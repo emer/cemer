@@ -859,7 +859,7 @@ void PVLVDaLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
 
   if(!da.lv_delta) return;
 
-  if(net->phase_no == 1) {
+  if(net->phase_no == net->phase_max-1) { // only at very end!
     Update_LvDelta(lay, net);
   }
 }
