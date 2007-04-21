@@ -190,7 +190,7 @@ public:
   // data cleaning operations
 
   static bool	TimeAvg(DataTable* time_avg_data, bool view, DataTable* src_data,
-			float avg_dt, bool float_only=false);
+			float avg_dt, bool float_only=true);
   // #CAT_Clean #MENU_BUTTON #MENU_ON_Clean #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute the time average for all the numeric fields of source data, according to the given avg_dt (new_val = avg_dt * avg + (1-avg_dt) * old_val).  if(float_only) then int or byte data is not time averaged
 
   static bool	SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_data,
@@ -201,25 +201,25 @@ public:
   static bool	SmoothUniform(DataTable* smooth_data, bool view, DataTable* src_data,
 			      int kern_half_wd, bool neg_tail = true,
 			      bool pos_tail = true, bool keep_edges = true,
-			      bool float_only=false);
+			      bool float_only=true);
   // #CAT_Clean #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable uniform smoothing: compute the uniform average of all the numeric fields of source data, using a uniform kernel of given half-width.  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side.  if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
 
   static bool	SmoothGauss(DataTable* smooth_data, bool view, DataTable* src_data,
 			    int kern_half_wd, float kern_sigma, bool neg_tail = true,
 			    bool pos_tail = true, bool keep_edges = true,
-			    bool float_only=false);
+			    bool float_only=true);
   // #CAT_Clean #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable gaussian smoothing: compute the gaussian-convolved average for all the numeric fields of source data, using a gaussian kernel of given half-width and sigma (std deviation).  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side.  if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
 
   static bool	SmoothExp(DataTable* smooth_data, bool view, DataTable* src_data,
 			  int kern_half_wd, float kern_exp, bool neg_tail = true,
 			  bool pos_tail = false, bool keep_edges = true,
-			  bool float_only=false);
+			  bool float_only=true);
   // #CAT_Clean #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable exponential smoothing: compute the exponentially-convolved average for all the numeric fields of source data, using an exponential kernel of given half-width and exponent.  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side. if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
 
   static bool	SmoothPow(DataTable* smooth_data, bool view, DataTable* src_data,
 			  int kern_half_wd, float kern_exp, bool neg_tail = true,
 			  bool pos_tail = false, bool keep_edges = true,
-			  bool float_only=false);
+			  bool float_only=true);
   // #CAT_Clean #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable power-function smoothing: compute the power-function-convolved average for all the numeric fields of source data, using an power-function kernel of given half-width and exponent (typically negative).  neg and pos tail determine if kernel includes the negative (earlier) side and the positive (later) side. if(keep_edges) then smooth data is same size as src_data, otherwise edges of kern_half_wd are lost on either side of the data.  if(float_only) then int or byte data is not averaged
 
 //   static bool	PatFreqArray(float_RArray& freqs, int pat_no, float act_thresh = .5f, bool proportion = false);

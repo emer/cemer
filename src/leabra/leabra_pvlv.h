@@ -263,7 +263,6 @@ public:
   float		min_lvi;	// #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		lv_delta;	// #DEF_false new LV delta formulation: lv da is relative to last trial, reset by PV rew pred -- no synaptic depression!
-  float		dip_reset_thr;	// #DEF_0.3 threshold on dip magnitude for resetting previous values for temporal diff
 
   void	Initialize();
   void 	Destroy()	{ };

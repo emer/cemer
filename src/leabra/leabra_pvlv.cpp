@@ -495,7 +495,6 @@ void PVLVDaSpec::Initialize() {
   min_lvi = 0.1f;
   use_actual_er = false;
   lv_delta = false;
-  dip_reset_thr = 0.3f;
 }
 
 void PVLVDaLayerSpec::Initialize() {
@@ -748,15 +747,29 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
       u->dav = lv_da; 		// lviu->act_eq - avgbl;
     }
     else {
-      if(actual_er_avail || (fabs(pv_da) > fabs(lv_da))) {
-	u->dav = pv_da;
+      if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
+	u->dav = lv_da;
+	if(er_avail)
+	  u->dav += pv_da;
+      }
+      else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
+	if(er_avail)
+	  u->dav = pv_da;
+	else
+	  u->dav = lv_da;
+      }
+      else if(da.mode == PVLVDaSpec::PV_PLUS_LV) {
+	u->dav = pv_da + lv_da;
+      }
+
+      if(er_avail) {
 	u->misc_1 = pv_da;	// our misc_1 holds the value to send to LV
       }
       else {
-	u->dav = lv_da;
-	u->misc_1 = 0.0f;	// our misc_1 holds the value to send to LV
+	u->misc_1 = 0.0f;
       }
     }
+
     u->ext = da.tonic_da + u->dav;
     u->act_eq = u->act = u->net = u->ext;
     lay->dav += u->dav;
@@ -792,20 +805,10 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
 
     float lvd = lvesu->act_eq - eff_lvi; 
     float pvd = pve_val - pvisu->act_m; 
-    float pv_da = pvd - pvisu->misc_1;
+    //    float pv_da = pvd - pvisu->misc_1;
 
-    bool reset_now = false;
-
-    if(actual_er_avail) {
-      reset_now = true;
-    }
-    else {
-      if(pv_da < -da.dip_reset_thr)
-	reset_now = true;
-    }
-
-    if(reset_now) {
-      lvesu->misc_1 = 0.0f;
+    if(er_avail) {
+      lvesu->misc_1 = 0.0f;	// reset
       pvisu->misc_1 = 0.0f;
     }
     else {

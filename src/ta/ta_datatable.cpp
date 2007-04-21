@@ -1982,9 +1982,9 @@ void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, 
 }
 
 void DataTable::WriteClose_impl() {
+  CalcLastRow();
   UpdateAllViews();
   WriteDataLogRow();
-  CalcLastRow();
 }
 
 //////////////////////////////////////////////////////////////////////////////
