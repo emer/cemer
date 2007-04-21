@@ -519,6 +519,28 @@ void taBase::ClearBaseFlag(int flag) {
   m_flags &= ~flag;
 }
 
+int taBase::GetEditableState(int mask) const {
+// note: this routine is not virtual, nor should it be
+  int rval = GetThisEditableState_impl(mask);
+  if (rval) return rval;
+  return GetOwnerEditableState_impl(mask);
+}
+
+int taBase::GetThisEditableState_impl(int mask) const {
+  return m_flags & mask;
+// to extend, call the inherited, and then augment the flags
+// with your own -- you shouldn't make it "less" readonly than
+// than your inherited call returns, but you can make it more
+}
+
+int taBase::GetOwnerEditableState_impl(int mask) const {
+// to stop an object from querying higher, just stub this function out
+// (ie replace with one that returns 0)
+  taBase* own = GetOwner();
+  if (own) return own->GetEditableState(mask); // note: must be full, not Own..._impl
+  return 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //	Basic object properties: index in list, owner, name, description, etc
 

@@ -175,6 +175,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_LIST_ITEM_TO_GROUP_ITEM_MAX = DCR_LIST_SORTED, // for checking to translate for item->item
   DCR_LIST_ITEM_TO_GROUP_MIN = DCR_LIST_ITEM_UPDATE, // for checking to translate for item->item
   DCR_LIST_ITEM_TO_GROUP_MAX = DCR_LIST_SORTED, // for checking to translate for item->item
+  DCR_XXX_UPDATE_MIN = DCR_STRUCT_UPDATE_BEGIN, // for forwarding these guys, ex. Matrix
+  DCR_XXX_UPDATE_MAX = DCR_DATA_UPDATE_END, // for forwarding these guys, ex. Matrix
 #endif
 };
 

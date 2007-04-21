@@ -455,11 +455,14 @@ public:
     CHILD_INVALID	= 0x02, // CheckChildConfig_impl returns issue with a child
     COPYING		= 0x04, // this object is currently within a Copy function
     USE_STALE		= 0x08, // calls setStale on appropriate changes; usually set in Initialize
+    BF_READ_ONLY	= 0x10, // this object should be considered readonly by most code (except controlling objs) and by CSS -- note that ro is a property -- use that to query the ro status
+    BF_GUI_READ_ONLY	= 0x20, // a less restrictive form of ro intended to prevent users from modifying an object, but still permit programmatic access; RO ==> GRO
     DESTROYING		= 0x40, // Set in Destroying at the very beginning of destroy
     DESTROYED		= 0x80  // set in base destroy (DEBUG only); lets us detect multi destroys
 #ifndef __MAKETA__
     ,INVALID_MASK	= THIS_INVALID | CHILD_INVALID
     ,COPY_MASK		= THIS_INVALID | CHILD_INVALID // flags to copy when doing an object copy
+    ,EDITABLE_MASK	= BF_READ_ONLY | BF_GUI_READ_ONLY // flags in the Editable group 
 #endif
   };
   
@@ -575,6 +578,9 @@ public:
   // #CAT_ObjectMgmt sets the flag(s)
   void			ClearBaseFlag(int flag);
   // #CAT_ObjectMgmt clears the flag(s)
+  void			ChangeBaseFlag(int flag, bool set)
+    {if (set) SetBaseFlag(flag); else ClearBaseFlag(flag);}
+  // #CAT_ObjectMgmt sets or clears the flag(s)
   int			baseFlags() const {return m_flags;}
   // #IGNORE flag values; see also HasBaseFlag
   inline bool		useStale() const {return HasBaseFlag(USE_STALE);}
@@ -582,7 +588,21 @@ public:
   inline void		setUseStale(bool val) 
     {if (val) SetBaseFlag(USE_STALE); else ClearBaseFlag(USE_STALE);}
     // #IGNORE
-
+  int			GetEditableState(int mask) const; 
+  // #IGNORE returns READ_ONLY and GUI_READ_ONLY, which also (in default behavior) factors in the owner's state supercursively until/unless not found; WARNING: result may include other flags, so you must &
+  bool			isReadOnly() const 
+    {return (GetEditableState(BF_READ_ONLY) & BF_READ_ONLY);}
+    // #IGNORE true if the object is (supercursively) strongly read-only
+  bool			isGuiReadOnly() const 
+    {return (GetEditableState((BF_READ_ONLY | BF_GUI_READ_ONLY))
+       & (BF_READ_ONLY | BF_GUI_READ_ONLY));}
+    // #IGNORE true if the object is (supercursively) read-only in the gui
+protected:
+  virtual int		GetThisEditableState_impl(int mask) const;
+    // extend this guy to factor in special purpose flags or runtime conditions
+  virtual int		GetOwnerEditableState_impl(int mask) const;
+   // you can stub this one out to prevent supercursively searching for the flag
+  
   ///////////////////////////////////////////////////////////////////////////
   //	Basic object properties: index in list, owner, name, description, etc
 public:

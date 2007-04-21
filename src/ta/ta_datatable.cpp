@@ -199,6 +199,8 @@ void DataCol::Init() {
   } else {
     ar->SetGeom(1, rows);
   }
+  // transfer READ_ONLY to mat
+  ar->ChangeBaseFlag(BF_GUI_READ_ONLY, (col_flags & READ_ONLY));
 }
 
 bool DataCol::isImage() const {
@@ -441,13 +443,19 @@ bool DataCol::InitValsToRowNo()  {
 taMatrix* DataCol::GetValAsMatrix(int row) {
   taMatrix* ar = AR(); 
   if(row < 0) row = rows() + row;
-  return ar->GetFrameSlice_(row);
+  taMatrix* rval = ar->GetFrameSlice_(row);
+  if (col_flags & READ_ONLY)
+    rval->SetBaseFlag(BF_READ_ONLY | BF_GUI_READ_ONLY);
+  return rval;
 }
 
 taMatrix* DataCol::GetRangeAsMatrix(int st_row, int n_rows) {
   taMatrix* ar = AR();
   if(st_row < 0) st_row = rows() + st_row;
-  return ar->GetFrameRangeSlice_(st_row, n_rows);
+  taMatrix* rval = ar->GetFrameRangeSlice_(st_row, n_rows);
+  if (col_flags & READ_ONLY)
+    rval->SetBaseFlag(BF_READ_ONLY | BF_GUI_READ_ONLY);
+  return rval;
 }
 
 bool DataCol::SetValAsMatrix(const taMatrix* val, int row) {
@@ -2435,8 +2443,13 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
     else
       return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
     } break;
-//Qt::BackgroundColorRole -- QColor
-//  but* only used when !(option.showDecorationSelected && (option.state & QStyle::State_Selected))
+  case Qt::BackgroundColorRole : //-- QColor
+ /* note: only used when !(option.showDecorationSelected && (option.state
+    & QStyle::State_Selected)) */
+    // note: only make it actual ro color if ro (not for "(matrix)" cells)
+    if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
+      return QColor(COLOR_RO_BACKGROUND);
+    break;
   case Qt::TextColorRole: { // QColor: color of text
     if (col->is_matrix)
       return QColor(Qt::blue);
@@ -2471,7 +2484,8 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       //TODO: determine if not editable, ex. maybe for matrix types
       DataCol* col = dt->GetColData(index.column(), true); // quiet
-      if (col && !col->is_matrix)  
+      if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
+         col->isGuiReadOnly()) ) 
         rval |= Qt::ItemIsEditable;
     }
   }

@@ -2171,9 +2171,17 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
 #endif
     if (m_dbu_cnt < 0) {
       ++m_dbu_cnt;
-    } else {
+    } else if (m_dbu_cnt > 0) {
       --m_dbu_cnt;
       dcr = DCR_STRUCT_UPDATE_END; // force to be struct end, in case we notify
+    } 
+    // this situation might theoretically arise if some updating action 
+    // mid-update causes a link to an item to get created, which will then
+    // not have been tracking all the BEGINs -- but it should be safe
+    // to just keep letting them happen, doing gui updates, which should be harmless
+    else {
+      cerr << "WARNING: Datalink for object name: "
+        << GetName() << " unexpectedly received a DATA or STRUCT END (cnt was 0)\n";
     }
 #ifdef DATA_DATA_DEBUG    
     if(was_stru)

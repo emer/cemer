@@ -143,6 +143,8 @@ protected:
   virtual void 		InitLinks_post(); // #IGNORE called after all _impls: does LoadDefaults and launches wiz
   void 	CutLinks(); // don't override this -- use _impl instead
   virtual MainWindowViewer* MakeProjectBrowser_impl(); // make a standard viewer for this project type
+  override int		GetOwnerEditableState_impl(int mask) const
+    {return 0;} // the readonly stops here!
   
 private:
   void	Copy_(const taProject& cp);

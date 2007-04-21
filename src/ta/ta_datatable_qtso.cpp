@@ -4652,9 +4652,8 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   if (col && col->is_matrix) {
     m_cell = dt_->GetValAsMatrix(index.column(), index.row());
     m_cell_index = index;
-    //TODO: the ref above will prevent the col from growing, and also
-    // screw up things like deleting the col -- we need to be able to "unlock"
-    // this defacto lock on the col!!!!
+    //TODO: the ref above will screw up things like deleting the col
+    // we need to be able to "unlock" this defacto lock on the col!!!!
     if (m_cell.ptr()) {
       tvCell->setModel(m_cell->GetDataModel());
       return;
@@ -4858,6 +4857,9 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
 {
   // ops that are never allowed on mats
   forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  // forbidden on ro
+  if (mat->isGuiReadOnly()) 
+    forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
   // src ops
   if (sel.nonempty())
     allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
@@ -4978,12 +4980,15 @@ void taiTabularDataMimeFactory::Table_Clear(DataTable* tab,
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
     DataCol* da = tab->GetColData(col, true); // quiet
     if (!da) continue;
+    // use bracketed data update, because these get sent to all slices, including gui
+    da->AR()->DataUpdate(true);
     int cell_size = da->cell_size();
     for (int row = sel.row_fr; row <= sel.row_to; ++row) {
       for (int cell = 0; cell < cell_size; ++cell) {
         tab->SetValAsVarM(_nilVariant, col, row, cell);
       }
     }
+    da->AR()->DataUpdate(false);
   }
   tab->DataUpdate(false);
 }
@@ -4995,6 +5000,19 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
 {
   // ops that are never allowed on mats
   forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
+  // forbidden on ro -- whole table
+  if (isGuiReadOnly()) 
+    forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
+  // selected cols
+  bool sel_ro = false; // we'll or in
+  for (int col = sel.col_fr; (col <= sel.col_to) && !sel_ro; ++col) {
+    DataCol* da = tab->GetColData(col);
+    sel_ro = sel_ro || (da->col_flags & DataCol::READ_ONLY);
+  }
+  if (sel_ro) {
+    forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
+  }
+  
   // src ops
   if (sel.nonempty())
     allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);

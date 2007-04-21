@@ -188,8 +188,12 @@ public:
     EA_DST_OPS		= (EA_PASTE_XXX | EA_LINK | 
       EA_LINK_INTO | EA_DROP_OPS), //
     EA_FORB_ON_SRC_CUT	= (EA_LINK | EA_LINK_INTO), // dst ops forbidden when the source operation was Cut
-    EA_FORB_ON_SRC_READONLY = (EA_DUPE | EA_DELETE | EA_DROP_MOVE | EA_DROP_MOVE_INTO), 
+    EA_FORB_ON_SRC_READONLY = (EA_DUPE | EA_DELETE | EA_CLEAR |
+      EA_DROP_MOVE | EA_DROP_MOVE_INTO), 
       // ops forbidden when the source operation forbade Cut/Move
+    EA_FORB_ON_DST_READONLY = (EA_CLEAR | EA_PASTE_XXX |
+      EA_DROP_ASSIGN | EA_DROP_COPY_INTO | EA_DROP_MOVE_INTO), 
+      // ops forbidden when the dst is readonly -- note this includes src ops
     EA_FORB_ON_MUL_SEL	= (EA_PASTE_XXX | EA_LINK2 |
        EA_DROP_OPS),
         // dst ops forbidden when multi operands selected

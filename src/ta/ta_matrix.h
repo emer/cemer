@@ -132,6 +132,12 @@ class MatrixTableModel; //
      are mediated by the Qt model do, so other grid views will automatically stay
      updated.
      
+     We also use Struct/Data Begin/End to communicate changes. When a mat has
+     slices, we recursively propogate those notifies to the slices. Note that
+     this are almost invariably gui-driven, so don't entail overhead for low-level
+     data processing. But if you want your low-level updates to cause gui changes,
+     then you must wrap them in a Begin/End block.
+     
    Matrix vs. Array
      'Array' classes are typically 1-d vectors or interpreted as 2-d arrays.
      Array supports dynamic operations, like inserting, sorting, etc.
@@ -532,7 +538,6 @@ public:
     { return Output(strm, indent); }
   int			Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, TAPtr par=NULL);
-  COPY_FUNS(taMatrix, taNBase);
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 
 public:
@@ -572,7 +577,8 @@ public:
   // #IGNORE
  
 protected:
-  void			UpdateAfterEdit_impl(); 
+  override void		UpdateAfterEdit_impl(); 
+  override void		BatchUpdate(bool begin, bool struc);
   static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
    // called after slice created -- static for consistency
   static void		SliceDestroying(taMatrix* par_slice, taMatrix* child_slice); 

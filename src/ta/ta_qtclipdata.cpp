@@ -628,6 +628,11 @@ void taBase::QueryEditActions(taiMimeSource* ms,
   // ASSIGN not allowed for multi srcs
   if (ms->isMulti())
     forbidden |= (taiClipData::EA_PASTE_ASSIGN | taiClipData::EA_DROP_ASSIGN);
+  // not allowed on ro
+  if (isGuiReadOnly()) {
+    forbidden |= (taiClipData::EA_PASTE_ASSIGN | 
+      taiClipData::EA_DROP_ASSIGN);
+  }  
   // note: single is just the degenerate case here
   // for multi, a bit more complicated, since we need to not allow something
   // not allowed by all, which is not the same as forbid
@@ -647,6 +652,9 @@ void taBase::QueryEditActions(taiMimeSource* ms,
 void taBase::QueryEditActionsS_impl(int& allowed, int& forbidden)
 {
   allowed |= taiClipData::EA_COPY;
+  if (isGuiReadOnly()) {
+    forbidden |= (taiClipData::EA_CLEAR);
+  }  
 }
 
 void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbidden)
@@ -751,6 +759,10 @@ void taBase::ChildQueryEditActions_impl(const MemberDef* md, const taBase* child
   if (ms->srcAction() & (taiClipData::EA_SRC_CUT))
    forbidden |= taiClipData::EA_FORB_ON_SRC_CUT;
 
+  if (isGuiReadOnly()) {
+    forbidden |= (taiClipData::EA_PASTE_INTO | taiClipData::EA_DROP_ASSIGN |
+      taiClipData::EA_DROP_COPY_INTO | taiClipData::EA_DROP_MOVE_INTO);
+  }  
   // can't link etc. if not in this process
   if (!ms->isThisProcess())
     forbidden |= taiClipData::EA_IN_PROC_OPS;

@@ -463,6 +463,15 @@ void taMatrix::Destroy() {
   }
 }
 
+void taMatrix::BatchUpdate(bool begin, bool struc) {
+  inherited::BatchUpdate(begin, struc);
+  // recursively send blocked updates to slices
+  if (slices) for (int i = 0; i < slices->size; ++i) {
+    taMatrix* mat = slices->FastEl(i);
+    mat->BatchUpdate(begin, struc); // recursive, of course
+  }
+}
+
 void taMatrix::Add_(const void* it) {
   if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   if(TestError((dims() != 1), "Add", "only allowed when dims=1")) return;
@@ -1504,13 +1513,18 @@ QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
 //Qt::FontRole--  QFont: font for the text
   case Qt::TextAlignmentRole:
     return m_mat->defAlignment();
-/*Qt::BackgroundColorRole -- QColor
-  but* only used when !(option.showDecorationSelected && (option.state & QStyle::State_Selected))
-Qt::TextColorRole
+  case Qt::BackgroundColorRole : //-- QColor
+ /* note: only used when !(option.showDecorationSelected && (option.state
+    & QStyle::State_Selected)) */
+    if (!(flags(index) & Qt::ItemIsEditable))
+      return QColor(COLOR_RO_BACKGROUND);
+    break;
+/*Qt::TextColorRole
   QColor: color of text
 Qt::CheckStateRole*/
-  default: return QVariant();
+  default: break;
   }
+  return QVariant();
 }
 
 void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
@@ -1549,7 +1563,11 @@ Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
   Qt::ItemFlags rval = 0;
   
   if (ValidateIndex(index)) {
-    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable;
+    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  }
+  // editability is a property of the whole mat
+  if (!m_mat->isGuiReadOnly()) {
+    rval |= Qt::ItemIsEditable;
   }
   return rval; 
 }
