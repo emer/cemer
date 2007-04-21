@@ -495,6 +495,7 @@ void PVLVDaSpec::Initialize() {
   min_lvi = 0.1f;
   use_actual_er = false;
   lv_delta = false;
+  lv_da_gain = 2.0f;
 }
 
 void PVLVDaLayerSpec::Initialize() {
@@ -740,7 +741,7 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     float lvd = lvesu->act_eq - eff_lvi; 
     float pvd = pve_val - pvisu->act_m; 
 
-    float lv_da = lvd - lvesu->misc_1;
+    float lv_da = da.lv_da_gain * (lvd - lvesu->misc_1);
     float pv_da = pvd - pvisu->misc_1;
 
     if(net->phase_no == 0) {	// not used at this point..
