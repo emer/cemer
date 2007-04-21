@@ -783,7 +783,7 @@ int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
   for (int i = 0; i < cols(); ++i) {
-    DataCol* col = GetColData(i);
+    DataCol* col = data.FastEl(i);
     int frms = col->AR()->frames();
     // number of rows is going to be = biggest number in individual cols
     rows = max((int)rows, frms);
@@ -812,7 +812,7 @@ DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
 const Variant DataTable::GetColUserData(const String& name,
   int col) const 
 {
-  DataCol* da = GetColData(col);
+  DataCol* da = GetColData(col); // todo: quiet err?
   if (da) return da->GetUserData(name);
   else return _nilVariant;
 }
@@ -2403,7 +2403,7 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   // * it would be nice to just italicize the "matrix" text, but we have no
   //   no access to the font being used, and cannot only pass modifiers
   
-  DataCol* col = dt->GetColData(index.column());
+  DataCol* col = dt->GetColData(index.column(), true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return QVariant(); // nil
   
@@ -2470,7 +2470,7 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
     if (dt->hasData(index.column(), index.row() )) {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       //TODO: determine if not editable, ex. maybe for matrix types
-      DataCol* col = dt->GetColData(index.column());
+      DataCol* col = dt->GetColData(index.column(), true); // quiet
       if (col && !col->is_matrix)  
         rval |= Qt::ItemIsEditable;
     }
@@ -2482,7 +2482,7 @@ QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, in
   if (role != Qt::DisplayRole)
     return QVariant();
   if (orientation == Qt::Horizontal) {
-    DataCol* col = dt->GetColData(section);
+    DataCol* col = dt->GetColData(section, true); // quiet
     if (col)  
       return QString(col->GetDisplayName().chars());
     else 
@@ -2504,7 +2504,7 @@ int DataTableModel::rowCount(const QModelIndex& parent) const {
 bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   if (!dt || !index.isValid()) return false;
   
-  DataCol* col = dt->GetColData(index.column());
+  DataCol* col = dt->GetColData(index.column(), true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return false; 
   //we restrict setData for scalars only -- use delegate for matrix

@@ -582,10 +582,11 @@ public:
 					int d0=0, int d1=0, int d2=0, int d3=0);
   // #EXPERT #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
-  virtual DataCol* 	GetColData(int col) const {
-    if(TestError((col < 0 || col >= cols()), "GetColData",
-		 "column number is out of range")) return NULL;
-    else return data.FastEl(col);
+  virtual DataCol* 	GetColData(int col, bool quiet = false) const {
+    bool bad_col = (col < 0 || col >= cols());
+    if(quiet && bad_col) return NULL;
+    if(TestError(bad_col, "GetColData", "column number is out of range")) return NULL;
+    return data.FastEl(col);
   }
   // #CAT_Columns get col data for given column 
   virtual taMatrix*	GetColMatrix(int col) const

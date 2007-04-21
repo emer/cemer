@@ -2889,7 +2889,7 @@ void GraphTableView::ComputeAxisRanges() {
   }
   plot_1.ComputeRange();
   plot_2.ComputeRange();
-  if(share_y_axis && plot_2.on && !plot_2.GetDAPtr()->isString()) {
+  if(share_y_axis && plot_2.on && plot_2.GetDAPtr() && !plot_2.GetDAPtr()->isString()) {
     plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
   }
   if(color_mode == COLOR_AXIS)
@@ -4647,8 +4647,7 @@ void iDataTableEditor::tvTable_layoutChanged()
 void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
   int colidx = index.column();
-  DataCol* col = NULL;
-  if(colidx >= 0) col = dt_->GetColData(colidx);
+  DataCol* col = dt_->GetColData(colidx, true); // quiet
   // note: we return from following if, otherwise fall through to do the contra
   if (col && col->is_matrix) {
     m_cell = dt_->GetValAsMatrix(index.column(), index.row());
@@ -4977,7 +4976,7 @@ void taiTabularDataMimeFactory::Table_Clear(DataTable* tab,
   tab->DataUpdate(true);
   //note: it is easier and more efficient to clear in col-major order
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
-    DataCol* da = tab->GetColData(col);
+    DataCol* da = tab->GetColData(col, true); // quiet
     if (!da) continue;
     int cell_size = da->cell_size();
     for (int row = sel.row_fr; row <= sel.row_to; ++row) {
@@ -5113,7 +5112,7 @@ void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
   
   // add the col descs
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
-    DataCol* da = tab->GetColData(col);
+    DataCol* da = tab->GetColData(col, true); // quiet
     int x; int y;
     da->Get2DCellGeom(x, y); 
     str.cat(String(x)).cat(';').cat(String(y)).cat(';');
@@ -5245,7 +5244,7 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
         // just assume either could be empty, for robustness
         int dst_cell_cols = 0; //dummy
         int dst_cell_rows = 0;
-        DataCol* da = tab->GetColData(dst_col);
+        DataCol* da = tab->GetColData(dst_col, true); // quiet
         if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
         //note: only need to do the following in the very first cell_row
         max_cell_rows = MAX(max_cell_rows, dst_cell_rows);
@@ -5531,7 +5530,7 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
         // just assume either could be empty, for robustness
         int dst_cell_cols = 0; 
         int dst_cell_rows = 0;
-        DataCol* da = tab->GetColData(dst_col);
+        DataCol* da = tab->GetColData(dst_col, true); // quiet
         if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
         int src_cell_cols = 0;
         int src_cell_rows = 0;
