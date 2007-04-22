@@ -59,7 +59,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(CtxtUpdateSpec);
-  COPY_FUNS(CtxtUpdateSpec, taBase);
   TA_BASEFUNS(CtxtUpdateSpec);
 };
 
@@ -83,7 +82,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(LeabraContextLayerSpec);
-  COPY_FUNS(LeabraContextLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(LeabraContextLayerSpec);
 };
 
@@ -135,7 +133,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(LeabraNegBiasSpec);
-  COPY_FUNS(LeabraNegBiasSpec, LeabraBiasSpec);
   TA_BASEFUNS(LeabraNegBiasSpec);
 };
 
@@ -158,7 +155,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(SynDepSpec);
-  COPY_FUNS(SynDepSpec, taBase);
   TA_BASEFUNS(SynDepSpec);
 };
 
@@ -267,7 +263,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TrialSynDepConSpec);
-  COPY_FUNS(TrialSynDepConSpec, LeabraConSpec);
   TA_BASEFUNS(TrialSynDepConSpec);
 protected:
   void 	UpdateAfterEdit_impl();
@@ -303,7 +298,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(FastWtSpec);
-  COPY_FUNS(FastWtSpec, taBase);
   TA_BASEFUNS(FastWtSpec);
 };
 
@@ -441,7 +435,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(FastWtConSpec);
-  COPY_FUNS(FastWtConSpec, LeabraConSpec);
   TA_BASEFUNS(FastWtConSpec);
 };
 
@@ -455,7 +448,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(ActAvgHebbMixSpec);
-  COPY_FUNS(ActAvgHebbMixSpec, taBase);
   TA_BASEFUNS(ActAvgHebbMixSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -502,7 +494,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(ActAvgHebbConSpec);
-  COPY_FUNS(ActAvgHebbConSpec, LeabraConSpec);
   TA_BASEFUNS(ActAvgHebbConSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -555,7 +546,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(ScalarValSpec);
-  COPY_FUNS(ScalarValSpec, taBase);
   TA_BASEFUNS(ScalarValSpec);
 };
 
@@ -590,7 +580,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(ScalarValBias);
-  COPY_FUNS(ScalarValBias, taBase);
   TA_BASEFUNS(ScalarValBias);
 };
 
@@ -657,7 +646,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(ScalarValLayerSpec);
-  COPY_FUNS(ScalarValLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(ScalarValLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -679,7 +667,6 @@ public:
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(ScalarValSelfPrjnSpec);
-  COPY_FUNS(ScalarValSelfPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(ScalarValSelfPrjnSpec);
 };
 
@@ -726,7 +713,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(TwoDValSpec);
-  COPY_FUNS(TwoDValSpec, taBase);
   TA_BASEFUNS(TwoDValSpec);
 };
 
@@ -755,7 +741,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(TwoDValBias);
-  COPY_FUNS(TwoDValBias, taBase);
   TA_BASEFUNS(TwoDValBias);
 };
 
@@ -819,7 +804,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TwoDValLayerSpec);
-  COPY_FUNS(TwoDValLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(TwoDValLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();

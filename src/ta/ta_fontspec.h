@@ -40,7 +40,6 @@ public:
   void	CutLinks();
   void	InitLinks();
   void	Copy_(const FontSpec& cp);
-  COPY_FUNS(FontSpec,taOBase)
   TA_BASEFUNS(FontSpec);
 private:
   void	Initialize();

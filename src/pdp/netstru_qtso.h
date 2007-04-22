@@ -219,7 +219,7 @@ protected:
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
-  NCOPY(UnitGroupView)
+  NOCOPY(UnitGroupView)
   void			Initialize();
   void			Destroy();
 };
@@ -233,7 +233,6 @@ public:
   void			setHighlightColor(const T3Color& color); 
     // used for highlighting in gui, esp lay/prjn
     
-  COPY_FUNS(nvhDataView, inherited);
   TA_BASEFUNS(nvhDataView)
 protected:
   T3Color 		m_hcolor; // hilight color (saved for rebuilds)
@@ -274,7 +273,7 @@ protected:
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
-  NCOPY(LayerView)
+  NOCOPY(LayerView)
   void			Initialize();
   void			Destroy();
 };
@@ -298,7 +297,7 @@ protected:
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
 private:
-  NCOPY(PrjnView)
+  NOCOPY(PrjnView)
   void			Initialize();
   void			Destroy();
 };

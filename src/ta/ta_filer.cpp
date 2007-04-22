@@ -411,6 +411,12 @@ void taFiler::FixFileName() {
   if (compressed) act_ext += taMisc::compress_sfx;
   
   if (m_fname.endsWith(act_ext)) return; // done!
+
+  // ends with basic extension but not compressed one -- just add compresed
+  if(compressed && m_fname.endsWith(ext)) {
+    m_fname += taMisc::compress_sfx;
+    return;
+  }
   
   // if user already has an extension, don't change it
   //note: because paths can have . we have to look at file only
@@ -461,8 +467,9 @@ istream* taFiler::open_read() {
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
   if (!istrm->good()) {
-      taMisc::Error("File:",fileName(),"could not be opened for reading");
-      Close();
+    taMisc::Error("File:",fileName(),"could not be opened for reading");
+    Close();
+    return NULL;
   }
   open_file = true;
   if (!no_save_last_fname)

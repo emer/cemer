@@ -188,7 +188,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const DataViewer& cp);
-  COPY_FUNS(DataViewer, taDataView)
   TA_DATAVIEWFUNS(DataViewer, taDataView) //
 
 
@@ -221,7 +220,7 @@ public:
   TA_DATAVIEWLISTFUNS(DataViewer_List, DataView_List, DataViewer)
 
 private:
-  NCOPY(DataViewer_List)
+  NOCOPY(DataViewer_List)
   void 	Initialize() { SetBaseType(&TA_DataViewer);}
   void	Destroy() {}
 };
@@ -239,12 +238,11 @@ public:
 //  void	InitLinks();
 //  void	CutLinks(); //
 //  void 	Copy_(const FrameViewer& cp);
-//  COPY_FUNS(FrameViewer, DataViewer) //
   TA_DATAVIEWFUNS(FrameViewer, DataViewer) //
 protected:
 
 private:
-  NCOPY(FrameViewer)
+  NOCOPY(FrameViewer)
   void 	Initialize();
   void	Destroy() {CutLinks();}
 };
@@ -254,7 +252,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(FrameViewer_List, DataViewer_List, FrameViewer)
 private:
-  NCOPY(FrameViewer_List)
+  NOCOPY(FrameViewer_List)
   void 	Initialize() { SetBaseType(&TA_FrameViewer);}
   void	Destroy() {}
 };
@@ -275,7 +273,6 @@ public:
 
   inline iBrowseViewer*	widget() {return (iBrowseViewer*)inherited::widget();}
 
-  COPY_FUNS(BrowseViewer, FrameViewer) //
   TA_DATAVIEWFUNS(BrowseViewer, FrameViewer) //
 protected:
   override void		Render_pre(); // 
@@ -300,7 +297,6 @@ public:
   void	UpdateAfterEdit(); // if root deletes, our window must die
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(tabBrowseViewer, BrowseViewer) //
   TA_DATAVIEWFUNS(tabBrowseViewer, BrowseViewer) //
   
 protected:
@@ -326,7 +322,6 @@ public:
   void			setRoot(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); // use this to set the root
   
   void	UpdateAfterEdit();
-  COPY_FUNS(ClassBrowseViewer, BrowseViewer) //
   TA_DATAVIEWFUNS(ClassBrowseViewer, BrowseViewer) //
 protected:
   void* 		m_root; // #IGNORE
@@ -353,7 +348,7 @@ public:
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
 private:
-  NCOPY(PanelViewer)
+  NOCOPY(PanelViewer)
   void			Initialize();
   void			Destroy() {CutLinks();}
 };
@@ -379,7 +374,6 @@ public:
   void 			ScriptWinState(ostream& strm = cout);
 
   void	UpdateAfterEdit();
-  COPY_FUNS(WindowState, taOBase)
   TA_BASEFUNS(WindowState)
 private:
   void 	Copy_(const WindowState& cp);
@@ -417,7 +411,6 @@ public:
   
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(TopLevelViewer, DataViewer) //
   TA_DATAVIEWFUNS(TopLevelViewer, DataViewer) //
 protected:
   WindowState		win_state; // TEMP: until is UserData
@@ -471,7 +464,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(DockViewer_List, DataViewer_List, DockViewer)
 private:
-  NCOPY(DockViewer_List)
+  NOCOPY(DockViewer_List)
   void 	Initialize() { SetBaseType(&TA_DockViewer);}
   void	Destroy() {}
 };
@@ -487,7 +480,7 @@ protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE note: we just use base window, and put the console into it
   override void		MakeWinName_impl(); // set win_name, impl in subs
 private:
-  NCOPY(ConsoleDockViewer)
+  NOCOPY(ConsoleDockViewer)
   void			Initialize();
   void			Destroy() {}
 };
@@ -507,7 +500,7 @@ protected:
   override void		MakeWinName_impl(); 
   
 private:
-  NCOPY(ToolBoxDockViewer)
+  NOCOPY(ToolBoxDockViewer)
   void 	Initialize();
   void	Destroy() {}
 };
@@ -546,7 +539,6 @@ public:
 
   inline iToolBar*	widget() {return (iToolBar*)inherited::widget();} // #IGNORE lex override
 
-  COPY_FUNS(ToolBar, DataViewer)
   TA_DATAVIEWFUNS(ToolBar, DataViewer)
 
 protected:
@@ -569,7 +561,7 @@ INHERITED(DataViewer_List)
 public:
   TA_DATAVIEWLISTFUNS(ToolBar_List, DataViewer_List, ToolBar)
 private:
-  NCOPY(ToolBar_List)
+  NOCOPY(ToolBar_List)
   void			Initialize() {SetBaseType(&TA_ToolBar);}
   void			Destroy() {}
 };
@@ -634,7 +626,6 @@ public:
   void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(MainWindowViewer, TopLevelViewer)
   TA_DATAVIEWFUNS(MainWindowViewer, TopLevelViewer) //
 
 public: // Action methods
@@ -700,7 +691,6 @@ public:
 //  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(TreeDecorationSpec, inherited)
   TA_BASEFUNS(TreeDecorationSpec) //
 private:
   void	Copy_(const TreeDecorationSpec& cp);
@@ -715,7 +705,7 @@ public:
   
   TA_BASEFUNS(TreeDecorationSpec_List) //
 private:
-  NCOPY(TreeDecorationSpec_List)
+  NOCOPY(TreeDecorationSpec_List)
   void Initialize() {SetBaseType(&TA_TreeDecorationSpec);}
   void Destroy() {}
 };

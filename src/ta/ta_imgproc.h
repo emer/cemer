@@ -60,7 +60,6 @@ public:
   void 	Initialize();
   void	Destroy() { };
   void	Copy_(const taImage& cp);
-  COPY_FUNS(taImage, inherited);
   TA_BASEFUNS(taImage);
 protected:
 #ifdef TA_GUI
@@ -264,7 +263,7 @@ public:
 					      RetinalSpacingSpec::Resolution res);
   // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
 
-  TA_BASEFUNS_NCOPY(DoGRetinaSpecList);
+  TA_BASEFUNS_NOCOPY(DoGRetinaSpecList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DoGRetinaSpec); }
   void 	Destroy()		{ };
@@ -287,7 +286,6 @@ public:
   void 	Initialize();
   void	Destroy() { };
   SIMPLE_COPY(GaborRFSpec);
-  COPY_FUNS(GaborRFSpec, taBase);
   TA_BASEFUNS(GaborRFSpec);
 };
 
@@ -302,7 +300,6 @@ public:
   void 	Initialize();
   void	Destroy() { };
   SIMPLE_COPY(BlobRFSpec);
-  COPY_FUNS(BlobRFSpec, taBase);
   TA_BASEFUNS(BlobRFSpec);
 };
 
@@ -375,7 +372,7 @@ public:
   virtual bool UpdateSizesFmRetina(DoGRetinaSpecList& dogs);
   // calls SetGpGeomFmRetSpec on all the items in the list
 
-  TA_BASEFUNS_NCOPY(GaborV1SpecList);
+  TA_BASEFUNS_NOCOPY(GaborV1SpecList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_GaborV1Spec); }
   void 	Destroy()		{ };
@@ -429,7 +426,7 @@ public:
   // #CAT_Filter #MENU_BUTTON #MENU_ON_Filter apply Gabor filter to on/off input channels to produce a V1-like processing of the input image.  superimpose = add values instead of overwriting (this is just a call to equiv function on spec)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
-  TA_BASEFUNS_NCOPY(taImageProc);
+  TA_BASEFUNS_NOCOPY(taImageProc);
 private:
   void 	Initialize();
   void	Destroy();

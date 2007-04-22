@@ -37,7 +37,6 @@ public:
   void	Destroy();
   void	InitLinks();
   void	Copy_(const SelectEditConfig& cp);
-  COPY_FUNS(SelectEditConfig, inherited);
   TA_BASEFUNS(SelectEditConfig);
 };
 
@@ -130,7 +129,6 @@ public:
   void	UpdateAfterEdit();
   void 	InitLinks();
   void	Copy_(const SelectEdit& cp);
-  COPY_FUNS(SelectEdit, inherited);
   TA_BASEFUNS(SelectEdit);
 protected:  
   void			BaseAdded(taBase* ta); // called when we add a memb or meth; we unique add to notify list

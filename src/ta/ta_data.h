@@ -44,7 +44,6 @@ public:
   virtual const String_Matrix& cellNames() const;
   
   String GetColText(int col, int);
-  COPY_FUNS(ChannelSpec, inherited);
   TA_BASEFUNS(ChannelSpec);
 private:
   void 	Copy_(const ChannelSpec& cp);
@@ -72,7 +71,6 @@ public:
   void 	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(MatrixChannelSpec, ChannelSpec);
   TA_BASEFUNS(MatrixChannelSpec);
 protected:
   void			InitCellNames();
@@ -91,7 +89,7 @@ public:
   int		NumListCols() const {return 6;}
   String 	GetColHeading(int col);
 
-  TA_BASEFUNS_NCOPY(ChannelSpec_List);
+  TA_BASEFUNS_NOCOPY(ChannelSpec_List);
 private:
   void		Initialize() {SetBaseType(&TA_ChannelSpec);}
   void		Destroy() {}
@@ -326,7 +324,7 @@ protected:
   virtual void		DeleteSinkChannel_impl(int chan) {}
 
 private:
-  NCOPY(DataBlock)
+  NOCOPY(DataBlock)
   void			Initialize() {}
   void			Destroy() {}
 };
@@ -363,7 +361,6 @@ public:
   override int		ReadIndex() const {return rd_itr;} 
   override int		WriteIndex() const {return wr_itr;} 
 
-  COPY_FUNS(DataBlock_Idx, DataBlock)
   TA_ABSTRACT_BASEFUNS(DataBlock_Idx);
 protected:
   int			rd_itr;

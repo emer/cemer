@@ -31,7 +31,6 @@ public:
   inline void 	Initialize() 			{ value = 0; }
   inline void 	Destroy()			{ };
   inline void 	Copy_(const DynEnumItem& cp)	{ value = cp.value; desc = cp.desc; }
-  COPY_FUNS(DynEnumItem, taNBase);
   TA_BASEFUNS(DynEnumItem);
 };
 
@@ -72,7 +71,6 @@ public:
   void	Initialize();
   void	Destroy() { Reset(); }
   void	Copy_(const DynEnum& cp);
-  COPY_FUNS(DynEnum, taList<DynEnumItem>);
   TA_BASEFUNS(DynEnum);
 };
 

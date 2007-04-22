@@ -87,7 +87,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ImageReader& cp);
-  COPY_FUNS(ImageReader, DataBlock)
   TA_BASEFUNS(ImageReader)
   
 protected:

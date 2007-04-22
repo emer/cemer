@@ -80,7 +80,6 @@ public:
   void 	InitLinks();
   void 	CutLinks();
   void	Copy_(const ColCalcExpr& cp);
-  COPY_FUNS(ColCalcExpr, inherited);
   TA_BASEFUNS(ColCalcExpr);
 protected:
 
@@ -392,7 +391,6 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks(); //note: ok to do own AR here, because never called in constructor
   void	CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
-  COPY_FUNS(DataCol, taNBase);
   TA_ABSTRACT_BASEFUNS(DataCol);
   
 protected:
@@ -459,7 +457,7 @@ protected: // these guys must only be used by DataTable, but no external guys
   // #IGNORE #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
 
 private:
-  NCOPY(DataTableCols)
+  NOCOPY(DataTableCols)
   void	Initialize();
   void	Destroy()		{}
 };
@@ -959,7 +957,6 @@ public:
 
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(DataTable, DataBlock_Idx);
   TA_BASEFUNS(DataTable); //
 
 protected: 
@@ -1053,7 +1050,7 @@ public:
 
   TA_BASEFUNS(DataTable_Group);
 private:
-  NCOPY(DataTable_Group)
+  NOCOPY(DataTable_Group)
   void	Initialize() 		{ SetBaseType(&TA_DataTable); }
   void 	Destroy()		{ };
 };
@@ -1074,7 +1071,6 @@ public:
 
   void	CutLinks()
     {ar.CutLinks(); DataCol::CutLinks();}
-  COPY_FUNS(DataColTp<T>, DataCol);
   TA_TMPLT_ABSTRACT_BASEFUNS(DataColTp, T); //
 public: //DO NOT ACCESS DIRECTLY
   T		ar;		// #NO_SHOW  the array itself
@@ -1092,7 +1088,7 @@ public:
   override bool		isString() const {return true;} 
   override ValType 	valType() const  {return VT_STRING;}
 
-  TA_BASEFUNS_NCOPY(String_Data);
+  TA_BASEFUNS_NOCOPY(String_Data);
 
 protected:
   override double 	GetValAsDouble_impl(int row, int cell) const
@@ -1127,7 +1123,7 @@ friend class DataTable;
 public:
   override ValType 	valType() const  {return VT_VARIANT;}
 
-  TA_BASEFUNS_NCOPY(Variant_Data);
+  TA_BASEFUNS_NOCOPY(Variant_Data);
 
 protected:
   override const Variant GetValAsVar_impl(int row, int cell) const
@@ -1165,7 +1161,7 @@ public:
   override int		maxColWidth() const {return 15;} // assumes sign, int: 15 dig's; double: 14 dig's, decimal point
   override ValType 	valType() const {return VT_DOUBLE;}
 
-  TA_BASEFUNS_NCOPY(double_Data);
+  TA_BASEFUNS_NOCOPY(double_Data);
   
 protected:
   override double GetValAsDouble_impl(int row, int cell) const
@@ -1197,7 +1193,7 @@ public:
   override int		maxColWidth() const {return 7;} // assumes sign, int: 6 dig's; float: 5 dig's, decimal point
   override ValType 	valType() const {return VT_FLOAT;}
 
-  TA_BASEFUNS_NCOPY(float_Data);
+  TA_BASEFUNS_NOCOPY(float_Data);
   
 protected:
   override double 	GetValAsDouble_impl(int row, int cell) const
@@ -1229,7 +1225,7 @@ public:
   override int		maxColWidth() const {return 11;} // assumes sign, 10 digs
   override ValType 	valType() const {return VT_INT;}
 
-  TA_BASEFUNS_NCOPY(int_Data);
+  TA_BASEFUNS_NOCOPY(int_Data);
   
 protected:
   override double 	GetValAsDouble_impl(int row, int cell) const
@@ -1261,7 +1257,7 @@ public:
   override int		maxColWidth() const {return 3;} // assumes 3 digs
   override ValType 	valType() const {return VT_BYTE;}
 
-  TA_BASEFUNS_NCOPY(byte_Data);
+  TA_BASEFUNS_NOCOPY(byte_Data);
   
 protected:
   override double 	GetValAsDouble_impl(int row, int cell) const
@@ -1342,7 +1338,7 @@ public:
     VM_Flat		// #LABEL_Flat show all data in the main table, using dummy cells
   };
 
-  TA_BASEFUNS_NCOPY(DataTableEditorOptions);
+  TA_BASEFUNS_NOCOPY(DataTableEditorOptions);
   
 private:
   void	Initialize() {}

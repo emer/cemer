@@ -56,7 +56,6 @@ public:
   const iColor*		color() const; //note: always correct -- updated on call
 
   String ToString_RGBA() const;
-  COPY_FUNS(RGBA, taNBase);
   TA_BASEFUNS_LITE(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
 protected:
@@ -74,7 +73,7 @@ INHERITED(taList<RGBA>)
 public:
   void	Initialize() 		{SetBaseType(&TA_RGBA); };
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(RGBA_List);
+  TA_BASEFUNS_NOCOPY(RGBA_List);
 };
 
 class TA_API TAColor : public taBase { // ##NO_TOKENS Color
@@ -105,7 +104,7 @@ class TA_API TAColor_List : public taList<TAColor> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of TAColor objects
 INHERITED(taList<TAColor>)
 public:
-  TA_BASEFUNS_NCOPY(TAColor_List);
+  TA_BASEFUNS_NOCOPY(TAColor_List);
 private:
   void	Initialize() 		{SetBaseType(&TA_TAColor); };
   void 	Destroy()		{ };
@@ -128,7 +127,6 @@ public:
   static const KeyString key_clr4;
   override String GetColText(const KeyString& key, int itm_idx) const;
   void 	InitLinks();
-  COPY_FUNS(ColorScaleSpec, taNBase);
   TA_BASEFUNS(ColorScaleSpec);
 private:
   void 	Copy_(const ColorScaleSpec& cp);
@@ -150,7 +148,7 @@ public:
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const; // header text for the indicated column
 
-  TA_BASEFUNS_NCOPY(ColorScaleSpec_Group);
+  TA_BASEFUNS_NOCOPY(ColorScaleSpec_Group);
 private:
   void 	Initialize()	{SetBaseType(&TA_ColorScaleSpec);};
   void 	Destroy()	{ };
@@ -170,7 +168,6 @@ public:
 
   void		SetFromScale(ColorScale& cs);
 
-  COPY_FUNS(ScaleRange, taNBase);
   TA_BASEFUNS(ScaleRange);
 private:
   void 		Copy_(const ScaleRange &cp)
@@ -186,7 +183,7 @@ INHERITED(taList<ScaleRange>)
 public:
   void			Initialize() {SetBaseType(&TA_ScaleRange);}
   void 			Destroy() {};
-  TA_BASEFUNS_NCOPY(ScaleRange_List);
+  TA_BASEFUNS_NOCOPY(ScaleRange_List);
 };
 
 class TA_API ColorScale : public taNBase {
@@ -262,7 +259,6 @@ public:
   override String	GetDesc() const { return desc; }
 
   void	InitLinks();
-  COPY_FUNS(ViewColor, inherited);
   TA_BASEFUNS(ViewColor);
 private:
   SIMPLE_COPY(ViewColor);
@@ -280,7 +276,7 @@ public:
 				  bool bg=false, const String& bg_color_name="");
   // find view color of given name -- if not there, make it, with given params (returns false if didn't already exist)
 
-  TA_BASEFUNS_NCOPY(ViewColor_List);
+  TA_BASEFUNS_NOCOPY(ViewColor_List);
 private:
   void	Initialize() 		{ SetBaseType(&TA_ViewColor); }
   void 	Destroy()		{ };

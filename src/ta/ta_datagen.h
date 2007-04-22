@@ -126,7 +126,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS_NCOPY(taDataGen);
+  TA_BASEFUNS_NOCOPY(taDataGen);
 };
 
 
@@ -138,7 +138,7 @@ class TA_API DataGenCall : public StaticMethodCall {
   // call a taDataGen (data generation) function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS_NCOPY(DataGenCall);
+  TA_BASEFUNS_NOCOPY(DataGenCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

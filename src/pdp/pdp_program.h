@@ -54,7 +54,6 @@ public:
   override String	GetDisplayName() const;
 
   SIMPLE_COPY_UPDT_PTR_PAR(BasicDataLoop, Program);
-  COPY_FUNS(BasicDataLoop, Loop);
   SIMPLE_LINKS(BasicDataLoop);
   TA_BASEFUNS(BasicDataLoop);
 protected:
@@ -98,7 +97,6 @@ public:
   virtual void  GetItemList(int group_idx); // 
 
   SIMPLE_COPY_UPDT_PTR_PAR(GroupedDataLoop, Program);
-  COPY_FUNS(GroupedDataLoop, Loop);
   SIMPLE_LINKS(GroupedDataLoop);
   TA_BASEFUNS(GroupedDataLoop);
 protected:
@@ -127,7 +125,6 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
   SIMPLE_COPY_UPDT_PTR_PAR(NetCounterInit, Program);
-  COPY_FUNS(NetCounterInit, ProgEl);
   SIMPLE_LINKS(NetCounterInit);
   TA_BASEFUNS(NetCounterInit);
 
@@ -156,7 +153,6 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
   SIMPLE_COPY_UPDT_PTR_PAR(NetCounterIncr, Program);
-  COPY_FUNS(NetCounterIncr, ProgEl);
   SIMPLE_LINKS(NetCounterIncr);
   TA_BASEFUNS(NetCounterIncr);
 
@@ -183,7 +179,6 @@ public:
   override String 	GetTypeDecoKey() const { return "Function"; }
 
   SIMPLE_COPY_UPDT_PTR_PAR(NetUpdateView, Program);
-  COPY_FUNS(NetUpdateView, ProgEl);
   SIMPLE_LINKS(NetUpdateView);
   TA_BASEFUNS(NetUpdateView);
 

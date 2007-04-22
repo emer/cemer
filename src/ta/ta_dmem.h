@@ -97,7 +97,7 @@ public:
 
   TA_BASEFUNS_LITE(DMemComm);
 private:
-  NCOPY(DMemComm)
+  NOCOPY(DMemComm)
   void 	Initialize();
   void 	Destroy();
 };
@@ -136,7 +136,6 @@ public:
 
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(DMemShareVar, taBase);
   TA_BASEFUNS(DMemShareVar);
 private
   void	Copy_(const DMemShareVar& cp);
@@ -185,7 +184,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const DMemShare& cp);
-  COPY_FUNS(DMemShare, taBase_List);
   TA_BASEFUNS(DMemShare);
 };
 
@@ -229,7 +227,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const DMemAggVars& cp);
-  COPY_FUNS(DMemAggVars, taBase);
   TA_BASEFUNS_LITE(DMemAggVars);
 };
 
@@ -248,7 +245,7 @@ public:
   //  void	Dummy(const DMemComm&) { };
   TA_BASEFUNS_LITE(DMemComm);
 private:
-  NCOPY(DMemComm)
+  NOCOPY(DMemComm)
   void 	Initialize() { };
   void 	Destroy() { };
 };
@@ -261,7 +258,7 @@ public:
   void	Dummy(const DMemShareVar&) { };
   TA_BASEFUNS(DMemShareVar);
 private:
-  NCOPY(DMemShareVar)
+  NOCOPY(DMemShareVar)
   void 	Initialize() { };
   void 	Destroy()	{ };
 };
@@ -274,7 +271,7 @@ public:
   // #IGNORE
 
   void	Dummy(const DMemShare&) { };
-  TA_BASEFUNS_NCOPY(DMemShare);
+  TA_BASEFUNS_NOCOPY(DMemShare);
 private:
   void 	Initialize() 	{ };
   void 	Destroy()	{ };
@@ -286,7 +283,7 @@ INHERITED(taBase)
 public:
 
   void	Dummy(const DMemAggVars&) { };
-  TA_BASEFUNS_NCOPY(DMemAggVars);
+  TA_BASEFUNS_NOCOPY(DMemAggVars);
 private:
   void 	Initialize() { };
   void 	Destroy()	{ };

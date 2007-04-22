@@ -107,7 +107,6 @@ public:
   void 	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(BpConSpec);
-  COPY_FUNS(BpConSpec, ConSpec);
   TA_BASEFUNS2(BpConSpec, ConSpec);
 };
 
@@ -178,7 +177,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const BpUnitSpec& cp);
-  COPY_FUNS(BpUnitSpec, UnitSpec);
   TA_BASEFUNS2(BpUnitSpec, UnitSpec);
 };
 
@@ -211,7 +209,6 @@ public:
   void 	Initialize();
   void 	Destroy()		{ };
   void	Copy_(const BpUnit& cp);
-  COPY_FUNS(BpUnit, Unit);
   TA_BASEFUNS2(BpUnit, Unit);
 };
 
@@ -326,7 +323,6 @@ public:
   void 	Initialize()	{ err_scale = 1.0f; }
   void 	Destroy()	{ };
   SIMPLE_COPY(ErrScaleBpConSpec);
-  COPY_FUNS(ErrScaleBpConSpec, BpConSpec);
   TA_BASEFUNS2(ErrScaleBpConSpec, BpConSpec);
 };
 
@@ -369,7 +365,6 @@ public:
   void	Initialize();
   void 	Destroy()		{ };
   void	Copy_(const DeltaBarDeltaBpConSpec& cp);
-  COPY_FUNS(DeltaBarDeltaBpConSpec, BpConSpec);
   TA_BASEFUNS2(DeltaBarDeltaBpConSpec, BpConSpec);
 };
 
@@ -475,7 +470,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   void	Copy_(const BpContextSpec& cp);
-  COPY_FUNS(BpContextSpec, BpUnitSpec);
   TA_BASEFUNS2(BpContextSpec, BpUnitSpec);
 };
 
@@ -503,7 +497,6 @@ public:
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(ThreshLinBpUnitSpec);
-  COPY_FUNS(ThreshLinBpUnitSpec, BpUnitSpec);
   TA_BASEFUNS2(ThreshLinBpUnitSpec, BpUnitSpec);
 };
 
@@ -518,7 +511,6 @@ public:
   void 	Destroy()		{ };
   void 	InitLinks();
   SIMPLE_COPY(NoisyBpUnitSpec);
-  COPY_FUNS(NoisyBpUnitSpec, BpUnitSpec);
   TA_BASEFUNS2(NoisyBpUnitSpec, BpUnitSpec);
 };
 
@@ -528,7 +520,7 @@ public:
   void				Compute_Act(Unit* u);
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS2_NCOPY(StochasticBpUnitSpec, BpUnitSpec);
+  TA_BASEFUNS2_NOCOPY(StochasticBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API RBFBpUnitSpec : public BpUnitSpec {
@@ -546,7 +538,6 @@ public:
   void  Initialize();
   void  Destroy()               { };
   SIMPLE_COPY(RBFBpUnitSpec);
-  COPY_FUNS(RBFBpUnitSpec, BpUnitSpec);
   TA_BASEFUNS2(RBFBpUnitSpec, BpUnitSpec);
 };
 
@@ -564,7 +555,6 @@ public:
   void  Initialize();
   void  Destroy()               { };
   SIMPLE_COPY(BumpBpUnitSpec);
-  COPY_FUNS(BumpBpUnitSpec, BpUnitSpec);
   TA_BASEFUNS2(BumpBpUnitSpec, BpUnitSpec);
 };
 
@@ -576,7 +566,7 @@ public:
 
   void  Initialize()	{ };
   void  Destroy()	{ };
-  TA_BASEFUNS2_NCOPY(ExpBpUnitSpec, BpUnitSpec);
+  TA_BASEFUNS2_NOCOPY(ExpBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
@@ -594,7 +584,7 @@ public:
 
   void  Initialize()	{ };
   void  Destroy()	{ };
-  TA_BASEFUNS2_NCOPY(SoftMaxBpUnitSpec, BpUnitSpec);
+  TA_BASEFUNS2_NOCOPY(SoftMaxBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API BpLayer : public Layer {
@@ -604,7 +594,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(BpLayer);
+  TA_BASEFUNS_NOCOPY(BpLayer);
 };
 
 class PDP_API BpNetwork : public Network {
@@ -635,7 +625,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{}
-  TA_BASEFUNS_NCOPY(BpProject);
+  TA_BASEFUNS_NOCOPY(BpProject);
 };
 
 

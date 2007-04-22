@@ -77,7 +77,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ProgArg"; }
 
-  TA_BASEFUNS_NCOPY(DataOpList);
+  TA_BASEFUNS_NOCOPY(DataOpList);
 private:
   void	Initialize() 		{ SetBaseType(&TA_DataOpEl); }
   void 	Destroy()		{ };
@@ -353,7 +353,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS(taDataProc);
 private:
-  NCOPY(taDataProc)
+  NOCOPY(taDataProc)
   void Initialize() { };
   void Destroy() { };
 };

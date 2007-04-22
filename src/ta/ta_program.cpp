@@ -77,7 +77,11 @@ void ProgVar::Copy_(const ProgVar& cp) {
   flags = cp.flags;
   desc = cp.desc;
 
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
+  if(var_type == T_Object) {
+    UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
+    // could be pointing outside of program -- check for project:
+    UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject);
+  }
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
@@ -437,7 +441,8 @@ void ProgVar_List::Initialize() {
 void ProgVar_List::Copy_(const ProgVar_List& cp) {
   var_context = cp.var_context;
 
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
+  // this is not needed: each individual guy will do it
+  //  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 void ProgVar_List::El_SetIndex_(void* it_, int idx) {
@@ -858,10 +863,6 @@ void ProgArg::Copy_(const ProgArg& cp) {
   arg_type = cp.arg_type;
 }
 
-void ProgArg::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void ProgArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError((required && expr.empty()), quiet, rval,
@@ -1027,10 +1028,6 @@ void ProgEl::Destroy() {
 void ProgEl::Copy_(const ProgEl& cp) {
   desc = cp.desc;
   flags = cp.flags;
-}
-
-void ProgEl::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
 }
 
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
@@ -1300,10 +1297,6 @@ void UserScript::Initialize() {
   script.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 }
 
-void UserScript::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 const String UserScript::GenCssBody_impl(int indent_level) {
   String rval(cssMisc::IndentLines(script.GetFullExpr(), indent_level));
   // strip trailing non-newline ws, and make sure there is a trailing newline
@@ -1373,10 +1366,6 @@ taBase* Loop::FindTypeName(const String& nm) const {
 //  WhileLoop		//
 //////////////////////////
 
-void WhileLoop::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
@@ -1397,10 +1386,6 @@ String WhileLoop::GetDisplayName() const {
 //////////////////////////
 //  DoLoop		//
 //////////////////////////
-
-void DoLoop::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
 
 void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -1435,10 +1420,6 @@ void ForLoop::Initialize() {
   iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 }
 
-void ForLoop::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
@@ -1469,10 +1450,6 @@ String ForLoop::GetDisplayName() const {
 void IfContinue::Initialize() {
 }
 
-void IfContinue::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
@@ -1496,10 +1473,6 @@ String IfContinue::GetDisplayName() const {
 //////////////////////////
 
 void IfBreak::Initialize() {
-}
-
-void IfBreak::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
 }
 
 void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1526,10 +1499,6 @@ String IfBreak::GetDisplayName() const {
 void IfReturn::Initialize() {
 }
 
-void IfReturn::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
@@ -1553,10 +1522,6 @@ String IfReturn::GetDisplayName() const {
 
 void IfElse::Initialize() {
   //  cond.expr = "true";
-}
-
-void IfElse::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
 }
 
 void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -2256,10 +2221,6 @@ void FunctionCall::UpdateArgs() {
 void ReturnExpr::Initialize() {
 }
 
-void ReturnExpr::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   expr.CheckConfig(quiet, rval);
@@ -2469,6 +2430,7 @@ void Program::Copy_(const Program& cp) {
   m_checked = false; // redo
   sub_progs.RemoveAll();
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
+  UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
 
 void Program::UpdateAfterEdit_impl() {

@@ -53,7 +53,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ }
   SIMPLE_COPY(taTime);
-  COPY_FUNS(taTime, taBase);
   TA_BASEFUNS(taTime);
 };
 

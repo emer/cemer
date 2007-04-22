@@ -64,7 +64,7 @@ public:
 
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  TA_BASEFUNS2_NCOPY(RBpConSpec, BpConSpec);
+  TA_BASEFUNS2_NOCOPY(RBpConSpec, BpConSpec);
 };
 
 class BP_API SymRBpConSpec : public RBpConSpec {
@@ -121,7 +121,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(RBpUnitSpec);
-  COPY_FUNS(RBpUnitSpec, BpUnitSpec);
   TA_BASEFUNS2(RBpUnitSpec, BpUnitSpec);
 };
 
@@ -148,7 +147,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   void 	Copy_(const float_CircBuffer& cp);
-  COPY_FUNS(float_CircBuffer, float_Array);
   TA_BASEFUNS2(float_CircBuffer, float_Array);
 };
 
@@ -195,7 +193,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   void	Copy_(const RBpUnit& cp);
-  COPY_FUNS(RBpUnit, BpUnit);
   TA_BASEFUNS2(RBpUnit, BpUnit);
 };
 
@@ -251,7 +248,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   void	Copy_(const RBpContextSpec& cp);
-  COPY_FUNS(RBpContextSpec, RBpUnitSpec);
   TA_BASEFUNS2(RBpContextSpec, RBpUnitSpec);
 };
 
@@ -272,7 +268,6 @@ public:
   void 	Destroy()		{ };
   void 	InitLinks();
   SIMPLE_COPY(NoisyRBpUnitSpec);
-  COPY_FUNS(NoisyRBpUnitSpec, RBpUnitSpec);
   TA_BASEFUNS2(NoisyRBpUnitSpec, RBpUnitSpec);
 };
 
@@ -294,8 +289,7 @@ public:
   void 	Initialize();
   void 	Destroy()	{ };
 //   SIMPLE_COPY(BpWizard);
-//   COPY_FUNS(BpWizard, Wizard);
-  TA_BASEFUNS2_NCOPY(BpWizard, Wizard);
+  TA_BASEFUNS2_NOCOPY(BpWizard, Wizard);
 };
 
 #endif // rbp_h

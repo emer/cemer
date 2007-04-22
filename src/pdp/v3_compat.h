@@ -111,7 +111,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   void 	Copy_(const float_RArray& cp);
-  COPY_FUNS(float_RArray, float_Array);
   TA_BASEFUNS(float_RArray);
 };
 
@@ -142,7 +141,6 @@ public:
   void  Initialize();
   void 	Destroy()		{ };
   void	Copy_(const CritParam& cp);
-  COPY_FUNS(CritParam, taBase);
   TA_BASEFUNS_LITE(CritParam);
 };
 
@@ -225,7 +223,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(Script_Group);
+  TA_BASEFUNS_NOCOPY(Script_Group);
 };
 
 class PDP_API Process : public taNBase {
@@ -848,7 +846,7 @@ public:
 
   void	Initialize() {SetBaseType(&TA_Pattern);}
   void 	Destroy()		{ }
-  TA_BASEFUNS_NCOPY(Pattern_Group);
+  TA_BASEFUNS_NOCOPY(Pattern_Group);
 };
 
 class PDP_API Event : public taNBase {
@@ -1789,7 +1787,7 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_TypeDefault); }
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(TypeDefault_Group);
+  TA_BASEFUNS_NOCOPY(TypeDefault_Group);
 };
 
 
@@ -1813,7 +1811,7 @@ public:
   void 	Destroy();
   void	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS_NCOPY(PDPLog);
+  TA_BASEFUNS_NOCOPY(PDPLog);
 };
 
 class PDP_API PDPLog_Group : public taGroup<PDPLog> {
@@ -1822,7 +1820,7 @@ INHERITED(taGroup<PDPLog>)
 public:
   void	Initialize() 		{SetBaseType(&TA_PDPLog);}
   void 	Destroy()		{ }
-  TA_BASEFUNS_NCOPY(PDPLog_Group);
+  TA_BASEFUNS_NOCOPY(PDPLog_Group);
 };
 
 
@@ -1874,7 +1872,6 @@ public:
   void 	InitLinks_impl(); //for this class
   void	CutLinks_impl();
   void	Copy_(const V3ProjectBase& cp);
-  COPY_FUNS(V3ProjectBase, ProjectBase);
   TA_BASEFUNS(V3ProjectBase);
 private:
   void	Initialize();

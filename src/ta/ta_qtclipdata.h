@@ -235,7 +235,7 @@ public:
   static QByteArray	StrToByteArray(const QString& str);
     // convenience, for converting strings to bytearrays
     
-  TA_BASEFUNS_NCOPY(taiMimeFactory);//
+  TA_BASEFUNS_NOCOPY(taiMimeFactory);//
 private:
   void	Initialize() {}
   void	Destroy() {}
@@ -245,7 +245,7 @@ private:
   static T* instance() {static T* in = NULL; if (!in) \
     in = (T*)(taiMimeFactory_List::StatGetInstanceByType(&TA_##T)); \
     return in;} \
-  TA_BASEFUNS_NCOPY(T)
+  TA_BASEFUNS_NOCOPY(T)
     
 
 class TA_API taiMimeFactory_List: public taList<taiMimeFactory> {
@@ -261,7 +261,7 @@ public:
   taiMimeFactory*	GetInstanceByType(TypeDef* td);
     // get an instance of the exact factory, making if needed
     
-  TA_BASEFUNS_NCOPY(taiMimeFactory_List);
+  TA_BASEFUNS_NOCOPY(taiMimeFactory_List);
 protected:
   static taiMimeFactory_List*	g_instance; // we set this during InitLinks for the global guy
 private:
@@ -327,7 +327,7 @@ public:
     
   void	SetIndex(int idx) {m_index = idx;} // iml index as convenience
   int	GetIndex() const {return m_index;}
-  TA_BASEFUNS_NCOPY(taiMimeItem);
+  TA_BASEFUNS_NOCOPY(taiMimeItem);
 
 public: // TAI_xxx instance interface -- used for dynamic creation
   virtual taiMimeItem* 	Extract(taiMimeSource* ms, 
@@ -356,7 +356,7 @@ INHERITED(taList<taiMimeItem>)
 public:
   TA_BASEFUNS(taiMimeItem_List);
 private:
-  NCOPY(taiMimeItem_List)
+  NOCOPY(taiMimeItem_List)
   void	Initialize() {SetBaseType(&TA_taiMimeItem);}
   void	Destroy() {}
 };
@@ -376,7 +376,7 @@ protected:
   taiMimeItem_List	items; // the subitems
   
 private:
-  NCOPY(taiMultiMimeItem)
+  NOCOPY(taiMultiMimeItem)
   void	Initialize();
   void	Destroy() {CutLinks();}
 };
@@ -394,7 +394,7 @@ public:
   int			GetObjectData(istringstream& result);
     // #IGNORE gets the object data for the current item; returns number of bytes
 
-  TA_BASEFUNS_NCOPY(taiObjectMimeItem);
+  TA_BASEFUNS_NOCOPY(taiObjectMimeItem);
 protected:
   String		m_type_name;
   TypeDef*		m_td;
@@ -417,7 +417,7 @@ public:
 
   TypeDef*		CommonSubtype() const; // type of item (if 1) or common subtype if multiple
 
-  TA_BASEFUNS_NCOPY(taiObjectsMimeItem);
+  TA_BASEFUNS_NOCOPY(taiObjectsMimeItem);
   
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 

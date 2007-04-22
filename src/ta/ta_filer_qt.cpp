@@ -124,6 +124,11 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setDirectory(eff_dir);
   fd->setFilters(filter_list);
 
+  if(compressEnabled() && (compressReq() || isCompressed()))
+    fd->setDefaultSuffix(ext + taMisc::compress_sfx);
+  else
+    fd->setDefaultSuffix(ext);
+
   switch (filerOperation) {
   case foOpen:
     fd->setAcceptMode(QFileDialog::AcceptOpen);

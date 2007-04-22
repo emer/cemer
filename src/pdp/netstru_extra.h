@@ -34,7 +34,7 @@ public:
 
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(FullPrjnSpec);
+  TA_BASEFUNS_NOCOPY(FullPrjnSpec);
 };
 
 class PDP_API TessEl : public taOBase {
@@ -48,7 +48,6 @@ public:
   void	Destroy()	{ };
   void	InitLinks();
   void	Copy_(const TessEl& cp);
-  COPY_FUNS(TessEl, taOBase);
   TA_BASEFUNS(TessEl);
 };
 
@@ -58,7 +57,7 @@ INHERITED(taList<TessEl>)
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_LITE_NCOPY(TessEl_List);
+  TA_BASEFUNS_LITE_NOCOPY(TessEl_List);
 };
 
 class PDP_API TesselPrjnSpec : public ProjectionSpec {
@@ -100,7 +99,6 @@ public:
   void	Destroy()	{ };
   void	InitLinks();
   void	Copy_(const TesselPrjnSpec& cp);
-  COPY_FUNS(TesselPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(TesselPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
@@ -119,7 +117,6 @@ public:
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(OneToOnePrjnSpec);
-  COPY_FUNS(OneToOnePrjnSpec, ProjectionSpec);
   TA_BASEFUNS(OneToOnePrjnSpec);
 };
 
@@ -139,7 +136,6 @@ public:
   void 	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(UniformRndPrjnSpec);
-  COPY_FUNS(UniformRndPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(UniformRndPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
@@ -184,7 +180,6 @@ public:
   void	Destroy()	{ };
   void	InitLinks();
   SIMPLE_COPY(PolarRndPrjnSpec);
-  COPY_FUNS(PolarRndPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(PolarRndPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
@@ -198,7 +193,7 @@ public:
 
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS_NCOPY(SymmetricPrjnSpec);
+  TA_BASEFUNS_NOCOPY(SymmetricPrjnSpec);
 };
 
 class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
@@ -220,7 +215,6 @@ public:
   void 	Destroy();
   void	InitLinks();
   void	Copy_(const ScriptPrjnSpec& cp);
-  COPY_FUNS(ScriptPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(ScriptPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
@@ -234,7 +228,7 @@ public:
   void	Connect(Projection* prjn);	// do nothing
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS_NCOPY(CustomPrjnSpec);
+  TA_BASEFUNS_NOCOPY(CustomPrjnSpec);
 };
 
 
@@ -250,7 +244,7 @@ public:
 
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(GpOneToOnePrjnSpec);
+  TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
 };
 
 class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
@@ -267,7 +261,6 @@ public:
   void 	Destroy()		{ };
   void 	InitLinks();
   SIMPLE_COPY(RndGpOneToOnePrjnSpec);
-  COPY_FUNS(RndGpOneToOnePrjnSpec, GpOneToOnePrjnSpec);
   TA_BASEFUNS(RndGpOneToOnePrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
@@ -294,7 +287,6 @@ public:
   void	Initialize();
   void 	Destroy()		{ };
   SIMPLE_COPY(GpOneToManyPrjnSpec);
-  COPY_FUNS(GpOneToManyPrjnSpec, OneToOnePrjnSpec);
   TA_BASEFUNS(GpOneToManyPrjnSpec);
 };
 
@@ -309,7 +301,6 @@ public:
   void	Destroy()	{ };
   void	InitLinks();
   void	Copy_(const GpTessEl& cp);
-  COPY_FUNS(GpTessEl, taOBase);
   TA_BASEFUNS_LITE(GpTessEl);
 };
 
@@ -319,7 +310,7 @@ INHERITED(taList<GpTessEl>)
 public:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_LITE_NCOPY(GpTessEl_List);
+  TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
 };
 
 class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
@@ -372,7 +363,6 @@ public:
   void	Destroy()	{ };
   void	InitLinks();
   SIMPLE_COPY(GpRndTesselPrjnSpec);
-  COPY_FUNS(GpRndTesselPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(GpRndTesselPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
@@ -429,7 +419,6 @@ public:
   void 	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(TiledGpRFPrjnSpec);
-  COPY_FUNS(TiledGpRFPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(TiledGpRFPrjnSpec);
 };
 
@@ -456,7 +445,6 @@ public:
   void 	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(TiledNovlpPrjnSpec);
-  COPY_FUNS(TiledNovlpPrjnSpec, ProjectionSpec);
   TA_BASEFUNS(TiledNovlpPrjnSpec);
 };
 

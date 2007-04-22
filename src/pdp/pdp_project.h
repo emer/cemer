@@ -54,7 +54,6 @@ public:
   void	Initialize();
   void	Destroy() 	{ };
   SIMPLE_COPY(LayerWizEl);
-  COPY_FUNS(LayerWizEl, taNBase);
   TA_BASEFUNS(LayerWizEl);
 };
 
@@ -149,7 +148,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   SIMPLE_COPY(Wizard);
-  COPY_FUNS(Wizard, taWizard);
   TA_BASEFUNS(Wizard);
 };
 
@@ -175,7 +173,6 @@ public:
   void 	InitLinks_impl(); // special, for this class only
   void	CutLinks_impl(); // special, so we can do base class guys first (esp. viewers)
   void	Copy_(const ProjectBase& cp);
-  COPY_FUNS(ProjectBase, taProject);
   TA_BASEFUNS(ProjectBase);
 protected:
   override void UpdateAfterEdit_impl();
@@ -200,7 +197,7 @@ public:
   void	CutLinks();
   TA_BASEFUNS(PDPRoot);
 private:
-  NCOPY(taRootBase)
+  NOCOPY(taRootBase)
   void 	Initialize();
   void 	Destroy();
 };

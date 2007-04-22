@@ -56,7 +56,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(SNcMiscSpec);
-  COPY_FUNS(SNcMiscSpec, taBase);
   TA_BASEFUNS(SNcMiscSpec);
 };
 
@@ -76,7 +75,6 @@ public:
   void	Destroy()		{ };
   void 	InitLinks();
   SIMPLE_COPY(SNcLayerSpec);
-  COPY_FUNS(SNcLayerSpec, PVLVDaLayerSpec);
   TA_BASEFUNS(SNcLayerSpec);
 };
 
@@ -198,7 +196,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(MatrixUnitSpec);
-  COPY_FUNS(MatrixUnitSpec, DaModUnitSpec);
   TA_BASEFUNS(MatrixUnitSpec);
 };
 
@@ -218,7 +215,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(MatrixMiscSpec);
-  COPY_FUNS(MatrixMiscSpec, taBase);
   TA_BASEFUNS(MatrixMiscSpec);
 };
 
@@ -235,7 +231,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(ContrastSpec);
-  COPY_FUNS(ContrastSpec, taBase);
   TA_BASEFUNS(ContrastSpec);
 };
 
@@ -255,7 +250,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(MatrixRndGoSpec);
-  COPY_FUNS(MatrixRndGoSpec, taBase);
   TA_BASEFUNS(MatrixRndGoSpec);
 };
 
@@ -274,7 +268,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(MatrixErrRndGoSpec);
-  COPY_FUNS(MatrixErrRndGoSpec, taBase);
   TA_BASEFUNS(MatrixErrRndGoSpec);
 };
 
@@ -293,7 +286,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(MatrixAvgDaRndGoSpec);
-  COPY_FUNS(MatrixAvgDaRndGoSpec, taBase);
   TA_BASEFUNS(MatrixAvgDaRndGoSpec);
 };
 
@@ -353,7 +345,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(MatrixLayerSpec);
-  COPY_FUNS(MatrixLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(MatrixLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -374,7 +365,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(SNrThalMiscSpec);
-  COPY_FUNS(SNrThalMiscSpec, taBase);
   TA_BASEFUNS(SNrThalMiscSpec);
 };
 
@@ -398,7 +388,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(SNrThalLayerSpec);
-  COPY_FUNS(SNrThalLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(SNrThalLayerSpec);
 };
 
@@ -435,7 +424,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(PFCGateSpec);
-  COPY_FUNS(PFCGateSpec, taBase);
   TA_BASEFUNS(PFCGateSpec);
 };
 
@@ -493,7 +481,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(PFCOutGateSpec);
-  COPY_FUNS(PFCOutGateSpec, taBase);
   TA_BASEFUNS(PFCOutGateSpec);
 };
 

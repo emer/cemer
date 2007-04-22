@@ -237,7 +237,6 @@ public:
   explicit MatrixGeom(int init_size);
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0,
     int d4=0, int d5=0, int d6=0);
-  COPY_FUNS(MatrixGeom, taBase);
   TA_BASEFUNS_LITE(MatrixGeom); //
 
 public: // functions for internal/trusted use only
@@ -647,7 +646,7 @@ protected:
    // generic copy using Variant; only called when not same matrix type
 
 private:
-  NCOPY(taMatrix) // there is a generic copy, but not at the direct object level
+  NOCOPY(taMatrix) // there is a generic copy, but not at the direct object level
   void 			Initialize();
   void			Destroy();
 };
@@ -670,7 +669,7 @@ class TA_API taMatrix_Group: public taGroup<taMatrix> {
 INHERITED(taGroup<taMatrix>)
 public:
 
-  TA_BASEFUNS_NCOPY(taMatrix_Group);
+  TA_BASEFUNS_NOCOPY(taMatrix_Group);
 private:
   void		Initialize() {SetBaseType(&TA_taMatrix);}
   void		Destroy() {}
@@ -762,7 +761,7 @@ protected:
   override uint		El_SizeOf_() const	{ return sizeof(T); }
 
 private: 
-  TMPLT_NCOPY(taMatrixT, T)
+  TMPLT_NOCOPY(taMatrixT, T)
   void			Initialize()	{el = NULL;}
   void			Destroy() { CutLinks();}
 };
@@ -835,7 +834,6 @@ public:
   override TypeDef*	GetDataTypeDef() const {return &TA_taString;} 
   override ValType	GetDataValType() const {return VT_STRING;} 
   
-  COPY_FUNS(String_Matrix, taMatrixT<String>)
   TA_MATRIX_FUNS_SLOW(String_Matrix, String)
   
 public:

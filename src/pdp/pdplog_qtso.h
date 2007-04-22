@@ -140,7 +140,6 @@ public:
   void	CutLinks();
   void 	InitLinks();
   void	Copy_(const GraphTableView& cp);
-  COPY_FUNS(GraphTableView, TableView);
   T3_DATAVIEWFUNS(GraphTableView, LogtView)
 
 protected:

@@ -234,16 +234,16 @@ public: \
   TA_BASEFUNS_CTORS_(y) \
   TA_BASEFUNS_TOK_NCTORS(y)
   
-#define TA_BASEFUNS_NCOPY(y) \
-  private: NCOPY(y) public: \
+#define TA_BASEFUNS_NOCOPY(y) \
+  private: NOCOPY(y) public: \
   TA_BASEFUNS(y)
 
 #define TA_BASEFUNS2(y,x) \
   private: INHERITED(x) public: \
   TA_BASEFUNS(y)
   
-#define TA_BASEFUNS2_NCOPY(y,x) \
-  private: INHERITED(x) NCOPY(y) public: \
+#define TA_BASEFUNS2_NOCOPY(y,x) \
+  private: INHERITED(x) NOCOPY(y) public: \
   TA_BASEFUNS(y)
 
 
@@ -252,17 +252,17 @@ public: \
   TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   TA_TMPLT_BASEFUNS_TOK_NCTORS(y,T)
 
-#define TA_TMPLT_BASEFUNS_NCOPY(y,T) \
-  private: TMPLT_NCOPY(y,T) public: \
+#define TA_TMPLT_BASEFUNS_NOCOPY(y,T) \
+  private: TMPLT_NOCOPY(y,T) public: \
   TA_TMPLT_BASEFUNS(y,T) 
 
 #define TA_TMPLT_BASEFUNS2(y,T,x) \
   private: INHERITED(x) public: \
-  private: TMPLT_NCOPY(y,T) public: \
+  private: TMPLT_NOCOPY(y,T) public: \
   TA_TMPLT_BASEFUNS(y,T) 
 
-#define TA_TMPLT_BASEFUNS2_NCOPY(y,T,x) \
-  private: INHERITED(x) TMPLT_NCOPY(y,T) public: \
+#define TA_TMPLT_BASEFUNS2_NOCOPY(y,T,x) \
+  private: INHERITED(x) TMPLT_NOCOPY(y,T) public: \
   TA_TMPLT_BASEFUNS(y,T) 
 
 
@@ -274,16 +274,16 @@ public: \
   TA_BASEFUNS_INST_(y) \
   TA_BASEFUNS_NTOK_(y) 
 
-#define TA_BASEFUNS_LITE_NCOPY(y) \
-  private: NCOPY(y) public: \
+#define TA_BASEFUNS_LITE_NOCOPY(y) \
+  private: NOCOPY(y) public: \
   TA_BASEFUNS_LITE(y)
 
 #define TA_BASEFUNS2_LITE(y,x) \
   private: INHERITED(x) public: \
   TA_BASEFUNS_LITE(y)
 
-#define TA_BASEFUNS2_LITE_NCOPY(y,x) \
-  private: INHERITED(x) NCOPY(y) public: \
+#define TA_BASEFUNS2_LITE_NOCOPY(y,x) \
+  private: INHERITED(x) NOCOPY(y) public: \
   TA_BASEFUNS_LITE(y)
 
 // template versions, ex. for smart ptrs, and similar class with no reg
@@ -306,8 +306,8 @@ public: \
   TA_BASEFUNS_MAIN_(y) \
   TA_BASEFUNS_TOK_(y)
   
-#define TA_ABSTRACT_BASEFUNS_NCOPY(y) \
-  private: NCOPY(y) public: \
+#define TA_ABSTRACT_BASEFUNS_NOCOPY(y) \
+  private: NOCOPY(y) public: \
   TA_ABSTRACT_BASEFUNS(y)
 
 
@@ -321,14 +321,6 @@ public: \
   static TypeDef* StatTypeDef(int) {  return &TA_##y##_##T; } \
   TypeDef* GetTypeDef() const { return &TA_##y##_##T; }
 
-// NOTE: the generic copy assumes that a Copy is a Structural updating operation, and
-// so brackets the actual copy with the beg/end struct update
-#define COPY_FUNS(T, P) inline void ______cf(){}
-/*  inline void Copy__(const T& cp) { SetBaseFlag(COPYING); \
-    Copy_(cp); ClearBaseFlag(COPYING);} \
-  void Copy(const T& cp) { StructUpdate(true); P::Copy(cp); \
-    Copy__(cp); StructUpdate(false);}*/
-
 // this guy is your friend for most simple classes! esp good in plugins
 #define SIMPLE_COPY(T) \
   void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
@@ -338,10 +330,10 @@ public: \
   void NAME(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
 
 // dummy, for when nothing to copy in this class
-#define NCOPY(y) \
+#define NOCOPY(y) \
   void Copy_(const y& cp){}
 
-#define TMPLT_NCOPY(y,T) \
+#define TMPLT_NOCOPY(y,T) \
   void Copy_(const y<T>& cp){}
 
 // this calls UpdatePointers_NewPar based on a major scoping owning parent, only if that
@@ -371,7 +363,14 @@ public: \
   SIMPLE_COPY(T); \
   SIMPLE_LINKS(T); \
   TA_BASEFUNS(T)
-  
+
+// for guys that have pointers to outside objects -- need to update if 
+// not within PAR scope
+#define TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(T,P) \
+  SIMPLE_COPY_UPDT_PTR_PAR(T,P); \
+  SIMPLE_LINKS(T); \
+  TA_BASEFUNS(T)
+
 #define TA_SIMPLE_BASEFUNS2(y,x) \
   SIMPLE_COPY(y); \
   SIMPLE_LINKS(y); \
@@ -1421,7 +1420,6 @@ public:
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
   void	CutLinks();
-  COPY_FUNS(taOBase, taBase)
   TA_BASEFUNS(taOBase); //
 protected:
   taDataLink*		m_data_link; //
@@ -1498,7 +1496,7 @@ public:
   void 	Initialize()	{}
 #endif
   void	CutLinks();
-  TA_BASEFUNS_NCOPY(taOABase); //
+  TA_BASEFUNS_NOCOPY(taOABase); //
   
 private:
   void	Destroy() {CutLinks();}
@@ -1519,7 +1517,7 @@ protected:
   override void		UpdateAfterEdit_impl();
 
 private:
-  NCOPY(taNBase); //note: we don't copy name, because it causes too many issues
+  NOCOPY(taNBase); //note: we don't copy name, because it causes too many issues
   void 	Initialize()	{ }
   void  Destroy()       { } 
 };
@@ -1803,7 +1801,7 @@ public:
 
   TA_TMPLT_BASEFUNS(taList,T);
 private:
-  TMPLT_NCOPY(taList,T);
+  TMPLT_NOCOPY(taList,T);
   void	Initialize()			{ SetBaseType(StatTypeDef(0)); }
   void	Destroy()			{ };
 };
@@ -1828,7 +1826,7 @@ INHERITED(taList<taBase>)
 public:
   TA_BASEFUNS(taBase_List);
 private:
-  NCOPY(taBase_List)
+  NOCOPY(taBase_List)
   void	Initialize() 		{ SetBaseType(&TA_taBase); }
   void 	Destroy()		{ };
 };
@@ -2000,7 +1998,7 @@ protected:
   override void		El_disOwn_(void* it);
 
 private:
-  NCOPY(DataView_List)
+  NOCOPY(DataView_List)
   void 	Initialize() { SetBaseType(&TA_taDataView); data_view = NULL;}
   void	Destroy() {}
 };
@@ -2101,7 +2099,7 @@ public:
     if(cp->InheritsFrom(taArray::StatTypeDef(0))) Copy(*((taArray<T>*)cp));
     else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
   void  CastCopyTo(TAPtr cp)            { taArray<T>& rf = *((taArray<T>*)cp); rf.Copy(*this); } //*/
-  TA_TMPLT_BASEFUNS_NCOPY(taArray,T); //
+  TA_TMPLT_BASEFUNS_NOCOPY(taArray,T); //
 public:
   void*		FastEl_(int i)			{ return &(el[i]); }// #IGNORE
 protected:
@@ -2128,7 +2126,7 @@ public:
   
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_int; if(InRange(i)) return FastEl_(i); return NULL; }
-  NCOPY(int_Array)
+  NOCOPY(int_Array)
   void Initialize()	{err = 0; };
   void Destroy()	{ }; //
   //note: Register() is not necessary for arrays, so we omit in these convenience constructors
@@ -2159,7 +2157,7 @@ public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_float; if(InRange(i)) return FastEl_(i); return NULL; }
-  TA_BASEFUNS_NCOPY(float_Array);
+  TA_BASEFUNS_NOCOPY(float_Array);
   TA_ARRAY_FUNS(float_Array, float)
 protected:
   int		El_Compare_(const void* a, const void* b) const
@@ -2170,7 +2168,7 @@ protected:
   void		El_SetFmStr_(void* it, const String& val)
   { float tmp = (float)val; *((float*)it) = tmp; }
 private:
-  NCOPY(int_Array)
+  NOCOPY(int_Array)
   void Initialize()	{err = 0.0f; };
   void Destroy()	{ };
 };
@@ -2194,7 +2192,7 @@ protected:
   void		El_SetFmStr_(void* it, const String& val)
   { double tmp = (double)val; *((double*)it) = tmp; }
 private:
-  NCOPY(double_Array)
+  NOCOPY(double_Array)
   void Initialize()	{err = 0.0;};
   void Destroy()	{ };
 };
@@ -2218,7 +2216,7 @@ protected:
   void		El_SetFmStr_(void* it, const String& val)
   { char tmp = val[0]; *((char*)it) = tmp; }
 private:
-  NCOPY(char_Array)
+  NOCOPY(char_Array)
   void Initialize()	{err = ' ';};
   void Destroy()	{ };
 };
@@ -2285,7 +2283,7 @@ public:
   STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_Variant; if(InRange(i)) return FastEl_(i); return NULL; }
-  TA_BASEFUNS_NCOPY(Variant_Array);
+  TA_BASEFUNS_NOCOPY(Variant_Array);
   TA_ARRAY_FUNS(Variant_Array, Variant)
 protected:
   int		El_Compare_(const void* a, const void* b) const
@@ -2310,7 +2308,7 @@ public:
 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_voidptr; if(InRange(i)) return FastEl_(i); return NULL; }
-  TA_BASEFUNS_NCOPY(voidptr_Array);
+  TA_BASEFUNS_NOCOPY(voidptr_Array);
   TA_ARRAY_FUNS(voidptr_Array, voidptr)
 protected:
   bool		El_Equal_(const void* a, const void* b) const
@@ -2374,7 +2372,7 @@ class TA_API UserDataItem_List: public taList<UserDataItemBase> {
 INHERITED(taList<UserDataItemBase>)
 public:
   
-  TA_BASEFUNS_NCOPY(UserDataItem_List)
+  TA_BASEFUNS_NOCOPY(UserDataItem_List)
 protected:
 
 private:

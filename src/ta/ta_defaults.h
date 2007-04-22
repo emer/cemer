@@ -25,7 +25,6 @@ INHERITED(taNBase)
 public:
   String 	value;			// Value for name
 
-  COPY_FUNS(NameValue, taNBase);
   TA_BASEFUNS(NameValue);
 private:
   void 	Copy_(const NameValue& cp)		{ value = cp.value; }

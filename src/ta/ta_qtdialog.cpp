@@ -1873,12 +1873,14 @@ void taiEditDataHost::DoSelectForEdit(int param){
   MemberDef* md = sel_item_md;
   TypeDef* td = SelectEdit::StatTypeDef(0);
   SelectEdit* se = (SelectEdit*)td->tokens.SafeEl_(param);
-  if ((md == NULL) || (se == NULL)) return; //shouldn't happen...
+  if (!md || !se || !cur_base) return; //shouldn't happen...
   int idx;
   if ((idx = se->FindMbrBase((taBase*)cur_base, md)) >= 0)
     se->RemoveField(idx);
-  else
-    se->SelectMember((taBase*)cur_base, md, "");
+  else {
+    String lbl = ((taBase*)cur_base)->GetName();
+    se->SelectMember((taBase*)cur_base, md, lbl.elidedTo(16));
+  }
 }
 
 int taiEditDataHost::Edit(bool modal_) {

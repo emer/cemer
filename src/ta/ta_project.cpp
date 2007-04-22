@@ -299,6 +299,10 @@ bool taProject::SetFileName(const String& val) {
     vwr->SetWinName();
   }
   tabMisc::root->AddRecentFile(val);
+  // always set current dir for project!
+  if(!val.empty()) {
+    QDir::setCurrent(taMisc::GetDirFmPath(val));	
+  }
   return true;
 }
 
@@ -308,7 +312,8 @@ int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
     UpdateSimLog();
   }
 #endif
-  return inherited::Save_strm(strm, par, indent);
+  int rval = inherited::Save_strm(strm, par, indent);
+  return rval;
 }
 
 int taProject::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 

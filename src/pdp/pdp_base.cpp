@@ -88,9 +88,11 @@ float		pdpMisc::pdpZScale = 4.0f;
 int pdpMisc::Main(int& argc, const char *argv[]) {
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_pdp, &TA_PDPRoot)) return 1;
 #ifdef TA_GUI
-  QPixmap* pm = new QPixmap(pdp_bitmap_bits);
-  qApp->setWindowIcon(*pm);
-  delete pm;
+  if(taMisc::use_gui) {
+    QPixmap* pm = new QPixmap(pdp_bitmap_bits);
+    qApp->setWindowIcon(*pm);
+    delete pm;
+  }
 #endif
   root = (PDPRoot*)tabMisc::root;
    //always use our wait proc, since there is a predefined chain backwards anyways...

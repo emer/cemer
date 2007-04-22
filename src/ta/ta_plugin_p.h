@@ -93,7 +93,6 @@ public:
   void          SetDefaultName() {} 
   String	GetDesc() const {return desc;}
   void		Copy_(const taPluginBase& cp); //note: we only use this for descs, not actual plugins
-  COPY_FUNS(taPluginBase, taOBase);
   TA_ABSTRACT_BASEFUNS(taPluginBase);
 private:
   void	Initialize();
@@ -114,7 +113,6 @@ public:
   int	GetEnabled() const {return enabled;}
   void	SetEnabled(bool value) {enabled = value;}
   void	Copy_(const taPlugin& cp); //note: we only use this for descs, not actual plugins
-  COPY_FUNS(taPlugin, taPluginBase);
   TA_BASEFUNS(taPlugin);
 private:
   void	Initialize();
@@ -134,7 +132,6 @@ public:
   
   DepCheck		dep_check; // #READ_ONLY #SHOW #NO_SAVE set if plugin_dep is missing in plugins
   
-  COPY_FUNS(taPluginDep, taPluginBase);
   TA_BASEFUNS(taPluginDep); //
 protected:
   override void CheckThisConfig_impl(bool quiet, bool& rval); // only for _deps
@@ -151,7 +148,7 @@ INHERITED(taList<taPluginBase>)
 public:
   taPluginBase*		FindUniqueId(const String& value); // find by unique_id
   
-  TA_BASEFUNS_NCOPY(taPluginBase_List);
+  TA_BASEFUNS_NOCOPY(taPluginBase_List);
   
 protected:
 // forbid most clip ops, since we are managed based on existing plugins
@@ -177,7 +174,7 @@ public:
   void		LoadPlugins(); // Load and initialize all the enabled plugins, unload remainder
   
   void			ViewPluginLog(); // #MENU_CONTEXT #BUTTON view the most recent plugin log
-  TA_BASEFUNS_NCOPY(taPlugin_List);
+  TA_BASEFUNS_NOCOPY(taPlugin_List);
   
 protected:
   void		ReconcilePlugins(); // reconciles our list with list of plugins

@@ -27,6 +27,7 @@
 
 #ifdef TA_USE_QT
 # include <QStringList>
+# include <QDir>
 #endif
 #ifdef TA_GUI
 # include "ta_qt.h"
@@ -961,6 +962,7 @@ int taBase::Load_cvt(taFiler*& flr) {
   taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
   taRefN::Ref(cvt_flr);
   String cvt_fname = flr->fileName();
+  QDir::setCurrent(taMisc::GetDirFmPath(cvt_fname));	
   String cvt_tag = "_v4precvt";
   if(!flr->ext.empty()) {
     if(cvt_fname.contains(flr->ext)) cvt_fname = cvt_fname.before(flr->ext);

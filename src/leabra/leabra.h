@@ -120,7 +120,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(WtScaleSpec);
-  COPY_FUNS(WtScaleSpec, taBase);
   TA_BASEFUNS(WtScaleSpec);
 };
 
@@ -148,7 +147,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(WtSigSpec);
-  COPY_FUNS(WtSigSpec, taBase);
   TA_BASEFUNS(WtSigSpec);
 };
 
@@ -163,7 +161,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(LearnMixSpec);
-  COPY_FUNS(LearnMixSpec, taBase);
   TA_BASEFUNS(LearnMixSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -180,7 +177,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(SAvgCorSpec);
-  COPY_FUNS(SAvgCorSpec, taBase);
   TA_BASEFUNS(SAvgCorSpec);
 };
 
@@ -204,7 +200,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(AdaptRelNetinSpec);
-  COPY_FUNS(AdaptRelNetinSpec, taBase);
   TA_BASEFUNS(AdaptRelNetinSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -332,7 +327,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(LeabraConSpec);
-  COPY_FUNS(LeabraConSpec, ConSpec);
   TA_BASEFUNS(LeabraConSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -354,7 +348,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(LeabraBiasSpec);
-  COPY_FUNS(LeabraBiasSpec, LeabraConSpec);
   TA_BASEFUNS(LeabraBiasSpec);
 };
 
@@ -383,7 +376,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   void	Copy_(const LeabraRecvCons& cp);
-  COPY_FUNS(LeabraRecvCons, RecvCons);
   TA_BASEFUNS(LeabraRecvCons);
 };
 
@@ -429,7 +421,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(ActFunSpec);
-  COPY_FUNS(ActFunSpec, taBase);
   TA_BASEFUNS(ActFunSpec);
 };
 
@@ -446,7 +437,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(SpikeFunSpec);
-  COPY_FUNS(SpikeFunSpec, taBase);
   TA_BASEFUNS(SpikeFunSpec);
 };
 
@@ -468,7 +458,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(DepressSpec);
-  COPY_FUNS(DepressSpec, taBase);
   TA_BASEFUNS(DepressSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -487,7 +476,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(OptThreshSpec);
-  COPY_FUNS(OptThreshSpec, taBase);
   TA_BASEFUNS(OptThreshSpec);
 };
 
@@ -504,7 +492,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(DtSpec);
-  COPY_FUNS(DtSpec, taBase);
   TA_BASEFUNS(DtSpec);
 };
 
@@ -521,7 +508,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   void 	Copy_(const LeabraChannels& cp);
-  COPY_FUNS(LeabraChannels, taBase);
   TA_BASEFUNS(LeabraChannels);
 };
 
@@ -550,7 +536,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(VChanSpec);
-  COPY_FUNS(VChanSpec, taBase);
   TA_BASEFUNS(VChanSpec);
 };
 
@@ -566,7 +551,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(ActRegSpec);
-  COPY_FUNS(ActRegSpec, taBase);
   TA_BASEFUNS(ActRegSpec);
 };
 
@@ -587,7 +571,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   SIMPLE_COPY(MaxDaSpec);
-  COPY_FUNS(MaxDaSpec, taBase);
   TA_BASEFUNS(MaxDaSpec);
 };
 
@@ -772,7 +755,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(LeabraUnitSpec);
-  COPY_FUNS(LeabraUnitSpec, UnitSpec);
   TA_BASEFUNS(LeabraUnitSpec);
 protected:
   override void		UpdateAfterEdit_impl();	// to set _impl sig
@@ -792,7 +774,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   void 	Copy_(const VChanBasis& cp);
-  COPY_FUNS(VChanBasis, taBase);
   TA_BASEFUNS(VChanBasis);
 };
 
@@ -808,7 +789,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   void 	Copy_(const LeabraUnitChans& cp);
-  COPY_FUNS(LeabraUnitChans, taBase);
   TA_BASEFUNS(LeabraUnitChans);
 };
 
@@ -947,7 +927,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(LeabraUnit);
-  COPY_FUNS(LeabraUnit, Unit);
   TA_BASEFUNS(LeabraUnit);
 };
 
@@ -982,7 +961,6 @@ public:
   void 	Initialize();
   void 	Destroy();
   void	Copy_(const LeabraPrjn& cp);
-  COPY_FUNS(LeabraPrjn, Projection);
   TA_BASEFUNS(LeabraPrjn);
 };
 
@@ -1026,7 +1004,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(KWTASpec);
-  COPY_FUNS(KWTASpec, taBase);
   TA_BASEFUNS(KWTASpec);
 };
 
@@ -1041,7 +1018,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(KwtaTieBreak);
-  COPY_FUNS(KwtaTieBreak, taBase);
   TA_BASEFUNS(KwtaTieBreak);
 };
 
@@ -1066,7 +1042,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(AdaptISpec);
-  COPY_FUNS(AdaptISpec, taBase);
   TA_BASEFUNS(AdaptISpec);
 };
 
@@ -1081,7 +1056,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(ClampSpec);
-  COPY_FUNS(ClampSpec, taBase);
   TA_BASEFUNS(ClampSpec);
 };
 
@@ -1097,7 +1071,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(DecaySpec);
-  COPY_FUNS(DecaySpec, taBase);
   TA_BASEFUNS(DecaySpec);
 };
 
@@ -1112,7 +1085,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(LayNetRescaleSpec);
-  COPY_FUNS(LayNetRescaleSpec, taBase);
   TA_BASEFUNS(LayNetRescaleSpec);
 };
 
@@ -1128,7 +1100,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(LayAbsNetAdaptSpec);
-  COPY_FUNS(LayAbsNetAdaptSpec, taBase);
   TA_BASEFUNS(LayAbsNetAdaptSpec);
 };
 
@@ -1353,7 +1324,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   SIMPLE_COPY(LeabraLayerSpec);
-  COPY_FUNS(LeabraLayerSpec, LayerSpec);
   TA_BASEFUNS(LeabraLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -1372,7 +1342,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   void	Copy_(const AvgMaxVals& cp);
-  COPY_FUNS(AvgMaxVals, taBase);
   TA_BASEFUNS(AvgMaxVals);
 };
 
@@ -1396,7 +1365,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   void	Copy_(const KWTAVals& cp);
-  COPY_FUNS(KWTAVals, taBase);
   TA_BASEFUNS(KWTAVals);
 };
 
@@ -1412,7 +1380,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   void	Copy_(const AdaptIVals& cp);
-  COPY_FUNS(AdaptIVals, taBase);
   TA_BASEFUNS(AdaptIVals);
 };
 
@@ -1428,7 +1395,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   void	Copy_(const InhibVals& cp);
-  COPY_FUNS(InhibVals, taBase);
   TA_BASEFUNS(InhibVals);
 };
 
@@ -1573,7 +1539,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const LeabraLayer& cp);
-  COPY_FUNS(LeabraLayer, Layer);
   TA_BASEFUNS(LeabraLayer);
 protected:
   void	UpdateAfterEdit_impl();
@@ -1592,7 +1557,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   void	Copy_(const LeabraUnit_Group& cp);
-  COPY_FUNS(LeabraUnit_Group, Unit_Group);
   TA_BASEFUNS(LeabraUnit_Group);
 };
 
@@ -1970,7 +1934,6 @@ public:
   void	Initialize();
   void 	Destroy()		{}
   SIMPLE_COPY(LeabraNetwork);
-  COPY_FUNS(LeabraNetwork, Network);
   TA_BASEFUNS(LeabraNetwork);
 };
 
@@ -2056,7 +2019,6 @@ public:
   void 	Initialize();
   void 	Destroy()	{ };
 //   SIMPLE_COPY(LeabraWizard);
-//   COPY_FUNS(LeabraWizard, Wizard);
   TA_BASEFUNS(LeabraWizard);
 };
 

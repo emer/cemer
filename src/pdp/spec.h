@@ -60,7 +60,7 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ }
-  TA_BASEFUNS_NCOPY(BaseSpec_Group);
+  TA_BASEFUNS_NOCOPY(BaseSpec_Group);
 };
 
 class PDP_API BaseSpec : public taNBase {
@@ -113,7 +113,6 @@ public:
   override String GetDesc() const { return desc; }
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(BaseSpec, taNBase);
   TA_BASEFUNS(BaseSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -144,7 +143,6 @@ public:
   // update from parent sub spec, if one exists
 
   void	InitLinks();
-  COPY_FUNS(BaseSubSpec, taNBase);
   TA_BASEFUNS(BaseSubSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -173,7 +171,6 @@ public:
 
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
-  COPY_FUNS(SpecPtr_impl, inherited);
   TA_BASEFUNS(SpecPtr_impl);
 protected:
   override void	UpdateAfterEdit_impl();	// check, update the spec type

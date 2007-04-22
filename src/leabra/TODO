@@ -2,13 +2,15 @@ leabra todo list:
 
 commit:
 
+* pointer udpate for copy across projs
+* compress file getting .proj.proj.gz sometimes
+
 ------------
 current:
 
 == Graph
 
 * put ticks on other axis lines
-* should not rescale based on string vals!
 * graph axis units not good; also add label of data column
 * bar graph mode??  -- easy to do.. just do it..  no fill..
 * add a few more lines, repl share axis with axis_1 and axis_2
@@ -28,10 +30,10 @@ current:
 
 == Misc
 
-* compress file getting .proj.proj.gz sometimes
 * NewLayer not working in netview
 * Can't view weights with 2 nets in same view!
 * r.wt disp scale gets reset when you click on a new unit
+* project display needs update after loading: filename is not there..
 
 * CHECK: add DataUpdate brackets in Filter op -- still doesn't fix problem!
 * multi-test on hv
@@ -50,8 +52,6 @@ current:
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the
   weakly activated units more weak, and the strongly activated more weak too!  pop out??
-
-* project display needs update after loading: filename is not there..
 
 
 -----------

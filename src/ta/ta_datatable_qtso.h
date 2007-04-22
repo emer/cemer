@@ -81,7 +81,6 @@ public:
   
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const DataColView& cp);
-  COPY_FUNS(DataColView, inherited);
   TA_BASEFUNS(DataColView);
 protected:
   override void		Unbind_impl(); // unbinds col
@@ -151,7 +150,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const DataTableView& cp);
-  COPY_FUNS(DataTableView, T3DataViewPar);
   T3_DATAVIEWFUNS(DataTableView, T3DataViewPar) //
 
 protected:
@@ -233,7 +231,6 @@ public:
 
   DATAVIEW_PARENT(GridTableView)
   void	Copy_(const GridColView& cp);
-  COPY_FUNS(GridColView, DataColView);
   TA_BASEFUNS(GridColView);
 protected:
   void			UpdateAfterEdit_impl();
@@ -322,7 +319,6 @@ public:
   void	Initialize();
   void	Destroy() {CutLinks();}
   void	Copy_(const GridTableView& cp);
-  COPY_FUNS(GridTableView, inherited);
   T3_DATAVIEWFUNS(GridTableView, DataTableView)
 
 protected:
@@ -529,7 +525,6 @@ public:
 
   void InitLinks();
   SIMPLE_COPY(GraphColView);
-  COPY_FUNS(GraphColView, DataColView);
   TA_BASEFUNS(GraphColView);
 protected:
 
@@ -603,7 +598,6 @@ public:
   void InitLinks();
   void CutLinks();
   SIMPLE_COPY(GraphAxisBase);
-  COPY_FUNS(GraphAxisBase, T3DataView);
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)
 protected:
   void 			RenderAxis_X(T3Axis* t3ax);
@@ -660,7 +654,6 @@ public:
 //   void InitLinks();
 //   void CutLinks();
   SIMPLE_COPY(GraphPlotView);
-  COPY_FUNS(GraphPlotView, GraphAxisBase);
   T3_DATAVIEWFUNS(GraphPlotView, GraphAxisBase)
 protected:
   override void 	UpdateAfterEdit_impl();
@@ -681,7 +674,6 @@ public:
   override bool 	UpdateRange();
 
   SIMPLE_COPY(GraphAxisView);
-  COPY_FUNS(GraphAxisView, GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
 protected:
   override void 	UpdateAfterEdit_impl();
@@ -818,7 +810,6 @@ public:
   void	InitLinks();
   void 	CutLinks();
   SIMPLE_COPY(GraphTableView);
-  COPY_FUNS(GraphTableView, inherited);
   T3_DATAVIEWFUNS(GraphTableView, DataTableView)
 
 protected:
@@ -1155,7 +1146,6 @@ public:
   void 	InitLinks();
   void	CutLinks(); 
   SIMPLE_COPY(DataTableGridViewWizard);
-  COPY_FUNS(DataTableGridViewWizard, taWizard);
   TA_BASEFUNS(DataTableGridViewWizard); //
 protected:
 //  override void	UpdateAfterEdit_impl();
@@ -1286,7 +1276,7 @@ protected:
   virtual void		WriteTable_Generic(DataTable* tab, const CellRange& sel);
   
 private:
-  NCOPY(taiTabularDataMimeItem);
+  NOCOPY(taiTabularDataMimeItem);
   void	Initialize() {}
   void	Destroy() {}
 };
@@ -1296,7 +1286,7 @@ class TA_API taiMatrixDataMimeItem: public taiTabularDataMimeItem { // this clas
 INHERITED(taiTabularDataMimeItem)
 public: // i/f for tabular data guy  
   
-  TA_BASEFUNS_NCOPY(taiMatrixDataMimeItem);
+  TA_BASEFUNS_NOCOPY(taiMatrixDataMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 
@@ -1313,7 +1303,7 @@ class TA_API taiTsvMimeItem: public taiTabularDataMimeItem { // this class handl
 INHERITED(taiTabularDataMimeItem)
 public: // i/f for tabular data guy  
   
-  TA_BASEFUNS_NCOPY(taiTsvMimeItem);
+  TA_BASEFUNS_NOCOPY(taiTsvMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 
@@ -1360,7 +1350,7 @@ public:
   
   override void		WriteTable(DataTable* tab, const CellRange& sel);
   
-  TA_BASEFUNS_NCOPY(taiTableDataMimeItem);
+  TA_BASEFUNS_NOCOPY(taiTableDataMimeItem);
     
 public: // TAI_xxx instance interface -- used for dynamic creation
   override taiMimeItem* Extract(taiMimeSource* ms, 

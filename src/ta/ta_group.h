@@ -36,7 +36,7 @@ public:
 
   bool	Transfer(taBase* item);
 
-  TA_BASEFUNS_NCOPY(taSubGroup);
+  TA_BASEFUNS_NOCOPY(taSubGroup);
 private:
   void	Initialize()	{ };
   void	Destroy()	{ };
@@ -350,7 +350,7 @@ protected:
   taGroup<T>* 	LeafGp(int leaf_idx) const		{ return (taGroup<T>*)LeafGp_(leaf_idx); }
   // the group containing given leaf; NOTE: **don't confuse this with the Safe/FastLeafGp funcs*** -- moved here to try to flush out any use, since it is so confusing and nonstandard and likely to be mixed up with the XxxLeafGp funcs 
 private:
-  TMPLT_NCOPY(taGroup,T)
+  TMPLT_NOCOPY(taGroup,T)
   void Initialize() 	{ SetBaseType(T::StatTypeDef(1));}
   void	Destroy () {}
 };
@@ -376,7 +376,7 @@ INHERITED(taGroup<taBase>)
 public:
   void	Initialize() 		{ SetBaseType(&TA_taBase); }
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(taBase_Group);
+  TA_BASEFUNS_NOCOPY(taBase_Group);
 };
 
 #define BaseGroup_of(T)							      \

@@ -33,7 +33,6 @@ public:
   bool  SetName(const String& value);
   void	SetDefaultName() {SetDefaultName_();}
   String GetDisplayName() const;
-  COPY_FUNS(ViewSpec, inherited);
   TA_BASEFUNS(ViewSpec) //
 private:
   void	Copy_(const ViewSpec& cp);
@@ -48,7 +47,7 @@ INHERITED(taGroup<ViewSpec>)
 public:
   TA_BASEFUNS(ViewSpec_Group) //
 private:
-  NCOPY(ViewSpec_Group)
+  NOCOPY(ViewSpec_Group)
   void Initialize() {SetBaseType(&TA_ViewSpec);}
   void Destroy() {}
 };

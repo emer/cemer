@@ -66,7 +66,7 @@ INHERITED(taNBase)
 public:
   void CrashMe() {taBase* null_ptr = NULL; null_ptr->GetName();}
   // #MENU #MENU_CONTEXT Execute this bad boy function and you will crash!!!
-  TA_BASEFUNS_NCOPY(CrashObject);
+  TA_BASEFUNS_NOCOPY(CrashObject);
 private:
   void Initialize() {}
   void Destroy() {}

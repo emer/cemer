@@ -37,7 +37,7 @@ public:
   void		RemoveNotify(TAPtr ud);
   TypeDef* 	UpdaterType()		{ return &TA_SchedProcess; }
 
-  TA_BASEFUNS_LITE_NCOPY(PDPView);
+  TA_BASEFUNS_LITE_NOCOPY(PDPView);
 
 private:
   void	Initialize()	{ };

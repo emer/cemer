@@ -88,7 +88,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(PVConSpec);
-  COPY_FUNS(PVConSpec, LeabraConSpec);
   TA_BASEFUNS(PVConSpec);
 };
 
@@ -102,7 +101,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(PVDetectSpec);
-  COPY_FUNS(PVDetectSpec, taBase);
   TA_BASEFUNS(PVDetectSpec);
 };
 
@@ -129,7 +127,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(PViLayerSpec);
-  COPY_FUNS(PViLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(PViLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -179,7 +176,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(LVConSpec);
-  COPY_FUNS(LVConSpec, TrialSynDepConSpec);
   TA_BASEFUNS(LVConSpec);
 };
 
@@ -195,7 +191,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(LVSpec);
-  COPY_FUNS(LVSpec, taBase);
   TA_BASEFUNS(LVSpec);
 };
 
@@ -222,7 +217,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(LVeLayerSpec);
-  COPY_FUNS(LVeLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(LVeLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -234,7 +228,7 @@ public:
 
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  TA_BASEFUNS2_NCOPY(LViLayerSpec, LVeLayerSpec);
+  TA_BASEFUNS2_NOCOPY(LViLayerSpec, LVeLayerSpec);
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -268,7 +262,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(PVLVDaSpec);
-  COPY_FUNS(PVLVDaSpec, taBase);
   TA_BASEFUNS(PVLVDaSpec);
 };
 
@@ -304,7 +297,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(PVLVDaLayerSpec);
-  COPY_FUNS(PVLVDaLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(PVLVDaLayerSpec);
 };
 

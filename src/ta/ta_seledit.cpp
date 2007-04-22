@@ -94,6 +94,7 @@ void SelectEdit::Copy_(const SelectEdit& cp) {
   meth_bases.Borrow(cp.meth_bases);
   methods = cp.methods;
   meth_strs.Copy(cp.meth_strs);
+  UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject);
 }
 
 void SelectEdit::UpdateAfterEdit() {

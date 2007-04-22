@@ -189,7 +189,7 @@ public:
 
   void Initialize() { };
   void Destroy() { };
-  TA_ABSTRACT_BASEFUNS_NCOPY(taMath);
+  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -601,7 +601,7 @@ public:
 
   void Initialize() { };
   void Destroy() { };
-  TA_ABSTRACT_BASEFUNS_NCOPY(taMath_double);
+  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath_double);
 };
 
 
@@ -947,7 +947,7 @@ public:
     bool real_out = false, bool norm = true);
   // #CAT_FFT compute the radix-N FFT of the real data in in_mat, writing the complex output to out_mat (d0[0]=real,d0[1]=imag) if real_out=0 or the power sqrt(r^2+i^2) if real_out=1; if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0; real_out=1 computes norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
   
-  TA_ABSTRACT_BASEFUNS_NCOPY(taMath_float);
+  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath_float);
 private:
   void Initialize() { };
   void Destroy() { };
@@ -1072,7 +1072,6 @@ public:
   void	Initialize();
   void	Destroy()		 { };
   void	Copy_(const Random& cp);
-  COPY_FUNS(Random, taBase);
   TA_BASEFUNS_LITE(Random); //
 };
 

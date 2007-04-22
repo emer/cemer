@@ -35,7 +35,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   void	Copy_(const DaModUnit& cp);
-  COPY_FUNS(DaModUnit, LeabraUnit);
   TA_BASEFUNS(DaModUnit);
 };
 
@@ -58,7 +57,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(DaModSpec);
-  COPY_FUNS(DaModSpec, taBase);
   TA_BASEFUNS(DaModSpec);
 };
 
@@ -85,7 +83,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(DaModUnitSpec);
-  COPY_FUNS(DaModUnitSpec, LeabraUnitSpec);
   TA_BASEFUNS(DaModUnitSpec);
 };
 
@@ -103,7 +100,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(AvgExtRewSpec);
-  COPY_FUNS(AvgExtRewSpec, taBase);
   TA_BASEFUNS(AvgExtRewSpec);
 };
 
@@ -119,7 +115,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(OutErrSpec);
-  COPY_FUNS(OutErrSpec, taBase);
   TA_BASEFUNS(OutErrSpec);
 };
 
@@ -134,7 +129,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(ExtRewSpec);
-  COPY_FUNS(ExtRewSpec, taBase);
   TA_BASEFUNS(ExtRewSpec);
 };
 
@@ -181,7 +175,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(ExtRewLayerSpec);
-  COPY_FUNS(ExtRewLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(ExtRewLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -227,7 +220,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(TDRewPredConSpec);
-  COPY_FUNS(TDRewPredConSpec, LeabraConSpec);
   TA_BASEFUNS(TDRewPredConSpec);
 };
 
@@ -262,7 +254,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TDRewPredLayerSpec);
-  COPY_FUNS(TDRewPredLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(TDRewPredLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -281,7 +272,6 @@ public:
   void	Initialize();
   void 	Destroy()	{ };
   SIMPLE_COPY(TDRewIntegSpec);
-  COPY_FUNS(TDRewIntegSpec, taBase);
   TA_BASEFUNS(TDRewIntegSpec);
 };
 
@@ -302,7 +292,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TDRewIntegLayerSpec);
-  COPY_FUNS(TDRewIntegLayerSpec, ScalarValLayerSpec);
   TA_BASEFUNS(TDRewIntegLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -336,7 +325,6 @@ public:
   void	Destroy()		{ };
   void  InitLinks();
   SIMPLE_COPY(TdLayerSpec);
-  COPY_FUNS(TdLayerSpec, LeabraLayerSpec);
   TA_BASEFUNS(TdLayerSpec);
 };
 

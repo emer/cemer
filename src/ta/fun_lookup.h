@@ -58,7 +58,6 @@ public:
   void	Destroy()		{ };
   void	InitLinks();
   void 	Copy_(const FunLookup& cp);
-  COPY_FUNS(FunLookup, float_Array);
   TA_BASEFUNS(FunLookup);
  protected:
   void	UpdateAfterEdit_impl();
@@ -126,7 +125,6 @@ public:
   void  InitLinks();
   void  CutLinks();
   void 	Copy_(const FunLookupND& cp);
-  COPY_FUNS(FunLookupND, taNBase);
   TA_BASEFUNS(FunLookupND);
 };
 

@@ -385,7 +385,7 @@ public:
 protected:
   void	UpdateAfterEdit_impl();
 private:
-  NCOPY(PosTDCoord)
+  NOCOPY(PosTDCoord)
   void	Initialize()	{ }
   void	Destroy()	{ };
 };
@@ -652,7 +652,6 @@ public:
   FloatRotation(float xx, float yy, float zz, float rr)	{SetXYZR(xx, yy, zz, rr); }
   FloatRotation(int xx, int yy, int zz, float rr) 	{SetXYZR(xx, yy, zz, rr); }
   TA_BASEFUNS_LITE(FloatRotation);
-  COPY_FUNS(FloatRotation, FloatTDCoord);
 private:
   void 			Copy_(const FloatRotation& cp)	{rot = cp.rot;}
   void 			Initialize() {rot = 0.0;}
@@ -668,7 +667,6 @@ public:
   FloatTDCoord		translate; // translate, in x, y, and z
 
   TA_BASEFUNS_LITE(FloatTransform);
-  COPY_FUNS(FloatTransform, taBase);
 #ifdef TA_USE_INVENTOR
   void			CopyTo(SoTransform* txfm); // #IGNORE txfers values to an inventor txfm -- note, does a transfer, not an accumulate
 #endif
@@ -796,7 +794,7 @@ public:
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
   virtual void*		GetTA_Element(int i, TypeDef*& eltd)
   { eltd = &TA_ValIdx; if(InRange(i)) return FastEl_(i); return NULL; }
-  TA_BASEFUNS_NCOPY(ValIdx_Array);
+  TA_BASEFUNS_NOCOPY(ValIdx_Array);
   TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 private:
   void Initialize()	{ };

@@ -41,15 +41,9 @@ class ProgLib;
 //		IMPORTANT CODING NOTES:
 
 // Any object that contains a ProgVarRef or other program-local object
-// reference should use the following basefuns macros, to ensure that
+// reference should use the TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(Type,Program)
+// basefuns, to ensure that
 // pointers are properly updated if copied between different programs!
-//
-//  SIMPLE_COPY_UPDT_PTR_PAR(MethodCall, Program);  // this is the key function
-//  COPY_FUNS(MethodCall, ProgEl);
-//  SIMPLE_LINKS(MethodCall);
-//  TA_BASEFUNS(MethodCall);
-
-//  The UpdateAfterEdit_impl should also call 
 
 // Also, pretty much any place where a user can enter an expression,
 // use ProgExpr -- it handles variable name updates automatically!
@@ -140,7 +134,6 @@ public:
   void 	SetDefaultName() {} // make it local to list, set by list
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(ProgVar, inherited);
   TA_BASEFUNS(ProgVar);
 protected:
   String		m_this_sig; // the sig from most recent change
@@ -180,7 +173,6 @@ public:
   override String GetTypeDecoKey() const { return "ProgVar"; }
 
   void	setStale();
-  COPY_FUNS(ProgVar_List, inherited);
   TA_BASEFUNS(ProgVar_List);
   
 protected:
@@ -267,7 +259,6 @@ public:
 
   void 	InitLinks();
   void 	CutLinks();
-  COPY_FUNS(ProgExprBase, inherited);
   TA_BASEFUNS(ProgExprBase);
 protected:
 
@@ -296,7 +287,7 @@ public:
   ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
-  TA_BASEFUNS_NCOPY(ProgExpr);
+  TA_BASEFUNS_NOCOPY(ProgExpr);
 protected:
   override void	UpdateAfterEdit_impl();
 private:
@@ -328,10 +319,8 @@ public:
 
   void 	InitLinks();
   void 	CutLinks();
-  COPY_FUNS(ProgArg, inherited);
   TA_BASEFUNS(ProgArg);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Copy_(const ProgArg& cp);
@@ -353,7 +342,7 @@ public:
   override String GetTypeDecoKey() const { return "ProgArg"; }
   virtual const String	GenCssBody_impl(int indent_level); 
   
-  TA_BASEFUNS_NCOPY(ProgArg_List);
+  TA_BASEFUNS_NOCOPY(ProgArg_List);
 protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
 private:
@@ -407,7 +396,6 @@ public:
   override int		GetEnabled() const;
   // note: it is our own, plus disabled if parent is
   override String 	GetDesc() const {return desc;}
-  COPY_FUNS(ProgEl, inherited);
   TA_BASEFUNS(ProgEl);
 
 protected:
@@ -421,7 +409,6 @@ protected:
   virtual bool		UpdateProgVarRef_NewOwner(ProgVarRef& pvr);
   // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found; put in UpdateAfterEdit_impl for any guy containing progvarref's
 
-  override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 					     int dcr, void* op1_, void* op2_);
@@ -457,7 +444,6 @@ public:
   override const KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
 
-  COPY_FUNS(ProgEl_List, inherited);
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 private:
@@ -534,7 +520,6 @@ public:
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(UserScript);
 protected:
-  override void		UpdateAfterEdit_impl();
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -557,7 +542,6 @@ public:
 //no  override taList_impl* children_() {return &loop_code;}
 
   SIMPLE_COPY(Loop);
-  COPY_FUNS(Loop, inherited);
   SIMPLE_LINKS(Loop);
   TA_ABSTRACT_BASEFUNS(Loop);
 
@@ -580,7 +564,6 @@ public:
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(WhileLoop);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -599,7 +582,6 @@ public:
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DoLoop);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -621,7 +603,6 @@ public:
 
   TA_SIMPLE_BASEFUNS(ForLoop);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
@@ -642,7 +623,6 @@ public:
 
   TA_SIMPLE_BASEFUNS(IfContinue);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -662,7 +642,6 @@ public:
 
   TA_SIMPLE_BASEFUNS(IfBreak);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -682,7 +661,6 @@ public:
 
   TA_SIMPLE_BASEFUNS(IfReturn);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -706,7 +684,6 @@ public:
 
   TA_SIMPLE_BASEFUNS(IfElse);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
@@ -731,10 +708,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(AssignExpr, Program);
-  COPY_FUNS(AssignExpr, ProgEl);
-  SIMPLE_LINKS(AssignExpr);
-  TA_BASEFUNS(AssignExpr);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(AssignExpr, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -764,10 +738,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(MethodCall, Program);
-  COPY_FUNS(MethodCall, ProgEl);
-  SIMPLE_LINKS(MethodCall);
-  TA_BASEFUNS(MethodCall);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MethodCall, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -794,10 +765,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(StaticMethodCall, Program);
-  COPY_FUNS(StaticMethodCall, ProgEl);
-  SIMPLE_LINKS(StaticMethodCall);
-  TA_BASEFUNS(StaticMethodCall);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(StaticMethodCall, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -848,10 +816,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(PrintVar, Program);
-  COPY_FUNS(PrintVar, ProgEl);
-  SIMPLE_LINKS(PrintVar);
-  TA_BASEFUNS(PrintVar);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(PrintVar, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -966,10 +931,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(FunctionCall, Program);
-  COPY_FUNS(FunctionCall, ProgEl);
-  SIMPLE_LINKS(FunctionCall);
-  TA_BASEFUNS(FunctionCall);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(FunctionCall, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -992,7 +954,6 @@ public:
   TA_SIMPLE_BASEFUNS(ReturnExpr);
 
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -1021,7 +982,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_BASEFUNS_NCOPY(ProgObjList);
+  TA_BASEFUNS_NOCOPY(ProgObjList);
 protected:
   void*		El_Own_(void* it); // give anon objs a name
 
@@ -1193,7 +1154,6 @@ public: // XxxGui versions provide feedback to the user
 
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(Program, inherited);
   TA_BASEFUNS(Program);
 
 public: // ScriptBase i/f
@@ -1232,7 +1192,7 @@ class TA_API Program_List : public taList<Program> {
 public:
   
   override String 	GetTypeDecoKey() const { return "Program"; }
-  TA_BASEFUNS_NCOPY(Program_List);
+  TA_BASEFUNS_NOCOPY(Program_List);
 private:
   void	Initialize();
   void 	Destroy()		{Reset(); }; //
@@ -1333,7 +1293,6 @@ public:
   
   void	InitLinks();
   void	CutLinks();
-  COPY_FUNS(Program_Group, inherited)
   TA_BASEFUNS(Program_Group);
 
 private:
@@ -1367,7 +1326,8 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
 
-  TA_SIMPLE_BASEFUNS(ProgramCall);
+  // note: scope here is project, as it is calling outside of program
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(ProgramCall, taProject);
 protected:
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
@@ -1392,7 +1352,7 @@ protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in _qt file
 #endif
 private:
-  NCOPY(ProgramToolBar)
+  NOCOPY(ProgramToolBar)
   void Initialize() {}
   void Destroy() {}
 };

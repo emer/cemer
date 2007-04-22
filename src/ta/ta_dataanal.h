@@ -33,7 +33,6 @@ public:
   void	Destroy()	{ CutLinks(); }
   void	CutLinks();
   void	Copy_(const ClustLink& cp);
-  COPY_FUNS(ClustLink, taBase);
   TA_BASEFUNS_LITE(ClustLink);
 };
 
@@ -93,7 +92,6 @@ public:
   void  InitLinks();
   void	CutLinks();
   SIMPLE_COPY(ClustNode);
-  COPY_FUNS(ClustNode, taNBase);
   TA_BASEFUNS(ClustNode);
 };
 
@@ -240,7 +238,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };
-  TA_BASEFUNS_NCOPY(taDataAnal);
+  TA_BASEFUNS_NOCOPY(taDataAnal);
 };
 
 /////////////////////////////////////////////////////////
@@ -251,7 +249,7 @@ class TA_API DataAnalCall : public StaticMethodCall {
   // call a taDataAnal (data analysis) function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS_NCOPY(DataAnalCall);
+  TA_BASEFUNS_NOCOPY(DataAnalCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

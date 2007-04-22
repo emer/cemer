@@ -46,7 +46,6 @@ public:
 
   void 	InitLinks();
   void	CutLinks(); 
-  COPY_FUNS(taWizard, inherited);
   TA_BASEFUNS(taWizard);
 private:
   SIMPLE_COPY(taWizard);
@@ -64,7 +63,7 @@ public:
 
   TA_BASEFUNS(Wizard_Group);
 private:
-  NCOPY(Wizard_Group)
+  NOCOPY(Wizard_Group)
   void	Initialize() 		{ SetBaseType(&TA_taWizard); }
   void 	Destroy()		{ };
 };
@@ -79,7 +78,7 @@ public:
 
   TA_BASEFUNS(SelectEdit_Group);
 private:
-  NCOPY(SelectEdit_Group)
+  NOCOPY(SelectEdit_Group)
   void	Initialize() 		{ SetBaseType(&TA_SelectEdit); }
   void 	Destroy()		{ };
 };
@@ -136,7 +135,6 @@ public:
   void	UpdateAfterEdit();
   virtual void		InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses
   virtual void		CutLinks_impl(); // #IGNORE use this instead of CutLinks in subclasses -- you can call this first to nuke the viewers etc. before your own stuff
-  COPY_FUNS(taProject, taFBase);
   TA_BASEFUNS(taProject);
   
 protected:
@@ -163,7 +161,7 @@ public:
 
   TA_BASEFUNS(Project_Group);
 private:
-  NCOPY(Project_Group)
+  NOCOPY(Project_Group)
   void	Initialize() 		{SetBaseType(&TA_taProject);} // upclassed in pdp
   void 	Destroy()		{ };
 };

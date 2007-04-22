@@ -82,7 +82,6 @@ public:
   void 	Initialize()		{ off = 0.0f; gain = 1.0f; }
   void	Destroy()		{ };
   SIMPLE_COPY(SigmoidSpec);
-  COPY_FUNS(SigmoidSpec, taBase);
   TA_BASEFUNS(SigmoidSpec);
 };
 
@@ -102,7 +101,6 @@ public:
   void	Initialize();
   void	Destroy() 	{ };
   void 	Copy_(const SchedItem& cp);
-  COPY_FUNS(SchedItem, taOBase);
   TA_BASEFUNS(SchedItem);
 };
 
@@ -121,7 +119,6 @@ public:
   void	Initialize();
   void	Destroy()	{ };
   void	Copy_(const Schedule& cp);
-  COPY_FUNS(Schedule, taList<SchedItem>);
   TA_BASEFUNS(Schedule);
 protected:
   override void UpdateAfterEdit_impl();
@@ -193,7 +190,6 @@ public:
   void 	Initialize()		{ type = NONE; min = -1.0f; max = 1.0f; sym = false; }
   void	Destroy()		{ };
   SIMPLE_COPY(WeightLimits);
-  COPY_FUNS(WeightLimits, taBase);
   TA_BASEFUNS(WeightLimits);
 };
 
@@ -260,7 +256,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ConSpec& cp);
-  COPY_FUNS(ConSpec, BaseSpec);
   TA_BASEFUNS_LITE(ConSpec);
 };
 
@@ -322,7 +317,6 @@ public:
   void 	Destroy();
   void	CutLinks();
   void	Copy_(const ConArray& cp);
-  COPY_FUNS(ConArray, inherited);
   TA_BASEFUNS(ConArray);
 };
 
@@ -472,7 +466,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const RecvCons& cp);
-  COPY_FUNS(RecvCons, inherited);
   TA_BASEFUNS(RecvCons);
 protected:
   ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
@@ -504,7 +497,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
-  NCOPY(RecvCons_List)
+  NOCOPY(RecvCons_List)
   void	Initialize() 		{ SetBaseType(&TA_RecvCons); }
   void 	Destroy()		{ };
   TA_BASEFUNS(RecvCons_List);
@@ -587,7 +580,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const SendCons& cp);
-  COPY_FUNS(SendCons, inherited);
   TA_BASEFUNS(SendCons);
 protected:
   ConSpec* 	m_con_spec;	// con spec that we use: controlled entirely by the projection!
@@ -622,7 +614,7 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_SendCons); }
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(SendCons_List);
+  TA_BASEFUNS_NOCOPY(SendCons_List);
 };
 
 
@@ -683,7 +675,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const UnitSpec& cp);
-  COPY_FUNS(UnitSpec, BaseSpec);
   TA_BASEFUNS(UnitSpec);
 protected:
   override void  	UpdateAfterEdit_impl();
@@ -851,7 +842,6 @@ public: //
   void  InitLinks();
   void	CutLinks();
   void	Copy_(const Unit& cp);
-  COPY_FUNS(Unit, taNBase);
   TA_BASEFUNS(Unit);
 
 protected:
@@ -902,7 +892,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   SIMPLE_COPY(ProjectionSpec);
-  COPY_FUNS(ProjectionSpec, BaseSpec);
   TA_BASEFUNS(ProjectionSpec);
 };
 
@@ -1030,7 +1019,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Projection& cp);
-  COPY_FUNS(Projection, taNBase);
   TA_BASEFUNS(Projection);
 protected:
   ConSpec*	m_prv_con_spec;	// previous con spec set for cons 
@@ -1048,7 +1036,7 @@ public:
 
   void	Initialize() 		{ SetBaseType(&TA_Projection); }
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(Projection_Group);
+  TA_BASEFUNS_NOCOPY(Projection_Group);
 };
 
 //////////////////////////////////////////////////////////
@@ -1206,7 +1194,6 @@ public:
   void	InitLinks();
   void	CutLinks();
   void  Copy_(const Unit_Group& cp);
-  COPY_FUNS(Unit_Group, taGroup<Unit>);
   TA_BASEFUNS(Unit_Group);
 protected:
   override void UpdateAfterEdit_impl();
@@ -1225,7 +1212,7 @@ public:
   void	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS_NCOPY(LayerSpec); //
+  TA_BASEFUNS_NOCOPY(LayerSpec); //
 };
 
 class PDP_API LayerDistances : public taBase {
@@ -1240,7 +1227,6 @@ public:
   void 	Initialize()		{ fm_input = -1; fm_output = -1; }
   void	Destroy()		{ };
   SIMPLE_COPY(LayerDistances);
-  COPY_FUNS(LayerDistances, taBase);
   TA_BASEFUNS_LITE(LayerDistances);
 };
 
@@ -1476,7 +1462,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const Layer& cp);
-  COPY_FUNS(Layer, taNBase);
   TA_BASEFUNS(Layer); //
   
 protected:
@@ -1513,7 +1498,6 @@ public:
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks()		{ inherited::InitLinks(); taBase::Own(pos,this); }
   void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
-  COPY_FUNS(Layer_Group, inherited);
   TA_BASEFUNS(Layer_Group);
 };
 
@@ -1535,7 +1519,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(NetViewFontSizes);
-  COPY_FUNS(NetViewFontSizes, inherited);
   TA_BASEFUNS(NetViewFontSizes);
 };
 
@@ -1555,7 +1538,6 @@ public:
   void 	Initialize();
   void	Destroy()		{ };
   SIMPLE_COPY(NetViewParams);
-  COPY_FUNS(NetViewParams, inherited);
   TA_BASEFUNS(NetViewParams);
 };
 
@@ -1925,7 +1907,6 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void 	Copy_(const Network& cp);
-  COPY_FUNS(Network, inherited);
   TA_BASEFUNS(Network);
   
 protected:
@@ -1945,7 +1926,7 @@ public:
 
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
-  TA_BASEFUNS_NCOPY(Network_Group); //
+  TA_BASEFUNS_NOCOPY(Network_Group); //
 };
 
 #endif /* netstru_h */
