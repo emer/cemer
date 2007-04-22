@@ -2368,18 +2368,18 @@ void GraphAxisBase::ComputeTicks() {
 /////////////////////////////////////////////////////////
 //	rendering
 
-void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax) {
+void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
   t3ax->clear();
   if(!on) return;
   ComputeTicks();		// do this always..
   SoMaterial* mat = t3ax->material();
   color.color()->copyTo(mat->diffuseColor);
   switch (axis) {
-  case X: RenderAxis_X(t3ax);
+  case X: RenderAxis_X(t3ax, ticks_only);
     break;
-  case Y: RenderAxis_Y(t3ax, n_ax);
+  case Y: RenderAxis_Y(t3ax, n_ax, ticks_only);
     break;
-  case Z: RenderAxis_Z(t3ax);
+  case Z: RenderAxis_Z(t3ax, ticks_only);
     break;
   }
 }
@@ -2388,51 +2388,61 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax) {
   act_n_ticks is the number of sections, so tick marks will be +1 (to include ends)
 
 */
-void GraphAxisBase::RenderAxis_X(T3Axis* t3ax) {
-  iVec3f fm;
+void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
+  iVec3f fm;			// init to 0
   iVec3f to;
 
   // axis line itself
   to.x = axis_length;
   t3ax->addLine(fm, to);
 
-  // units legend
-  fm.x = -UNIT_LEGEND_OFFSET;
-  fm.y = -AXIS_LABEL_SIZE;
-  String label = String(units,"%.5g") + "x";
-  t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+  if(!ticks_only) { 
+    // units legend
+    if(units != 1.0) {
+      fm.x = axis_length + UNIT_LEGEND_OFFSET;
+      fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
+      String label = "x " + String(units,"%.5g");
+      t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+    }
+
+    if(!col_name.empty()) {
+      fm.x = .5f * axis_length;
+      fm.y = -(TICK_OFFSET + 2.2f * AXIS_LABEL_SIZE);
+      t3ax->addLabel(col_name.chars(), fm, SoAsciiText::CENTER);
+    }
+  }
 
   // ticks
   fm = 0.0f;
   to = 0.0f;
-  fm.y = -(TICK_SIZE / 2.0f);
-  to.y =  (TICK_SIZE / 2.0f);
+  fm.y = -(.5f * TICK_SIZE);
+  to.y =  (.5f * TICK_SIZE);
 
-//nn  String label = String(units,"%5g") + "X";
-  //TODO: first axis label
-/*  tick[0] = lkit->vcenter	// perhaps a different font or color?
-    (lkit->hcenter(lkit->r_margin(new ivLabel(label, font, c), 3.0), 1.0), 0.5); */
+  float y_lab_off = (TICK_OFFSET + AXIS_LABEL_SIZE);
 
   int i;
   float val;
+  String label;
   for (i = 0, val = start_tick; i < act_n_ticks; val += tick_incr, ++i) {
     fm.x = DataToPlot(val);
     to.x = DataToPlot(val);
-    float lab_val = val / units;
-    if (fabs(lab_val) < .001) {
-      if (fabs(lab_val) < .0001)
-	lab_val = 0.0f;		// the 0 can be screwy
-      else lab_val = .001f;
-    }
-    label = String(lab_val);
-
     t3ax->addLine(fm, to);
-    t3ax->addLabel(label.chars(),
-      iVec3f(fm.x, fm.y - (TICK_OFFSET + AXIS_LABEL_SIZE), fm.z), SoAsciiText::CENTER);
+    if(!ticks_only) {
+      float lab_val = val / units;
+      if (fabs(lab_val) < .001) {
+	if (fabs(lab_val) < .0001)
+	  lab_val = 0.0f;		// the 0 can be screwy
+	else lab_val = .001f;
+      }
+      label = String(lab_val);
+      t3ax->addLabel(label.chars(),
+		     iVec3f(fm.x, fm.y - y_lab_off, fm.z),
+		     SoAsciiText::CENTER);
+    }
   }
 }
 
-void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax) {
+void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
   iVec3f fm;
   iVec3f to;
 
@@ -2440,11 +2450,30 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax) {
   to.y = axis_length;
   t3ax->addLine(fm, to);
 
-  // units legend
-  fm.y = -(UNIT_LEGEND_OFFSET + (AXIS_LABEL_SIZE / 2.0f));
-//  fm.x = 0.0f;
-  String label = String(units,"%.5g") + "x";
-  t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+  if(!ticks_only) { 
+    // units legend
+    if(units != 1.0) {
+      fm.y = axis_length + UNIT_LEGEND_OFFSET;
+      if(n_ax > 0)
+	fm.x = TICK_OFFSET;
+      else
+	fm.x = -TICK_OFFSET;
+      String label = "x " + String(units,"%.5g");
+      t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+    }
+
+    if(!col_name.empty()) {
+      fm.y = .5f * axis_length;
+      if(n_ax > 0) {
+	fm.x = TICK_OFFSET + 2.0 * AXIS_LABEL_SIZE;
+	t3ax->addLabel(col_name.chars(), fm, SoAsciiText::LEFT);
+      }
+      else {
+	fm.x = -TICK_OFFSET - 2.0 * AXIS_LABEL_SIZE;
+	t3ax->addLabel(col_name.chars(), fm, SoAsciiText::RIGHT);
+      }
+    }
+  }
 
   // ticks
   fm = 0.0f;
@@ -2454,30 +2483,32 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax) {
 
   int i;
   float val;
+  String label;
   for (i = 0, val = start_tick; i < act_n_ticks; val += tick_incr, ++i) {
     fm.y = DataToPlot(val);
     to.y = DataToPlot(val);
-    float lab_val = val / units;
-    if (fabs(lab_val) < .001) {
-      if (fabs(lab_val) < .0001)
-	lab_val = 0.0f;		// the 0 can be screwy
-      else lab_val = .001f;
-    }
-    label = String(lab_val);
-
     t3ax->addLine(fm, to);
-    if(n_ax > 0) {
-      t3ax->addLabel(label.chars(),
-		     iVec3f(to.x + TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
-    }
-    else {
-      t3ax->addLabel(label.chars(),
-		     iVec3f(fm.x - TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
+    if(!ticks_only) {
+      float lab_val = val / units;
+      if (fabs(lab_val) < .001) {
+	if (fabs(lab_val) < .0001)
+	  lab_val = 0.0f;		// the 0 can be screwy
+	else lab_val = .001f;
+      }
+      label = String(lab_val);
+      if(n_ax > 0) {
+	t3ax->addLabel(label.chars(),
+		       iVec3f(to.x + TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
+      }
+      else {
+	t3ax->addLabel(label.chars(),
+		       iVec3f(fm.x - TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
+      }
     }
   }
 }
 
-void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax) {
+void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
   iVec3f fm;
   iVec3f to;
 
@@ -2485,35 +2516,49 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax) {
   to.z = axis_length;
   t3ax->addLine(fm, to);
 
-  // units legend
-//  fm.x = -(UNIT_LEGEND_OFFSET + (AXIS_LABEL_SIZE / 2.0f));
-  fm.y = -(AXIS_LABEL_SIZE / 2.0f);
-//  fm.x = 0.0f;
-  String label = String(units,"%.5g") + "x";
-  t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+  if(!ticks_only) {
+    // units legend
+    if(units != 1.0) {
+      fm.z = axis_length + UNIT_LEGEND_OFFSET;
+      fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
+      fm.x = -(TICK_OFFSET + 2.0f * AXIS_LABEL_SIZE);
+      String label = "x " + String(units,"%.5g");
+      t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+    }
+    if(!col_name.empty()) {
+      fm.z = .5f * axis_length;
+      fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
+      fm.x = -(TICK_OFFSET + 2.0f * AXIS_LABEL_SIZE);
+      t3ax->addLabel(col_name.chars(), fm, SoAsciiText::RIGHT);
+    }
+  }
 
   // ticks
   fm = 0.0f;
   to = 0.0f;
-  fm.x = -(TICK_SIZE / 2.0f);
-  to.x =  (TICK_SIZE / 2.0f);
+  fm.x = -(.5f * TICK_SIZE);
+  to.x =  (.5f * TICK_SIZE);
+  
+  float y_lab_off = (.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
 
   int i;
   float val;
+  String label;
   for (i = 0, val = start_tick; i < act_n_ticks; val += tick_incr, ++i) {
     fm.z = DataToPlot(val);
     to.z = DataToPlot(val);
-    float lab_val = val / units;
-    if (fabs(lab_val) < .001) {
-      if (fabs(lab_val) < .0001)
-	lab_val = 0.0f;		// the 0 can be screwy
-      else lab_val = .001f;
-    }
-    label = String(lab_val);
-
     t3ax->addLine(fm, to);
-    t3ax->addLabel(label.chars(),
-		   iVec3f(fm.x - TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
+    if(!ticks_only) {
+      float lab_val = val / units;
+      if (fabs(lab_val) < .001) {
+	if (fabs(lab_val) < .0001)
+	  lab_val = 0.0f;		// the 0 can be screwy
+	else lab_val = .001f;
+      }
+      label = String(lab_val);
+      t3ax->addLabel(label.chars(),
+		     iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
+    }
   }
 }
 
