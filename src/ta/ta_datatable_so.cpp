@@ -259,10 +259,8 @@ void T3Axis::addLabel(const char* text, const iVec3f& at) {
 void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
   //note: we assume (for simplicity) that each new label is at a different place
   SoTranslation* tr = new SoTranslation();
-  tr->translation.setValue(
-    at.x - last_label_at.x,
-    at.y - last_label_at.y,
-    -(at.z - last_label_at.z));
+  tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
+			   -(at.z - last_label_at.z));
   last_label_at = at;
   labels->addChild(tr);
 
@@ -271,6 +269,26 @@ void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
   txt->justification.setValue((SoAsciiText::Justification)just);
   txt->string.setValue(text);
   labels->addChild(txt);
+}
+
+void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just, SbRotation& rot) {
+  //note: we assume (for simplicity) that each new label is at a different place
+  SoTranslation* tr = new SoTranslation();
+  tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
+			   -(at.z - last_label_at.z));
+  last_label_at = at;
+  labels->addChild(tr);
+
+  // render the actual text
+  SoSeparator* sep = new SoSeparator;
+  SoTransform* tx = new SoTransform;
+  tx->rotation.setValue(rot);
+  sep->addChild(tx);
+  SoAsciiText* txt = new SoAsciiText();
+  txt->justification.setValue((SoAsciiText::Justification)just);
+  txt->string.setValue(text);
+  sep->addChild(txt);
+  labels->addChild(sep);
 }
 
 void T3Axis::addLine(const iVec3f& from, const iVec3f to) {

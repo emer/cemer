@@ -2463,14 +2463,16 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
     }
 
     if(!col_name.empty()) {
+      SbRotation rot;
+      rot.setValue(SbVec3f(0.0, 0.0f, 1.0f), .5f * taMath_float::pi);
       fm.y = .5f * axis_length;
       if(n_ax > 0) {
-	fm.x = TICK_OFFSET + 2.0 * AXIS_LABEL_SIZE;
-	t3ax->addLabel(col_name.chars(), fm, SoAsciiText::LEFT);
+	fm.x = TICK_OFFSET + 2.5 * AXIS_LABEL_SIZE;
+	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::LEFT, rot);
       }
       else {
-	fm.x = -TICK_OFFSET - 2.0 * AXIS_LABEL_SIZE;
-	t3ax->addLabel(col_name.chars(), fm, SoAsciiText::RIGHT);
+	fm.x = -TICK_OFFSET - 2.5 * AXIS_LABEL_SIZE;
+	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::RIGHT, rot);
       }
     }
   }
@@ -2526,10 +2528,13 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
     }
     if(!col_name.empty()) {
+      SbRotation rot;
+      rot.setValue(SbVec3f(0.0, 1.0f, 0.0f), .5f * taMath_float::pi);
+
       fm.z = .5f * axis_length;
       fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
-      fm.x = -(TICK_OFFSET + 2.0f * AXIS_LABEL_SIZE);
-      t3ax->addLabel(col_name.chars(), fm, SoAsciiText::RIGHT);
+      fm.x = -(TICK_OFFSET + 2.5f * AXIS_LABEL_SIZE);
+      t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::RIGHT, rot);
     }
   }
 
@@ -2712,7 +2717,17 @@ void GraphTableView::Initialize() {
 
   n_plots = 1;
   t3_x_axis = NULL;
+  t3_x_axis_top = NULL;
+  t3_x_axis_far = NULL;
+  t3_x_axis_far_top = NULL;
+  t3_y_axis = NULL;
+  t3_y_axis_rt = NULL;
+  t3_y_axis_far = NULL;
+  t3_y_axis_far_rt = NULL;
   t3_z_axis = NULL;
+  t3_z_axis_rt = NULL;
+  t3_z_axis_top = NULL;
+  t3_z_axis_top_rt = NULL;
 }
 
 void GraphTableView::InitLinks() {
@@ -2845,20 +2860,7 @@ void GraphTableView::Render_pre() {
 				     colorscale.background.bluef()));
   UpdatePanel();		// otherwise doesn't get updated without explicit click..
 
-  T3GraphViewNode* node_so = this->node_so(); // cache
-
-  t3_x_axis = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
-  t3_z_axis = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, AXIS_LABEL_SIZE);
-
-//   SoTranslation* tr = new SoTranslation();
-//   m_node_so->x_axis()->addChild(tr);
-//   tr->translation.setValue(0.0f, AXIS_LABEL_SIZE, 0.0f);
-  node_so->x_axis()->addChild(t3_x_axis);
-
-//   tr = new SoTranslation();
-//   m_node_so->z_axis()->addChild(tr);
-//   tr->translation.setValue(-AXIS_LABEL_SIZE, 0.0f, 0.0f);
-  node_so->z_axis()->addChild(t3_z_axis);
+  //  T3GraphViewNode* node_so = this->node_so(); // cache
 
   inherited::Render_pre();
 }
@@ -3127,8 +3129,75 @@ void GraphTableView::RenderAxes() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
+  SoSeparator* xax = node_so->x_axis();
+  xax->removeAllChildren();
+
+  t3_x_axis = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
+  t3_x_axis_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
+
+  xax->addChild(t3_x_axis);
+
+  SoTranslation* tr;
+  // top
+  tr = new SoTranslation();  xax->addChild(tr);
+  tr->translation.setValue(0.0f, plot_1.axis_length, 0.0f);
+  xax->addChild(t3_x_axis_top);
+
   x_axis.RenderAxis(t3_x_axis);
-  z_axis.RenderAxis(t3_z_axis);
+  x_axis.RenderAxis(t3_x_axis_top, 0, true); // ticks only
+
+  if(z_axis.on) {
+    t3_x_axis_far = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
+    t3_x_axis_far_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
+
+    // far_top
+    tr = new SoTranslation();   xax->addChild(tr);
+    tr->translation.setValue(0.0f, 0.0, -z_axis.axis_length);
+    xax->addChild(t3_x_axis_far_top);
+    // far
+    tr = new SoTranslation();  xax->addChild(tr);
+    tr->translation.setValue(0.0f, -plot_1.axis_length, 0.0f);
+    xax->addChild(t3_x_axis_far);
+
+    x_axis.RenderAxis(t3_x_axis_far_top, 0, true); // ticks only
+    x_axis.RenderAxis(t3_x_axis_far, 0, true); // ticks only
+
+    /////////////  Z
+    SoSeparator* zax = node_so->z_axis();
+    t3_z_axis = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, AXIS_LABEL_SIZE);
+    t3_z_axis_rt = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, AXIS_LABEL_SIZE);
+    t3_z_axis_top = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, AXIS_LABEL_SIZE);
+    t3_z_axis_top_rt = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, AXIS_LABEL_SIZE);
+
+    zax->addChild(t3_z_axis);
+    z_axis.RenderAxis(t3_z_axis);
+
+    // rt
+    tr = new SoTranslation();   zax->addChild(tr);
+    tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f);
+    zax->addChild(t3_z_axis_rt);
+    // top_rt
+    tr = new SoTranslation();   zax->addChild(tr);
+    tr->translation.setValue(x_axis.axis_length, plot_1.axis_length, 0.0f);
+    zax->addChild(t3_z_axis_top_rt);
+    // top
+    tr = new SoTranslation();   zax->addChild(tr);
+    tr->translation.setValue(-x_axis.axis_length, 0.0f, 0.0f);
+    zax->addChild(t3_z_axis_top);
+
+    z_axis.RenderAxis(t3_z_axis_rt, 0, true); // ticks only
+    z_axis.RenderAxis(t3_z_axis_top_rt);
+    z_axis.RenderAxis(t3_z_axis_top);
+  }
+  else {
+    t3_x_axis_far = NULL;
+    t3_x_axis_far_top = NULL;
+    t3_z_axis = NULL;
+    t3_z_axis_rt = NULL;
+    t3_z_axis_top = NULL;
+    t3_z_axis_top_rt = NULL;
+  }
+
 
   SoSeparator* yax = node_so->y_axes();
   yax->removeAllChildren();
@@ -3167,7 +3236,7 @@ void GraphTableView::RenderGraph_Scalar() {
   SoSeparator* gr1 = new SoSeparator;
   graphs->addChild(gr1);
 
-  float boxd = .01f;
+  float boxd = 0.0f;
   if(z_axis.on)
     boxd = depth;
 

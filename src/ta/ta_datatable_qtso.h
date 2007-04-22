@@ -815,7 +815,17 @@ public:
 protected:
   int			n_plots; // updated during rendergraph -- number of plots
   T3Axis* 		t3_x_axis;
+  T3Axis* 		t3_x_axis_top; // tick-only top version of x
+  T3Axis* 		t3_x_axis_far;
+  T3Axis* 		t3_x_axis_far_top;
+  T3Axis* 		t3_y_axis;
+  T3Axis* 		t3_y_axis_rt; // tick-only rt version of y (if not 2nd y)
+  T3Axis* 		t3_y_axis_far;
+  T3Axis* 		t3_y_axis_far_rt;
   T3Axis* 		t3_z_axis;
+  T3Axis* 		t3_z_axis_rt;
+  T3Axis* 		t3_z_axis_top;
+  T3Axis* 		t3_z_axis_top_rt;
 
   ///////////////////////////////////////////////////
   // 	Rendering
