@@ -424,7 +424,7 @@ public: // TAI_xxx instance interface -- used for dynamic creation
     const String& mimetype = _nilString);
 
 protected:
-  mutable unsigned char	m_all_base; // 0=unknown; -1 no, 1=yes
+  mutable signed char	m_all_base; // 0=unknown; -1 no, 1=yes
   override bool		Constr_impl(const String&);
 private:
   void	Initialize();

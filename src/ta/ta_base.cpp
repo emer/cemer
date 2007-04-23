@@ -2178,6 +2178,12 @@ void taSmartRef::DataLinkDestroying(taDataLink* dl) {
     m_ptr = NULL;
 }
 
+void taSmartRef::DataRefChanging(taBase* obj, bool setting) {
+  if (m_own) {
+    m_own->SmartRef_DataRefChanging(this, obj, setting); 
+  }
+}
+
 //////////////////////////
 //	taOBase		//
 //////////////////////////

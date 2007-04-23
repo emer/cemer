@@ -798,6 +798,9 @@ protected:	// Impl
   virtual void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
     int dcr, void* op1_, void* op2_) {}
   // #IGNORE the obj (to which we have a ref) has signalled the indicated data change
+  virtual void		SmartRef_DataRefChanging(taSmartRef* ref, 
+    taBase* obj, bool setting) {}
+  // #IGNORE the obj ref has either been removed (smartref now null) or added (smartref already set to that object)
 
   
   ///////////////////////////////////////////////////////////////////////////
@@ -1304,8 +1307,11 @@ friend class taDataView; // for access to link
 public:
   inline taBase*	ptr() const {return m_ptr;}
   void			set(taBase* src) {if (src == m_ptr) return;
-    if (m_ptr) m_ptr->RemoveDataClient(this); m_ptr = NULL;
-    if (src && src->AddDataClient(this)) m_ptr = src;} 
+    if (m_ptr) {m_ptr->RemoveDataClient(this); 
+      //note: important to wait to get mptr in case RDC indirectly deleted it
+      taBase* t = m_ptr; m_ptr = NULL; DataRefChanging(t, false);}
+    if (src && src->AddDataClient(this)) 
+      {m_ptr = src; DataRefChanging(m_ptr, true);} }
   
   virtual TypeDef*	GetBaseType() const {return &TA_taBase;}
   
@@ -1327,6 +1333,8 @@ public:
 protected:
   taBase*		m_own; 
   mutable taBase*	m_ptr;
+  
+  void			DataRefChanging(taBase* obj, bool setting);
   
 private:
   taSmartRef(const taSmartRef& src); // not defined 
