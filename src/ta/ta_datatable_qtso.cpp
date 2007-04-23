@@ -2407,7 +2407,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
 
     if(!col_name.empty()) {
       fm.x = .5f * axis_length;
-      fm.y = -(TICK_OFFSET + 2.2f * AXIS_LABEL_SIZE);
+      fm.y = -(TICK_SIZE + TICK_OFFSET + 1.5f * AXIS_LABEL_SIZE);
       t3ax->addLabel(col_name.chars(), fm, SoAsciiText::CENTER);
     }
   }
@@ -2454,12 +2454,15 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
     // units legend
     if(units != 1.0) {
       fm.y = axis_length + UNIT_LEGEND_OFFSET;
-      if(n_ax > 0)
-	fm.x = TICK_OFFSET;
-      else
-	fm.x = -TICK_OFFSET;
       String label = "x " + String(units,"%.5g");
-      t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+      if(n_ax > 0) {
+	fm.x = TICK_OFFSET;
+	t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+      }
+      else {
+	fm.x = -TICK_OFFSET;
+	t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+      }
     }
 
     if(!col_name.empty()) {
@@ -2467,12 +2470,12 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
       rot.setValue(SbVec3f(0.0, 0.0f, 1.0f), .5f * taMath_float::pi);
       fm.y = .5f * axis_length;
       if(n_ax > 0) {
-	fm.x = TICK_OFFSET + 2.5 * AXIS_LABEL_SIZE;
-	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::LEFT, rot);
+	fm.x = TICK_SIZE + TICK_OFFSET + 1.2f * AXIS_LABEL_SIZE;
+	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::CENTER, rot);
       }
       else {
-	fm.x = -TICK_OFFSET - 2.5 * AXIS_LABEL_SIZE;
-	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::RIGHT, rot);
+	fm.x = -TICK_SIZE - TICK_OFFSET - 1.2f * AXIS_LABEL_SIZE;
+	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::CENTER, rot);
       }
     }
   }
@@ -2500,11 +2503,11 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
       label = String(lab_val);
       if(n_ax > 0) {
 	t3ax->addLabel(label.chars(),
-		       iVec3f(to.x + TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
+		       iVec3f(to.x + TICK_OFFSET, fm.y - (.5f * AXIS_LABEL_SIZE), fm.z));
       }
       else {
 	t3ax->addLabel(label.chars(),
-		       iVec3f(fm.x - TICK_OFFSET, fm.y - (AXIS_LABEL_SIZE / 2.0f), fm.z));
+		       iVec3f(fm.x - TICK_OFFSET, fm.y - (.5f * AXIS_LABEL_SIZE), fm.z));
       }
     }
   }
@@ -2534,7 +2537,7 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       fm.z = .5f * axis_length;
       fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
       fm.x = -(TICK_OFFSET + 2.5f * AXIS_LABEL_SIZE);
-      t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::RIGHT, rot);
+      t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::CENTER, rot);
     }
   }
 
@@ -3131,6 +3134,11 @@ void GraphTableView::RenderAxes() {
 
   SoSeparator* xax = node_so->x_axis();
   xax->removeAllChildren();
+  SoSeparator* zax = node_so->z_axis();
+  zax->removeAllChildren();
+  SoSeparator* yax = node_so->y_axes();
+  yax->removeAllChildren();
+
 
   t3_x_axis = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
   t3_x_axis_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, AXIS_LABEL_SIZE);
@@ -3178,7 +3186,7 @@ void GraphTableView::RenderAxes() {
     zax->addChild(t3_z_axis_rt);
     // top_rt
     tr = new SoTranslation();   zax->addChild(tr);
-    tr->translation.setValue(x_axis.axis_length, plot_1.axis_length, 0.0f);
+    tr->translation.setValue(0.0f, plot_1.axis_length, 0.0f);
     zax->addChild(t3_z_axis_top_rt);
     // top
     tr = new SoTranslation();   zax->addChild(tr);
@@ -3186,8 +3194,8 @@ void GraphTableView::RenderAxes() {
     zax->addChild(t3_z_axis_top);
 
     z_axis.RenderAxis(t3_z_axis_rt, 0, true); // ticks only
-    z_axis.RenderAxis(t3_z_axis_top_rt);
-    z_axis.RenderAxis(t3_z_axis_top);
+    z_axis.RenderAxis(t3_z_axis_top_rt, 0, true);
+    z_axis.RenderAxis(t3_z_axis_top, 0, true);
   }
   else {
     t3_x_axis_far = NULL;
@@ -3198,27 +3206,67 @@ void GraphTableView::RenderAxes() {
     t3_z_axis_top_rt = NULL;
   }
 
-
-  SoSeparator* yax = node_so->y_axes();
-  yax->removeAllChildren();
-
   if(graph_type == RASTER) {
-    T3Axis* t3_y_axis = new T3Axis((T3Axis::Axis)raster_axis.axis, &raster_axis, AXIS_LABEL_SIZE);
+    t3_y_axis = new T3Axis((T3Axis::Axis)raster_axis.axis, &raster_axis, AXIS_LABEL_SIZE);
     raster_axis.RenderAxis(t3_y_axis); // raster axis is Y axis!
     yax->addChild(t3_y_axis);
+
   }
   else {
-    T3Axis* t3_y_axis = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, AXIS_LABEL_SIZE);
+    t3_y_axis = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, AXIS_LABEL_SIZE);
     plot_1.RenderAxis(t3_y_axis);
     yax->addChild(t3_y_axis);
 
+    if(z_axis.on) {
+      t3_y_axis_far = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, AXIS_LABEL_SIZE);
+      plot_1.RenderAxis(t3_y_axis_far, 0, true); // only ticks
+      // far
+      tr = new SoTranslation();   yax->addChild(tr);
+      tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
+      yax->addChild(t3_y_axis_far);
+      tr = new SoTranslation();   yax->addChild(tr); // reset this guy for next..
+      tr->translation.setValue(0.0f, 0.0f, z_axis.axis_length);
+    }
+    else {
+      t3_y_axis_far = NULL;
+    }
+
     if(n_plots >= 2 && !share_y_axis) {
-      T3Axis* t3_y_axis = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, AXIS_LABEL_SIZE, 1); // second Y = 1
-      plot_2.RenderAxis(t3_y_axis, 1); // indicate second axis!
-      SoTranslation* tr = new SoTranslation();
-      yax->addChild(tr);
-      tr->translation.setValue(width, 0.0f, 0.0f); // put on right hand side!
-      yax->addChild(t3_y_axis);		  
+      t3_y_axis_rt = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, AXIS_LABEL_SIZE, 1); // second Y = 1
+      plot_2.RenderAxis(t3_y_axis_rt, 1); // indicate second axis!
+      tr = new SoTranslation();  yax->addChild(tr);
+      tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f); // put on right hand side!
+      yax->addChild(t3_y_axis_rt);		  
+
+      if(z_axis.on) {
+	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, AXIS_LABEL_SIZE, 1);
+	plot_2.RenderAxis(t3_y_axis_far_rt, 1, true); // only ticks
+	tr = new SoTranslation();   yax->addChild(tr);
+	tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
+	yax->addChild(t3_y_axis_far_rt);
+      }
+      else {
+	t3_y_axis_far_rt = NULL;
+      }
+    }
+    else {
+      // rt
+      t3_y_axis_rt = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, AXIS_LABEL_SIZE);
+      plot_1.RenderAxis(t3_y_axis_rt, 0, true); // ticks
+      tr = new SoTranslation();   yax->addChild(tr);
+      tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f);
+      yax->addChild(t3_y_axis_rt);
+
+      if(z_axis.on) {
+	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, AXIS_LABEL_SIZE);
+	plot_1.RenderAxis(t3_y_axis_far_rt, 0, true); // only ticks
+	tr = new SoTranslation();   yax->addChild(tr);
+	tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
+	yax->addChild(t3_y_axis_far_rt);
+      }
+      else {
+	t3_y_axis_far_rt = NULL;
+      }
     }
   }
 }

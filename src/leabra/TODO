@@ -2,16 +2,11 @@ leabra todo list:
 
 commit:
 
-* pointer udpate for copy across projs
-* compress file getting .proj.proj.gz sometimes
-
 ------------
 current:
 
 == Graph
 
-* put ticks on other axis lines
-* graph axis units not good; also add label of data column
 * bar graph mode??  -- easy to do.. just do it..  no fill..
 * add a few more lines, repl share axis with axis_1 and axis_2
 * log units on axis
