@@ -671,11 +671,7 @@ taiTypeItemDataHost::taiTypeItemDataHost(TypeItem* ti_, taMisc::TypeInfoKind tik
   tik = tik_;
 }
 
-void taiTypeItemDataHost::Constr_Data() {
-//note: everything done in constr_labels
-}
-
-void taiTypeItemDataHost::Constr_Labels() {
+void taiTypeItemDataHost::Constr_Data_Labels() {
 //  taiData* dat;
   int row = 0; // makes following more generic
   

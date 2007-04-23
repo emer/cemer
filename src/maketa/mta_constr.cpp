@@ -698,6 +698,9 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       cmd = "cssReal((double)";
     else if (md->type->DerivesFrom(TA_taString))
       cmd = "cssString(";
+    else if (md->type->InheritsFormal(TA_enum))
+    //TODO: this is a temporary hack -- we should create the right enum type
+      cmd = "cssInt((int)";
     else {
       MethodDef_GenStubCall(ownr, md, strm);
       MethodDef_GenArgs(md, strm, act_argc);

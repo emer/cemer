@@ -1681,6 +1681,7 @@ void taiEditDataHost::Constr_impl() {
 
 void taiEditDataHost::Enum_Members() {
   if (membs.def_size <= 0) return; // not handling anything
+  if (!typ) return; // class browser or such
   MemberSpace& ms = typ->members;
   for (int i = 0; i < ms.size; ++i) {
     MemberDef* md = ms.FastEl(i);

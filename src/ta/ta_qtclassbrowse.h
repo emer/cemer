@@ -283,8 +283,7 @@ public:
   taiTypeItemDataHost(TypeItem* ti_, taMisc::TypeInfoKind tik, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);
 protected:
-  override void 	Constr_Data();
-  override void 	Constr_Labels();
+  override void 	Constr_Data_Labels();
 };
 
 class TA_API taTypeInfoViewType: public taiViewType { // for TypeItem types and their spaces
