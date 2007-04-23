@@ -2211,6 +2211,12 @@ DataCol* GraphAxisBase::GetDAPtr() {
   return cv->dataCol();
 }
 
+bool GraphAxisBase::isString() {
+  DataCol* da = GetDAPtr();
+  if(!da) return false;
+  return da->isString();
+}
+
 void GraphAxisBase::InitFromUserData() {
   GraphColView* cv = GetColPtr();
   if(!cv) return;
@@ -2682,7 +2688,16 @@ void GraphTableView::Initialize() {
   plot_1.point_style = GraphPlotView::CIRCLE;
   plot_2.color.name = "red";
   plot_2.point_style = GraphPlotView::SQUARE;
-  share_y_axis = false;
+  plot_3.color.name = "blue";
+  plot_3.point_style = GraphPlotView::DIAMOND;
+  plot_4.color.name = "green";
+  plot_4.point_style = GraphPlotView::TRIANGLE;
+  plot_5.color.name = "violet";
+  plot_5.point_style = GraphPlotView::PLUS;
+  alt_y_2 = false;
+  alt_y_3 = false;
+  alt_y_4 = false;
+  alt_y_5 = false;
 
   graph_type = XY;
   plot_style = LINE;
@@ -2698,6 +2713,9 @@ void GraphTableView::Initialize() {
 
   err_1.axis = GraphAxisBase::Y;
   err_2.axis = GraphAxisBase::Y;
+  err_3.axis = GraphAxisBase::Y;
+  err_4.axis = GraphAxisBase::Y;
+  err_5.axis = GraphAxisBase::Y;
   err_spacing = 1;
   err_bar_width = .02f;
 
@@ -2739,8 +2757,14 @@ void GraphTableView::InitLinks() {
   taBase::Own(z_axis, this);
   taBase::Own(plot_1, this);
   taBase::Own(plot_2, this);
+  taBase::Own(plot_3, this);
+  taBase::Own(plot_4, this);
+  taBase::Own(plot_5, this);
   taBase::Own(err_1, this);
   taBase::Own(err_2, this);
+  taBase::Own(err_3, this);
+  taBase::Own(err_4, this);
+  taBase::Own(err_5, this);
   taBase::Own(color_axis, this);
   taBase::Own(raster_axis, this);
   taBase::Own(colorscale, this);
@@ -2751,8 +2775,14 @@ void GraphTableView::CutLinks() {
   z_axis.CutLinks();
   plot_1.CutLinks();
   plot_2.CutLinks();
+  plot_3.CutLinks();
+  plot_4.CutLinks();
+  plot_5.CutLinks();
   err_1.CutLinks();
   err_2.CutLinks();
+  err_3.CutLinks();
+  err_4.CutLinks();
+  err_5.CutLinks();
   color_axis.CutLinks();
   raster_axis.CutLinks();
   colorscale.CutLinks();
@@ -2771,35 +2801,56 @@ void GraphTableView::UpdateAfterEdit_impl(){
   plot_1.on = true;		// try to keep it on
   plot_1.UpdateAfterEdit();
   plot_2.UpdateAfterEdit();
+  plot_3.UpdateAfterEdit();
+  plot_4.UpdateAfterEdit();
+  plot_5.UpdateAfterEdit();
   err_1.UpdateAfterEdit();
   err_2.UpdateAfterEdit();
+  err_3.UpdateAfterEdit();
+  err_4.UpdateAfterEdit();
+  err_5.UpdateAfterEdit();
   color_axis.UpdateAfterEdit();
   raster_axis.UpdateAfterEdit();
 
-  if(plot_2.on && !plot_1.on) { // move to pl1
-    plot_1.col_name = plot_2.col_name;
-    plot_2.col_name = "";
-    plot_1.UpdateAfterEdit();
-    plot_2.UpdateAfterEdit();
-  }
+  // don't bother: not generlizable and not supported
+//   if(plot_2.on && !plot_1.on) { // move to pl1
+//     plot_1.col_name = plot_2.col_name;
+//     plot_2.col_name = "";
+//     plot_1.UpdateAfterEdit();
+//     plot_2.UpdateAfterEdit();
+//   }
 
   if(!plot_1.on) {
     taMisc::Warning("GraphTableView -- plot_1 is not on -- perhaps no valid col_name found for plot_1 -- nothing will be plotted!");
   }
+  else if(plot_1.isString()) {
+    taMisc::Warning("GraphTableView -- plot_1 is a string -- must be a numeric value -- nothing will be plotted");
+    plot_1.on = false;
+  }
   else {
     GraphColView* pl1 = plot_1.GetColPtr();
     if(pl1->dataCol()->is_matrix && plot_2.on) {
-      taMisc::Warning("GraphTableView -- plot_1 is a matrix, so plot_2 is being turned off (matrix can only be plotted by itself)");
-      plot_2.on = false;
+      taMisc::Warning("GraphTableView -- plot_1 is a matrix, so all other plots are being turned off (matrix can only be plotted by itself)");
+      plot_2.on = false; plot_3.on = false; plot_4.on = false; plot_5.on = false;
     }
 
-    if(pl1->dataCol()->isString() && !plot_2.on) {
-      taMisc::Warning("GraphTableView -- plot_1 is a String, so plot_2 must have a numeric (non matrix) column for the Y values to plot");
+    // always share axis if string
+    if(plot_2.on && plot_2.isString()) alt_y_2 = false;
+    
+    if(!alt_y_2) {
+      if(alt_y_3 && plot_3.on) {
+	taMisc::Warning("GraphTableView -- plot_3 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
+	alt_y_3 = false;
+      }
+      if(alt_y_4 && plot_4.on) {
+	taMisc::Warning("GraphTableView -- plot_4 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
+	alt_y_4 = false;
+      }
+      if(alt_y_5 && plot_5.on) {
+	taMisc::Warning("GraphTableView -- plot_5 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
+	alt_y_5 = false; // no can do
+      }
     }
-
-    // always share axis if one of these guys is a string..
-    if(pl1->dataCol()->isString()) share_y_axis = true;
-    if(plot_2.on && plot_2.GetDAPtr()->isString()) share_y_axis = true;
   }
 
   if(!x_axis.on) {
@@ -2939,9 +2990,44 @@ void GraphTableView::ComputeAxisRanges() {
   }
   plot_1.ComputeRange();
   plot_2.ComputeRange();
-  if(share_y_axis && plot_2.on && plot_2.GetDAPtr() && !plot_2.GetDAPtr()->isString()) {
-    plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
+  plot_3.ComputeRange();
+  plot_4.ComputeRange();
+  plot_5.ComputeRange();
+
+  if(plot_2.on && plot_2.GetDAPtr()) {
+    if(!alt_y_2 || plot_2.isString()) {
+      if(!plot_2.isString())
+	plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
+      // if anyone is on, they have to use main axis because 2 is only guy defining 2nd axis
+      if(plot_3.on && plot_3.GetDAPtr() && !plot_3.isString())
+	plot_1.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
+      if(plot_4.on && plot_4.GetDAPtr() && !plot_4.isString())
+	plot_1.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
+      if(plot_5.on && plot_5.GetDAPtr() && !plot_5.isString())
+	plot_1.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
+    }
+    else {
+      if(plot_3.on && plot_3.GetDAPtr() && !plot_3.isString()) {
+	if(alt_y_3)
+	  plot_2.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
+	else
+	  plot_1.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
+      }
+      if(plot_4.on && plot_4.GetDAPtr() && !plot_4.isString()) {
+	if(alt_y_4)
+	  plot_2.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
+	else
+	  plot_1.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
+      }
+      if(plot_5.on && plot_5.GetDAPtr() && !plot_5.isString()) {
+	if(alt_y_5)
+	  plot_2.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
+	else
+	  plot_1.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
+      }
+    }
   }
+
   if(color_mode == COLOR_AXIS)
     color_axis.ComputeRange();
   if(graph_type == RASTER)
@@ -3060,34 +3146,48 @@ void GraphTableView::InitFromUserData() {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataCol* da = cvs->dataCol();
     if(da->HasUserData("PLOT_2")) {
-      plot_2.col_name = cvs->name;
-      plot_2.on = true;
-      plot_2.InitFromUserData();
-      plot_2.UpdateAfterEdit();
+      plot_2.col_name = cvs->name;  plot_2.on = true;
+      plot_2.InitFromUserData();    plot_2.UpdateAfterEdit();
+    }
+    if(da->HasUserData("PLOT_3")) {
+      plot_3.col_name = cvs->name; plot_3.on = true;
+      plot_3.InitFromUserData();   plot_3.UpdateAfterEdit();
+    }
+    if(da->HasUserData("PLOT_4")) {
+      plot_4.col_name = cvs->name; plot_4.on = true;
+      plot_4.InitFromUserData();   plot_4.UpdateAfterEdit();
+    }
+    if(da->HasUserData("PLOT_5")) {
+      plot_5.col_name = cvs->name; plot_5.on = true;
+      plot_5.InitFromUserData();   plot_5.UpdateAfterEdit();
     }
     if(da->HasUserData("ERR_1")) {
-      err_1.col_name = cvs->name;
-      err_1.on = true;
-      err_1.InitFromUserData();
-      err_1.UpdateAfterEdit();
+      err_1.col_name = cvs->name;  err_1.on = true;
+      err_1.InitFromUserData();    err_1.UpdateAfterEdit();
     }
     if(da->HasUserData("ERR_2")) {
-      err_2.col_name = cvs->name;
-      err_2.on = true;
-      err_2.InitFromUserData();
-      err_2.UpdateAfterEdit();
+      err_2.col_name = cvs->name;  err_2.on = true;
+      err_2.InitFromUserData();    err_2.UpdateAfterEdit();
+    }
+    if(da->HasUserData("ERR_3")) {
+      err_3.col_name = cvs->name;  err_3.on = true;
+      err_3.InitFromUserData();    err_3.UpdateAfterEdit();
+    }
+    if(da->HasUserData("ERR_4")) {
+      err_4.col_name = cvs->name;  err_4.on = true;
+      err_4.InitFromUserData();    err_4.UpdateAfterEdit();
+    }
+    if(da->HasUserData("ERR_5")) {
+      err_5.col_name = cvs->name;  err_5.on = true;
+      err_5.InitFromUserData();    err_5.UpdateAfterEdit();
     }
     if(da->HasUserData("COLOR_AXIS")) {
-      color_axis.col_name = cvs->name;
-      color_axis.on = true;
-      color_axis.InitFromUserData();
-      color_axis.UpdateAfterEdit();
+      color_axis.col_name = cvs->name;   color_axis.on = true;
+      color_axis.InitFromUserData();     color_axis.UpdateAfterEdit();
     }
     if(da->HasUserData("RASTER_AXIS")) {
-      raster_axis.col_name = cvs->name;
-      raster_axis.on = true;
-      raster_axis.InitFromUserData();
-      raster_axis.UpdateAfterEdit();
+      raster_axis.col_name = cvs->name;  raster_axis.on = true;
+      raster_axis.InitFromUserData();    raster_axis.UpdateAfterEdit();
     }
   }
 
@@ -3111,8 +3211,15 @@ void GraphTableView::RenderGraph() {
   UpdateAfterEdit_impl();
   if(!plot_1.on || !x_axis.on) return;
   n_plots = 1;
-  if(plot_2.on)
+  if(plot_2.on && plot_2.GetDAPtr()) { // 2 must be on for any subsequent guys
     n_plots++;
+    if(plot_3.on && plot_3.GetDAPtr())
+      n_plots++;
+    if(plot_4.on && plot_4.GetDAPtr())
+      n_plots++;
+    if(plot_5.on && plot_5.GetDAPtr())
+      n_plots++;
+  }
 
   RenderAxes();
 
@@ -3231,7 +3338,7 @@ void GraphTableView::RenderAxes() {
       t3_y_axis_far = NULL;
     }
 
-    if(n_plots >= 2 && !share_y_axis) {
+    if(n_plots >= 2 && alt_y_2) {
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, AXIS_LABEL_SIZE, 1); // second Y = 1
       plot_2.RenderAxis(t3_y_axis_rt, 1); // indicate second axis!
       tr = new SoTranslation();  yax->addChild(tr);
@@ -3294,32 +3401,49 @@ void GraphTableView::RenderGraph_Scalar() {
   T3GraphLine* ln = new T3GraphLine(&plot_1);
   gr1->addChild(ln);
 
-  if(da_1->isString()) {
-    PlotData_String(plot_1, plot_2, ln);
-    if(n_plots >= 2) {
-      T3GraphLine* ln = new T3GraphLine(&plot_2); // then plot 2nd guy
-      gr1->addChild(ln);
-      if(share_y_axis)
-	PlotData_XY(plot_2, err_2, plot_1, ln);
-      else
-	PlotData_XY(plot_2, err_2, plot_2, ln);
+  PlotData_XY(plot_1, err_1, plot_1, ln); // this guy always has to be on
+
+  if(n_plots >= 2) {
+    T3GraphLine* ln = new T3GraphLine(&plot_2); gr1->addChild(ln);
+    if(plot_2.isString()) {
+      PlotData_String(plot_2, plot_1, ln);
     }
-  }
-  else {
-    PlotData_XY(plot_1, err_1, plot_1, ln);
-    if(n_plots >= 2) {
-      DataCol* da_2 = plot_2.GetDAPtr();
-      if(!da_2) return;
-      T3GraphLine* ln = new T3GraphLine(&plot_1);
-      gr1->addChild(ln);
-      if(da_2->isString()) {
-	PlotData_String(plot_2, plot_1, ln);
+    else {
+      if(alt_y_2) PlotData_XY(plot_2, err_2, plot_2, ln);
+      else        PlotData_XY(plot_2, err_2, plot_1, ln);
+    }
+
+    if(plot_3.on) {
+      T3GraphLine* ln = new T3GraphLine(&plot_3); gr1->addChild(ln);
+      if(plot_3.isString()) {
+	if(alt_y_3) PlotData_String(plot_3, plot_2, ln);
+	else 	    PlotData_String(plot_3, plot_1, ln);
       }
       else {
-	if(share_y_axis)
-	  PlotData_XY(plot_2, err_2, plot_1, ln);
-	else
-	  PlotData_XY(plot_2, err_2, plot_2, ln);
+	if(alt_y_3) PlotData_XY(plot_3, err_3, plot_2, ln);
+	else        PlotData_XY(plot_3, err_3, plot_1, ln);
+      }
+    }
+    if(plot_4.on) {
+      T3GraphLine* ln = new T3GraphLine(&plot_4); gr1->addChild(ln);
+      if(plot_4.isString()) {
+	if(alt_y_4) PlotData_String(plot_4, plot_2, ln);
+	else 	    PlotData_String(plot_4, plot_1, ln);
+      }
+      else {
+	if(alt_y_4) PlotData_XY(plot_4, err_4, plot_2, ln);
+	else        PlotData_XY(plot_4, err_4, plot_1, ln);
+      }
+    }
+    if(plot_5.on) {
+      T3GraphLine* ln = new T3GraphLine(&plot_5); gr1->addChild(ln);
+      if(plot_5.isString()) {
+	if(alt_y_5) PlotData_String(plot_5, plot_2, ln);
+	else 	    PlotData_String(plot_5, plot_1, ln);
+      }
+      else {
+	if(alt_y_5) PlotData_XY(plot_5, err_5, plot_2, ln);
+	else        PlotData_XY(plot_5, err_5, plot_1, ln);
       }
     }
   }
@@ -3848,16 +3972,45 @@ void GraphTableView::setPlot1(GraphColView* value) {
   UpdateAfterEdit();
   UpdateDisplay(true);
 }
-
 void GraphTableView::setPlot2(GraphColView* value) {
   plot_2.SetColPtr(value);
   UpdateAfterEdit();
   UpdateDisplay(true);
 }
+void GraphTableView::setPlot3(GraphColView* value) {
+  plot_3.SetColPtr(value);
+  UpdateAfterEdit();
+  UpdateDisplay(true);
+}
+void GraphTableView::setPlot4(GraphColView* value) {
+  plot_4.SetColPtr(value);
+  UpdateAfterEdit();
+  UpdateDisplay(true);
+}
+void GraphTableView::setPlot5(GraphColView* value) {
+  plot_5.SetColPtr(value);
+  UpdateAfterEdit();
+  UpdateDisplay(true);
+}
 
-void GraphTableView::setShareAxis(bool value) {
-  if (share_y_axis == value) return;
-  share_y_axis = value;
+void GraphTableView::setAltY2(bool value) {
+  if(alt_y_2 == value) return;
+  alt_y_2 = value;
+  UpdateDisplay(true);
+}
+void GraphTableView::setAltY3(bool value) {
+  if(alt_y_3 == value) return;
+  alt_y_3 = value;
+  UpdateDisplay(true);
+}
+void GraphTableView::setAltY4(bool value) {
+  if(alt_y_4 == value) return;
+  alt_y_4 = value;
+  UpdateDisplay(true);
+}
+void GraphTableView::setAltY5(bool value) {
+  if(alt_y_5 == value) return;
+  alt_y_5 = value;
   UpdateDisplay(true);
 }
 
@@ -3865,9 +4018,20 @@ void GraphTableView::setErr1(GraphColView* value) {
   err_1.SetColPtr(value);
   UpdateDisplay(true);
 }
-
 void GraphTableView::setErr2(GraphColView* value) {
   err_2.SetColPtr(value);
+  UpdateDisplay(true);
+}
+void GraphTableView::setErr3(GraphColView* value) {
+  err_3.SetColPtr(value);
+  UpdateDisplay(true);
+}
+void GraphTableView::setErr4(GraphColView* value) {
+  err_4.SetColPtr(value);
+  UpdateDisplay(true);
+}
+void GraphTableView::setErr5(GraphColView* value) {
+  err_5.SetColPtr(value);
   UpdateDisplay(true);
 }
 
@@ -4095,7 +4259,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // 1 AXis
   lay1Axis = new QHBoxLayout(layOuter);
 
-  lbl1Axis = taiM->NewLabel("1:", widg, font_spec);
+  lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
   lbl1Axis->setToolTip("First column of data to plot");
   lay1Axis->addWidget(lbl1Axis);
   lel1Axis = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
@@ -4113,7 +4277,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // 2 AXis
   lay2Axis = new QHBoxLayout(layOuter);
 
-  lbl2Axis = taiM->NewLabel("2:", widg, font_spec);
+  lbl2Axis = taiM->NewLabel("Y2:", widg, font_spec);
   lbl2Axis->setToolTip("Second column of data to plot (optional)");
   lay2Axis->addWidget(lbl2Axis);
   lel2Axis = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
@@ -4126,11 +4290,11 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(onc2Axis_toggled(bool)) );
   lay2Axis->addWidget(onc2Axis);
 
-  chkShareAxis =  new QCheckBox("Share\nAxis", widg, "chkShareAxis");
-  chkShareAxis->setToolTip("Whether to share the Y axis for this second column of data with the first plot's Y axis");
-  connect(chkShareAxis, SIGNAL(clicked(bool)), this, SLOT(chkShareAxis_toggled(bool)) );
-  //  layPlots->addWidget(chkShareAxis);
-  lay2Axis->addWidget(chkShareAxis);
+  chk2AltY =  new QCheckBox("Alt\nY", widg, "chk2AltY");
+  chk2AltY->setToolTip("Whether to setup an alternate Y axis for this second column of data (otherwise it shares with the first plot's Y axis)");
+  connect(chk2AltY, SIGNAL(clicked(bool)), this, SLOT(chk2AltY_toggled(bool)) );
+  //  layPlots->addWidget(chk2AltY);
+  lay2Axis->addWidget(chk2AltY);
 
   pdt2Axis = taiPolyData::New(true, &TA_FixedMinMax, NULL, NULL, widg);
   connect(pdt2Axis, SIGNAL(ChildDataChangedNotify(taiData*)), this, SLOT(pdt2Axis_dataChanged(taiData*)) );
@@ -4139,44 +4303,169 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay2Axis->addStretch();
 
   ////////////////////////////////////////////////////////////////////
-  // Plots
-  layPlots = new QHBoxLayout(layOuter);
+  // 3 AXis
+  lay3Axis = new QHBoxLayout(layOuter);
 
-  lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
-  lbl1Err->setToolTip("Column of for the 1st column's error bar data");
-  layPlots->addWidget(lbl1Err);
-  lel1Err = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
-  connect(lel1Err, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel1Err_dataChanged(taiData*)) );
-  layPlots->addWidget(lel1Err->GetRep());
+  lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
+  lbl3Axis->setToolTip("Second column of data to plot (optional)");
+  lay3Axis->addWidget(lbl3Axis);
+  lel3Axis = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel3Axis, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel3Axis_dataChanged(taiData*)) );
+  lay3Axis->addWidget(lel3Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
+  onc3Axis = new QCheckBox("On", widg, "onc3Axis");
+  onc3Axis->setToolTip("Display a second column's worth of data?");
+  connect(onc3Axis, SIGNAL(clicked(bool)), this, SLOT(onc3Axis_toggled(bool)) );
+  lay3Axis->addWidget(onc3Axis);
+
+  chk3AltY =  new QCheckBox("Alt\nY", widg, "chk3AltY");
+  chk3AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
+  connect(chk3AltY, SIGNAL(clicked(bool)), this, SLOT(chk3AltY_toggled(bool)) );
+  //  layPlots->addWidget(chk3AltY);
+  lay3Axis->addWidget(chk3AltY);
+
+  pdt3Axis = taiPolyData::New(true, &TA_FixedMinMax, NULL, NULL, widg);
+  connect(pdt3Axis, SIGNAL(ChildDataChangedNotify(taiData*)), this, SLOT(pdt3Axis_dataChanged(taiData*)) );
+  lay3Axis->addWidget(pdt3Axis->GetRep());
+
+  lay3Axis->addStretch();
+
+  ////////////////////////////////////////////////////////////////////
+  // 4 AXis
+  lay4Axis = new QHBoxLayout(layOuter);
+
+  lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
+  lbl4Axis->setToolTip("Second column of data to plot (optional)");
+  lay4Axis->addWidget(lbl4Axis);
+  lel4Axis = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel4Axis, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel4Axis_dataChanged(taiData*)) );
+  lay4Axis->addWidget(lel4Axis->GetRep());
+  //  layVals->addSpacing(taiM->hsep_c);
+
+  onc4Axis = new QCheckBox("On", widg, "onc4Axis");
+  onc4Axis->setToolTip("Display a second column's worth of data?");
+  connect(onc4Axis, SIGNAL(clicked(bool)), this, SLOT(onc4Axis_toggled(bool)) );
+  lay4Axis->addWidget(onc4Axis);
+
+  chk4AltY =  new QCheckBox("Alt\nY", widg, "chk4AltY");
+  chk4AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
+  connect(chk4AltY, SIGNAL(clicked(bool)), this, SLOT(chk4AltY_toggled(bool)) );
+  //  layPlots->addWidget(chk4AltY);
+  lay4Axis->addWidget(chk4AltY);
+
+  pdt4Axis = taiPolyData::New(true, &TA_FixedMinMax, NULL, NULL, widg);
+  connect(pdt4Axis, SIGNAL(ChildDataChangedNotify(taiData*)), this, SLOT(pdt4Axis_dataChanged(taiData*)) );
+  lay4Axis->addWidget(pdt4Axis->GetRep());
+
+  lay4Axis->addStretch();
+
+  ////////////////////////////////////////////////////////////////////
+  // 5 AXis
+  lay5Axis = new QHBoxLayout(layOuter);
+
+  lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
+  lbl5Axis->setToolTip("Second column of data to plot (optional)");
+  lay5Axis->addWidget(lbl5Axis);
+  lel5Axis = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel5Axis, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel5Axis_dataChanged(taiData*)) );
+  lay5Axis->addWidget(lel5Axis->GetRep());
+  //  layVals->addSpacing(taiM->hsep_c);
+
+  onc5Axis = new QCheckBox("On", widg, "onc5Axis");
+  onc5Axis->setToolTip("Display a second column's worth of data?");
+  connect(onc5Axis, SIGNAL(clicked(bool)), this, SLOT(onc5Axis_toggled(bool)) );
+  lay5Axis->addWidget(onc5Axis);
+
+  chk5AltY =  new QCheckBox("Alt\nY", widg, "chk5AltY");
+  chk5AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
+  connect(chk5AltY, SIGNAL(clicked(bool)), this, SLOT(chk5AltY_toggled(bool)) );
+  //  layPlots->addWidget(chk5AltY);
+  lay5Axis->addWidget(chk5AltY);
+
+  pdt5Axis = taiPolyData::New(true, &TA_FixedMinMax, NULL, NULL, widg);
+  connect(pdt5Axis, SIGNAL(ChildDataChangedNotify(taiData*)), this, SLOT(pdt5Axis_dataChanged(taiData*)) );
+  lay5Axis->addWidget(pdt5Axis->GetRep());
+
+  lay5Axis->addStretch();
+
+  ////////////////////////////////////////////////////////////////////
+  // Error bars
+  layErr1 = new QHBoxLayout(layOuter);
+  
+  // Err1
+  lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
+  lbl1Err->setToolTip("Column of for the 1st column's error bar data");
+  layErr1->addWidget(lbl1Err);
+  lel1Err = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel1Err, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel1Err_dataChanged(taiData*)) );
+  layErr1->addWidget(lel1Err->GetRep());
   onc1Err = new QCheckBox("On", widg, "onc1Err");
   onc1Err->setToolTip("Display error bars for 1st column's data?");
   connect(onc1Err, SIGNAL(clicked(bool)), this, SLOT(onc1Err_toggled(bool)) );
-  layPlots->addWidget(onc1Err);
+  layErr1->addWidget(onc1Err);
 
+  // Err2
   lbl2Err = taiM->NewLabel("2 Err:", widg, font_spec);
   lbl2Err->setToolTip("Column of for the 2nd column's error bar data");
-  layPlots->addWidget(lbl2Err);
+  layErr1->addWidget(lbl2Err);
   lel2Err = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
   connect(lel2Err, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel2Err_dataChanged(taiData*)) );
-  layPlots->addWidget(lel2Err->GetRep());
-  //  layVals->addSpacing(taiM->hsep_c);
-
+  layErr1->addWidget(lel2Err->GetRep());
   onc2Err = new QCheckBox("On", widg, "onc2Err");
   onc2Err->setToolTip("Display error bars for 2nd column's data?");
   connect(onc2Err, SIGNAL(clicked(bool)), this, SLOT(onc2Err_toggled(bool)) );
-  layPlots->addWidget(onc2Err);
+  layErr1->addWidget(onc2Err);
 
+  // Err3
+  lbl3Err = taiM->NewLabel("3 Err:", widg, font_spec);
+  lbl3Err->setToolTip("Column of for the 3nd column's error bar data");
+  layErr1->addWidget(lbl3Err);
+  lel3Err = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel3Err, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel3Err_dataChanged(taiData*)) );
+  layErr1->addWidget(lel3Err->GetRep());
+  onc3Err = new QCheckBox("On", widg, "onc3Err");
+  onc3Err->setToolTip("Display error bars for 3nd column's data?");
+  connect(onc3Err, SIGNAL(clicked(bool)), this, SLOT(onc3Err_toggled(bool)) );
+  layErr1->addWidget(onc3Err);
+
+  layErr1->addStretch();
+
+  layErr2 = new QHBoxLayout(layOuter);
+  // Err4
+  lbl4Err = taiM->NewLabel("4 Err:", widg, font_spec);
+  lbl4Err->setToolTip("Column of for the 4nd column's error bar data");
+  layErr2->addWidget(lbl4Err);
+  lel4Err = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel4Err, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel4Err_dataChanged(taiData*)) );
+  layErr2->addWidget(lel4Err->GetRep());
+  onc4Err = new QCheckBox("On", widg, "onc4Err");
+  onc4Err->setToolTip("Display error bars for 4nd column's data?");
+  connect(onc4Err, SIGNAL(clicked(bool)), this, SLOT(onc4Err_toggled(bool)) );
+  layErr2->addWidget(onc4Err);
+
+  // Err5
+  lbl5Err = taiM->NewLabel("5 Err:", widg, font_spec);
+  lbl5Err->setToolTip("Column of for the 5nd column's error bar data");
+  layErr2->addWidget(lbl5Err);
+  lel5Err = new taiListElsButton(&TA_T3DataView_List, NULL, NULL, widg);
+  connect(lel5Err, SIGNAL(DataChangedNotify(taiData*)), this, SLOT(lel5Err_dataChanged(taiData*)) );
+  layErr2->addWidget(lel5Err->GetRep());
+  onc5Err = new QCheckBox("On", widg, "onc5Err");
+  onc5Err->setToolTip("Display error bars for 5nd column's data?");
+  connect(onc5Err, SIGNAL(clicked(bool)), this, SLOT(onc5Err_toggled(bool)) );
+  layErr2->addWidget(onc5Err);
+
+  // Err Spacing
   lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
   lblErrSpacing->setToolTip("Spacing of error bars relative to data points.");
-  layPlots->addWidget(lblErrSpacing);
+  layErr2->addWidget(lblErrSpacing);
   fldErrSpacing = new taiField(&TA_float, NULL, NULL, widg);
-  layPlots->addWidget(fldErrSpacing->GetRep());
+  layErr2->addWidget(fldErrSpacing->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
   connect(fldErrSpacing->rep(), SIGNAL(editingFinished()), this, SLOT(fldErrSpacing_textChanged()) );
 
-  layPlots->addStretch();
+  layErr2->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	Colors
@@ -4286,8 +4575,17 @@ iGraphTableView_Panel::~iGraphTableView_Panel() {
   if (pdt1Axis) {delete pdt1Axis; pdt1Axis = NULL;}
   if (lel2Axis) {delete lel2Axis; lel2Axis = NULL;}
   if (pdt2Axis) {delete pdt2Axis; pdt2Axis = NULL;}
+  if (lel3Axis) {delete lel3Axis; lel3Axis = NULL;}
+  if (pdt3Axis) {delete pdt3Axis; pdt3Axis = NULL;}
+  if (lel4Axis) {delete lel4Axis; lel4Axis = NULL;}
+  if (pdt4Axis) {delete pdt4Axis; pdt4Axis = NULL;}
+  if (lel5Axis) {delete lel5Axis; lel5Axis = NULL;}
+  if (pdt5Axis) {delete pdt5Axis; pdt5Axis = NULL;}
   if (lel1Err) {delete lel1Err; lel1Err = NULL;}
   if (lel2Err) {delete lel2Err; lel2Err = NULL;}
+  if (lel3Err) {delete lel3Err; lel3Err = NULL;}
+  if (lel4Err) {delete lel4Err; lel4Err = NULL;}
+  if (lel5Err) {delete lel5Err; lel5Err = NULL;}
   if (lelCAxis) {delete lelCAxis; lelCAxis = NULL;}
   if (lelRAxis) {delete lelRAxis; lelRAxis = NULL;}
   if (pdtRAxis) {delete pdtRAxis; pdtRAxis = NULL;}
@@ -4328,22 +4626,47 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   lelZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
   pdtZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
-
   lel1Axis->GetImage(&(glv->children), glv->plot_1.GetColPtr());
   pdt1Axis->GetImage_(&(glv->plot_1.fixed_range));
 
   onc2Axis->setChecked(glv->plot_2.on);
   lel2Axis->GetImage(&(glv->children), glv->plot_2.GetColPtr());
   pdt2Axis->GetImage_(&(glv->plot_2.fixed_range));
-
   lel2Axis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
-  pdtZAxis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
+  pdt2Axis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
+  chk2AltY->setChecked(glv->alt_y_2);
 
-  chkShareAxis->setChecked(glv->share_y_axis);
+  onc3Axis->setChecked(glv->plot_3.on);
+  lel3Axis->GetImage(&(glv->children), glv->plot_3.GetColPtr());
+  pdt3Axis->GetImage_(&(glv->plot_3.fixed_range));
+  lel3Axis->SetFlag(taiData::flgReadOnly, !glv->plot_3.on);
+  pdt3Axis->SetFlag(taiData::flgReadOnly, !glv->plot_3.on);
+  chk3AltY->setChecked(glv->alt_y_3);
+
+  onc4Axis->setChecked(glv->plot_4.on);
+  lel4Axis->GetImage(&(glv->children), glv->plot_4.GetColPtr());
+  pdt4Axis->GetImage_(&(glv->plot_4.fixed_range));
+  lel4Axis->SetFlag(taiData::flgReadOnly, !glv->plot_4.on);
+  pdt4Axis->SetFlag(taiData::flgReadOnly, !glv->plot_4.on);
+  chk4AltY->setChecked(glv->alt_y_4);
+
+  onc5Axis->setChecked(glv->plot_5.on);
+  lel5Axis->GetImage(&(glv->children), glv->plot_5.GetColPtr());
+  pdt5Axis->GetImage_(&(glv->plot_5.fixed_range));
+  lel5Axis->SetFlag(taiData::flgReadOnly, !glv->plot_5.on);
+  pdt5Axis->SetFlag(taiData::flgReadOnly, !glv->plot_5.on);
+  chk5AltY->setChecked(glv->alt_y_5);
+
   lel1Err->GetImage(&(glv->children), glv->err_1.GetColPtr());
   onc1Err->setChecked(glv->err_1.on);
   lel2Err->GetImage(&(glv->children), glv->err_2.GetColPtr());
   onc2Err->setChecked(glv->err_2.on);
+  lel3Err->GetImage(&(glv->children), glv->err_3.GetColPtr());
+  onc3Err->setChecked(glv->err_3.on);
+  lel4Err->GetImage(&(glv->children), glv->err_4.GetColPtr());
+  onc4Err->setChecked(glv->err_4.on);
+  lel5Err->GetImage(&(glv->children), glv->err_5.GetColPtr());
+  onc5Err->setChecked(glv->err_5.on);
   fldErrSpacing->GetImage((String)glv->err_spacing);
 
   cmbColorMode->GetImage(glv->color_mode);
@@ -4552,7 +4875,6 @@ void iGraphTableView_Panel::onc2Axis_toggled(bool on) {
   glv->UpdateAfterEdit();
   glv->UpdateDisplay(false);
 }
-
 void iGraphTableView_Panel::lel2Axis_dataChanged(taiData*) {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
@@ -4560,7 +4882,6 @@ void iGraphTableView_Panel::lel2Axis_dataChanged(taiData*) {
   glv->setPlot2((GraphColView*)lel2Axis->GetValue());
   pdt2Axis->GetImage_(&(glv->plot_2.fixed_range)); // this can change, so update
 }
-
 void iGraphTableView_Panel::pdt2Axis_dataChanged(taiData*) {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
@@ -4568,13 +4889,95 @@ void iGraphTableView_Panel::pdt2Axis_dataChanged(taiData*) {
   pdt2Axis->GetValue_(&(glv->plot_2.fixed_range));
   glv->UpdateDisplay(false);
 }
-
-//////////////////////////////////////////
-void iGraphTableView_Panel::chkShareAxis_toggled(bool on) {
+void iGraphTableView_Panel::chk2AltY_toggled(bool on) {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-  glv->setShareAxis(on);
+  glv->setAltY2(on);
 }
+//////////////////////////////////////////
+void iGraphTableView_Panel::onc3Axis_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->plot_3.on = on;
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay(false);
+}
+void iGraphTableView_Panel::lel3Axis_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setPlot3((GraphColView*)lel3Axis->GetValue());
+  pdt3Axis->GetImage_(&(glv->plot_3.fixed_range)); // this can change, so update
+}
+void iGraphTableView_Panel::pdt3Axis_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  pdt3Axis->GetValue_(&(glv->plot_3.fixed_range));
+  glv->UpdateDisplay(false);
+}
+void iGraphTableView_Panel::chk3AltY_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setAltY3(on);
+}
+//////////////////////////////////////////
+void iGraphTableView_Panel::onc4Axis_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->plot_4.on = on;
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay(false);
+}
+void iGraphTableView_Panel::lel4Axis_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setPlot4((GraphColView*)lel4Axis->GetValue());
+  pdt4Axis->GetImage_(&(glv->plot_4.fixed_range)); // this can change, so update
+}
+void iGraphTableView_Panel::pdt4Axis_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  pdt4Axis->GetValue_(&(glv->plot_4.fixed_range));
+  glv->UpdateDisplay(false);
+}
+void iGraphTableView_Panel::chk4AltY_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setAltY4(on);
+}
+//////////////////////////////////////////
+void iGraphTableView_Panel::onc5Axis_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->plot_5.on = on;
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay(false);
+}
+void iGraphTableView_Panel::lel5Axis_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setPlot5((GraphColView*)lel5Axis->GetValue());
+  pdt5Axis->GetImage_(&(glv->plot_5.fixed_range)); // this can change, so update
+}
+void iGraphTableView_Panel::pdt5Axis_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  pdt5Axis->GetValue_(&(glv->plot_5.fixed_range));
+  glv->UpdateDisplay(false);
+}
+void iGraphTableView_Panel::chk5AltY_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->setAltY5(on);
+}
+
+
+//////////////////////////////////////////
 void iGraphTableView_Panel::onc1Err_toggled(bool on) {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
@@ -4589,6 +4992,7 @@ void iGraphTableView_Panel::lel1Err_dataChanged(taiData*) {
 
   glv->setErr1((GraphColView*)lel1Err->GetValue());
 }
+//////////////////////////////////////////
 void iGraphTableView_Panel::onc2Err_toggled(bool on) {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
@@ -4603,6 +5007,53 @@ void iGraphTableView_Panel::lel2Err_dataChanged(taiData*) {
 
   glv->setErr2((GraphColView*)lel2Err->GetValue());
 }
+//////////////////////////////////////////
+void iGraphTableView_Panel::onc3Err_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->err_3.on = on;
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay(false);
+}
+
+void iGraphTableView_Panel::lel3Err_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setErr3((GraphColView*)lel3Err->GetValue());
+}
+//////////////////////////////////////////
+void iGraphTableView_Panel::onc4Err_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->err_4.on = on;
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay(false);
+}
+
+void iGraphTableView_Panel::lel4Err_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setErr4((GraphColView*)lel4Err->GetValue());
+}
+//////////////////////////////////////////
+void iGraphTableView_Panel::onc5Err_toggled(bool on) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->err_5.on = on;
+  glv->UpdateAfterEdit();
+  glv->UpdateDisplay(false);
+}
+
+void iGraphTableView_Panel::lel5Err_dataChanged(taiData*) {
+  GraphTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->setErr5((GraphColView*)lel5Err->GetValue());
+}
+
+
 void iGraphTableView_Panel::fldErrSpacing_textChanged() {
   GraphTableView* glv = this->glv(); //cache
   if (updating || !glv) return;

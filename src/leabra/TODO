@@ -7,8 +7,8 @@ current:
 
 == Graph
 
+* add legend
 * bar graph mode??  -- easy to do.. just do it..  no fill..
-* add a few more lines, repl share axis with axis_1 and axis_2
 * log units on axis
 
 == Program

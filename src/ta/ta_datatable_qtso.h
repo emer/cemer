@@ -505,8 +505,10 @@ protected slots:
   Z_AXIS -- set as Z Axis
   PLOT_1 -- set as plot_1 data (first data to be plotted)
   PLOT_2 -- set as plot_2 data
+  PLOT_n -- set as plot_n data
   ERR_1 -- set as err_1 data
   ERR_2 -- set as err_2 data
+  ERR_n -- set as err_n data
   COLOR_AXIS -- set as color_axis
   RASTER_AXIS -- set as raster_axis
 */
@@ -564,6 +566,8 @@ public:
   GraphColView* 	GetColPtr(); // get column pointer from col_name
   DataCol*		GetDAPtr();  // get dataarray ptr
   GraphTableView*	GetGTV() 	{ return (GraphTableView*)owner; }
+
+  bool			isString(); // is this data a string?
 
   ///////////////////////////////////////////////////
   // 	Range Management
@@ -723,8 +727,14 @@ public:
   GraphAxisView		x_axis; 	// the x axis (horizontal, left-to-right)
   GraphAxisView		z_axis;		// the z axis (in depth, front-to-back)
   GraphPlotView		plot_1;		// first column of data to plot
-  GraphPlotView		plot_2;		// second column of data to plot (optional)
-  bool			share_y_axis;	// plot both values on same Y axis (else separate)
+  GraphPlotView		plot_2;		// second column of data to plot (optional -- only one that can set alt 2nd axis)
+  GraphPlotView		plot_3;		// third column of data to plot (optional)
+  GraphPlotView		plot_4;		// fourth column of data to plot (optional)
+  GraphPlotView		plot_5;		// fifth column of data to plot (optional)
+  bool			alt_y_2;	// plot 2 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_3;	// plot 3 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_4;	// plot 4 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_5;	// plot 5 values on alt Y axis (else plot_1 axis)
 
   GraphType		graph_type; 	// type of graph to draw
   PlotStyle		plot_style;	// how to plot the data
@@ -740,6 +750,9 @@ public:
 
   GraphPlotView		err_1;		// data for error bars for plot_1 values
   GraphPlotView		err_2;		// data for error bars for plot_2 values
+  GraphPlotView		err_3;		// data for error bars for plot_3 values
+  GraphPlotView		err_4;		// data for error bars for plot_4 values
+  GraphPlotView		err_5;		// data for error bars for plot_5 values
   int			err_spacing;	// #CONDEDIT_ON_graph_type:XY_ERR spacing between
   float			err_bar_width;	// half-width of error bars, in view plot units
 
@@ -793,9 +806,18 @@ public:
   void		setZAxis(GraphColView* value);
   void		setPlot1(GraphColView* value);
   void		setPlot2(GraphColView* value);
-  void		setShareAxis(bool value);
+  void		setPlot3(GraphColView* value);
+  void		setPlot4(GraphColView* value);
+  void		setPlot5(GraphColView* value);
+  void		setAltY2(bool value);
+  void		setAltY3(bool value);
+  void		setAltY4(bool value);
+  void		setAltY5(bool value);
   void		setErr1(GraphColView* value);
   void		setErr2(GraphColView* value);
+  void		setErr3(GraphColView* value);
+  void		setErr4(GraphColView* value);
+  void		setErr5(GraphColView* value);
   void		setColorAxis(GraphColView* value);
   void		setRasterAxis(GraphColView* value);
 
@@ -916,15 +938,51 @@ public:
   QLabel*		    lbl2Axis;
   taiListElsButton*	    lel2Axis; // list element chooser
   taiPolyData*	    	    pdt2Axis; // fixed_range polydata (inline)
+  QCheckBox*		    chk2AltY;
 
-  QHBoxLayout*		  layPlots;
-  QCheckBox*		    chkShareAxis;
+  QHBoxLayout*		  lay3Axis;
+  QCheckBox*		    onc3Axis; // on checkbox
+  QLabel*		    lbl3Axis;
+  taiListElsButton*	    lel3Axis; // list element chooser
+  taiPolyData*	    	    pdt3Axis; // fixed_range polydata (inline)
+  QCheckBox*		    chk3AltY;
+
+  QHBoxLayout*		  lay4Axis;
+  QCheckBox*		    onc4Axis; // on checkbox
+  QLabel*		    lbl4Axis;
+  taiListElsButton*	    lel4Axis; // list element chooser
+  taiPolyData*	    	    pdt4Axis; // fixed_range polydata (inline)
+  QCheckBox*		    chk4AltY;
+
+  QHBoxLayout*		  lay5Axis;
+  QCheckBox*		    onc5Axis; // on checkbox
+  QLabel*		    lbl5Axis;
+  taiListElsButton*	    lel5Axis; // list element chooser
+  taiPolyData*	    	    pdt5Axis; // fixed_range polydata (inline)
+  QCheckBox*		    chk5AltY;
+
+  QHBoxLayout*		  layErr1;
   QLabel*		    lbl1Err;
   taiListElsButton*	    lel1Err;
   QCheckBox*		    onc1Err; // on checkbox
+
   QLabel*		    lbl2Err;
   taiListElsButton*	    lel2Err;
   QCheckBox*		    onc2Err; // on checkbox
+
+  QLabel*		    lbl3Err;
+  taiListElsButton*	    lel3Err;
+  QCheckBox*		    onc3Err; // on checkbox
+
+  QHBoxLayout*		  layErr2;
+  QLabel*		    lbl4Err;
+  taiListElsButton*	    lel4Err;
+  QCheckBox*		    onc4Err; // on checkbox
+
+  QLabel*		    lbl5Err;
+  taiListElsButton*	    lel5Err;
+  QCheckBox*		    onc5Err; // on checkbox
+
   QLabel*		    lblErrSpacing;
   taiField*		    fldErrSpacing;
 
@@ -972,7 +1030,6 @@ protected slots:
 
   void 		chkDisplay_toggled(bool on);
   void 		cmbGraphType_itemChanged(int itm);
-  void 		chkShareAxis_toggled(bool on);
   void 		chkNegDraw_toggled(bool on);
   void 		fldRows_textChanged();
 
@@ -1005,11 +1062,33 @@ protected slots:
   void 		lel2Axis_dataChanged(taiData*);
   void 		onc2Axis_toggled(bool);
   void 		pdt2Axis_dataChanged(taiData*);
+  void 		chk2AltY_toggled(bool on);
+
+  void 		lel3Axis_dataChanged(taiData*);
+  void 		onc3Axis_toggled(bool);
+  void 		pdt3Axis_dataChanged(taiData*);
+  void 		chk3AltY_toggled(bool on);
+
+  void 		lel4Axis_dataChanged(taiData*);
+  void 		onc4Axis_toggled(bool);
+  void 		pdt4Axis_dataChanged(taiData*);
+  void 		chk4AltY_toggled(bool on);
+
+  void 		lel5Axis_dataChanged(taiData*);
+  void 		onc5Axis_toggled(bool);
+  void 		pdt5Axis_dataChanged(taiData*);
+  void 		chk5AltY_toggled(bool on);
 
   void 		lel1Err_dataChanged(taiData*);
   void 		onc1Err_toggled(bool);
   void 		lel2Err_dataChanged(taiData*);
   void 		onc2Err_toggled(bool);
+  void 		lel3Err_dataChanged(taiData*);
+  void 		onc3Err_toggled(bool);
+  void 		lel4Err_dataChanged(taiData*);
+  void 		onc4Err_toggled(bool);
+  void 		lel5Err_dataChanged(taiData*);
+  void 		onc5Err_toggled(bool);
   void 		fldErrSpacing_textChanged();
   void 		fldThresh_textChanged();
 
