@@ -1433,7 +1433,9 @@ DataCol* DataTable::FindMakeColMatrix(const String& col_nm,
 
 DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 					   ValType val_type, int dims,
-					   int d0, int d1, int d2, int d3) {
+					   int d0, int d1, int d2, int d3) 
+{
+  if (dims < 0) dims = 0; // causes invalid results if -ve; 0=flag for scalar
   DataCol* da = FindColName(col_nm, col_idx);
   if(da) {
     if(da->valType() != (ValType)val_type) {

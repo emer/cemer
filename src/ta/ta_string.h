@@ -198,9 +198,9 @@ public:
 #ifdef TA_USE_QT
   String(const QString& val);
   String&	  operator = (const QString& y);
-  const QString		toQString() const; // evil C++ necessitates this!!!
-  operator QString() const; //
-  operator QVariant() const; //
+  const QString		toQString() const; // #IGNORE evil C++ necessitates this!!!
+  operator QString() const;  // #IGNORE
+  operator QVariant() const;  // #IGNORE
 #endif
 
   ~String() {mrep->unRef();}

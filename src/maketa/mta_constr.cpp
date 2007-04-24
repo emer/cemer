@@ -681,47 +681,53 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
   }
   strm << "    ";
 
+  bool has_rval = ((md->type->ptr > 0) || (md->type != &TA_void));
   if (md->type->ptr == 0) {
-    if (md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int) ||
+    bool has_rval = true;
+    if (md->type == &TA_void) // explicitly not, so ok,
+      has_rval = false;
+    else if (md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int) ||
        md->type->DerivesFrom(TA_signed_char) || md->type->DerivesFrom(TA_unsigned_char) ||
        md->type->DerivesFrom(TA_short) || md->type->DerivesFrom(TA_unsigned_short) ||
        md->type->DerivesFrom(TA_long) || md->type->DerivesFrom(TA_unsigned_long))
       cmd = "cssInt((int)";
-    else if (md->type->DerivesFrom(TA_char))
-      cmd = "cssChar(";
     else if (md->type->DerivesFrom(TA_bool))
       cmd = "cssBool(";
-    else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t) ||
-      md->type->DerivesFrom(TA_Variant))
-      cmd = "cssVariant(";
     else if(md->type->DerivesFrom(TA_float) || md->type->DerivesFrom(TA_double))
       cmd = "cssReal((double)";
     else if (md->type->DerivesFrom(TA_taString))
       cmd = "cssString(";
+    else if(md->type->DerivesFrom(TA_Variant) ||
+      md->type->DerivesFrom(TA_uint64_t))
+      cmd = "cssVariant(";
+    else if(md->type->DerivesFrom(TA_int64_t))
+      cmd = "cssInt64(";
+    else if (md->type->DerivesFrom(TA_char))
+      cmd = "cssChar(";
     else if (md->type->InheritsFormal(TA_enum))
-    //TODO: this is a temporary hack -- we should create the right enum type
+      // NOTE: we can't make strongly typed enums here, but an int will
+      // convert properly to any strong enum, and should work fine
       cmd = "cssInt((int)";
     else {
-      MethodDef_GenStubCall(ownr, md, strm);
-      MethodDef_GenArgs(md, strm, act_argc);
-      strm << ");";
-      if(md->fun_argd >= 0) {
-	MethodDef_AssgnTempArgVars(ownr, md, strm, act_argc);
-	strm << "}\n";
-      }
-      else			strm << "\n";
-      return;
+      // we don't know how to handle this rval -- not good!!!!
+      has_rval = false;
+      if (mta->verbose > 0) {
+      cerr << "**WARNING**: in file: " << mta->cur_fname << " method: " << md->name << 
+        " don't know how to handle return type: " << md->type->name << 
+        " so it will be ignored!\n";
+     }
     }
-
-    strm << "rval=new " << cmd;
+    if (has_rval)
+      strm << "rval=new " << cmd;
     MethodDef_GenStubCall(ownr, md, strm);
     MethodDef_GenArgs(md, strm, act_argc);
-    strm << "));";
-  } else { // ptr > 0, is a ptr
-  //TODO: this seems wrong -- aren't we assuming it is exactly one indirection, 
-  // i.e., type* -- what if it ptr>=2????
+    if (has_rval) strm << ")";
+    strm << ");";
+  } else { // ptr > 0, therefore, ptr of some kind
     bool include_td = false;
-
+    // TODO: wrapping unsigned types with a signed wrapper as we do will
+    // give wrong behavior when the value is > MAX_xxx (i.e. looks -ve to int type
+    // We should have distinct signed/unsigned types
     if(md->type->DerivesFrom(TA_int) || md->type->DerivesFrom(TA_unsigned_int))
       cmd = "cssCPtr_int(";
     else if(md->type->DerivesFrom(TA_short) || md->type->DerivesFrom(TA_unsigned_short))
@@ -741,7 +747,8 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
     else if(md->type->DerivesFrom(TA_float))
       cmd = "cssCPtr_float(";
     else if(md->type->DerivesFrom(TA_bool))
-      cmd = "cssCPtr_int("; //TODO: why not cssCPtr_bool ????
+      cmd = "cssCPtr_bool("; 
+    //TODO: wrapping uint64 in int64 will give incorrect results for large vals!
     else if(md->type->DerivesFrom(TA_int64_t) || md->type->DerivesFrom(TA_uint64_t))
       cmd = "cssCPtr_long_long(";
     else if(md->type->DerivesFrom(TA_taString))
@@ -752,12 +759,23 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       cmd = "cssTA_Base(";
       include_td = true;
     }
+    else if(md->type->DerivesFrom(TA_TypeDef)) {
+      cmd = "cssTypeDef(";
+      include_td = true;
+    }
+    else if(md->type->DerivesFrom(TA_MethodDef)) {
+      cmd = "cssMethodDef(";
+      include_td = true;
+    }
+    else if(md->type->DerivesFrom(TA_MemberDef)) {
+      cmd = "cssMemberDef(";
+      include_td = true;
+    }
     else {
       cmd = "cssTA(";
       include_td = true;
     }
-
-    // everything is cast into a void!
+    // everything is cast into a void*! 
     strm << "rval=new " << cmd << "(void*)";
     MethodDef_GenStubCall(ownr, md, strm);
     MethodDef_GenArgs(md, strm, act_argc);
@@ -768,13 +786,13 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       strm << ", " << TypeDef_Gen_Ref_Of(nptd);
     }
     strm << ");";
-  }
+  } 
 
   if(md->fun_argd >= 0) {
     MethodDef_AssgnTempArgVars(ownr, md, strm, act_argc);
     strm << "}\n";
-  }
-  else			strm << "\n";
+  } else
+    strm << "\n";
 }
 
 

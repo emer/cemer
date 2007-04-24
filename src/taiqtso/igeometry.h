@@ -86,7 +86,7 @@ public:
 #endif
 };
 
-class TAIQTSO_API iSize { // #NO_TOKENS #INSTANCE #EDIT_INLINE
+class TAIQTSO_API iSize { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int w;
   int h;
@@ -107,7 +107,7 @@ public:
 };
 
 
-class TAIQTSO_API iRect { // #NO_TOKENS #INSTANCE #EDIT_INLINE
+class TAIQTSO_API iRect { // #NO_CSS #NO_TOKENS #INSTANCE #EDIT_INLINE
 public:
   int x;
   int y;

@@ -314,7 +314,7 @@ public:
   friend std::istream&   operator>>(std::istream& s, Variant& x);  // expects: type code then value
 #endif 
   
-#ifdef TA_USE_QT
+#if defined(TA_USE_QT) && !defined(__MAKETA__)
   Variant(const QVariant &val);
   void 		setQVariant(const QVariant& cp); 
   Variant& 	operator=(const QVariant& val) {setQVariant(val); return *this;}
