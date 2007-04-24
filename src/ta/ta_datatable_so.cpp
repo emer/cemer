@@ -838,6 +838,8 @@ T3GraphViewNode::T3GraphViewNode(void* dataView_, float wdth, bool show_draggers
   chld->addChild(z_axis_sep_);
   y_axes_sep_ = new SoSeparator;
   chld->addChild(y_axes_sep_);
+  legend_sep_ = new SoSeparator;
+  chld->addChild(legend_sep_);
   graphs_sep_ = new SoSeparator;
   chld->addChild(graphs_sep_);
 
@@ -856,6 +858,7 @@ T3GraphViewNode::~T3GraphViewNode()
   x_axis_sep_ = NULL;
   z_axis_sep_ = NULL;
   y_axes_sep_ = NULL;
+  legend_sep_ = NULL;
   graphs_sep_ = NULL;
 }
 

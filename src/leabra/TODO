@@ -2,13 +2,15 @@ leabra todo list:
 
 commit:
 
+* all on buttons independent
+* add legend: graphlines at top w/ labels
+* bar graph mode
+
 ------------
 current:
 
 == Graph
 
-* add legend
-* bar graph mode??  -- easy to do.. just do it..  no fill..
 * log units on axis
 
 == Program

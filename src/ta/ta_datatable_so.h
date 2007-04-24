@@ -335,6 +335,7 @@ public:
   virtual SoSeparator*	x_axis() { return x_axis_sep_; }
   virtual SoSeparator*	z_axis() { return z_axis_sep_; }
   virtual SoSeparator*	y_axes() { return y_axes_sep_; }
+  virtual SoSeparator*	legend() { return legend_sep_; }
   virtual SoSeparator*	graphs() { return graphs_sep_; }
 
 protected:
@@ -345,7 +346,8 @@ protected:
   SoMaterial*		chld_mat_; // first item in childNodes -- default material
   SoSeparator*		x_axis_sep_;
   SoSeparator*		z_axis_sep_;
-  SoSeparator*		y_axes_sep_; // can be multiple
+  SoSeparator*		y_axes_sep_;
+  SoSeparator*		legend_sep_; // can be multiple
 
   SoSeparator*		graphs_sep_; // graph boxes
 

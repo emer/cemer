@@ -696,6 +696,7 @@ public:
 
   enum GraphType {
     XY,				// standard XY(Z) plot -- plot value determines Y axis coordinate to plot (optional error bars as well, if turned on)
+    BAR,			// gar graph -- for integer/nominal X axis values (optional error bars as well, if turned on)
     RASTER,			// raster plot (flat lines stacked up using raster_axis), typically with color representing plot data value or thresholded lines (spike raster)
   };
 
@@ -741,11 +742,12 @@ public:
   float			line_width;	// width of line -- 0 means use default
   PointSize		point_size;	// size of point symbols
   int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE how frequently to display point markers 
+  float			bar_space;	// #DEF_0.2 amount of space between bars
   ColorMode		color_mode;	// how to determine the colors to draw
   bool			negative_draw;	// continue same line when X value resets in negative axis direction?
   int 			label_spacing;	// how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
   MatrixMode		matrix_mode;	// how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
-  taMisc::MatrixView		mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
+  taMisc::MatrixView	mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
   bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
 
   GraphPlotView		err_1;		// data for error bars for plot_1 values
@@ -836,6 +838,7 @@ public:
 
 protected:
   int			n_plots; // updated during rendergraph -- number of plots
+  float			bar_width; // width of bar for bar charts
   T3Axis* 		t3_x_axis;
   T3Axis* 		t3_x_axis_top; // tick-only top version of x
   T3Axis* 		t3_x_axis_far;
@@ -853,7 +856,8 @@ protected:
   // 	Rendering
 
   virtual void		RenderGraph();
-  virtual void		RenderGraph_Scalar();
+  virtual void		RenderGraph_XY();
+  virtual void		RenderGraph_Bar();
   virtual void		RenderGraph_Matrix_Sep();
   virtual void		RenderGraph_Matrix_Zi();
 
@@ -863,13 +867,18 @@ protected:
   virtual const iColor* GetValueColor(GraphAxisBase* ax_clr, float val);
   // get color from value using given axis
 
-  virtual void		RenderAxes();	   // get all the axis info
+  virtual void		RenderAxes();
+  virtual void		RenderLegend();
+  virtual void 		RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl);
 
   virtual void  	RemoveGraph(); // remove all lines
 
   virtual void 		PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
 				    T3GraphLine* t3gl, int mat_cell = -1);
   // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
+  virtual void 		PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+				     T3GraphLine* t3gl, float bar_off, int mat_cell = -1);
+  // plot bar data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0)
   virtual void 		PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y, T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
 

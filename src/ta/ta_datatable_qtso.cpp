@@ -2414,7 +2414,8 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
     if(!col_name.empty()) {
       fm.x = .5f * axis_length;
       fm.y = -(TICK_SIZE + TICK_OFFSET + 1.5f * AXIS_LABEL_SIZE);
-      t3ax->addLabel(col_name.chars(), fm, SoAsciiText::CENTER);
+      String label = col_name; taMisc::SpaceLabel(label);
+      t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
     }
   }
 
@@ -2475,13 +2476,14 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
       SbRotation rot;
       rot.setValue(SbVec3f(0.0, 0.0f, 1.0f), .5f * taMath_float::pi);
       fm.y = .5f * axis_length;
+      String label = col_name; taMisc::SpaceLabel(label);
       if(n_ax > 0) {
 	fm.x = TICK_SIZE + TICK_OFFSET + 1.2f * AXIS_LABEL_SIZE;
-	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::CENTER, rot);
+	t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
       }
       else {
 	fm.x = -TICK_SIZE - TICK_OFFSET - 1.2f * AXIS_LABEL_SIZE;
-	t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::CENTER, rot);
+	t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
       }
     }
   }
@@ -2543,7 +2545,8 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       fm.z = .5f * axis_length;
       fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
       fm.x = -(TICK_OFFSET + 2.5f * AXIS_LABEL_SIZE);
-      t3ax->addLabelRot(col_name.chars(), fm, SoAsciiText::CENTER, rot);
+      String label = col_name; taMisc::SpaceLabel(label);
+      t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
     }
   }
 
@@ -2704,6 +2707,7 @@ void GraphTableView::Initialize() {
   line_width = 2.0f;
   point_size = MEDIUM;
   point_spacing = 1;
+  bar_space = .2f;
   color_mode = VALUE_COLOR;
   negative_draw = false;
   label_spacing = -1;
@@ -2837,7 +2841,7 @@ void GraphTableView::UpdateAfterEdit_impl(){
     // always share axis if string
     if(plot_2.on && plot_2.isString()) alt_y_2 = false;
     
-    if(!alt_y_2) {
+    if(!alt_y_2 || !plot_2.on) {
       if(alt_y_3 && plot_3.on) {
 	taMisc::Warning("GraphTableView -- plot_3 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
 	alt_y_3 = false;
@@ -2994,38 +2998,27 @@ void GraphTableView::ComputeAxisRanges() {
   plot_4.ComputeRange();
   plot_5.ComputeRange();
 
-  if(plot_2.on && plot_2.GetDAPtr()) {
-    if(!alt_y_2 || plot_2.isString()) {
-      if(!plot_2.isString())
-	plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
-      // if anyone is on, they have to use main axis because 2 is only guy defining 2nd axis
-      if(plot_3.on && plot_3.GetDAPtr() && !plot_3.isString())
-	plot_1.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
-      if(plot_4.on && plot_4.GetDAPtr() && !plot_4.isString())
-	plot_1.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
-      if(plot_5.on && plot_5.GetDAPtr() && !plot_5.isString())
-	plot_1.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
-    }
-    else {
-      if(plot_3.on && plot_3.GetDAPtr() && !plot_3.isString()) {
-	if(alt_y_3)
-	  plot_2.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
-	else
-	  plot_1.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
-      }
-      if(plot_4.on && plot_4.GetDAPtr() && !plot_4.isString()) {
-	if(alt_y_4)
-	  plot_2.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
-	else
-	  plot_1.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
-      }
-      if(plot_5.on && plot_5.GetDAPtr() && !plot_5.isString()) {
-	if(alt_y_5)
-	  plot_2.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
-	else
-	  plot_1.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
-      }
-    }
+  if(plot_2.on && plot_2.GetDAPtr() && !plot_2.isString()) {
+    if(!alt_y_2)
+      plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
+  }
+  if(plot_3.on && plot_3.GetDAPtr() && !plot_3.isString()) {
+    if(alt_y_3)
+      plot_2.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
+    else
+      plot_1.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
+  }
+  if(plot_4.on && plot_4.GetDAPtr() && !plot_4.isString()) {
+    if(alt_y_4)
+      plot_2.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
+    else
+      plot_1.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
+  }
+  if(plot_5.on && plot_5.GetDAPtr() && !plot_5.isString()) {
+    if(alt_y_5)
+      plot_2.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
+    else
+      plot_1.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
   }
 
   if(color_mode == COLOR_AXIS)
@@ -3211,15 +3204,14 @@ void GraphTableView::RenderGraph() {
   UpdateAfterEdit_impl();
   if(!plot_1.on || !x_axis.on) return;
   n_plots = 1;
-  if(plot_2.on && plot_2.GetDAPtr()) { // 2 must be on for any subsequent guys
+  if(plot_2.on && plot_2.GetDAPtr())
     n_plots++;
-    if(plot_3.on && plot_3.GetDAPtr())
-      n_plots++;
-    if(plot_4.on && plot_4.GetDAPtr())
-      n_plots++;
-    if(plot_5.on && plot_5.GetDAPtr())
-      n_plots++;
-  }
+  if(plot_3.on && plot_3.GetDAPtr())
+    n_plots++;
+  if(plot_4.on && plot_4.GetDAPtr())
+    n_plots++;
+  if(plot_5.on && plot_5.GetDAPtr())
+    n_plots++;
 
   RenderAxes();
 
@@ -3230,7 +3222,11 @@ void GraphTableView::RenderGraph() {
       RenderGraph_Matrix_Zi();
   }
   else {
-    RenderGraph_Scalar();
+    RenderLegend();
+    if(graph_type == BAR)
+      RenderGraph_Bar();
+    else
+      RenderGraph_XY();
   }
 }
 
@@ -3338,7 +3334,7 @@ void GraphTableView::RenderAxes() {
       t3_y_axis_far = NULL;
     }
 
-    if(n_plots >= 2 && alt_y_2) {
+    if(plot_2.on && alt_y_2) {
       t3_y_axis_rt = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, AXIS_LABEL_SIZE, 1); // second Y = 1
       plot_2.RenderAxis(t3_y_axis_rt, 1); // indicate second axis!
       tr = new SoTranslation();  yax->addChild(tr);
@@ -3378,7 +3374,75 @@ void GraphTableView::RenderAxes() {
   }
 }
 
-void GraphTableView::RenderGraph_Scalar() {
+void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl) {
+  t3gl->clear();
+  t3gl->startBatch();
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
+  t3gl->setValueColorMode(false);
+  t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+
+  String label = plv.col_name; taMisc::SpaceLabel(label);
+
+  iVec3f st;
+  iVec3f ed;
+  ed.x = 1.5f * LINE_LABEL_SIZE;
+  t3gl->moveTo(st);
+  t3gl->lineTo(ed);
+  t3gl->textAt(iVec3f(ed.x + TICK_OFFSET,  ed.y - (.5f * LINE_LABEL_SIZE), ed.z),
+	       label.chars());
+}
+
+void GraphTableView::RenderLegend() {
+  T3GraphViewNode* node_so = this->node_so();
+  if (!node_so) return;
+
+  SoSeparator* leg = node_so->legend();
+  leg->removeAllChildren();
+  // move to top
+  SoTranslation* tr;
+  tr = new SoTranslation();  leg->addChild(tr);
+  tr->translation.setValue(0.0f, plot_1.axis_length + 2.5f * AXIS_LABEL_SIZE, 0.0f);
+
+  float over_amt = .5f * x_axis.axis_length;
+  float dn_amt = -1.1f * AXIS_LABEL_SIZE;
+  bool mv_dn = true;		// else over
+
+  if(plot_2.on && !alt_y_2 && !plot_2.isString()) {
+    T3GraphLine* ln = new T3GraphLine(&plot_2); leg->addChild(ln);
+    RenderLegend_Ln(plot_2, ln);
+    tr = new SoTranslation();  leg->addChild(tr);
+    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
+    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;		// flip
+  }
+  if(plot_3.on && !plot_2.isString()) {
+    T3GraphLine* ln = new T3GraphLine(&plot_3); leg->addChild(ln);
+    RenderLegend_Ln(plot_3, ln);
+    tr = new SoTranslation();  leg->addChild(tr);
+    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
+    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;		// flip
+  }
+  if(plot_4.on && !plot_2.isString()) {
+    T3GraphLine* ln = new T3GraphLine(&plot_4); leg->addChild(ln);
+    RenderLegend_Ln(plot_4, ln);
+    tr = new SoTranslation();  leg->addChild(tr);
+    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
+    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;		// flip
+  }
+  if(plot_5.on && !plot_2.isString()) {
+    T3GraphLine* ln = new T3GraphLine(&plot_5); leg->addChild(ln);
+    RenderLegend_Ln(plot_5, ln);
+    tr = new SoTranslation();  leg->addChild(tr);
+    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
+    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;		// flip
+  }
+}
+
+void GraphTableView::RenderGraph_XY() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
@@ -3403,7 +3467,7 @@ void GraphTableView::RenderGraph_Scalar() {
 
   PlotData_XY(plot_1, err_1, plot_1, ln); // this guy always has to be on
 
-  if(n_plots >= 2) {
+  if(plot_2.on) {
     T3GraphLine* ln = new T3GraphLine(&plot_2); gr1->addChild(ln);
     if(plot_2.isString()) {
       PlotData_String(plot_2, plot_1, ln);
@@ -3412,39 +3476,124 @@ void GraphTableView::RenderGraph_Scalar() {
       if(alt_y_2) PlotData_XY(plot_2, err_2, plot_2, ln);
       else        PlotData_XY(plot_2, err_2, plot_1, ln);
     }
+  }
+  if(plot_3.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_3); gr1->addChild(ln);
+    if(plot_3.isString()) {
+      if(alt_y_3) PlotData_String(plot_3, plot_2, ln);
+      else 	    PlotData_String(plot_3, plot_1, ln);
+    }
+    else {
+      if(alt_y_3) PlotData_XY(plot_3, err_3, plot_2, ln);
+      else        PlotData_XY(plot_3, err_3, plot_1, ln);
+    }
+  }
+  if(plot_4.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_4); gr1->addChild(ln);
+    if(plot_4.isString()) {
+      if(alt_y_4) PlotData_String(plot_4, plot_2, ln);
+      else 	    PlotData_String(plot_4, plot_1, ln);
+    }
+    else {
+      if(alt_y_4) PlotData_XY(plot_4, err_4, plot_2, ln);
+      else        PlotData_XY(plot_4, err_4, plot_1, ln);
+    }
+  }
+  if(plot_5.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_5); gr1->addChild(ln);
+    if(plot_5.isString()) {
+      if(alt_y_5) PlotData_String(plot_5, plot_2, ln);
+      else 	    PlotData_String(plot_5, plot_1, ln);
+    }
+    else {
+      if(alt_y_5) PlotData_XY(plot_5, err_5, plot_2, ln);
+      else        PlotData_XY(plot_5, err_5, plot_1, ln);
+    }
+  }
+}
 
-    if(plot_3.on) {
-      T3GraphLine* ln = new T3GraphLine(&plot_3); gr1->addChild(ln);
-      if(plot_3.isString()) {
-	if(alt_y_3) PlotData_String(plot_3, plot_2, ln);
-	else 	    PlotData_String(plot_3, plot_1, ln);
-      }
-      else {
-	if(alt_y_3) PlotData_XY(plot_3, err_3, plot_2, ln);
-	else        PlotData_XY(plot_3, err_3, plot_1, ln);
-      }
+void GraphTableView::RenderGraph_Bar() {
+  T3GraphViewNode* node_so = this->node_so();
+  if (!node_so) return;
+
+  if(n_plots <= 0) return;
+
+  DataCol* da_1 = plot_1.GetDAPtr();
+  if(!da_1) return;
+
+  SoSeparator* graphs = node_so->graphs();
+  graphs->removeAllChildren();
+
+  SoSeparator* gr1 = new SoSeparator;
+  graphs->addChild(gr1);
+
+  float boxd = 0.0f;
+  if(z_axis.on)
+    boxd = depth;
+
+  // each graph has a box and lines..
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
+  gr1->addChild(lbox);
+  T3GraphLine* ln = new T3GraphLine(&plot_1);
+  gr1->addChild(ln);
+
+  int n_str = 0;
+  if(plot_2.on && plot_2.isString()) n_str++;
+  if(plot_3.on && plot_3.isString()) n_str++;
+  if(plot_4.on && plot_4.isString()) n_str++;
+  if(plot_5.on && plot_5.isString()) n_str++;
+
+  bar_width = (1.0f - bar_space) / ((float)(n_plots - n_str));
+  float bar_off = - .5f * (1.0f - bar_space);
+
+  PlotData_Bar(plot_1, err_1, plot_1, ln, bar_off); // this guy always has to be on
+  bar_off += bar_width;
+
+  if(plot_2.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_2); gr1->addChild(ln);
+    if(plot_2.isString()) {
+      PlotData_String(plot_2, plot_1, ln);
     }
-    if(plot_4.on) {
-      T3GraphLine* ln = new T3GraphLine(&plot_4); gr1->addChild(ln);
-      if(plot_4.isString()) {
-	if(alt_y_4) PlotData_String(plot_4, plot_2, ln);
-	else 	    PlotData_String(plot_4, plot_1, ln);
-      }
-      else {
-	if(alt_y_4) PlotData_XY(plot_4, err_4, plot_2, ln);
-	else        PlotData_XY(plot_4, err_4, plot_1, ln);
-      }
+    else {
+      if(alt_y_2) PlotData_Bar(plot_2, err_2, plot_2, ln, bar_off);
+      else        PlotData_Bar(plot_2, err_2, plot_1, ln, bar_off);
+      bar_off += bar_width;
     }
-    if(plot_5.on) {
-      T3GraphLine* ln = new T3GraphLine(&plot_5); gr1->addChild(ln);
-      if(plot_5.isString()) {
-	if(alt_y_5) PlotData_String(plot_5, plot_2, ln);
-	else 	    PlotData_String(plot_5, plot_1, ln);
-      }
-      else {
-	if(alt_y_5) PlotData_XY(plot_5, err_5, plot_2, ln);
-	else        PlotData_XY(plot_5, err_5, plot_1, ln);
-      }
+  }
+  if(plot_3.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_3); gr1->addChild(ln);
+    if(plot_3.isString()) {
+      if(alt_y_3) PlotData_String(plot_3, plot_2, ln);
+      else 	    PlotData_String(plot_3, plot_1, ln);
+    }
+    else {
+      if(alt_y_3) PlotData_Bar(plot_3, err_3, plot_2, ln, bar_off);
+      else        PlotData_Bar(plot_3, err_3, plot_1, ln, bar_off);
+      bar_off += bar_width;
+    }
+  }
+  if(plot_4.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_4); gr1->addChild(ln);
+    if(plot_4.isString()) {
+      if(alt_y_4) PlotData_String(plot_4, plot_2, ln);
+      else 	    PlotData_String(plot_4, plot_1, ln);
+    }
+    else {
+      if(alt_y_4) PlotData_Bar(plot_4, err_4, plot_2, ln, bar_off);
+      else        PlotData_Bar(plot_4, err_4, plot_1, ln, bar_off);
+      bar_off += bar_width;
+    }
+  }
+  if(plot_5.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_5); gr1->addChild(ln);
+    if(plot_5.isString()) {
+      if(alt_y_5) PlotData_String(plot_5, plot_2, ln);
+      else 	    PlotData_String(plot_5, plot_1, ln);
+    }
+    else {
+      if(alt_y_5) PlotData_Bar(plot_5, err_5, plot_2, ln, bar_off);
+      else        PlotData_Bar(plot_5, err_5, plot_1, ln, bar_off);
+      bar_off += bar_width;
     }
   }
 }
@@ -3819,6 +3968,152 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     // post draw updates:
     first = false;
     last_x = dat.x;
+  }
+  t3gl->finishBatch();
+}
+
+void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax, 
+				  T3GraphLine* t3gl, float bar_off, int mat_cell) {
+  t3gl->clear();
+  t3gl->startBatch();
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
+
+  DataCol* da_y = plv.GetDAPtr();
+  if(!da_y) return;
+  DataCol* da_x = x_axis.GetDAPtr();
+  DataCol* da_z = z_axis.GetDAPtr();
+
+  DataTable* dt = dataTable();
+
+  // this should only happen if we have no data at all..
+  if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
+  if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
+
+  DataCol* da_er = erv.GetDAPtr();
+
+  GraphAxisBase* ax_clr = NULL;
+  DataCol* da_clr = NULL;
+  if(color_mode == FIXED_COLOR) {
+    t3gl->setValueColorMode(false);
+    t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+  }
+  else {
+    t3gl->setValueColorMode(true);
+    if(color_mode == VALUE_COLOR) {
+      ax_clr = &yax;
+      da_clr = plv.GetDAPtr();
+    }
+    else {
+      ax_clr = &color_axis;
+      da_clr = color_axis.GetDAPtr();
+    }
+    if(!da_clr) {		// fallback
+      t3gl->setValueColorMode(false);
+      t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+    }
+  }
+
+  GraphAxisBase* ax_rst = NULL;
+  DataCol* da_rst = NULL;
+  if(graph_type == RASTER) {
+    ax_rst = &raster_axis;
+    da_rst = raster_axis.GetDAPtr();
+  }
+
+  bool matz = false;
+  if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) matz = true;
+
+  float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
+  float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
+
+  iVec3f dat;			// data point
+  iVec3f plt;			// plot coords
+  for (int row = view_range.min; row <= view_range.max; row++) {
+    const iColor* clr = NULL; // only used for color modes
+    if(x_axis.row_num)
+      dat.x = row;
+    else
+      dat.x = da_x->GetValAsFloat(row);
+    if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
+    if(z_axis.on) {
+      if(z_axis.row_num)
+	dat.z = row;
+      else if(da_z)
+	dat.z = da_z->GetValAsFloat(row);
+      if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
+    }
+    if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
+      dat.z = mat_cell;
+    }
+    if(mat_cell >= 0) {
+      dat.y = da_y->GetValAsFloatM(row, mat_cell);
+    }
+    else {
+      dat.y = da_y->GetValAsFloat(row);
+    }
+    if(dat.y < yax.range.min || dat.y > yax.range.max) continue;
+
+    plt.x = x_axis.DataToPlot(dat.x);
+    plt.y = yax.DataToPlot(dat.y);
+
+    if(z_axis.on || matz)
+      plt.z = z_axis.DataToPlot(dat.z);
+
+    if(da_clr) {
+      if(color_mode == VALUE_COLOR) {
+	clr = GetValueColor(ax_clr, dat.y);
+      }
+      else {
+	clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
+      }
+    }
+
+    iVec3f pt;
+    // draw the line
+    if(clr) {
+      pt = plt;  pt.y = 0.0f;  pt.x += bar_off_plt;
+      t3gl->moveTo(pt, (T3Color)(*clr));
+      pt.y = plt.y;
+      t3gl->lineTo(pt, (T3Color)(*clr));
+      pt.x += bar_wd_plt;
+      t3gl->lineTo(pt, (T3Color)(*clr));
+      pt.y = 0.0f;
+      t3gl->lineTo(pt, (T3Color)(*clr));
+    }
+    else {
+      pt = plt;  pt.y = 0.0f;  pt.x += bar_off_plt;
+      t3gl->moveTo(pt);
+      pt.y = plt.y;
+      t3gl->lineTo(pt);
+      pt.x += bar_wd_plt;
+      t3gl->lineTo(pt);
+      pt.y = 0.0f;
+      t3gl->lineTo(pt);
+    }
+
+    if(erv.on && da_er && (row % err_spacing == 0)) {
+      float err_dat;
+      if(da_er->is_matrix && mat_cell >= 0) {
+	err_dat = da_er->GetValAsFloatM(row, mat_cell);
+      }
+      else {
+	err_dat = da_er->GetValAsFloat(row);
+      }
+      float err_plt = err_dat;
+      if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
+      
+      if(clr)
+	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(*clr));
+      else
+	t3gl->errBar(plt, err_plt, err_bar_width);
+    }
+
+    if((label_spacing > 0) && (row % label_spacing == 0)) {
+      String str = String(dat.y); // todo: could spec format..
+      t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * LINE_LABEL_SIZE), plt.z),
+		   str.chars());
+    }
   }
   t3gl->finishBatch();
 }
