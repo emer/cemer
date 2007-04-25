@@ -130,10 +130,10 @@ TAHEADS =\
 	@abs_srcdir@/ta_qtclipdata.h \
 	@abs_srcdir@/colorscale.h \
 	@abs_srcdir@/ta_script.h \
-	@abs_srcdir@/ta_dynenum.h \
 	@abs_srcdir@/ta_viewspec.h \
 	@abs_srcdir@/ta_viewer.h \
 	@abs_srcdir@/ta_program.h \
+	@abs_srcdir@/ta_program_els.h \
 	@abs_srcdir@/ta_matrix.h \
 	@abs_srcdir@/ta_math.h \
 	@abs_srcdir@/ta_geometry.h \
@@ -174,10 +174,10 @@ HEADS =\
 	colorscale.h \
 	ta_dmem.h \
 	ta_script.h \
-	ta_dynenum.h \
 	ta_viewspec.h \
 	ta_viewer.h \
 	ta_program.h \
+	ta_program_els.h \
 	ta_matrix.h \
 	ta_data.h \
 	ta_math.h \
@@ -219,10 +219,10 @@ SRCS =\
 	ta_qtclipdata.moc.cpp \
 	colorscale.cpp \
 	ta_script.cpp \
-	ta_dynenum.cpp \
 	ta_viewspec.cpp \
 	ta_viewer.cpp \
 	ta_program.cpp \
+	ta_program_els.cpp \
 	ta_matrix.cpp \
 	ta_matrix.moc.cpp \
 	ta_math.cpp \

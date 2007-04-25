@@ -1031,7 +1031,9 @@ void cssCPtr_DynEnum::TypeInfo(ostream& fh) const {
   }
   else {
     fh << "\n";
-    GetEnumRef().OutputType(fh);
+    DynEnum& enm = GetEnumRef();
+    if(enm.enum_type)
+      enm.enum_type->OutputType(fh);
   }
 }
 

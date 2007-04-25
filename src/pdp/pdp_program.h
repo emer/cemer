@@ -19,6 +19,7 @@
 #define PDP_PROGRAM_H
 
 #include "ta_program.h"
+#include "ta_datatable.h"
 #include "ta_dmem.h"
 
 class Network;
@@ -53,9 +54,7 @@ public:
 
   override String	GetDisplayName() const;
 
-  SIMPLE_COPY_UPDT_PTR_PAR(BasicDataLoop, Program);
-  SIMPLE_LINKS(BasicDataLoop);
-  TA_BASEFUNS(BasicDataLoop);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(BasicDataLoop, Program);
 protected:
   virtual void	GetOrderVar(); // make an order variable in program
   override void	UpdateAfterEdit_impl();
@@ -96,9 +95,7 @@ public:
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
 
-  SIMPLE_COPY_UPDT_PTR_PAR(GroupedDataLoop, Program);
-  SIMPLE_LINKS(GroupedDataLoop);
-  TA_BASEFUNS(GroupedDataLoop);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(GroupedDataLoop, Program);
 protected:
   virtual void	GetOrderVars(); // make order variables in program
   override void	UpdateAfterEdit_impl();
@@ -124,16 +121,13 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(NetCounterInit, Program);
-  SIMPLE_LINKS(NetCounterInit);
-  TA_BASEFUNS(NetCounterInit);
-
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetCounterInit, Program);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -152,16 +146,13 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(NetCounterIncr, Program);
-  SIMPLE_LINKS(NetCounterIncr);
-  TA_BASEFUNS(NetCounterIncr);
-
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetCounterIncr, Program);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetLocalCtrVar(); // if counter is not empty and local_ctr_var == NULL, then get a local ctr var for it
 
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -172,26 +163,67 @@ class PDP_API NetUpdateView: public ProgEl {
   // update the network view, conditional on an update_net_view variable that is created by this progam element
 INHERITED(ProgEl)
 public:
-  ProgVarRef	network_var;	// #SCOPE_Program_Group variable that points to the network (typically a global_var)
-  ProgVarRef	update_var;	// #SCOPE_Program_Group variable that controls whether we update the display or not
+  ProgVarRef	network_var;	// variable that points to the network
+  ProgVarRef	update_var;	// variable that controls whether we update the display or not
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  SIMPLE_COPY_UPDT_PTR_PAR(NetUpdateView, Program);
-  SIMPLE_LINKS(NetUpdateView);
-  TA_BASEFUNS(NetUpdateView);
-
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetUpdateView, Program);
 protected:
   override void	UpdateAfterEdit_impl();
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetUpdateVar(); // get the update_var variable
 
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
   void	Destroy();
 };
+
+////////////////////////////////////////////////////
+//		Named Units Framework
+////////////////////////////////////////////////////
+
+class PDP_API InitNamedUnits: public ProgEl { 
+  // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which must exist with that name -- other programs depend on it!)
+INHERITED(ProgEl)
+public:
+  ProgVarRef	input_data_var;	// program variable pointing to the input data table, which must exist and be called input_data (other named units programs depend on this name)
+  ProgVarRef	unit_names_var;	// program variable pointing to the unit_names data table, which is created if it does not exist -- contains the name labels for each of the units
+  ProgVarRef	network_var;	// variable that points to the network (optional; for labeling network units if desired)
+
+  static bool	InitUnitNamesFmInputData(DataTable* unit_names, const DataTable* input_data);
+  // intialize unit names data table from input data table
+  static bool	InitDynEnumFmUnitNames(DynEnumType* dyn_enum, const DataCol* unit_names_col);
+  // initialize a dynamic enum with names from unit names table colum (string matrix with one row)
+
+  virtual bool	InitNamesTable();
+  // #BUTTON #CONFIRM intialize the names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!
+  virtual bool	InitDynEnums();
+  // #BUTTON #CONFIRM intialize the dynamic enums from names table -- do this after you have entered the names in the unit_names table, in order to then refer to the names using enum values (avoiding having to use quotes!)
+  virtual bool	LabelNetwork();
+  // #BUTTON #CONFIRM label units in the network -- network_var must be set
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(InitNamedUnits, Program);
+protected:
+  override void	UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+
+  virtual bool	GetInputDataVar();
+  virtual bool	GetUnitNamesVar();
+  virtual bool	GetNetworkVar();
+
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
 
 #endif

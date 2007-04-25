@@ -18,8 +18,10 @@
 #include "v3_compat.h"
 
 #include "css_ta.h"
+#include "ta_program_els.h"
 #include "netstru.h"
 #include "pdp_project.h"
+
 
 #ifdef TA_GUI
 #include "ta_qtviewer.h"

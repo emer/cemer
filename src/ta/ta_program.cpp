@@ -31,6 +31,304 @@
 #endif
 
 
+///////////////////////////////////////////////////////////
+//		Program Types
+///////////////////////////////////////////////////////////
+
+void ProgType::Initialize() {
+}
+
+void ProgType::Destroy() {
+  CutLinks();
+}
+
+taBase* ProgType::FindTypeName(const String& nm) const {
+  if(name == nm) return (taBase*)this;
+  return NULL;
+}
+
+const String ProgType::GenCssType() const {
+  return "";
+}
+
+const String ProgType::GenCss(int indent_level) {
+  String rval;
+  if(!desc.empty()) {
+    // we support multi-lines by using the multi-line form of comments
+    if (desc.contains('\n')) {
+      rval.cat(cssMisc::IndentLines("/* " + desc + " */\n", indent_level));
+    } else {
+      rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(desc).cat("\n");
+    }
+  }
+  rval += GenCssPre_impl(indent_level);
+  rval += GenCssBody_impl(indent_level);
+  rval += GenCssPost_impl(indent_level);
+  return rval;
+} 
+
+//////////////////////////
+//   ProgType_List	//
+//////////////////////////
+
+void ProgType_List::Initialize() {
+  SetBaseType(&TA_ProgType);
+}
+
+void ProgType_List::El_SetIndex_(void* it_, int idx) {
+  ProgType* it = (ProgType*)it_;
+  if (it->name.empty()) {
+    it->name = "Type_" + (String)idx;
+  }
+}
+
+DynEnumType* ProgType_List::NewDynEnum() {
+  return (DynEnumType*)New(1, &TA_DynEnumType);
+}
+
+taBase* ProgType_List::FindTypeName(const String& nm)  const {
+  for (int i = 0; i < size; ++i) {
+    ProgType* it = FastEl(i);
+    taBase* ptr = it->FindTypeName(nm);
+    if(ptr) return ptr;
+  }
+  return NULL;
+}
+
+const String ProgType_List::GenCss(int indent_level) const {
+  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
+  for (int i = 0; i < size; ++i) {
+    ProgType* it = FastEl(i);
+    rval += it->GenCss(indent_level); 
+  }
+  return rval;
+}
+
+// void ProgType_List::setStale() {
+//   inherited::setStale();
+//   // if we are in a program group, dirty all progs
+//   // note: we have to test if in a prog first, otherwise we'll always get a group
+//   Program* prog = GET_MY_OWNER(Program);
+//   if (!prog) {
+//     Program_Group* grp = GET_MY_OWNER(Program_Group);
+//     if (grp)
+//       grp->SetProgsStale();
+//   }
+// }
+
+///////////////////////////////////////////////////////////
+//		DynEnumType
+///////////////////////////////////////////////////////////
+
+String DynEnumItem::GetDisplayName() const {
+  return name + "=" + String(value);
+}
+
+void DynEnumItem_List::Initialize() {
+  SetBaseType(&TA_DynEnumItem);
+}
+
+int DynEnumItem_List::FindNumIdx(int val) const {
+  for(int i=0;i<size;i++)
+    if(FastEl(i)->value == val) return i;
+  return -1;
+}
+
+void DynEnumItem_List::OrderItems() {
+  if(size == 0) return;
+  int prval = FastEl(0)->value;
+  for(int i=1;i<size;i++) {
+    DynEnumItem* it = FastEl(i);
+    if(it->value <= prval) {
+      it->value = prval + 1;
+      it->DataChanged(DCR_ITEM_UPDATED);
+    }
+    prval = it->value;
+  }
+}
+
+void DynEnumItem_List::DataChanged(int dcr, void* op1, void* op2) {
+//   cerr << "dyn enum: " << name << " invalidated due to type change" << endl;
+  OrderItems();
+  // we notify owner, so editing items causes related things to update,
+  // typically used by ProgVar to make sure the enum list gets updated in gui
+  taBase* own = GetOwner();
+  if (own)
+    own->DataChanged(DCR_CHILD_ITEM_UPDATED, (void*)this);
+  inherited::DataChanged(dcr, op1, op2);
+}
+
+///////////////////////////
+//	DynEnumType
+
+void DynEnumType::Initialize() {
+  SetDefaultName();
+  bits = false;
+}
+
+DynEnumItem* DynEnumType::NewEnum() {
+  return (DynEnumItem*)enums.New(1);
+}
+
+DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
+  DynEnumItem* it = NewEnum();
+  it->name = nm;
+  it->value = val;
+  enums.OrderItems();
+}
+
+taBase* DynEnumType::FindTypeName(const String& nm) const {
+  if(name == nm) return (taBase*)this;
+  int idx;
+  if((idx = FindNameIdx(nm)) >= 0) 
+    return enums.FastEl(idx);
+  return NULL;
+}
+
+String DynEnumType::GetDisplayName() const {
+  return "enum " + name + " (" + String(enums.size) + " items)";
+}
+
+const String DynEnumType::GenCssPre_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level); 
+  String rval = il + "enum " + name + " {\n";
+  return rval;
+}
+
+const String DynEnumType::GenCssBody_impl(int indent_level) {
+  String il1 = cssMisc::Indent(indent_level+1);
+  String rval;
+  for(int i=0;i<enums.size;i++) {
+    DynEnumItem* it = enums.FastEl(i);
+    rval += il1 + it->name + " \t = ";
+    if(bits)
+      rval += String(1 << it->value, "%x") + ",";
+    else
+      rval += String(it->value) + ",";
+    if(!it->desc.empty()) {
+      if(it->desc.contains('\n'))
+	rval += "  /* " + it->desc + " */";
+      else
+	rval += "  // " + it->desc;
+    }
+    rval += "\n";
+  }
+  return rval;
+}
+
+const String DynEnumType::GenCssPost_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level); 
+  String rval = il + "};\n";
+  return rval;
+}
+
+ostream& DynEnumType::OutputType(ostream& strm, int indent) const {
+  String rval = ((DynEnumType*)this)->GenCss(indent);
+  strm << rval;
+  return strm;
+}
+
+void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
+  // dynenum is programmed to send us notifies, we trap those and 
+  // turn them into changes of us, to force gui to update (esp enum list)
+  if (dcr == DCR_CHILD_ITEM_UPDATED) {
+    DataChanged(DCR_ITEM_UPDATED);
+    return; // don't send any further
+  }
+  inherited::DataChanged(dcr, op1, op2);
+}
+
+// todo: check config on bits with value > 31
+
+void DynEnumType::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  enums.CheckConfig(quiet, rval);
+}
+
+///////////////////////////////////////////////////////////
+//		DynEnum value
+///////////////////////////////////////////////////////////
+
+void DynEnum::Initialize() {
+  value = -1;
+}
+
+void DynEnum::Destroy() {
+  CutLinks();
+  value = -1;
+}
+
+void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!enum_type, quiet, rval,
+	     "enum_type is not set for this dynamic enum value");
+}
+
+int DynEnum::NumVal() const {
+  if(!enum_type) return -1;
+  if(enum_type->bits) return value;
+  if(value < 0 || value >= enum_type->enums.size) return -1;
+  return enum_type->enums.FastEl(value)->value;
+}
+
+const String DynEnum::NameVal() const {
+  if(!enum_type) return -1;
+  if(enum_type->bits) {
+    String rval;
+    for(int i=0;i<enum_type->enums.size;i++) {
+      DynEnumItem* it = enum_type->enums.FastEl(i);
+      if(value & (1 << it->value)) {
+	if(!rval.empty()) rval += "|";
+	rval += it->name;
+      }
+    }
+    return rval;
+  }
+  if(value < 0 || value >= enum_type->enums.size) return "";
+  return enum_type->enums.FastEl(value)->name;
+}
+
+bool DynEnum::SetNumVal(int val) {
+  if(!enum_type) return false;
+  if(enum_type->bits) {
+    value = val;		// must just be literal value.. 
+  }
+  else {
+    value = enum_type->FindNumIdx(val);
+    if(TestError(value < 0, "SetNumVal", "value:", (String)val, "not found!"))
+      return false;
+  }
+  return true;
+}
+
+bool DynEnum::SetNameVal(const String& nm) {
+  if(!enum_type) return false;
+  if(enum_type->bits) {
+    DynEnumItem* it = enum_type->enums.FindName(nm);
+    if(TestError(!it, "SetNameVal", "value label:", nm, "not found!"))
+      return false;
+    value |= 1 << it->value;
+  }
+  else {
+    value = enum_type->FindNameIdx(nm);
+    if(TestError(value < 0, "SetNameVal", "value label:", nm, "not found!"))
+      return false;
+  }
+  return true;
+}
+
+bool DynEnum::ClearBitName(const String& nm) {
+  if(!enum_type) return false;
+  if(TestError(!enum_type->bits, "ClearBitName", "this can only be used for bits type enums"))
+    return false;
+  DynEnumItem* it = enum_type->enums.FindName(nm);
+  if(TestError(!it, "value label:", nm, "not found!"))
+    return false;
+  value &= ~(1 << it->value);
+  return true;
+}
+
+
 //////////////////////////
 //   ProgVar		//
 //////////////////////////
@@ -58,7 +356,6 @@ void ProgVar::InitLinks() {
 
 void ProgVar::CutLinks() {
   object_val.CutLinks();
-  dyn_enum_val.Reset();
   dyn_enum_val.CutLinks();
   inherited::CutLinks();
 }
@@ -229,15 +526,6 @@ void ProgVar::SetVar(const Variant& value) {
       dyn_enum_val.SetNumVal(value.toInt());
     break;
   }
-}
-
-taBase* ProgVar::FindTypeName(const String& nm) const {
-  if(var_type != T_DynEnum) return NULL; // currently only dynenum has new types
-  if(dyn_enum_val.name == nm) return (taBase*)&dyn_enum_val;
-  int idx;
-  if((idx = dyn_enum_val.FindNameIdx(nm)) >= 0) 
-    return dyn_enum_val.FastEl(idx);
-  return NULL;
 }
 
 void ProgVar::Cleanup() {
@@ -416,18 +704,6 @@ cssEl* ProgVar::NewCssEl() {
   return &cssMisc::Void;
 }
 
-cssEl* ProgVar::NewCssType() {
-  if(var_type != T_DynEnum)
-    return NULL;
-  cssEnumType* et = new cssEnumType(dyn_enum_val.name);
-  for(int i=0;i<dyn_enum_val.size;i++) {
-    DynEnumItem* ev = dyn_enum_val.FastEl(i);
-    et->enums->Push(new cssEnum(et, ev->value, ev->name));
-  }
-  return et;
-}
-
-
 //////////////////////////
 //   ProgVar_List	//
 //////////////////////////
@@ -465,15 +741,6 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   it->SetObject(src);
   it->SetName(src->GetName());
   it->UpdateAfterEdit();
-}
-
-taBase* ProgVar_List::FindTypeName(const String& nm)  const {
-  for (int i = 0; i < size; ++i) {
-    ProgVar* it = FastEl(i);
-    taBase* ptr = it->FindTypeName(nm);
-    if(ptr) return ptr;
-  }
-  return NULL;
 }
 
 const String ProgVar_List::GenCss(int indent_level) const {
@@ -1150,10 +1417,6 @@ ProgVar* ProgEl::FindVarName(const String& var_nm) const {
   return NULL;
 }
 
-taBase* ProgEl::FindTypeName(const String& nm) const {
-  return NULL;
-}
-
 //////////////////////////
 //   ProgEl_List	//
 //////////////////////////
@@ -1213,131 +1476,6 @@ ProgVar* ProgEl_List::FindVarName(const String& var_nm) const {
   return NULL;
 }
 
-taBase* ProgEl_List::FindTypeName(const String& nm) const {
-  for (int i = 0; i < size; ++i) {
-    ProgEl* el = FastEl(i);
-    taBase* pv = el->FindTypeName(nm);
-    if(pv) return pv;
-  }
-  return NULL;
-}
-
-//////////////////////////
-//  CodeBlock		//
-//////////////////////////
-
-void CodeBlock::Initialize() {
-}
-
-void CodeBlock::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  prog_code.CheckConfig(quiet, rval);
-}
-
-const String CodeBlock::GenCssBody_impl(int indent_level) {
-  return prog_code.GenCss(indent_level);
-}
-
-String CodeBlock::GetDisplayName() const {
-  return "CodeBlock (" + String(prog_code.size) + " items)";
-}
-
-void CodeBlock::PreGenChildren_impl(int& item_id) {
-  prog_code.PreGen(item_id);
-}
-ProgVar* CodeBlock::FindVarName(const String& var_nm) const {
-  return prog_code.FindVarName(var_nm);
-}
-taBase* CodeBlock::FindTypeName(const String& nm) const {
-  return prog_code.FindTypeName(nm);
-}
-
-//////////////////////////
-//  ProgVars		//
-//////////////////////////
-
-void ProgVars::Initialize() {
-}
-
-void ProgVars::Destroy() {
-  CutLinks();
-}
-
-void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  local_vars.CheckConfig(quiet, rval);
-}
-
-const String ProgVars::GenCssBody_impl(int indent_level) {
-  return local_vars.GenCss(indent_level);
-}
-
-String ProgVars::GetDisplayName() const {
-  String rval;
-  rval += "ProgVars (";
-  rval += String(local_vars.size);
-  rval += " vars)";
-  return rval;
-}
-
-ProgVar* ProgVars::FindVarName(const String& var_nm) const {
-  return local_vars.FindName(var_nm);
-}
-taBase* ProgVars::FindTypeName(const String& nm) const {
-  return local_vars.FindTypeName(nm);
-}
-
-//////////////////////////
-//    UserScript	//
-//////////////////////////
-
-void UserScript::Initialize() {
-  static String _def_user_script("// TODO: Add your CSS script code here.\n");
-  script.expr = _def_user_script;
-  script.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-}
-
-const String UserScript::GenCssBody_impl(int indent_level) {
-  String rval(cssMisc::IndentLines(script.GetFullExpr(), indent_level));
-  // strip trailing non-newline ws, and make sure there is a trailing newline
-  rval = trimr(rval);
-  if (rval.lastchar() != '\n')
-    rval += '\n';
-  return rval;
-}
-
-String UserScript::GetDisplayName() const {
-  return script.expr;
-}
-
-void UserScript::ImportFromFile(istream& strm) {
-  script.expr = _nilString;
-  char c;
-  while((c = strm.get()) != EOF) {
-    script.expr += c;
-  }
-  UpdateAfterEdit();
-}
-
-void UserScript::ImportFromFileName(const String& fnm) {
-  String full_fnm = taMisc::FindFileOnLoadPath(fnm);
-  fstream strm;
-  strm.open(full_fnm, ios::in);
-  ImportFromFile(strm);
-  strm.close();
-}
-
-void UserScript::ExportToFile(ostream& strm) {
-  strm << script.GetFullExpr();
-}
-
-void UserScript::ExportToFileName(const String& fnm) {
-  fstream strm;
-  strm.open(fnm, ios::out);
-  ExportToFile(strm);
-  strm.close();
-}
-
 //////////////////////////
 //  Loop		//
 //////////////////////////
@@ -1356,339 +1494,6 @@ void Loop::PreGenChildren_impl(int& item_id) {
 }
 ProgVar* Loop::FindVarName(const String& var_nm) const {
   return loop_code.FindVarName(var_nm);
-}
-taBase* Loop::FindTypeName(const String& nm) const {
-  return loop_code.FindTypeName(nm);
-}
-
-
-//////////////////////////
-//  WhileLoop		//
-//////////////////////////
-
-void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
-}
-
-const String WhileLoop::GenCssPre_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "while (" + test.GetFullExpr() + ") {\n";
-}
-
-const String WhileLoop::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "}\n";
-}
-
-String WhileLoop::GetDisplayName() const {
-  return "while (" + test.expr + ")";
-}
-
-//////////////////////////
-//  DoLoop		//
-//////////////////////////
-
-void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
-}
-
-const String DoLoop::GenCssPre_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "do {\n";
-  return rval; 
-}
-
-const String DoLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "} while (" + test.GetFullExpr() + ");\n";
-  return rval;
-}
-
-String DoLoop::GetDisplayName() const {
-  return "do ... while (" + test.expr + ")";
-}
-
-//////////////////////////
-//  ForLoop		//
-//////////////////////////
-
-void ForLoop::Initialize() {
-  // the following are just default examples for the user
-  init.expr = "int i = 0";
-  test.expr = "i < 10";
-  iter.expr = "i++";
-  init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-}
-
-void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
-  CheckError(iter.expr.empty(), quiet, rval, "iter expression is empty");
-}
-
-const String ForLoop::GenCssPre_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "for (" + init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr() + ") {\n";
-  return rval; 
-}
-
-const String ForLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "}\n";
-  return rval;
-}
-
-String ForLoop::GetDisplayName() const {
-  return "for (" + init.expr + "; " + test.expr + "; " + iter.expr + ")";
-}
-
-
-//////////////////////////
-//  IfContinue		//
-//////////////////////////
-
-void IfContinue::Initialize() {
-}
-
-void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(cond.expr, quiet, rval);
-}
-
-const String IfContinue::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond.GetFullExpr() + ") continue;\n";
-  return rval; 
-}
-
-String IfContinue::GetDisplayName() const {
-  return "if(" + cond.expr + ") continue;";
-}
-
-
-//////////////////////////
-//  IfBreak		//
-//////////////////////////
-
-void IfBreak::Initialize() {
-}
-
-void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(cond.expr, quiet, rval);
-}
-
-const String IfBreak::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond.GetFullExpr() + ") break;\n";
-  return rval; 
-}
-
-String IfBreak::GetDisplayName() const {
-  return "if(" + cond.expr + ") break;";
-}
-
-//////////////////////////
-//  IfReturn		//
-//////////////////////////
-
-void IfReturn::Initialize() {
-}
-
-void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(cond.expr, quiet, rval);
-}
-
-const String IfReturn::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level) + 
-    "if(" + cond.GetFullExpr() + ") return;\n";
-  return rval; 
-}
-
-String IfReturn::GetDisplayName() const {
-  return "if(" + cond.expr + ") return;";
-}
-
-//////////////////////////
-//  IfElse		//
-//////////////////////////
-
-void IfElse::Initialize() {
-  //  cond.expr = "true";
-}
-
-void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(cond.expr, quiet, rval);
-}
-
-void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  true_code.CheckConfig(quiet, rval);
-  false_code.CheckConfig(quiet, rval);
-}
-
-const String IfElse::GenCssPre_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level);
-  rval += "if (" + cond.GetFullExpr() + ") {\n";
-  return rval; 
-}
-
-const String IfElse::GenCssBody_impl(int indent_level) {
-  String rval = true_code.GenCss(indent_level + 1);
-  // don't gen 'else' portion unless there are els
-  if (false_code.size > 0) {
-    rval += cssMisc::Indent(indent_level) + "} else {\n";
-    rval += false_code.GenCss(indent_level + 1);
-  }
-  return rval;
-}
-
-const String IfElse::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "}\n";
-}
-
-String IfElse::GetDisplayName() const {
-  return "if (" + cond.expr + ")";
-}
-
-void IfElse::PreGenChildren_impl(int& item_id) {
-  true_code.PreGen(item_id);
-  false_code.PreGen(item_id);
-}
-ProgVar* IfElse::FindVarName(const String& var_nm) const {
-  ProgVar* pv = true_code.FindVarName(var_nm);
-  if(pv) return pv;
-  return false_code.FindVarName(var_nm);
-}
-taBase* IfElse::FindTypeName(const String& nm) const {
-  taBase* pv = true_code.FindTypeName(nm);
-  if(pv) return pv;
-  return false_code.FindTypeName(nm);
-}
-
-//////////////////////////
-//    AssignExpr	//
-//////////////////////////
-
-void AssignExpr::Initialize() {
-}
-
-void AssignExpr::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(result_var);
-}
-
-void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!result_var, quiet, rval, "result_var is NULL");
-  CheckProgVarRef(result_var, quiet, rval);
-  expr.CheckConfig(quiet, rval);
-}
-
-const String AssignExpr::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
-  if (!result_var) {
-    rval += "//WARNING: AssignExpr not generated here -- result_var not specified\n";
-    return rval;
-  }
-  
-  rval += result_var->name + " = " + expr.GetFullExpr() + ";\n";
-  return rval;
-}
-
-String AssignExpr::GetDisplayName() const {
-  if(!result_var)
-    return "(result_var not selected)";
-  
-  String rval;
-  rval += result_var->name + "=" + expr.GetFullExpr();
-  return rval;
-}
-
-//////////////////////////
-//    MethodCall	//
-//////////////////////////
-
-void MethodCall::Initialize() {
-  method = NULL;
-  obj_type = &TA_taBase; // placeholder
-}
-
-void MethodCall::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(obj)
-    obj_type = obj->act_object_type();
-  else obj_type = &TA_taBase; // placeholder
-
-  UpdateProgVarRef_NewOwner(result_var);
-  UpdateProgVarRef_NewOwner(obj);
-
-//  if(!taMisc::is_loading && method)
-  if (method) // needed to set required etc.
-    meth_args.UpdateFromMethod(method);
-}
-
-void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!obj, quiet, rval, "obj is NULL");
-  CheckProgVarRef(result_var, quiet, rval);
-  CheckProgVarRef(obj, quiet, rval);
-  CheckError(!method, quiet, rval, "method is NULL");
-}
-
-void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  meth_args.CheckConfig(quiet, rval);
-}
-
-const String MethodCall::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
-  if (!((bool)obj && method)) {
-    rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
-   return rval;
-  }
-  
-  if(result_var)
-    rval += result_var->name + " = ";
-  rval += obj->name;
-  rval += "->";
-  rval += method->name;
-  rval += meth_args.GenCssBody_impl(indent_level);
-  rval += ";\n";
-  
-  return rval;
-}
-
-String MethodCall::GetDisplayName() const {
-  if (!obj || !method)
-    return "(object or method not selected)";
-  
-  String rval;
-  if(result_var)
-    rval += result_var->name + "=";
-  rval += obj->name;
-  rval += "->";
-  rval += method->name;
-  rval += "(";
-  for(int i=0;i<meth_args.size;i++) {
-    ProgArg* pa = meth_args[i];
-    if (i > 0)
-      rval += ", ";
-    rval += pa->GetDisplayName();
-  }
-  rval += ")";
-  return rval;
 }
 
 //////////////////////////
@@ -1761,132 +1566,6 @@ String StaticMethodCall::GetDisplayName() const {
   rval += ")";
   return rval;
 }
-
-void MathCall::Initialize() {
-  min_type = &TA_taMath;
-  object_type = &TA_taMath;
-}
-
-void RandomCall::Initialize() {
-  min_type = &TA_Random;
-  object_type = &TA_Random;
-}
-
-void MiscCall::Initialize() {
-  min_type = &TA_taMisc;
-  object_type = &TA_taMisc;
-}
-
-//////////////////////////
-//      PrintVar	//
-//////////////////////////
-
-void PrintVar::Initialize() {
-}
-
-void PrintVar::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(print_var);
-}
-
-void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!print_var, quiet, rval, "print_var is NULL");
-  CheckProgVarRef(print_var, quiet, rval);
-}
-
-const String PrintVar::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
-  if (!print_var) {
-    rval += "//WARNING: PrintVar not generated here -- print_var not specified\n";
-    return rval;
-  }
-  
-  rval += "cerr << \"" + print_var->name + " = \" << " + print_var->name + " << endl;\n";
-  return rval;
-}
-
-String PrintVar::GetDisplayName() const {
-  if(!print_var)
-    return "(print_var not selected)";
-  
-  String rval;
-  rval += "Print: " + print_var->name;
-  return rval;
-}
-
-
-//////////////////////////
-//      PrintExpr	//
-//////////////////////////
-
-void PrintExpr::Initialize() {
-}
-
-void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  expr.CheckConfig(quiet, rval);
-}
-
-const String PrintExpr::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
-  rval += "cerr << " + expr.GetFullExpr() + " << endl;\n";
-  return rval;
-}
-
-String PrintExpr::GetDisplayName() const {
-  String rval;
-  rval += "Print: " + expr.GetFullExpr();
-  return rval;
-}
-
-
-//////////////////////////
-//      Comment 	//
-//////////////////////////
-
-void Comment::Initialize() {
-  static String _def_comment("TODO: Add your program comment here (multi-lines ok).\n");
-  desc = _def_comment;
-}
-
-const String Comment::GenCssBody_impl(int indent_level) {
-  STRING_BUF(rval, desc.length() + 160);
-  rval += cssMisc::Indent(indent_level);
-  rval += "/*******************************************************************\n";
-  rval += cssMisc::IndentLines(desc, indent_level);
-  rval = trimr(rval);
-  if (rval.lastchar() != '\n')
-    rval += '\n';
-  rval += cssMisc::Indent(indent_level);
-  rval += "*******************************************************************/\n";
-  return rval;
-}
-
-String Comment::GetDisplayName() const {
-  return desc;
-}
-
-
-//////////////////////////
-//      StopStepPoint 	//
-//////////////////////////
-
-void StopStepPoint::Initialize() {
-}
-
-const String StopStepPoint::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level) + "StopCheck(); // check for Stop or Step button\n";
-  return rval;
-}
-
-String StopStepPoint::GetDisplayName() const {
-  return "Stop/Step Point";
-}
-
 
 //////////////////////////
 //   ProgramCall	//
@@ -2137,11 +1816,6 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
   if(pv) return pv;
   return fun_code.FindVarName(var_nm);
 }
-taBase* Function::FindTypeName(const String& nm) const {
-  taBase* pv = args.FindTypeName(nm);
-  if(pv) return pv;
-  return fun_code.FindTypeName(nm);
-}
 
 
 //////////////////////////
@@ -2212,31 +1886,6 @@ String FunctionCall::GetDisplayName() const {
 void FunctionCall::UpdateArgs() {
   if(!fun) return; // just leave existing stuff for now
   fun_args.UpdateFromVarList(fun->args);
-}
-
-//////////////////////////
-//    ReturnExpr	//
-//////////////////////////
-
-void ReturnExpr::Initialize() {
-}
-
-void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  expr.CheckConfig(quiet, rval);
-}
-
-const String ReturnExpr::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
-  rval += "return " + expr.GetFullExpr() + ";\n";
-  return rval;
-}
-
-String ReturnExpr::GetDisplayName() const {
-  String rval;
-  rval += "return " + expr.expr;
-  return rval;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -2377,6 +2026,7 @@ void Program::Destroy()	{
 void Program::InitLinks() {
   inherited::InitLinks();
   taBase::Own(objs, this);
+  taBase::Own(types, this);
   taBase::Own(args, this);
   taBase::Own(vars, this);
   taBase::Own(functions, this);
@@ -2395,6 +2045,7 @@ void Program::CutLinks() {
   functions.CutLinks();
   vars.CutLinks();
   args.CutLinks();
+  types.CutLinks();
   objs.CutLinks();
   prog_gp = NULL;
   inherited::CutLinks();
@@ -2408,6 +2059,7 @@ void Program::Reset() {
   functions.Reset();
   vars.Reset();
   args.Reset();
+  types.Reset();
   objs.Reset();
 }
 
@@ -2418,6 +2070,7 @@ void Program::Copy_(const Program& cp) {
   }
   desc = cp.desc;
   objs = cp.objs;
+  types = cp.types;
   args = cp.args;
   vars = cp.vars;
   functions = cp.functions;
@@ -2457,6 +2110,7 @@ bool Program::CheckConfig_impl(bool quiet) {
 void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   objs.CheckConfig(quiet, rval);
+  types.CheckConfig(quiet, rval);
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
   functions.CheckConfig(quiet, rval);
@@ -2743,11 +2397,7 @@ ProgVar* Program::FindVarName(const String& var_nm) const {
 }
 
 taBase* Program::FindTypeName(const String& nm) const {
-  taBase* sv = args.FindTypeName(nm);
-  if(sv) return sv;
-  sv = vars.FindTypeName(nm);
-  if(sv) return sv;
-  return prog_code.FindTypeName(nm);
+  return types.FindTypeName(nm);
 }
 
 Program* Program::FindProgramName(const String& prog_nm, bool warn_not_found) const {
@@ -2809,6 +2459,11 @@ const String Program::scriptString() {
       m_scriptCache += vars.GenCss(0);
     }
     m_scriptCache += "*/\n\n";
+
+    // types
+    if (types.size > 0) {
+      m_scriptCache += types.GenCss(0);
+    }
 
     // Functions
     m_scriptCache += functions.GenCss(0); // ok if empty, returns nothing
@@ -2885,17 +2540,11 @@ void  Program::UpdateProgVars() {
     ProgVar* sv = args.FastEl(i);
     el = sv->NewCssEl();
     script->prog_vars.Push(el);
-    el = sv->NewCssType();	// for dynenums
-    if(el)
-      script->prog_types.Push(el);
   } 
   for (int i = 0; i < vars.size; ++i) {
     ProgVar* sv = vars.FastEl(i);
     el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
-    el = sv->NewCssType();	// for dynenums
-    if(el)
-      script->prog_types.Push(el);
   } 
 }
 
@@ -2969,17 +2618,11 @@ void Program::RunLoadInitCode() {
     ProgVar* sv = args.FastEl(i);
     el = sv->NewCssEl();
     init_scr.prog_vars.Push(el);
-    el = sv->NewCssType();	// for dynenums
-    if(el)
-      init_scr.prog_types.Push(el);
   } 
   for (int i = 0; i < vars.size; ++i) {
     ProgVar* sv = vars.FastEl(i);
     el = sv->NewCssEl();
     init_scr.prog_vars.Push(el); //refs
-    el = sv->NewCssType();	// for dynenums
-    if(el)
-      init_scr.prog_types.Push(el);
   } 
 
   STRING_BUF(code_str, 2048);

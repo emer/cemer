@@ -17,6 +17,7 @@
 #include "netstru.h"
 #include "css_machine.h"
 #include "ta_datatable.h"
+#include "ta_project.h"
 
 // #include "css_basic_types.h"
 // #include "css_c_ptr_types.h"
@@ -264,8 +265,6 @@ String GroupedDataLoop::GetDisplayName() const {
 //////////////////////////
 
 void NetCounterInit::Initialize() {
-  network_var = NULL;
-  local_ctr_var = NULL;
   network_type = &TA_Network;
   counter = NULL;
 }
@@ -323,8 +322,6 @@ const String NetCounterInit::GenCssBody_impl(int indent_level) {
 // incr
 
 void NetCounterIncr::Initialize() {
-  network_var = NULL;
-  local_ctr_var = NULL;
   network_type = &TA_Network;
   counter = NULL;
 }
@@ -383,8 +380,6 @@ const String NetCounterIncr::GenCssBody_impl(int indent_level) {
 //////////////////////////
 
 void NetUpdateView::Initialize() {
-  network_var = NULL;
-  update_var = NULL;
 }
 
 void NetUpdateView::Destroy() {
@@ -427,4 +422,177 @@ const String NetUpdateView::GenCssBody_impl(int indent_level) {
     + network_var->name + "->UpdateAllViews();\n";
   return rval;
 }
+
+
+////////////////////////////////////////////////////
+//		Named Units Framework
+////////////////////////////////////////////////////
+
+void InitNamedUnits::Initialize() {
+}
+
+void InitNamedUnits::Destroy() {
+  CutLinks();
+}
+
+void InitNamedUnits::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(input_data_var);
+  UpdateProgVarRef_NewOwner(unit_names_var);
+  UpdateProgVarRef_NewOwner(network_var);
+
+  GetInputDataVar();
+  GetUnitNamesVar();
+  GetNetworkVar();
+}
+
+// this is really all it does -- no actual code gen!!
+void InitNamedUnits::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!input_data_var, quiet, rval, "input_data = NULL");
+  CheckError(!unit_names_var, quiet, rval, "unit_names = NULL");
+  CheckProgVarRef(input_data_var, quiet, rval);
+  CheckProgVarRef(unit_names_var, quiet, rval);
+  CheckProgVarRef(network_var, quiet, rval);
+}
+
+String InitNamedUnits::GetDisplayName() const {
+  return "Init Named Units";
+}
+
+bool InitNamedUnits::GetInputDataVar() {
+  if((bool)input_data_var && (input_data_var->name == "input_data")) return true;
+  Program* my_prog = program();
+  if(!my_prog) return false;
+  if(!(input_data_var = my_prog->vars.FindName("input_data"))) {
+    input_data_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+    input_data_var->name = "input_data";
+  }
+  input_data_var->var_type = ProgVar::T_Object;
+  //  input_data_var->UpdateAfterEdit();
+  return (bool)input_data_var->object_val;
+}
+
+bool InitNamedUnits::GetUnitNamesVar() {
+  Program* my_prog = program();
+  if(!my_prog) return false;
+  if(!unit_names_var || (unit_names_var->name != "unit_names")) {
+    if(!(unit_names_var = my_prog->vars.FindName("unit_names"))) {
+      unit_names_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      unit_names_var->name = "unit_names";
+    }
+  }
+  unit_names_var->var_type = ProgVar::T_Object;
+  //  unit_names_var->UpdateAfterEdit();
+
+  if(!unit_names_var->object_val) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(!proj) return false;
+    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
+    DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+    rval->name = "UnitNames";
+    taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
+    unit_names_var->object_val = rval;
+  }
+  return (bool)unit_names_var->object_val;
+}
+
+bool InitNamedUnits::GetNetworkVar() {
+  if((bool)network_var) return true;
+  Program* my_prog = program();
+  if(!my_prog) return false;
+  network_var = my_prog->vars.FindName("network");
+  if(!network_var) return false;
+  network_var->var_type = ProgVar::T_Object;
+  //  network_var->UpdateAfterEdit();
+  return (bool)network_var->object_val;
+}
+
+const String InitNamedUnits::GenCssBody_impl(int indent_level) {
+  return "";
+}
+
+bool InitNamedUnits::InitNamesTable() {
+  if(TestError(!GetInputDataVar(), "InitNamesTable", "could not find input_data table -- must set that up to point to your input data table, and give name input_data"))
+    return false;
+  if(TestError(!GetUnitNamesVar(), "InitNamesTable", "could not find unit names data table -- this should not usually happen because it is auto-made if not found"))
+    return false;
+
+  bool rval = InitUnitNamesFmInputData((DataTable*)unit_names_var->object_val.ptr(),
+				       (DataTable*)input_data_var->object_val.ptr());
+  return rval;
+}
+
+bool InitNamedUnits::InitUnitNamesFmInputData(DataTable* unit_names,
+					      const DataTable* input_data) {
+  if(!unit_names || !input_data) {
+    taMisc::Error("InitUnitNamesFmInputData", "null args");
+    return false;
+  }
+  for(int i=0;i<input_data->cols();i++) {
+    DataCol* idc = input_data->data.FastEl(i);
+    if(!idc->isNumeric() || !idc->isMatrix()) continue;
+    DataCol* ndc;
+    if(idc->cell_dims() == 4)
+      ndc = unit_names->FindMakeColMatrix(idc->name, VT_STRING,
+					  idc->cell_dims(),
+					  idc->GetCellGeom(0), idc->GetCellGeom(1), 
+					  idc->GetCellGeom(2), idc->GetCellGeom(3));
+    else
+      ndc = unit_names->FindMakeColMatrix(idc->name, VT_STRING,
+					  idc->cell_dims(),
+					  idc->GetCellGeom(0), idc->GetCellGeom(1));
+  }
+  if(unit_names->rows <= 0)
+    unit_names->AddBlankRow();		// only one row ever needed!
+  return true;
+}
+
+bool InitNamedUnits::InitDynEnums() {
+  Program* my_prog = program();
+  if(!my_prog) return false;
+  if(TestError(!GetUnitNamesVar(), "InitNamesTable", "could not find unit names data table -- this should not usually happen because it is auto-made if not found"))
+    return false;
+
+  DataTable* undt = (DataTable*)unit_names_var->object_val.ptr();
+  if(!undt) return false;	// should not happen
+
+  for(int i=0;i<undt->cols();i++) {
+    DataCol* ndc = undt->data.FastEl(i);
+    DynEnumType* det = (DynEnumType*)my_prog->types.FindName(ndc->name);
+    if(!det) {
+      det = my_prog->types.NewDynEnum();
+      det->name = ndc->name;
+    }
+    InitDynEnumFmUnitNames(det, ndc);
+  }
+  return true;
+}
+
+bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
+					    const DataCol* unit_names_col) {
+  if(!dyn_enum || !unit_names_col) {
+    taMisc::Error("InitDynEnumFmUnitNames", "null args");
+    return false;
+  }
+  dyn_enum->enums.Reset();
+  for(int i=0;i<unit_names_col->cell_size();i++) {
+    String cnm = unit_names_col->GetValAsStringM(-1, i);
+    if(cnm.empty()) continue;
+    dyn_enum->AddEnum(cnm, i);
+  }
+  return true;
+}
+
+bool InitNamedUnits::LabelNetwork() {
+  // todo: write this
+  return false;
+}
+
+// TODO: check for overlap and append first letter of layer/col name to disambig
+// do UnitNameLit and Var -- should be easy!
+
+// add offset for set -- for groups
+
+// do for 12ax -- better test case
 

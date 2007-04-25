@@ -1603,9 +1603,6 @@ ProgVar* DataCalcLoop::FindVarName(const String& var_nm) const {
   if(pv) return pv;
   return loop_code.FindVarName(var_nm);
 }
-taBase* DataCalcLoop::FindTypeName(const String& nm) const {
-  return loop_code.FindTypeName(nm);
-}
 
 void DataCalcLoop::PreGenChildren_impl(int& item_id) {
   loop_code.PreGen(item_id);

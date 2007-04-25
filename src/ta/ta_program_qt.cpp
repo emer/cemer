@@ -34,396 +34,70 @@
 #include "ispinbox.h"
 #include "itreewidget.h"
 
-//////////////////////////
-//   taiProgVar		//
-//////////////////////////
+////////////////////////
+//  taiDynEnumType    //
+////////////////////////
 
-taiProgVar* taiProgVar::New(TypeDef* typ_, IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags)
-{
-  taiProgVar* rval = new taiProgVar(typ_, host_, par, gui_parent_, flags);
-  rval->Constr(gui_parent_);
-  return rval;
+void taiDynEnumMember::Initialize() {
+  isBit = false;
 }
 
-taiProgVar::taiProgVar(TypeDef* typ_, IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags)
-: inherited(typ_, host_, par, gui_parent_, flags)
-{
-  init();
-}
-
-taiProgVar::~taiProgVar() {
-}
-
-void taiProgVar::init() {
-  m_updating = 0;
-  sc = scNone;
-  vt = 0;
-  
-  mbr_var_type = TA_ProgVar.members.FindName("var_type");
-  mbr_object_type = TA_ProgVar.members.FindName("object_type");
-  mbr_hard_enum_type = TA_ProgVar.members.FindName("hard_enum_type");
-
-  incVal = NULL; // for: ints
-  stack = NULL;
-  fldName = NULL;
-  cmbVarType = NULL;
-  incVal = NULL; // for: ints
-  fldVal = NULL; // for: char, string, most numbers
-  tglVal = NULL; // for: bool
-  tglCP = NULL;
-  tglNC = NULL;
-  thEnumType = NULL;
-  cboEnumValue = NULL;
-  thValType = NULL;
-  tkObjectValue = NULL;
-  edDynEnum = NULL; // for invoking editor for values
-  cboDynEnumValue = NULL;
-}
-
-void taiProgVar::Constr(QWidget* gui_parent_) { 
-  QWidget* rep_ = new QWidget(gui_parent_);
-  SetRep(rep_);
-  rep_->setMaximumHeight(taiM->max_control_height(defSize()));
-  if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep_,*(host->colorOfCurRow()));
-  }
-  InitLayout();
-  Constr_impl(gui_parent_, (mflags & flgReadOnly));
-  EndLayout();
-}
-
-void taiProgVar::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
-  QWidget* rep_ = GetRep();
-  QLabel* lbl = MakeLabel("name", rep_);
-  AddChildWidget(lbl, taiM->hsep_c);
-
-  fldName = new taiField(&TA_taString, host, this, rep_, mflags & flgReadOnly);
-  AddChildWidget(fldName->GetRep(), taiM->hsep_c);
-  
-  TypeDef* typ_var_enum = TA_ProgVar.sub_types.FindName("VarType");
-  lbl = MakeLabel(mbr_var_type->GetLabel(),rep_); // gets decorated name in case APPLY_IMMED
-  AddChildWidget(lbl, taiM->hsep_c);
-  // note: we handle apply_immed in cmb handler itself
-  cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
-  
-  AddChildWidget(cmbVarType->rep(), taiM->hsep_c);
-  lbl->setBuddy(cmbVarType->rep());
-  if (read_only_) {
-    cmbVarType->rep()->setEnabled(false);
-  } else {
-    connect(cmbVarType, SIGNAL(itemChanged(int)), this, SLOT(cmbVarType_itemChanged(int)));
-  }
-
-  lbl = MakeLabel("ctrl panel", rep_);
-  lbl->setToolTip("display this variable in the Program control panel?");
-  AddChildWidget(lbl, taiM->hsep_c);
-  tglCP = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
-  AddChildWidget(tglCP->rep(), taiM->hsep_c);
-
-  lbl = MakeLabel("null chk", rep_);
-  lbl->setToolTip("check if this variable is NULL during Init routine (only relevant for Object variables)?");
-  AddChildWidget(lbl, taiM->hsep_c);
-  tglNC = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
-  AddChildWidget(tglNC->rep(), taiM->hsep_c);
-}
-
-void taiProgVar::AssertControls(int value) {
-  if (value == sc) return;
-  // delete old
-  switch (sc) {
-//case scNone: // nothing 
-  case scInt:
-    incVal->Delete();
-    incVal = NULL; 
-    break;
-  case scField:
-    fldVal->Delete();
-    fldVal = NULL; // for: char, string, most numbers
-    break;
-  case scToggle:
-    tglVal->Delete();
-    tglVal = NULL; // for: bool
-    break;
-  case scBase:
-    thValType->Delete();
-    tkObjectValue->Delete();
-    thValType = NULL;
-    tkObjectValue = NULL;
-    break;
-  case scEnum:
-    thEnumType->Delete();
-    cboEnumValue->Delete();
-    thEnumType = NULL;
-    cboEnumValue = NULL;
-    break;
-  case scDynEnum:
-    edDynEnum->Delete();
-    cboDynEnumValue->Delete();
-    edDynEnum = NULL; // for invoking editor for values
-    cboDynEnumValue = NULL;
-    break;
-  default: break; // compiler food
-  }
-  if (stack) {
-    delete stack;
-    stack = NULL;
-  }
-  
-  QLabel* lbl = NULL; // used by many
-  QHBoxLayout* hl = NULL;
-  switch (value) {
-//case scNone: // nothing
-  case scInt: {
-    incVal = new taiIncrField(typ, host, this, NULL, mflags & flgReadOnly);
-    incVal->setMinimum(INT_MIN); //note: must be int
-    incVal->setMaximum(INT_MAX); //note: must be int
-    AddChildWidget(incVal->rep());
-    } break;
-  case scField: {
-    fldVal = new taiField(typ, host, this, NULL, mflags & (flgReadOnly | flgEditDialog));
-    AddChildWidget(fldVal->rep());
-    } break;
-  case scToggle: {
-    tglVal = new taiToggle(typ, host, this, NULL, mflags & flgReadOnly);
-    AddChildWidget(tglVal->rep());
-    } break;
-  case scBase: {
-    stack = new QWidget();
-    hl = new QHBoxLayout(stack);
-    hl->setMargin(0);
-    lbl = MakeLabel(mbr_object_type->GetLabel(), stack);
-    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    int flags = mflags & flgReadOnly;
-    if (mbr_object_type->HasOption(TypeItem::opt_apply_immed))
-      flags |= flgAutoApply;
-    thValType = new taiTypeDefButton(&TA_taBase, host, this, stack, flags);
-    hl->addWidget(thValType->GetRep());  hl->addSpacing(taiM->hsep_c);
-    lbl = MakeLabel("value", stack);
-    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    tkObjectValue = new taiTokenPtrButton(thValType->typ, host, this, stack, 
-      ((mflags & flgReadOnly) | flgNullOk | flgEditDialog));
-    hl->addWidget(tkObjectValue->GetRep());  hl->addSpacing(taiM->hsep_c);
-    
-    AddChildWidget(stack);
-    } break;
-  case scEnum: {
-    stack =  new QWidget();
-    hl = new QHBoxLayout(stack);
-    hl->setMargin(0);
-    
-    int flags = mflags & flgReadOnly;
-    if (mbr_hard_enum_type->HasOption(TypeItem::opt_apply_immed))
-      flags |= flgAutoApply;
-    lbl = MakeLabel(mbr_hard_enum_type->GetLabel(), stack);
-    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    thEnumType = new taiEnumTypeDefButton(&TA_taBase, host, this, stack, flags);
-    hl->addWidget(thEnumType->GetRep()); hl->addSpacing(taiM->hsep_c);
-    
-    lbl = MakeLabel("enum value", stack);
-    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    
-    cboEnumValue = new taiComboBox(true, NULL, host, this, stack, (mflags & flgReadOnly));
-    hl->addWidget(cboEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
-    
-    AddChildWidget(stack);
-    } break;
-  case scDynEnum: {
-    stack =  new QWidget();
-    hl = new QHBoxLayout(stack);
-    hl->setMargin(0);
-    
-    edDynEnum = taiEditButton::New(NULL, TA_DynEnum.ie, &TA_DynEnum, host, this,
-        stack, ((mflags & flgReadOnly) | flgEditOnly));
-    hl->addWidget(edDynEnum->GetRep()); hl->addSpacing(taiM->hsep_c);
-    
-    lbl = MakeLabel("enum value", stack);
-    hl->addWidget(lbl);  hl->addSpacing(taiM->hsep_c);
-    
-    cboDynEnumValue = new taiComboBox(true, NULL, host, this, stack, (mflags & flgReadOnly));
-    hl->addWidget(cboDynEnumValue->GetRep());  hl->addSpacing(taiM->hsep_c);
-    
-    AddChildWidget(stack);
-    } break;
-  default: break; // compiler food
-  }
-  sc = value;
-}
-
-void taiProgVar::cmbVarType_itemChanged(int itm) {
-  if (m_updating != 0) return;
-  ++m_updating;
-  // set combo box to right type
-  int new_vt;
-  cmbVarType->GetEnumValue(new_vt);
-  SetVarType(new_vt);
-  --m_updating;
-  if (mbr_var_type->HasOption(TypeItem::opt_apply_immed))
-    applyNow();
-}
-
-void taiProgVar::DataChanged_impl(taiData* chld) {
-  inherited::DataChanged_impl(chld);
-  if (m_updating > 0) return;
-  ++m_updating;
-  if (chld == thEnumType) {
-    cboEnumValue->SetEnumType(thEnumType->GetValue());
-    //note: prev value of value may no longer be a valid enum value!
-  } else  if (chld == thValType) {
-    // previous token may no longer be in scope!
-    tkObjectValue->GetImage(tkObjectValue->token(), thValType->GetValue());
-//    tkObjectValue->SetTypeScope(thValType->GetValue());
-  }
-  --m_updating;
-}
-
-void taiProgVar::GetImage(const ProgVar* var) {
-  ++m_updating;
-  fldName->GetImage(var->name);
-  SetVarType(var->var_type); //asserts correct control type
-  tglCP->GetImage(var->HasVarFlag(ProgVar::CTRL_PANEL)); 
-  tglNC->GetImage(var->HasVarFlag(ProgVar::NULL_CHECK)); 
-
-  // we only transfer the value in use
-  switch (varType()) {
-  case ProgVar::T_Int:
-    incVal->GetImage(var->int_val);
-    break;
-  case ProgVar::T_Real:
-    fldVal->GetImageVar_(Variant(var->real_val)); 
-    break;
-  case ProgVar::T_Bool:
-    tglVal->GetImage(var->bool_val); 
-    break;
-  case ProgVar::T_String:
-    fldVal->GetImage(var->string_val); 
-    break;
-  case ProgVar::T_Object: {
-    thValType->GetImage(var->object_type, &TA_taBase);
-    // get the host obj (usually Program) as scope obj
-    taBase* host_obj = NULL;
-    if (host && host->GetBaseTypeDef()->InheritsFrom(&TA_taBase)) {
-      host_obj = (taBase*)host->Base();
-    }
-    tkObjectValue->GetImage(var->object_val.ptr(), var->object_type, host_obj);
-    } break;
-  case ProgVar::T_HardEnum:
-    thEnumType->GetImage(var->hard_enum_type, &TA_taBase);
-    cboEnumValue->SetEnumType(var->hard_enum_type);
-    cboEnumValue->GetEnumImage(var->int_val);
-    break;
-  case ProgVar::T_DynEnum:
-    edDynEnum->GetImage_(&(var->dyn_enum_val));
-    UpdateDynEnumCombo(var);
-    //note: dynenums use the index as the "value" here, but we don't care, and
-    // treat that index as a "value"
-    int dei = var->dyn_enum_val.value_idx;
-    if (dei < 0) dei = 0;
-    cboDynEnumValue->GetEnumImage(dei);
-    break;
-  }
-  --m_updating;
-}
-
-void taiProgVar::GetValue(ProgVar* var) const {
-  var->name = fldName->GetValue();
-  var->var_type = (ProgVar::VarType)varType();
-  var->SetVarFlagState(ProgVar::CTRL_PANEL, tglCP->GetValue()); 
-  var->SetVarFlagState(ProgVar::NULL_CHECK, tglNC->GetValue()); 
-  // we only set the value for the type the user chose, and cleanup the rest
-  switch (varType()) {
-  case ProgVar::T_Int:
-    var->int_val = incVal->GetValue();
-    break;
-  case ProgVar::T_Real:
-    var->real_val = fldVal->GetValue().toDouble(); // note: we could check if ok...
-    break;
-  case ProgVar::T_Bool:
-    var->bool_val = tglVal->GetValue(); 
-    break;
-  case ProgVar::T_String:
-    var->string_val = fldVal->GetValue(); 
-    break;
-  case ProgVar::T_Object:
-    var->object_type = thValType->GetValue();
-    var->object_val = tkObjectValue->GetValue();
-    break;
-  case ProgVar::T_HardEnum:
-    var->hard_enum_type = thEnumType->GetValue();
-    cboEnumValue->GetEnumValue(var->int_val);
-    break;
-  case ProgVar::T_DynEnum: // see notes in GetImage about what "value" is
-    cboDynEnumValue->GetEnumValue(var->dyn_enum_val.value_idx);
-    break;
-  }
-  // set all the unused values to blanks
-  var->Cleanup();
-}
-  
-void taiProgVar::SetVarType(int value) {
-  ++m_updating;
-  vt = value;
-  cmbVarType->GetEnumImage(vt);
-  switch (vt) {
-  case ProgVar::T_Int:
-    AssertControls(scInt);
-    break;
-  case ProgVar::T_Real:
-  case ProgVar::T_String: 
-    AssertControls(scField);
-    break;
-  case ProgVar::T_Bool:
-    AssertControls(scToggle);
-    break;
-  case ProgVar::T_Object: 
-    AssertControls(scBase);
-//TODO ??   tabVal->GetImage(NULL); // obj, no scope
-    break;
-  case ProgVar::T_HardEnum: 
-    AssertControls(scEnum);
-    break;
-  case ProgVar::T_DynEnum:
-    AssertControls(scDynEnum);
-    break;
-  default: break ;
-  }
-  --m_updating;
-}
-
-void taiProgVar::UpdateDynEnumCombo(const ProgVar* var) {
-  if (sc != scDynEnum) return;
-  ++m_updating;
-  cboDynEnumValue->Clear();
-  const DynEnum& de = var->dyn_enum_val; // convenience
-  for (int i = 0; i < de.size; ++i) {
-    const DynEnumItem* dei = de.FastEl(i);
-    //note: dynenums store the index of the value, not the value
-    cboDynEnumValue->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
-  }
-  --m_updating;
-}
-
-
-//////////////////////////
-//  taiProgVarType	//
-//////////////////////////
-
-int taiProgVarType::BidForType(TypeDef* td) {
-   if (td->InheritsFrom(TA_ProgVar)) 
-     return (inherited::BidForType(td) +1);
-   else  return 0;
+int taiDynEnumMember::BidForMember(MemberDef* md, TypeDef* td){
+  TypeDef* mtd = md->type;
+  if(td->InheritsFrom(&TA_DynEnum) && mtd->InheritsFrom(&TA_int) &&
+     (md->OptionAfter("DYNENUM_ON_") != ""))
+    return taiMember::BidForMember(md,td)+1;
   return 0;
 }
 
-taiData* taiProgVarType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) 
-{
-  //note: we use a static New function because of funky construction-time virtual functions
-  taiProgVar* rval = taiProgVar::New(typ, host_, par, gui_parent_, flags_);
-  return rval;
+taiData* taiDynEnumMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+					 int flags_) {
+  isBit = false;		// oops -- we don't have base and can't find out!
+  if (isBit) {
+    return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
+  } else if (flags_ & taiData::flgReadOnly) {
+    return new taiField(typ, host_, par, gui_parent_, flags_);
+  } else {
+    taiComboBox* rval = new taiComboBox(true, NULL, host_, par, gui_parent_, flags_);
+    return rval;
+  }
 }
 
+void taiDynEnumMember::GetImage_impl(taiData* dat, const void* base) {
+  DynEnum* dye = (DynEnum*)base;
+  if (isBit) {
+    taiBitBox* rval = (taiBitBox*)dat;
+    rval->GetImage(dye->value);
+  } else if (isReadOnly(dat)) {
+    taiField* rval = (taiField*)(dat);
+    String str = dye->NameVal();
+    rval->GetImage(str);
+  } else {
+    taiComboBox* rval = (taiComboBox*)dat;
+    rval->Clear();
+    if(dye->enum_type) {
+      for (int i = 0; i < dye->enum_type->enums.size; ++i) {
+	const DynEnumItem* dei = dye->enum_type->enums.FastEl(i);
+	rval->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
+      }
+    }
+    if(dye->value >=0)
+      rval->GetImage(dye->value);
+  }
+}
 
+void taiDynEnumMember::GetValue_impl(taiData* dat, void* base) {
+  DynEnum* dye = (DynEnum*)base;
+  if (isBit) {
+    taiBitBox* rval = (taiBitBox*)dat;
+    rval->GetValue(dye->value);
+  } else if (!isReadOnly(dat)) {
+    taiComboBox* rval = (taiComboBox*)dat;
+    int itm_no = -1;
+    rval->GetValue(itm_no);
+    dye->value = itm_no;
+  }
+}
 
 //////////////////////////
 // tabProgramViewType	//
@@ -975,7 +649,8 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
   // by default, expand code guys throughout, plus top-level args, vars and objs
   taiDataLink* dl = item->link();
   TypeDef* typ = dl->GetDataTypeDef();
-  if((level <= 1) && typ->InheritsFrom(&TA_ProgVar_List)) return; // only top guys: args, vars
+  if((level <= 1) && (typ->InheritsFrom(&TA_ProgVar_List) ||
+		      typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
   if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList))
     return;			// expand
   if(typ->InheritsFrom(&TA_ProgEl)) {
@@ -1400,7 +1075,7 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
       }
       else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-        ((taiComboBox*)mb_dat)->GetEnumValue(pv->dyn_enum_val.value_idx);
+        ((taiComboBox*)mb_dat)->GetEnumValue(pv->dyn_enum_val.value);
       }
       else {
         md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
@@ -1416,8 +1091,9 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
 void iProgramCtrlDataHost::UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var) {
   cb->Clear();
   const DynEnum& de = var->dyn_enum_val; // convenience
-  for (int i = 0; i < de.size; ++i) {
-    const DynEnumItem* dei = de.FastEl(i);
+  if(!de.enum_type) return;
+  for (int i = 0; i < de.enum_type->enums.size; ++i) {
+    const DynEnumItem* dei = de.enum_type->enums.FastEl(i);
     //note: dynenums store the index of the value, not the value
     cb->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
   }
@@ -1466,7 +1142,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
       }
       else if(pv->var_type == ProgVar::T_DynEnum) {
         UpdateDynEnumCombo(((taiComboBox*)mb_dat), pv);
-        int dei = pv->dyn_enum_val.value_idx;
+        int dei = pv->dyn_enum_val.value;
         if (dei < 0) dei = 0;
         ((taiComboBox*)mb_dat)->GetEnumImage(dei);
       }

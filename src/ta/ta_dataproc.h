@@ -546,7 +546,6 @@ public:
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
   override ProgVar*	FindVarName(const String& var_nm) const;
-  override taBase*	FindTypeName(const String& nm) const;
 
   override String GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(DataCalcLoop);

@@ -1255,6 +1255,8 @@ bool taRootBase::Startup_InitViewColors() {
 					 true, "purple2", true, "MediumPurple1");
   taMisc::view_colors->FindMakeViewColor("Function", "Program function",
 					 true, "blue1", true, "LightBlue2");
+  taMisc::view_colors->FindMakeViewColor("ProgType", "Program type",
+					 true, "lime green", true, "lime green");
   taMisc::view_colors->FindMakeViewColor("ProgVar", "Program variable",
 					 true, "dark goldenrod");
   taMisc::view_colors->FindMakeViewColor("ProgArg", "Program argument",

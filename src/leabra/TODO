@@ -2,38 +2,51 @@ leabra todo list:
 
 commit:
 
-* all on buttons independent
-* add legend: graphlines at top w/ labels
-* bar graph mode
+* clearer if DynEnum type and token are separate..  Brad was right.  Dynenum edit not working.
+* add a types group, ProgType obj, ProgEnum subclass, plan for ProgClass guy..
 
 ------------
 current:
 
-== Graph
-
-* log units on axis
-
 == Program
 
+* namedunits guy
 * Add switch case guy: n_cases = enforced number of progels in case_code,
   ProgExpr_List size -- use a CodeBlock for more guys!
-
-* clearer if DynEnum type and token are separate..  Brad was right.  Dynenum edit not working.
-* add a types group, ProgType obj, ProgEnum subclass, plan for ProgClass guy..
-
 * VarInc, VarDec (var++, var--) -- can be useful
 
 * progexpr not finding variables in function args
 
-== Misc
+== Inventor
 
+* new viewer
+* manips conditional on arrow tool mode
+* scroll of graphview
+* import object files
+* render objects to bitmap and use to present to network
+
+== Netview:
+
+* Iconify layer -- add flag to layer itself, very easy to impl in viewer
+  (add LayerFlags?) -- in viewer allow for diff values to be displayed in one unit?
+  * also, what about compressing actual overall view -- this is presumably key,
+    but rather more difficult (moving layers around etc)  maybe only for counting the 
+    Max size -- reduce extent to 1 unit, so a layer full of iconfied guys just goes small
+    this seems good.  need to compute max size more frequently in display process -- will
+    fix disp bug..
 * NewLayer not working in netview
 * Can't view weights with 2 nets in same view!
 * r.wt disp scale gets reset when you click on a new unit
+
+== Misc
+
 * project display needs update after loading: filename is not there..
 
 * CHECK: add DataUpdate brackets in Filter op -- still doesn't fix problem!
-* multi-test on hv
+
+== Graph
+
+* log units on axis
 
 ---
 
@@ -52,16 +65,7 @@ current:
 
 
 -----------
-Inventor
-
-* new viewer
-* import object files
-* render objects to bitmap and use to present to network
-
------------
 check:
-
-* Init column out of range error in various projects
 
 * check uae on progel paste
 
@@ -90,6 +94,7 @@ Other Algorithms:
 ------------------
 hv model
 
+* multitest
 * move all key db's to programs: makes it more robust
 * put code under svn
 
@@ -98,9 +103,6 @@ hv model
   itfmo05  -- still bust; 
 * main thing is high: v2 from v4 seems to be bad..  try run with just norel adapt + output
 * output should get more from IT than V4??  check wiki for prior experiments..
-
-* do repeat testing
-* show retina stuff in netview (record params in trial log too)
 
 * add 3d model rendering using inventor..
  

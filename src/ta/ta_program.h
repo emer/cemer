@@ -20,7 +20,6 @@
 
 #include "ta_group.h"
 #include "ta_script.h"
-#include "ta_dynenum.h"
 #include "ta_viewer.h"
 
 #include "ta_def.h"
@@ -30,6 +29,7 @@
 class DataTable;
 
 // forwards
+class DynEnumType;
 class Program;
 SmartRef_Of(Program,TA_Program); // ProgramRef
 class Program_Group;
@@ -42,15 +42,194 @@ class ProgLib;
 
 // Any object that contains a ProgVarRef or other program-local object
 // reference should use the TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(Type,Program)
-// basefuns, to ensure that
-// pointers are properly updated if copied between different programs!
+// basefuns, to ensure that pointers are properly updated
+// if copied between different programs!
+
+// Also, such UpdateProgVarRef_NewOwner(ProgVarRef& pvr); must be called
+// in UpdateAfterEdit_impl
 
 // Also, pretty much any place where a user can enter an expression,
 // use ProgExpr -- it handles variable name updates automatically!
 // and also provides lookup of variable names
 
+
+///////////////////////////////////////////////////////////
+//		Program Types
+///////////////////////////////////////////////////////////
+
+class TA_API ProgType: public taNBase {
+  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program a program type -- base class for defining new types within a program
+INHERITED(taNBase)
+public:
+  String	desc;	// #EDIT_DIALOG Description of this type
+  
+  virtual const String	GenCssType() const; // type name
+  virtual const String	GenCss(int indent_level); // generate css code
+  
+  virtual taBase* FindTypeName(const String& nm) const;
+  // find given type name (e.g., dynamic enum type or value) on variable
+
+  override String GetDesc() const { return desc; }
+  override String GetTypeDecoKey() const { return "ProgType"; }
+  override bool	  FindCheck(const String& nm) const { return (name == nm); }
+
+  void 	SetDefaultName() {} // make it local to list, set by list
+  TA_SIMPLE_BASEFUNS(ProgType);
+protected:
+  virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
+  virtual const String	GenCssBody_impl(int indent_level) { return _nilString; } // #IGNORE generate the Css body code for this object
+  virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API ProgType_List : public taList<ProgType> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables
+INHERITED(taList<ProgType>)
+public:
+  virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+
+  virtual DynEnumType* NewDynEnum();
+  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new DynEnumType (shortcut)
+
+  virtual taBase* FindTypeName(const String& nm) const;
+  // find given type name (e.g., dynamic enum type or value) on list
+  
+  override String GetTypeDecoKey() const { return "ProgType"; }
+
+//   void	setStale();
+  TA_BASEFUNS_NOCOPY(ProgType_List);
+protected:
+  override void	El_SetIndex_(void*, int);
+  
+private:
+  void	Initialize();
+  void	Destroy() {Reset();}
+};
+
+SmartRef_Of(ProgType,TA_ProgType); // ProgTypeRef
+
+
+///////////////////////////////////////////////////////////
+//		DynEnum type
+///////////////////////////////////////////////////////////
+
+class TA_API DynEnumItem : public taNBase {
+  // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program dynamic enumerated type value (name and numerical int value)
+INHERITED(taNBase)
+public:
+  int		value;		// numerical (integer) value of this enum
+  String	desc;		// description of item
+
+  override String	GetDisplayName() const;
+
+  inline void 	Initialize() 			{ value = 0; }
+  inline void 	Destroy()			{ };
+  inline void 	Copy_(const DynEnumItem& cp)	{ value = cp.value; desc = cp.desc; }
+  TA_BASEFUNS(DynEnumItem);
+};
+
+class TA_API DynEnumItem_List : public taList<DynEnumItem> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of dynamic enumerated type items
+INHERITED(taList<DynEnumItem>)
+public:
+
+  virtual int	FindNumIdx(int val) const; // find index of given numerical value
+  virtual int	FindNameIdx(const String& nm) const
+  { int rval=0; FindName(nm, rval); return rval;}
+  // find index of given name value
+
+  virtual void	OrderItems();
+  // ensure that the item values are sequentially increasing
+
+  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+
+  override int	El_Compare_(const void* a, const void* b) const
+  { int rval=-1; if(((DynEnumItem*)a)->value > ((DynEnumItem*)b)->value) rval=1;
+    else if(((DynEnumItem*)a)->value == ((DynEnumItem*)b)->value) rval=0; return rval; }
+
+  TA_BASEFUNS_NOCOPY(DynEnumItem_List);
+private:
+  void	Initialize();
+  void	Destroy() {Reset();}
+};
+
+class TA_API DynEnumType : public ProgType {
+  // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write
+INHERITED(ProgType)
+public:
+  DynEnumItem_List	enums;	// enumerated values for this type
+  bool			bits;	// each item represents a separate bit value, which can be orthogonally set from each other, instead of mutually exclusive alternatives
+
+  virtual DynEnumItem*	NewEnum();
+  // #BUTTON create a new enum item
+  virtual DynEnumItem*  AddEnum(const String& nm, int val);
+  // add a new enum item with given name/label and value
+  
+  virtual int	FindNumIdx(int val) const { return enums.FindNumIdx(val); }
+  // find index of given numerical value
+  virtual int	FindNameIdx(const String& nm) const { return enums.FindNameIdx(nm); }
+  // find index of given name value
+
+  virtual ostream& OutputType(ostream& fh, int indent = 0) const;
+  // output type information in C++ syntax
+
+  override taList_impl*	children_() {return &enums;}	
+
+  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+
+  override taBase*	FindTypeName(const String& nm) const;
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS(DynEnumType);
+protected:
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssPre_impl(int indent_level);
+  override const String	GenCssBody_impl(int indent_level);
+  override const String	GenCssPost_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
+SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
+
+class TA_API DynEnum : public taOBase {
+  // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
+INHERITED(taOBase)
+public:
+  DynEnumTypeRef	enum_type; // enum type information (list of enum labels)
+  int			value;     // #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
+
+  virtual int 	NumVal() const;
+  // current numerical (integer) value of enum (-1 = no value set)
+  virtual const String NameVal() const;
+  // current name (string) value of enum ("" = no value set)
+
+  virtual bool	SetNumVal(int val);
+  // set current enum value by numerical value (for bits mode, literally set value); false (and error msg) if not found
+  virtual bool	SetNameVal(const String& nm);
+  // set current enum value by name (for bits mode, set bit for name); false (and error msg) if not found
+  virtual bool	ClearBitName(const String& val);
+  // only for bits type, clear bit with given name
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
+protected:
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+///////////////////////////////////////////////////////////
+//		Program Variables
+///////////////////////////////////////////////////////////
+
 class TA_API ProgVar: public taNBase {
-  // ##INSTANCE #INLINE #SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
+  // ##INSTANCE ##INLINE ##SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taNBase)
 public:
   enum VarType {
@@ -60,7 +239,7 @@ public:
     T_Bool,			// #LABEL_Bool boolean true/false 
     T_Object,			// #LABEL_Object pointer to a C++ object 
     T_HardEnum,			// #LABEL_Enum enumerated list of options (existing C++ hard-coded one)
-    T_DynEnum,			// #LABEL_DynEnum enumerated list of options (from my dynamically created list)
+    T_DynEnum,			// #LABEL_DynEnum enumerated list of labeled options (from a dynamically created list)
   };
 
   enum VarFlags { // #BITS flags for modifying program variables
@@ -77,7 +256,7 @@ public:
   TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
   taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
   TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
-  DynEnum	dyn_enum_val;	// #CONDSHOW_ON_var_type:T_DynEnum #HIDDEN_TREE value and type information for dynamic enum
+  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_ dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
@@ -91,8 +270,6 @@ public:
   
   virtual cssEl*	NewCssEl();
   // get a new cssEl of an appropriate type, name/value initialized
-  virtual cssEl*	NewCssType();
-  // if object defines new type information (dyn_enum), generate a type object
 
   virtual void	SetInt(int val); // set variable type to INT and set value
   virtual void	SetReal(double val);  // set variable type to REAL and set value
@@ -107,9 +284,6 @@ public:
 
   ProgVar* operator=(const Variant& value);
  
-  virtual taBase* FindTypeName(const String& nm) const;
-  // find given type name (e.g., dynamic enum type or value) on variable
-
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }
@@ -164,9 +338,6 @@ public:
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
 
-  virtual taBase* FindTypeName(const String& nm) const;
-  // find given type name (e.g., dynamic enum type or value) on list
-  
   void		AddVarTo(taNBase* src);
     // #DROPN add a var to the given object
 
@@ -389,8 +560,6 @@ public:
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
-  virtual taBase*	FindTypeName(const String& nm) const;
-  // find given type within this program element -- NULL if not found
 
   override String 	GetStateDecoKey() const;
   override int		GetEnabled() const;
@@ -437,8 +606,6 @@ public:
   
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this progel list -- NULL if not found
-  virtual taBase*	FindTypeName(const String& nm) const;
-  // find given type within this program element -- NULL if not found
 
   override int		NumListCols() const {return 2;} 
   override const KeyString GetListColKey(int col) const;
@@ -453,80 +620,6 @@ private:
 };
 
 
-class TA_API CodeBlock: public ProgEl { 
-  // a block of code (list of program elements), each executed in sequence
-INHERITED(ProgEl)
-public:
-  ProgEl_List	    	prog_code; // list of Program elements: the block of code
-
- virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
-  // #BUTTON #TYPE_ProgEl add a new program code element
-
-//no  override taList_impl*	children_() {return &prog_code;}	
-  override ProgVar*	FindVarName(const String& var_nm) const;
-  override taBase*	FindTypeName(const String& nm) const;
-  override String	GetDisplayName() const;
-
-  TA_SIMPLE_BASEFUNS(CodeBlock);
-protected:
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-};
-
-
-class TA_API ProgVars: public ProgEl {
-  // ##DEF_CHILD_local_vars local program variables (not globally accessible)
-INHERITED(ProgEl)
-public:
-  ProgVar_List		local_vars;	// the list of variables
-  
- virtual ProgVar*	AddVar()	{ return (ProgVar*)local_vars.New(1); }
-  // #BUTTON add a new variable
-
-  override ProgVar*	FindVarName(const String& var_nm) const;
-  override taBase*	FindTypeName(const String& nm) const;
-
-  override taList_impl*	children_() {return &local_vars;}
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgVar"; }
-
-  TA_SIMPLE_BASEFUNS(ProgVars);
-protected:
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
-
-class TA_API UserScript: public ProgEl { 
-  // a user-defined css script (can access all program variables, etc)
-INHERITED(ProgEl)
-public:
-  ProgExpr		script;	// the css (C++ syntax) code to be executed
-
-  virtual void	    	ImportFromFile(istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
-  virtual void	    	ImportFromFileName(const String& fnm); // import script from file
-  virtual void	    	ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
-  virtual void	    	ExportToFileName(const String& fnm); // export script to file
-  
-  override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(UserScript);
-protected:
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{}
-};
-
 class TA_API Loop: public ProgEl { 
   // #VIRT_BASE base class for loops
 INHERITED(ProgEl)
@@ -537,7 +630,6 @@ public:
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
   override ProgVar*	FindVarName(const String& var_nm) const;
-  override taBase*	FindTypeName(const String& nm) const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; } //
 //no  override taList_impl* children_() {return &loop_code;}
 
@@ -554,201 +646,6 @@ private:
   void	Initialize() {}
   void	Destroy()	{CutLinks();}
 };
-
-class TA_API WhileLoop: public Loop { 
-  // Repeat loop_code while loop_test expression is true (test first): while(loop_test) do loop_code
-INHERITED(Loop)
-public:
-  ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
-  
-  override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(WhileLoop);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize() {}
-  void	Destroy()	{}
-};
-
-class TA_API DoLoop: public Loop { 
-  // Do loop_code repatedly while loop_test expression is true (test-after): do loop_code while(loop_test);
-INHERITED(Loop)
-public:
-  ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
-  
-  override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(DoLoop);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize() {}
-  void	Destroy()	{}
-};
-
-class TA_API ForLoop: public Loop { 
-  // Standard C 'for loop' over loop_code: for(init_expr; loop_test; loop_iter) loop_code\n -- runs the init_expr, then does loop_code and the loop_iter expression, and continues if loop_test is true
-INHERITED(Loop)
-public:
-  ProgExprBase	    	init; // initialization expression (e.g., declare the loop variable; 'int i')
-  ProgExprBase		test; // a test expression for whether to continue looping (e.g., 'i < max')
-  ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
-
-  override String	GetDisplayName() const;
-
-  TA_SIMPLE_BASEFUNS(ForLoop);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize();
-  void	Destroy()	{}
-};
-
-class TA_API IfContinue: public ProgEl { 
-  // if condition is true, continue looping (skip any following code and loop back to top of loop)
-INHERITED(ProgEl)
-public:
-  ProgExpr		cond; 		// conditionalizing expression for continuing loop
-
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-
-  TA_SIMPLE_BASEFUNS(IfContinue);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class TA_API IfBreak: public ProgEl { 
-  // if condition is true, break out of current loop
-INHERITED(ProgEl)
-public:
-  ProgExpr		cond; 		// conditionalizing expression for breaking loop
-
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-
-  TA_SIMPLE_BASEFUNS(IfBreak);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class TA_API IfReturn: public ProgEl { 
-  // if condition is true, return (from void function or stop further execution of code or init segments of Program)
-INHERITED(ProgEl)
-public:
-  ProgExpr		cond; 		// conditionalizing expression for returning
-
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-
-  TA_SIMPLE_BASEFUNS(IfReturn);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class TA_API IfElse: public ProgEl { 
-  // a conditional test element: if(condition) then true_code; else false_code
-INHERITED(ProgEl)
-public:
-  ProgExpr	    cond; 	// condition expression to test for true or false
-  ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
-  ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
-
-  override ProgVar*	FindVarName(const String& var_nm) const;
-  override taBase*	FindTypeName(const String& nm) const;
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-
-  TA_SIMPLE_BASEFUNS(IfElse);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();} //
-};
-
-class TA_API AssignExpr: public ProgEl { 
-  // assign a variable to an expression (use method call for simple assignment to function call)
-INHERITED(ProgEl)
-public:
-  ProgVarRef		result_var;
-  // where to store the result of the epxression
-  ProgExpr		expr;
-  // expression to assign variable to
-  
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgVar"; }
-
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(AssignExpr, Program);
-protected:
-  override void		UpdateAfterEdit_impl();
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
-
-class TA_API MethodCall: public ProgEl { 
-  // ##DEF_CHILD_meth_args call a method (member function) on an object
-INHERITED(ProgEl)
-public:
-  ProgVarRef		result_var;
-  // where to store the result of the method call (optional -- can be NULL)
-  ProgVarRef		obj;
-  // #APPLY_IMMED program variable that points to the object with the method to call
-  TypeDef*		obj_type;
-  // #NO_SHOW #NO_SAVE temp copy of obj.object_type
-  MethodDef*		method;
-  // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj
-  ProgArg_List		meth_args;
-  // #SHOW_TREE arguments to be passed to the method
-
-  override taList_impl*	children_() {return &meth_args;}	
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "Function"; }
-
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MethodCall, Program);
-protected:
-  override void		UpdateAfterEdit_impl();
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
 
 class TA_API StaticMethodCall: public ProgEl { 
   // ##DEF_CHILD_meth_args call a static method (member function) on a type 
@@ -777,110 +674,6 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class TA_API MathCall : public StaticMethodCall { 
-  // call a taMath function
-INHERITED(StaticMethodCall)
-public:
-  TA_BASEFUNS(MathCall);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-}; 
-
-class TA_API RandomCall : public StaticMethodCall { 
-  // call a Random number generation function
-INHERITED(StaticMethodCall)
-public:
-  TA_BASEFUNS(RandomCall);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-}; 
-
-class TA_API MiscCall : public StaticMethodCall { 
-  // call a taMisc function
-INHERITED(StaticMethodCall)
-public:
-  TA_BASEFUNS(MiscCall);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-}; 
-
-class TA_API PrintVar: public ProgEl { 
-  // print out (to the console) the value of a variable -- useful for debugging
-INHERITED(ProgEl)
-public:
-  ProgVarRef		print_var; 	// print out (to console) the value of this variable
-  
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgVar"; }
-
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(PrintVar, Program);
-protected:
-  override void		UpdateAfterEdit_impl();
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
-
-class TA_API PrintExpr: public ProgEl { 
-  // print out (to the console) an expression -- e.g., an informational message for the user
-INHERITED(ProgEl)
-public:
-  ProgExpr		expr;
-  // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things
-  
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  TA_SIMPLE_BASEFUNS(PrintExpr);
-
-protected:
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
-
-class TA_API Comment: public ProgEl { 
-  // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
-INHERITED(ProgEl)
-public:
-  override String	GetDisplayName() const;
-  override String	GetTypeDecoKey() const { return "Comment"; }
-
-  TA_SIMPLE_BASEFUNS(Comment);
-
-protected:
-  override bool		useDesc() const {return false;} 
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
-
-class TA_API StopStepPoint: public ProgEl { 
-  // this is a point in the program where the Stop button will stop execution, and the Step button will act for single stepping (e.g., place inside of a loop) -- otherwise this only happens at the end of programs
-INHERITED(ProgEl)
-public:
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  TA_SIMPLE_BASEFUNS(StopStepPoint);
-
-protected:
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
-
 class TA_API Function: public ProgEl { 
   // a user-defined function that can be called within the program where it is defined -- must live in the functions of a Program, not in init_code or prog_code 
 INHERITED(ProgEl)
@@ -895,7 +688,6 @@ public:
   // the function code (list of program elements)
   
   override ProgVar*	FindVarName(const String& var_nm) const;
-  override taBase*	FindTypeName(const String& nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
   TA_SIMPLE_BASEFUNS(Function);
@@ -941,26 +733,6 @@ private:
   void	Initialize();
   void	Destroy()	{}
 };
-
-class TA_API ReturnExpr: public ProgEl { 
-  // return from a function with a given expression (can be empty to return from a void function) -- you can return from the code or init segments of a program to end execution at that point
-INHERITED(ProgEl)
-public:
-  ProgExpr		expr;
-  // expression to return from function with (can be empty to return from a void function)
-  
-  override String	GetDisplayName() const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  TA_SIMPLE_BASEFUNS(ReturnExpr);
-
-protected:
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
-}; 
 
 //		End of Prog Els!
 ///////////////////////////////////////////////////////////////////
@@ -1047,6 +819,8 @@ public:
   // control flags, for display and execution control
   ProgObjList		objs;
   // #TREEFILT_ProgGp create persistent objects of any type here that are needed for the program -- each object will automatically create an associated variable 
+  ProgType_List		types;
+  // user-defined types for this program (new enumerated types and class objects)
   ProgVar_List		args;
   // global variables that are parameters (arguments) for callers
   ProgVar_List		vars;
