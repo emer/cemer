@@ -2,9 +2,6 @@ leabra todo list:
 
 commit:
 
-* clearer if DynEnum type and token are separate..  Brad was right.  Dynenum edit not working.
-* add a types group, ProgType obj, ProgEnum subclass, plan for ProgClass guy..
-
 ------------
 current:
 
