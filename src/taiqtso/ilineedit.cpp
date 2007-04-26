@@ -19,6 +19,8 @@
 #include <QDesktopWidget>
 #include <QLayout>
 #include <QPushButton>
+#include <QPrintDialog>
+#include <QPrinter>
 #include <QShortcut>
 #include <QSizePolicy>
 #include <QTextEdit>
@@ -155,6 +157,10 @@ void iTextEditDialog::init(bool readOnly_) {
   layButtons->setSpacing(4);
   layOuter->addLayout(layButtons);
   layButtons->addStretch();
+  btnPrint = new QPushButton("&Print", this);
+  layButtons->addWidget(btnPrint);
+  layButtons->addSpacing(16);
+  connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
   if (m_readOnly) {
     txtText->setReadOnly(true);
     btnOk = NULL;
@@ -172,6 +178,14 @@ void iTextEditDialog::init(bool readOnly_) {
 }
  
 iTextEditDialog::~iTextEditDialog() {
+}
+
+void iTextEditDialog::btnPrint_clicked() {
+  QPrinter pr;
+  QPrintDialog pd(&pr, this);
+  if (pd.exec() != QDialog::Accepted) return;
+  // print ...
+  txtText->document()->print(&pr);
 }
 
 void iTextEditDialog::setText(const QString& value) {

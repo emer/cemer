@@ -66,6 +66,7 @@ class TAIQTSO_API iTextEditDialog : public QDialog {
 INHERITED(QDialog)
 public:
   QTextEdit*	txtText;
+  QPushButton*	btnPrint;
   QPushButton*	btnOk; // read/write only
   QPushButton* 	btnCancel; // or close, if read only
   
@@ -76,6 +77,10 @@ public:
   ~iTextEditDialog();
 protected:
   bool		m_readOnly;
+  
+protected slots:
+  void		btnPrint_clicked();
+  
 private:
   void 		init(bool readOnly);
 };
