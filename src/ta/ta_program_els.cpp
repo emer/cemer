@@ -458,6 +458,75 @@ String MethodCall::GetDisplayName() const {
   return rval;
 }
 
+//////////////////////////
+//    MemberAssign	//
+//////////////////////////
+
+void MemberAssign::Initialize() {
+  obj_type = &TA_taBase; // placeholder
+  member = NULL;
+  update_after = false;
+}
+
+void MemberAssign::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(obj)
+    obj_type = obj->act_object_type();
+  else obj_type = &TA_taBase; // placeholder
+
+  UpdateProgVarRef_NewOwner(obj);
+
+//  if(!taMisc::is_loading && member)
+}
+
+void MemberAssign::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!obj, quiet, rval, "obj is NULL");
+  CheckProgVarRef(obj, quiet, rval);
+  CheckError(!member, quiet, rval, "member is NULL");
+}
+
+void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  expr.CheckConfig(quiet, rval);
+}
+
+const String MemberAssign::GenCssBody_impl(int indent_level) {
+  STRING_BUF(rval, 80);
+  rval += cssMisc::Indent(indent_level);
+  if (!((bool)obj && member) || expr.empty()) {
+    rval += "//WARNING: MemberAssign not generated here -- obj or member not specified or expr empty\n";
+   return rval;
+  }
+  
+  rval += obj->name;
+  rval += "->";
+  rval += member->name + " = ";
+  rval += expr.GetFullExpr();
+  rval += ";\n";
+  if (update_after) {
+    rval += cssMisc::Indent(indent_level);
+    rval += obj->name.cat("->UpdateAfterEdit();\n");
+  }
+  return rval;
+}
+
+String MemberAssign::GetDisplayName() const {
+  if (!obj || !member)
+    return "(object or member not selected)";
+  
+  String rval;
+  rval += obj->name;
+  rval += "->";
+  rval += member->name + " = ";
+  rval += expr.GetFullExpr();
+  return rval;
+}
+
+//////////////////////////
+//      MathCall	//
+//////////////////////////
+
 void MathCall::Initialize() {
   min_type = &TA_taMath;
   object_type = &TA_taMath;

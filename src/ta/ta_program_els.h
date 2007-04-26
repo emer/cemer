@@ -232,13 +232,13 @@ private:
 };
 
 class TA_API AssignExpr: public ProgEl { 
-  // assign a variable to an expression (use method call for simple assignment to function call)
+  // assign an expression to a variable (use method call for simple assignment to function call)
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
-  // where to store the result of the epxression
+  // where to store the result of the expression (the variable)
   ProgExpr		expr;
-  // expression to assign variable to
+  // expression to assign to variable
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
@@ -274,6 +274,34 @@ public:
   override String 	GetTypeDecoKey() const { return "Function"; }
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MethodCall, Program);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API MemberAssign: public ProgEl { 
+  //  set a member (attribute) on an object
+INHERITED(ProgEl)
+public:
+  ProgVarRef		obj;
+  // #APPLY_IMMED program variable that points to the object with the method to call
+  TypeDef*		obj_type;
+  // #NO_SHOW #NO_SAVE temp copy of obj.object_type
+  MemberDef*		member;
+  // #TYPE_ON_obj_type #APPLY_IMMED the member to assign on object obj
+  ProgExpr		expr; // the expression to compute and assign to the member
+  bool			update_after; // call UpdateAfterEdit after setting the member
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberAssign, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);

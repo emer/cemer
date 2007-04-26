@@ -765,6 +765,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_AssignExpr)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("meth()",
     tabMisc::root->GetTemplateInstance(&TA_MethodCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("memb=",
+    tabMisc::root->GetTemplateInstance(&TA_MemberAssign)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("prog()",
     tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
 
