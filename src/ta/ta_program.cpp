@@ -175,6 +175,7 @@ DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
   it->name = nm;
   it->value = val;
   enums.OrderItems();
+  return it;
 }
 
 taBase* DynEnumType::FindTypeName(const String& nm) const {
@@ -190,12 +191,14 @@ String DynEnumType::GetDisplayName() const {
 }
 
 const String DynEnumType::GenCssPre_impl(int indent_level) {
+  if(enums.size == 0) return _nilString;
   String il = cssMisc::Indent(indent_level); 
   String rval = il + "enum " + name + " {\n";
   return rval;
 }
 
 const String DynEnumType::GenCssBody_impl(int indent_level) {
+  if(enums.size == 0) return _nilString;
   String il1 = cssMisc::Indent(indent_level+1);
   String rval;
   for(int i=0;i<enums.size;i++) {
@@ -217,6 +220,7 @@ const String DynEnumType::GenCssBody_impl(int indent_level) {
 }
 
 const String DynEnumType::GenCssPost_impl(int indent_level) {
+  if(enums.size == 0) return _nilString;
   String il = cssMisc::Indent(indent_level); 
   String rval = il + "};\n";
   return rval;
@@ -759,6 +763,28 @@ const String ProgVar_List::GenCss(int indent_level) const {
     ++cnt;
   }
   return rval;
+}
+
+ProgVar* ProgVar_List::FindVarType(ProgVar::VarType vart, TypeDef* td) {
+  for (int i = 0; i < size; ++i) {
+    ProgVar* it = FastEl(i);
+    if(it->var_type == vart) {
+      if((vart == ProgVar::T_Object) && (td != NULL)) {
+	if(it->object_type == td) {
+	  return it;
+	}
+      }
+      else if((vart == ProgVar::T_HardEnum) && (td != NULL)) {
+	if(it->hard_enum_type == td) {
+	  return it;
+	}
+      }
+      else {
+	return it;
+      }
+    }
+  }
+  return NULL;
 }
 
 void ProgVar_List::setStale() {

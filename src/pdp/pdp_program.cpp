@@ -429,6 +429,7 @@ const String NetUpdateView::GenCssBody_impl(int indent_level) {
 ////////////////////////////////////////////////////
 
 void InitNamedUnits::Initialize() {
+  n_lay_name_chars = 1;
 }
 
 void InitNamedUnits::Destroy() {
@@ -461,16 +462,18 @@ String InitNamedUnits::GetDisplayName() const {
 }
 
 bool InitNamedUnits::GetInputDataVar() {
-  if((bool)input_data_var && (input_data_var->name == "input_data")) return true;
+  if(input_data_var) return true;
   Program* my_prog = program();
   if(!my_prog) return false;
-  if(!(input_data_var = my_prog->vars.FindName("input_data"))) {
-    input_data_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+  input_data_var = my_prog->args.FindVarType(ProgVar::T_Object, &TA_DataTable);
+  if(input_data_var) return true;
+  input_data_var = my_prog->vars.FindVarType(ProgVar::T_Object, &TA_DataTable);
+  if(!input_data_var) {
+    input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
+    input_data_var->var_type = ProgVar::T_Object;
   }
-  input_data_var->var_type = ProgVar::T_Object;
-  //  input_data_var->UpdateAfterEdit();
-  return (bool)input_data_var->object_val;
+  return true;
 }
 
 bool InitNamedUnits::GetUnitNamesVar() {
@@ -564,13 +567,15 @@ bool InitNamedUnits::InitDynEnums() {
       det = my_prog->types.NewDynEnum();
       det->name = ndc->name;
     }
-    InitDynEnumFmUnitNames(det, ndc);
+    String prefix = ndc->name.before(n_lay_name_chars);
+    InitDynEnumFmUnitNames(det, ndc, prefix);
   }
   return true;
 }
 
 bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
-					    const DataCol* unit_names_col) {
+					    const DataCol* unit_names_col,
+					    const String& prefix) {
   if(!dyn_enum || !unit_names_col) {
     taMisc::Error("InitDynEnumFmUnitNames", "null args");
     return false;
@@ -579,6 +584,7 @@ bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
   for(int i=0;i<unit_names_col->cell_size();i++) {
     String cnm = unit_names_col->GetValAsStringM(-1, i);
     if(cnm.empty()) continue;
+    cnm = prefix + "_" + cnm;
     dyn_enum->AddEnum(cnm, i);
   }
   return true;
@@ -595,4 +601,179 @@ bool InitNamedUnits::LabelNetwork() {
 // add offset for set -- for groups
 
 // do for 12ax -- better test case
+
+//////////////////////////
+//  Set Units Lit
+//////////////////////////
+
+void SetUnitsLit::Initialize() {
+}
+
+void SetUnitsLit::Destroy() {
+  CutLinks();
+}
+
+void SetUnitsLit::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(input_data_var);
+  GetInputDataVar();
+}
+
+void SetUnitsLit::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!input_data_var, quiet, rval, "input_data = NULL");
+  CheckProgVarRef(input_data_var, quiet, rval);
+}
+
+String SetUnitsLit::GetDisplayName() const {
+  String rval = "Set Units: ";
+  if(unit_1.IsSet()) rval += unit_1.NameVal() + " ";
+  if(unit_2.IsSet()) rval += unit_2.NameVal() + " ";
+  if(unit_3.IsSet()) rval += unit_3.NameVal() + " ";
+  if(unit_4.IsSet()) rval += unit_4.NameVal();
+  return rval;
+}
+
+bool SetUnitsLit::GetInputDataVar() {
+  if(input_data_var) return true;
+  Program* my_prog = program();
+  if(!my_prog) return false;
+  input_data_var = my_prog->args.FindVarType(ProgVar::T_Object, &TA_DataTable);
+  if(input_data_var) return true;
+  input_data_var = my_prog->vars.FindVarType(ProgVar::T_Object, &TA_DataTable);
+  if(!input_data_var) {
+    input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
+    input_data_var->name = "input_data";
+    input_data_var->var_type = ProgVar::T_Object;
+  }
+  return true;
+}
+
+const String SetUnitsLit::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!input_data_var) return il + "// input_data_var not set!\n";
+  String idnm = input_data_var->name;
+  DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
+  if(!idat) return il + "// input_data not set!\n";
+  String rval;
+  int colno;
+  if(unit_1.IsSet()) {
+    if(idat->FindColName(unit_1.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_1.NameVal() + ");\n";
+  }
+  if(unit_2.IsSet()) {
+    if(idat->FindColName(unit_2.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_2.NameVal() + ");\n";
+  }
+  if(unit_3.IsSet()) {
+    if(idat->FindColName(unit_3.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_3.NameVal() + ");\n";
+  }
+  if(unit_4.IsSet()) {
+    if(idat->FindColName(unit_4.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_4.NameVal() + ");\n";
+  }
+  return rval;
+}
+
+//////////////////////////
+//  Set Units Var
+//////////////////////////
+
+void SetUnitsVar::Initialize() {
+}
+
+void SetUnitsVar::Destroy() {
+  CutLinks();
+}
+
+void SetUnitsVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(input_data_var);
+  GetInputDataVar();
+}
+
+void SetUnitsVar::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!input_data_var, quiet, rval, "input_data = NULL");
+  CheckProgVarRef(input_data_var, quiet, rval);
+  if(!CheckError(unit_1 && unit_1->var_type != ProgVar::T_DynEnum, quiet, rval, 
+		 "unit_1 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError(unit_1 && !unit_1->dyn_enum_val.enum_type, quiet, rval, 
+	       "unit_1 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError(unit_2 && unit_2->var_type != ProgVar::T_DynEnum, quiet, rval, 
+		 "unit_2 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError(unit_2 && !unit_2->dyn_enum_val.enum_type, quiet, rval, 
+	       "unit_2 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError(unit_3 && unit_3->var_type != ProgVar::T_DynEnum, quiet, rval, 
+		 "unit_3 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError(unit_3 && !unit_3->dyn_enum_val.enum_type, quiet, rval, 
+	       "unit_3 does not have enum_type set -- must be set to one associated with layer unit names!");
+  if(!CheckError(unit_4 && unit_4->var_type != ProgVar::T_DynEnum, quiet, rval, 
+		 "unit_4 is not a DynEnum variable -- must be one associated with layer unit names!"))
+    CheckError(unit_4 && !unit_4->dyn_enum_val.enum_type, quiet, rval, 
+	       "unit_4 does not have enum_type set -- must be set to one associated with layer unit names!");
+
+    
+}
+
+String SetUnitsVar::GetDisplayName() const {
+  String rval = "Set Units: Vars";
+  if(unit_1) rval += unit_1->name + " ";
+  if(unit_2) rval += unit_2->name + " ";
+  if(unit_3) rval += unit_3->name + " ";
+  if(unit_4) rval += unit_4->name + " ";
+  return rval;
+}
+
+bool SetUnitsVar::GetInputDataVar() {
+  if(input_data_var) return true;
+  Program* my_prog = program();
+  if(!my_prog) return false;
+  input_data_var = my_prog->args.FindVarType(ProgVar::T_Object, &TA_DataTable);
+  if(input_data_var) return true;
+  input_data_var = my_prog->vars.FindVarType(ProgVar::T_Object, &TA_DataTable);
+  if(!input_data_var) {
+    input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
+    input_data_var->name = "input_data";
+    input_data_var->var_type = ProgVar::T_Object;
+  }
+  return true;
+}
+
+const String SetUnitsVar::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!input_data_var) return il + "// input_data_var not set!\n";
+  String idnm = input_data_var->name;
+  DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
+  if(!idat) return il + "// input_data not set!\n";
+  String rval;
+  int colno;
+  if(unit_1) {
+    if(idat->FindColName(unit_1->dyn_enum_val.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_1->name + ");\n";
+  }
+  if(unit_2) {
+    if(idat->FindColName(unit_2->dyn_enum_val.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_2->name + ");\n";
+  }
+  if(unit_3) {
+    if(idat->FindColName(unit_3->dyn_enum_val.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_3->name + ");\n";
+  }
+  if(unit_4) {
+    if(idat->FindColName(unit_4->dyn_enum_val.enum_type->name, colno, true))
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ unit_4->name + ");\n";
+  }
+  return rval;
+}
+
 

@@ -190,17 +190,19 @@ class PDP_API InitNamedUnits: public ProgEl {
   // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which must exist with that name -- other programs depend on it!)
 INHERITED(ProgEl)
 public:
-  ProgVarRef	input_data_var;	// program variable pointing to the input data table, which must exist and be called input_data (other named units programs depend on this name)
+  ProgVarRef	input_data_var;	// program variable pointing to the input data table -- finds the first one in the program by default (and makes one if not found)
   ProgVarRef	unit_names_var;	// program variable pointing to the unit_names data table, which is created if it does not exist -- contains the name labels for each of the units
   ProgVarRef	network_var;	// variable that points to the network (optional; for labeling network units if desired)
+  int		n_lay_name_chars; // number of layer-name chars to prepend to the enum values
 
   static bool	InitUnitNamesFmInputData(DataTable* unit_names, const DataTable* input_data);
   // intialize unit names data table from input data table
-  static bool	InitDynEnumFmUnitNames(DynEnumType* dyn_enum, const DataCol* unit_names_col);
+  static bool	InitDynEnumFmUnitNames(DynEnumType* dyn_enum, const DataCol* unit_names_col,
+				       const String& prefix);
   // initialize a dynamic enum with names from unit names table colum (string matrix with one row)
 
   virtual bool	InitNamesTable();
-  // #BUTTON #CONFIRM intialize the names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!
+  // intialize the names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!
   virtual bool	InitDynEnums();
   // #BUTTON #CONFIRM intialize the dynamic enums from names table -- do this after you have entered the names in the unit_names table, in order to then refer to the names using enum values (avoiding having to use quotes!)
   virtual bool	LabelNetwork();
@@ -224,6 +226,62 @@ private:
   void	Initialize();
   void	Destroy();
 };
+
+class PDP_API SetUnitsLit: public ProgEl { 
+  // set units in input_data table to present to the network: values supplied as literal items
+INHERITED(ProgEl)
+public:
+  ProgVarRef	input_data_var;	// #PROGEDIT_NEWLN program variable pointing to the input data table
+  
+  DynEnum	unit_1; 
+  DynEnum	unit_2;
+  DynEnum	unit_3;
+  DynEnum	unit_4;
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "Function"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(SetUnitsLit, Program);
+protected:
+  override void	UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  virtual bool	GetInputDataVar();
+
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class PDP_API SetUnitsVar: public ProgEl { 
+  // set units in input_data table to present to the network: values supplied as variables
+INHERITED(ProgEl)
+public:
+  ProgVarRef	input_data_var;	// #PROGEDIT_NEWLN program variable pointing to the input data table
+  
+  ProgVarRef	unit_1;
+  ProgVarRef	unit_2;
+  ProgVarRef	unit_3;
+  ProgVarRef	unit_4;
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "Function"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(SetUnitsVar, Program);
+protected:
+  override void	UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  virtual bool	GetInputDataVar();
+
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
 
 
 #endif

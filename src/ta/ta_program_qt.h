@@ -42,8 +42,8 @@ public:
 
   TAQT_MEMBER_INSTANCE(taiDynEnumMember, taiMember);
 protected:
-  void 		GetImage_impl(taiData* dat, const void* base);
-  void		GetValue_impl(taiData* dat, void* base);
+  override void GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 
   bool		isBit; // true if a bits type enum
 private:

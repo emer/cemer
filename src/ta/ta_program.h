@@ -200,9 +200,12 @@ class TA_API DynEnum : public taOBase {
   // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
-  DynEnumTypeRef	enum_type; // enum type information (list of enum labels)
+  DynEnumTypeRef	enum_type; // #APPLY_IMMED enum type information (list of enum labels)
   int			value;     // #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
 
+  virtual bool	IsSet() const
+  { return (enum_type && value >= 0); }
+  // check whether there is a value set (enum_type is set and value >= 0)
   virtual int 	NumVal() const;
   // current numerical (integer) value of enum (-1 = no value set)
   virtual const String NameVal() const;
@@ -338,8 +341,10 @@ public:
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
 
-  void		AddVarTo(taNBase* src);
-    // #DROPN add a var to the given object
+  virtual void	AddVarTo(taNBase* src);
+  // #DROPN add a var to the given object
+  virtual ProgVar* FindVarType(ProgVar::VarType vart, TypeDef* td = NULL);
+  // find first variable of given type (if hard enum or object type, td specifies type of object to find if not null)
 
   override String GetTypeDecoKey() const { return "ProgVar"; }
 

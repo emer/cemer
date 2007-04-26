@@ -81,21 +81,20 @@ void taiDynEnumMember::GetImage_impl(taiData* dat, const void* base) {
 	rval->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
       }
     }
-    if(dye->value >=0)
-      rval->GetImage(dye->value);
+    int dei = dye->value;
+    if (dei < 0) dei = 0;
+    rval->GetImage(dei);
   }
 }
 
-void taiDynEnumMember::GetValue_impl(taiData* dat, void* base) {
+void taiDynEnumMember::GetMbrValue_impl(taiData* dat, void* base) {
   DynEnum* dye = (DynEnum*)base;
   if (isBit) {
     taiBitBox* rval = (taiBitBox*)dat;
     rval->GetValue(dye->value);
   } else if (!isReadOnly(dat)) {
     taiComboBox* rval = (taiComboBox*)dat;
-    int itm_no = -1;
-    rval->GetValue(itm_no);
-    dye->value = itm_no;
+    rval->GetValue(dye->value);
   }
 }
 
@@ -298,7 +297,7 @@ void iProgramEditor::Base_Add() {
     if (md->name == "desc") continue; // on separate line at end
     membs.FastEl(cur_ln)->memb_el.Add(md);
     ++i_ln;
-    if (i_ln >= n_per_ln) {
+    if (i_ln >= n_per_ln || md->HasOption("PROGEDIT_NEWLN")) {
       i_ln = 0;
       ++cur_ln;
     }
@@ -1077,7 +1076,7 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
       }
       else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-        ((taiComboBox*)mb_dat)->GetEnumValue(pv->dyn_enum_val.value);
+        ((taiComboBox*)mb_dat)->GetValue(pv->dyn_enum_val.value);
       }
       else {
         md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
@@ -1146,7 +1145,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
         UpdateDynEnumCombo(((taiComboBox*)mb_dat), pv);
         int dei = pv->dyn_enum_val.value;
         if (dei < 0) dei = 0;
-        ((taiComboBox*)mb_dat)->GetEnumImage(dei);
+        ((taiComboBox*)mb_dat)->GetImage(dei);
       }
       else {
         md->im->GetImage(mb_dat, (void*)pv);
