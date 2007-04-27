@@ -38,6 +38,7 @@ protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level);
+  override const String	GenListing_children(int indent_level);
 
 private:
   void	Initialize();
@@ -63,6 +64,7 @@ public:
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
+  override const String	GenListing_children(int indent_level);
 
 private:
   void	Initialize();
@@ -225,6 +227,7 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
+  override const String	GenListing_children(int indent_level);
 
 private:
   void	Initialize();

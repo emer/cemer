@@ -39,6 +39,9 @@ void CodeBlock::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String CodeBlock::GenCssBody_impl(int indent_level) {
   return prog_code.GenCss(indent_level);
 }
+const String CodeBlock::GenListing_children(int indent_level) {
+  return prog_code.GenListing(indent_level + 1);
+}
 
 String CodeBlock::GetDisplayName() const {
   return "CodeBlock (" + String(prog_code.size) + " items)";
@@ -69,6 +72,9 @@ void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 const String ProgVars::GenCssBody_impl(int indent_level) {
   return local_vars.GenCss(indent_level);
+}
+const String ProgVars::GenListing_children(int indent_level) {
+  return local_vars.GenListing(indent_level + 1);
 }
 
 String ProgVars::GetDisplayName() const {
@@ -320,6 +326,14 @@ const String IfElse::GenCssBody_impl(int indent_level) {
   if (false_code.size > 0) {
     rval += cssMisc::Indent(indent_level) + "} else {\n";
     rval += false_code.GenCss(indent_level + 1);
+  }
+  return rval;
+}
+const String IfElse::GenListing_children(int indent_level) {
+  String rval = true_code.GenListing(indent_level + 1);
+  if (false_code.size > 0) {
+    rval += cssMisc::Indent(indent_level) + "else\n";
+    rval += false_code.GenListing(indent_level + 1);
   }
   return rval;
 }

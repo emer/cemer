@@ -561,6 +561,7 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
+  override const String	GenListing_children(int indent_level);
 
 private:
   void	Initialize();

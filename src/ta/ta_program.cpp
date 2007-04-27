@@ -52,20 +52,18 @@ const String ProgType::GenCssType() const {
 }
 
 const String ProgType::GenCss(int indent_level) {
-  String rval;
-  if(!desc.empty()) {
-    // we support multi-lines by using the multi-line form of comments
-    if (desc.contains('\n')) {
-      rval.cat(cssMisc::IndentLines("/* " + desc + " */\n", indent_level));
-    } else {
-      rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(desc).cat("\n");
-    }
-  }
+  String rval = Program::GetDescString(desc, indent_level);
   rval += GenCssPre_impl(indent_level);
   rval += GenCssBody_impl(indent_level);
   rval += GenCssPost_impl(indent_level);
   return rval;
 } 
+
+const String ProgType::GenListing(int indent_level) {
+  String rval = Program::GetDescString(desc, indent_level);
+  rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
+  return rval;
+}
 
 //////////////////////////
 //   ProgType_List	//
@@ -100,6 +98,14 @@ const String ProgType_List::GenCss(int indent_level) const {
   for (int i = 0; i < size; ++i) {
     ProgType* it = FastEl(i);
     rval += it->GenCss(indent_level); 
+  }
+  return rval;
+}
+const String ProgType_List::GenListing(int indent_level) const {
+  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
+  for (int i = 0; i < size; ++i) {
+    ProgType* it = FastEl(i);
+    rval += it->GenListing(indent_level); 
   }
   return rval;
 }
@@ -619,6 +625,15 @@ const String ProgVar::GenCss(bool is_arg) {
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
 } 
 
+const String ProgVar::GenListing(bool is_arg, int indent_level) {
+  if(is_arg) {
+    return GenCssArg_impl();
+  }
+  String rval = Program::GetDescString(desc, indent_level);
+  rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
+  return rval;
+}
+
 const String ProgVar::GenCssType() const {
   switch(var_type) {
   case T_Int:
@@ -760,6 +775,22 @@ const String ProgVar_List::GenCss(int indent_level) const {
       rval += cssMisc::Indent(indent_level); 
     }
     rval += it->GenCss(is_arg); 
+    ++cnt;
+  }
+  return rval;
+}
+
+const String ProgVar_List::GenListing(int indent_level) const {
+  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
+  int cnt = 0;
+  for (int i = 0; i < size; ++i) {
+    ProgVar* it = FastEl(i);
+    bool is_arg = (var_context == VC_FuncArgs);
+    if (is_arg) {
+      if (cnt > 0)
+        rval += ", ";
+    }
+    rval += it->GenListing(is_arg, indent_level); 
     ++cnt;
   }
   return rval;
@@ -1402,6 +1433,13 @@ const String ProgEl::GenCss(int indent_level) {
   return rval;
 }
 
+const String ProgEl::GenListing(int indent_level) {
+  String rval = Program::GetDescString(desc, indent_level);
+  rval += cssMisc::Indent(indent_level) + GetDisplayName() + "\n";
+  rval += GenListing_children(indent_level);
+  return rval;
+}
+
 int ProgEl::GetEnabled() const {
   if(HasProgFlag(OFF)) return 0;
   ProgEl* par = parent();
@@ -1469,6 +1507,15 @@ const String ProgEl_List::GenCss(int indent_level) {
   return rval;;
 }
 
+const String ProgEl_List::GenListing(int indent_level) {
+  String rval;
+  for (int i = 0; i < size; ++i) {
+    ProgEl* el = FastEl(i);
+    rval += el->GenListing(indent_level); 
+  }
+  return rval;;
+}
+
 String ProgEl_List::GetColHeading(const KeyString& key) const {
   static String col0("El Type");
   static String col1("El Description");
@@ -1513,6 +1560,10 @@ void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 const String Loop::GenCssBody_impl(int indent_level) {
   return loop_code.GenCss(indent_level + 1);
+}
+
+const String Loop::GenListing_children(int indent_level) {
+  return loop_code.GenListing(indent_level + 1);
 }
 
 void Loop::PreGenChildren_impl(int& item_id) {
@@ -2464,6 +2515,19 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
   return rval;
 }
 
+const String Program::GetDescString(const String& dsc, int indent_level) {
+  String rval;
+  if(!dsc.empty()) {
+    // we support multi-lines by using the multi-line form of comments
+    if (dsc.contains('\n')) {
+      rval.cat(cssMisc::IndentLines("/* " + dsc + " */\n", indent_level));
+    } else {
+      rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(dsc).cat("\n");
+    }
+  }
+  return rval;
+}
+
 const String Program::scriptString() {
   if (m_stale) {
     // enumerate all the progels, esp. to get subprocs registered
@@ -2477,11 +2541,11 @@ const String Program::scriptString() {
     m_scriptCache += "Program::RunState run_state; // our program's run state\n";
     m_scriptCache += "int ret_val;\n";
     if (args.size > 0) {
-      m_scriptCache += "// global script parameters\n";
+      m_scriptCache += "// args: global script parameters (arguments)\n";
       m_scriptCache += args.GenCss(0);
     }
     if (vars.size > 0) {
-      m_scriptCache += "// global (non-param) variables\n";
+      m_scriptCache += "// vars: global (non-parameter) variables\n";
       m_scriptCache += vars.GenCss(0);
     }
     m_scriptCache += "*/\n\n";
@@ -2544,6 +2608,41 @@ const String Program::scriptString() {
     m_stale = false;
   }
   return m_scriptCache;
+}
+
+const String Program::ProgramListing() {
+  m_listingCache = "// ";
+  m_listingCache += GetName();
+
+  if (types.size > 0) {
+    m_listingCache += "\n// types: new types defined for this program\n";
+    m_listingCache += types.GenListing(0);
+  }
+
+  if (args.size > 0) {
+    m_listingCache += "\n// args: global script parameters (arguments)\n";
+    m_listingCache += args.GenListing(0);
+  }
+  if (vars.size > 0) {
+    m_listingCache += "\n// vars: global (non-parameter) variables\n";
+    m_listingCache += vars.GenListing(0);
+  }
+
+  if(functions.size > 0) {
+    m_listingCache += "\n// functions: functions defined for this program\n";
+    m_listingCache += functions.GenListing(0);
+  }
+    
+  if(init_code.size > 0) {
+    m_listingCache += "\n// init_code: code to initialize the program\n";
+    m_listingCache += init_code.GenListing(0); // ok if empty, returns nothing
+  }
+    
+  if(prog_code.size > 0) {
+    m_listingCache += "\n// prog_code: main code to run program\n";
+    m_listingCache += prog_code.GenListing(0);
+  }
+  return m_listingCache;
 }
 
 void  Program::UpdateProgVars() {
@@ -2688,6 +2787,29 @@ void Program::ViewScript_impl() {
   dlg->setText(scriptString());
   dlg->exec();
 }
+#endif  // TA_GUI
+
+void Program::SaveListing(ostream& strm) {
+  strm << ProgramListing();
+}
+
+#ifdef TA_GUI
+void Program::ViewListing() {
+  iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
+  dlg->setText(ProgramListing());
+  dlg->exec();
+}
+
+void Program::ViewListing_Editor() {
+  String fnm = name + "_list.css";
+  fstream strm;
+  strm.open(fnm, ios::out);
+  SaveListing(strm);
+  strm.close();
+
+  taMisc::EditFile(fnm);
+}
+
 #endif  // TA_GUI
 
 

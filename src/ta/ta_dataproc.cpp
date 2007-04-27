@@ -1651,6 +1651,10 @@ const String DataCalcLoop::GenCssBody_impl(int indent_level) {
   return loop_code.GenCss(indent_level + 2);
 }
 
+const String DataCalcLoop::GenListing_children(int indent_level) {
+  return loop_code.GenListing(indent_level + 1);
+}
+
 const String DataCalcLoop::GenCssPost_impl(int indent_level) {
   if(!GetSrcData()) return "";
   String il1 = cssMisc::Indent(indent_level+1);

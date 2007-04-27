@@ -65,6 +65,7 @@ public:
   
   virtual const String	GenCssType() const; // type name
   virtual const String	GenCss(int indent_level); // generate css code
+  virtual const String	GenListing(int indent_level); // generate listing of program
   
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on variable
@@ -89,6 +90,7 @@ class TA_API ProgType_List : public taList<ProgType> {
 INHERITED(taList<ProgType>)
 public:
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+  virtual const String 	GenListing(int indent_level) const; // generate the listing of program
 
   virtual DynEnumType* NewDynEnum();
   // #MENU #MENU_ON_Object #MENU_CONTEXT create a new DynEnumType (shortcut)
@@ -270,6 +272,7 @@ public:
   virtual const String	GenCssInitVal() const; // intial value
 
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
+  virtual const String	GenListing(bool is_arg = false, int indent_level = 0); // generate listing of program
   
   virtual cssEl*	NewCssEl();
   // get a new cssEl of an appropriate type, name/value initialized
@@ -340,6 +343,7 @@ public:
   VarContext	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
   
   virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+  virtual const String 	GenListing(int indent_level) const; // generate listing of program
 
   virtual void	AddVarTo(taNBase* src);
   // #DROPN add a var to the given object
@@ -547,6 +551,7 @@ public:
   
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
+  virtual const String	GenListing(int indent_level = 0); // generate a listing of the program
 
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // set flag state on
@@ -591,9 +596,14 @@ protected:
 
   virtual void		PreGenMe_impl(int item_id) {}
   virtual void		PreGenChildren_impl(int& item_id) {}
-  virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
-  virtual const String	GenCssBody_impl(int indent_level) { return _nilString; } // #IGNORE generate the Css body code for this object
-  virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
+  virtual const String	GenCssPre_impl(int indent_level) {return _nilString;}
+  // #IGNORE generate the Css prefix code (if any) for this object	
+  virtual const String	GenCssBody_impl(int indent_level) { return _nilString; }
+  // #IGNORE generate the Css body code for this object
+  virtual const String	GenCssPost_impl(int indent_level) {return _nilString;}
+  // #IGNORE generate the Css postfix code (if any) for this object
+  virtual const String	GenListing_children(int indent_level) {return _nilString;}
+  // generate listing of any children of this progel
 
 private:
   void	Copy_(const ProgEl& cp);
@@ -608,6 +618,7 @@ INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
   virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
+  virtual const String	GenListing(int indent_level = 0); // generate the listing of this program
   
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this progel list -- NULL if not found
@@ -646,6 +657,7 @@ protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenListing_children(int indent_level);
 
 private:
   void	Initialize() {}
@@ -856,11 +868,16 @@ public:
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
+  static const String	GetDescString(const String& dsc, int indent_level);
+  // #IGNORE get an appropriately formatted version of the description string for css code
+
   bool			isStale() {return m_stale;}
   override void		setStale(); // indicates a component has changed
   void			setRunState(RunState value); // sets and updates gui
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
+  virtual const String	ProgramListing();
+  // generate the listing of the program (NOT the underlying CSS code -- just the program)
   
   virtual void  Init();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT set the program state back to the beginning
@@ -906,9 +923,6 @@ public:
   virtual void		RunLoadInitCode();
   // Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
 
-  virtual void		SaveScript(ostream& strm);
-  // #MENU #MENU_ON_Script #MENU_CONTEXT #BUTTON save the css script generated by the program to a file
-
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // #CAT_Find find given variable within this program -- NULL if not found
   virtual taBase* 	FindTypeName(const String& nm) const;
@@ -918,12 +932,24 @@ public:
   virtual Program*	FindProgramNameContains(const String& prog_nm, bool warn_not_found=false) const;
   // #CAT_Find find program whose name contains given name, first looking within the group that this program belongs in, and then looking for all programs within the project.  if warn_not_found, then issue a warning if not found
 
+  virtual void		SaveScript(ostream& strm);
+  // #MENU #MENU_ON_Script #MENU_CONTEXT #BUTTON save the css script generated by the program to a file
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user 
   virtual void		ViewScript();
-    // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY view the css script generated by the program
+  // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY view the css script generated by the program
   virtual void		ViewScript_Editor();
-    // #MENU #MENU_CONTEXT #BUTTON open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
+  // #MENU #MENU_CONTEXT #BUTTON open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
+#endif
+
+  virtual void		SaveListing(ostream& strm);
+  // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #BUTTON save the program listing to a file
+#ifdef TA_GUI
+public: // XxxGui versions provide feedback to the user 
+  virtual void		ViewListing();
+  // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY view the listing of the program
+  virtual void		ViewListing_Editor();
+  // #MENU #MENU_CONTEXT #BUTTON open listing of the program in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
 
   static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
@@ -943,6 +969,7 @@ public: // ScriptBase i/f
 
 protected:
   String		m_scriptCache; // cache of script, managed by implementation
+  String		m_listingCache; // cache of listing, managed by implementation
   bool			m_checked; // flag to help us avoid doing CheckConfig twice
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
