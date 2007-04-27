@@ -122,7 +122,7 @@ public:
 };
 
 class TA_API taMath : public taNBase {
-  // ##CAT_Math ##NO_TOKENS ##NO_INSTANCE collection of commonly-used math functions
+  // ##CAT_Math ##NO_TOKENS ##INSTANCE collection of commonly-used math functions
 INHERITED(taNBase)
 public:
 

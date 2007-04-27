@@ -2,14 +2,10 @@ leabra todo list:
 
 commit:
 
-* got rid of most calls to SyncSendPrjns -- was causing spurious probs during copy
-  and is only necc for Connect.
-
-
 ------------
 current:
 
-Row_num label for x if row_num
+graph: Row_num label for x if row_num
 
 == Program
 
