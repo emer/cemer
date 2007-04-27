@@ -2179,10 +2179,12 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     // mid-update causes a link to an item to get created, which will then
     // not have been tracking all the BEGINs -- but it should be safe
     // to just keep letting them happen, doing gui updates, which should be harmless
+#ifdef DEBUG // just make sure these are harmless, and don't scare users...
     else {
       cerr << "WARNING: Datalink for object name: "
         << GetName() << " unexpectedly received a DATA or STRUCT END (cnt was 0)\n";
     }
+#endif
 #ifdef DATA_DATA_DEBUG    
     if(was_stru)
       cerr << (String)(int)this << " stru end: " << m_dbu_cnt << endl;

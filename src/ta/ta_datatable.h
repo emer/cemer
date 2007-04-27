@@ -483,7 +483,7 @@ TA_SMART_PTRS(DataTableCols); //
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST table of data of different types
+  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##EXT_tsv ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST table of data of different types
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
@@ -503,7 +503,7 @@ public:
     AUTO_LOAD,			// automatically load a data file after loading
     PROMPT_LOAD,		// prompt about loading a data file after loading (if run in -nogui mode, it is automatically loaded)
   };
-
+  
   /////////////////////////////////////////////////////////
   // 	Main datatable interface:
   int 			rows;
@@ -810,6 +810,7 @@ public:
   void			GetFlatGeom(const CellRange& cr, int& tot_cols, 
    int& max_cell_rows); // IGNORE get the total flat cols and max rows per cell; used for TSV output
 
+  String		HeaderToTSV(); // #IGNORE for tsv save
   String		RangeToTSV(const CellRange& cr); // #IGNORE for clip operations
 
   /////////////////////////////////////////////////////////
@@ -835,6 +836,8 @@ public:
 
   virtual void 		SaveData(const String& fname="", Delimiters delim = TAB, bool quote_str = true);
   // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+  void			SaveDataTSV(const String& fname="");
+  // #CAT_File #MENU #MENU_ON_Object #EXT_tsv saves data in a tab-separated value format; mat cells are flattened to 2-d; leave fname empty to pick from file chooser
   virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
 				   bool quote_str = true); 
   // #CAT_File #MENU #EXT_dat appends all of current datatable data to given file (does not output header; file assumed to be of same data structure

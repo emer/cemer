@@ -1521,6 +1521,36 @@ void DataTable::GetFlatGeom(const CellRange& cr, int& tot_cols, int& max_cell_ro
   }
 }
 
+String DataTable::HeaderToTSV() {
+  // metrics
+  int tot_col = 0; // total flat cols
+  int max_cell_rows = 0; // max flat rows per cell
+  CellRange cr;
+  cr.SetExtent(cols(), 1);
+  GetFlatGeom(cr, tot_col, max_cell_rows);
+  
+  // allocate a reasonable best-guess buffer
+  STRING_BUF(rval, (tot_col * (cr.row_to - cr.row_fr + 1)) * 15);
+  int flat_col = 0; // for tabs
+  for (int col = cr.col_fr; col <= cr.col_to; ++col) {
+    DataCol* da = GetColData(col);
+    int cell_cols; int cell_rows;
+    da->Get2DCellGeom(cell_cols, cell_rows); 
+    if (cell_cols == 1) {
+      if (flat_col++ > 0) rval.cat('\t');
+      rval.cat(da->name); 
+     } else { // mat, so deco all 
+      for (int cell_col = 0; cell_col < cell_cols; ++cell_col) {
+        if (flat_col++ > 0) rval.cat('\t');
+        rval.cat(da->name).cat("_").cat(String(cell_col)); 
+      }
+    }
+  }
+  rval.cat("\n");
+  return rval;
+}
+
+
 String DataTable::RangeToTSV(const CellRange& cr) {
   // metrics
   int tot_col = 0; // total flat cols
@@ -1769,12 +1799,27 @@ void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool
 
 void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) {
   taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data");
-  if(flr->ostrm)
+  if (flr->ostrm) {
     SaveData_strm(*flr->ostrm, delim, quote_str);
+  }
   flr->Close();
   taRefN::unRefDone(flr);
 }
 
+void DataTable::SaveDataTSV(const String& fname) {
+  taFiler* flr = GetSaveFiler(fname, ".tsv", false, "Data");
+  if(flr->ostrm) {
+    *flr->ostrm << HeaderToTSV();
+//    int tot_col = 0; // total flat cols
+//    int max_cell_rows = 0; // max flat rows per cell
+    CellRange cr;
+    cr.SetExtent(cols(), rows);
+//    GetFlatGeom(cr, tot_col, max_cell_rows);
+    *flr->ostrm << RangeToTSV(cr);
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
 void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str) {
   taFiler* flr = GetAppendFiler(fname, ".dat", false, "Data");
   if(flr->ostrm)
