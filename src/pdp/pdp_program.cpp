@@ -445,6 +445,8 @@ void InitNamedUnits::UpdateAfterEdit_impl() {
   GetInputDataVar();
   GetUnitNamesVar();
   GetNetworkVar();
+  if(!taMisc::is_loading)
+    InitNamesTable();
 }
 
 // this is really all it does -- no actual code gen!!
@@ -497,7 +499,7 @@ bool InitNamedUnits::GetUnitNamesVar() {
     taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
     unit_names_var->object_val = rval;
   }
-  return (bool)unit_names_var->object_val;
+  return true;
 }
 
 bool InitNamedUnits::GetNetworkVar() {
@@ -607,6 +609,7 @@ bool InitNamedUnits::LabelNetwork() {
 //////////////////////////
 
 void SetUnitsLit::Initialize() {
+  set_nm = true;
 }
 
 void SetUnitsLit::Destroy() {
@@ -649,6 +652,26 @@ bool SetUnitsLit::GetInputDataVar() {
   return true;
 }
 
+bool SetUnitsLit::GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm, 
+				 DataTable* idat, const String& il) {
+  int colno;
+  if(un.IsSet()) {
+    if(idat->FindColName(un.enum_type->name, colno, true)) {
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ un.NameVal() + ");\n";
+      if(set_nm) {
+	if(idat->FindColName("Name", colno, true)) {
+	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
+	    + ", -1); nm += \"_" + un.NameVal() + "\"; "
+	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
+	}
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
 const String SetUnitsLit::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   if(!input_data_var) return il + "// input_data_var not set!\n";
@@ -656,27 +679,10 @@ const String SetUnitsLit::GenCssBody_impl(int indent_level) {
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) return il + "// input_data not set!\n";
   String rval;
-  int colno;
-  if(unit_1.IsSet()) {
-    if(idat->FindColName(unit_1.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_1.NameVal() + ");\n";
-  }
-  if(unit_2.IsSet()) {
-    if(idat->FindColName(unit_2.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_2.NameVal() + ");\n";
-  }
-  if(unit_3.IsSet()) {
-    if(idat->FindColName(unit_3.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_3.NameVal() + ");\n";
-  }
-  if(unit_4.IsSet()) {
-    if(idat->FindColName(unit_4.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_4.NameVal() + ");\n";
-  }
+  GenCss_OneUnit(rval, unit_1, idnm, idat, il);
+  GenCss_OneUnit(rval, unit_2, idnm, idat, il);
+  GenCss_OneUnit(rval, unit_3, idnm, idat, il);
+  GenCss_OneUnit(rval, unit_4, idnm, idat, il);
   return rval;
 }
 
@@ -685,6 +691,7 @@ const String SetUnitsLit::GenCssBody_impl(int indent_level) {
 //////////////////////////
 
 void SetUnitsVar::Initialize() {
+  set_nm = true;
 }
 
 void SetUnitsVar::Destroy() {
@@ -745,6 +752,26 @@ bool SetUnitsVar::GetInputDataVar() {
   return true;
 }
 
+bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idnm, 
+				 DataTable* idat, const String& il) {
+  int colno;
+  if(un) {
+    if(idat->FindColName(un->dyn_enum_val.enum_type->name, colno, true)) {
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
+	+ un->name + ");\n";
+      if(set_nm) {
+	if(idat->FindColName("Name", colno, true)) {
+	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
+	    + ", -1); nm += \"_\" + " + un->name + "; "
+	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
+	}
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
 const String SetUnitsVar::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   if(!input_data_var) return il + "// input_data_var not set!\n";
@@ -752,27 +779,10 @@ const String SetUnitsVar::GenCssBody_impl(int indent_level) {
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) return il + "// input_data not set!\n";
   String rval;
-  int colno;
-  if(unit_1) {
-    if(idat->FindColName(unit_1->dyn_enum_val.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_1->name + ");\n";
-  }
-  if(unit_2) {
-    if(idat->FindColName(unit_2->dyn_enum_val.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_2->name + ");\n";
-  }
-  if(unit_3) {
-    if(idat->FindColName(unit_3->dyn_enum_val.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_3->name + ");\n";
-  }
-  if(unit_4) {
-    if(idat->FindColName(unit_4->dyn_enum_val.enum_type->name, colno, true))
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ unit_4->name + ");\n";
-  }
+  GenCss_OneUnit(rval, unit_1, idnm, idat, il);
+  GenCss_OneUnit(rval, unit_2, idnm, idat, il);
+  GenCss_OneUnit(rval, unit_3, idnm, idat, il);
+  GenCss_OneUnit(rval, unit_4, idnm, idat, il);
   return rval;
 }
 

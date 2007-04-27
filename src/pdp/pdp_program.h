@@ -232,12 +232,12 @@ class PDP_API SetUnitsLit: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef	input_data_var;	// #PROGEDIT_NEWLN program variable pointing to the input data table
-  
-  DynEnum	unit_1; 
-  DynEnum	unit_2;
-  DynEnum	unit_3;
-  DynEnum	unit_4;
-  
+  bool		set_nm;		// set trial name based on unit names here
+  DynEnum	unit_1; 	// unit to activate -- order doesn't matter -- can be any unit
+  DynEnum	unit_2; 	// unit to activate -- order doesn't matter -- can be any unit
+  DynEnum	unit_3; 	// unit to activate -- order doesn't matter -- can be any unit
+  DynEnum	unit_4; 	// unit to activate -- order doesn't matter -- can be any unit
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
@@ -248,6 +248,8 @@ protected:
   virtual bool	GetInputDataVar();
 
   override const String	GenCssBody_impl(int indent_level);
+  virtual bool	GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm, 
+			       DataTable* idat, const String& il);
 
 private:
   void	Initialize();
@@ -261,10 +263,11 @@ INHERITED(ProgEl)
 public:
   ProgVarRef	input_data_var;	// #PROGEDIT_NEWLN program variable pointing to the input data table
   
-  ProgVarRef	unit_1;
-  ProgVarRef	unit_2;
-  ProgVarRef	unit_3;
-  ProgVarRef	unit_4;
+  bool		set_nm;		// set trial name based on unit names here
+  ProgVarRef	unit_1;		// unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_2;		// unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_3;		// unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_4;		// unit to activate -- order doesn't matter -- can be any unit
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
@@ -276,6 +279,8 @@ protected:
   virtual bool	GetInputDataVar();
 
   override const String	GenCssBody_impl(int indent_level);
+  virtual bool	GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idnm, 
+			       DataTable* idat, const String& il);
 
 private:
   void	Initialize();

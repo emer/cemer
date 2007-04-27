@@ -2,12 +2,17 @@ leabra todo list:
 
 commit:
 
+* got rid of most calls to SyncSendPrjns -- was causing spurious probs during copy
+  and is only necc for Connect.
+
+
 ------------
 current:
 
+Row_num label for x if row_num
+
 == Program
 
-* namedunits guy
 * Add switch case guy: n_cases = enforced number of progels in case_code,
   ProgExpr_List size -- use a CodeBlock for more guys!
 * VarInc, VarDec (var++, var--) -- can be useful
@@ -24,6 +29,7 @@ current:
 
 == Netview:
 
+* Layer move digitize by units
 * Iconify layer -- add flag to layer itself, very easy to impl in viewer
   (add LayerFlags?) -- in viewer allow for diff values to be displayed in one unit?
   * also, what about compressing actual overall view -- this is presumably key,

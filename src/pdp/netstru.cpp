@@ -2492,7 +2492,7 @@ void Projection::SetFrom() {
     TestWarning(from == NULL, "SetFrom", "CUSTOM projection and from is NULL");
     break;
   }
-  mynet->UpdtAfterNetMod();
+  //  mynet->UpdtAfterNetMod();
 }
 
 void Projection::SetCustomFrom(Layer* fm_lay) {
@@ -3193,7 +3193,8 @@ void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs();
-  SyncSendPrjns();
+  //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
+  // also causes problems during copy..
   if(n_units > 0) {		// todo: v3compat conversion obs remove later
     if(n_units != un_geom.x * un_geom.y) {
       un_geom.n_not_xy = true;
@@ -4304,6 +4305,7 @@ void Network::Copy_(const Network& cp) {
   view_params = cp.view_params;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
+  SyncSendPrjns();
   FixPrjnIndexes();			     // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
   LinkSendCons();		// set the send cons (not copied!)
@@ -4359,7 +4361,7 @@ void Network::UpdateMonitors() {
 }
 
 void Network::UpdtAfterNetMod() {
-  SyncSendPrjns();
+  //  SyncSendPrjns();
   CountRecvCons();
   small_batch_n_eff = small_batch_n;
 #ifdef DMEM_COMPILE
