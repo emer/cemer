@@ -387,8 +387,8 @@ iSize taiMisc::dialogSize(int dialogSpec) {
     else rval = iSize((scrn_s.w * 2) / 5, (scrn_s.h * 3) / 10); // .4w .3h small horizontally oriented dialog
     break;
   case dlgBig:
-    if (ver) rval = iSize((scrn_s.w * 3) / 5, (scrn_s.h * 4) / 5);// .6w .8h  big vertically oriented dialog
-    else rval = iSize((scrn_s.w * 4) / 5, (scrn_s.h * 3) / 5);// .8h .6w big horizontally oriented dialog
+    if (ver) rval = iSize((scrn_s.w * 2) / 5, (scrn_s.h * 4) / 5);// .4w .8h  big vertically oriented dialog
+    else rval = iSize((scrn_s.w * 4) / 5, (scrn_s.h * 3) / 5);// .8w .6h big horizontally oriented dialog
     break;
   case dlgMedium:
   default: // medium, the default

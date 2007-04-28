@@ -548,7 +548,7 @@ public:
   String		col_name;	// name of column of data for this axis
   FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
-  RGBA			color;		// #EXPERT color of the line and points
+  RGBA			color;		// color of the line and points
 
   MinMax		data_range;     // #READ_ONLY actual min and max of data (including fixed range) 
   MinMax		range;		// #READ_ONLY actual display range of the axis data
@@ -652,8 +652,8 @@ public:
 #endif
   };
 
-  LineStyle	line_style;	// #EXPERT the style in which the line is drawn
-  PointStyle	point_style;	// #EXPERT the style in which the points are drawn
+  LineStyle	line_style;	// the style in which the line is drawn
+  PointStyle	point_style;	// the style in which the points are drawn
 
 //   void InitLinks();
 //   void CutLinks();

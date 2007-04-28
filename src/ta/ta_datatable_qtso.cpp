@@ -2415,6 +2415,8 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
       fm.x = .5f * axis_length;
       fm.y = -(TICK_SIZE + TICK_OFFSET + 1.5f * AXIS_LABEL_SIZE);
       String label = col_name; taMisc::SpaceLabel(label);
+      if(((GraphAxisView*)this)->row_num)
+	label = "Row Number";
       t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
     }
   }
@@ -2546,6 +2548,8 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
       fm.x = -(TICK_OFFSET + 2.5f * AXIS_LABEL_SIZE);
       String label = col_name; taMisc::SpaceLabel(label);
+      if(((GraphAxisView*)this)->row_num)
+	label = "Row Number";
       t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
     }
   }

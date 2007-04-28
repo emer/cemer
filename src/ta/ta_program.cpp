@@ -2806,9 +2806,20 @@ void Program::ViewScript_Editor() {
 }
 
 void Program::ViewScript_impl() {
-  iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
-  dlg->setText(scriptString());
-  dlg->exec();
+  taiStringDataHost* host_ = NULL;
+//   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
+  //  host_ = taiMisc::FindEdit(base, cur_win);
+  view_script = scriptString();
+  if(!host_) {
+    TypeDef* td = GetTypeDef();
+    MemberDef* md = td->members.FindName("view_script");
+    host_ = new taiStringDataHost(md, this, td, true); // true = read only
+    host_->Constr("Css Script for program: " + name);
+    host_->Edit(false);
+  }
+//   iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
+//   dlg->setText(scriptString());
+//   dlg->exec();
 }
 #endif  // TA_GUI
 
@@ -2818,9 +2829,21 @@ void Program::SaveListing(ostream& strm) {
 
 #ifdef TA_GUI
 void Program::ViewListing() {
-  iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
-  dlg->setText(ProgramListing());
-  dlg->exec();
+  taiStringDataHost* host_ = NULL;
+//   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
+  //  host_ = taiMisc::FindEdit(base, cur_win);
+  view_listing = ProgramListing();
+  if(!host_) {
+    TypeDef* td = GetTypeDef();
+    MemberDef* md = td->members.FindName("view_listing");
+    host_ = new taiStringDataHost(md, this, td, true); // true = read only
+    host_->Constr("Listing of program elements for program: " + name);
+    host_->Edit(false);
+  }
+
+//   iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
+//   dlg->setText(ProgramListing());
+//   dlg->exec();
 }
 
 void Program::ViewListing_Editor() {

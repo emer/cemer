@@ -56,6 +56,8 @@
 #include <qtooltip.h>
 #include <QVBoxLayout>
 #include <qwidget.h>
+#include <QPrintDialog>
+#include <QPrinter>
 
 #include "ibutton.h"
 #include "icolor.h"
@@ -962,6 +964,7 @@ int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
 }
 
 void taiDataHostBase::setBgColor(const iColor* new_bg) {
+  if(!bg_color) return;
   if (new_bg == NULL) {
     // get from default pallette
     bg_color->set(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
@@ -1884,6 +1887,11 @@ void taiEditDataHost::DoSelectForEdit(int param){
   }
 }
 
+void taiEditDataHost::DoConstr_Dialog(iDialog*& dlg) {
+  inherited::DoConstr_Dialog(dlg);
+  dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
+}
+
 int taiEditDataHost::Edit(bool modal_) {
   if (!modal_)
     taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
@@ -2198,6 +2206,7 @@ taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_
   cur_base = base_;
   mbr = mbr_;
   edit = NULL;
+  btnPrint = NULL;
 }
 
 taiStringDataHost::~taiStringDataHost() {
@@ -2212,7 +2221,7 @@ void taiStringDataHost::Constr(const char* prompt, const char* win_title) {
 }
 
 void taiStringDataHost::Constr_Box() {
-  edit = new iLineEdit(widget());
+  edit = new QTextEdit(widget());
   vblDialog->addWidget(edit, 1);
 }
 
@@ -2234,18 +2243,35 @@ void taiStringDataHost::Constr_Strings(const char* prompt_str_, const char* win_
   
 }
 
+void taiStringDataHost::Constr_Buttons() {
+  inherited::Constr_Buttons();
+  btnPrint = new QPushButton("&Print", widget());
+  layButtons->addSpacing(16);
+  layButtons->addWidget(btnPrint, 0, (Qt::AlignVCenter));
+  connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
+}
+
+
+void taiStringDataHost::btnPrint_clicked() {
+  QPrinter pr;
+  QPrintDialog pd(&pr, widget());
+  if (pd.exec() != QDialog::Accepted) return;
+  // print ...
+  edit->document()->print(&pr);
+}
+
 void taiStringDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
 }
 
 void taiStringDataHost::DoConstr_Dialog(iDialog*& dlg) {
   inherited::DoConstr_Dialog(dlg);
-  dlg->resize( taiM->dialogSize(taiMisc::dlgSmall | taiMisc::dlgHor) );
+  dlg->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
 }
 
 
 void taiStringDataHost::GetImage() {
   String val = mbr->type->GetValStr(mbr->GetOff(cur_base), cur_base, mbr);
-  edit->setText(val);
+  edit->setPlainText(val);
 }
 
 void taiStringDataHost::GetValue() {

@@ -640,6 +640,7 @@ protected:
     // uses mth's label, if no label passed
   void			DoAddMethButton(QAbstractButton* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
+  override void 	DoConstr_Dialog(iDialog*& dlg);
 
 protected slots:
   virtual void	DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
@@ -652,7 +653,7 @@ class TA_API taiStringDataHost: public taiDataHostBase
 INHERITED(taiDataHostBase)
   Q_OBJECT
 public:
-  iLineEdit*		edit;
+  QTextEdit*		edit;
   MemberDef*		mbr; // the member being edited (doesn't have to be String)
   
   taBase*		base() const;
@@ -660,13 +661,18 @@ public:
   void 			Constr(const char* prompt = "", const char* win_title = "");
   override void		GetImage();
   override void		GetValue();
+  override void		Constr_Buttons();
   
   taiStringDataHost(MemberDef* mbr, void* base, TypeDef* typ_ = NULL, 
    bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   ~taiStringDataHost();
   
 
+protected slots:
+  void		btnPrint_clicked();
+  
 protected:
+  QPushButton*		btnPrint;
 
   void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
   override void		Constr_Strings(const char* prompt="", const char* win_title="");

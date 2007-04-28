@@ -860,6 +860,10 @@ public:
   // #HIDDEN #NO_SAVE the direct subprogs of this one, enumerated in the PreGen phase (note: these are ProgramCall's, not the actual Program's)
   bool		    	m_stale;
   // #READ_ONLY #NO_SAVE dirty bit -- needs to be public for activating the Compile button
+  String		view_script;
+  // #READ_ONLY #NO_SAVE current view of script 
+  String		view_listing;
+  // #READ_ONLY #NO_SAVE current view of listing 
   
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // set flag state on
