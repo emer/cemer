@@ -590,6 +590,8 @@ taiField::~taiField() {
   if (edit) {
     delete edit;
   }
+  edit = NULL;
+  leText = NULL;
 }
 
 void taiField::btnEdit_clicked(bool) {
@@ -634,6 +636,7 @@ void taiField::setMinCharWidth(int num) {
 }
 
 void taiField::this_GetEditActionsEnabled(int& ea) {
+  if(!rep()) return;
   if (!readOnly())
     ea |= taiClipData::EA_PASTE;
   if (rep()->hasSelectedText()) {
@@ -644,6 +647,7 @@ void taiField::this_GetEditActionsEnabled(int& ea) {
 }
 
 void taiField::this_EditAction(int ea) {
+  if(!rep()) return;
   if (ea & taiClipData::EA_CUT) {
     rep()->cut();
   } else if (ea & taiClipData::EA_COPY) {

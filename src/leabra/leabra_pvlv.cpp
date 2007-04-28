@@ -284,8 +284,8 @@ void LVConSpec::Initialize() {
 void LVSpec::Initialize() {
   discount = 0.0f;
   use_actual_er = false;
-  new_lv = false;
   da_thr = .01f;
+  syn_dep = false;
 }
 
 void LVeLayerSpec::Initialize() {
@@ -389,7 +389,7 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = flay;
       continue;
     }
-    if(lv.new_lv) continue;
+    if(!lv.syn_dep) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(CheckError(!cs->InheritsFrom(TA_LVConSpec), quiet, rval,
 		  "requires recv connections to be of type LVConSpec")) {
@@ -445,7 +445,18 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
     (lay, 
      DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
 
-     if(lv.new_lv) {
+     if(lv.syn_dep) {
+       if(er_avail) {
+	 u->ext = (1.0f - lv.discount) * pve_val;
+	 ClampValue(ugp, net); 		// apply new value
+	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
+	 Compute_dWt_Ugp(ugp, lay, net);
+       }
+       else {
+	 Compute_DepressWt(ugp, lay, net); // always depress!!
+       }
+     }
+     else {
        if(actual_er_avail) { // an actual external signal
 	 u->ext = (1.0f - lv.discount) * pve_val;
 	 ClampValue(ugp, net); 		// apply new value
@@ -459,17 +470,6 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 	   Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
 	   Compute_dWt_Ugp(ugp, lay, net);
 	 }
-       }
-     }
-     else {
-       if(er_avail) {
-	 u->ext = (1.0f - lv.discount) * pve_val;
-	 ClampValue(ugp, net); 		// apply new value
-	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-	 Compute_dWt_Ugp(ugp, lay, net);
-       }
-       else {
-	 Compute_DepressWt(ugp, lay, net); // always depress!!
        }
      }
      );
@@ -490,12 +490,13 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 //////////////////////////////////
 
 void PVLVDaSpec::Initialize() {
-  mode = LV_PLUS_IF_PV;
+  mode = IF_PV_ELSE_LV;
+  lv_disc_thr = .01f;
+  lv_disc = 0.5f;
   tonic_da = 0.0f;
-  min_lvi = 0.1f;
   use_actual_er = false;
-  lv_delta = false;
-  lv_da_gain = 2.0f;
+  syn_dep = false;
+  min_lvi = 0.1f;
 }
 
 void PVLVDaLayerSpec::Initialize() {
@@ -656,7 +657,7 @@ void PVLVDaLayerSpec::Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork*) {
   }      
 }
 
-void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
+void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
   int lve_prjn_idx;
   FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
   int lvi_prjn_idx;
@@ -741,7 +742,11 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     float lvd = lvesu->act_eq - eff_lvi; 
     float pvd = pve_val - pvisu->act_m; 
 
-    float lv_da = da.lv_da_gain * (lvd - lvesu->misc_1);
+    float lv_da;
+    if(lvd + da.lv_disc_thr >= lvesu->misc_1)
+      lv_da = lvd - da.lv_disc * lvesu->misc_1;
+    else
+      lv_da = lvd - lvesu->misc_1;
     float pv_da = pvd - pvisu->misc_1;
 
     if(net->phase_no == 0) {	// not used at this point..
@@ -844,10 +849,10 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
 void PVLVDaLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->cycle >= 0) && lay->hard_clamped)
     return;			// don't do this during normal processing
-  if(da.lv_delta)
-    Compute_Da_LvDelta(lay, net);
+  if(da.syn_dep)
+    Compute_Da_SynDep(lay, net);	// now get the da and clamp it to layer
   else
-    Compute_Da(lay, net);	// now get the da and clamp it to layer
+    Compute_Da_LvDelta(lay, net);
   Send_Da(lay, net);
   Compute_ActAvg(lay, net);
 }
@@ -861,7 +866,7 @@ void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 void PVLVDaLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
   LeabraLayerSpec::PostSettle(lay, net, set_both);
 
-  if(!da.lv_delta) return;
+  if(da.syn_dep) return;
 
   if(net->phase_no == net->phase_max-1) { // only at very end!
     Update_LvDelta(lay, net);

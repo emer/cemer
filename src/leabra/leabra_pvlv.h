@@ -185,8 +185,8 @@ class LEABRA_API LVSpec : public taBase {
 public:
   float		discount;	// #DEF_0 multiplicative discount factor for PVe/ExtRew/US training signal: plus phase clamp = (1-discount)*PVe
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
-  bool		new_lv;		// #DEF_false #APPLY_IMMED do the new experimental version of LV
-  float		da_thr;		// #DEF_0.01 #CONDEDIT_ON_new_lv DA magnitude threshold for actually doing learning (don't want to clamp small values -- ideally would just increment acts)
+  float		da_thr;		// #DEF_0.3 #CONDEDIT_OFF_syn_dep for learning from PV dav DA values outside of delivered or missed expected rewards -- magnitude threshold for actually doing learning (don't want to clamp small values)
+  bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
 
   void	Initialize();
   void 	Destroy()	{ };
@@ -231,13 +231,6 @@ public:
   TA_BASEFUNS2_NOCOPY(LViLayerSpec, LVeLayerSpec);
 };
 
-////////////////////////////////////////////////////////////////////////////
-//			New version of LV and DA!
-////////////////////////////////////////////////////////////////////////////
-
-// 1. just use PVConSpec instead of LVConSpec
-// 2. click on new_delta in daspec
-
 //////////////////////////
 //	  DaLayer 	//
 //////////////////////////
@@ -247,17 +240,18 @@ class LEABRA_API PVLVDaSpec : public taBase {
   INHERITED(taBase)
 public:
   enum	DaMode {
-    LV_PLUS_IF_PV,		// da = (LVe - LVi) + [if (PV detected (present/expected), PVe - PVi]
     IF_PV_ELSE_LV,		// if (PV detected (present/expected), da = PVe - PVi; else da = LVe - LVi
+    LV_PLUS_IF_PV,		// da = (LVe - LVi) + [if (PV detected (present/expected), PVe - PVi]
     PV_PLUS_LV			// da = (PVe - PVi) + (LVe - LVi)
   };
 
-  DaMode	mode;		// #DEF_LV_PLUS_IF_PV how to compute DA as a function of PV and LV systems
+  DaMode	mode;		// #DEF_IF_PV_ELSE_LV how to compute DA as a function of PV and LV systems
+  float		lv_disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.01 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
+  float		lv_disc;	//  #CONDEDIT_OFF_syn_dep #DEF_0.5 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
-  float		min_lvi;	// #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
-  bool		lv_delta;	// #DEF_false new LV delta formulation: lv da is relative to last trial, reset by PV rew pred -- no synaptic depression!
-  float		lv_da_gain;	// #DEF_2 multiplier on contribution of LV da relative to PV -- because of lv_delta, it needs to be stronger
+  bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism
+  float		min_lvi;	// #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
 
   void	Initialize();
   void 	Destroy()	{ };
@@ -273,8 +267,6 @@ public:
 
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
   // compute a zero da value: in minus phase -- not used!
-  virtual void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
-  // compute the da value based on recv projections: every cycle in 1+ phases
   virtual void	Send_Da(LeabraLayer* lay, LeabraNetwork* net);
   // send the da value to sending projections: every cycle
 
@@ -283,6 +275,8 @@ public:
   virtual void	Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net);
   // update the LV
 
+  virtual void	Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net);
+  // compute the da value based on recv projections: every cycle in 1+ phases (synaptic depression version)
 
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);

@@ -65,7 +65,7 @@ class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
 public:
   SNcMiscSpec	snc;		// misc SNc specific parameters controlling influence of patch modulation
 
-  void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
+//   void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

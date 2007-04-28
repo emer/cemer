@@ -1889,7 +1889,8 @@ void taiEditDataHost::DoSelectForEdit(int param){
 
 void taiEditDataHost::DoConstr_Dialog(iDialog*& dlg) {
   inherited::DoConstr_Dialog(dlg);
-  dlg->setWindowFlags(Qt::WindowStaysOnTopHint);
+  if(!modal)
+    dlg->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowMinimizeButtonHint);
 }
 
 int taiEditDataHost::Edit(bool modal_) {

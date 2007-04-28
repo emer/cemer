@@ -89,10 +89,10 @@ bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
-  // todo: patch not supported right now!
-  PVLVDaLayerSpec::Compute_Da(lay, net);
-}
+// void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
+//   // todo: patch not supported right now!
+//   PVLVDaLayerSpec::Compute_Da(lay, net);
+// }
 
 //////////////////////////////////
 //	MatrixConSpec		//
