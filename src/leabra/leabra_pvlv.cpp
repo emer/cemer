@@ -295,7 +295,7 @@ void LVeLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
-  bias_val.val = 0.0f;
+  bias_val.val = 0.5f;		// 0.0 for old syn_dep
 }
 
 void LVeLayerSpec::Defaults() {
@@ -998,9 +998,12 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
   if(learn_cons == NULL) return;
 
-  LVConSpec* pvi_cons = (LVConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
-  LVConSpec* lve_cons = (LVConSpec*)pvi_cons->FindMakeChild("LVe", &TA_LVConSpec);
-  LVConSpec* lvi_cons = (LVConSpec*)lve_cons->FindMakeChild("LVi", &TA_LVConSpec);
+  PVConSpec* pvi_cons = (PVConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
+  PVConSpec* lve_cons = (PVConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
+  PVConSpec* lvi_cons = (PVConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
+  // old syn_dep:
+//   LVConSpec* lve_cons = (LVConSpec*)pvi_cons->FindMakeChild("LVe", &TA_LVConSpec);
+//   LVConSpec* lvi_cons = (LVConSpec*)lve_cons->FindMakeChild("LVi", &TA_LVConSpec);
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
   if(bg_bias == NULL) return;
   LeabraConSpec* fixed_bias = (LeabraConSpec*)bg_bias->FindMakeChild("FixedBias", &TA_LeabraBiasSpec);
@@ -1073,7 +1076,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
 
     lvesp->bias_val.un = ScalarValBias::GC;
     lvesp->bias_val.wt = ScalarValBias::NO_WT;
-    lvesp->bias_val.val = 0.0f;
+    lvesp->bias_val.val = 0.5f;	// 0.0 for syn_dep
     pvisp->bias_val.un = ScalarValBias::GC;
     pvisp->bias_val.wt = ScalarValBias::NO_WT;
     pvisp->bias_val.val = 0.5f;
@@ -1132,7 +1135,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
 
     lvesp->bias_val.un = ScalarValBias::GC;
     lvesp->bias_val.wt = ScalarValBias::NO_WT;
-    lvesp->bias_val.val = 0.0f;
+    lvesp->bias_val.val = 0.5f;	// 0.0 for old syn_dep
     pvisp->bias_val.un = ScalarValBias::GC;
     pvisp->bias_val.wt = ScalarValBias::NO_WT;
     pvisp->bias_val.val = 0.5f;

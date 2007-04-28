@@ -127,8 +127,11 @@ void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);
   bias_spec.type = &TA_MatrixBiasSpec;
   SetUnique("g_bar", true);
-  g_bar.a = .03f;
-  g_bar.h = .01f;
+  g_bar.a = .12f;		// new vals for lv_delta
+  g_bar.h = .04f;
+  // old vals for syn_dep
+//   g_bar.a = .03f;
+//   g_bar.h = .01f;
 
   freeze_net = true;
 }
@@ -2035,8 +2038,10 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     matrixosp->avgda_rnd_go.on = false;
   }
 
-  matrix_units->g_bar.h = .01f;
-  matrix_units->g_bar.a = .03f;
+//   matrix_units->g_bar.h = .01f; // old syn dep
+//   matrix_units->g_bar.a = .03f;
+  matrix_units->g_bar.h = .04f;
+  matrix_units->g_bar.a = .12f;
   pfc_units->SetUnique("g_bar", true);
   if(nolrn_pfc)
     pfc_units->g_bar.h = 1.0f;
