@@ -550,7 +550,8 @@ public:
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0);
   // #MENU #MENU_ON_Columns #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
-				      const String& col_nm,  const MatrixGeom& cell_geom);
+    const String& col_nm,  const MatrixGeom& cell_geom,
+    int& col_idx = idx_def_arg);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
   virtual double_Data*	NewColDouble(const String& col_nm); 
@@ -577,6 +578,9 @@ public:
 	ValType val_type = VT_FLOAT, int dims = 1,
 	int d0=0, int d1=0, int d2=0, int d3=0);
   // #CAT_Columns insures that a matrix column of the given name, val type, and dimensions exists, and returns that col. 
+  DataCol* 		FindMakeColMatrixN(const String& col_nm,
+	ValType val_type, const MatrixGeom& cell_geom,
+	int& col_idx = idx_def_arg); // #IGNORE
   virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
 					ValType val_type = VT_FLOAT, int dims = 0,
 					int d0=0, int d1=0, int d2=0, int d3=0);
@@ -1028,7 +1032,7 @@ protected:
   DataTableModel*	m_dm; // #IGNORE note: once we create, always exists
   
   DataCol*	NewCol_impl(DataCol::ValType val_type, 
-				    const String& col_nm);
+    const String& col_nm, int& col_idx = idx_def_arg);
   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
   DataCol*	GetColForChannelSpec_impl(ChannelSpec* cs);
   DataCol*	NewColFromChannelSpec_impl(ChannelSpec* cs);

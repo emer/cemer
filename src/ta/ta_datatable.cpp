@@ -1312,7 +1312,7 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type,
 }
 
 DataCol* DataTable::NewCol_impl(DataCol::ValType val_type, 
-				       const String& col_nm) 
+  const String& col_nm, int& col_idx) 
 {
   TypeDef* td;
   switch (val_type) {
@@ -1324,6 +1324,7 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
   case VT_VARIANT:  td = &TA_Variant_Data; break;
   default: return NULL; // compiler food
   }
+  col_idx = data.size; // next idx
   DataCol* rval = (DataCol*) data.New(1, td);
   rval->name = col_nm;
   // additional specialized initialization
@@ -1383,10 +1384,10 @@ DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm
 }
 
 DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type, 
-  const String& col_nm, const MatrixGeom& cell_geom) 
+  const String& col_nm, const MatrixGeom& cell_geom, int& col_idx) 
 {
   StructUpdate(true);
-  DataCol* rval = NewCol_impl(val_type, col_nm);
+  DataCol* rval = NewCol_impl(val_type, col_nm, col_idx);
   rval->is_matrix = true;
   rval->cell_geom = cell_geom;
   rval->Init(); // asserts geom
@@ -1429,6 +1430,41 @@ DataCol* DataTable::FindMakeColMatrix(const String& col_nm,
 {
   return FindMakeColName(col_nm, idx_def_arg, val_type,
     dims, d0, d1, d2, d3);
+}
+
+DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
+  ValType val_type, const MatrixGeom& cell_geom, int& col_idx)
+{
+  DataCol* da = FindColName(col_nm, col_idx);
+  if(da) {
+    if(da->valType() != (ValType)val_type) {
+      StructUpdate(true);
+      DataCol* nda = NewColMatrixN(val_type, col_nm, cell_geom, col_idx);
+      data.MoveIdx(data.size-1, col_idx);
+      data.RemoveEl(da);	// get rid of that guy
+      da = nda;
+      nda->EnforceRows(rows);	// keep row-constant
+      StructUpdate(false);
+    } else if ((da->cell_dims() != cell_geom.size) || (!da->is_matrix)) {
+      StructUpdate(true);
+      da->cell_geom = cell_geom;
+      da->is_matrix = true;
+      da->Init();		// asserts geom
+      da->EnforceRows(rows);	// keep row-constant
+      StructUpdate(false);
+    } else {
+      if (cell_geom != da->cell_geom) {
+	StructUpdate(true);
+	da->cell_geom = cell_geom;
+	da->Init();
+	StructUpdate(false);
+      }
+    }
+    return da;
+  }
+  else { // not found -- make one
+    return NewColMatrixN(val_type, col_nm, cell_geom, col_idx);
+  }
 }
 
 DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
