@@ -348,6 +348,7 @@ enumdefn: enumname '{' enums '}' end term {
             cssMisc::cur_top->Prog()->insts[$5-1]->SetLine($5); $$ = $5-1;
 	    if(cssMisc::cur_enum->name.before(5) == "enum_") /* don't keep anon enums around */
 	      delete cssMisc::cur_enum;
+	    cssMisc::parsing_args = false; /* needed for - numbers */
 	    cssMisc::cur_enum = NULL; }
         ;
 
@@ -357,6 +358,7 @@ enumname: CSS_ENUM name			{
 	    if(cssMisc::cur_class != NULL) cssMisc::cur_class->types->Push(cssMisc::cur_enum);
 	    /* todo: global keyword?? else cssMisc::TypesSpace.Push(cssMisc::cur_enum); */
 	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum);
+	    cssMisc::parsing_args = true; 
 	    cssEl::Done(nm); }
         | CSS_ENUM CSS_TYPE		{ /* redefining */
 	    if($2.El()->GetType() != cssEl::T_EnumType) {
@@ -364,13 +366,16 @@ enumname: CSS_ENUM name			{
 	      return cssProg::YY_Err; }
    	    cssMisc::cur_enum = (cssEnumType*)$2.El();
  	    cssMisc::cur_enum->enums->Reset(); /* prepare for new enums.. */
+	    cssMisc::parsing_args = true; 
 	    cssMisc::cur_enum->enum_cnt = 0; }
 	| CSS_ENUM			{ /* anonymous  */
 	    String nm = "anonenum_"; nm += String(cssMisc::anon_type_cnt++); nm += "_";
             cssMisc::cur_enum = new cssEnumType((const char*)nm);
 	    if(cssMisc::cur_class != NULL) cssMisc::cur_class->types->Push(cssMisc::cur_enum);
 	    /* todo: global keyword?? else cssMisc::TypesSpace.Push(cssMisc::cur_enum); */
-	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum); }
+	    else cssMisc::cur_top->types.Push(cssMisc::cur_enum);
+	    cssMisc::parsing_args = true; 
+	  }
         ;
 
 enums:    enumline
