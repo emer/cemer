@@ -159,7 +159,8 @@ int yylex()
     }
 
     bool got_minus_num = false;
-    if(cssMisc::parsing_args) {
+//     if(cssMisc::parsing_args) {
+    // why should this be restricted to parsing args???
       if(c == '-') {
 	nxt = cssMisc::cur_top->Prog()->Getc();
 	cssMisc::cur_top->Prog()->unGetc(); // look ahead
@@ -167,7 +168,7 @@ int yylex()
 	  return follow3('=', CSS_ASGN_SUB, '-', CSS_MINMIN, '>', CSS_POINTSAT, '-');
 	got_minus_num = true;
       }
-    }
+//     }
 
     if((c == '.') || got_minus_num || isdigit(c)) {	// number
       Real r;

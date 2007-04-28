@@ -231,8 +231,9 @@ class PDP_API SetUnitsLit: public ProgEl {
   // set units in input_data table to present to the network: values supplied as literal items
 INHERITED(ProgEl)
 public:
-  ProgVarRef	input_data_var;	// #PROGEDIT_NEWLN program variable pointing to the input data table
+  ProgVarRef	input_data_var;	// program variable pointing to the input data table
   bool		set_nm;		// set trial name based on unit names here
+  int		offset;		// add this additional offset to unit indicies -- useful for unit groups with same sets of units
   DynEnum	unit_1; 	// unit to activate -- order doesn't matter -- can be any unit
   DynEnum	unit_2; 	// unit to activate -- order doesn't matter -- can be any unit
   DynEnum	unit_3; 	// unit to activate -- order doesn't matter -- can be any unit
@@ -261,9 +262,10 @@ class PDP_API SetUnitsVar: public ProgEl {
   // set units in input_data table to present to the network: values supplied as variables
 INHERITED(ProgEl)
 public:
-  ProgVarRef	input_data_var;	// #PROGEDIT_NEWLN program variable pointing to the input data table
+  ProgVarRef	input_data_var;	// program variable pointing to the input data table
   
   bool		set_nm;		// set trial name based on unit names here
+  ProgVarRef	offset;		// add this additional offset to unit indicies -- useful for unit groups with same sets of units
   ProgVarRef	unit_1;		// unit to activate -- order doesn't matter -- can be any unit
   ProgVarRef	unit_2;		// unit to activate -- order doesn't matter -- can be any unit
   ProgVarRef	unit_3;		// unit to activate -- order doesn't matter -- can be any unit

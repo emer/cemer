@@ -36,6 +36,7 @@
 ///////////////////////////////////////////////////////////
 
 void ProgType::Initialize() {
+  setUseStale(true);
 }
 
 void ProgType::Destroy() {
@@ -71,6 +72,7 @@ const String ProgType::GenListing(int indent_level) {
 
 void ProgType_List::Initialize() {
   SetBaseType(&TA_ProgType);
+  setUseStale(true);
 }
 
 void ProgType_List::El_SetIndex_(void* it_, int idx) {
@@ -110,17 +112,18 @@ const String ProgType_List::GenListing(int indent_level) const {
   return rval;
 }
 
-// void ProgType_List::setStale() {
-//   inherited::setStale();
-//   // if we are in a program group, dirty all progs
-//   // note: we have to test if in a prog first, otherwise we'll always get a group
+void ProgType_List::setStale() {
+  inherited::setStale();
+  // note: there are no vars just in programs anymore
+  // if we are in a program group, dirty all progs
+  // note: we have to test if in a prog first, otherwise we'll always get a group
 //   Program* prog = GET_MY_OWNER(Program);
 //   if (!prog) {
 //     Program_Group* grp = GET_MY_OWNER(Program_Group);
 //     if (grp)
 //       grp->SetProgsStale();
 //   }
-// }
+}
 
 ///////////////////////////////////////////////////////////
 //		DynEnumType
@@ -182,6 +185,16 @@ DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
   it->value = val;
   enums.OrderItems();
   return it;
+}
+
+void DynEnumType::SeqNumberItems(int first_val) {
+  int val = first_val;
+  for(int i=0;i<enums.size;i++) {
+    DynEnumItem* it = enums.FastEl(i);
+    it->value = val;
+    it->DataChanged(DCR_ITEM_UPDATED);
+    val++;
+  }
 }
 
 taBase* DynEnumType::FindTypeName(const String& nm) const {
@@ -655,7 +668,10 @@ const String ProgVar::GenCssType() const {
     else
       return "int";
   case T_DynEnum:
-    return "c_DynEnum";
+    if(dyn_enum_val.enum_type) {
+      return dyn_enum_val.enum_type->name;
+    }
+    return "int";
   }
   return "";
 }
@@ -820,14 +836,15 @@ ProgVar* ProgVar_List::FindVarType(ProgVar::VarType vart, TypeDef* td) {
 
 void ProgVar_List::setStale() {
   inherited::setStale();
+  // note: there are no vars just in program groups anymore.. 
   // if we are in a program group, dirty all progs
   // note: we have to test if in a prog first, otherwise we'll always get a group
-  Program* prog = GET_MY_OWNER(Program);
-  if (!prog) {
-    Program_Group* grp = GET_MY_OWNER(Program_Group);
-    if (grp)
-      grp->SetProgsStale();
-  }
+//   Program* prog = GET_MY_OWNER(Program);
+//   if (!prog) {
+//     Program_Group* grp = GET_MY_OWNER(Program_Group);
+//     if (grp)
+//       grp->SetProgsStale();
+//   }
 }
 
 
@@ -1462,12 +1479,14 @@ String ProgEl::GetStateDecoKey() const {
 
 void ProgEl::SetNonStdFlag(bool non_std) {
   SetProgFlagState(NON_STD, non_std);
-  UpdateAfterEdit();		// trigger update
+  DataChanged(DCR_ITEM_UPDATED);
+  //UpdateAfterEdit();		// trigger update
 }
 
 void ProgEl::SetNewElFlag(bool new_el) {
   SetProgFlagState(NEW_EL, new_el);
-  UpdateAfterEdit();
+  DataChanged(DCR_ITEM_UPDATED);
+  //  UpdateAfterEdit();
 }
 
 void ProgEl::PreGen(int& item_id) {
@@ -1873,6 +1892,10 @@ const String Function::GenCssBody_impl(int indent_level) {
   rval += fun_code.GenCss(indent_level + 1);
   rval += cssMisc::Indent(indent_level) + "}\n";
   return rval;
+}
+
+const String Function::GenListing_children(int indent_level) {
+  return fun_code.GenListing(indent_level + 1);
 }
 
 String Function::GetDisplayName() const {

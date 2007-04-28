@@ -38,6 +38,7 @@ void BasicDataLoop::GetOrderVar() {
     if(!(order_var = my_prog->vars.FindName("data_loop_order"))) {
       order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       order_var->name = "data_loop_order";
+      order_var->DataChanged(DCR_ITEM_UPDATED);
     }
   }
   order_var->var_type = ProgVar::T_HardEnum;
@@ -52,6 +53,7 @@ void BasicDataLoop::GetOrderVal() {
 
 void BasicDataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
   UpdateProgVarRef_NewOwner(data_var);
   UpdateProgVarRef_NewOwner(order_var);
   GetOrderVar();
@@ -151,6 +153,7 @@ void GroupedDataLoop::GetOrderVars() {
     if(!(group_order_var = my_prog->vars.FindName("group_order"))) {
       group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       group_order_var->name = "group_order";
+      group_order_var->DataChanged(DCR_ITEM_UPDATED);
     }
   }
   group_order_var->var_type = ProgVar::T_HardEnum;
@@ -161,6 +164,7 @@ void GroupedDataLoop::GetOrderVars() {
     if(!(item_order_var = my_prog->vars.FindName("item_order"))) {
       item_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       item_order_var->name = "item_order";
+      item_order_var->DataChanged(DCR_ITEM_UPDATED);
     }
   }
   item_order_var->var_type = ProgVar::T_HardEnum;
@@ -170,6 +174,7 @@ void GroupedDataLoop::GetOrderVars() {
 
 void GroupedDataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
   UpdateProgVarRef_NewOwner(data_var);
   UpdateProgVarRef_NewOwner(group_order_var);
   UpdateProgVarRef_NewOwner(item_order_var);
@@ -275,12 +280,13 @@ void NetCounterInit::Destroy() {
 
 void NetCounterInit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(network_var);
-  UpdateProgVarRef_NewOwner(local_ctr_var);
-  GetLocalCtrVar();
   if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
   }
+  if(taMisc::is_loading) return;
+  UpdateProgVarRef_NewOwner(network_var);
+  UpdateProgVarRef_NewOwner(local_ctr_var);
+  GetLocalCtrVar();
 }
 
 void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -308,6 +314,7 @@ void NetCounterInit::GetLocalCtrVar() {
   if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
     local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     local_ctr_var->name = counter->name;
+    local_ctr_var->DataChanged(DCR_ITEM_UPDATED);
   }
   local_ctr_var->var_type = ProgVar::T_Int;
 }
@@ -332,12 +339,13 @@ void NetCounterIncr::Destroy() {
 
 void NetCounterIncr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(network_var);
-  UpdateProgVarRef_NewOwner(local_ctr_var);
-  GetLocalCtrVar();
   if((bool)network_var && ((bool)network_var->object_val)) {
     network_type = network_var->object_val->GetTypeDef();
   }
+  if(taMisc::is_loading) return;
+  UpdateProgVarRef_NewOwner(network_var);
+  UpdateProgVarRef_NewOwner(local_ctr_var);
+  GetLocalCtrVar();
 }
 
 void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -365,6 +373,7 @@ void NetCounterIncr::GetLocalCtrVar() {
   if(!(local_ctr_var = my_prog->vars.FindName(counter->name))) {
     local_ctr_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     local_ctr_var->name = counter->name;
+    local_ctr_var->DataChanged(DCR_ITEM_UPDATED);
   }
   local_ctr_var->var_type = ProgVar::T_Int;
 }
@@ -388,6 +397,7 @@ void NetUpdateView::Destroy() {
 
 void NetUpdateView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
   UpdateProgVarRef_NewOwner(network_var);
   UpdateProgVarRef_NewOwner(update_var);
   GetUpdateVar();
@@ -412,9 +422,9 @@ void NetUpdateView::GetUpdateVar() {
   if(!(update_var = my_prog->vars.FindName("update_net_view"))) {
     update_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
     update_var->name = "update_net_view";
+    update_var->DataChanged(DCR_ITEM_UPDATED);
   }
   update_var->var_type = ProgVar::T_Bool;
-  update_var->UpdateAfterEdit();
 }
 
 const String NetUpdateView::GenCssBody_impl(int indent_level) {
@@ -438,6 +448,8 @@ void InitNamedUnits::Destroy() {
 
 void InitNamedUnits::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
+
   UpdateProgVarRef_NewOwner(input_data_var);
   UpdateProgVarRef_NewOwner(unit_names_var);
   UpdateProgVarRef_NewOwner(network_var);
@@ -445,8 +457,7 @@ void InitNamedUnits::UpdateAfterEdit_impl() {
   GetInputDataVar();
   GetUnitNamesVar();
   GetNetworkVar();
-  if(!taMisc::is_loading)
-    InitNamesTable();
+  InitNamesTable();
 }
 
 // this is really all it does -- no actual code gen!!
@@ -474,6 +485,7 @@ bool InitNamedUnits::GetInputDataVar() {
     input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
+    input_data_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;
 }
@@ -485,10 +497,10 @@ bool InitNamedUnits::GetUnitNamesVar() {
     if(!(unit_names_var = my_prog->vars.FindName("unit_names"))) {
       unit_names_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
       unit_names_var->name = "unit_names";
+      unit_names_var->DataChanged(DCR_ITEM_UPDATED);
     }
   }
   unit_names_var->var_type = ProgVar::T_Object;
-  //  unit_names_var->UpdateAfterEdit();
 
   if(!unit_names_var->object_val) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -498,6 +510,8 @@ bool InitNamedUnits::GetUnitNamesVar() {
     rval->name = "UnitNames";
     taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
     unit_names_var->object_val = rval;
+    rval->DataChanged(DCR_ITEM_UPDATED);
+    unit_names_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;
 }
@@ -509,7 +523,7 @@ bool InitNamedUnits::GetNetworkVar() {
   network_var = my_prog->vars.FindName("network");
   if(!network_var) return false;
   network_var->var_type = ProgVar::T_Object;
-  //  network_var->UpdateAfterEdit();
+  network_var->DataChanged(DCR_ITEM_UPDATED);
   return (bool)network_var->object_val;
 }
 
@@ -597,19 +611,13 @@ bool InitNamedUnits::LabelNetwork() {
   return false;
 }
 
-// TODO: check for overlap and append first letter of layer/col name to disambig
-// do UnitNameLit and Var -- should be easy!
-
-// add offset for set -- for groups
-
-// do for 12ax -- better test case
-
 //////////////////////////
 //  Set Units Lit
 //////////////////////////
 
 void SetUnitsLit::Initialize() {
   set_nm = true;
+  offset = 0;
 }
 
 void SetUnitsLit::Destroy() {
@@ -618,6 +626,7 @@ void SetUnitsLit::Destroy() {
 
 void SetUnitsLit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
   UpdateProgVarRef_NewOwner(input_data_var);
   GetInputDataVar();
 }
@@ -648,6 +657,7 @@ bool SetUnitsLit::GetInputDataVar() {
     input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
+    input_data_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;
 }
@@ -657,12 +667,15 @@ bool SetUnitsLit::GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm,
   int colno;
   if(un.IsSet()) {
     if(idat->FindColName(un.enum_type->name, colno, true)) {
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ un.NameVal() + ");\n";
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, ";
+      if(offset != 0)
+	rval += String(offset) + "+" + un.NameVal() + ");\n";
+      else
+	rval += un.NameVal() + ");\n";
       if(set_nm) {
 	if(idat->FindColName("Name", colno, true)) {
 	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	    + ", -1); nm += \"_" + un.NameVal() + "\"; "
+	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal() + "\"; "
 	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
 	}
       }
@@ -679,6 +692,7 @@ const String SetUnitsLit::GenCssBody_impl(int indent_level) {
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) return il + "// input_data not set!\n";
   String rval;
+  rval += il + "// " + GetDisplayName() + "\n";
   GenCss_OneUnit(rval, unit_1, idnm, idat, il);
   GenCss_OneUnit(rval, unit_2, idnm, idat, il);
   GenCss_OneUnit(rval, unit_3, idnm, idat, il);
@@ -700,7 +714,13 @@ void SetUnitsVar::Destroy() {
 
 void SetUnitsVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
   UpdateProgVarRef_NewOwner(input_data_var);
+  UpdateProgVarRef_NewOwner(offset);
+  UpdateProgVarRef_NewOwner(unit_1);
+  UpdateProgVarRef_NewOwner(unit_2);
+  UpdateProgVarRef_NewOwner(unit_3);
+  UpdateProgVarRef_NewOwner(unit_4);
   GetInputDataVar();
 }
 
@@ -724,12 +744,10 @@ void SetUnitsVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 		 "unit_4 is not a DynEnum variable -- must be one associated with layer unit names!"))
     CheckError(unit_4 && !unit_4->dyn_enum_val.enum_type, quiet, rval, 
 	       "unit_4 does not have enum_type set -- must be set to one associated with layer unit names!");
-
-    
 }
 
 String SetUnitsVar::GetDisplayName() const {
-  String rval = "Set Units: Vars";
+  String rval = "Set Units Vars: ";
   if(unit_1) rval += unit_1->name + " ";
   if(unit_2) rval += unit_2->name + " ";
   if(unit_3) rval += unit_3->name + " ";
@@ -748,6 +766,7 @@ bool SetUnitsVar::GetInputDataVar() {
     input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
+    input_data_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;
 }
@@ -757,12 +776,15 @@ bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idn
   int colno;
   if(un) {
     if(idat->FindColName(un->dyn_enum_val.enum_type->name, colno, true)) {
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, "
-	+ un->name + ");\n";
+      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, ";
+      if(offset)
+	rval += offset->name + "+" + un->name + ");\n";
+      else
+	rval += un->name + ");\n";
       if(set_nm) {
 	if(idat->FindColName("Name", colno, true)) {
 	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	    + ", -1); nm += \"_\" + " + un->name + "; "
+	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += " + un->name + "; "
 	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
 	}
       }
@@ -779,6 +801,7 @@ const String SetUnitsVar::GenCssBody_impl(int indent_level) {
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) return il + "// input_data not set!\n";
   String rval;
+  rval += il + "// " + GetDisplayName() + "\n";
   GenCss_OneUnit(rval, unit_1, idnm, idat, il);
   GenCss_OneUnit(rval, unit_2, idnm, idat, il);
   GenCss_OneUnit(rval, unit_3, idnm, idat, il);

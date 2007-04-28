@@ -46,10 +46,10 @@ private:
 };
 
 class TA_API ProgVars: public ProgEl {
-  // ##DEF_CHILD_local_vars local program variables (not globally accessible)
+  // ##DEF_CHILD_local_vars local program variables -- these variables do NOT update their values as shown here -- they exist only as script variables (unlike global args and vars)
 INHERITED(ProgEl)
 public:
-  ProgVar_List		local_vars;	// the list of variables
+  ProgVar_List		local_vars;	// the list of variables -- these variables do NOT update their values as shown here -- they exist only as script variables (unlike global args and vars)
   
  virtual ProgVar*	AddVar()	{ return (ProgVar*)local_vars.New(1); }
   // #BUTTON add a new variable

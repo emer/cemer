@@ -100,7 +100,7 @@ public:
   
   override String GetTypeDecoKey() const { return "ProgType"; }
 
-//   void	setStale();
+  void	setStale();
   TA_BASEFUNS_NOCOPY(ProgType_List);
 protected:
   override void	El_SetIndex_(void*, int);
@@ -168,6 +168,8 @@ public:
   // #BUTTON create a new enum item
   virtual DynEnumItem*  AddEnum(const String& nm, int val);
   // add a new enum item with given name/label and value
+  virtual void		SeqNumberItems(int first_val = 0);
+  // #BUTTON assign values to items sequentially, starting with given first value
   
   virtual int	FindNumIdx(int val) const { return enums.FindNumIdx(val); }
   // find index of given numerical value
@@ -714,6 +716,7 @@ protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
   override const String	GenCssBody_impl(int indent_level);
+  override const String	GenListing_children(int indent_level);
 
 private:
   void	Initialize();
