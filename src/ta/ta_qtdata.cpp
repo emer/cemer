@@ -251,6 +251,9 @@ void taiData::SetRep(QWidget* val) {
   m_rep = val;
   if (m_rep) {
     m_rep->installEventFilter(this);
+//added 4/28/07 BA to try to solve/diagnose SelEdit crashes (#409)
+    connect(m_rep, SIGNAL(destroyed(QObject*)), 
+      this, SLOT(repDestroyed(QObject*)) );
   }
 }
 
@@ -286,7 +289,14 @@ void taiData::repChanged() {
 }
 
 void taiData::repDestroyed(QObject* obj) {
-  if (m_rep == obj) m_rep = NULL;
+  if (obj && m_rep == obj) {
+    m_rep = NULL;
+#ifdef DEBUG
+    cout << "**DEBUG WARNING**: rep deleting before taiData (rep/class): (" <<
+      obj->metaObject()->className() << "/" <<
+      this->metaObject()->className() << ")\n";
+#endif
+  }
 }
 
 
