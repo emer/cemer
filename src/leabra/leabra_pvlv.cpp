@@ -743,7 +743,7 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     float pvd = pve_val - pvisu->act_m; 
 
     float lv_da;
-    if(lvd + da.lv_disc_thr >= lvesu->misc_1)
+    if(lvd >= lvesu->misc_1 + da.lv_disc_thr)
       lv_da = lvd - da.lv_disc * lvesu->misc_1;
     else
       lv_da = lvd - lvesu->misc_1;
