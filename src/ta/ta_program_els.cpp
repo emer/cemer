@@ -36,9 +36,23 @@ void CodeBlock::CheckChildConfig_impl(bool quiet, bool& rval) {
   prog_code.CheckConfig(quiet, rval);
 }
 
-const String CodeBlock::GenCssBody_impl(int indent_level) {
-  return prog_code.GenCss(indent_level);
+const String CodeBlock::GenCssPre_impl(int indent_level) {
+  if(prog_code.size == 0) return _nilString;
+  String rval = cssMisc::Indent(indent_level) + "{\n";
+  return rval; 
 }
+
+const String CodeBlock::GenCssBody_impl(int indent_level) {
+  if(prog_code.size == 0) return _nilString;
+  return prog_code.GenCss(indent_level+1);
+}
+
+const String CodeBlock::GenCssPost_impl(int indent_level) {
+  if(prog_code.size == 0) return _nilString;
+  String rval = cssMisc::Indent(indent_level) + "}\n";
+  return rval; 
+}
+
 const String CodeBlock::GenListing_children(int indent_level) {
   return prog_code.GenListing(indent_level + 1);
 }
@@ -393,12 +407,13 @@ const String Switch::GenCssPre_impl(int indent_level) {
 
 const String Switch::GenCssBody_impl(int indent_level) {
   if(!switch_var) return _nilString;
-  String il = cssMisc::Indent(indent_level);
-  //  String il1 = cssMisc::Indent(indent_level+1);
+//   String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
   String rval;
   for(int i=0;i<case_exprs.size;i++) {
-    rval += il + "case " + case_exprs[i]->GetFullExpr() + ":\n";
-    rval += case_code[i]->GenCss(indent_level);
+    rval += il1 + "case " + case_exprs[i]->GetFullExpr() + ":\n";
+    rval += case_code[i]->GenCss(indent_level+1);
+    rval += il1 + "break;\n";	// always break
   }
   return rval;
 }
@@ -431,7 +446,90 @@ ProgVar* Switch::FindVarName(const String& var_nm) const {
 }
 
 void Switch::CasesFmEnum() {
-  // todo: write this: best if it can keep existing synchronized.. use algo from args.
+  if(TestError(!switch_var, "CasesFmEnum", "switch_var not set!"))
+    return;
+  if(TestError(((switch_var->var_type != ProgVar::T_DynEnum) && 
+		(switch_var->var_type != ProgVar::T_HardEnum)), "CasesFmEnum", "switch_var is not an enumerated type (either hard-coded enum or a dynamic enum)!"))
+    return;
+
+  if(switch_var->var_type == ProgVar::T_HardEnum)
+    CasesFmEnum_hard();
+  else
+    CasesFmEnum_dyn();
+}
+
+void Switch::CasesFmEnum_hard() {
+  if(TestError(!switch_var->hard_enum_type, "CasesFmEnum", "switch_var hard_enum_type not set!"))
+    return;
+  TypeDef* et = switch_var->hard_enum_type;
+  String enm = et->name + "::";
+  int i;  int ti;
+  ProgExpr* pe;
+  EnumDef* ei;
+  // delete ones that no longer exist
+  for (i = case_exprs.size - 1; i >= 0; --i) {
+    pe = case_exprs.FastEl(i);
+    ei = et->enum_vals.FindName(pe->expr);
+    if(!ei) {
+      case_exprs.RemoveIdx(i);
+      case_code.RemoveIdx(i);	// keep them sync'd
+    }
+  }
+  // add new ones and put in order
+  for (ti = 0; ti < et->enum_vals.size; ++ti) {
+    ei = et->enum_vals.FastEl(ti);
+    String einm = enm + ei->name;
+    for(i=0;i<case_exprs.size;i++) {
+      pe = case_exprs.FastEl(i);
+      if(pe->expr == einm) break;
+    }
+    if(i==case_exprs.size) {
+      pe = new ProgExpr();
+      pe->SetExpr(einm);
+      case_exprs.Insert(pe, ti);
+      CodeBlock* cb = new CodeBlock();
+      case_code.Insert(cb, ti);
+    } else if (i != ti) {
+      case_exprs.MoveIdx(i, ti);
+      case_code.MoveIdx(i, ti);
+    }
+  }
+}
+
+void Switch::CasesFmEnum_dyn() {
+  if(TestError(!switch_var->dyn_enum_val.enum_type.ptr(), "CasesFmEnum", "switch_var dyn enum_type not set!"))
+    return;
+  DynEnumType* et = switch_var->dyn_enum_val.enum_type.ptr();
+  int i;  int ti;
+  ProgExpr* pe;
+  DynEnumItem* ei;
+  // delete ones that no longer exist
+  for (i = case_exprs.size - 1; i >= 0; --i) {
+    pe = case_exprs.FastEl(i);
+    ei = et->enums.FindName(pe->expr);
+    if(!ei) {
+      case_exprs.RemoveIdx(i);
+      case_code.RemoveIdx(i);	// keep them sync'd
+    }
+  }
+  // add new ones and put in order
+  for (ti = 0; ti < et->enums.size; ++ti) {
+    ei = et->enums.FastEl(ti);
+    for(i=0;i<case_exprs.size;i++) {
+      pe = case_exprs.FastEl(i);
+      if(pe->expr == ei->name) break;
+    }
+    if(i==case_exprs.size) {
+      pe = new ProgExpr();
+      pe->SetExpr(ei->name);
+      case_exprs.Insert(pe, ti);
+      CodeBlock* cb = new CodeBlock();
+      case_code.Insert(cb, ti);
+    } else if (i != ti) {
+      case_exprs.MoveIdx(i, ti);
+      case_code.MoveIdx(i, ti);
+    }
+  }
 }
 
 //////////////////////////
@@ -471,6 +569,47 @@ String AssignExpr::GetDisplayName() const {
   
   String rval;
   rval += result_var->name + "=" + expr.GetFullExpr();
+  return rval;
+}
+
+//////////////////////////
+//    VarIncr	//
+//////////////////////////
+
+void VarIncr::Initialize() {
+  expr.expr = "1";
+}
+
+void VarIncr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(var);
+}
+
+void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!var, quiet, rval, "var is NULL");
+  CheckProgVarRef(var, quiet, rval);
+  expr.CheckConfig(quiet, rval);
+}
+
+const String VarIncr::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  if (!var) {
+    rval += "//WARNING: VarIncr not generated here -- var not specified\n";
+    return rval;
+  }
+  
+  rval += var->name + " += " + expr.GetFullExpr() + ";\n";
+  return rval;
+}
+
+String VarIncr::GetDisplayName() const {
+  if(!var)
+    return "(var not selected)";
+  
+  String rval;
+  rval += var->name + "+=" + expr.GetFullExpr();
   return rval;
 }
 

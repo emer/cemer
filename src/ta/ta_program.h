@@ -440,7 +440,8 @@ public:
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
-  String 	GetName() const;
+  override String GetDisplayName() const;
+  override String GetName() const;
   override String GetTypeDecoKey() const { return "ProgExpr"; }
 
   void 	InitLinks();

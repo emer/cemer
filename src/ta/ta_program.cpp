@@ -1058,6 +1058,10 @@ String ProgExprBase::GetName() const {
   return _nilString;
 }
 
+String ProgExprBase::GetDisplayName() const {
+  return expr;
+}
+
 void ProgExprBase::ParseExpr_SkipPath(int& pos) {
   int len = expr.length();
   int c;

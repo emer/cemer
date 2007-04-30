@@ -763,6 +763,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var=",
     tabMisc::root->GetTemplateInstance(&TA_AssignExpr)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var+=",
+    tabMisc::root->GetTemplateInstance(&TA_VarIncr)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("meth()",
     tabMisc::root->GetTemplateInstance(&TA_MethodCall)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("memb=",

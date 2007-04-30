@@ -37,7 +37,9 @@ public:
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level);
+  override const String	GenCssPost_impl(int indent_level); 
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -262,6 +264,10 @@ protected:
   override const String	GenCssPost_impl(int indent_level); 
   override const String	GenListing_children(int indent_level);
 
+  virtual void	    CasesFmEnum_hard(); // switch_var is a hard enum
+  virtual void	    CasesFmEnum_dyn();	// switch_var is a dynamic enum
+
+
 private:
   void	Initialize();
   void	Destroy()	{CutLinks();} //
@@ -280,6 +286,29 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(AssignExpr, Program);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API VarIncr: public ProgEl { 
+  // increment a variable's value by given amount
+INHERITED(ProgEl)
+public:
+  ProgVarRef		var;
+  // variable to increment
+  ProgExpr		expr;
+  // expression for how much to add to variable (use a negative sign to decrement)
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(VarIncr, Program);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);

@@ -77,6 +77,7 @@ bool Relation::CacheVar(Relation& tmp_rel) {
     return true;
   }
   tmp_rel.val = val;
+  return false;
 }
 
 bool Relation::Evaluate(double cmp) const {
