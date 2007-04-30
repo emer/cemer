@@ -2106,9 +2106,9 @@ taiData* taiStreamArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidg
     taRefN::Ref(gf);
   }
   if (arg_typ->InheritsFrom(TA_istream))
-    return new taiFileButton(NULL, host_, par, gui_parent_, true);
+    return new taiFileButton(NULL, host_, par, gui_parent_, flags_, true);
   else if(arg_typ->InheritsFrom(TA_ostream))
-    return new taiFileButton(NULL, host_, par, gui_parent_, false, true);
+    return new taiFileButton(NULL, host_, par, gui_parent_, flags_, false, true);
   return new taiFileButton(NULL, host_, par, gui_parent_, flags_);
 }
 
@@ -2607,7 +2607,7 @@ int gpiDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
 
 taiData* gpiDefaultEl::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
-	NULL, typ, host_, par, gui_parent_, (taiData::flgNullOk | taiData::flgNoList));
+	NULL, typ, host_, par, gui_parent_, (flags_ | taiData::flgNullOk | taiData::flgNoList));
   return rval;
 }
 
@@ -2691,7 +2691,7 @@ int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
-  int new_flags = 0;
+  int new_flags = flags_;
   if(!mbr->HasOption("NO_NULL"))
     new_flags |= taiData::flgNullOk;
   if(!mbr->HasOption("NO_EDIT"))
@@ -2801,7 +2801,7 @@ cssEl* gpiInObjArgType::GetElFromArg(const char* nm, void* base) {
 }
 
 taiData* gpiInObjArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
-  int new_flags = 0; //note: exclude flgNoList
+  int new_flags = (flags_ & ~taiData::flgNoList); //note: exclude flgNoList
   if (GetHasOption("NULL_OK"))
     new_flags |= taiData::flgNullOk;
 /*nn  if (GetHasOption("EDIT_OK"))
@@ -2863,7 +2863,7 @@ cssEl* gpiFromGpArgType::GetElFromArg(const char* nm, void* base) {
 taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
-  int new_flags = 0;
+  int new_flags = flags_;
   if (GetHasOption("NULL_OK"))
     new_flags |= taiData::flgNullOk;
   if (GetHasOption("EDIT_OK"))

@@ -133,12 +133,6 @@ void taiData::applyNow() {
     host->Apply();
 }
 
-void taiData::CheckDoAutoApply() {
-  if (!(mflags & flgAutoApply)) return;
-  if (host)
-    host->GetValue();
-}
-
 void taiData::DataChanged(taiData* chld) {
   // ignore completely if not yet constructed
   if (!isConstructed()) return;
@@ -359,7 +353,8 @@ void taiCompData::AddChildMember(MemberDef* md) {
 
 
   // add gui representation of data
-  taiData* mb_dat = md->im->GetDataRep(host, this, wid); //adds to list
+  int child_flags = (mflags & flg_INHERIT_MASK);
+  taiData* mb_dat = md->im->GetDataRep(host, this, wid, NULL, child_flags); //adds to list
   mb_dat->setLabel(lbl);
   QWidget* ctrl = mb_dat->GetRep();
   lbl->setBuddy(ctrl);
@@ -921,6 +916,10 @@ void taiComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
     typ = enum_typ;
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       EnumDef* ed = typ->enum_vals.FastEl(i);
+      // sometimes we have aliases, or enums that are subbits in a proper enum
+      // so we want to hide those
+      if (ed->HasOption("NO_SHOW") || ed->HasOption("IGNORE"))
+        continue;
       AddItem(ed->GetLabel(), QVariant(ed->enum_no));
     }
   }
@@ -3885,8 +3884,8 @@ const String taiTokenPtrButton::viewText(int index) const {
 //////////////////////////////////////////
 
 taiFileButton::taiFileButton(TypeDef* typ_, IDataHost* host_, taiData* par,
-	QWidget* gui_parent_, bool rd_only, bool wrt_only)
-: taiButtonMenu(taiMenu::normal, taiMisc::fonSmall, typ_, host_, par, gui_parent_)
+	QWidget* gui_parent_, int flags_, bool rd_only, bool wrt_only)
+: taiButtonMenu(taiMenu::normal, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
   gf = NULL;
   read_only = rd_only;
@@ -3994,6 +3993,12 @@ taiElBase::~taiElBase() {
   if (ownflag)
     delete ta_actions;
   ta_actions = NULL;
+}
+
+void taiElBase::DataChanged(taiData* chld) {
+  if (mflags & flgAutoApply)
+    applyNow();
+  else inherited::DataChanged(chld);
 }
 
 void taiElBase::setCur_obj(TAPtr value, bool do_chng) {

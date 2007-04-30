@@ -1193,7 +1193,7 @@ public:
   virtual void		GetGetFile();	// make sure we have a getfile..
 
   taiFileButton(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
-		  bool rd_only = false, bool wrt_only = false);
+      int flags_, bool rd_only = false, bool wrt_only = false);
   ~taiFileButton();
 
 public slots:
@@ -1215,8 +1215,10 @@ protected:
 // base class for sundry taiData items that use a menu, and have a taBase-derived current item
 
 class TA_API taiElBase: public taiData {
+INHERITED(taiData)
 public:
   TAPtr		cur_obj;
+  override void		DataChanged(taiData* chld = NULL); // do autoapply
 //  void		GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_menu, actn);}
   virtual void  GetMenu(taiActions* actions, taiMenuAction* actn = NULL) {} // variant provided for MenuGroup_impl in winbase
   void 		setCur_obj(TAPtr value, bool do_chng = true); // set cur_obj and notifies change if different

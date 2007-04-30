@@ -1130,9 +1130,10 @@ if (taMisc::proj_view_pref == -1) {
 }
 // / TEMP
 
-//TEMP -- force user dir to be what we want
-taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
-// /TEMP
+  // init user dir first time
+  if (taMisc::user_app_dir.empty()) {
+    taMisc::user_app_dir = taMisc::user_dir + PATH_SEP + taMisc::app_name + "_user";
+  }
 
   if (!Startup_InitTA_initUserAppDir()) return false;
   

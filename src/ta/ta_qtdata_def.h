@@ -134,6 +134,9 @@ public:
     flgAutoApply	= 0x0800,  // when user finishes editing this control, auto apply the edits
     flgFlowLayout	= 0x1000, // for polyguys (inline) us a flowlayout, not hboxlayout
     flgCondEditUseRO	= 0x2000 // for taiCondEditMember, used to keep its use_ro flag
+#ifndef __MAKETA__
+    ,flg_INHERIT_MASK	= (flgReadOnly) // flags to pass on to nested children, in inline
+#endif
   };
 
   TypeDef* 		typ;		// type for the gui object
@@ -166,7 +169,7 @@ public:
   virtual void		SetMemberDef(MemberDef* mbr) {} // taiMember sets this
   
   void			SetThisAsHandler(bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
-  void			DataChanged(taiData* chld = NULL);
+  virtual void		DataChanged(taiData* chld = NULL);
   // indicates something changed in the data from user input, if chld is passed then it called parent->DataChanged(this); ignored if parent or ourself is not fully constructed
 
   void			GetImage_(const void* base) {GetImage_impl(base);} // base points to value of type
@@ -198,7 +201,6 @@ protected:
   
 
   virtual void		SetRep(QWidget* val);
-  virtual void		CheckDoAutoApply(); // call for this control when the "auto apply" action is done
   virtual void		ChildAdd(taiData* child) {}
   virtual void		ChildRemove(taiData* child) {}
   virtual void		DataChanged_impl(taiData* chld) {} // only called if isConstructed
