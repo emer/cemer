@@ -5,12 +5,18 @@ commit:
 ------------
 current:
 
+== PVLV:
+
+* add PVre = reward expected system (habenula) which is quick learning and slow unlearning & determines when a reward is expected, but not what the expected value is -- contextualizes LV learning.  learns just using std PV mechs.
+
+* add group_name to CondEnv code -- Epochgp PERMUTED, etc..
+
+* create simulated SIR test case.. 2 repeated guys with reward assoc.
+
+* what about diff LV for diff stripes??  would solve saturation problem..  in general,
+   need to move into multi-reward case
 
 == Program
-
-* Add switch case guy: n_cases = enforced number of progels in case_code,
-  ProgExpr_List size -- use a CodeBlock for more guys!
-* VarInc, VarDec (var++, var--) -- can be useful
 
 * progexpr not finding variables in function args
 

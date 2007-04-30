@@ -285,11 +285,11 @@ void taiData::repChanged() {
 void taiData::repDestroyed(QObject* obj) {
   if (obj && m_rep == obj) {
     m_rep = NULL;
-#ifdef DEBUG
+// #ifdef DEBUG
     cout << "**DEBUG WARNING**: rep deleting before taiData (rep/class): (" <<
       obj->metaObject()->className() << "/" <<
       this->metaObject()->className() << ")\n";
-#endif
+// #endif
   }
 }
 
@@ -544,7 +544,6 @@ void iFieldEditDialog::repChanged() {
   setApplyEnabled(true);
 }
 
-
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -634,6 +633,18 @@ String taiField::GetValue() const {
 
 void taiField::selectionChanged() {
   emit_UpdateUi();
+}
+
+void taiField::repDestroyed(QObject* obj) {
+  if (obj) { //&& m_rep == obj) {
+    m_rep = NULL;
+    leText = NULL;
+// #ifdef DEBUG
+    cerr << "**DEBUG WARNING**: rep deleting before taiData (rep/class): (" <<
+      obj->metaObject()->className() << "/" <<
+      this->metaObject()->className() << ")" << endl;
+// #endif
+  }
 }
 
 void taiField::setMinCharWidth(int num) {

@@ -575,6 +575,7 @@ Variant ProgVar::GetVar() {
     return dyn_enum_val.NumVal();
     break;
   }
+  return _nilVariant;// compiler food
 }
 
 void ProgVar::Cleanup() {

@@ -166,6 +166,7 @@ protected:
   override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
+  override void 	repDestroyed(QObject* obj);
 };
 
 // this is for integers -- includes up and down arrow buttons

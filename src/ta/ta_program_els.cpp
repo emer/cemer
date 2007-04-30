@@ -445,6 +445,8 @@ ProgVar* Switch::FindVarName(const String& var_nm) const {
   return case_code.FindVarName(var_nm);
 }
 
+// todo: add DataChanged code to sync two lists..
+
 void Switch::CasesFmEnum() {
   if(TestError(!switch_var, "CasesFmEnum", "switch_var not set!"))
     return;
