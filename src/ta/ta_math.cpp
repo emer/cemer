@@ -70,6 +70,15 @@ void Relation::Initialize() {
   use_var = false;
 }
 
+bool Relation::CacheVar(Relation& tmp_rel) {
+  tmp_rel.rel = rel;
+  if(use_var && (bool)var) {
+    tmp_rel.val = var->GetVar().toDouble();
+    return true;
+  }
+  tmp_rel.val = val;
+}
+
 bool Relation::Evaluate(double cmp) const {
   double eff_val = val;
   if(use_var && (bool)var) {
@@ -788,15 +797,19 @@ double taMath_double::vec_last(const double_Matrix* vec) {
 }
 
 int taMath_double::vec_find_first(const double_Matrix* vec, Relation& rel) {
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
   for(int i=0;i<vec->size;i++) {
-    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) return i;
   }
   return -1;
 }
 
 int taMath_double::vec_find_last(const double_Matrix* vec, Relation& rel) {
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
   for(int i=vec->size-1;i>=0;i--) {
-    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) return i;
   }
   return -1;
 }
@@ -921,10 +934,12 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   }
 }
 
-double taMath_double::vec_count(const double_Matrix* vec, Relation& cnt) {
+double taMath_double::vec_count(const double_Matrix* vec, Relation& rel) {
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
   double rval = 0.0;
   for(int i=0;i<vec->size;i++) {
-    if(cnt.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
   }
   return rval;
 }
@@ -2038,15 +2053,19 @@ float taMath_float::vec_last(const float_Matrix* vec) {
 }
 
 int taMath_float::vec_find_first(const float_Matrix* vec, Relation& rel) {
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
   for(int i=0;i<vec->size;i++) {
-    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) return i;
   }
   return -1;
 }
 
 int taMath_float::vec_find_last(const float_Matrix* vec, Relation& rel) {
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
   for(int i=vec->size-1;i>=0;i--) {
-    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) return i;
   }
   return -1;
 }
@@ -2171,10 +2190,12 @@ void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, flo
   }
 }
 
-float taMath_float::vec_count(const float_Matrix* vec, Relation& cnt) {
+float taMath_float::vec_count(const float_Matrix* vec, Relation& rel) {
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
   float rval = 0.0;
   for(int i=0;i<vec->size;i++) {
-    if(cnt.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+    if(tmp_rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
   }
   return rval;
 }
