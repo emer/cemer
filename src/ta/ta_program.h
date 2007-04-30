@@ -125,6 +125,7 @@ public:
   String	desc;		// description of item
 
   override String	GetDisplayName() const;
+  override String 	GetDesc() const { return desc; }
 
   inline void 	Initialize() 			{ value = 0; }
   inline void 	Destroy()			{ };
@@ -287,8 +288,11 @@ public:
   virtual void	SetHardEnum(TypeDef* enum_type, int val); // set variable type to HARD_ENUM and set value
   virtual void	SetDynEnum(int val);  // set variable type to DYN_ENUM and set value
   virtual void	SetDynEnumName(const String& val); //  // set variable type to DYN_ENUM and set value
+
   virtual void	SetVar(const Variant& value);
   // set from variant value (general purpose variable setting) -- does not change type of variable, just sets from variant value
+  virtual Variant GetVar();
+  // get value as a variant value -- for hard-code use of the variable value
 
   ProgVar* operator=(const Variant& value);
  
@@ -476,6 +480,25 @@ private:
   void	Initialize();
   void	Destroy();
 };
+
+class TA_API ProgExpr_List : public taList<ProgExpr> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of program expressions
+INHERITED(taList<ProgExpr>)
+public:
+
+  override String GetTypeDecoKey() const { return "ProgExpr"; }
+  
+  TA_BASEFUNS_NOCOPY(ProgExpr_List);
+protected:
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
+private:
+  void	Initialize();
+  void	Destroy() {Reset();}
+};
+
+//////////////////////////////////////////////////////////////////
+//		Prog Arg
+//////////////////////////////////////////////////////////////////
 
 class TA_API ProgArg: public taOBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program a program or method argument

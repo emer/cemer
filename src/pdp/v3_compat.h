@@ -119,7 +119,7 @@ class PDP_API CritParam : public taBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_v3Compat stopping criteria params
 INHERITED(taBase)
 public:
-  enum Relation {
+  enum Relations {
     EQUAL,		// #LABEL_=
     NOTEQUAL,		// #LABEL_!=
     LESSTHAN,		// #LABEL_<
@@ -129,7 +129,7 @@ public:
   };
 
   bool          flag;           // #LABEL_ whether to use this criterion or not
-  Relation	rel;		// #LABEL_ #CONDEDIT_ON_flag:true relation of statistic to target value
+  Relations	rel;		// #LABEL_ #CONDEDIT_ON_flag:true relation of statistic to target value
   float		val;		// #LABEL_ #CONDEDIT_ON_flag:true target or comparison value
   int		cnt;		// #CONDEDIT_ON_flag:true Number of times criterion must be met before stopping
   int		n_met;		// #READ_ONLY number of times actually met

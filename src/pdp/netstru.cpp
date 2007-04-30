@@ -587,9 +587,9 @@ void RecvCons::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int RecvCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
-			    CountParam::Relation rel, float cmp_val)
+			    Relation::Relations rel, float cmp_val)
 {
-  CountParam cond;
+  Relation cond;
   cond.rel = rel; cond.val = cmp_val;
   int rval = 0;
   int j;
@@ -2144,7 +2144,7 @@ void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
   }
 }
 
-int Unit::PruneCons(const SimpleMathSpec& pre_proc, CountParam::Relation rel,
+int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
 		       float cmp_val, Projection* prjn)
 {
   int rval = 0;
@@ -2699,7 +2699,7 @@ void Projection::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Projection::PruneCons(const SimpleMathSpec& pre_proc,
-			      CountParam::Relation rel, float cmp_val)
+			      Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
   Unit* u;
@@ -2934,7 +2934,7 @@ void Unit_Group::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Unit_Group::PruneCons(const SimpleMathSpec& pre_proc,
-			CountParam::Relation rel, float cmp_val)
+			Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
   Unit* u;
@@ -3914,7 +3914,7 @@ void Layer::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Layer::PruneCons(const SimpleMathSpec& pre_proc,
-			CountParam::Relation rel, float cmp_val)
+			Relation::Relations rel, float cmp_val)
 {
   return units.PruneCons(pre_proc, rel, cmp_val);
 }
@@ -5418,7 +5418,7 @@ void Network::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Network::PruneCons(const SimpleMathSpec& pre_proc,
-			  CountParam::Relation rel, float cmp_val)
+			  Relation::Relations rel, float cmp_val)
 {
   taMisc::Busy();
   StructUpdate(true);

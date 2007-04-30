@@ -234,6 +234,39 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
+class TA_API Switch: public ProgEl { 
+  // switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
+INHERITED(ProgEl)
+public:
+  ProgVarRef	    switch_var;	// variable to switch on
+  ProgExpr_List	    case_exprs;	// #SHOW_TREE expressions for the different cases to test for
+  ProgEl_List	    case_code; 	// #SHOW_TREE code to execute for each case, in one-to-one correspondence with the case_exprs (automatically filled with CodeBlocks)
+
+  virtual void	    NewCase() 	{ case_exprs.New(1); UpdateAfterEdit(); }
+  // #BUTTON make a new case item
+  virtual void	    CasesFmEnum();
+  // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM)
+
+  override ProgVar*	FindVarName(const String& var_nm) const;
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(Switch, Program);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+  override const String	GenListing_children(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();} //
+};
+
 class TA_API AssignExpr: public ProgEl { 
   // assign an expression to a variable (use method call for simple assignment to function call)
 INHERITED(ProgEl)

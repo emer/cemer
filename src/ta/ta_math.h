@@ -20,6 +20,7 @@
 #include "ta_matrix.h"
 #include "ta_mtrnd.h"
 #include "ta_dmem.h"
+#include "ta_program.h"
 
 #ifndef __MAKETA__
 # include <cmath>
@@ -29,11 +30,11 @@
 # include "gsl/gsl_matrix_float.h"
 #endif
 
-class TA_API CountParam : public taBase {
+class TA_API Relation : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params
-  INHERITED(taBase)
+  INHERITED(taOBase)
 public:
-  enum Relation {
+  enum Relations {
     EQUAL,		// #LABEL_=
     NOTEQUAL,		// #LABEL_!=
     LESSTHAN,		// #LABEL_<
@@ -42,14 +43,16 @@ public:
     GREATERTHANOREQUAL 	// #LABEL_>=
   };
 
-  Relation	rel;		// #LABEL_ relation of statistic to target value
-  double	val;		// #LABEL_ target or comparison value
+  Relations	rel;		// #LABEL_ relationship to evaluate
+  double	val;		// #LABEL_ comparison value
+  bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the relation value
+  ProgVarRef	var;		// #CONDEDIT_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element) -- variable must be a top-level (.args or .vars) variable and not a local one
 
   bool 		Evaluate(double cmp) const;
 
   void  Initialize();
   void 	Destroy()		{ };
-  TA_SIMPLE_BASEFUNS(CountParam);
+  TA_SIMPLE_BASEFUNS(Relation);
 };
 
 class TA_API Aggregate : public taOBase {
@@ -60,6 +63,8 @@ public:
     GROUP,			// group by this field
     FIRST,			// first item
     LAST,			// last item
+    FIND_FIRST,			// find the first item that fits rel relationship
+    FIND_LAST,			// find the last item that fits rel relationship
     MIN,			// Minimum
     MAX,			// Maximum
     ABS_MIN,			// Minimum of absolute values
@@ -76,7 +81,7 @@ public:
   };
 
   Operator      op;		// #APPLY_IMMED how to aggregate over the network
-  CountParam	count;		// #CONDEDIT_ON_op:COUNT parameters for the COUNT aggregation
+  Relation	rel;		// #CONDEDIT_ON_op:COUNT,FIND_FIRST,FIND_LAST parameters for the COUNT and FIND_xxx operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
 
@@ -85,9 +90,9 @@ public:
   TA_SIMPLE_BASEFUNS(Aggregate);
 };
 
-class TA_API SimpleMathSpec : public taBase {
+class TA_API SimpleMathSpec : public taOBase {
   // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators
-  INHERITED(taBase)
+  INHERITED(taOBase)
 public:
   enum MathOpr {
     NONE,			// no function
@@ -418,6 +423,10 @@ public:
   // #CAT_Statistics first item in the vector
   static double	vec_last(const double_Matrix* vec);
   // #CAT_Statistics last item in the vector
+  static int	vec_find_first(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
+  static int	vec_find_last(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
   static double	vec_max(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static double	vec_abs_max(const double_Matrix* vec, int& idx);
@@ -444,8 +453,8 @@ public:
   static void	vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
 			      double bin_size);
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
-  static double	vec_count(const double_Matrix* vec, CountParam& cnt);
-  // #CAT_Statistics count number of times count relationship is true
+  static double	vec_count(const double_Matrix* vec, Relation& rel);
+  // #CAT_Statistics count number of times relationship is true
   static double	vec_median(const double_Matrix* vec);
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static double	vec_mode(const double_Matrix* vec);
@@ -766,6 +775,10 @@ public:
   // #CAT_Statistics first item in the vector
   static float	vec_last(const float_Matrix* vec);
   // #CAT_Statistics last item in the vector
+  static int	vec_find_first(const float_Matrix* vec, Relation& rel);
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
+  static int	vec_find_last(const float_Matrix* vec, Relation& rel);
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
   static float	vec_max(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static float	vec_abs_max(const float_Matrix* vec, int& idx);
@@ -792,8 +805,8 @@ public:
   static void	vec_histogram(float_Matrix* hist_vec, const float_Matrix* src_vec,
 			      float bin_size);
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
-  static float	vec_count(const float_Matrix* vec, CountParam& cnt);
-  // #CAT_Statistics count number of times count relationship is true
+  static float	vec_count(const float_Matrix* vec, Relation& rel);
+  // #CAT_Statistics count number of times relationship is true
   static float	vec_median(const float_Matrix* vec);
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static float	vec_mode(const float_Matrix* vec);

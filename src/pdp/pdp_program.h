@@ -23,6 +23,7 @@
 #include "ta_dmem.h"
 
 class Network;
+class Layer;
 
 #include "pdp_def.h"
 #include "pdp_TA_type.h"
@@ -187,7 +188,7 @@ private:
 ////////////////////////////////////////////////////
 
 class PDP_API InitNamedUnits: public ProgEl { 
-  // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which must exist with that name -- other programs depend on it!)
+  // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which should be the first datatable in the args or vars -- Set Unit guys will look for it there)
 INHERITED(ProgEl)
 public:
   ProgVarRef	input_data_var;	// program variable pointing to the input data table -- finds the first one in the program by default (and makes one if not found)
@@ -200,6 +201,8 @@ public:
   static bool	InitDynEnumFmUnitNames(DynEnumType* dyn_enum, const DataCol* unit_names_col,
 				       const String& prefix);
   // initialize a dynamic enum with names from unit names table colum (string matrix with one row)
+  static bool	InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col);
+  // initialize layer unit names from unit names table colum (string matrix with one row)
 
   virtual bool	InitNamesTable();
   // intialize the names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!

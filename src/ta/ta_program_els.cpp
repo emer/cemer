@@ -316,7 +316,7 @@ void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 const String IfElse::GenCssPre_impl(int indent_level) {
   String rval = cssMisc::Indent(indent_level);
-  rval += "if (" + cond.GetFullExpr() + ") {\n";
+  rval += "if(" + cond.GetFullExpr() + ") {\n";
   return rval; 
 }
 
@@ -354,6 +354,84 @@ ProgVar* IfElse::FindVarName(const String& var_nm) const {
   ProgVar* pv = true_code.FindVarName(var_nm);
   if(pv) return pv;
   return false_code.FindVarName(var_nm);
+}
+
+//////////////////////////
+//  Switch		//
+//////////////////////////
+
+void Switch::Initialize() {
+  //  cond.expr = "true";
+  case_code.SetBaseType(&TA_CodeBlock);
+}
+
+void Switch::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(switch_var);
+  case_code.SetSize(case_exprs.size); // enforce!
+}
+
+void Switch::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!switch_var, quiet, rval, "switch_var is NULL");
+}
+
+void Switch::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  for(int i=0;i<case_exprs.size;i++) {
+    CheckError(case_exprs[i]->expr.empty(), quiet, rval,  "case expression number: " + String(i) + " is empty");
+  }
+  case_code.CheckConfig(quiet, rval);
+}
+
+const String Switch::GenCssPre_impl(int indent_level) {
+  if(!switch_var) return _nilString;
+  String rval = cssMisc::Indent(indent_level);
+  rval += "switch(" + switch_var->name + ") {\n";
+  return rval; 
+}
+
+const String Switch::GenCssBody_impl(int indent_level) {
+  if(!switch_var) return _nilString;
+  String il = cssMisc::Indent(indent_level);
+  //  String il1 = cssMisc::Indent(indent_level+1);
+  String rval;
+  for(int i=0;i<case_exprs.size;i++) {
+    rval += il + "case " + case_exprs[i]->GetFullExpr() + ":\n";
+    rval += case_code[i]->GenCss(indent_level);
+  }
+  return rval;
+}
+const String Switch::GenListing_children(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  String rval;
+  for(int i=0;i<case_exprs.size;i++) {
+    rval += il + "case " + case_exprs[i]->GetFullExpr() + ":\n";
+    rval += case_code[i]->GenListing(indent_level+1);
+  }
+  return rval;
+}
+
+const String Switch::GenCssPost_impl(int indent_level) {
+  if(!switch_var) return _nilString;
+  return cssMisc::Indent(indent_level) + "}\n";
+}
+
+String Switch::GetDisplayName() const {
+  if(switch_var)
+    return "switch(" + switch_var->name + ")";
+  return "switch( VAR NOT SET!)";
+}
+
+void Switch::PreGenChildren_impl(int& item_id) {
+  case_code.PreGen(item_id);
+}
+ProgVar* Switch::FindVarName(const String& var_nm) const {
+  return case_code.FindVarName(var_nm);
+}
+
+void Switch::CasesFmEnum() {
+  // todo: write this: best if it can keep existing synchronized.. use algo from args.
 }
 
 //////////////////////////

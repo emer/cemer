@@ -414,7 +414,7 @@ public:
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification
   virtual int	PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
-			     CountParam::Relation rel, float cmp_val);
+			     Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	LesionCons(Unit* un, float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
@@ -816,7 +816,7 @@ public: //
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec, Projection* prjn = NULL);
   // #MENU #CAT_Learning add noise to weights using given noise specification
-  virtual int	PruneCons(const SimpleMathSpec& pre_proc, CountParam::Relation rel,
+  virtual int	PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
 			     float cmp_val, Projection* prjn = NULL);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	LesionCons(float p_lesion, bool permute=true, Projection* prjn = NULL);
@@ -977,7 +977,7 @@ public:
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Weights add noise to weights using given noise specification
   virtual int	PruneCons(const SimpleMathSpec& pre_proc,
-			     CountParam::Relation rel, float cmp_val);
+			     Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Weights remove weights that (after pre-proc) meet relation to compare val
   virtual int	LesionCons(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
@@ -1160,7 +1160,7 @@ public:
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification
   virtual int	PruneCons(const SimpleMathSpec& pre_proc,
-			     CountParam::Relation rel, float cmp_val);
+			     Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	LesionCons(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
@@ -1378,7 +1378,7 @@ public:
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification
   virtual int	PruneCons(const SimpleMathSpec& pre_proc,
-			     CountParam::Relation rel, float cmp_val);
+			     Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	ProbAddCons(float p_add_con, float init_wt = 0.0);
   // #MENU #USE_RVAL #CAT_Structure probabilistically add new connections (assuming prior pruning), init_wt = initial weight value of new connection
@@ -1795,7 +1795,7 @@ public:
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification
   virtual int	PruneCons(const SimpleMathSpec& pre_proc,
-			     CountParam::Relation rel, float cmp_val);
+			     Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	ProbAddCons(float p_add_con, float init_wt = 0.0);
   // #MENU #USE_RVAL #CAT_Structure probabilistically add new connections (assuming prior pruning), init_wt = initial weight value of new connection

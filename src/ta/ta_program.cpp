@@ -551,6 +551,32 @@ void ProgVar::SetVar(const Variant& value) {
   }
 }
 
+Variant ProgVar::GetVar() {
+  switch(var_type) {
+  case T_Int:
+    return Variant(int_val);
+    break;
+  case T_Real:
+    return Variant(real_val);
+    break;
+  case T_String:
+    return Variant(string_val);
+    break;
+  case T_Bool:
+    return Variant(bool_val);
+    break;
+  case T_Object:
+    return Variant(object_val.ptr());
+    break;
+  case T_HardEnum:
+    return Variant(int_val);
+    break;
+  case T_DynEnum:
+    return dyn_enum_val.NumVal();
+    break;
+  }
+}
+
 void ProgVar::Cleanup() {
   if (!((var_type == T_Int) || (var_type == T_HardEnum)))
     int_val = 0;
@@ -1170,6 +1196,15 @@ void ProgExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
+void ProgExpr_List::Initialize() {
+  SetBaseType(&TA_ProgExpr);
+  setUseStale(true);
+}
+
+void ProgExpr_List::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+}
+
 //////////////////////////
 //   ProgArg		//
 //////////////////////////
@@ -1532,7 +1567,7 @@ const String ProgEl_List::GenListing(int indent_level) {
     ProgEl* el = FastEl(i);
     rval += el->GenListing(indent_level); 
   }
-  return rval;;
+  return rval;
 }
 
 String ProgEl_List::GetColHeading(const KeyString& key) const {
@@ -1803,6 +1838,7 @@ void ProgramCall::UpdateArgs() {
     ProgVar* var_chk = prg->vars.FindName(pa->name);
     if(!arg_chk && !var_chk) continue; 
     pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
+    pa->DataChanged(DCR_ITEM_UPDATED);
   }
 }
 

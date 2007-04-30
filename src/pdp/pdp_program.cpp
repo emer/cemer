@@ -607,8 +607,39 @@ bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
 }
 
 bool InitNamedUnits::LabelNetwork() {
-  // todo: write this
-  return false;
+  if(TestError(!GetUnitNamesVar(), "InitNamesTable", "could not find unit names data table -- this should not usually happen because it is auto-made if not found"))
+    return false;
+  if(TestError(!GetNetworkVar(), "InitNamesTable", "network variable is not set and could not find one -- please set and try again"))
+    return false;
+
+  DataTable* undt = (DataTable*)unit_names_var->object_val.ptr();
+  if(!undt) return false;	// should not happen
+
+  Network* net = (Network*)network_var->object_val.ptr();
+  if(!net) return false;	// should not happen
+
+  for(int i=0;i<undt->cols();i++) {
+    DataCol* ndc = undt->data.FastEl(i);
+    Layer* lay = (Layer*)net->layers.FindLeafName(ndc->name);
+    if(!lay) continue;
+    InitLayerFmUnitNames(lay, ndc);
+  }
+  return true;
+}
+
+bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col) {
+  if(!lay || !unit_names_col) {
+    taMisc::Error("InitLayerFmUnitNames", "null args");
+    return false;
+  }
+  for(int i=0;i<lay->units.leaves;i++) {
+    int cidx = i % unit_names_col->cell_size();
+    String cnm = unit_names_col->GetValAsStringM(-1, cidx);
+    if(cnm.empty()) continue;
+    Unit* un = lay->units.Leaf(i);
+    un->name = cnm;
+  }
+  return true;
 }
 
 //////////////////////////
@@ -666,7 +697,11 @@ bool SetUnitsLit::GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm,
 				 DataTable* idat, const String& il) {
   int colno;
   if(un.IsSet()) {
-    if(idat->FindColName(un.enum_type->name, colno, true)) {
+    DynEnumType* det = un.enum_type.ptr();
+    if(TestError(!idat->FindColName(det->name, colno, true), "GenCss",
+		 "data table column:",det->name,"not found in input data table:",
+		 idat->name)) return false;
+    if(un.NumVal() >= 0) {	// could be neg
       rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, ";
       if(offset != 0)
 	rval += String(offset) + "+" + un.NameVal() + ");\n";
@@ -774,22 +809,32 @@ bool SetUnitsVar::GetInputDataVar() {
 bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idnm, 
 				 DataTable* idat, const String& il) {
   int colno;
-  if(un) {
-    if(idat->FindColName(un->dyn_enum_val.enum_type->name, colno, true)) {
-      rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, ";
-      if(offset)
-	rval += offset->name + "+" + un->name + ");\n";
-      else
-	rval += un->name + ");\n";
-      if(set_nm) {
-	if(idat->FindColName("Name", colno, true)) {
-	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += " + un->name + "; "
-	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
-	}
-      }
-      return true;
+  if(un && (bool)un->dyn_enum_val.enum_type) {
+    DynEnumType* det = un->dyn_enum_val.enum_type.ptr();
+    if(TestError(!idat->FindColName(det->name, colno, true), "GenCss",
+		 "data table column:",det->name,"not found in input data table:",
+		 idat->name)) return false;
+    // if var has ability to go negative, check..
+    bool neg_chk = false;
+    if(det->enums.SafeEl(0) && det->enums.SafeEl(0)->value < 0) {
+      rval += il + "if(" + un->name + " >= 0) {\n";
+      neg_chk = true;
     }
+    rval += il + idnm + ".SetValAsFloatM(1.0, " + String(colno) + ", -1, ";
+    if(offset)
+      rval += offset->name + "+" + un->name + ");\n";
+    else
+      rval += un->name + ");\n";
+    if(set_nm) {
+      if(idat->FindColName("Name", colno, true)) {
+	rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
+	  + ", -1); if(!nm.empty()) nm += \"_\"; nm += " + un->name + "; "
+	  + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
+      }
+    }
+    if(neg_chk)
+      rval += il + "}\n";
+    return true;
   }
   return false;
 }

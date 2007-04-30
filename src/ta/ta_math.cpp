@@ -61,33 +61,39 @@ double erf(double x) {
 
 
 //////////////////////////
-//  	CountParam     	//
+//  	Relation     	//
 //////////////////////////
 
-void CountParam::Initialize() {
+void Relation::Initialize() {
   rel = LESSTHANOREQUAL;
   val = 0.0;
+  use_var = false;
 }
 
-bool CountParam::Evaluate(double cmp) const {
+bool Relation::Evaluate(double cmp) const {
+  double eff_val = val;
+  if(use_var && (bool)var) {
+    eff_val = var->GetVar().toDouble();
+  }
+    
   switch(rel) {
   case EQUAL:
-    if(cmp == val)	return true;
+    if(cmp == eff_val)	return true;
     break;
   case NOTEQUAL:
-    if(cmp != val)	return true;
+    if(cmp != eff_val)	return true;
     break;
   case LESSTHAN:
-    if(cmp < val)	return true;
+    if(cmp < eff_val)	return true;
     break;
   case GREATERTHAN:
-    if(cmp > val)	return true;
+    if(cmp > eff_val)	return true;
     break;
   case LESSTHANOREQUAL:
-    if(cmp <= val)	return true;
+    if(cmp <= eff_val)	return true;
     break;
   case GREATERTHANOREQUAL:
-    if(cmp >= val)	return true;
+    if(cmp >= eff_val)	return true;
     break;
   }
   return false;
@@ -781,6 +787,20 @@ double taMath_double::vec_last(const double_Matrix* vec) {
   return vec->FastEl_Flat(vec->size-1);
 }
 
+int taMath_double::vec_find_first(const double_Matrix* vec, Relation& rel) {
+  for(int i=0;i<vec->size;i++) {
+    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+  }
+  return -1;
+}
+
+int taMath_double::vec_find_last(const double_Matrix* vec, Relation& rel) {
+  for(int i=vec->size-1;i>=0;i--) {
+    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+  }
+  return -1;
+}
+
 double taMath_double::vec_max(const double_Matrix* vec, int& idx) {
   idx = 0;
   if(vec->size == 0) return 0.0;
@@ -901,7 +921,7 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   }
 }
 
-double taMath_double::vec_count(const double_Matrix* vec, CountParam& cnt) {
+double taMath_double::vec_count(const double_Matrix* vec, Relation& cnt) {
   double rval = 0.0;
   for(int i=0;i<vec->size;i++) {
     if(cnt.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
@@ -1212,6 +1232,10 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_first(vec);
   case Aggregate::LAST:
     return taMath_double::vec_last(vec);
+  case Aggregate::FIND_FIRST: 
+    return (double)taMath_double::vec_find_first(vec, agg.rel);
+  case Aggregate::FIND_LAST: 
+    return (double)taMath_double::vec_find_last(vec, agg.rel);
   case Aggregate::MIN:
     return taMath_double::vec_min(vec, idx);
   case Aggregate::MAX:
@@ -1233,7 +1257,7 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
   case Aggregate::SEM:
     return taMath_double::vec_sem(vec);
   case Aggregate::COUNT: 
-    return taMath_double::vec_count(vec, agg.count);
+    return taMath_double::vec_count(vec, agg.rel);
   case Aggregate::MEDIAN:
     return taMath_double::vec_median(vec);
   case Aggregate::MODE:
@@ -2013,6 +2037,20 @@ float taMath_float::vec_last(const float_Matrix* vec) {
   return vec->FastEl_Flat(vec->size-1);
 }
 
+int taMath_float::vec_find_first(const float_Matrix* vec, Relation& rel) {
+  for(int i=0;i<vec->size;i++) {
+    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+  }
+  return -1;
+}
+
+int taMath_float::vec_find_last(const float_Matrix* vec, Relation& rel) {
+  for(int i=vec->size-1;i>=0;i--) {
+    if(rel.Evaluate(vec->FastEl_Flat(i))) return i;
+  }
+  return -1;
+}
+
 float taMath_float::vec_max(const float_Matrix* vec, int& idx) {
   idx = 0;
   if(vec->size == 0) return 0.0;
@@ -2133,7 +2171,7 @@ void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, flo
   }
 }
 
-float taMath_float::vec_count(const float_Matrix* vec, CountParam& cnt) {
+float taMath_float::vec_count(const float_Matrix* vec, Relation& cnt) {
   float rval = 0.0;
   for(int i=0;i<vec->size;i++) {
     if(cnt.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
@@ -2446,6 +2484,10 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_first(vec);
   case Aggregate::LAST:
     return taMath_float::vec_last(vec);
+  case Aggregate::FIND_FIRST: 
+    return (float)taMath_float::vec_find_first(vec, agg.rel);
+  case Aggregate::FIND_LAST: 
+    return (float)taMath_float::vec_find_last(vec, agg.rel);
   case Aggregate::MIN:
     return taMath_float::vec_min(vec, idx);
   case Aggregate::MAX:
@@ -2467,7 +2509,7 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
   case Aggregate::SEM:
     return taMath_float::vec_sem(vec);
   case Aggregate::COUNT: 
-    return taMath_float::vec_count(vec, agg.count);
+    return taMath_float::vec_count(vec, agg.rel);
   case Aggregate::MEDIAN:
     return taMath_float::vec_median(vec);
   case Aggregate::MODE:

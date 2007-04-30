@@ -610,11 +610,12 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   taBase::Own(full_sort_spec, NULL);
   full_sort_spec = *sort_spec;
 
-  // add LAST and FIRST to end of sort spec
+  // add [FIND_] LAST and FIRST to end of sort spec
   for(int i=0;i<spec->ops.size; i++) {
     DataGroupEl* ds = (DataGroupEl*)spec->ops.FastEl(i);
     if(ds->col_idx < 0) continue;
-    if((ds->agg.op != Aggregate::FIRST) && (ds->agg.op != Aggregate::LAST)) continue;
+    if((ds->agg.op != Aggregate::FIRST) && (ds->agg.op != Aggregate::LAST) &&
+       (ds->agg.op != Aggregate::FIND_FIRST) && (ds->agg.op != Aggregate::FIND_LAST)) continue;
     DataSortEl* ss = (DataSortEl*)full_sort_spec.ops.New(1, &TA_DataSortEl);
     ss->col_name = ds->col_name;
     ss->col_idx = ds->col_idx;

@@ -1965,11 +1965,11 @@ void ISelectableHost::EditAction(int ea) {
   if (ea & taiClipData::EA_DELETE) {
   // until/unless we add Undo, confirm deletes
 //TODO: maybe add a new option once Undo added, to continue prompting or not
-    if (ea & taiClipData::EA_DELETE) {
-      int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
-        "&Yes", "&No");
-      if (chs != 0) return;
-    }
+//     if (ea & taiClipData::EA_DELETE) {
+    int chs = taMisc::Choice("Are you sure you want to delete the selected object(s)?",
+			     "&No", "&Yes");
+    if (chs != 1) return;
+//     }
   
     EditAction_Delete();
   } else {

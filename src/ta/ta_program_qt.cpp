@@ -725,24 +725,8 @@ void iProgramGroupPanel::items_CustomExpandFilter(iTreeViewItem* item,
 //////////////////////////
 
 void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
-  int sec = tb->AssertSection("Program"); //note: need to keep it short
-  // for vars
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var",
-    tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
-//   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("arg",
-//     tabMisc::root->GetTemplateInstance(&TA_ProgArg)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("loc vars",
-    tabMisc::root->GetTemplateInstance(&TA_ProgVars)));
+  int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
 
-  // for els
-  tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("block",
-    tabMisc::root->GetTemplateInstance(&TA_CodeBlock)));
-
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("script",
-    tabMisc::root->GetTemplateInstance(&TA_UserScript)));
-  
-  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("for",
     tabMisc::root->GetTemplateInstance(&TA_ForLoop)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("do",
@@ -750,6 +734,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("while",
     tabMisc::root->GetTemplateInstance(&TA_WhileLoop)));
   
+  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("if",
     tabMisc::root->GetTemplateInstance(&TA_IfElse)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("if.con",
@@ -758,7 +743,23 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_IfBreak)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("if.ret",
     tabMisc::root->GetTemplateInstance(&TA_IfReturn)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("switch",
+    tabMisc::root->GetTemplateInstance(&TA_Switch)));
+
+  tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("block",
+    tabMisc::root->GetTemplateInstance(&TA_CodeBlock)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("script",
+    tabMisc::root->GetTemplateInstance(&TA_UserScript)));
   
+  ////////////////////////////////////////////////////////////////////////////
+  //		Var/Fun
+  sec = tb->AssertSection("Var/Fun");
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var",
+    tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("loc vars",
+    tabMisc::root->GetTemplateInstance(&TA_ProgVars)));
+
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("var=",
     tabMisc::root->GetTemplateInstance(&TA_AssignExpr)));
@@ -769,22 +770,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("prog()",
     tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
 
-  ////////////////////////////////////////////////////////////////////////////
-  //		Prog2
-  sec = tb->AssertSection("Prog2");
-  //  tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("static()",
-    tabMisc::root->GetTemplateInstance(&TA_StaticMethodCall)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("math()",
-    tabMisc::root->GetTemplateInstance(&TA_MathCall)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("random()",
-    tabMisc::root->GetTemplateInstance(&TA_RandomCall)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("misc()",
-    tabMisc::root->GetTemplateInstance(&TA_MiscCall)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("img proc()",
-    tabMisc::root->GetTemplateInstance(&TA_ImageProcCall)));
-  // add other spec meth calls here..
-
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("fun def",
     tabMisc::root->GetTemplateInstance(&TA_Function)));
@@ -793,7 +778,9 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("return",
     tabMisc::root->GetTemplateInstance(&TA_ReturnExpr)));
 
-  tb->AddSeparator(sec);
+  ////////////////////////////////////////////////////////////////////////////
+  //		Print/Misc
+  sec = tb->AssertSection("Print..");
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print",
     tabMisc::root->GetTemplateInstance(&TA_PrintExpr)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("print var",
@@ -804,10 +791,31 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_StopStepPoint)));
 
   ////////////////////////////////////////////////////////////////////////////
-  //		Data processing
-  sec = tb->AssertSection("Data Proc"); //note: need to keep it short
+  //		Misc Fun
+  sec = tb->AssertSection("Misc Fun");
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("static()",
+    tabMisc::root->GetTemplateInstance(&TA_StaticMethodCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("math()",
+    tabMisc::root->GetTemplateInstance(&TA_MathCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("random()",
+    tabMisc::root->GetTemplateInstance(&TA_RandomCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("misc()",
+    tabMisc::root->GetTemplateInstance(&TA_MiscCall)));
+  // add other spec meth calls here..
+
+  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data proc()",
     tabMisc::root->GetTemplateInstance(&TA_DataProcCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data anal()",
+    tabMisc::root->GetTemplateInstance(&TA_DataAnalCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data gen()",
+    tabMisc::root->GetTemplateInstance(&TA_DataGenCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("img proc()",
+    tabMisc::root->GetTemplateInstance(&TA_ImageProcCall)));
+
+  ////////////////////////////////////////////////////////////////////////////
+  //		Data processing
+  sec = tb->AssertSection("Data Proc"); //note: need to keep it short
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("sort",
     tabMisc::root->GetTemplateInstance(&TA_DataSortProg)));
@@ -830,17 +838,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_DataCalcSetSrcRow)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("cpy cols",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcCopyCommonCols)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("script",
-    tabMisc::root->GetTemplateInstance(&TA_UserScript)));
-
-  ////////////////////////////////////////////////////////////////////////////
-  //		Data generation and analysis
-  sec = tb->AssertSection("Data Misc"); //note: need to keep it short
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data gen()",
-    tabMisc::root->GetTemplateInstance(&TA_DataGenCall)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data anal()",
-    tabMisc::root->GetTemplateInstance(&TA_DataAnalCall)));
-
 }
 
 ToolBoxRegistrar ptb(ProgramToolBoxProc);
