@@ -268,7 +268,8 @@ public:
 #ifndef __MAKETA__
   enum CustomEventType {
     CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
-    CET_GET_IMAGE
+    CET_GET_IMAGE,
+    CET_APPLY
   };
 #endif
 
@@ -325,7 +326,6 @@ public:
 /*  virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
-  virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
   virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
@@ -351,6 +351,8 @@ public slots:
 
 public slots:
   virtual void		Revert(); 
+  virtual void 		Ok(); // for dialogs
+  void 			Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
 
 protected:
   ContextFlag		updating; // flag to indicate we are the instance that caused the update
@@ -359,7 +361,11 @@ protected:
   QWidget*		mwidget;	// outer container for all widgets
   iDialog*		dialog; // dialog, when using Edit, NULL otherwise
   HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
-  DataChangeHelper 	dch; // helps track the state of datachanges
+  iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
+  bool			reshow_req; // these are set on async req, cleared when serviced
+  bool			get_image_req;
+  bool			apply_req;
+  
 
   virtual void	Constr_Strings(const char* prompt="", const char* win_title="");
   virtual void  Constr_Methods() {}
@@ -378,15 +384,6 @@ protected:
   virtual void	Cancel_impl();
   virtual void 	Ok_impl(); // for dialogs
 
-public slots:
-  virtual void 	Ok(); // for dialogs
-  void 		Cancel(); // mostly for dialogs, but also used internally to close a Panel (ex. when obj deleted)
-
-protected:
-  iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
-  bool		reshow_req; // set on async req, cleared when serviced
-  bool		get_image_req;
-  
   virtual void 		DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
   void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
@@ -395,6 +392,7 @@ protected:
 /*  override void		customEvent(QEvent* ev);
 */  
   virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor 
+
 };
 
 
@@ -415,25 +413,25 @@ public:
   iFlowLayout*	layMethButtons;	// method buttons
 
 
-  virtual const iColor* 	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
+  virtual const iColor* colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
   inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
 
   taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   virtual ~taiDataHost();
 
-  void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
+  void			ClearBody();	
+   // prepare dialog for rebuilding Body to show new contents
 
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call
-  virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
-  virtual void  SetRevert();	// set the revert button on
-  virtual void  UnSetRevert();	// set the revert button off
-  virtual void  NotifyChanged(); // called by our object when it has changed (by us, or other)
+  virtual void		Revert_force();	
+   // forcibly (automatically) revert buffer (prompts)
+  virtual void  	SetRevert();	// set the revert button on
+  virtual void  	UnSetRevert();	// set the revert button off
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
   virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
-  virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
-  virtual void  Scroll(){}	// overload to scroll to field editor
+  virtual void		Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
@@ -457,7 +455,7 @@ public: // IDataHost i/f
   void		GetImage()	{ }
   void		GetValue()	{ }
 public slots:
-  void		Apply() {inherited::Apply();} 
+  void		Apply_Async();
   void  	Changed() {inherited::Changed();}
 
 

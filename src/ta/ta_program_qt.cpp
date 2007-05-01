@@ -170,6 +170,7 @@ void iProgramEditor::Init() {
   read_only = false;
   m_modified = false;
   warn_clobber = false;
+  apply_req = false;
 //  bg_color.set(TAI_Program->GetEditColor()); // always the same
   base = NULL;
   row = 0;
@@ -236,6 +237,28 @@ void iProgramEditor::Init() {
     this, SLOT(items_ItemSelected(iTreeViewItem*)) );
 
   InternalSetModified(false);
+}
+
+void iProgramEditor::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_APPLY: {
+    if (apply_req) {
+      Apply();
+      apply_req = false;
+    }
+  } break;
+  default: inherited(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
+void iProgramEditor::Apply_Async() {
+  if (apply_req) return; // already waiting
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
+  apply_req = true;
+  QCoreApplication::postEvent(this, ev);
 }
 
 bool iProgramEditor::ShowMember(MemberDef* md) {
@@ -378,6 +401,7 @@ void iProgramEditor::Apply() {
   GetImage();
   InternalSetModified(false); // superfulous??
 }
+
 
 const iColor* iProgramEditor::colorOfCurRow() const {
   if ((row % 2) == 0) {

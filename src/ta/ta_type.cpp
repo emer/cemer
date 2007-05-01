@@ -2267,54 +2267,6 @@ void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
 }
 
 
-//////////////////////////
-//   DataChangeHelper	//
-//////////////////////////
-
-
-bool DataChangeHelper::doStructUpdate() {
-  bool rval = su;
-  su = false;
-  if (rval) du = false;
-  return rval;
-}
-
-bool DataChangeHelper::doDataUpdate() {
-  bool rval = du;
-  du = false;
-  return rval;
-}
-
-void DataChangeHelper::UpdateFromDataChanged(int dcr) {
-  if (dcr == DCR_STRUCT_UPDATE_BEGIN) {
-    ++struct_up_cnt;
-    return;
-  } else if (dcr == DCR_DATA_UPDATE_BEGIN) {
-    ++data_up_cnt;
-    return;
-  } else if (dcr == DCR_STRUCT_UPDATE_END) {
-    if (--struct_up_cnt > 0) return;
-    su = true;
-    du = true;
-  } else if (dcr == DCR_DATA_UPDATE_END) {
-    if ((--data_up_cnt > 0) || (struct_up_cnt > 0))  return;
-    du = true;
-  } else if (dcr == DCR_ITEM_REBUILT) {
-    su = true;
-    du = true;
-  } else
-    du = true;
-}
-
-void DataChangeHelper::Reset() {
-  struct_up_cnt = 0;
-  data_up_cnt = 0;
-  su = false;
-  du = false;
-}
-
-
-
 //////////////////////////////////
 // 	     TypeSpace		//
 //////////////////////////////////

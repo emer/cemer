@@ -692,6 +692,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
   host_type = HT_DIALOG; // default, set later
   reshow_req = false;
   get_image_req = false;
+  apply_req = false;
   warn_clobber = false;
 }
 
@@ -1304,6 +1305,14 @@ void taiDataHost::Constr_Final() {
 void taiDataHost::customEvent(QEvent* ev_) {
   // we return early if we don't accept, otherwise fall through to accept
   switch ((int)ev_->type()) {
+  case CET_APPLY: {
+    if (apply_req) {
+      if (state == ACTIVE) {
+        Apply();
+      }
+      apply_req = false;
+    }
+  } break;
   case CET_RESHOW: {
     ReShowEvent* ev = static_cast<ReShowEvent*>(ev_);
     if (reshow_req) {
@@ -1328,6 +1337,15 @@ void taiDataHost::customEvent(QEvent* ev_) {
   ev_->accept();
 }
 
+void taiDataHost::Apply_Async() {
+  // reshow does a getimage, so ignore if a reshow pending
+  if (apply_req) return; // already waiting
+  if (state != ACTIVE) return;
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
+  apply_req = true;
+  QCoreApplication::postEvent(this, ev);
+}
+
 void taiDataHost::ReShow_Async(bool forced) {
   if (reshow_req) return; // already waiting
   if (state != ACTIVE) return;
@@ -1347,6 +1365,8 @@ void taiDataHost::GetImage_Async() {
 
 void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
 //note: nothing in base, by design
+  //NOTE: list/group subclasses typically detect changes in their GetImage routine
+  //  so we don't really subclass this routine or explicitly detect the list/group notifies
   // note: because of deferred construction, we may still need to update buttons/menus
   if (state == DEFERRED1) {
     GetImage();
@@ -1354,14 +1374,19 @@ void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2)
   }
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
   if (!isConstructed()) return;
-  dch.UpdateFromDataChanged(dcr);
-  // we only care about the rebuilding ones, for others, we just call notify
-  //NOTE: list/group subclasses typically detect changes in their GetImage routine
-  //  so we don't really subclass this routine or explicitly detect the list/group notifies
-  if (dch.doStructUpdate()) //note: clears su and du states
+  
+  if (updating) return; // it is us that caused this
+  if (dcr == DCR_STRUCT_UPDATE_END) {
     ReShow();
-  else if (dch.doDataUpdate()) //note: clears du state
-    NotifyChanged();
+  } else if (dcr <= DCR_ITEM_UPDATED_ND) {
+    // if no changes have been made in this instance, then just refresh,
+    // otherwise, user will have to decide what to do, i.e., revert
+    if (HasChanged()) {
+      warn_clobber = true;
+    } else {
+      GetImage_Async();
+    }
+  }
 }
 
 void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
@@ -1395,17 +1420,6 @@ void taiDataHost::Ok_impl() { //note: only used for Dialogs
   }
 }
 
-void taiDataHost::NotifyChanged() {
-  if (updating) return; // it is us that caused this
-  // if no changes have been made in this instance, then just refresh,
-  // otherwise, user will have to decide what to do, i.e., revert
-  if (HasChanged()) {
-    warn_clobber = true;
-  } else {
-    GetImage_Async();
-  }
-}
-
 void taiDataHost::ReConstr_Body() {
   if (!isConstructed()) return;
   Constr_Body();
@@ -1415,7 +1429,7 @@ void taiDataHost::ReConstr_Body() {
 bool taiDataHost::ReShow(bool force) {
 //note: only called with force from ReShowEdits, typ only from a SelEdit dialog
   if (!updating) {
-    // was not use that caused this...
+    // was not us that caused this...
     if (force) {
         // get confirmation if changed, and possibly exit
       if (HasChanged()) {

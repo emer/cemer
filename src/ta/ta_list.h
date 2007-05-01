@@ -122,9 +122,7 @@ class  taHashTable; //
 enum DataChangedReason { /* reason why DataChanged being called, as well as defining ops (also used by taBase and other classes) -- some data change operations will emit multiple DataChanged calls */
   DCR_ITEM_UPDATED = 0, // 0 after user edits (or load) ex. taBase::UpdateAfterEdit call; ops not used
   DCR_ITEM_UPDATED_ND, 	// 1 same as IU, but doesn't invoke Dirty (to avoid circular dirtying)
-  DCR_ITEM_REBUILT, 	// 2 for complex items that support the STRUCT updates
-
-  DCR_CHILD_ITEM_UPDATED, // 3 op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it
+  DCR_CHILD_ITEM_UPDATED = 3, // 3 op1=item; can optionally be invoked by an owned object (usually a member, usually not list/group items) -- owner can ignore this, or do something with it
   
   DCR_ARY_SIZE_CHANGED, // 4 this is the only notify we send from arrays
   

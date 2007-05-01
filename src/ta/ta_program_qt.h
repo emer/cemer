@@ -81,6 +81,14 @@ class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
 INHERITED(QWidget)
   Q_OBJECT
 public:
+#ifndef __MAKETA__
+  enum CustomEventType { // note: just copied from taiDataHost, not all used
+    CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
+    CET_GET_IMAGE,
+    CET_APPLY
+  };
+#endif
+
   QVBoxLayout*		layOuter;
   QScrollArea*		  scrBody;
   iStripeWidget*	  body; // container for the actual taiData items
@@ -130,6 +138,7 @@ public: // IDataHost i/f -- some delegate up to mommy
   void			GetValue();
   void			GetImage();
   void			Changed(); // called by embedded item to indicate contents have changed
+  void			Apply_Async();
 
 
 protected:
@@ -140,12 +149,14 @@ protected:
   iColor		bg_color_dark; // for edit area
   bool			m_modified;
   bool			warn_clobber; // set if we get a notify and are already modified
+  bool			apply_req;
   TAPtr			base; // no need for smartref, because we are a dlc
   MembSet_List		membs; // the member items, one set per line
   
   int 			row;
   int			m_show;
  
+  override void 	customEvent(QEvent* ev_);
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void		Base_Add(); // adds controls etc for base
   bool			ShowMember(MemberDef* md);

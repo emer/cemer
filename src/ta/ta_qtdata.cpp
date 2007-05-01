@@ -129,8 +129,11 @@ void taiData::applyNow() {
   // we send this up via parents, to let them trap first, ex taiToggle
   if (mparent)
     mparent->applyNow();
-  else if (host)
-    host->Apply();
+  else if (host) {
+    //note: we need to use the Async because things like seledit rebuild
+    // during the call, clobbering the ctrl while its sig/slot stuff still ongoing
+    host->Apply_Async();
+  }
 }
 
 void taiData::DataChanged(taiData* chld) {

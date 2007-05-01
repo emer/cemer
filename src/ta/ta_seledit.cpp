@@ -441,9 +441,8 @@ void SelectEdit::MoveFun(int from, int to) {
 }
 
 void SelectEdit::NewEdit() {
-  DataChanged(DCR_ITEM_REBUILT);
-/*obs  CloseEdit();
-  Edit(); */
+  DataChanged(DCR_STRUCT_UPDATE_BEGIN);
+  DataChanged(DCR_STRUCT_UPDATE_END);
 }
 
 int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {

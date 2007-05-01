@@ -1253,23 +1253,6 @@ protected:
 #define FOR_DLC_EL_OF_TYPE(T, el, dl, itr) \
 for(itr.Reset(), el = (T*) itr.NextEl(dl, &TA_ ## T); el; el = (T*) itr.NextEl(dl, &TA_ ## T))
 
-class TA_API DataChangeHelper {
-  // class to help track data changes to help clients defer updates, etc;
-public:
-  bool		doStructUpdate(); // after update, will be true if struct changed; CLEARED ON READ, and if true, clears DataUpdate, so check this one first if separately handling struct changes
-  bool		doDataUpdate(); // after update, will be true if data or structure changed; CLEARED ON READ
-
-  void		UpdateFromDataChanged(int dcr); // pass the DataDataChanged dcr value in
-  void		Reset(); // reset everything; normally not needed
-  DataChangeHelper() {Reset();}
-  
-protected:
-  short		struct_up_cnt; // count of struct updates in progress
-  short		data_up_cnt; // count of data updates in progress
-  bool		su;
-  bool		du;
-};
-
 
 //////////////////////////
 //   EnumSpace		//
