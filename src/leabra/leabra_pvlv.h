@@ -18,12 +18,12 @@
 #ifndef leabra_pvlv_h
 #define leabra_pvlv_h
 
-// todo:
+// main issues fixed in new version (5/07):
 // * the syndep code is definitely not the way the brain works, and has dmem issues
 //   as noted below (is this still relevant??)
 // * the integration of pv&lv produces artifacts from lv firing during pv..
 //   need to revisit.
-
+// * separate detector of times when reward occurs PVr
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //	Pavlovian (PVLV): Primary Value and Learned Value Reward Learning System	//
@@ -207,6 +207,9 @@ public:
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights; otherwise just depress weights
 
+  virtual float	Compute_ActEqSum(LeabraLayer* lay);
+  // compute sum over value representation subgroups of act_eq values
+
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
@@ -239,19 +242,12 @@ class LEABRA_API PVLVDaSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
   INHERITED(taBase)
 public:
-  enum	DaMode {
-    IF_PV_ELSE_LV,		// if (PV detected (present/expected), da = PVe - PVi; else da = LVe - LVi
-    LV_PLUS_IF_PV,		// da = (LVe - LVi) + [if (PV detected (present/expected), PVe - PVi]
-    PV_PLUS_LV			// da = (PVe - PVi) + (LVe - LVi)
-  };
-
-  DaMode	mode;		// #DEF_IF_PV_ELSE_LV how to compute DA as a function of PV and LV systems
   float		lv_disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.01 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
-  float		lv_disc;	//  #CONDEDIT_OFF_syn_dep #DEF_0.5 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
+  float		lv_disc;	// #CONDEDIT_OFF_syn_dep #DEF_0.5 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
-  bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism
-  float		min_lvi;	// #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
+  bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)
+  float		min_lvi;	// #CONDEDIT_ON_syn_dep #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
 
   void	Initialize();
   void 	Destroy()	{ };

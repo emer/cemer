@@ -249,26 +249,19 @@ void ActAvgHebbConSpec::Initialize() {
 void ScalarValSpec::Initialize() {
   rep = LOCALIST;
   un_width = .3f;
-  min_net = .1f;
   clamp_pat = false;
   min_sum_act = 0.2f;
   val_mult_lrn = false;
   clip_val = true;
-  min = val = sb_ev = 0.0f;
+  min = val = 0.0f;
   range = incr = 1.0f;
-  sb_lt = 0;
 }
 
 void ScalarValSpec::InitVal(float sval, int ugp_size, float umin, float urng) {
   min = umin; range = urng;
   val = sval;
-  if((rep == GAUSSIAN) || (rep == LOCALIST))
-    incr = range / (float)(ugp_size - 2); // skip 1st unit, and count end..
-  else
-    incr = range / (float)(ugp_size - 1); // skip 1st unit
+  incr = range / (float)(ugp_size - 2); // skip 1st unit, and count end..
   //  incr -= .000001f;		// round-off tolerance..
-  sb_lt = (int)floor((val - min) / incr);
-  sb_ev = (val - (min + ((float)sb_lt * incr))) / incr;
 }
 
 // rep 1.5.  ugp_size = 4, incr = 1.5 / 3 = .5
@@ -294,13 +287,7 @@ float ScalarValSpec::GetUnitAct(int unit_idx) {
     if(fabs(val - cur) > incr) return 0.0f;
     return 1.0f - (fabs(val - cur) / incr);
   }
-  else {
-    float rval;
-    if(eff_idx < sb_lt) rval = 1.0f;
-    else if(eff_idx > sb_lt) rval = 0.0f;
-    else rval = sb_ev;
-    return rval;
-  }
+  return 0.0f;			// compiler food
 }
 
 float ScalarValSpec::GetUnitVal(int unit_idx) {
@@ -343,12 +330,6 @@ void ScalarValLayerSpec::Initialize() {
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;
   }
-  else {			// SUM_BAR
-    unit_range.min = 0.0f;   unit_range.max = 1.0f;
-    unit_range.UpdateAfterEdit();
-    val_range.min = unit_range.min;
-    val_range.max = unit_range.max;
-  }
   val_range.UpdateAfterEdit();
 }
 
@@ -373,9 +354,6 @@ void ScalarValLayerSpec::UpdateAfterEdit_impl() {
     val_range.max = unit_range.max;
   }
   val_range.UpdateAfterEdit();
-  if(scalar.rep == ScalarValSpec::SUM_BAR) {
-    compute_i = UNIT_INHIB;
-  }
 }
 
 void ScalarValLayerSpec::HelpConfig() {
@@ -412,15 +390,6 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       lay->un_geom.n = 12;
       lay->un_geom.x = 12;
     }
-    else if(scalar.rep == ScalarValSpec::SUM_BAR) {
-      lay->un_geom.n = 12;
-      lay->un_geom.x = 12;
-    }
-  }
-
-  if(CheckError((scalar.rep == ScalarValSpec::SUM_BAR) && (compute_i != UNIT_INHIB), quiet, rval,
-		"SUM_BAR rep type requires compute_i = UNIT_INHIB, because it sets gc.i individually")) {
-    compute_i = UNIT_INHIB;
   }
 
   if(scalar.rep == ScalarValSpec::LOCALIST) {
@@ -468,13 +437,6 @@ bool ScalarValLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     else if(cs->InheritsFrom(TA_MarkerConSpec)) {
       continue;
     }
-    else {
-      if(CheckError((scalar.rep == ScalarValSpec::SUM_BAR) && cs->lmix.err_sb, quiet, rval,
-		    "scalar val cons for SUM_BAR should have lmix.err_sb = false (are otherwise biased!), I just set it for you in spec:", cs->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-	cs->SetUnique("lmix", true);
-	cs->lmix.err_sb = false;
-      }
-    }
   }
   return rval;
 }
@@ -493,27 +455,7 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
     LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
     
-    if(scalar.rep == ScalarValSpec::SUM_BAR) {
-      compute_i = UNIT_INHIB;
-      bias_val.un = ScalarValBias::BWT;
-      bias_val.un_shp = ScalarValBias::NEG_SLP;
-      bias_val.wt = ScalarValBias::NO_WT;
-      us->g_bar.h = .1f; us->g_bar.a = .1f;
-      unit_range.min = 0.0; unit_range.max = 1.0f;
-
-      for(int g=0; g<u->recv.size; g++) {
-	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
-	LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-	if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
-	   cs->InheritsFrom(TA_MarkerConSpec)) {
-	  continue;
-	}
-	cs->lmix.err_sb = false;
-	cs->rnd.mean = 0.1f;
-      }
-    }
-    else if(scalar.rep == ScalarValSpec::LOCALIST) {
+    if(scalar.rep == ScalarValSpec::LOCALIST) {
       scalar.min_sum_act = .2f;
       kwta.k = 1;
       compute_i = KWTA_AVG_INHIB;
@@ -780,7 +722,9 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     float cur = scalar.GetUnitVal(i);
-    float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
+    float act_val = 0.0f;
+    if(u->act_eq >= us->opt_thresh.send)		   // only if over sending thresh!
+      act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
     avg += cur * act_val;
     sum_act += act_val;
   }
@@ -789,10 +733,7 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     avg /= sum_act;
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-  if((scalar.rep == ScalarValSpec::GAUSSIAN) || (scalar.rep == ScalarValSpec::LOCALIST))
-    u->act_eq = avg;
-  else
-    u->act_eq = scalar.min + scalar.incr * sum_act;
+  u->act_eq = avg;
   u->act = 0.0f;		// very important to clamp act to 0: don't send!
   u->da = 0.0f;			// don't contribute to change in act
   return u->act_eq;
@@ -859,28 +800,6 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
 void ScalarValLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net) {
   LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
   ReadValue(ug, net);		// always read out the value
-}
-
-void ScalarValLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ugp, LeabraInhib* thr, LeabraNetwork* net) {
-  if(scalar.rep != ScalarValSpec::SUM_BAR) {
-    LeabraLayerSpec::Compute_Inhib_impl(lay, ugp, thr, net);
-    return;
-  }
-  thr->i_val.g_i = 0.0f;	// make sure it's zero, cuz this gets added to units.. 
-  thr->i_val.g_i_orig = thr->i_val.g_i;	// retain original values..
-  if(ugp->size < 3) return;	// must be at least a few units..
-
-  int i;
-  for(i=1;i<ugp->size;i++) {
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
-    //    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
-    float old_net = u->net;
-    u->net = MIN(scalar.min_net, u->net);
-    float ithr = u->Compute_IThreshNoAH(lay, net); // exclude AH here so they can be used as a modulator!
-    if(ithr < 0.0f) ithr = 0.0f;
-    u->net = old_net;
-    u->gc.i = u->g_i_raw = ithr;
-  }    
 }
 
 void ScalarValLayerSpec::Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net) {

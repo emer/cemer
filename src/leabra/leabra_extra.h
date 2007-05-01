@@ -503,6 +503,8 @@ protected:
 // 	Scalar Value Layer	//
 //////////////////////////////////
 
+// NOTE: got rid of sum_bar -- never worked and requires lots of different params
+// to support in the future it should probably be a subclass of the main guy
 // misc todo: items for SUM_BAR:
 // to do equivalent of "clamp_value" (e.g., LV units at end of settle), add a special
 // mode where asymptotic Vm is computed based on current params, and act from that, etc.
@@ -519,22 +521,19 @@ public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
     LOCALIST,			// each unit represents a distinct value; intermediate values represented by graded activity of neighbors; overall activity is weighted-average across all units
-    SUM_BAR,			// bar of increasing activation threshold across units, with value = sum of overall activation.  This has more natural activation dynamics than GAUSSIAN
   };
 
   RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
   float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in min-max units)
-  float		min_net;	// #CONDEDIT_ON_rep:SUM_BAR #DEF_0.1 minimum netinput value for purposes of computing gc.i in sum_bar
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
   bool		val_mult_lrn;	// #DEF_false for learning, effectively multiply the learning rate by the minus-plus phase difference in overall represented value (i.e., if overall value is the same, no learning takes place)
   bool		clip_val;	// #DEF_true ensure that value remains within specified range
+
   float		min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
   float		range;		// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
   float		val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())
   float		incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
-  int		sb_lt;		// #READ_ONLY #NO_SAVE #NO_INHERIT sum_bar lower threshold index (implementational, computed in InitVal())
-  float		sb_ev;		// #READ_ONLY #NO_SAVE #NO_INHERIT sum_bar 'edge' unit value (implementational, computed in InitVal())
 
   virtual void	InitVal(float sval, int ugp_size, float umin, float urng);
   // initialize implementational values for subsequently computing GetUnitAct to represent scalar val sval over unit group of ugp_size
@@ -620,7 +619,6 @@ public:
   void 	Init_Weights(LeabraLayer* lay);
   void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
 
   // don't include first unit in any of these computations!

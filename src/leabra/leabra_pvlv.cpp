@@ -475,6 +475,16 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      );
 }
 
+float LVeLayerSpec::Compute_ActEqSum(LeabraLayer* lay) {
+  float act_eq_sum = 0.0f;
+  UNIT_GP_ITR
+    (lay, 
+     DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
+     act_eq_sum += u->act_eq;
+     );
+  return act_eq_sum;
+}
+
 void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   // doing second because act_p is computed only at end of settling!
   // this is better than clamping the value in the middle of everything
@@ -490,7 +500,6 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 //////////////////////////////////
 
 void PVLVDaSpec::Initialize() {
-  mode = IF_PV_ELSE_LV;
   lv_disc_thr = .01f;
   lv_disc = 0.5f;
   tonic_da = 0.0f;
@@ -690,20 +699,20 @@ void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
       u->dav = lv_da; 		// lviu->act_eq - avgbl;
     }
     else {
-      if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
+//       if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
 	u->dav = lv_da;
 	if(er_avail)
 	  u->dav += pv_da;
-      }
-      else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
-	if(er_avail)
-	  u->dav = pv_da;
-	else
-	  u->dav = lv_da;
-      }
-      else if(da.mode == PVLVDaSpec::PV_PLUS_LV) {
-	u->dav = pv_da + lv_da;
-      }
+//       }
+//       else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
+// 	if(er_avail)
+// 	  u->dav = pv_da;
+// 	else
+// 	  u->dav = lv_da;
+//       }
+//       else if(da.mode == PVLVDaSpec::PV_PLUS_LV) {
+// 	u->dav = pv_da + lv_da;
+//       }
     }
     u->ext = da.tonic_da + u->dav;
     u->act_eq = u->act = u->net = u->ext;
@@ -714,9 +723,11 @@ void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   int lve_prjn_idx;
-  FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
+  LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
+  LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
   int lvi_prjn_idx;
-  FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
+  LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
+  LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
   int pvi_prjn_idx;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
@@ -727,51 +738,37 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
 
+  // note that multiple LV subgroups are supported, but not multiple PV's
+  DaModUnit* lvesu = (DaModUnit*)lve_lay->units.Leaf(0); // holds prior vals for all
+  DaModUnit* pvisu = (DaModUnit*)pvi_lay->units.Leaf(0);
+
+  float lve_sum = lve_sp->Compute_ActEqSum(lve_lay);
+  float lvi_sum = lvi_sp->Compute_ActEqSum(lvi_lay);
+  float lvd = lve_sum - lvi_sum;
+  float lv_da;
+  if(lvd >= lvesu->misc_1 + da.lv_disc_thr)
+    lv_da = lvd - da.lv_disc * lvesu->misc_1;
+  else
+    lv_da = lvd - lvesu->misc_1;
+
+  float pvd = pve_val - pvisu->act_m; 
+  float pv_da = pvd - pvisu->misc_1;
+
   lay->dav = 0.0f;
   DaModUnit* u;
   taLeafItr i;
   FOR_ITR_EL(DaModUnit, u, lay->units., i) {
-    LeabraRecvCons* lvecg = (LeabraRecvCons*)u->recv[lve_prjn_idx];
-    DaModUnit* lvesu = (DaModUnit*)lvecg->Un(0);
-    LeabraRecvCons* lvicg = (LeabraRecvCons*)u->recv[lvi_prjn_idx];
-    DaModUnit* lvisu = (DaModUnit*)lvicg->Un(0);
-    LeabraRecvCons* pvicg = (LeabraRecvCons*)u->recv[pvi_prjn_idx];
-    DaModUnit* pvisu = (DaModUnit*)pvicg->Un(0);
-    float eff_lvi = MAX(lvisu->act_eq, da.min_lvi); // effective lvi value
-
-    float lvd = lvesu->act_eq - eff_lvi; 
-    float pvd = pve_val - pvisu->act_m; 
-
-    float lv_da;
-    if(lvd >= lvesu->misc_1 + da.lv_disc_thr)
-      lv_da = lvd - da.lv_disc * lvesu->misc_1;
-    else
-      lv_da = lvd - lvesu->misc_1;
-    float pv_da = pvd - pvisu->misc_1;
-
     if(net->phase_no == 0) {	// not used at this point..
       u->dav = lv_da; 		// lviu->act_eq - avgbl;
     }
     else {
-      if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
-	u->dav = lv_da;
-	if(er_avail)
-	  u->dav += pv_da;
-      }
-      else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
-	if(er_avail)
-	  u->dav = pv_da;
-	else
-	  u->dav = lv_da;
-      }
-      else if(da.mode == PVLVDaSpec::PV_PLUS_LV) {
-	u->dav = pv_da + lv_da;
-      }
-
+      // IF_PV_ELSE_LV mode always:
       if(er_avail) {
+	u->dav = pv_da;
 	u->misc_1 = pv_da;	// our misc_1 holds the value to send to LV
       }
       else {
+	u->dav = lv_da;
 	u->misc_1 = 0.0f;
       }
     }
@@ -785,9 +782,11 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   int lve_prjn_idx;
-  FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
+  LeabraLayer* lve_lay = FindLayerFmSpec(lay, lve_prjn_idx, &TA_LVeLayerSpec);
+  LVeLayerSpec* lve_sp = (LVeLayerSpec*)lve_lay->GetLayerSpec();
   int lvi_prjn_idx;
-  FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
+  LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
+  LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
   int pvi_prjn_idx;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
@@ -798,29 +797,21 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
 
-  DaModUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(DaModUnit, u, lay->units., i) {
-    LeabraRecvCons* lvecg = (LeabraRecvCons*)u->recv[lve_prjn_idx];
-    DaModUnit* lvesu = (DaModUnit*)lvecg->Un(0);
-    LeabraRecvCons* lvicg = (LeabraRecvCons*)u->recv[lvi_prjn_idx];
-    DaModUnit* lvisu = (DaModUnit*)lvicg->Un(0);
-    LeabraRecvCons* pvicg = (LeabraRecvCons*)u->recv[pvi_prjn_idx];
-    DaModUnit* pvisu = (DaModUnit*)pvicg->Un(0);
-    float eff_lvi = MAX(lvisu->act_eq, da.min_lvi); // effective lvi value
+  DaModUnit* lvesu = (DaModUnit*)lve_lay->units.Leaf(0); // holds prior vals for all
+  DaModUnit* pvisu = (DaModUnit*)pvi_lay->units.Leaf(0);
 
-    float lvd = lvesu->act_eq - eff_lvi; 
+  if(er_avail) {
+    lvesu->misc_1 = 0.0f;	// reset
+    pvisu->misc_1 = 0.0f;
+  }
+  else {
+    float lve_sum = lve_sp->Compute_ActEqSum(lve_lay);
+    float lvi_sum = lvi_sp->Compute_ActEqSum(lvi_lay);
+    float lvd = lve_sum - lvi_sum;
     float pvd = pve_val - pvisu->act_m; 
-    //    float pv_da = pvd - pvisu->misc_1;
 
-    if(er_avail) {
-      lvesu->misc_1 = 0.0f;	// reset
-      pvisu->misc_1 = 0.0f;
-    }
-    else {
-      lvesu->misc_1 = lvd;
-      pvisu->misc_1 = pvd;
-    }
+    lvesu->misc_1 = lvd;
+    pvisu->misc_1 = pvd;
   }
 }
 
@@ -1071,8 +1062,6 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val, 
     pvesp->scalar.min_sum_act = .2f;
     pvisp->scalar.min_sum_act = .2f;
     lvesp->scalar.min_sum_act = .2f;
-
-    dasp->da.mode = PVLVDaSpec::LV_PLUS_IF_PV;
 
     lvesp->bias_val.un = ScalarValBias::GC;
     lvesp->bias_val.wt = ScalarValBias::NO_WT;
