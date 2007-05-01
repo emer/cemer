@@ -576,7 +576,7 @@ public:
   // #CAT_Columns insures that a scalar column of the given name and val type exists, and return that col. 
   DataCol* 		FindMakeColMatrix(const String& col_nm,
 	ValType val_type = VT_FLOAT, int dims = 1,
-	int d0, int d1=0, int d2=0, int d3=0);
+	int d0=0, int d1=0, int d2=0, int d3=0);
   // #CAT_Columns insures that a matrix column of the given name, val type, and dimensions exists, and returns that col. 
   DataCol* 		FindMakeColMatrixN(const String& col_nm,
 	ValType val_type, const MatrixGeom& cell_geom,
