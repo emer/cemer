@@ -31,6 +31,7 @@
 # include <QObject>
 # include <QWidget>
 # include "icheckbox.h"
+# include "ilineedit.h"
 #endif
 
 #include "igeometry.h"
@@ -155,8 +156,10 @@ protected slots:
   void			btnEdit_clicked(bool);
 
 protected:
-  iLineEdit*		leText;
-  QToolButton*		btnEdit; // if requested, button to invoke dialog editor
+#ifndef __MAKETA__
+  QPointer<iLineEdit>	leText;
+  QPointer<QToolButton>	btnEdit; // if requested, button to invoke dialog editor
+#endif
   iFieldEditDialog*	edit; // an edit dialog, if created
   MemberDef*		mbr;
   override void		GetImage_impl(const void* base) {GetImage(*((String*)base));}
@@ -166,7 +169,6 @@ protected:
   override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void 	this_EditAction(int param); // for when control is clipboard handler
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
-  override void 	repDestroyed(QObject* obj);
 };
 
 // this is for integers -- includes up and down arrow buttons
@@ -622,7 +624,6 @@ public:
   taiAction*		curSel() const;
   void			setCurSel(taiAction* value);
   QWidget*		actionsRep(); // where actions are stored, in menu if a menu, else in Rep
-  void			SetRep(QWidget* val); // override
   virtual void		AddSep(bool new_radio_grp = false); // add menu separator -- can also be used to create new radio groups --  won't add initial sep, or 2 separators in a row; seps don't count as taiActions
   virtual void		AddAction(taiAction* act); // add the already created action
   taiAction* 		AddItem(const String& val, SelType st = use_default, 
@@ -674,7 +675,6 @@ protected:
   
 protected slots:
   virtual void 		child_triggered_toggled(taiAction* act);
-  void			repDestroyed(QObject* obj); //override
 };
 
 //////////////////////////////////

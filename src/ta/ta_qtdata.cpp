@@ -238,16 +238,13 @@ void taiData::setParent(taiData* value) {
 void taiData::SetRep(QWidget* val) {
   if (m_rep == val) return;
 
-  // if not already destroying (either rep or this), disconnect all the signals from old rep to this object
+  // if not already destroying (either rep or this)
   if (m_rep != NULL) {
-    disconnect(m_rep, 0, this, 0); // all slots/signals between m_rep and this
+    m_rep->removeEventFilter(this);
   }
   m_rep = val;
   if (m_rep) {
     m_rep->installEventFilter(this);
-//added 4/28/07 BA to try to solve/diagnose SelEdit crashes (#409)
-    connect(m_rep, SIGNAL(destroyed(QObject*)), 
-      this, SLOT(repDestroyed(QObject*)) );
   }
 }
 
@@ -281,18 +278,6 @@ bool taiData::setVisible(bool value) {
 void taiData::repChanged() {
   DataChanged(NULL);
 }
-
-void taiData::repDestroyed(QObject* obj) {
-  if (obj && m_rep == obj) {
-    m_rep = NULL;
-// #ifdef DEBUG
-    cout << "**DEBUG WARNING**: rep deleting before taiData (rep/class): (" <<
-      obj->metaObject()->className() << "/" <<
-      this->metaObject()->className() << ")\n";
-// #endif
-  }
-}
-
 
 //////////////////////////////////
 //	taiCompData		//
@@ -635,18 +620,6 @@ void taiField::selectionChanged() {
   emit_UpdateUi();
 }
 
-void taiField::repDestroyed(QObject* obj) {
-  if (obj) { //&& m_rep == obj) {
-    m_rep = NULL;
-    leText = NULL;
-// #ifdef DEBUG
-    cerr << "**DEBUG WARNING**: rep deleting before taiData (rep/class): (" <<
-      obj->metaObject()->className() << "/" <<
-      this->metaObject()->className() << ")" << endl;
-// #endif
-  }
-}
-
 void taiField::setMinCharWidth(int num) {
   rep()->setMinCharWidth(num);
 }
@@ -752,8 +725,6 @@ void taiIncrField::this_EditAction(int ea) {
 void taiIncrField::this_SetActionsEnabled() {
   //TODO: UNDO/REDO
 }
-
-
 
 
 //////////////////////////////////
@@ -1740,8 +1711,6 @@ taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_,
   if (has_menu) {
     m_menu = (exist_menu) ? exist_menu : new QMenu(gui_parent);
     m_menu->setFont(taiM->menuFont(font_spec));
-    connect(m_menu, SIGNAL(destroyed(QObject*)), 
-      this, SLOT(repDestroyed(QObject*)) );
   } else {
     m_menu = NULL;
   } 
@@ -2039,12 +2008,6 @@ String taiActions::label() const {
   }
 }
 
-void taiActions::repDestroyed(QObject* obj) {
-  if (obj == m_menu)
-    m_menu = NULL;
-  else inherited::repDestroyed(obj);
-}
-
 void taiActions::setLabel(const String& val) {
   if (par_menu != NULL)
     par_menu->setLabel(val);
@@ -2065,15 +2028,6 @@ void taiActions::setLabel(const String& val) {
   }
 }
 
-void taiActions::SetRep(QWidget* val) {
-  if (val) 
-    connect(val, SIGNAL(destroyed(QObject*)),
-      this, SLOT(repDestroyed(QObject*)) );
-  else if (m_rep)
-    disconnect(m_rep, SIGNAL(destroyed(QObject*)),
-      this, SLOT(repDestroyed(QObject*)) );
-  inherited::SetRep(val);
-}
 
 //////////////////////////
 // 	taiMenu	//

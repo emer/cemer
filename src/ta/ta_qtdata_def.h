@@ -211,7 +211,6 @@ protected:
   
 protected slots:
   void 			repChanged(); //signal from rep that data has changed
-  virtual void 		repDestroyed(QObject* obj); // available if instance wants to insure its rep member is not invalid -- not connected by default, but class can override SetRep conveniently to connect
   virtual void		applyNow(); // calling this will force the host to apply editing data -- same action as if user pressed Apply button
 
   // handler controls do nothing in base class, and in most subclasses
