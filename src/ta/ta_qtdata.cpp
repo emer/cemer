@@ -705,6 +705,7 @@ void taiIncrField::setMaximum(const Variant& max) {
 }
 
 void taiIncrField::this_GetEditActionsEnabled(int& ea) {
+  if(!rep()) return;
   if (!readOnly())
     ea |= taiClipData::EA_PASTE;
   if (rep()->hasSelectedText()) {
@@ -715,6 +716,7 @@ void taiIncrField::this_GetEditActionsEnabled(int& ea) {
 }
 
 void taiIncrField::this_EditAction(int ea) {
+  if(!rep()) return;
   if (ea & taiClipData::EA_CUT) {
     rep()->cut();
   } else if (ea & taiClipData::EA_COPY) {
