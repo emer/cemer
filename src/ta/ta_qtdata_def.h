@@ -133,7 +133,8 @@ public:
     flgToggleReadOnly	= 0x0400, // for taiPlusToggle, makes the toggle itself ro
     flgAutoApply	= 0x0800,  // when user finishes editing this control, auto apply the edits
     flgFlowLayout	= 0x1000, // for polyguys (inline) us a flowlayout, not hboxlayout
-    flgCondEditUseRO	= 0x2000 // for taiCondEditMember, used to keep its use_ro flag
+    flgCondEditUseRO	= 0x2000, // for taiCondEditMember, used to keep its use_ro flag
+    flgNoEditDialogAutoApply = 0x4000 // overrides the implicit APPLY_IMMED for the edit dialog of fields
 #ifndef __MAKETA__
     ,flg_INHERIT_MASK	= (flgReadOnly) // flags to pass on to nested children, in inline
 #endif

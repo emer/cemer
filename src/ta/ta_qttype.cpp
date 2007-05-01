@@ -990,10 +990,12 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
        (mbr->HasOption(TypeItem::opt_edit_inline))) 
     && mbr->type->it->allowsInline())
     flags |= taiData::flgInline;
-  if (mbr->HasOption(TypeItem::opt_edit_dialog)) // if a string field, puts up an editor button
+  if (mbr->HasOption(TypeItem::opt_EDIT_DIALOG)) // if a string field, puts up an editor button
     flags |= taiData::flgEditDialog;
-  if (mbr->HasOption(TypeItem::opt_apply_immed))
+  if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
     flags |= taiData::flgAutoApply;
+  if (mbr->HasOption("NO_EDIT_APPLY_IMMED"))
+    flags |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
     
   ro = (flags & taiData::flgReadOnly); // just for clarity and parity with Image/Value
   taiData* rval = NULL;

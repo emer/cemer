@@ -3349,7 +3349,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
   editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence("Ctrl+L"), "editLinkIntoAction" ));
   editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
-  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
+  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence(Qt::Key_F5), _viewRefreshAction )); viewRefreshAction->setShortcutContext(Qt::ApplicationShortcut);
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));

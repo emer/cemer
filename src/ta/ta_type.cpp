@@ -2893,7 +2893,7 @@ MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
 //////////////////////////
 //   TypeItem		//
 //////////////////////////
-
+//TODO: was silly to make these lower case because hard to search; make upper case
 const String TypeItem::opt_show("SHOW");
 const String TypeItem::opt_no_show("NO_SHOW");
 const String TypeItem::opt_hidden("HIDDEN");
@@ -2905,10 +2905,10 @@ const String TypeItem::opt_edit_hidden("EDIT_HIDDEN");
 const String TypeItem::opt_edit_read_only("EDIT_READ_ONLY");
 const String TypeItem::opt_edit_detail("EDIT_DETAIL");
 const String TypeItem::opt_edit_expert("EDIT_EXPERT");
-const String TypeItem::opt_apply_immed("APPLY_IMMED");
+const String TypeItem::opt_APPLY_IMMED("APPLY_IMMED");
 const String TypeItem::opt_inline("INLINE");
 const String TypeItem::opt_edit_inline("EDIT_INLINE");
-const String TypeItem::opt_edit_dialog("EDIT_DIALOG");
+const String TypeItem::opt_EDIT_DIALOG("EDIT_DIALOG");
 
 const String TypeItem::opt_bits("BITS");
 const String TypeItem::opt_instance("INSTANCE");
@@ -2988,7 +2988,7 @@ String TypeItem::GetLabel() const {
   } else				// do translate spaces..
     rval.gsub('_', ' ');
   // if has the APPLY_IMMED flag, decorate it so user is aware
-  if (HasOption(opt_apply_immed)) {
+  if (HasOption(opt_APPLY_IMMED)) {
     rval.cat('!');
   }
   return rval;

@@ -1566,10 +1566,10 @@ public:
   static const String opt_edit_read_only; // "EDIT_READ_ONLY"
   static const String opt_edit_detail; // "EDIT_DETAIL"
   static const String opt_edit_expert; // "EDIT_EXPERT"
-  static const String opt_apply_immed; // "APPLY_IMMED"
+  static const String opt_APPLY_IMMED; // "APPLY_IMMED"
   static const String opt_inline; // "INLINE"
   static const String opt_edit_inline; // "EDIT_INLINE"
-  static const String opt_edit_dialog; // "EDIT_DIALOG"
+  static const String opt_EDIT_DIALOG; // "EDIT_DIALOG"
   
   static const String opt_bits; // "BITS"
   static const String opt_instance; // "INSTANCE"

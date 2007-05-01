@@ -518,6 +518,10 @@ void iFieldEditDialog::setText(const QString& value) {
 
 void iFieldEditDialog::btnApply_clicked() {
   field->rep()->setText(txtText->text());
+  // unless explicitly overridden, we always do an autoapply 
+  if (!(field->flags() & taiData::flgNoEditDialogAutoApply)) {
+    field->applyNow();
+  }
   setApplyEnabled(false);
 }
 
@@ -954,7 +958,7 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
         continue;
       // auto apply if entire guy marked, or if item is marked
       bool auto_apply = ((flags_ & taiData::flgAutoApply)
-        || (ed->HasOption(TypeItem::opt_apply_immed)));
+        || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
       if (cnt++ > 0)
         lay->addSpacing(taiM->hsep_c);
       AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc);
