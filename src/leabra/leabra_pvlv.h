@@ -183,7 +183,8 @@ class LEABRA_API LVSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for learned value layers
   INHERITED(taBase)
 public:
-  float		discount;	// #DEF_0 multiplicative discount factor for PVe/ExtRew/US training signal: plus phase clamp = (1-discount)*PVe
+  float		disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.02 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
+  float		disc;		// #CONDEDIT_OFF_syn_dep #DEF_0.8 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   float		da_thr;		// #DEF_0.3 #CONDEDIT_OFF_syn_dep for learning from PV dav DA values outside of delivered or missed expected rewards -- magnitude threshold for actually doing learning (don't want to clamp small values)
   bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
@@ -209,6 +210,14 @@ public:
 
   virtual float	Compute_ActEqSum(LeabraLayer* lay);
   // compute sum over value representation subgroups of act_eq values
+  virtual float Compute_LvDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp);
+  // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
+  virtual float	Compute_LvDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay);
+  // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
+  virtual void 	Update_LvPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail);
+  // update the prior Lv value, stored in lv unit misc_1 values
+  virtual void	Update_LvPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail);
+  // update the prior Lv value, stored in lv unit misc_1 values
 
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
@@ -242,8 +251,6 @@ class LEABRA_API PVLVDaSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
   INHERITED(taBase)
 public:
-  float		lv_disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.01 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
-  float		lv_disc;	// #CONDEDIT_OFF_syn_dep #DEF_0.5 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)
