@@ -93,7 +93,7 @@ public:
   DataTable_Group	data;	// data, such as patterns for network input
   taBase_Group		data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group		programs; // Gui-based programs to run simulations and other processing
-  DataViewer_List	viewers; // #EXPERT viewer objects: contains configuration information (though this is typically more easily accessed through the view control panel)
+  DataViewer_List	viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying

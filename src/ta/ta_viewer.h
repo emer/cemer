@@ -400,7 +400,7 @@ public:
   WindowState&		winState(); // we get from UserData
   
   virtual void		ViewWindow();
-    // #MENU #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
+    // #MENU #MENU_CONTEXT #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
   virtual void  	Iconify();		// #MENU iconify the window (saves iconified state)
   virtual void		DeIconify();		// deiconify the window (saves deiconified state)
   virtual void 		ScriptWinState() 		{ winState().ScriptWinState(cout); }
