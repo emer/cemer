@@ -39,7 +39,6 @@ class TypeDef;
 class taMatrix_PList;
 class byte_Matrix; //
 class float_Matrix; //
-class MatrixTableModel; //
 
 /* Matrix -- a specialized, richer implementation of Array
 
@@ -275,7 +274,7 @@ typedef void (*fixed_dealloc_fun)(void*); // function that deallocates fixed dat
 class TA_API taMatrix: public taNBase {
   // #VIRT_BASE #NO_INSTANCE ##TOKENS #CAT_Data ref counted multi-dimensional data array
 INHERITED(taNBase)
-friend class MatrixTableModel;
+//nn friend class MatrixTableModel;
 
 public:
   ///////////////////////////////////////////////////////////////////
@@ -521,10 +520,6 @@ public:
   virtual taMatrix*	GetFrameRangeSlice_(int st_frame, int n_frames);
   // #CAT_Access return a slice, of n_frames frames starting at st_frame
   
-#ifdef TA_GUI
-  MatrixTableModel*	GetDataModel(); // #IGNORE returns new if none exists, or existing -- enables views to be shared
-#endif
-  
   virtual void 		List(ostream& strm=cout) const; 	// List the items
   
   virtual bool		StrValIsValid(const String& str, String* err_msg = NULL) const
@@ -586,7 +581,6 @@ protected:
   int			alloc_size; // -1 means fixed (external data)
   taMatrix_PList*	slices; // list of extant slices -- created on first slice
   taMatrix*		slice_par; // slice parent -- we ref/unref it
-  MatrixTableModel*	m_dm; // #IGNORE instance of dm; persists once created
   fixed_dealloc_fun	fixed_dealloc; // optional dealloc fun passed in on FixedData
   
   virtual bool		fastAlloc() const {return true;}
@@ -650,9 +644,7 @@ private:
   void 			Initialize();
   void			Destroy();
 };
-
-typedef taMatrix* ptaMatrix_impl;
-SmartPtr_Of(taMatrix); // taMatrixPtr
+TA_SMART_PTRS(taMatrix);
 
 
 class TA_API taMatrix_PList: public taPtrList<taMatrix> {
@@ -1058,58 +1050,6 @@ private:
 };
 TA_SMART_PTRS(rgb_Matrix);
 
-
-class TA_API MatrixTableModel: public QAbstractTableModel,
-  public IDataLinkClient
-{
-  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display
-friend class taMatrix;
-INHERITED(QAbstractTableModel)
-  Q_OBJECT
-public:
-#ifndef __MAKETA__
-  int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
-  override QMimeData* 	mimeData (const QModelIndexList& indexes) const;
-  override QStringList	mimeTypes () const;
-  taMisc::MatrixView 	matView() const;
-#endif //note: bugs in maketa necessitated these sections
-  taMatrix*		mat() const {return m_mat;}
-  
-  void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
-    int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
-  void			emit_layoutChanged();
-  
-  MatrixTableModel(taMatrix* mat_); // note: mat is always valid, we destroy this on mat dest
-  ~MatrixTableModel(); //
-  
-public: // required implementations
-#ifndef __MAKETA__
-  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
-  QVariant 		headerData(int section, Qt::Orientation orientation, 
-    int role = Qt::DisplayRole) const; // override
-  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
-  bool 			setData(const QModelIndex& index, const QVariant& value, 
-    int role = Qt::EditRole); // override, for editing
-
-public: // IDataLinkClient i/f
-  override void*	This() {return this;}
-  override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
-  override void		DataLinkDestroying(taDataLink* dl);
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
-  
-protected:
-  static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
- 
-  taMatrix*		m_mat;
-  taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
-  
-  bool			ValidateIndex(const QModelIndex& index) const;
-  bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
-    // translates index into matrix coords; true if the index is valid
-#endif
-};
 
 
 

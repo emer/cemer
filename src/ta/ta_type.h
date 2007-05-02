@@ -1113,6 +1113,8 @@ public:
   inline taDataLink*	link() const {return m_link;}
 #endif
   inline taDataLink*	link_() const {return m_link;}
+  virtual bool		ignoreDataChanged() const {return false;}
+    // hidden guys can ignore changes (but they always get Destroyed)
   virtual bool		isDataView() const {return false;} // true for dataviews
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //

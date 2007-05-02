@@ -174,6 +174,8 @@ public:
   override void		Closing(CancelOp& cancel_op);
   override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
+  override void		Refresh(); // always do it, even when hidden; the edit sorts it out
+  override void 	GetImage() {GetImage_impl();} // edit handles HasChanged stuff
 
   EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_);
   ~EditDataPanel();
@@ -183,7 +185,7 @@ public: // IDataLinkClient interface
 
 protected:
   taiEditDataHost* 	owner;
-  override void		GetImage_impl(); // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
+  override void		GetImage_impl(); // sheesh, THIS is the refresh guy!
   override void		Render_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
@@ -323,13 +325,14 @@ public:
 /*  virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call */
   virtual void  Unchanged();	// call when data has been saved or reverted
+  virtual void		Refresh(); // does a GetImage or defered Reshow
 /*  virtual void	Revert_force();	// forcibly (automatically) revert buffer (prompts)
   virtual void  SetRevert();	// set the revert button on
   virtual void  UnSetRevert();	// set the revert button off
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
-  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
-  virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
-  virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front*/
+  virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)*/
+  virtual void		GetImage_Async(){} // refresh asynchronously; can be called multiple times (only done once)
+  /*virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front*/
   virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
   virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
   
@@ -338,12 +341,14 @@ public: // ITypedObject i/f (common to IDLC and IDH)
   TypeDef* 	GetTypeDef() const {return &TA_taiDataHostBase;} // override
 
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
+//  bool		ignoreDataChanged() const; we always accept, but respect hidden
   void		DataLinkDestroying(taDataLink* dl); 
   void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 
 // virtuals for IDataHost i/f -- call back to these from taiDataHost
   virtual void		GetImage() {} // IDH brings this in too, we override in EDH
+  virtual void		GetImage(bool force) {} // ugly hack
   virtual void		GetValue() {} // IDH brings this in too, we override in EDH
 public slots:
   virtual void		Apply(); 
@@ -363,6 +368,8 @@ protected:
   HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
   bool			reshow_req; // these are set on async req, cleared when serviced
+  bool			defer_reshow_req; 
+  // deferred reshow -- used when hidden, or changed; when refresh comes, it reshows
   bool			get_image_req;
   bool			apply_req;
   
@@ -383,7 +390,8 @@ protected:
 
   virtual void	Cancel_impl();
   virtual void 	Ok_impl(); // for dialogs
-
+  virtual void	Refresh_impl(bool reshow) {}
+  
   virtual void 		DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
   void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
@@ -430,8 +438,9 @@ public:
   virtual void  	UnSetRevert();	// set the revert button off
   virtual bool		ReShow(bool force = false); // rebuild the body; if changes and force=false then prompts user first; ret true if reshown
   virtual void		ReShow_Async(bool force = false); // reshow asynchronously; can be called multiple times before the reshow (only done once)
-  virtual void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
+  override void		GetImage_Async(); // refresh asynchronously; can be called multiple times (only done once)
   virtual void		Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front
+  override void		GetImage(bool force) {inherited::GetImage(force);} // scope ugh
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
@@ -452,7 +461,7 @@ public: // IDataHost i/f
 // iMainWindowViewer* viewerWindow() const; n/a here -- defined in taiEDH
   void*		Base() {return cur_base;} // base of the object
   TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
-  void		GetImage()	{ }
+  void		GetImage()	{GetImage(true);}
   void		GetValue()	{ }
 public slots:
   void		Apply_Async();
@@ -493,6 +502,7 @@ protected:
   override void		customEvent(QEvent* ev);
 
   override void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
+  override void		Refresh_impl(bool reshow);
 protected slots:
   virtual void	label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e);
 };
@@ -587,7 +597,7 @@ public:
   EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
   void		 	ConstrEditControl(const iColor* bgcol = NULL); 
     // for controls -- construct then edit 
-  void			GetImage(); //override
+  void			GetImage(bool force); //override
   void			GetValue(); //override
   virtual bool		ShowMember(MemberDef* md) const;
   virtual void		GetMembDesc(MemberDef* md, String& dsc_str, String indent);
@@ -633,7 +643,7 @@ protected:
   virtual void		GetImageInline_impl(const void* base);
   virtual void		GetValue_impl(const Member_List* ms, const taiDataList& dl, void* base) const;
   virtual void		GetValueInline_impl(void* base) const;
-  virtual void		GetButtonImage();
+  virtual void		GetButtonImage(bool force = true);
   void			AddMethButton(taiMethodData* mth_rep, const String& label = _nilString);
     // uses mth's label, if no label passed
   void			DoAddMethButton(QAbstractButton* but);

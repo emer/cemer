@@ -4493,8 +4493,11 @@ void iDataPanel::setPinned(bool value) {
 }
 
 void iDataPanel::showEvent(QShowEvent* ev) {
-  if (!m_rendered) Render();
   inherited::showEvent(ev);
+  // note: we only call the impl, because each guy gets it, so we don't
+  // want sets to then invoke this twice
+  if (m_rendered) Refresh_impl();
+  else            Render();
 }
 
 iTabBar::TabIcon iDataPanel::tabIcon() const {
@@ -4794,12 +4797,12 @@ void iDataPanelSet::removeChild(QObject* obj) {
   inherited::removeChild(obj);
 }
 
-void iDataPanelSet::Refresh_impl() {
-  for (int i = 0; i < panels.size; ++i) {
+void iDataPanelSet::Refresh() {
+  if (isVisible()) for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
     pn->Refresh();
   }
-  inherited::Refresh_impl();
+  inherited::Refresh();
 }
 
 void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {

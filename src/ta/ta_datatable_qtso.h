@@ -34,6 +34,8 @@
 #endif
 
 // forwards
+class DataTableModel;
+
 class DataColView;
 class DataTableView;
 class iDataTableView_Panel;
@@ -57,6 +59,56 @@ class T3Axis;
 class T3GraphLine;
 class T3GraphViewNode;
 class taiListElsButton;
+
+class TA_API DataTableModel: public QAbstractTableModel,
+  public IDataLinkClient
+{
+  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
+INHERITED(QAbstractTableModel)
+friend class DataTableCols;
+friend class DataTable;
+public:
+#ifndef __MAKETA__
+  QPointer<QWidget>	gui_parent;
+#endif
+  DataTable*		dataTable() const {return m_dt;}
+  void			setDataTable(DataTable* value, bool notify = true);
+  
+  void			refreshViews(); // similar to matrix, issues dataChanged
+  
+  void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
+    int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
+
+  DataTableModel(DataTable* dt, QWidget* gui_parent = NULL);
+    // if has a single gui_parent you can pass it in, to suppress notifies when hidden
+  ~DataTableModel(); //
+  
+public: // required implementations
+#ifndef __MAKETA__
+  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
+  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
+  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
+  QVariant 		headerData(int section, Qt::Orientation orientation, 
+    int role = Qt::DisplayRole) const; // override
+  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
+  bool 			setData(const QModelIndex& index, const QVariant& value, 
+    int role = Qt::EditRole); // override, for editing
+    
+public: // IDataLinkClient i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_DataTableModel;}
+  override bool		ignoreDataChanged() const;
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
+    
+protected:
+  bool			ValidateIndex(const QModelIndex& index) const;
+#endif
+  void			emit_layoutChanged(); // we call this for most schema changes
+protected:
+  DataTable*		m_dt;
+};
+
 
 class TA_API DataColView: public T3DataView {
   // ##SCOPE_DataTableView base specification for the display of data columns
@@ -1168,11 +1220,11 @@ public:
   QVBoxLayout*		layOuter;
   QSplitter*		splMain;
   iDataTableView*	  tvTable; // the main table
-  iMatrixTableView*	  tvCell; // a matrix cell in the table (only shown if needed)
+  iMatrixEditor*	  tvCell; // a matrix cell in the table (only shown if needed)
 
   DataTable*		dt() const {return m_dt;}
   void			setDataTable(DataTable* dt);
-  DataTableModel*	dtm() const {return (m_dt.ptr()) ? m_dt->GetDataModel() : NULL;}
+  DataTableModel*	dtm() const {return m_model;}
   
   void			Refresh(); // for manual refresh
   
@@ -1194,6 +1246,7 @@ protected:
 
 protected:
   DataTableRef		m_dt;
+  DataTableModel*	m_model;
   taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row
   QModelIndex		m_cell_index; // we keep this to refresh cell if data changes
   void			ConfigView(); // setup or change view, esp after col ins/deletes

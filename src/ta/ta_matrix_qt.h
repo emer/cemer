@@ -24,6 +24,62 @@
 #include "ta_qttype.h"
 #include "ta_qtviewer.h"
 
+class MatrixTableModel; //
+
+
+class TA_API MatrixTableModel: public QAbstractTableModel,
+  public IDataLinkClient
+{
+  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display; if the model has a single gui client, then set it, to avoid doing refreshes when it isn't visible
+friend class taMatrix;
+INHERITED(QAbstractTableModel)
+  Q_OBJECT
+public:
+#ifndef __MAKETA__
+  QPointer<QWidget>	gui_parent;
+  int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
+  override QMimeData* 	mimeData (const QModelIndexList& indexes) const;
+  override QStringList	mimeTypes () const;
+  taMisc::MatrixView 	matView() const;
+#endif //note: bugs in maketa necessitated these sections
+  taMatrix*		mat() const {return m_mat;}
+  
+  void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
+    int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
+  void			emit_layoutChanged();
+  
+  MatrixTableModel(taMatrix* mat_, QWidget* gui_parent = NULL); // note: mat is always valid, we destroy this on mat dest
+  ~MatrixTableModel(); //
+  
+public: // required implementations
+#ifndef __MAKETA__
+  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
+  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
+  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
+  QVariant 		headerData(int section, Qt::Orientation orientation, 
+    int role = Qt::DisplayRole) const; // override
+  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
+  bool 			setData(const QModelIndex& index, const QVariant& value, 
+    int role = Qt::EditRole); // override, for editing
+
+public: // IDataLinkClient i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
+  override bool		ignoreDataChanged() const;
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
+  
+protected:
+  static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
+ 
+  taMatrix*		m_mat;
+  taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
+  
+  bool			ValidateIndex(const QModelIndex& index) const;
+  bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
+    // translates index into matrix coords; true if the index is valid
+#endif
+};
 
 class TA_API tabMatrixViewType: public tabOViewType {
 INHERITED(tabOViewType)
@@ -89,15 +145,18 @@ public:
   QHBoxLayout*		  layDims;
   iMatrixTableView*		  tv;
 
-  taMatrix*		mat() const;
-  MatrixTableModel* 	model() const;
-  void			setModel(MatrixTableModel* mod);
+  taMatrix*		mat() const {return m_mat;}
+  MatrixTableModel* 	model() const {return m_model;}
+  void			setMatrix(taMatrix* mat);
   
   void			Refresh(); // for manual refresh -- note, this also updates all other mat editors too
   
   iMatrixEditor(QWidget* parent = NULL); //
+  ~iMatrixEditor();
   
 protected:
+  taMatrix*		m_mat;
+  MatrixTableModel*	m_model;
   
 private:
   void		init();
@@ -130,9 +189,9 @@ protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
-
 protected: // IDataViewWidget i/f
   override void		Refresh_impl();
+  
 };
 
 

@@ -48,8 +48,7 @@ class Variant_Data;
 class float_Data;
 class double_Data;
 class int_Data;
-class byte_Data;
-class DataTableModel;
+class byte_Data; //
 
 // note: the ColCalcExpr could be augmented to update with column name changes
 // as in ProgExpr
@@ -939,9 +938,6 @@ public:
   virtual int  		MinLength();		// #IGNORE
   virtual int  		MaxLength();		// #IGNORE
 
-  virtual DataTableModel* GetDataModel();
-  // #IGNORE returns new if none exists, or existing -- enables views to be shared
-
   virtual void	Copy_NoData(const DataTable& cp);
   // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
   virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
@@ -1029,8 +1025,6 @@ protected:
   override void		WriteClose_impl();
 
 protected:
-  DataTableModel*	m_dm; // #IGNORE note: once we create, always exists
-  
   DataCol*	NewCol_impl(DataCol::ValType val_type, 
     const String& col_nm, int& col_idx = idx_def_arg);
   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
@@ -1290,51 +1284,6 @@ private:
   void	Destroy() {}
 };
 TA_SMART_PTRS(byte_Data); //
-
-class TA_API DataTableModel: public QAbstractTableModel,
-  public IDataLinkClient
-{
-  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
-INHERITED(QAbstractTableModel)
-friend class DataTableCols;
-friend class DataTable;
-public:
-
-  DataTable*		dataTable() const {return dt;}
-  void			setDataTable(DataTable* value, bool notify = true);
-  
-  void			refreshViews(); // similar to matrix, issues dataChanged
-  
-  void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
-    int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
-
-  DataTableModel(DataTable* owner);
-  ~DataTableModel(); //
-  
-public: // required implementations
-#ifndef __MAKETA__
-  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
-  QVariant 		headerData(int section, Qt::Orientation orientation, 
-    int role = Qt::DisplayRole) const; // override
-  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
-  bool 			setData(const QModelIndex& index, const QVariant& value, 
-    int role = Qt::EditRole); // override, for editing
-    
-public: // IDataLinkClient i/f
-  override void*	This() {return this;}
-  override TypeDef*	GetTypeDef() const {return &TA_DataTableModel;}
-  override void		DataLinkDestroying(taDataLink* dl);
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
-    
-protected:
-  bool			ValidateIndex(const QModelIndex& index) const;
-#endif
-  void			emit_layoutChanged(); // we call this for most schema changes
-protected:
-  DataTable*		dt;
-};
 
 class TA_API DataTableEditorOptions : public taOBase {
   // for specifying and saving params for editing options

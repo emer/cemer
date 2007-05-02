@@ -1200,7 +1200,7 @@ public:
     // called in post, when all windows are built
   virtual void		ResolveChanges(CancelOp& cancel_op);
   virtual void		Render(); // actually create content; override _impl; used to defer creation of button panels
-  virtual void		Refresh() {Refresh_impl();} // manually refresh
+  virtual void		Refresh() {if (isVisible()) Refresh_impl();} // manually refresh
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
@@ -1212,6 +1212,7 @@ public slots:
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
+  override bool		ignoreDataChanged() const {return (!isVisible());}
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
   override void		DataLinkDestroying(taDataLink* dl) {} // called by DataLink when it is destroying --
@@ -1349,7 +1350,7 @@ public:
   override void		GetImage();
   override const iColor* GetTabColor(bool selected) const;
   override bool		HasChanged();
-  override void		Refresh_impl();
+  override void		Refresh();
   override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
 
 

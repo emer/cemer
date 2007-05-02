@@ -27,6 +27,206 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
+//////////////////////////////////////////////////////////////////////////////
+// 		 class MatrixTableModel
+//  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
+//  For Gui editing, we map indexes in 2d flat table.
+
+MatrixGeom MatrixTableModel::tgeom; 
+
+MatrixTableModel::MatrixTableModel(taMatrix* mat_, QWidget* gui_parent_) 
+:inherited(NULL)
+{
+  m_mat = mat_;
+  if (m_mat) {
+    m_mat->AddDataClient(this);
+  }
+  gui_parent = gui_parent_;
+}
+
+MatrixTableModel::~MatrixTableModel() {
+  if (m_mat) {
+    m_mat->RemoveDataClient(this);
+    m_mat = NULL;
+  }
+}
+
+int MatrixTableModel::columnCount(const QModelIndex& parent) const {
+  if (!m_mat) return 0;
+  return m_mat->geom.FastEl(0);
+}
+
+QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
+  if (!m_mat) return QVariant();
+  switch (role) {
+  case Qt::DisplayRole: 
+  case Qt::EditRole:
+    return m_mat->SafeElAsStr_Flat(matIndex(index));
+//Qt::DecorationRole
+//Qt::ToolTipRole
+//Qt::StatusTipRole
+//Qt::WhatsThisRole
+//Qt::SizeHintRole -- QSize
+//Qt::FontRole--  QFont: font for the text
+  case Qt::TextAlignmentRole:
+    return m_mat->defAlignment();
+  case Qt::BackgroundColorRole : //-- QColor
+ /* note: only used when !(option.showDecorationSelected && (option.state
+    & QStyle::State_Selected)) */
+    if (!(flags(index) & Qt::ItemIsEditable))
+      return QColor(COLOR_RO_BACKGROUND);
+    break;
+/*Qt::TextColorRole
+  QColor: color of text
+Qt::CheckStateRole*/
+  default: break;
+  }
+  return QVariant();
+}
+
+void MatrixTableModel::DataLinkDestroying(taDataLink* dl) {
+  m_mat = NULL;
+}
+
+void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
+  void* op1, void* op2)
+{
+  //this is primarily for code-driven changes
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
+    emit_dataChanged();
+  }
+  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_ITEM_UPDATED)) {
+    emit_layoutChanged();
+  }
+}
+
+
+void MatrixTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
+  if (!m_mat) return;
+  // lookup actual end values when we are called with sentinels
+  if (row_to < 0) row_to = rowCount() - 1;
+  if (col_to < 0) col_to = columnCount() - 1;  
+  
+  emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
+}
+
+void MatrixTableModel::emit_layoutChanged() {
+  emit layoutChanged();
+}
+
+Qt::ItemFlags MatrixTableModel::flags(const QModelIndex& index) const {
+  if (!m_mat) return 0;
+  //TODO: maybe need to qualify!, plus drag-drop handling, etc.
+  Qt::ItemFlags rval = 0;
+  
+  if (ValidateIndex(index)) {
+    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  }
+  // editability is a property of the whole mat
+  if (!m_mat->isGuiReadOnly()) {
+    rval |= Qt::ItemIsEditable;
+  }
+  return rval; 
+}
+/*
+  index = i0 + ((i1*d0) + i2)*d1 etc.
+to find i1,i2... from index:
+1. divide by d0 gives rowframe -- remainder is i1
+2. divide by d1 gives 2d-frame
+*/
+QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if (role != Qt::DisplayRole)
+    return QVariant();
+//TODO: make the headers show the dimenion # when > 2
+  if (orientation == Qt::Horizontal)
+    return QString::number(section); //QString("%1").arg(section);
+  else {// in form: d1[[:d2]:d3]
+    int eff_row;
+    switch (matView()) {
+    case taMisc::BOT_ZERO: eff_row = m_mat->rowCount() - section - 1; break;
+    case taMisc::TOP_ZERO: eff_row = section; break;
+    }
+    if (m_mat->dims() <= 2) {
+      return QString::number(eff_row);
+    } else {
+      div_t r;
+      String rval;
+      // find each nextmost dim n by doing modulo remaining dim[n-1]
+      for (int i = 1; i < (m_mat->dims() - 1); ++i) {
+        r = div(eff_row, m_mat->dim(i)); 
+        eff_row = r.quot;
+        if (i > 1) rval = ":" + rval;
+        rval = String(r.rem) + rval; 
+      }
+      rval = String(eff_row) + ":"  + rval; 
+      return rval;
+    }
+  }
+}
+
+bool MatrixTableModel::ignoreDataChanged() const {
+  return (gui_parent && !gui_parent->isVisible());
+}
+
+int MatrixTableModel::matIndex(const QModelIndex& idx) const {
+  //note: we dimensionally reduce all dims >1 to 1
+  switch (matView()) {
+  case taMisc::BOT_ZERO:
+    return ((m_mat->rowCount() - idx.row() - 1) * m_mat->dim(0)) + idx.column();
+  case taMisc::TOP_ZERO:
+    return (idx.row() * m_mat->dim(0)) + idx.column();
+  }
+  return -1; // compiler food, never executes
+}
+
+QMimeData* MatrixTableModel::mimeData (const QModelIndexList& indexes) const {
+  if (!m_mat) return NULL;
+  CellRange cr(indexes);
+  String str = mat()->FlatRangeToTSV(cr);
+  QMimeData* rval = new QMimeData;
+  rval->setText(str);
+  return rval;
+}
+
+QStringList MatrixTableModel::mimeTypes () const {
+  QStringList types;
+  types << "text/plain";
+  return types;
+}
+
+
+int MatrixTableModel::rowCount(const QModelIndex& parent) const {
+  return m_mat->rowCount();
+  //note: for visual stuff, there is always at least one row
+}
+
+bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
+  if (!m_mat) return false;
+  if (index.isValid() && role == Qt::EditRole) {
+    m_mat->SetFmStr_Flat(value.toString(), matIndex(index));
+    emit dataChanged(index, index);
+    return true;
+  }
+  return false;
+}
+
+bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
+  // TODO: maybe need to check bounds???
+  return (m_mat);
+}
+
+bool MatrixTableModel::ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const {
+  bool rval = ValidateIndex(index);
+  if (rval) {
+    // TODO:
+  }
+  return rval;
+}
+
+taMisc::MatrixView MatrixTableModel::matView() const {
+  return taMisc::matrix_view;
+}
+
 //////////////////////////
 // tabMatrixViewType	//
 //////////////////////////
@@ -173,22 +373,20 @@ iMatrixEditor::iMatrixEditor(QWidget* parent)
   init();
 }
 
+iMatrixEditor::~iMatrixEditor() {
+  if (m_model) {
+    delete m_model;
+    m_model = NULL;
+  }
+}
+
 void iMatrixEditor::init() {
+  m_model = NULL;
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
   layDims = new QHBoxLayout(layOuter);
   tv = new iMatrixTableView(this);
   layOuter->addWidget(tv);
-}
-
-taMatrix* iMatrixEditor::mat() const {
-  MatrixTableModel* mod = model();
-  if (mod) return mod->mat();
-  else return NULL; 
-}
-
-MatrixTableModel* iMatrixEditor::model() const {
-  return qobject_cast<MatrixTableModel*>(tv->model());
 }
 
 void iMatrixEditor::Refresh() {
@@ -198,8 +396,17 @@ void iMatrixEditor::Refresh() {
     mod->emit_dataChanged(); // default values mean entire table
 }
 
-void iMatrixEditor::setModel(MatrixTableModel* mod) {
-  tv->setModel(mod);
+void iMatrixEditor::setMatrix(taMatrix* mat_) {
+  if (m_mat == mat_) return;
+  if (m_model) {
+    delete m_model;
+    m_model = NULL;
+  }
+  m_mat = mat_;
+  if (mat_){
+    m_model = new MatrixTableModel(mat_, this);
+  }
+  tv->setModel(m_model);
 }
 
 
@@ -249,8 +456,6 @@ void iMatrixPanel::Render_impl() {
   me->setName("MatrixEditor"); // diagnostic
   setCentralWidget(me); //sets parent
   taMatrix* mat_ = mat();
-  if (mat_) {
-    me->setModel(mat_->GetDataModel());
-  }
+  me->setMatrix(mat_);
   connect(me->tv, SIGNAL(hasFocus(iTableView*)), this, SLOT(tv_hasFocus(iTableView*)) );
 }

@@ -418,7 +418,7 @@ void EditDataPanel::Closing(CancelOp& cancel_op) {
 }
 
 void EditDataPanel::GetImage_impl() {
-  if (owner) owner->GetImage();
+  if (owner) owner->Refresh();
 }
 
 const iColor*  EditDataPanel::GetTabColor(bool selected) const {
@@ -434,6 +434,11 @@ bool EditDataPanel::HasChanged() {
 String EditDataPanel::panel_type() const {
   static String str("Properties");
   return str;
+}
+
+void EditDataPanel::Refresh() {
+  iDataPanel::Refresh_impl(); // for tab stuff -- skip our direct inherit!
+  Refresh_impl();
 }
 
 void EditDataPanel::Render_impl() {
@@ -691,6 +696,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
 //  warn_clobber = false;
   host_type = HT_DIALOG; // default, set later
   reshow_req = false;
+  defer_reshow_req = false;
   get_image_req = false;
   apply_req = false;
   warn_clobber = false;
@@ -735,14 +741,14 @@ void taiDataHostBase::Apply() {
   }
   ++updating;
   GetValue();
-  GetImage();
-  Unchanged();
+  Refresh(); // GetImage/Unchanged, unless a defer_reshow pending
+/*obs  GetImage();
+  Unchanged(); */
   --updating;
 }
 
 void taiDataHostBase::Revert() {
-  GetImage();
-  Unchanged();
+  Refresh(); // GetImage/Unchanged, unless a defer_reshow pending
 }
 
 void taiDataHostBase::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
@@ -794,7 +800,7 @@ void taiDataHostBase::Constr(const char* aprompt, const char* win_title,
     Constr_Methods();
   Constr_RegNotifies(); // taiEditHost registers notifies
   state = DEFERRED1;
-  if (deferred) return;
+  if (deferred) {GetImage(true); return;}
   ConstrDeferred(); // else finish it now!
 }
 
@@ -991,6 +997,10 @@ void taiDataHostBase::Ok() { //note: only used for Dialogs
 }
 
 void taiDataHostBase::Ok_impl() { 
+}
+
+void taiDataHostBase::Refresh() {
+  Refresh_impl(defer_reshow_req);
 }
 
 void taiDataHostBase::Unchanged() {
@@ -1326,7 +1336,7 @@ void taiDataHost::customEvent(QEvent* ev_) {
   case CET_GET_IMAGE: {
     if (get_image_req) {
       if (state == ACTIVE) {
-        GetImage();
+        GetImage(false);
       }
       get_image_req = false;
     }
@@ -1369,7 +1379,7 @@ void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2)
   //  so we don't really subclass this routine or explicitly detect the list/group notifies
   // note: because of deferred construction, we may still need to update buttons/menus
   if (state == DEFERRED1) {
-    GetImage();
+    Refresh_impl(false);
     return;
   }
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
@@ -1377,15 +1387,27 @@ void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2)
   
   if (updating) return; // it is us that caused this
   if (dcr == DCR_STRUCT_UPDATE_END) {
-    ReShow();
-  } else if (dcr <= DCR_ITEM_UPDATED_ND) {
-    // if no changes have been made in this instance, then just refresh,
-    // otherwise, user will have to decide what to do, i.e., revert
-    if (HasChanged()) {
-      warn_clobber = true;
-    } else {
+    Refresh_impl(true);
+  } 
+  // we really just want to ignore the BEGIN-type guys, otherwise accept all others
+  else if (!((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
+    (dcr == DCR_DATA_UPDATE_BEGIN)))
+  {
+    Refresh_impl(false);
+  }
+}
+
+void taiDataHost::Refresh_impl(bool reshow) {
+  // if no changes have been made in this instance, then just refresh,
+  // otherwise, user will have to decide what to do, i.e., revert
+  if (HasChanged()) {
+    warn_clobber = true;
+    if (reshow) defer_reshow_req = true; // if not already set
+  } else {
+    if (reshow)
+      ReShow_Async();
+    else 
       GetImage_Async();
-    }
   }
 }
 
@@ -1427,6 +1449,13 @@ void taiDataHost::ReConstr_Body() {
 }
 
 bool taiDataHost::ReShow(bool force) {
+// if not visible, we may refresh the buttons if visible, otherwise nothing else
+  if (!mwidget) return false;//. huh?
+  //note: extremely unlikely to be updating if invisible, so we do this test here
+  if (!mwidget->isVisible()) {
+    defer_reshow_req = true;
+    GetImage(); // invisible-friendly
+  }
 //note: only called with force from ReShowEdits, typ only from a SelEdit dialog
   if (!updating) {
     // was not us that caused this...
@@ -1446,7 +1475,8 @@ bool taiDataHost::ReShow(bool force) {
       }
     } else { // not forced, normal situation for datachanged notifies
       if (HasChanged()) {
-        warn_clobber = true; //TODO: prob should have a state variable, so we will rebuild
+        warn_clobber = true; 
+        defer_reshow_req = true;
         return false;
       }
     }
@@ -1454,6 +1484,7 @@ bool taiDataHost::ReShow(bool force) {
   state |= SHOW_CHANGED; 
   ClearBody(); // rebuilds body after clearing -- but SHOW_CHANGED prevents GetImage...
   GetImage(); // ... so we do it here
+  defer_reshow_req = false; // if it was true
   return true;
 }
 
@@ -1982,8 +2013,9 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
     menu->setItemEnabled(last_id, false); // show item for usability, but disable
 }
 
-void taiEditDataHost::GetButtonImage() {
+void taiEditDataHost::GetButtonImage(bool force) {
   if (typ == NULL)  return;
+  if (!force && !frmMethButtons->isVisible()) return;
   
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
@@ -2003,14 +2035,17 @@ void taiEditDataHost::GetButtonImage() {
   }
 }
 
-void taiEditDataHost::GetImage() {
+void taiEditDataHost::GetImage(bool force) {
   if ((typ == NULL) || (cur_base == NULL)) return;
   if (state >= ACCEPTED ) return;
+  //note: we could be invisible, so we only do what is visible
+  if (host_type != HT_CONTROL) 
+    GetButtonImage(force); // does its own visible check
+  if (!mwidget) return; // huh?
+  if (!force && !mwidget->isVisible()) return;
   if (state > DEFERRED1) {
     GetImage_Membs();
   }
-  if (host_type != HT_CONTROL) 
-    GetButtonImage();
   Unchanged();
 }
 

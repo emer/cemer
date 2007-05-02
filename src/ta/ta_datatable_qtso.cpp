@@ -74,6 +74,191 @@
 
 #define DIST(x,y) sqrt((double) ((x * x) + (y*y)))
 
+//////////////////////////////////
+//   DataTableModel		//
+//////////////////////////////////
+
+DataTableModel::DataTableModel(DataTable* dt_, QWidget* gui_parent_) 
+:inherited(NULL)
+{
+  m_dt = dt_;
+  if (m_dt) {
+    m_dt->AddDataClient(this);
+  }
+  gui_parent = gui_parent_;
+}
+
+DataTableModel::~DataTableModel() {
+  if (m_dt) {
+    m_dt->RemoveDataClient(this);
+    m_dt = NULL;
+  }
+}
+
+int DataTableModel::columnCount(const QModelIndex& parent) const {
+  return (m_dt) ? m_dt->cols() : 0;
+}
+
+void DataTableModel::DataLinkDestroying(taDataLink* dl) {
+  m_dt = NULL;
+}
+
+void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
+  void* op1, void* op2)
+{
+  //this is primarily for code-driven changes
+  if (dcr == DCR_ITEM_UPDATED_ND) {
+    emit_dataChanged();
+  }
+  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_ITEM_UPDATED)) { // for col insert/deletes
+    emit_layoutChanged();
+  }
+}
+
+QVariant DataTableModel::data(const QModelIndex& index, int role) const {
+  if (!m_dt || !index.isValid()) return QVariant();
+  //NOTES:
+  // * it would be nice to just italicize the "matrix" text, but we have no
+  //   no access to the font being used, and cannot only pass modifiers
+  
+  DataCol* col = m_dt->GetColData(index.column(), true); // quiet
+  // if no col, we really don't care about anything else...
+  if (!col) return QVariant(); // nil
+  
+  switch (role) {
+  case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
+  case Qt::EditRole: {
+    if (col->is_matrix) 
+      return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
+    else {
+      int dx;
+      if(m_dt->idx(index.row(), col->rows(), dx))
+	return col->GetValAsString(dx);
+      else
+	return QVariant();	// nil
+    }
+  }
+// Qt::FontRole: //  QFont: font for the text
+//Qt::DecorationRole
+//Qt::ToolTipRole
+//Qt::StatusTipRole
+//Qt::WhatsThisRole
+//Qt::SizeHintRole -- QSize
+//Qt::FontRole--  QFont: font for the text
+  case Qt::TextAlignmentRole: {
+    if (col->is_matrix)
+      return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
+    else if (col->isNumeric())
+      return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+    else
+      return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+    } break;
+  case Qt::BackgroundColorRole : //-- QColor
+ /* note: only used when !(option.showDecorationSelected && (option.state
+    & QStyle::State_Selected)) */
+    // note: only make it actual ro color if ro (not for "(matrix)" cells)
+    if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
+      return QColor(COLOR_RO_BACKGROUND);
+    break;
+  case Qt::TextColorRole: { // QColor: color of text
+    if (col->is_matrix)
+      return QColor(Qt::blue);
+    } break;
+//Qt::CheckStateRole
+  default: break;
+  }
+  return QVariant();
+}
+
+void DataTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
+  if (!m_dt) return;
+  // lookup actual end values when we are called with sentinels
+  if (row_to < 0) row_to = rowCount() - 1;
+  if (col_to < 0) col_to = columnCount() - 1;  
+  
+  emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
+}
+
+void DataTableModel::emit_layoutChanged() {
+  emit layoutChanged();
+}
+
+Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
+  if (!m_dt || !index.isValid()) return 0;
+  Qt::ItemFlags rval = 0;
+  if (ValidateIndex(index)) {
+    // don't enable null cells
+    if (m_dt->hasData(index.column(), index.row() )) {
+      rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+      //TODO: determine if not editable, ex. maybe for matrix types
+      DataCol* col = m_dt->GetColData(index.column(), true); // quiet
+      if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
+         col->isGuiReadOnly()) ) 
+        rval |= Qt::ItemIsEditable;
+    }
+  }
+  return rval;
+}
+
+QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+  if (role != Qt::DisplayRole)
+    return QVariant();
+  if (orientation == Qt::Horizontal) {
+    DataCol* col = m_dt->GetColData(section, true); // quiet
+    if (col)  
+      return QString(col->GetDisplayName().chars());
+    else 
+      return QString();
+  } else {
+    return QString::number(section);
+  }
+}
+
+bool DataTableModel::ignoreDataChanged() const {
+  return (gui_parent && !gui_parent->isVisible());
+}
+
+void DataTableModel::refreshViews() {
+  emit_layoutChanged();
+/*  emit dataChanged(createIndex(0, 0), 
+    createIndex(rowCount() - 1, columnCount() - 1));*/
+}
+
+int DataTableModel::rowCount(const QModelIndex& parent) const {
+  return (m_dt) ? m_dt->rows : 0;
+}
+
+bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
+  if (!m_dt || !index.isValid()) return false;
+  
+  DataCol* col = m_dt->GetColData(index.column(), true); // quiet
+  // if no col, we really don't care about anything else...
+  if (!col) return false; 
+  //we restrict setData for scalars only -- use delegate for matrix
+  if (col->is_matrix) return false;
+  
+  bool rval = false;
+  switch (role) {
+  case Qt::EditRole:
+    m_dt->SetValAsVar(value, index.column(), index.row());
+    emit dataChanged(index, index);
+    col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh
+    rval = true;
+  default: break;
+  }
+  return rval;
+}
+
+bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
+  if (!m_dt) return false;
+  return (index.isValid() && (index.row() < m_dt->rows) && (index.column() < m_dt->cols()));
+}
+
+
+//////////////////////////
+//   DataTable (gui)	//
+//////////////////////////
+
 void DataTable::NewGridView(T3DataViewFrame* fr) {
   GridTableView* vw = GridTableView::New(this, fr);
   if (!vw) return;
@@ -5495,12 +5680,13 @@ DataTableDelegate::~DataTableDelegate() {
 iDataTableEditor::iDataTableEditor(QWidget* parent) 
 :inherited(parent)
 {
+  m_model = NULL;
   layOuter = new QVBoxLayout(this);
   splMain = new QSplitter(this);
   splMain->setOrientation(Qt::Vertical);
   layOuter->addWidget(splMain);
   tvTable = new iDataTableView();
-  tvCell = new iMatrixTableView();
+  tvCell = new iMatrixEditor();
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);
   
@@ -5512,6 +5698,10 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
 }
 
 iDataTableEditor::~iDataTableEditor() {
+  if (m_model) { 
+    delete m_model;
+    m_model = NULL;
+  }
 }
 
 void iDataTableEditor::ConfigView() {
@@ -5532,19 +5722,21 @@ void iDataTableEditor::ConfigView() {
 }
 
 void iDataTableEditor::Refresh() {
-  DataTableModel* mod = dynamic_cast<DataTableModel*>(tvTable->model());
-  //note: this will refresh all views, not just this one
-  if (mod)
-    mod->refreshViews();
+  if (m_model)
+    m_model->refreshViews();
 }
 
 void iDataTableEditor::setDataTable(DataTable* dt_) {
   if (dt_ == m_dt.ptr()) return;
+  if (m_model) { // shouldn't really happen, we only assign one table
+    delete m_model;
+    m_model = NULL;
+  }
   if (dt_) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
-    QAbstractTableModel* mod = dt_->GetDataModel();
-    tvTable->setModel(mod);
-    connect(mod, SIGNAL(layoutChanged()),
+    m_model = new DataTableModel(dt_, this);
+    tvTable->setModel(m_model);
+    connect(m_model, SIGNAL(layoutChanged()),
       this, SLOT(tvTable_layoutChanged()) );
   }
   m_dt = dt_;
@@ -5567,11 +5759,11 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
     //TODO: the ref above will screw up things like deleting the col
     // we need to be able to "unlock" this defacto lock on the col!!!!
     if (m_cell.ptr()) {
-      tvCell->setModel(m_cell->GetDataModel());
+      tvCell->setMatrix(m_cell);
       return;
     } 
   } else {  
-    tvCell->setModel(NULL);
+    tvCell->setMatrix(NULL);
     m_cell = NULL; // good to at least release this asap!!!
     m_cell_index = QModelIndex(); // empty is invalid
   }
@@ -5704,7 +5896,7 @@ void iDataTablePanel::Render_impl() {
   dte->setDataTable(dt());
   connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)),
     this, SLOT(tv_hasFocus(iTableView*)) );
-  connect(dte->tvCell, SIGNAL(hasFocus(iTableView*)),
+  connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)),
     this, SLOT(tv_hasFocus(iTableView*)) );
 }
 
