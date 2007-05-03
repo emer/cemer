@@ -31,17 +31,19 @@
 
 // PV primary value: learns continuously about primary rewards (present or absent)
 //   PVe = excitatory: primary reward (ExtRew)
+//   [PVr] = detector of time when rewards are present (fast to learn, slow to extinguish)
 //   PVi = inhibitory: cancelling expected primary rewards
 // LV learned value: learns only at the time of primary (expected) rewards, free to fire at time CS's come on
 //   LVe = excitatory: rapidly learns excitatory CS assocs
 //   LVi = inhibitory: slowly learns to cancel CS assocs (adaptive baseline for LVe)
 // PVLVDa (VTA/SNc) computes DA signal as: IF PV present, PVe - PVi, else LVe - LVi
+// delta version  (5/07) uses temporal derivative of LV signals instead of synaptic depression
 
 //////////////////////////////////////////
 //	PV: Primary Value Layer		//
 //////////////////////////////////////////
 
-// TODO: the syndep in this code cannot be parallelized over dwt's because the dynamics will
+// NOTE: the syndep in this code cannot be parallelized over dwt's because the dynamics will
 // be different!!!
 // need to have a dmem small_batch over sequences type mode that does a SyncWts using sum_dwts = false
 // and calls Compute_Weights after each trial..
@@ -243,7 +245,6 @@ public:
   float		disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.02 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
   float		disc;		// #CONDEDIT_OFF_syn_dep #DEF_0.8 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
-  float		da_thr;		// #DEF_0.3 #CONDEDIT_OFF_syn_dep for learning from PV dav DA values outside of delivered or missed expected rewards -- magnitude threshold for actually doing learning (don't want to clamp small values)
   bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
 
   void	Initialize();
@@ -308,6 +309,7 @@ class LEABRA_API PVLVDaSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
   INHERITED(taBase)
 public:
+  float		da_gain;	// #DEF_1 multiplier on da value
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)

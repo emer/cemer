@@ -295,7 +295,6 @@ void LVSpec::Initialize() {
   disc_thr = .02f;
   disc = 0.8f;
   use_actual_er = false;
-  da_thr = .3f;
   syn_dep = false;
 }
 
@@ -481,19 +480,11 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        }
      }
      else {
-       if(er_avail) { // an actual external signal
+       if(er_avail) {
 	 u->ext = pve_val;
 	 ClampValue(ugp, net); 		// apply new value
 	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
 	 Compute_dWt_Ugp(ugp, lay, net);
-       }
-       else { // rely on td value, computed by DA guy, with self specifically removed
-	 if(fabs(u->dav) > lv.da_thr) { 
-	   u->ext = u->act_m + u->dav;
-	   ClampValue(ugp, net); 		// apply new value
-	   Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
-	   Compute_dWt_Ugp(ugp, lay, net);
-	 }
        }
      }
      );
@@ -531,11 +522,12 @@ float LVeLayerSpec::Compute_LvDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay) {
       Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
       lv_da_sum += Compute_LvDa_ugp(lve_ugp, lvi_ugp);
     }
+    lv_da_sum /= (float)lve_lay->units.gp.size; // average!
   }
   else {
     Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
     Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-    lv_da_sum += Compute_LvDa_ugp(lve_ugp, lvi_ugp);
+    lv_da_sum = Compute_LvDa_ugp(lve_ugp, lvi_ugp);
   } 
   return lv_da_sum;
 }
@@ -583,6 +575,7 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 //////////////////////////////////
 
 void PVLVDaSpec::Initialize() {
+  da_gain = 1.0f;
   tonic_da = 0.0f;
   use_actual_er = false;
   syn_dep = false;
@@ -790,13 +783,13 @@ void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
     float pv_da = pve_val - pvisu->act_m; 
 
     if(net->phase_no == 0) {	// not used at this point..
-      u->dav = lv_da; 		// lviu->act_eq - avgbl;
+      u->dav = da.da_gain * lv_da; 		// lviu->act_eq - avgbl;
     }
     else {
 //       if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
-	u->dav = lv_da;
+	u->dav = da.da_gain * lv_da;
 	if(er_avail)
-	  u->dav += pv_da;
+	  u->dav += da.da_gain * pv_da;
 //       }
 //       else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
 // 	if(er_avail)
@@ -863,12 +856,10 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     else {
       // IF_PV_ELSE_LV mode always:
       if(er_avail) {
-	u->dav = pv_da;
-	u->misc_1 = pv_da;	// our misc_1 holds the value to send to LV
+	u->dav = da.da_gain * pv_da;
       }
       else {
-	u->dav = lv_da;
-	u->misc_1 = 0.0f;
+	u->dav = da.da_gain * lv_da;
       }
     }
 
@@ -931,15 +922,8 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesion)	continue;
-      if(tol->GetLayerSpec()->InheritsFrom(&TA_LVeLayerSpec)) {
-	for(int j=0;j<send_gp->cons.size; j++) {
-	  ((DaModUnit*)send_gp->Un(j))->dav = u->misc_1; // special val for lv guys
-	}
-      }
-      else {
-	for(int j=0;j<send_gp->cons.size; j++) {
-	  ((DaModUnit*)send_gp->Un(j))->dav = u->act;
-	}
+      for(int j=0;j<send_gp->cons.size; j++) {
+	((DaModUnit*)send_gp->Un(j))->dav = u->act;
       }
     }
   }
