@@ -132,6 +132,63 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
+////////////////////////////////////////////////////////
+//	PVr = PV reward detection system (habenula?)
+////////////////////////////////////////////////////////
+
+class LEABRA_API PVrConSpec : public PVConSpec {
+  // primary value connection spec with asymmetrical learning rates -- used for reward detection connections
+  INHERITED(PVConSpec)
+public:
+  float 	wt_dec_mult;   // multiplier for weight decrease rate relative to basic lrate used for weight increases
+
+  inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float err = (ru->act_p - ru->act_m) * su->act_p;
+    if(err < 0.0f)	err *= wt_dec_mult;
+    // wt is negative in linear form, so using opposite sign of usual here
+    if(lmix.err_sb) {
+      if(err > 0.0f)	err *= (1.0f + cn->wt);
+      else		err *= -cn->wt;	
+    }
+    return err;
+  }
+
+  // this computes weight changes based on sender at time t-1
+  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
+    LeabraUnit* lru = (LeabraUnit*)ru;
+    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
+    Compute_SAvgCor(lcg, lru);
+    if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	if(!(su->in_subgp &&
+	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
+	  float orig_wt = cn->wt;
+	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  C_Compute_dWt(cn, lru, 
+			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
+			C_Compute_Err(cn, lru, su));  
+	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+	}
+      }
+    }
+  }
+
+  void 	Initialize();
+  void	Destroy()		{ };
+  TA_SIMPLE_BASEFUNS(PVrConSpec);
+};
+
+class LEABRA_API PVrLayerSpec : public PViLayerSpec {
+  // primary value reward detection layer: learns when rewards are expected to occur (just for marking purposes -- same functionality as PVi)
+  INHERITED(PViLayerSpec)
+public:
+  TA_BASEFUNS(PVrLayerSpec);
+protected:
+};
+
+
 //////////////////////////////////////////
 //	LV: Learned Value Layer		//
 //////////////////////////////////////////

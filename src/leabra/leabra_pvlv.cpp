@@ -244,6 +244,16 @@ void PViLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   AdaptKWTAPt(lay, net);
 }
 
+
+////////////////////////////////////////////////////////
+//	PVr = PV reward detection system (habenula?)
+////////////////////////////////////////////////////////
+
+void PVrConSpec::Initialize() {
+  wt_dec_mult = 0.01f;
+}
+
+
 //////////////////////////////////////////
 // 	LV Con Spec			//
 //////////////////////////////////////////
@@ -435,9 +445,22 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
   int pvi_prjn_idx = 0;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+
+  int pvr_prjn_idx = 0;
+  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
+  PVrLayerSpec* pvrls = NULL;
+  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
+
   bool actual_er_avail = false;
   bool pv_detected = false;
-  float pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  float pve_val = 0.0f;
+
+  if(pvr_lay) {			// if pvr avail, use it
+    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
+  }
+  else {
+    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  }
 
   bool er_avail = pv_detected;
   if(lv.use_actual_er) er_avail = actual_er_avail; // cheat..
@@ -458,7 +481,7 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
        }
      }
      else {
-       if(actual_er_avail) { // an actual external signal
+       if(er_avail) { // an actual external signal
 	 u->ext = pve_val;
 	 ClampValue(ugp, net); 		// apply new value
 	 Compute_ExtToPlus(ugp, net); 	// copy ext values to act_p
@@ -732,9 +755,22 @@ void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
   int pvi_prjn_idx;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+
+  int pvr_prjn_idx = 0;
+  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
+  PVrLayerSpec* pvrls = NULL;
+  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
+
   bool actual_er_avail = false;
   bool pv_detected = false;
-  float pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  float pve_val = 0.0f;
+
+  if(pvr_lay) {			// if pvr avail, use it
+    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
+  }
+  else {
+    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  }
 
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
@@ -786,12 +822,26 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   int lvi_prjn_idx;
   LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
 //   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
+
   int pvi_prjn_idx;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+
+  int pvr_prjn_idx = 0;
+  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
+  PVrLayerSpec* pvrls = NULL;
+  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
+
   bool actual_er_avail = false;
   bool pv_detected = false;
-  float pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  float pve_val = 0.0f;
+
+  if(pvr_lay) {			// if pvr avail, use it
+    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
+  }
+  else {
+    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  }
 
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..
@@ -836,12 +886,26 @@ void PVLVDaLayerSpec::Update_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   int lvi_prjn_idx;
   LeabraLayer* lvi_lay = FindLayerFmSpec(lay, lvi_prjn_idx, &TA_LViLayerSpec);
 //   LVeLayerSpec* lvi_sp = (LViLayerSpec*)lvi_lay->GetLayerSpec();
+
   int pvi_prjn_idx;
   LeabraLayer* pvi_lay = FindLayerFmSpec(lay, pvi_prjn_idx, &TA_PViLayerSpec);
   PViLayerSpec* pvils = (PViLayerSpec*)pvi_lay->spec.SPtr();
+
+  int pvr_prjn_idx = 0;
+  LeabraLayer* pvr_lay = FindLayerFmSpec(lay, pvr_prjn_idx, &TA_PVrLayerSpec);
+  PVrLayerSpec* pvrls = NULL;
+  if(pvr_lay) pvrls = (PVrLayerSpec*)pvr_lay->spec.SPtr();
+
   bool actual_er_avail = false;
   bool pv_detected = false;
-  float pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  float pve_val = 0.0f;
+
+  if(pvr_lay) {			// if pvr avail, use it
+    pve_val = pvrls->Compute_PVe(pvr_lay, net, actual_er_avail, pv_detected);
+  }
+  else {
+    pve_val = pvils->Compute_PVe(pvi_lay, net, actual_er_avail, pv_detected);
+  }
 
   bool er_avail = pv_detected;
   if(da.use_actual_er) er_avail = actual_er_avail; // cheat..

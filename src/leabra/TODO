@@ -7,7 +7,7 @@ current:
 
 == PVLV:
 
-* add PVre = reward expected system (habenula) which is quick learning and slow unlearning & determines when a reward is expected, but not what the expected value is -- contextualizes LV learning.  learns just using std PV mechs.
+* add PVr = reward expected system (habenula) which is quick learning and slow unlearning & determines when a reward is expected, but not what the expected value is -- contextualizes LV learning.  learns just using std PV mechs.
 
 * add group_name to CondEnv code -- Epochgp PERMUTED, etc..
 
