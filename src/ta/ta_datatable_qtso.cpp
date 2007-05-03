@@ -3096,22 +3096,6 @@ void GraphTableView::UpdateAfterEdit_impl(){
   }
 }
 
-void GraphTableView::Render_pre() {
-  m_node_so = new T3GraphViewNode(this, width, manip_ctrl_on);
-
-  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
-  if(!frame) return;
-  SoQtViewer* viewer = frame->widget()->ra();
-  viewer->setBackgroundColor(SbColor(colorscale.background.redf(),
-				     colorscale.background.greenf(), 
-				     colorscale.background.bluef()));
-  UpdatePanel();		// otherwise doesn't get updated without explicit click..
-
-  //  T3GraphViewNode* node_so = this->node_so(); // cache
-
-  inherited::Render_pre();
-}
-
 String GraphTableView::GetLabel() const {
   return inherited::GetLabel() + " Graph";
 }
@@ -3120,17 +3104,38 @@ String GraphTableView::GetName() const {
   return inherited::GetName() + " Graph";
 }
 
+void GraphTableView::Render_pre() {
+  m_node_so = new T3GraphViewNode(this, width, manip_ctrl_on);
+
+/*NOTES:
+1. Render_pre is only done once, or on STRUCT changes
+2. item should not take ownsership of a shared frame prop like bg color
+3. we can set the frame bg color to the default for graphs
+
+  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
+  if(!frame) return;
+  SoQtViewer* viewer = frame->widget()->ra();
+  viewer->setBackgroundColor(SbColor(colorscale.background.redf(),
+				     colorscale.background.greenf(), 
+				     colorscale.background.bluef()));
+*/
+
+  inherited::Render_pre();
+}
+
 void GraphTableView::Render_impl() {
   inherited::Render_impl();
   T3GraphViewNode* node_so = this->node_so(); // cache
   if(!node_so || !dataTable())
     return;
+    
   node_so->setWidth(width);	// does a render too -- ensure always up to date on width
   int orig_rows;
   CheckRowsChanged(orig_rows);	// don't do anything with this here, but just make sure m_rows is up to date
   MakeViewRangeValid();
   ComputeAxisRanges();
   RenderGraph();
+  UpdatePanel();		// otherwise doesn't get updated without explicit click..
 }
 
 void GraphTableView::Render_post() {

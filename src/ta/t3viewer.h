@@ -447,6 +447,7 @@ public:
   FloatTDCoord		camera_pos;	// position of camera in view
   FloatRotation		camera_orient;	// orientation of camera in view
   float			camera_focdist; // focalDistance of camera in view
+  RGBA			bg_color; // background color of the frame (note: a not used)
 
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
 

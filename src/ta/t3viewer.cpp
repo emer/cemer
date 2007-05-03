@@ -789,7 +789,8 @@ void iT3DataViewFrame::Init() {
 
   m_ra = new iRenderArea(t3vs);
   //  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
-  m_ra->setBackgroundColor(SbColor(.8f, 0.8f, 0.8f));
+  const RGBA& bg = viewer()->bg_color;
+  m_ra->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
   t3vs->setRenderArea(m_ra);
 }
 
@@ -840,7 +841,8 @@ void iT3DataViewFrame::Render_pre() {
 }
 
 void iT3DataViewFrame::Render_impl() {
-  //nothing
+  const RGBA& bg = viewer()->bg_color;
+  m_ra->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
 }
 
 void iT3DataViewFrame::Render_post() {
@@ -893,6 +895,9 @@ void iT3DataViewFrame::viewRefresh() {
 void T3DataViewFrame::Initialize() {
 //  link_type = &TA_T3DataLink;
   camera_focdist = 0.0f;
+  bg_color.r = 0.8f;
+  bg_color.g = 0.8f;
+  bg_color.b = 0.8f;
 }
 
 void T3DataViewFrame::Destroy() {
@@ -905,15 +910,18 @@ void T3DataViewFrame::InitLinks() {
   taBase::Own(root_view, this);
   taBase::Own(camera_pos, this);
   taBase::Own(camera_orient, this);
+  taBase::Own(bg_color, this);
 }
 
 void T3DataViewFrame::CutLinks() {
+  bg_color.CutLinks();
   root_view.CutLinks();
   inherited::CutLinks();
 }
 
 void T3DataViewFrame::Copy_(const T3DataViewFrame& cp) {
   root_view = cp.root_view;
+  bg_color = cp.bg_color;
 }
 
 

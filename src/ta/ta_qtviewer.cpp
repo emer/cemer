@@ -5624,7 +5624,7 @@ iTreeViewItem::iTreeViewItem(taiDataLink* link_, MemberDef* md_, iTreeView* pare
 :inherited(parent, after)
 {
   // assume by default we want to update name if no md, and not told not to
-  if (!md_ && !(dn_flags & DNF_NO_UPDATE_NAME))
+  if (!md_ && !(dn_flags_ & DNF_NO_UPDATE_NAME))
     dn_flags_ |= DNF_UPDATE_NAME;
   init(tree_name, link_, md_, dn_flags_);
 }

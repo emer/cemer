@@ -3295,9 +3295,9 @@ void taDataView::DoActions(DataViewAction acts) {
   // no rendering should ever get done if not in gui mode, incl during late shutdown
   if (taMisc::gui_active) {
     if (acts & RENDER_PRE) {
-      // must not already be constructed
-  //TEMP    if (!isMapped())
-        Render_pre();
+/*obs      // must not already be constructed
+      if (!isMapped())*/
+      Render_pre();
     }
     // must be mapped for other render steps
     if (isMapped()) {

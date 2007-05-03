@@ -1335,7 +1335,7 @@ void taiDataHost::customEvent(QEvent* ev_) {
   } break;
   case CET_GET_IMAGE: {
     if (get_image_req) {
-      if (state == ACTIVE) {
+      if ((state & STATE_MASK) < CANCELED) {
         GetImage(false);
       }
       get_image_req = false;
@@ -1348,7 +1348,6 @@ void taiDataHost::customEvent(QEvent* ev_) {
 }
 
 void taiDataHost::Apply_Async() {
-  // reshow does a getimage, so ignore if a reshow pending
   if (apply_req) return; // already waiting
   if (state != ACTIVE) return;
   QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
@@ -1358,7 +1357,7 @@ void taiDataHost::Apply_Async() {
 
 void taiDataHost::ReShow_Async(bool forced) {
   if (reshow_req) return; // already waiting
-  if (state != ACTIVE) return;
+  if ((state & STATE_MASK) >= CANCELED) return;
   ReShowEvent* ev = new ReShowEvent(forced);
   reshow_req = true;
   QCoreApplication::postEvent(this, ev);
@@ -1367,7 +1366,8 @@ void taiDataHost::ReShow_Async(bool forced) {
 void taiDataHost::GetImage_Async() {
   // reshow does a getimage, so ignore if a reshow pending
   if (get_image_req || reshow_req) return; // already waiting
-  if (state != ACTIVE) return;
+  // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
+  if ((state & STATE_MASK) >= CANCELED) return;
   QEvent* ev = new QEvent((QEvent::Type)CET_GET_IMAGE);
   get_image_req = true;
   QCoreApplication::postEvent(this, ev);
