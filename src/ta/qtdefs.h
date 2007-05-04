@@ -165,6 +165,7 @@ class	T3ViewspaceWidget;	// #IGNORE
 
 class	iBrush;			// #IGNORE  -- TODO
 class	iColor;			// #IGNORE 
+class	iColorButton;		// #IGNORE 
 class	iCheckBox;		// #IGNORE  -- support for Hilight and ReadOnly
 class	iComboBox;		// #IGNORE  -- support for Hilight
 class	iClipToolWidget;	// #IGNORE

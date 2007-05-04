@@ -156,10 +156,11 @@ void T3CBar::render() {
   vp->vertex.setNum(b * 4);
 
   for (int i = 0; i < b; ++i) { // one strip per color value
-    const iColor* col = scale->GetColor(i);
-    if (!col) break; // shouldn't happen
+    bool ok;
+    iColor col = scale->GetColor(i, &ok);
+    if (!ok) break; // shouldn't happen
     // color
-    pcol = T3Color::makePackedRGBA(col->red(), col->green(), col->blue());
+    pcol = T3Color::makePackedRGBA(col.red(), col.green(), col.blue());
     vp->orderedRGBA.set1Value(idx_rct, pcol);
     // num of vertices
     bars_->numVertices.set1Value(idx_rct++, 4); // always 4 per face

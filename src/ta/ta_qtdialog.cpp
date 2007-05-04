@@ -421,9 +421,12 @@ void EditDataPanel::GetImage_impl() {
   if (owner) owner->Refresh();
 }
 
-const iColor*  EditDataPanel::GetTabColor(bool selected) const {
-  if (owner) return (selected) ? owner->bg_color : owner->bg_color_dark;
-  else       return inherited::GetTabColor(selected);
+const iColor EditDataPanel::GetTabColor(bool selected, bool& ok) const {
+  if (owner) {
+    ok = true;
+    return (selected) ? owner->bg_color : owner->bg_color_dark;
+  } else       
+    return inherited::GetTabColor(selected, ok);
 }
 
 bool EditDataPanel::HasChanged() {
@@ -684,8 +687,9 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
   modal = modal_;
   state = EXISTS;
 
-  bg_color = NULL; //not used in base
-  bg_color_dark = NULL; //not used in base
+  // default background colors
+  setBgColor(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
+  
   InitGuiFields(false);
 
   if (taiM == NULL) ctrl_size = taiMisc::sizMedium;
@@ -705,14 +709,6 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
 
 taiDataHostBase::~taiDataHostBase() {
   if (dialog != NULL) DoDestr_Dialog(dialog);
-  if (bg_color != NULL) {
-    delete bg_color;
-    bg_color = NULL;
-  }
-  if (bg_color_dark != NULL) {
-    delete bg_color_dark;
-    bg_color_dark = NULL;
-  }
 }
 
 void taiDataHostBase::InitGuiFields(bool) {
@@ -748,7 +744,8 @@ void taiDataHostBase::Apply() {
 }
 
 void taiDataHostBase::Revert() {
-  Refresh(); // GetImage/Unchanged, unless a defer_reshow pending
+  GetImage();
+  Unchanged();
 }
 
 void taiDataHostBase::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
@@ -789,10 +786,9 @@ void taiDataHostBase::Changed() {
 
 /* NOTE: Constr_Xxx methods presented in execution (not lexical) order */
 void taiDataHostBase::Constr(const char* aprompt, const char* win_title,
-  const iColor* bgclr, HostType host_type_, bool deferred) 
+  HostType host_type_, bool deferred) 
 {
   host_type = host_type_;
-  setBgColor(bgclr);
   Constr_Strings(aprompt, win_title);
   Constr_WinName();
   Constr_Widget();
@@ -826,9 +822,7 @@ void taiDataHostBase::Constr_impl() {
   // create container for ok/cancel/apply etc. buttons
   widButtons = new QWidget(); // parented when we do setButtonsWidget
   widButtons->setAutoFillBackground(true);
-  if (bg_color) {
-    widButtons->setPaletteBackgroundColor(*bg_color);
-  }
+  widButtons->setPaletteBackgroundColor(bg_color);
   layButtons = new QHBoxLayout(widButtons);
 //def  layButtons->setMargin(2); // facilitates container
   Constr_Buttons();
@@ -846,9 +840,7 @@ void taiDataHostBase::Constr_Strings(const char* prompt, const char* win_title) 
 void taiDataHostBase::Constr_Widget() {
   if (mwidget != NULL) return;
   mwidget = new QWidget();
-  if (bg_color != NULL) {
-    widget()->setPaletteBackgroundColor(*bg_color);
-  }
+  widget()->setPaletteBackgroundColor(bg_color);
   widget()->setFont(taiM->dialogFont(ctrl_size));
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look
@@ -970,15 +962,9 @@ int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
   return dialog->post(modal);
 }
 
-void taiDataHostBase::setBgColor(const iColor* new_bg) {
-  if(!bg_color) return;
-  if (new_bg == NULL) {
-    // get from default pallette
-    bg_color->set(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
-  } else {
-    bg_color->set(new_bg);
-  }
-  MakeDarkBgColor(*bg_color, *bg_color_dark);
+void taiDataHostBase::setBgColor(const iColor& new_bg) {
+  bg_color = new_bg;
+  MakeDarkBgColor(bg_color, bg_color_dark);
 }
 
 void taiDataHostBase::Ok() { //note: only used for Dialogs
@@ -1033,8 +1019,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
 {
   InitGuiFields(false);
 
-  bg_color = new iColor(); //value set later
-  bg_color_dark = new iColor(); //value set later
   row_height = 1; // actual value set in Constr
   cur_row = 0;
   sel_item_md = NULL;
@@ -1055,7 +1039,7 @@ void taiDataHost::InitGuiFields(bool virt) {
   show_meth_buttons = false;
 }
 
-const iColor* taiDataHost::colorOfRow(int row) const {
+const iColor taiDataHost::colorOfRow(int row) const {
   if ((row % 2) == 0) {
     return bg_color;
   } else {
@@ -1068,7 +1052,7 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   f.setBold(true);
   wid->setFont(f);
   wid->setFixedHeight(taiM->label_height(ctrl_size));
-  wid->setPaletteBackgroundColor(*colorOfRow(row));
+  wid->setPaletteBackgroundColor(colorOfRow(row));
   if (!desc.empty()) {
     wid->setToolTip(desc);
   }
@@ -1109,7 +1093,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
   iLabel* label = new iLabel(row, name, body);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  label->setPaletteBackgroundColor(*colorOfRow(row));
+  label->setPaletteBackgroundColor(colorOfRow(row));
   if (md) label->setUserData((ta_intptr_t)md);
   connect(label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
       this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)) );
@@ -1169,7 +1153,7 @@ void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& 
   QLabel* label = new QLabel(name, (QWidget*)NULL);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  label->setPaletteBackgroundColor(*colorOfRow(row));
+  label->setPaletteBackgroundColor(colorOfRow(row));
   if (!desc.empty()) {
     label->setToolTip(desc);
   }
@@ -1237,19 +1221,15 @@ void taiDataHost::Constr_Box() {
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
   scrBody = new iScrollArea(scr_par);
-  scrBody->viewport()->setPaletteBackgroundColor(*bg_color_dark);
+  scrBody->viewport()->setPaletteBackgroundColor(bg_color_dark);
 //Qt3  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
   scrBody->setWidgetResizable(true); 
   body = new iStripeWidget();
   scrBody->setWidget(body);
-  if (bg_color != NULL) {
-    body->setPaletteBackgroundColor(*bg_color);
-    if (bg_color_dark != NULL)
-      ((iStripeWidget*)body)->setHiLightColor(*bg_color_dark);
-    ((iStripeWidget*)body)->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
-    //TODO: if adding spacing, need to include LAYBODY_SPACING;
-
-  }
+  body->setPaletteBackgroundColor(bg_color);
+  ((iStripeWidget*)body)->setHiLightColor(bg_color_dark);
+  ((iStripeWidget*)body)->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
+  //TODO: if adding spacing, need to include LAYBODY_SPACING;
   if (splBody == NULL) {
     vblDialog->addWidget(scrBody, 1); // gets all the space
   }
@@ -1279,9 +1259,7 @@ void taiDataHost::Constr_Methods_impl() { //note: conditional constructions used
     tmp = new QFrame(); // tmp = new QFrame(widget());
     tmp->setVisible(false); // prevents it showing as global win in some situations
     tmp->setAutoFillBackground(true); // for when disconnected from us
-    if (bg_color) {
-      tmp->setPaletteBackgroundColor(*bg_color);
-    }
+    tmp->setPaletteBackgroundColor(bg_color);
     tmp->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
     tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   }
@@ -1565,7 +1543,7 @@ void  taiDialog::Constr_Box() {
   vh->setMovingEnabled(false);
   vh->setClickEnabled(false);
   body->resize(1, 1); // let it expand
-  body->setPaletteBackgroundColor(*bg_color_dark); //TODO: replace/nuke when we use Palettes
+  body->setPaletteBackgroundColor(bg_color_dark); //TODO: replace/nuke when we use Palettes
   vblDialog->addWidget(body, 2);
 }
 
@@ -1962,8 +1940,8 @@ EditDataPanel* taiEditDataHost::EditPanelDeferred(taiDataLink* link) {
   return panel;
 }
 
-void taiEditDataHost::ConstrEditControl(const iColor* bgcol) {
-  Constr("", "", bgcol, HT_CONTROL);
+void taiEditDataHost::ConstrEditControl() {
+  Constr("", "", HT_CONTROL);
   taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
   state = ACTIVE;
 }

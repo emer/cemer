@@ -4770,10 +4770,10 @@ void iDataPanelSet::GetImage() {
   }
 }
 
-const iColor* iDataPanelSet::GetTabColor(bool selected) const {
+const iColor iDataPanelSet::GetTabColor(bool selected, bool& ok) const {
   iDataPanel* pn = curPanel();
-  if (pn) return pn->GetTabColor(selected);
-  else    return inherited::GetTabColor(selected);
+  if (pn) return pn->GetTabColor(selected, ok);
+  else    return inherited::GetTabColor(selected, ok);
 }
 
 bool iDataPanelSet::HasChanged() {
@@ -5773,9 +5773,9 @@ void iTreeViewItem::DecorateDataNode() {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
 	if(vc->use_bg)		// prefer bg color; always set bg so no conflict with type info
-	  setBackgroundColor(*(vc->bg_color.color()));
+	  setBackgroundColor(vc->bg_color.color());
  	else if(vc->use_fg)
- 	  setBackgroundColor(*(vc->fg_color.color()));
+ 	  setBackgroundColor(vc->fg_color.color());
       }
       else {
 	resetBackgroundColor();//setHighlightIndex(0);
@@ -5792,9 +5792,9 @@ void iTreeViewItem::DecorateDataNode() {
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
 	if(vc->use_fg)
-	  setTextColor(*(vc->fg_color.color()));
+	  setTextColor(vc->fg_color.color());
  	else if(vc->use_bg)
- 	  setTextColor(*(vc->bg_color.color())); // always set text, even if bg, so no conflict with state info
+ 	  setTextColor(vc->bg_color.color()); // always set text, even if bg, so no conflict with state info
       }
     }
   }

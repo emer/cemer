@@ -209,8 +209,8 @@ public:
 //  virtual iColor* GetColor(float val, iColor** maincolor=NULL,
 //			    iColor** contrast=NULL);
    // return color object for val
-  virtual const iColor* GetColor(int idx);	// return color[idx];
-  virtual const iColor* GetContrastColor(int idx);	// return color[idx];
+  virtual const iColor GetColor(int idx, bool* ok = NULL);	// return color[idx];
+  virtual const iColor GetContrastColor(int idx, bool* ok = NULL);	// return color[idx];
 
   virtual void SetColorScale(ColorScale* c);
 

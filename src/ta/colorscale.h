@@ -31,6 +31,7 @@
 
 // forwards this file
 
+class taColor;
 class RGBA;
 class RGBA_List;
 class TAColor;
@@ -43,24 +44,54 @@ class ColorScale;
 typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
 typedef ptr_iColor const_iColor;
 
+class TA_API taColor : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color value
+INHERITED(taBase)
+public:
+  bool 			no_a; // #NO_SHOW #NO_SAVE control using a, by context
+  float			r; // red
+  float			g; // green
+  float			b; // blue
+  float			a; // #CONDSHOW_ON_no_a:false alpha (intensity, ratio of fg to bg)
+
+  const iColor		color() const;
+  void			setColor(const iColor& cp);
+  
+  void			Set(float r_, float g_, float b_, float a_ = 1)
+     {r=r_; g=g_; b=b_; a=a_;}
+  TA_BASEFUNS_LITE(taColor);
+
+private:
+  void 	Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a
+  void  Initialize() {no_a = false; r = g = b = 0; a = 1;}
+  void 	Destroy() {}
+};
+
 class TA_API RGBA : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color specification
-INHERITED(taNBase)
+INHERITED(taOBase)
 public:
-  float	r;			// red
-  float	g;			// green
-  float	b;			// blue
-  float	a;			// alpha (intensity, ratio of fg to bg)
-  String desc;			// description of what this color is
+  String 		name; // description of what this color is
+  float			r; // red
+  float			g; // green
+  float			b; // blue
+  float			a; // alpha (intensity, ratio of fg to bg)
+  String 		desc; // description of what this color is
 
-  const iColor*		color() const; //note: always correct -- updated on call
+  const iColor		color() const; //note: always correct -- updated on call
 
   String ToString_RGBA() const;
+  String	GetDesc() const			{ return desc; }
   TA_BASEFUNS_LITE(RGBA);
   RGBA(float rd, float gr, float bl, float al = 1.0); // for Iv compatibility
 protected:
-  override void UpdateAfterEdit_impl(); // don't use C names
-  iColor	color_; // #IGNORE
+  override void 	UpdateAfterEdit_impl(); // don't use C names
+  //note: we handle both directions of copy to/from taColor
+  override void		CanCopyCustom_impl(bool to, const taBase* cp,
+    bool quiet, bool& allowed, bool& forbidden) const;
+  override void		CopyFromCustom_impl(const taBase* cp);
+  override void		CopyToCustom_impl(taBase* to) const;
+    
 private:
   void 	Copy_(const RGBA& cp);
   void  Initialize();
@@ -79,10 +110,10 @@ public:
 class TA_API TAColor : public taBase { // ##NO_TOKENS Color
 INHERITED(taBase)
 public:
-  const iColor* color() {return &color_;}		// #IGNORE
-  const iColor*	contrastcolor() {return &contrastcolor_;}	// #IGNORE
-  void SetColor(const iColor* c, RGBA* background = NULL){
-    SetColor(c->redf(), c->greenf(), c->bluef(), c->alpha(), background);
+  const iColor 	color() {return color_;}		// #IGNORE
+  const iColor	contrastcolor() {return contrastcolor_;}	// #IGNORE
+  void SetColor(const iColor& c, RGBA* background = NULL){
+    SetColor(c.redf(), c.greenf(), c.bluef(), c.alphaf(), background);
   }
   void SetColor(RGBA* c, RGBA* background = NULL) {
     SetColor(c->r, c->g, c->b, c->a, background);
@@ -190,6 +221,7 @@ class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 INHERITED(taNBase)
 public:
+  static const iColor	def_color; 
   static float		sc_val_def; // #HIDDEN def arg for sc_val
 
   int			chunks;		// number of chunks to divide scale into
@@ -211,13 +243,13 @@ public:
   virtual void		SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON set the color scale spec to determine the palette of colors representing values
 
-  virtual const iColor*	Get_Background(); // #IGNORE
+  virtual const iColor	Get_Background(); // #IGNORE
   float 		GetAbsPercent(float val);
-  virtual const iColor*	GetColor(int idx);
-  virtual const iColor* GetColor(float val, const iColor** maincolor=NULL,
-				 const iColor** contrast=NULL, float& sc_val = sc_val_def);
+  virtual const iColor	GetColor(int idx, bool* ok = NULL);
+  virtual const iColor GetColor(float val, iColor* maincolor=NULL,
+	iColor* contrast=NULL, float& sc_val = sc_val_def);
   // #IGNORE
-  virtual const iColor*	GetContrastColor(int idx);
+  virtual const iColor	GetContrastColor(int idx, bool* ok = NULL);
   int 			GetIdx(float val);
   void			DefaultChunks();
 

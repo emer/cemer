@@ -473,12 +473,6 @@ void T3DataView::CutLinks() {
   inherited::CutLinks();
 }
 
-void T3DataView::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-  if (m_node_so.ptr())
-    Render_impl();
-}
-
 void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
   if (m_node_so.ptr())
     AddRemoveChildNode_impl(node, adding);
@@ -1073,8 +1067,6 @@ void iT3DataViewFrame::Init() {
 
   m_ra = new T3ExaminerViewer(t3vs);
   //  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
-  const RGBA& bg = viewer()->bg_color;
-  m_ra->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
   t3vs->setRenderArea(m_ra);
 }
 
@@ -1125,7 +1117,7 @@ void iT3DataViewFrame::Render_pre() {
 }
 
 void iT3DataViewFrame::Render_impl() {
-  const RGBA& bg = viewer()->bg_color;
+  const taColor& bg = viewer()->bg_color;
   m_ra->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
 }
 
@@ -1179,6 +1171,7 @@ void iT3DataViewFrame::viewRefresh() {
 void T3DataViewFrame::Initialize() {
 //  link_type = &TA_T3DataLink;
   camera_focdist = 0.0f;
+  bg_color.no_a = true; 
   bg_color.r = 0.8f;
   bg_color.g = 0.8f;
   bg_color.b = 0.8f;
@@ -1264,6 +1257,9 @@ void T3DataViewFrame::Render_pre() {
 void T3DataViewFrame::Render_impl() {
   inherited::Render_impl();
   root_view.Render_impl();
+  SoQtViewer* viewer = widget()->ra();
+  viewer->setBackgroundColor(
+    SbColor(bg_color.r, bg_color.g, bg_color.b));
   widget()->Render_impl();
 }
 

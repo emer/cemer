@@ -1107,8 +1107,8 @@ public:
   // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual bool		ReShowEdit(bool force = false);
   // #CAT_Display reshows any open edit dialogs for this object
-  virtual const iColor* GetEditColor(); // #IGNORE background color for edit dialog
-  virtual const iColor* GetEditColorInherit();
+  virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
+  virtual const iColor GetEditColorInherit(bool& ok);
   // #IGNORE background color for edit dialog, include inherited colors from parents
 #if defined(TA_GUI) && !defined(__MAKETA__) 
   virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
@@ -1920,6 +1920,7 @@ public:
   void	SetIndex(int value) {m_index = value;}
   TAPtr	SetOwner(TAPtr own); // update the parent; nulls it if not of parentType
   void	CutLinks();
+  void	UpdateAfterEdit();
   TA_BASEFUNS(taDataView)
 
 public: // IDataLinkCLient

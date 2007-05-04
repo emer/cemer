@@ -213,7 +213,6 @@ public:
   
   virtual void		ViewProperties(); // #MENU show the view properties for this object
   
-  override void		UpdateAfterEdit(); //note: not _impl
   override void		CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
@@ -490,8 +489,20 @@ protected:
 
 private:
   void			Init();
-};
+}; //
 
+/* T3DataViewFrame
+  
+  The frame can hold multiple objects, however the typical cases are:
+   1 object ("single")-- ex., a graph or table view
+   N objects (!"single") -- ex., a network, with viewlets, graphs, etc.
+   
+  We treat some things differently, depending on single or multi:
+  		single		multi
+  DisplayName	item name	frame name
+  bg color	slave to item	
+
+*/
 
 class TA_API T3DataViewFrame : public DataViewer {
   // ##DEF_NAME_ROOT_Frame top-level taDataViewer object that contains one 3D data view of multiple objects
@@ -503,7 +514,7 @@ public:
   FloatTDCoord		camera_pos;	// position of camera in view
   FloatRotation		camera_orient;	// orientation of camera in view
   float			camera_focdist; // focalDistance of camera in view
-  RGBA			bg_color; // background color of the frame (note: a not used)
+  taColor		bg_color; // background color of the frame (note: a not used)
 
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
 

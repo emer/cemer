@@ -916,7 +916,7 @@ protected:
   virtual void 		ComputeAxisRanges();
   // compute range information based on data column, call UpdateRange_impl
 
-  virtual const iColor* GetValueColor(GraphAxisBase* ax_clr, float val);
+  virtual const iColor GetValueColor(GraphAxisBase* ax_clr, float val);
   // get color from value using given axis
 
   virtual void		RenderAxes();

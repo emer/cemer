@@ -30,6 +30,7 @@
 # include <QMenu>
 # include <QObject>
 # include <QWidget>
+# include "ibutton.h" 
 # include "icheckbox.h"
 # include "ilineedit.h"
 #endif
@@ -392,6 +393,25 @@ protected:
   virtual bool		ShowMember(MemberDef* md) const;
   taiPolyData(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 };
+
+
+//////////////////////////
+//     taiColor		//
+//////////////////////////
+
+class TA_API taiColor : public taiData {
+INHERITED(taiData)
+public:
+  iColorButton*		rep() const {return (iColorButton*)(QWidget*)m_rep;}
+  
+  void 			GetImage(const iColor& val);
+  iColor		GetValue() const;
+  
+  taiColor(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+    int flags = 0);
+
+};
+
 
 //////////////////////////
 //     taiDataDeck	//

@@ -67,7 +67,7 @@ public:
 
 class TA_API IDataHost: public ITypedObject { // #VIRT_BASE #NO_INSTANCE #NO_CSS
 public:
-  virtual const iColor* colorOfCurRow() const = 0; // #IGNORE background color of cur row
+  virtual const iColor	colorOfCurRow() const = 0; // #IGNORE background color of cur row
   virtual bool		isConstructed() = 0;
   virtual bool		isModal() = 0;
   virtual bool		isReadOnly() = 0;
@@ -134,7 +134,8 @@ public:
     flgAutoApply	= 0x0800,  // when user finishes editing this control, auto apply the edits
     flgFlowLayout	= 0x1000, // for polyguys (inline) us a flowlayout, not hboxlayout
     flgCondEditUseRO	= 0x2000, // for taiCondEditMember, used to keep its use_ro flag
-    flgNoEditDialogAutoApply = 0x4000 // overrides the implicit APPLY_IMMED for the edit dialog of fields
+    flgNoEditDialogAutoApply = 0x4000, // overrides the implicit APPLY_IMMED for the edit dialog of fields
+    flgUseAlpha		= 0x10000 // for taiColor, use the alpha channel
 #ifndef __MAKETA__
     ,flg_INHERIT_MASK	= (flgReadOnly) // flags to pass on to nested children, in inline
 #endif

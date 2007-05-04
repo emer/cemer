@@ -1194,7 +1194,8 @@ public:
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
   virtual void		ClosePanel() = 0; // anyone can call this to get the panel to close (ex. edit panel contents are deleted externally)
   virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
-  virtual const iColor* GetTabColor(bool selected) const {return NULL;} // special color for tab; NULL means use default
+  virtual const iColor	GetTabColor(bool selected, bool& ok) const 
+    {ok = false; return iColor();} // special color for tab; NULL means use default
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
   virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
     // called in post, when all windows are built
@@ -1348,7 +1349,7 @@ public:
   override void		Closing(CancelOp& cancel_op);
   override void		ClosePanel();
   override void		GetImage();
-  override const iColor* GetTabColor(bool selected) const;
+  override const iColor GetTabColor(bool selected, bool& ok) const;
   override bool		HasChanged();
   override void		Refresh();
   override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl

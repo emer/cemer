@@ -184,7 +184,6 @@ public:
   bool   SetName(const String& nm) 	{ name = nm; return true; } 
   String GetName() const 		{ return name; } 
   void	SetDefaultName() {SetDefaultName_();} // use the name (for inherited classes)
-  void	UpdateAfterEdit();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const DataViewer& cp);

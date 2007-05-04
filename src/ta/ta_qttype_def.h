@@ -20,6 +20,7 @@
 #define TAI_QTTYPE_DEF_H
 
 #include "ta_type.h"
+#include "icolor.h"
 #include "ta_TA_type.h"
 
 // externals
@@ -27,7 +28,6 @@ class taBase;
 class taiData;
 class IDataHost;
 class taiEditDataHost;
-class iColor;
 class iDataPanel;
 class iDataPanelFrame;
 class iDataPanelSet;
@@ -47,6 +47,8 @@ class taiTypeHier; //
 class TA_API taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
+  static const iColor	def_color; // passed as a default, or explicitly, to indicate using default
+  
   static void		InitializeTypes(bool gui);  // called at startup to initialize the type system
   TypeDef*		typ;		// typedef of base object
   int			bid;		// its bid
@@ -154,7 +156,7 @@ public:
   virtual iDataPanel*	CreateDataPanel(taiDataLink* dl_); // creates a new data panel; normally override _impl
   virtual taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ) {return NULL;}
     // get an existing, or create new if needed
-  virtual const iColor* GetEditColorInherit(taiDataLink* dl) const {return NULL;} // #IGNORE background color for edit dialog, include inherited colors from parents
+  virtual const iColor GetEditColorInherit(taiDataLink* dl, bool& ok) const {ok = false; return def_color;} // #IGNORE background color for edit dialog, include inherited colors from parents
 
   void			Initialize();
   void			Destroy() {}
@@ -178,19 +180,20 @@ private:
 
 class TA_API taiEdit : public taiType {
 public:
+  
   taiEdit* 		sub_types() {return (taiEdit*)m_sub_types;}
   taiEdit** 		addr_sub_types() {return (taiEdit**)&m_sub_types;}
 
-  virtual const iColor* GetBackgroundColor(void* base); // gets for taBase
-  virtual int 		Edit(void* base=NULL, bool read_only=false, const iColor* bgcol = NULL); //edit wherever found (note: rarely overridden)
+  virtual const iColor	GetBackgroundColor(void* base, bool& ok); // gets for taBase
+  virtual int 		Edit(void* base=NULL, bool read_only=false, const iColor& bgcol = def_color); //edit wherever found (note: rarely overridden)
   virtual int 		EditDialog(void* base, bool read_only = false,
-    const iColor* bgcol = NULL, bool modal = false); //edit in a Dialog (note: rarely overridden) -- finds existing if non-modal else makes new
+    bool modal = false, const iColor& bgcol = def_color); //edit in a Dialog (note: rarely overridden) -- finds existing if non-modal else makes new
   virtual EditDataPanel* EditNewPanel(taiDataLink* link, void* base=NULL,
-    bool read_only = false, const iColor* bgcol = NULL); 
+    bool read_only = false, const iColor& bgcol = def_color); 
     //edit in a new panel (note: rarely overridden)
   virtual EditDataPanel* EditPanel(taiDataLink* link, void* base=NULL,
-    bool read_only = false, const iColor* bgcol = NULL,
-    iMainWindowViewer* not_in_win = NULL); 
+    bool read_only = false, iMainWindowViewer* not_in_win = NULL,
+    const iColor& bgcol = def_color); 
     //edit in a panel, prefer existing, else created new (note: rarely overridden)
   virtual int 		BidForType(TypeDef*) { return 0;}
   virtual int 		BidForEdit(TypeDef*) { return 1;}

@@ -153,7 +153,7 @@ String taTypeInfoDataLink::GetDisplayName() const {
 iDataPanel* taTypeInfoDataLink::CreateDataPanel_impl() {
   taiTypeItemDataHost* tidh = 
     new taiTypeItemDataHost(data(), tik, true, false);
-  tidh->Constr("", "", NULL, taiDataHost::HT_PANEL);
+  tidh->Constr("", "", taiDataHost::HT_PANEL);
   EditDataPanel* dp = tidh->EditPanel(this);
   return dp;
 } 

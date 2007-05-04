@@ -108,11 +108,7 @@ int cssTA::Edit(bool wait) {
     return false;
   taiEdit* gc = type_def->ie;
   if (gc) {
-    const iColor* bgclr = NULL;
-    if (type_def->InheritsFrom(TA_taBase))
-      bgclr = ((taBase*)pt)->GetEditColor();
-//3.2    return gc->Edit(pt, NULL, wait, false, bgclr);
-    return gc->Edit(pt, false, bgclr);
+    return gc->Edit(pt, false);
   }
   return false;
 }

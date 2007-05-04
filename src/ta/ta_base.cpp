@@ -1672,7 +1672,7 @@ int taBase::Edit() {
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
     //note: taiEdit looks up color, if hinting enabled
-    return ie->Edit((void*)this, false, NULL);
+    return ie->Edit((void*)this, false);
   }
 #endif
   return false;
@@ -1683,7 +1683,7 @@ int taBase::EditDialog(bool modal) {
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
     //note: taiEdit looks up color, if hinting enabled
-    return ie->EditDialog((void*)this, false, NULL);
+    return ie->EditDialog((void*)this, false);
   }
 #endif
   return false;
@@ -1697,26 +1697,28 @@ bool taBase::ReShowEdit(bool force) {
   return false;
 }
 
-const iColor* taBase::GetEditColor() {
+const iColor taBase::GetEditColor(bool& ok) {
   String dec_key = GetTypeDecoKey(); // nil if none
   if (dec_key.nonempty()) {
     ViewColor* vc = taMisc::view_colors->FindName(dec_key);
     if(vc) {
+      ok = true;
       if(vc->use_bg)
 	return vc->bg_color.color(); // prefer bg color if specified; else use fg
       else if(vc->use_fg)
 	return vc->fg_color.color();
     }
   }
-  return NULL;
+  ok = false; 
+  return iColor();
 }
 
-const iColor* taBase::GetEditColorInherit() {
-  const iColor* bgclr = GetEditColor();
-  if (!bgclr) {
+const iColor taBase::GetEditColorInherit(bool& ok) {
+  iColor bgclr = GetEditColor(ok);
+  if (!ok) {
     TAPtr ownr = GetOwner();
-    while ((ownr != NULL) && (bgclr == NULL)) {
-      bgclr = ownr->GetEditColor();
+    while ((ownr != NULL) && (!ok)) {
+      bgclr = ownr->GetEditColor(ok);
       ownr = ownr->GetOwner();
     }
   }
@@ -3173,6 +3175,12 @@ void taDataView::CutLinks() {
   inherited::CutLinks();
 }
  
+void taDataView::UpdateAfterEdit() {
+  inherited::UpdateAfterEdit();
+  if (isMapped())
+    Render_impl();
+}
+
 void taDataView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {

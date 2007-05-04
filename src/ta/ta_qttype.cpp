@@ -49,6 +49,8 @@
 //    taiTypeBase	//
 //////////////////////////
 
+const iColor taiTypeBase::def_color; 
+
 taiTypeBase::taiTypeBase() {
   typ = NULL;
   init();
@@ -576,7 +578,7 @@ bool taiClassType::CanBrowse() {
 
 
 //////////////////////////////////
-// 	taiMatrixGeomType		//
+//  taiMatrixGeomType		//
 //////////////////////////////////
 
 int taiMatrixGeomType::BidForType(TypeDef* td) {
@@ -591,6 +593,49 @@ taiData* taiMatrixGeomType::GetDataRepInline_impl(IDataHost* host_, taiData* par
 }
 
 
+//////////////////////////////////
+//  taiColorType		//
+//////////////////////////////////
+
+int taiColorType::BidForType(TypeDef* td) {
+//TODO: we can handle other color guys, just subclass
+  if (td->InheritsFrom(TA_taColor))
+    return (inherited::BidForType(td) +1);
+  return 0;
+}
+
+taiData* taiColorType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
+ QWidget* gui_parent_, int flags_) 
+{
+  taiColor *rval = new taiColor(typ, host_, par, gui_parent_, flags_);
+  return rval;
+}
+
+
+//////////////////////////////////
+//  taitaColorType		//
+//////////////////////////////////
+
+int taitaColorType::BidForType(TypeDef* td) {
+  if (td->InheritsFrom(TA_taColor))
+    return (inherited::BidForType(td) +1);
+  return 0;
+}
+
+void taitaColorType::GetImage_impl(taiData* dat_, const void* base) {
+  taiColor* dat = dynamic_cast<taiColor*>(dat_); // for safety
+  if (!dat) return;
+  const taColor* col = static_cast<const taColor*>(base);
+  dat->GetImage(iColor(col->r, col->g, col->b, col->a));
+}
+
+void taitaColorType::GetValue_impl(taiData* dat_, void* base) {
+  taiColor* dat = dynamic_cast<taiColor*>(dat_); // for safety
+  if (!dat) return;
+  iColor icol = dat->GetValue();
+  taColor* col = static_cast<taColor*>(base);
+  col->Set(icol.redf(), icol.greenf(), icol.bluef(), icol.alphaf()); 
+}
 
 //////////////////////////////////
 // 	gpiListType		//
@@ -858,32 +903,37 @@ taiEditDataHost* taiEdit::CreateDataHost(void* base, bool read_only) {
   return new taiEditDataHost(base, typ, read_only);
 }
 
-int taiEdit::Edit(void* base, bool readonly, const iColor* bgcol) {
-  taiEditDataHost* host_ = NULL;
+int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
+  taiEditDataHost* host = NULL;
   // get currently active win -- we will only look in any other window
   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  host_ = taiMisc::FindEdit(base, cur_win);
-  if (host_ == NULL) {
-    host_ = CreateDataHost(base, readonly);
+  host = taiMisc::FindEdit(base, cur_win);
+  if (host == NULL) {
+    host = CreateDataHost(base, readonly);
 
     if (typ->HasOption("NO_OK"))
-      host_->no_ok_but = true;
+      host->no_ok_but = true;
     if (typ->HasOption("NO_CANCEL"))
-      host_->read_only = true;
+      host->read_only = true;
     if (taMisc::color_hints & taMisc::CH_EDITS) {
-      if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+      if (&bgcol == &def_color) {
+        bool ok = false;
+        iColor bg = GetBackgroundColor(base, ok);
+        if (ok) host->setBgColor(bg);
+      } else 
+        host->setBgColor(bgcol);
     }
-    host_->Constr("", "", bgcol);
-//TODO: no longer supported:    host_->cancel_only = readonly;
-    return host_->Edit(false);
-  } else if (!host_->modal) {
-    host_->Raise();
+    host->Constr("", "");
+//TODO: no longer supported:    host->cancel_only = readonly;
+    return host->Edit(false);
+  } else if (!host->modal) {
+    host->Raise();
   }
   return 2;
 }
 
-int taiEdit::EditDialog(void* base, bool read_only,
-  const iColor* bgcol, bool modal) 
+int taiEdit::EditDialog(void* base, bool read_only, bool modal,
+  const iColor& bgcol) 
 {
   taiEditDataHost* host = NULL;
   if (!modal) {
@@ -895,34 +945,44 @@ int taiEdit::EditDialog(void* base, bool read_only,
   }
   host = CreateDataHost(base, read_only);
   if (taMisc::color_hints & taMisc::CH_EDITS) {
-    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+    if (&bgcol == &def_color) {
+      bool ok = false;
+      iColor bg = GetBackgroundColor(base, ok);
+      if (ok) host->setBgColor(bg);
+    } else 
+        host->setBgColor(bgcol);
   } else {
   //TODO: maybe we always null out, or should we allow caller to specify?
     //bgcol = NULL; 
   }
-  host->Constr("", "", bgcol, taiDataHost::HT_DIALOG);
+  host->Constr("", "", taiDataHost::HT_DIALOG);
   return host->Edit(modal);
   
 }
 
 EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
-   bool read_only, const iColor* bgcol) 
+   bool read_only, const iColor& bgcol) 
 {
   taiEditDataHost* host = CreateDataHost(base, read_only);
   if (taMisc::color_hints & taMisc::CH_EDITS) {
-    if (!bgcol) bgcol = GetBackgroundColor(base); // gets for taBase
+    if (&bgcol == &def_color) {
+      bool ok = false;
+      iColor bg = GetBackgroundColor(base, ok);
+      if (ok) host->setBgColor(bg);
+    } else 
+      host->setBgColor(bgcol);
   } else {
   //TODO: maybe we always null out, or should we allow caller to specify?
     //bgcol = NULL; 
   }
 
-  host->Constr("", "", bgcol, taiDataHost::HT_PANEL, true);
+  host->Constr("", "", taiDataHost::HT_PANEL, true);
   EditDataPanel* rval = host->EditPanelDeferred(link);
   return rval;
 }
 
 EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
-   bool read_only, const iColor* bgcol, iMainWindowViewer* not_in_win) 
+   bool read_only, iMainWindowViewer* not_in_win, const iColor& bgcol) 
 {
   taiEditDataHost* host = NULL;
   host = taiMisc::FindEditPanel(base, read_only, not_in_win);
@@ -934,10 +994,12 @@ EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
   }
 }
 
-const iColor* taiEdit::GetBackgroundColor(void* base) {
+const iColor taiEdit::GetBackgroundColor(void* base, bool& ok) {
   if (typ->InheritsFrom(&TA_taBase) && base) {
-    return ((taBase*)base)->GetEditColorInherit();
-  } else return NULL;
+    return ((taBase*)base)->GetEditColorInherit(ok);
+  } 
+  ok = false;
+  return def_color;
 }
 
 
@@ -3108,7 +3170,13 @@ void tabViewType::CreateDataPanel_impl(taiDataLink* dl)
   taiEdit* taie = td->ie;
   //TODO: need to determine read_only
   //note: we cache this panel for the menu/method box fixup step
-  edit_panel = taie->EditNewPanel(dl, dl->data(), false, GetEditColorInherit(dl));
+  // note: prob don't need this color nonsense, could just use defs, which does the same thing
+  bool ok;
+  const iColor bg = GetEditColorInherit(dl, ok);
+  if (ok)
+    edit_panel = taie->EditNewPanel(dl, dl->data(), false, bg);
+  else 
+    edit_panel = taie->EditNewPanel(dl, dl->data(), false);
   DataPanelCreated(edit_panel);
 }
 
@@ -3120,8 +3188,8 @@ taiDataLink* tabViewType::GetDataLink(void* data_, TypeDef* el_typ) {
   else return CreateDataLink_impl(data);
 }
 
-const iColor* tabViewType::GetEditColorInherit(taiDataLink* dl) const {
-  return ((taBase*)dl->data())->GetEditColorInherit();
+const iColor tabViewType::GetEditColorInherit(taiDataLink* dl, bool& ok) const {
+  return ((taBase*)dl->data())->GetEditColorInherit(ok);
 }
 
 

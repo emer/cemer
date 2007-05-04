@@ -172,7 +172,7 @@ public:
   taiEditDataHost*	editDataHost() {return owner;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
   override void		Closing(CancelOp& cancel_op);
-  override const iColor* GetTabColor(bool selected) const; // special color for tab; NULL means use default
+  override const iColor GetTabColor(bool selected, bool& ok) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
   override void		Refresh(); // always do it, even when hidden; the edit sorts it out
   override void 	GetImage() {GetImage_impl();} // edit handles HasChanged stuff
@@ -300,8 +300,8 @@ public:
   HiLightButton*  apply_but;	// only use for dialogs that wait around
   HiLightButton*  revert_but;
 
-  iColor* 		bg_color;	// background color of host -- only set via setBgColor
-  virtual void		setBgColor(const iColor* new_bg); // #SET_bg_color
+  iColor		bgColor() const {return bg_color;}
+  virtual void		setBgColor(const iColor& new_bg); // #SET_bg_color
 
   inline bool		isDialog() {return (host_type == HT_DIALOG);} 
     // 'true' when we will be been posted as a dialog
@@ -318,7 +318,7 @@ public:
   void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
 
   void  Constr(const char* prompt = "", const char* win_title = "",
-    const iColor* bgcol = NULL, HostType host_type = HT_DIALOG, bool deferred = false);
+    HostType host_type = HT_DIALOG, bool deferred = false);
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
   void  ConstrDeferred(); // finish deferred construction
   virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
@@ -366,7 +366,8 @@ protected:
   QWidget*		mwidget;	// outer container for all widgets
   iDialog*		dialog; // dialog, when using Edit, NULL otherwise
   HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
-  iColor*		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
+  iColor 		bg_color; // background color of host -- set via setBgColor
+  iColor		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
   bool			reshow_req; // these are set on async req, cleared when serviced
   bool			defer_reshow_req; 
   // deferred reshow -- used when hidden, or changed; when refresh comes, it reshows
@@ -421,7 +422,7 @@ public:
   iFlowLayout*	layMethButtons;	// method buttons
 
 
-  virtual const iColor* colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
+  virtual const iColor	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
   inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
 
   taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
@@ -451,7 +452,7 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
   void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f
-  const iColor* colorOfCurRow() const {return colorOfRow(cur_row);} 
+  const iColor	 colorOfCurRow() const {return colorOfRow(cur_row);} 
   taMisc::ShowMembs	show() const; // legacy -- just returns the app value
   bool  	HasChanged() {return modified;}	
   bool		isConstructed() {int s = state & STATE_MASK;
@@ -595,7 +596,7 @@ public:
     // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
   EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
-  void		 	ConstrEditControl(const iColor* bgcol = NULL); 
+  void		 	ConstrEditControl(); 
     // for controls -- construct then edit 
   void			GetImage(bool force); //override
   void			GetValue(); //override

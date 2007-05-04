@@ -31,7 +31,7 @@
 #include "css_ta.h"
 #include "ta_TA_type.h"
 
-#include "ibutton.h" // iMenuButton
+#include "ibutton.h" // iMenuButton, iColorButton
 #include "icolor.h"
 #include "icheckbox.h"
 #include "icombobox.h"
@@ -1131,7 +1131,7 @@ void taiPolyData::Constr(QWidget* gui_parent_) {
   SetRep(new QWidget(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
+    SET_PALETTE_BACKGROUND_COLOR(rep(), host->colorOfCurRow());
   }
 }
 
@@ -1169,6 +1169,35 @@ void taiPolyData::GetValue_impl(void* base) const {
 
 
 //////////////////////////////////
+//  taiColor			//
+//////////////////////////////////
+
+taiColor::taiColor(TypeDef* typ_, IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags)
+: inherited(typ_, host_, par, gui_parent_, flags) 
+{
+  iColorButton* rep = new iColorButton(gui_parent_);
+  SetRep(rep);
+  rep->setUseAlpha((flags & flgUseAlpha));
+  if (flags & flgReadOnly) {
+    rep->setEnabled(false);
+  } else {
+    connect(rep, SIGNAL(colorChanged()), this, SLOT(repChanged()));
+  }
+}
+
+void taiColor::GetImage(const iColor& val) {
+  rep()->setColor(val);
+}
+
+iColor taiColor::GetValue() const {
+  iColor rval(rep()->color());
+  return rval;
+}
+
+
+
+//////////////////////////////////
 // 	taiDataDeck		//
 //////////////////////////////////
 
@@ -1177,7 +1206,7 @@ taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget*
   SetRep(new QStackedWidget(gui_parent_));
   rep()->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep(),*(host->colorOfCurRow()));
+    SET_PALETTE_BACKGROUND_COLOR(rep(), host->colorOfCurRow());
   }
 }
 
@@ -1224,7 +1253,7 @@ void taiVariantBase::Constr(QWidget* gui_parent_) {
   SetRep(rep_);
   rep_->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
-    SET_PALETTE_BACKGROUND_COLOR(rep_,*(host->colorOfCurRow()));
+    SET_PALETTE_BACKGROUND_COLOR(rep_, host->colorOfCurRow());
   }
   InitLayout();
   Constr_impl(gui_parent_, (mflags & flgReadOnly));
@@ -2370,10 +2399,6 @@ void taiEditButton::GetImage_impl(const void* base) {
 void taiEditButton::Edit() {
   if (cur_base == NULL)
     return;
-  const iColor* bgclr = NULL;
-  if (typ->InheritsFrom(TA_taBase)) {
-    bgclr = ((TAPtr)cur_base)->GetEditColorInherit();
-  }
 //nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
 /*obs  bool modal = false;
   if (host != NULL)
@@ -2381,11 +2406,11 @@ void taiEditButton::Edit() {
   // note that the target of a pointer is not necessarily readonly just because
   // the pointer itself was readonly... (so we don't propagate ro to target)
   if (ie == NULL) {
-    typ->ie->Edit(cur_base, false, bgclr);
+    typ->ie->Edit(cur_base, false);
   }
   else {
     ie->typ = typ;
-    ie->Edit(cur_base, false, bgclr);
+    ie->Edit(cur_base, false);
   }
   GetImage_impl(cur_base);
 }
@@ -4024,9 +4049,7 @@ void taiToken::Edit() {
   if(cur_base == NULL) return;
 
   taiEdit* gc;
-  const iColor* bgclr = NULL;
   if (typ->InheritsFrom(TA_taBase)) {
-    bgclr = ((TAPtr)cur_base)->GetEditColorInherit();
     gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
   }
   else {
@@ -4036,7 +4059,7 @@ void taiToken::Edit() {
 /*obs  bool wait = false;
   if (host != NULL) wait = host->modal; */
 
-  gc->Edit(cur_base, false, bgclr);
+  gc->Edit(cur_base, false);
 }
 
 void taiToken::GetImage(TAPtr ths) {
@@ -4239,9 +4262,7 @@ void taiSubToken::Edit() {
   if (cur_base == NULL) return;
 
   taiEdit* gc;
-  const iColor* bgclr = NULL;
   if(typ->InheritsFrom(TA_taBase)) {
-    bgclr = ((TAPtr)cur_base)->GetEditColorInherit();
     gc = (taiEdit*) ((taBase*)cur_base)->GetTypeDef()->ie;
   }
   else {
@@ -4252,7 +4273,7 @@ void taiSubToken::Edit() {
 /*obs  bool modal = false;
   if (host != NULL) modal = host->modal; */
 
-  gc->Edit(cur_base, false, bgclr);
+  gc->Edit(cur_base, false);
 }
 
 void taiSubToken::GetImage(const void* ths, void* sel) {
@@ -4691,12 +4712,13 @@ void taiMethodData::CallFun() {
     return;
   }
   arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal
-  const iColor* bgclr = NULL;
   if (typ->InheritsFrom(TA_taBase)) {
-    bgclr = ((TAPtr)base)->GetEditColorInherit();
+    bool ok;
+    iColor bgclr = ((TAPtr)base)->GetEditColorInherit(ok);
+    if (ok) arg_dlg->setBgColor(bgclr);
   }
 //nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
-  arg_dlg->Constr("", "", bgclr);
+  arg_dlg->Constr("", "");
   int ok_can = arg_dlg->Edit(true);	// true = wait for a response
   if (ok_can && !arg_dlg->err_flag) {
     GenerateScript();

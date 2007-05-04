@@ -77,10 +77,6 @@ void DataViewer::Copy_(const DataViewer& cp) {
 //TODO: should probably call Clear() too
 }
 
-void DataViewer::UpdateAfterEdit() {
-  inherited::UpdateAfterEdit();
-}
-
 void DataViewer::CloseWindow_impl() { // only called if mapped
   m_dvwidget->Close(); // typically is destructive close, and calls us back + resets instance
   m_dvwidget = NULL; // for safety

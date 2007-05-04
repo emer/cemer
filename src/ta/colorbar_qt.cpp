@@ -75,19 +75,21 @@ void HCBar::paintEvent(QPaintEvent* ev) {
   if (w_tot <= b ) { // less or same # strips as blocks -- subsample
     for (int j = 0; j < w_tot ; ++j) { // one strip per pixel
       int i = (j * (b - 1)) / w_tot ;
-      const iColor* col = scale->GetColor(i);
-      if (!col) break; // shouldn't happen
-      paint.fillRect(x, y, 1, h, (QColor)*col); // note: QColor converted to QBrush by Qt
+      bool ok;
+      const iColor col = scale->GetColor(i, &ok);
+      if (!ok) break; // shouldn't happen
+      paint.fillRect(x, y, 1, h, (QColor)col); // note: QColor converted to QBrush by Qt
       x += 1;
     }
   } else { // more space than blocks -- oversample
     float w = ((float)w_tot) / b; // ideal exact value per strip
     for (int i = 0; i < b; ++i) { // one strip per color value
-      const iColor* col = scale->GetColor(i);
-      if (!col) break; // shouldn't happen
+      bool ok;
+      const iColor col = scale->GetColor(i, &ok);
+      if (!ok) break; // shouldn't happen
       int wi = (int)(((i + 1) * w) - (float)x);
 
-      paint.fillRect(x, y, wi, h, (QColor)*col); // note: QColor converted to QBrush by Qt
+      paint.fillRect(x, y, wi, h, (QColor)col); // note: QColor converted to QBrush by Qt
       x += wi;
     }
   }
@@ -116,20 +118,22 @@ void VCBar::paintEvent(QPaintEvent* ev) {
   if (h_tot <= b ) { // less or same # strips as blocks -- subsample
     for (int j = h_tot - 1; j >= 0; --j) { // one strip per pixel
       int i = (j * (b - 1)) / h_tot ;
-      const iColor* col = scale->GetColor(i);
-      if (!col) break; // shouldn't happen
-      paint.fillRect(x, y, w, 1, (QColor)*col); // note: QColor converted to QBrush by Qt
+      bool ok;
+      const iColor col = scale->GetColor(i, &ok);
+      if (!ok) break; // shouldn't happen
+      paint.fillRect(x, y, w, 1, (QColor)col); // note: QColor converted to QBrush by Qt
       y += 1;
     }
   } else { // more space than blocks -- oversample
     float h = ((float)h_tot) / b; // ideal exact value per strip
     for (int i = b - 1; i >= 0; --i) { // one strip per color value
-      const iColor* col = scale->GetColor(i);
-      if (!col) break; // shouldn't happen
+      bool ok;
+      const iColor col = scale->GetColor(i, &ok);
+      if (!ok) break; // shouldn't happen
 //      int hi = (int)(((((b - 1) - i) + 1) * h) - (float)y);
       int hi = (int)(((b - i) * h) - (float)y);
 
-      paint.fillRect(x, y, w, hi, (QColor)*col); // note: QColor converted to QBrush by Qt
+      paint.fillRect(x, y, w, hi, (QColor)col); // note: QColor converted to QBrush by Qt
       y += hi;
     }
   }
@@ -287,8 +291,8 @@ void ColorPad::GetColors(){
   ColorScale* scale = sb->bar->scale; // cache
   if (!scale) return; // safety
   if (fill_type == COLOR){
-    const iColor* tfg;
-    const iColor* ttc;
+    iColor tfg;
+    iColor ttc;
     scale->GetColor(padval,&tfg,&ttc);
     fg = tfg;
     tc = ttc;
@@ -531,16 +535,16 @@ void ScaleBar::editor_reject(ivFieldEditor*) {
 
 #define scalebar_low_value	1.0e-10
 
-const iColor* ScaleBar::GetColor(int idx){
+const iColor ScaleBar::GetColor(int idx, bool* ok){
   int i = idx;
   if(i < 0) i = bar->scale->colors.size + i;
-  return(bar->scale->GetColor(i));
+  return(bar->scale->GetColor(i, ok));
 }
 
-const iColor* ScaleBar::GetContrastColor(int idx){
+const iColor ScaleBar::GetContrastColor(int idx, bool* ok){
   int i = idx;
   if(i < 0) i = bar->scale->colors.size + i;
-  return(bar->scale->GetContrastColor(i));
+  return(bar->scale->GetContrastColor(i, ok));
 }
 
 float ScaleBar::GetVal(int idx) {

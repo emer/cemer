@@ -2564,7 +2564,7 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
   if(!on) return;
   ComputeTicks();		// do this always..
   SoMaterial* mat = t3ax->material();
-  color.color()->copyTo(mat->diffuseColor);
+  color.color().copyTo(mat->diffuseColor);
   switch (axis) {
   case X: RenderAxis_X(t3ax, ticks_only);
     break;
@@ -3574,7 +3574,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl) {
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
   t3gl->setValueColorMode(false);
-  t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+  t3gl->setDefaultColor((T3Color)(plv.color.color()));
 
   String label = plv.col_name; taMisc::SpaceLabel(label);
 
@@ -3951,8 +3951,8 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   }
 }
 
-const iColor* GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
-  const iColor* clr = NULL;
+const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
+  iColor clr;
 
   if (ax_clr->range.Range() == 0) {
     clr = colorscale.GetColor((int)((.5f * (float)(colorscale.chunks-1)) + .5f));
@@ -3995,7 +3995,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   DataCol* da_clr = NULL;
   if(color_mode == FIXED_COLOR) {
     t3gl->setValueColorMode(false);
-    t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+    t3gl->setDefaultColor((T3Color)(plv.color.color()));
   }
   else {
     t3gl->setValueColorMode(true);
@@ -4009,7 +4009,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     }
     if(!da_clr) {		// fallback
       t3gl->setValueColorMode(false);
-      t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+      t3gl->setDefaultColor((T3Color)(plv.color.color()));
     }
   }
 
@@ -4034,7 +4034,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   iVec3f th_ed;			// end of thresholded line
   bool first = true;
   for (int row = view_range.min; row <= view_range.max; row++) {
-    const iColor* clr = NULL; // only used for color modes
+    iColor clr; // only used for color modes
+    bool clr_ok = false;
     bool new_trace = false;
     if(x_axis.row_num)
       dat.x = row;
@@ -4081,6 +4082,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
       new_trace = true;
 
     if(da_clr) {
+      clr_ok = true;
       if(color_mode == VALUE_COLOR) {
 	clr = GetValueColor(ax_clr, yval);
       }
@@ -4092,14 +4094,14 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     // draw the line
     if(plot_style == LINE || plot_style == LINE_AND_POINTS) {
       if(first || (new_trace && !negative_draw)) {	// just starting out
-	if(clr)
-	  t3gl->moveTo(plt, (T3Color)(*clr));
+	if(clr_ok)
+	  t3gl->moveTo(plt, (T3Color)(clr));
 	else
 	  t3gl->moveTo(plt);
       }
       else {
-	if(clr)
-	  t3gl->lineTo(plt, (T3Color)(*clr));
+	if(clr_ok)
+	  t3gl->lineTo(plt, (T3Color)(clr));
 	else
 	  t3gl->lineTo(plt);
       }
@@ -4108,9 +4110,9 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
       if(yval >= thresh) {
 	th_st = plt;  th_st.x = x_axis.DataToPlot(dat.x - thr_line_len);
 	th_ed = plt;  th_ed.x = x_axis.DataToPlot(dat.x + thr_line_len);
-	if(clr) {
-	  t3gl->moveTo(th_st, (T3Color)(*clr));
-	  t3gl->lineTo(th_ed, (T3Color)(*clr));
+	if(clr_ok) {
+	  t3gl->moveTo(th_st, (T3Color)(clr));
+	  t3gl->lineTo(th_ed, (T3Color)(clr));
 	}
 	else {
 	  t3gl->moveTo(th_st);
@@ -4120,8 +4122,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     }
     else if(plot_style == THRESH_POINT) {
       if(yval >= thresh) {
-	if(clr)
-	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(*clr));
+	if(clr_ok)
+	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
 	else
 	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
       }
@@ -4130,8 +4132,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     // render marker, if any
     if((plot_style == POINTS) || (plot_style == LINE_AND_POINTS)) {
       if(row % point_spacing == 0) {
-	if(clr)
-	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(*clr));
+	if(clr_ok)
+	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
 	else
 	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
       }
@@ -4148,8 +4150,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
       
-      if(clr)
-	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(*clr));
+      if(clr_ok)
+	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(clr));
       else
 	t3gl->errBar(plt, err_plt, err_bar_width);
     }
@@ -4190,7 +4192,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   DataCol* da_clr = NULL;
   if(color_mode == FIXED_COLOR) {
     t3gl->setValueColorMode(false);
-    t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+    t3gl->setDefaultColor((T3Color)(plv.color.color()));
   }
   else {
     t3gl->setValueColorMode(true);
@@ -4204,7 +4206,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     }
     if(!da_clr) {		// fallback
       t3gl->setValueColorMode(false);
-      t3gl->setDefaultColor((T3Color)(*plv.color.color()));
+      t3gl->setDefaultColor((T3Color)(plv.color.color()));
     }
   }
 
@@ -4224,7 +4226,8 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   iVec3f dat;			// data point
   iVec3f plt;			// plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
-    const iColor* clr = NULL; // only used for color modes
+    iColor clr; // only used for color modes
+    bool clr_ok = false;
     if(x_axis.row_num)
       dat.x = row;
     else
@@ -4255,6 +4258,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
       plt.z = z_axis.DataToPlot(dat.z);
 
     if(da_clr) {
+      clr_ok = true;
       if(color_mode == VALUE_COLOR) {
 	clr = GetValueColor(ax_clr, dat.y);
       }
@@ -4265,15 +4269,15 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
 
     iVec3f pt;
     // draw the line
-    if(clr) {
+    if(clr_ok) {
       pt = plt;  pt.y = 0.0f;  pt.x += bar_off_plt;
-      t3gl->moveTo(pt, (T3Color)(*clr));
+      t3gl->moveTo(pt, (T3Color)(clr));
       pt.y = plt.y;
-      t3gl->lineTo(pt, (T3Color)(*clr));
+      t3gl->lineTo(pt, (T3Color)(clr));
       pt.x += bar_wd_plt;
-      t3gl->lineTo(pt, (T3Color)(*clr));
+      t3gl->lineTo(pt, (T3Color)(clr));
       pt.y = 0.0f;
-      t3gl->lineTo(pt, (T3Color)(*clr));
+      t3gl->lineTo(pt, (T3Color)(clr));
     }
     else {
       pt = plt;  pt.y = 0.0f;  pt.x += bar_off_plt;
@@ -4297,8 +4301,8 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
       
-      if(clr)
-	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(*clr));
+      if(clr_ok)
+	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(clr));
       else
 	t3gl->errBar(plt, err_plt, err_bar_width);
     }

@@ -79,7 +79,7 @@ public:
   float		redf() const {return ic2fc(r);}
   float		greenf() const {return ic2fc(g);}
   float		bluef() const {return ic2fc(b);}
-  float		alpha() const {return ic2fc(a);}
+  float		alphaf() const {return ic2fc(a);}
   int		rgb() const { return (r << 16) | (g << 8) | b; } // can't assume byte order
 
   void		clear() {setRgb(0,0,0,1.0);} // black

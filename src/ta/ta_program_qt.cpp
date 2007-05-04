@@ -194,7 +194,7 @@ void iProgramEditor::Init() {
 
   meth_but_mgr = new iMethodButtonMgr(this); 
   
-  setEditBgColor(NULL); // set defaults
+  defEditBgColor(); 
   
   QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
@@ -268,8 +268,10 @@ bool iProgramEditor::ShowMember(MemberDef* md) {
 void iProgramEditor::Base_Add() {
   base->AddDataClient(this);
   // get colors for type
-  const iColor* bgc = base->GetEditColorInherit(); 
-  setEditBgColor(bgc);
+  bool ok;
+  const iColor bgc = base->GetEditColorInherit(ok); 
+  if (ok) setEditBgColor(bgc);
+  else defEditBgColor();
 
   // metrics for laying out
   int lines = editLines(); // amount of space, in lines, available
@@ -403,11 +405,11 @@ void iProgramEditor::Apply() {
 }
 
 
-const iColor* iProgramEditor::colorOfCurRow() const {
+const iColor iProgramEditor::colorOfCurRow() const {
   if ((row % 2) == 0) {
-    return &bg_color;
+    return bg_color;
   } else {
-    return &bg_color_dark;
+    return bg_color_dark;
   }
 }
 
@@ -533,14 +535,14 @@ void iProgramEditor::Refresh() {
 }
 
 
-void iProgramEditor::setEditBgColor(const iColor* value) {
-  // default colors, if not supplied
-  if (value) // defaults
-    bg_color = *value;
-  else
-    bg_color.set(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
+void iProgramEditor::setEditBgColor(const iColor& value) {
+  bg_color = value;
   taiDataHost::MakeDarkBgColor(bg_color, bg_color_dark);
   body->setColors(bg_color, bg_color_dark);
+}
+
+void iProgramEditor::defEditBgColor() {
+  setEditBgColor(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
 }
 
 void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
@@ -1188,11 +1190,12 @@ iProgramCtrlPanel::iProgramCtrlPanel(taiDataLink* dl_)
   pc = NULL;
   if (prog_) {
     pc = new iProgramCtrlDataHost(prog_);
-    const iColor* bgcol = NULL;
     if (taMisc::color_hints & taMisc::CH_EDITS) {
-      bgcol = prog_->GetEditColorInherit();
+      bool ok;
+      iColor bgcol = prog_->GetEditColorInherit(ok);
+      if (ok) pc->setBgColor(bgcol);
     }
-    pc->ConstrEditControl(bgcol);
+    pc->ConstrEditControl();
     setCentralWidget(pc->widget()); //sets parent
     setButtonsWidget(pc->widButtons);
   }

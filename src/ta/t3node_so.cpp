@@ -1379,14 +1379,14 @@ void SoMatrixGrid::renderValues() {
 	  val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
 	else
 	  val = matrix->FastElAsFloat(pos.x, pos.y);
-	const iColor* fl;  const iColor* tx;
+	iColor fl;  iColor tx;
 	scale->GetColor(val,&fl,&tx,sc_val);
 	float zp = sc_val * blk_ht;
 	v_idx+=4;			// skip the _0 cases
 	for(int i=0;i<4;i++)
 	  vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
 	float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
-	color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
+	color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
 	if(val_text) {
 	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
@@ -1416,14 +1416,14 @@ void SoMatrixGrid::renderValues() {
 	    val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
 	  else
 	    val = matrix->FastElAsFloat(pos.x, pos.y, z);
-	  const iColor* fl;  const iColor* tx;
+	  iColor fl;  iColor tx;
 	  scale->GetColor(val,&fl,&tx,sc_val);
 	  float zp = sc_val * blk_ht;
 	  v_idx+=4;			// skip the _0 cases
 	  for(int i=0;i<4;i++)
 	    vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
 	  float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
-	  color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
+	  color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
 	  if(val_text) {
 	    SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
@@ -1457,14 +1457,14 @@ void SoMatrixGrid::renderValues() {
 	      val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
 	    else
 	      val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
-	    const iColor* fl;  const iColor* tx;
+	    iColor fl;  iColor tx;
 	    scale->GetColor(val,&fl,&tx,sc_val);
 	    float zp = sc_val * blk_ht;
 	    v_idx+=4;			// skip the _0 cases
 	    for(int i=0;i<4;i++)
 	      vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
 	    float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
-	    color_dat[c_idx++] = T3Color::makePackedRGBA(fl->redf(), fl->greenf(), fl->bluef(), alpha);
+	    color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
 	    if(val_text) {
 	      SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	      SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);

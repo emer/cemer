@@ -104,7 +104,8 @@ public:
 #endif 
   int			editLines() const; // number of edit lines (typ 4) 
   void			setEditNode(TAPtr value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
-  void 			setEditBgColor(const iColor* value); // set bg for edit, null for default
+  void 			setEditBgColor(const iColor& value); // set bg for edit, null for default
+  void			defEditBgColor(); // set default color
   void			setShow(int value); // only used by expert toggle
   virtual void		Refresh(); // manual refresh
 
@@ -125,7 +126,7 @@ public: // IDataLinkClient i/f
   void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
-  const iColor* 	colorOfCurRow() const; // #IGNORE 
+  const iColor	 	colorOfCurRow() const; // #IGNORE 
   bool  		HasChanged() {return m_modified;}	
   bool			isConstructed() {return true;}
   bool			isModal() {return false;} // never for us

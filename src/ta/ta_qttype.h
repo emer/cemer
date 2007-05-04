@@ -152,6 +152,35 @@ protected:
 };
 
 
+class TA_API taiColorType : public taiClassType { // special editor for colors, add dialog
+INHERITED(taiClassType)
+public:
+  bool		handlesReadOnly() const {return true;}
+  bool		requiresInline() const {return true;}
+  int 		BidForType(TypeDef* td);
+
+  TAQT_TYPE_INSTANCE(taiColorType, taiClassType);
+protected:
+  taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_);
+};
+
+
+class TA_API taitaColorType : public taiColorType { // special editor for colors, add dialog
+INHERITED(taiColorType)
+public:
+  int 		BidForType(TypeDef* td);
+  
+  TAQT_TYPE_INSTANCE(taitaColorType, taiColorType);
+  
+protected:
+  void 		GetImage_impl(taiData* dat, const void* base);
+  void		GetValue_impl(taiData* dat, void* base);
+};
+
+
+
+
 class TA_API gpiListType : public taiClassType {
 public:
 //  bool		allowsInline() const {return false;}
@@ -875,7 +904,7 @@ class TA_API tabViewType: public taiViewType { // for taBase and descendants
 INHERITED(taiViewType)
 public:
   override int		BidForView(TypeDef*);
-  override const iColor* GetEditColorInherit(taiDataLink* dl) const;// #IGNORE background color for edit
+  override const iColor GetEditColorInherit(taiDataLink* dl, bool& ok) const;// #IGNORE background color for edit
   override iDataPanel*	CreateDataPanel(taiDataLink* dl_); 
   override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ);
   void			Initialize() {}

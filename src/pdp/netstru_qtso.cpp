@@ -1511,7 +1511,7 @@ void NetView::GetMembs() {
 }
 
 void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
-  const iColor* fl;  const iColor* tx;
+  iColor fl;  iColor tx;
   scale.GetColor(val,&fl,&tx,sc_val);
   col = fl;
 }
@@ -2402,8 +2402,12 @@ void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
     if (m_cur_spec) {
       Layer* lay = lv->layer();
       if (lay && UsesSpec(lay, m_cur_spec)) {
-        lv->setHighlightColor(T3Color(m_cur_spec->GetEditColorInherit()));
-        continue;
+        bool ok;
+        iColor hc = m_cur_spec->GetEditColorInherit(ok);
+        if (ok) { 
+          lv->setHighlightColor(T3Color(hc));
+          continue;
+        }
       }
     }
     lv->setDefaultColor();
@@ -2414,8 +2418,12 @@ void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
     if (m_cur_spec) {
       Projection* prjn = pv->prjn();
       if (prjn && UsesSpec(prjn, m_cur_spec)) {
-        pv->setHighlightColor(T3Color(m_cur_spec->GetEditColorInherit()));
-        continue;
+        bool ok;
+        iColor hc = m_cur_spec->GetEditColorInherit(ok);
+        if (ok) { 
+          pv->setHighlightColor(T3Color(hc));
+          continue;
+        }
       }
     }
     pv->setDefaultColor();

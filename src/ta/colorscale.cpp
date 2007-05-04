@@ -29,35 +29,46 @@
 #include <qpalette.h>
 #endif
 
+
+//////////////////////////
+//  taColor		//
+//////////////////////////
+
+const iColor taColor::color() const {
+  iColor rval(r,g,b,a);
+  return rval;
+}
+
+void taColor::setColor(const iColor& cp) {
+  Set(cp.redf(), cp.greenf(), cp.bluef(), cp.alphaf());
+}
+
 //////////////////////////
 //	RGBA		//
 //////////////////////////
 
 RGBA::RGBA(float rd, float gr, float bl, float al) {
-  Register(); Initialize(); SetDefaultName();
+  Initialize(); SetDefaultName();
   r = rd; g = gr; b = bl; a = al;
-  color_.setRgb(r, g, b, a);
 }
 
 void RGBA::Initialize() {
   r = g = b = 0.0f;
   a = 1.0f;
-  name = "";
 }
 
 void RGBA::Destroy() {
 }
 
 void RGBA::UpdateAfterEdit_impl(){
-  taOBase::UpdateAfterEdit_impl(); // skip over NBase and avoid C name imposition
+  taOBase::UpdateAfterEdit_impl(); // skip nBase guy
   //  if(!taMisc::gui_active)    return;
-  if (!name.empty()){
+  if (!name.empty()) {
     if(!(iColor::find
-	 (/*ivSession::instance()->default_display(),*/(char *)name,r,g,b))){
+	 ((char*)name,r,g,b))){
       taMisc::Error("Color: " , name , " not found for this display");
     }
   }
-  color_.setRgb(r, g, b, a);
 }
 
 void RGBA::Copy_(const RGBA& cp) {
@@ -66,14 +77,45 @@ void RGBA::Copy_(const RGBA& cp) {
   g = cp.g;
   b = cp.b;
   a = cp.a;
-  color_.setRgb(r, g, b, a);
 }
 
-const iColor* RGBA::color() const {
-  //note: updating every time is slower, but WAY WAY more reliable than trying
-  // to track every possible case of manual updating
-  ((iColor&)color_).setRgb(r, g, b, a); // note: cast away constness is ok for an internal cache variable
-  return &color_;
+void RGBA::CanCopyCustom_impl(bool to, const taBase* cp,
+    bool quiet, bool& allowed, bool& forbidden) const
+{
+  // we handle both dirs, so don't check
+  if (cp->InheritsFrom(&TA_taColor)) {
+    allowed = true;
+  } else 
+    inherited::CanCopyCustom_impl(to, cp, quiet, allowed, forbidden);
+}
+
+void RGBA::CopyFromCustom_impl(const taBase* cp_)
+{
+  const taColor* cp = dynamic_cast<const taColor*>(cp_);
+  if (cp) {
+    r = cp->r;
+    g = cp->g;
+    b = cp->b;
+    a = cp->a;
+  } else
+    inherited::CopyFromCustom_impl(cp_);
+}
+
+void RGBA::CopyToCustom_impl(taBase* to_) const
+{
+  taColor* to = dynamic_cast<taColor*>(to_);
+  if (to) {
+    to->r = r;
+    to->g = g;
+    to->b = b;
+    to->a = a;
+  } else
+    inherited::CopyToCustom_impl(to_);
+}
+
+
+const iColor RGBA::color() const {
+  return iColor(r, g, b, a);
 }
 
 String RGBA::ToString_RGBA() const {
@@ -112,9 +154,9 @@ void TAColor::SetColor(float r, float g, float b, float a, RGBA* background){
 
   // now get the intensity of the foreground color
 
-  float		nr=1.0,ng=1.0,nb=1.0,na=1.0;
+  float		nr=1.0,ng=1.0,nb=1.0;
   color_.intensities(nr,ng,nb);
-  na = color_.alpha();
+  float na = color_.alphaf();
   // compute the ratio of the background color to the foreground color
   float bw = ((nr+ng+nb)/3.0f) * na + (bgc * (1.0f-na));
 
@@ -412,6 +454,7 @@ void ScaleRange::SetFromScale(ColorScale& cs) {
 //	ColorScale	//
 //////////////////////////
 
+const iColor ColorScale::def_color;
 float ColorScale::sc_val_def = 0.0f;
 
 void ColorScale::Initialize() {
@@ -474,9 +517,9 @@ void ColorScale::MapColors() {
   }
   spec->GenRanges(&colors, chunks);
 
-  maxout.SetColor(new iColor(*GetColor(colors.size-1),.25), &spec->background);
-  minout.SetColor(new iColor(*GetColor(0),.25), &spec->background);
-  nocolor.SetColor(new iColor(*GetColor((colors.size+1)/2),.25),&spec->background);
+  maxout.SetColor(iColor(GetColor(colors.size-1),.25), &spec->background);
+  minout.SetColor(iColor(GetColor(0),.25), &spec->background);
+  nocolor.SetColor(iColor(GetColor((colors.size+1)/2),.25), &spec->background);
 }
 
 void ColorScale::DefaultChunks(){
@@ -490,11 +533,12 @@ float ColorScale::GetAbsPercent(float val){
     return ((zero - min) == 0.0f) ? 0.0f : fabs((zero - val) / (zero - min));
 }
 
-const iColor* ColorScale::GetColor(float val, const iColor** maincolor,
-				   const iColor** contrast, float& sc_val) {
+const iColor ColorScale::GetColor(float val, iColor* maincolor,
+    iColor* contrast, float& sc_val) 
+{
   int idx;
-  const iColor* m;
-  const iColor* c;
+  iColor m;
+  iColor c;
   if (range == 0.0f) {
     m = GetColor((int) ((.5f * (float)(chunks-1)) + .5f));
     c = GetContrastColor(chunks-1);
@@ -522,26 +566,26 @@ const iColor* ColorScale::GetColor(float val, const iColor** maincolor,
   return m;
 }
 
-const iColor* ColorScale::Get_Background(){
-  return &background;
+const iColor ColorScale::Get_Background(){
+  return background;
 }
 
-const iColor* ColorScale::GetColor(int idx) {
+const iColor ColorScale::GetColor(int idx, bool* ok) {
   if((idx >= 0) && (idx < colors.size)) {
+    if (ok) *ok = true;
     return ((TAColor *) colors[idx])->color();
   }
-  else {
-    return NULL;
-  }
+  if (ok) *ok = false;
+  return def_color;
 }
 
-const iColor* ColorScale::GetContrastColor(int idx) {
+const iColor ColorScale::GetContrastColor(int idx, bool* ok) {
   if((idx >= 0) && (idx < colors.size)) {
+    if (ok) *ok = true;
     return ((TAColor *) colors[idx])->contrastcolor();
   }
-  else {
-    return NULL;
-  }
+  if (ok) *ok = false;
+  return def_color;
 }
 
 int ColorScale::GetIdx(float val) {

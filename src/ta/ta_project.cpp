@@ -750,7 +750,7 @@ void taRootBase::Options() {
   taiEdit* ie =  TA_taMisc.ie;
   if (!ie) return;
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
-  int accepted = ie->EditDialog(inst, false, NULL, true); // r/w, defcolor, modal
+  int accepted = ie->EditDialog(inst, false, true); // r/w, modal
   if (accepted) {
     inst->SaveConfig();
   }
