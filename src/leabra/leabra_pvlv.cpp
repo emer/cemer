@@ -294,6 +294,7 @@ void LVConSpec::Initialize() {
 void LVSpec::Initialize() {
   disc_thr = .02f;
   disc = 0.8f;
+  delta_on_sum = false;
   use_actual_er = false;
   syn_dep = false;
 }
@@ -490,13 +491,16 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
      );
 }
 
-float LVeLayerSpec::Compute_ActEqSum(LeabraLayer* lay) {
+float LVeLayerSpec::Compute_ActEqAvg(LeabraLayer* lay) {
   float act_eq_sum = 0.0f;
   UNIT_GP_ITR
     (lay, 
      DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
      act_eq_sum += u->act_eq;
      );
+
+  if(lay->units.gp.size > 0)
+    act_eq_sum /= (float)lay->units.gp.size; // average!
   return act_eq_sum;
 }
 
@@ -514,22 +518,34 @@ float LVeLayerSpec::Compute_LvDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
 }
 
 float LVeLayerSpec::Compute_LvDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay) {
-  float lv_da_sum = 0.0f;
-  int gi = 0;
-  if(lve_lay->units.gp.size > 0) {
-    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
-      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-      Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-      lv_da_sum += Compute_LvDa_ugp(lve_ugp, lvi_ugp);
-    }
-    lv_da_sum /= (float)lve_lay->units.gp.size; // average!
+  float lv_da = 0.0f;
+  if(lv.delta_on_sum) {
+    DaModUnit* lveu = (DaModUnit*)lve_lay->units.Leaf(0); // first guy holds prior val
+    float lve_avg = Compute_ActEqAvg(lve_lay);
+    float lvi_avg = Compute_ActEqAvg(lvi_lay);
+    float lvd = lve_avg - lvi_avg;
+    if(lvd >= lveu->misc_1 + lv.disc_thr) // bonus if significantly above previous
+      lv_da = lvd - lv.disc * lveu->misc_1;
+    else
+      lv_da = lvd - lveu->misc_1;
   }
   else {
-    Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
-    Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-    lv_da_sum = Compute_LvDa_ugp(lve_ugp, lvi_ugp);
-  } 
-  return lv_da_sum;
+    int gi = 0;
+    if(lve_lay->units.gp.size > 0) {
+      for(gi=0; gi<lve_lay->units.gp.size; gi++) {
+	Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
+	Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
+	lv_da += Compute_LvDa_ugp(lve_ugp, lvi_ugp);
+      }
+      lv_da /= (float)lve_lay->units.gp.size; // average!
+    }
+    else {
+      Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
+      Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
+      lv_da = Compute_LvDa_ugp(lve_ugp, lvi_ugp);
+    } 
+  }
+  return lv_da;
 }
 
 void LVeLayerSpec::Update_LvPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail) {
@@ -545,19 +561,33 @@ void LVeLayerSpec::Update_LvPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, 
 }
 
 void LVeLayerSpec::Update_LvPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail) {
-  int gi = 0;
-  if(lve_lay->units.gp.size > 0) {
-    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
-      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-      Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-      Update_LvPrior_ugp(lve_ugp, lvi_ugp, er_avail);
+  if(lv.delta_on_sum) {
+    DaModUnit* lveu = (DaModUnit*)lve_lay->units.Leaf(0); // first guy holds prior val
+    if(er_avail) {
+      lveu->misc_1 = 0.0f;
+    }
+    else {
+      float lve_avg = Compute_ActEqAvg(lve_lay);
+      float lvi_avg = Compute_ActEqAvg(lvi_lay);
+      float lvd = lve_avg - lvi_avg;
+      lveu->misc_1 = lvd;
     }
   }
   else {
-    Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
-    Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-    Update_LvPrior_ugp(lve_ugp, lvi_ugp, er_avail);
-  } 
+    int gi = 0;
+    if(lve_lay->units.gp.size > 0) {
+      for(gi=0; gi<lve_lay->units.gp.size; gi++) {
+	Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
+	Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
+	Update_LvPrior_ugp(lve_ugp, lvi_ugp, er_avail);
+      }
+    }
+    else {
+      Unit_Group* lve_ugp = (Unit_Group*)&(lve_lay->units);
+      Unit_Group* lvi_ugp = (Unit_Group*)&(lvi_lay->units);
+      Update_LvPrior_ugp(lve_ugp, lvi_ugp, er_avail);
+    } 
+  }
 }
 
 void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {

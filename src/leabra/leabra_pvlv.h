@@ -244,6 +244,7 @@ class LEABRA_API LVSpec : public taBase {
 public:
   float		disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.02 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
   float		disc;		// #CONDEDIT_OFF_syn_dep #DEF_0.8 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
+  bool		delta_on_sum;	// #DEF_false if there are multiple lv subgroups, compute the temporal delta on the summed lv values (else deltas are per each sub-group, then summed)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
 
@@ -266,8 +267,8 @@ public:
   virtual void 	Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // if primary value detected (present/expected), compute plus phase activations for learning, and actually change weights; otherwise just depress weights
 
-  virtual float	Compute_ActEqSum(LeabraLayer* lay);
-  // compute sum over value representation subgroups of act_eq values
+  virtual float	Compute_ActEqAvg(LeabraLayer* lay);
+  // compute average over value representation subgroups of act_eq values
   virtual float Compute_LvDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
   virtual float	Compute_LvDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay);

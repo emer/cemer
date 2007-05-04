@@ -240,7 +240,7 @@ class LEABRA_API MatrixRndGoSpec : public taBase {
 public:
   float		avgrew;		// #DEF_0.9 threshold on global avg reward value (0..1) below which random GO can fire (uses ExtRew_Stat if avail, else avg value from ExtRewLayer) -- once network is doing well overall, shutdown the exploration.  This is true for all cases EXCEPT err rnd go
 
-  float		ucond_p;	// #DEF_1e-04 unconditional random go probability (on every trial, each stripe has this probability of firing a Go randomly, without conditions)
+  float		ucond_p;	// #DEF_0.0001 unconditional random go probability (on every trial, each stripe has this probability of firing a Go randomly, without conditions)
   float		ucond_da;	// #DEF_1 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for the unconditional random go
 
   int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing

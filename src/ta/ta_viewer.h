@@ -597,9 +597,9 @@ public:
   taiMenuBar*		menu; // #IGNORE menu bar -- note: partially managed by the window
   taiActions*		cur_menu; // #IGNORE for building menu
 #endif
-  ToolBar_List		toolbars;	// 
+  ToolBar_List		toolbars; // #EXPERT 
   FrameViewer_List 	frames;	// the frames shown in the center splitter area
-  DockViewer_List	docks; // currently docked windows -- removed if they undock
+  DockViewer_List	docks; // #EXPERT currently docked windows -- removed if they undock
 
   override bool		isRoot() const {return m_is_root;}
   inline bool		isProjViewer() const {return m_is_proj_viewer;}
