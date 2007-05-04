@@ -26,7 +26,6 @@
 #include "ta_qtdialog.h"
 
 #include "css_machine.h" // for trace flag
-//#include "irenderarea.h"
 
 #include <qapplication.h>
 #include <qclipboard.h>
@@ -40,6 +39,7 @@
 #include <QMenu>
 #include <qscrollbar.h>
 #include <QTabWidget>
+#include <QPushButton>
 
 #include <Inventor/SoPath.h>
 #include <Inventor/SoOutput.h>
@@ -49,18 +49,17 @@
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/misc/SoBase.h>
 //#include <Inventor/nodes/SoDirectionalLight.h>
-//#include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoGroup.h>
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/Qt/SoQtRenderArea.h>
 #include <Inventor/Qt/viewers/SoQtViewer.h>
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
-
 
 const float t3Misc::pts_per_geom(72.0f);
 const float t3Misc::geoms_per_pt(1/pts_per_geom);
@@ -68,6 +67,337 @@ const float t3Misc::char_ht_to_wd_pts(12.0f/8.0f);
 const float t3Misc::char_base_fract(0.20f); //TODO: find correct val from coin src
 
 using namespace Qt;
+
+// todo: just go back to original buttons, but have new view guy,
+// * pre-set home as loaded view
+// * save set home guy instead of actual current view
+// * different icon for set home guy??  tool tips!!
+// * don't go back to pan after seek -- stay in seek mode until click off??
+// * present orig popup menu if nothing selected.  Add Frame is lame.
+
+//////////////////////////
+//	T3ExaminerViewer
+//////////////////////////
+
+SOQT_OBJECT_SOURCE(T3ExaminerViewer);
+
+T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget *parent, const char *name, bool embed)
+ :inherited(parent, name, embed, SoQtFullViewer::BUILD_ALL, SoQtViewer::BROWSER, FALSE) // no build
+{
+  t3vw = parent;
+  interactbutton = NULL;
+  viewbutton = NULL;
+  setClassName("T3ExaminerViewer");
+  QWidget * widget = buildWidget(getParentWidget()); // build now so that stuff is there
+  setBaseWidget(widget);
+}
+
+void T3ExaminerViewer::processEvent(QEvent* ev_) {
+  //NOTE: the base classes don't check if event is already handled, so we have to skip
+  // calling inherited if we handle it ourselves
+  if (!t3vw) goto do_inherited;
+
+  if (ev_->type() == QEvent::MouseButtonPress) {
+    QMouseEvent* ev = (QMouseEvent*)ev_;
+    if (ev->button() == Qt::RightButton) {
+      //TODO: maybe should check for item under mouse???
+      //TODO: pos will need to be adjusted for parent offset of renderarea ???
+      ISelectable* ci = t3vw->curItem();
+      if (!ci) goto do_inherited;
+
+      ev->accept();
+      t3vw->ContextMenuRequested(ev->globalPos());
+      return;
+    }
+  }
+
+do_inherited:
+  inherited::processEvent(ev_);
+}
+
+T3ExaminerViewer::~T3ExaminerViewer() {
+  // anything?
+  t3vw = NULL;
+}
+
+// pimpl is definitely a wart!  any attempt at re-use is really really awful!
+
+// Button icons.
+#include "pick.xpm"
+#include "view.xpm"
+#include "home.xpm"
+#include "set_home.xpm"
+#include "seek.xpm"
+#include "view_all.xpm"
+
+// original buttons
+enum {
+  INTERACT_BUTTON = 0,
+  EXAMINE_BUTTON,
+  HOME_BUTTON,
+  SET_HOME_BUTTON,
+  VIEW_ALL_BUTTON,
+  SEEK_BUTTON
+};
+
+// #define PUBLIC(o) (o->pub)
+// #define PRIVATE(o) (o->pimpl)
+
+void
+T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
+{
+  for (int i=0; i <= SEEK_BUTTON; i++) {
+    QPushButton * p = new QPushButton(parent);
+    // Button focus doesn't really make sense in the way we're using
+    // the pushbuttons.
+    p->setFocusPolicy(Qt::NoFocus);
+    // In some GUI styles in Qt4, a default button is drawn with an
+    // extra frame around it, up to 3 pixels or more. This causes
+    // pixmaps on buttons to look tiny, which is not what we want.
+    p->setIconSize(QSize(24, 24));
+
+#if (defined Q_WS_MAC && QT_VERSION >= 0x030100) && defined(HAVE_QSTYLEFACTORY_H)
+    // Since Qt/Mac 3.1.x, all pushbuttons (even those < 32x32) are drawn 
+    // using the Aqua style, i.e. with rounded edges and shading. This
+    // looks really ugly in the viewer decoration. Drawing the buttons
+    // in the Windows style gives us the flat, square buttons we want.
+    QStyle * style = QStyleFactory::create("windows");
+    if (style) { p->setStyle(style); }
+#endif
+
+    switch (i) {
+    case INTERACT_BUTTON:
+      interactbutton = p;
+      p->setToggleButton(TRUE);
+      p->setPixmap(QPixmap((const char **)pick_xpm));
+      p->setOn(this->isViewing() ? FALSE : TRUE);
+      p->setToolTip("Interact (ESC key): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
+      connect(p, SIGNAL(clicked()),
+	      this, SLOT(interactbuttonClicked()));
+      break;
+    case EXAMINE_BUTTON:
+      viewbutton = p;
+      p->setToggleButton(TRUE);
+      p->setPixmap(QPixmap((const char **)view_xpm));
+      p->setOn(this->isViewing());
+      p->setToolTip("Camera View (ESC key): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
+      QObject::connect(p, SIGNAL(clicked()),
+		       this, SLOT(viewbuttonClicked()));
+      break;
+    case HOME_BUTTON:
+      QObject::connect(p, SIGNAL(clicked()), this, SLOT(homebuttonClicked()));
+      p->setToolTip("Home View (Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
+      p->setPixmap(QPixmap((const char **)home_xpm));
+      break;
+    case SET_HOME_BUTTON:
+      QObject::connect(p, SIGNAL(clicked()),
+		       this, SLOT(sethomebuttonClicked()));
+      p->setToolTip("Save Home: Saves the current 'home' viewing configuration \n(click button above to go back to this view) -- saved with the project");
+      p->setPixmap(QPixmap((const char **)set_home_xpm));
+      break;
+    case VIEW_ALL_BUTTON:
+      QObject::connect(p, SIGNAL(clicked()),
+		       this, SLOT(viewallbuttonClicked()));
+      p->setToolTip("View All: repositions the camera view to the standard initial view with everything in view");
+      p->setPixmap(QPixmap((const char **)view_all_xpm));
+      break;
+    case SEEK_BUTTON:
+      QObject::connect(p, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
+      p->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
+      p->setPixmap(QPixmap((const char **)seek_xpm));
+      break;
+    default:
+      assert(0);
+      break;
+    }
+
+    p->adjustSize();
+    buttonlist->append(p);
+  }
+}
+
+// this is copied directly from SoQtFullViewer.cpp, which defines it as a static
+// method on SoGuiFullViewerP -- again, pimpl = no code reuse!  crazy.  what are 
+// you trying to hide anyway!!
+
+void
+T3ExaminerViewer::zoom(SoCamera* cam, const float diffvalue) {
+  if (cam == NULL) return; // can happen for empty scenegraph
+  SoType t = cam->getTypeId();
+  SbName tname = t.getName();
+
+  // This will be in the range of <0, ->>.
+  float multiplicator = float(exp(diffvalue));
+
+  if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId())) {
+
+    // Since there's no perspective, "zooming" in the original sense
+    // of the word won't have any visible effect. So we just increase
+    // or decrease the field-of-view values of the camera instead, to
+    // "shrink" the projection size of the model / scene.
+    SoOrthographicCamera * oc = (SoOrthographicCamera *)cam;
+    oc->height = oc->height.getValue() * multiplicator;
+
+  }
+  else {
+    // FrustumCamera can be found in the SmallChange CVS module (it's
+    // a camera that lets you specify (for instance) an off-center
+    // frustum (similar to glFrustum())
+    if (!t.isDerivedFrom(SoPerspectiveCamera::getClassTypeId()) &&
+        tname != "FrustumCamera") {
+      static SbBool first = TRUE;
+      if (first) {
+        SoDebugError::postWarning("SoGuiFullViewerP::zoom",
+                                  "Unknown camera type, "
+                                  "will zoom by moving position, but this might not be correct.");
+        first = FALSE;
+      }
+    }
+    
+    const float oldfocaldist = cam->focalDistance.getValue();
+    const float newfocaldist = oldfocaldist * multiplicator;
+
+    SbVec3f direction;
+    cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
+
+    const SbVec3f oldpos = cam->position.getValue();
+    const SbVec3f newpos = oldpos + (newfocaldist - oldfocaldist) * -direction;
+
+    // This catches a rather common user interface "buglet": if the
+    // user zooms the camera out to a distance from origo larger than
+    // what we still can safely do floating point calculations on
+    // (i.e. without getting NaN or Inf values), the faulty floating
+    // point values will propagate until we start to get debug error
+    // messages and eventually an assert failure from core Coin code.
+    //
+    // With the below bounds check, this problem is avoided.
+    //
+    // (But note that we depend on the input argument ''diffvalue'' to
+    // be small enough that zooming happens gradually. Ideally, we
+    // should also check distorigo with isinf() and isnan() (or
+    // inversely; isinfite()), but those only became standardized with
+    // C99.)
+    const float distorigo = newpos.length();
+    // sqrt(FLT_MAX) == ~ 1e+19, which should be both safe for further
+    // calculations and ok for the end-user and app-programmer.
+    if (distorigo > 1.0e+19) {
+#if SOQT_DEBUG && 0 // debug
+      SoDebugError::postWarning("SoGuiFullViewerP::zoom",
+                                "zoomed too far (distance to origo==%f (%e))",
+                                distorigo, distorigo);
+#endif // debug
+    }
+    else {
+      cam->position = newpos;
+      cam->focalDistance = newfocaldist;
+    }
+  }
+}
+
+// todo: make another button that does the angle = .35 thing?? -- yep
+
+void T3ExaminerViewer::viewAll() {
+  SoCamera* cam = getCamera();
+  SoNode* sg = getSceneGraph();
+  if (cam && sg) {
+    SbVec3f axis;
+    axis[0]=-1.0; axis[1]=0.0f; axis[2]=0.0f;
+//     float angle = .35;
+    float angle = 0.0f;
+    cam->orientation.setValue(axis, angle);
+    cam->viewAll(sg, getViewportRegion());
+    zoom(cam, -.35f);		// zoom in !!
+  }
+}
+
+// Qt slot.
+void
+T3ExaminerViewer::interactbuttonClicked(void)
+{
+  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
+  if (interactbutton)
+    interactbutton->setOn(TRUE);
+  if (viewbutton)
+    viewbutton->setOn(FALSE);
+  if (isViewing())
+    setViewing(FALSE); // other guys assume buttons!
+  // this could mess up the setMode thing on examiner but we'll see..
+}
+
+// *************************************************************************
+
+// Qt slot.
+void
+T3ExaminerViewer::viewbuttonClicked(void)
+{
+  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
+  if (interactbutton)
+    interactbutton->setOn(FALSE);
+  if (viewbutton)
+    viewbutton->setOn(TRUE);
+  if (!isViewing())
+    setViewing(TRUE); // other guys assume buttons!
+  // this could mess up the setMode thing on examiner but we'll see..
+}
+
+void
+T3ExaminerViewer::viewallbuttonClicked()
+{
+  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
+  viewAll();
+}
+
+void
+T3ExaminerViewer::homebuttonClicked()
+{
+  if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
+  resetToHomePosition();
+}
+
+void
+T3ExaminerViewer::sethomebuttonClicked()
+{
+  saveHomePosition();
+}
+
+void
+T3ExaminerViewer::seekbuttonClicked()
+{
+  setSeekMode_doit(isSeekMode() ? FALSE : TRUE);
+}
+
+void
+T3ExaminerViewer::setSeekMode(SbBool enable)
+{
+  // do nothing -- the thing is always trying to turn off seek mode too much!
+}
+
+void
+T3ExaminerViewer::setSeekMode_doit(SbBool enable)
+{
+  inherited::setSeekMode(enable); // actually do it!
+}
+
+void
+T3ExaminerViewer::saveHomePosition() {
+  if(!t3vw) return;
+  iT3DataViewFrame* idvf = t3vw->i_data_frame();
+  if(!idvf) return;
+  T3DataViewFrame* dvf = idvf->viewer();
+  if(!dvf) return;
+  dvf->GetCameraPosOrient();
+}
+
+void
+T3ExaminerViewer::resetToHomePosition(void)
+{
+  if(!t3vw) return;
+  iT3DataViewFrame* idvf = t3vw->i_data_frame();
+  if(!idvf) return;
+  T3DataViewFrame* dvf = idvf->viewer();
+  if(!dvf) return;
+  dvf->SetCameraPosOrient();
+}
 
 //////////////////////////
 //	T3DataView	//
@@ -465,60 +795,6 @@ void T3DataViewRoot::Constr_Node_impl() {
   m_node_so = new T3NodeParent;
 }
 
-
-
-
-//////////////////////////
-//    iRenderArea	//
-//////////////////////////
-
-// this is an internal implementation class -- it can be subclassed from SoQtRenderArea, or
-// one of its convenience/development subclasses
-
-class iRenderArea: public SoQtExaminerViewer {
-typedef SoQtExaminerViewer inherited;
-public:
-
-  iRenderArea(iT3ViewspaceWidget *parent, const char *name=NULL, SbBool embed=TRUE,
-     SoQtFullViewer::BuildFlag flag=BUILD_ALL, SoQtViewer::Type type=BROWSER);
-
-  iT3ViewspaceWidget*		t3vw;
-protected:
-  override void 		processEvent(QEvent* ev_);
-//  override SbBool 		processSoEvent(const SoEvent* const ev);
-};
-
-
-iRenderArea::iRenderArea(iT3ViewspaceWidget *parent, const char *name, SbBool embed,
-     SoQtFullViewer::BuildFlag flag, SoQtViewer::Type type)
-:inherited(parent, name, embed, flag, type)
-{
-  t3vw = parent;
-}
-
-
-void iRenderArea::processEvent(QEvent* ev_) {
-  //NOTE: the base classes don't check if event is already handled, so we have to skip
-  // calling inherited if we handle it ourselves
-  if (!t3vw) goto do_inherited;
-
-  if (ev_->type() == QEvent::MouseButtonPress) {
-    QMouseEvent* ev = (QMouseEvent*)ev_;
-    if (ev->button() == Qt::RightButton) {
-//cerr << "iRenderArea::processEvent: right mouse press handled\n";
-      //TODO: maybe should check for item under mouse???
-      //TODO: pos will need to be adjusted for parent offset of renderarea ???
-      ev->accept();
-      t3vw->ContextMenuRequested(ev->globalPos());
-      return;
-    }
-  }
-
-do_inherited:
-  inherited::processEvent(ev_);
-}
-
-
 //////////////////////////
 //   iSoSelectionEvent	//
 //////////////////////////
@@ -547,9 +823,17 @@ void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
   t3dv->sel_so->touch(); // to redraw
 }
 
+iT3ViewspaceWidget::iT3ViewspaceWidget(iT3DataViewFrame* parent)
+:QWidget(parent)
+{
+  m_i_data_frame = parent;
+  init();
+}
+
 iT3ViewspaceWidget::iT3ViewspaceWidget(QWidget* parent)
 :QWidget(parent)
 {
+  m_i_data_frame = NULL;
   init();
 }
 
@@ -561,6 +845,7 @@ iT3ViewspaceWidget::~iT3ViewspaceWidget() {
   setRenderArea(NULL);
   m_horScrollBar = NULL;
   m_verScrollBar = NULL;
+  m_i_data_frame = NULL;
 }
 
 void iT3ViewspaceWidget::init() {
@@ -786,8 +1071,7 @@ void iT3DataViewFrame::Init() {
   t3vs->setMinimumWidth(mw);*/
   t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
 
-
-  m_ra = new iRenderArea(t3vs);
+  m_ra = new T3ExaminerViewer(t3vs);
   //  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
   const RGBA& bg = viewer()->bg_color;
   m_ra->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
@@ -990,7 +1274,7 @@ void T3DataViewFrame::Render_post() {
   widget()->Render_post();
   // on first opening, do a viewall to center all geometry in viewer
   if(camera_pos == 0.0f && camera_focdist == 0.0f) {
-    widget()->ra()->viewAll();
+    ViewAll();
     GetCameraPosOrient();
   }
 }
@@ -1006,6 +1290,12 @@ void T3DataViewFrame::WindowClosing(CancelOp& cancel_op) {
     root_view.DoActions(CLEAR_IMPL);
     root_view.host = NULL;
   }
+}
+
+void T3DataViewFrame::ViewAll() {
+  if(!widget()) return;
+  SoQtViewer* viewer = widget()->ra();
+  viewer->viewAll();
 }
 
 void T3DataViewFrame::GetCameraPosOrient() {
@@ -1040,7 +1330,8 @@ void T3DataViewFrame::SetCameraPosOrient() {
 
 void T3DataViewFrame::Dump_Save_pre() {
   inherited::Dump_Save_pre();
-  GetCameraPosOrient();
+  // note: not doing this now: it is up to the viewer to do this now
+//   GetCameraPosOrient();
 }
 
 

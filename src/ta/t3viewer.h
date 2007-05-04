@@ -36,6 +36,7 @@
 # include <QTabBar>
 # include <qwidget.h>
 # include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #endif
 
 // externals
@@ -45,6 +46,8 @@ class taiMimeSource;
 class TDCoord;
 class FloatTransform;
 class SoPath; // #IGNORE
+class SbPList; // #IGNORE
+class SoCamera; // #IGNORE
 class T3Node;
 
 // forwards
@@ -69,6 +72,55 @@ public:
   static const float	geoms_per_pt; // number of geoms per point (1/72)
   static const float	char_ht_to_wd_pts; // ratio of ht to wd in metrics: 12/8
   static const float	char_base_fract; // fraction of total ht below baseline
+};
+
+///////////////////////////////////////
+//	custom T3 viewer object
+///////////////////////////////////////
+
+// goals: get rid of unused buttons, and add new ones(?)
+// fix view button to regularize the view as well.
+
+class TA_API T3ExaminerViewer : public QObject, public SoQtExaminerViewer {
+  Q_OBJECT
+  SOQT_OBJECT_HEADER(T3ExaminerViewer, SoQtExaminerViewer);
+public:
+  T3ExaminerViewer(iT3ViewspaceWidget* parent = NULL,
+		   const char * name = NULL,
+		   bool embed = true);
+  ~T3ExaminerViewer();
+
+  iT3ViewspaceWidget*		t3vw;
+
+  static void zoom(SoCamera* cam, const float diffvalue);
+  // zoom in/out by given amount: adjusts both camera pos and focal length
+
+  override void viewAll();
+  // make this actually fill the damn screen!
+  override void saveHomePosition();
+  override void resetToHomePosition();
+  // use our saved values in frame dude
+
+public slots:
+  void interactbuttonClicked();
+  void viewbuttonClicked();
+  void homebuttonClicked();
+  void sethomebuttonClicked();
+  void viewallbuttonClicked();
+  void seekbuttonClicked();
+
+protected:
+  QPushButton* interactbutton;
+  QPushButton* viewbutton;
+
+  override void processEvent(QEvent* ev_);
+  override void createViewerButtons(QWidget* parent, SbPList* buttonlist);
+
+#ifndef __MAKETA__ // doesn't like SbBool..
+  override void setSeekMode(SbBool enable); // #IGNORE override standard one to do nothing
+  virtual void setSeekMode_doit(SbBool enable);
+  // #IGNORE this is the one that calls the original -- only activated by the user!
+#endif
 };
 
 //////////////////////////
@@ -350,6 +402,9 @@ public:
   void			deleteScene(); // deletes the scene -- usually only called internally, not by clients of this component
   void 			ContextMenuRequested(const QPoint& pos); // #IGNORE called from render area
 
+  inline iT3DataViewFrame* i_data_frame() const {return m_i_data_frame;}
+
+  iT3ViewspaceWidget(iT3DataViewFrame* parent);
   iT3ViewspaceWidget(QWidget* parent = NULL);
   ~iT3ViewspaceWidget();
 
@@ -376,6 +431,7 @@ protected:
   SoSeparatorPtr	m_root_so; //
   SoNode*		m_scene; // actual top item set by user
   SelectionMode		m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
+  iT3DataViewFrame*	m_i_data_frame; // #IGNORE our parent object
 
   void			SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
   void			LayoutComponents(); // called on resize or when comps change (ex scrollers)
@@ -454,6 +510,8 @@ public:
   virtual void		AddView(T3DataView* view); // add a view
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 
+  virtual void		ViewAll();
+  // reset the camera position to view everything in the display
   virtual void		GetCameraPosOrient();
   // get camera's current position and orientation from viewer into my fields (for saving)
   virtual void		SetCameraPosOrient();
