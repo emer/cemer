@@ -2126,6 +2126,12 @@ void iGridTableView_Panel::UpdatePanel_impl() {
     sb->setSingleStep(1);
     sb->setValue(MIN(glv->view_range.min, mx));
   }
+  // bg color
+  SoQtRenderArea* ra = t3vs->renderArea();
+  bool ok;
+  iColor bg = glv->bgColor(ok); // note: we know it is ok!
+  if (!ok) bg.setRgb(0.8f, 0.8f, 0.8f);
+  ra->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
 }
 
 void iGridTableView_Panel::horScrBar_valueChanged(int value) {

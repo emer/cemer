@@ -1143,9 +1143,10 @@ void iT3DataViewFrame::Reset_impl() {
 }
 
 void iT3DataViewFrame::Refresh_impl() {
-  T3DataViewRoot* rt = root();
+/*obs  T3DataViewRoot* rt = root();
   if (rt) 
-    rt->Refresh();
+    rt->Refresh(); */
+  viewRefresh();
 }
 
 T3DataViewRoot* iT3DataViewFrame::root() {
