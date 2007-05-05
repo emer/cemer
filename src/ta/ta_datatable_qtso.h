@@ -366,6 +366,10 @@ public:
 
   override bool		selectEditMe() const { return true; }
   
+  const iColor 		bgColor(bool& ok) const {
+    ok = true; return colorscale.background;
+  } // #IGNORE
+
   void	InitLinks();
   void 	CutLinks();
   void	Initialize();
@@ -878,6 +882,7 @@ public:
   iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
   T3GraphViewNode* node_so() const {return (T3GraphViewNode*)m_node_so.ptr();}
 
+  override const iColor	bgColor(bool& ok) const;
   override String	GetLabel() const;
   override String	GetName() const;
 

@@ -1066,7 +1066,6 @@ void iT3DataViewFrame::Init() {
   t3vs->setSelMode(iT3ViewspaceWidget::SM_MULTI); // default
 
   m_ra = new T3ExaminerViewer(t3vs);
-  //  m_ra->setBackgroundColor(SbColor(0.5f, 0.5f, 0.5f));
   t3vs->setRenderArea(m_ra);
 }
 
@@ -1117,8 +1116,7 @@ void iT3DataViewFrame::Render_pre() {
 }
 
 void iT3DataViewFrame::Render_impl() {
-  const taColor& bg = viewer()->bg_color;
-  m_ra->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
+  //nothing
 }
 
 void iT3DataViewFrame::Render_post() {
@@ -1248,6 +1246,28 @@ T3DataView* T3DataViewFrame::FindRootViewOfData(TAPtr data) {
   return NULL;
 }
 
+T3DataView* T3DataViewFrame::singleChild() const {
+  if (root_view.children.size != 1) return NULL;
+  T3DataView* rval = dynamic_cast<T3DataView*>(root_view.children[0]);
+  return rval;
+}
+
+
+const iColor T3DataViewFrame::GetBgColor() const {
+  bool sm = singleMode();
+  iColor rval;
+  if (sm) {
+    T3DataView* sng = singleChild();
+    if (sng) {
+      bool ok = false;
+      rval = sng->bgColor(ok);
+      if (ok) return rval;
+    }
+  }
+  rval = bg_color;
+  return rval;
+}
+
 void T3DataViewFrame::Render_pre() {
   inherited::Render_pre();
   widget()->Render_pre();
@@ -1258,8 +1278,9 @@ void T3DataViewFrame::Render_impl() {
   inherited::Render_impl();
   root_view.Render_impl();
   SoQtViewer* viewer = widget()->ra();
+  iColor bg = GetBgColor();
   viewer->setBackgroundColor(
-    SbColor(bg_color.r, bg_color.g, bg_color.b));
+    SbColor(bg.r, bg.g, bg.b));
   widget()->Render_impl();
 }
 

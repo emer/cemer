@@ -418,6 +418,7 @@ public:
 
   override bool		selectEditMe() const { return true; }
 
+  override const iColor	bgColor(bool& ok) const;
   override void		InitLinks();
   override void		CutLinks();
   override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);

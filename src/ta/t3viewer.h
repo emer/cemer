@@ -177,6 +177,8 @@ public:
   int			flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
   FloatTransform*	m_transform;  // #READ_ONLY transform, created only if not unity
 
+  virtual const iColor	bgColor(bool& ok) const {ok = false; return iColor();}
+    // high-level items can optionally supply a bg color, for when they are singles
   virtual bool		hasChildren() const {return false;}
   virtual bool		hasViewProperties() const {return false;}
     // true if this item has editable view properties, and should be shown
@@ -516,8 +518,14 @@ public:
   float			camera_focdist; // focalDistance of camera in view
   taColor		bg_color; // background color of the frame (note: a not used)
 
+  bool			singleMode() const
+    {return (root_view.children.size == 1);}
+    // true when one and only one child obj -- it can control some of our properties by default
+  T3DataView*		singleChild() const; // return the single child
+  
   inline iT3DataViewFrame* widget() {return (iT3DataViewFrame*)inherited::widget();} // lex override
-
+  const iColor		GetBgColor() const; // get the effective bg color
+  
   virtual void		AddView(T3DataView* view); // add a view
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one
 

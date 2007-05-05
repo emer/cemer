@@ -1630,6 +1630,12 @@ void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   }
 }
 
+const iColor NetView::bgColor(bool& ok) const {
+  ok = true;
+  return scale.background;
+}
+
+
 void NetView::Render_pre() {
   InitDisplay();
   m_node_so = new T3NetNode(this);
@@ -1641,11 +1647,8 @@ void NetView::Render_pre() {
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
   node_so()->addChild(ecb);
 
-  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
-  if(!frame) return;
-  SoQtViewer* viewer = frame->widget()->ra();
-  viewer->setBackgroundColor(SbColor(scale.background.redf(), scale.background.greenf(), 
-				     scale.background.bluef()));
+/*nn  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
+  if(!frame) return; */
 
   inherited::Render_pre();
 }

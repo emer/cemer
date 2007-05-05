@@ -61,6 +61,8 @@ public:
      {r=r_; g=g_; b=b_; a=a_;}
   TA_BASEFUNS_LITE(taColor);
 
+  			operator iColor() const {return color();}
+
 private:
   void 	Copy_(const taColor& cp) {r=cp.r; g=cp.g; b=cp.b; a=cp.a;}// not no_a
   void  Initialize() {no_a = false; r = g = b = 0; a = 1;}

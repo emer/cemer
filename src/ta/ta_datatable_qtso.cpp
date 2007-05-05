@@ -1013,11 +1013,6 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
 void GridTableView::Render_pre() {
   m_node_so = new T3GridViewNode(this, width, manip_ctrl_on);
 
-  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
-  if(!frame) return;
-  SoQtViewer* viewer = frame->widget()->ra();
-  viewer->setBackgroundColor(SbColor(colorscale.background.redf(), colorscale.background.greenf(), 
-				     colorscale.background.bluef()));
   UpdatePanel();		// otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
 }
@@ -1860,7 +1855,6 @@ void iDataTableView_Panel::Constr_T3ViewspaceWidget(QWidget* widg) {
   root->addChild(m_lm);
 
   viewAll();
-  m_ra->setBackgroundColor(SbColor(0.8f, 0.8f, 0.8f));
 }
 
 void iDataTableView_Panel::InitPanel() {
@@ -3096,6 +3090,11 @@ void GraphTableView::UpdateAfterEdit_impl(){
   }
 }
 
+const iColor GraphTableView::bgColor(bool& ok) const {
+  ok = true;
+  return colorscale.background;
+}
+
 String GraphTableView::GetLabel() const {
   return inherited::GetLabel() + " Graph";
 }
@@ -3112,12 +3111,6 @@ void GraphTableView::Render_pre() {
 2. item should not take ownsership of a shared frame prop like bg color
 3. we can set the frame bg color to the default for graphs
 
-  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
-  if(!frame) return;
-  SoQtViewer* viewer = frame->widget()->ra();
-  viewer->setBackgroundColor(SbColor(colorscale.background.redf(),
-				     colorscale.background.greenf(), 
-				     colorscale.background.bluef()));
 */
 
   inherited::Render_pre();
