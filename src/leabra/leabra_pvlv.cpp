@@ -606,6 +606,7 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
+  pv_da_gain = 1.0f;
   tonic_da = 0.0f;
   use_actual_er = false;
   syn_dep = false;
@@ -819,7 +820,7 @@ void PVLVDaLayerSpec::Compute_Da_SynDep(LeabraLayer* lay, LeabraNetwork* net) {
 //       if(da.mode == PVLVDaSpec::LV_PLUS_IF_PV) {
 	u->dav = da.da_gain * lv_da;
 	if(er_avail)
-	  u->dav += da.da_gain * pv_da;
+	  u->dav += da.pv_da_gain * da.da_gain * pv_da;
 //       }
 //       else if(da.mode == PVLVDaSpec::IF_PV_ELSE_LV) {
 // 	if(er_avail)
@@ -886,7 +887,7 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     else {
       // IF_PV_ELSE_LV mode always:
       if(er_avail) {
-	u->dav = da.da_gain * pv_da;
+	u->dav = da.pv_da_gain * da.da_gain * pv_da;
       }
       else {
 	u->dav = da.da_gain * lv_da;
