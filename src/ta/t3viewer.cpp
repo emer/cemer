@@ -68,13 +68,6 @@ const float t3Misc::char_base_fract(0.20f); //TODO: find correct val from coin s
 
 using namespace Qt;
 
-// todo: just go back to original buttons, but have new view guy,
-// * pre-set home as loaded view
-// * save set home guy instead of actual current view
-// * different icon for set home guy??  tool tips!!
-// * don't go back to pan after seek -- stay in seek mode until click off??
-// * present orig popup menu if nothing selected.  Add Frame is lame.
-
 //////////////////////////
 //	T3ExaminerViewer
 //////////////////////////
@@ -140,9 +133,6 @@ enum {
   SEEK_BUTTON
 };
 
-// #define PUBLIC(o) (o->pub)
-// #define PRIVATE(o) (o->pimpl)
-
 void
 T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
 {
@@ -202,6 +192,9 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
       p->setPixmap(QPixmap((const char **)view_all_xpm));
       break;
     case SEEK_BUTTON:
+      seekbutton = p;
+      p->setToggleButton(TRUE);
+      p->setOn(isSeekMode());
       QObject::connect(p, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
       p->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
       p->setPixmap(QPixmap((const char **)seek_xpm));
@@ -294,7 +287,7 @@ T3ExaminerViewer::zoom(SoCamera* cam, const float diffvalue) {
   }
 }
 
-// todo: make another button that does the angle = .35 thing?? -- yep
+// make another button that does the angle = .35 thing??
 
 void T3ExaminerViewer::viewAll() {
   SoCamera* cam = getCamera();
@@ -321,7 +314,10 @@ T3ExaminerViewer::interactbuttonClicked(void)
     viewbutton->setOn(FALSE);
   if (isViewing())
     setViewing(FALSE); // other guys assume buttons!
-  // this could mess up the setMode thing on examiner but we'll see..
+  T3DataViewFrame* dvf = GetFrame();
+  if(!dvf) return;
+  // rebuilds to update manipulators
+  dvf->Render();
 }
 
 // *************************************************************************
@@ -337,7 +333,10 @@ T3ExaminerViewer::viewbuttonClicked(void)
     viewbutton->setOn(TRUE);
   if (!isViewing())
     setViewing(TRUE); // other guys assume buttons!
-  // this could mess up the setMode thing on examiner but we'll see..
+  T3DataViewFrame* dvf = GetFrame();
+  if(!dvf) return;
+  // rebuilds to update manipulators
+  dvf->Render();
 }
 
 void
@@ -375,15 +374,22 @@ T3ExaminerViewer::setSeekMode(SbBool enable)
 void
 T3ExaminerViewer::setSeekMode_doit(SbBool enable)
 {
+  if (seekbutton)
+    seekbutton->setOn(enable);
   inherited::setSeekMode(enable); // actually do it!
+}
+
+T3DataViewFrame* T3ExaminerViewer::GetFrame() {
+  if(!t3vw) return NULL;
+  iT3DataViewFrame* idvf = t3vw->i_data_frame();
+  if(!idvf) return NULL;
+  T3DataViewFrame* dvf = idvf->viewer();
+  return dvf;
 }
 
 void
 T3ExaminerViewer::saveHomePosition() {
-  if(!t3vw) return;
-  iT3DataViewFrame* idvf = t3vw->i_data_frame();
-  if(!idvf) return;
-  T3DataViewFrame* dvf = idvf->viewer();
+  T3DataViewFrame* dvf = GetFrame();
   if(!dvf) return;
   dvf->GetCameraPosOrient();
 }
@@ -391,10 +397,7 @@ T3ExaminerViewer::saveHomePosition() {
 void
 T3ExaminerViewer::resetToHomePosition(void)
 {
-  if(!t3vw) return;
-  iT3DataViewFrame* idvf = t3vw->i_data_frame();
-  if(!idvf) return;
-  T3DataViewFrame* dvf = idvf->viewer();
+  T3DataViewFrame* dvf = GetFrame();
   if(!dvf) return;
   dvf->SetCameraPosOrient();
 }
@@ -599,6 +602,18 @@ void T3DataView::FillContextMenu_impl(taiActions* menu) {
   IObjectSelectable::FillContextMenu_impl(menu);
 } 
 
+T3DataViewFrame* T3DataView::GetFrame() {
+  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
+  return frame;
+}
+
+SoQtViewer* T3DataView::GetViewer() {
+  T3DataViewFrame* frame = GetFrame();
+  if(!frame || !frame->widget()) return NULL;
+  SoQtViewer* viewer = frame->widget()->ra();
+  return viewer;
+}
+
 void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   if (flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
@@ -779,7 +794,6 @@ void T3DataViewPar::ReInit() {
   }
   ReInit_impl();
 }
-
 
 //////////////////////////
 //    T3DataViewRoot	//
@@ -1279,8 +1293,8 @@ void T3DataViewFrame::Render_impl() {
   root_view.Render_impl();
   SoQtViewer* viewer = widget()->ra();
   iColor bg = GetBgColor();
-  viewer->setBackgroundColor(
-    SbColor(bg.r, bg.g, bg.b));
+  //  viewer->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
+  viewer->setBackgroundColor(SbColor(.8f, .8f, .8f)); // todo: temp bug fix
   widget()->Render_impl();
 }
 

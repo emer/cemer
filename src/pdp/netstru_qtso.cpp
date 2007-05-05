@@ -375,9 +375,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
 
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
-  T3DataViewFrame* frame = GET_OWNER(nv, T3DataViewFrame);
-  if(!frame) return;
-  SoQtViewer* viewer = frame->widget()->ra();
+  SoQtViewer* viewer = nv->GetViewer();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoRayPickAction rp( viewer->getViewportRegion());
   rp.setPoint(mouseevent->getPosition());
@@ -1609,10 +1607,13 @@ void NetView::Layer_DataUAE(LayerView* lv) {
 }
 
 void NetView::NewLayer(int x, int y) {
-  //TODO:
+  Layer* lay = net()->layers.NewEl(1);
+  lay->pos.x = x; lay->pos.y = y;
+  lay->UpdateAfterEdit();
 }
 
 void NetView::GetMaxSize() {
+  net()->UpdateMax();
   max_size = net()->max_size;
   if(view_params.xy_square) {
     max_size.x = MAX(max_size.x, max_size.y);
@@ -1646,9 +1647,6 @@ void NetView::Render_pre() {
   SoEventCallback* ecb = new SoEventCallback;
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
   node_so()->addChild(ecb);
-
-/*nn  T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
-  if(!frame) return; */
 
   inherited::Render_pre();
 }

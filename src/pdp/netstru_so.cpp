@@ -412,6 +412,7 @@ T3LayerNode::T3LayerNode(void* dataView_)
   xy_drag_sep_->addChild(xy_drag_xf_);
   xy_dragger_ = new SoTranslate2Dragger;
   xy_drag_sep_->addChild(xy_dragger_);
+
   topSeparator()->addChild(xy_drag_sep_);
 
   xy_drag_calc_ = new SoCalculator;

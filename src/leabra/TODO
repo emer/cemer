@@ -17,7 +17,6 @@ current:
 
 == Inventor
 
-* new viewer
 * manips conditional on arrow tool mode
 * scroll of graphview
 * import object files

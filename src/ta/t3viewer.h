@@ -95,6 +95,9 @@ public:
   static void zoom(SoCamera* cam, const float diffvalue);
   // zoom in/out by given amount: adjusts both camera pos and focal length
 
+  T3DataViewFrame* GetFrame();
+  // get my owning frame, from t3vw
+
   override void viewAll();
   // make this actually fill the damn screen!
   override void saveHomePosition();
@@ -112,6 +115,7 @@ public slots:
 protected:
   QPushButton* interactbutton;
   QPushButton* viewbutton;
+  QPushButton* seekbutton;
 
   override void processEvent(QEvent* ev_);
   override void createViewerButtons(QWidget* parent, SbPList* buttonlist);
@@ -192,8 +196,10 @@ public:
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
   T3Node*		node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
-//obs  T3DataViewer*		viewer() const;
-//obs  iT3DataViewer*	viewer_win() const {return (iT3DataViewer*)viewer_win_();}
+  virtual T3DataViewFrame* GetFrame();
+  // get the T3DataViewFrame that owns us
+  virtual SoQtViewer*	GetViewer();
+  // #IGNORE get the SoQtViewer that contains us
 
   void 			AddRemoveChildNode(SoNode* node, bool adding);
     // can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl

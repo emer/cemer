@@ -1011,7 +1011,12 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
 }
 
 void GridTableView::Render_pre() {
-  m_node_so = new T3GridViewNode(this, width, manip_ctrl_on);
+  bool show_drag = manip_ctrl_on;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
+
+  m_node_so = new T3GridViewNode(this, width, show_drag);
 
   UpdatePanel();		// otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
@@ -3104,7 +3109,12 @@ String GraphTableView::GetName() const {
 }
 
 void GraphTableView::Render_pre() {
-  m_node_so = new T3GraphViewNode(this, width, manip_ctrl_on);
+  bool show_drag = manip_ctrl_on;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
+
+  m_node_so = new T3GraphViewNode(this, width, show_drag);
 
 /*NOTES:
 1. Render_pre is only done once, or on STRUCT changes
@@ -4958,7 +4968,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   layCAxis = new QHBoxLayout(layOuter);
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
-  lblColorMode->setToolTip("How to determine line color");
+  lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
   layCAxis->addWidget(lblColorMode);
   cmbColorMode = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
     NULL, NULL, widg);
@@ -4975,7 +4985,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layVals->addSpacing(taiM->hsep_c);
 
   lblThresh = taiM->NewLabel("Thresh", widg, font_spec);
-  lblThresh->setToolTip("Threshold for THRESH_LINE and THRESH_POINT styles -- only render when value is over this threshold.");
+  lblThresh->setToolTip("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold.");
   layCAxis->addWidget(lblThresh);
   fldThresh = new taiField(&TA_float, NULL, NULL, widg);
   layCAxis->addWidget(fldThresh->GetRep());
@@ -4993,6 +5003,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
 
   butSetColor = new QPushButton("Colors", widg);
+  butSetColor->setToolTip("Select color pallette for color value plotting (also determines background color).");
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );

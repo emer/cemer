@@ -51,7 +51,7 @@
 //   T3GridViewNode	//
 //////////////////////////
 
-float T3GridViewNode::drag_size = .04f;
+float T3GridViewNode::drag_size = .06f;
 float T3GridViewNode::frame_margin = .05f;
 float T3GridViewNode::frame_width = .02f;
 
@@ -771,7 +771,7 @@ void T3GraphLine::textAt(const iVec3f& pt, const char* str) {
 //   T3GraphViewNode	//
 //////////////////////////
 
-float T3GraphViewNode::drag_size = .04f;
+float T3GraphViewNode::drag_size = .06f;
 float T3GraphViewNode::frame_margin = .2f;
 float T3GraphViewNode::frame_width = .02f;
 
