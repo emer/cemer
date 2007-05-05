@@ -58,13 +58,12 @@ public:
   static bool  		find (const char* name, float& r, float& g, float& b); // for Iv compat
 
   iColor() {setRgb(0,0,0,1.0);} // black
-//def  iColor(const iColor& src) {c = src;} // copy constructor
-  explicit iColor(const iColor* src) {set(src);} // NULL converted to black
   iColor(int r_, int g_, int b_, float a_ = 1.0) {setRgb(r_, g_, b_, a_);}
   iColor(float r_, float g_, float b_, float a_ = 1.0) {setRgb(r_, g_, b_, a_);}
   explicit iColor(float x) {setRgb(x, x, x, 1.0f);}
   explicit iColor(int rgb_) {setRgb(rgb_);} // hex Internet color value, b is lowest byte
-  iColor(const iColor& src, float a_ = 1.0f) {setRgb(src.r, src.g, src.b, a_);} // for Iv compat
+  iColor(const iColor& src, float a_ ) {setRgb(src.r, src.g, src.b, a_);} // for Iv compat
+  iColor(const iColor& src) {c = src.c;}
 
   void		getRgb(float& r_, float& g_, float& b_) const {
     r_ = ic2fc(r); g_ = ic2fc(g); b_ = ic2fc(b); }
@@ -72,7 +71,6 @@ public:
   void		setRgb(float r_, float g_, float b_, float a_ = 1.0)
   		  {setRgb(fc2ic(r_), fc2ic(g_), fc2ic(b_), a_);}
   void		setRgb(int rgb_);
-  void	 	set(const iColor* src);
   int		red() const {return r;}
   int		green() const {return g;}
   int		blue() const {return b;}
@@ -86,10 +84,8 @@ public:
   void		intensities(float& r, float& g, float& b); // Iv->Qt compat
 
 
-//use implicit  iColor& operator =(const iColor& src);
+  iColor& operator =(const iColor& cp) {c = cp.c; return *this;}
   iColor& operator =(float x) {setRgb(x, x, x, 1.0f); return *this;}
-  iColor& operator =(const iColor* cp) {set(cp); return *this;} //note: works for NULL too
-//  		operator iBrush() const; //implicit conversion, similar to how Qt allows QColor for QBrush
 
 #ifdef TA_GUI
   iColor(const QColor& src); // conversion constructor
@@ -102,6 +98,12 @@ public:
 #ifdef TA_USE_INVENTOR
   void		copyTo(SoMFColor& col) const; //
 #endif
+
+#ifndef __MAKETA__
+union {
+  uint32_t	c; // for uber-efficient copying
+struct {
+#endif // MAKETA
 
 #if (TA_BYTE_ORDER == TA_BIG_ENDIAN)
   uint8_t	a; 
@@ -116,6 +118,10 @@ public:
 #else
 # error "Undefined byte order"
 #endif
+
+#ifndef __MAKETA__
+};};
+#endif // MAKETA
 };
 
 

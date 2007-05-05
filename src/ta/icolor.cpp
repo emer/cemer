@@ -377,12 +377,7 @@ void iColor::intensities(float& r_, float& g_, float& b_) {
   b_ = ic2fc(b);
 }
 
-void iColor::set(const iColor* src) {
-  if (src == NULL)
-    setRgb(0,0,0,1.0);
-  else
-    setRgb(src->r, src->g, src->b, 1.0);
-}
+
 
 /*
 //////////////////////////

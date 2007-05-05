@@ -1293,8 +1293,7 @@ void T3DataViewFrame::Render_impl() {
   root_view.Render_impl();
   SoQtViewer* viewer = widget()->ra();
   iColor bg = GetBgColor();
-  //  viewer->setBackgroundColor(SbColor(bg.r, bg.g, bg.b));
-  viewer->setBackgroundColor(SbColor(.8f, .8f, .8f)); // todo: temp bug fix
+  viewer->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
   widget()->Render_impl();
 }
 

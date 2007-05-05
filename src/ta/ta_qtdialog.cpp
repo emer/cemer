@@ -118,7 +118,7 @@ void HiLightButton::init(const char* script_) {
   mouse_button = Qt::NoButton;
   if (script_ != NULL)
     mscript = script_;
-  mhiLight_color = new iColor(0x66, 0xFF, 0x66); // medium-light green
+  mhiLight_color.setRgb(0x66, 0xFF, 0x66); // medium-light green
 }
 
 void HiLightButton::released() {
