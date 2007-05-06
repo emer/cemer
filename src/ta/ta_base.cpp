@@ -1482,13 +1482,13 @@ void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
 
 void taBase::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
 			      void_PArray& src_bases, taBase* cp_base,
-			      int show_forbidden, int show_allowed) {
+			      int show_forbidden, int show_allowed, bool no_ptrs) {
   if(!cp_base) return;
   TypeDef* td = GetTypeDef();
   if(td != cp_base->GetTypeDef()) return; // must be same type..
   // search our guy:
   td->CompareSameType(mds, trg_bases, src_bases, (void*)this, (void*)cp_base,
-		      show_forbidden, show_allowed);
+		      show_forbidden, show_allowed, no_ptrs);
   // then recurse..
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
@@ -1497,7 +1497,8 @@ void taBase::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
     if(md->HasOption("HIDDEN")) continue; // categorically don't look at hidden objects for diffs
     taBase* obj = (taBase*)md->GetOff(this);
     taBase* cp_obj = (taBase*)md->GetOff(cp_base);
-    obj->CompareSameTypeR(mds, trg_bases, src_bases, cp_obj, show_forbidden, show_allowed);
+    obj->CompareSameTypeR(mds, trg_bases, src_bases, cp_obj, show_forbidden, show_allowed,
+			  no_ptrs);
   }
 }
 
@@ -1787,7 +1788,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
   return nfound;
 }
 
-int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor) {
+int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor, bool no_ptrs) {
   if(TestError(!cmp_obj, "SelectForEditCompare", "cmp_obj is null")) return -1;
   if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "SelectForEditCompare", 
 	       "objects must have the exact same type to be able to be compared")) return -1;
@@ -1796,7 +1797,7 @@ int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor) {
     if(TestError(!proj, "SelectForEditCompare", "cannot find project")) return -1;
     editor = (SelectEdit*)proj->edits.New(1);
   }
-  return editor->CompareObjs(this, cmp_obj);
+  return editor->CompareObjs(this, cmp_obj, no_ptrs);
 }
 
 bool taBase::SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label) {
@@ -3042,11 +3043,12 @@ void taList_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
 
 void taList_impl::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
 				   void_PArray& src_bases, taBase* cp_base,
-				   int show_forbidden, int show_allowed) {
+				   int show_forbidden, int show_allowed, bool no_ptrs) {
   if(!cp_base) return;
   if(GetTypeDef() != cp_base->GetTypeDef()) return; // must be same type..
 
-  taOBase::CompareSameTypeR(mds, trg_bases, src_bases, cp_base, show_forbidden, show_allowed);
+  taOBase::CompareSameTypeR(mds, trg_bases, src_bases, cp_base, show_forbidden, show_allowed,
+			    no_ptrs);
   // then recurse..
   taList_impl* cp_lst = (taList_impl*)cp_base;
   int mxsz = MIN(size, cp_lst->size);
@@ -3056,7 +3058,8 @@ void taList_impl::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
     if(!itm || !cp_itm) continue;
     if((itm->GetOwner() == this) && (cp_itm->GetOwner() == cp_lst)) {
        // for guys we own (not links; prevents loops)
-      itm->CompareSameTypeR(mds, trg_bases, src_bases, cp_itm, show_forbidden, show_allowed);
+      itm->CompareSameTypeR(mds, trg_bases, src_bases, cp_itm, show_forbidden, show_allowed,
+			    no_ptrs);
     }
   }
 }

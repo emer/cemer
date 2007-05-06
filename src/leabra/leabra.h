@@ -2002,11 +2002,16 @@ public:
   virtual void 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure standard TD reinforcement learning layers; bio_labels = use biologically-based labels for layers, else functional; td_mod_all = have td value modulate all the regular units in the network
 
-  virtual void 	PVLV(LeabraNetwork* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false);
-  // #MENU_BUTTON configure PVLV (pavlovian perceived value and local value) learning layers in a network; bio_labels = use biologically-based labels for layers, else functional; localist_val = use localist value representations for lvpv layers; da_mod_all = have da value modulate all the regular units in the network
+  virtual void 	PVLV(LeabraNetwork* net, bool bio_labels = false, bool localist_val = true,
+		     bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false,
+		     bool old_syn_dep = false);
+  // #MENU_BUTTON configure PVLV (pavlovian primary value and learned value) learning layers in a network; bio_labels = use biologically-based labels for layers, else functional; localist_val = use localist value representations for PVLV layers; fm_hid_cons = receive from hidden layers (in addition to input); fm_out_cons = receive from output layers; da_mod_all = have da value modulate all the regular units in the network; old_syn_dep = make old synaptic-depression based configuration
 
-  virtual void 	BgPFC(LeabraNetwork* net, bool bio_labels = false, bool localist_val = true, bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false, int n_stripes=4, bool mat_fm_pfc_full = false, bool out_gate=false, bool nolrn_pfc=false, bool lr_sched = true);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for doing basal-ganglia based gating of the pfc layer; bio_labels = label layers with biological, else functional, names; localist_val = use localist value representations for lvpv layers; fm_hid_cons = make cons to pfc/bg fm hidden layers; fm_out_cons = from output layers; mat_fm_pfc_full = make pfc -> matrix prjn full (else stripe-specific); out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; patch per-stripe learning system optional; nolrn_pfc = pfc does not learn -- just copies input acts directly; da_mod_all = have da value modulate all the regular units in the network; lr_sched = make a learning rate schedule on BG learn cons
+  virtual void 	BgPFC(LeabraNetwork* net, bool bio_labels = false, bool localist_val = true,
+		      bool fm_hid_cons=true, bool fm_out_cons=false, bool da_mod_all = false,
+		      int n_stripes=4, bool mat_fm_pfc_full = false, bool out_gate=false,
+		      bool nolrn_pfc=false, bool lr_sched = true);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for doing basal-ganglia based gating of the pfc layer; bio_labels = label layers with biological, else functional, names; localist_val = use localist value representations for lvpv layers; fm_hid_cons = make cons to pfc/bg fm hidden layers; fm_out_cons = from output layers; da_mod_all = have da value modulate all the regular units in the network; mat_fm_pfc_full = make pfc -> matrix prjn full (else stripe-specific); out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly; lr_sched = make a learning rate schedule on BG learn cons
 
   virtual void SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)

@@ -253,12 +253,14 @@ void taGroup_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
 
 void taGroup_impl::CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
 				    void_PArray& src_bases, taBase* cp_base,
-				    int show_forbidden, int show_allowed) {
+				    int show_forbidden, int show_allowed, bool no_ptrs) {
   if(!cp_base) return;
   if(GetTypeDef() != cp_base->GetTypeDef()) return; // must be same type..
-  inherited::CompareSameTypeR(mds, trg_bases, src_bases, cp_base, show_forbidden, show_allowed);
+  inherited::CompareSameTypeR(mds, trg_bases, src_bases, cp_base, show_forbidden,
+			      show_allowed, no_ptrs);
   taGroup_impl* cp_gp = (taGroup_impl*)cp_base;
-  gp.CompareSameTypeR(mds, trg_bases, src_bases, &(cp_gp->gp), show_forbidden, show_allowed);
+  gp.CompareSameTypeR(mds, trg_bases, src_bases, &(cp_gp->gp), show_forbidden, show_allowed,
+		      no_ptrs);
 }
 
 int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {

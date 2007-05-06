@@ -7,6 +7,10 @@ current:
 
 == PVLV:
 
+* output gate guys only get pv da, not lv??
+
+* go back and try pv dt = .05
+
 * add group_name to CondEnv code -- Epochgp PERMUTED, etc..
 
 * create simulated SIR test case.. 2 repeated guys with reward assoc.
@@ -17,6 +21,7 @@ current:
 
 == Inventor
 
+* get rid of libpeg
 * manips conditional on arrow tool mode
 * scroll of graphview
 * import object files

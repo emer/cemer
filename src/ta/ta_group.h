@@ -96,7 +96,8 @@ public:
   override void	CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
 				 void_PArray& src_bases, taBase* cp_base,
 				 int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
-				 int show_allowed = taMisc::SHOW_CHECK_MASK);
+				 int show_allowed = taMisc::SHOW_CHECK_MASK,
+				 bool no_ptrs = true);
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);

@@ -1408,7 +1408,8 @@ public:
 					void_PArray& src_bases, 
 					void* trg_base, void* src_base,
 					int show_forbidden = taMisc::NO_HIDDEN,
-					int show_allowed = taMisc::SHOW_CHECK_MASK);
+					int show_allowed = taMisc::SHOW_CHECK_MASK,
+					bool no_ptrs = true);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
 
   // IO
@@ -1669,7 +1670,8 @@ public:
 				void_PArray& src_bases, 
 				void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
-				int show_allowed = taMisc::SHOW_CHECK_MASK);
+				int show_allowed = taMisc::SHOW_CHECK_MASK,
+				bool no_ptrs = true);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
 
   ostream&   	OutputType(ostream& strm, int indent = 1) const;
@@ -1989,7 +1991,8 @@ public:
 				void_PArray& src_bases, 
 				void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
-				int show_allowed = taMisc::SHOW_CHECK_MASK);
+				int show_allowed = taMisc::SHOW_CHECK_MASK,
+				bool no_ptrs = true);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
 
   // IO

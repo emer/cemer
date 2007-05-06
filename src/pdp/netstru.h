@@ -1528,7 +1528,7 @@ INHERITED(taBase)
 public:
   bool	xy_square;	// keep the x and y dimensions of the network square (same) -- makes the units square
   float	unit_spacing;	// #DEF_0.05 spacing between units (as a proportion of total space available to render the unit)
-  float	prjn_width;	// #DEF_0.001 width of the projection arrows
+  float	prjn_width;	// #DEF_0.002 width of the projection arrows
   float	prjn_trans;	// #DEF_0.5 transparency of the projection arrows
   float	lay_trans;	// #DEF_0.5 transparency of the layer border
   float	unit_trans;	// #DEF_0.6 transparency of the units

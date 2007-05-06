@@ -100,8 +100,6 @@ bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
 void MatrixConSpec::Initialize() {
   SetUnique("lmix", true);
-//   lmix.hebb = .001f;
-//   lmix.err = .999f;
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
 
@@ -127,11 +125,8 @@ void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);
   bias_spec.type = &TA_MatrixBiasSpec;
   SetUnique("g_bar", true);
-  g_bar.a = .12f;		// new vals for lv_delta
-  g_bar.h = .04f;
-  // old vals for syn_dep
-//   g_bar.a = .03f;
-//   g_bar.h = .01f;
+  g_bar.a = .03f;
+  g_bar.h = .01f;
 
   freeze_net = true;
 }
@@ -1568,7 +1563,12 @@ static void set_n_stripes(LeabraNetwork* net, char* nm, int n_stripes, int n_uni
 static void lay_set_geom(LeabraLayer* lay, int half_stripes) {
   lay->unit_groups = true;
   lay->gp_geom.n = half_stripes * 2;
-  lay->gp_geom.y = 2; lay->gp_geom.x = half_stripes;
+  if(half_stripes <= 2) {
+    lay->gp_geom.y = 1; lay->gp_geom.x = half_stripes * 2;
+  }
+  else {
+    lay->gp_geom.y = 2; lay->gp_geom.x = half_stripes;
+  }
   lay->UpdateAfterEdit();
 }
 
@@ -1584,12 +1584,18 @@ void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units)
   set_n_stripes(net, "SNrThal", n_stripes, -1, false);
   set_n_stripes(net, "SNrThal_mnt", n_stripes, -1, false);
   set_n_stripes(net, "SNrThal_out", n_stripes, -1, false);
+  set_n_stripes(net, "LVe", n_stripes, -1, false);
+  set_n_stripes(net, "LVi", n_stripes, -1, false);
   net->LayoutUnitGroups();
   net->Build();
 }
 
-void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val, bool fm_hid_cons, bool fm_out_cons, bool da_mod_all, int n_stripes, bool mat_fm_pfc_full, bool out_gate, bool nolrn_pfc, bool lr_sched) {
-  PVLV(net, bio_labels, localist_val, fm_hid_cons, fm_out_cons, da_mod_all); // first configure PVLV system..
+void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
+			 bool fm_hid_cons, bool fm_out_cons, bool da_mod_all,
+			 int n_stripes, bool mat_fm_pfc_full, bool out_gate,
+			 bool nolrn_pfc, bool lr_sched) {
+  PVLV(net, bio_labels, localist_val, fm_hid_cons, fm_out_cons, da_mod_all);
+  // first configure PVLV system..
 
   String msg = "Configuring BG PFC (Basal Ganglia Prefrontal Cortex) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
@@ -1613,11 +1619,12 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   net->RemoveUnits();
 
-  String pvenm = "PVe_LHA";  String pvinm = "PVi_VSpatch";
+  String pvenm = "PVe_LHA";  String pvinm = "PVi_VSpatch";  String pvrnm = "PVr_VShab";
   String lvenm = "LVe_CNA";  String lvinm = "LVi_VSpatch";
   String vtanm = "VTA";
   if(!bio_labels) {
-    pvenm = "PVe"; 	pvinm = "PVi";    lvenm = "LVe";    lvinm = "LVi";    vtanm = "DA";
+    pvenm = "PVe"; 	pvinm = "PVi";    pvrnm = "PVr";
+    lvenm = "LVe";    lvinm = "LVi";    vtanm = "DA";
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1626,6 +1633,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   // get these from the DA function..
   LeabraLayer* rew_targ_lay = (LeabraLayer*)net->FindLayer("RewTarg");
   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
+  LeabraLayer* pvr = (LeabraLayer*)net->FindLayer(pvrnm);
   LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
   LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
   LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
@@ -1674,8 +1682,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   //////////////////////////////////////////////////////////////////////////////////
   // sort layers
 
-  rew_targ_lay->name = "0000";  pve->name = "0001"; pvi->name = "0002";  
-  lve->name = "0003";  lvi->name = "0004";    vta->name = "0005";
+  rew_targ_lay->name = "0000";  pve->name = "0001"; pvr->name = "0002"; pvi->name = "0003";  
+  lve->name = "0004";  lvi->name = "0005";    vta->name = "0006";
 
   snc->name = "ZZZ3";
   matrix_m->name = "ZZZ4";  
@@ -1690,7 +1698,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   net->layers.Sort();
 
-  rew_targ_lay->name = "RewTarg";  pve->name = pvenm;  pvi->name = pvinm;
+  rew_targ_lay->name = "RewTarg";  pve->name = pvenm;  pvr->name = pvrnm; pvi->name = pvinm;
   lve->name = lvenm;  	lvi->name = lvinm;	vta->name = vtanm;
   snc->name = "SNc";
   if(out_gate) {
@@ -1719,7 +1727,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
     lay->SetUnitType(&TA_DaModUnit);
-    if(lay != rew_targ_lay && lay != pve && lay != pvi && lay != lve && lay != lvi && lay != vta
+    if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
+       && lay != lve && lay != lvi && lay != vta
        && lay != snc && lay != snrthal_m && lay != matrix_m && lay != pfc_m
        && lay != snrthal_o && lay != matrix_o && lay != pfc_o) {
       other_lays.Link(lay);
@@ -1764,8 +1773,12 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   if(learn_cons == NULL) return;
 
   LeabraConSpec* pvi_cons = (LeabraConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
-  LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_LVConSpec);
-  LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_LVConSpec);
+  LeabraConSpec* pvr_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVConSpec);
+  LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
+  LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
+  // old syn_dep:
+//   LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_LVConSpec);
+//   LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_LVConSpec);
 
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   if(topfc_cons == NULL) return;
@@ -1790,7 +1803,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
      || matrix_bias == NULL)
     return;
 
-//   LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
+  LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
+  LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec);
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindMakeSpec(vtanm + "Layer", &TA_PVLVDaLayerSpec);
   LeabraLayerSpec* pfcmsp = (LeabraLayerSpec*)layers->FindMakeSpec("PFCLayer", &TA_PFCLayerSpec);
   LeabraLayerSpec* pfcosp = NULL;
@@ -1843,6 +1857,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   // make projections
 
   // FindMakePrjn(Layer* recv, Layer* send,
+  net->FindMakePrjn(snc, pvr, fullprjn, marker_cons);
   net->FindMakePrjn(snc, pvi, fullprjn, marker_cons);
   net->FindMakePrjn(snc, lve, fullprjn, marker_cons);
   net->FindMakePrjn(snc, lvi, fullprjn, marker_cons);
@@ -1885,6 +1900,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
     // this part in particular doesn't make sense for pfc_o only..
     // critics need up reflect updating!
+    net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
     net->FindMakePrjn(lve, pfc_m, fullprjn, lve_cons);
     net->FindMakePrjn(lvi, pfc_m, fullprjn, lvi_cons);
@@ -1898,6 +1914,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
     //  net->FindMakeSelfPrjn(pfc, intra_pfcps, intra_pfc);
 
+    net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
     net->FindMakePrjn(lve, pfc_m, fullprjn, lve_cons);
     net->FindMakePrjn(lvi, pfc_m, fullprjn, lvi_cons);
@@ -2038,10 +2055,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     matrixosp->avgda_rnd_go.on = false;
   }
 
-//   matrix_units->g_bar.h = .01f; // old syn dep
-//   matrix_units->g_bar.a = .03f;
-  matrix_units->g_bar.h = .04f;
-  matrix_units->g_bar.a = .12f;
+  matrix_units->g_bar.h = .01f; // old syn dep
+  matrix_units->g_bar.a = .03f;
   pfc_units->SetUnique("g_bar", true);
   if(nolrn_pfc)
     pfc_units->g_bar.h = 1.0f;
@@ -2101,9 +2116,20 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
 
+  // LVe and LVi are now per-pfc stripe!
+  lay_set_geom(lve, half_stripes);
+  lay_set_geom(lvi, half_stripes);
+  lvesp->SetUnique("inhib_group", true);
+  lvesp->SetUnique("gp_kwta", true);
+  lvisp->SetUnique("inhib_group", false);
+  lvisp->SetUnique("gp_kwta", false);
+  lvesp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
+  lvesp->gp_kwta.k_from = KWTASpec::USE_K;
+  lvesp->gp_kwta.k = 1;
+
   snc->un_geom.n = 1;
   if(snc_new) { 
-    snc->pos.z = 0; snc->pos.y = 3; snc->pos.x = vta->pos.x; 
+    snc->pos.z = 0; snc->pos.y = 4; snc->pos.x = lve->pos.x; 
   }
   lay_set_geom(snc, half_stripes);
 
@@ -2208,9 +2234,6 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
   }
-
-  // todo: !!!
-//   winbMisc::DelayedMenuUpdate(net);
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit

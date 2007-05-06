@@ -5420,23 +5420,25 @@ void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
 
 void MemberSpace::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 				  void_PArray& src_bases, void* trg_base, void* src_base,
-				  int show_forbidden, int show_allowed) {
+				  int show_forbidden, int show_allowed, bool no_ptrs) {
   int i;
   for(i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
-    if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed))
+    if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed)) {
+      if(no_ptrs && (md->type->ptr > 0 || md->type->HasOption("SMART_POINTER"))) continue;
       md->CompareSameType(mds, trg_bases, src_bases, trg_base, src_base, show_forbidden,
-			  show_allowed);
+			  show_allowed, no_ptrs);
+    }
   }
 }
 
 void MemberDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 				void_PArray& src_bases, void* trg_base, void* src_base,
-				int show_forbidden, int show_allowed) {
+				int show_forbidden, int show_allowed, bool no_ptrs) {
   if(type->InheritsFormal(TA_class) &&
      !(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE"))) {
     type->CompareSameType(mds, trg_bases, src_bases, GetOff(trg_base), 
-			  GetOff(src_base), show_forbidden, show_allowed);
+			  GetOff(src_base), show_forbidden, show_allowed, no_ptrs);
   }
   else {
     // actually do the comparison, based on string value
@@ -5449,10 +5451,10 @@ void MemberDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 
 void TypeDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 			      void_PArray& src_bases, void* trg_base, void* src_base,
-			      int show_forbidden, int show_allowed) {
+			      int show_forbidden, int show_allowed, bool no_ptrs) {
   if(InheritsFormal(TA_class)) {
     members.CompareSameType(mds, trg_bases, src_bases, trg_base, src_base, show_forbidden,
-			    show_allowed);
+			    show_allowed, no_ptrs);
   }
   else {
     taMisc::Error("CompareSameType called on non-class object -- does not work!");

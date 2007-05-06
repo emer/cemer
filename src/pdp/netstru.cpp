@@ -4161,7 +4161,7 @@ void NetViewFontSizes::Initialize() {
 void NetViewParams::Initialize() {
   xy_square = false;
   unit_spacing = .05f;
-  prjn_width = .001f;
+  prjn_width = .002f;
   prjn_trans = .5f;
   lay_trans = .5f;
   unit_trans = 0.6f;

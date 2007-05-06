@@ -19,13 +19,6 @@
 
 #include <QDir>
 
-extern "C" {
-// using the IV version of lib tiff!
-// #include <TIFF/tiffio.h>
-#include <jpeglib.h>
-}
-
-
 //////////////////////////
 //  DirectoryCatalog	//
 //////////////////////////
@@ -162,62 +155,9 @@ bool ImageReader::ReadImage_Jpeg() {
     taMisc::Warning("ImageReader::ReadImage_Jpeg: can't open file: ", fname);
     return false;
   }
+
+  // todo: use QtImage or taImage for this!  not worth the libjpeg dependency!!
   
-  struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_decompress(&cinfo);
-
-  jpeg_stdio_src(&cinfo, infile);
-  jpeg_read_header(&cinfo, TRUE);
-
-  // we should have dims now, so make matrices and set color space
-  img_size.x = cinfo.image_width; 
-  img_size.y = cinfo.image_height;
-  //note: jpeglib should interpolate or reduce output regardless of input file format
-  switch (color_mode) {
-  case CM_GRAYSCALE:
-    cinfo.out_color_space = JCS_GRAYSCALE; 
-    break;
-  case CM_RGB:
-    cinfo.out_color_space = JCS_RGB; 
-    break;
-  }
-  jpeg_start_decompress(&cinfo);
-  
-  // note: out size should = image size, since we aren't scaling
-  //   comps should be 1 for gray and 3 for color
-  int comps = cinfo.output_components; 
-  byte_Matrix* bmat = new byte_Matrix(3, comps, cinfo.output_width, cinfo.output_height);
-  SetMat(bmat);
-
-//  int row_stride = cinfo.output_width;	/* JSAMPLEs per row in image_buffer */;
-//  JSAMPLE* scanline = new JSAMPLE[row_stride * cinfo.rec_outbuf_height * components];
-  int y =0;
-  while (cinfo.output_scanline < cinfo.output_height) {
-    JSAMPLE* scanline = (JSAMPLE*)bmat->FastEl_(0, 0, y);
-    int lread = jpeg_read_scanlines(&cinfo, &scanline, cinfo.rec_outbuf_height);
-    y += lread; // should be 1
-/*done inplace    int lread = jpeg_read_scanlines(&cinfo, &scanline, cinfo.rec_outbuf_height);
-    int ctr = 0;
-    int srow; 
-    for (int y = 0; y < lread; y++) {
-      srow = cinfo.output_height - cinfo.output_scanline - y; 
-      for (int x = 0; x < (int)cinfo.output_width; ++x) {
-        for (int comp = 0; comp < components; ++comp) {
-          bmat->FastEl(x, srow, comp) = (byte)(scanline[ctr++]);
-        }
-      }
-    }*/
-  }
-
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
-
-  fclose(infile);
- 
-//  delete [] scanline;
   return true;
 }
 

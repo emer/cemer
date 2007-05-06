@@ -523,7 +523,7 @@ int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
   return rval;
 }
 
-int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b) {
+int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
   if(TestError(!obj_a || !obj_b, "CompareObjs", "null object(s)")) return -1;
   if(TestError(obj_a->GetTypeDef() != obj_b->GetTypeDef(), "CompareObjs",
 	       "objects must have the exact same type to be able to be compared")) return -1;
@@ -533,7 +533,7 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b) {
   Member_List mds;
   void_PArray trg_bases;
   void_PArray src_bases;
-  obj_a->CompareSameTypeR(mds, trg_bases, src_bases, obj_b);
+  obj_a->CompareSameTypeR(mds, trg_bases, src_bases, obj_b, no_ptrs);
   taMisc::Info("SelectEdit::CompareObjs generated", (String)mds.size, "differences");
   for(int i=0;i<mds.size;i++) {
     taBase* itma = (taBase*)trg_bases[i];

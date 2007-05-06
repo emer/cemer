@@ -165,7 +165,7 @@ void taProject::InitLinks_impl() {
 void taProject::InitLinks_post() {
   if (!taMisc::is_loading) {
     AssertDefaultProjectBrowser(true);
-    AssertDefaultWiz(true);	// make default and edit it
+    AssertDefaultWiz(false);	// make default and don't edit it
   } else {
     AssertDefaultProjectBrowser(false);
     AssertDefaultWiz(false);	// make default and don't edit it

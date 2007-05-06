@@ -103,8 +103,8 @@ public:
   // #MENU #MENU_SEP_BEFORE #CONFIRM reset (remove all) current members and methods
   virtual int	SearchMembers(taNBase* obj, const String& memb_contains);
   // #MENU search given object for member names that contain given string, and add them to this editor
-  virtual int	CompareObjs(taBase* obj_a, taBase* obj_b);
-  // #MENU #TYPE_taNBase compare two objects (must be of the same type) and add the differences in this select edit
+  virtual int	CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
+  // #MENU #TYPE_taNBase compare two objects (must be of the same type) and add the differences in this select edit; no_ptrs = ignore pointer fields
 
   virtual void	GetMembsFmStrs(); // #IGNORE get members from strings (upon loading)
   virtual void	GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)

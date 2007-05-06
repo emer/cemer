@@ -253,6 +253,7 @@ void ScalarValSpec::Initialize() {
   min_sum_act = 0.2f;
   val_mult_lrn = false;
   clip_val = true;
+  send_thr = false;
   min = val = 0.0f;
   range = incr = 1.0f;
 }
@@ -723,7 +724,7 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
     LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     float cur = scalar.GetUnitVal(i);
     float act_val = 0.0f;
-    if(u->act_eq >= us->opt_thresh.send)		   // only if over sending thresh!
+    if(!scalar.send_thr || (u->act_eq >= us->opt_thresh.send)) // only if over sending thresh!
       act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
     avg += cur * act_val;
     sum_act += act_val;

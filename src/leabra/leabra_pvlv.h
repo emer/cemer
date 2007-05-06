@@ -242,8 +242,6 @@ class LEABRA_API LVSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for learned value layers
   INHERITED(taBase)
 public:
-  float		disc_thr;	// #CONDEDIT_OFF_syn_dep #DEF_0.02 threshold for increases in net LV value above previous time step for applying lv_disc discount to prior time step value (allows new inputs to produce a stronger da drive)
-  float		disc;		// #CONDEDIT_OFF_syn_dep #DEF_0.8 amount to discount prior time step LV value if current value exceeds prior by lv_disc_thr threshold
   bool		delta_on_sum;	// #DEF_false if there are multiple lv subgroups, compute the temporal delta on the summed lv values (else deltas are per each sub-group, then summed)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
@@ -310,8 +308,7 @@ class LEABRA_API PVLVDaSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
   INHERITED(taBase)
 public:
-  float		lv_da_gain;	// #DEF_1 multiplier for LV dopamine values
-  float		pv_da_gain;	// #DEF_1 multiplier for PV dopamine values
+  float		da_gain;	// #DEF_1 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)
