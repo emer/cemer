@@ -241,23 +241,14 @@ public:
   int		maxButtonWidth(int sizeSpec = 0) const; // maximum width allowed
 
   QLabel*	NewLabel(const String& text, QWidget* parent = NULL, int fontSpec = 0);
-    // convenience, for making a label with indicated fontspec
+  // convenience, for making a label with indicated fontspec
   void		FormatButton(QAbstractButton* but, const String& text,
-    int font_spec = 0); // sets max width, text, and adds a tooltip
+			     int font_spec = 0); // sets max width, text, and adds a tooltip
     
-static  iColor	ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness); // applies a legacy IV brightness factor to a Qt Color
-  String 	color_to_string(const iColor& color); // returns a string value (appropriate for setting in a style) for the color
-
-/*TODO: rewrite for Qt #if (!(defined(WINDOWS) || defined(CYGWIN)))
-  static void DumpJpeg(_XDisplay* dpy, XWindow win, const char* fnm, int quality=85, int xstart=0, int ystart=0, int width=-1, int height=-1);
-  // dump window to jpeg file
-  static void DumpJpegIv(iWindow* win, const char* fnm, int quality=85, int xstart=0, int ystart=0, int width=-1, int height=-1);
-  // dump interviews window to jpeg file
-  static void DumpTiff(_XDisplay* dpy, XWindow win, const char* fnm, int xstart=0, int ystart=0, int width=-1, int height=-1);
-  // dump window to tiff file
-  static void DumpTiffIv(iWindow* win, const char* fnm, int xstart=0, int ystart=0, int width=-1, int height=-1);
-  // dump interviews window to tiff file
-#endif */
+  static  iColor ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrightness);
+  // applies a legacy IV brightness factor to a Qt Color
+  String 	color_to_string(const iColor& color); 
+  // returns a string value (appropriate for setting in a style) for the color
 
   taiMisc(QObject* parent = NULL);
   ~taiMisc();

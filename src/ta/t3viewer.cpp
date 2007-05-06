@@ -45,6 +45,7 @@
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
 #include <Inventor/events/SoButtonEvent.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <Inventor/misc/SoBase.h>
@@ -1364,6 +1365,68 @@ void T3DataViewFrame::Dump_Save_pre() {
   // note: not doing this now: it is up to the viewer to do this now
 //   GetCameraPosOrient();
 }
+
+bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
+  if(img_fmt != EPS) {
+    return inherited::SaveImageAs(fname, img_fmt);
+  }
+
+  if(!widget()) return false;
+  SoQtViewer* viewer = widget()->ra();
+  if(!viewer) return false;
+
+  String ext = image_exts.SafeEl(img_fmt);
+  taFiler* flr = GetSaveFiler(fname, ext);
+  if(!flr->ostrm) {
+    flr->Close();
+    taRefN::unRefDone(flr);
+    return false;
+  }
+  flr->Close();
+
+  SoVectorizePSAction * ps = new SoVectorizePSAction;
+  SoVectorOutput * out = ps->getOutput();
+
+  if (!out->openFile(flr->fileName())) {
+    return -1; // unable to open output file
+  }
+
+  // to enable gouraud shading. 0.1 is a nice epsilon value
+  // ps->setGouraudThreshold(0.1f);
+
+  // clear to white background. Not really necessary if you
+  // want a white background
+  ps->setBackgroundColor(TRUE, SbColor(1.0f, 1.0f, 1.0f));
+
+  // select LANDSCAPE or PORTRAIT orientation
+  ps->setOrientation(SoVectorizeAction::LANDSCAPE);
+
+  // start creating a new page (A4 page, with 10mm border).
+  //  ps->beginPage(SbVec2f(10.0f, 10.0f), SbVec2f(190.0f, 277.0f));
+
+  // There are also enums for A0-A10. Example:
+  // ps->beginStandardPage(SoVectorizeAction::A4, 10.0f);
+  ps->beginStandardPage(SoVectorizeAction::A4, 10.0f);
+
+  // calibrate so that text, lines, points and images will have the
+  // same size in the postscript file as on the monitor.
+  ps->calibrate(viewer->getViewportRegion());
+
+  // apply action on the viewer scenegraph. Remember to use
+  // SoSceneManager's scene graph so that the camera is included.
+  ps->apply(viewer->getSceneManager()->getSceneGraph());
+
+  // this will create the postscript file
+  ps->endPage();
+
+  // close file
+  out->closeFile();
+
+  delete ps;
+  taRefN::unRefDone(flr);
+  return true;
+}
+
 
 
 //////////////////////////

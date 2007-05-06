@@ -139,15 +139,18 @@ friend class DataViewer_List;
 friend class MainWindowViewer;
 //friend class WindowState;
 public:
-  enum PrintFmt {
-    POSTSCRIPT,
-    JPEG,
-    TIFF,
-    PDF //NOTE: new for Qt version
+  enum ImageFormat {
+    EPS,			// encapsulated postscript file (only for inventor objects)
+    JPEG,			// JPEG
+    PNG,			// Portable Network Graphics
+    PPM,			// Portable Pixmap
+    N_IMG_FMTS,			// total number of image formats
   };
   
   static void		GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
   // #IGNORE get file properties for given type
+  static String_Array	image_exts;
+  // #HIDDEN list of image extensions in one-to-one correspondence with ImageFormat enum
 
   String                name;           // name of the object 
   bool			visible; // #HIDDEN whether toolbar window is being shown to user
@@ -180,6 +183,14 @@ public:
   virtual void 		WindowClosing(CancelOp& cancel_op) {} 
    // cb from m_widget, subordinate wins may not be cancellable
   virtual void		WidgetDeleting(); // lets us do any cleanup -- override the impl
+
+  virtual QPixmap	GrabImage(bool& got_image);
+  // #IGNORE grabs the widget image into a pixmap object
+  virtual bool		SaveImageAs(const String& fname = _nilString, ImageFormat img_fmt = JPEG);
+  // #BUTTON save the image of this view to a file -- if fname is empty, it prompts the user for a name
+  virtual bool		PrintImage();
+  // #BUTTON print the image of this view to printer
+  static bool		InitImageExts(); // initialize the image extensions, if not already done
   
   bool   SetName(const String& nm) 	{ name = nm; return true; } 
   String GetName() const 		{ return name; } 
@@ -188,7 +199,6 @@ public:
   void	CutLinks();
   void	Copy_(const DataViewer& cp);
   TA_DATAVIEWFUNS(DataViewer, taDataView) //
-
 
 protected:
   // from taDataView

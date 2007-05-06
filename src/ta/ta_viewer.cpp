@@ -28,6 +28,10 @@
 # endif
 # include <QApplication>
 # include <QScrollArea>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QPixmap>
+#include <QPainter>
 #endif
 
 //TODO: this file will need to have many routines modalized for TA_GUI
@@ -38,6 +42,18 @@
 //////////////////////////
 //   DataViewer		//
 //////////////////////////
+
+String_Array DataViewer::image_exts;
+
+bool DataViewer::InitImageExts() {
+  if(image_exts.size == N_IMG_FMTS) return false;
+  image_exts.Reset();
+  image_exts.Add("eps");
+  image_exts.Add("jpg");
+  image_exts.Add("png");
+  image_exts.Add("ppm");
+  return true;
+}
 
 void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
   int opt;
@@ -62,6 +78,7 @@ void DataViewer::Destroy() {
 
 void DataViewer::InitLinks() {
   inherited::InitLinks();
+  InitImageExts();
 }
 
 void DataViewer::CutLinks() {
@@ -157,6 +174,48 @@ void DataViewer::SetWinState() {
   SetWinState_impl();
 }
 
+
+QPixmap DataViewer::GrabImage(bool& got_image) {
+  if(!widget()) {
+    got_image = false;
+    return QPixmap();
+  }
+  got_image = true;
+  return QPixmap::grabWidget(widget());
+}
+
+bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
+  if(TestError(img_fmt == EPS, "SaveImageAs",
+	       "EPS (encapsulated postscript) not supported for this type of view"))
+    return false;
+  bool rval = false;
+  String ext = image_exts.SafeEl(img_fmt);
+  taFiler* flr = GetSaveFiler(fname, ext);
+  if(flr->ostrm) {
+    QPixmap pix = GrabImage(rval);
+    if(rval) {
+      flr->Close();
+      pix.save(flr->fileName(), ext, taMisc::jpeg_quality);
+    }
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
+}
+
+bool DataViewer::PrintImage() {
+  bool rval = false;
+  QPixmap pix = GrabImage(rval);
+  if(rval) {
+    QPrinter pr;
+    QPrintDialog pd(&pr, widget());
+    if(pd.exec() == QDialog::Accepted) {
+      QPainter p(&pr);
+      p.drawPixmap(0, 0, pix);
+    }
+  }  
+  return rval;
+}
 
 /* TBD
 void DataViewer::GetPrintFileDlg(PrintFmt fmt) {

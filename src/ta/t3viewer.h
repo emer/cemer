@@ -542,6 +542,8 @@ public:
   virtual void		SetCameraPosOrient();
   // set camera's current position and orientation from viewer from my fields (during loading)
 
+  override bool		SaveImageAs(const String& fname = _nilString, ImageFormat img_fmt = JPEG);
+
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();
   void	CutLinks();
