@@ -1241,6 +1241,7 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
     vw->viewerWindow()->AddPanelNewTab(lvp());
+    m_lvp->t3vs->setTopView(this);
   }
 }
 

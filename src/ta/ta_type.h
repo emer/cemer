@@ -1118,6 +1118,8 @@ public:
   virtual bool		isDataView() const {return false;} // true for dataviews
   virtual void		DataLinkDestroying(taDataLink* dl) = 0; // called by DataLink when destroying; it will remove datalink ref in dlc upon return
   virtual void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) = 0; //
+  virtual void		IgnoredDataChanged(taDataLink* dl, int dcr,
+    void* op1, void* op2) {} // called instead if ignoreDataChanged was true
   
   IDataLinkClient() {m_link = NULL;}
   ~IDataLinkClient();

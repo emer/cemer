@@ -281,6 +281,7 @@ private:
   void			Initialize();
   void			Destroy();
 };
+TA_SMART_PTRS(T3DataView);
 
 #define T3_DATAVIEWFUNS(b,i) \
   TA_DATAVIEWFUNS(b,i);
@@ -394,6 +395,7 @@ public:
   };
 
   SoSelectionPtr	sel_so; //#IGNORE
+  
   SoSeparator*		root_so() {return m_root_so.ptr();} // always valid -- you can add your own lights, camera, etc.
   QScrollBar*		horScrollBar(bool auto_create = false);
   void			setHasHorScrollBar(bool value);
@@ -407,6 +409,7 @@ public:
   SoQtRenderArea* 	renderArea() {return m_renderArea;}
   void			setRenderArea(SoQtRenderArea* value); // must be called once, after creation
   void 			setSceneGraph(SoNode* sg);
+  void			setTopView(taDataView* tv); // set topmost view; for show/hide -- calls SetVisible if visible on set
 
   void			deleteScene(); // deletes the scene -- usually only called internally, not by clients of this component
   void 			ContextMenuRequested(const QPoint& pos); // #IGNORE called from render area
@@ -441,6 +444,11 @@ protected:
   SoNode*		m_scene; // actual top item set by user
   SelectionMode		m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
   iT3DataViewFrame*	m_i_data_frame; // #IGNORE our parent object
+  taDataViewRef		m_top_view; // #IGNORE topmost view obj, for show/hide ctrl
+  signed char		m_last_vis; // #IGNORE keeps track of last hide/show state, to avoid spurious calls when several in a row: -1=hide, 0=init, 1=show
+
+  override void 	showEvent(QShowEvent* ev);
+  override void 	hideEvent(QHideEvent* ev);
 
   void			SoSelectionEvent(iSoSelectionEvent* ev); // #IGNORE
   void			LayoutComponents(); // called on resize or when comps change (ex scrollers)

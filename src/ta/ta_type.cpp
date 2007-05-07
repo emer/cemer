@@ -2104,8 +2104,10 @@ void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
   for (int i = 0; i < clients.size; ++i) {
     IDataLinkClient* dlc = clients.FastEl(i);
     if ((dcr == DCR_REBUILD_VIEWS) && !dlc->isDataView()) continue;
-    if (dlc->ignoreDataChanged()) continue;
-    dlc->DataDataChanged(this, dcr, op1_, op2_);
+    if (dlc->ignoreDataChanged())
+      dlc->IgnoredDataChanged(this, dcr, op1_, op2_);
+    else 
+      dlc->DataDataChanged(this, dcr, op1_, op2_);
   }
 }
 

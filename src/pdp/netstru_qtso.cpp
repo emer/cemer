@@ -967,8 +967,8 @@ void LayerView::UpdateUnitValues() { // *actually* only does unit value updating
   int ch_idx = 0;
   Layer* lay = layer(); //cache
   if(!lay->unit_groups) { // single ugrp
-    UnitGroupView* ugv = (UnitGroupView*)children.FastEl(ch_idx++);
-    ugv->UpdateUnitValues();
+    UnitGroupView* ugv = (UnitGroupView*)children.SafeEl(ch_idx++);
+    if(ugv) ugv->UpdateUnitValues(); // if null, maybe not built yet
   }
   else { // multi-ugrps
     for (int j = 0; j < lay->gp_geom.n; ++j) {

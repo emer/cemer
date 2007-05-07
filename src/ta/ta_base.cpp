@@ -3170,6 +3170,8 @@ void taDataView::Initialize() {
   m_dbu_cnt = 0;
   m_parent = NULL;
   m_index = -1;
+  m_vis_cnt = 0;
+  m_defer_refresh = 0;
 }
 
 void taDataView::CutLinks() {
@@ -3190,6 +3192,65 @@ void taDataView::UpdateAfterEdit_impl() {
     if (m_data) 
       m_data->AddDataClient(this);
   }
+}
+
+void taDataView::ChildAdding(taDataView* child) {
+  child->m_vis_cnt = m_vis_cnt;
+}
+
+// arbitrary number, not likely to be higher than this
+#define MAX_VIS_CNT 6
+
+void taDataView::SetVisible(bool showing) {
+  DataViewAction act = (showing) ? SHOWING_IMPL : HIDING_IMPL;
+  DoActions(act);
+}
+
+void taDataView::SetVisible_impl(DataViewAction act) {
+  int do_defer_refresh = 0;
+  if (act & SHOWING_IMPL) {
+    if (++m_vis_cnt == 1) {
+      // first hide->show: do a defered struct guy if appl
+      do_defer_refresh = m_defer_refresh;
+      if (do_defer_refresh > 0)
+        DataDataChanged(NULL, DCR_STRUCT_UPDATE_BEGIN, NULL, NULL);
+      else if (do_defer_refresh < 0)
+        DataDataChanged(NULL, DCR_DATA_UPDATE_BEGIN, NULL, NULL);
+    }
+#ifdef DEBUG
+    TestError((m_vis_cnt > MAX_VIS_CNT), "taDataView::SetVisible_impl",
+      "m_vis_cnt > likely max, may indicate show/hide issues (is:",
+      String(m_vis_cnt), ")");
+#endif
+  } else { // act & HIDING_IMPL
+    if (TestError((--m_vis_cnt < 0), "taDataView::SetVisible_impl",
+      "m_vis_cnt went -ve, indicates show/hide issues"))
+      m_vis_cnt = 0;
+  }
+  
+  DoActionChildren_impl(act);
+  
+  if (do_defer_refresh == 0) return;
+  
+  m_defer_refresh = 0;
+  if (do_defer_refresh > 0)
+    DataDataChanged(NULL, DCR_STRUCT_UPDATE_END, NULL, NULL);
+  else // (do_defer_rebuild < 0)
+    DataDataChanged(NULL, DCR_DATA_UPDATE_END, NULL, NULL);
+}
+
+
+void taDataView::IgnoredDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
+  // note: should not need to track anything during loading
+  if (taMisc::is_loading) return;
+  
+  // keep track if we need to update -- struct has priority, and overrides data
+  if ((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
+    (dcr == DCR_REBUILD_VIEWS))
+    m_defer_refresh = 1;
+  else if ((m_defer_refresh == 0) && ((dcr == DCR_DATA_UPDATE_BEGIN) ||
+    (dcr <= DCR_ITEM_UPDATED_ND) || (dcr == DCR_UPDATE_VIEWS)))
+    m_defer_refresh = -1;
 }
 
 // set this to emit debug messages for the following code..
@@ -3282,6 +3343,10 @@ void taDataView::DataUpdateAfterEdit() {
 }
 
 void taDataView::DoActions(DataViewAction acts) {
+  if (acts & SHOWING_HIDING_MASK) {
+    SetVisible_impl(acts); // note: only 1 will be called
+    return; // NEVER combined with any other action
+  }
   // never do any rendering during load or copying, 
   if (!(taMisc::is_loading || taMisc::is_duplicating)) { 
   

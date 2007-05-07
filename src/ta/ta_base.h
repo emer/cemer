@@ -1859,14 +1859,16 @@ INHERITED(taOBase)
 friend class DataView_List;
 public:
   enum DataViewAction { // #BITS enum used to (safely) manually invoke one or more _impl actions
-    CONSTR_POST		= 0x01, // #BIT (only used by DataViewer)
-    CLEAR_IMPL		= 0x02, // #BIT (only used by T3DataView)
-    RENDER_PRE		= 0x04, // #BIT
-    RENDER_IMPL		= 0x08, // #BIT
-    RENDER_POST		= 0x10, // #BIT
-    CLOSE_WIN_IMPL	= 0x20,  // #BIT (only used by DataViewer)
-    RESET_IMPL		= 0x40, // #BIT
-    UNBIND_IMPL		= 0x80 // #BIT disconnect everyone from a data source
+    CONSTR_POST		= 0x001, // #BIT (only used by DataViewer)
+    CLEAR_IMPL		= 0x002, // #BIT (only used by T3DataView)
+    RENDER_PRE		= 0x004, // #BIT
+    RENDER_IMPL		= 0x008, // #BIT
+    RENDER_POST		= 0x010, // #BIT
+    CLOSE_WIN_IMPL	= 0x020,  // #BIT (only used by DataViewer)
+    RESET_IMPL		= 0x040, // #BIT
+    UNBIND_IMPL		= 0x080, // #BIT disconnect everyone from a data source
+    SHOWING_IMPL	= 0x100, // #BIT
+    HIDING_IMPL		= 0x200 // #BIT
 #ifndef __MAKETA__
     ,CLEAR_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL // for Clear
     ,RENDER_ACTS	= CLEAR_IMPL | RENDER_PRE | RENDER_IMPL | RENDER_POST // for Render
@@ -1874,7 +1876,9 @@ public:
     ,RESET_ACTS		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL // for Reset
     ,UNBIND_ACTS	= UNBIND_IMPL
     
-    ,CONSTR_MASK	= CONSTR_POST | RENDER_PRE | RENDER_IMPL | RENDER_POST 
+    ,SHOWING_HIDING_MASK = SHOWING_IMPL | HIDING_IMPL
+    ,CONSTR_MASK	= CONSTR_POST | RENDER_PRE | RENDER_IMPL | RENDER_POST |
+      SHOWING_HIDING_MASK
       // mask for doing child delegations in forward order
     ,DESTR_MASK		= CLEAR_IMPL | CLOSE_WIN_IMPL | RESET_IMPL | UNBIND_IMPL
       // mask for doing child delegations in reverse order
@@ -1901,11 +1905,12 @@ public:
   virtual void		DataUpdateAfterEdit_Child(taDataView* chld) 
     {DataUpdateAfterEdit_Child_impl(chld);}
     // optionally called by child in its DUAE routine; must be added manually
-  virtual void 		ChildAdding(taDataView* child) {} // #IGNORE called from list;
+  virtual void 		ChildAdding(taDataView* child); // #IGNORE called from list;
   virtual void 		ChildRemoving(taDataView* child) {} // #IGNORE called from list; 
   virtual void		ChildClearing(taDataView* child) {} // override to implement par's portion of clear
   virtual void		ChildRendered(taDataView* child) {} // override to implement par's portion of render
   virtual void		CloseChild(taDataView* child) {}
+  virtual void		SetVisible(bool showing); // called recursively when a view ctrl shows or hides
   virtual void		Render() {DoActions(RENDER_ACTS);} 
     // renders the visible contents (usually override the _impls) -- MUST BE DEFINED IN SUB
   virtual void		Clear(taDataView* par = NULL) {DoActions(CLEAR_ACTS);} // clears the view (but doesn't delete any components) (usually override _impl)
@@ -1914,7 +1919,7 @@ public:
   virtual void		Refresh(){DoActions(REFRESH_ACTS);} // for manual refreshes -- just the impl stuff, not structural stuff
   virtual void		Unbind() {DoActions(UNBIND_ACTS);} 
     // clears, and deletes any components (usually override _impls)
-  virtual void		DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.); par only needed when a _impl needs it
+  virtual void		DoActions(DataViewAction acts); // do the indicated action(s) if safe in this context (ex loading, whether gui exists, etc.)
   
   virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
   virtual void		DataDestroying() {} // called when data is destroying (m_data will already be NULL)
@@ -1931,9 +1936,11 @@ public: // IDataLinkCLient
 //in taBase  virtual TypeDef*	GetTypeDef() const;
   override TypeDef*	GetDataTypeDef() const 
     {return (m_data) ? m_data->GetTypeDef() : &TA_taBase;} // TypeDef of the data
+  override bool		ignoreDataChanged() const {return (m_vis_cnt <= 0);}
   override bool		isDataView() const {return true;}
   override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
-   // called when the data item has changed, esp. ex lists and groups; dispatches to the DataXxx_impl's
+  override void		IgnoredDataChanged(taDataLink* dl, int dcr,
+    void* op1, void* op2);
   override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove 
 
 protected:
@@ -1941,6 +1948,8 @@ protected:
   int			m_index; // for when in a list
   // NOTE: all Dataxxx_impl are supressed if dbuCnt or parDbuCnt <> 0 -- see ta_type.h for detailed rules
   mutable taDataView* 	m_parent; // autoset on SetOwner, type checked as well
+  mutable short		m_vis_cnt; // visible count -- when >0, is visible, so refresh
+  mutable signed char	m_defer_refresh; // while hidden: +1, struct; -1, data	
   
   override void		UpdateAfterEdit_impl();
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
@@ -1953,6 +1962,8 @@ protected:
   virtual void		DataChanged_Child(TAPtr child, int dcr, void* op1, void* op2) {} 
    // typically from an owned list
   virtual void		DoActionChildren_impl(DataViewAction acts) {} // only one action called at a time, if CONSTR do children in order, if DESTR do in reverse order; call child.DoActions(act)
+  virtual void 		SetVisible_impl(DataViewAction act);
+    // called when a viewer hides/shows (act is one of SHOWING or HIDING)
   virtual void		Constr_post() {DoActionChildren_impl(CONSTR_POST);} 
     // extend to implement post-constr
   virtual void		Clear_impl() {DoActionChildren_impl(CLEAR_IMPL);} 
@@ -1974,6 +1985,7 @@ private:
   void			Initialize();
   void			Destroy() {CutLinks();}
 };
+TA_SMART_PTRS(taDataView);
 
 // for explicit lifetime management
 #define TA_DATAVIEWFUNS(b,i) \

@@ -899,6 +899,7 @@ void iT3ViewspaceWidget::init() {
 //nn  m_raw = NULL;
   m_selMode = SM_NONE;
   m_scene = NULL;
+  m_last_vis = 0;
 //TEST
   setMinimumSize(320, 320);
 }
@@ -1032,6 +1033,35 @@ void iT3ViewspaceWidget::setSelMode(SelectionMode value) {
 
   if (m_selMode == value) return;
     m_selMode = value;
+}
+
+void iT3ViewspaceWidget::setTopView(taDataView* tv) {
+  if (tv == m_top_view) return;
+  m_top_view = tv;
+  if (tv) {
+    if (isVisible()) {
+      m_last_vis = 1;
+      tv->SetVisible(true);
+    } else {
+      m_last_vis = -1;
+    }
+  }
+}
+
+void iT3ViewspaceWidget::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  if ((bool)m_top_view && (m_last_vis != 1)) {
+    m_last_vis = 1;
+    m_top_view->SetVisible(true);
+  }
+}
+
+void iT3ViewspaceWidget::hideEvent(QHideEvent* ev) {
+  if ((bool)m_top_view && (m_last_vis != -1)) {
+    m_last_vis = -1;
+    m_top_view->SetVisible(false);
+  }
+  inherited::hideEvent(ev);
 }
 
 QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
@@ -1266,6 +1296,8 @@ void T3DataViewFrame::Clear_impl() {
 void T3DataViewFrame::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
   root_view.host = widget()->t3vs; // TODO: prob should encapsulate this better
+  // note: set top view to the root, not us, because we don't pass doactions down
+  widget()->t3vs->setTopView(&root_view);
 }
 
 void T3DataViewFrame::Constr_post() {
