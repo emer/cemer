@@ -111,6 +111,8 @@ public slots:
   void sethomebuttonClicked();
   void viewallbuttonClicked();
   void seekbuttonClicked();
+  void snapshotbuttonClicked();
+  void printbuttonClicked();
 
 protected:
   QPushButton* interactbutton;
@@ -542,7 +544,8 @@ public:
   virtual void		SetCameraPosOrient();
   // set camera's current position and orientation from viewer from my fields (during loading)
 
-  override bool		SaveImageAs(const String& fname = _nilString, ImageFormat img_fmt = JPEG);
+  override QPixmap	GrabImage(bool& got_image);
+  override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = EPS);
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();

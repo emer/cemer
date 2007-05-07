@@ -40,6 +40,7 @@
 #include <qscrollbar.h>
 #include <QTabWidget>
 #include <QPushButton>
+#include <QGLWidget>
 
 #include <Inventor/SoPath.h>
 #include <Inventor/SoOutput.h>
@@ -123,6 +124,8 @@ T3ExaminerViewer::~T3ExaminerViewer() {
 #include "set_home.xpm"
 #include "seek.xpm"
 #include "view_all.xpm"
+#include "print.xpm"
+#include "snapshot.xpm"
 
 // original buttons
 enum {
@@ -131,13 +134,15 @@ enum {
   HOME_BUTTON,
   SET_HOME_BUTTON,
   VIEW_ALL_BUTTON,
-  SEEK_BUTTON
+  SEEK_BUTTON,
+  SNAPSHOT_BUTTON,
+  PRINT_BUTTON,
 };
 
 void
 T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
 {
-  for (int i=0; i <= SEEK_BUTTON; i++) {
+  for (int i=0; i <= PRINT_BUTTON; i++) {
     QPushButton * p = new QPushButton(parent);
     // Button focus doesn't really make sense in the way we're using
     // the pushbuttons.
@@ -199,6 +204,18 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
       QObject::connect(p, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
       p->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
       p->setPixmap(QPixmap((const char **)seek_xpm));
+      break;
+    case SNAPSHOT_BUTTON:
+      QObject::connect(p, SIGNAL(clicked()),
+		       this, SLOT(snapshotbuttonClicked()));
+      p->setToolTip("Snapshot: save the current image to a file\nEPS format gives best resolution but transparency etc not captured\n -- use EPS primarily for graphs and grids\n PNG is best for lossless compression \n JPEG is best for lossy compression (see jpeg_qualty in preferences)");
+      p->setPixmap(QPixmap((const char **)snapshot_xpm));
+      break;
+    case PRINT_BUTTON:
+      QObject::connect(p, SIGNAL(clicked()),
+		       this, SLOT(printbuttonClicked()));
+      p->setToolTip("Print: print the current image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
+      p->setPixmap(QPixmap((const char **)print_xpm));
       break;
     default:
       assert(0);
@@ -379,6 +396,23 @@ T3ExaminerViewer::setSeekMode_doit(SbBool enable)
     seekbutton->setOn(enable);
   inherited::setSeekMode(enable); // actually do it!
 }
+
+void
+T3ExaminerViewer::snapshotbuttonClicked()
+{
+  T3DataViewFrame* dvf = GetFrame();
+  if(!dvf) return;
+  dvf->CallFun("SaveImageAs");
+}
+
+void
+T3ExaminerViewer::printbuttonClicked()
+{
+  T3DataViewFrame* dvf = GetFrame();
+  if(!dvf) return;
+  dvf->PrintImage();
+}
+
 
 T3DataViewFrame* T3ExaminerViewer::GetFrame() {
   if(!t3vw) return NULL;
@@ -1366,6 +1400,29 @@ void T3DataViewFrame::Dump_Save_pre() {
 //   GetCameraPosOrient();
 }
 
+QPixmap T3DataViewFrame::GrabImage(bool& got_image) {
+  got_image = false;
+  if(!widget()) {
+    return QPixmap();
+  }
+  // this doesn't get the gl parts:
+  //  return QPixmap::grabWidget(widget());
+  // this doesn't work either: no gl
+//   QPoint widgpos = widget()->mapToGlobal(QPoint(0,0));
+//   QWidget* winwidg = widget()->window();
+//   QPoint winpos = winwidg->mapToGlobal(QPoint(0,0));
+//   QPoint off = widgpos - winpos;
+//   return QPixmap::grabWindow(winwidg->winId(), (int)fabsf(off.x()), (int)fabsf(off.y()),
+// 			     (int)widget()->width(), (int)widget()->height());
+  SoQtViewer* viewer = widget()->ra();
+  if(!viewer) return QPixmap();
+  QGLWidget* qglw = (QGLWidget*)viewer->getGLWidget();
+  // renderPixmap did not work -- returned a black screen -- something about InitGL..
+  got_image = true;
+  QImage img = qglw->grabFrameBuffer(false); // todo: try true?
+  return QPixmap::fromImage(img);     // more costly but works!
+}
+
 bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   if(img_fmt != EPS) {
     return inherited::SaveImageAs(fname, img_fmt);
@@ -1375,7 +1432,7 @@ bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   SoQtViewer* viewer = widget()->ra();
   if(!viewer) return false;
 
-  String ext = image_exts.SafeEl(img_fmt);
+  String ext = String(".") + image_exts.SafeEl(img_fmt);
   taFiler* flr = GetSaveFiler(fname, ext);
   if(!flr->ostrm) {
     flr->Close();
@@ -1399,14 +1456,25 @@ bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   ps->setBackgroundColor(TRUE, SbColor(1.0f, 1.0f, 1.0f));
 
   // select LANDSCAPE or PORTRAIT orientation
-  ps->setOrientation(SoVectorizeAction::LANDSCAPE);
+  //  ps->setOrientation(SoVectorizeAction::LANDSCAPE);
+  ps->setOrientation(SoVectorizeAction::PORTRAIT);
 
-  // start creating a new page (A4 page, with 10mm border).
-  //  ps->beginPage(SbVec2f(10.0f, 10.0f), SbVec2f(190.0f, 277.0f));
+  // compute size based on actual image..  190.0f max width/height (= 7.5in)
+  float wd = widget()->width();
+  float ht = widget()->height();
+  float pwd, pht;
+  if(wd > ht) {
+    pwd = 190.0f; pht = (ht/wd) * 190.0f;
+  }
+  else {
+    pht = 190.0f; pwd = (wd/ht) * 190.0f;
+  }
+
+  // start creating a new page (based on actual size)
+  ps->beginPage(SbVec2f(0.0f, 0.0f), SbVec2f(pwd, pht));
 
   // There are also enums for A0-A10. Example:
-  // ps->beginStandardPage(SoVectorizeAction::A4, 10.0f);
-  ps->beginStandardPage(SoVectorizeAction::A4, 10.0f);
+  //   ps->beginStandardPage(SoVectorizeAction::A4, 30.0f);
 
   // calibrate so that text, lines, points and images will have the
   // same size in the postscript file as on the monitor.

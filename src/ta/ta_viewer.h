@@ -141,10 +141,9 @@ friend class MainWindowViewer;
 public:
   enum ImageFormat {
     EPS,			// encapsulated postscript file (only for inventor objects)
-    JPEG,			// JPEG
-    PNG,			// Portable Network Graphics
-    PPM,			// Portable Pixmap
-    N_IMG_FMTS,			// total number of image formats
+    JPEG,			// JPEG -- best lossy compression (small file sizes) and ubiquitous
+    PNG,			// Portable Network Graphics -- best lossless compression (larger files, but better than raw) and ubiquitous
+    PPM,			// Portable Pixmap -- good for converting to other formats -- no compression
   };
   
   static void		GetFileProps(TypeDef* td, String& fltr, bool& cmprs);
@@ -186,7 +185,7 @@ public:
 
   virtual QPixmap	GrabImage(bool& got_image);
   // #IGNORE grabs the widget image into a pixmap object
-  virtual bool		SaveImageAs(const String& fname = _nilString, ImageFormat img_fmt = JPEG);
+  virtual bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = JPEG);
   // #BUTTON save the image of this view to a file -- if fname is empty, it prompts the user for a name
   virtual bool		PrintImage();
   // #BUTTON print the image of this view to printer

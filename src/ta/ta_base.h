@@ -709,7 +709,7 @@ public:
   // #IGNORE get filer with ostrm opened for appending for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
   virtual int		Save(); 
   // #MENU #MENU_ON_Object #ARGC_0 #CAT_File saves the object to a file using current file name (from GetFileName() function); if context="" then default is used
-  virtual int		SaveAs(const String& fname = _nilString); 
+  virtual int		SaveAs(const String& fname = ""); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user; if context="" then default is used
 
 
@@ -2371,7 +2371,7 @@ public:
   override String	GetDesc() const {return desc;}
   TA_BASEFUNS(UserDataItem)
   UserDataItem(const String& type_name, const String& key, const Variant& value,
-    const String& desc = _nilString);
+	       const String& desc = _nilString);
   // #IGNORE constructor for creating static (compile-time) schema instances
 private:
   void Copy_(const UserDataItem& cp){value = cp.value; desc = cp.desc;}

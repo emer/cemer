@@ -46,7 +46,7 @@
 String_Array DataViewer::image_exts;
 
 bool DataViewer::InitImageExts() {
-  if(image_exts.size == N_IMG_FMTS) return false;
+  if(image_exts.size == PPM+1) return false;
   image_exts.Reset();
   image_exts.Add("eps");
   image_exts.Add("jpg");
@@ -182,6 +182,7 @@ QPixmap DataViewer::GrabImage(bool& got_image) {
   }
   got_image = true;
   return QPixmap::grabWidget(widget());
+  //  return QPixmap::grabWindow(widget()->winId());
 }
 
 bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
@@ -189,7 +190,7 @@ bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
 	       "EPS (encapsulated postscript) not supported for this type of view"))
     return false;
   bool rval = false;
-  String ext = image_exts.SafeEl(img_fmt);
+  String ext = String(".") + image_exts.SafeEl(img_fmt);
   taFiler* flr = GetSaveFiler(fname, ext);
   if(flr->ostrm) {
     QPixmap pix = GrabImage(rval);

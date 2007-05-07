@@ -1912,8 +1912,14 @@ void taiEditDataHost::DoSelectForEdit(int param){
 
 void taiEditDataHost::DoConstr_Dialog(iDialog*& dlg) {
   inherited::DoConstr_Dialog(dlg);
-  if(!modal)
+  if(!modal) {
+#ifdef TA_OS_MAC
+    // unfortunately, staysontop prevents any other dialog from opening..
+    dlg->setWindowFlags(Qt::WindowMinimizeButtonHint);
+#else
     dlg->setWindowFlags(Qt::WindowStaysOnTopHint | Qt::WindowMinimizeButtonHint);
+#endif
+  }
 }
 
 int taiEditDataHost::Edit(bool modal_) {
