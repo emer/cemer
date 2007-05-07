@@ -40,6 +40,7 @@
 #include <Inventor/nodes/SoTriangleStripSet.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/draggers/SoTranslate1Dragger.h>
 #endif
 
 // forwards
@@ -67,6 +68,7 @@ class SoScale; // #IGNORE
 class SoSeparator; // #IGNORE
 class SoTexture2; // #IGNORE
 class SoTexture2Transform; // #IGNORE
+class SoTranslate1Dragger; // #IGNORE
 class SoTranslation; // #IGNORE
 class SoTransform; // #IGNORE
 class SoTriangleStripSet; // #IGNORE
@@ -527,5 +529,69 @@ public:
   static void		initClass();
   SoBigTransformBoxRotatorRotator(float line_width=.4f);
 };
+
+class TA_API SoScrollBar: public SoSeparator { 
+  // ##NO_INSTANCE ##NO_TOKENS a scrollbar for scrolling a view, uses same interface as QScrollBar from Qt -- length is 1.0, default orientation is in X plane -- put transform in front to change
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+  SO_NODE_HEADER(SoScrollBar);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  SoScrollBar(int min_=0, int max_=10, int val_=0, int ps_=5, int ss_=1,
+	      float wdth_ = .05f, float dpth_ = .01f);
+
+  int	value() 		{ return value_; }	
+  int	minimum()		{ return minimum_; }
+  int	maximum()		{ return maximum_; }
+  int	pageStep()		{ return pageStep_; }
+  int	singleStep()		{ return singleStep_; }
+  float width()			{ return width_; } // width is Y axis (length is X) 
+  float depth()			{ return depth_; } // depth is Z axis
+
+  void	setValue(int new_val);
+  void	setMinimum(int new_min);
+  void	setMaximum(int new_max);
+  void	setPageStep(int new_ps);
+  void	setSingleStep(int new_ss);
+  void  setWidth(float new_width);
+  void  setDepth(float new_depth);
+
+  SoMaterial* getBoxMat() 		{ return box_mat_; }
+  SoMaterial* getSlideMat() 		{ return slide_mat_; }
+  SoMaterial* getActiveMat() 		{ return active_mat_; }
+
+protected:
+  float	width_;
+  float	depth_;	
+  int	minimum_;
+  int	maximum_;
+  int	value_;
+  int	pageStep_;		// also controls the size of the bar
+  int	singleStep_;
+
+  // listed as ordered elements under overall sep
+  SoMaterial* 	  box_mat_;	// box material
+  SoCube* 	  box_;		// containing box for slider
+  SoMaterial* 	  slide_mat_;	// slider material (inactive)
+  SoTranslation*  pos_;		// position of slider
+  SoTranslate1Dragger* dragger_; // the dragger
+
+  // this is the slider that replaces guy in dragger
+  SoSeparator*	slider_sep_;	// slider separator
+  SoTransform*	slider_tx_;	// slider transform (rotate)
+  SoCylinder*	slider_;	// slider itself
+
+  SoSeparator*	active_sep_; 	// active slider sep
+  SoMaterial* 	active_mat_;	// slider material (active)
+
+  void	fixValues();		// make sure values are sensible
+  float	getPos();		// get position for slider based on value
+  void	repositionSlider();	// reposition the slider based on current values
+  float	sliderSize();		// get size of slider
+
+};
+
+
 
 #endif

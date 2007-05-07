@@ -47,6 +47,8 @@
 #include <math.h>
 #include <limits.h>
 
+#define PI 3.14159265
+
 //////////////////////////
 //   T3GridViewNode	//
 //////////////////////////
@@ -132,6 +134,14 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
   SoSeparator* ss = shapeSeparator(); // cache
   frame_ = new SoFrame(SoFrame::Ver);
   insertChildAfter(ss, frame_, material());
+
+  SoTransform* scrtx = new SoTransform;
+  scrtx->translation.setValue(.5f * width_ + frame_margin + 2.0f * frame_width,
+			      0.0f, 0.0f);
+  scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), .5f * PI); // vertical!
+  topSeparator()->addChild(scrtx);
+  scroll_bar_ = new SoScrollBar;
+  topSeparator()->addChild(scroll_bar_);
 }
 
 T3GridViewNode::~T3GridViewNode()

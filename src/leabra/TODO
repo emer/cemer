@@ -9,8 +9,6 @@ current:
 
 * output gate guys only get pv da, not lv??
 
-* go back and try pv dt = .05
-
 * add group_name to CondEnv code -- Epochgp PERMUTED, etc..
 
 * create simulated SIR test case.. 2 repeated guys with reward assoc.
@@ -18,18 +16,18 @@ current:
 == Program
 
 * progexpr not finding variables in function args
+* brad's bug on drag of objs
 
 == Inventor
 
-* get rid of libpeg
-* manips conditional on arrow tool mode
 * scroll of graphview
 * import object files
 * render objects to bitmap and use to present to network
 
 == Netview:
 
-* Layer move digitize by units
+* manips conditional on arrow tool mode & bigger
+* Layer move digitize by units & z-axis move
 * Iconify layer -- add flag to layer itself, very easy to impl in viewer
   (add LayerFlags?) -- in viewer allow for diff values to be displayed in one unit?
   * also, what about compressing actual overall view -- this is presumably key,

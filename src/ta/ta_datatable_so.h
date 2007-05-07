@@ -49,10 +49,12 @@ class T3GraphViewNode; //
         +body: SoSeparator -- for body objects
 	+grid: SoSeparator -- for grid lines
       *captionSeparator: SoSeparator  
-            shapeSeparator: SoSeparator
-      *txfm_shape: SoTransform
-      *material: SoMaterial
-      +frame: SoFrame
+      *shapeSeparator: SoSeparator
+        *txfm_shape: SoTransform
+        *material: SoMaterial
+        +frame: SoFrame
+      + scroll_sep
+        +scroll_xf
 */
 
 class TA_API T3GridViewNode: public T3NodeLeaf {
@@ -94,6 +96,8 @@ protected:
   SoTransform*		drag_xf_;
   SoTransformBoxDragger* dragger_;
   SoCalculator*		drag_trans_calc_;
+
+  SoScrollBar*		scroll_bar_;
 
   ~T3GridViewNode();
 };

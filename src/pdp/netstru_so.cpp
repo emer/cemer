@@ -406,6 +406,11 @@ T3LayerNode::T3LayerNode(void* dataView_)
 
   // manipulation: dragging!
   xy_drag_sep_ = new SoSeparator;
+  SoMaterial* drmat = new SoMaterial;
+  drmat->diffuseColor.setValue(0.7f, 0.5f, 0.7f);
+  drmat->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
+  xy_drag_sep_->addChild(drmat);
+  
   xy_drag_xf_ = new SoTransform;
   xy_drag_xf_->scaleFactor.setValue(.05f, .05f, .05f);
   xy_drag_xf_->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);

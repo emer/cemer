@@ -1506,8 +1506,8 @@ SoBigScaleUniformScaler::SoBigScaleUniformScaler(float cube_size) {
   SO_NODE_CONSTRUCTOR(SoBigScaleUniformScaler);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(0.9f, 0.7f, 0.9f);
-  mat->emissiveColor.setValue(0.9f, 0.7f, 0.9f);
+  mat->diffuseColor.setValue(0.7f, 0.5f, 0.7f);
+  mat->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
   addChild(mat);
 
   float sz = 1.1f;
@@ -1550,8 +1550,8 @@ SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_widt
   SO_NODE_CONSTRUCTOR(SoBigTransformBoxRotatorRotator);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(.9f, 0.7f, 0.9f);
-  mat->emissiveColor.setValue(0.9f, 0.7f, 0.9f);
+  mat->diffuseColor.setValue(.7f, 0.5f, 0.7f);
+  mat->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
   addChild(mat);
 
   float sz = 1.1f;
@@ -1575,4 +1575,142 @@ SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_widt
       sep->addChild(cb);
     }
   }
+}
+
+
+//////////////////////////
+//   SoScrollBar
+//////////////////////////
+
+SO_NODE_SOURCE(SoScrollBar);
+
+void SoScrollBar::initClass()
+{
+  SO_NODE_INIT_CLASS(SoScrollBar, SoSeparator, "SoSeparator");
+}
+
+SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float wdth_,
+			 float dpth_) {
+  SO_NODE_CONSTRUCTOR(SoScrollBar);
+
+  minimum_ = min_;
+  maximum_ = max_;
+  value_ = val_;
+  pageStep_ = ps_;
+  singleStep_ = ss_;
+  width_ = wdth_;
+  depth_ = dpth_;
+  fixValues();
+
+  box_mat_ = new SoMaterial;
+  box_mat_->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
+  box_mat_->transparency.setValue(0.5f);
+  addChild(box_mat_);
+
+  box_ = new SoCube;
+  box_->width = 1.0f;
+  box_->height = width_;
+  box_->depth = depth_;
+  addChild(box_);
+
+  slide_mat_ = new SoMaterial;
+  slide_mat_->diffuseColor.setValue(.7f, 0.5f, 0.7f); // light violet
+  slide_mat_->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
+  addChild(slide_mat_);
+
+  pos_ = new SoTranslation;
+  addChild(pos_);
+
+  slider_sep_ = new SoSeparator;
+  slider_tx_ = new SoTransform;
+  slider_tx_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), .5f * PI);
+  slider_sep_->addChild(slider_tx_);
+  slider_ = new SoCylinder;
+  slider_->radius = .5f * width_;
+  slider_->height = sliderSize();
+  slider_sep_->addChild(slider_);
+
+  active_sep_ = new SoSeparator;
+  
+  active_mat_ = new SoMaterial;
+  active_mat_->diffuseColor.setValue(.5f, 0.5f, 0.0f); // yellow
+  active_mat_->emissiveColor.setValue(0.5f, 0.5f, 0.0f);
+  active_sep_->addChild(active_mat_);
+  active_sep_->addChild(slider_sep_);
+
+  dragger_ = new SoTranslate1Dragger;
+  dragger_->setPart("translator", slider_sep_);
+  dragger_->setPart("translatorActive", active_sep_);
+  addChild(dragger_);
+
+  pos_->translation.connectFrom(&dragger_->translation);
+
+  repositionSlider();
+}
+
+void SoScrollBar::fixValues() {
+  if(minimum_ > maximum_) {
+    int tmp = maximum_;
+    maximum_ = minimum_;
+    minimum_ = tmp;
+  }
+  if(maximum_ == minimum_) maximum_ = minimum_ + 1;
+
+  if(value_>maximum_) value_ = maximum_;
+  if(value_<minimum_) value_ = minimum_;
+
+  int range = maximum_ - minimum_;
+
+  if(pageStep_ > range) pageStep_ = range / 2;
+}
+
+float SoScrollBar::getPos() {
+  int range = maximum_ - minimum_;
+  float pct = (float)value_ / (float)range;
+  float scrng = (float)range / ((float)range + (float)pageStep_); // scrollable range
+  return pct * scrng;
+}
+
+float SoScrollBar::sliderSize() {
+  int range = maximum_ - minimum_;
+  float pspct = (float)pageStep_ / ((float)range + (float)pageStep_);
+  return MAX(pspct, width_);	// keep it within range
+}
+
+void SoScrollBar::repositionSlider() {
+  fixValues();
+  float slsz = sliderSize();
+  slider_->height = slsz;
+  pos_->translation.setValue(getPos() - slsz, 0.0f, 0.0f);
+}
+
+void SoScrollBar::setValue(int new_val) {
+  value_ = new_val;
+  repositionSlider();
+}
+void SoScrollBar::setMinimum(int new_min) {
+  minimum_ = new_min;
+  repositionSlider();
+}
+void SoScrollBar::setMaximum(int new_max) {
+  maximum_ = new_max;
+  repositionSlider();
+}
+void SoScrollBar::setPageStep(int new_ps) {
+  pageStep_ = new_ps;
+  slider_->height = MAX(pageStep_, width_); // don't shrink too far
+  repositionSlider();
+}
+void SoScrollBar::setSingleStep(int new_ss) {
+  singleStep_ = new_ss;
+}
+void SoScrollBar::setWidth(float new_width) {
+  width_ = new_width;
+  box_->height = width_;
+  slider_->radius = .5f * width_;
+  slider_->height = MAX(pageStep_, width_); // don't shrink too far
+}
+void SoScrollBar::setDepth(float new_depth) {
+  depth_ = new_depth;
+  box_->depth = depth_;
 }

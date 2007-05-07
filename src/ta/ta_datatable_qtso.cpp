@@ -1433,7 +1433,6 @@ void GridTableView::RenderHeader() {
     rectr->translation.setValue(0.0f, .5f * head_height-base_adj, 0.0f);
     SoMaterial* rectmat = new SoMaterial;
     rectmat->diffuseColor.setValue(0.0f, 1.0f, 1.0f);
-    rectmat->diffuseColor.setValue(0.0f, 1.0f, 1.0f);
     rectmat->transparency.setValue(0.8f);
     colnd->topSeparator()->addChild(rectmat);
     SoCube* rect = new SoCube;
