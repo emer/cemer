@@ -326,7 +326,7 @@ private:
 };
 
 class TA_API SoFrame: public SoTriangleStripSet {
-  // ##NO_INSTANCE ##NO_TOKENS quadraloidal frame
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS quadraloidal frame
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
@@ -363,7 +363,7 @@ protected:
 };
 
 class TA_API SoRect: public SoTriangleStripSet {
-  // ##NO_INSTANCE ##NO_TOKENS  2d rectangle, primarily for images, table images, etc.
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS  2d rectangle, primarily for images, table images, etc.
 #ifndef __MAKETA__
 typedef SoTriangleStripSet inherited;
 
@@ -390,7 +390,7 @@ protected:
 };
 
 class TA_API SoLineBox3d : public SoIndexedLineSet {
-  // ##NO_INSTANCE ##NO_TOKENS a 3d box draw with lines, starting at 0,0,0 and going to 1,-1,1 (note: uses TA Y coords, not GL's)
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a 3d box draw with lines, starting at 0,0,0 and going to 1,-1,1 (note: uses TA Y coords, not GL's)
 #ifndef __MAKETA__
 typedef SoIndexedLineSet inherited;
 
@@ -410,7 +410,7 @@ protected:
 };
 
 class TA_API SoImageEx: public SoSeparator { 
-  // ##NO_INSTANCE ##NO_TOKENS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS taImage-compatible image viewer -- width will always be 1; height will then be h/w ratio
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
@@ -440,7 +440,7 @@ protected:
 };
 
 class TA_API SoMatrixGrid: public SoSeparator {
-  // ##NO_INSTANCE ##NO_TOKENS renders a matrix as a grid of 3d blocks, in X-Y plane, with block height = Z axis.  size = 1x1 unit
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS renders a matrix as a grid of 3d blocks, in X-Y plane, with block height = Z axis.  size = 1x1 unit
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
 
@@ -509,7 +509,7 @@ protected:
 // redefine various dragger controls!
 
 class TA_API SoBigScaleUniformScaler: public SoSeparator { 
-  // ##NO_INSTANCE ##NO_TOKENS big version of the scaleUniformScaler
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the scaleUniformScaler
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
   SO_NODE_HEADER(SoBigScaleUniformScaler);
@@ -520,7 +520,7 @@ public:
 };
 
 class TA_API SoBigTransformBoxRotatorRotator: public SoSeparator { 
-  // ##NO_INSTANCE ##NO_TOKENS big version of the transformBoxRotatorRotator
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the transformBoxRotatorRotator
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
   SO_NODE_HEADER(SoBigTransformBoxRotatorRotator);
@@ -530,8 +530,17 @@ public:
   SoBigTransformBoxRotatorRotator(float line_width=.4f);
 };
 
+
+// unfortunately you can't seem to do multiple inheritance for both QObject and So,
+// so we need to do our own callbacks..
+
+class SoScrollBar;
+
+typedef void (*SoScrollBarCB)(SoScrollBar*, int, void*);
+// callback function format: passes the scrollbar, current value, and void* user_data
+
 class TA_API SoScrollBar: public SoSeparator { 
-  // ##NO_INSTANCE ##NO_TOKENS a scrollbar for scrolling a view, uses same interface as QScrollBar from Qt -- length is 1.0, default orientation is in X plane -- put transform in front to change
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS a scrollbar for scrolling a view, uses same interface as QScrollBar from Qt -- length is 1.0, default orientation is in X plane -- put transform in front to change
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
   SO_NODE_HEADER(SoScrollBar);
@@ -541,13 +550,13 @@ public:
   SoScrollBar(int min_=0, int max_=10, int val_=0, int ps_=5, int ss_=1,
 	      float wdth_ = .05f, float dpth_ = .01f);
 
-  int	value() 		{ return value_; }	
-  int	minimum()		{ return minimum_; }
-  int	maximum()		{ return maximum_; }
-  int	pageStep()		{ return pageStep_; }
-  int	singleStep()		{ return singleStep_; }
-  float width()			{ return width_; } // width is Y axis (length is X) 
-  float depth()			{ return depth_; } // depth is Z axis
+  int	value() const		{ return value_; }	
+  int	minimum() const		{ return minimum_; }
+  int	maximum() const		{ return maximum_; }
+  int	pageStep() const	{ return pageStep_; }
+  int	singleStep() const	{ return singleStep_; }
+  float width()	const		{ return width_; } // width is Y axis (length is X) 
+  float depth()	const		{ return depth_; } // depth is Z axis
 
   void	setValue(int new_val);
   void	setMinimum(int new_min);
@@ -557,18 +566,31 @@ public:
   void  setWidth(float new_width);
   void  setDepth(float new_depth);
 
-  SoMaterial* getBoxMat() 		{ return box_mat_; }
-  SoMaterial* getSlideMat() 		{ return slide_mat_; }
-  SoMaterial* getActiveMat() 		{ return active_mat_; }
+  SoMaterial* getBoxMat() 		{ return box_mat_; } // #IGNORE
+  SoMaterial* getSlideMat() 		{ return slide_mat_; } // #IGNORE
+  SoMaterial* getActiveMat() 		{ return active_mat_; } // #IGNORE
 
+  void	setValueChangedCB(SoScrollBarCB cb_fun, void* user_data = NULL);
+  // #IGNORE set callback for when value changes
+
+  void	DragStartCB(SoTranslate1Dragger* dragger);
+  // callback: do not touch!
+  void	DraggingCB(SoTranslate1Dragger* dragger);
+  // callback: do not touch!
+  void	DragFinishCB(SoTranslate1Dragger* dragger);
+  // callback: do not touch!
 protected:
   float	width_;
   float	depth_;	
   int	minimum_;
   int	maximum_;
   int	value_;
+  int 	start_val_;
   int	pageStep_;		// also controls the size of the bar
   int	singleStep_;
+
+  SoScrollBarCB	valueChanged_cb_; // value has changed callback
+  void*		valueChanged_ud_; // user data
 
   // listed as ordered elements under overall sep
   SoMaterial* 	  box_mat_;	// box material
@@ -587,9 +609,10 @@ protected:
 
   void	fixValues();		// make sure values are sensible
   float	getPos();		// get position for slider based on value
+  int	getValFmPos(float pos);	// get value from position
   void	repositionSlider();	// reposition the slider based on current values
   float	sliderSize();		// get size of slider
-
+  void	valueChangedCB();	// perform value changed callback
 };
 
 

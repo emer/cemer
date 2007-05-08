@@ -135,13 +135,21 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
   frame_ = new SoFrame(SoFrame::Ver);
   insertChildAfter(ss, frame_, material());
 
+  float vert_off = .5f + frame_margin + 2.0f * frame_width;
+
   SoTransform* scrtx = new SoTransform;
-  scrtx->translation.setValue(.5f * width_ + frame_margin + 2.0f * frame_width,
-			      0.0f, 0.0f);
-  scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), .5f * PI); // vertical!
+  scrtx->translation.setValue(0.0f, -vert_off, -frame_width); // Z is to go below label
   topSeparator()->addChild(scrtx);
-  scroll_bar_ = new SoScrollBar;
-  topSeparator()->addChild(scroll_bar_);
+  col_scroll_bar_ = new SoScrollBar;
+  topSeparator()->addChild(col_scroll_bar_);
+
+  scrtx = new SoTransform;
+  scrtx->translation.setValue(.5f * width_ + frame_margin + 2.0f * frame_width,
+			      vert_off, frame_width);
+  scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -.5f * PI); // vertical!
+  topSeparator()->addChild(scrtx);
+  row_scroll_bar_ = new SoScrollBar;
+  topSeparator()->addChild(row_scroll_bar_);
 }
 
 T3GridViewNode::~T3GridViewNode()

@@ -75,6 +75,9 @@ public:
   SoSeparator*		header() const {return header_;}
   SoSeparator*		body() const {return body_;}
 
+  SoScrollBar*		ColScrollBar() const { return col_scroll_bar_; }
+  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }
+
   virtual void		render();
   virtual void		setWidth(float wdth);
   virtual float		getWidth() { return width_; }
@@ -97,7 +100,8 @@ protected:
   SoTransformBoxDragger* dragger_;
   SoCalculator*		drag_trans_calc_;
 
-  SoScrollBar*		scroll_bar_;
+  SoScrollBar*		col_scroll_bar_;
+  SoScrollBar*		row_scroll_bar_;
 
   ~T3GridViewNode();
 };

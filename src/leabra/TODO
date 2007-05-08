@@ -5,6 +5,9 @@ commit:
 ------------
 current:
 
+SoScrollBar: make a Q_OBJECT and add regular Qt signals as in the original 
+QtScrollbar -- internal callbacks do all the mediation.
+
 == PVLV:
 
 * output gate guys only get pv da, not lv??

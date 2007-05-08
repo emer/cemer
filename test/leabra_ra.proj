@@ -4220,7 +4220,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4232,7 +4231,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4244,7 +4242,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="trial";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4256,7 +4253,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="trial_name";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4268,7 +4264,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="group_name";
 	    visible=0;
-	    sticky=0;
 	    text_width=16;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4280,7 +4275,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="phase_no";
 	    visible=0;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4292,7 +4286,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="minus_cycles";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4304,7 +4297,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="sse";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4316,7 +4308,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="ext_rew";
 	    visible=0;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4328,7 +4319,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    m_transform=NULL;
 	    name="Output_act_m";
 	    visible=1;
-	    sticky=0;
 	    text_width=5;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4384,7 +4374,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4396,7 +4385,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4408,7 +4396,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4420,7 +4407,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4432,7 +4418,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=0;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4444,7 +4429,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4456,7 +4440,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4468,7 +4451,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
-	    sticky=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4480,7 +4462,6 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    m_transform=NULL;
 	    name="Hidden_Fm_Input_r_wt";
 	    visible=1;
-	    sticky=0;
 	    text_width=30;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -4536,7 +4517,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4545,7 +4525,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4554,7 +4533,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4563,7 +4541,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4572,7 +4549,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4581,7 +4557,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4590,7 +4565,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4599,7 +4573,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4608,7 +4581,6 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    m_transform=NULL;
 	    name="Hidden_Fm_Input_r_wt";
 	    visible=1;
-	    sticky=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
@@ -4880,7 +4852,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
        camera_pos {x=0.8699911: y=1.253086: z=2.261982: };
        camera_orient {x=-0.9986469: y=-0.03246701: z=0.04067912: rot=0.2368263: };
        camera_focdist=2.806019;
-       bg_color {name="": r=0.8: g=0.8: b=0.8: a=1: desc="": };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
     };

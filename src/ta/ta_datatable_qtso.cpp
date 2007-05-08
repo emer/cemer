@@ -291,14 +291,14 @@ void DataTable::NewGraphView(T3DataViewFrame* fr) {
 
 void DataColView::Initialize(){
   visible = true;
-  sticky = false;
+//   sticky = false;
   data_base = &TA_DataCol;
 }
 
 void DataColView::Copy_(const DataColView& cp) {
   name = cp.name;
   visible = cp.visible;
-  sticky = cp.sticky;
+//   sticky = cp.sticky;
 }
 
 void DataColView::Destroy() {
@@ -349,6 +349,13 @@ void DataColView::UpdateFromDataCol_impl(bool first) {
 
 bool DataColView::isVisible() const {
   return (visible && (bool)m_data);
+}
+
+void DataColView::Hide() {
+  visible = false;
+  DataTableView* par = parent();
+  //  par->InitDisplay();
+  par->UpdateDisplay();
 }
 
 //////////////////////////
@@ -575,11 +582,11 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
       // make sure it is this col bound to the guy!
       dcs->setDataCol(dc);
     } else { // no target found in table
-      if (dcs->sticky) {
-        dcs->setDataCol(NULL); //keep him, but unbind from any col
-      } else {
+//       if (dcs->sticky) {
+//         dcs->setDataCol(NULL); //keep him, but unbind from any col
+//       } else {
         children.RemoveIdx(i);
-      }
+//       }
     }
   }  
 // items: add missing, order correctly, and update existing (will be only action 1st time)
@@ -914,6 +921,8 @@ void GridTableView::Initialize() {
   text_size_range.min = .02f;
   text_size_range.max = .05f;
 
+  scrolling_ = false;
+
   colorscale.auto_scale = false;
   colorscale.min = -1.0f; colorscale.max = 1.0f;
 
@@ -1010,6 +1019,20 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
   }
 }
 
+void GridTableView_ColScrollCB(SoScrollBar* sb, int val, void* user_data) {
+  GridTableView* gtv = (GridTableView*)user_data;
+  gtv->scrolling_ = true;
+  gtv->ViewCol_At(val);
+  gtv->scrolling_ = false;
+}
+
+void GridTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
+  GridTableView* gtv = (GridTableView*)user_data;
+  gtv->scrolling_ = true;
+  gtv->ViewRow_At(val);
+  gtv->scrolling_ = false;
+}
+
 void GridTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
   SoQtViewer* vw = GetViewer();
@@ -1033,6 +1056,7 @@ void GridTableView::Render_impl() {
   MakeViewRangeValid();
   CalcViewMetrics();
   GetScaleRange();
+  SetScrollBars();
   RenderGrid();
   RenderHeader();
   RenderLines();
@@ -1224,6 +1248,30 @@ void GridTableView::GetScaleRange() {
   }
 }
 
+void GridTableView::SetScrollBars() {
+  if(scrolling_) return;		     // do't redo if currently doing!
+  T3GridViewNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
+
+  SoScrollBar* csb = node_so->ColScrollBar();
+  csb->setMinimum(0);
+  csb->setMaximum(vis_cols.size - col_n);
+  csb->setPageStep(col_n);
+  csb->setSingleStep(1);
+  csb->setValue(col_range.min);
+  csb->setValueChangedCB(GridTableView_ColScrollCB, this);
+
+  SoScrollBar* rsb = node_so->RowScrollBar();
+  rsb->setMinimum(0);
+  int mx = MAX((rows() - view_rows), 0);
+  rsb->setMaximum(mx);
+  int pg_step = MAX(view_rows, 1);
+  rsb->setPageStep(pg_step);
+  rsb->setSingleStep(1);
+  rsb->setValue(MIN(view_range.min, mx));
+  rsb->setValueChangedCB(GridTableView_RowScrollCB, this);
+}
+
 void GridTableView::ClearViewRange() {
   col_range.min = 0;
   inherited::ClearViewRange();
@@ -1241,7 +1289,6 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
     vw->viewerWindow()->AddPanelNewTab(lvp());
-    m_lvp->t3vs->setTopView(this);
   }
 }
 
@@ -1878,6 +1925,7 @@ void iDataTableView_Panel::UpdatePanel() {
 }
 
 void iDataTableView_Panel::viewAll() {
+  if(!t3vs) return;
   m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
   m_camera->focalDistance.setValue(.1f); // zoom in!
 }
@@ -2043,12 +2091,15 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 
+  layOuter->addStretch();
+
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
 
-  layViewspace = new QHBoxLayout(layOuter);
-  Constr_T3ViewspaceWidget(widg);
-  layViewspace->addWidget(t3vs);
+  // not used anymore!
+//   layViewspace = new QHBoxLayout(layOuter);
+//   Constr_T3ViewspaceWidget(widg);
+//   layViewspace->addWidget(t3vs);
 
   setCentralWidget(widg);
 }
@@ -2066,7 +2117,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   GridTableView* glv = this->glv(); //cache
 //   DataTable* dt = glv->dataTable();
 
-  viewAll();
+//  viewAll();
 
   chkDisplay->setChecked(glv->display_on);
   chkHeaders->setChecked(glv->header_on);
@@ -2088,62 +2139,12 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   cbar->UpdateScaleValues();
   chkAutoScale->setChecked(glv->colorscale.auto_scale);
 
-  // only show col slider if necessary
-//   if(glv->col_n >= dt->cols()) {
-//     t3vs->setHasHorScrollBar(false);
-//   } else {
-  // always show the column scrollbar!
-  QScrollBar* sb = t3vs->horScrollBar(); // no autocreate
-  if (!sb) {
-    sb = t3vs->horScrollBar(true);
-    connect(sb, SIGNAL(valueChanged(int)), this, SLOT(horScrBar_valueChanged(int)) );
-    sb->setTracking(true);
-  }
-  sb->setMinValue(0);
-  sb->setMaxValue(glv->vis_cols.size - glv->col_n);
-  sb->setPageStep(glv->col_n);
-  sb->setSingleStep(1);
-  sb->setValue(glv->col_range.min);
-//   }
-
-  // only show row slider if necessary
-  if (glv->view_rows >= glv->rows()) {
-    t3vs->setHasVerScrollBar(false);
-  } else {
-    QScrollBar* sb = t3vs->verScrollBar(); // no autocreate
-    if (!sb) {
-      sb = t3vs->verScrollBar(true);
-      connect(sb, SIGNAL(valueChanged(int)), this, SLOT(verScrBar_valueChanged(int)) );
-      sb->setTracking(true);
-      sb->setMinValue(0);
-    }
-    //note: the max val is set so that the last page is a full page (i.e., can't scroll past end)
-    int mx = MAX((glv->rows() - glv->view_rows), 0);
-    sb->setMaxValue(mx);
-    //page step size based on viewable to total lines
-    int pg_step = MAX(glv->view_rows, 1);
-    sb->setPageStep(pg_step);
-    sb->setSingleStep(1);
-    sb->setValue(MIN(glv->view_range.min, mx));
-  }
   // bg color
-  SoQtRenderArea* ra = t3vs->renderArea();
-  bool ok;
-  iColor bg = glv->bgColor(ok); // note: we know it is ok!
-  if (!ok) bg.setRgb(0.8f, 0.8f, 0.8f);
-  ra->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
-}
-
-void iGridTableView_Panel::horScrBar_valueChanged(int value) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->ViewCol_At(value);
-}
-
-void iGridTableView_Panel::verScrBar_valueChanged(int value) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->ViewRow_At(value);
+//   SoQtRenderArea* ra = t3vs->renderArea();
+//   bool ok;
+//   iColor bg = glv->bgColor(ok); // note: we know it is ok!
+//   if (!ok) bg.setRgb(0.8f, 0.8f, 0.8f);
+//   ra->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
 }
 
 void iGridTableView_Panel::chkDisplay_toggled(bool on) {

@@ -1589,6 +1589,24 @@ void SoScrollBar::initClass()
   SO_NODE_INIT_CLASS(SoScrollBar, SoSeparator, "SoSeparator");
 }
 
+void SoScrollBar_DragStartCB(void* userData, SoDragger* dragr) {
+  SoTranslate1Dragger* dragger = (SoTranslate1Dragger*)dragr;
+  SoScrollBar* sb = (SoScrollBar*)userData;
+  sb->DragStartCB(dragger);
+}
+
+void SoScrollBar_DraggingCB(void* userData, SoDragger* dragr) {
+  SoTranslate1Dragger* dragger = (SoTranslate1Dragger*)dragr;
+  SoScrollBar* sb = (SoScrollBar*)userData;
+  sb->DraggingCB(dragger);
+}
+
+void SoScrollBar_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTranslate1Dragger* dragger = (SoTranslate1Dragger*)dragr;
+  SoScrollBar* sb = (SoScrollBar*)userData;
+  sb->DragFinishCB(dragger);
+}
+
 SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float wdth_,
 			 float dpth_) {
   SO_NODE_CONSTRUCTOR(SoScrollBar);
@@ -1641,9 +1659,15 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   dragger_ = new SoTranslate1Dragger;
   dragger_->setPart("translator", slider_sep_);
   dragger_->setPart("translatorActive", active_sep_);
+  dragger_->addFinishCallback(SoScrollBar_DragFinishCB, (void*)this);
+  dragger_->addStartCallback(SoScrollBar_DragStartCB, (void*)this);
+  dragger_->addMotionCallback(SoScrollBar_DraggingCB, (void*)this);
   addChild(dragger_);
 
-  pos_->translation.connectFrom(&dragger_->translation);
+//   pos_->translation.connectFrom(&dragger_->translation);
+
+  valueChanged_cb_ = NULL;
+  valueChanged_ud_ = NULL;
 
   repositionSlider();
 }
@@ -1654,26 +1678,49 @@ void SoScrollBar::fixValues() {
     maximum_ = minimum_;
     minimum_ = tmp;
   }
-  if(maximum_ == minimum_) maximum_ = minimum_ + 1;
+  //  if(maximum_ == minimum_) maximum_ = minimum_ + 1;
 
   if(value_>maximum_) value_ = maximum_;
   if(value_<minimum_) value_ = minimum_;
 
   int range = maximum_ - minimum_;
 
-  if(pageStep_ > range) pageStep_ = range / 2;
+  if(pageStep_ > range) {
+    if(range == 0)
+      pageStep_ = 1;
+    else
+      pageStep_ = range;
+  }
 }
+
+///////////////////////
+//  [         ][    ]
+//  Min.....Max..PS..
+//  [  doc length   ]
+///////////////////////
+//  [    PS         ]  (range = 0)
+
 
 float SoScrollBar::getPos() {
   int range = maximum_ - minimum_;
-  float pct = (float)value_ / (float)range;
-  float scrng = (float)range / ((float)range + (float)pageStep_); // scrollable range
-  return pct * scrng;
+  float scrng = ((float)range + (float)pageStep_); // scrollable range
+  float pos = (float)value_ / scrng;
+//   cerr << "getpos: val: " << value_ << " range: " << range << " ps: " << pageStep_
+//        << " pos: " << pos << endl;
+  return pos;
+}
+
+int SoScrollBar::getValFmPos(float pos) {
+  int range = maximum_ - minimum_;
+  float val = pos * (float)(range + pageStep_); // scrollable range
+//   cerr << "getval val: " << val << " range: " << range << " ps: " << pageStep_
+//        << " pos: " << pos << endl;
+  return (int)val;
 }
 
 float SoScrollBar::sliderSize() {
   int range = maximum_ - minimum_;
-  float pspct = (float)pageStep_ / ((float)range + (float)pageStep_);
+  float pspct = (float)pageStep_ / (float)(range + pageStep_);
   return MAX(pspct, width_);	// keep it within range
 }
 
@@ -1681,7 +1728,9 @@ void SoScrollBar::repositionSlider() {
   fixValues();
   float slsz = sliderSize();
   slider_->height = slsz;
-  pos_->translation.setValue(getPos() - slsz, 0.0f, 0.0f);
+  //  pos_->translation.setValue(getPos() - slsz, 0.0f, 0.0f);
+//   cerr << "slsz: " << slsz << endl;
+  pos_->translation.setValue(getPos()-.5f + .5f * slsz, 0.0f, 0.0f);
 }
 
 void SoScrollBar::setValue(int new_val) {
@@ -1714,3 +1763,55 @@ void SoScrollBar::setDepth(float new_depth) {
   depth_ = new_depth;
   box_->depth = depth_;
 }
+
+void SoScrollBar::setValueChangedCB(SoScrollBarCB cb_fun, void* user_data) {
+  valueChanged_cb_ = cb_fun;
+  valueChanged_ud_ = user_data;
+}
+
+void SoScrollBar::valueChangedCB() {
+  if(valueChanged_cb_)
+    (*valueChanged_cb_)(this, value_, valueChanged_ud_);
+}
+
+void SoScrollBar::DragStartCB(SoTranslate1Dragger* dragger) {
+  start_val_ = value_;
+}
+
+void SoScrollBar::DraggingCB(SoTranslate1Dragger* dragger) {
+  SbVec3f trans = dragger->translation.getValue();
+  
+  int incr = getValFmPos(trans[0]);
+
+  int nw_val = start_val_ + incr;
+  value_ = nw_val;
+  fixValues();
+  int delta_val = value_ - start_val_;
+//   cerr << "trans: " << trans[0] << " incr: " << incr
+//        << " nw_val: " << nw_val
+//        << endl;
+  if(nw_val < minimum_ || nw_val > maximum_) {
+    int range = maximum_ - minimum_;
+    float nw_pos = (float)delta_val / ((float)range + (float)pageStep_);
+    dragger->translation.setValue(nw_pos, 0.0f, 0.0f);
+  }
+  if(delta_val != 0)
+    valueChangedCB();
+}
+
+void SoScrollBar::DragFinishCB(SoTranslate1Dragger* dragger) {
+  SbVec3f trans = dragger->translation.getValue();
+  
+  int incr = getValFmPos(trans[0]);
+
+//   cerr << "finish trans: " << trans[0] << " incr: " << incr << endl;
+
+  value_ = start_val_ + incr;
+  fixValues();
+
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+  repositionSlider();
+
+  valueChangedCB();
+}
+

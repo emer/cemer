@@ -117,7 +117,7 @@ friend class DataTableView;
 public:
   String	name;		// name of column this guy is associated with
   bool		visible;	// is this column visible in display?
-  bool		sticky; 	// #DEF_false set this to retain this colspec even if its column deletes
+  //  bool	sticky; 	// #DEF_false set this to retain this colspec even if its column deletes -- not supported by the views and nonsensical, right?
 
   DataCol*		dataCol() const {return (DataCol*)data();}
   void			setDataCol(DataCol* value, bool first_time = false);
@@ -128,6 +128,9 @@ public:
 
   override bool		SetName(const String& nm);
   override String	GetName() const 	{ return name; } 
+
+  virtual void		Hide();
+  // #BUTTON set this column to be invisible
 
   override void		DataDestroying();
   
@@ -324,6 +327,7 @@ public:
 
   MinMaxInt	mat_size_range;	// range of display sizes for matrix items relative to other text items.  each cell in a matrix counts as one character in size, within these ranges (smaller matricies are made larger to min size, and large ones are made smaller to max size)
   MinMax	text_size_range; // (default .02 - .05) minimum and maximum text size -- keeps things readable and not too big
+  bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
 
   GridColView*		colVis(int i) const
   { return (GridColView*)colView(vis_cols.SafeEl(i)); }
@@ -387,6 +391,7 @@ protected:
 
   virtual void		CalcViewMetrics(); // for entire view
   virtual void		GetScaleRange();   // get the current scale range based on auto scaled columns (only if auto_scale is on)
+  virtual void		SetScrollBars();   // set scroll bar values
 
   virtual void		RemoveGrid();
   virtual void		RemoveHeader(); // remove the header
@@ -506,10 +511,6 @@ public:
 
   iGridTableView_Panel(GridTableView* glv);
   ~iGridTableView_Panel();
-
-public slots:
-  void 			horScrBar_valueChanged(int value);
-  void 			verScrBar_valueChanged(int value);
 
 protected:
   override void		InitPanel_impl(); // called on structural changes
