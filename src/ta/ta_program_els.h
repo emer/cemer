@@ -323,10 +323,12 @@ class TA_API MethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a method (member function) on an object
 INHERITED(ProgEl)
 public:
+  static bool		ShowVarFilter(void* var); // filter for button, only obj types
+  
   ProgVarRef		result_var;
   // where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
-  // #APPLY_IMMED program variable that points to the object with the method to call
+  // #APPLY_IMMED #ITEM_FILTER_ShowVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   MethodDef*		method;

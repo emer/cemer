@@ -3141,6 +3141,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
+  item_filter = NULL;
   targ_typ = NULL; // gets set later
   m_sel = NULL;
   cats = NULL;
@@ -3237,6 +3238,12 @@ void taiItemPtrBase::OpenChooser() {
 delete ic;
 }
 
+bool taiItemPtrBase::ShowItemFilter(void* item) {
+  if (item_filter) 
+    return item_filter(item);
+  return true;
+}
+
 void taiItemPtrBase::UpdateImage(void* cur_sel) {
   // note: don't optimize this if same msel, since we use it to set label
   m_sel = cur_sel;
@@ -3290,6 +3297,7 @@ void taiMemberDefButton::BuildChooser_0(taiItemChooser* ic) {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
     cat = mbr->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
     item->setData(1, Qt::DisplayRole, mbr->desc);
@@ -3320,7 +3328,8 @@ const String taiMemberDefButton::labelNameNonNull() const {
 }
 
 bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
-  return mbr->ShowMember();
+  return (ShowItemFilter(mbr) &&
+    mbr->ShowMember());
 }
 
 
@@ -3350,7 +3359,7 @@ void taiMethodDefButton::BuildCategories_impl() {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    if (!ShowMethod(mth)) continue;
+    if (!ShowMethod(mth) || !ShowItemFilter(mth)) continue;
     cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
     cats->AddUnique(cat);
   }
@@ -3454,7 +3463,8 @@ const String taiMethodDefButton::labelNameNonNull() const {
 }
 
 bool taiMethodDefButton::ShowMethod(MethodDef* mth) {
-  return mth->ShowMethod();
+  return (ShowItemFilter(mth) &&
+    mth->ShowMethod());
 }
 
 const String taiMethodDefButton::viewText(int index) const {
@@ -3823,6 +3833,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref))
       continue;
+    if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp); 
@@ -3869,6 +3880,10 @@ const String taiTokenPtrButton::headerText(int index, int view) const {
 
 const String taiTokenPtrButton::labelNameNonNull() const {
   return token()->GetDisplayName();
+}
+
+bool taiTokenPtrButton::ShowToken(void* tk) {
+  return ShowItemFilter(tk);
 }
 
 const String taiTokenPtrButton::viewText(int index) const {

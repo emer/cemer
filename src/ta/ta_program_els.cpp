@@ -619,6 +619,11 @@ String VarIncr::GetDisplayName() const {
 //    MethodCall	//
 //////////////////////////
 
+bool MethodCall::ShowVarFilter(void* var_) {
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  return (var->var_type == ProgVar::T_Object);
+}
+
 void MethodCall::Initialize() {
   method = NULL;
   obj_type = &TA_taBase; // placeholder

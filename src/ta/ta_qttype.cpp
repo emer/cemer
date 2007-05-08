@@ -1367,6 +1367,15 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
     flags_ |= taiData::flgNoTokenDlg; // no dialog */
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_,
 	flags_);
+  String filt_nm = mbr->OptionAfter("ITEM_FILTER_");
+  if (filt_nm.nonempty()) {
+    TypeDef* par_typ = mbr->owner->owner;
+    if (par_typ) {
+      MethodDef* md = par_typ->methods.FindName(filt_nm);
+      if (md && md->is_static)
+        rval->item_filter = (item_filter_fun)(md->addr);
+    }
+  }
   return rval;
 }
 

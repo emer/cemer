@@ -993,11 +993,14 @@ private:
   taiItemChooser& operator=(const taiItemChooser&); //no
 };
 
+typedef bool (*item_filter_fun)(void*); // optional filter, spec'ed in ITEM_FILTER_xxx
 
 class TA_API taiItemPtrBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
   Q_OBJECT
 public:
+  item_filter_fun	item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
+  
   const String		labelText(); // "tag: name" for button
   virtual int		columnCount(int view) const = 0; 
     // number of header columns in the view
@@ -1017,6 +1020,8 @@ public:
 
   void			setNullText(const String& nt) { null_text = " " + nt; }
   // set text to display instead of NULL for a null item
+  
+  bool			ShowItemFilter(void* item); // apply optional filter, else true
   
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
@@ -1194,6 +1199,7 @@ protected:
 
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
+  virtual bool		ShowToken(void* tk);
 };
 
 
