@@ -346,6 +346,8 @@ public:
   virtual SoSeparator*	legend() { return legend_sep_; }
   virtual SoSeparator*	graphs() { return graphs_sep_; }
 
+  SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; }
+
 protected:
   float			width_;
   SoFrame*		frame_; 
@@ -364,6 +366,8 @@ protected:
   SoTransform*		drag_xf_;
   SoTransformBoxDragger* dragger_;
   SoCalculator*		drag_trans_calc_;
+
+  SoScrollBar*		row_scroll_bar_;
 
   ~T3GraphViewNode();
 };

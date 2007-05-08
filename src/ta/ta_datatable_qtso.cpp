@@ -1019,20 +1019,6 @@ void GridTableView::UpdateFromDataTable_this(bool first) {
   }
 }
 
-void GridTableView_ColScrollCB(SoScrollBar* sb, int val, void* user_data) {
-  GridTableView* gtv = (GridTableView*)user_data;
-  gtv->scrolling_ = true;
-  gtv->ViewCol_At(val);
-  gtv->scrolling_ = false;
-}
-
-void GridTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
-  GridTableView* gtv = (GridTableView*)user_data;
-  gtv->scrolling_ = true;
-  gtv->ViewRow_At(val);
-  gtv->scrolling_ = false;
-}
-
 void GridTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
   SoQtViewer* vw = GetViewer();
@@ -1248,26 +1234,40 @@ void GridTableView::GetScaleRange() {
   }
 }
 
+void GridTableView_ColScrollCB(SoScrollBar* sb, int val, void* user_data) {
+  GridTableView* gtv = (GridTableView*)user_data;
+  gtv->scrolling_ = true;
+  gtv->ViewCol_At(val);
+  gtv->scrolling_ = false;
+}
+
+void GridTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
+  GridTableView* gtv = (GridTableView*)user_data;
+  gtv->scrolling_ = true;
+  gtv->ViewRow_At(val);
+  gtv->scrolling_ = false;
+}
+
 void GridTableView::SetScrollBars() {
   if(scrolling_) return;		     // do't redo if currently doing!
   T3GridViewNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
   SoScrollBar* csb = node_so->ColScrollBar();
-  csb->setMinimum(0);
+//   csb->setMinimum(0);
+//   csb->setSingleStep(1);
   csb->setMaximum(vis_cols.size - col_n);
   csb->setPageStep(col_n);
-  csb->setSingleStep(1);
   csb->setValue(col_range.min);
   csb->setValueChangedCB(GridTableView_ColScrollCB, this);
 
   SoScrollBar* rsb = node_so->RowScrollBar();
-  rsb->setMinimum(0);
+//   rsb->setMinimum(0);
+//   rsb->setSingleStep(1);
   int mx = MAX((rows() - view_rows), 0);
   rsb->setMaximum(mx);
   int pg_step = MAX(view_rows, 1);
   rsb->setPageStep(pg_step);
-  rsb->setSingleStep(1);
   rsb->setValue(MIN(view_range.min, mx));
   rsb->setValueChangedCB(GridTableView_RowScrollCB, this);
 }
@@ -2909,6 +2909,7 @@ void GraphTableView::Initialize() {
   matrix_mode = SEP_GRAPHS;
   mat_layout = taMisc::BOT_ZERO;
   mat_odd_vert = true;
+  scrolling_ = false;
 
   err_1.axis = GraphAxisBase::Y;
   err_2.axis = GraphAxisBase::Y;
@@ -3144,6 +3145,7 @@ void GraphTableView::Render_impl() {
   CheckRowsChanged(orig_rows);	// don't do anything with this here, but just make sure m_rows is up to date
   MakeViewRangeValid();
   ComputeAxisRanges();
+  SetScrollBars();
   RenderGraph();
   UpdatePanel();		// otherwise doesn't get updated without explicit click..
 }
@@ -3229,6 +3231,29 @@ void GraphTableView::ComputeAxisRanges() {
     color_axis.ComputeRange();
   if(graph_type == RASTER)
     raster_axis.ComputeRange();
+}
+
+void GraphTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
+  GraphTableView* gtv = (GraphTableView*)user_data;
+  gtv->scrolling_ = true;
+  gtv->ViewRow_At(val);
+  gtv->scrolling_ = false;
+}
+
+void GraphTableView::SetScrollBars() {
+  if(scrolling_) return;		     // don't redo if currently doing!
+  T3GraphViewNode* node_so = this->node_so(); // cache
+  if(!node_so) return;
+
+  SoScrollBar* rsb = node_so->RowScrollBar();
+  //  rsb->setMinimum(0);
+  //  rsb->setSingleStep(1);
+  int mx = MAX((rows() - view_rows), 0);
+  rsb->setMaximum(mx);
+  int pg_step = MAX(view_rows, 1);
+  rsb->setPageStep(pg_step);
+  rsb->setValue(MIN(view_range.min, mx));
+  rsb->setValueChangedCB(GraphTableView_RowScrollCB, this);
 }
 
 void GraphTableView::Clear_impl() {
@@ -4649,6 +4674,11 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
   //  layTopCtrls->addSpacing(taiM->hsep_c);
 
+  chkNegDraw =  new QCheckBox("Neg\nDraw", widg, "chkNegDraw");
+  chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
+  connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(chkNegDraw_toggled(bool)) );
+  layTopCtrls->addWidget(chkNegDraw);
+
   layTopCtrls->addStretch();
   butRefresh = new QPushButton("Refresh", widg);
   butRefresh->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
@@ -4664,6 +4694,14 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   layVals = new QHBoxLayout(layOuter);
+
+  lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
+  lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
+  layVals->addWidget(lblRows);
+  fldRows = new taiIncrField(&TA_int, NULL, NULL, widg);
+  layVals->addWidget(fldRows->GetRep());
+//   layVals->addSpacing(taiM->hsep_c);
+  connect(fldRows->rep(), SIGNAL(selectionChanged()), this, SLOT(fldRows_textChanged()) );
 
   lblLineWidth = taiM->NewLabel("Line\nWidth", widg, font_spec);
   lblLineWidth->setToolTip("Width to draw lines with.");
@@ -4688,11 +4726,6 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layVals->addWidget(fldLabelSpacing->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
   connect(fldLabelSpacing->rep(), SIGNAL(editingFinished()), this, SLOT(fldLabelSpacing_textChanged()) );
-
-  chkNegDraw =  new QCheckBox("Neg\nDraw", widg, "chkNegDraw");
-  chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
-  connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(chkNegDraw_toggled(bool)) );
-  layVals->addWidget(chkNegDraw);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of graph display, in normalized units (default is 1.0 = same as height).");
@@ -5033,29 +5066,6 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   layRAxis->addStretch();
 
-  ////////////////////////////////////////////
-  // scrollbar
-  
-  layScroll = new QHBoxLayout(layOuter);
-
-  lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
-  lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
-  layScroll->addWidget(lblRows);
-  fldRows = new taiIncrField(&TA_int, NULL, NULL, widg);
-  layScroll->addWidget(fldRows->GetRep());
-//   layVals->addSpacing(taiM->hsep_c);
-  connect(fldRows->rep(), SIGNAL(selectionChanged()), this, SLOT(fldRows_textChanged()) );
-
-//   lblView = taiM->NewLabel("View\nRows:", widg, font_spec);
-//   lblView->setToolTip("Scroll here to control rows of data to view");
-//   layScroll->addWidget(lblView);
-
-  scrView = new QScrollBar(Qt::Horizontal, widg);
-  connect(scrView, SIGNAL(valueChanged(int)), this, SLOT(scrView_valueChanged(int)) );
-  scrView->setTracking(true);
-  scrView->setMinValue(0);
-  layScroll->addWidget(scrView, 1); // this 1 here gives it higher priority and allows it to stretch all the way!
-
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
 
@@ -5186,20 +5196,6 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
 
   lelRAxis->SetFlag(taiData::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
   pdtRAxis->SetFlag(taiData::flgReadOnly, glv->graph_type != GraphTableView::RASTER);
-
-  int mx = MAX((glv->rows() - glv->view_rows), 0);
-  scrView->setMaxValue(mx);
-  //page step size based on viewable to total lines
-  int pg_step = MAX(glv->view_rows, 1);
-  scrView->setPageStep(pg_step);
-  scrView->setSingleStep(1);
-  scrView->setValue(MIN(glv->view_range.min, mx));
-}
-
-void iGraphTableView_Panel::scrView_valueChanged(int value) {
-  GraphTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->ViewRow_At(value);
 }
 
 void iGraphTableView_Panel::chkDisplay_toggled(bool on) {

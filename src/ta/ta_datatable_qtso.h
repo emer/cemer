@@ -826,12 +826,15 @@ public:
 
   bool			two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
   float			two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
+  bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
 
   override void	InitDisplay(bool init_panel = true);
   override void	UpdateDisplay(bool update_panel = true);
 
   void		SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON set the color scale spec to determine the palette of colors representing values
+
+  virtual void	SetScrollBars();   // set scroll bar values
 
   ///////////////////////////////////////////////////
   // misc housekeeping
@@ -971,6 +974,8 @@ public:
   QPushButton*		    butClear;
 
   QHBoxLayout*		  layVals;
+  QLabel*		    lblRows;
+  taiIncrField*		    fldRows; // number of rows to display
   QLabel*		    lblLineWidth;
   taiField*		    fldLineWidth;
   QLabel*		    lblPointSpacing;
@@ -1070,20 +1075,11 @@ public:
   taiListElsButton*	    lelRAxis; // list element chooser
   taiPolyData*	    	    pdtRAxis; // fixed_range polydata (inline)
 
-  QHBoxLayout*		  layScroll;
-  QLabel*		    lblRows;
-  taiIncrField*		    fldRows; // number of rows to display
-  QLabel*		    lblView;
-  QScrollBar*	            scrView; // scrollbar for view range (instead of using viewspace)
-
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GraphTableView*	glv() {return (GraphTableView*)m_dv;}
 
   iGraphTableView_Panel(GraphTableView* glv);
   ~iGraphTableView_Panel();
-
-public slots:
-  void 			scrView_valueChanged(int value);
 
 protected:
   override void		InitPanel_impl(); // called on structural changes

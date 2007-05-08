@@ -1506,8 +1506,9 @@ SoBigScaleUniformScaler::SoBigScaleUniformScaler(float cube_size) {
   SO_NODE_CONSTRUCTOR(SoBigScaleUniformScaler);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(0.7f, 0.5f, 0.7f);
-  mat->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
+  mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+  mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+  mat->transparency.setValue(drag_inact_clr_tr);
   addChild(mat);
 
   float sz = 1.1f;
@@ -1550,8 +1551,9 @@ SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_widt
   SO_NODE_CONSTRUCTOR(SoBigTransformBoxRotatorRotator);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(.7f, 0.5f, 0.7f);
-  mat->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
+  mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+  mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+  mat->transparency.setValue(drag_inact_clr_tr);
   addChild(mat);
 
   float sz = 1.1f;
@@ -1621,8 +1623,8 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   fixValues();
 
   box_mat_ = new SoMaterial;
-  box_mat_->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
-  box_mat_->transparency.setValue(0.5f);
+  box_mat_->diffuseColor.setValue(frame_clr_r, frame_clr_g, frame_clr_b);
+  box_mat_->transparency.setValue(frame_clr_tr);
   addChild(box_mat_);
 
   box_ = new SoCube;
@@ -1632,8 +1634,9 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   addChild(box_);
 
   slide_mat_ = new SoMaterial;
-  slide_mat_->diffuseColor.setValue(.7f, 0.5f, 0.7f); // light violet
-  slide_mat_->emissiveColor.setValue(0.7f, 0.5f, 0.7f);
+  slide_mat_->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+  slide_mat_->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+  slide_mat_->transparency.setValue(drag_inact_clr_tr);
   addChild(slide_mat_);
 
   pos_ = new SoTranslation;
@@ -1651,8 +1654,9 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
   active_sep_ = new SoSeparator;
   
   active_mat_ = new SoMaterial;
-  active_mat_->diffuseColor.setValue(.5f, 0.5f, 0.0f); // yellow
-  active_mat_->emissiveColor.setValue(0.5f, 0.5f, 0.0f);
+  active_mat_->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+  active_mat_->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+  active_mat_->transparency.setValue(drag_activ_clr_tr);
   active_sep_->addChild(active_mat_);
   active_sep_->addChild(slider_sep_);
 
@@ -1734,32 +1738,39 @@ void SoScrollBar::repositionSlider() {
 }
 
 void SoScrollBar::setValue(int new_val) {
+  if(value_ == new_val) return;
   value_ = new_val;
   repositionSlider();
 }
 void SoScrollBar::setMinimum(int new_min) {
+  if(minimum_ == new_min) return;
   minimum_ = new_min;
   repositionSlider();
 }
 void SoScrollBar::setMaximum(int new_max) {
+  if(maximum_ == new_max) return;
   maximum_ = new_max;
   repositionSlider();
 }
 void SoScrollBar::setPageStep(int new_ps) {
+  if(pageStep_ == new_ps) return;
   pageStep_ = new_ps;
   slider_->height = MAX(pageStep_, width_); // don't shrink too far
   repositionSlider();
 }
 void SoScrollBar::setSingleStep(int new_ss) {
+  if(singleStep_ == new_ss) return;
   singleStep_ = new_ss;
 }
 void SoScrollBar::setWidth(float new_width) {
+  if(width_ == new_width) return;
   width_ = new_width;
   box_->height = width_;
   slider_->radius = .5f * width_;
   slider_->height = MAX(pageStep_, width_); // don't shrink too far
 }
 void SoScrollBar::setDepth(float new_depth) {
+  if(depth_ == new_depth) return;
   depth_ = new_depth;
   box_->depth = depth_;
 }

@@ -128,8 +128,8 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
   }
   
   SoMaterial* mat = material(); //cache
-  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
-  mat->transparency.setValue(0.5f);
+  mat->diffuseColor.setValue(frame_clr_r, frame_clr_g, frame_clr_b); // blue/green
+  mat->transparency.setValue(frame_clr_tr);
 
   SoSeparator* ss = shapeSeparator(); // cache
   frame_ = new SoFrame(SoFrame::Ver);
@@ -862,12 +862,20 @@ T3GraphViewNode::T3GraphViewNode(void* dataView_, float wdth, bool show_draggers
   chld->addChild(graphs_sep_);
 
   SoMaterial* mat = material(); //cache
-  mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
-  mat->transparency.setValue(0.5f);
+  mat->diffuseColor.setValue(frame_clr_r, frame_clr_g, frame_clr_b); // blue/green
+  mat->transparency.setValue(frame_clr_tr);
 
   SoSeparator* ss = shapeSeparator(); // cache
   frame_ = new SoFrame(SoFrame::Ver);
   insertChildAfter(ss, frame_, material());
+
+  float vert_off = frame_margin + 2.0f * frame_width;
+
+  SoTransform* scrtx = new SoTransform;
+  scrtx->translation.setValue(0.5f, -vert_off, -frame_width); // Z is to go below label
+  topSeparator()->addChild(scrtx);
+  row_scroll_bar_ = new SoScrollBar;
+  topSeparator()->addChild(row_scroll_bar_);
 }
 
 T3GraphViewNode::~T3GraphViewNode()
