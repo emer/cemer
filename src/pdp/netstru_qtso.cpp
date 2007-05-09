@@ -411,6 +411,10 @@ void UnitGroupView::Render_pre() {
   NetView* nv = this->nv();
   Unit_Group* ugrp = this->ugrp(); //cache
 
+  if(ugrp->own_lay && ugrp->own_lay->Iconified()) {
+    return;			// don't render anything!
+  }
+
   bool no_units = true;
   if(nv->unit_disp_mode != NetView::UDM_BLOCK)
     no_units = false;
@@ -472,6 +476,12 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 
 void UnitGroupView::Render_impl_children() {
   NetView* nv = this->nv(); //cache
+
+  Unit_Group* ugrp = this->ugrp(); //cache
+  if(ugrp->own_lay && ugrp->own_lay->Iconified()) {
+    return;			// don't render anything!
+  }
+
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
     Render_impl_blocks();
     return;
@@ -893,6 +903,10 @@ void UnitGroupView::UpdateUnitValues_blocks() {
 
 void UnitGroupView::UpdateUnitValues() {
   NetView* nv = this->nv(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+  if(ugrp->own_lay && ugrp->own_lay->Iconified()) {
+    return;			// don't render anything!
+  }
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
     UpdateUnitValues_blocks();
     return;
@@ -1043,7 +1057,12 @@ void LayerView::Render_impl() {
 
   T3LayerNode* node_so = this->node_so(); // cache
   if(!node_so) return;
-  node_so->setGeom(lay->act_geom.x, lay->act_geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+  if(lay->Iconified()) {
+    node_so->setGeom(1, 1, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+  }
+  else {
+    node_so->setGeom(lay->act_geom.x, lay->act_geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
+  }
   node_so->setCaption(data()->GetName().chars());
   node_so->resizeCaption(nv->font_sizes.layer);
   inherited::Render_impl();
