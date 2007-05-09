@@ -1104,7 +1104,8 @@ void taiMember::GetImage(taiData* dat, const void* base) {
     is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
     dat->setVisible(is_visible);
   }
-  if (!is_visible) return;
+  // note: we must always fall through and get image, even when invisible, for
+  // when we change visibility, so the result is valid
   
   // note: must use identical criteria for ro here as when we did GetDataRep
   bool ro = dat->HasFlag(taiData::flgReadOnly) ;
@@ -1125,12 +1126,10 @@ void taiMember::GetImage(taiData* dat, const void* base) {
       if (val_is_eq) img = 1;	// not editable
       else           img = 0;	// editable
     }
-    deck->GetImage(img);
-    if (img == 0) { // rw, always our impl
-      GetArbitrateImage(deck->data_el.FastEl(0), base);
-    } else { //ro
-      GetArbitrateImage(deck->data_el.FastEl(1), base);
-    }
+    deck->GetImage(img); // this is the one that is visible
+    // NOTE: we must *always* get both images, so the val img is valid if we switch to rw
+    GetArbitrateImage(deck->data_el.FastEl(0), base);
+    GetArbitrateImage(deck->data_el.FastEl(1), base);
   }
 }
 
@@ -1149,7 +1148,8 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
     is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
     dat->setVisible(is_visible);
   }
-  if (!is_visible) return;
+  // note: we must always fall through and get value, even when invisible, for
+  // when we change visibility, so the result is actually saved!
   
   // note: must use identical criteria for ro here as when we did GetDataRep
   bool ro = dat->HasFlag(taiData::flgReadOnly);
@@ -1160,7 +1160,7 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
     GetArbitrateMbrValue(dat, base, first_diff);
   } else { // note: we only do this if we aren't RO, otherwise there is no point
     QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
-    bool is_on = false; // defaults here make it editable in test chain below
+/*nn  bool is_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
     int img = 0;
     //note: we don't care if processed or not -- flag defaults make it editable
@@ -1171,9 +1171,8 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
     } else {
       if (val_is_eq) img = 1;	// not editable
       else           img = 0;	// editable
-    }
-    // only process editable case, and skip the CmpOrigVal
-    if (img != 0) return;
+    }*/
+    // NOTE: we must *always* get the rw val in case we had switched editability
     dat = deck->data_el.FastEl(0);
     GetArbitrateMbrValue(dat, base, first_diff);
   }
