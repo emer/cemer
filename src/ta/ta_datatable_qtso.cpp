@@ -408,6 +408,9 @@ void DataTableView::Copy_(const DataTableView& cp) {
 void DataTableView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //note: UAE calls setDirty, which is where we do most of the rejigging
+  if(table_orient.x == 0.0f && table_orient.y == 0.0f && table_orient.z == 0.0f) {
+    table_orient.z = 1.0f;	// axis must be defined, even if not used.
+  }
 }
 
 String DataTableView::GetLabel() const {
@@ -463,8 +466,12 @@ void DataTableView::setDataTable(DataTable* dt) {
     SetData(dt);
     bool first = (colViewCount() == 0);
     UpdateFromDataTable(first);
-//TEST
-if (m_lvp) m_lvp->Refresh(); // to update name
+    T3DataViewFrame* frame = GetFrame();
+    if(frame) {
+      table_pos.y = 1.3f * (frame->root_view.children.size - 1); // move to unique position (up)
+    }
+    //TEST
+    if (m_lvp) m_lvp->Refresh(); // to update name
   } else {
     Unbind(); // also does kids
   }
@@ -1256,8 +1263,9 @@ void GridTableView::SetScrollBars() {
   SoScrollBar* csb = node_so->ColScrollBar();
 //   csb->setMinimum(0);
 //   csb->setSingleStep(1);
-  csb->setMaximum(vis_cols.size - col_n);
-  csb->setPageStep(col_n);
+  int eff_col_n = MIN(col_n, vis_cols.size);
+  csb->setMaximum(vis_cols.size - eff_col_n);
+  csb->setPageStep(eff_col_n);
   csb->setValue(col_range.min);
   csb->setValueChangedCB(GridTableView_ColScrollCB, this);
 

@@ -1260,6 +1260,13 @@ void NetView::CutLinks() {
   inherited::CutLinks();
 }
 
+void NetView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(network_orient.x == 0.0f && network_orient.y == 0.0f && network_orient.z == 0.0f) {
+    network_orient.z = 1.0f;	// axis must be defined, even if not used.
+  }
+}
+
 void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   if(taMisc::is_loading || !taMisc::gui_active) return;
   TypeDef* typ = child->GetTypeDef();

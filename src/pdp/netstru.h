@@ -1300,7 +1300,9 @@ public:
   virtual void  LayoutUnitGroups();
   // #MENU #CONFIRM #CAT_Structure layout the unit groups according to layer group geometry and spacing
   virtual void  ConnectFrom(Layer* lay);
-  // #DYN12N #CAT_Structure connect one or more other layers to this layer
+  // #DYN12N #CAT_Structure connect from one or more other layers to this layer (receive from other layer(s))
+  virtual void  ConnectBidir(Layer* lay);
+  // #DYN12N #CAT_Structure bidirectionally connect with one or more other layers to (receive from and send to other layer(s))
   virtual void  Connect();
   // #MENU #CONFIRM #CAT_Structure connect the layer
   virtual bool	CheckBuild(bool quiet=false);
@@ -1669,7 +1671,7 @@ public:
   virtual int	GetDefaultZ();  // #IGNORE
 #ifdef TA_GUI
   virtual void	ShowInViewer(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #CAT_Display open a viewer on this network (NULL=use blank if any, else make new frame)
+  // #NULL_OK #BUTTON #CAT_Display open a viewer on this network (NULL=use blank if any, else make new frame)
 #endif
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)

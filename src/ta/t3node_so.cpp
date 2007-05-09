@@ -231,8 +231,9 @@ void T3Node::transformCaption(const SbRotation& rotate, const iVec3f& translate)
 
 void T3Node::transformCaption(const SbRotation* rotate, const iVec3f* translate) {
   SoTransform* txfm = captionTransform(true);
-  if (rotate)
+  if (rotate) {
     txfm->rotation.setValue(*rotate);
+  }
   if (translate)
     txfm->translation.setValue(SbVec3f(translate->x, translate->y, translate->z + 0.02f)); // offset slightly
 }

@@ -3223,6 +3223,14 @@ void Layer::ConnectFrom(Layer* from_lay) {
   net->FindMakePrjn(this, from_lay);
 }
 
+void Layer::ConnectBidir(Layer* from_lay) {
+  Network* net = GET_MY_OWNER(Network);
+  if (!net) return;
+  //Projection* prjn =
+  net->FindMakePrjn(this, from_lay);
+  net->FindMakePrjn(from_lay, this);
+}
+
 void Layer::SyncSendPrjns() {
   Projection* p;
   taLeafItr i;

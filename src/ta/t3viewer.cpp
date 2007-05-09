@@ -511,6 +511,15 @@ void T3DataView::CutLinks() {
   inherited::CutLinks();
 }
 
+void T3DataView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(m_transform) {
+    if(m_transform->rotate.x == 0.0f && m_transform->rotate.y == 0.0f && m_transform->rotate.z == 0.0f) {
+      m_transform->rotate.z = 1.0f;	// axis must be defined, even if not used.
+    }
+  }
+}
+
 void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
   if (m_node_so.ptr())
     AddRemoveChildNode_impl(node, adding);

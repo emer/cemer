@@ -430,6 +430,7 @@ protected:
 
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
+  override void		UpdateAfterEdit_impl();
   override void		DataUpdateView_impl();
   override void		DataUpdateAfterEdit_impl(); //
   override void		DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns

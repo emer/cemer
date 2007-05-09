@@ -5,28 +5,6 @@ commit:
 ------------
 current:
 
-SoScrollBar: make a Q_OBJECT and add regular Qt signals as in the original 
-QtScrollbar -- internal callbacks do all the mediation.
-
-== PVLV:
-
-* output gate guys only get pv da, not lv??
-
-* add group_name to CondEnv code -- Epochgp PERMUTED, etc..
-
-* create simulated SIR test case.. 2 repeated guys with reward assoc.
-
-== Program
-
-* progexpr not finding variables in function args
-* brad's bug on drag of objs
-
-== Inventor
-
-* scroll of graphview
-* import object files
-* render objects to bitmap and use to present to network
-
 == Netview:
 
 * manips conditional on arrow tool mode & bigger
@@ -41,6 +19,24 @@ QtScrollbar -- internal callbacks do all the mediation.
 * NewLayer not working in netview
 * Can't view weights with 2 nets in same view!
 * r.wt disp scale gets reset when you click on a new unit
+
+== Program
+
+* progexpr not finding variables in function args
+* brad's bug on drag of objs
+
+== PVLV:
+
+* output gate guys only get pv da, not lv??
+
+* add group_name to CondEnv code -- Epochgp PERMUTED, etc..
+
+* create simulated SIR test case.. 2 repeated guys with reward assoc.
+
+== Inventor
+
+* import object files
+* render objects to bitmap and use to present to network
 
 == Misc
 

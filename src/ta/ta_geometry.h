@@ -654,7 +654,7 @@ public:
   TA_BASEFUNS_LITE(FloatRotation);
 private:
   void 			Copy_(const FloatRotation& cp)	{rot = cp.rot;}
-  void 			Initialize() {rot = 0.0;}
+  void 			Initialize() { z = 1.0f; rot = 0.0f;}
   void 			Destroy() {}
 };
 

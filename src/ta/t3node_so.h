@@ -515,7 +515,7 @@ protected:
 const float drag_inact_clr_r = .5f;
 const float drag_inact_clr_g = .3f;
 const float drag_inact_clr_b = .5f;
-const float drag_inact_clr_tr = 0.3f; // transparency
+const float drag_inact_clr_tr = 0.5f; // transparency
 
 // official defined colors for dragger controls: active = yellow
 // (set but diffuse and emissive)
@@ -528,7 +528,7 @@ const float drag_activ_clr_tr = 0.0f; // transparency
 const float frame_clr_r = .0f;
 const float frame_clr_g = .5f;
 const float frame_clr_b = .5f;
-const float frame_clr_tr = 0.7f; // transparency
+const float frame_clr_tr = 0.8f; // transparency
 
 class TA_API SoBigScaleUniformScaler: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the scaleUniformScaler

@@ -222,7 +222,7 @@ public:
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
   
   virtual void		ViewProperties(); // #MENU show the view properties for this object
-  
+
   override void		CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
 
@@ -275,6 +275,7 @@ protected:
 //TODO  virtual void		Assert_QObj(); // makes sure the qobj is created
 //  override void		DataDataChanged_impl(int dcr, void* op1, void* op2); // called when the data item has changed, esp. ex lists and groups, EXCEPT UpdateAfterEdit, which gets dispatched direct
   override void		DataUpdateAfterEdit_impl(); // called by data for an UAE
+  override void		UpdateAfterEdit_impl();
 
 private:
   void	Copy_(const T3DataView& cp);
