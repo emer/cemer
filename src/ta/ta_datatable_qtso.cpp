@@ -1845,9 +1845,7 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   trans[0] *= nv->table_scale.x;
   trans[1] *= nv->table_scale.y;
   trans[2] *= nv->table_scale.z;
-  FloatTDCoord tr(T3GridViewNode::drag_size * trans[0],
-		  T3GridViewNode::drag_size * trans[1],
-		  T3GridViewNode::drag_size * trans[2]);
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
   nv->table_pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
@@ -4599,9 +4597,7 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   trans[0] *= nv->table_scale.x;
   trans[1] *= nv->table_scale.y;
   trans[2] *= nv->table_scale.z;
-  FloatTDCoord tr(T3GraphViewNode::drag_size * trans[0],
-		  T3GraphViewNode::drag_size * trans[1],
-		  T3GraphViewNode::drag_size * trans[2]);
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
   nv->table_pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();

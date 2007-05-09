@@ -262,13 +262,12 @@ typedef T3NodeParent inherited;
 public:
   static float 		height; // = .05 height of layer frame shape itself (in fractions of a unit)
   static float 		width; // = .5 width of layer frame shape (in frac of unit)
-  static float		drag_scale; // = 1.5 = scale of drag control relative to width
 
   static void		initClass();
 
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z);
 
-  T3LayerNode(void* dataView_ = NULL);
+  T3LayerNode(void* dataView_ = NULL, bool show_draggers = true);
 
 protected:
   
@@ -279,10 +278,18 @@ protected:
 
 private:
   SoFrame*		shape_;
+
+  bool			show_drag_;
+
   SoSeparator*		xy_drag_sep_;
   SoTransform*		xy_drag_xf_;
   SoTranslate2Dragger*	xy_dragger_;
   SoCalculator*		xy_drag_calc_;
+
+  SoSeparator*		z_drag_sep_;
+  SoTransform*		z_drag_xf_;
+  SoTranslate1Dragger*	z_dragger_;
+  SoCalculator*		z_drag_calc_;
 };
 
 //////////////////////////
@@ -324,14 +331,13 @@ typedef T3NodeParent inherited;
 #endif // def __MAKETA__
 
 public:
-  static float 		drag_size; // = .08 size of dragger control object
   static void		initClass();
 
   SoFrame*		shape() {return shape_;}
   SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
   SoSeparator*		getNetText();		      // get a new net text separator
 
-  T3NetNode(void* dataView_ = NULL);
+  T3NetNode(void* dataView_ = NULL, bool show_draggers = true);
 
 protected:
   void		setDefaultCaptionTransform(); // override
@@ -341,10 +347,8 @@ protected:
   SoFrame*		shape_; //#IGNORE
   SoSeparator* 		net_text_; // network text variables
 
-  SoSeparator*		drag_sep_;
-  SoTransform*		drag_xf_;
-  SoTransformBoxDragger* dragger_;
-  SoCalculator*		drag_trans_calc_;
+  bool			show_drag_;
+  T3TransformBoxDragger* drag_;	// my position dragger
 };
 
 

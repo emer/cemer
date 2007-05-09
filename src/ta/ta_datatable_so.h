@@ -64,7 +64,6 @@ typedef T3NodeLeaf inherited;
   SO_NODE_HEADER(T3GridViewNode);
 #endif // def __MAKETA__
 public:
-  static float 		drag_size; // = .04 size of dragger control object
   static float 		frame_margin; // = .05 size of margin around stage for frame
   static float 		frame_width; // = .02 width of frame itself
   static void		initClass();
@@ -95,10 +94,7 @@ protected:
   SoFrame*		frame_; 
 
   bool			show_drag_;
-  SoSeparator*		drag_sep_;
-  SoTransform*		drag_xf_;
-  SoTransformBoxDragger* dragger_;
-  SoCalculator*		drag_trans_calc_;
+  T3TransformBoxDragger* drag_;	// my position dragger
 
   SoScrollBar*		col_scroll_bar_;
   SoScrollBar*		row_scroll_bar_;
@@ -328,7 +324,6 @@ typedef T3NodeParent inherited;
   SO_NODE_HEADER(T3GraphViewNode);
 #endif // def __MAKETA__
 public:
-  static float 		drag_size; // = .04 size of dragger control object
   static float 		frame_margin; // = .05 size of margin around stage for frame
   static float 		frame_width; // = .02 width of frame itself
   static void		initClass();
@@ -362,10 +357,7 @@ protected:
   SoSeparator*		graphs_sep_; // graph boxes
 
   bool			show_drag_;
-  SoSeparator*		drag_sep_;
-  SoTransform*		drag_xf_;
-  SoTransformBoxDragger* dragger_;
-  SoCalculator*		drag_trans_calc_;
+  T3TransformBoxDragger* drag_;	// my position dragger
 
   SoScrollBar*		row_scroll_bar_;
 

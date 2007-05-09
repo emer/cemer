@@ -3103,18 +3103,20 @@ void LayerSpec::CutLinks() {
 
 void Layer::Initialize() {
   own_net = NULL;
+  lesion = false;
+  flags = LF_NONE;
   layer_type = HIDDEN;
   unit_groups = false;
   gp_spc.x = 1;  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
   units.SetBaseType(&TA_Unit);
-  lesion = false;
   ext_flag = Unit::NO_EXTERNAL;
   act_geom = un_geom;
   dmem_dist = DMEM_DIST_DEFAULT;
   m_prv_unit_spec = NULL;
 
   sse = 0.0f;
+  icon_value = 0.0f;
 
   n_units = 0;			// todo: v3compat obs
 }
@@ -3162,6 +3164,8 @@ void Layer::CutLinks() {
 
 void Layer::Copy_(const Layer& cp) {
   layer_type = cp.layer_type;
+  lesion = cp.lesion;
+  flags = cp.flags;
   pos = cp.pos;
   un_geom = cp.un_geom;
   unit_groups = cp.unit_groups;
@@ -3172,9 +3176,11 @@ void Layer::Copy_(const Layer& cp) {
   projections = cp.projections;
   units = cp.units;
   unit_spec = cp.unit_spec;
-  lesion = cp.lesion;
   ext_flag = cp.ext_flag;
   m_prv_unit_spec = cp.m_prv_unit_spec;
+
+  sse = cp.sse;
+  icon_value = cp.icon_value;
 
   n_units = cp.n_units;		// todo: v3compat obs
 
@@ -5493,9 +5499,15 @@ void Network::UpdateMax() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    max_size.x = MAX(max_size.x, l->act_geom.x + l->pos.x);
-    max_size.y = MAX(max_size.y, l->act_geom.y + l->pos.y);
     max_size.z = MAX(max_size.z, 1 + l->pos.z);
+    if(l->Iconified()) {
+      max_size.x = MAX(max_size.x, l->pos.x + 1);
+      max_size.y = MAX(max_size.y, l->pos.y + 1);
+    }
+    else {
+      max_size.x = MAX(max_size.x, l->act_geom.x + l->pos.x);
+      max_size.y = MAX(max_size.y, l->act_geom.y + l->pos.y);
+    }
   }
 }
 

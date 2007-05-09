@@ -1019,7 +1019,12 @@ void LayerView::DoHighlightColor(bool apply) {
 } 
 
 void LayerView::Render_pre() {
-  m_node_so = new T3LayerNode(this);
+  bool show_drag = true;;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
+
+  m_node_so = new T3LayerNode(this, show_drag);
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -1059,17 +1064,12 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
 
   float fx = (float)lay->act_geom.x / nv->max_size.x;
   float fy = (float)lay->act_geom.y / nv->max_size.y;
-  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
-  float lay_wd = T3LayerNode::width / max_xy;
-  float use_sc = T3LayerNode::drag_scale;
-  if(max_xy < 10.0f) use_sc = 1.0f;
-  float drag_sc = use_sc * lay_wd;
   float xfrac = .5f * fx;
   float yfrac = .5f * fy;
 
   const SbVec3f& trans = dragger->translation.getValue();
-  float new_x = trans[0] * drag_sc * nv->max_size.x;
-  float new_y = trans[1] * drag_sc * nv->max_size.y;
+  float new_x = trans[0] * nv->max_size.x;
+  float new_y = trans[1] * nv->max_size.y;
 
 //   cerr << "lay: " << lay->name << " " << trans[0] << " " << trans[1] << " drg: " <<
 //     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
@@ -1080,6 +1080,33 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   if(lay->pos.y < 0) lay->pos.y = 0;
 
   laynd->txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac); // reset!
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+
+  nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
+
+  nv->UpdateDisplay();
+}
+
+// callback for layer z dragger
+void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
+  SoTranslate1Dragger* dragger = (SoTranslate1Dragger*)dragr;
+  T3LayerNode* laynd = (T3LayerNode*)userData;
+  LayerView* lv = (LayerView*)laynd->dataView();
+  Layer* lay = lv->layer();
+  NetView* nv = lv->nv();
+
+  float max_z = nv->max_size.z;
+
+  const SbVec3f& trans = dragger->translation.getValue();
+  float new_z = trans[0] * max_z;
+
+//   cerr << "lay: " << lay->name << " z:" << trans[0] << " new_z: " << new_z << endl;
+
+  lay->pos.z += (int)new_z;
+  if(lay->pos.z < 0) lay->pos.z = 0;
+
+  const SbVec3f& shptrans = laynd->txfm_shape()->translation.getValue();
+  laynd->txfm_shape()->translation.setValue(shptrans[0], 0.0f, shptrans[2]); // reset!
   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
 
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
@@ -1646,7 +1673,13 @@ const iColor NetView::bgColor(bool& ok) const {
 
 void NetView::Render_pre() {
   InitDisplay();
-  m_node_so = new T3NetNode(this);
+
+  bool show_drag = true;;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
+
+  m_node_so = new T3NetNode(this, show_drag);
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
@@ -1674,9 +1707,7 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   trans[0] *= nv->network_scale.x;
   trans[1] *= nv->network_scale.y;
   trans[2] *= nv->network_scale.z;
-  FloatTDCoord tr(T3NetNode::drag_size * trans[0],
-		  T3NetNode::drag_size * trans[1],
-		  T3NetNode::drag_size * trans[2]);
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
   nv->network_pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();

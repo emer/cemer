@@ -2573,6 +2573,9 @@ void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->ext_flag & Unit::TARG) {
     net->trg_max_act = MAX(net->trg_max_act, lay->acts.max);
   }
+  if(lay->Iconified()) {
+    lay->icon_value = lay->acts.avg;
+  }
 }
 
 void LeabraLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net)

@@ -1239,14 +1239,21 @@ public:
     DMEM_DIST_UNITGP		// distribute units according to unit groups, which can be less even but allows for shared weights by unit group
   }; //
   
-  enum LayerType { // type of layer, used to determine various default settings
-    HIDDEN, 	// layer does not receive external input of any form
-    INPUT,	// layer receives external input (EXT) that drives activation states directly
-    TARGET,	// layer receives a target input (TARG) that determines correct activation states, used for training
-    OUTPUT	// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
+  enum LayerType { 	// type of layer, used to determine various default settings
+    HIDDEN, 		// layer does not receive external input of any form
+    INPUT,		// layer receives external input (EXT) that drives activation states directly
+    TARGET,		// layer receives a target input (TARG) that determines correct activation states, used for training
+    OUTPUT		// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
   };
   
+  enum LayerFlags { 			// #BITS flags for layer
+    LF_NONE		= 0, 		// #NO_BIT
+    ICONIFIED		= 0x0001, 	// only display a single unit showing icon_value (set in algorithm-specific manner)
+  };
+
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure Network this layer is in
+  bool			lesion;		// #DEF_false #CAT_Structure inactivate this layer from processing (reversable)
+  LayerFlags		flags;		// flags controlling various aspects of layer funcdtion
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
   XYNGeom		un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer 
@@ -1260,7 +1267,6 @@ public:
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
   Unit_Group		units;		// #CAT_Structure units or groups of units
   UnitSpec_SPtr 	unit_spec;	// #CAT_Structure default unit specification for units in this layer
-  bool			lesion;		// #DEF_false #CAT_Structure inactivate this layer from processing (reversable)
   Unit::ExtType		ext_flag;	// #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
   int_Array		sent_already; 	// #CAT_Activation #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
   DMemDist		dmem_dist; 	// #CAT_DMem how to distribute units across multiple distributed memory processors
@@ -1268,12 +1274,23 @@ public:
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
   float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+  float			icon_value;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW value to display if layer is iconified (algorithmically determined)
 
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
 
   ProjectBase*		project(); // #IGNORE this layer's project
   	
+  inline void		SetLayerFlag(LayerFlags flg)   { flags = (LayerFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearLayerFlag(LayerFlags flg) { flags = (LayerFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasLayerFlag(LayerFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetLayerFlagState(LayerFlags flg, bool on)
+  { if(on) SetLayerFlag(flg); else ClearLayerFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
   virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
@@ -1388,6 +1405,13 @@ public:
   // #MENU #USE_RVAL #CAT_Structure remove connectiosn with prob p_lesion (permute = fixed no. lesioned)
   virtual int	LesionUnits(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
+
+  virtual void	Iconify()	{ SetLayerFlag(ICONIFIED); }
+  // #MENU #CAT_Display #MENU_CONTEXT iconify this layer in the network display
+  virtual void	DeIconify()	{ ClearLayerFlag(ICONIFIED); }
+  // #MENU #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
+  virtual bool	Iconified()	{ return HasLayerFlag(ICONIFIED); }
+  // convenience function for checking iconified flag
 
   virtual void	SetLayerUnitGeom(int x, int y, bool n_not_xy = false, int n = 0);
   // set layer unit geometry (convenience function for programs)
@@ -1588,8 +1612,8 @@ public:
     NO_BUILD,			// do not build network after loading
   };
 
-  enum NetFlags { // #BITS flags for modifying program variables
-    NF_NONE		= 0, // #NO_BIT
+  enum NetFlags { 		// #BITS flags for network
+    NF_NONE		= 0, 	// #NO_BIT
     SAVE_UNITS		= 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
     SAVE_UNITS_FORCE 	= 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
   };

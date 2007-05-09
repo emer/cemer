@@ -41,6 +41,8 @@
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
 #include <Inventor/draggers/SoTranslate1Dragger.h>
+#include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/engines/SoCalculator.h>
 #endif
 
 // forwards
@@ -75,6 +77,8 @@ class SoTriangleStripSet; // #IGNORE
 class SoIndexedTriangleStripSet; // #IGNORE
 class SoUnits; // #IGNORE
 class SoVertexProperty; // #IGNORE
+class SoTransformBoxDragger; // #IGNORE
+class SoCalculator; // #IGNORE
 
 //////////////////////////
 //   T3Color		//
@@ -530,28 +534,77 @@ const float frame_clr_g = .5f;
 const float frame_clr_b = .5f;
 const float frame_clr_tr = 0.8f; // transparency
 
-class TA_API SoBigScaleUniformScaler: public SoSeparator { 
+class TA_API T3ScaleUniformScaler: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the scaleUniformScaler
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
-  SO_NODE_HEADER(SoBigScaleUniformScaler);
+  SO_NODE_HEADER(T3ScaleUniformScaler);
 #endif // def __MAKETA__
 public:
   static void		initClass();
-  SoBigScaleUniformScaler(float cube_size=0.6f);
+  T3ScaleUniformScaler(bool active = false, float half_size=1.1f, float cube_size=0.6f);
 };
 
-class TA_API SoBigTransformBoxRotatorRotator: public SoSeparator { 
+class TA_API T3TransformBoxRotatorRotator: public SoSeparator { 
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS big version of the transformBoxRotatorRotator
 #ifndef __MAKETA__
 typedef SoSeparator inherited;
-  SO_NODE_HEADER(SoBigTransformBoxRotatorRotator);
+  SO_NODE_HEADER(T3TransformBoxRotatorRotator);
 #endif // def __MAKETA__
 public:
   static void		initClass();
-  SoBigTransformBoxRotatorRotator(float line_width=.4f);
+  T3TransformBoxRotatorRotator(bool active = false, float half_size=1.1f, float line_width=.4f);
 };
 
+//////////////////////////////////
+// 	T3TransformBoxDrag
+
+class TA_API T3TransformBoxDragger: public SoSeparator { 
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS my custom transform box dragger kit for positioning T3 view guys
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+  SO_NODE_HEADER(T3TransformBoxDragger);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  T3TransformBoxDragger(float half_size=1.1f, float cube_size=0.6f, float line_width=0.4f);
+
+  // elements within me:
+  SoTransform*		xf_;		// transform -- set as you need
+  SoTransformBoxDragger* dragger_;	// dragger
+  SoCalculator*		trans_calc_;    // translation calculator -- gets from translation of dragger
+};
+
+//////////////////////////////////
+//	Parameterized translators
+
+class TA_API T3Translate1Translator: public SoSeparator { 
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS parameterizes and uses default color for the translate2 translator
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+  SO_NODE_HEADER(T3Translate1Translator);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  T3Translate1Translator(bool active = false, float bar_len = 2.0f, float bar_width=0.1f,
+			   float cone_radius=0.25f, float cone_ht=.5f);
+};
+
+class TA_API T3Translate2Translator: public SoSeparator { 
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS parameterizes and uses default color of the translate2 translator
+#ifndef __MAKETA__
+typedef SoSeparator inherited;
+  SO_NODE_HEADER(T3Translate2Translator);
+#endif // def __MAKETA__
+public:
+  static void		initClass();
+  T3Translate2Translator(bool active = false, float bar_len = 2.0f, float bar_width=0.1f,
+			   float cone_radius=0.25f, float cone_ht=.5f);
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//			SoScrollBar
 
 // unfortunately you can't seem to do multiple inheritance for both QObject and So,
 // so we need to do our own callbacks..

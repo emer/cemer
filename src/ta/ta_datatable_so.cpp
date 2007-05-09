@@ -53,7 +53,6 @@
 //   T3GridViewNode	//
 //////////////////////////
 
-float T3GridViewNode::drag_size = .06f;
 float T3GridViewNode::frame_margin = .05f;
 float T3GridViewNode::frame_width = .02f;
 
@@ -76,40 +75,20 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
   show_drag_ = show_draggers;
 
   if(show_drag_) {
-    drag_sep_ = new SoSeparator;
-    drag_xf_ = new SoTransform;
-    drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
-    drag_xf_->translation.setValue(-frame_margin, 0.0f, 0.0f);
-    drag_sep_->addChild(drag_xf_);
-    dragger_ = new SoTransformBoxDragger;
-    drag_sep_->addChild(dragger_);
+    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+    drag_->xf_->translation.setValue(-frame_margin, 0.0f, 0.0f);
 
-    // super-size me so stuff is actually grabable!
-    dragger_->setPart("scaler.scaler", new SoBigScaleUniformScaler(.6f));
-    dragger_->setPart("rotator1.rotator", new SoBigTransformBoxRotatorRotator(.4f));
-    dragger_->setPart("rotator2.rotator", new SoBigTransformBoxRotatorRotator(.4f));
-    dragger_->setPart("rotator3.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+    txfm_shape()->translation.connectFrom(&(drag_->trans_calc_->oA));
+    txfm_shape()->rotation.connectFrom(&(drag_->dragger_->rotation));
+    txfm_shape()->scaleFactor.connectFrom(&(drag_->dragger_->scaleFactor));
 
-    drag_trans_calc_ = new SoCalculator;
-    drag_trans_calc_->ref();
-    drag_trans_calc_->A.connectFrom(&dragger_->translation);
-
-    // expr set in render below
-    //   String expr = "oA = vec3f(" + String(.5f * (width_ + 2.0f * frame_margin)) + " + " + String(drag_size)
-    //     + " * A[0], .5 + " +  String(drag_size)
-    //     + " * A[1], " + String(drag_size) + " * A[2])";
-
-    //   drag_trans_calc_->expression = expr.chars();
-
-    txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
-    txfm_shape()->rotation.connectFrom(&dragger_->rotation);
-    txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
-
-    dragger_->addFinishCallback(T3GridViewNode_DragFinishCB, (void*)this);
+    drag_->dragger_->addFinishCallback(T3GridViewNode_DragFinishCB, (void*)this);
+  }
+  else {
+    drag_ = NULL;
   }
 
   stage_ = new SoSeparator;
-  // stage_->addChild(drag_sep_);
   mat_stage_ = new SoMaterial;
   mat_stage_->diffuseColor.setValue(0, 0, 0); // black
   stage_->addChild(mat_stage_);
@@ -124,7 +103,7 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
   insertChildAfter(topSeparator(), stage_, transform());
 
   if(show_drag_) {
-    insertChildAfter(topSeparator(), drag_sep_, transform());
+    insertChildAfter(topSeparator(), drag_, transform());
   }
   
   SoMaterial* mat = material(); //cache
@@ -172,11 +151,10 @@ void T3GridViewNode::render() {
   float frmg2 = 2.0f * frame_margin;
 
   if(show_drag_) {
-    String expr = "oA = vec3f(" + String(.5f * width_) + " + " + String(drag_size)
-      + " * A[0], " + String(.5f * (1.0f + frmg2)) + " + " +  String(drag_size)
-      + " * A[1], " + String(drag_size) + " * A[2])";
+    String expr = "oA = vec3f(" + String(.5f * width_) + " + A[0], "
+      + String(.5f * (1.0f + frmg2)) + " + A[1], A[2])";
 
-    drag_trans_calc_->expression = expr.chars();
+    drag_->trans_calc_->expression = expr.chars();
   }
 
   txlt_stage_->translation.setValue(0.0f, 1.0f + frame_margin, 0.0f);
@@ -789,7 +767,6 @@ void T3GraphLine::textAt(const iVec3f& pt, const char* str) {
 //   T3GraphViewNode	//
 //////////////////////////
 
-float T3GraphViewNode::drag_size = .06f;
 float T3GraphViewNode::frame_margin = .2f;
 float T3GraphViewNode::frame_width = .02f;
 
@@ -812,37 +789,19 @@ T3GraphViewNode::T3GraphViewNode(void* dataView_, float wdth, bool show_draggers
   show_drag_ = show_draggers;
 
   if(show_drag_) {
-    drag_sep_ = new SoSeparator;
-    drag_xf_ = new SoTransform;
-    drag_xf_->scaleFactor.setValue(drag_size, drag_size, drag_size);
-    drag_xf_->translation.setValue(-frame_margin, -frame_margin, 0.0f);
-    drag_sep_->addChild(drag_xf_);
-    dragger_ = new SoTransformBoxDragger;
-    drag_sep_->addChild(dragger_);
-    topSeparator()->addChild(drag_sep_);
+    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+    drag_->xf_->translation.setValue(-frame_margin, -frame_margin, 0.0f);
 
-    // super-size me so stuff is actually grabable!
-    dragger_->setPart("scaler.scaler", new SoBigScaleUniformScaler(.6f));
-    dragger_->setPart("rotator1.rotator", new SoBigTransformBoxRotatorRotator(.4f));
-    dragger_->setPart("rotator2.rotator", new SoBigTransformBoxRotatorRotator(.4f));
-    dragger_->setPart("rotator3.rotator", new SoBigTransformBoxRotatorRotator(.4f));
+    txfm_shape()->translation.connectFrom(&drag_->trans_calc_->oA);
+    txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);
+    txfm_shape()->scaleFactor.connectFrom(&drag_->dragger_->scaleFactor);
 
-    drag_trans_calc_ = new SoCalculator;
-    drag_trans_calc_->ref();
-    drag_trans_calc_->A.connectFrom(&dragger_->translation);
+    drag_->dragger_->addFinishCallback(T3GraphViewNode_DragFinishCB, (void*)this);
 
-    // expr set in render below
-    //   String expr = "oA = vec3f(" + String(.5f * (width_ + 2.0f * frame_margin)) + " + " + String(drag_size)
-    //     + " * A[0], .5 + " +  String(drag_size)
-    //     + " * A[1], " + String(drag_size) + " * A[2])";
-
-    //   drag_trans_calc_->expression = expr.chars();
-
-    txfm_shape()->translation.connectFrom(&drag_trans_calc_->oA);
-    txfm_shape()->rotation.connectFrom(&dragger_->rotation);
-    txfm_shape()->scaleFactor.connectFrom(&dragger_->scaleFactor);
-
-    dragger_->addFinishCallback(T3GraphViewNode_DragFinishCB, (void*)this);
+    topSeparator()->addChild(drag_);
+  }
+  else {
+    drag_ = NULL;
   }
 
   SoSeparator* chld = childNodes();
@@ -892,11 +851,9 @@ void T3GraphViewNode::render() {
   float frmg2 = 2.0f * frame_margin;
 
   if(show_drag_) {
-    String expr = "oA = vec3f(" + String(.5f * width_) + " + " + String(drag_size)
-      + " * A[0], " + String(.5f) + " + " +  String(drag_size)
-      + " * A[1], " + String(drag_size) + " * A[2])";
+    String expr = "oA = vec3f(" + String(.5f * width_) + " + A[0], .5f + A[1], A[2])";
 
-    drag_trans_calc_->expression = expr.chars();
+    drag_->trans_calc_->expression = expr.chars();
   }
 
   frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);

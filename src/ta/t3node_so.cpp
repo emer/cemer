@@ -58,6 +58,7 @@
 #include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoShapeHints.h>
 #include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoCone.h>
 
 #define PI 3.14159265
 
@@ -1492,28 +1493,34 @@ void SoMatrixGrid::renderValues() {
 }
 
 
-//////////////////////////
-//   SoBigScaleUniformScaler
-//////////////////////////
+//////////////////////////////////////////////////////////////////
+//   T3ScaleUniformScaler
 
-SO_NODE_SOURCE(SoBigScaleUniformScaler);
+SO_NODE_SOURCE(T3ScaleUniformScaler);
 
-void SoBigScaleUniformScaler::initClass()
+void T3ScaleUniformScaler::initClass()
 {
-  SO_NODE_INIT_CLASS(SoBigScaleUniformScaler, SoSeparator, "SoSeparator");
+  SO_NODE_INIT_CLASS(T3ScaleUniformScaler, SoSeparator, "SoSeparator");
 }
 
-SoBigScaleUniformScaler::SoBigScaleUniformScaler(float cube_size) {
-  SO_NODE_CONSTRUCTOR(SoBigScaleUniformScaler);
+T3ScaleUniformScaler::T3ScaleUniformScaler(bool active, float half_size, float cube_size) {
+  SO_NODE_CONSTRUCTOR(T3ScaleUniformScaler);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-  mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-  mat->transparency.setValue(drag_inact_clr_tr);
+  if(active) {
+    mat->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->transparency.setValue(drag_activ_clr_tr);
+  }
+  else {
+    mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->transparency.setValue(drag_inact_clr_tr);
+  }
   addChild(mat);
 
-  float sz = 1.1f;
-  float sz2 = 2.0f * 1.1f;
+  float sz = half_size;
+  float sz2 = 2.0f * half_size;
 
   SoCube* cb = new SoCube;
   cb->width = cube_size;
@@ -1537,28 +1544,34 @@ SoBigScaleUniformScaler::SoBigScaleUniformScaler(float cube_size) {
   }
 }
 
-//////////////////////////
-//   SoBigTransformBoxRotatorRotator
-//////////////////////////
+//////////////////////////////////////////////////////////////////
+//   T3TransformBoxRotatorRotator
 
-SO_NODE_SOURCE(SoBigTransformBoxRotatorRotator);
+SO_NODE_SOURCE(T3TransformBoxRotatorRotator);
 
-void SoBigTransformBoxRotatorRotator::initClass()
+void T3TransformBoxRotatorRotator::initClass()
 {
-  SO_NODE_INIT_CLASS(SoBigTransformBoxRotatorRotator, SoSeparator, "SoSeparator");
+  SO_NODE_INIT_CLASS(T3TransformBoxRotatorRotator, SoSeparator, "SoSeparator");
 }
 
-SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_width) {
-  SO_NODE_CONSTRUCTOR(SoBigTransformBoxRotatorRotator);
+T3TransformBoxRotatorRotator::T3TransformBoxRotatorRotator(bool active, float half_size, float line_width) {
+  SO_NODE_CONSTRUCTOR(T3TransformBoxRotatorRotator);
 
   SoMaterial* mat = new SoMaterial;
-  mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-  mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
-  mat->transparency.setValue(drag_inact_clr_tr);
+  if(active) {
+    mat->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->transparency.setValue(drag_activ_clr_tr);
+  }
+  else {
+    mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->transparency.setValue(drag_inact_clr_tr);
+  }
   addChild(mat);
 
-  float sz = 1.1f;
-  float sz2 = 2.0f * 1.1f;
+  float sz = half_size;
+  float sz2 = 2.0f * sz;
 
   SoCube* cb = new SoCube;
   cb->width = line_width;
@@ -1580,6 +1593,199 @@ SoBigTransformBoxRotatorRotator::SoBigTransformBoxRotatorRotator(float line_widt
   }
 }
 
+//////////////////////////////////////////////////////////////////
+//   T3Translate1Translator
+
+SO_NODE_SOURCE(T3Translate1Translator);
+
+void T3Translate1Translator::initClass()
+{
+  SO_NODE_INIT_CLASS(T3Translate1Translator, SoSeparator, "SoSeparator");
+}
+
+T3Translate1Translator::T3Translate1Translator(bool active, float bar_len, float bar_width, float cone_radius, float cone_ht) {
+  SO_NODE_CONSTRUCTOR(T3Translate1Translator);
+
+  // all this just for the material!
+  SoMaterial* mat = new SoMaterial;
+  if(active) {
+    mat->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->transparency.setValue(drag_activ_clr_tr);
+  }
+  else {
+    mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->transparency.setValue(drag_inact_clr_tr);
+  }
+  addChild(mat);
+
+  float tr_val = .5f * bar_len + .5f * cone_ht;
+
+  SoCube* cb = new SoCube;
+  cb->width = bar_len;
+  cb->height = bar_width;
+  cb->depth = bar_width;
+  addChild(cb);
+  
+  SoCone* cc = new SoCone;
+  cc->height = cone_ht;
+  cc->bottomRadius = cone_radius;
+
+  SoSeparator* c1s = new SoSeparator;
+  SoTransform* c1t = new SoTransform;
+  c1t->translation.setValue(tr_val, 0.0f, 0.0f);
+  c1t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -1.5708);
+  c1s->addChild(c1t);
+  c1s->addChild(cc);
+  addChild(c1s);
+
+  SoSeparator* c2s = new SoSeparator;
+  SoTransform* c2t = new SoTransform;
+  c2t->translation.setValue(-tr_val, 0.0f, 0.0f);
+  c2t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
+  c2s->addChild(c2t);
+  c2s->addChild(cc);
+  addChild(c2s);
+}
+
+//////////////////////////////////////////////////////////////////
+//   T3Translate2Translator
+
+SO_NODE_SOURCE(T3Translate2Translator);
+
+void T3Translate2Translator::initClass()
+{
+  SO_NODE_INIT_CLASS(T3Translate2Translator, SoSeparator, "SoSeparator");
+}
+
+T3Translate2Translator::T3Translate2Translator(bool active, float bar_len, float bar_width, float cone_radius, float cone_ht) {
+  SO_NODE_CONSTRUCTOR(T3Translate2Translator);
+
+  // all this just for the material!
+  SoMaterial* mat = new SoMaterial;
+  if(active) {
+    mat->diffuseColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->emissiveColor.setValue(drag_activ_clr_r, drag_activ_clr_g, drag_activ_clr_b);
+    mat->transparency.setValue(drag_activ_clr_tr);
+  }
+  else {
+    mat->diffuseColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->emissiveColor.setValue(drag_inact_clr_r, drag_inact_clr_g, drag_inact_clr_b);
+    mat->transparency.setValue(drag_inact_clr_tr);
+  }
+  addChild(mat);
+
+  float tr_val = .5f * bar_len + .5f * cone_ht;
+
+  SoCube* cbx = new SoCube;
+  cbx->width = bar_len;
+  cbx->height = bar_width;
+  cbx->depth = bar_width;
+  addChild(cbx);
+
+  SoCube* cby = new SoCube;
+  cby->width = bar_width;
+  cby->height = bar_len;
+  cby->depth = bar_width;
+  addChild(cby);
+  
+  SoCone* cc = new SoCone;
+  cc->height = cone_ht;
+  cc->bottomRadius = cone_radius;
+
+  SoSeparator* xc1s = new SoSeparator;
+  SoTransform* xc1t = new SoTransform;
+  xc1t->translation.setValue(tr_val, 0.0f, 0.0f);
+  xc1t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -1.5708);
+  xc1s->addChild(xc1t);
+  xc1s->addChild(cc);
+  addChild(xc1s);
+
+  SoSeparator* xc2s = new SoSeparator;
+  SoTransform* xc2t = new SoTransform;
+  xc2t->translation.setValue(-tr_val, 0.0f, 0.0f);
+  xc2t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
+  xc2s->addChild(xc2t);
+  xc2s->addChild(cc);
+  addChild(xc2s);
+
+  SoSeparator* yc1s = new SoSeparator;
+  SoTransform* yc1t = new SoTransform;
+  yc1t->translation.setValue(0.0f, tr_val, 0.0f);
+  yc1s->addChild(yc1t);
+  yc1s->addChild(cc);
+  addChild(yc1s);
+
+  SoSeparator* yc2s = new SoSeparator;
+  SoTransform* yc2t = new SoTransform;
+  yc2t->translation.setValue(0.0f, -tr_val, 0.0f);
+  yc2t->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), PI);
+  yc2s->addChild(yc2t);
+  yc2s->addChild(cc);
+  addChild(yc2s);
+
+}
+
+//////////////////////////////////////////////////////////////////
+//   T3TransformBoxDragger
+
+SO_NODE_SOURCE(T3TransformBoxDragger);
+
+void T3TransformBoxDragger::initClass()
+{
+  SO_NODE_INIT_CLASS(T3TransformBoxDragger, SoSeparator, "SoSeparator");
+}
+
+T3TransformBoxDragger::T3TransformBoxDragger(float half_size, float cube_size, float line_width) {
+  SO_NODE_CONSTRUCTOR(T3TransformBoxDragger);
+
+  xf_ = new SoTransform;
+  addChild(xf_);
+  dragger_ = new SoTransformBoxDragger;
+  addChild(dragger_);
+
+  T3TransformBoxRotatorRotator* inact_rot = 
+    new T3TransformBoxRotatorRotator(false, half_size, line_width);
+  T3TransformBoxRotatorRotator* act_rot = 
+    new T3TransformBoxRotatorRotator(true, half_size, line_width);
+
+  T3Translate2Translator* inact_trans = 
+    new T3Translate2Translator(false, half_size, .5 * line_width, line_width,
+			       line_width * 2.0f);
+  T3Translate2Translator* act_trans = 
+    new T3Translate2Translator(true, half_size, .5 * line_width, line_width,
+			       line_width * 2.0f);
+
+  // super-size me so stuff is actually grabable!
+  dragger_->setPart("scaler.scaler", new T3ScaleUniformScaler(false, half_size, cube_size));
+  dragger_->setPart("rotator1.rotator", inact_rot);
+  dragger_->setPart("rotator2.rotator", inact_rot);
+  dragger_->setPart("rotator3.rotator", inact_rot);
+
+  dragger_->setPart("scaler.scalerActive", new T3ScaleUniformScaler(true, half_size, cube_size));
+  dragger_->setPart("rotator1.rotatorActive", act_rot);
+  dragger_->setPart("rotator2.rotatorActive", act_rot);
+  dragger_->setPart("rotator3.rotatorActive", act_rot);
+
+  dragger_->setPart("translator1.translator", inact_trans);
+  dragger_->setPart("translator2.translator", inact_trans);
+  dragger_->setPart("translator3.translator", inact_trans);
+  dragger_->setPart("translator4.translator", inact_trans);
+  dragger_->setPart("translator5.translator", inact_trans);
+  dragger_->setPart("translator6.translator", inact_trans);
+
+  dragger_->setPart("translator1.translatorActive", act_trans);
+  dragger_->setPart("translator2.translatorActive", act_trans);
+  dragger_->setPart("translator3.translatorActive", act_trans);
+  dragger_->setPart("translator4.translatorActive", act_trans);
+  dragger_->setPart("translator5.translatorActive", act_trans);
+  dragger_->setPart("translator6.translatorActive", act_trans);
+
+  trans_calc_ = new SoCalculator;
+  trans_calc_->ref();
+  trans_calc_->A.connectFrom(&dragger_->translation);
+}
 
 //////////////////////////
 //   SoScrollBar
