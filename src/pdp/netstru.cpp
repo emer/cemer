@@ -3223,13 +3223,15 @@ void Layer::UpdateAfterEdit_impl() {
 }
 
 void Layer::Iconify() {
+  StructUpdate(true);
   SetLayerFlag(ICONIFIED);
-  DataChanged(DCR_ITEM_UPDATED);
+  StructUpdate(false);
 }
 
 void Layer::DeIconify()	{
+  StructUpdate(true);
   ClearLayerFlag(ICONIFIED);
-  DataChanged(DCR_ITEM_UPDATED);
+  StructUpdate(false);
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {

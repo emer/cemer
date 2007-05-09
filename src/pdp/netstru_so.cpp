@@ -480,7 +480,7 @@ void T3LayerNode::render() {
 }
 
 void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z) {
-  if (geom.isEqual(x, y)) return; // nothing to do, not changed
+//   if (geom.isEqual(x, y)) return; // nothing to do, not changed
   geom.setValue(x, y);
   max_size.setValue(max_x, max_y, max_z);
   render();

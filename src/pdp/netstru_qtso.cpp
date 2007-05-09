@@ -1005,6 +1005,9 @@ done:
 
 void LayerView::DataUpdateAfterEdit_impl() {
   inherited::DataUpdateAfterEdit_impl();
+  // always update kids!!
+  DoActionChildren_impl(RENDER_IMPL);
+
   NetView* nv = GET_MY_OWNER(NetView);
   if (!nv) return;
   nv->Layer_DataUAE(this);
@@ -1065,6 +1068,7 @@ void LayerView::Render_impl() {
   }
   node_so->setCaption(data()->GetName().chars());
   node_so->resizeCaption(nv->font_sizes.layer);
+
   inherited::Render_impl();
 }
 
