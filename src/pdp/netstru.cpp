@@ -3222,6 +3222,16 @@ void Layer::UpdateAfterEdit_impl() {
     own_net->LayerPos_Cleanup();
 }
 
+void Layer::Iconify() {
+  SetLayerFlag(ICONIFIED);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void Layer::DeIconify()	{
+  ClearLayerFlag(ICONIFIED);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void Layer::ConnectFrom(Layer* from_lay) {
   Network* net = GET_MY_OWNER(Network);
   if (!net) return;

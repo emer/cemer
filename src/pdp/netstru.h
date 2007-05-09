@@ -1406,9 +1406,9 @@ public:
   virtual int	LesionUnits(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
-  virtual void	Iconify()	{ SetLayerFlag(ICONIFIED); }
+  virtual void	Iconify();
   // #MENU #CAT_Display #MENU_CONTEXT iconify this layer in the network display
-  virtual void	DeIconify()	{ ClearLayerFlag(ICONIFIED); }
+  virtual void	DeIconify();
   // #MENU #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
   virtual bool	Iconified()	{ return HasLayerFlag(ICONIFIED); }
   // convenience function for checking iconified flag
