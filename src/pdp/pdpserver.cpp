@@ -105,23 +105,26 @@ void PdpClient::sock_readyRead() {
   QByteArray ba;
   // need to keep fetching lines, since we only get notified once
   // note: typical case is we get one full line at a time
-  while (sock->canReadLine()) {
-    // we will need to make a buffer large enough for max data
-    qint64 av = sock->bytesAvailable(); // we also use this to compare with readAll to check for error
-    if (av < 2) av = 2;
-    //note: qt seems to choke if readLine maxsize is < 2, but av can be 1 for nl
-    ba.resize(av);
-    qint64 line_len = sock->readLine(ba.data(), av);
+  bool ok = true; // in case reading goes daft
+  while (ok && sock->canReadLine()) {
+    ba = sock->readLine();
+    qint64 line_len = ba.size();
+    if (line_len <= 0) {
+      ok = false;
+      break;
+    }
     String line(ba.data(), line_len); // note: includes \n
   
   //TEMP -- for demo -- doesn't have any state
-    // strip nl
-    if (line.endsWith('\n'));
-      line = line.left(line.length() - 1);
-    if (line.startsWith("open ")) {
-      String fname = line.after("open ");
+    // strip nl -- should be only one, because that's what a line is
+    line = line.before('\n');
+    // strip r, like from telnet
+    line = line.before('\r');
+    String cmd = line.before(" ");
+    String args = line.after(" ");
+    if (cmd == "open") {
       taBase* proj_ = NULL;
-      if (tabMisc::root->projects.Load(fname, &proj_)) {
+      if (tabMisc::root->projects.Load(args, &proj_)) {
         taProject* proj = dynamic_cast<taProject*>(proj_);
         if (proj) {
           if (taMisc::gui_active) {
@@ -136,6 +139,9 @@ void PdpClient::sock_readyRead() {
     else {
       sock->write(QByteArray("ERROR 2 : unknown command\n"));
     }
+  }
+  if (!ok) {
+    sock->write(QByteArray("ERROR 4 : an unknown read error occurred\n"));
   }
 }
 
@@ -234,7 +240,8 @@ void  PdpServer::server_newConnection() {
   cl->server = this;
   cl->SetSocket(ts);
     
-  out << "pdp++ server v" << taMisc::version.chars() << "\n"; 
+  String banner = "pdp++ server v" + taMisc::version + "\n";
+  out << banner.chars(); 
   ts->write(block);
   DataChanged(DCR_ITEM_UPDATED);
 }
