@@ -30,8 +30,65 @@
 #endif
 
 // forwards
+class PdpClient;
+class PdpClientAdapter;
 class PdpServer;
 class PdpServerAdapter;
+
+class PDP_API PdpClientAdapter: public taBaseAdapter {
+  // ##IGNORE QObject for attaching events/signals for its taBase owner
+friend class PdpClient;
+  Q_OBJECT
+public:
+  inline PdpClient*	owner() {return (PdpClient*)taBaseAdapter::owner;}
+  PdpClientAdapter(PdpClient* owner_): taBaseAdapter((taOABase*)owner_) {}
+  
+#ifndef __MAKETA__ // maketa chokes on the net class types etc.
+public slots:
+  void 			sock_readyRead();
+  void 			sock_disconnected(); //note: we only allow one for now, so monitor it here
+  void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
+#endif
+};
+
+class PDP_API PdpClient: public taOABase { 
+  // #INSTANCE #TOKENS for tcp-based remote services -- represents one connected client 
+INHERITED(taOABase)
+public:
+  bool			connected; // #READ_ONLY #SHOW #NO_SAVE true when the client is connected
+  
+  inline PdpClientAdapter* adapter() {return (PdpClientAdapter*)taOABase::adapter;} // #IGNORE
+  TA_BASEFUNS(PdpClient);
+
+#ifndef __MAKETA__ // maketa chokes on the net class types etc.
+  PdpServer*		server; // (will never change) set on create; NOT refcnted
+  
+  void			CloseClient();
+  void			SetSocket(QTcpSocket* sock);
+
+public: // slot forwardees
+  void 			sock_readyRead();
+  void 			sock_disconnected(); 
+  void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
+
+protected:
+  QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
+#endif
+private:
+  void	Copy_(const PdpClient& cp);
+  void	Initialize();
+  void 	Destroy();
+};
+
+class PDP_API PdpClient_List: public taList<PdpClient> {
+public:
+  TA_BASEFUNS2_NOCOPY(PdpClient_List, taList<PdpClient>);
+
+private:
+  void	Initialize() {SetBaseType(&TA_PdpClient);}
+  void 	Destroy() {}
+};
+
 
 class PDP_API PdpServerAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
@@ -44,12 +101,6 @@ public:
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
   void 			server_newConnection();
-  
-  // socket functions -- currently on this obj, but if we allowed multi, have to create
-  // separate QObject handler for each one, because Qt doesn't put the sender in the calls
-  void 			socket_readyRead();
-  void 			socket_disconnected(); //note: we only allow one for now, so monitor it here
-  void 			socket_stateChanged(QAbstractSocket::SocketState socketState);
 #endif
 };
 
@@ -59,33 +110,30 @@ INHERITED(taOABase)
 public:
   unsigned short	port; // #DEF_5360 port number to use -- each instance must have unique port
   bool			open; // #NO_SAVE #SHOW #READ_ONLY set when server is open and accepting connections
-  int			clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
+  PdpClient_List	clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
   
   inline PdpServerAdapter* adapter() {return (PdpServerAdapter*)taOABase::adapter;} // #IGNORE
 
   bool			OpenServer(); // #BUTTON #GHOST_ON_open open the server and accept connections
   void			CloseServer(bool notify = true); // #BUTTON #GHOST_OFF_open #ARGC_0 stop the server and close open connections
   
-  
+// callbacks
+  void			ClientDisconnected(PdpClient* client); // #IGNORE
+
+  SIMPLE_LINKS(PdpServer);
   TA_BASEFUNS(PdpServer);
 
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public: // slot forwardees
   void 			server_newConnection(); //
-  
-  // socket functions -- currently on this obj, but if we allowed multi, have to create
-  // separate QObject handler for each one, because Qt doesn't put the sender in the calls
-  void 			socket_readyRead();
-  void 			socket_disconnected(); //note: we only allow one for now, so monitor it here
-  void 			socket_stateChanged(QAbstractSocket::SocketState socketState);
 #endif
 
 protected:
   QTcpServer*		server; // #IGNORE
   
-  QTcpSocket*		client; // #IGNORE the one and only socket we allow to connect
+  PdpClient*		m_client; // #IGNORE unitary client
 private:
-  void	Copy_(const PdpServer& cp);
+  void	Copy_(const PdpServer& cp); // copying not really supported...
   void	Initialize();
   void 	Destroy();
 };

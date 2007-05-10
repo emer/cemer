@@ -24,6 +24,126 @@
 #include <QDataStream>
 // end TEMP
 
+//TEMP prob handle commands in another file
+#include "ta_viewer.h"
+#include "ta_project.h"
+// /TEMP
+
+//////////////////////////
+//  PdpClientAdapter	//
+//////////////////////////
+
+void PdpClientAdapter::sock_disconnected() {
+  owner()->sock_disconnected();
+}
+
+void PdpClientAdapter::sock_readyRead() {
+  owner()->sock_readyRead();
+}
+
+void PdpClientAdapter::sock_stateChanged(QAbstractSocket::SocketState socketState) {
+  owner()->sock_stateChanged(socketState);
+}
+
+
+
+//////////////////////////
+//  PdpClient		//
+//////////////////////////
+
+void PdpClient::Initialize() {
+  connected = false;
+  server = NULL;
+  SetAdapter(new PdpClientAdapter(this));
+}
+
+void PdpClient::Destroy() {
+  CloseClient();
+}
+
+void PdpClient::Copy_(const PdpClient& cp) {
+//NOTE: not designed to be copied
+  CloseClient();
+  if (server != cp.server) server = NULL;
+}
+
+void PdpClient::CloseClient() {
+  if (!connected) return;
+  if (sock) {
+    sock->disconnectFromHost();
+    // probably called back immediately, so check again
+    if (sock) {
+      sock = NULL;
+    }
+  }
+  connected = false;
+}
+
+void PdpClient::SetSocket(QTcpSocket* sock_) {
+  sock = sock_;
+  connected = true;
+  QObject::connect(sock_, SIGNAL(disconnected()),
+    adapter(), SLOT(sock_disconnected()));
+  QObject::connect(sock_, SIGNAL(readyRead()),
+    adapter(), SLOT(sock_readyRead()));
+  QObject::connect(sock_, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
+    adapter(), SLOT(sock_stateChanged(QAbstractSocket::SocketState)));
+}            
+
+void PdpClient::sock_disconnected() {
+  connected = false;
+  sock = NULL; // goodbye...
+  if (server) server->ClientDisconnected(this);
+//NO MORE CODE: we will be deleted!
+}
+
+void PdpClient::sock_readyRead() {
+  if (!sock) return; 
+  // we only do lines -- will call us again when a line is ready
+  if (!sock->canReadLine()) return;
+  
+  QByteArray ba;
+  // need to keep fetching lines, since we only get notified once
+  // note: typical case is we get one full line at a time
+  while (sock->canReadLine()) {
+    // we will need to make a buffer large enough for max data
+    qint64 av = sock->bytesAvailable(); // we also use this to compare with readAll to check for error
+    if (av < 2) av = 2;
+    //note: qt seems to choke if readLine maxsize is < 2, but av can be 1 for nl
+    ba.resize(av);
+    qint64 line_len = sock->readLine(ba.data(), av);
+    String line(ba.data(), line_len); // note: includes \n
+  
+  //TEMP -- for demo -- doesn't have any state
+    // strip nl
+    if (line.endsWith('\n'));
+      line = line.left(line.length() - 1);
+    if (line.startsWith("open ")) {
+      String fname = line.after("open ");
+      taBase* proj_ = NULL;
+      if (tabMisc::root->projects.Load(fname, &proj_)) {
+        taProject* proj = dynamic_cast<taProject*>(proj_);
+        if (proj) {
+          if (taMisc::gui_active) {
+            MainWindowViewer::NewProjectBrowser(proj);
+          }
+        }
+        sock->write(QByteArray("OK open\n"));
+      } else {
+        sock->write(QByteArray("ERROR 3 : file not found\n"));
+      }
+    } 
+    else {
+      sock->write(QByteArray("ERROR 2 : unknown command\n"));
+    }
+  }
+}
+
+void PdpClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
+  //nothing yet
+}
+
+
 //////////////////////////
 //  PdpServerAdapter	//
 //////////////////////////
@@ -31,19 +151,6 @@
 void PdpServerAdapter::server_newConnection() {
   owner()->server_newConnection();
 }
-
-void PdpServerAdapter::socket_disconnected() {
-  owner()->socket_disconnected();
-}
-
-void PdpServerAdapter::socket_readyRead() {
-  owner()->socket_readyRead();
-}
-
-void PdpServerAdapter::socket_stateChanged(QAbstractSocket::SocketState socketState) {
-  owner()->socket_stateChanged(socketState);
-}
-
 
 
 //////////////////////////
@@ -53,11 +160,8 @@ void PdpServerAdapter::socket_stateChanged(QAbstractSocket::SocketState socketSt
 void PdpServer::Initialize() {
   port = 5360;
   open = false;
-  clients = 0;
   server = NULL;
-  client = NULL;
   SetAdapter(new PdpServerAdapter(this));
-  
 }
 
 void PdpServer::Destroy() {
@@ -67,17 +171,21 @@ void PdpServer::Destroy() {
 void PdpServer::Copy_(const PdpServer& cp) {
   CloseServer();
   port = cp.port;
+//NOTE: don't copy the clients -- always flushed
+}
+
+void PdpServer::ClientDisconnected(PdpClient* client) {
+  // only called for asynchronous disconnects (not ones we force)
+  clients.RemoveEl(client);
 }
 
 void PdpServer::CloseServer(bool notify) {
   if (!open) return;
-  if (client) {
-    client->disconnectFromHost();
-    // probably called back immediately, so check again
-    if (client) {
-      client = NULL;
-      --clients;
-    }
+  while (clients.size > 0) {
+    PdpClient* cl = clients.FastEl(clients.size - 1);
+    cl->server = NULL; // prevents callback
+    cl->CloseClient();
+    clients.RemoveEl(cl);
   }
   if (server) {
     delete server;
@@ -116,52 +224,18 @@ void  PdpServer::server_newConnection() {
   QObject::connect(ts, SIGNAL(disconnected()),
     ts, SLOT(deleteLater()));
   // we only allow 1 client (in this version of pdp), so refuse others
-  if (clients >= 1) {
-    out << "pdp4.0\n**ERROR** -- too many connections already, closing...\n";
+  if (clients.size >= 1) {
+    out << "ERROR 1 : too many connections already, closing...\n";
     ts->write(block);
     ts->disconnectFromHost();
     return;
   }
-  client = ts;
-  ++clients;
-  QObject::connect(ts, SIGNAL(disconnected()),
-    adapter(), SLOT(socket_disconnected()));
-  QObject::connect(ts, SIGNAL(readyRead()),
-    adapter(), SLOT(socket_readyRead()));
-  QObject::connect(ts, SIGNAL(stateChanged(QAbstractSocket::SocketState)),
-    adapter(), SLOT(socket_stateChanged(QAbstractSocket::SocketState)));
-            
+  PdpClient* cl = (PdpClient*)clients.New(1);
+  cl->server = this;
+  cl->SetSocket(ts);
     
-  out << "pdp4.0 \n"; // TODO: also output version (after the space)
+  out << "pdp++ server v" << taMisc::version.chars() << "\n"; 
   ts->write(block);
   DataChanged(DCR_ITEM_UPDATED);
-}
-
-void  PdpServer::socket_disconnected() {
-  //NOTE: only 1 allowed for now, so it must be our cached version
-  if (client == NULL) return; // already removed
-  client = NULL;
-  --clients;
-  DataChanged(DCR_ITEM_UPDATED);
-}
-
-void PdpServer::socket_readyRead() {
-  if (!client) return; 
-  qint64 ba = client->bytesAvailable(); // we use this to compare with readAll to check for error
-  QByteArray block = client->readAll(); //note: no way to report an error
-  if (block.count() != ba) {
-    taMisc::Error("read error on socket");
-  }
-
-//TEMP
-  // just echo for now
-  client->write(block);
-  
-// /TEMP
-}
-
-
-void PdpServer::socket_stateChanged(QAbstractSocket::SocketState socketState) {
-  //nothing yet
 }
 
