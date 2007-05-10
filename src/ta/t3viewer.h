@@ -347,6 +347,8 @@ public:
 //note: typically never has a non-null parent, because it is rooted in non-T3DataView  
   override T3DataViewRoot* root() {return this;}
 
+  override void 	ChildRemoving(taDataView* child); 
+  
   T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
 
 protected:
@@ -686,6 +688,7 @@ public:
   virtual T3DataViewFrame* NewT3DataViewFrame(); // #MENU #MENU_ON_Object #MENU_CONTEXT create and map a new frame
   void			FrameChanged(T3DataViewFrame* frame); 
     // called by frame if changes, we update names
+    
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const T3DataViewer& cp);

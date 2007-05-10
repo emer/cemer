@@ -847,6 +847,19 @@ void T3DataViewRoot::Constr_Node_impl() {
   m_node_so = new T3NodeParent;
 }
 
+void T3DataViewRoot::ChildRemoving(taDataView* child) {
+  inherited::ChildRemoving(child);
+/* Special Rules:
+  1. in a non-default frame, delete if deleting last item
+*/
+  if (!isDestroying() && (children.size == 0)) {
+    T3DataViewFrame* dvf = GET_MY_OWNER(T3DataViewFrame);
+    if (dvf && (dvf->GetIndex() > 0)) {
+      dvf->CloseLater();
+    }
+  }
+}
+
 //////////////////////////
 //   iSoSelectionEvent	//
 //////////////////////////
@@ -1747,7 +1760,6 @@ void T3DataViewer::CutLinks() {
 void T3DataViewer::Copy_(const T3DataViewer& cp) {
   frames = cp.frames;
 }
-
 
 IDataViewWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
   return new iT3DataViewer(this, gui_parent);

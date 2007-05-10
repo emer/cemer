@@ -529,8 +529,6 @@ public:
   // #IGNORE constructor implementation to initialize memberes of class.  every class should define this initializer.  cannot refer to anything outside of the object itself (use InitLinks for when it gets added into the object hierarchy)
   void			Destroy();
   // #IGNORE destructor implementation -- free any allocated memory and reset pointers to null, etc.  MIGHT BE CALLED MULTIPLE TIMES -- set to null and check for null!
-  bool			isDestroying() const {return HasBaseFlag(DESTROYING);}
-  // #IGNORE true if the object is already destroying
 
   virtual void		SetTypeDefaults();
   // #IGNORE initialize modifiable default initial values stored with the typedef -- see TypeDefault object in ta_defaults.  currently not used; was called in taBase::Own
@@ -589,6 +587,8 @@ public:
     // #IGNORE
   int			GetEditableState(int mask) const; 
   // #IGNORE returns READ_ONLY and GUI_READ_ONLY, which also (in default behavior) factors in the owner's state supercursively until/unless not found; WARNING: result may include other flags, so you must &
+  inline bool		isDestroying() const  {return HasBaseFlag(DESTROYING);}
+    // #IGNORE
   bool			isReadOnly() const 
     {return (GetEditableState(BF_READ_ONLY) & BF_READ_ONLY);}
     // #IGNORE true if the object is (supercursively) strongly read-only
