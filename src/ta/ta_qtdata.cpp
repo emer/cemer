@@ -326,28 +326,28 @@ void taiCompData::InitLayout() { //virtual/overridable
 }
 
 void taiCompData::AddChildMember(MemberDef* md) {
-  String desc = md->desc;
-
-  // add caption
-  String nm = md->GetLabel();
+  const int ctrl_size = taiM->ctrl_size;
+  
+  // establish container
   QWidget* wid;
   if (hasFlowLayout()) {
     wid = new QWidget(GetRep());
   } else {
     wid = GetRep(); // directly into the guy
   }
-//QLabel* lbl = taiM->NewLabel(nm, GetRep());
-  iLabel* lbl = MakeLabel(nm, wid);
-
-
-  // add gui representation of data
+  // get gui representation of data
   int child_flags = (mflags & flg_INHERIT_MASK);
   taiData* mb_dat = md->im->GetDataRep(host, this, wid, NULL, child_flags); //adds to list
-  mb_dat->setLabel(lbl);
+  
+  // get caption
+  String name;
+  String desc;
+  taiDataHost::GetName(md, name, desc);
+//QLabel* lbl = taiM->NewLabel(nm, GetRep());
+//  iLabel* lbl = MakeLabel(nm, wid);
+  iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat, md);
+  
   QWidget* ctrl = mb_dat->GetRep();
-  lbl->setBuddy(ctrl);
-  connect(mb_dat, SIGNAL(settingHighlight(bool)),
-	  lbl, SLOT(setHighlight(bool)) );
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
 	  this, SLOT(ChildDataChanged(taiData*)) );
 	  
@@ -4741,11 +4741,19 @@ void taiMethodData::CallFun() {
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
     if (taMisc::dmem_nprocs == 1) {
 #endif
+QPointer<taiMethodData> ths = this; // to detect us being deleted
       taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, arg_dlg->obj->members->size-1,
 				     arg_dlg->obj->members->els);
+//if (ths) {
       UpdateAfter();
+//}
       taMisc::Busy(false);
+if (!ths) {
+taMisc::Warning("taiMethodData instance was deleted as a result of this Method call!",
+  "No return value or UpdateAfter can occur!");
+return;
+}     
       if (rval != &cssMisc::Void)
 	ShowReturnVal(rval);
 #ifdef DMEM_COMPILE

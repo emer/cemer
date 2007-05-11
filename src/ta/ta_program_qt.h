@@ -145,6 +145,7 @@ public: // IDataHost i/f -- some delegate up to mommy
 protected:
   int			ln_sz; // const, the line size, without margins
   int			ln_vmargin; // const, margin, typ 1 
+  int 			line_ht; // const, size of each stripe
   int			m_changing; // for suppressing spurious notifies
   iColor		bg_color; // for edit area
   iColor		bg_color_dark; // for edit area

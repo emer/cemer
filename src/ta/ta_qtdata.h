@@ -1482,6 +1482,7 @@ public:
 //  ~taiMethButton();
 };
 
+
 //TODO: double check proper base class (was taiMethMenu in IV)
 class TA_API taiMethToggle : public taiMethodData {
   // toggle representation of a method (does not call directly, but checks flag)
@@ -1494,8 +1495,6 @@ public:
 
 public slots:
   void	CallFun(); // override
-};
-
-
+}; 
 
 #endif // TA_QTDATA_H

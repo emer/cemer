@@ -186,7 +186,7 @@ void iProgramEditor::Init() {
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   body = new iStripeWidget; 
   scrBody->setWidget(body);
-  int line_ht = ln_sz + (2 * ln_vmargin);
+  line_ht = ln_sz + (2 * ln_vmargin);
   body->setStripeHeight(line_ht);
   int body_ht = line_ht * editLines();
   scrBody->setMinimumHeight(body_ht + scrBody->horizontalScrollBar()->height() + 2);
@@ -337,12 +337,13 @@ void iProgramEditor::Base_Add() {
   // add main inline controls
   int flags = taiData::flgInline ;
   if (read_only) flags |= taiData::flgReadOnly;
-  
+  const int ctrl_size = taiM->ctrl_size;
   for (int j = 0; j < membs.size; ++j) {
     MembSet* ms = membs.FastEl(j);
     if (ms->memb_el.size == 0) continue; // actually, is end
     QHBoxLayout* hbl = new QHBoxLayout();
-    hbl->setMargin(ln_vmargin);
+    //hbl->setMargin(ln_vmargin);
+    hbl->addItem(new QSpacerItem(0, line_ht, QSizePolicy::Minimum, QSizePolicy::Fixed));
     hbl->setSpacing(0);
     hbl->addSpacing(taiM->hsep_c);
     // if only 1 guy, give it all to him, else share
@@ -351,13 +352,21 @@ void iProgramEditor::Base_Add() {
       if (i > 0)
         hbl->addSpacing(taiM->hspc_c);
       MemberDef* md = ms->memb_el.FastEl(i);
-      QLabel* lbl = taiM->NewLabel(md->GetLabel(), body);
+      taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
+      ms->data_el.Add(mb_dat);
+      
+//obs      QLabel* lbl = taiM->NewLabel(, body);
+      String name;
+      String desc;
+      taiDataHost::GetName(md, name, desc);
+      iLabel* lbl = taiDataHost::MakeInitEditLabel(name, body,
+        ctrl_size,  desc, mb_dat, md//,  
+        /*TODO:ctxt this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)),*/ /*row */);
+      
       hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
       hbl->addSpacing(taiM->hsep_c);
-      lbl->show();
-      taiData* mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags);
-      mb_dat->setLabel(lbl);
-      ms->data_el.Add(mb_dat);
+      lbl->show(); //n???
+      
       QWidget* rep = mb_dat->GetRep();
       hbl->addWidget(rep, stretch, (Qt::AlignVCenter)); 
       rep->show();
@@ -1037,6 +1046,7 @@ void iProgramCtrlDataHost::DataDestroying_Ref(taBase_RefList* ref, taBase* base)
 void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
     int dcr, void* op1, void* op2) 
 {
+  if (ignoreDataChanged()) return; // not visible, so ignore!
   Program* prog = this->prog(); //cache
   if (!prog) return;
   // ignore list delete msgs, since the obj itself should notify
@@ -1091,6 +1101,8 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
       if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
+      //note: code below is "risky" ex if visiblity update ctrl changes etc.
+      // then the type values can be wrong -- so we strongly cast
       if (!md || !mb_dat) {
 #ifdef DEBUG
         taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
@@ -1098,10 +1110,17 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {
-        ((taiComboBox*)mb_dat)->GetEnumValue(pv->int_val); // todo: not supporting first_diff
+        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+        //note: use of pv for tests is just a hook, pv not really germane
+        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+          mb_dat->metaObject()->className())) continue;
+        tmb_dat->GetEnumValue(pv->int_val); // todo: not supporting first_diff
       }
       else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-        ((taiComboBox*)mb_dat)->GetValue(pv->dyn_enum_val.value);
+        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+          mb_dat->metaObject()->className())) continue;
+        tmb_dat->GetValue(pv->dyn_enum_val.value);
       }
       else {
         md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);

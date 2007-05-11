@@ -411,6 +411,13 @@ INHERITED(taiDataHostBase)
   Q_OBJECT
 friend class iDialog;
 public:
+  static void		GetMembDesc(MemberDef* md, String& dsc_str, String indent);
+  static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
+  static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
+    const String& desc, taiData* buddy = NULL, MemberDef* md = NULL,
+    QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0); 
+    // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
+  
   int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
   int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
 
@@ -601,9 +608,6 @@ public:
   void			GetImage(bool force); //override
   void			GetValue(); //override
   virtual bool		ShowMember(MemberDef* md) const;
-  virtual void		GetMembDesc(MemberDef* md, String& dsc_str, String indent);
-//obs  virtual QWidget* 	GetNameRep(MemberDef* md, QWidget* dataWidget);	// returns one name item (typically a label)
-  virtual void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
   virtual void		SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void		SetCurMenuButton(MethodDef* md);
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}

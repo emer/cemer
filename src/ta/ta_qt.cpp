@@ -619,7 +619,8 @@ bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
   for (int i = active_edits.size-1; i >= 0; --i) {
     taiEditDataHost* edh = active_edits.FastEl(i);
     if((edh->cur_base == obj) && (edh->state == taiDataHost::ACTIVE)) {
-      got_one = got_one || edh->ReShow(force);
+      edh->ReShow_Async(force);
+      got_one = true; 
     }
   }
   return got_one;

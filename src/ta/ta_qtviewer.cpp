@@ -3095,6 +3095,12 @@ void iMainWindowViewer::Init() {
 
 taiAction* iMainWindowViewer::AddAction(taiAction* act) {
   actions.Add(act); // refs the act
+  // Qt docs recommend "actions be created as children of the window they are in"
+  act->setParent(this);
+  // because Qt only activates acts with shortcuts if visible, we need to add the
+  // shorcutted guys to something visible... how about... us!
+  if (!act->shortcut().isEmpty())
+    this->addAction(act);
   return act;
 }
 
@@ -3349,7 +3355,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
   editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence("Ctrl+L"), "editLinkIntoAction" ));
   editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
-  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence(Qt::Key_F5), _viewRefreshAction )); viewRefreshAction->setShortcutContext(Qt::ApplicationShortcut);
+  viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));

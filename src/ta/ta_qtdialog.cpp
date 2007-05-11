@@ -1013,6 +1013,45 @@ void taiDataHostBase::WidgetDeleting() {
 // 	taiDataHost		//
 //////////////////////////////////
 
+void taiDataHost::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
+  String desc = md->desc;
+  String defval = md->OptionAfter("DEF_");
+  if(!defval.empty())
+    desc = String("[Default: ") + defval + "] " + desc;
+  else
+    desc = desc;
+  if(!indent.empty())
+    desc = indent + md->GetLabel() + String(": ") + desc;
+  if (!dsc_str.empty())
+    dsc_str += "<br>";
+  dsc_str += desc;
+  if(md->type->InheritsFormal(TA_class) &&
+     (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
+    indent += "  ";
+    for (int i=0; i < md->type->members.size; ++i) {
+      MemberDef* smd = md->type->members.FastEl(i);
+      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT) ||
+        smd->HasOption("HIDDEN_INLINE"))
+	continue;
+      GetMembDesc(smd, dsc_str, indent);
+    }
+  } else if (md->type->InheritsFormal(TA_enum)) {
+    for (int i = 0; i < md->type->enum_vals.size; ++i) {
+      EnumDef* ed = md->type->enum_vals.FastEl(i);
+      if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;
+      desc = indent + "  " + ed->GetLabel() + String(": ") + ed->desc;
+      if (!dsc_str.empty())
+        dsc_str += "<br>";
+      dsc_str += desc;
+    }
+  }
+}
+
+void taiDataHost::GetName(MemberDef* md, String& name, String& desc) {
+  name = md->GetLabel();
+  desc = ""; // just in case
+  GetMembDesc(md, desc, "");
+}
 
 taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_, read_only_, modal_, parent)
@@ -1087,32 +1126,43 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   return row;
 }
 
-int taiDataHost::AddName(int row, const String& name, const String& desc,
-   taiData* buddy, MemberDef* md)
+iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
+  int ctrl_size, const String& desc, taiData* buddy, MemberDef* md,
+  QObject* ctx_obj, const char* ctx_slot, int row)
 {
-  iLabel* label = new iLabel(row, name, body);
+  iLabel* label = new iLabel(row, name, par);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  label->setPaletteBackgroundColor(colorOfRow(row));
   if (md) label->setUserData((ta_intptr_t)md);
-  connect(label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
-      this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)) );
+  if (ctx_obj) QObject::connect(
+    label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
+      ctx_obj, ctx_slot );
 // if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
   QWidget* buddy_widg = NULL;
   if (buddy) {
     buddy->setLabel(label);
     buddy_widg = buddy->GetRep();
-    connect(buddy, SIGNAL(settingHighlight(bool)),
+    QObject::connect(buddy, SIGNAL(settingHighlight(bool)),
         label, SLOT(setHighlight(bool)) );
   }
   
 
   if (!desc.empty()) {
     label->setToolTip(desc);
+    label->setStatusTip(desc);
     if (buddy_widg != NULL) {
       buddy_widg->setToolTip(desc);
+      buddy_widg->setStatusTip(desc);
     }
   }
+  return label;
+}
+
+int taiDataHost::AddName(int row, const String& name, const String& desc,
+   taiData* buddy, MemberDef* md)
+{
+  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy, md, 
+    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row );
   // add a label item in first column
   if (row < 0)
     row = layBody->numRows();
@@ -1432,7 +1482,7 @@ bool taiDataHost::ReShow(bool force) {
   //note: extremely unlikely to be updating if invisible, so we do this test here
   if (!mwidget->isVisible()) {
     defer_reshow_req = true;
-    GetImage(); // invisible-friendly
+    GetImage(false); // no-force; invisible-friendly
   }
 //note: only called with force from ReShowEdits, typ only from a SelEdit dialog
   if (!updating) {
@@ -2075,45 +2125,6 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
   }
 }
 
-void taiEditDataHost::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
-  String desc = md->desc;
-  String defval = md->OptionAfter("DEF_");
-  if(!defval.empty())
-    desc = String("[Default: ") + defval + "] " + desc;
-  else
-    desc = desc;
-  if(!indent.empty())
-    desc = indent + md->GetLabel() + String(": ") + desc;
-  if (!dsc_str.empty())
-    dsc_str += "<br>";
-  dsc_str += desc;
-  if(md->type->InheritsFormal(TA_class) &&
-     (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
-    indent += "  ";
-    for (int i=0; i < md->type->members.size; ++i) {
-      MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(show(), TypeItem::SC_EDIT) || smd->HasOption("HIDDEN_INLINE"))
-	continue;
-      GetMembDesc(smd, dsc_str, indent);
-    }
-  } else if (md->type->InheritsFormal(TA_enum)) {
-    for (int i = 0; i < md->type->enum_vals.size; ++i) {
-      EnumDef* ed = md->type->enum_vals.FastEl(i);
-      if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;
-      desc = indent + "  " + ed->GetLabel() + String(": ") + ed->desc;
-      if (!dsc_str.empty())
-        dsc_str += "<br>";
-      dsc_str += desc;
-    }
-  }
-}
-
-void taiEditDataHost::GetName(MemberDef* md, String& name, String& desc) {
-  name = md->GetLabel();
-  desc = ""; // just in case
-  GetMembDesc(md, desc, "");
-}
-
 void taiEditDataHost::GetValue() {
   if ((typ == NULL) || (cur_base == NULL)) return;
   if (state >= ACCEPTED ) return;
@@ -2181,17 +2192,16 @@ void taiEditDataHost::SetCurMenu(MethodDef* md) {
   if (!menu) {
     // we can't use QMainMenu on Mac, and QMenu doesn't work for some
     // reason (doesn't become visible, no matter what); but a toolbar works
-//TODO: it looks slightly funny, but maybe we should do it the same on
-// all platforms, to give the same look (ex. for screenshots)???
-//#ifdef TA_OS_MAC
+    // we don't use these on all platforms for uniformity because they SUCK!
+#ifdef TA_OS_MAC
     menu = new taiToolBar(widget(), taiMisc::fonSmall,NULL); 
     vblDialog->insertWidget(0, menu->GetRep()); //note: no spacing needed after
     vblDialog->insertSpacing(1, 2);
-/*#else
+#else
     menu = new taiMenuBar(taiMisc::fonSmall,
       NULL, this, NULL, widget());
     vblDialog->setMenuBar(menu->GetRep());
-#endif*/
+#endif
   }
   String men_nm = md->OptionAfter("MENU_ON_");
   if (men_nm != "") {

@@ -98,9 +98,8 @@ public:
   virtual void	NewEdit();
   // closes current edit dialog and makes a new one (with any changes)
 
-  // todo: following should be #BUTTON but it doesn't work..
   virtual void	Reset();
-  // #MENU #MENU_SEP_BEFORE #CONFIRM reset (remove all) current members and methods
+  // #MENU #MENU_SEP_BEFORE #BUTTON #CONFIRM reset (remove all) current members and methods
   virtual int	SearchMembers(taNBase* obj, const String& memb_contains);
   // #MENU search given object for member names that contain given string, and add them to this editor
   virtual int	CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
