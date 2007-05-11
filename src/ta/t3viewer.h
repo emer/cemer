@@ -232,7 +232,7 @@ public: // ISelectable interface (only not in IDataLinkClient)
   override ISelectable*	par() const;
 //  override taiDataLink* par_link() const; // from parent data
 //  override MemberDef* 	par_md() const; // as for par_link
-  
+  override taiDataLink*	clipParLink() const {return own_link();} // not par_link 
 /*override int		EditAction_(ISelectable_PtrList& sel_items, int ea);
   override void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
   override void 		FillContextMenu(taiActions* menu);

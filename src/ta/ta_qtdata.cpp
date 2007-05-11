@@ -4669,6 +4669,22 @@ void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
 // 	taiMethodData     //
 ///////////////////////////
 
+void taiMethodData::ShowReturnVal(cssEl* rval, IDataHost* host,
+  const String& meth_name) 
+{
+  if ((rval->GetType() == cssEl::T_TA) || (rval->GetType() == cssEl::T_Class)) {
+    if (host != NULL)
+      rval->Edit(host->isModal());
+    else
+      rval->Edit(false);
+    rval->Edit(true); // always show modally
+    return;
+  }
+  String val = meth_name + " Return Value: \n";
+  val += rval->PrintStr();
+  taMisc::Confirm(val);
+}
+
 taiMethodData::taiMethodData(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_) {
@@ -4699,10 +4715,24 @@ void taiMethodData::AddToMenu(taiActions* mnu) {
 }
 
 
-void taiMethodData::CallFun() {
+bool taiMethodData::CallFun_impl() {
   if ((meth->stubp == NULL) || (base == NULL))
-    return;
+    return true;
+  QPointer<taiMethodData> ths = this; // to detect us being deleted
   ApplyBefore();
+  // note: this is not a great situation, whereby applying deletes us, but
+  // we warn user (and should probably do something, ie a directive that you 
+  // have to save before)
+  if (!ths) {
+    taMisc::Error("This menu item or button action apparently cannot be invoked when you have not applied changes. Please try the operation again. (The developers would appreciate hearing about this situation.");
+    return false;
+  }
+  // determine if needs rval now, before we may get deleted when callivoidng
+  bool show_rval = (meth->HasOption("USE_RVAL")  ||
+       (meth->HasOption("USE_RVAL_RMB") && (arg_dlg->mouse_button == Qt::RightButton)) );
+  IDataHost* thost = host; // in case we delete
+  String meth_name = meth->name; // in case we delete
+  
   use_argc = meth->fun_argc;
   String argc_str = meth->OptionAfter("ARGC_");
   if (argc_str != "")
@@ -4719,12 +4749,14 @@ void taiMethodData::CallFun() {
       bool use_busy = !meth->HasOption("NO_BUSY");
       if (use_busy) taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
-      UpdateAfter();
+      // make sure we still exist before doing UA!
+      if (ths)void
+        UpdateAfter();
       if (use_busy) taMisc::Busy(false);
-      if (rval != &cssMisc::Void)
-	ShowReturnVal(rval);
+      if ((show_rval && (rval != &cssMisc::Void)))
+	ShowReturnVal(rval, thost, meth_name);
     } // NOTE: end of DMEM_COMPILE
-    return;
+    return (bool)ths;
   }
   arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal
   if (typ->InheritsFrom(TA_taBase)) {
@@ -4732,7 +4764,6 @@ void taiMethodData::CallFun() {
     iColor bgclr = ((TAPtr)base)->GetEditColorInherit(ok);
     if (ok) arg_dlg->setBgColor(bgclr);
   }
-//nn  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
   arg_dlg->Constr("", "");
   int ok_can = arg_dlg->Edit(true);	// true = wait for a response
   if (ok_can && !arg_dlg->err_flag) {
@@ -4741,26 +4772,22 @@ void taiMethodData::CallFun() {
     // don't actually run the command when using gui in dmem mode: everything happens via the script!
     if (taMisc::dmem_nprocs == 1) {
 #endif
-QPointer<taiMethodData> ths = this; // to detect us being deleted
       taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, arg_dlg->obj->members->size-1,
 				     arg_dlg->obj->members->els);
-//if (ths) {
-      UpdateAfter();
-//}
+      // only UA if we still exist!
+      if (ths)
+        UpdateAfter();
+
       taMisc::Busy(false);
-if (!ths) {
-taMisc::Warning("taiMethodData instance was deleted as a result of this Method call!",
-  "No return value or UpdateAfter can occur!");
-return;
-}     
-      if (rval != &cssMisc::Void)
-	ShowReturnVal(rval);
+      if ((show_rval && (rval != &cssMisc::Void)))
+	ShowReturnVal(rval, thost, meth_name);
 #ifdef DMEM_COMPILE
     }
 #endif
   }
   delete arg_dlg;
+  return (bool)ths;
 }
 
 QAbstractButton* taiMethodData::MakeButton() {
@@ -4780,36 +4807,19 @@ QAbstractButton* taiMethodData::MakeButton() {
   return buttonRep;
 }
 
-void taiMethodData::ShowReturnVal(cssEl* rval) {
-  if (!(meth->HasOption("USE_RVAL")  ||
-       (meth->HasOption("USE_RVAL_RMB") && (arg_dlg->mouse_button == Qt::RightButton)) ))
-    return;
-
-  if ((rval->GetType() == cssEl::T_TA) || (rval->GetType() == cssEl::T_Class)) {
-    if (host != NULL)
-      rval->Edit(host->isModal());
-    else
-      rval->Edit(false);
-    return;
-  }
-  String val = meth->name + " Return Value: ";
-  val += rval->PrintStr();
-  taMisc::Confirm(val);
-}
-
 void taiMethodData::ApplyBefore() {
-//nn??  if ((host == NULL) || (host->state != IDataHost::ACTIVE))
-  if (host == NULL) 
-    return;
+  if (host == NULL) return;
   if (meth->HasOption("NO_APPLY_BEFORE") || !host->HasChanged())
     return;
-  if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
+  // we no longer check about applying, because auto apply is supposed to be automatic!
+/*obs  if (taMisc::auto_revert == taMisc::CONFIRM_REVERT) {
     int chs = taMisc::Choice("Auto Apply/Revert: You have edited the dialog--apply or revert and lose changes?", "Apply", "Revert");
-    if (chs == 0)
-      host->GetValue();
-  } else {
-    host->GetValue();
-  }
+    if (chs != 0) return;
+  }*/
+  applyNow();
+  // note: applyNow is async, so we have to do event loop 
+  taiMiscCore::ProcessEvents();
+  //NOTE: small chance we could be deleted here, so no code here!
 }
 
 void taiMethodData::UpdateAfter() {
@@ -4968,7 +4978,7 @@ taiMethToggle::taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* 
 
 void taiMethToggle::CallFun() {
   if (rep()->isChecked())
-    taiMethodData::CallFun();
+    CallFun_impl();
 }
 
 

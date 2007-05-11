@@ -89,6 +89,7 @@ public:
   
   virtual int		checkConfigFlags() const { return 0;}
     // taBase::THIS_INVALID|CHILD_INVALID
+  virtual taiDataLink*	ownLink() const {return NULL;} // owner link (NOT gui par)
 
   virtual void		FillContextMenu(taiActions* menu); // only override to prepend to menu
   virtual void		FillContextMenu_EditItems(taiActions* menu, int allowed) {}
@@ -151,6 +152,7 @@ public:
   override bool		isBase() const {return true;} 
   override int		checkConfigFlags() const; // we call CheckConfig
   override bool		isEnabled() const;
+  override taiDataLink*	ownLink() const; 
 
   
   override bool		GetIcon(int bmf, int& flags_supported, QIcon& ic);
@@ -310,8 +312,10 @@ INHERITED(IDataLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
   virtual MemberDef*	md() const {return NULL;} // memberdef in data parent, if any, of the selected item
+  virtual taiDataLink*	own_link() const; // owner item's link -- this is the *data* parent (not the gui parent) 
   virtual ISelectable*	par() const = 0; // gui parent, if any
-  virtual taiDataLink*	par_link() const; // parent item's link -- this is the *data* parent (not the gui parent) -- for taBase links, gets from the link
+  virtual taiDataLink*	par_link() const; // parent item's link -- this is the *gui* parent (not the data parent/owner) 
+  virtual taiDataLink*	clipParLink() const {return par_link();} // for tree stuff, we use the gui parent for clip ops; for t3 we use the data owner
   virtual MemberDef* 	par_md() const;// data parent item's (if any) md
   virtual ISelectableHost* host() const = 0; //
   taBase*		taData() const; // if the data is taBase, this returns it
@@ -323,7 +327,7 @@ public: // Interface Properties and Methods
    // do the indicated edit action (called from browser or list view); normally implement the _impl
   virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
    // for multi or single (normally implement the _impl)
-  virtual void 		FillContextMenu(taiActions* menu);
+//  virtual void 		FillContextMenu(taiActions* menu);
    // for single (normally implement the _impl)
   virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
     bool for_drag) const; // works for single or multi; normally not overridden
@@ -507,6 +511,11 @@ protected:
   taiMimeSource*	drop_ms; // during a drop, holds the ms used for dyn and edit actions
   ISelectable*		drop_item; // during drop, holds the items dropped on
   
+  virtual void		FillContextMenu_pre(ISelectable_PtrList& sel_items, 
+    taiActions* menu) {} // hook
+  virtual void		FillContextMenu_post(ISelectable_PtrList& sel_items, 
+    taiActions* menu) {} // hook 
+  
   virtual void 		EditAction_Delete(); // actually does the Edit/Delete
   virtual void		UpdateSelectedItems_impl() = 0; 
     // called when force=true for changes, force gui to be selItems
@@ -628,7 +637,7 @@ public slots:
 
 protected slots:
   virtual void		lvwDataTree_FillContextMenuHookPost(
-    ISelectable_PtrList& sel_items, taiMenu* menu);
+    ISelectable_PtrList& sel_items, taiActions* menu);
 
 protected: // IDataViewWidget i/f
   override void		Refresh_impl(); 
@@ -1539,9 +1548,11 @@ public:
 signals:
   void			CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
     // invoked when we want our mummy to do custom filtering, expand=true by default
-  void			FillContextMenuHookPre(ISelectable_PtrList& sel_items, taiMenu* menu);
+  void			FillContextMenuHookPre(ISelectable_PtrList& sel_items,
+     taiActions* menu);
     // hook to allow client to add items to start of context menu before it shows
-  void			FillContextMenuHookPost(ISelectable_PtrList& sel_items, taiMenu* menu);
+  void			FillContextMenuHookPost(ISelectable_PtrList& sel_items,
+     taiActions* menu);
     // hook to allow client to add items to end of context menu before it shows
   void			ItemSelected(iTreeViewItem* item); 
     // NULL if none -- NOTE: the preferred way is to use ISelectableHost::Notify signal
@@ -1562,6 +1573,11 @@ public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const;
   override QWidget*	widget() {return this;} 
 protected:
+  override void		FillContextMenu_pre(ISelectable_PtrList& sel_items,
+    taiActions* menu);
+  override void		FillContextMenu_post(ISelectable_PtrList& sel_items,
+    taiActions* menu); 
+  
   override void		UpdateSelectedItems_impl(); 
   
 protected:

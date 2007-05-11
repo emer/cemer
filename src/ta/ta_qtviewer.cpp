@@ -782,6 +782,13 @@ void tabDataLink::QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& fo
 int tabDataLink::EditAction_impl(taiMimeSource* ms, int ea) {
   return data()->EditAction(ms, ea);
 }
+
+taiDataLink* tabDataLink::ownLink() const {
+  if (!m_data) return NULL;
+  taBase* own = ((taBase*)m_data)->GetOwner();
+  return (own) ? (taiDataLink*)own->GetDataLink() : NULL;
+} 
+
 /*
 void tabDataLink::fileClose() {
   data()->Close();
@@ -1311,14 +1318,14 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* me
   if (link) link->FillContextMenu(menu);
 }
 
-void ISelectable::FillContextMenu(taiActions* menu) {
+/*void ISelectable::FillContextMenu(taiActions* menu) {
   taiMimeSource* ms = taiMimeSource::NewFromClipboard();
   FillContextMenu_impl(menu);
   int allowed = QueryEditActions_(ms);
   FillContextMenu_EditItems_impl(menu, allowed);
   taiDataLink* link = this->link();
   if (link) link->FillContextMenu(menu);
-}
+}*/
 
 void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
   if (ea == 0) return;
@@ -1420,20 +1427,10 @@ taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int 
   }
 }
 
-/*obs -- these were the versions that drove off the data parent,
-  not the gui parent -- it is often the same, but not esp. when
-  you have things like link groups
-taiDataLink* ISelectable::par_link() const {
+taiDataLink* ISelectable::own_link() const {
   taiDataLink* link = this->link();
-  if (link) {
-    taBase* tab = link->taData();
-    if (tab) tab = tab->GetOwner();
-    if (tab) {
-      return (taiDataLink*)tab->GetDataLink();
-    }
-  }
-  return NULL;
-}*/
+  return (link) ? link->ownLink() : NULL;
+}
 
 MemberDef* ISelectable::par_md() const {
   // to get the par_md, we have to go up the grandparent, and ask for member addr
@@ -1458,37 +1455,6 @@ taiDataLink* ISelectable::par_link() const {
   if (par) return par->link();
   else     return NULL;
 }
-
-/*obs
-MemberDef* ISelectable::par_md() const {
-// what we will return, is the md if the gui par recognizes us as a member
-  MemberDef* rval = NULL;
-  taBase* par_tab = NULL; 
-  taiDataLink* link = NULL;
-  ISelectable* par = this->par();
-  if (!par) goto exit;
-  link = par->link();
-  if (!link) goto exit;
-  par_tab = link->taData();
-  if (!par_tab) goto exit;
-   
-   
-  
-  
-  // to get the par_md, we have to go up the grandparent, and ask for member addr
-  taBase* gpar_tab = NULL;
-  taiDataLink* link = this->link();
-  if (!link) goto exit;
-  par_tab = link->taData(); //note: still only got the guy, not par
-  if (!par_tab) goto exit;
-  par_tab = par_tab->GetOwner(); // now we have par
-  if (!par_tab) goto exit;
-  gpar_tab = par_tab->GetOwner();
-  if (!gpar_tab) goto exit;
-  rval = gpar_tab->FindMemberPtr(par_tab);
-exit:
-   return rval;
-}*/
 
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
 int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
@@ -1621,7 +1587,7 @@ taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_
 }
 
 int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = par_link();
+  taiDataLink* pdl = clipParLink();
   //note: called routines must requery for allowed
   taiDataLink* link = this->link();
   int rval = taiClipData::ER_IGNORED;
@@ -1657,7 +1623,7 @@ int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: fol
 }
 
 int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = par_link();
+  taiDataLink* pdl = clipParLink();
   //note: called routines must requery for allowed
   taiDataLink* link = this->link();
   int rval = taiClipData::ER_IGNORED;
@@ -1673,10 +1639,12 @@ int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as 
   return rval;
 }
 
-void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
+void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms,
+  int& allowed, int& forbidden) const 
+{
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
-  taiDataLink* pdl = par_link();
+  taiDataLink* pdl = clipParLink();
   taiDataLink* link = this->link();
   if (pdl) 
     pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
@@ -1689,7 +1657,7 @@ void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed,
 void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
-  taiDataLink* pdl = par_link();
+  taiDataLink* pdl = clipParLink();
   taiDataLink* link = this->link();
   if (pdl) 
     pdl->ChildQueryEditActions_impl(NULL, link, NULL, allowed, forbidden); // ex. CUT of child
@@ -1783,7 +1751,6 @@ DynMethodDesc* DynMethod_PtrList::AddNew(int dmd_type, MethodDef* md) {
 }
 
 void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
-  Reset();
   if (sel_items.size == 0) return;
 
   TypeDef* t1n = sel_items.CommonSubtype1N(); // greatest common subtype of items 1-N
@@ -1845,7 +1812,6 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
 void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms, 
     ISelectable* drop_item)
 {
-  Reset();
   taiObjectsMimeItem* mi = ms.objects();
   if (!mi || (mi->count() == 0)) return;
   TypeDef* tms = mi->CommonSubtype(); // greatest common subtype of source object(s)
@@ -1912,15 +1878,12 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
 
 void ISelectableHost::AddDynActions(taiActions* menu) {
   if (dyn_actions.count() == 0) return;
-  menu->AddSep();
+//nn,at top  menu->AddSep();
   for (int i = 0; i < (int)dyn_actions.count(); ++i) {
     taiAction* act = dyn_actions.FastEl(i);
     act->AddTo(menu);
   }
 }
-
-void		AddDynActionsForDrop(taiMimeSource* ms, taiActions* menu);
-   // add the drop dynamic guys to the given menu
 
 void ISelectableHost::ClearSelectedItems(bool forced) {
   SelectionChanging(true, forced);
@@ -2017,14 +1980,20 @@ void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
 }
 
 void ISelectableHost::FillContextMenu(taiActions* menu) {
+  ISelectable_PtrList items(selItems()); // TODO: prob don't need a copy!!!
+  FillContextMenu_pre(items, menu);
+  
   // do the item-mediated portion
   ISelectable* ci = curItem();
   if (!ci) return;
-  ISelectable_PtrList items(selItems());
+  // start with dynamic actions
+  if (dyn_actions.count() != 0) {
+    AddDynActions(menu);
+    menu->AddSep();
+  }
   ci->FillContextMenu(items, menu);
-  // then add the dynamic actions
-  if (dyn_actions.count() == 0) return; // prevents spurious separator
-  AddDynActions(menu);
+  
+  FillContextMenu_post(items, menu);
 }
 
 void ISelectableHost::DoDynAction(int idx) {
@@ -2209,7 +2178,15 @@ void ISelectableHost::SelectionChanging(bool begin, bool forced) {
 void ISelectableHost::UpdateMethodsActions() {
   // enumerate dynamic methods
   dyn_methods.Reset();
-  dyn_methods.Fill(selItems());
+  // if one dst, add the drop actions
+  ISelectable_PtrList& sel_items = selItems();
+  if (sel_items.size == 1) {
+    //TODO: pretty wastefull to get the ms here, because it will be done again...
+    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
+    dyn_methods.FillForDrop(*ms, sel_items.FastEl(0));
+    delete ms;
+  }
+  dyn_methods.Fill(sel_items);
 
   // dynamically create actions
   dyn_actions.Reset(); // note: items ref deleted if needed
@@ -2370,8 +2347,8 @@ void iBrowseViewer::Init() {
   lvwDataTree->resize(mw, lvwDataTree->height()); // 15% min for tree
   lvwDataTree->setMinimumWidth(mw); // 15% min for tree
 */
-  connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)),
-      this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiMenu*)) );
+  connect(lvwDataTree, SIGNAL(FillContextMenuHookPost(ISelectable_PtrList&, taiActions*)),
+      this, SLOT(lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList&, taiActions*)) );
   lvwDataTree->Connect_SelectableHostNotifySignal(this, 
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
@@ -2431,7 +2408,7 @@ void iBrowseViewer::ApplyRoot() {
 } */
 
 void iBrowseViewer::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*sel_items*/,
-   taiMenu* menu) 
+   taiActions* menu) 
 {
 //TODO:  FillContextMenu(menu);
 }
@@ -5512,23 +5489,20 @@ bool iTreeView::ShowNode(iTreeViewItem* item) const {
   return item->ShowNode(show(), m_show_context);
 }
 
-void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
-//TODO: revise, based on us being ISelectableHost
-  iTreeViewItem* nd = dynamic_cast<iTreeViewItem*>(item);
-  //note: could be NULL if on tree area itself, or invalid node type
+void iTreeView::FillContextMenu_pre(ISelectable_PtrList& sel_items, taiActions* menu) {
+  emit FillContextMenuHookPre(sel_items, menu);
+} 
 
-  // get list of the selected items, could be 0, 1 (normal case) or N (multi select)
-  ISelectable_PtrList lst;
-  GetSelectedItems(lst);
-  
+void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & pos, int col ) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-  
-  emit FillContextMenuHookPre(lst, menu);
-  
-  if (nd)
-    nd->FillContextMenu(lst, menu); // also calls link menu filler
-    
+  FillContextMenu(menu);
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(pos);
+  }
+  delete menu;
+}
+
+void iTreeView::FillContextMenu_post(ISelectable_PtrList& sel_items, taiActions* menu) {
   menu->AddSep();
   taiMenu* men_exp = menu->AddSubMenu("Expand/Collapse");
   men_exp->AddItem("Expand Default", taiMenu::normal, taiAction::action,
@@ -5537,20 +5511,19 @@ void iTreeView::this_contextMenuRequested(QTreeWidgetItem* item, const QPoint & 
     this, SLOT(ExpandAll()) );
   men_exp->AddItem("Collapse All", taiMenu::normal, taiAction::action,
     this, SLOT(CollapseAll()) );
-  if (nd && lst.size == 1) {
-    men_exp->AddItem("Expand All From Here", taiMenu::normal, taiAction::ptr_act,
-      this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
-    men_exp->AddItem("Collapse All From Here", taiMenu::normal, taiAction::ptr_act,
-      this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
+  if (sel_items.size == 1) {
+    ISelectable* si = sel_items.FastEl(0);
+    if (si && si->GetTypeDef()->InheritsFrom(&TA_iTreeViewItem)) {
+      void* nd = si->This(); // don't need to detype, because we pass as void anyway
+      men_exp->AddItem("Expand All From Here", taiMenu::normal, taiAction::ptr_act,
+        this, SLOT(ExpandAllUnderInt(void*)), (void*)nd );
+      men_exp->AddItem("Collapse All From Here", taiMenu::normal, taiAction::ptr_act,
+        this, SLOT(CollapseAllUnderInt(void*)), (void*)nd );
+    }
   }
   
-  emit FillContextMenuHookPost(lst, menu);
-
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
-}
+  emit FillContextMenuHookPost(sel_items, menu);
+} 
 
 //NOTE: this is a widget-level guy that just forwards to our signal --
 // it presumably is ALSO emitted in addition to itemSelectionChanged

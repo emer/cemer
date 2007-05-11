@@ -1445,19 +1445,26 @@ public:
     // button connected to method -- only created on demand by subclasses
 
   virtual bool	hasButtonRep() { return (buttonRep != NULL); }
-  virtual void  ShowReturnVal(cssEl* rval); // show return value after menu call
-  virtual void	ApplyBefore();	// apply changes before performing menu call
-  virtual void	UpdateAfter();	// update display after performing menu call
 
   virtual void	GenerateScript(); // output script code equivalent if recording
 
   virtual void 	AddToMenu(taiActions* mnu);
+  
+public slots:
+  virtual void 	CallFun() {CallFun_impl();} // call the function (button callback)
+
 protected:
+  static void  	ShowReturnVal(cssEl* rval, IDataHost* host,
+     const String& meth_name); // show return value after menu call
+  
   QAbstractButton*	buttonRep;
   QWidget*	gui_parent;
   QAbstractButton*	MakeButton(); // makes the button if necessary, and returns a reference
-public slots:
-  virtual void 	CallFun();		// call the function (button callback)
+  
+  bool 		CallFun_impl();		// impl -- we could delete partway through, returns true if we still exist!
+// note that some situations can cause this guy to delete during processing
+  void		ApplyBefore();	// apply changes before performing menu call
+  void		UpdateAfter();	// update display after performing menu call
 
 };
 
@@ -1479,11 +1486,9 @@ public:
   
   taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
-//  ~taiMethButton();
 };
 
 
-//TODO: double check proper base class (was taiMethMenu in IV)
 class TA_API taiMethToggle : public taiMethodData {
   // toggle representation of a method (does not call directly, but checks flag)
   Q_OBJECT
@@ -1494,7 +1499,7 @@ public:
       QWidget* gui_parent_, int flags_ = 0);
 
 public slots:
-  void	CallFun(); // override
+  void			CallFun(); // replaces
 }; 
 
 #endif // TA_QTDATA_H
