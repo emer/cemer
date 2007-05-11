@@ -706,6 +706,25 @@ public:
   // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
   /////////////////////////////
+  // column and row name versions:
+
+  const Variant 	GetValColRowName(const String& col_name, const String& row_col_name,
+					 const Variant& row_value) const;
+  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name
+  bool 			SetValColRowName(const Variant& val, const String& col_name,
+				      const String& row_col_name, const Variant& row_value);
+  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful
+
+  const Variant 	GetMatrixValColRowName(const String& col_name,
+				const String& row_col_name, const Variant& row_value,
+					    int d0, int d1=0, int d2=0, int d3=0) const;
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
+  bool 			SetMatrixValColRowName(const Variant& val, const String& col_name,
+				    const String& row_col_name, const Variant& row_value,
+					       int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  /////////////////////////////
   // column pointer versions, just for the gui:
 
   bool	 	InitValsCol(DataCol* col, const Variant& init_val)
@@ -926,6 +945,8 @@ public:
   // #CAT_DataProc #MENU #FROM_GROUP_data #NULL_OK #NULL_TEXT_0_NewDataTable groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
   virtual String	ColStats(DataCol* col);
   // #CAT_DataProc #MENU #FROM_GROUP_data #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  virtual String	ColStatsName(const String& col_name);
+  // #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   /////////////////////////////////////////////////////////
   // misc funs

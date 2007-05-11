@@ -887,6 +887,73 @@ bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
 
 /////////////////////
 
+const Variant DataTable::GetValColRowName(const String& col_nm, const String& row_col_name,
+					  const Variant& row_value) const {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if(!cda) return _nilVariant;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return _nilVariant;
+  int row = rda->FindVal(row_value);
+  if(row >= 0)
+    return cda->GetValAsVar(row);
+  return _nilVariant;
+}
+
+bool DataTable::SetValColRowName(const Variant& val, const String& col_nm,
+				 const String& row_col_name,
+				 const Variant& row_value) {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if(!cda || cda->is_matrix_err()) return false;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return false;
+  int row = rda->FindVal(row_value);
+  if(row >= 0) {
+    cda->SetValAsVar(val, row);
+    return true;
+  }
+  return false;
+}
+
+const Variant DataTable::GetMatrixValColRowName(const String& col_nm, 
+						const String& row_col_name,
+						const Variant& row_value,
+						int d0, int d1, int d2, int d3) const {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if(!cda || cda->not_matrix_err()) return _nilVariant;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return _nilVariant;
+  int row = rda->FindVal(row_value);
+  if(row >= 0)
+    return cda->GetValAsVarMDims(row, d0, d1, d2, d3);
+  return _nilVariant;
+}
+
+bool DataTable::SetMatrixValColRowName(const Variant& val, const String& col_nm,
+				       const String& row_col_name,
+				       const Variant& row_value,
+				       int d0, int d1, int d2, int d3) {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if (!cda || cda->not_matrix_err()) return false;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return false;
+  int row = rda->FindVal(row_value);
+  if(row >= 0) {
+    cda->SetValAsVarMDims(val, row, d0, d1, d2, d3);
+    return true;
+  }
+  return false;
+}
+
+/////////////////////
+
 bool DataTable::InitVals(const Variant& init_val, int col) {
   DataCol* da = GetColData(col);
   if (!da) return false;
@@ -2345,6 +2412,13 @@ bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
 String DataTable::ColStats(DataCol* col) {
   if(TestError(!col, "ColStats", "column is null")) return _nilString;
   return col->ColStats();
+}
+
+String DataTable::ColStatsName(const String& col_nm) {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if (!cda) return _nilString;
+  return cda->ColStats();
 }
 
 

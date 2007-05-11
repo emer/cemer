@@ -820,13 +820,15 @@ T3GraphViewNode::T3GraphViewNode(void* dataView_, float wdth, bool show_draggers
   graphs_sep_ = new SoSeparator;
   chld->addChild(graphs_sep_);
 
-  SoMaterial* mat = material(); //cache
-  mat->diffuseColor.setValue(frame_clr_r, frame_clr_g, frame_clr_b); // blue/green
-  mat->transparency.setValue(frame_clr_tr);
+  if(show_drag_) {		  // don't show frame either!
+    SoMaterial* mat = material(); //cache
+    mat->diffuseColor.setValue(frame_clr_r, frame_clr_g, frame_clr_b); // blue/green
+    mat->transparency.setValue(frame_clr_tr);
 
-  SoSeparator* ss = shapeSeparator(); // cache
-  frame_ = new SoFrame(SoFrame::Ver);
-  insertChildAfter(ss, frame_, material());
+    SoSeparator* ss = shapeSeparator(); // cache
+    frame_ = new SoFrame(SoFrame::Ver);
+    insertChildAfter(ss, frame_, material());
+  }
 
   float vert_off = frame_margin + 2.0f * frame_width;
 
@@ -854,10 +856,10 @@ void T3GraphViewNode::render() {
     String expr = "oA = vec3f(" + String(.5f * width_) + " + A[0], .5f + A[1], A[2])";
 
     drag_->trans_calc_->expression = expr.chars();
-  }
 
-  frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);
-  txfm_shape()->translation.setValue(.5f * width_, .5f, 0.0f);
+    frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);
+    txfm_shape()->translation.setValue(.5f * width_, .5f, 0.0f);
+  }
   // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
   transformCaption(iVec3f(0.1f, -((float)font->size.getValue() + frame_margin), 0.0f)); // move caption below the frame

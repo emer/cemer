@@ -852,8 +852,18 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
 
   ////////////////////////////////////////////////////////////////////////////
   //		Data processing
+  sec = tb->AssertSection("Data"); //note: need to keep it short
+  // todo: add DataLoop
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("new row",
+    tabMisc::root->GetTemplateInstance(&TA_AddNewDataRow)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("row done",
+    tabMisc::root->GetTemplateInstance(&TA_DoneWritingDataRow)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data vars",
+    tabMisc::root->GetTemplateInstance(&TA_DataVarProg)));
+
+  ////////////////////////////////////////////////////////////////////////////
+  //		Data processing
   sec = tb->AssertSection("Data Proc"); //note: need to keep it short
-  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("sort",
     tabMisc::root->GetTemplateInstance(&TA_DataSortProg)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("group",

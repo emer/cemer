@@ -75,7 +75,7 @@ void DataOpEl::ClearColumns() {
 
 void DataOpList::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
-  DataProg* own_prog = GET_MY_OWNER(DataProg);
+  DataSrcDestProg* own_prog = GET_MY_OWNER(DataSrcDestProg);
   if(own_prog)
     own_prog->UpdateSpecDataTable(); // will update col_lookups from data table
 }
@@ -1135,17 +1135,48 @@ void DataProcCall::Initialize() {
   object_type = &TA_taDataProc;
 }
 
-void DataProg::Initialize() {
+///////////////////////////////////////////
+//		Data One
+
+void DataOneProg::Initialize() {
 }
 
-void DataProg::UpdateAfterEdit_impl() {
+void DataOneProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  UpdateProgVarRef_NewOwner(data_var);
+}
+
+void DataOneProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(!data_var, quiet, rval, "data_var is NULL")) return; // fatal
+  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
+  CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
+	     "data_var variable does not point to a DataTable object");
+  CheckProgVarRef(data_var, quiet, rval);
+}
+
+DataTable* DataOneProg::GetData() {
+  if(!data_var) return NULL;
+  if(data_var->object_type != &TA_DataTable) return NULL;
+  return (DataTable*)data_var->object_val.ptr();
+}
+
+
+///////////////////////////////////////////////
+//		Src Dest
+
+void DataSrcDestProg::Initialize() {
+}
+
+void DataSrcDestProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
   UpdateProgVarRef_NewOwner(src_data_var);
   UpdateProgVarRef_NewOwner(dest_data_var);
 }
 
-void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+void DataSrcDestProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!src_data_var, quiet, rval, "src_data_var is NULL")) return; // fatal
   CheckError(!src_data_var->object_val, quiet, rval, "src_data_var variable NULL");
@@ -1156,13 +1187,13 @@ void DataProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   // NULL OK in dest_data_var!
 }
 
-DataTable* DataProg::GetSrcData() {
+DataTable* DataSrcDestProg::GetSrcData() {
   if(!src_data_var) return NULL;
   if(src_data_var->object_type != &TA_DataTable) return NULL;
   return (DataTable*)src_data_var->object_val.ptr();
 }
 
-DataTable* DataProg::GetDestData() {
+DataTable* DataSrcDestProg::GetDestData() {
   if(!dest_data_var) return NULL;
   if(dest_data_var->object_type != &TA_DataTable) return NULL;
   return (DataTable*)dest_data_var->object_val.ptr();
@@ -1984,5 +2015,133 @@ const String DataCalcCopyCommonCols::GenCssBody_impl(int indent_level) {
     rval += il + "taDataProc::CopyCommonColsRow(" + dcl->dest_data_var->name + ", " + 
       dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);\n";
   return rval;
+}
+
+///////////////////////////////////////////////////////
+//		DataVarProg
+///////////////////////////////////////////////////////
+
+
+void DataVarProg::Initialize() {
+  row_spec = CUR_ROW;
+  set_data = false;
+}
+
+void DataVarProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  UpdateProgVarRef_NewOwner(row_var);
+  UpdateProgVarRef_NewOwner(var_1);
+  UpdateProgVarRef_NewOwner(var_2);
+  UpdateProgVarRef_NewOwner(var_3);
+  UpdateProgVarRef_NewOwner(var_4);
+}
+
+void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckProgVarRef(row_var, quiet, rval);
+  CheckProgVarRef(var_1, quiet, rval);
+  CheckProgVarRef(var_2, quiet, rval);
+  CheckProgVarRef(var_3, quiet, rval);
+  CheckProgVarRef(var_4, quiet, rval);
+}
+
+String DataVarProg::GetDisplayName() const {
+  String rval;
+  if(set_data)
+    rval = "Set Data To: ";
+  else
+    rval = "Get Data Fm: ";
+  if(data_var)
+    rval += data_var->name;
+  else
+    rval += "(ERROR: data_var not set!)";
+  if(set_data)
+    rval = " Fm Vars: ";
+  else
+    rval = " To Vars: ";
+  if(var_1) rval += var_1->name + " ";
+  if(var_2) rval += var_2->name + " ";
+  if(var_3) rval += var_3->name + " ";
+  if(var_4) rval += var_4->name + " ";
+  return rval;
+}
+
+bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
+				const String& il) {
+  if(!var) return false;
+  if(row_spec == CUR_ROW) {
+    if(set_data)
+      rval +=  il + idnm + ".SetDataByName(" + var->name + ", \"" + var->name +"\");\n";
+    else
+      rval += il + var->name + " = GetDataByName(\"" + var->name + "\");\n";
+  }
+  else if(row_spec == ROW_NUM) {
+    if(set_data)
+      rval +=  il + idnm + ".SetValColName(" + var->name + ", \"" + var->name +"\", "
+	+ row_var->name + ");\n";
+    else 
+      rval += il + var->name + " = GetValColName(\"" + var->name + "\", "
+	+ row_var->name + ");\n";
+  }
+  else if(row_spec == ROW_VAL) {
+    if(set_data)
+      rval +=  il + idnm + ".SetValColRowName(" + var->name + ", \"" + var->name+ "\", \""
+	+ row_var->name + "\", " + row_var->name + ");\n";
+    else 
+      rval += il + var->name + " = GetValColRowName(\"" + var->name +"\", \""
+	+ row_var->name + "\", " + row_var->name + ");\n";
+  }
+  return true;
+}
+
+const String DataVarProg::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  String idnm = data_var->name;
+  String rval;
+  rval += il + "// " + GetDisplayName() + "\n";
+  GenCss_OneVar(rval, var_1, idnm, il);
+  GenCss_OneVar(rval, var_2, idnm, il);
+  GenCss_OneVar(rval, var_3, idnm, il);
+  GenCss_OneVar(rval, var_4, idnm, il);
+  return rval;
+}
+
+///////////////////////////////////////////
+//		Add New Data Row
+
+void AddNewDataRow::Initialize() {
+}
+
+String AddNewDataRow::GetDisplayName() const {
+  String rval = "AddNewDataRow to: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+const String AddNewDataRow::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  return il + data_var->name + ".AddBlankRow();\n";
+}
+
+/////////////
+
+void DoneWritingDataRow::Initialize() {
+}
+
+String DoneWritingDataRow::GetDisplayName() const {
+  String rval = "DoneWritingDataRow to: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+const String DoneWritingDataRow::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  return il + data_var->name + ".WriteClose();\n";
 }
 

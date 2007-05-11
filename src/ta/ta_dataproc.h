@@ -372,8 +372,26 @@ private:
   void	Destroy()	{ };
 }; 
 
-class TA_API DataProg : public ProgEl { 
-  // #VIRT_BASE #NO_INSTANCE a program element for data operations (virtual base class -- do not use)
+class TA_API DataOneProg : public ProgEl { 
+  // #VIRT_BASE #NO_INSTANCE a program element for operations on one data table (virtual base class -- do not use)
+INHERITED(ProgEl)
+public:
+  ProgVarRef	    data_var;	// program variable pointing to data table for operation
+
+  virtual DataTable* GetData();
+
+  override String 	GetTypeDecoKey() const { return "DataTable"; }
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataOneProg, Program);
+protected:
+  override void UpdateAfterEdit_impl();
+  override void	 CheckThisConfig_impl(bool quiet, bool& rval);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API DataSrcDestProg : public ProgEl { 
+  // #VIRT_BASE #NO_INSTANCE a program element for data operations involving a source and destination (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
   ProgVarRef	    src_data_var;	// program variable pointing to source data for operation
@@ -386,7 +404,7 @@ public:
   // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
-  TA_SIMPLE_BASEFUNS(DataProg);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataSrcDestProg, Program);
 protected:
   override void UpdateAfterEdit_impl();
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
@@ -395,9 +413,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataSortProg : public DataProg { 
+class TA_API DataSortProg : public DataSrcDestProg { 
   // sorts src_data into dest_data according to sort_spec
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
   DataSortSpec		sort_spec; // #SHOW_TREE data sorting specification
 
@@ -420,9 +438,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataGroupProg : public DataProg { 
+class TA_API DataGroupProg : public DataSrcDestProg { 
   // groups src_data into dest_data according to group_spec
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
   DataGroupSpec		group_spec; // #SHOW_TREE data grouping specification
 
@@ -444,9 +462,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataSelectRowsProg : public DataProg { 
+class TA_API DataSelectRowsProg : public DataSrcDestProg { 
   // selects rows from src_data into dest_data according to select_spec
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
   DataSelectSpec	select_spec; // #SHOW_TREE data selection specification
 
@@ -468,9 +486,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataSelectColsProg : public DataProg { 
+class TA_API DataSelectColsProg : public DataSrcDestProg { 
   // ##DEF_CHILD_select_spec ##DEF_CHILDNAME_Select_Spec selects rows from src_data into dest_data according to select_spec
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
   DataOpList		select_spec; // #SHOW_TREE columns to select
 
@@ -493,9 +511,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataJoinProg : public DataProg { 
+class TA_API DataJoinProg : public DataSrcDestProg { 
   // joins two datatables (src and src_b) into dest datatable indexed by a common column
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
   ProgVarRef		src_b_data_var;	// variable pointing to second source data for operation
   DataJoinSpec		join_spec; 	// #SHOW_TREE data grouping specification
@@ -518,9 +536,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataCalcLoop : public DataProg { 
+class TA_API DataCalcLoop : public DataSrcDestProg { 
   // enables arbitrary calculations and operations on data by looping row-by-row through the src_data table; can either just operate on src_data (using SetSrcRow) or generate new dest_data (using AddDestRow and SetDestRow)
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
   DataOpList		src_cols;
   // source columns to operate on (variables are labeled as s_xxx where xxx is col_name)
@@ -568,9 +586,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataCalcAddDestRow : public DataProg { 
+class TA_API DataCalcAddDestRow : public DataSrcDestProg { 
   // add a new blank row into the dest data table (used in DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
   ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN source data for operation
@@ -594,9 +612,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataCalcSetDestRow : public DataProg { 
+class TA_API DataCalcSetDestRow : public DataSrcDestProg { 
   // set all the current values into the dest data table (used in DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
   ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN source data for operation
@@ -620,9 +638,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataCalcSetSrcRow : public DataProg { 
+class TA_API DataCalcSetSrcRow : public DataSrcDestProg { 
   // set all the current values into the src data table (used in DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
   ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW source table to set values in -- automatically updated from DataCalcLoop
@@ -646,9 +664,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API DataCalcCopyCommonCols : public DataProg { 
+class TA_API DataCalcCopyCommonCols : public DataSrcDestProg { 
   // copy all of the columns from source to dest that have the same name and type
-INHERITED(DataProg)
+INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
   ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW source data for copying -- automatically updated from DataCalcLoop
@@ -674,5 +692,65 @@ private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
+
+class TA_API DataVarProg : public DataOneProg { 
+  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables
+INHERITED(DataOneProg)
+public:
+  enum RowType {
+    CUR_ROW,			// use the current row (i.e., the last one added or specifically set by Read or Write operation)
+    ROW_NUM,			// row_var variable contains the row number to operate on
+    ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
+  };
+
+  bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
+  RowType	row_spec;	// how the row number within data table is specified
+  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW program variable containing information about which row to operate on (depends on row_spec for what this information is)
+
+  ProgVarRef	var_1;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_2;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_3;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_4;		// program variable to operate on -- name must match name of column in data table!
+
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataVarProg, Program);
+protected:
+  override void UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+
+  override const String	GenCssBody_impl(int indent_level);
+  virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
+			      const String& il);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API AddNewDataRow: public DataOneProg { 
+  // add a new row to data table (just calls AddBlankRow() on data table var object)
+INHERITED(DataOneProg)
+public:
+  override String	GetDisplayName() const;
+  TA_BASEFUNS(AddNewDataRow);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+private:
+  void	Initialize();
+  void	Destroy()	{ }
+}; 
+
+class TA_API DoneWritingDataRow: public DataOneProg { 
+  // add this after you are done writing everything to the current row of the data table, and it will update displays and write to log files, etc (just calls WriteClose() on data table var object)
+INHERITED(DataOneProg)
+public:
+  override String	GetDisplayName() const;
+  TA_BASEFUNS(DoneWritingDataRow);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+private:
+  void	Initialize();
+  void	Destroy()	{ }
+}; 
 
 #endif // ta_dataproc_h

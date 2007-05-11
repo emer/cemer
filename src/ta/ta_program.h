@@ -45,8 +45,8 @@ class ProgLib;
 // basefuns, to ensure that pointers are properly updated
 // if copied between different programs!
 
-// Also, such UpdateProgVarRef_NewOwner(ProgVarRef& pvr); must be called
-// in UpdateAfterEdit_impl
+// Also, UpdateProgVarRef_NewOwner(ProgVarRef& pvr); must be called
+// in UpdateAfterEdit_impl for such programs
 
 // Also, pretty much any place where a user can enter an expression,
 // use ProgExpr -- it handles variable name updates automatically!

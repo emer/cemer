@@ -5,8 +5,8 @@ commit:
 ------------
 current:
 
-* TransformBox translators are still weird.
-* netview layers get out of whack due to new max size but not updated?? not sure..
+* no frame on graphs..
+* snapshot not working!
 
 == Netview:
 
@@ -26,6 +26,10 @@ current:
 
 == Program
 
+* test new guys
+* some kind of simple DataLoop guy?
+* support for condlist datatables: what is needed?  
+* InitUnitNames -- display datatable with name legend function..
 * progexpr not finding variables in function args
 * brad's bug on drag of objs
 
