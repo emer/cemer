@@ -33,7 +33,7 @@ class Layer;
 // same project can be run transparently in dmem or non-dmem mode without modification
 
 class PDP_API NetDataLoop: public DataLoop { 
-  // For network input data: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data. Note: assumes that there is a 'network' variable defined in program!!
+  // For network input data: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data. Note: assumes that there is a 'network' object pointer variable and an int 'trial' counter variable defined in the program!!
 INHERITED(DataLoop)
 public:
   int		dmem_nprocs;	// #READ_ONLY number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1

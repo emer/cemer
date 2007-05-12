@@ -30,15 +30,14 @@ Program .projects[0].programs.gp[0][2] {
     };
     MethodCall @[3] { };
     NetGroupedDataLoop @[4] { 
-      ProgEl_List @.loop_code = [3] {
-	UserScript @[0] { };
-	ProgramCall @[1] { 
+      ProgEl_List @.loop_code = [2] {
+	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	  };
 	};
-	IfElse @[2] { 
+	IfElse @[1] { 
 	  ProgEl_List @.true_code = [1] {
 	    MethodCall @[0] { };
 	  };
@@ -269,20 +268,7 @@ Program .projects[0].programs.gp[0][2] {
     name=;
     el_typ=ProgEl;
     el_def=0;
-    UserScript @[0] {
-     desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
-     flags=OFF;
-     script {
-      expr="trial = item_index; network.trial = item_index;";
-      flags=NO_VAR_ERRS;
-      var_expr="$#0#$ = $#1#$; $#2#$.trial = $#1#$;";
-      vars {
-      };
-      var_names{ trial;item_index;network;      };
-      bad_vars{       };
-     };
-    };
-    ProgramCall @[1] {
+    ProgramCall @[0] {
      desc="call the trial process";
      flags=;
      target=.projects[0].programs.gp[0][3]$8$;
@@ -326,7 +312,7 @@ Program .projects[0].programs.gp[0][2] {
       };
      };
     };
-    IfElse @[2] {
+    IfElse @[1] {
      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
      flags=;
      cond {

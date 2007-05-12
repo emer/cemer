@@ -192,15 +192,14 @@ LeabraProject .projects[0] {
 	  };
 	  MethodCall @[3] { };
 	  NetDataLoop @[4] { 
-	    ProgEl_List @.loop_code = [3] {
-	      UserScript @[0] { };
-	      ProgramCall @[1] { 
+	    ProgEl_List @.loop_code = [2] {
+	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [2] {
 		  ProgArg @[0] { };
 		  ProgArg @[1] { };
 		};
 	      };
-	      IfElse @[2] { 
+	      IfElse @[1] { 
 		ProgEl_List @.true_code = [1] {
 		  MethodCall @[0] { };
 		};
@@ -1817,20 +1816,7 @@ LeabraProject .projects[0] {
        name=;
        el_typ=ProgramCall;
        el_def=0;
-       UserScript @[0] {
-	desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
-	flags=;
-	script {
-	 expr="trial = data_loop_index; network.trial = data_loop_index;";
-	 flags=NO_VAR_ERRS;
-	 var_expr="$#0#$ = $#1#$; $#2#$.trial = $#1#$;";
-	 vars {
-	 };
-	 var_names{ trial;data_loop_index;network;	 };
-	 bad_vars{ 	 };
-	};
-       };
-       ProgramCall @[1] {
+       ProgramCall @[0] {
 	desc=;
 	flags=;
 	target=.projects[0].programs.gp[0][3]$19$;
@@ -1874,7 +1860,7 @@ LeabraProject .projects[0] {
 	 };
 	};
        };
-       IfElse @[2] {
+       IfElse @[1] {
 	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
 	flags=;
 	cond {
@@ -4975,7 +4961,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=6: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  table_pos {x=1: y=0: z=0: };
@@ -5018,10 +5004,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis=Y;
 	   col_lookup=NULL;
 	   col_name="avg_sse";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=5.402786: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=5.402786: };
-	   range {min=0: max=5.402786: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -5410,7 +5396,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.1: err=0.9: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -5442,7 +5428,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.1: err=0.9: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };

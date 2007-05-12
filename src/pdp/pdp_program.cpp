@@ -57,6 +57,7 @@ const String NetDataLoop::GenCssPre_impl(int indent_level) {
   rval += id3 + "else data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size); // draw at random from list if over max -- need to process something for dmem to stay in sync\n";
   rval += id3 + "}\n";
   rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break;\n";
+  rval += id2 + "trial = " + idx_nm + "; network.trial = " + idx_nm + ";\n";
   return rval;
 }
 
