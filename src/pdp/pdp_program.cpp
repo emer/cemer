@@ -258,6 +258,7 @@ void BasicDataLoop::UpdateAfterEdit_impl() {
 }
 
 void BasicDataLoop::ChangeToNetDataLoop() {
+  GetIndexVar();
   ChangeMyType(&TA_NetDataLoop);
 }
 
@@ -268,6 +269,7 @@ void GroupedDataLoop::UpdateAfterEdit_impl() {
 }
 
 void GroupedDataLoop::ChangeToNetGroupedDataLoop() {
+  GetIndexVars();
   ChangeMyType(&TA_NetGroupedDataLoop);
 }
 
