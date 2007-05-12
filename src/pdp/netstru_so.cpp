@@ -407,10 +407,10 @@ T3LayerNode::T3LayerNode(void* dataView_, bool show_draggers)
   show_drag_ = show_draggers;
 
   if(show_drag_) {
-    const float len = .05f;	// bar_len
-    const float wd = .005f;	// bar_width
-    const float cr = .01f;	// cone radius
-    const float ch = .02f;	// cone height
+    const float len = .08f;	// bar_len
+    const float wd = .1f * len;	// bar_width
+    const float cr = .2f * len;	// cone radius
+    const float ch = .4f * len;	// cone height
 
     // XY dragger
     xy_drag_sep_ = new SoSeparator;
@@ -530,21 +530,35 @@ void T3PrjnNode::init() {
   trln_arr = new SoTransform();
   ss->addChild(trln_arr);
 
+  arr_mat = new SoMaterial;
+  // overwritten in qtso..
+  arr_mat->diffuseColor.setValue(SbColor(1.0f, .8f, 0.0f)); // orange
+  arr_mat->transparency.setValue(.5f);			    // 
+  ss->addChild(arr_mat);
+
   arr_prjn = new SoCone();
-  arr_prjn->height =  3.0f * radius;
-  arr_prjn->bottomRadius = 2.0f * radius;
+  arr_prjn->height =  6.0f * radius;
+  arr_prjn->bottomRadius = 4.0f * radius;
   ss->addChild(arr_prjn);
 }
 
 void T3PrjnNode::setEndPoint(const SbVec3f& ep) {
-  float dist = ep.length();
+  float len = ep.length() - 6.0f * radius;
+  float hlf_len = .5f *len;
 
-  line_prjn->height = dist;
+  line_prjn->height = len;
   // txfm
   rot_prjn->rotation.setValue(SbRotation(SbVec3f(0, 1.0f, 0), ep));
-  trln_prjn->translation.setValue(0.0f, line_prjn->height.getValue() / 2.0f, 0.0f);
-  trln_arr->translation.setValue(0.0f, line_prjn->height.getValue() / 2.0f, 0.0f); //note: already txlted by 1/2 height
+  trln_prjn->translation.setValue(0.0f, hlf_len, 0.0f);
+  trln_arr->translation.setValue(0.0f, hlf_len + 3.0f * radius, 0.0f);
+  //note: already txlted by 1/2 height -- adds arrow len offset
 }
+
+void T3PrjnNode::setArrowColor(const SbColor& clr, float transp) {
+  arr_mat->diffuseColor.setValue(clr);
+  arr_mat->transparency.setValue(transp);
+}
+
 
 //////////////////////////
 //   T3NetNode		//

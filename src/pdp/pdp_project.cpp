@@ -296,7 +296,8 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
 
   UpdateInputDataFmNet(net, data_table);
 
-  data_table->AddRows(n_patterns);
+  if(n_patterns > 0)
+    data_table->AddRows(n_patterns);
   data_table->StructUpdate(false);
 }
 

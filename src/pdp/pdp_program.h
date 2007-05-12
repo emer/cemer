@@ -18,8 +18,9 @@
 #ifndef PDP_PROGRAM_H
 #define PDP_PROGRAM_H
 
-#include "ta_program.h"
-#include "ta_datatable.h"
+// #include "ta_program.h"
+// #include "ta_datatable.h"
+#include "ta_dataproc.h"
 #include "ta_dmem.h"
 
 class Network;
@@ -31,55 +32,40 @@ class Layer;
 // note: the motivation for supporting dmem within the basic data loops is so that the
 // same project can be run transparently in dmem or non-dmem mode without modification
 
-class PDP_API BasicDataLoop: public Loop { 
-  // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data; Note: assumes that there is a network variable defined in program!!
-INHERITED(Loop)
+class PDP_API NetDataLoop: public DataLoop { 
+  // For network input data: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data. Note: assumes that there is a 'network' variable defined in program!!
+INHERITED(DataLoop)
 public:
-  enum Order {
-    SEQUENTIAL,			// present events in sequential order
-    PERMUTED,			// permute the order of event presentation
-    RANDOM 			// pick an event at random (with replacement)
-  };
-
-  ProgVarRef	data_var;	// program variable pointing to the data table to use
-  ProgVarRef	order_var;	// variable that contains the order to process data items (trials) in -- is automatically created if not set
-  Order		order;		// #READ_ONLY #SHOW order to process data items (trials) in -- set from order_var
-  int_Array	item_idx_list;	// #READ_ONLY list of item indicies 
   int		dmem_nprocs;	// #READ_ONLY number of processors to use for distributed memory processing (input data distributed over nodes) -- computed automatically if dmem is active; else set to 1
   int		dmem_this_proc;	// #READ_ONLY processor rank for this processor relative to communicator group
 
-  virtual void	GetOrderVal();
-  // get order value from order_var variable
   virtual void	DMem_Initialize(Network* net);
   // configure the dmem communicator stuff: depends on dmem setup of network
 
-  override String	GetDisplayName() const;
+  override String GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(BasicDataLoop, Program);
+  TA_SIMPLE_BASEFUNS(NetDataLoop);
 protected:
-  virtual void	GetOrderVar(); // make an order variable in program
-  override void	UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
 
 private:
   void	Initialize();
   void	Destroy() { CutLinks(); }
 };
 
-class PDP_API GroupedDataLoop: public Loop { 
-  // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data
+class PDP_API NetGroupedDataLoop: public Loop { 
+  // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data.  Note: assumes that there is a 'network' variable defined in program!!
 INHERITED(Loop)
 public:
   enum Order {
-    SEQUENTIAL,			// present events in sequential order
-    PERMUTED,			// permute the order of event presentation
-    RANDOM 			// pick an event at random (with replacement)
+    SEQUENTIAL,			// present events (input data rows) in sequential order
+    PERMUTED,			// permute the order of event (input data row) presentation
+    RANDOM, 			// pick an event (input data row) at random (with replacement)
   };
 
   ProgVarRef	data_var;	// program variable pointing to the data table to use
+  ProgVarRef	group_index_var; // program variable for the group index used in the loop -- goes from 0 to number of groups in data table-1
+  ProgVarRef	item_index_var; // program variable for the item index used in the loop -- goes from 0 to number of items in current group
   ProgVarRef	group_order_var; // variable that contains the order to process data groups in -- is automatically created if not set
   ProgVarRef	item_order_var; // variable that contains the order to process data items in -- is automatically created if not set
   Order		group_order;	// #READ_ONLY #SHOW order to process data groups in -- set from group_order_var
@@ -96,9 +82,10 @@ public:
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(GroupedDataLoop, Program);
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetGroupedDataLoop, Program);
 protected:
   virtual void	GetOrderVars(); // make order variables in program
+  virtual void	GetIndexVars(); // make index variables in program if not already set
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
@@ -108,6 +95,38 @@ protected:
 private:
   void	Initialize();
   void	Destroy() { CutLinks(); }
+};
+
+// todo: remove at some point -- obsolete!
+
+class PDP_API BasicDataLoop: public NetDataLoop { 
+  // DO NOT USE -- OBSOLETE! REPLACE WITH NetDataLoop!
+INHERITED(NetDataLoop)
+public:
+  void	ChangeToNetDataLoop();
+  // #BUTTON -- this will change me to a NetDataLoop object -- do this!!
+
+  TA_BASEFUNS(BasicDataLoop);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
+  void	Initialize() { };
+  void	Destroy() { }
+};
+
+class PDP_API GroupedDataLoop: public NetGroupedDataLoop { 
+  // DO NOT USE -- OBSOLETE! REPLACE WITH NetGroupedDataLoop!
+INHERITED(NetGroupedDataLoop)
+public:
+  void	ChangeToNetGroupedDataLoop();
+  // #BUTTON -- this will change me to a NetGroupedDataLoop object -- do this!!
+
+  TA_BASEFUNS(GroupedDataLoop);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
+  void	Initialize() { };
+  void	Destroy() { }
 };
 
 class PDP_API NetCounterInit: public ProgEl { 

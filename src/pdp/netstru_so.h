@@ -305,7 +305,9 @@ typedef T3NodeParent inherited;
 public:
   static void		initClass();
 
-  void			setEndPoint(const SbVec3f& value); // #IGNORE sets endpoint, relative to its origin
+  void		setEndPoint(const SbVec3f& value); // #IGNORE sets endpoint, relative to its origin
+  void		setArrowColor(const SbColor& clr, float transp);
+  // set arrow color
 
   T3PrjnNode(void* dataView_ = NULL, float rad = .01f);
 
@@ -316,6 +318,7 @@ protected:
   SoTransform*		trln_arr; // #IGNORE
   SoCone*		arr_prjn;  // #IGNORE arrow head
   SoCylinder*		line_prjn;  // #IGNORE line
+  SoMaterial*		arr_mat;  // #IGNORE arrow material (color)
 
   ~T3PrjnNode();
 private:

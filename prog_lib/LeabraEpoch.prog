@@ -5,11 +5,12 @@ Program .projects[0].programs.gp[0][2] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [4] {
+  ProgVar_List @.vars = [5] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
+    ProgVar @[4] { };
   };
 
   ProgEl_List @.init_code = [2] {
@@ -26,7 +27,7 @@ Program .projects[0].programs.gp[0][2] {
       };
     };
     MethodCall @[3] { };
-    BasicDataLoop @[4] { 
+    NetDataLoop @[4] { 
       ProgEl_List @.loop_code = [3] {
 	UserScript @[0] { };
 	ProgramCall @[1] { 
@@ -65,6 +66,11 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=taOBase;
   el_def=0;
  };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
  args {
   name=;
   el_typ=ProgVar;
@@ -96,7 +102,7 @@ Program .projects[0].programs.gp[0][2] {
    name="data_loop_order";
    var_type=T_HardEnum;
    int_val=1;
-   hard_enum_type=BasicDataLoop::Order;
+   hard_enum_type=DataLoop::Order;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="controls the order in which events (rows of the input data datatable) are presented to the network";
@@ -123,6 +129,14 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Object;
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].epoch_time$3$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[4] {
+   name="data_loop_index";
+   var_type=T_Int;
+   int_val=0;
    objs_ptr=0;
    flags=NULL_CHECK;
    desc=;
@@ -203,6 +217,8 @@ Program .projects[0].programs.gp[0][2] {
      arg_type=bool;
      type="bool";
      name="reset_used";
+     required=0;
+     def_val="true";
      expr {
       expr="true";
       flags=;
@@ -227,8 +243,8 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  BasicDataLoop @[4] {
-   desc=;
+  NetDataLoop @[4] {
+   desc="iterates over the events/rows of input_data";
    flags=;
    loop_code {
     name=;
@@ -238,13 +254,13 @@ Program .projects[0].programs.gp[0][2] {
      desc="set trial to list_idx of data loop -- for dmem code this is the correct trial number";
      flags=;
      script {
-      expr="trial = list_idx; network.trial = list_idx;";
+      expr="trial = data_loop_index; network.trial = data_loop_index;";
       flags=NO_VAR_ERRS;
-      var_expr="$#0#$ = list_idx; $#1#$.trial = list_idx;";
+      var_expr="$#0#$ = $#1#$; $#2#$.trial = $#1#$;";
       vars {
       };
-      var_names{ trial;network;      };
-      bad_vars{ list_idx;      };
+      var_names{ trial;data_loop_index;network;      };
+      bad_vars{       };
      };
     };
     ProgramCall @[1] {
@@ -261,6 +277,8 @@ Program .projects[0].programs.gp[0][2] {
        arg_type=LeabraNetwork;
        type="LeabraNetwork*";
        name="network";
+       required=1;
+       def_val=;
        expr {
 	expr="network";
 	flags=;
@@ -275,6 +293,8 @@ Program .projects[0].programs.gp[0][2] {
        arg_type=DataTable;
        type="DataTable*";
        name="input_data";
+       required=1;
+       def_val=;
        expr {
 	expr="input_data";
 	flags=;
@@ -324,7 +344,8 @@ Program .projects[0].programs.gp[0][2] {
     };
    };
    data_var=.projects[0].programs.gp[0][2].args[1]$9$;
-   order_var=.projects[0].programs.gp[0][2].vars[0]$10$;
+   index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
+   order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
    item_idx_list{ 5;4;2;1;0;3;   };
    dmem_nprocs=1;
@@ -392,7 +413,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgramCall @[8] {
    desc=;
    flags=;
-   target=.projects[0].programs.gp[0][8]$11$;
+   target=.projects[0].programs.gp[0][8]$12$;
    targ_ld_init="*LeabraEpochMonitor*";
    call_init=0;
    prog_args {
@@ -403,6 +424,8 @@ Program .projects[0].programs.gp[0][2] {
      arg_type=Network;
      type="LeabraNetwork*";
      name="network";
+     required=1;
+     def_val=;
      expr {
       expr="network";
       flags=;

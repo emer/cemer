@@ -1163,6 +1163,7 @@ void PrjnView::DoHighlightColor(bool apply) {
     mat->diffuseColor.setValue(SbColor(1, 1, 1)); // white
     mat->transparency.setValue(nv->view_params.prjn_trans);
   }
+  nd->setArrowColor(SbColor(1.0f, .8f, 0.0f), nv->view_params.prjn_trans);
 } 
 
 void PrjnView::Render_pre() {
@@ -1182,36 +1183,66 @@ void PrjnView::Render_impl() {
   Layer* lay_fr = prjn->from;
   Layer* lay_to = prjn->layer;
 
-  // origin is *back* center of origin layer, in Inventor coords (add .5f to z..)
-  FloatTDCoord src( ((float)lay_fr->pos.x + .5f * (float)lay_fr->act_geom.x) / nv->max_size.x,
-		    ((float)lay_fr->pos.z+.5f) / nv->max_size.z,
-		    -((float)(lay_fr->pos.y + lay_fr->act_geom.y) / nv->max_size.y)
-		    );
+  FloatTDCoord src;		// source and dest coords
+  FloatTDCoord dst;
+
+  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  float lay_ht = T3LayerNode::height / max_xy;
+  float lay_wd = T3LayerNode::width / max_xy;
+
+  // y = network z coords -- same for all cases  (add .5f to z..)
+  src.y = ((float)lay_fr->pos.z+.5f) / nv->max_size.z;
+  dst.y = ((float)lay_to->pos.z+.5f) / nv->max_size.z;
+
+  // move above/below layer plane
+  if(src.y < dst.y) {
+    src.y += lay_ht; dst.y -= lay_ht;
+  }
+  else if(src.y > dst.y) {
+    src.y -= lay_ht; dst.y += lay_ht;
+  }
+  else {
+    src.y += lay_ht; dst.y += lay_ht;
+  }
+
+  if(nv->view_params.prjn_disp == NetViewParams::B_F) {
+    // origin is *back* center
+    src.x = ((float)lay_fr->pos.x + .5f * (float)lay_fr->act_geom.x) / nv->max_size.x;
+    src.z = -((float)(lay_fr->pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
+
+    // dest is *front* *center*
+    dst.x = ((float)lay_to->pos.x + .5f * (float)lay_to->act_geom.x) / nv->max_size.x;
+    dst.z = -((float)lay_to->pos.y / nv->max_size.y) + lay_wd;
+  }
+  else if(nv->view_params.prjn_disp == NetViewParams::L_R_F) { // easier to see
+    // origin is *front* left
+    src.x = ((float)lay_fr->pos.x) / nv->max_size.x + lay_wd;
+    src.z = -((float)(lay_fr->pos.y) / nv->max_size.y) + lay_wd;
+
+    // dest is *front* right
+    dst.x = ((float)lay_to->pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
+    dst.z = -((float)lay_to->pos.y / nv->max_size.y) + lay_wd;
+  }
+  else if(nv->view_params.prjn_disp == NetViewParams::L_R_B) { // out of the way
+    // origin is *back* left
+    src.x = ((float)lay_fr->pos.x) / nv->max_size.x + lay_wd;
+    src.z = -((float)(lay_fr->pos.y + lay_fr->act_geom.y) / nv->max_size.y) - lay_wd;
+
+    // dest is *back* right
+    dst.x = ((float)lay_to->pos.x + (float)lay_to->act_geom.x) / nv->max_size.x - lay_wd;
+    dst.z = -((float)(lay_to->pos.y  + lay_to->act_geom.y) / nv->max_size.y) - lay_wd;
+  }
+
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
-
-  // dest is the equally spaced target front on dest
-//   float rcv_num = (float)lay_to->projections.FindLeafEl(prjn) + 1.0f; // indent
-//   float tot_num = (float)lay_to->projections.leaves + 1.0f;
-//   float	x_spc = (float)lay_to->act_geom.x / tot_num;
-
-//   FloatTDCoord dst( ((float)lay_to->pos.x + rcv_num * x_spc) / nv->max_size.x,
-// 		    ((float)lay_to->pos.z+.5f) / nv->max_size.z,
-// 		    -((float)lay_to->pos.y / nv->max_size.y)
-// 		    );
-
-  // dest is *front* *center* -- keeps it clean
-  FloatTDCoord dst( ((float)lay_to->pos.x + .5f * (float)lay_to->act_geom.x) / nv->max_size.x,
-		    ((float)lay_to->pos.z+.5f) / nv->max_size.z,
-		    -((float)lay_to->pos.y / nv->max_size.y)
-		    );
-
   node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
 
   // caption location is half way
-  FloatTDCoord cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
-  node_so->setCaption(prjn->name.chars());
-  node_so->transformCaption(cap);
-  node_so->resizeCaption(nv->font_sizes.prjn);
+  if(nv->view_params.prjn_name) {
+    FloatTDCoord cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
+    node_so->setCaption(prjn->name.chars());
+    node_so->transformCaption(cap);
+    node_so->resizeCaption(nv->font_sizes.prjn);
+  }
 
   inherited::Render_impl();
 }
@@ -2062,16 +2093,28 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
-  lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
-  lblPrjnWdth->setToolTip("Width of projection lines -- .001 is default (very thin!) -- increase if editing projections so they are easier to select.");
-  layDispCheck->addWidget(lblPrjnWdth);
-  fldPrjnWdth = new taiField(&TA_float, NULL, NULL, widg);
-  layDispCheck->addWidget(fldPrjnWdth->GetRep());
-//   layDispCheck->addSpacing(taiM->hsep_c);
-  connect(fldPrjnWdth->rep(), SIGNAL(editingFinished()), this, SLOT(fldPrjnWdth_textChanged()) );
-
+  lblPrjnDisp = taiM->NewLabel("Prjn\nDisp", widg, font_spec);
+  lblPrjnDisp->setToolTip("How to display projections between layers:\n\
+L_R_F: Left = sender, Right = receiver, all arrows at the Front of the layer\n\
+L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
+B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
+  layDispCheck->addWidget(lblPrjnDisp);
+  cmbPrjnDisp = new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
+				NULL, NULL, widg);
+  connect(cmbPrjnDisp, SIGNAL(itemChanged(int)), this, SLOT(cmbPrjnDisp_itemChanged(int)) );
+  layDispCheck->addWidget(cmbPrjnDisp->GetRep());
+  layDispCheck->addStretch();
+  
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout(layViewParams);
+
+  lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
+  lblPrjnWdth->setToolTip("Width of projection lines -- .001 is default (very thin!) -- increase if editing projections so they are easier to select.");
+  layFontsEtc->addWidget(lblPrjnWdth);
+  fldPrjnWdth = new taiField(&TA_float, NULL, NULL, widg);
+  layFontsEtc->addWidget(fldPrjnWdth->GetRep());
+//   layDispCheck->addSpacing(taiM->hsep_c);
+  connect(fldPrjnWdth->rep(), SIGNAL(editingFinished()), this, SLOT(fldPrjnWdth_textChanged()) );
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
@@ -2184,24 +2227,6 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
   meth_but_mgr->Constr(nv()->net());
 
-
-/*obs  // add all base pdp commands -- you can add more in a derived constructor
-
-  butBuildAll = new QPushButton("Build", widCmdButtons);
-  AddCmdButton(butBuildAll);
-  connect(butBuildAll, SIGNAL(pressed()), this, SLOT(butBuildAll_pressed()) );
-  butBuildAll->setToolTip("Build Units in Network according to Layer configuration, and Connect them together according to Projection Specifications");
-
-//   butConnectAll = new QPushButton("ConnectAll", widCmdButtons);
-//   AddCmdButton(butConnectAll);
-//   connect(butConnectAll, SIGNAL(pressed()), this, SLOT(butConnectAll_pressed()) );
-
-  butNewLayer = new QPushButton("&New Layer", widCmdButtons);
-  AddCmdButton(butNewLayer);
-  connect(butNewLayer, SIGNAL(pressed()), this, SLOT(butNewLayer_pressed()) );
-*/
-//  layOuter->addStretch();
-
   setCentralWidget(widg);
 }
 
@@ -2211,6 +2236,7 @@ NetViewPanel::~NetViewPanel() {
     nv_->nvp = NULL;
   }
   if (cmbDispMode) {delete cmbDispMode; cmbDispMode = NULL;}
+  if (cmbPrjnDisp) {delete cmbPrjnDisp; cmbPrjnDisp = NULL;}
   if (cmbUnitText) {delete cmbUnitText; cmbUnitText = NULL;}
 }
 
@@ -2220,6 +2246,7 @@ void NetViewPanel::GetImage_impl() {
   cmbUnitText->GetImage(nv->unit_text_disp);
   cmbDispMode->GetImage(nv->unit_disp_mode);
   chkDisplay->setChecked(nv->display);
+  cmbPrjnDisp->GetImage(nv->view_params.prjn_disp);
   fldPrjnWdth->GetImage((String)nv->view_params.prjn_width);
 
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
@@ -2310,6 +2337,16 @@ void NetViewPanel::cmbDispMode_itemChanged(int itm) {
   nv_->Render();
 }
 
+void NetViewPanel::cmbPrjnDisp_itemChanged(int itm) {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+
+  if (nv_->view_params.prjn_disp == (NetViewParams::PrjnDisp)itm) return;
+  nv_->view_params.prjn_disp = (NetViewParams::PrjnDisp)itm;
+  nv_->UpdateDisplay(false);
+}
+
 void NetViewPanel::cmbUnitText_itemChanged(int itm) {
   if (updating) return;
   NetView* nv_;
@@ -2352,8 +2389,10 @@ void NetViewPanel::fldPrjnWdth_textChanged() {
   if (!(nv_ = nv())) return;
 
   nv_->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
-  nv_->UpdateDisplay(false);
-  // todo: seems to require a more signficant rebuild
+  // requires more complete redraw
+  nv_->Reset();
+  nv_->BuildAll();
+  nv_->Render();
 }
 
 void NetViewPanel::chkXYSquare_toggled(bool on) {

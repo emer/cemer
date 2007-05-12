@@ -372,6 +372,9 @@ private:
   void	Destroy()	{ };
 }; 
 
+/////////////////////////////////////////////////////////////////////////
+//		Data One Prog -- Basic Data operations (loop, var, etc)
+
 class TA_API DataOneProg : public ProgEl { 
   // #VIRT_BASE #NO_INSTANCE a program element for operations on one data table (virtual base class -- do not use)
 INHERITED(ProgEl)
@@ -379,6 +382,7 @@ public:
   ProgVarRef	    data_var;	// program variable pointing to data table for operation
 
   virtual DataTable* GetData();
+  // get actual data table pointer from variable
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataOneProg, Program);
@@ -389,6 +393,108 @@ private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
+
+class TA_API DataLoop: public Loop { 
+  // For any kind of data table: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data
+INHERITED(Loop)
+public:
+  enum Order {
+    SEQUENTIAL,			// present events in sequential order
+    PERMUTED,			// permute the order of event presentation
+    RANDOM 			// pick an event at random (with replacement)
+  };
+
+  ProgVarRef	data_var;	// program variable pointing to the data table to use
+  ProgVarRef	index_var;	// program variable for the index used in the loop -- goes from 0 to number of rows in data table-1
+  ProgVarRef	order_var;	// variable that contains the order to process data items (rows) in -- is automatically created if not set
+  Order		order;		// #READ_ONLY #SHOW order to process data items (rows) in -- set from order_var
+  int_Array	item_idx_list;	// #READ_ONLY list of item indicies (permuted if permuted, otherwise in sequential order)
+
+  virtual DataTable* GetData();
+  // get actual data table pointer from variable
+  virtual void	GetOrderVal();
+  // get order value from order_var variable
+
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataLoop, Program);
+protected:
+  virtual void	GetOrderVar(); // make an order variable in program if not already set
+  virtual void	GetIndexVar(); // make an index variable in program if not already set
+  override void	UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy() { CutLinks(); }
+};
+
+class TA_API DataVarProg : public DataOneProg { 
+  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables
+INHERITED(DataOneProg)
+public:
+  enum RowType {
+    CUR_ROW,			// use the current row (i.e., the last one added or specifically set by Read or Write operation)
+    ROW_NUM,			// row_var variable contains the row number to operate on
+    ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
+  };
+
+  bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
+  RowType	row_spec;	// how the row number within data table is specified
+  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW program variable containing information about which row to operate on (depends on row_spec for what this information is)
+
+  ProgVarRef	var_1;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_2;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_3;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_4;		// program variable to operate on -- name must match name of column in data table!
+
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataVarProg, Program);
+protected:
+  override void UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+
+  override const String	GenCssBody_impl(int indent_level);
+  virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
+			      const String& il);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+class TA_API AddNewDataRow: public DataOneProg { 
+  // add a new row to data table (just calls AddBlankRow() on data table var object)
+INHERITED(DataOneProg)
+public:
+  override String	GetDisplayName() const;
+  TA_BASEFUNS(AddNewDataRow);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+private:
+  void	Initialize();
+  void	Destroy()	{ }
+}; 
+
+class TA_API DoneWritingDataRow: public DataOneProg { 
+  // add this after you are done writing everything to the current row of the data table, and it will update displays and write to log files, etc (just calls WriteClose() on data table var object)
+INHERITED(DataOneProg)
+public:
+  override String	GetDisplayName() const;
+  TA_BASEFUNS(DoneWritingDataRow);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+private:
+  void	Initialize();
+  void	Destroy()	{ }
+}; 
+
+
+/////////////////////////////////////////////////////////////////////////
+//	Data Proc Programs -- Src Dest Tables for major proc ops
 
 class TA_API DataSrcDestProg : public ProgEl { 
   // #VIRT_BASE #NO_INSTANCE a program element for data operations involving a source and destination (virtual base class -- do not use)
@@ -692,65 +798,5 @@ private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
-
-class TA_API DataVarProg : public DataOneProg { 
-  // A program element for exchanging information between program variables and data table values in columns with the same names as the variables
-INHERITED(DataOneProg)
-public:
-  enum RowType {
-    CUR_ROW,			// use the current row (i.e., the last one added or specifically set by Read or Write operation)
-    ROW_NUM,			// row_var variable contains the row number to operate on
-    ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
-  };
-
-  bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
-  RowType	row_spec;	// how the row number within data table is specified
-  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW program variable containing information about which row to operate on (depends on row_spec for what this information is)
-
-  ProgVarRef	var_1;		// program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_2;		// program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_3;		// program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_4;		// program variable to operate on -- name must match name of column in data table!
-
-  override String	GetDisplayName() const;
-
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataVarProg, Program);
-protected:
-  override void UpdateAfterEdit_impl();
-  override void	CheckThisConfig_impl(bool quiet, bool& rval);
-
-  override const String	GenCssBody_impl(int indent_level);
-  virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
-			      const String& il);
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class TA_API AddNewDataRow: public DataOneProg { 
-  // add a new row to data table (just calls AddBlankRow() on data table var object)
-INHERITED(DataOneProg)
-public:
-  override String	GetDisplayName() const;
-  TA_BASEFUNS(AddNewDataRow);
-protected:
-  override const String	GenCssBody_impl(int indent_level);
-private:
-  void	Initialize();
-  void	Destroy()	{ }
-}; 
-
-class TA_API DoneWritingDataRow: public DataOneProg { 
-  // add this after you are done writing everything to the current row of the data table, and it will update displays and write to log files, etc (just calls WriteClose() on data table var object)
-INHERITED(DataOneProg)
-public:
-  override String	GetDisplayName() const;
-  TA_BASEFUNS(DoneWritingDataRow);
-protected:
-  override const String	GenCssBody_impl(int indent_level);
-private:
-  void	Initialize();
-  void	Destroy()	{ }
-}; 
 
 #endif // ta_dataproc_h

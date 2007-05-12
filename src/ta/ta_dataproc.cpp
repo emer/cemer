@@ -1135,7 +1135,8 @@ void DataProcCall::Initialize() {
   object_type = &TA_taDataProc;
 }
 
-///////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //		Data One
 
 void DataOneProg::Initialize() {
@@ -1162,8 +1163,250 @@ DataTable* DataOneProg::GetData() {
   return (DataTable*)data_var->object_val.ptr();
 }
 
+//////////////////////////
+//      DataLoop	//
+//////////////////////////
 
-///////////////////////////////////////////////
+void DataLoop::Initialize() {
+  order = SEQUENTIAL;
+}
+
+DataTable* DataLoop::GetData() {
+  if(!data_var) return NULL;
+  if(data_var->object_type != &TA_DataTable) return NULL;
+  return (DataTable*)data_var->object_val.ptr();
+}
+
+void DataLoop::GetOrderVar() {
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!order_var) {
+    if(!(order_var = my_prog->vars.FindName("data_loop_order"))) {
+      order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      order_var->name = "data_loop_order";
+      order_var->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+  order_var->var_type = ProgVar::T_HardEnum;
+  order_var->hard_enum_type = TA_DataLoop.sub_types.FindName("Order");
+  order = (Order)order_var->int_val;
+}
+
+void DataLoop::GetIndexVar() {
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!index_var) {
+    if(!(index_var = my_prog->vars.FindName("data_loop_index"))) {
+      index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      index_var->name = "data_loop_index";
+      index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
+      index_var->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+  index_var->var_type = ProgVar::T_Int;
+}
+
+void DataLoop::GetOrderVal() {
+  if(!order_var) GetOrderVar();
+  else order = (Order)order_var->int_val;
+}
+
+void DataLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
+  UpdateProgVarRef_NewOwner(data_var);
+  UpdateProgVarRef_NewOwner(index_var);
+  UpdateProgVarRef_NewOwner(order_var);
+  GetOrderVar();
+  GetIndexVar();
+}
+
+void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!data_var, quiet, rval,  "data_var = NULL");
+  CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
+  CheckError(!index_var, quiet, rval, "index_var = NULL");
+  CheckError(!order_var, quiet, rval, "order_var = NULL");
+  CheckProgVarRef(data_var, quiet, rval);
+  CheckProgVarRef(index_var, quiet, rval);
+  CheckProgVarRef(order_var, quiet, rval);
+}
+
+const String DataLoop::GenCssPre_impl(int indent_level) {
+  String id1 = cssMisc::Indent(indent_level+1);
+  String id2 = cssMisc::Indent(indent_level+2);
+  String id3 = cssMisc::Indent(indent_level+3);
+  if(!data_var || !index_var) return id1 + "// DataLoop ERROR vars not set!";
+  String data_nm = data_var->name;
+  String idx_nm = index_var->name;
+
+  String rval = cssMisc::Indent(indent_level) + "{ // DataLoop " + data_nm + "\n";
+  rval += id1 + "DataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
+  rval += id1 + "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value\n";
+  rval += id1 + "data_loop->item_idx_list.SetSize(" + data_nm + "->ItemCount());\n";
+  rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
+  rval += id1 + "if(data_loop->order == DataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
+  rval += id1 + "for(" + idx_nm + " = 0; " + idx_nm + " < " + data_nm + "->ItemCount(); "
+    + idx_nm + "++) {\n";
+  rval += id2 + "int data_row_idx;\n";
+  rval += id2 + "if(data_loop->order == DataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
+  rval += id2 + "else\n";
+  rval += id3 + "data_row_idx = data_loop->item_idx_list[" + idx_nm + "];\n";
+  rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break; // set read index\n";
+  rval += id2 + "if(!" + data_nm + "->WriteItem(data_row_idx)) break; // set write index too\n";
+  return rval;
+}
+
+const String DataLoop::GenCssBody_impl(int indent_level) {
+  return loop_code.GenCss(indent_level + 2);
+}
+
+const String DataLoop::GenCssPost_impl(int indent_level) {
+  String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
+  rval += cssMisc::Indent(indent_level) + "} // DataLoop " + data_var->name + "\n";
+  return rval;
+}
+
+String DataLoop::GetDisplayName() const {
+  String ord_str = GetTypeDef()->GetEnumString("Order", order);
+  String data_nm;
+  if(data_var) data_nm = data_var->name;
+  else data_nm = "ERROR: data_var not set!";
+  return "DataTable Loop (" + ord_str + " over: " + data_nm + ")";
+}
+
+
+///////////////////////////////////////////////////////
+//		DataVarProg
+///////////////////////////////////////////////////////
+
+
+void DataVarProg::Initialize() {
+  row_spec = CUR_ROW;
+  set_data = false;
+}
+
+void DataVarProg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  UpdateProgVarRef_NewOwner(row_var);
+  UpdateProgVarRef_NewOwner(var_1);
+  UpdateProgVarRef_NewOwner(var_2);
+  UpdateProgVarRef_NewOwner(var_3);
+  UpdateProgVarRef_NewOwner(var_4);
+}
+
+void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckProgVarRef(row_var, quiet, rval);
+  CheckProgVarRef(var_1, quiet, rval);
+  CheckProgVarRef(var_2, quiet, rval);
+  CheckProgVarRef(var_3, quiet, rval);
+  CheckProgVarRef(var_4, quiet, rval);
+}
+
+String DataVarProg::GetDisplayName() const {
+  String rval;
+  if(set_data)
+    rval = "Set Data To: ";
+  else
+    rval = "Get Data Fm: ";
+  if(data_var)
+    rval += data_var->name;
+  else
+    rval += "(ERROR: data_var not set!)";
+  if(set_data)
+    rval = " Fm Vars: ";
+  else
+    rval = " To Vars: ";
+  if(var_1) rval += var_1->name + " ";
+  if(var_2) rval += var_2->name + " ";
+  if(var_3) rval += var_3->name + " ";
+  if(var_4) rval += var_4->name + " ";
+  return rval;
+}
+
+bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
+				const String& il) {
+  if(!var) return false;
+  if(row_spec == CUR_ROW) {
+    if(set_data)
+      rval +=  il + idnm + ".SetDataByName(" + var->name + ", \"" + var->name +"\");\n";
+    else
+      rval += il + var->name + " = GetDataByName(\"" + var->name + "\");\n";
+  }
+  else if(row_spec == ROW_NUM) {
+    if(set_data)
+      rval +=  il + idnm + ".SetValColName(" + var->name + ", \"" + var->name +"\", "
+	+ row_var->name + ");\n";
+    else 
+      rval += il + var->name + " = GetValColName(\"" + var->name + "\", "
+	+ row_var->name + ");\n";
+  }
+  else if(row_spec == ROW_VAL) {
+    if(set_data)
+      rval +=  il + idnm + ".SetValColRowName(" + var->name + ", \"" + var->name+ "\", \""
+	+ row_var->name + "\", " + row_var->name + ");\n";
+    else 
+      rval += il + var->name + " = GetValColRowName(\"" + var->name +"\", \""
+	+ row_var->name + "\", " + row_var->name + ");\n";
+  }
+  return true;
+}
+
+const String DataVarProg::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  String idnm = data_var->name;
+  String rval;
+  rval += il + "// " + GetDisplayName() + "\n";
+  GenCss_OneVar(rval, var_1, idnm, il);
+  GenCss_OneVar(rval, var_2, idnm, il);
+  GenCss_OneVar(rval, var_3, idnm, il);
+  GenCss_OneVar(rval, var_4, idnm, il);
+  return rval;
+}
+
+///////////////////////////////////////////
+//		Add New Data Row
+
+void AddNewDataRow::Initialize() {
+}
+
+String AddNewDataRow::GetDisplayName() const {
+  String rval = "AddNewDataRow to: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+const String AddNewDataRow::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  return il + data_var->name + ".AddBlankRow();\n";
+}
+
+/////////////
+
+void DoneWritingDataRow::Initialize() {
+}
+
+String DoneWritingDataRow::GetDisplayName() const {
+  String rval = "DoneWritingDataRow to: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+const String DoneWritingDataRow::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  return il + data_var->name + ".WriteClose();\n";
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 //		Src Dest
 
 void DataSrcDestProg::Initialize() {
@@ -2015,133 +2258,5 @@ const String DataCalcCopyCommonCols::GenCssBody_impl(int indent_level) {
     rval += il + "taDataProc::CopyCommonColsRow(" + dcl->dest_data_var->name + ", " + 
       dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);\n";
   return rval;
-}
-
-///////////////////////////////////////////////////////
-//		DataVarProg
-///////////////////////////////////////////////////////
-
-
-void DataVarProg::Initialize() {
-  row_spec = CUR_ROW;
-  set_data = false;
-}
-
-void DataVarProg::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-
-  UpdateProgVarRef_NewOwner(row_var);
-  UpdateProgVarRef_NewOwner(var_1);
-  UpdateProgVarRef_NewOwner(var_2);
-  UpdateProgVarRef_NewOwner(var_3);
-  UpdateProgVarRef_NewOwner(var_4);
-}
-
-void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckProgVarRef(row_var, quiet, rval);
-  CheckProgVarRef(var_1, quiet, rval);
-  CheckProgVarRef(var_2, quiet, rval);
-  CheckProgVarRef(var_3, quiet, rval);
-  CheckProgVarRef(var_4, quiet, rval);
-}
-
-String DataVarProg::GetDisplayName() const {
-  String rval;
-  if(set_data)
-    rval = "Set Data To: ";
-  else
-    rval = "Get Data Fm: ";
-  if(data_var)
-    rval += data_var->name;
-  else
-    rval += "(ERROR: data_var not set!)";
-  if(set_data)
-    rval = " Fm Vars: ";
-  else
-    rval = " To Vars: ";
-  if(var_1) rval += var_1->name + " ";
-  if(var_2) rval += var_2->name + " ";
-  if(var_3) rval += var_3->name + " ";
-  if(var_4) rval += var_4->name + " ";
-  return rval;
-}
-
-bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
-				const String& il) {
-  if(!var) return false;
-  if(row_spec == CUR_ROW) {
-    if(set_data)
-      rval +=  il + idnm + ".SetDataByName(" + var->name + ", \"" + var->name +"\");\n";
-    else
-      rval += il + var->name + " = GetDataByName(\"" + var->name + "\");\n";
-  }
-  else if(row_spec == ROW_NUM) {
-    if(set_data)
-      rval +=  il + idnm + ".SetValColName(" + var->name + ", \"" + var->name +"\", "
-	+ row_var->name + ");\n";
-    else 
-      rval += il + var->name + " = GetValColName(\"" + var->name + "\", "
-	+ row_var->name + ");\n";
-  }
-  else if(row_spec == ROW_VAL) {
-    if(set_data)
-      rval +=  il + idnm + ".SetValColRowName(" + var->name + ", \"" + var->name+ "\", \""
-	+ row_var->name + "\", " + row_var->name + ");\n";
-    else 
-      rval += il + var->name + " = GetValColRowName(\"" + var->name +"\", \""
-	+ row_var->name + "\", " + row_var->name + ");\n";
-  }
-  return true;
-}
-
-const String DataVarProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  String idnm = data_var->name;
-  String rval;
-  rval += il + "// " + GetDisplayName() + "\n";
-  GenCss_OneVar(rval, var_1, idnm, il);
-  GenCss_OneVar(rval, var_2, idnm, il);
-  GenCss_OneVar(rval, var_3, idnm, il);
-  GenCss_OneVar(rval, var_4, idnm, il);
-  return rval;
-}
-
-///////////////////////////////////////////
-//		Add New Data Row
-
-void AddNewDataRow::Initialize() {
-}
-
-String AddNewDataRow::GetDisplayName() const {
-  String rval = "AddNewDataRow to: ";
-  if(data_var) rval += data_var->name;
-  else rval += "(ERROR: data_var not set!)";
-  return rval;
-}
-
-const String AddNewDataRow::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  return il + data_var->name + ".AddBlankRow();\n";
-}
-
-/////////////
-
-void DoneWritingDataRow::Initialize() {
-}
-
-String DoneWritingDataRow::GetDisplayName() const {
-  String rval = "DoneWritingDataRow to: ";
-  if(data_var) rval += data_var->name;
-  else rval += "(ERROR: data_var not set!)";
-  return rval;
-}
-
-const String DoneWritingDataRow::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  return il + data_var->name + ".WriteClose();\n";
 }
 

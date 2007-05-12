@@ -466,6 +466,8 @@ public:
   taiComboBox*		    cmbUnitText;
   QLabel*		    lblDispMode;
   taiComboBox*		    cmbDispMode;
+  QLabel*		    lblPrjnDisp;
+  taiComboBox*		    cmbPrjnDisp;
   QLabel*		    lblPrjnWdth;
   taiField*		    fldPrjnWdth;
 
@@ -533,6 +535,7 @@ protected slots:
   virtual void 		chkDisplay_toggled(bool on);
   virtual void 		cmbUnitText_itemChanged(int itm);
   virtual void 		cmbDispMode_itemChanged(int itm);
+  virtual void 		cmbPrjnDisp_itemChanged(int itm);
   virtual void 		fldPrjnWdth_textChanged();
 
   virtual void 		fldUnitTrans_textChanged();

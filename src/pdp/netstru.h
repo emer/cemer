@@ -1552,19 +1552,27 @@ class PDP_API NetViewParams : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
 INHERITED(taBase)
 public:
-  bool	xy_square;	// keep the x and y dimensions of the network square (same) -- makes the units square
-  float	unit_spacing;	// #DEF_0.05 spacing between units (as a proportion of total space available to render the unit)
-  float	prjn_width;	// #DEF_0.002 width of the projection arrows
-  float	prjn_trans;	// #DEF_0.5 transparency of the projection arrows
-  float	lay_trans;	// #DEF_0.5 transparency of the layer border
-  float	unit_trans;	// #DEF_0.6 transparency of the units
+  enum PrjnDisp {		// how to display projections
+    L_R_F,			// all in front: sender is at left of layer, receiver is right
+    L_R_B,			// all in back: sender is at left of layer, receiver is right
+    B_F,			// sender is at back of layer, receiver is front
+  };
+
+  bool		xy_square;	// keep the x and y dimensions of the network square (same) -- makes the units square
+  float		unit_spacing;	// #DEF_0.05 spacing between units (as a proportion of total space available to render the unit)
+  PrjnDisp	prjn_disp;	// how to arrange projection arrows to convey sender/receiver info
+  bool		prjn_name;	// #DEF_false whether to display the projection name
+  float		prjn_width;	// #DEF_0.002 width of the projection arrows
+  float		prjn_trans;	// #DEF_0.5 transparency of the projection arrows
+  float		lay_trans;	// #DEF_0.5 transparency of the layer border
+  float		unit_trans;	// #DEF_0.6 transparency of the units
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
+  TA_SIMPLE_BASEFUNS(NetViewParams);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  SIMPLE_COPY(NetViewParams);
-  TA_BASEFUNS(NetViewParams);
 };
 
 
@@ -1693,10 +1701,7 @@ public:
   virtual int	GetDefaultX();  // #IGNORE 
   virtual int	GetDefaultY();  // #IGNORE
   virtual int	GetDefaultZ();  // #IGNORE
-#ifdef TA_GUI
-  virtual void	ShowInViewer(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #BUTTON #CAT_Display open a viewer on this network (NULL=use blank if any, else make new frame)
-#endif
+
   virtual void	Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
   virtual void	SaveWeights_strm(ostream& strm, WtSaveFormat fmt = NET_FMT);
@@ -1723,7 +1728,7 @@ public:
   virtual void	UpdtAfterNetMod();
   // #CAT_ObjectMgmt update network after any network modification (calls appropriate functions)
   virtual void	SetUnitType(TypeDef* td);
-  // #BUTTON #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
+  // #MENU #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
 
   virtual void	SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
@@ -1750,12 +1755,20 @@ public:
   virtual void	FixPrjnIndexes();
   // #CAT_Structure fix the projection indicies of the connection groups (recv_idx, send_idx)
 
+  virtual Layer* NewLayer();
+  // #BUTTON create a new layer in the network, using default layer type
+
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
   virtual void	RemoveMonitors();
   // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
   virtual void	UpdateMonitors();
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
+
+#ifdef TA_GUI
+  virtual void	ShowInViewer(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #BUTTON #CAT_Display open a viewer on this network (NULL=use blank if any, else make new frame)
+#endif
 
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs

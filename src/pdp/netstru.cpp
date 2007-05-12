@@ -4187,6 +4187,8 @@ void NetViewFontSizes::Initialize() {
 void NetViewParams::Initialize() {
   xy_square = false;
   unit_spacing = .05f;
+  prjn_disp = L_R_F;
+  prjn_name = false;
   prjn_width = .002f;
   prjn_trans = .5f;
   lay_trans = .5f;
@@ -4632,6 +4634,11 @@ void Network::ShowInViewer(T3DataViewFrame* fr) {
   fr->Render();
 }
 #endif
+
+Layer* Network::NewLayer() {
+  return layers.NewEl(1);
+}
+
 void Network::RemoveUnits() {
   taMisc::Busy();
   StructUpdate(true);
