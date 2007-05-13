@@ -190,13 +190,15 @@ bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
 	       "EPS (encapsulated postscript) not supported for this type of view"))
     return false;
   bool rval = false;
-  String ext = String(".") + image_exts.SafeEl(img_fmt);
-  taFiler* flr = GetSaveFiler(fname, ext);
+  String ext = image_exts.SafeEl(img_fmt);
+  String fext = String(".") + ext; // filer needs .
+  taFiler* flr = GetSaveFiler(fname, fext);
   if(flr->ostrm) {
     QPixmap pix = GrabImage(rval);
     if(rval) {
       flr->Close();
       pix.save(flr->fileName(), ext, taMisc::jpeg_quality);
+      cerr << "Saving image of size: " << pix.width() << " x " << pix.height() << " depth: " << pix.depth() << " to: " << flr->fileName() << endl;
     }
   }
   flr->Close();

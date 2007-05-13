@@ -1093,6 +1093,10 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& trans = dragger->translation.getValue();
   float new_x = trans[0] * nv->max_size.x;
   float new_y = trans[1] * nv->max_size.y;
+  if(new_x < 0.0f) 	new_x -= .5f; // add an offset to effect rounding.
+  else			new_x += .5f;
+  if(new_y < 0.0f) 	new_y -= .5f;
+  else			new_y += .5f;
 
 //   cerr << "lay: " << lay->name << " " << trans[0] << " " << trans[1] << " drg: " <<
 //     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
@@ -1118,10 +1122,10 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
 
-  float max_z = nv->max_size.z;
-
   const SbVec3f& trans = dragger->translation.getValue();
-  float new_z = trans[0] * max_z;
+  float new_z = trans[0] * nv->max_size.z;
+  if(new_z < 0.0f)	new_z -= .5f;
+  else			new_z += .5f;
 
 //   cerr << "lay: " << lay->name << " z:" << trans[0] << " new_z: " << new_z << endl;
 
@@ -1153,22 +1157,27 @@ void PrjnView::Destroy() {
 void PrjnView::DoHighlightColor(bool apply) {
   T3PrjnNode* nd = node_so();
   if (!nd) return;
-  
   NetView* nv = this->nv();
+  Projection* prjn = this->prjn(); // cache
+  float prjn_trans = nv->view_params.prjn_trans;
+  if(!prjn->projected)
+    prjn_trans = .8f;
+  
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
     mat->transparency.setValue(0.0f);
   } else {
-    mat->diffuseColor.setValue(SbColor(1, 1, 1)); // white
-    mat->transparency.setValue(nv->view_params.prjn_trans);
+    mat->diffuseColor.setValue(SbColor(1.0f, .9f, .5f)); // very light orange
+    mat->transparency.setValue(prjn_trans);
   }
-  nd->setArrowColor(SbColor(1.0f, .8f, 0.0f), nv->view_params.prjn_trans);
+  nd->setArrowColor(SbColor(1.0f, .8f, 0.0f), prjn_trans);
 } 
 
 void PrjnView::Render_pre() {
   NetView* nv = this->nv();
-  m_node_so = new T3PrjnNode(this, nv->view_params.prjn_width);
+  Projection* prjn = this->prjn(); // cache
+  m_node_so = new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width);
   DoHighlightColor(false);
   inherited::Render_pre();
 }
@@ -1182,6 +1191,8 @@ void PrjnView::Render_impl() {
   Projection* prjn = this->prjn(); // cache
   Layer* lay_fr = prjn->from;
   Layer* lay_to = prjn->layer;
+
+  if(lay_fr == NULL) lay_fr = lay_to;
 
   FloatTDCoord src;		// source and dest coords
   FloatTDCoord dst;
@@ -1292,6 +1303,12 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   nv->font_sizes = net->font_sizes;
   nv->view_params = net->view_params;
   fr->AddView(nv);
+
+  // make sure we've got it all rendered:
+  nv->BuildAll();
+  fr->Render();
+  fr->ViewAll();
+  fr->GetCameraPosOrient();
   return nv;
 }
 

@@ -260,17 +260,11 @@ bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
 //////////////////////////
 
 void DataTable::NewGridView(T3DataViewFrame* fr) {
-  GridTableView* vw = GridTableView::New(this, fr);
-  if (!vw) return;
-  vw->BuildAll();
-  fr->Render();
+  GridTableView::New(this, fr);
 }
 
 void DataTable::NewGraphView(T3DataViewFrame* fr) {
-  GraphTableView* vw = GraphTableView::New(this, fr);
-  if (!vw) return;
-  vw->BuildAll();
-  fr->Render();
+  GraphTableView::New(this, fr);
 }
 
 
@@ -899,6 +893,11 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   GridTableView* vw = new GridTableView;
   fr->AddView(vw);
   vw->setDataTable(dt);
+  // make sure we get it all setup!
+  vw->BuildAll();
+  fr->Render();
+  fr->ViewAll();
+  fr->GetCameraPosOrient();
   return vw;
 }
 
@@ -2880,6 +2879,11 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   GraphTableView* vw = new GraphTableView;
   fr->AddView(vw);
   vw->setDataTable(dt);
+  // make sure we get it all setup!
+  vw->BuildAll();
+  fr->Render();
+  fr->ViewAll();
+  fr->GetCameraPosOrient();
   return vw;
 }
 

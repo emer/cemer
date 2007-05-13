@@ -1029,14 +1029,17 @@ protected:
 };
 
 class PDP_API Projection_Group: public taGroup<Projection> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network 
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network group of projections
 INHERITED(taGroup<Projection>)
 public:
+  bool	send_prjns;	// #NO_SAVE #HIDDEN if true, this is a sending projection group which is just links
+  
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
-  void	Initialize() 		{ SetBaseType(&TA_Projection); }
+  void	Initialize() 		{ SetBaseType(&TA_Projection); send_prjns = false; }
   void 	Destroy()		{ };
-  TA_BASEFUNS_NOCOPY(Projection_Group);
+  void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  TA_SIMPLE_BASEFUNS(Projection_Group);
 };
 
 //////////////////////////////////////////////////////////

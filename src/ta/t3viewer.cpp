@@ -1469,11 +1469,14 @@ QPixmap T3DataViewFrame::GrabImage(bool& got_image) {
 //   return QPixmap::grabWindow(winwidg->winId(), (int)fabsf(off.x()), (int)fabsf(off.y()),
 // 			     (int)widget()->width(), (int)widget()->height());
   SoQtViewer* viewer = widget()->ra();
-  if(!viewer) return QPixmap();
+  if(TestError(!viewer, "GrabImage", "viewer is NULL!")) return QPixmap();
   QGLWidget* qglw = (QGLWidget*)viewer->getGLWidget();
   // renderPixmap did not work -- returned a black screen -- something about InitGL..
-  got_image = true;
   QImage img = qglw->grabFrameBuffer(false); // todo: try true?
+  if(TestError(img.isNull(), "GrabImage", "got a null image from grabFrameBuffer call!"))
+    return QPixmap();
+  got_image = true;
+//   cerr << "Grabbed image of size: " << img.width() << " x " << img.height() << " depth: " << img.depth() << endl;
   return QPixmap::fromImage(img);     // more costly but works!
 }
 

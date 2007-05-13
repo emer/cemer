@@ -1949,6 +1949,8 @@ int SoScrollBar::getValFmPos(float pos) {
   float val = pos * (float)(range + pageStep_); // scrollable range
 //   cerr << "getval val: " << val << " range: " << range << " ps: " << pageStep_
 //        << " pos: " << pos << endl;
+  if(val < 0.0f) val -= .5f;	// effect rounding
+  else		 val += .5f;
   return (int)val;
 }
 
@@ -2042,7 +2044,7 @@ void SoScrollBar::DraggingCB(SoTranslate1Dragger* dragger) {
 
 void SoScrollBar::DragFinishCB(SoTranslate1Dragger* dragger) {
   SbVec3f trans = dragger->translation.getValue();
-  
+
   int incr = getValFmPos(trans[0]);
 
 //   cerr << "finish trans: " << trans[0] << " incr: " << incr << endl;

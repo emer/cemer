@@ -38,6 +38,7 @@ class SoVertexProperty;		 // #IGNORE
 class SoTranslate2Dragger; // #IGNORE
 class SoTransformBoxDragger; // #IGNORE
 class SoCalculator; // #IGNORE
+class SoComplexity; // #IGNORE
 
 // forwards
 class T3UnitNode;
@@ -309,10 +310,12 @@ public:
   void		setArrowColor(const SbColor& clr, float transp);
   // set arrow color
 
-  T3PrjnNode(void* dataView_ = NULL, float rad = .01f);
+  T3PrjnNode(void* dataView_ = NULL, bool projected = true, float rad = .01f);
 
 protected:
+  bool			projected_;
   float			radius;
+  SoComplexity*		complexity;
   SoTransform*		trln_prjn; // #IGNORE
   SoTransform*		rot_prjn; // #IGNORE
   SoTransform*		trln_arr; // #IGNORE

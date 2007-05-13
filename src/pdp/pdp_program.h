@@ -106,7 +106,7 @@ public:
   void	ChangeToNetDataLoop();
   // #BUTTON -- this will change me to a NetDataLoop object -- do this!!
 
-  TA_BASEFUNS(BasicDataLoop);
+  TA_BASEFUNS_NOCOPY(BasicDataLoop);
 protected:
   override void	UpdateAfterEdit_impl();
 private:
@@ -121,7 +121,7 @@ public:
   void	ChangeToNetGroupedDataLoop();
   // #BUTTON -- this will change me to a NetGroupedDataLoop object -- do this!!
 
-  TA_BASEFUNS(GroupedDataLoop);
+  TA_BASEFUNS_NOCOPY(GroupedDataLoop);
 protected:
   override void	UpdateAfterEdit_impl();
 private:

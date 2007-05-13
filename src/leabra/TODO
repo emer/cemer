@@ -2,24 +2,8 @@ leabra todo list:
 
 commit:
 
-* BasicDataLoop -> NetDataLoop, which subclasses DataLoop -- need to convert existing
-LeabraEpoch programs to use NetDataLoop -- there is a button you just click on and it does 
-it for you.  Then, touch the guy (put something in desc) and Apply to get new 
-data_loop_index variable in .vars.  Then, need to fix UserScript just inside loop to
-refer to this data_loop_index insted of list_idx.  Sorry for all the hassle!  If you 
-have a standard set of programs, you can just do LoadFromProgLib on the LeabraEpoch
-and you'll get the updated stuff.  Similar actions needed for GroupedDataLoop ->
-NetGroupedDataLoop
-
-* also added new prjn display option per Brad's suggestion (all in frontal plane, L-R)
-
-* various other minor fixes. 
-
 ------------
 current:
-
-* snapshot not working!
-* new network not showing in view all (ticket)
 
 == Netview:
 

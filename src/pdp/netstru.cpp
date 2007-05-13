@@ -3085,6 +3085,20 @@ bool Unit_Group::Dump_QuerySaveChildren() {
 }
 
 ////////////////////////
+//  Projection_Group  //
+////////////////////////
+
+void Projection_Group::DataChanged(int dcr, void* op1, void* op2) {
+  inherited::DataChanged(dcr, op1, op2);
+  if(send_prjns) return;
+  if (dcr == DCR_LIST_ITEM_INSERT) {
+    Network* net = GET_MY_OWNER(Network);
+    if (net) 
+      net->RebuildAllViews();
+  }
+}
+
+////////////////////////
 //	Layer	      //
 ////////////////////////
 
@@ -3109,6 +3123,7 @@ void Layer::Initialize() {
   unit_groups = false;
   gp_spc.x = 1;  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
+  send_prjns.send_prjns = true;
   units.SetBaseType(&TA_Unit);
   ext_flag = Unit::NO_EXTERNAL;
   act_geom = un_geom;
@@ -4628,10 +4643,7 @@ void Network::LinkSendCons() {
 
 #ifdef TA_GUI
 void Network::ShowInViewer(T3DataViewFrame* fr) {
-  NetView* nv = NetView::New(this, fr);
-  if (!nv) return;
-  nv->BuildAll();
-  fr->Render();
+  NetView::New(this, fr);
 }
 #endif
 

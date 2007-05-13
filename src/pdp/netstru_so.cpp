@@ -32,6 +32,7 @@
 #include <Inventor/nodes/SoCallback.h>
 #include <Inventor/nodes/SoCone.h>
 #include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoCylinder.h>
 //#include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoDrawStyle.h>
@@ -498,10 +499,11 @@ void T3PrjnNode::initClass()
   SO_NODE_INIT_CLASS(T3PrjnNode, T3NodeParent, "T3NodeParent");
 }
 
-T3PrjnNode::T3PrjnNode(void* dataView_, float rad)
+T3PrjnNode::T3PrjnNode(void* dataView_, bool proj, float rad)
 :inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3PrjnNode);
+  projected_ = proj;
   radius = rad;
   init();
 }
@@ -518,6 +520,10 @@ T3PrjnNode::~T3PrjnNode()
 void T3PrjnNode::init() {
   SoSeparator* ss = shapeSeparator();
 
+  complexity = new SoComplexity;
+  //  complexit->type = SoComplexity::SCREEN_SPACE;
+  complexity->value.setValue(.1f); // don't need much..
+
   rot_prjn = new SoTransform();
   ss->addChild(rot_prjn);
   trln_prjn = new SoTransform();
@@ -533,7 +539,10 @@ void T3PrjnNode::init() {
   arr_mat = new SoMaterial;
   // overwritten in qtso..
   arr_mat->diffuseColor.setValue(SbColor(1.0f, .8f, 0.0f)); // orange
-  arr_mat->transparency.setValue(.5f);			    // 
+  if(projected_)
+    arr_mat->transparency.setValue(.5f);
+  else
+    arr_mat->transparency.setValue(.8f);
   ss->addChild(arr_mat);
 
   arr_prjn = new SoCone();

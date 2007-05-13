@@ -471,7 +471,7 @@ class TA_API AddNewDataRow: public DataOneProg {
 INHERITED(DataOneProg)
 public:
   override String	GetDisplayName() const;
-  TA_BASEFUNS(AddNewDataRow);
+  TA_BASEFUNS_NOCOPY(AddNewDataRow);
 protected:
   override const String	GenCssBody_impl(int indent_level);
 private:
@@ -484,7 +484,7 @@ class TA_API DoneWritingDataRow: public DataOneProg {
 INHERITED(DataOneProg)
 public:
   override String	GetDisplayName() const;
-  TA_BASEFUNS(DoneWritingDataRow);
+  TA_BASEFUNS_NOCOPY(DoneWritingDataRow);
 protected:
   override const String	GenCssBody_impl(int indent_level);
 private:
