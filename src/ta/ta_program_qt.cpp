@@ -853,7 +853,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ////////////////////////////////////////////////////////////////////////////
   //		Data processing
   sec = tb->AssertSection("Data"); //note: need to keep it short
-  // todo: add DataLoop
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data loop",
+    tabMisc::root->GetTemplateInstance(&TA_DataLoop)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("new row",
     tabMisc::root->GetTemplateInstance(&TA_AddNewDataRow)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("row done",

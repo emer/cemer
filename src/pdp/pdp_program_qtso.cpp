@@ -21,11 +21,6 @@
 
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data loop",
-    tabMisc::root->GetTemplateInstance(&TA_BasicDataLoop)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("gp data lp",
-    tabMisc::root->GetTemplateInstance(&TA_GroupedDataLoop)));
-  tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("init nm units",
     tabMisc::root->GetTemplateInstance(&TA_InitNamedUnits)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("set units lit",
@@ -39,6 +34,11 @@ void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_NetCounterIncr)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("net updt view",
     tabMisc::root->GetTemplateInstance(&TA_NetCounterIncr)));
+  tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data loop",
+    tabMisc::root->GetTemplateInstance(&TA_NetDataLoop)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("gp data lp",
+    tabMisc::root->GetTemplateInstance(&TA_NetGroupedDataLoop)));
 }
 
 ToolBoxRegistrar pdp_ptb(PDPProgramToolBoxProc);

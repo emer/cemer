@@ -36,8 +36,6 @@ current:
 
 == Misc
 
-* project display needs update after loading: filename is not there..
-
 * CHECK: add DataUpdate brackets in Filter op -- still doesn't fix problem!
 
 == Graph
@@ -62,12 +60,6 @@ current:
 
 -----------
 check:
-
-* check uae on progel paste
-
-* #288: profile check on editing a datatable and then clicking away, for
-  sub-rasa updates do dialog -- seems slower after clicking around
-  (confirmed).  maybe net too?  STILL NEED THIS -- THIS IS HAPPENING!
 
 ------------------
 Program issues
