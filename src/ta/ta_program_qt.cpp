@@ -213,6 +213,7 @@ void iProgramEditor::Init() {
   layOuter->addWidget(items, 1); // it gets the room
   items->setColumnCount(3);
   items->setSortingEnabled(false);// only 1 order possible
+  items->setSelectionMode(QAbstractItemView::ExtendedSelection);
   items->setHeaderText(0, "Program Item");
   items->setHeaderText(1, "Item Detail");
   items->setColumnWidth(1, 160);
@@ -233,8 +234,8 @@ void iProgramEditor::Init() {
   
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
-  connect(items, SIGNAL(ItemSelected(iTreeViewItem*)),
-    this, SLOT(items_ItemSelected(iTreeViewItem*)) );
+  items->Connect_SelectableHostNotifySignal(this,
+    SLOT(items_Notify(ISelectableHost*, int)) );
 
   InternalSetModified(false);
 }
@@ -517,12 +518,20 @@ void iProgramEditor::InternalSetModified(bool value) {
   UpdateButtons();
 }
 
-void iProgramEditor::items_ItemSelected(iTreeViewItem* item) {
-  TAPtr new_base = NULL;
-  if (item) {
-    new_base = item->taData(); // NULL if not a taBase
+void iProgramEditor::items_Notify(ISelectableHost* src, int op) {
+  switch (op) {
+  //case ISelectableHost::OP_GOT_FOCUS: return;
+  case ISelectableHost::OP_SELECTION_CHANGED: {
+    TAPtr new_base = NULL;
+    ISelectable* si = src->curItem();
+    if (si && si->link()) {
+      new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen
+    }
+    setEditNode(new_base);
+  } break;
+  //case ISelectableHost::OP_DESTROYING: return;
+  default: return;
   }
-  setEditNode(new_base);
 }
 
 void iProgramEditor::Revert() {

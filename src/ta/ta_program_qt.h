@@ -167,7 +167,7 @@ protected:
   void 			UpdateButtons();
   
 protected slots:
-  void			items_ItemSelected(iTreeViewItem* item); // note: NULL if none
+  void			items_Notify(ISelectableHost* src, int op); // note: NULL if none
   
 private:
   void			Init();

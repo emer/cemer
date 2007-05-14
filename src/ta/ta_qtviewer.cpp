@@ -1189,8 +1189,8 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
   ISelectableHost* host_ = host(); //cache
   
   // set for the menu callbacks
-  host_->drop_ms = ms;
-  host_->drop_item = this;
+  host_->ctxt_ms = ms;
+  host_->ctxt_item = this;
   
   int ea = QueryEditActions_(ms);
   int key_mods = mods & (Qt::ShiftModifier | Qt::ControlModifier |
@@ -1305,8 +1305,8 @@ show_menu:
   delete menu;
   } // block for jump
 exit:
-  host_->drop_ms = NULL;
-  host_->drop_item = NULL;
+  host_->ctxt_ms = NULL;
+  host_->ctxt_item = NULL;
   delete ms;
 }
 
@@ -1860,7 +1860,7 @@ const char* ISelectableHost::update_ui_signal; // currently NULL
 ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
   helper = new SelectableHostHelper(this);
-  drop_ms = NULL;
+  ctxt_ms = NULL;
 }
 
 ISelectableHost::~ISelectableHost() {
@@ -1915,10 +1915,18 @@ void ISelectableHost::Connect_SelectableHostItemRemovingSlot(QObject* src_obj,
     QObject::connect(src_obj, src_signal, helper, slot_nm);
 }
 
+void ISelectableHost::ctxtMenu_destroyed() {
+  if (ctxt_ms) {
+    delete ctxt_ms;
+    ctxt_ms = NULL;
+  }
+  ctxt_item = NULL;
+}
+
 void ISelectableHost::DropEditAction(int ea) {
-  ISelectable* ci = drop_item; 
+  ISelectable* ci = ctxt_item; 
   if (!ci) return;
-  ci->EditActionD_impl_(drop_ms, ea);
+  ci->EditActionD_impl_(ctxt_ms, ea);
 }
 
 void ISelectableHost::EditAction(int ea) {
@@ -1980,20 +1988,34 @@ void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
 }
 
 void ISelectableHost::FillContextMenu(taiActions* menu) {
-  ISelectable_PtrList items(selItems()); // TODO: prob don't need a copy!!!
-  FillContextMenu_pre(items, menu);
+  QObject::connect(menu, SIGNAL(destroyed()), helper, SLOT(ctxtMenu_destroyed()) );
+  ISelectable_PtrList& sel_items = selItems(); 
+  if (sel_items.size == 1) {
+    ctxt_ms = taiMimeSource::NewFromClipboard(); // deleted in the destroyed() handler
+    ctxt_item = sel_items.FastEl(0);
+  }
+  UpdateMethodsActions();
+  
+  FillContextMenu_pre(sel_items, menu);
   
   // do the item-mediated portion
   ISelectable* ci = curItem();
-  if (!ci) return;
-  // start with dynamic actions
-  if (dyn_actions.count() != 0) {
-    AddDynActions(menu);
-    menu->AddSep();
+  if (ci) {
+    // start with dynamic actions
+    if (dyn_actions.count() != 0) {
+      AddDynActions(menu);
+      menu->AddSep();
+    }
+    ci->FillContextMenu(sel_items, menu);
   }
-  ci->FillContextMenu(items, menu);
   
-  FillContextMenu_post(items, menu);
+  FillContextMenu_post(sel_items, menu);
+  
+  // have to delete ms now, because Qt deletes MimeSource from clipboard in event loop
+  if (ctxt_ms) {
+    delete ctxt_ms;
+    ctxt_ms = NULL;
+  }
 }
 
 void ISelectableHost::DoDynAction(int idx) {
@@ -2021,10 +2043,13 @@ void ISelectableHost::DoDynAction(int idx) {
 
   // use a copy of selected items list, to avoid issues if items change during these operations
   //NOTE: a bit hacky since adding dynamic drop actions...
+  // if we are in the middle of a Drop, then ctxt_ms will have been set
+  // otherwise, we have to recreate it here, since Qt deletes MimeSource guys
+  // from clipboard automatically in the event loops, so we couldn't cache it
   ISelectable_PtrList sel_items_cp;
   if (dmd->dmd_type == DynMethod_PtrList::Type_MimeN_N) {
-    if (!drop_ms || !drop_item) return; // not supposed to happen
-    sel_items_cp.Add(drop_item);
+    if (!ctxt_item) return; // not supposed to happen
+    sel_items_cp.Add(ctxt_item);
   } else {
     sel_items_cp = sel_items;
   }
@@ -2089,15 +2114,17 @@ void ISelectableHost::DoDynAction(int idx) {
       }
       case DynMethod_PtrList::Type_MimeN_N: { // call 1:N with ms_objs[1..N] as params
         //NOTE: sel_items actually contains the drop target item
-        if (!drop_ms || !drop_item) break; // not supposed to happen
+        if (!ctxt_ms) { // ctxt (not drop) mode -- need to make it
+          ctxt_ms =  taiMimeSource::NewFromClipboard(); // deleted in the destroyed() handler
+        }
         cssEl* param[2];
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
         typ = it1->GetDataTypeDef();
-        for (int j = 0; j < drop_ms->count(); ++j) {
-          drop_ms->setIndex(j);
-          taBase* obj = drop_ms->tabObject();
+        for (int j = 0; j < ctxt_ms->count(); ++j) {
+          ctxt_ms->setIndex(j);
+          taBase* obj = ctxt_ms->tabObject();
           if (!obj) continue;
           *param[1] = (void*)obj;
           for (i = 0; i < sel_items_cp.size; ++i) {
@@ -2180,11 +2207,8 @@ void ISelectableHost::UpdateMethodsActions() {
   dyn_methods.Reset();
   // if one dst, add the drop actions
   ISelectable_PtrList& sel_items = selItems();
-  if (sel_items.size == 1) {
-    //TODO: pretty wastefull to get the ms here, because it will be done again...
-    taiMimeSource* ms = taiMimeSource::NewFromClipboard();
-    dyn_methods.FillForDrop(*ms, sel_items.FastEl(0));
-    delete ms;
+  if (ctxt_ms && ctxt_item) {
+    dyn_methods.FillForDrop(*ctxt_ms, ctxt_item);
   }
   dyn_methods.Fill(sel_items);
 
@@ -2202,8 +2226,8 @@ void ISelectableHost::UpdateMethodsActionsForDrop() {
   // enumerate dynamic methods
   dyn_methods.Reset();
   dyn_actions.Reset(); // note: items ref deleted if needed
-  if (!drop_ms || !drop_item) return;
-  dyn_methods.FillForDrop(*drop_ms, drop_item);
+  if (!ctxt_ms || !ctxt_item) return;
+  dyn_methods.FillForDrop(*ctxt_ms, ctxt_item);
 
   // dynamically create actions
   for (int i = 0; i < dyn_methods.size; ++i) {
@@ -3048,7 +3072,6 @@ void iMainWindowViewer::Init() {
   last_sel_server = NULL;
   m_is_root = false;
   m_is_proj_viewer = false;
-  m_last_action_idx = -1;
   // set maximum size
   iSize ss = taiM->scrn_s;
   setMaximumSize(ss.width(), ss.height());
@@ -3212,9 +3235,6 @@ void iMainWindowViewer::Constr_impl() {
   setCentralWidget(body);
   body->show();
 
-  actionsMenu->insertSeparator();
-  m_last_action_idx = actionsMenu->count() - 1;
-
   taiMisc::active_wins.AddUnique(this);
 }
 
@@ -3247,7 +3267,6 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()) );
-  actionsMenu = menu->AddSubMenu("&Actions");
   toolsMenu = menu->AddSubMenu("&Tools");
   helpMenu = menu->AddSubMenu("&Help");;
 }
@@ -3402,7 +3421,6 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( editUnlinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
-//nn  connect(actionsMenu->GetRep(), SIGNAL( aboutToShow() ), this, SLOT(actionsMenu_aboutToShow()) );
   connect( toolsClassBrowseAction, SIGNAL( activated() ), 
     this, SLOT( toolsClassBrowser() ) );
 //    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );
@@ -3606,7 +3624,6 @@ void iMainWindowViewer::mnuEditAction(taiAction* mel) {
 void iMainWindowViewer::SelectableHostNotifying_impl(ISelectableHost* src_host, int op) {
   //TODO: should we do anything else with this ourself????
   emit SelectableHostNotifySignal(src_host, op);
-  UpdateActionsMenu(src_host, true);
   UpdateUi();
 }
 
@@ -3685,7 +3702,6 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
         SetClipboardHandler(NULL); // might as well do this now
       }
       last_sel_server = src_host;
-      UpdateActionsMenu(src_host, false);
       UpdateUi();
     }
     } break;
@@ -3807,18 +3823,6 @@ void iMainWindowViewer::toolsClassBrowser() {
   MainWindowViewer* brows = MainWindowViewer::NewClassBrowser(&taMisc::types, &TA_TypeSpace);
   if (brows == NULL) return;
   brows->ViewWindow();
-}
-
-void iMainWindowViewer::UpdateActionsMenu(ISelectableHost* src_host, bool do_add) {
-  // clear out the previous dynamic items
-  int i;
-  for (i = actionsMenu->count() - 1; i > m_last_action_idx; --i) {
-    actionsMenu->DeleteItem(i);
-  }
-  // we don't add ex. if src guy is destroying
-  if (do_add) {
-    src_host->AddDynActions(actionsMenu);
-  }
 }
 
 void iMainWindowViewer::UpdateUi() {
@@ -5099,7 +5103,10 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   );
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
-  connect(this, SIGNAL(itemSelectionChanged()),
+//  connect(this, SIGNAL(itemSelectionChanged()),
+//    this, SLOT(this_itemSelectionChanged()) );
+  //note: can't use "activate" because that is only for ex. double-clicking the item
+  connect(this, SIGNAL(clicked(const QModelIndex&)),
     this, SLOT(this_itemSelectionChanged()) );
   connect(this, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)),
     this, SLOT(this_contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)) );

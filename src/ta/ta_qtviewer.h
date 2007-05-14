@@ -495,7 +495,8 @@ public:
   void 			Connect_SelectableHostItemRemovingSlot(QObject* src_obj, 
     const char* src_signal, bool discnct = false); // connects (or disconnects) an optional ItemRemoving notification
   void 			UpdateMethodsActionsForDrop();
-    // uses drop_ms and drop_item
+    // uses ctxt_ms and ctxt_item
+  void			ctxtMenu_destroyed();
 
   ISelectableHost();
   virtual ~ISelectableHost();
@@ -508,8 +509,8 @@ protected:
   ISelectable_PtrList	sel_items;
   DynMethod_PtrList	dyn_methods; // available dynamic methods
   taiAction_List	dyn_actions; // actions corresponding to methods (always 1:1)
-  taiMimeSource*	drop_ms; // during a drop, holds the ms used for dyn and edit actions
-  ISelectable*		drop_item; // during drop, holds the items dropped on
+  taiMimeSource*	ctxt_ms; // during a drop and context holds the ms used for dyn and edit actions 
+  ISelectable*		ctxt_item; // during drop, holds the item dropped on; for context, holds the item
   
   virtual void		FillContextMenu_pre(ISelectable_PtrList& sel_items, 
     taiActions* menu) {} // hook
@@ -542,7 +543,9 @@ public slots:
   void		EditActionsEnabled(int& ea) {host->EditActionsEnabled(ea);} 
     // callback for when we are ClipHandler
   void		EditAction(int ea) {host->EditAction(ea);} //  callback for when we are ClipHandler
-
+  void		ctxtMenu_destroyed() {host->ctxtMenu_destroyed();}
+   // attached to ctxt menu so we can clean up the mimesource 
+  
 #ifndef __MAKETA__
 signals:
   void		NotifySignal(ISelectableHost* src, int op);
@@ -858,7 +861,6 @@ public:
   taiMenu* 		toolBarMenu; // enumeration of all ToolBar guys
   taiMenu* 		dockMenu; // enumeration of all Dock guys
   taiMenu* 		toolsMenu;
-  taiMenu* 		actionsMenu; // statically added items first; bottom section is for dynamic
   taiMenu* 		helpMenu;
   taiAction* 		fileNewAction;
   taiAction* 		fileOpenAction;
@@ -1003,7 +1005,6 @@ protected slots:
 protected:
   bool			m_is_root; // true if this is a root window (has Quit menu)
   bool			m_is_proj_viewer; // true if this is a project viewer (false for simple browsers)
-  int			m_last_action_idx; // index of last static action in actionMenu
   override void 	closeEvent(QCloseEvent* ev);
   bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);
@@ -1015,7 +1016,6 @@ protected:
   virtual void		Constr_Menu_impl(); // #IGNORE constructs the menu and actions; MUST construct all static actions
   virtual void		SelectableHostNotifying_impl(ISelectableHost* src_host, int op);
     // called when we should handle this for sure
-  void 			UpdateActionsMenu(ISelectableHost* src_host, bool do_add);
 
 #ifndef _MAKETA__
 private:
