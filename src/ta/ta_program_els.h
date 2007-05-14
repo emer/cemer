@@ -353,20 +353,27 @@ private:
 }; 
 
 class TA_API MemberAssign: public ProgEl { 
-  //  set a member (attribute) on an object
+  // set a member (attribute) on an object to a value given by an expression
 INHERITED(ProgEl)
 public:
+  static bool		ShowVarFilter(void* var); // filter for button, only obj types
+
   ProgVarRef		obj;
-  // #APPLY_IMMED program variable that points to the object with the method to call
+  // #APPLY_IMMED #ITEM_FILTER_ShowVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
-  MemberDef*		member;
-  // #TYPE_ON_obj_type #APPLY_IMMED the member to assign on object obj
+  String		path;
+  // path to the member -- can just be member name (use member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
+  MemberDef*		member_lookup;
+  // #AKA_member #TYPE_ON_obj_type #APPLY_IMMED lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
   ProgExpr		expr; // the expression to compute and assign to the member
   bool			update_after; // call UpdateAfterEdit after setting the member
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
+
+  virtual bool		GetTypeFromPath(bool quiet = false);
+  // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberAssign, Program);
 protected:

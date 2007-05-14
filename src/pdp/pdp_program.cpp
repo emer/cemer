@@ -16,7 +16,7 @@
 #include "pdp_program.h"
 #include "netstru.h"
 #include "css_machine.h"
-#include "ta_datatable.h"
+#include "ta_datatable_qtso.h"
 #include "ta_project.h"
 
 //////////////////////////
@@ -651,6 +651,31 @@ bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_
   }
   return true;
 }
+
+bool InitNamedUnits::ViewDataLegend() {
+  if(!input_data_var) return false;
+  DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
+  if(!idat) return false;
+  if(!unit_names_var) return false;
+  DataTable* ndat = (DataTable*)unit_names_var->object_val.ptr();
+  if(!ndat) return false;
+
+  idat->SetUserData("N_ROWS", 5);
+  GridTableView* igtv = idat->NewGridView();
+  T3DataViewFrame* frame = igtv->GetFrame();
+
+  ndat->SetUserData("N_ROWS", 1);
+  ndat->SetUserData("MAT_VAL_TEXT", 1);
+  ndat->SetUserData("WIDTH", 3.3f);
+  GridTableView* ngtv = ndat->NewGridView(frame);
+
+  ngtv->table_pos.y = 1.1f;
+  ngtv->table_scale = .33f;
+  frame->Render();
+  frame->ViewAll(); 
+  frame->GetCameraPosOrient();
+}
+
 
 //////////////////////////
 //  Set Units Lit

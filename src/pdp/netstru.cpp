@@ -4642,8 +4642,8 @@ void Network::LinkSendCons() {
 }
 
 #ifdef TA_GUI
-void Network::ShowInViewer(T3DataViewFrame* fr) {
-  NetView::New(this, fr);
+NetView* Network::ShowInViewer(T3DataViewFrame* fr) {
+  return NetView::New(this, fr);
 }
 #endif
 

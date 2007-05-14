@@ -310,8 +310,8 @@ public:
   float		width;		// how wide to make the display (height is always 1.0)
   bool		grid_on; 	// #DEF_true whether to show grid lines
   bool		header_on;	// #DEF_true is the table header visible?
-  bool		row_num_on; 	// #DEF_true row number col visible?
-  bool		two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
+  bool		row_num_on; 	// #DEF_false row number col visible?
+  bool		two_d_font;	// #DEF_false use 2d font (easier to read, but doesn't scale) instead of 3d font
   float		two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
   bool		mat_val_text;	// also display text values for matrix blocks
 

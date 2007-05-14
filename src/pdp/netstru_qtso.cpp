@@ -1919,7 +1919,8 @@ void NetView::SelectVar(const char* var_name, bool add, bool update) {
 }
 
 void NetView::SetScaleData(bool auto_scale_, float min_, float max_, bool update_panel) {
-  if ((scale.auto_scale == auto_scale_) && (scale.min == min_) && (scale.max == max_)) return;
+  // the cbar is automatically linked to the scale, so it always has these vals!!
+//   if ((scale.auto_scale == auto_scale_) && (scale.min == min_) && (scale.max == max_)) return;
   scale.auto_scale = auto_scale_;
   if (!auto_scale_)
     scale.SetMinMax(min_, max_);

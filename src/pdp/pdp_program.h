@@ -229,6 +229,8 @@ public:
   // #BUTTON #CONFIRM intialize the dynamic enums from names table -- do this after you have entered the names in the unit_names table, in order to then refer to the names using enum values (avoiding having to use quotes!)
   virtual bool	LabelNetwork();
   // #BUTTON #CONFIRM label units in the network -- network_var must be set
+  virtual bool	ViewDataLegend();
+  // #BUTTON #CONFIRM create a new grid view display of the input data with the unit names as alegend
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }

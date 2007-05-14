@@ -202,6 +202,9 @@ public:
   void		SetFromScale(ColorScale& cs);
 
   TA_BASEFUNS(ScaleRange);
+protected:
+  override void		UpdateAfterEdit_impl();
+
 private:
   void 		Copy_(const ScaleRange &cp)
     {auto_scale = cp.auto_scale; min = cp.min; max = cp.max; }

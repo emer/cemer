@@ -2,13 +2,16 @@ leabra todo list:
 
 commit:
 
+* changed MemberAssign to a string path that can accept multiple sub-path guys.  Member
+is a lookup that adds to path and is reset.
+* fixed netview scale memory -- netview should be pretty much done -- just a few more things.
+
 ------------
 current:
 
 == Netview:
 
 * Can't view weights with 2 nets in same view!
-* r.wt disp scale gets reset when you click on a new unit
 * Iconify layer -- disp value
 * self prjn should be better..
 
@@ -17,9 +20,11 @@ current:
 == Program
 
 * test new guys
-* InitUnitNames -- display datatable with name legend function..
 * progexpr not finding variables in function args
 * brad's bug on drag of objs
+* proglib: add dates (fill in!)
+* checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
+* ProgVar FLAG: CTRL_RO -- read only in control panel #374
 
 == PVLV:
 
@@ -47,11 +52,8 @@ current:
 * #ARG_VAL_FM_n_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
 
-* ProgVar FLAG: CTRL_RO -- read only in control panel #374
-
 * datatable: 
   * Join should be symmetric
-  * add DataGetCurRowVars -- just like data calc loop var getter -- use in applyimage
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the
@@ -63,8 +65,6 @@ check:
 
 ------------------
 Program issues
-
-* proglib: add dates (fill in!) also fix bug after repeated calls..
 
 --------------------
 Other Algorithms:
@@ -114,41 +114,16 @@ css:
 ------------------
 * datatable views:
 
-  - struct update debug on hv model
   - when editing a datatable_impl, need to send refresh update to display
   - initial panel is not updated..  just stick in render_impl and be done with it??  no..
-  - view at is too far zoomed out -- can't seem to fix this at all, any way I try..
   - colorscale changes not sending signal
   - add data_spacing to graph view?
-
-  - all views: add bool for draggers (in gridview; only active for structural re-init)
-
---------------------
-* netview: 
-
-* add 2d text flag for netview. play with complexity vis-a-vis rendering
-  (probably not worth it for flag -- costs a lot in render but is not a big
-  deal..)
-
------------
-Check:
 
 -----------
 Broader issues:
 
-* configuring network properties: currently various button menus but need more efficient?
-* specifically connecting layers!
-
 -----------
 current bugs:
-
-
----------------
-Tom's project:
-
-* replace condlist with datatables -- just do all the ops on the datatables 
-  directly; lots of datatableloops!
-
 
 -------
 lower pri:
@@ -158,14 +133,9 @@ lower pri:
 
 * add #CAT to everything in leabra_*.h, and fixup comments
 
-* checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
-
 * test FILE string_stream.css: ptr = 0?
 
 * view colors: enum with different built-in styles
-
-* make netview xydrag handles thicker: create new default image by replacing existing
-   with thicker bars;
 
 ----------
 arg directives

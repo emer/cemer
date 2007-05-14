@@ -700,28 +700,47 @@ String MethodCall::GetDisplayName() const {
 //    MemberAssign	//
 //////////////////////////
 
+bool MemberAssign::ShowVarFilter(void* var_) {
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  return (var->var_type == ProgVar::T_Object);
+}
+
 void MemberAssign::Initialize() {
   obj_type = &TA_taBase; // placeholder
-  member = NULL;
+  member_lookup = NULL;
   update_after = false;
 }
 
 void MemberAssign::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(obj)
-    obj_type = obj->act_object_type();
-  else obj_type = &TA_taBase; // placeholder
+  if(member_lookup) {
+    if(!path.empty() && (path.lastchar() != '.')) path += ".";
+    path += member_lookup->name;
+    member_lookup = NULL;
+  }
+
+  GetTypeFromPath();
 
   UpdateProgVarRef_NewOwner(obj);
+}
 
-//  if(!taMisc::is_loading && member)
+bool MemberAssign::GetTypeFromPath(bool quiet) {
+  if(!obj) {
+    obj_type = &TA_taBase; // placeholder
+    return false;
+  }
+  TypeDef* ot = obj->act_object_type();
+  MemberDef* md = TypeDef::FindMemberPathStatic(ot, path, true);
+  // gets static path based just on member types, updates ot to point to owner type of md
+  obj_type = ot;
+  return (bool)md;
 }
 
 void MemberAssign::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
   CheckProgVarRef(obj, quiet, rval);
-  CheckError(!member, quiet, rval, "member is NULL");
+  CheckError(path.empty(), quiet, rval, "path is empty");
 }
 
 void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -732,14 +751,14 @@ void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String MemberAssign::GenCssBody_impl(int indent_level) {
   STRING_BUF(rval, 80);
   rval += cssMisc::Indent(indent_level);
-  if (!((bool)obj && member) || expr.empty()) {
-    rval += "//WARNING: MemberAssign not generated here -- obj or member not specified or expr empty\n";
+  if (!(bool)obj || path.empty() || expr.empty()) {
+    rval += "//WARNING: MemberAssign not generated here -- obj or path not specified or expr empty\n";
    return rval;
   }
   
   rval += obj->name;
   rval += "->";
-  rval += member->name + " = ";
+  rval += path + " = ";
   rval += expr.GetFullExpr();
   rval += ";\n";
   if (update_after) {
@@ -750,13 +769,13 @@ const String MemberAssign::GenCssBody_impl(int indent_level) {
 }
 
 String MemberAssign::GetDisplayName() const {
-  if (!obj || !member)
-    return "(object or member not selected)";
+  if (!obj || path.empty())
+    return "(object or path not selected)";
   
   String rval;
   rval += obj->name;
   rval += "->";
-  rval += member->name + " = ";
+  rval += path + " = ";
   rval += expr.GetFullExpr();
   return rval;
 }

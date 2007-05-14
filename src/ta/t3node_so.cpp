@@ -1044,7 +1044,7 @@ void SoMatrixGrid::render() {
   color.setNum(n_geom);
 
   bool build_text = false;
-  float ufontsz = MIN(cl_x / (float)max_txt_len, cl_y);
+  float ufontsz = MIN(1.5f * (cl_x / (float)max_txt_len), cl_y);
   if(!val_text) {
     if (cell_text_) {
       removeChild(cell_text_);

@@ -4201,6 +4201,37 @@ bool TypeDef::is_enum() const {
   return (enum_vals.size > 0);
 }
 
+MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, const String& path, bool warn) {
+  if(!own_td || path.empty()) {
+    return NULL;		// no warning..
+  }
+  String pth = path;
+  while(pth.contains('.')) {
+    String bef = pth.before('.');
+    pth = pth.after('.');
+    MemberDef* md = own_td->members.FindName(bef);
+    if(!md) {
+      if(warn) {
+	taMisc::Warning("FindMemberPathStatic: member:", bef, "not found in object type:",
+			own_td->name);
+      }
+      return NULL;
+    }
+    else {
+      own_td = md->type;
+    }
+  }
+  MemberDef* md = own_td->members.FindName(pth);
+  if(!md) {
+    if(warn) {
+      taMisc::Warning("FindMemberPathStatic: member:", pth, "not found in object type:",
+		      own_td->name);
+    }
+    return NULL;
+  }
+  return md;
+}
+
 EnumDef* TypeDef::FindEnum(const String& nm) const {
   EnumDef* rval;
   if((rval = enum_vals.FindName(nm)) != NULL)

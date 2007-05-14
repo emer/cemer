@@ -42,6 +42,7 @@
 #endif
 
 class NetMonitor;
+class NetView;
 
 // forwards this file
 class Unit_Group; //
@@ -1769,7 +1770,7 @@ public:
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
 
 #ifdef TA_GUI
-  virtual void	ShowInViewer(T3DataViewFrame* fr = NULL);
+  virtual NetView* ShowInViewer(T3DataViewFrame* fr = NULL);
   // #NULL_OK #BUTTON #CAT_Display open a viewer on this network (NULL=use blank if any, else make new frame)
 #endif
 

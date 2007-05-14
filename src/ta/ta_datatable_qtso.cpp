@@ -259,12 +259,12 @@ bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
 //   DataTable (gui)	//
 //////////////////////////
 
-void DataTable::NewGridView(T3DataViewFrame* fr) {
-  GridTableView::New(this, fr);
+GridTableView* DataTable::NewGridView(T3DataViewFrame* fr) {
+  return GridTableView::New(this, fr);
 }
 
-void DataTable::NewGraphView(T3DataViewFrame* fr) {
-  GraphTableView::New(this, fr);
+GraphTableView* DataTable::NewGraphView(T3DataViewFrame* fr) {
+  return GraphTableView::New(this, fr);
 }
 
 
@@ -1015,6 +1015,27 @@ void GridTableView::InitFromUserData() {
   }
   if(dt->HasUserData("BLOCK_HEIGHT")) {
     mat_block_height = dt->GetUserDataAsFloat("BLOCK_HEIGHT");
+  }
+  if(dt->HasUserData("MAT_VAL_TEXT")) {
+    mat_val_text = true;
+  }
+  if(dt->HasUserData("HEADER_OFF")) {
+    header_on = false;
+  }
+  if(dt->HasUserData("ROW_NUM_ON")) {
+    row_num_on = true;
+  }
+  if(dt->HasUserData("TWO_D_FONT")) {
+    two_d_font = true;
+  }
+  if(dt->HasUserData("TWO_D_FONT_SCALE")) {
+    two_d_font_scale = dt->GetUserDataAsFloat("TWO_D_FONT_SCALE");
+  }
+  if(dt->HasUserData("MAT_ROT")) {
+    mat_rot = dt->GetUserDataAsFloat("MAT_ROT");
+  }
+  if(dt->HasUserData("MAT_TRANS")) {
+    mat_trans = dt->GetUserDataAsFloat("MAT_TRANS");
   }
 }
 

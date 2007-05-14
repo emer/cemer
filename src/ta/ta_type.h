@@ -1946,6 +1946,9 @@ public:
   void		SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars);
   // set type of a template class
 
+  static MemberDef* FindMemberPathStatic(TypeDef*& own_td, const String& path, bool warn = true);
+  // looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths
+
   EnumDef*	FindEnum(const String& enum_nm) const;
   // find an enum and return its definition (or NULL if not found).  searches in enum_vals, then subtypes
   int		GetEnumVal(const String& enum_nm, String& enum_tp_nm) const;

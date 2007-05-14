@@ -35,6 +35,8 @@
 
 // externals
 class T3DataViewFrame;
+class GridTableView;
+class GraphTableView;
 class cssProgSpace;		// #IGNORE
 
 // forwards this file
@@ -951,9 +953,9 @@ public:
   /////////////////////////////////////////////////////////
   // misc funs
 
-  virtual void		NewGridView(T3DataViewFrame* fr = NULL);
+  virtual GridTableView* NewGridView(T3DataViewFrame* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use blank if any, else make new frame)
-  virtual void		NewGraphView(T3DataViewFrame* fr = NULL);
+  virtual GraphTableView* NewGraphView(T3DataViewFrame* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use blank if any, else make new frame)
 
   virtual int  		MinLength();		// #IGNORE

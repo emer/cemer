@@ -449,6 +449,9 @@ void ScaleRange::SetFromScale(ColorScale& cs) {
   max = cs.max;
 }
 
+void ScaleRange::UpdateAfterEdit_impl() {
+  taOBase::UpdateAfterEdit_impl(); // skip over taNbase to avoid c_name thing!
+}
 
 //////////////////////////
 //	ColorScale	//
