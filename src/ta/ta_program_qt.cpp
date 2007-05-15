@@ -864,6 +864,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   sec = tb->AssertSection("Data"); //note: need to keep it short
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data loop",
     tabMisc::root->GetTemplateInstance(&TA_DataLoop)));
+  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("reset rows",
+    tabMisc::root->GetTemplateInstance(&TA_ResetDataRows)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("new row",
     tabMisc::root->GetTemplateInstance(&TA_AddNewDataRow)));
   tb->AddClipToolWidget(sec, new iBaseClipToolWidget("row done",
