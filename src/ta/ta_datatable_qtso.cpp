@@ -918,7 +918,7 @@ void GridTableView::Initialize() {
   row_num_width = 4;
 
   mat_block_spc = 0.1f;
-  mat_block_height = 0.2f;
+  mat_block_height = 0.0f;
   mat_rot = 0.0f;
   mat_trans = 0.6f;
 

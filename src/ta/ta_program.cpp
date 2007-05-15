@@ -281,6 +281,13 @@ void DynEnum::Destroy() {
   value = -1;
 }
 
+String DynEnum::GetDisplayName() const {
+  if((bool)enum_type)
+    return enum_type->name + " " + NameVal();
+  else
+    return "(no dyn enum type!)";
+}
+
 void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!enum_type, quiet, rval,
@@ -623,8 +630,10 @@ String ProgVar::GetDisplayName() const {
       hard_enum_type->Get_C_EnumString(int_val);
   }
   else if(var_type == T_DynEnum) {
-    return "dyn enum " + name + " = " + 
-      dyn_enum_val.NameVal();
+    if((bool)dyn_enum_val.enum_type)
+      return dyn_enum_val.enum_type->name + " " + name + " = " + dyn_enum_val.NameVal();
+    else
+      return "(no dyn enum type!) " + name + " = " + dyn_enum_val.NameVal();
   }
   return "invalid type!";
 }

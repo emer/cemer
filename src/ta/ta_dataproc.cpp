@@ -1368,6 +1368,25 @@ const String DataVarProg::GenCssBody_impl(int indent_level) {
 }
 
 ///////////////////////////////////////////
+//		Reset Data Rows
+
+void ResetDataRows::Initialize() {
+}
+
+String ResetDataRows::GetDisplayName() const {
+  String rval = "ResetDataRows of: ";
+  if(data_var) rval += data_var->name;
+  else rval += "(ERROR: data_var not set!)";
+  return rval;
+}
+
+const String ResetDataRows::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  if(!data_var) return il + "// data_var not set!\n";
+  return il + data_var->name + ".RemoveAllRows();\n";
+}
+
+///////////////////////////////////////////
 //		Add New Data Row
 
 void AddNewDataRow::Initialize() {

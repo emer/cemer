@@ -223,6 +223,8 @@ public:
   virtual bool	ClearBitName(const String& val);
   // only for bits type, clear bit with given name
 
+  override String	GetDisplayName() const;
+
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
 protected:
   override void CheckThisConfig_impl(bool quiet, bool& rval);

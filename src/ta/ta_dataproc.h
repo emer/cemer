@@ -466,6 +466,19 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
+class TA_API ResetDataRows: public DataOneProg { 
+  // clear out all existing rows of data in data table
+INHERITED(DataOneProg)
+public:
+  override String	GetDisplayName() const;
+  TA_BASEFUNS_NOCOPY(ResetDataRows);
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+private:
+  void	Initialize();
+  void	Destroy()	{ }
+}; 
+
 class TA_API AddNewDataRow: public DataOneProg { 
   // add a new row to data table (just calls AddBlankRow() on data table var object)
 INHERITED(DataOneProg)

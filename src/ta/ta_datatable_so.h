@@ -97,6 +97,7 @@ protected:
   T3TransformBoxDragger* drag_;	// my position dragger
 
   SoScrollBar*		col_scroll_bar_;
+  SoTransform*		col_sb_tx_; // col scrollbar transform
   SoScrollBar*		row_scroll_bar_;
 
   ~T3GridViewNode();
@@ -359,6 +360,7 @@ protected:
   bool			show_drag_;
   T3TransformBoxDragger* drag_;	// my position dragger
 
+  SoTransform*		row_sb_tx_; // row scrollbar transform
   SoScrollBar*		row_scroll_bar_;
 
   ~T3GraphViewNode();

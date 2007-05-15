@@ -575,7 +575,7 @@ String AssignExpr::GetDisplayName() const {
 }
 
 //////////////////////////
-//    VarIncr	//
+//      VarIncr 	//
 //////////////////////////
 
 void VarIncr::Initialize() {
@@ -602,7 +602,7 @@ const String VarIncr::GenCssBody_impl(int indent_level) {
     return rval;
   }
   
-  rval += var->name + " += " + expr.GetFullExpr() + ";\n";
+  rval += var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";\n";
   return rval;
 }
 

@@ -116,13 +116,14 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
 
   float vert_off = .5f + frame_margin + 2.0f * frame_width;
 
-  SoTransform* scrtx = new SoTransform;
-  scrtx->translation.setValue(0.0f, -vert_off, -frame_width); // Z is to go below label
-  topSeparator()->addChild(scrtx);
+  col_sb_tx_ = new SoTransform;
+  col_sb_tx_->translation.setValue(0.0f, -vert_off, -frame_width); // Z is to go below label
+  col_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
+  topSeparator()->addChild(col_sb_tx_);
   col_scroll_bar_ = new SoScrollBar;
   topSeparator()->addChild(col_scroll_bar_);
 
-  scrtx = new SoTransform;
+  SoTransform* scrtx = new SoTransform;
   scrtx->translation.setValue(.5f * width_ + frame_margin + 2.0f * frame_width,
 			      vert_off, frame_width);
   scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -.5f * PI); // vertical!
@@ -160,6 +161,7 @@ void T3GridViewNode::render() {
   txlt_stage_->translation.setValue(0.0f, 1.0f + frame_margin, 0.0f);
   frame_->setDimensions(width_ + frmg2, 1.0f + frmg2, frame_width, frame_width);
   txfm_shape()->translation.setValue(.5f * width_, .5f * (1.0f + frmg2), 0.0f);
+  col_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
   // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
   transformCaption(iVec3f(0.1f, -((float)font->size.getValue()), 0.0f)); // move caption below the frame
@@ -832,9 +834,10 @@ T3GraphViewNode::T3GraphViewNode(void* dataView_, float wdth, bool show_draggers
 
   float vert_off = frame_margin + 2.0f * frame_width;
 
-  SoTransform* scrtx = new SoTransform;
-  scrtx->translation.setValue(0.5f, -vert_off, -frame_width); // Z is to go below label
-  topSeparator()->addChild(scrtx);
+  row_sb_tx_ = new SoTransform;
+  row_sb_tx_->translation.setValue(0.5f * width_, -vert_off, -frame_width); // Z is to go below label
+  row_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
+  topSeparator()->addChild(row_sb_tx_);
   row_scroll_bar_ = new SoScrollBar;
   topSeparator()->addChild(row_scroll_bar_);
 }
@@ -863,6 +866,9 @@ void T3GraphViewNode::render() {
   // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
   transformCaption(iVec3f(0.1f, -((float)font->size.getValue() + frame_margin), 0.0f)); // move caption below the frame
+  float vert_off = frame_margin + 2.0f * frame_width;
+  row_sb_tx_->translation.setValue(0.5f * width_, -vert_off, -frame_width); // Z is to go below label
+  row_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
 }
 
 void T3GraphViewNode::setWidth(float wdth) {

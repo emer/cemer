@@ -182,6 +182,10 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     if (sfs.isEmpty()) goto exit; // shouldn't happen!
     { // block necessitated by exit
     tfname = sfs[0];
+    // some weird bugs showing up in qt filer!
+    tfname.gsub("..", ".");	// .. -> .
+    tfname.gsub(ext + ext, ext); // .proj.proj -> .proj
+
     QFileInfo fi(tfname);
     // we always add the path here, to the sys paths -- if added again, it is a noop
     if (tabMisc::root)
@@ -193,7 +197,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
       file_exists = fi.exists();
     }
     // compressed 'true' is absolutely based  on filename
-    compressed = m_fname.endsWith(taMisc::compress_sfx);
+    compressed = tfname.endsWith(taMisc::compress_sfx);
     // but if file doesn't exist, we could fix it up, so we set based on checkbox
     if (!file_exists && !compressed) {
       compressed = fde->cbCompress->isChecked();

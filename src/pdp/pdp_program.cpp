@@ -669,7 +669,7 @@ bool InitNamedUnits::ViewDataLegend() {
   ndat->SetUserData("WIDTH", 3.3f);
   GridTableView* ngtv = ndat->NewGridView(frame);
 
-  ngtv->table_pos.y = 1.1f;
+  ngtv->table_pos.y = 1.13f;
   ngtv->table_scale = .33f;
   frame->Render();
   frame->ViewAll(); 
