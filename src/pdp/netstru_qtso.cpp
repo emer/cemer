@@ -1733,6 +1733,7 @@ void NetView::OnWindowBind_impl(iT3DataViewFrame* vw) {
     vw->viewerWindow()->AddPanelNewTab(nvp);
     vw->t3vs->Connect_SelectableHostNotifySignal(nvp,
       SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
+    vw->RegisterPanel(nvp);
   }
 }
 

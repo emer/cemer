@@ -21,6 +21,7 @@
 #define T3VIEWER_H
 
 #include "ta_group.h"
+#include "ta_qt.h"
 #include "ta_qtviewer.h"
 #include "t3node_so.h"
 #include "ta_def.h"
@@ -484,6 +485,8 @@ public:
   inline T3DataViewFrame* viewer() const {return (T3DataViewFrame*)m_viewer;}
   iT3DataViewer* 	viewerWidget() const;
 
+  void			RegisterPanel(iDataPanel* panel); 
+    // registers a panel created, so we can show/hide it when we go visible/hidden
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list
 
   iT3DataViewFrame(T3DataViewFrame* viewer_, QWidget* parent = NULL); 
@@ -508,6 +511,17 @@ protected:
   virtual void		Render_post(); // #IGNORE
   virtual void		Reset_impl(); // note: delegated from DataViewer::Clear_impl
 
+protected:
+  Widget_List		m_panels;
+  
+  void			hideEvent(QHideEvent* ev);
+  void			showEvent(QShowEvent* ev);
+  void			Showing(bool showing); 
+  
+  
+protected slots:
+  void			panel_destroyed(QObject* panel); // so we remove from list
+  
 private:
   void			Init();
 }; //

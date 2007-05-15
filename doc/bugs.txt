@@ -1,3 +1,12 @@
+ccn lab 4/25/07
+
+* member assign el
+
+* maybe some assoc between UnitNames and the network itself
+* input geometry designer for nets
+
+* mechanism to label cells in gridview
+
 ccn lab 4/18/07
 
 

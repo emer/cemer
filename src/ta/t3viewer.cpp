@@ -1212,6 +1212,41 @@ void iT3DataViewFrame::fileExportInventor() {
   out.closeFile();
 }
 
+void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
+  inherited::hideEvent(ev);
+  Showing(false);
+}
+
+void iT3DataViewFrame::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  Showing(true);
+}
+
+void iT3DataViewFrame::Showing(bool showing) {
+  // panel tabs
+  if (showing) {
+    for (int i = m_panels.size - 1; i >= 0; --i) {
+      iDataPanel* panel = (iDataPanel*)m_panels.FastEl(i);
+      panel->FrameShowing(showing);
+    }
+  } else {
+    for (int i = 0; i < m_panels.size; ++i) {
+      iDataPanel* panel = (iDataPanel*)m_panels.FastEl(i);
+      panel->FrameShowing(showing);
+    }
+  }
+}
+
+void iT3DataViewFrame::panel_destroyed(QObject* panel) {
+  m_panels.RemoveEl_(panel);
+}
+
+void iT3DataViewFrame::RegisterPanel(iDataPanel* panel) {
+  connect(panel, SIGNAL(destroyed(QObject*)),
+    this, SLOT(panel_destroyed(QObject*)) );
+  m_panels.AddUnique(panel);
+}
+
 void iT3DataViewFrame::Render_pre() {
   //nothing
 }

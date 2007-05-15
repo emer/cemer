@@ -1131,6 +1131,7 @@ public:
   void			ShowPanel(iDataPanel* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
   void			SetCurrentTab(int tab_idx); 
     // focus indicated tab, but usually not if current is lockInPlace 
+  void			ShowTab(iDataPanel* panel, bool show); // show/hide tab, esp for ctrl panel in visible frame
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
   void 			UpdateTabName(iDataPanel* pan); // called only by individual panel when its name may have changed
 
@@ -1205,6 +1206,8 @@ public:
   virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
   virtual const iColor	GetTabColor(bool selected, bool& ok) const 
     {ok = false; return iColor();} // special color for tab; NULL means use default
+  virtual void		FrameShowing(bool showing); // called esp by t3 frames when show/hide; lets us show hide the tabs
+
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
   virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
     // called in post, when all windows are built

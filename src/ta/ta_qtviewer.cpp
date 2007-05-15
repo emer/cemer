@@ -4220,6 +4220,30 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   return rval;
 }
 
+void iTabView::ShowTab(iDataPanel* panel, bool show) {
+// this is for ctrl panel frames that go visible, to show their ctrl panel tabs
+  if (show) {
+    // may be there already, prob most recent...
+    for (int i = tabCount(); i >= 0; --i) {
+      iDataPanel* tpan = tabPanel(i);
+      if (tpan == panel) {
+        return;
+      }
+    }
+    tbPanels->addTab(panel);
+    // don't focus automatically???
+  //TODO: do a SetCurrentTab here if it should autofocus
+  } else {
+    for (int i = tabCount(); i >= 0; --i) {
+      iDataPanel* tpan = tabPanel(i);
+      if (tpan == panel) {
+        tbPanels->removeTab(i);
+        return;
+      }
+    }
+  }
+}
+
 iDataPanel* iTabView::panel(int pan_idx) {
   return panels.SafeEl(pan_idx);
 }
@@ -4444,6 +4468,13 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
     if (tabView())
       tabView()->UpdateTabName(this); //in case changed */
   }
+}
+
+void iDataPanel::FrameShowing(bool showing) {
+  if (tabView()) {
+    tabView()->ShowTab(this, showing);
+  }
+
 }
 
 void iDataPanel::Refresh_impl() {

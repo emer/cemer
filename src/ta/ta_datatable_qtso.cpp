@@ -1317,6 +1317,7 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
     vw->viewerWindow()->AddPanelNewTab(lvp());
+    vw->RegisterPanel(m_lvp);
   }
 }
 
@@ -3297,6 +3298,7 @@ void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   if (!m_lvp) {
     m_lvp = new iGraphTableView_Panel(this);
     vw->viewerWindow()->AddPanelNewTab(lvp());
+    vw->RegisterPanel(m_lvp);
   }
 }
 
@@ -5654,6 +5656,7 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
 {
+  setSelectionMode(QAbstractItemView::ContinguousSelection);
 }
   
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
