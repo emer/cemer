@@ -5656,7 +5656,7 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 iDataTableView::iDataTableView(QWidget* parent)
 :inherited(parent)
 {
-  setSelectionMode(QAbstractItemView::ContinguousSelection);
+  setSelectionMode(QAbstractItemView::ContiguousSelection);
 }
   
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
