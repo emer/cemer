@@ -445,6 +445,7 @@ T3ExaminerViewer::resetToHomePosition(void)
 int T3DataView_inst_cnt = 0;
 #endif
 
+
 T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
   SoPath* path = path_->copy();
   path->ref();
@@ -582,6 +583,11 @@ void T3DataView::setNode(T3Node* node_) {
   if (m_node_so.ptr() == node_) return; // generally shouldn't happen
   if (m_node_so.ptr()) {
     //TODO: detach the guy, and also force a gui deselect
+    T3DataViewFrame* dvf = GetFrame();
+    iT3DataViewFrame* idvf;
+    if (dvf && (idvf = dvf->widget())) {
+      idvf->NodeDeleting(m_node_so); // just desels all, for now
+    }
  //   node_so()->dataView = NULL;
   }
   m_node_so = node_;
@@ -1211,6 +1217,14 @@ void iT3DataViewFrame::fileExportInventor() {
   wa.apply(scene);
 
   out.closeFile();
+}
+
+void iT3DataViewFrame::NodeDeleting(T3Node* node) {
+  if (t3vs->sel_so) {
+    // deselect all the damn nodes because too complicated to try to figure out
+    // how to deselect just one
+    t3vs->sel_so->deselectAll();
+  }
 }
 
 void iT3DataViewFrame::hideEvent(QHideEvent* ev) {

@@ -444,7 +444,6 @@ protected:
   QScrollBar*		m_horScrollBar;
   QScrollBar*		m_verScrollBar;
   SoQtRenderArea* 	m_renderArea;
-//nn  iRenderAreaWrapper*	m_raw; // render area wrapper
   SoSeparatorPtr	m_root_so; //
   SoNode*		m_scene; // actual top item set by user
   SelectionMode		m_selMode; // #IGNORE true adds a SoSelection node, and selection call back
@@ -481,10 +480,13 @@ public:
 
   SoQtViewer* 		ra() {return m_ra;} //TODO: maybe should not cache; should get from body()
   T3DataViewRoot*	root();
-  virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_pre
+  virtual void		setSceneTop(SoNode* node); // set top of scene -- usually called during Render_post
   override int		stretchFactor() const {return 4;} // 4/2 default
   inline T3DataViewFrame* viewer() const {return (T3DataViewFrame*)m_viewer;}
   iT3DataViewer* 	viewerWidget() const;
+
+  void 			NodeDeleting(T3Node* node); 
+    // called when a node is deleting; basically used to deselect
 
   void			RegisterPanel(iDataPanel* panel); 
     // registers a panel created, so we can show/hide it when we go visible/hidden
