@@ -43,6 +43,7 @@
 #include <QGLWidget>
 
 #include <Inventor/SoPath.h>
+#include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
 #include <Inventor/actions/SoWriteAction.h>
@@ -456,7 +457,7 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
       T3Node* t3node = (T3Node*)node;
       rval = (T3DataView*)t3node->dataView();
       break;
-    }
+    } 
     path->truncate(path->getLength() - 1);
   }
   path->unref();

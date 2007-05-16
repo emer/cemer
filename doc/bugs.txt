@@ -1,3 +1,30 @@
+T3 Selection
+
+* selection itself is an Inventor concept, mediated my UI
+* sel triggers an event, which we then trap and put a T3DataView guy on/off a list
+
+* our biggest issue is when an So guy deletes, it doesn't raise a deselect
+  * causes spurious "higher subpath" visual selection
+  * leaves us with an invalid selection in our list
+  
+Notes:
+
+* sels are paths; as such, there is a M:1 mapping between possible paths:So objs
+* sels are paths to So objs (so only indirectly to t3 guys)
+* we can't directly hook node deletion, nor probably do we want to
+* nodes just don't spontaneously delete; 
+
+
+fix:
+* spurious sel on delete of a guy
+
+What we could do:
+
+* we can filter the sels and deny, or replace -- we could thus only allow exactly
+  our kinds of nodes (ex t3 nodes) to be selected
+* we control when nodes get deleted (via Render_pre and Clear), and could remove them
+  from selection, prior to deletion
+
 ccn lab 4/25/07
 
 * member assign el

@@ -674,6 +674,7 @@ bool InitNamedUnits::ViewDataLegend() {
   frame->Render();
   frame->ViewAll(); 
   frame->GetCameraPosOrient();
+  return true;
 }
 
 

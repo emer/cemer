@@ -4080,7 +4080,7 @@ void iTabView::Init() {
   tbPanels = new iTabBar(this);
 #if (QT_VERSION >= 0x040200)
   tbPanels->setUsesScrollButtons(true);
-  tbPanels->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
+  tbPanels->setElideMode(Qt::ElideMiddle/*Qt::ElideNone*/); 
 #endif
   layDetail->addWidget(tbPanels);
   wsPanels = new QStackedWidget(this);
@@ -4222,6 +4222,8 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
 
 void iTabView::ShowTab(iDataPanel* panel, bool show) {
 // this is for ctrl panel frames that go visible, to show their ctrl panel tabs
+// note that we are assuming for simplicity that we can focus the default or 0th tab
+// when removing a tab for a visible ctrl guy
   if (show) {
     // may be there already, prob most recent...
     for (int i = tabCount(); i >= 0; --i) {
@@ -4238,6 +4240,9 @@ void iTabView::ShowTab(iDataPanel* panel, bool show) {
       iDataPanel* tpan = tabPanel(i);
       if (tpan == panel) {
         tbPanels->removeTab(i);
+        if (tpan->isVisible()) {
+          SetCurrentTab(0); // should be the non-ctrl default edit guy...
+        }
         return;
       }
     }

@@ -37,7 +37,7 @@
 # include <QTabBar>
 # include <qwidget.h>
 # include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+# include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 #endif
 
 // externals
@@ -370,6 +370,7 @@ class TA_API iSoSelectionEvent { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMB
 public:
   bool 			is_selected;
   const SoPath*		path;
+  
   iSoSelectionEvent(bool is_selected_, const SoPath* path_);
 };
 
