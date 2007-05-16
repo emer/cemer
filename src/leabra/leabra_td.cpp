@@ -1106,7 +1106,7 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesion)	continue;
+      if(tol->lesioned())	continue;
       for(int j=0;j<send_gp->cons.size; j++) {
 	((DaModUnit*)send_gp->Un(j))->dav = u->act;
       }

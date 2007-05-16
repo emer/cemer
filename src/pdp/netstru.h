@@ -1252,11 +1252,11 @@ public:
   
   enum LayerFlags { 			// #BITS flags for layer
     LF_NONE		= 0, 		// #NO_BIT
-    ICONIFIED		= 0x0001, 	// only display a single unit showing icon_value (set in algorithm-specific manner)
+    LESIONED		= 0x0001,	// this layer is temporarily lesioned (inactivated for all network-level processing functions)
+    ICONIFIED		= 0x0002, 	// only display a single unit showing icon_value (set in algorithm-specific manner)
   };
 
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure Network this layer is in
-  bool			lesion;		// #DEF_false #CAT_Structure inactivate this layer from processing (reversable)
   LayerFlags		flags;		// flags controlling various aspects of layer funcdtion
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
@@ -1282,6 +1282,8 @@ public:
 
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
+  bool			lesion_;	
+  // #AKA_lesion #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 flag to inactivate this layer from processing (reversable)
 
   ProjectBase*		project(); // #IGNORE this layer's project
   	
@@ -1294,6 +1296,9 @@ public:
   inline void		SetLayerFlagState(LayerFlags flg, bool on)
   { if(on) SetLayerFlag(flg); else ClearLayerFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
+
+  inline bool		lesioned() const { return HasLayerFlag(LESIONED); }
+  // check if this layer is lesioned -- use in function calls
 
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
@@ -1414,7 +1419,7 @@ public:
   // #MENU #CAT_Display #MENU_CONTEXT iconify this layer in the network display
   virtual void	DeIconify();
   // #MENU #CAT_Display #MENU_CONTEXT de-iconify this layer in the network display
-  virtual bool	Iconified()	{ return HasLayerFlag(ICONIFIED); }
+  virtual bool	Iconified() const 	{ return HasLayerFlag(ICONIFIED); }
   // convenience function for checking iconified flag
 
   virtual void	SetLayerUnitGeom(int x, int y, bool n_not_xy = false, int n = 0);
@@ -1483,7 +1488,7 @@ public:
   virtual bool	DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
 #endif
 
-  override int	GetEnabled() const { return !lesion; }
+  override int	GetEnabled() const { return !lesioned(); }
   override String GetTypeDecoKey() const { return "Layer"; }
 
   void 	UpdateAfterEdit();

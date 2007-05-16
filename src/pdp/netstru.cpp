@@ -1522,7 +1522,7 @@ void UnitSpec::Init_Acts(Unit* u) {
 void UnitSpec::Init_dWt(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Init_dWt(u);
   }
   if(u->bias.cons.size)
@@ -1541,7 +1541,7 @@ void UnitSpec::Init_Weights(Unit* u) {
       for(int g = 0; g < u->recv.size; g++) {
 	RecvCons* recv_gp = u->recv.FastEl(g);
 	// ignore lesion here because n_recv_cons does not take into account lesioned layers, so dmem would get out of sync
-	//    if(!recv_gp->prjn->from->lesion)
+	//    if(!recv_gp->prjn->from->lesioned())
 	recv_gp->Init_Weights(u);
       }
     }
@@ -1555,7 +1555,7 @@ void UnitSpec::Init_Weights(Unit* u) {
 void UnitSpec::Init_Weights_post(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Init_Weights_post(u);
   }
 }
@@ -1564,7 +1564,7 @@ void UnitSpec::Compute_Netin(Unit* u) {
   u->net = 0.0f;
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     u->net += recv_gp->Compute_Netin(u);
   }
   if(u->bias.cons.size)
@@ -1578,7 +1578,7 @@ void UnitSpec::Send_Netin(Unit* u) {
   for(int g = 0; g < u->send.size; g++) {
     SendCons* send_gp = u->send.FastEl(g);
     Layer* tol = send_gp->prjn->layer;
-    if(tol->lesion || !send_gp->cons.size) continue;
+    if(tol->lesioned() || !send_gp->cons.size) continue;
     send_gp->Send_Netin(u);
   }
   if(u->bias.cons.size)
@@ -1592,7 +1592,7 @@ void UnitSpec::Send_NetinToLay(Unit* u, Layer* tolay) {
   for(int g = 0; g < u->send.size; g++) {
     SendCons* send_gp = u->send.FastEl(g);
     Layer* tol = send_gp->prjn->layer;
-    if(tol->lesion || (tol != tolay) || !send_gp->cons.size) continue;
+    if(tol->lesioned() || (tol != tolay) || !send_gp->cons.size) continue;
     send_gp->Send_Netin(u);
   }
   if(u->bias.cons.size)
@@ -1609,7 +1609,7 @@ void UnitSpec::Compute_Act(Unit* u) {
 void UnitSpec::Compute_dWt(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_dWt(u);
   }
   // NOTE: derived classes must supply bias.Cn(0)->Compute_dWt call because C_Compute_dWt
@@ -1620,7 +1620,7 @@ void UnitSpec::Compute_dWt(Unit* u) {
 void UnitSpec::Compute_Weights(Unit* u) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesion || !recv_gp->cons.size) continue;
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_Weights(u);
   }
   // NOTE: derived classes must supply bias.Cn(0)->Compute_Weights call because C_Compute_Weights
@@ -1978,7 +1978,7 @@ void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
   for(int i=0; i<mx; i++) {
     RecvCons* cg = recv.FastEl(i);
     RecvCons* scg = src->recv.FastEl(i);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->Copy_Weights(scg);
   }
 }
@@ -2001,7 +2001,7 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFor
   // each process -- need to include size=0 place holders for non-local units
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesion || (prjn && (cg->prjn != prjn))) continue;
+    if(cg->prjn->from->lesioned() || (prjn && (cg->prjn != prjn))) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, fmt);
     strm << "</Cg>\n";
@@ -2131,7 +2131,7 @@ int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFor
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->TransformWeights(trans);
   }
 }
@@ -2139,7 +2139,7 @@ void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
 void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->AddNoiseToWeights(noise_spec);
   }
 }
@@ -2151,7 +2151,7 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
   int g;
   for(g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->PruneCons(this, pre_proc, rel, cmp_val);
   }
   n_recv_cons -= rval;
@@ -2163,7 +2163,7 @@ int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   int g;
   for(g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesion || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->LesionCons(this, p_lesion, permute);
   }
   n_recv_cons -= rval;
@@ -3117,7 +3117,7 @@ void LayerSpec::CutLinks() {
 
 void Layer::Initialize() {
   own_net = NULL;
-  lesion = false;
+  lesion_ = false;
   flags = LF_NONE;
   layer_type = HIDDEN;
   unit_groups = false;
@@ -3179,7 +3179,6 @@ void Layer::CutLinks() {
 
 void Layer::Copy_(const Layer& cp) {
   layer_type = cp.layer_type;
-  lesion = cp.lesion;
   flags = cp.flags;
   pos = cp.pos;
   un_geom = cp.un_geom;
@@ -3205,6 +3204,12 @@ void Layer::Copy_(const Layer& cp) {
 
 void Layer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
+
+  if(lesion_) {			// todo: v3compat conversion obs remove later
+    SetLayerFlag(LESIONED);
+    lesion_ = false;
+  }
+
   if(taMisc::is_loading) return;
   if (!own_net) return;
   own_net->UpdtAfterNetMod();	// todo: is this a good idea??
@@ -3685,7 +3690,7 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
 {
   // note: when use LayerWriters, we typically always just get a single frame of 
   // the exact dimensions, and so ignore 'frame'
-  if (!data || lesion) return;
+  if (!data || lesioned()) return;
   // check correct geom of data
   if(TestError((data->dims() != 2) && (data->dims() != 4), "ApplyInputData",
 	       "data->dims must be 2 (2-d) or 4 (4-d)")) {
@@ -3796,7 +3801,7 @@ void Layer::Send_NetinToMe() {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i) {
-    if(p->from->lesion) continue;
+    if(p->from->lesioned()) continue;
     int addr = (int)(long)p->from;
     if(sent_already.FindEl(addr) >= 0) continue;
     p->from->Send_NetinToLay(this);
@@ -3877,7 +3882,7 @@ void Layer::PropagateInputDistance() {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, send_prjns., i) {
-    if(!p->layer || p->layer->lesion) continue;
+    if(!p->layer || p->layer->lesioned()) continue;
     if(p->layer->dist.fm_input >= 0) { // already set
       if(new_dist < p->layer->dist.fm_input) { // but we're closer
 	p->layer->dist.fm_input = new_dist;
@@ -3897,7 +3902,7 @@ void Layer::PropagateOutputDistance() {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i) {
-    if(!p->from || p->from->lesion) continue;
+    if(!p->from || p->from->lesioned()) continue;
     if(p->from->dist.fm_output >= 0) { // already set
       if(new_dist < p->from->dist.fm_output) { // but we're closer
 	p->from->dist.fm_output = new_dist;
@@ -3916,7 +3921,7 @@ void Layer::Compute_PrjnDirections() {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i) {
-    if(!p->from || p->from->lesion) {
+    if(!p->from || p->from->lesioned()) {
       p->direction = Projection::DIR_UNKNOWN;
       continue;
     }
@@ -4703,7 +4708,7 @@ void Network::Init_InputData(){
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Init_InputData();
   }
 }
@@ -4712,7 +4717,7 @@ void Network::Init_Netin(){
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Init_Netin();
   }
 }
@@ -4721,7 +4726,7 @@ void Network::Init_Acts(){
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Init_Acts();
   }
 }
@@ -4734,7 +4739,7 @@ void Network::DMem_SyncNRecvCons() {
     Layer* l;
     taLeafItr i;
     FOR_ITR_EL(Layer, l, layers., i) {
-      if(!l->lesion)
+      if(!l->lesioned())
 	l->DMem_SyncNRecvCons();
     }
   }
@@ -4746,7 +4751,7 @@ void Network::DMem_SyncNRecvCons() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     Unit* u;
     taLeafItr i;
     FOR_ITR_EL(Unit, u, l->units., i) {
@@ -4783,7 +4788,7 @@ void Network::DMem_DistributeUnits() {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesion) continue;
+    if(lay->lesioned()) continue;
     lay->dmem_share_units.comm = dmem_share_units.comm;
     if(dmem_sync_level == DMEM_SYNC_LAYER) {
       lay->DMem_DistributeUnits();
@@ -4823,7 +4828,7 @@ void Network::DMem_PruneNonLocalCons() {
   Unit* u;
   Layer *l;
   FOR_ITR_EL(Layer, l, layers., li) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     FOR_ITR_EL(Unit, u, l->units., ui) {
       if(u->DMem_IsLocal()) {
 	continue;
@@ -4856,7 +4861,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesion) continue;
+    if(lay->lesioned()) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
@@ -4876,7 +4881,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   cidx = 0;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesion) continue;
+    if(lay->lesioned()) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
@@ -4905,7 +4910,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesion) continue;
+    if(lay->lesioned()) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
@@ -4926,7 +4931,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   float avg_mult = 1.0f / (float)np;
   cidx = 0;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesion) continue;
+    if(lay->lesioned()) continue;
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
@@ -4960,7 +4965,7 @@ void Network::DMem_SymmetrizeWts() {
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesion) continue;
+    if(lay->lesioned()) continue;
     if(lay->projections.size == 0) continue;
     Unit* un;
     taLeafItr ui;
@@ -5063,7 +5068,7 @@ void Network::Init_dWt(){
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Init_dWt();
   }
 }
@@ -5077,7 +5082,7 @@ void Network::Init_Weights() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Init_Weights();
   }
   Init_Weights_post();		// done after all initialization (for scaling wts...)
@@ -5121,7 +5126,7 @@ void Network::Init_Weights_post() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Init_Weights_post();
   }
 }
@@ -5130,7 +5135,7 @@ void Network::Compute_Netin() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Compute_Netin();
   }
 #ifdef DMEM_COMPILE
@@ -5142,7 +5147,7 @@ void Network::Send_Netin() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Send_Netin();
   }
 #ifdef DMEM_COMPILE
@@ -5154,7 +5159,7 @@ void Network::Compute_Act_default() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Compute_Act();
   }
 }
@@ -5163,7 +5168,7 @@ void Network::Compute_dWt() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Compute_dWt();
   }
 }
@@ -5189,7 +5194,7 @@ void Network::Compute_Weights_impl() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->Compute_Weights();
   }
 }
@@ -5208,7 +5213,7 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     sse += l->Compute_SSE(lay_vals, unit_avg, sqrt);
     n_vals += lay_vals;
   }
@@ -5259,7 +5264,7 @@ void Network::Copy_Weights(const Network* src) {
       (l) && (sl);
       l = (Layer*)layers.NextEl(i), sl = (Layer*)src->layers.NextEl(si))
   {
-    if(!l->lesion && !sl->lesion)
+    if(!l->lesioned() && !sl->lesioned())
       l->Copy_Weights(sl);
   }
   UpdateAllViews();
@@ -5276,7 +5281,7 @@ void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     strm << "<Lay " << l->name << ">\n";
     l->SaveWeights_strm(strm, (RecvCons::WtSaveFormat)fmt);
     strm << "</Lay>\n";
@@ -5408,20 +5413,20 @@ void Network::Compute_LayerDistances() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     l->dist.fm_input = -1; l->dist.fm_output = -1;
   }
 
   // next go through and find inputs
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     if(l->layer_type != Layer::INPUT) continue;
     l->dist.fm_input = 0;
     l->PropagateInputDistance();
   }
   // then outputs
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     if(!((l->layer_type == Layer::OUTPUT) || (l->layer_type == Layer::TARGET))) continue;
     l->dist.fm_output = 0;
     l->PropagateOutputDistance();
@@ -5433,7 +5438,7 @@ void Network::Compute_PrjnDirections() {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(l->lesion) continue;
+    if(l->lesioned()) continue;
     l->Compute_PrjnDirections();
   }
 }
@@ -5443,7 +5448,7 @@ void Network::TransformWeights(const SimpleMathSpec& trans) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->TransformWeights(trans);
   }
   UpdateAllViews();
@@ -5455,7 +5460,7 @@ void Network::AddNoiseToWeights(const Random& noise_spec) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       l->AddNoiseToWeights(noise_spec);
   }
   UpdateAllViews();
@@ -5471,7 +5476,7 @@ int Network::PruneCons(const SimpleMathSpec& pre_proc,
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       rval += l->PruneCons(pre_proc, rel, cmp_val);
   }
   StructUpdate(false);
@@ -5486,7 +5491,7 @@ int Network::ProbAddCons(float p_add_con, float init_wt) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       rval += l->ProbAddCons(p_add_con, init_wt);
   }
   StructUpdate(false);
@@ -5501,7 +5506,7 @@ int Network::LesionCons(float p_lesion, bool permute) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       rval += l->LesionCons(p_lesion, permute);
   }
   StructUpdate(false);
@@ -5516,7 +5521,7 @@ int Network::LesionUnits(float p_lesion, bool permute) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       rval += l->LesionUnits(p_lesion, permute);
   }
   StructUpdate(false);
@@ -5615,7 +5620,7 @@ int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       nchg += l->ReplaceUnitSpec(old_sp, new_sp);
   }
   return nchg;
@@ -5626,7 +5631,7 @@ int Network::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       nchg += l->ReplaceConSpec(old_sp, new_sp);
   }
   return nchg;
@@ -5637,7 +5642,7 @@ int Network::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       nchg += l->ReplacePrjnSpec(old_sp, new_sp);
   }
   return nchg;
@@ -5648,7 +5653,7 @@ int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesion)
+    if(!l->lesioned())
       nchg += l->ReplaceLayerSpec(old_sp, new_sp);
   }
   return nchg;

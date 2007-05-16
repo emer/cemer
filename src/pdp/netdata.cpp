@@ -446,6 +446,7 @@ void NetMonItem::UpdateAfterEdit_impl() {
   
   if(computed) {
     name_style = MY_NAME;
+    object = NULL;		// never have an obj for computed guy
   }
 
   if(!owner) return;

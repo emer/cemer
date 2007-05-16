@@ -2620,6 +2620,8 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
   to.x = axis_length;
   t3ax->addLine(fm, to);
 
+  bool use_str_labels = false;
+
   if(!ticks_only) { 
     // units legend
     if(units != 1.0) {
@@ -2633,8 +2635,14 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
       fm.x = .5f * axis_length;
       fm.y = -(TICK_SIZE + TICK_OFFSET + 1.5f * AXIS_LABEL_SIZE);
       String label = col_name; taMisc::SpaceLabel(label);
-      if(((GraphAxisView*)this)->row_num)
-	label = "Row Number";
+      if(((GraphAxisView*)this)->row_num) {
+	if(isString()) {
+	  use_str_labels = true;
+	}
+	else {
+	  label = "Row Number";
+	}
+      }
       t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
     }
   }
@@ -2662,6 +2670,14 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
 	else lab_val = .001f;
       }
       label = String(lab_val);
+      if(use_str_labels) {
+	DataCol* da = GetDAPtr();
+	if(da) {
+	  int rnum = (int)lab_val;// lab_val is row number!
+	  if(rnum >= 0 && rnum < da->rows())
+	    label = da->GetValAsString(rnum);
+	}
+      }
       t3ax->addLabel(label.chars(),
 		     iVec3f(fm.x, fm.y - y_lab_off, fm.z),
 		     SoAsciiText::CENTER);
@@ -2749,6 +2765,8 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
   to.z = axis_length;
   t3ax->addLine(fm, to);
 
+  bool use_str_labels = false;
+
   if(!ticks_only) {
     // units legend
     if(units != 1.0) {
@@ -2766,8 +2784,14 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       fm.y = -(.5f * TICK_SIZE + TICK_OFFSET + AXIS_LABEL_SIZE);
       fm.x = -(TICK_OFFSET + 2.5f * AXIS_LABEL_SIZE);
       String label = col_name; taMisc::SpaceLabel(label);
-      if(((GraphAxisView*)this)->row_num)
-	label = "Row Number";
+      if(((GraphAxisView*)this)->row_num) {
+	if(isString()) {
+	  use_str_labels = true;
+	}
+	else {
+	  label = "Row Number";
+	}
+      }
       t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
     }
   }
@@ -2795,6 +2819,14 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
 	else lab_val = .001f;
       }
       label = String(lab_val);
+      if(use_str_labels) {
+	DataCol* da = GetDAPtr();
+	if(da) {
+	  int rnum = (int)lab_val;// lab_val is row number!
+	  if(rnum >= 0 && rnum < da->rows())
+	    label = da->GetValAsString(rnum); 
+	}
+      }
       t3ax->addLabel(label.chars(),
 		     iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
     }
@@ -3091,6 +3123,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
     x_axis.on = true;
   }
   else {
+    if(x_axis.isString()) {
+      x_axis.row_num = true;	// must be row num!
+    }
     if(!x_axis.row_num) {
       GraphColView* xa = x_axis.GetColPtr();
       if(xa->dataCol()->is_matrix) {
@@ -3099,7 +3134,11 @@ void GraphTableView::UpdateAfterEdit_impl(){
       }
     }
   }
-  
+
+  if(z_axis.isString()) {
+    z_axis.row_num = true;	// must be row num!
+  }
+
   if(graph_type == RASTER) {
     if((plot_style != THRESH_LINE) && (plot_style !=  THRESH_POINT))
       color_mode = VALUE_COLOR;

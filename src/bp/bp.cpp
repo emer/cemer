@@ -138,7 +138,7 @@ void BpUnitSpec::Compute_dEdA(BpUnit* u) {
   u->err = 0.0f;
   for(int g=0; g<u->send.size; g++) {
     BpSendCons* send_gp = (BpSendCons*)u->send.FastEl(g);
-    if(!send_gp->prjn->layer->lesion)
+    if(!send_gp->prjn->layer->lesioned())
       u->dEdA += send_gp->Compute_dEdA(u);
   }
 }
@@ -565,7 +565,7 @@ void BpNetwork::SetCurLrate() {
   Layer* layer;
   taLeafItr l_itr;
   FOR_ITR_EL(Layer, layer, layers., l_itr) {
-    if (layer->lesion)	continue;
+    if (layer->lesioned())	continue;
     BpUnit* u;
     taLeafItr u_itr;
     FOR_ITR_EL(BpUnit, u, layer->units., u_itr)
@@ -578,7 +578,7 @@ void BpNetwork::Compute_Act() {
   Layer* lay;
   taLeafItr l_itr;
   FOR_ITR_EL(Layer, lay, layers., l_itr) {
-    if (lay->lesion)	continue;
+    if (lay->lesioned())	continue;
     if (!(lay->ext_flag & Unit::EXT)) {
       lay->Compute_Netin();
 #ifdef DMEM_COMPILE
@@ -596,7 +596,7 @@ void BpNetwork::Compute_dEdA_dEdNet() {
   int i;//
   for (i = layers.leaves-1; i>= 0; i--) {
     lay = ((Layer*) layers.Leaf(i));
-    if(lay->lesion || (!bp_to_inputs && (lay->ext_flag & Unit::EXT))) // don't compute err on inputs
+    if(lay->lesioned() || (!bp_to_inputs && (lay->ext_flag & Unit::EXT))) // don't compute err on inputs
       continue;
 
     BpUnit* u;
@@ -625,7 +625,7 @@ void BpNetwork::Compute_Error() {
   Layer* lay;
   taLeafItr l_itr;
   FOR_ITR_EL(Layer, lay, layers., l_itr) {
-    if (lay->lesion || !(lay->ext_flag & Unit::TARG)) // only compute err on targs
+    if (lay->lesioned() || !(lay->ext_flag & Unit::TARG)) // only compute err on targs
       continue;
 
     BpUnit* u;

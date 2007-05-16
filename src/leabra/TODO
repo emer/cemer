@@ -2,9 +2,8 @@ leabra todo list:
 
 commit:
 
-* changed MemberAssign to a string path that can accept multiple sub-path guys.  Member
-is a lookup that adds to path and is reset.
-* fixed netview scale memory -- netview should be pretty much done -- just a few more things.
+* replace Layer.lesion with flag and lesioned() fun..
+* set string for X/Z axis: auto selects row_num but displays string vals!
 
 ------------
 current:
