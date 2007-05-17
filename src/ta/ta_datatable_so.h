@@ -29,6 +29,7 @@ class SoCube; // #IGNORE
 class SoFont; // #IGNORE
 class SoCalculator; // #IGNORE
 class SoTransformBoxDragger; // #IGNORE
+class SoComplexity; // #IGNORE 
 
 // forwards
 class T3GridViewNode;
@@ -160,6 +161,7 @@ public:
   static void		initClass(); //
   Axis			axis() const {return axis_;} //note: lifetime invariant
   SoFont*		labelFont() const {return labelFont_;} // setup after creating
+  float			fontSize() const { return font_size_; }
 
   void			clear();
   void			addLabel(const char* text, const iVec3f& at);
@@ -180,6 +182,7 @@ protected:
   SoDrawStyle* 		line_style;
   SoLineSet*		lines; // we use the vertexProperty for points etc.
   iVec3f 		last_label_at; // used so we just need to issue delta translates
+  SoComplexity*		complexity_;
   SoFont*		labelFont_;
   float			font_size_;
   SoSeparator*		labels;
@@ -299,6 +302,7 @@ protected:
   SoLineSet*		errbars;
   SoMarkerSet*		markerSet_; // created if needed; we use the vertexProperty for points etc.
   SoSeparator*		textSep_; // optional text separator
+  SoComplexity*		complexity_;
   SoFont*		labelFont_;
   float			font_size_;
   SoPackedColor*	textColor_;

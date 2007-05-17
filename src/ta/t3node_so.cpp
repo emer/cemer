@@ -1097,7 +1097,7 @@ void SoMatrixGrid::render() {
 	vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
 
 	if(val_text) {
-	  render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	  render_text(build_text, t_idx, xp, xp1, yp, yp1, zp, ufontsz);
 	}
       }
     }
@@ -1132,7 +1132,7 @@ void SoMatrixGrid::render() {
 	  vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
 
 	  if(val_text) {
-	    render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	    render_text(build_text, t_idx, xp, xp1, yp, yp1, zp, ufontsz);
 	  }
 	}
       }
@@ -1169,7 +1169,7 @@ void SoMatrixGrid::render() {
 	    vertex_dat[v_idx++].setValue(xp1, yp1, zp); // 11_v = 4
 
 	    if(val_text) {
-	      render_text(build_text, t_idx, xp, xp1, yp, yp1, zp);
+	      render_text(build_text, t_idx, xp, xp1, yp, yp1, zp, ufontsz);
 	    }
           }
 	}
@@ -1255,7 +1255,7 @@ void SoMatrixGrid::render() {
 }
 
 void SoMatrixGrid::render_text(bool build_text, int& t_idx, float xp, float xp1,
-			       float yp, float yp1, float zp)
+			       float yp, float yp1, float zp, float ufontsz)
 {
   if(build_text || cell_text_->getNumChildren() <= t_idx) {
     SoSeparator* tsep = new SoSeparator;
@@ -1271,7 +1271,7 @@ void SoMatrixGrid::render_text(bool build_text, int& t_idx, float xp, float xp1,
   SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
   SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
   float xfp = .5f * (xp + xp1);
-  float yfp = .5f * (yp + yp1);
+  float yfp = .5f * (yp + yp1) - .5f * ufontsz;
   tr->translation.setValue(xfp, yfp, MAX(zp,0.0f) + .01f);
   SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
   txt->string.setValue("0.0");	// placeholder; gets set later
@@ -1375,7 +1375,41 @@ void SoMatrixGrid::renderValues() {
 
   // these go in normal order; indexes are backwards
   // note: only 2d case right yet..
-  if(matrix->dims() <= 2) {
+  if(matrix->dims() == 1) {
+    pos.x = 0;
+    int ymax = matrix->dim(0);	// assumes odd_y
+    for(pos.y=0; pos.y<ymax; pos.y++) {
+      if(mat_layout == BOT_ZERO)
+	val = matrix->FastElAsFloat(ymax-1-pos.y);
+      else
+	val = matrix->FastElAsFloat(pos.y);
+
+      iColor fl;  iColor tx;
+      scale->GetColor(val,&fl,&tx,sc_val);
+      float zp = sc_val * blk_ht;
+      v_idx+=4;			// skip the _0 cases
+      for(int i=0;i<4;i++)
+	vertex_dat[v_idx++][2] = zp; // 00_v = 1, 10_v = 2, 01_v = 3, 11_v = 4
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans_max);
+      color_dat[c_idx++] = T3Color::makePackedRGBA(fl.redf(), fl.greenf(), fl.bluef(), alpha);
+      if(val_text) {
+	SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
+	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+	if(matrix->GetDataValType() == taBase::VT_STRING) {
+	  if(mat_layout == BOT_ZERO)
+	    val_str = ((String_Matrix*)matrix)->FastEl(ymax-1-pos.y).elidedTo(max_txt_len);
+	  else
+	    val_str = ((String_Matrix*)matrix)->FastEl(pos.y).elidedTo(max_txt_len);
+	}
+	else {
+	  ValToDispText(val, val_str);
+	}
+	txt->string.setValue(val_str.chars());
+	t_idx++;
+      }
+    }
+  }
+  else if(matrix->dims() == 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
 	if(mat_layout == BOT_ZERO)

@@ -2641,6 +2641,7 @@ const String Program::scriptString() {
       // note: this is a list of ProgramCall's, not the actual prog itself!
       for (int i = 0; i < sub_progs.size; ++i) {
         ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
+	if(!sp->target) continue;
         m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
         m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
         m_scriptCache += "    target->CompileScript(); // needs to be compiled before setting vars\n";

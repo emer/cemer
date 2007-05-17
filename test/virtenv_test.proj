@@ -1,0 +1,307 @@
+// ta_Dump File v2.0
+taPluginBase_List .plugin_deps { 
+  taPluginBase_List @.plugin_deps = [1] {
+    taPluginDep @[0] { };
+  };
+};
+taPluginBase_List .plugin_deps {
+ name=;
+ el_typ=taPluginDep;
+ el_def=0;
+ taPluginDep @[0] {
+  name="VEOdePlugin";
+  desc="Virtual Simulated Environment, using ODE physics engine";
+  unique_id="virtenvplugin.ccnlab.psych.colorado.edu";
+  version="1.0.0.0";
+  url=;
+ };
+};
+LeabraProject .projects[0] { 
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @[0] { 
+      taBase_List @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { };
+    taDataAnal @[1] { };
+    taDataGen @[2] { };
+    taImageProc @[3] { };
+  };
+
+  Program_Group @.programs = [1] {
+    Program @[0] { 
+      ProgObjList @.objs = [1] {
+	VEWorld @[0] { };
+      };
+
+      ProgVar_List @.vars = [1] {
+	ProgVar @[0] { };
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @[0] { };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+};
+LeabraProject .projects[0] {
+ name="Project_0";
+ desc=;
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ wizards {
+  name=;
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   name="LeabraWizard_0";
+   auto_open=0;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name=;
+     n_units=25;
+     io_type=131072;
+    };
+    LayerWizEl @[1] {
+     name=;
+     n_units=25;
+     io_type=131096;
+    };
+    LayerWizEl @[2] {
+     name=;
+     n_units=25;
+     io_type=131072;
+    };
+   };
+   connectivity=BIDIRECTIONAL;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  desc=;
+  Program @[0] {
+   name="Program_1";
+   desc=;
+   flags=;
+   objs {
+    name=;
+    el_typ=VEWorld;
+    el_def=0;
+    VEWorld @[0] {
+     name="VEWorld_0";
+     gravity {x=0: y=0: z=-9.81: };
+     stepsize=0.01;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="VEWorld_0";
+     var_type=T_Object;
+     object_type=VEWorld;
+     object_val=.projects[0].programs[0].objs[0]$0$;
+     objs_ptr=1;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$1$;
+   name=;
+   visible=1;
+   m_is_root=0;
+   m_is_proj_viewer=1;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name=;
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$1$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name=;
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="Frame1";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="Frame1";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	};
+       };
+       camera_pos {x=0: y=0: z=-1.517074: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=2.482926;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ use_sim_log=0;
+ networks {
+  name=;
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};

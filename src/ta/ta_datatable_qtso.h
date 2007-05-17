@@ -802,6 +802,9 @@ public:
   float			bar_space;	// #DEF_0.2 amount of space between bars
   ColorMode		color_mode;	// how to determine the colors to draw
   bool			negative_draw;	// continue same line when X value resets in negative axis direction?
+  float			axis_font_size;	// #DEF_0.05 size to render axis text 
+  float			label_font_size;// #DEF_0.04 size to render value/string labels
+
   int 			label_spacing;	// how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
   MatrixMode		matrix_mode;	// how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
   taMisc::MatrixView	mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
@@ -826,6 +829,9 @@ public:
 
   bool			two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
   float			two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
+
+  static float		tick_size; 	// #DEF_0.05 size of tick marks
+
   bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
 
   override void	InitDisplay(bool init_panel = true);

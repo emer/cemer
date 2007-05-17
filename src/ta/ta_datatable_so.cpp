@@ -223,8 +223,13 @@ T3Axis::T3Axis(Axis ax, void* dataView_, float fnt_sz, int n_axis)
   labels = new SoSeparator();
   ss->addChild(labels);
 
+  complexity_ = new SoComplexity;
+  complexity_->ref(); // we re-add to the labels group every clear
+  complexity_->value.setValue(taMisc::text_complexity);
+
   labelFont_ = new SoFont();
   labelFont_->ref(); // we re-add to the labels group every clear
+  labelFont_->name = "Arial";
   labelFont_->size.setValue(font_size_);
 
   clear(); // initializes everything correctly
@@ -232,6 +237,8 @@ T3Axis::T3Axis(Axis ax, void* dataView_, float fnt_sz, int n_axis)
 
 T3Axis::~T3Axis()
 {
+  complexity_->unref();
+  complexity_ = NULL;
   labelFont_->unref();
   labelFont_ = NULL;
   labels = NULL;
@@ -313,10 +320,7 @@ void T3Axis::clear() {
 
   last_label_at = 0.0f;
   labels->removeAllChildren();
-  // doesn't seem to make much diff:
-  SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(taMisc::text_complexity);
-  labels->addChild(cplx);
+  labels->addChild(complexity_);
   labels->addChild(labelFont_);
   inherited::clear();
 }
@@ -363,9 +367,16 @@ T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
   font_size_ = fnt_sz;
   textSep_ = NULL;
   textColor_ = NULL;
+
+  complexity_ = new SoComplexity;
+  complexity_->ref(); // we re-add to the labels group every clear
+  complexity_->value.setValue(taMisc::text_complexity);
+
   labelFont_ = new SoFont();
   labelFont_->ref(); // we re-add to the text group after clear
+  labelFont_->name = "Arial";
   labelFont_->size.setValue(font_size_);
+
   defColor_ = 0xff; // black, opaque
   valueColorMode_ = false;
   SoSeparator* ss = this->shapeSeparator(); //cache
@@ -398,6 +409,8 @@ T3GraphLine::~T3GraphLine()
   textColor_ = NULL;
   labelFont_->unref();
   labelFont_ = NULL;
+  complexity_->unref();
+  complexity_ = NULL;
 }
 
 void T3GraphLine::assertMarkerSet() {
@@ -412,10 +425,7 @@ void T3GraphLine::assertMarkerSet() {
 void T3GraphLine::assertText() {
   if (textSep_) return;
   textSep_ = new SoSeparator();
-  // doesn't seem to make much diff:
-  SoComplexity* cplx = new SoComplexity;
-  cplx->value.setValue(taMisc::text_complexity);
-  textSep_->addChild(cplx);
+  textSep_->addChild(complexity_);
   textSep_->addChild(labelFont_);
 
   textColor_ = new SoPackedColor();

@@ -133,3 +133,11 @@ String TimeUsed::GetString() {
   }
   return rval;
 }
+
+//////////////////////////
+// 	taDateTime 	//
+//////////////////////////
+
+void taDateTime::Initialize() {
+  secs_1jan_1970 = 0;
+}

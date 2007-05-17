@@ -1333,14 +1333,14 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
     if(set_data)
       rval +=  il + idnm + ".SetDataByName(" + var->name + ", \"" + var->name +"\");\n";
     else
-      rval += il + var->name + " = GetDataByName(\"" + var->name + "\");\n";
+      rval += il + var->name + " = " + idnm + ".GetDataByName(\"" + var->name + "\");\n";
   }
   else if(row_spec == ROW_NUM) {
     if(set_data)
       rval +=  il + idnm + ".SetValColName(" + var->name + ", \"" + var->name +"\", "
 	+ row_var->name + ");\n";
     else 
-      rval += il + var->name + " = GetValColName(\"" + var->name + "\", "
+      rval += il + var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
 	+ row_var->name + ");\n";
   }
   else if(row_spec == ROW_VAL) {
@@ -1348,7 +1348,7 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
       rval +=  il + idnm + ".SetValColRowName(" + var->name + ", \"" + var->name+ "\", \""
 	+ row_var->name + "\", " + row_var->name + ");\n";
     else 
-      rval += il + var->name + " = GetValColRowName(\"" + var->name +"\", \""
+      rval += il + var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
 	+ row_var->name + "\", " + row_var->name + ");\n";
   }
   return true;

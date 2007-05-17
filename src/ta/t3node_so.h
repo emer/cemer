@@ -506,7 +506,7 @@ protected:
 				 int32_t* mats_dat, int& cidx, int& nidx, int& midx);
   // render one set of block indicies
   void		render_text(bool build_text, int& t_idx, float xp, float xp1, float yp,
-			    float yp1, float zp);
+			    float yp1, float zp, float ufontsz);
   // setup all the cell_text_ stuff
 };
 
