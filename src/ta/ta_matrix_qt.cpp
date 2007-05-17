@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QHeaderView>
 #include <QTableView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -260,6 +261,12 @@ iTableView::iTableView(QWidget* parent)
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(this_customContextMenuRequested(const QPoint&)) );
+  horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
+    this, SLOT(hor_customContextMenuRequested(const QPoint&)) );
+  verticalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(verticalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
+    this, SLOT(ver_customContextMenuRequested(const QPoint&)) );
   // wire the selection signals to the UpdateUi, to update enabling
 //  connect(me->tv, SIGNAL(activated(const QModelIndex&)), me, SIGNAL(UpdateUi()) );
   connect(this, SIGNAL(clicked(const QModelIndex&)), this, SIGNAL(UpdateUi()) );
@@ -280,12 +287,46 @@ bool iTableView::event(QEvent* ev) {
   return rval;
 }
 
+void iTableView::ContextMenuRequested(ContextArea ca, const QPoint& global_pos) {
+  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
+  FillContextMenu_impl(ca, menu);
+  if (menu->count() > 0) { //only show if any items!
+    menu->exec(global_pos);
+  }
+  delete menu;
+}
 
-void iTableView::FillContextMenu_impl(taiMenu* menu) {
+void iTableView::FillContextMenu_impl(ContextArea ca, taiMenu* menu) {
+  taiAction* act = NULL;
+  // generic col guys
+  if (ca == CA_COL_HDR) {
+    if (!isFixedColCount()) {
+      act = menu->AddItem("Append Columns", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_COL | OP_APPEND) );
+      act = menu->AddItem("Insert Columns", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );
+      act = menu->AddItem("Delete Columns", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
+    }
+  }
+  
+  // generic row guys
+  if (ca == CA_ROW_HDR) {
+    if (!isFixedRowCount()) {
+      act = menu->AddItem("Append Rows", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_ROW | OP_APPEND) );
+      act = menu->AddItem("Insert Rows", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_ROW | OP_INSERT) );
+      act = menu->AddItem("Delete Rows", taiMenu::normal, taiAction::int_act,
+        this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
+    }
+    menu->AddSep();
+  }
+  
+  // edit guys
   int ea = 0;
   GetEditActionsEnabled(ea);
     
-  taiAction* 
   act = menu->AddItem("&Copy", taiMenu::normal, taiAction::int_act,
     this, SLOT(EditAction(int)), taiClipData::EA_COPY );
   act->setShortcut(QKeySequence("Ctrl+C"));
@@ -307,14 +348,24 @@ void iTableView::FillContextMenu_impl(taiMenu* menu) {
       QKeySequence("Ctrl+A"));
 }
 
+void iTableView::RowColOp(int op_code) {
+  CellRange sel(selectionModel()->selectedIndexes());
+  RowColOp_impl(op_code, sel);
+}
 
 void iTableView::this_customContextMenuRequested(const QPoint& pos) {
-  taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  FillContextMenu_impl(menu);
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(mapToGlobal(pos));
-  }
-  delete menu;
+  ContextArea ca = CA_GRID; // TODO: determine if in blank
+  ContextMenuRequested(ca, mapToGlobal(pos));
+}
+
+void iTableView::hor_customContextMenuRequested(const QPoint& pos) {
+  ContextArea ca = CA_COL_HDR; // TODO: determine if in blank
+  ContextMenuRequested(ca, horizontalHeader()->mapToGlobal(pos));
+}
+
+void iTableView::ver_customContextMenuRequested(const QPoint& pos) {
+  ContextArea ca = CA_ROW_HDR; // TODO: determine if in blank
+  ContextMenuRequested(ca, verticalHeader()->mapToGlobal(pos));
 }
 
 
@@ -360,6 +411,12 @@ void iMatrixTableView::GetEditActionsEnabled(int& ea) {
     delete ms;
   }
   ea = allowed & ~forbidden;
+}
+
+bool iMatrixTableView::isFixedRowCount() const {
+  taMatrix* mat = this->mat(); // may not have a model/mat!
+  if (!mat) return true;
+  return (!mat->canResize());
 }
 
 

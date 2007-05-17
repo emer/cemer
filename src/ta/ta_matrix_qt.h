@@ -98,8 +98,19 @@ class TA_API iTableView: public QTableView {
 INHERITED(QTableView)
   Q_OBJECT
 public:
+  enum ContextArea { // where ctxt menu was requested
+    CA_EMPTY	= 0x01,
+    CA_GRID	= 0x02,
+    CA_COL_HDR	= 0x04,
+    CA_ROW_HDR	= 0x08,
+    CA_HDR_MASK = 0x0C
+  };
 
+  virtual bool		isFixedRowCount() const = 0; // true, ex. for tab mat cells with fixed rows
+  virtual bool		isFixedColCount() const = 0; // true, ex. for tab mat cells with fixed geom
+  
   iTableView(QWidget* parent = NULL);
+  
 #ifndef __MAKETA__
 signals:
   void			hasFocus(iTableView* sender); // we emit anytime something happens which implies we are focused
@@ -115,11 +126,24 @@ signals:
 
 
 protected:
-  override bool		event(QEvent* ev);
-  virtual void		FillContextMenu_impl(taiMenu* menu);
+  enum RowColOpCode {
+    OP_APPEND		= 0x02,
+    OP_INSERT		= 0x04,
+    OP_DELETE		= 0x08,
+    OP_ROW		= 0x40, 
+    OP_COL		= 0x80
+  };
   
+  override bool		event(QEvent* ev);
+  void 			ContextMenuRequested(ContextArea ca, const QPoint& global_pos);
+  virtual void		FillContextMenu_impl(ContextArea ca, taiMenu* menu);
+  virtual void		RowColOp_impl(int op_code, const CellRange& sel) {} 
+    
 protected slots:
   void 			this_customContextMenuRequested(const QPoint& pos);
+  void 			hor_customContextMenuRequested(const QPoint& pos);
+  void 			ver_customContextMenuRequested(const QPoint& pos);
+  void			RowColOp(int op_code); // based on selection
 };
 
 class TA_API iMatrixTableView: public iTableView {
@@ -129,6 +153,9 @@ INHERITED(iTableView)
 public:
   taMatrix*		mat() const;
 
+  override bool		isFixedRowCount() const;
+  override bool		isFixedColCount() const {return true;}
+  
   iMatrixTableView(QWidget* parent = NULL);
   
 public: // cliphandler i/f

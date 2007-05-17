@@ -108,7 +108,8 @@ void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
 {
   //this is primarily for code-driven changes
   if (dcr <= DCR_ITEM_UPDATED_ND) {
-    emit_dataChanged();
+    emit_layoutChanged(); // need to update layout for when rows added/removed
+//nw    emit_dataChanged();
   }
   else if ((dcr == DCR_STRUCT_UPDATE_END)) { // for col insert/deletes
     emit_layoutChanged();
@@ -5737,6 +5738,41 @@ void iDataTableView::GetEditActionsEnabled(int& ea) {
   ea = allowed & ~forbidden;
 }
 
+void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
+  DataTable* tab = this->dataTable(); // may not exist
+  if (!tab) return;
+  if (op_code & OP_ROW) {
+    // must have >=1 row selected to make sense
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
+      if (sel.height() < 1) return;
+      if (op_code & OP_APPEND) {
+        tab->AddRows(sel.height());
+      } else if (op_code & OP_INSERT) {
+        tab->InsertRows(sel.row_fr, sel.height());
+      } else if (op_code & OP_DELETE) {
+        if (taMisc::Choice("Are you sure you want to delete the selected rows? (this operation cannot be undone!)", "Yes", "Cancel") != 0) return;
+        tab->RemoveRows(sel.row_fr, sel.height());
+      }
+    }
+  } else if (op_code & OP_COL) { 
+    // must have >=1 col selected to make sense
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
+      if (sel.width() < 1) return;
+      if (op_code & OP_APPEND) {
+//TODO        tab->AddRows(sel.height());
+      } else if (op_code & OP_INSERT) {
+//TODO        tab->InsertRows(sel.row_fr, sel.height());
+      } else if (op_code & OP_DELETE) {
+        if (taMisc::Choice("Are you sure you want to delete the selected columns? (this operation cannot be undone!)", "Yes", "Cancel") != 0) return;
+        tab->StructUpdate(true);
+        for (int col = sel.col_to; col >= sel.col_fr; --col) {
+          tab->RemoveCol(col);
+        }
+        tab->StructUpdate(false);
+      }
+    }
+  }
+} 
 
 
 //////////////////////////

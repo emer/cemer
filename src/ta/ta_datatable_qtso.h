@@ -1202,6 +1202,9 @@ INHERITED(iTableView)
 public:
   DataTable*		dataTable() const;
   
+  override bool		isFixedRowCount() const {return false;}
+  override bool		isFixedColCount() const {return false;}
+  
   iDataTableView(QWidget* parent = NULL);
 
 public: // cliphandler i/f
@@ -1218,6 +1221,7 @@ protected:
     const QModelIndex& previous); // override
   override void 	dataChanged(const QModelIndex& topLeft,
     const QModelIndex & bottomRight); // refresh mat cell if in here
+  override void		RowColOp_impl(int op_code, const CellRange& sel); 
 };
 #endif // MAKETA
 
