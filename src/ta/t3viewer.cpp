@@ -1827,8 +1827,9 @@ void T3DataViewer::Constr_impl(QWidget* gui_parent) {
 
 void T3DataViewer::ConstrFrames_impl() {
   iT3DataViewer* idv = widget(); //cache
+  T3DataViewFrame* fv = NULL;
   for (int i = 0; i < frames.size; ++i) {
-    T3DataViewFrame* fv = frames.FastEl(i);
+    fv = frames.FastEl(i);
     if (!fv) continue; // shouldn't happen
     // note: don't parent the frame, since we use the api to add it
     ((DataViewer*)fv)->Constr_impl(NULL);

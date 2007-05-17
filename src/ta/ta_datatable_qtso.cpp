@@ -107,10 +107,10 @@ void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   void* op1, void* op2)
 {
   //this is primarily for code-driven changes
-  if (dcr == DCR_ITEM_UPDATED_ND) {
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
-  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_ITEM_UPDATED)) { // for col insert/deletes
+  else if ((dcr == DCR_STRUCT_UPDATE_END)) { // for col insert/deletes
     emit_layoutChanged();
   }
 }
@@ -1316,7 +1316,7 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
-    vw->viewerWindow()->AddPanelNewTab(lvp());
+    vw->viewerWindow()->AddPanel(lvp(), false); // no tab yet
     vw->RegisterPanel(m_lvp);
   }
 }
@@ -3336,7 +3336,7 @@ void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGraphTableView_Panel(this);
-    vw->viewerWindow()->AddPanelNewTab(lvp());
+    vw->viewerWindow()->AddPanel(lvp(), false); // no tab yet
     vw->RegisterPanel(m_lvp);
   }
 }

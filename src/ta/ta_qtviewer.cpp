@@ -2358,6 +2358,7 @@ void iBrowseViewer::Init() {
   lay->addWidget(lvwDataTree);
   lvwDataTree->setName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
+  lvwDataTree->setSelectionMode(QAbstractItemView::ExtendedSelection); // multiselect
   lvwDataTree->setDefaultExpandLevels(8); // set fairly deep for ExpandAll
   lvwDataTree->setColumnCount(1);
   lvwDataTree->AddColDataKey(0, "", Qt::StatusTipRole); // show status tip
@@ -2837,10 +2838,11 @@ int iToolBoxDockViewer::AssertSection(const String& sec_name) {
   return sec;
 }
 
-void iToolBoxDockViewer::AddClipToolWidget(int sec, iClipToolWidget* ctw) {
+void iToolBoxDockViewer::AddClipToolWidget(int sec, iClipWidgetAction* cwa) {
   QToolBar* w = sectionWidget(sec);
   if (!w) return; // user didn't assert
-  w->addWidget(ctw);
+  w->addAction(cwa); 
+  connect(cwa, SIGNAL(triggered()), cwa, SLOT(copyToClipboard()) ); // ie to self
 }
 
 void iToolBoxDockViewer::AddSeparator(int sec) {
@@ -2943,41 +2945,41 @@ void iApplicationToolBar::Constr_post() {
 }
 
 //////////////////////////
-//  iBaseClipToolWidget	//
+//  iBaseClipWidgetAction //
 //////////////////////////
 
-iBaseClipToolWidget::iBaseClipToolWidget(taBase* inst_, QWidget* parent)
+iBaseClipWidgetAction::iBaseClipWidgetAction(taBase* inst_, QObject* parent)
 :inherited(parent)
 {
   Init(inst_);
 }
 
-iBaseClipToolWidget::iBaseClipToolWidget(const QIcon & icon_, taBase* inst_,
- QWidget* parent)
+iBaseClipWidgetAction::iBaseClipWidgetAction(const QIcon & icon_, taBase* inst_,
+ QObject* parent)
 :inherited(parent)
 {
   Init(inst_);
   setIcon(icon_);
 }
 
-iBaseClipToolWidget::iBaseClipToolWidget(const String& tooltip_, const QIcon & icon_,
-    taBase* inst_, QWidget* parent)
+iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const QIcon & icon_,
+    taBase* inst_, QObject* parent)
 :inherited(parent)
 {
   Init(inst_, tooltip_);
   setIcon(icon_);
 }
 
-iBaseClipToolWidget::iBaseClipToolWidget(const String& text_,
-    taBase* inst_, QWidget* parent)
+iBaseClipWidgetAction::iBaseClipWidgetAction(const String& text_,
+    taBase* inst_, QObject* parent)
 :inherited(parent)
 {
   Init(inst_);
   setText(text_);
 }
 
-iBaseClipToolWidget::iBaseClipToolWidget(const String& tooltip_, const String& text_,
-    taBase* inst_, QWidget* parent)
+iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const String& text_,
+    taBase* inst_, QObject* parent)
 :inherited(parent)
 {
   Init(inst_, tooltip_);
@@ -2985,9 +2987,7 @@ iBaseClipToolWidget::iBaseClipToolWidget(const String& tooltip_, const String& t
 }
 
   
-void iBaseClipToolWidget::Init(taBase* inst_, String tooltip_) {
-  setAutoCopy(true);
-  setDragEnabled(true);
+void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
   m_inst = inst_;
   if (tooltip_.empty() && inst_) {
     tooltip_ = inst_->GetToolTip(taBase::key_desc);
@@ -3001,8 +3001,8 @@ void iBaseClipToolWidget::Init(taBase* inst_, String tooltip_) {
       setStatusTip(statustip);
   }
 }
-
-QMimeData* iBaseClipToolWidget::mimeData() const {
+  		
+QMimeData* iBaseClipWidgetAction::mimeData() const {
   taiClipData* rval = NULL;
   if (m_inst) {
     taiDataLink* link = (taiDataLink*)m_inst->GetDataLink();
@@ -3020,24 +3020,17 @@ QMimeData* iBaseClipToolWidget::mimeData() const {
   return rval;
 }
 
-QStringList iBaseClipToolWidget::mimeTypes() const {
+QStringList iBaseClipWidgetAction::mimeTypes() const {
  //NOTE: for dnd to work, we just permit our own special mime type!!!
   QStringList rval;
   rval.append(taiObjectMimeFactory::tacss_objectdesc);
   return rval;
 }
 
-void iBaseClipToolWidget::setBase(taBase* value) {
-  m_inst = value;
-}
-  		
-
 
 //////////////////////////
 //  iMainWindowViewer	//
 //////////////////////////
-
-
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax |
@@ -3145,9 +3138,13 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
 
 // this guy exists because we must always be able to add a panel,
 // so if there isn't already a panel viewer, we have to add one
-void iMainWindowViewer::AddPanelNewTab(iDataPanel* panel) {
+void iMainWindowViewer::AddPanel(iDataPanel* panel, bool new_tab) {
   iTabViewer* itv = GetTabViewer(true);
-  itv->AddPanelNewTab(panel);
+  if (new_tab) {
+    itv->AddPanelNewTab(panel);
+  } else {
+    itv->AddPanel(panel); // typically for ctrl panels
+  }
 } 
 
 iTabViewer* iMainWindowViewer::GetTabViewer(bool force) {
@@ -3268,6 +3265,10 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   show_menu = menu->AddSubMenu("&Show");
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()) );
   toolsMenu = menu->AddSubMenu("&Tools");
+  windowMenu = menu->AddSubMenu("&Window");
+  connect(windowMenu->menu(), SIGNAL(aboutToShow()),
+    this, SLOT(windowMenu_aboutToShow()) );
+  
   helpMenu = menu->AddSubMenu("&Help");;
 }
 
@@ -3611,6 +3612,40 @@ int iMainWindowViewer::GetEditActions() {
   emit GetEditActionsEnabled(rval);
   return rval;
 }
+
+void iMainWindowViewer::windowMenu_aboutToShow() {
+  // delete previous
+  windowMenu->Reset();
+  // populate with current windows
+  Widget_List wl;
+  taiMisc::GetWindowList(wl);
+  for (int i = 0; i < wl.size; ++i) {
+    QWidget* wid = wl.FastEl(i);
+    String title;
+    // for up to first 9, put numeric accelerator
+    if (i < 9) {
+      title = "&" + String(i + 1) + " ";
+    }
+    if (wid->isWindow())
+      title.cat((String)wid->windowTitle());
+/*??    else 
+      title.cat((String)wid->text());*/
+    //taiAction* item =
+    windowMenu->AddItem(title, taiAction::int_act, 
+     this, SLOT(windowActivate(int)), i);
+  }
+}
+
+void iMainWindowViewer::windowActivate(int win) {
+  // populate with current windows -- should correspond to the ones enumerated
+  Widget_List wl;
+  taiMisc::GetWindowList(wl);
+  QWidget* wid = wl.SafeEl(win);
+  if (!wid) return;
+  wid->activateWindow();
+  wid->raise();
+}
+
 
 void iMainWindowViewer::helpAbout() {
   if (tabMisc::root) tabMisc::root->About();

@@ -51,6 +51,7 @@ class ISelectable;
 class ISelectable_PtrList;
 class ISelectableHost; 
 class iBrowseViewer;
+class iBaseClipWidgetAction;
 class iTreeView;
 class iTreeViewItem;
 class taiListDataNode;
@@ -741,7 +742,7 @@ public:
   inline ToolBoxDockViewer*	viewer() {return (ToolBoxDockViewer*)m_viewer;}
   
   int			AssertSection(const String& sec_name); // insures the tab exists; returns idx
-  void			AddClipToolWidget(int sec, iClipToolWidget* ctw);
+  void			AddClipToolWidget(int sec, iClipWidgetAction* cwa);
   void			AddSeparator(int sec); // adds a separator (if one is not at the end already)
   
   iToolBoxDockViewer(ToolBoxDockViewer* viewer_, QWidget* parent = NULL);
@@ -804,24 +805,23 @@ public:
   override void		Constr_post(); 
 };
 
-class TA_API iBaseClipToolWidget: public iClipToolWidget {
+class TA_API iBaseClipWidgetAction: public iClipWidgetAction {
   // for making drag/copy guys from a taBase instance (ex. see programs_qtso)
-INHERITED(iClipToolWidget)
+INHERITED(iClipWidgetAction)
   Q_OBJECT
 public:
   taBase*		base() const {return m_inst;}
-  void			setBase(taBase* value); //
   
   
   // tooltip defaults to key_desc of the instance		
-  iBaseClipToolWidget(taBase* inst = NULL, QWidget* parent = NULL);
-  iBaseClipToolWidget(const QIcon & icon, taBase* inst = NULL, QWidget* parent = NULL);
-  iBaseClipToolWidget(const String& tooltip, const QIcon & icon,
-    taBase* inst = NULL, QWidget* parent = NULL);
-  iBaseClipToolWidget(const String& text,
-    taBase* inst = NULL, QWidget* parent = NULL);
-  iBaseClipToolWidget(const String& tooltip, const String& text,
-    taBase* inst = NULL, QWidget* parent = NULL);
+  iBaseClipWidgetAction(taBase* inst = NULL, QObject* parent = NULL);
+  iBaseClipWidgetAction(const QIcon & icon, taBase* inst = NULL, QObject* parent = NULL);
+  iBaseClipWidgetAction(const String& tooltip, const QIcon & icon,
+    taBase* inst = NULL, QObject* parent = NULL);
+  iBaseClipWidgetAction(const String& text,
+    taBase* inst = NULL, QObject* parent = NULL);
+  iBaseClipWidgetAction(const String& tooltip, const String& text,
+    taBase* inst = NULL, QObject* parent = NULL);
    
   
 protected:
@@ -834,7 +834,7 @@ private:
 };
 
 
-//////////////////////////
+/////////////////////////
 //   iMainWindowViewer	//
 //////////////////////////
 
@@ -861,6 +861,7 @@ public:
   taiMenu* 		toolBarMenu; // enumeration of all ToolBar guys
   taiMenu* 		dockMenu; // enumeration of all Dock guys
   taiMenu* 		toolsMenu;
+  taiMenu* 		windowMenu; // on-demand
   taiMenu* 		helpMenu;
   taiAction* 		fileNewAction;
   taiAction* 		fileOpenAction;
@@ -905,8 +906,8 @@ public:
   inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
-  void			AddPanelNewTab(iDataPanel* panel); 
-    // insures we have a iTabViewer; adds a new tab, sets panel active in it
+  void			AddPanel(iDataPanel* panel, bool new_tab = true); 
+    // insures we have a iTabViewer; adds panel; if requested, adds a new tab, sets panel active in it
   virtual void		AddToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
   virtual void		AddFrameViewer(iFrameViewer* fv, int at_index = -1); // -1=end
 #ifndef __MAKETA__
@@ -954,6 +955,9 @@ public slots:
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
   
   virtual void	toolsClassBrowser();
+
+  virtual void	windowMenu_aboutToShow();
+  void 		windowActivate(int win); // activate the indicated win
 /*  virtual void helpIndex();
   virtual void helpContents();*/
   virtual void 	helpAbout();

@@ -95,7 +95,7 @@ void MatrixTableModel::DataDataChanged(taDataLink* dl, int dcr,
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     emit_dataChanged();
   }
-  else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_ITEM_UPDATED)) {
+  else if ((dcr == DCR_STRUCT_UPDATE_END)) {
     emit_layoutChanged();
   }
 }

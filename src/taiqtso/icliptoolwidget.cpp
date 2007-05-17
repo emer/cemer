@@ -23,9 +23,47 @@
 #include <QDrag>
 
 
-iClipToolWidget::iClipToolWidget(QWidget* parent) 
+//////////////////////////
+//  iClipWidgetAction	//
+//////////////////////////
+  
+iClipWidgetAction::iClipWidgetAction(QObject* parent)
 :inherited(parent)
 {
+}
+
+void iClipWidgetAction::copyToClipboard() {
+  QMimeData* md = mimeData();
+  if (md)
+    QApplication::clipboard()->setMimeData(md);
+}
+
+QWidget* iClipWidgetAction::createWidget(QWidget* parent) {
+  iClipToolWidget* rval = 
+    new iClipToolWidget(this, parent);
+  rval->setDragEnabled(true);
+  if (!text().isEmpty())
+    rval->setText(text());
+  if (!icon().isNull())
+    rval->setIcon(icon());
+  if (!statusTip().isEmpty())
+    rval->setStatusTip(statusTip());
+  if (!toolTip().isEmpty())
+    rval->setToolTip(toolTip());
+  return rval;
+}
+
+
+
+//////////////////////////
+//  iClipToolWidget	//
+//////////////////////////
+  
+iClipToolWidget::iClipToolWidget(iClipWidgetAction* cwa_, QWidget* parent) 
+:inherited(parent)
+{
+  m_cwa = cwa_;
+  setDefaultAction(cwa_);
   Init();
 }
 
@@ -35,26 +73,27 @@ void iClipToolWidget::Init() {
   setAutoRaise(true);
 }
 
-void iClipToolWidget::copyToClipboard() {
-  QMimeData* md = mimeData();
-  if (md)
-    QApplication::clipboard()->setMimeData(md);
-}
-
 void iClipToolWidget::mousePressEvent(QMouseEvent* event) {
   if (event->button() == Qt::LeftButton) {
     if (dragEnabled()) {
       dragStartPosition = event->pos();
     }
-    if (autoCopy()) {
-      copyToClipboard();
-    }
   }
   inherited::mousePressEvent(event);
 }
 
+void iClipToolWidget::mouseReleaseEvent(QMouseEvent* event) {
+  if (event->button() == Qt::LeftButton) {
+    if (m_cwa) {
+      if (autoCopy())
+        m_cwa->copyToClipboard();
+    }
+  }
+  inherited::mouseReleaseEvent(event);
+}
+
 void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
-  if (!dragEnabled()) return;
+  if (!dragEnabled() || !m_cwa) return;
   
   if (!(event->buttons() & Qt::LeftButton))
     return;
@@ -62,11 +101,12 @@ void iClipToolWidget::mouseMoveEvent(QMouseEvent* event) {
     < QApplication::startDragDistance())
     return;
 
-  QMimeData* md = mimeData();
+  QMimeData* md = m_cwa->mimeData();
   if (md) {
     QDrag* drag = new QDrag(this);
     drag->setMimeData(md);
-    Qt::DropAction dropAction = drag->start(supportedDropActions());
+    //Qt::DropAction dropAction = 
+    drag->start(supportedDropActions());
   }
 }
 

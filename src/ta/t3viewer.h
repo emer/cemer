@@ -473,6 +473,7 @@ class TA_API iT3DataViewFrame : public QWidget, public IDataViewWidget {
   Q_OBJECT
 INHERITED(QWidget)
 friend class T3DataViewFrame;
+friend class T3DataViewer;
 public:
 //  taiMenu* 		fileExportInventorMenu;
 

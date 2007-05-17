@@ -21,23 +21,23 @@
 
 void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Network"); //note: need to keep it short
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("init nm units",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("init nm units",
     tabMisc::root->GetTemplateInstance(&TA_InitNamedUnits)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("set units lit",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("set units lit",
     tabMisc::root->GetTemplateInstance(&TA_SetUnitsLit)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("set units var",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("set units var",
     tabMisc::root->GetTemplateInstance(&TA_SetUnitsVar)));
   tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("net ctr init",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("net ctr init",
     tabMisc::root->GetTemplateInstance(&TA_NetCounterInit)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("net ctr inc",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("net ctr inc",
     tabMisc::root->GetTemplateInstance(&TA_NetCounterIncr)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("net updt view",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("net updt view",
     tabMisc::root->GetTemplateInstance(&TA_NetCounterIncr)));
   tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("data loop",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("data loop",
     tabMisc::root->GetTemplateInstance(&TA_NetDataLoop)));
-  tb->AddClipToolWidget(sec, new iBaseClipToolWidget("gp data lp",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("gp data lp",
     tabMisc::root->GetTemplateInstance(&TA_NetGroupedDataLoop)));
 }
 

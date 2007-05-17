@@ -151,6 +151,8 @@ public:
   static taBase_PtrList		unopened_windows;
   // #HIDDEN unopened windows waiting to be opened
   
+  static void			GetWindowList(Widget_List& rval);
+    // returns, as widgets, all "top level" windows, for use in a Windows menu; you can only use these transiently, i.e. in an on-demand popup
   static taiMisc* 		New(bool gui, QObject* parent = NULL);
    // #IGNORE initialize Qt interface system -- launch main window if gui; 
   

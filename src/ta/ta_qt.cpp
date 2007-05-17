@@ -218,7 +218,13 @@ void taiMisc::CheckConfigResult_(bool ok) {
   }
 }
 
-
+void taiMisc::GetWindowList(Widget_List& rval) {
+//note: try the app's thoughts on this...
+  foreach(QWidget* widget, QApplication::topLevelWidgets()) {
+    if (!widget->isHidden())
+      rval.Add(widget);
+  }
+}
 
 void taiMisc::InitMetrics() {
   // everything that requires Qt to be initialized and could depend on Settings being loaded

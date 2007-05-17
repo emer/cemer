@@ -23,10 +23,30 @@
 
 #include <QIcon>
 #include <QPoint>
+#include <QPointer>
 #include <QStringList>
 #include <QToolButton>
+#include <QWidgetAction>
 
 class QMimeData;
+
+class TAIQTSO_API iClipWidgetAction: public QWidgetAction {
+  // for making drag/copy guys from a taBase instance (ex. see programs_qtso)
+INHERITED(QWidgetAction)
+  Q_OBJECT
+public:
+  
+  virtual QMimeData* 	mimeData() const = 0;
+  virtual QStringList   mimeTypes() const = 0;
+  
+  iClipWidgetAction(QObject* parent = NULL);
+  
+public slots:
+  void			copyToClipboard(); // copy the mimedata to the clipboard
+
+protected:
+  override QWidget* 	createWidget(QWidget* parent);
+};
 
 class TAIQTSO_API iClipToolWidget: public QToolButton {
 // a toolbar widget that copies to clipboard and is drag enabled
@@ -41,25 +61,24 @@ public:
   bool			dragEnabled() const {return m_dragEnabled;}
   void			setDragEnabled(bool value);
 
-  iClipToolWidget(QWidget* parent = NULL);
+  iClipToolWidget(iClipWidgetAction* cwa = NULL, QWidget* parent = NULL);
 
-public slots:
-  void			copyToClipboard(); // copy the mimedata to the clipboard
   
+#ifndef __MAKETA__
 protected:
+  QPointer<iClipWidgetAction> m_cwa;
   bool			m_autoCopy;
   bool			m_dragEnabled;
   QPoint		dragStartPosition;
   
-  virtual QMimeData* 	mimeData() const = 0;
-  virtual QStringList   mimeTypes() const = 0;
   virtual Qt::DropActions supportedDropActions () const; // def is Copy
   
   void 			mousePressEvent(QMouseEvent* event); // override
+  void 			mouseReleaseEvent(QMouseEvent* event); // override
   void 			mouseMoveEvent(QMouseEvent* event); // override
 private:
   void			Init();
-
+#endif
 };
 
 #endif
