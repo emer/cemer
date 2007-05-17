@@ -924,7 +924,6 @@ public:
 
   iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent = NULL);
     // uses: WFlags flags = (WType_TopLevel | WStyle_SysMenu | WStyle_MinMax | WDestructiveClose)
-//obs  iMainWindowViewer(DataViewer* viewer_, QWidget* parent, WFlags flags); //note: only for completeness, usually use the one with implicit flags
   ~iMainWindowViewer();
 
 public slots:
@@ -942,14 +941,8 @@ public slots:
   virtual void 	fileQuit(); // (root) or all on Mac (needed for App menu)
 /*  virtual void editUndo();
   virtual void editRedo();
-  virtual void editCut();
-  virtual void editCopy();
-  virtual void editPaste();
   virtual void editFind(); */
   virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
-  virtual void 	viewCloseCurrentView();
-  virtual void 	viewSplitVertical();
-  virtual void 	viewSplitHorizontal();
   
   virtual void	showMenu_aboutToShow();
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes

@@ -1039,38 +1039,6 @@ void MainWindowViewer::ConstrMainMenu_impl() {
  // TODO: new main menu constr 
 }
 
-/*TODO: somehow need to merge this concept with existing more hardwired menus on iMainWindowViewer
-void MainWindowViewer::Constr_Menu_impl() {
-  TypeDef* typ = GetTypeDef();
-
-  for (int i = 0; i < typ->methods.size; ++i) {
-    MethodDef* md = typ->methods.FastEl(i);
-    if ((!md->HasOption("VMENU")) || (md->im == NULL))
-      continue;
-
-    taiMethodData* mth_rep = md->im->GetMethodRep(NULL, NULL, NULL, NULL); // no buttons;
-    if (mth_rep == NULL) continue;
-
-//    this_meths.Add(mth_rep);
-
-    // find or make current menu
-    String men_nm = md->OptionAfter("MENU_ON_");
-    if (men_nm != "") {
-      cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu != NULL)  goto cont;
-    }
-    if (cur_menu != NULL) goto cont;
-
-    if (men_nm == "")
-      men_nm = "File";
-    cur_menu = menu->AddSubMenu(men_nm);
-    ta_menus.Add(cur_menu);
-
-cont:
-    mth_rep->AddToMenu(cur_menu);
-  }
-} */
-
 void MainWindowViewer::ConstrToolBars_impl() {
   for (int i = 0; i < toolbars.size; ++i) {
     ToolBar* tb = toolbars.FastEl(i);
@@ -1168,45 +1136,12 @@ void MainWindowViewer::ResolveChanges(CancelOp& cancel_op) {
   inherited::ResolveChanges(cancel_op);
 }
 
-/*obs
-void MainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
-  bool forced = (cancel_op == CO_NOT_CANCELLABLE);
-
-  if (hasChanges()) {
-    int chs;
-    if (forced)
-      chs= taMisc::Choice("You have unsaved changes -- do you want to save before closing?",
-        "&Save", "&Discard Changes");
-    else 
-      chs= taMisc::Choice("You have unsaved changes -- do you want to save before closing?",
-        "&Save", "&Discard Changes", "&Cancel");
-
-    switch (chs) {
-    case 0:
-      SaveData(); 
-      break;
-    case 1:
-      break;
-    case 2: //only possible if not forced
-      cancel_op = CO_CANCEL;
-      return;
-    }
-  }
-} */
-
 void MainWindowViewer::Show_impl() {
   SetWinName();
   QWidget* wid = widget();
   wid->raise();
   qApp->setActiveWindow(wid);
 }
-
-/*obs bool MainWindowViewer::ThisMenuFilter(MethodDef* md) {
-  if((md->name == "GetAllWinPos") || (md->name == "ScriptAllWinPos") ||
-     (md->name == "SetWinState") || (md->name == "SelectForEdit") ||
-     (md->name == "SelectFunForEdit")) return false;
-  return true;
-} */
 
 void MainWindowViewer::WidgetDeleting_impl() {
   menu = NULL;

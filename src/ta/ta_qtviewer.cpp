@@ -3133,7 +3133,6 @@ void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   if (fv->viewer()->isVisible() != act->isChecked())
     act->setChecked(fv->isVisible()); // note: triggers action
     
-  //TODO: forward the viewSplit guys, if the guy has compatible slots
 }
 
 // this guy exists because we must always be able to add a panel,
@@ -3426,24 +3425,6 @@ void iMainWindowViewer::Constr_Menu_impl() {
     this, SLOT( toolsClassBrowser() ) );
 //    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );
     connect( helpAboutAction, SIGNAL( Action() ), this, SLOT( helpAbout() ) );
-
-//TODO: split stuff needs to be enabled/disabled and dynamically dispatched to right guy
-  viewSplitVerticalAction = AddAction(new taiAction(this, "Split &Vertical", QKeySequence("Ctrl+Shift+L"),
-     "viewSplitVerticalAction"));
-  viewSplitVerticalAction->AddTo(viewMenu);
-  connect( viewSplitVerticalAction, SIGNAL( activated() ), this, SLOT( viewSplitVertical() ) );
-
-  viewSplitHorizontalAction = AddAction(new taiAction(this, "Split &Horizontal", QKeySequence("Ctrl+Shift+T"),
-     "viewSplitHorizontalAction"));
-  viewSplitHorizontalAction->AddTo(viewMenu);
-  connect(viewSplitHorizontalAction, SIGNAL( activated() ), this, SLOT(viewSplitHorizontal() ) );
-
-  viewCloseCurrentViewAction = AddAction(new taiAction(this, "Close &Current View", QKeySequence("Ctrl+Shift+R"),
-     "viewCloseCurrentViewAction"));
-  viewCloseCurrentViewAction->setEnabled(false); // only enabled for multi tabs
-  viewCloseCurrentViewAction->AddTo(viewMenu);
-  connect(viewCloseCurrentViewAction, SIGNAL( activated() ), this, SLOT(viewCloseCurrentView() ) );
-
 }
 
 taProject* iMainWindowViewer::curProject() const {
@@ -3931,11 +3912,6 @@ void iMainWindowViewer::UpdateUi() {
   
   emit SetActionsEnabled();
 }
-
-//TODO: need to somehow enable/forward these guys dynamically
-void iMainWindowViewer::viewCloseCurrentView() {}
-void iMainWindowViewer::viewSplitVertical() {}
-void iMainWindowViewer::viewSplitHorizontal() {}
 
 void iMainWindowViewer::windowActivationChange(bool oldActive) {
   if (isActiveWindow()) {
