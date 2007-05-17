@@ -230,6 +230,7 @@ INHERITED(taNBase)
 public:
   DoGFilterSpec		dog;		// Difference of Gaussian retinal filters
   RetinalSpacingSpec	spacing;	// how to space DoG filters in the retina
+  float			renorm_thresh;	// #DEF_0.01 threshold for renormalizing: if contrast is really low, you may not want to renormalize and just call it blank..
 
   virtual bool	FilterRetina(float_Matrix& on_output, float_Matrix& off_output,
 			     float_Matrix& retina_img, bool superimpose = false);

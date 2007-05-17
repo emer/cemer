@@ -763,6 +763,7 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
 void DoGRetinaSpec::Initialize() {
   dog.name = name;
   spacing.name = name;
+  renorm_thresh = .01f;
 }
 
 void DoGRetinaSpec::UpdateAfterEdit_impl() {
@@ -854,11 +855,11 @@ bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_outp
   
   int idx;
   float on_max = taMath_float::vec_max(on_out, idx);
-  if(on_max > .01f)
+  if(on_max > renorm_thresh)
      taMath_float::vec_norm_max(on_out);
 
   float off_max = taMath_float::vec_max(off_out, idx);
-  if(off_max > .01f)
+  if(off_max > renorm_thresh)
     taMath_float::vec_norm_max(off_out);
 
   if(superimpose) {			// add them back in!

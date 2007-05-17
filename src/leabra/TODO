@@ -2,9 +2,6 @@ leabra todo list:
 
 commit:
 
-* replace Layer.lesion with flag and lesioned() fun..
-* set string for X/Z axis: auto selects row_num but displays string vals!
-
 ------------
 current:
 
