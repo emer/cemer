@@ -378,10 +378,17 @@ public:
 
   virtual void	Copy_NoData(const DataCol& cp);
   // #CAT_ObjectMgmt copy the structure of the datatable without getting all the data
+  virtual void 	CopyFromCol_Robust(const DataCol& cp); 
+  // #CAT_ObjectMgmt copy col, but don't change schema; robust to differences in type and format of the cells
   virtual void	CopyFromRow(int dest_row, const DataCol& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object, assumes that the two have the same type and, if matrix, cell_size
   virtual void	CopyFromRow_Robust(int dest_row, const DataCol& cp, int src_row);
   // #CAT_ObjectMgmt copy one row from source to given row in this object, robust to differences in type and format of the cells
+  //IMPORTANT: DO NOT CHANGE THE FOLLOWING METHODS TO VIRTUAL
+  void		ChangeColType(ValType new_type);
+  // #CAT_ObjectMgmt #MENU change the type of the data in this col, without loss of data
+  void		ChangeColCellGeom(const MatrixGeom& new_geom);
+  // #CAT_ObjectMgmt #MENU change the cell geom of a mat col, without loss of data
   
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 
@@ -548,7 +555,7 @@ public:
 			       const String& col_nm);
   // #MENU #MENU_ON_Columns #ARG_C_2 #CAT_Columns create new scalar column of data of specified type
   virtual DataCol* 	NewColMatrix(DataCol::ValType val_type, const String& col_nm,
-    int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0);
+    int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #MENU #MENU_ON_Columns #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
     const String& col_nm,  const MatrixGeom& cell_geom,
@@ -569,7 +576,8 @@ public:
   virtual bool		RenameCol(const String& cur_nm, const String& new_nm);
   // #CAT_Columns rename column with current name cur_nm to new name new_nm (returns false if ccur_nm not found)
 
-  virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg, bool err_msg = false) const;
+  virtual DataCol* 	FindColName(const String& col_nm, int& col_idx = idx_def_arg,
+    bool err_msg = false) const;
   // #CAT_Columns #ARGC_1 find a column of the given name; if err_msg then generate an error if not found
 
   DataCol* 		FindMakeCol(const String& col_nm,
@@ -577,16 +585,20 @@ public:
   // #CAT_Columns insures that a scalar column of the given name and val type exists, and return that col. 
   DataCol* 		FindMakeColMatrix(const String& col_nm,
 	ValType val_type = VT_FLOAT, int dims = 1,
-	int d0=0, int d1=0, int d2=0, int d3=0);
+	int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_Columns insures that a matrix column of the given name, val type, and dimensions exists, and returns that col. 
   DataCol* 		FindMakeColMatrixN(const String& col_nm,
 	ValType val_type, const MatrixGeom& cell_geom,
 	int& col_idx = idx_def_arg); // #IGNORE
   virtual DataCol* 	FindMakeColName(const String& col_nm, int& col_idx = idx_def_arg,
-					ValType val_type = VT_FLOAT, int dims = 0,
-					int d0=0, int d1=0, int d2=0, int d3=0);
+	ValType val_type = VT_FLOAT, int dims = 0,
+	int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #EXPERT #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
+  void 			ChangeColTypeGeom(DataCol* src, ValType val_type,
+    const MatrixGeom& geom);
+    // #IGNORE impl func, called by Col or other funcs here; new is diff from exist; geom.dims=0 for scalar, otherwise matrix
+  
   virtual DataCol* 	GetColData(int col, bool quiet = false) const {
     bool bad_col = (col < 0 || col >= cols());
     if(quiet && bad_col) return NULL;

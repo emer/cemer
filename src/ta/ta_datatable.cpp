@@ -140,6 +140,27 @@ void DataCol::Copy_(const DataCol& cp) {
   Copy_Common_(cp);
 }
 
+void DataCol::CopyFromCol_Robust(const DataCol& cp) {
+  // note: caller has asserted Struct guys, but ok for us to do it again
+  // assumes copy has been validated
+  StructUpdate(true);
+  inherited::Copy_impl(cp); // do all common generic class copying
+  SetBaseFlag(COPYING); // note: still have to set/reset here, because not nestable
+  // assume name already copied, else don't want it overwritten
+  desc = cp.desc;
+  col_flags = cp.col_flags;
+  calc_expr = cp.calc_expr;
+
+  //NOTE: we only copy data, leaving geom and type as is (since we can't change anyway)
+  int rows = cp.rows();
+  EnforceRows(rows);
+  for (int i = 0; i < rows; ++i) {
+    CopyFromRow_Robust(i, cp, i);
+  }  
+  ClearBaseFlag(COPYING);
+  StructUpdate(false);
+}
+
 void DataCol::Copy_NoData(const DataCol& cp) {
   StructUpdate(true);
   inherited::Copy_impl(cp);
@@ -231,6 +252,21 @@ void DataCol::DataChanged(int dcr, void* op1, void* op2) {
       dt->UpdateColCalcs();
     }
   }
+}
+
+void DataCol::ChangeColType(ValType new_type) {
+  if (valType() == new_type) return;
+  MatrixGeom cell_geom;
+  if (is_matrix) cell_geom = this->cell_geom; // because we will be nuked
+  dataTable()->ChangeColTypeGeom(this, new_type, cell_geom);
+  //NOTE: no more code here, because we've probably been deleted/replaced
+}
+
+void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
+  if ((!is_matrix && (new_geom.dims() == 0)) ||
+    cell_geom.Equal(new_geom)) return;
+  dataTable()->ChangeColTypeGeom(this, valType(), new_geom);
+  //NOTE: no more code here, because we may have been deleted/replaced
 }
 
 DataTable* DataCol::dataTable() {
@@ -1424,12 +1460,12 @@ int_Data* DataTable::NewColInt(const String& col_nm) {
 }
 
 DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm,
-    int dims, int d0, int d1, int d2, int d3)
+    int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
   if(dims < 1) {		// < 1 is shortcut for not actually a matrix!
     return NewCol(val_type, col_nm);
   }
-  MatrixGeom geom(dims, d0, d1, d2, d3);
+  MatrixGeom geom(dims, d0, d1, d2, d3, d4, d5, d6);
   String err_msg;
   if(TestError(!taMatrix::GeomIsValid(geom, &err_msg), "NewcolMatrix",
 	       "Invalid geom:", err_msg)) return NULL;
@@ -1481,10 +1517,10 @@ DataCol* DataTable::FindMakeCol(const String& col_nm,
 
 DataCol* DataTable::FindMakeColMatrix(const String& col_nm,
   ValType val_type, int dims,
-  int d0, int d1, int d2, int d3)
+  int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
   return FindMakeColName(col_nm, idx_def_arg, val_type,
-    dims, d0, d1, d2, d3);
+    dims, d0, d1, d2, d3, d4, d5, d6);
 }
 
 DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
@@ -1523,8 +1559,8 @@ DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
 }
 
 DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
-					   ValType val_type, int dims,
-					   int d0, int d1, int d2, int d3) 
+  ValType val_type, int dims, int d0, int d1, int d2, 
+  int d3, int d4, int d5, int d6) 
 {
   if (dims < 0) dims = 0; // causes invalid results if -ve; 0=flag for scalar
   DataCol* da = FindColName(col_nm, col_idx);
@@ -1533,7 +1569,7 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       StructUpdate(true);
       DataCol* nda;
       if(dims > 0)
-	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3);
+	nda = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
       else
 	nda = NewCol(val_type, col_nm);
       data.MoveIdx(data.size-1, col_idx);
@@ -1543,7 +1579,7 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       StructUpdate(false);
     } else if(da->cell_dims() != dims) {
       StructUpdate(true);
-      da->cell_geom.SetGeom(dims, d0, d1, d2, d3);
+      da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
       if(dims == 0)
 	da->is_matrix = false;
       else
@@ -1552,7 +1588,7 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       da->EnforceRows(rows);	// keep row-constant
       StructUpdate(false);
     } else {
-      MatrixGeom mg(dims, d0, d1, d2, d3);
+      MatrixGeom mg(dims, d0, d1, d2, d3, d4, d5, d6);
       if(mg != da->cell_geom) {
 	StructUpdate(true);
 	da->cell_geom = mg;
@@ -1565,10 +1601,35 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
   else {			// not found -- make one
     col_idx = data.size;	// will be the next guy
     if(dims >= 1)
-      return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3);
+      return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
     else
       return NewCol(val_type, col_nm);
   }
+}
+
+void DataTable::ChangeColTypeGeom(DataCol* src, ValType new_type, const MatrixGeom& g) {
+  if (!src) return;
+  // make a new col of right type
+  int old_idx = src->GetIndex();
+  String col_nm = src->name; 
+  src->name = _nilString; // for new
+  DataCol* new_col = NULL;
+  StructUpdate(true);
+  // note:
+  int tmp_idx;
+  if (g.dims() == 0) {
+    new_col = NewCol(new_type, col_nm);
+    tmp_idx = new_col->GetIndex();
+  } else {
+    new_col = NewColMatrixN(new_type, col_nm, g, tmp_idx);
+  }
+  // copy all data -- the generic copy dude copies user data, and robustly copies data
+  new_col->CopyFromCol_Robust(*src);
+  // move to right place, and nuke old guy
+  data.MoveIdx(tmp_idx, old_idx);
+  data.RemoveEl(src);
+  StructUpdate(false);
+
 }
 
 void DataTable::UniqueColNames() {

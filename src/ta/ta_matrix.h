@@ -195,6 +195,7 @@ friend class DataCol;
 public:
   int			size; // DO NOT SET DIRECTLY, use SetSize
   
+  inline int		dims() const {return size;} // convenience
   bool			Equal(const MatrixGeom& other) const;
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
   bool			IsFrameOf(const MatrixGeom& other) const; 
