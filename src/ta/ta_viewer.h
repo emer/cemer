@@ -267,7 +267,7 @@ private:
 
 
 class TA_API BrowseViewer : public FrameViewer {
-  // #NO_TOKENS ##DEF_NAME_ROOT_TreeFrame the base type for browser frames (tree of objects or classes)
+  // #NO_TOKENS ##DEF_NAME_ROOT_Tree ##DEF_NAME_STYLE_2 the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
 friend class iDataBrowser;
 public:
@@ -345,7 +345,7 @@ private:
 
 
 class TA_API PanelViewer : public FrameViewer {
-  // #NO_TOKENS ##DEF_NAME_ROOT_PanelFrame the base type for browser frames (tree of objects or classes)
+  // #NO_TOKENS ##DEF_NAME_ROOT_Panels ##DEF_NAME_STYLE_2 the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
 friend class iDataPanel;
 public:

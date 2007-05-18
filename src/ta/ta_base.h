@@ -202,7 +202,8 @@ public: \
 
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
-  inline void Initialize__() {Register(); Initialize(); SetDefaultName();} \
+  inline void Initialize__() {Register(); Initialize(); \
+    if (!(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
 
 #define TA_TMPLT_BASEFUNS_TOK_(y,T) TA_BASEFUNS_TOK_(y)

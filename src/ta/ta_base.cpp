@@ -600,23 +600,27 @@ void taBase::SetDefaultName_impl(int idx) {
   if (nm.empty()) nm = td->name;
   // name style -- 0 is the legacy one
   int nm_style = td->OptionAfter("DEF_NAME_STYLE_").toInt(); // 0 if not present
-  if (nm_style == 1) {
-    nm += String(++idx); // use 1-based, no _
+  if (nm_style == 2) { // no number (for things that are unique in a container)
+    ;
+  } 
+  else if (nm_style == 1) {
+    if (idx >= 0) nm += String(++idx); // use 1-based, no _
   } else { // 0, or unknown style -- use legacy
-    nm += ("_" + String(idx)); 
+    if (idx >= 0) nm += ("_" + String(idx)); 
   }
   SetName(nm);
 }
 
+//note: normally we dont' call SetDefaultName unless keeping tokens...
 void taBase::SetDefaultName_() {
   TypeDef* td = GetTypeDef();
   if (td->HasOption("DEF_NAME_LIST")) {
     SetName(_nilString); // must clear, since desc class may already have set
     return; // not actually done until added to list
   }
-  if (!td->tokens.keep) return;
+//nn  if (!td->tokens.keep) return;
   int idx = td->tokens.FindEl((void *)this);
-  if (idx < 0) return;
+//nn  if (idx < 0) return;
   SetDefaultName_impl(idx);
 }
 

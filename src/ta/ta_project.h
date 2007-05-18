@@ -127,7 +127,6 @@ public:
 
   override bool		SetFileName(const String& val);
   override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
-  override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
 
   override void		PostLoadAutos();
   // perform post-loading automatic functions
@@ -158,6 +157,7 @@ INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
   override int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
+  override int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
 
   TA_BASEFUNS(Project_Group);
 private:

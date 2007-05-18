@@ -316,11 +316,6 @@ int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
   return rval;
 }
 
-int taProject::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
-  int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
-  return rval;
-}
-
 void taProject::setDirty(bool value) {
   // note: inherited only forwards 'dirty' up the chain, not '!dirty'
   inherited::setDirty(value);
@@ -427,6 +422,14 @@ void taProject::SaveRecoverFile() {
 //////////////////////////
 //   Project_Group	//
 //////////////////////////
+
+int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) { 
+  // chg working dir to that of project -- simplifies lots of stuff immensely
+  QFileInfo fi(fname);
+  QDir::setCurrent(fi.absolutePath());
+  int rval = inherited::Load(fname, loaded_obj_ptr);
+  return rval;
+}
 
 int Project_Group::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) {
   int prj_sz = leaves;
