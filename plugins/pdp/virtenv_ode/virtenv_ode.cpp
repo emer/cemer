@@ -33,6 +33,7 @@ void VEObj::Initialize() {
   mass_radius = .5f;
   mass_length = 1.0f;
   mass_box = 1.0f;
+  use_fname = true;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
 }
 
@@ -189,7 +190,9 @@ void VEWorld::SetValsToODE() {
   dWorldID wid = (dWorldID)world_id;
   dWorldSetGravity(wid, gravity.x, gravity.y, gravity.z);
 
+  StructUpdate(true);
   objects.SetValsToODE();
+  StructUpdate(false);		// trigger full rebuild!
 }
 
 void VEWorld::GetValsFmODE() {
@@ -309,12 +312,14 @@ void VEObjView::Render_pre() {
 
   VEObj* ob = Obj();
   if(ob) {
-    if(!ob->obj_fname.empty()) {
+    if(ob->use_fname && !ob->obj_fname.empty()) {
       SoInput in;
       if (in.openFile(ob->obj_fname)) {
 	SoSeparator* root = SoDB::readAll(&in);
 	if (root) {
 	  ssep->addChild(root);
+	  SoTransform* tx = m_node_so->txfm_shape();
+	  ob->obj_xform.CopyTo(tx);
 	  goto finish;
 	}
       }
@@ -346,8 +351,6 @@ void VEObjView::Render_pre() {
     }
   }      
  finish:
-  SoTransform* tx = m_node_so->txfm_shape();
-  ob->obj_xform.CopyTo(tx);
 
   inherited::Render_pre();
 }

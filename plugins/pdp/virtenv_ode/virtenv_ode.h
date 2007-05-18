@@ -86,7 +86,8 @@ public:
   FloatTDCoord	mass_box;	// #CONDEDIT_ON_mass_shape:BOX length of box in each axis for BOX-shaped mass
 
   FloatTransform obj_xform;	// full transform to apply to object file to align/size/etc with object
-  String	obj_fname;	// file name of Inventor file that describes object appearance (if empty, mass_shape will be rendered)
+  bool		use_fname;	// if true, use obj_fname field (if non-empty) to load object from file (else shows the basic mass_shape)
+  String	obj_fname;	// #CONDEDIT_ON_use_fname file name of Inventor file that describes object appearance (if empty, mass_shape will be rendered)
   taColor	color; 		// default color of object if not otherwise defined (a used for transparency)
 
   dMass		mass_ode;	// #IGNORE full ode mass of object

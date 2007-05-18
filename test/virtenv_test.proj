@@ -77,7 +77,7 @@ LeabraProject .projects[0] {
 	ProgVar @[8] { };
       };
 
-      ProgEl_List @.init_code = [7] {
+      ProgEl_List @.init_code = [8] {
 	MethodCall @[0] { };
 	MemberAssign @[1] { };
 	MemberAssign @[2] { };
@@ -93,6 +93,7 @@ LeabraProject .projects[0] {
 	    ProgArg @[0] { };
 	  };
 	};
+	MethodCall @[7] { };
       };
 
       ProgEl_List @.prog_code = [3] {
@@ -329,9 +330,10 @@ LeabraProject .projects[0] {
        mass_length=1;
        mass_long_axis=LONG_X;
        mass_box {x=1: y=1: z=1: };
-       obj_xform {scale={x=4: y=4: z=4: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+       obj_xform {scale={x=6: y=6: z=6: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+       use_fname=1;
        obj_fname="Banana.iv";
-       color {r=0.2: g=0.2: b=0.4941176: a=1: };
+       color {r=0.2: g=0.2: b=0.4901961: a=1: };
       };
      };
     };
@@ -438,7 +440,7 @@ LeabraProject .projects[0] {
     ProgVar @[3] {
      name="step";
      var_type=T_Int;
-     int_val=95;
+     int_val=91;
      objs_ptr=0;
      flags=NULL_CHECK;
      desc=;
@@ -621,6 +623,18 @@ LeabraProject .projects[0] {
       };
      };
     };
+    MethodCall @[7] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[0].vars[0]$9$;
+     method=VEWorld::SetValsToODE;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
    };
    prog_code {
     name=;
@@ -630,7 +644,7 @@ LeabraProject .projects[0] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[0]$9$;
+     obj=$9$;
      method=VEWorld::SetValsToODE;
      meth_args {
       name=;
