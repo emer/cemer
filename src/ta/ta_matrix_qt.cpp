@@ -304,6 +304,8 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   // generic col guys
   if (ca == CA_COL_HDR) {
     if (!isFixedColCount()) {
+//note: not include these yet, because fairly complicated semantics, ex
+// popping up col editor etc. etc.
 /*      act = menu->AddItem("Append Columns", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_APPEND) );
       act = menu->AddItem("Insert Columns", taiMenu::normal, taiAction::int_act,
