@@ -289,24 +289,28 @@ bool iTableView::event(QEvent* ev) {
 
 void iTableView::ContextMenuRequested(ContextArea ca, const QPoint& global_pos) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
-  FillContextMenu_impl(ca, menu);
+  CellRange sel(selectionModel()->selectedIndexes());
+  FillContextMenu_impl(ca, menu, sel);
   if (menu->count() > 0) { //only show if any items!
     menu->exec(global_pos);
   }
   delete menu;
 }
 
-void iTableView::FillContextMenu_impl(ContextArea ca, taiMenu* menu) {
+void iTableView::FillContextMenu_impl(ContextArea ca,
+  taiMenu* menu, const CellRange& sel)
+{
   taiAction* act = NULL;
   // generic col guys
   if (ca == CA_COL_HDR) {
     if (!isFixedColCount()) {
-      act = menu->AddItem("Append Columns", taiMenu::normal, taiAction::int_act,
+/*      act = menu->AddItem("Append Columns", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_APPEND) );
       act = menu->AddItem("Insert Columns", taiMenu::normal, taiAction::int_act,
-        this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );
+        this, SLOT(RowColOp(int)), (OP_COL | OP_INSERT) );*/
       act = menu->AddItem("Delete Columns", taiMenu::normal, taiAction::int_act,
         this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
+      menu->AddSep();
     }
   }
   

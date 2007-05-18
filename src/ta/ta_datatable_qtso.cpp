@@ -5774,6 +5774,21 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   }
 } 
 
+void iDataTableView::FillContextMenu_impl(ContextArea ca,
+  taiMenu* menu, const CellRange& sel)
+{
+  inherited::FillContextMenu_impl(ca, menu, sel);
+  DataTable* tab = this->dataTable(); // may not exist
+  if (!tab) return;
+  // only do col items if one selected only
+  if ((ca == CA_COL_HDR) && (sel.width() == 1)) {
+    DataCol* col = tab->GetColData(sel.col_fr, true);
+    if (col) {
+      taiDataLink* link = (taiDataLink*)col->GetDataLink();
+      if (link) link->FillContextMenu(menu);
+    }
+  }
+}
 
 //////////////////////////
 //    DataTableDelegate	//

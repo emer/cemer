@@ -1221,6 +1221,8 @@ protected:
     const QModelIndex& previous); // override
   override void 	dataChanged(const QModelIndex& topLeft,
     const QModelIndex & bottomRight); // refresh mat cell if in here
+  override void		FillContextMenu_impl(ContextArea ca, taiMenu* menu,
+    const CellRange& sel);
   override void		RowColOp_impl(int op_code, const CellRange& sel); 
 };
 #endif // MAKETA

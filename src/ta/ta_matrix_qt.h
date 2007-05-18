@@ -136,7 +136,8 @@ protected:
   
   override bool		event(QEvent* ev);
   void 			ContextMenuRequested(ContextArea ca, const QPoint& global_pos);
-  virtual void		FillContextMenu_impl(ContextArea ca, taiMenu* menu);
+  virtual void		FillContextMenu_impl(ContextArea ca, taiMenu* menu,
+    const CellRange& sel);
   virtual void		RowColOp_impl(int op_code, const CellRange& sel) {} 
     
 protected slots:

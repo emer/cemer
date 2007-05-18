@@ -350,7 +350,7 @@ public:
   // misc
 
   virtual String	ColStats();
-  // #CAT_DataProc #MENU #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_DataProc #MENU #MENU_ON_Column #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   int			displayWidth() const;
   // #CAT_Display low level display width, in chars, taken from options
@@ -388,7 +388,7 @@ public:
   void		ChangeColType(ValType new_type);
   // #CAT_ObjectMgmt #MENU change the type of the data in this col, without loss of data
   void		ChangeColCellGeom(const MatrixGeom& new_geom);
-  // #CAT_ObjectMgmt #MENU change the cell geom of a mat col, without loss of data
+  // #CAT_ObjectMgmt #MENU change the cell geom of a mat col, or change to/from a mat col, without loss of data (use dims=0 for a scalar col)
   
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 
