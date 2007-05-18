@@ -329,9 +329,9 @@ LeabraProject .projects[0] {
        mass_length=1;
        mass_long_axis=LONG_X;
        mass_box {x=1: y=1: z=1: };
-       obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
-       obj_fname=;
-       color {r=0.2: g=0.2: b=0.4980392: a=1: };
+       obj_xform {scale={x=4: y=4: z=4: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+       obj_fname="Banana.iv";
+       color {r=0.2: g=0.2: b=0.4941176: a=1: };
       };
      };
     };
@@ -438,7 +438,7 @@ LeabraProject .projects[0] {
     ProgVar @[3] {
      name="step";
      var_type=T_Int;
-     int_val=4;
+     int_val=95;
      objs_ptr=0;
      flags=NULL_CHECK;
      desc=;
@@ -819,7 +819,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=179: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  table_pos {x=1: y=0: z=0: };
@@ -831,10 +831,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="VEObj__pos_x";
-	   fixed_range {fix_min=0: min=0.001: fix_max=0: max=1.349999: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0.001: max=1.349999: };
-	   range {min=0.001: max=1.349999: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
