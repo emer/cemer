@@ -299,10 +299,6 @@ bool taProject::SetFileName(const String& val) {
     vwr->SetWinName();
   }
   tabMisc::root->AddRecentFile(val);
-  // always set current dir for project!
-  if(!val.empty()) {
-    QDir::setCurrent(taMisc::GetDirFmPath(val));	
-  }
   return true;
 }
 
