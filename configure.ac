@@ -65,6 +65,7 @@ AC_CONFIG_SRCDIR([src/ta/ta_global.h])                 dnl Make sure we're in th
 AC_CONFIG_HEADERS([config.h])                          dnl Create config.h
                                                        dnl NOTE: If using OSX, use DarwinPorts to get most recent automake verison
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.6])
+AM_MAINTAINER_MODE
 PDP_CANONICAL_HOST                                     dnl Do a few host checks, mostly for MSVC stuff
 PDP_PROG_CXX                                           dnl Modify compiler optimization
 PDP_SET_BUILD_MODE                                     dnl Set up our build modes
