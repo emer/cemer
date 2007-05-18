@@ -808,7 +808,7 @@ void tabDataLink::fileSaveAs() {
 
 /* Context Menus are filled in the following order (with indicated separators)
 ------
-Browser/gui framework items 
+Dynamic actions
 ------
 Standard Edit menu items (Cut, Copy, etc.)
 ------
@@ -819,6 +819,8 @@ Standard Edit menu items (Cut, Copy, etc.)
 ------
 Normal submenus (ex. Object Edit, etc.)
 ------
+Browser/gui framework items 
+------
 
 */
 void tabDataLink::FillContextMenu_impl(taiActions* menu) {
@@ -826,9 +828,6 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
 
   TypeDef* typ = GetDataTypeDef();
   if (typ == NULL)  return;
-  taiMenu_List ta_menus;
-  taiActions* cur_menu = NULL;
-  String men_nm;
 
   // add all the #MENU_CONTEXT items first, so they always appear before the nested submenus
   int cnt = 0;
@@ -845,34 +844,33 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
 
   // add the BUTTON and MENU_BUTTON items
   cnt = 0;
+  taiMenu_List ta_menus;
+  taiActions* cur_menu = NULL;
+  String men_nm = "Misc";  //see note in taiEditDataHost::SetCurMenuButton
+  String on_nm;
   for (int i = 0; i < typ->methods.size; ++i) {
     MethodDef* md = typ->methods.FastEl(i);
+    // we always have to extract the MENU_ON because it has side-effects
+    on_nm = md->OptionAfter("MENU_ON_");
+    if (on_nm.nonempty()) men_nm = on_nm;
     //check skip conditions
     if (md->HasOption("NO_MENU_CONTEXT") || md->HasOption("MENU_CONTEXT") ||
         !(md->HasOption("BUTTON") || md->HasOption("MENU_BUTTON")) )
         continue;
+    if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
     taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
 
     if (md->HasOption("BUTTON")) {
-      mth_rep->AddToMenu(menu); //TODO: need to make sure this works for BUTTON, and MENU_BUTTON types
+      mth_rep->AddToMenu(menu); 
     } else { // has to be "MENU_BUTTON"
       // create the submenus when needed, and locate -- default is last created one
-      men_nm = md->OptionAfter("MENU_ON_");
-      if (men_nm != "") {
-        cur_menu = ta_menus.FindName(men_nm);
-        if (cur_menu != NULL)  goto cont1;
+      if (!(cur_menu = ta_menus.FindName(men_nm))) {
+        cur_menu = menu->AddSubMenu(men_nm);
+        ta_menus.Add(cur_menu);
       }
-      if (cur_menu != NULL)  goto cont1;
-
-      if (men_nm == "")
-        men_nm = "Misc";  //see note in taiEditDataHost::SetCurMenuButton
-      cur_menu = menu->AddSubMenu(men_nm);
-      ta_menus.Add(cur_menu);
-
-cont1:
       mth_rep->AddToMenu(cur_menu);
     }
     ++cnt;
@@ -882,30 +880,28 @@ cont1:
   ta_menus.Reset();
   cur_menu = NULL;
   cnt = 0;
+  men_nm = "Actions"; // default until/unless explicit
   for (int i = 0; i < typ->methods.size; ++i) {
     MethodDef* md = typ->methods.FastEl(i);
-    //check skip conditions
-    if ((!md->HasOption("MENU")) || (md->HasOption("NO_MENU_CONTEXT") || md->HasOption("MENU_CONTEXT") ||
-        md->HasOption("BUTTON") || md->HasOption("MENU_BUTTON")) )
+    // we always have to extract the MENU_ON because it has side-effects
+    on_nm = md->OptionAfter("MENU_ON_");
+    if (on_nm.nonempty()) men_nm = on_nm;
+    // skip the ones we already put up
+    if ((!md->HasOption("MENU")) || (md->HasOption("NO_MENU_CONTEXT") ||
+      md->HasOption("MENU_CONTEXT") ||
+      md->HasOption("BUTTON") || md->HasOption("MENU_BUTTON")) )
         continue;
+    // standard test
+    if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
     taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
     // create the submenus when needed, and locate -- default is last created one
-    men_nm = md->OptionAfter("MENU_ON_");
-    if (men_nm != "") {
-      cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu != NULL)  goto cont2;
+    if (!(cur_menu = ta_menus.FindName(men_nm))) {
+      cur_menu = menu->AddSubMenu(men_nm);
+      ta_menus.Add(cur_menu);
     }
-    if (cur_menu != NULL) goto cont2;
-
-    if (men_nm == "")
-      men_nm = "Actions";
-    cur_menu = menu->AddSubMenu(men_nm);
-    ta_menus.Add(cur_menu);
-
-cont2:
     mth_rep->AddToMenu(cur_menu);
     ++cnt;
   } // end normal submenu items
@@ -1314,8 +1310,10 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* me
   FillContextMenu_impl(menu);
   int allowed = QueryEditActions_(sel_items);
   FillContextMenu_EditItems_impl(menu, allowed);
-  taiDataLink* link = this->link();
-  if (link) link->FillContextMenu(menu);
+  if (sel_items.size == 1) {
+    taiDataLink* link = this->link();
+    if (link) link->FillContextMenu(menu);
+  }
 }
 
 /*void ISelectable::FillContextMenu(taiActions* menu) {
