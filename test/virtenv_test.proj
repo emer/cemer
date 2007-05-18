@@ -27,6 +27,20 @@ LeabraProject .projects[0] {
     };
   };
 
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] { };
+    DataTable_Group @.gp[1] = [1] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [3] {
+	  float_Data @[0] { };
+	  float_Data @[1] { };
+	  float_Data @[2] { };
+	};
+      };
+    };
+    DataTable_Group @.gp[2] { };
+  };
+
   taBase_Group @.data_proc = [4] {
     taDataProc @[0] { };
     taDataAnal @[1] { };
@@ -36,12 +50,63 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [1] {
     Program @[0] { 
-      ProgObjList @.objs = [1] {
-	VEWorld @[0] { };
+      ProgObjList @.objs = [2] {
+	VEWorld @[0] { 
+	  VEObj_Group @.objects = [1] {
+	    VEObj @[0] { };
+	  };
+	};
+	NetMonitor @[1] { 
+	  NetMonItem_List @.items = [3] {
+	    NetMonItem @[0] { };
+	    NetMonItem @[1] { };
+	    NetMonItem @[2] { };
+	  };
+	};
       };
 
-      ProgVar_List @.vars = [1] {
+      ProgVar_List @.vars = [9] {
 	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+	ProgVar @[5] { };
+	ProgVar @[6] { };
+	ProgVar @[7] { };
+	ProgVar @[8] { };
+      };
+
+      ProgEl_List @.init_code = [7] {
+	MethodCall @[0] { };
+	MemberAssign @[1] { };
+	MemberAssign @[2] { };
+	MemberAssign @[3] { };
+	ResetDataRows @[4] { };
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[6] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+      };
+
+      ProgEl_List @.prog_code = [3] {
+	MethodCall @[0] { };
+	ResetDataRows @[1] { };
+	ForLoop @[2] { 
+	  ProgEl_List @.loop_code = [5] {
+	    MethodCall @[0] { };
+	    MethodCall @[1] { };
+	    MethodCall @[2] { };
+	    DoneWritingDataRow @[3] { };
+	    StopStepPoint @[4] { };
+	  };
+	};
       };
     };
   };
@@ -56,8 +121,34 @@ LeabraProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @[0] { };
+	  T3DataViewFrame_List @.frames = [2] {
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[1] { 
+	      T3DataView_List @.children = [2] {
+		VEWorldView @[0] { 
+		  T3DataView_List @.children = [1] {
+		    VEObjView @[0] { };
+		  };
+		};
+		GridTableView @[1] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		  };
+		};
+	      };
+	    };
 	  };
 	};
       };
@@ -66,6 +157,10 @@ LeabraProject .projects[0] {
 	ToolBoxDockViewer @[0] { };
       };
     };
+  };
+
+  Network_Group @.networks = [1] {
+    LeabraNetwork @[0] { };
   };
 };
 LeabraProject .projects[0] {
@@ -125,6 +220,55 @@ LeabraProject .projects[0] {
    name="OutputData";
    el_typ=DataTable;
    el_def=0;
+   DataTable @[0] {
+    name="MonitorOutput";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @[0] {
+      name="VEObj__pos_x";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[1] {
+      name="VEObj__pos_y";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[2] {
+      name="VEObj__pos_z";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
   };
   DataTable_Group @.gp[2] {
    name="AnalysisData";
@@ -153,10 +297,10 @@ LeabraProject .projects[0] {
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
+  step_prog=.projects[0].programs[0]$0$;
   desc=;
   Program @[0] {
-   name="Program_1";
+   name="VETest";
    desc=;
    flags=;
    objs {
@@ -165,8 +309,90 @@ LeabraProject .projects[0] {
     el_def=0;
     VEWorld @[0] {
      name="VEWorld_0";
-     gravity {x=0: y=0: z=-9.81: };
+     step_type=STD_STEP;
      stepsize=0.01;
+     quick_iters=20;
+     gravity {x=0: y=0: z=0: };
+     objects {
+      name=;
+      el_typ=VEObj;
+      el_def=0;
+      VEObj @[0] {
+       name="VEObj_0";
+       pos {x=0: y=0: z=0: };
+       orient {x=0: y=0: z=1: rot=0: };
+       lin_vel {x=1: y=0.1: z=0.1: };
+       ang_vel {x=0: y=0: z=0: };
+       mass=1;
+       mass_shape=CYLINDER;
+       mass_radius=0.5;
+       mass_length=1;
+       mass_long_axis=LONG_X;
+       mass_box {x=1: y=1: z=1: };
+       obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+       obj_fname=;
+       color {r=0.2: g=0.2: b=0.4980392: a=1: };
+      };
+     };
+    };
+    NetMonitor @[1] {
+     name="NetMonitor_0";
+     items {
+      name=;
+      el_typ=NetMonItem;
+      el_def=0;
+      NetMonItem @[0] {
+       name="VEObj__pos_x";
+       computed=0;
+       object_type=VEObj;
+       object=.projects[0].programs[0].objs[0].objects[0]$1$;
+       variable="pos.x";
+       var_label=;
+       name_style=AUTO_NAME;
+       max_name_len=6;
+       val_type=VT_FLOAT;
+       matrix=0;
+       matrix_geom{        };
+       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+      };
+      NetMonItem @[1] {
+       name="VEObj__pos_y";
+       computed=0;
+       object_type=VEObj;
+       object=$1$;
+       variable="pos.y";
+       var_label=;
+       name_style=AUTO_NAME;
+       max_name_len=6;
+       val_type=VT_FLOAT;
+       matrix=0;
+       matrix_geom{        };
+       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+      };
+      NetMonItem @[2] {
+       name="VEObj__pos_z";
+       computed=0;
+       object_type=VEObj;
+       object=$1$;
+       variable="pos.z";
+       var_label=;
+       name_style=AUTO_NAME;
+       max_name_len=6;
+       val_type=VT_FLOAT;
+       matrix=0;
+       matrix_geom{        };
+       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+      };
+     };
+     network=.projects[0].networks[0]$2$;
+     data=.projects[0].data.gp[1][0]$3$;
+     rmv_orphan_cols=1;
     };
    };
    types {
@@ -187,9 +413,76 @@ LeabraProject .projects[0] {
      name="VEWorld_0";
      var_type=T_Object;
      object_type=VEWorld;
-     object_val=.projects[0].programs[0].objs[0]$0$;
+     object_val=.projects[0].programs[0].objs[0]$4$;
      objs_ptr=1;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="NetMonitor_0";
+     var_type=T_Object;
+     object_type=NetMonitor;
+     object_val=.projects[0].programs[0].objs[1]$5$;
+     objs_ptr=1;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[2] {
+     name="n_steps";
+     var_type=T_Int;
+     int_val=100;
+     objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="step";
+     var_type=T_Int;
+     int_val=4;
+     objs_ptr=0;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[4] {
+     name="x_vel";
+     var_type=T_Real;
+     real_val=1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[5] {
+     name="y_vel";
+     var_type=T_Real;
+     real_val=0.1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[6] {
+     name="z_vel";
+     var_type=T_Real;
+     real_val=0.1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[7] {
+     name="MonitorOutput";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$3$;
+     objs_ptr=0;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[8] {
+     name="VEObj_0";
+     var_type=T_Object;
+     object_type=VEObj;
+     object_val=$1$;
+     objs_ptr=0;
+     flags=NULL_CHECK;
      desc=;
     };
    };
@@ -207,11 +500,230 @@ LeabraProject .projects[0] {
     name=;
     el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[0].vars[8]$6$;
+     method=VEObj::ResetPosVel;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MemberAssign @[1] {
+     desc=;
+     flags=;
+     obj=$6$;
+     path="lin_vel.x";
+     expr {
+      expr="x_vel";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ x_vel;      };
+      bad_vars{       };
+     };
+     update_after=0;
+    };
+    MemberAssign @[2] {
+     desc=;
+     flags=;
+     obj=$6$;
+     path="lin_vel.y";
+     expr {
+      expr="y_vel";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ y_vel;      };
+      bad_vars{       };
+     };
+     update_after=0;
+    };
+    MemberAssign @[3] {
+     desc=;
+     flags=;
+     obj=$6$;
+     path="lin_vel.z";
+     expr {
+      expr="z_vel";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ z_vel;      };
+      bad_vars{       };
+     };
+     update_after=0;
+    };
+    ResetDataRows @[4] {
+     desc=;
+     flags=;
+     data_var=.projects[0].programs[0].vars[7]$7$;
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[0].vars[1]$8$;
+     method=NetMonitor::UpdateDataTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="reset_first";
+       required=0;
+       def_val="false";
+       expr {
+	expr=;
+	flags=;
+	var_expr=;
+	vars {
+	};
+	var_names{ 	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$8$;
+     method=NetMonitor::SetDataTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=0;
+       def_val=;
+       expr {
+	expr="MonitorOutput";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ MonitorOutput;	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
    };
    prog_code {
     name=;
     el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[0].vars[0]$9$;
+     method=VEWorld::SetValsToODE;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    ResetDataRows @[1] {
+     desc=;
+     flags=OFF;
+     data_var=$7$;
+    };
+    ForLoop @[2] {
+     desc=;
+     flags=;
+     loop_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       obj=$9$;
+       method=VEWorld::Step;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       obj=$7$;
+       method=DataTable::AddBlankRow;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       obj=$8$;
+       method=NetMonitor::GetMonVals;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      DoneWritingDataRow @[3] {
+       desc=;
+       flags=;
+       data_var=$7$;
+      };
+      StopStepPoint @[4] {
+       desc=;
+       flags=;
+      };
+     };
+     init {
+      expr="step = 0";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$ = 0";
+      vars {
+      };
+      var_names{ step;      };
+      bad_vars{       };
+     };
+     test {
+      expr="step < n_steps";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$ < $#1#$";
+      vars {
+      };
+      var_names{ step;n_steps;      };
+      bad_vars{       };
+     };
+     iter {
+      expr="step++";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$++";
+      vars {
+      };
+      var_names{ step;      };
+      bad_vars{       };
+     };
+    };
    };
   };
  };
@@ -220,7 +732,7 @@ LeabraProject .projects[0] {
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$1$;
+   m_data=.projects[0]$10$;
    name=;
    visible=1;
    m_is_root=0;
@@ -248,7 +760,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$1$;
+     m_root=$10$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -274,11 +786,403 @@ LeabraProject .projects[0] {
 	 name=;
 	 el_typ=T3DataView;
 	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$3$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[1][0].data[0]$11$;
+	    m_transform=NULL;
+	    name="VEObj__pos_x";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[1][0].data[1]$12$;
+	    m_transform=NULL;
+	    name="VEObj__pos_y";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[1][0].data[2]$13$;
+	    m_transform=NULL;
+	    name="VEObj__pos_z";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=179: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  table_pos {x=1: y=0: z=0: };
+	  table_scale {x=1: y=1: z=1: };
+	  table_orient {x=0: y=0: z=1: rot=0: };
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="VEObj__pos_x";
+	   fixed_range {fix_min=0: min=0.001: fix_max=0: max=1.349999: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0.001: max=1.349999: };
+	   range {min=0.001: max=1.349999: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Z;
+	   col_name="VEObj__pos_z";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="VEObj__pos_y";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green": r=0: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="violet": r=0.9333333: g=0.509804: b=0.9333333: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	  };
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  color_mode=VALUE_COLOR;
+	  negative_draw=0;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  label_spacing=-1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name=;
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=.colorspecs[0]$14$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  width=1;
+	  depth=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
 	};
        };
-       camera_pos {x=0: y=0: z=-1.517074: };
+       camera_pos {x=1.320764: y=1.603933: z=1.397222: };
+       camera_orient {x=-0.996334: y=-0.08069943: z=0.02839033: rot=0.5651565: };
+       camera_focdist=2.234377;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[1] {
+       m_data=NULL;
+       name="VEWorld_0";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 VEWorldView @[0] {
+	  m_data=$4$;
+	  m_transform=NULL;
+	  children {
+	   name=;
+	   el_typ=VEObjView;
+	   el_def=0;
+	   VEObjView @[0] {
+	    m_data=$1$;
+	    m_transform=NULL;
+	    name="VEObj_0";
+	   };
+	  };
+	  display_on=0;
+	 };
+	 GridTableView @[1] {
+	  m_data=$3$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=$11$;
+	    m_transform=NULL;
+	    name="VEObj__pos_x";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=$12$;
+	    m_transform=NULL;
+	    name="VEObj__pos_y";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=$13$;
+	    m_transform=NULL;
+	    name="VEObj__pos_z";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  view_rows=10;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  table_pos {x=1: y=0: z=0: };
+	  table_scale {x=1: y=1: z=1: };
+	  table_orient {x=0: y=0: z=1: rot=0: };
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name=;
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$14$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.0575: y=0.3: z=3.831118: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=2.482926;
+       camera_focdist=3.831118;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
@@ -303,5 +1207,101 @@ LeabraProject .projects[0] {
   name=;
   el_typ=LeabraNetwork;
   el_def=0;
+  LeabraNetwork @[0] {
+   name="Network_0";
+   desc=;
+   specs {
+    name=;
+    el_typ=BaseSpec;
+    el_def=0;
+   };
+   layers {
+    name=;
+    el_typ=LeabraLayer;
+    el_def=0;
+    pos {x=0: y=0: z=0: };
+   };
+   flags=;
+   auto_build=AUTO_BUILD;
+   train_mode=TRAIN;
+   wt_update=ON_LINE;
+   small_batch_n=10;
+   batch=0;
+   epoch=0;
+   trial=0;
+   cycle=0;
+   time=0;
+   group_name=;
+   trial_name=;
+   output_name=;
+   sse_unit_avg=0;
+   sse_sqrt=0;
+   sse=0;
+   sum_sse=0;
+   avg_sse=0;
+   cnt_err_tol=0;
+   cnt_err=0;
+   cur_sum_sse=0;
+   avg_sse_n=0;
+   cur_cnt_err=0;
+   train_time {name="train_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   misc_time {name="misc_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   dmem_sync_level=DMEM_SYNC_NETWORK;
+   dmem_nprocs=1;
+   usr1_save_fmt=FULL_NET;
+   wt_save_fmt=TEXT;
+   lay_layout=THREE_D;
+   n_units=0;
+   n_cons=0;
+   max_size {x=1: y=1: z=1: };
+   font_sizes {
+    net_name=0.05;
+    net_vals=0.05;
+    layer=0.04;
+    layer_vals=0.03;
+    prjn=0.01;
+    unit=0.02;
+   };
+   view_params {
+    xy_square=0;
+    unit_spacing=0.05;
+    prjn_disp=L_R_F;
+    prjn_name=0;
+    prjn_width=0.002;
+    prjn_trans=0.5;
+    lay_trans=0.5;
+    unit_trans=0.6;
+   };
+   phase_order=MINUS_PLUS;
+   no_plus_test=1;
+   trial_init=DECAY_STATE;
+   sequence_init=DO_NOTHING;
+   first_plus_dwt=ONLY_FIRST_DWT;
+   phase=MINUS_PHASE;
+   phase_no=0;
+   phase_max=2;
+   cycle_max=60;
+   min_cycles=15;
+   min_cycles_phase2=35;
+   minus_cycles=0;
+   avg_cycles=0;
+   avg_cycles_sum=0;
+   avg_cycles_n=0;
+   netin_mod=1;
+   send_delta=1;
+   maxda_stopcrit=0.005;
+   maxda=0;
+   trg_max_act_stopcrit=1;
+   trg_max_act=0;
+   ext_rew=0;
+   avg_ext_rew=0;
+   avg_ext_rew_sum=0;
+   avg_ext_rew_n=0;
+  };
  };
 };

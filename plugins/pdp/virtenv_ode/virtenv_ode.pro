@@ -29,7 +29,7 @@ SOURCES += $${TARGET}.cpp
   message( "../pdp_shared.pri file is missing or could not be included" )
 }
 
-LIBS += -lode
+LIBS += -lode -framework Inventor -framework SoQt
 
 # presumably this allows you to link in an additional package
 

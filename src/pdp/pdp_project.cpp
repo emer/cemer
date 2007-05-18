@@ -245,7 +245,7 @@ void Wizard::StdNetwork(Network* net) {
   net->LayerZPos_Unitize();
   net->Build();
   net->StructUpdate(false);
-  net->ShowInViewer();
+  net->NewView();
 //obs  taMisc::DelayedMenuUpdate(net);
 }
 

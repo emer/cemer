@@ -1057,6 +1057,7 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
       if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
       // call the init function
       md->addr();
+      md->addr = NULL;		// reset so it isn't run again!
     }
   }
   // add any Schema that couldn't be added earlier

@@ -966,9 +966,9 @@ public:
   // misc funs
 
   virtual GridTableView* NewGridView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use blank if any, else make new frame)
+  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_ON_View #MENU_CONTEXT #CAT_Display open a grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
   virtual GraphTableView* NewGraphView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use blank if any, else make new frame)
+  // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
   virtual int  		MinLength();		// #IGNORE
   virtual int  		MaxLength();		// #IGNORE

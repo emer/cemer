@@ -1775,8 +1775,8 @@ public:
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
 
 #ifdef TA_GUI
-  virtual NetView* ShowInViewer(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #BUTTON #CAT_Display open a viewer on this network (NULL=use blank if any, else make new frame)
+  virtual NetView* NewView(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
 #endif
 
   virtual void  Init_InputData();
