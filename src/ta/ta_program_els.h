@@ -365,7 +365,7 @@ public:
   String		path;
   // path to the member -- can just be member name (use member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
   MemberDef*		member_lookup;
-  // #AKA_member #TYPE_ON_obj_type #APPLY_IMMED lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
+  // #AKA_member #TYPE_ON_obj_type #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
   ProgExpr		expr; // the expression to compute and assign to the member
   bool			update_after; // call UpdateAfterEdit after setting the member
   

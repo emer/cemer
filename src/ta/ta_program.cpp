@@ -1186,6 +1186,7 @@ String ProgExprBase::GetFullExpr() const {
 
 void ProgExpr::Initialize() {
   var_lookup = NULL;
+  enum_lookup = NULL;
 }
 
 void ProgExpr::Destroy() {	
@@ -1195,6 +1196,9 @@ void ProgExpr::Destroy() {
 void ProgExpr::CutLinks() {
   if(var_lookup) {
     taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  if(enum_lookup) {
+    taBase::SetPointer((taBase**)&enum_lookup, NULL);
   }
   inherited::CutLinks();
 }
@@ -1206,6 +1210,13 @@ void ProgExpr::UpdateAfterEdit_impl() {
     else
       expr += " " + var_lookup->name;
     taBase::SetPointer((taBase**)&var_lookup, NULL);
+  }
+  if(enum_lookup) {
+    if(expr.empty())
+      expr += enum_lookup->name;
+    else
+      expr += " " + enum_lookup->name;
+    taBase::SetPointer((taBase**)&enum_lookup, NULL);
   }
   inherited::UpdateAfterEdit_impl();
 }

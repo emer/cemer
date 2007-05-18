@@ -5,6 +5,14 @@ commit:
 ------------
 current:
 
+* it is still a todo: allow you to lookup/select enum values (dynenums) in
+  program expressions -- would be very useful..  probably just a simple
+  DynEnumItem token chooser with Program scope will do the trick -- I'll look
+  into it..
+
+* need hard enum val chooser in std progvar edit!  not sure how best to do that
+ -- probably need a separate int that is used and then copied.
+
 == Netview:
 
 * Can't view weights with 2 nets in same view!

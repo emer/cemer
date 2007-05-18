@@ -48,7 +48,7 @@ public:
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
 
   DataCol*		col_lookup;
-  // #NO_SAVE #FROM_GROUP_data_cols #APPLY_IMMED column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
+  // #NO_SAVE #FROM_GROUP_data_cols #APPLY_IMMED #NO_EDIT column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
   String		chan_name;
   // name of the channel/column in the data to use 
 
@@ -233,7 +233,7 @@ public:
   bool			computed;	// #APPLY_IMMED if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*		object_type;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NO_SCOPE the network object being monitored
-  MemberDef*		lookup_var;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
+  MemberDef*		lookup_var;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
   String        	variable;	// #CONDEDIT_OFF_computed:true Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
   String		var_label;	// #CONDEDIT_OFF_computed:true label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDEDIT_OFF_computed:true how to name the columns/channels generated from this data?

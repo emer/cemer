@@ -746,7 +746,7 @@ bool SetUnitsLit::GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm,
       if(set_nm) {
 	if(idat->FindColName("Name", colno, true)) {
 	  rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal() + "\"; "
+	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal().after("_") + "\"; "
 	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
 	}
       }
@@ -864,7 +864,8 @@ bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idn
     if(set_nm) {
       if(idat->FindColName("Name", colno, true)) {
 	rval += il + "{ String nm = " + idnm + ".GetValAsString(" + String(colno)
-	  + ", -1); if(!nm.empty()) nm += \"_\"; nm += " + un->name + "; "
+	  + ", -1); if(!nm.empty()) nm += \"_\"; String nwnm = " + un->name
+	  + "; nwnm = nwnm.after(\"_\"); nm += nwnm; "
 	  + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }\n";
       }
     }

@@ -118,7 +118,7 @@ SmartRef_Of(ProgType,TA_ProgType); // ProgTypeRef
 ///////////////////////////////////////////////////////////
 
 class TA_API DynEnumItem : public taNBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program dynamic enumerated type value (name and numerical int value)
+  // #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated type value (name and numerical int value)
 INHERITED(taNBase)
 public:
   int		value;		// numerical (integer) value of this enum
@@ -134,7 +134,7 @@ public:
 };
 
 class TA_API DynEnumItem_List : public taList<DynEnumItem> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of dynamic enumerated type items
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program ##SCOPE_Program list of dynamic enumerated type items
 INHERITED(taList<DynEnumItem>)
 public:
 
@@ -159,7 +159,7 @@ private:
 };
 
 class TA_API DynEnumType : public ProgType {
-  // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write
+  // #NO_UPDATE_AFTER ##DEF_CHILD_enums ##CAT_Program ##SCOPE_Program dynamic enumerated type -- user-definable list of labeled values that make code easier to read and write
 INHERITED(ProgType)
 public:
   DynEnumItem_List	enums;	// enumerated values for this type
@@ -202,7 +202,7 @@ private:
 SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
 
 class TA_API DynEnum : public taOBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
+  // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
   DynEnumTypeRef	enum_type; // #APPLY_IMMED enum type information (list of enum labels)
@@ -466,14 +466,13 @@ private:
   void	Destroy();
 };
 
-// todo: add support for choosing enum vals for enum types!
-
 class TA_API ProgExpr : public ProgExprBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- includes variable lookup functions
 INHERITED(ProgExprBase)
 public:
 
-  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  DynEnumItem*	enum_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a dynamic enum variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
   TA_BASEFUNS_NOCOPY(ProgExpr);

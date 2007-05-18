@@ -601,7 +601,7 @@ public:
 
   bool			on;		// is this axis active for displaying info
   AxisType		axis;		// #READ_ONLY #SHOW type of axis this is, for rendering purposes
-  GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
+  GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list #NO_SAVE #NO_EDIT lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String		col_name;	// name of column of data for this axis
   FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
