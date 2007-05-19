@@ -104,6 +104,7 @@ private:
 
 class TA_API DMemShareVar : public taBase {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem definition of a variable of a given type (FLOAT, DOUBLE, INT) that each proc has some instances of (can be multiple members of a given object) -- these can all be Allgather'ed to sync across procs
+  INHERITED(taBase)
 public:
   MPI_Comm	comm;		// #IGNORE communicator associated with these shared objs
   MPI_Datatype	mpi_type;	// #IGNORE mpi's type for this variable
@@ -136,15 +137,16 @@ public:
 
   void	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS(DMemShareVar);
-private
   void	Copy_(const DMemShareVar& cp);
+  TA_BASEFUNS(DMemShareVar);
+private:
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
 };
 
 class TA_API DMemShare : public taBase_List {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS ##NO_UPDATE_AFTER ##CAT_DMem collection of objects that are shared across distributed processes: link the objects into this list to share them
+  INHERITED(taBase_List)
 public:
   taBase_List	vars;		// #IGNORE list of DMemShareVar variables, one for each share_set (set of variables to be shared at the same time)
   // NOTE: a share_set must all have the same variable type (e.g., all must be FLOAT or DOUBLE, etc)!

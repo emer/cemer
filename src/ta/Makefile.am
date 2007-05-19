@@ -224,7 +224,6 @@ SRCS =\
 	ta_program.cpp \
 	ta_program_els.cpp \
 	ta_matrix.cpp \
-	ta_matrix.moc.cpp \
 	ta_math.cpp \
 	ta_geometry.cpp \
 	ta_data.cpp \
