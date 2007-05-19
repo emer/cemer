@@ -25,9 +25,12 @@ Q_EXPORT_PLUGIN2(virtenv_ode, VEOdePlugin)
 /////////////////////////////////////////////////////////////////////////////////
 //		Actual ODE Code
 
+////////////////////////////////////////////////
+//		objects (bodies)
 
-void VEObj::Initialize() {
+void VEBody::Initialize() {
   body_id = NULL;
+  flags = BF_NONE;
   mass = 1.0f;
   mass_shape = CYLINDER;
   mass_radius = .5f;
@@ -37,26 +40,26 @@ void VEObj::Initialize() {
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
 }
 
-void VEObj::Destroy() {
+void VEBody::Destroy() {
   CutLinks();
 }
 
-void VEObj::CutLinks() {
+void VEBody::CutLinks() {
   DestroyODE();
   inherited::CutLinks();
 }
 
-VEWorld* VEObj::GetWorld() {
+VEWorld* VEBody::GetWorld() {
   return GET_MY_OWNER(VEWorld);
 }
 
-void* VEObj::GetWorldID() {
+void* VEBody::GetWorldID() {
   VEWorld* wld = GetWorld();
   if(!wld) return wld;
   return wld->world_id;
 }
 
-bool VEObj::CreateODE() {
+bool VEBody::CreateODE() {
   if(body_id) return true;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create object!"))
@@ -65,28 +68,34 @@ bool VEObj::CreateODE() {
   return (bool)body_id;
 }
 
-void VEObj::DestroyODE() {
+void VEBody::DestroyODE() {
   if(body_id) dBodyDestroy((dBodyID)body_id);
   body_id = NULL;
 }
 
-void VEObj::SetValsToODE() {
+void VEBody::SetValsToODE() {
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
-  dBodySetPosition(bid, pos.x, pos.y, pos.z);
+  dBodySetPosition(bid, init_pos.x, init_pos.y, init_pos.z);
 
   dMatrix3 R;
-  dRFromAxisAndAngle(R, orient.x, orient.y, orient.z, orient.rot);
+  dRFromAxisAndAngle(R, init_rot.x, init_rot.y, init_rot.z, init_rot.rot);
   dBodySetRotation(bid, R);
 
-  dBodySetLinearVel(bid, lin_vel.x, lin_vel.y, lin_vel.z);
-  dBodySetAngularVel(bid, ang_vel.x, ang_vel.y, ang_vel.z);
+  if(HasBodyFlag(FIXED)) {
+    dBodySetLinearVel(bid, 0.0f, 0.0f, 0.0f);
+    dBodySetAngularVel(bid,  0.0f, 0.0f, 0.0f);
+  }
+  else {
+    dBodySetLinearVel(bid, init_lin_vel.x, init_lin_vel.y, init_lin_vel.z);
+    dBodySetAngularVel(bid, init_ang_vel.x, init_ang_vel.y, init_ang_vel.z);
+  }
 
   SetMassToODE();
 }
 
-void VEObj::SetMassToODE() {
+void VEBody::SetMassToODE() {
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
@@ -107,48 +116,288 @@ void VEObj::SetMassToODE() {
   dBodySetMass(bid, &mass_ode);
 }
 
-void VEObj::GetValsFmODE() {
+void VEBody::GetValsFmODE() {
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
   const dReal* opos = dBodyGetPosition(bid);
-  pos.x = opos[0]; pos.y = opos[1]; pos.z = opos[2];
+  cur_pos.x = opos[0]; cur_pos.y = opos[1]; cur_pos.z = opos[2];
 
 // const dReal * dBodyGetRotation (dBodyID);
   // todo: need to get axis & angle back from 4x3 return matrix
 
   const dReal* olv = dBodyGetLinearVel(bid);
-  lin_vel.x = olv[0]; lin_vel.y = olv[1]; lin_vel.z = olv[2];
+  cur_lin_vel.x = olv[0]; cur_lin_vel.y = olv[1]; cur_lin_vel.z = olv[2];
   const dReal* oav = dBodyGetAngularVel(bid);
-  ang_vel.x = oav[0]; ang_vel.y = oav[1]; ang_vel.z = oav[2];
+  cur_ang_vel.x = oav[0]; cur_ang_vel.y = oav[1]; cur_ang_vel.z = oav[2];
 
   DataChanged(DCR_ITEM_UPDATED); // update displays..
-  // not really necc:
+  // not necc (nonrelativistic!)
   //  dBodyGetMass(bid, &mass);
-}
-
-void VEObj::ResetPosVel() {
-  pos = 0.0f;
-  lin_vel = 0.0f;
-  ang_vel = 0.0f;
-  DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
 
 /////////////////////////////////////////////
 //		Group
 
-void VEObj_Group::SetValsToODE() {
-  VEObj* ob;
+void VEBody_Group::SetValsToODE() {
+  VEBody* ob;
   taLeafItr i;
-  FOR_ITR_EL(VEObj, ob, this->, i) {
+  FOR_ITR_EL(VEBody, ob, this->, i) {
     ob->SetValsToODE();
   }
 }
 
-void VEObj_Group::GetValsFmODE() {
-  VEObj* ob;
+void VEBody_Group::GetValsFmODE() {
+  VEBody* ob;
   taLeafItr i;
-  FOR_ITR_EL(VEObj, ob, this->, i) {
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->GetValsFmODE();
+  }
+}
+
+
+////////////////////////////////////////////////
+//		Joints
+
+void VEJoint::Initialize() {
+  joint_id = NULL;
+  flags = JF_NONE;
+  set_type = NO_JOINT;
+  type = HINGE;
+  axis.x = 1.0f;
+  axis2.x = 1.0f;
+}
+
+void VEJoint::Destroy() {
+  CutLinks();
+}
+
+void VEJoint::CutLinks() {
+  DestroyODE();
+  inherited::CutLinks();
+}
+
+VEWorld* VEJoint::GetWorld() {
+  return GET_MY_OWNER(VEWorld);
+}
+
+void* VEJoint::GetWorldID() {
+  VEWorld* wld = GetWorld();
+  if(!wld) return wld;
+  return wld->world_id;
+}
+
+bool VEJoint::CreateODE() {
+  if(joint_id && type == set_type) return true;
+  dWorldID wid = (dWorldID)GetWorldID();
+  if(TestError(!wid, "CreateODE", "no valid world id -- cannot create joint!"))
+    return false;
+  switch(type) {
+  case BALL:
+    joint_id = (dJointID)dJointCreateBall(wid, 0);
+    break;
+  case HINGE:
+    joint_id = (dJointID)dJointCreateHinge(wid, 0);
+    break;
+  case SLIDER:
+    joint_id = (dJointID)dJointCreateSlider(wid, 0);
+    break;
+  case UNIVERSAL:
+    joint_id = (dJointID)dJointCreateUniversal(wid, 0);
+    break;
+  case HINGE2:
+    joint_id = (dJointID)dJointCreateHinge2(wid, 0);
+    break;
+  case FIXED:
+    joint_id = (dJointID)dJointCreateFixed(wid, 0);
+    break;
+//   case PR:
+//     joint_id = (dJointID)dJointCreatePR(wid, 0);
+//     break;
+  }
+  set_type = type;
+  return (bool)joint_id;
+}
+
+void VEJoint::DestroyODE() {
+  if(joint_id) dJointDestroy((dJointID)joint_id);
+  joint_id = NULL;
+}
+
+void VEJoint::SetValsToODE() {
+  if(!joint_id) CreateODE();
+  if(!joint_id) return;
+  dJointID jid = (dJointID)joint_id;
+
+  if(TestError(!body1 || !body1->body_id,
+	       "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
+    return;
+  if(TestError(!body2 || !body2->body_id,
+	       "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
+    return;
+
+  dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
+
+  if(HasJointFlag(FEEDBACK)) {
+    dJointSetFeedback(jid, &ode_fdbk_obj);
+  }
+  
+  if(HasJointFlag(USE_STOPS)) {
+    switch(type) {
+    case HINGE:
+      dJointSetHingeParam(jid, dParamLoStop, lo_stop);
+      dJointSetHingeParam(jid, dParamHiStop, hi_stop);
+      dJointSetHingeParam(jid, dParamBounce, stop_bounce);
+      break;
+    case SLIDER:
+      dJointSetSliderParam(jid, dParamLoStop, lo_stop);
+      dJointSetSliderParam(jid, dParamHiStop, hi_stop);
+      dJointSetSliderParam(jid, dParamBounce, stop_bounce);
+      break;
+    case UNIVERSAL:
+      // todo: set these!
+      break;
+    case HINGE2:
+      break;
+    case FIXED:
+      break;
+    }
+  }
+
+  FloatTDCoord wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
+
+  switch(type) {
+  case BALL:
+    dJointSetBallAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    break;
+  case HINGE:
+    dJointSetHingeAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    dJointSetHingeAxis(jid, axis.x, axis.y, axis.z);
+    break;
+  case SLIDER:
+    dJointSetSliderAxis(jid, axis.x, axis.y, axis.z);
+    break;
+  case UNIVERSAL:
+    dJointSetUniversalAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    dJointSetUniversalAxis1(jid, axis.x, axis.y, axis.z);
+    dJointSetUniversalAxis2(jid, axis2.x, axis2.y, axis2.z);
+    break;
+  case HINGE2:
+    dJointSetHinge2Anchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    dJointSetHinge2Axis1(jid, axis.x, axis.y, axis.z);
+    dJointSetHinge2Axis2(jid, axis2.x, axis2.y, axis2.z);
+    break;
+  case FIXED:
+    break;
+//   case PR:
+//     dJointSetPRAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+//     dJointSetPRAxis1(jid, axis.x, axis.y, axis.z);
+//     dJointSetPRAxis2(jid, axis2.x, axis2.y, axis2.z);
+//     break;
+  }
+
+}
+
+void VEJoint::GetValsFmODE() {
+  if(!HasJointFlag(FEEDBACK)) return;
+  if(!joint_id) CreateODE();
+  if(!joint_id) return;
+  dJointID jid = (dJointID)joint_id;
+
+  dJointGetFeedback(jid);
+  // todo: fill in vals
+
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEJoint::ApplyForce(float force1, float force2) {
+  if(!joint_id) CreateODE();
+  if(!joint_id) return;
+  dJointID jid = (dJointID)joint_id;
+
+  switch(type) {
+  case BALL:
+    break;
+  case HINGE:
+    dJointAddHingeTorque(jid, force1);
+    break;
+  case SLIDER:
+    dJointAddSliderForce(jid, force1);
+    break;
+  case UNIVERSAL:
+    dJointAddUniversalTorques(jid, force1, force2);
+    break;
+  case HINGE2:
+    dJointAddHinge2Torques(jid, force1, force2);
+    break;
+  case FIXED:
+    break;
+  }
+}
+
+/////////////////////////////////////////////
+//		Group
+
+void VEJoint_Group::SetValsToODE() {
+  VEJoint* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEJoint, ob, this->, i) {
+    ob->SetValsToODE();
+  }
+}
+
+void VEJoint_Group::GetValsFmODE() {
+  VEJoint* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEJoint, ob, this->, i) {
+    ob->GetValsFmODE();
+  }
+}
+
+////////////////////////////////////////////////
+//	Object: collection of bodies and joints
+
+void VEObject::Initialize() {
+}
+void VEObject::Destroy() {
+  CutLinks();
+}
+
+VEWorld* VEObject::GetWorld() {
+  return GET_MY_OWNER(VEWorld);
+}
+
+void* VEObject::GetWorldID() {
+  VEWorld* wld = GetWorld();
+  if(!wld) return wld;
+  return wld->world_id;
+}
+
+void VEObject::SetValsToODE() {
+  bodies.SetValsToODE();	// bodies first!
+  joints.SetValsToODE();
+}
+
+void VEObject::GetValsFmODE() {
+  bodies.GetValsFmODE();	// bodies first!
+  joints.GetValsFmODE();
+}
+
+/////////////////////////////////////////////
+//		Group
+
+void VEObject_Group::SetValsToODE() {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->SetValsToODE();
+  }
+}
+
+void VEObject_Group::GetValsFmODE() {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
     ob->GetValsFmODE();
   }
 }
@@ -215,7 +464,7 @@ void VEWorld::Step() {
 
 
 /////////////////////////////////////////////////////////////////////////
-//		So Inventor Objects
+//		So Inventor objects
 
 SO_NODE_SOURCE(T3VEWorld);
 
@@ -236,25 +485,46 @@ T3VEWorld::~T3VEWorld()
 }
 
 /////////////////////////////////////////////
-//	obj
+//	Object
 
-SO_NODE_SOURCE(T3VEObj);
+SO_NODE_SOURCE(T3VEObject);
 
-void T3VEObj::initClass()
+void T3VEObject::initClass()
 {
-  SO_NODE_INIT_CLASS(T3VEObj, T3NodeLeaf, "T3NodeLeaf");
+  SO_NODE_INIT_CLASS(T3VEObject, T3NodeParent, "T3NodeParent");
 }
 
-T3VEObj::T3VEObj(void* obj, bool show_drag)
-:inherited(obj)
+T3VEObject::T3VEObject(void* world)
+:inherited(world)
 {
-  SO_NODE_CONSTRUCTOR(T3VEObj);
+  SO_NODE_CONSTRUCTOR(T3VEObject);
+}
+
+T3VEObject::~T3VEObject()
+{
+  
+}
+
+/////////////////////////////////////////////
+//	Body
+
+SO_NODE_SOURCE(T3VEBody);
+
+void T3VEBody::initClass()
+{
+  SO_NODE_INIT_CLASS(T3VEBody, T3NodeLeaf, "T3NodeLeaf");
+}
+
+T3VEBody::T3VEBody(void* bod, bool show_drag)
+:inherited(bod)
+{
+  SO_NODE_CONSTRUCTOR(T3VEBody);
 
   show_drag_ = show_drag;
   drag_ = NULL;
 }
 
-T3VEObj::~T3VEObj()
+T3VEBody::~T3VEBody()
 {
   
 }
@@ -278,25 +548,25 @@ T3VEObj::~T3VEObj()
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 
-void VEObjView::Initialize(){
-  data_base = &TA_VEObj;
+void VEBodyView::Initialize(){
+  data_base = &TA_VEBody;
 }
 
-void VEObjView::Copy_(const VEObjView& cp) {
+void VEBodyView::Copy_(const VEBodyView& cp) {
   name = cp.name;
 }
 
-void VEObjView::Destroy() {
+void VEBodyView::Destroy() {
   CutLinks();
 }
 
-bool VEObjView::SetName(const String& value) { 
+bool VEBodyView::SetName(const String& value) { 
   name = value;  
   return true; 
 } 
 
-void VEObjView::SetObj(VEObj* ob) {
-  if (Obj() == ob) return;
+void VEBodyView::SetBody(VEBody* ob) {
+  if (Body() == ob) return;
   SetData(ob);
   if(ob) {
     if (name != ob->name) {
@@ -305,12 +575,12 @@ void VEObjView::SetObj(VEObj* ob) {
   }
 }
 
-void VEObjView::Render_pre() {
-  m_node_so = new T3VEObj(this);
+void VEBodyView::Render_pre() {
+  m_node_so = new T3VEBody(this);
 
   SoSeparator* ssep = m_node_so->shapeSeparator();
 
-  VEObj* ob = Obj();
+  VEBody* ob = Body();
   if(ob) {
     if(ob->use_fname && !ob->obj_fname.empty()) {
       SoInput in;
@@ -326,21 +596,21 @@ void VEObjView::Render_pre() {
       taMisc::Error("object file:", ob->obj_fname, "not found, reverting to mass_shape");
     }
     switch(ob->mass_shape) {
-    case VEObj::SPHERE: {
+    case VEBody::SPHERE: {
       SoSphere* sp = new SoSphere;
       sp->radius = ob->mass_radius;
       ssep->addChild(sp);
       break;
     }
-    case VEObj::CAPPED_CYLINDER:
-    case VEObj::CYLINDER: {
+    case VEBody::CAPPED_CYLINDER:
+    case VEBody::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->mass_radius;
       sp->height = ob->mass_length;
       ssep->addChild(sp);
       break;
     }
-    case VEObj::BOX: {
+    case VEBody::BOX: {
       SoCube* sp = new SoCube;
       sp->width = ob->mass_box.x;
       sp->depth = ob->mass_box.y;
@@ -355,21 +625,81 @@ void VEObjView::Render_pre() {
   inherited::Render_pre();
 }
 
-void VEObjView::Render_impl() {
+void VEBodyView::Render_impl() {
   inherited::Render_impl();
 
-  T3VEObj* node_so = (T3VEObj*)this->node_so(); // cache
+  T3VEBody* node_so = (T3VEBody*)this->node_so(); // cache
   if(!node_so) return;
-  VEObj* ob = Obj();
+  VEBody* ob = Body();
   if(!ob) return;
 
   SoTransform* tx = node_so->transform();
-  tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
-  tx->rotation.setValue(SbVec3f(ob->orient.x, ob->orient.y, ob->orient.z), ob->orient.rot);
+  tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
+  tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
   SoMaterial* mat = node_so->material();
   mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
   mat->transparency.setValue(1.0f - ob->color.a);
+}
+
+//////////////////////////
+//   VEObjectView	//
+//////////////////////////
+
+void VEObjectView::Initialize(){
+  data_base = &TA_VEObject;
+}
+
+void VEObjectView::Copy_(const VEObjectView& cp) {
+  name = cp.name;
+}
+
+void VEObjectView::Destroy() {
+  CutLinks();
+}
+
+bool VEObjectView::SetName(const String& value) { 
+  name = value;  
+  return true; 
+} 
+
+void VEObjectView::SetObject(VEObject* ob) {
+  if (Object() == ob) return;
+  SetData(ob);
+  if(ob) {
+    if (name != ob->name) {
+      name = ob->name;
+    }
+  }
+}
+
+void VEObjectView::BuildAll() {
+  Reset();
+  VEObject* obj = Object();
+  if(!obj) return;
+
+  VEBody* bod;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, bod, obj->bodies., i) {
+    VEBodyView* ov = new VEBodyView();
+    ov->SetBody(bod);
+    children.Add(ov);
+    ov->BuildAll();
+  }
+}
+
+void VEObjectView::Render_pre() {
+  m_node_so = new T3VEObject(this);
+  inherited::Render_pre();
+}
+
+void VEObjectView::Render_impl() {
+  inherited::Render_impl();
+
+  T3VEObject* node_so = (T3VEObject*)this->node_so(); // cache
+  if(!node_so) return;
+  VEObject* ob = Object();
+  if(!ob) return;
 }
 
 //////////////////////////
@@ -415,7 +745,7 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
 
 void VEWorldView::Initialize() {
   data_base = &TA_VEWorld;
-  children.SetBaseType(&TA_VEObjView);
+  children.SetBaseType(&TA_VEObjectView);
 }
 
 void VEWorldView::InitLinks() {
@@ -512,11 +842,11 @@ void VEWorldView::BuildAll() {
   VEWorld* wl = World();
   if(!wl) return;
 
-  VEObj* obj;
+  VEObject* obj;
   taLeafItr i;
-  FOR_ITR_EL(VEObj, obj, wl->objects., i) {
-    VEObjView* ov = new VEObjView();
-    ov->SetObj(obj);
+  FOR_ITR_EL(VEObject, obj, wl->objects., i) {
+    VEObjectView* ov = new VEObjectView();
+    ov->SetObject(obj);
     children.Add(ov);
     ov->BuildAll();
   }

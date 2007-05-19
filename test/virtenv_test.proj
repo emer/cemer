@@ -52,8 +52,12 @@ LeabraProject .projects[0] {
     Program @[0] { 
       ProgObjList @.objs = [2] {
 	VEWorld @[0] { 
-	  VEObj_Group @.objects = [1] {
-	    VEObj @[0] { };
+	  VEObject_Group @.objects = [1] {
+	    VEObject @[0] { 
+	      VEBody_Group @.bodies = [1] {
+		VEBody @[0] { };
+	      };
+	    };
 	  };
 	};
 	NetMonitor @[1] { 
@@ -77,23 +81,22 @@ LeabraProject .projects[0] {
 	ProgVar @[8] { };
       };
 
-      ProgEl_List @.init_code = [8] {
-	MethodCall @[0] { };
+      ProgEl_List @.init_code = [7] {
+	MemberAssign @[0] { };
 	MemberAssign @[1] { };
 	MemberAssign @[2] { };
-	MemberAssign @[3] { };
-	ResetDataRows @[4] { };
+	ResetDataRows @[3] { };
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
 	MethodCall @[5] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	MethodCall @[6] { 
-	  ProgArg_List @.meth_args = [1] {
-	    ProgArg @[0] { };
-	  };
-	};
-	MethodCall @[7] { };
+	MethodCall @[6] { };
       };
 
       ProgEl_List @.prog_code = [3] {
@@ -125,20 +128,18 @@ LeabraProject .projects[0] {
 	  T3DataViewFrame_List @.frames = [2] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
-		GraphTableView @[0] { 
-		  T3DataView_List @.children = [3] {
-		    GraphColView @[0] { };
-		    GraphColView @[1] { };
-		    GraphColView @[2] { };
-		  };
-		};
+		GraphTableView @[0] { };
 	      };
 	    };
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [2] {
 		VEWorldView @[0] { 
 		  T3DataView_List @.children = [1] {
-		    VEObjView @[0] { };
+		    VEObjectView @[0] { 
+		      T3DataView_List @.children = [1] {
+			VEBodyView @[0] { };
+		      };
+		    };
 		  };
 		};
 		GridTableView @[1] { 
@@ -229,7 +230,7 @@ LeabraProject .projects[0] {
      el_typ=float_Data;
      el_def=0;
      float_Data @[0] {
-      name="VEObj__pos_x";
+      name="VEBody_cur_pos_x";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -237,11 +238,11 @@ LeabraProject .projects[0] {
        expr=;
       };
       ar {
-       name=;
+       name="taNBase";
 	    [0]       };
      };
      float_Data @[1] {
-      name="VEObj__pos_y";
+      name="VEBody_cur_pos_y";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -249,11 +250,11 @@ LeabraProject .projects[0] {
        expr=;
       };
       ar {
-       name=;
+       name="taNBase";
 	    [0]       };
      };
      float_Data @[2] {
-      name="VEObj__pos_z";
+      name="VEBody_cur_pos_z";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -261,7 +262,7 @@ LeabraProject .projects[0] {
        expr=;
       };
       ar {
-       name=;
+       name="taNBase";
 	    [0]       };
      };
     };
@@ -316,24 +317,42 @@ LeabraProject .projects[0] {
      gravity {x=0: y=0: z=0: };
      objects {
       name=;
-      el_typ=VEObj;
+      el_typ=VEObject;
       el_def=0;
-      VEObj @[0] {
-       name="VEObj_0";
-       pos {x=0: y=0: z=0: };
-       orient {x=0: y=0: z=1: rot=0: };
-       lin_vel {x=1: y=0.1: z=0.1: };
-       ang_vel {x=0: y=0: z=0: };
-       mass=1;
-       mass_shape=CYLINDER;
-       mass_radius=0.5;
-       mass_length=1;
-       mass_long_axis=LONG_X;
-       mass_box {x=1: y=1: z=1: };
-       obj_xform {scale={x=6: y=6: z=6: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
-       use_fname=1;
-       obj_fname="Banana.iv";
-       color {r=0.2: g=0.2: b=0.4901961: a=1: };
+      VEObject @[0] {
+       name="VEObject_0";
+       bodies {
+	name=;
+	el_typ=VEBody;
+	el_def=0;
+	VEBody @[0] {
+	 name="VEBody_0";
+	 flags=;
+	 init_pos {x=0: y=0: z=0: };
+	 init_rot {x=0: y=0: z=1: rot=0: };
+	 init_lin_vel {x=1: y=0.1: z=0.1: };
+	 init_ang_vel {x=0: y=0: z=0: };
+	 cur_pos {x=0.9999993: y=0.1: z=0.1: };
+	 cur_rot {x=0: y=0: z=1: rot=0: };
+	 cur_lin_vel {x=1: y=0.1: z=0.1: };
+	 cur_ang_vel {x=0: y=0: z=0: };
+	 mass=1;
+	 mass_shape=CYLINDER;
+	 mass_radius=0.5;
+	 mass_length=1;
+	 mass_long_axis=LONG_X;
+	 mass_box {x=1: y=1: z=1: };
+	 obj_xform {scale={x=6: y=6: z=6: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	 use_fname=1;
+	 obj_fname="Banana.iv";
+	 color {r=0.2: g=0.2: b=0.4980392: a=1: };
+	};
+       };
+       joints {
+	name=;
+	el_typ=VEJoint;
+	el_def=0;
+       };
       };
      };
     };
@@ -344,11 +363,11 @@ LeabraProject .projects[0] {
       el_typ=NetMonItem;
       el_def=0;
       NetMonItem @[0] {
-       name="VEObj__pos_x";
+       name="VEBody_cur_pos_x";
        computed=0;
-       object_type=VEObj;
-       object=.projects[0].programs[0].objs[0].objects[0]$1$;
-       variable="pos.x";
+       object_type=VEBody;
+       object=.projects[0].programs[0].objs[0].objects[0].bodies[0]$1$;
+       variable="cur_pos.x";
        var_label=;
        name_style=AUTO_NAME;
        max_name_len=6;
@@ -360,11 +379,11 @@ LeabraProject .projects[0] {
        pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
       };
       NetMonItem @[1] {
-       name="VEObj__pos_y";
+       name="VEBody_cur_pos_y";
        computed=0;
-       object_type=VEObj;
+       object_type=VEBody;
        object=$1$;
-       variable="pos.y";
+       variable="cur_pos.y";
        var_label=;
        name_style=AUTO_NAME;
        max_name_len=6;
@@ -376,11 +395,11 @@ LeabraProject .projects[0] {
        pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
       };
       NetMonItem @[2] {
-       name="VEObj__pos_z";
+       name="VEBody_cur_pos_z";
        computed=0;
-       object_type=VEObj;
+       object_type=VEBody;
        object=$1$;
-       variable="pos.z";
+       variable="cur_pos.z";
        var_label=;
        name_style=AUTO_NAME;
        max_name_len=6;
@@ -440,7 +459,7 @@ LeabraProject .projects[0] {
     ProgVar @[3] {
      name="step";
      var_type=T_Int;
-     int_val=91;
+     int_val=100;
      objs_ptr=0;
      flags=NULL_CHECK;
      desc=;
@@ -479,9 +498,9 @@ LeabraProject .projects[0] {
      desc=;
     };
     ProgVar @[8] {
-     name="VEObj_0";
+     name="VEBody_0";
      var_type=T_Object;
-     object_type=VEObj;
+     object_type=VEBody;
      object_val=$1$;
      objs_ptr=0;
      flags=NULL_CHECK;
@@ -502,23 +521,11 @@ LeabraProject .projects[0] {
     name=;
     el_typ=ProgEl;
     el_def=0;
-    MethodCall @[0] {
+    MemberAssign @[0] {
      desc=;
      flags=;
-     result_var=NULL;
      obj=.projects[0].programs[0].vars[8]$6$;
-     method=VEObj::ResetPosVel;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-    MemberAssign @[1] {
-     desc=;
-     flags=;
-     obj=$6$;
-     path="lin_vel.x";
+     path="init_lin_vel.x";
      expr {
       expr="x_vel";
       flags=;
@@ -530,11 +537,11 @@ LeabraProject .projects[0] {
      };
      update_after=0;
     };
-    MemberAssign @[2] {
+    MemberAssign @[1] {
      desc=;
      flags=;
      obj=$6$;
-     path="lin_vel.y";
+     path="init_lin_vel.y";
      expr {
       expr="y_vel";
       flags=;
@@ -546,11 +553,11 @@ LeabraProject .projects[0] {
      };
      update_after=0;
     };
-    MemberAssign @[3] {
+    MemberAssign @[2] {
      desc=;
      flags=;
      obj=$6$;
-     path="lin_vel.z";
+     path="init_lin_vel.z";
      expr {
       expr="z_vel";
       flags=;
@@ -562,12 +569,12 @@ LeabraProject .projects[0] {
      };
      update_after=0;
     };
-    ResetDataRows @[4] {
+    ResetDataRows @[3] {
      desc=;
      flags=;
      data_var=.projects[0].programs[0].vars[7]$7$;
     };
-    MethodCall @[5] {
+    MethodCall @[4] {
      desc=;
      flags=;
      result_var=NULL;
@@ -595,7 +602,7 @@ LeabraProject .projects[0] {
       };
      };
     };
-    MethodCall @[6] {
+    MethodCall @[5] {
      desc=;
      flags=;
      result_var=NULL;
@@ -623,7 +630,7 @@ LeabraProject .projects[0] {
       };
      };
     };
-    MethodCall @[7] {
+    MethodCall @[6] {
      desc=;
      flags=;
      result_var=NULL;
@@ -807,30 +814,6 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
-	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[1][0].data[0]$11$;
-	    m_transform=NULL;
-	    name="VEObj__pos_x";
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[1][0].data[1]$12$;
-	    m_transform=NULL;
-	    name="VEObj__pos_y";
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[1][0].data[2]$13$;
-	    m_transform=NULL;
-	    name="VEObj__pos_z";
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=-1: };
@@ -844,7 +827,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
-	   col_name="VEObj__pos_x";
+	   col_name="VEBody__pos_x";
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
@@ -858,7 +841,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=1;
 	   axis=Z;
-	   col_name="VEObj__pos_z";
+	   col_name="VEBody__pos_z";
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
@@ -872,7 +855,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=1;
 	   axis=Y;
-	   col_name="VEObj__pos_y";
+	   col_name="VEBody__pos_y";
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
@@ -1058,7 +1041,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$14$;
+	   spec=.colorspecs[0]$11$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -1105,12 +1088,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  m_transform=NULL;
 	  children {
 	   name=;
-	   el_typ=VEObjView;
+	   el_typ=VEBodyView;
 	   el_def=0;
-	   VEObjView @[0] {
-	    m_data=$1$;
+	   VEObjectView @[0] {
+	    m_data=.projects[0].programs[0].objs[0].objects[0]$12$;
 	    m_transform=NULL;
-	    name="VEObj_0";
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	     VEBodyView @[0] {
+	      m_data=$1$;
+	      m_transform=NULL;
+	      name="VEBody_0";
+	     };
+	    };
+	    name="VEObject_0";
 	   };
 	  };
 	  display_on=0;
@@ -1123,9 +1116,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=$11$;
+	    m_data=.projects[0].data.gp[1][0].data[0]$13$;
 	    m_transform=NULL;
-	    name="VEObj__pos_x";
+	    name="VEBody_cur_pos_x";
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -1134,9 +1127,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=$12$;
+	    m_data=.projects[0].data.gp[1][0].data[1]$14$;
 	    m_transform=NULL;
-	    name="VEObj__pos_y";
+	    name="VEBody_cur_pos_y";
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -1145,9 +1138,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=$13$;
+	    m_data=.projects[0].data.gp[1][0].data[2]$15$;
 	    m_transform=NULL;
-	    name="VEObj__pos_z";
+	    name="VEBody_cur_pos_z";
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -1179,7 +1172,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$14$;
+	   spec=$11$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
