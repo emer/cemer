@@ -31,7 +31,7 @@ SOURCES += $${TARGET}.cpp
 
 
 macx:LIBS += -lode -framework Inventor -framework SoQt
-unix {
+linux {
    LIBS += -lode
   debug { 
     LIBS += -lCoind  -lSoQtd
