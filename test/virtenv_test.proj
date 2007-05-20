@@ -48,7 +48,7 @@ LeabraProject .projects[0] {
     taImageProc @[3] { };
   };
 
-  Program_Group @.programs = [1] {
+  Program_Group @.programs = [2] {
     Program @[0] { 
       ProgObjList @.objs = [2] {
 	VEWorld @[0] { 
@@ -113,6 +113,80 @@ LeabraProject .projects[0] {
 	};
       };
     };
+    Program @[1] { 
+      ProgObjList @.objs = [2] {
+	VEWorld @[0] { 
+	  VEObject_Group @.objects = [1] {
+	    VEObject @[0] { 
+	      VEBody_Group @.bodies = [3] {
+		VEBody @[0] { };
+		VEBody @[1] { };
+		VEBody @[2] { };
+	      };
+
+	      VEJoint_Group @.joints = [2] {
+		VEJoint @[0] { };
+		VEJoint @[1] { };
+	      };
+	    };
+	  };
+	};
+	NetMonitor @[1] { 
+	  NetMonItem_List @.items = [3] {
+	    NetMonItem @[0] { };
+	    NetMonItem @[1] { };
+	    NetMonItem @[2] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.vars = [9] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+	ProgVar @[5] { };
+	ProgVar @[6] { };
+	ProgVar @[7] { };
+	ProgVar @[8] { };
+      };
+
+      ProgEl_List @.init_code = [4] {
+	ResetDataRows @[0] { };
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[3] { };
+      };
+
+      ProgEl_List @.prog_code = [3] {
+	MethodCall @[0] { };
+	ResetDataRows @[1] { };
+	ForLoop @[2] { 
+	  ProgEl_List @.loop_code = [6] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	    MethodCall @[1] { };
+	    MethodCall @[2] { };
+	    MethodCall @[3] { };
+	    DoneWritingDataRow @[4] { };
+	    StopStepPoint @[5] { };
+	  };
+	};
+      };
+    };
   };
 
   DataViewer_List @.viewers = [1] {
@@ -125,10 +199,16 @@ LeabraProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [2] {
+	  T3DataViewFrame_List @.frames = [3] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
-		GraphTableView @[0] { };
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
 	      };
 	    };
 	    T3DataViewFrame @[1] { 
@@ -147,6 +227,21 @@ LeabraProject .projects[0] {
 		    GridColView @[0] { };
 		    GridColView @[1] { };
 		    GridColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[2] { 
+	      T3DataView_List @.children = [1] {
+		VEWorldView @[0] { 
+		  T3DataView_List @.children = [1] {
+		    VEObjectView @[0] { 
+		      T3DataView_List @.children = [3] {
+			VEBodyView @[0] { };
+			VEBodyView @[1] { };
+			VEBodyView @[2] { };
+		      };
+		    };
 		  };
 		};
 	      };
@@ -299,10 +394,10 @@ LeabraProject .projects[0] {
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=.projects[0].programs[0]$0$;
+  step_prog=.projects[0].programs[1]$0$;
   desc=;
   Program @[0] {
-   name="VETest";
+   name="VEBasicMotion";
    desc=;
    flags=;
    objs {
@@ -310,7 +405,7 @@ LeabraProject .projects[0] {
     el_typ=VEWorld;
     el_def=0;
     VEWorld @[0] {
-     name="VEWorld_0";
+     name="VEMotWorld";
      step_type=STD_STEP;
      stepsize=0.01;
      quick_iters=20;
@@ -320,19 +415,19 @@ LeabraProject .projects[0] {
       el_typ=VEObject;
       el_def=0;
       VEObject @[0] {
-       name="VEObject_0";
+       name="Banana";
        bodies {
 	name=;
 	el_typ=VEBody;
 	el_def=0;
 	VEBody @[0] {
-	 name="VEBody_0";
+	 name="BananaBody";
 	 flags=;
 	 init_pos {x=0: y=0: z=0: };
 	 init_rot {x=0: y=0: z=1: rot=0: };
 	 init_lin_vel {x=1: y=0.1: z=0.1: };
 	 init_ang_vel {x=0: y=0: z=0: };
-	 cur_pos {x=0.9999993: y=0.1: z=0.1: };
+	 cur_pos {x=0.999999: y=0.1: z=0.1: };
 	 cur_rot {x=0: y=0: z=1: rot=0: };
 	 cur_lin_vel {x=1: y=0.1: z=0.1: };
 	 cur_ang_vel {x=0: y=0: z=0: };
@@ -345,7 +440,7 @@ LeabraProject .projects[0] {
 	 obj_xform {scale={x=6: y=6: z=6: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	 use_fname=1;
 	 obj_fname="Banana.iv";
-	 color {r=0.2: g=0.2: b=0.4980392: a=1: };
+	 color {r=0.2: g=0.2: b=0.4941176: a=1: };
 	};
        };
        joints {
@@ -431,7 +526,7 @@ LeabraProject .projects[0] {
     el_typ=ProgVar;
     el_def=0;
     ProgVar @[0] {
-     name="VEWorld_0";
+     name="VEMotWorld";
      var_type=T_Object;
      object_type=VEWorld;
      object_val=.projects[0].programs[0].objs[0]$4$;
@@ -747,13 +842,541 @@ LeabraProject .projects[0] {
     };
    };
   };
+  Program @[1] {
+   name="VEArm";
+   desc=;
+   flags=;
+   objs {
+    name=;
+    el_typ=VEWorld;
+    el_def=0;
+    VEWorld @[0] {
+     name="VEArmWorld";
+     step_type=STD_STEP;
+     stepsize=0.1;
+     quick_iters=20;
+     gravity {x=0: y=0: z=0: };
+     objects {
+      name=;
+      el_typ=VEObject;
+      el_def=0;
+      VEObject @[0] {
+       name="Arm";
+       bodies {
+	name=;
+	el_typ=VEBody;
+	el_def=0;
+	VEBody @[0] {
+	 name="FixedBase";
+	 flags=FIXED;
+	 init_pos {x=0: y=0: z=0: };
+	 init_rot {x=0: y=0: z=1: rot=0: };
+	 init_lin_vel {x=0: y=0: z=0: };
+	 init_ang_vel {x=0: y=0: z=0: };
+	 cur_pos {x=1.342937e-08: y=2.114376e-09: z=0: };
+	 cur_rot {x=2.075537e-07: y=1: z=0: rot=3.141593: };
+	 cur_lin_vel {x=2.079707e-08: y=3.079879e-08: z=0: };
+	 cur_ang_vel {x=0: y=0: z=-2.313211e-08: };
+	 mass=1;
+	 mass_shape=BOX;
+	 mass_radius=0.1;
+	 mass_length=1;
+	 mass_long_axis=LONG_Y;
+	 mass_box {x=1: y=1: z=1: };
+	 obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	 use_fname=0;
+	 obj_fname=;
+	 color {r=0: g=1: b=0: a=1: };
+	};
+	VEBody @[1] {
+	 name="UpperArm";
+	 flags=;
+	 init_pos {x=0: y=1: z=0: };
+	 init_rot {x=0: y=0: z=1: rot=0: };
+	 init_lin_vel {x=0: y=0: z=0: };
+	 init_ang_vel {x=0: y=0: z=0: };
+	 cur_pos {x=0.2576096: y=0.9287718: z=0: };
+	 cur_rot {x=0.267217: y=0.9636365: z=0: rot=3.141593: };
+	 cur_lin_vel {x=-0.07478064: y=0.04635539: z=0: };
+	 cur_ang_vel {x=0: y=0: z=0.1759665: };
+	 mass=1;
+	 mass_shape=CYLINDER;
+	 mass_radius=0.1;
+	 mass_length=0.9;
+	 mass_long_axis=LONG_Y;
+	 mass_box {x=1: y=1: z=1: };
+	 obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	 use_fname=0;
+	 obj_fname=;
+	 color {r=0.2: g=0.2: b=0.4941176: a=1: };
+	};
+	VEBody @[2] {
+	 name="LowerArm";
+	 flags=;
+	 init_pos {x=0: y=2: z=0: };
+	 init_rot {x=0: y=0: z=1: rot=0: };
+	 init_lin_vel {x=1: y=0: z=0: };
+	 init_ang_vel {x=0: y=0: z=0: };
+	 cur_pos {x=0.318016: y=1.823702: z=0: };
+	 cur_rot {x=-0.1968121: y=0.9804413: z=0: rot=3.141593: };
+	 cur_lin_vel {x=0.205038: y=0.261118: z=0: };
+	 cur_ang_vel {x=0: y=0: z=-0.77676: };
+	 mass=1;
+	 mass_shape=CYLINDER;
+	 mass_radius=0.05;
+	 mass_length=0.9;
+	 mass_long_axis=LONG_Y;
+	 mass_box {x=1: y=1: z=1: };
+	 obj_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
+	 use_fname=0;
+	 obj_fname=;
+	 color {r=0: g=0: b=1: a=1: };
+	};
+       };
+       joints {
+	name=;
+	el_typ=VEJoint;
+	el_def=0;
+	VEJoint @[0] {
+	 name="BaseUpperArm";
+	 flags=FEEDBACK|USE_STOPS;
+	 body1=.projects[0].programs[1].objs[0].objects[0].bodies[0]$10$;
+	 body2=.projects[0].programs[1].objs[0].objects[0].bodies[1]$11$;
+	 joint_type=HINGE;
+	 anchor {x=0: y=0.5: z=0: };
+	 axis {x=0: y=0: z=1: };
+	 axis2 {x=1: y=0: z=0: };
+	 lo_stop=-1.5;
+	 hi_stop=1.5;
+	 stop_bounce=1;
+	 pos=0.5410073;
+	 vel=-0.1759666;
+	 pos2=2.09913e-15;
+	 vel2=2.16122e-15;
+	 cur_force1 {x=0.08361655: y=0.05504286: z=0: };
+	 cur_torque1 {x=0: y=0: z=-0.04180827: };
+	 cur_force2 {x=-0.08361655: y=-0.05504286: z=0: };
+	 cur_torque2 {x=0: y=0: z=-0.02086682: };
+	};
+	VEJoint @[1] {
+	 name="UpperLower";
+	 flags=FEEDBACK|USE_STOPS;
+	 body1=$11$;
+	 body2=.projects[0].programs[1].objs[0].objects[0].bodies[2]$12$;
+	 joint_type=HINGE;
+	 anchor {x=0: y=0.5: z=0: };
+	 axis {x=0: y=0: z=1: };
+	 axis2 {x=1: y=0: z=0: };
+	 lo_stop=-3;
+	 hi_stop=0.01;
+	 stop_bounce=1;
+	 pos=-0.9372182;
+	 vel=0.9527266;
+	 pos2=2.522337e-44;
+	 vel2=2.690493e-43;
+	 cur_force1 {x=-0.02118402: y=0.1060178: z=0: };
+	 cur_torque1 {x=0: y=0: z=0.03707685: };
+	 cur_force2 {x=0.02118402: y=-0.1060178: z=0: };
+	 cur_torque2 {x=0: y=0: z=-0.0147637: };
+	};
+       };
+      };
+     };
+    };
+    NetMonitor @[1] {
+     name="NetMonitor_0";
+     items {
+      name=;
+      el_typ=NetMonItem;
+      el_def=0;
+      NetMonItem @[0] {
+       name="VEBody_cur_pos_x";
+       computed=0;
+       object_type=VEBody;
+       object=$10$;
+       variable="cur_pos.x";
+       var_label=;
+       name_style=AUTO_NAME;
+       max_name_len=6;
+       val_type=VT_FLOAT;
+       matrix=0;
+       matrix_geom{        };
+       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+      };
+      NetMonItem @[1] {
+       name="VEBody_cur_pos_y";
+       computed=0;
+       object_type=VEBody;
+       object=$10$;
+       variable="cur_pos.y";
+       var_label=;
+       name_style=AUTO_NAME;
+       max_name_len=6;
+       val_type=VT_FLOAT;
+       matrix=0;
+       matrix_geom{        };
+       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+      };
+      NetMonItem @[2] {
+       name="VEBody_cur_pos_z";
+       computed=0;
+       object_type=VEBody;
+       object=$10$;
+       variable="cur_pos.z";
+       var_label=;
+       name_style=AUTO_NAME;
+       max_name_len=6;
+       val_type=VT_FLOAT;
+       matrix=0;
+       matrix_geom{        };
+       pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
+       pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+      };
+     };
+     network=$2$;
+     data=$3$;
+     rmv_orphan_cols=1;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="VEArmWorld";
+     var_type=T_Object;
+     object_type=VEWorld;
+     object_val=.projects[0].programs[1].objs[0]$13$;
+     objs_ptr=1;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="NetMonitor_0";
+     var_type=T_Object;
+     object_type=NetMonitor;
+     object_val=.projects[0].programs[1].objs[1]$14$;
+     objs_ptr=1;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[2] {
+     name="n_steps";
+     var_type=T_Int;
+     int_val=1000;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="step";
+     var_type=T_Int;
+     int_val=1000;
+     objs_ptr=0;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[4] {
+     name="x_vel";
+     var_type=T_Real;
+     real_val=1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[5] {
+     name="y_vel";
+     var_type=T_Real;
+     real_val=0.1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[6] {
+     name="z_vel";
+     var_type=T_Real;
+     real_val=0.1;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[7] {
+     name="MonitorOutput";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$3$;
+     objs_ptr=0;
+     flags=NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[8] {
+     name="UpperLowerJoint";
+     var_type=T_Object;
+     object_type=VEJoint;
+     object_val=.projects[0].programs[1].objs[0].objects[0].joints[1]$15$;
+     objs_ptr=0;
+     flags=NULL_CHECK;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    ResetDataRows @[0] {
+     desc=;
+     flags=OFF;
+     data_var=.projects[0].programs[1].vars[7]$16$;
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=OFF;
+     result_var=NULL;
+     obj=.projects[0].programs[1].vars[1]$17$;
+     method=NetMonitor::UpdateDataTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="reset_first";
+       required=0;
+       def_val="false";
+       expr {
+	expr=;
+	flags=;
+	var_expr=;
+	vars {
+	};
+	var_names{ 	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=OFF;
+     result_var=NULL;
+     obj=$17$;
+     method=NetMonitor::SetDataTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=0;
+       def_val=;
+       expr {
+	expr="MonitorOutput";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ MonitorOutput;	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[1].vars[0]$18$;
+     method=VEWorld::SetValsToODE;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$18$;
+     method=VEWorld::SetValsToODE;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    ResetDataRows @[1] {
+     desc=;
+     flags=OFF;
+     data_var=$16$;
+    };
+    ForLoop @[2] {
+     desc=;
+     flags=;
+     loop_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=OFF;
+       result_var=NULL;
+       obj=.projects[0].programs[1].vars[8]$19$;
+       method=VEJoint::ApplyForce;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=float;
+	 type="float";
+	 name="force1";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr=".01";
+	  flags=;
+	  var_expr=".01";
+	  vars {
+	  };
+	  var_names{ 	  };
+	  bad_vars{ 	  };
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=float;
+	 type="float";
+	 name="force2";
+	 required=0;
+	 def_val="0.0f";
+	 expr {
+	  expr=;
+	  flags=;
+	  var_expr=;
+	  vars {
+	  };
+	  var_names{ 	  };
+	  bad_vars{ 	  };
+	 };
+	};
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=;
+       result_var=NULL;
+       obj=$18$;
+       method=VEWorld::Step;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=OFF;
+       result_var=NULL;
+       obj=$16$;
+       method=DataTable::AddBlankRow;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      MethodCall @[3] {
+       desc=;
+       flags=OFF;
+       result_var=NULL;
+       obj=$17$;
+       method=NetMonitor::GetMonVals;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      DoneWritingDataRow @[4] {
+       desc=;
+       flags=OFF;
+       data_var=$16$;
+      };
+      StopStepPoint @[5] {
+       desc=;
+       flags=;
+      };
+     };
+     init {
+      expr="step = 0";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$ = 0";
+      vars {
+      };
+      var_names{ step;      };
+      bad_vars{       };
+     };
+     test {
+      expr="step < n_steps";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$ < $#1#$";
+      vars {
+      };
+      var_names{ step;n_steps;      };
+      bad_vars{       };
+     };
+     iter {
+      expr="step++";
+      flags=NO_VAR_ERRS;
+      var_expr="$#0#$++";
+      vars {
+      };
+      var_names{ step;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
  };
  viewers {
   name=;
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$10$;
+   m_data=.projects[0]$20$;
    name=;
    visible=1;
    m_is_root=0;
@@ -781,7 +1404,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$10$;
+     m_root=$20$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -814,6 +1437,30 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[1][0].data[0]$21$;
+	    m_transform=NULL;
+	    name="VEBody_cur_pos_x";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[1][0].data[1]$22$;
+	    m_transform=NULL;
+	    name="VEBody_cur_pos_y";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[1][0].data[2]$23$;
+	    m_transform=NULL;
+	    name="VEBody_cur_pos_z";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=-1: };
@@ -827,21 +1474,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
-	   col_name="VEBody__pos_x";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   col_name="VEBody_cur_pos_x";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=-1: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=0: };
-	   range {min=-6e-07: max=6e-07: };
+	   data_range {min=-1: max=0: };
+	   range {min=-1: max=0: };
 	   n_ticks=10;
 	   axis_length=1;
-	   row_num=0;
+	   row_num=1;
 	  };
 	  z_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
 	   axis=Z;
-	   col_name="VEBody__pos_z";
+	   col_name="VEBody_cur_pos_z";
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
@@ -855,7 +1502,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=1;
 	   axis=Y;
-	   col_name="VEBody__pos_y";
+	   col_name="VEBody_cur_pos_y";
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
@@ -1041,7 +1688,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$11$;
+	   spec=.colorspecs[0]$24$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -1074,7 +1721,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       };
       T3DataViewFrame @[1] {
        m_data=NULL;
-       name="VEWorld_0";
+       name="VEMotWorld";
        visible=1;
        root_view {
 	m_data=NULL;
@@ -1091,7 +1738,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=VEBodyView;
 	   el_def=0;
 	   VEObjectView @[0] {
-	    m_data=.projects[0].programs[0].objs[0].objects[0]$12$;
+	    m_data=.projects[0].programs[0].objs[0].objects[0]$25$;
 	    m_transform=NULL;
 	    children {
 	     name=;
@@ -1116,7 +1763,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[1][0].data[0]$13$;
+	    m_data=$21$;
 	    m_transform=NULL;
 	    name="VEBody_cur_pos_x";
 	    visible=1;
@@ -1127,7 +1774,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[1][0].data[1]$14$;
+	    m_data=$22$;
 	    m_transform=NULL;
 	    name="VEBody_cur_pos_y";
 	    visible=1;
@@ -1138,7 +1785,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[1][0].data[2]$15$;
+	    m_data=$23$;
 	    m_transform=NULL;
 	    name="VEBody_cur_pos_z";
 	    visible=1;
@@ -1172,7 +1819,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$11$;
+	   spec=$24$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -1187,9 +1834,62 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.0575: y=0.3: z=3.831118: };
+       camera_pos {x=1.0575: y=0.3: z=3.83112: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=3.831118;
+       camera_focdist=3.83112;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[2] {
+       m_data=NULL;
+       name="VEArmWorld";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 VEWorldView @[0] {
+	  m_data=$13$;
+	  m_transform=NULL;
+	  children {
+	   name=;
+	   el_typ=VEObjectView;
+	   el_def=0;
+	   VEObjectView @[0] {
+	    m_data=.projects[0].programs[1].objs[0].objects[0]$26$;
+	    m_transform=NULL;
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	     VEBodyView @[0] {
+	      m_data=$10$;
+	      m_transform=NULL;
+	      name="FixedBase";
+	     };
+	     VEBodyView @[1] {
+	      m_data=$11$;
+	      m_transform=NULL;
+	      name="UpperArm";
+	     };
+	     VEBodyView @[2] {
+	      m_data=$12$;
+	      m_transform=NULL;
+	      name="LowerArm";
+	     };
+	    };
+	    name="Arm";
+	   };
+	  };
+	  display_on=1;
+	 };
+	};
+       };
+       camera_pos {x=0.05874436: y=0.9360737: z=4.493679: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=4.393679;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };

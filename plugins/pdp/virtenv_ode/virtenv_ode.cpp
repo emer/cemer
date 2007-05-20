@@ -26,7 +26,9 @@ Q_EXPORT_PLUGIN2(virtenv_ode, VEOdePlugin)
 //		Actual ODE Code
 
 ////////////////////////////////////////////////
-//		objects (bodies)
+//		bodies (ridid object elements)
+
+#include <Inventor/SbLinear.h>
 
 void VEBody::Initialize() {
   body_id = NULL;
@@ -38,6 +40,7 @@ void VEBody::Initialize() {
   mass_box = 1.0f;
   use_fname = true;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
+  fixed_joint_id = NULL;
 }
 
 void VEBody::Destroy() {
@@ -71,11 +74,16 @@ bool VEBody::CreateODE() {
 void VEBody::DestroyODE() {
   if(body_id) dBodyDestroy((dBodyID)body_id);
   body_id = NULL;
+  if(fixed_joint_id) dJointDestroy((dJointID)fixed_joint_id);
+  fixed_joint_id = NULL;
 }
 
 void VEBody::SetValsToODE() {
   if(!body_id) CreateODE();
   if(!body_id) return;
+  dWorldID wid = (dWorldID)GetWorldID();
+  if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
+    return;
   dBodyID bid = (dBodyID)body_id;
   dBodySetPosition(bid, init_pos.x, init_pos.y, init_pos.z);
 
@@ -86,6 +94,8 @@ void VEBody::SetValsToODE() {
   if(HasBodyFlag(FIXED)) {
     dBodySetLinearVel(bid, 0.0f, 0.0f, 0.0f);
     dBodySetAngularVel(bid,  0.0f, 0.0f, 0.0f);
+    fixed_joint_id = dJointCreateFixed(wid, 0);
+    dJointAttach((dJointID)fixed_joint_id, bid, 0);	// 0 = attach to static object
   }
   else {
     dBodySetLinearVel(bid, init_lin_vel.x, init_lin_vel.y, init_lin_vel.z);
@@ -123,8 +133,13 @@ void VEBody::GetValsFmODE() {
   const dReal* opos = dBodyGetPosition(bid);
   cur_pos.x = opos[0]; cur_pos.y = opos[1]; cur_pos.z = opos[2];
 
-// const dReal * dBodyGetRotation (dBodyID);
-  // todo: need to get axis & angle back from 4x3 return matrix
+  // ODE quaternion = w,x,y,z; Inventor = x,y,z,w
+  const dReal* quat = dBodyGetQuaternion(bid);
+  SbRotation sbrot;
+  sbrot.setValue(-quat[3], quat[0], quat[1], quat[2]);
+  SbVec3f rot_ax;
+  sbrot.getValue(rot_ax, cur_rot.rot);
+  cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
 
   const dReal* olv = dBodyGetLinearVel(bid);
   cur_lin_vel.x = olv[0]; cur_lin_vel.y = olv[1]; cur_lin_vel.z = olv[2];
@@ -163,9 +178,12 @@ void VEJoint::Initialize() {
   joint_id = NULL;
   flags = JF_NONE;
   set_type = NO_JOINT;
-  type = HINGE;
+  joint_type = HINGE;
   axis.x = 1.0f;
   axis2.x = 1.0f;
+  lo_stop = -3.1415;
+  hi_stop = 3.1415;
+  stop_bounce = 0.0;
 }
 
 void VEJoint::Destroy() {
@@ -188,11 +206,11 @@ void* VEJoint::GetWorldID() {
 }
 
 bool VEJoint::CreateODE() {
-  if(joint_id && type == set_type) return true;
+  if(joint_id && joint_type == set_type) return true;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create joint!"))
     return false;
-  switch(type) {
+  switch(joint_type) {
   case BALL:
     joint_id = (dJointID)dJointCreateBall(wid, 0);
     break;
@@ -215,7 +233,7 @@ bool VEJoint::CreateODE() {
 //     joint_id = (dJointID)dJointCreatePR(wid, 0);
 //     break;
   }
-  set_type = type;
+  set_type = joint_type;
   return (bool)joint_id;
 }
 
@@ -238,12 +256,40 @@ void VEJoint::SetValsToODE() {
 
   dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
 
-  if(HasJointFlag(FEEDBACK)) {
-    dJointSetFeedback(jid, &ode_fdbk_obj);
+  FloatTDCoord wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
+
+  switch(joint_type) {
+  case BALL:
+    dJointSetBallAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    break;
+  case HINGE:
+    dJointSetHingeAxis(jid, axis.x, axis.y, axis.z);
+    dJointSetHingeAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    break;
+  case SLIDER:
+    dJointSetSliderAxis(jid, axis.x, axis.y, axis.z);
+    break;
+  case UNIVERSAL:
+    dJointSetUniversalAxis1(jid, axis.x, axis.y, axis.z);
+    dJointSetUniversalAxis2(jid, axis2.x, axis2.y, axis2.z);
+    dJointSetUniversalAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    break;
+  case HINGE2:
+    dJointSetHinge2Axis1(jid, axis.x, axis.y, axis.z);
+    dJointSetHinge2Axis2(jid, axis2.x, axis2.y, axis2.z);
+    dJointSetHinge2Anchor(jid, wanchor.x, wanchor.y, wanchor.z);
+    break;
+  case FIXED:
+    break;
+//   case PR:
+//     dJointSetPRAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
+//     dJointSetPRAxis1(jid, axis.x, axis.y, axis.z);
+//     dJointSetPRAxis2(jid, axis2.x, axis2.y, axis2.z);
+//     break;
   }
-  
+
   if(HasJointFlag(USE_STOPS)) {
-    switch(type) {
+    switch(joint_type) {
     case HINGE:
       dJointSetHingeParam(jid, dParamLoStop, lo_stop);
       dJointSetHingeParam(jid, dParamHiStop, hi_stop);
@@ -264,38 +310,9 @@ void VEJoint::SetValsToODE() {
     }
   }
 
-  FloatTDCoord wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
-
-  switch(type) {
-  case BALL:
-    dJointSetBallAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
-    break;
-  case HINGE:
-    dJointSetHingeAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
-    dJointSetHingeAxis(jid, axis.x, axis.y, axis.z);
-    break;
-  case SLIDER:
-    dJointSetSliderAxis(jid, axis.x, axis.y, axis.z);
-    break;
-  case UNIVERSAL:
-    dJointSetUniversalAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
-    dJointSetUniversalAxis1(jid, axis.x, axis.y, axis.z);
-    dJointSetUniversalAxis2(jid, axis2.x, axis2.y, axis2.z);
-    break;
-  case HINGE2:
-    dJointSetHinge2Anchor(jid, wanchor.x, wanchor.y, wanchor.z);
-    dJointSetHinge2Axis1(jid, axis.x, axis.y, axis.z);
-    dJointSetHinge2Axis2(jid, axis2.x, axis2.y, axis2.z);
-    break;
-  case FIXED:
-    break;
-//   case PR:
-//     dJointSetPRAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
-//     dJointSetPRAxis1(jid, axis.x, axis.y, axis.z);
-//     dJointSetPRAxis2(jid, axis2.x, axis2.y, axis2.z);
-//     break;
+  if(HasJointFlag(FEEDBACK)) {
+    dJointSetFeedback(jid, &ode_fdbk_obj);
   }
-
 }
 
 void VEJoint::GetValsFmODE() {
@@ -305,7 +322,36 @@ void VEJoint::GetValsFmODE() {
   dJointID jid = (dJointID)joint_id;
 
   dJointGetFeedback(jid);
-  // todo: fill in vals
+  cur_force1.x = ode_fdbk_obj.f1[0]; cur_force1.y = ode_fdbk_obj.f1[1]; cur_force1.z = ode_fdbk_obj.f1[2];
+  cur_force2.x = ode_fdbk_obj.f2[0]; cur_force2.y = ode_fdbk_obj.f2[1]; cur_force2.z = ode_fdbk_obj.f2[2];
+  cur_torque1.x = ode_fdbk_obj.t1[0]; cur_torque1.y = ode_fdbk_obj.t1[1]; cur_torque1.z = ode_fdbk_obj.t1[2];
+  cur_torque2.x = ode_fdbk_obj.t2[0]; cur_torque2.y = ode_fdbk_obj.t2[1]; cur_torque2.z = ode_fdbk_obj.t2[2];
+
+  switch(joint_type) {
+  case BALL:
+    break;
+  case HINGE:
+    pos = dJointGetHingeAngle(jid);
+    vel = dJointGetHingeAngleRate(jid);
+    break;
+  case SLIDER:
+    pos = dJointGetSliderPosition(jid);
+    vel = dJointGetSliderPositionRate(jid);
+    break;
+  case UNIVERSAL:
+    pos = dJointGetUniversalAngle1(jid);
+    vel = dJointGetUniversalAngle1Rate(jid);
+    pos2 = dJointGetUniversalAngle2(jid);
+    vel2 = dJointGetUniversalAngle2Rate(jid);
+    break;
+  case HINGE2:
+    pos = dJointGetHinge2Angle1(jid);
+    vel = dJointGetHinge2Angle1Rate(jid);
+    vel2 = dJointGetHinge2Angle2Rate(jid);
+    break;
+  case FIXED:
+    break;
+  }
 
   DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
@@ -315,7 +361,7 @@ void VEJoint::ApplyForce(float force1, float force2) {
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
 
-  switch(type) {
+  switch(joint_type) {
   case BALL:
     break;
   case HINGE:
@@ -419,7 +465,8 @@ void VEWorld::Destroy() {
 }
 
 void VEWorld::CutLinks() {
-  DestroyODE();
+  objects.CutLinks();
+  DestroyODE();			// do this last!
   inherited::CutLinks();
 }
 

@@ -54,6 +54,8 @@ Q_DECLARE_INTERFACE(VEOdePlugin, "pdp.VEOdePlugin/1.0")
 
 class VEBody;
 class VEBody_Group;
+class VEObject;
+class VEObject_Group;
 class VEWorld;
 class VEWorldView;
 
@@ -61,7 +63,7 @@ class VEWorldView;
 //		objects (bodies)
 
 class VEODE_API VEBody : public taNBase {
-  // ##CAT_VirtEnv a virtual environment body (rigid structural element)
+  // ##CAT_VirtEnv ##SCOPE_VEObject virtual environment body (rigid structural element)
 INHERITED(taNBase)
 public:	
   enum BodyFlags { // #BITS flags for bodies
@@ -102,11 +104,15 @@ public:
   FloatTDCoord	mass_box;	// #CONDEDIT_ON_mass_shape:BOX length of box in each axis for BOX-shaped mass
 
   FloatTransform obj_xform;	// full transform to apply to object file to align/size/etc with object
-  bool		use_fname;	// if true, use obj_fname field (if non-empty) to load object from file (else shows the basic mass_shape)
+  bool		use_fname;	// #APPLY_IMMED if true, use obj_fname field (if non-empty) to load object from file (else shows the basic mass_shape)
   String	obj_fname;	// #CONDEDIT_ON_use_fname file name of Inventor file that describes object appearance (if empty, mass_shape will be rendered)
   taColor	color; 		// default color of object if not otherwise defined (a used for transparency)
 
+  //////////////////////////////
+  //	Internal-ish stuff
+
   dMass		mass_ode;	// #IGNORE full ode mass of object
+  void*		fixed_joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE id of joint used to fix a FIXED object
 
   inline void		SetBodyFlag(BodyFlags flg)   { flags = (BodyFlags)(flags | flg); }
   // set body flag state on
@@ -141,7 +147,7 @@ private:
 SmartRef_Of(VEBody,TA_VEBody); // VEBodyRef
 
 class TA_API VEBody_Group : public taGroup<VEBody> {
-  // ##CAT_VirtEnv a group of virtual environment bodies
+  // ##CAT_VirtEnv  ##SCOPE_VEObject a group of virtual environment bodies
 INHERITED(taGroup<VEBody>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
@@ -157,7 +163,7 @@ private:
 //		Joints
 
 class VEODE_API VEJoint : public taNBase {
-  // ##CAT_VirtEnv a virtual environment joint, which connects two bodies
+  // ##CAT_VirtEnv  ##SCOPE_VEObject a virtual environment joint, which connects two bodies
 INHERITED(taNBase)
 public:	
   enum JointFlags { // #BITS flags for joints
@@ -166,14 +172,14 @@ public:
     USE_STOPS		= 0x0002, // set the lo and hi stop values and bounce
   };
 
-  enum JointType {
-    BALL = dJointTypeBall,	// ball joint -- no constraints on relative orientation
-    HINGE = dJointTypeHinge,	// hinged -- only bends in one axis
-    SLIDER = dJointTypeSlider,	// slider -- moves 
-    UNIVERSAL = dJointTypeUniversal, // like a ball joint but transmits torque
-    HINGE2 = dJointTypeHinge2,	     // a hinge and a 
-    FIXED = dJointTypeFixed,	// fixed -- use of this is discouraged (just redefine body shape)
-    NO_JOINT,			// no joint type set
+  enum JointType { 	// type of joint: Important -- must be sync'd with joint types in ode/common.h!!!
+    NO_JOINT = 0,	// no joint type set
+    BALL,		// ball joint -- no constraints on relative orientation
+    HINGE,		// hinged -- only bends in one axis
+    SLIDER,		// slider -- moves 
+    UNIVERSAL = 5, 	// like a ball joint but transmits torque
+    HINGE2,	     	// a hinge and a 
+    FIXED,		// fixed -- use of this is discouraged (just redefine body shape)
   };
 
   // note this seems to be missing in 0.7:
@@ -183,25 +189,25 @@ public:
   JointFlags	flags;		// joint flags
   VEBodyRef	body1;		// first body in the joint
   VEBodyRef	body2;		// second body in the joint
-  JointType    	type;		// type of joint
+  JointType    	joint_type;	// type of joint
   FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
-  FloatTDCoord	axis;  		// #CONDEDIT_OFF_type:BALL axis orientation vector
-  FloatTDCoord	axis2;  	// #CONDSHOW_ON_type:UNIVERSAL,HINGE2 second axis for universal joint
+  FloatTDCoord	axis;  		// #CONDEDIT_OFF_joint_type:BALL axis orientation vector
+  FloatTDCoord	axis2;  	// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 second axis for universal joint
   float		lo_stop;	// stop for low angle or position value of joint
   float		hi_stop;	// stop for high angle or position value of joint
   float		stop_bounce;	// how bouncy is the joint (0 = no bounce, 1 = maximum bounce)
 
   ////////////////////////////////////////////////////
   // feedback information -- only if feedback flag is set
-  float		pos;		// probed position value (joint dependent; could be angle)
-  float		vel;		// probed velocity value (joint dependent; could be angle)
-  float		pos2;		// #CONDSHOW_ON_type:UNIVERSAL probed position value (joint dependent; could be angle)
-  float		vel2;		// #CONDSHOW_ON_type:UNIVERSAL,HINGE2 probed velocity value (joint dependent; could be angle)
+  float		pos;		// #READ_ONLY #SHOW probed position value (joint dependent; could be angle)
+  float		vel;		// #READ_ONLY #SHOW probed velocity value (joint dependent; could be angle)
+  float		pos2;		// #CONDSHOW_ON_joint_type:UNIVERSAL #READ_ONLY #SHOW probed position value (joint dependent; could be angle)
+  float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW probed velocity value (joint dependent; could be angle)
 
-  FloatTDCoord	cur_force1;  	// force that joint applies to body 1
-  FloatTDCoord	cur_torque1;  	// torque that joint applies to body 1
-  FloatTDCoord	cur_force2;  	// force that joint applies to body 2
-  FloatTDCoord	cur_torque2;  	// torque that joint applies to body 2
+  FloatTDCoord	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
+  FloatTDCoord	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
+  FloatTDCoord	cur_force2;  	// #READ_ONLY #SHOW force that joint applies to body 2
+  FloatTDCoord	cur_torque2;  	// #READ_ONLY #SHOW torque that joint applies to body 2
 
   inline void		SetJointFlag(JointFlags flg)   { flags = (JointFlags)(flags | flg); }
   // set joint flag state on
@@ -222,7 +228,7 @@ public:
   virtual void	GetValsFmODE();	// get the updated values from ODE after computing
 
   virtual void	ApplyForce(float force1, float force2 = 0.0f);
-  // apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
+  // #BUTTON apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
 
   SIMPLE_COPY(VEJoint);
   SIMPLE_INITLINKS(VEJoint);
@@ -243,7 +249,7 @@ private:
 SmartRef_Of(VEJoint,TA_VEJoint); // VEJointRef
 
 class TA_API VEJoint_Group : public taGroup<VEJoint> {
-  // ##CAT_VirtEnv a group of virtual environment joints
+  // ##CAT_VirtEnv  ##SCOPE_VEObject a group of virtual environment joints
 INHERITED(taGroup<VEJoint>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
@@ -259,7 +265,7 @@ private:
 //	Object: collection of bodies and joints
 
 class VEODE_API VEObject : public taNBase {
-  // ##CAT_VirtEnv a virtual environment object, which contains interconnected bodies and their joints
+  // ##CAT_VirtEnv ##SCOPE_VEWorld a virtual environment object, which contains interconnected bodies and their joints
 INHERITED(taNBase)
 public:	
   VEBody_Group	bodies;
@@ -284,7 +290,7 @@ private:
 SmartRef_Of(VEObject,TA_VEObject); // VEObjectRef
 
 class TA_API VEObject_Group : public taGroup<VEObject> {
-  // ##CAT_VirtEnv a group of virtual environment objects
+  // ##CAT_VirtEnv ##SCOPE_VEWorld a group of virtual environment objects
 INHERITED(taGroup<VEObject>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
