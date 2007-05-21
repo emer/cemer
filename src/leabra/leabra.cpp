@@ -2573,6 +2573,7 @@ void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->ext_flag & Unit::TARG) {
     net->trg_max_act = MAX(net->trg_max_act, lay->acts.max);
   }
+  Compute_OutputName(lay, net);
   if(lay->Iconified()) {
     lay->icon_value = lay->acts.avg;
   }
@@ -2598,6 +2599,20 @@ void LeabraLayerSpec::Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net)
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     u->Compute_NetinRescale(lay, net, new_scale);
   }
+}
+
+void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
+  if((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET)) return;
+  if(lay->acts.max_i < 0) {
+    lay->output_name = "n/a";
+    return;
+  }
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(lay->acts.max_i);
+  if(!u) {
+    lay->output_name = "n/a";
+    return;
+  }
+  lay->output_name = u->name;	// if it is something..
 }
 
 //////////////////////////////////////////

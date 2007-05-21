@@ -763,7 +763,7 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
 void DoGRetinaSpec::Initialize() {
   dog.name = name;
   spacing.name = name;
-  renorm_thresh = .01f;
+  renorm_thresh = .001f;
 }
 
 void DoGRetinaSpec::UpdateAfterEdit_impl() {

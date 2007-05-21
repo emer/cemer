@@ -200,6 +200,7 @@ void UnitViewData_PArray::SetGeom(TwoDCoord& c) {
 
 void UnitGroupView::Initialize() {
   data_base = &TA_Unit_Group;
+  m_lv = NULL;
 }
 
 
@@ -424,12 +425,6 @@ void UnitGroupView::Render_pre() {
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
-//   SoMaterial* mat = ugrp_so->material(); //cache
-//   mat->diffuseColor.setValue(0.5f, 0.0f, 0.0f);
-  //  mat->specularColor.setValue(0.5f, 0.0f, 0.0f);
-//   mat->shininess.setValue(.9f);
-//   mat->transparency.setValue(0.5f);
-
   ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
 
   inherited::Render_pre();
@@ -476,10 +471,18 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 
 void UnitGroupView::Render_impl_children() {
   NetView* nv = this->nv(); //cache
-
   Unit_Group* ugrp = this->ugrp(); //cache
-  if(ugrp->own_lay && ugrp->own_lay->Iconified()) {
+  if(!ugrp) return;
+  Layer* lay = ugrp->own_lay;
+  if(!lay) return;
+
+  if(lay->Iconified() || !lv() || (lv()->disp_mode == LayerView::DISP_FRAME)) {
     return;			// don't render anything!
+  }
+
+  if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
+    Render_impl_outnm();
+    return;
   }
 
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
@@ -904,8 +907,15 @@ void UnitGroupView::UpdateUnitValues_blocks() {
 void UnitGroupView::UpdateUnitValues() {
   NetView* nv = this->nv(); //cache
   Unit_Group* ugrp = this->ugrp(); //cache
-  if(ugrp->own_lay && ugrp->own_lay->Iconified()) {
+  if(!ugrp) return;
+  Layer* lay = ugrp->own_lay;
+  if(!lay) return;
+  if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
     return;			// don't render anything!
+  }
+  if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
+    UpdateUnitValues_outnm();
+    return;
   }
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) {
     UpdateUnitValues_blocks();
@@ -917,6 +927,73 @@ void UnitGroupView::UpdateUnitValues() {
 void UnitGroupView::Reset_impl() {
   inherited::Reset_impl();
   uvd_arr.SetSize(0);
+}
+
+void UnitGroupView::Render_impl_outnm() {
+  // this function just does all the memory allocation and static configuration
+  // that doesn't depend on unit values, then it calls UpdateUnitValues
+  // which sets all the values!
+
+  NetView* nv = this->nv(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+  T3UnitGroupNode* node_so = this->node_so(); // cache
+  Layer* lay = ugrp->own_lay;
+  if(!lay) return;
+
+  SoSeparator* un_txt = node_so->unitText();
+  if(!un_txt) {
+    un_txt = node_so->getUnitText();
+    node_so->addChild(un_txt);
+    SoBaseColor* bc = new SoBaseColor;
+    bc->rgb.setValue(0, 0, 0); //black is default for text
+    un_txt->addChild(bc);
+    // doesn't seem to make much diff:
+    SoComplexity* cplx = new SoComplexity;
+    cplx->value.setValue(taMisc::text_complexity);
+    un_txt->addChild(cplx);
+    SoFont* fnt = new SoFont();
+    fnt->name = "Arial";
+    un_txt->addChild(fnt);
+    SoTranslation* tr = new SoTranslation;
+    un_txt->addChild(tr);
+    SoAsciiText* txt = new SoAsciiText();
+    txt->justification = SoAsciiText::CENTER;
+    un_txt->addChild(txt);
+    SoMFString* mfs = &(txt->string);
+    mfs->setValue(lay->output_name.chars());
+  }
+
+  float szx = (float)ugrp->geom.x / nv->max_size.x;
+  float szy = (float)ugrp->geom.y / nv->max_size.y;
+
+  float cx = .5f * szx;
+  float cy = .5f * szy;
+
+  SoTranslation* tr = (SoTranslation*)un_txt->getChild(3);
+  tr->translation.setValue(cx, 0.0f, -cy);
+
+  szx = 1.5f * szx / 12.0f;	// 12 = max len
+
+  float ufontsz = MIN(szx, szy);
+
+  SoFont* fnt = (SoFont*)un_txt->getChild(2);
+  fnt->size.setValue(ufontsz);
+
+  UpdateUnitValues_outnm();		// hand off to next guy..
+}
+
+void UnitGroupView::UpdateUnitValues_outnm() {
+  //  NetView* nv = this->nv(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+  T3UnitGroupNode* node_so = this->node_so(); // cache
+  Layer* lay = ugrp->own_lay;
+  if(!lay) return;
+
+  SoSeparator* un_txt = node_so->unitText();
+
+  SoAsciiText* txt = (SoAsciiText*)un_txt->getChild(4);
+  SoMFString* mfs = &(txt->string);
+  mfs->setValue(lay->output_name.chars());
 }
 
 
@@ -939,6 +1016,7 @@ void nvhDataView::setHighlightColor(const T3Color& color) {
 
 void LayerView::Initialize() {
   data_base = &TA_Layer;
+  disp_mode = DISP_UNITS;
 }
 
 void LayerView::Destroy() {
@@ -956,6 +1034,7 @@ void LayerView::BuildAll() {
     ugv = new UnitGroupView;
     ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
     ugrps.Add(ugv);  // no side-effects -- better to add to this first
+    ugv->SetLayerView(this);
     children.Add(ugv);
     ugv->BuildAll();
 
@@ -968,6 +1047,7 @@ void LayerView::BuildAll() {
       ugv = new UnitGroupView;
       ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
       ugrps.Add(ugv);  // no side-effects -- better to add to this first
+      ugv->SetLayerView(this);
       children.Add(ugv);
       ugv->BuildAll();
 
@@ -1030,7 +1110,11 @@ void LayerView::DoHighlightColor(bool apply) {
     mat->diffuseColor.setValue(m_hcolor);
     mat->transparency.setValue(0.0f);
   } else {
-    mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // cyan
+    Layer* lay = layer();
+    if(lay && lay->lesioned())
+      mat->diffuseColor.setValue(0.5f, 0.5f, 0.5f); // grey
+    else
+      mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // aqua
     mat->transparency.setValue(nv->view_params.lay_trans);
   }
 } 
@@ -1051,7 +1135,6 @@ void LayerView::Render_impl() {
   Layer* lay = this->layer(); //cache
   NetView* nv = this->nv();
 
-  // set origin: 0,.5,0 in allocated area
   TDCoord& pos = lay->pos;
   FloatTransform* ft = transform(true);
   ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
@@ -1139,6 +1222,58 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   nv->net()->LayerPos_Cleanup(); // reposition everyone to avoid conflicts
 
   nv->UpdateDisplay();
+}
+
+void LayerView::DispUnits() {
+  disp_mode = DISP_UNITS;
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void LayerView::DispOutputName() {
+  disp_mode = DISP_OUTPUT_NAME;
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
+void LayerView::UseViewer(T3DataViewMain* viewer) {
+  disp_mode = DISP_FRAME;
+  DataChanged(DCR_ITEM_UPDATED);
+  if(!viewer) return;
+  NetView* nv = this->nv();
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
+
+  TDCoord& pos = lay->pos;
+  viewer->main_xform = nv->main_xform; // first get the network
+
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
+			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
+
+  // translate to layer offset
+  SbVec3f trans;
+  trans[0] = (float)pos.x / nv->max_size.x;
+  trans[1] = (float)(pos.z + 0.5f) / nv->max_size.z;
+  trans[2] = (float)-pos.y / nv->max_size.y;
+  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+  viewer->main_xform.translate.x += trans[0];
+  viewer->main_xform.translate.y += trans[1];
+  viewer->main_xform.translate.z += trans[2];
+
+  // scale to size of layer
+  FloatTDCoord sc;
+  sc.x = (float)lay->act_geom.x / nv->max_size.x;
+  sc.y = (float)lay->act_geom.y / nv->max_size.y;
+  sc.z = 1.0f;
+  viewer->main_xform.scale *= sc;
+
+  // rotate down in the plane
+  SbRotation rot;
+  rot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.508);
+  SbRotation nw_rot = rot * cur_rot;
+  SbVec3f axis;
+  float angle;
+  nw_rot.getValue(axis, angle);
+  viewer->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
 }
 
 
@@ -1325,7 +1460,7 @@ void NetView::Initialize() {
   unit_src = NULL;
   unit_con_md = false;
 
-  network_scale = 1.0f;
+  network_scale = 0.0f;		// if still 0, then not loading obsolete vals!  todo: remove
 }
 
 void NetView::Destroy() {
@@ -1341,6 +1476,7 @@ void NetView::InitLinks() {
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
+  // todo: remove - obsolete:
   taBase::Own(network_pos, this);
   taBase::Own(network_scale, this);
   taBase::Own(network_orient, this);
@@ -1360,8 +1496,12 @@ void NetView::CutLinks() {
 
 void NetView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(network_orient.x == 0.0f && network_orient.y == 0.0f && network_orient.z == 0.0f) {
-    network_orient.z = 1.0f;	// axis must be defined, even if not used.
+  if(network_scale.x != 0.0f) {
+    // todo: obsolete conversion -- remove at some point soon!
+    main_xform.scale = network_scale;
+    main_xform.translate = network_pos;
+    main_xform.rotate = network_orient;
+    network_scale = 0.0f;
   }
 }
 
@@ -1770,22 +1910,22 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   NetView* nv = (NetView*)netnd->dataView();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->network_orient.x, nv->network_orient.y, 
-			   nv->network_orient.z), nv->network_orient.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
+			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  trans[0] *= nv->network_scale.x;
-  trans[1] *= nv->network_scale.y;
-  trans[2] *= nv->network_scale.z;
+  trans[0] *= nv->main_xform.scale.x;
+  trans[1] *= nv->main_xform.scale.y;
+  trans[2] *= nv->main_xform.scale.z;
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
-  nv->network_pos += tr;
+  nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  nv->network_scale *= sc;
+  nv->main_xform.scale *= sc;
 
   SbVec3f axis;
   float angle;
@@ -1796,7 +1936,7 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
     SbRotation nw_rot = rot * cur_rot;
     nw_rot.getValue(axis, angle);
-    nv->network_orient.SetXYZR(axis[0], axis[1], axis[2], angle);
+    nv->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
   }
 
   float h = 0.04f; // nominal amount of height, so we don't vanish
@@ -1815,9 +1955,7 @@ void NetView::Render_impl() {
   //  cerr << "nv render_impl" << endl;
 
   FloatTransform* ft = transform(true);
-  ft->translate = network_pos;
-  ft->rotate = network_orient;
-  ft->scale = network_scale;
+  *ft = main_xform;
 
   GetMaxSize();
   T3NetNode* node_so = this->node_so(); //cache

@@ -636,17 +636,17 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 */
 
 void T3DataView::FillContextMenu_impl(taiActions* menu) {
-//TODO: maybe we could make a comment directive for view items
-// that are supposed to go on the menu, if there is more than this one...
   TypeDef* typ = GetTypeDef();
   // put view props first, if any
   if (selectEditMe()) {
-    MethodDef* md = typ->methods.FindName("ViewProperties");
-    if (md && md->im) {
-      taiMethodData* mth_rep = md->im->GetMethodRep(this, NULL, NULL, NULL);
-      if (mth_rep) {;
-        mth_rep->AddToMenu(menu);
-        menu->AddSep();
+    for(int i=0;i<typ->methods.size;i++) {
+      MethodDef* md = typ->methods[i];
+      if(md->im && md->HasOption("VIEWMENU")) {
+	taiMethodData* mth_rep = md->im->GetMethodRep(this, NULL, NULL, NULL);
+	if (mth_rep) {;
+	  mth_rep->AddToMenu(menu);
+	  menu->AddSep();
+	}
       }
     }
   }
@@ -866,6 +866,20 @@ void T3DataViewRoot::ChildRemoving(taDataView* child) {
     }
   }
 }
+
+//////////////////////////
+//    T3DataViewMain	//
+//////////////////////////
+
+void T3DataViewMain::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(main_xform, this);
+}
+
+void T3DataViewMain::Copy_(const T3DataViewMain& cp) {
+  main_xform = cp.main_xform;
+}
+
 
 //////////////////////////
 //   iSoSelectionEvent	//

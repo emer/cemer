@@ -1277,6 +1277,7 @@ public:
 
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
+  String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float			icon_value;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW value to display if layer is iconified (algorithmically determined)
 
@@ -1444,7 +1445,7 @@ public:
   // #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
-  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this layer
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections as well)
 
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp

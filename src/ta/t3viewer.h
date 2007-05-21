@@ -55,6 +55,7 @@ class T3Node;
 class T3DataView;
 class T3DataViewPar;
 class T3DataViewRoot;
+class T3DataViewMain;
 
 class T3DataView_List;
 class iT3ViewspaceWidget;
@@ -162,7 +163,7 @@ private:
 */
 
 class TA_API T3DataView: public taDataView, public virtual IObjectSelectable {
-  // ##NO_TOKENS base class for 3d-based DataView objects
+  // #NO_TOKENS #VIRT_BASE base class for 3d-based DataView objects
 INHERITED(taDataView)
 friend class T3DataViewer;
 friend class T3DataView_List;
@@ -222,7 +223,7 @@ public:
   virtual void		ReInit(); // perform a reinitialization, particularly of visual state -- overload _impl
   virtual void		UpdateChildNames(T3DataView*); // #IGNORE update child names of the indicated node
   
-  virtual void		ViewProperties(); // #MENU show the view properties for this object
+  virtual void		ViewProperties(); // #MENU #VIEWMENU show the view properties for this object
 
   override void		CutLinks();
   TA_DATAVIEWFUNS(T3DataView, taDataView);
@@ -311,7 +312,8 @@ protected:
 //   T3DataViewPar	//
 //////////////////////////
 
-class TA_API T3DataViewPar: public T3DataView { // T3DataView that has child T3DataView's
+class TA_API T3DataViewPar: public T3DataView { 
+  // #VIRT_BASE #NO_TOKENS T3DataView that has child T3DataView's
 #ifndef __MAKETA__
 typedef T3DataView inherited;
 #endif
@@ -336,7 +338,8 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class TA_API T3DataViewRoot: public T3DataViewPar { // Root item for a viewwidget type
+class TA_API T3DataViewRoot: public T3DataViewPar {
+  // #NO_TOKENS Root item for a viewwidget type
 #ifndef __MAKETA__
 typedef T3DataViewPar inherited;
 #endif
@@ -359,6 +362,23 @@ private:
   NOCOPY(T3DataViewRoot)
   void			Initialize() {host = NULL;}
   void			Destroy() {}
+};
+
+class TA_API T3DataViewMain: public T3DataViewPar {
+  // base class for major self-contained view objects, which can be independently positioned etc (main classes under T3DataViewRoot)
+#ifndef __MAKETA__
+typedef T3DataViewPar inherited;
+#endif
+public:
+  FloatTransform	main_xform;
+  // this is the overall transform (position, scale, rotation) for this view object (typically can be adjusted by view's transform dragbox)
+
+  override void		InitLinks();
+  T3_DATAVIEWFUNS(T3DataViewMain, T3DataViewPar) // 
+private:
+  void 	Copy_(const T3DataViewMain& cp);
+  void	Initialize() {}
+  void	Destroy() {}
 };
 
 

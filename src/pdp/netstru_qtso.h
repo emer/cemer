@@ -187,6 +187,7 @@ protected:
 
 class PDP_API UnitGroupView: public nvDataView {
 INHERITED(nvDataView)
+  friend class LayerView;
 public:
   static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
 
@@ -195,6 +196,9 @@ public:
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE
   T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)m_node_so.ptr();}
+
+  LayerView*		lv() const { return m_lv; }
+  void			SetLayerView(LayerView* l) { m_lv = l; }
 
   void			AllocUnitViewData(); // make sure we have correct space in uvd array
   override void		BuildAll(); // creates fully populated subviews
@@ -205,9 +209,12 @@ public:
   // *only* updates unit values 
   virtual void		UpdateUnitValues_blocks();
   // *only* updates unit values: optimized blocks mode
+  virtual void		UpdateUnitValues_outnm();
+  // output name mode update
 
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
+  LayerView*    	m_lv;
   void 			UpdateUnitViewBase_Unit_impl(MemberDef* disp_md); // for unit members
   void 			UpdateUnitViewBase_Sub_impl(MemberDef* disp_md); // for unit submembers
   void 			UpdateUnitViewBase_Con_impl(bool is_send, String nm, Unit* src_u); // for cons
@@ -215,6 +222,7 @@ protected:
   override void		DoActionChildren_impl(DataViewAction acts);
   virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void 		Render_impl_blocks(); // optimized blocks
+  virtual void 		Render_impl_outnm(); // output name
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
@@ -248,13 +256,21 @@ private:
 
 
 //////////////////////////
-//   LayerView	//
+//     LayerView	//
 //////////////////////////
 
 class PDP_API LayerView: public nvhDataView {
 INHERITED(nvhDataView)
 public:
-  T3DataView_PtrList	ugrps; // #NO_SAVE
+  enum DispMode {
+    DISP_UNITS,				// display units (standard)
+    DISP_OUTPUT_NAME,			// display output_name field (what layer has generated)
+    DISP_FRAME,				// only display outer frame -- useful when using another viewer for the layer data (e.g., a grid view)
+  };
+
+  DispMode		disp_mode; // how to display layer information
+
+  T3DataView_PtrList	ugrps; // #NO_SAVE #HIDDEN
 
   Layer*		layer() const {return (Layer*)data();}
   T3LayerNode*		node_so() const {return (T3LayerNode*)m_node_so.ptr();}
@@ -262,6 +278,13 @@ public:
   override void		BuildAll(); // creates fully populated subviews
   virtual void		UpdateUnitValues();
   // *only* updates unit values 
+
+  virtual void	DispUnits();
+  // #BUTTON #VIEWMENU display standard representation of unit values
+  virtual void	DispOutputName();
+  // #BUTTON #VIEWMENU display contents of output_name on layer instead of unit values
+  virtual void	UseViewer(T3DataViewMain* viewer);
+  // #BUTTON #VIEWMENU replace usual unit view display with display from viewer (only displays frame of layer, and aligns given viewer with layer)
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvDataView)
@@ -312,8 +335,8 @@ private:
  * of iteration
 */
 
-class PDP_API NetView: public T3DataViewPar {
-INHERITED(T3DataViewPar)
+class PDP_API NetView: public T3DataViewMain {
+INHERITED(T3DataViewMain)
 friend class NetViewAdapter;
 friend class NetViewPanel;
 public:
@@ -361,9 +384,10 @@ public:
   NetViewFontSizes	font_sizes;	// font sizes for various items
   NetViewParams		view_params;	// misc view parameters 
 
-  FloatTDCoord		network_pos;	// position of network in view
-  FloatTDCoord		network_scale;	// scaling factors of network in view
-  FloatRotation		network_orient;	// orientation of network in view
+  // todo: remove -- obsolete (replaced with main_xform on main guy):
+  FloatTDCoord		network_pos;	// #NO_SAVE #HIDDEN obsolete! position of network in view
+  FloatTDCoord		network_scale;	// #NO_SAVE #HIDDEN obsolete! scaling factors of network in view
+  FloatRotation		network_orient;	// #NO_SAVE #HIDDEN obsolete! orientation of network in view
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)m_node_so.ptr();}
@@ -422,7 +446,7 @@ public:
   override void		InitLinks();
   override void		CutLinks();
   override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);
-  T3_DATAVIEWFUNS(NetView, T3DataViewPar)
+  T3_DATAVIEWFUNS(NetView, T3DataViewMain)
 
 protected:
   Unit*			m_unit_src; // #IGNORE unit last picked (if any) for display

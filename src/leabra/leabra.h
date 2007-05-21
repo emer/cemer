@@ -1249,6 +1249,9 @@ public:
   virtual void 	Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation do net rescaling to prevent blowup based on netin.max
 
+  virtual void	Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
+
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
   ////////////////////////////////////////

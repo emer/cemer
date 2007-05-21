@@ -147,9 +147,9 @@ protected:
   void	Destroy();
 };
 
-class TA_API DataTableView : public T3DataViewPar {
+class TA_API DataTableView : public T3DataViewMain {
   // #VIRT_BASE #NO_TOKENS base class of grid and graph views
-INHERITED(T3DataViewPar)
+INHERITED(T3DataViewMain)
 public:
   int		view_rows; 	// maximum number of rows visible
   MinMaxInt	view_range; 	// range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
@@ -157,9 +157,10 @@ public:
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		manip_ctrl_on;	// #DEF_true display the manipulation controls on objects for positioning etc
 
-  FloatTDCoord	table_pos;	// position of table in view
-  FloatTDCoord	table_scale;	// scaling factors of table in view
-  FloatRotation	table_orient;	// orientation of table in view
+  // todo: remove -- obsolete (replaced with main_xform on main guy):
+  FloatTDCoord	table_pos;	// #NO_SAVE #HIDDEN obsolete! position of table in view
+  FloatTDCoord	table_scale;	// #NO_SAVE #HIDDEN obsolete! scaling factors of table in view
+  FloatRotation	table_orient;	// #NO_SAVE #HIDDEN obsolete! orientation of table in view
   
   virtual const String	caption() const; // what to show in viewer
 
@@ -205,7 +206,7 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const DataTableView& cp);
-  T3_DATAVIEWFUNS(DataTableView, T3DataViewPar) //
+  T3_DATAVIEWFUNS(DataTableView, T3DataViewMain) //
 
 protected:
 #ifndef __MAKETA__

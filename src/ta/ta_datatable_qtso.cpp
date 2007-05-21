@@ -366,9 +366,8 @@ void DataTableView::Initialize() {
   display_on = true;
   manip_ctrl_on = true;
 
-  //TODO: new ones should offset pos in viewers so they don't overlap
-  table_pos.SetXYZ(1.0f, 0.0f, 0.0f);
-  table_scale = 1.0f;
+  main_xform.translate.x = 1.0f;
+  table_scale = 0.0f;		// if still 0 after loading, then is an updated project!
 
   updating = 0;
   m_lvp = NULL;
@@ -380,6 +379,7 @@ void DataTableView::Initialize() {
 void DataTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(view_range, this);
+  // todo: remove - obsolete:
   taBase::Own(table_pos, this);
   taBase::Own(table_scale, this);
   taBase::Own(table_orient, this);
@@ -395,16 +395,17 @@ void DataTableView::Copy_(const DataTableView& cp) {
   view_range = cp.view_range;
   display_on = cp.display_on;
   manip_ctrl_on = cp.manip_ctrl_on;
-  table_pos = cp.table_pos;
-  table_scale = cp.table_scale;
-  table_orient = cp.table_orient;
 }
 
 void DataTableView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //note: UAE calls setDirty, which is where we do most of the rejigging
-  if(table_orient.x == 0.0f && table_orient.y == 0.0f && table_orient.z == 0.0f) {
-    table_orient.z = 1.0f;	// axis must be defined, even if not used.
+  if(table_scale.x != 0.0f) {
+    // todo: obsolete conversion -- remove at some point soon!
+    main_xform.scale = table_scale;
+    main_xform.translate = table_pos;
+    main_xform.rotate = table_orient;
+    table_scale = 0.0f;
   }
 }
 
@@ -463,7 +464,7 @@ void DataTableView::setDataTable(DataTable* dt) {
     UpdateFromDataTable(first);
     T3DataViewFrame* frame = GetFrame();
     if(frame) {
-      table_pos.y = 1.3f * (frame->root_view.children.size - 1); // move to unique position (up)
+      main_xform.translate.y = 1.3f * (frame->root_view.children.size - 1); // move to unique position (up)
     }
     //TEST
     if (m_lvp) m_lvp->Refresh(); // to update name
@@ -624,9 +625,7 @@ void DataTableView::Render_pre() {
 void DataTableView::Render_impl() {
   // set origin: in allocated area
   FloatTransform* ft = transform(true);
-  ft->translate = table_pos;
-  ft->rotate = table_orient;
-  ft->scale = table_scale;
+  *ft = main_xform;
 
   inherited::Render_impl();
 
@@ -1857,22 +1856,22 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   GridTableView* nv = (GridTableView*)vnd->dataView();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->table_orient.x, nv->table_orient.y, 
-			   nv->table_orient.z), nv->table_orient.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
+			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate translation by current rotation
-  trans[0] *= nv->table_scale.x;
-  trans[1] *= nv->table_scale.y;
-  trans[2] *= nv->table_scale.z;
+  trans[0] *= nv->main_xform.scale.x;
+  trans[1] *= nv->main_xform.scale.y;
+  trans[2] *= nv->main_xform.scale.z;
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
-  nv->table_pos += tr;
+  nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  nv->table_scale *= sc;
+  nv->main_xform.scale *= sc;
 
   SbVec3f axis;
   float angle;
@@ -1883,7 +1882,7 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
     SbRotation nw_rot = rot * cur_rot;
     nw_rot.getValue(axis, angle);
-    nv->table_orient.SetXYZR(axis[0], axis[1], axis[2], angle);
+    nv->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
   }
 
   vnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
@@ -4648,22 +4647,22 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   GraphTableView* nv = (GraphTableView*)vnd->dataView();
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->table_orient.x, nv->table_orient.y, 
-			   nv->table_orient.z), nv->table_orient.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
+			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate translation by current rotation
-  trans[0] *= nv->table_scale.x;
-  trans[1] *= nv->table_scale.y;
-  trans[2] *= nv->table_scale.z;
+  trans[0] *= nv->main_xform.scale.x;
+  trans[1] *= nv->main_xform.scale.y;
+  trans[2] *= nv->main_xform.scale.z;
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
-  nv->table_pos += tr;
+  nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  nv->table_scale *= sc;
+  nv->main_xform.scale *= sc;
 
   SbVec3f axis;
   float angle;
@@ -4674,7 +4673,7 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
     SbRotation nw_rot = rot * cur_rot;
     nw_rot.getValue(axis, angle);
-    nv->table_orient.SetXYZR(axis[0], axis[1], axis[2], angle);
+    nv->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
   }
 
   vnd->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
