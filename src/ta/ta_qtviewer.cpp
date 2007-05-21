@@ -49,6 +49,7 @@
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QStackedLayout>
+#include <QTextBrowser>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolBox>
@@ -5287,7 +5288,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       expand = false;
   }
   if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
-    emit CustomExpandFilter(item, level, expand);
+//    emit CustomExpandFilter(item, level, expand);
   }
   if (expand) {
     // first expand the guy...
@@ -6462,3 +6463,108 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
 }
 
 
+//////////////////////////////////
+//   iSearchDialog		//
+//////////////////////////////////
+
+iSearchDialog* iSearchDialog::New(const String& caption_, int ft,
+  taBase* root_, iMainWindowViewer* par_window_) 
+{
+/*no, let qt choose  if (par_window_ == NULL)
+    par_window_ = taiMisc::main_window;*/
+  iSearchDialog* rval = new iSearchDialog(caption_, root_, par_window_);
+  rval->setFont(taiM->dialogFont(ft));
+  rval->Constr();
+  return rval;
+}
+
+iSearchDialog::iSearchDialog(const String& caption_, taBase* root_, 
+  iMainWindowViewer* par_window_)
+:inherited(par_window_, Qt::WindowStaysOnTopHint)
+{
+  if (!root_) root_ = tabMisc::root;
+  root = root_;
+  par_window = par_window_;
+  init(caption_);
+}
+
+void iSearchDialog::init(const String& caption_) {
+  m_changing = 0;
+  m_stop = false;
+  setCaption(caption_);
+//  setFont(taiM->dialogFont(taiMisc::fonSmall));
+  resize(taiM->dialogSize(taiMisc::hdlg_m));
+}
+
+void iSearchDialog::Constr() {
+  layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(taiM->vsep_c);
+  layOuter->setSpacing(taiM->vspc_c); 
+
+  QHBoxLayout* lay = new QHBoxLayout();
+  lay->setMargin(0);
+  lay->addSpacing(taiM->hspc_c); 
+  search = new QLineEdit(this);
+  search->setToolTip("Enter text to search for in item names, descriptions, and contents.");
+  lay->addWidget(search, 1);
+  lay->addSpacing(taiM->hspc_c); 
+  btnGo = new QToolButton(this);
+  btnGo->setText("&Go");
+//TODO: trap Enter so user can hit Enter in field  ((QToolButton*)btnGo)->setDefault(true);
+  lay->addWidget(btnGo);
+  lay->addSpacing(taiM->vsep_c);
+  btnStop = new QToolButton(this);
+  btnStop->setText("X");
+  lay->addWidget(btnStop);
+  layOuter->addLayout(lay);
+  
+  results = new QTextBrowser(this);
+  layOuter->addWidget(results, 1); // results is item to expand in host
+
+  connect(btnGo, SIGNAL(clicked()), this, SLOT(go_clicked()) );
+  connect(btnStop, SIGNAL(clicked()), this, SLOT(stop_clicked()) );
+  connect(results, SIGNAL(anchorClicked(const QUrl&)),
+    this, SLOT(results_anchorClicked(const QUrl&)) );
+}
+
+
+void iSearchDialog::AddItem(const String& headline, const String& href,
+    const String& desc)
+{//note: newlines just to help make resulting str readable in debugger, etc.
+  STRING_BUF(b, 200);
+  b += "<p>";
+  b += "<a href=\"" + href + ">" + headline + "</a>\n";
+  if (desc.nonempty())
+    b += "<br>" + desc + "<br>";
+  b += "</p>\n";
+  src.cat(b);
+}
+
+void iSearchDialog::Start()
+{
+  m_stop = false;
+  src = _nilString;
+}
+
+void iSearchDialog::End()
+{
+  results->setText(src);
+}
+
+void iSearchDialog::StartSection(const String& sec_name)
+{
+}
+
+void iSearchDialog::EndSection()
+{
+}
+
+void iSearchDialog::results_anchorClicked(const QUrl& link) {
+}
+
+void iSearchDialog::go_clicked() {
+}
+
+void iSearchDialog::stop_clicked() {
+  m_stop = true;
+}

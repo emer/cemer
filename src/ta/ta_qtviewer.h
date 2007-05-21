@@ -1546,7 +1546,7 @@ public:
    
 #ifndef __MAKETA__
 signals:
-  void			CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
+  void			CustomExpandSearch(iTreeViewItem* item, int level, bool& expand);
     // invoked when we want our mummy to do custom filtering, expand=true by default
   void			FillContextMenuHookPre(ISelectable_PtrList& sel_items,
      taiActions* menu);
@@ -1910,6 +1910,59 @@ protected:
   void			UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
 private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
+};
+
+class TA_API iSearchDialog: QDialog {
+// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search a project (or more)
+INHERITED(QDialog)
+  Q_OBJECT
+public:
+#ifndef __MAKETA__
+  enum Roles { // extra roles, for additional data, etc.
+    ObjDataRole = Qt::UserRole + 1,
+//    ObjCatRole  // for object category string, whether shown or not
+  };
+#endif
+
+  static iSearchDialog* New(const String& caption, int ft = 0,
+    taBase* root = NULL, iMainWindowViewer* par_window_ = NULL);
+
+  
+  QVBoxLayout*		layOuter;
+//QHBoxLayout*		  laySearch;
+  QLineEdit*		    search;
+  QAbstractButton*	    btnGo;
+  QAbstractButton*	    btnStop;
+  QTextBrowser* 	  results; 	// list of result items, as clickable links
+  
+  void			Start(); // resets everything, and starts new results page
+  void			StartSection(const String& sec_name);
+  void			EndSection(); // end the current section
+  void			AddItem(const String& headline, const String& href,
+    const String& desc = "");
+  void			End(); // end all and display results
+  
+#ifndef __MAKETA__
+protected:
+  QPointer<iMainWindowViewer>	par_window; // so we can look for tree, etc.
+  taBaseRef		root;
+  String		src;
+  int			m_changing;
+  bool			m_stop;
+  
+  virtual void		Constr(); 
+   // does constr, called in static, so can extend
+
+  iSearchDialog(const String& caption, taBase* root, iMainWindowViewer* par_window_);
+  
+protected slots:
+  void			go_clicked();
+  void			stop_clicked();
+  void			results_anchorClicked(const QUrl& link);
+  
+private:
+  void 		init(const String& captn); // called by constructors
+#endif
 };
 
 
