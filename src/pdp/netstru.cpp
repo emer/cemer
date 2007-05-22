@@ -1659,7 +1659,7 @@ void Unit::Destroy() {
 }
 
 void Unit::InitLinks() {
-  taNBase::InitLinks();
+  inherited::InitLinks();
   taBase::Own(recv, this);	// always own your constitutents
   taBase::Own(send, this);
   taBase::Own(bias, this);
@@ -2126,6 +2126,19 @@ int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFor
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;
+}
+
+void Unit::GetLocalistName() {
+  for(int g = 0; g < recv.size; g++) {
+    RecvCons* cg = recv.FastEl(g);
+    if(cg->prjn->from->lesioned()) continue;
+    if(cg->units.size != 1) continue; // only 1-to-1
+    Unit* un = cg->Un(0);
+    if(!un->name.empty()) {
+      name = un->name;
+      break;			// done!
+    }
+  }
 }
 
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
@@ -3951,6 +3964,14 @@ void Layer::Compute_PrjnDirections() {
   }  
 }
 
+void Layer::GetLocalistName() {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i) {
+    u->GetLocalistName();
+  }
+}
+
 void Layer::TransformWeights(const SimpleMathSpec& trans) {
   units.TransformWeights(trans);
 }
@@ -4202,6 +4223,7 @@ void NetViewFontSizes::Initialize() {
   layer_vals = .03f;
   prjn = .01f;
   unit = .02f;
+  un_nm_len = 3;
 }
 
 void NetViewParams::Initialize() {
@@ -5441,6 +5463,18 @@ void Network::Compute_PrjnDirections() {
     if(l->lesioned()) continue;
     l->Compute_PrjnDirections();
   }
+}
+
+void Network::GetLocalistName() {
+  taMisc::Busy();
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->GetLocalistName();
+  }
+  UpdateAllViews();
+  taMisc::DoneBusy();
 }
 
 void Network::TransformWeights(const SimpleMathSpec& trans) {

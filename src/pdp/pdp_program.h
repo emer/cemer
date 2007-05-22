@@ -213,6 +213,7 @@ public:
   ProgVarRef	input_data_var;	// program variable pointing to the input data table -- finds the first one in the program by default (and makes one if not found)
   ProgVarRef	unit_names_var;	// program variable pointing to the unit_names data table, which is created if it does not exist -- contains the name labels for each of the units
   ProgVarRef	network_var;	// variable that points to the network (optional; for labeling network units if desired)
+  bool		init_label_net;	// label the network units (if network_var is set) in the Init code for this function (typically at the start of training)
   int		n_lay_name_chars; // number of layer-name chars to prepend to the enum values
 
   static bool	InitUnitNamesFmInputData(DataTable* unit_names, const DataTable* input_data);

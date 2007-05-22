@@ -1781,6 +1781,7 @@ void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     u->Compute_HardClamp(lay, net);
   }
   Compute_ActAvg(lay, net);
+  Compute_OutputName(lay, net);
 }
 
 void LeabraLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) {
@@ -2602,7 +2603,6 @@ void LeabraLayerSpec::Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net)
 }
 
 void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
-  if((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET)) return;
   if(lay->acts.max_i < 0) {
     lay->output_name = "n/a";
     return;
@@ -2613,6 +2613,12 @@ void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
     return;
   }
   lay->output_name = u->name;	// if it is something..
+  // for target/output layers, if we set something, set network name!
+  if(lay->output_name.empty() || 
+     ((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET))) return;
+  if(!net->output_name.empty())
+    net->output_name += "_";
+  net->output_name += lay->output_name;
 }
 
 //////////////////////////////////////////
@@ -3378,6 +3384,7 @@ void LeabraNetwork::Compute_InhibAvg() {
 }
 
 void LeabraNetwork::Compute_Act() {
+  output_name = "";		// this will be updated by layer compute_act
   maxda = 0.0f;		// initialize
   trg_max_act = 0.0f;
   LeabraLayer* lay;

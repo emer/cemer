@@ -139,6 +139,10 @@ class TA_API T3DataView_List: public DataView_List { // ##NO_TOKENS
 INHERITED(DataView_List)
 friend class T3DataView;
 public:
+
+ virtual T3DataView*  FindData(taBase* dat, int& idx);
+ // find DataView guy with data() == dat (fills in its index in list), returns NULL & idx=-1 for not found
+
   TA_DATAVIEWLISTFUNS(T3DataView_List, DataView_List, T3DataView)
 private:
   NOCOPY(T3DataView_List)

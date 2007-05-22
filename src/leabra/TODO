@@ -2,17 +2,13 @@ leabra todo list:
 
 commit:
 
-New functionality for displaying layer values:
-* on LayerView, disp_mode for OUTPUT_NAME -- output_name string (displays output_name
-instead of unit values)
-* also, frame only layer disp mode + function to align an existing view to the layer
--- can replace layer with a gridview or whatever!
-* also created T3DataViewMain -- subclass of par with its own permanent transform
-that serves as base class for main views such as NetView, etc.
-* implemented #VIEWMENU directive
+* new LayerView disp_modes fully functional (output name instead of units, etc)
 
 ------------
 current:
+
+* need output_name per unit_group (e.g., 12ax task, many cases)
+* double tokens listed in token chooser..hmm..
 
 * need hard enum val chooser in std progvar edit!  not sure how best to do that
  -- probably need a separate int that is used and then copied.

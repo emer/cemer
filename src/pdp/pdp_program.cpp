@@ -449,6 +449,7 @@ const String NetUpdateView::GenCssBody_impl(int indent_level) {
 ////////////////////////////////////////////////////
 
 void InitNamedUnits::Initialize() {
+  init_label_net = true;
   n_lay_name_chars = 1;
 }
 
@@ -538,7 +539,12 @@ bool InitNamedUnits::GetNetworkVar() {
 }
 
 const String InitNamedUnits::GenCssBody_impl(int indent_level) {
-  return "";
+  if(!init_label_net || !network_var)
+    return "";
+  String il = cssMisc::Indent(indent_level);
+  String rval = il + "{ " + "InitNamedUnits* inu = this" + GetPath(NULL,program()) + ";\n"; 
+  rval += il + "  inu->LabelNetwork(); }\n";
+  return rval;
 }
 
 bool InitNamedUnits::InitNamesTable() {
@@ -634,6 +640,7 @@ bool InitNamedUnits::LabelNetwork() {
     if(!lay) continue;
     InitLayerFmUnitNames(lay, ndc);
   }
+  net->GetLocalistName();	// propagate (why not!)
   return true;
 }
 

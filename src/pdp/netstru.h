@@ -684,9 +684,9 @@ protected:
 
 SpecPtr_of(UnitSpec);
 
-class PDP_API Unit: public taNBase {
+class PDP_API Unit: public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit
-INHERITED(taNBase)
+INHERITED(taOBase)
 protected:
   static RecvCons*	rcg_rval; // return value for connecting
   static SendCons*	scg_rval; // return value for connecting
@@ -702,6 +702,7 @@ public: //
     COMP_TARG_EXT	= 0x07	// #NO_BIT as a comparison, target, and external input layer
   };
 
+  String	name;		// name of unit (empty by default)
   ExtType	ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received
   float 	targ;
@@ -813,6 +814,9 @@ public: //
   virtual int	CountRecvCons();
   // #CAT_Structure count total number of receiving connections
 
+  virtual void	GetLocalistName();
+  // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
+
   virtual void	TransformWeights(const SimpleMathSpec& trans, Projection* prjn = NULL);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec, Projection* prjn = NULL);
@@ -838,6 +842,9 @@ public: //
   
   override String 	GetTypeDecoKey() const { return "Unit"; }
 
+  override bool 	SetName(const String& nm)    	{ name = nm; return true; }
+  override String	GetName() const			{ return name; }
+
   void	Initialize();
   void 	Destroy();
   void  InitLinks();
@@ -848,7 +855,7 @@ public: //
 protected:
   UnitSpec*	m_unit_spec;	// unit spec that we use: controlled entirely by the layer!
 
-  override void UpdateAfterEdit_impl();
+  override void  UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
   override void	 CheckChildConfig_impl(bool quiet, bool& rval);
 };
@@ -1402,6 +1409,9 @@ public:
   virtual void	Compute_PrjnDirections();
   // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers
 
+  virtual void	GetLocalistName();
+  // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
+
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec);
@@ -1549,6 +1559,7 @@ public:
   float	 layer_vals;	// #DEF_0.03 layer values (stats)
   float  prjn;		// #DEF_0.01 projection names and values
   float	 unit;		// #DEF_0.02 unit names and values
+  int	 un_nm_len;	// #DEF_3 unit name length -- used to compute output name font size
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
@@ -1838,6 +1849,9 @@ public:
   // #MENU #CONFIRM #CAT_Structure compute distances between layers and input/output layers
   virtual void	Compute_PrjnDirections();
   // #MENU #CONFIRM #CAT_Structure compute the directions of projections based on the relative distances from input/output layers (calls Compute_LayerDistances first)
+
+  virtual void	GetLocalistName();
+  // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights

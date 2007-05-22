@@ -279,6 +279,9 @@ public:
   virtual void		UpdateUnitValues();
   // *only* updates unit values 
 
+  virtual void	UpdateNetLayDispMode();
+  // update network's storing of the layer display mode value
+  
   virtual void	DispUnits();
   // #BUTTON #VIEWMENU display standard representation of unit values
   virtual void	DispOutputName();
@@ -289,6 +292,7 @@ public:
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvDataView)
 protected:
+  override void		UpdateAfterEdit_impl();
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DoHighlightColor(bool apply); 
   override void		DataUpdateAfterEdit_impl(); // also invoke for the connected prjns
@@ -367,6 +371,7 @@ public:
 
   T3DataView_PtrList	layers; // #NO_SAVE
   T3DataView_PtrList	prjns; // #NO_SAVE
+  NameVar_Array		lay_disp_modes; // layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
   ColorScale		scale; //contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  // Auto ranges for member buttons
   bool			display;       // whether to update the display when values change (under control of programs)
@@ -434,6 +439,8 @@ public:
   void			SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON set the color scale spec to determine the palette of colors representing values
 
+  virtual void		SetLayDispMode(const String& lay_nm, int disp_md);
+  // set the layer display mode value for given layer name (called by LayerView UAE)
   virtual void		NewLayer(int x = 3, int y = 3);
   virtual void		Layer_DataUAE(LayerView* lv); // send a DataUAE for all prjns for this layer
 

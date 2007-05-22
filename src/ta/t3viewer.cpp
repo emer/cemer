@@ -441,10 +441,22 @@ T3ExaminerViewer::resetToHomePosition(void)
 //////////////////////////
 //	T3DataView	//
 //////////////////////////
+
 #ifdef TA_PROFILE
 int T3DataView_inst_cnt = 0;
 #endif
 
+
+T3DataView* T3DataView_List::FindData(taBase* dat, int& idx) {
+  for(idx=0; idx<size; idx++) {
+    T3DataView* dv = FastEl(idx);
+    if(dv->data() == dat) {
+      return dv;
+    }
+  }
+  idx = -1;
+  return NULL;
+}
 
 T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
   SoPath* path = path_->copy();

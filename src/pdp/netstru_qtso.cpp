@@ -972,7 +972,7 @@ void UnitGroupView::Render_impl_outnm() {
   SoTranslation* tr = (SoTranslation*)un_txt->getChild(3);
   tr->translation.setValue(cx, 0.0f, -cy);
 
-  szx = 1.5f * szx / 12.0f;	// 12 = max len
+  szx = 1.5f * szx / (float)nv->font_sizes.un_nm_len;
 
   float ufontsz = MIN(szx, szy);
 
@@ -1021,6 +1021,19 @@ void LayerView::Initialize() {
 
 void LayerView::Destroy() {
   Reset();
+}
+
+void LayerView::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateNetLayDispMode();
+}
+
+void LayerView::UpdateNetLayDispMode() {
+  NetView* n = nv();
+  Layer* lay = layer(); //cache
+  if(n && lay) {
+    n->SetLayDispMode(lay->name, disp_mode);
+  }
 }
 
 void LayerView::BuildAll() {
@@ -1226,21 +1239,26 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 
 void LayerView::DispUnits() {
   disp_mode = DISP_UNITS;
-  DataChanged(DCR_ITEM_UPDATED);
+  UpdateNetLayDispMode();
+  if(nv())
+    nv()->Render();
 }
 
 void LayerView::DispOutputName() {
   disp_mode = DISP_OUTPUT_NAME;
-  DataChanged(DCR_ITEM_UPDATED);
+  UpdateNetLayDispMode();
+  if(nv())
+    nv()->Render();
 }
 
 void LayerView::UseViewer(T3DataViewMain* viewer) {
   disp_mode = DISP_FRAME;
-  DataChanged(DCR_ITEM_UPDATED);
+  UpdateNetLayDispMode();
+
   if(!viewer) return;
   NetView* nv = this->nv();
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
+  if(!nv || !lay) return;
 
   TDCoord& pos = lay->pos;
   viewer->main_xform = nv->main_xform; // first get the network
@@ -1249,11 +1267,14 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
 			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
-  // translate to layer offset
+  float szx = ((float)lay->act_geom.x / nv->max_size.x);
+  float szy = ((float)lay->act_geom.y / nv->max_size.y);
+
+  // translate to layer offset + indent into layer
   SbVec3f trans;
-  trans[0] = (float)pos.x / nv->max_size.x;
-  trans[1] = (float)(pos.z + 0.5f) / nv->max_size.z;
-  trans[2] = (float)-pos.y / nv->max_size.y;
+  trans[0] = ((float)pos.x / nv->max_size.x) + .02f * szx;
+  trans[1] = ((float)(pos.z - 0.25f) / nv->max_size.z);
+  trans[2] = ((float)-pos.y / nv->max_size.y) - .02f * szy;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   viewer->main_xform.translate.x += trans[0];
   viewer->main_xform.translate.y += trans[1];
@@ -1261,19 +1282,22 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
 
   // scale to size of layer
   FloatTDCoord sc;
-  sc.x = (float)lay->act_geom.x / nv->max_size.x;
-  sc.y = (float)lay->act_geom.y / nv->max_size.y;
+  sc.x = .8f * szx;
+  sc.y = .8f * szy;
   sc.z = 1.0f;
   viewer->main_xform.scale *= sc;
 
   // rotate down in the plane
   SbRotation rot;
-  rot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.508);
+  rot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5708);
   SbRotation nw_rot = rot * cur_rot;
   SbVec3f axis;
   float angle;
   nw_rot.getValue(axis, angle);
   viewer->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
+
+  T3DataViewFrame* fr = GetFrame();
+  if(fr) fr->Render();
 }
 
 
@@ -1470,6 +1494,7 @@ void NetView::Destroy() {
 
 void NetView::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(lay_disp_modes, this);
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(ordered_uvg_list, this);
@@ -1542,20 +1567,26 @@ String NetView::GetName() const {
   return "(no net)";
 }
 
-void NetView::BuildAll() { // populates everything
-  Reset();
-  if(!net()) return;
+void NetView::BuildAll() { // populates all T3 guys
+  if(!net()) {
+    Reset();
+    return;
+  }
   GetMaxSize();
+
+  Network* nt = net();
+
   Layer* lay;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, lay, net()->layers., i) {
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, net()->layers., li) {
     LayerView* lv = new LayerView();
     lv->SetData(lay);//obs lay->AddDataView(lv);
     //nn layers.Add(lv); // no side-effects -- better to add to this first
     children.Add(lv);
     lv->BuildAll();
   }
-  FOR_ITR_EL(Layer, lay, net()->layers., i) {
+
+  FOR_ITR_EL(Layer, lay, net()->layers., li) {
     Projection* prjn;
     taLeafItr j;
     FOR_ITR_EL(Projection, prjn, lay->projections., j) {
@@ -1565,6 +1596,42 @@ void NetView::BuildAll() { // populates everything
       children.Add(pv);
     }
   }
+
+  // cannot preserve LayerView objects, so recording disp_mode info separately
+  // first pass: delete non-existing ones, and apply existing ones
+  for(int i = lay_disp_modes.size - 1; i >= 0; --i) {
+    NameVar dmv = lay_disp_modes.FastEl(i);
+    int li;
+    nt->layers.FindLeafName(dmv.name, li);
+    if (li >= 0) {
+      LayerView* lv = (LayerView*)children.FastEl(li); // 1-to-1 with layers
+      lv->disp_mode = (LayerView::DispMode)dmv.value.toInt();
+    } else {
+      lay_disp_modes.RemoveIdx(i);
+    }
+  }
+  // add layers not in us, move in position
+  for(int li = 0; li < nt->layers.leaves; ++li) {
+    Layer* ly = nt->layers.Leaf(li);
+    LayerView* lv = (LayerView*)children.FastEl(li);
+    int i = lay_disp_modes.FindName(ly->name);
+    if(i < 0) {
+      NameVar dmv;
+      dmv.name = ly->name;
+      dmv.value = (int)lv->disp_mode;
+      lay_disp_modes.Insert(dmv, li);
+    } 
+    else if(i != li) {
+      lay_disp_modes.MoveIdx(i, li);
+      lay_disp_modes.FastEl(li).value = (int)lv->disp_mode;
+    }
+  }
+}
+
+void NetView::SetLayDispMode(const String& lay_nm, int disp_md) {	
+  int i = lay_disp_modes.FindName(lay_nm);
+  if(i < 0) return;
+  lay_disp_modes.FastEl(i).value = disp_md;
 }
 
 void NetView::ChildAdding(taDataView* child_) {
