@@ -650,18 +650,18 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 void T3DataView::FillContextMenu_impl(taiActions* menu) {
   TypeDef* typ = GetTypeDef();
   // put view props first, if any
-  if (selectEditMe()) {
+//  if (selectEditMe()) {
     for(int i=0;i<typ->methods.size;i++) {
       MethodDef* md = typ->methods[i];
       if(md->im && md->HasOption("VIEWMENU")) {
 	taiMethodData* mth_rep = md->im->GetMethodRep(this, NULL, NULL, NULL);
 	if (mth_rep) {;
 	  mth_rep->AddToMenu(menu);
-	  menu->AddSep();
 	}
       }
     }
-  }
+ // }
+  menu->AddSep();
   IObjectSelectable::FillContextMenu_impl(menu);
 } 
 
