@@ -5284,15 +5284,27 @@ void iTreeView::AddFilter(const String& value) {
   m_filters->AddUnique(value);
 }
 
-iTreeViewItem* iTreeView::AssertItem(taiDataLink* link) {
+iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
   // first, check if already an item in our tree
   taDataLinkItr itr;
   iTreeViewItem* el;
   FOR_DLC_EL_OF_TYPE(iTreeViewItem, el, link, itr) {
     if (el->treeWidget() == this) return el;
   } 
-  //TODO: failed, so need to assert the owner
-  return NULL;
+  if (!super) return NULL; // when we are called by ourself
+  
+  // failed, so try to assert the owner
+  taiDataLink* own_link = link->ownLink();
+  if (!own_link) return NULL;
+  iTreeViewItem* own_el = AssertItem(own_link);
+  if (!own_el) return NULL;
+  // then try making sure owner's children asserted
+  if (own_el->lazyChildren()) {
+    own_el->CreateChildren();
+    own_el->setExpanded(true);
+  }
+  // and try again, but not supercursively of course!
+  return AssertItem(link, false);
 }
 
 void iTreeView::CollapseAll() {
@@ -6658,7 +6670,8 @@ void iSearchDialog::Search() {
   Start();
   for (int i = 0; i < items.size; ++i) {
     taBase* item = items.FastEl(i);
-    headline = item->GetColText(taBase::key_disp_name);
+    headline = item->GetColText(taBase::key_disp_name) +
+      " (" + item->GetTypeDef()->name + ")";
     href = "pdp:" + item->GetPath();
     if (vw_num >= 0)
       href.cat("#" + String(vw_num));
