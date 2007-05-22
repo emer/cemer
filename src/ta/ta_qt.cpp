@@ -74,12 +74,12 @@ int tai_rl_hook_proc() {
 // 	taiMisc: miscellaneous useful stuff 		//
 //////////////////////////////////////////////////////////
 
-iMainWindowViewer* iTopLevelWindow_List::FastElAsMainWindow(int i) {
-  return dynamic_cast<iMainWindowViewer*>(FastEl(i)->widget());
+iMainWindowViewer* iTopLevelWindow_List::SafeElAsMainWindow(int i) {
+  return dynamic_cast<iMainWindowViewer*>(SafeEl(i)->widget());
 }
 
-iDockViewer* iTopLevelWindow_List::FastElAsDockWindow(int i) {
-  return dynamic_cast<iDockViewer*>(FastEl(i)->widget());
+iDockViewer* iTopLevelWindow_List::SafeElAsDockWindow(int i) {
+  return dynamic_cast<iDockViewer*>(SafeEl(i)->widget());
 }
 
 void iTopLevelWindow_List::GotFocus_MainWindow(iMainWindowViewer* imw) {
@@ -94,7 +94,7 @@ void iTopLevelWindow_List::GotFocus_DockWindow(iDockViewer* idv) {
 
 iMainWindowViewer* iTopLevelWindow_List::Peek_MainWindow() {
   for (int i = 0; i < size; ++i) {
-    iMainWindowViewer* rval = FastElAsMainWindow(i);
+    iMainWindowViewer* rval = SafeElAsMainWindow(i);
     if (rval) return rval;
   }
   return NULL;
@@ -102,7 +102,7 @@ iMainWindowViewer* iTopLevelWindow_List::Peek_MainWindow() {
 
 iDockViewer* iTopLevelWindow_List::Peek_DockWindow() {
   for (int i = 0; i < size; ++i) {
-    iDockViewer* rval = FastElAsDockWindow(i);
+    iDockViewer* rval = SafeElAsDockWindow(i);
     if (rval) return rval;
   }
   return NULL;

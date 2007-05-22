@@ -49,6 +49,7 @@
 #include <QSplitter>
 #include <QStackedWidget>
 #include <QStackedLayout>
+#include <QStatusBar>
 #include <QTextBrowser>
 #include <QTextEdit>
 #include <QTimer>
@@ -3350,6 +3351,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
   editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence("Ctrl+L"), "editLinkIntoAction" ));
   editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
+  editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence("Ctrl+F"), "editFindAction"));
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
@@ -3374,7 +3376,9 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editLinkIntoAction->AddTo( editMenu );
   editUnlinkAction->AddTo( editMenu );
   editDeleteAction->AddTo( editMenu );
-
+  editMenu->insertSeparator();
+  editFindAction->AddTo( editMenu );
+  
   viewRefreshAction->AddTo(viewMenu);
   viewMenu->insertSeparator();
   frameMenu = viewMenu->AddSubMenu("Frames");
@@ -3419,6 +3423,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( editLinkIntoAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editUnlinkAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
   connect( editDeleteAction, SIGNAL( IntParamAction(int) ), this, SIGNAL(EditAction(int)) );
+  connect( editFindAction, SIGNAL( Action() ), this, SLOT(editFind()) );
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
   connect( toolsClassBrowseAction, SIGNAL( activated() ), 
     this, SLOT( toolsClassBrowser() ) );
@@ -3451,6 +3456,25 @@ void iMainWindowViewer::emit_EditAction(int param) {
 {
   emit selectionChanged();
 } */
+
+void iMainWindowViewer::editFind() {
+  // default is to root in base of window, else default (root)
+  taBase* root = NULL;
+  
+  MainWindowViewer* db = viewer();
+  BrowseViewer* bv = NULL;
+  if (!db) goto get_dlg;
+  bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+  if (!bv) goto get_dlg;
+  if (!bv->rootType()->InheritsFrom(&TA_taBase)) goto get_dlg; // we aren't a project
+  root = static_cast<taBase*>(bv->root());
+  
+get_dlg:
+  iSearchDialog* dlg = iSearchDialog::New("Find", 0, root, this);
+  dlg->show();
+  dlg->raise();
+  dlg->activateWindow();
+}
 
 void iMainWindowViewer::fileCloseWindow() {
   close();
@@ -3578,6 +3602,42 @@ void iMainWindowViewer::fileClose() {
 void iMainWindowViewer::fileOptions() {
   if (!tabMisc::root) return;
   tabMisc::root->Options();
+}
+
+iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
+  MainWindowViewer* db = viewer();
+  if (!db) return NULL;
+  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+  if (!bv) return NULL;
+  iBrowseViewer* ibv = bv->widget();
+  iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
+  if (rval) {
+    ibv->lvwDataTree->scrollTo(rval);
+    ibv->lvwDataTree->setCurrentItem(rval);
+  }
+  return rval;
+}
+
+
+void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
+//TODO: diagnostics on failures
+  String path = url.path(); // will only be part before #, if any
+  String vw_num = String(url.fragment()).after("#");
+  iMainWindowViewer* inst = NULL;
+  if (vw_num.isInt()) {
+    inst = taiMisc::active_wins.SafeElAsMainWindow(vw_num.toInt());
+  } 
+  if (!inst)  {
+    inst = taiMisc::active_wins.Peek_MainWindow();
+  }
+  if (!inst) return; // shouldn't happen!
+   
+  taBase* tab = tabMisc::root->FindFromPath(path);
+  if (!tab) return;
+  taiDataLink* link = (taiDataLink*)tab->GetDataLink();
+  if (!link) return;
+//  iTreeViewItem* item = 
+  inst->AssertBrowserItem(link);
 }
 
 bool iMainWindowViewer::event(QEvent* ev) {
@@ -5224,6 +5284,17 @@ void iTreeView::AddFilter(const String& value) {
   m_filters->AddUnique(value);
 }
 
+iTreeViewItem* iTreeView::AssertItem(taiDataLink* link) {
+  // first, check if already an item in our tree
+  taDataLinkItr itr;
+  iTreeViewItem* el;
+  FOR_DLC_EL_OF_TYPE(iTreeViewItem, el, link, itr) {
+    if (el->treeWidget() == this) return el;
+  } 
+  //TODO: failed, so need to assert the owner
+  return NULL;
+}
+
 void iTreeView::CollapseAll() {
   for (int i = topLevelItemCount() - 1; i >= 0; --i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
@@ -5288,7 +5359,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       expand = false;
   }
   if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
-//    emit CustomExpandFilter(item, level, expand);
+    emit CustomExpandFilter(item, level, expand);
   }
   if (expand) {
     // first expand the guy...
@@ -6485,6 +6556,8 @@ iSearchDialog::iSearchDialog(const String& caption_, taBase* root_,
   if (!root_) root_ = tabMisc::root;
   root = root_;
   par_window = par_window_;
+  if (par_window_)
+    connect(par_window_, SIGNAL(destroyed()), this, SLOT(parWin_destroyed()) );
   init(caption_);
 }
 
@@ -6492,6 +6565,7 @@ void iSearchDialog::init(const String& caption_) {
   m_changing = 0;
   m_stop = false;
   setCaption(caption_);
+  setSizeGripEnabled(true);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_m));
 }
@@ -6503,11 +6577,10 @@ void iSearchDialog::Constr() {
 
   QHBoxLayout* lay = new QHBoxLayout();
   lay->setMargin(0);
-  lay->addSpacing(taiM->hspc_c); 
+  lay->setSpacing(0);
   search = new QLineEdit(this);
   search->setToolTip("Enter text to search for in item names, descriptions, and contents.");
   lay->addWidget(search, 1);
-  lay->addSpacing(taiM->hspc_c); 
   btnGo = new QToolButton(this);
   btnGo->setText("&Go");
 //TODO: trap Enter so user can hit Enter in field  ((QToolButton*)btnGo)->setDefault(true);
@@ -6516,15 +6589,22 @@ void iSearchDialog::Constr() {
   btnStop = new QToolButton(this);
   btnStop->setText("X");
   lay->addWidget(btnStop);
+  lay->addSpacing(taiM->hspc_c); 
   layOuter->addLayout(lay);
   
   results = new QTextBrowser(this);
+  results->setOpenExternalLinks(true); // including pdp:// "links"
   layOuter->addWidget(results, 1); // results is item to expand in host
+  
+  status_bar = new QStatusBar(this);
+  layOuter->addWidget(status_bar);
 
   connect(btnGo, SIGNAL(clicked()), this, SLOT(go_clicked()) );
   connect(btnStop, SIGNAL(clicked()), this, SLOT(stop_clicked()) );
   connect(results, SIGNAL(anchorClicked(const QUrl&)),
     this, SLOT(results_anchorClicked(const QUrl&)) );
+  connect(results, SIGNAL(highlighted(const QString&)),
+    status_bar, SLOT(message(const QString&)) );
 }
 
 
@@ -6533,7 +6613,7 @@ void iSearchDialog::AddItem(const String& headline, const String& href,
 {//note: newlines just to help make resulting str readable in debugger, etc.
   STRING_BUF(b, 200);
   b += "<p>";
-  b += "<a href=\"" + href + ">" + headline + "</a>\n";
+  b += "<a href=\"" + href + "\">" + headline + "</a>\n";
   if (desc.nonempty())
     b += "<br>" + desc + "<br>";
   b += "</p>\n";
@@ -6559,12 +6639,49 @@ void iSearchDialog::EndSection()
 {
 }
 
+void iSearchDialog::Search() {
+  if (!root) return;
+  // append viewer# to simplify invocation of url
+  int vw_num = -1;
+  if (par_window)
+    vw_num = taiMisc::active_wins.FindEl(
+      static_cast<IDataViewWidget*>((iMainWindowViewer*)par_window));
+//TODO: parse out additional qualifiers, etc.
+  String nm = search->text();
+  taBase_PtrList items;
+  taMisc::Busy(true);
+  root->SearchNameContains(nm, items/*, &owners*/);
+  taMisc::Busy(false);
+  String headline;
+  String href;
+  String desc;
+  Start();
+  for (int i = 0; i < items.size; ++i) {
+    taBase* item = items.FastEl(i);
+    headline = item->GetColText(taBase::key_disp_name);
+    href = "pdp:" + item->GetPath();
+    if (vw_num >= 0)
+      href.cat("#" + String(vw_num));
+    desc = item->GetColText(taBase::key_desc);
+    AddItem(headline, href, desc);
+  }
+  End();
+  
+}
+
 void iSearchDialog::results_anchorClicked(const QUrl& link) {
+//TEMP
+status_bar->message(link.toString());
 }
 
 void iSearchDialog::go_clicked() {
+  Search();
 }
 
 void iSearchDialog::stop_clicked() {
   m_stop = true;
+}
+
+void iSearchDialog::parWin_destroyed() {
+  this->deleteLater();
 }

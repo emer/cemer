@@ -355,6 +355,8 @@ public:
   TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
+  override void 	GetWinState_impl(); // set gui state; only called if mapped
+  override void 	SetWinState_impl(); // fetch gui state; only called if mapped
 private:
   NOCOPY(PanelViewer)
   void			Initialize();

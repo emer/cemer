@@ -50,9 +50,9 @@ typedef taPtrList<taiEditDataHost> taiEditDataHost_List; // #IGNORE
 
 class TA_API iTopLevelWindow_List: public taPtrList<IDataViewWidget> {
 public:
-  iMainWindowViewer*	FastElAsMainWindow(int i); 
+  iMainWindowViewer*	SafeElAsMainWindow(int i); 
     // returns item cast as requested, or NULL if not of that type
-  iDockViewer*		FastElAsDockWindow(int i);
+  iDockViewer*		SafeElAsDockWindow(int i);
     // returns item cast as requested, or NULL if not of that type
   iMainWindowViewer*	Peek_MainWindow(); // finds the topmost main window, NULL if none
   iDockViewer*		Peek_DockWindow(); // finds the topmost undocked dock win, NULL if none

@@ -709,7 +709,7 @@ private:
 
 
 class TA_API T3DataViewer : public FrameViewer {
-  // ##DEF_NAME_ROOT_Frame top-level taDataViewer object that contains one 3D data view of multiple objects
+  // ##DEF_NAME_ROOT_T3Frames ##DEF_NAME_STYLE_2 top-level taDataViewer object that contains one 3D data view of multiple objects
 INHERITED(FrameViewer)
 friend class T3DataView;
 public:

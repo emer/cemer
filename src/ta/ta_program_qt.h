@@ -259,7 +259,7 @@ protected:
 };
 
 class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefListClient {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
+  // ##IGNORE ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public: //

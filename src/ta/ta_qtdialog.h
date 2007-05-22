@@ -244,7 +244,7 @@ private:
 
 //TODO: taiDHB should be used to rebase taiDH
 class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient
-{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+{ // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(QObject)
   Q_OBJECT
 friend class iDialog;
@@ -406,7 +406,7 @@ protected:
 
 
 class TA_API taiDataHost: public taiDataHostBase, virtual public IDataHost 
-{ // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+{ // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiDataHostBase)
   Q_OBJECT
 friend class iDialog;

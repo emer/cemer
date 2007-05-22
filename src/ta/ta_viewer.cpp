@@ -449,6 +449,12 @@ IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
   browser_win()->Reset();
 }*/
 
+void PanelViewer::GetWinState_impl() {
+}
+
+void PanelViewer::SetWinState_impl() {
+}
+
 //////////////////////////
 //	WindowState	//
 //////////////////////////
@@ -843,7 +849,7 @@ TypeDef* MainWindowViewer::def_viewer_type = &TA_MainWindowViewer;
 MainWindowViewer* MainWindowViewer::GetDefaultProjectBrowser(taProject* proj) {
 // look in list of viewer wins for most current
   for (int i = taiMisc::active_wins. size - 1; i >= 0; --i) {
-    iMainWindowViewer* ivw = taiMisc::active_wins.FastElAsMainWindow(i); 
+    iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i); 
     // check if it is a proj viewer
     if (!ivw || !ivw->isProjViewer()) continue;
     // if proj specified, check if same

@@ -106,6 +106,7 @@ class	QSpinBox;		// #IGNORE
 class	QSplitter;		// #IGNORE 
 class	QStackedLayout;		// #IGNORE 
 class	QStackedWidget;		// #IGNORE 
+class	QStatusBar;		// #IGNORE
 class	QTableView;		// #IGNORE 
 class	QTabBar;		// #IGNORE 
 class	QTabWidget;		// #IGNORE 

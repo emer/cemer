@@ -111,7 +111,7 @@ public:
 */
 
 class TA_API taiData: public QObject {
-  // #INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for data elements
+  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for data elements
   Q_OBJECT
   friend class taiCompData; // for parenting
 #ifndef __MAKETA__

@@ -1580,7 +1580,7 @@ public:
 };
 
 class TA_API taBase_RefList: public taPtrList<taBase>,
-   public IMultiDataLinkClient { // a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
+   public IMultiDataLinkClient { // #IGNORE a primitive taBase list type, that uses SmartRef semantics to manage the items -- note: this list does NOT manage ownership/lifetimes
 public:
   void			setOwner(IRefListClient* own_);
 

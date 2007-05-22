@@ -886,6 +886,7 @@ public:
   taiAction* 		editLinkAction;
   taiAction* 		editLinkIntoAction;
   taiAction* 		editUnlinkAction;
+  taiAction*		editFindAction;
   
   taiAction* 		viewRefreshAction;
   taiAction* 		viewSplitVerticalAction;
@@ -914,6 +915,7 @@ public:
   virtual void		AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
 #endif
+  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force
@@ -940,8 +942,8 @@ public slots:
   virtual void 	fileCloseWindow();// (non-root only)
   virtual void 	fileQuit(); // (root) or all on Mac (needed for App menu)
 /*  virtual void editUndo();
-  virtual void editRedo();
-  virtual void editFind(); */
+  virtual void editRedo();*/
+  virtual void editFind(); 
   virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
   
   virtual void	showMenu_aboutToShow();
@@ -971,6 +973,9 @@ public slots:
     // Clipboard server: called by cliphandler after major events, to refresh menus, toolbars, etc.
 
 #ifndef __MAKETA__
+  void		globalUrlHandler(const QUrl& url);
+    // root browser handles the pdp:// urls that point to internal objects -- routed
+
 signals:
   void 		EditAction(int ea); 
     // Clipboard server: param is one of the taiClipData editAction values
@@ -1523,6 +1528,8 @@ public:
   
   void			AddFilter(const String& value);
     // add a TREEFILT_xxx expression to exclude members and/or types; note: not dynamic, must be added before items created
+  virtual iTreeViewItem* AssertItem(taiDataLink* link);
+    // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be asserted
   bool			HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list
     
@@ -1546,7 +1553,7 @@ public:
    
 #ifndef __MAKETA__
 signals:
-  void			CustomExpandSearch(iTreeViewItem* item, int level, bool& expand);
+  void			CustomExpandFilter(iTreeViewItem* item, int level, bool& expand);
     // invoked when we want our mummy to do custom filtering, expand=true by default
   void			FillContextMenuHookPre(ISelectable_PtrList& sel_items,
      taiActions* menu);
@@ -1624,7 +1631,7 @@ private:
 
 class TA_API iTreeViewItem: public iTreeWidgetItem, 
   public virtual IDataLinkClient, public virtual IObjectSelectable {
-  //  ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
+  //  ##IGNORE  ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(iTreeWidgetItem)
 friend class iTreeView;
 public:
@@ -1912,7 +1919,7 @@ private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
 };
 
-class TA_API iSearchDialog: QDialog {
+class TA_API iSearchDialog: public QDialog {
 // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT
@@ -1934,7 +1941,10 @@ public:
   QAbstractButton*	    btnGo;
   QAbstractButton*	    btnStop;
   QTextBrowser* 	  results; 	// list of result items, as clickable links
+  QStatusBar*		  status_bar;
   
+  void			Search(); // search, based on search line
+// following are all rendering apis
   void			Start(); // resets everything, and starts new results page
   void			StartSection(const String& sec_name);
   void			EndSection(); // end the current section
@@ -1959,6 +1969,7 @@ protected slots:
   void			go_clicked();
   void			stop_clicked();
   void			results_anchorClicked(const QUrl& link);
+  void			parWin_destroyed();
   
 private:
   void 		init(const String& captn); // called by constructors

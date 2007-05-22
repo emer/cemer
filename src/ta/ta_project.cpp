@@ -36,6 +36,7 @@
 #   include "css_qtconsole.h"
 # endif
 # include <QApplication>
+# include <QDesktopServices>
 # include <QFileDialog>
 # include <QMessageBox>
 # include <QWidgetList>
@@ -1334,6 +1335,8 @@ bool taRootBase::Startup_MakeMainWin() {
   db->ViewWindow();
   iMainWindowViewer* bw = db->viewerWindow();
   if (bw) { //note: already constrained to max screen size, so we don't have to check
+    // main win handle internal app urls
+    QDesktopServices::setUrlHandler("pdp", bw, "globalUrlHandler");
     bw->resize(s.w, s.h);
     bw->show(); // when we start event loop
   }
