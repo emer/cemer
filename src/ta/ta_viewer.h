@@ -278,6 +278,7 @@ public:
   virtual void*		root() {return NULL;} // subtype must supply
   inline TypeDef*	rootType() {return root_typ;}
   inline MemberDef*	rootMemb() {return root_md;}
+  virtual taiDataLink*	rootLink() {return NULL;}
 
   inline iBrowseViewer*	widget() {return (iBrowseViewer*)inherited::widget();}
 
@@ -301,6 +302,8 @@ public:
   taSmartRef		m_root; 
   
   override void*	root() {return (void*)m_root.ptr();} 
+  override taiDataLink*	rootLink() {return (m_root) ? 
+    (taiDataLink*)m_root->GetDataLink() : NULL;}
   
   void	UpdateAfterEdit(); // if root deletes, our window must die
   void	InitLinks();
@@ -328,6 +331,8 @@ public:
 
   override void*	root() {return m_root;} 
   void			setRoot(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); // use this to set the root
+  override taiDataLink*	rootLink() 
+    {return (m_root) ? (taiDataLink*)((TypeItem*)m_root)->data_link : NULL;}
   
   void	UpdateAfterEdit();
   TA_DATAVIEWFUNS(ClassBrowseViewer, BrowseViewer) //

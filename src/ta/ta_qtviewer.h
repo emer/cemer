@@ -63,7 +63,8 @@ class tabListTreeDataNode;
 class tabGroupTreeDataNode;  
 class iDataPanel;
 class iDataPanelFrame;
-class iListDataPanel;  //
+class iListDataPanel;
+class iSearchDialog;
 
 
 // externals
@@ -97,10 +98,12 @@ public:
   virtual bool		GetIcon(int bmf, int& flags_supported, QIcon& ic) {return false;}
   virtual taiDataLink*	GetListChild(int itm_idx) {return NULL;} // returns NULL when no more
   virtual taiDataLink*	GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
+  virtual String	GetPath() const {return _nilString;} // esp taBase path 
   virtual String	GetTypeDecoKey() const {return _nilString;}
   virtual String	GetStateDecoKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
     {return QVariant();} // for getting things like status text, tooltip text, etc.
+  virtual void		Search(iSearchDialog* dlg) {} // called to do a search
   virtual bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const
     {return false;} // asks this type if we should show the md member
 
@@ -160,9 +163,11 @@ public:
     // delegates to taBase::GetDataNodeBitmap
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
+  override String	GetPath() const {return data()->GetPath();} 
   override String	GetTypeDecoKey() const;
   override String	GetStateDecoKey() const;
   override String	GetName() const;
+  override void		Search(iSearchDialog* dlg);
   override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE
   override const QVariant GetColData(const KeyString& key, int role) const;
@@ -627,6 +632,7 @@ public:
   void*			root() {return (browser()) ? browser()->root() : NULL;}
   TypeDef*		root_typ() {return (browser()) ? browser()->root_typ : &TA_void;}
   MemberDef*		root_md() {return (browser()) ? browser()->root_md : NULL;} //
+  taiDataLink*		rootLink() {return (browser()) ? browser()->rootLink() : NULL;} 
   override int		stretchFactor() const {return 1;} //  1/2 default
 
   void			Reset();
@@ -844,7 +850,12 @@ class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 INHERITED(QMainWindow)
 friend class taDataLink;
 friend class MainWindowViewer;
-public:  
+public: 
+#ifndef __MAKETA__ 
+  static QPointer<iSearchDialog> search_dialog; // we only allow 1, so user doesn't get confused
+  static void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
+#endif
+
 //nn  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
 
@@ -943,7 +954,7 @@ public slots:
   virtual void 	fileQuit(); // (root) or all on Mac (needed for App menu)
 /*  virtual void editUndo();
   virtual void editRedo();*/
-  virtual void editFind(); 
+  virtual void 	editFind(); 
   virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
   
   virtual void	showMenu_aboutToShow();
@@ -1227,11 +1238,11 @@ public slots:
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iDataPanel;}
   override bool		ignoreDataChanged() const {return (!isVisible());}
   override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // called when the data item has changed, esp. ex lists and groups
   override void		DataLinkDestroying(taDataLink* dl) {} // called by DataLink when it is destroying --
-  override TypeDef*	GetTypeDef() const {return &TA_iDataPanel;}
 
 protected:
   bool			m_pinned;
@@ -1919,8 +1930,8 @@ private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
 };
 
-class TA_API iSearchDialog: public QDialog {
-// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search a project (or more)
+class TA_API iSearchDialog: public QDialog, public IDataLinkClient {
+// ##IGNORE ##NO_CSS ##NO_MEMBERS search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT
 public:
@@ -1931,8 +1942,7 @@ public:
   };
 #endif
 
-  static iSearchDialog* New(const String& caption, int ft = 0,
-    taBase* root = NULL, iMainWindowViewer* par_window_ = NULL);
+  static iSearchDialog* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
   
   QVBoxLayout*		layOuter;
@@ -1943,6 +1953,8 @@ public:
   QTextBrowser* 	  results; 	// list of result items, as clickable links
   QStatusBar*		  status_bar;
   
+  void			setRoot(taiDataLink* root); // set or reset the root used for the search; sets caption and clears
+  
   void			Search(); // search, based on search line
 // following are all rendering apis
   void			Start(); // resets everything, and starts new results page
@@ -1952,18 +1964,26 @@ public:
     const String& desc = "");
   void			End(); // end all and display results
   
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iSearchDialog;}
+  override bool		ignoreDataChanged() const {return true;}
+  override void		DataDataChanged(taDataLink*, int dcr, void* op1, void* op2) {}
+  override void		DataLinkDestroying(taDataLink* dl);
+
+
 #ifndef __MAKETA__
 protected:
-  QPointer<iMainWindowViewer>	par_window; // so we can look for tree, etc.
-  taBaseRef		root;
+  String		m_caption; // base portion of caption
   String		src;
   int			m_changing;
   bool			m_stop;
   
   virtual void		Constr(); 
    // does constr, called in static, so can extend
+  void			RootSet(taiDataLink* root); // called when root changes
 
-  iSearchDialog(const String& caption, taBase* root, iMainWindowViewer* par_window_);
+  iSearchDialog(iMainWindowViewer* par_window_);
   
 protected slots:
   void			go_clicked();
@@ -1972,7 +1992,7 @@ protected slots:
   void			parWin_destroyed();
   
 private:
-  void 		init(const String& captn); // called by constructors
+  void 		init(); // called by constructors
 #endif
 };
 

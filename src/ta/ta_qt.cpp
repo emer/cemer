@@ -119,7 +119,7 @@ taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
 iTopLevelWindow_List	taiMisc::active_wins;
 TypeSpace		taiMisc::arg_types;
-QWidget*		taiMisc::main_window = NULL;
+QPointer<iMainWindowViewer> taiMisc::main_window;
 taBase_PtrList		taiMisc::unopened_windows;
 void (*taiMisc::Update_Hook)(TAPtr) = NULL;
 

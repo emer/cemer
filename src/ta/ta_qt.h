@@ -145,9 +145,10 @@ public:
   static TypeSpace		arg_types; 	// list of all taiArgTypes
   static void (*Update_Hook)(TAPtr);
   // #IGNORE called after apply in a dialog, etc. obj is the object that was edited
+#ifndef __MAKETA__
+  static QPointer<iMainWindowViewer> main_window; // the main window (dialogs are parented to this)
 
-  static QWidget*		main_window; // the main window (dialogs are parented to this)
-
+#endif
   static taBase_PtrList		unopened_windows;
   // #HIDDEN unopened windows waiting to be opened
   

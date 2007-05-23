@@ -1336,6 +1336,7 @@ bool taRootBase::Startup_MakeMainWin() {
   iMainWindowViewer* bw = db->viewerWindow();
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
+    taiMisc::main_window = bw;
     QDesktopServices::setUrlHandler("pdp", bw, "globalUrlHandler");
     bw->resize(s.w, s.h);
     bw->show(); // when we start event loop

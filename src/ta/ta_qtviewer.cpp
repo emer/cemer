@@ -948,6 +948,26 @@ int tabDataLink::checkConfigFlags() const {
   return (data()->baseFlags() & taBase::INVALID_MASK);
 }
 
+void tabDataLink::Search(iSearchDialog* dlg) {
+//TEMP, until new search routine written
+//TODO: parse out additional qualifiers, etc.
+  String nm = dlg->search->text();
+  taBase_PtrList items;
+  data()->SearchNameContains(nm, items/*, &owners*/);
+  
+  String headline;
+  String href;
+  String desc;
+  for (int i = 0; i < items.size; ++i) {
+    taBase* item = items.FastEl(i);
+    headline = item->GetColText(taBase::key_disp_name) +
+      " (" + item->GetTypeDef()->name + ")";
+    href = "pdp:" + item->GetPath();
+    desc = item->GetColText(taBase::key_desc);
+    dlg->AddItem(headline, href, desc);
+  }
+}
+
 bool tabDataLink::ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const {
   TypeDef* td = md->type;
   if (td == NULL) return false; // shouldn't happen...
@@ -3032,6 +3052,8 @@ QStringList iBaseClipWidgetAction::mimeTypes() const {
 //  iMainWindowViewer	//
 //////////////////////////
 
+QPointer<iSearchDialog> iMainWindowViewer::search_dialog;
+
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax |
   Qt::WDestructiveClose)), IDataViewWidget(viewer_)
@@ -3457,23 +3479,33 @@ void iMainWindowViewer::emit_EditAction(int param) {
   emit selectionChanged();
 } */
 
-void iMainWindowViewer::editFind() {
-  // default is to root in base of window, else default (root)
-  taBase* root = NULL;
+//static
+void iMainWindowViewer::Find(taiDataLink* root) {
+//note: generally assumed that calling this func has a definite root
+  // if an instance doesn't exist, need to make one; we tie it to main window 
+  if (!search_dialog) {
+    search_dialog = iSearchDialog::New(0, taiMisc::main_window);
+  }
+  iSearchDialog* dlg = search_dialog;
   
-  MainWindowViewer* db = viewer();
-  BrowseViewer* bv = NULL;
-  if (!db) goto get_dlg;
-  bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
-  if (!bv) goto get_dlg;
-  if (!bv->rootType()->InheritsFrom(&TA_taBase)) goto get_dlg; // we aren't a project
-  root = static_cast<taBase*>(bv->root());
-  
-get_dlg:
-  iSearchDialog* dlg = iSearchDialog::New("Find", 0, root, this);
+  dlg->setRoot(root);
   dlg->show();
   dlg->raise();
   dlg->activateWindow();
+}
+
+void iMainWindowViewer::editFind() {
+  // assume root of this window's browser
+  taiDataLink* root = NULL;
+  
+  MainWindowViewer* db = viewer();
+  BrowseViewer* bv = NULL;
+  if (db) {
+    bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+    if (bv) root = bv->rootLink();
+  }
+  if (!root) root = (taiDataLink*)tabMisc::root->GetDataLink();
+  iMainWindowViewer::Find(root);
 }
 
 void iMainWindowViewer::fileCloseWindow() {
@@ -6550,35 +6582,26 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
 //   iSearchDialog		//
 //////////////////////////////////
 
-iSearchDialog* iSearchDialog::New(const String& caption_, int ft,
-  taBase* root_, iMainWindowViewer* par_window_) 
+iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_) 
 {
-/*no, let qt choose  if (par_window_ == NULL)
-    par_window_ = taiMisc::main_window;*/
-  iSearchDialog* rval = new iSearchDialog(caption_, root_, par_window_);
+  iSearchDialog* rval = new iSearchDialog(par_window_);
   rval->setFont(taiM->dialogFont(ft));
   rval->Constr();
   return rval;
 }
 
-iSearchDialog::iSearchDialog(const String& caption_, taBase* root_, 
-  iMainWindowViewer* par_window_)
-:inherited(par_window_, Qt::WindowStaysOnTopHint)
+iSearchDialog::iSearchDialog(iMainWindowViewer* par_window_)
+:inherited(NULL, Qt::WindowStaysOnTopHint)
 {
-  if (!root_) root_ = tabMisc::root;
-  root = root_;
-  par_window = par_window_;
   if (par_window_)
     connect(par_window_, SIGNAL(destroyed()), this, SLOT(parWin_destroyed()) );
-  init(caption_);
+  init();
 }
 
-void iSearchDialog::init(const String& caption_) {
+void iSearchDialog::init() {
   m_changing = 0;
   m_stop = false;
-  setCaption(caption_);
   setSizeGripEnabled(true);
-//  setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_m));
 }
 
@@ -6632,10 +6655,8 @@ void iSearchDialog::AddItem(const String& headline, const String& href,
   src.cat(b);
 }
 
-void iSearchDialog::Start()
-{
-  m_stop = false;
-  src = _nilString;
+void iSearchDialog::DataLinkDestroying(taDataLink* dl) {
+  RootSet(NULL);
 }
 
 void iSearchDialog::End()
@@ -6643,43 +6664,12 @@ void iSearchDialog::End()
   results->setText(src);
 }
 
-void iSearchDialog::StartSection(const String& sec_name)
-{
-}
-
 void iSearchDialog::EndSection()
 {
 }
 
-void iSearchDialog::Search() {
-  if (!root) return;
-  // append viewer# to simplify invocation of url
-  int vw_num = -1;
-  if (par_window)
-    vw_num = taiMisc::active_wins.FindEl(
-      static_cast<IDataViewWidget*>((iMainWindowViewer*)par_window));
-//TODO: parse out additional qualifiers, etc.
-  String nm = search->text();
-  taBase_PtrList items;
-  taMisc::Busy(true);
-  root->SearchNameContains(nm, items/*, &owners*/);
-  taMisc::Busy(false);
-  String headline;
-  String href;
-  String desc;
-  Start();
-  for (int i = 0; i < items.size; ++i) {
-    taBase* item = items.FastEl(i);
-    headline = item->GetColText(taBase::key_disp_name) +
-      " (" + item->GetTypeDef()->name + ")";
-    href = "pdp:" + item->GetPath();
-    if (vw_num >= 0)
-      href.cat("#" + String(vw_num));
-    desc = item->GetColText(taBase::key_desc);
-    AddItem(headline, href, desc);
-  }
-  End();
-  
+void iSearchDialog::go_clicked() {
+  Search();
 }
 
 void iSearchDialog::results_anchorClicked(const QUrl& link) {
@@ -6687,8 +6677,41 @@ void iSearchDialog::results_anchorClicked(const QUrl& link) {
 status_bar->message(link.toString());
 }
 
-void iSearchDialog::go_clicked() {
-  Search();
+void iSearchDialog::RootSet(taiDataLink* root) {
+  String cap = "Find: ";
+  if (root) {
+    cap += root->GetPath();
+  }
+  cap += " - " + taMisc::app_name;
+  setCaption(cap);
+}
+
+void iSearchDialog::Search() {
+  if (!link()) return;
+  taMisc::Busy(true);
+  Start();
+  link()->Search(this);
+  End();
+  taMisc::Busy(false);
+}
+
+void iSearchDialog::Start()
+{
+  m_stop = false;
+  src = _nilString;
+}
+
+void iSearchDialog::StartSection(const String& sec_name)
+{
+}
+
+
+void iSearchDialog::setRoot(taiDataLink* root) {
+  if (link() != root) {
+    if (link()) RemoveDataLink(link()); 
+    if (root) AddDataLink(root);
+  }
+  RootSet(root);
 }
 
 void iSearchDialog::stop_clicked() {
