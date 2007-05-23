@@ -925,7 +925,7 @@ public:
 
   Layer* 		layer;    	// #READ_ONLY #NO_SAVE layer this prjn is in
   PrjnSource 		from_type;	// #CAT_Structure #APPLY_IMMED Source of the projections
-  Layer*		from;		// #CAT_Structure layer receiving from (set this for custom)
+  Layer*		from;		// #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)
   ProjectionSpec_SPtr	spec;		// #CAT_Structure spec for this item
   TypeDef*		con_type;	// #TYPE_Connection #CAT_Structure Type of connection
   TypeDef*		recvcons_type;	// #TYPE_RecvCons #CAT_Structure Type of receiving connection group to make

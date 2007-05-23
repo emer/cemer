@@ -757,7 +757,7 @@ public:
   ProgVarRef		result_var;
   // where to store the result (return value) of the function (optional -- can be NULL)
   FunctionRef		fun;
-  // the function to be called
+  // #APPLY_IMMED the function to be called
   ProgArg_List		fun_args;
   // #SHOW_TREE arguments to the function: passed when called
 

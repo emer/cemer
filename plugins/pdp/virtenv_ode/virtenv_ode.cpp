@@ -136,7 +136,7 @@ void VEBody::GetValsFmODE() {
   // ODE quaternion = w,x,y,z; Inventor = x,y,z,w
   const dReal* quat = dBodyGetQuaternion(bid);
   SbRotation sbrot;
-  sbrot.setValue(-quat[3], quat[0], quat[1], quat[2]);
+  sbrot.setValue(-quat[3], quat[0], quat[1], -quat[2]);
   SbVec3f rot_ax;
   sbrot.getValue(rot_ax, cur_rot.rot);
   cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
@@ -655,13 +655,18 @@ void VEBodyView::Render_pre() {
       sp->radius = ob->mass_radius;
       sp->height = ob->mass_length;
       ssep->addChild(sp);
+      SoTransform* tx = m_node_so->txfm_shape();
+      if(ob->mass_long_axis == VEBody::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
+      else if(ob->mass_long_axis == VEBody::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708);
       break;
     }
     case VEBody::BOX: {
       SoCube* sp = new SoCube;
       sp->width = ob->mass_box.x;
-      sp->depth = ob->mass_box.y;
-      sp->height = ob->mass_box.z;
+      sp->depth = ob->mass_box.z;
+      sp->height = ob->mass_box.y;
       ssep->addChild(sp);
       break;
     }

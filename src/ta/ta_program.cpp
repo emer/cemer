@@ -2027,7 +2027,11 @@ const String FunctionCall::GenCssBody_impl(int indent_level) {
 }
 
 String FunctionCall::GetDisplayName() const {
-  String rval = "Call ";
+  String rval;
+  if(result_var)
+    rval += result_var->name + "=";
+  else
+    rval += "Call ";
   if (fun) {
     rval += fun->name;
     if(fun_args.size > 0) {

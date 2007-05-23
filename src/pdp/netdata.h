@@ -351,6 +351,9 @@ public:
   void		SetDataNetwork(DataTable* dt, Network* net);
   // #CAT_Monitor set both the data table and network -- convenient for programs
 
+  void		AddBlank()
+  { items.New(1); }
+  // #BUTTON #CAT_Monitor add a new blank monitor to be filled in
   void		AddNetwork(Network* net, const String& variable)
   { AddObject(net, variable);}
   // #BUTTON #CAT_Monitor monitor a value in the Network or its subobjects
@@ -367,7 +370,7 @@ public:
   { AddObject(un, variable);}
   // #CAT_Monitor monitor a value in the Unit or its subobjects
   
-  void		AddObject(TAPtr obj, const String& variable);
+  void		AddObject(taBase* obj, const String& variable);
   // #CAT_Monitor monitor a value in the object or its subobjects
 
   void 		UpdateDataTable(bool reset_first = false);

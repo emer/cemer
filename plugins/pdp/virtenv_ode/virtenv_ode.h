@@ -63,7 +63,7 @@ class VEWorldView;
 //		objects (bodies)
 
 class VEODE_API VEBody : public taNBase {
-  // ##CAT_VirtEnv virtual environment body (rigid structural element)
+  // ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element)
 INHERITED(taNBase)
 public:	
   enum BodyFlags { // #BITS flags for bodies
@@ -84,7 +84,7 @@ public:
     LONG_Z,			// long axis is in Z direction
   };
 
-  void*		body_id;	// #READ_ONLY #HIDDEN #NO_SAVE id of the body (cast to a dBodyID which is dxbody*)
+  void*		body_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the body (cast to a dBodyID which is dxbody*)
   BodyFlags	flags;		// flags for various body properties
   FloatTDCoord	init_pos;  	// initial position of body (when creating it)
   FloatRotation	init_rot;  	// initial rotation of body (when creating it)
@@ -112,7 +112,7 @@ public:
   //	Internal-ish stuff
 
   dMass		mass_ode;	// #IGNORE full ode mass of object
-  void*		fixed_joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE id of joint used to fix a FIXED object
+  void*		fixed_joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of joint used to fix a FIXED object
 
   inline void		SetBodyFlag(BodyFlags flg)   { flags = (BodyFlags)(flags | flg); }
   // set body flag state on
@@ -125,15 +125,15 @@ public:
   // set body flag state according to on bool (if true, set flag, if false, clear it)
 
 
-  virtual VEWorld* GetWorld();	// get world object (parent of this guy)
-  virtual void*	GetWorldID();	// get world id value
+  virtual VEWorld* GetWorld();	// #CAT_ODE get world object (parent of this guy)
+  virtual void*	GetWorldID();	// #CAT_ODE get world id value
 
-  virtual bool	CreateODE();	// create object in ode (if not already created) -- returns false if unable to create
-  virtual void	DestroyODE();	// destroy object in ode (if created)
-  virtual void	SetValsToODE();	// set the current values to ODE (creates id's if not already done)
-  virtual void	SetMassToODE();	// set the mass of object in ODE
+  virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
+  virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
+  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
+  virtual void	SetMassToODE();	// #CAT_ODE set the mass of object in ODE
 
-  virtual void	GetValsFmODE();	// get the updated values from ODE after computing
+  virtual void	GetValsFmODE();	// #CAT_ODE get the updated values from ODE after computing
 
   SIMPLE_COPY(VEBody);
   SIMPLE_INITLINKS(VEBody);
@@ -163,7 +163,7 @@ private:
 //		Joints
 
 class VEODE_API VEJoint : public taNBase {
-  // ##CAT_VirtEnv a virtual environment joint, which connects two bodies
+  // ##CAT_VirtEnv ##EXT_vejnt a virtual environment joint, which connects two bodies
 INHERITED(taNBase)
 public:	
   enum JointFlags { // #BITS flags for joints
@@ -185,7 +185,7 @@ public:
   // note this seems to be missing in 0.7:
   //    PR = dJointTypePR,		// rotoide & prismatic
 
-  void*		joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE id of the joint (cast to a dJointID which is dxjoint*)
+  void*		joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the joint (cast to a dJointID which is dxjoint*)
   JointFlags	flags;		// joint flags
   VEBodyRef	body1;		// #SCOPE_VEObject first body in the joint
   VEBodyRef	body2;		// #SCOPE_VEObject second body in the joint
@@ -219,16 +219,16 @@ public:
   { if(on) SetJointFlag(flg); else ClearJointFlag(flg); }
   // set joint flag state according to on bool (if true, set flag, if false, clear it)
 
-  virtual VEWorld* GetWorld();	// get world object (parent of this guy)
-  virtual void*	GetWorldID();	// get world id value
+  virtual VEWorld* GetWorld();	// #CAT_ODE get world object (parent of this guy)
+  virtual void*	GetWorldID();	// #CAT_ODE get world id value
 
-  virtual bool	CreateODE();	// create object in ode (if not already created) -- returns false if unable to create
-  virtual void	DestroyODE();	// destroy object in ode (if created)
-  virtual void	SetValsToODE();	// set the current values to ODE (creates id's if not already done)
-  virtual void	GetValsFmODE();	// get the updated values from ODE after computing
+  virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
+  virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
+  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
+  virtual void	GetValsFmODE();	// #CAT_ODE get the updated values from ODE after computing
 
   virtual void	ApplyForce(float force1, float force2 = 0.0f);
-  // #BUTTON apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
+  // #BUTTON #CAT_Force apply force(s) (or torque(s) as the case may be) to the joint (only good for next time step)
 
   SIMPLE_COPY(VEJoint);
   SIMPLE_INITLINKS(VEJoint);
@@ -252,8 +252,8 @@ class TA_API VEJoint_Group : public taGroup<VEJoint> {
   // ##CAT_VirtEnv a group of virtual environment joints
 INHERITED(taGroup<VEJoint>)
 public:
-  virtual void	SetValsToODE();	// set the current values to ODE
-  virtual void	GetValsFmODE();	// get the updated values from ODE after computing
+  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE
+  virtual void	GetValsFmODE();	// #CAT_ODE get the updated values from ODE after computing
 
   TA_BASEFUNS_NOCOPY(VEJoint_Group);
 private:
@@ -265,19 +265,19 @@ private:
 //	Object: collection of bodies and joints
 
 class VEODE_API VEObject : public taNBase {
-  // ##CAT_VirtEnv a virtual environment object, which contains interconnected bodies and their joints
+  // ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints
 INHERITED(taNBase)
 public:	
   VEBody_Group	bodies;
   VEJoint_Group	joints;
 
-  virtual VEWorld* GetWorld();	// get world object (parent of this guy)
-  virtual void*	GetWorldID();	// get world id value
+  virtual VEWorld* GetWorld();	// #CAT_ODE get world object (parent of this guy)
+  virtual void*	GetWorldID();	// #CAT_ODE get world id value
 
   virtual void	SetValsToODE();
-  // set the current values to ODE (creates id's if not already done)
+  // #CAT_ODE set the current values to ODE (creates id's if not already done)
   virtual void	GetValsFmODE();
-  // get the updated values from ODE after computing
+  // #CAT_ODE get the updated values from ODE after computing
 
   TA_SIMPLE_BASEFUNS(VEObject);
 protected:
@@ -308,7 +308,7 @@ private:
 class T3DataViewFrame;
 
 class VEODE_API VEWorld : public taNBase {
-  // ##CAT_VirtEnv a virtual environment world
+  // ##CAT_VirtEnv ##EXT_vewld a virtual environment world
 INHERITED(taNBase)
 public:	
   enum	StepType {		// which type of stepping function to use
@@ -316,7 +316,7 @@ public:
     QUICK_STEP,
   };
 
-  void*		world_id;	// #READ_ONLY #HIDDEN #NO_SAVE id of the world (cast to a dWorldID which is dxworld*)
+  void*		world_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the world (cast to a dWorldID which is dxworld*)
   StepType	step_type;	// what type of stepping function to use
   float		stepsize;	// how big of a step to take
   int		quick_iters;	// #CONDEDIT_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
@@ -324,15 +324,15 @@ public:
 
   VEObject_Group objects;	// objects in the world
 
-  virtual bool	CreateODE();	// create world in ode (if not already created) -- returns false if unable to create
-  virtual void	DestroyODE();	// destroy world in ode (if created)
+  virtual bool	CreateODE();	// #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
+  virtual void	DestroyODE();	// #CAT_ODE destroy world in ode (if created)
   virtual void	SetValsToODE();
-  // #BUTTON set the current values to ODE (creates id's if not already done)
+  // #BUTTON #CAT_ODE set the current values to ODE (creates id's if not already done)
   virtual void	GetValsFmODE();
-  // get the updated values from ODE after computing (called after each step)
+  // #CAT_ODE get the updated values from ODE after computing (called after each step)
 
   virtual void	Step();		
-  // #BUTTON take one step of integration, and get updated values
+  // #BUTTON #CAT_Run take one step of integration, and get updated values
 
   VEWorldView*	NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)
@@ -465,9 +465,9 @@ protected:
   override void		Render_impl();
 };
 
-class VEODE_API VEWorldView : public T3DataViewPar {
+class VEODE_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer
-INHERITED(T3DataViewPar)
+INHERITED(T3DataViewMain)
 friend class VEWorldViewPanel;
 public:
   static VEWorldView* New(VEWorld* wl, T3DataViewFrame*& fr);
@@ -506,7 +506,7 @@ public:
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const VEWorldView& cp);
-  T3_DATAVIEWFUNS(VEWorldView, T3DataViewPar) // 
+  T3_DATAVIEWFUNS(VEWorldView, T3DataViewMain) // 
 protected:
 #ifndef __MAKETA__
   QPointer<VEWorldViewPanel> m_wvp;
