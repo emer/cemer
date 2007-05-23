@@ -63,7 +63,7 @@ class VEWorldView;
 //		objects (bodies)
 
 class VEODE_API VEBody : public taNBase {
-  // ##CAT_VirtEnv ##SCOPE_VEObject virtual environment body (rigid structural element)
+  // ##CAT_VirtEnv virtual environment body (rigid structural element)
 INHERITED(taNBase)
 public:	
   enum BodyFlags { // #BITS flags for bodies
@@ -147,7 +147,7 @@ private:
 SmartRef_Of(VEBody,TA_VEBody); // VEBodyRef
 
 class TA_API VEBody_Group : public taGroup<VEBody> {
-  // ##CAT_VirtEnv  ##SCOPE_VEObject a group of virtual environment bodies
+  // ##CAT_VirtEnv a group of virtual environment bodies
 INHERITED(taGroup<VEBody>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
@@ -163,7 +163,7 @@ private:
 //		Joints
 
 class VEODE_API VEJoint : public taNBase {
-  // ##CAT_VirtEnv  ##SCOPE_VEObject a virtual environment joint, which connects two bodies
+  // ##CAT_VirtEnv a virtual environment joint, which connects two bodies
 INHERITED(taNBase)
 public:	
   enum JointFlags { // #BITS flags for joints
@@ -187,8 +187,8 @@ public:
 
   void*		joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE id of the joint (cast to a dJointID which is dxjoint*)
   JointFlags	flags;		// joint flags
-  VEBodyRef	body1;		// first body in the joint
-  VEBodyRef	body2;		// second body in the joint
+  VEBodyRef	body1;		// #SCOPE_VEObject first body in the joint
+  VEBodyRef	body2;		// #SCOPE_VEObject second body in the joint
   JointType    	joint_type;	// type of joint
   FloatTDCoord	anchor;  	// anchor location for joint, specified RELATIVE TO BODY1 (note this is different from ODE -- we just add body1's position to this anchor position)
   FloatTDCoord	axis;  		// #CONDEDIT_OFF_joint_type:BALL axis orientation vector
@@ -249,7 +249,7 @@ private:
 SmartRef_Of(VEJoint,TA_VEJoint); // VEJointRef
 
 class TA_API VEJoint_Group : public taGroup<VEJoint> {
-  // ##CAT_VirtEnv  ##SCOPE_VEObject a group of virtual environment joints
+  // ##CAT_VirtEnv a group of virtual environment joints
 INHERITED(taGroup<VEJoint>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
@@ -265,7 +265,7 @@ private:
 //	Object: collection of bodies and joints
 
 class VEODE_API VEObject : public taNBase {
-  // ##CAT_VirtEnv ##SCOPE_VEWorld a virtual environment object, which contains interconnected bodies and their joints
+  // ##CAT_VirtEnv a virtual environment object, which contains interconnected bodies and their joints
 INHERITED(taNBase)
 public:	
   VEBody_Group	bodies;
@@ -290,7 +290,7 @@ private:
 SmartRef_Of(VEObject,TA_VEObject); // VEObjectRef
 
 class TA_API VEObject_Group : public taGroup<VEObject> {
-  // ##CAT_VirtEnv ##SCOPE_VEWorld a group of virtual environment objects
+  // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VEObject>)
 public:
   virtual void	SetValsToODE();	// set the current values to ODE
@@ -412,7 +412,7 @@ class VEWorldView;
 class VEWorldViewPanel;
 
 class VEODE_API VEBodyView: public T3DataView {
-  // ##SCOPE_VEWorldView view of one body
+  // view of one body
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
@@ -438,7 +438,7 @@ protected:
 };
 
 class VEODE_API VEObjectView: public T3DataViewPar {
-  // ##SCOPE_VEWorldView view of one object
+  // view of one object
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:

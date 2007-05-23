@@ -3772,6 +3772,7 @@ taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
     taiData* par, QWidget* gui_parent_, int flags_)
 :inherited(typ_, host, par, gui_parent_, flags_)
 {
+  scope_typ = NULL;
 }
 
 void taiTokenPtrButton::EditDialog() {
@@ -3831,7 +3832,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
   
   for (int i = 0; i < td->tokens.size; ++i) {
     TAPtr btmp = (TAPtr)td->tokens.FastEl(i);
-    if ((bool)scope_ref && !btmp->SameScope(scope_ref))
+    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
@@ -3860,8 +3861,9 @@ int taiTokenPtrButton::columnCount(int view) const {
   }
 }
 
-void taiTokenPtrButton::GetImage(TAPtr ths, TypeDef* targ_typ_, TAPtr scope_) {
+void taiTokenPtrButton::GetImage(TAPtr ths, TypeDef* targ_typ_, TAPtr scope_, TypeDef* scope_type_) {
   scope_ref = scope_;
+  scope_typ = scope_type_;
   inherited::GetImage((void*)ths, targ_typ_);
 }
 

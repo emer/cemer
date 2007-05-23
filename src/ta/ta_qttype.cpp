@@ -1449,9 +1449,14 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
 /*nn    if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
       scope = (TAPtr)(rval->host)->Base(); */
   }
+  TypeDef* scope_type = NULL;
+  String sctyp = mbr->OptionAfter("SCOPE_");
+  if(!sctyp.empty()) {
+    scope_type = taMisc::types.FindName(sctyp);
+  }
     
   taiTokenPtrButton* tpb = (taiTokenPtrButton*)dat;
-  tpb->GetImage(tok_ptr, targ_typ, scope);
+  tpb->GetImage(tok_ptr, targ_typ, scope, scope_type);
   GetOrigVal(dat, base);
 }
 
@@ -2297,12 +2302,17 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
     scope = (TAPtr)(rval->host)->Base();
   else
     scope = (TAPtr)base;
+  TypeDef* scope_type = NULL;
+  String sctyp = GetOptionAfter("SCOPE_");
+  if(!sctyp.empty()) {
+    scope_type = taMisc::types.FindName(sctyp);
+  }
   String nulltxt = GetOptionAfter("NULL_TEXT_");
   if(nulltxt.nonempty()) {
     taMisc::SpaceLabel(nulltxt);
     rval->setNullText(nulltxt);
   }
-  rval->GetImage(*((TAPtr*)arg_base), npt, scope);
+  rval->GetImage(*((TAPtr*)arg_base), npt, scope, scope_type);
 }
 
 void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {

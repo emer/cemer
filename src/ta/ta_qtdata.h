@@ -1180,8 +1180,9 @@ public:
   override int		viewCount() const {return 1;}
   override const String	viewText(int index) const;
 
-  virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL);
-    // get image, using the new type and scope supplied
+  virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
+				 TypeDef* scope_type = NULL);
+  // get image, using the new type and scope params supplied
   virtual taBase*	GetValue() {return token();}
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
@@ -1193,6 +1194,7 @@ public:
     taiData* par, QWidget* gui_parent_, int flags_ = 0);
 protected:
   taSmartRef		scope_ref;	// reference object for scoping, default is none
+  TypeDef*		scope_typ;	// type of scope to use (NULL = default)
   
   const String		itemTag() const {return "Token: ";}
   const String		labelNameNonNull() const;
