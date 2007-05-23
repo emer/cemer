@@ -2,12 +2,11 @@ leabra todo list:
 
 commit:
 
-* new LayerView disp_modes fully functional (output name instead of units, etc)
-
 ------------
 current:
 
 * need output_name per unit_group (e.g., 12ax task, many cases)
+* nuke selectEditMe
 * double tokens listed in token chooser..hmm..
 
 * need hard enum val chooser in std progvar edit!  not sure how best to do that

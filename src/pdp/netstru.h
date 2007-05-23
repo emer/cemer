@@ -1135,6 +1135,8 @@ public:
   XYNGeom	geom;		// #CONDEDIT_ON_unique_geom:true #CAT_Structure geometry of the group: layout and number of units
   bool		units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
 
+  String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+
   int		n_units;	// #READ_ONLY #HIDDEN #NO_SAVE obsolete v3 compatibility: number of units to create in the group; updates v4 values and is reset to 0 if !=0
 
   virtual void	Copy_Weights(const Unit_Group* src);

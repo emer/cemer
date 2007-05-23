@@ -2602,23 +2602,43 @@ void LeabraLayerSpec::Compute_NetinRescale(LeabraLayer* lay, LeabraNetwork* net)
   }
 }
 
-void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
-  if(lay->acts.max_i < 0) {
-    lay->output_name = "n/a";
+void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay, Unit_Group* ug,
+					     LeabraInhib* thr, LeabraNetwork* net) {
+  String* onm;
+  if(lay->unit_groups)
+    onm = &(ug->output_name);
+  else
+    onm = &(lay->output_name);
+
+  if(thr->acts.max_i < 0) {
+    *onm = "n/a";
     return;
   }
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(lay->acts.max_i);
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(thr->acts.max_i);
   if(!u) {
-    lay->output_name = "n/a";
+    *onm = "n/a";
     return;
   }
-  lay->output_name = u->name;	// if it is something..
+  *onm = u->name;	// if it is something..
   // for target/output layers, if we set something, set network name!
-  if(lay->output_name.empty() || 
+  if(u->name.empty() || 
      ((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET))) return;
   if(!net->output_name.empty())
     net->output_name += "_";
-  net->output_name += lay->output_name;
+  net->output_name += u->name;
+}
+
+void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay->units.gp.size > 0) {
+    int g;
+    for(g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      Compute_OutputName_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+    }
+  }
+  else {
+    Compute_OutputName_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+  }
 }
 
 //////////////////////////////////////////

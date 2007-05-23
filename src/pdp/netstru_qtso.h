@@ -289,6 +289,8 @@ public:
   virtual void	UseViewer(T3DataViewMain* viewer);
   // #BUTTON #VIEWMENU replace usual unit view display with display from viewer (only displays frame of layer, and aligns given viewer with layer)
 
+  override bool		hasViewProperties() const { return true; }
+
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
   T3_DATAVIEWFUNS(LayerView, nvDataView)
 protected:
@@ -447,7 +449,7 @@ public:
   override String	GetLabel() const;
   override String	GetName() const;
 
-  override bool		selectEditMe() const { return true; }
+  override bool		hasViewProperties() const { return true; }
 
   override const iColor	bgColor(bool& ok) const;
   override void		InitLinks();

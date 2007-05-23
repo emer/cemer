@@ -650,7 +650,7 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 void T3DataView::FillContextMenu_impl(taiActions* menu) {
   TypeDef* typ = GetTypeDef();
   // put view props first, if any
-//  if (selectEditMe()) {
+  if (hasViewProperties()) {
     for(int i=0;i<typ->methods.size;i++) {
       MethodDef* md = typ->methods[i];
       if(md->im && md->HasOption("VIEWMENU")) {
@@ -660,7 +660,7 @@ void T3DataView::FillContextMenu_impl(taiActions* menu) {
 	}
       }
     }
- // }
+  }
   menu->AddSep();
   IObjectSelectable::FillContextMenu_impl(menu);
 } 
@@ -1149,13 +1149,13 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   if (!t3node) return;
 
   if (ev->is_selected) {
-    if (t3node->selectEditMe()) {
-      if (taMisc::click_style == taMisc::CS_SINGLE) {
-        t3node->ViewProperties();
-        // don't also select or grab focus in this mode
-        return;
-      }
-    }
+//     if (t3node->selectEditMe()) {
+//       if (taMisc::click_style == taMisc::CS_SINGLE) {
+//         t3node->ViewProperties();
+//         // don't also select or grab focus in this mode
+//         return;
+//       }
+//     }
     AddSelectedItem(t3node);
   }
   else {

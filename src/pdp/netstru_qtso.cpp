@@ -993,7 +993,10 @@ void UnitGroupView::UpdateUnitValues_outnm() {
 
   SoAsciiText* txt = (SoAsciiText*)un_txt->getChild(4);
   SoMFString* mfs = &(txt->string);
-  mfs->setValue(lay->output_name.chars());
+  if(lay->unit_groups)
+    mfs->setValue(ugrp->output_name.chars());
+  else
+    mfs->setValue(lay->output_name.chars());
 }
 
 
@@ -1151,7 +1154,7 @@ void LayerView::Render_impl() {
   TDCoord& pos = lay->pos;
   FloatTransform* ft = transform(true);
   ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-		       (float)(pos.z + 0.5f) / nv->max_size.z,
+		       ((float)pos.z + 0.5f) / nv->max_size.z,
 		       (float)-pos.y / nv->max_size.y);
 
   T3LayerNode* node_so = this->node_so(); // cache
@@ -1272,9 +1275,9 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
 
   // translate to layer offset + indent into layer
   SbVec3f trans;
-  trans[0] = ((float)pos.x / nv->max_size.x) + .02f * szx;
-  trans[1] = ((float)(pos.z - 0.25f) / nv->max_size.z);
-  trans[2] = ((float)-pos.y / nv->max_size.y) - .02f * szy;
+  trans[0] = nv->main_xform.scale.x * (((float)pos.x / nv->max_size.x) + .05f * szx);
+  trans[1] = nv->main_xform.scale.y * ((((float)pos.z + 0.5f) / nv->max_size.z));
+  trans[2] = nv->main_xform.scale.z * (((float)-pos.y / nv->max_size.y) - .05f * szy);
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   viewer->main_xform.translate.x += trans[0];
   viewer->main_xform.translate.y += trans[1];

@@ -282,7 +282,7 @@ public:
 
   virtual void		InitFromUserData();
 
-  override bool		selectEditMe() const { return true; }
+  override bool		hasViewProperties() const { return true; }
   override String	GetDisplayName() const;
 
   DATAVIEW_PARENT(GridTableView)
@@ -369,7 +369,7 @@ public:
   override String	GetLabel() const;
   override String	GetName() const;
 
-  override bool		selectEditMe() const { return true; }
+  override bool		hasViewProperties() const { return true; }
   
   const iColor 		bgColor(bool& ok) const {
     ok = true; return colorscale.background;
@@ -578,7 +578,7 @@ public:
   FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
   MinMax		data_range;     // #READ_ONLY actual min and max of data (including fixed range) 
 
-  override bool		selectEditMe() const { return true; }
+  override bool		hasViewProperties() const { return true; }
   override String	GetDisplayName() const;
 
   DATAVIEW_PARENT(GraphTableView)
@@ -655,7 +655,7 @@ public:
 
   virtual void		InitFromUserData();
   // initialize various settings from the user data of the data column
-  override bool		selectEditMe() const { return true; }
+  override bool		hasViewProperties() const { return true; }
 
   void InitLinks();
   void CutLinks();
@@ -897,7 +897,7 @@ public:
   override String	GetLabel() const;
   override String	GetName() const;
 
-  override bool		selectEditMe() const { return true; }
+  override bool		hasViewProperties() const { return true; }
   
   void	InitLinks();
   void 	CutLinks();

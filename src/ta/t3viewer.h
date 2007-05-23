@@ -193,8 +193,7 @@ public:
     // high-level items can optionally supply a bg color, for when they are singles
   virtual bool		hasChildren() const {return false;}
   virtual bool		hasViewProperties() const {return false;}
-    // true if this item has editable view properties, and should be shown
-  virtual bool		selectEditMe() const { return false; }
+  // true if this item has editable view properties, and should be shown
 
   virtual bool		expandable() const {return false;}
   virtual void		setExpandable(bool) {}

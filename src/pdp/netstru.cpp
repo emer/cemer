@@ -2759,6 +2759,7 @@ void Unit_Group::Copy_(const Unit_Group& cp) {
   pos = cp.pos;
   unique_geom = false;
   geom = cp.geom;
+  output_name = cp.output_name;
   n_units = cp.n_units;		// todo: v3compat obs
 }
 
@@ -3206,6 +3207,7 @@ void Layer::Copy_(const Layer& cp) {
   ext_flag = cp.ext_flag;
   m_prv_unit_spec = cp.m_prv_unit_spec;
 
+  output_name = cp.output_name;
   sse = cp.sse;
   icon_value = cp.icon_value;
 
