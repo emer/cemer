@@ -5321,19 +5321,30 @@ iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
   taDataLinkItr itr;
   iTreeViewItem* el;
   FOR_DLC_EL_OF_TYPE(iTreeViewItem, el, link, itr) {
-    if (el->treeWidget() == this) return el;
+    if (el->treeWidget() == this) {
+taMisc::Info("found the iTreeViewItem! (", el->text(0), ") for:", link->GetName(),
+  "of actual type:", el->GetTypeDef()->name); 
+      return el;
+    }
+else taMisc::Info("rejecting an iTreeViewItem: (", el->text(0), ") for:", link->GetName(),
+  "of actual type:", el->GetTypeDef()->name); 
   } 
   if (!super) return NULL; // when we are called by ourself
-  
+taMisc::Info("no iTreeViewItem for:", link->GetName(), "(", link->GetTypeDef()->name, ")"); 
   // failed, so try to assert the owner
   taiDataLink* own_link = link->ownLink();
   if (!own_link) return NULL;
+taMisc::Info("trying for own_link:", own_link->GetName(), "(", own_link->GetTypeDef()->name, ")"); 
   iTreeViewItem* own_el = AssertItem(own_link);
-  if (!own_el) return NULL;
+if (!own_el)
+taMisc::Info("no iTreeViewItem for own_link:", own_link->GetName()); 
+  // note: don't bale if no own_el, because could be a defchild parent
   // then try making sure owner's children asserted
-  if (own_el->lazyChildren()) {
+  if (own_el && own_el->lazyChildren()) {
+taMisc::Info("doing CreateChildren/Expand for own_el:", own_link->GetName()); 
     own_el->CreateChildren();
     own_el->setExpanded(true);
+    taiMisc::ProcessEvents();
   }
   // and try again, but not supercursively of course!
   return AssertItem(link, false);
