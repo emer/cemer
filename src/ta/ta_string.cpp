@@ -121,6 +121,35 @@ int _search(const char* s, int start, int sl, const char* t, int tl) {
   return -1;
 }
 
+int _search_ci(const char* s, int start, int sl, const char* t, int tl) {
+  if (tl < 0) tl =  t ? (int)strlen(t) : 0;
+  if (sl > 0 && tl > 0) {
+    if (start >= 0) {
+      const char* lasts = &(s[sl - tl]);
+      const char* lastt = &(t[tl]);
+      const char* p = &(s[start]);
+
+      while (p <= lasts) {
+        const char* x = p++;
+        const char* y = t;
+        while (tolower(*x++) == tolower(*y++)) 
+          if (y >= lastt) return (int)(--p - s); //safeint
+      }
+    } else {
+      const char* firsts = &(s[tl - 1]);
+      const char* lastt =  &(t[tl - 1]);
+      const char* p = &(s[sl + start + 1]);
+
+      while (--p >= firsts) {
+        const char* x = p;
+        const char* y = lastt;
+        while (tolower(*x--) == tolower(*y--)) if (y < t) return (int)(++x - s); //safeint
+      }
+    }
+  }
+  return -1;
+}
+
 // string compare: first argument is known to be non-null
 
 inline static int ncmp(const char* a, int al, const char* b, int bl)
@@ -303,6 +332,10 @@ int StrRep::search(int start, int sl, const char* t, int tl) const {
   return _search(s, start, sl, t, tl);
 }
 
+int StrRep::search_ci(int start, int sl, const char* t, int tl) const {
+  return _search_ci(s, start, sl, t, tl);
+}
+
 void StrRep::upcase() {//note: should only be called on cnt<=1
   for (uint n = 0; n < len; ++n) {
     if (islower(s[n])) s[n] = toupper(s[n]);
@@ -318,11 +351,15 @@ const String String::con_0("0");
 const String String::con_1("1");
 const String String::con_NULL("NULL");
 
-void trimr_(String& rval, char c) {
-  do {
-    rval.truncate(rval.length() - 1);
-    c = rval.lastchar();
-  } while ((c== ' ') || (c == '\t')); 
+String triml(const String& x) {
+  int n = 0; // count of number to strip
+  while (n < x.length()) {
+    char c = x[n];
+    if (!((c== ' ') || (c == '\t'))) break;
+    ++n;
+  }
+  if (n == 0) return x;
+  return x.right(x.length() - n);
 }
 
 String trimr(const String& x) {
@@ -333,8 +370,15 @@ String trimr(const String& x) {
   
   String rval(x);
   rval.makeUnique();
-  trimr_(rval, c);
+  do {
+    rval.truncate(rval.length() - 1);
+    c = rval.lastchar();
+  } while ((c== ' ') || (c == '\t')); 
   return rval;
+}
+
+String trim(const String& x) {
+  return trimr(triml(x));
 }
 
 void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) { 

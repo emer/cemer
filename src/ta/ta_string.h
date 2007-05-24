@@ -96,6 +96,7 @@ protected:
   void			reverse();	// reverse order of string; only called if cnt<=1
   void			prepend(const char* str, uint slen); // note: slen must be set, and canCat must have been true
   int	      	search(int, int, const char*, int = -1) const;
+  int	      	search_ci(int, int, const char*, int = -1) const;
   int	      	search(int, int, char) const;
   int	      	match(int, int, int, const char*, int = -1) const;
 };
@@ -140,9 +141,9 @@ public:
   friend String     join(const String src[], int n, const String& sep); //
 
 // simple builtin transformations
-//todo  friend String		triml(const String& x); // trims leading spaces
+  friend String		triml(const String& x); // trims leading spaces
   friend String		trimr(const String& x); // trims trailing spaces
-//todo  friend String		trim(const String& x); // trims leadingand trailing  spaces
+  friend String		trim(const String& x); // trims leading and trailing  spaces
   friend inline String	reverse(const String& x);
   friend inline String	upcase(const String& x);
   friend inline String	downcase(const String& x);
@@ -277,10 +278,12 @@ public:
   int			index(const String& y, int startpos = 0) const;
   int			index(const char* t, int startpos = 0) const;
     // return position of target in string or -1 for failure
+  int			index_ci(const String& y, int startpos = 0) const; // ci version
 
   bool			contains(char c) const;
   bool			contains(const String& y) const; 
     // return 'true' if target appears anyhere in String
+  bool			contains_ci(const String& y) const; // ci version
 
   bool			contains(char c, int pos) const;
   bool			contains(const String& y, int pos) const;
@@ -396,6 +399,8 @@ protected:
   int		 	search(int start, int sl, const char* t, int tl = -1) const
   	{return mrep->search(start, sl, t, tl);}
   int		 	search(int start, int sl, char c) const {return mrep->search(start, sl, c);}
+  int		 	search_ci(int start, int sl, const char* t, int tl = -1) const
+  	{return mrep->search_ci(start, sl, t, tl);}
   int		 	match(int start, int sl, int exact, const char* t, int tl = -1) const
   	{return mrep->match(start, sl, exact, t, tl);}
   int		 	_gsub(const char*, int, const char* ,int);
@@ -661,6 +666,11 @@ inline int String::index(const String& y, int startpos) const
   return search(startpos, length(), y.chars(), y.length());
 }
 
+inline int String::index_ci(const String& y, int startpos) const
+{
+  return search_ci(startpos, length(), y.chars(), y.length());
+}
+
 inline bool String::contains(char c) const
 {
   return search(0, length(), c) >= 0;
@@ -674,6 +684,11 @@ inline bool String::contains(const char* t) const
 inline bool String::contains(const String& y) const
 {
   return search(0, length(), y.chars(), y.length()) >= 0;
+}
+
+inline bool String::contains_ci(const String& y) const
+{
+  return search_ci(0, length(), y.chars(), y.length()) >= 0;
 }
 
 inline bool String::contains(char c, int p) const

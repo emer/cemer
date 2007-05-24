@@ -60,7 +60,7 @@ class tabTreeDataNode;
 class tabParTreeDataNode;
 class tabDefChildTreeDataNode;
 class tabListTreeDataNode;
-class tabGroupTreeDataNode;  
+class tabGroupTreeDataNode;
 class iDataPanel;
 class iDataPanelFrame;
 class iListDataPanel;
@@ -175,6 +175,8 @@ public:
   DL_FUNS(tabDataLink); //
 
 protected:
+  static void		SearchStat(taBase* tab, iSearchDialog* sd); // for searching
+  
   tabDataLink(taBase* data_, taDataLink* &link_ref_); //TODO: implementation for non taOBase-derived types
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
     iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
@@ -851,11 +853,6 @@ INHERITED(QMainWindow)
 friend class taDataLink;
 friend class MainWindowViewer;
 public: 
-#ifndef __MAKETA__ 
-  static QPointer<iSearchDialog> search_dialog; // we only allow 1, so user doesn't get confused
-  static void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
-#endif
-
 //nn  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
 
@@ -898,6 +895,7 @@ public:
   taiAction* 		editLinkIntoAction;
   taiAction* 		editUnlinkAction;
   taiAction*		editFindAction;
+  taiAction*		editFindNextAction;
   
   taiAction* 		viewRefreshAction;
   taiAction* 		viewSplitVerticalAction;
@@ -925,6 +923,8 @@ public:
 #ifndef __MAKETA__
   virtual void		AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
+  QPointer<iSearchDialog> search_dialog;
+  void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
 #endif
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
@@ -955,6 +955,7 @@ public slots:
 /*  virtual void editUndo();
   virtual void editRedo();*/
   virtual void 	editFind(); 
+  virtual void 	editFindNext(); 
   virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
   
   virtual void	showMenu_aboutToShow();
@@ -1642,7 +1643,7 @@ private:
 
 class TA_API iTreeViewItem: public iTreeWidgetItem, 
   public virtual IDataLinkClient, public virtual IObjectSelectable {
-  //  ##IGNORE  ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
+  //  ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for Tree and List nodes
 INHERITED(iTreeWidgetItem)
 friend class iTreeView;
 public:
@@ -1931,37 +1932,58 @@ private:
 };
 
 class TA_API iSearchDialog: public QDialog, public IDataLinkClient {
-// ##IGNORE ##NO_CSS ##NO_MEMBERS search a project (or more)
+//   search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT
 public:
 #ifndef __MAKETA__
   enum Roles { // extra roles, for additional data, etc.
-    ObjDataRole = Qt::UserRole + 1,
+    ObjUrlRole = Qt::UserRole + 1, // Url stored in this
 //    ObjCatRole  // for object category string, whether shown or not
   };
 #endif
 
+  enum SearchOptions { // #BITS
+    SO_OBJ_NAME		= 0x0001, // #LABEL_object_name
+    SO_OBJ_DESC		= 0x0002, // #LABEL_object_desc object description (where applicable)
+    SO_MEMB_NAME	= 0x0004, // #LABEL_member_name
+    SO_MEMB_VAL		= 0x0008, // #LABEL_member_value searches in the values of members, especially strings
+#ifndef __MAKETA__
+    SO_DEF_OPTIONS	= SO_OBJ_NAME | SO_OBJ_DESC
+#endif
+  };
+  
+#ifndef __MAKETA__ // needed to allow us to get SearchOptions
+  static const int	col_item = 0;
+  static const int	col_hits = 1;
+  
   static iSearchDialog* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
   
   QVBoxLayout*		layOuter;
+//QHBoxLayout*		  layOptions;
+  taiBitBox*		  bbOptions;
 //QHBoxLayout*		  laySearch;
   QLineEdit*		    search;
   QAbstractButton*	    btnGo;
   QAbstractButton*	    btnStop;
-  QTextBrowser* 	  results; 	// list of result items, as clickable links
+  QTextBrowser* 	  results; 	// list of result items
   QStatusBar*		  status_bar;
   
-  void			setRoot(taiDataLink* root); // set or reset the root used for the search; sets caption and clears
+  int			options() const {return m_options;}
+  void			setRoot(taiDataLink* root); // set or reset the root and window used for the search; sets caption and clears
+  inline const String_PArray& targets() const {return m_targets;} // ref for max speed; only use in search
+  inline const String_PArray& kickers() const {return m_kickers;} // ref for max speed; only use in search
+  
+  void			FindNext(); // really only applicable if already have results
   
   void			Search(); // search, based on search line
 // following are all rendering apis
   void			Start(); // resets everything, and starts new results page
   void			StartSection(const String& sec_name);
   void			EndSection(); // end the current section
-  void			AddItem(const String& headline, const String& href,
-    const String& desc = "");
+  void			AddItem(const String& headline,
+    const String& href, const String& desc, const String& hits); 
   void			End(); // end all and display results
   
 public: // IDataLinkClient interface
@@ -1972,20 +1994,24 @@ public: // IDataLinkClient interface
   override void		DataLinkDestroying(taDataLink* dl);
 
 
-#ifndef __MAKETA__
 protected:
+  int			m_options; // any of the option values
   String		m_caption; // base portion of caption
   String		src;
   int			m_changing;
   bool			m_stop;
+  String_PArray		m_targets;
+  String_PArray		m_kickers;
   
   virtual void		Constr(); 
    // does constr, called in static, so can extend
   void			RootSet(taiDataLink* root); // called when root changes
+  void			ParseSearchString();
 
   iSearchDialog(iMainWindowViewer* par_window_);
   
 protected slots:
+  void			bbOptions_clicked(iBitCheckBox* sender, bool on);
   void			go_clicked();
   void			stop_clicked();
   void			results_anchorClicked(const QUrl& link);
@@ -1993,7 +2019,7 @@ protected slots:
   
 private:
   void 		init(); // called by constructors
-#endif
+#endif // !__MAKETA__
 };
 
 

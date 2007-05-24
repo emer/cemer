@@ -1262,7 +1262,8 @@ if (mta->verbose > 0) {
 	}
 	else {
 	  strm << ",0";
-	  if((ths->parents.size > 1) && (i==0) && !ths->InheritsFromName("ios"))
+	  if((ths->parents.size > 1) && (i==0) && !ths->InheritsFromName("ios") &&
+	    !ths->HasOption("NO_MEMBERS"))
 	    taMisc::Error("warning: type:",ths->name,"has mult inherit but no instance",
 			   "-parent offset cannot be computed!");
 	}
