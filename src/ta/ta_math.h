@@ -982,11 +982,11 @@ public:
   int			mti;	// #READ_ONLY the index into the seed, also needs to be saved
 
   virtual void	 NewSeed();
-  // set the seed to a new random value (based on time and process id)
+  // #BUTTON #CONFIRM set the seed to a new random value (based on time and process id)
   virtual void	 OldSeed();
-  // restore current seed to random num generator
+  // #BUTTON #CONFIRM restore current seed to random num generator
   virtual void	 GetCurrent();
-  // get the current seed in use by the generator
+  // #BUTTON #CONFIRM get the current seed in use by the generator
   virtual void   Init(ulong i);
   // initialize the seed based on given initializer
 
@@ -1007,11 +1007,11 @@ public:
   override taList_impl*	children_() {return &seeds;}	
 
   virtual void	 MakeSeeds(int n_seeds);
-  // #MENU #MENU_ON_Actions #MENU_CONTEXT make set of random seed holder objects of given size
+  // #BUTTON make set of random seed holder objects of given size
   virtual void	 NewSeeds();
-  // #MENU #MENU_CONTEXT get new seeds for all items in the list
+  // #BUTTON #CONFIRM get new seeds for all items in the list (overwrites existing seeds!)
   virtual void	 UseSeed(int idx);
-  // #MENU #MENU_CONTEXT use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
+  // #BUTTON use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)
 
   TA_SIMPLE_BASEFUNS(RndSeed_List);
 private:

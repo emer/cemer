@@ -249,17 +249,27 @@ void ActAvgHebbConSpec::Initialize() {
 void ScalarValSpec::Initialize() {
   rep = LOCALIST;
   un_width = .3f;
+  norm_width = false;
   clamp_pat = false;
   min_sum_act = 0.2f;
   val_mult_lrn = false;
   clip_val = true;
   send_thr = false;
+
   min = val = 0.0f;
   range = incr = 1.0f;
+  un_width_eff = un_width;
+}
+
+void ScalarValSpec::InitRange(float umin, float urng) {
+  min = umin; range = urng;
+  un_width_eff = un_width;
+  if(norm_width)
+    un_width_eff *= range;
 }
 
 void ScalarValSpec::InitVal(float sval, int ugp_size, float umin, float urng) {
-  min = umin; range = urng;
+  InitRange(umin, urng);
   val = sval;
   incr = range / (float)(ugp_size - 2); // skip 1st unit, and count end..
   //  incr -= .000001f;		// round-off tolerance..
@@ -280,7 +290,7 @@ float ScalarValSpec::GetUnitAct(int unit_idx) {
   int eff_idx = unit_idx - 1;
   if(rep == GAUSSIAN) {
     float cur = min + incr * (float)eff_idx;
-    float dist = (cur - val) / un_width;
+    float dist = (cur - val) / un_width_eff;
     return expf(-(dist * dist));
   }
   else if(rep == LOCALIST) {
@@ -322,8 +332,9 @@ void ScalarValLayerSpec::Initialize() {
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
     unit_range.min = -0.5f;   unit_range.max = 1.5f;
     unit_range.UpdateAfterEdit();
-    val_range.min = unit_range.min + (.5f * scalar.un_width);
-    val_range.max = unit_range.max - (.5f * scalar.un_width);
+    scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
+    val_range.min = unit_range.min + (.5f * scalar.un_width_eff);
+    val_range.max = unit_range.max - (.5f * scalar.un_width_eff);
   }
   else if(scalar.rep == ScalarValSpec::LOCALIST) {
     unit_range.min = 0.0f;  unit_range.max = 1.0f;
@@ -347,8 +358,9 @@ void ScalarValLayerSpec::UpdateAfterEdit_impl() {
   unit_range.UpdateAfterEdit();
   scalar.UpdateAfterEdit();
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
-    val_range.min = unit_range.min + (.5f * scalar.un_width);
-    val_range.max = unit_range.max - (.5f * scalar.un_width);
+    scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
+    val_range.min = unit_range.min + (.5f * scalar.un_width_eff);
+    val_range.max = unit_range.max - (.5f * scalar.un_width_eff);
   }
   else {
     val_range.min = unit_range.min;
@@ -923,6 +935,140 @@ void ScalarValSelfPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) 
   }
 }
 
+//////////////////////////////////
+// 	MotorForceLayerSpec	//
+//////////////////////////////////
+
+void MotorForceSpec::Initialize() {
+  pos_width = .2f;
+  vel_width = .2f;
+  norm_width = true;
+  clip_vals = true;
+
+  cur_pos = cur_vel = 0.0f;
+  pos_min = vel_min = 0.0f;
+  pos_range = vel_range = 1.0f;
+
+  pos_width_eff = pos_width;
+  vel_width_eff = vel_width;
+}
+
+void MotorForceSpec::InitRanges(float pos_min_, float pos_range_, float vel_min_, float vel_range_) {
+  pos_min = pos_min_;
+  pos_range = pos_range_;
+  vel_min = vel_min_;
+  vel_range = vel_range_;
+  pos_width_eff = pos_width;
+  vel_width_eff = vel_width;
+  if(norm_width) {
+    pos_width_eff *= pos_range;
+    vel_width_eff *= vel_range;
+  }
+}
+
+void MotorForceSpec::InitVals(float pos, int pos_size, float pos_min_, float pos_range_,
+			      float vel, int vel_size, float vel_min_, float vel_range_) {
+  InitRanges(pos_min_, pos_range_, vel_min_, vel_range_);
+  cur_pos = pos;
+  pos_incr = pos_range / (float)(pos_size-1);
+  cur_vel = vel;
+  vel_incr = vel_range / (float)(vel_size-1);
+}
+
+float MotorForceSpec::GetWt(int pos_gp_idx, int vel_gp_idx) {
+  float ug_pos = pos_min + pos_incr * (float)pos_gp_idx;
+  float pos_dist = (ug_pos - cur_pos) / pos_width_eff;
+  float ug_vel = vel_min + vel_incr * (float)vel_gp_idx;
+  float vel_dist = (ug_vel - cur_vel) / vel_width_eff;
+  return expf(-(pos_dist * pos_dist + vel_dist * vel_dist));
+}
+
+void MotorForceLayerSpec::Initialize() {
+  pos_range.min = 0.0f;
+  pos_range.max = 2.0f;
+  vel_range.min = -.1f;
+  vel_range.max = .1f;
+  add_noise = true;
+  force_noise.type = Random::GAUSSIAN;
+  force_noise.var = .01f;
+}
+
+void MotorForceLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  pos_range.UpdateAfterEdit();
+  vel_range.UpdateAfterEdit();
+  force_noise.UpdateAfterEdit();
+}
+
+bool MotorForceLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  bool rval = inherited::CheckConfig_Layer(lay, quiet);
+  if(!rval) return rval;
+  
+  if(CheckError(!lay->unit_groups, quiet, rval,
+		"requires unit groups -- I just set it for you")) {
+    lay->unit_groups = true;
+  }
+  if(CheckError(lay->gp_geom.x < 3, quiet, rval,
+		"requires at least 3 unit groups in x axis -- I just set it for you")) {
+    lay->gp_geom.x = 5;
+  }
+  if(CheckError(lay->gp_geom.y < 3, quiet, rval,
+		"requires at least 3 unit groups in y axis -- I just set it for you")) {
+    lay->gp_geom.y = 5;
+  }
+  return rval;
+}
+
+float MotorForceLayerSpec::ReadForce(LeabraLayer* lay, LeabraNetwork* net, float pos, float vel) {
+  if(motor_force.clip_vals) {
+    pos = pos_range.Clip(pos);
+    vel = vel_range.Clip(vel);
+  }
+  motor_force.InitVals(pos, lay->gp_geom.x, pos_range.min, pos_range.range,
+		       vel, lay->gp_geom.y, vel_range.min, vel_range.range);
+
+  float force = 0.0f;
+  float wt_sum = 0.0f;
+  for(int y=0; y<lay->gp_geom.y; y++) {
+    for(int x=0; x<lay->gp_geom.x; x++) {
+      float wt = motor_force.GetWt(x,y);
+      Unit_Group* ug = lay->FindUnitGpFmCoord(x, y);
+      if(!ug || ug->size == 0) continue;
+      LeabraUnit* un0 = (LeabraUnit*)ug->FastEl(0);
+      force += wt * un0->act_eq;
+      wt_sum += wt;
+    }
+  }
+  if(wt_sum > 0.0f)
+    force /= wt_sum;
+  if(add_noise)
+    force += force_noise.Gen();
+  return force;
+}
+
+void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float force, float pos, float vel) {
+  if(motor_force.clip_vals) {
+    pos = pos_range.Clip(pos);
+    vel = vel_range.Clip(vel);
+  }
+  motor_force.InitVals(pos, lay->gp_geom.x, pos_range.min, pos_range.range,
+		       vel, lay->gp_geom.y, vel_range.min, vel_range.range);
+
+  for(int y=0; y<lay->gp_geom.y; y++) {
+    for(int x=0; x<lay->gp_geom.x; x++) {
+      float wt = motor_force.GetWt(x,y);
+      Unit_Group* ug = lay->FindUnitGpFmCoord(x, y);
+      if(!ug || ug->size == 0) continue;
+      LeabraUnit* un0 = (LeabraUnit*)ug->FastEl(0);
+      un0->ext = force;
+      ClampValue(ug, net, wt);
+    }
+  }
+  lay->SetExtFlag(Unit::EXT);
+  lay->hard_clamped = clamp.hard;
+  HardClampExt(lay, net);
+  scalar.clamp_pat = true;	// must have this to keep this clamped val
+}
 
 //////////////////////////////////
 // 	TwoD Value Layer	//
@@ -932,17 +1078,31 @@ void TwoDValSpec::Initialize() {
   rep = GAUSSIAN;
   n_vals = 1;
   un_width = .3f;
+  norm_width = false;
   clamp_pat = false;
   min_sum_act = 0.2f;
   mn_dst = 0.5f;
+  clip_val = true;
+
   x_min = x_val = y_min = y_val = 0.0f;
   x_range = x_incr = y_range = y_incr = 1.0f;
   x_size = y_size = 1;
-  clip_val = true;
+  un_width_x = un_width_y = un_width;
+}
+
+void TwoDValSpec::InitRange(float xmin, float xrng, float ymin, float yrng) {
+  x_min = xmin; x_range = xrng; y_min = ymin; y_range = yrng;
+  un_width_x = un_width;
+  un_width_y = un_width;
+  if(norm_width) {
+    un_width_x *= x_range;
+    un_width_y *= y_range;
+  }
 }
 
 void TwoDValSpec::InitVal(float xval, float yval, int xsize, int ysize, float xmin, float xrng, float ymin, float yrng) {
-  x_min = xmin; x_range = xrng; y_min = ymin; y_range = yrng; x_val = xval; y_val = yval;
+  InitRange(xmin, xrng, ymin, yrng);
+  x_val = xval; y_val = yval;
   x_size = xsize; y_size = ysize;
   x_incr = x_range / (float)(x_size - 1); // DON'T skip 1st row, and count end..
   y_incr = y_range / (float)(y_size - 2); // skip 1st row, and count end..
@@ -954,9 +1114,9 @@ float TwoDValSpec::GetUnitAct(int unit_idx) {
   int y_idx = (unit_idx / x_size) - 1; // get rid of first row..
   if(rep == GAUSSIAN) {
     float x_cur = x_min + x_incr * (float)x_idx;
-    float x_dist = (x_cur - x_val) / un_width;
+    float x_dist = (x_cur - x_val) / un_width_x;
     float y_cur = y_min + y_incr * (float)y_idx;
-    float y_dist = (y_cur - y_val) / un_width;
+    float y_dist = (y_cur - y_val) / un_width_y;
     float dist = x_dist * x_dist + y_dist * y_dist;
     return expf(-dist);
   }
@@ -1004,8 +1164,11 @@ void TwoDValLayerSpec::Initialize() {
   if(twod.rep == TwoDValSpec::GAUSSIAN) {
     x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit();
     y_range.min = -0.5f;   y_range.max = 1.5f; y_range.UpdateAfterEdit();
-    x_val_range.min = x_range.min + (.5f * twod.un_width); x_val_range.max = x_range.max - (.5f * twod.un_width);
-    y_val_range.min = y_range.min + (.5f * twod.un_width); y_val_range.max = y_range.max - (.5f * twod.un_width);
+    twod.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
+    x_val_range.min = x_range.min + (.5f * twod.un_width_x);
+    x_val_range.max = x_range.max - (.5f * twod.un_width_x);
+    y_val_range.min = y_range.min + (.5f * twod.un_width_y);
+    y_val_range.max = y_range.max - (.5f * twod.un_width_y);
   }
   else if(twod.rep == TwoDValSpec::LOCALIST) {
     x_range.min = 0.0f;  x_range.max = 1.0f;  x_range.UpdateAfterEdit();
@@ -1031,10 +1194,11 @@ void TwoDValLayerSpec::UpdateAfterEdit_impl() {
   x_range.UpdateAfterEdit(); y_range.UpdateAfterEdit();
   twod.UpdateAfterEdit();
   if(twod.rep == TwoDValSpec::GAUSSIAN) {
-    x_val_range.min = x_range.min + (.5f * twod.un_width);
-    y_val_range.min = y_range.min + (.5f * twod.un_width);
-    x_val_range.max = x_range.max - (.5f * twod.un_width);
-    y_val_range.max = y_range.max - (.5f * twod.un_width);
+    twod.InitRange(x_range.min, x_range.range, y_range.min, y_range.range);
+    x_val_range.min = x_range.min + (.5f * twod.un_width_x);
+    y_val_range.min = y_range.min + (.5f * twod.un_width_y);
+    x_val_range.max = x_range.max - (.5f * twod.un_width_x);
+    y_val_range.max = y_range.max - (.5f * twod.un_width_y);
   }
   else {
     x_val_range.min = x_range.min;    y_val_range.min = y_range.min;
@@ -1413,8 +1577,8 @@ void TwoDValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
       sort_ary.Add(vi);
     }
     sort_ary.Sort();
-    float mn_x = twod.mn_dst * twod.un_width * x_range.Range();
-    float mn_y = twod.mn_dst * twod.un_width * y_range.Range();
+    float mn_x = twod.mn_dst * twod.un_width_x * x_range.Range();
+    float mn_y = twod.mn_dst * twod.un_width_y * y_range.Range();
     float mn_dist = mn_x * mn_x + mn_y * mn_y;
     int outi = 0;  int j = 0;
     while((outi < twod.n_vals) && (j < sort_ary.size)) {

@@ -210,6 +210,8 @@ bool VEJoint::CreateODE() {
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create joint!"))
     return false;
+  if(joint_id)
+    DestroyODE();
   switch(joint_type) {
   case BALL:
     joint_id = (dJointID)dJointCreateBall(wid, 0);
@@ -243,7 +245,7 @@ void VEJoint::DestroyODE() {
 }
 
 void VEJoint::SetValsToODE() {
-  if(!joint_id) CreateODE();
+  if(!joint_id || joint_type != set_type) CreateODE();
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
 

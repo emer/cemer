@@ -524,18 +524,22 @@ public:
   };
 
   RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
-  float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in min-max units)
+  float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)
+  bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
   bool		val_mult_lrn;	// #DEF_false for learning, effectively multiply the learning rate by the minus-plus phase difference in overall represented value (i.e., if overall value is the same, no learning takes place)
-  bool		clip_val;	// #DEF_true ensure that value remains within specified range
-  bool		send_thr;	// #DEF_false use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)
+  bool		clip_val;	// ensure that value remains within specified range
+  bool		send_thr;	// use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)
 
   float		min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
   float		range;		// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values
   float		val;		// #READ_ONLY #NO_SAVE #NO_INHERIT current val being represented (implementational, computed in InitVal())
   float		incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
+  float		un_width_eff;	// #READ_ONLY #NO_SAVE #NO_INHERIT effective unit range
 
+  virtual void	InitRange(float umin, float urng);
+  // initialize range values (also sets un_width_eff)
   virtual void	InitVal(float sval, int ugp_size, float umin, float urng);
   // initialize implementational values for subsequently computing GetUnitAct to represent scalar val sval over unit group of ugp_size
   virtual float	GetUnitAct(int unit_idx);
@@ -545,8 +549,7 @@ public:
 
   void	Initialize();
   void 	Destroy()	{ };
-  SIMPLE_COPY(ScalarValSpec);
-  TA_BASEFUNS(ScalarValSpec);
+  TA_SIMPLE_BASEFUNS(ScalarValSpec);
 };
 
 class LEABRA_API ScalarValBias : public taBase {
@@ -593,29 +596,29 @@ public:
   MinMaxRange	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
   virtual void	ClampValue(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
-  // clamp value in the first unit's ext field to the units in the group
+  // #CAT_ScalarVal clamp value in the first unit's ext field to the units in the group
   virtual float	ClampAvgAct(int ugp_size);
-  // computes the average activation for a clamped unit pattern (for computing rescaling)
+  // #CAT_ScalarVal computes the average activation for a clamped unit pattern (for computing rescaling)
   virtual float	ReadValue(Unit_Group* ugp, LeabraNetwork* net);
-  // read out current value represented by activations in layer
+  // #CAT_ScalarVal read out current value represented by activations in layer
   virtual void	ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
-  // reset activation of first unit(s) after hard clamping
+  // #CAT_ScalarVal reset activation of first unit(s) after hard clamping
   virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
-  // hard clamp current ext values (on all units, after ClampValue called) to all the units
+  // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units
 
   virtual void	LabelUnits_impl(Unit_Group* ugp);
-  // label units with their underlying values
+  // #CAT_ScalarVal label units with their underlying values
   virtual void	LabelUnits(LeabraLayer* lay);
-  // #BUTTON label units in given layer with their underlying values
+  // #BUTTON #CAT_ScalarVal label units in given layer with their underlying values
   virtual void	LabelUnitsNet(Network* net);
-  // #BUTTON label all layers in given network using this spec
+  // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
 
   virtual void	Compute_WtBias_Val(Unit_Group* ugp, float val);
   virtual void	Compute_UnBias_Val(Unit_Group* ugp, float val);
   virtual void	Compute_UnBias_NegSlp(Unit_Group* ugp);
   virtual void	Compute_UnBias_PosSlp(Unit_Group* ugp);
   virtual void	Compute_BiasVal(LeabraLayer* lay);
-  // initialize the bias value 
+  // #CAT_ScalarVal initialize the bias value 
 
   void 	Init_Weights(LeabraLayer* lay);
   void	Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net);
@@ -636,7 +639,7 @@ public:
 			     bool unit_avg = false, bool sqrt = false);
 
   virtual void	ReConfig(Network* net, int n_units = -1);
-  // #BUTTON reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
+  // #BUTTON #CAT_ScalarVal reconfigure layer and associated specs for current scalar.rep type; if n_units > 0, changes number of units in layer to specified value
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -669,6 +672,64 @@ public:
   TA_BASEFUNS(ScalarValSelfPrjnSpec);
 };
 
+class LEABRA_API MotorForceSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
+  INHERITED(taBase)
+public:
+  float		pos_width;	// sigma parameter of a gaussian specifying the tuning width of the coarse-coded integration over position (in pos_range or normalized units, depending on norm_width)
+  float		vel_width;	// sigma parameter of a gaussian specifying the tuning width of the coarse-coded integration over velocity (in vel_range or normalized units, depending on norm_width)
+  bool		norm_width;	// #DEF_true if true, use normalized 0-1 width parameters instead of raw parameters
+  bool		clip_vals;	// #DEF_true clip the pos and velocity values within their ranges, for purposes of computing values
+
+  float		cur_pos;	// #READ_ONLY #NO_SAVE #NO_INHERIT current pos val
+  float		cur_vel;	// #READ_ONLY #NO_SAVE #NO_INHERIT current vel val
+  float		pos_min;	// #READ_ONLY #NO_SAVE #NO_INHERIT current pos min
+  float		vel_min;	// #READ_ONLY #NO_SAVE #NO_INHERIT current vel min
+  float		pos_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT current pos range
+  float		vel_range;	// #READ_ONLY #NO_SAVE #NO_INHERIT current vel range
+  float		pos_incr;	// #READ_ONLY #NO_SAVE #NO_INHERIT current pos increment
+  float		vel_incr;	// #READ_ONLY #NO_SAVE #NO_INHERIT current vel increment
+  float		pos_width_eff;	// #READ_ONLY #NO_SAVE #NO_INHERIT effective position width
+  float		vel_width_eff;	// #READ_ONLY #NO_SAVE #NO_INHERIT effective velocity width
+
+  virtual void	InitRanges(float pos_min, float pos_range, float vel_min, float vel_range);
+  // #CAT_MotorForce initialize range parameters
+  virtual void	InitVals(float pos, int pos_size, float pos_min, float pos_range, 
+			float vel, int vel_size, float vel_min, float vel_range);
+  // #CAT_MotorForce intiailize value and range parameters for subsequent calls
+  virtual float	GetWt(int pos_gp_idx, int vel_gp_idx);
+  // #CAT_MotorForce get weighting factor for position & velocity group at given indexes: MUST CALL InitVal first!
+
+  void	Initialize();
+  void 	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(MotorForceSpec);
+};
+
+class LEABRA_API MotorForceLayerSpec : public ScalarValLayerSpec {
+  // represents motor force as a function of joint position and velocity using scalar val layer spec: layer uses unit groups -- each group represents a force (typically localist), and groups are organized in X axis by position, Y axis by velocity.  Overall value is weighted average from neighboring unit groups
+  INHERITED(ScalarValLayerSpec)
+public:
+  MotorForceSpec motor_force;   // misc specs for motor force representation
+  MinMaxRange	 pos_range;	// range of position values encoded over the X axis of unit groups in the layer
+  MinMaxRange	 vel_range;	// range of velocity values encoded over the Y axis of unit groups in the layer
+  bool		 add_noise;	// add some noise after computing value from layer
+  Random	 force_noise;	// #CONDEDIT_ON_add_noise parameters for random added noise to forces
+
+  virtual float	ReadForce(LeabraLayer* lay, LeabraNetwork* net, float pos, float vel);
+  // #CAT_MotorForce read the force value from the layer, as a gaussian weighted average over units near the current position and velocity values
+  virtual void	ClampForce(LeabraLayer* lay, LeabraNetwork* net, float force, float pos, float vel);
+  // #CAT_MotorForce clamp the force value to the layer, as a gaussian weighted average over units near the current position and velocity values
+  
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(MotorForceLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
 
 //////////////////////////////////
 // 	TwoD Value Layer	//
@@ -685,7 +746,8 @@ public:
 
   RepType	rep;		// #APPLY_IMMED type of representation of scalar value to use
   int		n_vals;		// number of values to represent in layer: layer geom.x must be >= 2 * n_vals because vals are represented in first row of layer!
-  float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in min-max units)
+  float		un_width;	// #CONDEDIT_ON_rep:GAUSSIAN sigma parameter of a gaussian specifying the tuning width of the coarse-coded units (in unit_range min-max units, unless norm_width is true, meaning use normalized 0-1 proportion of unit range)
+  bool		norm_width;	// un_width is specified in normalized 0-1 proportion of unit range
   bool		clamp_pat;	// #DEF_false if true, environment provides full set of values to clamp over entire layer (instead of providing single scalar value to clamp on 1st unit, which then generates a corresponding distributed pattern)
   float		min_sum_act;	// #DEF_0.2 minimum total activity of all the units representing a value: when computing weighted average value, this is used as a minimum for the sum that you divide by
   float		mn_dst;		// #DEF_0.5 minimum distance factor for reading out multiple bumps: must be at least this times un_width far away from other bumps
@@ -701,7 +763,11 @@ public:
   float		y_incr;		// #READ_ONLY #NO_SAVE #NO_INHERIT increment per unit (implementational, computed in InitVal())
   int		x_size;		// #READ_ONLY #NO_SAVE #NO_INHERIT size of axis
   int		y_size;		// #READ_ONLY #NO_SAVE #NO_INHERIT size of axis
+  float		un_width_x;	// #READ_ONLY #NO_SAVE #NO_INHERIT unit width, x axis (use for all computations -- can be normalized)
+  float		un_width_y;	// #READ_ONLY #NO_SAVE #NO_INHERIT unit width, y axis (use for all computations -- can be normalized)
 
+  virtual void	InitRange(float xmin, float xrng, float ymin, float yrng);
+  // initialize range values, including normalized unit width values per axis
   virtual void	InitVal(float xval, float yval, int xsize, int ysize, float xmin, float xrng, float ymin, float yrng);
   // initialize implementational values for subsequently computing GetUnitAct to represent scalar val sval over unit group of ugp_size
   virtual float	GetUnitAct(int unit_idx);
