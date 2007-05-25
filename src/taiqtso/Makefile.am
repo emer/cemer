@@ -27,6 +27,7 @@ HEADS =\
 	qconsole.h \
 	ibutton.h \
 	iscrollarea.h \
+	itextbrowswer.h \
 	test_iflowbox.h \
 	test_iflowlayout.h \
 	test_simplewidgets.h \
@@ -67,6 +68,8 @@ SRCS =\
 	ibutton.moc.cpp \
 	iscrollarea.cpp \
 	iscrollarea.moc.cpp \
+	itextbrowser.cpp \
+	itextbrowser.moc.cpp \
 	taiqtso_ti.cpp
 
 include $(top_srcdir)/Moc.am

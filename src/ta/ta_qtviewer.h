@@ -20,6 +20,7 @@
 
 #include "ta_viewer.h"
 #include "ta_qtdata.h"
+#include "ta_datatable.h"
 
 
 #ifndef __MAKETA__
@@ -175,7 +176,7 @@ public:
   DL_FUNS(tabDataLink); //
 
 protected:
-  static void		SearchStat(taBase* tab, iSearchDialog* sd); // for searching
+  static void		SearchStat(taBase* tab, iSearchDialog* sd, int level = 0); // for searching
   
   tabDataLink(taBase* data_, taDataLink* &link_ref_); //TODO: implementation for non taOBase-derived types
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
@@ -475,6 +476,7 @@ public:
     // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
   virtual bool 		hasMultiSelect() const = 0; // true if supports multi select
   SelectableHostHelper* helperObj() const {return helper;} // for attaching slots
+  iMainWindowViewer*	mainWindow() const; // returns main window we are embedded in
   virtual bool		selectionChanging() {return (m_sel_chg_cnt != 0);}
     // you can use this to escape from sundry gui notifies to yourself (to avoid recursion)
   virtual ISelectable_PtrList&	selItems() {return sel_items;} // currently selected items
@@ -1578,7 +1580,7 @@ signals:
 #endif
   
 public slots:
-  virtual void		mnuNewBrowser(taiAction* mel); // called from context 'New Browse from here'; cast obj to taiTreeDataNode*
+  void			mnuFindFromHere(taiAction* mel); // called from context 'Find from here'; cast obj to iTreeViewItem*
   void			ExpandDefault(); 
     // expand to the default level specified for this tree, or invokes CustomExpand if set 
   void			ExpandAll(int max_levels = 6); 
@@ -1715,8 +1717,8 @@ public: // ISelectable interface
 //  override int		GetEditActions(taiMimeSource* ms) const; // simpler version uses Query
 protected:
 //  override int		EditAction_impl(taiMimeSource* ms, int ea);
-//  override void		FillContextMenu_EditItems_impl(taiMenu* menu, int allowed);
-//  override void		FillContextMenu_impl(taiMenu* menu); // this is the one to extend in inherited classes
+//  override void		FillContextMenu_EditItems_impl(taiActions* menu, int allowed);
+  override void		FillContextMenu_impl(taiActions* menu); // this is the one to extend in inherited classes
   override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;  // OR's in allowed; OR's in forbidden
 
 protected:
@@ -1783,7 +1785,6 @@ protected:
   taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
   taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
   override void 	CreateChildren_impl();
-  override void		FillContextMenu_impl(taiActions* menu);
 private:
   static int		no_idx; // dummy parameter
   void			init(taiDataLink* link_, int dn_flags_); // #IGNORE
@@ -1954,8 +1955,18 @@ public:
   };
   
 #ifndef __MAKETA__ // needed to allow us to get SearchOptions
-  static const int	col_item = 0;
-  static const int	col_hits = 1;
+  static const int	col_row = 0; // note: cols must be created in this order!
+  static const int	col_level = 1;
+  static const int	col_headline = 2;
+  static const int	col_href = 3;
+  static const int	col_desc = 4;
+  static const int	col_hits = 5;
+  static const int	col_relev = 6;
+  static const int	num_cols = col_relev + 1;
+  
+//static const int	num_vis_cols = 3;
+//static const char*	vis_col_names[] = {"nest", "item", "hits"};
+  
   
   static iSearchDialog* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
@@ -1967,23 +1978,27 @@ public:
   QLineEdit*		    search;
   QAbstractButton*	    btnGo;
   QAbstractButton*	    btnStop;
-  QTextBrowser* 	  results; 	// list of result items
+  iTextBrowser* 	  results; 	// list of result items
   QStatusBar*		  status_bar;
   
   int			options() const {return m_options;}
   void			setRoot(taiDataLink* root); // set or reset the root and window used for the search; sets caption and clears
+  bool			stop() const; // allow event loop, then check stop
+  bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
   inline const String_PArray& targets() const {return m_targets;} // ref for max speed; only use in search
   inline const String_PArray& kickers() const {return m_kickers;} // ref for max speed; only use in search
   
   void			FindNext(); // really only applicable if already have results
   
+  void			Reset(); // clears items and window, esp for when link detaches
   void			Search(); // search, based on search line
 // following are all rendering apis
   void			Start(); // resets everything, and starts new results page
   void			StartSection(const String& sec_name);
   void			EndSection(); // end the current section
   void			AddItem(const String& headline,
-    const String& href, const String& desc, const String& hits); 
+    const String& href, const String& desc, const String& hits,
+    int level = 0, int relev = 0); 
   void			End(); // end all and display results
   
 public: // IDataLinkClient interface
@@ -1995,6 +2010,8 @@ public: // IDataLinkClient interface
 
 
 protected:
+  static const int	num_sorts = 3;
+  
   int			m_options; // any of the option values
   String		m_caption; // base portion of caption
   String		src;
@@ -2002,20 +2019,25 @@ protected:
   bool			m_stop;
   String_PArray		m_targets;
   String_PArray		m_kickers;
+  DataTable		m_items;
+  int			m_row; // row num, for baking into results table
+  int			m_sorts[num_sorts];
   
   virtual void		Constr(); 
    // does constr, called in static, so can extend
   void			RootSet(taiDataLink* root); // called when root changes
   void			ParseSearchString();
+  void			Render();
+  void 			RenderItem(int level, const String& headline,
+    const String& href, const String& desc, const String& hits);
 
   iSearchDialog(iMainWindowViewer* par_window_);
   
 protected slots:
-  void			bbOptions_clicked(iBitCheckBox* sender, bool on);
   void			go_clicked();
   void			stop_clicked();
-  void			results_anchorClicked(const QUrl& link);
-  void			parWin_destroyed();
+  void			results_setSourceRequest(iTextBrowser* src,
+    const QUrl& url, bool& cancel);
   
 private:
   void 		init(); // called by constructors

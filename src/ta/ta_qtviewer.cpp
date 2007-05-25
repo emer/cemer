@@ -35,6 +35,7 @@
 #include <qapplication.h>
 #include <qbuttongroup.h>
 #include <qclipboard.h>
+#include <QDesktopServices>
 #include <qdialog.h>
 #include <qevent.h>
 #include <QButtonGroup>
@@ -58,6 +59,8 @@
 #include <qvariant.h>
 #include <QVBoxLayout>
 #include <qwhatsthis.h>
+
+#include "itextbrowser.h"
 
 using namespace Qt;
 
@@ -701,7 +704,6 @@ taiTreeDataNode* taiDataLink::CreateTreeDataNode(MemberDef* md, taiTreeDataNode*
   return rval;
 }
 
-
 void taiDataLink::FillContextMenu(taiActions* menu) {
   FillContextMenu_impl(menu);
 }
@@ -993,7 +995,8 @@ void AddHit(int item_type, const String& probedx, String& hits)
   hits += probedx;
 }
 
-void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd) {
+void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
+  if (sd->stop()) return; // user hit stop
   const String_PArray& targs = sd->targets();
   const String_PArray& kicks = sd->kickers();
   String probed;
@@ -1017,7 +1020,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd) {
   }
   
   TypeDef* td = tab->GetTypeDef();
-  // MEMB NAME
+  // MEMB NAME (note: NO_SEARCH not applicable to name search)
   item_type = iSearchDialog::SO_MEMB_NAME;
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
@@ -1039,6 +1042,8 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
       if (!md->ShowMember()) continue;
+      if (md->is_static) continue;
+      if (md->HasOption("NO_SEARCH")) continue;
       if (md->type->ptr == 0) {
         // a list or greater is never a "value"
         if (md->type->InheritsFrom(TA_taList_impl)) continue;
@@ -1058,22 +1063,25 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd) {
   }
   // end of this guy, so if he hit, then output
   if (n > 0) {
-  String headline = tab->GetColText(taBase::key_disp_name) +
-      " (" + tab->GetTypeDef()->name + ")";
-  String href = "pdp:" + tab->GetPath();
-  String desc = tab->GetColText(taBase::key_desc);
-  sd->AddItem(headline, href, desc, hits);
+    String headline = tab->GetColText(taBase::key_disp_name) +
+        " (" + tab->GetTypeDef()->name + ")";
+    String href = "pdp:" + tab->GetPath();
+    String desc = tab->GetColText(taBase::key_desc);
+    sd->AddItem(headline, href, desc, hits, level);
   }
    
   
   // browsable taBase members
   // second pass: recurse
-  for(int m=0;m<td->members.size;m++) {
+  for(int m=0; m<td->members.size;m++) {
+    if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
     taList_impl* tal = NULL;
     if (!md->type->InheritsFrom(TA_taList_impl)) continue;
     if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
           TypeItem::SC_ANY)) continue;
+    if (md->is_static) continue;
+    if (md->HasOption("NO_SEARCH")) continue;
     // baked-in lists
     if(md->type->ptr == 0) {
 	tal = static_cast<taList_impl*>(md->GetOff(tab));
@@ -1083,27 +1091,29 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd) {
       if (tal->GetOwner() != tab) continue;
     }
     if (tal) 
-      tabDataLink::SearchStat(tal, sd);
+      tabDataLink::SearchStat(tal, sd, level+1);
   }
   
   // only for Lists:
   if (td->InheritsFrom(&TA_taList_impl)) {
     taList_impl* tal = static_cast<taList_impl*>(tab);
     for(int i=0; i<tal->size; i++) {
+      if (sd->stop()) return; // user hit stop
       taBase* itm = (taBase*)tal->FastEl_(i);
       if(!itm) continue;
        // for guys we own (not links; prevents loops)
       if (itm->GetOwner() != tab) continue;
-      tabDataLink::SearchStat(itm, sd);
+      tabDataLink::SearchStat(itm, sd, level+1);
     }
     
     // only for Groups:
     if (td->InheritsFrom(&TA_taGroup_impl)) {
       taGroup_impl* tag = static_cast<taGroup_impl*>(tab);
       for(int i=0; i < tag->gp.size; i++) {
+        if (sd->stop()) return; // user hit stop
         taGroup_impl* gp = tag->gp.FastEl(i);
         if(!gp) continue;
-        tabDataLink::SearchStat(gp, sd);
+        tabDataLink::SearchStat(gp, sd, level+1);
       }
     }
   }  
@@ -2339,6 +2349,15 @@ void ISelectableHost::DoDynAction(int idx) {
 */
 
 }
+
+iMainWindowViewer* ISelectableHost::mainWindow() const {
+  QWidget* wid = const_cast<ISelectableHost*>(this)->widget();
+  iMainWindowViewer* rval = NULL;
+  while (wid && !(rval = qobject_cast<iMainWindowViewer*>(wid)))
+    wid = wid->parentWidget();
+  return rval;
+}
+
 
 bool ISelectableHost::RemoveSelectedItem(ISelectable* item,  bool forced) {
   bool rval = sel_items.RemoveEl(item); // use raw list, because we are building
@@ -5682,16 +5701,12 @@ QStringList iTreeView::mimeTypes () const {
   return rval;
 }
 
-void iTreeView::mnuNewBrowser(taiAction* mel) {
-  taiTreeDataNode* node = (taiTreeDataNode*)(mel->usr_data.toPtr());
+void iTreeView::mnuFindFromHere(taiAction* mel) {
+  iMainWindowViewer* imw = mainWindow();
+  if (!imw) return;
+  iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
   taiDataLink* dl = node->link();
-  TypeDef* td = dl->GetDataTypeDef();
-  //TODO: browse system should be fully typesafe and support all types, so this should work
-  // for any type, not just taBase
-  if (!td->InheritsFrom(&TA_taBase)) return;
-  MainWindowViewer* brows = MainWindowViewer::NewBrowser((taBase*)dl->data(), node->md());
-  if (!brows) return;
-  brows->ViewWindow();
+  imw->Find(dl);
 }
 
 bool iTreeView::useCustomExpand() const {
@@ -6116,6 +6131,13 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden) const 
   IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden);
 }
 
+void iTreeViewItem::FillContextMenu_impl(taiActions* menu) {
+  //taiAction* mel =
+  menu->AddItem("Find from here...", taiMenu::use_default,
+    taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
+  IObjectSelectable::FillContextMenu_impl(menu);
+}
+
 ISelectableHost* iTreeViewItem::host() const {
   iTreeView* tv = treeView();
   return (tv) ? (ISelectableHost*)tv : NULL;
@@ -6282,15 +6304,6 @@ void taiTreeDataNode::CreateChildren_impl() {
     }
   }
   last_member_node = last_child_node; //note: will be NULL if no members issued
-}
-
-void taiTreeDataNode::FillContextMenu_impl(taiActions* menu) {
-/*obs, nuke, superceded by taBase::BrowseMe  if (dn_flags & DNF_CAN_BROWSE) {
-     //taiAction* mel =
-     menu->AddItem("New Browser from here", taiMenu::use_default,
-       taiAction::men_act, treeView(), SLOT(mnuNewBrowser(taiAction*)), this);
-  } */
-  inherited::FillContextMenu_impl(menu);
 }
 
 taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
@@ -6749,8 +6762,6 @@ iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_)
 iSearchDialog::iSearchDialog(iMainWindowViewer* par_window_)
 :inherited(par_window_, Qt::WindowStaysOnTopHint)
 {
-  if (par_window_)
-    connect(par_window_, SIGNAL(destroyed()), this, SLOT(parWin_destroyed()) );
   init();
 }
 
@@ -6758,8 +6769,18 @@ void iSearchDialog::init() {
   m_options = SO_DEF_OPTIONS;
   m_changing = 0;
   m_stop = false;
+  for (int i = 0; i < num_sorts; ++i) 
+    m_sorts[i] = -1;
+  m_items.InitLinks();
+  m_items.NewCol(DataCol::VT_INT, "row");
+  m_items.NewCol(DataCol::VT_INT, "level");
+  m_items.NewCol(DataCol::VT_STRING, "headline");
+  m_items.NewCol(DataCol::VT_STRING, "href");
+  m_items.NewCol(DataCol::VT_STRING, "desc");
+  m_items.NewCol(DataCol::VT_STRING, "hits");
+  m_items.NewCol(DataCol::VT_INT, "relev");
   setSizeGripEnabled(true);
-  resize(taiM->dialogSize(taiMisc::hdlg_m));
+  resize(taiM->dialogSize(taiMisc::hdlg_s)); // don't hog too much screen size
 }
 
 void iSearchDialog::Constr() {
@@ -6785,47 +6806,42 @@ void iSearchDialog::Constr() {
   lay->addSpacing(taiM->vsep_c);
   btnStop = new QToolButton(this);
   btnStop->setText("X");
+  btnStop->setToolTip("stop search");
   lay->addWidget(btnStop);
   lay->addSpacing(taiM->hspc_c); 
   layOuter->addLayout(lay);
   
-  results = new QTextBrowser(this);
-  results->setOpenExternalLinks(true); // including pdp:// "links"
+  results = new iTextBrowser(this);
   layOuter->addWidget(results, 1); // results is item to expand in host
+  results->setHtml("Enter search words in the box above.<br>Enclose phrases in \" (quotation marks).<br>You can exclude items by preceding a search word or phrase with - (minus).<br>You can change the sort order by clicking on the column header link.");
   
   status_bar = new QStatusBar(this);
   layOuter->addWidget(status_bar);
 
   connect(btnGo, SIGNAL(clicked()), this, SLOT(go_clicked()) );
   connect(btnStop, SIGNAL(clicked()), this, SLOT(stop_clicked()) );
-  connect(results, SIGNAL(anchorClicked(const QUrl&)),
-    this, SLOT(results_anchorClicked(const QUrl&)) );
+  connect(results, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
+    this, SLOT(results_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
   connect(results, SIGNAL(highlighted(const QString&)),
     status_bar, SLOT(message(const QString&)) );
   search->setFocus();
 }
 
-//TODO: nn, nuke
-void iSearchDialog::bbOptions_clicked(iBitCheckBox* sender, bool on) {
-}
-
 void iSearchDialog::AddItem(const String& headline, const String& href,
-    const String& desc, const String& hits)
+    const String& desc, const String& hits, int level, int relev)
 {//note: newlines just to help make resulting str readable in debugger, etc.
-  STRING_BUF(b, 200);
-  b += "<tr><td>";
-  b += "<a href=\"" + href + "\">" + headline + "</a>";
-  if (desc.nonempty()) {
-  //TODO: need to somehow escape html nasties in this!!!
-    b += "<br>" + desc ;
-  }
-  b += "</td><td>";
-  b += hits; // note: this will already have highlighting, breaks etc.
-  b += "</td></tr>";
-  src.cat(b);
+  m_items.AddBlankRow();
+  m_items.SetVal(m_row++, col_row, -1);
+  m_items.SetVal(level, col_level, -1);
+  m_items.SetVal(headline, col_headline, -1);
+  m_items.SetVal(href, col_href, -1);
+  m_items.SetVal(desc, col_desc, -1);
+  m_items.SetVal(hits, col_hits, -1);
+  m_items.SetVal(relev, col_relev, -1);
 }
 
 void iSearchDialog::DataLinkDestroying(taDataLink* dl) {
+  Reset();
   RootSet(NULL);
 }
 
@@ -6841,9 +6857,20 @@ void iSearchDialog::go_clicked() {
   Search();
 }
 
-void iSearchDialog::results_anchorClicked(const QUrl& link) {
-//TEMP
-taMisc::Info("iSearchDialog::anchorClicked:", link.toString());
+void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
+  const QUrl& url, bool& cancel) 
+{
+  if ((url.scheme() == "sort")) {
+    int col = url.path().toInt();
+    setFirstSort(col);
+    Render();
+  } 
+  else { // unknown, so forward to global
+    QDesktopServices::openUrl(url);
+  }
+  cancel = true;
+  //NOTE: we never let results call its own setSource because we don't want
+  // link clicking to cause us to change our source page
 }
 
 void iSearchDialog::RootSet(taiDataLink* root) {
@@ -6862,6 +6889,7 @@ void iSearchDialog::ParseSearchString() {
   while (s.nonempty()) {
     bool k = false;
     // look for qualifier
+
     char c = s[0];
     if (c == '-') {
       k = true;
@@ -6908,18 +6936,69 @@ void iSearchDialog::Search() {
   taMisc::Busy(false);
 }
 
-void iSearchDialog::Start()
+void iSearchDialog::Reset()
 {
   m_stop = false;
-  src = "<table border=1><tr>"
-    "<th>item</th> <th>hits</th>"
-    "</tr>";
+  m_items.ResetData();
+  m_row = 0;
+  results->setText("");
+  taiMisc::ProcessEvents();
+}
+
+void iSearchDialog::Start()
+{
+  Reset();
 }
 
 void iSearchDialog::End()
-{  
+{
+  Render();
+}
+
+void iSearchDialog::Render()
+{
+  taMisc::Busy(true);
+  if (m_sorts[0] != -1) {
+    m_items.Sort(m_sorts[0], true, m_sorts[1],
+      true, m_sorts[2], true);
+  }
+  src = "<table border=1><tr><th>";
+  if (m_sorts[0] == col_level) src += "nest";
+  else src += "<a href=sort:" + String(col_level) + ">nest</a>";
+  src += "</th><th>";
+  if (m_sorts[0] == col_headline) src += "item";
+  else src += "<a href=sort:" + String(col_headline) + ">item</a>";
+  src += "</th><th>hits</th></tr>";
+  for (int i = 0; i < m_items.rows; ++i) {
+    int level = m_items.GetValAsInt(col_level, i);
+    String headline =  m_items.GetValAsString(col_headline, i);
+    String href =  m_items.GetValAsString(col_href, i);
+    String desc =  m_items.GetValAsString(col_desc, i);
+    String hits =  m_items.GetValAsString(col_hits, i);
+    //int relev = m_items.GetValAsInt(col_relev, i);
+    RenderItem(level, headline, href, desc, hits);
+  }  
   src += "</table>";
-  results->setText(src);
+  results->setHtml(src);
+  taMisc::Busy(false);
+}
+
+void iSearchDialog::RenderItem(int level, const String& headline,
+  const String& href, const String& desc, const String& hits)
+{
+  STRING_BUF(b, 200);
+  b += "<tr><td>" + String(level) + "</td><td>";
+  // item
+  b += "<a href=\"" + href + "\">" + headline + "</a>";
+  if (desc.nonempty()) {
+  //TODO: need to somehow escape html nasties in this!!!
+    b += "<br>" + desc ;
+  }
+  b += "</td><td>";
+  // hits
+  b += hits; // note: this will already have highlighting, breaks etc.
+  b += "</td></tr>";
+  src.cat(b);
 }
 
 void iSearchDialog::StartSection(const String& sec_name)
@@ -6927,18 +7006,35 @@ void iSearchDialog::StartSection(const String& sec_name)
 }
 
 
+bool iSearchDialog::setFirstSort(int col) {
+  if ((col < 0) || (col >= num_cols)) return false;
+  if (m_sorts[0] == col) return false;
+  // push down, also nuking any existing col guys (don't sort twice on same col)
+  for (int i = num_sorts - 1; i >= 1; --i) {
+    if (m_sorts[i-1] == col) m_sorts[i-1] = -1;
+    m_sorts[i] = m_sorts[i-1];
+  }
+  m_sorts[0] = col;
+  return true;
+}
+
 void iSearchDialog::setRoot(taiDataLink* root) {
   if (link() != root) {
-    if (link()) RemoveDataLink(link()); 
-    if (root) AddDataLink(root);
+    if (link()) link()->RemoveDataClient(this); 
+    if (root) root->AddDataClient(this);
   }
   RootSet(root);
+}
+
+bool iSearchDialog::stop() const {
+  taiMisc::ProcessEvents();
+//TEMP
+if (m_stop)
+taMisc::Info("should be stopping...");
+  return m_stop;
 }
 
 void iSearchDialog::stop_clicked() {
   m_stop = true;
 }
 
-void iSearchDialog::parWin_destroyed() {
-  this->deleteLater();
-}

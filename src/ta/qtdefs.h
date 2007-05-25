@@ -189,6 +189,7 @@ class	iSize;			//
 class	iSpinBox;		// #IGNORE 
 class	iStripeWidget;		// #IGNORE  -- in ieditgrid.h/.cc
 class	iTransformer;		// #IGNORE 
+class	iTextBrowser;		// #IGNORE
 class	iTreeWidget;		// #IGNORE 
 
 // clipboard types

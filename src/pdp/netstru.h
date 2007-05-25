@@ -1278,7 +1278,7 @@ public:
 
   Projection_Group  	projections;	// #CAT_Structure group of receiving projections
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
-  Unit_Group		units;		// #CAT_Structure units or groups of units
+  Unit_Group		units;		// #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr 	unit_spec;	// #CAT_Structure default unit specification for units in this layer
   Unit::ExtType		ext_flag;	// #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
   int_Array		sent_already; 	// #CAT_Activation #READ_ONLY #NO_SAVE array of layer addresses for coordinating sending of net input to this layer
