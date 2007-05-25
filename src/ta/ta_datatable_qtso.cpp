@@ -201,8 +201,10 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
   return rval;
 }
 
-QVariant DataTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
-  if (role != Qt::DisplayRole)
+QVariant DataTableModel::headerData(int section, Qt::Orientation orientation,
+  int role) const 
+{
+  if (!m_dt || (role != Qt::DisplayRole))
     return QVariant();
   if (orientation == Qt::Horizontal) {
     DataCol* col = m_dt->GetColData(section, true); // quiet
