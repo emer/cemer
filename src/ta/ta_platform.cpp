@@ -246,6 +246,12 @@ String taPlatform::lexCanonical(const String& in) {
   // in Unix, we don't use backslashes, and all filename 
   // components are strictly case sensitive, so we are already
   // lexically canonical
+/*note: we could do this... but note, not avail on win32/msvc
+  char resolved_path[PATH_MAX];
+  char* r = realpath(in, resolved_path);
+  if (r) {
+    return r; // same as our buff
+  } */
   return in;
 }
 

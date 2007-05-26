@@ -242,7 +242,6 @@ typedef unsigned	uint;
 typedef unsigned long   ulong;
 typedef char*		pchar;
 typedef uchar*		puchar; //
-//typedef const char*	pcchar;  //NOTE: too obscure, don't use this in ta/pdp code
 
 #endif // TA_GUI
 
