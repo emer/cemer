@@ -111,13 +111,25 @@ int MTA::readword(int c) {
 }  
 
 int MTA::readfilename(int c) {
+  // if c is a quote, then read to end quote, else assume it is unquoted fname
+  // and read until next ws 
+  // note that quoted fnames can contain embedded spaces
   LexBuf = "";
-
-  LexBuf += (char)c;
-  while (((c=Getc()) != EOF) && (c != ' ') && (c != '\t') && (c != '\n') && (c != '\r')) {
-    if(c != '\"')		// "
+  if (c == '\"') { // since c was the opening ", we don't add it to lexbuf
+    // note: ws inside will be Very Bad, but we terminate regardless
+    while (((c=Getc()) != EOF) && (c != '\t') && (c != '\n') && (c != '\r')) {
+      if (c == '\"') { // found terminator, so skip it and break out
+        c = Getc();
+        break;
+      }
       LexBuf += (char)c;
-  } 
+    } 
+  } else {
+    LexBuf += (char)c; // gotta include the first guy!
+    while (((c=Getc()) != EOF) && (c != ' ') && (c != '\t') && (c != '\n') && (c != '\r')) {
+      LexBuf += (char)c;
+    } 
+  }
   if(c == EOF)
     return EOF;
   return c;
@@ -261,7 +273,13 @@ int MTA::lex() {
 	cerr << "Directive Not Recognized: " << LexBuf << (char)c << "\n";
 	continue;
       }
-      c = readfilename(Getc());
+      c = readfilename(c);
+      // ignore gcc stuff like "<built-in>"
+      if (LexBuf.startsWith('<')) {
+        if ((c != '\n') && (c != '\r'))
+          skipline();
+        continue;
+      }
       cur_fname = taPlatform::lexCanonical(LexBuf);
       if ((c != '\n') && (c != '\r'))
 	skipline();		// might be training stuff to skip here

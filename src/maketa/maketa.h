@@ -201,7 +201,7 @@ public:
   int	skipline();
   int	skiptocommarb();	// skip to comma or right bracket
   int	readword(int c);
-  int	readfilename(int c);
+  int	readfilename(int c); // read an optionally quoted filename, pass first char (ex ") in c; returns fname without quotes; quotes enables spaces, else ws terminates
   int	follow(int expect, int ifyes, int ifno);
   int	lex();
 protected:
