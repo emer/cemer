@@ -25,7 +25,7 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // BP_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#if ((defined(BP_DLL)) && (defined(TA_OS_WIN) && !defined(_MSC_VER)) && (!defined(__MAKETA__)))
+#if ((defined(BP_DLL)) && (defined(TA_OS_WIN) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
   #ifdef BP_EXPORTS
   #define BP_API __declspec(dllexport)
   #else
