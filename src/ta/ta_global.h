@@ -338,12 +338,14 @@ typedef unsigned char   byte;
 
 // Some OS-specific includes or types
 #if (defined(TA_OS_WIN))
-#ifndef __MAKETA__
-# include <io.h>
-#endif
-#define F_OK 00 // Existence only 
-#define W_OK 02 // Write permission 
-#define R_OK 04 // Read permission 
+# ifndef __MAKETA__
+#   include <io.h>
+# endif
+# ifdef _MSC_VER
+#   define F_OK 00 // Existence only 
+#   define W_OK 02 // Write permission 
+#   define R_OK 04 // Read permission 
+# endif
 //#define F_OK 06 // Read and write permission 
 
 typedef int pid_t; //
