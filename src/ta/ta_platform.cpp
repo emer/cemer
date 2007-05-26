@@ -165,6 +165,8 @@ String taPlatform::lexCanonical(const String& in) {
   // then, convert all forward slashes to Windows backslashes
   //  (this is the safest common-denominator)
   rval.gsub("/", "\\");
+  // remove any double backslashes AGAIN -- this happens with gcc/maketa/mingw funky: dir\\/file
+  rval = unescapeBackslash(rval);
   // note: we assume that pathing is case-exact (even though win filenames are case-insensitive)
   // but we do convert drive letter to upper case
   String drv = rval.before(":");
