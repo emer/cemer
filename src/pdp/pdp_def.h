@@ -26,7 +26,7 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // PDP_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#if ((defined(PDP_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
+#if ((defined(PDP_DLL)) && (defined(TA_OS_WIN) && !defined(_MSC_VER)) && (!defined(__MAKETA__)))
   #ifdef PDP_EXPORTS
   #define PDP_API __declspec(dllexport)
   #else

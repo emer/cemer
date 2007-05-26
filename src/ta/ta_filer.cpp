@@ -65,7 +65,7 @@
 // Standard C++ Library".
 // ============================================================================
 
-#include <zlib.h>
+//#include <zlib.h>
 
 // ----------------------------------------------------------------------------
 // Internal classes to implement gzstream. See below for user classes.

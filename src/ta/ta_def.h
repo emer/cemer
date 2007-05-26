@@ -25,7 +25,7 @@
 // that uses this DLL. This way any other project whose source files include this file see 
 // TA_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#if ((defined(TA_DLL)) && (defined(TA_OS_WIN)) && (!defined(__MAKETA__)))
+#if (defined(TA_DLL) && (defined(TA_OS_WIN) && !defined(_MSC_VER)) && (!defined(__MAKETA__)))
   #ifdef TA_EXPORTS
   #define TA_API __declspec(dllexport)
   #else
