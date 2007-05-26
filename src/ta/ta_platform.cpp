@@ -25,10 +25,14 @@
 String taPlatform::finalSep(const String& in) {
   if (in.length() == 0)
     return String();
-  //NOTE: don't use [] below, because of insane MS VC++ ambiguity
-  else if (in.elem(in.length() - 1) == pathSep)
-    return in;
-  else return in + pathSep;
+  else {
+    //NOTE: don't use [] below, because of insane MS VC++ ambiguity
+    char c = in.elem(in.length() - 1);
+    // note: need to check both seps, because of whacky Win/Cygwin mixtures
+    if (( c == '\\') || (c == '/'))
+      return in;
+  } 
+  return in + pathSep;
 }
 
 String taPlatform::getFileName(const String& in) {
