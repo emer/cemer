@@ -80,7 +80,14 @@ AC_PROG_MAKE_SET
 AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
-AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
+
+case $host in
+       *-*-mingw32*)
+       ;;
+        *)
+               AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
+esac
+
 SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
 
 dnl  non-modal, for now
@@ -102,7 +109,7 @@ AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/..
 
 dnl  Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
 LDFLAGS="$LDFLAGS -L/opt/local/lib" dnl Harmless insertion for DarwinPorts
-AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working n Fedora that were built on Kubuntu
+AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])
 AC_CHECK_LIB([gsl],[main],
@@ -121,6 +128,8 @@ dnl  Let the codebase know where to find auxiliary files (in config.h)
 dnl  TODO: Brad says this doesn't work right
 AH_TEMPLATE([WHEREAMI],[blah])
 AC_DEFINE_DIR([WHEREAMI],[datadir])
+
+
 
 dnl  --with-readline
 if test "$readline" = "true"; then
@@ -310,7 +319,6 @@ AC_CONFIG_FILES([Makefile
 		prog_lib/Makefile
 		test/Makefile
 		css_stdlib/Makefile
-                manual/Makefile
                 postremove-pak
                 postinstall-pak])
 

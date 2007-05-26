@@ -256,9 +256,6 @@ LIB_VERSION = @LIB_VERSION@
 LIB_VERSION_2 = @LIB_VERSION_2@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
-MAINT = @MAINT@
-MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
-MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
 MAKETA_OPT = @MAKETA_OPT@
 MPICXX = @MPICXX@
@@ -605,21 +602,21 @@ MAKETA_FLAGS = \
 	-hx \
 	-css \
 	-cpp="@CXXCPP@" \
-	-I@abs_top_builddir@ \
-	-I@abs_srcdir@ \
-	-I@abs_srcdir@/../ta/ios-g++-3.1 \
-	-I@abs_srcdir@/../ta \
-	-I@abs_srcdir@/../pdp \
-	-I@abs_srcdir@/../css \
-	-I@abs_srcdir@/../leabra \
-	-I@abs_srcdir@/../taiqtso \
-	-I@abs_srcdir@/../bp \
-	-I/usr/include/qt4/Qt \
-	-I${QTDIR}/include/QtCore \
-	${MAKETA_XXFLAGS}
+	-I@abs_top_srcdir@ \
+	-I@abs_top_srcdir@/src/ta/ios-g++-3.1 \
+	-I@abs_top_srcdir@/src/ta \
+	-I@abs_top_srcdir@/src/pdp \
+	-I@abs_top_srcdir@/src/css \
+	-I@abs_top_srcdir@/src/leabra \
+	-I@abs_top_srcdir@/src/taiqtso \
+	-I@abs_top_srcdir@/src/bp \
+	-I${QTDIR}/include/QtCore
 
 
 # TODO: Fix above hacky includes
+# TODO: Is this include still needed?
+#	-I/usr/include/qt4/Qt \
+# 	${MAKETA_XXFLAGS}
 BUILT_SOURCES = ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h
 MAKETA = ../maketa/./maketa
 SUFFIXES = .moc.cpp
@@ -650,7 +647,7 @@ all: $(BUILT_SOURCES)
 
 .SUFFIXES:
 .SUFFIXES: .moc.cpp .ccx .cpp .h .hx .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/Maketa.am $(top_srcdir)/Moc.am $(top_srcdir)/mfstamp.am $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/Maketa.am $(top_srcdir)/Moc.am $(top_srcdir)/mfstamp.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -675,9 +672,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
+$(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
 clean-noinstLTLIBRARIES:

@@ -27,7 +27,7 @@ HEADS =\
 	qconsole.h \
 	ibutton.h \
 	iscrollarea.h \
-	itextbrowswer.h \
+	itextbrowser.h \
 	test_iflowbox.h \
 	test_iflowlayout.h \
 	test_simplewidgets.h \
@@ -77,6 +77,10 @@ include $(top_srcdir)/mfstamp.am
 
 irenderarea.moc.cpp:
 	$(QT_MOC) -DTA_USE_INVENTOR -o irenderarea.moc.cpp irenderarea.h
+
+itextbrowser.h:
+
+
 
 noinst_LTLIBRARIES = libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(SRCS) $(HEADS)

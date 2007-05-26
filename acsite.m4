@@ -183,7 +183,7 @@ fi
 ])
 
 
-dnl 					     PDP_DETERMINE_OSTYPE
+dnl					       PDP_CANONICAL_HOST
 dnl *************************************************************
 dnl  These tests are used mainly for Maketa.am at this point.
 dnl *************************************************************
@@ -212,17 +212,27 @@ case $host in
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
 	;;
-	*-*-msdos* | *-*-go32* | *-*-mingw32* | *-*-cygwin* | *-*-windows*)
+	*-*-msdos* | *-*-go32* | *-*-cygwin* | *-*-windows*)
 		AC_DEFINE([CYGWIN],[1],[When on cygwin])
 		AC_DEFINE([WIN32],[1],[When on cygwin])
-		AC_DEFINE([WIN32],[1],[When on cygwin])
 	;;
+        *-*-mingw32*)
+                CXXFLAGS="$CXXFLAGS -I/usr/local/include"
+                LDFLAGS="$LDFLAGS -L/usr/local/lib"
+		AC_DEFINE([CYGWIN],[1],[When on cygwin,mingw])
+		AC_DEFINE([WIN32],[1],[When on win?])
+                AC_DEFINE([TA_OS_WIN],[1],[When on win])
+        ;;
 	*)
 
 	;;
 esac
 SIM_AC_CONFIGURATION_SETTING([Host],[$host])
 ]) dnl PDP_CANONICAL_HOST
+
+        ;;
+esac
+
 
 dnl 					     PDP_DETERMINE_SUFFIX
 dnl *************************************************************
@@ -4282,7 +4292,18 @@ EOF
 # The " *"-parts of the last sed-expression on the next line are necessary
 # because at least the Solaris/CC preprocessor adds extra spaces before and
 # after the trailing semicolon.
-sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'`
+#AC_MSG_WARN([CXXCPP: $CXXCPP])
+#AC_MSG_WARN([CPPFLAGS: $CPPFLAGS])
+#AC_MSG_WARN([$CXXCPP -nostdinc $(echo $CPPFLAGS | sed 's/\/ -I/ -I/g') conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'])
+
+# NOTE: -nostdinc was used for MinGW. But the standard compiler paths
+# shouldn't be needed for this check anyway, anywhere, so i'll leave
+# it -- Brian 5/26/07
+
+# NOTE: MinGW also chokes on trailing newlines.
+
+sim_ac_qt_version=`$CXXCPP -nostdinc $(echo $CPPFLAGS | sed 's/\/ -I/ -I/g;s/\/$//') conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'`
+#AC_MSG_WARN([sim_ac_qt_version: $sim_ac_qt_version])
 
 case $sim_ac_qt_version in
 0x* )
@@ -4536,8 +4557,25 @@ if $sim_ac_with_qt; then
              "-lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore" 
           do
             if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
+
               CPPFLAGS="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
+              CPPFLAGS=$(echo $CPPFLAGS | sed 's/\/ -I/ -I/g;s/\/$//;s,//,,g')
+
               LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
+
+              # The libnames for Qt on MinGW have a "4" at the end... --Brian 5/26/07
+	      case $host in 
+                      *-*-mingw32*)
+                      AC_MSG_WARN([Entering special non-dynamic mingw32 routine...])
+                      LIBS="-lQtGui4 -lQt3Support4 -lQtNetwork4 -lQtOpenGL4 -lQtCore4"
+                      #LIBS="`echo $LIBS | sed -r 's/(-lQt[A-Z0-9a-z_]*)/\14/g'`"
+                      ;;
+                      *)
+                      ;;
+              esac
+
+              #echo CPPFLAGS: $CPPFLAGS
+              #echo LIBS: $LIBS
               AC_TRY_LINK([#include <qapplication.h>],
                           [
                            // FIXME: assignment to qApp does no longer work with Qt 4,
@@ -5021,3 +5059,44 @@ case $host_os in
     fi
 esac
 ]) # SIM_AC_UNIVERSAL_BINARIES
+
+AC_DEFUN([BASH_CHECK_LIB_TERMCAP],
+[
+if test "X$bash_cv_termcap_lib" = "X"; then
+_bash_needmsg=yes
+else
+AC_MSG_CHECKING(which library has the termcap functions)
+_bash_needmsg=
+fi
+AC_CACHE_VAL(bash_cv_termcap_lib,
+[AC_CHECK_FUNC(tgetent, bash_cv_termcap_lib=libc,
+  [AC_CHECK_LIB(termcap, tgetent, bash_cv_termcap_lib=libtermcap,
+    [AC_CHECK_LIB(tinfo, tgetent, bash_cv_termcap_lib=libtinfo,
+        [AC_CHECK_LIB(curses, tgetent, bash_cv_termcap_lib=libcurses,
+	    [AC_CHECK_LIB(ncurses, tgetent, bash_cv_termcap_lib=libncurses,
+	        bash_cv_termcap_lib=gnutermcap)])])])])])
+if test "X$_bash_needmsg" = "Xyes"; then
+AC_MSG_CHECKING(which library has the termcap functions)
+fi
+AC_MSG_RESULT(using $bash_cv_termcap_lib)
+if test $bash_cv_termcap_lib = gnutermcap && test -z "$prefer_curses"; then
+LDFLAGS="$LDFLAGS -L./lib/termcap"
+TERMCAP_LIB="./lib/termcap/libtermcap.a"
+TERMCAP_DEP="./lib/termcap/libtermcap.a"
+elif test $bash_cv_termcap_lib = libtermcap && test -z "$prefer_curses"; then
+TERMCAP_LIB=-ltermcap
+TERMCAP_DEP=
+elif test $bash_cv_termcap_lib = libtinfo; then
+TERMCAP_LIB=-ltinfo
+TERMCAP_DEP=
+elif test $bash_cv_termcap_lib = libncurses; then
+TERMCAP_LIB=-lncurses
+TERMCAP_DEP=
+elif test $bash_cv_termcap_lib = libc; then
+TERMCAP_LIB=
+TERMCAP_DEP=
+else
+TERMCAP_LIB=-lcurses
+TERMCAP_DEP=
+fi
+])
