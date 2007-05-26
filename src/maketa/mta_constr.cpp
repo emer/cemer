@@ -154,9 +154,9 @@ void MTA::TypeSpace_Declare_Types(TypeSpace* ths, ostream& strm, const String_PA
 #ifdef TA_OS_WIN
   if (win_dll)
   strm << "extern " << win_dll_str << " void" << " ta_Init_" << ths->name << "();\n\n";
-#else
-  strm << "extern void" << " ta_Init_" << ths->name << "();\n\n";
+  else
 #endif
+  strm << "extern void" << " ta_Init_" << ths->name << "();\n\n";
 
   int i;
   for(i=0; i < ths->size; i++) {
@@ -1138,10 +1138,10 @@ void MTA::TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm, const String_PA
 
 #ifdef TA_OS_WIN
   if (win_dll)
-  strm << win_dll_str << " void ta_Init_" << ths->name << "() {\n";
-#else
-  strm << "void ta_Init_" << ths->name << "() {\n";
+    strm << win_dll_str << " void ta_Init_" << ths->name << "() {\n";
+  else
 #endif
+    strm << "void ta_Init_" << ths->name << "() {\n";
   strm << "  TypeDef* sbt;\n\n";
 
   strm << "  if(ta_Init_" << ths->name << "_done) return;\n";

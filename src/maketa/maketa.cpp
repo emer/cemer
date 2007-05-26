@@ -295,7 +295,7 @@ void MTA::InitKeyWords() {
 
 void MTA::InitBuiltIn() {
   TA_void_ptr.AddParents(&TA_void);
-#ifdef TA_OS_WIN
+#if (defined(TA_OS_WIN) && defined(_MSC_VER))
   TA_int8_t.AddParents(&TA_char);
 #else
   TA_int8_t.AddParents(&TA_signed_char);
@@ -519,7 +519,10 @@ int main(int argc, char* argv[])
   mta->spc = &(mta->spc_other);
 
   if(argc < 2) { mta_print_commandline_args(argv); return 1;  } // wrong number of arguments
-#if (defined(TA_OS_WIN))
+#ifdef CYGWIN
+  String cpp = "cpp";
+  String rm = "rm ";
+#elif (defined(TA_OS_WIN))
   String cpp = "cl.exe /E /C"; //NOTE: preprocesses, preserving comments, inhibits compilation
   String rm = String("del ");
 #else
@@ -582,7 +585,7 @@ int main(int argc, char* argv[])
 	mta->hash_size = vl;
     }
     else if(tmp(0,2) == "-I") {
-#ifdef TA_OS_WIN
+#if (defined(TA_OS_WIN) && !defined(CYGWIN))
       // to avoid space issues, put filename in quotes, and use MSVC style
       incs += String("/I \"") + tmp.from(2) + "\" ";
 #else
@@ -699,7 +702,7 @@ int main(int argc, char* argv[])
     String tmp_file = taPlatform::finalSep(taPlatform::getTempPath()) + 
       taPlatform::getFileName(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
     mta->fname = mta->headv.FastEl(i);
-#if (defined(TA_OS_WIN))
+#if (defined(TA_OS_WIN) && !defined(CYGWIN))
 //    mta->fname.makeUnique();
 //    mta->fname.gsub("/", "\\");
 //mta->fname.gsub(":", ":\\");
@@ -717,7 +720,7 @@ int main(int argc, char* argv[])
       cout << "**maketa command did not succeed (err code  " << ret_code << ")\n";
       return ret_code;
     }
-#if (defined(TA_OS_WIN))
+#if (defined(TA_OS_WIN) && !defined(CYGWIN))
 /*    String lef = "lef.exe " + String(tmp_file) + " " + String(tmp_file) + ".1";
     if ((ret_code = system(lef)) != 0) {
       cout << "**lef command did not succeed (err code  " << ret_code << ")\n";
@@ -794,7 +797,7 @@ int main(int argc, char* argv[])
   outc.close();  outc.clear();
 
   /* update times...why do we have to do this?? */
-#ifdef TA_OS_WIN
+#if (defined(TA_OS_WIN) && !defined(CYGWIN))
 //TODO: fails on Windows (no "touch" command)
 #else
   comnd = String("touch ") + mta->ta_type_h;
