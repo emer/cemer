@@ -1469,7 +1469,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
   if(!pvr) return false;
   Program* myprg = GET_MY_OWNER(Program);
   Program* otprg = GET_OWNER(pvr.ptr(), Program);
-  if(myprg == otprg) return false; // not updated
+  if(!myprg || myprg == otprg) return false; // not updated
   ProgVar* nvar = myprg->FindVarName(pvr->name);
   if(TestWarning(!nvar, "UpdtProgVar", "variable of name:",pvr->name,
 		 "not found in new Program -- is now NULL and must be set manually")) {

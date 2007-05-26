@@ -125,6 +125,11 @@ String Aggregate::GetAggName() const {
   return GetTypeDef()->GetEnumString("Operator", op);
 }
 
+bool Aggregate::RealVal() const {
+  if(op == MEAN || op == VAR || op == STDEV || op == SEM) return true;
+  return false;
+}
+
 //////////////////////////
 //  	SimpleMathSpec 	//
 //////////////////////////

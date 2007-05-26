@@ -536,7 +536,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     if(ds->col_idx < 0) continue;
     DataCol* sda = src->data.FastEl(ds->col_idx);
     DataCol* nda;
-    if(sda->valType() == VT_INT) // up-convert to float!
+    if(ds->agg.RealVal() && (sda->valType() == VT_INT)) // up-convert to float!
       nda = new float_Data;
     else
       nda = (DataCol*)sda->MakeToken();

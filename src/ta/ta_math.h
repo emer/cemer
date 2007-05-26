@@ -87,6 +87,7 @@ public:
   Relation	rel;		// #CONDEDIT_ON_op:COUNT,FIND_FIRST,FIND_LAST parameters for the COUNT and FIND_xxx operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
+  virtual bool	 RealVal() const;     // true if agg operation returns a real-valued result
 
   void 	Initialize();
   void 	Destroy();
@@ -276,6 +277,9 @@ public:
   // #CAT_ExpLog x to the power p (x^p)
   static double sqrt(double x) { return std::sqrt(x); }
   // #CAT_ExpLog square root of x (i.e., x^1/2)
+  static double logistic(double x, double gain=1.0, double off=0.0)
+  { return 1.0 / (1.0 + exp(-gain*(x-off))); }
+  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
 
   /////////////////////////////////////////////////////////////////////////////////
   // Trigonometry
@@ -285,8 +289,16 @@ public:
   static double deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
 
-//   static double hypot(double x, double y) { return std::hypot(x,y); }
-//   // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
+  static double  euc_dist_sq(double x1, double y1, double x2, double y2) 
+  { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }
+  // #CAT_Trigonometry the squared Euclidean distance between two coordinates ((x1-x2)^2 + (y1-y2)^2)
+  static double  euc_dist(double x1, double y1, double x2, double y2) 
+  { return sqrt(euc_dist_sq(x1, y1, x2, y2)); }
+  // #CAT_Trigonometry the Euclidean distance between two coordinates ((x1-x2)^2 + (y1-y2)^2)
+  static double  hypot_sq(double x, double y)  { return x*x + y*y; }
+  // #CAT_Trigonometry the squared length of the hypotenuse (i.e., Euclidean distance): (x^2 + y^2)
+  static double  hypot(double x, double y)     { return sqrt(hypot_sq(x,y)); }
+  // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
   static double  acos(double X) { return std::acos(X); }
   // #CAT_Trigonometry The arc-cosine (inverse cosine) -- takes an X coordinate and returns the angle (in radians) such that cos(angle)=X
   static double  asin(double Y) { return std::asin(Y); }
@@ -693,6 +705,9 @@ public:
   // #CAT_ExpLog x to the power p (x^p)
   static float sqrt(float x) { return std::sqrt(x); }
   // #CAT_ExpLog square root of x (i.e., x^1/2)
+  static float logistic(float x, float gain=1.0, float off=0.0)
+  { return 1.0 / (1.0 + exp(-gain*(x-off))); }
+  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
 
   /////////////////////////////////////////////////////////////////////////////////
   // Trigonometry
@@ -702,8 +717,17 @@ public:
   static float deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
 
-//   static float hypot(float x, float y) { return hypotf(x,y); }
-//   // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
+  static float  euc_dist_sq(float x1, float y1, float x2, float y2) 
+  { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }
+  // #CAT_Trigonometry the squared Euclidean distance between two coordinates ((x1-x2)^2 + (y1-y2)^2)
+  static float  euc_dist(float x1, float y1, float x2, float y2) 
+  { return sqrt(euc_dist_sq(x1, y1, x2, y2)); }
+  // #CAT_Trigonometry the Euclidean distance between two coordinates ((x1-x2)^2 + (y1-y2)^2)
+  static float  hypot_sq(float x, float y)  { return x*x + y*y; }
+  // #CAT_Trigonometry the squared length of the hypotenuse (i.e., Euclidean distance): (x^2 + y^2)
+  static float  hypot(float x, float y)     { return sqrt(hypot_sq(x,y)); }
+  // #CAT_Trigonometry the length of the hypotenuse (i.e., Euclidean distance): sqrt(x^2 + y^2)
+
   static float  acos(float X) { return std::acos(X); }
   // #CAT_Trigonometry The arc-cosine (inverse cosine) -- takes an X coordinate and returns the angle (in radians) such that cos(angle)=X
   static float  asin(float Y) { return std::asin(Y); }

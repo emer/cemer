@@ -461,7 +461,7 @@ void NetMonItem::UpdateAfterEdit_impl() {
   if (!taMisc::is_loading) {
     if(name_style == MY_NAME) {
       if(!computed) {
-	if(name.empty() || name.contains(GetTypeDef()->name)) {
+	if(name.empty()) {
 	  name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
 	}
       }
@@ -542,19 +542,19 @@ String NetMonItem::GetObjName(TAPtr obj) {
 }
 
 String NetMonItem::GetChanName(taBase* obj, int col_idx) {
-  String base_nm;
+  String rval;
   if(name_style == MY_NAME) {
     if(col_idx == 0)
-      base_nm = name;
+      rval = name;
     else
-      base_nm = name + "_" + String(col_idx);
+      rval = name + "_" + String(col_idx);
   }
   else {
     if(obj->InheritsFrom(&TA_Network)) // special case
-      return (var_label.empty() ? variable : var_label);
-    base_nm = GetObjName(obj);
+      rval = (var_label.empty() ? variable : var_label);
+    else 
+      rval = GetObjName(obj) + "_" + (var_label.empty() ? variable : var_label);
   }
-  String rval = base_nm + "_" + (var_label.empty() ? variable : var_label);
   rval = taMisc::StringCVar(rval); // keep it clean for css var names
   return rval;
 }

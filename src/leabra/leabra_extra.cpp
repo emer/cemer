@@ -1057,17 +1057,42 @@ void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float
   for(int y=0; y<lay->gp_geom.y; y++) {
     for(int x=0; x<lay->gp_geom.x; x++) {
       float wt = motor_force.GetWt(x,y);
-      Unit_Group* ug = lay->FindUnitGpFmCoord(x, y);
-      if(!ug || ug->size == 0) continue;
-      LeabraUnit* un0 = (LeabraUnit*)ug->FastEl(0);
+      Unit_Group* ugp = lay->FindUnitGpFmCoord(x, y);
+      if(!ugp || ugp->size == 0) continue;
+      LeabraUnit* un0 = (LeabraUnit*)ugp->FastEl(0);
       un0->ext = force;
-      ClampValue(ug, net, wt);
+      ClampValue(ugp, net, wt);
     }
   }
   lay->SetExtFlag(Unit::EXT);
   lay->hard_clamped = clamp.hard;
   HardClampExt(lay, net);
   scalar.clamp_pat = true;	// must have this to keep this clamped val
+  UNIT_GP_ITR(lay, 
+	      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+	      u->ext = 0.0f;		// must reset so it doesn't contribute!
+	      );
+}
+
+void MotorForceLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
+  float vel_mid = .5f * (float)(lay->gp_geom.y-1);
+  float pos_mid = .5f * (float)(lay->gp_geom.x-1);
+  for(int y=0; y<lay->gp_geom.y; y++) {
+    float vel_dist = -((float)y - vel_mid) / vel_mid;
+    for(int x=0; x<lay->gp_geom.x; x++) {
+      float pos_dist = -((float)x - pos_mid) / pos_mid;
+      Unit_Group* ugp = lay->FindUnitGpFmCoord(x, y);
+      if(!ugp || ugp->size == 0) continue;
+      float sum_val = .5f * vel_dist + .5f * pos_dist;
+
+      if(bias_val.un != ScalarValBias::NO_UN) {
+	Compute_UnBias_Val(ugp, sum_val);
+      }
+      if(bias_val.wt == ScalarValBias::WT) {
+	Compute_WtBias_Val(ugp, sum_val);
+      }
+    }
+  }
 }
 
 //////////////////////////////////

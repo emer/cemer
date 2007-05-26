@@ -719,6 +719,8 @@ public:
   // #CAT_MotorForce read the force value from the layer, as a gaussian weighted average over units near the current position and velocity values
   virtual void	ClampForce(LeabraLayer* lay, LeabraNetwork* net, float force, float pos, float vel);
   // #CAT_MotorForce clamp the force value to the layer, as a gaussian weighted average over units near the current position and velocity values
+
+  override void	Compute_BiasVal(LeabraLayer* lay);
   
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
