@@ -220,8 +220,7 @@ case $host in
                 CXXFLAGS="$CXXFLAGS -I/usr/local/include"
                 LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		AC_DEFINE([CYGWIN],[1],[When on cygwin,mingw])
-		AC_DEFINE([WIN32],[1],[When on win?])
-                AC_DEFINE([TA_OS_WIN],[1],[When on win])
+		AC_DEFINE([WIN32],[1],[When on win])
         ;;
 	*)
 
