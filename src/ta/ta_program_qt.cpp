@@ -98,6 +98,68 @@ void taiDynEnumMember::GetMbrValue_impl(taiData* dat, void* base) {
   }
 }
 
+////////////////////////
+//  taiProgVarIntValType    //
+////////////////////////
+
+void taiProgVarIntValMember::Initialize() {
+}
+
+int taiProgVarIntValMember::BidForMember(MemberDef* md, TypeDef* td){
+  if(td->InheritsFrom(&TA_ProgVar) && (md->name == "int_val"))
+    return taiMember::BidForMember(md,td)+10;
+  return 0;
+}
+
+taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+					 int flags_) {
+  taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
+  int_rep = new taiIncrField(typ, host_, par, gui_parent_, flags_);
+  enum_rep = new taiComboBox(true, NULL, host_, par, gui_parent_, flags_);
+
+  rval->AddChildWidget(int_rep->rep());
+  rval->AddChildWidget(enum_rep->rep());
+
+  return rval;
+}
+
+void taiProgVarIntValMember::GetImage_impl(taiData* dat, const void* base) {
+  ProgVar* pv = (ProgVar*)base;
+  int val =  *((int*)mbr->GetOff(base));
+  taiDataDeck* rval = (taiDataDeck*)dat;
+
+  if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
+    rval->GetImage(1);
+    enum_rep->SetEnumType(pv->hard_enum_type);
+    EnumDef* td = pv->hard_enum_type->enum_vals.FindNo(val);
+    if(td != NULL)
+      enum_rep->GetImage(td->idx);
+  }
+  else {
+    rval->GetImage(0);
+    int_rep->GetImage(val);
+  }
+}
+
+void taiProgVarIntValMember::GetMbrValue_impl(taiData* dat, void* base) {
+  ProgVar* pv = (ProgVar*)base;
+  int& val =  *((int*)mbr->GetOff(base));
+//   taiDataDeck* rval = (taiDataDeck*)dat;
+
+  if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
+    int itm_no = -1;
+    enum_rep->GetValue(itm_no);
+    EnumDef* td = NULL;
+    if ((itm_no >= 0) && (itm_no < pv->hard_enum_type->enum_vals.size))
+      td = pv->hard_enum_type->enum_vals.FastEl(itm_no);
+    if (td != NULL)
+      val = td->enum_no;
+  }
+  else {
+    val = int_rep->GetValue();
+  }
+}
+
 //////////////////////////
 // tabProgramViewType	//
 //////////////////////////

@@ -4076,9 +4076,6 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
 void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax, 
 				 T3GraphLine* t3gl, int mat_cell) {
   t3gl->clear();
-  t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
-  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_y = plv.GetDAPtr();
   if(!da_y) return;
@@ -4090,6 +4087,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   // this should only happen if we have no data at all..
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
+
+  t3gl->startBatch();
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_er = erv.GetDAPtr();
 
@@ -4273,9 +4274,6 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
 void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax, 
 				  T3GraphLine* t3gl, float bar_off, int mat_cell) {
   t3gl->clear();
-  t3gl->startBatch();
-  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
-  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_y = plv.GetDAPtr();
   if(!da_y) return;
@@ -4287,6 +4285,10 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   // this should only happen if we have no data at all..
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
+
+  t3gl->startBatch();
+  t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
+  t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
 
   DataCol* da_er = erv.GetDAPtr();
 
@@ -4428,6 +4430,11 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
   DataCol* da_x = x_axis.GetDAPtr();
   DataCol* da_z = z_axis.GetDAPtr();
 
+  // always plot in color assoc with plv_str, regardless of mode!
+  t3gl->startBatch();
+  t3gl->setValueColorMode(false);
+  t3gl->setDefaultColor((T3Color)(plv_str.color.color()));
+
   iVec3f dat;			// data point
   iVec3f plt;			// plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
@@ -4457,6 +4464,7 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
 		   str.chars());
     }
   }
+  t3gl->finishBatch();
 }
 
 ////////////////////////////////////////////////////////////////////////

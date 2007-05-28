@@ -148,7 +148,7 @@ protected:
 };
 
 class TA_API DataTableView : public T3DataViewMain {
-  // #VIRT_BASE #NO_TOKENS base class of grid and graph views
+  // #VIRT_BASE base class of grid and graph views
 INHERITED(T3DataViewMain)
 public:
   int		view_rows; 	// maximum number of rows visible

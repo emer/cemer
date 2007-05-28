@@ -239,9 +239,6 @@
 /* Set when building nogui */
 #undef TA_NO_GUI
 
-/* When on win */
-#undef TA_OS_WIN
-
 /* This switch is set when compiling for gui and linking with Coin. This
    switch is really only used in the lowest level files. NOTE: Coin/Inventor
    is never used when building nogui. */
@@ -265,7 +262,7 @@
 /* blah */
 #undef WHEREAMI
 
-/* When on win? */
+/* When on win */
 #undef WIN32
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a

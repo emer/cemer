@@ -2,16 +2,26 @@ leabra todo list:
 
 commit:
 
+* graph strings always use associated line color, not black.
+
+* ticket #440: double tokens listed in token chooser -- due to #NO_TOKENS in
+  DataTableView -- in general not a good idea to include #NO_TOKENS in a 
+  parent of a guy who will later have tokens, esp if those tokens will be
+  looked for via a parent above the #NO_TOKENS guy..  #VIRT_BASE is sufficient.
+
+* taideck for hard_enum_val for ProgVar edit (435)
+
 ------------
 current:
 
-* dist computation driven reward in arm model
-* graph strings should use line color, not just black!
+* join should not care about type mismatch -- something wrong in variant comparisons??
+* also Brad's filter bug with different types -- try a bunch of filter exprs
 
-* double tokens listed in token chooser..hmm..
+* maketa parse: static const int     my_const = 0;
 
-* need hard enum val chooser in std progvar edit!  not sure how best to do that
- -- probably need a separate int that is used and then copied.
+* check: test datatable /matrix cut/paste ops
+
+* check: ticket 442 -- crash in connect from -- updated w/test case
 
 == Netview:
 
@@ -23,7 +33,6 @@ current:
 
 == Program
 
-* test new guys
 * progexpr not finding variables in function args
 * brad's bug on drag of objs
 * proglib: add dates (fill in!)

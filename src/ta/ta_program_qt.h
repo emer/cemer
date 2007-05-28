@@ -51,6 +51,25 @@ private:
   void 		Destroy() {};
 };
 
+class TA_API taiProgVarIntValMember : public taiMember {
+  // the int_val member in a ProgVar -- switches from plain int to hard_enum
+public:
+  int		BidForMember(MemberDef* md, TypeDef* td);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+
+  TAQT_MEMBER_INSTANCE(taiProgVarIntValMember, taiMember);
+protected:
+  taiIncrField*	int_rep;
+  taiComboBox*	enum_rep;
+
+  override void GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
+
+private:
+  void		Initialize();
+  void 		Destroy() {};
+};
+
 class TA_API tabProgramViewType: public tabOViewType {
 INHERITED(tabOViewType)
 public:

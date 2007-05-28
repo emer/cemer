@@ -421,7 +421,7 @@ public:
 
 class TA_API taiDataDeck : public taiCompData {
 public:
-  inline QStackedWidget*rep() {return (QStackedWidget*)(QWidget*)m_rep;}
+  inline QStackedWidget* rep() {return (QStackedWidget*)(QWidget*)m_rep;}
 
   override void	InitLayout() {} // nothing in this class
   override void	EndLayout() {} // nothing in this class
