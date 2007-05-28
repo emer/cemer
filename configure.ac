@@ -280,6 +280,14 @@ if test x"bundle" = x"false"; then
   SIM_AC_CONFIGURATION_SETTING([Installation prefix],[${prefix}])
 fi
 
+case $host in
+    *-*-mingw32*)
+            CXXFLAGS=$(echo $CXXFLAGS | sed 's/\/ -I/ -I/g;s/\/$//;s/\\\\/\\/g')
+    ;;
+    *)
+    ;;
+esac
+    
 AC_SUBST([PDP_SUFFIX])
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
@@ -287,7 +295,6 @@ AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
-
 
 if test x"$bundle" = x"true"; then
   bundle_name="pdp-${PACKAGE_VERSION}.app"
@@ -302,7 +309,6 @@ if test x"$bundle" = x"true"; then
 
 fi
 
-	
 
 AC_CONFIG_FILES([Makefile
 		src/maketa/Makefile

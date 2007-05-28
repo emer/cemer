@@ -1348,6 +1348,16 @@ if $sim_ac_soqt_desired; then
     sim_ac_soqt_datadir=`$sim_ac_soqt_configcmd --datadir`
     sim_ac_soqt_includedir=`$sim_ac_soqt_configcmd --includedir`
     sim_ac_soqt_version=`$sim_ac_soqt_configcmd --version`
+
+    case $host in
+            *-*-mingw32*)
+                sim_ac_soqt_cppflags="-DSOQT_DLL $sim_ac_soqt_cppflags"
+                AC_MSG_WARN([sim_ac_soqt_cppflags: $sim_ac_soqt_cppflags])
+            ;;
+            *)
+            ;;
+    esac
+
     AC_CACHE_CHECK(
       [whether libSoQt is available],
       sim_cv_soqt_avail,
@@ -4300,9 +4310,15 @@ EOF
 # it -- Brian 5/26/07
 
 # NOTE: MinGW also chokes on trailing newlines.
-
-sim_ac_qt_version=`$CXXCPP -nostdinc $(echo $CPPFLAGS | sed 's/\/ -I/ -I/g;s/\/$//') conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'`
-#AC_MSG_WARN([sim_ac_qt_version: $sim_ac_qt_version])
+case $host in
+    *-*-mingw32*)
+            sim_ac_qt_version=`$CXXCPP -nostdinc $(echo $CPPFLAGS | sed 's/\/ -I/ -I/g;s/\/$//') conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'`
+            CXXFLAGS="$(echo $CXXFLAGS | sed 's/\/ -I/ -I/g;s/\/$//')"
+    ;;
+    *)
+            sim_ac_qt_version=`$CXXCPP $CPPFLAGS conftest.c 2>/dev/null | grep '^int VerQt' | sed 's%^int VerQt = %%' | sed 's% *;.*$%%'`
+    ;;
+esac
 
 case $sim_ac_qt_version in
 0x* )
@@ -4553,28 +4569,21 @@ if $sim_ac_with_qt; then
         for sim_ac_qt_cppflags_loop in "" "-DQT_DLL"; do
           for sim_ac_qt_libcheck in \
                "-lQtGui_debug -lQt3Support_debug -lQtNetwork_debug -lQtOpenGL_debug -lQtCore_debug" \
-             "-lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore" 
+               "-lQtGui -lQt3Support -lQtNetwork -lQtOpenGL -lQtCore"
           do
             if test "x$sim_ac_qt_libs" = "xUNRESOLVED"; then
 
-              CPPFLAGS="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
-              CPPFLAGS=$(echo $CPPFLAGS | sed 's/\/ -I/ -I/g;s/\/$//;s,//,,g')
-
-              LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
-
-              # The libnames for Qt on MinGW have a "4" at the end... --Brian 5/26/07
 	      case $host in 
                       *-*-mingw32*)
-                      AC_MSG_WARN([Entering special non-dynamic mingw32 routine...])
-                      LIBS="-lQtGui4 -lQt3Support4 -lQtNetwork4 -lQtOpenGL4 -lQtCore4"
-                      #LIBS="`echo $LIBS | sed -r 's/(-lQt[A-Z0-9a-z_]*)/\14/g'`"
+                          sim_ac_QTDIR_cppflags="$(echo $sim_ac_QTDIR_cppflags | sed 's/\/ -I/ -I/g;s/\/$//')"
+                          sim_ac_qt_libcheck="-lQtGui4 -lQt3Support4 -lQtNetwork4 -lQtOpenGL4 -lQtCore4"
                       ;;
                       *)
                       ;;
               esac
 
-              #echo CPPFLAGS: $CPPFLAGS
-              #echo LIBS: $LIBS
+              CPPFLAGS="$sim_ac_QTDIR_cppflags $sim_ac_qt_cppflags_loop $sim_ac_save_cppflags"
+              LIBS="$sim_ac_qt_libcheck $sim_ac_save_libs"
               AC_TRY_LINK([#include <qapplication.h>],
                           [
                            // FIXME: assignment to qApp does no longer work with Qt 4,
@@ -4590,6 +4599,7 @@ if $sim_ac_with_qt; then
             fi
           done
         done
+
 
         AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_QTDIR_ldflags $sim_ac_qt_libs)
       fi
