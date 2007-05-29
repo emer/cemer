@@ -7,6 +7,7 @@
 
 #ifndef INTERCEPTOR_H
 #define INTERCEPTOR_H
+#ifdef HAVE_QT_CONSOLE
 
 #include "taiqtso_def.h"
 
@@ -37,4 +38,5 @@ private:
   int m_origFdCopy;
 };
 
+#endif
 #endif

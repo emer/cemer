@@ -20,6 +20,7 @@
 // css_qtconsole.h -- abstraction of qt-based console (unix only)
 
 #include "css_console.h"
+#ifdef HAVE_QT_CONSOLE
 
 #include "qconsole.h"
 
@@ -52,4 +53,4 @@ class CSS_API QcssConsole : public QConsole {
 };
 
 #endif
-
+#endif

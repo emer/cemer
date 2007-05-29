@@ -17,6 +17,7 @@
 
 #ifndef QCONSOLE_H
 #define QCONSOLE_H
+#ifdef HAVE_QT_CONSOLE
 
 #include "taiqtso_def.h"
 
@@ -133,4 +134,5 @@ signals:
   void commandExecuted(QString command);
 };
 
+#endif
 #endif

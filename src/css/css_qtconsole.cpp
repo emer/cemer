@@ -15,12 +15,12 @@
 
 
 #include "css_qtconsole.h"
+#ifdef HAVE_QT_CONSOLE 
 #include "css_basic_types.h"
 #include "css_builtin.h"
 #include "css_ta.h"
 
 
-#ifdef HAVE_QT_CONSOLE 
 //////////////////////////////////////////////////////////////////////////
 //
 

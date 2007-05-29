@@ -38,6 +38,7 @@ SRCS =\
 	css_ta.cpp \
 	xmemory.cpp \
 	css_misc_funs.cpp \
+	readline_win.cpp \
 	$(SRCS_GUI) \
 	css_ti.cpp
 

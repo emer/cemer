@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "qconsole.h"
+#ifdef HAVE_QT_CONSOLE
 #include "ta_platform.h"
 
 #include <qfile.h>
@@ -551,3 +552,4 @@ bool QConsole::isCommandComplete(QString cmd) {
 // implementation should do something here..
 void QConsole::ctrlCPressed() {
 }
+#endif

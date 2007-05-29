@@ -186,10 +186,6 @@
 // pdp	    PDP_DLL	  PDP_DLL,PDP_EXPORTS
 
 #ifdef TA_OS_WIN
-# ifdef TA_USE_INVENTOR
-#   define COIN_DLL
-#   define SOQT_DLL
-# endif
 # ifdef TA_DLL
 #   define TAIQTSO_DLL
 #   define CSS_DLL
