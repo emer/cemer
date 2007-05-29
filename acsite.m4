@@ -258,13 +258,11 @@ case $host in
 	*linux*)
 		AC_DEFINE([LINUX],[1],[When on linux])
                 pdp_linux=true
-
 	;;
 	*darwin*)
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
                 pdp_darwin=true
-
 	;;
 	*-*-msdos* | *-*-go32* | *-*-cygwin* | *-*-windows*)
 		AC_DEFINE([CYGWIN],[1],[When on cygwin])
@@ -285,11 +283,16 @@ case $host in
 	;;
 esac
 
-AM_CONDITIONAL([LINUX],[test $pdp_linux=false])
+AM_CONDITIONAL([LINUX],[test $pdp_linux=true])
 AM_CONDITIONAL([DARWIN],[test $pdp_darwin=true])
 AM_CONDITIONAL([CYGWIN],[test $pdp_cygwin=true])
 AM_CONDITIONAL([WINDOWS],[test $pdp_windows=true])
 AM_CONDITIONAL([MINGW32],[test $pdp_mingw32=true])
+# AC_MSG_WARN([pdp_linux : $pdp_linux])
+# AC_MSG_WARN([pdp_darwin : $pdp_darwin])
+# AC_MSG_WARN([pdp_cygwin : $pdp_cygwin])
+# AC_MSG_WARN([pdp_mingw32 : $pdp_mingw32])
+# AC_MSG_WARN([pdp_windows : $pdp_windows])
 
 SIM_AC_CONFIGURATION_SETTING([Host],[$host])
 ]) dnl PDP_CANONICAL_HOST
