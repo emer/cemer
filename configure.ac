@@ -67,6 +67,7 @@ AC_CONFIG_HEADERS([config.h])                          dnl Create config.h
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.6])
 PDP_CANONICAL_HOST                                     dnl Do a few host checks, mostly for MSVC stuff
 PDP_PROG_CXX                                           dnl Modify compiler optimization
+PDP_CANONICAL_COMPILER
 PDP_SET_BUILD_MODE                                     dnl Set up our build modes
 m4_undefine([AC_PROG_F77])                             dnl Get rid of those stupid fortran checks
 m4_defun([AC_PROG_F77],[])

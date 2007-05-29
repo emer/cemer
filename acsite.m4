@@ -111,6 +111,7 @@ AC_ARG_ENABLE([readline],
 			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),
 			     [readline=false],
 			     [readline=true])
+
 #NOTE: This actually works with a few minor hiccups
 AC_ARG_WITH([rpm],
 	      AC_HELP_STRING([--with-rpm],
@@ -182,6 +183,49 @@ if test x"${pdpexists}" = x"true"; then
 fi
 ])
 
+dnl					   PDP_CANONICAL_COMPILER
+dnl *************************************************************
+dnl  A couple of compiler checks for setting AM_CONDITIONALs
+dnl *************************************************************
+dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Carnegie Mellon University, Princeton University.
+dnl
+dnl This file is part of TA/PDP++
+dnl
+dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   it under the terms of the GNU General Public License as published by
+dnl   the Free Software Foundation; either version 2 of the License, or
+dnl   (at your option) any later version.
+dnl
+dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl   GNU General Public License for more details. 
+AC_DEFUN([PDP_CANONICAL_COMPILER],[
+
+pdp_gpp=false
+pdp_cl=false
+pdp_other_compiler=false
+
+case $CXX in
+       g++)
+          pdp_gpp=true
+       ;;
+       cl)
+          pdp_cl=true        
+       ;;
+       *)
+          pdp_other_compiler=true
+          AC_MSG_WARN([$CXX compiler detected. PDP++ has only been tested on gcc and cl. Proceed at your own risk.])
+       ;;
+esac
+
+AM_CONDITIONAL([GCC],[test $pdp_gpp=true])
+AM_CONDITIONAL([CL],[test $pdp_cl=true])
+AM_CONDITIONAL([OTHER_COMPILER],[test $pdp_other_compiler=true])
+
+])
+
 
 dnl					       PDP_CANONICAL_HOST
 dnl *************************************************************
@@ -204,28 +248,49 @@ dnl   GNU General Public License for more details.
 
 AC_DEFUN([PDP_CANONICAL_HOST],[
 AC_REQUIRE([AC_CANONICAL_HOST])
+pdp_linux=false
+pdp_darwin=false
+pdp_cygwin=false
+pdp_mingw32=false
+pdp_windows=false
+
 case $host in
 	*linux*)
 		AC_DEFINE([LINUX],[1],[When on linux])
+                pdp_linux=true
+
 	;;
 	*darwin*)
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
+                pdp_darwin=true
+
 	;;
 	*-*-msdos* | *-*-go32* | *-*-cygwin* | *-*-windows*)
 		AC_DEFINE([CYGWIN],[1],[When on cygwin])
 		AC_DEFINE([WIN32],[1],[When on cygwin])
+                pdp_cygwin=true
+                pdp_windows=true
 	;;
         *-*-mingw32*)
                 CXXFLAGS="$CXXFLAGS -I/usr/local/include"
                 LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		AC_DEFINE([CYGWIN],[1],[When on cygwin,mingw])
 		AC_DEFINE([WIN32],[1],[When on win])
+                pdp_mingw32=true
+                pdp_windows=true
         ;;
 	*)
 
 	;;
 esac
+
+AM_CONDITIONAL([LINUX],[test $pdp_linux=false])
+AM_CONDITIONAL([DARWIN],[test $pdp_darwin=true])
+AM_CONDITIONAL([CYGWIN],[test $pdp_cygwin=true])
+AM_CONDITIONAL([WINDOWS],[test $pdp_windows=true])
+AM_CONDITIONAL([MINGW32],[test $pdp_mingw32=true])
+
 SIM_AC_CONFIGURATION_SETTING([Host],[$host])
 ]) dnl PDP_CANONICAL_HOST
 
