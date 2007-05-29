@@ -13,10 +13,10 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifdef TA_OS_WIN
 // readline_win.cc -- stub replacement for readline, in windows
 
 #include "css_console.h"
+#ifdef TA_OS_WIN
 
 #include <windows.h>
 

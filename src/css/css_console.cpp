@@ -162,4 +162,3 @@ cssConsole* cssConsole::New_SysConsole(QObject* parent) {
 
 #endif  TA_OS_UNIX
 
-
