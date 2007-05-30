@@ -127,6 +127,8 @@ void cssWinConsole::getConHandles() {
 }
 
 void cssWinConsole::connectStreams() {
+//TODO: fixup for MINGW
+#ifdef _MSC_VER
   // reconnect the cxx streams
   //TODO: probably not needed for true console processes (NO GUI)
   int hConHandle = _open_osfhandle((intptr_t)hstderr, _O_TEXT);
@@ -143,6 +145,26 @@ void cssWinConsole::connectStreams() {
   fp = _fdopen(hConHandle, "r");
   fb = new filebuf(fp);
   cin.rdbuf(fb);
+#else // mingw/gcc
+  // reconnect the cxx streams
+  //TODO: probably not needed for true console processes (NO GUI)
+  int hConHandle = _open_osfhandle((intptr_t)hstderr, _O_TEXT);
+  FILE *fp = _fdopen(hConHandle, "w");
+  *stdout = *fp;
+  setvbuf( stdout, NULL, _IONBF, 0 );
+
+  hConHandle = _open_osfhandle((intptr_t)hstdout, _O_TEXT);
+  fp = _fdopen(hConHandle, "w");
+  *stdin = *fp;
+  setvbuf( stdin, NULL, _IONBF, 0 );
+
+  hConHandle = _open_osfhandle((intptr_t)hstdin, _O_TEXT);
+  fp = _fdopen(hConHandle, "r");
+  *stderr = *fp;
+  setvbuf( stderr, NULL, _IONBF, 0 );
+
+  ios::sync_with_stdio();
+#endif
 }
 
 BOOL cssWinConsole::Console_HandlerRoutine(
@@ -253,7 +275,7 @@ char* readline(char* prompt) {
 
   // prompt
   int lprompt = (prompt) ? strlen(prompt) : 0;
-  hresult = WriteFile(hstdout, prompt, lprompt, NULL, NULL);
+  cout << prompt; //hresult = WriteFile(hstdout, prompt, lprompt, NULL, NULL);
 
   read_error = 0;
   read_status = Waiting;
