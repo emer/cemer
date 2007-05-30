@@ -186,7 +186,7 @@ int  Variant::cmpInt(int val) const {
   case T_UInt: return cmp(d.u, (uint)val);
   case T_Int64:  return cmp(d.i64, val);
   case T_UInt64: return cmp(d.u64, (uint)val);
-  case T_Double: return cmp(d.d, val);
+  case T_Double: return cmp((int)d.d, val);
   case T_Char: return cmp(d.c, val);
   default: return -2;
   }
@@ -239,7 +239,7 @@ int  Variant::cmpDouble(double val) const {
   if (isNull()) return -2;
   switch (m_type) {
   case T_Bool: return cmp((double)d.b, val);
-  case T_Int: return cmp(d.i, val);
+  case T_Int: return cmp((double)d.i, val);
   case T_UInt: return cmp(d.u, val);
   case T_Int64:  return cmp(d.i64, val);
   case T_UInt64: return cmp(d.u64, val);

@@ -405,9 +405,14 @@ void ProgVar::Copy_(const ProgVar& cp) {
   desc = cp.desc;
 
   if(var_type == T_Object) {
-    UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
-    // could be pointing outside of program -- check for project:
-    UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject);
+    if((bool)object_val) {
+      // note that updatepointers will reset to null if not found, so it is key
+      // to call the appropriate one based on owner of object being pointed to
+      if(object_val->GetOwner(&TA_Program) == cp.GetOwner(&TA_Program))
+	UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program); // only look in program
+      else
+	UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject); // only look outside of program
+    }
   }
 }
 

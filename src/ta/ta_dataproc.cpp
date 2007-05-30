@@ -334,6 +334,7 @@ bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* 
   for(int j=0;j<src_cols->size;j++) {
     DataOpEl* sop = src_cols->FastEl(j);
     DataOpEl* dop = dest_cols->FastEl(j);
+    if(sop->col_idx < 0 || dop->col_idx < 0) continue;
     DataCol* sda = src->data[sop->col_idx];
     DataCol* dda = dest->data[dop->col_idx];
     dda->CopyFromRow(dest_row, *sda, src_row);
@@ -354,6 +355,7 @@ bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
     for(int j=0;j<src_cols.size;j++) {
       DataOpEl* sop = src_cols.FastEl(j);
       DataOpEl* dop = dest_cols.FastEl(j);
+      if(sop->col_idx < 0 || dop->col_idx < 0) continue;
       DataCol* sda = src->data[sop->col_idx];
       DataCol* dda = dest->data[dop->col_idx];
       dda->CopyFromRow(-1, *sda, i);
@@ -1928,6 +1930,7 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
   rval += il1 + "for(int src_row=0; src_row < " + src_data_var->name + ".rows; src_row++) {\n";
   for(int i=0;i<src_cols.size; i++) {
     DataOpEl* ds = src_cols[i];
+    if(ds->col_idx < 0) continue;
     DataCol* da = GetSrcData()->data[ds->col_idx];
     if(da->is_matrix)
       rval += il2 + "taMatrix* s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsMatrix(" +
@@ -2045,6 +2048,7 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
 
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
+    if(ds->col_idx < 0) continue;
     DataCol* da = dd->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + "taMatrix* d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsMatrix(" +
@@ -2121,6 +2125,7 @@ const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
   dcl->dest_cols.GetColumns(dd);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
+    if(ds->col_idx < 0) continue;
     DataCol* da = dd->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + dcl->dest_data_var->name + ".SetValAsMatrix(" + 
@@ -2192,6 +2197,7 @@ const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
   dcl->src_cols.GetColumns(sd);
   for(int i=0;i<dcl->src_cols.size; i++) {
     DataOpEl* ds = dcl->src_cols[i];
+    if(ds->col_idx < 0) continue;
     DataCol* da = sd->data[ds->col_idx];
     if(da->is_matrix)
       rval += il + dcl->src_data_var->name + ".SetValAsMatrix(" + 
