@@ -148,6 +148,7 @@ extern TA_API TypeDef TA_long;
   extern TA_API TypeDef TA_signed_long_int;
 extern TA_API TypeDef TA_unsigned_long;
   extern TA_API TypeDef TA_unsigned_long_int;
+  extern TA_API TypeDef TA_ulong;
 extern TA_API TypeDef TA_int64_t;
   extern TA_API TypeDef TA_long_long;
   extern TA_API TypeDef TA_signed_long_long;

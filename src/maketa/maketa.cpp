@@ -68,6 +68,7 @@ TypeDef TA_long_int		("long_int", 1, 0, 0, 0, 1, 1, "long int");
 TypeDef TA_signed_long_int	("signed_long_int", 1, 0, 0, 0, 1, 1, "signed long int");
 TypeDef TA_unsigned_long	("unsigned_long", 1, 0, 0, 0, 1, 1, "unsigned long");
 TypeDef TA_unsigned_long_int    ("unsigned_long_int", 1, 0, 0, 0, 1, 1, "unsigned long int");
+TypeDef TA_ulong	("ulong", 1, 0, 0, 0, 1, 1, "ulong");
 // (u)intptr_t gets parented to either (u)int or (u)int64
 TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, 1); 
@@ -260,6 +261,7 @@ void MTA::AddBuiltIn(TypeSpace& ts) { // common code
   ts.Add(&TA_signed_long_int);
   ts.Add(&TA_unsigned_long);
   ts.Add(&TA_unsigned_long_int);
+  ts.Add(&TA_ulong);
   ts.Add(&TA_intptr_t);
   ts.Add(&TA_uintptr_t);
   ts.Add(&TA_float);
@@ -317,6 +319,7 @@ void MTA::InitBuiltIn() {
   TA_long_int.AddParents(&TA_long);
   TA_signed_long_int.AddParents(&TA_long);
   TA_unsigned_long_int.AddParents(&TA_unsigned_long);
+  TA_ulong.AddParents(&TA_unsigned_long);
   TA_long_long.AddParents(&TA_int64_t);
   TA_signed_long_long.AddParents(&TA_int64_t);
   TA_unsigned_long_long.AddParents(&TA_uint64_t);

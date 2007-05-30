@@ -16,10 +16,10 @@
 
 // Standard global defines used in all header and source files
 
-#include "config.h"
-
 #ifndef TAGLOBAL_H
 #define TAGLOBAL_H
+
+#include "config.h"
 
 #ifndef __MAKETA__
 #include <stdlib.h>
