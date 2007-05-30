@@ -94,4 +94,4 @@ void Interceptor::finish()
     ::close(m_origFdCopy); // close the copy as it's redundant now
     ::close(m_pipeFd[0]);  // close the reading end of the pipe
 }
-#endif // !TA_OS_WIN
+#endif // HAVE_QT_CONSOLE
