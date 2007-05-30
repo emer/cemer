@@ -7,10 +7,10 @@
 
 #ifndef INTERCEPTOR_H
 #define INTERCEPTOR_H
-#ifdef HAVE_QT_CONSOLE
 
 #include "taiqtso_def.h"
 
+#ifdef HAVE_QT_CONSOLE
 #include <qobject.h>
 
 class QTextStream;
@@ -38,5 +38,5 @@ private:
   int m_origFdCopy;
 };
 
-#endif
+#endif //HAVE_QT_CONSOLE
 #endif

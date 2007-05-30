@@ -17,10 +17,10 @@
 
 #ifndef QCONSOLE_H
 #define QCONSOLE_H
-#ifdef HAVE_QT_CONSOLE
 
 #include "taiqtso_def.h"
 
+#ifdef HAVE_QT_CONSOLE
 #include "interceptor.h"
 #include <qstringlist.h>
 #include <qtextedit.h>
@@ -134,5 +134,5 @@ signals:
   void commandExecuted(QString command);
 };
 
-#endif
+#endif //HAVE_QT_CONSOLE
 #endif
