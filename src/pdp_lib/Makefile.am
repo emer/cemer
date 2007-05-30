@@ -1,7 +1,8 @@
 include $(top_srcdir)/mfstamp.am
 
 lib_LTLIBRARIES = libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la
-libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LDFLAGS = -version-info @LIB_VERSION@
+libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LDFLAGS = -version-info @LIB_VERSION@ -no-undefined
+
 libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =
 
 # Dummy C++ source to cause C++ linking.

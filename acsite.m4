@@ -256,15 +256,18 @@ pdp_windows=false
 
 case $host in
 	*linux*)
+                AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 		AC_DEFINE([LINUX],[1],[When on linux])
                 pdp_linux=true
 	;;
 	*darwin*)
+                AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
                 pdp_darwin=true
 	;;
 	*-*-msdos* | *-*-go32* | *-*-cygwin* | *-*-windows*)
+
 		AC_DEFINE([CYGWIN],[1],[When on cygwin])
 		AC_DEFINE([WIN32],[1],[When on cygwin])
                 pdp_cygwin=true

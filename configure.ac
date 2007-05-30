@@ -240,7 +240,6 @@ if test x"$gui" = x"true"; then
   AC_DEFINE([TA_USE_QT],,[This switch is set when linking with Qt.])
   AC_DEFINE([TA_USE_INVENTOR],,[This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
   AC_DEFINE([QT_SHARED],,[Used in qglobal.h.])
-  AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 
   dnl Tells top-level makefile.am to recurse through src/taiqtso in gui mode
   AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
@@ -284,6 +283,7 @@ fi
 case $host in
     *-*-mingw32*)
             CXXFLAGS=$(echo $CXXFLAGS | sed 's/\/ -I/ -I/g;s/\/$//;s/\\\\/\\/g')
+            LIBS=$(echo $LIBS | sed 's/-lm//')
     ;;
     *)
     ;;
