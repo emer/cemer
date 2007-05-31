@@ -1,8 +1,4 @@
-template<class T, TypeDef* td = &TA_int>
-class MyClassT { 
+class testt { 
 public:
-  T val;
-  void GetType(TypeDef* typ = td);
+  static const int my_const = 0;
 };
-
-typedef MyClassT<int, TA_float> myguy;

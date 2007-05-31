@@ -516,6 +516,7 @@ basicmemb:
 
 nostatmemb:
           membtype membnames term	{ $$ = $2; }
+        | membtype membname EQUALS term { $$ = $2; }
         | membnames term		{ }
         | membtype membname ARRAY term	{
 	    $$ = $2;

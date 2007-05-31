@@ -516,7 +516,7 @@ void mta_print_commandline_args(char* argv[]) {
       << "\n[-class_only | -struct_union] only scan for class types (else struct and unions)"
       << "\n[-I<include>]...    path to include files (one path per -I)"
       << "\n[-D<define>]...     define a pre-processor macro"
-      << "\n[-cpp=<cpp command>] explicit path for c-pre-processor"
+      << "\n[-cpp=<cpp command>] explicit path for c-pre-processor (g++ -E is default)"
       << "\n[-hash<size>]       size of hash tables (default 2000), use -v1 to see actual sizes"
       << "\n[-f <filename>]     read list of header files from given file"
       << "\n[-k]                keep temporary files (useful for debugging)"
@@ -540,7 +540,7 @@ int main(int argc, char* argv[])
   String rm = String("del ");
 #else
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) mta_cleanup);
-  String cpp = "/usr/lib/cpp";
+  String cpp = "g++ -E";
   String rm = String("/bin/rm ");
 #endif
   String incs;
