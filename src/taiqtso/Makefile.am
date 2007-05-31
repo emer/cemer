@@ -81,6 +81,9 @@ irenderarea.moc.cpp:
 interceptor.moc.cpp:
 	$(QT_MOC) -o interceptor.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta interceptor.h
 
+qconsole.moc.cpp:
+	$(QT_MOC) -o qconsole.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta qconsole.h
+
 itextbrowser.h:
 
 
