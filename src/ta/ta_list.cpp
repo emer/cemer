@@ -145,29 +145,45 @@ int taPtrList_impl::FindEl_(const void* it) const {
 }
 
 void* taPtrList_impl::FindName_(const String& nm, int& idx) const {
+  idx = -1;
   if (hash_table && (hash_table->key_type == taHashTable::KT_NAME)) {
     idx = hash_table->FindListEl(HashCode_String(nm));
-    if(idx >=0 )
-      return el[idx];
-    return NULL;
+    if(idx >=0) {
+#ifdef DEBUG
+      if(!El_FindCheck_(el[idx], nm)) { // sometimes the hash can be wrong!!!
+	cerr << "ERROR -- please report this bug!!!  Hash table error!: " << nm << " != " << El_GetName_(el[idx]) << endl;
+	if(HashCode_String(nm) != HashCode_String(El_GetName_(el[idx]))) {
+	  cerr << "Hash error is not because of code equality!  Must be overwriting item!"
+	       << endl;
+	  return NULL;		// not going to help to search
+	}
+	goto slow_search;
+      }
+      else
+#endif
+	return el[idx];
+    }
+    else
+      return NULL;
   }
+ slow_search:
   for(int i=0; i < size; i++) {
     if(El_FindCheck_(el[i], nm)) {
       idx = i;
       return el[i];
     }
   }
-  idx = -1;
   return NULL;
 }
 
 void taPtrList_impl::UpdateIndex_(int idx) {
   if(el[idx] == NULL)
     return;
-  if(El_GetOwnerList_(el[idx]) == this)
+  if(El_GetOwnerList_(el[idx]) == this) {
     El_SetIndex_(el[idx], idx);
-  if(hash_table != NULL)
-    hash_table->UpdateIndex(El_GetName_(el[idx]), idx);
+    if(hash_table != NULL)
+      hash_table->UpdateIndex(El_GetName_(el[idx]), idx);
+  }
 }
 
 bool taPtrList_impl::MoveIdx(int fm, int to) {
@@ -308,7 +324,7 @@ bool taPtrList_impl::RemoveIdx(int i) {
   //note: change in 4.0 - don't disown until after removed from list
   if(tel != NULL) {
     if(hash_table != NULL)
-      hash_table->RemoveName(El_GetName_(tel));
+      hash_table->RemoveHash(El_GetHashVal_(tel));
   }
   int j;
   for(j=i; j < size-1; j++) {		// compact, if necc
@@ -383,7 +399,7 @@ bool taPtrList_impl::ReplaceIdx_(int ol, void* nw, bool no_notify_insert) {
     return false;
   if(el[ol] != NULL) {
     if(hash_table != NULL)
-      hash_table->RemoveName(El_GetName_(el[ol]));
+      hash_table->RemoveHash(El_GetHashVal_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -495,7 +511,7 @@ bool taPtrList_impl::ReplaceLinkIdx_(int ol, void* nw) {
     return false;
   if(el[ol] != NULL) {
     if(hash_table != NULL)
-      hash_table->RemoveName(El_GetName_(el[ol]));
+      hash_table->RemoveHash(El_GetHashVal_(el[ol]));
     DataChanged(DCR_LIST_ITEM_REMOVE, el[ol]);
     El_disOwn_(el[ol]);
   }
@@ -529,7 +545,7 @@ void* taPtrList_impl::Pop_() {
   void* rval = el[--size];
   if(rval != NULL) {
     if(hash_table != NULL)
-      hash_table->RemoveName(El_GetName_(rval));
+      hash_table->RemoveHash(El_GetHashVal_(rval));
     DataChanged(DCR_LIST_ITEM_REMOVE, rval);
     El_unRef_(rval);
   }

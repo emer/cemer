@@ -403,6 +403,16 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
        << sp->name << " idx: " << td->idx << endl;
 }
 
+void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
+  if(ext_td->name != new_td->name) {
+    cerr << "E!!: Error in hash table name lookup -- names: " << ext_td->name << " and: " 
+	 << new_td->name << " should be the same!" << endl;
+  }
+  if(verbose <= 2)	return;
+  cerr << "M!!: " << typ << " NOT added: " << new_td->name << " to: "
+       << sp->name << " because of existing type: " << ext_td->name
+       << " idx: " << ext_td->idx << endl;
+}
 
 void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
 		  String_PArray& opts, String_PArray& lists) {

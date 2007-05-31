@@ -33,6 +33,8 @@ int MTA::Getc() {
   //  strm_pos++;
   strm_pos = strm_pos + streampos(1);
   // now, detect for CRLF and skip to the lf
+  if(verbose > 4) // && (state != MTA::Find_Item))
+    cerr << "C!!: => " << line << " :\t" << c << "\n";
   if (c == '\r') {
     if (Peekc() == '\n')
       c = fh.get();
@@ -47,7 +49,7 @@ int MTA::Getc() {
     col = 0;
   } else {
     if(col >= 8191)
-      cout << "Warning, line length exceeded in line: " << line << "\n";
+      cout << "W!!: Warning, line length exceeded in line: " << line << "\n";
     else {
       MTA::LastLn[col++] = c;
       MTA::LastLn[col] = '\0';	// always terminate

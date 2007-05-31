@@ -175,6 +175,9 @@ public:
 
   void		TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td);
   // report that type was added if verbose is on
+  void		TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td,
+			     TypeDef* new_td);
+  // report that type new_td was NOT added because of existing type ext_td (if verbose is on)
 
   void 		SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
 			String_PArray& opts, String_PArray& lists);

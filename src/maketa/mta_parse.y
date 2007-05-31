@@ -521,10 +521,12 @@ nostatmemb:
 	    $$ = $2;
 	    String nm = $1->name + "_ary";
 	    TypeDef* nty = new TypeDef((char*)nm, true, $1->ptr + 1);
-	    nty->AddParFormal(&TA_ta_array); nty->AddParent($1);
 	    TypeSpace* sp = mta->GetTypeSpace($1);
-	    TypeDef* uty = sp->AddUniqNameOld(nty); $2->type = uty;
-	    if(uty == nty) mta->TypeAdded("array", sp, uty); }
+	    TypeDef* uty = sp->AddUniqNameOld(nty); 
+	    if(uty == nty) { mta->TypeAdded("array", sp, uty); 
+	      nty->AddParFormal(&TA_ta_array); nty->AddParent($1); }
+	    else { mta->TypeNotAdded("array", sp, uty, nty); delete nty; }
+	    $2->type = uty; }
         | membtype membfunp funargs term { $2->type = $1; $$ = $2; }
         ;
 
@@ -712,30 +714,35 @@ type:	  noreftype
         | noreftype '&'			{
 	    String nm = $1->name + "_ref";
 	    TypeDef* nty = new TypeDef((char*)nm, true, $1->ptr, true);
-	    nty->AddParent($1);
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) mta->TypeAdded("ref", sp, $$); }
+	    if($$ == nty) { mta->TypeAdded("ref", sp, $$); nty->AddParent($1); }
+	    else { mta->TypeNotAdded("ref", sp, $$, nty); delete nty; }
+	  }
         ;
 
 noreftype:
 	  constype
         | constype ptrs			{
  	    int i; String nm = $1->name; for(i=0; i<$2; i++) nm += "_ptr";
-	    TypeDef* nty = new TypeDef((char*)nm, true, $2); nty->AddParent($1);
+	    TypeDef* nty = new TypeDef((char*)nm, true, $2); 
 	    TypeSpace* sp = mta->GetTypeSpace($1);
 	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) mta->TypeAdded("ptr", sp, $$); }
+	    if($$ == nty) { mta->TypeAdded("ptr", sp, $$); nty->AddParent($1); }
+	    else { mta->TypeNotAdded("ptr", sp, $$, nty); delete nty; }
+	  }
         ;
 
 constype: subtype
         | CONST subtype			{
 	    String nm = $1->name + "_" + $2->name;
 	    TypeDef* nty = new TypeDef((char*)nm, true);
-	    nty->size = $2->size; nty->AddParent($1); nty->AddParent($2);
 	    TypeSpace* sp = mta->GetTypeSpace($2);
 	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) mta->TypeAdded("const", sp, $$); }
+	    if($$ == nty) { mta->TypeAdded("const", sp, $$);
+	      nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
+	    else { mta->TypeNotAdded("const", sp, $$, nty); delete nty; }
+	  }
         ;
 
 subtype:  combtype
@@ -780,10 +787,12 @@ combtype: TYPE
         | combtype TYPE			{
 	    String nm = $1->name + "_" + $2->name;
 	    TypeDef* nty = new TypeDef((char*)nm, true);
-	    nty->size = $2->size; nty->AddParent($1); nty->AddParent($2);
 	    TypeSpace* sp = mta->GetTypeSpace($2);
 	    $$ = sp->AddUniqNameOld(nty);
-	    if($$ == nty) mta->TypeAdded("combo", sp, $$); }
+	    if($$ == nty) { mta->TypeAdded("combo", sp, $$);
+	      nty->size = $2->size; nty->AddParent($1); nty->AddParent($2); }
+	    else { mta->TypeNotAdded("combo", sp, $$, nty); delete nty; }
+	  }
         ;
 
 templargs:
