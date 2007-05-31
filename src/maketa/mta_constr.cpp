@@ -122,7 +122,7 @@ bool TypeSpace_Sort_Order(TypeSpace* ths) {
       TypeDef* par_td = td->parents.FastEl(j);
       if((td->idx < par_td->idx) && (td->owner == ths) && (par_td->owner == ths)) {
 	if(mta->verbose > 0)
-	  cerr << "Switching order of: " << td->name << " fm: " << td->idx << " to: "
+	  cerr << "M!!: Switching order of: " << td->name << " fm: " << td->idx << " to: "
 	       << par_td->idx+1 << "\n";
 	// child comes before parent..
 	ths->MoveIdx(td->idx, par_td->idx+1); // move after parent
@@ -264,7 +264,7 @@ void MTA::TypeSpace_Generate(TypeSpace* ths, ostream& strm, const String_PArray&
 
 String TypeDef_Gen_Ref(TypeDef* ths) {
   if(ths->owner == NULL) {
-    cerr << "Warning: referring to unowned type: " << ths->name << "\n";
+    cerr << "W!!: Warning: referring to unowned type: " << ths->name << "\n";
     return "TA_void";
   }
   if(ths->owner->owner == NULL)	// on some kind of global list
@@ -712,7 +712,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
       // we don't know how to handle this rval -- not good!!!!
       has_rval = false;
       if (mta->verbose > 0) {
-      cerr << "**WARNING**: in file: " << mta->cur_fname << " method: " << md->name << 
+      cerr << "W!!: Warning: in file: " << mta->cur_fname << " method: " << md->name << 
         " don't know how to handle return type: " << md->type->name << 
         " so it will be ignored!\n";
      }
@@ -829,7 +829,7 @@ void TypeDef_Generate_Data(TypeDef* ths, ostream& strm) {
 
 String TypeDef_Generate_TypeFields(TypeDef* ths, TypeDef* ownr_ownr) {
   if(ths->owner == NULL) {
-    cerr << "Warning: referring to unowned type: " << ths->name << "\n";
+    cerr << "W!!: Warning: referring to unowned type: " << ths->name << "\n";
     return "&TA_void,NULL";
   }
   if(ths->owner->owner == NULL)	// on some kind of global list
@@ -1210,17 +1210,17 @@ void TypeDef_Generate_AddParents(TypeDef* ths, char* typ_ref, ostream& strm) {
    only defined in a later module)
 */
     if ((ptd->owner != ths->owner) && !ptd->pre_parsed &&
-       (mta->spc_builtin.FindName(ptd->name) == NULL) &&
-       (mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
-if (mta->verbose > 0) {
-	cerr << "maketa: ("
-	<< (ptd->owner != ths->owner) << ", "
-	<< !ptd->pre_parsed << ", "
-	<< (mta->spc_builtin.FindName(ptd->name) == NULL) 
-	<< ") skipping parent '" << ptd->name << "' for: " << ths->name << endl;
+	(mta->spc_builtin.FindName(ptd->name) == NULL) &&
+	(mta->spc_pre_parse.FindName(ptd->name) == NULL)) {
+      if (mta->verbose > 0) {
+	cerr << "M!!: maketa: ("
+	     << (ptd->owner != ths->owner) << ", "
+	     << !ptd->pre_parsed << ", "
+	     << (mta->spc_builtin.FindName(ptd->name) == NULL) 
+	     << ") skipping parent '" << ptd->name << "' for: " << ths->name << endl;
 	if (ptd->owner) cerr << " ptd space: " <<  ptd->owner->name << endl;
 	if (ths->owner) cerr << " ths space: " <<  ths->owner->name << endl;
-}
+      }
       continue; // add parents only if on same list. (except if pre-parsed or builtin)
     } 
     cnt++;

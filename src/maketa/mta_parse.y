@@ -166,13 +166,19 @@ defn:     type tyname term		{
         /* predeclared type, which gets sucked in by the combtype list
 	   the second parent of the new type is the actual new type */
         | type term			{
+	  if($1->parents.size < 2) {
+	    cerr << "E!!: Error in predeclared type: " << $1->name << " second parent not found!"
+		 << endl;
+	    $$ = $1;
+	  }
+	  else {
 	    TypeDef* td = $1->parents[1]; mta->type_stack.Pop();
 	    TypeSpace* sp = $1->owner;
 	    sp->RemoveEl($1); /* get rid of new one, cuz it is bogus */
 	    /* not on list that it would be placed on now.. */
 	    if((td->owner != mta->spc) && (mta->spc->FindName(td->name) == NULL)) {
 	      if(mta->verbose >= 3)
-		cerr << "transfered: " << td->name << " from: " << td->owner->name
+		cerr << "M!!: transfered: " << td->name << " from: " << td->owner->name
 		     << " to: " << mta->spc->name << "\n";
 	      mta->spc->Transfer(td); /* now check for parent which is a combo of basic types */
 	      if((td->parents.size == 1) && (td->parents[0]->owner != mta->spc) &&
@@ -182,7 +188,7 @@ defn:     type tyname term		{
 		if((mta->spc_builtin.FindName(par->parents[0]->name) != NULL) &&
 		   (mta->spc_builtin.FindName(par->parents[1]->name) != NULL)) {
 		  if(mta->verbose >= 3)
-		    cerr << "transfered: " << par->name << " from: " << par->owner->name
+		    cerr << "M!!: transfered: " << par->name << " from: " << par->owner->name
 			 << " to: " << mta->spc->name << "\n";
 		  TypeDef* already_there = mta->spc->FindName(par->name);
 		  if(already_there == NULL)
@@ -192,7 +198,7 @@ defn:     type tyname term		{
 		}
 	      }
 	    }
-	    $$ = td; }
+	    $$ = td; } }
         /* currently, parsing pointer-to-a-function typedefs, but not
 	   registering them as such, just giving them void* types */
         | type '(' '*' tyname ')' funargs term {
@@ -448,7 +454,7 @@ membline: membdefn			{
 		 && !($1->type->DerivesFrom(TA_const))) {
 		mta->cur_class->members.AddUniqNameNew($1);
 		if(mta->verbose >= 3)
-		  cerr << "member: " << $1->name << " added to: "
+		  cerr << "M!!: member: " << $1->name << " added to: "
 		       << mta->cur_class->name << "\n"; } }
 	    mta->memb_stack.Pop(); $$ = NULL; }
         | methdefn			{
@@ -459,7 +465,7 @@ membline: membdefn			{
 		else {
 		  mta->cur_class->methods.AddUniqNameNew($1);
 		  if(mta->verbose >= 3)
-		    cerr << "method: " << $1->name << " added to: "
+		    cerr << "M!!: method: " << $1->name << " added to: "
 			 << mta->cur_class->name << "\n"; } } }
 	    else {
 	      mta->cur_meth = NULL; }
@@ -497,7 +503,7 @@ membdefn:
 	      else if((mta->last_meth->opts.size > 0) || (mta->last_meth->lists.size > 0)) {
 		mta->cur_class->methods.AddUniqNameNew(mta->last_meth);
 		if(mta->verbose >= 3)
-		  cerr << "method: " << mta->last_meth->name << " added to: "
+		  cerr << "M!!: method: " << mta->last_meth->name << " added to: "
 		       << mta->cur_class->name << "\n"; } } }
         ;
 
@@ -828,13 +834,13 @@ void yyerror(char *s) { 	/* called for yacc syntax error */
     return;
 
   if(strcmp(s, "parse error") == 0) {
-    cerr << "Syntax Error, line " << mta->st_line << ":\t" << MTA::LastLn << "\n";
+    cerr << "E!!: Syntax Error, line " << mta->st_line << ":\t" << MTA::LastLn << "\n";
     cerr << "\t\t\t";
     for(i=0; i < mta->st_col + 1; i++)
       cerr << " ";
     cerr << "^\n";
   }
   else {
-    cerr << s << "line " << mta->st_line << ":\t" << MTA::LastLn << "\n";
+    cerr << "E!!: " << s << "line " << mta->st_line << ":\t" << MTA::LastLn << "\n";
   }
 }

@@ -651,13 +651,13 @@ public:
   // find given variable within this progel list -- NULL if not found
 
   override int		NumListCols() const {return 2;} 
-  override const KeyString GetListColKey(int col) const;
+  override const 	KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
 
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
 private:
-  void Copy_(const ProgEl_List& cp);
+  void 	Copy_(const ProgEl_List& cp);
   void	Initialize();
   void	Destroy();
 };
@@ -749,6 +749,30 @@ private:
 };
 
 SmartRef_Of(Function,TA_Function);
+
+class TA_API Function_List: public taList<Function> {
+  // #TREEFILT_ProgGp list of functions defined within a program
+INHERITED(taList<Function>)
+public:
+  virtual void		PreGen(int& item_id); // iterates over all items
+  virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
+  virtual const String	GenListing(int indent_level = 0); // generate the listing of this program
+
+  virtual ProgVar*	FindVarName(const String& var_nm) const;
+  // find given variable within this progel list -- NULL if not found
+
+  override int		NumListCols() const {return 2;} 
+  override const 	KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
+
+  SIMPLE_LINKS(Function_List);
+  TA_BASEFUNS(Function_List);
+private:
+  void 	Copy_(const Function_List& cp);
+  void	Initialize();
+  void	Destroy();
+};
+
 
 class TA_API FunctionCall: public ProgEl { 
   // ##DEF_CHILD_fun_args call a function
@@ -870,7 +894,7 @@ public:
   // global variables that are parameters (arguments) for callers
   ProgVar_List		vars;
   // global variables accessible outside and inside script
-  ProgEl_List		functions;
+  Function_List		functions;
   // function code (for defining subroutines): goes at top of script and can be called from init or prog code
   ProgEl_List		load_code;
   // load initialization code: run when the program is loaded from the program library or other external sources (does not appear in standard program -- is compiled and run in a separate css program space). Note: ProgramCall's are automatically initialized according to targ_ld_init_name

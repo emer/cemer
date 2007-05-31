@@ -399,8 +399,8 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
 
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
   if(verbose <= 2)	return;
-  cerr << typ << " added: " << td->name << " to: "
-       << sp->name << " idx: " << td->idx << "\n";
+  cerr << "M!!: " << typ << " added: " << td->name << " to: "
+       << sp->name << " idx: " << td->idx << endl;
 }
 
 
@@ -483,9 +483,9 @@ void MTA::SetPreParseFlag(TypeSpace& aspc, TypeSpace& pplist) {
 #if (defined(TA_OS_UNIX))
 void mta_cleanup(int err) {
   signal(err, SIG_DFL);
-  cerr << "maketa: exiting and cleaning up temp files from signal: ";
+  cerr << "E!!: maketa: exiting and cleaning up temp files from signal: ";
   taMisc::Decode_Signal(err);
-  cerr << "\n";
+  cerr << endl;
   String tmp_file = String("/tmp/mta_tmp.") + String(getpid());
   String rm_tmp = String("/bin/rm ") + tmp_file + " >/dev/null 2>&1";
   system(rm_tmp);
@@ -628,7 +628,7 @@ int main(int argc, char* argv[])
 	  // but order is also sometimes important in the master input list
 	  // so we shouldn't just ignore them
 	  if (!mta->headv.AddUnique(taPlatform::lexCanonical(fl))) {
-	    cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
+	    cerr <<  "W!!: Warning: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
 	  }
 	}
       }
@@ -669,11 +669,11 @@ int main(int argc, char* argv[])
   }
 
   if(mta->verbose > 0) {
-    cerr << "header files to be parsed:\n";
+    cerr << "M!!: header files to be parsed:\n";
     mta->headv.List(cout);
-    cerr << "\nheader files to be parsed (file-name-only):\n";
+    cerr << "\nM!!: header files to be parsed (file-name-only):\n";
     mta->head_fn_only.List(cout);
-    cerr << "\n";
+    cerr << endl;
   }
 
   if(mta->verbose > 4)
@@ -716,7 +716,7 @@ int main(int argc, char* argv[])
 #endif
 
     if(mta->verbose > 0)
-      cerr << comnd << "\n";
+      cerr << "M!!: " << comnd << "\n";
     cout.flush();
     int ret_code;
     if ((ret_code = system((char*)comnd)) != 0) {
@@ -769,11 +769,11 @@ int main(int argc, char* argv[])
   // give it 5 passes through to try to get everything in order..
   int swp_cnt = 0;
   if(mta->verbose > 0)
-    cerr << "Sorting: Pass " << swp_cnt << "\n";
+    cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
   while ((swp_cnt < 10) && TypeSpace_Sort_Order(&(mta->spc_target))) {
     swp_cnt++;
     if(mta->verbose > 0)
-      cerr << "Sorting: Pass " << swp_cnt << "\n";
+      cerr << "M!!: Sorting: Pass " << swp_cnt << "\n";
   }
 
   if(mta->verbose > 3) {
@@ -832,7 +832,7 @@ int main(int argc, char* argv[])
   }
   
   if((mta->verbose > 0) && (mta->spc_target.hash_table != NULL)) {
-    cerr << "\n TypeSpace size and hash_table bucket_max values:\n"
+    cerr << "\nM!!: TypeSpace size and hash_table bucket_max values:\n"
 	 << "spc_target:\t" << mta->spc_target.size << "\t" << mta->spc_target.hash_table->bucket_max << "\n"
 	 << "spc_other:\t" << mta->spc_other.size << "\t" << mta->spc_other.hash_table->bucket_max << "\n"
 	 << "spc_extern:\t" << mta->spc_extern.size << "\t" << mta->spc_extern.hash_table->bucket_max << "\n"

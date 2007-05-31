@@ -41,7 +41,7 @@ int MTA::Getc() {
   if ((c == '\n') || (c == '\r')) {
     MTA::LastLn[col] = '\0';	// always terminate
     if(verbose > 3) // && (state != MTA::Find_Item))
-      cerr << "=> " << line << " :\t" << MTA::LastLn << "\n";
+      cerr << "I!!: => " << line << " :\t" << MTA::LastLn << "\n";
     line++;
     st_line_pos = strm_pos;
     col = 0;
@@ -270,7 +270,7 @@ int MTA::lex() {
       if ((c == '\n') || (c == '\r'))		// ignore #<lineno><RETURN> directives
 	continue;
       else if(c != '\"') {	// "
-	cerr << "Directive Not Recognized: " << LexBuf << (char)c << "\n";
+	cerr << "E!!: Directive Not Recognized: " << LexBuf << (char)c << "\n";
 	continue;
       }
       c = readfilename(c);

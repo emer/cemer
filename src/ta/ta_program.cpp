@@ -1924,6 +1924,75 @@ bool ProgramCall::LoadInitTarget_impl(const String& nm) {
 
 
 //////////////////////////
+//   Function_List	//
+//////////////////////////
+
+void Function_List::Initialize() {
+  SetBaseType(&TA_Function);
+  setUseStale(true);
+}
+
+void Function_List::Destroy() {
+  Reset();
+}
+
+void Function_List::Copy_(const Function_List& cp) {
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
+}
+
+const String Function_List::GenCss(int indent_level) {
+  String rval;
+  for (int i = 0; i < size; ++i) {
+    Function* el = FastEl(i);
+    rval += el->GenCss(indent_level); 
+  }
+  return rval;;
+}
+
+const String Function_List::GenListing(int indent_level) {
+  String rval;
+  for (int i = 0; i < size; ++i) {
+    Function* el = FastEl(i);
+    rval += el->GenListing(indent_level); 
+  }
+  return rval;
+}
+
+String Function_List::GetColHeading(const KeyString& key) const {
+  static String col0("El Type");
+  static String col1("El Description");
+  if (key == key_type)  return col0;
+  else if (key == key_disp_name) return col1;
+  else return inherited::GetColHeading(key);
+}
+
+const KeyString Function_List::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return key_type;
+  case 1: return key_disp_name;
+  default: return _nilKeyString;
+  }
+}
+
+
+void Function_List::PreGen(int& item_id) {
+  for (int i = 0; i < size; ++i) {
+    Function* el = FastEl(i);
+    el->PreGen(item_id);
+  }
+}
+
+ProgVar* Function_List::FindVarName(const String& var_nm) const {
+  for (int i = 0; i < size; ++i) {
+    Function* el = FastEl(i);
+    ProgVar* pv = el->FindVarName(var_nm);
+    if(pv) return pv;
+  }
+  return NULL;
+}
+
+
+//////////////////////////
 //  Function		//
 //////////////////////////
 
