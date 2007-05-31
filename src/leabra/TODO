@@ -10,8 +10,6 @@ current:
   a=float -> b=int = NOT
   a=string -> b=int = NOT
 
-* maketa parse: static const int     my_const = 0;
-
 * check: test datatable /matrix cut/paste ops
 
 * check: ticket 442 -- crash in connect from -- updated w/test case

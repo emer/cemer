@@ -120,6 +120,9 @@ LIB_VERSION = @LIB_VERSION@
 LIB_VERSION_2 = @LIB_VERSION_2@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
+MAINTAINER_MODE_FALSE = @MAINTAINER_MODE_FALSE@
+MAINTAINER_MODE_TRUE = @MAINTAINER_MODE_TRUE@
 MAKEINFO = @MAKEINFO@
 MAKETA_OPT = @MAKETA_OPT@
 MPICXX = @MPICXX@
@@ -252,7 +255,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .dvi .html .pdf .ps .texi
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/mfstamp.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/mfstamp.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -277,9 +280,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
 mostlyclean-libtool:
@@ -373,13 +376,10 @@ dist-info: $(INFO_DEPS)
 	    $(srcdir)/*) base=`echo "$$base" | sed "s|^$$srcdirstrip/||"`;; \
 	  esac; \
 	  if test -f $$base; then d=.; else d=$(srcdir); fi; \
-	  base_i=`echo "$$base" | sed 's|\.info$$||;s|$$|.i|'`; \
-	  for file in $$d/$$base $$d/$$base-[0-9] $$d/$$base-[0-9][0-9] $$d/$$base_i[0-9] $$d/$$base_i[0-9][0-9]; do \
-	    if test -f $$file; then \
-	      relfile=`expr "$$file" : "$$d/\(.*\)"`; \
-	      test -f $(distdir)/$$relfile || \
-		cp -p $$file $(distdir)/$$relfile; \
-	    else :; fi; \
+	  for file in $$d/$$base*; do \
+	    relfile=`expr "$$file" : "$$d/\(.*\)"`; \
+	    test -f $(distdir)/$$relfile || \
+	      cp -p $$file $(distdir)/$$relfile; \
 	  done; \
 	done
 
