@@ -906,6 +906,9 @@ do-mfstamp-am do-mfstamp: Makefile.in
 irenderarea.moc.cpp:
 	$(QT_MOC) -DTA_USE_INVENTOR -o irenderarea.moc.cpp irenderarea.h
 
+interceptor.moc.cpp:
+	$(QT_MOC) -o interceptor.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta interceptor.h
+
 itextbrowser.h:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

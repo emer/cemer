@@ -110,6 +110,7 @@ AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/..
 
 dnl  Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
 LDFLAGS="$LDFLAGS -L/opt/local/lib" dnl Harmless insertion for DarwinPorts
+AC_CHECK_LIB([ode],[main])
 AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])

@@ -78,6 +78,9 @@ include $(top_srcdir)/mfstamp.am
 irenderarea.moc.cpp:
 	$(QT_MOC) -DTA_USE_INVENTOR -o irenderarea.moc.cpp irenderarea.h
 
+interceptor.moc.cpp:
+	$(QT_MOC) -o interceptor.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta interceptor.h
+
 itextbrowser.h:
 
 
