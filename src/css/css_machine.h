@@ -20,23 +20,23 @@
 #ifndef machine_h
 #define machine_h 1
 
-#include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
-#include <memory.h>
-#include <fstream>
-#include <sstream>
+#include "css_extern_support.h"
 
 #include "ta_string.h"
 #include "ta_variant.h"
-#include "css_extern_support.h"
-
 #include "ta_type.h"
 #include "ta_base.h"
 
 #ifdef TA_USE_QT
 # include <QObject>
 #endif
+
+#include <stdlib.h>
+#include <ctype.h>
+#include <math.h>
+#include <memory.h>
+#include <fstream>
+#include <sstream>
 
 #include <signal.h>
 // #include <setjmp.h>

@@ -17,6 +17,8 @@
 #ifndef css_builtin_h
 #define css_builtin_h 1
 
+#include "css_def.h"
+
 // builtin function exports
 
 class cssTA_Base;

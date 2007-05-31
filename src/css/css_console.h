@@ -19,8 +19,9 @@
 
 // css_console.h -- abstraction of console (and readline)
 
-#include "ta_string.h"
 #include "css_machine.h"
+
+#include "ta_string.h"
 
 #include <QObject>
 

@@ -14,9 +14,9 @@
 //   Lesser General Public License for more details.
 
 
-// machine.cc
-#include "ta_platform.h"
 #include "css_machine.h"
+
+#include "ta_platform.h"
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_console.h"
