@@ -82,14 +82,15 @@ AC_PROG_AWK
 AC_PROG_YACC
 AC_PROG_LEX
 
+SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
+
 case $host in
        *-*-mingw32*)
        ;;
         *)
                AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
+       ;;
 esac
-
-SIM_AC_HAVE_LIBZLIB_IFELSE(,[SIM_AC_CONFIGURATION_WARNING([Failed to detect libzlib])])
 
 dnl  non-modal, for now
 AC_DEFINE([V3_COMPAT],[],[turn on version 3.x compatability code])
@@ -290,6 +291,10 @@ case $host in
     ;;
 esac
     
+if test x"$my_libs"; then
+  LIBS="$my_libs $LIBS"
+fi
+
 AC_SUBST([PDP_SUFFIX])
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
@@ -310,7 +315,6 @@ if test x"$bundle" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([OSX Bundle],[./$bundle_name])
 
 fi
-
 
 AC_CONFIG_FILES([Makefile
 		src/maketa/Makefile

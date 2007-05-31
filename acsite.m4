@@ -111,6 +111,12 @@ AC_ARG_ENABLE([readline],
 			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),
 			     [readline=false],
 			     [readline=true])
+AC_ARG_ENABLE([libs],
+	      AC_HELP_STRING([--enable-libs],
+			     [These flags will be safeguarded and added to the linker line at the very end of configure.]),
+			     [my_libs="${enableval}"],
+			     [my_libs=])
+
 
 #NOTE: This actually works with a few minor hiccups
 AC_ARG_WITH([rpm],
