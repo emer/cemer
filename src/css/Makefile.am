@@ -59,7 +59,7 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 css_qtconsole.moc.cpp:
-	$(QT_MOC) -o css_qtconsole.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/css css_qtconsole.h
+	$(QT_MOC) -o css_qtconsole.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/css -I@abs_top_builddir@/src/ta css_qtconsole.h
 
 make_css_parse:
 	bison -dtvy css_parse.y;
