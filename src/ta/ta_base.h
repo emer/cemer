@@ -115,7 +115,7 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
-  USING(taBase::Copy); \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   void Copy(const y& cp) { bool ok = true; \
     CanCopy_impl((const taBase*)&cp, true, ok, true); \
     if (ok) Copy_impl(cp);} \
@@ -139,7 +139,7 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
-  USING(taBase::Copy); \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   void Copy(const y<T>& cp) {  bool ok = true; \
     CanCopy_impl((const taBase*)&cp, true, ok, true); \
     if (ok) Copy_impl(cp);} \
@@ -163,7 +163,7 @@ protected: \
 public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
-  USING(taBase::Copy); \
+  inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
   void Copy(const y<T,U>& cp) {  bool ok = true; \
     CanCopy_impl((const taBase*)&cp, true, ok, true); \
     if (ok) Copy_impl(cp);} \

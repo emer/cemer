@@ -209,7 +209,7 @@ public:
   int			value;     // #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
 
   virtual bool	IsSet() const
-  { return (enum_type && value >= 0); }
+  { return ((bool)enum_type && (value >= 0)); }
   // check whether there is a value set (enum_type is set and value >= 0)
   virtual int 	NumVal() const;
   // current numerical (integer) value of enum (-1 = no value set)

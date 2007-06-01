@@ -1091,7 +1091,7 @@ void iT3ViewspaceWidget::setSelMode(SelectionMode value) {
 }
 
 void iT3ViewspaceWidget::setTopView(taDataView* tv) {
-  if (tv == m_top_view) return;
+  if (m_top_view.ptr() == tv) return;
   m_top_view = tv;
   if (tv) {
     if (isVisible()) {
@@ -1578,7 +1578,7 @@ bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   SoVectorOutput * out = ps->getOutput();
 
   if (!out->openFile(flr->fileName())) {
-    return -1; // unable to open output file
+    return false; // unable to open output file
   }
 
   // to enable gouraud shading. 0.1 is a nice epsilon value

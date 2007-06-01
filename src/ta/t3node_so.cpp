@@ -1674,7 +1674,7 @@ T3Translate1Translator::T3Translate1Translator(bool active, float bar_len, float
   SoSeparator* c1s = new SoSeparator;
   SoTransform* c1t = new SoTransform;
   c1t->translation.setValue(tr_val, 0.0f, 0.0f);
-  c1t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -1.5708);
+  c1t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -1.5708f);
   c1s->addChild(c1t);
   c1s->addChild(cc);
   addChild(c1s);
@@ -1682,7 +1682,7 @@ T3Translate1Translator::T3Translate1Translator(bool active, float bar_len, float
   SoSeparator* c2s = new SoSeparator;
   SoTransform* c2t = new SoTransform;
   c2t->translation.setValue(-tr_val, 0.0f, 0.0f);
-  c2t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
+  c2t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
   c2s->addChild(c2t);
   c2s->addChild(cc);
   addChild(c2s);
@@ -1736,7 +1736,7 @@ T3Translate2Translator::T3Translate2Translator(bool active, float bar_len, float
   SoSeparator* xc1s = new SoSeparator;
   SoTransform* xc1t = new SoTransform;
   xc1t->translation.setValue(tr_val, 0.0f, 0.0f);
-  xc1t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -1.5708);
+  xc1t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -1.5708f);
   xc1s->addChild(xc1t);
   xc1s->addChild(cc);
   addChild(xc1s);
@@ -1744,7 +1744,7 @@ T3Translate2Translator::T3Translate2Translator(bool active, float bar_len, float
   SoSeparator* xc2s = new SoSeparator;
   SoTransform* xc2t = new SoTransform;
   xc2t->translation.setValue(-tr_val, 0.0f, 0.0f);
-  xc2t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
+  xc2t->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
   xc2s->addChild(xc2t);
   xc2s->addChild(cc);
   addChild(xc2s);
@@ -1759,7 +1759,7 @@ T3Translate2Translator::T3Translate2Translator(bool active, float bar_len, float
   SoSeparator* yc2s = new SoSeparator;
   SoTransform* yc2t = new SoTransform;
   yc2t->translation.setValue(0.0f, -tr_val, 0.0f);
-  yc2t->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), PI);
+  yc2t->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), (float)PI);
   yc2s->addChild(yc2t);
   yc2s->addChild(cc);
   addChild(yc2s);
@@ -1912,7 +1912,7 @@ SoScrollBar::SoScrollBar(int min_, int max_, int val_, int ps_, int ss_, float w
 
   slider_sep_ = new SoSeparator;
   slider_tx_ = new SoTransform;
-  slider_tx_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), .5f * PI);
+  slider_tx_->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), (float)(.5f * PI));
   slider_sep_->addChild(slider_tx_);
   slider_ = new SoCylinder;
   slider_->radius = .5f * width_;

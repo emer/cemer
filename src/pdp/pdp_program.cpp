@@ -806,21 +806,21 @@ void SetUnitsVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!input_data_var, quiet, rval, "input_data = NULL");
   CheckProgVarRef(input_data_var, quiet, rval);
-  if(!CheckError(unit_1 && unit_1->var_type != ProgVar::T_DynEnum, quiet, rval, 
+  if(!CheckError((bool)unit_1 && unit_1->var_type != ProgVar::T_DynEnum, quiet, rval, 
 		 "unit_1 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError(unit_1 && !unit_1->dyn_enum_val.enum_type, quiet, rval, 
+    CheckError((bool)unit_1 && !unit_1->dyn_enum_val.enum_type, quiet, rval, 
 	       "unit_1 does not have enum_type set -- must be set to one associated with layer unit names!");
-  if(!CheckError(unit_2 && unit_2->var_type != ProgVar::T_DynEnum, quiet, rval, 
+  if(!CheckError((bool)unit_2 && unit_2->var_type != ProgVar::T_DynEnum, quiet, rval, 
 		 "unit_2 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError(unit_2 && !unit_2->dyn_enum_val.enum_type, quiet, rval, 
+    CheckError((bool)unit_2 && !unit_2->dyn_enum_val.enum_type, quiet, rval, 
 	       "unit_2 does not have enum_type set -- must be set to one associated with layer unit names!");
-  if(!CheckError(unit_3 && unit_3->var_type != ProgVar::T_DynEnum, quiet, rval, 
+  if(!CheckError((bool)unit_3 && unit_3->var_type != ProgVar::T_DynEnum, quiet, rval, 
 		 "unit_3 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError(unit_3 && !unit_3->dyn_enum_val.enum_type, quiet, rval, 
+    CheckError((bool)unit_3 && !unit_3->dyn_enum_val.enum_type, quiet, rval, 
 	       "unit_3 does not have enum_type set -- must be set to one associated with layer unit names!");
-  if(!CheckError(unit_4 && unit_4->var_type != ProgVar::T_DynEnum, quiet, rval, 
+  if(!CheckError((bool)unit_4 && unit_4->var_type != ProgVar::T_DynEnum, quiet, rval, 
 		 "unit_4 is not a DynEnum variable -- must be one associated with layer unit names!"))
-    CheckError(unit_4 && !unit_4->dyn_enum_val.enum_type, quiet, rval, 
+    CheckError((bool)unit_4 && !unit_4->dyn_enum_val.enum_type, quiet, rval, 
 	       "unit_4 does not have enum_type set -- must be set to one associated with layer unit names!");
 }
 
@@ -852,7 +852,7 @@ bool SetUnitsVar::GetInputDataVar() {
 bool SetUnitsVar::GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idnm, 
 				 DataTable* idat, const String& il) {
   int colno;
-  if(un && (bool)un->dyn_enum_val.enum_type) {
+  if((bool)un && (bool)un->dyn_enum_val.enum_type) {
     DynEnumType* det = un->dyn_enum_val.enum_type.ptr();
     if(TestError(!idat->FindColName(det->name, colno, true), "GenCss",
 		 "data table column:",det->name,"not found in input data table:",

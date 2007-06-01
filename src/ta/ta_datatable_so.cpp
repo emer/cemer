@@ -126,7 +126,7 @@ T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
   SoTransform* scrtx = new SoTransform;
   scrtx->translation.setValue(.5f * width_ + frame_margin + 2.0f * frame_width,
 			      vert_off, frame_width);
-  scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), -.5f * PI); // vertical!
+  scrtx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), (float)(-.5f * PI)); // vertical!
   topSeparator()->addChild(scrtx);
   row_scroll_bar_ = new SoScrollBar;
   topSeparator()->addChild(row_scroll_bar_);

@@ -246,8 +246,9 @@ typedef unsigned char   byte;
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 // god bless Microsoft c++...
 #ifdef TA_OS_WIN
-  typedef unsigned int		uint;
   typedef unsigned char		uint8_t;
+  typedef unsigned int		uint;
+  typedef unsigned int      	uint32_t;
   typedef signed __int64      	int64_t;
   typedef unsigned __int64    	uint64_t;
 # if defined(_WIN64)
@@ -294,17 +295,18 @@ typedef unsigned char   byte;
 // misc. compiler hacks for MAKETA
 
 #ifdef __MAKETA__
-#define explicit
-#define _(c) // hide the guy from maketa
-#define INHERITED(c)
-#define STATIC_CONST static
-#define USING(b)
-#define volatile
+# define explicit
+# define _(c) // hide the guy from maketa
+# define INHERITED(c)
+# define STATIC_CONST static
+# define USING(b)
+# define volatile
 #else
-#define _(c) c
-#define INHERITED(c) typedef c inherited;
-#define STATIC_CONST static const
-#define USING(b) b;
+# define _(c) c
+# define INHERITED(c) typedef c inherited;
+# define STATIC_CONST static const
+# define USING(b) using b; \
+ 
 #endif
 
 // define Qt's macros, for Maketa

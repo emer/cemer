@@ -31,6 +31,7 @@ taiqtso_mocs: \
   irenderarea.moc.cpp \
   iscrollarea.moc.cpp \
   ispinbox.moc.cpp \
+  itextbrowser.moc.cpp \
   itreewidget.moc.cpp 
 
 ibutton.moc.cpp: $(PDP4DIR)\src\taiqtso\ibutton.h
@@ -73,6 +74,9 @@ iscrollarea.moc.cpp: $(PDP4DIR)\src\taiqtso\iscrollarea.h
 	$(MOC) %s -o $@
 
 ispinbox.moc.cpp: $(PDP4DIR)\src\taiqtso\ispinbox.h
+	$(MOC) %s -o $@
+
+itextbrowser.moc.cpp: $(PDP4DIR)\src\taiqtso\itextbrowser.h
 	$(MOC) %s -o $@
 
 itreewidget.moc.cpp: $(PDP4DIR)\src\taiqtso\itreewidget.h
@@ -137,10 +141,10 @@ TA_HEADS =\
 	$(PDP4DIR)/src/ta/colorscale.h \
 	$(PDP4DIR)/src/ta/ta_dmem.h \
 	$(PDP4DIR)/src/ta/ta_script.h \
-	$(PDP4DIR)/src/ta/ta_dynenum.h \
 	$(PDP4DIR)/src/ta/ta_viewspec.h \
 	$(PDP4DIR)/src/ta/ta_viewer.h \
 	$(PDP4DIR)/src/ta/ta_program.h \
+	$(PDP4DIR)/src/ta/ta_program_els.h \
 	$(PDP4DIR)/src/ta/ta_matrix.h \
 	$(PDP4DIR)/src/ta/ta_math.h \
 	$(PDP4DIR)/src/ta/ta_geometry.h \
