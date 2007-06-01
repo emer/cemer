@@ -756,7 +756,8 @@ void iProgramPanel::items_CustomExpandFilter(iTreeViewItem* item,
   TypeDef* typ = dl->GetDataTypeDef();
   if((level <= 1) && (typ->InheritsFrom(&TA_ProgVar_List) ||
 		      typ->InheritsFrom(&TA_ProgType_List))) return; // only top guys: args, vars
-  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList))
+  if(typ->DerivesFrom(&TA_ProgEl_List) || typ->DerivesFrom(&TA_ProgObjList) 
+     || typ->DerivesFrom(&TA_Function_List))
     return;			// expand
   if(typ->InheritsFrom(&TA_ProgEl)) {
     String mbr = typ->OptionAfter("DEF_CHILD_");

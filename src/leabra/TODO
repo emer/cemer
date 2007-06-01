@@ -10,6 +10,8 @@ current:
   a=float -> b=int = NOT
   a=string -> b=int = NOT
 
+* have init values of wt_scale parameters prior to adapting?? yes
+
 * check: test datatable /matrix cut/paste ops
 
 * check: ticket 442 -- crash in connect from -- updated w/test case

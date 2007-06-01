@@ -26,19 +26,43 @@ Q_EXPORT_PLUGIN2(virtenv_ode, VEOdePlugin)
 //		Actual ODE Code
 
 ////////////////////////////////////////////////
+//	parameters
+
+void ODEIntParams::Initialize() {
+  erp = 0.2f;
+  cfm = 1.0e-5f;
+}
+
+void ODEIntParams::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(erp < .01f) erp = .01f;
+  if(erp > .99f) erp = .99f;
+  if(cfm < 1.0e-9f) cfm = 1.0e-9f;
+  if(cfm > 1.0f) cfm = 1.0f;
+}
+
+////////////////////////////////////////////////
 //		bodies (ridid object elements)
+
+
+void VESurface::Initialize() {
+  friction = 1.0e22f;
+  bounce = 0.0f;
+  bounce_vel = .01f;
+}
 
 #include <Inventor/SbLinear.h>
 
 void VEBody::Initialize() {
   body_id = NULL;
+  geom_id = NULL;
   flags = BF_NONE;
+  shape = CYLINDER;
+  cur_shape = BOX;
   mass = 1.0f;
-  mass_shape = CYLINDER;
-  mass_radius = .5f;
-  mass_length = 1.0f;
-  mass_box = 1.0f;
-  use_fname = true;
+  radius = .5f;
+  length = 1.0f;
+  box = 1.0f;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
   fixed_joint_id = NULL;
 }
@@ -58,20 +82,80 @@ VEWorld* VEBody::GetWorld() {
 
 void* VEBody::GetWorldID() {
   VEWorld* wld = GetWorld();
-  if(!wld) return wld;
+  if(!wld) return NULL;
   return wld->world_id;
 }
 
+VEObject* VEBody::GetObject() {
+  return GET_MY_OWNER(VEObject);
+}
+
+void* VEBody::GetObjSpaceID() {
+  VEObject* obj = GetObject();
+  if(!obj) return NULL;
+  return obj->space_id;
+}
+
 bool VEBody::CreateODE() {
-  if(body_id) return true;
+  if(body_id && geom_id && cur_shape == shape && ((bool)fixed_joint_id == HasBodyFlag(FIXED)))
+     return true;
   dWorldID wid = (dWorldID)GetWorldID();
-  if(TestError(!wid, "CreateODE", "no valid world id -- cannot create object!"))
+  if(TestError(!wid, "CreateODE", "no valid world id -- cannot create body!"))
     return false;
-  body_id = (dBodyID)dBodyCreate(wid);
-  return (bool)body_id;
+  if(!body_id)
+    body_id = (dBodyID)dBodyCreate(wid);
+  if(TestError(!body_id, "CreateODE", "could not create body!"))
+    return false;
+
+  dBodyID bid = (dBodyID)body_id;
+  if(HasBodyFlag(FIXED)) {
+    if(!fixed_joint_id) {
+      fixed_joint_id = dJointCreateFixed(wid, 0);
+    }
+    dJointAttach((dJointID)fixed_joint_id, bid, 0);	// 0 = attach to static object
+  }
+  else if(fixed_joint_id) {
+    dJointDestroy((dJointID)fixed_joint_id);
+    fixed_joint_id = NULL;
+  }
+
+  dSpaceID sid = (dSpaceID)GetObjSpaceID();
+  if(TestError(!sid, "CreateODE", "no valid space id -- cannot create body geom!"))
+    return false;
+
+  if(!geom_id || cur_shape != shape) {
+    if(geom_id) dGeomDestroy((dGeomID)geom_id);
+    geom_id = NULL;
+    switch(shape) {
+    case SPHERE:
+      geom_id = dCreateSphere(sid, radius);
+      break;
+    case CAPSULE:
+      geom_id = dCreateCapsule(sid, radius, MAX(0.0f,length-2.0f*radius));
+      break;
+    case CYLINDER:
+      geom_id = dCreateCylinder(sid, radius, length);
+      break;
+    case BOX:
+      geom_id = dCreateBox(sid, box.x, box.y, box.z);
+      break;
+    }
+  }
+  
+  if(TestError(!geom_id, "CreateODE", "could not create body geom!"))
+    return false;
+
+  cur_shape = shape;
+
+  dGeomSetBody((dGeomID)geom_id, (dBodyID)body_id);
+  dGeomSetData((dGeomID)geom_id, (void*)this);
+
+  return true;
 }
 
 void VEBody::DestroyODE() {
+  if(geom_id) dGeomDestroy((dGeomID)geom_id);
+  geom_id = NULL;
   if(body_id) dBodyDestroy((dBodyID)body_id);
   body_id = NULL;
   if(fixed_joint_id) dJointDestroy((dJointID)fixed_joint_id);
@@ -79,11 +163,15 @@ void VEBody::DestroyODE() {
 }
 
 void VEBody::SetValsToODE() {
-  if(!body_id) CreateODE();
+  if(!body_id || !geom_id || cur_shape != shape) CreateODE();
   if(!body_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
     return;
+
+  cur_pos = init_pos;
+  cur_rot = init_rot;
+
   dBodyID bid = (dBodyID)body_id;
   dBodySetPosition(bid, init_pos.x, init_pos.y, init_pos.z);
 
@@ -92,12 +180,13 @@ void VEBody::SetValsToODE() {
   dBodySetRotation(bid, R);
 
   if(HasBodyFlag(FIXED)) {
+    if(!fixed_joint_id) CreateODE();
     dBodySetLinearVel(bid, 0.0f, 0.0f, 0.0f);
     dBodySetAngularVel(bid,  0.0f, 0.0f, 0.0f);
-    fixed_joint_id = dJointCreateFixed(wid, 0);
-    dJointAttach((dJointID)fixed_joint_id, bid, 0);	// 0 = attach to static object
+    dJointSetFixed((dJointID)fixed_joint_id);
   }
   else {
+    if(fixed_joint_id) CreateODE(); // will destroy joint
     dBodySetLinearVel(bid, init_lin_vel.x, init_lin_vel.y, init_lin_vel.z);
     dBodySetAngularVel(bid, init_ang_vel.x, init_ang_vel.y, init_ang_vel.z);
   }
@@ -109,24 +198,25 @@ void VEBody::SetMassToODE() {
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
-  switch(mass_shape) {
+  switch(shape) {
   case SPHERE:
-    dMassSetSphereTotal(&mass_ode, mass, mass_radius);
+    dMassSetSphereTotal(&mass_ode, mass, radius);
     break;
-  case CAPPED_CYLINDER:
-    dMassSetCappedCylinderTotal(&mass_ode, mass, mass_long_axis, mass_radius, mass_length);
+  case CAPSULE:
+    //    dMassSetCappedCylinderTotal(&mass_ode, mass, long_axis, radius, length);
+    dMassSetCapsuleTotal(&mass_ode, mass, long_axis, radius, MAX(0.0f,length-2.0*radius));
     break;
   case CYLINDER:
-    dMassSetCylinderTotal(&mass_ode, mass, mass_long_axis, mass_radius, mass_length);
+    dMassSetCylinderTotal(&mass_ode, mass, long_axis, radius, length);
     break;
   case BOX:
-    dMassSetBoxTotal(&mass_ode, mass, mass_box.x, mass_box.y, mass_box.z);
+    dMassSetBoxTotal(&mass_ode, mass, box.x, box.y, box.z);
     break;
   }
   dBodySetMass(bid, &mass_ode);
 }
 
-void VEBody::GetValsFmODE() {
+void VEBody::GetValsFmODE(bool updt_disp) {
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
@@ -146,7 +236,8 @@ void VEBody::GetValsFmODE() {
   const dReal* oav = dBodyGetAngularVel(bid);
   cur_ang_vel.x = oav[0]; cur_ang_vel.y = oav[1]; cur_ang_vel.z = oav[2];
 
-  DataChanged(DCR_ITEM_UPDATED); // update displays..
+  if(updt_disp)
+    DataChanged(DCR_ITEM_UPDATED); // update displays..
   // not necc (nonrelativistic!)
   //  dBodyGetMass(bid, &mass);
 }
@@ -162,11 +253,11 @@ void VEBody_Group::SetValsToODE() {
   }
 }
 
-void VEBody_Group::GetValsFmODE() {
+void VEBody_Group::GetValsFmODE(bool updt_disp) {
   VEBody* ob;
   taLeafItr i;
   FOR_ITR_EL(VEBody, ob, this->, i) {
-    ob->GetValsFmODE();
+    ob->GetValsFmODE(updt_disp);
   }
 }
 
@@ -174,16 +265,30 @@ void VEBody_Group::GetValsFmODE() {
 ////////////////////////////////////////////////
 //		Joints
 
+void VEJointStops::Initialize() {
+  lo = -3.1415f;
+  hi = 3.1415f;
+  bounce = 0.0f;
+}
+
+void VEJointMotor::Initialize() {
+  vel = 0.0f;
+  f_max = 0.0f;
+}
+
+void ODEJointParams::Initialize() {
+  no_stop_cfm = 1.0e-5f;
+  fudge = 1.0f;
+}
+
 void VEJoint::Initialize() {
   joint_id = NULL;
   flags = JF_NONE;
-  set_type = NO_JOINT;
+  cur_type = NO_JOINT;
   joint_type = HINGE;
   axis.x = 1.0f;
   axis2.x = 1.0f;
-  lo_stop = -3.1415;
-  hi_stop = 3.1415;
-  stop_bounce = 0.0;
+  pos = vel = pos2 = vel2 = 0.0f;
 }
 
 void VEJoint::Destroy() {
@@ -206,7 +311,7 @@ void* VEJoint::GetWorldID() {
 }
 
 bool VEJoint::CreateODE() {
-  if(joint_id && joint_type == set_type) return true;
+  if(joint_id && joint_type == cur_type) return true;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create joint!"))
     return false;
@@ -235,7 +340,7 @@ bool VEJoint::CreateODE() {
 //     joint_id = (dJointID)dJointCreatePR(wid, 0);
 //     break;
   }
-  set_type = joint_type;
+  cur_type = joint_type;
   return (bool)joint_id;
 }
 
@@ -245,7 +350,7 @@ void VEJoint::DestroyODE() {
 }
 
 void VEJoint::SetValsToODE() {
-  if(!joint_id || joint_type != set_type) CreateODE();
+  if(!joint_id || joint_type != cur_type) CreateODE();
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
 
@@ -282,6 +387,7 @@ void VEJoint::SetValsToODE() {
     dJointSetHinge2Anchor(jid, wanchor.x, wanchor.y, wanchor.z);
     break;
   case FIXED:
+    dJointSetFixed(jid);
     break;
 //   case PR:
 //     dJointSetPRAnchor(jid, wanchor.x, wanchor.y, wanchor.z);
@@ -293,19 +399,101 @@ void VEJoint::SetValsToODE() {
   if(HasJointFlag(USE_STOPS)) {
     switch(joint_type) {
     case HINGE:
-      dJointSetHingeParam(jid, dParamLoStop, lo_stop);
-      dJointSetHingeParam(jid, dParamHiStop, hi_stop);
-      dJointSetHingeParam(jid, dParamBounce, stop_bounce);
+      dJointSetHingeParam(jid, dParamLoStop, stops.lo);
+      dJointSetHingeParam(jid, dParamHiStop, stops.hi);
+      dJointSetHingeParam(jid, dParamBounce, stops.bounce);
       break;
     case SLIDER:
-      dJointSetSliderParam(jid, dParamLoStop, lo_stop);
-      dJointSetSliderParam(jid, dParamHiStop, hi_stop);
-      dJointSetSliderParam(jid, dParamBounce, stop_bounce);
+      dJointSetSliderParam(jid, dParamLoStop, stops.lo);
+      dJointSetSliderParam(jid, dParamHiStop, stops.hi);
+      dJointSetSliderParam(jid, dParamBounce, stops.bounce);
       break;
     case UNIVERSAL:
-      // todo: set these!
+      dJointSetUniversalParam(jid, dParamLoStop, stops.lo);
+      dJointSetUniversalParam(jid, dParamHiStop, stops.hi);
+      dJointSetUniversalParam(jid, dParamBounce, stops.bounce);
+      dJointSetUniversalParam(jid, dParamLoStop2, stops2.lo);
+      dJointSetUniversalParam(jid, dParamHiStop2, stops2.hi);
+      dJointSetUniversalParam(jid, dParamBounce2, stops2.bounce);
       break;
     case HINGE2:
+      dJointSetHinge2Param(jid, dParamLoStop, stops.lo);
+      dJointSetHinge2Param(jid, dParamHiStop, stops.hi);
+      dJointSetHinge2Param(jid, dParamBounce, stops.bounce);
+      dJointSetHinge2Param(jid, dParamLoStop2, stops2.lo);
+      dJointSetHinge2Param(jid, dParamHiStop2, stops2.hi);
+      dJointSetHinge2Param(jid, dParamBounce2, stops2.bounce);
+      break;
+    case FIXED:
+      break;
+    }
+  }
+
+  if(joint_type == HINGE2) {
+    dJointSetHinge2Param(jid, dParamSuspensionERP, suspension.erp);
+    dJointSetHinge2Param(jid, dParamSuspensionCFM, suspension.cfm);
+  }
+
+  if(HasJointFlag(USE_MOTOR)) {
+    switch(joint_type) {
+    case HINGE:
+      dJointSetHingeParam(jid, dParamVel, motor.vel);
+      dJointSetHingeParam(jid, dParamFMax, motor.f_max);
+      break;
+    case SLIDER:
+      dJointSetSliderParam(jid, dParamVel, motor.vel);
+      dJointSetSliderParam(jid, dParamFMax, motor.f_max);
+      break;
+    case UNIVERSAL:
+      dJointSetUniversalParam(jid, dParamVel, motor.vel);
+      dJointSetUniversalParam(jid, dParamFMax, motor.f_max);
+      dJointSetUniversalParam(jid, dParamVel2, motor2.vel);
+      dJointSetUniversalParam(jid, dParamFMax2, motor2.f_max);
+      break;
+    case HINGE2:
+      dJointSetHinge2Param(jid, dParamVel, motor.vel);
+      dJointSetHinge2Param(jid, dParamFMax, motor.f_max);
+      dJointSetHinge2Param(jid, dParamVel2, motor2.vel);
+      dJointSetHinge2Param(jid, dParamFMax2, motor2.f_max);
+      break;
+    case FIXED:
+      break;
+    }
+  }
+
+  if(HasJointFlag(USE_ODE_PARAMS)) {
+    switch(joint_type) {
+    case HINGE:
+      dJointSetHingeParam(jid, dParamFudgeFactor, ode_params.fudge);
+      dJointSetHingeParam(jid, dParamCFM, ode_params.no_stop_cfm);
+      dJointSetHingeParam(jid, dParamStopERP, ode_params.erp);
+      dJointSetHingeParam(jid, dParamStopCFM, ode_params.cfm);
+      break;
+    case SLIDER:
+      dJointSetSliderParam(jid, dParamFudgeFactor, ode_params.fudge);
+      dJointSetSliderParam(jid, dParamCFM, ode_params.no_stop_cfm);
+      dJointSetSliderParam(jid, dParamStopERP, ode_params.erp);
+      dJointSetSliderParam(jid, dParamStopCFM, ode_params.cfm);
+      break;
+    case UNIVERSAL:
+      dJointSetUniversalParam(jid, dParamFudgeFactor, ode_params.fudge);
+      dJointSetUniversalParam(jid, dParamCFM, ode_params.no_stop_cfm);
+      dJointSetUniversalParam(jid, dParamStopERP, ode_params.erp);
+      dJointSetUniversalParam(jid, dParamStopCFM, ode_params.cfm);
+      dJointSetUniversalParam(jid, dParamFudgeFactor2, ode_params.fudge);
+      dJointSetUniversalParam(jid, dParamCFM2, ode_params.no_stop_cfm);
+      dJointSetUniversalParam(jid, dParamStopERP2, ode_params.erp);
+      dJointSetUniversalParam(jid, dParamStopCFM2, ode_params.cfm);
+      break;
+    case HINGE2:
+      dJointSetHinge2Param(jid, dParamFudgeFactor, ode_params.fudge);
+      dJointSetHinge2Param(jid, dParamCFM, ode_params.no_stop_cfm);
+      dJointSetHinge2Param(jid, dParamStopERP, ode_params.erp);
+      dJointSetHinge2Param(jid, dParamStopCFM, ode_params.cfm);
+      dJointSetHinge2Param(jid, dParamFudgeFactor2, ode_params.fudge);
+      dJointSetHinge2Param(jid, dParamCFM2, ode_params.no_stop_cfm);
+      dJointSetHinge2Param(jid, dParamStopERP2, ode_params.erp);
+      dJointSetHinge2Param(jid, dParamStopCFM2, ode_params.cfm);
       break;
     case FIXED:
       break;
@@ -317,7 +505,7 @@ void VEJoint::SetValsToODE() {
   }
 }
 
-void VEJoint::GetValsFmODE() {
+void VEJoint::GetValsFmODE(bool updt_disp) {
   if(!HasJointFlag(FEEDBACK)) return;
   if(!joint_id) CreateODE();
   if(!joint_id) return;
@@ -355,7 +543,8 @@ void VEJoint::GetValsFmODE() {
     break;
   }
 
-  DataChanged(DCR_ITEM_UPDATED); // update displays..
+  if(updt_disp)
+    DataChanged(DCR_ITEM_UPDATED);
 }
 
 void VEJoint::ApplyForce(float force1, float force2) {
@@ -394,11 +583,11 @@ void VEJoint_Group::SetValsToODE() {
   }
 }
 
-void VEJoint_Group::GetValsFmODE() {
+void VEJoint_Group::GetValsFmODE(bool updt_disp) {
   VEJoint* ob;
   taLeafItr i;
   FOR_ITR_EL(VEJoint, ob, this->, i) {
-    ob->GetValsFmODE();
+    ob->GetValsFmODE(updt_disp);
   }
 }
 
@@ -406,10 +595,22 @@ void VEJoint_Group::GetValsFmODE() {
 //	Object: collection of bodies and joints
 
 void VEObject::Initialize() {
+  space_id = NULL;
+  space_type = SIMPLE_SPACE;
+  cur_space_type = SIMPLE_SPACE;
+  hash_levels.min = 1;  hash_levels.max = 4;
 }
 void VEObject::Destroy() {
   CutLinks();
 }
+
+void VEObject::CutLinks() {
+  bodies.CutLinks();
+  joints.CutLinks();
+  DestroyODE();
+  inherited::CutLinks();
+}
+
 
 VEWorld* VEObject::GetWorld() {
   return GET_MY_OWNER(VEWorld);
@@ -417,18 +618,56 @@ VEWorld* VEObject::GetWorld() {
 
 void* VEObject::GetWorldID() {
   VEWorld* wld = GetWorld();
-  if(!wld) return wld;
+  if(!wld) return NULL;
   return wld->world_id;
 }
 
+void* VEObject::GetWorldSpaceID() {
+  VEWorld* wld = GetWorld();
+  if(!wld) return NULL;
+  return wld->space_id;
+}
+
+bool VEObject::CreateODE() {
+  if(space_id && space_type == cur_space_type) return true;
+  dSpaceID wsid = (dSpaceID)GetWorldSpaceID();
+  if(TestError(!wsid, "CreateODE", "no valid world id -- cannot create space!"))
+    return false;
+  if(space_id)
+    DestroyODE();
+  switch(space_type) {
+  case SIMPLE_SPACE:
+    space_id = (dSpaceID)dSimpleSpaceCreate(wsid);
+    break;
+  case HASH_SPACE:
+    space_id = (dSpaceID)dHashSpaceCreate(wsid);
+    break;
+  }
+  if(TestError(!space_id, "CreateODE", "cannot create space!"))
+    return false;
+  cur_space_type = space_type;
+  return true;
+}
+
+void VEObject::DestroyODE() {
+  if(space_id) dSpaceDestroy((dSpaceID)space_id);
+  space_id = NULL;
+}
+
 void VEObject::SetValsToODE() {
+  if(!space_id || space_type != cur_space_type) CreateODE();
+  if(!space_id) return;
+  dSpaceID sid = (dSpaceID)space_id;
+  if(space_type == HASH_SPACE) {
+    dHashSpaceSetLevels(sid, hash_levels.min, hash_levels.max);
+  }
   bodies.SetValsToODE();	// bodies first!
   joints.SetValsToODE();
 }
 
-void VEObject::GetValsFmODE() {
-  bodies.GetValsFmODE();	// bodies first!
-  joints.GetValsFmODE();
+void VEObject::GetValsFmODE(bool updt_disp) {
+  bodies.GetValsFmODE(updt_disp);	// bodies first!
+  joints.GetValsFmODE(updt_disp);
 }
 
 /////////////////////////////////////////////
@@ -442,11 +681,11 @@ void VEObject_Group::SetValsToODE() {
   }
 }
 
-void VEObject_Group::GetValsFmODE() {
+void VEObject_Group::GetValsFmODE(bool updt_disp) {
   VEObject* ob;
   taLeafItr i;
   FOR_ITR_EL(VEObject, ob, this->, i) {
-    ob->GetValsFmODE();
+    ob->GetValsFmODE(updt_disp);
   }
 }
 
@@ -454,8 +693,25 @@ void VEObject_Group::GetValsFmODE() {
 ///////////////////////////////////////////////////////////////
 //	World!
 
+void ODEWorldParams::Initialize() {
+  max_cor_vel = 1.0e6f;
+  contact_depth = 0.001f;
+  max_col_pts = 4;
+}
+
+void ODEWorldParams::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(max_col_pts > 64) max_col_pts = 64;
+  if(max_col_pts < 0) max_col_pts = 1;
+}
+
 void VEWorld::Initialize() {
   world_id = NULL;
+  space_id = NULL;
+  cgp_id = NULL;
+  space_type = HASH_SPACE;
+  cur_space_type = HASH_SPACE;
+  hash_levels.min = 1;  hash_levels.max = 4;
   gravity.y = -9.81f;
   step_type = STD_STEP;
   stepsize = .01f;
@@ -473,20 +729,57 @@ void VEWorld::CutLinks() {
 }
 
 bool VEWorld::CreateODE() {
-  world_id = (dWorldID)dWorldCreate();
-  return (bool)world_id;
+  if(!world_id)
+    world_id = (dWorldID)dWorldCreate();
+  if(TestError(!world_id, "CreateODE", "could not create world id!"))
+    return false;
+  if(space_id && space_type == cur_space_type) return true;
+  if(space_id) {
+    dSpaceDestroy((dSpaceID)space_id);
+    space_id = NULL;
+  }
+  switch(space_type) {
+  case SIMPLE_SPACE:
+    space_id = (dSpaceID)dSimpleSpaceCreate(NULL);
+    break;
+  case HASH_SPACE:
+    space_id = (dSpaceID)dHashSpaceCreate(NULL);
+    break;
+  }
+  if(TestError(!space_id, "CreateODE", "could not create space id!"))
+    return false;
+  cur_space_type = space_type;
+
+  if(!cgp_id)
+    cgp_id = dJointGroupCreate(0); // 0 = max_size = not used
+  if(TestError(!cgp_id, "CreateODE", "could not create contact group id!"))
+    return false;
+  return true;
 }
 
 void VEWorld::DestroyODE() {
+  if(cgp_id) dJointGroupDestroy((dJointGroupID)cgp_id);
+  cgp_id = NULL;
+  if(space_id) dSpaceDestroy((dSpaceID)space_id);
+  space_id = NULL;
   if(world_id) dWorldDestroy((dWorldID)world_id);
   world_id = NULL;
 }
 
 void VEWorld::SetValsToODE() {
-  if(!world_id) CreateODE();
-  if(!world_id) return;
+  if(!world_id || !space_id || space_type != cur_space_type || !cgp_id) CreateODE();
+  if(!world_id || !space_id || !cgp_id) return;
   dWorldID wid = (dWorldID)world_id;
+  dSpaceID sid = (dSpaceID)space_id;
   dWorldSetGravity(wid, gravity.x, gravity.y, gravity.z);
+  dWorldSetERP(wid, ode_params.erp);
+  dWorldSetCFM(wid, ode_params.cfm);
+  dWorldSetContactMaxCorrectingVel(wid, ode_params.max_cor_vel); 
+  dWorldSetContactSurfaceLayer(wid, ode_params.contact_depth); 
+
+  if(space_type == HASH_SPACE) {
+    dHashSpaceSetLevels(sid, hash_levels.min, hash_levels.max);
+  }
 
   StructUpdate(true);
   objects.SetValsToODE();
@@ -494,20 +787,67 @@ void VEWorld::SetValsToODE() {
 }
 
 void VEWorld::GetValsFmODE() {
-  objects.GetValsFmODE();
+  objects.GetValsFmODE(updt_display);
+  if(updt_display)
+    DataChanged(DCR_ITEM_UPDATED); // update displays..
   // not really nec
   // void dWorldGetGravity (dWorldID, dVector3 gravity);
 }
 
-void VEWorld::Step() {
-  if(!world_id) return;
+
+void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {
+  static dContactGeom cgs[64];
   dWorldID wid = (dWorldID)world_id;
+  dJointGroupID gid = (dJointGroupID)cgp_id;
+  int num_contact = dCollide(o1,o2, ode_params.max_col_pts, cgs, sizeof(dContactGeom));
+  // add these contact points to the simulation ...
+  VEBody* b1 = (VEBody*)dGeomGetData(o1);
+  VEBody* b2 = (VEBody*)dGeomGetData(o2);
+  dContact cont;
+  cont.surface.mode = dContactBounce | dContactSoftERP | dContactSoftCFM;
+  cont.surface.mu = .5f * (b1->surface.friction + b2->surface.friction);
+  cont.surface.bounce = .5f * (b1->surface.bounce + b2->surface.bounce);
+  cont.surface.bounce_vel = .5f * (b1->surface.bounce_vel + b2->surface.bounce_vel);
+  cont.surface.soft_erp = .5f * (b1->softness.erp + b2->softness.erp);
+  cont.surface.soft_cfm = .5f * (b1->softness.cfm + b2->softness.cfm);
+  // todo: not seting slip1 or second directions (as in tires)
+  if(num_contact > 0) {
+    for(int i=0;i<num_contact;i++) { 
+      cont.geom = cgs[i];
+      dJointID c = dJointCreateContact(wid, gid, &cont);
+      dJointAttach(c, dGeomGetBody(cont.geom.g1), dGeomGetBody(cont.geom.g2));
+    }
+    //    cerr << num_contact << " contacts for objs: " << b1->name << " " << b2->name << endl;
+  }
+}
+
+void nearCallback(void *data, dGeomID o1, dGeomID o2) {
+  if (dGeomIsSpace (o1) || dGeomIsSpace (o2)) { // colliding a space with something
+    dSpaceCollide2 (o1,o2,data,&nearCallback); // collide all geoms internal to the space(s)
+    if (dGeomIsSpace (o1)) dSpaceCollide ((dSpaceID)o1,data,&nearCallback);
+    if (dGeomIsSpace (o2)) dSpaceCollide ((dSpaceID)o2,data,&nearCallback);
+  } else {
+    ((VEWorld*)data)->CollisionCallback(o1, o2);
+  }
+}
+
+void VEWorld::Step() {
+  if(!world_id || !space_id || !cgp_id) return;
+  dWorldID wid = (dWorldID)world_id;
+  dSpaceID sid = (dSpaceID)space_id;
+  dJointGroupID gid = (dJointGroupID)cgp_id;
+
+  dSpaceCollide(sid, (void*)this, &nearCallback);
+
   if(step_type == STD_STEP) {
     dWorldStep(wid, stepsize);
   }
   else {
     dWorldQuickStep(wid, stepsize);
   }
+
+  dJointGroupEmpty(gid);
+
   GetValsFmODE();
 }
 
@@ -631,7 +971,7 @@ void VEBodyView::Render_pre() {
 
   VEBody* ob = Body();
   if(ob) {
-    if(ob->use_fname && !ob->obj_fname.empty()) {
+    if(ob->HasBodyFlag(VEBody::FM_FILE) && !ob->obj_fname.empty()) {
       SoInput in;
       if (in.openFile(ob->obj_fname)) {
 	SoSeparator* root = SoDB::readAll(&in);
@@ -642,33 +982,33 @@ void VEBodyView::Render_pre() {
 	  goto finish;
 	}
       }
-      taMisc::Error("object file:", ob->obj_fname, "not found, reverting to mass_shape");
+      taMisc::Error("object file:", ob->obj_fname, "not found, reverting to shape");
     }
-    switch(ob->mass_shape) {
+    switch(ob->shape) {
     case VEBody::SPHERE: {
       SoSphere* sp = new SoSphere;
-      sp->radius = ob->mass_radius;
+      sp->radius = ob->radius;
       ssep->addChild(sp);
       break;
     }
-    case VEBody::CAPPED_CYLINDER:
+    case VEBody::CAPSULE:
     case VEBody::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
-      sp->radius = ob->mass_radius;
-      sp->height = ob->mass_length;
+      sp->radius = ob->radius;
+      sp->height = ob->length;
       ssep->addChild(sp);
       SoTransform* tx = m_node_so->txfm_shape();
-      if(ob->mass_long_axis == VEBody::LONG_X)
+      if(ob->long_axis == VEBody::LONG_X)
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
-      else if(ob->mass_long_axis == VEBody::LONG_Z)
+      else if(ob->long_axis == VEBody::LONG_Z)
 	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708);
       break;
     }
     case VEBody::BOX: {
       SoCube* sp = new SoCube;
-      sp->width = ob->mass_box.x;
-      sp->depth = ob->mass_box.z;
-      sp->height = ob->mass_box.y;
+      sp->width = ob->box.x;
+      sp->depth = ob->box.z;
+      sp->height = ob->box.y;
       ssep->addChild(sp);
       break;
     }

@@ -614,12 +614,14 @@ void taiField::btnEdit_clicked(bool) {
 }
 
 void taiField::GetImage(const String& val) {
+  if(!rep()) return;
   rep()->setText(val);
   if (edit)
     edit->setText(val);
 }
 
 String taiField::GetValue() const {
+  if(!rep()) return _nilString;
   return rep()->text();
 }
 
