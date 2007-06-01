@@ -28,7 +28,7 @@
 #ifdef TA_GUI
 #define pdp_bitmap_width 64
 #define pdp_bitmap_height 64
-static const char pdp_bitmap_bits[] = {
+static const unsigned char pdp_bitmap_bits[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0xff, 0x83, 0xff,
   0x1f, 0xfc, 0xff, 0x00, 0x10, 0x00, 0x82, 0x00, 0x10, 0x04, 0x80, 0x00,
   0x10, 0x00, 0x82, 0x00, 0x10, 0x04, 0x80, 0x00, 0x10, 0x1f, 0x82, 0xf8,
@@ -89,7 +89,7 @@ int pdpMisc::Main(int& argc, const char *argv[]) {
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_pdp, &TA_PDPRoot)) return 1;
 #ifdef TA_GUI
   if(taMisc::use_gui) {
-    QPixmap* pm = new QPixmap(pdp_bitmap_bits);
+    QPixmap* pm = new QPixmap((const char*)pdp_bitmap_bits);
     qApp->setWindowIcon(*pm);
     delete pm;
   }

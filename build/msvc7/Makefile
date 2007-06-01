@@ -7,7 +7,7 @@ INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
   "-I$(QTDIR)/include/QtNetwork" "-I$(QTDIR)/include/QtOpenGL" \
   "-I$(QTDIR)/include/QtXml" "-I$(COINDIR)/include/Inventor" \
   "-I$(PDP4DIR)\build\msvc7" "-I$(PDP4DIR)\build\msvc7\include" \
-  "-I$(VCDIR)\Vc7\include" 
+  "-I$(VCDIR)\Vc7\include" "-I$(ODEDIR)\include"
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
 #MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
@@ -92,7 +92,8 @@ TA_HEADS_TAMISC_GUI =\
 	$(PDP4DIR)/src/ta/t3viewer.h \
 	$(PDP4DIR)/src/ta/colorbar_so.h \
 	$(PDP4DIR)/src/ta/ta_datatable_qtso.h \
-	$(PDP4DIR)/src/ta/ta_datatable_so.h 
+	$(PDP4DIR)/src/ta/ta_datatable_so.h \
+	$(PDP4DIR)/src/ta/virtenv_ode.h 
 
 TA_HEADS_GUI =\
 	$(PDP4DIR)/src/ta/ta_qt.h \
@@ -171,6 +172,7 @@ ta_mocs: \
   ta_matrix.moc.cpp \
   ta_matrix_qt.moc.cpp \
   ta_plugin_p.moc.cpp \
+  ta_project.moc.cpp \
   ta_program_qt.moc.cpp \
   ta_qt.moc.cpp \
   ta_qtclassbrowse.moc.cpp \
@@ -184,7 +186,7 @@ ta_mocs: \
   ta_qtviewer.moc.cpp \
   ta_qtgroup.moc.cpp \
   ta_type.moc.cpp \
-  ta_project.moc.cpp
+  virtenv_ode.moc.cpp
 
 colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
 	$(MOC) %s -o $@
@@ -246,6 +248,8 @@ ta_qtviewer.moc.cpp: $(PDP4DIR)\src\ta\ta_qtviewer.h
 ta_type.moc.cpp: $(PDP4DIR)\src\ta\ta_type.h
 	$(MOC) %s -o $@
 
+virtenv_ode.moc.cpp: $(PDP4DIR)\src\ta\virtenv_ode.h
+	$(MOC) %s -o $@
 
 
 

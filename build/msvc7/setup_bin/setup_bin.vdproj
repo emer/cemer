@@ -445,7 +445,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_3A65E3E3A78A40CDBE29F80F91100358"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtOpenGL4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtOpenGL4.dll"
             "TargetName" = "8:QtOpenGL4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -505,7 +505,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_58246F294FE54CA786F281F59A4C99AA"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtXml4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtXml4.dll"
             "TargetName" = "8:QtXml4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -525,7 +525,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_62C911B7D7864C2C8C424DC3572949CF"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\plugins\\imageformats\\qmng1.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\plugins\\imageformats\\qmng1.dll"
             "TargetName" = "8:qmng1.dll"
             "Tag" = "8:"
             "Folder" = "8:_70D4A938DF4E4842BA7FBF7B13182537"
@@ -645,7 +645,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_97E1FE8CB5524C318EA054F6692D930D"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtGui4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtGui4.dll"
             "TargetName" = "8:QtGui4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -665,7 +665,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_99CCE85922E345A69A05CB34FF1219AD"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtSql4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtSql4.dll"
             "TargetName" = "8:QtSql4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -765,7 +765,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_ABAC1A50E3EE4EF5A2FAA3E7C0186CE9"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\plugins\\imageformats\\qjpeg1.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\plugins\\imageformats\\qjpeg1.dll"
             "TargetName" = "8:qjpeg1.dll"
             "Tag" = "8:"
             "Folder" = "8:_70D4A938DF4E4842BA7FBF7B13182537"
@@ -805,7 +805,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_B4EA4B8F585E4282A23804A59C431B73"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtCore4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtCore4.dll"
             "TargetName" = "8:QtCore4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -905,7 +905,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_C69E9E0B851A4506A665A25025BB3ABD"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\Qt3Support4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\Qt3Support4.dll"
             "TargetName" = "8:Qt3Support4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -925,7 +925,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_C8EDDB7BE9BE485390232BCCD1387D49"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtSvg4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtSvg4.dll"
             "TargetName" = "8:QtSvg4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -945,7 +945,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_CB986E56049643E3AFBE61488B46FA83"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\plugins\\imageformats\\qsvg1.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\plugins\\imageformats\\qsvg1.dll"
             "TargetName" = "8:qsvg1.dll"
             "Tag" = "8:"
             "Folder" = "8:_70D4A938DF4E4842BA7FBF7B13182537"
@@ -1105,7 +1105,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_E6CCAA007F734FD69A4D22920F88B993"
             {
-            "SourcePath" = "8:D:\\Qt\\4.2.2\\bin\\QtNetwork4.dll"
+            "SourcePath" = "8:C:\\Qt\\4.2.3\\bin\\QtNetwork4.dll"
             "TargetName" = "8:QtNetwork4.dll"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"

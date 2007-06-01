@@ -5,7 +5,16 @@ echo *** PDP4DIR environment variable must be set
 EXIT /B 2
 
 :cont1
-if not "%1" == "" goto cont2
+if not "%1" == "Debug" goto cont1a
+rem Debug
+
+goto cont2
+:cont1a
+if not "%1" == "Release" goto cont1b
+rem Release
+
+goto cont2
+:cont1b
 echo *** Must specify Target (Debug or Release)
 EXIT /B 2
 
