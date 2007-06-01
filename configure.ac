@@ -125,7 +125,7 @@ dnl  svn revision number support
 PDP_SVN_REVISION
 
 dnl  Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
-CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
+#CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
 
 dnl  Let the codebase know where to find auxiliary files (in config.h)
 dnl  TODO: Brad says this doesn't work right
