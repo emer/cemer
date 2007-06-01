@@ -675,7 +675,7 @@ private:
 template<class T> 
 class taMatrixT : public taMatrix {
   // #VIRT_BASE #NO_INSTANCE ##CAT_Data 
-INHERITED(taMatrix);
+INHERITED(taMatrix)
 public:
   T*		el;		// #HIDDEN #NO_SAVE Pointer to actual array memory
 
