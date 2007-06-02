@@ -2,6 +2,11 @@ leabra todo list:
 
 commit:
 
+== Virtual Env
+
+* virtual cameras
+* capsule render
+
 ------------
 current:
 
@@ -15,11 +20,6 @@ current:
 * check: test datatable /matrix cut/paste ops
 
 * check: ticket 442 -- crash in connect from -- updated w/test case
-
-== Virtual Env
-
-* virtual cameras
-* collision detection
 
 == Netview:
 
@@ -44,13 +44,7 @@ current:
 
 * create simulated SIR test case.. 2 repeated guys with reward assoc.
 
-== Inventor
-
-* render objects to bitmap and use to present to network
-
 == Misc
-
-* CHECK: add DataUpdate brackets in Filter op -- still doesn't fix problem!
 
 == Graph
 

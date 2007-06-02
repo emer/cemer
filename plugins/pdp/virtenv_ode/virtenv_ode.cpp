@@ -261,6 +261,21 @@ void VEBody_Group::GetValsFmODE(bool updt_disp) {
   }
 }
 
+void VECamera::Initialize() {
+  img_size.x = 320;
+  img_size.y = 240;
+  color = true;
+  focal_dist = 5.0f;
+  field_of_view = .7853f;
+}
+
+void VELight::Initialize() {
+  light_type = DIRECTIONAL_LIGHT;
+  light_on = true;
+  intensity = 1.0f;
+  drop_off_rate = 0.0f;
+  cut_off_angle = .7853f;
+}
 
 ////////////////////////////////////////////////
 //		Joints
@@ -855,6 +870,29 @@ void VEWorld::Step() {
 /////////////////////////////////////////////////////////////////////////
 //		So Inventor objects
 
+#include <QGroupBox>
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qwidget.h>
+#include <QImage>
+#include <QPixmap>
+#include <QLabel>
+
+#include <Inventor/SoInput.h>
+#include <Inventor/SoDB.h>
+#include <Inventor/nodes/SoCube.h>
+#include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoSphere.h>
+#include <Inventor/nodes/SoCylinder.h>
+#include <Inventor/nodes/SoMaterial.h>
+#include <Inventor/nodes/SoTransform.h>
+#include <Inventor/nodes/SoTranslation.h>
+#include <Inventor/nodes/SoSwitch.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#include <Inventor/SoOffscreenRenderer.h>
+#include <Inventor/SbViewportRegion.h>
+ 
 SO_NODE_SOURCE(T3VEWorld);
 
 void T3VEWorld::initClass()
@@ -866,11 +904,24 @@ T3VEWorld::T3VEWorld(void* world)
 :inherited(world)
 {
   SO_NODE_CONSTRUCTOR(T3VEWorld);
+
+  sun_light = new SoDirectionalLight;
+  insertChildBefore(topSeparator(), sun_light, childNodes());
+  camera_switch = new SoSwitch;
+  insertChildBefore(topSeparator(), camera_switch, childNodes());
 }
 
 T3VEWorld::~T3VEWorld()
 {
   
+}
+
+void T3VEWorld::setSunLightOn(bool on) {
+  sun_light->on = on;
+}
+
+void T3VEWorld::setSunLightDir(float x_dir, float y_dir, float z_dir) {
+  sun_light->direction = SbVec3f(x_dir, y_dir, z_dir);
 }
 
 /////////////////////////////////////////////
@@ -920,22 +971,6 @@ T3VEBody::~T3VEBody()
 
 ///////////////////////////////////////////////////////////////////////
 //		T3 DataView Guys
-
-
-#include <QGroupBox>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qwidget.h>
-
-#include <Inventor/SoInput.h>
-#include <Inventor/SoDB.h>
-#include <Inventor/nodes/SoCube.h>
-#include <Inventor/nodes/SoFont.h>
-#include <Inventor/nodes/SoSphere.h>
-#include <Inventor/nodes/SoCylinder.h>
-#include <Inventor/nodes/SoMaterial.h>
-#include <Inventor/nodes/SoTransform.h>
-#include <Inventor/nodes/SoTranslation.h>
 
 void VEBodyView::Initialize(){
   data_base = &TA_VEBody;
@@ -1140,6 +1175,7 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
 void VEWorldView::Initialize() {
   data_base = &TA_VEWorld;
   children.SetBaseType(&TA_VEObjectView);
+  cam_renderer = NULL;
 }
 
 void VEWorldView::InitLinks() {
@@ -1149,6 +1185,8 @@ void VEWorldView::InitLinks() {
 
 void VEWorldView::CutLinks() {
   inherited::CutLinks();
+  if(cam_renderer) delete cam_renderer;
+  cam_renderer = NULL;
 }
 
 void VEWorldView::Copy_(const VEWorldView& cp) {
@@ -1176,7 +1214,7 @@ const String VEWorldView::caption() const {
   String rval;
   if (wl) {
     rval = wl->GetDisplayName();
-  } else rval = "(no world";
+  } else rval = "(no world)";
   return rval;
 }
 
@@ -1260,10 +1298,34 @@ void VEWorldView::Render_impl() {
   T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
   if(!node_so) return;
 
+  VEWorld* wl = World();
+  if(!wl) return;
+
   SoFont* font = node_so->captionFont(true);
   float font_size = 0.4f;
   font->size.setValue(font_size); // is in same units as geometry units of network
   node_so->setCaption(caption().chars());
+
+  SoSwitch* cam_switch = node_so->getCameraSwitch();
+  int n_cam = 0;
+  if(wl->camera_0) {
+    if(cam_switch->getNumChildren() == 0) {
+      SoPerspectiveCamera* cam = new SoPerspectiveCamera;
+      cam_switch->addChild(cam);
+    }
+    n_cam++;
+  }
+  if(n_cam == 1 && wl->camera_1) {
+    if(cam_switch->getNumChildren() == 1) {
+      SoPerspectiveCamera* cam = new SoPerspectiveCamera;
+      cam_switch->addChild(cam);
+    }
+  }
+  if(n_cam == 0) {
+    cam_switch->removeAllChildren();
+  }
+
+  UpdatePanel();
 }
 
 // void VEWorldView::setDisplay(bool value) {
@@ -1271,6 +1333,77 @@ void VEWorldView::Render_impl() {
 //   display_on = value;
 //   UpdateDisplay(false);		// 
 // }
+
+QImage VEWorldView::RenderCamera(int cam_no) {
+  QImage img;
+  VEWorld* wl = World();
+  if(!wl) return img;
+
+  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  if(!node_so) return img;
+
+  SoSwitch* cam_switch = node_so->getCameraSwitch();
+  if(cam_switch->getNumChildren() <= cam_no) return img; // not ready yet
+
+  VECamera* vecam = NULL;
+  if(cam_no == 0) {
+    if(TestError(!wl->camera_0, "RenderCamera", "camera_0 not set -- cannot be rendered!"))
+      return img;
+    vecam = wl->camera_0.ptr();
+  }
+  else if(cam_no == 1) {
+    if(TestError(!wl->camera_1, "RenderCamera", "camera_1 not set -- cannot be rendered!"))
+      return img;
+    vecam = wl->camera_1.ptr();
+  }
+  else {
+    TestError(true, "RenderCamera", "only 2 cameras (0 or 1) supported!");
+    return img;
+  }
+
+  SbViewportRegion vpreg;
+  vpreg.setWindowSize(vecam->img_size.x, vecam->img_size.y); 
+  
+  if(!cam_renderer)
+    cam_renderer = new SoOffscreenRenderer(vpreg);
+
+  cam_renderer->setViewportRegion(vpreg);
+  cam_renderer->setComponents(SoOffscreenRenderer::RGB_TRANSPARENCY);
+
+  cam_switch->whichChild = cam_no;
+
+  SoPerspectiveCamera* cam = (SoPerspectiveCamera*)cam_switch->getChild(cam_no);
+  cam->position.setValue(vecam->cur_pos.x, vecam->cur_pos.y, vecam->cur_pos.z);
+  cam->orientation.setValue(SbVec3f(vecam->cur_rot.x, vecam->cur_rot.y, vecam->cur_rot.z),
+			     vecam->cur_rot.rot);
+  // todo: compute these from the scene
+  cam->nearDistance = 0.1f;
+  cam->farDistance = 10.0f;
+  cam->focalDistance = vecam->focal_dist;
+  cam->heightAngle = vecam->field_of_view;
+
+  bool ok = cam_renderer->render(node_so);
+
+  cam_switch->whichChild = -1;	// switch off for regular viewing!
+
+  if(TestError(!ok, "RenderCamera", "offscreen render failed!")) return img;
+  
+  img = QImage((uchar*)cam_renderer->getBuffer(), vecam->img_size.x, vecam->img_size.y,
+ 	       QImage::Format_ARGB32);
+//   img = QImage(vecam->img_size.x, vecam->img_size.y, QImage::Format_RGB32);
+
+//   int* gbuf = (int*)cam_renderer->getBuffer();
+
+//   int idx = 0;
+//   for(int y=0;y<vecam->img_size.y;y++) {
+//     for(int x=0;x<vecam->img_size.x;x++) {
+//       img.setPixel(x,y, gbuf[idx]);
+//       idx++;
+//     }
+//   }
+  return img;
+}
+
 
 ////////////////////////////////////////////////////////////
 
@@ -1287,6 +1420,12 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout(layOuter);
 
+  labcam0 = new QLabel(widg);
+  layDispCheck->addWidget(labcam0);
+
+  labcam1 = new QLabel(widg);
+  layDispCheck->addWidget(labcam1);
+  
   setCentralWidget(widg);
 }
 
@@ -1300,6 +1439,35 @@ VEWorldViewPanel::~VEWorldViewPanel() {
 void VEWorldViewPanel::GetImage_impl() {
   inherited::GetImage_impl();
   VEWorldView* wv_ = wv();
+  
+  VEWorld* wl = wv_->World();
+  if(!wl) return;
+  
+  if(wl->camera_0) {
+    QPixmap pm = QPixmap::fromImage(wv_->RenderCamera(0));
+    if(!pm.isNull()) {
+      labcam0->setPixmap(pm);
+    }
+    else {
+      labcam0->setText("Camera 0 Image Render Failed!");
+    }
+  }
+  else {
+    labcam0->setText("No Camera 0 Set");
+  }
+
+  if(wl->camera_1) {
+    QPixmap pm = QPixmap::fromImage(wv_->RenderCamera(1));
+    if(!pm.isNull()) {
+      labcam1->setPixmap(pm);
+    }
+    else {
+      labcam1->setText("Camera 1 Image Render Failed!");
+    }
+  }
+  else {
+    labcam1->setText("No Camera 1 Set");
+  }
 }
 
 void VEWorldViewPanel::InitPanel() {

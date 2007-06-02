@@ -205,6 +205,51 @@ private:
   void 	Destroy()		{ };
 };
 
+
+////////////////////////////////////////////////
+//		Camera & Lights
+
+class VEODE_API VECamera : public VEBody {
+  // ##CAT_VirtEnv ##EXT_vebod virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
+INHERITED(VEBody)
+public:
+  TwoDCoord	img_size;	// size of image to record from camera
+  bool		color;		// if true, get color information (else monochrome)
+  float		focal_dist;	// focal distance of camera -- where is it focused on in scene?
+  float		field_of_view;	// field of view of camera (angle in radians) -- how muc of scene is it taking in
+
+  TA_SIMPLE_BASEFUNS(VECamera);
+private:
+  void 	Initialize();
+  void  Destroy() { };
+};
+
+SmartRef_Of(VECamera,TA_VECamera); // VECameraRef
+
+class VEODE_API VELight : public VEBody {
+  // ##CAT_VirtEnv ##EXT_vebod virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!
+INHERITED(VEBody)
+public:	
+  enum LightType {
+    DIRECTIONAL_LIGHT,		// shines in a given direction, rotation is used for the direction, but position is not -- fastest rendering speed
+    POINT_LIGHT,		// radiates in all directions, uses position for location
+    SPOT_LIGHT,			// shines in a given direction from a given position
+  };
+
+  LightType	light_type;	// type of light
+  bool		light_on;	// is the light turned on?
+  float		intensity;	// (0-1) how bright is the light
+  float		drop_off_rate;	// #CONDEDIT_ON_light_type:SPOT_LIGHT (0-1) how fast light drops off with increasing angle from the direction angle
+  float		cut_off_angle;	// #CONDEDIT_ON_light_type:SPOT_LIGHT (radians, PI/4 = 0.7853 default) angle in radians from the direction vector where there will be no light
+
+  TA_SIMPLE_BASEFUNS(VELight);
+private:
+  void 	Initialize();
+  void  Destroy() { };
+};
+
+SmartRef_Of(VELight,TA_VELight); // VELightRef
+
 ////////////////////////////////////////////////
 //		Joints
 
@@ -437,7 +482,6 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
-
 class VEODE_API VEWorld : public taNBase {
   // ##CAT_VirtEnv ##EXT_vewld a virtual environment world
 INHERITED(taNBase)
@@ -461,10 +505,13 @@ public:
   float		stepsize;	// how big of a step to take
   int		quick_iters;	// #CONDEDIT_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
   FloatTDCoord	gravity;	// gravitational setting for world (0,0,-9.81) is std
+  bool		sun_on;		// turn on a sun (overhead directional) light 
   bool		updt_display;	// if true, will update any attached display after each time step
   ODEWorldParams ode_params;	// parameters for tuning the ODE engine
 
   VEObject_Group objects;	// objects in the world
+  VECameraRef	camera_0;	// first camera to use in rendering images (first person view) -- must be set to point to a camera in the set of objects for it to be used
+  VECameraRef	camera_1;	// second camera to use in rendering images (for stereo vision)-- must be set to point to a camera in the set of objects for it to be used 
 
   virtual bool	CreateODE();	// #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy world in ode (if created)
@@ -505,6 +552,10 @@ SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
 
 #include "t3node_so.h"
 
+class SoOffscreenRenderer; // #IGNORE
+class SoSwitch;			// #IGNORE
+class SoDirectionalLight; // #IGNORE
+
 class VEODE_API T3VEWorld : public T3NodeParent {
   // world parent for virtual environment 
 #ifndef __MAKETA__
@@ -516,7 +567,15 @@ public:
 
   T3VEWorld(void* world = NULL);
 
+  void			setSunLightDir(float x_dir, float y_dir, float z_dir);
+  void			setSunLightOn(bool on);
+  SoDirectionalLight* 	getSunLight()	  { return sun_light; }
+  SoSwitch*		getCameraSwitch() { return camera_switch; }
+
 protected:
+  SoDirectionalLight* 	sun_light;
+  SoSwitch*		camera_switch; // switching between diff cameras
+  
   ~T3VEWorld();
 };
 
@@ -644,6 +703,9 @@ public:
   virtual void		UpdatePanel();
   // after changes to props
 
+  virtual QImage	RenderCamera(int cam_no);
+  // get the output of the given camera number (currently 0 or 1)
+
   bool			isVisible() const; // gui_active, mapped and display_on
 
   override void		BuildAll();
@@ -662,6 +724,8 @@ protected:
 #ifndef __MAKETA__
   QPointer<VEWorldViewPanel> m_wvp;
 #endif
+  SoOffscreenRenderer*	cam_renderer;
+
   override void 	UpdateAfterEdit_impl();
 
   override void		Render_pre();
@@ -677,6 +741,8 @@ public:
 
   QVBoxLayout*		layOuter;
   QHBoxLayout*		  layDispCheck;
+  QLabel*		  labcam0;
+  QLabel*		  labcam1;
 
   VEWorldView*		wv() {return (VEWorldView*)m_dv;} //
 
