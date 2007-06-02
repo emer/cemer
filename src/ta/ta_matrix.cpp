@@ -383,15 +383,32 @@ void MatrixGeom::SetGeom(int dims, int d0, int d1, int d2, int d3, int d4,
 //  taMatrix		//
 //////////////////////////
 
-bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
-  if ((dims_ < 0) || (dims_ > TA_MATRIX_DIMS_MAX)) { 
-    if (err_msg != NULL)
-      *err_msg = "dims must be: 0 <= dims <= " + String(TA_MATRIX_DIMS_MAX) + 
+bool taMatrix::GeomIsValid(int dims_, const int geom_[],
+  String* err_msg, bool allow_flex)
+{
+  if ((dims_ <= 0) || (dims_ > TA_MATRIX_DIMS_MAX)) { 
+    if (err_msg)
+      *err_msg = "dims must be: 0 < dims <= " + String(TA_MATRIX_DIMS_MAX) + 
         " was: " + String(dims_);
     return false;
   }
   
-  // note: for loading and initialization, we accept zero dim values,
+  // we only allow a non-zero value in top dim (flex sizing, if enabled)
+  for (int i = 0; i < (dims_ - 1) ; ++i) {
+    if (geom_[i] < 0) {
+      if (err_msg)
+        *err_msg = "geoms must be >= 0";
+      return false;
+    } else if (geom_[i] == 0) {
+      if (!(allow_flex && (i == (dims_ - 1)))) {
+        if (err_msg)
+          *err_msg = "all but highest-most geom must be >0";
+        return false;
+      }
+    }
+  }
+  
+/*obs,nuke  // note: for loading and initialization, we accept zero dim values,
   // provided all above that dim are also zero
   int i;
   bool found_zero = false;
@@ -407,7 +424,7 @@ bool taMatrix::GeomIsValid(int dims_, const int geom_[], String* err_msg) {
         return false;
       }
     }
-  }
+  }*/
   
   return true;
 }

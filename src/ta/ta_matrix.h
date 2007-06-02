@@ -400,10 +400,12 @@ public:
   MatrixGeom		geom;
   // #SHOW #READ_ONLY #NO_SAVE dimensions array -- you cannot change this directly, you have to use API functions to change size
   
-  static bool		GeomIsValid(int dims_, const int geom_[], String* err_msg = NULL);
+  static bool		GeomIsValid(int dims_, const int geom_[],
+    String* err_msg = NULL, bool allow_flex = true);
   // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
-  static bool		GeomIsValid(const MatrixGeom& geom_, String* err_msg = NULL)
-  { return GeomIsValid(geom_.size, geom_.el, err_msg); }
+  static bool		GeomIsValid(const MatrixGeom& geom_,
+    String* err_msg = NULL, bool allow_flex = true)
+  { return GeomIsValid(geom_.size, geom_.el, err_msg, allow_flex); }
   // #IGNORE validates proposed geom, ex. dims >=1, and valid values for supplied geoms
   
   bool			canResize() const; 

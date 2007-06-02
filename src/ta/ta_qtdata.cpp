@@ -4752,7 +4752,9 @@ bool taiMethodData::CallFun_impl() {
     {
       bool use_busy = !meth->HasOption("NO_BUSY");
       if (use_busy) taMisc::Busy(true);
+      ++taMisc::in_gui_call;
       cssEl* rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
+      --taMisc::in_gui_call;
       // make sure we still exist before doing UA!
       if (ths)void
         UpdateAfter();

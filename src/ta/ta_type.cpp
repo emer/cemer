@@ -583,6 +583,7 @@ ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_saving;
 ContextFlag	taMisc::is_duplicating;
 ContextFlag	taMisc::is_checking;
+ContextFlag	taMisc::in_gui_call;
 ContextFlag	taMisc::in_plugin_init;
 TypeDef*	taMisc::plugin_loading;
 
@@ -713,7 +714,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
     String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
       + "() (path: " + obj->GetPath_Long() + ")\n";
 
-    if(obj == prv_obj || prv_fun == fun_name || prv_a == a) {
+    if((obj == prv_obj) && (prv_fun == fun_name) && (prv_a == a)) {
       // nogui version for repeat!
       taMisc::Error_nogui(objinfo, a, b, c, d, e, f, g, h);
     }
@@ -724,7 +725,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
   }
   else {
     String fn = String("Function: ") + fun_name + "()\n";
-    if(prv_fun == fun_name || prv_a == a) {
+    if((prv_fun == fun_name) && (prv_a == a)) {
       // nogui version for repeat!
       taMisc::Error_nogui(fn, a, b, c, d, e, f, g, h);
     }
@@ -733,7 +734,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
       taMisc::Error(fn, a, b, c, d, e, f, g, h);
     }
   }
-  prv_obj = (taBase*)obj;
+  prv_obj = const_cast<taBase*>(obj);
   prv_fun = fun_name;
   prv_a = a;
   return true;
@@ -3344,13 +3345,17 @@ void MethodDef::CallFun(void* base) const {
     mth_rep = im->GetMethodRep(base, NULL, NULL, NULL);
   }
   if(mth_rep != NULL) {
+    ++taMisc::in_gui_call;
     mth_rep->CallFun();
+    --taMisc::in_gui_call;
     delete mth_rep;
   }
   else {
     if((fun_argc == 0) || (fun_argd == 0)) {
-      //      cssEl* rval = (*(stubp))(base, 0, (cssEl**)NULL);
+      ++taMisc::in_gui_call;
+      // cssEl* rval = 
       (*(stubp))(base, 0, (cssEl**)NULL);
+      --taMisc::in_gui_call;
     }
     else {
       taMisc::Warning("*** CallFun Error: function:", name,

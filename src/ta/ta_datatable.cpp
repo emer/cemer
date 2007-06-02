@@ -1394,6 +1394,7 @@ int DataTable::MinLength() {
 DataCol* DataTable::NewCol(DataCol::ValType val_type, 
 				  const String& col_nm) 
 {
+  if (!NewColValid(col_nm)) return NULL;
   StructUpdate(true);
   DataCol* rval = NewCol_impl(val_type, col_nm);
   rval->Init(); // asserts geom
@@ -1459,6 +1460,22 @@ int_Data* DataTable::NewColInt(const String& col_nm) {
   return (int_Data*)NewCol(VT_INT, col_nm);
 }
 
+bool DataTable::NewColValid(const String& col_nm,
+  const MatrixGeom* cell_geom) 
+{
+  String err_msg;
+  if (TestError((data.FindName(col_nm) != NULL), "NewCol",
+    "Column with name '" + col_nm + "' already exists")) return false;
+  if (cell_geom) {
+    // note: no flex-sizing allowed in cell geoms, must be fully spec'ed
+    // note: concat err msg to reduce chance it will be interpreted as duplicate
+    bool ok = taMatrix::GeomIsValid(*cell_geom, &err_msg, false);
+    String msg("Invalid geom: " + err_msg);
+    if (TestError(!ok, "NewColMatrix", msg)) return false;
+  }
+  return true;
+}
+
 DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm,
     int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
@@ -1466,10 +1483,6 @@ DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm
     return NewCol(val_type, col_nm);
   }
   MatrixGeom geom(dims, d0, d1, d2, d3, d4, d5, d6);
-  String err_msg;
-  if(TestError(!taMatrix::GeomIsValid(geom, &err_msg), "NewcolMatrix",
-	       "Invalid geom:", err_msg)) return NULL;
-  
   DataCol* rval = NewColMatrixN(val_type, col_nm, geom);
   return rval;
 }
@@ -1477,6 +1490,7 @@ DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm
 DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type, 
   const String& col_nm, const MatrixGeom& cell_geom, int& col_idx) 
 {
+  if (!NewColValid(col_nm, &cell_geom)) return NULL;
   StructUpdate(true);
   DataCol* rval = NewCol_impl(val_type, col_nm, col_idx);
   rval->is_matrix = true;
