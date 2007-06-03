@@ -116,6 +116,7 @@ public:
     CAPSULE,			// a cylinder with half-spheres on each end -- preferred to standard cylinders for collision detection
     CYLINDER,
     BOX,
+    NO_SHAPE,			// no shape at all -- only for special classes light lights
   };
   enum LongAxis {
     LONG_X=1,			// long axis is in X direction
@@ -209,14 +210,61 @@ private:
 ////////////////////////////////////////////////
 //		Camera & Lights
 
+class VEODE_API VELightParams : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
+INHERITED(taBase)
+public:
+  bool		on;		// is the light turned on?
+  float		intensity;	// #CONDEDIT_ON_on (0-1) how bright is the light
+  taColor	color; 		// #CONDEDIT_ON_on color of light
+
+  void	Initialize();
+  void	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(VELightParams);
+// protected:
+//   void	UpdateAfterEdit_impl();
+};
+
+class VEODE_API VECameraDists : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
+INHERITED(taBase)
+public:
+  float		near;		// #DEF_0.1 near distance of camera -- closest things can be seen
+  float		focal;		// focal distance of camera -- where is it focused on in scene?
+  float		far;		// far distance of camera -- furthest things that can be seen
+
+  void	Initialize();
+  void	Destroy()	{ };
+  TA_SIMPLE_BASEFUNS(VECameraDists);
+// protected:
+//   void	UpdateAfterEdit_impl();
+};
+
+class SoPerspectiveCamera; // #IGNORE
+
 class VEODE_API VECamera : public VEBody {
   // ##CAT_VirtEnv ##EXT_vebod virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
 INHERITED(VEBody)
 public:
+
+#ifdef __MAKETA__
+  Shape		shape;		// #READ_ONLY #HIDDEN shape for camera must always be a cylinder
+  LongAxis	long_axis;	// #READ_ONLY #HIDDEN direction of the long axis of the body (where length is oriented) -- must always be LONG_Z for a camera
+  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+#endif
+
   TwoDCoord	img_size;	// size of image to record from camera
-  bool		color;		// if true, get color information (else monochrome)
-  float		focal_dist;	// focal distance of camera -- where is it focused on in scene?
+  bool		color;		// if true, get full color images (else greyscale)
+  VECameraDists	view_dist;	// distances that are in view of the camera
   float		field_of_view;	// field of view of camera (angle in radians) -- how muc of scene is it taking in
+  int		antialias_scale; // #DEF_2 to achieve antialiasing, renders at a larger scale (determined by this parameter), and is then downscaled to target size
+  VELightParams	light;		// directional "headlight" associated with the camera -- ensures that whatever is being viewed can be seen (but makes lighting artificially consistent and good)
+  FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
+
+  virtual void 		ConfigCamera(SoPerspectiveCamera* cam);
+  // config So camera parameters
+
+  override void	GetValsFmODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VECamera);
 private:
@@ -225,6 +273,8 @@ private:
 };
 
 SmartRef_Of(VECamera,TA_VECamera); // VECameraRef
+
+class SoLight; // #IGNORE
 
 class VEODE_API VELight : public VEBody {
   // ##CAT_VirtEnv ##EXT_vebod virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!
@@ -236,11 +286,22 @@ public:
     SPOT_LIGHT,			// shines in a given direction from a given position
   };
 
+#ifdef __MAKETA__
+  LongAxis	long_axis;	// #READ_ONLY #HIDDEN direction of the long axis of the body (where length is oriented) -- must always be LONG_Z for a light
+#endif
+
   LightType	light_type;	// type of light
-  bool		light_on;	// is the light turned on?
-  float		intensity;	// (0-1) how bright is the light
+  VELightParams	light;		// light parameters
   float		drop_off_rate;	// #CONDEDIT_ON_light_type:SPOT_LIGHT (0-1) how fast light drops off with increasing angle from the direction angle
   float		cut_off_angle;	// #CONDEDIT_ON_light_type:SPOT_LIGHT (radians, PI/4 = 0.7853 default) angle in radians from the direction vector where there will be no light
+  FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
+
+  virtual SoLight*	CreateLight();
+  // create the So light of correct type
+  virtual void 	ConfigLight(SoLight* lgt);
+  // config So light parameters
+
+  override void	GetValsFmODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VELight);
 private:
@@ -470,7 +531,7 @@ class VEODE_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
   INHERITED(ODEIntParams)
 public:
-  float 	max_cor_vel;	// #DEF_1e06 maximum correcting velocity for contacts (how quickly they can pop things out of contact)
+  float 	max_cor_vel;	// #DEF_1e+06 maximum correcting velocity for contacts (how quickly they can pop things out of contact)
   float		contact_depth;	// #DEF_0.001 depth of the surface layer arond all geometry objects -- allows things to go this deep into a surface before actual contact is made -- increased value can help prevent jittering
   int		max_col_pts;	// #DEF_4 maximum number of collision points to get (must be less than 64, which is a hard maximum)
 
@@ -512,6 +573,9 @@ public:
   VEObject_Group objects;	// objects in the world
   VECameraRef	camera_0;	// first camera to use in rendering images (first person view) -- must be set to point to a camera in the set of objects for it to be used
   VECameraRef	camera_1;	// second camera to use in rendering images (for stereo vision)-- must be set to point to a camera in the set of objects for it to be used 
+  taColor	bg_color; 	// background color of display for camera images
+  VELightRef	light_0;	// first light to add to scene -- must be set to point to a light in the set of objects for it to be used
+  VELightRef	light_1;	// second light to add to scene -- must be set to point to a light in the set of objects for it to be used 
 
   virtual bool	CreateODE();	// #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy world in ode (if created)
@@ -521,10 +585,13 @@ public:
   // #CAT_ODE get the updated values from ODE after computing (called after each step)
 
   virtual void	Step();		
-  // #BUTTON #CAT_Run take one step of integration, and get updated values
+  // #BUTTON #CAT_ODE take one step of integration, and get updated values
 
   VEWorldView*	NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)
+
+  virtual QImage GetCameraImage(int camera_no);
+  // #CAT_ODE get camera image from given camera number (image may be null if camera not set)
 
   //////////////////////////////////////
   // 	IMPL functions
@@ -570,10 +637,18 @@ public:
   void			setSunLightDir(float x_dir, float y_dir, float z_dir);
   void			setSunLightOn(bool on);
   SoDirectionalLight* 	getSunLight()	  { return sun_light; }
+
+  void			setCamLightDir(float x_dir, float y_dir, float z_dir);
+  void			setCamLightOn(bool on);
+  SoDirectionalLight* 	getCamLight()	  { return cam_light; }
+
+  SoGroup*		getLightGroup() { return light_group; }
   SoSwitch*		getCameraSwitch() { return camera_switch; }
 
 protected:
   SoDirectionalLight* 	sun_light;
+  SoDirectionalLight* 	cam_light;
+  SoGroup*		light_group;
   SoSwitch*		camera_switch; // switching between diff cameras
   
   ~T3VEWorld();
@@ -703,7 +778,15 @@ public:
   virtual void		UpdatePanel();
   // after changes to props
 
-  virtual QImage	RenderCamera(int cam_no);
+
+  virtual void		SetupCameras();
+  // configure the cameras during rendering -- called by Render_impl
+  virtual void		CreateLights();
+  // create the lights during render_pre
+  virtual void		SetupLights();
+  // configure the lights during rendering -- called by Render_impl
+
+  virtual QImage	GetCameraImage(int cam_no);
   // get the output of the given camera number (currently 0 or 1)
 
   bool			isVisible() const; // gui_active, mapped and display_on
@@ -740,9 +823,15 @@ INHERITED(iViewPanelFrame)
 public:
 
   QVBoxLayout*		layOuter;
-  QHBoxLayout*		  layDispCheck;
+  QHBoxLayout*		 layCams;
+
+  QVBoxLayout*		  layCam0;
   QLabel*		  labcam0;
+  QLabel*		  labcam0_txt;
+
+  QVBoxLayout*		  layCam1;
   QLabel*		  labcam1;
+  QLabel*		  labcam1_txt;
 
   VEWorldView*		wv() {return (VEWorldView*)m_dv;} //
 

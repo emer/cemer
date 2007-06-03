@@ -261,21 +261,123 @@ void VEBody_Group::GetValsFmODE(bool updt_disp) {
   }
 }
 
+/////////////////////////////////////////////
+//		Camera and Lights
+
+void VELightParams::Initialize() {
+  on = true;
+  intensity = 1.0f;
+  color.no_a = true; 
+  color.r = 1.0f; color.g = 1.0f; color.b = 1.0f;
+}
+
+void VECameraDists::Initialize() {
+  near = 0.1f;
+  focal = 1.0f;
+  far = 10.0f;
+}
+
 void VECamera::Initialize() {
   img_size.x = 320;
   img_size.y = 240;
   color = true;
-  focal_dist = 5.0f;
-  field_of_view = .7853f;
+  field_of_view = 1.5803f;
+  antialias_scale = 2;
+  light.intensity = .2;		// keep it not so bright relative to the sun..
+  mass = .01f;
+  radius = .01f;
+  length = .01f;
+  shape = CYLINDER;
+  long_axis = LONG_Z;		// default orientation: must remain!
+  dir_norm.x = 0.0f; dir_norm.y = 0.0f; dir_norm.z = -1.0f;
 }
 
+void VECamera::GetValsFmODE(bool updt_disp) {
+  inherited::GetValsFmODE(updt_disp);
+  SbVec3f dn(0.0f, 0.0f, -1.0f);
+  SbRotation sbrot(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  sbrot.multVec(dn, dn);
+  dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
+}
+
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+
+void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
+  cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
+  cam->orientation.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  cam->nearDistance = view_dist.near;
+  cam->focalDistance = view_dist.focal;
+  cam->farDistance = view_dist.far;
+  cam->heightAngle = field_of_view;
+}
+
+///////////////////////////////////////////////////
+//		Lights
+
 void VELight::Initialize() {
-  light_type = DIRECTIONAL_LIGHT;
-  light_on = true;
-  intensity = 1.0f;
+  light_type = SPOT_LIGHT;
   drop_off_rate = 0.0f;
   cut_off_angle = .7853f;
+  dir_norm.x = 0.0f; dir_norm.y = 0.0f; dir_norm.z = -1.0f;
+  shape = NO_SHAPE;		// having a shape will interfere with light!  but might want to see where it is sometimes..
+  long_axis = LONG_Z;
+  mass = .01f;
+  radius = .01f;
+  length = .01f;
 }
+
+#include <Inventor/nodes/SoLight.h>
+#include <Inventor/nodes/SoDirectionalLight.h>
+#include <Inventor/nodes/SoPointLight.h>
+#include <Inventor/nodes/SoSpotLight.h>
+
+SoLight* VELight::CreateLight() {
+  SoLight* lgt = NULL;
+  switch(light_type) {
+  case DIRECTIONAL_LIGHT:
+    lgt = new SoDirectionalLight;
+    break;
+  case POINT_LIGHT:
+    lgt = new SoPointLight;
+    break;
+  case SPOT_LIGHT:
+    lgt = new SoSpotLight;
+    break;
+  }
+  ConfigLight(lgt);
+  return lgt;
+}
+
+void VELight::ConfigLight(SoLight* lgt) {
+  lgt->on = light.on;
+  lgt->intensity = light.intensity;
+  lgt->color.setValue(SbColor(light.color.r, light.color.g, light.color.b));
+  switch(light_type) {
+  case DIRECTIONAL_LIGHT:
+    ((SoDirectionalLight*)lgt)->direction.setValue(dir_norm.x, dir_norm.y, dir_norm.z);
+    break;
+  case POINT_LIGHT:
+    ((SoPointLight*)lgt)->location.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
+    break;
+  case SPOT_LIGHT:
+    SoSpotLight* sl = (SoSpotLight*)lgt;
+    sl->direction.setValue(dir_norm.x, dir_norm.y, dir_norm.z);
+    sl->location.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
+    sl->dropOffRate = drop_off_rate;
+    sl->cutOffAngle = cut_off_angle;
+    break;
+  }
+}
+
+void VELight::GetValsFmODE(bool updt_disp) {
+  inherited::GetValsFmODE(updt_disp);
+  SbVec3f dn(0.0f, 0.0f, -1.0f);
+  SbRotation sbrot(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  sbrot.multVec(dn, dn);
+  dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
+}
+
+
 
 ////////////////////////////////////////////////
 //		Joints
@@ -731,6 +833,10 @@ void VEWorld::Initialize() {
   step_type = STD_STEP;
   stepsize = .01f;
   quick_iters = 20;
+  bg_color.no_a = true; 
+  bg_color.r = 0.8f;
+  bg_color.g = 0.8f;
+  bg_color.b = 0.8f;
 }
 
 void VEWorld::Destroy() {
@@ -866,6 +972,12 @@ void VEWorld::Step() {
   GetValsFmODE();
 }
 
+#include <QImage>
+
+QImage VEWorld::GetCameraImage(int cam_no) {
+  QImage img;
+  return img;
+}
 
 /////////////////////////////////////////////////////////////////////////
 //		So Inventor objects
@@ -874,7 +986,6 @@ void VEWorld::Step() {
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qwidget.h>
-#include <QImage>
 #include <QPixmap>
 #include <QLabel>
 
@@ -888,10 +999,10 @@ void VEWorld::Step() {
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoSwitch.h>
-#include <Inventor/nodes/SoDirectionalLight.h>
-#include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/SbViewportRegion.h>
+
+#include "SoCapsule.h"
  
 SO_NODE_SOURCE(T3VEWorld);
 
@@ -907,7 +1018,17 @@ T3VEWorld::T3VEWorld(void* world)
 
   sun_light = new SoDirectionalLight;
   insertChildBefore(topSeparator(), sun_light, childNodes());
+  sun_light->on = false;
+
+  cam_light = new SoDirectionalLight;
+  insertChildBefore(topSeparator(), cam_light, childNodes());
+  cam_light->on = false;
+
+  light_group = new SoGroup;
+  insertChildBefore(topSeparator(), light_group, childNodes());
+
   camera_switch = new SoSwitch;
+  camera_switch->whichChild = -1; // no cameras!
   insertChildBefore(topSeparator(), camera_switch, childNodes());
 }
 
@@ -922,6 +1043,14 @@ void T3VEWorld::setSunLightOn(bool on) {
 
 void T3VEWorld::setSunLightDir(float x_dir, float y_dir, float z_dir) {
   sun_light->direction = SbVec3f(x_dir, y_dir, z_dir);
+}
+
+void T3VEWorld::setCamLightOn(bool on) {
+  cam_light->on = on;
+}
+
+void T3VEWorld::setCamLightDir(float x_dir, float y_dir, float z_dir) {
+  cam_light->direction = SbVec3f(x_dir, y_dir, z_dir);
 }
 
 /////////////////////////////////////////////
@@ -1027,6 +1156,18 @@ void VEBodyView::Render_pre() {
       break;
     }
     case VEBody::CAPSULE:
+      SoCapsule* sp = new SoCapsule;
+      sp->radius = ob->radius;
+      sp->height = ob->length;
+      ssep->addChild(sp);
+      SoTransform* tx = m_node_so->txfm_shape();
+      if(ob->long_axis == VEBody::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEBody::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEBody::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
     case VEBody::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->radius;
@@ -1034,9 +1175,11 @@ void VEBodyView::Render_pre() {
       ssep->addChild(sp);
       SoTransform* tx = m_node_so->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708);
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEBody::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
       else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708);
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEBody::BOX: {
@@ -1045,6 +1188,9 @@ void VEBodyView::Render_pre() {
       sp->depth = ob->box.z;
       sp->height = ob->box.y;
       ssep->addChild(sp);
+      break;
+    }
+    case VEBody::NO_SHAPE: {
       break;
     }
     }
@@ -1289,43 +1435,122 @@ void VEWorldView::Render_pre() {
 
   m_node_so = new T3VEWorld(this);
 
+  CreateLights();
+
   inherited::Render_pre();
+}
+
+void VEWorldView::CreateLights() {
+  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  VEWorld* wl = World();
+
+  SoGroup* lgt_group = node_so->getLightGroup();
+  int n_lgt = 0;
+  if(wl->light_0) {
+    VELight* vlgt = wl->light_0.ptr();
+    SoLight* lt = vlgt->CreateLight();
+    lgt_group->addChild(lt);
+    n_lgt++;
+  }
+  if(n_lgt == 1 && wl->light_1) {
+    VELight* vlgt = wl->light_1.ptr();
+    SoLight* lt = vlgt->CreateLight();
+    lgt_group->addChild(lt);
+    n_lgt++;
+  }
 }
 
 void VEWorldView::Render_impl() {
   inherited::Render_impl();
 
+  // these tests are so the subroutines don't need them
   T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
   if(!node_so) return;
-
   VEWorld* wl = World();
   if(!wl) return;
 
-  SoFont* font = node_so->captionFont(true);
-  float font_size = 0.4f;
-  font->size.setValue(font_size); // is in same units as geometry units of network
-  node_so->setCaption(caption().chars());
+  // don't set the caption!!  just gets in the way!
+//   SoFont* font = node_so->captionFont(true);
+//   float font_size = 0.4f;
+//   font->size.setValue(font_size); // is in same units as geometry units of network
+//   node_so->setCaption(caption().chars());
+
+  SetupCameras();
+  SetupLights();
+
+  UpdatePanel();
+}
+
+void VEWorldView::SetupCameras() {
+  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  VEWorld* wl = World();
 
   SoSwitch* cam_switch = node_so->getCameraSwitch();
   int n_cam = 0;
+  VECamera* cam_light = NULL;
   if(wl->camera_0) {
+    VECamera* vecam = wl->camera_0.ptr();
     if(cam_switch->getNumChildren() == 0) {
       SoPerspectiveCamera* cam = new SoPerspectiveCamera;
+      vecam->ConfigCamera(cam);
       cam_switch->addChild(cam);
     }
+    if(vecam->light.on)
+      cam_light = vecam;
     n_cam++;
   }
   if(n_cam == 1 && wl->camera_1) {
+    VECamera* vecam = wl->camera_1.ptr();
     if(cam_switch->getNumChildren() == 1) {
       SoPerspectiveCamera* cam = new SoPerspectiveCamera;
+      vecam->ConfigCamera(cam);
       cam_switch->addChild(cam);
     }
+    if(!cam_light && vecam->light.on)
+      cam_light = vecam;
+    n_cam++;
   }
   if(n_cam == 0) {
     cam_switch->removeAllChildren();
   }
 
-  UpdatePanel();
+  if(cam_light) {
+    node_so->setCamLightOn(true);
+    node_so->setCamLightDir(-cam_light->dir_norm.x, -cam_light->dir_norm.y,
+			    -cam_light->dir_norm.z);
+  }
+  else {
+    node_so->setCamLightOn(false);
+  }
+
+}
+
+void VEWorldView::SetupLights() {
+  T3VEWorld* node_so = (T3VEWorld*)this->node_so(); // cache
+  VEWorld* wl = World();
+
+  SoGroup* lgt_group = node_so->getLightGroup();
+  int n_lgt = 0;
+  if(wl->light_0) {
+    VELight* vlgt = wl->light_0.ptr();
+    SoLight* lt = (SoLight*)lgt_group->getChild(0);
+    vlgt->ConfigLight(lt);
+    n_lgt++;
+  }
+  if(n_lgt == 1 && wl->light_1) {
+    VELight* vlgt = wl->light_1.ptr();
+    SoLight* lt = (SoLight*)lgt_group->getChild(1);
+    vlgt->ConfigLight(lt);
+    n_lgt++;
+  }
+
+  if(wl->sun_on) {
+    node_so->setSunLightOn(true);
+    node_so->setSunLightDir(0.0f, -1.0f, 0.0f);
+  }
+  else {
+    node_so->setSunLightOn(false);
+  }
 }
 
 // void VEWorldView::setDisplay(bool value) {
@@ -1334,7 +1559,7 @@ void VEWorldView::Render_impl() {
 //   UpdateDisplay(false);		// 
 // }
 
-QImage VEWorldView::RenderCamera(int cam_no) {
+QImage VEWorldView::GetCameraImage(int cam_no) {
   QImage img;
   VEWorld* wl = World();
   if(!wl) return img;
@@ -1361,26 +1586,37 @@ QImage VEWorldView::RenderCamera(int cam_no) {
     return img;
   }
 
-  SbViewportRegion vpreg;
-  vpreg.setWindowSize(vecam->img_size.x, vecam->img_size.y); 
-  
-  if(!cam_renderer)
-    cam_renderer = new SoOffscreenRenderer(vpreg);
+  TwoDCoord cur_img_size = vecam->img_size;
+  TwoDCoord cur_img_sc = cur_img_size * vecam->antialias_scale;
 
-  cam_renderer->setViewportRegion(vpreg);
-  cam_renderer->setComponents(SoOffscreenRenderer::RGB_TRANSPARENCY);
+  SbViewportRegion vpreg;
+  vpreg.setWindowSize(cur_img_sc.x, cur_img_sc.y);
+
+  static TwoDCoord last_img_size;
+  
+  if(!cam_renderer) {
+    cam_renderer = new SoOffscreenRenderer(vpreg);
+    cam_renderer->setComponents(SoOffscreenRenderer::RGB);
+    cam_renderer->setViewportRegion(vpreg);
+    last_img_size = cur_img_sc;
+  }
+
+  if(cur_img_sc != last_img_size) {
+    cam_renderer->setViewportRegion(vpreg);
+    last_img_size = cur_img_sc;
+  }
+
+  cam_renderer->setBackgroundColor(SbColor(wl->bg_color.r, wl->bg_color.g, wl->bg_color.b));
 
   cam_switch->whichChild = cam_no;
 
   SoPerspectiveCamera* cam = (SoPerspectiveCamera*)cam_switch->getChild(cam_no);
-  cam->position.setValue(vecam->cur_pos.x, vecam->cur_pos.y, vecam->cur_pos.z);
-  cam->orientation.setValue(SbVec3f(vecam->cur_rot.x, vecam->cur_rot.y, vecam->cur_rot.z),
-			     vecam->cur_rot.rot);
-  // todo: compute these from the scene
-  cam->nearDistance = 0.1f;
-  cam->farDistance = 10.0f;
-  cam->focalDistance = vecam->focal_dist;
-  cam->heightAngle = vecam->field_of_view;
+  vecam->ConfigCamera(cam);
+
+  // to auto compute -- probably more expensive than its worth
+//   SoGetBoundingBoxAction action(vpregion);
+//   action.apply(sceneroot);
+//   SbBox3f box = action.getBoundingBox();
 
   bool ok = cam_renderer->render(node_so);
 
@@ -1388,20 +1624,30 @@ QImage VEWorldView::RenderCamera(int cam_no) {
 
   if(TestError(!ok, "RenderCamera", "offscreen render failed!")) return img;
   
-  img = QImage((uchar*)cam_renderer->getBuffer(), vecam->img_size.x, vecam->img_size.y,
- 	       QImage::Format_ARGB32);
-//   img = QImage(vecam->img_size.x, vecam->img_size.y, QImage::Format_RGB32);
+  img = QImage(cur_img_sc.x, cur_img_sc.y, QImage::Format_RGB32);
 
-//   int* gbuf = (int*)cam_renderer->getBuffer();
+  uchar* gbuf = (uchar*)cam_renderer->getBuffer();
 
-//   int idx = 0;
-//   for(int y=0;y<vecam->img_size.y;y++) {
-//     for(int x=0;x<vecam->img_size.x;x++) {
-//       img.setPixel(x,y, gbuf[idx]);
-//       idx++;
-//     }
-//   }
-  return img;
+  int idx = 0;
+  if(vecam->color) {
+    for(int y=cur_img_sc.y-1; y>= 0; y--) {
+      for(int x=0;x<cur_img_sc.x;x++) {
+	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
+	img.setPixel(x,y, qRgb(r,g,b));
+      }
+    }
+  }
+  else {
+    for(int y=cur_img_sc.y-1; y>= 0; y--) {
+      for(int x=0;x<cur_img_sc.x;x++) {
+	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
+	img.setPixel(x,y, qGray(r,g,b));
+      }
+    }
+  }
+
+  return img.scaled(cur_img_size.x, cur_img_size.y, Qt::IgnoreAspectRatio,
+		    Qt::SmoothTransformation);
 }
 
 
@@ -1418,13 +1664,21 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   layOuter->setSpacing(taiM->vsep_c);
 
   ////////////////////////////////////////////////////////////////////////////
-  layDispCheck = new QHBoxLayout(layOuter);
+  layCams = new QHBoxLayout(layOuter);
 
+  layCam0 = new QVBoxLayout(layCams);
   labcam0 = new QLabel(widg);
-  layDispCheck->addWidget(labcam0);
+  layCam0->addWidget(labcam0);
+  labcam0_txt = new QLabel(widg);
+  labcam0_txt->setText("Camera 0");
+  layCam0->addWidget(labcam0_txt);
 
+  layCam1 = new QVBoxLayout(layCams);
   labcam1 = new QLabel(widg);
-  layDispCheck->addWidget(labcam1);
+  layCam1->addWidget(labcam1);
+  labcam1_txt = new QLabel(widg);
+  labcam1_txt->setText("Camera 1");
+  layCam1->addWidget(labcam1_txt);
   
   setCentralWidget(widg);
 }
@@ -1444,29 +1698,29 @@ void VEWorldViewPanel::GetImage_impl() {
   if(!wl) return;
   
   if(wl->camera_0) {
-    QPixmap pm = QPixmap::fromImage(wv_->RenderCamera(0));
+    QPixmap pm = QPixmap::fromImage(wv_->GetCameraImage(0));
     if(!pm.isNull()) {
       labcam0->setPixmap(pm);
     }
     else {
-      labcam0->setText("Camera 0 Image Render Failed!");
+      labcam0->setText("Render Failed!");
     }
   }
   else {
-    labcam0->setText("No Camera 0 Set");
+    labcam0->setText("Not Set");
   }
 
   if(wl->camera_1) {
-    QPixmap pm = QPixmap::fromImage(wv_->RenderCamera(1));
+    QPixmap pm = QPixmap::fromImage(wv_->GetCameraImage(1));
     if(!pm.isNull()) {
       labcam1->setPixmap(pm);
     }
     else {
-      labcam1->setText("Camera 1 Image Render Failed!");
+      labcam1->setText("Render Failed!");
     }
   }
   else {
-    labcam1->setText("No Camera 1 Set");
+    labcam1->setText("Not Set");
   }
 }
 
