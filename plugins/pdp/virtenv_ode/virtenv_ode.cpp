@@ -1462,7 +1462,7 @@ void VEBodyView::Render_pre() {
       ssep->addChild(sp);
       break;
     }
-    case VEBody::CAPSULE:
+    case VEBody::CAPSULE: {
       SoCapsule* sp = new SoCapsule;
       sp->radius = ob->radius;
       sp->height = ob->length;
@@ -1475,6 +1475,7 @@ void VEBodyView::Render_pre() {
       else if(ob->long_axis == VEBody::LONG_Z)
 	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
+    }
     case VEBody::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->radius;
@@ -1642,7 +1643,7 @@ void VEStaticView::Render_pre() {
       ssep->addChild(sp);
       break;
     }
-    case VEStatic::CAPSULE:
+    case VEStatic::CAPSULE: {
       SoCapsule* sp = new SoCapsule;
       sp->radius = ob->radius;
       sp->height = ob->length;
@@ -1655,6 +1656,7 @@ void VEStaticView::Render_pre() {
       else if(ob->long_axis == VEStatic::LONG_Z)
 	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
+    }
     case VEStatic::CYLINDER: {
       SoCylinder* sp = new SoCylinder;
       sp->radius = ob->radius;
