@@ -5,6 +5,7 @@
 #include "ta_plugin.h"                       // Defines the plugin architecture.
 #include "ta_base.h"                         // Definition of the taBase object.
 #include "ta_geometry.h"
+#include "ta_datatable.h"
 #include "virtenv_ode_TA_type.h"
 
 #define VEODE_API                      // Needed for windows compatability.
@@ -59,6 +60,10 @@ class VEJoint;
 class VEJoint_Group;
 class VEObject;
 class VEObject_Group;
+class VEStatic;
+class VEStatic_Group;
+class VESpace;
+class VESpace_Group;
 class VEWorld;
 class VEWorldView;
 
@@ -79,7 +84,7 @@ protected:
 
 
 ////////////////////////////////////////////////
-//		objects (bodies)
+//		Bodies
 
 class VEODE_API VESurface : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv surface properties for collisions
@@ -98,9 +103,8 @@ public:
 //   void	UpdateAfterEdit_impl();
 };
 
-
 class VEODE_API VEBody : public taNBase {
-  // ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element)
+  // ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
 public:	
   enum BodyFlags { // #BITS flags for bodies
@@ -186,6 +190,8 @@ public:
   TA_BASEFUNS(VEBody);
 protected:
   Shape		cur_shape;	// current shape that was previously set
+
+  override void 	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void  Destroy();
@@ -243,7 +249,7 @@ public:
 class SoPerspectiveCamera; // #IGNORE
 
 class VEODE_API VECamera : public VEBody {
-  // ##CAT_VirtEnv ##EXT_vebod virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
+  // virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
 INHERITED(VEBody)
 public:
 
@@ -277,7 +283,7 @@ SmartRef_Of(VECamera,TA_VECamera); // VECameraRef
 class SoLight; // #IGNORE
 
 class VEODE_API VELight : public VEBody {
-  // ##CAT_VirtEnv ##EXT_vebod virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!
+  // virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!
 INHERITED(VEBody)
 public:	
   enum LightType {
@@ -522,6 +528,180 @@ private:
   void 	Destroy()		{ };
 };
 
+
+////////////////////////////////////////////////
+//	Static bodies
+
+class VEODE_API VEStatic : public taNBase {
+  // ##CAT_VirtEnv ##EXT_vestc virtual environment static environment element -- not subject to physics and only interacts with bodies via collisions (cannot be part of a joint)
+INHERITED(taNBase)
+public:	
+  enum StaticFlags { // #BITS flags for static elements
+    SF_NONE		= 0, // #NO_BIT
+    FM_FILE		= 0x0001, // load object image features from Inventor (iv) object file
+  };
+
+  enum Shape {			// shape of the object -- used for intertial mass and for collision detection (unless use_fname
+    SPHERE,
+    CAPSULE,			// a cylinder with half-spheres on each end -- preferred to standard cylinders for collision detection
+    CYLINDER,
+    BOX,
+    PLANE,			// flat plane -- useful for ground surfaces
+    NO_SHAPE,			// no shape at all -- only for special classes light lights
+  };
+  enum LongAxis {
+    LONG_X=1,			// long axis is in X direction
+    LONG_Y,			// long axis is in Y direction
+    LONG_Z,			// long axis is in Z direction
+  };
+
+  void*		geom_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry associated with the static item (cast to a dGeomID which is dxgeom*)
+  StaticFlags	flags;		// #APPLY_IMMED flags for various env el properties
+  FloatTDCoord	pos;  		// #CONDEDIT_OFF_shape:PLANE position of static item
+  FloatRotation	rot;  		// #CONDEDIT_OFF_shape:PLANE rotation of static item
+
+  Shape		shape;		// #APPLY_IMMED shape of static item for purposes of collision (and visual rendering if not FM_FILE)
+  float		radius;		// #CONDEDIT_OFF_shape:BOX radius of body, for all but box
+  float		length;		// #CONDEDIT_OFF_shape:BOX,SPHERE length of body, for all but box 
+  LongAxis	long_axis;	// #CONDEDIT_OFF_shape:BOX,SPHERE direction of the long axis of the body (where length is oriented)
+  FloatTDCoord	box;		// #CONDEDIT_ON_shape:BOX length of box in each axis for BOX-shaped body
+  FloatTDCoord	plane_norm;	// #CONDEDIT_ON_shape:PLANE normal vector for the plane (x*x + y*y + z*z = plane_height)
+  float		plane_height;	// #CONDEDIT_ON_shape:PLANE height of the plane (x*x + y*y + z*z = plane_height)
+
+  FloatTransform obj_xform;	// full transform to apply to object file to align/size/etc with static item
+  String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
+
+  taColor	color; 		// default color of static item if not otherwise defined (a used for transparency)
+  VESurface	surface;	// surface properties of the static item
+  ODEIntParams	softness;	// set the cfm and erp values higher here to make the surface softer
+
+  //////////////////////////////
+  //	Internal-ish stuff
+
+  inline void		SetStaticFlag(StaticFlags flg)   { flags = (StaticFlags)(flags | flg); }
+  // set body flag state on
+  inline void		ClearStaticFlag(StaticFlags flg) { flags = (StaticFlags)(flags & ~flg); }
+  // clear body flag state (set off)
+  inline bool		HasStaticFlag(StaticFlags flg) const { return (flags & flg); }
+  // check if body flag is set
+  inline void		SetStaticFlagState(StaticFlags flg, bool on)
+  { if(on) SetStaticFlag(flg); else ClearStaticFlag(flg); }
+  // set body flag state according to on bool (if true, set flag, if false, clear it)
+
+  virtual VEWorld* GetWorld();	// #CAT_ODE get world object (parent of this guy)
+  virtual void*	GetWorldID();	// #CAT_ODE get world id value
+  virtual VESpace* GetSpace();  // #CAT_ODE get parent space (parent of this guy)
+  virtual void*	GetSpaceID(); 	// #CAT_ODE get space id value from space
+
+  virtual bool	CreateODE();	// #CAT_ODE create static element in ode (if not already created) -- returns false if unable to create
+  virtual void	DestroyODE();	// #CAT_ODE destroy static element in ode (if created)
+  virtual void	SetValsToODE();	// #CAT_ODE set the current values to ODE (creates id's if not already done)
+
+  SIMPLE_COPY(VEStatic);
+  SIMPLE_INITLINKS(VEStatic);
+  override void CutLinks();
+  TA_BASEFUNS(VEStatic);
+protected:
+  Shape		cur_shape;	// current shape that was previously set
+
+  override void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void  Destroy();
+};
+
+SmartRef_Of(VEStatic,TA_VEStatic); // VEStaticRef
+
+class TA_API VEStatic_Group : public taGroup<VEStatic> {
+  // ##CAT_VirtEnv a group of virtual environment static elements
+INHERITED(taGroup<VEStatic>)
+public:
+  virtual void	SetValsToODE();	// set the current values to ODE
+
+  TA_BASEFUNS_NOCOPY(VEStatic_Group);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_VEStatic); }
+  void 	Destroy()		{ };
+};
+
+class VEODE_API VEHeightField : public VEStatic {
+  // virtual environment height field -- 3d surface defined by a grid of height values
+INHERITED(VEStatic)
+public:
+
+#ifdef __MAKETA__
+  Shape		shape;		// #READ_ONLY #HIDDEN shape is always height field
+  FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
+#endif
+
+  // todo: lookup column in data table..
+
+  DataTableRef	height_data;	// data table containing height field data
+  String	data_col;	// column name within table that has the data -- IMPORTANT: must be a 2d float/double matrix column!
+  int		row_num;	// row number containing height field data
+
+  override void	SetValsToODE();	
+
+  TA_SIMPLE_BASEFUNS(VEHeightField);
+private:
+  void 	Initialize();
+  void  Destroy() { };
+};
+
+////////////////////////////////////////////////
+//	Space: collection of static elements
+
+class VEODE_API VESpace : public taNBase {
+  // ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
+INHERITED(taNBase)
+public:	
+  enum SpaceType {
+    SIMPLE_SPACE,		// simple list of items, requires O(n^2) but ok for very small spaces
+    HASH_SPACE,			// hash-coded space with multi-scale grids: efficient for larger number of items
+  };
+
+  VEStatic_Group static_els;	// static elements of the space
+
+  void*		space_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of the geometry space (cast to a dSpaceID which is dxspace*)
+  SpaceType	space_type;	// type of space to use
+  MinMaxInt	hash_levels;	// #CONDEDIT_ON_space_type:HASH_SPACE minimum and maximum spacing levels in hash space
+
+  virtual VEWorld* GetWorld();	// #CAT_ODE get world object (parent of this guy)
+  virtual void*	GetWorldID();	// #CAT_ODE get world id value
+  virtual void*	GetWorldSpaceID(); // #CAT_ODE get world space id value
+
+  virtual bool	CreateODE();	// #CAT_ODE create object in ode (if not already created) -- returns false if unable to create
+  virtual void	DestroyODE();	// #CAT_ODE destroy object in ode (if created)
+
+  virtual void	SetValsToODE();
+  // #CAT_ODE set the current values to ODE (creates id's if not already done)
+
+  SIMPLE_COPY(VESpace);
+  SIMPLE_INITLINKS(VESpace);
+  override void CutLinks();
+  TA_BASEFUNS(VESpace);
+protected:
+  SpaceType	cur_space_type;	// current type that was previously set
+  //  override CheckConfig_impl() // todo
+private:
+  void 	Initialize();
+  void  Destroy();
+};
+
+SmartRef_Of(VESpace,TA_VESpace); // VESpaceRef
+
+class TA_API VESpace_Group : public taGroup<VESpace> {
+  // ##CAT_VirtEnv a group of virtual environment objects
+INHERITED(taGroup<VESpace>)
+public:
+  virtual void	SetValsToODE();	// set the current values to ODE
+
+  TA_BASEFUNS_NOCOPY(VESpace_Group);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_VESpace); }
+  void 	Destroy()		{ };
+};
+
 ////////////////////////////////////////////////
 //		World
 
@@ -566,14 +746,16 @@ public:
   float		stepsize;	// how big of a step to take
   int		quick_iters;	// #CONDEDIT_ON_step_type:QUICK_STEP how many iterations to take in quick step mode
   FloatTDCoord	gravity;	// gravitational setting for world (0,0,-9.81) is std
-  bool		sun_on;		// turn on a sun (overhead directional) light 
   bool		updt_display;	// if true, will update any attached display after each time step
   ODEWorldParams ode_params;	// parameters for tuning the ODE engine
 
   VEObject_Group objects;	// objects in the world
+  VESpace_Group  spaces;	// spaces (static elements) in the world
+
   VECameraRef	camera_0;	// first camera to use in rendering images (first person view) -- must be set to point to a camera in the set of objects for it to be used
   VECameraRef	camera_1;	// second camera to use in rendering images (for stereo vision)-- must be set to point to a camera in the set of objects for it to be used 
   taColor	bg_color; 	// background color of display for camera images
+  VELightParams	sun_light;	// parameters for a sun (overhead directional) light 
   VELightRef	light_0;	// first light to add to scene -- must be set to point to a light in the set of objects for it to be used
   VELightRef	light_1;	// second light to add to scene -- must be set to point to a light in the set of objects for it to be used 
 
@@ -687,12 +869,46 @@ protected:
   ~T3VEBody();
 };
 
+class VEODE_API T3VESpace : public T3NodeParent {
+  // space parent for virtual environment 
+#ifndef __MAKETA__
+typedef T3NodeParent inherited;
+  SO_NODE_HEADER(T3VESpace);
+#endif // def __MAKETA__
+public:
+  static void	initClass();
+
+  T3VESpace(void* obj = NULL);
+
+protected:
+  ~T3VESpace();
+};
+
+class VEODE_API T3VEStatic : public T3NodeLeaf {
+  // static item for virtual environment 
+#ifndef __MAKETA__
+typedef T3NodeLeaf inherited;
+  SO_NODE_HEADER(T3VEStatic);
+#endif // def __MAKETA__
+public:
+  static void	initClass();
+
+  T3VEStatic(void* stat = NULL, bool show_drag = false);
+
+protected:
+  bool			 show_drag_;
+  T3TransformBoxDragger* drag_;	// my position dragger
+
+  ~T3VEStatic();
+};
+
 ///////////////////////////////////////////////////////////////////////
 //		T3 DataView Code
 
 #include "t3viewer.h"
 
 class VEBodyView;
+class VEStaticView;
 class VEWorldView;
 class VEWorldViewPanel;
 
@@ -723,7 +939,7 @@ protected:
 };
 
 class VEODE_API VEObjectView: public T3DataViewPar {
-  // view of one object
+  // view of one object: a group of bodies
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
@@ -750,6 +966,60 @@ protected:
   override void		Render_impl();
 };
 
+class VEODE_API VEStaticView: public T3DataView {
+  // view of one static environment element
+INHERITED(T3DataView)
+friend class VEWorldView;
+public:
+  String	name;		// name of static item this one is associated with
+
+  VEStatic*		Static() const { return (VEStatic*)data();}
+  virtual void		SetStatic(VEStatic* ob);
+  
+  DATAVIEW_PARENT(VEWorldView)
+
+  override bool		SetName(const String& nm);
+  override String	GetName() const 	{ return name; } 
+
+  void 	SetDefaultName() {} // leave it blank
+  void	Copy_(const VEStaticView& cp);
+  TA_BASEFUNS(VEStaticView);
+protected:
+  void	Initialize();
+  void	Destroy();
+
+  override void		Render_pre();
+  override void		Render_impl();
+};
+
+class VEODE_API VESpaceView: public T3DataViewPar {
+  // view of one space
+INHERITED(T3DataView)
+friend class VEWorldView;
+public:
+  String	name;		// name of body this one is associated with
+
+  VESpace*		Space() const { return (VESpace*)data();}
+  virtual void		SetSpace(VESpace* ob);
+  
+  DATAVIEW_PARENT(VEWorldView)
+
+  override bool		SetName(const String& nm);
+  override String	GetName() const 	{ return name; } 
+
+  override void		BuildAll();
+  
+  void 	SetDefaultName() {} // leave it blank
+  void	Copy_(const VESpaceView& cp);
+  TA_BASEFUNS(VESpaceView);
+protected:
+  void	Initialize();
+  void	Destroy();
+
+  override void		Render_pre();
+  override void		Render_impl();
+};
+
 class VEODE_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer
 INHERITED(T3DataViewMain)
@@ -763,10 +1033,6 @@ public:
 
   VEWorld*		World() const {return (VEWorld*)data();}
   virtual void		SetWorld(VEWorld* wl);
-
-  VEObjectView*		ObjectView(int i) const
-  { return (VEObjectView*)children.SafeEl(i); } 
-  inline int		ObjectViewCount() const { return children.size;}
 
   virtual void		InitDisplay(bool init_panel = true);
   // does a hard reset on the display, reinitializing variables etc.  Note does NOT do Updatedisplay -- that is a separate step

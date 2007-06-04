@@ -30,7 +30,7 @@ SOURCES += $${TARGET}.cpp SoCapsule.cpp
 }
 
 
-macx:LIBS += -lode -framework Inventor -framework SoQt
+macx:LIBS += -lode -framework Inventor -framework SoQt -framework QtOpenGL
 linux {
    LIBS += -lode
   debug { 

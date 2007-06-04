@@ -57,10 +57,10 @@ void VEBody::Initialize() {
   body_id = NULL;
   geom_id = NULL;
   flags = BF_NONE;
-  shape = CYLINDER;
+  shape = CAPSULE;
   cur_shape = BOX;
   mass = 1.0f;
-  radius = .5f;
+  radius = .2f;
   length = 1.0f;
   box = 1.0f;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
@@ -74,6 +74,15 @@ void VEBody::Destroy() {
 void VEBody::CutLinks() {
   DestroyODE();
   inherited::CutLinks();
+}
+
+void VEBody::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(shape == CAPSULE) {
+    if(TestWarning(length < 2.0f * radius, "", "capsule length must be > 2 * radius!")) {
+      length = 1.1f * 2.0f * radius;
+    }
+  }
 }
 
 VEWorld* VEBody::GetWorld() {
@@ -715,7 +724,7 @@ void VEObject::Initialize() {
   space_id = NULL;
   space_type = SIMPLE_SPACE;
   cur_space_type = SIMPLE_SPACE;
-  hash_levels.min = 1;  hash_levels.max = 4;
+  hash_levels.min = -3;  hash_levels.max = 10;
 }
 void VEObject::Destroy() {
   CutLinks();
@@ -806,6 +815,228 @@ void VEObject_Group::GetValsFmODE(bool updt_disp) {
   }
 }
 
+////////////////////////////////////////////////
+//	Static bodies
+
+void VEStatic::Initialize() {
+  geom_id = NULL;
+  flags = SF_NONE;
+  shape = BOX;
+  cur_shape = BOX;
+  radius = .2f;
+  length = 1.0f;
+  box = 1.0f;
+  color.Set(0.4f, 0.3f, .1f, 0.0f);	// brownish..
+}
+
+void VEStatic::Destroy() {
+  CutLinks();
+}
+
+void VEStatic::CutLinks() {
+  DestroyODE();
+  inherited::CutLinks();
+}
+
+void VEStatic::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(shape == CAPSULE) {
+    if(TestWarning(length < 2.0f * radius, "", "capsule length must be > 2 * radius!")) {
+      length = 1.1f * 2.0f * radius;
+    }
+  }
+}
+
+VEWorld* VEStatic::GetWorld() {
+  return GET_MY_OWNER(VEWorld);
+}
+
+void* VEStatic::GetWorldID() {
+  VEWorld* wld = GetWorld();
+  if(!wld) return NULL;
+  return wld->world_id;
+}
+
+VESpace* VEStatic::GetSpace() {
+  return GET_MY_OWNER(VESpace);
+}
+
+void* VEStatic::GetSpaceID() {
+  VESpace* obj = GetSpace();
+  if(!obj) return NULL;
+  return obj->space_id;
+}
+
+bool VEStatic::CreateODE() {
+  if(geom_id && cur_shape == shape)
+     return true;
+  dWorldID wid = (dWorldID)GetWorldID();
+  if(TestError(!wid, "CreateODE", "no valid world id -- cannot create static item!"))
+    return false;
+
+  dSpaceID sid = (dSpaceID)GetSpaceID();
+  if(TestError(!sid, "CreateODE", "no valid space id -- cannot create static item geom!"))
+    return false;
+
+  if(!geom_id || cur_shape != shape) {
+    if(geom_id) dGeomDestroy((dGeomID)geom_id);
+    geom_id = NULL;
+    switch(shape) {
+    case SPHERE:
+      geom_id = dCreateSphere(sid, radius);
+      break;
+    case CAPSULE:
+      geom_id = dCreateCapsule(sid, radius, MAX(0.0f,length-2.0f*radius));
+      break;
+    case CYLINDER:
+      geom_id = dCreateCylinder(sid, radius, length);
+      break;
+    case BOX:
+      geom_id = dCreateBox(sid, box.x, box.y, box.z);
+      break;
+    case PLANE:
+      geom_id = dCreatePlane(sid, plane_norm.x, plane_norm.y, plane_norm.z, plane_height);
+      break;
+    }
+  }
+  
+  if(TestError(!geom_id, "CreateODE", "could not create static item geom!"))
+    return false;
+
+  cur_shape = shape;
+
+  dGeomSetData((dGeomID)geom_id, (void*)this);
+
+  return true;
+}
+
+void VEStatic::DestroyODE() {
+  if(geom_id) dGeomDestroy((dGeomID)geom_id);
+  geom_id = NULL;
+}
+
+void VEStatic::SetValsToODE() {
+  if(!geom_id || cur_shape != shape) CreateODE();
+  if(!geom_id) return;
+  dWorldID wid = (dWorldID)GetWorldID();
+  if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
+    return;
+
+  dGeomID gid = (dGeomID)geom_id;
+
+  if(shape != PLANE) {
+    dGeomSetPosition(gid, pos.x, pos.y, pos.z);
+    dMatrix3 R;
+    dRFromAxisAndAngle(R, rot.x, rot.y, rot.z, rot.rot);
+    dGeomSetRotation(gid, R);
+  }
+}
+
+/////////////////////////////////////////////
+//		HeightField
+
+void VEHeightField::Initialize() {
+  // todo: do this
+}
+
+void VEHeightField::SetValsToODE() {
+  // todo: write this!
+}
+
+/////////////////////////////////////////////
+//		Group
+
+void VEStatic_Group::SetValsToODE() {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->SetValsToODE();
+  }
+}
+
+////////////////////////////////////////////////
+//	Space: collection of static elements
+
+void VESpace::Initialize() {
+  space_id = NULL;
+  space_type = HASH_SPACE;
+  cur_space_type = HASH_SPACE;
+  hash_levels.min = -3;  hash_levels.max = 10;
+}
+void VESpace::Destroy() {
+  CutLinks();
+}
+
+void VESpace::CutLinks() {
+  static_els.CutLinks();
+  DestroyODE();
+  inherited::CutLinks();
+}
+
+
+VEWorld* VESpace::GetWorld() {
+  return GET_MY_OWNER(VEWorld);
+}
+
+void* VESpace::GetWorldID() {
+  VEWorld* wld = GetWorld();
+  if(!wld) return NULL;
+  return wld->world_id;
+}
+
+void* VESpace::GetWorldSpaceID() {
+  VEWorld* wld = GetWorld();
+  if(!wld) return NULL;
+  return wld->space_id;
+}
+
+bool VESpace::CreateODE() {
+  if(space_id && space_type == cur_space_type) return true;
+  dSpaceID wsid = (dSpaceID)GetWorldSpaceID();
+  if(TestError(!wsid, "CreateODE", "no valid world id -- cannot create space!"))
+    return false;
+  if(space_id)
+    DestroyODE();
+  switch(space_type) {
+  case SIMPLE_SPACE:
+    space_id = (dSpaceID)dSimpleSpaceCreate(wsid);
+    break;
+  case HASH_SPACE:
+    space_id = (dSpaceID)dHashSpaceCreate(wsid);
+    break;
+  }
+  if(TestError(!space_id, "CreateODE", "cannot create space!"))
+    return false;
+  cur_space_type = space_type;
+  return true;
+}
+
+void VESpace::DestroyODE() {
+  if(space_id) dSpaceDestroy((dSpaceID)space_id);
+  space_id = NULL;
+}
+
+void VESpace::SetValsToODE() {
+  if(!space_id || space_type != cur_space_type) CreateODE();
+  if(!space_id) return;
+  dSpaceID sid = (dSpaceID)space_id;
+  if(space_type == HASH_SPACE) {
+    dHashSpaceSetLevels(sid, hash_levels.min, hash_levels.max);
+  }
+  static_els.SetValsToODE();	// bodies first!
+}
+
+/////////////////////////////////////////////
+//		Group
+
+void VESpace_Group::SetValsToODE() {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->SetValsToODE();
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////
 //	World!
@@ -828,7 +1059,7 @@ void VEWorld::Initialize() {
   cgp_id = NULL;
   space_type = HASH_SPACE;
   cur_space_type = HASH_SPACE;
-  hash_levels.min = 1;  hash_levels.max = 4;
+  hash_levels.min = -3;  hash_levels.max = 10;
   gravity.y = -9.81f;
   step_type = STD_STEP;
   stepsize = .01f;
@@ -845,6 +1076,7 @@ void VEWorld::Destroy() {
 
 void VEWorld::CutLinks() {
   objects.CutLinks();
+  spaces.CutLinks();
   DestroyODE();			// do this last!
   inherited::CutLinks();
 }
@@ -904,6 +1136,7 @@ void VEWorld::SetValsToODE() {
 
   StructUpdate(true);
   objects.SetValsToODE();
+  spaces.SetValsToODE();
   StructUpdate(false);		// trigger full rebuild!
 }
 
@@ -976,6 +1209,32 @@ void VEWorld::Step() {
 
 QImage VEWorld::GetCameraImage(int cam_no) {
   QImage img;
+
+  if(cam_no == 0) {
+    if(TestError(!camera_0, "GetCameraImage", "camera_0 not set -- cannot be rendered!"))
+      return img;
+  }
+  else if(cam_no == 1) {
+    if(TestError(!camera_1, "GetCameraImage", "camera_1 not set -- cannot be rendered!"))
+      return img;
+  }
+  else {
+    TestError(true, "GetCameraImage", "only 2 cameras (0 or 1) supported!");
+    return img;
+  }
+
+  taDataLink* dl = data_link();
+  if(TestError(!dl, "GetCameraImage", "data link not found -- could not find views (should not happen -- please report as a bug!"))
+    return img;
+
+  taDataLinkItr itr;
+  VEWorldView* el;
+  FOR_DLC_EL_OF_TYPE(VEWorldView, el, dl, itr) {
+    return el->GetCameraImage(cam_no);
+  } 
+
+  TestError(true, "GetCameraImage", "No View of this world found -- must create View in order to get camera images");
+
   return img;
 }
 
@@ -1090,6 +1349,7 @@ T3VEBody::T3VEBody(void* bod, bool show_drag)
   SO_NODE_CONSTRUCTOR(T3VEBody);
 
   show_drag_ = show_drag;
+  // todo: impl dragger!?
   drag_ = NULL;
 }
 
@@ -1097,6 +1357,53 @@ T3VEBody::~T3VEBody()
 {
   
 }
+
+/////////////////////////////////////////////
+//	Space
+
+SO_NODE_SOURCE(T3VESpace);
+
+void T3VESpace::initClass()
+{
+  SO_NODE_INIT_CLASS(T3VESpace, T3NodeParent, "T3NodeParent");
+}
+
+T3VESpace::T3VESpace(void* world)
+:inherited(world)
+{
+  SO_NODE_CONSTRUCTOR(T3VESpace);
+}
+
+T3VESpace::~T3VESpace()
+{
+  
+}
+
+/////////////////////////////////////////////
+//	Static
+
+SO_NODE_SOURCE(T3VEStatic);
+
+void T3VEStatic::initClass()
+{
+  SO_NODE_INIT_CLASS(T3VEStatic, T3NodeLeaf, "T3NodeLeaf");
+}
+
+T3VEStatic::T3VEStatic(void* bod, bool show_drag)
+:inherited(bod)
+{
+  SO_NODE_CONSTRUCTOR(T3VEStatic);
+
+  show_drag_ = show_drag;
+  // todo: impl dragger!?
+  drag_ = NULL;
+}
+
+T3VEStatic::~T3VEStatic()
+{
+  
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //		T3 DataView Guys
@@ -1278,6 +1585,190 @@ void VEObjectView::Render_impl() {
 }
 
 //////////////////////////
+//   VEStaticView 	//
+//////////////////////////
+
+void VEStaticView::Initialize(){
+  data_base = &TA_VEStatic;
+}
+
+void VEStaticView::Copy_(const VEStaticView& cp) {
+  name = cp.name;
+}
+
+void VEStaticView::Destroy() {
+  CutLinks();
+}
+
+bool VEStaticView::SetName(const String& value) { 
+  name = value;  
+  return true; 
+} 
+
+void VEStaticView::SetStatic(VEStatic* ob) {
+  if (Static() == ob) return;
+  SetData(ob);
+  if(ob) {
+    if (name != ob->name) {
+      name = ob->name;
+    }
+  }
+}
+
+void VEStaticView::Render_pre() {
+  m_node_so = new T3VEStatic(this);
+
+  SoSeparator* ssep = m_node_so->shapeSeparator();
+
+  VEStatic* ob = Static();
+  if(ob) {
+    if(ob->HasStaticFlag(VEStatic::FM_FILE) && !ob->obj_fname.empty()) {
+      SoInput in;
+      if (in.openFile(ob->obj_fname)) {
+	SoSeparator* root = SoDB::readAll(&in);
+	if (root) {
+	  ssep->addChild(root);
+	  SoTransform* tx = m_node_so->txfm_shape();
+	  ob->obj_xform.CopyTo(tx);
+	  goto finish;
+	}
+      }
+      taMisc::Error("object file:", ob->obj_fname, "not found, reverting to shape");
+    }
+    switch(ob->shape) {
+    case VEStatic::SPHERE: {
+      SoSphere* sp = new SoSphere;
+      sp->radius = ob->radius;
+      ssep->addChild(sp);
+      break;
+    }
+    case VEStatic::CAPSULE:
+      SoCapsule* sp = new SoCapsule;
+      sp->radius = ob->radius;
+      sp->height = ob->length;
+      ssep->addChild(sp);
+      SoTransform* tx = m_node_so->txfm_shape();
+      if(ob->long_axis == VEStatic::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEStatic::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEStatic::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    case VEStatic::CYLINDER: {
+      SoCylinder* sp = new SoCylinder;
+      sp->radius = ob->radius;
+      sp->height = ob->length;
+      ssep->addChild(sp);
+      SoTransform* tx = m_node_so->txfm_shape();
+      if(ob->long_axis == VEStatic::LONG_X)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+      else if(ob->long_axis == VEStatic::LONG_Y)
+	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+      else if(ob->long_axis == VEStatic::LONG_Z)
+	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+      break;
+    }
+    case VEStatic::BOX: {
+      SoCube* sp = new SoCube;
+      sp->width = ob->box.x;
+      sp->depth = ob->box.z;
+      sp->height = ob->box.y;
+      ssep->addChild(sp);
+      break;
+    }
+    case VEStatic::PLANE: {
+      // todo: do this!!
+      break;
+    }
+    case VEStatic::NO_SHAPE: {
+      break;
+    }
+    }
+  }      
+ finish:
+
+  inherited::Render_pre();
+}
+
+void VEStaticView::Render_impl() {
+  inherited::Render_impl();
+
+  T3VEStatic* node_so = (T3VEStatic*)this->node_so(); // cache
+  if(!node_so) return;
+  VEStatic* ob = Static();
+  if(!ob) return;
+
+  SoTransform* tx = node_so->transform();
+  tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
+  tx->rotation.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
+
+  SoMaterial* mat = node_so->material();
+  mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
+  mat->transparency.setValue(1.0f - ob->color.a);
+}
+
+//////////////////////////
+//   VESpaceView	//
+//////////////////////////
+
+void VESpaceView::Initialize(){
+  data_base = &TA_VESpace;
+}
+
+void VESpaceView::Copy_(const VESpaceView& cp) {
+  name = cp.name;
+}
+
+void VESpaceView::Destroy() {
+  CutLinks();
+}
+
+bool VESpaceView::SetName(const String& value) { 
+  name = value;  
+  return true; 
+} 
+
+void VESpaceView::SetSpace(VESpace* ob) {
+  if (Space() == ob) return;
+  SetData(ob);
+  if(ob) {
+    if (name != ob->name) {
+      name = ob->name;
+    }
+  }
+}
+
+void VESpaceView::BuildAll() {
+  Reset();
+  VESpace* obj = Space();
+  if(!obj) return;
+
+  VEStatic* bod;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, bod, obj->static_els., i) {
+    VEStaticView* ov = new VEStaticView();
+    ov->SetStatic(bod);
+    children.Add(ov);
+    ov->BuildAll();
+  }
+}
+
+void VESpaceView::Render_pre() {
+  m_node_so = new T3VESpace(this);
+  inherited::Render_pre();
+}
+
+void VESpaceView::Render_impl() {
+  inherited::Render_impl();
+
+  T3VESpace* node_so = (T3VESpace*)this->node_so(); // cache
+  if(!node_so) return;
+  VESpace* ob = Space();
+  if(!ob) return;
+}
+
+//////////////////////////
 //   VEWorldView	//
 //////////////////////////
 
@@ -1320,7 +1811,7 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
 
 void VEWorldView::Initialize() {
   data_base = &TA_VEWorld;
-  children.SetBaseType(&TA_VEObjectView);
+//   children.SetBaseType(&TA_VEObjectView);
   cam_renderer = NULL;
 }
 
@@ -1420,14 +1911,25 @@ void VEWorldView::BuildAll() {
   VEWorld* wl = World();
   if(!wl) return;
 
-  VEObject* obj;
   taLeafItr i;
+
+  // do background spaces first..
+  VESpace* spc;
+  FOR_ITR_EL(VESpace, spc, wl->spaces., i) {
+    VESpaceView* ov = new VESpaceView();
+    ov->SetSpace(spc);
+    children.Add(ov);
+    ov->BuildAll();
+  }
+
+  VEObject* obj;
   FOR_ITR_EL(VEObject, obj, wl->objects., i) {
     VEObjectView* ov = new VEObjectView();
     ov->SetObject(obj);
     children.Add(ov);
     ov->BuildAll();
   }
+
 }
 
 void VEWorldView::Render_pre() {
@@ -1544,9 +2046,13 @@ void VEWorldView::SetupLights() {
     n_lgt++;
   }
 
-  if(wl->sun_on) {
+  if(wl->sun_light.on) {
     node_so->setSunLightOn(true);
     node_so->setSunLightDir(0.0f, -1.0f, 0.0f);
+    SoDirectionalLight* slt = node_so->getSunLight();
+    slt->intensity = wl->sun_light.intensity;
+    slt->color.setValue(SbColor(wl->sun_light.color.r, wl->sun_light.color.g,
+				wl->sun_light.color.b));
   }
   else {
     node_so->setSunLightOn(false);
@@ -1572,17 +2078,17 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   VECamera* vecam = NULL;
   if(cam_no == 0) {
-    if(TestError(!wl->camera_0, "RenderCamera", "camera_0 not set -- cannot be rendered!"))
+    if(TestError(!wl->camera_0, "GetCameraImage", "camera_0 not set -- cannot be rendered!"))
       return img;
     vecam = wl->camera_0.ptr();
   }
   else if(cam_no == 1) {
-    if(TestError(!wl->camera_1, "RenderCamera", "camera_1 not set -- cannot be rendered!"))
+    if(TestError(!wl->camera_1, "GetCameraImage", "camera_1 not set -- cannot be rendered!"))
       return img;
     vecam = wl->camera_1.ptr();
   }
   else {
-    TestError(true, "RenderCamera", "only 2 cameras (0 or 1) supported!");
+    TestError(true, "GetCameraImage", "only 2 cameras (0 or 1) supported!");
     return img;
   }
 
@@ -1622,7 +2128,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   cam_switch->whichChild = -1;	// switch off for regular viewing!
 
-  if(TestError(!ok, "RenderCamera", "offscreen render failed!")) return img;
+  if(TestError(!ok, "GetCameraImage", "offscreen render failed!")) return img;
   
   img = QImage(cur_img_sc.x, cur_img_sc.y, QImage::Format_RGB32);
 
