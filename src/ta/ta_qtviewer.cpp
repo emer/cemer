@@ -2251,7 +2251,7 @@ void ISelectableHost::DoDynAction(int idx) {
           base = link->data();
           rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
         }
-      }
+      } break;
       case DynMethod_PtrList::Type_1_2N: { // call 1 with 2:N as a param
         cssEl* param[2];
         param[0] = &cssMisc::Void;
@@ -2269,7 +2269,7 @@ void ISelectableHost::DoDynAction(int idx) {
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
         }
         delete param[1];
-      }
+      } break;
       case DynMethod_PtrList::Type_2N_1: { // call 2:N with 1 as param
         cssEl* param[2];
         param[0] = &cssMisc::Void;
@@ -2287,7 +2287,7 @@ void ISelectableHost::DoDynAction(int idx) {
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
         }
         delete param[1];
-      }
+      } break;
       case DynMethod_PtrList::Type_MimeN_N: { // call 1:N with ms_objs[1..N] as params
         //NOTE: sel_items actually contains the drop target item
         if (!ctxt_ms) { // ctxt (not drop) mode -- need to make it
@@ -2314,7 +2314,7 @@ void ISelectableHost::DoDynAction(int idx) {
           }
         }
         delete param[1];
-      }
+      } break;
       }
 //TODO:      UpdateAfter();
 #ifdef DMEM_COMPILE
@@ -4751,8 +4751,17 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
 }
 
 void iDataPanel::FrameShowing(bool showing) {
-  if (tabView()) {
+  if (showing) {
+    QTimer::singleShot(0, this, SLOT(FrameShowing_Async()) );
+  } else if (tabView()) {
     tabView()->ShowTab(this, showing);
+  }
+
+}
+
+void iDataPanel::FrameShowing_Async() {
+  if (tabView()) {
+    tabView()->ShowTab(this, true);
   }
 
 }
@@ -5547,6 +5556,10 @@ const KeyString iTreeView::colKey(int col) const {
   return rval;
 }
 
+bool iTreeView::doubleClickExpandsAll() const {
+  return (taMisc::viewer_options & taMisc::VO_DOUBLE_CLICK_EXP_ALL);
+}
+
 void iTreeView::ExpandAll(int max_levels) {
   ExpandAll_impl(max_levels, false);
 }
@@ -5707,6 +5720,28 @@ void iTreeView::mnuFindFromHere(taiAction* mel) {
   iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
   taiDataLink* dl = node->link();
   imw->Find(dl);
+}
+
+void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
+  if (!doubleClickExpandsAll()) {
+    // just does default stuff, which includes single level exp/collapse
+    inherited::mouseDoubleClickEvent(event);
+    return;
+  }
+  // NOTE: we replace all the default behavior with our custom exp/coll all shtick
+  QModelIndex index = indexAt(event->pos());
+  if (!index.isValid()) {
+    inherited::mouseDoubleClickEvent(event); // does some other stuff, prob should keep
+    return;
+  }
+  QTreeWidgetItem* item_ = itemFromIndex(index);
+  iTreeViewItem* item = dynamic_cast<iTreeViewItem*>(item_);
+  if (!item) return; 
+  if (item->isExpanded())
+    CollapseAllUnder(item);
+  else
+    ExpandAllUnder(item);
+  
 }
 
 bool iTreeView::useCustomExpand() const {

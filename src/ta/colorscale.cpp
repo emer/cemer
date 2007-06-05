@@ -133,7 +133,7 @@ String RGBA::ToString_RGBA() const {
 
 // set the color to a new color based on the values given
 void TAColor::SetColor(float r, float g, float b, float a, RGBA* background){
-  color_.setRgb(r,g,b,a);
+  color_.setRgba(r,g,b,a);
 
 
   // compute contrast color
@@ -164,7 +164,7 @@ void TAColor::SetColor(float r, float g, float b, float a, RGBA* background){
     nr = ng = nb = 0.0; // make contrast black
   else                  // color is mostly black
     nr = ng = nb = 1.0; // make contrast white
-  contrastcolor_.setRgb(nr,ng,nb,1.0);
+  contrastcolor_.setRgba(nr,ng,nb,1.0);
 
 }
 
@@ -511,7 +511,7 @@ void ColorScale::SetColorSpec(ColorScaleSpec* color_spec) {
 void ColorScale::MapColors() {
   if(spec == NULL)
     return;
-  background.setRgb(spec->background.r, spec->background.g,
+  background.setRgba(spec->background.r, spec->background.g,
 		      spec->background.b, spec->background.a);
   // ensure that chunks evenly fit with number of colors
   int n_range = spec->clr.size-1;

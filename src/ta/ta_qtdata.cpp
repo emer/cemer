@@ -1180,7 +1180,8 @@ taiColor::taiColor(TypeDef* typ_, IDataHost* host_, taiData* par,
 {
   iColorButton* rep = new iColorButton(gui_parent_);
   SetRep(rep);
-  rep->setUseAlpha((flags & flgUseAlpha));
+  //note: using alpha is the default, must add NO_ALPHA to suppress
+  rep->setUseAlpha(!(flags & flgNoAlpha));
   if (flags & flgReadOnly) {
     rep->setEnabled(false);
   } else {

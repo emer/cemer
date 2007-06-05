@@ -135,7 +135,7 @@ public:
     flgFlowLayout	= 0x1000, // for polyguys (inline) us a flowlayout, not hboxlayout
     flgCondEditUseRO	= 0x2000, // for taiCondEditMember, used to keep its use_ro flag
     flgNoEditDialogAutoApply = 0x4000, // overrides the implicit APPLY_IMMED for the edit dialog of fields
-    flgUseAlpha		= 0x10000 // for taiColor, use the alpha channel
+    flgNoAlpha		= 0x10000 // for taiColor, don't use the alpha channel
 #ifndef __MAKETA__
     ,flg_INHERIT_MASK	= (flgReadOnly) // flags to pass on to nested children, in inline
 #endif

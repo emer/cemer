@@ -209,6 +209,8 @@ public:
 public: // for taLists, and default children (where defined) in taOBase
   virtual taList_impl*	list() {return ((taOBase*)m_data)->children_();}
   virtual taList_impl*	list() const {return ((taOBase*)m_data)->children_();}
+  virtual taiDataLink* 	listLink() {taList_impl* lst = list();
+    return (lst) ? (taiDataLink*)lst->GetDataLink() : NULL;} 
     
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md,
     taiTreeDataNode* nodePar, iTreeView* tvPar, taiTreeDataNode* after,
@@ -234,6 +236,7 @@ INHERITED(tabODataLink)
 public:
   taList_impl*		list() {return (taList_impl*)m_data;}
   taList_impl*		list() const {return (taList_impl*)m_data;}
+  override taiDataLink* listLink() {return this;}
   
   tabListDataLink(taList_impl* data_);
   DL_FUNS(tabListDataLink) //
@@ -1258,6 +1261,10 @@ protected:
   virtual void		Render_impl() {} // only called once, when content needs to be created
   virtual void		Refresh_impl();
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
+  
+protected slots:
+  virtual void		FrameShowing_Async(); // we forward async from FS (only when true) as a useful hack to make sure all constr etc is done before doing it
+  
 private:
   iTabView*		m_tabView; // force access through accessors only
 };
@@ -1514,6 +1521,7 @@ public:
 #endif
   
   bool			useCustomExpand() const;
+  bool			doubleClickExpandsAll() const; // use at own risk...
   const KeyString	colKey(int col) const; // the key we set for data lookup
   void			setColKey(int col, const KeyString& key); 
     // sets in ColKeyRole -- you can do it yourself if you want	
@@ -1543,7 +1551,7 @@ public:
   void			AddFilter(const String& value);
     // add a TREEFILT_xxx expression to exclude members and/or types; note: not dynamic, must be added before items created
   iTreeViewItem* 	AssertItem(taiDataLink* link, bool super = true);
-    // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be asserted
+    // insures that the item for the link exists; returns NULL if it doesn't exist/couldn't be assertedtaMisc::
   bool			HasFilter(TypeItem* ti) const;
     // true if the typeitem has a TREEFILT_xxx filter that was added to our list
     
@@ -1616,6 +1624,7 @@ protected:
   
   void 			focusInEvent(QFocusEvent* ev); // override
   QFont&		italicFont() const; // so we don't create a new guy each node
+  void 			mouseDoubleClickEvent(QMouseEvent* ev); //for exp/coll all
   void			showEvent(QShowEvent* ev); // override, for expand all
   void 			ExpandAll_impl(int max_levels,
     bool use_custom_filt = false); // inner code

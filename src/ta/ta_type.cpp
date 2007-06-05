@@ -483,6 +483,7 @@ taMisc::ColorHints taMisc::color_hints = taMisc::CH_EDITS;
 taMisc::ClickStyle taMisc::click_style = taMisc::CS_CONTEXT;
 //note: we actually init this in ta_project, the first time, for the user
 taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
+taMisc::ViewerOptions	taMisc::viewer_options = taMisc::VO_0;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif

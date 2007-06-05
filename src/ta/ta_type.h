@@ -587,6 +587,11 @@ public:
     PVP_3PANE   // #LABEL_3_Pane one humungous mega-meal of a window, with all three panes (only for large wide displays!)
   };
   
+  enum ViewerOptions { // #BITS options for the viewer
+    VO_0		= 0, // #IGNORE
+    VO_DOUBLE_CLICK_EXP_ALL = 0X001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
+  };
+  
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		default_app_install_folder_name; // #READ_ONLY #NO_SAVE #HIDDEN the default folder name for installation, ex. "pdp++"
@@ -620,6 +625,7 @@ public:
   static ColorHints 	color_hints; // #SAVE #CAT_GUI what types of color hinting to use in the application
   static ClickStyle	click_style; // #SAVE #CAT_GUI how to select editable items in the gui, particularly in the 3d gui
   static ProjViewPref	proj_view_pref; // #SAVE #CAT_GUI the default way to view projects
+  static ViewerOptions	viewer_options; // #SAVE #CAT_GUI misc options for the viewer
 #ifndef NO_TA_BASE
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors; 	// #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects

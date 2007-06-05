@@ -18,15 +18,24 @@ TypeDef TA_PSGPlugin("PSGPlugin", " ",
 	"", "", "", sizeof(PSGPlugin), (void**)0, 0, 0, 0,1);
 TypeDef TA_PSGBase("PSGBase", " declares 'inherited' keyword for safer base-class references", 
 	"", "", "", sizeof(PSGBase), (void**)&TAI_PSGBase, 1, 0, 0,1);
+TypeDef TA_PSGBase_ref("PSGBase_ref", 1, 0, 1, 0, 1, 0);
 TypeDef TA_const_PSGBase("const_PSGBase", 1, 0, 0, 0, 1, 0);
 TypeDef TA_const_PSGBase_ref("const_PSGBase_ref", 1, 0, 1, 0, 1, 0);
 
 // Instances
 
 PSGBase*		 TAI_PSGBase=NULL;
+  static cssEl* cssElCFun_PSGBase_Initialize___stub(void* ths,int, cssEl**) {
+    cssEl* rval=&cssMisc::Void;
+    ((PSGBase*)ths)->Initialize__();
+    return rval;}
   static cssEl* cssElCFun_PSGBase_PSG_stub(void* ths,int, cssEl**) {
     cssEl* rval=&cssMisc::Void;
     ((PSGBase*)ths)->PSG();
+    return rval;}
+  static cssEl* cssElCFun_PSGBase_COPY_FUNS_stub(void* ths,int, cssEl** arg) {
+    cssEl* rval=&cssMisc::Void;
+    rval=new cssInt((int)((PSGBase*)ths)->COPY_FUNS(*(PSGBase*)arg[1]->GetVoidPtrOfType(&TA_PSGBase), *(taNBase*)arg[2]->GetVoidPtrOfType(&TA_taNBase)));
     return rval;}
 
 // Type Data
@@ -36,9 +45,17 @@ static MemberDef_data TA_PSGBase_MemberDef[]={
   {&TA_FixedMinMax,NULL,"min_max"," example of complex types as fields","","",
     *((ta_memb_ptr*)&(TA_PSGBase_MbrOff=(int PSGBase::*)(&PSGBase::min_max))),0,NULL,0},
   NULL};
+static MethodArgs_data TA_PSGBase_COPY_FUNS_MethArgs[]={
+  {&TA_PSGBase,NULL,"na",""},
+  {&TA_taNBase,NULL,"na",""},
+  NULL};
 static MethodDef_data TA_PSGBase_MethodDef[]={
+  {&TA_void,NULL,"Initialize__","","","",
+    0,0,-1,0,0,NULL,cssElCFun_PSGBase_Initialize___stub,NULL},
   {&TA_void,NULL,"PSG"," PSG, World! Function","MENU ","",
     0,0,-1,0,0,NULL,cssElCFun_PSGBase_PSG_stub,NULL},
+  {&TA_int,NULL,"COPY_FUNS"," Defines a default constructor that calls Initialize(), Register()","","",
+    0,2,-1,0,0,NULL,cssElCFun_PSGBase_COPY_FUNS_stub,TA_PSGBase_COPY_FUNS_MethArgs},
   NULL};
 
 // Init Function
@@ -65,6 +82,8 @@ void ta_Init_psg() {
     TA_PSGBase.AddClassPar(&TA_taNBase,0);
     tac_AddMembers(TA_PSGBase,TA_PSGBase_MemberDef);
     tac_AddMethods(TA_PSGBase,TA_PSGBase_MethodDef);
+  taMisc::types.Add(&TA_PSGBase_ref);
+    TA_PSGBase_ref.AddParents(&TA_PSGBase);
   taMisc::types.Add(&TA_const_PSGBase);
     TA_const_PSGBase.AddParents(&TA_const, &TA_PSGBase);
   taMisc::types.Add(&TA_const_PSGBase_ref);

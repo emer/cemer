@@ -453,10 +453,9 @@ void iMatrixEditor::init() {
 }
 
 void iMatrixEditor::Refresh() {
-  //note: this also updates all other mat editors too, due to Model linking
   MatrixTableModel* mod = model();
   if (mod)
-    mod->emit_dataChanged(); // default values mean entire table
+    mod->emit_layoutChanged(); // default values mean entire table
 }
 
 void iMatrixEditor::setMatrix(taMatrix* mat_) {

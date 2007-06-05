@@ -576,7 +576,7 @@ public:
   FloatTDCoord		camera_pos;	// position of camera in view
   FloatRotation		camera_orient;	// orientation of camera in view
   float			camera_focdist; // focalDistance of camera in view
-  taColor		bg_color; // background color of the frame (note: a not used)
+  taColor		bg_color; // #NO_ALPHA background color of the frame (note: a not used)
 
   bool			singleMode() const
     {return (root_view.children.size == 1);}

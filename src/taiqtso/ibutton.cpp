@@ -88,6 +88,8 @@ void iColorButton::this_clicked() {
     QColor col(m_col);
     col = QColorDialog::getColor(col);
     if (!col.isValid()) return;
+    // note: don't actually clobber alpha
+    col.setAlpha(m_col.alpha()); // easiest way
     m_col = col;
   }
   update();

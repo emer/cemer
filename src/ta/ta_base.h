@@ -1982,9 +1982,9 @@ protected:
   virtual void		Unbind_impl() {DoActionChildren_impl(UNBIND_IMPL);}
     // extend to implement unbind
 private:
-  void Copy_(const taDataView& cp) {m_data = cp.m_data;}
-  void			Initialize();
-  void			Destroy() {CutLinks();}
+  void	Copy_(const taDataView& cp);
+  void	Initialize();
+  void	Destroy() {CutLinks();}
 };
 TA_SMART_PTRS(taDataView);
 

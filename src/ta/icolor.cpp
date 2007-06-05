@@ -345,11 +345,11 @@ bool iColor::find (const char* name, float& r, float& g, float& b) {
   return rval;
 }
 
-void iColor::setRgb(int r_, int g_, int b_, float a_) {
+void iColor::setRgb(int r_, int g_, int b_) {
   r = r_ & 0xFF;
   g = g_ & 0xFF;
   b = b_ & 0xFF;
-  a = fc2ic(a_);
+  //don't change a 
 }
 
 void iColor::setRgb(int rgb_) {
@@ -358,6 +358,13 @@ void iColor::setRgb(int rgb_) {
   g = rgb_ & 0xFF;
   rgb_ = rgb_ >> 8;
   r = rgb_ & 0xFF;
+}
+
+void iColor::setRgba(int r_, int g_, int b_, int a_) {
+  r = r_ & 0xFF;
+  g = g_ & 0xFF;
+  b = b_ & 0xFF;
+  a = a_ & 0xFF;
 }
 
 /* iColor& iColor::operator=(const iColor& src) {
@@ -391,27 +398,27 @@ void iBrush::set(const iBrush& src) {
 
 #ifdef TA_GUI
 iColor::iColor(const QColor& src) {
-  setRgb(src.red(), src.green(), src.blue());
+  setRgba(src.red(), src.green(), src.blue(), src.alpha());
 }
 
 void iColor::set(const QColor& src) {
-  setRgb(src.red(), src.green(), src.blue());
+  setRgba(src.red(), src.green(), src.blue(), src.alpha());
 }
 
 void iColor::set(const QColor* src) {
   if (src == NULL)
-    setRgb(0,0,0,1.0);
+    clear();
   else
-    setRgb(src->red(), src->green(), src->blue());
+    setRgba(src->red(), src->green(), src->blue(), src->alpha());
 }
 
 iColor& iColor::operator=(const QColor&  src) {
-  setRgb(src.red(), src.green(), src.blue());
+  setRgba(src.red(), src.green(), src.blue(), src.alpha());
   return *this;
 }
 
 iColor::operator QColor() const {
-  return QColor(r, g, b);
+  return QColor(r, g, b, a);
 }
 
 #endif

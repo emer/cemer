@@ -3184,6 +3184,10 @@ void taDataView::CutLinks() {
   inherited::CutLinks();
 }
  
+void taDataView::Copy_(const taDataView& cp) {
+  SetData(cp.m_data);
+}
+
 void taDataView::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
   if (isMapped())

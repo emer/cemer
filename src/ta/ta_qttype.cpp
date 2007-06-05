@@ -1058,6 +1058,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags |= taiData::flgAutoApply;
   if (mbr->HasOption("NO_EDIT_APPLY_IMMED"))
     flags |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
+  if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
+    flags |= taiData::flgNoAlpha; // just in case this is needed
     
   ro = (flags & taiData::flgReadOnly); // just for clarity and parity with Image/Value
   taiData* rval = NULL;
@@ -3235,6 +3237,7 @@ void tabOViewType::CreateDataPanel_impl(taiDataLink* dl_)
   if (typ && typ->OptionAfter("DEF_CHILD_").nonempty()) {
     String custom_name = typ->OptionAfter("DEF_CHILDNAME_"); // optional
     custom_name.gsub("_", " ");
+    dl_ = dynamic_cast<tabODataLink*>(dl_)->listLink();
     iListDataPanel* bldp = new iListDataPanel(dl_, custom_name);
     DataPanelCreated(bldp);
   }

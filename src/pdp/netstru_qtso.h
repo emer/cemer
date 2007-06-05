@@ -377,13 +377,13 @@ public:
   ColorScale		scale; //contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  // Auto ranges for member buttons
   bool			display;       // whether to update the display when values change (under control of programs)
-  MemberSpace		membs;		// #NO_SAVE list of all the members possible in units
-  int_Array	  	ordered_uvg_list; // #HIDDEN selected var buttons
+  Member_List		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units
+  int_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
   // unit display flags
-  Unit*			unit_src; // #NO_SAVE unit last picked (if any) for display
+  Unit*			unit_src; // #NO_SAVE #NO_COPY unit last picked (if any) for display
   bool			unit_con_md;  // #NO_SAVE true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*		unit_disp_md; // #NO_SAVE memberdef (if any) of Unit (or Connection) to display
-  ScaleRange*		unit_sr; // #NO_SAVE scalerange of disp_md
+  ScaleRange*		unit_sr; // #NO_SAVE #NO_COPY scalerange of disp_md
   MDFlags		unit_md_flags; // #NO_SAVE type to display in units
   UnitDisplayMode	unit_disp_mode; // how to display unit values
   UnitTextDisplay	unit_text_disp; // what labels to display with units
@@ -392,9 +392,9 @@ public:
   NetViewParams		view_params;	// misc view parameters 
 
   // todo: remove -- obsolete (replaced with main_xform on main guy):
-  FloatTDCoord		network_pos;	// #NO_SAVE #HIDDEN obsolete! position of network in view
-  FloatTDCoord		network_scale;	// #NO_SAVE #HIDDEN obsolete! scaling factors of network in view
-  FloatRotation		network_orient;	// #NO_SAVE #HIDDEN obsolete! orientation of network in view
+  FloatTDCoord		network_pos;	// #NO_SAVE #HIDDEN #NO_COPY obsolete! position of network in view
+  FloatTDCoord		network_scale;	// #NO_SAVE #HIDDEN #NO_COPY obsolete! scaling factors of network in view
+  FloatRotation		network_orient;	// #NO_SAVE #HIDDEN #NO_COPY obsolete! orientation of network in view
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)m_node_so.ptr();}

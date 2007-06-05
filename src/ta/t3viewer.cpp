@@ -1286,6 +1286,9 @@ void iT3DataViewFrame::RegisterPanel(iDataPanel* panel) {
   connect(panel, SIGNAL(destroyed(QObject*)),
     this, SLOT(panel_destroyed(QObject*)) );
   m_panels.AddUnique(panel);
+  // if we are currently visible, then so should be panel!
+  if (isVisible())
+    panel->FrameShowing(true);
 }
 
 void iT3DataViewFrame::Render_pre() {

@@ -57,20 +57,26 @@ public:
   static float		ic2fc(int value) {return ((float) value) / 255.0f ;} // #IGNORE int color to float color
   static bool  		find (const char* name, float& r, float& g, float& b); // for Iv compat
 
-  iColor() {setRgb(0,0,0,1.0);} // black
-  iColor(int r_, int g_, int b_, float a_ = 1.0) {setRgb(r_, g_, b_, a_);}
-  iColor(float r_, float g_, float b_, float a_ = 1.0) {setRgb(r_, g_, b_, a_);}
-  explicit iColor(float x) {setRgb(x, x, x, 1.0f);}
+  iColor() {setRgba(0,0,0,255);} // black
+  iColor(int r_, int g_, int b_) {setRgb(r_, g_, b_);}
+  iColor(float r_, float g_, float b_) {setRgb(r_, g_, b_);}
+  iColor(int r_, int g_, int b_, int a_) {setRgba(r_, g_, b_, a_);}
+  iColor(float r_, float g_, float b_, float a_) {setRgba(r_, g_, b_, a_);}
+  explicit iColor(float x) {setRgba(x, x, x, 1.0f);}
   explicit iColor(int rgb_) {setRgb(rgb_);} // hex Internet color value, b is lowest byte
-  iColor(const iColor& src, float a_ ) {setRgb(src.r, src.g, src.b, a_);} // for Iv compat
+  iColor(const iColor& src, float a_ ) {setRgba(src.r, src.g, src.b, fc2ic(a_));} 
+   // for Iv compat -- this insane api is used a lot in ex. colorscale.*
   iColor(const iColor& src) {c = src.c;}
 
   void		getRgb(float& r_, float& g_, float& b_) const {
     r_ = ic2fc(r); g_ = ic2fc(g); b_ = ic2fc(b); }
-  void		setRgb(int r, int g, int b, float a = 1.0);
-  void		setRgb(float r_, float g_, float b_, float a_ = 1.0)
-  		  {setRgb(fc2ic(r_), fc2ic(g_), fc2ic(b_), a_);}
+  void		setRgb(int r, int g, int b);
+  void		setRgb(float r_, float g_, float b_)
+  		  {setRgb(fc2ic(r_), fc2ic(g_), fc2ic(b_));}
   void		setRgb(int rgb_);
+  void		setRgba(int r, int g, int b, int a);
+  void		setRgba(float r_, float g_, float b_, float a_)
+  		  {setRgba(fc2ic(r_), fc2ic(g_), fc2ic(b_), fc2ic(a_));}
   int		red() const {return r;}
   int		green() const {return g;}
   int		blue() const {return b;}
@@ -80,12 +86,12 @@ public:
   float		alphaf() const {return ic2fc(a);}
   int		rgb() const { return (r << 16) | (g << 8) | b; } // can't assume byte order
 
-  void		clear() {setRgb(0,0,0,1.0);} // black
+  void		clear() {setRgba(0,0,0,255);} // black
   void		intensities(float& r, float& g, float& b); // Iv->Qt compat
 
 
   iColor& operator =(const iColor& cp) {c = cp.c; return *this;}
-  iColor& operator =(float x) {setRgb(x, x, x, 1.0f); return *this;}
+  iColor& operator =(float x) {setRgba(x, x, x, 1.0f); return *this;}
 
 #ifdef TA_GUI
   iColor(const QColor& src); // conversion constructor
