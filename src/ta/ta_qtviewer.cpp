@@ -6853,6 +6853,7 @@ void iSearchDialog::Constr() {
   status_bar = new QStatusBar(this);
   layOuter->addWidget(status_bar);
 
+  connect(search, SIGNAL(returnPressed()), this, SLOT(go_clicked()) );
   connect(btnGo, SIGNAL(clicked()), this, SLOT(go_clicked()) );
   connect(btnStop, SIGNAL(clicked()), this, SLOT(stop_clicked()) );
   connect(results, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
