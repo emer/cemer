@@ -111,11 +111,11 @@ AC_ARG_ENABLE([readline],
 			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),
 			     [readline=false],
 			     [readline=true])
-AC_ARG_ENABLE([libs],
-	      AC_HELP_STRING([--enable-libs],
-			     [These flags will be safeguarded and added to the linker line at the very end of configure.]),
-			     [my_libs="${enableval}"],
-			     [my_libs=])
+AC_ARG_ENABLE([nightly],
+	      AC_HELP_STRING([--enable-nightly],
+			     [Adds the _nightly infix to our bins/libs. For internal use only.]),
+			     [nightly=true],
+			     [nightly=false])
 
 
 #NOTE: This actually works with a few minor hiccups
@@ -314,7 +314,7 @@ dnl 					     PDP_DETERMINE_SUFFIX
 dnl *************************************************************
 dnl  * Adds program version to libraries
 dnl  * In debug mode, adds configure flag dependent suffixes. 
-dnl    E.g. bp4_nogui_debug_mpi++
+dnl    E.g. bp_nogui_debug_mpi++
 dnl *************************************************************
 dnl Copyright, 1995-2005, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
@@ -344,6 +344,11 @@ fi
 if test x"$profile" = x"true"; then
 	PDP_SUFFIX="${PDP_SUFFIX}_prof"
 fi
+if test x"$nightly" = x"true"; then
+	PDP_SUFFIX="${PDP_SUFFIX}_nightly"
+fi
+SIM_AC_CONFIGURATION_SETTING([Mode infix],[${PDP_SUFFIX}])
+
 ]) dnl PDP_DETERMINE_SUFFIX
 
 dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
@@ -367,7 +372,7 @@ dnl If you want to compile everything with MPI, you should set:
 dnl
 dnl     CC="$MPICC" #OR# CXX="$MPICXX" #OR# F77="$MPIF77"
 dnl     LIBS="$MPILIBS $LIBS"
-dnl
+dnl	
 dnl NOTE: The above assumes that you will use $CC (or whatever) for
 dnl linking as well as for compiling. (This is the default for automake
 dnl and most Makefiles.)
@@ -4305,13 +4310,13 @@ AC_ARG_WITH(
 if $sim_ac_with_qt; then
   if test -z "$sim_ac_qtdir"; then
     # The Cygwin environment needs to invoke moc with a POSIX-style path.
-    AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
-    if test $sim_ac_qt_cygpath = "false"; then
+    #AC_PATH_PROG(sim_ac_qt_cygpath, cygpath, false)
+    #if test $sim_ac_qt_cygpath = "false"; then
       sim_ac_qtdir=$QTDIR
-    else
+    #else
       # Quote $QTDIR in case it's empty.
-      sim_ac_qtdir=`$sim_ac_qt_cygpath -u "$QTDIR"`
-    fi
+    #  sim_ac_qtdir=`$sim_ac_qt_cygpath -u "$QTDIR"`
+    #fi
 
     AC_MSG_CHECKING([value of the QTDIR environment variable])
     if test x"$sim_ac_qtdir" = x""; then
@@ -4678,7 +4683,7 @@ if $sim_ac_with_qt; then
         done
 
 
-        AC_MSG_RESULT($sim_ac_qt_cppflags $sim_ac_QTDIR_ldflags $sim_ac_qt_libs)
+        AC_MSG_RESULT([yes])
       fi
 
     fi # sim_ac_qglobal_unresolved = false
@@ -5184,5 +5189,113 @@ TERMCAP_DEP=
 else
 TERMCAP_LIB=-lcurses
 TERMCAP_DEP=
+fi
+])
+
+# **************************************************************************
+# SIM_AC_HAVE_SIMAGE_IFELSE( IF-FOUND, IF-NOT-FOUND )
+#
+# Description:
+#   This macro locates the simage development system.  If it is found, the
+#   set of variables listed below are set up as described and made available
+#   to the configure script.
+#
+#   The $sim_ac_simage_desired variable can be set to false externally to
+#   make SoXt default to be excluded.
+#
+# Autoconf Variables:
+# > $sim_ac_simage_desired   true | false (defaults to true)
+# < $sim_ac_simage_avail     true | false
+# < $sim_ac_simage_cppflags  (extra flags the compiler needs for simage)
+# < $sim_ac_simage_ldflags   (extra flags the linker needs for simage)
+# < $sim_ac_simage_libs      (link libraries the linker needs for simage)
+# < $sim_ac_simage_version   (the libsimage version)
+#
+# Authors:
+#   Morten Eriksen <mortene@coin3d.org>
+#   Lars J. Aas <larsa@coin3d.org>
+#
+# TODO:
+# - rework variable name convention
+# - clean up shell scripting redundancy
+# - support debug symbols simage library
+#
+
+AC_DEFUN([SIM_AC_HAVE_SIMAGE_IFELSE],
+[AC_PREREQ([2.14a])
+
+# official variables
+sim_ac_simage_avail=false
+sim_ac_simage_cppflags=
+sim_ac_simage_ldflags=
+sim_ac_simage_libs=
+sim_ac_simage_version=
+
+# internal variables
+: ${sim_ac_simage_desired=true}
+sim_ac_simage_extrapath=
+
+AC_ARG_WITH(
+  simage,
+  AC_HELP_STRING([--with-simage=DIR],
+                 [use simage for loading texture files]),
+  [case $withval in
+   yes) sim_ac_simage_desired=true ;;
+   no)  sim_ac_simage_desired=false ;;
+   *)   sim_ac_simage_desired=true
+        sim_ac_simage_extrapath=$withval ;;
+  esac],
+  [])
+
+if $sim_ac_simage_desired; then
+  sim_ac_path=$PATH
+  test -z "$sim_ac_simage_extrapath" ||
+    sim_ac_path=$sim_ac_simage_extrapath/bin:$sim_ac_path
+  test x"$prefix" = xNONE ||
+    sim_ac_path=$sim_ac_path:$prefix/bin
+
+  AC_PATH_PROG(sim_ac_simage_configcmd, simage-config, false, $sim_ac_path)
+
+  if test "X$sim_ac_simage_configcmd" = "Xfalse"; then :; else
+    test -n "$CONFIG" &&
+      $sim_ac_simage_configcmd --alternate=$CONFIG >/dev/null 2>/dev/null &&
+      sim_ac_simage_configcmd="$sim_ac_simage_configcmd --alternate=$CONFIG"
+  fi
+
+  if $sim_ac_simage_configcmd; then
+    sim_ac_simage_cppflags=`$sim_ac_simage_configcmd --cppflags`
+    sim_ac_simage_ldflags=`$sim_ac_simage_configcmd --ldflags`
+    sim_ac_simage_libs=`$sim_ac_simage_configcmd --libs`
+    sim_ac_simage_version=`$sim_ac_simage_configcmd --version`
+    AC_CACHE_CHECK([whether the simage library is available],
+      sim_cv_simage_avail,
+      [sim_ac_save_cppflags=$CPPFLAGS
+      sim_ac_save_ldflags=$LDFLAGS
+      sim_ac_save_libs=$LIBS
+      CPPFLAGS="$CPPFLAGS $sim_ac_simage_cppflags"
+      LDFLAGS="$LDFLAGS $sim_ac_simage_ldflags"
+      LIBS="$sim_ac_simage_libs $LIBS"
+      AC_TRY_LINK(
+        [#include <simage.h>],
+        [(void)simage_read_image(0L, 0L, 0L, 0L);],
+        [sim_cv_simage_avail=true],
+        [sim_cv_simage_avail=false])
+      CPPFLAGS=$sim_ac_save_cppflags
+      LDFLAGS=$sim_ac_save_ldflags
+      LIBS=$sim_ac_save_libs
+    ])
+    sim_ac_simage_avail=$sim_cv_simage_avail
+  else
+    locations=`IFS=:
+               for p in $sim_ac_path; do echo " -> $p/simage-config"; done`
+    AC_MSG_WARN([cannot find 'simage-config' at any of these locations:
+$locations])
+  fi
+fi
+
+if $sim_ac_simage_avail; then
+  ifelse([$1], , :, [$1])
+else
+  ifelse([$2], , :, [$2])
 fi
 ])

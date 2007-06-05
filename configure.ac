@@ -72,7 +72,6 @@ PDP_SET_BUILD_MODE                                     dnl Set up our build mode
 m4_undefine([AC_PROG_F77])                             dnl Get rid of those stupid fortran checks
 m4_defun([AC_PROG_F77],[])
 AC_PROG_CXXCPP                                         dnl Detect our C++ preprocessor
-SIM_AC_CONFIGURATION_SETTING([Preprocessor],[$CXXCPP])
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_PROG_INSTALL
@@ -109,16 +108,15 @@ dnl  than manually specifying them for each library
 
 AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
-dnl  Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
-LDFLAGS="$LDFLAGS -L/opt/local/lib" dnl Harmless insertion for DarwinPorts
 AC_CHECK_LIB([ode],[main])
 AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])
+
+dnl  Check for gsl, the GNU Scientific Library. By default, this #defines HAVE_LIBGSL
 AC_CHECK_LIB([gsl],[main],
               [LIBS="$LIBS -lgsl"]
-              [AC_DEFINE([HAVE_LIBGSL],[],[Have the gnu scientific library])]
-              [SIM_AC_CONFIGURATION_SETTING([gsl],[Enabled])],
+              [AC_DEFINE([HAVE_LIBGSL],[],[Have the gnu scientific library])],
                [SIM_AC_CONFIGURATION_WARNING([Failed to detect the GNU Scientific Library])])
 
 dnl  svn revision number support
@@ -218,7 +216,7 @@ dnl  Qt
                    CXXFLAGS="$CXXFLAGS $sim_ac_qt_cppflags"
                    LDFLAGS="$LDFLAGS $sim_ac_qt_ldflags"
                    sim_ac_qt_version="`echo $sim_ac_qt_version | sed 's/./&./g;s/.$//'`"
-                   SIM_AC_CONFIGURATION_SETTING([Qt],[v.$sim_ac_qt_version $sim_ac_qt_libs]),
+                   SIM_AC_CONFIGURATION_SETTING([Qt],[v.$sim_ac_qt_version]),
                    [SIM_AC_CONFIGURATION_WARNING([Failed to find a functioning Qt installation])])
 
 
@@ -229,15 +227,19 @@ dnl  Qt
 
 dnl  --enable-gui
 if test x"$gui" = x"true"; then
-  SIM_AC_CONFIGURATION_SETTING([GUI],[Enabled])	
-  
   dnl Functioning SoQt implies functioning Coin!
+                           
   SIM_AC_HAVE_SOQT_IFELSE([SIM_AC_CONFIGURATION_SETTING([SoQt],[v.$sim_ac_soqt_version -lSoQt -lCoin])
                            CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
                            LDFLAGS="$LDFLAGS $sim_ac_soqt_ldflags"
-                           LIBS="$LIBS $sim_ac_soqt_libs"],
+                           LIBS="$LIBS $sim_ac_soqt_libs"
+                           SIM_AC_HAVE_SIMAGE_IFELSE([SIM_AC_CONFIGURATION_SETTING([Simage],[v.$sim_ac_simage_version])
+                                                      CPPFLAGS="$CPPFLAGS $sim_ac_simage_cppflags"
+                                                      LDFLAGS="$LDFLAGS $sim_ac_simage_ldflags"
+                                                      LIBS="$LIBS $sim_ac_simage_libs"],
+                                                      [SIM_AC_CONFIGURATION_WARNING([Failed to detect Simage. Textures will not work.])])],
                           [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])
- 
+
   AC_DEFINE([TA_GUI],,[Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
   AC_DEFINE([TA_USE_QT],,[This switch is set when linking with Qt.])
   AC_DEFINE([TA_USE_INVENTOR],,[This switch is set when compiling for gui and linking with Coin. This switch is really only used in the lowest level files. NOTE: Coin/Inventor is never used when building nogui.])
@@ -263,10 +265,6 @@ else
   SIM_AC_CONFIGURATION_SETTING([MPI],[Disabled])	
 fi
 
-if test x"$debug" = x"true"; then
-  SIM_AC_CONFIGURATION_SETTING([LIBS],[$LIBS])
-dnl   SIM_AC_CONFIGURATION_SETTING([CXXFLAGS],[$CXXFLAGS])
-fi
 
 dnl  --enable-profile
 if test x"$profile" = x"true"; then
@@ -316,6 +314,7 @@ if test x"$bundle" = x"true"; then
 
 fi
 
+
 AC_CONFIG_FILES([Makefile
 		src/maketa/Makefile
 		src/taiqtso/Makefile
@@ -336,3 +335,11 @@ AC_CONFIG_FILES([Makefile
 
 AC_OUTPUT
 SIM_AC_CONFIGURATION_SUMMARY
+if test x"$debug" = x"true"; then
+  echo "  LIBS:"
+  echo $LIBS | tr " " "\n" | sort | uniq | tr "\n" " " | fmt -s -w 78 | sed 's/^/    /'
+  echo "  CXXFLAGS:"
+  echo $CXXFLAGS | tr " " "\n" | sort | uniq | tr "\n" " " | fmt -s -w 78  | sed 's/^/    /'
+  echo "  LDFLAGS:"
+  echo $LDFLAGS | tr " " "\n" | sort | uniq | tr "\n" " " | fmt -s -w 78  | sed 's/^/    /'
+fi
