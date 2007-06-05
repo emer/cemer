@@ -1,0 +1,303 @@
+#!/usr/bin/env python
+# Copyright 2007, Brian Mingus
+#
+# This file is part of prm.py, the PDP++ Release Manager
+#
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details. 
+
+# TODO: wakeonlan for night!
+
+# Standard library imports
+
+from optparse import OptionParser
+from time import strftime
+import tempfile
+import smtplib
+import logging
+import sys
+import os
+
+from email.Utils import COMMASPACE, formatdate
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEBase import MIMEBase
+from email.MIMEText import MIMEText
+from email import Encoders
+
+# Third party imports
+from pyvix.vix import *
+
+"""
+The PDP++ Release Manager knows how to perform all sorts of build
+related tasks on several systems
+"""
+
+class ReleaseManager:
+    """
+    The main release manager class does all the heavy lifting
+    """
+    def __init__(self):
+        self.host = None
+        self.vm = None
+        self.vix = None
+        self.email = None
+
+        # TODO: We should use a configuration file for listing the currently valid VMs
+        self.kubuntu = "C:\\Virtual Machines\\Kubuntu Feisty Fawn CD\\Ubuntu.vmx"
+        self.oses = "kubuntu"
+
+        self.whoami = Popen3("whoami").out.replace("\n","").replace(" ","")
+        self.logfile = '/usr/local/prm/logs/' + self.whoami + "_" + strftime("%Y-%y-%d") + '_' + strftime("%I:%M:%S") + '.txt'
+
+        # TODO: Spend some time with the logging module to optimize this
+        logging.basicConfig(level=logging.INFO,format = \
+                        self.whoami + ":" + \
+                        '%(asctime)s %(levelname)-8s %(message)s',
+                        filename=self.logfile,
+                        filemode='a')
+
+        # True for success, False for failure
+        self.status = True
+
+        # This is the error accumulator! :)
+        self.errors = ''
+
+        # Get's set when a build is started
+        self.revision = ''
+
+    def GetHost(self):
+        """
+        Opens up a socket to the server running on night.
+        """
+        # TODO: Better user/pass
+        self.host = Host(2,"night.colorado.edu",902,"mingus","m!n*us")
+
+    def GetVM(self, vmx):
+        """
+        Pass this thing the (remote) location of a vmx file and it will open up
+        a virtual machine
+        """
+        self.host = self.vix.Host()
+        self.vm = self.host.openVM(vmx)
+
+    def PowerOnVM(self):
+        self.vm.powerOn()
+
+    def LocalCommand(self, cmd, stdin=None, quiet=True, silent=False):
+        """
+        Runs a command on the local OS. If --quiet is passed, doesn't output
+        anything.
+        """
+        logging.info("Running command: %s", cmd)
+
+        printcmd = strftime("%I:%M:%S") + '> ' + cmd
+        self.errors += "\n" + printcmd
+
+        if not silent:
+            print printcmd
+
+        output = Popen3(cmd)
+        result = ''
+        if output.err:
+            result += output.err
+            self.errors += "\n" + output.err
+        if output.out:
+            result += output.out
+        # Any return code above 0 implies error
+        if output.errorlevel > 0:
+            self.status = False
+            
+        logging.info("Command output:\n%s", result)
+
+        printrslt = strftime("%I:%M:%S") + '> ' + result
+        if not silent and not quiet:
+            print printrslt
+
+    def LocalBuild(self, quiet=True, silent=False, configure_flags=None):
+        """
+        Do a checkout of the software locally and try to build it.
+        TODO: Need to be able to pass arbitrary configure flags  --configure-flags=
+        TODO: Some of these commands produce so much output that we will never
+              want to see it all in one chunk, since it is accumulated while
+              the command is run. Maybe there is a better alternative to Popen3
+              in this case
+        TODO: What about distcc/ccache? How can we inherit the user's environment?
+        TODO: When prm is run from the cron, whose environment will it inherit?!
+              We need to have these in a common location, such as /etc/profile.
+              This could be problemantic, though, because randy uses csh. 
+        """
+
+        self.LocalCommand("if test -d /tmp/pdp4.0;then rm -fr /tmp/pdp4.0;fi")
+        self.LocalCommand("svn checkout file:///usr/local/svn/repo/pdp4.0/trunk /tmp/pdp4.0")
+        self.revision = Popen3("svn info /tmp/pdp4.0 | grep ^Rev").out[:-1]
+        self.LocalCommand("cd /tmp/pdp4.0")
+        self.LocalCommand("make clean")
+        self.LocalCommand("./configure")
+        self.LocalCommand("make -j 6") # TODO: Ability to specify number of jobs
+        self.errors += "\n" + strftime("%I:%M:%S") + '> '
+        return (self.status, self.errors, self.revision, self.logfile)
+
+    def EmailLogFile(self,
+                     to=['reflection@gmail.com'],
+                     subject='',
+                     text='',
+                     files=[],
+                     server="localhost"):
+        """
+        Thank you manatlan http://snippets.dzone.com/posts/show/757
+        """
+        assert type(to)==list
+        assert type(files)==list
+        fro = "PDP++ Release Manager <pdpdev@grey.colorado.edu>"
+        if not files:
+            files = [self.logfile]
+
+        msg = MIMEMultipart()
+        msg['From'] = fro
+        msg['To'] = COMMASPACE.join(to)
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = subject
+
+        msg.attach( MIMEText(text) )
+
+        for file in files:
+            part = MIMEBase("text","plain")
+            part.set_payload( open(file,"rb").read() )
+            Encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 'attachment; filename="%s"'
+                            % os.path.basename(file))
+            msg.attach(part)
+
+            smtp = smtplib.SMTP(server)
+            smtp.sendmail(fro, to, msg.as_string() )
+            smtp.close()
+    
+    def main(self):
+        print "Logging to:", self.logfile
+        self.LocalBuild()
+
+class Popen3:
+   """
+   This is a deadlock-safe version of popen that returns
+   an object with errorlevel, out (a string) and err (a string).
+   (capturestderr may not work under windows.)
+   Example: print Popen3('grep spam','\n\nhere spam\n\n').out
+   """
+   def __init__(self,command,input=None,capturestderr=True):
+       outfile=tempfile.mktemp()
+       command="( %s ) > %s" % (command,outfile)
+       if input:
+           infile=tempfile.mktemp()
+           open(infile,"w").write(input)
+           command=command+" <"+infile
+       if capturestderr:
+           errfile=tempfile.mktemp()
+           command=command+" 2>"+errfile
+       self.errorlevel=os.system(command) >> 8
+       self.out=open(outfile,"r").read()
+       os.remove(outfile)
+       if input:
+           os.remove(infile)
+       if capturestderr:
+           self.err=open(errfile,"r").read()
+           os.remove(errfile)
+
+if __name__ == "__main__":
+    """
+    Command-line behavior
+    """
+    usage = "Usage: %prog --options[=value]"
+    parser = OptionParser(usage)
+
+    parser.add_option("-b",
+                      "--build-pdp",
+                      action="store_true",
+                      dest="test_build",
+                      default=0,
+                      help="Initiate a build of PDP++. See --operating-systems, --configure-flags, --jobs, --email, --quiet")
+
+    parser.add_option("-o",
+                      "--operating-systems",
+                      action="store",
+                      type="string",
+                      dest="os",
+                      default=None,
+                      help="Comma separated list of operating systems to act on. [default=localhost]. See --list-operating-systems")
+
+    parser.add_option("--list-operating-systems",
+                      action="store_false",
+                      default=0,
+                      help="Print a list of available operating systems and exit.")
+
+    parser.add_option("--configure-flags",
+                      action="store",
+                      type="string",
+                      dest="flags",
+                      default=None,
+                      help="The flags to pass to configure. Use single quotes in bash to preserve parameters for later expansion.")
+
+    parser.add_option("-r",
+                      "--release",
+                      action="store_false",
+                      dest="release",
+                      default=0,
+                      help="If --build-pdp passes, create packages and update our repositories")
+
+    parser.add_option("-e",
+                      "--email",
+                      action="store",
+                      type="string",
+                      dest="email",
+                      default=None,
+                      help="Send all output as an attachment to this comma-separated list of e-mail addresses.")
+
+    parser.add_option("-q",
+                      "--quiet",
+                      action="store_false",
+                      dest="quiet",
+                      default=1,
+                      help="Print the commands being executed, but not their output. [default=enabled]. See --silent")
+    
+    parser.add_option("-s",
+                      "--silent",
+                      action="store_true",
+                      dest="silent",
+                      default=0,
+                      help="Don't print anything to stdout.")
+    
+    (options, args) = parser.parse_args()
+
+    rm = ReleaseManager()
+
+    if options.test_build:
+        (stat, err, rev, log)  = rm.LocalBuild(quiet=options.quiet,
+                                               silent=options.silent)
+        # TODO: Make pdpdev default address
+        if options.email:
+            addrs = options.email.split(',')
+
+            if stat:
+                success = "successful"
+            else:
+                success = "failure"
+
+            #TODO: The message body should be the command that was run
+            #      followed by its stderr
+
+            subject = rev + ". Build " + success + ". See stdout and stderr inside."
+            text = "View the attached or backup logfile for the complete output.\n"
+            text += "Backup logfile: " + log + "\n"
+            text += err
+
+            rm.EmailLogFile(to=addrs,
+                            subject=subject,
+                            text=text)
+
+    sys.exit(0)
