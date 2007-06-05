@@ -29115,9 +29115,9 @@ fi
 
 if test x"$debug" = x"true"; then
   echo "  LIBS:"
-  echo $LIBS | tr " " "\n" | sort | uniq | tr "\n" " " | fmt -s -w 78 | sed 's/^/    /'
+  echo $LIBS | fmt -s -w 78 | sed 's/^/    /'
   echo "  CXXFLAGS:"
-  echo $CXXFLAGS | tr " " "\n" | sort | uniq | tr "\n" " " | fmt -s -w 78  | sed 's/^/    /'
+  echo $CXXFLAGS | fmt -s -w 78  | sed 's/^/    /'
   echo "  LDFLAGS:"
-  echo $LDFLAGS | tr " " "\n" | sort | uniq | tr "\n" " " | fmt -s -w 78  | sed 's/^/    /'
+  echo $LDFLAGS | fmt -s -w 78  | sed 's/^/    /'
 fi
