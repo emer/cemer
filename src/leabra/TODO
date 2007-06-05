@@ -4,11 +4,12 @@ commit:
 
 == Virtual Env
 
-* virtual cameras
-* capsule render
+* initial rot maybe 180deg off from one computed by ode??
 
 ------------
 current:
+
+* Tom's project stuff!
 
 * join should not care about type mismatch -- something wrong in variant comparisons??
   a=int -> b=float = OK

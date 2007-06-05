@@ -1,51 +1,46 @@
-#ifndef VIRTENV_ODE_H
-#define VIRTENV_ODE_H
+/* -*- C++ -*- */
+/*=============================================================================
+//									      //
+// This file is part of the TypeAccess/C-Super-Script software package.	      //
+//									      //
+// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
+//		      James L. McClelland, and Carnegie Mellon University     //
+//     									      //
+// Permission to use, copy, modify, and distribute this software and its      //
+// documentation for any purpose is hereby granted without fee, provided that //
+// the above copyright notice and this permission notice appear in all copies //
+// of the software and related documentation.                                 //
+// 									      //
+// Note that the PDP++ software package, which contains this package, has a   //
+// more restrictive copyright, which applies only to the PDP++-specific       //
+// portions of the software, which are labeled as such.			      //
+//									      //
+// Note that the taString class, which is derived from the GNU String class,  //
+// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
+// is covered by the GNU General Public License, see ta_string.h.             //
+// The iv_graphic library and some iv_misc classes were derived from the      //
+// InterViews morpher example and other InterViews code, which is             //
+// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
+// Copyright (C) 1991 Silicon Graphics, Inc.				      //
+//									      //
+// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
+// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
+// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
+// 									      //
+// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
+// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
+// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
+// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
+// SOFTWARE. 								      //
+==============================================================================*/
 
-#undef QT_SHARED                             // Already defined in config.h.
-#include "ta_plugin.h"                       // Defines the plugin architecture.
+#ifndef TA_VIRTENV_H
+#define TA_VIRTENV_H
+
 #include "ta_base.h"                         // Definition of the taBase object.
 #include "ta_geometry.h"
 #include "ta_datatable.h"
-#include "virtenv_ode_TA_type.h"
-
-#define VEODE_API                      // Needed for windows compatability.
-
-class VEOdePlugin;		// 
-
-#ifndef __MAKETA__
-// The VEOdePlugin class allows this to be a plugin. It usually won't
-// need to be majorly modified. It is not seen by `maketa' as it
-// cannot grok many Qt c++ constructs.
-
-class VEODE_API VEOdePlugin : public QObject, public IPlugin {
-  // #NO_CSS #NO_MEMBERS
-  Q_OBJECT
-
-  // Tells Qt which interfaces are implemented by this class
-  Q_INTERFACES(IPlugin)
-public:
-  static const taVersion	version;
-  
-  VEOdePlugin(QObject* par = NULL);
-
- public: // IPlugin interface
-  TYPED_OBJECT(VEOdePlugin) 
-  const char*	desc() {return "Virtual Simulated Environment, using ODE physics engine";}
-  const char*	name() {return "VEOdePlugin";}
-  const char*	uniqueId() {return "virtenvplugin.ccnlab.psych.colorado.edu";}
-  const char*	url();
-  
-  int		NotifyTacssVersion(const taVersion& tav, bool& is_ok) {return 0;}
-    // we pass ta/css version; set is_ok false if this version is no good for plugin
-  int		GetVersion(taVersion& tav) {tav = version; return 0;}
-  int 		InitializeTypes();
-  int 		InitializePlugin();
-};
-
-// Associates a string with the interface VEOdePlugin
-Q_DECLARE_INTERFACE(VEOdePlugin, "pdp.VEOdePlugin/1.0")
-#endif // !__MAKETA__
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //		Actual ODE Code
@@ -67,7 +62,7 @@ class VESpace_Group;
 class VEWorld;
 class VEWorldView;
 
-class VEODE_API ODEIntParams : public taBase {
+class TA_API ODEIntParams : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
 INHERITED(taBase)
 public:
@@ -86,7 +81,7 @@ protected:
 ////////////////////////////////////////////////
 //		Bodies
 
-class VEODE_API VESurface : public taBase {
+class TA_API VESurface : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv surface properties for collisions
 INHERITED(taBase)
 public:
@@ -106,7 +101,7 @@ public:
 class SoTexture2; // #IGNORE
 class SoTexture2Transform; // #IGNORE
 
-class VEODE_API VETexture : public taNBase {
+class TA_API VETexture : public taNBase {
   // #NO_UPDATE_AFTER ##CAT_VirtEnv texture mapping of an image onto a 3d object -- defined as a shared resource in the VEWorld that individual objects can point to
 INHERITED(taBase)
 public:
@@ -167,7 +162,7 @@ private:
 };
 
 
-class VEODE_API VEBody : public taNBase {
+class TA_API VEBody : public taNBase {
   // ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
 public:	
@@ -283,7 +278,7 @@ private:
 ////////////////////////////////////////////////
 //		Camera & Lights
 
-class VEODE_API VELightParams : public taBase {
+class TA_API VELightParams : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
 INHERITED(taBase)
 public:
@@ -298,7 +293,7 @@ public:
 //   void	UpdateAfterEdit_impl();
 };
 
-class VEODE_API VECameraDists : public taBase {
+class TA_API VECameraDists : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env camera distances
 INHERITED(taBase)
 public:
@@ -315,7 +310,7 @@ public:
 
 class SoPerspectiveCamera; // #IGNORE
 
-class VEODE_API VECamera : public VEBody {
+class TA_API VECamera : public VEBody {
   // virtual environment camera -- a body that contains a camera -- position and orientation are used to point the camera -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- camera must be selected in the VEWorld for it to actually be used to render images!
 INHERITED(VEBody)
 public:
@@ -349,7 +344,7 @@ SmartRef_Of(VECamera,TA_VECamera); // VECameraRef
 
 class SoLight; // #IGNORE
 
-class VEODE_API VELight : public VEBody {
+class TA_API VELight : public VEBody {
   // virtual environment light -- a body that contains a light source -- body shape is not rendered, but mass/inertia etc is used if part of a non-fixed object -- light only affects items after it in the list of objects!
 INHERITED(VEBody)
 public:	
@@ -387,7 +382,7 @@ SmartRef_Of(VELight,TA_VELight); // VELightRef
 ////////////////////////////////////////////////
 //		Joints
 
-class VEODE_API VEJointStops : public taBase {
+class TA_API VEJointStops : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint stop parameters
 INHERITED(taBase)
 public:
@@ -403,7 +398,7 @@ public:
 //   void	UpdateAfterEdit_impl();
 };
 
-class VEODE_API VEJointMotor : public taBase {
+class TA_API VEJointMotor : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env joint motor parameters
 INHERITED(taBase)
 public:
@@ -418,7 +413,7 @@ public:
 //   void	UpdateAfterEdit_impl();
 };
 
-class VEODE_API ODEJointParams : public ODEIntParams {
+class TA_API ODEJointParams : public ODEIntParams {
   // ODE integration parameters for joints
 INHERITED(ODEIntParams)
 public:
@@ -433,7 +428,7 @@ public:
 //   void	UpdateAfterEdit_impl();
 };
 
-class VEODE_API VEJoint : public taNBase {
+class TA_API VEJoint : public taNBase {
   // ##CAT_VirtEnv ##EXT_vejnt a virtual environment joint, which connects two bodies
 INHERITED(taNBase)
 public:	
@@ -543,7 +538,7 @@ private:
 ////////////////////////////////////////////////
 //	Object: collection of bodies and joints
 
-class VEODE_API VEObject : public taNBase {
+class TA_API VEObject : public taNBase {
   // ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:	
@@ -605,7 +600,7 @@ private:
 ////////////////////////////////////////////////
 //	Static bodies
 
-class VEODE_API VEStatic : public taNBase {
+class TA_API VEStatic : public taNBase {
   // ##CAT_VirtEnv ##EXT_vestc virtual environment static environment element -- not subject to physics and only interacts with bodies via collisions (cannot be part of a joint)
 INHERITED(taNBase)
 public:	
@@ -706,7 +701,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class VEODE_API VEHeightField : public VEStatic {
+class TA_API VEHeightField : public VEStatic {
   // virtual environment height field -- 3d surface defined by a grid of height values
 INHERITED(VEStatic)
 public:
@@ -733,7 +728,7 @@ private:
 ////////////////////////////////////////////////
 //	Space: collection of static elements
 
-class VEODE_API VESpace : public taNBase {
+class TA_API VESpace : public taNBase {
   // ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:	
@@ -791,7 +786,7 @@ private:
 
 class T3DataViewFrame;
 
-class VEODE_API ODEWorldParams : public ODEIntParams {
+class TA_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
   INHERITED(ODEIntParams)
 public:
@@ -807,7 +802,7 @@ protected:
   void	UpdateAfterEdit_impl();
 };
 
-class VEODE_API VEWorld : public taNBase {
+class TA_API VEWorld : public taNBase {
   // ##CAT_VirtEnv ##EXT_vewld a virtual environment world
 INHERITED(taNBase)
 public:	
@@ -882,334 +877,4 @@ private:
 
 SmartRef_Of(VEWorld,TA_VEWorld); // VEWorldRef
 
-
-/////////////////////////////////////////////////////////////////////////
-//		So Inventor Code
-
-#include "t3node_so.h"
-
-class SoOffscreenRenderer; // #IGNORE
-class SoSwitch;			// #IGNORE
-class SoDirectionalLight; // #IGNORE
-
-class VEODE_API T3VEWorld : public T3NodeParent {
-  // world parent for virtual environment 
-#ifndef __MAKETA__
-typedef T3NodeParent inherited;
-  SO_NODE_HEADER(T3VEWorld);
-#endif // def __MAKETA__
-public:
-  static void	initClass();
-
-  T3VEWorld(void* world = NULL);
-
-  void			setSunLightDir(float x_dir, float y_dir, float z_dir);
-  void			setSunLightOn(bool on);
-  SoDirectionalLight* 	getSunLight()	  { return sun_light; }
-
-  void			setCamLightDir(float x_dir, float y_dir, float z_dir);
-  void			setCamLightOn(bool on);
-  SoDirectionalLight* 	getCamLight()	  { return cam_light; }
-
-  SoGroup*		getLightGroup() { return light_group; }
-  SoSwitch*		getCameraSwitch() { return camera_switch; }
-  SoSwitch*		getTextureSwitch() { return textures; }
-
-protected:
-  SoDirectionalLight* 	sun_light;
-  SoDirectionalLight* 	cam_light;
-  SoGroup*		light_group;
-  SoSwitch*		camera_switch; // switching between diff cameras
-  SoSwitch*		textures;      // group of shared textures (always switched off -- used by nodes)
-  
-  ~T3VEWorld();
-};
-
-class VEODE_API T3VEObject : public T3NodeParent {
-  // object parent for virtual environment 
-#ifndef __MAKETA__
-typedef T3NodeParent inherited;
-  SO_NODE_HEADER(T3VEObject);
-#endif // def __MAKETA__
-public:
-  static void	initClass();
-
-  T3VEObject(void* obj = NULL);
-
-protected:
-  ~T3VEObject();
-};
-
-class VEODE_API T3VEBody : public T3NodeLeaf {
-  // body for virtual environment 
-#ifndef __MAKETA__
-typedef T3NodeLeaf inherited;
-  SO_NODE_HEADER(T3VEBody);
-#endif // def __MAKETA__
-public:
-  static void	initClass();
-
-  T3VEBody(void* bod = NULL, bool show_drag = false);
-
-protected:
-  bool			 show_drag_;
-  T3TransformBoxDragger* drag_;	// my position dragger
-
-  ~T3VEBody();
-};
-
-class VEODE_API T3VESpace : public T3NodeParent {
-  // space parent for virtual environment 
-#ifndef __MAKETA__
-typedef T3NodeParent inherited;
-  SO_NODE_HEADER(T3VESpace);
-#endif // def __MAKETA__
-public:
-  static void	initClass();
-
-  T3VESpace(void* obj = NULL);
-
-protected:
-  ~T3VESpace();
-};
-
-class VEODE_API T3VEStatic : public T3NodeLeaf {
-  // static item for virtual environment 
-#ifndef __MAKETA__
-typedef T3NodeLeaf inherited;
-  SO_NODE_HEADER(T3VEStatic);
-#endif // def __MAKETA__
-public:
-  static void	initClass();
-
-  T3VEStatic(void* stat = NULL, bool show_drag = false);
-
-protected:
-  bool			 show_drag_;
-  T3TransformBoxDragger* drag_;	// my position dragger
-
-  ~T3VEStatic();
-};
-
-///////////////////////////////////////////////////////////////////////
-//		T3 DataView Code
-
-#include "t3viewer.h"
-
-class VEBodyView;
-class VEStaticView;
-class VEWorldView;
-class VEWorldViewPanel;
-
-class VEODE_API VEBodyView: public T3DataView {
-  // view of one body
-INHERITED(T3DataView)
-friend class VEWorldView;
-public:
-  String	name;		// name of body this one is associated with
-
-  VEBody*		Body() const { return (VEBody*)data();}
-  virtual void		SetBody(VEBody* ob);
-  
-  DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
-
-  void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEBodyView& cp);
-  TA_BASEFUNS(VEBodyView);
-protected:
-  void	Initialize();
-  void	Destroy();
-
-  override void		Render_pre();
-  override void		Render_impl();
-};
-
-class VEODE_API VEObjectView: public T3DataViewPar {
-  // view of one object: a group of bodies
-INHERITED(T3DataView)
-friend class VEWorldView;
-public:
-  String	name;		// name of body this one is associated with
-
-  VEObject*		Object() const { return (VEObject*)data();}
-  virtual void		SetObject(VEObject* ob);
-  
-  DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
-
-  override void		BuildAll();
-  
-  void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEObjectView& cp);
-  TA_BASEFUNS(VEObjectView);
-protected:
-  void	Initialize();
-  void	Destroy();
-
-  override void		Render_pre();
-  override void		Render_impl();
-};
-
-class VEODE_API VEStaticView: public T3DataView {
-  // view of one static environment element
-INHERITED(T3DataView)
-friend class VEWorldView;
-public:
-  String	name;		// name of static item this one is associated with
-
-  VEStatic*		Static() const { return (VEStatic*)data();}
-  virtual void		SetStatic(VEStatic* ob);
-  
-  DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
-
-  void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEStaticView& cp);
-  TA_BASEFUNS(VEStaticView);
-protected:
-  void	Initialize();
-  void	Destroy();
-
-  override void		Render_pre();
-  override void		Render_impl();
-};
-
-class VEODE_API VESpaceView: public T3DataViewPar {
-  // view of one space
-INHERITED(T3DataView)
-friend class VEWorldView;
-public:
-  String	name;		// name of body this one is associated with
-
-  VESpace*		Space() const { return (VESpace*)data();}
-  virtual void		SetSpace(VESpace* ob);
-  
-  DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
-
-  override void		BuildAll();
-  
-  void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VESpaceView& cp);
-  TA_BASEFUNS(VESpaceView);
-protected:
-  void	Initialize();
-  void	Destroy();
-
-  override void		Render_pre();
-  override void		Render_impl();
-};
-
-class VEODE_API VEWorldView : public T3DataViewMain {
-  // a virtual environment world viewer
-INHERITED(T3DataViewMain)
-friend class VEWorldViewPanel;
-public:
-  static VEWorldView* New(VEWorld* wl, T3DataViewFrame*& fr);
-
-  bool		display_on;  	// #DEF_true 'true' if display should be updated
-
-  virtual const String	caption() const; // what to show in viewer
-
-  VEWorld*		World() const {return (VEWorld*)data();}
-  virtual void		SetWorld(VEWorld* wl);
-
-  virtual void		InitDisplay(bool init_panel = true);
-  // does a hard reset on the display, reinitializing variables etc.  Note does NOT do Updatedisplay -- that is a separate step
-  virtual void		UpdateDisplay(bool update_panel = true);
-  // full re-render of the display (generally calls Render_impl)
-
-  virtual void		InitPanel();
-  // lets panel init itself after struct changes
-  virtual void		UpdatePanel();
-  // after changes to props
-
-
-  virtual void		SetupCameras();
-  // configure the cameras during rendering -- called by Render_impl
-  virtual void		CreateLights();
-  // create the lights during render_pre
-  virtual void		CreateTextures();
-  // create the textures during render_pre
-  virtual void		SetupLights();
-  // configure the lights during rendering -- called by Render_impl
-
-  virtual QImage	GetCameraImage(int cam_no);
-  // get the output of the given camera number (currently 0 or 1)
-
-  bool			isVisible() const; // gui_active, mapped and display_on
-
-  override void		BuildAll();
-  
-  override String	GetLabel() const;
-  override String	GetName() const;
-  override void		OnWindowBind_impl(iT3DataViewFrame* vw);
-
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
-  void 	InitLinks();
-  void	CutLinks();
-  void	Copy_(const VEWorldView& cp);
-  T3_DATAVIEWFUNS(VEWorldView, T3DataViewMain) // 
-protected:
-#ifndef __MAKETA__
-  QPointer<VEWorldViewPanel> m_wvp;
-#endif
-  SoOffscreenRenderer*	cam_renderer;
-
-  override void 	UpdateAfterEdit_impl();
-
-  override void		Render_pre();
-  override void		Render_impl();
-
-};
-
-class VEODE_API VEWorldViewPanel: public iViewPanelFrame {
-  // frame for gui interface to a VEWorldView -- usually posted by the worldview
-INHERITED(iViewPanelFrame)
-  Q_OBJECT
-public:
-
-  QVBoxLayout*		layOuter;
-  QHBoxLayout*		 layCams;
-
-  QVBoxLayout*		  layCam0;
-  QLabel*		  labcam0;
-  QLabel*		  labcam0_txt;
-
-  QVBoxLayout*		  layCam1;
-  QLabel*		  labcam1;
-  QLabel*		  labcam1_txt;
-
-  VEWorldView*		wv() {return (VEWorldView*)m_dv;} //
-
-  virtual void		InitPanel();
-
-  VEWorldViewPanel(VEWorldView* dv_);
-  ~VEWorldViewPanel();
-
-public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;} //
-  override TypeDef*	GetTypeDef() const {return &TA_VEWorldViewPanel;}
-
-protected:
-  int			updating; // to prevent recursion
-  override void		GetImage_impl();
-
-// public slots:
-//   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
-
-  //protected slots:
-};
-
-
-#endif // VIRTENV_ODE_H
+#endif // TA_VIRTENV_H

@@ -46,42 +46,44 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 am__libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES_DIST =  \
-	ta_imgproc.cpp ta_platform.cpp ta_thread.cpp ta_string.cpp \
-	ta_variant.cpp ifont.cpp icolor.cpp ta_mtrnd.cpp ta_list.cpp \
-	ta_filer.cpp ta_type.cpp ta_type.moc.cpp ta_type_constr.cpp \
-	ta_base.cpp ta_dmem.cpp ta_fontspec.cpp minmax.cpp \
-	ta_group.cpp ta_qtclipdata.cpp ta_qtclipdata.moc.cpp \
-	colorscale.cpp ta_script.cpp ta_viewspec.cpp ta_viewer.cpp \
-	ta_program.cpp ta_program_els.cpp ta_matrix.cpp ta_math.cpp \
-	ta_geometry.cpp ta_data.cpp ta_datatable.cpp ta_dataproc.cpp \
-	ta_dataanal.cpp ta_datagen.cpp ta_dump.cpp ta_defaults.cpp \
-	ta_plugin_p.cpp ta_plugin_p.moc.cpp ta_project.cpp \
-	ta_project.moc.cpp ta_qt.cpp ta_qt.moc.cpp ta_type_qt.cpp \
-	ta_qtdata.cpp ta_qtdata_def.moc.cpp ta_qtdata.moc.cpp \
-	ta_qtdialog.cpp ta_qtdialog.moc.cpp ta_qtgroup.cpp \
-	ta_qtgroup.moc.cpp ta_qtviewer.cpp ta_qtviewer.moc.cpp \
-	ta_matrix_qt.cpp ta_matrix_qt.moc.cpp ta_qtclassbrowse.cpp \
-	ta_qtclassbrowse.moc.cpp ta_qttype.cpp ta_seledit.cpp \
-	ta_program_qt.cpp ta_program_qt.moc.cpp ta_filer_qt.cpp \
-	ta_qrc.cpp ta_ti.cpp t3node_so.cpp t3viewer.cpp \
-	t3viewer.moc.cpp colorbar_qt.cpp colorbar_qt.moc.cpp \
-	colorbar_so.cpp ta_datatable_qtso.cpp \
-	ta_datatable_qtso.moc.cpp ta_datatable_so.cpp ta_time.cpp \
-	fun_lookup.cpp ta_data_extras.cpp ta_def.h ta_platform.h \
-	ta_thread.h ta_string.h ta_stdef.h ta_variant.h ifont.h \
-	icolor.h ta_mtrnd.h ta_list.h ta_filer.h ta_type.h \
+	ta_platform.cpp ta_thread.cpp ta_string.cpp ta_variant.cpp \
+	ifont.cpp icolor.cpp ta_mtrnd.cpp ta_list.cpp ta_filer.cpp \
+	ta_type.cpp ta_type.moc.cpp ta_type_constr.cpp ta_base.cpp \
+	ta_dmem.cpp ta_fontspec.cpp minmax.cpp ta_group.cpp \
+	ta_qtclipdata.cpp ta_qtclipdata.moc.cpp colorscale.cpp \
+	ta_script.cpp ta_viewspec.cpp ta_viewer.cpp ta_program.cpp \
+	ta_program_els.cpp ta_matrix.cpp ta_math.cpp ta_geometry.cpp \
+	ta_data.cpp ta_datatable.cpp ta_dataproc.cpp ta_dataanal.cpp \
+	ta_datagen.cpp ta_imgproc.cpp ta_virtenv.cpp ta_dump.cpp \
+	ta_defaults.cpp ta_plugin_p.cpp ta_plugin_p.moc.cpp \
+	ta_project.cpp ta_project.moc.cpp ta_qt.cpp ta_qt.moc.cpp \
+	ta_type_qt.cpp ta_qtdata.cpp ta_qtdata_def.moc.cpp \
+	ta_qtdata.moc.cpp ta_qtdialog.cpp ta_qtdialog.moc.cpp \
+	ta_qtgroup.cpp ta_qtgroup.moc.cpp ta_qtviewer.cpp \
+	ta_qtviewer.moc.cpp ta_matrix_qt.cpp ta_matrix_qt.moc.cpp \
+	ta_qtclassbrowse.cpp ta_qtclassbrowse.moc.cpp ta_qttype.cpp \
+	ta_seledit.cpp ta_program_qt.cpp ta_program_qt.moc.cpp \
+	ta_filer_qt.cpp ta_qrc.cpp ta_ti.cpp t3node_so.cpp \
+	SoCapsule.cpp t3viewer.cpp t3viewer.moc.cpp colorbar_qt.cpp \
+	colorbar_qt.moc.cpp colorbar_so.cpp ta_datatable_qtso.cpp \
+	ta_datatable_qtso.moc.cpp ta_datatable_so.cpp \
+	ta_virtenv_qtso.cpp ta_virtenv_qtso.moc.cpp ta_virtenv_so.cpp \
+	ta_time.cpp fun_lookup.cpp ta_data_extras.cpp ta_def.h \
+	ta_platform.h ta_thread.h ta_string.h ta_stdef.h ta_variant.h \
+	ifont.h icolor.h ta_mtrnd.h ta_list.h ta_filer.h ta_type.h \
 	ta_type_constr.h ta_base.h ta_fontspec.h minmax.h ta_group.h \
 	ta_qtclipdata.h colorscale.h ta_dmem.h ta_script.h \
 	ta_viewspec.h ta_viewer.h ta_program.h ta_program_els.h \
 	ta_matrix.h ta_data.h ta_math.h ta_geometry.h ta_datatable.h \
 	ta_dataproc.h ta_dataanal.h ta_datagen.h ta_imgproc.h \
-	ta_dump.h ta_defaults.h ta_plugin.h ta_plugin_p.h ta_project.h \
-	ta_qt.h ta_qtdata_def.h ta_qtdata.h ta_qtdialog.h \
+	ta_virtenv.h ta_dump.h ta_defaults.h ta_plugin.h ta_plugin_p.h \
+	ta_project.h ta_qt.h ta_qtdata_def.h ta_qtdata.h ta_qtdialog.h \
 	ta_qttype_def.h ta_qttype.h ta_qtgroup.h ta_qtviewer.h \
 	ta_matrix_qt.h ta_qtclassbrowse.h ta_qtcursors.h ta_seledit.h \
 	ta_program_qt.h ta_time.h fun_lookup.h ta_data_extras.h \
-	t3node_so.h t3viewer.h colorbar_qt.h colorbar_so.h \
-	ta_datatable_qtso.h ta_datatable_so.h
+	t3node_so.h SoCapsule.h t3viewer.h colorbar_qt.h colorbar_so.h \
+	ta_datatable_qtso.h ta_datatable_so.h ta_virtenv_qtso.h \
+	ta_virtenv_so.h
 @TA_GUI_TRUE@am__objects_1 =  \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_qt.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_qt.moc.lo \
@@ -105,6 +107,7 @@ am__libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES_DIST =  \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_program_qt.moc.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_filer_qt.lo
 @TA_GUI_TRUE@am__objects_2 = libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3node_so.lo \
+@TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.moc.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-colorbar_qt.lo \
@@ -112,12 +115,14 @@ am__libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES_DIST =  \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-colorbar_so.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_qtso.lo \
 @TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_qtso.moc.lo \
-@TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_so.lo
+@TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_so.lo \
+@TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.lo \
+@TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.lo \
+@TA_GUI_TRUE@	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.lo
 am__objects_3 = libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_time.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-fun_lookup.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_data_extras.lo
-am__objects_4 = libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo \
-	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_platform.lo \
+am__objects_4 = libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_platform.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_thread.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_string.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_variant.lo \
@@ -150,6 +155,8 @@ am__objects_4 = libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dataproc.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dataanal.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datagen.lo \
+	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo \
+	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_defaults.lo \
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_plugin_p.lo \
@@ -243,6 +250,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCC_FALSE = @GCC_FALSE@
 GCC_TRUE = @GCC_TRUE@
+GREP = @GREP@
 HAVE_SVN = @HAVE_SVN@
 INCLUDE_AMINCLUDE_AM = @INCLUDE_AMINCLUDE_AM@
 INC_AMINCLUDE = @INC_AMINCLUDE@
@@ -312,13 +320,11 @@ WHEREAMI = @WHEREAMI@
 WINDOWS_FALSE = @WINDOWS_FALSE@
 WINDOWS_TRUE = @WINDOWS_TRUE@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -335,24 +341,31 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pdpexists = @pdpexists@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sim_ac_qt_cygpath = @sim_ac_qt_cygpath@
@@ -368,21 +381,28 @@ PROJNAME = ta
 @TA_GUI_TRUE@	@abs_srcdir@/colorbar_qt.h \
 @TA_GUI_TRUE@	@abs_srcdir@/../taiqtso/safeptr_so.h \
 @TA_GUI_TRUE@	@abs_srcdir@/t3node_so.h \
+@TA_GUI_TRUE@	@abs_srcdir@/SoCapsule.h \
 @TA_GUI_TRUE@	@abs_srcdir@/t3viewer.h \
 @TA_GUI_TRUE@	@abs_srcdir@/colorbar_so.h \
 @TA_GUI_TRUE@	@abs_srcdir@/ta_datatable_qtso.h \
-@TA_GUI_TRUE@	@abs_srcdir@/ta_datatable_so.h 
+@TA_GUI_TRUE@	@abs_srcdir@/ta_datatable_so.h \
+@TA_GUI_TRUE@	@abs_srcdir@/ta_virtenv_qtso.h \
+@TA_GUI_TRUE@	@abs_srcdir@/ta_virtenv_so.h
 
 @TA_GUI_TRUE@HEADS_TAMISC_GUI = \
 @TA_GUI_TRUE@	t3node_so.h \
+@TA_GUI_TRUE@	SoCapsule.h \
 @TA_GUI_TRUE@	t3viewer.h \
 @TA_GUI_TRUE@	colorbar_qt.h \
 @TA_GUI_TRUE@	colorbar_so.h \
 @TA_GUI_TRUE@	ta_datatable_qtso.h \
-@TA_GUI_TRUE@	ta_datatable_so.h
+@TA_GUI_TRUE@	ta_datatable_so.h \
+@TA_GUI_TRUE@	ta_virtenv_qtso.h \
+@TA_GUI_TRUE@	ta_virtenv_so.h
 
 @TA_GUI_TRUE@SRCS_TAMISC_GUI = \
 @TA_GUI_TRUE@	t3node_so.cpp \
+@TA_GUI_TRUE@	SoCapsule.cpp \
 @TA_GUI_TRUE@	t3viewer.cpp \
 @TA_GUI_TRUE@	t3viewer.moc.cpp \
 @TA_GUI_TRUE@	colorbar_qt.cpp \
@@ -390,7 +410,10 @@ PROJNAME = ta
 @TA_GUI_TRUE@	colorbar_so.cpp \
 @TA_GUI_TRUE@	ta_datatable_qtso.cpp \
 @TA_GUI_TRUE@	ta_datatable_qtso.moc.cpp \
-@TA_GUI_TRUE@	ta_datatable_so.cpp
+@TA_GUI_TRUE@	ta_datatable_so.cpp \
+@TA_GUI_TRUE@	ta_virtenv_qtso.cpp \
+@TA_GUI_TRUE@	ta_virtenv_qtso.moc.cpp \
+@TA_GUI_TRUE@	ta_virtenv_so.cpp
 
 @TA_GUI_TRUE@TAHEADS_GUI = \
 @TA_GUI_TRUE@	@abs_srcdir@/ta_qt.h \
@@ -498,6 +521,7 @@ TAHEADS = \
 	@abs_srcdir@/ta_dataanal.h \
 	@abs_srcdir@/ta_datagen.h \
 	@abs_srcdir@/ta_imgproc.h \
+	@abs_srcdir@/ta_virtenv.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
 	@abs_srcdir@/ta_plugin.h \
@@ -542,6 +566,7 @@ HEADS = \
 	ta_dataanal.h \
 	ta_datagen.h \
 	ta_imgproc.h \
+	ta_virtenv.h \
 	ta_dump.h \
 	ta_defaults.h \
 	ta_plugin.h \
@@ -552,7 +577,6 @@ HEADS = \
 	$(HEADS_TAMISC_GUI)
 
 SRCS = \
-	ta_imgproc.cpp \
 	ta_platform.cpp \
 	ta_thread.cpp \
 	ta_string.cpp \
@@ -586,6 +610,8 @@ SRCS = \
 	ta_dataproc.cpp \
 	ta_dataanal.cpp \
 	ta_datagen.cpp \
+	ta_imgproc.cpp \
+	ta_virtenv.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
 	ta_plugin_p.cpp \
@@ -706,6 +732,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-colorbar_qt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-colorbar_qt.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-colorbar_so.Plo@am__quote@
@@ -781,6 +808,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_variant.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_viewer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_viewspec.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_TA.Plo@am__quote@
 
 .cpp.o:
@@ -803,13 +834,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo: ta_imgproc.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo `test -f 'ta_imgproc.cpp' || echo '$(srcdir)/'`ta_imgproc.cpp; \
-@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_imgproc.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo `test -f 'ta_imgproc.cpp' || echo '$(srcdir)/'`ta_imgproc.cpp
 
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_platform.lo: ta_platform.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_platform.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_platform.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_platform.lo `test -f 'ta_platform.cpp' || echo '$(srcdir)/'`ta_platform.cpp; \
@@ -1042,6 +1066,20 @@ libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datagen.lo: ta_datagen.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datagen.lo `test -f 'ta_datagen.cpp' || echo '$(srcdir)/'`ta_datagen.cpp
 
+libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo: ta_imgproc.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo `test -f 'ta_imgproc.cpp' || echo '$(srcdir)/'`ta_imgproc.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_imgproc.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_imgproc.lo `test -f 'ta_imgproc.cpp' || echo '$(srcdir)/'`ta_imgproc.cpp
+
+libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.lo: ta_virtenv.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.lo `test -f 'ta_virtenv.cpp' || echo '$(srcdir)/'`ta_virtenv.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_virtenv.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv.lo `test -f 'ta_virtenv.cpp' || echo '$(srcdir)/'`ta_virtenv.cpp
+
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.lo: ta_dump.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.lo `test -f 'ta_dump.cpp' || echo '$(srcdir)/'`ta_dump.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_dump.Tpo"; exit 1; fi
@@ -1252,6 +1290,13 @@ libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3node_so.lo: t3node_so.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3node_so.lo `test -f 't3node_so.cpp' || echo '$(srcdir)/'`t3node_so.cpp
 
+libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.lo: SoCapsule.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.lo `test -f 'SoCapsule.cpp' || echo '$(srcdir)/'`SoCapsule.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='SoCapsule.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-SoCapsule.lo `test -f 'SoCapsule.cpp' || echo '$(srcdir)/'`SoCapsule.cpp
+
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.lo: t3viewer.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.lo `test -f 't3viewer.cpp' || echo '$(srcdir)/'`t3viewer.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-t3viewer.Tpo"; exit 1; fi
@@ -1307,6 +1352,27 @@ libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_so.lo: ta_datatable_so.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_datatable_so.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_so.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_datatable_so.lo `test -f 'ta_datatable_so.cpp' || echo '$(srcdir)/'`ta_datatable_so.cpp
+
+libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.lo: ta_virtenv_qtso.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.lo `test -f 'ta_virtenv_qtso.cpp' || echo '$(srcdir)/'`ta_virtenv_qtso.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_virtenv_qtso.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.lo `test -f 'ta_virtenv_qtso.cpp' || echo '$(srcdir)/'`ta_virtenv_qtso.cpp
+
+libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.lo: ta_virtenv_qtso.moc.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.lo `test -f 'ta_virtenv_qtso.moc.cpp' || echo '$(srcdir)/'`ta_virtenv_qtso.moc.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_virtenv_qtso.moc.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_qtso.moc.lo `test -f 'ta_virtenv_qtso.moc.cpp' || echo '$(srcdir)/'`ta_virtenv_qtso.moc.cpp
+
+libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.lo: ta_virtenv_so.cpp
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.lo `test -f 'ta_virtenv_so.cpp' || echo '$(srcdir)/'`ta_virtenv_so.cpp; \
+@am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.Tpo" "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.Plo"; else rm -f "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ta_virtenv_so.cpp' object='libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_virtenv_so.lo `test -f 'ta_virtenv_so.cpp' || echo '$(srcdir)/'`ta_virtenv_so.cpp
 
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_time.lo: ta_time.cpp
 @am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_time.lo -MD -MP -MF "$(DEPDIR)/libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_time.Tpo" -c -o libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la-ta_time.lo `test -f 'ta_time.cpp' || echo '$(srcdir)/'`ta_time.cpp; \

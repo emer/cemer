@@ -11,21 +11,28 @@ TAHEADS_TAMISC_GUI =\
 	@abs_srcdir@/colorbar_qt.h \
 	@abs_srcdir@/../taiqtso/safeptr_so.h \
 	@abs_srcdir@/t3node_so.h \
+	@abs_srcdir@/SoCapsule.h \
 	@abs_srcdir@/t3viewer.h \
 	@abs_srcdir@/colorbar_so.h \
 	@abs_srcdir@/ta_datatable_qtso.h \
-	@abs_srcdir@/ta_datatable_so.h 
+	@abs_srcdir@/ta_datatable_so.h \
+	@abs_srcdir@/ta_virtenv_qtso.h \
+	@abs_srcdir@/ta_virtenv_so.h
 
 HEADS_TAMISC_GUI =\
 	t3node_so.h \
+	SoCapsule.h \
 	t3viewer.h \
 	colorbar_qt.h \
 	colorbar_so.h \
 	ta_datatable_qtso.h \
-	ta_datatable_so.h
+	ta_datatable_so.h \
+	ta_virtenv_qtso.h \
+	ta_virtenv_so.h
 
 SRCS_TAMISC_GUI =\
 	t3node_so.cpp \
+	SoCapsule.cpp \
 	t3viewer.cpp \
 	t3viewer.moc.cpp \
 	colorbar_qt.cpp \
@@ -33,7 +40,10 @@ SRCS_TAMISC_GUI =\
 	colorbar_so.cpp \
 	ta_datatable_qtso.cpp \
 	ta_datatable_qtso.moc.cpp \
-	ta_datatable_so.cpp
+	ta_datatable_so.cpp \
+	ta_virtenv_qtso.cpp \
+	ta_virtenv_qtso.moc.cpp \
+	ta_virtenv_so.cpp
 
 TAHEADS_GUI =\
 	@abs_srcdir@/ta_qt.h \
@@ -143,6 +153,7 @@ TAHEADS =\
 	@abs_srcdir@/ta_dataanal.h \
 	@abs_srcdir@/ta_datagen.h \
 	@abs_srcdir@/ta_imgproc.h \
+	@abs_srcdir@/ta_virtenv.h \
 	@abs_srcdir@/ta_dump.h \
 	@abs_srcdir@/ta_defaults.h \
 	@abs_srcdir@/ta_plugin.h \
@@ -187,6 +198,7 @@ HEADS =\
 	ta_dataanal.h \
 	ta_datagen.h \
 	ta_imgproc.h \
+	ta_virtenv.h \
 	ta_dump.h \
 	ta_defaults.h \
 	ta_plugin.h \
@@ -197,7 +209,6 @@ HEADS =\
 	$(HEADS_TAMISC_GUI)
 
 SRCS =\
-	ta_imgproc.cpp \
 	ta_platform.cpp \
 	ta_thread.cpp \
 	ta_string.cpp \
@@ -231,6 +242,8 @@ SRCS =\
 	ta_dataproc.cpp \
 	ta_dataanal.cpp \
 	ta_datagen.cpp \
+	ta_imgproc.cpp \
+	ta_virtenv.cpp \
 	ta_dump.cpp \
 	ta_defaults.cpp \
 	ta_plugin_p.cpp \
