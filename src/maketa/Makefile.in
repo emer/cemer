@@ -249,6 +249,7 @@ program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
+sim_ac_coin_configcmd = @sim_ac_coin_configcmd@
 sim_ac_simage_configcmd = @sim_ac_simage_configcmd@
 sim_ac_soqt_configcmd = @sim_ac_soqt_configcmd@
 sysconfdir = @sysconfdir@

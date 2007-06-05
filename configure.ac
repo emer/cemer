@@ -229,16 +229,21 @@ dnl  --enable-gui
 if test x"$gui" = x"true"; then
   dnl Functioning SoQt implies functioning Coin!
                            
-  SIM_AC_HAVE_SOQT_IFELSE([SIM_AC_CONFIGURATION_SETTING([SoQt],[v.$sim_ac_soqt_version -lSoQt -lCoin])
-                           CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
-                           LDFLAGS="$LDFLAGS $sim_ac_soqt_ldflags"
-                           LIBS="$LIBS $sim_ac_soqt_libs"
-                           SIM_AC_HAVE_SIMAGE_IFELSE([SIM_AC_CONFIGURATION_SETTING([Simage],[v.$sim_ac_simage_version])
-                                                      CPPFLAGS="$CPPFLAGS $sim_ac_simage_cppflags"
-                                                      LDFLAGS="$LDFLAGS $sim_ac_simage_ldflags"
-                                                      LIBS="$LIBS $sim_ac_simage_libs"],
-                                                      [SIM_AC_CONFIGURATION_WARNING([Failed to detect Simage. Textures will not work.])])],
-                          [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])
+  SIM_AC_HAVE_COIN_IFELSE([SIM_AC_CONFIGURATION_SETTING([Coin],[v.$sim_ac_coin_version])
+                           CPPFLAGS="$CPPFLAGS $sim_ac_coin_cppflags"
+                           LDFLAGS="$LDFLAGS $sim_ac_coin_ldflags"
+                           LIBS="$LIBS $sim_ac_coin_libs"
+                           SIM_AC_HAVE_SOQT_IFELSE([SIM_AC_CONFIGURATION_SETTING([SoQt],[v.$sim_ac_soqt_version])
+                                                    CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
+                                                    LDFLAGS="$LDFLAGS $sim_ac_soqt_ldflags"
+                                                    LIBS="$LIBS $sim_ac_soqt_libs"
+                                                    SIM_AC_HAVE_SIMAGE_IFELSE([SIM_AC_CONFIGURATION_SETTING([Simage],[v.$sim_ac_simage_version])
+                                                                               CPPFLAGS="$CPPFLAGS $sim_ac_simage_cppflags"
+                                                                               LDFLAGS="$LDFLAGS $sim_ac_simage_ldflags"
+                                                                               LIBS="$LIBS $sim_ac_simage_libs"],
+                                                                               [SIM_AC_CONFIGURATION_WARNING([Failed to detect Simage. Textures will not work.])])],
+                                                   [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])],
+                          [SIM_AC_CONFIGURATION_WARNING([Failed to detect the Coin development system])])
 
   AC_DEFINE([TA_GUI],,[Complementary switches, set when compiling for gui/no gui. Controls all non-QtCore related dependencies. For nogui, there can be no Coin or non-QtCore dependencies.])
   AC_DEFINE([TA_USE_QT],,[This switch is set when linking with Qt.])
@@ -289,9 +294,12 @@ case $host in
     ;;
 esac
     
-if test x"$my_libs"; then
-  LIBS="$my_libs $LIBS"
-fi
+# Remove duplicate entries. TODO: Will this cause problems on MinGW?
+# NOTE: on quadrigraphs: [ is @<:@  and ] is @:>@  
+CXXFLAGS="`echo "$CXXFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
+LDFLAGS="`echo "$LDFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
+LIBS="`echo "$LIBS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
+
 
 AC_SUBST([PDP_SUFFIX])
 AC_SUBST([abs_top_builddir])
