@@ -41,13 +41,14 @@
 #include "ta_base.h"                         // Definition of the taBase object.
 #include "ta_geometry.h"
 #include "ta_datatable.h"
+#include "colorscale.h"		// taColor
+#include "minmax.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 //		Actual ODE Code
-
-#include <ode/ode.h>
-#include "colorscale.h"		// taColor
-#include "minmax.h"
+#ifndef __MAKETA__
+# include <ode/ode.h>
+#endif
 
 class VEBody;
 class VEBody_Group;
@@ -218,8 +219,9 @@ public:
 
   //////////////////////////////
   //	Internal-ish stuff
-
+#ifndef __MAKETA__
   dMass		mass_ode;	// #IGNORE full ode mass of body
+#endif
   void*		fixed_joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of joint used to fix a FIXED body
 
   override String	GetDesc() const { return desc; }
@@ -859,9 +861,10 @@ public:
 
   //////////////////////////////////////
   // 	IMPL functions
-
+#ifndef __MAKETA__
   virtual void	CollisionCallback(dGeomID o1, dGeomID o2);
   // #IGNORE callback function for the collision function, with two objects that are actual objects and not spaces
+#endif
 
   SIMPLE_COPY(VEWorld);
   SIMPLE_INITLINKS(VEWorld);
