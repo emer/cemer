@@ -4506,21 +4506,26 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   return rval;
 }
 
-void iTabView::ShowTab(iDataPanel* panel, bool show) {
+void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
 // this is for ctrl panel frames that go visible, to show their ctrl panel tabs
 // note that we are assuming for simplicity that we can focus the default or 0th tab
 // when removing a tab for a visible ctrl guy
   if (show) {
     // may be there already, prob most recent...
+    int tb = -1;
     for (int i = tabCount(); i >= 0; --i) {
       iDataPanel* tpan = tabPanel(i);
       if (tpan == panel) {
-        return;
+        tb = i;
+        break;
       }
     }
-    tbPanels->addTab(panel);
-    // don't focus automatically???
-  //TODO: do a SetCurrentTab here if it should autofocus
+    if (tb < 0) {
+      tb = tbPanels->addTab(panel);
+    }
+    // focus it
+    if (focus) 
+      SetCurrentTab(tb);
   } else {
     for (int i = tabCount(); i >= 0; --i) {
       iDataPanel* tpan = tabPanel(i);
@@ -4685,11 +4690,13 @@ int iTabView::TabIndexOfPanel(iDataPanel* panel) const {
   return -1;
 }
 
+
 void iTabView::UpdateTabNames() { // called by a datalink when a tab name might have changed
   for (int i = 0; i < tbPanels->count(); ++i ) {
     iDataPanel* pan = tbPanels->panel(i);
     if (pan == NULL) continue; // shouldn't happen...
     tbPanels->setTabText(i, pan->TabText());
+    tbPanels->setTabToolTip(i, pan->TabText()); // esp for when elided
     tbPanels->setTabIcon(i,  pan->tabIcon());
   }
 }
@@ -4699,6 +4706,7 @@ void iTabView::UpdateTabName(iDataPanel* pan) { // called by a panel when its ta
     iDataPanel* pani = tbPanels->panel(i);
     if (pan != pani) continue; // shouldn't happen...
     tbPanels->setTabText(i, pan->TabText());
+    tbPanels->setTabToolTip(i, pan->TabText()); // esp for when elided
     tbPanels->setTabIcon(i,  pan->tabIcon());
   }
 }
@@ -4754,6 +4762,25 @@ QWidget* iDataPanel::centralWidget() const {
   return scr->widget();
 }
 
+void iDataPanel::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  bool focus = false;
+  switch ((int)ev_->type()) {
+  case CET_SHOW_PANEL_FOCUS: 
+    focus = true; // FALL THROUGH
+  case CET_SHOW_PANEL: {
+    if (show_req) {
+      FrameShowing_Async(focus);
+      show_req = false;
+    }
+  } break;
+  default: inherited(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
+
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     if (tabView())
@@ -4761,20 +4788,25 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   }
 }
 
-void iDataPanel::FrameShowing(bool showing) {
+void iDataPanel::FrameShowing(bool showing, bool focus) {
   if (showing) {
-    QTimer::singleShot(0, this, SLOT(FrameShowing_Async()) );
+    if (!show_req) { // !already waiting
+      QEvent::Type evt = (QEvent::Type)(focus ? CET_SHOW_PANEL_FOCUS : CET_SHOW_PANEL);
+      QEvent* ev = new QEvent(evt);
+      show_req = true;
+      QCoreApplication::postEvent(this, ev);
+    }
   } else if (tabView()) {
     tabView()->ShowTab(this, showing);
   }
 
 }
 
-void iDataPanel::FrameShowing_Async() {
+void iDataPanel::FrameShowing_Async(bool focus) {
   if (tabView()) {
-    tabView()->ShowTab(this, true);
+    tabView()->ShowTab(this, true, focus);
   }
-
+  show_req = false;
 }
 
 void iDataPanel::Refresh_impl() {

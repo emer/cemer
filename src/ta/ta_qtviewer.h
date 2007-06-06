@@ -1150,7 +1150,7 @@ public:
   void			ShowPanel(iDataPanel* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
   void			SetCurrentTab(int tab_idx); 
     // focus indicated tab, but usually not if current is lockInPlace 
-  void			ShowTab(iDataPanel* panel, bool show); // show/hide tab, esp for ctrl panel in visible frame
+  void			ShowTab(iDataPanel* panel, bool show, bool focus = false); // show/hide tab, esp for ctrl panel in visible frame
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
   void 			UpdateTabName(iDataPanel* pan); // called only by individual panel when its name may have changed
 
@@ -1197,6 +1197,12 @@ friend class iPanelTab;
 friend class iDataPanel_PtrList;
 friend class iDataPanelSet;
 public:
+#ifndef __MAKETA__
+  enum CustomEventType { // note: just copied from taiDataHost, not all used
+    CET_SHOW_PANEL	= QEvent::User + 1,  // to get panel to show 
+    CET_SHOW_PANEL_FOCUS,  // to get panel to show/focus 
+  };
+#endif
   virtual QWidget*	centralWidget() const; // contents
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
   void			setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
@@ -1225,7 +1231,7 @@ public:
   virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
   virtual const iColor	GetTabColor(bool selected, bool& ok) const 
     {ok = false; return iColor();} // special color for tab; NULL means use default
-  virtual void		FrameShowing(bool showing); // called esp by t3 frames when show/hide; lets us show hide the tabs
+  virtual void		FrameShowing(bool showing, bool focus = false); // called esp by t3 frames when show/hide; lets us show hide the tabs
 
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
   virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
@@ -1253,8 +1259,10 @@ public: // IDataLinkClient interface
 protected:
   bool			m_pinned;
   bool			m_rendered; // set once rendered
+  bool			show_req; // set when we send the SHOW_REQ event
   QVBoxLayout* 		layOuter; 
   QScrollArea*		scr; // central scrollview
+  override void 	customEvent(QEvent* ev_);
   override void		showEvent(QShowEvent* ev);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
@@ -1263,7 +1271,7 @@ protected:
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
   
 protected slots:
-  virtual void		FrameShowing_Async(); // we forward async from FS (only when true) as a useful hack to make sure all constr etc is done before doing it
+  virtual void		FrameShowing_Async(bool focus); // we forward async from FS (only when true) as a useful hack to make sure all constr etc is done before doing it
   
 private:
   iTabView*		m_tabView; // force access through accessors only

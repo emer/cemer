@@ -1267,9 +1267,9 @@ void iT3DataViewFrame::showEvent(QShowEvent* ev) {
 void iT3DataViewFrame::Showing(bool showing) {
   // panel tabs
   if (showing) {
-    for (int i = m_panels.size - 1; i >= 0; --i) {
+    for (int i = 0; i < m_panels.size; ++i) {//int i = m_panels.size - 1; i >= 0; --i) {
       iDataPanel* panel = (iDataPanel*)m_panels.FastEl(i);
-      panel->FrameShowing(showing);
+      panel->FrameShowing(showing, (i == 0));
     }
   } else {
     for (int i = 0; i < m_panels.size; ++i) {
