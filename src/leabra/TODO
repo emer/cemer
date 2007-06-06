@@ -5,9 +5,16 @@ commit:
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??
+* add complexity params to various levels
 
 ------------
 current:
+
+* Add all blank progels to init_code and hit init!
+
+* program edit control panel -- causes stale of calling progs! (not that one) -- check.
+
+* losing net init variable (act)?
 
 * Tom's project stuff!
 

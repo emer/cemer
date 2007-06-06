@@ -1776,12 +1776,12 @@ bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, in
   return false;
 }
 
-bool taMath_double::fft_real_wavetable(double_Matrix* out_mat, int n) {
-  return false;
-}
+// bool taMath_double::fft_real_wavetable(double_Matrix* out_mat, int n) {
+//   return false;
+// }
 
 bool taMath_double::fft_real_transform(double_Matrix* out_mat,
-  const double_Matrix* in_mat, double_Matrix* wavetable, double_Matrix* workspace)
+				       const double_Matrix* in_mat, bool real_out, bool norm)
 {
   return false;
 }

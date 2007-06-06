@@ -1503,6 +1503,8 @@ void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataSortProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
+  if(!src_data_var)
+    return il + "// DataSort: src_data_var not set!  cannot run";
   String rval = il + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::Sort(" + dest_data_var->name + ", " + src_data_var->name
@@ -1562,6 +1564,8 @@ void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
+  if(!src_data_var)
+    return il + "// DataSelectRows: src_data_var not set!  cannot run!";
   String rval = il + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   for(int i=0;i<select_spec.ops.size; i++) {
     DataSelectEl* el = (DataSelectEl*)select_spec.ops[i];
@@ -1569,20 +1573,16 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
       rval += il1 + "dsp->select_spec.ops[" + String(i) + "].cmp = " + el->var->name + ";\n";
     }
   }
-  if (src_data_var) {
-    if(dest_data_var) {
-      rval += il1 + "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
-        src_data_var->name + ", dsp->select_spec);\n";
-    }
-    else {
-      rval += il1 + "taDataProc::SelectRows(NULL, " + 
-        src_data_var->name + ", dsp->select_spec);\n";
-    }
-    if(dest_data_var) {
-      rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
-    }
-  } else { // invalid!!!
-    rval += "// ***OBJECT REQUIRES src_data_var !!\n";
+  if(dest_data_var) {
+    rval += il1 + "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
+      src_data_var->name + ", dsp->select_spec);\n";
+  }
+  else {
+    rval += il1 + "taDataProc::SelectRows(NULL, " + 
+      src_data_var->name + ", dsp->select_spec);\n";
+  }
+  if(dest_data_var) {
+    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
   }
   rval += il + "}\n";
   return rval; 
@@ -1631,6 +1631,8 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
+  if(!src_data_var)
+    return il + "// DataSelectCols: src_data_var not set!  cannot run!";
   String rval = il + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
@@ -1690,6 +1692,8 @@ void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 const String DataGroupProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
+  if(!src_data_var)
+    return il + "// DataGroup: src_data_var not set!  cannot run!";
   String rval = il + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
@@ -1768,6 +1772,8 @@ DataTable* DataJoinProg::GetSrcBData() {
 const String DataJoinProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
+  if(!src_data_var || !src_b_data_var)
+    return il + "// DataJoin: src_data_var or src_b_data_var not set!  cannot run";
   String rval = il + "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::Join(" + dest_data_var->name + ", " + 
