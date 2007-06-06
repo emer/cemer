@@ -266,7 +266,8 @@ case $host in
 		AC_DEFINE([LINUX],[1],[When on linux])
                 pdp_linux=true
 	;;
-	*darwin*)
+		*darwin*)
+                LDFLAGS="$LDFLAGS -L/opt/local/lib -L/sw/lib"
                 AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
