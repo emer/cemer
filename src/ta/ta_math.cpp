@@ -1199,12 +1199,11 @@ double taMath_double::vec_norm_sum(double_Matrix* vec, double sum, double min_va
   if(vec->size == 0)	return 0.0;
   double act_sum = 0.0;
   int min_idx;
-  double cur_min = vec_min(vec, min_idx);
   for(int i=0;i<vec->size;i++)
-    act_sum += (vec->FastEl_Flat(i) - cur_min);
+    act_sum += (vec->FastEl_Flat(i) - min_val);
   double scale = (sum / act_sum);
   for(int i=0;i<vec->size;i++)
-    vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - cur_min) * scale) + min_val;
+    vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
   return scale;
 }
 
@@ -2457,12 +2456,11 @@ float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
   if(vec->size == 0)	return 0.0;
   float act_sum = 0.0;
   int min_idx;
-  float cur_min = vec_min(vec, min_idx);
   for(int i=0;i<vec->size;i++)
-    act_sum += (vec->FastEl_Flat(i) - cur_min);
+    act_sum += (vec->FastEl_Flat(i) - min_val);
   float scale = (sum / act_sum);
   for(int i=0;i<vec->size;i++)
-    vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - cur_min) * scale) + min_val;
+    vec->FastEl_Flat(i) = ((vec->FastEl_Flat(i) - min_val) * scale) + min_val;
   return scale;
 }
 

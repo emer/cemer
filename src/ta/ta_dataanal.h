@@ -101,7 +101,7 @@ class TA_API taDataAnal : public taNBase {
 INHERITED(taNBase)
 public:
 
-  static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
+  static bool	GetDest(DataTable*& dest, const DataTable* src, const String& suffix);
   // #IGNORE get a dest analysis datatable -- if NULL, make one in proj.data.AnalysisData with name based on src and suffix
   static DataCol* GetMatrixDataCol(DataTable* src_data, const String& data_col_nm);
   // #IGNORE get named column from data, with checks that it is a matrix of type float or double

@@ -233,12 +233,13 @@ private:
 //   Join Spec
 /////////////////////////////////////////////////////////
 
-class TA_API DataJoinSpec : public taOBase {
+class TA_API DataJoinSpec : public taNBase {
   // ##INLINE ##CAT_Data datatable join specification: combine two tables along common column values
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 public:
   DataOpEl	col_a;		// column from first (a) source datatable to join on (values match those in col_b)
   DataOpEl	col_b;		// column from second (b) source datatable to join on (values match those in col_a)
+  bool		nomatch_warn;	// issue a warning for row values in a that do not have a matching value in b
 
   virtual void 	SetDataTable(DataTable* dt_a, DataTable* dt_b);
   // set the data table to enable looking up columns
@@ -267,7 +268,7 @@ class TA_API taDataProc : public taNBase {
 INHERITED(taNBase)
 public:
   
-  static bool	GetDest(DataTable*& dest, DataTable* src, const String& suffix);
+  static bool	GetDest(DataTable*& dest, const DataTable* src, const String& suffix);
   // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
 
   ///////////////////////////////////////////////////////////////////

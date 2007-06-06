@@ -233,6 +233,7 @@ String DataSelectSpec::GetDisplayName() const {
 ///////////////////////////
 
 void DataJoinSpec::Initialize() {
+  nomatch_warn = true;
 }
 
 void DataJoinSpec::SetDataTable(DataTable* dt_a, DataTable* dt_b) {
@@ -263,7 +264,7 @@ void DataJoinSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 //   taDataProc
 /////////////////////////////////////////////////////////
 
-bool taDataProc::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
+bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
   if(dest) return false;
   taProject* proj = GET_OWNER(src, taProject);
   dest = proj->GetNewAnalysisDataTable(src->name + "_" + suffix, true);
@@ -972,7 +973,8 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   return true;
 }
 
-bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec) {
+bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
+		      DataJoinSpec* spec) {
   if(!src_a) { taMisc::Error("taDataProc::Join: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::Join: src_b is NULL"); return false; }
   if(!spec) { taMisc::Error("taDataProc::Join: spec is NULL"); return false; }
@@ -1078,9 +1080,11 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJ
       }
     }
     else {
-      taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
-		      "from table:", src_a->name, "not found in column",
-		      spec->col_b.col_name, "of src_b:", src_b->name);
+      if(spec->nomatch_warn) {
+	taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
+			"from table:", src_a->name, "not found in column",
+			spec->col_b.col_name, "of src_b:", src_b->name);
+      }
     }
   }
   dest->StructUpdate(false);

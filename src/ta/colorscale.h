@@ -71,7 +71,7 @@ private:
 
 class TA_API RGBA : public taNBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Display Red Green Blue Alpha color specification
-INHERITED(taOBase)
+INHERITED(taNBase)
 public:
   String 		name; // description of what this color is
   float			r; // red

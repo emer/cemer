@@ -292,6 +292,16 @@ DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
   return rval;
 }
 
+DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
+  DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("InputData");
+  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  if(!nw_nm.empty())
+    rval->name = nw_nm;
+  if(msg)
+    taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
+  return rval;
+}
+
 bool taProject::SetFileName(const String& val) {
   if (GetFileName() == val) return true;
   inherited::SetFileName(val);

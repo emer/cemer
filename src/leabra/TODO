@@ -2,10 +2,16 @@ leabra todo list:
 
 commit:
 
+* added taDataGen::CrossLists, CombineFrequencies, and ReplicateByFrequency -- handy
+  functions for creating lists of conditions etc to run from more compact parameterized
+  source data tables.
+
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??
 * add complexity params to various levels
+* add a function to update texture when texture is changed -- just like the other guy 
+  for image -- (test that too!)
 
 ------------
 current:
@@ -18,16 +24,9 @@ current:
 
 * Tom's project stuff!
 
-* join should not care about type mismatch -- something wrong in variant comparisons??
-  a=int -> b=float = OK
-  a=float -> b=int = NOT
-  a=string -> b=int = NOT
-
 * have init values of wt_scale parameters prior to adapting?? yes
 
 * check: test datatable /matrix cut/paste ops
-
-* check: ticket 442 -- crash in connect from -- updated w/test case
 
 == Netview:
 

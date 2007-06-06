@@ -21,15 +21,25 @@
 #include "ta_program.h"
 
 class TA_API taDataGen : public taNBase {
-  // ##CAT_Data collection of data generation functions (e.g., drawing, random patterns)
+  // ##CAT_Data collection of data generation functions (e.g., drawing, random patterns, combining lists)
 INHERITED(taNBase)
 public:
+
+  enum CombineOp {		// how to combine numbers
+    MULTIPLY,			// multiply the numbers
+    ADD,			// add the numbers
+  };
 
   static bool	CheckDims(float_Matrix* mat, int dims);
   // #IGNORE check dimensionality of matrix, issue warning if not correct
 
-  static DataCol* GetFloatMatrixDataCol(DataTable* src_data, const String& data_col_nm);
+  static DataCol* GetFloatMatrixDataCol(const DataTable* src_data, const String& data_col_nm);
   // #IGNORE get named column from data, with checks that it is a matrix of type float
+  static DataCol* GetFloatDataCol(const DataTable* src_data, const String& data_col_nm);
+  // #IGNORE get named column from data, with checks that it is a scalar of type float
+
+  static bool	GetDest(DataTable*& dest, const DataTable* src, const String& suffix);
+  // #IGNORE helper function: if dest is NULL, a new one is created in proj.data.AnalysisData, with name from source + suffix
 
   ///////////////////////////////////////////////////////////////////
   // basic operations
@@ -38,6 +48,24 @@ public:
   // #MENU_BUTTON #MENU_ON_Basic #CONFIRM #CAT_Basic clear existing patterns: set all values to given value in float matrix column col_nm (empty col_nm = all float matrix columns)
   static bool SimpleMath(DataTable* data, const String& col_nm, const SimpleMathSpec& math);
   // #MENU_BUTTON #CAT_Basic Apply simple math operation to all values in float matrix column col_nm (empty col_nm = all float matrix columns)
+
+  ///////////////////////////////////////////////////////////////////
+  // operations on lists of elements/conditions (combine, replicate by frequency, etc)
+
+  static bool	CrossLists(DataTable* crossed_output, const DataTable* data_list_1,
+			   const DataTable* data_list_2, const DataTable* data_list_3=NULL,
+			   const DataTable* data_list_4=NULL, const DataTable* data_list_5=NULL);
+  // #MENU_BUTTON #MENU_ON_Lists #CAT_Lists #NULL_OK_0 #NULL_OK_3 #NULL_OK_4 #NULL_OK_5 creates a full set of combination of elements from two or more lists (of conditions or other items) -- for each row in the first list, replicate all rows in the second list, and so on..
+  static bool	CombineFrequencies(DataTable* freq_output, const DataTable* data_list_in,
+				   const String& freq_col_nm = "frequency",
+				   CombineOp opr = MULTIPLY,
+				   bool renorm_freqs=true);
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 for a data table containing a list of items with multiple frequency_x columns (e.g., as created by the CrossLists function), this will combine the frequencies into one overall frequency in the output table freq_output, using given operation.  If renorm_freqs, then overall frequencies are renormalized as probabilities to sum to 1
+  static bool	ReplicateByFrequency(DataTable* repl_output, const DataTable* data_list_in,
+				     int total_number, const String& freq_col_nm = "frequency",
+				     bool renorm_freqs=true);
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 replicate the items in the input data by the number given in the frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
+
 
   ///////////////////////////////////////////////////////////////////
   // drawing routines

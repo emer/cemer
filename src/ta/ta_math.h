@@ -30,9 +30,9 @@
 # include "gsl/gsl_matrix_float.h"
 #endif
 
-class TA_API Relation : public taOBase {
+class TA_API Relation : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 public:
   enum Relations {
     EQUAL,		// #LABEL_=
@@ -58,9 +58,9 @@ public:
   TA_SIMPLE_BASEFUNS(Relation);
 };
 
-class TA_API Aggregate : public taOBase {
+class TA_API Aggregate : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Basic aggregation operations
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 public:
   enum Operator {		// Aggregate Operators
     GROUP,			// group by this field
@@ -94,9 +94,9 @@ public:
   TA_SIMPLE_BASEFUNS(Aggregate);
 };
 
-class TA_API SimpleMathSpec : public taOBase {
+class TA_API SimpleMathSpec : public taNBase {
   // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 public:
   enum MathOpr {
     NONE,			// no function
@@ -110,8 +110,8 @@ public:
     ADD,			// add arg value
     SUB,			// subtract arg value
     MUL,			// multiply by arg value
-    POWER,			// raise to the power of arg
     DIV, 			// divide by arg value
+    POWER,			// raise to the power of arg
     GTEQ,			// make all values greater than or equal to arg
     LTEQ,			// make all values less than or equal to arg
     GTLTEQ			// make all values greater than lw and less than hi
@@ -485,13 +485,13 @@ public:
   // distance metrics (comparing two vectors)
 
   static double	vec_ss_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
-			    bool norm = false, double tolerance=0.0f);
+			    bool norm = false, double tolerance=0.0);
   // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element
   static double	vec_euclid_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
-				bool norm = false, double tolerance=0.0f);
+				bool norm = false, double tolerance=0.0);
   // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element
   static double	vec_hamming_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
-				 bool norm = false, double tolerance=0.0f);
+				 bool norm = false, double tolerance=0.0);
   // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element
   static double	vec_covar(const double_Matrix* vec, const double_Matrix* oth_vec);
   // #CAT_Distance compute the covariance of this vector the oth vector
@@ -503,22 +503,22 @@ public:
   static double	vec_cross_entropy(const double_Matrix* vec, const double_Matrix* oth_vec);
   // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
   static double	vec_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
-			 DistMetric metric, bool norm = false, double tolerance=0.0f);
+			 DistMetric metric, bool norm = false, double tolerance=0.0);
   // #CAT_Distance compute generalized distance metric with other vector (double_Matrix* vec, calls appropriate fun above)
 
   ///////////////////////////////////////
   // Normalization
 
-  static double	vec_norm_len(double_Matrix* vec, double len=1.0f);
+  static double	vec_norm_len(double_Matrix* vec, double len=1.0);
   // #CAT_Norm normalize vector to total given length (1.0), returns scaling factor
-  static double	vec_norm_sum(double_Matrix* vec, double sum=1.0f, double min_val=0.0f);
+  static double	vec_norm_sum(double_Matrix* vec, double sum=1.0, double min_val=0.0);
   // #CAT_Norm normalize vector to total given sum (1.0) and min_val (0), returns scaling factor
-  static double	vec_norm_max(double_Matrix* vec, double max=1.0f);
+  static double	vec_norm_max(double_Matrix* vec, double max=1.0);
   // #CAT_Norm normalize vector to given maximum value, returns scaling factor
-  static double	vec_norm_abs_max(double_Matrix* vec, double max=1.0f);
+  static double	vec_norm_abs_max(double_Matrix* vec, double max=1.0);
   // #CAT_Norm normalize vector to given absolute maximum value, returns scaling factor
-  static int	vec_threshold(double_Matrix* vec, double thresh=.5f,
-			      double low=0.0f, double high=1.0f);
+  static int	vec_threshold(double_Matrix* vec, double thresh=.5,
+			      double low=0.0, double high=1.0);
   // #CAT_Norm threshold values in the vector, low vals go to low, etc; returns number of high values
   static double	vec_aggregate(const double_Matrix* vec, Aggregate& agg);
   // #CAT_Aggregate compute aggregate of values in this vector using aggregation params of agg
@@ -590,17 +590,17 @@ public:
   static bool mat_cell_to_vec(double_Matrix* vec, const double_Matrix* mat, int cell_no);
   // #CAT_HighDimMatrix extract given cell element across frames of matrix, and put in vector vec (usueful for analyzing behavior of a given cell across time or whatever the frames represent)
   static bool mat_dist(double_Matrix* dist_mat, const double_Matrix* src_mat,
-		       DistMetric metric, bool norm = false, double tolerance=0.0f);
+		       DistMetric metric, bool norm = false, double tolerance=0.0);
   // #CAT_HighDimMatrix compute distance matrix of frames within matrix src_mat (must be dim >= 2) -- dist_mat is nframes x nframes
   static bool mat_cross_dist(double_Matrix* dist_mat, const double_Matrix* src_mat_a,
 			       const double_Matrix* src_mat_b,
-			       DistMetric metric, bool norm = false, double tolerance=0.0f);
+			       DistMetric metric, bool norm = false, double tolerance=0.0);
   // #CAT_HighDimMatrix compute cross distance matrix between the frames within src_mat_a and src_mat_b (must be dim >= 2 and have same frame size) -- rows of dist_mat are a, cols are b
   static bool mat_correl(double_Matrix* correl_mat, const double_Matrix* src_mat);
   // #CAT_HighDimMatrix compute correlation matrix for cells across frames within src_mat (i.e., how does each cell co-vary across time/frames with each other cell). result is nxn matrix where n is number of cells in each frame of src_mat (i.e., size of sub-matrix), with each cell being correlation of that cell with other cell.
   static bool mat_prjn(double_Matrix* prjn_vec, const double_Matrix* src_mat,
 		       const double_Matrix* prjn_mat, DistMetric metric=INNER_PROD,
-		       bool norm = false, double tolerance=0.0f);
+		       bool norm = false, double tolerance=0.0);
   // #CAT_HighDimMatrix compute projection of each frame of src_mat onto prjn_mat.  prjn_vec contains one value for each frame in src_mat, which is the inner/dot product (projection -- or other metric if selected) of that frame and the prjn_mat.
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -1043,9 +1043,9 @@ private:
   void 	Destroy()		{ };
 };
 
-class TA_API Random : public taOBase {
+class TA_API Random : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Random Number Generation
-INHERITED(taOBase)
+INHERITED(taNBase)
 public:
   enum Type {
     UNIFORM,			// uniform with var = range on either side of the mean

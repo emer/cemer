@@ -386,7 +386,7 @@ float ClustNode::SetParDists(float par_d) {
 ////////////////////////////////////////////////////////////////////////////////////
 //			taDataAnal
 
-bool taDataAnal::GetDest(DataTable*& dest, DataTable* src, const String& suffix) {
+bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
   if(dest) {
     dest->ResetData();		// always clear out for new data
     return false;

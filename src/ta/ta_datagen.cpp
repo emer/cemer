@@ -30,24 +30,51 @@ bool taDataGen::CheckDims(float_Matrix* mat, int dims) {
   return true;
 }
 
-DataCol* taDataGen::GetFloatMatrixDataCol(DataTable* src_data, const String& data_col_nm) {
+DataCol* taDataGen::GetFloatMatrixDataCol(const DataTable* src_data, const String& data_col_nm) {
   if(!src_data) return NULL;
   int idx;
   DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
   if(!da)
     return NULL;
   if(!da->is_matrix) {
-    taMisc::Error("taDataAnal: column named:", data_col_nm,
+    taMisc::Error("taDataGen: column named:", data_col_nm,
 		  "is not a matrix in data table:", src_data->name);
     return NULL;
   }
   if(da->valType() != VT_FLOAT) {
-    taMisc::Error("taDataAnal: column named:", data_col_nm,
+    taMisc::Error("taDataGen: column named:", data_col_nm,
 		  "is not of type float in data table:", src_data->name);
     return NULL;
   }
   return da;
 }
+
+DataCol* taDataGen::GetFloatDataCol(const DataTable* src_data, const String& data_col_nm) {
+  if(!src_data) return NULL;
+  int idx;
+  DataCol* da = src_data->FindColName(data_col_nm, idx, true); // err msg
+  if(!da)
+    return NULL;
+  if(da->is_matrix) {
+    taMisc::Error("taDataGen: column named:", data_col_nm,
+		  "is a matrix in data table:", src_data->name, "must be a scalar!");
+    return NULL;
+  }
+  if(da->valType() != VT_FLOAT) {
+    taMisc::Error("taDataGen: column named:", data_col_nm,
+		  "is not of type float in data table:", src_data->name);
+    return NULL;
+  }
+  return da;
+}
+
+bool taDataGen::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
+  if(dest) return false;
+  taProject* proj = GET_OWNER(src, taProject);
+  dest = proj->GetNewInputDataTable(src->name + "_" + suffix, true);
+  return true;
+}
+
 
 ///////////////////////////////////////////////////////////////////
 // basic operations
@@ -99,6 +126,188 @@ bool taDataGen::SimpleMath(DataTable* data, const String& col_nm, const SimpleMa
     taBase::unRefDone(mat);
   }
   data->DataUpdate(false);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////
+// list opterations
+
+bool taDataGen::CrossLists(DataTable* dest, const DataTable* data_list_1,
+			   const DataTable* data_list_2, const DataTable* data_list_3,
+			   const DataTable* data_list_4, const DataTable* data_list_5) {
+  if(!data_list_1 || data_list_1->rows == 0) {
+    taMisc::Error("taDataGen:CrossLists data_list_1 is NULL or has no rows");
+    return false;
+  }
+  if(!data_list_2 || data_list_2->rows == 0) {
+    taMisc::Error("taDataGen:CrossLists data_list_2 is NULL or has no rows");
+    return false;
+  }
+  
+  const DataTable* dats[5];
+  dats[0] = data_list_1;
+  dats[1] = data_list_2;
+
+  int n_lists = 2;
+  if(data_list_3 && data_list_3->rows > 0) dats[n_lists++] = data_list_3;
+  if(data_list_4 && data_list_3->rows > 0) dats[n_lists++] = data_list_4;
+  if(data_list_5 && data_list_3->rows > 0) dats[n_lists++] = data_list_5;
+
+  String dst_nm = String("x_") + data_list_2->name;
+  for(int l=2;l<n_lists;l++)
+    dst_nm += String("_x_") + dats[l]->name;
+
+  GetDest(dest, data_list_1, dst_nm);
+  dest->StructUpdate(true);
+  dest->Reset();
+
+  MatrixGeom mg;
+  for(int l=0; l<n_lists; l++) {
+    mg.Add(dats[l]->rows);	// number of rows are like geometries of each dim
+    for(int i=0; i < dats[l]->data.size; i++) {
+      DataCol* sda = dats[l]->data.FastEl(i);
+      DataCol* nda = (DataCol*)sda->MakeToken();
+      dest->data.Add(nda);
+      nda->Copy_NoData(*sda);
+    }
+  }
+
+  dest->UniqueColNames();	// make them unique!
+
+  int max_n = mg.Product();
+
+  MatrixGeom rows;
+  for(int ri=0; ri<max_n; ri++) {
+    mg.DimsFmIndex(ri, rows);	// get dim vals from overall index
+    dest->AddBlankRow();
+    int didx = 0;
+    for(int l=0; l<n_lists; l++) {
+      for(int i=0; i < dats[l]->data.size; i++, didx++) {
+	DataCol* sda = dats[l]->data.FastEl(i);
+	DataCol* nda = dest->data.FastEl(didx);
+	nda->CopyFromRow(-1, *sda, rows[l]);
+      }
+    }
+  }
+  dest->StructUpdate(false);
+  return true;
+}
+
+bool taDataGen::CombineFrequencies(DataTable* dest, const DataTable* data_in,
+				   const String& freq_col_nm, CombineOp opr,
+				   bool renorm_freqs) {
+  if(!data_in || data_in->rows == 0) {
+    taMisc::Error("taDataGen:CombineFrequencies data_list_in is NULL or has no rows");
+    return false;
+  }
+  
+  GetDest(dest, data_in, "CombFreq");
+  dest->StructUpdate(true);
+  dest->Reset();
+
+  int_Array freq_cols;		// cols having frequency info
+  int_Array data_cols;		// all other data, incl 1st freq (1-to-1 with dest cols)
+  int dest_freq_col = -1;
+  
+  for(int i=0; i < data_in->data.size; i++) {
+    DataCol* sda = data_in->data.FastEl(i);
+    bool add = false;
+    if(sda->name.contains(freq_col_nm) && !sda->is_matrix) {
+      freq_cols.Add(i);
+      if(freq_cols.size == 1) {
+	add = true;	// add the first one
+	dest_freq_col = data_cols.size;
+      }
+    }
+    else {
+      add = true;
+    }
+    if(add) {
+      data_cols.Add(i);		// incl the one freq, so has 1-to-1 with dest cols
+      DataCol* nda = (DataCol*)sda->MakeToken();
+      dest->data.Add(nda);
+      nda->Copy_NoData(*sda);
+    }
+  }
+
+  if(freq_cols.size < 2) {
+    taMisc::Error("taDataGen:CombineFrequencies could not find two or more scalar columns containing name:",
+		  freq_col_nm);
+    return false;
+  }
+
+  DataCol* freq_da = dest->data.FastEl(dest_freq_col);
+
+  for(int ri=0;ri<data_in->rows; ri++) {
+    dest->AddBlankRow();
+    float cmb_val = data_in->data.FastEl(freq_cols[0])->GetValAsFloat(ri);
+    for(int i=1;i<freq_cols.size; i++) {
+      float col_val = data_in->data.FastEl(freq_cols[i])->GetValAsFloat(ri);
+      if(opr == MULTIPLY)
+	cmb_val *= col_val;
+      else
+	cmb_val += col_val;
+    }
+    freq_da->SetValAsFloat(cmb_val, ri);
+    for(int i=0;i<data_cols.size; i++) {
+      if(data_cols[i] != freq_cols[0]) {
+	DataCol* sda = data_in->data.FastEl(data_cols[i]);
+	DataCol* nda = dest->data.FastEl(i);
+	nda->CopyFromRow(ri, *sda, ri);
+      }
+    }
+  }
+
+  if(renorm_freqs) {
+    taMath_float::vec_norm_sum((float_Matrix*)freq_da->AR(), 1.0f, 0.0f);
+  }
+
+  dest->StructUpdate(false);
+  return true;
+}
+
+bool taDataGen::ReplicateByFrequency(DataTable* dest, const DataTable* data_in,
+				     int total_number, const String& freq_col_nm,
+				     bool renorm_freqs) {
+  if(!data_in || data_in->rows == 0) {
+    taMisc::Error("taDataGen:ReplicateByFrequency data_list_in is NULL or has no rows");
+    return false;
+  }
+
+  DataCol* freq_col = GetFloatDataCol(data_in, freq_col_nm);
+  if(!freq_col) {
+    taMisc::Error("taDataGen:ReplicateByFrequency column of name:", freq_col_nm,
+		  "not found in data table:", data_in->name);
+    return false;
+  }
+  
+  GetDest(dest, data_in, "ReplFreq");
+  dest->StructUpdate(true);
+  dest->Reset();
+
+  dest->Copy_NoData(*data_in);		// give it same structure
+
+  float_Matrix norm_freq;
+  float_Matrix* freqs = (float_Matrix*)freq_col->AR();
+  if(renorm_freqs) {
+    norm_freq = *freqs;		// copy the data!
+    taMath_float::vec_norm_sum(&norm_freq, 1.0f, 0.0f);
+    freqs = &norm_freq;
+  }
+
+  for(int i=0;i<data_in->rows;i++) {
+    int n_repl = (int)((float)total_number * freqs->FastEl_Flat(i));
+    for(int k=0;k<n_repl;k++) {
+      dest->AddBlankRow();
+      for(int j=0;j<data_in->data.size;j++) {
+	DataCol* sda = data_in->data[j];
+	DataCol* dda = dest->data[j];
+	dda->CopyFromRow(-1, *sda, i);
+      }
+    }
+  }
+
+  dest->StructUpdate(false);
   return true;
 }
 

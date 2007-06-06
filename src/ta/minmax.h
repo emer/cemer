@@ -152,9 +152,9 @@ private:
   void 	Copy_(const FixedMinMax& cp);
 };
 
-class TA_API Modulo : public taOBase {
+class TA_API Modulo : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math modulo for things that happen periodically
-  INHERITED(taOBase)
+  INHERITED(taNBase)
 public:
   bool	         flag;		// Modulo is active?
   int		 m;	        // Modulo N mod m, where N is counter
