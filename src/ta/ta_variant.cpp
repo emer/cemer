@@ -24,6 +24,12 @@
 
 #ifdef TA_USE_QT
 #  include <QVariant>
+#else
+inline double qAbs(const double& t) { return t >= 0 ? t : -t; }
+static bool qFuzzyCompare(double p1, double p2)
+{
+    return qAbs(p1 - p2) < 0.00000000001;
+}
 #endif
 
 using namespace std;
@@ -300,7 +306,7 @@ void Variant::Dump_Save_Type(ostream& strm) const {
 bool Variant::eqVariant(const Variant& b) const {
   // invalid never equates
   if (isInvalid() || b.isInvalid()) return false;
-  // for pointer types, proceed directly
+  // for pointer types, proceed directly -- we skip null test
   if (b.isPtrType())
     return eqPtr(b.toPtr());
   // otherwise, null never equates
@@ -318,20 +324,12 @@ bool Variant::eqVariant(const Variant& b) const {
   }
 }
 
-bool  Variant::eqBool(bool val) const {
-  if (isNull()) return false;
-  switch (m_type) {
-  case T_Bool: return (d.b == val);
-  case T_Int: 
-  case T_UInt: 
-  case T_Int64: 
-  case T_UInt64:
-    return (toBool() == val);
-  default: return false;
-  }
+bool Variant::eqBool(bool val) const {
+  if (isInvalid() || isNull()) return false;
+  return (toBool() == val);
 }
 
-bool  Variant::eqInt(int val) const {
+bool Variant::eqInt(int val) const {
   // handle the Ptr == or != NULL case -- only matches on NULL
   if (isPtrType())
     return ((!d.ptr) && (val == 0));
@@ -344,6 +342,10 @@ bool  Variant::eqInt(int val) const {
   case T_Int64:  return (d.i64 == val);
   case T_UInt64: 
     return ((val > 0) && (d.u64 <= (unsigned)INT_MAX) && (d.u64 == (unsigned)val));
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
+  case T_Char: return (d.c == val);
+  case T_String: return (getString() == String(val));
   default: return false;
   }
 }
@@ -356,6 +358,11 @@ bool  Variant::eqUInt(uint val) const {
   case T_UInt:  return (d.u == val);
   case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int64_t)val));
   case T_UInt64: return (d.u64 == val);
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
+  // sleaze a bit, but usually what we want:
+  case T_Char: return ((unsigned char)d.c == val);
+  case T_String: return (getString() == String(val));
   default: return false;
   }
 }
@@ -370,6 +377,10 @@ bool  Variant::eqInt64(int64_t val) const {
   case T_Int64:  return (d.i64 == val);
   case T_UInt64: 
     return ((val > 0) && (d.u64 < (unsigned)LLONG_MAX) && (d.u64 == (unsigned)val));
+  case T_Double: // note: the conversion could overflow...
+    return qFuzzyCompare(d.d, (double)val);
+  case T_Char: return (d.c == val);
+  case T_String: return (getString() == String(val));
   default: return false;
   }
 }
@@ -382,6 +393,11 @@ bool  Variant::eqUInt64(uint64_t val) const {
   case T_UInt:  return (d.u == val);
   case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int)val));
   case T_UInt64: return (d.u64 == val);
+  case T_Double: // the conversion could overflow
+    return qFuzzyCompare(d.d, (double)val);
+  // sleaze a bit, but usually what we want:
+  case T_Char: return ((unsigned char)d.c == val);
+  case T_String: return (getString() == String(val));
   default: return false;
   }
 }
@@ -396,14 +412,25 @@ bool  Variant::eqDouble(double val) const {
   case T_UInt64: 
     return (toDouble() == val);
   case T_Double:
-    return d.d == val;
+    return qFuzzyCompare(d.d, val);
+  case T_Char: return (d.c == val);
+  //note: this is mostly for cases where the val will already be ex an int
+  case T_String: return (getString() == String(val));
   default: return false;
   }
 }
 
 bool  Variant::eqChar(char val) const {
+  // note: unsigned conversions below a bit sleazy, but usually what we want
   if (isNull()) return false;
   switch (m_type)  {
+  case T_Bool: return (d.b == (bool)(val));
+  case T_Int: return (d.i == val);
+  case T_UInt:  return (d.u == (unsigned char)val);
+  case T_Int64:  return (d.i64 == val);
+  case T_UInt64: return (d.u64 == (unsigned char)val);
+  case T_Double:
+    return qFuzzyCompare(d.d, (double)val);
   case T_Char: return (d.c == val); 
   case T_String: {
     const String& str = getString();

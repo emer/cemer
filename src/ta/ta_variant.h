@@ -392,8 +392,8 @@ protected:
   //note: following ops don't affect m_is_null -- context must determine that
   
   //note: following gets ONLY valid when m_type is known to be of correct type
-  const String& 	getString() const { return *((String*)(&d.str));} // #IGNORE
-  String& 		getString() { return *((String*)(&d.str));} // #IGNORE
+  inline const String& 	getString() const { return *((String*)(&d.str));} // #IGNORE
+  inline String& 	getString() { return *((String*)(&d.str));} // #IGNORE
 #ifndef NO_TA_BASE
   taMatrix*		getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
   taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix

@@ -4469,8 +4469,13 @@ void TypeDef::unRegister(void* it) {
 //////////////////////////////////
 
 String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
-  StrContext sc) const 
+  StrContext sc_) const 
 {
+  StrContext sc = sc_; // we keep sc_ for recursive calls
+  // extract flags
+  bool flag_inline = (sc & SC_FLAG_INLINE);
+  // mask out flags
+  sc = (StrContext)(sc & SC_CONTEXT_MASK);
 //note: par is not used (except for recursive calls) and should maybe be nuked
   if (sc == SC_DEFAULT) 
     sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
@@ -4586,7 +4591,9 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       var.GetRepInfo(typ, var_base);
       return typ->GetValStr(var_base, NULL, memb_def, sc);
     }
-    else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
+    else if(DerivesFormal(TA_class) && 
+      (flag_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) 
+    {
       int i;
       String rval("{");
       for(i=0; i<members.size; i++) {
@@ -4661,7 +4668,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if (DerivesFrom(TA_taSmartPtr)) {
       // we just delegate to taBase* since we are binary compatible
-      return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc);
+      return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc_);
     }
     else if (DerivesFrom(TA_taSmartRef)) {
       taSmartRef& ref = *((taSmartRef*)base);

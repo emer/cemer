@@ -590,6 +590,8 @@ public:
   enum ViewerOptions { // #BITS options for the viewer
     VO_0		= 0, // #IGNORE
     VO_DOUBLE_CLICK_EXP_ALL = 0X001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
+    VO_AUTO_SELECT_NEW	= 0x002, // #LABEL_AutoSelectNew automatically select (the first) of a new tree item that is made with New or similar menu commands
+    VO_AUTO_EXPAND_NEW	= 0x004, // #LABEL_AutoExpandNew automatically expand new tree items that are made with New or similar menu commands
   };
   
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
@@ -1775,7 +1777,9 @@ public:
     SC_DEFAULT,		// default (for compat) -- if taMisc::is_loading/saving true, then STREAMING else VALUE
     SC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
     SC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
-    SC_DISPLAY		// value is being used for display purposes, ex. float value may be formatted prettily
+    SC_DISPLAY,		// value is being used for display purposes, ex. float value may be formatted prettily
+    SC_CONTEXT_MASK	= 0x00FF, // masks out the value
+    SC_FLAG_INLINE	= 0x0100 // forces gen of inline values for classes (ex used by search)
   };
   
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two

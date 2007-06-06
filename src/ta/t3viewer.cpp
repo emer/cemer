@@ -39,6 +39,7 @@
 #include <QMenu>
 #include <qscrollbar.h>
 #include <QTabWidget>
+#include <QTimer>
 #include <QPushButton>
 #include <QGLWidget>
 
@@ -1695,6 +1696,9 @@ void iT3DataViewer::Init() {
   lay->addWidget(tw);
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
     this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
+  // punt, and just connect a timer to focus first tab
+  // if any ProcessEvents get called (should not!) may have to make non-zero time
+  QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
 }
 
 void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
@@ -1744,6 +1748,11 @@ void iT3DataViewer::FillContextMenu_impl(taiMenu* menu, int tab_idx) {
   }
 }
 
+void iT3DataViewer::FocusFirstTab() {
+  if (tw->count() > 0)
+    tw->setCurrentIndex(0);
+
+}
 
 void iT3DataViewer::tw_customContextMenuRequested2(const QPoint& pos, int tab_idx) {
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);

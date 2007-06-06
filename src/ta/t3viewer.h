@@ -697,6 +697,7 @@ public slots:
   void			AddFrame();
   void			DeleteFrame(int tab_idx);
   void			FrameProperties(int tab_idx);
+  void			FocusFirstTab(); // hack to get first tab focussed on load
   
 protected: // IDataViewWidget i/f
   override void		Refresh_impl();

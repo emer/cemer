@@ -1049,13 +1049,17 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
         if (md->type->InheritsFrom(TA_taList_impl)) continue;
         if (md->type->InheritsFrom(TA_taBase)) {
           taBase* obj = (taBase*)md->GetOff(tab);
-          taBase* own = obj->GetOwner();
-          if (!own) continue; // non-owned value
-          // note: have to assume it is tab!!!
-          if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
-            TypeItem::SC_TREE)) continue;
+          taBase* own = obj->GetOwner(); //note: embedded obj must be owned by par
+          // non-owned values can't be browsed, and must be handled inline, below
+          if (own) {
+            // if owned, could browsable child -- we do that as recursive
+            if (md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
+              TypeItem::SC_TREE)) continue;
+          }
         } 
-        probed = md->type->GetValStr(md->GetOff(tab), tab, md);
+        // have to force getting an inline value, since default is often the path
+        probed = md->type->GetValStr(md->GetOff(tab), tab, md,
+          (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
         if (IsHit(targs, kicks, probed)) 
           {++n; AddHit(item_type, probed, hits);}
       }
@@ -1076,22 +1080,29 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   for(int m=0; m<td->members.size;m++) {
     if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
-    taList_impl* tal = NULL;
-    if (!md->type->InheritsFrom(TA_taList_impl)) continue;
-    if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
-          TypeItem::SC_ANY)) continue;
+    if (!md->ShowMember()) continue;
     if (md->is_static) continue;
     if (md->HasOption("NO_SEARCH")) continue;
-    // baked-in lists
-    if(md->type->ptr == 0) {
-	tal = static_cast<taList_impl*>(md->GetOff(tab));
-    } else if (md->type->ptr == 1) {
-      taList_impl** ptal = static_cast<taList_impl**>(md->GetOff(tab));
-      if (!ptal || !(tal = *ptal)) continue;
-      if (tal->GetOwner() != tab) continue;
+    
+    taBase* chld = NULL;
+    // we are only handling owned browsable taBase guys here
+    if ((md->type->ptr > 1) || !md->type->InheritsFrom(TA_taBase) )
+      continue;
+    // if guy is not a list or greater, must be browsable taBase
+    if (!md->type->InheritsFrom(TA_taList_impl)) {
+      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
+          TypeItem::SC_TREE)) continue;
+    }      
+    
+    if (md->type->ptr == 0) {
+	chld = static_cast<taBase*>(md->GetOff(tab));
+    } else { // must be == 1
+      taBase** pchld = static_cast<taBase**>(md->GetOff(tab));
+      if (!pchld || !(chld = *pchld)) continue;
+      if (chld->GetOwner() != tab) continue;
     }
-    if (tal) 
-      tabDataLink::SearchStat(tal, sd, level+1);
+    // note: chld will have a value by here
+    tabDataLink::SearchStat(chld, sd, level+1);
   }
   
   // only for Lists:
