@@ -73,8 +73,7 @@ public:
   override String GetDesc() const { return desc; }
   override String GetTypeDecoKey() const { return "ProgType"; }
   override bool	  FindCheck(const String& nm) const { return (name == nm); }
-
-  void 	SetDefaultName() {} // make it local to list, set by list
+  override void   SetDefaultName() {} // make it local to list, set by list
   TA_SIMPLE_BASEFUNS(ProgType);
 protected:
   virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
@@ -319,7 +318,7 @@ public:
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  void 	SetDefaultName() {} // make it local to list, set by list
+  override void 	SetDefaultName() {} // make it local to list, set by list
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(ProgVar);
@@ -960,9 +959,11 @@ public:
   int			CallInit(Program* caller); 
   // runs the program's Init from a superProg Init, 0=success
   virtual bool		SetVar(const String& var_nm, const Variant& value);
-  // set the value of a program variable -- must be called after Init as it directly sets the underlying css variable -- can be called from within a running program
+  // set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
   virtual bool		SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet = false);
   // set the value of a program variable (using SetVar) based on the value of startup argument arg_nm -- typically called from startup scripts -- displays information about variable set if !quiet
+  virtual Variant	GetVar(const String& var_nm);
+  // get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
   bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
 
   virtual void		Reset();

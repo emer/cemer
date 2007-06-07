@@ -2278,7 +2278,7 @@ void taOABase::SetAdapter(taBaseAdapter* adapter_) {
 //////////////////////////
 
 void taNBase::SetDefaultName() {
-  if(taMisc::not_constr || taMisc::in_init)
+  if(taMisc::not_constr || taMisc::in_init || GetTypeDef() == &TA_taNBase)
     return;
   SetDefaultName_();
 }

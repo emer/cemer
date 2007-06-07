@@ -2,10 +2,6 @@ leabra todo list:
 
 commit:
 
-* added taDataGen::CrossLists, CombineFrequencies, and ReplicateByFrequency -- handy
-  functions for creating lists of conditions etc to run from more compact parameterized
-  source data tables.
-
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??
@@ -16,13 +12,16 @@ commit:
 ------------
 current:
 
-* Add all blank progels to init_code and hit init!
-
-* program edit control panel -- causes stale of calling progs! (not that one) -- check.
-
 * losing net init variable (act)?
 
-* Tom's project stuff!
+* update std leabra progs -- a few places where methcall or data-specific call can now
+  be used..  maybe some weird comments somewhere?  add more comments!
+
+* program edit control panel -- causes stale of calling progs! (not that one) - #490
+
+* bp, cs, so!!
+
+* Add all blank progels to init_code and hit init!
 
 * have init values of wt_scale parameters prior to adapting?? yes
 

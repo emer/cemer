@@ -234,12 +234,18 @@ private:
 /////////////////////////////////////////////////////////
 
 class TA_API DataJoinSpec : public taNBase {
-  // ##INLINE ##CAT_Data datatable join specification: combine two tables along common column values
+  // ##INLINE ##CAT_Data datatable join specification: combine two tables along matching column values -- tables are both sorted (internally) by join col, so results are in that sort order
   INHERITED(taNBase)
 public:
+  enum JoinType {
+    LEFT,			// each row of the first table is included, with blanks for nonmatches
+    INNER,			// only matching rows from both tables are included
+  };
+
   DataOpEl	col_a;		// column from first (a) source datatable to join on (values match those in col_b)
   DataOpEl	col_b;		// column from second (b) source datatable to join on (values match those in col_a)
-  bool		nomatch_warn;	// issue a warning for row values in a that do not have a matching value in b
+  JoinType	type;		// type of join to perfrom (determines what to do with nonmatches -- matches are always included)
+  bool		nomatch_warn;	// #CONDEDIT_ON_type:INNER for INNER join, issue a warning for row values in A that do not have a matching value in B
 
   virtual void 	SetDataTable(DataTable* dt_a, DataTable* dt_b);
   // set the data table to enable looking up columns
@@ -346,7 +352,7 @@ public:
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON #MENU_ON_Columns select columns of data from src into dest according to list of columnns in spec (all rows are copied)
 
   static bool	Join(DataTable* dest, DataTable* src_a, DataTable* src_b, DataJoinSpec* spec);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON joins two datatables (src_a and src_b) into dest datatable.  for each row of src_a, the value of col_a is used to search col_b of src_b for the row(s) to include from it.  all columns are included (without repeating the common column)
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON joins two datatables (src_a and src_b) into dest datatable.  tables are internally sorted first according to the join column.  all matching row values from both tables are included in the result.  for the left join, all rows of src_a are included even if src_b does not match, and vice-versa for the right join.  inner only includes the matches.  all columns are included (without repeating the common column)
 
   static bool	ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together, merging data on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)).

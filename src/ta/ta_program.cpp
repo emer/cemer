@@ -2009,6 +2009,8 @@ void Function::UpdateAfterEdit_impl() {
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(name.empty(), quiet, rval, "name is empty -- functions must be named");
+  Function_List* flo = GET_MY_OWNER(Function_List);
+  CheckError(!flo, quiet, rval, "Function must only be in .functions -- cannot be in .prog_code or .init_code -- this is the DEFINITION of the function, not calling the function (which is FunctionCall)");
 }
 
 void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -2608,13 +2610,13 @@ bool Program::SetVar(const String& nm, const Variant& value) {
     return false;
   var->SetVar(value);
   return true;
-  // old version operated on css version of variable -- not good
-//   if(!script) return false;
-//   cssElPtr& el_ptr = script->prog_vars.FindName(nm);
-//   if (el_ptr == cssMisc::VoidElPtr) return false;
-//   cssEl* el = el_ptr.El();
-//   *el = value;
-//   return true;
+}
+
+Variant Program::GetVar(const String& nm) {
+  ProgVar* var = FindVarName(nm);
+  if(TestError(!var, "GetVar", "variable named:", nm, "not found!"))
+    return false;
+  return var->GetVar();
 }
 
 bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet) {

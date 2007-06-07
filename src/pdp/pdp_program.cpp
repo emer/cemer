@@ -160,8 +160,12 @@ void NetGroupedDataLoop::UpdateAfterEdit_impl() {
 
 void NetGroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!data_var, quiet, rval,  "data_var = NULL");
-  CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
+  if(!CheckError(!data_var, quiet, rval,  "data_var = NULL")) {
+    if(!CheckError(!data_var->object_val, quiet, rval,"data_var is NULL!")) {
+      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), 
+		 quiet, rval,"data_var does not point to a data table");
+    }
+  }
   CheckError(!group_index_var, quiet, rval, "group_index_var = NULL");
   CheckError(!item_index_var, quiet, rval, "item_index_var = NULL");
   CheckError(!group_order_var, quiet, rval, "group_order_var = NULL");
@@ -233,6 +237,7 @@ const String NetGroupedDataLoop::GenCssBody_impl(int indent_level) {
 }
 
 const String NetGroupedDataLoop::GenCssPost_impl(int indent_level) {
+  if(!data_var || !group_index_var || !item_index_var) return "// NetGroupedDataLoop ERROR vars not set!";
   String rval = cssMisc::Indent(indent_level+2) + "} // item for loop\n";
   rval += cssMisc::Indent(indent_level+1) + "} // group for loop\n";
   rval += cssMisc::Indent(indent_level) + "} // NetGroupedDataLoop " + data_var->name + "\n";
@@ -330,6 +335,7 @@ void NetCounterInit::GetLocalCtrVar() {
 }
 
 const String NetCounterInit::GenCssBody_impl(int indent_level) {
+  if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!";
   String rval = cssMisc::Indent(indent_level) + counter->name + " = 0;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter->name + " = " + counter->name + ";\n";
   return rval;
@@ -389,6 +395,7 @@ void NetCounterIncr::GetLocalCtrVar() {
 }
 
 const String NetCounterIncr::GenCssBody_impl(int indent_level) {
+  if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!";
   String rval = cssMisc::Indent(indent_level) + counter->name + "++;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter->name + " = " + counter->name + ";\n";
   return rval;
@@ -438,6 +445,7 @@ void NetUpdateView::GetUpdateVar() {
 }
 
 const String NetUpdateView::GenCssBody_impl(int indent_level) {
+  if(!network_var) return "// ERROR: network_var not set in NetUpdateView";
   String rval = cssMisc::Indent(indent_level) + "if(update_net_view) "
     + network_var->name + "->UpdateAllViews();\n";
   return rval;
@@ -540,7 +548,7 @@ bool InitNamedUnits::GetNetworkVar() {
 
 const String InitNamedUnits::GenCssBody_impl(int indent_level) {
   if(!init_label_net || !network_var)
-    return "";
+    return "// ERROR: vars not set!";
   String il = cssMisc::Indent(indent_level);
   String rval = il + "{ " + "InitNamedUnits* inu = this" + GetPath(NULL,program()) + ";\n"; 
   rval += il + "  inu->LabelNetwork(); }\n";

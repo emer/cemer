@@ -233,6 +233,7 @@ String DataSelectSpec::GetDisplayName() const {
 ///////////////////////////
 
 void DataJoinSpec::Initialize() {
+  type = INNER;
   nomatch_warn = true;
 }
 
@@ -1054,14 +1055,14 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
 	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
 	  DataCol* sda = ssrc_a.data.FastEl(i);
 	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-	  nda->CopyFromRow(row, *sda, row); // just copy
+	  nda->CopyFromRow(-1, *sda, row); // just copy
 	}
 	int col_idx = a_cols;
 	for(int i=0; i < ssrc_b.data.size; i++) {
 	  if(i == spec->col_b.col_idx) continue; // don't include common index
 	  DataCol* sdb = ssrc_b.data.FastEl(i);
 	  DataCol* nda = dest->data.FastEl(col_idx);
-	  nda->CopyFromRow(row, *sdb, bi); // just copy
+	  nda->CopyFromRow(-1, *sdb, bi); // just copy
 	  col_idx++;
 	}
 	if(bi >= ssrc_b.rows-1) break; // done!
@@ -1071,7 +1072,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
 	Variant nxt_a = sda->GetValAsVar(row+1);
 	if(nxt_a != orig_b)
 	  b_row = bi;		// otherwise just go through same b's again
-	if(b_row > ssrc_b.rows-1) {
+	if(b_row > ssrc_b.rows-1 && spec->nomatch_warn) {
 	  taMisc::Warning("taDataProc::Join -- at end of src_b table:", src_b->name,
 			  "with:",String(ssrc_a.rows-row-1),
 			  "rows left in src_a!", src_a->name);
@@ -1080,10 +1081,21 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
       }
     }
     else {
-      if(spec->nomatch_warn) {
-	taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
-			"from table:", src_a->name, "not found in column",
-			spec->col_b.col_name, "of src_b:", src_b->name);
+      if(spec->type == DataJoinSpec::LEFT) { // add blank!
+	dest->AddBlankRow();
+	for(int i=0;i<ssrc_a.data.size; i++) {
+	  //    if(i == spec->col_a.col_idx) continue; // include first guy..
+	  DataCol* sda = ssrc_a.data.FastEl(i);
+	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
+	  nda->CopyFromRow(-1, *sda, row); // just copy
+	}
+      }
+      else {			// left and inner: just skip b's
+	if(spec->nomatch_warn) {
+	  taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
+			  "from table:", src_a->name, "not found in column",
+			  spec->col_b.col_name, "of src_b:", src_b->name);
+	}
       }
     }
   }
@@ -1229,8 +1241,12 @@ void DataLoop::UpdateAfterEdit_impl() {
 
 void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!data_var, quiet, rval,  "data_var = NULL");
-  CheckError(!data_var->object_val || !data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), quiet, rval,"data_var does not point to a data table");
+  if(!CheckError(!data_var, quiet, rval,  "data_var = NULL")) {
+    if(!CheckError(!data_var->object_val, quiet, rval,"data_var is NULL!")) {
+      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), 
+		 quiet, rval,"data_var does not point to a data table");
+    }
+  }
   CheckError(!index_var, quiet, rval, "index_var = NULL");
   CheckError(!order_var, quiet, rval, "order_var = NULL");
   CheckProgVarRef(data_var, quiet, rval);
@@ -1268,6 +1284,7 @@ const String DataLoop::GenCssBody_impl(int indent_level) {
 }
 
 const String DataLoop::GenCssPost_impl(int indent_level) {
+  if(!data_var || !index_var) return cssMisc::Indent(indent_level+1) + "// DataLoop ERROR vars not set!";
   String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
   rval += cssMisc::Indent(indent_level) + "} // DataLoop " + data_var->name + "\n";
   return rval;

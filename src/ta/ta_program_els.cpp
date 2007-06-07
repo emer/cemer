@@ -204,12 +204,32 @@ String DoLoop::GetDisplayName() const {
 
 void ForLoop::Initialize() {
   // the following are just default examples for the user
-  init.expr = "int i = 0";
+  init.expr = "i = 0";
   test.expr = "i < 10";
   iter.expr = "i++";
   init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
   test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
   iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+}
+
+void ForLoop::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
+  GetIndexVar();
+}
+
+void ForLoop::GetIndexVar() {
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(init.expr.at(0,2) == "i " && test.expr.at(0,2) == "i ") {
+    if(!my_prog->vars.FindName("i")) {
+      ProgVar* ivar = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      ivar->name = "i";
+      ivar->SetInt(0);
+      ivar->ClearVarFlag(ProgVar::CTRL_PANEL);
+      ivar->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
 }
 
 void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
