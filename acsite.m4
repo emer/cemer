@@ -116,7 +116,11 @@ AC_ARG_ENABLE([nightly],
 			     [Adds the _nightly infix to our bins/libs. For internal use only.]),
 			     [nightly=true],
 			     [nightly=false])
-
+AC_ARG_ENABLE([maketa_docs],
+	      AC_HELP_STRING([--enable-maketa-docs],
+			     [Generate xml documentation on types using maketa]),
+			     [maketa_docs=true],
+			     [maketa_docs=false])
 
 #NOTE: This actually works with a few minor hiccups
 AC_ARG_WITH([rpm],

@@ -123,6 +123,7 @@ public:
   bool		gen_instances;	// generate instances?
   bool		make_hx;	// make an hx file instead of an h file
   bool		auto_hx;	// if making hx files, update h files if changed
+  bool		gen_doc;	        // if making hx files, update h files if changed
   bool		class_only;	// parse structs of type "class" only (not struct or union)
   int		verbose;	// level of verbosity
 #ifdef TA_OS_WIN
@@ -255,6 +256,11 @@ public: // these used to be standalone functions
 
   void TypeSpace_Generate_Init(TypeSpace* ths, ostream& strm,
 				    const String_PArray& ppfiles);
+//////////////////////////////////
+// 	  GenDoc		//
+//////////////////////////////////
+
+  void GenDoc(TypeSpace* ths, fstream& strm);
 };
 
 

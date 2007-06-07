@@ -1,4 +1,7 @@
-CLEAN_FILES =
+
+# TODO: Clean up xml files created by gendoc
+
+CLEAN_FILES = 
 
 EXTRA_DIST =\
 	src/ta/ta_global.h \

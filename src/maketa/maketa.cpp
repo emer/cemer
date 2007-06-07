@@ -520,6 +520,7 @@ void mta_print_commandline_args(char* argv[]) {
       << "\n[-hash<size>]       size of hash tables (default 2000), use -v1 to see actual sizes"
       << "\n[-f <filename>]     read list of header files from given file"
       << "\n[-k]                keep temporary files (useful for debugging)"
+      << "\n[-gendoc]           generate xml documentation for all types"
       << "\n[-win_dll[=STR]]    use macro for external linkage, default is XXX_API where XXX is proj name (win only)"
       << "\nproject             stub project name (generates project_TA[.cpp|_type.h|_inst.h])"
       << "\nfiles...            the header files to be processed\n";
@@ -569,6 +570,8 @@ int main(int argc, char* argv[])
       mta->make_hx = true;
     else if(tmp == "-noautohx")
       mta->auto_hx = false;
+    else if(tmp == "-gendoc")
+      mta->gen_doc = true;
     else if(tmp == "-autohx") {
       mta->make_hx = true;
       mta->auto_hx = true;
@@ -797,6 +800,13 @@ int main(int argc, char* argv[])
     mta->ta_ccname = mta->basename + "_TA.ccx";
   }
   fstream out_type_h, out_inst_h, outc;
+
+  if(mta->gen_doc) {
+    fstream gen_doc_xml;
+    gen_doc_xml.open(mta->basename + ".xml", ios::out);
+    mta->GenDoc(&(mta->spc_target), gen_doc_xml);
+    gen_doc_xml.close();  gen_doc_xml.clear();
+  }
 
   out_type_h.open((char*)mta->ta_type_h, ios::out);
   out_inst_h.open((char*)mta->ta_inst_h, ios::out);

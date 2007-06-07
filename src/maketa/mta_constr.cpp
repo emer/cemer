@@ -139,6 +139,7 @@ bool TypeSpace_Sort_Order(TypeSpace* ths) {
 //////////////////////////////////
 // (_TA_type.h _TA_inst.h files)
 
+
 void MTA::TypeSpace_Declare_Types(TypeSpace* ths, ostream& strm, const String_PArray&) {
   strm << "#ifndef " << ths->name << "_TA_types_h\n";
   strm << "#define " << ths->name << "_TA_types_h 1\n";
@@ -1401,3 +1402,39 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
   }
 }
 
+
+//////////////////////////////////
+// 	     GenDoc		//
+//////////////////////////////////
+
+void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
+  // TODO: What's going to happen when a later scan imports a TA file
+  // generated earlier? Hopefully we don't get duplicates
+
+  // Loop over a list of all the typedefs in this scan 
+
+  // Save for debugging
+  //   ths->ListAllTokens(strm);
+
+  for(int i=0; i < ths->size; i++) {
+    TypeDef* this_def = ths->FastEl(i);
+
+    // What's your name?
+    strm << this_def->name << ",";
+
+    // Are you a base class?
+    if (!this_def->InheritsFrom(this_def)) {
+      TypeSpace* this_space = &this_def->parents;
+
+      // No? Then who are your daddies?
+      for (int i=0; i < this_space->size; i++){
+        // TODO: Brad said a TypeDef *could* have more than one parent due to
+	// multiple inheritance, but i'm not seeing any examples here.
+        TypeDef* this_parent_def = this_space->FastEl(i);
+        strm << this_parent_def->name << ":";
+      }
+      strm << ",";
+    }
+    strm << "\n";
+  }
+}
