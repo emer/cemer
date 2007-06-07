@@ -14,6 +14,8 @@
 
 @SET_MAKE@
 
+# TODO: Clean up xml files created by gendoc
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -128,6 +130,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCC_FALSE = @GCC_FALSE@
 GCC_TRUE = @GCC_TRUE@
+GENDOC = @GENDOC@
 GREP = @GREP@
 HAVE_SVN = @HAVE_SVN@
 INCLUDE_AMINCLUDE_AM = @INCLUDE_AMINCLUDE_AM@
