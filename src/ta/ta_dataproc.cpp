@@ -1321,6 +1321,7 @@ void DataVarProg::UpdateAfterEdit_impl() {
 
 void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
   CheckProgVarRef(row_var, quiet, rval);
   CheckProgVarRef(var_1, quiet, rval);
   CheckProgVarRef(var_2, quiet, rval);
@@ -1380,6 +1381,7 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
 const String DataVarProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   if(!data_var) return il + "// data_var not set!\n";
+  if(row_spec != CUR_ROW && !row_var) return il + "// row_var not set but needed!\n";
   String idnm = data_var->name;
   String rval;
   rval += il + "// " + GetDisplayName() + "\n";

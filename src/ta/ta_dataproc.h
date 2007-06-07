@@ -450,7 +450,7 @@ public:
   };
 
   bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
-  RowType	row_spec;	// how the row number within data table is specified
+  RowType	row_spec;	// #APPLY_IMMED how the row number within data table is specified
   ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
   ProgVarRef	var_1;		// program variable to operate on -- name must match name of column in data table!

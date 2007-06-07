@@ -1040,6 +1040,12 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
   for(int i=0;i<argc;i++) {
     String av = argv[i];
     if(av.length() == 0) continue;
+    while(av.contains(" -")) { // sometimes multiple flag args get munged together in scripts
+      String frst = av.before(" -");
+      av = av.from(" -");
+      av = av.after(0);		// skip space
+      args_raw.Add(frst);
+    }
     args_raw.Add(av);
   }
   UpdateArgs();

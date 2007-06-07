@@ -875,17 +875,23 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 #endif
 
   // process gui flag right away -- has other implications
-  // we will just take the last one found on cmd line
-  for (int i = argc - 1; i > 0; --i) {
-    String arg = argv[i];
-     if (arg.endsWith("-nogui")) {
-      taMisc::use_gui = false; 
-      break;
-    } else if (arg.endsWith("-gui")) {
-      taMisc::use_gui = true; 
-      break;
-    }
-  }
+//   // we will just take the last one found on cmd line
+//   for (int i = taMisc::argc - 1; i > 0; --i) {
+//     String arg = argv[i];
+//      if (arg.endsWith("-nogui")) {
+//       taMisc::use_gui = false; 
+//       break;
+//     } else if (arg.endsWith("-gui")) {
+//       taMisc::use_gui = true; 
+//       break;
+//     }
+//   }
+
+  // need to use Init_Args and entire system because sometimes flags get munged together
+  if(taMisc::CheckArgByName("NoGui"))
+    taMisc::use_gui = false;
+  else if(taMisc::CheckArgByName("Gui"))
+    taMisc::use_gui = true;
 
 #ifndef TA_GUI
   if(taMisc::use_gui) {
@@ -1432,8 +1438,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
   if(!Startup_InitDMem(argc, argv)) goto startup_failed;
-  if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
   if(!Startup_InitArgs(argc, argv)) goto startup_failed;
+  if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
   if(!Startup_InitApp(argc, argv)) goto startup_failed;
   if(!Startup_InitTA(ta_init_fun)) goto startup_failed;
   if(!Startup_InitTypes()) goto startup_failed;
