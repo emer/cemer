@@ -1038,7 +1038,7 @@ public:
   virtual void		SetUserData(const String& key, const Variant& value);
   // #CAT_UserData #EXPERT set user data; ignored if class does not support user data
   virtual taDoc*	GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
-  virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj
+  virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT #DROP1 set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj
   
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }
