@@ -25,7 +25,15 @@ Program .projects[0].programs.gp[0][4] {
       };
     };
     MethodCall @[3] { };
-    UserScript @[4] { };
+    IfElse @[4] { 
+      ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+      };
+
+      ProgEl_List @.false_code = [1] {
+	AssignExpr @[0] { };
+      };
+    };
     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [4] {
 	ProgramCall @[0] { 
@@ -61,6 +69,11 @@ Program .projects[0].programs.gp[0][4] {
   el_typ=taOBase;
   el_def=0;
  };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
  args {
   name=;
   el_typ=ProgVar;
@@ -94,15 +107,16 @@ Program .projects[0].programs.gp[0][4] {
    int_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="current cycle of settling (local loop counter)";
   };
   ProgVar @[1] {
    name="min_cycles";
    var_type=T_Int;
    int_val=15;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   flags=NULL_CHECK;
+   desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
+sets the minimum number of cycles to settle for, regardless of network state changes, etc";
   };
   ProgVar @[2] {
    name="update_net_view";
@@ -110,7 +124,7 @@ Program .projects[0].programs.gp[0][4] {
    bool_val=1;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="if true, will update network views at end of settling";
   };
  };
  functions {
@@ -128,7 +142,7 @@ Program .projects[0].programs.gp[0][4] {
   el_typ=NetCounterInit;
   el_def=0;
   NetCounterInit @[0] {
-   desc=;
+   desc="initialize local cycle counter and corresponding counter on network";
    flags=;
    network_var=.projects[0].programs.gp[0][4].args[0]$2$;
    local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$3$;
@@ -140,7 +154,7 @@ Program .projects[0].programs.gp[0][4] {
   el_typ=NetCounterInit;
   el_def=0;
   NetCounterInit @[0] {
-   desc=;
+   desc="initialize local cycle counter and corresponding counter on network";
    flags=;
    network_var=$2$;
    local_ctr_var=$3$;
@@ -159,7 +173,8 @@ Program .projects[0].programs.gp[0][4] {
    };
   };
   ProgramCall @[2] {
-   desc="this program can be extended to do arbitrary things to generate data and apply it to network layers";
+   desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=;
    target=.projects[0].programs.gp[0][6]$4$;
    targ_ld_init="*ApplyInputs*";
@@ -172,6 +187,8 @@ Program .projects[0].programs.gp[0][4] {
      arg_type=LeabraNetwork;
      type="LeabraNetwork*";
      name="network";
+     required=1;
+     def_val=;
      expr {
       expr="network";
       flags=;
@@ -186,6 +203,8 @@ Program .projects[0].programs.gp[0][4] {
      arg_type=DataTable;
      type="DataTable*";
      name="input_data";
+     required=1;
+     def_val=;
      expr {
       expr="input_data";
       flags=;
@@ -210,37 +229,68 @@ Program .projects[0].programs.gp[0][4] {
     el_def=0;
    };
   };
-  UserScript @[4] {
-   desc="get min cycles";
+  IfElse @[4] {
+   desc="get appropriate min_cycles value depending on which phase we're in";
    flags=;
-   script {
-    expr="if(network.phase_no <= 1) min_cycles = network.min_cycles;
-else min_cycles = network.min_cycles_phase2;
-
-";
-    flags=NO_VAR_ERRS;
-    var_expr="if($#0#$.phase_no <= 1) $#1#$ = $#0#$.min_cycles;
-else $#1#$ = $#0#$.min_cycles_phase2;
-
-
-";
+   cond {
+    expr="network.phase_no <= 1";
+    flags=;
+    var_expr="$#0#$.phase_no <= 1";
     vars {
     };
-    var_names{ network;min_cycles;    };
-    bad_vars{ if;else;    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
+     flags=;
+     result_var=.projects[0].programs.gp[0][4].vars[1]$5$;
+     expr {
+      expr="network.min_cycles";
+      flags=;
+      var_expr="$#0#$.min_cycles";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
+     flags=;
+     result_var=$5$;
+     expr {
+      expr="network.min_cycles_phase2";
+      flags=;
+      var_expr="$#0#$.min_cycles_phase2";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
    };
   };
   WhileLoop @[5] {
-   desc=;
+   desc="the main loop over cycles of updating";
    flags=;
    loop_code {
     name=;
     el_typ=ProgramCall;
     el_def=0;
     ProgramCall @[0] {
-     desc=;
+     desc="run the cycle program, which computes one cycle of activations";
      flags=;
-     target=.projects[0].programs.gp[0][5]$5$;
+     target=.projects[0].programs.gp[0][5]$6$;
      targ_ld_init="*LeabraCycle*";
      call_init=0;
      prog_args {
@@ -251,6 +301,8 @@ else $#1#$ = $#0#$.min_cycles_phase2;
        arg_type=LeabraNetwork;
        type="LeabraNetwork*";
        name="network";
+       required=1;
+       def_val=;
        expr {
 	expr="network";
 	flags=;
@@ -264,14 +316,14 @@ else $#1#$ = $#0#$.min_cycles_phase2;
      };
     };
     NetCounterIncr @[1] {
-     desc=;
+     desc="increment cycle counter (also on network)";
      flags=;
      network_var=$2$;
      local_ctr_var=$3$;
      counter=Network::cycle;
     };
     IfContinue @[2] {
-     desc="avoid subsequent stopping criteria";
+     desc="avoid subsequent stopping criteria if below min_cycles";
      flags=;
      cond {
       expr="cycle < min_cycles";
@@ -284,7 +336,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
      };
     };
     IfBreak @[3] {
-     desc="stopping criterion for settling";
+     desc="stopping criterion for settling: based either on maximum change in activation (maxda) or on the maximum activation value in the network getting over threshold (which ever comes first).  Set either parmeter to values that are always false (e.g., trg_max_act_stopcrit = -1) to eliminate associated source of criterion for stopping settling.";
      flags=;
      cond {
       expr="(network.maxda < network.maxda_stopcrit) ||
@@ -310,7 +362,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
   };
   MethodCall @[6] {
-   desc=;
+   desc="perform final operations at end of settling (storing final activations, etc)";
    flags=;
    result_var=NULL;
    obj=$2$;
@@ -322,7 +374,8 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
   };
   IfElse @[7] {
-   desc="only run sse in minus phase";
+   desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
+presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
    flags=;
    cond {
     expr="network.phase == LeabraNetwork::MINUS_PHASE";
@@ -338,7 +391,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     el_typ=MethodCall;
     el_def=0;
     MethodCall @[0] {
-     desc=;
+     desc="compute trial-level statistics";
      flags=;
      result_var=NULL;
      obj=$2$;
@@ -373,7 +426,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     el_typ=ProgEl;
     el_def=0;
     MethodCall @[0] {
-     desc=;
+     desc="get external reward information";
      flags=;
      result_var=NULL;
      obj=$2$;
@@ -392,10 +445,10 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
   };
   NetUpdateView @[9] {
-   desc=;
+   desc="update network views, if update_net_view == true";
    flags=;
    network_var=$2$;
-   update_var=.projects[0].programs.gp[0][4].vars[2]$6$;
+   update_var=.projects[0].programs.gp[0][4].vars[2]$7$;
   };
  };
 };

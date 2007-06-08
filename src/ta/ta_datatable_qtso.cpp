@@ -369,7 +369,6 @@ void DataTableView::Initialize() {
   manip_ctrl_on = true;
 
   main_xform.translate.x = 1.0f;
-  table_scale = 0.0f;		// if still 0 after loading, then is an updated project!
 
   updating = 0;
   m_lvp = NULL;
@@ -381,10 +380,6 @@ void DataTableView::Initialize() {
 void DataTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(view_range, this);
-  // todo: remove - obsolete:
-  taBase::Own(table_pos, this);
-  taBase::Own(table_scale, this);
-  taBase::Own(table_orient, this);
 }
 
 void DataTableView::CutLinks() {
@@ -402,13 +397,6 @@ void DataTableView::Copy_(const DataTableView& cp) {
 void DataTableView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //note: UAE calls setDirty, which is where we do most of the rejigging
-  if(table_scale.x != 0.0f) {
-    // todo: obsolete conversion -- remove at some point soon!
-    main_xform.scale = table_scale;
-    main_xform.translate = table_pos;
-    main_xform.rotate = table_orient;
-    table_scale = 0.0f;
-  }
 }
 
 String DataTableView::GetLabel() const {

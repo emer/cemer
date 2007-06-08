@@ -523,6 +523,7 @@ void T3PrjnNode::init() {
   complexity = new SoComplexity;
   //  complexit->type = SoComplexity::SCREEN_SPACE;
   complexity->value.setValue(.1f); // don't need much..
+  ss->addChild(complexity);
 
   rot_prjn = new SoTransform();
   ss->addChild(rot_prjn);

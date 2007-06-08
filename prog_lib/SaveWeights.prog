@@ -53,6 +53,11 @@ Program .projects[0].programs.gp[0][9] {
   el_typ=taOBase;
   el_def=0;
  };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
  args {
   name=;
   el_typ=ProgVar;
@@ -140,7 +145,7 @@ Program .projects[0].programs.gp[0][9] {
   el_typ=MethodCall;
   el_def=0;
   IfReturn @[0] {
-   desc="do not save if not first dmem guy";
+   desc="do not save if not the first dmem process (only relevant for dmem = distributed memory processing)";
    flags=;
    cond {
     expr="taMisc::dmem_proc > 0";
@@ -153,7 +158,7 @@ Program .projects[0].programs.gp[0][9] {
    };
   };
   MiscCall @[1] {
-   desc=;
+   desc="get current batch counter for file name, with leading zeros to length 3";
    flags=;
    result_var=.projects[0].programs.gp[0][9].vars[4]$1$;
    object_type=taMisc;
@@ -166,6 +171,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="num";
+     required=0;
+     def_val=;
      expr {
       expr="network.batch";
       flags=;
@@ -180,6 +187,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="len";
+     required=0;
+     def_val=;
      expr {
       expr="2";
       flags=;
@@ -193,7 +202,7 @@ Program .projects[0].programs.gp[0][9] {
    };
   };
   MiscCall @[2] {
-   desc=;
+   desc="get current epoch counter with leading zeros to length 4";
    flags=;
    result_var=.projects[0].programs.gp[0][9].vars[3]$2$;
    object_type=taMisc;
@@ -206,6 +215,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="num";
+     required=0;
+     def_val=;
      expr {
       expr="network.epoch";
       flags=;
@@ -220,6 +231,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=int;
      type="int";
      name="len";
+     required=0;
+     def_val=;
      expr {
       expr="4";
       flags=;
@@ -233,7 +246,7 @@ Program .projects[0].programs.gp[0][9] {
    };
   };
   AssignExpr @[3] {
-   desc=;
+   desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
    flags=;
    result_var=.projects[0].programs.gp[0][9].vars[5]$3$;
    expr {
@@ -247,7 +260,7 @@ Program .projects[0].programs.gp[0][9] {
    };
   };
   MethodCall @[4] {
-   desc=;
+   desc="get a file name based on the project's current file name, for saving the weights";
    flags=;
    result_var=.projects[0].programs.gp[0][9].vars[2]$4$;
    obj=.projects[0].programs.gp[0][9].args[0]$5$;
@@ -260,6 +273,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=const_taString_ref;
      type="const taString&";
      name="ext";
+     required=1;
+     def_val=;
      expr {
       expr="\".wts.gz\"";
       flags=;
@@ -274,6 +289,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=const_taString_ref;
      type="const taString&";
      name="tag";
+     required=0;
+     def_val="\"\"";
      expr {
       expr="final_tag";
       flags=;
@@ -288,6 +305,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=const_taString_ref;
      type="const taString&";
      name="subdir";
+     required=0;
+     def_val="\"\"";
      expr {
       expr="wts_subdir";
       flags=;
@@ -302,6 +321,8 @@ Program .projects[0].programs.gp[0][9] {
      arg_type=bool;
      type="bool";
      name="dmem_proc_no";
+     required=0;
+     def_val="false";
      expr {
       expr="false";
       flags=;
@@ -315,7 +336,7 @@ Program .projects[0].programs.gp[0][9] {
    };
   };
   MethodCall @[5] {
-   desc=;
+   desc="save the weights to that file name";
    flags=;
    result_var=NULL;
    obj=$5$;
@@ -325,9 +346,11 @@ Program .projects[0].programs.gp[0][9] {
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=NULL;
+     arg_type=const_taString_ref;
      type="const taString&";
      name="fname";
+     required=0;
+     def_val="\"\"";
      expr {
       expr="fname";
       flags=;
@@ -339,9 +362,11 @@ Program .projects[0].programs.gp[0][9] {
      };
     };
     ProgArg @[1] {
-     arg_type=NULL;
+     arg_type=Network::WtSaveFormat;
      type="Network::WtSaveFormat";
      name="fmt";
+     required=0;
+     def_val="Network::NET_FMT";
      expr {
       expr="Network::NET_FMT";
       flags=;

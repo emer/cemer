@@ -60,7 +60,7 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      ext_flags=EXT;
-     noise {type=NONE: mean=0: var=0.5: par=1: };
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;     };
     };
     LayerWriterEl @[1] {
@@ -70,7 +70,7 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      ext_flags=TARG;
-     noise {type=NONE: mean=0: var=0.5: par=1: };
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;     };
     };
     LayerWriterEl @[2] {
@@ -80,11 +80,16 @@ Program .projects[0].programs.gp[0][6] {
      offset {x=0: y=0: };
      use_layer_type=1;
      ext_flags=;
-     noise {type=NONE: mean=0: var=0.5: par=1: };
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      value_names{      };
     };
    };
   };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
  };
  args {
   name=;
@@ -97,7 +102,7 @@ Program .projects[0].programs.gp[0][6] {
    object_val=$1$;
    objs_ptr=0;
    flags=NULL_CHECK;
-   desc=;
+   desc="network to apply inputs to -- typically set by calling program";
   };
   ProgVar @[1] {
    name="input_data";
@@ -106,7 +111,7 @@ Program .projects[0].programs.gp[0][6] {
    object_val=$0$;
    objs_ptr=0;
    flags=NULL_CHECK;
-   desc=;
+   desc="input datatable containing input/output patterns";
   };
  };
  vars {
@@ -120,7 +125,7 @@ Program .projects[0].programs.gp[0][6] {
    object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
    objs_ptr=1;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
   };
  };
  functions {
@@ -138,7 +143,7 @@ Program .projects[0].programs.gp[0][6] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
-   desc=;
+   desc="sets the datatable and network for the layer writer, so it knows what to write to";
    flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][6].vars[0]$3$;
@@ -151,6 +156,8 @@ Program .projects[0].programs.gp[0][6] {
      arg_type=DataBlock_ptr;
      type="DataBlock*";
      name="db";
+     required=0;
+     def_val=;
      expr {
       expr="input_data";
       flags=;
@@ -165,6 +172,8 @@ Program .projects[0].programs.gp[0][6] {
      arg_type=Network_ptr;
      type="Network*";
      name="net";
+     required=0;
+     def_val=;
      expr {
       expr="network";
       flags=;
@@ -178,7 +187,7 @@ Program .projects[0].programs.gp[0][6] {
    };
   };
   MethodCall @[1] {
-   desc=;
+   desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
    flags=;
    result_var=NULL;
    obj=$3$;
@@ -191,6 +200,8 @@ Program .projects[0].programs.gp[0][6] {
      arg_type=bool;
      type="bool";
      name="quiet";
+     required=0;
+     def_val="false";
      expr {
       expr="false";
       flags=;

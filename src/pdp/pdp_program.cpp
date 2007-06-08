@@ -684,8 +684,8 @@ bool InitNamedUnits::ViewDataLegend() {
   ndat->SetUserData("WIDTH", 3.3f);
   GridTableView* ngtv = ndat->NewGridView(frame);
 
-  ngtv->table_pos.y = 1.13f;
-  ngtv->table_scale = .33f;
+  ngtv->main_xform.translate.y = 1.13f;
+  ngtv->main_xform.scale = .33f;
   frame->Render();
   frame->ViewAll(); 
   frame->GetCameraPosOrient();

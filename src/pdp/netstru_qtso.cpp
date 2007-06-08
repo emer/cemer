@@ -1467,6 +1467,7 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   fr->AddView(nv);
 
   // make sure we've got it all rendered:
+  nv->main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   nv->BuildAll();
   fr->Render();
   fr->ViewAll();
@@ -1486,8 +1487,6 @@ void NetView::Initialize() {
   unit_text_disp = UTD_NONE;
   unit_src = NULL;
   unit_con_md = false;
-
-  network_scale = 0.0f;		// if still 0, then not loading obsolete vals!  todo: remove
 }
 
 void NetView::Destroy() {
@@ -1504,10 +1503,6 @@ void NetView::InitLinks() {
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
-  // todo: remove - obsolete:
-  taBase::Own(network_pos, this);
-  taBase::Own(network_scale, this);
-  taBase::Own(network_orient, this);
 }
 
 void NetView::CutLinks() {
@@ -1524,13 +1519,6 @@ void NetView::CutLinks() {
 
 void NetView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(network_scale.x != 0.0f) {
-    // todo: obsolete conversion -- remove at some point soon!
-    main_xform.scale = network_scale;
-    main_xform.translate = network_pos;
-    main_xform.rotate = network_orient;
-    network_scale = 0.0f;
-  }
 }
 
 void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {

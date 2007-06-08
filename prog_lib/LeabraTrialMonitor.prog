@@ -58,7 +58,7 @@ Program .projects[0].programs.gp[0][7] {
 };
 Program .projects[0].programs.gp[0][7] {
  name="LeabraTrialMonitor";
- desc="monitor trial-level data from the network";
+ desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
  flags=;
  objs {
   name=;
@@ -82,9 +82,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[1] {
      name="epoch";
@@ -98,9 +98,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[2] {
      name="trial";
@@ -114,9 +114,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[3] {
      name="trial_name";
@@ -130,9 +130,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[4] {
      name="group_name";
@@ -146,9 +146,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[5] {
      name="phase_no";
@@ -162,9 +162,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[6] {
      name="cycle";
@@ -178,9 +178,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[7] {
      name="sse";
@@ -194,9 +194,9 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[8] {
      name="ext_rew";
@@ -210,15 +210,20 @@ Program .projects[0].programs.gp[0][7] {
      val_type=VT_FLOAT;
      matrix=0;
      matrix_geom{      };
-     pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
    network=$0$;
    data=.projects[0].data.gp[1][0]$1$;
    rmv_orphan_cols=1;
   };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
  };
  args {
   name=;
@@ -231,7 +236,7 @@ Program .projects[0].programs.gp[0][7] {
    object_val=$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="network to record data from";
   };
  };
  vars {
@@ -245,7 +250,7 @@ Program .projects[0].programs.gp[0][7] {
    object_val=$1$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="data table to record trial-level data to (this program writes new data to this table!)";
   };
   ProgVar @[1] {
    name="trial_netmon";
@@ -253,8 +258,8 @@ Program .projects[0].programs.gp[0][7] {
    object_type=NetMonitor;
    object_val=.projects[0].programs.gp[0][7].objs[0]$2$;
    objs_ptr=1;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   flags=NULL_CHECK;
+   desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
   };
  };
  functions {
@@ -272,7 +277,7 @@ Program .projects[0].programs.gp[0][7] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
-   desc=;
+   desc="set the network and datatable for the NetMonitor";
    flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][7].vars[1]$3$;
@@ -285,6 +290,8 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=DataTable_ptr;
      type="DataTable*";
      name="dt";
+     required=0;
+     def_val=;
      expr {
       expr="trial_mon_data";
       flags=;
@@ -299,6 +306,8 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=Network_ptr;
      type="Network*";
      name="net";
+     required=0;
+     def_val=;
      expr {
       expr="network";
       flags=;
@@ -312,7 +321,7 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
   MethodCall @[1] {
-   desc=;
+   desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
    flags=;
    result_var=NULL;
    obj=$3$;
@@ -325,6 +334,8 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=bool;
      type="bool";
      name="quiet";
+     required=0;
+     def_val="false";
      expr {
       expr="false";
       flags=;
@@ -338,7 +349,7 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
   MethodCall @[2] {
-   desc="update the monitor items and data schema";
+   desc="update the monitor items and data schema based on current settings of the NetMonitor object";
    flags=;
    result_var=NULL;
    obj=$3$;
@@ -351,6 +362,8 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=bool;
      type="bool";
      name="reset_first";
+     required=0;
+     def_val="false";
      expr {
       expr="true";
       flags=;
@@ -381,7 +394,7 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
   MethodCall @[1] {
-   desc="get the new monitor data.";
+   desc="get the new monitor data from the network and other sources -- this does the main work";
    flags=;
    result_var=NULL;
    obj=$3$;
@@ -393,7 +406,7 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
   MethodCall @[2] {
-   desc="update after writing new data to monitor data table";
+   desc="update views and other things after writing new data to monitor data table";
    flags=;
    result_var=NULL;
    obj=$4$;
@@ -405,7 +418,7 @@ Program .projects[0].programs.gp[0][7] {
    };
   };
   MethodCall @[3] {
-   desc="only functional for dmem projects: synchronizes trial data across processes";
+   desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
    flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][7].args[0]$5$;
@@ -418,6 +431,8 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=DataTable_ptr;
      type="DataTable*";
      name="dt";
+     required=1;
+     def_val=;
      expr {
       expr="trial_mon_data";
       flags=;
@@ -432,6 +447,8 @@ Program .projects[0].programs.gp[0][7] {
      arg_type=int;
      type="int";
      name="n_rows";
+     required=0;
+     def_val="1";
      expr {
       expr="1";
       flags=;

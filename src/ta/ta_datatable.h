@@ -491,7 +491,7 @@ TA_SMART_PTRS(DataTableCols); //
     - unless noted, row<0 means access from the end, ex. -1 is last row
 */
 class TA_API DataTable : public DataBlock_Idx {
-  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##EXT_tsv ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST table of data of different types
+  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST table of data of different types
 INHERITED(DataBlock_Idx)
 friend class DataTableCols;
 friend class DataTableModel;
@@ -897,6 +897,8 @@ public:
   // #IGNORE util function to read from stream into str until delim or newline or EOF
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
+
+  // todo: following should have #EXT_tsv as well..
 
   virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);

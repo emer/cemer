@@ -827,7 +827,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[10] { };
 	};
 
-	ProgEl_List @.functions = [1] {
+	Function_List @.functions = [1] {
 	  Function @[0] { 
 	    ProgVar_List @.args = [4] {
 	      ProgVar @[0] { };
@@ -4139,7 +4139,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=EXT;
-	noise {type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
        LayerWriterEl @[1] {
@@ -4149,7 +4149,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=EXT;
-	noise {type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
        LayerWriterEl @[2] {
@@ -4159,7 +4159,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=TARG;
-	noise {type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
        LayerWriterEl @[3] {
@@ -4169,7 +4169,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=;
-	noise {type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
        LayerWriterEl @[4] {
@@ -4179,7 +4179,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=;
-	noise {type=NONE: mean=0: var=0.5: par=1: };
+	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
       };
@@ -4374,9 +4374,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[1] {
 	name="epoch";
@@ -4390,9 +4390,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[2] {
 	name="trial";
@@ -4406,9 +4406,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[3] {
 	name="trial_name";
@@ -4422,9 +4422,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[4] {
 	name="group_name";
@@ -4438,9 +4438,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[5] {
 	name="phase_no";
@@ -4454,9 +4454,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[6] {
 	name="cycle";
@@ -4470,9 +4470,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[7] {
 	name="sse";
@@ -4486,9 +4486,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[8] {
 	name="ext_rew";
@@ -4502,9 +4502,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[9] {
 	name="DA";
@@ -4518,9 +4518,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[10] {
 	name="PVe";
@@ -4534,9 +4534,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[11] {
 	name="PVi";
@@ -4550,9 +4550,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[12] {
 	name="LVe";
@@ -4566,9 +4566,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[13] {
 	name="LVi";
@@ -4582,9 +4582,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[14] {
 	name="absDA";
@@ -4598,9 +4598,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$1$;
@@ -5237,9 +5237,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[1] {
 	name="epoch";
@@ -5253,9 +5253,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[2] {
 	name="avg_sse";
@@ -5269,9 +5269,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[3] {
 	name="cnt_err";
@@ -5285,9 +5285,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[4] {
 	name="avg_ext_rew";
@@ -5301,9 +5301,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[5] {
 	name="avg_cycles";
@@ -5317,9 +5317,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[6] {
 	name="Leabra_cur_lrate";
@@ -5333,9 +5333,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[7] {
 	name="epoch_time_tot";
@@ -5349,9 +5349,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[8] {
 	name="epoch_time_usr";
@@ -5365,9 +5365,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[9] {
 	name="A_da";
@@ -5381,9 +5381,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[10] {
 	name="B_da";
@@ -5397,9 +5397,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[11] {
 	name="C_da";
@@ -5413,9 +5413,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[12] {
 	name="one_da";
@@ -5429,9 +5429,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[13] {
 	name="two_da";
@@ -5445,9 +5445,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[14] {
 	name="X_da";
@@ -5461,9 +5461,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[15] {
 	name="Y_da";
@@ -5477,9 +5477,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[16] {
 	name="Z_da";
@@ -5493,9 +5493,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
-	pre_proc_1 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$1$;
@@ -6950,7 +6950,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
     };
     functions {
      name=;
-     el_typ=ProgEl;
+     el_typ=Function;
      el_def=0;
      Function @[0] {
       desc=;
@@ -7009,7 +7009,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
       fun_code {
        name=;
-       el_typ=ProgEl;
+       el_typ=AddNewDataRow;
        el_def=0;
        AddNewDataRow @[0] {
 	desc=;
@@ -7112,7 +7112,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	};
 	true_code {
 	 name=;
-	 el_typ=ProgEl;
+	 el_typ=SetUnitsLit;
 	 el_def=0;
 	 SetUnitsLit @[0] {
 	  desc=;
@@ -7972,31 +7972,31 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	el_def=0;
 	DataGroupEl @[0] {
 	 col_name="trial_name";
-	 agg {op=GROUP: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
 	DataGroupEl @[1] {
 	 col_name="DA";
-	 agg {op=MEAN: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
 	DataGroupEl @[2] {
 	 col_name="LVe_dav";
-	 agg {op=MEAN: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
 	DataGroupEl @[3] {
 	 col_name="LVe";
-	 agg {op=MEAN: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
 	DataGroupEl @[4] {
 	 col_name="LVi";
-	 agg {op=MEAN: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
 	DataGroupEl @[5] {
 	 col_name="PVe";
-	 agg {op=MEAN: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
 	DataGroupEl @[6] {
 	 col_name="PVi";
-	 agg {op=MEAN: rel={rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="": op=MEAN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	};
        };
       };
@@ -9472,7 +9472,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      opt_thresh {send=0.1: delta=0.005: learn=-1: updt_wts=0: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
-     v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+     v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
      dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
      g_bar {e=1: l=0.1: i=1: h=0.1: a=0.5: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9481,7 +9481,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      act_reg {on=0: min=0.001: max=0.35: wt_dt=0.2: };
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
-     noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+     noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -9603,7 +9603,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	el_typ=LeabraBiasSpec;
 	el_def=0;
        };
-       rnd {type=UNIFORM: mean=0: var=0: par=1: };
+       rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        inhib=0;
        wt_scale {abs=1: rel=1: };
@@ -9615,10 +9615,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=70;
+	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
 	SchedItem @[0] {
 	 start_ctr=0;
 	 start_val=1;
@@ -9647,7 +9647,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        dwt_thresh=0.1;
       };
      };
-     rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      inhib=0;
      wt_scale {abs=1: rel=1: };
@@ -9659,10 +9659,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=70;
+      last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
       SchedItem @[0] {
        start_ctr=0;
        start_val=1;
@@ -9721,7 +9721,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	opt_thresh {send=0.1: delta=0.005: learn=-1: updt_wts=0: phase_dif=0: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=1: range=1: scale=1: };
-	v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+	v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
 	dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: };
 	g_bar {e=1: l=0.1: i=1: h=0.03: a=0.09: };
 	e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9730,7 +9730,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
 	maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
 	noise_type=NO_NOISE;
-	noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+	noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
 	noise_sched {
 	 name=;
 	 el_typ=SchedItem;
@@ -9754,7 +9754,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       opt_thresh {send=0.1: delta=0.005: learn=-1: updt_wts=0: phase_dif=0: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
-      v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
       dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: };
       g_bar {e=1: l=0.1: i=1: h=0.03: a=0.09: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9763,7 +9763,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
-      noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       noise_sched {
        name=;
        el_typ=SchedItem;
@@ -9795,7 +9795,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       opt_thresh {send=0.1: delta=0.005: learn=0.01: updt_wts=1: phase_dif=0: };
       clamp_range {min=-2: max=2: range=4: scale=0.25: };
       vm_range {min=0: max=1: range=1: scale=1: };
-      v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
       dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
       g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9804,7 +9804,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
-      noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       noise_sched {
        name=;
        el_typ=SchedItem;
@@ -9836,7 +9836,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       opt_thresh {send=0.1: delta=0.005: learn=0.01: updt_wts=1: phase_dif=0: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
-      v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
       dt {vm=0.1: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
       g_bar {e=1: l=0.1: i=1: h=1: a=2: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9845,7 +9845,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
-      noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       noise_sched {
        name=;
        el_typ=SchedItem;
@@ -9877,7 +9877,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       opt_thresh {send=0.1: delta=0.005: learn=-1: updt_wts=0: phase_dif=0: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
-      v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
       dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
       g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9886,7 +9886,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
-      noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       noise_sched {
        name=;
        el_typ=SchedItem;
@@ -9919,7 +9919,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       opt_thresh {send=0.1: delta=0.005: learn=0.01: updt_wts=1: phase_dif=0: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
-      v_m_init {type=UNIFORM: mean=0.15: var=0: par=1: };
+      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
       dt {vm=0.1: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
       g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
@@ -9928,7 +9928,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
-      noise {type=GAUSSIAN: mean=0: var=0.001: par=1: };
+      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
       noise_sched {
        name=;
        el_typ=SchedItem;
@@ -9978,7 +9978,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	     el_typ=PVConSpec;
 	     el_def=0;
 	    };
-	    rnd {type=UNIFORM: mean=0.1: var=0: par=1: };
+	    rnd {name="": type=UNIFORM: mean=0.1: var=0: par=1: };
 	    wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	    inhib=0;
 	    wt_scale {abs=1: rel=1: };
@@ -10009,7 +10009,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	    };
 	   };
 	  };
-	  rnd {type=UNIFORM: mean=0.1: var=0: par=1: };
+	  rnd {name="": type=UNIFORM: mean=0.1: var=0: par=1: };
 	  wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	  inhib=0;
 	  wt_scale {abs=1: rel=1: };
@@ -10040,7 +10040,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	  };
 	 };
 	};
-	rnd {type=UNIFORM: mean=0.1: var=0: par=1: };
+	rnd {name="": type=UNIFORM: mean=0.1: var=0: par=1: };
 	wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	inhib=0;
 	wt_scale {abs=1: rel=1: };
@@ -10087,7 +10087,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   el_typ=LeabraBiasSpec;
 	   el_def=0;
 	  };
-	  rnd {type=UNIFORM: mean=0: var=0: par=1: };
+	  rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
 	  wt_limits {type=NONE: min=-1: max=5: sym=0: };
 	  inhib=0;
 	  wt_scale {abs=1: rel=1: };
@@ -10099,10 +10099,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=70;
+	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	   SchedItem @[0] {
 	    start_ctr=0;
 	    start_val=1;
@@ -10139,7 +10139,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   el_typ=MatrixBiasSpec;
 	   el_def=0;
 	  };
-	  rnd {type=UNIFORM: mean=0: var=0: par=1: };
+	  rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
 	  wt_limits {type=NONE: min=-1: max=5: sym=0: };
 	  inhib=0;
 	  wt_scale {abs=1: rel=1: };
@@ -10151,10 +10151,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=70;
+	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	   SchedItem @[0] {
 	    start_ctr=0;
 	    start_val=1;
@@ -10184,7 +10184,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	  learn_rule=MAINT;
 	 };
 	};
-	rnd {type=UNIFORM: mean=0: var=0: par=1: };
+	rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
 	wt_limits {type=NONE: min=-1: max=5: sym=0: };
 	inhib=0;
 	wt_scale {abs=1: rel=1: };
@@ -10196,10 +10196,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=70;
+	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=1;
+	 cur_val=0;
 	 SchedItem @[0] {
 	  start_ctr=0;
 	  start_val=1;
@@ -10244,7 +10244,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   el_typ=LeabraConSpec;
 	   el_def=0;
 	  };
-	  rnd {type=UNIFORM: mean=0.5: var=0: par=1: };
+	  rnd {name="": type=UNIFORM: mean=0.5: var=0: par=1: };
 	  wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
 	  inhib=0;
 	  wt_scale {abs=1: rel=0.1: };
@@ -10295,7 +10295,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   el_typ=LeabraBiasSpec;
 	   el_def=0;
 	  };
-	  rnd {type=UNIFORM: mean=0: var=0: par=1: };
+	  rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
 	  wt_limits {type=NONE: min=-1: max=5: sym=0: };
 	  inhib=0;
 	  wt_scale {abs=1: rel=1: };
@@ -10307,10 +10307,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=70;
+	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	   SchedItem @[0] {
 	    start_ctr=0;
 	    start_val=1;
@@ -10339,7 +10339,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	  dwt_thresh=0.1;
 	 };
 	};
-	rnd {type=UNIFORM: mean=0.5: var=0: par=1: };
+	rnd {name="": type=UNIFORM: mean=0.5: var=0: par=1: };
 	wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
 	inhib=0;
 	wt_scale {abs=1: rel=1: };
@@ -10351,10 +10351,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=70;
+	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=1;
+	 cur_val=0;
 	 SchedItem @[0] {
 	  start_ctr=0;
 	  start_val=1;
@@ -10398,7 +10398,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   el_typ=MatrixConSpec;
 	   el_def=0;
 	  };
-	  rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: };
+	  rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
 	  wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	  inhib=0;
 	  wt_scale {abs=1: rel=0.2: };
@@ -10410,10 +10410,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=70;
+	   last_ctr=-1;
 	   default_val=1;
 	   interpolate=0;
-	   cur_val=1;
+	   cur_val=0;
 	   SchedItem @[0] {
 	    start_ctr=0;
 	    start_val=1;
@@ -10442,7 +10442,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	  learn_rule=MAINT;
 	 };
 	};
-	rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: };
+	rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
 	wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	inhib=0;
 	wt_scale {abs=1: rel=1: };
@@ -10454,10 +10454,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=70;
+	 last_ctr=-1;
 	 default_val=1;
 	 interpolate=0;
-	 cur_val=1;
+	 cur_val=0;
 	 SchedItem @[0] {
 	  start_ctr=0;
 	  start_val=1;
@@ -10486,7 +10486,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	learn_rule=MAINT;
        };
       };
-      rnd {type=UNIFORM: mean=0.5: var=0.25: par=1: };
+      rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
       wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
       inhib=0;
       wt_scale {abs=1: rel=1: };
@@ -10498,10 +10498,10 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        name=;
        el_typ=SchedItem;
        el_def=0;
-       last_ctr=70;
+       last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=1;
+       cur_val=0;
        SchedItem @[0] {
 	start_ctr=0;
 	start_val=1;
@@ -10537,7 +10537,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        el_typ=MarkerConSpec;
        el_def=0;
       };
-      rnd {type=UNIFORM: mean=0: var=0: par=1: };
+      rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
       wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
       inhib=0;
       wt_scale {abs=1: rel=0: };
@@ -10552,7 +10552,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=1;
+       cur_val=0;
       };
       lmix {hebb=0.001: err=0.999: err_sb=1: };
       savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -10576,7 +10576,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        el_typ=LeabraConSpec;
        el_def=0;
       };
-      rnd {type=UNIFORM: mean=0.9: var=0: par=1: };
+      rnd {name="": type=UNIFORM: mean=0.9: var=0: par=1: };
       wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
       inhib=0;
       wt_scale {abs=1: rel=0.1: };
@@ -10591,7 +10591,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        last_ctr=-1;
        default_val=1;
        interpolate=0;
-       cur_val=1;
+       cur_val=0;
       };
       lmix {hebb=0.001: err=0.999: err_sb=1: };
       savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -10637,7 +10637,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      scalar {rep=LOCALIST: un_width=0.3: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
       val_range {min=0: max=1: range=1: scale=1: };
@@ -10672,7 +10672,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      scalar {rep=LOCALIST: un_width=0.3: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };
@@ -10712,7 +10712,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	 tol=0.1;
 	 abs_lrate=0.05;
 	};
-	scalar {rep=LOCALIST: un_width=0.3: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+	scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
 	unit_range {min=0: max=1: range=1: scale=1: };
 	bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
 	val_range {min=0: max=1: range=1: scale=1: };
@@ -10744,7 +10744,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	 tol=0.1;
 	 abs_lrate=0.05;
 	};
-	scalar {rep=LOCALIST: un_width=0.3: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+	scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
 	unit_range {min=0: max=1: range=1: scale=1: };
 	bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
 	val_range {min=0: max=1: range=1: scale=1: };
@@ -10768,7 +10768,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      scalar {rep=LOCALIST: un_width=0.3: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };

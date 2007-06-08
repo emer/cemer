@@ -157,11 +157,6 @@ public:
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		manip_ctrl_on;	// #DEF_true display the manipulation controls on objects for positioning etc
 
-  // todo: remove -- obsolete (replaced with main_xform on main guy):
-  FloatTDCoord	table_pos;	// #NO_SAVE #HIDDEN obsolete! position of table in view
-  FloatTDCoord	table_scale;	// #NO_SAVE #HIDDEN obsolete! scaling factors of table in view
-  FloatRotation	table_orient;	// #NO_SAVE #HIDDEN obsolete! orientation of table in view
-  
   virtual const String	caption() const; // what to show in viewer
 
   DataTable*		dataTable() const {return (DataTable*)data();}

@@ -4,18 +4,28 @@ Program .projects[0].programs.gp[0][1] {
     RndSeed @[0] { };
   };
 
+  ProgType_List @.types = [1] {
+    DynEnumType @[0] { 
+      DynEnumItem_List @.enums = [2] {
+	DynEnumItem @[0] { };
+	DynEnumItem @[1] { };
+      };
+    };
+  };
+
   ProgVar_List @.args = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [6] {
+  ProgVar_List @.vars = [7] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
     ProgVar @[5] { };
+    ProgVar @[6] { };
   };
 
   ProgEl_List @.init_code = [5] {
@@ -26,7 +36,15 @@ Program .projects[0].programs.gp[0][1] {
     };
     AssignExpr @[1] { };
     NetCounterInit @[2] { };
-    MethodCall @[3] { };
+    IfElse @[3] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+
+      ProgEl_List @.false_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
     MethodCall @[4] { };
   };
 
@@ -38,7 +56,7 @@ Program .projects[0].programs.gp[0][1] {
       };
     };
     NetCounterInit @[2] { };
-    UserScript @[3] { };
+    MemberAssign @[3] { };
     MethodCall @[4] { };
     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [3] {
@@ -69,6 +87,31 @@ Program .projects[0].programs.gp[0][1] {
    mti=156;
   };
  };
+ types {
+  name=;
+  el_typ=DynEnumType;
+  el_def=0;
+  DynEnumType @[0] {
+   name="RndInitType";
+   desc=;
+   enums {
+    name=;
+    el_typ=DynEnumItem;
+    el_def=0;
+    DynEnumItem @[0] {
+     name="OLD_SEED";
+     value=0;
+     desc="use stored random seed value (recreates same sequence every time)";
+    };
+    DynEnumItem @[1] {
+     name="NEW_SEED";
+     value=1;
+     desc="generate new random seed (new sequence of random numbers)";
+    };
+   };
+   bits=0;
+  };
+ };
  args {
   name=;
   el_typ=ProgVar;
@@ -80,7 +123,7 @@ Program .projects[0].programs.gp[0][1] {
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="network to train";
   };
   ProgVar @[1] {
    name="input_data";
@@ -89,7 +132,7 @@ Program .projects[0].programs.gp[0][1] {
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="datatable with training patterns";
   };
  };
  vars {
@@ -102,7 +145,7 @@ Program .projects[0].programs.gp[0][1] {
    int_val=500;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="maximum number of epochs to run";
   };
   ProgVar @[1] {
    name="train_mode";
@@ -111,41 +154,53 @@ Program .projects[0].programs.gp[0][1] {
    hard_enum_type=Network::TrainMode;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
   };
   ProgVar @[2] {
+   name="rnd_init";
+   var_type=T_DynEnum;
+   dyn_enum_val {
+    enum_type=.projects[0].programs.gp[0][1].types[0]$2$;
+    value=0;
+   };
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="how to initialize the random numbers when the Init button is pressed";
+  };
+  ProgVar @[3] {
    name="epoch";
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="current epoch -- local copy, which is used to update network's epoch counter";
   };
-  ProgVar @[3] {
+  ProgVar @[4] {
    name="err_stopcrit";
    var_type=T_Real;
    real_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
+goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
   };
-  ProgVar @[4] {
+  ProgVar @[5] {
    name="rnd_seed";
    var_type=T_Object;
    object_type=RndSeed;
-   object_val=.projects[0].programs.gp[0][1].objs[0]$2$;
+   object_val=.projects[0].programs.gp[0][1].objs[0]$3$;
    objs_ptr=1;
    flags=NULL_CHECK;
-   desc=;
+   desc="random seed that is used at start of training -- if OldSeed is called";
   };
-  ProgVar @[5] {
+  ProgVar @[6] {
    name="train_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].train_time$3$;
+   object_val=.projects[0].networks[0].train_time$4$;
    objs_ptr=0;
    flags=NULL_CHECK;
-   desc=;
+   desc="records time used to train network (object lives on network -- this is a pointer to it)";
   };
  };
  functions {
@@ -163,19 +218,21 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
-   desc=;
+   desc="check network to make sure it is ready to be run";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][1].args[0]$4$;
+   obj=.projects[0].programs.gp[0][1].args[0]$5$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=NULL;
+     arg_type=bool;
      type="bool";
      name="quiet";
+     required=0;
+     def_val="false";
      expr {
       expr="false";
       flags=;
@@ -189,9 +246,9 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   AssignExpr @[1] {
-   desc=;
+   desc="get our pointer to the network training time object";
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[5]$5$;
+   result_var=.projects[0].programs.gp[0][1].vars[6]$6$;
    expr {
     expr="network.train_time";
     flags=;
@@ -205,27 +262,62 @@ Program .projects[0].programs.gp[0][1] {
   NetCounterInit @[2] {
    desc="initialize epoch counter ";
    flags=;
-   network_var=$4$;
-   local_ctr_var=.projects[0].programs.gp[0][1].vars[2]$6$;
+   network_var=$5$;
+   local_ctr_var=.projects[0].programs.gp[0][1].vars[3]$7$;
    counter=Network::epoch;
   };
-  MethodCall @[3] {
-   desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
+  IfElse @[3] {
+   desc="initialize random seed (either old or new)";
    flags=;
-   result_var=NULL;
-   obj=.projects[0].programs.gp[0][1].vars[4]$7$;
-   method=RndSeed::OldSeed;
-   meth_args {
+   cond {
+    expr="rnd_init == OLD_SEED";
+    flags=;
+    var_expr="$#0#$ == OLD_SEED";
+    vars {
+    };
+    var_names{ rnd_init;    };
+    bad_vars{     };
+   };
+   true_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="restore previous random seed (all runs produce same results)";
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs.gp[0][1].vars[5]$8$;
+     method=RndSeed::OldSeed;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="new random numbers each time";
+     flags=;
+     result_var=NULL;
+     obj=$8$;
+     method=RndSeed::NewSeed;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
    };
   };
   MethodCall @[4] {
    desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
    flags=;
    result_var=NULL;
-   obj=$4$;
+   obj=$5$;
    method=Network::Init_Weights;
    meth_args {
     name=;
@@ -239,9 +331,9 @@ Program .projects[0].programs.gp[0][1] {
   el_typ=MethodCall;
   el_def=0;
   AssignExpr @[0] {
-   desc=;
+   desc="get our pointer to the network training time object";
    flags=;
-   result_var=$5$;
+   result_var=$6$;
    expr {
     expr="network.train_time";
     flags=;
@@ -253,10 +345,10 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   MethodCall @[1] {
-   desc="keeps track of how long it takes to run entire training run";
+   desc="start timer to keep track of how long it takes to run entire training run";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$6$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -266,6 +358,8 @@ Program .projects[0].programs.gp[0][1] {
      arg_type=bool;
      type="bool";
      name="reset_used";
+     required=0;
+     def_val="true";
      expr {
       expr="true";
       flags=;
@@ -279,30 +373,33 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   NetCounterInit @[2] {
-   desc="initialize epoch counter ";
+   desc="initialize epoch counter (both our local copy and network's epoch counter)";
    flags=;
-   network_var=$4$;
-   local_ctr_var=$6$;
+   network_var=$5$;
+   local_ctr_var=$7$;
    counter=Network::epoch;
   };
-  UserScript @[3] {
-   desc="update network's train mode to be same as ours";
+  MemberAssign @[3] {
+   desc="set network's training mode to our local value";
    flags=;
-   script {
-    expr="network.train_mode = train_mode;";
-    flags=NO_VAR_ERRS;
-    var_expr="$#0#$.train_mode = $#1#$;";
+   obj=$5$;
+   path="train_mode";
+   expr {
+    expr="train_mode";
+    flags=;
+    var_expr="$#0#$";
     vars {
     };
-    var_names{ network;train_mode;    };
+    var_names{ train_mode;    };
     bad_vars{     };
    };
+   update_after=0;
   };
   MethodCall @[4] {
    desc="initialize network weights: could also load pre-set weights or something else here";
    flags=;
    result_var=NULL;
-   obj=$4$;
+   obj=$5$;
    method=Network::Init_Weights;
    meth_args {
     name=;
@@ -311,16 +408,16 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   WhileLoop @[5] {
-   desc=;
+   desc="main loop over epochs of training";
    flags=;
    loop_code {
     name=;
     el_typ=ProgramCall;
     el_def=0;
     ProgramCall @[0] {
-     desc=;
+     desc="run the epoch program (one epoch), passes our network and input_data";
      flags=;
-     target=.projects[0].programs.gp[0][2]$8$;
+     target=.projects[0].programs.gp[0][2]$9$;
      targ_ld_init="*LeabraEpoch*";
      call_init=0;
      prog_args {
@@ -331,6 +428,8 @@ Program .projects[0].programs.gp[0][1] {
        arg_type=LeabraNetwork;
        type="LeabraNetwork*";
        name="network";
+       required=1;
+       def_val=;
        expr {
 	expr="network";
 	flags=;
@@ -345,6 +444,8 @@ Program .projects[0].programs.gp[0][1] {
        arg_type=DataTable;
        type="DataTable*";
        name="input_data";
+       required=1;
+       def_val=;
        expr {
 	expr="input_data";
 	flags=;
@@ -358,14 +459,14 @@ Program .projects[0].programs.gp[0][1] {
      };
     };
     NetCounterIncr @[1] {
-     desc="increment the epoch counter";
+     desc="increment the epoch counter (locally and on network)";
      flags=;
-     network_var=$4$;
-     local_ctr_var=$6$;
+     network_var=$5$;
+     local_ctr_var=$7$;
      counter=Network::epoch;
     };
     IfBreak @[2] {
-     desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
+     desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
      flags=;
      cond {
       expr="network.cnt_err <= err_stopcrit";
@@ -389,10 +490,10 @@ Program .projects[0].programs.gp[0][1] {
    };
   };
   MethodCall @[6] {
-   desc=;
+   desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$6$;
    method=TimeUsed::EndTimer;
    meth_args {
     name=;

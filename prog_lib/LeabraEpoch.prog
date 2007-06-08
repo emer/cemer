@@ -48,12 +48,12 @@ Program .projects[0].programs.gp[0][2] {
       };
     };
     MethodCall @[6] { };
-    MethodCall @[7] { };
-    ProgramCall @[8] { 
+    ProgramCall @[7] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
+    MethodCall @[8] { };
   };
 };
 Program .projects[0].programs.gp[0][2] {
@@ -81,7 +81,7 @@ Program .projects[0].programs.gp[0][2] {
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="network to operate on";
   };
   ProgVar @[1] {
    name="input_data";
@@ -104,7 +104,8 @@ Program .projects[0].programs.gp[0][2] {
    hard_enum_type=DataLoop::Order;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc="controls the order in which events (rows of the input data datatable) are presented to the network";
+   desc="controls the order in which events (rows of the input data datatable) are presented to the network
+(SEQUENTIAL, PERMUTED, RANDOM)";
   };
   ProgVar @[1] {
    name="trial";
@@ -130,7 +131,7 @@ Program .projects[0].programs.gp[0][2] {
    object_val=.projects[0].networks[0].epoch_time$3$;
    objs_ptr=0;
    flags=NULL_CHECK;
-   desc=;
+   desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
   };
   ProgVar @[4] {
    name="data_loop_index";
@@ -138,7 +139,7 @@ Program .projects[0].programs.gp[0][2] {
    int_val=0;
    objs_ptr=0;
    flags=NULL_CHECK;
-   desc=;
+   desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
   };
  };
  functions {
@@ -156,14 +157,14 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=NetCounterInit;
   el_def=0;
   NetCounterInit @[0] {
-   desc="initialize trial counter: note also needs to do this in regular running program";
+   desc="initialize trial counter (local variable and in the network)";
    flags=;
    network_var=.projects[0].programs.gp[0][2].args[0]$4$;
    local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$5$;
    counter=Network::trial;
   };
   AssignExpr @[1] {
-   desc=;
+   desc="get pointer to epoch timer object on network";
    flags=;
    result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
    expr {
@@ -182,14 +183,14 @@ Program .projects[0].programs.gp[0][2] {
   el_typ=NetCounterInit;
   el_def=0;
   NetCounterInit @[0] {
-   desc="initialize trial counter";
+   desc="initialize trial counter (local variable and in the network)";
    flags=;
    network_var=$4$;
    local_ctr_var=$5$;
    counter=Network::trial;
   };
   AssignExpr @[1] {
-   desc=;
+   desc="get pointer to epoch timer object on network";
    flags=;
    result_var=$6$;
    expr {
@@ -203,7 +204,7 @@ Program .projects[0].programs.gp[0][2] {
    };
   };
   MethodCall @[2] {
-   desc=;
+   desc="start the epoch timer to record computation time per epoch";
    flags=;
    result_var=NULL;
    obj=$6$;
@@ -231,7 +232,7 @@ Program .projects[0].programs.gp[0][2] {
    };
   };
   MethodCall @[3] {
-   desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn OFF if not wanted)";
+   desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
    flags=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][2].vars[2]$7$;
@@ -243,14 +244,14 @@ Program .projects[0].programs.gp[0][2] {
    };
   };
   NetDataLoop @[4] {
-   desc="iterates over the events/rows of input_data";
+   desc="iterates over the events/rows of input_data, according to data_loop_order variable";
    flags=;
    loop_code {
     name=;
     el_typ=ProgramCall;
     el_def=0;
     ProgramCall @[0] {
-     desc=;
+     desc="run the trial program, passing network and input_data";
      flags=;
      target=.projects[0].programs.gp[0][3]$8$;
      targ_ld_init="*LeabraTrial*";
@@ -310,7 +311,7 @@ Program .projects[0].programs.gp[0][2] {
       el_typ=MethodCall;
       el_def=0;
       MethodCall @[0] {
-       desc=;
+       desc="update the weight values based on changes computed by trial program";
        flags=;
        result_var=NULL;
        obj=$4$;
@@ -333,7 +334,7 @@ Program .projects[0].programs.gp[0][2] {
    index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
    order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
-   item_idx_list{ 5;4;2;1;0;3;   };
+   item_idx_list{ 1;3;2;5;0;4;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };
@@ -354,7 +355,7 @@ Program .projects[0].programs.gp[0][2] {
     el_typ=ProgEl;
     el_def=0;
     MethodCall @[0] {
-     desc=;
+     desc="final update of weights based on accumulated changes";
      flags=;
      result_var=NULL;
      obj=$4$;
@@ -373,7 +374,7 @@ Program .projects[0].programs.gp[0][2] {
    };
   };
   MethodCall @[6] {
-   desc=;
+   desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
    flags=;
    result_var=NULL;
    obj=$4$;
@@ -384,20 +385,8 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  MethodCall @[7] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   obj=$6$;
-   method=TimeUsed::EndTimer;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-   };
-  };
-  ProgramCall @[8] {
-   desc=;
+  ProgramCall @[7] {
+   desc="run program that records data from network and possibly other sources about the epoch";
    flags=;
    target=.projects[0].programs.gp[0][8]$12$;
    targ_ld_init="*LeabraEpochMonitor*";
@@ -422,6 +411,18 @@ Program .projects[0].programs.gp[0][2] {
       bad_vars{       };
      };
     };
+   };
+  };
+  MethodCall @[8] {
+   desc="done with the computation in the epoch -- record time it took";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=TimeUsed::EndTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
    };
   };
  };

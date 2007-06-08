@@ -22,6 +22,11 @@ Program .projects[0].programs.gp[0][5] {
   el_typ=taOBase;
   el_def=0;
  };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
  args {
   name=;
   el_typ=ProgVar;
@@ -46,7 +51,7 @@ Program .projects[0].programs.gp[0][5] {
    bool_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
+   desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
   };
  };
  functions {
@@ -81,7 +86,7 @@ Program .projects[0].programs.gp[0][5] {
    };
   };
   NetUpdateView @[1] {
-   desc=;
+   desc="update network views if update_net_view == true";
    flags=;
    network_var=$1$;
    update_var=.projects[0].programs.gp[0][5].vars[0]$2$;

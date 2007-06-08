@@ -2,8 +2,6 @@ leabra todo list:
 
 commit:
 
-* ForLoop auto i var; Join fixed!; NULL ProgEl crashes fixed; taNBase name fixed
-
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??

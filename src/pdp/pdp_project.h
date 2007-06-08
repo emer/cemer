@@ -81,7 +81,7 @@ public:
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_spec (if net == NULL, new network is created)
 
   virtual void	StdInputData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
-  // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences 
+  // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also calls StdOutputData to create monitor output data
   virtual void	UpdateInputDataFmNet(Network* net, DataTable* data_table);
   // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network 
   virtual void	StdOutputData();
