@@ -1383,10 +1383,12 @@ public:
   iDataPanel*		curPanel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
   void			set_cur_panel_id(int cpi);
   override void		setTabView(iTabView* tv); // set for kids too
+  void			setPanelAvailable(iDataPanel* pn); // dynamically show/hide a btn/pn
 
   void			SetMenu(QWidget* menu); // sets the menu (s/b a menubar; or toolbar on mac)
   void			AddSubPanel(iDataPanelFrame* pn);
   void			AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
+  void			AddSubPanelDynamic(iDataPanelFrame* pn); // call this after fully built to dynamically add a new frame
   void			SetMethodBox(QWidget* meths); // sets a box that contains methods, on bottom
 
   override void		Closing(CancelOp& cancel_op);
@@ -1412,6 +1414,9 @@ public slots:
 protected:
   void			removeChild(QObject* obj);
   override void		OnWindowBind_impl(iTabViewer* itv);
+  void 			AddMinibar();
+  void 			AddMinibarCtrls();
+  void			AddMinibarCtrl(iDataPanelFrame* pn);
 };
 
 //////////////////////////

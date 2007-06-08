@@ -5021,6 +5021,10 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   layButtons = new QHBoxLayout(frmButtons);
   layButtons->setMargin(2);
   layButtons->setSpacing(taiM->hspc_c);
+  // note: because we can add btns dynamically, we insert them, so put final
+  // spacing here
+  layButtons->addSpacing(3); // in case of minibar
+  layButtons->addStretch(); // before mb
   layDetail->addWidget(frmButtons);
   buttons = new QButtonGroup(frmButtons); // note: not a widget, not visible
   buttons->setExclusive(true); // this is the default anyway
@@ -5047,47 +5051,78 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   QToolButton* but = new QToolButton(frmButtons);
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
+  // first visible button should be down
   if (id == 0) but->setDown(true); // first button should be down
   but->setToggleButton(true);
   but->setText(pn->panel_type());
   buttons->addButton(but, id);
-  layButtons->addWidget(but);
+  // layout position is same as button (no preceding layouts/wids)
+  layButtons->insertWidget(id, but);
   but->show();
   pn->AddedToPanelSet();
   iTabViewer* itv = tabViewerWin();
   if (itv) pn->OnWindowBind(itv);
 }
+
+void iDataPanelSet::AddSubPanelDynamic(iDataPanelFrame* pn) {
+  AddSubPanel(pn);
+  // ok, now the tricky part -- esp if we have a minibar but others didn't
+  if (pn->minibarCtrls()) {
+    if (layMinibar) { 
+      // already created, so just add in our ctrl or dummy
+      AddMinibarCtrl(pn);
+    } else {
+      // none, so need to make the whole bar and add all dummies
+      AllSubPanelsAdded();
+    }
+  } else { // no mb for us, but add dummy if we had one
+    if (layMinibar) {
+      AddMinibarCtrl(pn); // we know we don't have one, but routine just does dummy
+    }
+  }
+}
+
+void iDataPanelSet::AddMinibar() {
+  QFrame* fr = new QFrame(frmButtons);
+  fr->setFrameStyle(QFrame::VLine | QFrame::Sunken);
+  int idx = layButtons->count() - 2; // insert before stretch
+  layButtons->insertWidget(idx, fr);
+  layMinibar = new QStackedLayout;
+  layButtons->addLayout(layMinibar);
+}
+
+void iDataPanelSet::AddMinibarCtrl(iDataPanelFrame* pn) {
+  QWidget* ctrl = (pn) ? pn->minibarCtrls() : NULL;
+  // note: easiest is just to create a null widg for missing guys
+  if (ctrl) {
+    ctrl->setParent(frmButtons);
+  } else {
+    ctrl = new QWidget(frmButtons);
+  }
+  layMinibar->addWidget(ctrl); // no final spacing etc. so same whether static or dyn
+}
+
+void iDataPanelSet::AddMinibarCtrls() {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanelFrame* pn = qobject_cast<iDataPanelFrame*>(panels.FastEl(i));
+    AddMinibarCtrl(pn);
+  }
+}
+
 void iDataPanelSet::AllSubPanelsAdded() {
+  // note: called after all static panels added, and if
+  // we add a dynamic that needs minibar and not made yet
   // check if any need the minibar, if yes, initialize it and break
   for (int i = 0; i < panels.size; ++i) {
     iDataPanelFrame* pn = qobject_cast<iDataPanelFrame*>(panels.FastEl(i));
     if (!pn) continue; // should always be
     if (pn->minibarCtrls()) {
-      layButtons->addSpacing(3);
-      QFrame* fr = new QFrame(frmButtons);
-      fr->setFrameStyle(QFrame::VLine | QFrame::Sunken);
-      layButtons->addWidget(fr);
-      layButtons->addStretch();
-      layMinibar = new QStackedLayout;
-      layButtons->addLayout(layMinibar);
+      AddMinibar();
       break;
     };
   }
   if (layMinibar) {
-    for (int i = 0; i < panels.size; ++i) {
-      iDataPanelFrame* pn = qobject_cast<iDataPanelFrame*>(panels.FastEl(i));
-      // note: should always be 
-      QWidget* ctrl = (pn) ? pn->minibarCtrls() : NULL;
-      // note: easiest is just to create a null widg for missing guys
-      if (ctrl) {
-        ctrl->setParent(frmButtons);
-      } else {
-        ctrl = new QWidget(frmButtons);
-      }
-      layMinibar->addWidget(ctrl);
-    }
-  } else {
-    layButtons->addStretch();
+    AddMinibarCtrls();
   }
 }
 
@@ -5193,6 +5228,9 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
     layMinibar->setCurrentIndex(cpi);
   }
   //TODO: maybe something to change tab color
+}
+
+void iDataPanelSet::setPanelAvailable(iDataPanel* pn) {
 }
 
 void iDataPanelSet::setTabView(iTabView* value) {
