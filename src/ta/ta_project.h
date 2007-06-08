@@ -33,8 +33,62 @@
   #include "ta_seledit.h"
 #endif
 
+class taDoc;
+class taWizard;
 class taProject;
 class taRootBase;
+
+class TA_API taDoc : public taNBase {
+  // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Docs document for providing information on projects and other objects
+INHERITED(taNBase)
+public:
+  bool			auto_open;	// open this document upon startup
+  //note: a specialized taEdit is used to show this guy
+  String		text; // #NO_SHOW the text of the document (in html format)
+
+  override String 	GetTypeDecoKey() const { return "Doc"; }
+
+  TA_BASEFUNS(taDoc);
+protected:
+  static const String	init_text; // ##IGNORE initial text
+private:
+  SIMPLE_COPY(taDoc);
+  void 	Initialize();
+  void 	Destroy() { }
+};
+TA_SMART_PTRS(taDoc);
+
+class TA_API UserData_DocLink: public UserDataItemBase {
+  // a link to a doc -- when added to the userdata of an obj, will auto display the doc
+INHERITED(UserDataItemBase)
+public:
+  taDocRef		doc; // the doc
+  
+/*  override bool		isSimple() const {return true;}
+  override const Variant valueAsVariant() const {return doc;}
+  override bool		setValueAsVariant(const Variant& v) {value = v; return true;}*/
+  
+//  override String	GetDesc() const {return desc;}
+  TA_BASEFUNS(UserData_DocLink)
+private:
+  void Copy_(const UserData_DocLink& cp){doc = cp.doc;}
+  void Initialize() {}
+  void Destroy() {}
+};
+
+class TA_API Doc_Group : public taGroup<taDoc> {
+  // ##CAT_Docs group of doc objects
+INHERITED(taGroup<taDoc>)
+public:
+  virtual void		AutoEdit();
+
+  override String 	GetTypeDecoKey() const { return "Doc"; }
+  TA_BASEFUNS(Doc_Group);
+private:
+  NOCOPY(Doc_Group)
+  void	Initialize() 		{ SetBaseType(&TA_taDoc); }
+  void 	Destroy()		{ };
+};
 
 class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Wizard wizard for automating construction of simulation objects
@@ -43,9 +97,6 @@ public:
   bool		auto_open;	// open this wizard upon startup
 
   override String 	GetTypeDecoKey() const { return "Wizard"; }
-
-  void 	InitLinks();
-  void	CutLinks(); 
   TA_BASEFUNS(taWizard);
 private:
   SIMPLE_COPY(taWizard);
@@ -57,7 +108,7 @@ class TA_API Wizard_Group : public taGroup<taWizard> {
   // ##CAT_Wizard group of wizard objects
 INHERITED(taGroup<taWizard>)
 public:
-  virtual void	AutoEdit();
+  virtual void		AutoEdit();
 
   override String 	GetTypeDecoKey() const { return "Wizard"; }
 
@@ -88,6 +139,7 @@ class TA_API taProject : public taFBase {
 INHERITED(taFBase)
 public:
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
+  Doc_Group		docs; // documents, typically linked to other objects
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects
   SelectEdit_Group	edits;	// special edit dialogs for selected elements
   DataTable_Group	data;	// data, such as patterns for network input

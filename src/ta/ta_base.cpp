@@ -21,7 +21,7 @@
 #include "ta_dump.h"
 #include "ta_filer.h"
 #include "ta_group.h"
-#include "ta_project.h" // for taRootBase
+#include "ta_project.h" // for taRootBase, Doclinks
 #include "ta_TA_type.h"
 #include "ta_seledit.h"
 
@@ -1600,6 +1600,53 @@ const Variant taBase::GetUserData(const String& name) const {
   return _nilVariant;
 }
 
+UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
+  const String& key, bool force_create) 
+{
+  if (!typ) return NULL;
+  typ = typ->GetNonPtrType();
+  // need to verify, in case we have to create
+  if (!typ->InheritsFrom(&TA_UserDataItemBase)) return NULL;
+  UserDataItem_List* ud = GetUserDataList(force_create);
+  if (!ud) return NULL;
+  UserDataItemBase* rval = NULL; 
+  for (int i = 0; i < ud->size; ++i) {
+    UserDataItemBase* udi = ud->FastEl(i);
+    if (udi->name != key) continue;
+    if (udi->InheritsFrom(typ)) {
+      rval = udi;
+      break;
+    }
+  }
+  if (!rval && force_create) {
+    rval = (UserDataItemBase*)ud->New(1, typ);
+    rval->name = key;
+  }
+  return rval;
+}
+
+UserDataItemBase* taBase::GetUserDataOfTypeC(TypeDef* typ,
+  const String& key) const
+{
+  return const_cast<taBase*>(this)->GetUserDataOfType(typ,
+    key, false);
+}
+
+taDoc* taBase::GetDocLink() const {
+  UserData_DocLink* uddl = (UserData_DocLink*)GetUserDataOfTypeC(
+    &TA_UserData_DocLink, "DocLink");
+  if (!uddl) return NULL;
+  return uddl->doc;
+}
+ 
+void taBase::SetDocLink(taDoc* doc) {
+  UserData_DocLink* uddl = (UserData_DocLink*)GetUserDataOfType(
+    &TA_UserData_DocLink, "DocLink", true);
+  if (TestError((!uddl), "SetDocLink", "Could not set DocLink -- the object may not support UserData")) return;
+  uddl->doc = doc;
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void taBase::SetUserData(const String& name, const Variant& value) {
   UserDataItem_List* ud = GetUserDataList(true);
 #ifdef DEBUG
@@ -2225,14 +2272,13 @@ void taOBase::Copy_(const taOBase& cp) {
   }
 }
 
-UserDataItem_List* taOBase::GetUserDataList(bool fc) const { 
-  if (!user_data_ && fc) {
+UserDataItem_List* taOBase::GetUserDataList(bool force) const { 
+  if (!user_data_ && force) {
     user_data_ = new UserDataItem_List; 
     taBase::Own(user_data_, const_cast<taOBase*>(this));
   } 
   return user_data_;
 }
-
 
 
 //////////////////////////

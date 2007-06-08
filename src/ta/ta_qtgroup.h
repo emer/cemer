@@ -25,6 +25,9 @@
 #include "ta_qtdialog.h"
 #include "ta_group.h"
 
+// externals
+class taDoc; //
+
 //////////////////////////
 // 	Edit Buttons	//
 //////////////////////////
@@ -517,6 +520,34 @@ protected slots:
   virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
   virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
 };
+
+//////////////////////////////////
+//  DocEditDataHost		//
+//////////////////////////////////
+
+class TA_API DocEditDataHost: public taiEditDataHost {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(taiEditDataHost)
+public:
+  QTabWidget*		widDocs; // out widg for docs
+  iTextBrowser*		  tbrDoc; // r/o Doc tab
+  QTextEdit*		  tedHtml; // r/w Html tab
+    
+  taDoc*		doc() const; // just returns cast of base
+  
+  DocEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
+  	bool modal_ = false, QObject* parent = 0);
+  DocEditDataHost() {init();} // just for instance
+  ~DocEditDataHost() {}
+protected:
+  override void 	Constr_Box(); // add the docs box
+  override void 	GetValue_Membs();
+  override void 	GetImage_Membs();
+private:
+  void init();
+};
+
+
 
 #endif // ta_group_iv.h
 

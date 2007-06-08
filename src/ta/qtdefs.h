@@ -66,7 +66,7 @@ class	QGroupBox;		// #IGNORE
 class	QHBox;			// #IGNORE 
 class	QHBoxLayout;		// #IGNORE 
 class	Q3HButtonGroup;		// #IGNORE 
-class	Q3Header;		// #IGNORE 
+//nuke class	Q3Header;		// #IGNORE 
 class	QHostAddress;		// #IGNORE
 class	QIcon;			// #IGNORE
 class	QImage;			// #IGNORE

@@ -1198,7 +1198,7 @@ double taMath_double::vec_norm_len(double_Matrix* vec, double len) {
 double taMath_double::vec_norm_sum(double_Matrix* vec, double sum, double min_val) {
   if(vec->size == 0)	return 0.0;
   double act_sum = 0.0;
-  int min_idx;
+//notused  int min_idx;
   for(int i=0;i<vec->size;i++)
     act_sum += (vec->FastEl_Flat(i) - min_val);
   double scale = (sum / act_sum);
@@ -2455,7 +2455,7 @@ float taMath_float::vec_norm_len(float_Matrix* vec, float len) {
 float taMath_float::vec_norm_sum(float_Matrix* vec, float sum, float min_val) {
   if(vec->size == 0)	return 0.0;
   float act_sum = 0.0;
-  int min_idx;
+//notused  int min_idx;
   for(int i=0;i<vec->size;i++)
     act_sum += (vec->FastEl_Flat(i) - min_val);
   float scale = (sum / act_sum);

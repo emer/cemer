@@ -23,12 +23,12 @@
 #include "ta_qttype.h"
 #include "ta_seledit.h"
 #include "ta_dmem.h"
+#include "ta_project.h" // for taDoc
 
 #include "css_ta.h"
 
 #include <qapplication.h>
 #include <qframe.h>
-#include <Q3Header>
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmenudata.h>
@@ -36,12 +36,13 @@
 #include <Q3VBox>
 #include <QScrollArea> // for gpiGroupDialog
 #include <QSplitter>
+#include <QTextEdit>
 #include <qtooltip.h>
-#include <Q3Table>
 
 #include "icolor.h"
 #include "ieditgrid.h"
 #include "iscrollarea.h"
+#include "itextbrowser.h"
 
 
 //////////////////////////
@@ -1109,14 +1110,13 @@ gpiList_ElData::~gpiList_ElData() {
 }
 
 
-//////////////////////////////////////////////////////////
-// 		gpiMultiEditDataHost			//
-/////////////////////////////////////////////    vblDialog->addSpacing(2); // makes adding methods easier
-/////////////
+//////////////////////////////////
+//  gpiMultiEditDataHost	//
+//////////////////////////////////
 
 gpiMultiEditDataHost::gpiMultiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
       bool modal_, QObject* parent)
-: taiEditDataHost(base, typ_, read_only_, modal_, parent)
+: inherited(base, typ_, read_only_, modal_, parent)
 {
   multi = NULL;
   scrMulti = NULL;
@@ -1871,4 +1871,78 @@ void gpiSelectEditDataHost::mnuRemoveMember_select(int idx) {
 
 void gpiSelectEditDataHost::mnuRemoveMethod_select(int idx) {
   sele->RemoveFun(idx);
+}
+
+
+//////////////////////////////////
+//  DocEditDataHost		//
+//////////////////////////////////
+
+
+
+
+DocEditDataHost::DocEditDataHost(void* base, TypeDef* typ_, bool read_only_,
+      bool modal_, QObject* parent)
+: inherited(base, typ_, read_only_, modal_, parent)
+{
+  init();
+}
+
+void DocEditDataHost::init() {
+  widDocs = NULL;
+  tbrDoc = NULL;
+  tedHtml = NULL;
+}
+
+void DocEditDataHost::Constr_Box() {
+  // create the splitter before calling base, so scrbody gets put into the splitter
+  splBody = new QSplitter(widget());
+  splBody->setOrientation(Qt::Vertical);
+  vblDialog->addWidget(splBody, 1); // gets all the space
+
+  inherited::Constr_Box();
+
+  widDocs = new QTabWidget(splBody);
+  
+  // Doc tab
+  tbrDoc = new iTextBrowser;
+  widDocs->addTab(tbrDoc, "Doc");
+  
+  // Html tab
+  tedHtml = new QTextEdit;
+  tedHtml->setAcceptRichText(false); // is the raw html as text
+  if (read_only) {
+    tedHtml->setReadOnly(true);
+  } else { // r/w
+    connect(tedHtml, SIGNAL(textChanged()), 
+      this, SLOT(Changed()) );
+  }
+  widDocs->addTab(tedHtml, "Html");
+  widDocs->setCurrentIndex(0);
+  
+}
+
+taDoc* DocEditDataHost::doc() const {
+  return static_cast<taDoc*>(cur_base);
+}
+
+void DocEditDataHost::GetImage_Membs() {
+  inherited::GetImage_Membs();
+  taDoc* doc = this->doc();
+  if (!doc) return; // ex. for zombies
+  
+  // note: you're reading the following right... the "Doc" is a formatted
+  // view, so in html, whereas the html view, is actually raw text
+  QString text = doc->text; // only convert once...
+  tbrDoc->setHtml(text);
+  tedHtml->clear();
+  tedHtml->insertPlainText(text); // we set the html as text
+}
+
+void DocEditDataHost::GetValue_Membs() {
+  inherited::GetValue_Membs();
+  taDoc* doc = this->doc();
+  if (!doc) return; // ex. for zombies
+  
+  doc->text = tedHtml->text();
 }

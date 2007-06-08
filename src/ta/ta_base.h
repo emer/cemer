@@ -53,7 +53,8 @@
 // externals
 class SelectEdit;
 class taFiler;
-class taRootBase;
+class taDoc;
+class taRootBase; //
 
 #ifdef TA_GUI
 class taiMimeSource; //
@@ -1019,6 +1020,11 @@ public:
   // #CAT_UserData #EXPERT returns true if UserData exists for this key (case sens)
   virtual const Variant	GetUserData(const String& key) const;
   // #CAT_UserData get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
+  virtual UserDataItemBase* GetUserDataOfType(TypeDef* typ, const String& key,
+     bool force_create);
+  // #CAT_UserData #EXPERT gets specified user data of given type, making one if doesn't exist and fc=true
+  UserDataItemBase* 	GetUserDataOfTypeC(TypeDef* typ, const String& key) const;
+  // #IGNORE const non-forced version, for convenience
   inline bool		GetUserDataAsBool(const String& key) const
     {return GetUserData(key).toBool();} // #CAT_UserData #EXPERT get specified user data as bool (see GetUserData)
   inline int		GetUserDataAsInt(const String& key) const
@@ -1031,7 +1037,9 @@ public:
     {return GetUserData(key).toString();} // #CAT_UserData #EXPERT get specified user data as String (see GetUserData)
   virtual void		SetUserData(const String& key, const Variant& value);
   // #CAT_UserData #EXPERT set user data; ignored if class does not support user data
-
+  virtual taDoc*	GetDocLink() const; // #CAT_UserData #EXPERT gets a linked Doc, if any; you can use this to test for existence
+  virtual void		SetDocLink(taDoc* doc); // #CAT_UserData #MENU #MENU_CONTEXT set a link to a doc from the .docs collection -- the doc will then show up automatically in a panel for this obj
+  
   bool		HasOption(const char* op) const
   { return GetTypeDef()->HasOption(op); }
   // #IGNORE hard-coded options for this type
@@ -1414,13 +1422,14 @@ private:\
 
 SmartRef_Of(taBase,TA_taBase);		// basic ref if you don't know the type
 
+
 class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
 INHERITED(taBase)
 public:
   TAPtr			owner;	// #NO_SHOW #READ_ONLY #NO_SAVE pointer to owner
 
-  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #SHOW_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
+  mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY storage for user data (created if needed)
 
   taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
@@ -1429,7 +1438,7 @@ public:
   TAPtr 		GetOwner() const	{ return owner; }
   TAPtr			GetOwner(TypeDef* tp) const { return taBase::GetOwner(tp); }
   TAPtr 		SetOwner(TAPtr ta)	{ owner = ta; return ta; }
-  UserDataItem_List* 	GetUserDataList(bool fc = false) const;  
+  UserDataItem_List* 	GetUserDataList(bool force = false) const;  
   void	CutLinks();
   TA_BASEFUNS(taOBase); //
 protected:
@@ -2062,7 +2071,8 @@ protected: \
 
 #define TA_ARRAY_OPS(y) \
   inline bool operator ==(const y& a, const y& b) {return a.Equal_(b);} \
-  inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));}
+  inline bool operator !=(const y& a, const y& b) {return !(a.Equal_(b));} \
+  TA_SMART_PTRS(y)
 
 template<class T>
 class taArray : public taArray_base {
@@ -2382,31 +2392,25 @@ private:
 };
 TA_ARRAY_OPS(NameVar_Array)
 
-class TA_API UserDataItemBase: public taBase {
-  // ##INLINE ##NO_TOKENS base class for all simple user data
-INHERITED(taBase)
+class TA_API UserDataItemBase: public taNBase {
+  // ##INLINE ##NO_TOKENS base class for all simple user data -- name is key
+INHERITED(taNBase)
 public:
-  taBase*		owner; // #READ_ONLY #NO_SAVE
-  String		name;
-  
   virtual bool		isSimple() const {return false;}
     // only true for UserDataItem class
     
   virtual const Variant valueAsVariant() const {return _nilVariant;}
   virtual bool		setValueAsVariant(const Variant& value) {return false;}
   
-  TAPtr SetOwner(taBase* value)	{ owner = value; return owner; } // #IGNORE
-  TAPtr GetOwner() const	{ return owner; } // #CAT_ObjectMgmt 
-  bool	SetName(const String& value) {name = value; return true;}
-  String GetName() const {return name;}
-  TA_BASEFUNS_LITE(UserDataItemBase)
+  TA_BASEFUNS(UserDataItemBase)
 protected:
   UserDataItemBase(const String& type_name, const String& key); // for schema constructors
 private:
-  void Copy_(const UserDataItemBase& cp){name = cp.name;}
-  void Initialize() {owner = NULL;}
+  NOCOPY(UserDataItemBase)
+  void Initialize() {}
   void Destroy() {}
 };
+TA_SMART_PTRS(UserDataItemBase);
 
 class TA_API UserDataItem: public UserDataItemBase {
   // an item of simple user data
@@ -2429,12 +2433,13 @@ private:
   void Initialize() {}
   void Destroy() {}
 };
+TA_SMART_PTRS(UserDataItem);
 
 class TA_API UserDataItem_List: public taList<UserDataItemBase> {
   // #CHILDREN_INLINE
 INHERITED(taList<UserDataItemBase>)
 public:
-  
+
   TA_BASEFUNS_NOCOPY(UserDataItem_List)
 protected:
 
@@ -2443,7 +2448,7 @@ private:
   void Destroy() {}
 };
 
-SmartPtr_Of(UserDataItem_List) // UserDataItem_ListPtr
+TA_SMART_PTRS(UserDataItem_List) // UserDataItem_ListPtr
 
 // define selectedit if no gui
 #ifdef TA_NO_GUI

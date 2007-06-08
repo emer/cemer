@@ -63,16 +63,34 @@
 extern "C" void moncontrol(int mode);
 #endif
 
+//////////////////////////
+//   taDoc		//
+//////////////////////////
+
+const String taDoc::init_text(
+"<html>\n"
+"<head></head>\n"
+"<body>\n"
+"</body>\n"
+"</html>");
+
+void taDoc::Initialize() {
+  auto_open = false;
+  if (!taMisc::is_loading && !taMisc::is_duplicating)
+    text = init_text;
+}
+
+
 //////////////////////////////////
-//	SelectEdit_Group	//
+//  Doc_Group		//
 //////////////////////////////////
 
-void SelectEdit_Group::AutoEdit() {
+void Doc_Group::AutoEdit() {
+  taDoc* doc;
   taLeafItr i;
-  SelectEdit* se;
-  FOR_ITR_EL(SelectEdit, se, this->, i) {
-    if(se->config.auto_edit)
-      se->Edit();
+  FOR_ITR_EL(taDoc, doc, this->, i) {
+    if (doc->auto_open)
+      doc->Edit();
   }
 }
 
@@ -83,14 +101,6 @@ void SelectEdit_Group::AutoEdit() {
 
 void taWizard::Initialize() {
   auto_open = false;
-}
-
-void taWizard::InitLinks() {
-  inherited::InitLinks();
-}
-
-void taWizard::CutLinks() {
-  inherited::CutLinks();
 }
 
 //////////////////////////////////
@@ -105,6 +115,20 @@ void Wizard_Group::AutoEdit() {
       wz->Edit();
   }
 }
+
+//////////////////////////////////
+//	SelectEdit_Group	//
+//////////////////////////////////
+
+void SelectEdit_Group::AutoEdit() {
+  taLeafItr i;
+  SelectEdit* se;
+  FOR_ITR_EL(SelectEdit, se, this->, i) {
+    if(se->config.auto_edit)
+      se->Edit();
+  }
+}
+
 
 //////////////////////////
 //  taProject		//
@@ -145,6 +169,7 @@ void taProject::InitLinks() {
 
 void taProject::InitLinks_impl() {
   taBase::Own(templates, this);
+  taBase::Own(docs, this);
   taBase::Own(wizards, this);
   taBase::Own(edits, this);
   taBase::Own(data, this);
@@ -185,6 +210,7 @@ void taProject::CutLinks_impl() {
   data.CutLinks();
   edits.CutLinks();
   wizards.CutLinks();
+  docs.CutLinks();
   templates.CutLinks();
 }
 
@@ -197,6 +223,7 @@ void taProject::Copy_(const taProject& cp) {
   edits.Reset();
   
   templates = cp.templates;
+  docs = cp.docs;
   wizards = cp.wizards;
   edits = cp.edits;
   data = cp.data;
