@@ -225,7 +225,7 @@ public:
   // initialize layer unit names from unit names table colum (string matrix with one row)
 
   virtual bool	InitNamesTable();
-  // intialize the names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!
+  // #BUTTON #CONFIRM intialize (and update) the unit names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!
   virtual bool	InitDynEnums();
   // #BUTTON #CONFIRM intialize the dynamic enums from names table -- do this after you have entered the names in the unit_names table, in order to then refer to the names using enum values (avoiding having to use quotes!)
   virtual bool	LabelNetwork();

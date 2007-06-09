@@ -296,7 +296,7 @@ bool taDataGen::ReplicateByFrequency(DataTable* dest, const DataTable* data_in,
   }
 
   for(int i=0;i<data_in->rows;i++) {
-    int n_repl = (int)((float)total_number * freqs->FastEl_Flat(i));
+    int n_repl = (int)(.5f + (float)total_number * freqs->FastEl_Flat(i));
     for(int k=0;k<n_repl;k++) {
       dest->AddBlankRow();
       for(int j=0;j<data_in->data.size;j++) {
@@ -305,6 +305,51 @@ bool taDataGen::ReplicateByFrequency(DataTable* dest, const DataTable* data_in,
 	dda->CopyFromRow(-1, *sda, i);
       }
     }
+  }
+
+  dest->StructUpdate(false);
+  return true;
+}
+
+bool taDataGen::NsByFrequency(DataTable* dest, const DataTable* data_in,
+				     int total_number, const String& freq_col_nm,
+				     bool renorm_freqs) {
+  if(!data_in || data_in->rows == 0) {
+    taMisc::Error("taDataGen:ReplicateByFrequency data_list_in is NULL or has no rows");
+    return false;
+  }
+
+  DataCol* freq_col = GetFloatDataCol(data_in, freq_col_nm);
+  if(!freq_col) {
+    taMisc::Error("taDataGen:ReplicateByFrequency column of name:", freq_col_nm,
+		  "not found in data table:", data_in->name);
+    return false;
+  }
+  
+  GetDest(dest, data_in, "ReplFreq");
+  dest->StructUpdate(true);
+  dest->Reset();
+
+  dest->Copy_NoData(*data_in);		// give it same structure
+  DataCol* ns = dest->NewCol(DataCol::VT_INT, "n_repls");
+
+  float_Matrix norm_freq;
+  float_Matrix* freqs = (float_Matrix*)freq_col->AR();
+  if(renorm_freqs) {
+    norm_freq = *freqs;		// copy the data!
+    taMath_float::vec_norm_sum(&norm_freq, 1.0f, 0.0f);
+    freqs = &norm_freq;
+  }
+
+  for(int i=0;i<data_in->rows;i++) {
+    int n_repl = (int)(.5f + (float)total_number * freqs->FastEl_Flat(i));
+    dest->AddBlankRow();
+    for(int j=0;j<data_in->data.size;j++) {
+      DataCol* sda = data_in->data[j];
+      DataCol* dda = dest->data[j];
+      dda->CopyFromRow(-1, *sda, i);
+    }
+    ns->SetValAsInt(n_repl, -1);
   }
 
   dest->StructUpdate(false);

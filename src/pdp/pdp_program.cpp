@@ -504,6 +504,7 @@ bool InitNamedUnits::GetInputDataVar() {
     input_data_var = (ProgVar*)my_prog->args.New(1, &TA_ProgVar); // make an arg by default
     input_data_var->name = "input_data";
     input_data_var->var_type = ProgVar::T_Object;
+    input_data_var->object_type = &TA_DataTable;
     input_data_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;
@@ -525,11 +526,14 @@ bool InitNamedUnits::GetUnitNamesVar() {
     taProject* proj = GET_MY_OWNER(taProject);
     if(!proj) return false;
     DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    DataTable* rval = dgp->NewEl(1, &TA_DataTable);
-    rval->name = "UnitNames";
-    taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
+    DataTable* rval = dgp->FindName("UnitNames");
+    if(!rval) {
+      rval = dgp->NewEl(1, &TA_DataTable);
+      rval->name = "UnitNames";
+      taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
+      rval->DataChanged(DCR_ITEM_UPDATED);
+    }
     unit_names_var->object_val = rval;
-    rval->DataChanged(DCR_ITEM_UPDATED);
     unit_names_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;
@@ -556,7 +560,8 @@ const String InitNamedUnits::GenCssBody_impl(int indent_level) {
 }
 
 bool InitNamedUnits::InitNamesTable() {
-  if(TestError(!GetInputDataVar(), "InitNamesTable", "could not find input_data table -- must set that up to point to your input data table, and give name input_data"))
+  GetInputDataVar();
+  if(TestError(!input_data_var->object_val.ptr(), "InitNamesTable", "could not find input_data table -- must set that up to point to your input data table"))
     return false;
   if(TestError(!GetUnitNamesVar(), "InitNamesTable", "could not find unit names data table -- this should not usually happen because it is auto-made if not found"))
     return false;
@@ -569,7 +574,7 @@ bool InitNamedUnits::InitNamesTable() {
 bool InitNamedUnits::InitUnitNamesFmInputData(DataTable* unit_names,
 					      const DataTable* input_data) {
   if(!unit_names || !input_data) {
-    taMisc::Error("InitUnitNamesFmInputData", "null args");
+    taMisc::Error("InitUnitNamesFmInputData", "null args -- should not happen -- report bug!");
     return false;
   }
   for(int i=0;i<input_data->cols();i++) {

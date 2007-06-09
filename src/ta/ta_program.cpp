@@ -184,6 +184,7 @@ DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
   it->name = nm;
   it->value = val;
   enums.OrderItems();
+  it->DataChanged(DCR_ITEM_UPDATED);
   return it;
 }
 

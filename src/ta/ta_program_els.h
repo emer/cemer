@@ -243,7 +243,7 @@ class TA_API CaseBlock: public CodeBlock {
   // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
   INHERITED(CodeBlock)
 public:
-  ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run
+  ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here)
 
   override String	GetDisplayName() const;
 

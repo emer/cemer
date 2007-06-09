@@ -65,6 +65,10 @@ public:
 				     int total_number, const String& freq_col_nm = "frequency",
 				     bool renorm_freqs=true);
   // #MENU_BUTTON #CAT_Lists #NULL_OK_0 replicate the items in the input data by the number given in the frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
+  static bool	NsByFrequency(DataTable* repl_output, const DataTable* data_list_in,
+			      int total_number, const String& freq_col_nm = "frequency",
+			      bool renorm_freqs=true);
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 compute the numbers of items in the input data that would be produced by the ReplicateByFrequency fnction (frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table))
 
 
   ///////////////////////////////////////////////////////////////////
