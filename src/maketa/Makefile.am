@@ -17,7 +17,6 @@ HEADS =\
 	../ta/ta_type.h \
 	mta_parse.h \
 	mta_constr.h \
-	mta_gendoc.h \
 	maketa.h
 
 SRCS =\
