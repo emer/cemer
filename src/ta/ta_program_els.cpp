@@ -391,18 +391,62 @@ ProgVar* IfElse::FindVarName(const String& var_nm) const {
 }
 
 //////////////////////////
+//  CaseBlock		//
+//////////////////////////
+
+void CaseBlock::Initialize() {
+}
+
+void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(case_val.empty(), quiet, rval,  "case value expression is empty!");
+}
+
+const String CaseBlock::GenCssPre_impl(int indent_level) {
+  if(prog_code.size == 0) return _nilString;
+  String il = cssMisc::Indent(indent_level);
+  String rval = il + "case " + case_val.GetFullExpr() + ": {\n";
+  return rval; 
+}
+
+const String CaseBlock::GenCssBody_impl(int indent_level) {
+  if(prog_code.size == 0) return _nilString;
+  return prog_code.GenCss(indent_level+1);
+}
+
+const String CaseBlock::GenCssPost_impl(int indent_level) {
+  if(prog_code.size == 0) return _nilString;
+  String rval = cssMisc::Indent(indent_level+1) + "break;\n"; // always break
+  rval += cssMisc::Indent(indent_level) + "}\n";
+  return rval; 
+}
+
+String CaseBlock::GetDisplayName() const {
+  return "case: " + case_val.expr + " (" + String(prog_code.size) + " items)";
+}
+
+//////////////////////////
 //  Switch		//
 //////////////////////////
 
 void Switch::Initialize() {
-  //  cond.expr = "true";
+  cases.SetBaseType(&TA_CaseBlock);
   case_code.SetBaseType(&TA_CodeBlock);
 }
 
 void Switch::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgVarRef_NewOwner(switch_var);
-  case_code.SetSize(case_exprs.size); // enforce!
+
+  if(case_code.size > 0) {	// todo: remove! obsolete conversion code!!
+    for(int i=0; i<case_code.size;i++) {
+      CaseBlock* cb = (CaseBlock*)cases.New(1);
+      cb->CopyFrom(case_code.FastEl(i));
+      cb->case_val.SetExpr(case_exprs.FastEl(i)->expr);
+    }
+    case_code.Reset();
+    case_exprs.Reset();
+  }
 }
 
 void Switch::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -412,10 +456,7 @@ void Switch::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void Switch::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  for(int i=0;i<case_exprs.size;i++) {
-    CheckError(case_exprs[i]->expr.empty(), quiet, rval,  "case expression number: " + String(i) + " is empty");
-  }
-  case_code.CheckConfig(quiet, rval);
+  cases.CheckConfig(quiet, rval);
 }
 
 const String Switch::GenCssPre_impl(int indent_level) {
@@ -427,29 +468,16 @@ const String Switch::GenCssPre_impl(int indent_level) {
 
 const String Switch::GenCssBody_impl(int indent_level) {
   if(!switch_var) return _nilString;
-//   String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  String rval;
-  for(int i=0;i<case_exprs.size;i++) {
-    rval += il1 + "case " + case_exprs[i]->GetFullExpr() + ":\n";
-    rval += case_code[i]->GenCss(indent_level+1);
-    rval += il1 + "break;\n";	// always break
-  }
-  return rval;
-}
-const String Switch::GenListing_children(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String rval;
-  for(int i=0;i<case_exprs.size;i++) {
-    rval += il + "case " + case_exprs[i]->GetFullExpr() + ":\n";
-    rval += case_code[i]->GenListing(indent_level+1);
-  }
-  return rval;
+  return cases.GenCss(indent_level+1);
 }
 
 const String Switch::GenCssPost_impl(int indent_level) {
   if(!switch_var) return _nilString;
   return cssMisc::Indent(indent_level) + "}\n";
+}
+
+const String Switch::GenListing_children(int indent_level) {
+  return cases.GenListing(indent_level+1);
 }
 
 String Switch::GetDisplayName() const {
@@ -459,13 +487,12 @@ String Switch::GetDisplayName() const {
 }
 
 void Switch::PreGenChildren_impl(int& item_id) {
-  case_code.PreGen(item_id);
-}
-ProgVar* Switch::FindVarName(const String& var_nm) const {
-  return case_code.FindVarName(var_nm);
+  cases.PreGen(item_id);
 }
 
-// todo: add DataChanged code to sync two lists..
+ProgVar* Switch::FindVarName(const String& var_nm) const {
+  return cases.FindVarName(var_nm);
+}
 
 void Switch::CasesFmEnum() {
   if(TestError(!switch_var, "CasesFmEnum", "switch_var not set!"))
@@ -486,34 +513,30 @@ void Switch::CasesFmEnum_hard() {
   TypeDef* et = switch_var->hard_enum_type;
   String enm = et->name + "::";
   int i;  int ti;
-  ProgExpr* pe;
+  CaseBlock* pe;
   EnumDef* ei;
   // delete ones that no longer exist
-  for (i = case_exprs.size - 1; i >= 0; --i) {
-    pe = case_exprs.FastEl(i);
-    ei = et->enum_vals.FindName(pe->expr);
+  for (i = cases.size - 1; i >= 0; --i) {
+    pe = (CaseBlock*)cases.FastEl(i);
+    ei = et->enum_vals.FindName(pe->case_val.expr);
     if(!ei) {
-      case_exprs.RemoveIdx(i);
-      case_code.RemoveIdx(i);	// keep them sync'd
+      cases.RemoveIdx(i);
     }
   }
   // add new ones and put in order
   for (ti = 0; ti < et->enum_vals.size; ++ti) {
     ei = et->enum_vals.FastEl(ti);
     String einm = enm + ei->name;
-    for(i=0;i<case_exprs.size;i++) {
-      pe = case_exprs.FastEl(i);
-      if(pe->expr == einm) break;
+    for(i=0;i<cases.size;i++) {
+      pe = (CaseBlock*)cases.FastEl(i);
+      if(pe->case_val.expr == einm) break;
     }
-    if(i==case_exprs.size) {
-      pe = new ProgExpr();
-      pe->SetExpr(einm);
-      case_exprs.Insert(pe, ti);
-      CodeBlock* cb = new CodeBlock();
-      case_code.Insert(cb, ti);
+    if(i==cases.size) {
+      pe = new CaseBlock();
+      pe->case_val.SetExpr(einm);
+      cases.Insert(pe, ti);
     } else if (i != ti) {
-      case_exprs.MoveIdx(i, ti);
-      case_code.MoveIdx(i, ti);
+      cases.MoveIdx(i, ti);
     }
   }
 }
@@ -523,33 +546,29 @@ void Switch::CasesFmEnum_dyn() {
     return;
   DynEnumType* et = switch_var->dyn_enum_val.enum_type.ptr();
   int i;  int ti;
-  ProgExpr* pe;
+  CaseBlock* pe;
   DynEnumItem* ei;
   // delete ones that no longer exist
-  for (i = case_exprs.size - 1; i >= 0; --i) {
-    pe = case_exprs.FastEl(i);
-    ei = et->enums.FindName(pe->expr);
+  for (i = cases.size - 1; i >= 0; --i) {
+    pe = (CaseBlock*)cases.FastEl(i);
+    ei = et->enums.FindName(pe->case_val.expr);
     if(!ei) {
-      case_exprs.RemoveIdx(i);
-      case_code.RemoveIdx(i);	// keep them sync'd
+      cases.RemoveIdx(i);
     }
   }
   // add new ones and put in order
   for (ti = 0; ti < et->enums.size; ++ti) {
     ei = et->enums.FastEl(ti);
-    for(i=0;i<case_exprs.size;i++) {
-      pe = case_exprs.FastEl(i);
-      if(pe->expr == ei->name) break;
+    for(i=0;i<cases.size;i++) {
+      pe = (CaseBlock*)cases.FastEl(i);
+      if(pe->case_val.expr == ei->name) break;
     }
-    if(i==case_exprs.size) {
-      pe = new ProgExpr();
-      pe->SetExpr(ei->name);
-      case_exprs.Insert(pe, ti);
-      CodeBlock* cb = new CodeBlock();
-      case_code.Insert(cb, ti);
+    if(i==cases.size) {
+      pe = new CaseBlock();
+      pe->case_val.SetExpr(ei->name);
+      cases.Insert(pe, ti);
     } else if (i != ti) {
-      case_exprs.MoveIdx(i, ti);
-      case_code.MoveIdx(i, ti);
+      cases.MoveIdx(i, ti);
     }
   }
 }

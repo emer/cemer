@@ -239,15 +239,40 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
+class TA_API CaseBlock: public CodeBlock { 
+  // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
+  INHERITED(CodeBlock)
+public:
+  ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run
+
+  override String	GetDisplayName() const;
+
+  TA_SIMPLE_BASEFUNS(CaseBlock);
+protected:
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level);
+  override const String	GenCssPost_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
+
 class TA_API Switch: public ProgEl { 
   // switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
   ProgVarRef	    switch_var;	// variable to switch on
-  ProgExpr_List	    case_exprs;	// #SHOW_TREE expressions for the different cases to test for
-  ProgEl_List	    case_code; 	// #SHOW_TREE code to execute for each case, in one-to-one correspondence with the case_exprs (automatically filled with CodeBlocks)
 
-  virtual void	    NewCase() 	{ case_exprs.New(1); UpdateAfterEdit(); }
+  ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
+
+  // following are obsolete! todo: remove!!
+  ProgExpr_List	    case_exprs;	// #HIDDEN #NO_SAVE obsolete!! expressions for the different cases to test for
+  ProgEl_List	    case_code; 	// #HIDDEN #NO_SAVE obsolete!! code to execute for each case, in one-to-one correspondence with the case_exprs (automatically filled with CodeBlocks)
+
+  virtual void	    NewCase() 	{ cases.New(1); }
   // #BUTTON make a new case item
   virtual void	    CasesFmEnum();
   // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM)
@@ -269,7 +294,6 @@ protected:
 
   virtual void	    CasesFmEnum_hard(); // switch_var is a hard enum
   virtual void	    CasesFmEnum_dyn();	// switch_var is a dynamic enum
-
 
 private:
   void	Initialize();

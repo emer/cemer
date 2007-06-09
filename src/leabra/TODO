@@ -14,9 +14,6 @@ current:
 
 * losing net init variable (act)?
 
-* update std leabra progs -- a few places where methcall or data-specific call can now
-  be used..  maybe some weird comments somewhere?  add more comments!
-
 * program edit control panel -- causes stale of calling progs! (not that one) - #490
 
 * bp, cs, so!!
