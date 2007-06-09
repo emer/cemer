@@ -8,10 +8,9 @@ dist_pkgdata_test_DATA =\
 	toaster.jpg \
 	giraffe.jpg \
 	imgproc_test.proj \
-	xor.proj \
+	bp_xor.proj \
 	12ax4s_demo_v4.proj \
 	leabra_ra.proj \
 	ra3_2.proj \
-	xor_old.proj \
 	model_and_task_v4.proj \
 	simple_vis_search.proj
