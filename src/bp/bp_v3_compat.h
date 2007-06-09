@@ -25,7 +25,7 @@
 #include "bp_def.h"
 #include "bp_TA_type.h"
 
-class BpTrial : public TrialProcess {
+class BP_API BpTrial : public TrialProcess {
   // standard Bp feed-forward trial
 INHERITED(TrialProcess)
 public:
@@ -40,7 +40,7 @@ public:
 //	Additional Stat Types 		//
 //////////////////////////////////////////
 
-class CE_Stat : public Stat {
+class BP_API CE_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Cross-entropy error statistic (asymmetric divergence)
 INHERITED(Stat)
 public:
@@ -52,7 +52,7 @@ public:
   TA_SIMPLE_BASEFUNS(CE_Stat);
 };
 
-class NormDotProd_Stat : public Stat {
+class BP_API NormDotProd_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Dot Product of act and target values
 INHERITED(Stat)
 public:
@@ -63,7 +63,7 @@ public:
   TA_SIMPLE_BASEFUNS(NormDotProd_Stat);
 };
 
-class VecCor_Stat : public Stat {
+class BP_API VecCor_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Vector Correlation of act and target values
 INHERITED(Stat)
 public:
@@ -77,7 +77,7 @@ public:
   TA_SIMPLE_BASEFUNS(VecCor_Stat);
 };
 
-class NormVecLen_Stat : public Stat {
+class BP_API NormVecLen_Stat : public Stat {
   // ##COMPUTE_IN_TrialProcess Normalized Vector Length of act and target values
 INHERITED(Stat)
 public:
@@ -102,7 +102,7 @@ public:
 // at start of Compute_Act then time gets reset to 0.  otherwise, time increases
 // by dt each step of processing (thus, it is not tied to a specific sequence length)
 
-class RBpTrial : public BpTrial {
+class BP_API RBpTrial : public BpTrial {
   // one presentation of an event to RBp
 INHERITED(BpTrial)
 public:
@@ -124,7 +124,7 @@ public:
   TA_SIMPLE_BASEFUNS(RBpTrial);
 };
 
-class RBpSequence : public SequenceProcess {
+class BP_API RBpSequence : public SequenceProcess {
   // one sequence of events, handles TimeEvents properly
 INHERITED(SequenceProcess)
 public:
@@ -134,7 +134,7 @@ public:
 };
 
 
-class RBpSE_Stat : public SE_Stat {
+class BP_API RBpSE_Stat : public SE_Stat {
   // Squared error for recurrent backprop, mulitplies by dt
 INHERITED(SE_Stat)
 public:
@@ -148,7 +148,7 @@ public:
 //	Almeida-Pineda Algorithm	//
 //////////////////////////////////////////
 
-class APBpCycle : public CycleProcess {
+class BP_API APBpCycle : public CycleProcess {
   // one cycle of processing in almeida-pineda (either act or bp depending on 'phase')
 INHERITED(CycleProcess)
 public:
@@ -162,7 +162,7 @@ public:
   TA_SIMPLE_BASEFUNS(APBpCycle);
 };
 
-class APBpSettle : public SettleProcess {
+class BP_API APBpSettle : public SettleProcess {
   // one settling phase in Almeide-Pineda (either act or bp depending on phase)
 INHERITED(SettleProcess)
 public:
@@ -175,7 +175,7 @@ public:
 };
 
 
-class APBpTrial : public TrialProcess {
+class BP_API APBpTrial : public TrialProcess {
   // one Almeida-Pineda BP Trial
 INHERITED(TrialProcess)
 public:
@@ -201,7 +201,7 @@ public:
   TA_SIMPLE_BASEFUNS(APBpTrial);
 };
 
-class APBpMaxDa_De : public Stat {
+class BP_API APBpMaxDa_De : public Stat {
   /* ##COMPUTE_IN_SettleProcess ##LOOP_STAT computes max of da and ddE to determine
      when to stop settling in almeida-pineda algorithm */
 INHERITED(Stat)
@@ -213,6 +213,16 @@ public:
   TA_SIMPLE_BASEFUNS(APBpMaxDa_De);
 };
 
-// todo add bp v3 project & conversion routines
+class BP_API V3BpProject : public V3ProjectBase {
+INHERITED(V3ProjectBase)
+  public:
+
+  override bool	ConvertToV4_impl(); 
+
+  void	Initialize() {};
+  void	Destroy() 	{ };
+  TA_BASEFUNS(V3BpProject);
+};
+
 
 #endif // BP_V3_COMPAT_H

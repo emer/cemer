@@ -39,7 +39,7 @@ static void leabra_converter_init() {
   cvt->repl_strs.Add(NameVar("EnviroView", "taNBase"));
   cvt->repl_strs.Add(NameVar("Xform", "taBase"));
   cvt->repl_strs.Add(NameVar("ImageEnv", "ScriptEnv"));
-  cvt->repl_strs.Add(NameVar("unique/w=", "unique")); // todo: need to make this work!
+  cvt->repl_strs.Add(NameVar("unique/w=", "unique"));
   taMisc::file_converters.Add(cvt);
 }
 

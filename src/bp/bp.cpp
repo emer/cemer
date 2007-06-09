@@ -27,10 +27,36 @@
 #include <mpi.h>
 #endif
 
+static void bp_converter_init() {
+  DumpFileCvt* cvt = new DumpFileCvt("Bp", "BpUnit");
+  cvt->repl_strs.Add(NameVar("_MGroup", "_Group"));
+  cvt->repl_strs.Add(NameVar("Project", "V3BpProject"));
+  cvt->repl_strs.Add(NameVar("V3BpProject_Group", "Project_Group")); // fix prev
+  cvt->repl_strs.Add(NameVar("V3BpProjection", "Projection"));
+  cvt->repl_strs.Add(NameVar("BpPrjn_Group", "Projection_Group"));
+  cvt->repl_strs.Add(NameVar("Network", "BpNetwork"));
+  cvt->repl_strs.Add(NameVar("BpNetwork_Group", "Network_Group")); // fix prev
+  cvt->repl_strs.Add(NameVar("BpWiz", "BpWizard"));
+  cvt->repl_strs.Add(NameVar("Layer", "BpLayer"));
+  // obsolete types get replaced with taBase..
+  cvt->repl_strs.Add(NameVar("WinView_Group", "taBase_Group"));
+  cvt->repl_strs.Add(NameVar("ProjViewState_List", "taBase_List"));
+  cvt->repl_strs.Add(NameVar("NetView", "taNBase"));
+  cvt->repl_strs.Add(NameVar("DataTable", "taNBase"));
+  cvt->repl_strs.Add(NameVar("EnviroView", "taNBase"));
+  cvt->repl_strs.Add(NameVar("Xform", "taBase"));
+  cvt->repl_strs.Add(NameVar("ImageEnv", "ScriptEnv"));
+  cvt->repl_strs.Add(NameVar("unique/w=", "unique"));
+  taMisc::file_converters.Add(cvt);
+}
+
+void bp_module_init() {
+  ta_Init_bp();			// initialize types 
+  bp_converter_init();		// configure converter
+}
+
 // module initialization
-InitProcRegistrar mod_init(ta_Init_bp);
-
-
+InitProcRegistrar mod_init_bp(bp_module_init);
 
 //////////////////////////
 //  	Con, Spec	//

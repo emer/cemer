@@ -16,7 +16,9 @@ current:
 
 * program edit control panel -- causes stale of calling progs! (not that one) - #490
 
-* bp, cs, so!!
+* leabra test all progp
+
+* bp conversion, cs, so, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp
 
 * have init values of wt_scale parameters prior to adapting?? yes
 

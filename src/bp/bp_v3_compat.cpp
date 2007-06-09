@@ -123,3 +123,51 @@ void APBpMaxDa_De::Initialize() {
   min_unit = &TA_RBpUnit;
 }
 
+
+//////////////////////////////////
+// 	V3BpProject		//
+//////////////////////////////////
+
+bool V3BpProject::ConvertToV4_impl() {
+  PDPRoot* root = (PDPRoot*)tabMisc::root;
+  BpProject* nwproj = (BpProject*)root->projects.NewEl(1, &TA_BpProject);
+
+  nwproj->desc = desc1 + "\n" + desc2 + "\n" + desc3 + "\n" + desc4;
+
+  BpWizard* lwiz = (BpWizard*)nwproj->wizards[0];
+
+  lwiz->StdOutputData();	// need this for std procs
+
+  ConvertToV4_Nets(nwproj);
+  ConvertToV4_Enviros(nwproj);
+  ConvertToV4_ProcScripts(nwproj);
+  ConvertToV4_Scripts(nwproj);
+
+  DataTable_Group* dgp = (DataTable_Group*)nwproj->data.FindMakeGpName("InputData");
+
+  bool grouped_data = false;
+  if(dgp->size > 1) {
+    DataTable* first_env = (DataTable*)dgp->FastEl(0);
+    if(first_env->data.FindName("Group"))
+      grouped_data = true;
+  }
+
+  // process the new programs
+  nwproj->programs.prog_lib.NewProgramFmName("BpAll_Std", &(nwproj->programs));
+//   Program_Group* progs = (Program_Group*)nwproj->programs.gp[0];
+//   BpNetwork* new_net = (BpNetwork*)nwproj->networks[0];
+
+//   if(grouped_data) {
+//     Program* epc = progs->FindName("BpEpoch");
+//     if(epc) {
+//       epc->LoadFromProgLib(Program_Group::prog_lib.FindName("BpEpochGpData"));
+//     }
+//   }
+
+  ConvertToV4_DefaultApplyInputs(nwproj);
+
+  ConvertToV4_Edits(nwproj);
+
+  return true;
+}
+
