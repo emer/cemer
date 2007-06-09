@@ -50,6 +50,8 @@ void BpConSpec::Initialize() {
 
 void BpConSpec::InitLinks() {
   ConSpec::InitLinks();
+  children.SetBaseType(&TA_BpConSpec);
+  children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(lrate_sched, this);
 }
 
@@ -72,12 +74,12 @@ void BpSendCons::Initialize() {
 }
 
 void Bp_Simple_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit*, BpUnit*) {
-  cn->dEdW -= spec->decay * cn->wt;
+  cn->dwt -= spec->decay * cn->wt;
 }
 
 void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit*, BpUnit*) {
   float denom = (1.0f + (cn->wt * cn->wt));
-  cn->dEdW -= spec->decay * ((2.0f * cn->wt * cn->wt) / (denom * denom));
+  cn->dwt -= spec->decay * ((2.0f * cn->wt * cn->wt) / (denom * denom));
 }
 
 
@@ -95,6 +97,8 @@ void BpUnitSpec::Initialize() {
 
 void BpUnitSpec::InitLinks() {
   UnitSpec::InitLinks();
+  children.SetBaseType(&TA_BpUnitSpec);
+  children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(sig, this);
 }
 
@@ -617,7 +621,6 @@ void BpNetwork::Compute_dEdA_dEdNet() {
       u->Compute_dEdA_dEdNet();
 #endif
   }
-  taiMiscCore::RunPending();
 }
 
 void BpNetwork::Compute_Error() {
@@ -635,7 +638,6 @@ void BpNetwork::Compute_Error() {
       u->Compute_Error();
     }
   }
-  taiMiscCore::RunPending();
 }
 
 void BpNetwork::Trial_Run() {
@@ -645,16 +647,13 @@ void BpNetwork::Trial_Run() {
   Compute_Act();
   Compute_dEdA_dEdNet();
 
-/*NOTE: from 3.x, we put this in the program
   // compute the weight err derivatives (only if not testing...)
-  if (net_context == TRAIN) {
+  if(train_mode == TRAIN) {
     Compute_dWt();
   } else {
-    BpCompute_Error();		// for display purposes only..
+    Compute_Error();		// for display purposes only..
   }
-*/
-//TODO: verify below comment from 3.x
-// weight update taken care of by the epoch process
+  // weight update taken care of by the epoch process
   DataUpdate(false);
 }
 

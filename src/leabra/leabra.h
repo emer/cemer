@@ -103,7 +103,7 @@ class LeabraProject;
 class LeabraCon : public Connection {
   // ##CAT_Leabra Leabra connection
 public:
-  float		pdw;		// #NO_SAVE previous delta-weight change
+  float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
   
   LeabraCon() { pdw = 0.0f; }
 };

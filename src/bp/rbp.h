@@ -198,7 +198,7 @@ public:
 
 // use previous activation value
 inline void RBpConSpec::C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su) {
-  cn->dEdW += su->prv_act * ru->dEdNet;
+  cn->dwt += su->prv_act * ru->dEdNet;
 }
 inline void RBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (RBpUnit*)ru, (RBpUnit*)cg->Un(i)));
@@ -207,7 +207,7 @@ inline void RBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 // use previous activation value
 inline void SymRBpConSpec::C_Compute_dWt_Sym(BpCon* cn, RBpUnit* ru, RBpUnit* su) {
   // just take the average of the two different weight changes
-  cn->dEdW += 0.5f * (su->prv_act * ru->dEdNet + ru->prv_act * su->dEdNet);
+  cn->dwt += 0.5f * (su->prv_act * ru->dEdNet + ru->prv_act * su->dEdNet);
 }
 inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   if(sym_wt_updt) {

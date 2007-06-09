@@ -34,16 +34,15 @@ class BpUnit;
 class BpUnitSpec;
 
 
+// note: dwt is equivalent to the old dEdW and pdw = the old dwt
+
 class BP_API BpCon : public Connection {
-  // Bp connection
+  // ##CAT_Bp Bp connection
 public:
-  float 		dEdW; 		// #NO_SAVE derivative of Error wrt weight
+  float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
 
-  BpCon() { dEdW = 0.0f; }
+  BpCon() { pdw = 0.0f; }
 };
-
-// todo: need to figure out why bp uses dEdW like others use dwt -- now that 
-// dwt is moved to the base connection..
 
 // ConSpec now has 3 versions of some functions, the two regular ones
 // (one for the group and one for the connection), and now a third which is a
@@ -52,7 +51,7 @@ public:
 // version, where the new B_ just calls the new C_
 
 class BP_API BpConSpec : public ConSpec {
-  // Bp connection specifications
+  // ##CAT_Bp Bp connection specifications
 public:
   enum MomentumType {
     AFTER_LRATE,		// apply momentum after learning rate (old pdp style)
@@ -71,10 +70,10 @@ public:
   // #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
   void 		C_Init_dWt(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_Init_dWt(cg, cn, ru, su); ((BpCon*)cn)->dEdW = 0.0f; }
+  { ConSpec::C_Init_dWt(cg, cn, ru, su); ((BpCon*)cn)->dwt = 0.0f; }
 
   void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((BpCon*)cn)->dwt = 0.0f;}
+  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((BpCon*)cn)->pdw = 0.0f;}
 
   inline float		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
   inline virtual float 	Compute_dEdA(BpSendCons* cg, BpUnit* su);
@@ -98,10 +97,6 @@ public:
   virtual void	SetCurLrate(int epoch);
   // set current learning rate based on schedule given epoch
 
-  // todo: this is no longer supported -- dwt is hard coded.  hmm.
-  MemberDef* DMem_EpochShareDwtVar() { return min_obj_type->members.FindName("dEdW"); }
-  // name of weight-change variable to share across dmem processors in BATCH mode learning
-
   void	UpdateAfterEdit();
   void	Initialize();
   void 	Destroy()		{ };
@@ -122,7 +117,8 @@ BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su
      ;				// term here so scanner picks up comment
 
 class BP_API BpRecvCons : public RecvCons {
-  // group of Bp recv connections
+  // ##CAT_Bp group of Bp recv connections
+  INHERITED(RecvCons)
 public:
   // these are "convenience" functions for those defined in the spec
 
@@ -130,11 +126,12 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS2(BpRecvCons, RecvCons);
+  TA_BASEFUNS(BpRecvCons);
 };
 
-class BP_API BpSendCons : public RecvCons {
-  // group of Bp sending connections
+class BP_API BpSendCons : public SendCons {
+  // ##CAT_Bp group of Bp sending connections
+  INHERITED(SendCons)
 public:
   // these are "convenience" functions for those defined in the spec
 
@@ -142,13 +139,13 @@ public:
 
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS2(BpSendCons, RecvCons);
+  TA_BASEFUNS(BpSendCons);
 };
 
 class BpUnit;
 
 class BP_API BpUnitSpec : public UnitSpec {
-  // specifications for Bp units
+  // ##CAT_Bp specifications for Bp units
 public:
   SigmoidSpec	sig;		// sigmoid activation parameters
   float		err_tol;	// error tolerance (no error signal if |t-o|<err_tol)
@@ -193,7 +190,7 @@ BP_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
 
 
 class BP_API BpUnit : public Unit {
-  // ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
+  // ##CAT_Bp ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
 public:
   float 	err; 		// this is E, not dEdA
   float 	dEdA;		// #LABEL_dEdA #DMEM_SHARE_SET_3 error wrt activation
@@ -225,13 +222,13 @@ inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su) {
 
 
 inline void BpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  cn->dEdW += su->act * ru->dEdNet;
+  cn->dwt += su->act * ru->dEdNet;
 }
 inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg,C_Compute_dWt((BpCon*)cg->Cn(i), (BpUnit*)ru, (BpUnit*)cg->Un(i)));
 }
 inline void BpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
-  cn->dEdW += ru->dEdNet;
+  cn->dwt += ru->dEdNet;
 }
 
 inline void BpConSpec::C_Compute_WtDecay(BpCon* cn, BpUnit* ru, BpUnit* su) {
@@ -239,22 +236,22 @@ inline void BpConSpec::C_Compute_WtDecay(BpCon* cn, BpUnit* ru, BpUnit* su) {
     (*decay_fun)(this, cn, ru, su);
 }
 inline void BpConSpec::C_AFT_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  C_Compute_WtDecay(cn, ru, su); // decay goes into dEdW...
-  cn->dwt = cur_lrate * cn->dEdW + momentum * cn->dwt;
-  cn->wt += cn->dwt;
-  cn->dEdW = 0.0f;
+  C_Compute_WtDecay(cn, ru, su); // decay goes into dwt...
+  cn->pdw = cur_lrate * cn->dwt + momentum * cn->pdw;
+  cn->wt += cn->pdw;
+  cn->dwt = 0.0f;
 }
 inline void BpConSpec::C_BEF_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) {
   C_Compute_WtDecay(cn, ru, su);
-  cn->dwt = cn->dEdW + momentum * cn->dwt;
-  cn->wt += cur_lrate * cn->dwt;
-  cn->dEdW = 0.0f;
+  cn->pdw = cn->dwt + momentum * cn->pdw;
+  cn->wt += cur_lrate * cn->pdw;
+  cn->dwt = 0.0f;
 }
 inline void BpConSpec::C_NRM_Compute_Weights(BpCon* cn, BpUnit* ru, BpUnit* su) {
   C_Compute_WtDecay(cn, ru, su);
-  cn->dwt = momentum_c * cn->dEdW + momentum * cn->dwt;
-  cn->wt += cur_lrate * cn->dwt;
-  cn->dEdW = 0.0f;
+  cn->pdw = momentum_c * cn->dwt + momentum * cn->pdw;
+  cn->wt += cur_lrate * cn->pdw;
+  cn->dwt = 0.0f;
 }
 
 inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
@@ -301,7 +298,7 @@ public:
 };
 
 inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
-  cn->dEdW += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
+  cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
 }
 
 inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
@@ -309,7 +306,7 @@ inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 }
 
 inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
-  cn->dEdW +=  ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
+  cn->dwt +=  ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
 }
 
 class BP_API ErrScaleBpConSpec : public BpConSpec {
@@ -371,7 +368,7 @@ public:
 inline void DeltaBarDeltaBpConSpec::C_UpdateLrate
 (DeltaBarDeltaBpCon* cn, BpUnit*, BpUnit*)
 {
-  float prod = cn->dwt * cn->dEdW;
+  float prod = cn->pdw * cn->dwt;
   if(prod > 0.0f)
     cn->lrate += act_lrate_incr;
   else if(prod < 0.0f)
@@ -382,29 +379,29 @@ inline void DeltaBarDeltaBpConSpec::C_UpdateLrate
 inline void DeltaBarDeltaBpConSpec::C_AFT_Compute_Weights
 (DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su)
 {
-  C_Compute_WtDecay(cn, ru, su); // decay goes into dEdW...
+  C_Compute_WtDecay(cn, ru, su); // decay goes into dwt...
   C_UpdateLrate(cn, ru, su);
-  cn->dwt = cn->lrate * cn->dEdW + momentum * cn->dwt;
-  cn->wt += cn->dwt;
-  cn->dEdW = 0.0f;
+  cn->pdw = cn->lrate * cn->dwt + momentum * cn->pdw;
+  cn->wt += cn->pdw;
+  cn->dwt = 0.0f;
 }
 inline void DeltaBarDeltaBpConSpec::C_BEF_Compute_Weights
 (DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su)
 {
   C_Compute_WtDecay(cn, ru, su);
   C_UpdateLrate(cn, ru, su);
-  cn->dwt = cn->dEdW + momentum * cn->dwt;
-  cn->wt += cn->lrate * cn->dwt;
-  cn->dEdW = 0.0f;
+  cn->pdw = cn->dwt + momentum * cn->pdw;
+  cn->wt += cn->lrate * cn->pdw;
+  cn->dwt = 0.0f;
 }
 inline void DeltaBarDeltaBpConSpec::C_NRM_Compute_Weights
 (DeltaBarDeltaBpCon* cn, BpUnit* ru, BpUnit* su)
 {
   C_Compute_WtDecay(cn, ru, su);
   C_UpdateLrate(cn, ru, su);
-  cn->dwt = momentum_c * cn->dEdW + momentum * cn->dwt;
-  cn->wt += cn->lrate * cn->dwt;
-  cn->dEdW = 0.0f;
+  cn->pdw = momentum_c * cn->dwt + momentum * cn->pdw;
+  cn->wt += cn->lrate * cn->pdw;
+  cn->dwt = 0.0f;
 }
 
 inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
@@ -588,7 +585,7 @@ public:
 };
 
 class BP_API BpLayer : public Layer {
-  // A feedforward backpropagation layer
+  // ##CAT_Bp A feedforward backpropagation layer
 INHERITED(Layer)
 public:
 
@@ -597,29 +594,29 @@ public:
   TA_BASEFUNS_NOCOPY(BpLayer);
 };
 
-class PDP_API BpNetwork : public Network {
-  // project for feedforward backpropagation networks (recurrent backprop is in RBPNetwork)
+class BP_API BpNetwork : public Network {
+  // ##CAT_Bp project for feedforward backpropagation networks (recurrent backprop is in RBpNetwork)
 INHERITED(Network)
 public:
   bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
 
-  virtual void		SetCurLrate(); // set current learning rate, based on network epoch counter
-  override void 	Compute_Act(); // compute activations, based on external input data that has already been applied
-  virtual void		Compute_dEdA_dEdNet(); // compute derivatives of error with respect to activations & net inputs (backpropagate)
-  virtual void		Compute_Error(); // compute local error values, for display purposes only (only call when testing, not training)
+  virtual void		SetCurLrate(); // #CAT_Learning set current learning rate, based on network epoch counter
+  override void 	Compute_Act(); // #CAT_Activation compute activations, based on external input data that has already been applied
+  virtual void		Compute_dEdA_dEdNet(); // #CAT_Learning compute derivatives of error with respect to activations & net inputs (backpropagate)
+  virtual void		Compute_Error(); //  #CAT_Learning compute local error values, for display purposes only (only call when testing, not training)
   
-  virtual void		Trial_Run(); // run one trial of Bp: calls SetCurLrate, Compute_Act and Compute_dEdA_dEdNet.  If you want to save some speed just for testing, you can just call Compute_Act and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
+  virtual void		Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_Act, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_Act and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
   
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
-  void Copy_(const BpNetwork& cp) {bp_to_inputs = cp.bp_to_inputs;}
+  TA_SIMPLE_BASEFUNS(BpNetwork);
+private:
   void	Initialize();
   void 	Destroy()		{}
-  TA_BASEFUNS(BpNetwork);
 };
 
-class PDP_API BpProject : public ProjectBase {
-  // project for backpropagation networks
+class BP_API BpProject : public ProjectBase {
+  // ##CAT_Bp project for backpropagation networks
 INHERITED(ProjectBase)
 public:
 

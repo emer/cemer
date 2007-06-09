@@ -326,7 +326,7 @@ bool taDataGen::NsByFrequency(DataTable* dest, const DataTable* data_in,
     return false;
   }
   
-  GetDest(dest, data_in, "ReplFreq");
+  GetDest(dest, data_in, "ReplFreqNs");
   dest->StructUpdate(true);
   dest->Reset();
 

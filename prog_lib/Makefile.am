@@ -19,4 +19,12 @@ dist_pkgdata_prog_lib_DATA =\
 	ReadImages.prog \
 	LeabraTrainBatchSeedList.prog \
 	LeabraTrainBatchSeedNThr.prog \
-	MultiInputData.prog
+	MultiInputData.prog \
+	BpAll_Std.progp \
+	BpBatch.prog \
+	BpEpoch.prog \
+	BpEpochMonitor.prog \
+	BpTestAll.progp \
+	BpTrain.prog \
+	BpTrial.prog \
+	BpTrialMonitor.prog
