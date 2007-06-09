@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 
-// mta_constr.cc
+// mta_constr.cpp
 
 #include "mta_constr.h"
 
@@ -1399,42 +1399,5 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
   }
   if((reg_fun_level > 0) && (mta->gen_css) && !ths->HasOption("NO_CSS")) {
     TypeDef_Init_MethodData(ths, strm);
-  }
-}
-
-
-//////////////////////////////////
-// 	     GenDoc		//
-//////////////////////////////////
-
-void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
-  // TODO: What's going to happen when a later scan imports a TA file
-  // generated earlier? Hopefully we don't get duplicates
-
-  // Loop over a list of all the typedefs in this scan 
-
-  // Save for debugging
-  //   ths->ListAllTokens(strm);
-
-  for(int i=0; i < ths->size; i++) {
-    TypeDef* this_def = ths->FastEl(i);
-
-    // What's your name?
-    strm << this_def->name << ",";
-
-    // Are you a base class?
-    if (!this_def->InheritsFrom(this_def)) {
-      TypeSpace* this_space = &this_def->parents;
-
-      // No? Then who are your daddies?
-      for (int i=0; i < this_space->size; i++){
-        // TODO: Brad said a TypeDef *could* have more than one parent due to
-	// multiple inheritance, but i'm not seeing any examples here.
-        TypeDef* this_parent_def = this_space->FastEl(i);
-        strm << this_parent_def->name << ":";
-      }
-      strm << ",";
-    }
-    strm << "\n";
   }
 }

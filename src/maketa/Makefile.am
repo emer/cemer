@@ -17,6 +17,7 @@ HEADS =\
 	../ta/ta_type.h \
 	mta_parse.h \
 	mta_constr.h \
+	mta_gendoc.h \
 	maketa.h
 
 SRCS =\
@@ -30,6 +31,7 @@ SRCS =\
 	mta_parse.cpp \
 	mta_lex.cpp \
 	mta_constr.cpp \
+	mta_gendoc.cpp \
 	maketa.cpp
 
 include $(top_srcdir)/mfstamp.am
