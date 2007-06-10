@@ -62,6 +62,7 @@ Program .projects[0].programs.gp[0][4] {
 };
 Program .projects[0].programs.gp[0][4] {
  name="LeabraSettle";
+ tags="Leabra, Std";
  desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
  flags=;
  objs {

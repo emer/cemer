@@ -2359,7 +2359,6 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   load_code.CheckConfig(quiet, rval);
   init_code.CheckConfig(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
-  // todo: go through and check that the functions contains valid function els!?
 }
 
 int Program::Call(Program* caller) {
@@ -2385,7 +2384,10 @@ int Program::CallInit(Program* caller) {
   Run_impl();
   CheckConfig(false);	// check after running!  see below
   script->Restart(); 	// for init, always restart script at beginning if run again	
-  setRunState(DONE);	// always done..
+  if(!taMisc::check_ok)
+    setRunState(NOT_INIT);
+  else
+    setRunState(DONE);
   return ret_val;
 } 
 
@@ -2407,7 +2409,10 @@ void Program::Init() {
   if (ret_val != RV_OK) ShowRunError();
   script->Restart();		// restart script at beginning if run again
 
-  setRunState(DONE);
+  if(!taMisc::check_ok)
+    setRunState(NOT_INIT);
+  else
+    setRunState(DONE);
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
 
@@ -3165,6 +3170,12 @@ bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
       name.gsub("\"", "");
       if(name.lastchar() == ';') name = name.before(';');
     }
+    if(taMisc::LexBuf.contains("tags=")) {
+      tags = taMisc::LexBuf.after("tags=");
+      tags.gsub("\"", "");
+      if(tags.lastchar() == ';') tags = tags.before(';');
+      ParseTags();
+    }
     if(taMisc::LexBuf.contains("desc=")) {
       desc = taMisc::LexBuf.after("desc=");
       desc.gsub("\"", "");
@@ -3175,6 +3186,23 @@ bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
   }
   strm.close();
   return rval;
+}
+
+void ProgLibEl::ParseTags() {
+  tags_array.Reset();
+  if(tags.empty())
+    return;
+  String tmp = tags;
+  while(tmp.contains(',')) {
+    String tag = tmp.before(',');
+    tag.gsub(" ","");		// nuke spaces
+    tags_array.Add(tag);
+    tmp = tmp.after(',');
+  }
+  if(!tmp.empty()) {
+    tmp.gsub(" ","");		// nuke spaces
+    tags_array.Add(tmp);
+  }
 }
 
 void ProgLibEl_List::Initialize() {

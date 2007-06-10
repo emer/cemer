@@ -658,6 +658,11 @@ LeabraProject .projects[0] {
   el_typ=taBase;
   el_def=0;
  };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+ };
  wizards {
   name=;
   el_typ=LeabraWizard;
@@ -1069,15 +1074,18 @@ LeabraProject .projects[0] {
   el_typ=Program;
   el_def=0;
   step_prog=NULL;
+  tags=;
   desc=;
   Program_Group @.gp[0] {
    name="LeabraAll_Std";
    el_typ=Program;
    el_def=0;
    step_prog=.projects[0].programs.gp[0][4]$0$;
+   tags="Leabra, Std, All";
    desc="The full set of programs for training a standard Leabra network";
    Program @[0] {
     name="LeabraBatch";
+    tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
     flags=;
     objs {
@@ -1240,6 +1248,7 @@ LeabraProject .projects[0] {
    };
    Program @[1] {
     name="LeabraTrain";
+    tags="Leabra, Std";
     desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task";
     flags=;
     objs {
@@ -1670,6 +1679,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    };
    Program @[2] {
     name="LeabraEpoch";
+    tags="Leabra, Std";
     desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
     flags=;
     objs {
@@ -2041,6 +2051,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    };
    Program @[3] {
     name="LeabraTrial";
+    tags="Leabra, Std";
     desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
     flags=;
     objs {
@@ -2273,6 +2284,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    };
    Program @[4] {
     name="LeabraSettle";
+    tags="Leabra, Std";
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
     flags=;
     objs {
@@ -2395,7 +2407,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	arg_type=LeabraNetwork;
+	arg_type=Network;
 	type="LeabraNetwork*";
 	name="network";
 	required=1;
@@ -2665,6 +2677,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    Program @[5] {
     name="LeabraCycle";
+    tags="Leabra, Std";
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
     flags=;
     objs {
@@ -2745,6 +2758,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    Program @[6] {
     name="ApplyInputs";
+    tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
     flags=NO_USER_RUN;
     objs {
@@ -2804,7 +2818,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[0] {
       name="network";
       var_type=T_Object;
-      object_type=LeabraNetwork;
+      object_type=Network;
       object_val=$1$;
       objs_ptr=0;
       flags=NULL_CHECK;
@@ -2941,6 +2955,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    Program @[7] {
     name="LeabraTrialMonitor";
+    tags="Leabra, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
     flags=;
     objs {
@@ -3348,6 +3363,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    Program @[8] {
     name="LeabraEpochMonitor";
+    tags="Leabra, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
     flags=;
     objs {
@@ -3852,6 +3868,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    };
    Program @[9] {
     name="SaveWeights";
+    tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     flags=;
     objs {
@@ -3871,7 +3888,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[0] {
       name="network";
       var_type=T_Object;
-      object_type=LeabraNetwork;
+      object_type=Network;
       object_val=$1$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
@@ -3901,7 +3918,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[2] {
       name="fname";
       var_type=T_String;
-      string_val="/Users/oreilly/pdp4.0/trunk/test/leabra_ra.03_0036.wts.gz";
+      string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="final generated file name -- do not edit!";
@@ -4322,7 +4339,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  display=1;
-	  ordered_uvg_list{ 8;	  };
+	  ordered_uvg_list{ 	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=3: };
@@ -4520,7 +4537,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4552,7 +4569,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };

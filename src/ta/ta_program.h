@@ -881,6 +881,8 @@ public:
   static bool		step_mode;
   // #READ_ONLY the program was run in step mode -- check for stepping
   
+  String		tags;
+  // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String		desc;
   // #EDIT_DIALOG #HIDDEN_INLINE description of what this program does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgFlags		flags;
@@ -1072,6 +1074,8 @@ INHERITED(taNBase)
 public:
   bool		is_group;	// this is a group of related programs
   String	desc; 		// #EDIT_DIALOG description of what this program does and when it should be used
+  String	tags;		// #EDIT_DIALOG list of comma-separated tags describing function of program
+  String_Array	tags_array;	// #HIDDEN #READ_ONLY #NO_SAVE parsed version of the tags list, for internal use to actually operate on the tags
   String	lib_name;	// #EDIT_DIALOG name of library that contains this program
   String	URL;		// #EDIT_DIALOG full URL to find this program
   String	filename;	// #EDIT_DIALOG file name given to this program
@@ -1084,8 +1088,10 @@ public:
   virtual bool 	LoadProgramGroup(Program_Group* prog_gp);
   // load into given program; true if loaded, false if not
 
-  virtual bool ParseProgFile(const String& fnm, const String& path);
+  virtual bool  ParseProgFile(const String& fnm, const String& path);
   // get program information from program or program group file. is_group is set based on extension of file name (.prog or .progp)
+
+  virtual void	ParseTags(); // parse list of tags into tags_array
 
   override String GetDesc() const { return desc; }
   override String GetTypeName() const { return lib_name; }
@@ -1136,6 +1142,8 @@ class TA_API Program_Group : public taGroup<Program> {
 INHERITED(taGroup<Program>)
 public:
   ProgramRef		step_prog; // the program that will be stepped when the Step button is pressed
+  String		tags;
+  // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
   String		desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
 
   static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
@@ -1153,7 +1161,7 @@ public:
   void		SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
   override String 	GetTypeDecoKey() const { return "Program"; }
-  
+
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(Program_Group);

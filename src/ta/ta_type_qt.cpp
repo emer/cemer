@@ -38,6 +38,8 @@
 
 #include "css_machine.h"	// for setting error code in taMisc::Error
 
+#include <QTime>
+
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
@@ -56,7 +58,23 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   }
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
-    taiChoiceDialog::ErrorDialog(NULL, errmsg);
+    static bool cancel_mode = false;
+    static QTime prv_time;
+    if(cancel_mode) {
+      QTime cur_time = QTime::currentTime();
+      if(prv_time.secsTo(cur_time) > 60) {
+	cancel_mode = false;
+      }
+      else {
+	return;			// cancel!
+      }
+    }
+    bool cancel = taiChoiceDialog::ErrorDialog(NULL, errmsg);
+    if(cancel) {
+      cancel_mode = true;
+      prv_time = QTime::currentTime();
+      cerr << "Cancelling all error messages for the next minute!" << endl;
+    }
   }
 #endif
 }

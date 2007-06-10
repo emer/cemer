@@ -106,8 +106,8 @@ public:
   static int	ChoiceDialog(QWidget* parent_, const String& msg, const String& but_list, 
     const char* win_title = "");
 
-  static void 	ErrorDialog(QWidget* parent_, const char* msg, 
-    const char* win_title = "Error", bool copy_but = true);
+  static bool 	ErrorDialog(QWidget* parent_, const char* msg, 
+    const char* win_title = "Error", bool copy_but = true, bool cancel_errs_but = true);
     
   static void 	ConfirmDialog(QWidget* parent_, const char* msg, 
     const char* win_title = "", bool copy_but = true);

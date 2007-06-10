@@ -45,7 +45,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
     TypeDef* td = ts->FastEl(i);
 
     // We only want "actual" types, not pointers or references to types, etc...
-    if (!td->ptr && !td->ref && !td->formal && !td->pre_parsed && !td->is_subclass) {
+    if (!td->ptr && !td->ref && !td->formal && !td->pre_parsed) {
       strm << "  <TypeDef name=\"" << td->name;
       strm << (td->is_enum() ? "\" type=\"enum" : "");
       strm << (td->is_class() ? "\" type=\"class" : "");

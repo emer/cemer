@@ -68,6 +68,7 @@ Program .projects[0].programs.gp[0][8] {
 };
 Program .projects[0].programs.gp[0][8] {
  name="LeabraEpochMonitor";
+ tags="Leabra, Std, Monitor";
  desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
  flags=;
  objs {

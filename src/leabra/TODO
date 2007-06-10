@@ -2,12 +2,19 @@ leabra todo list:
 
 commit:
 
+Cancel Err Dialog; CheckConfig fail != INIT on programs; tags for programs & prog_lib
+
+
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??
 * add complexity params to various levels
 * add a function to update texture when texture is changed -- just like the other guy 
   for image -- (test that too!)
+
+--------------------
+Other Algorithms:
+  * cs, so, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp?
 
 ------------
 current:
@@ -17,8 +24,6 @@ current:
 * program edit control panel -- causes stale of calling progs! (not that one) - #490
 
 * leabra test all progp
-
-* bp conversion, cs, so, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp
 
 * have init values of wt_scale parameters prior to adapting?? yes
 
@@ -37,7 +42,6 @@ current:
 * ProgVar FLAG: CTRL_RO -- read only in control panel #374
 * progexpr not finding variables in function args
 * proglib: add dates (fill in!)
-* checkconfig on functions -- fun can only appear in functions (but not vice-versa..)
 
 == PVLV:
 
@@ -71,10 +75,6 @@ check:
 
 ------------------
 Program issues
-
---------------------
-Other Algorithms:
-  * fixup BP, so plugin
 
 --------------
 

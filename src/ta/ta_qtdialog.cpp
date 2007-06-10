@@ -184,15 +184,19 @@ int taiChoiceDialog::ChoiceDialog(QWidget* parent_, const String& msg,
 }
 
 
-void taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg,
-  const char* title, bool copy_but_)
+bool taiChoiceDialog::ErrorDialog(QWidget* parent_, const char* msg,
+  const char* title, bool copy_but_, bool cancel_errs_but_)
 {
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  String buts;
+  if(cancel_errs_but_)
+    buts = "Cancel Remaining Error Dialogs" + delimiter + "OK";
   taiChoiceDialog* dlg = new taiChoiceDialog(Warning, QString(title), 
-    QString(msg), "", parent_, copy_but_);
-  dlg->exec();
+    QString(msg), buts, parent_, copy_but_);
+  int chs = dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;
+  return chs == 0;		// true if cancel
 }
 
 void taiChoiceDialog::ConfirmDialog(QWidget* parent_, const char* msg,
