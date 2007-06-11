@@ -53,18 +53,13 @@ void DaModUnitSpec::Initialize() {
   min_obj_type = &TA_DaModUnit;
 }
 
-void DaModUnitSpec::InitLinks() {
-  LeabraUnitSpec::InitLinks();
-  taBase::Own(da_mod, this);
-}
-
 void DaModUnitSpec::Defaults() {
-  LeabraUnitSpec::Defaults();
+  inherited::Defaults();
   Initialize();
 }
 
 void DaModUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
-  LeabraUnitSpec::Init_Acts(u, lay);
+  inherited::Init_Acts(u, lay);
   DaModUnit* lu = (DaModUnit*)u;
   lu->act_m2 = 0.0f;
   lu->act_p2 = 0.0f;
@@ -109,12 +104,12 @@ void DaModUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib
     }
   }
 
-  LeabraUnitSpec::Compute_Conduct(u, lay, thr, net);
+  inherited::Compute_Conduct(u, lay, thr, net);
 }
 
 void DaModUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
   if(!da_mod.p_dwt) {
-    LeabraUnitSpec::Compute_dWt(u, lay, net);
+    inherited::Compute_dWt(u, lay, net);
     return;
   }
   DaModUnit* lu = (DaModUnit*)u;
@@ -129,7 +124,7 @@ void DaModUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* 
 
 void DaModUnitSpec::Compute_Weights(Unit* u) {
   if(!da_mod.p_dwt) {
-    LeabraUnitSpec::Compute_Weights(u);
+    inherited::Compute_Weights(u);
     return;
   }
   DaModUnit* lu = (DaModUnit*)u;
@@ -157,7 +152,7 @@ void DaModUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net)
 }
 
 void DaModUnitSpec::DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay) {
-  LeabraUnitSpec::DecayEvent(u, lay, net, decay);
+  inherited::DecayEvent(u, lay, net, decay);
   DaModUnit* lu = (DaModUnit*)u;
   lu->dav = 0.0f;
 }
@@ -165,7 +160,7 @@ void DaModUnitSpec::DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* n
 void DaModUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 			       LeabraNetwork* net, bool set_both)
 {
-  LeabraUnitSpec::PostSettle(u, lay, thr, net, set_both);
+  inherited::PostSettle(u, lay, thr, net, set_both);
   DaModUnit* lu = (DaModUnit*)u;
 
   if((net->phase == LeabraNetwork::MINUS_PHASE) && (net->phase_no < 2)) {
@@ -235,18 +230,11 @@ void ExtRewLayerSpec::Initialize() {
 }
 
 void ExtRewLayerSpec::Defaults() {
-  ScalarValLayerSpec::Defaults();
-  rew.Initialize();
-  avg_rew.Initialize();
-  out_err.Initialize();
+  inherited::Defaults();
+  rew.Defaults();
+  avg_rew.Defaults();
+  out_err.Defaults();
   Initialize();
-}
-
-void ExtRewLayerSpec::InitLinks() {
-  ScalarValLayerSpec::InitLinks();
-  taBase::Own(rew, this);
-  taBase::Own(avg_rew, this);
-  taBase::Own(out_err, this);
 }
 
 void ExtRewLayerSpec::UpdateAfterEdit_impl() {
@@ -272,11 +260,11 @@ void ExtRewLayerSpec::HelpConfig() {
  which this layer is based on)";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
-  ScalarValLayerSpec::HelpConfig();
+  inherited::HelpConfig();
 }
 
 bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  bool rval = ScalarValLayerSpec::CheckConfig_Layer(lay, quiet);
+  bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
 
@@ -607,12 +595,8 @@ void TDRewPredLayerSpec::Initialize() {
 }
 
 void TDRewPredLayerSpec::Defaults() {
-  ScalarValLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
-}
-
-void TDRewPredLayerSpec::InitLinks() {
-  ScalarValLayerSpec::InitLinks();
 }
 
 void TDRewPredLayerSpec::UpdateAfterEdit_impl() {
@@ -630,11 +614,11 @@ void TDRewPredLayerSpec::HelpConfig() {
  - Sending connection to a TDRewIntegLayerSpec to integrate predictions with external rewards";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
-  ScalarValLayerSpec::HelpConfig();
+  inherited::HelpConfig();
 }
 
 bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
+  if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -691,7 +675,7 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 }
 
 void TDRewPredLayerSpec::Init_Acts(LeabraLayer* lay) {
-  ScalarValLayerSpec::Init_Acts(lay);
+  inherited::Init_Acts(lay);
   // initialize the misc_1 variable to 0.0 -- no prior predictions!
   UNIT_GP_ITR(lay, 
       LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
@@ -748,7 +732,7 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* ne
 }
 
 void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
-  ScalarValLayerSpec::PostSettle(lay, net, set_both); 
+  inherited::PostSettle(lay, net, set_both); 
   if(net->phase_no < net->phase_max-1)
     return; // only at very last phase, do this!  see note on Compute_dWt as to why..
   Compute_TdPlusPhase(lay, net);
@@ -772,7 +756,7 @@ void TDRewPredLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   // and then continuing with settling..
   if(net->phase_no < net->phase_max-1)
     return; // only do FINAL dwt!
-  ScalarValLayerSpec::Compute_dWt(lay, net);
+  inherited::Compute_dWt(lay, net);
 }
 
 //////////////////////////////////////////
@@ -794,13 +778,8 @@ void TDRewIntegLayerSpec::Initialize() {
 }
 
 void TDRewIntegLayerSpec::Defaults() {
-  ScalarValLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
-}
-
-void TDRewIntegLayerSpec::InitLinks() {
-  ScalarValLayerSpec::InitLinks();
-  taBase::Own(rew_integ, this);
 }
 
 void TDRewIntegLayerSpec::UpdateAfterEdit_impl() {
@@ -824,11 +803,11 @@ void TDRewIntegLayerSpec::HelpConfig() {
  which this layer is based on)";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
-  ScalarValLayerSpec::HelpConfig();
+  inherited::HelpConfig();
 }
 
 bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
+  if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -963,12 +942,8 @@ void TdLayerSpec::Initialize() {
   i_kwta_pt = .25;
 }
 
-void TdLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-}
-
 void TdLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
 }
 
@@ -990,7 +965,7 @@ void TdLayerSpec::HelpConfig() {
 }
 
 bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
@@ -1134,7 +1109,7 @@ void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     lay->hard_clamped = false;
     lay->UnSetExtFlag(Unit::EXT);
   }
-  LeabraLayerSpec::Compute_HardClamp(lay, net);
+  inherited::Compute_HardClamp(lay, net);
 }
 
 

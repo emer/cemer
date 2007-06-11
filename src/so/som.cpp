@@ -16,7 +16,6 @@
 
 
 #include "som.h"
-#include <pdp/net_iv.h>		// for the "from netview" thing
 
 void SomUnitSpec::Compute_Netin(Unit* u) {
   // Modified by Danke, Feb. 9, 2003
@@ -25,10 +24,9 @@ void SomUnitSpec::Compute_Netin(Unit* u) {
   else {
     // do distance instead of net input
     u->net = 0.0f;
-    Con_Group* recv_gp;
-    int g;
-    FOR_ITR_GP(Con_Group, recv_gp, u->recv., g) {
-      if(!recv_gp->prjn->from->lesion)
+    for(int g=0; g<u->recv.size; g++) {
+      SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
+      if(!recv_gp->prjn->from->lesioned())
 	u->net += recv_gp->Compute_Dist(u);
     }
   }
@@ -38,29 +36,9 @@ void NeighborEl::Initialize() {
   act_val = 1.0;
 }
 
-void NeighborEl::InitLinks() {
-  taOBase::InitLinks();
-  taBase::Own(off, this);
-}
-
-void NeighborEl::Copy_(const NeighborEl& cp) {
-  off = cp.off;
-  act_val = cp.act_val;
-}
-
 void SomLayerSpec::Initialize() {
   wrap = false;
   netin_type = MIN_NETIN_WINS;
-}
-
-void SomLayerSpec::InitLinks() {
-  SoLayerSpec::InitLinks();
-  taBase::Own(neighborhood, this);
-}
-
-void SomLayerSpec::CutLinks() {
-  neighborhood.CutLinks();
-  SoLayerSpec::CutLinks();
 }
 
 void SomLayerSpec::KernelEllipse(int half_width, int half_height, int ctr_x, int ctr_y) {
@@ -136,29 +114,29 @@ void SomLayerSpec::KernelRectangle(int width, int height, int ctr_x, int ctr_y) 
   }
 }
 
-void SomLayerSpec::KernelFromNetView(NetView* view) {
-  if((view == NULL) || (view->editor == NULL) || (view->editor->netg == NULL))
-    return;
-  if(view->editor->netg->selectgroup.size <= 0) {
-    taMisc::Error("Must select some units to get connection pattern from");
-    return;
-  }
-  neighborhood.Reset();
-  int i;
-  taBase* itm;
-  Unit* center = NULL;
-  for(i=0; i< view->editor->netg->selectgroup.size; i++) {
-    itm = view->editor->netg->selectgroup.FastEl(i);
-    if(!itm->InheritsFrom(TA_Unit))      continue;
-    Unit* un = (Unit*) itm;
-    if(center == NULL) {
-      center = un;
-    }
-    NeighborEl* te = (NeighborEl*)neighborhood.New(1, &TA_NeighborEl);
-    te->off.x = un->pos.x - center->pos.x;
-    te->off.y = un->pos.y - center->pos.y;
-  }
-}
+// void SomLayerSpec::KernelFromNetView(NetView* view) {
+//   if((view == NULL) || (view->editor == NULL) || (view->editor->netg == NULL))
+//     return;
+//   if(view->editor->netg->selectgroup.size <= 0) {
+//     taMisc::Error("Must select some units to get connection pattern from");
+//     return;
+//   }
+//   neighborhood.Reset();
+//   int i;
+//   taBase* itm;
+//   Unit* center = NULL;
+//   for(i=0; i< view->editor->netg->selectgroup.size; i++) {
+//     itm = view->editor->netg->selectgroup.FastEl(i);
+//     if(!itm->InheritsFrom(TA_Unit))      continue;
+//     Unit* un = (Unit*) itm;
+//     if(center == NULL) {
+//       center = un;
+//     }
+//     NeighborEl* te = (NeighborEl*)neighborhood.New(1, &TA_NeighborEl);
+//     te->off.x = un->pos.x - center->pos.x;
+//     te->off.y = un->pos.y - center->pos.y;
+//   }
+// }
 
 void SomLayerSpec::StepKernelActs(float val) {
   int i;
@@ -229,13 +207,13 @@ void SomLayerSpec::Compute_Act(SoLayer* lay) {
   NeighborEl* te;
   for(i = 0; i< neighborhood.size; i++) {
     te = (NeighborEl*)neighborhood.FastEl(i);
-    int su_x = WrapClip(win_u->pos.x + te->off.x, lay->geom.x);
-    int su_y = WrapClip(win_u->pos.y + te->off.y, lay->geom.y);
+    int su_x = WrapClip(win_u->pos.x + te->off.x, lay->un_geom.x);
+    int su_y = WrapClip(win_u->pos.y + te->off.y, lay->un_geom.y);
 
     if((su_x < 0) || (su_y < 0))
       continue;
 
-    int su_idx = su_y * lay->geom.x + su_x;
+    int su_idx = su_y * lay->un_geom.x + su_x;
     if(su_idx >= lay->units.leaves)
       continue;
 

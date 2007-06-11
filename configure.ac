@@ -106,7 +106,7 @@ dnl  A generic set of systemwide includes. Not all sub libraries
 dnl  require all of these includes, but this is less error-prone
 dnl  than manually specifying them for each library
 
-AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
+AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../so -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
 AC_CHECK_LIB([ode],[main])
 AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
@@ -337,6 +337,7 @@ AC_CONFIG_FILES([Makefile
 		src/ta_lib/Makefile
 		src/bp/Makefile
 		src/leabra/Makefile
+		src/so/Makefile
 		src/pdp/Makefile
 		src/pdp_lib/Makefile
 		src/pdp_bin/Makefile

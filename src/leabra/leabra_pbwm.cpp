@@ -43,14 +43,9 @@ void SNcLayerSpec::Initialize() {
 }
 
 void SNcLayerSpec::Defaults() {
-  PVLVDaLayerSpec::Defaults();
-  snc.Initialize();
+  inherited::Defaults();
+  snc.Defaults();
   Initialize();
-}
-
-void SNcLayerSpec::InitLinks() {
-  PVLVDaLayerSpec::InitLinks();
-  taBase::Own(snc, this);
 }
 
 void SNcLayerSpec::HelpConfig() {
@@ -64,11 +59,11 @@ void SNcLayerSpec::HelpConfig() {
  which this layer is based on";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
-  PVLVDaLayerSpec::HelpConfig();
+  inherited::HelpConfig();
 }
 
 bool SNcLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!PVLVDaLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   bool rval = true;
   int myidx = lay->own_net->layers.FindLeafEl(lay);
@@ -106,12 +101,6 @@ void MatrixConSpec::Initialize() {
   learn_rule = MAINT;
 }
 
-void MatrixConSpec::InitLinks() {
-  LeabraConSpec::InitLinks();
-  children.SetBaseType(&TA_LeabraConSpec); // make this the base type so bias specs
-					   // can live under here..
-  children.el_typ = &TA_MatrixConSpec; // but this is the default type
-}
 
 //////////////////////////////////////////
 // 	Matrix Unit Spec		//
@@ -132,7 +121,7 @@ void MatrixUnitSpec::Initialize() {
 }
 
 void MatrixUnitSpec::Defaults() {
-  DaModUnitSpec::Defaults();
+  inherited::Defaults();
   Initialize();
 }
 
@@ -168,7 +157,7 @@ void MatrixUnitSpec::Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib
 void MatrixUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 			       LeabraNetwork* net, bool set_both)
 {
-  DaModUnitSpec::PostSettle(u, lay, thr, net, set_both);
+  inherited::PostSettle(u, lay, thr, net, set_both);
   MatrixLayerSpec* mls = (MatrixLayerSpec*)lay->spec.SPtr();
   if(mls->bg_type == MatrixLayerSpec::MAINT) {
     DaModUnit* lu = (DaModUnit*)u;
@@ -254,22 +243,13 @@ void MatrixLayerSpec::UpdateAfterEdit_impl() {
 }
 
 void MatrixLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
-  matrix.Initialize();
-  contrast.Initialize();
-  rnd_go.Initialize();
-  err_rnd_go.Initialize();
-  avgda_rnd_go.Initialize();
+  inherited::Defaults();
+  matrix.Defaults();
+  contrast.Defaults();
+  rnd_go.Defaults();
+  err_rnd_go.Defaults();
+  avgda_rnd_go.Defaults();
   Initialize();
-}
-
-void MatrixLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(matrix, this);
-  taBase::Own(contrast, this);
-  taBase::Own(rnd_go, this);
-  taBase::Own(err_rnd_go, this);
-  taBase::Own(avgda_rnd_go, this);
 }
 
 void MatrixLayerSpec::HelpConfig() {
@@ -291,7 +271,7 @@ void MatrixLayerSpec::HelpConfig() {
 }
 
 bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet))
+  if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -419,7 +399,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 }
 
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay) {
-  LeabraLayerSpec::Init_Weights(lay);
+  inherited::Init_Weights(lay);
   UNIT_GP_ITR(lay, 
 	      DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
 	      u->misc_1 = avgda_rnd_go.avgda_thr;	// initialize to above rnd go val..
@@ -791,7 +771,7 @@ void MatrixLayerSpec::Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraI
       Compute_DaLearnMod(lay, mugp, thr, net);
     // don't do anything in 2nd plus!
   }
-  LeabraLayerSpec::Compute_Act_impl(lay, ug, thr, net);
+  inherited::Compute_Act_impl(lay, ug, thr, net);
 }
 
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
@@ -819,11 +799,11 @@ void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     }
   }
 
-  LeabraLayerSpec::Compute_HardClamp(lay, net);
+  inherited::Compute_HardClamp(lay, net);
 }
 
 void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
-  LeabraLayerSpec::PostSettle(lay, net, set_both);
+  inherited::PostSettle(lay, net, set_both);
 
   if(bg_type == MatrixLayerSpec::OUTPUT) {
     if(net->phase_no == 0)
@@ -844,7 +824,7 @@ void MatrixLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
     if(net->phase_no < net->phase_max-1)	// only final dwt!
       return;
   }
-  LeabraLayerSpec::Compute_dWt(lay, net);
+  inherited::Compute_dWt(lay, net);
 }
 
 //////////////////////////////////
@@ -873,12 +853,8 @@ void SNrThalLayerSpec::Initialize() {
   i_kwta_pt = .6f;
 }
 
-void SNrThalLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-}
-
 void SNrThalLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
 }
 
@@ -901,7 +877,7 @@ void SNrThalLayerSpec::HelpConfig() {
 }
 
 bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
@@ -989,7 +965,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
 
 void SNrThalLayerSpec::Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_GoNogoNet(lay, net);
-  LeabraLayerSpec::Compute_Clamp_NetAvg(lay, net);
+  inherited::Compute_Clamp_NetAvg(lay, net);
 }
 
 void SNrThalLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork*) {
@@ -1030,14 +1006,9 @@ void PFCLayerSpec::Initialize() {
 }
 
 void PFCLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
-  gate.Initialize();
+  inherited::Defaults();
+  gate.Defaults();
   Initialize();
-}
-
-void PFCLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(gate, this);
 }
 
 void PFCLayerSpec::HelpConfig() {
@@ -1060,7 +1031,7 @@ void PFCLayerSpec::HelpConfig() {
 }
 
 bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
     SetUnique("decay", true);
@@ -1307,7 +1278,7 @@ void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork*) {
 
 void PFCLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(gate.allow_clamp && clamp.hard && (lay->ext_flag & Unit::EXT)) {
-    LeabraLayerSpec::Compute_HardClamp(lay, net);
+    inherited::Compute_HardClamp(lay, net);
   }
   else {
     // not to hard clamp: needs to update in 2nd plus phase!
@@ -1317,7 +1288,7 @@ void PFCLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
-  LeabraLayerSpec::PostSettle(lay, net, set_both);
+  inherited::PostSettle(lay, net, set_both);
 
   if(net->phase_no >= 1) {
     Compute_GatingGOGO(lay, net);	// do gating
@@ -1327,7 +1298,7 @@ void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_bot
 void PFCLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   if((net->phase_max > 2) && (net->phase_no != 1))
     return; // only do first dwt!
-  LeabraLayerSpec::Compute_dWt(lay, net);
+  inherited::Compute_dWt(lay, net);
 }
 
 
@@ -1360,14 +1331,9 @@ void PFCOutLayerSpec::Initialize() {
 }
 
 void PFCOutLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
-  out_gate.Initialize();
+  inherited::Defaults();
+  out_gate.Defaults();
   Initialize();
-}
-
-void PFCOutLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(out_gate, this);
 }
 
 void PFCOutLayerSpec::HelpConfig() {
@@ -1387,7 +1353,7 @@ void PFCOutLayerSpec::HelpConfig() {
 }
 
 bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   if(decay.clamp_phase2) {
     SetUnique("decay", true);

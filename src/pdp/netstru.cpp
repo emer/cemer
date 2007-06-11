@@ -35,18 +35,15 @@
 //  	Schedule	//
 //////////////////////////
 
+const float SigmoidSpec::SIGMOID_MAX_VAL;
+const float SigmoidSpec::SIGMOID_MIN_VAL;
+const float SigmoidSpec::SIGMOID_MAX_NET;
+
 void SchedItem::Initialize() {
   start_ctr = 0;
   start_val = 0.0f;
   duration = 0;
   step = .01f;
-}
-
-void SchedItem::Copy_(const SchedItem& cp) {
-  start_ctr = cp.start_ctr;
-  start_val = cp.start_val;
-  duration = cp.duration;
-  step = cp.step;
 }
 
 void Schedule::Initialize() {
@@ -55,13 +52,6 @@ void Schedule::Initialize() {
   cur_val = 0.0f;
   interpolate = true;
   SetBaseType(&TA_SchedItem);
-}
-
-void Schedule::Copy_(const Schedule& cp) {
-  last_ctr = cp.last_ctr;
-  default_val = cp.default_val;
-  cur_val = cp.cur_val;
-  interpolate = cp.interpolate;
 }
 
 void Schedule::UpdateAfterEdit_impl() {
@@ -1798,15 +1788,17 @@ bool Unit::CheckBuild(bool quiet) {
 		"Unit CheckBuild: no unit spec set for unit")) {
     return false;		// fatal
   }
-  if(CheckError((!GetUnitSpec()->bias_con_type && bias.cons.size), quiet, rval,
-		"Unit CheckBuild: bias weight exists but no type")) {
-    return false;
+  UnitSpec* us = GetUnitSpec();
+  if(!us->bias_con_type) {
+    if(CheckError(bias.cons.size > 0, quiet, rval,
+		  "Unit CheckBuild: bias weight exists but no type")) {
+      return false;
+    }
   }
   else {
-    if(CheckError((!bias.cons.size || (bias.con_type != GetUnitSpec()->bias_con_type)),
+    if(CheckError((!bias.cons.size || (bias.con_type != us->bias_con_type)),
 		  quiet, rval, 
-		  "Unit CheckBuild: bias weight null or not same type -- should be:",
-		  GetUnitSpec()->bias_con_type->name)) {
+		  "Unit CheckBuild: bias weight null or not same type as specified in UnitSpec:", us->name)) {
       return false;
     }
   }
@@ -2199,10 +2191,6 @@ void ProjectionSpec::InitLinks() {
   BaseSpec::InitLinks();
   children.SetBaseType(&TA_ProjectionSpec); // allow all of this general spec type to be created under here
   children.el_typ = GetTypeDef(); // but make the default to be me!
-}
-
-void ProjectionSpec::CutLinks() {
-  BaseSpec::CutLinks();
 }
 
 void ProjectionSpec::RemoveCons(Projection* prjn) {
@@ -3220,11 +3208,6 @@ void Layer::Copy_(const Layer& cp) {
 void Layer::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 
-  if(lesion_) {			// todo: v3compat conversion obs remove later
-    SetLayerFlag(LESIONED);
-    lesion_ = false;
-  }
-
   if(taMisc::is_loading) return;
   if (!own_net) return;
   own_net->UpdtAfterNetMod();	// todo: is this a good idea??
@@ -3232,6 +3215,12 @@ void Layer::UpdateAfterEdit() {
 
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(lesion_) {			// todo: v3compat conversion obs remove later
+    SetLayerFlag(LESIONED);
+    lesion_ = false;
+  }
+
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs();
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec

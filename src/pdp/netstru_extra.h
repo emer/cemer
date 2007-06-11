@@ -32,9 +32,10 @@ public:
   // Connection function for full connectivity
   int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
 
+  TA_BASEFUNS_NOCOPY(FullPrjnSpec);
+private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_NOCOPY(FullPrjnSpec);
 };
 
 class PDP_API TessEl : public taOBase {
@@ -44,20 +45,20 @@ public:
   TwoDCoord	send_off;	// offset from current receiving unit
   float		wt_val;		// value to assign to weight
 
+  TA_SIMPLE_BASEFUNS(TessEl);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  void	InitLinks();
-  void	Copy_(const TessEl& cp);
-  TA_BASEFUNS(TessEl);
 };
 
 class PDP_API TessEl_List : public taList<TessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of TessEl objects
 INHERITED(taList<TessEl>)
 public:
+  TA_BASEFUNS_LITE_NOCOPY(TessEl_List);
+private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_LITE_NOCOPY(TessEl_List);
 };
 
 class PDP_API TesselPrjnSpec : public ProjectionSpec {
@@ -95,13 +96,12 @@ public:
   virtual void	WeightsFromGausDist(float scale, float sigma);
   // #MENU assign weights as a Gaussian function of sender distance
 
-  void	Initialize();
-  void	Destroy()	{ };
-  void	InitLinks();
-  void	Copy_(const TesselPrjnSpec& cp);
-  TA_BASEFUNS(TesselPrjnSpec);
+  TA_SIMPLE_BASEFUNS(TesselPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
 class PDP_API OneToOnePrjnSpec : public ProjectionSpec {
@@ -114,10 +114,10 @@ public:
 
   void	Connect_impl(Projection* prjn);
 
+  TA_SIMPLE_BASEFUNS(OneToOnePrjnSpec);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  SIMPLE_COPY(OneToOnePrjnSpec);
-  TA_BASEFUNS(OneToOnePrjnSpec);
 };
 
 class PDP_API UniformRndPrjnSpec : public ProjectionSpec {
@@ -132,13 +132,12 @@ public:
   void 	Connect_impl(Projection* prjn);
   // Connection function for full connectivity
 
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(UniformRndPrjnSpec);
-  TA_BASEFUNS(UniformRndPrjnSpec);
+  TA_SIMPLE_BASEFUNS(UniformRndPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
 };
 
 class PDP_API PolarRndPrjnSpec : public ProjectionSpec {
@@ -176,13 +175,12 @@ public:
   virtual float	GetDistProb(Projection* prjn, Unit* ru, Unit* su);
   // compute the probability for connecting two units as a fctn of distance
 
-  void	Initialize();
-  void	Destroy()	{ };
-  void	InitLinks();
-  SIMPLE_COPY(PolarRndPrjnSpec);
-  TA_BASEFUNS(PolarRndPrjnSpec);
+  TA_SIMPLE_BASEFUNS(PolarRndPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
 class PDP_API SymmetricPrjnSpec : public ProjectionSpec {
@@ -191,9 +189,10 @@ INHERITED(ProjectionSpec)
 public:
   void 	Connect_impl(Projection* prjn);
 
+  TA_BASEFUNS_NOCOPY(SymmetricPrjnSpec);
+private:
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS_NOCOPY(SymmetricPrjnSpec);
 };
 
 class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
@@ -211,13 +210,14 @@ public:
   virtual void	Compile();
   // #BUTTON compile script from script file into internal runnable format
 
-  void	Initialize();
-  void 	Destroy();
   void	InitLinks();
   void	Copy_(const ScriptPrjnSpec& cp);
   TA_BASEFUNS(ScriptPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy();
 };
 
 class PDP_API CustomPrjnSpec : public ProjectionSpec {
@@ -226,9 +226,10 @@ INHERITED(ProjectionSpec)
 public:
 
   void	Connect(Projection* prjn);	// do nothing
+  TA_BASEFUNS_NOCOPY(CustomPrjnSpec);
+private:
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS_NOCOPY(CustomPrjnSpec);
 };
 
 
@@ -242,9 +243,10 @@ INHERITED(OneToOnePrjnSpec)
 public:
   void	Connect_impl(Projection* prjn);
 
+  TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
+private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
 };
 
 class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
@@ -257,13 +259,12 @@ public:
 
   void	Connect_impl(Projection* prjn);
 
-  void	Initialize();
-  void 	Destroy()		{ };
-  void 	InitLinks();
-  SIMPLE_COPY(RndGpOneToOnePrjnSpec);
-  TA_BASEFUNS(RndGpOneToOnePrjnSpec);
+  TA_SIMPLE_BASEFUNS(RndGpOneToOnePrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
 };
 
 class PDP_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
@@ -284,10 +285,10 @@ public:
   void	PreConnect(Projection* prjn);
   void	Connect_impl(Projection* prjn);
 
+  TA_SIMPLE_BASEFUNS(GpOneToManyPrjnSpec);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  SIMPLE_COPY(GpOneToManyPrjnSpec);
-  TA_BASEFUNS(GpOneToManyPrjnSpec);
 };
 
 class PDP_API GpTessEl : public taOBase {
@@ -297,20 +298,20 @@ public:
   TwoDCoord	send_gp_off;	// offset of group from current receiving group
   float		p_con;		// proportion connectivity from this group -- negative value means just make symmetric cons
 
+  TA_SIMPLE_BASEFUNS(GpTessEl);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  void	InitLinks();
-  void	Copy_(const GpTessEl& cp);
-  TA_BASEFUNS_LITE(GpTessEl);
 };
 
 class PDP_API GpTessEl_List : public taList<GpTessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
 INHERITED(taList<GpTessEl>)
 public:
+  TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
+private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS_LITE_NOCOPY(GpTessEl_List);
 };
 
 class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
@@ -359,13 +360,12 @@ public:
   virtual void	SetPCon(float p_con, int start = 0, int end = -1);
   // #MENU set p_con value for a range of send_gp_offs (default = all; end-1 = all)
 
-  void	Initialize();
-  void	Destroy()	{ };
-  void	InitLinks();
-  SIMPLE_COPY(GpRndTesselPrjnSpec);
-  TA_BASEFUNS(GpRndTesselPrjnSpec);
+  TA_SIMPLE_BASEFUNS(GpRndTesselPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
 class PDP_API TiledRFPrjnSpec : public ProjectionSpec {
@@ -398,9 +398,10 @@ public:
   virtual void	SelectRF(Projection* prjn);
   // #BUTTON select all sending and receiving units in the receptive field of this projection
 
+  TA_SIMPLE_BASEFUNS(TiledRFPrjnSpec);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  TA_SIMPLE_BASEFUNS(TiledRFPrjnSpec);
 };
 
 class PDP_API TiledGpRFPrjnSpec : public ProjectionSpec {
@@ -415,11 +416,10 @@ public:
   virtual void 	Connect_Reciprocal(Projection* prjn);
   int 	ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
 
+  TA_SIMPLE_BASEFUNS(TiledGpRFPrjnSpec);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(TiledGpRFPrjnSpec);
-  TA_BASEFUNS(TiledGpRFPrjnSpec);
 };
 
 class PDP_API TiledNovlpPrjnSpec : public ProjectionSpec {
@@ -441,11 +441,10 @@ public:
 //   virtual void	SelectRF(Projection* prjn);
   // #BUTTON select all sending and receiving units in the receptive field of this projection
 
+  TA_SIMPLE_BASEFUNS(TiledNovlpPrjnSpec);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(TiledNovlpPrjnSpec);
-  TA_BASEFUNS(TiledNovlpPrjnSpec);
 };
 
 #endif /* netstru_extra_h */

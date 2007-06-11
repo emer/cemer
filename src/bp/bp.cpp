@@ -75,14 +75,14 @@ void BpConSpec::Initialize() {
 }
 
 void BpConSpec::InitLinks() {
-  ConSpec::InitLinks();
-  children.SetBaseType(&TA_BpConSpec);
+  inherited::InitLinks();
+  children.SetBaseType(&TA_BpConSpec); // allow any of this basic type here
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(lrate_sched, this);
 }
 
-void BpConSpec::UpdateAfterEdit() {
-  ConSpec::UpdateAfterEdit();
+void BpConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit();
   momentum_c = 1.0f - momentum;
 }
@@ -265,14 +265,9 @@ void DeltaBarDeltaBpConSpec::Initialize() {
   act_lrate_incr = lrate * lrate_incr;
 }
 
-void DeltaBarDeltaBpConSpec::UpdateAfterEdit() {
-  BpConSpec::UpdateAfterEdit();
+void DeltaBarDeltaBpConSpec::UpdateAfterEdit_impl() {
+  BpConSpec::UpdateAfterEdit_impl();
   act_lrate_incr = lrate * lrate_incr;
-}
-
-void DeltaBarDeltaBpConSpec::Copy_(const DeltaBarDeltaBpConSpec& cp) {
-  lrate_incr = cp.lrate_incr;
-  lrate_decr = cp.lrate_decr;
 }
 
 
@@ -293,21 +288,8 @@ void BpContextSpec::Initialize() {
   unit_flags = Unit::NO_EXTERNAL;
 }
 
-void BpContextSpec::InitLinks() {
-  BpUnitSpec::InitLinks();
-  taBase::Own(initial_act, this);
-}
-
-void BpContextSpec::Copy_(const BpContextSpec& cp) {
-  hysteresis = cp.hysteresis;
-  hysteresis_c = cp.hysteresis_c;
-  initial_act = cp.initial_act;
-  variable = cp.variable;
-  unit_flags = cp.unit_flags;
-}
-
-void BpContextSpec::UpdateAfterEdit() {
-  BpUnitSpec::UpdateAfterEdit();
+void BpContextSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
   hysteresis_c = 1.0f - hysteresis;
   var_md = TA_BpUnit.members.FindName(variable);
   if(var_md == NULL)
@@ -367,8 +349,8 @@ void LinearBpUnitSpec::Initialize() {
   act_range.max = 1e20f;
 }
 
-void LinearBpUnitSpec::UpdateAfterEdit() {
-  BpUnitSpec::UpdateAfterEdit();
+void LinearBpUnitSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
   if(err_fun == Bp_CrossEnt_Error) {
     taMisc::Error("LinearBpUnitSpec: Cross entropy error is incompatible with Linear Units!  I switched to Squared_Error for you.");
     SetUnique("err_fun", true);
@@ -398,8 +380,8 @@ void ThreshLinBpUnitSpec::Initialize() {
   threshold = 0.0f;
 }
 
-void ThreshLinBpUnitSpec::UpdateAfterEdit() {
-  BpUnitSpec::UpdateAfterEdit();
+void ThreshLinBpUnitSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
   if(err_fun == Bp_CrossEnt_Error) {
     taMisc::Error("ThreshLinBpUnitSpec: Cross entropy error is incompatible with Linear Units!  I switched to Squared_Error for you.");
     SetUnique("err_fun", true);
@@ -428,11 +410,6 @@ void ThreshLinBpUnitSpec::Compute_dEdNet(BpUnit* u) {
 void NoisyBpUnitSpec::Initialize() {
   noise.type = Random::GAUSSIAN;
   noise.var = .1f;
-}
-
-void NoisyBpUnitSpec::InitLinks() {
-  BpUnitSpec::InitLinks();
-  taBase::Own(noise, this);
 }
 
 void NoisyBpUnitSpec::Compute_Act(Unit* u) {
@@ -470,8 +447,8 @@ void RBFBpUnitSpec::Initialize() {
   denom_const = 0.5f / var;
 }
 
-void RBFBpUnitSpec::UpdateAfterEdit() {
-  BpUnitSpec::UpdateAfterEdit();
+void RBFBpUnitSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
   norm_const = 1.0f / sqrtf(2.0f * 3.14159265358979323846 * var);
   denom_const = 0.5f / var;
 }
@@ -507,8 +484,8 @@ void BumpBpUnitSpec::Initialize() {
   std_dev_r = 1.0f;
 }
 
-void BumpBpUnitSpec::UpdateAfterEdit() {
-  BpUnitSpec::UpdateAfterEdit();
+void BumpBpUnitSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
   std_dev_r = 1.0f / std_dev;
 }
 
@@ -679,7 +656,7 @@ void BpNetwork::Trial_Run() {
   } else {
     Compute_Error();		// for display purposes only..
   }
-  // weight update taken care of by the epoch process
+  // weight update taken care of by the epoch program
   DataUpdate(false);
 }
 

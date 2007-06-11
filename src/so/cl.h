@@ -20,7 +20,7 @@
 #ifndef cl_h
 #define cl_h
 
-#include <so/so.h>
+#include "so.h"
 
 class ClConSpec;
 class SoftClConSpec;
@@ -30,48 +30,51 @@ class SoftClConSpec;
 
 class ClConSpec : public SoConSpec {
   // competitive learning connection spec (uses normalized input activation)
+INHERITED(SoConSpec)
 public:
-  inline void	C_Compute_dWt(SoCon* cn, SoCon_Group* cg, 
+  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
   // compute weight change according to Cl function (normalized input acts)
 
+  TA_BASEFUNS_NOCOPY(ClConSpec);
+private:
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  SIMPLE_COPY(ClConSpec);
-  COPY_FUNS(ClConSpec, SoConSpec);
-  TA_BASEFUNS(ClConSpec);
 };
 
 class SoftClConSpec : public SoConSpec {
   // soft competitive learning connection spec
+INHERITED(SoConSpec)
 public:
-  inline void		C_Compute_dWt(SoCon* cn, SoCon_Group* cg, 
+  inline void		C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline virtual void 	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline virtual void 	Compute_dWt(RecvCons* cg, Unit* ru);
   // compute weight change according to soft Cl function
 
+  TA_BASEFUNS_NOCOPY(SoftClConSpec);
+private:
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  SIMPLE_COPY(SoftClConSpec);
-  COPY_FUNS(SoftClConSpec, SoConSpec);
-  TA_BASEFUNS(SoftClConSpec);
 };
 
 
 class ClLayerSpec : public SoLayerSpec {
   // competitive learning layer spec
+INHERITED(SoLayerSpec)
 public:
   void		Compute_Act(SoLayer* lay);
   // set activation to be 1.0 for unit with most input, 0 else
 
+  TA_BASEFUNS_NOCOPY(ClLayerSpec);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  TA_BASEFUNS(ClLayerSpec);
 };
 
 class SoftClUnitSpec : public SoUnitSpec {
   // soft competitive learning unit spec
+INHERITED(SoUnitSpec)
 public:
   float		var;		// variance of the Gaussian activation function
   float         norm_const;     // #HIDDEN normalization const for Gaussian
@@ -81,24 +84,26 @@ public:
   void 		Compute_Act(Unit* u);
   // activation is a gaussian function of the net input
 
-  void  UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(SoftClUnitSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(SoftClUnitSpec);
-  COPY_FUNS(SoftClUnitSpec, SoUnitSpec);
-  TA_BASEFUNS(SoftClUnitSpec);
 };
 
 class SoftClLayerSpec : public SoLayerSpec {
   // soft competitive learning layer spec: does a softmax on the units
+INHERITED(SoLayerSpec)
 public:
 
   void		Compute_Act(SoLayer* lay);
   // set activation to be softmax of unit activations
 
+  TA_BASEFUNS_NOCOPY(SoftClLayerSpec);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  TA_BASEFUNS(SoftClLayerSpec);
 };
 
 //////////////////////////////////
@@ -106,26 +111,26 @@ public:
 //////////////////////////////////
 
 inline void ClConSpec::
-C_Compute_dWt(SoCon* cn, SoCon_Group* cg, Unit* ru, Unit* su)
+C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su)
 {
   cn->dwt += ru->act * ((su->act / cg->sum_in_act) - cn->wt);
 }
 
-inline void ClConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
-  Compute_AvgInAct((SoCon_Group*)cg, ru);
+inline void ClConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
+  Compute_AvgInAct((SoRecvCons*)cg, ru);
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
-				   (SoCon_Group*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
 inline void SoftClConSpec::
-C_Compute_dWt(SoCon* cn, SoCon_Group*, Unit* ru, Unit* su)
+C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
 {
   cn->dwt += ru->act * (su->act - cn->wt);
 }
 
-inline void SoftClConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void SoftClConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
-				   (SoCon_Group*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
 #endif // cl_h

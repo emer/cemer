@@ -130,7 +130,7 @@ INHERITED(SequenceProcess)
 public:
   void 	Initialize() {}
   void 	Destroy()		{ CutLinks(); }
-  TA_SIMPLE_BASEFUNS(RBpSequence);
+  TA_BASEFUNS_NOCOPY(RBpSequence);
 };
 
 
@@ -140,7 +140,7 @@ INHERITED(SE_Stat)
 public:
   void	Initialize();
   void 	Destroy()		{ CutLinks(); }
-  TA_SIMPLE_BASEFUNS(RBpSE_Stat);
+  TA_BASEFUNS_NOCOPY(RBpSE_Stat);
 };
 
 
@@ -221,7 +221,7 @@ INHERITED(V3ProjectBase)
 
   void	Initialize() {};
   void	Destroy() 	{ };
-  TA_BASEFUNS(V3BpProject);
+  TA_BASEFUNS_NOCOPY(V3BpProject);
 };
 
 

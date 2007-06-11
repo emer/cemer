@@ -73,11 +73,6 @@ void RBpUnitSpec::Initialize() {
   fast_hard_clamp_net = false;
 }
 
-void RBpUnitSpec::InitLinks() {
-  BpUnitSpec::InitLinks();
-  taBase::Own(initial_act, this);
-}
-
 void RBpUnitSpec::Init_Acts(Unit* u) {
   BpUnitSpec::Init_Acts(u);
   RBpUnit* ru = (RBpUnit*)u;
@@ -101,8 +96,8 @@ void RBpUnitSpec::Init_Acts(Unit* u) {
   ru->acts.Reset();
 }
 
-void RBpUnitSpec::UpdateAfterEdit() {
-  BpUnitSpec::UpdateAfterEdit();
+void RBpUnitSpec::UpdateAfterEdit_impl() {
+  BpUnitSpec::UpdateAfterEdit_impl();
   if((dt < 0.0f) || (dt > 1.0f))
     taMisc::Error("Warning: dt must be in the [0..1] range!");
 }
@@ -340,15 +335,8 @@ void RBpContextSpec::Initialize() {
   unit_flags = Unit::NO_EXTERNAL;
 }
 
-void RBpContextSpec::Copy_(const RBpContextSpec& cp) {
-  hysteresis = cp.hysteresis;
-  hysteresis_c = cp.hysteresis_c;
-  variable = cp.variable;
-  unit_flags = cp.unit_flags;
-}
-
-void RBpContextSpec::UpdateAfterEdit() {
-  RBpUnitSpec::UpdateAfterEdit();
+void RBpContextSpec::UpdateAfterEdit_impl() {
+  RBpUnitSpec::UpdateAfterEdit_impl();
   hysteresis_c = 1.0f - hysteresis;
   var_md = TA_RBpUnit.members.FindName(variable);
   if(var_md == NULL)
@@ -405,14 +393,9 @@ void NoisyRBpUnitSpec::Initialize() {
   sqrt_dt = sqrtf(dt);
 }
 
-void NoisyRBpUnitSpec::UpdateAfterEdit() {
-  RBpUnitSpec::UpdateAfterEdit();
+void NoisyRBpUnitSpec::UpdateAfterEdit_impl() {
+  RBpUnitSpec::UpdateAfterEdit_impl();
   sqrt_dt = sqrtf(dt);
-}
-
-void NoisyRBpUnitSpec::InitLinks() {
-  RBpUnitSpec::InitLinks();
-  taBase::Own(noise, this);
 }
 
 void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u) {

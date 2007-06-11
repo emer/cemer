@@ -70,13 +70,8 @@ void PViLayerSpec::Initialize() {
 }
 
 void PViLayerSpec::Defaults() {
-  ScalarValLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
-}
-
-void PViLayerSpec::InitLinks() {
-  ScalarValLayerSpec::InitLinks();
-  taBase::Own(pv_detect, this);
 }
 
 void PViLayerSpec::UpdateAfterEdit_impl() {
@@ -102,11 +97,11 @@ void PViLayerSpec::HelpConfig() {
  which this layer is based on)";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
-  ScalarValLayerSpec::HelpConfig();
+  inherited::HelpConfig();
 }
 
 bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
+  if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -310,13 +305,8 @@ void LVeLayerSpec::Initialize() {
 }
 
 void LVeLayerSpec::Defaults() {
-  ScalarValLayerSpec::Defaults();
+  inherited::Defaults();
   Initialize();
-}
-
-void LVeLayerSpec::InitLinks() {
-  ScalarValLayerSpec::InitLinks();
-  taBase::Own(lv, this);
 }
 
 void LVeLayerSpec::UpdateAfterEdit_impl() {
@@ -342,11 +332,11 @@ void LVeLayerSpec::HelpConfig() {
  which this layer is based on)";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
-  ScalarValLayerSpec::HelpConfig();
+  inherited::HelpConfig();
 }
 
 bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!ScalarValLayerSpec::CheckConfig_Layer(lay, quiet))
+  if(!inherited::CheckConfig_Layer(lay, quiet))
     return false;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
@@ -619,14 +609,9 @@ void PVLVDaLayerSpec::Initialize() {
   i_kwta_pt = .25;
 }
 
-void PVLVDaLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(da, this);
-}
-
 void PVLVDaLayerSpec::Defaults() {
-  LeabraLayerSpec::Defaults();
-  da.Initialize();
+  inherited::Defaults();
+  da.Defaults();
   Initialize();
 }
 
@@ -646,7 +631,7 @@ void PVLVDaLayerSpec::HelpConfig() {
 }
 
 bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
-  if(!LeabraLayerSpec::CheckConfig_Layer(lay, quiet)) return false;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
@@ -966,11 +951,11 @@ void PVLVDaLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
 void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   lay->hard_clamped = false;
   lay->UnSetExtFlag(Unit::EXT);
-  LeabraLayerSpec::Compute_HardClamp(lay, net);
+  inherited::Compute_HardClamp(lay, net);
 }
 
 void PVLVDaLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
-  LeabraLayerSpec::PostSettle(lay, net, set_both);
+  inherited::PostSettle(lay, net, set_both);
 
   if(da.syn_dep) return;
 

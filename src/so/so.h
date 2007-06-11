@@ -20,123 +20,140 @@
 #ifndef so_h
 #define so_h
 
-#include <so/so_TA_type.h>
-#include <pdp/netstru.h>
-#include <pdp/sched_proc.h>
+#include "pdp_base.h"
+#include "netstru.h"
+#include "pdp_project.h"
+
+#include "so_def.h"
+#include "so_TA_type.h"
 
 class SoCon;
 class SoConSpec;
-class SoCon_Group;
+class SoRecvCons;
 class SoUnit;
 class SoUnitSpec;
 class SoLayer;
 class SoLayerSpec;
 
-class SoCon : public Connection {
-  // generic self-organizing algorithm connection
+class SO_API SoCon : public Connection {
+  // ##CAT_So generic self-organizing algorithm connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change
 
-  void 	Initialize()		{ pdw = 0.0f; }
-  void	Destroy()		{ };
-  void	Copy_(const SoCon& cp)	{ pdw = cp.pdw; }
-  COPY_FUNS(SoCon, Connection);
-  TA_BASEFUNS(SoCon);
+  SoCon() { pdw = 0.0f; }
 };
 
-class SoConSpec : public ConSpec {
-  // #VIRT_BASE generic self-organizing algorithm connection specification
+class SO_API SoConSpec : public ConSpec {
+  // ##CAT_So #VIRT_BASE generic self-organizing algorithm connection specification
+INHERITED(ConSpec)
 public:
   enum AvgInActSource {
     LAYER_AVG_ACT,		// from layer's average activation
-    COMPUTE_AVG_ACT 		// compute the avg_in_act directly from my inputs
+    COMPUTE_AVG_ACT 		// compute the avg_in_act directly from my inputs (more computationally expensive but always accurate)
   };
 
   float		lrate;		// learning rate
   AvgInActSource avg_act_source; // source of average input actviation value
 
-  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su) 
+  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) 
   { ConSpec::C_Init_Weights(cg, cn, ru, su); ((SoCon*)cn)->pdw=0.0f; }
 
   inline void	C_Compute_Weights(SoCon* cn, Unit* ru, Unit* su); 
-  inline void	Compute_Weights(Con_Group* cg, Unit* ru);
+  inline void	Compute_Weights(RecvCons* cg, Unit* ru);
 
-  inline virtual void	Compute_AvgInAct(SoCon_Group* cg, Unit* ru);
+  inline virtual void	Compute_AvgInAct(SoRecvCons* cg, Unit* ru);
   // compute the average input activation 
 
-  void 	Initialize();
-  void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(SoConSpec);
-  COPY_FUNS(SoConSpec, ConSpec);
   TA_BASEFUNS(SoConSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
-class SoCon_Group : public Con_Group {
-  // self-organizing connection group
+class SO_API SoRecvCons : public RecvCons {
+  // ##CAT_So self-organizing connection group
+INHERITED(RecvCons)
 public:
   float		avg_in_act;	// average input activation
   float		sum_in_act;	// summed input activation
 
   void		Compute_AvgInAct(Unit* ru)
-  { ((SoConSpec*)spec.spec)->Compute_AvgInAct(this, ru); }
+  { ((SoConSpec*)GetConSpec())->Compute_AvgInAct(this, ru); }
   // compute the average (and sum) input activation
 
+  void	Copy_(const SoRecvCons& cp);
+  TA_BASEFUNS(SoRecvCons);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  SIMPLE_COPY(SoCon_Group);
-  COPY_FUNS(SoCon_Group, Con_Group);
-  TA_BASEFUNS(SoCon_Group);
 };
 
-class SoUnitSpec : public UnitSpec {
-  // generic self-organizing unit spec: linear act of std dot-product netin
+class SO_API SoSendCons : public SendCons {
+  // ##CAT_So group of self-organizing sending connections
+INHERITED(SendCons)
+public:
+  TA_BASEFUNS_NOCOPY(SoSendCons);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+class SO_API SoUnitSpec : public UnitSpec {
+  // ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
+INHERITED(UnitSpec)
 public:
   void		Init_Acts(Unit* u);
-
   void		Compute_Act(Unit* u);
 
   virtual void	Compute_AvgInAct(Unit* u);
-
-  virtual void	GraphActFun(GraphLog* graph_log, float min = -5.0, float max = 5.0);
+  // compute average input activations
+  virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
 
+  void	InitLinks();
+  TA_BASEFUNS_NOCOPY(SoUnitSpec);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  TA_BASEFUNS(SoUnitSpec);
 };
 
-class ThreshLinSoUnitSpec : public SoUnitSpec {
+class SO_API ThreshLinSoUnitSpec : public SoUnitSpec {
   // threshold-linear self-org unit spec
+INHERITED(SoUnitSpec)
 public:
   float		threshold;
 
   void		Compute_Act(Unit* u);
 
+  TA_SIMPLE_BASEFUNS(ThreshLinSoUnitSpec);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(ThreshLinSoUnitSpec);
-  COPY_FUNS(ThreshLinSoUnitSpec, SoUnitSpec);
-  TA_BASEFUNS(ThreshLinSoUnitSpec);
 };
   
-class SoUnit : public Unit {
-  // generic self-organizing unit
+class SO_API SoUnit : public Unit {
+  // ##CAT_So generic self-organizing unit
+INHERITED(Unit)
 public:
   float		act_i;
   // independent activation of the unit (before layer-level rescaling)
 
   void		Compute_AvgInAct()
-  { ((SoUnitSpec*)spec.spec)->Compute_AvgInAct(this); }
+  { ((SoUnitSpec*)GetUnitSpec())->Compute_AvgInAct(this); }
 
+  void Copy_(const SoUnit& cp) { act_i = cp.act_i; }
+  TA_BASEFUNS(SoUnit);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  TA_BASEFUNS(SoUnit);
 };
 
 
-class SoLayerSpec : public LayerSpec {
-  // generic self-organizing layer specification
+class SO_API SoLayerSpec : public LayerSpec {
+  // ##CAT_So generic self-organizing layer specification
+INHERITED(LayerSpec)
 public:
   enum	NetInType {		// type of netinput measure unit has
     MAX_NETIN_WINS,		// maximum net input wins (like dot product)
@@ -158,22 +175,22 @@ public:
   virtual void	Compute_dWt(SoLayer* lay);
   virtual void	Compute_Weights(SoLayer* lay);
 
+  TA_SIMPLE_BASEFUNS(SoLayerSpec);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(SoLayerSpec);
-  COPY_FUNS(SoLayerSpec, LayerSpec);
-  TA_BASEFUNS(SoLayerSpec);
 };
 
 SpecPtr_of(SoLayerSpec);
 
-class SoLayer : public Layer {
-  // generic self-organizing layer
+class SO_API SoLayer : public Layer {
+  // ##CAT_So generic self-organizing layer
+INHERITED(Layer)
 public:
   SoLayerSpec_SPtr	spec;	// the spec for this layer
   float		avg_act;	// average activation over layer
   float		sum_act;	// summed activation over layer
-  Unit*		winner;		// #READ_ONLY winning unit
+  Unit*		winner;		// #READ_ONLY #NO_SAVE winning unit
 
   // the spec now does all of the updating..
   void		Compute_Netin()		{ spec->Compute_Netin(this); }
@@ -185,13 +202,13 @@ public:
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.spec; }
 
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const SoLayer& cp);
-  COPY_FUNS(SoLayer, Layer);
   TA_BASEFUNS(SoLayer);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
 };
 
 
@@ -204,91 +221,116 @@ inline void SoConSpec::C_Compute_Weights(SoCon* cn, Unit*, Unit*) {
   cn->wt += lrate * cn->dwt;
   cn->dwt = 0.0f;
 }
-inline void SoConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+inline void SoConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_Weights((SoCon*)cg->Cn(i), ru, cg->Un(i)));
   ApplyLimits(cg, ru);
 }
 
-inline void SoConSpec::Compute_AvgInAct(SoCon_Group* cg, Unit*) {
+inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, Unit*) {
   if(avg_act_source == LAYER_AVG_ACT) {
     cg->avg_in_act = ((SoLayer*)cg->prjn->from)->avg_act;
     cg->sum_in_act = ((SoLayer*)cg->prjn->from)->sum_act;
   }
-  else if(cg->size > 0) {
+  else if(cg->cons.size > 0) {
     cg->sum_in_act = 0.0f;
     int i;
-    for(i=0; i<cg->size; i++)
+    for(i=0; i<cg->cons.size; i++)
       cg->sum_in_act += ((Unit*)cg->Un(i))->act;
-    cg->avg_in_act = cg->sum_in_act / (float)cg->size;
+    cg->avg_in_act = cg->sum_in_act / (float)cg->cons.size;
   }
 }
-
-//////////////////////////
-//	Processes	//
-//////////////////////////
-
-class SoTrial : public TrialProcess {
-  // one self-organizing trial step
-public:
-  void		Loop();		
-  bool 		Crit()		{ return true; } // executes loop only once
-
-  virtual void	Compute_Act();
-  virtual void	Compute_dWt();
-
-  bool	CheckNetwork();
-  
-  void	Initialize();
-  void	Destroy()		{ };
-  TA_BASEFUNS(SoTrial);
-};
 
 
 //////////////////////////////////
 //	Simple Hebbian 		//
 //////////////////////////////////
 
-class HebbConSpec : public SoConSpec {
+class SO_API HebbConSpec : public SoConSpec {
   // simple hebbian learning
+INHERITED(SoConSpec)
 public:
-  inline void	C_Compute_dWt(SoCon* cn, SoCon_Group* cg, 
+  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
   // compute weight change according to simple hebb function
 
+  TA_BASEFUNS(HebbConSpec);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  TA_BASEFUNS(HebbConSpec);
 };
 
 inline void HebbConSpec::
-C_Compute_dWt(SoCon* cn, SoCon_Group*, Unit* ru, Unit* su)
+C_Compute_dWt(SoCon* cn, SoRecvCons*, Unit* ru, Unit* su)
 {
   cn->dwt += ru->act * su->act;
 }
 
-inline void HebbConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void HebbConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
-				   (SoCon_Group*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
 //////////////////////////////////
 //	Simple SoftMax		//
 //////////////////////////////////
 
-class SoftMaxLayerSpec : public SoLayerSpec {
+class SO_API SoftMaxLayerSpec : public SoLayerSpec {
   // soft competitive learning layer spec: does a softmax on the units
+INHERITED(SoLayerSpec)
 public:
   float		softmax_gain;	// gain of the softmax function
 
   void		Compute_Act(SoLayer* lay);
   // set activation to be softmax of unit activations
 
+  TA_SIMPLE_BASEFUNS(SoftMaxLayerSpec);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  SIMPLE_COPY(SoftMaxLayerSpec);
-  COPY_FUNS(SoftMaxLayerSpec, SoLayerSpec);
-  TA_BASEFUNS(SoftMaxLayerSpec);
+};
+
+class PDP_API SoNetwork : public Network {
+  // ##CAT_So project for feedforward backpropagation networks (recurrent backprop is in RBPNetwork)
+INHERITED(Network)
+public:
+
+  override void		Compute_Act();
+
+  virtual void		Trial_Run(); // run one trial of So
+  
+  override void	SetProjectionDefaultTypes(Projection* prjn);
+
+  TA_BASEFUNS_NOCOPY(SoNetwork);
+private:
+  void	Initialize();
+  void 	Destroy()		{}
+};
+
+class PDP_API SoProject : public ProjectBase {
+  // ##CAT_So project for self-organizing networks
+INHERITED(ProjectBase)
+public:
+
+  TA_BASEFUNS_NOCOPY(SoProject);
+private:
+  void	Initialize();
+  void 	Destroy()		{}
+};
+
+//////////////////////////////////
+//	So Wizard		//
+//////////////////////////////////
+
+class SO_API SoWizard : public Wizard {
+  // ##CAT_So self-organizing networks specific wizard for automating construction of simulation objects
+INHERITED(Wizard)
+public:
+
+  TA_BASEFUNS_NOCOPY(SoWizard);
+private:
+  void 	Initialize() 	{ };
+  void 	Destroy()	{ };
 };
 
 #endif // so_h

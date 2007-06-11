@@ -140,7 +140,7 @@ void LeabraConSpec::Initialize() {
 }
 
 void LeabraConSpec::InitLinks() {
-  ConSpec::InitLinks();
+  inherited::InitLinks();
   children.SetBaseType(&TA_LeabraConSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(wt_scale, this);
@@ -163,10 +163,10 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraConSpec::Defaults() {
-  wt_scale.Initialize();
-  wt_sig.Initialize();
-  lmix.Initialize();
-  savg_cor.Initialize();
+  wt_scale.Defaults();
+  wt_sig.Defaults();
+  lmix.Defaults();
+  savg_cor.Defaults();
   Initialize();
 }
 
@@ -306,7 +306,7 @@ bool LeabraBiasSpec::CheckObjectType_impl(TAPtr obj) {
 }
 
 void LeabraBiasSpec::Defaults() {
-  LeabraConSpec::Defaults();
+  inherited::Defaults();
   Initialize();
 }
 
@@ -469,12 +469,12 @@ void LeabraUnitSpec::Initialize() {
 }
 
 void LeabraUnitSpec::Defaults() {
-  act.Initialize();
-  spike.Initialize();
-  depress.Initialize();
-  opt_thresh.Initialize();
-  dt.Initialize();
-  act_reg.Initialize();
+  act.Defaults();
+  spike.Defaults();
+  depress.Defaults();
+  opt_thresh.Defaults();
+  dt.Defaults();
+  act_reg.Defaults();
   Initialize();
   bias_spec.SetSpec(bias_spec.SPtr());
 }
@@ -516,7 +516,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
 }
 
 bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
-  if(!UnitSpec::CheckConfig_Unit(un, quiet)) return false;
+  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
 
   Network* net = GET_MY_OWNER(Network);
   bool rval = true;
@@ -604,7 +604,7 @@ void LeabraUnitSpec::CreateNXX1Fun() {
 }
 
 void LeabraUnitSpec::Init_Weights(Unit* u) {
-  UnitSpec::Init_Weights(u);
+  inherited::Init_Weights(u);
   LeabraUnit* lu = (LeabraUnit*)u;
   lu->act_avg = .5 * (act_reg.max + MAX(act_reg.min, 0.0f));
   lu->misc_1 = 0.0f;
@@ -654,7 +654,7 @@ void LeabraUnitSpec::Init_Netin(LeabraUnit* u) {
 }
 
 void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
-  UnitSpec::Init_Acts(ru);
+  inherited::Init_Acts(ru);
   //  ru->clmp_net = 0.0f;
   ru->net_scale = 0.0f;
   ru->bias_scale = 0.0f;
@@ -1192,7 +1192,7 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer*, LeabraNetwork
   //  if(!((u->ext_flag & Unit::EXT) && !(u->ext_flag & Unit::TARG))) {
   ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt((LeabraCon*)u->bias.Cn(0), u);
     //  }
-  UnitSpec::Compute_dWt(u);
+  inherited::Compute_dWt(u);
 }
 
 void LeabraUnitSpec::Compute_WtFmLin(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -1213,7 +1213,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u) {
   if(opt_thresh.updt_wts && 
      ((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)))
     return;
-  UnitSpec::Compute_Weights(lu);
+  inherited::Compute_Weights(lu);
 }
 
 float LeabraUnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
@@ -1365,7 +1365,7 @@ void LeabraUnit::Initialize() {
 }
 
 void LeabraUnit::InitLinks() {
-  Unit::InitLinks();
+  inherited::InitLinks();
   taBase::Own(vcb, this);
   taBase::Own(gc, this);
   GetInSubGp();
@@ -1378,6 +1378,35 @@ void LeabraUnit::GetInSubGp() {
   else
     in_subgp = false;
 }
+
+void LeabraUnit::Copy_(const LeabraUnit& cp) {
+  act_eq = cp.act_eq;
+  act_avg = cp.act_avg;
+  act_m = cp.act_m;
+  act_p = cp.act_p;
+  act_dif = cp.act_dif;
+  da = cp.da;
+  vcb = cp.vcb;
+  gc = cp.gc;
+  I_net = cp.I_net;
+  v_m = cp.v_m;
+  // not: in_subgp
+  clmp_net = cp.clmp_net;
+  net_scale = cp.net_scale;
+  bias_scale = cp.bias_scale;
+  prv_net = cp.prv_net;
+  prv_g_i = cp.prv_g_i;
+  act_sent = cp.act_sent;
+  act_delta = cp.act_delta;
+  net_raw = cp.net_raw;
+  net_delta = cp.net_delta;
+  g_i_raw = cp.g_i_raw;
+  g_i_delta = cp.g_i_delta;
+  i_thr = cp.i_thr;
+  spk_amp = cp.spk_amp;
+  misc_1 = cp.misc_1;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //			Projection Level Code
@@ -1504,10 +1533,10 @@ void LeabraLayerSpec::Initialize() {
 }
 
 void LeabraLayerSpec::Defaults() {
-  adapt_i.Initialize();
-  clamp.Initialize();
-  decay.Initialize();
-  net_rescale.Initialize();
+  adapt_i.Defaults();
+  clamp.Defaults();
+  decay.Defaults();
+  net_rescale.Defaults();
   Initialize();
 }
 
@@ -1516,7 +1545,7 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraLayerSpec::InitLinks() {
-  LayerSpec::InitLinks();
+  inherited::InitLinks();
   children.SetBaseType(&TA_LeabraLayerSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(kwta, this);
@@ -1527,10 +1556,6 @@ void LeabraLayerSpec::InitLinks() {
   taBase::Own(decay, this);
   taBase::Own(net_rescale, this);
   taBase::Own(abs_net_adapt, this);
-}
-
-void LeabraLayerSpec::CutLinks() {
-  LayerSpec::CutLinks();
 }
 
 bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
@@ -3094,16 +3119,16 @@ void LeabraInhib::Inhib_Initialize() {
   kwta.k = 1;
   kwta.pct = .25;
   kwta.pct_c = .75;
-  i_val.Initialize();
+  i_val.Defaults();
   phase_dif_ratio = 1.0f;
 }
 
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
-  i_val.Initialize();
-  netin.Initialize();
-  i_thrs.Initialize();
-  acts.Initialize();
-  un_g_i.Initialize();
+  i_val.Defaults();
+  netin.Defaults();
+  i_thrs.Defaults();
+  acts.Defaults();
+  un_g_i.Defaults();
 }
 
 void LeabraLayer::Initialize() {
@@ -3128,7 +3153,7 @@ void LeabraLayer::Initialize() {
 }  
 
 void LeabraLayer::InitLinks() {
-  Layer::InitLinks();
+  inherited::InitLinks();
   taBase::Own(netin, this);
   taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
@@ -3154,7 +3179,7 @@ void LeabraLayer::InitLinks() {
 }
 
 void LeabraLayer::CutLinks() {
-  Layer::CutLinks();
+  inherited::CutLinks();
   spec.CutLinks();
   misc_iar.CutLinks();
 }
@@ -3206,7 +3231,7 @@ bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
 
 void LeabraLayer::BuildUnits() {
   ResetSortBuf();
-  Layer::BuildUnits();
+  inherited::BuildUnits();
 }
 
 #ifdef DMEM_COMPILE
@@ -3227,7 +3252,7 @@ void LeabraUnit_Group::Initialize() {
 }
 
 void LeabraUnit_Group::InitLinks() {
-  Unit_Group::InitLinks();
+  inherited::InitLinks();
   taBase::Own(netin, this);
   taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
@@ -3889,7 +3914,7 @@ void LeabraWizard::StdNetwork(Network* net) {
   if(net == NULL)
     net = pdpMisc::GetNewNetwork(GET_MY_OWNER(LeabraProject));
   if(net == NULL) return;
-  Wizard::StdNetwork(net);
+  inherited::StdNetwork(net);
   StdLayerSpecs((LeabraNetwork*)net);
 }
 

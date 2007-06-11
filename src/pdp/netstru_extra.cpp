@@ -119,17 +119,6 @@ void TessEl::Initialize() {
   wt_val = 1.0f;
 }
 
-void TessEl::InitLinks() {
-  taOBase::InitLinks();
-  taBase::Own(send_off, this);
-}
-
-void TessEl::Copy_(const TessEl& cp) {
-  send_off = cp.send_off;
-  wt_val = cp.wt_val;
-}
-
-
 void TesselPrjnSpec::Initialize() {
   recv_n = -1;
   recv_skip = 1;
@@ -137,28 +126,6 @@ void TesselPrjnSpec::Initialize() {
   wrap = true;
   send_scale = 1.0f;
   send_offs.SetBaseType(&TA_TessEl);
-}
-
-void TesselPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(recv_off, this);
-  taBase::Own(recv_n, this);
-  taBase::Own(recv_skip, this);
-  taBase::Own(recv_group, this);
-  taBase::Own(send_scale, this);
-  taBase::Own(send_border, this);
-  taBase::Own(send_offs, this);
-}
-
-void TesselPrjnSpec::Copy_(const TesselPrjnSpec& cp) {
-  recv_off = cp.recv_off;
-  recv_n = cp.recv_n;
-  recv_skip = cp.recv_skip;
-  recv_group = cp.recv_group;
-  wrap = cp.wrap;
-  send_scale = cp.send_scale;
-  send_border = cp.send_border;
-  send_offs = cp.send_offs;
 }
 
 void TesselPrjnSpec::UpdateAfterEdit_impl() {
@@ -373,11 +340,6 @@ void UniformRndPrjnSpec::Initialize() {
   rndm_seed.GetCurrent();
 }
 
-void UniformRndPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(rndm_seed, this);
-}
-
 void UniformRndPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(p_con > 1.0f) p_con = 1.0f;
@@ -485,13 +447,6 @@ void PolarRndPrjnSpec::Initialize() {
 
   same_seed = false;
   rndm_seed.GetCurrent();
-}
-
-void PolarRndPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(rnd_dist, this);
-  taBase::Own(rnd_angle, this);
-  taBase::Own(rndm_seed, this);
 }
 
 void PolarRndPrjnSpec::UpdateAfterEdit_impl() {
@@ -824,11 +779,6 @@ void RndGpOneToOnePrjnSpec::Initialize() {
   rndm_seed.GetCurrent();
 }
 
-void RndGpOneToOnePrjnSpec::InitLinks() {
-  GpOneToOnePrjnSpec::InitLinks();
-  taBase::Own(rndm_seed, this);
-}
-
 void RndGpOneToOnePrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(p_con > 1.0f) p_con = 1.0f;
@@ -1054,17 +1004,6 @@ void GpTessEl::Initialize() {
   p_con = .25f;
 }
 
-void GpTessEl::InitLinks() {
-  taOBase::InitLinks();
-  taBase::Own(send_gp_off, this);
-}
-
-void GpTessEl::Copy_(const GpTessEl& cp) {
-  send_gp_off = cp.send_gp_off;
-  p_con = cp.p_con;
-}
-
-
 void GpRndTesselPrjnSpec::Initialize() {
   recv_gp_n = -1;
   recv_gp_skip = 1;
@@ -1077,18 +1016,6 @@ void GpRndTesselPrjnSpec::Initialize() {
   sym_self = true;
   same_seed = false;
   rndm_seed.GetCurrent();
-}
-
-void GpRndTesselPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(recv_gp_off, this);
-  taBase::Own(recv_gp_n, this);
-  taBase::Own(recv_gp_skip, this);
-  taBase::Own(recv_gp_group, this);
-  taBase::Own(send_gp_scale, this);
-  taBase::Own(send_gp_border, this);
-  taBase::Own(send_gp_offs, this);
-  taBase::Own(rndm_seed, this);
 }
 
 void GpRndTesselPrjnSpec::UpdateAfterEdit_impl() {
@@ -1597,12 +1524,6 @@ void TiledGpRFPrjnSpec::Initialize() {
   reciprocal = false;
 }
 
-void TiledGpRFPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-  taBase::Own(send_gp_size, this);
-  taBase::Own(send_gp_skip, this);
-}
-
 void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->from == NULL)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
@@ -1800,14 +1721,6 @@ int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init
 
 void TiledNovlpPrjnSpec::Initialize() {
   reciprocal = false;
-}
-
-void TiledNovlpPrjnSpec::InitLinks() {
-  ProjectionSpec::InitLinks();
-
-  taBase::Own(ru_geo, this);
-  taBase::Own(su_act_geom, this);
-  taBase::Own(rf_width, this);
 }
 
 bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {

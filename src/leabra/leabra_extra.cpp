@@ -56,11 +56,6 @@ void LeabraContextLayerSpec::Initialize() {
   decay.phase = 0.0f;
 }
 
-void LeabraContextLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(updt, this);
-}
-
 // void LeabraContextLayerSpec::UpdateAfterEdit-impl() {
 //   inherited::UpdateAfterEdit_impl();
 //   hysteresis_c = 1.0f - hysteresis;
@@ -174,11 +169,6 @@ void TrialSynDepConSpec::Initialize() {
   min_obj_type = &TA_TrialSynDepCon;
 }
 
-void TrialSynDepConSpec::InitLinks() {
-  LeabraConSpec::InitLinks();
-  taBase::Own(syn_dep, this);
-}
-
 void TrialSynDepConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(syn_dep.rec <= 0.0f)	// can't go to zero!
@@ -200,11 +190,6 @@ void FastWtSpec::Initialize() {
 
 void FastWtConSpec::Initialize() {
   min_obj_type = &TA_FastWtCon;
-}
-
-void FastWtConSpec::InitLinks() {
-  LeabraConSpec::InitLinks();
-  taBase::Own(fast_wt, this);
 }
 
 void FastWtConSpec::SetCurLrate(int epoch, LeabraNetwork* net) {
@@ -231,11 +216,6 @@ void ActAvgHebbMixSpec::UpdateAfterEdit_impl() {
 void ActAvgHebbConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   act_avg_hebb.UpdateAfterEdit();
-}
-
-void ActAvgHebbConSpec::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(act_avg_hebb, this);
 }
 
 void ActAvgHebbConSpec::Initialize() {
@@ -343,14 +323,6 @@ void ScalarValLayerSpec::Initialize() {
     val_range.max = unit_range.max;
   }
   val_range.UpdateAfterEdit();
-}
-
-void ScalarValLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(scalar, this);
-  taBase::Own(unit_range, this);
-  taBase::Own(val_range, this);
-  taBase::Own(bias_val, this);
 }
 
 void ScalarValLayerSpec::UpdateAfterEdit_impl() {
@@ -1202,16 +1174,6 @@ void TwoDValLayerSpec::Initialize() {
     y_val_range.min = y_range.min;  y_val_range.max = y_range.max;
   }
   x_val_range.UpdateAfterEdit(); y_val_range.UpdateAfterEdit();
-}
-
-void TwoDValLayerSpec::InitLinks() {
-  LeabraLayerSpec::InitLinks();
-  taBase::Own(twod, this);
-  taBase::Own(x_range, this);
-  taBase::Own(y_range, this);
-  taBase::Own(x_val_range, this);
-  taBase::Own(y_val_range, this);
-  taBase::Own(bias_val, this);
 }
 
 void TwoDValLayerSpec::UpdateAfterEdit_impl() {

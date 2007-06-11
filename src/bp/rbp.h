@@ -57,18 +57,21 @@ class APBpMaxDa_De;
 
 class BP_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
+INHERITED(BpConSpec)
 public:
   inline void 		C_Compute_dWt(BpCon* cn, RBpUnit* ru, RBpUnit* su);
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
   // Compute dE with respect to the weights (using prv_act) as sender
 
+  TA_BASEFUNS_NOCOPY(RBpConSpec);
+private:
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  TA_BASEFUNS2_NOCOPY(RBpConSpec, BpConSpec);
 };
 
 class BP_API SymRBpConSpec : public RBpConSpec {
   // Recurrent Backprop Con Spec: option to maintain weight symmetry through simple averaging of two weight changes
+INHERITED(RBpConSpec)
 public:
   bool	sym_wt_updt;		// if true, use symmetric weight updates
 
@@ -76,15 +79,16 @@ public:
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
   // Compute dE with respect to the weights (using prv_act) as sender
 
-  void 	Copy_(const SymRBpConSpec& cp) {sym_wt_updt = cp.sym_wt_updt;}
+  TA_SIMPLE_BASEFUNS(SymRBpConSpec);
+private:
   void 	Initialize()		{ sym_wt_updt = true; }
   void	Destroy()		{ };
-  TA_BASEFUNS2(SymRBpConSpec, RBpConSpec);
 };
 
 
 class BP_API RBpUnitSpec : public BpUnitSpec {
   // Recurrent Backprop Unit Specification
+INHERITED(BpUnitSpec)
 public:
   enum TimeAvgType {	// type of time-averaging to perform
     ACTIVATION,		// time-average the activations
@@ -116,16 +120,17 @@ public:
   void 		Compute_dWt(Unit* u);
   void 		Compute_Weights(Unit* u);
 
-  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(RBpUnitSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(RBpUnitSpec);
-  TA_BASEFUNS2(RBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API float_CircBuffer : public float_Array {
  // Circular buffer for holding state information
+INHERITED(float_Array)
 public:
   int		st_idx;		// starting index
   int		length;		// logical length of the list
@@ -144,15 +149,17 @@ public:
 
   void		Reset();
 
+  void 	Copy_(const float_CircBuffer& cp);
+  TA_BASEFUNS(float_CircBuffer);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  void 	Copy_(const float_CircBuffer& cp);
-  TA_BASEFUNS2(float_CircBuffer, float_Array);
 };
 
 
 class BP_API RBpUnit : public BpUnit {
   // recurrent BP unit
+INHERITED(BpUnit)
 public:
   float		da;		// delta-activation (change in activation value)
   float		ddE;		// delta-delta-Error (change in error derivative)
@@ -189,11 +196,12 @@ public:
   void    Compute_ClampExt() { ((RBpUnitSpec*)GetUnitSpec())->Compute_ClampExt(this); }
   void    Compute_HardClampNet() { ((RBpUnitSpec*)GetUnitSpec())->Compute_HardClampNet(this); }
 
-  void 	Initialize();
-  void	Destroy()		{ };
   void	InitLinks();
   void	Copy_(const RBpUnit& cp);
-  TA_BASEFUNS2(RBpUnit, BpUnit);
+  TA_BASEFUNS(RBpUnit);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 // use previous activation value
@@ -220,6 +228,7 @@ inline void SymRBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 
 class BP_API RBpContextSpec : public RBpUnitSpec {
   // RBp version of context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, Trial->CopyContext() must be called by script to update!
+INHERITED(RBpUnitSpec)
 public:
   float		hysteresis;	 // hysteresis factor: (1-hyst)*new + hyst*old
   float		hysteresis_c;	 // #READ_ONLY complement of hysteresis
@@ -244,11 +253,12 @@ public:
 
 //obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
 
-  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(RBpContextSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Copy_(const RBpContextSpec& cp);
-  TA_BASEFUNS2(RBpContextSpec, RBpUnitSpec);
 };
 
 //////////////////////////////////////////
@@ -257,18 +267,19 @@ public:
 
 class BP_API NoisyRBpUnitSpec : public RBpUnitSpec {
   // RBp with noisy output signal (act plus noise)
+INHERITED(RBpUnitSpec)
 public:
   Random	noise;		// what kind of noise to add to activations
   float		sqrt_dt; 	// #HIDDEN square-root of dt for noise
 
   void 		Compute_Act_impl(RBpUnit* u);
 
-  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(NoisyRBpUnitSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  void 	InitLinks();
-  SIMPLE_COPY(NoisyRBpUnitSpec);
-  TA_BASEFUNS2(NoisyRBpUnitSpec, RBpUnitSpec);
 };
 
 //////////////////////////////////
@@ -277,6 +288,7 @@ public:
 
 class BP_API BpWizard : public Wizard {
   // backprop-specific wizard for automating construction of simulation objects
+INHERITED(Wizard)
 public:
   virtual void	SRNContext(Network* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE configure a simple-recurrent-network context layer in the network
@@ -286,10 +298,10 @@ public:
 //obs  virtual void	ToRBPEvents(Environment* env, int targ_time = 2);
   // #MENU_BUTTON convert events to format suitable for training by RBP, with inputs coming on first, and then targets coming on after targ_time time steps
 
+  TA_BASEFUNS_NOCOPY(BpWizard);
+private:
   void 	Initialize();
   void 	Destroy()	{ };
-//   SIMPLE_COPY(BpWizard);
-  TA_BASEFUNS2_NOCOPY(BpWizard, Wizard);
 };
 
 #endif // rbp_h

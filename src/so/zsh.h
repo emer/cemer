@@ -20,24 +20,24 @@
 #ifndef zsh_h
 #define zsh_h
 
-#include <so/so.h>
+#include "so.h"
 
 class ZshConSpec : public SoConSpec {
   // zero-sum-hebbian (subtractive normalization) learning
+INHERITED(SoConSpec)
 public:
   bool		soft_wt_bound;
   // soft weight bounding *(1-wt) for inc, *wt for dec
 
-  inline void	C_Compute_dWt(SoCon* cn, SoCon_Group* cg, 
+  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
   // compute weight change according to Zsh function
 
+  TA_SIMPLE_BASEFUNS(ZshConSpec);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  SIMPLE_COPY(ZshConSpec);
-  COPY_FUNS(ZshConSpec, SoConSpec);
-  TA_BASEFUNS(ZshConSpec);
 };
 
 // MaxIn is an algorithm developed in O'Reilly, 1994, which is based
@@ -48,20 +48,20 @@ public:
 
 class MaxInConSpec : public ZshConSpec {
   // approximation to MaxIn (Zsh + SoftCl)
+INHERITED(ZshConSpec)
 public:
   float		k_scl;
   // strength of the soft-competitive learning component
 
-  inline void	C_Compute_dWt(SoCon* cn, SoCon_Group* cg, 
+  inline void	C_Compute_dWt(SoCon* cn, SoRecvCons* cg, 
 				      Unit* ru, Unit* su);
-  inline void 	Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 	Compute_dWt(RecvCons* cg, Unit* ru);
   // compute weight change according to approximate MaxIn function
 
+  TA_SIMPLE_BASEFUNS(MaxInConSpec);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  SIMPLE_COPY(MaxInConSpec);
-  COPY_FUNS(MaxInConSpec, ZshConSpec);
-  TA_BASEFUNS(MaxInConSpec);
 };
 
 
@@ -71,7 +71,7 @@ public:
 //////////////////////////////////
 
 inline void ZshConSpec::
-C_Compute_dWt(SoCon* cn, SoCon_Group* cg, Unit* ru, Unit* su) {
+C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
   float tmp = ru->act * (su->act - cg->avg_in_act);
   if(soft_wt_bound) {
     if(tmp > 0)			
@@ -82,14 +82,14 @@ C_Compute_dWt(SoCon* cn, SoCon_Group* cg, Unit* ru, Unit* su) {
   cn->dwt += tmp;
 }
 
-inline void ZshConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
-  Compute_AvgInAct((SoCon_Group*)cg, ru);
+inline void ZshConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
+  Compute_AvgInAct((SoRecvCons*)cg, ru);
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
-				   (SoCon_Group*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
 inline void MaxInConSpec::
-C_Compute_dWt(SoCon* cn, SoCon_Group* cg, Unit* ru, Unit* su) {
+C_Compute_dWt(SoCon* cn, SoRecvCons* cg, Unit* ru, Unit* su) {
   float tmp = ru->act * (su->act - cg->avg_in_act) +
     k_scl * ru->act * (su->act - cn->wt);
   if(soft_wt_bound) {
@@ -101,10 +101,10 @@ C_Compute_dWt(SoCon* cn, SoCon_Group* cg, Unit* ru, Unit* su) {
   cn->dwt += tmp;
 }
 
-inline void MaxInConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
-  Compute_AvgInAct((SoCon_Group*)cg, ru);
+inline void MaxInConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
+  Compute_AvgInAct((SoRecvCons*)cg, ru);
   CON_GROUP_LOOP(cg, C_Compute_dWt((SoCon*)cg->Cn(i), 
-				   (SoCon_Group*)cg, ru, cg->Un(i)));
+				   (SoRecvCons*)cg, ru, cg->Un(i)));
 }
 
 #endif // zsh_h

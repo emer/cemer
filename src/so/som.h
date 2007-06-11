@@ -20,43 +20,48 @@
 #ifndef som_h
 #define som_h
 
-#include <so/so.h>
+#include "so.h"
 
 class SomUnitSpec : public SoUnitSpec {
   // self-organizing feature maps: net input is distance, not raw netin
+INHERITED(SoUnitSpec)
 public:
   void 		Compute_Netin(Unit* u); // redefine to call compute_dist
 
+  TA_BASEFUNS_NOCOPY(SomUnitSpec);
+private:
   void	Initialize()	{ };
   void	Destroy()	{ };
-  TA_BASEFUNS(SomUnitSpec);
 };
 
 
 class NeighborEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER one element of a neighborhood function
+INHERITED(taOBase)
 public:
   TwoDCoord	off;		// offset from "winning" unit
   float		act_val;	// activation value for this unit
 
+  TA_SIMPLE_BASEFUNS(NeighborEl);
+private:
   void	Initialize();
   void	Destroy()	{ };
-  void	InitLinks();
-  void	Copy_(const NeighborEl& cp);
-  COPY_FUNS(NeighborEl, taOBase);
-  TA_BASEFUNS(NeighborEl);
 };
 
 class NeighborEl_List : public taList<NeighborEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER list of NeighborEl objects
+INHERITED(taList<NeighborEl>)
 public:
-  void	Initialize() 		{ };
-  void 	Destroy()		{ };
+  NOCOPY(NeighborEl_List);
   TA_BASEFUNS(NeighborEl_List);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_NeighborEl); }
+  void 	Destroy()		{ };
 };
 
 class SomLayerSpec : public SoLayerSpec {
   // self-organizing map activates a neighborhood of elements
+INHERITED(SoLayerSpec)
 public:
   NeighborEl_List	neighborhood;
   // neighborhood kernel function (determines activations around max unit)
@@ -67,7 +72,7 @@ public:
   // #MENU_BUTTON #MENU_ON_Kernel make a kernel in the form of an elipse
   virtual void	KernelRectangle(int width, int height, int ctr_x, int ctr_y);
   // #MENU_BUTTON make a kernel in the form of a rectangle
-  virtual void	KernelFromNetView(NetView* view);
+//   virtual void	KernelFromNetView(NetView* view);
   // #MENU_BUTTON make kernel from selected units in netview, first unit is center, then other positions
 
   virtual void  StepKernelActs(float val=1.0);
@@ -83,11 +88,10 @@ public:
   void		Compute_Act(SoLayer* lay);
   // set activation as function of kernel
 
+  TA_SIMPLE_BASEFUNS(SomLayerSpec);
+private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
-  void	InitLinks();
-  void	CutLinks();
-  TA_BASEFUNS(SomLayerSpec);
 };
 
 

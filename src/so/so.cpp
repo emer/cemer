@@ -14,17 +14,45 @@
 //   GNU General Public License for more details.
 
 
-
-// so.cc
-
 #include "so.h"
+
+static void so_converter_init() {
+  DumpFileCvt* cvt = new DumpFileCvt("So", "SoUnit");
+  cvt->repl_strs.Add(NameVar("_MGroup", "_Group"));
+  cvt->repl_strs.Add(NameVar("Project", "V3SoProject"));
+  cvt->repl_strs.Add(NameVar("V3SoProject_Group", "Project_Group")); // fix prev
+  cvt->repl_strs.Add(NameVar("V3SoProjection", "Projection"));
+  cvt->repl_strs.Add(NameVar("SoPrjn_Group", "Projection_Group"));
+  cvt->repl_strs.Add(NameVar("Network", "SoNetwork"));
+  cvt->repl_strs.Add(NameVar("SoNetwork_Group", "Network_Group")); // fix prev
+  cvt->repl_strs.Add(NameVar("SoWiz", "SoWizard"));
+  //  cvt->repl_strs.Add(NameVar("Layer", "SoLayer"));
+  // obsolete types get replaced with taBase..
+  cvt->repl_strs.Add(NameVar("WinView_Group", "taBase_Group"));
+  cvt->repl_strs.Add(NameVar("ProjViewState_List", "taBase_List"));
+  cvt->repl_strs.Add(NameVar("NetView", "taNBase"));
+  cvt->repl_strs.Add(NameVar("DataTable", "taNBase"));
+  cvt->repl_strs.Add(NameVar("EnviroView", "taNBase"));
+  cvt->repl_strs.Add(NameVar("Xform", "taBase"));
+  cvt->repl_strs.Add(NameVar("ImageEnv", "ScriptEnv"));
+  cvt->repl_strs.Add(NameVar("unique/w=", "unique"));
+  taMisc::file_converters.Add(cvt);
+}
+
+void so_module_init() {
+  ta_Init_so();			// initialize types 
+  so_converter_init();		// configure converter
+}
+
+// module initialization
+InitProcRegistrar mod_init_so(so_module_init);
 
 //////////////////////////
 //	Con,Spec	//
 //////////////////////////
 
 void SoConSpec::Initialize() {
-  min_obj_type = &TA_SoCon_Group;
+  min_obj_type = &TA_SoCon;
   lrate = 0.1f;
   wt_limits.min = 0.0f;
   wt_limits.max = 1.0f;
@@ -34,12 +62,19 @@ void SoConSpec::Initialize() {
 }
 
 void SoConSpec::InitLinks() {
-  ConSpec::InitLinks();
+  inherited::InitLinks();
+  children.SetBaseType(&TA_SoConSpec); // allow any of this basic type here
+  children.el_typ = GetTypeDef(); // but make the default to be me!
 }
 
-void SoCon_Group::Initialize() {
-  spec.SetBaseType(&TA_SoConSpec);
+void SoRecvCons::Initialize() {
+  SetConType(&TA_SoCon);
   avg_in_act = 0.0f;
+  sum_in_act = 0.0f;
+}
+
+void SoSendCons::Initialize() {
+  SetConType(&TA_SoCon);
 }
 
 void HebbConSpec::Initialize() {
@@ -55,8 +90,14 @@ void SoUnitSpec::Initialize() {
   min_obj_type = &TA_SoUnit;
 }
 
+void SoUnitSpec::InitLinks() {
+  inherited::InitLinks();
+  children.SetBaseType(&TA_SoUnitSpec); // allow any of this basic type here
+  children.el_typ = GetTypeDef(); // but make the default to be me!
+}
+
 void SoUnitSpec::Init_Acts(Unit* u) {
-  UnitSpec::Init_Acts(u);
+  inherited::Init_Acts(u);
   ((SoUnit*)u)->act_i = 0.0f;
 }
 
@@ -69,37 +110,39 @@ void SoUnitSpec::Compute_Act(Unit* u) {
 }
 
 void SoUnitSpec::Compute_AvgInAct(Unit* u) {
-  SoCon_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(SoCon_Group, recv_gp, u->recv., g) {
-    if(!recv_gp->prjn->from->lesion)
+  SoRecvCons* recv_gp;
+  taListItr g;
+  FOR_ITR_EL(SoRecvCons, recv_gp, u->recv., g) {
+    if(!recv_gp->prjn->from->lesioned())
       recv_gp->Compute_AvgInAct(u);
   }
 }
 
-void SoUnitSpec::GraphActFun(GraphLog* graph_log, float min, float max) {
-  if(graph_log == NULL) {
-    graph_log = (GraphLog*) pdpMisc::GetNewLog(GET_MY_OWNER(Project), &TA_GraphLog);
-    if(graph_log == NULL) return;
+void SoUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_ActFun", true);
+    newguy = true;
   }
-  graph_log->name = name + ": Act Fun";
-  DataTable* dt = &(graph_log->data);
-  dt->Reset();
-  dt->NewColFloat("netin");
-  dt->NewColFloat("act");
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* netin = graph_data->FindMakeColName("Netin", idx, VT_FLOAT);
+  DataCol* act = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
 
   SoUnit un;
-
   float x;
   for(x = min; x <= max; x += .01f) {
     un.net = x;
     Compute_Act(&un);
-    dt->AddBlankRow();
-    dt->SetLastFloatVal(x, 0);
-    dt->SetLastFloatVal(un.act, 1);
+    graph_data->AddBlankRow();
+    netin->SetValAsFloat(x, -1);
+    act->SetValAsFloat(un.act, -1);
   }
-  dt->UpdateAllRanges();
-  graph_log->ViewAllData();
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
 }
 
 void ThreshLinSoUnitSpec::Initialize() {
@@ -114,7 +157,6 @@ void ThreshLinSoUnitSpec::Compute_Act(Unit* u) {
 }
 
 void SoUnit::Initialize() {
-  spec.SetBaseType(&TA_SoUnitSpec);
   act_i = 0.0f;
 }
 
@@ -128,7 +170,7 @@ void SoLayerSpec::Initialize() {
 }
 
 SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
-  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.spec;
+  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
   float max_val = -1.0e20;
   SoUnit* max_val_u = NULL;
   SoUnit* u;
@@ -145,7 +187,7 @@ SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
 }
 
 SoUnit* SoLayerSpec::FindMinNetIn(SoLayer* lay) {
-  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.spec;
+  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
   float min_val = 1.0e20;
   SoUnit* min_val_u = NULL;
   SoUnit* u;
@@ -224,13 +266,13 @@ void SoLayer::Initialize() {
 }
 
 void SoLayer::InitLinks() {
-  Layer::InitLinks();
+  inherited::InitLinks();
   spec.SetDefaultSpec(this);
 }
 
 void SoLayer::CutLinks() {
+  inherited::CutLinks();
   spec.CutLinks();
-  Layer::CutLinks();
   winner = NULL;
 }
 
@@ -242,57 +284,6 @@ bool SoLayer::SetLayerSpec(LayerSpec* sp) {
     return false;
   return true;
 } 
-
-//////////////////////////
-//	Processes	//
-//////////////////////////
-
-void SoTrial::Initialize() {
-  min_unit = &TA_SoUnit;
-  min_con_group =  &TA_SoCon_Group;
-  min_con =  &TA_SoCon;
-  min_layer = &TA_SoLayer;
-}
-
-
-void SoTrial::Compute_Act() {
-  // compute activations in feed-forward fashion
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, network->layers., l) {
-    lay->Compute_Netin();
-#ifdef DMEM_COMPILE    
-    lay->DMem_SyncNet();
-#endif
-    lay->Compute_Act();
-  }
-}
-
-void SoTrial::Compute_dWt() {
-  network->Compute_dWt();
-}
-
-void SoTrial::Loop() {
-  network->Init_InputData();
-  if(cur_event) {      
-    cur_event->ApplyPatterns(network);
-  }
-
-  Compute_Act();
-
-  // compute the delta - weight (only if not testing...)
-  if((epoch_proc != NULL) && (epoch_proc->wt_update != EpochProcess::TEST))
-    Compute_dWt();
-
-  // weight update taken care of by the process
-}
-
-bool SoTrial::CheckNetwork() {
-  if(network && (network->dmem_sync_level != Network::DMEM_SYNC_LAYER)) {
-    network->dmem_sync_level = Network::DMEM_SYNC_LAYER;
-  }
-  return TrialProcess::CheckNetwork();
-}
 
 //////////////////////////////////
 //	Simple SoftMax		//
@@ -308,7 +299,7 @@ void SoftMaxLayerSpec::Compute_Act(SoLayer* lay) {
     return;
   }
 
-  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.spec;
+  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
 
   float sum = 0.0f;
   Unit* u;
@@ -326,3 +317,55 @@ void SoftMaxLayerSpec::Compute_Act(SoLayer* lay) {
 
   Compute_AvgAct(lay);
 }
+
+
+//////////////////////////
+//  SoNetwork		//
+//////////////////////////
+
+void SoNetwork::Initialize() {
+  layers.SetBaseType(&TA_SoLayer);
+}
+
+void SoNetwork::SetProjectionDefaultTypes(Projection* prjn) {
+  inherited::SetProjectionDefaultTypes(prjn);
+  prjn->con_type = &TA_SoCon;
+  prjn->recvcons_type = &TA_SoRecvCons;
+  prjn->sendcons_type = &TA_SoSendCons;
+  prjn->con_spec.SetBaseType(&TA_SoConSpec);
+}
+
+void SoNetwork::Compute_Act() {
+  // compute activations in feed-forward fashion
+  Layer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(Layer, lay, layers., l) {
+    lay->Compute_Netin();
+#ifdef DMEM_COMPILE    
+    lay->DMem_SyncNet();
+#endif
+    lay->Compute_Act();
+  }
+}
+
+void SoNetwork::Trial_Run() {
+  DataUpdate(true);
+  
+  Compute_Act();
+
+  if(train_mode == TRAIN)
+    Compute_dWt();
+
+  // weight update taken care of by the epoch program
+  DataUpdate(false);
+}
+
+//////////////////////////
+//   SoProject	        //
+//////////////////////////
+
+void SoProject::Initialize() {
+  wizards.SetBaseType(&TA_SoWizard);
+  networks.SetBaseType(&TA_SoNetwork);
+}
+

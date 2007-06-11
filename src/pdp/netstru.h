@@ -59,15 +59,14 @@ class Unit_Group; //
 // note that with the projection spec, its job is to define connectivity, so
 // it does have structural functions in the spec..
 
-
-const float SIGMOID_MAX_VAL = 0.999999f; // max eval value
-const float SIGMOID_MIN_VAL = 0.000001f; // min eval value
-const float SIGMOID_MAX_NET = 13.81551f;	// maximium net input value
-
 class PDP_API SigmoidSpec : public taBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 INHERITED(taBase)
 public:
+  static const float SIGMOID_MAX_VAL = 0.999999f; // #READ_ONLY #HIDDEN max eval value
+  static const float SIGMOID_MIN_VAL = 0.000001f; // #READ_ONLY #HIDDEN min eval value
+  static const float SIGMOID_MAX_NET = 13.81551f; // #READ_ONLY #HIDDEN maximium net input value
+
   float		off;		// offset for .5 point
   float		gain;		// gain
 
@@ -80,10 +79,11 @@ public:
   float		Deriv(float x)	{ x = Clip(x); return x * (1.0f - x) * gain; }
   float		Inverse(float y)	{ y=y+off; return logf(y / (1.0f - y)) / gain; }
 
-  void 	Initialize()		{ off = 0.0f; gain = 1.0f; }
-  void	Destroy()		{ };
   SIMPLE_COPY(SigmoidSpec);
   TA_BASEFUNS(SigmoidSpec);
+private:
+  void 	Initialize()		{ off = 0.0f; gain = 1.0f; }
+  void	Destroy()		{ };
 };
 
 
@@ -99,10 +99,10 @@ public:
   float		GetVal(int ctr)  { return start_val + step * (float)(ctr - start_ctr); }
   // get value for given ctr value
 
+  TA_SIMPLE_BASEFUNS(SchedItem);
+private:
   void	Initialize();
   void	Destroy() 	{ };
-  void 	Copy_(const SchedItem& cp);
-  TA_BASEFUNS(SchedItem);
 };
 
 class PDP_API Schedule : public taList<SchedItem> {
@@ -117,12 +117,12 @@ public:
   float		GetVal(int ctr);
   // #MENU #MENU_ON_Edit #USE_RVAL get current schedule val, based on counter
 
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Copy_(const Schedule& cp);
-  TA_BASEFUNS(Schedule);
+  TA_SIMPLE_BASEFUNS(Schedule);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
 };
 
 
@@ -145,8 +145,6 @@ public:
 
   Connection() { wt = dwt = 0.0f; }
 };
-
-// SmartRef_Of(Connection); // ConnectionSRef
 
 // the ConSpec has 2 versions of every function: one to go through the group
 // and the other to apply to a single connection.
@@ -188,10 +186,11 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ConSpec"; }
 
-  void 	Initialize()		{ type = NONE; min = -1.0f; max = 1.0f; sym = false; }
-  void	Destroy()		{ };
   SIMPLE_COPY(WeightLimits);
   TA_BASEFUNS(WeightLimits);
+private:
+  void 	Initialize()		{ type = NONE; min = -1.0f; max = 1.0f; sym = false; }
+  void	Destroy()		{ };
 };
 
 class PDP_API ConSpec: public BaseSpec {
@@ -252,12 +251,13 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ConSpec"; }
 
-  void 	Initialize();
-  void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ConSpec& cp);
   TA_BASEFUNS_LITE(ConSpec);
+private:
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
 };
 
 SpecPtr_of(ConSpec);
@@ -269,7 +269,7 @@ SpecPtr_of(ConSpec);
 
 class PDP_API  ConArray : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group -- only one alloc of connections is allowed (to preserve validity of links to existing connections)
-  INHERITED(taOBase)
+INHERITED(taOBase)
 public:
   int		con_size;	// #READ_ONLY #EXPERT #NO_SAVE sizeof() connection object being stored
   TypeDef*	con_type;	// type of connection object being stored
@@ -314,11 +314,12 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
-  void 	Initialize();
-  void 	Destroy();
   void	CutLinks();
   void	Copy_(const ConArray& cp);
   TA_BASEFUNS(ConArray);
+private:
+  void 	Initialize();
+  void 	Destroy();
 };
 
 class PDP_API UnitPtrList: public taPtrList<Unit> {
@@ -462,8 +463,6 @@ public:
   
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const RecvCons& cp);
@@ -473,6 +472,9 @@ protected:
 
   override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
 
 class PDP_API RecvCons_List: public taList<RecvCons> {
@@ -499,9 +501,10 @@ public:
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
   NOCOPY(RecvCons_List)
+  TA_BASEFUNS(RecvCons_List);
+private:
   void	Initialize() 		{ SetBaseType(&TA_RecvCons); }
   void 	Destroy()		{ };
-  TA_BASEFUNS(RecvCons_List);
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -576,8 +579,6 @@ public:
   
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const SendCons& cp);
@@ -587,6 +588,9 @@ protected:
 
   override void  UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
 
 class PDP_API SendCons_List: public taList<SendCons> {
@@ -613,9 +617,10 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Connection"; }
 
+  TA_BASEFUNS_NOCOPY(SendCons_List);
+private:
   void	Initialize() 		{ SetBaseType(&TA_SendCons); }
   void 	Destroy()		{ };
-  TA_BASEFUNS_NOCOPY(SendCons_List);
 };
 
 
@@ -671,8 +676,6 @@ public:
 
   override String 	GetTypeDecoKey() const { return "UnitSpec"; }
 
-  void 	Initialize();
-  void 	Destroy()		{ };
   void	InitLinks();
   void	CutLinks();
   void 	Copy_(const UnitSpec& cp);
@@ -680,6 +683,9 @@ public:
 protected:
   override void  	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);
+private:
+  void 	Initialize();
+  void 	Destroy()		{ };
 };
 
 SpecPtr_of(UnitSpec);
@@ -845,8 +851,6 @@ public: //
   override bool 	SetName(const String& nm)    	{ name = nm; return true; }
   override String	GetName() const			{ return name; }
 
-  void	Initialize();
-  void 	Destroy();
   void  InitLinks();
   void	CutLinks();
   void	Copy_(const Unit& cp);
@@ -858,6 +862,9 @@ protected:
   override void  UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
   override void	 CheckChildConfig_impl(bool quiet, bool& rval);
+private:
+  void	Initialize();
+  void 	Destroy();
 };
 
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
@@ -895,12 +902,12 @@ public:
 
   override String 	GetTypeDecoKey() const { return "ProjectionSpec"; }
 
-  void 	Initialize();
-  void 	Destroy()		{ CutLinks(); }
   void 	InitLinks();
-  void	CutLinks();
   SIMPLE_COPY(ProjectionSpec);
   TA_BASEFUNS(ProjectionSpec);
+private:
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
 };
 
 SpecPtr_of(ProjectionSpec);
@@ -1022,8 +1029,6 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
-  void 	Initialize();
-  void 	Destroy();
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const Projection& cp);
@@ -1034,6 +1039,9 @@ protected:
   override void UpdateAfterEdit_impl();
   override void  CheckThisConfig_impl(bool quiet, bool& rval);
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
+private:
+  void 	Initialize();
+  void 	Destroy();
 };
 
 class PDP_API Projection_Group: public taGroup<Projection> {
@@ -1044,10 +1052,11 @@ public:
   
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
-  void	Initialize() 		{ SetBaseType(&TA_Projection); send_prjns = false; }
-  void 	Destroy()		{ };
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_SIMPLE_BASEFUNS(Projection_Group);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_Projection); send_prjns = false; }
+  void 	Destroy()		{ };
 };
 
 //////////////////////////////////////////////////////////
@@ -1202,14 +1211,15 @@ public:
   
   override String 	GetTypeDecoKey() const { return "Unit"; }
 
-  void	Initialize();
-  void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void  Copy_(const Unit_Group& cp);
   TA_BASEFUNS(Unit_Group);
 protected:
   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ CutLinks(); }
 };
 
 class PDP_API LayerSpec : public BaseSpec {
@@ -1221,11 +1231,12 @@ public:
 
   override String 	GetTypeDecoKey() const { return "LayerSpec"; }
 
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
   TA_BASEFUNS_NOCOPY(LayerSpec); //
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
 };
 
 class PDP_API LayerDistances : public taBase {
@@ -1237,10 +1248,11 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Layer"; }
 
-  void 	Initialize()		{ fm_input = -1; fm_output = -1; }
-  void	Destroy()		{ };
   SIMPLE_COPY(LayerDistances);
   TA_BASEFUNS_LITE(LayerDistances);
+private:
+  void 	Initialize()		{ fm_input = -1; fm_output = -1; }
+  void	Destroy()		{ };
 };
 
 class PDP_API Layer : public taNBase {
@@ -1505,8 +1517,6 @@ public:
   override String GetTypeDecoKey() const { return "Layer"; }
 
   void 	UpdateAfterEdit();
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
   void	Copy_(const Layer& cp);
@@ -1531,22 +1541,26 @@ protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   // #IGNORE this is the guy that *additionally* delegates to the Spec
   override void		CheckChildConfig_impl(bool quiet, bool& rval);// #IGNORE 
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
 
 class PDP_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers 
-  INHERITED(taGroup<Layer>)
+INHERITED(taGroup<Layer>)
 public:
   TDCoord	pos;		// Position of Group of layers relative to network
 
   override String GetTypeDecoKey() const { return "Layer"; }
 
-  void	Initialize() 		{ };
-  void 	Destroy()		{ };
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks()		{ inherited::InitLinks(); taBase::Own(pos,this); }
   void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; }
   TA_BASEFUNS(Layer_Group);
+private:
+  void	Initialize() 		{ };
+  void 	Destroy()		{ };
 };
 
 SmartRef_Of(Layer,TA_Layer); // LayerRef
@@ -1565,10 +1579,11 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
-  void 	Initialize();
-  void	Destroy()		{ };
   SIMPLE_COPY(NetViewFontSizes);
   TA_BASEFUNS(NetViewFontSizes);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 class PDP_API NetViewParams : public taBase {
@@ -1967,8 +1982,6 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
   void 	Copy_(const Network& cp);
@@ -1978,6 +1991,9 @@ protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
 
 SmartRef_Of(Network,TA_Network);
@@ -1989,9 +2005,10 @@ public:
   
   override String 	GetTypeDecoKey() const { return "Network"; }
 
+  TA_BASEFUNS_NOCOPY(Network_Group); //
+private:
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
-  TA_BASEFUNS_NOCOPY(Network_Group); //
 };
 
 #endif /* netstru_h */

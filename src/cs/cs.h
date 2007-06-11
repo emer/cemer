@@ -50,16 +50,18 @@ class CsGoodStat;
 
 class CsCon : public Connection {
   // connection values for constraint satisfaction
+INHERITED(Connection)
 public:
   float		pdw;		// #NO_SAVE the previous delta-weight (for momentum)
   float		dwt_agg;	// #NO_VIEW #NO_SAVE variable for aggregating the outer-prods
 
-  void 	Initialize()		{ dwt_agg = pdw= 0.0f; }
-  void 	Destroy()		{ };
   void	Copy_(const CsCon& cp)
   { dwt_agg = cp.dwt_agg; pdw = cp.pdw; }
   COPY_FUNS(CsCon, Connection);
   TA_BASEFUNS(CsCon);
+private:
+  void 	Initialize()		{ dwt_agg = pdw= 0.0f; }
+  void 	Destroy()		{ };
 };
 
 // ConSpec now has 3 versions of some functions, the two regular ones
@@ -70,6 +72,7 @@ public:
 
 class CsConSpec : public ConSpec {
   // constraint satisfaction connection specifications
+INHERITED(ConSpec)
 public:
   float		lrate;		// learning rate
   float		momentum;	// momentum for change in weights
@@ -99,11 +102,12 @@ public:
   inline virtual void	B_Compute_Weights(CsCon* cn, Unit* ru);
 
   void	UpdateAfterEdit();
-  void 	Initialize();
-  void	Destroy()		{ };
   SIMPLE_COPY(CsConSpec);
   COPY_FUNS(CsConSpec, ConSpec);
   TA_BASEFUNS(CsConSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 // the following functions are possible weight decay functions
@@ -119,19 +123,23 @@ void Cs_WtElim_WtDecay(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su)
 
 
 class CsCon_Group : public Con_Group {
+  // cs receiving connections
+INHERITED(Con_Group)
 public:
   void		Aggregate_dWt(CsUnit* ru, float phase)
   { ((CsConSpec*)spec.spec)->Aggregate_dWt(this, ru, phase); }
   // compute weight change
 
+  TA_BASEFUNS(CsCon_Group);
+private:
   void 	Initialize()		{ };
   void	Destroy()		{ };
-  TA_BASEFUNS(CsCon_Group);
 };
 
 
 class CsUnitSpec : public UnitSpec {
   // standard constraint satisfaction unit (uses inverse-logistic activation)
+INHERITED(UnitSpec)
 public:
   enum ClampType {
     HARD_CLAMP,			// input sets value, noise is added
@@ -180,16 +188,18 @@ public:
   // #BUTTON #NULL_OK graph the activation function, "settling" for 50 cycles for each net input (NULL = new graph log)
 
   void	UpdateAfterEdit();	// update the sqrt_step
-  void 	Initialize();
-  void	Destroy()		{ };
   void	InitLinks();
   SIMPLE_COPY(CsUnitSpec);
   COPY_FUNS(CsUnitSpec, UnitSpec);
   TA_BASEFUNS(CsUnitSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 class SigmoidUnitSpec : public CsUnitSpec {
   // Sigmoid (logistic) activation function (float-valued within range)
+INHERITED(CsUnitSpec)
 public:
   enum TimeAvgType {		// type of time-averaging to perform
     ACTIVATION,			// time-average the activations
@@ -199,30 +209,34 @@ public:
 
   void		Compute_Act_impl(CsUnit* u,int cycle, int phase);
 
-  void 	Initialize();
-  void	Destroy()		{ };
   SIMPLE_COPY(SigmoidUnitSpec);
   COPY_FUNS(SigmoidUnitSpec, CsUnitSpec);
   TA_BASEFUNS(SigmoidUnitSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 class BoltzUnitSpec : public CsUnitSpec {
   // Boltzmann-machine activation function (binary, probabalistic)
+INHERITED(CsUnitSpec)
 public:
   float		temp;		// temperature (1/gain)
 
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
   void	UpdateAfterEdit();	// update gain from temp
-  void 	Initialize();
-  void	Destroy()		{ };
   SIMPLE_COPY(BoltzUnitSpec);
   COPY_FUNS(BoltzUnitSpec, CsUnitSpec);
   TA_BASEFUNS(BoltzUnitSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 class IACUnitSpec : public CsUnitSpec {
   // Interactive-Activation & Competition activation function (IAC)
+INHERITED(CsUnitSpec)
 public:
   float		rest;		// rest level of activation
   float		decay;		// decay rate (1/gain)
@@ -234,39 +248,45 @@ public:
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
   void	UpdateAfterEdit();	// update gain from decay
-  void 	Initialize();
-  void	Destroy()		{ };
   SIMPLE_COPY(IACUnitSpec);
   COPY_FUNS(IACUnitSpec, CsUnitSpec);
   TA_BASEFUNS(IACUnitSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 class LinearCsUnitSpec : public CsUnitSpec {
   // linear version of Cs units with time-averaging on the net inputs
+INHERITED(CsUnitSpec)
 public:
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
+  TA_BASEFUNS(LinearCsUnitSpec);
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  TA_BASEFUNS(LinearCsUnitSpec);
 };
 
 class ThreshLinCsUnitSpec : public CsUnitSpec {
   // threshold-linear version of Cs units with time-averaging on the net inputs
+INHERITED(CsUnitSpec)
 public:
   float		threshold;
 
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
-  void 	Initialize();
-  void	Destroy()		{ };
   SIMPLE_COPY(ThreshLinCsUnitSpec);
   COPY_FUNS(ThreshLinCsUnitSpec, CsUnitSpec);
   TA_BASEFUNS(ThreshLinCsUnitSpec);
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
 };
 
 class CsUnit : public Unit {
   // constraint satisfaction unit
+INHERITED(Unit)
 public:
   float		da;		// delta-activation (or net input) value
   float		prv_net;	// #NO_VIEW previous net input
@@ -294,6 +314,7 @@ public:
   void		Aggregate_dWt(int phase)
   { ((CsUnitSpec*)spec.spec)->Aggregate_dWt(this, phase); }
 
+private:
   void 	Initialize();
   void 	InitLinks();
   void	Destroy()		{ };
@@ -362,6 +383,7 @@ inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
 
 class CsCycle : public CycleProcess {
   // one update cycle of all units (or n_updates in async) in network
+INHERITED(CycleProcess)
 public:
   enum UpdateMode {
     SYNCHRONOUS,
@@ -385,16 +407,18 @@ public:
 
   void	UpdateAfterEdit();
   void	CutLinks();
-  void 	Initialize();
-  void	Destroy()		{ CutLinks(); }
   void	Copy_(const CsCycle& cp);
   COPY_FUNS(CsCycle, CycleProcess);
   TA_BASEFUNS(CsCycle);
+private:
+  void 	Initialize();
+  void	Destroy()		{ CutLinks(); }
 };
 
 
 class CsSettle : public SettleProcess {
   // one settle to equilibrium of constrant satsisfaction
+INHERITED(SettleProcess)
 public:
   enum StateInit {		// ways of initializing the state of the network
     DO_NOTHING,			// do nothing
@@ -421,17 +445,19 @@ public:
 
   void	UpdateAfterEdit();
   void	CutLinks();
-  void 	Initialize();
-  void	Destroy()		{ CutLinks(); }
   void	InitLinks();
   SIMPLE_COPY(CsSettle);
   COPY_FUNS(CsSettle, SettleProcess);
   TA_BASEFUNS(CsSettle);
+private:
+  void 	Initialize();
+  void	Destroy()		{ CutLinks(); }
 };
 
 
 class CsTrial : public TrialProcess {
   // one minus phase and one plus phase of settling
+INHERITED(TrialProcess)
 public:
   enum StateInit {		// ways of initializing the state of the network
     DO_NOTHING,			// do nothing
@@ -469,17 +495,19 @@ public:
   bool		CheckNetwork();
 
   void	UpdateAfterEdit();
-  void	Initialize();
-  void 	InitLinks();
   void	CutLinks();
   void	Destroy()		{ CutLinks(); }
   void 	Copy_(const CsTrial& cp);
   COPY_FUNS(CsTrial, TrialProcess);
   TA_BASEFUNS(CsTrial);
+private:
+  void	Initialize();
+  void 	InitLinks();
 };
 
 class CsSample : public TrialProcess {
   // Samples over Cs Trials (
+INHERITED(TrialProcess)
 public:
   Counter	sample;
 
@@ -495,15 +523,17 @@ public:
 
   void  Init_impl();
   void 	InitLinks();
-  void	Initialize();
-  void 	Destroy()	{ };
   SIMPLE_COPY(CsSample);
   COPY_FUNS(CsSample, TrialProcess);
   TA_BASEFUNS(CsSample);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
 };
 
 class CsMaxDa : public Stat {
  // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes when equilibrium is
+INHERITED(Stat)
 public:
   SettleProcess* settle;	// #READ_ONLY #NO_SAVE settle process to record
   StatVal	da;		// delta-activation
@@ -518,19 +548,21 @@ public:
   void		Network_Stat();	// don't stop before 5 cycles 
   void 		Unit_Stat(Unit* unit);
 
-  void 	Initialize();		// set minimums
-  void	Destroy()		{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const CsMaxDa& cp);
   COPY_FUNS(CsMaxDa, Stat);
   TA_BASEFUNS(CsMaxDa);
+private:
+  void 	Initialize();		// set minimums
+  void	Destroy()		{ CutLinks(); }
 };
 
 
 class CsDistStat : public Stat {
   /* ##COMPUTE_IN_SettleProcess ##LOOP_STAT gets actual distributions for TIG Stat
      aggregation makes avg of this in phases, TIG stat in trial */
+INHERITED(Stat)
 public:
   CsSettle*	cs_settle;	// #READ_ONLY #NO_SAVE
   StatVal_List	probs;		// prob of each dist pattern
@@ -545,18 +577,20 @@ public:
   void		Network_Stat();
   void		CreateAggregates(Aggregate::Operator default_op = Aggregate::DEFAULT);
   
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const CsDistStat& cp);
   COPY_FUNS(CsDistStat, Stat);
   TA_BASEFUNS(CsDistStat);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
 };
 
 class CsTIGstat : public Stat {
   /* ##COMPUTE_IN_CsSample ##FINAL_STAT Total Information Gain statistic,
      needs a dist stat to compute raw stats for this one */
+INHERITED(Stat)
 public:
   TrialProcess* trial_proc;	// #READ_ONLY #NO_SAVE need to get cur_event
   StatVal	tig;		// the Information Gain for the trial
@@ -569,18 +603,20 @@ public:
   void		Network_Init();
   void		Network_Stat();
 
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const CsTIGstat& cp);
   COPY_FUNS(CsTIGstat, Stat);
   TA_BASEFUNS(CsTIGstat);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
 };
 
 class CsTargStat : public Stat {
   /* ##COMPUTE_IN_CsSample ##FINAL_STAT computes the pct in target distribution,
      is just like a TIG stat in that it gets raw values from dist stat */
+INHERITED(Stat)
 public:
   StatVal	trg_pct;	// the pct in target for the trial
   CsDistStat*	dist_stat;	// get the actual distributions from this stat
@@ -592,17 +628,19 @@ public:
   void		Network_Init();
   void		Network_Stat();
 
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const CsTargStat& cp);
   COPY_FUNS(CsTargStat, Stat);
   TA_BASEFUNS(CsTargStat);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
 };
 
 class CsGoodStat : public Stat {
   // ##COMPUTE_IN_TrialProcess constraint satisfaction goodness statistic
+INHERITED(Stat)
 public:
   bool		use_netin;
   // use net-input for harmony instead of computing anew?
@@ -623,11 +661,12 @@ public:
   void		Con_Stat(Unit* ru, Connection* cn, Unit* su);
   void		Network_Stat();
 
-  void	Initialize();
-  void	Destroy();
   void	Copy_(const CsGoodStat& cp);
   COPY_FUNS(CsGoodStat, Stat);
   TA_BASEFUNS(CsGoodStat);
+private:
+  void	Initialize();
+  void	Destroy();
 };
 
 //////////////////////////////////////////
@@ -636,6 +675,7 @@ public:
 
 class HebbCsConSpec : public CsConSpec {
   // Simple Hebbian wt update (send act * recv act), operates only on final activity states
+INHERITED(CsConSpec)
 public:
   virtual void 	Aggregate_dWt(CsCon_Group*, CsUnit*, float) 	{ };
   virtual void 	B_Aggregate_dWt(CsCon*, CsUnit*, float)		{ }; 
@@ -646,9 +686,10 @@ public:
 
   inline void		B_Compute_dWt(CsCon* cn, CsUnit* ru);
 
+  TA_BASEFUNS(HebbCsConSpec);
+private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS(HebbCsConSpec);
 };
 
 inline void HebbCsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su) {

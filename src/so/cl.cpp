@@ -32,7 +32,7 @@ void ClLayerSpec::Compute_Act(SoLayer* lay) {
   SoUnit* win_u = FindWinner(lay);
   if(win_u == NULL) return;
 
-  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.spec;
+  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
 
   float lvcnt = (float)lay->units.leaves;
   lay->avg_act = (uspec->act_range.max / lvcnt) +
@@ -44,23 +44,29 @@ void ClLayerSpec::Compute_Act(SoLayer* lay) {
 
 void SoftClUnitSpec::Initialize() {
   var = 1.0f;
-  norm_const = 1.0f / sqrtf(2.0f * 3.14159265358979323846 * var);
+  norm_const = 1.0f / sqrtf(2.0f * 3.1415926f * var);
   denom_const = 0.5f / var;
 }
 
-void SoftClUnitSpec::UpdateAfterEdit() {
-  SoUnitSpec::UpdateAfterEdit();
-  norm_const = 1.0f / sqrtf(2.0f * 3.14159265358979323846 * var);
+void SoftClUnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  norm_const = 1.0f / sqrtf(2.0f * 3.1415926f * var);
   denom_const = 0.5f / var;
 }
 
 void SoftClUnitSpec::Compute_Netin(Unit* u) {
   // do distance instead of net input
-  u->net = 0.0f;
-  Con_Group* recv_gp;
-  int g;
-  FOR_ITR_GP(Con_Group, recv_gp, u->recv., g)
-    u->net += recv_gp->Compute_Dist(u);
+  if (u->ext_flag & Unit::EXT)
+    u->net = u->ext;
+  else {
+    // do distance instead of net input
+    u->net = 0.0f;
+    for(int g=0; g<u->recv.size; g++) {
+      SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
+      if(!recv_gp->prjn->from->lesioned())
+	u->net += recv_gp->Compute_Dist(u);
+    }
+  }
 }
 
 void SoftClUnitSpec::Compute_Act(Unit* u) {
@@ -81,7 +87,7 @@ void SoftClLayerSpec::Compute_Act(SoLayer* lay) {
     return;
   }
 
-  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.spec;
+  SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
 
   float sum = 0.0f;
   Unit* u;

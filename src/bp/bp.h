@@ -52,6 +52,7 @@ public:
 
 class BP_API BpConSpec : public ConSpec {
   // ##CAT_Bp Bp connection specifications
+INHERITED(ConSpec)
 public:
   enum MomentumType {
     AFTER_LRATE,		// apply momentum after learning rate (old pdp style)
@@ -97,12 +98,14 @@ public:
   virtual void	SetCurLrate(int epoch);
   // set current learning rate based on schedule given epoch
 
-  void	UpdateAfterEdit();
+  void InitLinks();
+  SIMPLE_COPY(BpConSpec);
+  TA_BASEFUNS(BpConSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  void	InitLinks();
-  SIMPLE_COPY(BpConSpec);
-  TA_BASEFUNS2(BpConSpec, ConSpec);
 };
 
 // the following functions are possible weight decay functions
@@ -118,34 +121,35 @@ BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su
 
 class BP_API BpRecvCons : public RecvCons {
   // ##CAT_Bp group of Bp recv connections
-  INHERITED(RecvCons)
+INHERITED(RecvCons)
 public:
   // these are "convenience" functions for those defined in the spec
 
   void	SetCurLrate(int epoch) { ((BpConSpec*)GetConSpec())->SetCurLrate(epoch); }
 
+  TA_BASEFUNS_NOCOPY(BpRecvCons);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(BpRecvCons);
 };
 
 class BP_API BpSendCons : public SendCons {
   // ##CAT_Bp group of Bp sending connections
-  INHERITED(SendCons)
+INHERITED(SendCons)
 public:
   // these are "convenience" functions for those defined in the spec
 
   float Compute_dEdA(BpUnit* su) { return ((BpConSpec*)GetConSpec())->Compute_dEdA(this, su); }
 
+  TA_BASEFUNS_NOCOPY(BpSendCons);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS(BpSendCons);
 };
-
-class BpUnit;
 
 class BP_API BpUnitSpec : public UnitSpec {
   // ##CAT_Bp specifications for Bp units
+INHERITED(UnitSpec)
 public:
   SigmoidSpec	sig;		// sigmoid activation parameters
   float		err_tol;	// error tolerance (no error signal if |t-o|<err_tol)
@@ -169,12 +173,13 @@ public:
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
 
-  void 	Initialize();
-  void 	Destroy()		{ CutLinks(); }
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const BpUnitSpec& cp);
-  TA_BASEFUNS2(BpUnitSpec, UnitSpec);
+  TA_BASEFUNS(BpUnitSpec);
+private:
+  void 	Initialize();
+  void 	Destroy()		{ CutLinks(); }
 };
 
 // the following functions are possible error functions.
@@ -191,6 +196,7 @@ BP_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
 
 class BP_API BpUnit : public Unit {
   // ##CAT_Bp ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
+INHERITED(Unit)
 public:
   float 	err; 		// this is E, not dEdA
   float 	dEdA;		// #LABEL_dEdA #DMEM_SHARE_SET_3 error wrt activation
@@ -203,10 +209,11 @@ public:
   void Compute_dEdNet()		{ ((BpUnitSpec*)GetUnitSpec())->Compute_dEdNet(this); }
   void Compute_dEdA_dEdNet() 	{ Compute_dEdA(); Compute_Error(); Compute_dEdNet(); }
 
+  void	Copy_(const BpUnit& cp); // units need hi-performance custom copy
+  TA_BASEFUNS(BpUnit);
+private:
   void 	Initialize();
   void 	Destroy()		{ };
-  void	Copy_(const BpUnit& cp);
-  TA_BASEFUNS2(BpUnit, Unit);
 };
 
 // inline functions (for speed)
@@ -286,15 +293,17 @@ inline void BpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
 
 class BP_API HebbBpConSpec : public BpConSpec {
   // Simple Hebbian wt update (send act * recv act)
+INHERITED(BpConSpec)
 public:
   inline void 		C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su);
   inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
 
   inline void		B_Compute_dWt(BpCon* cn, BpUnit* ru);
 
+  TA_BASEFUNS_NOCOPY(HebbBpConSpec);
+private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS2(HebbBpConSpec, BpConSpec);
 };
 
 inline void HebbBpConSpec::C_Compute_dWt(BpCon* cn, BpUnit* ru, BpUnit* su) {
@@ -311,16 +320,17 @@ inline void HebbBpConSpec::B_Compute_dWt(BpCon* cn, BpUnit* ru) {
 
 class BP_API ErrScaleBpConSpec : public BpConSpec {
   // con spec that scales the error by given parameter
+INHERITED(BpConSpec)
 public:
   float		err_scale;	// the scaling parameter
 
   inline float 		C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit* su);
   inline float 		Compute_dEdA(BpRecvCons* cg, BpUnit* su);
 
+  TA_SIMPLE_BASEFUNS(ErrScaleBpConSpec);
+private:
   void 	Initialize()	{ err_scale = 1.0f; }
   void 	Destroy()	{ };
-  SIMPLE_COPY(ErrScaleBpConSpec);
-  TA_BASEFUNS2(ErrScaleBpConSpec, BpConSpec);
 };
 
 inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
@@ -342,6 +352,7 @@ public:
 
 class BP_API DeltaBarDeltaBpConSpec : public BpConSpec {
   // delta-bar-delta has local learning rates for each connection
+INHERITED(BpConSpec)
 public:
   float		lrate_incr;	// rate of learning rate increase (additive)
   float		lrate_decr;	// rate of learning rate decrease (multiplicative)
@@ -358,11 +369,12 @@ public:
   inline virtual void	Compute_Weights(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
 
-  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  void	Copy_(const DeltaBarDeltaBpConSpec& cp);
-  TA_BASEFUNS2(DeltaBarDeltaBpConSpec, BpConSpec);
 };
 
 inline void DeltaBarDeltaBpConSpec::C_UpdateLrate
@@ -437,6 +449,7 @@ inline void DeltaBarDeltaBpConSpec::B_Compute_Weights(BpCon* cn, BpUnit* ru) {
 
 class BP_API BpContextSpec : public BpUnitSpec {
   // for context units in simple recurrent nets (SRN), expects one-to-one prjn from layer it copies, must be AFTER that layer in .layers
+INHERITED(BpUnitSpec)
 public:
   float		hysteresis;	 // hysteresis factor: (1-hyst)*new + hyst*old
   float		hysteresis_c;	 // #READ_ONLY complement of hysteresis
@@ -462,66 +475,75 @@ public:
 
 //obs  bool  CheckConfig(Unit* un, Layer* lay, TrialProcess* tp);
 
-  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(BpContextSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	InitLinks();
-  void	Copy_(const BpContextSpec& cp);
-  TA_BASEFUNS2(BpContextSpec, BpUnitSpec);
 };
 
 class BP_API LinearBpUnitSpec : public BpUnitSpec {
   // linear unit in Bp
+INHERITED(BpUnitSpec)
 public:
   void 		Compute_Act(Unit* u);
   void		Compute_dEdNet(BpUnit* u);
 
-  void	UpdateAfterEdit();
+  TA_BASEFUNS(LinearBpUnitSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS2(LinearBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API ThreshLinBpUnitSpec : public BpUnitSpec {
   // thresholded linear unit in Bp
+INHERITED(BpUnitSpec)
 public:
   float		threshold;
 
   void 		Compute_Act(Unit* u);
   void		Compute_dEdNet(BpUnit* u);
 
-  void	UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(ThreshLinBpUnitSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  SIMPLE_COPY(ThreshLinBpUnitSpec);
-  TA_BASEFUNS2(ThreshLinBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API NoisyBpUnitSpec : public BpUnitSpec {
   // Bp with noisy output signal (act plus noise)
+INHERITED(BpUnitSpec)
 public:
   Random	noise;		// what kind of noise to add to activations
 
   void 		Compute_Act(Unit* u);
 
+  TA_SIMPLE_BASEFUNS(NoisyBpUnitSpec);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  void 	InitLinks();
-  SIMPLE_COPY(NoisyBpUnitSpec);
-  TA_BASEFUNS2(NoisyBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API StochasticBpUnitSpec : public BpUnitSpec {
   // Bp with a binary stochastic activation function
+INHERITED(BpUnitSpec)
 public:
   void				Compute_Act(Unit* u);
+
+  TA_BASEFUNS_NOCOPY(StochasticBpUnitSpec);
+private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
-  TA_BASEFUNS2_NOCOPY(StochasticBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API RBFBpUnitSpec : public BpUnitSpec {
   // Radial basis function (Gaussian) function units in Bp
+INHERITED(BpUnitSpec)
 public:
   float         var;            // variance of Gaussian
   float         norm_const;     // #HIDDEN normalization const for Gaussian
@@ -531,15 +553,17 @@ public:
   void          Compute_Act(Unit* u);
   void          Compute_dEdNet(BpUnit* u);
 
-  void  UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(RBFBpUnitSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void  Initialize();
   void  Destroy()               { };
-  SIMPLE_COPY(RBFBpUnitSpec);
-  TA_BASEFUNS2(RBFBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API BumpBpUnitSpec : public BpUnitSpec {
   // bump function in Bp: Gaussian of std net input
+INHERITED(BpUnitSpec)
 public:
   float         mean;           // mean of Gaussian
   float         std_dev;        // std deviation of Gaussian
@@ -548,27 +572,31 @@ public:
   void          Compute_Act(Unit* u);
   void          Compute_dEdNet(BpUnit* u);
 
-  void  UpdateAfterEdit();
+  TA_SIMPLE_BASEFUNS(BumpBpUnitSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
   void  Initialize();
   void  Destroy()               { };
-  SIMPLE_COPY(BumpBpUnitSpec);
-  TA_BASEFUNS2(BumpBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API ExpBpUnitSpec : public BpUnitSpec {
   // exponential units in Bp: simple exponent of net input
+INHERITED(BpUnitSpec)
 public:
   void          Compute_Act(Unit* u);
   virtual void  Compute_dEdNet(BpUnit* u);      // error wrt unit activation
 
+  TA_BASEFUNS_NOCOPY(ExpBpUnitSpec);
+private:
   void  Initialize()	{ };
   void  Destroy()	{ };
-  TA_BASEFUNS2_NOCOPY(ExpBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
   /* SoftMax Units: first one-to-one prjn is from corresp exponential unit,
      second prjn is from single summing linear unit, this then divides two */
+INHERITED(BpUnitSpec)
 public:
 
   void		Compute_Netin(Unit*)	{ }; // do nothing
@@ -579,9 +607,10 @@ public:
   void          Compute_dWt(Unit*)	{ };
   void          Compute_Weights(Unit*)	{ };
 
+  TA_BASEFUNS_NOCOPY(SoftMaxBpUnitSpec);
+private:
   void  Initialize()	{ };
   void  Destroy()	{ };
-  TA_BASEFUNS2_NOCOPY(SoftMaxBpUnitSpec, BpUnitSpec);
 };
 
 class BP_API BpLayer : public Layer {
@@ -589,9 +618,10 @@ class BP_API BpLayer : public Layer {
 INHERITED(Layer)
 public:
 
+  TA_BASEFUNS_NOCOPY(BpLayer);
+private:
   void	Initialize();
   void 	Destroy()		{ };
-  TA_BASEFUNS_NOCOPY(BpLayer);
 };
 
 class BP_API BpNetwork : public Network {
@@ -620,9 +650,10 @@ class BP_API BpProject : public ProjectBase {
 INHERITED(ProjectBase)
 public:
 
+  TA_BASEFUNS_NOCOPY(BpProject);
+private:
   void	Initialize();
   void 	Destroy()		{}
-  TA_BASEFUNS_NOCOPY(BpProject);
 };
 
 

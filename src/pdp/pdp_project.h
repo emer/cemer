@@ -51,10 +51,11 @@ public:
 
   override String 	GetDecorateKey() const { return "Wizard"; }
 
-  void	Initialize();
-  void	Destroy() 	{ };
   SIMPLE_COPY(LayerWizEl);
   TA_BASEFUNS(LayerWizEl);
+private:
+  void	Initialize();
+  void	Destroy() 	{ };
 };
 
 class PDP_API Wizard : public taWizard {
@@ -143,12 +144,13 @@ public:
 */
   
   void	UpdateAfterEdit();
-  void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
   void 	InitLinks();
   void	CutLinks();
   SIMPLE_COPY(Wizard);
   TA_BASEFUNS(Wizard);
+private:
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
 
 class PDP_API ProjectBase : public taProject {
