@@ -3124,6 +3124,9 @@ taiDataLink* taiViewType::StatGetDataLink(void* el, TypeDef* el_typ) {
 
 
 void taiViewType::Initialize() {
+  m_dp = NULL;
+  m_dps = NULL;
+  m_need_set = false;
 }
 
 void taiViewType::AddView(TypeDef* td) {
@@ -3144,6 +3147,7 @@ void taiViewType::AddView(TypeDef* td) {
 iDataPanel* taiViewType::CreateDataPanel(taiDataLink* dl_) {
   m_dp = NULL;
   m_dps = NULL;
+  m_need_set = false;
   CreateDataPanel_impl(dl_);
   if (m_dps) {
       m_dps->AllSubPanelsAdded();
@@ -3154,10 +3158,10 @@ iDataPanel* taiViewType::CreateDataPanel(taiDataLink* dl_) {
 
 void taiViewType::DataPanelCreated(iDataPanelFrame* dp) {
   // we will need to create a set if > 1 panel, or 1st-only uses minibar
-  bool need_set = (m_dp != NULL) || dp->hasMinibarCtrls();
+  m_need_set = m_need_set || (m_dp != NULL) || dp->hasMinibarCtrls();
   if (!m_dp) {
     m_dp = dp;
-    if (!need_set) return; // only applies to first guy
+    if (!needSet()) return; // only applies to first guy
   }
   // using or need a set
   if (!m_dps) {

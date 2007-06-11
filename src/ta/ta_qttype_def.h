@@ -150,7 +150,7 @@ public:
   
   taiViewType* 		sub_types() {return (taiViewType*)m_sub_types;}
   taiViewType** 	addr_sub_types() {return (taiViewType**)&m_sub_types;}
-
+  virtual bool		needSet() const {return m_need_set;} // only valid during constr of panels
   void 			AddView(TypeDef* td);	// add an instance to a type
   virtual int		BidForView(TypeDef*) {return 1;}
   virtual iDataPanel*	CreateDataPanel(taiDataLink* dl_); // creates a new data panel; normally override _impl
@@ -162,6 +162,7 @@ public:
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(taiViewType, taiTypeBase)
 protected:
+  bool			m_need_set;
   iDataPanelSet*	m_dps; // #IGNORE created automatically if more than one datapanel is created
   
   void 			DataPanelCreated(iDataPanelFrame* dp); // call in CreateDataPanel_impl for each dp frame created

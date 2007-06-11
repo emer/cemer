@@ -930,6 +930,8 @@ class TA_API tabOViewType: public tabViewType { // for taOBase and descendants
 typedef tabViewType inherited;
 #endif
 public:
+  override bool		needSet() const {return true;} // always, so we can do dyn panels
+  
   override int		BidForView(TypeDef*);
   override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ); // optimized version of tabViewType
   void			Initialize() {}
