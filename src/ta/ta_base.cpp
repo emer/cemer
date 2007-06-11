@@ -1644,7 +1644,7 @@ void taBase::SetDocLink(taDoc* doc) {
     &TA_UserData_DocLink, "DocLink", true);
   if (TestError((!uddl), "SetDocLink", "Could not set DocLink -- the object may not support UserData")) return;
   uddl->doc = doc;
-  DataChanged(DCR_ITEM_UPDATED);
+  DataChanged(DCR_USER_DATA_UPDATED);
 }
 
 void taBase::SetUserData(const String& name, const Variant& value) {
@@ -2275,7 +2275,9 @@ void taOBase::Copy_(const taOBase& cp) {
 UserDataItem_List* taOBase::GetUserDataList(bool force) const { 
   if (!user_data_ && force) {
     user_data_ = new UserDataItem_List; 
-    taBase::Own(user_data_, const_cast<taOBase*>(this));
+    taOBase* ths =  const_cast<taOBase*>(this); // note: harmless const casts
+    taBase::Own(user_data_, ths);
+    ths->DataChanged(DCR_USER_DATA_UPDATED);
   } 
   return user_data_;
 }

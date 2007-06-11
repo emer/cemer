@@ -1016,6 +1016,9 @@ public:
   virtual UserDataItem_List* GetUserDataList(bool force_create = false) const
     {return NULL;}
   // #CAT_UserData #EXPERT gets the userdatalist for this class
+  virtual bool		HasUserDataList() const
+    {return (GetUserDataList(false) != NULL);}
+  // #CAT_UserData #EXPERT returns true if UserData exists at all
   virtual bool		HasUserData(const String& key) const;
   // #CAT_UserData #EXPERT returns true if UserData exists for this key (case sens)
   virtual const Variant	GetUserData(const String& key) const;

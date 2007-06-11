@@ -4749,7 +4749,8 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   layOuter->setSpacing(2); //def
   layOuter->addWidget(scr, 1);
 
-  dl_->AddDataClient(this); // sets our m_link variable
+  if (dl_) //note: most classes always pass a link, but ex DocDataPanel doesn't
+    dl_->AddDataClient(this); // sets our m_link variable
 }
 
 iDataPanel::~iDataPanel() {
@@ -5148,6 +5149,27 @@ void iDataPanelSet::ClosePanel() {
   deleteLater();
 }
 
+void iDataPanelSet::DataChanged_impl(int dcr, void* op1, void* op2) {
+  inherited::DataChanged_impl(dcr, op1, op2);
+  // if UDC then we need to invoke the dyn panel update procedure on the tai guy
+  if (dcr == DCR_USER_DATA_UPDATED) {
+    TypeDef* typ = link()->GetDataTypeDef();
+    if (typ && typ->iv) {
+      typ->iv->CheckUpdateDataPanelSet(this);
+    }
+  }
+}
+
+iDataPanel* iDataPanelSet::GetDataPanelOfType(TypeDef* typ, int& idx) {
+  while ((idx >= 0) && (idx < panels.size)) {
+    iDataPanel* rval = panels.FastEl(idx);
+    idx++; // before returning val
+    if (rval->GetTypeDef()->InheritsFrom(typ))
+      return rval;
+  }
+  return NULL;
+}
+
 void iDataPanelSet::GetImage() {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
@@ -5456,6 +5478,77 @@ String iTextDataPanel::panel_type() const {
   static String str("Text View");
   return str;
 }
+
+
+//////////////////////////
+//    iDocDataPanel 	//
+//////////////////////////
+
+iDocDataPanel::iDocDataPanel()
+:inherited(NULL) // usual case: we dynamically set the link, via setDoc
+{
+  br = new iTextBrowser(this);
+  setCentralWidget(br);
+//TODO  connect(txtText, SIGNAL(copyAvailable(bool)),
+//      this, SLOT(textText_copyAvailable(bool)) );
+  m_doc = NULL; // changed via setDoc -- if diff, we change our dl
+}
+
+iDocDataPanel::~iDocDataPanel() {
+}
+
+void iDocDataPanel::DataLinkDestroying(taDataLink* dl) {
+  setDoc(NULL);
+}
+
+void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+//TODO:  if (dcr <= DCR_ITEM_UPDATED_ND) ;
+  //get updated text
+}
+
+/* todo int iDocDataPanel::EditAction(int ea) {
+  int rval = 0;
+//todo
+  return rval;
+}
+
+
+int iDocDataPanel::GetEditActions() {
+  int rval = 0;
+  QTextCursor tc(txtText->textCursor());
+  if (tc.hasSelection())
+    rval |= taiClipData::EA_COPY;
+//TODO: more, if not readonly
+  return rval;
+} */
+
+void iDocDataPanel::setDoc(taDoc* doc) {
+  if (m_doc == doc) return;
+  // if the doc is NULL, or different (regardless of NULL->val or val1->val2)
+  // we will necessarily have to change links, so we always revoke link
+  if (m_link) {
+    m_link->RemoveDataClient(this);
+  }
+  
+  m_doc = doc;
+  if (doc) {
+    taDataLink* dl = doc->GetDataLink();
+    if (!dl) return; // shouldn't happen!
+    dl->AddDataClient(this);
+    br->setHtml(doc->text);
+  } else {
+    br->clear(); // TODO: since occurs after previous existence, maybe we should put
+    // something like "<no doc set>" or such
+  }
+}
+
+  
+/*void iDocDataPanel::br_copyAvailable (bool) {
+  viewerWindow()->UpdateUi();
+}*/
+
+
 
 
 //////////////////////////

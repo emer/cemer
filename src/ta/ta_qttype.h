@@ -934,6 +934,7 @@ public:
   
   override int		BidForView(TypeDef*);
   override taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ); // optimized version of tabViewType
+  override void		CheckUpdateDataPanelSet(iDataPanelSet* pan);
   void			Initialize() {}
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(tabOViewType, tabViewType)

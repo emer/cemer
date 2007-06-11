@@ -157,6 +157,8 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   DCR_DATA_UPDATE_END,  // 61 update operation at the end of everything
     
   DCR_ITEM_DELETING = 70,  // 70 NOTE: not used in standard DataChanged calls, but may be used by forwarders, ex. taDataMonitor
+  
+  DCR_USER_DATA_UPDATED	= 80, // called when we create user data, or when user data is updated -- helps gui snooping so it doesn't do detailed UserData checks on every ITEM_UPDATED or such
 
 #ifndef __MAKETA__
   DCR_LIST_MIN		= DCR_LIST_INIT,

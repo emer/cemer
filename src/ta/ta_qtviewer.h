@@ -389,8 +389,7 @@ protected:
 // Note: for inheritance hierarchies, only the first parent is searched, as that is
 // always the primary class in cases where there is multiple inheritance
 
-class TA_API ISelectable_PtrList: public taPtrList<ISelectable> {
-  // ##IGNORE for selection lists
+class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selection lists
 INHERITED(taPtrList<ISelectable>)
 friend class ISelectableHost;
 public:
@@ -802,7 +801,7 @@ private:
 };
 
 class TA_API iToolBar_List: public taPtrList<iToolBar> {
- // ##IGNORE each mainwin maintains its existent toolbars in this list
+ // each mainwin maintains its existent toolbars in this list
 public:
 protected:
   override String El_GetName_(void* it) const;
@@ -820,7 +819,7 @@ public:
 };
 
 class TA_API iBaseClipWidgetAction: public iClipWidgetAction {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER for making drag/copy guys from a taBase instance (ex. see programs_qtso)
+  // for making drag/copy guys from a taBase instance (ex. see programs_qtso)
 INHERITED(iClipWidgetAction)
   Q_OBJECT
 public:
@@ -1059,8 +1058,7 @@ private:
 // 	iTabBar 	//
 //////////////////////////
 
-class TA_API iTabBar: public QTabBar {
-  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS encapsulates the TabBar for iTabView
+class TA_API iTabBar: public QTabBar { //  encapsulates the TabBar for iTabView
   Q_OBJECT
 INHERITED(QTabBar)
 public:
@@ -1101,8 +1099,7 @@ protected:
 //   iDataPanel_PtrList	//
 //////////////////////////
 
-class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> {
-  // ##IGNORE
+class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 public:
   iTabView*	m_tabView; // optional, we manage the refs in panels if set
   iDataPanel_PtrList() {m_tabView = NULL;}
@@ -1180,7 +1177,6 @@ private:
 //////////////////////////
 
 class TA_API iTabView_PtrList: public taPtrList<iTabView> {
-  // ##IGNORE
 public:
   void			DataPanelDestroying(iDataPanel* panel); // dispatch to all
   iTabView_PtrList() {}
@@ -1394,7 +1390,8 @@ public:
   void			AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
   void			AddSubPanelDynamic(iDataPanelFrame* pn); // call this after fully built to dynamically add a new frame
   void			SetMethodBox(QWidget* meths); // sets a box that contains methods, on bottom
-
+  iDataPanel*		GetDataPanelOfType(TypeDef* typ, int& start_idx);
+    // get the first data panel of the specified type, starting at panel index; NULL if none
   override void		Closing(CancelOp& cancel_op);
   override void		ClosePanel();
   override void		GetImage();
@@ -1411,6 +1408,8 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override void		DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
   override TypeDef*	GetTypeDef() const {return &TA_iDataPanelSet;}
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); // dyn subpanel detection
 
 public slots:
   void			btn_pressed(int id);
@@ -1488,6 +1487,37 @@ protected:
 
 protected slots:
   void 			textText_copyAvailable (bool yes);
+
+};
+
+class TA_API iDocDataPanel: public iDataPanelFrame {
+  // a panel frame for displaying docs
+  Q_OBJECT
+INHERITED(iDataPanelFrame)
+public:
+  QTextBrowser*		br; // the doc
+  
+  virtual void		setDoc(taDoc* doc); // only called if changes after creation
+  
+
+  override String	panel_type() const {return "Doc";}
+
+//  override int 		EditAction(int ea);
+//  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+
+  iDocDataPanel(); // NOTE: use the setDoc api to (indirectly) set the DataLink
+  ~iDocDataPanel();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iDocDataPanel;}
+  override void		DataLinkDestroying(taDataLink* dl);
+protected:
+  taDoc*		m_doc; // ref managed through link; we just put ptr here to detect change
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+
+protected slots:
+//  void 			br_copyAvailable (bool yes);
 
 };
 
@@ -1959,7 +1989,7 @@ private:
 };
 
 class TA_API iSearchDialog: public QDialog, public IDataLinkClient {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER  search a project (or more)
+//   search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT
 public:

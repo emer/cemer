@@ -3165,7 +3165,8 @@ void taiViewType::DataPanelCreated(iDataPanelFrame* dp) {
   }
   // using or need a set
   if (!m_dps) {
-    m_dps = new iDataPanelSet(dp->link());
+//     // note: use first link for set, in case, ex. this is a Doc panel, which is nonstandard
+    m_dps = new iDataPanelSet(m_dp->link());
     m_dps->AddSubPanel(m_dp);
     // if adding first because of minibar, don't add again
     if (m_dp == dp) return;
@@ -3242,6 +3243,40 @@ int tabOViewType::BidForView(TypeDef* td) {
   return 0;
 }
 
+void tabOViewType::CheckUpdateDataPanelSet(iDataPanelSet* pan) {
+  // TODO (4.1): check for new UserData
+  // TODO: check for a new DocLink
+  // if we have UserData, make a panel for it
+  taiDataLink* dl = pan->link();
+  if (!dl) return;
+  taOBase* tab = dynamic_cast<taOBase*>(dl->taData());
+  if (!tab) return; // shouldn't happen
+  UserDataItem_List* udl = tab->GetUserDataList(false); // no force
+  if (udl) { // note: if not, can't have DocLink either...
+    /* TODO: 4.0release or 4.1: so make the panel
+    iUserDataPanel* udp = new iUserDataPanel((taiDataLink*)udl->GetDataLink());
+    DataPanelCreated(udp);*/
+    // if we have a DocLink, make a panel for it
+    // if the content changes or it gets deleted, the panel updates
+    // if we set a new Doc or null it out, we get a USER_DATA_UPDATED notify, and reset it
+    taDoc* doc = tab->GetDocLink();
+    // get an existing DocPanel, if any -- don't force yet...
+    int start_idx = 0;
+    iDocDataPanel* dp = (iDocDataPanel*)pan->GetDataPanelOfType(&TA_iDocDataPanel, start_idx);
+    if (doc) {
+      if (!dp) { // need to create one
+        dp = new iDocDataPanel; // note special case: no ctor link
+        DataPanelCreated(dp);
+      }
+      dp->setDoc(doc); // sets link
+    } else {
+      if (dp) {
+        dp->setDoc(NULL);
+      }
+    }
+  }
+}
+
 taiDataLink* tabOViewType::CreateDataLink_impl(taBase* data_) {
   return new tabODataLink((taOBase*)data_);
 }
@@ -3259,6 +3294,24 @@ void tabOViewType::CreateDataPanel_impl(taiDataLink* dl_)
     dl_ = dynamic_cast<tabODataLink*>(dl_)->listLink();
     iListDataPanel* bldp = new iListDataPanel(dl_, custom_name);
     DataPanelCreated(bldp);
+  }
+  // if we have UserData, make a panel for it
+  taOBase* tab = dynamic_cast<taOBase*>(dl_->taData());
+  if (!tab) return; // shouldn't happen
+  UserDataItem_List* udl = tab->GetUserDataList(false); // no force
+  if (udl) { // note: if not, can't have DocLink either...
+    /* TODO: 4.0release or 4.1: so make the panel
+    iUserDataPanel* udp = new iUserDataPanel((taiDataLink*)udl->GetDataLink());
+    DataPanelCreated(udp);*/
+    // if we have a DocLink, make a panel for it
+    // if the content changes or it gets deleted, the panel updates
+    // if we set a new Doc or null it out, we get a USER_DATA_UPDATED notify, and reset it
+    taDoc* doc = tab->GetDocLink();
+    if (doc) {
+      iDocDataPanel* dp = new iDocDataPanel; // note special case: no ctor link
+      DataPanelCreated(dp);
+      dp->setDoc(doc); // sets link
+    }
   }
 }
 

@@ -32,6 +32,7 @@ class iDataPanel;
 class iDataPanelFrame;
 class iDataPanelSet;
 class EditDataPanel;
+class iDocDataPanel;
 class iDataViewer;
 class taiDataLink;
 class iMainWindowViewer;
@@ -154,6 +155,7 @@ public:
   void 			AddView(TypeDef* td);	// add an instance to a type
   virtual int		BidForView(TypeDef*) {return 1;}
   virtual iDataPanel*	CreateDataPanel(taiDataLink* dl_); // creates a new data panel; normally override _impl
+  virtual void		CheckUpdateDataPanelSet(iDataPanelSet* pan) {} // dynamically updates a data panel set; currently only called when set gets a USER_DATA_UPDATED notify
   virtual taiDataLink*	GetDataLink(void* data_, TypeDef* el_typ) {return NULL;}
     // get an existing, or create new if needed
   virtual const iColor GetEditColorInherit(taiDataLink* dl, bool& ok) const {ok = false; return def_color;} // #IGNORE background color for edit dialog, include inherited colors from parents
