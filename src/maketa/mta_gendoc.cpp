@@ -41,6 +41,11 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
   strm << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
   strm << " <TypeSpace name=\"" << ths->name << "\">\n";
 
+
+  TypeDef* ta_base_def = ts->FindName("taBase");
+  TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
+  TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
+
   for(int i=0; i < ts->size; i++) {
   
     //////////////////////
@@ -49,21 +54,57 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
     TypeDef* td = ts->FastEl(i);
 
+    ///////////////////////////////////////////////////
+    // 	Filters!
+
     // We only want "actual" types, not pointers or references to types, etc...
     if (td->ptr || td->ref || td->formal || td->pre_parsed) 
       continue;
 
-    // exclude template instances that have a single further subclass
-    if (td->InheritsFormal(TA_templ_inst) && (td->children.size == 1))
+    if(td->InheritsFrom(&TA_const))
+      continue;
+
+    // exclude template instances (of any sort!)
+    if (td->InheritsFormal(TA_templ_inst)) //  && (td->children.size == 1))
      continue;
-    
+
+    if(td->HasOption("IGNORE")) continue;
+
+    // exclude low-level non-instance guys, except for the ones we want..
+    if((td->HasOption("NO_INSTANCE") || td->HasOption("NO_CSS"))
+       && !(td->HasOption("VIRT_BASE") || td->HasOption("SMART_POINTER")
+	    || td->name == "taMisc"))
+      continue;
+
+    if(spc_builtin.FindName(td->name)) continue;
+    // no builtin guys
+
+    if((td != ta_smartref_def && td->InheritsFrom(ta_smartref_def))
+       || (td != ta_smartptr_def && td->InheritsFrom(ta_smartptr_def))) continue;
+
+    TypeDef* main_parent = NULL;
+    if(td->children.size >= 1)
+      main_parent = td->children.FastEl(0);
+
+    if(main_parent && main_parent->HasOption("IGNORE")) continue;
+
+    ///////////////////////////////////////////////////
+    // now generate type info
+
     strm << "  <TypeDef name=\"" << td->name;
     strm << (td->is_enum() ? "\" type=\"enum" : "");
     strm << (td->is_class() ? "\" type=\"class" : "");
     strm << "\">\n";
 
+    if(td->desc.length() > 2)
+      strm << "   <desc>" + td->desc + "</desc>\n";
+
     // Options of this TypeDef
-    //strm << "   <option>" << td->opts.AsString() << "</option>\n";
+    if (td->opts.size) {
+      for (int k=0; k < td->opts.size; k++ ) {
+	strm << "   <options>" << td->opts.FastEl(k) << "</options>\n";
+      }
+    }
       
     // Parents of this TypeDef
     TypeSpace* tsp = &td->parents;
@@ -80,28 +121,73 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
     }
 
     //////////////////////
+    //    Sub-types     //
+    //////////////////////
+
+    TypeSpace* subs = &td->sub_types;
+    if(subs->size) {
+      bool first_one = true;
+      for(int q=0;q<subs->size;q++) {
+	TypeDef* st = subs->FastEl(q);
+	if(st->GetOwnerType() != td) continue;
+	if(st->is_enum()) {
+	  if(first_one) {
+	    strm << "   <SubTypes>\n";
+	    first_one = false;
+	  }
+	  strm << "     <EnumType name=\"" << st->name << "\">\n";
+	  EnumSpace* es = &st->enum_vals;
+	  if(es->size) {
+	    for (int j=0; j < es->size; j++) {
+	      EnumDef* ed = es->FastEl(j);
+	      strm << "      <EnumDef name=\"" << ed->name << "\" " << "value=\"" << ed->enum_no
+		   << "\"";
+	      if(ed->desc.length() > 2)
+		strm << " desc=\"" << ed->desc << "\"";
+	      strm << "/>\n";
+	    }
+	  }
+	  strm << "     </EnumType>\n";
+	}
+      }
+      if(!first_one)
+	strm << "   </SubTypes>\n";
+    }
+
+    //////////////////////
     //    MemberSpace   //
     //////////////////////
 
     MemberSpace* mems = &td->members;
-
     if (mems->size) {
-      strm << "   <MemberSpace name=\"" << mems->name << "\">\n";
-
       //////////////////////
       //    MemberDef     //
       //////////////////////
 
+      bool first_one = true;
       for (int j=0; j < mems->size; j++) {
 	MemberDef* md = mems->FastEl(j);
 
 	// Shortened src/ta.xml by !5k lines
-	if (MemberSpace_Filter_Member(mems, md))
+	if(!MemberSpace_Filter_Member(mems, md))
 	  continue;
 
-	strm << "     <MemberDef name=\"" << md->name << ">\n";
+	if(md->HasOption("NO_SHOW") || md->HasOption("NO_SHOW_EDIT") ||
+	   md->HasOption("HIDDEN") || md->HasOption("HIDDEN_TREE"))
+	  continue;
 
-	strm << (md->desc.length() > 2 ? "      <desc>" + md->desc + "</desc>\n" : "");
+	if(first_one) {
+	  strm << "   <MemberSpace name=\"" << mems->name << "\">\n";
+	  first_one = false;
+	}
+
+	strm << "     <MemberDef name=\"" << md->name << "\">\n";
+
+	if(md->desc.length() > 2)
+	  strm << "      <desc>" + md->desc + "</desc>\n";
+
+	strm << "      <type>" + md->type->Get_C_Name() + "</type>\n";
+
 	if (md->opts.size) {
 	  for (int k=0; k < md->opts.size; k++ ) {
 	    strm << "      <options>" << md->opts.FastEl(k) << "</options>\n";
@@ -109,7 +195,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	}
 	strm << "     </MemberDef>\n";
       }
-      strm << "   </MemberSpace>\n";
+      if(!first_one)
+	strm << "   </MemberSpace>\n";
     }
 
     //////////////////////
@@ -118,18 +205,35 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
     MethodSpace* mets = &td->methods;
     if (mets->size) {
-      strm << "   <MethodSpace\">\n";
 
       //////////////////////
       //    MethodDef     //
       //////////////////////
 
+      bool first_one = true;
       for (int j=0; j < mets->size; j++) {
 	MethodDef* metd = mets->FastEl(j);
 
-	// Shortened src/ta.xml by ~20k lines
-	if (MethodSpace_Filter_Method(mets, metd))
+	if (!MethodSpace_Filter_Method(mets, metd))
 	  continue;
+
+	if(metd->HasOption("EXPERT"))
+	  continue;
+
+	if(ta_base_def && td->name != "taBase" && ta_base_def->methods.FindName(metd->name))
+	  continue;		// firmly exclude any of the base guys, which tend to be
+	                        // overwritten quite frequently in subclasses
+
+	if(main_parent && main_parent->methods.FindName(metd->name))
+	  continue;		// sometimes methods get re-owned, esp in multiple inheritance
+	                        // and templates -- for docs, we can always exclude
+
+	if(metd->name.contains("__")) continue; // internal thing
+
+	if(first_one) {
+	  strm << "   <MethodSpace>\n";
+	  first_one = false;
+	}
 
 	int metd_desc_len = metd->desc.length();
 	int metd_opts_size = metd->opts.size;
@@ -161,7 +265,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	  strm << "     </MethodDef>\n";
 	}
       }
-      strm << "   </MethodSpace>\n";
+      if(!first_one)
+	strm << "   </MethodSpace>\n";
     }
 
     //////////////////////
@@ -179,7 +284,11 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
       for (int j=0; j < es->size; j++) {
 	EnumDef* ed = es->FastEl(j);
-	strm << "     <EnumDef name=\"" << ed->name << "\" " << "value=\"" << ed->enum_no << "\"/>\n";
+	strm << "     <EnumDef name=\"" << ed->name << "\" " << "value=\"" << ed->enum_no
+	     << "\"";
+	if(ed->desc.length() > 2)
+	  strm << " desc=\"" << ed->desc << "\"";
+	strm << "/>\n";
       }
       strm << "   </EnumSpace>\n";
     }

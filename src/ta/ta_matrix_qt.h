@@ -94,7 +94,7 @@ protected:
 };
 
 class TA_API iTableView: public QTableView {
-  // table editor; model flattens >2d into 2d by frames
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER table editor; model flattens >2d into 2d by frames
 INHERITED(QTableView)
   Q_OBJECT
 public:
@@ -165,7 +165,7 @@ public: // cliphandler i/f
 };
 
 class TA_API iMatrixEditor: public QWidget {
-  // widget that includes a table editor; model flattens >2d into 2d by frames
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER widget that includes a table editor; model flattens >2d into 2d by frames
 INHERITED(QWidget)
   Q_OBJECT
 public:

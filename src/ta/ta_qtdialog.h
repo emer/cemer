@@ -48,7 +48,7 @@ class taiStringDataHost; //
 //////////////////////////////////
 
 class TA_API HiLightButton: public QPushButton {
-  // combines v3.2 Script Button and HiLightButton -- set script_ to script name, to enable ScriptButton functionality
+  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS combines v3.2 Script Button and HiLightButton -- set script_ to script name, to enable ScriptButton functionality
 public:
   int			mouse_button;	// (Qt::Button) the mouse button that pressed the button (defaults to NoButton, when actuated by keyboard)
 
@@ -98,6 +98,7 @@ class taiTypeHier;
 // User can also press the number associated with the button, starting from 0
 
 class TA_API taiChoiceDialog : public QMessageBox {
+  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
   Q_OBJECT
 INHERITED(QMessageBox)
 public:

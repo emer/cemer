@@ -389,7 +389,8 @@ protected:
 // Note: for inheritance hierarchies, only the first parent is searched, as that is
 // always the primary class in cases where there is multiple inheritance
 
-class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selection lists
+class TA_API ISelectable_PtrList: public taPtrList<ISelectable> {
+  // ##IGNORE for selection lists
 INHERITED(taPtrList<ISelectable>)
 friend class ISelectableHost;
 public:
@@ -801,7 +802,7 @@ private:
 };
 
 class TA_API iToolBar_List: public taPtrList<iToolBar> {
- // each mainwin maintains its existent toolbars in this list
+ // ##IGNORE each mainwin maintains its existent toolbars in this list
 public:
 protected:
   override String El_GetName_(void* it) const;
@@ -819,7 +820,7 @@ public:
 };
 
 class TA_API iBaseClipWidgetAction: public iClipWidgetAction {
-  // for making drag/copy guys from a taBase instance (ex. see programs_qtso)
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER for making drag/copy guys from a taBase instance (ex. see programs_qtso)
 INHERITED(iClipWidgetAction)
   Q_OBJECT
 public:
@@ -1058,7 +1059,8 @@ private:
 // 	iTabBar 	//
 //////////////////////////
 
-class TA_API iTabBar: public QTabBar { //  encapsulates the TabBar for iTabView
+class TA_API iTabBar: public QTabBar {
+  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS encapsulates the TabBar for iTabView
   Q_OBJECT
 INHERITED(QTabBar)
 public:
@@ -1099,7 +1101,8 @@ protected:
 //   iDataPanel_PtrList	//
 //////////////////////////
 
-class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> { // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API iDataPanel_PtrList: public taPtrList<iDataPanel> {
+  // ##IGNORE
 public:
   iTabView*	m_tabView; // optional, we manage the refs in panels if set
   iDataPanel_PtrList() {m_tabView = NULL;}
@@ -1177,6 +1180,7 @@ private:
 //////////////////////////
 
 class TA_API iTabView_PtrList: public taPtrList<iTabView> {
+  // ##IGNORE
 public:
   void			DataPanelDestroying(iDataPanel* panel); // dispatch to all
   iTabView_PtrList() {}
@@ -1955,7 +1959,7 @@ private:
 };
 
 class TA_API iSearchDialog: public QDialog, public IDataLinkClient {
-//   search a project (or more)
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBER  search a project (or more)
 INHERITED(QDialog)
   Q_OBJECT
 public:

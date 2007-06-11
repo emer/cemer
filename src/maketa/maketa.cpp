@@ -803,51 +803,52 @@ int main(int argc, char* argv[])
 
   if(mta->gen_doc) {
     fstream gen_doc_xml;
-    gen_doc_xml.open(mta->basename + ".xml", ios::out);
+    gen_doc_xml.open(mta->basename + "_TA_doc.xml", ios::out);
     mta->GenDoc(&(mta->spc_target), gen_doc_xml);
     gen_doc_xml.close();  gen_doc_xml.clear();
   }
+  else {
+    out_type_h.open((char*)mta->ta_type_h, ios::out);
+    out_inst_h.open((char*)mta->ta_inst_h, ios::out);
+    outc.open((char*)mta->ta_ccname, ios::out);
 
-  out_type_h.open((char*)mta->ta_type_h, ios::out);
-  out_inst_h.open((char*)mta->ta_inst_h, ios::out);
-  outc.open((char*)mta->ta_ccname, ios::out);
+    mta->TypeSpace_Declare_Types(&(mta->spc_target), out_type_h, mta->headv);
+    out_type_h.close();  out_type_h.clear();
+    mta->TypeSpace_Declare_Instances(&(mta->spc_target), out_inst_h, mta->headv);
+    out_inst_h.close();  out_inst_h.clear();
+    mta->TypeSpace_Generate(&(mta->spc_target), outc, mta->headv, mta->pre_parse_inits);
+    outc.close();  outc.clear();
 
-  mta->TypeSpace_Declare_Types(&(mta->spc_target), out_type_h, mta->headv);
-  out_type_h.close();  out_type_h.clear();
-  mta->TypeSpace_Declare_Instances(&(mta->spc_target), out_inst_h, mta->headv);
-  out_inst_h.close();  out_inst_h.clear();
-  mta->TypeSpace_Generate(&(mta->spc_target), outc, mta->headv, mta->pre_parse_inits);
-  outc.close();  outc.clear();
-
-  /* update times...why do we have to do this?? */
+    /* update times...why do we have to do this?? */
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))
-//TODO: fails on Windows (no "touch" command)
+    //TODO: fails on Windows (no "touch" command)
 #else
-  comnd = String("touch ") + mta->ta_type_h;
-  system(comnd);
-  comnd = String("touch ") + mta->ta_inst_h;
-  system(comnd);
-  comnd = String("touch ") + mta->ta_ccname;
-  system(comnd);
+    comnd = String("touch ") + mta->ta_type_h;
+    system(comnd);
+    comnd = String("touch ") + mta->ta_inst_h;
+    system(comnd);
+    comnd = String("touch ") + mta->ta_ccname;
+    system(comnd);
 #endif
 
-  // if in autohx mode, then update files that changed
-  if (mta->make_hx && mta->auto_hx) {
-    String fin, fout;
-    fin = mta->basename + "_TA_type.hx";
-    fout = mta->basename + "_TA_type.h";
-    if (!files_same(fin.chars(), fout.chars())) {
-      copy_file(fin.chars(), fout.chars());
-    }
-    fin = mta->basename + "_TA_inst.hx";
-    fout = mta->basename + "_TA_inst.h";
-    if (!files_same(fin.chars(), fout.chars())) {
-      copy_file(fin.chars(), fout.chars());
-    }
-    fin = mta->basename + "_TA.ccx";
-    fout = mta->basename + "_TA.cpp";
-    if (!files_same(fin.chars(), fout.chars())) {
-      copy_file(fin.chars(), fout.chars());
+    // if in autohx mode, then update files that changed
+    if (mta->make_hx && mta->auto_hx) {
+      String fin, fout;
+      fin = mta->basename + "_TA_type.hx";
+      fout = mta->basename + "_TA_type.h";
+      if (!files_same(fin.chars(), fout.chars())) {
+	copy_file(fin.chars(), fout.chars());
+      }
+      fin = mta->basename + "_TA_inst.hx";
+      fout = mta->basename + "_TA_inst.h";
+      if (!files_same(fin.chars(), fout.chars())) {
+	copy_file(fin.chars(), fout.chars());
+      }
+      fin = mta->basename + "_TA.ccx";
+      fout = mta->basename + "_TA.cpp";
+      if (!files_same(fin.chars(), fout.chars())) {
+	copy_file(fin.chars(), fout.chars());
+      }
     }
   }
   
