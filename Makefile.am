@@ -122,6 +122,12 @@ force_ta:
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/so && ${MAKE} force_ta
 
+gendoc:
+	cd ${abs_top_builddir}/src/ta && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/pdp && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/bp && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/leabra && ${MAKE} gendoc
+
 do_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} do_ta

@@ -34,6 +34,9 @@ from email import Encoders
 # Third party imports
 from pyvix.vix import *
 
+sys.path.append('/usr/local/lib/python2.4/site-packages/pywikipedia')
+import wikipedia
+
 """
 The PDP++ Release Manager knows how to perform all sorts of build
 related tasks on several systems
@@ -208,6 +211,20 @@ class Popen3:
        if capturestderr:
            self.err=open(errfile,"r").read()
            os.remove(errfile)
+
+# TODO: Put all of the TA/CSS stuff in that category, and all of the PDP stuff in that category
+
+class MaketaBot:
+    """
+    Parses the xml output from `maketa -gendoc' and posts it to the pdp wiki.
+    """
+
+    def getPage():
+        "Get the text of a page"
+        wikipedia.get()
+        
+
+
 
 if __name__ == "__main__":
     """

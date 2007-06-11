@@ -285,11 +285,6 @@ if test x"bundle" = x"false"; then
   SIM_AC_CONFIGURATION_SETTING([Installation prefix],[${prefix}])
 fi
 
-if test "$maketa_docs" = "true"; then
-  AC_SUBST([GENDOC],[-gendoc])
-  SIM_AC_CONFIGURATION_SETTING([Maketa documentation],[Enabled])
-fi
-
 case $host in
     *-*-mingw32*)
             CXXFLAGS=$(echo $CXXFLAGS | sed 's/\/ -I/ -I/g;s/\/$//;s/\\\\/\\/g')
