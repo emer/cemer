@@ -73,6 +73,11 @@ void SoRecvCons::Initialize() {
   sum_in_act = 0.0f;
 }
 
+void SoRecvCons::Copy_(const SoRecvCons& cp) {
+  avg_in_act = cp.avg_in_act;
+  sum_in_act = cp.sum_in_act;
+}
+
 void SoSendCons::Initialize() {
   SetConType(&TA_SoCon);
 }
