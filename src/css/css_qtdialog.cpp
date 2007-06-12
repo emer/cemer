@@ -463,7 +463,7 @@ void cssiArgDialog::GetValue() {
   Unchanged();
 }
 
-void cssiArgDialog::GetImage() {
+void cssiArgDialog::GetImage(bool) {
   for (int i = hide_args; i < type_el.size; ++i) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
     taiData* mb_dat = data_el(0).SafeEl(i);

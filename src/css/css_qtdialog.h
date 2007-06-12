@@ -82,7 +82,7 @@ public:
   ~cssiArgDialog();
 
   void		Constr_ArgTypes();
-  void		GetImage();
+  void		GetImage(bool force); // force ignored
   void		GetValue();
   int		Edit(bool modal_); // ati is for when n leading args are predetermined by context, and so shouldn't be shown to the user
 
