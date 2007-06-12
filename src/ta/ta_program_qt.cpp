@@ -1102,11 +1102,12 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       MemberDef* md = pv->GetValMemberDef();
       memb_el(j).Add(md);
       taiData* mb_dat;
-      if(pv->var_type == ProgVar::T_HardEnum) {
+      if ((pv->var_type == ProgVar::T_HardEnum) ||
+        (pv->var_type == ProgVar::T_DynEnum)) 
+      {
         mb_dat = new taiComboBox(true, NULL, this, NULL, body);
-      }
-      else if(pv->var_type == ProgVar::T_DynEnum) {
-        mb_dat = new taiComboBox(true, NULL, this, NULL, body);
+      } else if (pv->var_type == ProgVar::T_Int) {
+        mb_dat = new taiIncrField(NULL, this, NULL, body);
       }
       else {
         mb_dat = md->im->GetDataRep(this, NULL, body);
@@ -1208,6 +1209,12 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
           mb_dat->metaObject()->className())) continue;
         tmb_dat->GetValue(pv->dyn_enum_val.value);
       }
+      else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
+        taiIncrField* tmb_dat = dynamic_cast<taiIncrField*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiIncrField, not: ", 
+          mb_dat->metaObject()->className())) continue;
+        pv->int_val = tmb_dat->GetValue();
+      }
       else {
         md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
       }
@@ -1268,14 +1275,26 @@ void iProgramCtrlDataHost::GetImage_Membs()
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {
-        ((taiComboBox*)mb_dat)->SetEnumType(pv->hard_enum_type);
-        ((taiComboBox*)mb_dat)->GetEnumImage(pv->int_val);
+        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+          mb_dat->metaObject()->className())) continue;
+        tmb_dat->SetEnumType(pv->hard_enum_type);
+        tmb_dat->GetEnumImage(pv->int_val);
       }
       else if(pv->var_type == ProgVar::T_DynEnum) {
-        UpdateDynEnumCombo(((taiComboBox*)mb_dat), pv);
+        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+          mb_dat->metaObject()->className())) continue;
+        UpdateDynEnumCombo((tmb_dat), pv);
         int dei = pv->dyn_enum_val.value;
         if (dei < 0) dei = 0;
-        ((taiComboBox*)mb_dat)->GetImage(dei);
+        tmb_dat->GetImage(dei);
+      }
+      else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
+        taiIncrField* tmb_dat = dynamic_cast<taiIncrField*>(mb_dat);
+        if (pv->TestError(!tmb_dat, "expected taiIncrField, not: ", 
+          mb_dat->metaObject()->className())) continue;
+        tmb_dat->GetImage(pv->int_val);
       }
       else {
         md->im->GetImage(mb_dat, (void*)pv);

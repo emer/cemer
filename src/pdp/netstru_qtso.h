@@ -377,8 +377,8 @@ public:
   ColorScale		scale; //contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  // Auto ranges for member buttons
   bool			display;       // whether to update the display when values change (under control of programs)
-  Member_List		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units
-  int_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
+  MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
+  String_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
   // unit display flags
   Unit*			unit_src; // #NO_SAVE #NO_COPY unit last picked (if any) for display
   bool			unit_con_md;  // #NO_SAVE true if memberdef is from a connection as opposed to a direct unit var

@@ -1692,47 +1692,14 @@ UnitView* NetView::FindUnitView(Unit* unit) {
 
 // this fills a member group with the valid memberdefs from the units and connections
 void NetView::GetMembs() { 
+  if(!net()) return;
   setUnitDispMd(NULL);
   membs.Reset();
-  if(!net()) return;
-  // first do the connections
   TypeDef* prv_td = NULL;
   Layer* lay;
   taLeafItr l_itr;
-  FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
-    Projection* prjn;
-    taLeafItr p_itr;
-    FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
-      TypeDef* td = prjn->con_type;
-      if(td == prv_td) continue; // don't re-scan!
-      prv_td = td;
-      int k;
-      for (k=0; k<td->members.size; k++) {
-	MemberDef* smd = td->members.FastEl(k);
-	if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-	  if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-	      smd->HasOption("READ_ONLY")))
-	    continue;
-	  String nm = "r." + smd->name;
-	  if(membs.FindName(nm)==NULL) {
-	    MemberDef* nmd = smd->Clone();
-	    nmd->name = nm;
-	    membs.Add(nmd);
-	    nmd->idx = smd->idx;
-	  }
-	  nm = "s." + smd->name;
-	  if(membs.FindName(nm)==NULL) {
-	    MemberDef* nmd = smd->Clone();
-	    nmd->name = nm;
-	    membs.Add(nmd);
-	    nmd->idx = smd->idx;
-	  }
-	}
-      }
-    }
-  }
-
-  // then do the unit variables
+  
+  // first do the unit variables
   FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
     Unit* u;
     taLeafItr u_itr;
@@ -1803,11 +1770,48 @@ void NetView::GetMembs() {
     }
   }
 
-  int_Array& oul = ordered_uvg_list;
-  int i;
-  for(i=oul.size-1; i>=0; i--) { // make sure no oul index is beyond number of membs
-    if(oul[i] >= membs.size)
-      oul.RemoveIdx(i,1);
+  // then, only do the connections if any Unit guys, otherwise we are
+  // not built yet, so we leave ourselves empty to signal that
+  if (membs.size > 0) FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
+    Projection* prjn;
+    taLeafItr p_itr;
+    FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
+      TypeDef* td = prjn->con_type;
+      if(td == prv_td) continue; // don't re-scan!
+      prv_td = td;
+      int k;
+      for (k=0; k<td->members.size; k++) {
+	MemberDef* smd = td->members.FastEl(k);
+	if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+	  if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+	      smd->HasOption("READ_ONLY")))
+	    continue;
+	  String nm = "r." + smd->name;
+	  if(membs.FindName(nm)==NULL) {
+	    MemberDef* nmd = smd->Clone();
+	    nmd->name = nm;
+	    membs.Add(nmd);
+	    nmd->idx = smd->idx;
+	  }
+	  nm = "s." + smd->name;
+	  if(membs.FindName(nm)==NULL) {
+	    MemberDef* nmd = smd->Clone();
+	    nmd->name = nm;
+	    membs.Add(nmd);
+	    nmd->idx = smd->idx;
+	  }
+	}
+      }
+    }
+  }
+
+  // remove any stale items from sel list, but only if we were built
+  if (membs.size > 0) {
+    String_Array& oul = ordered_uvg_list;
+    for (int i=oul.size-1; i>=0; i--) { 
+      if (!membs.FindName(oul[i]))
+        oul.RemoveIdx(i,1);
+    }
   }
 }
 
@@ -1850,20 +1854,23 @@ void NetView::InitDisplay(bool init_panel) {
   // why not just do that..  much more invasive I guess
 //   BuildAll();	// rebuild views
   GetMembs();
-  // select "act" by default, if nothing selected, or saved selection not restored yet (first after load)
-  if (!unit_disp_md) {
-    if (ordered_uvg_list.size > 0) {
-      int idx = ordered_uvg_list[0];
-      setUnitDispMd(membs.SafeEl(idx));
-    }
-  }
-  if (!unit_disp_md) {
-    SelectVar("act", false, false);
-  }
   if (init_panel) {
     InitPanel();
     UpdatePanel();
   }
+  // select "act" by default, if nothing selected, or saved selection not restored yet (first after load) -- skip if still not initialized
+  if (!unit_disp_md && (membs.size > 0)) {
+    MemberDef* md = NULL;
+    if (ordered_uvg_list.size > 0) {
+      md = membs.FindName(ordered_uvg_list[0]);
+    }
+    if (md) {
+      setUnitDispMd(md);
+    } else {// default
+      SelectVar("act", false, false);
+    }
+  }
+  
   // descend into sub items
   LayerView* lv;
   taListItr i;
@@ -2103,13 +2110,12 @@ void NetView::Reset_impl() {
 }
 
 void NetView::SelectVar(const char* var_name, bool add, bool update) {
-  int idx;
   if (!add)
     ordered_uvg_list.Reset();
-  MemberDef* md = (MemberDef*)membs.FindName(var_name, idx);
+  MemberDef* md = (MemberDef*)membs.FindName(var_name);
   if (md) {
-    if (ordered_uvg_list.FindEl(idx) < 0)
-      ordered_uvg_list.Add(idx);
+    //nnif (ordered_uvg_list.FindEl(var_name) < 0)
+    ordered_uvg_list.AddUnique(var_name);
   }
   setUnitDispMd(md);
   if (update) UpdateDisplay();
@@ -2472,7 +2478,7 @@ void NetViewPanel::GetImage_impl() {
   Q3ListViewItemIterator it(lvDisplayValues);
   Q3ListViewItem* item;
   while ((item = it.current())) {
-    bool is_selected = (nv->ordered_uvg_list.FindEl(i) >= 0);
+    bool is_selected = (nv->ordered_uvg_list.FindEl(item->text(0)) >= 0);
     lvDisplayValues->setSelected(item, is_selected);
     // if list is size 1 make sure that there is a scale_range entry for this one
     ++it;
@@ -2678,16 +2684,19 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   Q3ListViewItem* item;
   while ((item = it.current())) {
     if (lvDisplayValues->isSelected(item)) {
-      if (nv_->ordered_uvg_list.FindEl(i) < 0) {
-        nv_->ordered_uvg_list.Add(i);
+      if (nv_->ordered_uvg_list.FindEl(item->text(0)) < 0) {
+        nv_->ordered_uvg_list.Add(item->text(0));
       }
     } else {
-      nv_->ordered_uvg_list.RemoveIdx(i); // note: may not exist
+      nv_->ordered_uvg_list.RemoveEl(item->text(0)); // note: may not exist
     }
     ++it;
     ++i;
   }
-  nv_->setUnitDisp(nv_->ordered_uvg_list.SafeEl(0)); // -1 if nothing
+  MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->ordered_uvg_list.SafeEl(0));
+  if (md) {
+    nv_->setUnitDispMd(md); 
+  }
   ColorScaleFromData();
   nv_->InitDisplay(false);
   nv_->UpdateDisplay(false);
