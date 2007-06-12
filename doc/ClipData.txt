@@ -2,6 +2,9 @@ Clip Data Interface
 
 QT DND SEMANTICS
 
+Notes:
+* index *includes* hidden tree items
+
 1. Drop on View itself:
   item: NULL (only situation without an item)
   case: between or before top level item
@@ -17,7 +20,7 @@ QT DND SEMANTICS
 3. Drop between two items:
   item: parent of the items
   index: what index would be of a new item there
-    ex. if before 1st, index=0l if after last, index=N
+    ex. if before 1st, index=0, if after last, index=N
   NOTE: there is a subtle difference between the feedback
     and meaning of "before first" vs. "1st after parent",
     and "after last" vs. "before next parent" -- this 
@@ -25,6 +28,62 @@ QT DND SEMANTICS
     change in moving the mouse; also, the feedback is very
     subtle, being just a slight difference in the width
     of the feedback line
+3a. Drop when IND=ABOVE_ITEM
+   item: parent
+   index: index of what item dropped there would be
+   Drop when IND=BELOW_ITEM
+   item: parent
+   index: index of what item dropped there would be
+NOTE: there does not seem to be a significant difference
+   between the two cases, other than the subtle distinction
+   of where the line is
+NOTE: you cannot do a "1st child" drop when the node is
+   collapsed; therefore, the situation of having to deal
+   with the 1st dummy child does not occur
+   
+MERGING THE DROPS
+
+* must watch out for the "index=1" on our not-opened items; this
+  will be different than the actual number of items
+* between etc. guys can't allow things like "Assign"
+* good news: the ops are all in one routine, so it is easy to 
+  filter right there, if necessary
+* descriptive term needs to be appropriate, ex. "Move Here" when
+  doing a between (not ex. Move After)
+* should probably just have a "between" flag of some kind, to clearly
+  distinguish the case
+* ISSUE: how do we decode the different cases in the drop???
+Notes:
+* we can decode the "drop on" by checking that the index== # visual
+  gui item children, ex. if 1 gui child, index==1;
+    maybe we need to add a flag, from the dragMoveEvent
+* we could have an "eff_idx" which meant:
+  -1: drop on the item
+  N: drop between items (or after parent), where N is the effective
+     index of where the new item will go; N=size means "append"
+* OR, we could just have a "on" flag to indicate On, otherwise, it
+  is one of the "betweens" or "before/after" guys
+Translating betweens:
+  case: for anything other than "at end", we can translate a
+    par/index to be "on INDEX child of par", i.e, it will go 
+    at that spot; we can use a flag to suppress Assign, and to
+    use the right word
+  case: for "at end" we just pass through as on par, with "on=false"
+    EXCEPT: this then becomes ambiguous when considering the item as a 
+    target itself of its parent
+  note: it is ok about the dummy childs, because we always decode the
+    par/end case wrt to the # gui items, and we never use the child gui
+    item
+  ISSUES: what about the "1st in list"??
+Client Code:
+  * VERY similar to before, including what is "the" item invoked
+  * add a "where" flag: 
+      ON: whenever on; 
+      BEFORE: translated "before this item" (item = item for before)
+      AT_END: translated "at end of list" (item = parent)
+  * when "where != ON", then you need to suppress Assign, and just always
+    use the "... Here" terminology; however, the actual semantics (ie item
+    being used) is the same as before
 
 BUGS
 

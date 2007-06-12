@@ -354,7 +354,7 @@ public: // Interface Properties and Methods
   ~ISelectable();
 protected:
   void 			DropHandler(const QMimeData* mime, const QPoint& pos, 
-    int key_mods);
+    int key_mods, /*iTreeWidgetItem::WhereIndicator*/int where);
     //  handles all aspects of a drag drop operation
   virtual int		EditActionD_impl_(taiMimeSource* ms, int ea) = 0;
     // do Dst op for single selected item; generally doesn't need extending
@@ -1780,7 +1780,7 @@ protected:
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
   override void		dropped(const QMimeData* mime, const QPoint& pos, 
-    int key_mods);
+    int key_mods, WhereIndicator where);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);
   virtual bool		ShowNode_impl(int show, const String& context) const;

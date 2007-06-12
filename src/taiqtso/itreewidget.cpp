@@ -111,12 +111,13 @@ void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
   //note: we accept autoscroll decision regardless
   inherited::dragMoveEvent(ev);
   if (ev->isAccepted()) {
-    switch (dropIndicatorPosition()) {
+    drop_ind = dropIndicatorPosition();
+    switch (drop_ind) {
     //TEMP: forbid above/below
     case AboveItem:
     case BelowItem:
-      ev->setDropAction(Qt::IgnoreAction);
-      ev->ignore(); // puts up the stop sign icon
+//      ev->setDropAction(Qt::IgnoreAction);
+//      ev->ignore(); // puts up the stop sign icon
       break;
     case OnItem: {
       QModelIndex index = indexAt(ev->pos());
@@ -165,10 +166,31 @@ bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
   const QMimeData* data, Qt::DropAction action) 
 {
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(parent);
-//NOTE: index doesn't seem to be needed -- parent always seems to indicate
-// the target of the drop action
+  
+  iTreeWidgetItem::WhereIndicator where = iTreeWidgetItem::WI_ON; // default
+  switch (drop_ind) {
+  case AboveItem:
+  case BelowItem:
+    // both these cases are essentially identical -- the index indicates
+    // the new target position -- but we need to differentiate the
+    // "before" case in our semantics, from the "at end" case
+    if (index == parent->childCount()) {
+      // "at end" case -- item is correct, but we set the flag
+      where = iTreeWidgetItem::WI_AT_END;
+    } else { // "before" case
+      // so we'll change to that item..
+      where = iTreeWidgetItem::WI_BEFORE;
+      item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
+    }
+    break;
+  case OnItem: // default case
+    break;
+  case OnViewport:
+    return false; // probably shouldn't happen
+  }
   if (!item) return false;
-  item->dropped(data, drop_pos, key_mods);
+  
+  item->dropped(data, drop_pos, key_mods, where);
   return false; // never let Qt manipulate the items
 }
 

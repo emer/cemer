@@ -1367,7 +1367,7 @@ QObject* ISelectable::clipHandlerObj() const {
 
 // called from ui to handle drops
 void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos, 
-    int mods) 
+    int mods, int where) 
 {
 //Note: on Mac, "Ctrl" and test bits always refer to Command key (not Ctrl key)
   taiMimeSource* ms = taiMimeSource::New(mime);
@@ -1405,23 +1405,32 @@ show_menu:
   { // block for jump
   taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
   QAction* act = NULL;
-  
-//NOTE: "Xxx+" shortcuts are dummies, to hint the shortcircuit drop key
+  // when dropping "at end", we force the term "here" instead of "into"
+  // but we still use the INTO semantics
+  bool force_here = (where == iTreeWidgetItem::WI_AT_END);
+  String IntoOrHere = force_here ? "Here" : "Into";
+// NOTE: "Xxx+" shortcuts are dummies, to hint the shortcircuit drop key
 // if has both variants of an op, no shortcuts and both, else yes
+// NOTE: for the "between/end" cases, we can't allow the "Into" (ie,
+//  typically for a group) because the situation is ambiguous, and
+// the result is not what might be expected, since it gets put into
+// the next item, not as a child of the previous item
   if ((ea & taiClipData::EA_DROP_MOVE2) == taiClipData::EA_DROP_MOVE2) {
     act = menu->AddItem("Move Here", taiAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)), 
       taiClipData::EA_DROP_MOVE, QKeySequence());
-    act = menu->AddItem("Move Into", taiAction::int_act,
-      host_->helperObj(),  SLOT(DropEditAction(int)), 
-      taiClipData::EA_DROP_MOVE_INTO, QKeySequence());
+    if (where == iTreeWidgetItem::WI_ON) {
+      act = menu->AddItem("Move Into", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)), 
+        taiClipData::EA_DROP_MOVE_INTO, QKeySequence());
+    }
   } else {
     if (ea & taiClipData::EA_DROP_MOVE)
       act = menu->AddItem("&Move Here", taiAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)), 
         taiClipData::EA_DROP_MOVE, QKeySequence("Shift+"));
     else if (ea & taiClipData::EA_DROP_MOVE_INTO)
-      act = menu->AddItem("&Move Into", taiAction::int_act,
+      act = menu->AddItem("&Move "+IntoOrHere, taiAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)), 
         taiClipData::EA_DROP_MOVE_INTO, QKeySequence("Shift+"));
   }
@@ -1431,22 +1440,27 @@ show_menu:
     act = menu->AddItem("Copy Here", taiAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_COPY, QKeySequence());
-    act = menu->AddItem("Copy Into", taiAction::int_act,
-      host_->helperObj(),  SLOT(DropEditAction(int)),
-      taiClipData::EA_DROP_COPY_INTO, QKeySequence());
+    if (where == iTreeWidgetItem::WI_ON) {
+      act = menu->AddItem("Copy Into", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        taiClipData::EA_DROP_COPY_INTO, QKeySequence());
+    }
   } else {
     if (ea & taiClipData::EA_DROP_COPY)
       act = menu->AddItem("&Copy Here", taiAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_COPY, QKeySequence("Ctrl+"));
     else if (ea & taiClipData::EA_DROP_COPY_INTO)
-      act = menu->AddItem("&Copy Into", taiAction::int_act,
+      act = menu->AddItem("&Copy "+IntoOrHere, taiAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_COPY_INTO, QKeySequence("Ctrl+"));
   }
   
   act = NULL;
-  if (ea & taiClipData::EA_DROP_ASSIGN) {
+  // Assign only applicable for "On" drops
+  if ((where == iTreeWidgetItem::WI_ON) && 
+     (ea & taiClipData::EA_DROP_ASSIGN)) 
+  {
     act = menu->AddItem("Assign To", taiAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_ASSIGN, QKeySequence());
@@ -1457,16 +1471,18 @@ show_menu:
     act = menu->AddItem("Link Here", taiAction::int_act,
       host_->helperObj(),  SLOT(DropEditAction(int)),
       taiClipData::EA_DROP_LINK, QKeySequence());
-    act = menu->AddItem("Link Into", taiAction::int_act,
-      host_->helperObj(),  SLOT(DropEditAction(int)),
-      taiClipData::EA_DROP_LINK_INTO, QKeySequence());
+    if (where == iTreeWidgetItem::WI_ON) {
+      act = menu->AddItem("Link Into", taiAction::int_act,
+        host_->helperObj(),  SLOT(DropEditAction(int)),
+        taiClipData::EA_DROP_LINK_INTO, QKeySequence());
+    }
   } else {
     if (ea & taiClipData::EA_DROP_LINK)
       act = menu->AddItem("&Link Here", taiAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_LINK, QKeySequence("Alt+"));
     else if (ea & taiClipData::EA_DROP_LINK_INTO)
-      act = menu->AddItem("&Link Into", taiAction::int_act,
+      act = menu->AddItem("&Link "+IntoOrHere, taiAction::int_act,
         host_->helperObj(),  SLOT(DropEditAction(int)),
         taiClipData::EA_DROP_LINK_INTO, QKeySequence("Alt+"));
   }
@@ -6328,8 +6344,9 @@ void iTreeViewItem::DecorateDataNode() {
 }
 
 void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos, 
-    int key_mods) {
-  DropHandler(mime, pos, key_mods);
+    int key_mods, WhereIndicator where) 
+{
+  DropHandler(mime, pos, key_mods, where);
 
 }
 

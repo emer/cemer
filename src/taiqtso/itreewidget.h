@@ -52,6 +52,7 @@ signals:
   void 			contextMenuRequested(QTreeWidgetItem* item, const QPoint& pos, int col);
   
 protected:
+  DropIndicatorPosition drop_ind; // we capture this from the dragMove event
   QPoint		drop_pos; // we capture this from the drop event
   int			key_mods; // we captur this from the drop event
   bool			m_highlightRows;
@@ -80,6 +81,11 @@ class TAIQTSO_API iTreeWidgetItem: public QTreeWidgetItem {
 INHERITED(QTreeWidgetItem)
 friend class iTreeWidget;
 public:
+  enum WhereIndicator {
+    WI_ON,	// this is the value passed when item was dropped right on another
+    WI_BEFORE,	// indicates one of the "between" situations (except end); item invoked is the item before which the new item should go
+    WI_AT_END	// indicates the "at end" situation; item invoked is the *parent* item
+  };
   
   bool			isExpanded() const;
   inline bool		lazyChildren() const {return lazy_children;}
@@ -112,7 +118,7 @@ protected:
   uint			children_created : 1;
   
   virtual void		dropped(const QMimeData* mime, const QPoint& pos, 
-    int key_mods) {}
+    int key_mods, WhereIndicator where) {}
     // what to do when data dropped, usually we put up a drop context menu
   virtual void		itemExpanded(bool expanded); // called when exanded or closed
   virtual void		CreateChildren_impl() {} // override this to create the true children
