@@ -13,55 +13,36 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
-
 // cs: constraint satisfaction (grain, boltzmann, etc.)
 
 #ifndef  cs_h
 #define cs_h
 
-#include <pdp/base.h>
-#include <pdp/netstru.h>
-#include <pdp/sched_proc.h>
-#include <pdp/enviro.h>
-#include <cs/cs_TA_type.h>
+#include "pdp_base.h"
+#include "netstru.h"
+#include "pdp_project.h"
+
+#include "cs_def.h"
+#include "cs_TA_type.h"
 
 // pre-declare
 
 class CsCon;
 class CsConSpec;
-class CsCon_Group;
+class CsRecvCons;
 class CsUnitSpec;
 class SigmoidUnitSpec;
 class BoltzUnitSpec;
 class IACUnitSpec;
 class CsUnit;
 
-class CsSample;
-class CsTrial;
-class CsSettle;
-class CsCycle;
-
-class CsMaxDa;
-class CsDistStat;
-class CsTIGstat;
-class CsTargStat;
-class CsGoodStat;
-
-class CsCon : public Connection {
-  // connection values for constraint satisfaction
-INHERITED(Connection)
+class CS_API CsCon : public Connection {
+  // ##CAT_Cs connection values for constraint satisfaction
 public:
   float		pdw;		// #NO_SAVE the previous delta-weight (for momentum)
   float		dwt_agg;	// #NO_VIEW #NO_SAVE variable for aggregating the outer-prods
 
-  void	Copy_(const CsCon& cp)
-  { dwt_agg = cp.dwt_agg; pdw = cp.pdw; }
-  COPY_FUNS(CsCon, Connection);
-  TA_BASEFUNS(CsCon);
-private:
-  void 	Initialize()		{ dwt_agg = pdw= 0.0f; }
-  void 	Destroy()		{ };
+  CsCon() { pdw = dwt_agg = 0.0f; }
 };
 
 // ConSpec now has 3 versions of some functions, the two regular ones
@@ -70,8 +51,8 @@ private:
 // every time a C_ version is overloaded, it is necessary to overload the B_
 // version, where the new B_ just calls the new C_
 
-class CsConSpec : public ConSpec {
-  // constraint satisfaction connection specifications
+class CS_API CsConSpec : public ConSpec {
+  // ##CAT_Cs constraint satisfaction connection specifications
 INHERITED(ConSpec)
 public:
   float		lrate;		// learning rate
@@ -81,12 +62,12 @@ public:
   void 		(*decay_fun)(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su);
   // #LIST_CsConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  void 		C_Init_Weights(Con_Group* cg, Connection* cn, Unit* ru, Unit* su)
+  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
   { ConSpec::C_Init_Weights(cg, cn, ru, su); ((CsCon*)cn)->pdw = 0.0f; }
 
   inline void		C_Aggregate_dWt(CsCon* cn, CsUnit* ru, 
 				      CsUnit* su, float phase);
-  inline virtual void 	Aggregate_dWt(CsCon_Group* cg, CsUnit* ru, float phase);
+  inline virtual void 	Aggregate_dWt(CsRecvCons* cg, CsUnit* ru, float phase);
   inline virtual void 	B_Aggregate_dWt(CsCon* cn, CsUnit* ru, float phase);
   // aggregate coproducts
 
@@ -94,17 +75,18 @@ public:
   // call the decay function 
 
   inline void		C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su);
-  inline void		Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void		Compute_dWt(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_dWt(CsCon* cn, CsUnit* ru);
   
   inline void		C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su);
-  inline void		Compute_Weights(Con_Group* cg, Unit* ru);
+  inline void		Compute_Weights(RecvCons* cg, Unit* ru);
   inline virtual void	B_Compute_Weights(CsCon* cn, Unit* ru);
 
-  void	UpdateAfterEdit();
+  void	InitLinks();
   SIMPLE_COPY(CsConSpec);
-  COPY_FUNS(CsConSpec, ConSpec);
   TA_BASEFUNS(CsConSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -122,23 +104,32 @@ void Cs_WtElim_WtDecay(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su)
      ;				// term here so scanner picks up comment
 
 
-class CsCon_Group : public Con_Group {
-  // cs receiving connections
-INHERITED(Con_Group)
+class CS_API CsRecvCons : public RecvCons {
+  // ##CAT_Cs group of constraint-satisfaction receiving connections
+INHERITED(RecvCons)
 public:
   void		Aggregate_dWt(CsUnit* ru, float phase)
-  { ((CsConSpec*)spec.spec)->Aggregate_dWt(this, ru, phase); }
+  { ((CsConSpec*)GetConSpec())->Aggregate_dWt(this, ru, phase); }
   // compute weight change
 
-  TA_BASEFUNS(CsCon_Group);
+  TA_BASEFUNS_NOCOPY(CsRecvCons);
 private:
-  void 	Initialize()		{ };
+  void 	Initialize();
   void	Destroy()		{ };
 };
 
+class CS_API CsSendCons : public SendCons {
+  // ##CAT_Cs group of constraint-satisfaction sending connections
+INHERITED(SendCons)
+public:
+  TA_BASEFUNS_NOCOPY(CsSendCons);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
 
-class CsUnitSpec : public UnitSpec {
-  // standard constraint satisfaction unit (uses inverse-logistic activation)
+class CS_API CsUnitSpec : public UnitSpec {
+  // ##CAT_Cs standard constraint satisfaction unit (uses inverse-logistic activation)
 INHERITED(UnitSpec)
 public:
   enum ClampType {
@@ -184,20 +175,20 @@ public:
   virtual void	PostSettle(CsUnit* u, int phase);
   // set stuff after settling is over
 
-  virtual void	GraphActFun(GraphLog* graph_log, float min = -5.0, float max = 5.0, int ncycles=50);
-  // #BUTTON #NULL_OK graph the activation function, "settling" for 50 cycles for each net input (NULL = new graph log)
+  virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0, int ncycles=50);
+  // #BUTTON #NULL_OK graph the activation function, settling for 50 cycles for each net input (NULL = new graph data)
 
-  void	UpdateAfterEdit();	// update the sqrt_step
   void	InitLinks();
   SIMPLE_COPY(CsUnitSpec);
-  COPY_FUNS(CsUnitSpec, UnitSpec);
   TA_BASEFUNS(CsUnitSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
-class SigmoidUnitSpec : public CsUnitSpec {
+class CS_API SigmoidUnitSpec : public CsUnitSpec {
   // Sigmoid (logistic) activation function (float-valued within range)
 INHERITED(CsUnitSpec)
 public:
@@ -209,15 +200,13 @@ public:
 
   void		Compute_Act_impl(CsUnit* u,int cycle, int phase);
 
-  SIMPLE_COPY(SigmoidUnitSpec);
-  COPY_FUNS(SigmoidUnitSpec, CsUnitSpec);
-  TA_BASEFUNS(SigmoidUnitSpec);
+  TA_SIMPLE_BASEFUNS(SigmoidUnitSpec);
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
-class BoltzUnitSpec : public CsUnitSpec {
+class CS_API BoltzUnitSpec : public CsUnitSpec {
   // Boltzmann-machine activation function (binary, probabalistic)
 INHERITED(CsUnitSpec)
 public:
@@ -225,16 +214,15 @@ public:
 
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
-  void	UpdateAfterEdit();	// update gain from temp
-  SIMPLE_COPY(BoltzUnitSpec);
-  COPY_FUNS(BoltzUnitSpec, CsUnitSpec);
-  TA_BASEFUNS(BoltzUnitSpec);
+  TA_SIMPLE_BASEFUNS(BoltzUnitSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
-class IACUnitSpec : public CsUnitSpec {
+class CS_API IACUnitSpec : public CsUnitSpec {
   // Interactive-Activation & Competition activation function (IAC)
 INHERITED(CsUnitSpec)
 public:
@@ -247,28 +235,27 @@ public:
   void		Send_Netin(Unit* u, Layer* tolay);	// do sender-based stuff
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
-  void	UpdateAfterEdit();	// update gain from decay
-  SIMPLE_COPY(IACUnitSpec);
-  COPY_FUNS(IACUnitSpec, CsUnitSpec);
-  TA_BASEFUNS(IACUnitSpec);
+  TA_SIMPLE_BASEFUNS(IACUnitSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
-class LinearCsUnitSpec : public CsUnitSpec {
+class CS_API LinearCsUnitSpec : public CsUnitSpec {
   // linear version of Cs units with time-averaging on the net inputs
 INHERITED(CsUnitSpec)
 public:
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
-  TA_BASEFUNS(LinearCsUnitSpec);
+  TA_BASEFUNS_NOCOPY(LinearCsUnitSpec);
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
-class ThreshLinCsUnitSpec : public CsUnitSpec {
+class CS_API ThreshLinCsUnitSpec : public CsUnitSpec {
   // threshold-linear version of Cs units with time-averaging on the net inputs
 INHERITED(CsUnitSpec)
 public:
@@ -276,16 +263,14 @@ public:
 
   void		Compute_Act_impl(CsUnit* u, int cycle, int phase);
 
-  SIMPLE_COPY(ThreshLinCsUnitSpec);
-  COPY_FUNS(ThreshLinCsUnitSpec, CsUnitSpec);
-  TA_BASEFUNS(ThreshLinCsUnitSpec);
+  TA_SIMPLE_BASEFUNS(ThreshLinCsUnitSpec);
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
-class CsUnit : public Unit {
-  // constraint satisfaction unit
+class CS_API CsUnit : public Unit {
+  // ##CAT_Cs constraint satisfaction unit
 INHERITED(Unit)
 public:
   float		da;		// delta-activation (or net input) value
@@ -295,32 +280,30 @@ public:
   float		act_p;		// plus phase activation
   int		n_dwt_aggs;	// number of delta-weight aggregations performed
 
-  void 	Init_Netin()	{ net = bias->wt + clmp_net; } // for sender based
+  void 	Init_Netin()	{ net = bias.Cn(0)->wt + clmp_net; } // for sender based
   void		Compute_ClampAct() 
-  { ((CsUnitSpec*)spec.spec)->Compute_ClampAct(this); }
+  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampAct(this); }
   void		Compute_ClampNet() 
-  { ((CsUnitSpec*)spec.spec)->Compute_ClampNet(this); }
+  { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampNet(this); }
   
   void		Compute_Act(int cycle, int phase)
-  { ((CsUnitSpec*)spec.spec)->Compute_Act(this, cycle, phase); }
+  { ((CsUnitSpec*)GetUnitSpec())->Compute_Act(this, cycle, phase); }
 
   void		Compute_Act()
   { Compute_Act(-1, 0); }
 
   virtual void	Targ_To_Ext();
   void		PostSettle(int phase)
-  { ((CsUnitSpec*)spec.spec)->PostSettle(this, phase); }
+  { ((CsUnitSpec*)GetUnitSpec())->PostSettle(this, phase); }
 
   void		Aggregate_dWt(int phase)
-  { ((CsUnitSpec*)spec.spec)->Aggregate_dWt(this, phase); }
+  { ((CsUnitSpec*)GetUnitSpec())->Aggregate_dWt(this, phase); }
 
+  void	Copy_(const CsUnit& cp);
+  TA_BASEFUNS(CsUnit);
 private:
   void 	Initialize();
-  void 	InitLinks();
   void	Destroy()		{ };
-  SIMPLE_COPY(CsUnit);
-  COPY_FUNS(CsUnit, Unit);
-  TA_BASEFUNS(CsUnit);
 };
 
 ////////////////////////////////
@@ -328,10 +311,10 @@ private:
 ////////////////////////////////
 
 inline void CsConSpec::C_Aggregate_dWt(CsCon* cn, CsUnit* ru, CsUnit* su,
-					float phase) {
-    cn->dwt_agg += phase * (su->act * ru->act); 
+				       float phase) {
+  cn->dwt_agg += phase * (su->act * ru->act); 
 }
-inline void CsConSpec::Aggregate_dWt(CsCon_Group* cg, CsUnit* ru,
+inline void CsConSpec::Aggregate_dWt(CsRecvCons* cg, CsUnit* ru,
 				      float phase) {
   CON_GROUP_LOOP(cg, C_Aggregate_dWt((CsCon*)cg->Cn(i), ru, (CsUnit*)cg->Un(i),
 				   phase));
@@ -346,7 +329,7 @@ inline void CsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit*) {
   cn->dwt_agg = 0.0f;
 }
 
-inline void CsConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void CsConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_dWt((CsCon*)cg->Cn(i), (CsUnit*)ru,
 				   (CsUnit*)cg->Un(i)));
 }
@@ -368,7 +351,7 @@ inline void CsConSpec::C_Compute_Weights(CsCon* cn, Unit* ru, Unit* su) {
   cn->wt += lrate * cn->pdw;	
   cn->dwt = 0.0f;
 }
-inline void CsConSpec::Compute_Weights(Con_Group* cg, Unit* ru) {
+inline void CsConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg, C_Compute_Weights((CsCon*)cg->Cn(i), ru, cg->Un(i)));
   ApplyLimits(cg, ru);
 }
@@ -377,316 +360,24 @@ inline void CsConSpec::B_Compute_Weights(CsCon* cn, Unit* ru) {
   C_ApplyLimits(cn, ru, NULL);
 }
 
-////////////////////////////////
-// 	Processes             //
-////////////////////////////////
-
-class CsCycle : public CycleProcess {
-  // one update cycle of all units (or n_updates in async) in network
-INHERITED(CycleProcess)
-public:
-  enum UpdateMode {
-    SYNCHRONOUS,
-    ASYNCHRONOUS,
-    SYNC_SENDER_BASED 		// needed for IAC send_thresh impl
-  };
-
-  CsSettle*	cs_settle;	// #NO_SUBTYPE #READ_ONLY #NO_SAVE
-  CsTrial*	cs_trial;	// #NO_SUBTYPE #READ_ONLY #NO_SAVE
-  UpdateMode 	update_mode;
-  // how to update: async = n_updates, sync = all units. sender_based is for IAC
-  int		n_updates;
-  // #CONDEDIT_ON_update_mode:ASYNCHRONOUS for ASYNC mode, number of updates (with replacement) to perform in one cycle
-
-  void		Loop();		// compute activations
-  bool		Crit()		{ return true; } // executes only once
-
-  virtual void	Compute_SyncAct();
-  virtual void	Compute_AsyncAct();
-  virtual void	Aggregate_dWt();
-
-  void	UpdateAfterEdit();
-  void	CutLinks();
-  void	Copy_(const CsCycle& cp);
-  COPY_FUNS(CsCycle, CycleProcess);
-  TA_BASEFUNS(CsCycle);
-private:
-  void 	Initialize();
-  void	Destroy()		{ CutLinks(); }
-};
-
-
-class CsSettle : public SettleProcess {
-  // one settle to equilibrium of constrant satsisfaction
-INHERITED(SettleProcess)
-public:
-  enum StateInit {		// ways of initializing the state of the network
-    DO_NOTHING,			// do nothing
-    INIT_STATE,			// initialize the network state
-    MODIFY_STATE 		// modify state (algorithm specific)
-  };
-
-  CsTrial*	cs_trial;	// #NO_SUBTYPE #READ_ONLY #NO_SAVE
-  StateInit	between_phases;	// what to do between phases
-  uint 		n_units;	// #HIDDEN for asynchronous update in cycle process
-  bool		deterministic;  // only compute stats after the last cycle (deterministic mode)
-  int		start_stats;	// #CONDEDIT_ON_deterministic:false the cycle at which to start aggregating dWt
-   
-  void	Init_impl();	// initialize start of settling and n_units
-  void	Final();	// update acts at end of settling
-  void	LoopStats();	// only compute stats after start_stats
-
-  virtual void	Compute_ClampAct();
-  virtual void	Compute_ClampNet();
-  virtual void	Compute_NUnits();
-  virtual void	Targ_To_Ext();
-  virtual void	PostSettle();
-  virtual void	Aggregate_dWt();
-
-  void	UpdateAfterEdit();
-  void	CutLinks();
-  void	InitLinks();
-  SIMPLE_COPY(CsSettle);
-  COPY_FUNS(CsSettle, SettleProcess);
-  TA_BASEFUNS(CsSettle);
-private:
-  void 	Initialize();
-  void	Destroy()		{ CutLinks(); }
-};
-
-
-class CsTrial : public TrialProcess {
-  // one minus phase and one plus phase of settling
-INHERITED(TrialProcess)
-public:
-  enum StateInit {		// ways of initializing the state of the network
-    DO_NOTHING,			// do nothing
-    INIT_STATE,			// initialize the network state
-    MODIFY_STATE 		// modify state (algorithm specific)
-  };
-    
-  enum Phase {
-    MINUS_PHASE = -1,
-    PLUS_PHASE = 1
-  };
-
-  Counter	phase_no;	// current phase number
-  Phase		phase;		// state variable for phase
-  StateInit	trial_init;	// how to initialize network at start of trial
-  bool		no_plus_stats;	// don't do stats/logging in plus phase
-  bool		no_plus_test;	// don't do plus phase when testing
-
-  void		C_Code();	// modified to use no_plus_stats flag
-
-  void		Init_impl();
-  void 		UpdateState();
-  bool		Crit();
-
-  void		Final();	
-  // compute the weight changes at the end of the trial (if not under a CsSample)
-  virtual void	Compute_dWt();
-  // computes weight changes for all units in network
-
-  void		GetCntrDataItems();
-  void 		GenCntrLog(LogData* ld, bool gen);
-
-  bool		CheckUnit(Unit* ck);
-  // make sure CsCycle::update_mode is correct for IAC send_thresh units..
-  bool		CheckNetwork();
-
-  void	UpdateAfterEdit();
-  void	CutLinks();
-  void	Destroy()		{ CutLinks(); }
-  void 	Copy_(const CsTrial& cp);
-  COPY_FUNS(CsTrial, TrialProcess);
-  TA_BASEFUNS(CsTrial);
-private:
-  void	Initialize();
-  void 	InitLinks();
-};
-
-class CsSample : public TrialProcess {
-  // Samples over Cs Trials (
-INHERITED(TrialProcess)
-public:
-  Counter	sample;
-
-  bool		Crit()		{ return SchedProcess::Crit(); }
-
-  void		Final();	
-  // compute the weight changes at the end of the trial
-  virtual void	Compute_dWt();
-  // computes weight changes for all units in network
-
-  bool		CheckUnit(Unit* ck);
-  // make sure CsCycle::update_mode is correct for IAC send_thresh units..
-
-  void  Init_impl();
-  void 	InitLinks();
-  SIMPLE_COPY(CsSample);
-  COPY_FUNS(CsSample, TrialProcess);
-  TA_BASEFUNS(CsSample);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class CsMaxDa : public Stat {
- // ##COMPUTE_IN_SettleProcess ##LOOP_STAT stat that computes when equilibrium is
-INHERITED(Stat)
-public:
-  SettleProcess* settle;	// #READ_ONLY #NO_SAVE settle process to record
-  StatVal	da;		// delta-activation
-
-  void		RecvCon_Run(Unit*)	{ }; // don't do these!
-  void		SendCon_Run(Unit*)	{ };
-
-  void		InitStat();
-  void		Init();
-  bool		Crit();
-  void		Network_Init();
-  void		Network_Stat();	// don't stop before 5 cycles 
-  void 		Unit_Stat(Unit* unit);
-
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const CsMaxDa& cp);
-  COPY_FUNS(CsMaxDa, Stat);
-  TA_BASEFUNS(CsMaxDa);
-private:
-  void 	Initialize();		// set minimums
-  void	Destroy()		{ CutLinks(); }
-};
-
-
-class CsDistStat : public Stat {
-  /* ##COMPUTE_IN_SettleProcess ##LOOP_STAT gets actual distributions for TIG Stat
-     aggregation makes avg of this in phases, TIG stat in trial */
-INHERITED(Stat)
-public:
-  CsSettle*	cs_settle;	// #READ_ONLY #NO_SAVE
-  StatVal_List	probs;		// prob of each dist pattern
-  float_RArray	act_vals;	// #HIDDEN  the act values read from network
-  float		tolerance;	// the tolerance for judging if act=targ
-  int		n_updates;	// #HIDDEN  the number of stat cycles so far
-
-  void		InitStat();
-  void		Init();
-  bool		Crit();
-  void		Layer_Run()		{ };
-  void		Network_Stat();
-  void		CreateAggregates(Aggregate::Operator default_op = Aggregate::DEFAULT);
-  
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const CsDistStat& cp);
-  COPY_FUNS(CsDistStat, Stat);
-  TA_BASEFUNS(CsDistStat);
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class CsTIGstat : public Stat {
-  /* ##COMPUTE_IN_CsSample ##FINAL_STAT Total Information Gain statistic,
-     needs a dist stat to compute raw stats for this one */
-INHERITED(Stat)
-public:
-  TrialProcess* trial_proc;	// #READ_ONLY #NO_SAVE need to get cur_event
-  StatVal	tig;		// the Information Gain for the trial
-  CsDistStat*	dist_stat; 	// get the actual distributions from this stat
-
-  void		InitStat();
-  void		Init();
-  bool		Crit();
-  void		Layer_Run()		{ };
-  void		Network_Init();
-  void		Network_Stat();
-
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const CsTIGstat& cp);
-  COPY_FUNS(CsTIGstat, Stat);
-  TA_BASEFUNS(CsTIGstat);
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class CsTargStat : public Stat {
-  /* ##COMPUTE_IN_CsSample ##FINAL_STAT computes the pct in target distribution,
-     is just like a TIG stat in that it gets raw values from dist stat */
-INHERITED(Stat)
-public:
-  StatVal	trg_pct;	// the pct in target for the trial
-  CsDistStat*	dist_stat;	// get the actual distributions from this stat
-
-  void		InitStat();
-  void		Init();
-  bool		Crit();
-  void		Layer_Run()		{ };
-  void		Network_Init();
-  void		Network_Stat();
-
-  void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const CsTargStat& cp);
-  COPY_FUNS(CsTargStat, Stat);
-  TA_BASEFUNS(CsTargStat);
-private:
-  void	Initialize();
-  void	Destroy()	{ CutLinks(); }
-};
-
-class CsGoodStat : public Stat {
-  // ##COMPUTE_IN_TrialProcess constraint satisfaction goodness statistic
-INHERITED(Stat)
-public:
-  bool		use_netin;
-  // use net-input for harmony instead of computing anew?
-
-  StatVal	hrmny;
-  StatVal	strss;
-  StatVal	gdnss;
-  float		netin_hrmny;	// #READ_ONLY temp variable to hold netin-based harmony
-
-  void		InitStat();
-  void		Init();
-  bool		Crit();
-
-  void		Network_Init();
-  void		Unit_Init(Unit* un);
-  void		Unit_Stat(Unit* un);
-  void 		RecvCon_Run(Unit* unit);  // check for use_netin case...
-  void		Con_Stat(Unit* ru, Connection* cn, Unit* su);
-  void		Network_Stat();
-
-  void	Copy_(const CsGoodStat& cp);
-  COPY_FUNS(CsGoodStat, Stat);
-  TA_BASEFUNS(CsGoodStat);
-private:
-  void	Initialize();
-  void	Destroy();
-};
-
 //////////////////////////////////////////
 //	Additional ConSpec Types	//
 //////////////////////////////////////////
 
-class HebbCsConSpec : public CsConSpec {
+class CS_API HebbCsConSpec : public CsConSpec {
   // Simple Hebbian wt update (send act * recv act), operates only on final activity states
 INHERITED(CsConSpec)
 public:
-  virtual void 	Aggregate_dWt(CsCon_Group*, CsUnit*, float) 	{ };
+  virtual void 	Aggregate_dWt(CsRecvCons*, CsUnit*, float) 	{ };
   virtual void 	B_Aggregate_dWt(CsCon*, CsUnit*, float)		{ }; 
   // disable both of these functions
 
   inline void 		C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su);
-  inline void 		Compute_dWt(Con_Group* cg, Unit* ru);
+  inline void 		Compute_dWt(RecvCons* cg, Unit* ru);
 
   inline void		B_Compute_dWt(CsCon* cn, CsUnit* ru);
 
-  TA_BASEFUNS(HebbCsConSpec);
+  TA_BASEFUNS_NOCOPY(HebbCsConSpec);
 private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
@@ -696,13 +387,158 @@ inline void HebbCsConSpec::C_Compute_dWt(CsCon* cn, CsUnit* ru, CsUnit* su) {
   cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act) * su->act;
 }
 
-inline void HebbCsConSpec::Compute_dWt(Con_Group* cg, Unit* ru) {
+inline void HebbCsConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   CON_GROUP_LOOP(cg,C_Compute_dWt((CsCon*)cg->Cn(i), (CsUnit*)ru, (CsUnit*)cg->Un(i)));
 }
 
 inline void HebbCsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
   cn->dwt += ((ru->ext_flag & Unit::TARG) ? ru->targ : ru->act);
 }
+
+/////////////////////////////////////////////////////////////////////////
+
+class CS_API CsLayer : public Layer {
+  // ##CAT_Cs A constraint-satisfaction layer
+INHERITED(Layer)
+public:
+
+  TA_BASEFUNS_NOCOPY(CsLayer);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+//////////////////////////////////
+//	Cs Network		//
+//////////////////////////////////
+
+class CS_API CsNetwork : public Network {
+  // ##CAT_Cs network for constraint statisfaction
+INHERITED(Network)
+public:
+  enum UpdateMode {
+    SYNCHRONOUS,
+    ASYNCHRONOUS,
+    SYNC_SENDER_BASED 		// needed for IAC send_thresh impl
+  };
+  enum StateInit {		// ways of initializing the state of the network
+    DO_NOTHING,			// do nothing
+    INIT_STATE,			// initialize the network state
+    MODIFY_STATE 		// modify state (algorithm specific)
+  };
+  enum Phase {
+    MINUS_PHASE = -1,
+    PLUS_PHASE = 1
+  };
+
+  UpdateMode 	update_mode;
+  // how to update: async = n_updates, sync = all units. sender_based is for IAC
+  int		n_updates;
+  // #CONDEDIT_ON_update_mode:ASYNCHRONOUS for ASYNC mode, number of updates (with replacement) to perform in one cycle
+  StateInit	trial_init;	// how to initialize network at start of trial
+  StateInit	between_phases;	// what to do between phases
+  bool		deterministic;  // only compute stats after the last cycle (deterministic mode)
+  int		start_stats;	// #CONDEDIT_ON_deterministic:false the cycle at which to start aggregating dWt
+  int		cycle_max;	// #CAT_Counter maximum number of cycles to compute
+
+  int		sample;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current sample number
+  int		phase_max;	// #CAT_Counter maximum number of phases
+  Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current phase name
+  int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current phase number
+
+  float		maxda_stopcrit;	// #DEF_0.01 #CAT_Statistic stopping criterion for max da
+  float		maxda;		// #GUI_READ_ONLY #SHOW maximum #CAT_Statistic #VIEW change in activation (delta-activation) over network; used in stopping settling
+
+  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
+  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
+  float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
+  int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
+
+//   // cs dist stat
+//   StatVal_List	probs;		// prob of each dist pattern
+//   float_RArray	act_vals;	// #HIDDEN  the act values read from network
+//   float		tolerance;	// the tolerance for judging if act=targ
+//   int		n_updates;	// #HIDDEN  the number of stat cycles so far
+
+//   // cs tig stat
+//   StatVal	tig;		// the Information Gain for the trial
+
+//   // cs targ stat
+//   StatVal	trg_pct;	// the pct in target for the trial
+
+//   // goodness stat
+//   bool		use_netin;
+//   // use net-input for harmony instead of computing anew?
+//   StatVal	hrmny;
+//   StatVal	strss;
+//   StatVal	gdnss;
+//   float		netin_hrmny;	// #READ_ONLY temp variable to hold netin-based harmony
+
+  override void	Init_Counters();
+  override void	Init_Stats();
+
+  // cycle
+  virtual void	Compute_SyncAct();
+  // #CAT_Cycle compute synchronous activations: first pass is netin, second pass is activations, for all units
+  virtual void	Compute_AsyncAct();
+  // #CAT_Cycle compute asynchronous activations: select units at random to update
+  virtual void	Aggregate_dWt();
+  // #CAT_Cycle aggregate weight changes (for probabilistic sampling)
+  virtual void	Cycle_Run();
+  // #CAT_Cycle compuate one cyle of updating
+
+  // settle
+  virtual void	Compute_ClampAct();
+  // #CAT_Settle compute activations of hard clamped units
+  virtual void	Compute_ClampNet();
+  // #CAT_Settle compute fixed netinputs from hard clamped units (optimizes computation)
+  virtual void	Targ_To_Ext();
+  // #CAT_Settle compute activations of hard clamped units
+  virtual void	PostSettle();
+  // #CAT_Settle get activation states after settling
+  virtual void	Settle_Init();
+  // #CAT_Settle run various initialization steps at the start of settling
+  virtual void	Settle_Final();
+  // #CAT_Settle run final steps of processing after settling
+  
+  virtual void	Trial_Init(); // run one trial of Cs
+  virtual void	Trial_Final(); // run one trial of Cs
+  
+  override void	SetProjectionDefaultTypes(Projection* prjn);
+
+  TA_SIMPLE_BASEFUNS(CsNetwork);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{}
+};
+
+class CS_API CsProject : public ProjectBase {
+  // ##CAT_Cs project for constraint satisfaction networks
+INHERITED(ProjectBase)
+public:
+
+  TA_BASEFUNS_NOCOPY(CsProject);
+private:
+  void	Initialize();
+  void 	Destroy()		{}
+};
+
+//////////////////////////////////
+//	Cs Wizard		//
+//////////////////////////////////
+
+class CS_API CsWizard : public Wizard {
+  // ##CAT_Cs constraint satisfaction specific wizard for automating construction of simulation objects
+INHERITED(Wizard)
+public:
+
+  TA_BASEFUNS_NOCOPY(CsWizard);
+private:
+  void 	Initialize() 	{ };
+  void 	Destroy()	{ };
+};
 
 #endif	// cs_h
 

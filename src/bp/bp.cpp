@@ -122,20 +122,10 @@ void BpUnitSpec::Initialize() {
 }
 
 void BpUnitSpec::InitLinks() {
-  UnitSpec::InitLinks();
+  inherited::InitLinks();
   children.SetBaseType(&TA_BpUnitSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(sig, this);
-}
-
-void BpUnitSpec::CutLinks() {
-  UnitSpec::CutLinks();
-}
-
-void BpUnitSpec::Copy_(const BpUnitSpec& cp) {
-  sig = cp.sig;
-  err_tol = cp.err_tol;
-  err_fun = cp.err_fun;
 }
 
 void BpUnitSpec::SetCurLrate(BpUnit* u, int epoch) {

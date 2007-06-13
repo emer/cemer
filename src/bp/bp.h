@@ -174,8 +174,7 @@ public:
   // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
 
   void	InitLinks();
-  void	CutLinks();
-  void	Copy_(const BpUnitSpec& cp);
+  SIMPLE_COPY(BpUnitSpec);
   TA_BASEFUNS(BpUnitSpec);
 private:
   void 	Initialize();

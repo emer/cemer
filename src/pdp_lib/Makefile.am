@@ -13,7 +13,8 @@ libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
 	@abs_top_builddir@/src/pdp/libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
 	@abs_top_builddir@/src/bp/libbp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
 	@abs_top_builddir@/src/leabra/libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/cs/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 else
 libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
 	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
@@ -21,7 +22,8 @@ libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
 	@abs_top_builddir@/src/pdp/libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
 	@abs_top_builddir@/src/bp/libbp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
 	@abs_top_builddir@/src/leabra/libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/cs/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
 if TA_GUI
 libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD +=\

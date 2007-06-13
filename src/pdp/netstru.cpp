@@ -35,15 +35,15 @@
 //  SigmoidSpec		//
 //////////////////////////
 
-/*#ifdef _MSC_VER
-  float SigmoidSpec::SIGMOID_MAX_VAL = 0.999999f;
-  float SigmoidSpec::SIGMOID_MIN_VAL = 0.000001f;
-  float SigmoidSpec::SIGMOID_MAX_NET = 13.81551f;
-#endif*/
-
-const float SigmoidSpec::SIGMOID_MAX_VAL = 0.999999f; // #READ_ONLY #HIDDEN max eval value
-const float SigmoidSpec::SIGMOID_MIN_VAL = 0.000001f; // #READ_ONLY #HIDDEN min eval value
-const float SigmoidSpec::SIGMOID_MAX_NET = 13.81551f; // #READ_ONLY #HIDDEN maximium net input value
+#ifdef _MSC_VER
+const float SigmoidSpec::SIGMOID_MAX_VAL = 0.999999f;
+const float SigmoidSpec::SIGMOID_MIN_VAL = 0.000001f;
+const float SigmoidSpec::SIGMOID_MAX_NET = 13.81551f;
+#else
+const float SigmoidSpec::SIGMOID_MAX_VAL;
+const float SigmoidSpec::SIGMOID_MIN_VAL;
+const float SigmoidSpec::SIGMOID_MAX_NET;
+#endif
 
 //////////////////////////
 //  	Schedule	//

@@ -32,9 +32,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(top_srcdir)/mfstamp.am
-bin_PROGRAMS = pdp@PDP_SUFFIX@++$(EXEEXT)
-subdir = src/pdp_bin
+	$(top_srcdir)/Maketa.am $(top_srcdir)/mfstamp.am
+subdir = src/cs
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -42,18 +41,27 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
-binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS)
-am_pdp@PDP_SUFFIX@___OBJECTS = pdp@PDP_SUFFIX@__-main.$(OBJEXT)
-pdp@PDP_SUFFIX@___OBJECTS = $(am_pdp@PDP_SUFFIX@___OBJECTS)
-@LIBTA_FALSE@pdp@PDP_SUFFIX@___DEPENDENCIES = @abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la
-@LIBTA_TRUE@pdp@PDP_SUFFIX@___DEPENDENCIES = @abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
-@LIBTA_TRUE@	@abs_top_builddir@/src/ta_lib/libtacss@PDP_SUFFIX@-@PACKAGE_VERSION@.la
-pdp@PDP_SUFFIX@___LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(pdp@PDP_SUFFIX@___CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+am__objects_1 =
+am__objects_2 = libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.lo \
+	libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.lo
+am_libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_OBJECTS = $(am__objects_1) \
+	$(am__objects_2)
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_OBJECTS =  \
+	$(am_libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_OBJECTS)
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LINK = $(LIBTOOL) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+libcs_TypeAccess@PDP_SUFFIX@_la_LIBADD =
+am_libcs_TypeAccess@PDP_SUFFIX@_la_OBJECTS =  \
+	libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.lo
+libcs_TypeAccess@PDP_SUFFIX@_la_OBJECTS =  \
+	$(am_libcs_TypeAccess@PDP_SUFFIX@_la_OBJECTS)
+libcs_TypeAccess@PDP_SUFFIX@_la_LINK = $(LIBTOOL) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(libcs_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS) $(CXXFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/cfg/depcomp
 am__depfiles_maybe = depfiles
@@ -66,8 +74,19 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(pdp@PDP_SUFFIX@___SOURCES)
-DIST_SOURCES = $(pdp@PDP_SUFFIX@___SOURCES)
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+SOURCES = $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES) \
+	$(libcs_TypeAccess@PDP_SUFFIX@_la_SOURCES)
+DIST_SOURCES = $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES) \
+	$(libcs_TypeAccess@PDP_SUFFIX@_la_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -92,7 +111,7 @@ CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
-DEFS = 
+DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 ECHO = @ECHO@
 ECHO_C = @ECHO_C@
@@ -210,24 +229,74 @@ top_srcdir = @top_srcdir@
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-PROJNAME = pdp_bin
-pdp@PDP_SUFFIX@___SOURCES = main.cpp
-@LIBTA_FALSE@pdp@PDP_SUFFIX@___LDADD = \
-@LIBTA_FALSE@	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la
+PROJNAME = cs
+TAHEADS = \
+	@abs_srcdir@/../ta/ta_TA_type.h \
+	@abs_srcdir@/../pdp/pdp_TA_type.h \
+	@abs_srcdir@/../cs/cs.h \
+	@abs_srcdir@/../cs/cs_v3_compat.h
+
+HEADS = \
+	cs.h \
+	cs_v3_compat.h
+
+SRCS = \
+	cs.cpp \
+	cs_v3_compat.cpp
 
 
-# toggle creation of ta library. see configure.ac/acsite.m4
-@LIBTA_TRUE@pdp@PDP_SUFFIX@___LDADD = \
-@LIBTA_TRUE@	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
-@LIBTA_TRUE@	@abs_top_builddir@/src/ta_lib/libtacss@PDP_SUFFIX@-@PACKAGE_VERSION@.la
+# Instruct automake to clean these files on make clean
+CLEANFILES = \
+	${PROJNAME}_TA_type.h \
+	${PROJNAME}_TA_inst.h \
+	${PROJNAME}_TA.cpp \
+	${PROJNAME}_TA_type.hx \
+	${PROJNAME}_TA_inst.hx \
+	${PROJNAME}_TA.ccx
 
-pdp@PDP_SUFFIX@___CPPFLAGS = @PDP_INCLUDES@
-pdp@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
-all: all-am
+MAKETA_FLAGS = \
+	-hx \
+	-css \
+	-cpp="@CXXCPP@" \
+	-I@abs_top_srcdir@ \
+	-I@abs_top_srcdir@/src/ta/ios-g++-3.1 \
+	-I@abs_top_srcdir@/src/ta \
+	-I@abs_top_srcdir@/src/pdp \
+	-I@abs_top_srcdir@/src/css \
+	-I@abs_top_srcdir@/src/leabra \
+	-I@abs_top_srcdir@/src/taiqtso \
+	-I@abs_top_srcdir@/src/bp \
+	-I${QTDIR}/include/QtCore
+
+
+# TODO: Fix above hacky includes
+# TODO: Is this include still needed?
+#	-I/usr/include/qt4/Qt \
+# 	${MAKETA_XXFLAGS}
+BUILT_SOURCES = ${PROJNAME}_TA_type.h ${PROJNAME}_TA_inst.h
+MAKETA = ../maketa/./maketa
+noinst_LTLIBRARIES = \
+	libcs_TypeAccess@PDP_SUFFIX@.la \
+	libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libcs_TypeAccess@PDP_SUFFIX@.la
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libcs_TypeAccess@PDP_SUFFIX@.la
+libcs_TypeAccess@PDP_SUFFIX@_la_SOURCES = \
+	cs_TA.cpp \
+	cs_TA_type.h \
+	cs_TA_inst.h
+
+libcs_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libcs_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/mfstamp.am $(am__configure_deps)
+.SUFFIXES: .ccx .cpp .h .hx .lo .o .obj
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/Maketa.am $(top_srcdir)/mfstamp.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -236,9 +305,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/mfstamp.am $(am__con
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/pdp_bin/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/cs/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  src/pdp_bin/Makefile
+	  $(AUTOMAKE) --gnu  src/cs/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -256,37 +325,19 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  if test -f $$p \
-	     || test -f $$p1 \
-	  ; then \
-	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
-	  else :; fi; \
-	done
 
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
 	done
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-pdp@PDP_SUFFIX@++$(EXEEXT): $(pdp@PDP_SUFFIX@___OBJECTS) $(pdp@PDP_SUFFIX@___DEPENDENCIES) 
-	@rm -f pdp@PDP_SUFFIX@++$(EXEEXT)
-	$(pdp@PDP_SUFFIX@___LINK) $(pdp@PDP_SUFFIX@___OBJECTS) $(pdp@PDP_SUFFIX@___LDADD) $(LIBS)
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la: $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_OBJECTS) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES) 
+	$(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LINK)  $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_OBJECTS) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD) $(LIBS)
+libcs_TypeAccess@PDP_SUFFIX@.la: $(libcs_TypeAccess@PDP_SUFFIX@_la_OBJECTS) $(libcs_TypeAccess@PDP_SUFFIX@_la_DEPENDENCIES) 
+	$(libcs_TypeAccess@PDP_SUFFIX@_la_LINK)  $(libcs_TypeAccess@PDP_SUFFIX@_la_OBJECTS) $(libcs_TypeAccess@PDP_SUFFIX@_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -294,7 +345,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pdp@PDP_SUFFIX@__-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -317,19 +370,26 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
-pdp@PDP_SUFFIX@__-main.o: main.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdp@PDP_SUFFIX@___CPPFLAGS) $(CPPFLAGS) $(pdp@PDP_SUFFIX@___CXXFLAGS) $(CXXFLAGS) -MT pdp@PDP_SUFFIX@__-main.o -MD -MP -MF $(DEPDIR)/pdp@PDP_SUFFIX@__-main.Tpo -c -o pdp@PDP_SUFFIX@__-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/pdp@PDP_SUFFIX@__-main.Tpo $(DEPDIR)/pdp@PDP_SUFFIX@__-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='pdp@PDP_SUFFIX@__-main.o' libtool=no @AMDEPBACKSLASH@
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.lo: cs.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.lo -MD -MP -MF $(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.Tpo -c -o libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.lo `test -f 'cs.cpp' || echo '$(srcdir)/'`cs.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.Tpo $(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='cs.cpp' object='libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdp@PDP_SUFFIX@___CPPFLAGS) $(CPPFLAGS) $(pdp@PDP_SUFFIX@___CXXFLAGS) $(CXXFLAGS) -c -o pdp@PDP_SUFFIX@__-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs.lo `test -f 'cs.cpp' || echo '$(srcdir)/'`cs.cpp
 
-pdp@PDP_SUFFIX@__-main.obj: main.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdp@PDP_SUFFIX@___CPPFLAGS) $(CPPFLAGS) $(pdp@PDP_SUFFIX@___CXXFLAGS) $(CXXFLAGS) -MT pdp@PDP_SUFFIX@__-main.obj -MD -MP -MF $(DEPDIR)/pdp@PDP_SUFFIX@__-main.Tpo -c -o pdp@PDP_SUFFIX@__-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/pdp@PDP_SUFFIX@__-main.Tpo $(DEPDIR)/pdp@PDP_SUFFIX@__-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cpp' object='pdp@PDP_SUFFIX@__-main.obj' libtool=no @AMDEPBACKSLASH@
+libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.lo: cs_v3_compat.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -MT libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.lo -MD -MP -MF $(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.Tpo -c -o libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.lo `test -f 'cs_v3_compat.cpp' || echo '$(srcdir)/'`cs_v3_compat.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.Tpo $(DEPDIR)/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='cs_v3_compat.cpp' object='libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdp@PDP_SUFFIX@___CPPFLAGS) $(CPPFLAGS) $(pdp@PDP_SUFFIX@___CXXFLAGS) $(CXXFLAGS) -c -o pdp@PDP_SUFFIX@__-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS) $(CPPFLAGS) $(libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS) $(CXXFLAGS) -c -o libcs@PDP_SUFFIX@_@PACKAGE_VERSION@_la-cs_v3_compat.lo `test -f 'cs_v3_compat.cpp' || echo '$(srcdir)/'`cs_v3_compat.cpp
+
+libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.lo: cs_TA.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcs_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS) $(CPPFLAGS) $(libcs_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS) $(CXXFLAGS) -MT libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.lo -MD -MP -MF $(DEPDIR)/libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.Tpo -c -o libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.lo `test -f 'cs_TA.cpp' || echo '$(srcdir)/'`cs_TA.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.Tpo $(DEPDIR)/libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='cs_TA.cpp' object='libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libcs_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS) $(CPPFLAGS) $(libcs_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS) $(CXXFLAGS) -c -o libcs_TypeAccess@PDP_SUFFIX@_la-cs_TA.lo `test -f 'cs_TA.cpp' || echo '$(srcdir)/'`cs_TA.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -412,13 +472,12 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
-all-am: Makefile $(PROGRAMS)
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -435,6 +494,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -442,9 +502,11 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -466,7 +528,7 @@ install-data-am:
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-binPROGRAMS
+install-exec-am:
 
 install-html: install-html-am
 
@@ -498,27 +560,56 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am:
 
 .MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
+	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-binPROGRAMS
+	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
+${PROJNAME}_TA.ccx: ${TAHEADS}
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+
+${PROJNAME}_TA_type.hx ${PROJNAME}_TA_inst.hx: ${PROJNAME}_TA.ccx
+	@if test -f $@; then \
+	  touch $@; \
+	else \
+	  rm -f ${PROJNAME}_TA.ccx; \
+	  $(MAKE) ${PROJNAME}_TA.ccx; \
+	fi
+
+.hx.h:
+	cmp $@ $< || cp $< $@
+
+.ccx.cpp:
+	cmp $@ $< || cp $< $@
+
+gendoc:
+	${MAKETA} -gendoc ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS};
+
+force_ta:
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}; \
+	cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h; \
+	cp ${PROJNAME}_TA_inst.hx ${PROJNAME}_TA_inst.h; \
+	cp ${PROJNAME}_TA.ccx ${PROJNAME}_TA.cpp
+
+do_ta:
+	${MAKETA} @GENDOC@ ${MAKETA_FLAGS} -autohx ${PROJNAME} ${TAHEADS}
 do-mfstamp-am do-mfstamp: Makefile.in
 	@echo "timestamp for all Makefile.in files" > $(top_builddir)/mfstamp
 	@touch $@
+
+cs_def.h:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

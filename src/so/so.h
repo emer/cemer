@@ -13,8 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
-
 // so.h: self-organizing learning algorithms
 
 #ifndef so_h
@@ -110,7 +108,7 @@ public:
   virtual void	Compute_AvgInAct(Unit* u);
   // compute average input activations
   virtual void	GraphActFun(DataTable* graph_data, float min = -5.0, float max = 5.0);
-  // #BUTTON #NULL_OK graph the activation function (NULL = new graph log)
+  // #BUTTON #NULL_OK graph the activation function (NULL = new graph data)
 
   void	InitLinks();
   TA_BASEFUNS_NOCOPY(SoUnitSpec);
@@ -290,8 +288,8 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API SoNetwork : public Network {
-  // ##CAT_So project for feedforward backpropagation networks (recurrent backprop is in RBPNetwork)
+class SO_API SoNetwork : public Network {
+  // ##CAT_So network for self-organizing networks
 INHERITED(Network)
 public:
 
@@ -307,7 +305,7 @@ private:
   void 	Destroy()		{}
 };
 
-class PDP_API SoProject : public ProjectBase {
+class SO_API SoProject : public ProjectBase {
   // ##CAT_So project for self-organizing networks
 INHERITED(ProjectBase)
 public:

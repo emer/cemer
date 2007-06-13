@@ -12,6 +12,7 @@ EXTRA_DIST =\
 	src/bp/bp_def.h \
 	src/leabra/leabra_def.h \
 	src/so/so_def.h \
+	src/cs/cs_def.h \
 	spec.tmpl.in 
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
@@ -30,6 +31,7 @@ DIST_SUBDIRS =\
 	src/bp \
 	src/leabra \
 	src/so \
+	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
 	prog_lib \
@@ -47,6 +49,7 @@ SUBDIRS =\
 	src/bp \
 	src/leabra \
 	src/so \
+	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
 	prog_lib \
@@ -85,6 +88,7 @@ DISTCLEANFILES =\
 	src/bp/do-mfstamp \
 	src/leabra/do-mfstamp \
 	src/so/do-mfstamp \
+	src/cs/do-mfstamp \
 	src/maketa/mfstamp \
 	src/maketa/do-mfstamp \
 	src/ta/ta_TA.ccx
@@ -121,12 +125,15 @@ force_ta:
 	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/so && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/cs && ${MAKE} force_ta
 
 gendoc:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} gendoc
 	cd ${abs_top_builddir}/src/pdp && ${MAKE} gendoc
 	cd ${abs_top_builddir}/src/bp && ${MAKE} gendoc
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/so && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/cs && ${MAKE} gendoc
 
 do_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
@@ -134,6 +141,7 @@ do_ta:
 	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/so && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/cs && ${MAKE} do_ta
 
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log
