@@ -13,7 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
 // mta_gendoc.cc
 
 #include "mta_constr.h"
@@ -39,14 +38,14 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
   TypeSpace* ts = ths;
 
   strm << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
-  strm << " <TypeSpace name=\"" << ths->name << "\">\n";
-
+  strm << "<TypeSpace>\n";
+  strm << " <Name>" << ts->name << "</Name>\n";
 
   TypeDef* ta_base_def = ts->FindName("taBase");
   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
   TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
 
-  for(int i=0; i < ts->size; i++) {
+  for(int i=0;i<ts->size;i++) {
   
     //////////////////////
     //     TypeDef      //
@@ -61,12 +60,10 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
     if (td->ptr || td->ref || td->formal || td->pre_parsed) 
       continue;
 
-    if(td->InheritsFrom(&TA_const))
-      continue;
+    if(td->InheritsFrom(&TA_const)) continue;
 
-    // exclude template instances (of any sort!)
-    if (td->InheritsFormal(TA_templ_inst)) //  && (td->children.size == 1))
-     continue;
+    // exclude template instances (of any sort!)  //  && (td->children.size == 1)) 
+    if (td->InheritsFormal(TA_templ_inst)) continue;
 
     if(td->HasOption("IGNORE")) continue;
 
@@ -91,33 +88,29 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
     ///////////////////////////////////////////////////
     // now generate type info
 
-    strm << "  <TypeDef name=\"" << td->name;
-    strm << (td->is_enum() ? "\" type=\"enum" : "");
-    strm << (td->is_class() ? "\" type=\"class" : "");
-    strm << "\">\n";
+    strm << " <TypeDef>\n";
+    strm << "  <Name>" << td->name << "</Name>\n";
+    strm << (td->is_enum() ? "  <Type>enum</Type>\n":"");
+    strm << (td->is_class() ? "  <Type>class</Type>\n":"");
+    strm << (trim(td->desc).length() ? "  <Desc>"+trim(td->desc)+"</Desc>\n":"");
 
-    if(td->desc.length() > 2)
-      strm << "   <desc>" + td->desc + "</desc>\n";
-
-    // Options of this TypeDef
-    if (td->opts.size) {
-      for (int k=0; k < td->opts.size; k++ ) {
-	strm << "   <options>" << td->opts.FastEl(k) << "</options>\n";
-      }
+    if (td->opts.size) {  // Options of this TypeDef
+      strm << "  <Options>";
+      for (int k=0;k<td->opts.size;k++)
+	strm << trim(td->opts.FastEl(k)) << (k<td->opts.size-1 ? ",":"");
+      strm << "  </Options>\n";
     }
       
-    // Parents of this TypeDef
     TypeSpace* tsp = &td->parents;
-    for (int j=0; j < tsp->size; j++) {
-      TypeDef* tdp = tsp->FastEl(j);
-      strm << "   <parent>" << tdp->name << "</parent>\n";
-    }
+    for (int j=0;j<tsp->size;j++)
+      strm << "  <Parent>" << tsp->FastEl(j)->name << "</Parent>\n";
 
-    // Children of this TypeDef
     TypeSpace* tsc = &td->children;
-    for (int j=0; j < tsc->size; j++) {
-      TypeDef* tdc = tsc->FastEl(j);
-      strm << "   <children>" << tdc->name << "</children>\n";
+    if (tsc->size) {
+      strm << "  <Children>";
+      for (int j=0;j<tsc->size;j++)
+	strm << tsc->FastEl(j)->name <<  (j<tsc->size-1 ? ",":"");
+      strm << "  </Children>\n";
     }
 
     //////////////////////
@@ -132,26 +125,27 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	if(st->GetOwnerType() != td) continue;
 	if(st->is_enum()) {
 	  if(first_one) {
-	    strm << "   <SubTypes>\n";
+	    strm << "  <SubTypes>\n";
 	    first_one = false;
 	  }
-	  strm << "     <EnumType name=\"" << st->name << "\">\n";
+	  strm << "   <EnumType>\n";
+	  strm << "    <Name>" << st->name << "</Name>\n";
 	  EnumSpace* es = &st->enum_vals;
 	  if(es->size) {
-	    for (int j=0; j < es->size; j++) {
+	    for (int j=0;j<es->size;j++) {
 	      EnumDef* ed = es->FastEl(j);
-	      strm << "      <EnumDef name=\"" << ed->name << "\" " << "value=\"" << ed->enum_no
-		   << "\"";
-	      if(ed->desc.length() > 2)
-		strm << " desc=\"" << ed->desc << "\"";
-	      strm << "/>\n";
+	      strm << "    <EnumDef>\n";
+	      strm << "     <Name>" << ed->name << "</Name>\n";
+	      strm << (trim(ed->desc).length() ? "     <Desc>"+trim(ed->desc)+"</Desc>\n":"");
+	      strm << "     <Value>" << ed->enum_no << "</Value>\n";
+	      strm << "    </EnumDef>\n";
 	    }
 	  }
-	  strm << "     </EnumType>\n";
+	  strm << "   </EnumType>\n";
 	}
       }
       if(!first_one)
-	strm << "   </SubTypes>\n";
+	strm << "  </SubTypes>\n";
     }
 
     //////////////////////
@@ -165,10 +159,9 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       //////////////////////
 
       bool first_one = true;
-      for (int j=0; j < mems->size; j++) {
+      for (int j=0;j<mems->size;j++) {
 	MemberDef* md = mems->FastEl(j);
 
-	// Shortened src/ta.xml by !5k lines
 	if(!MemberSpace_Filter_Member(mems, md))
 	  continue;
 
@@ -177,26 +170,27 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	  continue;
 
 	if(first_one) {
-	  strm << "   <MemberSpace name=\"" << mems->name << "\">\n";
+	  strm << "  <MemberSpace>\n";
+	  strm << (mems->name != "members" ? "   <Name>"+mems->name+"</Name>\n":"");
 	  first_one = false;
 	}
 
-	strm << "     <MemberDef name=\"" << md->name << "\">\n";
-
-	if(md->desc.length() > 2)
-	  strm << "      <desc>" + md->desc + "</desc>\n";
-
-	strm << "      <type>" + md->type->Get_C_Name() + "</type>\n";
+	strm << "    <MemberDef>\n";
+	strm << "     <Name>" << md->name << "</Name>\n";
+	strm << (trim(md->desc).length() ? "     <Desc>"+trim(md->desc)+"</Desc>\n":"");
+	strm << "     <Type>"+md->type->Get_C_Name()+"</Type>\n";
 
 	if (md->opts.size) {
-	  for (int k=0; k < md->opts.size; k++ ) {
-	    strm << "      <options>" << md->opts.FastEl(k) << "</options>\n";
-	  }
+	  strm << "     <Options>"; 
+	  for (int k=0;k<md->opts.size;k++)
+	    strm << trim(md->opts.FastEl(k)) << (k<md->opts.size-1 ? ",":"");
+	  strm << "     </Options>\n"; 
 	}
-	strm << "     </MemberDef>\n";
+
+	strm << "    </MemberDef>\n";
       }
       if(!first_one)
-	strm << "   </MemberSpace>\n";
+	strm << "  </MemberSpace>\n";
     }
 
     //////////////////////
@@ -211,7 +205,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       //////////////////////
 
       bool first_one = true;
-      for (int j=0; j < mets->size; j++) {
+      for (int j=0;j<mets->size;j++) {
 	MethodDef* metd = mets->FastEl(j);
 
 	if (!MethodSpace_Filter_Method(mets, metd))
@@ -231,42 +225,25 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	if(metd->name.contains("__")) continue; // internal thing
 
 	if(first_one) {
-	  strm << "   <MethodSpace>\n";
+	  strm << "  <MethodSpace>\n";
 	  first_one = false;
 	}
 
-	int metd_desc_len = metd->desc.length();
-	int metd_opts_size = metd->opts.size;
-	int metd_args_size = metd->arg_types.size;
-	bool metd_cont = 1;
-	strm << "     <MethodDef name=\"" << metd->name << "\"";
+	strm << "    <MethodDef>\n";
+	strm << "     <Name>" << metd->name << "</Name>\n";
+	strm << (trim(metd->desc).length() ? "     <Desc>"+trim(metd->desc)+"</Desc>\n":"");
+	strm << "     <Prototype>"+metd->prototype()+"</Prototype>\n";
 
-	// Make this a self-closing tag if it has no xml children
-	if (metd_desc_len < 2 && !metd_opts_size) {
-	  strm << " />\n";
-	  metd_cont = 0;
+	if (metd->opts.size) {
+	  strm << "     <Options>"; 
+	  for (int k=0;k<metd->opts.size;k++)
+	    strm << trim(metd->opts.FastEl(k)) << (k<metd->opts.size ? ",":"");
+	  strm << "     </Options>\n"; 
 	}
-	  
-	if (metd_cont) {
-	  strm << ">\n";
-
-	  // Get the prototype
-	    strm << "      <prototype>" + metd->prototype() + "</prototype>\n";
-	  // Get the description
-	  if (metd_desc_len > 2) {
-	    strm << "      <desc>" + metd->desc + "</desc>\n";
-	  }
-	  // Get the options
-	  if (metd_opts_size) {
-	    for (int k=0; k < metd->opts.size; k++ ) {
-	      strm << "      <option>" << metd->opts.FastEl(k) << "</option>\n";
-	    }
-	  }
-	  strm << "     </MethodDef>\n";
-	}
+	strm << "    </MethodDef>\n";
       }
       if(!first_one)
-	strm << "   </MethodSpace>\n";
+	strm << "  </MethodSpace>\n";
     }
 
     //////////////////////
@@ -276,24 +253,23 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
     // Note: These are self-closing tags
     EnumSpace* es = &td->enum_vals;
     if(es->size) {
-      strm << "   <EnumSpace>\n";
+      strm << "  <EnumSpace>\n";
 
       //////////////////////
       //    EnumDef       //
       //////////////////////
 
-      for (int j=0; j < es->size; j++) {
+      for (int j=0;j<es->size;j++) {
 	EnumDef* ed = es->FastEl(j);
-	strm << "     <EnumDef name=\"" << ed->name << "\" " << "value=\"" << ed->enum_no
-	     << "\"";
-	if(ed->desc.length() > 2)
-	  strm << " desc=\"" << ed->desc << "\"";
-	strm << "/>\n";
+	strm << "   <EnumDef>\n";
+	strm << "    <Name>" << ed->name << "</Name>\n";
+	strm << (trim(ed->desc).length() ? "    <Desc>"+trim(ed->desc)+"</Desc>\n":"");
+	strm << "    <Value>" << ed->enum_no << "</Value>\n";
+	strm << "   </EnumDef>\n";
       }
-      strm << "   </EnumSpace>\n";
+      strm << "  </EnumSpace>\n";
     }
-    strm << "  </TypeDef>\n";
+    strm << " </TypeDef>\n";
   }
-  strm << " </TypeSpace>\n";
-  strm << "</xml>\n";
+  strm << "</TypeSpace>\n";
 }
