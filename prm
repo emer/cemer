@@ -32,6 +32,7 @@ from email.MIMEText import MIMEText
 from email import Encoders
 
 # Third party imports
+from BeautifulSoup import BeautifulStoneSoup
 from pyvix.vix import *
 
 sys.path.append('/usr/local/lib/python2.4/site-packages/pywikipedia')
@@ -219,11 +220,6 @@ class MaketaBot:
     Parses the xml output from `maketa -gendoc' and posts it to the pdp wiki.
     """
 
-    def getPage():
-        "Get the text of a page"
-        wikipedia.get()
-        
-
 
 
 if __name__ == "__main__":
@@ -239,6 +235,7 @@ if __name__ == "__main__":
                       dest="test_build",
                       default=0,
                       help="Initiate a build of PDP++. See --operating-systems, --configure-flags, --jobs, --email, --quiet")
+
 
     parser.add_option("-o",
                       "--operating-systems",
@@ -289,10 +286,17 @@ if __name__ == "__main__":
                       default=0,
                       help="Don't print anything to stdout.")
     
+    parser.add_option("-g",
+                      "--gendoc",
+                      action="store_true",
+                      dest="gendoc",
+                      default=0,
+                      help="Convert the XML GenDoc format to HTML.")
+
     (options, args) = parser.parse_args()
 
     rm = ReleaseManager()
-
+        
     if options.test_build:
         (stat, err, rev, log)  = rm.LocalBuild(quiet=options.quiet,
                                                silent=options.silent)
@@ -317,4 +321,16 @@ if __name__ == "__main__":
                             subject=subject,
                             text=text)
 
+    if options.gendoc:
+        f = open("/home/mingus/tmp/pdp4.0/src/ta/ta_TA_doc.xml")
+        soup = BeautifulStoneSoup(f.read())
+        f.close()
+
+        TypeDef = soup.findAll("typedef")
+        # TODO: Tell BeautifulStoneSoup about self-closing tags
+
+        valid_tags = ['typespace','typedef','desc','options','parent','children','subtypes','enumtype','enumdef','memberspace','memberdef','type','methodspace','methoddef','prototype','desc','option','enumspace','enumdef']
+
+        for i in TypeDef:
+            print len(i)
     sys.exit(0)

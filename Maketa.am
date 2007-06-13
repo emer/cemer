@@ -1,5 +1,5 @@
 ${PROJNAME}_TA.ccx: ${TAHEADS}
-	${MAKETA} @GENDOC@ ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
+	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}
 
 ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_inst.hx: ${PROJNAME}_TA.ccx
 	@if test -f $@; then \
