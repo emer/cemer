@@ -5,12 +5,17 @@
 !include(config.pri) {
   message( "config.pri file is missing or could not be included -- release build will be made" )
 }
-
 TEMPLATE = lib
 CONFIG += plugin warn_off
 
 # local root, relative to a plugin src folder, which works whether this is PDPDIR or mypdpdir
 THIS_ROOT = ../../..
+
+# the specific build folder of the version of msvc we are using
+# TODO: this would need to be changed for later versions
+win32 {
+BUILD_MSVC = $$(PDP4DIR)/build/msvc7
+}
 
 # we have up to 8 variants of binary, based on: debug, mpi, and nogui
 # we set parameters for these below
@@ -67,34 +72,50 @@ BUILD_EXT_US = $${BUILD_EXT_US}$${BUILD_EXT}
 BUILD_EXT_SF = $${BUILD_EXT_SF}$${BUILD_EXT}
 
 # note: all plugins (tacss+pdp) search tacss plugins for dependencies
-LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
 LIBS += -L$${THIS_ROOT}/lib/plugins_tacss$${BUILD_EXT_SF}
 LIBS += -L$$(PDP4DIR)/lib/plugins_tacss$${BUILD_EXT_SF}
-LIBS +=	-L$$(PDP4DIR)/lib -L$${THIS_ROOT}/lib
+LIBS +=	-L$${THIS_ROOT}/lib
 win32 {
+  LIBS += $${BUILD_MSVC}/lib/ta_debug.lib
+#  LIBS += -lta$${BUILD_EXT_US}
+  LIBS += -L$${BUILD_MSVC}/lib
 } else {
+  LIBS += -L$$(PDP4DIR)/lib
+  LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
   LIBS += -L$$(PDP4DIR)/src/ta_lib/.libs
 }
 
 # following is the basic list for taccs -- pdp extends it
 INCLUDEPATH +=\
 	. \
-	$$(PDP4DIR) \
 	$$(PDP4DIR)/src/taiqtso \
 	$$(PDP4DIR)/src/ta \
 	$$(PDP4DIR)/src/ta/ios-g++-3.1 \
 	$$(PDP4DIR)/src/css \
 	$$(PDP4DIR)/include \
 	$${THIS_ROOT}/include	 
+win32 {
+INCLUDEPATH +=\
+	$${BUILD_MSVC}
+} else {
+INCLUDEPATH +=\
+	$$(PDP4DIR)
+}
 
 # following is the basic list for taccs -- pdp extends it
 MAKETA_INCLUDEPATH +=\
 	-I. \
-	-I$$(PDP4DIR) \
 	-I$$(PDP4DIR)/src/taiqtso \
 	-I$$(PDP4DIR)/src/ta \
 	-I$$(PDP4DIR)/src/ta/ios-g++-3.1 \
 	-I$$(PDP4DIR)/src/css \
 	-I$$(PDP4DIR)/include \
 	-I$${THIS_ROOT}/include	
+win32 {
+MAKETA_INCLUDEPATH +=\
+	-I$${BUILD_MSVC}
+} else {
+MAKETA_INCLUDEPATH +=\
+	-I$$(PDP4DIR)
+}
 

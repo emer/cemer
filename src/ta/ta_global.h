@@ -299,12 +299,14 @@ typedef unsigned char   byte;
 # define _(c) // hide the guy from maketa
 # define INHERITED(c)
 # define STATIC_CONST static
+# define CONST_STATIC static const 
 # define USING(b)
 # define volatile
 #else
 # define _(c) c
 # define INHERITED(c) typedef c inherited;
 # define STATIC_CONST static const
+# define CONST_STATIC const static 
 # define USING(b) using b; \
  
 #endif

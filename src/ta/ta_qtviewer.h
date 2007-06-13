@@ -354,8 +354,9 @@ public: // Interface Properties and Methods
   ~ISelectable();
 protected:
   void 			DropHandler(const QMimeData* mime, const QPoint& pos, 
-    int key_mods, /*iTreeWidgetItem::WhereIndicator*/int where);
+    int key_mods, int where);
     //  handles all aspects of a drag drop operation
+    // (iTreeWidgetItem::WhereIndicator where)
   virtual int		EditActionD_impl_(taiMimeSource* ms, int ea) = 0;
     // do Dst op for single selected item; generally doesn't need extending
   virtual int		EditActionS_impl_(int ea) = 0;
@@ -1776,7 +1777,7 @@ protected:
 //  override void		FillContextMenu_EditItems_impl(taiActions* menu, int allowed);
   override void		FillContextMenu_impl(taiActions* menu); // this is the one to extend in inherited classes
   override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;  // OR's in allowed; OR's in forbidden
-
+#ifndef __MAKETA__ 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)
   override void		dropped(const QMimeData* mime, const QPoint& pos, 
@@ -1787,6 +1788,7 @@ protected:
 private:
   void			init(const String& tree_name, taiDataLink* link_, 
     MemberDef* md_, int dn_flags_); // #IGNORE
+#endif
 };
 
 

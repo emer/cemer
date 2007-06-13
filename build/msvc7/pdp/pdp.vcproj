@@ -440,6 +440,64 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="so"
+			Filter="">
+			<Filter
+				Name="Source Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\so\cl.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so_v3_compat.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\som.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\zsh.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="Header Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\so\cl.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so_def.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so_v3_compat.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\som.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\zsh.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Built Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\so\so_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so_TA_inst.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\so\so_TA_type.h">
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\pdp_prebuild.cmd">
 		</File>

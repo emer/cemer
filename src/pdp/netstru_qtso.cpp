@@ -1292,7 +1292,7 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
 
   // rotate down in the plane
   SbRotation rot;
-  rot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5708);
+  rot.setValue(SbVec3f(1.0f, 0.0f, 0.0f), -1.5708f);
   SbRotation nw_rot = rot * cur_rot;
   SbVec3f axis;
   float angle;

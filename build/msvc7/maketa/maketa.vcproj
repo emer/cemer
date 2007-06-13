@@ -126,6 +126,9 @@
 				RelativePath="..\..\..\src\maketa\mta_constr.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\src\maketa\mta_gendoc.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\src\maketa\mta_lex.cpp">
 			</File>
 			<File

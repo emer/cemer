@@ -176,7 +176,7 @@ void SoLayerSpec::Initialize() {
 
 SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
   SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
-  float max_val = -1.0e20;
+  float max_val = -1.0e20f;
   SoUnit* max_val_u = NULL;
   SoUnit* u;
   taLeafItr i;
@@ -193,7 +193,7 @@ SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
 
 SoUnit* SoLayerSpec::FindMinNetIn(SoLayer* lay) {
   SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
-  float min_val = 1.0e20;
+  float min_val = 1.0e20f;
   SoUnit* min_val_u = NULL;
   SoUnit* u;
   taLeafItr i;

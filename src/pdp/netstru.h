@@ -61,12 +61,18 @@ class Unit_Group; //
 
 class PDP_API SigmoidSpec : public taBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
-INHERITED(taBase)
+INHERITED(taBase) //
 public:
+#if (defined(_MSC_VER) && !defined(__MAKETA__))
+  // msvc doesn't allow floats here, and doesn't seem to handle static const right
+  static const float SIGMOID_MAX_VAL; // #READ_ONLY #HIDDEN max eval value
+  static const float SIGMOID_MIN_VAL; // #READ_ONLY #HIDDEN min eval value
+  static const float SIGMOID_MAX_NET; // #READ_ONLY #HIDDEN maximium net input value
+#else
   static const float SIGMOID_MAX_VAL = 0.999999f; // #READ_ONLY #HIDDEN max eval value
   static const float SIGMOID_MIN_VAL = 0.000001f; // #READ_ONLY #HIDDEN min eval value
   static const float SIGMOID_MAX_NET = 13.81551f; // #READ_ONLY #HIDDEN maximium net input value
-
+#endif
   float		off;		// offset for .5 point
   float		gain;		// gain
 

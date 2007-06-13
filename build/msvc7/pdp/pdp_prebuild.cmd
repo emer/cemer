@@ -22,5 +22,9 @@ nmake /f %PDP4DIR%\build\msvc7\Makefile "TARGET=%1" bp_files
 nmake /f %PDP4DIR%\build\msvc7\Makefile "TARGET=%1" leabra_files
 @if errorlevel 1 goto end
 
+@cd %PDP4DIR%\src\so
+nmake /f %PDP4DIR%\build\msvc7\Makefile "TARGET=%1" so_files
+@if errorlevel 1 goto end
+
 
 :end

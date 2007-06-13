@@ -354,6 +354,18 @@ LEABRA_MAKETA =\
 	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
 	$(LEABRA_HEADS)
 
+SO_HEADS =\
+	$(PDP4DIR)/src/so/so.h \
+	$(PDP4DIR)/src/so/som.h \
+	$(PDP4DIR)/src/so/cl.h \
+	$(PDP4DIR)/src/so/zsh.h \
+	$(PDP4DIR)/src/so/so_v3_compat.h
+
+SO_MAKETA =\
+	$(PDP4DIR)/src/ta/ta_TA_type.h \
+	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(SO_HEADS)
+
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
 #TODO: need to enable DEBUG to be parameterized somehow
 
@@ -392,6 +404,12 @@ leabra_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
 
 leabra_TA_type.h: leabra_TA_type.hx
   
+so_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(SO_HEADS)
+  $(CD) $(PDP4DIR)/src/so
+  $(MAKETA) $(MAKETA_FLAGS) so $(SO_MAKETA) 
+  
+so_TA_type.h: so_TA_type.hx
+
 clean: 
   del *.moc.cpp
  
@@ -410,3 +428,4 @@ bp_files: bp_TA_type.h
 
 leabra_files: leabra_TA_type.h
 
+so_files: so_TA_type.h
