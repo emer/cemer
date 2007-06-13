@@ -431,7 +431,7 @@ private:
 #endif // __MAKETA__
 
 
-class TA_API taVersion { // simple value class for version info
+class TA_API taVersion { // #EDIT_INLINE simple value class for version info
 public:
   ushort	major;
   ushort	minor;
@@ -440,16 +440,21 @@ public:
   
   void		set(ushort mj, ushort mn, ushort st = 0, ushort bld = 0)
     {major = mj; minor = mn; step = st; build = bld;}
+  void		setFromString(String ver); // parse, mj.mn.st-build
   const String	toString() 
     {return String(major).cat(".").cat(String(minor)).cat(".").
        cat(String(step)).cat(".").cat(String(build));}
 
   void		Clear() {major = minor = step = build = 0;} //
   
+  
   taVersion() {Clear();} //
   taVersion(ushort mj, ushort mn, ushort st = 0, ushort bld = 0) 
     {set(mj, mn, st, bld);} //
+  taVersion(const String& ver) {setFromString(ver);}
 // implicit copy and assign
+private:
+  int		BeforeOrOf(char sep, String& in);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -598,8 +603,11 @@ public:
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		default_app_install_folder_name; // #READ_ONLY #NO_SAVE #HIDDEN the default folder name for installation, ex. "pdp++"
   static String		org_name; // #READ_ONLY #NO_SAVE #SHOW the name of the organization, ex. ccnlab (used mostly in Windows paths)
-  static String		version; 	// #READ_ONLY #NO_SAVE #SHOW version number of ta/css
-  static const taVersion version_bin; 	// #IGNORE version number of ta/css
+  static String		version; // #READ_ONLY #NO_SAVE #SHOW version number of ta/css
+  static taVersion 	version_bin; 
+   //  #READ_ONLY #NO_SAVE #EXPERT version number of ta/css
+  static String		svn_rev; 
+   // #READ_ONLY #NO_SAVE #EXPERT svn revision number (only valid when configure has been rerun)
   static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
   static const String	build_str; // #READ_ONLY #NO_SAVE #EXPERT an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
   

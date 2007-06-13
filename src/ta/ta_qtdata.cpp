@@ -3026,7 +3026,14 @@ void taiItemChooser::Refresh() {
     for (int i = 0; i < (cols - 1); ++i) {
       items->resizeColumnToContents(i);
     }
-    setSelObj(m_client->sel());
+    // set current item; if NO NULL and none, then first item by default
+    void* tsel = m_client->sel();
+    if (!tsel && !m_client->HasFlag(taiData::flgNullOk)) {
+      if (items->topLevelItemCount() > 0) {
+        tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(0)->data(0, ObjDataRole));
+      }
+    }
+    setSelObj(tsel, true);
   }
   --m_changing;
 }
@@ -3097,8 +3104,8 @@ void taiItemChooser::SetFilter(const QString& filt) {
   ApplyFiltering();
 }
 
-void taiItemChooser::setSelObj(void* value) {
-  if (m_selObj == value) return;
+void taiItemChooser::setSelObj(void* value, bool force) {
+  if ((m_selObj == value) && !force) return;
   m_selObj = value;
   SetCurrentItemByData(value);
 }

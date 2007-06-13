@@ -1171,6 +1171,16 @@ String common_suffix(const String& x, const String& y, int startpos) {
   return r;
 }
 
+String& String::xml_esc() {
+  makeUnique();
+  gsub("&", "&amp;");
+  gsub("<", "&lt;");
+  gsub(">", "&gt;");
+  gsub("'", "&apos;");
+  gsub("\"", "&quot;");
+  return *this;
+}
+
 // IO
 #define ISTR_RESIZE_QUANTA 80
 TA_API istream& operator>>(istream& s, String& x) {

@@ -373,6 +373,7 @@ public:
   String&		upcase();	// convert all letters to upper case
   String&		downcase();	// convert all letters to lower case
   String&		capitalize(); // capitalize the first letter of each word
+  String&		xml_esc(); // xml escape, ex & to &amp;
 
   void			truncate(uint new_len); // shortens the string to new_len (if less than curr)
 // element extraction

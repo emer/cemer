@@ -388,6 +388,33 @@ InitProcRegistrar::InitProcRegistrar(init_proc_t init_proc) {
   taMisc::AddInitHook(init_proc);
 }
 
+void taVersion::setFromString(String ver) {
+  Clear();
+  // parse, mj.mn.st-build -- just blindly go through, harmless if missings
+  major = BeforeOrOf('.', ver);
+  minor = BeforeOrOf('.', ver);
+  step = BeforeOrOf('-', ver);
+  build = BeforeOrOf(' ', ver); //dummy
+}
+
+int taVersion::BeforeOrOf(char sep, String& in) {
+  String s = in.before(sep);
+  if (s.nonempty()) {
+    in = in.after(sep);
+  } else {
+    s = in;
+    in = _nilString;
+  }
+  // strip any gunk, which may be at end, ex "b1" etc.
+  int i = 0;
+  while (i < s.length()) {
+    char c = s[i];
+    if (!isdigit(c)) break;
+    ++i;
+  }
+  return s.left(i).toInt();
+}
+
 //////////////////////////////////
 // 	     taMisc		//
 //////////////////////////////////
@@ -396,13 +423,11 @@ String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
 String	taMisc::app_lib_name; // set in the main.cpp file
 String	taMisc::default_app_install_folder_name = "pdp++";
 String	taMisc::org_name = "ccnlab"; 
-#ifdef SVN_REV
-String	taMisc::version = "3.9.0-" + String(SVN_REV);
-const taVersion taMisc::version_bin(3, 9, 0, 0/*SVN_REV*/); //BROKEN ON MAC!!!!!!!s
-#else
-String	taMisc::version = "3.9.0";
-const taVersion taMisc::version_bin(3, 9, 0);
-#endif
+
+String	taMisc::svn_rev = String(SVN_REV);
+
+String	taMisc::version = String(VERSION);
+taVersion taMisc::version_bin(String(VERSION)); 
 
 // ugh! but easiest way to just statically set the build_type and official extender string
 #ifdef DEBUG
