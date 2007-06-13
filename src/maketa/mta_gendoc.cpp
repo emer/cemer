@@ -84,6 +84,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       main_parent = td->children.FastEl(0);
 
     if(main_parent && main_parent->HasOption("IGNORE")) continue;
+    if(td == ta_base_def) main_parent = NULL; // somehow parent of taBase is taBase!
 
     ///////////////////////////////////////////////////
     // now generate type info
@@ -208,19 +209,21 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       for (int j=0;j<mets->size;j++) {
 	MethodDef* metd = mets->FastEl(j);
 
-	if (!MethodSpace_Filter_Method(mets, metd))
+	if (!MethodSpace_Filter_Method(mets, metd)) {
 	  continue;
+	}
 
 	if(metd->HasOption("EXPERT"))
 	  continue;
 
-	if(ta_base_def && td->name != "taBase" && ta_base_def->methods.FindName(metd->name))
+	if(ta_base_def && td != ta_base_def && ta_base_def->methods.FindName(metd->name))
 	  continue;		// firmly exclude any of the base guys, which tend to be
 	                        // overwritten quite frequently in subclasses
 
-	if(main_parent && main_parent->methods.FindName(metd->name))
+	if(main_parent && main_parent->methods.FindName(metd->name)) {
 	  continue;		// sometimes methods get re-owned, esp in multiple inheritance
 	                        // and templates -- for docs, we can always exclude
+	}
 
 	if(metd->name.contains("__")) continue; // internal thing
 
