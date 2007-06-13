@@ -1487,7 +1487,7 @@ public:
   // #CAT_Structure switch any layers using old_sp to using new_sp
 
   virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
-  // #MENU #NULL_OK #CAT_Structure TODO:define send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  // #MENU #NULL_OK_0 #CAT_Structure TODO:define send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   Unit*		FindUnitFmCoord(int x, int y);
   // #CAT_Structure find unit within layer from given coordinates (layer relative coords), taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
@@ -1894,7 +1894,7 @@ public:
   // #MENU #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
 
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
-  // #MENU #NULL_OK #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  // #MENU #NULL_OK_0 #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
 
   virtual bool	UpdateUnitSpecs(bool force = false);
   // #CAT_Structure update unit specs for entire network (calls layer version of this function)
