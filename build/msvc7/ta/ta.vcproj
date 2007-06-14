@@ -518,6 +518,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\src\ta\SoCapsule.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\ta\t3node_so.cpp">
 				</File>
 				<File
@@ -671,7 +674,13 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_viewspec.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\virtenv_ode.cpp">
+					RelativePath="..\..\..\src\ta\ta_virtenv.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_virtenv_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_virtenv_so.cpp">
 				</File>
 			</Filter>
 			<Filter
@@ -700,6 +709,9 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\qtdefs.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\SoCapsule.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\ta\t3node_so.h">
@@ -873,7 +885,13 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_viewspec.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\virtenv_ode.h">
+					RelativePath="..\..\..\src\ta\ta_virtenv.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_virtenv_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\ta\ta_virtenv_so.h">
 				</File>
 			</Filter>
 			<Filter
@@ -959,7 +977,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\ta\ta_type.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\ta\virtenv_ode.moc.cpp">
+					RelativePath="..\..\..\src\ta\ta_virtenv_qtso.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>

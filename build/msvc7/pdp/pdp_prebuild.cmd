@@ -14,6 +14,10 @@ EXIT /B 2
 nmake /f %PDP4DIR%\build\msvc7\Makefile "TARGET=%1" pdp_files
 @if errorlevel 1 goto end
 
+@cd %PDP4DIR%\src\cs
+nmake /f %PDP4DIR%\build\msvc7\Makefile "TARGET=%1" cs_files
+@if errorlevel 1 goto end
+
 @cd %PDP4DIR%\src\bp
 nmake /f %PDP4DIR%\build\msvc7\Makefile "TARGET=%1" bp_files
 @if errorlevel 1 goto end

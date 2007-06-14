@@ -313,6 +313,46 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 			</Filter>
 		</Filter>
 		<Filter
+			Name="cs"
+			Filter="">
+			<Filter
+				Name="Source Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\cs\cs.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\cs\cs_v3_compat.cpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="Header Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\cs\cs.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\cs\cs_def.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\cs\cs_v3_compat.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Built Files"
+				Filter="">
+				<File
+					RelativePath="..\..\..\src\cs\cs_TA.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\cs\cs_TA_inst.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\cs\cs_TA_type.h">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
 			Name="bp"
 			Filter="">
 			<Filter

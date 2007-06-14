@@ -215,6 +215,8 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
+#define SVN_REV 0
+
 /* Complementary switches, set when compiling for gui/no gui. Controls all
    non-QtCore related dependencies. For nogui, there can be no Coin or
    non-QtCore dependencies. */

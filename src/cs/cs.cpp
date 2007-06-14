@@ -459,8 +459,8 @@ void IACUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
 
 void LinearCsUnitSpec::Initialize() {
   SetUnique("act_range", true);
-  act_range.min = -1e20;
-  act_range.max = 1e20;
+  act_range.min = -1e20f;
+  act_range.max = 1e20f;
 }
 
 void LinearCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
@@ -478,8 +478,8 @@ void LinearCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
 
 void ThreshLinCsUnitSpec::Initialize() {
   SetUnique("act_range", true);
-  act_range.min = -1e20;
-  act_range.max = 1e20;
+  act_range.min = -1e20f;
+  act_range.max = 1e20f;
   threshold = 0.0f;
 }
 

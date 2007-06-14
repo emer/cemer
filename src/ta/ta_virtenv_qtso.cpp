@@ -761,7 +761,7 @@ void VEWorldView::CreateLights() {
     lgt_group->addChild(lt);
     n_lgt++;
   }
-  if(n_lgt == 1 && wl->light_1) {
+  if((n_lgt == 1) && (bool)wl->light_1) {
     VELight* vlgt = wl->light_1.ptr();
     SoLight* lt = vlgt->CreateLight();
     lgt_group->addChild(lt);
@@ -821,7 +821,7 @@ void VEWorldView::SetupCameras() {
       cam_light = vecam;
     n_cam++;
   }
-  if(n_cam == 1 && wl->camera_1) {
+  if((n_cam == 1) && (bool)wl->camera_1) {
     VECamera* vecam = wl->camera_1.ptr();
     if(cam_switch->getNumChildren() == 1) {
       SoPerspectiveCamera* cam = new SoPerspectiveCamera;
@@ -859,7 +859,7 @@ void VEWorldView::SetupLights() {
     vlgt->ConfigLight(lt);
     n_lgt++;
   }
-  if(n_lgt == 1 && wl->light_1) {
+  if((n_lgt == 1) && (bool)wl->light_1) {
     VELight* vlgt = wl->light_1.ptr();
     SoLight* lt = (SoLight*)lgt_group->getChild(1);
     vlgt->ConfigLight(lt);

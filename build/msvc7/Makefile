@@ -89,11 +89,13 @@ TA_HEADS_TAMISC_GUI =\
 	$(PDP4DIR)/src/ta/colorbar_qt.h \
 	$(PDP4DIR)/src/taiqtso/safeptr_so.h \
 	$(PDP4DIR)/src/ta/t3node_so.h \
+	$(PDP4DIR)/src/ta/SoCapsule.h \
 	$(PDP4DIR)/src/ta/t3viewer.h \
 	$(PDP4DIR)/src/ta/colorbar_so.h \
 	$(PDP4DIR)/src/ta/ta_datatable_qtso.h \
 	$(PDP4DIR)/src/ta/ta_datatable_so.h \
-	$(PDP4DIR)/src/ta/virtenv_ode.h 
+	$(PDP4DIR)/src/ta/ta_virtenv_qtso.h \
+	$(PDP4DIR)/src/ta/ta_virtenv_so.h 
 
 TA_HEADS_GUI =\
 	$(PDP4DIR)/src/ta/ta_qt.h \
@@ -112,7 +114,8 @@ TA_HEADS_GUI =\
 TA_HEADS_TAMISC =\
 	$(PDP4DIR)/src/ta/ta_time.h \
 	$(PDP4DIR)/src/ta/fun_lookup.h \
-	$(PDP4DIR)/src/ta/ta_data_extras.h 
+	$(PDP4DIR)/src/ta/ta_data_extras.h \
+	$(PDP4DIR)/src/ta/ta_virtenv.h 
 
 TA_HEADS =\
 	$(PDP4DIR)/src/ta/ios-g++-3.1/streambuf.h \
@@ -186,7 +189,7 @@ ta_mocs: \
   ta_qtviewer.moc.cpp \
   ta_qtgroup.moc.cpp \
   ta_type.moc.cpp \
-  virtenv_ode.moc.cpp
+  ta_virtenv_qtso.moc.cpp
 
 colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
 	$(MOC) %s -o $@
@@ -248,7 +251,7 @@ ta_qtviewer.moc.cpp: $(PDP4DIR)\src\ta\ta_qtviewer.h
 ta_type.moc.cpp: $(PDP4DIR)\src\ta\ta_type.h
 	$(MOC) %s -o $@
 
-virtenv_ode.moc.cpp: $(PDP4DIR)\src\ta\virtenv_ode.h
+ta_virtenv_qtso.moc.cpp: $(PDP4DIR)\src\ta\ta_virtenv_qtso.h
 	$(MOC) %s -o $@
 
 
@@ -331,6 +334,15 @@ pdpserver_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdpserver_qt.h
 
 
 
+CS_HEADS =\
+	$(PDP4DIR)/src/cs/cs.h \
+	$(PDP4DIR)/src/cs/cs_v3_compat.h
+
+CS_MAKETA =\
+	$(PDP4DIR)/src/ta/ta_TA_type.h \
+	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(CS_HEADS)
+
 BP_HEADS =\
 	$(PDP4DIR)/src/bp/bp.h \
 	$(PDP4DIR)/src/bp/rbp.h \
@@ -398,6 +410,12 @@ bp_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
   
 bp_TA_type.h: bp_TA_type.hx
 
+cs_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(CS_HEADS)
+  $(CD) $(PDP4DIR)/src/cs
+  $(MAKETA) $(MAKETA_FLAGS) cs $(CS_MAKETA) 
+  
+cs_TA_type.h: cs_TA_type.hx
+
 leabra_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
@@ -425,6 +443,8 @@ css_files: css_mocs
 pdp_files: pdp_TA_type.h pdp_mocs
 
 bp_files: bp_TA_type.h
+
+cs_files: cs_TA_type.h
 
 leabra_files: leabra_TA_type.h
 
