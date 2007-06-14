@@ -17,27 +17,14 @@ dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 AC_DEFUN([PDP_SVN_REVISION],[
-AC_ARG_ENABLE([svn],
-	      AC_HELP_STRING([--enable-svn],
-		             [Runs `svn info .' and defines SVN_REV to its output]),
-                             [svn=true],
-                             [svn=false])
 
-# Run this if either --enable-svn or --enable-debug was set
-if test x"$svn" = x"true" -o x"$debug" = x"true"; then
-  AC_CHECK_PROG([HAVE_SVN],[svn],[true],[false])
-  if test x"$HAVE_SVN" = x"true"; then
-    SVN_REV=`svn info . | grep Revision | sed 's/Revision: //'`
-  else
+if test "`svn info --xml | grep "<ro"`"='<root>http://grey.colorado.edu/svn/repos</root>'; then 
+	SVN_REV=`svn info . | grep Revision | sed 's/Revision: //'`
+	CXXFLAGS="$CXXFLAGS -DSVN_REV=`echo $SVN_REV`"
+	SIM_AC_CONFIGURATION_SETTING([Svn revision],["$SVN_REV"])
+else
     SIM_AC_CONFIGURATION_WARNING([Unable to locate svn. Revision not set.])
-  fi
-
-CXXFLAGS="$CXXFLAGS -DSVN_REV=`echo $SVN_REV`"
-SIM_AC_CONFIGURATION_SETTING([Svn revision],["$SVN_REV"])
-
 fi
-
-
 ])
 
 dnl 					       PDP_SET_BUILD_MODE
