@@ -13,7 +13,9 @@
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #   Lesser General Public License for more details. 
 
-# TODO: wakeonlan for night!
+# TODO:
+#      * wakeonlan for night!
+#      * modalize these includes?
 
 # Standard library imports
 
@@ -24,6 +26,7 @@ import smtplib
 import logging
 import sys
 import os
+import re
 
 from email.Utils import COMMASPACE, formatdate
 from email.MIMEMultipart import MIMEMultipart
@@ -32,11 +35,15 @@ from email.MIMEText import MIMEText
 from email import Encoders
 
 # Third party imports
-from BeautifulSoup import BeautifulStoneSoup
+from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 from pyvix.vix import *
 
 sys.path.append('/usr/local/lib/python2.4/site-packages/pywikipedia')
 import wikipedia
+
+from pygments import highlight
+from pygments.lexers import CppLexer
+from pygments.formatters import HtmlFormatter
 
 """
 The PDP++ Release Manager knows how to perform all sorts of build
@@ -291,7 +298,7 @@ if __name__ == "__main__":
                       action="store_true",
                       dest="gendoc",
                       default=0,
-                      help="Convert the XML GenDoc format to HTML.")
+                      help="Run `maketa -gendoc', convert the XML GenDoc format to HTML and update the wiki. Depends on the PDP4DIR environment variable to know where to find maketa and the xml files.")
 
     (options, args) = parser.parse_args()
 
@@ -322,15 +329,55 @@ if __name__ == "__main__":
                             text=text)
 
     if options.gendoc:
-        f = open("/home/mingus/tmp/pdp4.0/src/ta/ta_TA_doc.xml")
-        soup = BeautifulStoneSoup(f.read())
+        """
+        TODO/BRAINSTORMING:
+        * Use gendoc.sh, modified, and just put that list on the wiki.
+        """
+        # for i in
+        if os.environ.has_key("PDP4DIR"):
+            pwd = os.environ["PDP4DIR"]
+        else:
+            print "Error: PDP4DIR not set"
+            sys.exit(1)
+
+        # TODO: Error checking
+        tmp = Popen3("cd " + pwd).out
+        tmp += Popen3("make gendoc").out
+
+        xml = ""
+        for dir in ["ta","pdp","bp","leabra"]:
+            f = open(pwd + "/src/" + dir + "/" + dir + "_TA_doc.xml")
+            xml += f.read()
+            f.close()
+
+        f = open(pwd + "/all_TA_doc.xml","w")
+        f.write(xml)
         f.close()
+        print "XML files aggregated into ",pwd,"/all_TA_doc.xml"
 
-        TypeDef = soup.findAll("typedef")
-        # TODO: Tell BeautifulStoneSoup about self-closing tags
+        #valid_tags = ['typespace','typedef','desc','options','parent','children','subtypes','enumtype','enumdef','memberspace','memberdef','type','methodspace','methoddef','prototype','desc','option','enumspace','enumdef']
 
-        valid_tags = ['typespace','typedef','desc','options','parent','children','subtypes','enumtype','enumdef','memberspace','memberdef','type','methodspace','methoddef','prototype','desc','option','enumspace','enumdef']
+        soup = BeautifulStoneSoup(xml)
 
-        for i in TypeDef:
-            print len(i)
+        html = ""
+        ####################
+        #     MethodDef    #
+        ####################
+
+        MethodDef = soup.findAll("methoddef")
+        
+        if len(MethodDef):
+            
+            html += "<h2>Methods of " + highlight(soup.typedef.next.next.next).out[:-1] + "</h2>"
+            for method in MethodDef:
+                html += "<div style=\"height=expression(document.body.clientHeight-150); overflow:auto; padding: 1px 0px 0px 8px; margin: 4px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-style: solid; border-top-color: #E0E0E0; border-right-color: #E0E0E0; border-bottom-color: #E0E0E0; border-left-color: #E0E0E0; border-right-style: none; border-bottom-style: none; border-left-style: none; background-color: #FAFAFA; font-family: Geneva, Arial, Helvetica, sans-serif; font-size: 12px;\">\n"
+                if method.desc:
+                    method_desc = method.desc.string
+                    html += method_desc
+                if method.prototype:
+                    html += highlight(method.prototype.string, CppLexer(), HtmlFormatter())
+                    html += Popen3("source-highlight -scpp | tail -n1 ", method.prototype.string).out[:-1]
+                html += "\n</div>"
+        print html
+
     sys.exit(0)

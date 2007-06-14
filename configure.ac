@@ -133,7 +133,10 @@ AH_TEMPLATE([WHEREAMI],[blah])
 AC_DEFINE_DIR([WHEREAMI],[datadir])
 dnl not working: AC_SUBST([PL_DATADIR],[`echo $(echo $datadir)`])
 
-
+dnl --disable-plugins (enabled by default)
+if test "$plugins" = "true"; then
+ AC_SUBST([WANT_PLUGINS],[plugins])
+fi
 
 dnl  --with-readline
 if test "$readline" = "true"; then

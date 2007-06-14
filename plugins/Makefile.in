@@ -115,8 +115,4 @@ install:
 	@echo "** Make $@ successfully completed! **"
 	@echo " "
 
-dist:
- 
-
-
- 
+dist distdir:

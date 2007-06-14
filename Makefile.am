@@ -1,7 +1,4 @@
-
-# TODO: Clean up xml files created by gendoc
-
-CLEAN_FILES = 
+CLEAN_FILES =  # TODO: Clean up xml files created by gendoc
 
 EXTRA_DIST =\
 	src/ta/ta_global.h \
@@ -53,14 +50,12 @@ SUBDIRS =\
 	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
-	plugins \
+	@WANT_PLUGINS@ \
 	prog_lib \
 	css_stdlib \
 	test
 
-
-
-EXTRA_DIST += src/ta/ios-g++-3.1
+EXTRA_DIST += src/ta/ios-g++-3.1 @WANT_PLUGINS@
 
 #For make rpm
 if RPM
@@ -68,9 +63,9 @@ if RPM
 @INCLUDE_AMINCLUDE_AM@
 #include aminclude.am
 
-EXTRA_DIST += aminclude.am spec.tmpl.in
-
-
+EXTRA_DIST +=\
+	 aminclude.am \
+	spec.tmpl.in \
 	*do-stamp* \
 	PDP++-3.5.spec \
 	RPMChangeLog 
@@ -100,12 +95,8 @@ endif
 # These actions occur immediately before a distribution tarball is created.
 dist-hook:
 	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
-
-# 	mkdir $(distdir)/prog_lib $(distdir)/css_stdlib $(distdir)/tests
-# 	cp -pR $(srcdir)/prog_lib $(distdir)/prog_lib
-# 	cp -pR $(srcdir)/css_stdlib $(distdir)/css_stdlib
-# 	cp -pR $(srcdir)/test $(distdir)/test
-# 	rm -fr $(distdir)/prog_lib/.svn $(distdir)/css_stdlib/.svn $(distdir)/test/.svn
+	cp -pR $(srcdir)/plugins $(distdir)/plugins
+	find $(distdir)/plugins -type d -name .svn -print | xargs -t rm -fr
 
 # Count the number of lines in *.h and *.cpp files
 linecount:
@@ -150,7 +141,6 @@ ifnames:
 	echo "Defines printed to ifnames.log"
 
 spec.tmpl.in:
-
 
 # You net to export/setenv ${DEBEMAIL}
 deb:

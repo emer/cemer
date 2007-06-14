@@ -103,9 +103,9 @@ AC_ARG_ENABLE([bundle],
 
 AC_ARG_ENABLE([plugins],
 	      AC_HELP_STRING([--enable-plugins],
-			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=disabled@:>@]),
-			     [plugins=true],
-			     [plugins=false])
+			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=enabled@:>@]),
+			     [plugins=flase],
+			     [plugins=true])
 AC_ARG_ENABLE([readline],
 	      AC_HELP_STRING([--disable-readline],
 			     [Disable linking against the readline library.  @<:@default=enabled@:>@]),

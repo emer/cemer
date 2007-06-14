@@ -14,8 +14,6 @@
 
 @SET_MAKE@
 
-# TODO: Clean up xml files created by gendoc
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -37,7 +35,13 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 #include aminclude.am
-@RPM_TRUE@am__append_1 = aminclude.am spec.tmpl.in
+@RPM_TRUE@am__append_1 = \
+@RPM_TRUE@	 aminclude.am \
+@RPM_TRUE@	spec.tmpl.in \
+@RPM_TRUE@	*do-stamp* \
+@RPM_TRUE@	PDP++-3.5.spec \
+@RPM_TRUE@	RPMChangeLog 
+
 DIST_COMMON = README $(am__configure_deps) $(dist_pkgdata_DATA) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in $(srcdir)/postinstall-pak.in \
@@ -133,6 +137,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCC_FALSE = @GCC_FALSE@
 GCC_TRUE = @GCC_TRUE@
+GREP = @GREP@
 HAVE_SVN = @HAVE_SVN@
 INCLUDE_AMINCLUDE_AM = @INCLUDE_AMINCLUDE_AM@
 INC_AMINCLUDE = @INC_AMINCLUDE@
@@ -201,18 +206,17 @@ TA_GUI_TRUE = @TA_GUI_TRUE@
 VERSION = @VERSION@
 WANT_CSS_BIN = @WANT_CSS_BIN@
 WANT_LIBTA = @WANT_LIBTA@
+WANT_PLUGINS = @WANT_PLUGINS@
 WANT_TAIQTSO = @WANT_TAIQTSO@
 WHEREAMI = @WHEREAMI@
 WINDOWS_FALSE = @WINDOWS_FALSE@
 WINDOWS_TRUE = @WINDOWS_TRUE@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -229,24 +233,31 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pdpexists = @pdpexists@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sim_ac_coin_configcmd = @sim_ac_coin_configcmd@
@@ -254,11 +265,11 @@ sim_ac_simage_configcmd = @sim_ac_simage_configcmd@
 sim_ac_soqt_configcmd = @sim_ac_soqt_configcmd@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-CLEAN_FILES = 
+CLEAN_FILES = # TODO: Clean up xml files created by gendoc
 EXTRA_DIST = src/ta/ta_global.h src/ta/ta_maketa_defs.h \
 	src/ta/qtdefs.h src/css/css_def.h src/pdp/pdp_def.h \
 	src/bp/bp_def.h src/leabra/leabra_def.h src/so/so_def.h \
-	src/cs/cs_def.h spec.tmpl.in src/ta/ios-g++-3.1 \
+	src/cs/cs_def.h spec.tmpl.in src/ta/ios-g++-3.1 @WANT_PLUGINS@ \
 	$(am__append_1)
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
@@ -297,7 +308,7 @@ SUBDIRS = \
 	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
-	plugins \
+	@WANT_PLUGINS@ \
 	prog_lib \
 	css_stdlib \
 	test
@@ -798,19 +809,11 @@ uninstall-info: uninstall-info-recursive
 
 @RPM_TRUE@@INCLUDE_AMINCLUDE_AM@
 
-@RPM_TRUE@	*do-stamp* \
-@RPM_TRUE@	PDP++-3.5.spec \
-@RPM_TRUE@	RPMChangeLog 
-
 # These actions occur immediately before a distribution tarball is created.
 dist-hook:
 	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
-
-# 	mkdir $(distdir)/prog_lib $(distdir)/css_stdlib $(distdir)/tests
-# 	cp -pR $(srcdir)/prog_lib $(distdir)/prog_lib
-# 	cp -pR $(srcdir)/css_stdlib $(distdir)/css_stdlib
-# 	cp -pR $(srcdir)/test $(distdir)/test
-# 	rm -fr $(distdir)/prog_lib/.svn $(distdir)/css_stdlib/.svn $(distdir)/test/.svn
+	cp -pR $(srcdir)/plugins $(distdir)/plugins
+	find $(distdir)/plugins -type d -name .svn -print | xargs -t rm -fr
 
 # Count the number of lines in *.h and *.cpp files
 linecount:
