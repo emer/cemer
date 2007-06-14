@@ -3,7 +3,6 @@ leabra todo list:
 commit:
 
 
-
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??
@@ -13,14 +12,10 @@ commit:
 
 --------------------
 Other Algorithms:
-  * cs, so, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp?
+  * cs, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp?
 
 ------------
 current:
-
-* losing net init variable (act)?
-
-* program edit control panel -- causes stale of calling progs! (not that one) - #490
 
 * leabra test all progp
 
@@ -60,9 +55,6 @@ current:
 
 * #ARG_VAL_FM_n_xxx -- get init value of arg from given member (can be a path)
   * ProgEl* fm name!
-
-* datatable: 
-  * Join should be symmetric
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the
