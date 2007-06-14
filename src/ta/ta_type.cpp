@@ -424,7 +424,9 @@ String	taMisc::app_lib_name; // set in the main.cpp file
 String	taMisc::default_app_install_folder_name = "pdp++";
 String	taMisc::org_name = "ccnlab"; 
 
+#ifdef SVN_REV
 String	taMisc::svn_rev = String(SVN_REV);
+#endif
 
 String	taMisc::version = String(VERSION);
 taVersion taMisc::version_bin(String(VERSION)); 
