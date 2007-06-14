@@ -1,6 +1,9 @@
 # Shared declarations for libpdp-based plugin
 # Assumes you have ${PDP4DIR} AND ${QTDIR} set
 
+# add the master config file as a pseudo-header so we are dependent on it
+HEADERS += $${CONFIG_PRI}
+# standard headers
 HEADERS += $${TARGET}_TA_type.h $${TARGET}_TA_inst.h
 SOURCES += $${TARGET}_TA.cpp
 MSVC_FOLDER = msvc7
@@ -16,7 +19,7 @@ win32 {
 } else {
   maketa.commands = $$(PDP4DIR)/bin/maketa -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 }
-maketa.depends = $${MAKETA_HEADERS}
+maketa.depends = $${CONFIG_PRI} $${MAKETA_HEADERS}
 
 # the following then creates the maketa target
 QMAKE_EXTRA_UNIX_TARGETS += maketa

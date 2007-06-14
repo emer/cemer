@@ -42,9 +42,11 @@ DIST_COMMON = README $(am__configure_deps) $(dist_pkgdata_DATA) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in $(srcdir)/postinstall-pak.in \
 	$(srcdir)/postremove-pak.in $(srcdir)/spec.tmpl.in \
-	$(top_srcdir)/configure AUTHORS COPYING COPYING.LIB ChangeLog \
-	INSTALL NEWS cfg/config.guess cfg/config.sub cfg/depcomp \
-	cfg/install-sh cfg/ltmain.sh cfg/missing cfg/texinfo.tex
+	$(top_srcdir)/configure $(top_srcdir)/plugins/Makefile.in \
+	$(top_srcdir)/plugins/config.pri.in AUTHORS COPYING \
+	COPYING.LIB ChangeLog INSTALL NEWS cfg/config.guess \
+	cfg/config.sub cfg/depcomp cfg/install-sh cfg/ltmain.sh \
+	cfg/missing cfg/texinfo.tex
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -54,7 +56,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = spec.tmpl postremove-pak postinstall-pak
+CONFIG_CLEAN_FILES = spec.tmpl plugins/config.pri plugins/Makefile \
+	postremove-pak postinstall-pak
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -178,6 +181,10 @@ PDP_SUFFIX = @PDP_SUFFIX@
 PLATFORM_SUFFIX = @PLATFORM_SUFFIX@
 PLUGINS_FALSE = @PLUGINS_FALSE@
 PLUGINS_TRUE = @PLUGINS_TRUE@
+PL_DEBUG = @PL_DEBUG@
+PL_DMEM_COMPILE = @PL_DMEM_COMPILE@
+PL_LIB_VER = @PL_LIB_VER@
+PL_TA_NO_GUI = @PL_TA_NO_GUI@
 POW_LIB = @POW_LIB@
 PROFILE_FALSE = @PROFILE_FALSE@
 PROFILE_TRUE = @PROFILE_TRUE@
@@ -271,6 +278,7 @@ DIST_SUBDIRS = \
 	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
+	plugins \
 	prog_lib \
 	css_stdlib \
 	test
@@ -289,6 +297,7 @@ SUBDIRS = \
 	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
+	plugins \
 	prog_lib \
 	css_stdlib \
 	test
@@ -368,6 +377,10 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 distclean-hdr:
 	-rm -f config.h stamp-h1
 spec.tmpl: $(top_builddir)/config.status $(srcdir)/spec.tmpl.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+plugins/config.pri: $(top_builddir)/config.status $(top_srcdir)/plugins/config.pri.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+plugins/Makefile: $(top_builddir)/config.status $(top_srcdir)/plugins/Makefile.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 postremove-pak: $(top_builddir)/config.status $(srcdir)/postremove-pak.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
@@ -536,7 +549,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/. $(distdir)/cfg $(distdir)/src/bp $(distdir)/src/cs $(distdir)/src/css $(distdir)/src/leabra $(distdir)/src/pdp $(distdir)/src/so $(distdir)/src/ta
+	$(mkdir_p) $(distdir)/. $(distdir)/cfg $(distdir)/plugins $(distdir)/src/bp $(distdir)/src/cs $(distdir)/src/css $(distdir)/src/leabra $(distdir)/src/pdp $(distdir)/src/so $(distdir)/src/ta
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

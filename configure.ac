@@ -22,6 +22,8 @@ dnl      * Increment age if interfaces have been added
 dnl      * Set age to 0 if interfaces have been removed
 dnl 
 dnl  [1] http://www.gnu.org/software/libtool/manual.html Versioning
+dnl
+dnl Subst variables that start with PL_ are used in the plugin configuration
 
 # Set binary version here. The format allows for 99.99.99abc
 AC_INIT([pdp],[4.0.2b1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
@@ -32,7 +34,7 @@ LIB_VERSION_2=0.0.0
 AC_SUBST([PACKAGE_VERSION])
 AC_SUBST([LIB_VERSION])
 AC_SUBST([LIB_VERSION_2])
-
+AC_SUBST([PL_LIB_VER],[${PACKAGE_VERSION}])
 AH_TEMPLATE([LIB_VERSION],[Library Version])
 AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
 
@@ -129,6 +131,7 @@ dnl  Let the codebase know where to find auxiliary files (in config.h)
 dnl  TODO: Brad says this doesn't work right
 AH_TEMPLATE([WHEREAMI],[blah])
 AC_DEFINE_DIR([WHEREAMI],[datadir])
+dnl not working: AC_SUBST([PL_DATADIR],[`echo $(echo $datadir)`])
 
 
 
@@ -176,6 +179,7 @@ if test x"$debug" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -Wall])
   AC_DEFINE([DEBUG],,[Used when debugging])
+  AC_SUBST([PL_DEBUG],[debug])
   AC_SUBST([OPT_LEVEL],["-g -Wall"])                       dnl No optimization in debug mode
   dnl Checks for headers
   AC_FUNC_ALLOCA
@@ -255,12 +259,14 @@ if test x"$gui" = x"true"; then
 else
   SIM_AC_CONFIGURATION_SETTING([GUI],[Disabled])	
   AC_DEFINE([TA_NO_GUI],,[Set when building nogui])
+  AC_SUBST([PL_TA_NO_GUI], [nogui])
 fi
 
 dnl  --enable-mpi is set
 if test x"$mpi" = x"true"; then
   ACX_MPI(,SIM_AC_CONFIGURATION_WARNING([Failed to detect the Message Passing Interface. Try CXX=mpiCC]))
   AC_DEFINE([DMEM_COMPILE],,[Causes mpi.h to be included])
+  AC_SUBST([PL_DMEM_COMPILE],[mpi])
 
   if test x"$MPICXX" != x; then
     SIM_AC_CONFIGURATION_SETTING([MPI],[Enabled. Using $MPICXX as compiler])
@@ -339,6 +345,8 @@ AC_CONFIG_FILES([Makefile
 		src/pdp_bin/Makefile
 		prog_lib/Makefile
 		test/Makefile
+		plugins/config.pri
+		plugins/Makefile
 		css_stdlib/Makefile
                 postremove-pak
                 postinstall-pak])

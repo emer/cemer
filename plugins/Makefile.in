@@ -3,8 +3,8 @@ MKDIR = mkdir -p
 CP = cp
 
 # we use config.pri as a dependent to trigger rebuild of things when configure changes
-CONFIG_PRI = /home/baisa/pdp4.0/plugins/config.pri
-SYS_DATA_DIR = /usr/local/share/pdp++-4.0.2b1
+CONFIG_PRI = @abs_srcdir@/config.pri
+SYS_DATA_DIR = /usr/local/share/pdp++-@PL_LIB_VER@
 
 all: qmake build
 

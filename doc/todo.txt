@@ -2,15 +2,11 @@ PLUGINS
 
 Build Includes, and folders
 
-* user plugins will need to include from the system folder
-  OR will need to have their own complete copy of the system
-  .pre include files
+* user plugins will need to have the sys location stamped into
+  the sys include file -- do this on startup
   
 Configure
 
-* need to get:
-  variant (mpi, etc.)
-  version (4.0.2 etc.)
   
 Build
 

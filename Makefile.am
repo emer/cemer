@@ -34,6 +34,7 @@ DIST_SUBDIRS =\
 	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
+	plugins \
 	prog_lib \
 	css_stdlib \
 	test
@@ -52,6 +53,7 @@ SUBDIRS =\
 	src/cs \
 	src/pdp_lib \
 	src/pdp_bin \
+	plugins \
 	prog_lib \
 	css_stdlib \
 	test
