@@ -39,7 +39,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
   strm << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
   strm << "<TypeSpace>\n";
-  strm << " <Name>" << ts->name << "</Name>\n";
+  strm << " <Name>" << ts->name.xml_esc() << "</Name>\n";
 
   TypeDef* ta_base_def = ts->FindName("taBase");
   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
@@ -90,27 +90,29 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
     // now generate type info
 
     strm << " <TypeDef>\n";
-    strm << "  <Name>" << td->name << "</Name>\n";
+    strm << "  <Name>" << td->name.xml_esc() << "</Name>\n";
     strm << (td->is_enum() ? "  <Type>enum</Type>\n":"");
     strm << (td->is_class() ? "  <Type>class</Type>\n":"");
-    strm << (trim(td->desc).length() ? "  <Desc>"+trim(td->desc)+"</Desc>\n":"");
+    strm << (trim(td->desc).length() ? "  <Desc>"+trim(td->desc).xml_esc()+"</Desc>\n":"");
 
     if (td->opts.size) {  // Options of this TypeDef
-      strm << "  <Options>";
+      strm << "  <Options>\n";
       for (int k=0;k<td->opts.size;k++)
-	strm << trim(td->opts.FastEl(k)) << (k<td->opts.size-1 ? ",":"");
+	strm << "   <Option>" << trim(td->opts.FastEl(k)).xml_esc() << "   </Option>\n";
       strm << "  </Options>\n";
     }
       
+
+    // TODO: Walk the parent heirarchy
     TypeSpace* tsp = &td->parents;
     for (int j=0;j<tsp->size;j++)
-      strm << "  <Parent>" << tsp->FastEl(j)->name << "</Parent>\n";
+      strm << "  <Parent>" << trim(tsp->FastEl(j)->name).xml_esc() << "</Parent>\n";
 
     TypeSpace* tsc = &td->children;
     if (tsc->size) {
-      strm << "  <Children>";
+      strm << "  <Children>\n";
       for (int j=0;j<tsc->size;j++)
-	strm << tsc->FastEl(j)->name <<  (j<tsc->size-1 ? ",":"");
+	strm << "   <Child>" << trim(tsc->FastEl(j)->name).xml_esc() << "</Child>\n";
       strm << "  </Children>\n";
     }
 
@@ -130,14 +132,14 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	    first_one = false;
 	  }
 	  strm << "   <EnumType>\n";
-	  strm << "    <Name>" << st->name << "</Name>\n";
+	  strm << "    <Name>" << st->name.xml_esc() << "</Name>\n";
 	  EnumSpace* es = &st->enum_vals;
 	  if(es->size) {
 	    for (int j=0;j<es->size;j++) {
 	      EnumDef* ed = es->FastEl(j);
 	      strm << "    <EnumDef>\n";
-	      strm << "     <Name>" << ed->name << "</Name>\n";
-	      strm << (trim(ed->desc).length() ? "     <Desc>"+trim(ed->desc)+"</Desc>\n":"");
+	      strm << "     <Name>" << ed->name.xml_esc() << "</Name>\n";
+	      strm << (trim(ed->desc).length() ? "     <Desc>"+trim(ed->desc).xml_esc()+"</Desc>\n":"");
 	      strm << "     <Value>" << ed->enum_no << "</Value>\n";
 	      strm << "    </EnumDef>\n";
 	    }
@@ -172,19 +174,19 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
 	if(first_one) {
 	  strm << "  <MemberSpace>\n";
-	  strm << (mems->name != "members" ? "   <Name>"+mems->name+"</Name>\n":"");
+	  strm << (mems->name != "members" ? "   <Name>"+mems->name.xml_esc()+"</Name>\n":"");
 	  first_one = false;
 	}
 
 	strm << "    <MemberDef>\n";
 	strm << "     <Name>" << md->name << "</Name>\n";
-	strm << (trim(md->desc).length() ? "     <Desc>"+trim(md->desc)+"</Desc>\n":"");
-	strm << "     <Type>"+md->type->Get_C_Name()+"</Type>\n";
+	strm << (trim(md->desc).length() ? "     <Desc>"+trim(md->desc).xml_esc()+"</Desc>\n":"");
+	strm << "     <Type>"+md->type->Get_C_Name().xml_esc()+"</Type>\n";
 
 	if (md->opts.size) {
-	  strm << "     <Options>"; 
+	  strm << "     <Options>\n"; 
 	  for (int k=0;k<md->opts.size;k++)
-	    strm << trim(md->opts.FastEl(k)) << (k<md->opts.size-1 ? ",":"");
+	    strm << "      <Option>" << trim(md->opts.FastEl(k)).xml_esc() << "   </Option>\n";
 	  strm << "     </Options>\n"; 
 	}
 
@@ -234,13 +236,13 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
 	strm << "    <MethodDef>\n";
 	strm << "     <Name>" << metd->name << "</Name>\n";
-	strm << (trim(metd->desc).length() ? "     <Desc>"+trim(metd->desc)+"</Desc>\n":"");
-	strm << "     <Prototype>"+metd->prototype()+"</Prototype>\n";
+	strm << (trim(metd->desc).length() ? "     <Desc>"+trim(metd->desc).xml_esc()+"</Desc>\n":"");
+	strm << "     <Prototype>"+String(metd->prototype()).xml_esc()+"</Prototype>\n";
 
 	if (metd->opts.size) {
-	  strm << "     <Options>"; 
+	  strm << "     <Options>\n"; 
 	  for (int k=0;k<metd->opts.size;k++)
-	    strm << trim(metd->opts.FastEl(k)) << (k<metd->opts.size ? ",":"");
+	    strm << "      <Option>" << trim(metd->opts.FastEl(k)).xml_esc() << "   </Option>\n";
 	  strm << "     </Options>\n"; 
 	}
 	strm << "    </MethodDef>\n";
@@ -265,8 +267,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       for (int j=0;j<es->size;j++) {
 	EnumDef* ed = es->FastEl(j);
 	strm << "   <EnumDef>\n";
-	strm << "    <Name>" << ed->name << "</Name>\n";
-	strm << (trim(ed->desc).length() ? "    <Desc>"+trim(ed->desc)+"</Desc>\n":"");
+	strm << "    <Name>" << ed->name.xml_esc() << "</Name>\n";
+	strm << (trim(ed->desc).length() ? "    <Desc>"+trim(ed->desc).xml_esc()+"</Desc>\n":"");
 	strm << "    <Value>" << ed->enum_no << "</Value>\n";
 	strm << "   </EnumDef>\n";
       }
