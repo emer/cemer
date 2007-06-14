@@ -606,8 +606,10 @@ public:
   static String		version; // #READ_ONLY #NO_SAVE #SHOW version number of ta/css
   static taVersion 	version_bin; 
    //  #READ_ONLY #NO_SAVE #EXPERT version number of ta/css
+#ifdef SVN_REV
   static String		svn_rev; 
    // #READ_ONLY #NO_SAVE #EXPERT svn revision number (only valid when configure has been rerun)
+#endif
   static const BuildType build_type; // #READ_ONLY #NO_SAVE #SHOW build type, mostly for determining plugin subfolders to search
   static const String	build_str; // #READ_ONLY #NO_SAVE #EXPERT an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem) 
   
