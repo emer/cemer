@@ -3905,9 +3905,9 @@ fi
 
 # Check whether --enable-plugins was given.
 if test "${enable_plugins+set}" = set; then
-  enableval=$enable_plugins; plugins=flase
+  enableval=$enable_plugins; plugins=true
 else
-  plugins=true
+  plugins=false
 fi
 
 # Check whether --enable-readline was given.
