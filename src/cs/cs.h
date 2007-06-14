@@ -536,7 +536,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(CsWizard);
 private:
-  void 	Initialize() 	{ };
+  void 	Initialize();
   void 	Destroy()	{ };
 };
 

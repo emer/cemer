@@ -1,0 +1,573 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][8] { 
+  ProgObjList @.objs = [1] {
+    NetMonitor @[0] { 
+      NetMonItem_List @.items = [8] {
+	NetMonItem @[0] { };
+	NetMonItem @[1] { };
+	NetMonItem @[2] { };
+	NetMonItem @[3] { };
+	NetMonItem @[4] { };
+	NetMonItem @[5] { };
+	NetMonItem @[6] { };
+	NetMonItem @[7] { };
+      };
+    };
+  };
+
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+  };
+
+  ProgEl_List @.init_code = [4] {
+    AssignExpr @[0] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+  };
+
+  ProgEl_List @.prog_code = [6] {
+    MethodCall @[0] { };
+    MethodCall @[1] { };
+    AssignExpr @[2] { };
+    MethodCall @[3] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    MethodCall @[4] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    MethodCall @[5] { };
+  };
+};
+Program .projects[0].programs.gp[0][8] {
+ name="CsEpochMonitor";
+ tags="Cs, Std, Monitor";
+ desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
+ flags=;
+ objs {
+  name=;
+  el_typ=NetMonitor;
+  el_def=0;
+  NetMonitor @[0] {
+   name="epoch_netmon";
+   items {
+    name=;
+    el_typ=NetMonItem;
+    el_def=0;
+    NetMonItem @[0] {
+     name="batch";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=.projects[0].networks[0]$0$;
+     variable="batch";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[1] {
+     name="epoch";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$0$;
+     variable="epoch";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[2] {
+     name="avg_sse";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$0$;
+     variable="avg_sse";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[3] {
+     name="cnt_err";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$0$;
+     variable="cnt_err";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[4] {
+     name="avg_ext_rew";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$0$;
+     variable="avg_ext_rew";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[5] {
+     name="avg_cycles";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$0$;
+     variable="avg_cycles";
+     var_label=;
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[6] {
+     name="epoch_time_tot";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[7] {
+     name="epoch_time_usr";
+     computed=1;
+     object_type=NULL;
+     object=NULL;
+     variable="act";
+     var_label=;
+     name_style=MY_NAME;
+     max_name_len=6;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+   };
+   network=$0$;
+   data=.projects[0].data.gp[1][1]$1$;
+   rmv_orphan_cols=1;
+  };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=Network;
+   object_val=$0$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="network to get data from";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="epoch_mon_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$1$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="data table to write the epoch data to";
+  };
+  ProgVar @[1] {
+   name="epoch_netmon";
+   var_type=T_Object;
+   object_type=NetMonitor;
+   object_val=.projects[0].programs.gp[0][8].objs[0]$2$;
+   objs_ptr=1;
+   flags=NULL_CHECK;
+   desc="network monitor object that contains full specs for what to record and where to get it";
+  };
+  ProgVar @[2] {
+   name="epoch_timer";
+   var_type=T_Object;
+   object_type=TimeUsed;
+   object_val=.projects[0].networks[0].epoch_time$3$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=AssignExpr;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  AssignExpr @[0] {
+   desc="get the epoch timer from current network";
+   flags=;
+   result_var=.projects[0].programs.gp[0][8].vars[2]$4$;
+   expr {
+    expr="network.epoch_time";
+    flags=;
+    var_expr="$#0#$.epoch_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[1] {
+   desc="set data and network on NetMonitor object";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][8].vars[1]$5$;
+   method=NetMonitor::SetDataNetwork;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="dt";
+     required=0;
+     def_val=;
+     expr {
+      expr="epoch_mon_data";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ epoch_mon_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     required=0;
+     def_val=;
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[2] {
+   desc="check configuration and emit errors/warnings for problems";
+   flags=;
+   result_var=NULL;
+   obj=$5$;
+   method=taBase::CheckConfig;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     required=0;
+     def_val="false";
+     expr {
+      expr="false";
+      flags=;
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[3] {
+   desc="update the monitor items and data schema based on current settings of NetMonitor";
+   flags=;
+   result_var=NULL;
+   obj=$5$;
+   method=NetMonitor::UpdateMonitors;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="reset_first";
+     required=0;
+     def_val="false";
+     expr {
+      expr="true";
+      flags=;
+      var_expr="true";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="add a new blank row to the data";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][8].vars[0]$6$;
+   method=DataTable::AddBlankRow;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  MethodCall @[1] {
+   desc="get the new monitor data and stor it into the data table -- this does the main job here";
+   flags=;
+   result_var=NULL;
+   obj=$5$;
+   method=NetMonitor::GetMonVals;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  AssignExpr @[2] {
+   desc="get the epoch timer from current network";
+   flags=;
+   result_var=$4$;
+   expr {
+    expr="network.epoch_time";
+    flags=;
+    var_expr="$#0#$.epoch_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[3] {
+   desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=DataTable::SetValColName;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="val";
+     required=0;
+     def_val=;
+     expr {
+      expr="epoch_timer.used.GetTotSecs()";
+      flags=;
+      var_expr="$#0#$.used.GetTotSecs()";
+      vars {
+      };
+      var_names{ epoch_timer;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="col_name";
+     required=0;
+     def_val="\"\"";
+     expr {
+      expr="\"epoch_time_tot\"";
+      flags=;
+      var_expr="\"epoch_time_tot\"";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="row";
+     required=0;
+     def_val=;
+     expr {
+      expr="-1";
+      flags=;
+      var_expr="-1";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[4] {
+   desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=DataTable::SetValColName;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="val";
+     required=0;
+     def_val=;
+     expr {
+      expr="epoch_timer.used.GetUsrSecs()";
+      flags=;
+      var_expr="$#0#$.used.GetUsrSecs()";
+      vars {
+      };
+      var_names{ epoch_timer;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="col_name";
+     required=0;
+     def_val="\"\"";
+     expr {
+      expr="\"epoch_time_usr\"";
+      flags=;
+      var_expr="\"epoch_time_usr\"";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="row";
+     required=0;
+     def_val=;
+     expr {
+      expr="-1";
+      flags=;
+      var_expr="-1";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[5] {
+   desc="update after writing new data to monitor data table";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=DataBlock::WriteClose;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+ };
+};

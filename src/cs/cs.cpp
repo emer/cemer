@@ -520,7 +520,8 @@ void CsNetwork::Initialize() {
 
   trial_init = INIT_STATE;
   between_phases = INIT_STATE;
-  deterministic = false;
+  //  deterministic = false;
+  deterministic = true;
   start_stats = 50;
   cycle_max = 100;
   sample = 0;
@@ -1212,3 +1213,7 @@ void CsProject::Initialize() {
   networks.SetBaseType(&TA_CsNetwork);
 }
 
+
+void CsWizard::Initialize() {
+  connectivity = BIDIRECTIONAL;
+}

@@ -12,7 +12,9 @@ commit:
 
 --------------------
 Other Algorithms:
-  * cs, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp?
+  * cs: Trial_UpdatePhases, compute maxda, tie in to stats, fix biasspec ptr on unitspec
+
+, rbp? (rbp requires time stuff -- probably not worth it).  maybe apbp?
 
 ------------
 current:
