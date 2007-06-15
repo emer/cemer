@@ -325,6 +325,8 @@ class SO_API SoWizard : public Wizard {
 INHERITED(Wizard)
 public:
 
+  override void	StdProgs();
+
   TA_BASEFUNS_NOCOPY(SoWizard);
 private:
   void 	Initialize() 	{ };

@@ -421,6 +421,10 @@ void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u) {
 void BpWizard::Initialize() {
 }
 
+void BpWizard::StdProgs() {
+  StdProgs_impl("BpAll_Std");
+}
+
 void BpWizard::SRNContext(Network* net) {
   if(net == NULL) {
     taMisc::Error("SRNContext: must have basic constructed network first");

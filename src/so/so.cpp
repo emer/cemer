@@ -374,3 +374,7 @@ void SoProject::Initialize() {
   networks.SetBaseType(&TA_SoNetwork);
 }
 
+void SoWizard::StdProgs() {
+  StdProgs_impl("SoAll_Std");
+}
+

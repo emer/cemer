@@ -476,7 +476,7 @@ void LeabraUnitSpec::Defaults() {
   dt.Defaults();
   act_reg.Defaults();
   Initialize();
-  bias_spec.SetSpec(bias_spec.SPtr());
+  //  bias_spec.SetSpec(bias_spec.SPtr());
 }
 
 void LeabraUnitSpec::InitLinks() {

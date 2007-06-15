@@ -122,6 +122,7 @@ void BpUnitSpec::Initialize() {
 }
 
 void BpUnitSpec::InitLinks() {
+  bias_spec.type = &TA_BpConSpec;
   inherited::InitLinks();
   children.SetBaseType(&TA_BpUnitSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!

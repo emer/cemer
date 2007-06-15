@@ -211,6 +211,9 @@ bool ConSpec::CheckObjectType_impl(taBase* obj) {
   else if(obj->InheritsFrom(&TA_Projection)) {
     con_tp = ((Projection*)obj)->con_type;
   }
+  else if(obj->InheritsFrom(&TA_UnitSpec)) {
+    con_tp = ((UnitSpec*)obj)->bias_con_type;
+  }
   if(!con_tp->InheritsFrom(min_obj_type))
     return false;
   return true;

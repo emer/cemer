@@ -572,12 +572,13 @@ CsProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [5] {
+		  T3DataView_List @.children = [6] {
 		    LayerView @[0] { };
 		    LayerView @[1] { };
 		    LayerView @[2] { };
 		    PrjnView @[3] { };
 		    PrjnView @[4] { };
+		    PrjnView @[5] { };
 		  };
 
 		  ScaleRange_List @.scale_ranges = [1] {
@@ -610,8 +611,9 @@ CsProject .projects[0] {
 	  };
 	};
 	CsLayer @[1] { 
-	  Projection_Group @.projections = [1] {
+	  Projection_Group @.projections = [2] {
 	    Projection @[0] { };
+	    Projection @[1] { };
 	  };
 
 	  Unit_Group @.units = [25] {
@@ -1785,7 +1787,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -1983,7 +1985,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$22$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$23$;
       order=PERMUTED;
-      item_idx_list{ 2;3;5;1;4;0;      };
+      item_idx_list{ 5;2;4;3;1;0;      };
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -2240,10 +2242,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
-	flags=OFF;
+	flags=;
 	result_var=NULL;
 	obj=$25$;
-	method=LeabraNetwork::Trial_UpdatePhase;
+	method=CsNetwork::Trial_UpdatePhase;
 	meth_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2354,7 +2356,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[0] {
       name="cycle";
       var_type=T_Int;
-      int_val=5;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="current cycle of settling (local loop counter)";
@@ -4236,7 +4238,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    };
 	   };
 	   PrjnView @[4] {
-	    m_data=.projects[0].networks[0].layers[2].projections[0]$57$;
+	    m_data=.projects[0].networks[0].layers[1].projections[1]$57$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.1: y=0.8233333: z=0.1: }: };
+	    children {
+	     name=;
+	     el_typ=T3DataView;
+	     el_def=0;
+	    };
+	   };
+	   PrjnView @[5] {
+	    m_data=.projects[0].networks[0].layers[2].projections[0]$58$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.1: y=0.51: z=0.1: }: };
 	    children {
 	     name=;
@@ -4254,7 +4265,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$58$;
+	   spec=.colorspecs[0]$59$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -4340,7 +4351,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=-1: max=1: range=2: scale=0.5: };
      bias_con_type=CsCon;
-     bias_spec {type=CsConSpec: spec=.projects[0].networks[0].specs[1]$59$: };
+     bias_spec {type=CsConSpec: spec=.projects[0].networks[0].specs[1]$60$: };
      sse_tol=0;
      real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
      noise {name="": type=NONE: mean=0: var=0.1: par=1: };
@@ -4438,8 +4449,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=CsUnitSpec: spec=.projects[0].networks[0].specs[0]$60$: };
-     ext_flag=EXT;
+     unit_spec {type=CsUnitSpec: spec=.projects[0].networks[0].specs[0]$61$: };
+     ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -4467,12 +4478,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        name="Fm_Input";
        from_type=CUSTOM;
        from=$53$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$61$: };
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$62$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$59$: };
+       con_spec {type=CsConSpec: spec=$60$: };
        recv_idx=0;
+       send_idx=0;
+       recv_n=1;
+       send_n=1;
+       projected=1;
+       direction=DIR_UNKNOWN;
+      };
+      Projection @[1] {
+       name="Fm_Output";
+       from_type=CUSTOM;
+       from=$55$;
+       spec {type=FullPrjnSpec: spec=$62$: };
+       con_type=CsCon;
+       recvcons_type=CsRecvCons;
+       sendcons_type=CsSendCons;
+       con_spec {type=CsConSpec: spec=$60$: };
+       recv_idx=1;
        send_idx=0;
        recv_n=1;
        send_n=1;
@@ -4496,7 +4523,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=CsUnitSpec: spec=$60$: };
+     unit_spec {type=CsUnitSpec: spec=$61$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -4525,11 +4552,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        name="Fm_Hidden";
        from_type=CUSTOM;
        from=$54$;
-       spec {type=FullPrjnSpec: spec=$61$: };
+       spec {type=FullPrjnSpec: spec=$62$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$59$: };
+       con_spec {type=CsConSpec: spec=$60$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -4542,6 +4569,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
       el_typ=Projection;
       el_def=0;
+	    Projection_Group @. = [0] = Projection .projects[0].networks[0].layers[1].projections[1];
      };
      units {
       name=;
@@ -4553,8 +4581,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=CsUnitSpec: spec=$60$: };
-     ext_flag=TARG;
+     unit_spec {type=CsUnitSpec: spec=$61$: };
+     ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -4573,10 +4601,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    batch=0;
    epoch=0;
    trial=0;
-   cycle=5;
+   cycle=0;
    time=0;
    group_name=;
-   trial_name="midhoriz";
+   trial_name="ldiag";
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -4588,8 +4616,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=9337: sys=2549: tot=2216927389: }: end={usr=9220: sys=2521: tot=2216925758: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=9340: sys=2551: tot=2216927395: }: end={usr=9220: sys=2521: tot=2216925758: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=2104: sys=400: tot=2225273028: }: end={usr=9220: sys=2521: tot=2216925758: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=2111: sys=405: tot=2225273042: }: end={usr=9220: sys=2521: tot=2216925758: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
@@ -4601,7 +4629,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=75;
-   n_cons=1250;
+   n_cons=1875;
    max_size {x=5: y=5: z=3: };
    font_sizes {
     net_name=0.05;

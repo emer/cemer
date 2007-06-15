@@ -115,6 +115,7 @@ void CsUnitSpec::Initialize() {
 }
 
 void CsUnitSpec::InitLinks() {
+  bias_spec.type = &TA_CsConSpec;
   inherited::InitLinks();
   children.SetBaseType(&TA_CsUnitSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
@@ -204,7 +205,7 @@ void CsUnitSpec::Compute_Netin(Unit* u) {
   cu->net += cu->clmp_net; // add in clamped input
 }
 
-void CsUnitSpec::Compute_Act(Unit* u, int cycle, int phase) {
+void CsUnitSpec::Compute_Act(Unit* u, int cycle, int phase, CsNetwork* net) {
   CsUnit* cu = (CsUnit*)u;
   if(u->ext_flag & Unit::EXT) {	// receiving external input
     if(clamp_type == HARD_FAST_CLAMP) // already processed this one!
@@ -244,6 +245,8 @@ void CsUnitSpec::Compute_Act(Unit* u, int cycle, int phase) {
     cu->act = real_range.min;
     cu->da = 0.0f;		// ditto..
   }
+
+  net->maxda = MAX(fabsf(cu->da), net->maxda); // update network stat!
 }
 
 void CsUnitSpec::Aggregate_dWt(Unit* u, int phase) {
@@ -580,6 +583,8 @@ void CsNetwork::Init_Stats() {
 
 void CsNetwork::Compute_SyncAct() {
   // netinput must already be computed in separate step
+  output_name = "";	// todo: update this
+  maxda = 0.0f;		// initialize
   Layer* lay;
   taLeafItr l_itr;
   FOR_ITR_EL(Layer, lay, layers., l_itr) {
@@ -587,13 +592,15 @@ void CsNetwork::Compute_SyncAct() {
     CsUnit* u;
     taLeafItr u_itr;
     FOR_ITR_EL(CsUnit, u, lay->units., u_itr) {
-      u->Compute_Act(cycle, phase);
+      u->Compute_Act(cycle, phase, this);
     }
   }
 }
 
 void CsNetwork::Compute_AsyncAct() {
   if(n_units == 0) return; // error check
+  output_name = "";	// todo: update this
+  maxda = 0.0f;		// initialize
   Layer* lay;
   taLeafItr l;
   for (int i=0; i < n_updates; i++) {	// do this n_updates times
@@ -606,7 +613,7 @@ void CsNetwork::Compute_AsyncAct() {
 	int whichunitleaf = rnd_num - total_prob;
 	CsUnit* u = (CsUnit*) lay->units.Leaf(whichunitleaf);	
 	u->Compute_Netin();
-	u->Compute_Act(cycle, phase); // update this one unit...
+	u->Compute_Act(cycle, phase, this); // update this one unit...
 	break;
       } else {
 	total_prob += lay_prob;
@@ -741,6 +748,10 @@ void CsNetwork::Trial_Final() {
   if(train_mode != TEST) {
     Compute_dWt();
   }
+}
+
+void CsNetwork::Trial_UpdatePhase() {
+  phase = PLUS_PHASE;		// always just next phase..
 }
 
 // todo: need to do this somewhere
@@ -1217,3 +1228,8 @@ void CsProject::Initialize() {
 void CsWizard::Initialize() {
   connectivity = BIDIRECTIONAL;
 }
+
+void CsWizard::StdProgs() {
+  StdProgs_impl("CsAll_Std");
+}
+

@@ -35,6 +35,9 @@ class SigmoidUnitSpec;
 class BoltzUnitSpec;
 class IACUnitSpec;
 class CsUnit;
+class CsLayer;
+class CsNetwork;
+class CsProject;
 
 class CS_API CsCon : public Connection {
   // ##CAT_Cs connection values for constraint satisfaction
@@ -163,8 +166,8 @@ public:
 
   void 		Compute_Netin(Unit* u); 		// add bias
   void		Compute_Act(Unit* u)		// if no cycle is passed
-  { Compute_Act(u,-1, 0); }
-  virtual void 	Compute_Act(Unit* u, int cycle, int phase);
+  { Compute_Act(u,-1, 0, NULL); }
+  virtual void 	Compute_Act(Unit* u, int cycle, int phase, CsNetwork* net);
   virtual void	Compute_Act_impl(CsUnit* u, int cycle, int phase); 
   // actually computes specific activation function 
   
@@ -286,11 +289,11 @@ public:
   void		Compute_ClampNet() 
   { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampNet(this); }
   
-  void		Compute_Act(int cycle, int phase)
-  { ((CsUnitSpec*)GetUnitSpec())->Compute_Act(this, cycle, phase); }
+  void		Compute_Act(int cycle, int phase, CsNetwork* net)
+  { ((CsUnitSpec*)GetUnitSpec())->Compute_Act(this, cycle, phase, net); }
 
   void		Compute_Act()
-  { Compute_Act(-1, 0); }
+  { Compute_Act(-1, 0, NULL); }
 
   virtual void	Targ_To_Ext();
   void		PostSettle(int phase)
@@ -503,6 +506,7 @@ public:
   
   virtual void	Trial_Init(); // run one trial of Cs
   virtual void	Trial_Final(); // run one trial of Cs
+  virtual void	Trial_UpdatePhase(); // update phase after one settle
   
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
@@ -533,6 +537,8 @@ class CS_API CsWizard : public Wizard {
   // ##CAT_Cs constraint satisfaction specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
+
+  override void	StdProgs();
 
   TA_BASEFUNS_NOCOPY(CsWizard);
 private:
