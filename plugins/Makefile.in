@@ -1,6 +1,7 @@
 CD = cd
 MKDIR = mkdir -p
 CP = cp
+QMAKE = $(QTDIR)/bin/qmake
 
 # we use config.pri as a dependent to trigger rebuild of things when configure changes
 CONFIG_PRI = @abs_srcdir@/config.pri
@@ -83,7 +84,7 @@ qmake:
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if [ -f "NOBUILD" ]; then continue; fi; \
-	    if ( qmake; ) then echo "* Successfully ran $@ in $$i";\
+	    if ( $(QMAKE); ) then echo "* Successfully ran $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../../;\
 	  fi; \
@@ -95,7 +96,7 @@ qmake:
 	    echo $$i; \
 	    $(CD) $$i;\
 	    if [ -f "NOBUILD" ]; then continue; fi; \
-	    if ( qmake; ) then echo "* Successfully ran $@ in $$i";\
+	    if ( $(QMAKE); ) then echo "* Successfully ran $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../../;\
 	  fi; \

@@ -1,8 +1,8 @@
 # Make a plugin for pdp++
 # Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
 
-!include( ../tacss_shared_pre.pri ) {
-  message( "../tacss_shared_pri.pri file is missing or could not be included" )
+!include( ../shared_pre.pri ) {
+  message( "../shared_pre.pri file is missing or could not be included" )
 }
 
 # Replace hw w/ your plugin name
@@ -26,6 +26,6 @@ MAKETA_HEADERS = $${HEADERS}
 SOURCES += $${TARGET}.cpp
 
 
-!include( ../tacss_shared.pri ) {
-  message( "../tacss_shared.pri file is missing or could not be included" )
+!include( ../shared.pri ) {
+  message( "../shared.pri file is missing or could not be included" )
 }

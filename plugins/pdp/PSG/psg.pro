@@ -1,7 +1,7 @@
 # Make a plugin for pdp++
 # Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
 
-include( ../pdp_shared_pre.pri )
+include( ../shared_pre.pri )
 
 # Replace hw w/ your plugin name
 TARGET = psg
@@ -23,7 +23,7 @@ MAKETA_INCLUDEPATH += -I/usr/local/include/player-2.0
 
 SOURCES += $${TARGET}.cpp
 
-include( ../pdp_shared.pri )
+include( ../shared.pri )
 
 CONFIG += link_pkgconfig
 PKGCONFIG += playerc++
