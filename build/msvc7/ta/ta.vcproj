@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib libgsl_dll_d.lib libgslcblas_dll_d.lib ode.lib"
+				AdditionalDependencies="Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib libgsl_dll_d.lib libgslcblas_dll_d.lib ode.lib opengl32.lib"
 				ShowProgress="2"
 				OutputFile="$(OutDir)/ta_debug.dll"
 				LinkIncremental="1"
@@ -102,7 +102,7 @@ copy $(TargetDir)ta*.dll $(SolutionDir)bin
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib libgsl_dll.lib libgslcblas_dll.lib ode.lib"
+				AdditionalDependencies="Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib libgsl_dll.lib libgslcblas_dll.lib ode.lib opengl32.lib"
 				OutputFile="$(OutDir)/ta.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(PDP4DIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(ODEDIR)\lib\releasedll&quot;;&quot;$(SolutionDir)\lib&quot;"
