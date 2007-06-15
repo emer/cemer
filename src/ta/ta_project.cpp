@@ -1221,16 +1221,9 @@ bool taRootBase::Startup_EnumeratePlugins() {
     plug_log = "plugins_" + taMisc::build_str + ".log";
     plug_sub = PATH_SEP + taMisc::build_str;
   }
-  // add basic tacss plugin folders, for 
-  taPlugins::AddPluginFolder(taMisc::app_dir + plug_dir + PATH_SEP + "plugins_tacss" + plug_sub);
-  taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir + PATH_SEP + "plugins_tacss" + plug_sub);
-  // add for the application lib, ex. pdp
-  if (taMisc::app_lib_name.nonempty()) {
-    taPlugins::AddPluginFolder(taMisc::app_dir + plug_dir + 
-      PATH_SEP + "plugins_" + taMisc::app_lib_name + plug_sub);
-    taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir +
-      PATH_SEP + "plugins_" + taMisc::app_lib_name + plug_sub);
-  }
+  // add plugin folders
+  taPlugins::AddPluginFolder(taMisc::app_dir + plug_dir + PATH_SEP + "plugins" + plug_sub);
+  taPlugins::AddPluginFolder(taMisc::user_app_dir + plug_dir + PATH_SEP + "plugins" + plug_sub);
   taPlugins::InitLog(taMisc::prefs_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
