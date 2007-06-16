@@ -3,7 +3,7 @@
 
 # CONFIG info (created by configure)
 !include(config.pri) {
-  message( "config.pri file is missing or could not be included -- release build will be made" )
+  error( "config.pri file is missing or could not be included!" )
 }
 TEMPLATE = lib
 CONFIG += plugin warn_off
@@ -69,28 +69,35 @@ BUILD_EXT_US = $${BUILD_EXT_US}$${BUILD_EXT}
 # value as a subfolder path
 BUILD_EXT_SF = $${BUILD_EXT_SF}$${BUILD_EXT}
 
-# note: all plugins (tacss+pdp) search tacss plugins for dependencies
-LIBS += -L$${THIS_ROOT}/lib/plugins_tacss$${BUILD_EXT_SF}
-LIBS += -L$$(PDP4DIR)/lib/plugins_tacss$${BUILD_EXT_SF}
+# note: all plugins search plugins for dependencies
+LIBS += -L$${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
+LIBS += -L$$(PDP4DIR)/lib/plugins$${BUILD_EXT_SF}
 LIBS +=	-L$${THIS_ROOT}/lib
 win32 {
-  LIBS += $${BUILD_MSVC}/lib/ta_debug.lib
-#  LIBS += -lta$${BUILD_EXT_US}
   LIBS += -L$${BUILD_MSVC}/lib
+  LIBS += $${BUILD_MSVC}/lib/ta$${BUILD_EXT_US}.lib
+#  LIBS += -lta$${BUILD_EXT_US}
+  LIBS += $${BUILD_MSVC}/lib/pdp$${BUILD_EXT_US}.lib
 } else {
   LIBS += -L$$(PDP4DIR)/lib
   LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
-  LIBS += -L$$(PDP4DIR)/src/ta_lib/.libs
+  LIBS += -lpdp$${BUILD_EXT_US}-$${LIB_VER}
 }
+
 
 # following is the basic list for taccs -- pdp extends it
 INCLUDEPATH +=\
 	. \
-	$$(PDP4DIR)/src/taiqtso \
-	$$(PDP4DIR)/src/ta \
-	$$(PDP4DIR)/src/ta/ios-g++-3.1 \
-	$$(PDP4DIR)/src/css \
-	$$(PDP4DIR)/include \
+	$(PDP4_INC_DIR)/taiqtso \
+	$(PDP4_INC_DIR)/ta \
+	$(PDP4_INC_DIR)/ta/ios-g++-3.1 \
+	$(PDP4_INC_DIR)/css \
+	$(PDP4_INC_DIR)/pdp \
+	$(PDP4_INC_DIR)/bp \
+	$(PDP4_INC_DIR)/cs \
+	$(PDP4_INC_DIR)/leabra \
+	$(PDP4_INC_DIR)/so \
+	$(PDP4_INC_DIR) \
 	$${THIS_ROOT}/include	 
 win32 {
 INCLUDEPATH +=\
@@ -103,11 +110,16 @@ INCLUDEPATH +=\
 # following is the basic list for taccs -- pdp extends it
 MAKETA_INCLUDEPATH +=\
 	-I. \
-	-I$$(PDP4DIR)/src/taiqtso \
-	-I$$(PDP4DIR)/src/ta \
-	-I$$(PDP4DIR)/src/ta/ios-g++-3.1 \
-	-I$$(PDP4DIR)/src/css \
-	-I$$(PDP4DIR)/include \
+	-I$(PDP4_INC_DIR)/taiqtso \
+	-I$(PDP4_INC_DIR)/ta \
+	-I$(PDP4_INC_DIR)/ta/ios-g++-3.1 \
+	-I$(PDP4_INC_DIR)/css \
+	-I$(PDP4_INC_DIR)/pdp \
+	-I$(PDP4_INC_DIR)/bp \
+	-I$(PDP4_INC_DIR)/cs \
+	-I$(PDP4_INC_DIR)/leabra \
+	-I$(PDP4_INC_DIR)/so \
+	-I$(PDP4_INC_DIR) \
 	-I$${THIS_ROOT}/include	
 win32 {
 MAKETA_INCLUDEPATH +=\
@@ -118,27 +130,4 @@ MAKETA_INCLUDEPATH +=\
 }
 
 DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
-
-# TODO: integrate these all together:
-
-# shared_pre.pri defined the basic ones for tacss -- we extend for pdp
-INCLUDEPATH +=\
-	$$(PDP4DIR)/src/pdp \
-	$$(PDP4DIR)/src/leabra \
-	$$(PDP4DIR)/src/bp 
-
-# shared.pri defined the basic ones for tacss -- we extend for pdp
-MAKETA_INCLUDEPATH +=\
-	-I$$(PDP4DIR)/src/pdp \
-	-I$$(PDP4DIR)/src/leabra \
-	-I$$(PDP4DIR)/src/bp 
-
-LIBS += -lpdp$${BUILD_EXT_US}-$${LIB_VER}
-# shared file includes tacss plugin folder already
-win32 {
-} else {
-  LIBS += -L$$(PDP4DIR)/src/pdp_lib/.libs
-}
-LIBS += -L$${THIS_ROOT}/lib/plugins_pdp$${BUILD_EXT_SF}
-LIBS += -L$$(PDP4DIR)/lib/plugins_pdp$${BUILD_EXT_SF}
 

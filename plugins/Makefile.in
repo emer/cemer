@@ -3,9 +3,14 @@ MKDIR = mkdir -p
 CP = cp
 QMAKE = $(QTDIR)/bin/qmake
 
+# standard autotools prefixes from configure
+prefix = @PL_prefix@
+datadir = @PL_datadir@
+includedir = @PL_includedir@
+
 # we use config.pri as a dependent to trigger rebuild of things when configure changes
 CONFIG_PRI = @abs_srcdir@/config.pri
-SYS_DATA_DIR = /usr/local/share/pdp++-@PL_LIB_VER@
+PDP_SYS_DIR = ${datadir}/pdp++-@PL_LIB_VER@
 
 all: qmake build
 
@@ -109,9 +114,9 @@ install:
 	@echo " "
 	@echo "** Doing ($@) in all plugin directories**"
 	@echo " "
-	$(MKDIR) $(SYS_DATA_DIR)/lib
-	$(CP) -Ru ../lib/plugins_pdp  $(SYS_DATA_DIR)/lib
-	$(CP) -Ru ../lib/plugins_tacss  $(SYS_DATA_DIR)/lib
+	$(MKDIR) $(PDP_SYS_DIR)/lib
+	$(CP) -Ru ../lib/plugins_pdp  $(PDP_SYS_DIR)/lib
+	$(CP) -Ru ../lib/plugins_tacss  $(PDP_SYS_DIR)/lib
 	@echo " "
 	@echo "** Make $@ successfully completed! **"
 	@echo " "
