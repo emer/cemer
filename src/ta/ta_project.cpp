@@ -1199,24 +1199,28 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
   
   // make the user plugin folder, and assert the proxy files
   // we redo those every time, in case app has been upgraded
+  // but don't fail if this can't be done -- just warn user
   String uplugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
-  dir.mkdir(uplugin_dir);
+  bool err = !dir.mkdir(uplugin_dir);
   taRootBase* inst = instance();
-  if (inst->TestError(
+  err = err || inst->TestError(
     !MakeUserPluginConfigProxy(uplugin_dir, "config.pri"),
-   "Startup_InitTA_initUserAppDir", "can't make config.pri")) return false;
-  if (inst->TestError(
+   "Startup_InitTA_initUserAppDir", "can't make config.pri");
+  err = err || inst->TestError(
     !MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri"),
-   "Startup_InitTA_initUserAppDir", "can't make shared_pre.pri")) return false;
-  if (inst->TestError(
+   "Startup_InitTA_initUserAppDir", "can't make shared_pre.pri");
+  err = err || inst->TestError(
     !MakeUserPluginConfigProxy(uplugin_dir, "shared.pri"),
-   "Startup_InitTA_initUserAppDir", "can't make shared.pri")) return false;
+   "Startup_InitTA_initUserAppDir", "can't make shared.pri");
   // copy the Makefile
   QFile::remove(uplugin_dir + "/Makefile");
-  if (inst->TestError(
+  err = err || inst->TestError(
     !QFile::copy(taMisc::app_dir + "/plugins/Makefile",
       uplugin_dir + "/Makefile"),
-   "Startup_InitTA_initUserAppDir", "can't copy plugins/Makefile")) return false;
+   "Startup_InitTA_initUserAppDir", "can't copy plugins/Makefile");
+  if (err) {
+    taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running pdp++ but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
+  }
   return true;
 }
 
