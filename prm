@@ -222,10 +222,10 @@ class Popen3:
 
 # TODO: Put all of the TA/CSS stuff in that category, and all of the PDP stuff in that category
 
-class MaketaBot:
-    """
-    Parses the xml output from `maketa -gendoc' and posts it to the pdp wiki.
-    """
+# class MaketaBot:
+#     """
+#     Parses the xml output from `maketa -gendoc' and posts it to the pdp wiki.
+#     """
 
 
 
@@ -328,56 +328,58 @@ if __name__ == "__main__":
                             subject=subject,
                             text=text)
 
-    if options.gendoc:
-        """
-        TODO/BRAINSTORMING:
-        * Use gendoc.sh, modified, and just put that list on the wiki.
-        """
-        # for i in
-        if os.environ.has_key("PDP4DIR"):
-            pwd = os.environ["PDP4DIR"]
-        else:
-            print "Error: PDP4DIR not set"
-            sys.exit(1)
-
-        # TODO: Error checking
-        tmp = Popen3("cd " + pwd).out
-        tmp += Popen3("make gendoc").out
-
-        xml = ""
-        for dir in ["ta","pdp","bp","leabra"]:
-            f = open(pwd + "/src/" + dir + "/" + dir + "_TA_doc.xml")
-            xml += f.read()
-            f.close()
-
-        f = open(pwd + "/all_TA_doc.xml","w")
-        f.write(xml)
-        f.close()
-        print "XML files aggregated into ",pwd,"/all_TA_doc.xml"
-
-        #valid_tags = ['typespace','typedef','desc','options','parent','children','subtypes','enumtype','enumdef','memberspace','memberdef','type','methodspace','methoddef','prototype','desc','option','enumspace','enumdef']
-
-        soup = BeautifulStoneSoup(xml)
-
-        html = ""
-        ####################
-        #     MethodDef    #
-        ####################
-
-        MethodDef = soup.findAll("methoddef")
-        
-        if len(MethodDef):
-            
-            html += "<h2>Methods of " + highlight(soup.typedef.next.next.next).out[:-1] + "</h2>"
-            for method in MethodDef:
-                html += "<div style=\"height=expression(document.body.clientHeight-150); overflow:auto; padding: 1px 0px 0px 8px; margin: 4px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-style: solid; border-top-color: #E0E0E0; border-right-color: #E0E0E0; border-bottom-color: #E0E0E0; border-left-color: #E0E0E0; border-right-style: none; border-bottom-style: none; border-left-style: none; background-color: #FAFAFA; font-family: Geneva, Arial, Helvetica, sans-serif; font-size: 12px;\">\n"
-                if method.desc:
-                    method_desc = method.desc.string
-                    html += method_desc
-                if method.prototype:
-                    html += highlight(method.prototype.string, CppLexer(), HtmlFormatter())
-                    html += Popen3("source-highlight -scpp | tail -n1 ", method.prototype.string).out[:-1]
-                html += "\n</div>"
-        print html
-
     sys.exit(0)
+
+# if options.gendoc:
+#         """
+#         TODO/BRAINSTORMING:
+#         * Use gendoc.sh, modified, and just put that list on the wiki.
+#         """
+#         # for i in
+#         if os.environ.has_key("PDP4DIR"):
+#             pwd = os.environ["PDP4DIR"]
+#         else:
+#             print "Error: PDP4DIR not set"
+#             sys.exit(1)
+
+#         # TODO: Error checking
+#         tmp = Popen3("cd " + pwd).out
+#         tmp += Popen3("make gendoc").out
+
+#         xml = ""
+#         for dir in ["ta","pdp","bp","leabra"]:
+#             f = open(pwd + "/src/" + dir + "/" + dir + "_TA_doc.xml")
+#             xml += f.read()
+#             f.close()
+
+#         f = open(pwd + "/all_TA_doc.xml","w")
+#         f.write(xml)
+#         f.close()
+#         print "XML files aggregated into ",pwd,"/all_TA_doc.xml"
+
+#         #valid_tags = ['typespace','typedef','desc','options','parent','children','subtypes','enumtype','enumdef','memberspace','memberdef','type','methodspace','methoddef','prototype','desc','option','enumspace','enumdef']
+
+#         soup = BeautifulStoneSoup(xml)
+
+#         html = ""
+#         ####################
+#         #     MethodDef    #
+#         ####################
+
+#         MethodDef = soup.findAll("methoddef")
+        
+#         if len(MethodDef):
+            
+#             html += "<h2>Methods of " + highlight(soup.typedef.next.next.next).out[:-1] + "</h2>"
+#             for method in MethodDef:
+#                 html += "<div style=\"height=expression(document.body.clientHeight-150); overflow:auto; padding: 1px 0px 0px 8px; margin: 4px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-top-style: solid; border-top-color: #E0E0E0; border-right-color: #E0E0E0; border-bottom-color: #E0E0E0; border-left-color: #E0E0E0; border-right-style: none; border-bottom-style: none; border-left-style: none; background-color: #FAFAFA; font-family: Geneva, Arial, Helvetica, sans-serif; font-size: 12px;\">\n"
+#                 if method.desc:
+#                     method_desc = method.desc.string
+#                     html += method_desc
+#                 if method.prototype:
+#                     html += highlight(method.prototype.string, CppLexer(), HtmlFormatter())
+#                     html += Popen3("source-highlight -scpp | tail -n1 ", method.prototype.string).out[:-1]
+#                 html += "\n</div>"
+#         print html
+
+
