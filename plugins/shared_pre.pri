@@ -6,7 +6,6 @@
   error( "config.pri file is missing or could not be included!" )
 }
 TEMPLATE = lib
-CONFIG += plugin warn_off
 
 # local root, relative to a plugin src folder, which works whether this is PDPDIR or mypdpdir
 THIS_ROOT = ../..
