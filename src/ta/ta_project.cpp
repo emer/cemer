@@ -1260,7 +1260,7 @@ if (taMisc::proj_view_pref == -1) {
   	
 bool taRootBase::Startup_EnumeratePlugins() {
 #ifdef TA_OS_WIN
-  String plug_dir = "\\bin"; 
+  String plug_dir = "\\lib"; 
 #else
   String plug_dir = "/lib"; 
 #endif

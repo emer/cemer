@@ -15,8 +15,8 @@ win32 {
 
   contains( MSVC_TARGET, Debug ) {
     CONFIG += debug
-    eror("ONLY A TEST, delete this line")
-  } else contains( MSVC_TARGET, Release ) {
+  } else { contains( MSVC_TARGET, Release ) {
+    CONFIG += release
   } else {
     error("MSVC_TARGET variable must be defined as either Debug or Release")
   }
@@ -25,6 +25,7 @@ win32 {
   SYS_PLUGIN_DIR = $$(PDP4DIR)/plugins
   CONFIG_PRI = $$(PDP4DIR)/plugins/config.pri
   PDP_SYS_DIR = $$(PDP4DIR)
+  PDP4_INC_DIR = $${PDP4_DIR}/src
   MAKETA = $$(PDP4DIR)/bin/maketa
   
 #TODO: add our pdp project depends on Windows, ex ode etc.

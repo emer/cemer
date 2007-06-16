@@ -4757,6 +4757,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   m_pinned = false;
   m_rendered = false;
+  show_req = false;
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
