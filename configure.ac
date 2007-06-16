@@ -319,6 +319,8 @@ AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
 
+
+
 AC_SUBST([PL_LIBS],["`echo "$LIBS"`"])
 AC_SUBST([PL_prefix],["`echo "$prefix"`"])
 dnl: note hack, because gd exec_prefix subs out as "NONE" for some whacky reason
@@ -328,9 +330,11 @@ dnl replace the single $ with 2 $ so qmake subs at qmake time
 dnl replace whacky "datarootdir" nonsense too
 AC_SUBST([PL_bindir],["`echo "$bindir" | sed 's/\$/\$\$/g'`"])
 dnl dnw AC_SUBST([PL_bindir],[$(eval echo ${bindir})])
-AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\$/[$][$]'`"])
+AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\$/[$][$]/'`"])
 AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\$/\$\$/g'`"])
 AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
+
+includedir="${includedir}/pdp++"
 
 if test x"$bundle" = x"true"; then
   bundle_name="pdp-${PACKAGE_VERSION}.app"

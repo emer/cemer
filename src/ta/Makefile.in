@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -33,9 +34,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(top_srcdir)/Maketa.am $(top_srcdir)/Moc.am \
-	$(top_srcdir)/mfstamp.am
+DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(top_srcdir)/Maketa.am \
+	$(top_srcdir)/Moc.am $(top_srcdir)/mfstamp.am
 subdir = src/ta
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -201,6 +202,67 @@ SOURCES = $(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES) \
 DIST_SOURCES =  \
 	$(am__libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES_DIST) \
 	$(libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES)
+am__include_HEADERS_DIST = ta_def.h ta_platform.h ta_thread.h \
+	ta_string.h ta_stdef.h ta_variant.h ifont.h icolor.h \
+	ta_mtrnd.h ta_list.h ta_filer.h ta_type.h ta_type_constr.h \
+	ta_base.h ta_fontspec.h minmax.h ta_group.h ta_qtclipdata.h \
+	colorscale.h ta_dmem.h ta_script.h ta_viewspec.h ta_viewer.h \
+	ta_program.h ta_program_els.h ta_matrix.h ta_data.h ta_math.h \
+	ta_geometry.h ta_datatable.h ta_dataproc.h ta_dataanal.h \
+	ta_datagen.h ta_imgproc.h ta_virtenv.h ta_dump.h ta_defaults.h \
+	ta_plugin.h ta_plugin_p.h ta_project.h ta_qt.h ta_qtdata_def.h \
+	ta_qtdata.h ta_qtdialog.h ta_qttype_def.h ta_qttype.h \
+	ta_qtgroup.h ta_qtviewer.h ta_matrix_qt.h ta_qtclassbrowse.h \
+	ta_qtcursors.h ta_seledit.h ta_program_qt.h ta_time.h \
+	fun_lookup.h ta_data_extras.h t3node_so.h SoCapsule.h \
+	t3viewer.h colorbar_qt.h colorbar_so.h ta_datatable_qtso.h \
+	ta_datatable_so.h ta_virtenv_qtso.h ta_virtenv_so.h \
+	@abs_srcdir@/../taiqtso/igeometry.h \
+	@abs_srcdir@/ios-g++-3.1/streambuf.h \
+	@abs_srcdir@/ios-g++-3.1/iostream.h \
+	@abs_srcdir@/ios-g++-3.1/fstream.h \
+	@abs_srcdir@/ios-g++-3.1/sstream.h @abs_srcdir@/ta_def.h \
+	@abs_srcdir@/ta_platform.h @abs_srcdir@/ta_thread.h \
+	@abs_srcdir@/ta_string.h @abs_srcdir@/ta_stdef.h \
+	@abs_srcdir@/ta_variant.h @abs_srcdir@/ifont.h \
+	@abs_srcdir@/ta_mtrnd.h @abs_srcdir@/ta_list.h \
+	@abs_srcdir@/ta_filer.h @abs_srcdir@/icolor.h \
+	@abs_srcdir@/ta_type.h @abs_srcdir@/ta_base.h \
+	@abs_srcdir@/ta_dmem.h @abs_srcdir@/ta_fontspec.h \
+	@abs_srcdir@/minmax.h @abs_srcdir@/ta_group.h \
+	@abs_srcdir@/ta_qtclipdata.h @abs_srcdir@/colorscale.h \
+	@abs_srcdir@/ta_script.h @abs_srcdir@/ta_viewspec.h \
+	@abs_srcdir@/ta_viewer.h @abs_srcdir@/ta_program.h \
+	@abs_srcdir@/ta_program_els.h @abs_srcdir@/ta_matrix.h \
+	@abs_srcdir@/ta_math.h @abs_srcdir@/ta_geometry.h \
+	@abs_srcdir@/ta_data.h @abs_srcdir@/ta_datatable.h \
+	@abs_srcdir@/ta_dataproc.h @abs_srcdir@/ta_dataanal.h \
+	@abs_srcdir@/ta_datagen.h @abs_srcdir@/ta_imgproc.h \
+	@abs_srcdir@/ta_virtenv.h @abs_srcdir@/ta_dump.h \
+	@abs_srcdir@/ta_defaults.h @abs_srcdir@/ta_plugin.h \
+	@abs_srcdir@/ta_plugin_p.h @abs_srcdir@/ta_project.h \
+	@abs_srcdir@/ta_qt.h @abs_srcdir@/ta_qtdata_def.h \
+	@abs_srcdir@/ta_qtdata.h @abs_srcdir@/ta_qtdialog.h \
+	@abs_srcdir@/ta_qttype_def.h @abs_srcdir@/ta_qttype.h \
+	@abs_srcdir@/ta_qtviewer.h @abs_srcdir@/ta_matrix_qt.h \
+	@abs_srcdir@/ta_qtclassbrowse.h @abs_srcdir@/ta_qtgroup.h \
+	@abs_srcdir@/ta_seledit.h @abs_srcdir@/ta_program_qt.h \
+	@abs_srcdir@/ta_time.h @abs_srcdir@/fun_lookup.h \
+	@abs_srcdir@/ta_data_extras.h @abs_srcdir@/colorbar_qt.h \
+	@abs_srcdir@/../taiqtso/safeptr_so.h @abs_srcdir@/t3node_so.h \
+	@abs_srcdir@/SoCapsule.h @abs_srcdir@/t3viewer.h \
+	@abs_srcdir@/colorbar_so.h @abs_srcdir@/ta_datatable_qtso.h \
+	@abs_srcdir@/ta_datatable_so.h @abs_srcdir@/ta_virtenv_qtso.h \
+	@abs_srcdir@/ta_virtenv_so.h ta_TA_type.h ta_TA_inst.h
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(includedir)"
+includeHEADERS_INSTALL = $(INSTALL_HEADER)
+HEADERS = $(include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -250,6 +312,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCC_FALSE = @GCC_FALSE@
 GCC_TRUE = @GCC_TRUE@
+GREP = @GREP@
 INCLUDE_AMINCLUDE_AM = @INCLUDE_AMINCLUDE_AM@
 INC_AMINCLUDE = @INC_AMINCLUDE@
 INSTALL_DATA = @INSTALL_DATA@
@@ -330,13 +393,11 @@ WHEREAMI = @WHEREAMI@
 WINDOWS_FALSE = @WINDOWS_FALSE@
 WINDOWS_TRUE = @WINDOWS_TRUE@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -353,24 +414,31 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pdpexists = @pdpexists@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sim_ac_coin_configcmd = @sim_ac_coin_configcmd@
@@ -630,6 +698,7 @@ SRCS = \
 	$(SRCS_TAMISC_GUI) \
 	$(SRCS_TAMISC)
 
+include_HEADERS = $(HEADS) $(TAHEADS) ta_TA_type.h ta_TA_inst.h
 
 # Instruct automake to clean these files on make clean
 CLEANFILES = \
@@ -1417,6 +1486,23 @@ clean-libtool:
 distclean-libtool:
 	-rm -f libtool
 uninstall-info-am:
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	test -z "$(includedir)" || $(mkdir_p) "$(DESTDIR)$(includedir)"
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includedir)/$$f'"; \
+	  $(includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includedir)/$$f"; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(includedir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(includedir)/$$f"; \
+	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -1467,7 +1553,7 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	$(mkdir_p) $(distdir)/../..
+	$(mkdir_p) $(distdir)/../.. $(distdir)/@abs_srcdir@ $(distdir)/@abs_srcdir@/../taiqtso $(distdir)/@abs_srcdir@/ios-g++-3.1
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
@@ -1497,8 +1583,11 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
+	for dir in "$(DESTDIR)$(includedir)"; do \
+	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+	done
 install: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
@@ -1547,7 +1636,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-includeHEADERS
 
 install-exec-am:
 
@@ -1575,19 +1664,20 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am
+uninstall-am: uninstall-includeHEADERS uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
 	clean-libtool clean-local clean-noinstLTLIBRARIES ctags \
 	distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
-	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-info-am
+	install-data-am install-exec install-exec-am \
+	install-includeHEADERS install-info install-info-am \
+	install-man install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-includeHEADERS uninstall-info-am
 
 ${PROJNAME}_TA.ccx: ${TAHEADS}
 	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} ${TAHEADS}

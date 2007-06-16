@@ -55,6 +55,8 @@ HEADS =\
 	css_misc_funs.h \
 	$(HEADS_GUI)
 
+include_HEADERS = $(HEADS) $(TAHEADS)
+
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 

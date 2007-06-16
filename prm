@@ -133,7 +133,7 @@ class ReleaseManager:
 
     def LocalBuild(self, quiet=True, silent=False, configure_flags=None):
         """
-        Do a checkout of the software locally and try to build it.
+        Do a checkout of the software locally and try to build and install it.
         TODO: Need to be able to pass arbitrary configure flags  --configure-flags=
         TODO: Some of these commands produce so much output that we will never
               want to see it all in one chunk, since it is accumulated while
@@ -143,6 +143,7 @@ class ReleaseManager:
         TODO: When prm is run from the cron, whose environment will it inherit?!
               We need to have these in a common location, such as /etc/profile.
               This could be problemantic, though, because randy uses csh. 
+        TODO: What about a lock file? Two instances of this simultaneously would be bad
         """
 
         self.LocalCommand("if test -d /tmp/pdp4.0;then rm -fr /tmp/pdp4.0;fi")
@@ -150,8 +151,9 @@ class ReleaseManager:
         self.revision = Popen3("svn info /tmp/pdp4.0 | grep ^Rev").out[:-1]
         self.LocalCommand("cd /tmp/pdp4.0")
         self.LocalCommand("make clean")
-        self.LocalCommand("./configure")
+        self.LocalCommand("./configure --prefix=/tmp/pdp4.0")
         self.LocalCommand("make -j 6") # TODO: Ability to specify number of jobs
+        self.LocalCommand("make install")
         self.errors += "\n" + strftime("%I:%M:%S") + '> '
         return (self.status, self.errors, self.revision, self.logfile)
 

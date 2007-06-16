@@ -33,6 +33,8 @@ SRCS =\
 	mta_gendoc.cpp \
 	maketa.cpp
 
+include_HEADERS = $(HEADS) $(TAHEADS)
+
 include $(top_srcdir)/mfstamp.am
 
 make_mta_parse:

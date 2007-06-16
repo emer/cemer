@@ -75,6 +75,9 @@ SRCS =\
 	pdp_ti.cpp \
 	v3_compat.cpp
 
+
+include_HEADERS = $(HEADS) $(TAHEADS) pdp_TA_type.h pdp_TA_inst.h
+
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am

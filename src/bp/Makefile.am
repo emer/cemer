@@ -23,6 +23,8 @@ SRCS=\
 	rbp.cpp  \
 	bp_v3_compat.cpp
 
+include_HEADERS = $(HEADS) $(TAHEADS) bp_TA_type.h bp_TA_inst.h
+
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 

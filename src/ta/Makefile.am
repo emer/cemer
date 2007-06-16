@@ -256,6 +256,8 @@ SRCS =\
 	$(SRCS_TAMISC_GUI) \
 	$(SRCS_TAMISC)
 
+include_HEADERS = $(HEADS) $(TAHEADS) ta_TA_type.h ta_TA_inst.h
+
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am

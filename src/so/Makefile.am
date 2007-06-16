@@ -29,6 +29,8 @@ SRCS=\
 	zsh.cpp \
 	so_v3_compat.cpp
 
+include_HEADERS = $(HEADS) $(TAHEADS) so_TA_type.h so_TA_inst.h
+
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 

@@ -72,6 +72,7 @@ SRCS =\
 	itextbrowser.moc.cpp \
 	taiqtso_ti.cpp
 
+include_HEADERS = $(HEADS) $(TAHEADS)
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
