@@ -213,6 +213,7 @@ if test x"$debug" = x"true"; then
   AC_CACHE_SAVE
 else
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Disabled])
+  AC_SUBST([PL_DEBUG],[release])
   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -O2, except TA files which are -g -O0])  
   AC_SUBST([OPT_LEVEL],["-g -O2"])
 fi
@@ -317,6 +318,17 @@ AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
+
+AC_SUBST([PL_LIBS],["`echo "$LIBS"`"])
+AC_SUBST([PL_prefix],["`echo "$prefix"`"])
+dnl: note hack, because gd exec_prefix subs out as "NONE" for some whacky reason
+dnl AC_SUBST([PL_exec_prefix],["`echo "$exec_prefix"`"])
+AC_SUBST([PL_exec_prefix],["`echo "$prefix"`"])
+dnl replace the single $ with 2 $ so qmake subs at qmake time
+AC_SUBST([PL_bindir],["`echo "$bindir" | sed 's/\${exec_prefix}/$${exec_prefix}/g'`"])
+AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\${prefix}/$${prefix}/g'`"])
+AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\${prefix}/$${prefix}/g'`"])
+AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
 
 if test x"$bundle" = x"true"; then
   bundle_name="pdp-${PACKAGE_VERSION}.app"

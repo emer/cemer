@@ -2,9 +2,7 @@ PLUGINS
 
 Build Includes, and folders
 
-* user plugins will need to have the sys location stamped into
-  the sys include file -- do this on startup
-  
+ 
 Configure
 
   
@@ -12,10 +10,13 @@ Build
 
 Install
 
-Dependencies
+  
+User Plugins
 
-* when configure changes, we really want to invalidate all the deps,
-  so that the plugins rebuild
+* need to keep the stub .pri files up to date with the correct path to 
+  the current version of pdp
+  
+* need to copy the plugins stuff when making the user folder
   
 WIZARD
 

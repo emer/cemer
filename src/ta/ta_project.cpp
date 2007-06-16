@@ -973,10 +973,9 @@ bool taRootBase::Startup_InitTA_folders() {
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
   
-/* NOTE: in development, binaries can tend to get created deep
-   inside the source code structure -- therefore, we give priority
-   to the PDP4DIR variable first, before checking dynamically.
-   Below, we list the likely or supported folder structure.
+/* NOTE: we give priorityto the PDP4DIR variable first, for
+   development purposes. Otherwise, we use the heuristic search
+   based on the platform, and as a last resort, prompt user.
 */
   app_dir = getenv("PDP4DIR");
   if (app_dir.nonempty() && isAppDir(app_dir))
@@ -992,7 +991,14 @@ bool taRootBase::Startup_InitTA_folders() {
     app_dir = app_dir.at(0, app_dir.length() - 4);
     if (isAppDir(app_dir)) goto have_app_dir;
   }
-#elif defined(TA_OS_MAC)
+#else // Mac and Unix -- defaults
+  // this is the normal install default, and possible alternate
+  app_dir = "/usr/local/share/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/opt/local/share/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+
+# if defined(TA_OS_MAC)
 /*
   {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
   {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
@@ -1019,7 +1025,7 @@ bool taRootBase::Startup_InitTA_folders() {
     if (isAppDir(app_dir)) goto have_app_dir;
   }
     
-#else // non-Mac Unix
+# else // non-Mac Unix
 /*
   {app_dir}/bin
 */
@@ -1027,22 +1033,11 @@ bool taRootBase::Startup_InitTA_folders() {
     app_dir = app_dir.at(0, app_dir.length() - 4);
     if (isAppDir(app_dir)) goto have_app_dir;
   }
-#endif
+# endif // non-Mac Unix-specific
 
-  // common code for failure to grok the app path
-  app_dir = QCoreApplication::applicationDirPath();
-  // first, maybe it is actually the exe's folder itself? -- probe with known subfolder
-  if (isAppDir(app_dir)) goto have_app_dir;
-  
-  // is it the current directory? -- probe with known subfolder
-  app_dir = QDir::currentPath();
-  if (isAppDir(app_dir)) goto have_app_dir;
-  
-#ifdef TA_OS_UNIX
-  // on Unix platforms, check the usually folders
+// continue with Mac/Unix tests
+  // on Unix platforms, check the other plausible prefix folders
   app_dir = "/usr/local/" + taMisc::default_app_install_folder_name;
-  if (isAppDir(app_dir)) goto have_app_dir;
-  app_dir = "/usr/local/share/" + taMisc::default_app_install_folder_name;
   if (isAppDir(app_dir)) goto have_app_dir;
   app_dir = "/usr/share/" + taMisc::default_app_install_folder_name;
   if (isAppDir(app_dir)) goto have_app_dir;
@@ -1050,8 +1045,27 @@ bool taRootBase::Startup_InitTA_folders() {
   if (isAppDir(app_dir)) goto have_app_dir;
   app_dir = "/usr/share/src/" + taMisc::default_app_install_folder_name;
   if (isAppDir(app_dir)) goto have_app_dir;
-#endif
+  // these are more usual on Mac or BSD-ish ones:
+  app_dir = "/opt/local/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/opt/share/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/opt/local/src/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
+  app_dir = "/opt/share/src/" + taMisc::default_app_install_folder_name;
+  if (isAppDir(app_dir)) goto have_app_dir;
 
+#endif // all modality
+
+  // common code for failure to grok the app path
+  app_dir = QCoreApplication::applicationDirPath();
+  // first, maybe it is actually the exe's folder itself?
+  if (isAppDir(app_dir)) goto have_app_dir;
+  
+  // is it the current directory? -- probe with known subfolder
+  app_dir = QDir::currentPath();
+  if (isAppDir(app_dir)) goto have_app_dir;
+  
 #ifdef DEBUG
   cerr << "NOTE: default app_dir logic did not find the app_dir.\n";
 #endif  
@@ -1130,6 +1144,24 @@ bool taRootBase::Startup_InitTA_getMissingAppDir() {
   return false;
 }
 
+bool MakeUserPluginConfigProxy(const String& uplugin_dir,
+  const String& fname) 
+{
+  String f(
+"tmpPDP4_DIR = $(PDP4DIR)\n"
+"if isEmpty( $${tmpPDP4_DIR} ) {\n"
+"  tmpPDP4_DIR = " + taMisc::app_dir + "\n"
+"}\n"
+"!include($${tmpPDP4_DIR}/plugins/" + fname + ")  {\n"
+"  error(\"could not find <pdp4dir>/plugins/" + fname + "\")\n"
+"}\n");
+  ofstream ofs(uplugin_dir + "/" + fname, ios_base::out | ios_base::trunc);
+  if (!ofs.is_open()) return false;
+  ofs << f;
+  ofs.close();
+  return true;
+}
+
 bool taRootBase::Startup_InitTA_initUserAppDir() {
   // make sure the folder exists
   // make sure the standard user subfolders exist:
@@ -1148,8 +1180,27 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   // make user css_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
-  // TODO: make user plugin folders
   
+  // make the user plugin folder, and assert the proxy files
+  // we redo those every time, in case app has been upgraded
+  String uplugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
+  dir.mkdir(uplugin_dir);
+  taRootBase* inst = instance();
+  if (inst->TestError(
+    !MakeUserPluginConfigProxy(uplugin_dir, "config.pri"),
+   "Startup_InitTA_initUserAppDir", "can't make config.pri")) return false;
+  if (inst->TestError(
+    !MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri"),
+   "Startup_InitTA_initUserAppDir", "can't make shared_pre.pri")) return false;
+  if (inst->TestError(
+    !MakeUserPluginConfigProxy(uplugin_dir, "shared.pri"),
+   "Startup_InitTA_initUserAppDir", "can't make shared.pri")) return false;
+  // copy the Makefile
+  QFile::remove(uplugin_dir + "/Makefile");
+  if (inst->TestError(
+    !QFile::copy(taMisc::app_dir + "/plugins/Makefile",
+      uplugin_dir + "/Makefile"),
+   "Startup_InitTA_initUserAppDir", "can't copy plugins/Makefile")) return false;
   return true;
 }
 

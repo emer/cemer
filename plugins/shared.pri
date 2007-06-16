@@ -17,7 +17,7 @@ win32 {
   /I $$(PDP4DIR)\\build\\$${MSVC_FOLDER} \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 } else {
-  maketa.commands = $$(PDP4DIR)/src/maketa/./maketa -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
+  maketa.commands = $${MAKETA} -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 }
 maketa.depends = $${CONFIG_PRI} $${MAKETA_HEADERS}
 
@@ -33,4 +33,5 @@ QMAKE_CLEAN =\
 	$${TARGET}_TA_type.h \
 	*~ \
 	\#*
-
+	
+warning($${CONFIG})
