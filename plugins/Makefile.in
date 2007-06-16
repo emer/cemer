@@ -19,19 +19,7 @@ build:
 	@echo " "
 	@echo "** Doing ($@) in all plugin directories**"
 	@echo " "
-	@for i in tacss/* ;\
-	do \
-	  if [ -d $$i ] ;\
-	  then \
-	    echo $$i; \
-	    $(CD) $$i;\
-	    if [ -f "NOBUILD" ]; then continue; fi; \
-	    if ( $(MAKE); ) then echo "* Successfully ran $@ in $$i";\
-	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../../;\
-	  fi; \
-	done
-	@for i in pdp/* ;\
+	@for i in ./* ;\
 	do \
 	  if [ -d $$i ] ;\
 	  then \
@@ -52,7 +40,7 @@ clean:
 	@echo " "
 	@echo "** Doing ($@) in all plugin directories**"
 	@echo " "
-	@for i in tacss/* ;\
+	@for i in ./* ;\
 	do \
 	  if [ -d $$i ] ;\
 	  then \
@@ -60,17 +48,6 @@ clean:
 	    $(CD) $$i;\
 	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
 	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../../;\
-	  fi; \
-	done
-	@for i in pdp/* ;\
-	do \
-	  if [ -d $$i ] ;\
-	  then \
-	    echo $$i; \
-	    $(CD) $$i;\
-	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
-	    else  echo "*** Could not make $@ in $$i"; fi;\
 	    $(CD) ../../;\
 	  fi; \
 	done
@@ -82,19 +59,7 @@ qmake:
 	@echo " "
 	@echo "** Doing ($@) in all plugin directories**"
 	@echo " "
-	@for i in tacss/* ;\
-	do \
-	  if [ -d $$i ] ;\
-	  then \
-	    echo $$i; \
-	    $(CD) $$i;\
-	    if [ -f "NOBUILD" ]; then continue; fi; \
-	    if ( $(QMAKE); ) then echo "* Successfully ran $@ in $$i";\
-	    else echo "*** Could not make $@ in $$i"; fi;\
-	    $(CD) ../../;\
-	  fi; \
-	done
-	@for i in pdp/* ;\
+	@for i in ./* ;\
 	do \
 	  if [ -d $$i ] ;\
 	  then \
@@ -115,8 +80,7 @@ install:
 	@echo "** Doing ($@) in all plugin directories**"
 	@echo " "
 	$(MKDIR) $(PDP_SYS_DIR)/lib
-	$(CP) -Ru ../lib/plugins_pdp  $(PDP_SYS_DIR)/lib
-	$(CP) -Ru ../lib/plugins_tacss  $(PDP_SYS_DIR)/lib
+	$(CP) -Ru ../lib/plugins  $(PDP_SYS_DIR)/lib
 	@echo " "
 	@echo "** Make $@ successfully completed! **"
 	@echo " "
