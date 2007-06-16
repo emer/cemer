@@ -24,3 +24,18 @@ void HelloBase::Hello() {
   taMisc::Error("Hello World!");
 }
 
+FloatTDCoord ftdc_plus(const FloatTDCoord& a, const FloatTDCoord& b) {
+  FloatTDCoord rv; 
+  rv.x = a.x + b.x; rv.y = a.y + b.y;  rv.z = a.z + b.z;
+  return rv;
+}
+
+void HelloBase::AddCoords() {
+  FloatTDCoord t(a);
+ // t = a;
+  t = ftdc_plus(a, b); // demonstrates use of temporary objects
+  t = a + b; // demonstrates use of temporary objects
+  c = t;
+  
+  UpdateAfterEdit(); // updates any associate members, and refreshes display
+}

@@ -27,14 +27,16 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies=" qtmain.lib QtCore4.lib ta.lib"
-				OutputFile="..\..\..\..\lib\plugins\hw.dll"
+				OutputFile="$(ConfigurationName)\hw.dll"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="FALSE"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				Description="Deploy plugin to runtime location"
+				CommandLine="copy $(ConfigurationName)\hw.dll ..\..\..\..\lib\plugins\hw.dll"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -70,14 +72,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ta_debug.lib qtmaind.lib QtCored4.lib"
-				OutputFile="..\..\..\..\lib\plugins\debug\hw.dll"
+				OutputFile="$(ConfigurationName)\hw.dll"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="copy $(ConfigurationName)\hw.dll ..\..\..\..\lib\plugins\debug\hw.dll"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -167,15 +170,6 @@
 				RelativePath="..\..\..\..\plugins\HelloWorld\hw_TA_type.h">
 			</File>
 			<File
-				RelativePath=".\GeneratedFiles\Release\moc_hw.cpp">
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="TRUE">
-					<Tool
-						Name="VCCLCompilerTool"/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\GeneratedFiles\Debug\moc_hw.cpp">
 				<FileConfiguration
 					Name="Release|Win32"
@@ -189,6 +183,15 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\GeneratedFiles\Release\moc_hw.cpp">
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
 				</FileConfiguration>
 			</File>
 		</Filter>

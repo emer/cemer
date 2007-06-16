@@ -117,9 +117,7 @@ public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
   inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
-  void Copy(const y& cp) { bool ok = true; \
-    CanCopy_impl((const taBase*)&cp, true, ok, true); \
-    if (ok) Copy_impl(cp);} \
+  void Copy(const y& cp) { Copy_impl(cp);} \
   y& operator=(const y& cp) { Copy(cp); return *this;}
 
 #define TA_TMPLT_BASEFUNS_MAIN_(y,T) \
@@ -141,9 +139,7 @@ public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
   inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
-  void Copy(const y<T>& cp) {  bool ok = true; \
-    CanCopy_impl((const taBase*)&cp, true, ok, true); \
-    if (ok) Copy_impl(cp);} \
+  void Copy(const y<T>& cp) { Copy_impl(cp);} \
   y<T>& operator=(const y<T>& cp) { Copy(cp); return *this; }
 
 #define TA_TMPLT2_BASEFUNS_MAIN_(y,T,U) \
@@ -165,9 +161,7 @@ public: \
   static TypeDef* StatTypeDef(int) { return &TA_##y; } \
   TypeDef* GetTypeDef() const { return &TA_##y; } \
   inline bool Copy(const taBase* cp) {return taBase::Copy(cp);} \
-  void Copy(const y<T,U>& cp) {  bool ok = true; \
-    CanCopy_impl((const taBase*)&cp, true, ok, true); \
-    if (ok) Copy_impl(cp);} \
+  void Copy(const y<T,U>& cp) { Copy_impl(cp);} \
   y<T,U>& operator=(const y<T,U>& cp) { Copy(cp); return *this; }
 
 // common defs used to make instances: Cloning and Tokens
@@ -187,19 +181,33 @@ public: \
   TAPtr MakeTokenAry(int n){ return (TAPtr)(new y<T,U>[n]); }  
 
 // ctors -- one size fits all (where used) thanks to Initialize__
+#ifndef __MAKETA__
 #define TA_BASEFUNS_CTORS_(y) \
   y () { Initialize__(); } \
-  y (const y& cp) { Initialize__(); if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp);}
-
+  y (const y& cp):inherited(cp) { Initialize__(); Copy__(cp);}
+  
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   y () { Initialize__(); } \
-  y (const y<T>& cp) { Initialize__(); \
-   if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp); } \
+  y (const y<T>& cp):inherited(cp) { Initialize__(); Copy__(cp); }
 
 #define TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
   y () { Initialize__(); } \
-  y (const y<T,U>& cp) { Initialize__(); \
-   if (CanCopy_ctor((TAPtr)&cp)) Copy__(cp); } \
+  y (const y<T,U>& cp):inherited(cp) { Initialize__(); Copy__(cp); }
+  
+#else
+
+#define TA_BASEFUNS_CTORS_(y) \
+  y () { Initialize__(); } \
+  y (const y& cp) { Initialize__(); Copy__(cp);}
+  
+#define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
+  y () { Initialize__(); } \
+  y (const y<T>& cp) { Initialize__(); Copy__(cp); }
+
+#define TA_TMPLT2_BASEFUNS_CTORS_(y,T,U) \
+  y () { Initialize__(); } \
+  y (const y<T,U>& cp) { Initialize__(); Copy__(cp); }
+#endif
 
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
@@ -556,7 +564,7 @@ public:
   // #IGNORE static version to make an array of tokens of the given type
 
   taBase()			{ Register(); Initialize(); }
-  taBase(taBase& cp)		{ Register(); Initialize(); Copy_impl(cp); }
+  taBase(const taBase& cp)		{ Register(); Initialize(); Copy_impl(cp); }
   virtual ~taBase() 		{ Destroy(); } //
 
   virtual TAPtr		Clone()			{ return new taBase(*this); } // #IGNORE

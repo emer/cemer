@@ -104,7 +104,7 @@ class SoTexture2Transform; // #IGNORE
 
 class TA_API VETexture : public taNBase {
   // #NO_UPDATE_AFTER ##CAT_VirtEnv texture mapping of an image onto a 3d object -- defined as a shared resource in the VEWorld that individual objects can point to
-INHERITED(taBase)
+INHERITED(taNBase)
 public:
   enum Mode {
     MODULATE,			// texture color is multiplied by the underlying object color, result is shaded by lighting

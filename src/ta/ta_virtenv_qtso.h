@@ -80,7 +80,7 @@ protected:
 
 class TA_API VEObjectView: public T3DataViewPar {
   // view of one object: a group of bodies
-INHERITED(T3DataView)
+INHERITED(T3DataViewPar)
 friend class VEWorldView;
 public:
   String	name;		// name of body this one is associated with
@@ -134,7 +134,7 @@ protected:
 
 class TA_API VESpaceView: public T3DataViewPar {
   // view of one space
-INHERITED(T3DataView)
+INHERITED(T3DataViewPar)
 friend class VEWorldView;
 public:
   String	name;		// name of body this one is associated with
