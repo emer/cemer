@@ -2248,6 +2248,7 @@ Program* Program::MakeTemplate() {
   
 bool Program::stop_req = false;
 bool Program::step_mode = false;
+Program_Group* Program::step_gp = NULL;
 
 void Program::Initialize() {
   run_state = NOT_INIT;
@@ -2466,6 +2467,7 @@ int Program::Cont_impl() {
 void Program::Run() {
   stop_req = false;
   step_mode = false;
+  step_gp = NULL;
   taMisc::Busy();
   setRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -2498,10 +2500,11 @@ void Program::ShowRunError() {
 void Program::Step() {
   if(!prog_gp) return;
   if(!prog_gp->step_prog) {
-    prog_gp->step_prog = prog_gp->Peek();
+    prog_gp->step_prog = prog_gp->Peek(); // get last guy
   }
   stop_req = false;
   step_mode = true;
+  step_gp = prog_gp;
   taMisc::Busy();
   setRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -2513,6 +2516,7 @@ void Program::Step() {
       QString("Operation Failed"));
   }
   step_mode = false;
+  step_gp = NULL;
   if(stop_req) {
     setRunState(STOP);
   }
@@ -2559,7 +2563,7 @@ bool Program::StopCheck() {
     Stop_impl();
     return true;
   }
-  if((step_mode) && prog_gp && (prog_gp->step_prog.ptr() == this)) {
+  if((step_mode) && step_gp && (step_gp->step_prog.ptr() == this)) {
     stop_req = true;			// stop everyone else
     Stop_impl();			// time for us to stop
     return true;

@@ -19,6 +19,9 @@ Other Algorithms:
 ------------
 current:
 
+* projection from should be a smartref, not a raw pointer!!  also, copy of it seems
+to not update the from display field..
+
 * leabra test all progp
 
 * have init values of wt_scale parameters prior to adapting?? yes

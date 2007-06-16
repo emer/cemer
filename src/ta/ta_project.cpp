@@ -309,23 +309,39 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   
 }
 
-DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
-  DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
-  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
-  if(!nw_nm.empty())
-    rval->name = nw_nm;
-  if(msg)
-    taMisc::Info("Note: created new data table named:", rval->name, "in .data.AnalysisData");
-  return rval;
-}
-
 DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("InputData");
   DataTable* rval = dgp->NewEl(1, &TA_DataTable);
-  if(!nw_nm.empty())
+  if(!nw_nm.empty()) {
     rval->name = nw_nm;
+    rval->DataChanged(DCR_ITEM_UPDATED);
+  }
   if(msg)
     taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
+  return rval;
+}
+
+DataTable* taProject::GetNewOutputDataTable(const String& nw_nm, bool msg) {
+  DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("OutputData");
+  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  if(!nw_nm.empty()) {
+    rval->name = nw_nm;
+    rval->DataChanged(DCR_ITEM_UPDATED);
+  }
+  if(msg)
+    taMisc::Info("Note: created new data table named:", rval->name, "in .data.OutputData");
+  return rval;
+}
+
+DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
+  DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
+  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  if(!nw_nm.empty()) {
+    rval->name = nw_nm;
+    rval->DataChanged(DCR_ITEM_UPDATED);
+  }
+  if(msg)
+    taMisc::Info("Note: created new data table named:", rval->name, "in .data.AnalysisData");
   return rval;
 }
 

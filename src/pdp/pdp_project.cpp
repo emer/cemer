@@ -278,9 +278,7 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
 void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!data_table) {
-    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    data_table = dgp->NewEl(1, &TA_DataTable); // todo: should be in InputData
-    data_table->name = "StdInputData";
+    data_table = proj->GetNewInputDataTable("StdInputData");
   }
   if(!net) {
     net = pdpMisc::GetDefNetwork(GET_MY_OWNER(ProjectBase));
@@ -329,11 +327,8 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 
 void Wizard::StdOutputData() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("OutputData");
-  DataTable* trl_data = dgp->NewEl(1, &TA_DataTable);
-  DataTable* epc_data = dgp->NewEl(1, &TA_DataTable);
-  trl_data->SetName("TrialOutputData");
-  epc_data->SetName("EpochOutputData");
+  DataTable* trl_data = proj->GetNewOutputDataTable("TrialOutputData");
+  DataTable* epc_data = proj->GetNewOutputDataTable("EpochOutputData");
 }
 
 //////////////////////////////////

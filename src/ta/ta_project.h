@@ -162,10 +162,12 @@ public:
   virtual void		OpenNewProjectBrowser(String proj_browser_name = "(default name)");
     // #MENU #MENU_ON_View #MENU_CONTEXT
 
-  virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);
-  // createa a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual DataTable*	GetNewInputDataTable(const String& nw_nm="", bool msg=false);
   // createa a new data table in data.InputData (used for data generation functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
+  virtual DataTable*	GetNewOutputDataTable(const String& nw_nm="", bool msg=false);
+  // createa a new data table in data.OutputData (used for monitoring and logging functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
+  virtual DataTable*	GetNewAnalysisDataTable(const String& nw_nm="", bool msg=false);
+  // createa a new data table in data.AnalysisData (used for various data processing and graphing functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
   virtual taBase*	FindMakeNewDataProc(TypeDef* typ, const String& nm);
   // find existing data processing object of given type, or else make one and give it nm
 

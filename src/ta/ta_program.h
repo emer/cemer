@@ -877,9 +877,11 @@ public:
   RunState		run_state;
   // #READ_ONLY #NO_SAVE this program's run state
   static bool		stop_req;
-  // #READ_ONLY a stop was requested by someone -- stop at next chance
+  // #READ_ONLY #NO_SAVE a stop was requested by someone -- stop at next chance
   static bool		step_mode;
-  // #READ_ONLY the program was run in step mode -- check for stepping
+  // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
+  static Program_Group*	step_gp;
+  // #IGNORE the program group in which the Step button was pressed -- only other programs in this group do single-stepping
   
   String		tags;
   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this program -- should be listed in hierarchical order, with most important/general tags first, as this is how they will be sorted in the program library
