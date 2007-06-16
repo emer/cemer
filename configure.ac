@@ -6,9 +6,9 @@ dnl
 dnl  Notes on library and package versioning:
 dnl  * Package: 
 dnl    * The binary version consists of major, minor, point and special
-dnl      versions. Autoconf will append the
+dnl      versions, set via the command-line. Autoconf will append the
 dnl      version to the package name. The full version is available in
-dnl      makefiles and the c++ source via PACKAGE_VERSION
+dnl      makefiles and the c++ source via BIN_VERSION
 dnl 
 dnl  * Library : 
 dnl    * The libraries are versioned according to Libtool's
@@ -23,18 +23,17 @@ dnl      * Set age to 0 if interfaces have been removed
 dnl 
 dnl  [1] http://www.gnu.org/software/libtool/manual.html Versioning
 dnl
+dnl Subst variables that start with PL_ are used in the plugin configuration
 
 # Set binary version here. The format allows for 99.99.99abc
-AC_INIT([pdp],[4.0.3rc1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
+AC_INIT([pdp],[4.0.2b1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
 # Change both of these
-LIB_VERSION=1:0:0   #Set library version here
-LIB_VERSION_2=1.0.0
+LIB_VERSION=0:0:0   #Set library version here
+LIB_VERSION_2=0.0.0
 
 AC_SUBST([PACKAGE_VERSION])
 AC_SUBST([LIB_VERSION])
 AC_SUBST([LIB_VERSION_2])
-
-dnl Subst variables that start with PL_ are used in the plugin configuration
 AC_SUBST([PL_LIB_VER],[${PACKAGE_VERSION}])
 AH_TEMPLATE([LIB_VERSION],[Library Version])
 AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
@@ -326,9 +325,11 @@ dnl: note hack, because gd exec_prefix subs out as "NONE" for some whacky reason
 dnl AC_SUBST([PL_exec_prefix],["`echo "$exec_prefix"`"])
 AC_SUBST([PL_exec_prefix],["`echo "$prefix"`"])
 dnl replace the single $ with 2 $ so qmake subs at qmake time
-AC_SUBST([PL_bindir],["`echo "$bindir" | sed 's/\${exec_prefix}/$${exec_prefix}/g'`"])
-AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\${prefix}/$${prefix}/g'`"])
-AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\${prefix}/$${prefix}/g'`"])
+dnl replace whacky "datarootdir" nonsense too
+AC_SUBST([PL_bindir],["`echo "$bindir" | sed 's/\$/\$\$/g'`"])
+dnl dnw AC_SUBST([PL_bindir],[$(eval echo ${bindir})])
+AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\$/[$][$]'`"])
+AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\$/\$\$/g'`"])
 AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
 
 if test x"$bundle" = x"true"; then

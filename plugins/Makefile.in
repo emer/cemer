@@ -4,13 +4,19 @@ CP = cp
 QMAKE = $(QTDIR)/bin/qmake
 
 # standard autotools prefixes from configure
-prefix = @PL_prefix@
-datadir = @PL_datadir@
-includedir = @PL_includedir@
+#prefix = @PL_prefix@
+#exec_prefix = @PL_exec_prefix@
+#datadir = @PL_datadir@
+#includedir = @PL_includedir@
+
+  prefix = /usr/local
+  bindir = ${prefix}/bin
+  datadir = ${prefix}/share
+  includedir = ${prefix}/include
 
 # we use config.pri as a dependent to trigger rebuild of things when configure changes
 CONFIG_PRI = @abs_srcdir@/config.pri
-PDP_SYS_DIR = ${datadir}/pdp++-@PL_LIB_VER@
+PDP_SYS_DIR = ${datadir}/pdp++
 
 all: qmake build
 
