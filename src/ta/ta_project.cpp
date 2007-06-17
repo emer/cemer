@@ -1196,31 +1196,42 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   // make user css_lib
   dir.mkdir(taMisc::user_app_dir + PATH_SEP + "css_lib");
-  
-  // make the user plugin folder, and assert the proxy files
-  // we redo those every time, in case app has been upgraded
-  // but don't fail if this can't be done -- just warn user
-  String uplugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
-  bool err = !dir.mkdir(uplugin_dir);
-  taRootBase* inst = instance();
-  err = err || inst->TestError(
-    !MakeUserPluginConfigProxy(uplugin_dir, "config.pri"),
-   "Startup_InitTA_initUserAppDir", "can't make config.pri");
-  err = err || inst->TestError(
-    !MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri"),
-   "Startup_InitTA_initUserAppDir", "can't make shared_pre.pri");
-  err = err || inst->TestError(
-    !MakeUserPluginConfigProxy(uplugin_dir, "shared.pri"),
-   "Startup_InitTA_initUserAppDir", "can't make shared.pri");
-  // copy the Makefile
-  QFile::remove(uplugin_dir + "/Makefile");
-  err = err || inst->TestError(
-    !QFile::copy(taMisc::app_dir + "/plugins/Makefile",
-      uplugin_dir + "/Makefile"),
-   "Startup_InitTA_initUserAppDir", "can't copy plugins/Makefile");
-  if (err) {
-    taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running pdp++ but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
-  }
+  // plugin making stuff should only run when interactive
+  if (taMisc::use_gui && (taMisc::dmem_proc == 0)) {
+    // make the user plugin folder, and assert the proxy files
+    // we redo those every time, in case app has been upgraded
+    // but don't fail if this can't be done -- just warn user
+    String uplugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
+    bool err = false;
+    String msg;
+    if (!dir.exists(uplugin_dir) && !dir.mkdir(uplugin_dir)) {
+      err = true;
+      msg += "Startup_InitTA_initUserAppDir: can't make <pdp++_user>/plugins\n";
+    }
+    if (!MakeUserPluginConfigProxy(uplugin_dir, "config.pri")) {
+      err = true;
+      msg += "Startup_InitTA_initUserAppDir: can't make config.pri\n";
+    }
+    if (!MakeUserPluginConfigProxy(uplugin_dir, "shared_pre.pri")) {
+      err = true;
+      msg += "Startup_InitTA_initUserAppDir: can't make shared_pre.pri\n";
+    }
+    if (!MakeUserPluginConfigProxy(uplugin_dir, "shared.pri")) {
+      err = true;
+      msg += "Startup_InitTA_initUserAppDir: can't make shared.pri\n";
+    }
+    // copy the Makefile
+    QFile::remove(uplugin_dir + "/Makefile");
+    if (!QFile::copy(taMisc::app_dir + "/plugins/Makefile",
+        uplugin_dir + "/Makefile")) {
+      err = true;
+      msg += "Startup_InitTA_initUserAppDir: can't copy plugins/Makefile\n";
+    }
+    if (err) {
+      taMisc::Warning(msg);
+      taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running pdp++ but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
+    }
+  } // gui mode
   return true;
 }
 

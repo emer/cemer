@@ -27030,6 +27030,8 @@ LIBS="`echo "$LIBS" | tr " " "\n" | awk '!seen[$0]++' | tr "\n" " "`"
 
 
 
+
+
 PL_LIBS="`echo "$LIBS"`"
 
 PL_prefix="`echo "$prefix"`"
@@ -27038,12 +27040,14 @@ PL_exec_prefix="`echo "$prefix"`"
 
 PL_bindir="`echo "$bindir" | sed 's/\$/\$\$/g'`"
 
-PL_datadir="`echo "$datadir" | sed 's/\$/$$'`"
+PL_datadir="`echo "$datadir" | sed 's/\$/$$/'`"
 
 PL_includedir="`echo "$includedir" | sed 's/\$/\$\$/g'`"
 
 PL_abs_top_builddir="`echo "$abs_top_builddir"`"
 
+
+includedir="${includedir}/pdp++"
 
 if test x"$bundle" = x"true"; then
   bundle_name="pdp-${PACKAGE_VERSION}.app"
