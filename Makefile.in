@@ -137,6 +137,7 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GCC_FALSE = @GCC_FALSE@
 GCC_TRUE = @GCC_TRUE@
+GREP = @GREP@
 INCLUDE_AMINCLUDE_AM = @INCLUDE_AMINCLUDE_AM@
 INC_AMINCLUDE = @INC_AMINCLUDE@
 INSTALL_DATA = @INSTALL_DATA@
@@ -217,13 +218,11 @@ WHEREAMI = @WHEREAMI@
 WINDOWS_FALSE = @WINDOWS_FALSE@
 WINDOWS_TRUE = @WINDOWS_TRUE@
 YACC = @YACC@
+YFLAGS = @YFLAGS@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -240,24 +239,31 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
+pdfdir = @pdfdir@
 pdpexists = @pdpexists@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sim_ac_coin_configcmd = @sim_ac_coin_configcmd@
@@ -862,12 +868,12 @@ spec.tmpl.in:
 # You net to export/setenv ${DEBEMAIL}
 deb:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME}-nightly --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/archives/binary --requires=pdp-qt,pdp-coin,pdp-soqt --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/archives/binary --requires=pdp-qt,pdp-coin,pdp-soqt,libode0c2,libode0-dev,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
 	dpkg-scanpackages /usr/local/apt/archives/binary /dev/null | gzip -9c > /usr/local/apt/archives/binary/Packages.gz
 
 rpm2:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME}-nightly --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=pdp-qt,pdp-coin,pdp-soqt --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=pdp-qt,pdp-coin,pdp-soqt,ode,ode-devel --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
 	createrepo /usr/local/yum
 
 packages: deb rpm2
