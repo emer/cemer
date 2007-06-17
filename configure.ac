@@ -29,7 +29,7 @@ dnl Subst variables that start with PL_ are used in the plugin configuration
 AC_INIT([pdp],[4.0.3rc1],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
 # Change both of these
 LIB_VERSION=1:0:0   #Set library version here
-LIB_VERSION_2=0.0.0
+LIB_VERSION_2=1.0.0
 
 AC_SUBST([PACKAGE_VERSION])
 AC_SUBST([LIB_VERSION])

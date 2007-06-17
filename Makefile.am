@@ -148,10 +148,9 @@ deb:
 	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/archives/binary --requires=pdp-qt,pdp-coin,pdp-soqt,libode0c2,libode0-dev,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
 	dpkg-scanpackages /usr/local/apt/archives/binary /dev/null | gzip -9c > /usr/local/apt/archives/binary/Packages.gz
 
-
 rpm2:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=pdp-qt,pdp-coin,pdp-soqt,ode,ode-devel --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=pdp-qt,pdp-coin,pdp-soqt,pdp-soqt,pdp-simage,ode,ode-devel,gsl  --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
 	createrepo /usr/local/yum
 
 packages: deb rpm2
