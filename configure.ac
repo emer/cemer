@@ -318,7 +318,7 @@ AC_SUBST([srcdir])
 AC_SUBST([top_srcdir])
 AC_SUBST([CXXFLAGS])
 AC_SUBST([CXXCPP])
-
+AC_SUBST([MAKETA_CXXFLAGS])
 
 
 AC_SUBST([PL_LIBS],["`echo "$LIBS"`"])
