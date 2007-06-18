@@ -435,15 +435,15 @@ taVersion taMisc::version_bin(String(VERSION));
 #ifdef DEBUG
 # ifdef DMEM_COMPILE
 #   ifdef NO_TA_GUI
-const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG + taMisc::BT_DMEM + taMisc::BT_NO_GUI;
+const taMisc::BuildType taMisc::build_type = (taMisc::BuildType)(taMisc::BT_DEBUG | taMisc::BT_DMEM | taMisc::BT_NO_GUI);
 const String             taMisc::build_str("nogui_mpi_debug"); 
 #   else
-const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG + taMisc::BT_DMEM;
+const taMisc::BuildType taMisc::build_type = (taMisc::BuildType)(taMisc::BT_DEBUG | taMisc::BT_DMEM);
 const String             taMisc::build_str("mpi_debug"); 
 #   endif
 # else
 #   ifdef NO_TA_GUI
-const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG + taMisc::BT_NO_GUI;
+const taMisc::BuildType taMisc::build_type = (taMisc::BuildType)(taMisc::BT_DEBUG | taMisc::BT_NO_GUI);
 const String             taMisc::build_str("nogui_debug"); 
 #   else
 const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG ;
