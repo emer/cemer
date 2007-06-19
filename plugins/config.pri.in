@@ -19,7 +19,9 @@ win32 {
     contains( MSVC_TARGET, Release ) {
       CONFIG += release
     } else {
-      error("MSVC_TARGET variable must be defined as either Debug or Release")
+      MSVC_TARGET = Release
+      CONFIG += release
+      warning("MSVC_TARGET variable should be defined as either Debug or Release; 'Release' has been assumed")
     }
   }
   
