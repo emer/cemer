@@ -986,7 +986,7 @@ public:
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)
 
   virtual void	DMem_ShareRows(MPI_Comm comm, int n_rows = 1);
-  // #CAT_DMem Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
+  // #CAT_DMem #IGNORE Share the given number of rows from the end of the table (-1 = all rows) across processors in given communicator -- everyone gets the data from all processors as new rows in the table
 
   virtual bool		AutoLoadData();
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded

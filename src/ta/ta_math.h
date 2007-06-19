@@ -1015,7 +1015,7 @@ public:
   // initialize the seed based on given initializer
 
   virtual void	DMem_Sync(MPI_Comm comm);
-   // synchronize seeds across all procs -- uses the first proc's seed
+   // #IGNORE synchronize seeds across all procs -- uses the first proc's seed
 
   void	Initialize();
   void	Destroy()		 { CutLinks(); }
