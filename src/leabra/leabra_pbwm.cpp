@@ -282,8 +282,8 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.phase2 = 0.0f;
   decay.clamp_phase2 = false;
 
-  if(CheckError(lay->units.gp.size == 1, quiet, rval,
-		"layer must contain multiple unit groups (= stripes) for indepent searching of gating space!")) {
+  if(CheckError(!lay->unit_groups, quiet, rval,
+		"layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space!")) {
     return false;
   }
 
@@ -885,6 +885,12 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
+  if(CheckError(!lay->unit_groups, quiet, rval,
+		"layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
+    lay->unit_groups = true;
+    return false;
+  }
+
   if(CheckError(net->trial_init != LeabraNetwork::DECAY_STATE, quiet, rval,
 		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
     net->trial_init = LeabraNetwork::DECAY_STATE;
@@ -904,6 +910,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   if(CheckError(matrix_lay->units.gp.size != lay->units.gp.size, quiet, rval,
 		"MatrixLayer unit groups must = SNrThalLayer unit groups!")) {
+    lay->unit_groups = true;
     lay->gp_geom.n = matrix_lay->units.gp.size;
     return false;
   }
@@ -1045,7 +1052,8 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   bool rval = true;
 
   if(CheckError(!lay->unit_groups, quiet, rval,
-		"layer must have unit groups (= stripes) (multiple are good for indepent searching of gating space)!")) {
+		"layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
+    lay->unit_groups = true;
     return false;
   }
 
@@ -1130,6 +1138,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   }
   if(CheckError(snrthal_lay->units.gp.size != lay->units.gp.size, quiet, rval,
 		"Gating Layer unit groups must = PFCLayer unit groups!")) {
+    snrthal_lay->unit_groups = true;
     snrthal_lay->gp_geom.n = lay->units.gp.size;
     return false;
   }
@@ -1365,8 +1374,9 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 
   bool rval = true;
 
-  if(CheckError(lay->units.gp.size == 1, quiet, rval,
-		"layer must contain multiple unit groups (= stripes) for indepent searching of gating space!")) {
+  if(CheckError(!lay->unit_groups, quiet, rval,
+		"layer must have unit_groups = true (= stripes) (multiple are good for indepent searching of gating space)!  I just set it for you -- you must configure groups now")) {
+    lay->unit_groups = true;
     return false;
   }
 
