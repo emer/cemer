@@ -59,7 +59,7 @@ Program .projects[0].programs.gp[0][2] {
 Program .projects[0].programs.gp[0][2] {
  name="CsEpoch";
  tags="Cs, Std";
- desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
+ desc="iterates over all of the items in a data table and calls Trial process on them";
  flags=;
  objs {
   name=;
@@ -137,7 +137,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[4] {
    name="data_loop_index";
    var_type=T_Int;
-   int_val=0;
+   int_val=1;
    objs_ptr=0;
    flags=NULL_CHECK;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -335,7 +335,7 @@ Program .projects[0].programs.gp[0][2] {
    index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
    order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
-   item_idx_list{ 2;3;5;1;4;0;   };
+   item_idx_list{ 1;0;3;5;2;4;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };

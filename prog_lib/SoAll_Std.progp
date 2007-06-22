@@ -398,11 +398,11 @@ Program_Group .projects[0].programs.gp[0] {
  el_typ=Program;
  el_def=0;
  step_prog=.projects[0].programs.gp[0][3]$0$;
- tags=;
+ tags="So, Std, All";
  desc="The full set of programs for training a standard self-organizing network";
  Program @[0] {
   name="SoBatch";
-  tags=;
+  tags="So, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
   flags=;
   objs {
@@ -565,7 +565,7 @@ Program_Group .projects[0].programs.gp[0] {
  };
  Program @[1] {
   name="SoTrain";
-  tags=;
+  tags="So, Std";
   desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task";
   flags=;
   objs {
@@ -996,7 +996,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
  };
  Program @[2] {
   name="SoEpoch";
-  tags=;
+  tags="So, Std";
   desc="iterates over all of the items in a data table and calls SoTrial process on them";
   flags=;
   objs {
@@ -1368,7 +1368,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
  };
  Program @[3] {
   name="SoTrial";
-  tags=;
+  tags="So, Std";
   desc="Self-organizing processing of a single input/output event or external information";
   flags=;
   objs {
@@ -1742,7 +1742,7 @@ this program can be extended to do arbitrary things to generate data and apply i
  };
  Program @[5] {
   name="SoTrialMonitor";
-  tags=;
+  tags="So, Std, Monitor";
   desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
   flags=;
   objs {
@@ -2102,7 +2102,7 @@ this program can be extended to do arbitrary things to generate data and apply i
  };
  Program @[6] {
   name="SoEpochMonitor";
-  tags=;
+  tags="So, Std, Monitor";
   desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
   flags=;
   objs {

@@ -476,8 +476,8 @@ Program_Group .projects[0].programs.gp[0] {
  el_typ=Program;
  el_def=0;
  step_prog=.projects[0].programs.gp[0][4]$0$;
- tags="Leabra, Std, All";
- desc="The full set of programs for training a standard Leabra network";
+ tags="Cs, Std, All";
+ desc="The full set of programs for training a standard Cs network";
  Program @[0] {
   name="CsBatch";
   tags="Cs, Std";
@@ -1075,7 +1075,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
  Program @[2] {
   name="CsEpoch";
   tags="Cs, Std";
-  desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
+  desc="iterates over all of the items in a data table and calls Trial process on them";
   flags=;
   objs {
    name=;
@@ -1153,7 +1153,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    ProgVar @[4] {
     name="data_loop_index";
     var_type=T_Int;
-    int_val=0;
+    int_val=1;
     objs_ptr=0;
     flags=NULL_CHECK;
     desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -1351,7 +1351,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     index_var=.projects[0].programs.gp[0][2].vars[4]$22$;
     order_var=.projects[0].programs.gp[0][2].vars[0]$23$;
     order=PERMUTED;
-    item_idx_list{ 2;3;5;1;4;0;    };
+    item_idx_list{ 1;0;3;5;2;4;    };
     dmem_nprocs=1;
     dmem_this_proc=0;
    };
@@ -1447,7 +1447,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
  Program @[3] {
   name="CsTrial";
   tags="Cs, Std";
-  desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+  desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
   flags=;
   objs {
    name=;
@@ -1608,10 +1608,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      };
      MethodCall @[2] {
       desc="increments other phase state information to prepare for the next phase of settling";
-      flags=OFF;
+      flags=;
       result_var=NULL;
       obj=$25$;
-      method=LeabraNetwork::Trial_UpdatePhase;
+      method=CsNetwork::Trial_UpdatePhase;
       meth_args {
        name=;
        el_typ=ProgArg;
@@ -1722,7 +1722,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    ProgVar @[0] {
     name="cycle";
     var_type=T_Int;
-    int_val=5;
+    int_val=0;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="current cycle of settling (local loop counter)";
@@ -1730,7 +1730,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    ProgVar @[1] {
     name="min_cycles";
     var_type=T_Int;
-    int_val=5;
+    int_val=15;
     objs_ptr=0;
     flags=NULL_CHECK;
     desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
@@ -1943,9 +1943,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
     flags=;
     cond {
-     expr="network.phase == LeabraNetwork::MINUS_PHASE";
+     expr="network.phase == CsNetwork::MINUS_PHASE";
      flags=;
-     var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
+     var_expr="$#0#$.phase == CsNetwork::MINUS_PHASE";
      vars {
      };
      var_names{ network;     };
@@ -1985,7 +1985,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
  Program @[5] {
   name="CsCycle";
   tags="Cs, Std";
-  desc="runs one cycle of leabra processing (updating net inputs and activations)";
+  desc="runs one cycle of CS processing (updating net inputs and activations)";
   flags=;
   objs {
    name=;
@@ -2044,7 +2044,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    el_typ=MethodCall;
    el_def=0;
    MethodCall @[0] {
-    desc="this does all the standard leabra processing for one cycle of activation updating";
+    desc="this does all the standard cs processing for one cycle of activation updating";
     flags=;
     result_var=NULL;
     obj=.projects[0].programs.gp[0][5].args[0]$34$;

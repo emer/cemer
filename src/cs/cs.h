@@ -65,8 +65,12 @@ public:
   void 		(*decay_fun)(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su);
   // #LIST_CsConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
-  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((CsCon*)cn)->pdw = 0.0f; }
+  override void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
+  { ConSpec::C_Init_Weights(cg, cn, ru, su); ((CsCon*)cn)->pdw = 0.0f;
+    ((CsCon*)cn)->dwt_agg = 0.0f; }
+
+  override void 	C_Init_dWt(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
+  { ConSpec::C_Init_dWt(cg, cn, ru, su); ((CsCon*)cn)->dwt_agg = 0.0f; }
 
   inline void		C_Aggregate_dWt(CsCon* cn, CsUnit* ru, 
 				      CsUnit* su, float phase);
@@ -150,14 +154,14 @@ public:
   ClampType	clamp_type;		// type of clamping to use
   float		clamp_gain;		// #CONDEDIT_OFF_clamp_type:HARD_CLAMP,HARD_FAST_CLAMP gain of the soft clamping
   Random	initial_act;		// what to initialize the act to
-  float		modify_decay;		// amount to decay acts towards rest for MODIFY_STATE
+  float		state_decay;		// #AKA_modify_decay amount to decay acts towards rest for DECAY_STATE initialization between phases or trials
   bool		use_annealing;		// true if noise sched is used to anneal acts
   Schedule	noise_sched;		// #CONDEDIT_ON_use_annealing:true schedule of noise variance multipliers
   bool		use_sharp;		// true if gain sched is used to sharpen acts
   Schedule	gain_sched;		// #CONDEDIT_ON_use_sharp:true schedule of gain multipliers
 
-  void		Init_Acts(Unit* u);
-  void 		Init_Weights(Unit* u); 	// also init aggregation stuff
+  override void	Init_Acts(Unit* u);
+  override void Init_Weights(Unit* u); 	// also init aggregation stuff
 
   virtual void 	Compute_ClampAct(CsUnit* u);
   // hard-fast-clamp inputs (at start of settling)
@@ -165,15 +169,20 @@ public:
   // compute net input from clamped inputs (at start of settling)
 
   void 		Compute_Netin(Unit* u); 		// add bias
-  void		Compute_Act(Unit* u)		// if no cycle is passed
+  override void	Compute_Act(Unit* u)		// if no cycle is passed
   { Compute_Act(u,-1, 0, NULL); }
   virtual void 	Compute_Act(Unit* u, int cycle, int phase, CsNetwork* net);
   virtual void	Compute_Act_impl(CsUnit* u, int cycle, int phase); 
   // actually computes specific activation function 
+
+  virtual void	DecayState(CsUnit* u);
+  // decay activation state information
+  virtual void	PhaseInit(CsUnit* u, int phase);
+  // initialize external inputs based on phase information
   
-  void		Aggregate_dWt(Unit* u, int phase);
-  void		Compute_dWt(Unit* u);
-  void		Compute_Weights(Unit* u);		// add update bias weight
+  virtual void	Aggregate_dWt(Unit* u, int phase);
+  override void	Compute_dWt(Unit* u);
+  override void	Compute_Weights(Unit* u);		// add update bias weight
 
   virtual void	PostSettle(CsUnit* u, int phase);
   // set stuff after settling is over
@@ -230,7 +239,7 @@ class CS_API IACUnitSpec : public CsUnitSpec {
 INHERITED(CsUnitSpec)
 public:
   float		rest;		// rest level of activation
-  float		decay;		// decay rate (1/gain)
+  float		decay;		// decay rate (1/gain) (continuous decay -- not between phases or trials, which is state_decay)
   bool		use_send_thresh;
   // pay attn to send_thresh? if so, need SYNC_SENDER_BASED in cycle proc, sender based netin
   float		send_thresh;	// #CONDEDIT_ON_use_send_thresh:true threshold below which unit does not send act
@@ -283,22 +292,21 @@ public:
   float		act_p;		// plus phase activation
   int		n_dwt_aggs;	// number of delta-weight aggregations performed
 
-  void 	Init_Netin()	{ net = bias.Cn(0)->wt + clmp_net; } // for sender based
+  void 		Init_Netin()	{ net = bias.Cn(0)->wt + clmp_net; } // for sender based
   void		Compute_ClampAct() 
   { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampAct(this); }
   void		Compute_ClampNet() 
   { ((CsUnitSpec*)GetUnitSpec())->Compute_ClampNet(this); }
-  
   void		Compute_Act(int cycle, int phase, CsNetwork* net)
   { ((CsUnitSpec*)GetUnitSpec())->Compute_Act(this, cycle, phase, net); }
-
   void		Compute_Act()
   { Compute_Act(-1, 0, NULL); }
-
-  virtual void	Targ_To_Ext();
+  void		DecayState()
+  { ((CsUnitSpec*)GetUnitSpec())->DecayState(this); }
+  void		PhaseInit(int phase)
+  { ((CsUnitSpec*)GetUnitSpec())->PhaseInit(this, phase); }
   void		PostSettle(int phase)
   { ((CsUnitSpec*)GetUnitSpec())->PostSettle(this, phase); }
-
   void		Aggregate_dWt(int phase)
   { ((CsUnitSpec*)GetUnitSpec())->Aggregate_dWt(this, phase); }
 
@@ -404,6 +412,7 @@ class CS_API CsLayer : public Layer {
   // ##CAT_Cs A constraint-satisfaction layer
 INHERITED(Layer)
 public:
+  override void  Init_Acts();
 
   TA_BASEFUNS_NOCOPY(CsLayer);
 private:
@@ -427,7 +436,7 @@ public:
   enum StateInit {		// ways of initializing the state of the network
     DO_NOTHING,			// do nothing
     INIT_STATE,			// initialize the network state
-    MODIFY_STATE 		// modify state (algorithm specific)
+    DECAY_STATE, 		// decay the activations from prior state
   };
   enum Phase {
     MINUS_PHASE = -1,
@@ -480,7 +489,8 @@ public:
   override void	Init_Counters();
   override void	Init_Stats();
 
-  // cycle
+  ///////////////////////////
+  // 	cycle
   virtual void	Compute_SyncAct();
   // #CAT_Cycle compute synchronous activations: first pass is netin, second pass is activations, for all units
   virtual void	Compute_AsyncAct();
@@ -490,24 +500,43 @@ public:
   virtual void	Cycle_Run();
   // #CAT_Cycle compuate one cyle of updating
 
-  // settle
+  ///////////////////////////
+  // 	settle
+  virtual void	PhaseInit();
+  // #CAT_Settle initialize at start of settling phase -- sets external input flags based on phase (called by Settle_Init)
+  virtual void	DecayState();
+  // #CAT_Settle decay state at start of settling phase (called by Settle_Init)
   virtual void	Compute_ClampAct();
-  // #CAT_Settle compute activations of hard clamped units
+  // #CAT_Settle compute activations of hard clamped units (called by Settle_Init)
   virtual void	Compute_ClampNet();
-  // #CAT_Settle compute fixed netinputs from hard clamped units (optimizes computation)
-  virtual void	Targ_To_Ext();
-  // #CAT_Settle compute activations of hard clamped units
+  // #CAT_Settle compute fixed netinputs from hard clamped units (optimizes computation) (called by Settle_Init)
   virtual void	PostSettle();
   // #CAT_Settle get activation states after settling
   virtual void	Settle_Init();
   // #CAT_Settle run various initialization steps at the start of settling
   virtual void	Settle_Final();
   // #CAT_Settle run final steps of processing after settling
+
+  ///////////////////////////
+  // 	trial
+  virtual void	Compute_MinusCycles();
+  // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
+  override void	Compute_TrialStats();
+  // #CAT_Statistic compute trial-level statistics, including SSE and minus cycles -- to be called at end of minus phase
+  virtual void	Trial_Init();
+  // #CAT_Trial initialize at start of trial: initializes activations and phase counters
+  virtual void	Trial_Final();
+  // #CAT_Trial at end of trial, calls Compute_dWt if not testing
+  virtual void	Trial_UpdatePhase();
+  // #CAT_Trial update phase after one settle -- just sets phase to plus phase
   
-  virtual void	Trial_Init(); // run one trial of Cs
-  virtual void	Trial_Final(); // run one trial of Cs
-  virtual void	Trial_UpdatePhase(); // update phase after one settle
-  
+  ///////////////////////////
+  // 	epoch
+  virtual void	Compute_AvgCycles();
+  // #CAT_Statistic compute average cycles (at an epoch-level timescale)
+  override void	Compute_EpochStats();
+  // #CAT_Statistic compute epoch-level statistics, including SSE and AvgCycles
+
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(CsNetwork);

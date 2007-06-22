@@ -55,6 +55,7 @@ Program .projects[0].programs.gp[0][5] {
 };
 Program .projects[0].programs.gp[0][5] {
  name="BpTrialMonitor";
+ tags="Bp, Std, Monitor";
  desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
  flags=;
  objs {

@@ -29,6 +29,7 @@ Program .projects[0].programs.gp[0][3] {
 };
 Program .projects[0].programs.gp[0][3] {
  name="BpTrial";
+ tags="Bp, Std";
  desc="Backpropagation processing of a single input/output event or external information";
  flags=;
  objs {

@@ -568,7 +568,7 @@ CsProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [1] {
+	  T3DataViewFrame_List @.frames = [2] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
@@ -581,8 +581,31 @@ CsProject .projects[0] {
 		    PrjnView @[5] { };
 		  };
 
-		  ScaleRange_List @.scale_ranges = [1] {
+		  ScaleRange_List @.scale_ranges = [6] {
 		    ScaleRange @[0] { };
+		    ScaleRange @[1] { };
+		    ScaleRange @[2] { };
+		    ScaleRange @[3] { };
+		    ScaleRange @[4] { };
+		    ScaleRange @[5] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[1] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [10] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		    GraphColView @[4] { };
+		    GraphColView @[5] { };
+		    GraphColView @[6] { };
+		    GraphColView @[7] { };
+		    GraphColView @[8] { };
+		    GraphColView @[9] { };
 		  };
 		};
 	      };
@@ -599,10 +622,11 @@ CsProject .projects[0] {
 
   Network_Group @.networks = [1] {
     CsNetwork @[0] { 
-      BaseSpec_Group @.specs = [3] {
+      BaseSpec_Group @.specs = [4] {
 	CsUnitSpec @[0] { };
 	CsConSpec @[1] { };
 	FullPrjnSpec @[2] { };
+	SigmoidUnitSpec @[3] { };
       };
 
       Layer_Group @.layers = [3] {
@@ -729,7 +753,7 @@ CsProject .projects[0] {
       };
       ar {
        name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;1;0;0;0;0;0;0;0;1;0;0;1;0;0;1;1;0;0;0;0;0;0;0;0;0;      };
+	    [5 5 6] 1;-1;-1;-1;1;-1;-1;-1;-1;-1;-1;-1;1;-1;-1;-1;-1;-1;-1;-1;1;-1;-1;-1;1;-1;-1;1;-1;-1;-1;-1;1;-1;-1;-1;-1;1;-1;-1;-1;-1;1;-1;-1;-1;-1;1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;1;1;1;1;1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;1;-1;-1;-1;1;-1;-1;-1;1;-1;-1;-1;1;-1;-1;-1;1;-1;-1;-1;-1;1;-1;-1;-1;-1;-1;1;-1;-1;-1;-1;-1;1;-1;-1;-1;-1;-1;1;-1;-1;-1;-1;-1;1;1;-1;-1;-1;-1;-1;-1;-1;1;-1;-1;1;-1;-1;1;1;-1;-1;-1;-1;-1;-1;-1;-1;-1;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1110,8 +1134,8 @@ CsProject .projects[0] {
    el_typ=Program;
    el_def=0;
    step_prog=.projects[0].programs.gp[0][4]$0$;
-   tags="Leabra, Std, All";
-   desc="The full set of programs for training a standard Leabra network";
+   tags="Cs, Std, All";
+   desc="The full set of programs for training a standard Cs network";
    Program @[0] {
     name="CsBatch";
     tags="Cs, Std";
@@ -1709,7 +1733,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    Program @[2] {
     name="CsEpoch";
     tags="Cs, Std";
-    desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
+    desc="iterates over all of the items in a data table and calls Trial process on them";
     flags=;
     objs {
      name=;
@@ -1787,7 +1811,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=2;
+      int_val=1;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -1985,7 +2009,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$22$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$23$;
       order=PERMUTED;
-      item_idx_list{ 5;2;4;3;1;0;      };
+      item_idx_list{ 1;0;3;5;2;4;      };
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -2081,7 +2105,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    Program @[3] {
     name="CsTrial";
     tags="Cs, Std";
-    desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+    desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
     flags=;
     objs {
      name=;
@@ -2364,7 +2388,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[1] {
       name="min_cycles";
       var_type=T_Int;
-      int_val=5;
+      int_val=15;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
@@ -2577,9 +2601,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
       flags=;
       cond {
-       expr="network.phase == LeabraNetwork::MINUS_PHASE";
+       expr="network.phase == CsNetwork::MINUS_PHASE";
        flags=;
-       var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
+       var_expr="$#0#$.phase == CsNetwork::MINUS_PHASE";
        vars {
        };
        var_names{ network;       };
@@ -2619,7 +2643,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    Program @[5] {
     name="CsCycle";
     tags="Cs, Std";
-    desc="runs one cycle of leabra processing (updating net inputs and activations)";
+    desc="runs one cycle of CS processing (updating net inputs and activations)";
     flags=;
     objs {
      name=;
@@ -2678,7 +2702,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_typ=MethodCall;
      el_def=0;
      MethodCall @[0] {
-      desc="this does all the standard leabra processing for one cycle of activation updating";
+      desc="this does all the standard cs processing for one cycle of activation updating";
       flags=;
       result_var=NULL;
       obj=.projects[0].programs.gp[0][5].args[0]$34$;
@@ -4278,9 +4302,39 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    min=-1;
 	    max=1;
 	   };
+	   ScaleRange @[1] {
+	    name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[2] {
+	    name="bias.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[3] {
+	    name="ext";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[4] {
+	    name="act_m";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[5] {
+	    name="act_p";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
 	  };
 	  display=1;
-	  ordered_uvg_list{ act;	  };
+	  ordered_uvg_list{ bias.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=3: };
@@ -4309,6 +4363,360 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        camera_pos {x=0.5: y=0.3430784: z=1.927563: };
        camera_orient {x=0: y=0: z=1: rot=0: };
        camera_focdist=2.330342;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[1] {
+       m_data=NULL;
+       name="EpochOutputData";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$42$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[1][1].data[0]$60$;
+	    m_transform=NULL;
+	    name="batch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[1][1].data[1]$61$;
+	    m_transform=NULL;
+	    name="epoch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[1][1].data[2]$62$;
+	    m_transform=NULL;
+	    name="avg_sse";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].data.gp[1][1].data[3]$63$;
+	    m_transform=NULL;
+	    name="cnt_err";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    m_data=.projects[0].data.gp[1][1].data[4]$64$;
+	    m_transform=NULL;
+	    name="Input_avg_ext_rew";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[5] {
+	    m_data=.projects[0].data.gp[1][1].data[5]$65$;
+	    m_transform=NULL;
+	    name="Hidden_avg_ext_rew";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[6] {
+	    m_data=.projects[0].data.gp[1][1].data[6]$66$;
+	    m_transform=NULL;
+	    name="Output_avg_ext_rew";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[7] {
+	    m_data=.projects[0].data.gp[1][1].data[7]$67$;
+	    m_transform=NULL;
+	    name="avg_cycles";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[8] {
+	    m_data=.projects[0].data.gp[1][1].data[8]$68$;
+	    m_transform=NULL;
+	    name="epoch_time_tot";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[9] {
+	    m_data=.projects[0].data.gp[1][1].data[9]$69$;
+	    m_transform=NULL;
+	    name="epoch_time_usr";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=95: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=95: };
+	   range {min=0: max=95: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Z;
+	   col_name="batch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_sse";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_cycles";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green": r=0: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="violet": r=0.9333333: g=0.509804: b=0.9333333: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	  };
+	  alt_y_2=1;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  color_mode=VALUE_COLOR;
+	  negative_draw=0;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  label_spacing=-1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$59$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  width=1;
+	  depth=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.483627: y=0.4134612: z=1.700495: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=2.210495;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
@@ -4351,8 +4759,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=-1: max=1: range=2: scale=0.5: };
      bias_con_type=CsCon;
-     bias_spec {type=CsConSpec: spec=.projects[0].networks[0].specs[1]$60$: };
-     sse_tol=0;
+     bias_spec {type=CsConSpec: spec=.projects[0].networks[0].specs[1]$70$: };
+     sse_tol=0.5;
      real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
      noise {name="": type=NONE: mean=0: var=0.1: par=1: };
      step=0.05;
@@ -4361,7 +4769,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      clamp_type=HARD_FAST_CLAMP;
      clamp_gain=5;
      initial_act {name="": type=NONE: mean=0: var=1: par=1: };
-     modify_decay=0.5;
+     state_decay=0.5;
      use_annealing=0;
      noise_sched {
       name=;
@@ -4394,7 +4802,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      rnd {name="": type=UNIFORM: mean=0: var=0.5: par=1: };
      wt_limits {type=NONE: min=-1: max=1: sym=1: };
-     lrate=0.01;
+     lrate=0.001;
      momentum=0;
      momentum_c=1;
      decay=0;
@@ -4411,6 +4819,50 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      self_con=0;
      init_wts=0;
+    };
+    SigmoidUnitSpec @[3] {
+     name="SigmoidUnitSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=SigmoidUnitSpec;
+      el_def=0;
+     };
+     act_range {min=-1: max=1: range=2: scale=0.5: };
+     bias_con_type=CsCon;
+     bias_spec {type=CsConSpec: spec=$70$: };
+     sse_tol=1;
+     real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
+     noise {name="": type=NONE: mean=0: var=0.1: par=1: };
+     step=0.2;
+     sqrt_step=0.4472136;
+     gain=1;
+     clamp_type=HARD_FAST_CLAMP;
+     clamp_gain=5;
+     initial_act {name="": type=NONE: mean=0: var=1: par=1: };
+     state_decay=0.5;
+     use_annealing=0;
+     noise_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      last_ctr=-1;
+      default_val=1;
+      interpolate=1;
+      cur_val=0;
+     };
+     use_sharp=0;
+     gain_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      last_ctr=-1;
+      default_val=1;
+      interpolate=1;
+      cur_val=0;
+     };
+     time_avg=NET_INPUT;
     };
    };
    layers {
@@ -4449,8 +4901,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=CsUnitSpec: spec=.projects[0].networks[0].specs[0]$61$: };
-     ext_flag=;
+     unit_spec {type=SigmoidUnitSpec: spec=.projects[0].networks[0].specs[3]$71$: };
+     ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -4478,11 +4930,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        name="Fm_Input";
        from_type=CUSTOM;
        from=$53$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$62$: };
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$72$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$60$: };
+       con_spec {type=CsConSpec: spec=$70$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -4494,11 +4946,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        name="Fm_Output";
        from_type=CUSTOM;
        from=$55$;
-       spec {type=FullPrjnSpec: spec=$62$: };
+       spec {type=FullPrjnSpec: spec=$72$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$60$: };
+       con_spec {type=CsConSpec: spec=$70$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -4523,7 +4975,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=CsUnitSpec: spec=$61$: };
+     unit_spec {type=SigmoidUnitSpec: spec=$71$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -4552,11 +5004,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        name="Fm_Hidden";
        from_type=CUSTOM;
        from=$54$;
-       spec {type=FullPrjnSpec: spec=$62$: };
+       spec {type=FullPrjnSpec: spec=$72$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$60$: };
+       con_spec {type=CsConSpec: spec=$70$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -4581,8 +5033,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=CsUnitSpec: spec=$61$: };
-     ext_flag=;
+     unit_spec {type=SigmoidUnitSpec: spec=$71$: };
+     ext_flag=TARG;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -4604,7 +5056,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cycle=0;
    time=0;
    group_name=;
-   trial_name="ldiag";
+   trial_name="checks";
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -4616,8 +5068,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=2104: sys=400: tot=2225273028: }: end={usr=9220: sys=2521: tot=2216925758: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=2111: sys=405: tot=2225273042: }: end={usr=9220: sys=2521: tot=2216925758: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=959: sys=105: tot=2285178750: }: end={usr=1161: sys=172: tot=2285043687: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=7376: sys=774: tot=2285186076: }: end={usr=7376: sys=774: tot=2285186076: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
@@ -4654,9 +5106,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    n_updates=10;
    trial_init=INIT_STATE;
    between_phases=INIT_STATE;
-   deterministic=0;
+   deterministic=1;
    start_stats=50;
-   cycle_max=100;
+   cycle_max=300;
    sample=0;
    phase_max=2;
    phase=MINUS_PHASE;

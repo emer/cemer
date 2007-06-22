@@ -109,7 +109,7 @@ void CsUnitSpec::Initialize() {
   clamp_type = HARD_FAST_CLAMP;
   clamp_gain = 5.0f;
   initial_act.type = Random::NONE;
-  modify_decay = 0.5f;
+  state_decay = 0.5f;
   use_annealing = false;
   use_sharp = false;
 }
@@ -131,7 +131,10 @@ void CsUnitSpec::UpdateAfterEdit_impl() {
 }
 
 void CsUnitSpec::Init_Acts(Unit* u) {
-  inherited::Init_Acts(u);
+  //  inherited::Init_Acts(u);  // this also initializes input data -- don't
+  //  u->Init_InputData();
+  u->Init_Netin();
+  u->act = 0.0f;
   CsUnit* cu = (CsUnit*)u;
   cu->da = 0.0f;
   cu->prv_net = 0.0f;
@@ -139,18 +142,17 @@ void CsUnitSpec::Init_Acts(Unit* u) {
   cu->act = act_range.Clip(initial_act.Gen());
 }
 
-// todo: obsolete
-// void Csinherited::ModifyState(Unit* u) {
-//   u->Init_InputData();
-//   u->Init_Netin();
-//   CsUnit* cu = (CsUnit*)u;
-//   float trgact = act_range.Clip(initial_act.Gen());
-//   cu->act -= modify_decay * (cu->act - trgact);
-//   cu->da = 0.0f;
-//   //  cu->prv_net -= modify_decay * cu->prv_net;
-//   cu->prv_net = 0.0f;
-//   cu->clmp_net = 0.0f;
-// }
+void CsUnitSpec::DecayState(CsUnit* u) {
+  //  u->Init_InputData();
+  u->Init_Netin();
+  CsUnit* cu = (CsUnit*)u;
+  float trgact = act_range.Clip(initial_act.Gen());
+  cu->act -= state_decay * (cu->act - trgact);
+  cu->da = 0.0f;
+  //  cu->prv_net -= state_decay * cu->prv_net;
+  cu->prv_net = 0.0f;
+  cu->clmp_net = 0.0f;
+}
 
 void CsUnitSpec::Init_Weights(Unit* u) {
   inherited::Init_Weights(u);
@@ -260,6 +262,23 @@ void CsUnitSpec::Aggregate_dWt(Unit* u, int phase) {
   cu->n_dwt_aggs++;
 }
 
+void CsUnitSpec::PhaseInit(CsUnit* u, int phase) {
+  if(!(u->ext_flag & Unit::TARG))
+    return;
+
+  if(phase == CsNetwork::MINUS_PHASE) {
+//     if(!(lay->ext_flag & Unit::TARG)) {	// layer isn't a target but unit is..
+//       u->targ = u->ext;
+//     }
+    u->ext = 0.0f;
+    u->UnSetExtFlag(Unit::EXT);
+  }
+  else {
+    u->ext = u->targ;
+    u->SetExtFlag(Unit::EXT);
+  }
+}
+
 void CsUnitSpec::PostSettle(CsUnit* u, int phase) {
   if(phase == CsNetwork::MINUS_PHASE)
     u->act_m = u->act;
@@ -324,14 +343,6 @@ void CsUnit::Copy_(const CsUnit& cp) {
   act_p = cp.act_p;
   n_dwt_aggs = cp.n_dwt_aggs;
 }
-
-void CsUnit::Targ_To_Ext() {
-  if(ext_flag & Unit::TARG) {
-    SetExtFlag(Unit::EXT);
-    ext = targ;
-  }
-}
-
 
 ////////////////////////////
 //  Activation Functions  //
@@ -512,6 +523,15 @@ void CsLayer::Initialize() {
   unit_spec.SetBaseType(&TA_CsUnitSpec);
 }
 
+void CsLayer::Init_Acts() {
+  //  ext_flag = Unit::NO_EXTERNAL;
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_Acts();
+}
+
+
 //////////////////////////////////
 //	Cs Network		//
 //////////////////////////////////
@@ -682,17 +702,33 @@ void CsNetwork::Compute_ClampNet() {
   }
 }
 
-void CsNetwork::Targ_To_Ext() {
+void CsNetwork::PhaseInit() {
   Layer* lay;
   taLeafItr l;
   FOR_ITR_EL(Layer, lay, layers., l) {
-    if(lay->lesioned() || !(lay->ext_flag & Unit::TARG))
+    if(lay->lesioned())
       continue;
-    lay->SetExtFlag(Unit::EXT);
+    if(lay->ext_flag & Unit::TARG) {
+      if(phase == PLUS_PHASE)
+	lay->SetExtFlag(Unit::EXT);
+    }
     CsUnit* un;
     taLeafItr u;
     FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->Targ_To_Ext();	// convert to ext..
+      un->PhaseInit(phase);
+  }
+}
+
+void CsNetwork::DecayState() {
+  Layer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(Layer, lay, layers., l) {
+    if(lay->lesioned())
+      continue;
+    CsUnit* un;
+    taLeafItr u;
+    FOR_ITR_EL(CsUnit, un, lay->units., u)
+      un->DecayState();
   }
 }
 
@@ -713,9 +749,11 @@ void CsNetwork::Settle_Init() {
   if(phase == PLUS_PHASE) {
     if(between_phases == INIT_STATE)
       Init_Acts();
-//     else
-//       Init_InputData();
+    else if(between_phases == DECAY_STATE)
+      DecayState();
   }
+
+  PhaseInit();
 
   // precompute clamping info so cycles aren't wasted during settling
   Compute_ClampAct();
@@ -740,8 +778,8 @@ void CsNetwork::Trial_Init() {
 
   if(trial_init == INIT_STATE)
     Init_Acts();
-  else
-    Init_InputData();
+  else if(trial_init == DECAY_STATE)
+    DecayState();
 }
 
 void CsNetwork::Trial_Final() {
@@ -753,6 +791,31 @@ void CsNetwork::Trial_Final() {
 void CsNetwork::Trial_UpdatePhase() {
   phase = PLUS_PHASE;		// always just next phase..
 }
+
+void CsNetwork::Compute_MinusCycles() {
+  minus_cycles = cycle;
+  avg_cycles_sum += minus_cycles;
+  avg_cycles_n++;
+}
+
+void CsNetwork::Compute_TrialStats() {
+  inherited::Compute_TrialStats();
+  Compute_MinusCycles();
+}
+
+void CsNetwork::Compute_AvgCycles() {
+  if(avg_cycles_n > 0) {
+    avg_cycles = avg_cycles_sum / (float)avg_cycles_n;
+  }
+  avg_cycles_sum = 0.0f;
+  avg_cycles_n = 0;
+}
+
+void CsNetwork::Compute_EpochStats() {
+  inherited::Compute_EpochStats();
+  Compute_AvgCycles();
+}
+
 
 // todo: need to do this somewhere
 // // this will also have cs-level checks on it..
