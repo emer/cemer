@@ -13,10 +13,6 @@ commit:
 --------------------
 Other Algorithms:
   * rbp -- at least support all process functions in network
-  * cs -- check import of cs_det project in demo
-  * cs -- support non-deterministic mode -- just basic boltz: no maxda + sampling +
-    uae check on cycle params
-    stuff in terms of input patterns, etc
 
 ------------
 current:

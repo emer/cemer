@@ -88,7 +88,7 @@ bool V3CsProject::ConvertToV4_impl() {
   // process the new programs
   nwproj->programs.prog_lib.NewProgramFmName("CsAll_Std", &(nwproj->programs));
 //   Program_Group* progs = (Program_Group*)nwproj->programs.gp[0];
-//   CsNetwork* new_net = (CsNetwork*)nwproj->networks[0];
+  CsNetwork* new_net = (CsNetwork*)nwproj->networks[0];
 
 //   if(grouped_data) {
 //     Program* epc = progs->FindName("CsEpoch");
@@ -101,6 +101,24 @@ bool V3CsProject::ConvertToV4_impl() {
 
   ConvertToV4_Edits(nwproj);
 
+  CsCycle* old_cycle = (CsCycle*)processes.FindLeafType(&TA_CsCycle);
+  if(old_cycle && new_net) {
+    new_net->update_mode = (CsNetwork::UpdateMode)old_cycle->update_mode;
+    new_net->n_updates = old_cycle->n_updates;
+  }
+
+  CsSettle* old_settle = (CsSettle*)processes.FindLeafType(&TA_CsSettle);
+  if(old_settle && new_net) {
+    new_net->cycle_max = old_settle->cycle.max;
+    new_net->deterministic = old_settle->deterministic;
+    new_net->start_stats = old_settle->start_stats;
+    new_net->between_phases = (CsNetwork::StateInit)old_settle->between_phases;
+  }
+
+  CsTrial* old_trial = (CsTrial*)processes.FindLeafType(&TA_CsTrial);
+  if(old_trial && new_net) {
+    new_net->trial_init = (CsNetwork::StateInit)old_trial->trial_init;
+  }
   return true;
 }
 

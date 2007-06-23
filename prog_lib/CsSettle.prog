@@ -15,17 +15,22 @@ Program .projects[0].programs.gp[0][4] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [8] {
+  ProgEl_List @.prog_code = [9] {
     NetCounterInit @[0] { };
-    MethodCall @[1] { };
-    ProgramCall @[2] { 
+    IfElse @[1] { 
+      ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+      };
+    };
+    MethodCall @[2] { };
+    ProgramCall @[3] { 
       ProgArg_List @.prog_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    MethodCall @[3] { };
-    WhileLoop @[4] { 
+    MethodCall @[4] { };
+    WhileLoop @[5] { 
       ProgEl_List @.loop_code = [4] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [1] {
@@ -37,13 +42,13 @@ Program .projects[0].programs.gp[0][4] {
 	IfBreak @[3] { };
       };
     };
-    MethodCall @[5] { };
-    IfElse @[6] { 
+    MethodCall @[6] { };
+    IfElse @[7] { 
       ProgEl_List @.true_code = [1] {
 	MethodCall @[0] { };
       };
     };
-    NetUpdateView @[7] { };
+    NetUpdateView @[8] { };
   };
 };
 Program .projects[0].programs.gp[0][4] {
@@ -99,11 +104,10 @@ Program .projects[0].programs.gp[0][4] {
   ProgVar @[1] {
    name="min_cycles";
    var_type=T_Int;
-   int_val=15;
+   int_val=20;
    objs_ptr=0;
    flags=NULL_CHECK;
-   desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
-sets the minimum number of cycles to settle for, regardless of network state changes, etc";
+   desc="sets the minimum number of cycles to settle for, regardless of network state changes, etc";
   };
   ProgVar @[2] {
    name="update_net_view";
@@ -147,7 +151,44 @@ sets the minimum number of cycles to settle for, regardless of network state cha
    local_ctr_var=$3$;
    counter=Network::cycle;
   };
-  MethodCall @[1] {
+  IfElse @[1] {
+   desc="if not deterministic, set min_cycles = max_cycles!";
+   flags=;
+   cond {
+    expr="!network.deterministic";
+    flags=;
+    var_expr="!$#0#$.deterministic";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc="if not determinstic, must settle for full number of cycles (bypasses use of maxda to stop settling)";
+     flags=;
+     result_var=.projects[0].programs.gp[0][4].vars[1]$4$;
+     expr {
+      expr="network.cycle_max";
+      flags=;
+      var_expr="$#0#$.cycle_max";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MethodCall @[2] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=;
    result_var=NULL;
@@ -159,11 +200,11 @@ sets the minimum number of cycles to settle for, regardless of network state cha
     el_def=0;
    };
   };
-  ProgramCall @[2] {
+  ProgramCall @[3] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=;
-   target=.projects[0].programs.gp[0][6]$4$;
+   target=.projects[0].programs.gp[0][6]$5$;
    targ_ld_init="*ApplyInputs*";
    call_init=0;
    prog_args {
@@ -204,7 +245,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
    };
   };
-  MethodCall @[3] {
+  MethodCall @[4] {
    desc="initializes various counters at start of settling";
    flags=;
    result_var=NULL;
@@ -216,7 +257,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
    };
   };
-  WhileLoop @[4] {
+  WhileLoop @[5] {
    desc="the main loop over cycles of updating";
    flags=;
    loop_code {
@@ -226,7 +267,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     ProgramCall @[0] {
      desc="run the cycle program, which computes one cycle of activations";
      flags=;
-     target=.projects[0].programs.gp[0][5]$5$;
+     target=.projects[0].programs.gp[0][5]$6$;
      targ_ld_init="*CsCycle*";
      call_init=0;
      prog_args {
@@ -295,7 +336,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     bad_vars{     };
    };
   };
-  MethodCall @[5] {
+  MethodCall @[6] {
    desc="perform final operations at end of settling (storing final activations, etc)";
    flags=;
    result_var=NULL;
@@ -307,7 +348,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
    };
   };
-  IfElse @[6] {
+  IfElse @[7] {
    desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
    flags=;
@@ -343,11 +384,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
     el_def=0;
    };
   };
-  NetUpdateView @[7] {
+  NetUpdateView @[8] {
    desc="update network views, if update_net_view == true";
    flags=;
    network_var=$2$;
-   update_var=.projects[0].programs.gp[0][4].vars[2]$6$;
+   update_var=.projects[0].programs.gp[0][4].vars[2]$7$;
   };
  };
 };

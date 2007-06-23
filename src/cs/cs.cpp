@@ -25,7 +25,7 @@ static void cs_converter_init() {
   cvt->repl_strs.Add(NameVar("Network", "CsNetwork"));
   cvt->repl_strs.Add(NameVar("CsNetwork_Group", "Network_Group")); // fix prev
   cvt->repl_strs.Add(NameVar("CsWiz", "CsWizard"));
-  //  cvt->repl_strs.Add(NameVar("Layer", "CsLayer"));
+  cvt->repl_strs.Add(NameVar("Layer", "CsLayer"));
   // obsolete types get replaced with taBase..
   cvt->repl_strs.Add(NameVar("WinView_Group", "taBase_Group"));
   cvt->repl_strs.Add(NameVar("ProjViewState_List", "taBase_List"));
@@ -570,6 +570,12 @@ void CsNetwork::UpdateAfterEdit_impl() {
     taMisc::Error("CsCycle Error: cannot use ASYNCHRONOUS update_mode with distributed memory computation (np > 1)");
   }
 #endif
+
+  if(TestError(!deterministic && start_stats > cycle_max, "UpdateAfterEdit",
+	       "start_stats is > cycle_max -- won't work -- setting to cycle_max -10 -- might want to set to desired value")) {
+    start_stats = cycle_max - 10;
+    if(start_stats < 0) start_stats = 0;
+  }
 }
 
 void CsNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -668,7 +674,7 @@ void CsNetwork::Cycle_Run() {
   else
     Compute_AsyncAct();
 
-  if(deterministic && (cycle >= start_stats) && !(train_mode == Network::TEST))
+  if(!deterministic && (cycle >= start_stats) && !(train_mode == Network::TEST))
     Aggregate_dWt();
 }
 
