@@ -1334,6 +1334,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   }
   vta->un_geom.n = 1;
   rew_targ_lay->un_geom.n = 1;
+  rew_targ_lay->layer_type = Layer::INPUT;
 
   if(lve_new) {
     if(localist_val) {

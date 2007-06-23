@@ -62,7 +62,7 @@ private:
 };
 
 class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
-  // computes PVLV 'Da' signal, uses inputs from the patch to provide stripe-specific modulation (NOTE: not currently supported); Does not do SNrThal modulation, which is computed directly in Matrix units
+  // computes PVLV 'Da' signal, uses inputs from the patch to provide stripe-specific modulation (NOTE: not currently supported -- this layer spec is currently optional and does the same thing as PVLVDaLayerSpec); Does not do SNrThal modulation, which is computed directly in Matrix units
 INHERITED(PVLVDaLayerSpec)
 public:
   SNcMiscSpec	snc;		// misc SNc specific parameters controlling influence of patch modulation
