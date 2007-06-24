@@ -29,6 +29,63 @@
 // 	     GenDoc		//
 //////////////////////////////////
 
+String MTA::TypeDef_Get_Parents(TypeDef* td, String biological_parents) {
+  TypeSpace* potential_parents = &td->parents;
+
+  for(int i=0;i<potential_parents->size;i++) {
+    TypeDef* this_parent = potential_parents->FastEl(i);
+
+    if (!TypeDef_Filter_Type(this_parent, potential_parents))
+      biological_parents += "," + this_parent->name;
+
+    return TypeDef_Get_Parents(this_parent, biological_parents);
+  }
+}
+
+bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
+  /////////////////////////////////////////////////////////////
+  // 	Filters! Returns true if you should filter this TypeDef
+
+  TypeDef* ta_base_def = ts->FindName("taBase");
+  TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
+  TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
+
+  // We only want "actual" types, not pointers or references to types, etc...
+  if (td->ptr || td->ref || td->formal || td->pre_parsed) 
+    return true;
+
+  if(td->InheritsFrom(&TA_const))
+    return true;
+
+  // exclude template instances (of any sort!)  //  && (td->children.size == 1)) 
+  if (td->InheritsFormal(TA_templ_inst))
+    return true;
+
+  if(td->HasOption("IGNORE"))
+    return true;
+
+  // exclude low-level non-instance guys, except for the ones we want..
+  if((td->HasOption("NO_INSTANCE") || td->HasOption("NO_CSS"))
+     && !(td->HasOption("VIRT_BASE") || td->HasOption("SMART_POINTER")
+	  || td->name == "taMisc"))
+    return true;
+
+  if(spc_builtin.FindName(td->name)) 
+    return true;
+
+  // no builtin guys
+  if((td != ta_smartref_def && td->InheritsFrom(ta_smartref_def))
+     || (td != ta_smartptr_def && td->InheritsFrom(ta_smartptr_def)))
+    return true;
+
+    TypeDef* main_parent = NULL;
+    if(td->children.size >= 1)
+      main_parent = td->children.FastEl(0);
+
+    if(main_parent && main_parent->HasOption("IGNORE"))
+      return true;
+}
+
 void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
   //////////////////////
@@ -53,37 +110,14 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
     TypeDef* td = ts->FastEl(i);
 
-    ///////////////////////////////////////////////////
-    // 	Filters!
+    if (TypeDef_Filter_Type(td, ts)) continue;
 
-    // We only want "actual" types, not pointers or references to types, etc...
-    if (td->ptr || td->ref || td->formal || td->pre_parsed) 
-      continue;
-
-    if(td->InheritsFrom(&TA_const)) continue;
-
-    // exclude template instances (of any sort!)  //  && (td->children.size == 1)) 
-    if (td->InheritsFormal(TA_templ_inst)) continue;
-
-    if(td->HasOption("IGNORE")) continue;
-
-    // exclude low-level non-instance guys, except for the ones we want..
-    if((td->HasOption("NO_INSTANCE") || td->HasOption("NO_CSS"))
-       && !(td->HasOption("VIRT_BASE") || td->HasOption("SMART_POINTER")
-	    || td->name == "taMisc"))
-      continue;
-
-    if(spc_builtin.FindName(td->name)) continue;
-    // no builtin guys
-
-    if((td != ta_smartref_def && td->InheritsFrom(ta_smartref_def))
-       || (td != ta_smartptr_def && td->InheritsFrom(ta_smartptr_def))) continue;
+    
 
     TypeDef* main_parent = NULL;
     if(td->children.size >= 1)
       main_parent = td->children.FastEl(0);
 
-    if(main_parent && main_parent->HasOption("IGNORE")) continue;
     if(td == ta_base_def) main_parent = NULL; // somehow parent of taBase is taBase!
 
     ///////////////////////////////////////////////////
@@ -102,11 +136,15 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       strm << "  </Options>\n";
     }
       
-
-    // TODO: Walk the parent heirarchy
+    // Parents
     TypeSpace* tsp = &td->parents;
-    for (int j=0;j<tsp->size;j++)
-      strm << "  <Parent>" << trim(tsp->FastEl(j)->name).xml_esc() << "</Parent>\n";
+    String tdp = "";
+    String parents = TypeDef_Get_Parents(td, tdp);
+    strm << "  <Parents>" << trim(parents).xml_esc() << "</Parents>\n";
+
+
+    //for (int j=0;j<tsp->size;j++)
+
 
     TypeSpace* tsc = &td->children;
     if (tsc->size) {

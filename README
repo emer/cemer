@@ -3,4 +3,7 @@
 * to build user plugins, you must set the environment variable
   PDP4DIR to point to your pdp4 system folder, typically:
   PDP4DIR = /usr/local/share/pdp++-4.0.3rc1
-  
+
+* make distcheck was not run, and it is unlikely that VPATH
+  building works
+
