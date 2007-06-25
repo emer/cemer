@@ -1861,6 +1861,7 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
   SbVec3f axis;
@@ -4660,6 +4661,7 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
   SbVec3f axis;
