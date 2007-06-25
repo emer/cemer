@@ -30,7 +30,6 @@
 
 String_PArray* MTA::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
   TypeSpace* pp = &td->parents; // Potential parents
-  cout << pp->size;
   for(int i=0;i<pp->size;i++) {
     TypeDef* this_par = pp->FastEl(i);
     if (!TypeDef_Filter_Type(this_par, pp)) {
@@ -39,7 +38,7 @@ String_PArray* MTA::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
       }
   }
   return bp;
-  }
+}
 
 bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////
@@ -111,8 +110,6 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 
     if (TypeDef_Filter_Type(td, ts)) continue;
 
-    
-
     TypeDef* main_parent = NULL;
     if(td->children.size >= 1)
       main_parent = td->children.FastEl(0);
@@ -135,15 +132,23 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       strm << "  </Options>\n";
     }
       
-    String_PArray* bp; // Biological parents
+    String_PArray* bp = new String_PArray; // Biological parents
     bp = TypeDef_Get_Parents(td, bp);
-    strm << "  <Parents>" << trim(bp->AsString()).xml_esc() << "</Parents>\n";
+    if(bp->size){
+      strm << "  <Parents>\n";
+      for (int l=0;l<bp->size;l++)
+	strm << "   <Parent>" << trim(bp->FastEl(l)).xml_esc() << "</Parent>\n";
+      strm << "  </Parents>\n";
+    }
 
     TypeSpace* tsc = &td->children;
     if (tsc->size) {
       strm << "  <Children>\n";
-      for (int j=0;j<tsc->size;j++)
-	strm << "   <Child>" << trim(tsc->FastEl(j)->name).xml_esc() << "</Child>\n";
+      for (int j=0;j<tsc->size;j++) {
+	TypeDef* tdc = tsc->FastEl(j);
+	if (!TypeDef_Filter_Type(tdc, tsc))
+	  strm << "   <Child>" << trim(tdc->name).xml_esc() << "</Child>\n";
+      }
       strm << "  </Children>\n";
     }
 

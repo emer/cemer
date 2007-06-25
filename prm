@@ -464,7 +464,6 @@ if __name__ == "__main__":
 
             TypeDefs = TypeSpace.findAllNext("typedef")
 
-            # 
             TypeDef_names = []
             for TypeDef in TypeDefs:
                 TypeDef_names.append(TypeDef.next.next.next)
@@ -497,6 +496,24 @@ if __name__ == "__main__":
                     cats = None
                     opts = None
 
+                # Parents
+                try:
+                    parents = []
+                    td_parents = TypeDef.parents
+                    for td_parent in td_parents:
+                        if len(td_parent.string) > 2:
+                            parents.append(td_parent.string)
+                except:
+                    parents = None
+
+                if parents:
+                    parents.reverse()
+                    h_body += "<h3>Parents</h3>"
+                    h_body += "<div id=\"navcontainer\">\n<ul id=\"navlist\">"
+                    for parent in parents:
+                        h_body += "<li><a href=\"" + parent  + ".html\" id=\"active\">" + parent + "</a></li>"
+                    h_body += "</ul></div>\n<br/>"
+                # Children
                 try:
                     children = []
                     td_children = TypeDef.children
