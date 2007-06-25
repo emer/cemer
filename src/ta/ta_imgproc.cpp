@@ -1798,19 +1798,40 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
 
   float_Matrix xform_img;     	taBase::Ref(xform_img);
 
-  // don't crop yet..
-  taImageProc::TransformImage_float(xform_img, img_data, move_x, move_y, rotate, scale);
+  // don't crop or scale yet..
+  taImageProc::TransformImage_float(xform_img, img_data, move_x, move_y, rotate);
 
   float_Matrix xlate_img;     	taBase::Ref(xlate_img);
   float_Matrix* use_img = &xform_img;
   if((ret_move_x != 0.0f) || (ret_move_y != 0.0f)) {
-    FloatTwoDCoord deltas(ret_move_x, ret_move_y);
+    FloatTwoDCoord deltas(ret_move_x / scale, ret_move_y / scale); // factor in scaling
     FloatTwoDCoord img_ctr = FloatTwoDCoord(retina_size) / 2.0f; // using retina size here!
     TwoDCoord img_off = TwoDCoord(deltas * img_ctr);
     
     taImageProc::TranslateImagePix_float(xlate_img, *use_img, img_off.x, img_off.y);
     use_img = &xlate_img;
     taImageProc::RenderBorder_float(*use_img);
+  }
+
+  float_Matrix sc_img;     	taBase::Ref(sc_img);
+  float_Matrix precrop_img;    	taBase::Ref(precrop_img);
+
+  // special code to optimize large scaling operations: crop first then scale..
+  if(scale > 1.3f) {
+    FloatTwoDCoord crop_sz(retina_size.x, retina_size.y);
+    crop_sz *= 1.05f / scale;	// 1.05 = allow for some extra margin
+    taImageProc::CropImage_float(precrop_img, *use_img, (int)crop_sz.x, (int)crop_sz.y);
+
+    taImageProc::ScaleImage_float(sc_img, precrop_img, scale);
+    use_img = &sc_img;
+    taImageProc::RenderBorder_float(*use_img);
+  }
+  else {
+    if(scale != 1.0f) {
+      taImageProc::ScaleImage_float(sc_img, *use_img, scale);
+      use_img = &sc_img;
+      taImageProc::RenderBorder_float(*use_img);
+    }
   }
 
   taImageProc::CropImage_float(*ret_img, *use_img, retina_size.x, retina_size.y);

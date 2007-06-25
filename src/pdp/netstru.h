@@ -974,7 +974,7 @@ public:
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // convenience functions for those defined in the spec
-  void 	RemoveCons()		{ spec->RemoveCons(this); }
+  void 	RemoveCons()		{ if((bool)spec) spec->RemoveCons(this); }
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
   void 	PreConnect()		{ spec->PreConnect(this); }
   // #CAT_Structure pre-configure connection state
