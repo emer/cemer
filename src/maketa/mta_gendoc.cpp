@@ -20,7 +20,6 @@
 #include "ta/ta_platform.h"
 #include "ta/ta_type.h"
 
-// TODO: Put everything/methods/members/etc... into wiki categories based on CAT_
 // The logical ordering is: enum, subtypes, members, methods
 // For member options, it goes guys with nothing, then expert, then hidden
 //  * Hidden also includes readonly
@@ -29,18 +28,18 @@
 // 	     GenDoc		//
 //////////////////////////////////
 
-String MTA::TypeDef_Get_Parents(TypeDef* td, String biological_parents) {
-  TypeSpace* potential_parents = &td->parents;
-
-  for(int i=0;i<potential_parents->size;i++) {
-    TypeDef* this_parent = potential_parents->FastEl(i);
-
-    if (!TypeDef_Filter_Type(this_parent, potential_parents))
-      biological_parents += "," + this_parent->name;
-
-    return TypeDef_Get_Parents(this_parent, biological_parents);
+String_PArray* MTA::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
+  TypeSpace* pp = &td->parents; // Potential parents
+  cout << pp->size;
+  for(int i=0;i<pp->size;i++) {
+    TypeDef* this_par = pp->FastEl(i);
+    if (!TypeDef_Filter_Type(this_par, pp)) {
+	bp->Add(this_par->name);
+	bp = TypeDef_Get_Parents(this_par, bp);
+      }
   }
-}
+  return bp;
+  }
 
 bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////
@@ -136,15 +135,9 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       strm << "  </Options>\n";
     }
       
-    // Parents
-    TypeSpace* tsp = &td->parents;
-    String tdp = "";
-    String parents = TypeDef_Get_Parents(td, tdp);
-    strm << "  <Parents>" << trim(parents).xml_esc() << "</Parents>\n";
-
-
-    //for (int j=0;j<tsp->size;j++)
-
+    String_PArray* bp; // Biological parents
+    bp = TypeDef_Get_Parents(td, bp);
+    strm << "  <Parents>" << trim(bp->AsString()).xml_esc() << "</Parents>\n";
 
     TypeSpace* tsc = &td->children;
     if (tsc->size) {

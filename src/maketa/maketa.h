@@ -262,7 +262,7 @@ public: // these used to be standalone functions
 
   void GenDoc(TypeSpace* ths, fstream& strm);
   bool TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts);
-  String TypeDef_Get_Parents(TypeDef* td, String tdp);
+  String_PArray* TypeDef_Get_Parents(TypeDef* td, String_PArray* bp);
 };
 
 
