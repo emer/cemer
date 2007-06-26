@@ -113,12 +113,27 @@ class LEABRA_API WtScaleSpec : public taBase {
 INHERITED(taBase)
 public:
   float		abs;		// #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
-  float		rel;		// [Default: 1] relative scaling (subject to normalization across all other projections into unit)
+  float		rel;		// [Default: 1] relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
 
   inline float	NetScale() 	{ return abs * rel; }
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(WtScaleSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API WtScaleSpecInit : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial weight scaling values -- applied to active WtScaleSpec values during InitWeights -- useful for adapting scale values
+INHERITED(taBase)
+public:
+  bool		init;		// #APPLY_IMMED use these scaling values to initialize the wt_scale parameters during InitWeights (if false, these values have no effect at all)
+  float		abs;		// #CONDEDIT_ON_init #DEF_1 absolute scaling (not subject to normalization: directly multiplies weight values)
+  float		rel;		// #CONDEDIT_ON_init [Default: 1] relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(WtScaleSpecInit);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -222,7 +237,8 @@ public:
   };
 
   bool		inhib;		// #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
-  WtScaleSpec	wt_scale;	// #CAT_Activation scale weight values, both relative and absolute factors
+  WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
+  WtScaleSpecInit wt_scale_init;// #CAT_Activation initial values of wt_scale parameters, set during InitWeights -- useful for rel_net_adapt and abs_net_adapt (on LayerSpec)
   WtSigSpec	wt_sig;		// #CAT_Learning sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   float		lrate;		// #DEF_0.01 #CAT_Learning learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
@@ -255,6 +271,10 @@ public:
   void 		C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
     lcn->pdw = 0.0f; C_Init_Weights_Post(cg, cn, ru, su); }
+  void 		Init_Weights(RecvCons* cg, Unit* ru) {
+    ConSpec::Init_Weights(cg, ru);
+    if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
+      wt_scale.rel = wt_scale_init.rel; } }
 
   inline float 	C_Compute_Netin(LeabraCon* cn, Unit*, Unit* su);
   inline float 	Compute_Netin(RecvCons* cg, Unit* ru);

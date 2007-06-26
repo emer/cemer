@@ -60,6 +60,12 @@ void WtScaleSpec::Initialize() {
   abs = 1.0f;
 }
 
+void WtScaleSpecInit::Initialize() {
+  init = false;
+  rel = 1.0f;
+  abs = 1.0f;
+}
+
 void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.25f;
@@ -144,6 +150,7 @@ void LeabraConSpec::InitLinks() {
   children.SetBaseType(&TA_LeabraConSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
   taBase::Own(wt_scale, this);
+  taBase::Own(wt_scale_init, this);
   taBase::Own(wt_sig, this);
   taBase::Own(lrate_sched, this);
   taBase::Own(lmix, this);
@@ -164,6 +171,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
 
 void LeabraConSpec::Defaults() {
   wt_scale.Defaults();
+  wt_scale_init.Defaults();
   wt_sig.Defaults();
   lmix.Defaults();
   savg_cor.Defaults();
@@ -289,6 +297,7 @@ void LeabraBiasSpec::Initialize() {
   SetUnique("rnd", true);
   SetUnique("wt_limits", true);
   SetUnique("wt_scale", true);
+  SetUnique("wt_scale_init", true);
   rnd.mean = 0.0f;
   rnd.var = 0.0f;
   wt_limits.min = -1.0f;
