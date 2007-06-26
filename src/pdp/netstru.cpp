@@ -2415,8 +2415,8 @@ void Projection::UpdateAfterEdit_impl() {
   SetFrom();
   if(from)
     name = "Fm_" + from->name;
+  UpdateConSpecs((bool)taMisc::is_loading);
   if(taMisc::is_loading) return;
-  UpdateConSpecs();
   if(!taMisc::gui_active) return;
   Network* net = GET_MY_OWNER(Network);
   if(!net) return;
@@ -3236,7 +3236,7 @@ void Layer::UpdateAfterEdit_impl() {
   }
 
   // no negative geoms., y,z must be 1 (for display)
-  UpdateUnitSpecs();
+  UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
   // also causes problems during copy..
   if(n_units > 0) {		// todo: v3compat conversion obs remove later

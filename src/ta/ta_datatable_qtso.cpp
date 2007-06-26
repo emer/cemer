@@ -2936,7 +2936,7 @@ void GraphTableView::Initialize() {
   plot_3.point_style = GraphPlotView::DIAMOND;
   plot_4.color.name = "green";
   plot_4.point_style = GraphPlotView::TRIANGLE;
-  plot_5.color.name = "violet";
+  plot_5.color.name = "purple";
   plot_5.point_style = GraphPlotView::PLUS;
   alt_y_2 = false;
   alt_y_3 = false;
