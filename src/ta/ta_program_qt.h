@@ -59,9 +59,6 @@ public:
 
   TAQT_MEMBER_INSTANCE(taiProgVarIntValMember, taiMember);
 protected:
-  taiIncrField*	int_rep;
-  taiComboBox*	enum_rep;
-
   override void GetImage_impl(taiData* dat, const void* base);
   override void	GetMbrValue_impl(taiData* dat, void* base);
 

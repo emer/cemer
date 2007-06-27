@@ -122,7 +122,7 @@ public:
   // get paths before saving
 
   override String 	GetTypeDecoKey() const { return "SelectEdit"; }
-  override String	GetDesc() const { return desc; }
+  override String	GetDesc() const { return desc; } //
 
   // note: this is intentionally not _impl:
   void	UpdateAfterEdit();

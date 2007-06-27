@@ -115,10 +115,11 @@ taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par,
 					 int flags_) {
   taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
   gui_parent_ = rval->GetRep();
-  int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
-  enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
-
+  taiIncrField*	int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
+  taiComboBox*	enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
+  rval->data_el.Add(int_rep);
   rval->AddChildWidget(int_rep->rep());
+  rval->data_el.Add(enum_rep);
   rval->AddChildWidget(enum_rep->rep());
 
   return rval;
@@ -131,6 +132,8 @@ void taiProgVarIntValMember::GetImage_impl(taiData* dat, const void* base) {
 
   if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
     rval->GetImage(1);
+    taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
+    if (!enum_rep) return; // shouldn't happen
     enum_rep->SetEnumType(pv->hard_enum_type);
     EnumDef* td = pv->hard_enum_type->enum_vals.FindNo(val);
     if(td != NULL)
@@ -138,6 +141,8 @@ void taiProgVarIntValMember::GetImage_impl(taiData* dat, const void* base) {
   }
   else {
     rval->GetImage(0);
+    taiIncrField* int_rep = dynamic_cast<taiIncrField*>(rval->data_el.SafeEl(0));
+    if (!int_rep) return; // shouldn't happen
     int_rep->GetImage(val);
   }
 }
@@ -145,10 +150,12 @@ void taiProgVarIntValMember::GetImage_impl(taiData* dat, const void* base) {
 void taiProgVarIntValMember::GetMbrValue_impl(taiData* dat, void* base) {
   ProgVar* pv = (ProgVar*)base;
   int& val =  *((int*)mbr->GetOff(base));
-//   taiDataDeck* rval = (taiDataDeck*)dat;
+  taiDataDeck* rval = (taiDataDeck*)dat;
 
   if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
     int itm_no = -1;
+    taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
+    if (!enum_rep) return; // shouldn't happen
     enum_rep->GetValue(itm_no);
     EnumDef* td = NULL;
     if ((itm_no >= 0) && (itm_no < pv->hard_enum_type->enum_vals.size))
@@ -157,6 +164,8 @@ void taiProgVarIntValMember::GetMbrValue_impl(taiData* dat, void* base) {
       val = td->enum_no;
   }
   else {
+    taiIncrField* int_rep = dynamic_cast<taiIncrField*>(rval->data_el.SafeEl(0));
+    if (!int_rep) return; // shouldn't happen
     val = int_rep->GetValue();
   }
 }
