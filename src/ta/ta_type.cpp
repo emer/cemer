@@ -506,11 +506,11 @@ int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
 int 	taMisc::search_depth = 4;
 int	taMisc::color_scale_size = 128;
 int	taMisc::jpeg_quality = 95;
-taMisc::ColorHints taMisc::color_hints = taMisc::CH_EDITS;
+taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS | taMisc::CH_BROWSER);
 taMisc::ClickStyle taMisc::click_style = taMisc::CS_CONTEXT;
 //note: we actually init this in ta_project, the first time, for the user
 taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
-taMisc::ViewerOptions	taMisc::viewer_options = taMisc::VO_0;
+taMisc::ViewerOptions	taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
