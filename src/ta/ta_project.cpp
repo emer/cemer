@@ -311,7 +311,12 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
 
 DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("InputData");
-  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  DataTable* rval = NULL;
+  if(!nw_nm.empty()) {
+    rval = dgp->FindName(nw_nm);
+    if(rval) return rval;
+  }
+  rval = dgp->NewEl(1, &TA_DataTable);
   if(!nw_nm.empty()) {
     rval->name = nw_nm;
     rval->DataChanged(DCR_ITEM_UPDATED);
@@ -323,7 +328,12 @@ DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
 
 DataTable* taProject::GetNewOutputDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("OutputData");
-  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  DataTable* rval = NULL;
+  if(!nw_nm.empty()) {
+    rval = dgp->FindName(nw_nm);
+    if(rval) return rval;
+  }
+  rval = dgp->NewEl(1, &TA_DataTable);
   if(!nw_nm.empty()) {
     rval->name = nw_nm;
     rval->DataChanged(DCR_ITEM_UPDATED);
@@ -335,7 +345,12 @@ DataTable* taProject::GetNewOutputDataTable(const String& nw_nm, bool msg) {
 
 DataTable* taProject::GetNewAnalysisDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
-  DataTable* rval = dgp->NewEl(1, &TA_DataTable);
+  DataTable* rval = NULL;
+  if(!nw_nm.empty()) {
+    rval = dgp->FindName(nw_nm);
+    if(rval) return rval;
+  }
+  rval = dgp->NewEl(1, &TA_DataTable);
   if(!nw_nm.empty()) {
     rval->name = nw_nm;
     rval->DataChanged(DCR_ITEM_UPDATED);

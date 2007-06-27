@@ -99,7 +99,7 @@ public:
   // closes current edit dialog and makes a new one (with any changes)
 
   virtual void	Reset();
-  // #BUTTON #CONFIRM reset (remove all) current members and methods
+  // #MENU #CONFIRM reset (remove all) current members and methods
   virtual int	SearchMembers(taNBase* obj, const String& memb_contains);
   // #MENU #MENU_SEP_BEFORE search given object for member names that contain given string, and add them to this editor
   virtual int	CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);

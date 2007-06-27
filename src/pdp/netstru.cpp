@@ -4247,7 +4247,6 @@ void Network::Initialize() {
   layers.SetBaseType(&TA_Layer);
 
   flags = NF_NONE;
-  no_save_units = true;		// todo: obsolete, remove!
   auto_build = AUTO_BUILD;
 
   train_mode = TRAIN;
@@ -4396,14 +4395,19 @@ void Network::UpdateAfterEdit_impl(){
   if(wt_save_fmt == NET_FMT)
     wt_save_fmt = TEXT;
 
-  if(!no_save_units) {		// todo: obsolete, remove conversion
-    SetNetFlag(SAVE_UNITS);
-    no_save_units = true;
-  }
-
   ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
 
   UpdtAfterNetMod();
+}
+
+void Network::UpdtAfterNetMod() {
+  //  SyncSendPrjns();
+  CountRecvCons();
+  small_batch_n_eff = small_batch_n;
+#ifdef DMEM_COMPILE
+  DMem_SyncNRecvCons();
+  DMem_UpdtWtUpdt();
+#endif
 }
 
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
@@ -4433,16 +4437,6 @@ void Network::UpdateMonitors() {
     if(nm->network != this) continue;
     nm->UpdateDataTable();
   }
-}
-
-void Network::UpdtAfterNetMod() {
-  //  SyncSendPrjns();
-  CountRecvCons();
-  small_batch_n_eff = small_batch_n;
-#ifdef DMEM_COMPILE
-  DMem_SyncNRecvCons();
-  DMem_UpdtWtUpdt();
-#endif
 }
 
 int Network::Dump_Load_Value(istream& strm, taBase* par) {

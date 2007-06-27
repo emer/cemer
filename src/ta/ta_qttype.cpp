@@ -118,7 +118,8 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
     md = tab->FindMembeR(mbr, mbr_base);
   }
   if ((md == NULL) || (mbr_base == NULL)) {
-    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
+    // this can happen in valid cases (selectedit), and the msg is annoying
+    //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
     return false;
   }
   

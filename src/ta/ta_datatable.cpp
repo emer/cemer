@@ -1948,7 +1948,7 @@ void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str) {
 }
 
 void DataTable::SaveHeader(const String& fname, Delimiters delim) {
-  taFiler* flr = GetSaveFiler(fname, ".dat", false);
+  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false);
   if(flr->ostrm)
     SaveHeader_strm(*flr->ostrm, delim);
   flr->Close();
@@ -1956,7 +1956,7 @@ void DataTable::SaveHeader(const String& fname, Delimiters delim) {
 }
 
 void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data");
+  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->ostrm)
     SaveDataRow_strm(*flr->ostrm, row, delim, quote_str);
   flr->Close();
@@ -1964,7 +1964,7 @@ void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool
 }
 
 void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetSaveFiler(fname, ".dat", false, "Data");
+  taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if (flr->ostrm) {
     SaveData_strm(*flr->ostrm, delim, quote_str);
   }
@@ -1972,22 +1972,24 @@ void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) 
   taRefN::unRefDone(flr);
 }
 
-void DataTable::SaveDataTSV(const String& fname) {
-  taFiler* flr = GetSaveFiler(fname, ".tsv", false, "Data");
-  if(flr->ostrm) {
-    *flr->ostrm << HeaderToTSV();
-//    int tot_col = 0; // total flat cols
-//    int max_cell_rows = 0; // max flat rows per cell
-    CellRange cr;
-    cr.SetExtent(cols(), rows);
-//    GetFlatGeom(cr, tot_col, max_cell_rows);
-    *flr->ostrm << RangeToTSV(cr);
-  }
-  flr->Close();
-  taRefN::unRefDone(flr);
-}
+// redundant with existing save -- perhaps useful to test the TSV stuff used by clip guy?
+// void DataTable::SaveDataTSV(const String& fname) {
+//   taFiler* flr = GetSaveFiler(fname, ".tsv", false, "Data");
+//   if(flr->ostrm) {
+//     *flr->ostrm << HeaderToTSV();
+// //    int tot_col = 0; // total flat cols
+// //    int max_cell_rows = 0; // max flat rows per cell
+//     CellRange cr;
+//     cr.SetExtent(cols(), rows);
+// //    GetFlatGeom(cr, tot_col, max_cell_rows);
+//     *flr->ostrm << RangeToTSV(cr);
+//   }
+//   flr->Close();
+//   taRefN::unRefDone(flr);
+// }
+
 void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetAppendFiler(fname, ".dat", false, "Data");
+  taFiler* flr = GetAppendFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->ostrm)
     SaveDataRows_strm(*flr->ostrm, delim, quote_str);
   flr->Close();
@@ -2175,7 +2177,7 @@ void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, i
 }
 
 int DataTable::LoadHeader(const String& fname, Delimiters delim) {
-  taFiler* flr = GetLoadFiler(fname, ".dat", false);
+  taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false);
   int rval = 0;
   if(flr->istrm)
     rval = LoadHeader_strm(*flr->istrm, delim);
@@ -2185,7 +2187,7 @@ int DataTable::LoadHeader(const String& fname, Delimiters delim) {
 }
 
 int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str) {
-  taFiler* flr = GetLoadFiler(fname, ".dat", false, "Data");
+  taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   int rval = 0;
   if(flr->istrm)
     rval = LoadDataRow_strm(*flr->istrm, delim, quote_str);
@@ -2195,7 +2197,7 @@ int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str
 }
 
 void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, int max_recs) {
-  taFiler* flr = GetLoadFiler(fname, ".dat", false, "Data");
+  taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->istrm)
     LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
   flr->Close();

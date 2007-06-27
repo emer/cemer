@@ -275,6 +275,11 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
 // 	Enviro Wizard		//
 //////////////////////////////////
 
+void Wizard::StdData(Network* net, DataTable* data_table, int n_patterns, bool group) {
+  StdInputData(net, data_table, n_patterns, group);
+  StdOutputData();
+}
+
 void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!data_table) {
@@ -297,8 +302,6 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
   if(n_patterns > 0)
     data_table->AddRows(n_patterns);
   data_table->StructUpdate(false);
-
-  StdOutputData();
 }
 
 void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
@@ -327,8 +330,10 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 
 void Wizard::StdOutputData() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  DataTable* trl_data = proj->GetNewOutputDataTable("TrialOutputData");
-  DataTable* epc_data = proj->GetNewOutputDataTable("EpochOutputData");
+  // DataTable* trl_data 
+  proj->GetNewOutputDataTable("TrialOutputData");
+  // DataTable* epc_data =
+  proj->GetNewOutputDataTable("EpochOutputData");
 }
 
 //////////////////////////////////

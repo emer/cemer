@@ -1520,6 +1520,11 @@ void NetView::CutLinks() {
 
 void NetView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    Reset();			// do full rebuild!
+    BuildAll();
+    Render();
+  }
 }
 
 void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {

@@ -1729,8 +1729,6 @@ public:
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
 
-  bool		no_save_units;  // #READ_ONLY #NO_SAVE #HIDDEN obsolete -- todo: remove!
-
   inline void		SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on
   inline void		ClearNetFlag(NetFlags flg) { flags = (NetFlags)(flags & ~flg); }

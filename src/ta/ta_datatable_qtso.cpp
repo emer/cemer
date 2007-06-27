@@ -513,7 +513,8 @@ void DataTableView::DataUpdateView_impl() {
 }
 
 void DataTableView::DataUpdateAfterEdit_impl() {
-  UpdateDisplay(true);
+  // this is actually fully redundant..
+  //  UpdateDisplay(true);
 }
 
 void DataTableView::DoActionChildren_impl(DataViewAction acts) {
@@ -1088,7 +1089,7 @@ void GridTableView::UpdateDisplay(bool update_panel) {
 
   if(delta_rows > 0) {
     // if we were not at the very end, then don't scroll, but do update the panel
-    if ((view_range.max < old_rows-1) && (view_range.max > 0)) {
+    if(update_panel && (view_range.max < old_rows-1) && (view_range.max > 0)) {
       UpdatePanel();
       return;
     }
@@ -1936,6 +1937,7 @@ void iDataTableView_Panel::InitPanel() {
 
 void iDataTableView_Panel::UpdatePanel() {
   if (updating) return;
+  if(!isVisible()) return; // no update when hidden!
   ++updating;
   UpdatePanel_impl();
   --updating;
@@ -3202,7 +3204,8 @@ void GraphTableView::Render_impl() {
   ComputeAxisRanges();
   SetScrollBars();
   RenderGraph();
-  UpdatePanel();		// otherwise doesn't get updated without explicit click..
+  //  UpdatePanel();		// otherwise doesn't get updated without explicit click..
+  // nein!  this is called in UpdateDisplay -- gets called 2x with this!
 }
 
 void GraphTableView::Render_post() {
@@ -3225,7 +3228,7 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
 
   if(delta_rows > 0) {
     // if we were not at the very end, then don't scroll, but do update the panel
-    if ((view_range.max < old_rows-1) && (view_range.max > 0)) {
+    if(update_panel && (view_range.max < old_rows-1) && (view_range.max > 0)) {
       UpdatePanel();
       return;
     }
@@ -3486,6 +3489,7 @@ void GraphTableView::UpdateFromDataTable_this(bool first) {
 //	Actual Rendering of graph display
 
 void GraphTableView::RenderGraph() {
+//   cerr << "render graph" << endl;
   UpdateAfterEdit_impl();
   if(!plot_1.on || !x_axis.on) return;
   n_plots = 1;
@@ -5174,6 +5178,8 @@ void iGraphTableView_Panel::InitPanel_impl() {
 
 void iGraphTableView_Panel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
+
+  //   cerr << "panel update" << endl;
 
   GraphTableView* glv = this->glv(); //cache
 //   DataTable* dt = glv->dataTable();

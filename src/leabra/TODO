@@ -19,8 +19,6 @@ current:
 
 * Duplicate project (455)
 
-* mult #EXT (ticket)
-
 * convert old file: cancel doesn't work!
 
 * projection from should be a smartref, not a raw pointer!!  also, copy of it seems

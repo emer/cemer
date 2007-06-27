@@ -79,14 +79,16 @@ public:
   virtual void	StdNetwork(Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK #NULL_TEXT_NewNetwork make a standard network according to the current settings (if net == NULL, new network is created)
   virtual void	RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net=NULL);
-  // #MENU_BUTTON #MENU_ON_Network #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_spec (if net == NULL, new network is created)
+  // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_spec (if net == NULL, new network is created)
 
+  virtual void	StdData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
+  // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also make standard output data to monitor network output
   virtual void	StdInputData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
-  // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also calls StdOutputData to create monitor output data
+  // #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also calls StdOutputData to create monitor output data
+  virtual void	StdOutputData();
+  // #MENU_BUTTON make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for
   virtual void	UpdateInputDataFmNet(Network* net, DataTable* data_table);
   // #MENU_BUTTON #MENU_SEP_BEFORE update data table columns based on configuration of the network 
-  virtual void	StdOutputData();
-  // #MENU_BUTTON #MENU_SEP_BEFORE make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for
 
 //   virtual void	TimeSeqEvents(TimeEnvironment* env, int n_seqs = 10, int events_per_seq = 4, float start_time = 0.0, float time_inc = 1.0);
 //   // #MENU_BUTTON make sequences (groups) of TimeEvents, with each sequence having the same sequence of times (start + inc for each addnl event)

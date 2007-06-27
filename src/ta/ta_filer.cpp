@@ -371,6 +371,7 @@ const String taFiler::filterText(bool incl_allfiles, QStringList* list) const {
   // key on the exts, and just put a ? for type if we run out
   for (int i = 0; i < sa_ex.size; ++i) {
     String tft = sa_ft.SafeEl(i);
+    if(tft.empty()) tft = sa_ft.SafeEl(0);
     if (tft.empty()) tft = "?";
     String tex = sa_ex.FastEl(i);
     String itm = tft.cat(" files (");
@@ -408,12 +409,14 @@ void taFiler::FixFileName() {
   // otherwise, if no ext was supplied and we have one, we apply it
   String act_ext; // the actual extension
   if (ext.nonempty()) act_ext = ext;
+  if(act_ext.contains(',')) act_ext = act_ext.before(','); // could be multiple
+  String nocompr_ext = act_ext;
   if (compressed) act_ext += taMisc::compress_sfx;
   
   if (m_fname.endsWith(act_ext)) return; // done!
 
   // ends with basic extension but not compressed one -- just add compresed
-  if(compressed && m_fname.endsWith(ext)) {
+  if(compressed && m_fname.endsWith(nocompr_ext)) {
     m_fname += taMisc::compress_sfx;
     return;
   }
@@ -422,9 +425,9 @@ void taFiler::FixFileName() {
   //note: because paths can have . we have to look at file only
   QFileInfo fi(m_fname);
   String f_only = fi.baseName();
-  if (!f_only.contains('.') && ext.nonempty()) {
+  if (!f_only.contains('.') && nocompr_ext.nonempty()) {
     // otherwise add standard extension
-    m_fname += ext;
+    m_fname += nocompr_ext;
   }
   // if compressed, and don't have compr ext, add it
   if (compressed) {

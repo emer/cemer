@@ -514,7 +514,7 @@ taMisc::ViewerOptions	taMisc::viewer_options = taMisc::VO_0;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
-int	taMisc::antialiasing_passes = 2;
+int	taMisc::antialiasing_passes = 1; // 2 is just too damn slow!!
 float	taMisc::text_complexity = .1f;
 
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
