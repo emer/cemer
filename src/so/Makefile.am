@@ -6,13 +6,13 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 TAHEADS =\
-	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/../pdp/pdp_TA_type.h \
-	@abs_srcdir@/../so/so.h \
-	@abs_srcdir@/../so/som.h \
-	@abs_srcdir@/../so/cl.h \
-	@abs_srcdir@/../so/zsh.h \
-	@abs_srcdir@/../so/so_v3_compat.h
+	../ta/ta_TA_type.h \
+	../pdp/pdp_TA_type.h \
+	so.h \
+	som.h \
+	cl.h \
+	zsh.h \
+	so_v3_compat.h
 
 HEADS=\
 	so.h \

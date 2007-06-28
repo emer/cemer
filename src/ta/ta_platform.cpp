@@ -22,6 +22,17 @@
 # include <QDir>
 #endif
 
+bool taPlatform::fileExists(const String& fname) {
+  bool rval = false;
+  fstream fin;
+  fin.open(fname, ios::in);
+  if (fin.is_open()) {
+    rval = true;
+  }
+  fin.close();
+  return rval;
+}
+
 String taPlatform::finalSep(const String& in) {
   if (in.length() == 0)
     return String();
@@ -53,6 +64,20 @@ String taPlatform::getHomePath() {
   return _nilString;
 }
 #endif
+
+bool taPlatform::isQualifiedPath(const String& fname) {
+//NOTE: we just check the union of Unix and Win -- we aren't asked if it 
+// is valid for the platform, so ok to check all cases here
+  if (fname.empty()) return false;
+  char c = fname.elem(0);
+  // handles all relative, and Unix absolute, and Win share paths
+  if ((c == '.') || (c == '\\') || (c == '/')) return true; 
+#ifdef TA_OS_WIN
+  // Win x: drive letter path
+  if ((fname.length() >= 2) && (fname.elem(1) == ':')) return true;
+#endif
+  return false;
+}
 
 bool taPlatform::mkdir(const String& dir) {
 #ifdef NO_TA_BASE

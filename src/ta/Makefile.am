@@ -8,16 +8,16 @@ VPATH = @srcdir@
 if TA_GUI
 
 TAHEADS_TAMISC_GUI =\
-	@abs_srcdir@/colorbar_qt.h \
-	@abs_srcdir@/../taiqtso/safeptr_so.h \
-	@abs_srcdir@/t3node_so.h \
-	@abs_srcdir@/SoCapsule.h \
-	@abs_srcdir@/t3viewer.h \
-	@abs_srcdir@/colorbar_so.h \
-	@abs_srcdir@/ta_datatable_qtso.h \
-	@abs_srcdir@/ta_datatable_so.h \
-	@abs_srcdir@/ta_virtenv_qtso.h \
-	@abs_srcdir@/ta_virtenv_so.h
+	colorbar_qt.h \
+	../taiqtso/safeptr_so.h \
+	t3node_so.h \
+	SoCapsule.h \
+	t3viewer.h \
+	colorbar_so.h \
+	ta_datatable_qtso.h \
+	ta_datatable_so.h \
+	ta_virtenv_qtso.h \
+	ta_virtenv_so.h
 
 HEADS_TAMISC_GUI =\
 	t3node_so.h \
@@ -46,18 +46,18 @@ SRCS_TAMISC_GUI =\
 	ta_virtenv_so.cpp
 
 TAHEADS_GUI =\
-	@abs_srcdir@/ta_qt.h \
-	@abs_srcdir@/ta_qtdata_def.h \
-	@abs_srcdir@/ta_qtdata.h \
-	@abs_srcdir@/ta_qtdialog.h \
-	@abs_srcdir@/ta_qttype_def.h \
-	@abs_srcdir@/ta_qttype.h \
-	@abs_srcdir@/ta_qtviewer.h \
-	@abs_srcdir@/ta_matrix_qt.h \
-	@abs_srcdir@/ta_qtclassbrowse.h \
-	@abs_srcdir@/ta_qtgroup.h \
-	@abs_srcdir@/ta_seledit.h \
-	@abs_srcdir@/ta_program_qt.h 
+	ta_qt.h \
+	ta_qtdata_def.h \
+	ta_qtdata.h \
+	ta_qtdialog.h \
+	ta_qttype_def.h \
+	ta_qttype.h \
+	ta_qtviewer.h \
+	ta_matrix_qt.h \
+	ta_qtclassbrowse.h \
+	ta_qtgroup.h \
+	ta_seledit.h \
+	ta_program_qt.h 
 
 HEADS_GUI =\
 	ta_qt.h \
@@ -100,9 +100,9 @@ SRCS_GUI =\
 endif
 
 TAHEADS_TAMISC =\
-	@abs_srcdir@/ta_time.h \
-	@abs_srcdir@/fun_lookup.h \
-	@abs_srcdir@/ta_data_extras.h 
+	ta_time.h \
+	fun_lookup.h \
+	ta_data_extras.h 
 
 HEADS_TAMISC =\
 	ta_time.h \
@@ -115,50 +115,50 @@ SRCS_TAMISC =\
 	ta_data_extras.cpp 
 
 TAHEADS =\
-	@abs_srcdir@/../taiqtso/igeometry.h \
-	@abs_srcdir@/ios-g++-3.1/streambuf.h \
-	@abs_srcdir@/ios-g++-3.1/iostream.h \
-	@abs_srcdir@/ios-g++-3.1/fstream.h \
-	@abs_srcdir@/ios-g++-3.1/sstream.h \
-	@abs_srcdir@/ta_def.h \
-	@abs_srcdir@/ta_platform.h \
-	@abs_srcdir@/ta_thread.h \
-	@abs_srcdir@/ta_string.h \
-	@abs_srcdir@/ta_stdef.h \
-	@abs_srcdir@/ta_variant.h \
-	@abs_srcdir@/ifont.h \
-	@abs_srcdir@/ta_mtrnd.h \
-	@abs_srcdir@/ta_list.h \
-	@abs_srcdir@/ta_filer.h \
-	@abs_srcdir@/icolor.h \
-	@abs_srcdir@/ta_type.h \
-	@abs_srcdir@/ta_base.h \
-	@abs_srcdir@/ta_dmem.h \
-	@abs_srcdir@/ta_fontspec.h \
-	@abs_srcdir@/minmax.h \
-	@abs_srcdir@/ta_group.h \
-	@abs_srcdir@/ta_qtclipdata.h \
-	@abs_srcdir@/colorscale.h \
-	@abs_srcdir@/ta_script.h \
-	@abs_srcdir@/ta_viewspec.h \
-	@abs_srcdir@/ta_viewer.h \
-	@abs_srcdir@/ta_program.h \
-	@abs_srcdir@/ta_program_els.h \
-	@abs_srcdir@/ta_matrix.h \
-	@abs_srcdir@/ta_math.h \
-	@abs_srcdir@/ta_geometry.h \
-	@abs_srcdir@/ta_data.h \
-	@abs_srcdir@/ta_datatable.h \
-	@abs_srcdir@/ta_dataproc.h \
-	@abs_srcdir@/ta_dataanal.h \
-	@abs_srcdir@/ta_datagen.h \
-	@abs_srcdir@/ta_imgproc.h \
-	@abs_srcdir@/ta_virtenv.h \
-	@abs_srcdir@/ta_dump.h \
-	@abs_srcdir@/ta_defaults.h \
-	@abs_srcdir@/ta_plugin.h \
-	@abs_srcdir@/ta_plugin_p.h \
-	@abs_srcdir@/ta_project.h \
+	../taiqtso/igeometry.h \
+	ios-g++-3.1/streambuf.h \
+	ios-g++-3.1/iostream.h \
+	ios-g++-3.1/fstream.h \
+	ios-g++-3.1/sstream.h \
+	ta_def.h \
+	ta_platform.h \
+	ta_thread.h \
+	ta_string.h \
+	ta_stdef.h \
+	ta_variant.h \
+	ifont.h \
+	ta_mtrnd.h \
+	ta_list.h \
+	ta_filer.h \
+	icolor.h \
+	ta_type.h \
+	ta_base.h \
+	ta_dmem.h \
+	ta_fontspec.h \
+	minmax.h \
+	ta_group.h \
+	ta_qtclipdata.h \
+	colorscale.h \
+	ta_script.h \
+	ta_viewspec.h \
+	ta_viewer.h \
+	ta_program.h \
+	ta_program_els.h \
+	ta_matrix.h \
+	ta_math.h \
+	ta_geometry.h \
+	ta_data.h \
+	ta_datatable.h \
+	ta_dataproc.h \
+	ta_dataanal.h \
+	ta_datagen.h \
+	ta_imgproc.h \
+	ta_virtenv.h \
+	ta_dump.h \
+	ta_defaults.h \
+	ta_plugin.h \
+	ta_plugin_p.h \
+	ta_project.h \
 	$(TAHEADS_GUI) \
 	$(TAHEADS_TAMISC) \
 	$(TAHEADS_TAMISC_GUI)

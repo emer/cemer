@@ -377,6 +377,28 @@ void MTA::Class_UpdateLastPtrs() {
   mta->cur_memb = NULL; mta->cur_memb_type = NULL; mta->cur_meth = NULL;
 }
 
+String MTA::FindFile(const String& fname, bool& ok) {
+  //NOTE: ok only cleared on error
+  // first just check the basic name, may be abs, or in current
+  if (taPlatform::fileExists(fname)) {
+    return fname;
+  }
+  // otherwise, search paths, unless it is already qualified
+  if (!taPlatform::isQualifiedPath(fname)) {
+    for (int i = 0; i < paths.size; ++i) {
+      String fqfname = paths.FastEl(i) + fname;
+      if (taPlatform::fileExists(fqfname)) {
+        return fqfname;
+      }
+    }
+  }
+  // not found -- we return fname, but set error
+  
+  cerr <<  "W!!: Warning: file could not be found on the include paths:: " << fname.chars() << "\n";
+  ok = false;
+  return fname;
+}
+
 TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
   TypeSpace* rval = mta->spc;
   TypeDef* partd;
@@ -551,6 +573,8 @@ int main(int argc, char* argv[])
   bool keep_tmp = false;
   int i;
   String tmp;
+  // always search in current directory first...
+  mta->paths.Add(taPlatform::finalSep("."));
   for(i=1; i<argc; i++) {
     tmp = argv[i];
     if( (tmp == "-help") || (tmp == "--help") 
@@ -607,10 +631,12 @@ int main(int argc, char* argv[])
 #else
       incs += tmp + " ";
 #endif
+      mta->paths.AddUnique(taPlatform::finalSep(tmp.from(2)));
     } else if(tmp(0,2) == "/I") { // MSVC style, arg is separate
       if ((i + 1) < argc) {
         i++; // get filename, put in quotes in case of spaces
         incs += String("/I \"") + (const char*)argv[i] + "\" ";
+        mta->paths.AddUnique(taPlatform::finalSep(argv[i]));
       }
     } else if(tmp(0,2) == "-D")
       incs += tmp + " ";
@@ -637,10 +663,15 @@ int main(int argc, char* argv[])
 	while(fh.good() && !fh.eof()) {
 	  String fl;
 	  fh >> fl;
+	  fl = trim(fl);
+	  if (fl.empty()) continue; // maybe last line
 	  //note: warn on duplicates, because these cause havoc if they slip in
 	  // but order is also sometimes important in the master input list
 	  // so we shouldn't just ignore them
-	  if (!mta->headv.AddUnique(taPlatform::lexCanonical(fl))) {
+	  bool ok = true;
+	  String tfl = mta->FindFile(fl, ok);
+	  if (!ok) continue; // warning was printed
+	  if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
 	    cerr <<  "W!!: Warning: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
 	  }
 	}
@@ -656,7 +687,10 @@ int main(int argc, char* argv[])
       mta->basename = tmp;
     else {
       // add the header file; see comments in loop above about duplicates
-      if (!mta->headv.AddUnique(taPlatform::lexCanonical(tmp))) {
+      bool ok = true;
+      String tfl = mta->FindFile(tmp, ok);
+      if (!ok) continue; // warning was printed
+      if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
 	cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << tmp.chars() << "\n";
       }
     }

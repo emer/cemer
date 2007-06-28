@@ -142,6 +142,7 @@ public:
   String_PArray	included;	// files already processed as includes, no need to rpt
   String_PArray	tmp_include;	// temp holder
 
+  String_PArray	paths;		// paths we check, in order (have final sep)
   String_PArray	headv;		// list of header files
   String_PArray	head_fn_only; 	// only the file names of the headers
 
@@ -189,6 +190,8 @@ public:
 
   void		SetPreParseFlag(TypeSpace& spc, TypeSpace& pplist);
   // set pre-parse flag for all types in spc that are on the pplist
+  String	FindFile(const String& fname, bool& ok);
+  // find the file, searching on .path if needed; returns full LexCanonical fname, clears ok if not found (fname can have full path)
 
   // LEX functions (defined in mta_lex.cc)
   String	LexBuf;

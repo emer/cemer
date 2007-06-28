@@ -6,11 +6,11 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 TAHEADS =\
-	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/../pdp/pdp_TA_type.h \
-	@abs_srcdir@/../bp/bp.h \
-	@abs_srcdir@/../bp/rbp.h \
-	@abs_srcdir@/../bp/bp_v3_compat.h
+	../ta/ta_TA_type.h \
+	../pdp/pdp_TA_type.h \
+	bp.h \
+	rbp.h \
+	bp_v3_compat.h
 
 HEADS=\
 	bp.h \

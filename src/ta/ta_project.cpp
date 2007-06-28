@@ -1180,7 +1180,7 @@ bool MakeUserPluginConfigProxy(const String& uplugin_dir,
 {
   String f(
 "tmpPDP4_DIR = $(PDP4DIR)\n"
-"if isEmpty( $${tmpPDP4_DIR} ) {\n"
+"isEmpty( $${tmpPDP4_DIR} ) {\n"
 "  tmpPDP4_DIR = " + taMisc::app_dir + "\n"
 "}\n"
 "!include($${tmpPDP4_DIR}/plugins/" + fname + ")  {\n"

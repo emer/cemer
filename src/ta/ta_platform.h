@@ -36,6 +36,8 @@ public:
 // File and Path routines
   static const String    pathSep; // normal file path separator character, ex / -- use this for construction of paths only (use qt parsing routines to parse paths)
   static String finalSep(const String& in); // return string that has a valid final separator
+  static bool		fileExists(const String& fname); // returns true if the file exists (can be absolute or partial pathed)
+  static bool		isQualifiedPath(const String& fname); // true if the fname is already an absolute or qualified relative path
   static String getTempPath(); // get a valid temporary path (that user can write to)
   static String getHomePath(); // the user's home folder
   static String getAppDataPath(const String& appname); // root for preference data

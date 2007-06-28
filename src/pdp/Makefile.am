@@ -8,12 +8,12 @@ VPATH = @srcdir@
 if TA_GUI
 
 TAHEADS_GUI =\
-	@abs_srcdir@/pdpview_qt.h \
-	@abs_srcdir@/pdpserver_qt.h \
-	@abs_srcdir@/netstru_so.h \
-	@abs_srcdir@/netstru_qtso.h \
-	@abs_srcdir@/pdp_qtso.h \
-	@abs_srcdir@/pdp_program_qtso.h 
+	pdpview_qt.h \
+	pdpserver_qt.h \
+	netstru_so.h \
+	netstru_qtso.h \
+	pdp_qtso.h \
+	pdp_program_qtso.h 
 
 HEADS_GUI =\
 	pdpview_qt.h \
@@ -35,18 +35,18 @@ SRCS_GUI =\
 endif
 
 TAHEADS =\
-	@abs_srcdir@/../ta/ta_TA_type.h \
-	@abs_srcdir@/pdpdeclare.h \
-	@abs_srcdir@/pdp_base.h \
-	@abs_srcdir@/spec.h \
-	@abs_srcdir@/netstru.h \
-	@abs_srcdir@/netstru_extra.h \
-	@abs_srcdir@/netdata.h \
-	@abs_srcdir@/pdp_program.h \
-	@abs_srcdir@/pdp_project.h \
-	@abs_srcdir@/pdpserver.h \
+	../ta/ta_TA_type.h \
+	pdpdeclare.h \
+	pdp_base.h \
+	spec.h \
+	netstru.h \
+	netstru_extra.h \
+	netdata.h \
+	pdp_program.h \
+	pdp_project.h \
+	pdpserver.h \
 	$(TAHEADS_GUI) \
-	@abs_srcdir@/v3_compat.h
+	v3_compat.h
 
 HEADS =\
 	pdpdeclare.h \
