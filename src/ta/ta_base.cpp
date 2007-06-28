@@ -319,7 +319,10 @@ void taBase::UnRef(TAPtr it) {
 }
 
 void taBase::unRef(taBase* it) {
-  it->refn--;
+  if (it->refn <= 0) {
+    cerr << "WARNING: taBase refn < 0 for item\n";
+  } else
+    it->refn--;
 }
 
 void taBase::Done(taBase* it) {

@@ -2024,7 +2024,7 @@ TA_SMART_PTRS(taDataView);
   TA_BASEFUNS(B);
 
 class TA_API DataView_List: public taList<taDataView> {
-  // #NO_TOKENS ##CAT_Display
+  // #NO_TOKENS ##CAT_Display ##NO_UPDATE_AFTER
 INHERITED(taList<taDataView>)
 public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);

@@ -394,37 +394,37 @@ MAKETA_FLAGS = -css -autohx /D DEBUG $(INCLUDE) -win_dll
 #note: also makes _TA_inst.h and .cpp
 ta_TA_type.hx: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   $(CD) $(PDP4DIR)/src/ta
-  $(MAKETA) $(MAKETA_FLAGS) ta $(TA_HEADS) 
+  $(MAKETA) $(MAKETA_FLAGS) ta -f files.mta 
   
 ta_TA_type.h: ta_TA_type.hx
 
 pdp_TA_type.hx: $(TA_HEADS) $(PDP_HEADS) 
   $(CD) $(PDP4DIR)/src/pdp
-  $(MAKETA) $(MAKETA_FLAGS) pdp $(PDP_MAKETA)
+  $(MAKETA) $(MAKETA_FLAGS) pdp -f files.mta
   
 pdp_TA_type.h: pdp_TA_type.hx 
 
 bp_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
   $(CD) $(PDP4DIR)/src/bp
-  $(MAKETA) $(MAKETA_FLAGS) bp $(BP_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) bp -f files.mta 
   
 bp_TA_type.h: bp_TA_type.hx
 
 cs_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(CS_HEADS)
   $(CD) $(PDP4DIR)/src/cs
-  $(MAKETA) $(MAKETA_FLAGS) cs $(CS_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) cs -f files.mta 
   
 cs_TA_type.h: cs_TA_type.hx
 
 leabra_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
   $(CD) $(PDP4DIR)/src/leabra
-  $(MAKETA) $(MAKETA_FLAGS) leabra $(LEABRA_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) leabra -f files.mta 
 
 leabra_TA_type.h: leabra_TA_type.hx
   
 so_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(SO_HEADS)
   $(CD) $(PDP4DIR)/src/so
-  $(MAKETA) $(MAKETA_FLAGS) so $(SO_MAKETA) 
+  $(MAKETA) $(MAKETA_FLAGS) so -f files.mta 
   
 so_TA_type.h: so_TA_type.hx
 

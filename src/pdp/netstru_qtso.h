@@ -292,7 +292,7 @@ public:
   override bool		hasViewProperties() const { return true; }
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save ugs and lower
-  T3_DATAVIEWFUNS(LayerView, nvDataView)
+  T3_DATAVIEWFUNS(LayerView, nvhDataView)
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
@@ -319,7 +319,7 @@ public:
   Projection*		prjn() const {return (Projection*)data();}
   T3PrjnNode*		node_so() const {return (T3PrjnNode*)m_node_so.ptr();}
 
-  T3_DATAVIEWFUNS(PrjnView, nvDataView)
+  T3_DATAVIEWFUNS(PrjnView, nvhDataView)
 protected:
   override void		DoHighlightColor(bool apply); 
   override void		Render_pre(); // #IGNORE

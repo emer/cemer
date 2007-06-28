@@ -240,7 +240,7 @@
 #define TIME_WITH_SYS_TIME 1
 
 /* Version number of package */
-#define VERSION "4.0.3rc1"
+#define VERSION "4.0.4rc2"
 
 /* When on cygwin */
 /* #undef WIN32 */
