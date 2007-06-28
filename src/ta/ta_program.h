@@ -564,8 +564,8 @@ public:
   enum ProgFlags { // #BITS flags for modifying program element function or other information
     PEF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // inactivated: does not generate code
-    NON_STD 		= 0x0002, // #NO_SHOW non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
-    NEW_EL 		= 0x0004, // #NO_SHOW new element: this element was recently added to the program (just for user information/highlighting)
+    NON_STD 		= 0x0002, // non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
+    NEW_EL 		= 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
   };
 
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script

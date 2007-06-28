@@ -43,6 +43,10 @@ public:
     GREATERTHANOREQUAL 	// #LABEL_>=
   };
 
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
+
   Relations	rel;		// #LABEL_ relationship to evaluate
   double	val;		// #LABEL_ comparison value
   bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the relation value
@@ -83,6 +87,10 @@ public:
     MODE,			// most frequent item (note: requires sorting)
   };
 
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
+
   Operator      op;		// #APPLY_IMMED how to aggregate over the network
   Relation	rel;		// #CONDEDIT_ON_op:COUNT,FIND_FIRST,FIND_LAST parameters for the COUNT and FIND_xxx operators
 
@@ -116,6 +124,10 @@ public:
     LTEQ,			// make all values less than or equal to arg
     GTLTEQ			// make all values greater than lw and less than hi
   };
+
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
 
   MathOpr 	opr;		// #APPLY_IMMED what math operator to use
   double	arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,GTEQ,LTEQ argument for ops (threshold add/sub/mul/div arg)
@@ -1055,6 +1067,10 @@ public:
     GAUSSIAN,			// normal with var
     NONE 			// just the mean
   };
+
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of the object
+#endif
 
   Type		type;		// #APPLY_IMMED type of random variable to generate
   double	mean;		// mean of random distribution
