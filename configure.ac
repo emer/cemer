@@ -369,6 +369,11 @@ AC_CONFIG_FILES([Makefile
 		plugins/config.pri
 		plugins/Makefile
 		css_stdlib/Makefile
+		demo/bp/Makefile
+		demo/cs/Makefile
+		demo/leabra/Makefile
+		demo/so/Makefile
+		demo/virt_env/Makefile
                 postremove-pak
                 postinstall-pak])
 

@@ -1,4 +1,4 @@
-pkgdata_demodir = $(pkgdatadir)/demo/bp
+pkgdata_bpdir = $(pkgdatadir)/demo/bp
 
-dist_pkgdata_demo_DATA =\
+dist_pkgdata_bp_DATA =\
 	bp_xor.proj

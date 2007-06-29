@@ -34,7 +34,12 @@ DIST_SUBDIRS =\
 	plugins \
 	prog_lib \
 	css_stdlib \
-	test
+	test \
+	demo/bp \
+	demo/cs \
+	demo/leabra \
+	demo/so \
+	demo/virt_env
 
 SUBDIRS =\
 	src/maketa \
@@ -53,7 +58,12 @@ SUBDIRS =\
 	@WANT_PLUGINS@ \
 	prog_lib \
 	css_stdlib \
-	test
+	test \
+	demo/bp \
+	demo/cs \
+	demo/leabra \
+	demo/so \
+	demo/virt_env
 
 EXTRA_DIST += src/ta/ios-g++-3.1 @WANT_PLUGINS@
 
