@@ -206,6 +206,9 @@ public:
   iMatrixPanel(taiDataLink* dl_);
   ~iMatrixPanel();
 
+protected: 
+  override void		UpdatePanel_impl();
+  
 protected slots:
   void			tv_hasFocus(iTableView* sender);
 
@@ -217,8 +220,6 @@ protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 //  override int 		EditAction_impl(taiMimeSource* ms, int ea, ISelectable* single_sel_node = NULL);
 
-protected: // IDataViewWidget i/f
-  override void		Refresh_impl();
   
 };
 

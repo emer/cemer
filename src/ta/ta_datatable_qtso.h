@@ -331,24 +331,13 @@ public:
 
   override void	InitDisplay(bool init_panel = true);
   override void	UpdateDisplay(bool update_panel = true);
+  // note: we also don't update panel if it is updating
 
   void		SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON set the color scale spec to determine the palette of colors representing values
 
-  // view button/field callbacks
-  void		setGrid(bool value);
-  void		setHeader(bool value);
-  void		setRowNum(bool value);
-  void		set2dFont(bool value);
-  void		set2dFontScale(float value);
-  void		setValText(bool value);
+  // viewpanel accessors for complex members, we don't update though
   void		setWidth(float wdth);
-  void		setRows(int rows);
-  void		setCols(int cols);
-  void		setMatTrans(float value);
-  void		setMatRot(float value);
-  void		setMatBlockHeight(float value);
-  void		setAutoScale(bool value);
   void		setScaleData(bool auto_scale, float scale_min, float scale_max);
   // updates the values in us and the stored ones in the colorscale list
 
@@ -406,7 +395,6 @@ protected:
   override void		Clear_impl();
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
-  override void		Render_post(); // #IGNORE
 
   override void		UpdateFromDataTable_this(bool first);
 
@@ -423,17 +411,15 @@ class TA_API iDataTableView_Panel: public iViewPanelFrame {
   INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
-  iT3ViewspaceWidget*	    t3vs; //note: created with call to Constr_T3Viewspace
+  QWidget*		widg;
+  QVBoxLayout*		layWidg;
+  
+  iT3ViewspaceWidget*	t3vs; //note: created with call to Constr_T3Viewspace
 
 //  override String	panel_type() const; // this string is on the subpanel button for this panel
 
   DataTableView*		lv() {return (DataTableView*)m_dv;}
   SoQtRenderArea* 	ra() {return m_ra;}
-
-  virtual void 		InitPanel();
-  // called on structural changes 
-  virtual void 		UpdatePanel();
-  // call when data added/removed, or view is scrolled, or other non-structural changes
 
   void 			viewAll(); // zooms to fit entire scenegraph in window
 
@@ -451,18 +437,12 @@ protected:
 
   void 			Constr_T3ViewspaceWidget(QWidget* widg);
 
-  virtual void 		InitPanel_impl() {}
-  // subclasses define these to do the actual work
-  virtual void 		UpdatePanel_impl() {}
-  // subclasses define these to do the actual work
 };
 
 class TA_API iGridTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
 INHERITED(iDataTableView_Panel)
 public:
-  QWidget*		widg;
-  QVBoxLayout*		layOuter;
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
   QCheckBox*		    chkHeaders;
@@ -511,35 +491,17 @@ public:
 protected:
   override void		InitPanel_impl(); // called on structural changes
   override void		UpdatePanel_impl(); // called on structural changes
+  override void		GetValue_impl();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iGridTableView_Panel;}
 
 protected slots:
-
-  void 		chkDisplay_toggled(bool on);
-  void 		chkHeaders_toggled(bool on);
-  void 		chkRowNum_toggled(bool on);
-  void 		chk2dFont_toggled(bool on);
-  void 		fldFontScale_textChanged();
-
   void 		butRefresh_pressed();
   void 		butClear_pressed();
   void 		butSetColor_pressed();
 
-  void 		fldRows_textChanged();
-  void 		fldCols_textChanged();
-  void 		fldWidth_textChanged();
-  void 		fldTxtMin_textChanged();
-  void 		fldTxtMax_textChanged();
-
-  void 		chkValText_toggled(bool on);
-  void 		fldTrans_textChanged();
-  void 		fldRot_textChanged();
-  void 		fldBlockHeight_textChanged();
-
-  void 		chkAutoScale_toggled(bool on);
   void		cbar_scaleValueChanged();
 };
 
@@ -963,8 +925,6 @@ class TA_API iGraphTableView_Panel: public iDataTableView_Panel {
   Q_OBJECT
 INHERITED(iDataTableView_Panel)
 public:
-  QWidget*		widg;
-  QVBoxLayout*		layOuter;
   QHBoxLayout*		  layTopCtrls;
   QCheckBox*		    chkDisplay;
   QLabel*		    lblGraphType;
@@ -1288,7 +1248,7 @@ protected:
 
 protected:
   override void		Render_impl();
-  override void		Refresh_impl();
+  override void		UpdatePanel_impl();
   
 protected slots:
   void			tv_hasFocus(iTableView* sender); // for both tableviews

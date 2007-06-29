@@ -342,6 +342,7 @@ private:
 */
 
 class PDP_API NetView: public T3DataViewMain {
+// ##NO_UPDATE_AFTER ##DUMP_LOAD_POST
 INHERITED(T3DataViewMain)
 friend class NetViewAdapter;
 friend class NetViewPanel;
@@ -446,6 +447,8 @@ public:
 
   override bool		hasViewProperties() const { return true; }
 
+  override void		Dump_Load_post();
+  override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
   override const iColor	bgColor(bool& ok) const;
   override void		InitLinks();
   override void		CutLinks();
@@ -458,7 +461,6 @@ protected:
 
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
   override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
-  override void		UpdateAfterEdit_impl();
   override void		DataUpdateView_impl();
   override void		DataUpdateAfterEdit_impl(); //
   override void		DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
@@ -547,7 +549,7 @@ protected:
   int			cmd_x; // current coords of where to place next button/ctrl
   int			cmd_y;
   BaseSpec*		m_cur_spec; // cur spec chosen -- only compared, so ok if stale
-  override void		GetImage_impl();
+  override void		UpdatePanel_impl();
   void 			setHighlightSpec(BaseSpec* spec, bool force = false);
 
 public slots:

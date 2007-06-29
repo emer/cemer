@@ -243,8 +243,6 @@ public:
 
   VEWorldView*		wv() {return (VEWorldView*)m_dv;} //
 
-  virtual void		InitPanel();
-
   VEWorldViewPanel(VEWorldView* dv_);
   ~VEWorldViewPanel();
 
@@ -253,8 +251,7 @@ public: // IDataLinkClient interface
   override TypeDef*	GetTypeDef() const {return &TA_VEWorldViewPanel;}
 
 protected:
-  int			updating; // to prevent recursion
-  override void		GetImage_impl();
+  override void		UpdatePanel_impl();
 
 // public slots:
 //   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview

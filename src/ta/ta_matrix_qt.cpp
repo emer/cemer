@@ -507,9 +507,9 @@ String iMatrixPanel::panel_type() const {
   return str;
 }
 
-void iMatrixPanel::Refresh_impl() {
+void iMatrixPanel::UpdatePanel_impl() {
   if (me) me->Refresh();
-  inherited::Refresh_impl();
+  inherited::UpdatePanel_impl();
 }
 
 void iMatrixPanel::Render_impl() {

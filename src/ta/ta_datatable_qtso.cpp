@@ -457,7 +457,7 @@ void DataTableView::setDataTable(DataTable* dt) {
       main_xform.translate.y = 1.3f * (frame->root_view.children.size - 1); // move to unique position (up)
     }
     //TEST
-    if (m_lvp) m_lvp->Refresh(); // to update name
+    UpdatePanel(); // to update name
   } else {
     Unbind(); // also does kids
   }
@@ -1064,10 +1064,6 @@ void GridTableView::Render_impl() {
   RenderGrid();
   RenderHeader();
   RenderLines();
-}
-
-void GridTableView::Render_post() {
-  inherited::Render_post();
 }
 
 void GridTableView::InitDisplay(bool init_panel) {
@@ -1738,92 +1734,20 @@ void GridTableView::SetColorSpec(ColorScaleSpec* color_spec) {
   UpdateDisplay(true);
 }
 
-void GridTableView::setGrid(bool value) {
-  if (grid_on == value) return;
-  grid_on = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setHeader(bool value) {
-  if (header_on == value) return;
-  header_on = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setRowNum(bool value) {
-  if(row_num_on == value) return;
-  row_num_on = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::set2dFont(bool value) {
-  if (two_d_font == value) return;
-  two_d_font = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::set2dFontScale(float value) {
-  if(two_d_font_scale == value) return;
-  two_d_font_scale = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setValText(bool value) {
-  if (mat_val_text == value) return;
-  mat_val_text = value;
-  UpdateDisplay(true);
-}
-
 void GridTableView::setWidth(float wdth) {
   width = wdth;
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
   node_so->setWidth(wdth);
-  UpdateDisplay(true);
+//  UpdateDisplay(true);
 }
 
-void GridTableView::setRows(int value) {
-  if(view_rows == value) return;
-  view_rows = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setCols(int value) {
-  if(col_n == value) return;
-  col_n = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setMatTrans(float value) {
-  if(mat_trans == value) return;
-  mat_trans = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setMatBlockHeight(float value) {
-  if(mat_block_height == value) return;
-  mat_block_height = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setMatRot(float value) {
-  if(mat_rot == value) return;
-  mat_rot = value;
-  UpdateDisplay(true);
-}
-
-void GridTableView::setAutoScale(bool value) {
-  if(colorscale.auto_scale == value) return;
-  colorscale.auto_scale = value;
-  UpdateDisplay(true);
-}
-  
 void GridTableView::setScaleData(bool auto_scale_, float min_, float max_) {
   if ((colorscale.auto_scale == auto_scale_) && (colorscale.min == min_) && (colorscale.max == max_)) return;
   colorscale.auto_scale = auto_scale_;
   if(!colorscale.auto_scale)
     colorscale.SetMinMax(min_, max_);
-  UpdateDisplay(true);
+//  UpdateDisplay(true);
 }
 
 void GridTableView::VScroll(bool left) {
@@ -1904,6 +1828,11 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
   t3vs = NULL; //these are created in  Constr_T3ViewspaceWidget
   m_ra = NULL;
   m_camera = NULL;
+  
+  QFrame* widg = new QFrame(); this->widg = widg;
+  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
+  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
+  setCentralWidget(widg);
 }
 
 iDataTableView_Panel::~iDataTableView_Panel() {
@@ -1927,22 +1856,6 @@ void iDataTableView_Panel::Constr_T3ViewspaceWidget(QWidget* widg) {
   viewAll();
 }
 
-void iDataTableView_Panel::InitPanel() {
-  if (updating) return;
-  ++updating;
-  InitPanel_impl();
-  UpdatePanel_impl();
-  --updating;
-}
-
-void iDataTableView_Panel::UpdatePanel() {
-  if (updating) return;
-  if(!isVisible()) return; // no update when hidden!
-  ++updating;
-  UpdatePanel_impl();
-  --updating;
-}
-
 void iDataTableView_Panel::viewAll() {
   if(!t3vs) return;
   m_camera->viewAll(t3vs->root_so(), ra()->getViewportRegion());
@@ -1964,38 +1877,34 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 {
   int font_spec = taiMisc::fonMedium;
 
-  widg = new QWidget();
-  layOuter = new QVBoxLayout(widg);
+  layTopCtrls = new QHBoxLayout(layWidg);
 
-  layTopCtrls = new QHBoxLayout(layOuter);
-
-  chkDisplay = new QCheckBox("Disp", widg, "chkDisplay");
+  chkDisplay = new QCheckBox("Disp!", widg, "chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
-  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(chkDisplay_toggled(bool)) );
+  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
 
-  chkHeaders =  new QCheckBox("Hdrs", widg, "chkHeaders");
-  chkDisplay->setToolTip("Whether to display a top row of headers indicating the name of the columns");
-  connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(chkHeaders_toggled(bool)) );
+  chkHeaders =  new QCheckBox("Hdrs!", widg, "chkHeaders");
+  chkHeaders->setToolTip("Whether to display a top row of headers indicating the name of the columns");
+  connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkHeaders);
 
-  chkRowNum =  new QCheckBox("Row\n#", widg, "chkRowNum");
-  chkDisplay->setToolTip("Whether to display the row number as the first column");
-  connect(chkRowNum, SIGNAL(clicked(bool)), this, SLOT(chkRowNum_toggled(bool)) );
+  chkRowNum =  new QCheckBox("Row\n#!", widg, "chkRowNum");
+  chkRowNum->setToolTip("Whether to display the row number as the first column");
+  connect(chkRowNum, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkRowNum);
 
-  chk2dFont =  new QCheckBox("2d\nFont", widg, "chk2dFont");
-  chkDisplay->setToolTip("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display");
-  connect(chk2dFont, SIGNAL(clicked(bool)), this, SLOT(chk2dFont_toggled(bool)) );
+  chk2dFont =  new QCheckBox("2d\nFont!", widg, "chk2dFont");
+  chk2dFont->setToolTip("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display");
+  connect(chk2dFont, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chk2dFont);
 
   lblFontScale = taiM->NewLabel("Font\nScale", widg, font_spec);
   lblFontScale->setToolTip("Scaling of the 2d font to make it roughly the same size as the 3d font -- adjust this to change the size of the 2d text (has no effect if 2d Font is not clicked");
   layTopCtrls->addWidget(lblFontScale);
-  fldFontScale = new taiField(&TA_float, NULL, NULL, widg);
+  fldFontScale = new taiField(&TA_float, this, NULL, widg);
   layTopCtrls->addWidget(fldFontScale->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
-  connect(fldFontScale->rep(), SIGNAL(editingFinished()), this, SLOT(fldFontScale_textChanged()) );
 
   layTopCtrls->addStretch();
 
@@ -2011,93 +1920,85 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 //   layTopCtrls->addWidget(butClear);
 //   connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
 
-  layVals = new QHBoxLayout(layOuter);
+  layVals = new QHBoxLayout(layWidg);
 
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = new taiIncrField(&TA_int, NULL, NULL, widg);
+  fldRows = new taiIncrField(&TA_int, this, NULL, widg);
   layVals->addWidget(fldRows->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
-  connect(fldRows->rep(), SIGNAL(selectionChanged()), this, SLOT(fldRows_textChanged()) );
 
   lblCols = taiM->NewLabel("Cols", widg, font_spec);
   lblCols->setToolTip("Maximum number of columns to display (column widths are scaled to fit).");
   layVals->addWidget(lblCols);
-  fldCols = new taiIncrField(&TA_int, NULL, NULL, widg);
+  fldCols = new taiIncrField(&TA_int, this, NULL, widg);
   layVals->addWidget(fldCols->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
-  connect(fldCols->rep(), SIGNAL(selectionChanged()), this, SLOT(fldCols_textChanged()) );
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of grid log display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
-  fldWidth = new taiField(&TA_float, NULL, NULL, widg);
+  fldWidth = new taiField(&TA_float, this, NULL, widg);
   layVals->addWidget(fldWidth->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
-  connect(fldWidth->rep(), SIGNAL(editingFinished()), this, SLOT(fldWidth_textChanged()) );
 
   lblTxtMin = taiM->NewLabel("Min\nText", widg, font_spec);
   lblTxtMin->setToolTip("Minimum text size in 'view units' (size of entire display is 1.0) -- .02 is default -- increase to make small text more readable");
   layVals->addWidget(lblTxtMin);
-  fldTxtMin = new taiField(&TA_float, NULL, NULL, widg);
+  fldTxtMin = new taiField(&TA_float, this, NULL, widg);
   layVals->addWidget(fldTxtMin->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
-  connect(fldTxtMin->rep(), SIGNAL(editingFinished()), this, SLOT(fldTxtMin_textChanged()) );
 
   lblTxtMax = taiM->NewLabel("Max\nText", widg, font_spec);
   lblTxtMax->setToolTip("Maximum text size in 'view units' (size of entire display is 1.0) -- .05 is default");
   layVals->addWidget(lblTxtMax);
-  fldTxtMax = new taiField(&TA_float, NULL, NULL, widg);
+  fldTxtMax = new taiField(&TA_float, this, NULL, widg);
   layVals->addWidget(fldTxtMax->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
-  connect(fldTxtMax->rep(), SIGNAL(editingFinished()), this, SLOT(fldTxtMax_textChanged()) );
 
   layVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  layMatrix = new QHBoxLayout(layOuter);
+  layMatrix = new QHBoxLayout(layWidg);
 
   lblMatrix = taiM->NewLabel("Matrix\nDisplay", widg, font_spec);
   lblMatrix->setToolTip("This row contains parameters that control the display of matrix values (shown in a grid of colored blocks)");
   layMatrix->addWidget(lblMatrix);
 
-  chkValText =  new QCheckBox("Val\nTxt", widg, "chkValText");
-  chkDisplay->setToolTip("Whether to display text of the matrix block values.");
-  connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(chkValText_toggled(bool)) );
+  chkValText =  new QCheckBox("Val\nTxt!", widg, "chkValText");
+  chkValText->setToolTip("Whether to display text of the matrix block values.");
+  connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layMatrix->addWidget(chkValText);
 
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
   lblTrans->setToolTip("Maximum transparency of the grid blocks (0 = fully opaque, 1 = fully transparent)\nBlocks with smaller magnitude values are more transparent.");
   layMatrix->addWidget(lblTrans);
-  fldTrans = new taiField(&TA_float, NULL, NULL, widg);
+  fldTrans = new taiField(&TA_float, this, NULL, widg);
   layMatrix->addWidget(fldTrans->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
-  connect(fldTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldTrans_textChanged()) );
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
   layMatrix->addWidget(lblRot);
-  fldRot = new taiField(&TA_float, NULL, NULL, widg);
+  fldRot = new taiField(&TA_float, this, NULL, widg);
   layMatrix->addWidget(fldRot->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
-  connect(fldRot->rep(), SIGNAL(editingFinished()), this, SLOT(fldRot_textChanged()) );
 
   lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
   lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
   layMatrix->addWidget(lblBlockHeight);
-  fldBlockHeight = new taiField(&TA_float, NULL, NULL, widg);
+  fldBlockHeight = new taiField(&TA_float, this, NULL, widg);
   layMatrix->addWidget(fldBlockHeight->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
-  connect(fldBlockHeight->rep(), SIGNAL(editingFinished()), this, SLOT(fldBlockHeight_textChanged()) );
 
 
   ////////////////////////////////////////////////////////////////////////////
   // 	Colorscale etc
-  layColorScale = new QHBoxLayout(layOuter);
+  layColorScale = new QHBoxLayout(layWidg);
   
   chkAutoScale = new QCheckBox("auto\nscale", widg);
-  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layColorScale->addWidget(chkAutoScale);
 
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
@@ -2110,17 +2011,17 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 
-  layOuter->addStretch();
+  layWidg->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
 
   // not used anymore!
-//   layViewspace = new QHBoxLayout(layOuter);
+//   layViewspace = new QHBoxLayout(layWidg);
 //   Constr_T3ViewspaceWidget(widg);
 //   layViewspace->addWidget(t3vs);
 
-  setCentralWidget(widg);
+  MakeButtons(layOuter);
 }
 
 iGridTableView_Panel::~iGridTableView_Panel() {
@@ -2130,13 +2031,35 @@ void iGridTableView_Panel::InitPanel_impl() {
   // nothing structural here (could split out cols, but not worth it)
 }
 
+void iGridTableView_Panel::GetValue_impl() {
+  inherited::GetValue_impl(); // prob nothing
+
+  GridTableView* glv = this->glv(); //cache
+  if (!glv) return;
+  
+  glv->display_on = chkDisplay->isChecked();
+  glv->header_on = chkHeaders->isChecked();
+  glv->row_num_on = chkRowNum->isChecked();
+  glv->two_d_font = chk2dFont->isChecked();
+  glv->two_d_font_scale = (float)fldFontScale->GetValue();
+  glv->view_rows = (int)fldRows->GetValue();
+  glv->col_n = (int)fldCols->GetValue();
+  glv->setWidth((float)fldWidth->GetValue());
+  glv->text_size_range.min = fldTxtMin->GetValue();
+  glv->text_size_range.max = fldTxtMax->GetValue();
+  glv->mat_val_text = chkValText->isChecked();
+  glv->mat_trans = (float)fldTrans->GetValue();
+  glv->mat_rot = (float)fldRot->GetValue();
+  glv->mat_block_height = (float)fldBlockHeight->GetValue();
+  glv->setScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max());
+  glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
+}
+
+
 void iGridTableView_Panel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
 
   GridTableView* glv = this->glv(); //cache
-//   DataTable* dt = glv->dataTable();
-
-//  viewAll();
 
   chkDisplay->setChecked(glv->display_on);
   chkHeaders->setChecked(glv->header_on);
@@ -2166,50 +2089,6 @@ void iGridTableView_Panel::UpdatePanel_impl() {
 //   ra->setBackgroundColor(SbColor(bg.redf(), bg.greenf(), bg.bluef()));
 }
 
-void iGridTableView_Panel::chkDisplay_toggled(bool on) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->setDisplay(on);
-}
-
-void iGridTableView_Panel::chkHeaders_toggled(bool on) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->setHeader(on);
-}
-
-void iGridTableView_Panel::chkRowNum_toggled(bool on) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->setRowNum(on);
-}
-
-void iGridTableView_Panel::chk2dFont_toggled(bool on) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->set2dFont(on);
-}
-
-void iGridTableView_Panel::fldFontScale_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->set2dFontScale((float)fldFontScale->GetValue());
-}
-
-void iGridTableView_Panel::chkValText_toggled(bool on) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->setValText(on);
-}
-
-void iGridTableView_Panel::fldBlockHeight_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->setMatBlockHeight((float)fldBlockHeight->GetValue());
-}
-
 void iGridTableView_Panel::butRefresh_pressed() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
@@ -2232,57 +2111,6 @@ void iGridTableView_Panel::butSetColor_pressed() {
   glv->CallFun("SetColorSpec");
 }
 
-void iGridTableView_Panel::fldWidth_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->setWidth((float)fldWidth->GetValue());
-}
-
-void iGridTableView_Panel::fldRows_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->setRows((int)fldRows->GetValue());
-}
-
-void iGridTableView_Panel::fldCols_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->setCols((int)fldCols->GetValue());
-}
-
-void iGridTableView_Panel::fldTxtMin_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->text_size_range.min = (float)fldTxtMin->GetValue();
-  glv->UpdateDisplay(true);
-}
-
-void iGridTableView_Panel::fldTxtMax_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->text_size_range.max = (float)fldTxtMax->GetValue();
-  glv->UpdateDisplay(true);
-}
-
-void iGridTableView_Panel::fldTrans_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->setMatTrans((float)fldTrans->GetValue());
-}
-
-void iGridTableView_Panel::fldRot_textChanged() {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-
-  glv->setMatRot((float)fldRot->GetValue());
-}
-
 void iGridTableView_Panel::cbar_scaleValueChanged() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
@@ -2291,16 +2119,9 @@ void iGridTableView_Panel::cbar_scaleValueChanged() {
   ++updating;
   chkAutoScale->setChecked(false); //note: raises signal on widget! (grr...)
   --updating;
-
-  glv->setScaleData(false, cbar->min(), cbar->max());
+  Changed();
+//  glv->setScaleData(false, cbar->min(), cbar->max());
 }
-
-void iGridTableView_Panel::chkAutoScale_toggled(bool on) {
-  GridTableView* glv = this->glv(); //cache
-  if (updating || !glv) return;
-  glv->setScaleData(on, cbar->min(), cbar->max());
-}
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -4710,11 +4531,8 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 {
   int font_spec = taiMisc::fonMedium;
 
-  widg = new QWidget();
-  layOuter = new QVBoxLayout(widg);
-
   ////////////////////////////////////////////////////////////////////
-  layTopCtrls = new QHBoxLayout(layOuter);
+  layTopCtrls = new QHBoxLayout(layWidg);
 
   chkDisplay = new QCheckBox("Disp", widg, "chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
@@ -4760,7 +4578,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 //   connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
 
   ////////////////////////////////////////////////////////////////////
-  layVals = new QHBoxLayout(layOuter);
+  layVals = new QHBoxLayout(layWidg);
 
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
@@ -4809,7 +4627,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // X AXis
-  layXAxis = new QHBoxLayout(layOuter);
+  layXAxis = new QHBoxLayout(layWidg);
 
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
   lblXAxis->setToolTip("Column of data to plot for the X Axis");
@@ -4832,7 +4650,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // Z AXis
-  layZAxis = new QHBoxLayout(layOuter);
+  layZAxis = new QHBoxLayout(layWidg);
 
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
   lblZAxis->setToolTip("Column of data to plot for the Z Axis");
@@ -4860,7 +4678,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 1 AXis
-  lay1Axis = new QHBoxLayout(layOuter);
+  lay1Axis = new QHBoxLayout(layWidg);
 
   lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
   lbl1Axis->setToolTip("First column of data to plot");
@@ -4878,7 +4696,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 2 AXis
-  lay2Axis = new QHBoxLayout(layOuter);
+  lay2Axis = new QHBoxLayout(layWidg);
 
   lbl2Axis = taiM->NewLabel("Y2:", widg, font_spec);
   lbl2Axis->setToolTip("Second column of data to plot (optional)");
@@ -4907,7 +4725,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 3 AXis
-  lay3Axis = new QHBoxLayout(layOuter);
+  lay3Axis = new QHBoxLayout(layWidg);
 
   lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
   lbl3Axis->setToolTip("Second column of data to plot (optional)");
@@ -4936,7 +4754,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 4 AXis
-  lay4Axis = new QHBoxLayout(layOuter);
+  lay4Axis = new QHBoxLayout(layWidg);
 
   lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
   lbl4Axis->setToolTip("Second column of data to plot (optional)");
@@ -4965,7 +4783,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 5 AXis
-  lay5Axis = new QHBoxLayout(layOuter);
+  lay5Axis = new QHBoxLayout(layWidg);
 
   lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
   lbl5Axis->setToolTip("Second column of data to plot (optional)");
@@ -4994,7 +4812,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // Error bars
-  layErr1 = new QHBoxLayout(layOuter);
+  layErr1 = new QHBoxLayout(layWidg);
   
   // Err1
   lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
@@ -5034,7 +4852,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   layErr1->addStretch();
 
-  layErr2 = new QHBoxLayout(layOuter);
+  layErr2 = new QHBoxLayout(layWidg);
   // Err4
   lbl4Err = taiM->NewLabel("4 Err:", widg, font_spec);
   lbl4Err->setToolTip("Column of for the 4nd column's error bar data");
@@ -5073,7 +4891,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   ////////////////////////////////////////////////////////////////////////////
   // 	Colors
 
-  layCAxis = new QHBoxLayout(layOuter);
+  layCAxis = new QHBoxLayout(layWidg);
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
   lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
   layCAxis->addWidget(lblColorMode);
@@ -5103,7 +4921,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // second row: color bar + button
-  layColorScale = new QHBoxLayout(layOuter);
+  layColorScale = new QHBoxLayout(layWidg);
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
@@ -5117,7 +4935,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // Raster Axis
-  layRAxis = new QHBoxLayout(layOuter);
+  layRAxis = new QHBoxLayout(layWidg);
 
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
@@ -5132,16 +4950,18 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layRAxis->addWidget(pdtRAxis->GetRep());
 
   layRAxis->addStretch();
+  
+  layWidg->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   // 	viewspace guy
 
   // no room!
-//   layViewspace = new QHBoxLayout(layOuter);
+//   layViewspace = new QHBoxLayout(layWidg);
 //   Constr_T3ViewspaceWidget(widg);
 //   layViewspace->addWidget(t3vs);
 
-  setCentralWidget(widg);
+  MakeButtons(layOuter);
 }
 
 iGraphTableView_Panel::~iGraphTableView_Panel() {
@@ -6019,10 +5839,10 @@ String iDataTablePanel::panel_type() const {
   return str;
 }
 
-void iDataTablePanel::Refresh_impl() {
+void iDataTablePanel::UpdatePanel_impl() {
   if (dte)
     dte->Refresh();
-  inherited::Refresh_impl();
+  inherited::UpdatePanel_impl();
 }
 
 void iDataTablePanel::Render_impl() {

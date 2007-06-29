@@ -608,6 +608,7 @@ bool	taMisc::not_constr = true;
 bool	taMisc::use_gui = false; // set to default in Init_Gui
 bool 	taMisc::gui_active = false;
 ContextFlag	taMisc::is_loading;
+ContextFlag	taMisc::is_post_loading;
 ContextFlag	taMisc::is_saving;
 ContextFlag	taMisc::is_duplicating;
 ContextFlag	taMisc::is_checking;

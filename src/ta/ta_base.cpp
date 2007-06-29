@@ -235,6 +235,7 @@ void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
 
     Deletion -- a link receives a notification when an object is about to
     be destroyed.
+ContextFlag	taMisc::is_loading;
 
     The following situations are handled automatically, you don't need to
     do anything in your code: List/Group member changes; object deletion.
@@ -250,7 +251,8 @@ void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
     the change is structural):
     \code
 	this->DataUpdate(true);
-        \\ data changes go here
+        \\ data changes go hereContextFlag	taMisc::is_loading;
+
 	this->DataUpdate(false);
     \endcode
 
@@ -259,7 +261,8 @@ void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
     taBase object lifetimes can be either Statically, or Dynamically 
     managed, and the visibility can either be Internal or External. 
     Static objects are created and destroyed by the compiler; Dynamic 
-    objects are created/destroyed by the programmer (new/delete).
+    objects are created/destroyed by the programmer ContextFlag	taMisc::is_loading;
+(new/delete).
     Internal objects are used solely by the managing owner, whereas 
     External objects can be accessed by an external client.
     In practice, this gives rise to three lifetime/visibility scenarios:
@@ -277,7 +280,8 @@ void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
     
     Ref Counting Mechanism -- Ref() causes refn++, UnRef() causes refn--;
     if refn goes from 1 to 0, the object deletes. The transition from
-    1 to 0 also causes refn to be set to a -ve sentinel value. The debug 
+    1 to 0 also causes refn to be set to a -ve sentiContextFlag	taMisc::is_loading;
+nel value. The debug 
     version of the program can detect double destruction, or ref count
     operations after destruction, based on this sentinel.
     
@@ -313,21 +317,20 @@ MemberDef* taBase::no_mdef = NULL;
 // 	Reference counting mechanisms, all static just for consistency..
 
 #ifdef DEBUG
-void taBase::UnRef(TAPtr it) {
-  if (--(it->refn) == 0) 
-    delete it;
-}
-
 void taBase::unRef(taBase* it) {
   if (it->refn <= 0) {
-    cerr << "WARNING: taBase refn < 0 for item\n";
+    cerr << "WARNING: taBase::unRef: taBase refn < 0 for item\n";
   } else
     it->refn--;
 }
 
 void taBase::Done(taBase* it) {
-  if (it->refn == 0)
-    delete it;
+  if (it->refn == 0) {
+    if (it->HasBaseFlag(DESTROYED))
+      cerr << "WARNING: taBase::Done: taBase refn == 0 but item already destroyed\n";
+    else
+      delete it;
+  }
 }
 #endif // DEBUG
 

@@ -1229,7 +1229,9 @@ public:
 
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
   virtual void		ClosePanel() = 0; // anyone can call this to get the panel to close (ex. edit panel contents are deleted externally)
-  virtual void		GetImage() = 0; // called when reshowing a panel, to insure latest data
+  //NOTE: due to various versioning/compatibility reasons, the following 2 routines get replaced sometimes in subclasses, to implement more elaborate rules before dispatching their worker bee impls
+  virtual void		InitPanel() {InitPanel_impl();} // called when creating ViewPanels
+  virtual void		UpdatePanel(); // called when reshowing a panel, to insure latest data
   virtual const iColor	GetTabColor(bool selected, bool& ok) const 
     {ok = false; return iColor();} // special color for tab; NULL means use default
   virtual void		FrameShowing(bool showing, bool focus = false); // called esp by t3 frames when show/hide; lets us show hide the tabs
@@ -1239,7 +1241,6 @@ public:
     // called in post, when all windows are built
   virtual void		ResolveChanges(CancelOp& cancel_op);
   virtual void		Render(); // actually create content; override _impl; used to defer creation of button panels
-  virtual void		Refresh() {if (isVisible()) Refresh_impl();} // manually refresh
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
@@ -1268,9 +1269,10 @@ protected:
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
   virtual void		Render_impl() {} // only called once, when content needs to be created
-  virtual void		Refresh_impl();
   virtual void		ResolveChanges_impl(CancelOp& cancel_op) {}
   
+  virtual void		InitPanel_impl() {} 
+  virtual void 		UpdatePanel_impl();
 protected slots:
   virtual void		FrameShowing_Async(bool focus); // we forward async from FS (only when true) as a useful hack to make sure all constr etc is done before doing it
   
@@ -1298,7 +1300,7 @@ public:
 
 
   override void		ClosePanel();
-  override void		GetImage(); // called when reshowing a panel, to insure latest data
+  override void		UpdatePanel(); // we add a test for HasChanged and invoke the inherited
   override String 	TabText() const; // text for the panel tab -- usually just the text of the sel_node
 
   void			AddMinibarWidget(QWidget* ctrl);
@@ -1317,19 +1319,38 @@ protected:
   iDataPanelSet*	m_dps; // set if we are in a datapanelset
   QWidget*		m_minibar_ctrls;
   QHBoxLayout* 		lay_minibar_ctrls;
-  virtual void		GetImage_impl() {} // #IGNORE called when reshowing a panel, to insure latest data (except not called if HasChanged true)
-  override void		Refresh_impl(); // same rule as GetImage
 };
 
 //////////////////////////
 //   iViewPanelFrame 	//
 //////////////////////////
 
-class TA_API iViewPanelFrame: public iDataPanel {
+class TA_API iViewPanelFrame: public iDataPanel, public virtual IDataHost {
   // frame for gui interface to a view element -- usually posted by the view, and locked
+  // provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls
   Q_OBJECT
 INHERITED(iDataPanel)
 public:
+  enum ViewPanelFlags { // #BITS misc flags
+    VP_0		= 0, // #IGNORE
+    VP_USE_BTNS		= 0x0001, // use the Apply/Revert buttons on bottom
+  };
+  
+#ifndef __MAKETA__
+  enum CustomEventType { // note: just copied from taiDataHost, not all used
+    CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
+    CET_GET_IMAGE,
+    CET_APPLY
+  };
+#endif
+
+//QHBoxLayout*		layButtons;
+  HiLightButton*	  btnApply; //note: only if created
+  HiLightButton*	  btnRevert;
+  
+  int			vp_flags;
+  bool			read_only; // set true if we are
+  
   taDataView*		dv() {return m_dv;} // can be statically replaced with subclass
   override bool		lockInPlace() const {return true;}
     // true if panel should not be replaced, ex. if dirty, or viewpanel
@@ -1339,26 +1360,55 @@ public:
   override bool		isViewPanelFrame() const {return true;}
 
 
-  virtual void		InitPanel(); // called on structural changes
-  inline void		UpdatePanel() {GetImage();} // more intuitive name 
+  void			MakeButtons(QBoxLayout* par_lay = NULL, QWidget* par_widg = NULL);
+    // make the Apply/Revert btns, par=this if NULL, if no lay, use par_widg
+  override void		InitPanel(); // we do a more elaborate check for m_dv and !updating
+  override void		UpdatePanel(); // ditto
   override void		ClosePanel();
-  override void		GetImage(); // called when reshowing a panel, to insure latest data, or just to refresh
   override String 	TabText() const; // text for the panel tab -- usually just the text of the sel_node
 
   iViewPanelFrame(taDataView* dv_);
     // NOTE: dv will be nulled out if it destroys
   ~iViewPanelFrame();
 
+public slots:
+  void			Apply();
+  void			Revert();
+
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;} //
   override void		DataLinkDestroying(taDataLink* dl); //note: dl is on the view, not underlying data
   override TypeDef*	GetTypeDef() const {return &TA_iViewPanelFrame;}
 
+public: // IDataHost i/f -- some delegate up to mommy
+  const iColor	 	colorOfCurRow() const; // #IGNORE probably not used, we just return our own bg color
+  bool  		HasChanged() {return m_modified;}	
+  bool			isConstructed() {return true;}
+  bool			isModal() {return false;} // never for us
+  bool			isReadOnly() {return read_only;}
+  taMisc::ShowMembs 	show() const {return taMisc::show_gui;}
+    // used by polydata
+  iMainWindowViewer* 	window() const {return (tabView()) ? tabView()->viewerWindow() : NULL;}
+  void*			Base() {return (void*)m_dv;} // (typical, could replace)
+  TypeDef*		GetBaseTypeDef(){return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
+  void			GetValue(); // does setup, override the impl
+  void			GetImage() {UpdatePanel();}
+public slots:
+  void			Changed(); // called by embedded item to indicate contents have changed
+  void			Apply_Async();
+
 protected:
   taDataView*		m_dv;
   int			updating; // #IGNORE >0 used to suppress update-related widget signals
-  virtual void		GetImage_impl() {} // called within +-updating pair, only called if dv exists
-  virtual void		InitPanel_impl() {} // called within +-updating pair on structural changes
+  bool			m_modified;
+  bool			apply_req;
+  bool			warn_clobber; // set if we get a notify and are already modified
+  
+  override void 	customEvent(QEvent* ev_);
+  
+  virtual void		GetValue_impl() {}
+  void			InternalSetModified(bool value); // does all the gui config
+  void 			UpdateButtons();
 };
 
 //NOTE: this class is only designed to handle a once-only adding of its subpanels; it cannot
@@ -1395,10 +1445,9 @@ public:
     // get the first data panel of the specified type, starting at panel index; NULL if none
   override void		Closing(CancelOp& cancel_op);
   override void		ClosePanel();
-  override void		GetImage();
+  override void		UpdatePanel(); // iterate over all kiddies
   override const iColor GetTabColor(bool selected, bool& ok) const;
   override bool		HasChanged();
-  override void		Refresh();
   override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
 
 
@@ -1455,7 +1504,7 @@ protected:
   String		m_custom_name; // used instead of "List View", typically for defchild lists
   void 			ConfigHeader();
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-  override void		Refresh_impl();  
+  override void		UpdatePanel_impl();  
   override void		OnWindowBind_impl(iTabViewer* itv);
 };
 

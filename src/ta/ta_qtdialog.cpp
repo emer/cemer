@@ -421,7 +421,7 @@ void EditDataPanel::Closing(CancelOp& cancel_op) {
   owner->state = taiDataHost::CANCELED;
 }
 
-void EditDataPanel::GetImage_impl() {
+void EditDataPanel::UpdatePanel_impl() {
   if (owner) owner->Refresh();
 }
 
@@ -443,9 +443,8 @@ String EditDataPanel::panel_type() const {
   return str;
 }
 
-void EditDataPanel::Refresh() {
-  iDataPanel::Refresh_impl(); // for tab stuff -- skip our direct inherit!
-  Refresh_impl();
+void EditDataPanel::UpdatePanel() {
+  iDataPanel::UpdatePanel_impl(); // for tab stuff -- skip our direct inherit!
 }
 
 void EditDataPanel::Render_impl() {

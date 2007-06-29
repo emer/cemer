@@ -175,9 +175,7 @@ public:
   override void		Closing(CancelOp& cancel_op);
   override const iColor GetTabColor(bool selected, bool& ok) const; // special color for tab; NULL means use default
   override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
-  override void		Refresh(); // always do it, even when hidden; the edit sorts it out
-  override void 	GetImage() {GetImage_impl();} // edit handles HasChanged stuff
-
+  override void		UpdatePanel(); // always do it, even when hidden; the edit sorts it out
   EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_);
   ~EditDataPanel();
 
@@ -186,7 +184,7 @@ public: // IDataLinkClient interface
 
 protected:
   taiEditDataHost* 	owner;
-  override void		GetImage_impl(); // sheesh, THIS is the refresh guy!
+  override void		UpdatePanel_impl(); // the refresh guy!
   override void		Render_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
 };

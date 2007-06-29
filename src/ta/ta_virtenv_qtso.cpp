@@ -665,7 +665,7 @@ void VEWorldView::SetWorld(VEWorld* wl) {
   if (World() == wl) return;
   if (wl) {
     SetData(wl);
-    if (m_wvp) m_wvp->Refresh(); // to update name
+    if (m_wvp) m_wvp->UpdatePanel(); // to update name
   } else {
     Unbind(); // also does kids
   }
@@ -1013,7 +1013,6 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
 :inherited(dv_)
 {
 //   int font_spec = taiMisc::fonMedium;
-  updating = 0;
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QVBoxLayout(widg);
@@ -1046,8 +1045,8 @@ VEWorldViewPanel::~VEWorldViewPanel() {
   }
 }
 
-void VEWorldViewPanel::GetImage_impl() {
-  inherited::GetImage_impl();
+void VEWorldViewPanel::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl();
   VEWorldView* wv_ = wv();
   
   VEWorld* wl = wv_->World();
@@ -1078,14 +1077,5 @@ void VEWorldViewPanel::GetImage_impl() {
   else {
     labcam1->setText("Not Set");
   }
-}
-
-void VEWorldViewPanel::InitPanel() {
-  VEWorldView* wv_ = wv();
-  if(!wv_) return;
-  ++updating;
-  // fill monitor values
-//   GetVars();
-  --updating;
 }
 

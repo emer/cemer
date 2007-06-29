@@ -1518,15 +1518,6 @@ void NetView::CutLinks() {
   inherited::CutLinks();
 }
 
-void NetView::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  if(taMisc::is_loading) {
-    Reset();			// do full rebuild!
-    BuildAll();
-    Render();
-  }
-}
-
 void NetView::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   if(taMisc::is_loading || !taMisc::gui_active) return;
   TypeDef* typ = child->GetTypeDef();
@@ -1661,6 +1652,21 @@ void NetView::DataUpdateAfterEdit_Child_impl(taDataView* chld) {
   // called when lays/specs are updated; typically just update spec view
   UpdatePanel();
 }
+
+void NetView::Dump_Load_post() {
+  // do full rebuild!
+  Reset();			
+  BuildAll();
+  Render();
+}
+
+taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
+  // don't save Layers/Prjn's, they have no persist state, and just get rebuilt
+  if (md->name == "children") {
+    return DQR_NO_SAVE;
+  } else
+    return inherited::Dump_QuerySaveMember(md);
+} 
 
 UnitView* NetView::FindUnitView(Unit* unit) {
   UnitView* uv = NULL;
@@ -2256,7 +2262,7 @@ void NetView::DataUpdateView_impl() {
 
 void NetView::UpdatePanel() {
   if (!nvp) return;
-  nvp->GetImage();
+  nvp->UpdatePanel();
 }
 
 void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
@@ -2468,8 +2474,8 @@ NetViewPanel::~NetViewPanel() {
   if (cmbUnitText) {delete cmbUnitText; cmbUnitText = NULL;}
 }
 
-void NetViewPanel::GetImage_impl() {
-  inherited::GetImage_impl();
+void NetViewPanel::UpdatePanel_impl() {
+  inherited::UpdatePanel_impl();
   NetView* nv = this->nv(); // cache
   cmbUnitText->GetImage(nv->unit_text_disp);
   cmbDispMode->GetImage(nv->unit_disp_mode);

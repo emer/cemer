@@ -321,7 +321,7 @@ void iProgramEditor::customEvent(QEvent* ev_) {
       apply_req = false;
     }
   } break;
-  default: inherited(ev_); 
+  default: inherited::customEvent(ev_); 
     return; // don't accept
   }
   ev_->accept();
@@ -725,7 +725,7 @@ void iProgramPanelBase::OnWindowBind_impl(iTabViewer* itv) {
     "Program");*/
 }
 
-void iProgramPanelBase::Refresh_impl() {
+void iProgramPanelBase::UpdatePanel_impl() {
   pe->Refresh();
 }
 
@@ -1356,7 +1356,7 @@ void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
   inherited::OnWindowBind_impl(itv);
 }
 
-void iProgramCtrlPanel::Refresh_impl() {
+void iProgramCtrlPanel::UpdatePanel_impl() {
   if (pc) pc->ReShow_Async();
 }
 

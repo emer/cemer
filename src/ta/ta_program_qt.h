@@ -209,7 +209,7 @@ public: // IDataLinkClient interface
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
   override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		Refresh_impl();
+  override void		UpdatePanel_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
   
 protected slots:
@@ -342,7 +342,7 @@ public: // IDataLinkClient interface
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		Refresh_impl();
+  override void		UpdatePanel_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
 

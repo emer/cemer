@@ -44,17 +44,16 @@ taBase_PtrList  dumpMisc::post_update_after;
 DumpPathSubList	dumpMisc::path_subs;
 DumpPathTokenList dumpMisc::path_tokens;
 VPUList 	dumpMisc::vpus;
-bool		dumpMisc::in_post_update_after = false;
 
 
 void dumpMisc::PostUpdateAfter() {
-  in_post_update_after = true;
+  taMisc::is_post_loading++;
   for (int i=0; i < dumpMisc::post_update_after.size; i++) {
     TAPtr tmp = dumpMisc::post_update_after.FastEl(i);
     tmp->Dump_Load_post();
   }
   dumpMisc::post_update_after.Reset();
-  in_post_update_after = false;
+  taMisc::is_post_loading--;
 }  
 
 
@@ -1360,7 +1359,7 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
 	  dumpMisc::update_after.Link(rbase);
 	}
 	// post load is a separate option, compatible with IMMED or NO_UA
-	if (!dumpMisc::in_post_update_after && rbase->HasOption("DUMP_LOAD_POST")) {
+	if (!taMisc::is_post_loading && rbase->HasOption("DUMP_LOAD_POST")) {
 	  dumpMisc::post_update_after.Link(rbase);
 	}
       }
@@ -1542,8 +1541,12 @@ endload:
   if (el_) *el_ = (void*)el;
   // if there were any post guys, send a msg to the taiMisc object, who will call us
   // back when the eventloop gets processed next
-  if (!dumpMisc::in_post_update_after && dumpMisc::post_update_after.size > 0) {
-    QTimer::singleShot(0, taiMC_, SLOT(PostUpdateAfter()) );
+  if (dumpMisc::post_update_after.size > 0) {
+    if (!taMisc::is_post_loading) {
+      QTimer::singleShot(0, taiMC_, SLOT(PostUpdateAfter()) );
+    } else { // shouldn't happen???
+      dumpMisc::post_update_after.Reset(); // if it does happen, don't leave around
+    }
   }
   return rval;
 }

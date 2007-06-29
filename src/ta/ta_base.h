@@ -488,22 +488,22 @@ public:
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
   static void  		Ref(taBase& it)		{ it.refn++; }	     // #IGNORE
   static void  		Ref(taBase* it) 	{ it->refn++; }	     // #IGNORE
-#ifdef DEBUG
-  static void		UnRef(taBase* it);// #IGNORE
-#else
-  static void		UnRef(taBase* it) { if (--(it->refn) == 0) delete it;}// #IGNORE
-#endif
+  static void		UnRef(taBase* it) {unRef(it); Done(it);} // #IGNORE
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
   static void		Own(taBase* it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership
   static void		Own(taSmartRef& it, TAPtr onr);	// #IGNORE for semantic compat with other Owns
 protected:
   // legacy ref counting routines, for compatability -- do not use for new code
+  // note that guards/tests in these are "defensive", not "by design"
 #ifdef DEBUG
-  static void   	unRef(taBase* it);	     // #IGNORE
+  static void   	unRef(taBase* it); // #IGNORE
   static void   	Done(taBase* it); // #IGNORE
 #else
-  static void   	unRef(taBase* it) { it->refn--; }	     // #IGNORE
-  static void   	Done(taBase* it) 	{ if (it->refn == 0) delete it;} // #IGNORE
+  static void   	unRef(taBase* it) 
+    { if (it->refn > 0) it->refn--; }  // #IGNORE -- don't keep writing if <=0 since this could be a zombie/deleted object in some obscure scenarios
+  static void   	Done(taBase* it) 
+    { if ((it->refn == 0) && (!it->HasBaseFlag(DESTROYED))) delete it;} 
+    // #IGNORE -- we check the flag for similar reasons as given in unRef
 #endif
   static void		unRefDone(taBase* it) 	{unRef(it); Done(it);}	 // #IGNORE
 

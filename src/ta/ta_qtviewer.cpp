@@ -4313,7 +4313,7 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
     setTabIcon(idx, m_panel->tabIcon());
 //    m_panel->mtab_cnt++;
     // make sure we show latest data (helps in case there are "holes" in data updating)
-    m_panel->GetImage();
+    m_panel->UpdatePanel();
   } else {
     setTabText(idx, "");
     setTabIcon(idx, TI_NONE); // no icon
@@ -4587,7 +4587,7 @@ void iTabView::OnWindowBind(iTabViewer* itv) {
 void iTabView::Refresh() {
   for (int i = panels.size - 1; i >= 0; --i) {
     iDataPanel* panel = panels.FastEl(i);
-    panel->Refresh();
+    panel->UpdatePanel();
   }
   UpdateTabNames();
 }
@@ -4827,7 +4827,12 @@ void iDataPanel::FrameShowing_Async(bool focus) {
   show_req = false;
 }
 
-void iDataPanel::Refresh_impl() {
+void iDataPanel::UpdatePanel() {
+  if (!isVisible()) return;
+  UpdatePanel_impl();
+}
+
+void iDataPanel::UpdatePanel_impl() {
   if (tabView())
     tabView()->UpdateTabName(this); //in case changed */
 }
@@ -4864,7 +4869,7 @@ void iDataPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   // note: we only call the impl, because each guy gets it, so we don't
   // want sets to then invoke this twice
-  if (m_rendered) Refresh_impl();
+  if (m_rendered) UpdatePanel_impl();
   else            Render();
 }
 
@@ -4937,8 +4942,9 @@ void iDataPanelFrame::DataLinkDestroying(taDataLink*) {
     ClosePanel();
 }
 
-void iDataPanelFrame::GetImage() {
-  if (!HasChanged()) GetImage_impl();
+void iDataPanelFrame::UpdatePanel() {
+  if (!HasChanged()) 
+    inherited::UpdatePanel();
 }
 
 taiDataLink* iDataPanelFrame::par_link() const {
@@ -4949,10 +4955,6 @@ taiDataLink* iDataPanelFrame::par_link() const {
 MemberDef* iDataPanelFrame::par_md() const {
   if (m_dps) return m_dps->par_md();
   else       return (tabView()) ? tabView()->par_md() : NULL;
-}
-
-void iDataPanelFrame::Refresh_impl() {
-  GetImage();
 }
 
 String iDataPanelFrame::TabText() const {
@@ -4973,13 +4975,42 @@ iTabViewer* iDataPanelFrame::tabViewerWin() const {
 iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
 :inherited((taiDataLink*)dv_->GetDataLink()) //NOTE: link not created yet during loads
 {
+  read_only = false;
   m_dv = dv_;
   updating = 0;
+  m_modified = false;
+  apply_req = false;
   taDataLink* dl = dv_->GetDataLink();
   dl->AddDataClient(this);
+  btnApply = NULL;
+  btnRevert = NULL; 
+  warn_clobber = false;
 }
 
 iViewPanelFrame::~iViewPanelFrame() {
+}
+
+void iViewPanelFrame::Apply() {
+  if (warn_clobber) {
+    int chs = taMisc::Choice("Warning: this object has changed since you started editing -- if you apply now, you will overwrite those changes -- what do you want to do?",
+			     "Apply", "Revert", "Cancel");
+    if(chs == 1) {
+      Revert();
+      return;
+    }
+    if(chs == 2)
+      return;
+  }
+  GetValue();
+  GetImage();
+  InternalSetModified(false); // superfulous??
+}
+
+void iViewPanelFrame::Apply_Async() {
+  if (apply_req) return; // already waiting
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
+  apply_req = true;
+  QCoreApplication::postEvent(this, ev);
 }
 
 void iViewPanelFrame::ClosePanel() {
@@ -4990,22 +5021,100 @@ void iViewPanelFrame::ClosePanel() {
   deleteLater(); // per Qt specs, defer deletions to avoid issues
 }
 
+void iViewPanelFrame::Changed() {
+  if (updating > 0) return;
+  InternalSetModified(true);
+}
+
+const iColor iViewPanelFrame::colorOfCurRow() const {
+  return this->palette().color(QPalette::Active, QPalette::Background);
+}
+
+void iViewPanelFrame::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_APPLY: {
+    if (apply_req) {
+      Apply();
+      apply_req = false;
+    }
+  } break;
+  default: inherited::customEvent(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
 void iViewPanelFrame::DataLinkDestroying(taDataLink*) {
   m_dv = NULL;
   ClosePanel();
 }
 
-void iViewPanelFrame::GetImage() {
-  if (!m_dv) return;
+void iViewPanelFrame::GetValue() {
   ++updating;
-  GetImage_impl();
+  InternalSetModified(false); // do it first, so signals/updates etc. see us nonmodified
+  GetValue_impl();
   --updating;
 }
 
 void iViewPanelFrame::InitPanel() {
   if (!m_dv) return;
+  if (updating) return;
   ++updating;
   InitPanel_impl();
+  if (!isVisible()) { // no update when hidden!
+    UpdatePanel_impl();
+  }
+  --updating;
+}
+
+void iViewPanelFrame::InternalSetModified(bool value) {
+  m_modified = value;
+  if (!value) warn_clobber = false;
+  UpdateButtons();
+}
+
+void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
+  if (vp_flags & VP_USE_BTNS) return;
+  if (!lay) return; // bug
+  if (!par) par = this;
+  
+  QHBoxLayout* layButtons = NULL;
+  if (lay)
+    layButtons = new QHBoxLayout();
+  else
+    layButtons = new QHBoxLayout(par);
+  layButtons->setMargin(0);
+  layButtons->setSpacing(0);
+  layButtons->addStretch();
+  btnApply = new HiLightButton("&Apply", par);
+  layButtons->addWidget(btnApply);
+  layButtons->addSpacing(4);
+  
+  btnRevert = new HiLightButton("&Revert", par);
+  layButtons->addWidget(btnRevert);
+  layButtons->addSpacing(4);
+  if (lay)
+    lay->addLayout(layButtons);
+  
+  connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
+  connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
+  
+  vp_flags |= VP_USE_BTNS;
+  InternalSetModified(false);
+}
+
+void iViewPanelFrame::Revert() {
+  GetImage();
+  InternalSetModified(false);
+}
+
+void iViewPanelFrame::UpdatePanel() {
+  if (!m_dv) return;
+  if (updating) return;
+  if (!isVisible()) return; // no update when hidden!
+  ++updating;
+  UpdatePanel_impl();
   --updating;
 }
 
@@ -5018,6 +5127,16 @@ iTabViewer* iViewPanelFrame::tabViewerWin() const {
   return (tabView()) ? tabView()->tabViewerWin() : NULL;
 }
 
+void iViewPanelFrame::UpdateButtons() {
+  if (!(vp_flags & VP_USE_BTNS)) return;
+  if (Base() && m_modified) {
+    btnApply->setEnabled(true);
+    btnRevert->setEnabled(true);
+  } else {
+    btnApply->setEnabled(false);
+    btnRevert->setEnabled(false);
+  }
+}
 
 //////////////////////////
 //    iDataPanelSet 	//
@@ -5187,10 +5306,10 @@ iDataPanel* iDataPanelSet::GetDataPanelOfType(TypeDef* typ, int& idx) {
   return NULL;
 }
 
-void iDataPanelSet::GetImage() {
+void iDataPanelSet::UpdatePanel() {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
-    pn->GetImage();
+    pn->UpdatePanel();
   }
 }
 
@@ -5219,14 +5338,6 @@ void iDataPanelSet::OnWindowBind_impl(iTabViewer* itv) {
 void iDataPanelSet::removeChild(QObject* obj) {
   panels.RemoveEl_(obj); // harmless if not a panel
   inherited::removeChild(obj);
-}
-
-void iDataPanelSet::Refresh() {
-  if (isVisible()) for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->Refresh();
-  }
-  inherited::Refresh();
 }
 
 void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {
@@ -5427,10 +5538,10 @@ String iListDataPanel::panel_type() const {
   else return str;
 }
 
-void iListDataPanel::Refresh_impl() {
+void iListDataPanel::UpdatePanel_impl() {
   //NOTE: for refresh, we just update the items (notify should always work for add/delete)
   list->Refresh();
-  inherited::Refresh_impl();
+  inherited::UpdatePanel_impl();
 }
 
 

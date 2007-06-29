@@ -34,7 +34,6 @@ public:
   static DumpPathSubList 	path_subs;     // path substitutions
   static DumpPathTokenList	path_tokens;  // path tokens
   static VPUList 		vpus;	      // pointers that couldn't get cached out
-  static bool			in_post_update_after; // flat to prevent recurrent pua calls
   
   static void 		 	PostUpdateAfter(); // called by taiMiscCore when there were guys on pua list
 };
