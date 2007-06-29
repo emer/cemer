@@ -1353,15 +1353,23 @@ String DataVarProg::GetDisplayName() const {
 bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
 				const String& il) {
   if(!var) return false;
+  DataCol* da = NULL;
+  DataTable* dt = GetData();
+  String string_cvt = "";
+  if(dt) {
+    da = dt->FindColName(var->name);
+    if(da->isString())
+      string_cvt = "(String)";	// cast variant value to a string for setting!
+  }
   if(row_spec == CUR_ROW) {
     if(set_data)
-      rval +=  il + idnm + ".SetDataByName(" + var->name + ", \"" + var->name +"\");\n";
+      rval +=  il + idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + var->name +"\");\n";
     else
       rval += il + var->name + " = " + idnm + ".GetDataByName(\"" + var->name + "\");\n";
   }
   else if(row_spec == ROW_NUM) {
     if(set_data)
-      rval +=  il + idnm + ".SetValColName(" + var->name + ", \"" + var->name +"\", "
+      rval +=  il + idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
 	+ row_var->name + ");\n";
     else 
       rval += il + var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
@@ -1369,7 +1377,7 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
-      rval +=  il + idnm + ".SetValColRowName(" + var->name + ", \"" + var->name+ "\", \""
+      rval +=  il + idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
 	+ row_var->name + "\", " + row_var->name + ");\n";
     else 
       rval += il + var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""

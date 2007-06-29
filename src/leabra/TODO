@@ -2,6 +2,9 @@ leabra todo list:
 
 commit:
 
+* layer now ALWAYS computes its own sse for both TARG and COMP -- added flags to
+  determine if it adds sse to overall network sse.
+* fixed writing of string dynenum to datatables.
 
 == Virtual Env
 

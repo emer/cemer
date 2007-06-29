@@ -1635,7 +1635,7 @@ void UnitSpec::Compute_Weights(Unit* u) {
 float UnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
   float sse = 0.0f;
   has_targ = false;
-  if(u->ext_flag & Unit::TARG) {
+  if(u->ext_flag & (Unit::TARG | Unit::COMP)) {
     has_targ = true;
     float uerr = u->targ - u->act;
     if(fabsf(uerr) >= sse_tol)
@@ -3847,8 +3847,8 @@ void Layer::Compute_dWt() {
 }
 float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(ext_flag & Unit::TARG)) return 0.0f;
   sse = 0.0f;
+  if(!(ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   Unit* u;
   taLeafItr i;
   bool has_targ;
@@ -3861,6 +3861,10 @@ float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
     sse /= (float)n_vals;
   if(sqrt)
     sse = sqrtf(sse);
+  if(!HasLayerFlag(NO_ADD_SSE)) {
+    rval = 0.0f;
+    n_vals = 0;
+  }
   return rval;
 }
 void Layer::Copy_Weights(const Layer* src) {

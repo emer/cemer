@@ -1228,7 +1228,7 @@ void LeabraUnitSpec::Compute_Weights(Unit* u) {
 float LeabraUnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
   has_targ = false;
   LeabraUnit* lu = (LeabraUnit*)u;
-  if(lu->ext_flag & Unit::TARG) {
+  if(lu->ext_flag & (Unit::TARG | Unit::COMP)) {
     has_targ = true;
     float uerr = lu->targ - lu->act_m;
     if(fabsf(uerr) < sse_tol)
