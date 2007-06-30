@@ -819,7 +819,7 @@ public:
 		       const char* c=0, const char* d=0, const char* e=0,
 		       const char* f=0, const char* g=0, const char* h=0,
 		       const char* i=0);
-  // #CAT_Dialog allows user to choose among different options in window if iv_active or stdin/out
+  // #CAT_Dialog allows user to choose among different options in a popup dialog window if gui_active (else stdin/out) -- option a returns 0, b = 1, etc.
   
   static void 	Confirm(const char* a, const char* b=0, const char* c=0,
 		      const char* d=0, const char* e=0, const char* f=0,

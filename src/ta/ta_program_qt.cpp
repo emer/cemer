@@ -860,6 +860,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_IfBreak)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("if.ret",
     tabMisc::root->GetTemplateInstance(&TA_IfReturn)));
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("if gui prmt",
+    tabMisc::root->GetTemplateInstance(&TA_IfGuiPrompt)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("switch",
     tabMisc::root->GetTemplateInstance(&TA_Switch)));
 

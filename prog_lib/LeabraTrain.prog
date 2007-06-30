@@ -45,7 +45,12 @@ Program .projects[0].programs.gp[0][1] {
 	MethodCall @[0] { };
       };
     };
-    MethodCall @[4] { };
+    IfGuiPrompt @[4] { 
+      ProgEl_List @.yes_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
   };
 
   ProgEl_List @.prog_code = [7] {
@@ -57,7 +62,12 @@ Program .projects[0].programs.gp[0][1] {
     };
     NetCounterInit @[2] { };
     MemberAssign @[3] { };
-    MethodCall @[4] { };
+    IfGuiPrompt @[4] { 
+      ProgEl_List @.yes_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [3] {
 	ProgramCall @[0] { 
@@ -171,7 +181,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[3] {
    name="epoch";
    var_type=T_Int;
-   int_val=0;
+   int_val=1;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="current epoch -- local copy, which is used to update network's epoch counter";
@@ -314,16 +324,41 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  MethodCall @[4] {
-   desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
+  IfGuiPrompt @[4] {
+   desc="don't initialize weights without checking!";
    flags=;
-   result_var=NULL;
-   obj=$5$;
-   method=Network::Init_Weights;
-   meth_args {
+   prompt="Do you want to Initialize Network Weights";
+   yes_label="Yes";
+   no_label="No";
+   yes_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$5$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
    };
   };
  };
@@ -396,16 +431,41 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    };
    update_after=0;
   };
-  MethodCall @[4] {
-   desc="initialize network weights: could also load pre-set weights or something else here";
+  IfGuiPrompt @[4] {
+   desc="don't initialize weights without checking";
    flags=;
-   result_var=NULL;
-   obj=$5$;
-   method=Network::Init_Weights;
-   meth_args {
+   prompt="Do you want to Initialize Network Weights";
+   yes_label="Yes";
+   no_label="No";
+   yes_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$5$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
    };
   };
   WhileLoop @[5] {

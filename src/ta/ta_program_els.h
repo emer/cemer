@@ -239,6 +239,35 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
+class TA_API IfGuiPrompt: public ProgEl { 
+  // if in gui mode, prompt user prior to performing a given operation -- if user says OK then run the code, otherwise do nothing -- if not in gui mode (e.g., running in batch mode) then always run the code -- allows interactive control over otherwise default operations
+INHERITED(ProgEl)
+public:
+  String	prompt; 	// prompt to display to user in gui mode
+  String	yes_label;	// label to display for the Yes/Ok answer
+  String	no_label;	// label to display for the No/Cancel answer
+
+  ProgEl_List	yes_code; 	// #SHOW_TREE items to execute if user says Yes/Ok to prompt in gui mode, or to always execute in nogui mode
+
+  override ProgVar*	FindVarName(const String& var_nm) const;
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
+
+  TA_SIMPLE_BASEFUNS(IfGuiPrompt);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level); 
+  override const String	GenCssPost_impl(int indent_level); 
+  override const String	GenListing_children(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();} //
+};
+
 class TA_API CaseBlock: public CodeBlock { 
   // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
   INHERITED(CodeBlock)

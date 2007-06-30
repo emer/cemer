@@ -3861,7 +3861,7 @@ float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
     sse /= (float)n_vals;
   if(sqrt)
     sse = sqrtf(sse);
-  if(!HasLayerFlag(NO_ADD_SSE)) {
+  if(HasLayerFlag(NO_ADD_SSE)) {
     rval = 0.0f;
     n_vals = 0;
   }

@@ -391,6 +391,72 @@ ProgVar* IfElse::FindVarName(const String& var_nm) const {
 }
 
 //////////////////////////
+//  IfGuiPrompt		//
+//////////////////////////
+
+void IfGuiPrompt::Initialize() {
+  prompt = "Do you want to...";
+  yes_label = "Yes";
+  no_label = "No";
+}
+
+void IfGuiPrompt::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  prompt.gsub("\"", "''");
+}
+
+void IfGuiPrompt::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  yes_code.CheckConfig(quiet, rval);
+}
+
+const String IfGuiPrompt::GenCssPre_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  String rval;
+  if(taMisc::gui_active) {
+    rval = il + "{ int chs = taMisc::Choice(\"" + prompt + "\", \""
+      + yes_label + "\", \""
+      + no_label + "\");\n";
+    rval += cssMisc::Indent(indent_level+1) + "if(chs == 0) {\n";
+  }
+  else {
+    rval = il + "{\n";		// just a block to run..
+  }
+  return rval; 
+}
+
+const String IfGuiPrompt::GenCssBody_impl(int indent_level) {
+  String rval = yes_code.GenCss(indent_level + 1 + (int)taMisc::gui_active);
+  return rval;
+}
+const String IfGuiPrompt::GenListing_children(int indent_level) {
+  String rval = yes_code.GenListing(indent_level + 1 + (int)taMisc::gui_active);
+  return rval;
+}
+
+const String IfGuiPrompt::GenCssPost_impl(int indent_level) {
+  if(taMisc::gui_active) {
+    return cssMisc::Indent(indent_level+1) + "}\n" +
+      cssMisc::Indent(indent_level) + "}\n"; // double close
+  }
+  else {
+    return cssMisc::Indent(indent_level) + "}\n";
+  }
+}
+
+String IfGuiPrompt::GetDisplayName() const {
+  return "if (gui && " + prompt + ")";
+}
+
+void IfGuiPrompt::PreGenChildren_impl(int& item_id) {
+  yes_code.PreGen(item_id);
+}
+ProgVar* IfGuiPrompt::FindVarName(const String& var_nm) const {
+  ProgVar* pv = yes_code.FindVarName(var_nm);
+  return pv;
+}
+
+//////////////////////////
 //  CaseBlock		//
 //////////////////////////
 
