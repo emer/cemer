@@ -813,39 +813,10 @@ public:
   ///////////////////////////////////////////////////
   // view button/field callbacks
 
-  void		setGraphType(GraphType value);
-  void		setPlotStyle(PlotStyle value);
-  void		setRows(int rows);
-  void		setColorMode(ColorMode value);
-  void		setLineWidth(float value);
-  void		setPointSpacing(int value);
-  void		setLabelSpacing(int value);
-  void		setErrSpacing(int value);
-  void		setThresh(float value);
-  void		setNegDraw(bool value);
-  void		set2dFont(bool value);
   void		setWidth(float wdth);
   void		setScaleData(bool auto_scale, float scale_min, float scale_max);
   // updates the values in us and the stored ones in the colorscale list
 
-  void		setXAxis(GraphColView* value);
-  void		setZAxis(GraphColView* value);
-  void		setPlot1(GraphColView* value);
-  void		setPlot2(GraphColView* value);
-  void		setPlot3(GraphColView* value);
-  void		setPlot4(GraphColView* value);
-  void		setPlot5(GraphColView* value);
-  void		setAltY2(bool value);
-  void		setAltY3(bool value);
-  void		setAltY4(bool value);
-  void		setAltY5(bool value);
-  void		setErr1(GraphColView* value);
-  void		setErr2(GraphColView* value);
-  void		setErr3(GraphColView* value);
-  void		setErr4(GraphColView* value);
-  void		setErr5(GraphColView* value);
-  void		setColorAxis(GraphColView* value);
-  void		setRasterAxis(GraphColView* value);
 
   iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
   T3GraphViewNode* node_so() const {return (T3GraphViewNode*)m_node_so.ptr();}
@@ -933,7 +904,6 @@ public:
   taiComboBox*		    cmbPlotStyle;
 
   QPushButton*		    butRefresh;
-  QPushButton*		    butClear;
 
   QHBoxLayout*		  layVals;
   QLabel*		    lblRows;
@@ -956,7 +926,7 @@ public:
   taiPolyData*	    	    pdtXAxis; // fixed_range polydata (inline)
 
   QHBoxLayout*		  layZAxis;
-  QCheckBox*		    oncZAxis; // on checkbox
+  iCheckBox*		    oncZAxis; // on checkbox
   QLabel*		    lblZAxis;
   taiListElsButton*	    lelZAxis; // list element chooser
   QCheckBox*		    rncZAxis; // row number checkbox
@@ -968,28 +938,28 @@ public:
   taiPolyData*	    	    pdt1Axis; // fixed_range polydata (inline)
 
   QHBoxLayout*		  lay2Axis;
-  QCheckBox*		    onc2Axis; // on checkbox
+  iCheckBox*		    onc2Axis; // on checkbox
   QLabel*		    lbl2Axis;
   taiListElsButton*	    lel2Axis; // list element chooser
   taiPolyData*	    	    pdt2Axis; // fixed_range polydata (inline)
   QCheckBox*		    chk2AltY;
 
   QHBoxLayout*		  lay3Axis;
-  QCheckBox*		    onc3Axis; // on checkbox
+  iCheckBox*		    onc3Axis; // on checkbox
   QLabel*		    lbl3Axis;
   taiListElsButton*	    lel3Axis; // list element chooser
   taiPolyData*	    	    pdt3Axis; // fixed_range polydata (inline)
   QCheckBox*		    chk3AltY;
 
   QHBoxLayout*		  lay4Axis;
-  QCheckBox*		    onc4Axis; // on checkbox
+  iCheckBox*		    onc4Axis; // on checkbox
   QLabel*		    lbl4Axis;
   taiListElsButton*	    lel4Axis; // list element chooser
   taiPolyData*	    	    pdt4Axis; // fixed_range polydata (inline)
   QCheckBox*		    chk4AltY;
 
   QHBoxLayout*		  lay5Axis;
-  QCheckBox*		    onc5Axis; // on checkbox
+  iCheckBox*		    onc5Axis; // on checkbox
   QLabel*		    lbl5Axis;
   taiListElsButton*	    lel5Axis; // list element chooser
   taiPolyData*	    	    pdt5Axis; // fixed_range polydata (inline)
@@ -998,24 +968,24 @@ public:
   QHBoxLayout*		  layErr1;
   QLabel*		    lbl1Err;
   taiListElsButton*	    lel1Err;
-  QCheckBox*		    onc1Err; // on checkbox
+  iCheckBox*		    onc1Err; // on checkbox
 
   QLabel*		    lbl2Err;
   taiListElsButton*	    lel2Err;
-  QCheckBox*		    onc2Err; // on checkbox
+  iCheckBox*		    onc2Err; // on checkbox
 
   QLabel*		    lbl3Err;
   taiListElsButton*	    lel3Err;
-  QCheckBox*		    onc3Err; // on checkbox
+  iCheckBox*		    onc3Err; // on checkbox
 
   QHBoxLayout*		  layErr2;
   QLabel*		    lbl4Err;
   taiListElsButton*	    lel4Err;
-  QCheckBox*		    onc4Err; // on checkbox
+  iCheckBox*		    onc4Err; // on checkbox
 
   QLabel*		    lbl5Err;
   taiListElsButton*	    lel5Err;
-  QCheckBox*		    onc5Err; // on checkbox
+  iCheckBox*		    onc5Err; // on checkbox
 
   QLabel*		    lblErrSpacing;
   taiField*		    fldErrSpacing;
@@ -1046,81 +1016,17 @@ public:
 protected:
   override void		InitPanel_impl(); // called on structural changes
   override void		UpdatePanel_impl(); // called on structural changes
+  override void		GetValue_impl();
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iGraphTableView_Panel;}
 
 protected slots:
-
-  void 		chkDisplay_toggled(bool on);
-  void 		cmbGraphType_itemChanged(int itm);
-  void 		chkNegDraw_toggled(bool on);
-  void 		fldRows_textChanged();
-
   void 		butRefresh_pressed();
   void 		butClear_pressed();
   void 		butSetColor_pressed();
 
-  void 		cmbPlotStyle_itemChanged(int itm);
-  void 		cmbColorMode_itemChanged(int itm);
-  void 		fldLineWidth_textChanged();
-  void 		fldPointSpacing_textChanged();
-  void 		fldLabelSpacing_textChanged();
-
-  void 		fldWidth_textChanged();
-
-  void		cbar_scaleValueChanged();
-
-  void 		lelXAxis_dataChanged(taiData*);
-  void 		rncXAxis_toggled(bool);
-  void 		pdtXAxis_dataChanged(taiData*);
-
-  void 		lelZAxis_dataChanged(taiData*);
-  void 		oncZAxis_toggled(bool);
-  void 		rncZAxis_toggled(bool);
-  void 		pdtZAxis_dataChanged(taiData*);
-
-  void 		lel1Axis_dataChanged(taiData*);
-  void 		pdt1Axis_dataChanged(taiData*);
-
-  void 		lel2Axis_dataChanged(taiData*);
-  void 		onc2Axis_toggled(bool);
-  void 		pdt2Axis_dataChanged(taiData*);
-  void 		chk2AltY_toggled(bool on);
-
-  void 		lel3Axis_dataChanged(taiData*);
-  void 		onc3Axis_toggled(bool);
-  void 		pdt3Axis_dataChanged(taiData*);
-  void 		chk3AltY_toggled(bool on);
-
-  void 		lel4Axis_dataChanged(taiData*);
-  void 		onc4Axis_toggled(bool);
-  void 		pdt4Axis_dataChanged(taiData*);
-  void 		chk4AltY_toggled(bool on);
-
-  void 		lel5Axis_dataChanged(taiData*);
-  void 		onc5Axis_toggled(bool);
-  void 		pdt5Axis_dataChanged(taiData*);
-  void 		chk5AltY_toggled(bool on);
-
-  void 		lel1Err_dataChanged(taiData*);
-  void 		onc1Err_toggled(bool);
-  void 		lel2Err_dataChanged(taiData*);
-  void 		onc2Err_toggled(bool);
-  void 		lel3Err_dataChanged(taiData*);
-  void 		onc3Err_toggled(bool);
-  void 		lel4Err_dataChanged(taiData*);
-  void 		onc4Err_toggled(bool);
-  void 		lel5Err_dataChanged(taiData*);
-  void 		onc5Err_toggled(bool);
-  void 		fldErrSpacing_textChanged();
-  void 		fldThresh_textChanged();
-
-  void 		lelCAxis_dataChanged(taiData*);
-
-  void 		lelRAxis_dataChanged(taiData*);
-  void 		pdtRAxis_dataChanged(taiData*);
 };
 
 
