@@ -94,7 +94,7 @@ public:
   virtual void	UpdateSubSpecs() { };	// update any subspec objects (overload me)
 
   virtual BaseSpec* NewChild(TypeDef* child_type);
-  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_this #CAT_Modify create a new child spec that inherits from this one but can have its own unique parameters
+  // #BUTTON #TYPE_ON_this #CAT_Modify create a new child spec that inherits from this one but can have its own unique parameters
 
   virtual bool  CheckType(TypeDef* td);
   // checks typedef type, issues error and returns false if not sufficient

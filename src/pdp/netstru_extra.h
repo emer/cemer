@@ -85,16 +85,16 @@ public:
   // connects one recv unit to all senders (doesn't check for linking..)
 
   virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
-  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
+  // #BUTTON #MENU_SEP_BEFORE make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
   virtual void	MakeRectangle(int width, int height, int left, int bottom);
-  // #MENU make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
+  // #BUTTON make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
 //TODO  virtual void	MakeFromNetView(NetView* view);
   /* #MENU make connection pattern from selected units in netview,
      first unit is center, then sender positions */
   virtual void	WeightsFromDist(float scale);
-  // #MENU #MENU_SEP_BEFORE assign weights as a linear function of sender distance
+  // #BUTTON assign weights as a linear function of sender distance
   virtual void	WeightsFromGausDist(float scale, float sigma);
-  // #MENU assign weights as a Gaussian function of sender distance
+  // #BUTTON assign weights as a Gaussian function of sender distance
 
   TA_SIMPLE_BASEFUNS(TesselPrjnSpec);
 protected:
@@ -353,12 +353,12 @@ public:
   virtual void	Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn);
   // connects one recv unit to all senders
 
-  virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
-  // #MENU #MENU_ON_Actions #MENU_SEP_BEFORE make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
   virtual void	MakeRectangle(int width, int height, int left, int bottom);
-  // #MENU make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
+  // #BUTTON make a connection pattern in the form of a rectangle starting at left, bottom coordinate and going right and up by width, height
+  virtual void	MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y);
+  // #BUTTON make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
   virtual void	SetPCon(float p_con, int start = 0, int end = -1);
-  // #MENU set p_con value for a range of send_gp_offs (default = all; end-1 = all)
+  // #BUTTON set p_con value for a range of send_gp_offs (default = all; end-1 = all)
 
   TA_SIMPLE_BASEFUNS(GpRndTesselPrjnSpec);
 protected:
