@@ -1351,7 +1351,7 @@ String DataVarProg::GetDisplayName() const {
 }
 
 bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
-				const String& il) {
+				const String& il, int var_no) {
   if(!var) return false;
   DataCol* da = NULL;
   DataTable* dt = GetData();
@@ -1393,11 +1393,61 @@ const String DataVarProg::GenCssBody_impl(int indent_level) {
   String idnm = data_var->name;
   String rval;
   rval += il + "// " + GetDisplayName() + "\n";
-  GenCss_OneVar(rval, var_1, idnm, il);
-  GenCss_OneVar(rval, var_2, idnm, il);
-  GenCss_OneVar(rval, var_3, idnm, il);
-  GenCss_OneVar(rval, var_4, idnm, il);
+  GenCss_OneVar(rval, var_1, idnm, il, 0);
+  GenCss_OneVar(rval, var_2, idnm, il, 1);
+  GenCss_OneVar(rval, var_3, idnm, il, 2);
+  GenCss_OneVar(rval, var_4, idnm, il, 3);
   return rval;
+}
+
+///////////////////////////////////////////
+//		DataVarProgMatrix
+
+void DataVarProgMatrix::Initialize() {
+}
+
+bool DataVarProgMatrix::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
+				      const String& il, int var_no) {
+  if(!var) return false;
+  DataCol* da = NULL;
+  String col_nm = var->name.before('_', -1);
+  if(TestError(col_nm.empty(), "GenCss_OneVar", "variable name must contain a '_' with part before that being name of column in data table to get/set value")) {
+    return false;
+  }
+  DataTable* dt = GetData();
+  String string_cvt = "";
+  if(dt) {
+    da = dt->FindColName(col_nm);
+    if(da->isString())
+      string_cvt = "(String)";	// cast variant value to a string for setting!
+  }
+  if(row_spec == CUR_ROW) {
+    if(set_data)
+      rval +=  il + idnm + ".SetMatrixCellDataByName(" + string_cvt + var->name
+	+ ", \"" + col_nm +"\", " + String(var_no) + ");\n";
+    else
+      rval += il + var->name + " = " + idnm + ".GetMatrixCellDataByName(\"" + col_nm
+	+ "\", " + String(var_no) + ");\n";
+  }
+  else if(row_spec == ROW_NUM) {
+    if(set_data)
+      rval +=  il + idnm + ".SetMatrixFlatValColName(" + string_cvt + var->name
+	+ ", \"" + col_nm +"\", " + row_var->name + ", " + String(var_no) + ");\n";
+    else 
+      rval += il + var->name + " = " + idnm + ".GetMatrixFlatValColName(\"" + col_nm + "\", "
+	+ row_var->name + ", " + String(var_no) + ");\n";
+  }
+  else if(row_spec == ROW_VAL) {
+    if(set_data)
+      rval +=  il + idnm + ".SetMatrixFlatValColRowName(" + string_cvt + var->name
+	+ ", \"" + col_nm + "\", \"" + row_var->name + "\", " + row_var->name
+	+ ", " + String(var_no) + ");\n";
+    else 
+      rval += il + var->name + " = " + idnm + ".GetMatrixFlatValColRowName(\"" + col_nm +"\", \""
+	+ row_var->name + "\", " + row_var->name
+	+ ", " + String(var_no) + ");\n";
+  }
+  return true;
 }
 
 ///////////////////////////////////////////

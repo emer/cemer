@@ -688,6 +688,15 @@ public:
   { return SetValAsVarMDims(val, col, row, d0, d1, d2, d3); }
   // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
+  const Variant 	GetMatrixFlatVal(int col, int row,
+					 int cell) const
+  { return GetValAsVarM(col, row, cell); }
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions)
+  bool 			SetMatrixFlatVal(const Variant& val, int col, int row, 
+					 int cell)
+  { return SetValAsVarM(val, col, row, cell); }
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions); returns 'true' if valid access and set is successful
+
   bool	 	InitVals(const Variant& init_val, int col);
   // #CAT_Modify initialize all values in given column to given value
   bool	 	InitValsToRowNo(int col);
@@ -710,6 +719,13 @@ public:
   bool 			SetMatrixValColName(const Variant& val, const String& col_name,
 					    int row, int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  const Variant 	GetMatrixFlatValColName(const String& col_name, int row,
+						int cell) const;
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality)
+  bool 			SetMatrixFlatValColName(const Variant& val, const String& col_name,
+						int row, int cell);
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful
 
   bool	 	InitValsColName(const Variant& init_val, const String& col_name);
   // #CAT_Modify initialize all values in column of given name to given value
@@ -737,6 +753,15 @@ public:
 				    const String& row_col_name, const Variant& row_value,
 					       int d0, int d1=0, int d2=0, int d3=0);
   // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+
+  const Variant 	GetMatrixFlatValColRowName(const String& col_name,
+				const String& row_col_name, const Variant& row_value,
+					    int cell) const;
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells)
+  bool 			SetMatrixFlatValColRowName(const Variant& val, const String& col_name,
+				    const String& row_col_name, const Variant& row_value,
+					       int cell);
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful
 
   /////////////////////////////
   // column pointer versions, just for the gui:
@@ -780,7 +805,7 @@ public:
   // #CAT_XpertModify set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
 
   ///////////////
-  // Matrix, Cell
+  // Matrix, Flat Idx
 
   const Variant 	GetValAsVarM(int col, int row, int cell) const;
   // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix

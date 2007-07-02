@@ -179,10 +179,11 @@ public:
   virtual const String	SourceChannelName(int chan) const
   { return _nilString;}
   // #CAT_SourceChannel name of source channel from channel index
-  virtual int		GetSourceChannelByName(const String& ch_nm)
+  virtual int		GetSourceChannelByName(const String& ch_nm, bool err_msg = true)
   { int scc = SourceChannelCount();
     for (int i = 0; i < scc; ++i) 
       if (ch_nm == SourceChannelName(i)) return i;
+    TestError(err_msg, "GetSourceChannelByName", "channel named",ch_nm,"not found");
     return -1;}
   // #CAT_SourceChannel get the source channel number for the name; -1 if none
     
@@ -208,6 +209,14 @@ public:
 		return GetMatrixData_impl(chan);
     else return NULL;}
   // #CAT_SourceChannel get source data from Matrix channel -- must have done Read first; note: you must taBase::Ref/unRefDone the matrix
+  const Variant		GetMatrixCellData(int chan, int cell) 
+  { taMatrix* mat = GetMatrixData(chan);  if(mat) return mat->SafeElAsVar_Flat(cell);
+    else return _nilVariant; }
+  // #CAT_SourceChannel get source data cell from Matrix channel -- must have done Read first; cell is one element in matrix data, using a flat index regardless of dimensionality
+  const Variant		GetMatrixCellDataByName(const String& ch_nm, int cell) 
+  { taMatrix* mat = GetMatrixDataByName(ch_nm);  if(mat) return mat->SafeElAsVar_Flat(cell);
+    else return _nilVariant; }
+  // #CAT_SourceChannel get source data cell from Matrix channel of given name -- must have done Read first; cell is one element in matrix data, using a flat index regardless of dimensionality
 
 protected:
   /////////////////////////////////////////////////////////
@@ -253,10 +262,11 @@ public:
   virtual const String	SinkChannelName(int chan) const {return _nilString;}
   // #CAT_SinkChannel Get name of sink channel from channel index
 
-  virtual int		GetSinkChannelByName(const String& ch_nm)
+  virtual int		GetSinkChannelByName(const String& ch_nm, bool err_msg = true)
   { int scc = SinkChannelCount();
     for (int i = 0; i < scc; ++i) 
       if (ch_nm == SinkChannelName(i)) return i;
+    TestError(err_msg, "GetSourceChannelByName", "channel named",ch_nm,"not found");
     return -1;}
   // #CAT_SinkChannel get the channel number for the name; -1 if none
     
@@ -293,6 +303,16 @@ public:
 		  ((chan = GetSinkChannelByName(ch_nm)) >= 0)) 
 		return SetMatrixData_impl(data, chan); else return false;}
   // #CAT_SinkChannel set the data for given matrix channel -- must have done Write first! returns true if successful
+    
+  bool			SetMatrixCellData(const Variant& data, int chan, int cell) 
+  { taMatrix* mat = GetSinkMatrix(chan);  if(mat) { mat->SetFmVar_Flat(data, cell);
+      return true; } else return false; }
+  // #CAT_SinkChannel set the data for given Matrix channel cell (flat index into matrix values) -- must have done Write first! returns true if successful
+  bool			SetMatrixCellDataByName(const taMatrix* data, const String& ch_nm,
+						int cell) 
+  { taMatrix* mat = GetSinkMatrixByName(ch_nm);  if(mat) { mat->SetFmVar_Flat(data, cell);
+      return true; } else return false; }
+  // #CAT_SinkChannel set the data for given matrix channel cell (flat index into matrix values) -- must have done Write first! returns true if successful
     
   taMatrix*		GetSinkMatrix(int chan)
   { if (WriteAvailable() && SinkChannelInRange(chan)) 

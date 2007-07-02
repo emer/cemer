@@ -947,6 +947,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_DoneWritingDataRow)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("data vars",
     tabMisc::root->GetTemplateInstance(&TA_DataVarProg)));
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("dat var mat",
+    tabMisc::root->GetTemplateInstance(&TA_DataVarProgMatrix)));
 
   ////////////////////////////////////////////////////////////////////////////
   //		Data processing

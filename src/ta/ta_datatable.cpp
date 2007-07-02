@@ -921,6 +921,29 @@ bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
   } else return false;
 }
 
+const Variant DataTable::GetMatrixFlatValColName(const String& col_nm, int row,
+						 int cell) const {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsVarM(i, cell);
+  else return _nilVariant;
+}
+
+bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm,
+					int row, int cell) {
+  int col;
+  DataCol* da = FindColName(col_nm, col, true);
+  if (!da || da->not_matrix_err()) return false;
+  int i;
+  if (idx_err(row, da->rows(), i)) {
+    da->SetValAsVarM(val, i, cell);
+    return true;
+  } else return false;
+}
+
 /////////////////////
 
 const Variant DataTable::GetValColRowName(const String& col_nm, const String& row_col_name,
@@ -983,6 +1006,40 @@ bool DataTable::SetMatrixValColRowName(const Variant& val, const String& col_nm,
   int row = rda->FindVal(row_value);
   if(row >= 0) {
     cda->SetValAsVarMDims(val, row, d0, d1, d2, d3);
+    return true;
+  }
+  return false;
+}
+
+const Variant DataTable::GetMatrixFlatValColRowName(const String& col_nm, 
+						const String& row_col_name,
+						const Variant& row_value,
+						int cell) const {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if(!cda || cda->not_matrix_err()) return _nilVariant;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return _nilVariant;
+  int row = rda->FindVal(row_value);
+  if(row >= 0)
+    return cda->GetValAsVarM(row, cell);
+  return _nilVariant;
+}
+
+bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col_nm,
+				       const String& row_col_name,
+				       const Variant& row_value,
+				       int cell) {
+  int col;
+  DataCol* cda = FindColName(col_nm, col, true);
+  if (!cda || cda->not_matrix_err()) return false;
+  int rcol;
+  DataCol* rda = FindColName(row_col_name, rcol, true);
+  if(!rda) return false;
+  int row = rda->FindVal(row_value);
+  if(row >= 0) {
+    cda->SetValAsVarMDims(val, row, cell);
     return true;
   }
   return false;
