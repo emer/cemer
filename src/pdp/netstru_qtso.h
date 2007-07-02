@@ -342,7 +342,7 @@ private:
 */
 
 class PDP_API NetView: public T3DataViewMain {
-// ##NO_UPDATE_AFTER ##DUMP_LOAD_POST
+// ##DUMP_LOAD_POST
 INHERITED(T3DataViewMain)
 friend class NetViewAdapter;
 friend class NetViewPanel;

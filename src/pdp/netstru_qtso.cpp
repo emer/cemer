@@ -2469,14 +2469,12 @@ NetViewPanel::~NetViewPanel() {
   if (nv_) {
     nv_->nvp = NULL;
   }
-  if (cmbDispMode) {delete cmbDispMode; cmbDispMode = NULL;}
-  if (cmbPrjnDisp) {delete cmbPrjnDisp; cmbPrjnDisp = NULL;}
-  if (cmbUnitText) {delete cmbUnitText; cmbUnitText = NULL;}
 }
 
 void NetViewPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   NetView* nv = this->nv(); // cache
+  if (!nv) return;
   cmbUnitText->GetImage(nv->unit_text_disp);
   cmbDispMode->GetImage(nv->unit_disp_mode);
   chkDisplay->setChecked(nv->display);

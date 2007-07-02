@@ -1680,6 +1680,11 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
 
 void DataTable::ChangeColTypeGeom(DataCol* src, ValType new_type, const MatrixGeom& g) {
   if (!src) return;
+  // must validate geom first, before we start making the col!
+  String err_msg;
+  bool valid = taMatrix::GeomIsValid(g, &err_msg, false); // no flex
+  if (TestError(!valid, "ChangeColTypeGeom", err_msg)) return;
+
   // make a new col of right type
   int old_idx = src->GetIndex();
   String col_nm = src->name; 

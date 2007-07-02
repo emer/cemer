@@ -4488,9 +4488,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layZAxis->addWidget(lelZAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  oncZAxis = new iCheckBox("On", widg);
+  oncZAxis = new iCheckBox("On!", widg);
   oncZAxis->setToolTip("Display a Z axis?");
-  connect(oncZAxis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(oncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(oncZAxis);
 
   rncZAxis = new QCheckBox("Row\nNum", widg, "rncZAxis");
@@ -4530,9 +4530,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay2Axis->addWidget(lel2Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  onc2Axis = new iCheckBox("On", widg);
+  onc2Axis = new iCheckBox("On!", widg);
   onc2Axis->setToolTip("Display a second column's worth of data?");
-  connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay2Axis->addWidget(onc2Axis);
 
   chk2AltY =  new QCheckBox("Alt\nY", widg, "chk2AltY");
@@ -4557,9 +4557,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay3Axis->addWidget(lel3Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  onc3Axis = new iCheckBox("On", widg);
+  onc3Axis = new iCheckBox("On!", widg);
   onc3Axis->setToolTip("Display a second column's worth of data?");
-  connect(onc3Axis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc3Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay3Axis->addWidget(onc3Axis);
 
   chk3AltY =  new QCheckBox("Alt\nY", widg, "chk3AltY");
@@ -4584,9 +4584,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay4Axis->addWidget(lel4Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  onc4Axis = new iCheckBox("On", widg);
+  onc4Axis = new iCheckBox("On!", widg);
   onc4Axis->setToolTip("Display a second column's worth of data?");
-  connect(onc4Axis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc4Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay4Axis->addWidget(onc4Axis);
 
   chk4AltY =  new QCheckBox("Alt\nY", widg);
@@ -4611,9 +4611,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay5Axis->addWidget(lel5Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  onc5Axis = new iCheckBox("On", widg);
+  onc5Axis = new iCheckBox("On!", widg);
   onc5Axis->setToolTip("Display a second column's worth of data?");
-  connect(onc5Axis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc5Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay5Axis->addWidget(onc5Axis);
 
   chk5AltY =  new QCheckBox("Alt\nY", widg, "chk5AltY");
@@ -4637,9 +4637,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layErr1->addWidget(lbl1Err);
   lel1Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
   layErr1->addWidget(lel1Err->GetRep());
-  onc1Err = new iCheckBox("On", widg);
+  onc1Err = new iCheckBox("On!", widg);
   onc1Err->setToolTip("Display error bars for 1st column's data?");
-  connect(onc1Err, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc1Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layErr1->addWidget(onc1Err);
 
   // Err2
@@ -4648,9 +4648,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layErr1->addWidget(lbl2Err);
   lel2Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
   layErr1->addWidget(lel2Err->GetRep());
-  onc2Err = new iCheckBox("On", widg);
+  onc2Err = new iCheckBox("On!", widg);
   onc2Err->setToolTip("Display error bars for 2nd column's data?");
-  connect(onc2Err, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc2Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layErr1->addWidget(onc2Err);
 
   // Err3
@@ -4659,9 +4659,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layErr1->addWidget(lbl3Err);
   lel3Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
   layErr1->addWidget(lel3Err->GetRep());
-  onc3Err = new iCheckBox("On", widg);
+  onc3Err = new iCheckBox("On!", widg);
   onc3Err->setToolTip("Display error bars for 3nd column's data?");
-  connect(onc3Err, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc3Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layErr1->addWidget(onc3Err);
 
   layErr1->addStretch();
@@ -4673,9 +4673,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layErr2->addWidget(lbl4Err);
   lel4Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
   layErr2->addWidget(lel4Err->GetRep());
-  onc4Err = new iCheckBox("On", widg);
+  onc4Err = new iCheckBox("On!", widg);
   onc4Err->setToolTip("Display error bars for 4nd column's data?");
-  connect(onc4Err, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc4Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layErr2->addWidget(onc4Err);
 
   // Err5
@@ -4684,9 +4684,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layErr2->addWidget(lbl5Err);
   lel5Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
   layErr2->addWidget(lel5Err->GetRep());
-  onc5Err = new iCheckBox("On", widg);
+  onc5Err = new iCheckBox("On!", widg);
   onc5Err->setToolTip("Display error bars for 5nd column's data?");
-  connect(onc5Err, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(onc5Err, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layErr2->addWidget(onc5Err);
 
   // Err Spacing
