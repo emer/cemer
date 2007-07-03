@@ -553,7 +553,7 @@ public:
   float		b_dec_dt;	// #CONDEDIT_ON_on:true time constant for decreases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
   float		a_thr;		// #CONDEDIT_ON_on:true activation threshold of the channel: when basis > a_thr, conductance starts to build up (channels open)
   float		d_thr;		// #CONDEDIT_ON_on:true deactivation threshold of the channel: when basis < d_thr, conductance diminshes (channels close)
-  float		g_dt;		// #CONDEDIT_ON_on:true time constant for changing conductance (activating or deactivating)
+  float		g_dt;		// #CONDEDIT_ON_on:true time constant for changing conductance (activating or deactivating) -- if = 1, then gc is equal to the basis if channel is on
   bool		init;		// #CONDEDIT_ON_on:true initialize variables when state is intialized between trials (else with weights)
   bool		trl;		// #CONDEDIT_ON_on:true update after every trial instead of every cycle -- time constants need to be much larger in general
 
@@ -567,7 +567,10 @@ public:
       on_off = true;
     if(on_off && (basis < d_thr))
       on_off = false;
-    gc += g_dt * ((float)on_off - gc);
+    if(g_dt == 1.0f)
+      gc = (on_off) ? basis : 0.0f;
+    else
+      gc += g_dt * ((float)on_off - gc);
   }
 
   void 	Defaults()	{ Initialize(); }

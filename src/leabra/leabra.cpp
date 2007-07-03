@@ -1136,8 +1136,10 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
   u->act_eq -= decay * u->act_eq;
   u->prv_net -= decay * u->prv_net;
   u->prv_g_i -= decay * u->prv_g_i;
-  u->vcb.hyst -= decay * u->vcb.hyst;
-  u->vcb.acc -= decay * u->vcb.acc;
+  if(hyst.on && !hyst.trl)
+    u->vcb.hyst -= decay * u->vcb.hyst;
+  if(acc.on && !acc.trl)
+    u->vcb.acc -= decay * u->vcb.acc;
   if(act_fun == DEPRESS)
     u->spk_amp += (act_range.max - u->spk_amp) * decay;
 
