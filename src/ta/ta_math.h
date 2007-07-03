@@ -82,6 +82,7 @@ public:
     VAR,			// Variance
     STDEV,			// Standard deviation
     SEM,			// Standard error of the mean 
+    N, 				// the number of data items in the vector
     COUNT, 			// Count of the number times count relation was true
     MEDIAN,			// middle item (note: requires sorting)
     MODE,			// most frequent item (note: requires sorting)

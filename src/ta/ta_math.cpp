@@ -1276,6 +1276,8 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_std_dev(vec);
   case Aggregate::SEM:
     return taMath_double::vec_sem(vec);
+  case Aggregate::N: 
+    return (double)vec->size;
   case Aggregate::COUNT: 
     return taMath_double::vec_count(vec, agg.rel);
   case Aggregate::MEDIAN:
@@ -2533,6 +2535,8 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_std_dev(vec);
   case Aggregate::SEM:
     return taMath_float::vec_sem(vec);
+  case Aggregate::N: 
+    return (float)vec->size;
   case Aggregate::COUNT: 
     return taMath_float::vec_count(vec, agg.rel);
   case Aggregate::MEDIAN:
