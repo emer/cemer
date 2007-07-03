@@ -1748,20 +1748,11 @@ bool taBase::EditDialog(bool modal) {
   return false;
 }
 
+#ifndef TA_GUI
+// see ta_qtviewer.cpp
 bool taBase::EditPanel(bool new_tab) {
-  // todo: Brad, please write me!!  this is just a copy of EditDialog for now..
-  // note that new_tab is critical for multiple auto_open's, so each comes up in a new tab
-  // and the last guy gets to be on top, presumably..
-#ifdef TA_GUI
-  taiEdit* ie;
-  if((ie = GetTypeDef()->ie) != NULL) {
-    //note: taiEdit looks up color, if hinting enabled
-    return ie->EditDialog((void*)this, false);
-  }
-#endif
-  return false;
 }
-
+#endif
 
 bool taBase::ReShowEdit(bool force) {
 #ifdef TA_GUI

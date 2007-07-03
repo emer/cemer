@@ -1,3 +1,10 @@
+TODO: RC2
+
+* put Doc in the major demo guys
+
+
+--- end rc2 ----
+
 to move to trac:
 
 Object Directive
@@ -18,21 +25,9 @@ Beta TODO list
 items to prioritize (from 2/6/07 ccnlab demo)
 
 General:
-* Programs: need a much less scary, "user friendly" view
-
-* comment directive or similiar to control what "null" means
-  in drop downs:
-  "New", "None", etc.
-
-* DataTable: button to add a row
-  also: maybe a standard "navigator" bar (including New)
 
 
 T3 (in rough order of importance/difficulty-factored)
-
-* view panels: put in the full T3 viewer (with the view buttons, etc.)
-
-* in t3 viewer, add button to return to a "nice" view
 
 * Projections: better visualization, esp direction of connection
   (maybe have transition of color, intermediate arrows, etc.)

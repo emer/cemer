@@ -63,9 +63,8 @@ Getting_Started_with_PDP++
     View-object Control Panels
     
   
-  <-> Building a simple project
-   (has an "ultralight" inline intro to: tables, nets,
-     progs)
+  Building a simple project
+    <->Build_your_own_network
   Exploring Virtual Environments
     virt_env demo
   Next steps...
@@ -83,7 +82,7 @@ Tutorials
 PDP++_User_Guide (linked a lot from elsewhere)
   <-> Projects
   <-> Docs
-  <-> Data Tables
+  <-> Data_Tables
        Columns
   <-> Networks
       Networks
@@ -91,18 +90,18 @@ PDP++_User_Guide (linked a lot from elsewhere)
       Projections and Connections
       Specs
         Where is a Spec being used?
-  <-> T3 Views
+  <-> T3_Views
   <-> Graphs
-  <-> Data Analysis
+  <-> Data_Analysis
   <-> Programs
-  <-> Virtual Environments
+  <-> Virtual_Environments
   <-> Plugins
   
 Network_Algorithm_Guide
-  <-> Back Propagation (BP)
+  <-> Backpropagation (BP)
   <-> Leabra
-  <-> (CS)
-  <-> (SO)
+  <-> Constraint_Satisfaction
+  <-> Self-organizing_Learning
   
 PDP++_Reference
   -> Main Menu Reference

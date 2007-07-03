@@ -932,7 +932,7 @@ public:
   QPointer<iSearchDialog> search_dialog;
   void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
 #endif
-  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
+  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link, bool new_tab = false);
   void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force

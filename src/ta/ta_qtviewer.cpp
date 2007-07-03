@@ -3836,11 +3836,18 @@ void iMainWindowViewer::fileOptions() {
   tabMisc::root->Options();
 }
 
-iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
+iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link, bool new_tab) {
   MainWindowViewer* db = viewer();
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
+  if (new_tab) {
+    // make a new tab -- will be used when we select it
+    PanelViewer* pv  = (PanelViewer*)db->FindFrameByType(&TA_PanelViewer);
+    if (!pv) return NULL;
+    iTabViewer* itv = pv->widget();
+    itv->AddTab(); //same api as in the tab context menu
+  }
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
@@ -3871,6 +3878,7 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
 //  iTreeViewItem* item = 
   inst->AssertBrowserItem(link);
 }
+
 
 bool iMainWindowViewer::event(QEvent* ev) {
   bool rval = inherited::event(ev);
@@ -7379,4 +7387,15 @@ taMisc::Info("should be stopping...");
 void iSearchDialog::stop_clicked() {
   m_stop = true;
 }
+
+
+bool taBase::EditPanel(bool new_tab) {
+  iMainWindowViewer* inst = taiMisc::active_wins.Peek_MainWindow();
+  if (!inst) return false; // shouldn't happen!
+  taiDataLink* link = (taiDataLink*)GetDataLink();
+  if (!link) return false; // shouldn't happen!
+  iTreeViewItem* item = inst->AssertBrowserItem(link, new_tab);
+  return (item);
+}
+
 
