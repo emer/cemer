@@ -4975,6 +4975,7 @@ iTabViewer* iDataPanelFrame::tabViewerWin() const {
 iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
 :inherited((taiDataLink*)dv_->GetDataLink()) //NOTE: link not created yet during loads
 {
+  vp_flags = 0;
   read_only = false;
   m_dv = dv_;
   updating = 0;
@@ -5539,8 +5540,10 @@ String iListDataPanel::panel_type() const {
 }
 
 void iListDataPanel::UpdatePanel_impl() {
-  //NOTE: for refresh, we just update the items (notify should always work for add/delete)
-  list->Refresh();
+  //NOTE: when reshowing from invisible, we need to do this full refresh
+  //obs list->Refresh();
+  ClearList();
+  FillList();
   inherited::UpdatePanel_impl();
 }
 

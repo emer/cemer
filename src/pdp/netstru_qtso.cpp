@@ -2292,19 +2292,21 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 {
   int font_spec = taiMisc::fonMedium;
   m_cur_spec = NULL;
-  updating = 0;
+  req_full_redraw = false;
+  
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
-  layOuter = new QVBoxLayout(widg);
-  layOuter->setSpacing(taiM->vsep_c);
+  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
+  layTopCtrls = new QVBoxLayout(layWidg);
+  layTopCtrls->setSpacing(taiM->vsep_c);
 
-  layViewParams = new QVBoxLayout(layOuter);
+  layViewParams = new QVBoxLayout(layTopCtrls);
   layViewParams->setSpacing(taiM->vsep_c);
 
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout(layViewParams);
-  chkDisplay = new QCheckBox("Display", widg);
-  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(chkDisplay_toggled(bool)) );
+  chkDisplay = new QCheckBox("Display!", widg);
+  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -2312,8 +2314,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-    NULL, NULL, widg);
-  connect(cmbUnitText, SIGNAL(itemChanged(int)), this, SLOT(cmbUnitText_itemChanged(int)) );
+    this, NULL, widg);
   layDispCheck->addWidget(cmbUnitText->GetRep());
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -2322,8 +2323,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
  for maximum speed.");
   layDispCheck->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-    NULL, NULL, widg);
-  connect(cmbDispMode, SIGNAL(itemChanged(int)), this, SLOT(cmbDispMode_itemChanged(int)) );
+    this, NULL, widg);
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
@@ -2334,8 +2334,7 @@ L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
 B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDispCheck->addWidget(lblPrjnDisp);
   cmbPrjnDisp = new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
-				NULL, NULL, widg);
-  connect(cmbPrjnDisp, SIGNAL(itemChanged(int)), this, SLOT(cmbPrjnDisp_itemChanged(int)) );
+				this, NULL, widg);
   layDispCheck->addWidget(cmbPrjnDisp->GetRep());
   layDispCheck->addStretch();
   
@@ -2345,49 +2344,45 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
   lblPrjnWdth->setToolTip("Width of projection lines -- .001 is default (very thin!) -- increase if editing projections so they are easier to select.");
   layFontsEtc->addWidget(lblPrjnWdth);
-  fldPrjnWdth = new taiField(&TA_float, NULL, NULL, widg);
+  fldPrjnWdth = new taiField(&TA_float, this, NULL, widg);
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
 //   layDispCheck->addSpacing(taiM->hsep_c);
-  connect(fldPrjnWdth->rep(), SIGNAL(editingFinished()), this, SLOT(fldPrjnWdth_textChanged()) );
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
   layFontsEtc->addWidget(lblUnitTrans);
-  fldUnitTrans = new taiField(&TA_float, NULL, NULL, widg);
+  fldUnitTrans = new taiField(&TA_float, this, NULL, widg);
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
 //   layFontsEtc->addSpacing(taiM->hsep_c);
-  connect(fldUnitTrans->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitTrans_textChanged()) );
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
   layFontsEtc->addWidget(lblUnitFont);
-  fldUnitFont = new taiField(&TA_float, NULL, NULL, widg);
+  fldUnitFont = new taiField(&TA_float, this, NULL, widg);
   layFontsEtc->addWidget(fldUnitFont->GetRep());
 //   layFontsEtc->addSpacing(taiM->hsep_c);
-  connect(fldUnitFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldUnitFont_textChanged()) );
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
   lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
   layFontsEtc->addWidget(lblLayFont);
-  fldLayFont = new taiField(&TA_float, NULL, NULL, widg);
+  fldLayFont = new taiField(&TA_float, this, NULL, widg);
   layFontsEtc->addWidget(fldLayFont->GetRep());
 //   layFontsEtc->addSpacing(taiM->hsep_c);
-  connect(fldLayFont->rep(), SIGNAL(editingFinished()), this, SLOT(fldLayFont_textChanged()) );
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
   chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
-  connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(chkXYSquare_toggled(bool)) );
+  connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layFontsEtc->addWidget(chkXYSquare);
 
   gbDisplayValues = new QGroupBox("Display Values", widg);
-  layOuter->addWidget(gbDisplayValues, 1);
+  layTopCtrls->addWidget(gbDisplayValues, 1);
   layDisplayValues = new QVBoxLayout(gbDisplayValues);
 
   ////////////////////////////////////////////////////////////////////////////
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
   chkAutoScale = new QCheckBox("auto scale", gbDisplayValues);
-  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(chkAutoScale_toggled(bool)) );
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layColorScaleCtrls->addWidget(chkAutoScale);
 
   butScaleDefault = new QPushButton("Set Defaults", gbDisplayValues);
@@ -2398,7 +2393,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   layColorBar = new QHBoxLayout(layDisplayValues);
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, gbDisplayValues);
-  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(cbar_scaleValueChanged()) );
+  connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
 //  cbar->setMaximumWidth(30);
 //   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
@@ -2421,7 +2416,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   // Spec tree
   gbSpecs = new QGroupBox("Specs", widg);
-  layOuter->addWidget(gbSpecs, 1);
+  layTopCtrls->addWidget(gbSpecs, 1);
   laySpecs = new QVBoxLayout(gbSpecs);
   tvSpecs = new iTreeView(gbSpecs, iTreeView::TV_AUTO_EXPAND);
   tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
@@ -2456,12 +2451,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   // Command Buttons
   widCmdButtons = new QWidget(widg);
   iFlowLayout* fl = new iFlowLayout(widCmdButtons);
-  layOuter->addWidget(widCmdButtons);
+  layTopCtrls->addWidget(widCmdButtons);
   
   meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
   meth_but_mgr->Constr(nv()->net());
 
   setCentralWidget(widg);
+  MakeButtons(layOuter);
 }
 
 NetViewPanel::~NetViewPanel() {
@@ -2475,10 +2471,17 @@ void NetViewPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   NetView* nv = this->nv(); // cache
   if (!nv) return;
-  cmbUnitText->GetImage(nv->unit_text_disp);
-  cmbDispMode->GetImage(nv->unit_disp_mode);
+  if (req_full_redraw) {
+    req_full_redraw = false;
+    nv->Reset();
+    nv->BuildAll();
+    nv->Render();
+  }
+  
   chkDisplay->setChecked(nv->display);
-  cmbPrjnDisp->GetImage(nv->view_params.prjn_disp);
+  cmbUnitText->GetEnumImage(nv->unit_text_disp);
+  cmbDispMode->GetEnumImage(nv->unit_disp_mode);
+  cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
   fldPrjnWdth->GetImage((String)nv->view_params.prjn_width);
 
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
@@ -2503,6 +2506,37 @@ void NetViewPanel::UpdatePanel_impl() {
     setHighlightSpec(m_cur_spec, true);
 
   ColorScaleFromData();
+}
+
+void NetViewPanel::GetValue_impl() {
+  inherited::GetValue_impl();
+  NetView* nv = this->nv(); // cache
+  if (!nv) return;
+  req_full_redraw = false; // some changes require the full monty
+
+//TODO: if nv->display off, and we are now on, may need to force a Render
+  nv->display = chkDisplay->isChecked();
+  int i; 
+  cmbUnitText->GetEnumValue(i);
+  nv->unit_text_disp = (NetView::UnitTextDisplay)i;
+  
+  cmbDispMode->GetEnumValue(i);
+  req_full_redraw = req_full_redraw || (nv->unit_disp_mode != i);
+  nv->unit_disp_mode = (NetView::UnitDisplayMode)i;
+  
+  cmbPrjnDisp->GetEnumValue(i);
+  nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)i;
+  
+  //note: we use a variant to get the fuzzy == operator
+  Variant f = (float)fldPrjnWdth->GetValue();
+  req_full_redraw = req_full_redraw || (nv->view_params.prjn_width == f);
+  nv->view_params.prjn_width = f.toFloat();
+
+  nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
+  nv->font_sizes.unit = (float)fldUnitFont->GetValue();
+  nv->font_sizes.layer = (float)fldLayFont->GetValue();
+
+  nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
 
 void NetViewPanel::butNewLayer_pressed() {
@@ -2535,118 +2569,6 @@ void NetViewPanel::butSetColor_pressed() {
   if (!(nv_ = nv())) return;
 
   nv_->CallFun("SetColorSpec");
-}
-
-void NetViewPanel::chkAutoScale_toggled(bool on) {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->SetScaleData(on, cbar->min(), cbar->max(), false);
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::chkDisplay_toggled(bool on) {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->display = on;
-  if (on) nv_->Render(); //note: may never have actually rendered yet!
-}
-
-
-void NetViewPanel::cmbDispMode_itemChanged(int itm) {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  if (nv_->unit_disp_mode == (NetView::UnitDisplayMode)itm) return;
-  nv_->unit_disp_mode = (NetView::UnitDisplayMode)itm;
-  // do full reset here so it actually displays new guys
-  nv_->Reset();
-  nv_->BuildAll();
-  nv_->Render();
-}
-
-void NetViewPanel::cmbPrjnDisp_itemChanged(int itm) {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  if (nv_->view_params.prjn_disp == (NetViewParams::PrjnDisp)itm) return;
-  nv_->view_params.prjn_disp = (NetViewParams::PrjnDisp)itm;
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::cmbUnitText_itemChanged(int itm) {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->unit_text_disp = (NetView::UnitTextDisplay)itm;
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::fldUnitTrans_textChanged() {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->view_params.unit_trans = (float)fldUnitTrans->GetValue();
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::fldUnitFont_textChanged() {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->font_sizes.unit = (float)fldUnitFont->GetValue();
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::fldLayFont_textChanged() {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->font_sizes.layer = (float)fldLayFont->GetValue();
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::fldPrjnWdth_textChanged() {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
-  // requires more complete redraw
-  nv_->Reset();
-  nv_->BuildAll();
-  nv_->Render();
-}
-
-void NetViewPanel::chkXYSquare_toggled(bool on) {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-
-  nv_->view_params.xy_square = on;
-  nv_->UpdateDisplay(false);
-}
-
-void NetViewPanel::cbar_scaleValueChanged() {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  //note: user changed value, so must no longer be autoscale
-  ++updating;
-  chkAutoScale->setChecked(false); //note: raises signal on widget! (grr...)
-  --updating;
-
-  nv_->SetScaleData(false, cbar->min(), cbar->max(), false);
-  nv_->UpdateDisplay(false);
 }
 
 void NetViewPanel::ColorScaleFromData() {

@@ -827,6 +827,7 @@ void taiDataHostBase::Constr_impl() {
   widButtons->setAutoFillBackground(true);
   widButtons->setPaletteBackgroundColor(bg_color);
   layButtons = new QHBoxLayout(widButtons);
+  layButtons->setMargin(0);
 //def  layButtons->setMargin(2); // facilitates container
   Constr_Buttons();
   Constr_Final();
@@ -901,7 +902,7 @@ void taiDataHostBase::Constr_Buttons() {
   } else {
      // dont' put apply/revert buttons on a readonly dialog!
     if (!read_only) {
-      layButtons->addSpacing(20); // TODO: parameterize, and give it some stretchiness
+      layButtons->addSpacing(20); 
       apply_but = new HiLightButton("&Apply", par);
       layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
       connect(apply_but, SIGNAL(clicked()),
@@ -913,7 +914,7 @@ void taiDataHostBase::Constr_Buttons() {
     }
     Unchanged();
   }
-  layButtons->addSpacing(10); // don't flush hard right
+//nuke  layButtons->addSpacing(10); // don't flush hard right
 }
 
 

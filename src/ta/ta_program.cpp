@@ -1496,7 +1496,8 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
 
 void ProgEl::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 				    int dcr, void* op1_, void* op2_) {
-  UpdateAfterEdit();		// just do this for all guys -- keeps display updated
+//NO!!!!! Does a UAE if content of ref changes; otherwise, don't need this
+//  UpdateAfterEdit();		// just do this for all guys -- keeps display updated
 }
 
 const String ProgEl::GenCss(int indent_level) {

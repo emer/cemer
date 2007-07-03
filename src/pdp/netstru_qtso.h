@@ -487,8 +487,10 @@ class PDP_API NetViewPanel: public iViewPanelFrame {
 INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
+  QWidget*		widg;
+  QVBoxLayout*		layWidg;
 
-  QVBoxLayout*		layOuter;
+  QVBoxLayout*		layTopCtrls;
   QVBoxLayout*		layViewParams;
   QHBoxLayout*		  layDispCheck;
   QCheckBox*		    chkDisplay;
@@ -549,7 +551,9 @@ protected:
   int			cmd_x; // current coords of where to place next button/ctrl
   int			cmd_y;
   BaseSpec*		m_cur_spec; // cur spec chosen -- only compared, so ok if stale
+  bool			req_full_redraw;
   override void		UpdatePanel_impl();
+  override void		GetValue_impl();
   void 			setHighlightSpec(BaseSpec* spec, bool force = false);
 
 public slots:
@@ -561,19 +565,7 @@ protected slots:
   void			butNewLayer_pressed();
   void			butScaleDefault_pressed();
   void 			butSetColor_pressed();
-  virtual void 		chkAutoScale_toggled(bool on);
-  virtual void 		chkDisplay_toggled(bool on);
-  virtual void 		cmbUnitText_itemChanged(int itm);
-  virtual void 		cmbDispMode_itemChanged(int itm);
-  virtual void 		cmbPrjnDisp_itemChanged(int itm);
-  virtual void 		fldPrjnWdth_textChanged();
-
-  virtual void 		fldUnitTrans_textChanged();
-  virtual void 		fldUnitFont_textChanged();
-  virtual void 		fldLayFont_textChanged();
-  virtual void 		chkXYSquare_toggled(bool on);
-  virtual void		cbar_scaleValueChanged();
-  virtual void		lvDisplayValues_selectionChanged();
+  void			lvDisplayValues_selectionChanged();
   void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
 						   int level, bool& expand);
   void			tvSpecs_ItemSelected(iTreeViewItem* item); 
