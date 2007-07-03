@@ -337,11 +337,13 @@ void LeabraChannels::Copy_(const LeabraChannels& cp) {
 
 void VChanSpec::Initialize() {
   on = false;
-  b_dt = .01f;
+  b_inc_dt = .01f;
+  b_dec_dt = .01f;
   a_thr = .5f;
   d_thr = .1f;
   g_dt = .1f;
   init = false;
+  trl = false;
 }
 
 void VChanBasis::Initialize() {
@@ -456,7 +458,8 @@ void LeabraUnitSpec::Initialize() {
   e_rev.h = 1.0f;
   e_rev.a = 0.0f;
 
-  hyst.b_dt = .05f;
+  hyst.b_inc_dt = .05f;
+  hyst.b_dec_dt = .05f;
   hyst.a_thr = .8f;
   hyst.d_thr = .7f;
 
@@ -924,7 +927,7 @@ void LeabraUnitSpec::Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* t
   Compute_Conduct(u, lay, thr, net);
   Compute_Vm(u, lay, thr, net);
   Compute_ActFmVm(u, lay, thr, net);
-  Compute_SelfReg(u, lay, thr, net);
+  Compute_SelfReg_Cycle(u, lay, thr, net);
   u->act_delta = u->act - u->act_sent;
 }
 
@@ -1075,10 +1078,20 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, 
   }
 }
 
-void LeabraUnitSpec::Compute_SelfReg(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork*) {
-  // fast-time scale updated during settling
-  hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
-  acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
+void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork*) {
+  // fast time scale updated every cycle
+  if(hyst.on && !hyst.trl)
+    hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
+  if(acc.on && !acc.trl)
+    acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
+}
+
+void LeabraUnitSpec::Compute_SelfReg_Trial(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
+  // slow time scale updated at end of trial
+  if(hyst.on && hyst.trl)
+    hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
+  if(acc.on && acc.trl)
+    acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
 }
 
 void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
@@ -2830,6 +2843,20 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_
   }
 }
 
+void LeabraLayerSpec::EncodeState(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
+    u->EncodeState(lay, net);
+}
+
+void LeabraLayerSpec::Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
+    u->Compute_SelfReg_Trial(lay, net);
+}
+
 float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
   return lay->Layer::Compute_SSE(n_vals, unit_avg, sqrt);
 }
@@ -3675,11 +3702,17 @@ void LeabraNetwork::EncodeState() {
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
-    if(lay->lesioned())     continue;
-    LeabraUnit* u;
-    taLeafItr i;
-    FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-      u->EncodeState(lay, this);
+    if(!lay->lesioned())
+      lay->EncodeState(this);
+  }
+}
+
+void LeabraNetwork::Compute_SelfReg_Trial() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(!lay->lesioned())
+      lay->Compute_SelfReg_Trial(this);
   }
 }
 
@@ -3803,6 +3836,7 @@ void LeabraNetwork::Trial_Final() {
     }
   }
   EncodeState();
+  Compute_SelfReg_Trial();
 }
 
 void LeabraNetwork::Compute_ExtRew() {

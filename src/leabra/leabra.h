@@ -549,21 +549,25 @@ class LEABRA_API VChanSpec : public taBase {
 INHERITED(taBase)
 public:
   bool		on;		// #APPLY_IMMED #DEF_false true if channel is on
-  float		b_dt;		// #CONDEDIT_ON_on:true time constant for integrating basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
+  float		b_inc_dt;	// #CONDEDIT_ON_on:true #AKA_b_dt time constant for increases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
+  float		b_dec_dt;	// #CONDEDIT_ON_on:true time constant for decreases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
   float		a_thr;		// #CONDEDIT_ON_on:true activation threshold of the channel: when basis > a_thr, conductance starts to build up (channels open)
   float		d_thr;		// #CONDEDIT_ON_on:true deactivation threshold of the channel: when basis < d_thr, conductance diminshes (channels close)
   float		g_dt;		// #CONDEDIT_ON_on:true time constant for changing conductance (activating or deactivating)
   bool		init;		// #CONDEDIT_ON_on:true initialize variables when state is intialized between trials (else with weights)
+  bool		trl;		// #CONDEDIT_ON_on:true update after every trial instead of every cycle -- time constants need to be much larger in general
 
   void	UpdateBasis(float& basis, bool& on_off, float& gc, float act) {
-    if(on) {
-      basis += b_dt * (act - basis);
-      if(basis > a_thr)
-	on_off = true;
-      if(on_off && (basis < d_thr))
-	on_off = false;
-      gc += g_dt * ((float)on_off - gc);
-    }
+    float del = act - basis;
+    if(del > 0.0f)
+      basis += b_inc_dt * del;
+    else
+      basis += b_dec_dt * del;
+    if(basis > a_thr)
+      on_off = true;
+    if(on_off && (basis < d_thr))
+      on_off = false;
+    gc += g_dt * ((float)on_off - gc);
   }
 
   void 	Defaults()	{ Initialize(); }
@@ -734,8 +738,10 @@ public:
   // #CAT_Activation compute the membrante potential from input conductances
   virtual void Compute_ActFmVm(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute the activation from membrane potential
-  virtual void Compute_SelfReg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation)
+  virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
+  virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the trial time scale
 
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
@@ -769,8 +775,8 @@ public:
 
   override void	Compute_Weights(Unit* u);
 
-  virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*)	{ };
-  // #CAT_Learning encode current state information (hook for time-based learning)
+  virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*) { };
+  // #CAT_Learning encode current state information after end of current trial (hook for time-based learning)
 
   override float Compute_SSE(bool& has_targ, Unit* u);
 
@@ -958,7 +964,10 @@ public:
 
   void 		EncodeState(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->EncodeState(this, lay, net); }
-  // #CAT_Learning encode current state information (hook for time-based learning)
+  // #CAT_Learning encode current state information at end of trial (hook for time-based learning)
+  void 		Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SelfReg_Trial(this, lay, net); }
+  // #CAT_Activation compute self-regulation (accommodation, hysteresis) at end of trial
 
   void		GetInSubGp();
 
@@ -1327,6 +1336,11 @@ public:
   virtual void	AdaptGBarI(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation adapt inhibitory conductances based on target activation values relative to current values
 
+  virtual void	EncodeState(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning encode final state information at end of trial for time-based learning across trials
+  virtual void	Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation update self-regulation (accommodation, hysteresis) at end of trial
+
   ////////////////////////////////////////
   //	Stage 6: Learning 		//
   ////////////////////////////////////////
@@ -1565,6 +1579,11 @@ public:
   // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
   void	PostSettle(LeabraNetwork* net, bool set_both=false) { spec->PostSettle(this, net, set_both); }
   // #CAT_Activation after settling, keep track of phase variables, etc.
+
+  void	EncodeState(LeabraNetwork* net)		{ spec->EncodeState(this, net); }
+  // #CAT_Learning encode final state information at end of trial for time-based learning across trials
+  void	Compute_SelfReg_Trial(LeabraNetwork* net) { spec->Compute_SelfReg_Trial(this, net); }
+  // #CAT_Activation update self-regulation (accommodation, hysteresis) at end of trial
 
   void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
   void	Compute_dWt(LeabraNetwork* net) 	{ spec->Compute_dWt(this, net); }
@@ -1959,7 +1978,9 @@ public:
   virtual void	Trial_UpdatePhase(); // #CAT_TrialInit update phase based on phase_no -- return false if no more phases need to be run
 
   virtual void	EncodeState();
-  // #CAT_TrialFinal encode final state information for subsequent use
+  // #CAT_TrialFinal encode final state information at end of trial for time-based learning across trials
+  virtual void	Compute_SelfReg_Trial();
+  // #CAT_TrialFinal update self-regulation (accommodation, hysteresis) at end of trial
   virtual void	Compute_dWt_NStdLay();
   // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
   virtual void	Compute_dWt();

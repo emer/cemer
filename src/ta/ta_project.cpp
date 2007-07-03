@@ -90,7 +90,7 @@ void Doc_Group::AutoEdit() {
   taLeafItr i;
   FOR_ITR_EL(taDoc, doc, this->, i) {
     if (doc->auto_open)
-      doc->Edit();
+      doc->EditPanel(true);	// true = new tab!  all auto_open's should be new tab in case there are multiple ones..
   }
 }
 
@@ -112,7 +112,7 @@ void Wizard_Group::AutoEdit() {
   taLeafItr i;
   FOR_ITR_EL(taWizard, wz, this->, i) {
     if (wz->auto_open)
-      wz->Edit();
+      wz->EditPanel(true); 	// true = new tab!  all auto_open's should be new tab in case there are multiple ones..
   }
 }
 
@@ -125,7 +125,7 @@ void SelectEdit_Group::AutoEdit() {
   SelectEdit* se;
   FOR_ITR_EL(SelectEdit, se, this->, i) {
     if(se->config.auto_edit)
-      se->Edit();
+      se->EditPanel(true);	// true = new tab!  all auto_open's should be new tab in case there are multiple ones..
   }
 }
 

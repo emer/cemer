@@ -19,9 +19,10 @@ Program .projects[0].programs.gp[0][0] {
     WhileLoop @[1] { 
       ProgEl_List @.loop_code = [2] {
 	ProgramCall @[0] { 
-	  ProgArg_List @.prog_args = [2] {
+	  ProgArg_List @.prog_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
+	    ProgArg @[2] { };
 	  };
 	};
 	NetCounterIncr @[1] { };
@@ -167,6 +168,22 @@ Program .projects[0].programs.gp[0][0] {
 	vars {
 	};
 	var_names{ input_data;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="no_prompts";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+	flags=;
+	var_expr="true";
+	vars {
+	};
+	var_names{ 	};
 	bad_vars{ 	};
        };
       };

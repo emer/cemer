@@ -1725,7 +1725,7 @@ void taBase::BrowseMe() {
 ///////////////////////////////////////////////////////////////////////////
 //	Edit Dialog gui
 
-int taBase::Edit() {
+bool taBase::Edit() {
 #ifdef TA_GUI
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
@@ -1736,7 +1736,22 @@ int taBase::Edit() {
   return false;
 }
 
-int taBase::EditDialog(bool modal) {
+bool taBase::EditDialog(bool modal) {
+  // todo: it doesn't look like modal is being used here!!
+#ifdef TA_GUI
+  taiEdit* ie;
+  if((ie = GetTypeDef()->ie) != NULL) {
+    //note: taiEdit looks up color, if hinting enabled
+    return ie->EditDialog((void*)this, false);
+  }
+#endif
+  return false;
+}
+
+bool taBase::EditPanel(bool new_tab) {
+  // todo: Brad, please write me!!  this is just a copy of EditDialog for now..
+  // note that new_tab is critical for multiple auto_open's, so each comes up in a new tab
+  // and the last guy gets to be on top, presumably..
 #ifdef TA_GUI
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {

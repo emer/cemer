@@ -1358,7 +1358,7 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
   String string_cvt = "";
   if(dt) {
     da = dt->FindColName(var->name);
-    if(da->isString())
+    if(da && da->isString())
       string_cvt = "(String)";	// cast variant value to a string for setting!
   }
   if(row_spec == CUR_ROW) {
@@ -1418,7 +1418,7 @@ bool DataVarProgMatrix::GenCss_OneVar(String& rval, ProgVarRef& var, const Strin
   String string_cvt = "";
   if(dt) {
     da = dt->FindColName(col_nm);
-    if(da->isString())
+    if(da && da->isString())
       string_cvt = "(String)";	// cast variant value to a string for setting!
   }
   if(row_spec == CUR_ROW) {

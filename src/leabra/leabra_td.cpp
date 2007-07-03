@@ -136,7 +136,8 @@ void DaModUnitSpec::Compute_Weights(Unit* u) {
   UnitSpec::Compute_Weights(lu);
 }
 
-void DaModUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net) {
+void DaModUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::EncodeState(u, lay, net);
   DaModUnit* lu = (DaModUnit*)u;
   if(da_mod.p_dwt) {
     // just save phase activation states

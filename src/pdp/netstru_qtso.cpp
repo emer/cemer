@@ -2512,16 +2512,16 @@ void NetViewPanel::GetValue_impl() {
   inherited::GetValue_impl();
   NetView* nv = this->nv(); // cache
   if (!nv) return;
-  req_full_redraw = false; // some changes require the full monty
+  req_full_redraw = true;	// not worth micro-managing: MOST changes require full redraw!
 
-//TODO: if nv->display off, and we are now on, may need to force a Render
   nv->display = chkDisplay->isChecked();
+
   int i; 
   cmbUnitText->GetEnumValue(i);
   nv->unit_text_disp = (NetView::UnitTextDisplay)i;
   
   cmbDispMode->GetEnumValue(i);
-  req_full_redraw = req_full_redraw || (nv->unit_disp_mode != i);
+  //  req_full_redraw = req_full_redraw || (nv->unit_disp_mode != i);
   nv->unit_disp_mode = (NetView::UnitDisplayMode)i;
   
   cmbPrjnDisp->GetEnumValue(i);
@@ -2529,7 +2529,7 @@ void NetViewPanel::GetValue_impl() {
   
   //note: we use a variant to get the fuzzy == operator
   Variant f = (float)fldPrjnWdth->GetValue();
-  req_full_redraw = req_full_redraw || (nv->view_params.prjn_width == f);
+//   req_full_redraw = req_full_redraw || (nv->view_params.prjn_width != f);
   nv->view_params.prjn_width = f.toFloat();
 
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
