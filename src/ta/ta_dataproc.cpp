@@ -329,7 +329,7 @@ bool taDataProc::CopyData(DataTable* dest, DataTable* src) {
   return true;
 }
 
-bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* dest_cols,
+bool taDataProc::CopyCommonColsRow_impl(DataTable* dest, DataTable* src, DataOpList* dest_cols,
 				   DataOpList* src_cols, int dest_row, int src_row) {
   if(!dest || !src || !dest_cols || !src_cols) return false;
   dest->DataUpdate(true);
@@ -343,6 +343,15 @@ bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, DataOpList* 
   }
   dest->DataUpdate(false);
   return true;
+}
+
+bool taDataProc::CopyCommonColsRow(DataTable* dest, DataTable* src, int dest_row, int src_row) {
+  if(!dest) { taMisc::Error("taDataProc::CopyCommonColsRow: dest is NULL"); return false; }
+  if(!src) { taMisc::Error("taDataProc::CopyCommonColsRow: src is NULL"); return false; }
+  DataOpList dest_cols;
+  DataOpList src_cols;
+  GetCommonCols(dest, src, &dest_cols, &src_cols);
+  return CopyCommonColsRow_impl(dest, src, &dest_cols, &src_cols, dest_row, src_row);
 }
 
 bool taDataProc::CopyCommonColData(DataTable* dest, DataTable* src) {
@@ -2364,10 +2373,10 @@ const String DataCalcCopyCommonCols::GenCssBody_impl(int indent_level) {
   String rval;
   rval += il + "if(" + dcl->dest_data_var->name + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }\n";
   if(only_named_cols) 
-    rval += il + "taDataProc::CopyCommonColsRow(" + dcl->dest_data_var->name + ", " + 
+    rval += il + "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
       dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);\n";
   else
-    rval += il + "taDataProc::CopyCommonColsRow(" + dcl->dest_data_var->name + ", " + 
+    rval += il + "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
       dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);\n";
   return rval;
 }
