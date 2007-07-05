@@ -1068,7 +1068,7 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
 }
 
 void NetMonItem::GetMonVals(DataBlock* db) {
-  if ((!db) || variable.empty())  return;
+  if ((!db) || variable.empty() || computed)  return;
 
   int mon = 0; 
   //note: there should always be the exact same number of mons as items to set,

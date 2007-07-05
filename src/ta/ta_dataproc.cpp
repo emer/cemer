@@ -1340,18 +1340,27 @@ void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 String DataVarProg::GetDisplayName() const {
   String rval;
+  String row_var_name = "(ERR: not set!)";
+  if((bool)row_var)
+    row_var_name = row_var->name;
   if(set_data)
-    rval = "Set Data To: ";
+    rval = "To: ";
   else
-    rval = "Get Data Fm: ";
+    rval = "Fm: ";
   if(data_var)
     rval += data_var->name;
   else
     rval += "(ERROR: data_var not set!)";
-  if(set_data)
-    rval = " Fm Vars: ";
+  if(row_spec  == CUR_ROW)
+    rval += " cur_row";
+  else if(row_spec == ROW_NUM)
+    rval += " row_num: " + row_var_name;
   else
-    rval = " To Vars: ";
+    rval += " row_val: " + row_var_name;
+  if(set_data)
+    rval += " Fm Vars: ";
+  else
+    rval += " To Vars: ";
   if(var_1) rval += var_1->name + " ";
   if(var_2) rval += var_2->name + " ";
   if(var_3) rval += var_3->name + " ";
