@@ -3841,12 +3841,15 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link, bool new_
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
+  // make sure previous operations are finished
+  taiMiscCore::ProcessEvents();
   if (new_tab) {
     // make a new tab -- will be used when we select it
     PanelViewer* pv  = (PanelViewer*)db->FindFrameByType(&TA_PanelViewer);
     if (!pv) return NULL;
     iTabViewer* itv = pv->widget();
     itv->AddTab(); //same api as in the tab context menu
+    taiMiscCore::ProcessEvents();
   }
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
@@ -3854,6 +3857,8 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link, bool new_
     ibv->lvwDataTree->scrollTo(rval);
     ibv->lvwDataTree->setCurrentItem(rval);
   }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
   return rval;
 }
 
