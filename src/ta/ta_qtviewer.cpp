@@ -2696,8 +2696,8 @@ void iTabViewer::AddPanel(iDataPanel* panel) {
   tabView()->AddPanel(panel);
 }
 
-void iTabViewer::AddPanelNewTab(iDataPanel* panel) {
-  tabView()->AddPanelNewTab(panel);
+void iTabViewer::AddPanelNewTab(iDataPanel* panel, bool lock) {
+  tabView()->AddPanelNewTab(panel, lock);
 }
 
 void iTabViewer::AddTab() {
@@ -3836,21 +3836,14 @@ void iMainWindowViewer::fileOptions() {
   tabMisc::root->Options();
 }
 
-iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link, bool new_tab) {
+iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
+{
   MainWindowViewer* db = viewer();
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
   // make sure previous operations are finished
   taiMiscCore::ProcessEvents();
-  if (new_tab) {
-    // make a new tab -- will be used when we select it
-    PanelViewer* pv  = (PanelViewer*)db->FindFrameByType(&TA_PanelViewer);
-    if (!pv) return NULL;
-    iTabViewer* itv = pv->widget();
-    itv->AddTab(); //same api as in the tab context menu
-    taiMiscCore::ProcessEvents();
-  }
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
@@ -3862,6 +3855,25 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link, bool new_
   return rval;
 }
 
+bool iMainWindowViewer::AssertPanel(taiDataLink* link,
+  bool new_tab, bool new_tab_lock)
+{
+  if (!new_tab) new_tab_lock = false;
+  iTabViewer* itv = GetTabViewer(); // should exist
+  if (!itv) return false;
+  
+  iDataPanel* pan = itv->tabView()->GetDataPanel(link);
+  if (!pan) return false; // shouldn't happen
+  
+  if (new_tab) {
+    itv->AddPanelNewTab(pan, new_tab_lock);
+  } else {
+    itv->AddPanel(pan);
+  }
+   // make sure previous operations are finished
+  taiMiscCore::ProcessEvents();
+  return true;
+}
 
 void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
 //TODO: diagnostics on failures
@@ -4434,8 +4446,9 @@ bool iTabView::AddPanel(iDataPanel* panel) {
   return true;
 }
 
-void iTabView::AddPanelNewTab(iDataPanel* panel) {
+void iTabView::AddPanelNewTab(iDataPanel* panel, bool lock) {
   AddPanel(panel); //noop if already added
+  if (lock) panel->Pin();
   int tab_idx = tbPanels->addTab(panel);
   SetCurrentTab(tab_idx);
 }
@@ -7399,8 +7412,8 @@ bool taBase::EditPanel(bool new_tab) {
   if (!inst) return false; // shouldn't happen!
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false; // shouldn't happen!
-  iTreeViewItem* item = inst->AssertBrowserItem(link, new_tab);
-  return (item);
+  bool rval = inst->AssertPanel(link, new_tab); // lock if new
+  return rval;
 }
 
 

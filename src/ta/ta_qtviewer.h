@@ -682,7 +682,7 @@ public:
   iTabView_PtrList*	tabViews() {return m_tabViews;} // currently active
 
   virtual void		AddPanel(iDataPanel* panel); // adds a new pane, and sets active in current tab
-  void			AddPanelNewTab(iDataPanel* panel); // adds a new tab, sets panel active in it
+  void			AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a new tab, sets panel active in it, locks if requested
   virtual iTabView*	AddTabView(QWidget* parCtrl, iTabView* splitBuddy = NULL); // adds a new tab view, optionally as a split
   void 			ShowLink(taiDataLink* link, bool not_in_cur = false);
   void			ShowPanel(iDataPanel* panel); // shows the panel, according to showing rules
@@ -932,7 +932,9 @@ public:
   QPointer<iSearchDialog> search_dialog;
   void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
 #endif
-  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link, bool new_tab = false);
+  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
+  bool		 	AssertPanel(taiDataLink* link, bool new_tab = false,
+    bool new_tab_lock = true); // used for things like wizards and edits; note: ntl ignored if !nt
   void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force
@@ -1138,7 +1140,7 @@ public:
   void			Activated(bool val); // called by parent to indicate if we are active tabview or not
   bool 			ActivatePanel(taiDataLink* dl); // if a panel exists for the link, make it active and return true
   bool			AddPanel(iDataPanel* panel); // adds a panel if not already, true if newly added
-  void			AddPanelNewTab(iDataPanel* panel); // adds a panel in a new tab
+  void			AddPanelNewTab(iDataPanel* panel, bool lock = false); // adds a panel in a new tab
   void 			Closing(CancelOp& cancel_op);
   void 			DataPanelDestroying(iDataPanel* panel);
   void			FillTabBarContextMenu(QMenu* contextMenu, int tab_idx = -1); 
