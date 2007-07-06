@@ -61,12 +61,6 @@ win32 {
 # the tacss/pdp version string, for adding to libs and folder (Unix only)
   LIB_VER = @PL_LIB_VER@
 
-# where the pdp src has been unpacked
-#  PDP_BUILD_DIR = @PL_abs_top_builddir@
-#TODO: if PDP4DIR exists, then we want to replace PDP_BUILD_DIR with it
-# the pdp system folder (Unix); (just the app folder on Win)
-  PDP_SYS_DIR = ${datadir}/pdp++
-# the installed headers folder
   
 # the install target for plugins
   SYS_PLUGIN_DIR = ${datadir}/pdp++/plugins
@@ -74,10 +68,11 @@ win32 {
   
   # now, the modal paths that depend on whether PDP4DIR is defined or not
   isEmpty( PDP4_DIR ) {
-    PDP4_DIR =  $${datadir}/pdp++
+    PDP_SYS_DIR = ${datadir}/pdp++
     PDP4_INC_DIR = $${includedir}/pdp++
     MAKETA = $${bindir}/maketa
   } else {
+    PDP_SYS_DIR = ${datadir}/pdp++
     PDP4_INC_DIR = $${PDP4_DIR}/src
     LIBS += -L$${PDP4_DIR}/src/ta_lib/.libs
     LIBS += -L$${PDP4_DIR}/src/pdp_lib/.libs

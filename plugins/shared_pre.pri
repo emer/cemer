@@ -83,10 +83,41 @@ win32 {
   LIBS += -lpdp$${BUILD_EXT_US}-$${LIB_VER}
 }
 
-
-# following is the basic list for taccs -- pdp extends it
+# include paths
 INCLUDEPATH +=\
 	. \
+	$${PDP4_INC_DIR}  \
+	$${THIS_ROOT}/include
+
+MAKETA_INCLUDEPATH +=\
+	-I. \
+	-I$${PDP4_INC_DIR} \
+	-I$${THIS_ROOT}/include	
+	
+# modal include folders -- these are diff depending on platform and dev/retail
+# on win32, we must have PDP4DIR defined, and we always deploy just like dev
+# on unix, we use PDP4DIR for dev, and have hier includes, else flat includes
+isEmpty( PDP4_DIR ) {
+  PDP4_INC_DIR_taiqtso = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_ta = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_css = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_pdp = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_bp = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_cs = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_leabra = $${PDP4_INC_DIR}
+  PDP4_INC_DIR_so = $${PDP4_INC_DIR}
+  
+} else { # unix
+  PDP4_INC_DIR_taiqtso = $${PDP4_INC_DIR}/taiqtso
+  PDP4_INC_DIR_ta = $${PDP4_INC_DIR}/ta
+  PDP4_INC_DIR_css = $${PDP4_INC_DIR}/css
+  PDP4_INC_DIR_pdp = $${PDP4_INC_DIR}/pdp
+  PDP4_INC_DIR_bp = $${PDP4_INC_DIR}/bp
+  PDP4_INC_DIR_cs = $${PDP4_INC_DIR}/cs
+  PDP4_INC_DIR_leabra = $${PDP4_INC_DIR}/leabra
+  PDP4_INC_DIR_so = $${PDP4_INC_DIR}/so
+  
+  INCLUDEPATH +=\
 	$${PDP4_INC_DIR}/taiqtso \
 	$${PDP4_INC_DIR}/ta \
 	$${PDP4_INC_DIR}/ta/ios-g++-3.1 \
@@ -95,20 +126,9 @@ INCLUDEPATH +=\
 	$${PDP4_INC_DIR}/bp \
 	$${PDP4_INC_DIR}/cs \
 	$${PDP4_INC_DIR}/leabra \
-	$${PDP4_INC_DIR}/so \
-	$${PDP4_INC_DIR} \
-	$${THIS_ROOT}/include	 
-win32 {
-INCLUDEPATH +=\
-	$${BUILD_MSVC}
-} else {
-INCLUDEPATH +=\
-	$${PDP4_DIR}
-}
-
-# following is the basic list for taccs -- pdp extends it
-MAKETA_INCLUDEPATH +=\
-	-I. \
+	$${PDP4_INC_DIR}/so
+	
+  MAKETA_INCLUDEPATH +=\
 	-I$${PDP4_INC_DIR}/taiqtso \
 	-I$${PDP4_INC_DIR}/ta \
 	-I$${PDP4_INC_DIR}/ta/ios-g++-3.1 \
@@ -117,14 +137,20 @@ MAKETA_INCLUDEPATH +=\
 	-I$${PDP4_INC_DIR}/bp \
 	-I$${PDP4_INC_DIR}/cs \
 	-I$${PDP4_INC_DIR}/leabra \
-	-I$${PDP4_INC_DIR}/so \
-	-I$${PDP4_INC_DIR} \
-	-I$${THIS_ROOT}/include	
+	-I$${PDP4_INC_DIR}/so	
+}
+
 win32 {
-MAKETA_INCLUDEPATH +=\
+  INCLUDEPATH +=\
+	$${BUILD_MSVC}
+	
+  MAKETA_INCLUDEPATH +=\
 	-I$${BUILD_MSVC}
 } else {
-MAKETA_INCLUDEPATH +=\
+  INCLUDEPATH +=\
+	$${PDP4_DIR}
+	
+  MAKETA_INCLUDEPATH +=\
 	-I$${PDP4_DIR}
 }
 

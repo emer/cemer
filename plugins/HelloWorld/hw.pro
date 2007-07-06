@@ -15,8 +15,10 @@ HEADERS += $${TARGET}.h
 
 # Declare all the maketa headers (usually the same as HEADERS) --
 # you can just refer to the HEADERS if they are the same
+# you should also include xx_TA_type.h files that are referenced
+# directly or indirectly by your own headers
 
-MAKETA_HEADERS = $${HEADERS}
+MAKETA_HEADERS = $${PDP4_INC_DIR_ta}/ta_TA_type.h $${HEADERS}
 
 
 # Declare all the source files, *except* the following:

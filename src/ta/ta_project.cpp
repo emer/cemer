@@ -1175,18 +1175,46 @@ bool taRootBase::Startup_InitTA_getMissingAppDir() {
   return false;
 }
 
+bool FileWithContentExists(const String& in1, const String& fname) {
+  bool rval = false;
+  fstream in2;
+
+  int i1 = 0;
+  in2.open(fname, ios::in | ios::binary);
+  if (!in2.is_open()) goto exit1;
+  char c1;  char c2;
+  bool g1;  bool g2;
+  while (true) {
+    g1 = (i1 < in1.length()); // we have at least one more char
+    g2 = in2.get(c2);
+    if (!g1 && !g2) break; // same size, done 
+    if (!(g1 && g2)) goto exit; // different sizes
+    c1 = in1.elem(i1++);
+    if (c1 != c2) goto exit;  // different content
+  }
+  rval = true; 
+
+exit:
+  in2.close();
+exit1:
+  return rval;
+}
+
 bool MakeUserPluginConfigProxy(const String& uplugin_dir,
   const String& fname) 
 {
+//note: isEmpty takes a raw var, not its content
   String f(
 "tmpPDP4_DIR = $(PDP4DIR)\n"
-"isEmpty( $${tmpPDP4_DIR} ) {\n"
+"isEmpty( tmpPDP4_DIR ) {\n"
 "  tmpPDP4_DIR = " + taMisc::app_dir + "\n"
 "}\n"
 "!include($${tmpPDP4_DIR}/plugins/" + fname + ")  {\n"
 "  error(\"could not find <pdp4dir>/plugins/" + fname + "\")\n"
 "}\n");
-  ofstream ofs(uplugin_dir + "/" + fname, ios_base::out | ios_base::trunc);
+  String tfname = uplugin_dir + "/" + fname;
+  if (FileWithContentExists(f, tfname)) return true;
+  ofstream ofs(tfname, ios_base::out | ios_base::trunc);
   if (!ofs.is_open()) return false;
   ofs << f;
   ofs.close();
