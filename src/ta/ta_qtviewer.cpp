@@ -6245,7 +6245,7 @@ void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* 
     }
   }
 
-  emit ItemSelected(it);
+this_itemSelectionChanged();//  emit itemSelectionChanged(); // needed esp. when we call setCurrentItem(x)
 }
 
 void iTreeView::this_itemSelectionChanged() {
@@ -7407,12 +7407,23 @@ void iSearchDialog::stop_clicked() {
 }
 
 
+//////////////////////////////////
+//   taBase			//
+//////////////////////////////////
+
 bool taBase::EditPanel(bool new_tab) {
   iMainWindowViewer* inst = taiMisc::active_wins.Peek_MainWindow();
   if (!inst) return false; // shouldn't happen!
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false; // shouldn't happen!
-  bool rval = inst->AssertPanel(link, new_tab); // lock if new
+  bool rval = false;
+  // for new_tab, we open new locked panels,
+  // for existing, we do a browse to the item
+  if (new_tab) {
+    rval = inst->AssertPanel(link, new_tab); // lock if new
+  } else {
+    rval = inst->AssertBrowserItem(link);
+  }
   return rval;
 }
 
