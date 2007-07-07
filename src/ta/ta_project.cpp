@@ -100,7 +100,7 @@ void Doc_Group::AutoEdit() {
 //////////////////////////
 
 void taWizard::Initialize() {
-  auto_open = false;
+  auto_open = true;
 }
 
 //////////////////////////////////

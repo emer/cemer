@@ -43,6 +43,19 @@ void ProgType::Destroy() {
   CutLinks();
 }
 
+void ProgType::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(Program::IsForbiddenName(name))
+    name = "My" + name;
+}
+
+void ProgType::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+		"Name:",name,"is forbidden -- choose another"))
+    name = "My" + name;
+}
+
 taBase* ProgType::FindTypeName(const String& nm) const {
   if(name == nm) return (taBase*)this;
   return NULL;
@@ -128,6 +141,19 @@ void ProgType_List::setStale() {
 ///////////////////////////////////////////////////////////
 //		DynEnumType
 ///////////////////////////////////////////////////////////
+
+void DynEnumItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(Program::IsForbiddenName(name))
+    name = "My" + name;
+}
+
+void DynEnumItem::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+		"Name:",name,"is forbidden -- choose another"))
+    name = "My" + name;
+}
 
 String DynEnumItem::GetDisplayName() const {
   return name + "=" + String(value);
@@ -419,7 +445,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-    // only send stale if the schema changed, not just the value
+  if(Program::IsForbiddenName(name))
+    name = "My" + name;
+  // only send stale if the schema changed, not just the value
   String tfs = GetSchemaSig();
   // loading is a special case: initialize
   if (taMisc::is_loading) {
@@ -436,9 +464,13 @@ void ProgVar::UpdateAfterEdit_impl() {
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
+  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+		"Name:",name,"is forbidden -- choose another"))
+    name = "My" + name;
   if(var_type == T_Object) {
     if(HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
@@ -2006,11 +2038,16 @@ void Function::Initialize() {
 void Function::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   name = taMisc::StringCVar(name); // make names C legal names
+  if(Program::IsForbiddenName(name))
+    name = "My" + name;
 }
 
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(name.empty(), quiet, rval, "name is empty -- functions must be named");
+  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+		"Name:",name,"is forbidden -- choose another"))
+    name = "My" + name;
   Function_List* flo = GET_MY_OWNER(Function_List);
   CheckError(!flo, quiet, rval, "Function must only be in .functions -- cannot be in .prog_code or .init_code -- this is the DEFINITION of the function, not calling the function (which is FunctionCall)");
 }
@@ -2221,6 +2258,7 @@ void* ProgObjList::El_Own_(void* it_) {
 //////////////////////////
 
 ProgLib* Program::prog_lib = NULL;
+String_Array Program::forbidden_names;
 
 void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
   taBase* tok = (taBase*)td->GetInstance();
@@ -2279,6 +2317,8 @@ void Program::InitLinks() {
   taBase::Own(prog_code, this);
   taBase::Own(sub_progs, this);
   prog_gp = GET_MY_OWNER(Program_Group);
+  if(forbidden_names.size == 0)
+    InitForbiddenNames();
 }
 
 void Program::CutLinks() {
@@ -2417,6 +2457,10 @@ void Program::Init() {
     setRunState(DONE);
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 } 
+
+void Program::InitScriptObj_impl() {
+  AbstractScriptBase::InitScriptObj_impl(); // default one turns out to be fine..
+}
 
 bool Program::PreCompileScript_impl() {
   // as noted in abstractscriptbase: you must call this first to reset the script
@@ -3011,6 +3055,32 @@ void Program::ViewListing_Editor() {
 
 #endif  // TA_GUI
 
+void Program::InitForbiddenNames() {
+  if(forbidden_names.size > 0) return;
+  forbidden_names.Add("run_state");
+  forbidden_names.Add("ret_val");
+  forbidden_names.Add("this");
+
+  TypeDef* type_def = &TA_Program;
+  for(int i=0; i<type_def->members.size; i++) {
+    MemberDef* md = type_def->members.FastEl(i);
+    forbidden_names.Add(md->name);
+  }
+  for(int i=0; i<type_def->methods.size; i++) {
+    MethodDef* md = type_def->methods.FastEl(i);
+    forbidden_names.Add(md->name);
+  }
+//   forbidden_names.List();
+  // todo: probably could add more.. need to test..
+}
+
+bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
+  if((forbidden_names.FindEl(chk_nm) < 0) && !(bool)taMisc::types.FindName(chk_nm)) return false;
+  if(!warn) return true;
+  taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
+		"is not allowed as it clashes with other hard-coded variable names -- please choose a different one!");
+  return true;
+}
 
 //////////////////////////
 //  Program_Group	//

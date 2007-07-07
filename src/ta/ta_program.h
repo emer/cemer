@@ -76,6 +76,8 @@ public:
   override void   SetDefaultName() {} // make it local to list, set by list
   TA_SIMPLE_BASEFUNS(ProgType);
 protected:
+  override void 	UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
   virtual const String	GenCssBody_impl(int indent_level) { return _nilString; } // #IGNORE generate the Css body code for this object
   virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
@@ -130,6 +132,9 @@ public:
   inline void 	Destroy()			{ };
   inline void 	Copy_(const DynEnumItem& cp)	{ value = cp.value; desc = cp.desc; }
   TA_BASEFUNS(DynEnumItem);
+protected:
+  override void 	UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
 };
 
 class TA_API DynEnumItem_List : public taList<DynEnumItem> {
@@ -326,7 +331,7 @@ protected:
   String		m_this_sig; // the sig from most recent change
   String		m_prev_sig; // the sig last time it changed
   
-  override void UpdateAfterEdit_impl();
+  override void 	UpdateAfterEdit_impl();
   virtual String	GetSchemaSig() const; // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval); //object, if any
@@ -870,6 +875,8 @@ public:
   };
 
   static ProgLib* 	prog_lib; // #NO_SHOW_TREE library of available programs
+  static String_Array	forbidden_names;
+  // #NO_SAVE #READ_ONLY #HIDDEN names that should not be used for variables and other such things because they are already in use
 
   Program_Group*	prog_gp;
   // #NO_SHOW #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
@@ -918,14 +925,14 @@ public:
   // #READ_ONLY #NO_SAVE current view of listing 
   
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
-  // set flag state on
+  // #CAT_Flags set flag state on
   inline void		ClearProgFlag(ProgFlags flg) { flags = (ProgFlags)(flags & ~flg); }
-  // clear flag state (set off)
+  // #CAT_Flags clear flag state (set off)
   inline bool		HasProgFlag(ProgFlags flg) const { return (flags & flg); }
-  // check if flag is set
+  // #CAT_Flags check if flag is set
   inline void		SetProgFlagState(ProgFlags flg, bool on)
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
-  // set flag state according to on bool (if true, set flag, if false, clear it)
+  // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
 
   static const String	GetDescString(const String& dsc, int indent_level);
   // #IGNORE get an appropriately formatted version of the description string for css code
@@ -936,53 +943,56 @@ public:
   override ScriptSource	scriptSource() {return ScriptString;}
   override const String	scriptString();
   virtual const String	ProgramListing();
-  // generate the listing of the program (NOT the underlying CSS code -- just the program)
+  // #CAT_Code generate the listing of the program (NOT the underlying CSS code -- just the program)
   
   virtual void  Init();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT set the program state back to the beginning
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP,NOT_INIT #CAT_Run set the program state back to the beginning
   virtual void  Run();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP run the program
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Run run the program
   virtual void	Step();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP step the program, at the previously selected step level (see SetAsStep or the program group control panel)
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Run step the program, at the previously selected step level (see SetAsStep or the program group control panel)
   virtual void	Stop();
-  // #BUTTON #GHOST_OFF_run_state:RUN stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
+  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void	Abort();
-  // #BUTTON #GHOST_OFF_run_state:RUN stop the current program immediately, regardless of where it is
+  // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run stop the current program immediately, regardless of where it is
+
+  virtual bool	StopCheck(); // #CAT_Run calls event loop, then checks for STOP state, true if so
   
   virtual void	SetAsStep();
-  // #BUTTON set this program as the step level for this set of programs -- this is the grain size of stepping when the Step button is pressed (for a higher-level program)
+  // #BUTTON #CAT_Run set this program as the step level for this set of programs -- this is the grain size of stepping when the Step button is pressed (for a higher-level program)
   virtual void  Compile();
-  // #BUTTON #GHOST_ON_script_compiled:true generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
+  // #BUTTON #GHOST_ON_script_compiled:true #CAT_Code generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)
   virtual void	CmdShell();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP set css command shell to operate on this program, so you can run, debug, etc this script from the command line
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code set css command shell to operate on this program, so you can run, debug, etc this script from the command line
   virtual void	ExitShell();
-  // #BUTTON #GHOST_OFF_run_state:DONE,STOP exit the command shell for this program (shell returns to previous script)
+  // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code exit the command shell for this program (shell returns to previous script)
 
   int			Call(Program* caller); 
-  // runs the program as a subprogram called from another running program, 0=success
+  // #CAT_Run runs the program as a subprogram called from another running program, 0=success
   int			CallInit(Program* caller); 
-  // runs the program's Init from a superProg Init, 0=success
+  // #CAT_Run runs the program's Init from a superProg Init, 0=success
   virtual bool		SetVar(const String& var_nm, const Variant& value);
-  // set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
+  // #CAT_Variables set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
   virtual bool		SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet = false);
-  // set the value of a program variable (using SetVar) based on the value of startup argument arg_nm -- typically called from startup scripts -- displays information about variable set if !quiet
+  // #CAT_Variables set the value of a program variable (using SetVar) based on the value of startup argument arg_nm -- typically called from startup scripts -- displays information about variable set if !quiet
   virtual Variant	GetVar(const String& var_nm);
-  // get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
-  bool			StopCheck(); // calls event loop, then checks for STOP state, true if so
+  // #CAT_Variables get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
+  static bool		IsForbiddenName(const String& chk_nm, bool warn=true);
+  // #CAT_Code check given name against list of forbidden names -- variables and other objects should check and if forbidden, add an extra character or something
 
   virtual void		Reset();
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM reset (remove) all program elements -- typically in preparation for loading a new program over this one
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one
 
   static String		GetProgLibPath(ProgLibs library);
-  // get path to given program library
+  // #CAT_ProgLib get path to given program library
 
   virtual void		SaveToProgLib(ProgLibs library = USER_LIB);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT save the program to given program library -- file name = object name -- be sure to add good desc comments!!
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void		LoadFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_ProgLib (re)load the program from the program library element of given type
 
   virtual void		RunLoadInitCode();
-  // Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
+  // #CAT_Run Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // #CAT_Find find given variable within this program -- NULL if not found
@@ -994,23 +1004,23 @@ public:
   // #CAT_Find find program whose name contains given name, first looking within the group that this program belongs in, and then looking for all programs within the project.  if warn_not_found, then issue a warning if not found
 
   virtual void		SaveScript(ostream& strm);
-  // #MENU #MENU_ON_Script #MENU_CONTEXT #BUTTON save the css script generated by the program to a file
+  // #MENU #MENU_ON_Script #MENU_CONTEXT #BUTTON #CAT_File save the css script generated by the program to a file
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user 
   virtual void		ViewScript();
-  // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY view the css script generated by the program
+  // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY  #CAT_Code view the css script generated by the program
   virtual void		ViewScript_Editor();
-  // #MENU #MENU_CONTEXT #BUTTON open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
+  // #MENU #MENU_CONTEXT #BUTTON #CAT_Code open css script in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
 
   virtual void		SaveListing(ostream& strm);
-  // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #BUTTON save the program listing to a file
+  // #MENU #MENU_SEP_BEFORE #MENU_CONTEXT #BUTTON #CAT_Code save the program listing to a file
 #ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user 
   virtual void		ViewListing();
-  // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY view the listing of the program
+  // #MENU #MENU_CONTEXT #BUTTON #NO_BUSY #CAT_Code view the listing of the program
   virtual void		ViewListing_Editor();
-  // #MENU #MENU_CONTEXT #BUTTON open listing of the program in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
+  // #MENU #MENU_CONTEXT #BUTTON #CAT_Code open listing of the program in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
 
   static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
@@ -1035,6 +1045,7 @@ protected:
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
+  override void		InitScriptObj_impl(); // no "this" and install
   override bool		PreCompileScript_impl(); // CheckConfig & add/update the global vars
   virtual void		Stop_impl(); 
   virtual int		Run_impl(); 
@@ -1045,6 +1056,7 @@ protected:
 #ifdef TA_GUI
   virtual void		ViewScript_impl();
 #endif
+  static void		InitForbiddenNames();
 
 private:
   void	Copy_(const Program& cp);
