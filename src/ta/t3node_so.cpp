@@ -883,7 +883,7 @@ void SoImageEx::setImage(const taMatrix& src, bool top_zero) {
 void SoImageEx::setImage2(const taMatrix& src, bool top_zero) {
   d.x = src.dim(0);
   d.y = src.dim(1);
-  img.SetGeom(2, d.y, d.x);	// seems greyscale is backwards!
+  img.SetGeom(2, d.y, d.x);
   if (top_zero) {
     for (int y = d.y - 1; y >= 0; --y) {
       for (int x = 0; x < d.x; ++x) {
@@ -904,26 +904,25 @@ void SoImageEx::setImage3(const taMatrix& src, bool top_zero) {
   d.x = src.dim(0);
   d.y = src.dim(1);
   //NOTE: img geom is not same as input: rgb is in innermost for us
-  img.SetGeom(3, 3, d.x, d.y);
-  int idx = 0;
+  img.SetGeom(3, 3, d.y, d.x);
   if (top_zero) {
     for (int y = d.y - 1; y >= 0; --y) {
       for (int x = 0; x < d.x; ++x) {
-        img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
-        img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
-        img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
+        img.FastEl(0,y,x) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
+        img.FastEl(1,y,x) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
+        img.FastEl(2,y,x) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
       }
     }
   } else {
     for (int y = 0; y < d.y; ++y) {
       for (int x = 0; x < d.x; ++x) {
-        img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
-        img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
-        img.FastEl_Flat(idx++) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
+        img.FastEl(0,y,x) = (byte)(src.FastElAsFloat(x, y, 0) * 255);
+        img.FastEl(1,y,x) = (byte)(src.FastElAsFloat(x, y, 1) * 255);
+        img.FastEl(2,y,x) = (byte)(src.FastElAsFloat(x, y, 2) * 255);
       }
     }
   }
-  texture->image.setValue(SbVec2s(d.x, d.y), 3, (const unsigned char*)img.data());
+  texture->image.setValue(SbVec2s(d.y, d.x), 3, (const unsigned char*)img.data());
 }
 
 //////////////////////////

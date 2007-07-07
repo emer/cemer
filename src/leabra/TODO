@@ -2,6 +2,20 @@ leabra todo list:
 
 commit:
 
+ * NameVar was not loading properly because SetFmStr was not working with T_Invalid
+type -- updateFromString must have been changed at some point to not work with invalid
+-- fixed by just detecting Invalid and doing a string assign to value, otherwise
+calling updateFromString.  This fixes the loading of lay_disp_mode values which are
+a NameVar_Array.
+
+ * removed various calls to taiMisc::RunPending() in netstru_qtso.cpp -- in general
+this seems like a bad idea and could cause various event loops to get out of
+whack, etc.  however, if we notice any new misbehavior from netview updating
+the we can reenable (my tests have not revealed any so far!)
+  
+ * fixed color image display in T3 -- turns out bw & color ARE consistent.. duh.. not
+sure how that got so messed up..
+
 == Virtual Env
 
 * initial rot maybe 180deg off from one computed by ode??

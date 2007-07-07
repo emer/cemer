@@ -1588,11 +1588,25 @@ bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		"does not have LeabraPrjn projection base type!",
 		"project must be updated and projections remade"))
     return false;
+  bool has_rel_net_conspec = false;
   for(int i=0;i<lay->projections.size;i++) {
     Projection* prjn = (Projection*)lay->projections[i];
     CheckError(!prjn->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
 	       "does not have LeabraPrjn projection base type!",
 	       "Projection must be re-made");
+    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.GetSpec();
+    if(cs && cs->rel_net_adapt.on) has_rel_net_conspec = true;
+  }
+  if(has_rel_net_conspec) {
+    // check for total trg_netin_rel
+    float sum_trg_netin_rel = 0.0f;
+    for(int i=0;i<lay->projections.size;i++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+      sum_trg_netin_rel += prjn->trg_netin_rel;
+    }
+    CheckError((fabsf(sum_trg_netin_rel - 1.0f) > .001f), quiet, rval,
+	       "sum of trg_netin_rel values for layer:",String(sum_trg_netin_rel),
+	       "!= 1.0 -- must fix!");
   }
   return rval;
 }
@@ -2668,10 +2682,10 @@ void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay, Unit_Group* ug,
     *onm = "n/a";
     return;
   }
-  *onm = u->name;	// if it is something..
   // for target/output layers, if we set something, set network name!
-  if(u->name.empty() || 
-     ((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET))) return;
+  if(u->name.empty()) return;
+  *onm = u->name;	// if it is something..
+  if((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET)) return;
   if(!net->output_name.empty())
     net->output_name += "_";
   net->output_name += u->name;

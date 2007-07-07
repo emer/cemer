@@ -2080,6 +2080,7 @@ bool taBase::UpdatePointers_NewParType_Ref(taSmartRef& ref, TypeDef* par_typ, ta
   if(new_guy)
     ref.set(new_guy);
   else {
+    //    cerr << "update ptrs: old_path " << old_path << " not found " << endl;
     if(null_not_found)
       ref.set(NULL);		// reset to null if not found!
     return false;

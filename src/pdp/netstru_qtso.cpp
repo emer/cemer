@@ -2044,7 +2044,7 @@ void NetView::Render_impl() {
   Render_net_text();
 
   inherited::Render_impl();
-  taiMisc::RunPending();
+  //  taiMisc::RunPending();
 }
 
 void NetView::Render_net_text() {
@@ -2109,7 +2109,7 @@ void NetView::Render_net_text() {
     UpdateAutoScale();
     if (nvp) {
       nvp->ColorScaleFromData();
-      taiMisc::RunPending(); // so that panel is correct if 3d rendering takes a long time
+//        taiMisc::RunPending(); // so that panel is correct if 3d rendering takes a long time
     }
   }
 }
@@ -2251,7 +2251,7 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
     LayerView* lv = (LayerView*)children.FastEl(ch_idx++);
     lv->UpdateUnitValues();
   }
-  taiMisc::RunPending();
+  //  taiMisc::RunPending();
 }
 
 void NetView::DataUpdateView_impl() {

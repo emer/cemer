@@ -2237,7 +2237,13 @@ void test1() {
 void NameVar::SetFmStr(const String& val) {
   if(val.contains('=')) {
     name = val.before('=');
-    value.updateFromString(val.after('='));
+    String vls = val.after('=');
+    if(value.type() == Variant::T_Invalid) {
+      value = vls;		// sets as string
+    }
+    else {
+      value.updateFromString(vls);
+    }
   }
   // else error!  todo.
 }
