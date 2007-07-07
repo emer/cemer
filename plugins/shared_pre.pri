@@ -73,10 +73,11 @@ LIBS += -L$${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 LIBS += -L$${PDP4_DIR}/lib/plugins$${BUILD_EXT_SF}
 LIBS +=	-L$${THIS_ROOT}/lib
 win32 {
+  DEFINES += QT_DLL CSS_DLL TA_DLL TAIQTSO_DLL PDP_DLL BP_DLL CS_DLL LEABRA_DLL SO_DLL
   LIBS += -L$${BUILD_MSVC}/lib
-  LIBS += $${BUILD_MSVC}/lib/ta$${BUILD_EXT_US}.lib
-#  LIBS += -lta$${BUILD_EXT_US}
-  LIBS += $${BUILD_MSVC}/lib/pdp$${BUILD_EXT_US}.lib
+#  LIBS += $${BUILD_MSVC}/lib/ta$${BUILD_EXT_US}.lib
+#  LIBS += $${BUILD_MSVC}/lib/pdp$${BUILD_EXT_US}.lib
+  LIBS += -lta$${BUILD_EXT_US} -lpdp$${BUILD_EXT_US}
 } else {
   LIBS += -L$${PDP4_DIR}/lib
   LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
@@ -146,6 +147,7 @@ win32 {
 	
   MAKETA_INCLUDEPATH +=\
 	-I$${BUILD_MSVC}
+  DESTDIR = $${PDP4_DIR}/lib/plugins$${BUILD_EXT_SF}
 } else {
   INCLUDEPATH +=\
 	$${PDP4_DIR}
@@ -154,5 +156,5 @@ win32 {
 	-I$${PDP4_DIR}
 }
 
-DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
+#DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 
