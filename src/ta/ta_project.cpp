@@ -1329,6 +1329,10 @@ if (taMisc::proj_view_pref == -1) {
     inst->Load();
     --taFiler::no_save_last_fname;
   }
+  // make sure the app dir is on the recent paths
+  if (instance()->recent_paths.FindEl(taMisc::app_dir) < 0) {
+    instance()->AddRecentPath(taMisc::app_dir);
+  }
   return true;
 }
   	

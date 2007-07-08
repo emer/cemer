@@ -86,6 +86,7 @@ String		pdpMisc::user_spec_def;
 float		pdpMisc::pdpZScale = 4.0f;
 
 int pdpMisc::Main(int& argc, const char *argv[]) {
+  taMisc::web_help_url = "http://grey.colorado.edu/pdp/index.php/Main_Page";
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_pdp, &TA_PDPRoot)) return 1;
 #ifdef TA_GUI
   if(taMisc::use_gui) {

@@ -673,6 +673,9 @@ public:
   // #SHOW #READ_ONLY #CAT_File location of user's home directory -- override with "-u <path>" command line switch
   static String		web_home;
   // #SAVE #CAT_File url for location of web repository of package information
+//NOTE: help url is not saved, for the moment, but s/b for release
+  static String		web_help_url;
+  // #NO_SAVE #CAT_File url for base of web application help
   static String		prefs_dir;
   // #READ_ONLY #SHOW #CAT_File location of preference files (e.g., ~/.appname)
   static String		user_app_dir;

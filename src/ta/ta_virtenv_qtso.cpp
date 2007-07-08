@@ -675,7 +675,6 @@ void VEWorldView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_wvp) {
     m_wvp = new VEWorldViewPanel(this);
-    vw->viewerWindow()->AddPanel(m_wvp, false); // no tab yet
     vw->RegisterPanel(m_wvp);
   }
 }

@@ -2634,7 +2634,7 @@ void iBrowseViewer::ApplyRoot() {
   }
   // always show the first items under the root
   node->CreateChildren();
-  lvwDataTree->setCurItem(node);
+  lvwDataTree->setCurrentItem(node);//setCurItem(node);
   lvwDataTree->setItemExpanded(node, true); // always open root node
 }
 
@@ -3143,9 +3143,9 @@ void iApplicationToolBar::Constr_post() {
   win->fileCloseAction->addTo(tb);
   win->filePrintAction->addTo(tb);
   tb->addSeparator();
-  win->editUndoAction->addTo(tb);
-  win->editRedoAction->addTo(tb);
-  tb->addSeparator();
+//  win->editUndoAction->addTo(tb);
+//  win->editRedoAction->addTo(tb);
+//  tb->addSeparator();
   win->editCutAction->addTo(tb);
   win->editCopyAction->addTo(tb);
   win->editPasteAction->addTo(tb);
@@ -3567,17 +3567,22 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editFindNextAction = AddAction(new taiAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
+  String s = taMisc::app_name + " Help on the web";
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
+  helpHelpAction->setToolTip(s);
+  helpHelpAction->setStatusTip(s);
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
 
   fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
   fileOptionsAction->AddTo( fileMenu );
   fileMenu->insertSeparator();
   filePrintAction->AddTo( fileMenu );
-
-  editUndoAction->AddTo( editMenu );
+//NOTE: undo currently not implemented
+  editUndoAction->AddTo( editMenu ); 
   editRedoAction->AddTo( editMenu );
-  editMenu->insertSeparator();
+  editUndoAction->setVisible(false);
+  editRedoAction->setVisible(false);
+//  editMenu->insertSeparator(); // renable if undo is made visible
   editCutAction->AddTo( editMenu );
   editCopyAction->AddTo( editMenu );
   editDupeAction->AddTo( editMenu );
@@ -3642,8 +3647,8 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
   connect( toolsClassBrowseAction, SIGNAL( activated() ), 
     this, SLOT( toolsClassBrowser() ) );
-//    connect( helpContentsAction, SIGNAL( activated() ), this, SLOT( helpContents() ) );
-    connect( helpAboutAction, SIGNAL( Action() ), this, SLOT( helpAbout() ) );
+  connect( helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()) );
+  connect( helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()) );
 }
 
 taProject* iMainWindowViewer::curProject() const {
@@ -3943,6 +3948,13 @@ void iMainWindowViewer::windowActivate(int win) {
   wid->raise();
 }
 
+
+void iMainWindowViewer::helpHelp() {
+  String url = taMisc::web_help_url;
+  if (url.nonempty()) {
+    QDesktopServices::openUrl(QUrl(url));
+  }
+}
 
 void iMainWindowViewer::helpAbout() {
   if (tabMisc::root) tabMisc::root->About();
@@ -5001,6 +5013,7 @@ iTabViewer* iDataPanelFrame::tabViewerWin() const {
 iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
 :inherited((taiDataLink*)dv_->GetDataLink()) //NOTE: link not created yet during loads
 {
+  m_dps = NULL;
   vp_flags = 0;
   read_only = false;
   m_dv = dv_;
@@ -5015,6 +5028,9 @@ iViewPanelFrame::iViewPanelFrame(taDataView* dv_)
 }
 
 iViewPanelFrame::~iViewPanelFrame() {
+  if (m_dps) {// if in a panelset, and it hasn't null'ed us
+    m_dps->PanelDestroying(this); // removes tab
+  }
 }
 
 void iViewPanelFrame::Apply() {
@@ -5043,9 +5059,17 @@ void iViewPanelFrame::Apply_Async() {
 void iViewPanelFrame::ClosePanel() {
   CancelOp cancel_op = CO_NOT_CANCELLABLE;
   Closing(cancel_op); // forced, ignore cancel
-  if (tabView()) // effectively unlink from system
-    tabView()->DataPanelDestroying(this);
-  deleteLater(); // per Qt specs, defer deletions to avoid issues
+  
+  emit destroyed(this); // signals tab view we are gone
+/*  if (m_tabView) // effectively unlink from system
+    m_tabView->DataPanelDestroying(this); */
+  if (m_dps) {// if in a panelset, we let panelset destroy us
+    m_dps->PanelDestroying(this); // removes tab
+    if (tabView()) // effectively unlink from system
+      tabView()->DataPanelDestroying(this);
+  } else {
+    deleteLater(); // per Qt specs, defer deletions to avoid issues
+  }
 }
 
 void iViewPanelFrame::Changed() {
@@ -5165,6 +5189,118 @@ void iViewPanelFrame::UpdateButtons() {
   }
 }
 
+
+//////////////////////////
+//    iDataPanelSet 	//
+//////////////////////////
+
+iDataPanelSetBase::iDataPanelSetBase(taiDataLink* link_)
+:inherited(link_)
+{
+  cur_panel_id = -1;
+  widg = new QWidget();
+  layDetail = new QVBoxLayout(widg); 
+  // don't introduce any new margin
+  layDetail->setMargin(0);
+  layDetail->setSpacing(0);
+  wsSubPanels = new QStackedWidget(widg); // add to lay by desc
+  
+  setCentralWidget(widg);
+}
+
+iDataPanelSetBase::~iDataPanelSetBase() {
+  for (int i = panels.size - 1; i >= 0 ; --i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->setTabView(NULL);
+  }
+}
+
+void iDataPanelSetBase::Closing(CancelOp& cancel_op) {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->Closing(cancel_op);
+    if (cancel_op == CO_CANCEL) return;
+  }
+}
+
+void iDataPanelSetBase::ClosePanel() {
+  for (int i = panels.size - 1; i >= 0 ; --i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->ClosePanel();
+  }
+  if (tabView()) // effectively unlink from system
+    tabView()->DataPanelDestroying(this);
+  deleteLater();
+}
+
+void iDataPanelSetBase::UpdatePanel() {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->UpdatePanel();
+  }
+}
+
+const iColor iDataPanelSetBase::GetTabColor(bool selected, bool& ok) const {
+  iDataPanel* pn = curPanel();
+  if (pn) return pn->GetTabColor(selected, ok);
+  else    return inherited::GetTabColor(selected, ok);
+}
+
+iDataPanel* iDataPanelSetBase::GetDataPanelOfType(TypeDef* typ, int& idx) {
+  while ((idx >= 0) && (idx < panels.size)) {
+    iDataPanel* rval = panels.FastEl(idx);
+    idx++; // before returning val
+    if (rval->GetTypeDef()->InheritsFrom(typ))
+      return rval;
+  }
+  return NULL;
+}
+
+bool iDataPanelSetBase::HasChanged() {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    if (pn->HasChanged()) return true;
+  }
+  return false;
+}
+
+void iDataPanelSetBase::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->OnWindowBind(itv);
+  }
+}
+
+void iDataPanelSetBase::removeChild(QObject* obj) {
+  panels.RemoveEl_(obj); // harmless if not a panel
+  inherited::removeChild(obj);
+}
+
+void iDataPanelSetBase::ResolveChanges(CancelOp& cancel_op) {
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->ResolveChanges(cancel_op);
+    if (cancel_op == CO_CANCEL) return;
+  }
+  inherited::ResolveChanges(cancel_op); // calls our own impl
+}
+
+void iDataPanelSetBase::setCurrentPanelId(int id) {
+  if (cur_panel_id == id) return;
+  cur_panel_id = id; // set this early, to prevent unexpected calls from the signal
+  setCurrentPanelId_impl(id);
+}
+
+void iDataPanelSetBase::setTabView(iTabView* value) {
+  inherited::setTabView(value);
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    pn->setTabView(value);
+  }
+}
+
+
 //////////////////////////
 //    iDataPanelSet 	//
 //////////////////////////
@@ -5172,13 +5308,7 @@ void iViewPanelFrame::UpdateButtons() {
 iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 :inherited(link_)
 {
-  cur_panel_id = -1;
   layMinibar = NULL;
-  QWidget* widg = new QWidget();
-  layDetail = new QVBoxLayout(widg); 
-  // don't introduce any new margin
-  layDetail->setMargin(0);
-  layDetail->setSpacing(0);
   frmButtons = new QFrame(widg);
   frmButtons->setFrameShape(QFrame::Box);
   frmButtons->setFrameShadow(QFrame::Sunken);
@@ -5193,18 +5323,12 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
   buttons = new QButtonGroup(frmButtons); // note: not a widget, not visible
   buttons->setExclusive(true); // this is the default anyway
 
-  wsSubPanels = new QStackedWidget(widg);
   layDetail->addWidget(wsSubPanels, 1);
-  setCentralWidget(widg);
 
-  connect(buttons, SIGNAL(buttonClicked(int)), this, SLOT(btn_pressed(int)));
+  connect(buttons, SIGNAL(buttonClicked(int)), this, SLOT(setCurrentPanelId(int)));
 }
 
 iDataPanelSet::~iDataPanelSet() {
-  for (int i = panels.size - 1; i >= 0 ; --i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->setTabView(NULL);
-  }
 }
 
 void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
@@ -5290,28 +5414,6 @@ void iDataPanelSet::AllSubPanelsAdded() {
   }
 }
 
-void iDataPanelSet::btn_pressed(int id) {
-  set_cur_panel_id(id);
-}
-
-void iDataPanelSet::Closing(CancelOp& cancel_op) {
-  for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->Closing(cancel_op);
-    if (cancel_op == CO_CANCEL) return;
-  }
-}
-
-void iDataPanelSet::ClosePanel() {
-  for (int i = panels.size - 1; i >= 0 ; --i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->ClosePanel();
-  }
-  if (tabView()) // effectively unlink from system
-    tabView()->DataPanelDestroying(this);
-  deleteLater();
-}
-
 void iDataPanelSet::DataChanged_impl(int dcr, void* op1, void* op2) {
   inherited::DataChanged_impl(dcr, op1, op2);
   // if UDC then we need to invoke the dyn panel update procedure on the tai guy
@@ -5321,59 +5423,6 @@ void iDataPanelSet::DataChanged_impl(int dcr, void* op1, void* op2) {
       typ->iv->CheckUpdateDataPanelSet(this);
     }
   }
-}
-
-iDataPanel* iDataPanelSet::GetDataPanelOfType(TypeDef* typ, int& idx) {
-  while ((idx >= 0) && (idx < panels.size)) {
-    iDataPanel* rval = panels.FastEl(idx);
-    idx++; // before returning val
-    if (rval->GetTypeDef()->InheritsFrom(typ))
-      return rval;
-  }
-  return NULL;
-}
-
-void iDataPanelSet::UpdatePanel() {
-  for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->UpdatePanel();
-  }
-}
-
-const iColor iDataPanelSet::GetTabColor(bool selected, bool& ok) const {
-  iDataPanel* pn = curPanel();
-  if (pn) return pn->GetTabColor(selected, ok);
-  else    return inherited::GetTabColor(selected, ok);
-}
-
-bool iDataPanelSet::HasChanged() {
-  for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
-    if (pn->HasChanged()) return true;
-  }
-  return false;
-}
-
-void iDataPanelSet::OnWindowBind_impl(iTabViewer* itv) {
-  inherited::OnWindowBind_impl(itv);
-  for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->OnWindowBind(itv);
-  }
-}
-
-void iDataPanelSet::removeChild(QObject* obj) {
-  panels.RemoveEl_(obj); // harmless if not a panel
-  inherited::removeChild(obj);
-}
-
-void iDataPanelSet::ResolveChanges(CancelOp& cancel_op) {
-  for (int i = 0; i < panels.size; ++i) {
-    iDataPanel* pn = panels.FastEl(i);
-    pn->ResolveChanges(cancel_op);
-    if (cancel_op == CO_CANCEL) return;
-  }
-  inherited::ResolveChanges(cancel_op); // calls our own impl
 }
 
 void iDataPanelSet::SetMenu(QWidget* menu) {
@@ -5386,13 +5435,11 @@ void iDataPanelSet::SetMethodBox(QWidget* meths) {
   layDetail->addWidget(meths);
 }
 
-void iDataPanelSet::set_cur_panel_id(int cpi) {
-  if (cur_panel_id == cpi) return;
-  cur_panel_id = cpi; // set this early, to prevent unexpected calls from the signal
-  iDataPanel* pn = panels.SafeEl(cpi);
+void iDataPanelSet::setCurrentPanelId_impl(int id) {
+  iDataPanel* pn = panels.SafeEl(id);
   if (!pn) return; //shouldn't happen
   wsSubPanels->setCurrentWidget(pn);
-  QAbstractButton* but = buttons->button(cpi);
+  QAbstractButton* but = buttons->button(id);
   // for when called programmatically:
   if (but) // should always have a value
     but->setDown(true);
@@ -5402,7 +5449,7 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
     if (but2 != but) but2->setDown(false);
   }
   if (layMinibar) {
-    layMinibar->setCurrentIndex(cpi);
+    layMinibar->setCurrentIndex(id);
   }
   //TODO: maybe something to change tab color
 }
@@ -5410,11 +5457,57 @@ void iDataPanelSet::set_cur_panel_id(int cpi) {
 void iDataPanelSet::setPanelAvailable(iDataPanel* pn) {
 }
 
-void iDataPanelSet::setTabView(iTabView* value) {
-  inherited::setTabView(value);
+
+//////////////////////////
+//    iViewPanelSet 	//
+//////////////////////////
+
+iViewPanelSet::iViewPanelSet(taiDataLink* link_)
+:inherited(link_)
+{
+  layDetail->addWidget(wsSubPanels, 1);
+  tbSubPanels = new QTabBar(widg);
+  tbSubPanels->setShape(QTabBar::TriangularSouth);
+  layDetail->addWidget(tbSubPanels);
+
+  connect(tbSubPanels, SIGNAL(currentChanged(int)), this, SLOT(setCurrentPanelId(int)));
+}
+
+iViewPanelSet::~iViewPanelSet() {
+  panels.Reset(); // don't need/want to find any when child panels deleting
+}
+
+void iViewPanelSet::AddSubPanel(iViewPanelFrame* pn) {
+  pn->m_dps = this;
+  panels.Add(pn);
+  wsSubPanels->addWidget(pn);
+  tbSubPanels->addTab(pn->TabText());
+  
+  pn->AddedToPanelSet();
+  iTabViewer* itv = tabViewerWin();
+  if (itv) pn->OnWindowBind(itv);
+}
+
+void iViewPanelSet::PanelDestroying(iViewPanelFrame* pn) {
+  int id = panels.FindEl(pn);
+  if (id < 0) return;
+  panels.RemoveIdx(id); // do 1st in case the gui gets triggered by:
+  tbSubPanels->removeTab(id);
+  pn->m_dps = NULL; // cut the link
+}
+
+void iViewPanelSet::setCurrentPanelId_impl(int id) {
+  iDataPanel* pn = panels.SafeEl(id);
+  if (!pn) return; //shouldn't happen
+  wsSubPanels->setCurrentWidget(pn);
+  tbSubPanels->setCurrentIndex(id);
+}
+
+void iViewPanelSet::UpdatePanel() {
+  inherited::UpdatePanel();
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
-    pn->setTabView(value);
+    tbSubPanels->setTabText(i, pn->TabText());
   }
 }
 
@@ -6244,8 +6337,9 @@ void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* 
       QApplication::sendEvent(parent(), &tip);
     }
   }
-
-this_itemSelectionChanged();//  emit itemSelectionChanged(); // needed esp. when we call setCurrentItem(x)
+//nn  emit ItemSelected(it); 
+  // needed esp. when we call setCurrentItem(x)
+  this_itemSelectionChanged();
 }
 
 void iTreeView::this_itemSelectionChanged() {

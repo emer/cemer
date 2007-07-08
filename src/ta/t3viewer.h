@@ -498,6 +498,9 @@ INHERITED(QWidget)
 friend class T3DataViewFrame;
 friend class T3DataViewer;
 public:
+#ifndef __MAKETA__
+  QPointer<iViewPanelSet> panel_set; // contains ctrl panels for all our guys
+#endif
 //  taiMenu* 		fileExportInventorMenu;
 
   iT3ViewspaceWidget*	t3vs;
@@ -512,9 +515,8 @@ public:
   void 			NodeDeleting(T3Node* node); 
     // called when a node is deleting; basically used to deselect
 
-  void			RegisterPanel(iDataPanel* panel); 
-    // registers a panel created, so we can show/hide it when we go visible/hidden
   virtual void		T3DataViewClosing(T3DataView* node); // used mostly to remove from selection list
+  void			RegisterPanel(iViewPanelFrame* pan);
 
   iT3DataViewFrame(T3DataViewFrame* viewer_, QWidget* parent = NULL); 
   ~iT3DataViewFrame(); //
@@ -539,15 +541,9 @@ protected:
   virtual void		Reset_impl(); // note: delegated from DataViewer::Clear_impl
 
 protected:
-  Widget_List		m_panels;
-  
   void			hideEvent(QHideEvent* ev);
   void			showEvent(QShowEvent* ev);
   void			Showing(bool showing); 
-  
-  
-protected slots:
-  void			panel_destroyed(QObject* panel); // so we remove from list
   
 private:
   void			Init();

@@ -64,6 +64,7 @@ class tabListTreeDataNode;
 class tabGroupTreeDataNode;
 class iDataPanel;
 class iDataPanelFrame;
+class iViewPanelSet;
 class iListDataPanel;
 class iSearchDialog;
 
@@ -973,8 +974,8 @@ public slots:
 
   virtual void	windowMenu_aboutToShow();
   void 		windowActivate(int win); // activate the indicated win
-/*  virtual void helpIndex();
-  virtual void helpContents();*/
+/*  virtual void helpIndex();*/
+  virtual void  helpHelp();
   virtual void 	helpAbout();
 
   virtual void	mnuEditAction(taiAction* mel);
@@ -1198,7 +1199,8 @@ INHERITED(QFrame)
 friend class taDataLink;
 friend class iPanelTab;
 friend class iDataPanel_PtrList;
-friend class iDataPanelSet;
+friend class iDataPanelSetBase;
+//friend class iDataPanelSet;
 public:
 #ifndef __MAKETA__
   enum CustomEventType { // note: just copied from taiDataHost, not all used
@@ -1229,6 +1231,7 @@ public:
   virtual bool		isViewPanelFrame() const {return false;} // we group the vpf's to the right, all others to the left
 
 
+  virtual void		AddedToPanelSet() {} // called when fully added to DataPanelSet
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
   virtual void		ClosePanel() = 0; // anyone can call this to get the panel to close (ex. edit panel contents are deleted externally)
   //NOTE: due to various versioning/compatibility reasons, the following 2 routines get replaced sometimes in subclasses, to implement more elaborate rules before dispatching their worker bee impls
@@ -1307,7 +1310,6 @@ public:
 
   void			AddMinibarWidget(QWidget* ctrl);
     // adds the ctrl (typically a tool button) to the minibar (area to right of PanelSet selector buttons); note: right-justified, and fills inward; ctrl should be parentless; can force the DPF to be put into a set, if wouldn't have been otherwise
-  virtual void		AddedToPanelSet() {} // called when fully added to DataPanelSet
   
   iDataPanelFrame(taiDataLink* dl_);
   ~iDataPanelFrame();
@@ -1332,6 +1334,7 @@ class TA_API iViewPanelFrame: public iDataPanel, public virtual IDataHost {
   // provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls
   Q_OBJECT
 INHERITED(iDataPanel)
+friend class iViewPanelSet;
 public:
   enum ViewPanelFlags { // #BITS misc flags
     VP_0		= 0, // #IGNORE
@@ -1400,6 +1403,7 @@ public slots:
   void			Apply_Async();
 
 protected:
+  iViewPanelSet*	m_dps; // set if we are in a viewpanelset
   taDataView*		m_dv;
   int			updating; // #IGNORE >0 used to suppress update-related widget signals
   bool			m_modified;
@@ -1413,29 +1417,60 @@ protected:
   void 			UpdateButtons();
 };
 
-//NOTE: this class is only designed to handle a once-only adding of its subpanels; it cannot
-// handle dynamically adding and removing subpanels
-
-class TA_API iDataPanelSet: public iDataPanel { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
+class TA_API iDataPanelSetBase: public iDataPanel { //  common subclass for iDataPanelSet and iViewPanelSet
   Q_OBJECT
 INHERITED(iDataPanel)
 public:
+  QWidget* 		widg;
+  QVBoxLayout*		layDetail;
+  QStackedWidget*	  wsSubPanels; // subpanels -- note, built by descendents
+  
   int			cur_panel_id; // -1 if none
   iDataPanel_PtrList	panels;
-  QVBoxLayout*		layDetail;
-    QFrame*		frmButtons;
-      QHBoxLayout*	layButtons;
-      QButtonGroup*	buttons; // one QPushButton for each (note: not a widget)
-      QStackedLayout*	layMinibar; // if any panels use the minibar, created
-    QStackedWidget*	wsSubPanels; // subpanels
-
+  
   override taiDataLink*	par_link() const {return (m_tabView) ? m_tabView->par_link() : NULL;}
   override MemberDef*	par_md() const {return (m_tabView) ? m_tabView->par_md() : NULL;}
   override iTabViewer* tabViewerWin() const {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
 
   iDataPanel*		curPanel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
-  void			set_cur_panel_id(int cpi);
   override void		setTabView(iTabView* tv); // set for kids too
+  
+  override void		Closing(CancelOp& cancel_op);
+  override void		ClosePanel();
+  iDataPanel*		GetDataPanelOfType(TypeDef* typ, int& start_idx);
+    // get the first data panel of the specified type, starting at panel index; NULL if none
+  override const iColor GetTabColor(bool selected, bool& ok) const;
+  override bool		HasChanged();
+  override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
+  override void		UpdatePanel(); // iterate over all kiddies
+
+  iDataPanelSetBase(taiDataLink* dl_);
+  ~iDataPanelSetBase();
+
+public slots:
+  void			setCurrentPanelId(int id);
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override void		DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
+  override TypeDef*	GetTypeDef() const {return &TA_iDataPanelSetBase;}
+  
+protected:
+  virtual void		setCurrentPanelId_impl(int id) {}
+  void			removeChild(QObject* obj);
+  override void		OnWindowBind_impl(iTabViewer* itv);
+};
+
+class TA_API iDataPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
+  Q_OBJECT
+INHERITED(iDataPanelSetBase)
+public:
+//QVBoxLayout*		layDetail;
+  QFrame*		  frmButtons;
+  QHBoxLayout*		  layButtons;
+  QButtonGroup*		    buttons; // one QPushButton for each (note: not a widget)
+  QStackedLayout*	    layMinibar; // if any panels use the minibar, created
+
   void			setPanelAvailable(iDataPanel* pn); // dynamically show/hide a btn/pn
 
   void			SetMenu(QWidget* menu); // sets the menu (s/b a menubar; or toolbar on mac)
@@ -1443,14 +1478,6 @@ public:
   void			AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
   void			AddSubPanelDynamic(iDataPanelFrame* pn); // call this after fully built to dynamically add a new frame
   void			SetMethodBox(QWidget* meths); // sets a box that contains methods, on bottom
-  iDataPanel*		GetDataPanelOfType(TypeDef* typ, int& start_idx);
-    // get the first data panel of the specified type, starting at panel index; NULL if none
-  override void		Closing(CancelOp& cancel_op);
-  override void		ClosePanel();
-  override void		UpdatePanel(); // iterate over all kiddies
-  override const iColor GetTabColor(bool selected, bool& ok) const;
-  override bool		HasChanged();
-  override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
 
 
   iDataPanelSet(taiDataLink* dl_);
@@ -1458,21 +1485,44 @@ public:
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override void		DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
+//  override void		DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
   override TypeDef*	GetTypeDef() const {return &TA_iDataPanelSet;}
 protected:
   override void		DataChanged_impl(int dcr, void* op1, void* op2); // dyn subpanel detection
 
-public slots:
-  void			btn_pressed(int id);
-
 protected:
-  void			removeChild(QObject* obj);
-  override void		OnWindowBind_impl(iTabViewer* itv);
+  override void		setCurrentPanelId_impl(int id);
   void 			AddMinibar();
   void 			AddMinibarCtrls();
   void			AddMinibarCtrl(iDataPanelFrame* pn);
 };
+
+
+class TA_API iViewPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-view-panels, and btm hor tab for selecting panels
+  Q_OBJECT
+INHERITED(iDataPanelSetBase)
+public:
+  QTabBar*		  tbSubPanels; 
+
+  override bool		lockInPlace() const {return true;}
+  
+  void			AddSubPanel(iViewPanelFrame* pn);
+  
+  override void		UpdatePanel(); // update tab names too
+  void			PanelDestroying(iViewPanelFrame* pn); // so we remove tab
+
+  iViewPanelSet(taiDataLink* dl_);
+  ~iViewPanelSet();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+//  override void		DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
+  override TypeDef*	GetTypeDef() const {return &TA_iViewPanelSet;}
+
+protected:
+  override void		setCurrentPanelId_impl(int id);
+};
+
 
 //////////////////////////
 //   iListDataPanel 	//

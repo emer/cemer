@@ -1182,7 +1182,9 @@ iT3DataViewFrame::iT3DataViewFrame(T3DataViewFrame* viewer_, QWidget* parent)
 }
 
 iT3DataViewFrame::~iT3DataViewFrame() {
-//nn  Reset_impl();
+  if (panel_set) {
+    panel_set->ClosePanel();
+  }
 }
 
 void iT3DataViewFrame::Constr_impl() {
@@ -1265,31 +1267,9 @@ void iT3DataViewFrame::showEvent(QShowEvent* ev) {
 }
 
 void iT3DataViewFrame::Showing(bool showing) {
-  // panel tabs
-  if (showing) {
-    for (int i = 0; i < m_panels.size; ++i) {//int i = m_panels.size - 1; i >= 0; --i) {
-      iDataPanel* panel = (iDataPanel*)m_panels.FastEl(i);
-      panel->FrameShowing(showing, (i == 0));
-    }
-  } else {
-    for (int i = 0; i < m_panels.size; ++i) {
-      iDataPanel* panel = (iDataPanel*)m_panels.FastEl(i);
-      panel->FrameShowing(showing);
-    }
+  if (panel_set) {
+    panel_set->FrameShowing(showing, showing); // focus it if showing
   }
-}
-
-void iT3DataViewFrame::panel_destroyed(QObject* panel) {
-  m_panels.RemoveEl_(panel);
-}
-
-void iT3DataViewFrame::RegisterPanel(iDataPanel* panel) {
-  connect(panel, SIGNAL(destroyed(QObject*)),
-    this, SLOT(panel_destroyed(QObject*)) );
-  m_panels.AddUnique(panel);
-  // if we are currently visible, then so should be panel!
-  if (isVisible())
-    panel->FrameShowing(true);
 }
 
 void iT3DataViewFrame::Render_pre() {
@@ -1314,6 +1294,17 @@ void iT3DataViewFrame::Refresh_impl() {
   if (rt) 
     rt->Refresh(); */
   viewRefresh();
+}
+
+void iT3DataViewFrame::RegisterPanel(iViewPanelFrame* pan) {
+    if (panel_set) {
+      panel_set->AddSubPanel(pan);
+    } 
+#ifdef DEBUG
+    else {
+      taMisc::Warning("Attempt to RegisterPanel failed because it doesn't exist!");
+    }
+#endif
 }
 
 T3DataViewRoot* iT3DataViewFrame::root() {
@@ -1409,7 +1400,17 @@ void T3DataViewFrame::Constr_post() {
 }
 
 IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
-  return new iT3DataViewFrame(this, gui_parent);
+  iT3DataViewFrame* rval = new iT3DataViewFrame(this, gui_parent);
+  // make the corresponding viewpanelset
+  //TODO: need guards, but big problem if we skip here!!! need to find better place then
+  MainWindowViewer* mwv = GET_MY_OWNER(MainWindowViewer);
+  PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer);
+  iTabViewer* itv = pv->widget();
+  taiDataLink* dl = (taiDataLink*)GetDataLink();
+  iViewPanelSet* ivps = new iViewPanelSet(dl);
+  rval->panel_set = ivps;
+  itv->AddPanelNewTab(ivps);
+  return rval;
 }
 
 void T3DataViewFrame::DataChanged(int dcr, void* op1, void* op2) {

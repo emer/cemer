@@ -1303,7 +1303,6 @@ void GridTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGridTableView_Panel(this);
-    vw->viewerWindow()->AddPanel(lvp(), false); // no tab yet
     vw->RegisterPanel(m_lvp);
   }
 }
@@ -3145,7 +3144,6 @@ void GraphTableView::OnWindowBind_impl(iT3DataViewFrame* vw) {
   inherited::OnWindowBind_impl(vw);
   if (!m_lvp) {
     m_lvp = new iGraphTableView_Panel(this);
-    vw->viewerWindow()->AddPanel(lvp(), false); // no tab yet
     vw->RegisterPanel(m_lvp);
   }
 }

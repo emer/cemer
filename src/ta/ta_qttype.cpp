@@ -3152,7 +3152,7 @@ iDataPanel* taiViewType::CreateDataPanel(taiDataLink* dl_) {
   CreateDataPanel_impl(dl_);
   if (m_dps) {
       m_dps->AllSubPanelsAdded();
-      m_dps->set_cur_panel_id(0);
+      m_dps->setCurrentPanelId(0);
       return m_dps;
   } else return m_dp;
 }

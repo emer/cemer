@@ -254,7 +254,7 @@ public:
   DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
   taPlugin_List		plugins; //  available plugins
   taPluginBase_List	plugin_deps; // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
-  taiMimeFactory_List	mime_factories; // #NO_SAVE extensible list of mime factories
+  taiMimeFactory_List	mime_factories; // #NO_SAVE #HIDDEN_TREE extensible list of mime factories
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
   String_Array		recent_files; // #NO_SHOW recently loaded files
   String_Array		recent_paths; // #NO_SHOW recently used paths
