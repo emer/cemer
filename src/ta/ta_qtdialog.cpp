@@ -2333,3 +2333,11 @@ void taiStringDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
     GetValue();
   }
 }
+
+void taiStringDataHost::Ok_impl() { //note: only used for Dialogs
+  inherited::Ok_impl();
+  //  if (modified) {
+    GetValue();
+    Unchanged();
+    //  }
+}

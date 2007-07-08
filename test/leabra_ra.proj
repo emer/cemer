@@ -4,9 +4,10 @@ LeabraProject .projects[0] {
     UserData_DocLink @[0] { };
  };
 
-  Doc_Group @.docs = [2] {
+  Doc_Group @.docs = [3] {
     taDoc @[0] { };
     taDoc @[1] { };
+    taDoc @[2] { };
   };
 
   Wizard_Group @.wizards = [1] {
@@ -663,6 +664,10 @@ LeabraProject .projects[0] {
 
   Network_Group @.networks = [1] {
     LeabraNetwork @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserData_DocLink @[0] { };
+   };
+
       BaseSpec_Group @.specs = [4] {
 	LeabraUnitSpec @[0] { };
 	LeabraLayerSpec @[1] { 
@@ -750,6 +755,22 @@ This is an overview of the network.
 This is the details.
 </body>
 </html>";
+  };
+  taDoc @[2] {
+   name="ChangeLog";
+   auto_open=0;
+   text="<html>
+<head>ChangeLog</head>
+<body>
+<h1>ChangeLog</h1>
+<ul>
+
+<li>Sun Jul  8 01:03:06 2007 oreilly <code>leabra_ra.proj</code><br>
+  Set the Doc link for Network, added this change log!
+</ul>
+</body>
+</html>
+";
   };
  };
  wizards {
@@ -5450,12 +5471,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
   };
  };
- use_sim_log=0;
+ use_change_log=0;
+ last_change_desc="Set the Doc link for Network, added this change log!";
  networks {
   name=;
   el_typ=LeabraNetwork;
   el_def=0;
   LeabraNetwork @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserData_DocLink;
+    el_def=0;
+    UserData_DocLink @[0] {
+     name="DocLink";
+     doc=.projects[0].docs[1]$77$;
+    };
+   };
    name="LeabraNetwork_0";
    desc=;
    specs {
@@ -5473,7 +5504,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$77$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$78$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: send_delta=0: i_thr=STD: };
@@ -5686,7 +5717,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$78$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$79$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -5706,7 +5737,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.2: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$79$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$80$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -5734,12 +5765,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$80$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$81$: };
+       from=.projects[0].networks[0].layers[0]$81$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$82$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$82$: };
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$83$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -5759,11 +5790,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        name="Fm_Output";
        from_type=CUSTOM;
        from=$40$;
-       spec {type=FullPrjnSpec: spec=$81$: };
+       spec {type=FullPrjnSpec: spec=$82$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$82$: };
+       con_spec {type=LeabraConSpec: spec=$83$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -5796,7 +5827,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$78$: };
+     unit_spec {type=LeabraUnitSpec: spec=$79$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -5816,7 +5847,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=3.796559: g_i=3.796559: gp_g_i=0: g_i_orig=3.796559: };
      un_g_i {avg=3.79656: max=3.796559: max_i=0: };
      adapt_i {avg_avg=0.2343937: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$83$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$84$: };
      stm_gain=0.5;
      hard_clamped=0;
      dav=0;
@@ -5844,12 +5875,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$84$;
-       spec {type=FullPrjnSpec: spec=$81$: };
+       from=.projects[0].networks[0].layers[1]$85$;
+       spec {type=FullPrjnSpec: spec=$82$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$82$: };
+       con_spec {type=LeabraConSpec: spec=$83$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -5882,7 +5913,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$78$: };
+     unit_spec {type=LeabraUnitSpec: spec=$79$: };
      ext_flag=TARG;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -5902,7 +5933,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=2.731192: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=2.731193: max=2.731192: max_i=0: };
      adapt_i {avg_avg=0.1979306: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=$79$: };
+     spec {type=LeabraLayerSpec: spec=$80$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;

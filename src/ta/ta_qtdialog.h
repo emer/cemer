@@ -692,6 +692,7 @@ protected:
   override void 	Constr_RegNotifies();
   override void 	DoConstr_Dialog(iDialog*& dlg);
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
+  override void 	Ok_impl();
 };
 
 #endif // tai_dialog_h

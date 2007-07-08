@@ -1122,7 +1122,7 @@ protected:
 public:  
   // NOTE: this plain Edit seems weird and vestigial and should be nuked:
   virtual bool		Edit();
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object using the gui -- this will be an edit dialog or an edit panel depending on ...???
+  // #CAT_Display Edit this object using the gui -- this will be an edit dialog or an edit panel depending on ...???
   virtual bool		EditDialog(bool modal = false);
   // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
   virtual bool		EditPanel(bool new_tab = false);

@@ -71,8 +71,9 @@ const String taDoc::init_text(
 "<html>\n"
 "<head></head>\n"
 "<body>\n"
+"<h1>Enter Title Here</h1>\n"
 "</body>\n"
-"</html>");
+"</html>\n");
 
 void taDoc::Initialize() {
   auto_open = false;
@@ -142,7 +143,7 @@ public:
     bool rval = (md->ShowMember(show()) && (md->im != NULL));
     if (!rval) return rval;
 // note: we also include a couple of members we know are in taProject
-    if (!(md->name.contains("desc") || (md->name == "use_sim_log") || (md->name == "save_rmv_units")
+    if (!(md->name.contains("desc") || (md->name == "use_change_log") || (md->name == "save_rmv_units")
 	 || (md->name == "file_name"))) return false;
     return true;
   }
@@ -156,7 +157,7 @@ public:
 void taProject::Initialize() {
   m_dirty = false;
   m_no_save = false;
-  use_sim_log = true;
+  use_change_log = true;
   viewers.SetBaseType(&TA_TopLevelViewer);
 }
 
@@ -373,8 +374,8 @@ bool taProject::SetFileName(const String& val) {
 
 int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
-  if (use_sim_log) {
-    UpdateSimLog();
+  if (use_change_log) {
+    UpdateChangeLog();
   }
 #endif
   int rval = inherited::Save_strm(strm, par, indent);
@@ -389,13 +390,13 @@ void taProject::setDirty(bool value) {
 }
 
 
-void taProject::UpdateSimLog() {
+void taProject::UpdateChangeLog() {
 #ifdef TA_GUI
-  SimLogEditDialog* dlg = new SimLogEditDialog(this, GetTypeDef(), false, true);
-  dlg->Constr("Update simulation log (SimLog) for this project,\n\
- storing the name of the project and the description as entered here.\n\
- Click off use_sim_log if you are not using this feature");
-  if(dlg->Edit(true) && use_sim_log) {
+  TypeDef* td = GetTypeDef();
+  MemberDef* md = td->members.FindName("last_change_desc");
+  taiStringDataHost* dlg = new taiStringDataHost(md, this, td, false); // false = not read only
+  dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  To turn off this feature, toggle use_change_log on the Project.");
+  if(dlg->Edit(true)) {
     time_t tmp = time(NULL);
     String tstamp = ctime(&tmp);
     tstamp = tstamp.before('\n');
@@ -404,20 +405,37 @@ void taProject::UpdateSimLog() {
     String host = taPlatform::hostName();
     if (host.nonempty()) user += String("@") + host;
 
-    String fnm = taMisc::GetDirFmPath(file_name) + "/SimLog";
-    fstream fh;
-    fh.open(fnm, ios::out | ios::app);
-    fh << endl << endl;
-    fh << file_name << " <- " << GetFileName() << "\t" << tstamp << "\t" << user << endl;
-    if(!desc.empty()) fh << "\t" << desc << endl;
-    fh.close(); fh.clear();
+    String cur_fname = taMisc::GetFileFmPath(file_name);
+    String prv_fname = taMisc::GetFileFmPath(GetFileName());
+
+    if(prv_fname == cur_fname) prv_fname = "";
+    else prv_fname = "(was: <code>" + prv_fname + "</code>)";
+
+    String nw_txt = "\n<li>" + tstamp + " " + user + " <code>" + cur_fname
+      + "</code>" + prv_fname + "<br>\n";
+    if(!last_change_desc.empty()) nw_txt += "  " + last_change_desc + "\n";
+
+    taDoc* doc = docs.FindName("ChangeLog");
+    if(!doc) {
+      doc = docs.NewEl(1);
+      doc->name = "ChangeLog";
+      doc->text = "<html>\n<head>ChangeLog</head>\n<body>\n<h1>ChangeLog</h1>\n<ul>\n";
+      doc->text += nw_txt;
+      doc->text += "</ul>\n</body>\n</html>\n";
+    }
+    else {
+      String hdr = doc->text.through("<ul>\n");
+      String trl = doc->text.after("<ul>\n");
+      doc->text = hdr + nw_txt + trl;
+    }
+    doc->DataChanged(DCR_ITEM_UPDATED);
   }
 #endif
 }
 
 void taProject::SaveRecoverFile() {
-  bool tmp_sim_log = use_sim_log;
-  use_sim_log = false;		// don't pop up any dialogs..
+  bool tmp_change_log = use_change_log;
+  use_change_log = false;		// don't pop up any dialogs..
 
   String prfx;
   String sufx = ".proj";
@@ -458,7 +476,7 @@ void taProject::SaveRecoverFile() {
     flr->Save();
     if(flr->ostrm) {
       cerr << "Now saving in user directory: " << fnm << endl;
-      use_sim_log = false;
+      use_change_log = false;
       SaveRecoverFile_strm(*flr->ostrm);
       saved = true;
     }
@@ -466,7 +484,7 @@ void taProject::SaveRecoverFile() {
   flr->Close();
   taRefN::unRefDone(flr);
 
-  use_sim_log = tmp_sim_log;
+  use_change_log = tmp_change_log;
 
 #ifdef HAVE_QT_CONSOLE
   // now try to save console

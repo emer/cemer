@@ -1692,7 +1692,8 @@ void iT3DataViewer::Init() {
   tw = new iTabWidget(this); //top, standard tabs
 #if (QT_VERSION >= 0x040200)
   tw->setUsesScrollButtons(true);
-  tw->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
+  tw->setElideMode(Qt::ElideMiddle/*Qt::ElideNone*/); // fixed now..
+  //  tw->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
   lay->addWidget(tw);
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),

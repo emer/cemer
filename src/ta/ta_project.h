@@ -149,7 +149,8 @@ public:
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
-  bool			use_sim_log; 	// record project changes in the SimLog file
+  bool			use_change_log;  // #AKA_use_sim_log record project changes in a ChangeLog docs item -- you will be prompted whenver the project is saved to a different name, and can always use the UpdateChangeLog button to add a new entry prior to saving
+  String		last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
 
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value); 
@@ -173,8 +174,8 @@ public:
 
   virtual MainWindowViewer* NewProjectBrowser(); 
     // create a new, empty viewer -- note: window not opened yet
-  virtual void		UpdateSimLog();
-  // #MENU update simulation log (SimLog) for this project, storing the name of the project and the description as entered here.  click off use_simlog if you are not using this feature
+  virtual void		UpdateChangeLog();
+  // #BUTTON update change log for this project, stored as a ChangeLog item in docs on the project -- you will be prompted to enter a description of recent changes, and the date, user, and file names will be recorded
 
   virtual void		SaveRecoverFile();
   // Save a recover file of this project, usually called when a signal is received indicating a crash condition

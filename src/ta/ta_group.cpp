@@ -591,7 +591,7 @@ taBase* taGroup_impl::NewEl_(int no, TypeDef* typ) {
 }
 
 TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ) {
-  if(typ == NULL)
+  if(typ == NULL || typ == &TA_TypeDef)
     typ = GetTypeDef();		// always create one of yourself..
   TAGPtr rval = (TAGPtr)gp.New(no, typ);
 //  UpdateAfterEdit();
