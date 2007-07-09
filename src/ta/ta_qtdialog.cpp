@@ -2053,7 +2053,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
 
 void taiEditDataHost::GetButtonImage(bool force) {
   if (typ == NULL)  return;
-  if (!force && !frmMethButtons->isVisible()) return;
+//always do it  if (!force && !frmMethButtons->isVisible()) return;
   
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
@@ -2179,13 +2179,6 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
   taiData* mb_dat = data_el(0).SafeEl(0);
   if (mb_dat) 
     typ->it->GetValue(mb_dat, base);
-}
-
-void taiEditDataHost::IgnoredDataChanged(taDataLink* dl, int dcr,
-    void* op1, void* op2)
-{
-  inherited::IgnoredDataChanged(dl, dcr, op1, op2);
-  GetButtonImage(true);
 }
 
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
