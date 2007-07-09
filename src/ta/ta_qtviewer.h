@@ -1770,9 +1770,11 @@ protected:
   taMisc::ShowMembs 	m_show;
   bool			m_decorate_enabled;
   String		m_show_context;
+  int			in_mouse_press; // ugly hack
   
   void 			focusInEvent(QFocusEvent* ev); // override
   QFont&		italicFont() const; // so we don't create a new guy each node
+  void 			mousePressEvent(QMouseEvent* ev); //for exp/coll all
   void 			mouseDoubleClickEvent(QMouseEvent* ev); //for exp/coll all
   void			showEvent(QShowEvent* ev); // override, for expand all
   void 			ExpandAll_impl(int max_levels,

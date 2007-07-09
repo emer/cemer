@@ -5838,6 +5838,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_show = (taMisc::ShowMembs)(taMisc::USE_SHOW_GUI_DEF | taMisc::show_gui);
   m_decorate_enabled = true;
   italic_font = NULL; 
+  in_mouse_press = 0;
   setIndentation(taMisc::tree_indent);
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
@@ -6175,6 +6176,12 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   
 }
 
+void iTreeView::mousePressEvent(QMouseEvent* event) {
+  ++in_mouse_press;
+  inherited::mousePressEvent(event); 
+ --in_mouse_press; 
+}
+
 bool iTreeView::useCustomExpand() const {
   return (receivers(SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&))) > 0);
 }
@@ -6344,9 +6351,11 @@ void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* 
       QApplication::sendEvent(parent(), &tip);
     }
   }
-//nn  emit ItemSelected(it); 
   // needed esp. when we call setCurrentItem(x)
-  this_itemSelectionChanged();
+  // except skip in the mouse-down routine (we get in the clicked, via mouse up)
+  if (!in_mouse_press) {
+    this_itemSelectionChanged();
+  }
 }
 
 void iTreeView::this_itemSelectionChanged() {
