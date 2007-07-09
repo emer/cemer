@@ -1016,11 +1016,13 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
 //       taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
 //     }
 
+    // this is the new Multisampling method -- much better!
+
     QGLWidget* qglw = (QGLWidget*)m_renderArea->getGLWidget();
-    if(taMisc::antialiasing_passes > 1) {
+    if(taMisc::antialiasing_level > 1) {
       QGLFormat fmt = qglw->format();
       fmt.setSampleBuffers(true);
-      fmt.setSamples(taMisc::antialiasing_passes);
+      fmt.setSamples(taMisc::antialiasing_level);
       qglw->setFormat(fmt);		// todo: this is supposedly deprecated..
       qglw->makeCurrent();
       glEnable(GL_MULTISAMPLE);
@@ -1047,6 +1049,8 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
 //       rend_act->setTransparencyType(SoGLRenderAction::DELAYED_BLEND);
       rend_act->setTransparencyType(SoGLRenderAction::BLEND);
       rend_act->setSmoothing(true); // low-cost line smoothing
+
+      // old-style accummulation buffer antialiasing:
       //#ifndef TA_OS_MAC		    // temp until bug is fixed!
       // bug is now fixed with patch to soqt 1.4.1
 //       if(accum_buf)
