@@ -4664,6 +4664,7 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
 }
 
 void iTabView::SetCurrentTab(int tab_idx) {
+  if (tab_idx >= tbPanels->count()) return;
   iDataPanel* pan = tabPanel(tab_idx);
   tbPanels->setCurrentIndex(tab_idx);
   wsPanels->setCurrentWidget(pan);
@@ -4845,6 +4846,12 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
 }
 
 void iDataPanel::FrameShowing(bool showing, bool focus) {
+//TEMP:
+  if (tabView()) {
+    tabView()->ShowTab(this, showing, focus);
+  }
+return;
+//NOTE: the sync version seems to work better, ex. no startup issues
   if (showing) {
     if (!show_req) { // !already waiting
       QEvent::Type evt = (QEvent::Type)(focus ? CET_SHOW_PANEL_FOCUS : CET_SHOW_PANEL);

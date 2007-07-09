@@ -261,18 +261,22 @@ MainWindowViewer* taProject::GetDefaultProjectBrowser() {
 }
 
 void taProject::PostLoadAutos() {
-  // todo: have option or make default to open a panel instead of dialog
   if (taMisc::gui_active) {
-    AssertDefaultProjectBrowser(true);
+    MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
+    // note: we want a doc to be the default item, if possible
+    docs.AutoEdit();
     wizards.AutoEdit();
     edits.AutoEdit();
-//     tabMisc::post_load_opr.Link(&wizards);
-    //       pdpMisc::post_load_opr.Link(&programs);
-//     tabMisc::post_load_opr.Link(&edits);
+    // this is very hacky... select the 2nd tab, which will 
+    // be the first auto guy if there were any
+    PanelViewer* pv = (PanelViewer*)vwr->FindFrameByType(&TA_PanelViewer);
+    if (!pv) return; // shouldn't happen
+    iTabViewer* itv = pv->widget();
+    itv->tabView()->SetCurrentTab(1);
   }
 }
 
-void taProject::AssertDefaultProjectBrowser(bool auto_open) {
+MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {
   MainWindowViewer* vwr = NULL;
   // get the default one, if there is one unopened
   vwr = GetDefaultProjectBrowser();
@@ -285,6 +289,7 @@ void taProject::AssertDefaultProjectBrowser(bool auto_open) {
   if (auto_open) {
     vwr->ViewWindow();
   }
+  return vwr;
 }
 
 MainWindowViewer* taProject::MakeProjectBrowser_impl() {
