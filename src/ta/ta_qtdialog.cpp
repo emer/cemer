@@ -2181,6 +2181,13 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
     typ->it->GetValue(mb_dat, base);
 }
 
+void taiEditDataHost::IgnoredDataChanged(taDataLink* dl, int dcr,
+    void* op1, void* op2)
+{
+  inherited::IgnoredDataChanged(dl, dcr, op1, op2);
+  GetButtonImage(true);
+}
+
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, etc. etc.
   if (HasChanged()) {

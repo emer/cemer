@@ -623,6 +623,9 @@ protected:
   EditDataPanel* panel; //NOTE: not used when invoked by Edit()
   bool			inline_mode; // true when doing inline, set early in constr
 
+  override void		IgnoredDataChanged(taDataLink* dl, int dcr,
+    void* op1, void* op2); // called instead if ignoreDataChanged was true
+  
   override void		InitGuiFields(bool virt = true);
   override void 	Constr_impl();
   virtual void		Enum_Members(); // called by Constr_impl to fill memb_el[]
