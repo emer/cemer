@@ -1005,14 +1005,29 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
   m_renderArea = value;
 
   if (m_renderArea) {
-    // need to set in both render area and in render_action..?
-    m_renderArea->setAccumulationBuffer(true);
-    bool accum_buf = m_renderArea->getAccumulationBuffer();
-    if(accum_buf)
-      m_renderArea->setAntialiasing(true, taMisc::antialiasing_passes);
+
+    // NOTE: the following is old-style and is VERY slow
+//     m_renderArea->setAccumulationBuffer(true);
+//     bool accum_buf = m_renderArea->getAccumulationBuffer();
+//     if(accum_buf)
+//       m_renderArea->setAntialiasing(true, taMisc::antialiasing_passes);
+//     else {
+//       m_renderArea->setAntialiasing(true, 1);
+//       taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
+//     }
+
+    QGLWidget* qglw = (QGLWidget*)m_renderArea->getGLWidget();
+    if(taMisc::antialiasing_passes > 1) {
+      QGLFormat fmt = qglw->format();
+      fmt.setSampleBuffers(true);
+      fmt.setSamples(taMisc::antialiasing_passes);
+      qglw->setFormat(fmt);		// todo: this is supposedly deprecated..
+      qglw->makeCurrent();
+      glEnable(GL_MULTISAMPLE);
+    }
     else {
-      m_renderArea->setAntialiasing(true, 1);
-      taMisc::Warning("Note: was not able to establish an accumulation buffer so rendering will not be anti-aliased.  Sorry.");
+      qglw->makeCurrent();
+      glDisable(GL_MULTISAMPLE);
     }
 
     if (m_selMode == SM_NONE)
@@ -1034,8 +1049,8 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       rend_act->setSmoothing(true); // low-cost line smoothing
       //#ifndef TA_OS_MAC		    // temp until bug is fixed!
       // bug is now fixed with patch to soqt 1.4.1
-      if(accum_buf)
-	rend_act->setNumPasses(taMisc::antialiasing_passes);    // 1 = no antialiasing; 2 = antialiasing
+//       if(accum_buf)
+// 	rend_act->setNumPasses(taMisc::antialiasing_passes);    // 1 = no antialiasing; 2 = antialiasing
       //#endif
       m_renderArea->setGLRenderAction(rend_act);
     }
