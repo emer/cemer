@@ -378,6 +378,7 @@ public:
   TwoDCoord	send_border;		// number of units around edge of sending layer to not connect
   TwoDCoord	send_adj_rfsz;		// adjust the total number of sending units by this amount in computing rfield size
   TwoDCoord	send_adj_sndloc;	// adjust the total number of sending units by this amount in computing sending locations
+  float		rf_width_mult;		// multiplier factor on the receptive field width: 1.0 = exactly half overlap of RF's across groups.  Larger number = more overlap
 
   // computed values below
   TwoDCoord ru_geo;		// #READ_ONLY receiving unit geometry

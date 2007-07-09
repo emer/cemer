@@ -1762,17 +1762,67 @@ void V1RFPrjnSpec::Initialize() {
 void V1RFPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   rf_spec.name = name + "_rf_spec";
-  rf_spec.rf_width = rf_width;
 }
 
 void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
-  inherited::Connect_impl(prjn);
-  rf_spec.rf_width = rf_width;
+  if(prjn->from == NULL)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+
   rf_spec.un_geom = prjn->layer->un_geom;
   rf_spec.InitFilters();	// this one call initializes all filter info once and for all!
   TestWarning(rf_spec.un_geom != prjn->layer->un_geom,
 	      "number of filters from rf_spec:", (String)rf_spec.un_geom.n,
 	      "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
+
+  TwoDCoord rf_width = rf_spec.rf_width;
+  int n_cons = rf_width.Product();
+  TwoDCoord rf_half_wd = rf_width / 2;
+  TwoDCoord ru_geo = prjn->layer->gp_geom;
+
+  TwoDCoord su_geo = prjn->from->un_geom;
+
+  TwoDCoord ruc;
+  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+
+      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+      if(ru_gp == NULL) continue;
+
+      TwoDCoord su_st;
+      su_st.x = (int)floor((float)(ruc.x+1) * rf_move.x) - rf_half_wd.x;
+      su_st.y = (int)floor((float)(ruc.y+1) * rf_move.y) - rf_half_wd.y;
+
+      su_st.SetGtEq(0);		// always keep entire rf in bounds!
+      TwoDCoord su_ed = su_st + rf_width;
+
+      if(su_ed.x > su_geo.x) {
+	su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+      }
+      if(su_ed.y > su_geo.y) {
+	su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+      }
+
+      for(int rui=0;rui<ru_gp->size;rui++) {
+	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	ru_u->ConnectAlloc(n_cons, prjn);
+
+	TwoDCoord suc;
+	for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
+	    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	    if(su_u == NULL) continue;
+	    if(!self_con && (su_u == ru_u)) continue;
+	    ru_u->ConnectFrom(su_u, prjn); // don't check: saves lots of time!
+	  }
+	}
+      }
+    }
+  }
 }
 
 void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
@@ -1788,7 +1838,7 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   else if(prjn->from->name.contains("_by_"))
     col_chan = DoGFilterSpec::BLUE_YELLOW;
 
-  int send_x = rf_width.x;
+  int send_x = rf_spec.rf_width.x;
   if(rf_spec.filter_type == GaborV1Spec::BLOB) {
     // color is outer-most dimension, and if it doesn't match, then bail
     int clr_dx = (recv_idx / (rf_spec.blob_rf.n_sizes * 2) % 2);

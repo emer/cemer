@@ -1341,6 +1341,7 @@ void TiledRFPrjnSpec::Initialize() {
   send_border = 0;
   send_adj_rfsz = 0;
   send_adj_sndloc = 0;
+  rf_width_mult = 1.0f;
 }
 
 bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
@@ -1382,7 +1383,8 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   // how to move the receptive fields over the sending layer (floating point)
   rf_move = FloatTwoDCoord(n_send_units + send_adj_sndloc) / FloatTwoDCoord(n_recv_gps + 1);
 
-  rf_width = rf_ovlp * 2;
+  FloatTwoDCoord rfw = (FloatTwoDCoord)rf_ovlp * 2.0f * rf_width_mult;
+  rf_width = rfw;
 //   cerr << "prjn: " << name << " layer: " << prjn->layer->name << " from: " << prjn->from->name
 //        << " rf size: " << rf_ovlp.x << ", " << rf_ovlp.y
 //        << " act send size: " << rf_ovlp.x * (n_recv_gps.x + 1)
@@ -1394,6 +1396,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
 
 void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(!InitRFSizes(prjn)) return;
+  int n_cons = rf_width.Product();
   TwoDCoord ruc;
   for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
@@ -1404,17 +1407,19 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
       Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
       if(ru_gp == NULL) continue;
 
+      TwoDCoord su_st;
+      su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
+      su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
+
+      TwoDCoord su_ed = su_st + rf_width;
+
       for(int rui=0;rui<ru_gp->size;rui++) {
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	ru_u->ConnectAlloc(rf_width.Product(), prjn);
-
-	TwoDCoord su_st;
-	su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
-	su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
+	ru_u->ConnectAlloc(n_cons, prjn);
 
 	TwoDCoord suc;
-	for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
-	  for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
+	for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
 	    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
 	    if(su_u == NULL) continue;
 	    if(!self_con && (su_u == ru_u)) continue;

@@ -2,19 +2,8 @@ leabra todo list:
 
 commit:
 
- * NameVar was not loading properly because SetFmStr was not working with T_Invalid
-type -- updateFromString must have been changed at some point to not work with invalid
--- fixed by just detecting Invalid and doing a string assign to value, otherwise
-calling updateFromString.  This fixes the loading of lay_disp_mode values which are
-a NameVar_Array.
-
- * removed various calls to taiMisc::RunPending() in netstru_qtso.cpp -- in general
-this seems like a bad idea and could cause various event loops to get out of
-whack, etc.  however, if we notice any new misbehavior from netview updating
-the we can reenable (my tests have not revealed any so far!)
-  
- * fixed color image display in T3 -- turns out bw & color ARE consistent.. duh.. not
-sure how that got so messed up..
+* new simplified V1 receptive field layer spec that allows for explicit setting of
+rf width separate from spacing..
 
 == Virtual Env
 
@@ -46,8 +35,6 @@ to not update the from display field..
 * Can't view weights with 2 nets in same view! (callback register is global?? -- incl obj?)
 * Iconify layer -- disp value
 * self prjn should be better..
-
-* LOWPRI: .5 rounding fixed mostly: Layer move digitize by units -- not clear how to do..  maybe in xform coupling eq?
 
 == Program
 
@@ -97,9 +84,7 @@ Program issues
 ------------------
 hv model
 
-* multitest
 * move all key db's to programs: makes it more robust
-* put code under svn
 
 * document fixes:
 * IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.
