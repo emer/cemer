@@ -81,6 +81,15 @@ void taDoc::Initialize() {
     text = init_text;
 }
 
+static String wiki_parse_str_between(const String& cl, const String& sts, const String& eds) {
+  if(cl.freq(sts) == 1 && cl.freq(eds) == 1) {
+    String btwn = cl.after(sts);
+    btwn = btwn.before(eds);
+    return btwn;
+  }
+  return _nilString;
+}
+
 String taDoc::WikiParse(const String& in_str) {
   String rval;
   String rest = in_str;
@@ -113,56 +122,49 @@ String taDoc::WikiParse(const String& in_str) {
     }
 
     // headers
-    if(cl.freq("==== ") == 1 && cl.freq(" ====") == 1) {
+    if(wiki_parse_str_between(cl, "==== ", " ====").nonempty()) {
       cl.gsub("==== ", "<h4> ");
       cl.gsub(" ====", " </h4>");
     }
-    else if(cl.freq("=== ") == 1 && cl.freq(" ===") == 1) {
+    else if(wiki_parse_str_between(cl, "=== ", " ===").nonempty()) {
       cl.gsub("=== ", "<h3> ");
       cl.gsub(" ===", " </h3>");
     }
-    else if(cl.freq("== ") == 1 && cl.freq(" ==") == 1) {
+    else if(wiki_parse_str_between(cl, "== ", " ==").nonempty()) {
       cl.gsub("== ", "<h2> ");
       cl.gsub(" ==", " </h2>");
     }
-    else if(cl.freq("= ") == 1 && cl.freq(" =") == 1) {
+    else if(wiki_parse_str_between(cl, "= ", " =").nonempty()) {
       cl.gsub("= ", "<h1> ");
       cl.gsub(" =", " </h1>");
     }
 
     // links
-    if(cl.freq("[[") == 1 && cl.freq("]]") == 1) {
-      String href = cl.after("[[");
-      href = href.before("]]");
-      if(!href.empty()) {
-	bool ta_tag = false;
-	if(href.startsWith('.')) {
-	  ta_tag = true;
-	  href = "ta:" + href;
-	}
-	String tag = href;
-	if(tag.contains('|')) {
-	  href = href.before('|');
-	  tag = tag.after('|');
-	}
-	else if(ta_tag) {
-	  tag = tag.after('.',-1);
-	}
-	cl = cl.before("[[") + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after("]]");
+    String href = wiki_parse_str_between(cl, "[[", "]]");
+    if(!href.empty()) {
+      bool ta_tag = false;
+      if(href.startsWith('.')) {
+	ta_tag = true;
+	href = "ta:" + href;
       }
+      String tag = href;
+      if(tag.contains('|')) {
+	href = href.before('|');
+	tag = tag.after('|');
+      }
+      else if(ta_tag) {
+	tag = tag.after('.',-1);
+      }
+      cl = cl.before("[[") + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after("]]");
     }
 
     // bold
-    if(cl.freq(" '''") == 1 && cl.freq("''' ") == 1) {
-      String bld = cl.after(" '''");
-      bld = bld.before("''' ");
-      if(!bld.empty()) {
-	cl = cl.before(" '''") + " <b>" + bld + "</b> " + cl.after("''' ");
-      }
+    String bld = wiki_parse_str_between(cl, " '''", "''' ");
+    if(!bld.empty()) {
+      cl = cl.before(" '''") + " <b>" + bld + "</b> " + cl.after("''' ");
     }
-    else if(cl.freq(" ''") == 1 && cl.freq("'' ") == 1) {
-      String bld = cl.after(" ''");
-      bld = bld.before("'' ");
+    else {
+      bld = wiki_parse_str_between(cl, " ''", "'' ");
       if(!bld.empty()) {
 	cl = cl.before(" ''") + " <i>" + bld + "</i> " + cl.after("'' ");
       }
