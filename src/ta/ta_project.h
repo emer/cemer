@@ -44,7 +44,11 @@ INHERITED(taNBase)
 public:
   bool			auto_open;	// open this document upon startup
   //note: a specialized taEdit is used to show this guy
-  String		text; // #NO_SHOW the text of the document (in html format)
+  String		text; // #NO_SHOW the text of the document (in html/mediawiki format)
+  String		html_text; // #READ_ONLY #HIDDEN #NO_SAVE #EDIT_DIALOG wiki conversion of html text -- only temporarily present for debugging issues with wiki parser -- set when viewed
+
+  static String		WikiParse(const String& in_str);
+  // convert very basic wiki syntax to html format -- == headers ==, * bulleted lists, [[ ]] links, etc
 
   override String 	GetTypeDecoKey() const { return "Doc"; }
 

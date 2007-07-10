@@ -1752,6 +1752,9 @@ bool taBase::EditDialog(bool modal) {
 // see ta_qtviewer.cpp
 bool taBase::EditPanel(bool new_tab) {
 }
+
+bool taBase::BrowserSelectMe() {
+}
 #endif
 
 bool taBase::ReShowEdit(bool force) {

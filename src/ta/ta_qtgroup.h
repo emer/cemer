@@ -27,6 +27,7 @@
 
 // externals
 class taDoc; //
+class QUrl;  // #IGNORE
 
 //////////////////////////
 // 	Edit Buttons	//
@@ -528,6 +529,7 @@ protected slots:
 class TA_API DocEditDataHost: public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiEditDataHost)
+  Q_OBJECT
 public:
   QTabWidget*		widDocs; // out widg for docs
   iTextBrowser*		  tbrDoc; // r/o Doc tab
@@ -543,6 +545,12 @@ protected:
   override void 	Constr_Box(); // add the docs box
   override void 	GetValue_Membs();
   override void 	GetImage_Membs();
+
+#ifndef __MAKETA__
+protected slots:
+  void			doc_setSourceRequest(iTextBrowser* src,
+					     const QUrl& url, bool& cancel);
+#endif
 private:
   void init();
 };

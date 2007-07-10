@@ -1019,8 +1019,8 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
     // this is the new Multisampling method -- much better!
 
     QGLWidget* qglw = (QGLWidget*)m_renderArea->getGLWidget();
+    QGLFormat fmt = qglw->format();
     if(taMisc::antialiasing_level > 1) {
-      QGLFormat fmt = qglw->format();
       fmt.setSampleBuffers(true);
       fmt.setSamples(taMisc::antialiasing_level);
       qglw->setFormat(fmt);		// todo: this is supposedly deprecated..
@@ -1028,6 +1028,8 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
       glEnable(GL_MULTISAMPLE);
     }
     else {
+      fmt.setSampleBuffers(false);
+      qglw->setFormat(fmt);		// todo: this is supposedly deprecated..
       qglw->makeCurrent();
       glDisable(GL_MULTISAMPLE);
     }

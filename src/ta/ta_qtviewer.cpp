@@ -1069,7 +1069,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   if (n > 0) {
     String headline = tab->GetColText(taBase::key_disp_name) +
         " (" + tab->GetTypeDef()->name + ")";
-    String href = "pdp:" + tab->GetPath();
+    String href = "ta:" + tab->GetPath();
     String desc = tab->GetColText(taBase::key_desc);
     sd->AddItem(headline, href, desc, hits, level);
   }
@@ -7343,8 +7343,8 @@ void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
     setFirstSort(col);
     Render();
   } 
-  else { // unknown, so forward to global
-    QDesktopServices::openUrl(url);
+  else { // unknown, so forward to global, which is iMainWindowViewer::globalUrlHandler
+    QDesktopServices::openUrl(url); 
   }
   cancel = true;
   //NOTE: we never let results call its own setSource because we don't want
@@ -7537,4 +7537,16 @@ bool taBase::EditPanel(bool new_tab) {
   return rval;
 }
 
+bool taBase::BrowserSelectMe() {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return false;
+  MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
+  if(!mwv) return false;
+  iMainWindowViewer* imwv = mwv->widget();
+  if(!imwv) return false;
+
+  taiDataLink* link = (taiDataLink*)GetDataLink();
+  if (!link) return false;
+  return (bool)imwv->AssertBrowserItem(link);
+}
 

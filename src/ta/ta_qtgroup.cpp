@@ -38,6 +38,7 @@
 #include <QSplitter>
 #include <QTextEdit>
 #include <qtooltip.h>
+#include <QDesktopServices>
 
 #include "icolor.h"
 #include "ieditgrid.h"
@@ -1908,6 +1909,9 @@ void DocEditDataHost::Constr_Box() {
   tbrDoc = new iTextBrowser;
   widDocs->addTab(tbrDoc, "Doc");
   
+  connect(tbrDoc, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
+	  this, SLOT(doc_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
+
   // Html tab
   tedHtml = new QTextEdit;
   tedHtml->setAcceptRichText(false); // is the raw html as text
@@ -1922,6 +1926,16 @@ void DocEditDataHost::Constr_Box() {
   
 }
 
+void DocEditDataHost::doc_setSourceRequest(iTextBrowser* src,
+					   const QUrl& url, bool& cancel) 
+{
+  // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
+  QDesktopServices::openUrl(url);
+  cancel = true;
+  //NOTE: we never let results call its own setSource because we don't want
+  // link clicking to cause us to change our source page
+}
+
 taDoc* DocEditDataHost::doc() const {
   return static_cast<taDoc*>(cur_base);
 }
@@ -1933,8 +1947,10 @@ void DocEditDataHost::GetImage_Membs() {
   
   // note: you're reading the following right... the "Doc" is a formatted
   // view, so in html, whereas the html view, is actually raw text
-  QString text = doc->text; // only convert once...
-  tbrDoc->setHtml(text);
+  doc->html_text = taDoc::WikiParse(doc->text);
+  QString html_text = doc->html_text; 
+  tbrDoc->setHtml(html_text);
+  QString text = doc->text; 
   tedHtml->clear();
   tedHtml->insertPlainText(text); // we set the html as text
 }

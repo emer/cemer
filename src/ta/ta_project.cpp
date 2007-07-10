@@ -81,6 +81,98 @@ void taDoc::Initialize() {
     text = init_text;
 }
 
+String taDoc::WikiParse(const String& in_str) {
+  String rval;
+  String rest = in_str;
+  bool bullet1 = false;
+  bool bullet2 = false;
+  while(rest.contains("\n")) {
+    String cl = rest.before("\n");
+    rest = rest.after("\n");
+
+    // need bullet first because it sets context with <ul> </ul>
+    if(cl.startsWith("* ")) {
+      if(bullet2) { cl = "</ul> <li> " + cl.after("* "); bullet2 = false; }
+      else if(!bullet1) cl = "<ul><li> " + cl.after("* ");
+      else cl = "<li> " + cl.after("* ");
+      bullet1 = true;
+    }
+    else if(cl.startsWith("** ")) {
+      if(!bullet2) cl = "<ul><li> " + cl.after("** ");
+      else cl = "<li> " + cl.after("** ");
+      bullet2 = true;
+    }
+    else {
+      if(bullet2) { cl += "</ul>"; bullet2 = false; }
+      if(bullet1) { cl += "</ul>"; bullet1 = false; }
+    }
+
+    if(cl.empty()) {		// make a <P> for blank lines..
+      rval += "<P>\n";
+      continue;
+    }
+
+    // headers
+    if(cl.freq("==== ") == 1 && cl.freq(" ====") == 1) {
+      cl.gsub("==== ", "<h4> ");
+      cl.gsub(" ====", " </h4>");
+    }
+    else if(cl.freq("=== ") == 1 && cl.freq(" ===") == 1) {
+      cl.gsub("=== ", "<h3> ");
+      cl.gsub(" ===", " </h3>");
+    }
+    else if(cl.freq("== ") == 1 && cl.freq(" ==") == 1) {
+      cl.gsub("== ", "<h2> ");
+      cl.gsub(" ==", " </h2>");
+    }
+    else if(cl.freq("= ") == 1 && cl.freq(" =") == 1) {
+      cl.gsub("= ", "<h1> ");
+      cl.gsub(" =", " </h1>");
+    }
+
+    // links
+    if(cl.freq("[[") == 1 && cl.freq("]]") == 1) {
+      String href = cl.after("[[");
+      href = href.before("]]");
+      if(!href.empty()) {
+	bool ta_tag = false;
+	if(href.startsWith('.')) {
+	  ta_tag = true;
+	  href = "ta:" + href;
+	}
+	String tag = href;
+	if(tag.contains('|')) {
+	  href = href.before('|');
+	  tag = tag.after('|');
+	}
+	else if(ta_tag) {
+	  tag = tag.after('.',-1);
+	}
+	cl = cl.before("[[") + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after("]]");
+      }
+    }
+
+    // bold
+    if(cl.freq(" '''") == 1 && cl.freq("''' ") == 1) {
+      String bld = cl.after(" '''");
+      bld = bld.before("''' ");
+      if(!bld.empty()) {
+	cl = cl.before(" '''") + " <b>" + bld + "</b> " + cl.after("''' ");
+      }
+    }
+    else if(cl.freq(" ''") == 1 && cl.freq("'' ") == 1) {
+      String bld = cl.after(" ''");
+      bld = bld.before("'' ");
+      if(!bld.empty()) {
+	cl = cl.before(" ''") + " <i>" + bld + "</i> " + cl.after("'' ");
+      }
+    }
+
+    rval += cl + "\n";
+  }
+  return rval;
+}
+
 
 //////////////////////////////////
 //  Doc_Group		//
@@ -598,6 +690,7 @@ void taRootBase::Destroy() {
 
 void taRootBase::InitLinks() {
   inherited::InitLinks();
+  version = taMisc::version;
   taBase::Own(templates, this);
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
@@ -1458,6 +1551,8 @@ bool taRootBase::Startup_InitViewColors() {
 					 true, "azure4", true, "azure1");
   taMisc::view_colors->FindMakeViewColor("SelectEdit", "SelectEdit -- editor for selected variables across different objects",
 					 true, "azure4", true, "azure1");
+  taMisc::view_colors->FindMakeViewColor("Doc", "Documentation object",
+					 true, "azure4", true, "azure1");
   return true;
 }
   	
@@ -1508,6 +1603,7 @@ bool taRootBase::Startup_ConsoleType() {
 }
 
 bool taRootBase::Startup_MakeMainWin() {
+  tabMisc::root->version = taMisc::version;
   if(!taMisc::gui_active) return true;
 #ifdef TA_GUI
   // TODO: need to better orchestrate the "OpenWindows" call below with
@@ -1525,7 +1621,7 @@ bool taRootBase::Startup_MakeMainWin() {
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
     taiMisc::main_window = bw;
-    QDesktopServices::setUrlHandler("pdp", bw, "globalUrlHandler");
+    QDesktopServices::setUrlHandler("ta", bw, "globalUrlHandler");
     bw->resize(s.w, s.h);
     bw->show(); // when we start event loop
   }
