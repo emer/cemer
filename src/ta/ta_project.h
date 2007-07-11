@@ -50,6 +50,9 @@ public:
   static String		WikiParse(const String& in_str);
   // convert very basic wiki syntax to html format -- == headers ==, * bulleted lists, [[ ]] links, etc
 
+  virtual void		UpdateText();
+  // update the html_text from the user-entered text with wiki syntax by calling WikiParse
+
   override String 	GetTypeDecoKey() const { return "Doc"; }
 
   TA_BASEFUNS(taDoc);

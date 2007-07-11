@@ -81,9 +81,13 @@ void taDoc::Initialize() {
     text = init_text;
 }
 
+void taDoc::UpdateText() {
+  html_text = WikiParse(text);
+}
+
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  html_text = WikiParse(text);
+  UpdateText();
 }
 
 static String wiki_parse_str_between(const String& cl, const String& sts, const String& eds) {

@@ -1960,4 +1960,5 @@ void DocEditDataHost::GetValue_Membs() {
   if (!doc) return; // ex. for zombies
   
   doc->text = tedHtml->text();
+  doc->UpdateText(); // render into html text
 }
