@@ -71,7 +71,7 @@ const String taDoc::init_text(
 "<html>\n"
 "<head></head>\n"
 "<body>\n"
-"<h1>Enter Title Here</h1>\n"
+"== Enter Title Here ==\n"
 "</body>\n"
 "</html>\n");
 
@@ -79,6 +79,11 @@ void taDoc::Initialize() {
   auto_open = false;
   if (!taMisc::is_loading && !taMisc::is_duplicating)
     text = init_text;
+}
+
+void taDoc::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  html_text = WikiParse(text);
 }
 
 static String wiki_parse_str_between(const String& cl, const String& sts, const String& eds) {

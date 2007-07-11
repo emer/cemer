@@ -1618,8 +1618,12 @@ protected:
   taDoc*		m_doc; // ref managed through link; we just put ptr here to detect change
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //
 
+#ifndef __MAKETA__
 protected slots:
+  void			doc_setSourceRequest(iTextBrowser* src,
+					     const QUrl& url, bool& cancel);
 //  void 			br_copyAvailable (bool yes);
+#endif
 
 };
 

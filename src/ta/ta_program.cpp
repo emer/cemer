@@ -2510,6 +2510,10 @@ int Program::Cont_impl() {
 }
 
 void Program::Run() {
+  if(TestError(run_state != DONE && run_state != STOP, "Run",
+	       "You must hit Init first to initialize and check the program")) {
+    return;
+  }
   stop_req = false;
   step_mode = false;
   step_gp = NULL;
@@ -2543,6 +2547,10 @@ void Program::ShowRunError() {
 }
 
 void Program::Step() {
+  if(TestError(run_state != DONE && run_state != STOP, "Step",
+	       "You must hit Init first to initialize and check the program")) {
+    return;
+  }
   if(!prog_gp) return;
   if(!prog_gp->step_prog) {
     prog_gp->step_prog = prog_gp->Peek(); // get last guy
@@ -2579,6 +2587,10 @@ void Program::SetAsStep() {
 }
 
 void Program::Stop() {
+  if(TestError(run_state != RUN, "Stop",
+	       "Program is not running")) {
+    return;
+  }
   stop_req = true;
 }
 

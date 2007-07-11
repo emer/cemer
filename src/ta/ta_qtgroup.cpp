@@ -1947,7 +1947,6 @@ void DocEditDataHost::GetImage_Membs() {
   
   // note: you're reading the following right... the "Doc" is a formatted
   // view, so in html, whereas the html view, is actually raw text
-  doc->html_text = taDoc::WikiParse(doc->text);
   QString html_text = doc->html_text; 
   tbrDoc->setHtml(html_text);
   QString text = doc->text; 

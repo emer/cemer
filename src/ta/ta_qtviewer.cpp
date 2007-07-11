@@ -5746,12 +5746,26 @@ iDocDataPanel::iDocDataPanel()
 {
   br = new iTextBrowser(this);
   setCentralWidget(br);
+
+  connect(br, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
+	  this, SLOT(doc_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
+
 //TODO  connect(txtText, SIGNAL(copyAvailable(bool)),
 //      this, SLOT(textText_copyAvailable(bool)) );
   m_doc = NULL; // changed via setDoc -- if diff, we change our dl
 }
 
 iDocDataPanel::~iDocDataPanel() {
+}
+
+void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
+					 const QUrl& url, bool& cancel) 
+{
+  // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
+  QDesktopServices::openUrl(url);
+  cancel = true;
+  //NOTE: we never let results call its own setSource because we don't want
+  // link clicking to cause us to change our source page
 }
 
 void iDocDataPanel::DataLinkDestroying(taDataLink* dl) {
@@ -5793,7 +5807,7 @@ void iDocDataPanel::setDoc(taDoc* doc) {
     taDataLink* dl = doc->GetDataLink();
     if (!dl) return; // shouldn't happen!
     dl->AddDataClient(this);
-    br->setHtml(doc->text);
+    br->setHtml(doc->html_text);
   } else {
     br->clear(); // TODO: since occurs after previous existence, maybe we should put
     // something like "<no doc set>" or such

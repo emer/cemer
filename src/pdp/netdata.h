@@ -73,6 +73,7 @@ public:
   virtual int	GetChanIdx(DataBlock* db) { return -1; }
   // #CAT_LayerData get channel index from data block: depends on source or sink (override in subclass)
 
+  String	GetName() const			{ return chan_name; }
   override String	GetDisplayName() const;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);

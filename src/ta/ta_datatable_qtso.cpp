@@ -2757,7 +2757,7 @@ void GraphTableView::Initialize() {
   plot_2.point_style = GraphPlotView::SQUARE;
   plot_3.color.name = "blue";
   plot_3.point_style = GraphPlotView::DIAMOND;
-  plot_4.color.name = "green";
+  plot_4.color.name = "green3";
   plot_4.point_style = GraphPlotView::TRIANGLE;
   plot_5.color.name = "purple";
   plot_5.point_style = GraphPlotView::PLUS;
@@ -3513,11 +3513,19 @@ void GraphTableView::RenderLegend() {
   tr = new SoTranslation();  leg->addChild(tr);
   tr->translation.setValue(0.0f, plot_1.axis_length + 2.5f * axis_font_size, 0.0f);
 
-  float over_amt = .5f * x_axis.axis_length;
+  float over_amt = .33f * x_axis.axis_length;
   float dn_amt = -1.1f * axis_font_size;
   bool mv_dn = true;		// else over
 
-  if(plot_2.on && !alt_y_2 && !plot_2.isString()) {
+  if(plot_1.on) {
+    T3GraphLine* ln = new T3GraphLine(&plot_1, axis_font_size); leg->addChild(ln);
+    RenderLegend_Ln(plot_1, ln);
+    tr = new SoTranslation();  leg->addChild(tr);
+    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
+    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;		// flip
+  }
+  if(plot_2.on) {
     T3GraphLine* ln = new T3GraphLine(&plot_2, axis_font_size); leg->addChild(ln);
     RenderLegend_Ln(plot_2, ln);
     tr = new SoTranslation();  leg->addChild(tr);
@@ -3525,7 +3533,7 @@ void GraphTableView::RenderLegend() {
     else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
     mv_dn = !mv_dn;		// flip
   }
-  if(plot_3.on && !plot_2.isString()) {
+  if(plot_3.on) {
     T3GraphLine* ln = new T3GraphLine(&plot_3, axis_font_size); leg->addChild(ln);
     RenderLegend_Ln(plot_3, ln);
     tr = new SoTranslation();  leg->addChild(tr);
@@ -3533,7 +3541,7 @@ void GraphTableView::RenderLegend() {
     else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
     mv_dn = !mv_dn;		// flip
   }
-  if(plot_4.on && !plot_2.isString()) {
+  if(plot_4.on) {
     T3GraphLine* ln = new T3GraphLine(&plot_4, axis_font_size); leg->addChild(ln);
     RenderLegend_Ln(plot_4, ln);
     tr = new SoTranslation();  leg->addChild(tr);
@@ -3541,7 +3549,7 @@ void GraphTableView::RenderLegend() {
     else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
     mv_dn = !mv_dn;		// flip
   }
-  if(plot_5.on && !plot_2.isString()) {
+  if(plot_5.on) {
     T3GraphLine* ln = new T3GraphLine(&plot_5, axis_font_size); leg->addChild(ln);
     RenderLegend_Ln(plot_5, ln);
     tr = new SoTranslation();  leg->addChild(tr);
