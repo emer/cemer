@@ -1621,7 +1621,7 @@ public:
   TA_BASEFUNS(LeabraLayer);
 protected:
   void	UpdateAfterEdit_impl();
-  override bool  CheckConfig_impl(bool quiet);
+  override void  CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
   void	Destroy()		{ CutLinks(); }

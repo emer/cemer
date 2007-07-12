@@ -2195,8 +2195,8 @@ int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
     if(load_col_idx.size > 0) {
       use_col = load_col_idx[col];
     }
-    if(TestError((use_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
-      c = EOF;
+    if(TestWarning((use_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
+      c = '\n';
       break;
     }
     DataCol* da = data.FastEl(use_col);

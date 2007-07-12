@@ -542,7 +542,7 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     float first_sc = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx))->scale_eff;
     for(int j=1; j<send_gp->cons.size; j++) {
       float sc = ((LeabraRecvCons*)ru->recv.FastEl(send_gp->recv_idx))->scale_eff;
-      if(CheckError((sc != first_sc), quiet, rval,
+      if(un->CheckError((sc != first_sc), quiet, rval,
 		    "the effective weight scales for different sending connections within a group are not all the same!  Sending Layer:",
 		    send_gp->prjn->from->name, ", Rev Layer:", send_gp->prjn->layer->name,
 		    ", first_sc: ", String(first_sc), ", sc: ", String(sc)))
@@ -550,7 +550,7 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     }
   }
 
-  if(CheckError((opt_thresh.updt_wts &&
+  if(un->CheckError((opt_thresh.updt_wts &&
 		 (net->wt_update != Network::ON_LINE) && (net->train_mode != Network::TEST)),
 		quiet, rval,
 		"cannot use opt_thresh.updt_wts when wt_update is not ON_LINE",
@@ -559,7 +559,7 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
     opt_thresh.updt_wts = false;
   }
 
-  if(CheckError((opt_thresh.updt_wts && act_reg.on && (act_reg.min > 0.0f)), quiet, rval,
+  if(un->CheckError((opt_thresh.updt_wts && act_reg.on && (act_reg.min > 0.0f)), quiet, rval,
 		"cannot use opt_thresh.updt_wts when act_reg is on and min > 0",
 		"I turned this flag off for you")) {
     SetUnique("opt_thresh", true);
@@ -1584,14 +1584,14 @@ void LeabraLayerSpec::InitLinks() {
 
 bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = true;
-  if(CheckError(!lay->projections.el_base->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
+  if(lay->CheckError(!lay->projections.el_base->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
 		"does not have LeabraPrjn projection base type!",
 		"project must be updated and projections remade"))
     return false;
   bool has_rel_net_conspec = false;
   for(int i=0;i<lay->projections.size;i++) {
     Projection* prjn = (Projection*)lay->projections[i];
-    CheckError(!prjn->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
+    lay->CheckError(!prjn->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
 	       "does not have LeabraPrjn projection base type!",
 	       "Projection must be re-made");
     LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.GetSpec();
@@ -1604,9 +1604,9 @@ bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
       sum_trg_netin_rel += prjn->trg_netin_rel;
     }
-    CheckError((fabsf(sum_trg_netin_rel - 1.0f) > .001f), quiet, rval,
-	       "sum of trg_netin_rel values for layer:",String(sum_trg_netin_rel),
-	       "!= 1.0 -- must fix!");
+    lay->CheckError((fabsf(sum_trg_netin_rel - 1.0f) > .001f), quiet, rval,
+		    "sum of trg_netin_rel values for layer:",String(sum_trg_netin_rel),
+		    "!= 1.0 -- must fix!");
   }
   return rval;
 }
@@ -3079,13 +3079,15 @@ void LeabraLayer::Compute_Weights() {
   Layer::Compute_Weights();
 }
 
-bool LeabraLayer::CheckConfig_impl(bool quiet) {
-  //note: inherited does so much, we only augment with spec
-  bool rval = inherited::CheckConfig_impl(quiet);
-  if(!spec.CheckSpec()) return false; // fatal
-  if(!spec->CheckConfig_Layer(this, quiet))
-      rval = false;
-  return rval;
+void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!spec.CheckSpec()) {
+    rval = false; // fatal
+    return;
+  }
+  if(!spec->CheckConfig_Layer(this, quiet)) {
+    rval = false;
+  }
 }
 
 //////////////////////////

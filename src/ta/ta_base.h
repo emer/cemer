@@ -846,7 +846,6 @@ public:
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt #ARGC_0 #LABEL_CheckConfig check the configuration of this object and all its children -- failed items highlighted in red, items with failed children in yellow
   void			ClearCheckConfig(); // #IGNORE this can be called when a CheckConfig_impl routine blindly assert ok, ex. for an object that has an "off" or "disable" state; this routine updates the gui if the state has now changed
 
-protected: // impl
   virtual void 	CheckError_msg(const char* a, const char* b=0, const char* c=0,
 			       const char* d=0, const char* e=0, const char* f=0,
 			       const char* g=0, const char* h=0) const;
@@ -863,13 +862,13 @@ protected: // impl
   }
   // for CheckConfig routines: if test, then report config error, including object name, type, and path information; returns test & sets rval to false if test is true -- use e.g. CheckError((condition), rval, "msg"));
 
+protected: // impl
   virtual bool		CheckConfig_impl(bool quiet);
   // #IGNORE usually not overridden, see Check[This/Child]_impl
   virtual void		CheckThisConfig_impl(bool quiet, bool& ok) {}
-    // impl for us; can include embedded objects (but don't incl them in Child check); only clear ok (if invalid), don't set
+  // impl for us; can include embedded objects (but don't incl them in Child check); only clear ok (if invalid), don't set
   virtual void		CheckChildConfig_impl(bool quiet, bool& ok) {}
-   // impl for checking children; only clear ok (if invalid), don't set
-
+  // impl for checking children; only clear ok (if invalid), don't set
 
   ///////////////////////////////////////////////////////////////////////////
   //	Copying and changing type 

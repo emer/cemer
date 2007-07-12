@@ -1792,8 +1792,9 @@ void Unit::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(CheckError(!GetUnitSpec(), quiet, rval, "No unit spec set for unit")) {
     return;			// fatal
   }
-  if(!GetUnitSpec()->CheckConfig_Unit(this, quiet))
+  if(!GetUnitSpec()->CheckConfig_Unit(this, quiet)) {
     rval = false;
+  }
 }
 
 bool Unit::CheckBuild(bool quiet) {
