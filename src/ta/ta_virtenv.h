@@ -334,6 +334,7 @@ public:
   virtual void 		ConfigCamera(SoPerspectiveCamera* cam);
   // config So camera parameters
 
+  override void	SetValsToODE();
   override void	GetValsFmODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VECamera);
@@ -371,6 +372,7 @@ public:
   virtual void 	ConfigLight(SoLight* lgt);
   // config So light parameters
 
+  override void	SetValsToODE();
   override void	GetValsFmODE(bool updt_disp = false);
 
   TA_SIMPLE_BASEFUNS(VELight);

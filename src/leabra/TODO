@@ -2,12 +2,8 @@ leabra todo list:
 
 commit:
 
-* new simplified V1 receptive field layer spec that allows for explicit setting of
-rf width separate from spacing..
-
 == Virtual Env
 
-* initial rot maybe 180deg off from one computed by ode??
 * add complexity params to various levels
 * add a function to update texture when texture is changed -- just like the other guy 
   for image -- (test that too!)

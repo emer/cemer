@@ -281,7 +281,7 @@ void VEBody::GetValsFmODE(bool updt_disp) {
   // ODE quaternion = w,x,y,z; Inventor = x,y,z,w
   const dReal* quat = dBodyGetQuaternion(bid);
   SbRotation sbrot;
-  sbrot.setValue(-quat[3], quat[0], quat[1], -quat[2]);
+  sbrot.setValue(quat[1], quat[2], quat[3], quat[0]);
   SbVec3f rot_ax;
   sbrot.getValue(rot_ax, cur_rot.rot);
   cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
@@ -347,6 +347,14 @@ void VECamera::Initialize() {
   dir_norm.x = 0.0f; dir_norm.y = 0.0f; dir_norm.z = -1.0f;
 }
 
+void VECamera::SetValsToODE() {
+  inherited::SetValsToODE();
+  SbVec3f dn(0.0f, 0.0f, -1.0f);
+  SbRotation sbrot(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  sbrot.multVec(dn, dn);
+  dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
+}
+
 void VECamera::GetValsFmODE(bool updt_disp) {
   inherited::GetValsFmODE(updt_disp);
   SbVec3f dn(0.0f, 0.0f, -1.0f);
@@ -375,6 +383,14 @@ void VELight::Initialize() {
 // in ta_virtenv_qtso.cpp: SoLight* VELight::CreateLight()
 
 // in ta_virtenv_qtso.cpp: void VELight::ConfigLight(SoLight* lgt)
+
+void VELight::SetValsToODE() {
+  inherited::SetValsToODE();
+  SbVec3f dn(0.0f, 0.0f, -1.0f);
+  SbRotation sbrot(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  sbrot.multVec(dn, dn);
+  dir_norm.x = dn[0]; dir_norm.y = dn[1]; dir_norm.z = dn[2];
+}
 
 void VELight::GetValsFmODE(bool updt_disp) {
   inherited::GetValsFmODE(updt_disp);

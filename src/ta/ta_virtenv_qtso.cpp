@@ -1052,8 +1052,9 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   if(!wl) return;
   
   if(wl->camera_0) {
-    QPixmap pm = QPixmap::fromImage(wv_->GetCameraImage(0));
-    if(!pm.isNull()) {
+    QImage img = wv_->GetCameraImage(0);
+    if(!img.isNull()) {
+      QPixmap pm = QPixmap::fromImage(img);
       labcam0->setPixmap(pm);
     }
     else {
@@ -1065,8 +1066,9 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   }
 
   if(wl->camera_1) {
-    QPixmap pm = QPixmap::fromImage(wv_->GetCameraImage(1));
-    if(!pm.isNull()) {
+    QImage img = wv_->GetCameraImage(1);
+    if(!img.isNull()) {
+      QPixmap pm = QPixmap::fromImage(img);
       labcam1->setPixmap(pm);
     }
     else {
