@@ -3083,21 +3083,6 @@ taiEditDataHost* gpiSelectEdit::CreateDataHost(void* base, bool readonly) {
 }
 
 
-//////////////////////////////////
-//  DocEdit			//
-//////////////////////////////////
-
-int DocEdit::BidForEdit(TypeDef* td) {
-  if (td->InheritsFrom(TA_taDoc))
-    return taiEdit::BidForEdit(td)+1;
-  return 0;
-}
-
-taiEditDataHost* DocEdit::CreateDataHost(void* base, bool readonly) {
-  return new DocEditDataHost(base, typ, readonly);
-}
-
-
 //////////////////////////
 //   taiViewType	//
 //////////////////////////

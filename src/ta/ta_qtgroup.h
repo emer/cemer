@@ -24,6 +24,7 @@
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
 #include "ta_group.h"
+#include "ta_qttype.h"
 
 // externals
 class taDoc; //
@@ -527,35 +528,67 @@ protected slots:
 //////////////////////////////////
 
 class TA_API DocEditDataHost: public taiEditDataHost {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit data host for editing raw HTML/wiki text
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public:
-  QTabWidget*		widDocs; // out widg for docs
-  iTextBrowser*		  tbrDoc; // r/o Doc tab
-  QTextEdit*		  tedHtml; // r/w Html tab
+  QTextEdit*		tedHtml; // r/w Html tab
     
   taDoc*		doc() const; // just returns cast of base
   
   DocEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
-  	bool modal_ = false, QObject* parent = 0);
+		  bool modal_ = false, QObject* parent = 0);
   DocEditDataHost() {init();} // just for instance
   ~DocEditDataHost() {}
 protected:
+  override void		Constr_Body();
   override void 	Constr_Box(); // add the docs box
   override void 	GetValue_Membs();
   override void 	GetImage_Membs();
 
-#ifndef __MAKETA__
-protected slots:
-  void			doc_setSourceRequest(iTextBrowser* src,
-					     const QUrl& url, bool& cancel);
-#endif
 private:
   void init();
 };
 
+class TA_API iDocEditDataPanel: public iDataPanelFrame {
+  // a panel frame for editing doc raw HTML/wiki source text
+  Q_OBJECT
+INHERITED(iDataPanelFrame)
+public:
+  DocEditDataHost*	de; // the doc editor
+  
+  taDoc*		doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
+  override String	panel_type() const {return "Doc Source";}
 
+  override bool		HasChanged(); // 'true' if user has unsaved changes
+  void			FillList();
+
+  iDocEditDataPanel(taiDataLink* dl_);
+  ~iDocEditDataPanel();
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iDocEditDataPanel;}
+  override bool		ignoreDataChanged() const;
+
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void		OnWindowBind_impl(iTabViewer* itv);
+  override void		UpdatePanel_impl();
+  override void		ResolveChanges_impl(CancelOp& cancel_op);
+};
+
+class TA_API tabDocViewType: public tabOViewType {
+INHERITED(tabOViewType)
+public:
+  override int		BidForView(TypeDef*);
+  void			Initialize() {}
+  void			Destroy() {}
+  TA_VIEW_TYPE_FUNS(tabDocViewType, tabOViewType) //
+protected:
+//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
+  override void		CreateDataPanel_impl(taiDataLink* dl_);
+};
 
 #endif // ta_group_iv.h
 

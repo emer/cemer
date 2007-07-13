@@ -1075,12 +1075,17 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   }
    
   
+  String def_child = td->OptionAfter("DEF_CHILD_");
   // browsable taBase members
   // second pass: recurse
   for(int m=0; m<td->members.size;m++) {
     if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
-    if (!md->ShowMember()) continue;
+    if (!md->ShowMember()) {
+      // def children are excluded from show, but should not be from search!!
+      if (md->name != def_child)
+	continue;
+    }
     if (md->is_static) continue;
     if (md->HasOption("NO_SEARCH")) continue;
     
@@ -5756,6 +5761,7 @@ iDocDataPanel::iDocDataPanel()
 }
 
 iDocDataPanel::~iDocDataPanel() {
+  m_doc = NULL;
 }
 
 void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
@@ -5768,14 +5774,24 @@ void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
   // link clicking to cause us to change our source page
 }
 
+bool iDocDataPanel::ignoreDataChanged() const {
+  return false;			
+  //  return !isVisible(); -- this doesn't seem to be giving accurate results!!!
+}
+
 void iDocDataPanel::DataLinkDestroying(taDataLink* dl) {
   setDoc(NULL);
 }
 
 void iDocDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-//TODO:  if (dcr <= DCR_ITEM_UPDATED_ND) ;
-  //get updated text
+  if (dcr <= DCR_ITEM_UPDATED_ND) {
+    br->clear();
+    taDoc* doc_ = this->doc();
+    if(doc_) {
+      br->setHtml(doc_->html_text);
+    }
+  }
 }
 
 /* todo int iDocDataPanel::EditAction(int ea) {

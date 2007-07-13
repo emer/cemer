@@ -1601,7 +1601,7 @@ public:
   
   virtual void		setDoc(taDoc* doc); // only called if changes after creation
   
-
+  taDoc*		doc() {return (m_link) ? (taDoc*)(link()->data()) : NULL;}
   override String	panel_type() const {return "Doc";}
 
 //  override int 		EditAction(int ea);
@@ -1614,6 +1614,7 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iDocDataPanel;}
   override void		DataLinkDestroying(taDataLink* dl);
+  override bool		ignoreDataChanged() const;
 protected:
   taDoc*		m_doc; // ref managed through link; we just put ptr here to detect change
   override void		DataChanged_impl(int dcr, void* op1, void* op2); //

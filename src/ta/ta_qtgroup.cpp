@@ -1879,9 +1879,6 @@ void gpiSelectEditDataHost::mnuRemoveMethod_select(int idx) {
 //  DocEditDataHost		//
 //////////////////////////////////
 
-
-
-
 DocEditDataHost::DocEditDataHost(void* base, TypeDef* typ_, bool read_only_,
       bool modal_, QObject* parent)
 : inherited(base, typ_, read_only_, modal_, parent)
@@ -1890,28 +1887,18 @@ DocEditDataHost::DocEditDataHost(void* base, TypeDef* typ_, bool read_only_,
 }
 
 void DocEditDataHost::init() {
-  widDocs = NULL;
-  tbrDoc = NULL;
   tedHtml = NULL;
 }
 
+taDoc* DocEditDataHost::doc() const {
+  return static_cast<taDoc*>(cur_base);
+}
+
+void DocEditDataHost::Constr_Body() {
+  //  taiDataHost::Constr_Body();
+}
+
 void DocEditDataHost::Constr_Box() {
-  // create the splitter before calling base, so scrbody gets put into the splitter
-  splBody = new QSplitter(widget());
-  splBody->setOrientation(Qt::Vertical);
-  vblDialog->addWidget(splBody, 1); // gets all the space
-
-  inherited::Constr_Box();
-
-  widDocs = new QTabWidget(splBody);
-  
-  // Doc tab
-  tbrDoc = new iTextBrowser;
-  widDocs->addTab(tbrDoc, "Doc");
-  
-  connect(tbrDoc, SIGNAL(setSourceRequest(iTextBrowser*, const QUrl&, bool&)),
-	  this, SLOT(doc_setSourceRequest(iTextBrowser*, const QUrl&, bool&)) );
-
   // Html tab
   tedHtml = new QTextEdit;
   tedHtml->setAcceptRichText(false); // is the raw html as text
@@ -1919,46 +1906,115 @@ void DocEditDataHost::Constr_Box() {
     tedHtml->setReadOnly(true);
   } else { // r/w
     connect(tedHtml, SIGNAL(textChanged()), 
-      this, SLOT(Changed()) );
+	    this, SLOT(Changed()) );
   }
-  widDocs->addTab(tedHtml, "Html");
-  widDocs->setCurrentIndex(0);
-  
-}
+  vblDialog->addWidget(tedHtml, 1); // gets all the space
 
-void DocEditDataHost::doc_setSourceRequest(iTextBrowser* src,
-					   const QUrl& url, bool& cancel) 
-{
-  // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
-  QDesktopServices::openUrl(url);
-  cancel = true;
-  //NOTE: we never let results call its own setSource because we don't want
-  // link clicking to cause us to change our source page
-}
-
-taDoc* DocEditDataHost::doc() const {
-  return static_cast<taDoc*>(cur_base);
+  //  inherited::Constr_Box();
 }
 
 void DocEditDataHost::GetImage_Membs() {
-  inherited::GetImage_Membs();
+  //  inherited::GetImage_Membs();
   taDoc* doc = this->doc();
   if (!doc) return; // ex. for zombies
   
-  // note: you're reading the following right... the "Doc" is a formatted
-  // view, so in html, whereas the html view, is actually raw text
-  QString html_text = doc->html_text; 
-  tbrDoc->setHtml(html_text);
   QString text = doc->text; 
   tedHtml->clear();
   tedHtml->insertPlainText(text); // we set the html as text
 }
 
 void DocEditDataHost::GetValue_Membs() {
-  inherited::GetValue_Membs();
+  //  inherited::GetValue_Membs();
   taDoc* doc = this->doc();
   if (!doc) return; // ex. for zombies
   
   doc->text = tedHtml->text();
-  doc->UpdateText(); // render into html text
+  doc->UpdateAfterEdit();
+  taiMisc::Update(doc);
+}
+
+
+//////////////////////////
+//    iDocEditDataPanel	//
+//////////////////////////
+
+iDocEditDataPanel::iDocEditDataPanel(taiDataLink* dl_)
+:inherited(dl_)
+{
+  taDoc* doc_ = doc();
+  de = NULL;
+  if (doc_) {
+    de = new DocEditDataHost(doc_, doc_->GetTypeDef());
+    if (taMisc::color_hints & taMisc::CH_EDITS) {
+      bool ok;
+      iColor bgcol = doc_->GetEditColorInherit(ok);
+      if (ok) de->setBgColor(bgcol);
+    }
+    de->ConstrEditControl();
+    setCentralWidget(de->widget()); //sets parent
+    setButtonsWidget(de->widButtons);
+  }
+}
+
+iDocEditDataPanel::~iDocEditDataPanel() {
+  if (de) {
+    delete de;
+    de = NULL;
+  }
+}
+
+bool iDocEditDataPanel::ignoreDataChanged() const {
+  return !isVisible();
+}
+
+void iDocEditDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  //NOTE: don't need to do anything because DataModel will handle it
+  // not in this case!
+}
+
+bool iDocEditDataPanel::HasChanged() {
+  if (de) return de->HasChanged();
+  else return false;
+}
+
+void iDocEditDataPanel::OnWindowBind_impl(iTabViewer* itv) {
+  inherited::OnWindowBind_impl(itv);
+}
+
+void iDocEditDataPanel::UpdatePanel_impl() {
+  if (de) de->ReShow_Async();
+}
+
+void iDocEditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
+ // per semantics elsewhere, we just blindly apply changes
+  if (de && de->HasChanged()) {
+    de->Apply();
+  }
+}
+
+
+//////////////////////////
+// tabDocViewType	//
+//////////////////////////
+
+int tabDocViewType::BidForView(TypeDef* td) {
+  if (td->InheritsFrom(&TA_taDoc))
+    return (inherited::BidForView(td) +1);
+  return 0;
+}
+
+void tabDocViewType::CreateDataPanel_impl(taiDataLink* dl_)
+{
+  // doc view is default
+  iDocDataPanel* cp = new iDocDataPanel();
+  cp->setDoc((taDoc*)dl_->data());
+  DataPanelCreated(cp);
+
+  // then source editor
+  iDocEditDataPanel* dp = new iDocEditDataPanel(dl_);
+  DataPanelCreated(dp);
+
+  // then standard properties
+  inherited::CreateDataPanel_impl(dl_);
 }
