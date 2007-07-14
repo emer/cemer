@@ -212,15 +212,6 @@ void ForLoop::Initialize() {
   iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 }
 
-void ForLoop::InitLinks() {
-  inherited::InitLinks();
-  InitLinks_taAuto(&TA_ForLoop);
-  // get the var ptrs in case someone changes them later!
-  // doesn't seem to work!
-//   init.ParseExpr();
-//   test.ParseExpr();
-//   iter.ParseExpr();
-}
 void ForLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
