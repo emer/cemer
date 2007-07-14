@@ -1235,6 +1235,38 @@ bool taImageProc::RenderBorder_float(float_Matrix& img_data) {
   return true;
 }
 
+bool taImageProc::FadeEdgesToBorder_float(float_Matrix& img_data, int fade_width) {
+  if(img_data.dims() == 3) {	// an rgb guy
+    for(int i=0;i<3;i++) {
+      float_Matrix* cmp = img_data.GetFrameSlice(i);
+      taBase::Ref(cmp);
+      FadeEdgesToBorder_float(*cmp, fade_width);
+      taBase::unRefDone(cmp);
+    }
+    return true;
+  }
+  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  float oavg = img_data.FastEl(0,0); // assuming already has renderborder called
+  for(int wd=1; wd<=fade_width;wd++) {
+    float pct = (float)wd / (float)(fade_width+1);
+    float pct_c = 1.0f - pct;
+    float oavgadd = pct_c * oavg;
+    for(int x=wd;x<img_size.x-wd;x++) {
+      float& tv = img_data.FastEl(x, img_size.y-1-wd);
+      float& bv = img_data.FastEl(x, wd);
+      tv = oavgadd + pct * tv;
+      bv = oavgadd + pct * bv;
+    }
+    for(int y=wd+1;y<img_size.y-wd-1;y++) {
+      float& rv = img_data.FastEl(img_size.x-1-wd, y);
+      float& lv = img_data.FastEl(wd, y);
+      rv = oavgadd + pct * rv;
+      lv = oavgadd + pct * lv;
+    }
+  }
+  return true;
+}
+
 bool taImageProc::TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img,
 					  int move_x, int move_y) {
 
@@ -1784,6 +1816,12 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
     dt->AddBlankRow();
   }
 
+  int max_off_width = 4;	// use for fading edges
+  for(int i=0;i<dogs.size;i++) {
+    DoGRetinaSpec* sp = dogs[i];
+    max_off_width = MAX(max_off_width, (int)sp->dog.off_sigma);
+  }
+
   int idx;
   DataCol* da_ret;
   if(color_type == COLOR)
@@ -1834,7 +1872,13 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
     }
   }
 
+  taImageProc::FadeEdgesToBorder_float(*use_img, max_off_width); 
+  // this should be JUST the original with no border fill -- crop does the filling
+
   taImageProc::CropImage_float(*ret_img, *use_img, retina_size.x, retina_size.y);
+
+  taImageProc::FadeEdgesToBorder_float(*ret_img, max_off_width); 
+  // and make double-sure.. on final image
 
   for(int i=0;i<dogs.size;i++) {
     DoGRetinaSpec* sp = dogs[i];

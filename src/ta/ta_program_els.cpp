@@ -212,6 +212,15 @@ void ForLoop::Initialize() {
   iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 }
 
+void ForLoop::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_ForLoop);
+  // get the var ptrs in case someone changes them later!
+  // doesn't seem to work!
+//   init.ParseExpr();
+//   test.ParseExpr();
+//   iter.ParseExpr();
+}
 void ForLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
@@ -228,6 +237,10 @@ void ForLoop::GetIndexVar() {
       ivar->SetInt(0);
       ivar->ClearVarFlag(ProgVar::CTRL_PANEL);
       ivar->DataChanged(DCR_ITEM_UPDATED);
+      // get the var ptrs in case someone changes them later!
+      init.ParseExpr();
+      test.ParseExpr();
+      iter.ParseExpr();
     }
   }
 }

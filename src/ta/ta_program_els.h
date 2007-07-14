@@ -141,7 +141,10 @@ public:
 
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS(ForLoop);
+  void	InitLinks();
+  SIMPLE_COPY(ForLoop);
+  SIMPLE_CUTLINKS(ForLoop);
+  TA_BASEFUNS(ForLoop);
 protected:
   virtual void	GetIndexVar(); // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
 

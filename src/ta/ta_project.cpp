@@ -536,6 +536,7 @@ void taProject::UpdateChangeLog() {
       String trl = doc->text.after("<ul>\n");
       doc->text = hdr + nw_txt + trl;
     }
+    doc->UpdateText();
     doc->DataChanged(DCR_ITEM_UPDATED);
   }
 #endif

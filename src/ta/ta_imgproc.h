@@ -391,6 +391,9 @@ public:
   static bool	RenderBorder_float(float_Matrix& img_data);
   // #CAT_Render make a uniform border 1 pixel wide around image, containing average value for that border region in original image: this value is what gets filled in when image is translated "off screen"
 
+  static bool	FadeEdgesToBorder_float(float_Matrix& img_data, int fade_width = 8);
+  // #CAT_Render fade edges of image uniformly to the border color, over fade_width pixels
+
   static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
   // #IGNORE helper function: get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
 
