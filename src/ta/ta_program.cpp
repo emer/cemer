@@ -1880,13 +1880,10 @@ String ProgramCall::GetDisplayName() const {
 }
 
 void ProgramCall::PreGenMe_impl(int item_id) {
-  // register as a subproc, but only if not a recursive call (which is bad anyway!)
-  //  if (!target) return; // not target (yet), nothing to register 
-  // actually, the LoadInit code uses this list of sub_progs to find targets, so 
-  // add reagardless of target
+  // register as a subproc
   Program* prog = program();
   if (!prog) return; // shouldn't normally happen
-  prog->sub_progs.LinkUnique(this);
+  prog->AddSubProg(this);
 }
 
 void ProgramCall::UpdateArgs() {
@@ -2746,6 +2743,29 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
   return rval;
 }
 
+ProgramCall* Program::FindSubProgTarget(Program* prg) {
+  for(int i=0;i<sub_progs.size;i++) {
+    ProgramCall* pc = (ProgramCall*)sub_progs.FastEl(i);
+    if(pc->target.ptr() == prg) {
+      return pc;
+    }
+  }
+  return NULL;
+}
+
+bool Program::AddSubProg(ProgramCall* pcall) {
+  Program* trg = pcall->target.ptr();
+  if(!trg) {			// if targ not set yet, add it regardless
+    return sub_progs.LinkUnique(pcall);
+  }
+  else {
+    if(!FindSubProgTarget(trg)) {
+      return sub_progs.LinkUnique(pcall); // only add if target is not already on list
+    }
+  }
+  return false;
+}
+
 const String Program::GetDescString(const String& dsc, int indent_level) {
   String rval;
   if(!dsc.empty()) {
@@ -2763,6 +2783,7 @@ const String Program::scriptString() {
   if (m_stale) {
     // enumerate all the progels, esp. to get subprocs registered
     int item_id = 0;
+    init_code.PreGen(item_id);
     prog_code.PreGen(item_id);
     
     // now, build the new script code
@@ -2791,10 +2812,9 @@ const String Program::scriptString() {
     
     // __Init() routine, for our own els, and calls to subprog Init()
     m_scriptCache += "void __Init() {\n";
-    m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
+    // first, make sure any sub-progs are compiled
     if (sub_progs.size > 0) {
-      if (init_code.size >0) m_scriptCache += "\n";
-      m_scriptCache += "  // init any subprogs that could be called from this one\n";
+      m_scriptCache += "  // First compile any subprogs that could be called from this one\n";
       m_scriptCache += "  { Program* target;\n";
       // note: this is a list of ProgramCall's, not the actual prog itself!
       for (int i = 0; i < sub_progs.size; ++i) {
@@ -2802,7 +2822,21 @@ const String Program::scriptString() {
 	if(!sp->target) continue;
         m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
         m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
-        m_scriptCache += "    target->CompileScript(); // needs to be compiled before setting vars\n";
+        m_scriptCache += "    target->CompileScript();\n";
+      }
+      m_scriptCache += "  }\n";
+    }
+    m_scriptCache += "  // Then run our init code\n";
+    m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
+    if (sub_progs.size > 0) {
+      if (init_code.size >0) m_scriptCache += "\n";
+      m_scriptCache += "  // Then call init on any subprogs that could be called from this one\n";
+      m_scriptCache += "  { Program* target;\n";
+      // note: this is a list of ProgramCall's, not the actual prog itself!
+      for (int i = 0; i < sub_progs.size; ++i) {
+        ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
+	if(!sp->target) continue;
+        m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
 	// set args for guys that are just passing our existing args/vars along
 	for (int j = 0; j < sp->prog_args.size; ++j) {
 	  ProgArg* ths_arg = sp->prog_args.FastEl(j);

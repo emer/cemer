@@ -600,7 +600,7 @@ class TA_API ImageProcCall : public StaticMethodCall {
   // call a taImageProc function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(ImageProcCall);
+  TA_BASEFUNS_NOCOPY(ImageProcCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

@@ -375,7 +375,7 @@ class TA_API DataProcCall : public StaticMethodCall {
   // call a taDataProc (data processing/database) function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(DataProcCall);
+  TA_BASEFUNS_NOCOPY(DataProcCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

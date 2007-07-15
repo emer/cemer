@@ -447,7 +447,7 @@ class TA_API MathCall : public StaticMethodCall {
   // call a taMath function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(MathCall);
+  TA_BASEFUNS_NOCOPY(MathCall);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -457,7 +457,7 @@ class TA_API RandomCall : public StaticMethodCall {
   // call a Random number generation function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(RandomCall);
+  TA_BASEFUNS_NOCOPY(RandomCall);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -467,7 +467,7 @@ class TA_API MiscCall : public StaticMethodCall {
   // call a taMisc function
 INHERITED(StaticMethodCall)
 public:
-  TA_BASEFUNS(MiscCall);
+  TA_BASEFUNS_NOCOPY(MiscCall);
 private:
   void	Initialize();
   void	Destroy()	{ };

@@ -211,15 +211,19 @@ public: \
 
 // common dtor/init, when using tokens (same for TMPLT)
 #define TA_BASEFUNS_TOK_(y) \
+  private: \
   inline void Initialize__() {Register(); Initialize(); \
     if (!(taMisc::is_loading || taMisc::is_duplicating)) SetDefaultName();} \
+  public: \
   ~y () { CheckDestroyed(); unRegister(); Destroying(); Destroy(); }
 
 #define TA_TMPLT_BASEFUNS_TOK_(y,T) TA_BASEFUNS_TOK_(y)
 
 // common dtor/init when not using tokens (the LITE guys)
 #define TA_BASEFUNS_NTOK_(y) \
+  private: \
   inline void Initialize__() {Initialize();}  \
+  public: \
   ~y () { CheckDestroyed(); Destroying(); Destroy(); } 
 
 #define TA_TMPLT_BASEFUNS_NTOK_(y,T) TA_BASEFUNS_NTOK_(y)
