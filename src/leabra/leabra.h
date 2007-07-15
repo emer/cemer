@@ -435,7 +435,8 @@ public:
     STD,			// include all currents (except bias weights) in inhibitory threshold computation
     NO_A,			// exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place
     NO_H,			// exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation
-    NO_AH			// exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation
+    NO_AH,			// exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation
+    ALL,			// include all currents INCLUDING bias weights
   };
 
   float		thr;		// #DEF_0.25 threshold value Theta (Q) for firing output activation 
@@ -715,14 +716,16 @@ public:
 
   virtual float	Compute_IThresh(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold
-  virtual float	Compute_IThreshAll(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, using all currents
+  virtual float	Compute_IThreshStd(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, using all currents EXCEPT bias.wt
   virtual float	Compute_IThreshNoA(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding gc.a current
   virtual float	Compute_IThreshNoH(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding gc.a current
   virtual float	Compute_IThreshNoAH(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
+  virtual float	Compute_IThreshAll(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute inhibitory value that would place unit directly at threshold, using all currents INCLUDING bias.wt
 
   ////////////////////////////////////////
   //	Stage 4: the final activation 	//

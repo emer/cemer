@@ -862,7 +862,7 @@ bool LeabraUnitSpec::Compute_SoftClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNe
 //	Stage 3: inhibition		//
 //////////////////////////////////////////
 
-float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
+float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   float non_bias_net = u->net;
   if(u->bias.cons.size)		// subtract out bias weights so they can change k
     non_bias_net -= u->bias_scale * u->bias.Cn(0)->wt;
@@ -905,16 +905,25 @@ float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraLayer*, LeabraNet
 	  (act.thr - e_rev.i));
 } 
 
+float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
+  // including the ga and gh terms and bias weights
+  return ((u->net * (e_rev.e - act.thr) + u->gc.l * (e_rev.l - act.thr)
+	   + u->gc.a * (e_rev.a - act.thr) + u->gc.h * (e_rev.h - act.thr)) /
+	  (act.thr - e_rev.i));
+} 
+
 float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
   switch(act.i_thr) {
   case ActFunSpec::STD:
-    return Compute_IThreshAll(u, lay, net);
+    return Compute_IThreshStd(u, lay, net);
   case ActFunSpec::NO_A:
     return Compute_IThreshNoA(u, lay, net);
   case ActFunSpec::NO_H:
     return Compute_IThreshNoH(u, lay, net);
   case ActFunSpec::NO_AH:
     return Compute_IThreshNoAH(u, lay, net);
+  case ActFunSpec::ALL:
+    return Compute_IThreshAll(u, lay, net);
   }
   return 0.0f;
 } 
