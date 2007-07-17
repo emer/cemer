@@ -582,6 +582,7 @@ int main(int argc, char* argv[])
     ) {
       mta_print_commandline_args(argv); return 1; 		// EXIT
     }
+    mta->gen_doc = false;
     if(tmp == "-css")
       mta->gen_css = true;
     else if(tmp == "-nocss")
