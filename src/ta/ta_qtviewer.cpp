@@ -4846,7 +4846,7 @@ void iDataPanel::customEvent(QEvent* ev_) {
 void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     if (tabView())
-      tabView()->UpdateTabName(this); //in case changed */
+      tabView()->UpdateTabName(this); //in case changed
   }
 }
 
@@ -4884,7 +4884,7 @@ void iDataPanel::UpdatePanel() {
 
 void iDataPanel::UpdatePanel_impl() {
   if (tabView())
-    tabView()->UpdateTabName(this); //in case changed */
+    tabView()->UpdateTabName(this); //in case changed 
 }
 
 void iDataPanel::Render() {

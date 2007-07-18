@@ -287,7 +287,7 @@ void LayerWriter::AutoConfig(bool reset_existing) {
   taLeafItr itr;
   FOR_ITR_EL(Layer, lay, network->layers., itr) {
     if(lay->layer_type == Layer::HIDDEN) continue;
-    int chan_idx = data->GetSourceChannelByName(lay->name);
+    int chan_idx = data->GetSourceChannelByName(lay->name, false);
     if(TestWarning(chan_idx < 0, "AutoConfig",
 		   "did not find channel/data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type))) {
       continue;	// not found
@@ -296,15 +296,17 @@ void LayerWriter::AutoConfig(bool reset_existing) {
     lrw->SetDataNetwork(data, network);
     lrw->DataChanged(DCR_ITEM_UPDATED);
   }
-  int nm_idx = data->GetSourceChannelByName("Name");
+  int nm_idx = data->GetSourceChannelByName("Name", false);
   if(nm_idx >= 0) {
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Name");
     lrw->net_target = LayerDataEl::TRIAL_NAME;
+    lrw->DataChanged(DCR_ITEM_UPDATED);
   }
-  int gp_idx = data->GetSourceChannelByName("Group");
+  int gp_idx = data->GetSourceChannelByName("Group", false);
   if(gp_idx >= 0) {
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group");
     lrw->net_target = LayerDataEl::GROUP_NAME;
+    lrw->DataChanged(DCR_ITEM_UPDATED);
   }
 }
 

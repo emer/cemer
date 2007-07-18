@@ -300,7 +300,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       if(recv_gp->prjn->from->name == "RewTarg")
-	rew_targ_lay = (LeabraLayer*)recv_gp->prjn->from;
+	rew_targ_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       else
 	got_marker = true;
       continue;
@@ -362,7 +362,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
+      LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       if(rew_lay->name != "RewTarg") continue;
       LeabraUnit* rtu = (LeabraUnit*)rew_lay->units[0];
       if(rtu->act_eq > .5) {
@@ -384,7 +384,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
       continue;
-    LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 
     if(rew_lay->ext_flag & Unit::TARG) n_targs++;
@@ -400,7 +400,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
       continue;
-    LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(rew_lay->name == "RewTarg") continue;
 
     if(!(rew_lay->ext_flag & rew_chk_flag)) continue; // only proceed if valid 
@@ -845,7 +845,7 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
-    LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
     if(fls->InheritsFrom(&TA_TDRewPredLayerSpec)) {
       rew_pred_lay = flay;
@@ -891,7 +891,7 @@ void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       continue;
     }
-    LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
     if(fls->InheritsFrom(&TA_TDRewPredLayerSpec)) {
       LeabraUnit* rpu = (LeabraUnit*)flay->units.Leaf(0); // todo; base on connections..
@@ -1002,7 +1002,7 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraLayer* rewinteg_lay = NULL;
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(lay->CheckError(fmlay == NULL, quiet, rval,
 		  "null from layer in recv projection:", (String)g)) {
       return false;

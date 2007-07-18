@@ -130,7 +130,7 @@ public:
     DaModUnit* lru = (DaModUnit*)ru;
     LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
-    if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<lcg->cons.size; i++) {
 	DaModUnit* su = (DaModUnit*)lcg->Un(i);
 	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);

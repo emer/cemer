@@ -30,7 +30,7 @@
 /////////////////////////////
 
 void FullPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   int no = prjn->from->units.leaves;
   if(!self_con && (prjn->from == prjn->layer))
@@ -51,7 +51,7 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 int FullPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
-  if(prjn->from == NULL)	return 0;
+  if(!(bool)prjn->from)	return 0;
 
   int rval = 0;
 
@@ -93,7 +93,7 @@ void OneToOnePrjnSpec::Initialize() {
 }
 
 void OneToOnePrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   int i;
   int max_n = n_conns;
@@ -297,7 +297,7 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
 }
 
 void TesselPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -347,7 +347,7 @@ void UniformRndPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
   if(same_seed)
     rndm_seed.OldSeed();
 
@@ -561,7 +561,7 @@ float PolarRndPrjnSpec::GetDistProb(Projection* prjn, Unit* ru, Unit* su) {
 // todo: could put in some sending limits, and do recvs in random order
 
 void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
   if(same_seed)
     rndm_seed.OldSeed();
 
@@ -617,7 +617,7 @@ void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
 /////////////////////////////
 
 void SymmetricPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   Unit* ru, *su;
   taLeafItr ru_itr, su_itr;
@@ -729,7 +729,7 @@ void CustomPrjnSpec::Connect(Projection* prjn) {
 //////////////////////////////////////////
 
 void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   Unit_Group* ru_gp = &(prjn->layer->units);
   Unit_Group* su_gp = &(prjn->from->units);
@@ -786,7 +786,7 @@ void RndGpOneToOnePrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
   if(same_seed)
     rndm_seed.OldSeed();
 
@@ -882,7 +882,7 @@ void GpOneToManyPrjnSpec::GetNGroups(Projection* prjn, int& r_n_ugp, int& s_n_ug
 // homogeneity of all unit con_groups in a layer.  this wastes some, but what can you do..
 void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
   prjn->SetFrom();		// justin case
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   int r_n_ugp, s_n_ugp;
   int old_send_start = send_start; // temporarilly resort to full connectivity
@@ -949,7 +949,7 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
 }
 
 void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   int orig_recv_idx = prjn->recv_idx;
   int orig_send_idx = prjn->send_idx;
@@ -1292,7 +1292,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
 }
 
 void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
   if(same_seed)
     rndm_seed.OldSeed();
 
@@ -1345,7 +1345,7 @@ void TiledRFPrjnSpec::Initialize() {
 }
 
 bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
-  if(prjn->from == NULL)	return false;
+  if(!(bool)prjn->from)	return false;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return false;
   if(TestWarning(prjn->layer->units.gp.size == 0, "InitRFSizes",
@@ -1530,7 +1530,7 @@ void TiledGpRFPrjnSpec::Initialize() {
 }
 
 void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
   if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
@@ -1655,7 +1655,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 }
 
 int TiledGpRFPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) {
-  if(prjn->from == NULL)	return 0;
+  if(!(bool)prjn->from)	return 0;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
   if(TestWarning(prjn->layer->units.gp.size == 0, "ProbAddCons",
@@ -1729,7 +1729,7 @@ void TiledNovlpPrjnSpec::Initialize() {
 }
 
 bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
-  if(prjn->from == NULL)	return false;
+  if(!(bool)prjn->from)	return false;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return false;
 

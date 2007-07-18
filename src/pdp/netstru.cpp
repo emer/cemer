@@ -702,7 +702,7 @@ bool RecvCons::ConValuesFromMatrix(float_Matrix& mat, const char* variable) {
 // 	Save/Load Weights
 
 void RecvCons::SaveWeights_strm(ostream& strm, Unit*, RecvCons::WtSaveFormat fmt) {
-  if((prjn == NULL) || (prjn->from == NULL)) {
+  if((prjn == NULL) || (!(bool)prjn->from)) {
     strm << "<Cn 0>\n";
     goto end_tag;		// don't do anything
   }
@@ -767,7 +767,7 @@ int RecvCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& c
 }
 
 int RecvCons::LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt, bool quiet) {
-  if((prjn == NULL) || (prjn->from == NULL)) {
+  if((prjn == NULL) || (!(bool)prjn->from)) {
     return SkipWeights_strm(strm, fmt, quiet); // bail
   }
   String tag, val;
@@ -2284,7 +2284,7 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
 }
 
 void ProjectionSpec::PreConnect(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
 
   // make first set of congroups to get indicies
   Unit* first_ru = (Unit*)prjn->layer->units.Leaf(0);
@@ -2334,7 +2334,7 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
 ////////////////////////
 
 void Projection::Initialize() {
-  layer = from = NULL;
+  //  layer = from = NULL;
   from_type = PREV;
   con_type = &TA_Connection;
   recvcons_type = &TA_RecvCons;
@@ -2354,18 +2354,19 @@ void Projection::Destroy(){
 
 void Projection::CutLinks() {
   if(owner == NULL) return;
-  if(from) {
+  if((bool)from) {
     // remove from sending links, being sure to protect against a spurious re-delete
     taBase::Ref(this);
     from->send_prjns.RemoveEl(this);
     taBase::unRef(this);
   }
   RemoveCons();		// remove actual connections
-  taBase::DelPointer((taBase**)&from);
+  //  taBase::DelPointer((taBase**)&from);
+  from = NULL;
   spec.CutLinks();
   con_spec.CutLinks();
   m_prv_con_spec = NULL;
-  if((layer) && taMisc::gui_active) {
+  if(((bool)layer) && taMisc::gui_active) {
     owner = NULL;		// tell view that we're not really here
     if(layer->own_net) {
       layer->own_net->RemoveCons(); // get rid of connections in any other layers!
@@ -2382,19 +2383,23 @@ void Projection::InitLinks() {
     mynet->SetProjectionDefaultTypes(this);
   }
 
-  spec.SetDefaultSpec(this);
-  con_spec.SetDefaultSpec(this);
   layer = GET_MY_OWNER(Layer);
   if(mynet) {
     int myindex = mynet->layers.FindLeafEl(layer);
-    if(!(myindex == 0) && (from_type == PREV)) // is it not the first?
-      UpdateAfterEdit();
+    if(!(myindex == 0) && (from_type == PREV)) { // is it not the first?
+      SetFrom();
+      if((bool)from)
+	name = "Fm_" + from->name;
+    }
   }
+  spec.SetDefaultSpec(this);
+  con_spec.SetDefaultSpec(this);
 }
 
 void Projection::Copy_(const Projection& cp) {
   from_type = cp.from_type;
-  taBase::SetPointer((taBase**)&from, cp.from);
+  //  taBase::SetPointer((taBase**)&from, cp.from);
+  from = cp.from;
   spec = cp.spec;
   con_type = cp.con_type;
   recvcons_type = cp.recvcons_type;
@@ -2414,17 +2419,17 @@ void Projection::Copy_(const Projection& cp) {
 void Projection::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   SetFrom();
-  if(from)
+  if((bool)from)
     name = "Fm_" + from->name;
   UpdateConSpecs((bool)taMisc::is_loading);
-  if(taMisc::is_loading) return;
-  if(!taMisc::gui_active) return;
-  Network* net = GET_MY_OWNER(Network);
-  if(!net) return;
+//   if(taMisc::is_loading) return;
+//   if(!taMisc::gui_active) return;
+//   Network* net = GET_MY_OWNER(Network);
+//   if(!net) return;
 }
 
 void Projection::WeightsToTable(DataTable* dt) {
-  if(from == NULL) return;
+  if(!(bool)from) return;
 /*TODO
   if (dt == NULL) {
     dt = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase));
@@ -2468,7 +2473,7 @@ void Projection::WeightsToTable(DataTable* dt) {
 }
 
 void Projection::SetFrom() {
-  if(layer == NULL) {
+  if(!(bool)layer) {
     from = NULL;
     return;
   }
@@ -2486,7 +2491,9 @@ void Projection::SetFrom() {
     else {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex+1);
       if(from == nwly) return;
-      taBase::SetPointer((taBase**)&from, nwly);
+//       taBase::SetPointer((taBase**)&from, nwly);
+      from = nwly;
+      DataChanged(DCR_ITEM_UPDATED);
     }
     break;
   case PREV:
@@ -2497,22 +2504,27 @@ void Projection::SetFrom() {
     else {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex-1);
       if(from == nwly) return;
-      taBase::SetPointer((taBase**)&from, nwly);
+//       taBase::SetPointer((taBase**)&from, nwly);
+      from = nwly;
+      DataChanged(DCR_ITEM_UPDATED);
     }
     break;
   case SELF:
     if(from == layer) return;
-    taBase::SetPointer((taBase**)&from, layer);
+//     taBase::SetPointer((taBase**)&from, layer);
+    from = layer;
+    DataChanged(DCR_ITEM_UPDATED);
     break;
   case CUSTOM:
-    TestWarning(from == NULL, "SetFrom", "CUSTOM projection and from is NULL");
+    TestWarning(!(bool)from, "SetFrom", "CUSTOM projection and from is NULL");
     break;
   }
   //  mynet->UpdtAfterNetMod();
 }
 
 void Projection::SetCustomFrom(Layer* fm_lay) {
-  taBase::SetPointer((taBase**)&from, fm_lay);
+//   taBase::SetPointer((taBase**)&from, fm_lay);
+  from = fm_lay;
   if(fm_lay == layer)
     from_type = SELF;
   else
@@ -2521,7 +2533,7 @@ void Projection::SetCustomFrom(Layer* fm_lay) {
 }
 
 bool Projection::UpdateConSpecs(bool force) {
-  if((layer == NULL) || (from == NULL)) return false;
+  if((!(bool)layer) || (!(bool)from)) return false;
   if(!force && (con_spec.SPtr() == m_prv_con_spec)) return false;
   ConSpec* sp = con_spec.SPtr();
   m_prv_con_spec = sp;		// don't redo it
@@ -2595,7 +2607,7 @@ void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
 
 void Projection::FixPrjnIndexes() {
   projected = false;
-  if((layer == NULL) || (from == NULL)) return;
+  if((!(bool)layer) || (!(bool)from)) return;
   if((layer->units.leaves == 0) || (from->units.leaves == 0)) return;
   Unit* ru = layer->units.Leaf(0);
   Unit* su = from->units.Leaf(0);
@@ -3169,10 +3181,10 @@ void Layer::InitLinks() {
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_share_units, this);
 #endif
-  unit_spec.SetDefaultSpec(this);
   own_net = GET_MY_OWNER(Network);
   SetDefaultPos();
   units.pos.z = 0;
+  unit_spec.SetDefaultSpec(this);
 }
 
 void Layer::CutLinks() {
@@ -3301,7 +3313,7 @@ void Layer::SyncSendPrjns() {
   for(pi=send_prjns.size-1; pi>=0; pi--) {
     p = (Projection*)send_prjns.FastEl(pi);
     if(p == NULL) continue;
-    if((p->layer == NULL) || (p->from != this))
+    if((!(bool)p->layer) || (p->from != this))
       send_prjns.RemoveIdx(pi);	// get rid of it!
   }
 }
@@ -3629,7 +3641,7 @@ void Layer::DisConnect() {
   for(pi=send_prjns.size-1; pi>=0; pi--) {
     Projection* p = (Projection*)send_prjns.FastEl(pi);
     if(p == NULL) continue;
-    if(p->layer == NULL) {
+    if(!(bool)p->layer) {
       send_prjns.RemoveIdx(pi);
       continue;
     }
@@ -5848,11 +5860,13 @@ Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* 
   if(use_prj == NULL)
     use_prj = (Projection*)recv->projections.NewEl(1);
   use_prj->from_type = Projection::SELF;
-  taBase::SetPointer((taBase**)&(use_prj->from), recv);
+//   taBase::SetPointer((taBase**)&(use_prj->from), recv);
+  use_prj->from = recv;
   if(ps)
     use_prj->spec.SetSpec(ps);
   if(cs)
     use_prj->con_spec.SetSpec(cs);
+  use_prj->DataChanged(DCR_ITEM_UPDATED);
   return use_prj;
 }
 
@@ -5870,11 +5884,13 @@ Projection* Network::FindMakeSelfPrjnAdd(Layer* recv, ProjectionSpec* ps, ConSpe
   nw_itm = true;
   Projection* prj = (Projection*)recv->projections.NewEl(1);
   prj->from_type = Projection::SELF;
-  taBase::SetPointer((taBase**)&(prj->from), recv);
+//   taBase::SetPointer((taBase**)&(prj->from), recv);
+  prj->from = recv;
   if(ps)
     prj->spec.SetSpec(ps);
   if(cs)
     prj->con_spec.SetSpec(cs);
+  prj->DataChanged(DCR_ITEM_UPDATED);
   return prj;
 }
 

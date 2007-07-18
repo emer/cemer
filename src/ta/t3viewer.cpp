@@ -92,6 +92,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget *parent, const char *name,
 void T3ExaminerViewer::processEvent(QEvent* ev_) {
   //NOTE: the base classes don't check if event is already handled, so we have to skip
   // calling inherited if we handle it ourselves
+
   if (!t3vw) goto do_inherited;
 
   if (ev_->type() == QEvent::MouseButtonPress) {
@@ -1717,8 +1718,10 @@ void iT3DataViewer::Init() {
   //  tw->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
   lay->addWidget(tw);
-  connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
-    this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
+  // NOTE: this is not a good thing because the viewer has its own menu that
+  // does everything it needs, and this conflicts
+//   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
+//     this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
   // punt, and just connect a timer to focus first tab
   // if any ProcessEvents get called (should not!) may have to make non-zero time
   QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
@@ -1838,8 +1841,9 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   if (!t3vw) return NULL; // shouldn't happen
   // make in default, if default is empty
   fr = t3vw->FirstEmptyT3DataViewFrame();
-  if (!fr) {
-    fr = t3vw->NewT3DataViewFrame();
+  if(!fr || fr->root_view.children.size == 0) {
+    if(!fr)
+      fr = t3vw->NewT3DataViewFrame();
     fr->SetName(obj->GetDisplayName()); // tis better to have one good name.. can always
     fr->UpdateAfterEdit();		// show name
   }

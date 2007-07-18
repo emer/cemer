@@ -569,6 +569,8 @@ protected slots:
   void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
 						   int level, bool& expand);
   void			tvSpecs_ItemSelected(iTreeViewItem* item); 
+  // note: this one seems a bit defunct for the iTreeView -- replaced with Notify below
+  void			tvSpecs_Notify(ISelectableHost* src, int op);
 
 };
 

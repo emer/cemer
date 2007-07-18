@@ -2441,8 +2441,10 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
       dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
     }
   }
-  connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
-    this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
+  tvSpecs->Connect_SelectableHostNotifySignal(this,
+    SLOT(tvSpecs_Notify(ISelectableHost*, int)) );
+//   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
+//     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
   connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
   
@@ -2706,7 +2708,28 @@ void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
   expand = false;
 }
 
+void NetViewPanel::tvSpecs_Notify(ISelectableHost* src, int op) {
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  switch (op) {
+  //case ISelectableHost::OP_GOT_FOCUS: return;
+  case ISelectableHost::OP_SELECTION_CHANGED: {
+    TAPtr new_base = NULL;
+    ISelectable* si = src->curItem();
+    if (si && si->link()) {
+      new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen
+    }
+    setHighlightSpec((BaseSpec*)new_base);
+    //    nv_->UpdateDisplay(true);
+  } break;
+  //case ISelectableHost::OP_DESTROYING: return;
+  default: return;
+  }
+}
+
 void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
   BaseSpec* spec = NULL;
   if (item) {
     taBase* ld_ = (taBase*)item->linkData();
@@ -2714,7 +2737,7 @@ void NetViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
       spec = (BaseSpec*)ld_;
   }
   setHighlightSpec(spec);
-
+//   nv_->UpdateDisplay(true);
 }
 
 

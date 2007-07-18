@@ -1031,6 +1031,9 @@ public: // XxxGui versions provide feedback to the user
   static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
   static void		MakeTemplate_fmtype(Program* prog, TypeDef* td); // #IGNORE make from typedef
   
+  virtual bool		SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label);
+  // #MENU #MENU_ON_SelectEdit #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the program control functions (Init, Run, Step, Stop) to a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
+
   override String 	GetTypeDecoKey() const { return "Program"; }
 
   void	InitLinks();

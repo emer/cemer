@@ -157,7 +157,7 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       continue;
     }
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
+      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
       if(fls->InheritsFrom(TA_ExtRewLayerSpec)) ext_rew_lay = flay;
       continue;
@@ -385,7 +385,7 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       continue;
     }
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from;
+      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       LeabraLayerSpec* fls = (LeabraLayerSpec*)flay->spec.SPtr();
       if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = flay;
       continue;
@@ -678,7 +678,7 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
       if(lay->CheckError(recv_gp->cons.size <= 0, quiet, rval,

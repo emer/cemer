@@ -589,7 +589,7 @@ public:
   
   enum ProjViewPref { // project viewing preference
     PVP_2x2,	// #LABEL_2x2_Panes one window has a browser and edit pane, the second has an edit pane and a 3-d viewer
-    PVP_3PANE   // #LABEL_3_Pane one humungous mega-meal of a window, with all three panes (only for large wide displays!)
+    PVP_3PANE   // #LABEL_3_Pane one window with a browser, edit pane, and a 3d-viewer
   };
   
   enum ViewerOptions { // #BITS options for the viewer

@@ -226,8 +226,8 @@ inline void SoConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
 
 inline void SoConSpec::Compute_AvgInAct(SoRecvCons* cg, Unit*) {
   if(avg_act_source == LAYER_AVG_ACT) {
-    cg->avg_in_act = ((SoLayer*)cg->prjn->from)->avg_act;
-    cg->sum_in_act = ((SoLayer*)cg->prjn->from)->sum_act;
+    cg->avg_in_act = ((SoLayer*)cg->prjn->from.ptr())->avg_act;
+    cg->sum_in_act = ((SoLayer*)cg->prjn->from.ptr())->sum_act;
   }
   else if(cg->cons.size > 0) {
     cg->sum_in_act = 0.0f;

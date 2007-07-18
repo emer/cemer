@@ -1317,6 +1317,15 @@ public:
   virtual void	Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
 
+  virtual float	Compute_TopKAvgAct_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
+  virtual float	Compute_TopKAvgAct(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
+  virtual float	Compute_TopKAvgNetin_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Statistic compute the average net input of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current net values
+  virtual float	Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute the average net input of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current net values
+
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
   ////////////////////////////////////////
@@ -1570,6 +1579,11 @@ public:
   void	Compute_Act(LeabraNetwork* net) 	{ spec->Compute_Act(this, net); }
   // #CAT_Activation stage three: compute final activation
 
+  float	Compute_TopKAvgAct(LeabraNetwork* net)  { return spec->Compute_TopKAvgAct(this, net); }
+  // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
+  float	Compute_TopKAvgNetin(LeabraNetwork* net)  { return spec->Compute_TopKAvgNetin(this, net); }
+  // #CAT_Statistic compute the average netinput of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
+
   void	PhaseInit(LeabraNetwork* net)		{ spec->PhaseInit(this, net); }
   // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
   void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, net); }
@@ -1743,7 +1757,7 @@ void LeabraConSpec::Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
 //////////////////////////
 
 inline void LeabraConSpec::Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit*) {
-  LeabraLayer* fm = (LeabraLayer*)cg->prjn->from;
+  LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
   float savg = .5f + savg_cor.cor * (fm->kwta.pct - .5f);
   savg = MAX(savg_cor.thresh, savg); // keep this computed value within bounds
   cg->savg_cor = .5f / savg;
@@ -1779,7 +1793,7 @@ inline void LeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
   LeabraUnit* lru = (LeabraUnit*)ru;
   LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
   Compute_SAvgCor(lcg, lru);
-  if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
+  if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
     for(int i=0; i<cg->cons.size; i++) {
       LeabraUnit* su = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
@@ -2026,7 +2040,7 @@ private:
 };
 
 class LEABRA_API LeabraProject : public ProjectBase {
-  // project for Leabra models
+  // ##CAT_Leabra project for Leabra models
 INHERITED(ProjectBase)
 public:
 

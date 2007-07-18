@@ -295,7 +295,7 @@ void taProject::InitLinks_impl() {
 void taProject::InitLinks_post() {
   if (!taMisc::is_loading) {
     AssertDefaultProjectBrowser(true);
-    AssertDefaultWiz(false);	// make default and don't edit it
+    AssertDefaultWiz(true);	// make default and do edit it
   } else {
     AssertDefaultProjectBrowser(false);
     AssertDefaultWiz(false);	// make default and don't edit it
@@ -1418,13 +1418,9 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // then load configuration info: sets lots of user-defined config info
   taMisc::Init_Defaults_PreLoadConfig();
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
-//TEMP
-if (taMisc::proj_view_pref == -1) {
-  if (taMisc::user_dir.contains("oreilly")) 
+  if (taMisc::proj_view_pref == -1) {
     taMisc::proj_view_pref = taMisc::PVP_3PANE;
-  else taMisc::proj_view_pref = taMisc::PVP_2x2;
-}
-// / TEMP
+  }
 
   // init user dir first time
   if (taMisc::user_app_dir.empty()) {

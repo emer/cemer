@@ -1765,7 +1765,7 @@ void V1RFPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
-  if(prjn->from == NULL)	return;
+  if(!(bool)prjn->from)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
   if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",

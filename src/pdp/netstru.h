@@ -45,7 +45,16 @@ class NetMonitor;
 class NetView;
 
 // forwards this file
-class Unit_Group; //
+class Unit_Group;
+
+class Unit;
+SmartRef_Of(Unit,TA_Unit); // UnitRef
+class Projection;
+SmartRef_Of(Projection,TA_Projection); // ProjectionRef
+class Layer;
+SmartRef_Of(Layer,TA_Layer); // LayerRef
+class Network;
+SmartRef_Of(Network,TA_Network); // NetworkRef
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -936,9 +945,13 @@ public:
     DIR_UNKNOWN,	// direction not set
   };
 
-  Layer* 		layer;    	// #READ_ONLY #NO_SAVE layer this prjn is in
+#ifdef __MAKETA__
+  String		name;		// #READ_ONLY #SHOW name of the projection -- this is generated automatically based on the from name
+#endif
+
+  Layer* 		layer;    	// #READ_ONLY #NO_SAVE #HIDDEN layer this prjn is in
   PrjnSource 		from_type;	// #CAT_Structure #APPLY_IMMED Source of the projections
-  Layer*		from;		// #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)
+  LayerRef		from;		// #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)
   ProjectionSpec_SPtr	spec;		// #CAT_Structure spec for this item
   TypeDef*		con_type;	// #TYPE_Connection #CAT_Structure Type of connection
   TypeDef*		recvcons_type;	// #TYPE_RecvCons #CAT_Structure Type of receiving connection group to make
@@ -1570,8 +1583,6 @@ private:
   void 	Destroy()		{ };
 };
 
-SmartRef_Of(Layer,TA_Layer); // LayerRef
-
 class PDP_API NetViewFontSizes : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
 INHERITED(taBase)
@@ -2000,8 +2011,6 @@ private:
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
 };
-
-SmartRef_Of(Network,TA_Network);
 
 class PDP_API Network_Group : public taGroup<Network> {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network a group of networks

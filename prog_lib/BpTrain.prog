@@ -13,9 +13,10 @@ Program .projects[0].programs.gp[0][1] {
     };
   };
 
-  ProgVar_List @.args = [2] {
+  ProgVar_List @.args = [3] {
     ProgVar @[0] { };
     ProgVar @[1] { };
+    ProgVar @[2] { };
   };
 
   ProgVar_List @.vars = [7] {
@@ -29,13 +30,13 @@ Program .projects[0].programs.gp[0][1] {
   };
 
   ProgEl_List @.init_code = [5] {
-    MethodCall @[0] { 
+    AssignExpr @[0] { };
+    MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    AssignExpr @[1] { };
-    NetCounterInit @[2] { };
+    AssignExpr @[2] { };
     IfElse @[3] { 
       ProgEl_List @.true_code = [1] {
 	MethodCall @[0] { };
@@ -45,7 +46,12 @@ Program .projects[0].programs.gp[0][1] {
 	MethodCall @[0] { };
       };
     };
-    MethodCall @[4] { };
+    IfGuiPrompt @[4] { 
+      ProgEl_List @.yes_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
   };
 
   ProgEl_List @.prog_code = [7] {
@@ -55,9 +61,14 @@ Program .projects[0].programs.gp[0][1] {
 	ProgArg @[0] { };
       };
     };
-    NetCounterInit @[2] { };
-    MemberAssign @[3] { };
-    MethodCall @[4] { };
+    MemberAssign @[2] { };
+    IfElse @[3] { 
+      ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
+    AssignExpr @[4] { };
     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [3] {
 	ProgramCall @[0] { 
@@ -120,7 +131,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[0] {
    name="network";
    var_type=T_Object;
-   object_type=BpNetwork;
+   object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
@@ -134,6 +145,14 @@ Program .projects[0].programs.gp[0][1] {
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="datatable with training patterns";
+  };
+  ProgVar @[2] {
+   name="no_prompts";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
   };
  };
  vars {
@@ -171,7 +190,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[3] {
    name="epoch";
    var_type=T_Int;
-   int_val=0;
+   int_val=17;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="current epoch -- local copy, which is used to update network's epoch counter";
@@ -179,11 +198,10 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[4] {
    name="err_stopcrit";
    var_type=T_Real;
-   real_val=0.01;
+   real_val=0.25;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
-   desc="stopping criterion -- when error measure (average sum squared error by defult)
-goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+   desc="stopping criterion -- when error measure (average sum squared error by default) goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
   };
   ProgVar @[5] {
    name="rnd_seed";
@@ -218,11 +236,25 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   name=;
   el_typ=MethodCall;
   el_def=0;
-  MethodCall @[0] {
+  AssignExpr @[0] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].args[2]$5$;
+   expr {
+    expr="false";
+    flags=;
+    var_expr="false";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[1] {
    desc="check network to make sure it is ready to be run";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs.gp[0][1].args[0]$5$;
+   obj=.projects[0].programs.gp[0][1].args[0]$6$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
@@ -246,10 +278,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  AssignExpr @[1] {
+  AssignExpr @[2] {
    desc="get our pointer to the network training time object";
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[6]$6$;
+   result_var=.projects[0].programs.gp[0][1].vars[6]$7$;
    expr {
     expr="network.train_time";
     flags=;
@@ -259,13 +291,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     var_names{ network;    };
     bad_vars{     };
    };
-  };
-  NetCounterInit @[2] {
-   desc="initialize epoch counter ";
-   flags=;
-   network_var=$5$;
-   local_ctr_var=.projects[0].programs.gp[0][1].vars[3]$7$;
-   counter=Network::epoch;
   };
   IfElse @[3] {
    desc="initialize random seed (either old or new)";
@@ -314,16 +339,41 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  MethodCall @[4] {
-   desc="this initializes the weights every time user presses Init -- could turn this off for large nets (init is also in prog_code)";
+  IfGuiPrompt @[4] {
+   desc="don't initialize weights without checking";
    flags=;
-   result_var=NULL;
-   obj=$5$;
-   method=Network::Init_Weights;
-   meth_args {
+   prompt="Do you want to Initialize Network Weights";
+   yes_label="Yes";
+   no_label="No";
+   yes_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$6$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
    };
   };
  };
@@ -334,7 +384,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   AssignExpr @[0] {
    desc="get our pointer to the network training time object";
    flags=;
-   result_var=$6$;
+   result_var=$7$;
    expr {
     expr="network.train_time";
     flags=;
@@ -349,7 +399,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    desc="start timer to keep track of how long it takes to run entire training run";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$7$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -373,17 +423,10 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  NetCounterInit @[2] {
-   desc="initialize epoch counter (both our local copy and network's epoch counter)";
-   flags=;
-   network_var=$5$;
-   local_ctr_var=$7$;
-   counter=Network::epoch;
-  };
-  MemberAssign @[3] {
+  MemberAssign @[2] {
    desc="set network's training mode to our local value";
    flags=;
-   obj=$5$;
+   obj=$6$;
    path="train_mode";
    expr {
     expr="train_mode";
@@ -396,16 +439,66 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    };
    update_after=0;
   };
-  MethodCall @[4] {
-   desc="initialize network weights: could also load pre-set weights or something else here";
+  IfElse @[3] {
+   desc=;
    flags=;
-   result_var=NULL;
-   obj=$5$;
-   method=Network::Init_Weights;
-   meth_args {
+   cond {
+    expr="no_prompts";
+    flags=;
+    var_expr="$#0#$";
+    vars {
+    };
+    var_names{ no_prompts;    };
+    bad_vars{     };
+   };
+   true_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$6$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  AssignExpr @[4] {
+   desc="grab the official network epoch counter: will be initialized if needed by now";
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].vars[3]$9$;
+   expr {
+    expr="network.epoch";
+    flags=;
+    var_expr="$#0#$.epoch";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
    };
   };
   WhileLoop @[5] {
@@ -418,7 +511,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     ProgramCall @[0] {
      desc="run the epoch program (one epoch), passes our network and input_data";
      flags=;
-     target=.projects[0].programs.gp[0][2]$9$;
+     target=.projects[0].programs.gp[0][2]$10$;
      targ_ld_init="*BpEpoch*";
      call_init=0;
      prog_args {
@@ -462,8 +555,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     NetCounterIncr @[1] {
      desc="increment the epoch counter (locally and on network)";
      flags=;
-     network_var=$5$;
-     local_ctr_var=$7$;
+     network_var=$6$;
+     local_ctr_var=$9$;
      counter=Network::epoch;
     };
     IfBreak @[2] {
@@ -494,7 +587,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
    flags=;
    result_var=NULL;
-   obj=$6$;
+   obj=$7$;
    method=TimeUsed::EndTimer;
    meth_args {
     name=;

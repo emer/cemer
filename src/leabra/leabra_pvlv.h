@@ -70,7 +70,7 @@ public:
     LeabraUnit* lru = (LeabraUnit*)ru;
     LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
-    if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
@@ -160,7 +160,7 @@ public:
     LeabraUnit* lru = (LeabraUnit*)ru;
     LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
-    if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
@@ -216,7 +216,7 @@ public:
     LeabraUnit* lru = (LeabraUnit*)ru;
     LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
     Compute_SAvgCor(lcg, lru);
-    if(((LeabraLayer*)cg->prjn->from)->acts_p.avg >= savg_cor.thresh) {
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);

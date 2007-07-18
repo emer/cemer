@@ -29,7 +29,7 @@ Program .projects[0].programs.gp[0][1] {
     ProgVar @[6] { };
   };
 
-  ProgEl_List @.init_code = [6] {
+  ProgEl_List @.init_code = [5] {
     AssignExpr @[0] { };
     MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
@@ -37,8 +37,7 @@ Program .projects[0].programs.gp[0][1] {
       };
     };
     AssignExpr @[2] { };
-    NetCounterInit @[3] { };
-    IfElse @[4] { 
+    IfElse @[3] { 
       ProgEl_List @.true_code = [1] {
 	MethodCall @[0] { };
       };
@@ -47,7 +46,7 @@ Program .projects[0].programs.gp[0][1] {
 	MethodCall @[0] { };
       };
     };
-    IfGuiPrompt @[5] { 
+    IfGuiPrompt @[4] { 
       ProgEl_List @.yes_code = [2] {
 	MethodCall @[0] { };
 	PrintExpr @[1] { };
@@ -62,14 +61,14 @@ Program .projects[0].programs.gp[0][1] {
 	ProgArg @[0] { };
       };
     };
-    NetCounterInit @[2] { };
-    MemberAssign @[3] { };
-    IfElse @[4] { 
+    MemberAssign @[2] { };
+    IfElse @[3] { 
       ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { };
 	PrintExpr @[1] { };
       };
     };
+    AssignExpr @[4] { };
     WhileLoop @[5] { 
       ProgEl_List @.loop_code = [3] {
 	ProgramCall @[0] { 
@@ -191,7 +190,7 @@ Program .projects[0].programs.gp[0][1] {
   ProgVar @[3] {
    name="epoch";
    var_type=T_Int;
-   int_val=0;
+   int_val=10;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="current epoch -- local copy, which is used to update network's epoch counter";
@@ -294,14 +293,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     bad_vars{     };
    };
   };
-  NetCounterInit @[3] {
-   desc="initialize epoch counter ";
-   flags=;
-   network_var=$6$;
-   local_ctr_var=.projects[0].programs.gp[0][1].vars[3]$8$;
-   counter=Network::epoch;
-  };
-  IfElse @[4] {
+  IfElse @[3] {
    desc="initialize random seed (either old or new)";
    flags=;
    cond {
@@ -321,7 +313,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      desc="restore previous random seed (all runs produce same results)";
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs.gp[0][1].vars[5]$9$;
+     obj=.projects[0].programs.gp[0][1].vars[5]$8$;
      method=RndSeed::OldSeed;
      meth_args {
       name=;
@@ -338,7 +330,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      desc="new random numbers each time";
      flags=;
      result_var=NULL;
-     obj=$9$;
+     obj=$8$;
      method=RndSeed::NewSeed;
      meth_args {
       name=;
@@ -348,7 +340,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  IfGuiPrompt @[5] {
+  IfGuiPrompt @[4] {
    desc="don't initialize weights without checking";
    flags=;
    prompt="Do you want to Initialize Network Weights";
@@ -432,14 +424,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  NetCounterInit @[2] {
-   desc="initialize epoch counter (both our local copy and network's epoch counter)";
-   flags=;
-   network_var=$6$;
-   local_ctr_var=$8$;
-   counter=Network::epoch;
-  };
-  MemberAssign @[3] {
+  MemberAssign @[2] {
    desc="set network's training mode to our local value";
    flags=;
    obj=$6$;
@@ -455,7 +440,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    };
    update_after=0;
   };
-  IfElse @[4] {
+  IfElse @[3] {
    desc=;
    flags=;
    cond {
@@ -501,6 +486,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     name=;
     el_typ=ProgEl;
     el_def=0;
+   };
+  };
+  AssignExpr @[4] {
+   desc="grab the official network epoch counter: will be initialized if needed by now";
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].vars[3]$9$;
+   expr {
+    expr="network.epoch";
+    flags=;
+    var_expr="$#0#$.epoch";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
    };
   };
   WhileLoop @[5] {
@@ -558,7 +557,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      desc="increment the epoch counter (locally and on network)";
      flags=;
      network_var=$6$;
-     local_ctr_var=$8$;
+     local_ctr_var=$9$;
      counter=Network::epoch;
     };
     IfBreak @[2] {

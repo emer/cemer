@@ -1781,9 +1781,12 @@ void gpiSelectEditDataHost::Constr_Methods() {
       }
       //note: we assume mth_rep methods will use GetLabel() to provide the menu text
       if (rem_men) MakeMenuItem(rem_men, md->GetLabel(), i, i, SLOT(mnuRemoveMethod_select(int)));
-   } else {
-      if (men_nm.empty())
-        men_nm = md->GetLabel();
+    }
+    else {			// BUTTON
+      if (men_nm.nonempty())
+        men_nm += " " + md->GetLabel();
+      else
+	men_nm = md->GetLabel();
       AddMethButton(mth_rep, men_nm);
       MakeMenuItem(mnuRemoveMethod_but, men_nm, i, i, SLOT(mnuRemoveMethod_select(int)));
     }

@@ -1569,6 +1569,7 @@ DataTable* DataSrcDestProg::GetDestData() {
 
 void DataSortProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  sort_spec.name = "sort_spec";
   UpdateSpecDataTable();
 }
 
@@ -1630,6 +1631,7 @@ void DataSortProg::AddAllColumns() {
 
 void DataSelectRowsProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  select_spec.name = "select_spec";
   UpdateSpecDataTable();
 }
 
@@ -1697,6 +1699,7 @@ void DataSelectRowsProg::AddAllColumns() {
 
 void DataSelectColsProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  select_spec.name = "select_spec";
   UpdateSpecDataTable();
 }
 
@@ -1758,6 +1761,7 @@ void DataSelectColsProg::AddAllColumns() {
 
 void DataGroupProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  group_spec.name = "group_spec";
   UpdateSpecDataTable();
 }
 
@@ -1819,6 +1823,7 @@ void DataGroupProg::AddAllColumns() {
 
 void DataJoinProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  join_spec.name = "join_spec";
   UpdateProgVarRef_NewOwner(src_b_data_var);
   UpdateSpecDataTable();
 }
@@ -1898,6 +1903,8 @@ void DataCalcLoop::Initialize() {
 
 void DataCalcLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  src_cols.name = "src_cols";
+  dest_cols.name = "dest_cols";
   UpdateSpecDataTable();
   for(int i=0;i<loop_code.size;i++) {
     ProgEl* pe = loop_code[i];

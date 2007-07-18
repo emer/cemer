@@ -1017,11 +1017,15 @@ public:
   // number of different kinds of views, ex flat vs. tree
   virtual const String	viewText(int index) const = 0; 
   // number of different kinds of views, ex flat vs. 
+  virtual bool		hasNoItems() { return false; }
+  // if it is possible to quickly determine that there are no items on the list, return true -- makes the chooser read-only with "no items available to choose" text label -- if nullOK, then this must always be false.
+  virtual bool		hasOnlyOneItem() { return false; }
+  // if it is possible to quickly determine that there is one and only one item in the list, return true AND set the selection to that one item -- if true, it makes the chooser read-only --  first check should be if nullOK and there are no items -- then there is one item! -- set to null -- if not, then multiple items and should return false
 
   void			setNullText(const String& nt) { null_text = " " + nt; }
   // set text to display instead of NULL for a null item
   
-  bool			ShowItemFilter(void* item); // apply optional filter, else true
+  bool			ShowItemFilter(void* item) const; // apply optional filter, else true
   
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
@@ -1123,6 +1127,8 @@ public:
   int			columnCount(int view) const; // override
   const String		headerText(int index, int view) const; // override
   const String		viewText(int index) const; // override
+  override bool		hasNoItems();
+  override bool		hasOnlyOneItem();
 
   void			GetImage(TypeDef* cur_sel, TypeDef* targ_typ) 
     {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
@@ -1179,6 +1185,10 @@ public:
   override const String	headerText(int index, int view) const;
   override int		viewCount() const {return 1;}
   override const String	viewText(int index) const;
+  override bool		hasNoItems();
+  override bool		hasOnlyOneItem();
+  virtual bool		countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm);
+  // recursively count valid (in scope etc) tokens of type until reaching n, at which point a true is returned -- if n is not reached, return false -- used for above two routines
 
   virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
 				 TypeDef* scope_type = NULL);
@@ -1201,7 +1211,7 @@ protected:
 
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
-  virtual bool		ShowToken(void* tk);
+  virtual bool		ShowToken(void* tk) const;
 };
 
 

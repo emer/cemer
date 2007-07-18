@@ -709,7 +709,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
 
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
+    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
     if(lay->lesioned() || !recv_gp->cons.size)	continue;
      // this is the normalization value: takes into account target activity of layer
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
@@ -732,7 +732,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
   if(u->net_scale == 0.0f) return;
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
+    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
     if(lay->lesioned() || !recv_gp->cons.size)	continue;
     recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
   }
@@ -741,7 +741,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwo
 void LeabraUnitSpec::Compute_NetinRescale(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, float new_scale) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
+    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
     if(lay->lesioned() || !recv_gp->cons.size)	continue;
     recv_gp->scale_eff *= new_scale;
   }
@@ -1231,7 +1231,7 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer*, LeabraNetwork
 void LeabraUnitSpec::Compute_WtFmLin(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from;
+    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
     if(lay->lesioned() || !recv_gp->cons.size)	continue;
     recv_gp->Compute_WtFmLin();
   }
@@ -1682,7 +1682,7 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, T
   Projection* p;
   taLeafItr pi;
   FOR_ITR_EL(Projection, p, lay->projections., pi) {
-    LeabraLayer* fmlay = (LeabraLayer*)p->from;
+    LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
     if(fmlay->spec.SPtr()->InheritsFrom(layer_spec)) {	// inherits - not excact match!
       prjn_idx = p->recv_idx;
       rval = fmlay;
@@ -1698,7 +1698,7 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpecExact(LeabraLayer* lay, int& prjn_i
   Projection* p;
   taLeafItr pi;
   FOR_ITR_EL(Projection, p, lay->projections., pi) {
-    LeabraLayer* fmlay = (LeabraLayer*)p->from;
+    LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
     if(fmlay->spec.SPtr()->GetTypeDef() == layer_spec) {	// not inherits - excact match!
       prjn_idx = p->recv_idx;
       rval = fmlay;
@@ -2712,6 +2712,76 @@ void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
     Compute_OutputName_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
   }
 }
+
+float LeabraLayerSpec::Compute_TopKAvgAct_ugp(LeabraLayer* lay, Unit_Group* ug,
+					      LeabraInhib* thr, LeabraNetwork*) {
+  int k_plus_1 = thr->kwta.k;	// keep cutoff at k
+
+  if(TestError(k_plus_1 <= 0 || thr->active_buf.size != k_plus_1, "Compute_TopKAvgAct_ugp",
+	       "Only usable when using a kwta function!")) {
+    return -1;
+  }
+
+  float k_avg = 0.0f;
+  for(int j=0; j < k_plus_1; j++)
+    k_avg += thr->active_buf[j]->act_eq;
+  k_avg /= (float)k_plus_1;
+
+  return k_avg;
+}
+
+float LeabraLayerSpec::Compute_TopKAvgAct(LeabraLayer* lay, LeabraNetwork* net) {
+  float k_avg = 0.0f;
+  if(lay->units.gp.size > 0) {
+    int g;
+    for(g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      k_avg += Compute_TopKAvgAct_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+    }
+    if(lay->units.gp.size > 0)
+      k_avg /= (float)lay->units.gp.size;
+  }
+  else {
+    k_avg = Compute_TopKAvgAct_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+  }
+  return k_avg;
+}
+
+float LeabraLayerSpec::Compute_TopKAvgNetin_ugp(LeabraLayer* lay, Unit_Group* ug,
+					      LeabraInhib* thr, LeabraNetwork*) {
+  int k_plus_1 = thr->kwta.k;	// keep cutoff at k
+
+  if(TestError(k_plus_1 <= 0 || thr->active_buf.size != k_plus_1, "Compute_TopKAvgNetin_ugp",
+	       "Only usable when using a kwta function!")) {
+    return -1;
+  }
+
+  float k_avg = 0.0f;
+  for(int j=0; j < k_plus_1; j++)
+    k_avg += thr->active_buf[j]->net;
+  k_avg /= (float)k_plus_1;
+
+  return k_avg;
+}
+
+float LeabraLayerSpec::Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net) {
+  float k_avg = 0.0f;
+  if(lay->units.gp.size > 0) {
+    int g;
+    for(g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      k_avg += Compute_TopKAvgNetin_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+    }
+    if(lay->units.gp.size > 0)
+      k_avg /= (float)lay->units.gp.size;
+  }
+  else {
+    k_avg = Compute_TopKAvgNetin_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
+  }
+  return k_avg;
+}
+
+
 
 //////////////////////////////////////////
 //	Stage 5: Between Events 	//
@@ -4141,7 +4211,7 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 
     int j;
     for(j=0;j<lay->projections.size;j++) {
-      LeabraLayer* fmlay = (LeabraLayer*)((Projection*)lay->projections[j])->from;
+      LeabraLayer* fmlay = (LeabraLayer*)((Projection*)lay->projections[j])->from.ptr();
       if(fmlay->name.contains("_Inhib")) continue;
       if(fmlay == lay) continue;
       net->FindMakePrjn(ilay, fmlay, fullprjn, ff_inhib_cs);

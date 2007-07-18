@@ -347,7 +347,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     if(recv_gp->prjn->from == recv_gp->prjn->layer) // self projection, skip it
       continue;
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
+      LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       if(fmlay->spec.SPtr()->InheritsFrom(TA_PVLVDaLayerSpec)) da_lay = fmlay;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
       continue;
@@ -1120,7 +1120,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from;
+    LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     if(lay->CheckError(fmlay == NULL, quiet, rval,
 		  "null from layer in recv projection:", (String)g)) {
       return false;
@@ -1413,7 +1413,7 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     FOR_ITR_EL(Projection, p, lay->projections., pi) {
       LeabraConSpec* cs = (LeabraConSpec*)p->con_spec.SPtr();
       if(!cs) continue;
-      LeabraLayer* fmlay = (LeabraLayer*)p->from;
+      LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
       if(cs->InheritsFrom(&TA_MarkerConSpec) && (fmlay != snrthal_lay)) {
 	pfc_prjn_idx = p->recv_idx;
 	pfc_lay = fmlay;
@@ -1489,7 +1489,7 @@ void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     taLeafItr pi;
     FOR_ITR_EL(Projection, p, lay->projections., pi) {
       LeabraConSpec* cs = (LeabraConSpec*)p->con_spec.SPtr();
-      LeabraLayer* fmlay = (LeabraLayer*)p->from;
+      LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
       if(!cs) continue;
       if(cs->InheritsFrom(&TA_MarkerConSpec) && (fmlay != snrthal_lay)) {
 	pfc_prjn_idx = p->recv_idx;

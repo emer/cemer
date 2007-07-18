@@ -21,6 +21,7 @@
 #include "ta_base.h"
 #include "ta_dump.h"
 #include "css_ta.h"
+#include "netdata.h"
 
 #ifdef TA_GUI
 # include "css_qt.h"
@@ -122,12 +123,15 @@ void Wizard::UpdateAfterEdit() {
 void Wizard::ThreeLayerNet() {
   n_layers = 3;
   layer_cfg.SetSize(n_layers);
-  ((LayerWizEl*)layer_cfg[0])->name = "Input";
-  ((LayerWizEl*)layer_cfg[0])->io_type = LayerWizEl::INPUT;
-  ((LayerWizEl*)layer_cfg[1])->name = "Hidden";
-  ((LayerWizEl*)layer_cfg[1])->io_type = LayerWizEl::HIDDEN;
-  ((LayerWizEl*)layer_cfg[2])->name = "Output";
-  ((LayerWizEl*)layer_cfg[2])->io_type = LayerWizEl::OUTPUT;
+  layer_cfg[0]->name = "Input";
+  layer_cfg[0]->io_type = LayerWizEl::INPUT;
+  layer_cfg[0]->DataChanged(DCR_ITEM_UPDATED);
+  layer_cfg[1]->name = "Hidden";
+  layer_cfg[1]->io_type = LayerWizEl::HIDDEN;
+  layer_cfg[1]->DataChanged(DCR_ITEM_UPDATED);
+  layer_cfg[2]->name = "Output";
+  layer_cfg[2]->io_type = LayerWizEl::OUTPUT;
+  layer_cfg[2]->DataChanged(DCR_ITEM_UPDATED);
 }
 
 void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
@@ -135,19 +139,23 @@ void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
   layer_cfg.SetSize(n_layers);
   int i;
   for(i=0;i<n_inputs;i++) {
-    ((LayerWizEl*)layer_cfg[i])->name = "Input";
-    if(n_inputs > 1) ((LayerWizEl*)layer_cfg[i])->name += "_" + String(i);
-    ((LayerWizEl*)layer_cfg[i])->io_type = LayerWizEl::INPUT;
+    LayerWizEl* lel = layer_cfg[i];
+    lel->name = "Input";
+    if(n_inputs > 1) lel->name += "_" + String(i);
+    lel->io_type = LayerWizEl::INPUT;
+    lel->DataChanged(DCR_ITEM_UPDATED);
   }
   for(;i<n_inputs + n_hiddens;i++) {
-    ((LayerWizEl*)layer_cfg[i])->name = "Hidden";
-    if(n_hiddens > 1) ((LayerWizEl*)layer_cfg[i])->name += "_" + String(i-n_inputs);
-    ((LayerWizEl*)layer_cfg[i])->io_type = LayerWizEl::HIDDEN;
+    LayerWizEl* lel = layer_cfg[i];
+    lel->name = "Hidden";
+    if(n_hiddens > 1) lel->name += "_" + String(i-n_inputs);
+    lel->io_type = LayerWizEl::HIDDEN;
   }
   for(;i<n_layers;i++) {
-    ((LayerWizEl*)layer_cfg[i])->name = "Output";
-    if(n_outputs > 1) ((LayerWizEl*)layer_cfg[i])->name += "_" + String(i-(n_inputs+n_hiddens));
-    ((LayerWizEl*)layer_cfg[i])->io_type = LayerWizEl::OUTPUT;
+    LayerWizEl* lel = layer_cfg[i];
+    lel->name = "Output";
+    if(n_outputs > 1) lel->name += "_" + String(i-(n_inputs+n_hiddens));
+    lel->io_type = LayerWizEl::OUTPUT;
   }
 }
 
@@ -162,7 +170,8 @@ void Wizard::StdNetwork(Network* net) {
   int i;
   int n_hid_layers = 0;
   for(i=0;i<layer_cfg.size;i++) {
-    if(((LayerWizEl*)layer_cfg[i])->io_type == LayerWizEl::HIDDEN) n_hid_layers++;
+    LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
+    if(el->io_type == LayerWizEl::HIDDEN) n_hid_layers++;
   }
   for(i=0;i<layer_cfg.size;i++) {
     LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
@@ -354,7 +363,15 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
 		  "is not a group of programs -- invalid for this function");
     return NULL;
   }
-  return (Program_Group*)rval;
+  Program_Group* pg = (Program_Group*)rval;
+  Program* apin = pg->FindName("ApplyInputs");
+  if(apin) {
+    LayerWriter* lw = (LayerWriter*)apin->objs.FindType(&TA_LayerWriter);
+    if(lw) {
+      lw->AutoConfig();
+    }
+  }
+  return (Program_Group*)pg;
 }
 
 /* TEMP
@@ -685,7 +702,7 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
   if(auto_opn) {
     wiz->auto_open = true;
     ((Wizard*)wiz)->ThreeLayerNet();
-    wiz->Edit();
+    wiz->EditPanel(true);
   }
 }
 

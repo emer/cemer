@@ -58,6 +58,16 @@ private:
   void	Destroy() 	{ };
 };
 
+class PDP_API LayerWizElList : public taList<LayerWizEl> {
+  // ##CAT_Wizard a list of layer wiz elements
+INHERITED(taList<LayerWizEl>)
+public:
+  TA_BASEFUNS_NOCOPY(LayerWizElList);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_LayerWizEl); }
+  void 	Destroy()		{ };
+};
+
 class PDP_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
@@ -68,7 +78,7 @@ public:
   };
 
   int		n_layers;	// number of layers
-  taBase_List	layer_cfg;	// provides configuration information for each layer
+  LayerWizElList layer_cfg;	// provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
 
   virtual void	ThreeLayerNet();

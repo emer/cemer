@@ -3248,7 +3248,7 @@ void taiItemPtrBase::OpenChooser() {
 delete ic;
 }
 
-bool taiItemPtrBase::ShowItemFilter(void* item) {
+bool taiItemPtrBase::ShowItemFilter(void* item) const {
   if (item_filter) 
     return item_filter(item);
   return true;
@@ -3257,6 +3257,14 @@ bool taiItemPtrBase::ShowItemFilter(void* item) {
 void taiItemPtrBase::UpdateImage(void* cur_sel) {
   // note: don't optimize this if same msel, since we use it to set label
   m_sel = cur_sel;
+  if(hasNoItems()) {
+    rep()->setEnabled(false);	// if no options
+    rep()->setText("No Items Available to Choose!");
+    return;
+  }
+  if(hasOnlyOneItem()) {
+    rep()->setEnabled(false);	// if only one option, this is it -- will override m_sel!
+  }
   rep()->setText(labelText());
 }
 
@@ -3539,6 +3547,17 @@ void taiTypeDefButton::BuildCategoriesR_impl(TypeDef* top_typ) {
   }
 }
 
+bool taiTypeDefButton::hasNoItems() {
+  // always false for this -- targ_typ is snould not be null!
+  return false;
+}
+
+bool taiTypeDefButton::hasOnlyOneItem() {
+  if(HasFlag(flgNullOk)) return false; // we now have 2 -- targ_typ and null
+  if(!targ_typ) return false;	       // shouldn't happen
+  return (targ_typ->children.size == 0); // if we have no children, then there is only 1!
+}
+
 void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
   //assume only called if needed
   
@@ -3560,7 +3579,7 @@ void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
 }
 
 int taiTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
-  QTreeWidgetItem* top_item)
+				     QTreeWidgetItem* top_item)
 {
   int rval = 0;
   QTreeWidgetItem* item = NULL; // used for intermediate items
@@ -3808,6 +3827,60 @@ void taiTokenPtrButton::EditPanel() {
   }
 }
 
+
+bool taiTokenPtrButton::countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm) {
+  if(td->tokens.size == 0 && td->tokens.sub_tokens == 0) return false;
+  // not gonna happen if it hasn't already
+  for (int i = 0; i < td->tokens.size; ++i) {
+    taBase* btmp = (taBase*)td->tokens.FastEl(i);
+    if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
+      continue;
+    if (!ShowToken(btmp)) continue;
+    cnt++;
+    if(cnt >= n) return true;	// got it!
+    last_itm = (void*)btmp;
+  }
+  if(td->tokens.sub_tokens == 0) return false; // not gonna happen
+
+  for (int i = 0; i < td->children.size; ++i) {
+    TypeDef* chld = td->children[i];
+    if(countTokensToN(cnt, chld, n, last_itm)) return true;
+  }
+  return false;			// didn't happen
+}
+
+bool taiTokenPtrButton::hasNoItems() {
+  if(!targ_typ) return false;	       // shouldn't happen
+  if(HasFlag(flgNullOk)) return false; // we now have 1..
+  if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
+  int cnt = 0;
+  void* last_itm = NULL;
+  bool got_one = countTokensToN(cnt, targ_typ, 1, last_itm);
+  if(!got_one) {
+    m_sel = NULL;		// select the null!
+    return true;
+  }
+  return false;
+}
+
+bool taiTokenPtrButton::hasOnlyOneItem() {
+  if(!targ_typ) return false;	       // shouldn't happen
+  int cnt = 0;
+  void* last_itm = NULL;
+  if(HasFlag(flgNullOk)) {
+    // now check that we don't have any others -- same logic as has no items
+    if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
+    return !countTokensToN(cnt, targ_typ, 1, last_itm);
+  }
+  if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return false; // no way
+  bool got_two = countTokensToN(cnt, targ_typ, 2, last_itm); // if we get 2, then we're bust!
+  if(!got_two && cnt == 1) {
+    m_sel = last_itm;		// select the one item!
+    return true;
+  }
+  return false;
+}
+
 void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
   //assume only called if needed
   
@@ -3894,7 +3967,7 @@ const String taiTokenPtrButton::labelNameNonNull() const {
   return token()->GetDisplayName();
 }
 
-bool taiTokenPtrButton::ShowToken(void* tk) {
+bool taiTokenPtrButton::ShowToken(void* tk) const {
   return ShowItemFilter(tk);
 }
 

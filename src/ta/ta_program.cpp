@@ -2256,32 +2256,6 @@ void* ProgObjList::El_Own_(void* it_) {
 
 ProgLib* Program::prog_lib = NULL;
 String_Array Program::forbidden_names;
-
-void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
-  taBase* tok = (taBase*)td->GetInstance();
-  if(tok) {
-    taBase* o = tok->MakeToken();
-    o->SetName("New" + td->name);
-    prog->init_code.Add(o);
-  }
-  for(int i=0;i<td->children.size;i++) {
-    TypeDef* chld = td->children[i];
-    MakeTemplate_fmtype(prog, chld);
-  }
-}
-
-Program* Program::MakeTemplate() {
-//TODO: this will probably get nuked and replaced with a generic maker on .root
-  Program* prog = new Program;
-  {ProgVar* o = new ProgVar; o->SetName("NewProgVar"); prog->vars.Add(o);}
-  //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
-  {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
-  //note: put in .init since that will get searched first
-  
-  MakeTemplate_fmtype(prog, &TA_ProgEl);
-  return prog;
-}
-  
 bool Program::stop_req = false;
 bool Program::step_mode = false;
 Program_Group* Program::step_gp = NULL;
@@ -3126,6 +3100,50 @@ bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
 		"is not allowed as it clashes with other hard-coded variable names -- please choose a different one!");
   return true;
+}
+
+void Program::MakeTemplate_fmtype(Program* prog, TypeDef* td) {
+  taBase* tok = (taBase*)td->GetInstance();
+  if(tok) {
+    taBase* o = tok->MakeToken();
+    o->SetName("New" + td->name);
+    prog->init_code.Add(o);
+  }
+  for(int i=0;i<td->children.size;i++) {
+    TypeDef* chld = td->children[i];
+    MakeTemplate_fmtype(prog, chld);
+  }
+}
+
+Program* Program::MakeTemplate() {
+//TODO: this will probably get nuked and replaced with a generic maker on .root
+  Program* prog = new Program;
+  {ProgVar* o = new ProgVar; o->SetName("NewProgVar"); prog->vars.Add(o);}
+  //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
+  {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
+  //note: put in .init since that will get searched first
+  
+  MakeTemplate_fmtype(prog, &TA_ProgEl);
+  return prog;
+}
+  
+bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label) {
+  if(!editor) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
+    editor = (SelectEdit*)proj->edits.New(1);
+  }
+  TypeDef* td = GetTypeDef();
+  bool rval = true;
+  MethodDef* md = td->methods.FindName("Init");
+  if(md) rval = editor->SelectMethod(this, md, extra_label);
+  md = td->methods.FindName("Run");
+  if(md) rval |= editor->SelectMethod(this, md, extra_label);
+  md = td->methods.FindName("Step");
+  if(md) rval |= editor->SelectMethod(this, md, extra_label);
+  md = td->methods.FindName("Stop");
+  if(md) rval |= editor->SelectMethod(this, md, extra_label);
+  return rval;
 }
 
 //////////////////////////
