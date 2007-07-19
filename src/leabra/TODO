@@ -2,26 +2,12 @@ leabra todo list:
 
 commit:
 
-* Name empty frame for first object in it
-* function select edit: addition name should be additional, not replace
-* DataProg -- set names of sub-specs
-* one function to add Program controls to select edit (with prefix name)
-* wizard stdprogs calls autoconfig on layerwriter
-* projection from is a smartref, not a raw pointer!  also, fixed updating when name
-changes in setfrom
-* prjn names are read only
-* fix that crazy "Add Frame" thing after selecting in t3view -- overloaded right mouse
-button event thing: basic default one and the one in the examiner viewer.  just 
-got rid of the default one and use the one in the examiner viewer -- you just can't
-have two competing ones, and viewer guy us MUCH more useful.
-* get current epoch in LeabraTrain (add IfGui thing to other algos with this too)
-* token and typedef selector optimizations: if only one item available on new selector,
-  select it and make it read only.  if none available, then so indicate, also read only
-* fixed netview spec selection bug: ItemSelected signal no longer operative from iTree --
-  need to use Notify guy
-
 * wizard not showing on new project -- despite auto_show and being 2nd item
 * selectedit browser name not updating when changed (in general, various name changes don't seem to update the browser)
+
+* multiple vars in print var
+* use css parser to process progexpr: have progspace, parse a string, have a special callback
+function for whenever a variable is processed..
 
 == Virtual Env
 

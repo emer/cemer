@@ -1761,6 +1761,7 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
   int idx =0;
   dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
   dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4);
+  dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2);
   dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2);
   dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0);
   dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0);
@@ -1815,6 +1816,8 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
   if(!superimpose) {		// might have changed!
     dt->AddBlankRow();
   }
+
+  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
 
   int max_off_width = 4;	// use for fading edges
   for(int i=0;i<dogs.size;i++) {
@@ -1897,11 +1900,16 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
   }
   taBase::unRefDone(ret_img);
 
+  float_Matrix* isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
+  taBase::Ref(isz_mat);
+  isz_mat->FastEl(0) = img_size.x; isz_mat->FastEl(1) = img_size.y;
+  taBase::unRefDone(isz_mat);
+  
   float_Matrix* mv_mat = (float_Matrix*)dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
   taBase::Ref(mv_mat);
   mv_mat->FastEl(0) = move_x; mv_mat->FastEl(1) = move_y;
   taBase::unRefDone(mv_mat);
-  
+
   dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(scale, -1);
   dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(rotate, -1);
   return true;

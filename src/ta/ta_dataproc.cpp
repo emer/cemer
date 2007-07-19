@@ -1267,7 +1267,7 @@ const String DataLoop::GenCssPre_impl(int indent_level) {
   String id1 = cssMisc::Indent(indent_level+1);
   String id2 = cssMisc::Indent(indent_level+2);
   String id3 = cssMisc::Indent(indent_level+3);
-  if(!data_var || !index_var) return id1 + "// DataLoop ERROR vars not set!";
+  if(!data_var || !index_var) return id1 + "// DataLoop ERROR vars not set!\n";
   String data_nm = data_var->name;
   String idx_nm = index_var->name;
 
@@ -1293,7 +1293,7 @@ const String DataLoop::GenCssBody_impl(int indent_level) {
 }
 
 const String DataLoop::GenCssPost_impl(int indent_level) {
-  if(!data_var || !index_var) return cssMisc::Indent(indent_level+1) + "// DataLoop ERROR vars not set!";
+  if(!data_var || !index_var) return cssMisc::Indent(indent_level+1) + "// DataLoop ERROR vars not set!\n";
   String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
   rval += cssMisc::Indent(indent_level) + "} // DataLoop " + data_var->name + "\n";
   return rval;
@@ -1604,7 +1604,7 @@ const String DataSortProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
   if(!src_data_var)
-    return il + "// DataSort: src_data_var not set!  cannot run";
+    return il + "// DataSort: src_data_var not set!  cannot run\n";
   String rval = il + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::Sort(" + dest_data_var->name + ", " + src_data_var->name
@@ -1666,7 +1666,7 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
   if(!src_data_var)
-    return il + "// DataSelectRows: src_data_var not set!  cannot run!";
+    return il + "// DataSelectRows: src_data_var not set!  cannot run!\n";
   String rval = il + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   for(int i=0;i<select_spec.ops.size; i++) {
     DataSelectEl* el = (DataSelectEl*)select_spec.ops[i];
@@ -1734,7 +1734,7 @@ const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
   if(!src_data_var)
-    return il + "// DataSelectCols: src_data_var not set!  cannot run!";
+    return il + "// DataSelectCols: src_data_var not set!  cannot run!\n";
   String rval = il + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
@@ -1796,7 +1796,7 @@ const String DataGroupProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
   if(!src_data_var)
-    return il + "// DataGroup: src_data_var not set!  cannot run!";
+    return il + "// DataGroup: src_data_var not set!  cannot run!\n";
   String rval = il + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
@@ -1877,7 +1877,7 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String il1 = cssMisc::Indent(indent_level+1);
   if(!src_data_var || !src_b_data_var)
-    return il + "// DataJoin: src_data_var or src_b_data_var not set!  cannot run";
+    return il + "// DataJoin: src_data_var or src_b_data_var not set!  cannot run\n";
   String rval = il + "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";\n";
   if(dest_data_var) {
     rval += il1 + "taDataProc::Join(" + dest_data_var->name + ", " + 
@@ -2017,7 +2017,7 @@ void DataCalcLoop::PreGenChildren_impl(int& item_id) {
 }
 
 const String DataCalcLoop::GenCssPre_impl(int indent_level) {
-  if(!GetSrcData()) return cssMisc::Indent(indent_level) + "// no src data!";
+  if(!GetSrcData()) return cssMisc::Indent(indent_level) + "// no src data!\n";
   src_cols.GetColumns(GetSrcData());
   String il1 = cssMisc::Indent(indent_level+1);
   String il2 = cssMisc::Indent(indent_level+2);

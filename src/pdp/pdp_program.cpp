@@ -31,7 +31,7 @@ const String NetDataLoop::GenCssPre_impl(int indent_level) {
   String id1 = cssMisc::Indent(indent_level+1);
   String id2 = cssMisc::Indent(indent_level+2);
   String id3 = cssMisc::Indent(indent_level+3);
-  if(!data_var || !index_var) return id1 + "// NetDataLoop ERROR vars not set!";
+  if(!data_var || !index_var) return id1 + "// NetDataLoop ERROR vars not set!\n";
   String data_nm = data_var->name;
   String idx_nm = index_var->name;
 
@@ -207,7 +207,7 @@ const String NetGroupedDataLoop::GenCssPre_impl(int indent_level) {
   String id1 = cssMisc::Indent(indent_level+1);
   String id2 = cssMisc::Indent(indent_level+2);
   String id3 = cssMisc::Indent(indent_level+3);
-  if(!data_var || !group_index_var || !item_index_var) return id1 + "// NetGroupedDataLoop ERROR vars not set!";
+  if(!data_var || !group_index_var || !item_index_var) return id1 + "// NetGroupedDataLoop ERROR vars not set!\n";
   String data_nm = data_var->name;
   String gp_idx_nm = group_index_var->name;
   String it_idx_nm = item_index_var->name;
@@ -239,7 +239,7 @@ const String NetGroupedDataLoop::GenCssBody_impl(int indent_level) {
 }
 
 const String NetGroupedDataLoop::GenCssPost_impl(int indent_level) {
-  if(!data_var || !group_index_var || !item_index_var) return "// NetGroupedDataLoop ERROR vars not set!";
+  if(!data_var || !group_index_var || !item_index_var) return "// NetGroupedDataLoop ERROR vars not set!\n";
   String rval = cssMisc::Indent(indent_level+2) + "} // item for loop\n";
   rval += cssMisc::Indent(indent_level+1) + "} // group for loop\n";
   rval += cssMisc::Indent(indent_level) + "} // NetGroupedDataLoop " + data_var->name + "\n";
@@ -337,7 +337,7 @@ void NetCounterInit::GetLocalCtrVar() {
 }
 
 const String NetCounterInit::GenCssBody_impl(int indent_level) {
-  if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!";
+  if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!\n";
   String rval = cssMisc::Indent(indent_level) + counter->name + " = 0;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter->name + " = " + counter->name + ";\n";
   return rval;
@@ -397,7 +397,7 @@ void NetCounterIncr::GetLocalCtrVar() {
 }
 
 const String NetCounterIncr::GenCssBody_impl(int indent_level) {
-  if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!";
+  if(!counter || !network_var) return "// NetCounterInit ERROR: vars not set!\n";
   String rval = cssMisc::Indent(indent_level) + counter->name + "++;\n";
   rval += cssMisc::Indent(indent_level) + network_var->name + "->" + counter->name + " = " + counter->name + ";\n";
   return rval;
@@ -447,7 +447,7 @@ void NetUpdateView::GetUpdateVar() {
 }
 
 const String NetUpdateView::GenCssBody_impl(int indent_level) {
-  if(!network_var) return "// ERROR: network_var not set in NetUpdateView";
+  if(!network_var) return "// ERROR: network_var not set in NetUpdateView\n";
   String rval = cssMisc::Indent(indent_level) + "if(update_net_view) "
     + network_var->name + "->UpdateAllViews();\n";
   return rval;
@@ -554,7 +554,7 @@ bool InitNamedUnits::GetNetworkVar() {
 
 const String InitNamedUnits::GenCssBody_impl(int indent_level) {
   if(!init_label_net || !network_var)
-    return "// ERROR: vars not set!";
+    return "// InitNamedUnits: not labeling units!\n";
   String il = cssMisc::Indent(indent_level);
   String rval = il + "{ " + "InitNamedUnits* inu = this" + GetPath(NULL,program()) + ";\n"; 
   rval += il + "  inu->LabelNetwork(); }\n";

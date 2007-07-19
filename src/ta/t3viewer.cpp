@@ -1691,8 +1691,10 @@ void iTabWidget::emit_customContextMenuRequested2(const QPoint& pos,
 }
 
 void iTabWidget::contextMenuEvent(QContextMenuEvent* e) {
-  QPoint gpos = mapToGlobal(e->pos());
-  emit_customContextMenuRequested2(gpos, -1);
+  // NOTE: this is not a good thing because the viewer has its own menu that
+  // does everything it needs, and this conflicts
+//   QPoint gpos = mapToGlobal(e->pos());
+//   emit_customContextMenuRequested2(gpos, -1);
 }
 
 //////////////////////////
@@ -1718,10 +1720,8 @@ void iT3DataViewer::Init() {
   //  tw->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
   lay->addWidget(tw);
-  // NOTE: this is not a good thing because the viewer has its own menu that
-  // does everything it needs, and this conflicts
-//   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
-//     this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
+  connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
+	  this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
   // punt, and just connect a timer to focus first tab
   // if any ProcessEvents get called (should not!) may have to make non-zero time
   QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
