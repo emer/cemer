@@ -751,7 +751,7 @@ iProgramPanel::iProgramPanel(taiDataLink* dl_)
       dl->CreateTreeDataNode(NULL, pe->items, NULL, dl->GetName());
     }
   }
-  pe->items->setDefaultExpandLevels(6); // shouldn't generally be more than this
+  pe->items->setDefaultExpandLevels(12); // shouldn't generally be more than this
   pe->items->setDecorateEnabled(true); //TODO: maybe make this an app option
   connect(pe->items, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(items_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
@@ -1370,3 +1370,76 @@ void iProgramCtrlPanel::ResolveChanges_impl(CancelOp& cancel_op) {
     pc->Apply();
   }
 }
+
+///////////////////////////////////////////////////////////////////////
+// 	Program specific browser guys!
+
+iProgramPanel* Program::FindMyProgramPanel() {
+  if(!taMisc::gui_active) return NULL;
+  taDataLink* link = data_link();
+  if(!link) return NULL;
+  taDataLinkItr itr;
+  iProgramPanel* el;
+  FOR_DLC_EL_OF_TYPE(iProgramPanel, el, link, itr) {
+    if (el->prog() == this) {
+      return el;
+    }
+  }
+  return NULL;
+}
+
+bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  if(!link) return false;
+
+  iProgramPanel* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->scrollTo(iti);
+    itv->setCurrentItem(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}
+
+bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  if(!link) return false;
+
+  iProgramPanel* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->ExpandAllUnder(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}
+
+bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiDataLink* link = (taiDataLink*)itm->GetDataLink();
+  if(!link) return false;
+
+  iProgramPanel* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserCollapseAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->CollapseAllUnder(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}
+

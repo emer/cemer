@@ -1021,6 +1021,13 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
       new_obj->SetDefaultName(); // should give it a new name, so not confused with existing obj
     // do a full UAE (not just DC) so associated update code gets retriggered
     new_obj->UpdateAfterEdit();
+
+    // special new delayed code to expand and select the new guy!
+    if(!list->HasOption("NO_EXPAND_ALL") && !new_obj->HasOption("NO_EXPAND_ALL")) {
+      tabMisc::DelayedFunCall(new_obj, "BrowserExpandAll");
+      tabMisc::DelayedFunCall(new_obj, "BrowserSelectMe");
+    }
+
     return taiClipData::ER_OK;
   }
   

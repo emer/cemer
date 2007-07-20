@@ -74,27 +74,37 @@ class taBase_PtrList;
 class String_Array;
 class UserDataItem;
 class UserDataItem_List;
+class NameVar_Array;
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
 public:
   static taRootBase*	root;
   // root of the structural object hierarchy
-  static taBase_PtrList	delayed_remove;
+
+  static taBase_PtrList	delayed_close;
   // list of objs to be removed in the wait process (e.g. when objs delete themselves)
   static taBase_PtrList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
-  static taBase_PtrList	post_load_opr;  // #HIDDEN objects that need to have operations performed on them after loading
+  static NameVar_Array  delayed_funcalls;
+  // functions to call during the waiting process -- variant value is the object, and name is the function
 
-  static void		Close_Obj(TAPtr obj);
-  // call this to implement closing object function
-  static void		DeleteRoot(); // get rid of root, if not nuked already
   static void		WaitProc();
-  // wait process function: remove objects from groups, update others
-//obs  static bool	NotifyEdits(TAPtr obj);
-  // notify any edit dialogs of a taptr object that object has changed
+  // wait process function: process all the delayed stuff
+
+  static void		DelayedClose(taBase* obj);
+  // close this object during the wait process (after other events have been processed and we are outside of any functions within the to-be-closed object)
   static void		DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
+  static void		DelayedFunCall(taBase* obj, const String& fun_name);
+  // perform a delayed function call on this object of given function name (using CallFun) -- if args required they will be prompted for, but that is probably not a great idea from the user's perspective.. best for void functions
+
+  static void		DeleteRoot(); // get rid of root, if not nuked already
+
+protected:
+  static bool		DoDelayedCloses();
+  static bool		DoDelayedUpdateAfterEdits();
+  static bool		DoDelayedFunCalls();
 };
 
 // common defs used by ALL taBase types: Type and Copy guys
@@ -1132,6 +1142,10 @@ public:
   // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it)
   virtual bool		BrowserSelectMe();
   // #CAT_Display select this item in the main project browser (only works if gui is active, etc) -- returns success
+  virtual bool		BrowserExpandAll();
+  // #CAT_Display expand all sub-leaves under this item in the browser
+  virtual bool		BrowserCollapseAll();
+  // #CAT_Display collapse all sub-leaves under this item in the browser
   virtual void		BrowseMe();
   // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
   virtual bool		ReShowEdit(bool force = false);
@@ -1717,7 +1731,9 @@ public:
   // #CAT_Access set the default element to be given item
 
   override taBase* New(int n_objs=1, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
+  // #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
+  virtual taBase* New_gui(int n_objs=1, TypeDef* typ=NULL);
+  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_XpertModify #LABEL_New create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 

@@ -963,7 +963,10 @@ int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
     taiMisc::active_dialogs.AddUnique((taiDataHost*)this); // add to the list of active dialogs
   }
   state = ACTIVE;
-  return dialog->post(modal);
+  int rval = dialog->post(modal);
+  if(modal)
+    Cancel();
+  return rval;
 }
 
 void taiDataHostBase::setBgColor(const iColor& new_bg) {

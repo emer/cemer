@@ -372,11 +372,16 @@ void taProject::PostLoadAutos() {
     edits.AutoEdit();
     // this is very hacky... select the 2nd tab, which will 
     // be the first auto guy if there were any
+    // make double sure..
+    taiMiscCore::ProcessEvents();
+    taiMiscCore::ProcessEvents();
     PanelViewer* pv = (PanelViewer*)vwr->FindFrameByType(&TA_PanelViewer);
     if (!pv) return; // shouldn't happen
     iTabViewer* itv = pv->widget();
     itv->tabView()->SetCurrentTab(1);
+    taiMiscCore::ProcessEvents();
   }
+  programs.RunStartupProgs();	// only at last step!
 }
 
 MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {
@@ -503,7 +508,7 @@ void taProject::UpdateChangeLog() {
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("last_change_desc");
   taiStringDataHost* dlg = new taiStringDataHost(md, this, td, false); // false = not read only
-  dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  To turn off this feature, toggle use_change_log on the Project.");
+  dlg->Constr("Please enter a detailed description of the changes made to the project since it was last saved -- this will be recorded in a docs object called ChangeLog.  You can use self-contained HTML formatting tags.  To turn off this feature, toggle use_change_log on the Project.  <b>NOTE: Cancel</b> here is <i>only</i> for the change log entry -- not for the project save!");
   if(dlg->Edit(true)) {
     time_t tmp = time(NULL);
     String tstamp = ctime(&tmp);

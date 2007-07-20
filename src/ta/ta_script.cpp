@@ -69,7 +69,7 @@ AbstractScriptBase::~AbstractScriptBase() {
 }
 
 bool AbstractScriptBase::CompileScript(bool force) {
-  if (script_compiled && !force) return true;
+  if (script_compiled && (bool)script && !force) return true;
   if (!HasScript()) {
     taMisc::Error("** Cannot Compile Script: No script file or string specified");
     return false;

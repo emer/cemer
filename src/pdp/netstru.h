@@ -493,7 +493,7 @@ private:
 };
 
 class PDP_API RecvCons_List: public taList<RecvCons> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of receiving connections, one per projection
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of receiving connections, one per projection
 INHERITED(taList<RecvCons>)
 public:
   virtual RecvCons*	NewPrjn(Projection* prjn);
@@ -609,7 +609,7 @@ private:
 };
 
 class PDP_API SendCons_List: public taList<SendCons> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of sending connections, one per projection
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of sending connections, one per projection
 INHERITED(taList<SendCons>)
 public:
   // projection-related functions for operations on sub-groups of the group
@@ -1154,7 +1154,7 @@ inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 
 
 class PDP_API Unit_Group: public taGroup<Unit> {
-  // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network a group of units
+  // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL a group of units
 INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW layer owner

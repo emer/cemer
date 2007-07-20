@@ -474,10 +474,16 @@ private:
 }; 
 
 class TA_API PrintVar: public ProgEl { 
-  // print out (to the console) the value of a variable -- useful for debugging
+  // print out (to the console) the value of variable(s) -- useful for debugging
 INHERITED(ProgEl)
 public:
+  String		message;	// initial message to print
   ProgVarRef		print_var; 	// print out (to console) the value of this variable
+  ProgVarRef		print_var2; 	// print out (to console) the value of this variable
+  ProgVarRef		print_var3; 	// print out (to console) the value of this variable
+  ProgVarRef		print_var4; 	// print out (to console) the value of this variable
+  ProgVarRef		print_var5; 	// print out (to console) the value of this variable
+  ProgVarRef		print_var6; 	// print out (to console) the value of this variable
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }

@@ -126,20 +126,82 @@ const QPixmap* folder_open_pixmap() {
 
 taRootBase* tabMisc::root = NULL;
 
-taBase_PtrList 	tabMisc::delayed_remove;
+taBase_PtrList 	tabMisc::delayed_close;
 taBase_PtrList 	tabMisc::delayed_updateafteredit;
-taBase_PtrList	tabMisc::post_load_opr;
+NameVar_Array   tabMisc::delayed_funcalls;
 
-void tabMisc::Close_Obj(TAPtr obj) {
-  delayed_remove.Link(obj);
-/*obs -- the obj will send a delete notify
+void tabMisc::DelayedClose(taBase* obj) {
+  delayed_close.Link(obj);
+}
+
+void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
+  delayed_updateafteredit.Link(obj);
+}
+
+void tabMisc::DelayedFunCall(taBase* obj, const String& fun_name) {
+  NameVar nv(fun_name, Variant(obj));
+  delayed_funcalls.Add(nv);
+}
+
+void tabMisc::WaitProc() {
 #ifdef TA_GUI
-  if(taMisc::gui_active) {
-    taiMisc::CloseEdits((void*)obj, obj->GetTypeDef());
-    return;
+  taiMisc::PurgeDialogs();
+#endif
+  DoDelayedCloses();
+  DoDelayedUpdateAfterEdits();
+  DoDelayedFunCalls();
+}
+
+
+bool tabMisc::DoDelayedCloses() {
+  bool did_some = false;
+  if(delayed_close.size > 0) {
+    for (int i = delayed_close.size - 1; i >= 0; --i) {
+      // if there is only 1 ref count left, we must be it, so just remove,
+      // otherwise, try its owner, otherwise, prob an error (too many refs)
+      taBase* it = delayed_close.FastEl(i);
+      // we need to grab count, because we always remove, and it could delete
+      int refn = taBase::GetRefn(it); 
+      delayed_close.RemoveIdx(i);
+      //TODO: maybe should warn if refn>2, since that will mean refs remain
+      if (refn > 1) {
+	it->Close(); // tries owner if any, else just unrefs, which should delete
+      } else if (refn < 1) { // VERY BAD! ref s/nb < 1!
+	taMisc::Error("tabMisc::delayed_close: item had refn<1!");
+      }
+    }
+    did_some = true;
   }
-#endif */
-  //  WaitProc();		// kill me now ?
+  return did_some;
+}
+
+bool tabMisc::DoDelayedUpdateAfterEdits() {
+  bool did_some = false;
+  if (delayed_updateafteredit.size > 0) {
+    for(int i=0; i<delayed_updateafteredit.size; i++) {
+      taBase* it = delayed_updateafteredit.FastEl(i);
+      it->UpdateAfterEdit();
+    }
+    delayed_updateafteredit.RemoveAll();
+    did_some = true;
+  }
+  return did_some;
+}
+
+bool tabMisc::DoDelayedFunCalls() {
+  bool did_some = false;
+  if (delayed_funcalls.size > 0) {
+    for(int i=0; i<delayed_funcalls.size; i++) {
+      NameVar& nv = delayed_funcalls.FastEl(i);
+      taBase* it = nv.value.toBase();
+      if(it) {
+	it->CallFun(nv.name);
+      }
+    }
+    delayed_funcalls.Reset();
+    did_some = true;
+  }
+  return did_some;
 }
 
 void tabMisc::DeleteRoot() {
@@ -148,48 +210,6 @@ void tabMisc::DeleteRoot() {
     tabMisc::root = NULL;
   }
 }
-
-void tabMisc::WaitProc() {
-#ifdef TA_GUI
-  taiMisc::PurgeDialogs();
-#endif
-  for (int i = delayed_remove.size - 1; i >= 0; --i) {
-    // if there is only 1 ref count left, we must be it, so just remove,
-    // otherwise, try its owner, otherwise, prob an error (too many refs)
-    TAPtr it = delayed_remove.FastEl(i);
-    // we need to grab count, because we always remove, and it could delete
-    int refn = taBase::GetRefn(it); 
-    delayed_remove.RemoveIdx(i);
-    //TODO: maybe should warn if refn>2, since that will mean refs remain
-    if (refn > 1) {
-      it->Close(); // tries owner if any, else just unrefs, which should delete
-    } else if (refn < 1) { // VERY BAD! ref s/nb < 1!
-      taMisc::Error("tabMisc::delayed_remove: item had refn<1!");
-    }
-  }
-  if (delayed_updateafteredit.size > 0) {
-    int i;
-    for(i=0; i<delayed_updateafteredit.size; i++) {
-      TAPtr it = delayed_updateafteredit.FastEl(i);
-      it->UpdateAfterEdit();
-    }
-    delayed_updateafteredit.RemoveAll();
-  }
-}
-
-/*obsbool tabMisc::NotifyEdits(TAPtr obj) {
-#ifdef TA_GUI
-  return taiMisc::NotifyEdits(obj, obj->GetTypeDef());
-#else
-  return false;
-#endif
-} */
-
-void tabMisc::DelayedUpdateAfterEdit(TAPtr obj) {
-  delayed_updateafteredit.Link(obj);
-}
-
-
 
 //////////////////////////
 // 	taBase		//
@@ -1726,6 +1746,7 @@ void taBase::BrowseMe() {
 //	Edit Dialog gui
 
 bool taBase::Edit() {
+  if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   taiEdit* ie;
   if((ie = GetTypeDef()->ie) != NULL) {
@@ -1737,6 +1758,7 @@ bool taBase::Edit() {
 }
 
 bool taBase::EditDialog(bool modal) {
+  if(!taMisc::gui_active) return false;
   // todo: it doesn't look like modal is being used here!!
 #ifdef TA_GUI
   taiEdit* ie;
@@ -1751,13 +1773,21 @@ bool taBase::EditDialog(bool modal) {
 #ifndef TA_GUI
 // see ta_qtviewer.cpp
 bool taBase::EditPanel(bool new_tab) {
+  return false;
 }
-
 bool taBase::BrowserSelectMe() {
+  return false;
+}
+bool taBase::BrowserExpandAll() {
+  return false;
+}
+bool taBase::BrowserCollapseAll() {
+  return false;
 }
 #endif
 
 bool taBase::ReShowEdit(bool force) {
+  if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
 #endif
@@ -1896,7 +1926,7 @@ void taBase::Close() {
 }
 
 void taBase::CloseLater() {
-  tabMisc::Close_Obj(this);
+  tabMisc::DelayedClose(this);
 }
 
 bool taBase::Close_Child(TAPtr) {
@@ -2596,7 +2626,7 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
     rval->SetName(orgnm);
   SwapIdx(idx, size-1);		// switch positions, so old guy is now at end!
   itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
-  tabMisc::Close_Obj(itm);
+  tabMisc::DelayedClose(itm);
   // then do a delayed remove of this object (in case called by itself!)
   return true;
 }
@@ -3001,6 +3031,18 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
   }
   return rval;
 }
+
+taBase* taList_impl::New_gui(int no, TypeDef* typ) {
+  taBase* rval = New(no, typ);
+  if(rval && taMisc::gui_active) {
+    if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+      tabMisc::DelayedFunCall(rval, "BrowserExpandAll");
+      tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+    }
+  }
+  return rval;
+}
+
 
 ostream& taList_impl::OutputR(ostream& strm, int indent) const {
   taMisc::indent(strm, indent) << name << "[" << size << "] = {\n";

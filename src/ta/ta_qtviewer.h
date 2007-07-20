@@ -934,8 +934,10 @@ public:
   void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
 #endif
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
+  iTreeViewItem* 	BrowserExpandAllItem(taiDataLink* link);
+  iTreeViewItem* 	BrowserCollapseAllItem(taiDataLink* link);
   bool		 	AssertPanel(taiDataLink* link, bool new_tab = false,
-    bool new_tab_lock = true); // used for things like wizards and edits; note: ntl ignored if !nt
+				    bool new_tab_lock = true); // used for things like wizards and edits; note: ntl ignored if !nt
   void			EditItem(taiDataLink* link, bool not_in_cur = false); // edit this guy in a new panel, making a tab viewer if necessary
   int			GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   iTabViewer* 		GetTabViewer(bool force = false); // get the tab viewer, or make one if force

@@ -221,7 +221,7 @@ private:
   void	Destroy();
 };
 
-class TA_API DataViewer_List: public DataView_List { // #NO_TOKENS
+class TA_API DataViewer_List: public DataView_List { // #NO_TOKENS ##NO_EXPAND_ALL
 INHERITED(DataView_List)
 public:
   

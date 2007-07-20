@@ -79,6 +79,25 @@ const String ProgType::GenListing(int indent_level) {
   return rval;
 }
 
+bool ProgType::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgType::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgType::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
+
+
 //////////////////////////
 //   ProgType_List	//
 //////////////////////////
@@ -96,7 +115,7 @@ void ProgType_List::El_SetIndex_(void* it_, int idx) {
 }
 
 DynEnumType* ProgType_List::NewDynEnum() {
-  return (DynEnumType*)New(1, &TA_DynEnumType);
+  return (DynEnumType*)New_gui(1, &TA_DynEnumType); // gui op
 }
 
 taBase* ProgType_List::FindTypeName(const String& nm)  const {
@@ -159,6 +178,26 @@ String DynEnumItem::GetDisplayName() const {
   return name + "=" + String(value);
 }
 
+bool DynEnumItem::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool DynEnumItem::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool DynEnumItem::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
+
+///////////// List
+
 void DynEnumItem_List::Initialize() {
   SetBaseType(&TA_DynEnumItem);
 }
@@ -193,6 +232,24 @@ void DynEnumItem_List::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
 }
 
+bool DynEnumItem_List::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool DynEnumItem_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool DynEnumItem_List::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
+
 ///////////////////////////
 //	DynEnumType
 
@@ -202,7 +259,7 @@ void DynEnumType::Initialize() {
 }
 
 DynEnumItem* DynEnumType::NewEnum() {
-  return (DynEnumItem*)enums.New(1);
+  return (DynEnumItem*)enums.New_gui(1); // primarily a gui op
 }
 
 DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
@@ -293,6 +350,24 @@ void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
 void DynEnumType::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   enums.CheckConfig(quiet, rval);
+}
+
+bool DynEnumType::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool DynEnumType::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool DynEnumType::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
 }
 
 ///////////////////////////////////////////////////////////
@@ -813,6 +888,24 @@ cssEl* ProgVar::NewCssEl() {
   return &cssMisc::Void;
 }
 
+bool ProgVar::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgVar::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgVar::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
+
 //////////////////////////
 //   ProgVar_List	//
 //////////////////////////
@@ -919,6 +1012,24 @@ void ProgVar_List::setStale() {
 //     if (grp)
 //       grp->SetProgsStale();
 //   }
+}
+
+bool ProgVar_List::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgVar_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgVar_List::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
 }
 
 
@@ -1308,33 +1419,95 @@ void ProgArg::CheckThisConfig_impl(bool quiet, bool& rval) {
     "An expression is required for this argument");
 }
 
-void ProgArg::UpdateFromVar(const ProgVar& cp) {
-  type = cp.GenCssType();
-  if(cp.var_type == ProgVar::T_Int)
-    arg_type = &TA_int;
-  else if(cp.var_type == ProgVar::T_Real)
-    arg_type = &TA_double;
-  else if(cp.var_type == ProgVar::T_String)
-    arg_type = &TA_taString;
-  else if(cp.var_type == ProgVar::T_Bool)
-    arg_type = &TA_bool;
-  else if(cp.var_type == ProgVar::T_Object)
-    arg_type = cp.object_type;
-  else if(cp.var_type == ProgVar::T_HardEnum)
-    arg_type = cp.hard_enum_type;
-  else if(cp.var_type == ProgVar::T_DynEnum)
-    arg_type = &TA_DynEnum;
+bool ProgArg::UpdateFromVar(const ProgVar& cp) {
+  bool any_changes = false;
+  String ntyp = cp.GenCssType();
+  if(type != ntyp) {
+    any_changes = true;
+    type = ntyp;
+  }
+  if(cp.var_type == ProgVar::T_Int) {
+    if(arg_type != &TA_int) {
+      arg_type = &TA_int;
+      any_changes = true;
+    }
+  }
+  else if(cp.var_type == ProgVar::T_Real) {
+    if(arg_type != &TA_double) {
+      arg_type = &TA_double;
+      any_changes = true;
+    }
+  }
+  else if(cp.var_type == ProgVar::T_String) {
+    if(arg_type != &TA_taString) {
+      arg_type = &TA_taString;
+      any_changes = true;
+    }
+  }
+  else if(cp.var_type == ProgVar::T_Bool) {
+    if(arg_type != &TA_bool) {
+      arg_type = &TA_bool;
+      any_changes = true;
+    }
+  }
+  else if(cp.var_type == ProgVar::T_Object) {
+    if(arg_type != cp.object_type) {
+      arg_type = cp.object_type;
+      any_changes = true;
+    }
+  }
+  else if(cp.var_type == ProgVar::T_HardEnum) {
+    if(arg_type != cp.hard_enum_type) {
+      arg_type = cp.hard_enum_type;
+      any_changes = true;
+    }
+  }
+  else if(cp.var_type == ProgVar::T_DynEnum) {
+    if(arg_type != &TA_DynEnum) {
+      arg_type = &TA_DynEnum;
+      any_changes = true;
+    }
+  }
+  return any_changes;
 } 
 
-void ProgArg::UpdateFromType(TypeDef* td) {
-  arg_type = td;
-  if(arg_type)
-    type = arg_type->Get_C_Name();
+bool ProgArg::UpdateFromType(TypeDef* td) {
+  bool any_changes = false;
+  if(arg_type != td) {
+    arg_type = td;
+    any_changes = true;
+  }
+  if(arg_type) {
+    String ntyp = arg_type->Get_C_Name();
+    if(type != ntyp) {
+      type = ntyp;
+      any_changes = true;
+    }
+  }
+  return any_changes;
 } 
 
 String ProgArg::GetDisplayName() const {
 //  return type + " " + name + "=" + expr.GetFullExpr();
   return expr.expr;
+}
+
+bool ProgArg::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgArg::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgArg::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
 }
 
 //////////////////////////
@@ -1374,7 +1547,8 @@ const String ProgArg_List::GenCssBody_impl(int /*indent_level*/) {
   return rval;
 }
 
-void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
+bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
+  bool any_changes = false;
   int i;  int ti;
   ProgArg* pa;
   ProgVar* pv;
@@ -1383,9 +1557,10 @@ void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
     pa = FastEl(i);
     pv = targ.FindName(pa->name, ti);
     if (ti >= 0) {
-      pa->UpdateFromVar(*pv);
+      any_changes |= pa->UpdateFromVar(*pv);
     } else {
       RemoveIdx(i);
+      any_changes = true;
     }
   }
   // add args in target not in us, and put in the right order
@@ -1397,14 +1572,18 @@ void ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
       pa->name = pv->name;
       pa->UpdateFromVar(*pv);
       Insert(pa, ti);
+      any_changes = true;
     } else if (i != ti) {
       MoveIdx(i, ti);
+      any_changes = true;
     }
   }
+  return any_changes;
 }
 
-void ProgArg_List::UpdateFromMethod(MethodDef* md) {
+bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
 //NOTE: safe to call during loading
+  bool any_changes = false;
   int i;  int ti;
   ProgArg* pa;
   // delete args not in md list
@@ -1412,9 +1591,10 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
     pa = FastEl(i);
     int ti = md->arg_names.FindEl(pa->name);
     if (ti >= 0) {
-      pa->UpdateFromType(md->arg_types[ti]);
+      any_changes |= pa->UpdateFromType(md->arg_types[ti]);
     } else {
       RemoveIdx(i);
+      any_changes = true;
     }
   }
   // add args in target not in us, and put in the right order
@@ -1427,9 +1607,11 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
       pa->name = arg_nm;
       pa->UpdateFromType(arg_typ);
       Insert(pa, ti);
+      any_changes = true;
       //pa->expr.SetExpr(def_val); // set to this expr
     } else if (i != ti) {
       MoveIdx(i, ti);
+      any_changes = true;
     }
     // have to do default for all, since it is not saved
     pa->required = (md->fun_argd > ti);
@@ -1449,8 +1631,26 @@ void ProgArg_List::UpdateFromMethod(MethodDef* md) {
       pa->def_val = def_val;
     }
   }
+  return any_changes;
 }
 
+bool ProgArg_List::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgArg_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgArg_List::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
 
 //////////////////////////
 //  ProgEl		//
@@ -1599,6 +1799,24 @@ ProgVar* ProgEl::FindVarName(const String& var_nm) const {
   return NULL;
 }
 
+bool ProgEl::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgEl::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgEl::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
+
 //////////////////////////
 //   ProgEl_List	//
 //////////////////////////
@@ -1665,6 +1883,24 @@ ProgVar* ProgEl_List::FindVarName(const String& var_nm) const {
     if(pv) return pv;
   }
   return NULL;
+}
+
+bool ProgEl_List::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgEl_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgEl_List::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
 }
 
 //////////////////////////
@@ -1768,7 +2004,6 @@ String StaticMethodCall::GetDisplayName() const {
 
 
 void ProgramCall::Initialize() {
-  call_init = false;
   taBase::Own(target, this);
 }
 
@@ -1848,10 +2083,7 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
 //     rval += "target->DataChanged(DCR_ITEM_UPDATED);\n";
 //   }
   rval += cssMisc::Indent(indent_level+1);
-  if(call_init)
-    rval += "{ target->CallInit(this); }\n";
-  else
-    rval += "{ target->Call(this); }\n";
+  rval += "{ target->Call(this); }\n";
   rval += cssMisc::Indent(indent_level);
   rval += "}\n";
   
@@ -1888,7 +2120,7 @@ void ProgramCall::PreGenMe_impl(int item_id) {
 
 void ProgramCall::UpdateArgs() {
   if (!target) return; // just leave existing stuff for now
-  prog_args.UpdateFromVarList(target->args);
+  bool any_changes = prog_args.UpdateFromVarList(target->args);
   // now go through and set default value for variables of same name in this program
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return;
@@ -1900,6 +2132,9 @@ void ProgramCall::UpdateArgs() {
     if(!arg_chk && !var_chk) continue; 
     pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
     pa->DataChanged(DCR_ITEM_UPDATED);
+  }
+  if(any_changes && taMisc::gui_active) {
+    BrowserExpandAll();		// expand me!
   }
 }
 
@@ -2020,6 +2255,24 @@ ProgVar* Function_List::FindVarName(const String& var_nm) const {
     if(pv) return pv;
   }
   return NULL;
+}
+
+bool Function_List::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool Function_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool Function_List::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
 }
 
 
@@ -2170,7 +2423,7 @@ void FunctionCall::UpdateArgs() {
 
 
 DataTable* ProgObjList::NewDataTable(int n_tables) {
-  return (DataTable*)New(n_tables, &TA_DataTable);
+  return (DataTable*)New_gui(n_tables, &TA_DataTable); // this is a gui op
 }
 
 void ProgObjList::GetVarsForObjs() {
@@ -2414,7 +2667,13 @@ void Program::Init() {
   // running unchecked code, so we need to make sure all progel's have 
   // an extra compile-time check and don't just crash (fail quietly -- err will showup later)
   taMisc::CheckConfigStart(false); // CallInit will do CheckConfig..
-  Run_impl();
+  if(!CompileScript(true)) {
+    if (ret_val != RV_CHECK_ERR)
+      ret_val = RV_COMPILE_ERR;
+  }
+  if(ret_val == RV_OK) {
+    script->Run();
+  }
   taMisc::DoneBusy();
   // now check us..
   CheckConfig(false);
@@ -2754,99 +3013,102 @@ const String Program::GetDescString(const String& dsc, int indent_level) {
 }
 
 const String Program::scriptString() {
-  if (m_stale) {
-    // enumerate all the progels, esp. to get subprocs registered
-    int item_id = 0;
-    init_code.PreGen(item_id);
-    prog_code.PreGen(item_id);
+  // enumerate all the progels, esp. to get subprocs registered
+  // note: this is regenerated every time because stale is not always right
+  // and code may depend on the state of external objects that can be updated
+  // outside of the stale mechanism.  When the user presses Init, they get the
+  // current fresh code regardless!  note that it doesn't do this obligatory
+  // recompiles all the time -- that is only done at init too.
+  int item_id = 0;
+  init_code.PreGen(item_id);
+  prog_code.PreGen(item_id);
     
-    // now, build the new script code
-    m_scriptCache = "// ";
-    m_scriptCache += GetName();
-    m_scriptCache += "\n\n/* globals added to hardvars:\n";
-    m_scriptCache += "Program::RunState run_state; // our program's run state\n";
-    m_scriptCache += "int ret_val;\n";
-    if (args.size > 0) {
-      m_scriptCache += "// args: global script parameters (arguments)\n";
-      m_scriptCache += args.GenCss(0);
-    }
-    if (vars.size > 0) {
-      m_scriptCache += "// vars: global (non-parameter) variables\n";
-      m_scriptCache += vars.GenCss(0);
-    }
-    m_scriptCache += "*/\n\n";
-
-    // types
-    if (types.size > 0) {
-      m_scriptCache += types.GenCss(0);
-    }
-
-    // Functions
-    m_scriptCache += functions.GenCss(0); // ok if empty, returns nothing
-    
-    // __Init() routine, for our own els, and calls to subprog Init()
-    m_scriptCache += "void __Init() {\n";
-    // first, make sure any sub-progs are compiled
-    if (sub_progs.size > 0) {
-      m_scriptCache += "  // First compile any subprogs that could be called from this one\n";
-      m_scriptCache += "  { Program* target;\n";
-      // note: this is a list of ProgramCall's, not the actual prog itself!
-      for (int i = 0; i < sub_progs.size; ++i) {
-        ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
-	if(!sp->target) continue;
-        m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
-        m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
-        m_scriptCache += "    target->CompileScript();\n";
-      }
-      m_scriptCache += "  }\n";
-    }
-    m_scriptCache += "  // Then run our init code\n";
-    m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
-    if (sub_progs.size > 0) {
-      if (init_code.size >0) m_scriptCache += "\n";
-      m_scriptCache += "  // Then call init on any subprogs that could be called from this one\n";
-      m_scriptCache += "  { Program* target;\n";
-      // note: this is a list of ProgramCall's, not the actual prog itself!
-      for (int i = 0; i < sub_progs.size; ++i) {
-        ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
-	if(!sp->target) continue;
-        m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
-	// set args for guys that are just passing our existing args/vars along
-	for (int j = 0; j < sp->prog_args.size; ++j) {
-	  ProgArg* ths_arg = sp->prog_args.FastEl(j);
-	  ProgVar* prg_var = sp->target->args.FindName(ths_arg->name);
-	  String argval = ths_arg->expr.GetFullExpr();
-	  if (!prg_var || argval.empty()) continue;
-	  // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
-	  ProgVar* arg_chk = args.FindName(argval);
-	  ProgVar* var_chk = vars.FindName(argval);
-	  if(!arg_chk && !var_chk) continue; 
-	  m_scriptCache += "    target->SetVar(\"" + prg_var->name + "\", "
-	    + argval + ");\n";
-	}
-        m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
-      }
-      m_scriptCache += "  }\n";
-    }
-    m_scriptCache += "}\n\n";
-    
-    m_scriptCache += "void __Prog() {\n";
-    m_scriptCache += prog_code.GenCss(1);
-    if(!(flags & NO_STOP)) {
-      m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
-    }
-    m_scriptCache += "}\n\n";
-    m_scriptCache += "\n";
-    
-    m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
-    m_scriptCache += "if (run_state == Program::INIT) {\n";
-    m_scriptCache += "  __Init();\n";
-    m_scriptCache += "} else {\n";
-    m_scriptCache += "  __Prog();\n";
-    m_scriptCache += "}\n";
-
-    m_stale = false;
+  // now, build the new script code
+  m_scriptCache = "// ";
+  m_scriptCache += GetName();
+  m_scriptCache += "\n\n/* globals added to hardvars:\n";
+  m_scriptCache += "Program::RunState run_state; // our program's run state\n";
+  m_scriptCache += "int ret_val;\n";
+  if (args.size > 0) {
+    m_scriptCache += "// args: global script parameters (arguments)\n";
+    m_scriptCache += args.GenCss(0);
   }
+  if (vars.size > 0) {
+    m_scriptCache += "// vars: global (non-parameter) variables\n";
+    m_scriptCache += vars.GenCss(0);
+  }
+  m_scriptCache += "*/\n\n";
+
+  // types
+  if (types.size > 0) {
+    m_scriptCache += types.GenCss(0);
+  }
+
+  // Functions
+  m_scriptCache += functions.GenCss(0); // ok if empty, returns nothing
+    
+  // __Init() routine, for our own els, and calls to subprog Init()
+  m_scriptCache += "void __Init() {\n";
+  // first, make sure any sub-progs are compiled
+  if (sub_progs.size > 0) {
+    m_scriptCache += "  // First compile any subprogs that could be called from this one\n";
+    m_scriptCache += "  { Program* target;\n";
+    // note: this is a list of ProgramCall's, not the actual prog itself!
+    for (int i = 0; i < sub_progs.size; ++i) {
+      ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
+      if(!sp->target) continue;
+      m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
+      m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
+      m_scriptCache += "    target->CompileScript(true); // true = force!\n";
+    }
+    m_scriptCache += "  }\n";
+  }
+  m_scriptCache += "  // Then run our init code\n";
+  m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
+  if (sub_progs.size > 0) {
+    if (init_code.size >0) m_scriptCache += "\n";
+    m_scriptCache += "  // Then call init on any subprogs that could be called from this one\n";
+    m_scriptCache += "  { Program* target;\n";
+    // note: this is a list of ProgramCall's, not the actual prog itself!
+    for (int i = 0; i < sub_progs.size; ++i) {
+      ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
+      if(!sp->target) continue;
+      m_scriptCache += "    target = this" + sp->GetPath(NULL, this) + "->GetTarget();\n";
+      // set args for guys that are just passing our existing args/vars along
+      for (int j = 0; j < sp->prog_args.size; ++j) {
+	ProgArg* ths_arg = sp->prog_args.FastEl(j);
+	ProgVar* prg_var = sp->target->args.FindName(ths_arg->name);
+	String argval = ths_arg->expr.GetFullExpr();
+	if (!prg_var || argval.empty()) continue;
+	// check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
+	ProgVar* arg_chk = args.FindName(argval);
+	ProgVar* var_chk = vars.FindName(argval);
+	if(!arg_chk && !var_chk) continue; 
+	m_scriptCache += "    target->SetVar(\"" + prg_var->name + "\", "
+	  + argval + ");\n";
+      }
+      m_scriptCache += "    ret_val = target->CallInit(this);\n"; 
+    }
+    m_scriptCache += "  }\n";
+  }
+  m_scriptCache += "}\n\n";
+    
+  m_scriptCache += "void __Prog() {\n";
+  m_scriptCache += prog_code.GenCss(1);
+  if(!(flags & NO_STOP)) {
+    m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
+  }
+  m_scriptCache += "}\n\n";
+  m_scriptCache += "\n";
+    
+  m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
+  m_scriptCache += "if (run_state == Program::INIT) {\n";
+  m_scriptCache += "  __Init();\n";
+  m_scriptCache += "} else {\n";
+  m_scriptCache += "  __Prog();\n";
+  m_scriptCache += "}\n";
+
+  m_stale = false;
   return m_scriptCache;
 }
 
@@ -3146,6 +3408,22 @@ bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_labe
   return rval;
 }
 
+#ifndef TA_GUI
+// see ta_program_qt.cpp
+iProgramPanel* Program::FindMyProgramPanel() {
+  return NULL;
+}
+bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
+  return false;
+}
+bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
+  return false;
+}
+bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
+  return false;
+}
+#endif
+
 //////////////////////////
 //  Program_Group	//
 //////////////////////////
@@ -3216,6 +3494,21 @@ void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
     prog->Reset();
   }
   prog_type->LoadProgramGroup(this);
+}
+
+bool Program_Group::RunStartupProgs() {
+  bool any_run = false;
+  taLeafItr itr;
+  Program* prog;
+  FOR_ITR_EL(Program, prog, this->, itr) {
+    if(!prog->HasProgFlag(Program::STARTUP_RUN)) continue;
+    prog->Init();
+    if((prog->ret_val == Program::RV_OK) && (prog->run_state == Program::DONE)) {
+      prog->Run();
+      any_run = true;
+    }
+  }
+  return any_run;
 }
 
 //////////////////////////

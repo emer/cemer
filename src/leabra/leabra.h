@@ -44,7 +44,7 @@ class LeabraLayerSpec;
 class LeabraLayer;
 
 class LeabraNetwork;
-class LeabraProject;
+class LeabraProject; //
 
 // _
 

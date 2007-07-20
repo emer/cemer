@@ -3865,6 +3865,40 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
   return rval;
 }
 
+iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
+  MainWindowViewer* db = viewer();
+  if (!db) return NULL;
+  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+  if (!bv) return NULL;
+  // make sure previous operations are finished
+  taiMiscCore::ProcessEvents();
+  iBrowseViewer* ibv = bv->widget();
+  iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
+  if (rval) {
+    ibv->lvwDataTree->ExpandAllUnder(rval);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return rval;
+}
+
+iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
+  MainWindowViewer* db = viewer();
+  if (!db) return NULL;
+  BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
+  if (!bv) return NULL;
+  // make sure previous operations are finished
+  taiMiscCore::ProcessEvents();
+  iBrowseViewer* ibv = bv->widget();
+  iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
+  if (rval) {
+    ibv->lvwDataTree->CollapseAllUnder(rval);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return rval;
+}
+
 bool iMainWindowViewer::AssertPanel(taiDataLink* link,
   bool new_tab, bool new_tab_lock)
 {
@@ -6047,6 +6081,11 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 {
   if (!item) return;
   if (isItemHidden(item)) return;
+
+  // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
+  taBase* tab = item->link()->taData();
+  if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
+
   bool expand = true; 
   if (!(exp_flags & EF_EXPAND_DISABLED)) {
     if (!item->link()->isEnabled())
@@ -7552,6 +7591,7 @@ void iSearchDialog::stop_clicked() {
 //////////////////////////////////
 
 bool taBase::EditPanel(bool new_tab) {
+  if(!taMisc::gui_active) return false;
   iMainWindowViewer* inst = taiMisc::active_wins.Peek_MainWindow();
   if (!inst) return false; // shouldn't happen!
   taiDataLink* link = (taiDataLink*)GetDataLink();
@@ -7568,6 +7608,7 @@ bool taBase::EditPanel(bool new_tab) {
 }
 
 bool taBase::BrowserSelectMe() {
+  if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
   MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
@@ -7578,5 +7619,33 @@ bool taBase::BrowserSelectMe() {
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
   return (bool)imwv->AssertBrowserItem(link);
+}
+
+bool taBase::BrowserExpandAll() {
+  if(!taMisc::gui_active) return false;
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return false;
+  MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
+  if(!mwv) return false;
+  iMainWindowViewer* imwv = mwv->widget();
+  if(!imwv) return false;
+
+  taiDataLink* link = (taiDataLink*)GetDataLink();
+  if (!link) return false;
+  return (bool)imwv->BrowserExpandAllItem(link);
+}
+
+bool taBase::BrowserCollapseAll() {
+  if(!taMisc::gui_active) return false;
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return false;
+  MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
+  if(!mwv) return false;
+  iMainWindowViewer* imwv = mwv->widget();
+  if(!imwv) return false;
+
+  taiDataLink* link = (taiDataLink*)GetDataLink();
+  if (!link) return false;
+  return (bool)imwv->BrowserCollapseAllItem(link);
 }
 

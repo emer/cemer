@@ -918,32 +918,63 @@ void PrintVar::Initialize() {
 void PrintVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgVarRef_NewOwner(print_var);
+  UpdateProgVarRef_NewOwner(print_var2);
+  UpdateProgVarRef_NewOwner(print_var3);
+  UpdateProgVarRef_NewOwner(print_var4);
+  UpdateProgVarRef_NewOwner(print_var5);
+  UpdateProgVarRef_NewOwner(print_var6);
 }
 
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(!print_var, quiet, rval, "print_var is NULL");
+  //  CheckError(!print_var, quiet, rval, "print_var is NULL");
   CheckProgVarRef(print_var, quiet, rval);
+  CheckProgVarRef(print_var2, quiet, rval);
+  CheckProgVarRef(print_var3, quiet, rval);
+  CheckProgVarRef(print_var4, quiet, rval);
+  CheckProgVarRef(print_var5, quiet, rval);
+  CheckProgVarRef(print_var6, quiet, rval);
 }
 
 const String PrintVar::GenCssBody_impl(int indent_level) {
   String rval;
-  rval += cssMisc::Indent(indent_level);
-  if (!print_var) {
-    rval += "//WARNING: PrintVar not generated here -- print_var not specified\n";
-    return rval;
-  }
-  
-  rval += "cerr << \"" + print_var->name + " = \" << " + print_var->name + " << endl;\n";
+  if(message.empty() && !print_var && !print_var2 && !print_var3 && !print_var4 && !print_var5 && !print_var6)
+    return _nilString;
+  rval += cssMisc::Indent(indent_level) + "cerr ";
+  if(message.nonempty()) 
+    rval += "<< \"" + message + "\"";
+  if((bool)print_var)
+    rval += "<< \"  " + print_var->name + " = \" << " + print_var->name;
+  if((bool)print_var2)
+    rval += "<< \"  " + print_var2->name + " = \" << " + print_var2->name;
+  if((bool)print_var3)
+    rval += "<< \"  " + print_var3->name + " = \" << " + print_var3->name;
+  if((bool)print_var4)
+    rval += "<< \"  " + print_var4->name + " = \" << " + print_var4->name;
+  if((bool)print_var5)
+    rval += "<< \"  " + print_var5->name + " = \" << " + print_var5->name;
+  if((bool)print_var6)
+    rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
+  rval += " << endl;\n";
   return rval;
 }
 
 String PrintVar::GetDisplayName() const {
-  if(!print_var)
-    return "(print_var not selected)";
-  
-  String rval;
-  rval += "Print: " + print_var->name;
+  String rval = "Print:";
+  if(message.nonempty())
+    rval += " " + message;
+  if(print_var)
+    rval += " " + print_var->name;
+  if((bool)print_var2)
+    rval += " " + print_var2->name;
+  if((bool)print_var3)
+    rval += " " + print_var3->name;
+  if((bool)print_var4)
+    rval += " " + print_var4->name;
+  if((bool)print_var5)
+    rval += " " + print_var5->name;
+  if((bool)print_var6)
+    rval += " " + print_var6->name;
   return rval;
 }
 

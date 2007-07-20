@@ -36,7 +36,8 @@ class Program_Group;
 class Program_List;
 class ProgLibEl;
 class ProgLib;
-class ProgramCall;
+class iProgramPanel;
+class ProgramCall; //
 
 /////////////////////////////////////////////////////////////////////
 //		IMPORTANT CODING NOTES:
@@ -70,6 +71,10 @@ public:
   
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on variable
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   override String GetDesc() const { return desc; }
   override String GetTypeDecoKey() const { return "ProgType"; }
@@ -129,6 +134,10 @@ public:
   override String	GetDisplayName() const;
   override String 	GetDesc() const { return desc; }
 
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
+
   inline void 	Initialize() 			{ value = 0; }
   inline void 	Destroy()			{ };
   inline void 	Copy_(const DynEnumItem& cp)	{ value = cp.value; desc = cp.desc; }
@@ -156,6 +165,10 @@ public:
   override int	El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(((DynEnumItem*)a)->value > ((DynEnumItem*)b)->value) rval=1;
     else if(((DynEnumItem*)a)->value == ((DynEnumItem*)b)->value) rval=0; return rval; }
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   TA_BASEFUNS_NOCOPY(DynEnumItem_List);
 private:
@@ -191,6 +204,10 @@ public:
 
   override taBase*	FindTypeName(const String& nm) const;
   override String	GetDisplayName() const;
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   TA_SIMPLE_BASEFUNS(DynEnumType);
 protected:
@@ -252,7 +269,7 @@ public:
     T_Real,			// #LABEL_Real real-valued number (double precision)
     T_String,			// #LABEL_String string of characters
     T_Bool,			// #LABEL_Bool boolean true/false 
-    T_Object,			// #LABEL_Object pointer to a C++ object 
+    T_Object,			// #LABEL_Object* pointer to a C++ (hard coded) object -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
     T_HardEnum,			// #LABEL_Enum enumerated list of options (existing C++ hard-coded one)
     T_DynEnum,			// #LABEL_DynEnum enumerated list of labeled options (from a dynamically created list)
   };
@@ -269,7 +286,7 @@ public:
   String	string_val;	// #CONDSHOW_ON_var_type:T_String #EDIT_DIALOG string value
   bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool boolean value
   TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
-  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type object pointer value
+  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
   TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
   DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_ dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
@@ -322,6 +339,10 @@ public:
   { if(on) SetVarFlag(flg); else ClearVarFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
+
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   override void 	SetDefaultName() {} // make it local to list, set by list
@@ -364,6 +385,10 @@ public:
   // find first variable of given type (if hard enum or object type, td specifies type of object to find if not null)
 
   override String GetTypeDecoKey() const { return "ProgVar"; }
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   void	setStale();
   TA_BASEFUNS(ProgVar_List);
@@ -518,16 +543,20 @@ public:
   String                def_val; // #SHOW #READ_ONLY for default arguments, what will get passed by default -- this is for reference only (leave expr blank for default)
   ProgExpr		expr; // the expression to compute and pass as the argument
 
-  virtual void		UpdateFromVar(const ProgVar& cp); 
-  // updates our type information given variable that we apply to
-  virtual void		UpdateFromType(TypeDef* td); 
-  // updates our type information from method typedef that we apply to
+  virtual bool		UpdateFromVar(const ProgVar& cp); 
+  // updates our type information given variable that we apply to -- returns true if any changes
+  virtual bool		UpdateFromType(TypeDef* td); 
+  // updates our type information from method typedef that we apply to -- returns true if any changes
 
   bool  	SetName(const String& nm) 	{ name = nm; return true; } 
   String 	GetName() const			{ return name; } 
 
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgArg"; }
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   void 	InitLinks();
   void 	CutLinks();
@@ -546,14 +575,18 @@ class TA_API ProgArg_List : public taList<ProgArg> {
 INHERITED(taList<ProgArg>)
 public:
 
-  virtual void	UpdateFromVarList(ProgVar_List& targ);
-  // update our list of args based on target variable list 
-  virtual void	UpdateFromMethod(MethodDef* md);
-  // update our list of args based on method def arguments
+  virtual bool	UpdateFromVarList(ProgVar_List& targ);
+  // update our list of args based on target variable list -- returns true if updated
+  virtual bool	UpdateFromMethod(MethodDef* md);
+  // update our list of args based on method def arguments -- returns true if updated
   
   override String GetTypeDecoKey() const { return "ProgArg"; }
   virtual const String	GenCssBody_impl(int indent_level); 
   
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
+
   TA_BASEFUNS_NOCOPY(ProgArg_List);
 protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
@@ -602,6 +635,10 @@ public:
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   override String 	GetStateDecoKey() const;
   override int		GetEnabled() const;
@@ -658,6 +695,10 @@ public:
   override int		NumListCols() const {return 2;} 
   override const 	KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
+
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
 
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
@@ -770,6 +811,10 @@ public:
   override const 	KeyString GetListColKey(int col) const;
   override String	GetColHeading(const KeyString& key) const;
 
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
+
   SIMPLE_LINKS(Function_List);
   TA_BASEFUNS(Function_List);
 private:
@@ -842,11 +887,12 @@ class TA_API Program: public taNBase, public AbstractScriptBase {
   // ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
 public:
-  enum ProgFlags { // #BITS mode flags
+  enum ProgFlags { // #BITS program flags
     PF_NONE		= 0, // #NO_BIT
     NO_STOP		= 0x0001, // this program cannot be stopped by Stop or Step buttons
     NO_USER_RUN		= 0x0002, // this program is not supposed to be run by regular users
-    SHOW_STEP		= 0x0004, // show the step_prog in the ctrl panel
+    SHOW_STEP		= 0x0004, // show the step_prog in the ctrl panel (turn this off for programs that are not part of the overall main control hierarchy)
+    STARTUP_RUN		= 0x0008, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -908,7 +954,7 @@ public:
   Function_List		functions;
   // function code (for defining subroutines): goes at top of script and can be called from init or prog code
   ProgEl_List		load_code;
-  // load initialization code: run when the program is loaded from the program library or other external sources (does not appear in standard program -- is compiled and run in a separate css program space). Note: ProgramCall's are automatically initialized according to targ_ld_init_name
+  // #EXPERT_TREE load initialization code: run when the program is loaded from the program library or other external sources (does not appear in standard program -- is compiled and run in a separate css program space). Note: ProgramCall's are automatically initialized according to targ_ld_init_name
   ProgEl_List		init_code;
   // initialization code: run when the Init button is pressed
   ProgEl_List		prog_code;
@@ -1033,6 +1079,15 @@ public: // XxxGui versions provide feedback to the user
   
   virtual bool		SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label);
   // #MENU #MENU_ON_SelectEdit #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the program control functions (Init, Run, Step, Stop) to a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
+
+  virtual iProgramPanel* FindMyProgramPanel();
+  // #IGNORE find my program panel, which contains the program editor -- useful for browser-specific operations
+  virtual bool		BrowserSelectMe_ProgItem(taOBase* itm);
+  // #IGNORE perform BrowserSelectMe function for program sub-item (prog el, etc)
+  virtual bool		BrowserExpandAll_ProgItem(taOBase* itm);
+  // #IGNORE perform BrowserExpandAll function for program sub-item (prog el, etc)
+  virtual bool		BrowserCollapseAll_ProgItem(taOBase* itm);
+  // #IGNORE perform BrowserCollapseAll function for program sub-item (prog el, etc)
 
   override String 	GetTypeDecoKey() const { return "Program"; }
 
@@ -1171,14 +1226,17 @@ public:
   static ProgLib	prog_lib; // #HIDDEN_TREE library of available programs
 
   taBase* NewFromLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL create a new program from a library of existing program types
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_Program create a new program from a library of existing program types
   taBase* NewFromLibByName(const String& prog_nm);
-  // create a new program from a library of existing program types, looking up by name (NULL if name not found)
+  // #CAT_Program create a new program from a library of existing program types, looking up by name (NULL if name not found)
 
   void		SaveToProgLib(Program::ProgLibs library = Program::USER_LIB);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_Program save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void	LoadFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_Program (re)load the program from the program library element of given type
+
+  virtual bool	RunStartupProgs();
+  // run programs marked as STARTUP_RUN -- typically only done by system at startup -- returns true if any run
 
   void		SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
@@ -1200,7 +1258,6 @@ INHERITED(ProgEl)
 public:
   ProgramRef		target; // #APPLY_IMMED the program to be called
   String		targ_ld_init; // #EDIT_DIALOG name(s) of target programs to search for to set this target pointer when program is loaded from program library or other external sources -- if not found, a warning message is emitted.  if empty, it defaults to name of current target. use commas to separate multiple options (tried in order) and an * indicates use the "contains" searching function (not full regexp support yet)
-  bool			call_init; // #EXPERT if true, run the init_code on that program, not prog_code
   ProgArg_List		prog_args; // #SHOW_TREE arguments to the program--copied to prog before call
 
   virtual void		UpdateArgs(); 

@@ -12,7 +12,7 @@ LeabraProject .projects[0] {
 
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
-      taBase_List @.layer_cfg = [3] {
+      LayerWizElList @.layer_cfg = [3] {
 	LayerWizEl @[0] { };
 	LayerWizEl @[1] { };
 	LayerWizEl @[2] { };
@@ -1356,7 +1356,6 @@ This is the details.
 	flags=;
 	target=.projects[0].programs.gp[0][1]$6$;
 	targ_ld_init="*LeabraTrain*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1861,7 +1860,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][2]$15$;
 	targ_ld_init="*LeabraEpoch*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2144,7 +2142,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][3]$22$;
 	targ_ld_init="*LeabraTrial*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2291,7 +2288,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][8]$26$;
       targ_ld_init="*LeabraEpochMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2432,7 +2428,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=$1$;
 	targ_ld_init="*LeabraSettle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2518,7 +2513,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][7]$29$;
       targ_ld_init="*LeabraTrialMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2666,7 +2660,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][6]$33$;
       targ_ld_init="*ApplyInputs*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2749,7 +2742,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	flags=;
 	target=.projects[0].programs.gp[0][5]$34$;
 	targ_ld_init="*LeabraCycle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -5254,7 +5246,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=5: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  x_axis {
@@ -5291,10 +5283,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="avg_sse";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=5.822705: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=5.822705: };
-	   range {min=0: max=5.822705: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
