@@ -757,6 +757,12 @@ This is an overview of the project.
 The [[.wizards.LeabraWizard_0]] is important for doing various ''configuration'' things.
 The [[.edits.ControlPanel]] has all the main '''parameters''' and buttons at bottom for running the sim.
 
+# Explicit [[ta:.docs.ChangeLog]] syntax
+# Function calling! [[.networks[0].Init_Weights()]]
+# Tab viewing! [[.T3Tab.EpochOutputData]]
+# Back to [[.T3Tab.DefaultFrame]]
+# Panel viewing! [[.PanelTab.ControlPanel]]
+
 The [[http://grey.colorado.edu/pdp/index.php/Main_Page|PDP++ Wiki]] has lots of info.
 
 === Some Details ===
@@ -5782,7 +5788,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.04: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$80$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -5978,7 +5984,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=2.880155: k1_ithr=2.585402: ithr_r=0.107963: ithr_diff=0.1023392: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.04: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=$80$: };
      stm_gain=0.5;
      hard_clamped=0;

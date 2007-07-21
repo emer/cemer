@@ -1241,6 +1241,8 @@ void DataLoop::GetOrderVal() {
 void DataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(data_var);
   UpdateProgVarRef_NewOwner(index_var);
   UpdateProgVarRef_NewOwner(order_var);
@@ -1903,6 +1905,8 @@ void DataCalcLoop::Initialize() {
 
 void DataCalcLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   src_cols.name = "src_cols";
   dest_cols.name = "dest_cols";
   UpdateSpecDataTable();

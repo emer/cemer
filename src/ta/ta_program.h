@@ -107,6 +107,10 @@ public:
   
   override String GetTypeDecoKey() const { return "ProgType"; }
 
+  override bool		BrowserSelectMe();
+  override bool		BrowserExpandAll();
+  override bool		BrowserCollapseAll();
+
   void	setStale();
   TA_BASEFUNS_NOCOPY(ProgType_List);
 protected:

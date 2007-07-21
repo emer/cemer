@@ -22,6 +22,7 @@
 #ifdef TA_GUI
 # include "ta_qt.h"
 # include "ta_qtviewer.h"
+# include "t3viewer.h"
 # include "ta_qtclassbrowse.h"
 # ifdef HAVE_QT_CONSOLE
 #   include "css_qtconsole.h"
@@ -1154,6 +1155,41 @@ void MainWindowViewer::WidgetDeleting_impl() {
   inherited::WidgetDeleting_impl();
 }
 
+bool MainWindowViewer::SelectPanelTabNo(int tab_no) {
+  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer);
+  if (pv && pv->widget()) {
+    iTabViewer* itv = pv->widget();
+    return itv->tabView()->SetCurrentTab(tab_no);
+  }
+  return false;
+}
+
+bool MainWindowViewer::SelectPanelTabName(const String& tab_nm) {
+  PanelViewer* pv = (PanelViewer*)FindFrameByType(&TA_PanelViewer);
+  if (pv && pv->widget()) {
+    iTabViewer* itv = pv->widget();
+    return itv->tabView()->SetCurrentTabName(tab_nm);
+  }
+  return false;
+}
+
+bool MainWindowViewer::SelectT3ViewTabNo(int tab_no) {
+  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer);
+  if (pv && pv->widget()) {
+    iT3DataViewer* itv = pv->widget();
+    return itv->SetCurrentTab(tab_no);
+  }
+  return false;
+}
+
+bool MainWindowViewer::SelectT3ViewTabName(const String& tab_nm) {
+  T3DataViewer* pv = (T3DataViewer*)FindFrameByType(&TA_T3DataViewer);
+  if (pv && pv->widget()) {
+    iT3DataViewer* itv = pv->widget();
+    return itv->SetCurrentTabName(tab_nm);
+  }
+  return false;
+}
 
 //////////////////////////
 //   TreeDecorationSpec	//

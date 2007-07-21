@@ -608,7 +608,6 @@ Program_Group .projects[0].programs.gp[0] {
       flags=;
       target=.projects[0].programs.gp[0][1]$5$;
       targ_ld_init="*LeabraTrain*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1113,7 +1112,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][2]$14$;
       targ_ld_init="*LeabraEpoch*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1397,7 +1395,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][3]$21$;
       targ_ld_init="*LeabraTrial*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1532,7 +1529,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     flags=;
     target=.projects[0].programs.gp[0][8]$25$;
     targ_ld_init="*LeabraEpochMonitor*";
-    call_init=0;
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -1685,7 +1681,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=$0$;
       targ_ld_init="*LeabraSettle*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1771,7 +1766,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     flags=;
     target=.projects[0].programs.gp[0][7]$28$;
     targ_ld_init="*LeabraTrialMonitor*";
-    call_init=0;
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -1921,7 +1915,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     flags=;
     target=.projects[0].programs.gp[0][6]$32$;
     targ_ld_init="*ApplyInputs*";
-    call_init=0;
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -2035,7 +2028,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       target=.projects[0].programs.gp[0][5]$34$;
       targ_ld_init="*LeabraCycle*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2299,9 +2291,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Input";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=EXT;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;      };
+      value_names{       };
      };
      LayerWriterEl @[1] {
       chan_name="Output";
@@ -2309,14 +2301,14 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Output";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=TARG;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;      };
+      value_names{       };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name="Name";
+      layer_name=;
       offset {x=0: y=0: };
       use_layer_type=1;
       ext_flags=;

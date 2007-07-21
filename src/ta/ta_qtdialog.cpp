@@ -51,7 +51,6 @@
 #include <qstring.h>
 #include <Q3StyleSheet>
 //#include <qtable.h>
-#include <QTextEdit>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <QVBoxLayout>
@@ -65,6 +64,7 @@
 #include "ieditgrid.h"
 #include "iflowlayout.h"
 #include "iscrollarea.h"
+#include "itextedit.h"
 
 // TODO: why is String=osString in this file, unless I do this:
 #include "ta_string.h"
@@ -2272,7 +2272,7 @@ void taiStringDataHost::Constr(const char* prompt, const char* win_title) {
 }
 
 void taiStringDataHost::Constr_Box() {
-  edit = new QTextEdit(widget());
+  edit = new iTextEdit(widget());
   vblDialog->addWidget(edit, 1);
 }
 

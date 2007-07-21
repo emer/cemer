@@ -22,24 +22,16 @@ Other Algorithms:
 ------------
 current:
 
-* programs always regenerate script code, and always recompile on Init!!  progs can depend
-on external datatables that don't go stale, and it just doesn't cost much to always be sure!
-* modal dialogs now call Cancel() -- was getting crash upon closing project from old changelog 
-dialog that wasn't dismissed..
-* added tabMisc::DelayedFunCall -- use this to postpone a function call for the wait proc..
-* added BrowserExpandAll, CancelAll on taBase..  override in program items to favor that browser
-if avail.  call these with New_gui and in the clip new token code, using delayed fun and it all
-seems good.  also have #NO_EXPAND_ALL -- put on unit groups etc and seems to work fine -- you can double
-click on a project all you damn want.  if you really want something done, do it yourself!
-* added STARTUP_RUN flag on programs -- runs programs after project is loaded.  this is probably the
-preferred way to do it, instead of having a separate startup script -- just make a startup program
-that grabs the args, etc.  maybe need a few special args for that.
+* find use browse so progs in progedit? Prog editor show
+* try multi new
+* list editor selects item for browse: editpanel(false)
 
-
-* select view tab with url in doc, do callfun from url
 * program stuff for dealing with startup args?
 * impl NO_STEP flag in ctrl panel
 * impl READ_ONLY flag in prog vars
+* update bug list..
+* back button?
+* #22 -- update of netview ctrl panel -- happens even in simpler projects
 
 * convert old file: cancel doesn't work!
 

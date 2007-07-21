@@ -178,11 +178,11 @@ bool tabMisc::DoDelayedCloses() {
 bool tabMisc::DoDelayedUpdateAfterEdits() {
   bool did_some = false;
   if (delayed_updateafteredit.size > 0) {
-    for(int i=0; i<delayed_updateafteredit.size; i++) {
-      taBase* it = delayed_updateafteredit.FastEl(i);
+    while(delayed_updateafteredit.size > 0) {
+      taBase* it = delayed_updateafteredit.FastEl(0);
+      delayed_updateafteredit.RemoveIdx(0);
       it->UpdateAfterEdit();
     }
-    delayed_updateafteredit.RemoveAll();
     did_some = true;
   }
   return did_some;
@@ -191,14 +191,15 @@ bool tabMisc::DoDelayedUpdateAfterEdits() {
 bool tabMisc::DoDelayedFunCalls() {
   bool did_some = false;
   if (delayed_funcalls.size > 0) {
-    for(int i=0; i<delayed_funcalls.size; i++) {
-      NameVar& nv = delayed_funcalls.FastEl(i);
+    while(delayed_funcalls.size > 0) {
+      NameVar& nv = delayed_funcalls.FastEl(0);
       taBase* it = nv.value.toBase();
+      String fun_nm = nv.name;
+      delayed_funcalls.RemoveIdx(0);
       if(it) {
-	it->CallFun(nv.name);
+	it->CallFun(fun_nm);
       }
     }
-    delayed_funcalls.Reset();
     did_some = true;
   }
   return did_some;
@@ -1416,8 +1417,17 @@ bool taBase::ChildCanDuplicate(const taBase* chld, bool quiet) const {
 
 taBase* taBase::ChildDuplicate(const taBase* chld) {
   taList_impl* lst = children_();
-  if (lst) return lst->DuplicateEl(chld);
-  else return NULL;
+  if (lst) {
+    taBase* rval = lst->DuplicateEl(chld);
+    if(rval && taMisc::gui_active) {
+      if(!lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+	tabMisc::DelayedFunCall(rval, "BrowserExpandAll");
+	tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+      }
+    }
+    return rval;
+  }
+  return NULL;
 }
 
 bool taBase::DuplicateMe() {

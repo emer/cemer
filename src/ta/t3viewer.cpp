@@ -1826,6 +1826,27 @@ void iT3DataViewer::UpdateTabNames() {
   }
 }
 
+int iT3DataViewer::TabIndexByName(const String& nm) const {
+  for (int i = 0; i < tw->count(); ++i) {
+    if(tw->tabText(i) == nm) return i;
+  }
+  return -1;
+}
+
+bool iT3DataViewer::SetCurrentTab(int tab_idx) {
+  if(tab_idx < 0 || tab_idx >= tw->count()) return false;
+  tw->setCurrentIndex(tab_idx);
+  return true;
+}
+
+bool iT3DataViewer::SetCurrentTabName(const String& tab_nm) {
+  int tab_idx = TabIndexByName(tab_nm);
+  if(tab_idx >= 0) {
+    return SetCurrentTab(tab_idx);
+  }
+  return false;
+}
+
 //////////////////////////
 //	T3DataViewer	//
 //////////////////////////

@@ -517,7 +517,6 @@ Program_Group .projects[0].programs.gp[0] {
       flags=;
       target=.projects[0].programs.gp[0][1]$5$;
       targ_ld_init="*BpTrain*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1021,7 +1020,6 @@ Program_Group .projects[0].programs.gp[0] {
       flags=;
       target=.projects[0].programs.gp[0][2]$14$;
       targ_ld_init="*BpEpoch*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1305,7 +1303,6 @@ Program_Group .projects[0].programs.gp[0] {
       flags=;
       target=$0$;
       targ_ld_init="*BpTrial*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -1440,7 +1437,6 @@ Program_Group .projects[0].programs.gp[0] {
     flags=;
     target=.projects[0].programs.gp[0][6]$24$;
     targ_ld_init="*BpEpochMonitor*";
-    call_init=0;
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -1565,7 +1561,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     flags=;
     target=.projects[0].programs.gp[0][4]$26$;
     targ_ld_init="*ApplyInputs*";
-    call_init=0;
     prog_args {
      name=;
      el_typ=ProgArg;
@@ -1633,7 +1628,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     flags=;
     target=.projects[0].programs.gp[0][5]$27$;
     targ_ld_init="*BpTrialMonitor*";
-    call_init=0;
     prog_args {
      name=;
      el_typ=ProgArg;

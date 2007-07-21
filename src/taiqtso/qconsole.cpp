@@ -327,6 +327,11 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     cursor.deleteChar();
     setTextCursor(cursor);
   }
+  else if((e->key() == Qt::Key_K) && ctrl_pressed) {
+    e->accept();
+    cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    cursor.removeSelectedText();
+  }
   else if((e->key() == Qt::Key_Y) && ctrl_pressed) {
     e->accept();
     paste();

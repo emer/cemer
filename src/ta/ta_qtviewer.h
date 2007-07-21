@@ -1154,10 +1154,13 @@ public:
   void			OnWindowBind(iTabViewer* itv); // called at constr_post time
   void 			ShowLink(taiDataLink* link, bool not_in_cur = false);
   void			ShowPanel(iDataPanel* panel, bool not_in_cur = false); // top level guy, checks if exists, adds or sets current; if not_in_cur then won't replace current tab
-  void			SetCurrentTab(int tab_idx); 
-    // focus indicated tab, but usually not if current is lockInPlace 
+  bool			SetCurrentTab(int tab_idx); 
+  // focus indicated tab, but usually not if current is lockInPlace -- returns success
+  bool			SetCurrentTabName(const String& tab_nm); 
+  // focus indicated tab, but usually not if current is lockInPlace -- returns success
   void			ShowTab(iDataPanel* panel, bool show, bool focus = false); // show/hide tab, esp for ctrl panel in visible frame
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
+  int			TabIndexByName(const String& nm) const;
   void 			UpdateTabName(iDataPanel* pan); // called only by individual panel when its name may have changed
 
   iTabView(QWidget* parent = NULL);

@@ -256,7 +256,6 @@ Program .projects[0].programs.gp[0][2] {
      flags=;
      target=.projects[0].programs.gp[0][3]$8$;
      targ_ld_init="*BpTrial*";
-     call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -391,7 +390,6 @@ Program .projects[0].programs.gp[0][2] {
    flags=;
    target=.projects[0].programs.gp[0][6]$12$;
    targ_ld_init="*BpEpochMonitor*";
-   call_init=0;
    prog_args {
     name=;
     el_typ=ProgArg;

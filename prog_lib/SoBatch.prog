@@ -134,7 +134,6 @@ Program .projects[0].programs.gp[0][0] {
      flags=;
      target=.projects[0].programs.gp[0][1]$4$;
      targ_ld_init="*SoTrain*";
-     call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;

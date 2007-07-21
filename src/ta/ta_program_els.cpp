@@ -215,6 +215,8 @@ void ForLoop::Initialize() {
 void ForLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   GetIndexVar();
 }
 
@@ -575,6 +577,10 @@ void Switch::CasesFmEnum() {
     CasesFmEnum_hard();
   else
     CasesFmEnum_dyn();
+
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+  }
 }
 
 void Switch::CasesFmEnum_hard() {

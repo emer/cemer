@@ -39,6 +39,7 @@
 #include "iflowlayout.h"
 #include "ilineedit.h"
 #include "ispinbox.h"
+#include "itextedit.h"
 
 #include <qapplication.h>
 #include <qcolor.h> // needed for qbitmap
@@ -59,7 +60,6 @@
 #include <qpushbutton.h>
 #include <QStackedWidget>
 #include <qstring.h>
-#include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
 #include <qtooltip.h>
@@ -445,7 +445,7 @@ void iFieldEditDialog::init(bool read_only_, const String& desc) {
     prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     layOuter->addWidget(prompt);
   }
-  txtText = new QTextEdit(this);
+  txtText = new iTextEdit(this);
   layOuter->addWidget(txtText);
   QHBoxLayout* layButtons = new QHBoxLayout();
   layButtons->setMargin(2);

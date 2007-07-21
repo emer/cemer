@@ -36,7 +36,6 @@
 #include <Q3VBox>
 #include <QScrollArea> // for gpiGroupDialog
 #include <QSplitter>
-#include <QTextEdit>
 #include <qtooltip.h>
 #include <QDesktopServices>
 
@@ -44,6 +43,7 @@
 #include "ieditgrid.h"
 #include "iscrollarea.h"
 #include "itextbrowser.h"
+#include "itextedit.h"
 
 
 //////////////////////////
@@ -1903,7 +1903,7 @@ void DocEditDataHost::Constr_Body() {
 
 void DocEditDataHost::Constr_Box() {
   // Html tab
-  tedHtml = new QTextEdit;
+  tedHtml = new iTextEdit;
   tedHtml->setAcceptRichText(false); // is the raw html as text
   if (read_only) {
     tedHtml->setReadOnly(true);

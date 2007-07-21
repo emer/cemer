@@ -513,7 +513,6 @@ Program .projects[0].programs.gp[0][1] {
      flags=;
      target=.projects[0].programs.gp[0][2]$10$;
      targ_ld_init="*BpEpoch*";
-     call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;

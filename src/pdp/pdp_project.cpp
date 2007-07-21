@@ -132,6 +132,9 @@ void Wizard::ThreeLayerNet() {
   layer_cfg[2]->name = "Output";
   layer_cfg[2]->io_type = LayerWizEl::OUTPUT;
   layer_cfg[2]->DataChanged(DCR_ITEM_UPDATED);
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(&layer_cfg, "BrowserExpandAll");
+  }
 }
 
 void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
@@ -150,12 +153,17 @@ void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
     lel->name = "Hidden";
     if(n_hiddens > 1) lel->name += "_" + String(i-n_inputs);
     lel->io_type = LayerWizEl::HIDDEN;
+    lel->DataChanged(DCR_ITEM_UPDATED);
   }
   for(;i<n_layers;i++) {
     LayerWizEl* lel = layer_cfg[i];
     lel->name = "Output";
     if(n_outputs > 1) lel->name += "_" + String(i-(n_inputs+n_hiddens));
     lel->io_type = LayerWizEl::OUTPUT;
+    lel->DataChanged(DCR_ITEM_UPDATED);
+  }
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(&layer_cfg, "BrowserExpandAll");
   }
 }
 
@@ -255,7 +263,10 @@ void Wizard::StdNetwork(Network* net) {
   net->Build();
   net->StructUpdate(false);
   net->NewView();
-//obs  taMisc::DelayedMenuUpdate(net);
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(net, "BrowserExpandAll");
+    tabMisc::DelayedFunCall(net, "BrowserSelectMe");
+  }
 }
 
 void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
@@ -278,6 +289,10 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
     off_lay->layer_type = Layer::INPUT;
   }
   net->StructUpdate(false);
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(net, "BrowserExpandAll");
+    tabMisc::DelayedFunCall(net, "BrowserSelectMe");
+  }
 }
 
 //////////////////////////////////
@@ -311,6 +326,9 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
   if(n_patterns > 0)
     data_table->AddRows(n_patterns);
   data_table->StructUpdate(false);
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(data_table, "BrowserSelectMe");
+  }
 }
 
 void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
@@ -335,14 +353,20 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
     }
   }
   data_table->StructUpdate(false);
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(data_table, "BrowserSelectMe");
+  }
 }
 
 void Wizard::StdOutputData() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   // DataTable* trl_data 
   proj->GetNewOutputDataTable("TrialOutputData");
-  // DataTable* epc_data =
-  proj->GetNewOutputDataTable("EpochOutputData");
+  DataTable* epc_data =
+    proj->GetNewOutputDataTable("EpochOutputData");
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(epc_data, "BrowserSelectMe");
+  }
 }
 
 //////////////////////////////////
@@ -363,6 +387,11 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
 		  "is not a group of programs -- invalid for this function");
     return NULL;
   }
+
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall((Program_Group*)rval, "BrowserExpandList");
+  }
+
   Program_Group* pg = (Program_Group*)rval;
   Program* apin = pg->FindName("ApplyInputs");
   if(apin) {

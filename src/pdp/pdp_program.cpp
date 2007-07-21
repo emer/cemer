@@ -152,6 +152,8 @@ void NetGroupedDataLoop::GetIndexVars() {
 void NetGroupedDataLoop::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(data_var);
   UpdateProgVarRef_NewOwner(group_order_var);
   UpdateProgVarRef_NewOwner(item_order_var);
@@ -301,6 +303,8 @@ void NetCounterInit::UpdateAfterEdit_impl() {
     network_type = network_var->object_val->GetTypeDef();
   }
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(network_var);
   UpdateProgVarRef_NewOwner(local_ctr_var);
   GetLocalCtrVar();
@@ -361,6 +365,8 @@ void NetCounterIncr::UpdateAfterEdit_impl() {
     network_type = network_var->object_val->GetTypeDef();
   }
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(network_var);
   UpdateProgVarRef_NewOwner(local_ctr_var);
   GetLocalCtrVar();
@@ -417,6 +423,8 @@ void NetUpdateView::Destroy() {
 void NetUpdateView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(network_var);
   UpdateProgVarRef_NewOwner(update_var);
   GetUpdateVar();
@@ -470,6 +478,8 @@ void InitNamedUnits::Destroy() {
 void InitNamedUnits::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
 
   UpdateProgVarRef_NewOwner(input_data_var);
   UpdateProgVarRef_NewOwner(unit_names_var);
@@ -534,6 +544,9 @@ bool InitNamedUnits::GetUnitNamesVar() {
       rval->name = "UnitNames";
       taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
       rval->DataChanged(DCR_ITEM_UPDATED);
+      if(taMisc::gui_active) {
+	tabMisc::DelayedFunCall(rval, "BrowserSelectMe"); // todo: might be too radical.
+      }
     }
     unit_names_var->object_val = rval;
     unit_names_var->DataChanged(DCR_ITEM_UPDATED);
@@ -545,7 +558,10 @@ bool InitNamedUnits::GetNetworkVar() {
   if((bool)network_var) return true;
   Program* my_prog = program();
   if(!my_prog) return false;
-  network_var = my_prog->vars.FindName("network");
+  network_var = my_prog->args.FindName("network");
+  if(!network_var) {
+    network_var = my_prog->vars.FindName("network");
+  }
   if(!network_var) return false;
   network_var->var_type = ProgVar::T_Object;
   network_var->DataChanged(DCR_ITEM_UPDATED);
@@ -611,11 +627,14 @@ bool InitNamedUnits::InitDynEnums() {
     DataCol* ndc = undt->data.FastEl(i);
     DynEnumType* det = (DynEnumType*)my_prog->types.FindName(ndc->name);
     if(!det) {
-      det = my_prog->types.NewDynEnum();
+      det = (DynEnumType*)my_prog->types.New(1, &TA_DynEnumType);
       det->name = ndc->name;
     }
     String prefix = ndc->name.before(n_lay_name_chars);
     InitDynEnumFmUnitNames(det, ndc, prefix);
+  }
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(&(my_prog->types), "BrowserExpandAll");
   }
   return true;
 }
@@ -716,6 +735,8 @@ void SetUnitsLit::Destroy() {
 void SetUnitsLit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(input_data_var);
   GetInputDataVar();
 }
@@ -808,6 +829,8 @@ void SetUnitsVar::Destroy() {
 void SetUnitsVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying() || prg->isDestroying()) return;
   UpdateProgVarRef_NewOwner(input_data_var);
   UpdateProgVarRef_NewOwner(offset);
   UpdateProgVarRef_NewOwner(unit_1);

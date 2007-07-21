@@ -683,6 +683,12 @@ public:
   iT3DataViewFrame*	iViewFrame(int idx) const; // the frame in indicated tab
   T3DataViewFrame*	viewFrame(int idx) const; // view of frame in indicate tab -- NOT necessarily same as view idx if all frames not viewed in frames
 
+  int			TabIndexByName(const String& nm) const;
+  bool			SetCurrentTab(int tab_idx); 
+  // focus indicated tab -- returns success
+  bool			SetCurrentTabName(const String& tab_nm); 
+  // focus indicated tab -- returns success
+
   void			AddT3DataViewFrame(iT3DataViewFrame* dvf, int idx = -1);
   void			UpdateTabNames();
   

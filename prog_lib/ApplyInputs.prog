@@ -60,9 +60,9 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Input";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=EXT;
+     ext_flags=;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-     value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;     };
+     value_names{      };
     };
     LayerWriterEl @[1] {
      chan_name="Output";
@@ -70,14 +70,14 @@ Program .projects[0].programs.gp[0][6] {
      layer_name="Output";
      offset {x=0: y=0: };
      use_layer_type=1;
-     ext_flags=TARG;
+     ext_flags=;
      noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-     value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;     };
+     value_names{      };
     };
     LayerWriterEl @[2] {
      chan_name="Name";
      net_target=TRIAL_NAME;
-     layer_name="Name";
+     layer_name=;
      offset {x=0: y=0: };
      use_layer_type=1;
      ext_flags=;

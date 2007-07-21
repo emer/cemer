@@ -227,7 +227,7 @@ void BaseSpec::UpdateAfterEdit_impl() {
 }
 
 BaseSpec* BaseSpec::NewChild(TypeDef* child_type) {
-  BaseSpec* rval = (BaseSpec*)children.NewEl(1, child_type);
+  BaseSpec* rval = (BaseSpec*)children.New_gui(1, child_type);
   rval->UpdateSpec();
   return rval;
 }

@@ -529,7 +529,6 @@ of what happens in the training of each network, or where it is run (e.g., on di
      flags=;
      target=.projects[0].programs.gp[0][2]$8$;
      targ_ld_init="*LeabraEpoch*";
-     call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;

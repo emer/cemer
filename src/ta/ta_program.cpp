@@ -157,6 +157,24 @@ void ProgType_List::setStale() {
 //   }
 }
 
+bool ProgType_List::BrowserSelectMe() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserSelectMe_ProgItem(this);
+}
+
+bool ProgType_List::BrowserExpandAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserExpandAll_ProgItem(this);
+}
+
+bool ProgType_List::BrowserCollapseAll() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return false;
+  return prog->BrowserCollapseAll_ProgItem(this);
+}
+
 ///////////////////////////////////////////////////////////
 //		DynEnumType
 ///////////////////////////////////////////////////////////
@@ -263,7 +281,7 @@ DynEnumItem* DynEnumType::NewEnum() {
 }
 
 DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
-  DynEnumItem* it = NewEnum();
+  DynEnumItem* it = (DynEnumItem*)enums.New(1);
   it->name = nm;
   it->value = val;
   enums.OrderItems();
@@ -3502,6 +3520,7 @@ bool Program_Group::RunStartupProgs() {
   Program* prog;
   FOR_ITR_EL(Program, prog, this->, itr) {
     if(!prog->HasProgFlag(Program::STARTUP_RUN)) continue;
+    cerr << "Running startup program: " << prog->name << endl;
     prog->Init();
     if((prog->ret_val == Program::RV_OK) && (prog->run_state == Program::DONE)) {
       prog->Run();
@@ -3536,11 +3555,15 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
   if(is_group) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
     pg->Load(path);
+    Program* first_guy = pg->Leaf(0);
+    if(first_guy)
+      tabMisc::DelayedFunCall(first_guy, "BrowserSelectMe");
     return pg;
   }
 
   Program* pg = new_owner->NewEl(1, &TA_Program);
   pg->Load(path);
+  tabMisc::DelayedFunCall(pg, "BrowserSelectMe");
   return pg;
 }
 

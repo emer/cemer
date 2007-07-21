@@ -282,7 +282,9 @@ void LayerWriter::AutoConfig(bool reset_existing) {
 	       "Either the data or the network variables are not set -- please set them and try again!")) {
     return;
   }
-  if(reset_existing) layer_data.Reset();
+  if(reset_existing) {
+    layer_data.Reset();
+  }
   Layer* lay;
   taLeafItr itr;
   FOR_ITR_EL(Layer, lay, network->layers., itr) {
@@ -307,6 +309,9 @@ void LayerWriter::AutoConfig(bool reset_existing) {
     LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group");
     lrw->net_target = LayerDataEl::GROUP_NAME;
     lrw->DataChanged(DCR_ITEM_UPDATED);
+  }
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall(this, "BrowserExpandAll");
   }
 }
 
@@ -1183,7 +1188,7 @@ void NetMonitor::AddObject(TAPtr obj, const String& variable) {
     if ((nmi->object.ptr() == obj) && (nmi->variable == variable))
       return;
   }
-  nmi = (NetMonItem*)items.New(1, &TA_NetMonItem);
+  nmi = (NetMonItem*)items.New_gui(1, &TA_NetMonItem); // use gui to update
   nmi->SetMonVals(obj, variable);
 }
 

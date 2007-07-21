@@ -514,7 +514,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      flags=;
      target=.projects[0].programs.gp[0][2]$10$;
      targ_ld_init="*SoEpoch*";
-     call_init=0;
      prog_args {
       name=;
       el_typ=ProgArg;

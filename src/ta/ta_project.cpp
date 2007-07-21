@@ -104,6 +104,8 @@ String taDoc::WikiParse(const String& in_str) {
   String rest = in_str;
   bool bullet1 = false;
   bool bullet2 = false;
+  bool num1 = false;
+  bool num2 = false;
   while(rest.contains("\n")) {
     String cl = rest.before("\n");
     rest = rest.after("\n");
@@ -120,9 +122,23 @@ String taDoc::WikiParse(const String& in_str) {
       else cl = "<li> " + cl.after("** ");
       bullet2 = true;
     }
+    else if(cl.startsWith("# ")) {
+      if(num2) { cl = "</ol> <li> " + cl.after("# "); num2 = false; }
+      else if(!num1) cl = "<ol><li> " + cl.after("# ");
+      else cl = "<li> " + cl.after("# ");
+      num1 = true;
+    }
+    else if(cl.startsWith("## ")) {
+      if(!num2) cl = "<ol><li> " + cl.after("## ");
+      else cl = "<li> " + cl.after("## ");
+      num2 = true;
+    }
     else {
       if(bullet2) { cl += "</ul>"; bullet2 = false; }
       if(bullet1) { cl += "</ul>"; bullet1 = false; }
+
+      if(num2) { cl += "</ol>"; num2 = false; }
+      if(num1) { cl += "</ol>"; num1 = false; }
     }
 
     if(cl.empty()) {		// make a <P> for blank lines..
@@ -162,7 +178,17 @@ String taDoc::WikiParse(const String& in_str) {
 	tag = tag.after('|');
       }
       else if(ta_tag) {
-	tag = tag.after('.',-1);
+	if(tag.contains("()")) {
+	  String fnm = tag.after('.',-1);
+	  tag = tag.before('.',-1);
+	  if(tag.contains('.')) { // should!
+	    tag = tag.after('.',-1);
+	  }
+	  tag += "." + fnm;
+	}
+	else {
+	  tag = tag.after('.',-1);
+	}
       }
       cl = cl.before("[[") + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after("]]");
     }
@@ -300,6 +326,15 @@ void taProject::InitLinks_post() {
     AssertDefaultProjectBrowser(false);
     AssertDefaultWiz(false);	// make default and don't edit it
   }
+  // then select second tab -- see PostLoadAutos for more info
+  if (taMisc::gui_active) {
+    taiMiscCore::ProcessEvents();
+    taiMiscCore::ProcessEvents();
+    MainWindowViewer* vwr = GetDefaultProjectBrowser();
+    if(vwr) {
+      vwr->SelectPanelTabNo(1);
+    }
+  }
 }
 
 void taProject::CutLinks() {
@@ -375,11 +410,7 @@ void taProject::PostLoadAutos() {
     // make double sure..
     taiMiscCore::ProcessEvents();
     taiMiscCore::ProcessEvents();
-    PanelViewer* pv = (PanelViewer*)vwr->FindFrameByType(&TA_PanelViewer);
-    if (!pv) return; // shouldn't happen
-    iTabViewer* itv = pv->widget();
-    itv->tabView()->SetCurrentTab(1);
-    taiMiscCore::ProcessEvents();
+    vwr->SelectPanelTabNo(1);
   }
   programs.RunStartupProgs();	// only at last step!
 }

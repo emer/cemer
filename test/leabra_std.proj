@@ -2,7 +2,7 @@
 LeabraProject .projects[0] { 
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
-      taBase_List @.layer_cfg = [3] {
+      LayerWizElList @.layer_cfg = [3] {
 	LayerWizEl @[0] { };
 	LayerWizEl @[1] { };
 	LayerWizEl @[2] { };
@@ -144,7 +144,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[6] { };
 	};
 
-	ProgEl_List @.init_code = [5] {
+	ProgEl_List @.init_code = [6] {
 	  AssignExpr @[0] { };
 	  MethodCall @[1] { 
 	    ProgArg_List @.meth_args = [1] {
@@ -167,6 +167,7 @@ LeabraProject .projects[0] {
 	      PrintExpr @[1] { };
 	    };
 	  };
+	  AssignExpr @[5] { };
 	};
 
 	ProgEl_List @.prog_code = [7] {
@@ -711,7 +712,7 @@ LeabraProject .projects[0] {
    el_typ=DataTable;
    el_def=0;
    DataTable @[0] {
-    name="SimpleLines5x5";
+    name="StdInputData";
     desc=;
     data {
      name="data";
@@ -721,13 +722,13 @@ LeabraProject .projects[0] {
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{ 1;      };
+      cell_geom{       };
       calc_expr {
        expr=;
       };
       ar {
        name=;
-	    [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
+	    [4] ;;;;      };
      };
      float_Data @[1] {
       name="Input";
@@ -739,7 +740,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;1;0;0;0;0;0;0;0;1;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;0;      };
+	    [5 5 4] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;      };
      };
      float_Data @[2] {
       name="Output";
@@ -751,7 +752,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;1;0;0;0;0;0;0;0;1;0;0;1;0;0;1;1;0;0;0;0;0;0;0;0;0;      };
+	    [5 5 4] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1190,7 +1191,6 @@ LeabraProject .projects[0] {
 	flags=;
 	target=.projects[0].programs.gp[0][1]$5$;
 	targ_ld_init="*LeabraTrain*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1371,7 +1371,7 @@ LeabraProject .projects[0] {
      ProgVar @[3] {
       name="epoch";
       var_type=T_Int;
-      int_val=10;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
@@ -1558,6 +1558,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
+     AssignExpr @[5] {
+      desc="grab the official network epoch counter: will be initialized if needed by now";
+      flags=;
+      result_var=.projects[0].programs.gp[0][1].vars[3]$13$;
+      expr {
+       expr="network.epoch";
+       flags=;
+       var_expr="$#0#$.epoch";
+       vars {
+       };
+       var_names{ network;       };
+       bad_vars{        };
+      };
+     };
     };
     prog_code {
      name=;
@@ -1672,7 +1686,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[4] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[3]$13$;
+      result_var=$13$;
       expr {
        expr="network.epoch";
        flags=;
@@ -1695,7 +1709,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][2]$14$;
 	targ_ld_init="*LeabraEpoch*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1979,7 +1992,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][3]$21$;
 	targ_ld_init="*LeabraTrial*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2114,7 +2126,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][8]$25$;
       targ_ld_init="*LeabraEpochMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2267,7 +2278,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=$0$;
 	targ_ld_init="*LeabraSettle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2353,7 +2363,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][7]$28$;
       targ_ld_init="*LeabraTrialMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2503,7 +2512,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       target=.projects[0].programs.gp[0][6]$32$;
       targ_ld_init="*ApplyInputs*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2617,7 +2625,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=;
 	target=.projects[0].programs.gp[0][5]$34$;
 	targ_ld_init="*LeabraCycle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2881,9 +2888,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	layer_name="Input";
 	offset {x=0: y=0: };
 	use_layer_type=1;
-	ext_flags=EXT;
+	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
+	value_names{ 	};
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -2891,14 +2898,14 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	layer_name="Output";
 	offset {x=0: y=0: };
 	use_layer_type=1;
-	ext_flags=TARG;
+	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
+	value_names{ 	};
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
 	net_target=TRIAL_NAME;
-	layer_name="Name";
+	layer_name=;
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=;
@@ -4358,7 +4365,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       el_def=0;
       T3DataViewFrame @[0] {
        m_data=NULL;
-       name="Frame1";
+       name="Network_0";
        visible=1;
        root_view {
 	m_data=NULL;
@@ -4442,7 +4449,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    };
   };
  };
- use_change_log=0;
+ use_change_log=1;
  last_change_desc=;
  networks {
   name=;
@@ -4594,7 +4601,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4627,7 +4634,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4692,13 +4699,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.19: max=0.95: max_i=10: };
-     acts_m {avg=0.19: max=0.95: max_i=10: };
+     acts_p {avg=0: max=0: max_i=-1: };
+     acts_m {avg=0: max=0: max_i=-1: };
      phase_dif_ratio=1;
-     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.2: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$58$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -4802,13 +4809,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.2019286: max=0.8643634: max_i=0: };
-     acts_m {avg=0.1950653: max=0.8721565: max_i=0: };
-     phase_dif_ratio=0.9660113;
-     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=4.205798: k1_ithr=3.278388: ithr_r=0.2491121: ithr_diff=0.2205074: tie_brk=0: };
+     acts_p {avg=0: max=0: max_i=-1: };
+     acts_m {avg=0: max=0: max_i=-1: };
+     phase_dif_ratio=1;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.24: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$63$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -4888,13 +4895,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0.19: max=0.95: max_i=10: };
-     acts_m {avg=0.1663103: max=0.8538466: max_i=14: };
-     phase_dif_ratio=0.8753175;
-     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=3.537247: k1_ithr=3.350972: ithr_r=0.0540983: ithr_diff=0.05266108: tie_brk=0: };
+     acts_p {avg=0: max=0: max_i=-1: };
+     acts_m {avg=0: max=0: max_i=-1: };
+     phase_dif_ratio=1;
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0.2: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=$58$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -4918,7 +4925,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cycle=0;
    time=0;
    group_name=;
-   trial_name="midhoriz";
+   trial_name=;
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -4930,8 +4937,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=5589: sys=765: tot=2508936526: }: end={usr=5711: sys=785: tot=2508936669: }: used={usr=122: sys=20: tot=143: }: n_used=1: };
-   epoch_time {name="epoch_time": start={usr=5700: sys=783: tot=2508936656: }: end={usr=5711: sys=785: tot=2508936669: }: used={usr=11: sys=2: tot=13: }: n_used=1: };
+   train_time {name="train_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };

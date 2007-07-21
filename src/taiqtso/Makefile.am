@@ -28,6 +28,7 @@ HEADS =\
 	ibutton.h \
 	iscrollarea.h \
 	itextbrowser.h \
+	itextedit.h \
 	test_iflowbox.h \
 	test_iflowlayout.h \
 	test_simplewidgets.h \
@@ -70,6 +71,8 @@ SRCS =\
 	iscrollarea.moc.cpp \
 	itextbrowser.cpp \
 	itextbrowser.moc.cpp \
+	itextedit.cpp \
+	itextedit.moc.cpp \
 	taiqtso_ti.cpp
 
 include_HEADERS = $(HEADS) $(TAHEADS)

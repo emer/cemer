@@ -52,7 +52,6 @@
 #include <QStackedLayout>
 #include <QStatusBar>
 #include <QTextBrowser>
-#include <QTextEdit>
 #include <QTimer>
 #include <QToolBox>
 #include <qtooltip.h>
@@ -61,6 +60,7 @@
 #include <qwhatsthis.h>
 
 #include "itextbrowser.h"
+#include "itextedit.h"
 
 using namespace Qt;
 
@@ -3852,8 +3852,9 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
+  // because these things are called in waitprocs, this is NOT a good idea..
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
@@ -3861,7 +3862,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
     ibv->lvwDataTree->setCurrentItem(rval);
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   return rval;
 }
 
@@ -3870,15 +3871,16 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
+  // because these things are called in waitprocs, this is NOT a good idea..
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
     ibv->lvwDataTree->ExpandAllUnder(rval);
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   return rval;
 }
 
@@ -3888,14 +3890,14 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
   // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
     ibv->lvwDataTree->CollapseAllUnder(rval);
   }
   // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   return rval;
 }
 
@@ -3915,12 +3917,12 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
     itv->AddPanel(pan);
   }
    // make sure previous operations are finished
-  taiMiscCore::ProcessEvents();
+//   taiMiscCore::ProcessEvents();
   return true;
 }
 
 void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
-//TODO: diagnostics on failures
+  //TODO: diagnostics on failures
   String path = url.path(); // will only be part before #, if any
   String vw_num = String(url.fragment()).after("#");
   iMainWindowViewer* inst = NULL;
@@ -3931,13 +3933,44 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
     inst = taiMisc::active_wins.Peek_MainWindow();
   }
   if (!inst) return; // shouldn't happen!
-   
-  taBase* tab = tabMisc::root->FindFromPath(path);
-  if (!tab) return;
-  taiDataLink* link = (taiDataLink*)tab->GetDataLink();
-  if (!link) return;
-//  iTreeViewItem* item = 
-  inst->AssertBrowserItem(link);
+
+  MainWindowViewer* mwv = inst->viewer();
+  if(!mwv) return;		// shouldn't happen!
+
+  String fun_call;
+  if(path.endsWith("()")) {	// function call!
+    fun_call = path.after(".",-1);
+    fun_call = fun_call.before("()");
+    path = path.before(".",-1);	// get part before last call
+  }
+  if(path.startsWith(".T3Tab.")) {
+    String tbnm = path.after(".T3Tab.");
+    if(!mwv->SelectT3ViewTabName(tbnm)) {
+      taMisc::Warning("ta: URL -- could not activate 3D View Tab named:", tbnm);
+    }      
+  }
+  else if(path.startsWith(".PanelTab.")) {
+    String tbnm = path.after(".PanelTab.");
+    if(!mwv->SelectPanelTabName(tbnm)) {
+      taMisc::Warning("ta: URL -- could not activate Panel Tab named:", tbnm);
+    }
+  }
+  else {
+    taBase* tab = tabMisc::root->FindFromPath(path);
+    if (!tab) {
+      taMisc::Warning("ta: URL",path,"not found as a path to an object!");
+      return;
+    }
+    if(fun_call.nonempty()) {
+      tab->CallFun(fun_call);
+    }
+    else {
+      taiDataLink* link = (taiDataLink*)tab->GetDataLink();
+      if (!link) return;
+      //  iTreeViewItem* item = 
+      inst->AssertBrowserItem(link);
+    }
+  }
 }
 
 
@@ -4702,11 +4735,20 @@ void iTabView::ResolveChanges(CancelOp& cancel_op) {
   }
 }
 
-void iTabView::SetCurrentTab(int tab_idx) {
-  if (tab_idx >= tbPanels->count()) return;
+bool iTabView::SetCurrentTab(int tab_idx) {
+  if (tab_idx < 0 || tab_idx >= tbPanels->count()) return false;
   iDataPanel* pan = tabPanel(tab_idx);
   tbPanels->setCurrentIndex(tab_idx);
   wsPanels->setCurrentWidget(pan);
+  return true;
+}
+
+bool iTabView::SetCurrentTabName(const String& tab_nm) {
+  int tab_idx = TabIndexByName(tab_nm);
+  if(tab_idx >= 0) {
+    return SetCurrentTab(tab_idx);
+  }
+  return false;
 }
 
 void iTabView::ShowPanel(iDataPanel* panel, bool not_in_cur) {
@@ -4780,6 +4822,13 @@ iDataPanel* iTabView::tabPanel(int tab_idx) {
 int iTabView::TabIndexOfPanel(iDataPanel* panel) const {
   for (int i = 0; i < tbPanels->count(); ++i) {
     if (tbPanels->panel(i) == panel) return i;
+  }
+  return -1;
+}
+
+int iTabView::TabIndexByName(const String& nm) const {
+  for (int i = 0; i < tbPanels->count(); ++i) {
+    if (tbPanels->panel(i)->TabText() == nm) return i;
   }
   return -1;
 }
@@ -5720,7 +5769,7 @@ void iListDataPanel::UpdatePanel_impl() {
 iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
 :inherited(dl_)
 {
-  txtText = new QTextEdit(this);
+  txtText = new iTextEdit(this);
   setCentralWidget(txtText);
   // default is ro
   setReadOnly(true);
