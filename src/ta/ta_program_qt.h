@@ -23,8 +23,7 @@
 
 #include "ta_program.h"
 
-#include "ta_qtdata.h"
-#include "ta_qttype.h"
+#include "ta_qtgroup.h"
 #include "ta_qtviewer.h"
 #include "ta_qtdialog.h"
 
@@ -346,5 +345,36 @@ protected:
   override void		ResolveChanges_impl(CancelOp& cancel_op);
 };
 
+////////////////////////////////////////////////////////
+//  Special ProgLib browser support
+
+class TA_API taiProgLibElsButton : public taiListElsButton {
+// for prog lib items
+INHERITED(taiListElsButton)
+public:
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+
+  taiProgLibElsButton(TypeDef* typ, IDataHost* host, taiData* par,
+		      QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
+protected:
+  override void		BuildCategories_impl();
+  override int 		BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst, 
+				       QTreeWidgetItem* top_item);
+};
+
+class TA_API taiProgLibElArgType : public gpiFromGpArgType {
+  // for ProgLibEl* ptr args
+public:
+  int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  void		GetImage_impl(taiData* dat, const void* base);
+  void		GetValue_impl(taiData* dat, void* base);
+
+  TAQT_ARGTYPE_INSTANCE(taiProgLibElArgType, gpiFromGpArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
 
 #endif

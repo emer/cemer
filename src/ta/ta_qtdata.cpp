@@ -2807,6 +2807,7 @@ taiItemChooser::taiItemChooser(const String& caption_, QWidget* par_window_)
 void taiItemChooser::init(const String& caption_) {
   m_changing = 0;
   caption = caption_;
+  multi_cats = false;
   m_selObj = NULL;
   m_selItem = NULL;
   m_client = NULL;
@@ -3076,9 +3077,28 @@ bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
   
   // category filter
   if (m_cat_filter != 0) {
-    QString act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
-    if (act_cat != client()->catText(m_cat_filter - 1)) // subtract 1 for 'all' item
-      return false;
+    String act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
+    String cat_txt = client()->catText(m_cat_filter - 1);// subtract 1 for 'all' item
+    if(multi_cats && act_cat.contains(", ")) {
+      bool any_match = false;
+      while(true) {
+	String cur_cat = act_cat.before(", ");
+	act_cat = act_cat.after(", ");
+	if(cur_cat == cat_txt) {
+	  any_match = true; break;
+	}
+	if(act_cat.contains(", ")) continue;
+	if(act_cat == cat_txt) {
+	  any_match = true;
+	}
+	break;
+      }
+      if(!any_match) return false;
+    }
+    else {
+      if (act_cat != cat_txt) 
+	return false;
+    }
   }
   
   // filter text filter

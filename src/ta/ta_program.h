@@ -281,7 +281,8 @@ public:
   enum VarFlags { // #BITS flags for modifying program variables
     PV_NONE		= 0, // #NO_BIT
     CTRL_PANEL		= 0x0001, // show this variable in the control panel
-    NULL_CHECK		= 0x0002, // complain if object variable is null during checkconfig (e.g., will get assigned during run)
+    CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
+    NULL_CHECK		= 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
@@ -894,9 +895,8 @@ public:
   enum ProgFlags { // #BITS program flags
     PF_NONE		= 0, // #NO_BIT
     NO_STOP		= 0x0001, // this program cannot be stopped by Stop or Step buttons
-    NO_USER_RUN		= 0x0002, // this program is not supposed to be run by regular users
-    SHOW_STEP		= 0x0004, // show the step_prog in the ctrl panel (turn this off for programs that are not part of the overall main control hierarchy)
-    STARTUP_RUN		= 0x0008, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
+    SHOW_STEP		= 0x0002, // show the step_prog in the ctrl panel (turn this off for programs that are not part of the overall main control hierarchy)
+    STARTUP_RUN		= 0x0004, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -925,7 +925,7 @@ public:
     SEARCH_LIBS,		// search through the libraries (for loading)
   };
 
-  static ProgLib* 	prog_lib; // #NO_SHOW_TREE library of available programs
+  static ProgLib* 	prog_lib; // #NO_SHOW_TREE #NO_SAVE library of available programs
   static String_Array	forbidden_names;
   // #NO_SAVE #READ_ONLY #HIDDEN names that should not be used for variables and other such things because they are already in use
 
@@ -1040,7 +1040,7 @@ public:
   virtual void		SaveToProgLib(ProgLibs library = USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_ProgLib save the program to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void		LoadFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_ProgLib (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #ARG_VAL_FM_FUN #CAT_ProgLib (re)load the program from the program library element of given type
 
   virtual void		RunLoadInitCode();
   // #CAT_Run Run the initialization code for object pointer variables and program calls -- to resolve pointers after loading
@@ -1094,6 +1094,7 @@ public: // XxxGui versions provide feedback to the user
   // #IGNORE perform BrowserCollapseAll function for program sub-item (prog el, etc)
 
   override String 	GetTypeDecoKey() const { return "Program"; }
+  override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
 
   void	InitLinks();
   void	CutLinks();
@@ -1237,7 +1238,7 @@ public:
   void		SaveToProgLib(Program::ProgLibs library = Program::USER_LIB);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_Program save the program group to given program library -- file name = object name -- be sure to add good desc comments!!
   virtual void	LoadFromProgLib(ProgLibEl* prog_type);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_Program (re)load the program from the program library element of given type
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #ARG_VAL_FM_FUN #CAT_Program (re)load the program from the program library element of given type
 
   virtual bool	RunStartupProgs();
   // run programs marked as STARTUP_RUN -- typically only done by system at startup -- returns true if any run
@@ -1245,6 +1246,8 @@ public:
   void		SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
   override String 	GetTypeDecoKey() const { return "Program"; }
+
+  override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
 
   void	InitLinks();
   void	CutLinks();

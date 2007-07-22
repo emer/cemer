@@ -108,8 +108,9 @@ protected:
 //nn  const String		itemTag() {return "Token: ";}
   const String		labelNameNonNull() const;
 
-  int 			BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst, 
-    QTreeWidgetItem* top_item); // we use this recursively, and also in gpi guy
+  virtual int 		BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst, 
+				       QTreeWidgetItem* top_item);
+  // we use this recursively, and also in gpi guy
 };
 
 class TA_API taiListElsButton : public taiListElsButtonBase {

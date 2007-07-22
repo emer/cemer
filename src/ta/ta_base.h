@@ -1159,7 +1159,10 @@ public:
 #endif
 
   virtual void		CallFun(const String& fun_name);
-  // #CAT_ObjectMgmt call function of given name on this object, prompting for args using gui interface
+  // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
+
+  virtual Variant	GetGuiArgVal(const String& fun_name, int arg_idx) { return _nilVariant; }
+  // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored
   
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
   // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected

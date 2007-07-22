@@ -2011,8 +2011,15 @@ taiArgType::~taiArgType() {
   }
 }
 
-void taiArgType::GetImage_impl(taiData* dat, const void*) {
+void taiArgType::GetImage_impl(taiData* dat, const void* base) {
   if (arg_base == NULL)  return;
+
+  if (arg_val && GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {
+      *arg_val = val;		// use css conversion code!
+    }
+  }
 
   if(use_it != NULL)
     use_it->GetImage(dat, arg_base);
@@ -2315,6 +2322,12 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
     taMisc::SpaceLabel(nulltxt);
     rval->setNullText(nulltxt);
   }
+  if (GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {
+      *((TAPtr*)arg_base) = val.toBase();
+    }
+  }
   rval->GetImage(*((TAPtr*)arg_base), npt, scope, scope_type);
 }
 
@@ -2396,7 +2409,7 @@ taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   return rval;
 }
 
-void taiTypePtrArgType::GetImage_impl(taiData* dat, const void*) {
+void taiTypePtrArgType::GetImage_impl(taiData* dat, const void* base) {
   if (arg_base == NULL)
     return;
   taiTypeDefButton* rval = (taiTypeDefButton*)dat;
@@ -2405,8 +2418,15 @@ void taiTypePtrArgType::GetImage_impl(taiData* dat, const void*) {
     taMisc::SpaceLabel(nulltxt);
     rval->setNullText(nulltxt);
   }
+  if (GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {// must be a string..
+      TypeDef* tdlkup = taMisc::types.FindName(val.toString());
+      *((TypeDef**)arg_base) = tdlkup;
+    }
+  }
   TypeDef* typ_ = (TypeDef*)*((void**)arg_base);
-  rval->GetImage((TypeDef*)*((void**)arg_base), typ_);
+  rval->GetImage(typ_, typ_);
 }
 
 void taiTypePtrArgType::GetValue_impl(taiData* dat, void*) {
@@ -2901,6 +2921,12 @@ taiData* gpiInObjArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidge
 void gpiInObjArgType::GetImage_impl(taiData* dat, const void* base) {
   if (arg_base == NULL)
     return;
+  if (GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {
+      *((TAPtr*)arg_base) = val.toBase();
+    }
+  }
   if (typ->InheritsFrom(TA_taGroup_impl)) {
     taiGroupElsButton* els = (taiGroupElsButton*)dat;
     els->GetImage((taGroup_impl*)base, *((TAPtr*)arg_base));
@@ -2958,18 +2984,20 @@ taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidg
     new_flags |= taiData::flgNoGroup; //aka flagNoList
 
   if (from_md->type->DerivesFrom(TA_taGroup_impl))
-//     return new gpiGroupEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
-// 		typ, host_, par, gui_parent_, (new_flags | taiData::flgNoInGroup));
      return new taiGroupElsButton(typ, host_, par, gui_parent_,
 				  (new_flags | taiData::flgNoInGroup));
   else
     return new taiListElsButton(typ, host_, par, gui_parent_, new_flags);
-//     return new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall, NULL,
-// 		typ, host_, par, gui_parent_, new_flags);
 }
 
 void gpiFromGpArgType::GetImage_impl(taiData* dat, const void* base) {
   if (arg_base == NULL)  return;
+  if (GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {
+      *((TAPtr*)arg_base) = val.toBase();
+    }
+  }
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)	return;
   TABLPtr lst = GetList(from_md, base);
@@ -2980,9 +3008,6 @@ void gpiFromGpArgType::GetImage_impl(taiData* dat, const void* base) {
     taiListElsButton* els = (taiListElsButton*)dat;
     els->GetImage((TABLPtr)lst, *((TAPtr*)arg_base));
   }
-
-//   gpiListEls* els = (gpiListEls*)dat;
-//   els->GetImage(lst, *((TAPtr*)arg_base));
 }
 
 void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
@@ -2990,8 +3015,6 @@ void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
     return;
   taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
   *((TAPtr*)arg_base) = els->GetValue();
-//   gpiListEls* els = (gpiListEls*)dat;
-//   *((TAPtr*)arg_base) = els->GetValue();
 }
 
 MemberDef* gpiFromGpArgType::GetFromMd() {

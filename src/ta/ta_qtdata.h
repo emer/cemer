@@ -925,6 +925,7 @@ public:
     int ft = 0, QWidget* par_window_ = NULL);
 
   String		caption; 	// current caption at top of chooser
+  bool			multi_cats;	// each item may have multiple categories, separated by commas
 
   inline taiItemPtrBase* client() const {return m_client;} // only valid in Constr and between Choose...accept/reject
   void*			selObj() const {return m_selObj;} // current selected object

@@ -2,36 +2,30 @@ leabra todo list:
 
 commit:
 
-* VIRT_BASE types do not show up in type selector!  also added err msg for creating one
-* fixed lazyChildren (i.e., lazy programmer!) so it only shows "+" things where they are 
-  actually required -- required looking at the size of the list etc and several other 
-  tweaks, and the new autoexpand/select code is actualy critical for making it all work
-  right, by driving the final update signal to redraw the new guy in the browser!
-* convert old file: cancel doesn't work -- fixed that logic so it should work.
+* impl NO_STEP flag in ctrl panel
+* added #ARG_VAL_FM_FUN directive for method args -- calls a GetGuiArgVal taBase fun to determine default initial arg value in gui -- very flexible soln to various such problems.
+* added special proglibel browser (BugID:33) uses tags as categories, added multi_cats support to itembrowser codebase -- this uses that.  also shows date modified and file/url
 
-* for proglib default arg, have a tabase arg default chooser function that gets 
-method name and arg name and returns a variant def arg val -- activated by #CD
-very good general soln!!
+------------
+current:
+
+* impl READ_ONLY flag in prog vars: NOT WORKING!!
+* fix all RO and STEP flags -- step seems not to be set in anything..
+
+* find use browse so progs in progedit? Prog editor show
+* list editor selects item for browse: editpanel(false)
 
 * selectedit browser name not updating when changed (in general, various name changes don't seem to update the browser)
 
 * use css parser to process progexpr: have progspace, parse a string, have a special callback
 function for whenever a variable is processed..
 
-------------
-current:
-
-* find use browse so progs in progedit? Prog editor show
-* list editor selects item for browse: editpanel(false)
-
-* program stuff for dealing with startup args?
-* impl NO_STEP flag in ctrl panel
-* impl READ_ONLY flag in prog vars
 * update bug list..
 * back button?
 * #22 -- update of netview ctrl panel -- happens even in simpler projects
 
 * check: test datatable /matrix cut/paste ops
+* program stuff for dealing with startup args?
 
 == Virtual Env
 
@@ -52,9 +46,7 @@ current:
 
 == Program
 
-* ProgVar FLAG: CTRL_RO -- read only in control panel #374
 * progexpr: not finding variables in function args, leading - sign is problematic
-* proglib: add dates (fill in!)
 
 == PVLV:
 
@@ -124,10 +116,7 @@ css:
 
 ------------------
 * datatable views:
-
-  - when editing a datatable_impl, need to send refresh update to display
   - initial panel is not updated..  just stick in render_impl and be done with it??  no..
-  - colorscale changes not sending signal
   - add data_spacing to graph view?
 
 -----------
@@ -147,9 +136,4 @@ lower pri:
 * test FILE string_stream.css: ptr = 0?
 
 * view colors: enum with different built-in styles
-
-----------
-arg directives
-
-
 

@@ -23,6 +23,9 @@
 
 #include <QCoreApplication>
 #include <QDir>
+//#include <QUrlInfo>
+#include <QFileInfo>
+#include <QDateTime>
 
 #ifdef TA_GUI
 # include "ilineedit.h" // for iTextDialog
@@ -3235,6 +3238,13 @@ void Program::SaveToProgLib(ProgLibs library) {
   Program_Group::prog_lib.FindPrograms();
 }
 
+Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
+  if(fun_name != "LoadFromProgLib") return _nilVariant;
+  if(!prog_lib) return  _nilVariant;
+  ProgLibEl* pel = prog_lib->FindName(name); // find our name
+  return Variant(pel);
+}
+
 void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
@@ -3508,6 +3518,12 @@ taBase* Program_Group::NewFromLibByName(const String& prog_nm) {
   return prog_lib.NewProgramFmName(prog_nm, this);
 }
 
+Variant Program_Group::GetGuiArgVal(const String& fun_name, int arg_idx) {
+  if(fun_name != "LoadFromProgLib") return _nilVariant;
+  ProgLibEl* pel = prog_lib.FindName(name); // find our name
+  return Variant(pel);
+}
+
 void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type to load is null")) return;
   if(TestError(!prog_type->is_group, "LoadFromProgLib", 
@@ -3646,6 +3662,10 @@ bool ProgLibEl::ParseProgFile(const String& fnm, const String& path) {
     }
   }
   strm.close();
+  // todo: should use QUrlInfo instead -- need QtNetwork module access!
+  QFileInfo urlinfo(openfnm);
+  QDateTime mod = urlinfo.lastModified();
+  date = mod.toString(Qt::ISODate);
   return rval;
 }
 

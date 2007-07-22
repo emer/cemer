@@ -1073,7 +1073,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     "useful items from the Program_Group to which this Program belongs");
   
   // ProgGroup guys
-  if(!(prog->HasProgFlag(Program::NO_STOP) || prog->HasProgFlag(Program::NO_USER_RUN))) {
+  if(!(prog->HasProgFlag(Program::NO_STOP) || !prog->HasProgFlag(Program::SHOW_STEP))) {
     Program_Group* pg = GET_OWNER(prog, Program_Group);
     MemberDef* md = TA_Program_Group.members.FindName("step_prog");
     if(pg && md) {
@@ -1125,6 +1125,8 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       else {
         mb_dat = md->im->GetDataRep(this, NULL, body);
       }
+      if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
+	mb_dat->SetFlag(taiData::flgReadOnly, true);
       data_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       int row = AddData(-1, data);
@@ -1441,5 +1443,126 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   // make sure our operations are finished
   taiMiscCore::ProcessEvents();
   return (bool)iti;
+}
+
+////////////////////////////////////////////////////////
+//  Special ProgLib browser support
+
+
+taiProgLibElsButton::taiProgLibElsButton(TypeDef* typ_, IDataHost* host, taiData* par,
+					 QWidget* gui_parent_, int flags_)
+ :inherited(typ_, host, par, gui_parent_, flags_)
+{
+  // nop
+}
+
+int taiProgLibElsButton::columnCount(int view) const {
+  switch (view) {
+  case 0: return 6;
+  default: return 0; // not supposed to happen
+  }
+}
+
+const String taiProgLibElsButton::headerText(int index, int view) const {
+  switch (view) {
+  case 0: switch (index) {
+    case 0: return "Name"; 
+    case 1: return "Type"; 
+    case 2: return "Tags"; 
+    case 3: return "Description"; 
+    case 4: return "Date Modified"; 
+    case 5: return "URL/filename"; 
+    } break; 
+  default: break; // compiler food
+  }
+  return _nilString; // shouldn't happen
+}
+
+void taiProgLibElsButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+
+  if(!list) return;		// shouldn't happen
+
+  ProgLib* plib = (ProgLib*)list;
+  for(int i=0;i<plib->size;i++) {
+    ProgLibEl* pel = plib->FastEl(i);
+    for(int j=0;j<pel->tags_array.size;j++) {
+      cats->AddUnique(pel->tags_array[j]);
+    }
+  }
+  cats->Sort(); // empty, if any, should sort to top
+}
+
+int taiProgLibElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst, 
+					QTreeWidgetItem* top_item) 
+{
+  int rval = 0;
+
+  ic->multi_cats = true;	// multiple categories
+  
+  ProgLib* plib = (ProgLib*)top_lst;
+  for (int i = 0; i < plib->size; ++i) {
+    ProgLibEl* pel = plib->FastEl(i);
+    QTreeWidgetItem* item = ic->AddItem(pel->tags, pel->GetDisplayName(),
+					top_item, pel); 
+    item->setText(1, pel->lib_name); // GetColText(taBase::key_type));
+    item->setText(2, pel->tags);
+    item->setText(3, pel->desc); // GetColText(taBase::key_desc));
+    item->setText(4, pel->date);
+    if(pel->URL.nonempty())
+      item->setText(5, pel->URL);
+    else
+      item->setText(5, pel->filename);
+    ++rval;
+  }
+  return rval;
+}
+
+//////////////////////////////////
+//        taiProgLibElArgType      //
+//////////////////////////////////
+
+int taiProgLibElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if ((argt->ptr != 1) || !argt->DerivesFrom(TA_ProgLibEl))
+    return 0;
+  return gpiFromGpArgType::BidForArgType(aidx,argt,md,td)+1;
+}
+
+taiData* taiProgLibElArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+  MemberDef* from_md = GetFromMd();
+  if(from_md == NULL)	return NULL;
+  int new_flags = flags_;
+  if (GetHasOption("NULL_OK"))
+    new_flags |= taiData::flgNullOk;
+  if (GetHasOption("EDIT_OK"))
+    new_flags |= taiData::flgEditOk;
+
+  if (GetHasOption("NO_GROUP_OPT"))
+    new_flags |= taiData::flgNoGroup; //aka flagNoList
+
+  return new taiProgLibElsButton(typ, host_, par, gui_parent_, new_flags);
+}
+
+void taiProgLibElArgType::GetImage_impl(taiData* dat, const void* base) {
+  if (arg_base == NULL)  return;
+  if (GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {
+      *((TAPtr*)arg_base) = val.toBase();
+    }
+  }
+  MemberDef* from_md = GetFromMd();
+  if (from_md == NULL)	return;
+  TABLPtr lst = GetList(from_md, base);
+  taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
+  els->GetImage((TABLPtr)lst, *((TAPtr*)arg_base));
+}
+
+void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
+  *((TAPtr*)arg_base) = els->GetValue();
 }
 

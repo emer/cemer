@@ -306,7 +306,7 @@ void taiListElsButton::BuildChooser(taiItemChooser* ic, int view) {
 
 void taiListElsButton::GetImage(taList_impl* base_lst, TAPtr it) {
   list = base_lst;
-  inherited::GetImage((void*)it, NULL); // don't need a targ_typ
+  inherited::GetImage((void*)it, base_lst->el_base);
 }
 
 
