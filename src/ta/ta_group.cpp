@@ -598,6 +598,17 @@ TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ) {
   return rval;
 }
 
+TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ) {
+  TAGPtr rval = NewGp_(no, typ);
+  if(rval && taMisc::gui_active) {
+    if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+      tabMisc::DelayedFunCall(rval, "BrowserExpandAll");
+      tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+    }
+  }
+  return rval;
+}  
+
 ostream& taGroup_impl::OutputR(ostream& strm, int indent) const {
   taMisc::indent(strm, indent) << name << "[" << size << "] = {\n";
   TypeDef* td = GetTypeDef();

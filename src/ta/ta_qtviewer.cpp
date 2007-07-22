@@ -6059,7 +6059,7 @@ iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
   iTreeViewItem* own_el = AssertItem(own_link);
   // note: don't bale if no own_el, because could be a defchild parent
   // then try making sure owner's children asserted
-  if (own_el && own_el->lazyChildren()) {
+  if (own_el) { // && own_el->lazyChildren()) {
     own_el->CreateChildren();
     own_el->setExpanded(true);
     taiMisc::ProcessEvents();
@@ -6146,9 +6146,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
-      if (item->lazyChildren() || (item->childCount() > 0)) {
+//       if (item->lazyChildren() || (item->childCount() > 0)) {
         setItemExpanded(item, true); // should trigger CreateChildren for lazy
-      }
+//       }
     }
     // check if we've expanded deeply enough 
     // (works for finite (>=1) and infinite (<0) cases)
@@ -6561,7 +6561,32 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
   if (dn_flags_ & DNF_LAZY_CHILDREN) {
-    enableLazyChildren();
+    taBase* tab = link_->taData();
+    if(tab) {
+      // note: disable lazy programmer! :)
+      taList_impl* chld = tab->children_();
+      if(chld) {
+	if(!chld->IsEmpty()) {
+	  enableLazyChildren();
+	}
+	else if(chld->InheritsFrom(&TA_taGroup_impl)) {
+	  // isempty doesn't check subgroups -- it is used in dump so we DON'T EVER
+	  // MESS WITH THAT!  hence this additional somewhat unclean check..
+	  taGroup_impl* tagp = (taGroup_impl*)chld;
+	  if(tagp->gp.size > 0) {
+	    enableLazyChildren();
+	  }
+	}
+      }
+      else {
+	// a regular base -- if it is here, then it definitely has child items
+	if(link_->HasChildItems())
+	  enableLazyChildren();
+      }
+    }
+    else {
+      enableLazyChildren();
+    }
   }
 }
 

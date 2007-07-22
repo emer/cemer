@@ -223,7 +223,7 @@ public: // for taLists, and default children (where defined) in taOBase
   override String	GetColHeading(const KeyString& key) const; // #IGNORE
   override String	ChildGetColText(taDataLink* child, const KeyString& key, 
     int itm_idx = -1) const;	// #IGNORE
-  override bool		HasChildItems() {return true;} // at very least, has the 'items' subnode
+//   override bool		HasChildItems() {return true;} // at very least, has the 'items' subnode
 
 };
 

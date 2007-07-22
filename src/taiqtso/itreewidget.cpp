@@ -333,8 +333,9 @@ bool iTreeWidgetItem::isExpanded() const {
 }
 
 void iTreeWidgetItem::itemExpanded(bool expanded) {
-  if (!expanded || !lazy_children) return;
-  CreateChildren();
+  if (!expanded) return; //  || !lazy_children) return;
+  if(!children_created)
+    CreateChildren();
 }
 
 void iTreeWidgetItem::setBackgroundColor(const QColor& color, int col) 

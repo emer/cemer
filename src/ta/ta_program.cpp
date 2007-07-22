@@ -961,6 +961,7 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   it->SetObject(src);
   it->SetName(src->GetName());
   it->UpdateAfterEdit();
+  tabMisc::DelayedFunCall(it, "BrowserSelectMe");
 }
 
 const String ProgVar_List::GenCss(int indent_level) const {
@@ -1961,8 +1962,13 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
   UpdateProgVarRef_NewOwner(result_var);
 
 //  if(!taMisc::is_loading && method)
-  if (method) // needed to set required etc.
-    meth_args.UpdateFromMethod(method);
+  if (method) { // needed to set required etc.
+    if(meth_args.UpdateFromMethod(method)) { // changed
+      if(taMisc::gui_active) {
+	tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+      }
+    }
+  }
 }
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -2152,7 +2158,7 @@ void ProgramCall::UpdateArgs() {
     pa->DataChanged(DCR_ITEM_UPDATED);
   }
   if(any_changes && taMisc::gui_active) {
-    BrowserExpandAll();		// expand me!
+    tabMisc::DelayedFunCall(this, "BrowserExpandAll");
   }
 }
 

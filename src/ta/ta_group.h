@@ -146,6 +146,9 @@ public:
   virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
 
+  virtual TAGPtr  NewGp_gui(int n_gps=1, TypeDef* typ=NULL);
+  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this #NULL_OK #NULL_TEXT_SameType #LABEL_NewGroup Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
+
   virtual taBase* FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
   virtual taBase* FindLeafNameContains_(const String& it, int& idx=no_idx) const;	// #IGNORE
   virtual taBase* FindLeafType_(TypeDef* it, int& idx=no_idx) const;	// #IGNORE
@@ -299,8 +302,6 @@ public:
   // #CAT_Modify Create and add n_els new element(s) of given type to the group (NULL = default type, el_typ)
   virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
-  virtual taGroup<T>* NewGroup(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
-  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this #NULL_OK #NULL_TEXT_SameType Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
   virtual T*	FindName(const char* item_nm, int& idx=no_idx)  const
   { return (T*)FindName_(item_nm, idx); }

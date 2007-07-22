@@ -106,6 +106,7 @@ DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
   dop->col_name = col_name;
   dop->SetDataTable(dt);
   dop->UpdateAfterEdit();
+  tabMisc::DelayedFunCall(dop, "BrowserSelectMe");
   return dop;
 }
 
@@ -117,6 +118,9 @@ void DataOpList::AddAllColumns(DataTable* dt) {
     if(dop) continue;
     dop = (DataOpEl*)New(1);
     dop->col_name = da->name;
+  }
+  if(size > 0) {
+    tabMisc::DelayedFunCall(FastEl(size-1), "BrowserSelectMe");
   }
   SetDataTable(dt);
 }

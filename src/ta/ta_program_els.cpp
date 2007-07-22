@@ -754,8 +754,13 @@ void MethodCall::UpdateAfterEdit_impl() {
   UpdateProgVarRef_NewOwner(obj);
 
 //  if(!taMisc::is_loading && method)
-  if (method) // needed to set required etc.
-    meth_args.UpdateFromMethod(method);
+  if (method) { // needed to set required etc.
+    if(meth_args.UpdateFromMethod(method)) { // changed
+      if(taMisc::gui_active) {
+	tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+      }
+    }
+  }
 }
 
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {

@@ -972,11 +972,11 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
 
 int taBase::Load_cvt(taFiler*& flr) {
   int c = taMisc::read_till_eol(*flr->istrm);
-  if(c == EOF) return EOF;
+  if(c == EOF) return false;	// bail
   if(!taMisc::LexBuf.contains("// ta_Dump File v1.0")) {
     flr->Close();
     flr->open_read();
-    return false;			// not converted
+    return true;		// continue
   }
   // first determine file type
   String_PArray key_strs;
@@ -988,7 +988,7 @@ int taBase::Load_cvt(taFiler*& flr) {
   flr->Close();			// file is done with anyway
   flr->open_read();		// read again in any case
   if(TestWarning((typ_id < 0), "Load_cvt",
-		 "Old format file could not be identified; not converting -- attempting to load as is!")) return false;
+		 "Old format file could not be identified; not converting!")) return false;
   DumpFileCvt* cvt = taMisc::file_converters[typ_id];
   taFiler* cvt_flr = taFiler::New(flr->filetype, flr->ext);
   taRefN::Ref(cvt_flr);
@@ -1030,13 +1030,14 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
   int rval = false;
   taFiler* flr = GetLoadFiler(fname, _nilString, -1, _nilString);
   if(flr->istrm) {
-    Load_cvt(flr);		// do conversion if needed
-    taBase* lobj = NULL;
-    rval = Load_strm(*flr->istrm, NULL, &lobj);
-    if (loaded_obj_ptr)
-      *loaded_obj_ptr = lobj;
-    if(rval && lobj) {
-      lobj->SetFileName(flr->fileName());
+    if(Load_cvt(flr)) {		// do conversion if needed
+      taBase* lobj = NULL;
+      rval = Load_strm(*flr->istrm, NULL, &lobj);
+      if (loaded_obj_ptr)
+	*loaded_obj_ptr = lobj;
+      if(rval && lobj) {
+	lobj->SetFileName(flr->fileName());
+      }
     }
   }
   flr->Close();
@@ -3029,6 +3030,9 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
   if(TestWarning(!typ->InheritsFrom(el_base), "New",
 		 "Attempt to create type:", typ->name,
 		 "in list with base type:", el_base->name)) return NULL;
+  if(TestError(typ->HasOption("VIRT_BASE"),
+		 "You cannot create a token of type:", typ->name,
+		 "because it is a 'virtual' base type -- you must create a more specific subtype of it instead")) return NULL;
   taBase* rval = NULL;
   Alloc(size + no);		// pre-allocate!
   if((size == 0) || (no > 1))
@@ -3036,8 +3040,9 @@ taBase* taList_impl::New(int no, TypeDef* typ) {
   int i;
   for(i=0; i < no; i++) {
     rval = taBase::MakeToken(typ);
-    if(rval != NULL)
-      Add_(rval);
+    if(TestError(!rval, "New", "Could not make a token of type",typ->name,"(probably has #NO_INSTANCE in object header comment directive)"))
+      return NULL;
+    Add_(rval);
   }
   return rval;
 }

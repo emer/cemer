@@ -2,28 +2,26 @@ leabra todo list:
 
 commit:
 
-* wizard not showing on new project -- despite auto_show and being 2nd item
+* VIRT_BASE types do not show up in type selector!  also added err msg for creating one
+* fixed lazyChildren (i.e., lazy programmer!) so it only shows "+" things where they are 
+  actually required -- required looking at the size of the list etc and several other 
+  tweaks, and the new autoexpand/select code is actualy critical for making it all work
+  right, by driving the final update signal to redraw the new guy in the browser!
+* convert old file: cancel doesn't work -- fixed that logic so it should work.
+
+* for proglib default arg, have a tabase arg default chooser function that gets 
+method name and arg name and returns a variant def arg val -- activated by #CD
+very good general soln!!
+
 * selectedit browser name not updating when changed (in general, various name changes don't seem to update the browser)
 
-* multiple vars in print var
 * use css parser to process progexpr: have progspace, parse a string, have a special callback
 function for whenever a variable is processed..
-
-== Virtual Env
-
-* add complexity params to various levels
-* add a function to update texture when texture is changed -- just like the other guy 
-  for image -- (test that too!)
-
---------------------
-Other Algorithms:
-  * rbp -- at least support all process functions in network
 
 ------------
 current:
 
 * find use browse so progs in progedit? Prog editor show
-* try multi new
 * list editor selects item for browse: editpanel(false)
 
 * program stuff for dealing with startup args?
@@ -33,11 +31,18 @@ current:
 * back button?
 * #22 -- update of netview ctrl panel -- happens even in simpler projects
 
-* convert old file: cancel doesn't work!
-
-* leabra test all progp
-
 * check: test datatable /matrix cut/paste ops
+
+== Virtual Env
+
+* add complexity params to various levels
+* add a function to update texture when texture is changed -- just like the other guy 
+  for image -- (test that too!)
+* render in nogui mode -- need a special nogui parent to hold the scenegraph, and init of
+  types for so (maybe happens anyway)?
+
+== Other Algorithms:
+  * rbp -- at least support all process functions in network
 
 == Netview:
 
@@ -66,9 +71,6 @@ current:
 * logarithmic units on axis
 
 ---
-
-* #ARG_VAL_FM_n_xxx -- get init value of arg from given member (can be a path)
-  * ProgEl* fm name!
 
 * leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
   and add extra inhib in proportion.  set point in for inhib value itself.  makes the

@@ -3515,8 +3515,10 @@ taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
   // we don't add templates, but we do add their children
   if (typ_->InheritsFormal(TA_templ_inst))
     return TC_NoAddCheckChildren;
-  
 
+  if(typ_->HasOption("VIRT_BASE")) {
+    return TC_NoAddCheckChildren;
+  }
 
   // don't clutter list with these..
   if((typ_->members.size==0) && (typ_->methods.size==0) && !(typ_ == &TA_taBase))
