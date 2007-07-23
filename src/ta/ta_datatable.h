@@ -553,14 +553,20 @@ public:
 
   virtual DataCol* 	NewCol(DataCol::ValType val_type, 
 			       const String& col_nm);
-  // #MENU #MENU_ON_Columns #CAT_Columns create new scalar column of data of specified type
+  // #CAT_Columns create new scalar column of data of specified type
+  virtual DataCol* 	NewCol_gui(DataCol::ValType val_type, 
+				   const String& col_nm);
+  // #MENU #MENU_ON_Columns #LABEL_NewCol #CAT_Columns create new scalar column of data of specified type
   virtual DataCol* 	NewColMatrix(DataCol::ValType val_type, const String& col_nm,
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
-    const String& col_nm,  const MatrixGeom& cell_geom,
-    int& col_idx = idx_def_arg);
-  // #MENU #MENU_ON_Columns #LABEL_NewColMatrix #ARGC_3 #CAT_Columns create new matrix column of data of specified type, with specified cell geom
+				      const String& col_nm,  const MatrixGeom& cell_geom,
+				      int& col_idx = idx_def_arg);
+  // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
+  virtual DataCol* 	NewColMatrixN_gui(DataCol::ValType val_type, 
+					  const String& col_nm,  const MatrixGeom& cell_geom);
+  // #MENU #MENU_ON_Columns #LABEL_NewColMatrix #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   
   virtual double_Data*	NewColDouble(const String& col_nm); 
   // #CAT_Columns create new column of double data

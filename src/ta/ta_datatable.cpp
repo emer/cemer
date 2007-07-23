@@ -1448,15 +1448,21 @@ int DataTable::MinLength() {
   return min;
 }
 
-DataCol* DataTable::NewCol(DataCol::ValType val_type, 
-				  const String& col_nm) 
-{
+DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
   if (!NewColValid(col_nm)) return NULL;
   StructUpdate(true);
   DataCol* rval = NewCol_impl(val_type, col_nm);
   rval->Init(); // asserts geom
   rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   StructUpdate(false);
+  return rval;
+}
+
+DataCol* DataTable::NewCol_gui(DataCol::ValType val_type, const String& col_nm) {
+  DataCol* rval = NewCol(val_type, col_nm);
+  if(rval && taMisc::gui_active) {
+    tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+  }
   return rval;
 }
 
@@ -1555,6 +1561,15 @@ DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type,
   rval->Init(); // asserts geom
   rval->EnforceRows(rows);	// new guys always get same # of rows as current table
   StructUpdate(false);
+  return rval;
+}
+
+DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& col_nm,
+				      const MatrixGeom& cell_geom) {
+  DataCol* rval = NewColMatrixN(val_type, col_nm, cell_geom);
+  if(rval && taMisc::gui_active) {
+    tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+  }
   return rval;
 }
 

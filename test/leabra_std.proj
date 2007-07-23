@@ -144,7 +144,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[6] { };
 	};
 
-	ProgEl_List @.init_code = [6] {
+	ProgEl_List @.init_code = [5] {
 	  AssignExpr @[0] { };
 	  MethodCall @[1] { 
 	    ProgArg_List @.meth_args = [1] {
@@ -167,7 +167,6 @@ LeabraProject .projects[0] {
 	      PrintExpr @[1] { };
 	    };
 	  };
-	  AssignExpr @[5] { };
 	};
 
 	ProgEl_List @.prog_code = [7] {
@@ -712,7 +711,7 @@ LeabraProject .projects[0] {
    el_typ=DataTable;
    el_def=0;
    DataTable @[0] {
-    name="StdInputData";
+    name="SimpleLines5x5";
     desc=;
     data {
      name="data";
@@ -722,13 +721,13 @@ LeabraProject .projects[0] {
       name="Name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
-      cell_geom{       };
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       ar {
        name=;
-	    [4] ;;;;      };
+	    [6] "checks";"mitvert";"midhoriz";"rdiag";"ldiag";"random";      };
      };
      float_Data @[1] {
       name="Input";
@@ -740,7 +739,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [5 5 4] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;      };
+	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;1;0;0;0;0;0;0;0;1;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;0;      };
      };
      float_Data @[2] {
       name="Output";
@@ -752,7 +751,7 @@ LeabraProject .projects[0] {
       };
       ar {
        name=;
-	    [5 5 4] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;      };
+	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;0;0;0;0;0;1;1;0;0;0;0;0;0;0;1;0;0;1;0;0;1;1;0;0;0;0;0;0;0;0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -770,7 +769,7 @@ LeabraProject .projects[0] {
     desc=;
     data {
      name="data";
-     el_typ=int_Data;
+     el_typ=String_Data;
      el_def=0;
      int_Data @[0] {
       UserDataItem_List @*(.user_data_) {
@@ -1091,7 +1090,7 @@ LeabraProject .projects[0] {
     name="LeabraBatch";
     tags="Leabra, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
-    flags=;
+    flags=SHOW_STEP;
     objs {
      name=;
      el_typ=taOBase;
@@ -1142,7 +1141,7 @@ LeabraProject .projects[0] {
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="batch counter";
      };
     };
@@ -1269,7 +1268,7 @@ LeabraProject .projects[0] {
     name="LeabraTrain";
     tags="Leabra, Std";
     desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task";
-    flags=;
+    flags=SHOW_STEP;
     objs {
      name=;
      el_typ=RndSeed;
@@ -1332,7 +1331,7 @@ LeabraProject .projects[0] {
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=NULL_CHECK;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
      };
     };
@@ -1349,6 +1348,14 @@ LeabraProject .projects[0] {
       desc="maximum number of epochs to run";
      };
      ProgVar @[1] {
+      name="epoch";
+      var_type=T_Int;
+      int_val=8;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      desc="current epoch -- local copy, which is used to update network's epoch counter";
+     };
+     ProgVar @[2] {
       name="train_mode";
       var_type=T_HardEnum;
       int_val=1;
@@ -1357,7 +1364,7 @@ LeabraProject .projects[0] {
       flags=CTRL_PANEL|NULL_CHECK;
       desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
      };
-     ProgVar @[2] {
+     ProgVar @[3] {
       name="rnd_init";
       var_type=T_DynEnum;
       dyn_enum_val {
@@ -1367,14 +1374,6 @@ LeabraProject .projects[0] {
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="how to initialize the random numbers when the Init button is pressed";
-     };
-     ProgVar @[3] {
-      name="epoch";
-      var_type=T_Int;
-      int_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
-      desc="current epoch -- local copy, which is used to update network's epoch counter";
      };
      ProgVar @[4] {
       name="err_stopcrit";
@@ -1558,20 +1557,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     AssignExpr @[5] {
-      desc="grab the official network epoch counter: will be initialized if needed by now";
-      flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[3]$13$;
-      expr {
-       expr="network.epoch";
-       flags=;
-       var_expr="$#0#$.epoch";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
-      };
-     };
     };
     prog_code {
      name=;
@@ -1686,7 +1671,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[4] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=;
-      result_var=$13$;
+      result_var=.projects[0].programs.gp[0][1].vars[1]$13$;
       expr {
        expr="network.epoch";
        flags=;
@@ -1796,7 +1781,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     name="LeabraEpoch";
     tags="Leabra, Std";
     desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
-    flags=;
+    flags=SHOW_STEP;
     objs {
      name=;
      el_typ=taOBase;
@@ -1849,7 +1834,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="current trial (event) within the epoch -- increments automatically";
      };
      ProgVar @[2] {
@@ -2070,7 +2055,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$23$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$24$;
       order=PERMUTED;
-      item_idx_list{ 4;0;3;5;1;2;      };
+      item_idx_list{ 1;2;0;3;4;5;      };
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -2166,7 +2151,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     name="LeabraTrial";
     tags="Leabra, Std";
     desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
-    flags=;
+    flags=SHOW_STEP;
     objs {
      name=;
      el_typ=taOBase;
@@ -2209,13 +2194,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
      };
      ProgVar @[1] {
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="determines whether to update any network view displays after trial is completed";
@@ -2440,7 +2425,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="current cycle of settling (local loop counter)";
      };
      ProgVar @[1] {
@@ -2869,7 +2854,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     name="ApplyInputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
-    flags=NO_USER_RUN;
+    flags=;
     objs {
      name=;
      el_typ=LayerWriter;
@@ -2888,7 +2873,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	layer_name="Input";
 	offset {x=0: y=0: };
 	use_layer_type=1;
-	ext_flags=;
+	ext_flags=EXT;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
@@ -2898,7 +2883,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	layer_name="Output";
 	offset {x=0: y=0: };
 	use_layer_type=1;
-	ext_flags=;
+	ext_flags=TARG;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
 	value_names{ 	};
        };
@@ -2953,7 +2938,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[0][6].objs[0]$38$;
       objs_ptr=1;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=NULL_CHECK;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
      };
     };
@@ -4029,7 +4014,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="final generated file name -- do not edit!";
      };
      ProgVar @[3] {
@@ -4601,7 +4586,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=0;
+	cur_val=1;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4634,7 +4619,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=0;
+      cur_val=1;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4699,13 +4684,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0: max=0: max_i=-1: };
-     acts_m {avg=0: max=0: max_i=-1: };
+     acts_p {avg=0.19: max=0.95: max_i=0: };
+     acts_m {avg=0.19: max=0.95: max_i=0: };
      phase_dif_ratio=1;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$58$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -4809,13 +4794,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0: max=0: max_i=-1: };
-     acts_m {avg=0: max=0: max_i=-1: };
-     phase_dif_ratio=1;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     acts_p {avg=0.1864776: max=0.8685922: max_i=24: };
+     acts_m {avg=0.187823: max=0.8719466: max_i=24: };
+     phase_dif_ratio=1.007215;
+     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=4.08235: k1_ithr=3.391397: ithr_r=0.1854307: ithr_diff=0.1692536: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.24: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$63$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -4895,13 +4880,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
-     acts_p {avg=0: max=0: max_i=-1: };
-     acts_m {avg=0: max=0: max_i=-1: };
-     phase_dif_ratio=1;
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     acts_p {avg=0.19: max=0.95: max_i=0: };
+     acts_m {avg=0.1646585: max=0.8814273: max_i=14: };
+     phase_dif_ratio=0.8666235;
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=3.132909: k1_ithr=2.931161: ithr_r=0.06656338: ithr_diff=0.06439643: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      spec {type=LeabraLayerSpec: spec=$58$: };
      stm_gain=0.5;
      hard_clamped=0;
@@ -4925,7 +4910,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cycle=0;
    time=0;
    group_name=;
-   trial_name=;
+   trial_name="random";
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -4937,8 +4922,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=8765: sys=1402: tot=2548886753: }: end={usr=8939: sys=1412: tot=2548886938: }: used={usr=174: sys=10: tot=185: }: n_used=1: };
+   epoch_time {name="epoch_time": start={usr=8919: sys=1411: tot=2548886917: }: end={usr=8939: sys=1412: tot=2548886938: }: used={usr=20: sys=1: tot=21: }: n_used=1: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };

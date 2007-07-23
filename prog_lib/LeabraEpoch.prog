@@ -60,7 +60,7 @@ Program .projects[0].programs.gp[0][2] {
  name="LeabraEpoch";
  tags="Leabra, Std";
  desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
- flags=;
+ flags=SHOW_STEP;
  objs {
   name=;
   el_typ=taOBase;
@@ -113,7 +113,7 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="current trial (event) within the epoch -- increments automatically";
   };
   ProgVar @[2] {

@@ -444,11 +444,11 @@ public:
   String	expr;		// #EDIT_DIALOG #LABEL_ enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
   ExprFlags	flags;		// #HIDDEN Flags for controlling expression behavior
-  String	var_expr;	// #READ_ONLY expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
+  String	var_expr;	// #READ_ONLY #HIDDEN expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
 
-  ProgVarRef_List vars;		// #READ_ONLY list of program variables that appear in the expression
-  String_Array	var_names;	// #READ_ONLY original variable names associated with vars list -- useful for user info if a variable goes out of existence..
-  String_Array	bad_vars;	// #READ_ONLY list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
+  ProgVarRef_List vars;		// #READ_ONLY #HIDDEN list of program variables that appear in the expression
+  String_Array	var_names;	// #READ_ONLY #HIDDEN original variable names associated with vars list -- useful for user info if a variable goes out of existence..
+  String_Array	bad_vars;	// #READ_ONLY #HIDDEN list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
 
   bool		empty() const {return expr.empty();} 
     // #IGNORE quicky test for whether has anything or not, without needing to render

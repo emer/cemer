@@ -1115,18 +1115,22 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       MemberDef* md = pv->GetValMemberDef();
       memb_el(j).Add(md);
       taiData* mb_dat;
+      int flags_ = 0;
+      if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
+	flags_ |= taiData::flgReadOnly;
       if ((pv->var_type == ProgVar::T_HardEnum) ||
         (pv->var_type == ProgVar::T_DynEnum)) 
       {
-        mb_dat = new taiComboBox(true, NULL, this, NULL, body);
+	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
+	  mb_dat = new taiField(NULL, this, NULL, body, flags_);
+	else
+	  mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_);
       } else if (pv->var_type == ProgVar::T_Int) {
-        mb_dat = new taiIncrField(NULL, this, NULL, body);
+        mb_dat = new taiIncrField(NULL, this, NULL, body, flags_);
       }
       else {
-        mb_dat = md->im->GetDataRep(this, NULL, body);
+        mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags_);
       }
-      if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
-	mb_dat->SetFlag(taiData::flgReadOnly, true);
       data_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       int row = AddData(-1, data);
@@ -1200,7 +1204,8 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
-      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL)) continue;
+      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL) || pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
+	continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
       //note: code below is "risky" ex if visiblity update ctrl changes etc.
@@ -1290,20 +1295,36 @@ void iProgramCtrlDataHost::GetImage_Membs()
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {
-        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-          mb_dat->metaObject()->className())) continue;
-        tmb_dat->SetEnumType(pv->hard_enum_type);
-        tmb_dat->GetEnumImage(pv->int_val);
+	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
+	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiField, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->GetImage(pv->GenCssInitVal());
+	}
+	else {
+	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->SetEnumType(pv->hard_enum_type);
+	  tmb_dat->GetEnumImage(pv->int_val);
+	}
       }
       else if(pv->var_type == ProgVar::T_DynEnum) {
-        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-          mb_dat->metaObject()->className())) continue;
-        UpdateDynEnumCombo((tmb_dat), pv);
-        int dei = pv->dyn_enum_val.value;
-        if (dei < 0) dei = 0;
-        tmb_dat->GetImage(dei);
+	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
+	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiField, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->GetImage(pv->GenCssInitVal());
+	}
+	else {
+	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  UpdateDynEnumCombo((tmb_dat), pv);
+	  int dei = pv->dyn_enum_val.value;
+	  if (dei < 0) dei = 0;
+	  tmb_dat->GetImage(dei);
+	}
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
         taiIncrField* tmb_dat = dynamic_cast<taiIncrField*>(mb_dat);

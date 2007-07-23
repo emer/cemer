@@ -2,15 +2,13 @@ leabra todo list:
 
 commit:
 
-* impl NO_STEP flag in ctrl panel
-* added #ARG_VAL_FM_FUN directive for method args -- calls a GetGuiArgVal taBase fun to determine default initial arg value in gui -- very flexible soln to various such problems.
-* added special proglibel browser (BugID:33) uses tags as categories, added multi_cats support to itembrowser codebase -- this uses that.  also shows date modified and file/url
+* impl CTRL_READ_ONLY flag in prog vars
 
 ------------
 current:
 
-* impl READ_ONLY flag in prog vars: NOT WORKING!!
-* fix all RO and STEP flags -- step seems not to be set in anything..
+* blank line in progvar..
+* fix all RO and STEP flags in all proglibs -- step seems not to be set in anything..
 
 * find use browse so progs in progedit? Prog editor show
 * list editor selects item for browse: editpanel(false)

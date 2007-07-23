@@ -107,7 +107,7 @@ Program .projects[0].programs.gp[0][4] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="current cycle of settling (local loop counter)";
   };
   ProgVar @[1] {
