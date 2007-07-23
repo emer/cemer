@@ -1035,7 +1035,6 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
     PatternSpec* ps = (PatternSpec*)es->patterns[i];
     if(ps->type == PatternSpec::INACTIVE) continue;
     LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeLayerData(ps->name, ps->layer_name);
-    le->value_names = ps->value_names;
     Layer* lay = (Layer*)net->layers.FindLeafName(ps->layer_name);
     if(lay) {
       if(ps->type == PatternSpec::INPUT) lay->layer_type = Layer::INPUT;

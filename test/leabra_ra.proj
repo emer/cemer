@@ -2991,7 +2991,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
     name="ApplyInputs";
     tags=;
     desc="apply the current input data to the network as external input and target values";
-    flags=NO_USER_RUN;
+    flags=;
     objs {
      name=;
      el_typ=LayerWriter;
@@ -3012,7 +3012,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	use_layer_type=1;
 	ext_flags=EXT;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -3022,7 +3021,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	use_layer_type=1;
 	ext_flags=TARG;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -3032,7 +3030,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	use_layer_type=1;
 	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ 	};
        };
       };
      };

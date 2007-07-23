@@ -5500,46 +5500,67 @@ void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
 // 	CompareSameType		//
 //////////////////////////////////
 
-void MemberSpace::CompareSameType(Member_List& mds, void_PArray& trg_bases,
+bool MemberSpace::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 				  void_PArray& src_bases, void* trg_base, void* src_base,
-				  int show_forbidden, int show_allowed, bool no_ptrs) {
+				  int show_forbidden, int show_allowed, bool no_ptrs,
+				  bool test_only) {
+  bool some_diff = false;
   int i;
   for(i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
     if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed)) {
       if(no_ptrs && (md->type->ptr > 0 || md->type->HasOption("SMART_POINTER"))) continue;
-      md->CompareSameType(mds, trg_bases, src_bases, trg_base, src_base, show_forbidden,
-			  show_allowed, no_ptrs);
+      some_diff |= md->CompareSameType(mds, trg_bases, src_bases, trg_base, src_base,
+				       show_forbidden, show_allowed, no_ptrs, test_only);
     }
   }
+  return some_diff;
 }
 
-void MemberDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
+bool MemberDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 				void_PArray& src_bases, void* trg_base, void* src_base,
-				int show_forbidden, int show_allowed, bool no_ptrs) {
-  if(type->InheritsFormal(TA_class) &&
-     !(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE"))) {
-    type->CompareSameType(mds, trg_bases, src_bases, GetOff(trg_base), 
-			  GetOff(src_base), show_forbidden, show_allowed, no_ptrs);
+				int show_forbidden, int show_allowed, bool no_ptrs,
+				bool test_only) {
+  bool some_diff = false;
+  if(type->InheritsFormal(TA_class)) {
+    if(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE")) {
+      // check the members 
+      some_diff = type->CompareSameType(mds, trg_bases, src_bases, GetOff(trg_base), 
+					GetOff(src_base), show_forbidden, show_allowed,
+					no_ptrs, true); // test only!
+      if(some_diff && !test_only) {			// not already testing, add it
+	mds.Link(this); trg_bases.Add(trg_base); src_bases.Add(src_base);
+      }
+    }
+    else {
+      some_diff = type->CompareSameType(mds, trg_bases, src_bases, GetOff(trg_base), 
+					GetOff(src_base), show_forbidden, show_allowed, no_ptrs);
+    }
   }
   else {
     // actually do the comparison, based on string value
     if(type->GetValStr(GetOff(trg_base), trg_base, this) !=
        type->GetValStr(GetOff(src_base), src_base, this)) {
-      mds.Link(this); trg_bases.Add(trg_base); src_bases.Add(src_base);
+      if(!test_only) {
+	mds.Link(this); trg_bases.Add(trg_base); src_bases.Add(src_base);
+      }
+      some_diff = true;
     }
   }
+  return some_diff;
 }
 
-void TypeDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
+bool TypeDef::CompareSameType(Member_List& mds, void_PArray& trg_bases,
 			      void_PArray& src_bases, void* trg_base, void* src_base,
-			      int show_forbidden, int show_allowed, bool no_ptrs) {
+			      int show_forbidden, int show_allowed, bool no_ptrs,
+			      bool test_only) {
   if(InheritsFormal(TA_class)) {
-    members.CompareSameType(mds, trg_bases, src_bases, trg_base, src_base, show_forbidden,
-			    show_allowed, no_ptrs);
+    return members.CompareSameType(mds, trg_bases, src_bases, trg_base, src_base,
+				   show_forbidden, show_allowed, no_ptrs, test_only);
   }
   else {
     taMisc::Error("CompareSameType called on non-class object -- does not work!");
+    return false;
   }
 }
 

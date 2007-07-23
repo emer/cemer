@@ -2,12 +2,11 @@ leabra todo list:
 
 commit:
 
-* impl CTRL_READ_ONLY flag in prog vars
 
 ------------
 current:
 
-* blank line in progvar..
+* seledit compare not ignoring #HIDDEN!
 * fix all RO and STEP flags in all proglibs -- step seems not to be set in anything..
 
 * find use browse so progs in progedit? Prog editor show

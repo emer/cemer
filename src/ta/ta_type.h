@@ -1430,13 +1430,13 @@ public:
   virtual void		CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members in my type (no inherited ones)
 
-  virtual void		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+  virtual bool		CompareSameType(Member_List& mds, void_PArray& trg_bases,
 					void_PArray& src_bases, 
 					void* trg_base, void* src_base,
 					int show_forbidden = taMisc::NO_HIDDEN,
 					int show_allowed = taMisc::SHOW_CHECK_MASK,
-					bool no_ptrs = true);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
+					bool no_ptrs = true, bool test_only = false);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   // IO
   virtual ostream&   	OutputType(ostream& strm, int indent = 0) const;
@@ -1692,13 +1692,13 @@ public:
   // copy all members from same type
   void		CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members from same type (no inherited)
-  void		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+  bool		CompareSameType(Member_List& mds, void_PArray& trg_bases,
 				void_PArray& src_bases, 
 				void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
 				int show_allowed = taMisc::SHOW_CHECK_MASK,
-				bool no_ptrs = true);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
+				bool no_ptrs = true, bool test_only = false);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   ostream&   	OutputType(ostream& strm, int indent = 1) const;
 
@@ -2018,13 +2018,13 @@ public:
   // copy only those members from same type (no inherited)
   void		MemberCopyFrom(int memb_no, void* trg_base, void* src_base);
   // copy a particular member from same type
-  void		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+  bool		CompareSameType(Member_List& mds, void_PArray& trg_bases,
 				void_PArray& src_bases, 
 				void* trg_base, void* src_base,
 				int show_forbidden = taMisc::NO_HIDDEN,
 				int show_allowed = taMisc::SHOW_CHECK_MASK,
-				bool no_ptrs = true);
-  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists
+				bool no_ptrs = true, bool test_only = false);
+  // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   // IO
   ostream& 	Output(ostream& strm, void* base, int indent=0) const;

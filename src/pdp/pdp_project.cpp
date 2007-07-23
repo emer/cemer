@@ -388,10 +388,6 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
     return NULL;
   }
 
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall((Program_Group*)rval, "BrowserExpandList");
-  }
-
   Program_Group* pg = (Program_Group*)rval;
   Program* apin = pg->FindName("ApplyInputs");
   if(apin) {
@@ -400,6 +396,9 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
       lw->AutoConfig();
     }
   }
+  Program* first_guy = pg->Leaf(0);
+  if(first_guy)
+    tabMisc::DelayedFunCall(first_guy, "BrowserSelectMe");
   return (Program_Group*)pg;
 }
 
