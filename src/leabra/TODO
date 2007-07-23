@@ -6,7 +6,9 @@ commit:
 ------------
 current:
 
-* seledit compare not ignoring #HIDDEN!
+* getting double-listings from MonitorVar update of monitor list!  new since
+doing the toggle thing..
+
 * fix all RO and STEP flags in all proglibs -- step seems not to be set in anything..
 
 * find use browse so progs in progedit? Prog editor show

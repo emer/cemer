@@ -351,8 +351,7 @@ public:
   void		SetDataNetwork(DataTable* dt, Network* net);
   // #CAT_Monitor set both the data table and network -- convenient for programs
 
-  void		AddBlank()
-  { items.New(1); }
+  void		AddBlank();
   // #BUTTON #CAT_Monitor add a new blank monitor to be filled in
   void		AddNetwork(Network* net, const String& variable)
   { AddObject(net, variable);}

@@ -3852,9 +3852,9 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
-  // because these things are called in waitprocs, this is NOT a good idea..
+  // note: waitproc is now insulated against recurrent calls..
   // make sure previous operations are finished
-//   taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
@@ -3862,7 +3862,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link)
     ibv->lvwDataTree->setCurrentItem(rval);
   }
   // make sure our operations are finished
-//   taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
   return rval;
 }
 
@@ -3871,16 +3871,16 @@ iTreeViewItem* iMainWindowViewer::BrowserExpandAllItem(taiDataLink* link) {
   if (!db) return NULL;
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
-  // because these things are called in waitprocs, this is NOT a good idea..
+  // note: waitproc is now insulated against recurrent calls..
   // make sure previous operations are finished
-//   taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
     ibv->lvwDataTree->ExpandAllUnder(rval);
   }
   // make sure our operations are finished
-//   taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
   return rval;
 }
 
@@ -3890,14 +3890,14 @@ iTreeViewItem* iMainWindowViewer::BrowserCollapseAllItem(taiDataLink* link) {
   BrowseViewer* bv  = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
   if (!bv) return NULL;
   // make sure previous operations are finished
-//   taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
   iBrowseViewer* ibv = bv->widget();
   iTreeViewItem* rval = ibv->lvwDataTree->AssertItem(link);
   if (rval) {
     ibv->lvwDataTree->CollapseAllUnder(rval);
   }
   // make sure our operations are finished
-//   taiMiscCore::ProcessEvents();
+  taiMiscCore::ProcessEvents();
   return rval;
 }
 

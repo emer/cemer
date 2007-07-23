@@ -144,12 +144,17 @@ void tabMisc::DelayedFunCall(taBase* obj, const String& fun_name) {
 }
 
 void tabMisc::WaitProc() {
+  static bool already_in = false;
+  // prevent reentrant waitprocs!
+  if(already_in) return;
+  already_in = true;
 #ifdef TA_GUI
   taiMisc::PurgeDialogs();
 #endif
   DoDelayedCloses();
   DoDelayedUpdateAfterEdits();
   DoDelayedFunCalls();
+  already_in = false;
 }
 
 

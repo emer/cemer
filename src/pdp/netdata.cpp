@@ -1180,6 +1180,10 @@ String NetMonitor::GetDisplayName() const {
   return rval;
 }
 
+void NetMonitor::AddBlank() {
+  items.New_gui(1);		// gui version
+}
+
 void NetMonitor::AddObject(TAPtr obj, const String& variable) {
   // check for exact obj/variable already there, otherwise add one
   NetMonItem* nmi;

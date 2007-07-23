@@ -300,8 +300,8 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
 //////////////////////////////////
 
 void Wizard::StdData(Network* net, DataTable* data_table, int n_patterns, bool group) {
-  StdInputData(net, data_table, n_patterns, group);
   StdOutputData();
+  StdInputData(net, data_table, n_patterns, group);
 }
 
 void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
