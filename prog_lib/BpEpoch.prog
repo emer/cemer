@@ -60,7 +60,7 @@ Program .projects[0].programs.gp[0][2] {
  name="BpEpoch";
  tags="Bp, Std";
  desc="iterates over all of the items in a data table and calls BpTrial process on them";
- flags=;
+ flags=SHOW_STEP;
  objs {
   name=;
   el_typ=taOBase;
@@ -113,7 +113,7 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="current trial (event) within the epoch -- increments automatically";
   };
   ProgVar @[2] {
@@ -137,7 +137,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[4] {
    name="data_loop_index";
    var_type=T_Int;
-   int_val=4;
+   int_val=6;
    objs_ptr=0;
    flags=NULL_CHECK;
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -334,7 +334,7 @@ Program .projects[0].programs.gp[0][2] {
    index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
    order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
    order=PERMUTED;
-   item_idx_list{ 3;2;1;0;   };
+   item_idx_list{ 0;3;2;4;5;1;   };
    dmem_nprocs=1;
    dmem_this_proc=0;
   };

@@ -3916,8 +3916,8 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
   } else {
     itv->AddPanel(pan);
   }
-   // make sure previous operations are finished
-//   taiMiscCore::ProcessEvents();
+  // make sure previous operations are finished
+  taiMiscCore::ProcessEvents();
   return true;
 }
 
@@ -5736,7 +5736,16 @@ void iListDataPanel::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/)
   taiListDataNode* item = dynamic_cast<taiListDataNode*>(item_);
   if (!item) return;
   taBase* ta = item->taData(); // null if n/a
-  if (ta) ta->EditDialog(true); // edit modal
+  if (ta) {
+//     tabMisc::DelayedFunCall(ta, "BrowserSelectMe");
+//    ta->BrowserSelectMe();
+    // neither of the above actually update the panel view to new item -- presumably because
+    // it is still in use or something..
+    //    ta->EditPanel(true, false);	// new non-pinned panel -- leads to a proliferation
+    // of panels and doesn't make a lot of sense.
+    ta->EditDialog();		// pop up the edit dialog -- not favored, but probably
+    				// the best thing for this situation
+  }
 }
 
 void iListDataPanel::OnWindowBind_impl(iTabViewer* itv) {
@@ -6292,6 +6301,8 @@ void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   else
     ExpandAllUnder(item);
   
+  emit itemDoubleClicked(item_, index.column()); // still need to emit the signal for other consumers!
+  // i.e., the iListDataPanel
 }
 
 void iTreeView::mousePressEvent(QMouseEvent* event) {
@@ -7664,7 +7675,7 @@ void iSearchDialog::stop_clicked() {
 //   taBase			//
 //////////////////////////////////
 
-bool taBase::EditPanel(bool new_tab) {
+bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   if(!taMisc::gui_active) return false;
   iMainWindowViewer* inst = taiMisc::active_wins.Peek_MainWindow();
   if (!inst) return false; // shouldn't happen!
@@ -7674,7 +7685,7 @@ bool taBase::EditPanel(bool new_tab) {
   // for new_tab, we open new locked panels,
   // for existing, we do a browse to the item
   if (new_tab) {
-    rval = inst->AssertPanel(link, new_tab); // lock if new
+    rval = inst->AssertPanel(link, new_tab, pin_tab);
   } else {
     rval = inst->AssertBrowserItem(link);
   }

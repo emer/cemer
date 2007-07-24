@@ -499,7 +499,7 @@ Program_Group .projects[0].programs.gp[0] {
   name="CsBatch";
   tags="Cs, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=taOBase;
@@ -550,7 +550,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="batch counter";
    };
   };
@@ -677,7 +677,7 @@ Program_Group .projects[0].programs.gp[0] {
   name="CsTrain";
   tags="Cs, Std";
   desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=RndSeed;
@@ -757,6 +757,14 @@ Program_Group .projects[0].programs.gp[0] {
     desc="maximum number of epochs to run";
    };
    ProgVar @[1] {
+    name="epoch";
+    var_type=T_Int;
+    int_val=9;
+    objs_ptr=0;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+    desc="current epoch -- local copy, which is used to update network's epoch counter";
+   };
+   ProgVar @[2] {
     name="train_mode";
     var_type=T_HardEnum;
     int_val=1;
@@ -765,7 +773,7 @@ Program_Group .projects[0].programs.gp[0] {
     flags=CTRL_PANEL|NULL_CHECK;
     desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
    };
-   ProgVar @[2] {
+   ProgVar @[3] {
     name="rnd_init";
     var_type=T_DynEnum;
     dyn_enum_val {
@@ -775,14 +783,6 @@ Program_Group .projects[0].programs.gp[0] {
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="how to initialize the random numbers when the Init button is pressed";
-   };
-   ProgVar @[3] {
-    name="epoch";
-    var_type=T_Int;
-    int_val=16;
-    objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
-    desc="current epoch -- local copy, which is used to update network's epoch counter";
    };
    ProgVar @[4] {
     name="err_stopcrit";
@@ -1080,7 +1080,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    AssignExpr @[4] {
     desc="grab the official network epoch counter: will be initialized if needed by now";
     flags=;
-    result_var=.projects[0].programs.gp[0][1].vars[3]$13$;
+    result_var=.projects[0].programs.gp[0][1].vars[1]$13$;
     expr {
      expr="network.epoch";
      flags=;
@@ -1190,7 +1190,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   name="CsEpoch";
   tags="Cs, Std";
   desc="iterates over all of the items in a data table and calls Trial process on them";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=taOBase;
@@ -1243,7 +1243,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="current trial (event) within the epoch -- increments automatically";
    };
    ProgVar @[2] {
@@ -1267,7 +1267,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    ProgVar @[4] {
     name="data_loop_index";
     var_type=T_Int;
-    int_val=2;
+    int_val=3;
     objs_ptr=0;
     flags=NULL_CHECK;
     desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -1464,7 +1464,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     index_var=.projects[0].programs.gp[0][2].vars[4]$23$;
     order_var=.projects[0].programs.gp[0][2].vars[0]$24$;
     order=PERMUTED;
-    item_idx_list{ 2;4;3;1;5;0;    };
+    item_idx_list{ 1;2;5;3;4;0;    };
     dmem_nprocs=1;
     dmem_this_proc=0;
    };
@@ -1560,7 +1560,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   name="CsTrial";
   tags="Cs, Std";
   desc="Constraint Satisfaction processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=taOBase;
@@ -1603,13 +1603,13 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
    };
    ProgVar @[1] {
     name="update_net_view";
     var_type=T_Bool;
-    bool_val=1;
+    bool_val=0;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="determines whether to update any network view displays after trial is completed";
@@ -1834,7 +1834,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="current cycle of settling (local loop counter)";
    };
    ProgVar @[1] {
@@ -2211,7 +2211,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   name="ApplyInputs";
   tags="Network, InputData, Apply";
   desc="apply the current input data to the network as external input and target values";
-  flags=NO_USER_RUN;
+  flags=;
   objs {
    name=;
    el_typ=LayerWriter;
@@ -2232,7 +2232,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       use_layer_type=1;
       ext_flags=EXT;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{ ;;;;      };
      };
      LayerWriterEl @[1] {
       chan_name="Output";
@@ -2242,17 +2241,15 @@ presented in the minus phase -- if this is not the case (values are computed on 
       use_layer_type=1;
       ext_flags=TARG;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{ ;;;;      };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name="Name";
+      layer_name=;
       offset {x=0: y=0: };
       use_layer_type=1;
       ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{       };
      };
     };
    };
@@ -2295,7 +2292,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     object_type=LayerWriter;
     object_val=.projects[0].programs.gp[0][6].objs[0]$38$;
     objs_ptr=1;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=NULL_CHECK;
     desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
    };
   };
@@ -3371,7 +3368,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     var_type=T_String;
     string_val=;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="final generated file name -- do not edit!";
    };
    ProgVar @[3] {

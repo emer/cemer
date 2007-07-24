@@ -62,7 +62,7 @@ Program_Group .projects[0].programs.gp[0] {
 	ProgVar @[6] { };
       };
 
-      ProgEl_List @.init_code = [5] {
+      ProgEl_List @.init_code = [6] {
 	AssignExpr @[0] { };
 	MethodCall @[1] { 
 	  ProgArg_List @.meth_args = [1] {
@@ -85,6 +85,7 @@ Program_Group .projects[0].programs.gp[0] {
 	    PrintExpr @[1] { };
 	  };
 	};
+	AssignExpr @[5] { };
       };
 
       ProgEl_List @.prog_code = [7] {
@@ -417,7 +418,7 @@ Program_Group .projects[0].programs.gp[0] {
   name="BpBatch";
   tags="Bp, Std";
   desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=taOBase;
@@ -468,7 +469,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="batch counter";
    };
   };
@@ -595,7 +596,7 @@ Program_Group .projects[0].programs.gp[0] {
   name="BpTrain";
   tags="Bp, Std";
   desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=RndSeed;
@@ -675,6 +676,14 @@ Program_Group .projects[0].programs.gp[0] {
     desc="maximum number of epochs to run";
    };
    ProgVar @[1] {
+    name="epoch";
+    var_type=T_Int;
+    int_val=0;
+    objs_ptr=0;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+    desc="current epoch -- local copy, which is used to update network's epoch counter";
+   };
+   ProgVar @[2] {
     name="train_mode";
     var_type=T_HardEnum;
     int_val=1;
@@ -683,7 +692,7 @@ Program_Group .projects[0].programs.gp[0] {
     flags=CTRL_PANEL|NULL_CHECK;
     desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
    };
-   ProgVar @[2] {
+   ProgVar @[3] {
     name="rnd_init";
     var_type=T_DynEnum;
     dyn_enum_val {
@@ -693,14 +702,6 @@ Program_Group .projects[0].programs.gp[0] {
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="how to initialize the random numbers when the Init button is pressed";
-   };
-   ProgVar @[3] {
-    name="epoch";
-    var_type=T_Int;
-    int_val=17;
-    objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
-    desc="current epoch -- local copy, which is used to update network's epoch counter";
    };
    ProgVar @[4] {
     name="err_stopcrit";
@@ -883,6 +884,20 @@ Program_Group .projects[0].programs.gp[0] {
      };
     };
    };
+   AssignExpr @[5] {
+    desc="always get current epoch counter";
+    flags=;
+    result_var=.projects[0].programs.gp[0][1].vars[1]$13$;
+    expr {
+     expr="network.epoch";
+     flags=;
+     var_expr="$#0#$.epoch";
+     vars {
+     };
+     var_names{ network;     };
+     bad_vars{      };
+    };
+   };
   };
   prog_code {
    name=;
@@ -997,7 +1012,7 @@ Program_Group .projects[0].programs.gp[0] {
    AssignExpr @[4] {
     desc="grab the official network epoch counter: will be initialized if needed by now";
     flags=;
-    result_var=.projects[0].programs.gp[0][1].vars[3]$13$;
+    result_var=$13$;
     expr {
      expr="network.epoch";
      flags=;
@@ -1107,7 +1122,7 @@ Program_Group .projects[0].programs.gp[0] {
   name="BpEpoch";
   tags="Bp, Std";
   desc="iterates over all of the items in a data table and calls BpTrial process on them";
-  flags=;
+  flags=SHOW_STEP;
   objs {
    name=;
    el_typ=taOBase;
@@ -1160,7 +1175,7 @@ Program_Group .projects[0].programs.gp[0] {
     var_type=T_Int;
     int_val=0;
     objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="current trial (event) within the epoch -- increments automatically";
    };
    ProgVar @[2] {
@@ -1662,7 +1677,7 @@ this program can be extended to do arbitrary things to generate data and apply i
   name="ApplyInputs";
   tags="Network, InputData, Apply";
   desc="apply the current input data to the network as external input and target values";
-  flags=NO_USER_RUN;
+  flags=;
   objs {
    name=;
    el_typ=LayerWriter;
@@ -1681,9 +1696,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       layer_name="Input";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=EXT;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;      };
      };
      LayerWriterEl @[1] {
       chan_name="Output";
@@ -1691,9 +1705,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       layer_name="Output";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=TARG;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;      };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
@@ -1703,7 +1716,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       use_layer_type=1;
       ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-      value_names{       };
      };
     };
    };
@@ -1746,7 +1758,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     object_type=LayerWriter;
     object_val=.projects[0].programs.gp[0][4].objs[0]$29$;
     objs_ptr=1;
-    flags=CTRL_PANEL|NULL_CHECK;
+    flags=NULL_CHECK;
     desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
    };
   };
@@ -2742,7 +2754,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     var_type=T_String;
     string_val=;
     objs_ptr=0;
-    flags=NULL_CHECK;
+    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="final generated file name -- do not edit!";
    };
    ProgVar @[3] {

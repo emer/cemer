@@ -1,25 +1,8 @@
 pkgdata_prog_libdir = $(pkgdatadir)/prog_lib
 
 dist_pkgdata_prog_lib_DATA =\
-	CPT12axAll.progp \
-	DataCalcSample.prog \
-	LeabraEpoch.prog \
-	LeabraTrain.prog \
-	SplitImageList.prog \
-	LeabraEpochGpData.prog \
-	LeabraTrial.prog \
-	LeabraAll_Std.progp \
-	LeabraEpochMonitor.prog \
-	LeabraTrialMonitor.prog \
 	ApplyInputs.prog \
-	LeabraBatch.prog \
 	ApplyInputsImage.prog \
-	LeabraCycle.prog \
-	LeabraSettle.prog \
-	ReadImages.prog \
-	LeabraTrainBatchSeedList.prog \
-	LeabraTrainBatchSeedNThr.prog \
-	MultiInputData.prog \
 	BpAll_Std.progp \
 	BpBatch.prog \
 	BpEpoch.prog \
@@ -27,4 +10,39 @@ dist_pkgdata_prog_lib_DATA =\
 	BpTestAll.progp \
 	BpTrain.prog \
 	BpTrial.prog \
-	BpTrialMonitor.prog
+	BpTrialMonitor.prog \
+	CPT12axAll.progp \
+	CsAll_Std.progp \
+	CsBatch.prog \
+	CsCycle.prog \
+	CsEpoch.prog \
+	CsEpochMonitor.prog \
+	CsSettle.prog \
+	CsTrain.prog \
+	CsTrial.prog \
+	CsTrialMonitor.prog \
+	DataCalcSample.prog \
+	LeabraAll_Std.progp \
+	LeabraBatch.prog \
+	LeabraCycle.prog \
+	LeabraEpoch.prog \
+	LeabraEpochGpData.prog \
+	LeabraEpochMonitor.prog \
+	LeabraSettle.prog \
+	LeabraTrain.prog \
+	LeabraTrainBatchSeedList.prog \
+	LeabraTrainBatchSeedNThr.prog \
+	LeabraTrial.prog \
+	LeabraTrialMonitor.prog \
+	MultiInputData.prog \
+	ReadImages.prog \
+	SaveWeights.prog \
+	SaveWeightsSpecs.prog \
+	SoAll_Std.progp \
+	SoBatch.prog \
+	SoEpoch.prog \
+	SoEpochMonitor.prog \
+	SoTrain.prog \
+	SoTrial.prog \
+	SoTrialMonitor.prog \
+	SplitImageList.prog

@@ -88,7 +88,7 @@ Program .projects[0].programs.gp[0][1] {
  name="CsTrain";
  tags="Cs, Std";
  desc="A complete training run of a constraint satisfaction network: iterating over epochs until the network has learned the task";
- flags=;
+ flags=SHOW_STEP;
  objs {
   name=;
   el_typ=RndSeed;
@@ -168,6 +168,14 @@ Program .projects[0].programs.gp[0][1] {
    desc="maximum number of epochs to run";
   };
   ProgVar @[1] {
+   name="epoch";
+   var_type=T_Int;
+   int_val=9;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="current epoch -- local copy, which is used to update network's epoch counter";
+  };
+  ProgVar @[2] {
    name="train_mode";
    var_type=T_HardEnum;
    int_val=1;
@@ -176,7 +184,7 @@ Program .projects[0].programs.gp[0][1] {
    flags=CTRL_PANEL|NULL_CHECK;
    desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
   };
-  ProgVar @[2] {
+  ProgVar @[3] {
    name="rnd_init";
    var_type=T_DynEnum;
    dyn_enum_val {
@@ -186,14 +194,6 @@ Program .projects[0].programs.gp[0][1] {
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="how to initialize the random numbers when the Init button is pressed";
-  };
-  ProgVar @[3] {
-   name="epoch";
-   var_type=T_Int;
-   int_val=16;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc="current epoch -- local copy, which is used to update network's epoch counter";
   };
   ProgVar @[4] {
    name="err_stopcrit";
@@ -491,7 +491,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   AssignExpr @[4] {
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[3]$9$;
+   result_var=.projects[0].programs.gp[0][1].vars[1]$9$;
    expr {
     expr="network.epoch";
     flags=;

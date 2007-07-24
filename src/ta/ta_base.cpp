@@ -1042,6 +1042,9 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
 	*loaded_obj_ptr = lobj;
       if(rval && lobj) {
 	lobj->SetFileName(flr->fileName());
+	if(taMisc::gui_active && lobj != this) { // loaded a new guy
+	  tabMisc::DelayedFunCall(lobj, "BrowserSelectMe");
+	}
       }
     }
   }
@@ -1788,7 +1791,7 @@ bool taBase::EditDialog(bool modal) {
 
 #ifndef TA_GUI
 // see ta_qtviewer.cpp
-bool taBase::EditPanel(bool new_tab) {
+bool taBase::EditPanel(bool new_tab, bool pin_tab) {
   return false;
 }
 bool taBase::BrowserSelectMe() {

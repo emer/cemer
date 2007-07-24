@@ -338,6 +338,7 @@ void SoNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   prjn->recvcons_type = &TA_SoRecvCons;
   prjn->sendcons_type = &TA_SoSendCons;
   prjn->con_spec.SetBaseType(&TA_SoConSpec);
+  prjn->con_spec.type = &TA_HebbConSpec;
 }
 
 void SoNetwork::Compute_Act() {
