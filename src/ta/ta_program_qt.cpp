@@ -1204,12 +1204,13 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
     int cnt = 0;
     for (int i = 0; i < pvl->size; ++i) {
       ProgVar* pv = pvl->FastEl(i);
-      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL) || pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
+      if(!pv->HasVarFlag(ProgVar::CTRL_PANEL))
 	continue;
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
       //note: code below is "risky" ex if visiblity update ctrl changes etc.
       // then the type values can be wrong -- so we strongly cast
+      if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) continue; // do this after the cnt++!
       if (!md || !mb_dat) {
 #ifdef DEBUG
         taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");

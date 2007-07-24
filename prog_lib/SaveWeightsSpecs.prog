@@ -1,20 +1,19 @@
 // ta_Dump File v2.0
-Program .projects[0].programs[4] { 
+Program .projects[0].programs.gp[0][12] { 
   ProgVar_List @.args = [1] {
     ProgVar @[0] { };
   };
 
-  ProgVar_List @.vars = [7] {
+  ProgVar_List @.vars = [6] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
     ProgVar @[3] { };
     ProgVar @[4] { };
     ProgVar @[5] { };
-    ProgVar @[6] { };
   };
 
-  ProgEl_List @.prog_code = [8] {
+  ProgEl_List @.prog_code = [7] {
     IfReturn @[0] { };
     MiscCall @[1] { 
       ProgArg_List @.meth_args = [2] {
@@ -43,18 +42,23 @@ Program .projects[0].programs[4] {
 	ProgArg @[1] { };
       };
     };
-    AssignExpr @[6] { };
-    UserScript @[7] { };
+    UserScript @[6] { };
   };
 };
-Program .projects[0].programs[4] {
+Program .projects[0].programs.gp[0][12] {
  name="SaveWeightsSpecs";
+ tags="Weights, Specs";
  desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values
 also save specs.";
  flags=;
  objs {
   name=;
   el_typ=taOBase;
+  el_def=0;
+ };
+ types {
+  name=;
+  el_typ=ProgType;
   el_def=0;
  };
  args {
@@ -94,15 +98,15 @@ also save specs.";
   ProgVar @[2] {
    name="fname";
    var_type=T_String;
-   string_val="/Users/oreilly/sims/vis_search/djilk/model/wts/hv.v4clrblob6_hi2xrf8_64ug_filtsc5_8_io15.00_0000.wts.gz";
+   string_val="/Users/oreilly/svn_sims/perception/objrec/wts/hv.dorsal_1.00_0001.wts.gz";
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc=;
   };
   ProgVar @[3] {
    name="epoch_str";
    var_type=T_String;
-   string_val="0000";
+   string_val="0001";
    objs_ptr=0;
    flags=NULL_CHECK;
    desc="string rep of epoch with leading zeros";
@@ -118,18 +122,10 @@ also save specs.";
   ProgVar @[5] {
    name="final_tag";
    var_type=T_String;
-   string_val=".00_0000";
+   string_val=".00_0001";
    objs_ptr=0;
    flags=NULL_CHECK;
    desc="batch + epoch";
-  };
-  ProgVar @[6] {
-   name="specfname";
-   var_type=T_String;
-   string_val="/Users/oreilly/sims/vis_search/djilk/model/wts/hv.v4clrblob6_hi2xrf8_64ug_filtsc5_8_io15.00_0000.wts.gz";
-   objs_ptr=0;
-   flags=NULL_CHECK;
-   desc=;
   };
  };
  functions {
@@ -152,7 +148,7 @@ also save specs.";
   el_typ=MethodCall;
   el_def=0;
   IfReturn @[0] {
-   desc="do not save if not first dmem guy";
+   desc="do not save if not first dmem processor";
    flags=;
    cond {
     expr="taMisc::dmem_proc > 0";
@@ -167,7 +163,7 @@ also save specs.";
   MiscCall @[1] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[4].vars[4]$1$;
+   result_var=.projects[0].programs.gp[0][12].vars[4]$1$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    meth_args {
@@ -178,6 +174,8 @@ also save specs.";
      arg_type=int;
      type="int";
      name="num";
+     required=0;
+     def_val=;
      expr {
       expr="network.batch";
       flags=;
@@ -192,6 +190,8 @@ also save specs.";
      arg_type=int;
      type="int";
      name="len";
+     required=0;
+     def_val=;
      expr {
       expr="2";
       flags=;
@@ -207,7 +207,7 @@ also save specs.";
   MiscCall @[2] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[4].vars[3]$2$;
+   result_var=.projects[0].programs.gp[0][12].vars[3]$2$;
    object_type=taMisc;
    method=taMisc::LeadingZeros;
    meth_args {
@@ -218,6 +218,8 @@ also save specs.";
      arg_type=int;
      type="int";
      name="num";
+     required=0;
+     def_val=;
      expr {
       expr="network.epoch";
       flags=;
@@ -232,6 +234,8 @@ also save specs.";
      arg_type=int;
      type="int";
      name="len";
+     required=0;
+     def_val=;
      expr {
       expr="4";
       flags=;
@@ -247,7 +251,7 @@ also save specs.";
   AssignExpr @[3] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[4].vars[5]$3$;
+   result_var=.projects[0].programs.gp[0][12].vars[5]$3$;
    expr {
     expr="tag + \".\" + batch_str + \"_\" + epoch_str";
     flags=;
@@ -261,8 +265,8 @@ also save specs.";
   MethodCall @[4] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[4].vars[2]$4$;
-   obj=.projects[0].programs[4].args[0]$5$;
+   result_var=.projects[0].programs.gp[0][12].vars[2]$4$;
+   obj=.projects[0].programs.gp[0][12].args[0]$5$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -272,6 +276,8 @@ also save specs.";
      arg_type=const_taString_ref;
      type="const taString&";
      name="ext";
+     required=1;
+     def_val=;
      expr {
       expr="\".wts.gz\"";
       flags=;
@@ -286,6 +292,8 @@ also save specs.";
      arg_type=const_taString_ref;
      type="const taString&";
      name="tag";
+     required=0;
+     def_val="\"\"";
      expr {
       expr="final_tag";
       flags=;
@@ -300,6 +308,8 @@ also save specs.";
      arg_type=const_taString_ref;
      type="const taString&";
      name="subdir";
+     required=0;
+     def_val="\"\"";
      expr {
       expr="wts_subdir";
       flags=;
@@ -314,6 +324,8 @@ also save specs.";
      arg_type=bool;
      type="bool";
      name="dmem_proc_no";
+     required=0;
+     def_val="false";
      expr {
       expr="false";
       flags=;
@@ -337,9 +349,11 @@ also save specs.";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=NULL;
+     arg_type=const_taString_ref;
      type="const taString&";
      name="fname";
+     required=0;
+     def_val="\"\"";
      expr {
       expr="fname";
       flags=;
@@ -351,9 +365,11 @@ also save specs.";
      };
     };
     ProgArg @[1] {
-     arg_type=NULL;
+     arg_type=Network::WtSaveFormat;
      type="Network::WtSaveFormat";
      name="fmt";
+     required=0;
+     def_val="Network::NET_FMT";
      expr {
       expr="Network::NET_FMT";
       flags=;
@@ -366,36 +382,25 @@ also save specs.";
     };
    };
   };
-  AssignExpr @[6] {
-   desc=;
-   flags=;
-   result_var=.projects[0].programs[4].vars[6]$6$;
-   expr {
-    expr="fname.before(\".wts.gz\") + \".spec\"";
-    flags=;
-    var_expr="$#0#$.before(\".wts.gz\") + \".spec\"";
-    vars {
-    };
-    var_names{ fname;    };
-    bad_vars{     };
-   };
-  };
-  UserScript @[7] {
+  UserScript @[6] {
    desc=;
    flags=;
    script {
-    expr="network.specs.SaveAs(specfname);
+    expr="String specfnm = fname.before(\".wts.gz\");
+specfnm += \".spec\";
+network.specs.SaveAs(specfnm);
 
 ";
     flags=NO_VAR_ERRS;
-    var_expr="$#0#$.specs.SaveAs($#1#$);
-
+    var_expr="String specfnm = $#0#$.before(\".wts.gz\");
+specfnm += \".spec\";
+network.specs.SaveAs(specfnm);
 
 ";
     vars {
     };
-    var_names{ network;specfname;    };
-    bad_vars{     };
+    var_names{ fname;    };
+    bad_vars{ specfnm;    };
    };
   };
  };
