@@ -10,7 +10,26 @@ EXTRA_DIST =\
 	src/leabra/leabra_def.h \
 	src/so/so_def.h \
 	src/cs/cs_def.h \
-	spec.tmpl.in 
+	spec.tmpl.in \
+	src/ta/files.mta \
+	src/pdp/files.mta \
+	src/bp/files.mta \
+	src/leabra/files.mta \
+	src/so/files.mta \
+	src/cs/files.mta \
+	src/ta/home.xpm \
+	src/ta/ortho.xpm \
+	src/ta/perspective.xpm \
+	src/ta/pick.xpm \
+	src/ta/print.xpm \
+	src/ta/seek.xpm \
+	src/ta/set_home.xpm \
+	src/ta/snapshot.xpm \
+	src/ta/view.xpm \
+	src/ta/view_all.xpm \
+	src/ta/x.xpm \
+	src/ta/y.xpm \
+	src/ta/z.xpm
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
