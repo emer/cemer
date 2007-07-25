@@ -964,7 +964,8 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   it->SetObject(src);
   it->SetName(src->GetName());
   it->UpdateAfterEdit();
-  tabMisc::DelayedFunCall(it, "BrowserSelectMe");
+  if(taMisc::gui_active)
+    tabMisc::DelayedFunCall(it, "BrowserSelectMe");
 }
 
 const String ProgVar_List::GenCss(int indent_level) const {
@@ -3578,14 +3579,15 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
     Program_Group* pg = (Program_Group*)new_owner->NewGp(1);
     pg->Load(path);
     Program* first_guy = pg->Leaf(0);
-    if(first_guy)
+    if(taMisc::gui_active && first_guy)
       tabMisc::DelayedFunCall(first_guy, "BrowserSelectMe");
     return pg;
   }
 
   Program* pg = new_owner->NewEl(1, &TA_Program);
   pg->Load(path);
-  tabMisc::DelayedFunCall(pg, "BrowserSelectMe");
+  if(taMisc::gui_active)
+    tabMisc::DelayedFunCall(pg, "BrowserSelectMe");
   return pg;
 }
 
