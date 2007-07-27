@@ -1653,20 +1653,22 @@ bool taRootBase::Startup_MakeMainWin() {
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
   MainWindowViewer* db = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
-  // try to size fairly large to avoid scrollbars -- values obtained empirically
-  iSize s(1024, 480); // no console
+  // try to size fairly large to avoid scrollbars
+  db->SetUserData("view_win_wd", 0.6f);
+  float ht = 0.5f; // no console
+//  iSize s(1024, 480); // no console  (note: values obtained empirically)
   if ((console_type == taMisc::CT_GUI) && (!(console_options & taMisc::CO_GUI_TRACKING))) {
-    s.h = 720; // console
+    ht = 0.8f; // console
     ConsoleDockViewer* cdv = new ConsoleDockViewer;
     db->docks.Add(cdv);
   }
+  db->SetUserData("view_win_ht", ht); 
   db->ViewWindow();
   iMainWindowViewer* bw = db->viewerWindow();
   if (bw) { //note: already constrained to max screen size, so we don't have to check
     // main win handle internal app urls
     taiMisc::main_window = bw;
     QDesktopServices::setUrlHandler("ta", bw, "globalUrlHandler");
-    bw->resize(s.w, s.h);
     bw->show(); // when we start event loop
   }
   //TODO: following prob not necessary

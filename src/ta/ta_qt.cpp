@@ -699,10 +699,6 @@ void taiMisc::OpenWindows(){
     win->UpdateAfterEdit();
   }
   taiMisc::RunPending();
-  for(i=0;i < unopened_windows.size;i++){
-    TopLevelViewer* win = dynamic_cast<TopLevelViewer*>(unopened_windows.FastEl(i));
-    if (win->isIconified()) win->Iconify();
-  }
   unopened_windows.RemoveAll();
   --taMisc::is_loading;
   cssiSession::RaiseObjEdits(); // make sure css objects are in front!

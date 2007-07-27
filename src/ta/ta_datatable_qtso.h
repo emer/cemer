@@ -1145,6 +1145,10 @@ public:
   iDataTablePanel(taiDataLink* dl_);
   ~iDataTablePanel();
 
+protected:
+  override void 	GetWinState_impl(); // when saving view state
+  override void		SetWinState_impl(); // when showing, from view state
+
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_iDataTablePanel;}

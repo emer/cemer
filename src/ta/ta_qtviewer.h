@@ -596,6 +596,9 @@ public:
   inline FrameViewer*	viewer() {return (FrameViewer*)m_viewer;} // usually lex overridden in subclass
   
 //nn??  virtual void		UpdateTabNames(); // called by a datalink when a tab name might have changed
+  virtual void 		GetWinState() {GetWinState_impl();} // when saving view state
+  virtual void		SetWinState() {SetWinState_impl();} // when showing, from view state
+  
   iFrameViewer(FrameViewer* viewer_, QWidget* parent = NULL);
   ~iFrameViewer();
   
@@ -615,6 +618,8 @@ public: // IDataViewerWidget i/f
   override QWidget*	widget() {return this;}
 protected:
 //  override void		Constr_impl(); // called virtually, after new
+  virtual void 		GetWinState_impl() {} // when saving view state
+  virtual void		SetWinState_impl() {} // when showing, from view state
 
 protected:
   short int		shn_changing; // for marking forwarding, so we don't reflect back
@@ -715,6 +720,8 @@ protected:
   override void		ResolveChanges_impl(CancelOp& cancel_op);
   override void 	SelectionChanged_impl(ISelectableHost* src_host); // called when sel changes
   void 			viewSplit(int o);
+  override void 	GetWinState_impl();
+  override void		SetWinState_impl();
 
 private:
   void			Init();
@@ -908,6 +915,7 @@ public:
   taiAction* 		viewSplitVerticalAction;
   taiAction* 		viewSplitHorizontalAction;
   taiAction* 		viewCloseCurrentViewAction;
+  taiAction* 		viewSaveViewAction;
 
   taiAction*	        toolsClassBrowseAction;
   
@@ -968,6 +976,7 @@ public slots:
   virtual void 	editFind(); 
   virtual void 	editFindNext(); 
   virtual void	viewRefresh() {Refresh();} // manually rebuild/refresh the current view
+  void		viewSaveView(); // save view state
   
   virtual void	showMenu_aboutToShow();
   virtual void	ShowChange(taiAction* sender);	// when show/hide menu changes
@@ -1162,7 +1171,9 @@ public:
   int			TabIndexOfPanel(iDataPanel* panel) const; // or -1 if not showing in a tab
   int			TabIndexByName(const String& nm) const;
   void 			UpdateTabName(iDataPanel* pan); // called only by individual panel when its name may have changed
-
+  void			GetWinState();
+  void			SetWinState();
+  
   iTabView(QWidget* parent = NULL);
   iTabView(iTabViewer* data_viewer_, QWidget* parent = NULL);
   ~iTabView();
@@ -1247,11 +1258,13 @@ public:
   virtual void		FrameShowing(bool showing, bool focus = false); // called esp by t3 frames when show/hide; lets us show hide the tabs
 
   virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
-  virtual void		OnWindowBind(iTabViewer* itv) {OnWindowBind_impl(itv);}
+  virtual void		OnWindowBind(iTabViewer* itv);
     // called in post, when all windows are built
   virtual void		ResolveChanges(CancelOp& cancel_op);
   virtual void		Render(); // actually create content; override _impl; used to defer creation of button panels
   virtual String 	TabText() const; // text for the panel tab -- usually just the view_name of the curItem
+  virtual void 		GetWinState(); // when saving view state
+  virtual void		SetWinState(); // when showing, from view state
 
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
   ~iDataPanel();
@@ -1283,6 +1296,8 @@ protected:
   
   virtual void		InitPanel_impl() {} 
   virtual void 		UpdatePanel_impl();
+  virtual void 		GetWinState_impl() {} // when saving view state
+  virtual void		SetWinState_impl() {} // when showing, from view state
 protected slots:
   virtual void		FrameShowing_Async(bool focus); // we forward async from FS (only when true) as a useful hack to make sure all constr etc is done before doing it
   
@@ -1448,6 +1463,8 @@ public:
   override bool		HasChanged();
   override void 	ResolveChanges(CancelOp& cancel_op); // do the children first, then our impl
   override void		UpdatePanel(); // iterate over all kiddies
+  override void 	GetWinState(); // when saving view state
+  override void		SetWinState(); // when showing, from view state
 
   iDataPanelSetBase(taiDataLink* dl_);
   ~iDataPanelSetBase();

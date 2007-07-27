@@ -221,6 +221,7 @@ public:
   int		vspc_c;
   int		dlgm_c;		// dialog margin (in pixels) -- empty space around dialog contents
   iSize		scrn_s;		// screen size, excluding task bars, etc. (use for maximum dialog size)
+  iSize		frame_s;	// normal window frame size -- we can only determine this from a shown window (esp on X) -- the startup routine sets it from the main window
   QRect		scrn_geom;	// #IGNORE available space on main screen (esp useful for evil Mac...)
   QCursor*	wait_cursor;	// cursor used for waiting
   QCursor*	record_cursor;	// cursor used for recording

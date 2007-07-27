@@ -116,7 +116,6 @@ class taProject;
 
 // forwards this file
 
-class WindowState;
 class ToolBar_List;
 class DataViewer;
 class   ToolBar;
@@ -175,8 +174,10 @@ public:
   virtual void  	Show();		// make the item visible, if this is applicable
   virtual void		Hide();		// hide (but don't delete) the item, if applicable
 
-  virtual void 		GetWinState(); // copy gui state to us (override impl)
-  virtual void		SetWinState(); // set gui state from us (override impl)
+  virtual void		FrameSizeToSize(iSize& sz) {} // #IGNORE converts a frame size to a window/widget size -- only applies to top level wins, and is hacky/OS-dependent (we don't need the reverse, because we call frameGeometry() to get that)
+  
+  virtual bool 		GetWinState(); // copy gui state to us (override impl); true if done (ie mapped)
+  virtual bool		SetWinState(); // set gui state from us (override impl)
 
   virtual void		ResolveChanges(CancelOp& cancel_op); // resolve all changes (if mapped)
   virtual void 		WindowClosing(CancelOp& cancel_op) {} 
@@ -225,6 +226,8 @@ class TA_API DataViewer_List: public DataView_List { // #NO_TOKENS ##NO_EXPAND_A
 INHERITED(DataView_List)
 public:
   
+  void			GetWinState();
+  void			SetWinState();
   TA_DATAVIEWLISTFUNS(DataViewer_List, DataView_List, DataViewer)
 
 private:
@@ -248,6 +251,8 @@ public:
 //  void 	Copy_(const FrameViewer& cp);
   TA_DATAVIEWFUNS(FrameViewer, DataViewer) //
 protected:
+  override void 	GetWinState_impl(); // set gui state; only called if mapped
+  override void 	SetWinState_impl(); // fetch gui state; only called if mapped
 
 private:
   NOCOPY(FrameViewer)
@@ -360,42 +365,11 @@ public:
   TA_DATAVIEWFUNS(PanelViewer, FrameViewer) //
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // #IGNORE
-  override void 	GetWinState_impl(); // set gui state; only called if mapped
-  override void 	SetWinState_impl(); // fetch gui state; only called if mapped
 private:
   NOCOPY(PanelViewer)
   void			Initialize();
   void			Destroy() {CutLinks();}
 };
-
-
-
-class TA_API WindowState : public taOBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP Window geometry (position, size) saved in 1.0f-relative coordinates TODO: make this UserData
-INHERITED(taOBase)
-public:
-  static float	Offs(float cur, float by); // offset cur by 'by' amount (0 > by >= 1.0); wraps if >1
-
-  float	 	lft; 		// left (horizontal)
-  float		top;  		// top (vertical) NOTE: was "bottom" in Iv version
-  float		wd;		// width
-  float		ht;		// height
-  bool		iconified;	// window has been minimized
-  
-  TopLevelViewer*	topLevelViewer();
-
-  void			GetWinState();	// get the window state from parent TopLevelViewer
-  void			SetWinState();	// set the window state from parent TopLevelViewer
-  void 			ScriptWinState(ostream& strm = cout);
-
-  void	UpdateAfterEdit();
-  TA_BASEFUNS(WindowState)
-private:
-  void 	Copy_(const WindowState& cp);
-  void 	Initialize();
-  void 	Destroy() {}
-};
-
 
 
 class TA_API TopLevelViewer : public DataViewer {
@@ -404,21 +378,17 @@ INHERITED(DataViewer)
 public:
     // can be provided to put msg up on closing
   override bool		deleteOnWinClose() const;
-  bool			isIconified() const {return win_state.iconified;} 
-    // 'true' if the window is iconified, n/a if not topLevel
-    //TODO: make UserData
   bool			openOnLoad() const {return false;} 
     // 'true' if the viewer should be opened after loading (note: still must check if topLevel)
     // TODO: define impl somehow 
   virtual bool		isRoot() const {return false;} // only true for main proj window
   virtual bool		isTopLevel() const {return true;} // to differentiate, when it could be either
-  WindowState&		winState(); // we get from UserData
   
   virtual void		ViewWindow();
     // #MENU #MENU_CONTEXT #MENU_ON_Object either de-iconfiy if exists or create a new window if doesn't
   virtual void  	Iconify();		// #MENU iconify the window (saves iconified state)
   virtual void		DeIconify();		// deiconify the window (saves deiconified state)
-  virtual void 		ScriptWinState() 		{ winState().ScriptWinState(cout); }
+//  virtual void 		ScriptWinState() 		{ winState().ScriptWinState(cout); }
     // #NO_SCRIPT generate script code to position the window
   virtual void		SetWinName();		// #IGNORE set the window name 
   
@@ -428,10 +398,9 @@ public:
   void	CutLinks();
   TA_DATAVIEWFUNS(TopLevelViewer, DataViewer) //
 protected:
-  WindowState		win_state; // TEMP: until is UserData
   String		win_name;
   
-  override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
+  override void 	GetWinState_impl();
   override void 	SetWinState_impl();
   virtual void		MakeWinName_impl() {} // set win_name, impl in subs
   
@@ -465,6 +434,8 @@ public:
 protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); 
   //override void		MakeWinName_impl(); each subguy will need this
+  override void 	GetWinState_impl();
+  override void 	SetWinState_impl();
   
 private:
   void 	Copy_(const DockViewer& cp) 
@@ -562,7 +533,7 @@ protected:
   override IDataViewWidget* ConstrWidget_impl(QWidget* gui_parent); // in qt file
 #endif
   override void		WidgetDeleting_impl();
-  override void 	GetWinState_impl();//TODO: we can eliminate these with UserData system
+  override void 	GetWinState_impl();
   override void 	SetWinState_impl();
 private:
   void	Copy_(const ToolBar& cp);
@@ -646,6 +617,9 @@ public:
   bool			SelectT3ViewTabName(const String& tab_name);
   // select T3DataViewer (3d view) (right view panel) tab by name
   
+  override void		FrameSizeToSize(iSize& sz);
+  override bool 	GetWinState();
+  override bool		SetWinState();
   override void 	ResolveChanges(CancelOp& cancel_op);
     
   void	UpdateAfterEdit();

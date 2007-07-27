@@ -1044,6 +1044,9 @@ public:
   // #CAT_UserData #EXPERT returns true if UserData exists for this key (case sens)
   virtual const Variant	GetUserData(const String& key) const;
   // #CAT_UserData get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
+  const Variant 	GetUserDataDef(const String& key, const Variant& def)
+    {if (HasUserData(key)) return GetUserData(key); else return def;}
+    // return value if exists, or default if doesn't
   virtual UserDataItemBase* GetUserDataOfType(TypeDef* typ, const String& key,
      bool force_create);
   // #CAT_UserData #EXPERT gets specified user data of given type, making one if doesn't exist and fc=true

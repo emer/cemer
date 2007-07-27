@@ -5343,6 +5343,42 @@ void iDataTablePanel::GetSelectedItems(ISelectable_PtrList& lst) {
   } */
 }
 
+void iDataTablePanel::GetWinState_impl() {
+  inherited::GetWinState_impl();
+  DataTable* dt = this->dt(); // cache
+  if (!dt) return;
+  QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
+  // we store col widths as fraction of ctrl width
+  float fwd = (float)tv->width();
+  if (fwd <= 0.0f) return; // huh???
+  for (int i = 0; i < dt->data.size; ++i) {
+    DataCol* dc = dt->data.FastEl(i);
+    int iwd = tv->columnWidth(i);
+    if (iwd > 0) {
+      float fcolwd = iwd / fwd;
+      dc->SetUserData("view_panel_wd", fcolwd);
+    }
+  }
+}
+
+void iDataTablePanel::SetWinState_impl() {
+  inherited::SetWinState_impl();
+  DataTable* dt = this->dt(); // cache
+  if (!dt) return;
+  QTableView* tv = dte->tvTable; // cache -- note: row# header size is separate
+  // we store col widths as fraction of ctrl width
+  float fwd = (float)tv->width();
+  if (fwd <= 0.0f) return; // huh???
+  for (int i = 0; i < dt->data.size; ++i) {
+    DataCol* dc = dt->data.FastEl(i);
+    float fcolwd = dc->GetUserDataAsFloat("view_panel_wd");
+    int iwd = (int)(fwd * fcolwd);
+    if (iwd > 0) { // ==0 typically if not set in UD
+      tv->setColumnWidth(i, iwd);
+    }
+  }
+}
+
 void iDataTablePanel::mb_View() {
   //TODO:
 }

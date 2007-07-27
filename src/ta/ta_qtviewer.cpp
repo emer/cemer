@@ -2738,6 +2738,20 @@ void iTabViewer::Constr_post() {
   }
 }
 
+void iTabViewer::GetWinState_impl() {
+  for (int i = 0; i < m_tabViews->size; ++i) {
+    iTabView* itv = m_tabViews->FastEl(i);
+    itv->GetWinState();
+  }
+}
+
+void iTabViewer::SetWinState_impl() {
+  for (int i = 0; i < m_tabViews->size; ++i) {
+    iTabView* itv = m_tabViews->FastEl(i);
+    itv->SetWinState();
+  }
+}
+
 void iTabViewer::Refresh_impl() {
   for (int i = 0; i < m_tabViews->size; ++i) {
     iTabView* itv = m_tabViews->FastEl(i);
@@ -3286,7 +3300,7 @@ void iMainWindowViewer::Init() {
   iSize ss = taiM->scrn_s;
   setMaximumSize(ss.width(), ss.height());
   // set default size as the big hor dialog
-  resize(taiM->dialogSize(taiMisc::hdlg_b));
+//  resize(taiM->dialogSize(taiMisc::hdlg_b));
 
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
@@ -3414,7 +3428,13 @@ void iMainWindowViewer::moveEvent(QMoveEvent* e) {
 }
 
 void iMainWindowViewer::resizeEvent(QResizeEvent* e) {
-  QMainWindow::resizeEvent(e);
+  inherited::resizeEvent(e);
+  // use this to check for initializing the hacky frame_s value
+  if ((taiM->frame_s.h + taiM->frame_s.w) == 0) {
+    QRect r = frameGeometry();
+    taiM->frame_s.h = r.height() - height();
+    taiM->frame_s.w = r.width() - width();
+  }
   taProject* prj = curProject();
   if(!prj) return;
   if(!taMisc::console_win) return;
@@ -3571,6 +3591,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence("Ctrl+F"), "editFindAction"));
   editFindNextAction = AddAction(new taiAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
+  viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction" ));
   toolsClassBrowseAction = AddAction(new taiAction(0, "Class Browser", QKeySequence(), "toolsClassBrowseAction"));
   String s = taMisc::app_name + " Help on the web";
   helpHelpAction = AddAction(new taiAction("&Help", QKeySequence(), _helpHelpAction ));
@@ -3609,6 +3630,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
   dockMenu = viewMenu->AddSubMenu("Dock Windows");
   viewMenu->insertSeparator();
+  viewSaveViewAction->AddTo(viewMenu);
   
   // next two items are commands that set the other toggle flags
   show_menu->AddItem("Normal &only", taiMenu::normal, taiAction::men_act,
@@ -3650,6 +3672,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( editFindAction, SIGNAL( Action() ), this, SLOT(editFind()) );
   connect( editFindNextAction, SIGNAL( Action() ), this, SLOT(editFindNext()) );
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
+  connect( viewSaveViewAction, SIGNAL( Action() ), this, SLOT(viewSaveView()) );
   connect( toolsClassBrowseAction, SIGNAL( activated() ), 
     this, SLOT( toolsClassBrowser() ) );
   connect( helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()) );
@@ -3985,6 +4008,10 @@ int iMainWindowViewer::GetEditActions() {
   int rval = 0;
   emit GetEditActionsEnabled(rval);
   return rval;
+}
+
+void iMainWindowViewer::viewSaveView() {
+  viewer()->GetWinState();
 }
 
 void iMainWindowViewer::windowMenu_aboutToShow() {
@@ -4632,6 +4659,22 @@ iDataPanel* iTabView::GetDataPanel(taiDataLink* link) {
   return rval;
 }
 
+void iTabView::GetWinState() {
+//TODO: may want to save state of what panels are active
+  for (int i = 0; i < panelCount(); ++i) {
+    iDataPanel* pn = panel(i);
+    if (pn) pn->GetWinState();
+  }
+}
+
+void iTabView::SetWinState() {
+//TODO: may want to get state of what panels are active
+  for (int i = 0; i < panelCount(); ++i) {
+    iDataPanel* pn = panel(i);
+    if (pn) pn->SetWinState();
+  }
+}
+
 void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
 // this is for ctrl panel frames that go visible, to show their ctrl panel tabs
 // note that we are assuming for simplicity that we can focus the default or 0th tab
@@ -4960,6 +5003,20 @@ void iDataPanel::FrameShowing_Async(bool focus) {
   show_req = false;
 }
 
+void iDataPanel::GetWinState() {
+  GetWinState_impl();
+}
+
+void iDataPanel::SetWinState() {
+  SetWinState_impl();
+}
+
+void iDataPanel::OnWindowBind(iTabViewer* itv) {
+  OnWindowBind_impl(itv);
+  if (m_rendered)
+    SetWinState();
+}
+
 void iDataPanel::UpdatePanel() {
   if (!isVisible()) return;
   UpdatePanel_impl();
@@ -4973,6 +5030,7 @@ void iDataPanel::UpdatePanel_impl() {
 void iDataPanel::Render() {
   if (!m_rendered) {
     Render_impl();
+    SetWinState();
     m_rendered = true;
   }
 }
@@ -5349,6 +5407,22 @@ iDataPanel* iDataPanelSetBase::GetDataPanelOfType(TypeDef* typ, int& idx) {
       return rval;
   }
   return NULL;
+}
+
+void iDataPanelSetBase::GetWinState() {
+  GetWinState_impl();
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    if (pn) pn->GetWinState();
+  }
+}
+
+void iDataPanelSetBase::SetWinState() {
+  SetWinState_impl();
+  for (int i = 0; i < panels.size; ++i) {
+    iDataPanel* pn = panels.FastEl(i);
+    if (pn) pn->SetWinState();
+  }
 }
 
 bool iDataPanelSetBase::HasChanged() {

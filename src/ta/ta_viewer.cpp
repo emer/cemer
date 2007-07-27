@@ -122,12 +122,14 @@ void DataViewer::Constr_post() {
 
 void DataViewer::Dump_Save_pre() {
   inherited::Dump_Save_pre();
-  GetWinState(); // prior to saving
+//no: we only save explicitly in v4
+//  GetWinState(); // prior to saving
 }
 
-void DataViewer::GetWinState() {
-  if (!isMapped()) return;
+bool DataViewer::GetWinState() {
+  if (!isMapped()) return false;
   GetWinState_impl();
+  return true;
 }
 
 void DataViewer::Hide() {
@@ -170,9 +172,10 @@ void DataViewer::setVisible(bool value, bool update_view) {
     if (visible) Show(); else Hide();
 }
 
-void DataViewer::SetWinState() {
-  if (!isMapped()) return;
+bool DataViewer::SetWinState() {
+  if (!isMapped()) return false;
   SetWinState_impl();
+  return true;
 }
 
 
@@ -296,6 +299,18 @@ QWidget* DataViewer::widget() {
 //   DataViewer_List	 	//
 //////////////////////////////////
 
+void DataViewer_List::GetWinState() {
+  for (int i = 0; i < size; ++i) {
+    FastEl(i)->GetWinState();
+  }
+}
+
+void DataViewer_List::SetWinState() {
+  for (int i = 0; i < size; ++i) {
+    FastEl(i)->SetWinState();
+  }
+}
+
 
 //////////////////////////////////
 //   FrameViewer	 	//
@@ -303,6 +318,19 @@ QWidget* DataViewer::widget() {
 
 void FrameViewer::Initialize() {
 }
+
+void FrameViewer::GetWinState_impl() {
+  iFrameViewer* wid = widget();
+  if (!wid) return; // not supposed to happen
+  wid->GetWinState();
+}
+
+void FrameViewer::SetWinState_impl() {
+  iFrameViewer* wid = widget();
+  if (!wid) return; // not supposed to happen
+  wid->SetWinState();
+}
+
 
 //////////////////////////////////
 // 	BrowseViewer	 	//
@@ -450,120 +478,6 @@ IDataViewWidget* PanelViewer::ConstrWidget_impl(QWidget* gui_parent) {
   browser_win()->Reset();
 }*/
 
-void PanelViewer::GetWinState_impl() {
-}
-
-void PanelViewer::SetWinState_impl() {
-}
-
-//////////////////////////
-//	WindowState	//
-//////////////////////////
-
-float WindowState::Offs(float cur, float by) {
-  float rval = cur + by;
-  if (rval > 1.0f) rval -= 1.0f;
-  if (rval < 0.0f) rval = 0.0f;
-  return rval;
-}
-
-void WindowState::Initialize() {
-  if (taiM) { // guard for instance creation before sys init
-    lft = (taiM->scrn_s.w > 0) ? (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f;
-    top =  (taiM->scrn_s.h > 0) ? (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f;
-  } else {
-    lft = 0.0f;
-    top = 0.0f;
-  }
-  wd = 0.95f;
-  ht = 0.7f; // default window size
-  iconified = false;
-}
-
-void WindowState::Copy_(const WindowState& cp) {
-  lft = cp.lft;
-  top = cp.top;
-  wd = cp.wd;
-  ht = cp.ht;
-  iconified = cp.iconified;
-}
-
-void WindowState::UpdateAfterEdit() {
-  // make sure to limit on mac, due to wacky menubar and dock
-  //TODO: maybe this should be used for all? ex. windows or kde taskbar etc.
-#ifdef QT_OS_MACX
-  if (taiM) { // guard for instance creation before sys init
-    lft = MAX(lft, (taiM->scrn_s.w > 0) ? 
-      (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f);
-    top = MAX(top, (taiM->scrn_s.h > 0) ? 
-      (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f);
-  }
-//TODO: prob should limit wd and ht too, because of dock, and inability to size if grip is offscreen
-#endif
-  inherited::UpdateAfterEdit();
-  if (!taMisc::is_loading)
-    SetWinState();
-}
-
-void WindowState::GetWinState() {
-  TopLevelViewer* tlv = topLevelViewer();
-  if (!tlv || !tlv->isMapped()) return;
-  QWidget* widget = tlv->widget(); // cache
-
-  iRect r = widget->frameGeometry();
-  // convert from screen coords to relative (note, allowed to be >1.0)
-  lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
-  top = (float)r.top() / (float)(taiM->scrn_s.h);
-  wd = (float)r.width() / (float)(taiM->scrn_s.w);
-  ht = (float)r.height() / (float)(taiM->scrn_s.h);
-  iconified = widget->isMinimized();
-}
-
-void WindowState::SetWinState() {
-  TopLevelViewer* tlv = topLevelViewer();
-  if (!tlv || !tlv->isMapped()) return;
-  QWidget* widget = tlv->widget(); // cache
-
-  // convert to pixels
-  iRect tr = iRect(
-    (int)(lft * taiM->scrn_s.w),
-    (int)(top * taiM->scrn_s.h),
-    (int)(wd * taiM->scrn_s.w),
-    (int)(ht * taiM->scrn_s.h)
-  );
-
-  //note: resize/move combo recommended by Qt
-  widget->resize(tr.w, tr.h);
-  widget->move(tr.x, tr.y);
-  if (iconified)
-    widget->showMinimized();
-  else
-    widget->showNormal();
-
-}
-
-TopLevelViewer* WindowState::topLevelViewer() {
-  TopLevelViewer* rval = GET_MY_OWNER(TopLevelViewer); // note: ok for when UserData as well 
-  return rval;
-}
-
-void WindowState::ScriptWinState(ostream& strm) {
-  TopLevelViewer* tlv = topLevelViewer();
-  if (!tlv || !tlv->isMapped()) return;
-
-  GetWinState();
-  String temp = tlv->GetPath();
-  if (iconified) {
-    temp += ".Iconify();\n";
-  }
-  else {
-    temp += String(".SetWinState(") + String(lft) + ", " +
-      String(top) + ", " + String(wd) + ", " + String(ht) + ");\n";
-  }
-  if (taMisc::record_script != NULL)  taMisc::RecordScript(temp);
-  else   strm << temp;
-}
-
 
 //////////////////////////
 //   TopLevelViewer	//
@@ -574,34 +488,92 @@ void TopLevelViewer::Initialize() {
 
 void TopLevelViewer::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(win_state, this); //TEMP: until is UserData
   if (taMisc::is_loading && isTopLevel() && openOnLoad())
       taiMisc::unopened_windows.LinkUnique(this);
 }
 
 void TopLevelViewer::CutLinks() {
-  win_state.CutLinks(); // TEMP: until is UserData
   inherited::CutLinks();
 }
 
 
 void TopLevelViewer::Copy_(const TopLevelViewer& cp) {
-  win_state = cp.win_state; //TEMP until is UserData, then nuke
-  if (isTopLevel()) {
-    WindowState& win_state = winState(); // cache
-    // offset the copy
-    win_state.lft = WindowState::Offs(win_state.lft, 0.05f);
-    win_state.top = WindowState::Offs(win_state.top, 0.05f);
-  }
   if (!GetName().empty())
     SetName(GetName() + "_copy");
+}
+
+void TopLevelViewer::GetWinState_impl() {
+  QWidget* widget = this->widget(); // cache
+
+  iRect r = widget->frameGeometry(); //note: same as size() for widgets
+  // convert from screen coords to relative (note, allowed to be >1.0)
+  // adjust for scrn geom, esp for evil mac
+  float lft = (float)(r.left() - taiM->scrn_geom.left()) / 
+    (float)(taiM->scrn_s.w); // all of these convert from screen coords
+  float top = (float)(r.top() - taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h);
+  float wd = (float)r.width() / (float)(taiM->scrn_s.w);
+  float ht = (float)r.height() / (float)(taiM->scrn_s.h);
+  bool iconified = widget->isMinimized();
+  // save in UserData
+  SetUserData("view_win_lft", lft);
+  SetUserData("view_win_top", top);
+  SetUserData("view_win_wd", wd);
+  SetUserData("view_win_ht", ht);
+  SetUserData("view_win_iconified", iconified);
+}
+
+void TopLevelViewer::SetWinState_impl() {
+  float lft = GetUserDataDef("view_win_lft", 0.0f).toFloat();
+  float top = GetUserDataDef("view_win_top", 0.0f).toFloat();
+  float wd = GetUserDataDef("view_win_wd", 1.0f).toFloat();
+  float ht = GetUserDataDef("view_win_ht", 1.0f).toFloat();
+  bool iconified = GetUserDataDef("view_win_iconified", false).toBool();
+  // adjust ht in case we are using the console win
+  if (taMisc::console_win) {
+    if (ht > 0.8f) ht = 0.8f;
+  }
+
+/*
+  // make sure to limit on mac, due to wacky menubar and dock
+  //TODO: maybe this should be used for all? ex. windows or kde taskbar etc.
+#ifdef TA_OS_MAC
+  if (taiM) { // guard for instance creation before sys init
+    lft = MAX(lft, (taiM->scrn_s.w > 0) ? 
+      (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f);
+    top = MAX(top, (taiM->scrn_s.h > 0) ? 
+      (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f);
+  }
+//TODO: prob should limit wd and ht too, because of dock, and inability to size if grip is offscreen
+#endif */
+  
+  QWidget* widget = this->widget(); // cache
+
+  // convert to pixels
+  // we use the screen geom offsets, mostly for evil mac
+  iSize s((int)(wd * taiM->scrn_s.w), (int)(ht * taiM->scrn_s.h));
+  FrameSizeToSize(s); // only does anything for wins(int)(ht * taiM->scrn_s.h)
+  iRect tr = iRect(
+    (int)((lft * taiM->scrn_s.w)) + taiM->scrn_geom.left(),
+    (int)((top * taiM->scrn_s.h)) + taiM->scrn_geom.top(),
+    s.w,
+    s.h
+  );
+
+  //note: resize/move combo recommended by Qt
+  widget->resize(tr.w, tr.h);
+  widget->move(tr.x, tr.y);
+  if (iconified)
+    widget->showMinimized();
+  else
+    widget->show();
+  
+  SetWinName();
 }
 
 void TopLevelViewer::DeIconify() {
   if (!isMapped() || !isTopLevel()) return;
   if (widget()->isMinimized())
     widget()->showNormal();
-  winState().iconified = false; //TEMP
 }
 
 bool TopLevelViewer::deleteOnWinClose() const {
@@ -615,12 +587,8 @@ void TopLevelViewer::Iconify() {
   if (!isMapped() || !isTopLevel()) return;
   if (!widget()->isMinimized())
     widget()->showMinimized();
-  winState().iconified = true; // TEMP
 }
 
-void TopLevelViewer::GetWinState_impl() {
-  winState().GetWinState();
-}
 
 void TopLevelViewer::SetWinName() {
 //   if (!isMapped()) return;
@@ -686,15 +654,6 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
   }
 }
 
-void TopLevelViewer::SetWinState_impl() {
-  winState().SetWinState();
-  SetWinName();
-}
-
-WindowState& TopLevelViewer::winState() {
-  return win_state; // TEMP: until is UserData, then we'll get from there and return addr
-}
-
 
 //////////////////////////
 //   DockViewer		//
@@ -709,6 +668,20 @@ IDataViewWidget* DockViewer::ConstrWidget_impl(QWidget* gui_parent) {
 //TODO: maybe we don't even need a generic one, but it does enable us to
 // make a purely taBase guy that doesn't need its own special gui guy
   return new iDockViewer(this, gui_parent);
+}
+
+void DockViewer::GetWinState_impl() {
+  inherited::GetWinState_impl();
+  QWidget* wid = widget(); //cache
+  bool vis = wid->isVisible();
+  SetUserData("view_visible", vis);
+}
+
+void DockViewer::SetWinState_impl() {
+  inherited::SetWinState_impl();
+  QWidget* wid = widget(); //cache
+  bool vis = GetUserDataDef("view_visible", true).toBool();
+  wid->setVisible(vis);
 }
 
 //////////////////////////
@@ -801,6 +774,7 @@ void ToolBar::Constr_impl(QWidget* gui_parent) {
 }
 
 void ToolBar::GetWinState_impl() {
+  inherited::GetWinState_impl();
   iRect r = widget()->frameGeometry();
   // convert from screen coords to relative (note, allowed to be >1.0)
   lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
@@ -809,6 +783,7 @@ void ToolBar::GetWinState_impl() {
 }
 
 void ToolBar::SetWinState_impl() {
+  inherited::SetWinState_impl();
   //TODO: docked, etc.
   iToolBar* itb = widget(); //cache
   itb->setOrientation((Qt::Orientation)o);
@@ -958,6 +933,22 @@ void MainWindowViewer::UpdateAfterEdit() {
   SetWinName();
 }
 
+bool MainWindowViewer::GetWinState() {
+  if (!inherited::GetWinState()) return false;
+  toolbars.GetWinState();
+  frames.GetWinState();
+  docks.GetWinState();
+  return true;
+}
+
+bool MainWindowViewer::SetWinState() {
+  if (!inherited::SetWinState()) return false;
+  toolbars.SetWinState();
+  frames.SetWinState();
+  docks.SetWinState();
+  return true;
+}
+
 void MainWindowViewer::AddDock(DockViewer* dv) {
   docks.Add(dv);
 }
@@ -1102,6 +1093,12 @@ ToolBar* MainWindowViewer::FindToolBarByType(TypeDef* typ,
       return tb;
   }
   return NULL;
+}
+
+void MainWindowViewer::FrameSizeToSize(iSize& sz) {
+  //TODO: maybe estimate if the taiM guy not set yet
+  sz.h -= taiM->frame_s.h;
+  sz.w -= taiM->frame_s.w;
 }
 
 void MainWindowViewer::Hide_impl() {
