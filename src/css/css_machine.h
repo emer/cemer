@@ -417,8 +417,14 @@ public:
   // does this object have a sub-program that gets put on the stack and run (e.g., code block, script fun)
   virtual cssProg*	GetSubProg() const	{ return NULL; }
   // get the sub-program inside this guy
-  virtual cssEl*	GetActualObj() 		{ return this; }
+  virtual cssEl*	GetActualObj() const	{ return (cssEl*)this; }
   // get non-reference, non-pointer object
+  virtual cssEl*	GetNonRefObj() const	{ return (cssEl*)this; }
+  // get non-reference object -- use this for all attempts to cast an object based on GetType()
+  // because only cssRef defines that to be that of the non-ref-obj, which can cause
+  // a crash if you then try to cast the thing..
+  virtual cssEl*	GetNonPtrObj() const	{ return (cssEl*)this; }
+  // get non-pointer object
 
   // elaborate printing (with type information, etc..
   virtual String 	PrintStr() const		// the output string

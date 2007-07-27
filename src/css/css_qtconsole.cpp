@@ -136,7 +136,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
     if(elp) {
       par_path = cmd_b4 + par_path + "::";		// add back for returning
       if(elp.El()->GetType() == cssEl::T_ClassType) {
-	cssClassType* par_el = (cssClassType*)elp.El();
+	cssClassType* par_el = (cssClassType*)elp.El()->GetNonRefObj();
 	for(int i=0;i<par_el->members->size;i++) {
 	  cssEl* md = par_el->members->FastEl(i);
 	  if(md->name(0,len) == mb_name)
@@ -152,7 +152,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
 	  if(st->name(0,len) == mb_name)
 	    lst.append(par_path + st->name);
 	  if(st->GetType() == cssEl::T_EnumType) {
-	    cssEnumType* et = (cssEnumType*)st;
+	    cssEnumType* et = (cssEnumType*)st->GetNonRefObj();
 	    for(int j=0;j<et->enums->size; j++) {
 	      cssEl* en = et->enums->FastEl(j);
 	      if(en->name(0,len) == mb_name)
@@ -162,7 +162,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
 	}
       }
       else if(elp.El()->GetType() == cssEl::T_EnumType) {
-	cssEnumType* et = (cssEnumType*)elp.El();
+	cssEnumType* et = (cssEnumType*)elp.El()->GetNonRefObj();
 	for(int j=0;j<et->enums->size; j++) {
 	  cssEl* en = et->enums->FastEl(j);
 	  if(en->name(0,len) == mb_name)

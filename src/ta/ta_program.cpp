@@ -573,11 +573,13 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 				    "object pointer is NULL");
       rval = false;
     }
-    if(owner != &(prg->args) && owner != &(prg->vars)) {
-      // not quite an error..
-      if(!quiet) taMisc::Warning("for ProgVar in program:", prognm, "var name:",name,
-				 "object pointers should be in program args or vars, not embedded within the program, where they are hard to find and correct if they don't point to the right thing.");
-    }
+    // this is not actually a very reasonable warning, because these vars can be assigned
+    // directly in the code!
+//     if(owner != &(prg->args) && owner != &(prg->vars)) {
+//       // not quite an error..
+//       if(!quiet) taMisc::Warning("for ProgVar in program:", prognm, "var name:",name,
+// 				 "object pointers should be in program args or vars, not embedded within the program, where they are hard to find and correct if they don't point to the right thing.");
+//     }
   }
 }
 
@@ -2032,7 +2034,8 @@ String StaticMethodCall::GetDisplayName() const {
 
 
 void ProgramCall::Initialize() {
-  taBase::Own(target, this);
+  // this is highly unusual -- should be in initlinks, not here in initialize..
+  //  taBase::Own(target, this);
 }
 
 void ProgramCall::UpdateAfterEdit_impl() {

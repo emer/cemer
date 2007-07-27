@@ -208,15 +208,16 @@ bool cssTA::AssignCheckSource(const cssEl& s) {
 		   "source is non-TA object of type:", s.GetTypeName());
     return false;
   }
-  cssTA& sp = (cssTA&)s;
-  if(!sp.type_def) {
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  TypeDef* sp_typ = sp->GetNonRefTypeDef();
+  if(!sp_typ) {
     cssMisc::Error(prog, "Failed to assign TA C pointer of type:", type_def->name,
 		   "source object type info is NULL");
     return false;
   }
-  if(type_def && !sp.type_def->InheritsFrom(type_def)) {
+  if(type_def && !sp_typ->InheritsFrom(type_def)) {
     cssMisc::Error(prog, "Failed to assign TA C pointer of type:", type_def->name,
-		   "source object type is incompatible:", sp.type_def->name);
+		   "source object type is incompatible:", sp_typ->name);
     return false;
   }
   return true;
@@ -228,13 +229,13 @@ bool cssTA::AssignObjCheck(const cssEl& s) {
 		   "our object is NULL");
     return false;
   }
-  cssTA& sp = (cssTA&)s;
-  if(sp.ptr_cnt > 0) {
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  if(sp->GetNonRefPtrCnt() > 0) {
     cssMisc::Error(prog, "Failed to copy to taBase C object of type:", type_def->name,
 		   "we are an object and source is a pointer");
     return false;
   }
-  if(!sp.ptr) {
+  if(!sp->GetNonRefPtr()) {
     cssMisc::Error(prog, "Failed to copy to taBase C object of type:", type_def->name,
 		   "source is NULL");
     return false;
@@ -260,27 +261,30 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
     return;
   }
   if(!AssignCheckSource(s)) return;
-  cssTA& sp = (cssTA&)s;
-  if(ptr_cnt == sp.ptr_cnt) {
-    ptr = sp.ptr;
-    type_def = sp.type_def;
-    SetClassParent(sp.class_parent);
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  int sp_ptr_cnt = sp->GetNonRefPtrCnt();
+  void* sp_ptr = sp->GetNonRefPtr();
+  TypeDef* sp_typ = sp->GetNonRefTypeDef();
+  if(ptr_cnt == sp_ptr_cnt) {
+    ptr = sp_ptr;
+    type_def = sp_typ;
+    SetClassParent(sp->class_parent);
   }
-  else if((ptr_cnt == 1) && (sp.ptr_cnt == 0)) {
-    ptr = sp.ptr;		// I now point to that guy
-    type_def = sp.type_def;
-    SetClassParent(sp.class_parent);
+  else if((ptr_cnt == 1) && (sp_ptr_cnt == 0)) {
+    ptr = sp_ptr;		// I now point to that guy
+    type_def = sp_typ;
+    SetClassParent(sp->class_parent);
   }
-  else if((ptr_cnt == 2) && (sp.ptr_cnt <= 1)) {
+  else if((ptr_cnt == 2) && (sp_ptr_cnt <= 1)) {
     // I'm a ptr-ptr and this sets me to point to another guy
-    if(PtrAssignPtrPtr(sp.ptr)) {
-      type_def = sp.type_def;
+    if(PtrAssignPtrPtr(sp_ptr)) {
+      type_def = sp_typ;
     }
   }
   else {
     cssMisc::Error(prog, "Failed to assign TA pointer of type:", type_def->name,
 		   "pointer mismatch.  our ptr_cnt == ", String(ptr_cnt),
-		   "source ptr_cnt == ", String(sp.ptr_cnt));
+		   "source ptr_cnt == ", String(sp_ptr_cnt));
   }
 }
 
@@ -316,9 +320,9 @@ void cssTA::operator=(const cssEl& s) {
 
   if(!AssignCheckSource(s)) return; // not a good source
   if(!AssignObjCheck(s)) return; // not a good source for obj
-  cssTA& sp = (cssTA&)s;
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
   // use typedef generic copy routine!
-  type_def->CopyFromSameType(ptr, sp.ptr);
+  type_def->CopyFromSameType(ptr, sp->GetNonRefPtr());
 }
 
 cssEl* cssTA::GetElement_impl(taBase* ths, int i) const {
@@ -582,9 +586,9 @@ void cssTA_Base::operator=(const cssEl& s) {
   if(!AssignCheckSource(s)) return; // not a good source
   if(!AssignObjCheck(s)) return; // not a good source for obj
 
-  cssTA& sp = (cssTA&)s;
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
   taBase* obj = (taBase*)ptr;
-  obj->UnSafeCopy((taBase*)sp.ptr);
+  obj->UnSafeCopy((taBase*)sp->GetNonRefPtr());
   UpdateClassParent();
 }
 
@@ -656,6 +660,24 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
 ////////////////////////////////////////////////////////////////////////
 // 		cssSmartRef
 ////////////////////////////////////////////////////////////////////////
+
+TypeDef* cssSmartRef::GetNonRefTypeDef() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr || !sr->ptr()) return type_def;
+  return sr->ptr()->GetTypeDef();
+}
+
+int cssSmartRef::GetNonRefPtrCnt() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr || !sr->ptr()) return 0;
+  return 1;			// we're basically a pointer to a ta base, not guy itself?
+}
+
+void* cssSmartRef::GetNonRefPtr() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr || !sr->ptr()) return ptr;
+  return (void*)sr->ptr();
+}
 
 const char* cssSmartRef::GetTypeName() const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
@@ -1015,7 +1037,7 @@ cssEl* cssIOS::operator>>(cssEl& s) {
     istream* strm = (istream*)*this;
     if(strm) {
       if(s.GetType() == T_Int) {
-	cssInt* tmp = (cssInt*)&s;
+	cssInt* tmp = (cssInt*)s.GetNonRefObj();
 	String tpnm = tmp->GetTypeName();
 	if(tpnm == "(char)") {
 	  char ctmp;
@@ -1026,11 +1048,11 @@ cssEl* cssIOS::operator>>(cssEl& s) {
 	  *strm >> tmp->val;
       }
       else if(s.GetType() == T_Real) {
-	cssReal* tmp = (cssReal*)&s;
+	cssReal* tmp = (cssReal*)s.GetNonRefObj();
 	*strm >> tmp->val;
       }
       else if(s.GetType() == T_Array) {
-	cssArray* ary = (cssArray*)&s;
+	cssArray* ary = (cssArray*)s.GetNonRefObj();
 	if(!ary->el_type || !ary->items) {
 	  cssMisc::Error(prog, "Error: Array has no item type");
 	  return this;
@@ -1094,7 +1116,7 @@ void cssIOS::PtrAssignPtr(const cssEl& s) {
     cssTA::PtrAssignPtr(s);
     return;
   }
-  cssTA* st = (cssTA*)&s;
+  cssTA* st = (cssTA*)s.GetNonRefObj();
   if(ptr_cnt == st->ptr_cnt) {
     if((ptr_cnt == 1) && !class_parent && st->type_def->InheritsFrom(TA_ios)) {
       if(!st->type_def->InheritsFrom(type_def)) {
@@ -1240,7 +1262,7 @@ void cssTypeDef::operator=(const String& s) {
 void cssTypeDef::operator=(const cssEl& s) {
   if(ptr_cnt==2) { // if im a typedef-ptr-ptr
     if(s.GetType() == T_TA) {
-      cssTA* tmp = (cssTA*)&s;
+      cssTA* tmp = (cssTA*)s.GetNonRefObj();
       if(tmp->type_def->InheritsFrom(&TA_TypeDef))
 	PtrAssignPtr(s);
       else {
@@ -1293,7 +1315,7 @@ void cssMemberDef::operator=(const String& s) {
 void cssMemberDef::operator=(const cssEl& s) {
   if(ptr_cnt==2) { // if im a memberdef-ptr-ptr
     if(s.GetType() == T_TA) {
-      cssTA* tmp = (cssTA*)&s;
+      cssTA* tmp = (cssTA*)s.GetNonRefObj();
       if(tmp->type_def->InheritsFrom(&TA_MemberDef))
 	PtrAssignPtr(s);
       else {
@@ -1346,7 +1368,7 @@ void cssMethodDef::operator=(const String& s) {
 void cssMethodDef::operator=(const cssEl& s) {
   if(ptr_cnt==2) { // if im a methoddef-ptr-ptr
     if(s.GetType() == T_TA) {
-      cssTA *tmp = (cssTA*)&s;
+      cssTA *tmp = (cssTA*)s.GetNonRefObj();
       if(tmp->type_def->InheritsFrom(&TA_MethodDef))
 	PtrAssignPtr(s);
       else {

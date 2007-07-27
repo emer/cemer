@@ -476,13 +476,13 @@ String cssPtr::GetStr() const {
 cssEl* cssPtr::GetNonPtrTypeObj() const {
   if((el_type->GetType() == T_Ptr) || (el_type->GetType() == T_Array) ||
      (el_type->GetType() == T_ArrayType))
-    return ((cssPtr*)el_type)->GetNonPtrTypeObj();
+    return ((cssPtr*)el_type->GetNonRefObj())->GetNonPtrTypeObj();
   return el_type;
 }
 
 void cssPtr::operator=(const cssEl& s) {
   if((s.GetType() == T_Ptr) || (s.GetType() == T_Array)) {
-    cssPtr* tmp = (cssPtr*)&s;
+    cssPtr* tmp = (cssPtr*)s.GetNonRefObj();
     cssEl* s_type = tmp->GetNonPtrTypeObj();
     cssEl* nptr_type = GetNonPtrTypeObj();
 
@@ -491,7 +491,7 @@ void cssPtr::operator=(const cssEl& s) {
     if(s_type->GetType() == T_Void)
       s_type = tmp->ptr.El();
     if(s_type->GetType() == T_Class)
-      s_type = ((cssClassInst*)s_type)->type_def;
+      s_type = ((cssClassInst*)s_type->GetNonRefObj())->type_def;
 
     // if either one's a Void, then assignment is automatically ok
     bool auto_ok = false;
@@ -506,8 +506,8 @@ void cssPtr::operator=(const cssEl& s) {
       // if we have class types, check for inheritance
       // allow both up and down casting
       else if(nptr_type->GetType() == T_ClassType) {
-        cssClassType* ths_class = (cssClassType*) nptr_type;
-        cssClassType* s_class = (cssClassType*) s_type;
+        cssClassType* ths_class = (cssClassType*) nptr_type->GetNonRefObj();
+        cssClassType* s_class = (cssClassType*) s_type->GetNonRefObj();
         if(!ths_class->InheritsFrom(s_class) &&
            !s_class->InheritsFrom(ths_class)) {
           cssMisc::Error(prog, "Pointer type mismatch between:",nptr_type->GetTypeName(),"and",
@@ -535,7 +535,7 @@ void cssPtr::operator=(const cssEl& s) {
 
 cssElPtr& cssPtr::GetOprPtr() const {
   if(ptr.El()->GetType() == T_Array)
-    return ((cssArray*)ptr.El())->ptr;
+    return ((cssArray*)ptr.El()->GetNonRefObj())->ptr;
   else
     return (cssElPtr&)ptr;
 }
@@ -1243,7 +1243,7 @@ void cssClassType::ConstructToken(cssClassInst* tok) {
     cssEl* mb = tok->members->FastEl(i);
     mb->prog = tok->prog;
     if(mb->GetType() == T_Class)
-      ((cssClassInst*)mb)->ConstructToken();
+      ((cssClassInst*)mb->GetNonRefObj())->ConstructToken();
     // arrays of objects already constructed via cssArray::Fill()
   }
   ConstructToken_impl(tok);
@@ -1389,9 +1389,9 @@ cssEl* cssClassType::InheritsFrom_stub(void*, int, cssEl* arg[]) {
   cssEl* arg2 = arg[2]->GetActualObj();
   cssClassType* that;
   if(arg2->GetType() == T_Class)
-    that = ((cssClassInst*)arg2)->type_def;
+    that = ((cssClassInst*)arg2->GetNonRefObj())->type_def;
   else if (arg2->GetType() == T_ClassType)
-    that = (cssClassType*)arg2;
+    that = (cssClassType*)arg2->GetNonRefObj();
   else {
     cssElPtr tp_ptr;
     if((ths->prog != NULL) && (ths->prog->top != NULL))
@@ -1411,7 +1411,7 @@ cssEl* cssClassType::Load_stub(void*, int, cssEl* arg[]) {
   // 'this' must be a class or class object to even get here
   cssClassInst* ths;
   if(arg[1]->GetType() == T_Class)
-    ths = (cssClassInst*)arg[1];
+    ths = (cssClassInst*)arg[1]->GetNonRefObj();
   else {
     cssMisc::Error(NULL, "Load must be called on a class instance, not just a type");
     return &cssMisc::Void;
@@ -1434,7 +1434,7 @@ cssEl* cssClassType::Save_stub(void*, int, cssEl* arg[]) {
   // 'this' must be a class or class object to even get here
   cssClassInst* ths;
   if(arg[1]->GetType() == T_Class)
-    ths = (cssClassInst*)arg[1];
+    ths = (cssClassInst*)arg[1]->GetNonRefObj();
   else {
     cssMisc::Error(NULL, "Save must be called on a class instance, not just a type");
     return &cssMisc::Void;
@@ -1499,11 +1499,11 @@ void cssClassType::TypeInfo(ostream& fh) const {
       fh << "\t\t\t";
     fh << mbr->name;
     if (mbr->mbr_type->GetType() == cssEl::T_Array) {
-      cssArray* ar = (cssArray*) mbr->mbr_type;
+      cssArray* ar = (cssArray*) mbr->mbr_type->GetNonRefObj();
       fh << '[' << ar->items->size << ']';
     }
     else if (mbr->mbr_type->GetType() == cssEl::T_ArrayType) {
-      cssArrayType* ar = (cssArrayType*) mbr->mbr_type;
+      cssArrayType* ar = (cssArrayType*) mbr->mbr_type->GetNonRefObj();
       fh << '[' << ar->size << ']';
     }
     if(!member_desc[i].empty())
@@ -1717,13 +1717,13 @@ cssClassInst::cssClassInst(cssClassType* cp, const char* nm) {
   for(i=0; i < cp->members->size; i++) {
     cssClassMember* mb = (cssClassMember*)cp->members->FastEl(i);
     if(mb->mbr_type->GetType() == T_ClassType) {
-      members->Push(new cssClassInst((cssClassType*)mb->mbr_type, mb->name));
+      members->Push(new cssClassInst((cssClassType*)mb->mbr_type->GetNonRefObj(), mb->name));
     }
     else if(mb->mbr_type->GetType() == T_ArrayType) {
-      members->Push(new cssArray(*(cssArrayType*)mb->mbr_type, mb->name));
+      members->Push(new cssArray(*(cssArrayType*)mb->mbr_type->GetNonRefObj(), mb->name));
     }
     else if(mb->mbr_type->GetType() == T_EnumType) {
-      members->Push(new cssEnum((cssEnumType*)mb->mbr_type, 0, mb->name));
+      members->Push(new cssEnum((cssEnumType*)mb->mbr_type->GetNonRefObj(), 0, mb->name));
     }
     else {
       cssEl* nwmb = mb->mbr_type->Clone();

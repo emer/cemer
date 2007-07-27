@@ -238,7 +238,7 @@ static cssEl* cssElCFun_del_opr_stub(int, cssEl* arg[]) {
 
 static cssEl* cssElCFun_constr_stub(int, cssEl* arg[]) {
   if(arg[1]->GetType() == cssEl::T_Class)
-    ((cssClassInst*)arg[1])->ConstructToken();
+    ((cssClassInst*)arg[1]->GetNonRefObj())->ConstructToken();
   return &cssMisc::Void;
 }
 
@@ -381,7 +381,7 @@ static cssEl* cssElCFun_modulo_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
   if((arg[1]->GetType() == cssEl::T_TA) && (arg[2]->GetType() == cssEl::T_Bool)) {
-    cssTA* ta = (cssTA*)arg[1];
+    cssTA* ta = (cssTA*)arg[1]->GetNonRefObj();
     if(ta->type_def->InheritsFrom(TA_ostream)) {
       ostream* strm = (ostream*)ta->GetVoidPtrOfType(&TA_ostream);
       if(strm != NULL) {
@@ -410,7 +410,7 @@ static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
 }
 static cssEl* cssElCFun_rshift_stub(int, cssEl* arg[]) {
   if((arg[1]->GetType() == cssEl::T_TA) && (arg[2]->GetType() == cssEl::T_Bool)) {
-    cssTA* ta = (cssTA*)arg[1];
+    cssTA* ta = (cssTA*)arg[1]->GetNonRefObj();
     if(ta->type_def->InheritsFrom(TA_istream)) {
       istream* strm = (istream*)ta->GetVoidPtrOfType(&TA_istream);
       if(strm != NULL) {
@@ -727,7 +727,7 @@ static cssEl* cssElCFun_chsh_stub(int na, cssEl* arg[]) {
   cssCmdShell* csh = cp->top->cmd_shell;
   if(na > 0) {
     if(arg[1]->GetType() == cssEl::T_SubShell) {
-      csh->PushSrcProg(&(((cssSubShell*)arg[1])->prog_space));
+      csh->PushSrcProg(&(((cssSubShell*)arg[1]->GetNonRefObj())->prog_space));
       return &cssMisc::Void;
     }
     if(arg[1]->GetType() != cssEl::T_TA) {
@@ -873,7 +873,7 @@ static cssEl* cssElCFun_list_stub(int na, cssEl* arg[]) {
     if((arg[1]->GetType() == cssEl::T_ScriptFun) ||
        (arg[1]->GetType() == cssEl::T_MbrScriptFun))
     {
-      cssScriptFun* fe = (cssScriptFun*)arg[1];
+      cssScriptFun* fe = (cssScriptFun*)arg[1]->GetNonRefObj();
       if(cp->top->ListDebug() >= 2)
 	fe->fun->ListImpl(csh->pgout);
       else
@@ -1991,7 +1991,7 @@ static void GeneratePtrRefTypes() {
   for(int i=0; i<cssMisc::TypesSpace.size; i++) {
     cssEl* tp = cssMisc::TypesSpace.FastEl(i);
     if(tp->GetType() == cssEl::T_TA) {
-      cssTA* tap = (cssTA*)tp;
+      cssTA* tap = (cssTA*)tp->GetNonRefObj();
       tap->ptr_cnt--;		// decrement ptr cnt from install to prevent obj creation
     }
     cssMisc::TypesSpace_refs.Push(tp->MakeRefType());

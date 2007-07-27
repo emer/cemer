@@ -168,7 +168,7 @@ void cssiMethMenu::CallFun() {
   for(i=2; i<=use_argc; i++) {
     cssEl* av = css_fun->argv[i].El()->Clone();
     if(av->GetType() == cssEl::T_Class) {
-      ((cssClassInst*)av)->ConstructToken();
+      ((cssClassInst*)av->GetNonRefObj())->ConstructToken();
       arg_obj->members->Push(av); // currently not saving to string..
     }
     else {
@@ -190,7 +190,7 @@ void cssiMethMenu::CallFun() {
       prg->Stack()->Push(av);
       css_fun->arg_vals[2 + i] = av->GetStr(); // set cur val based on arg val
       if(av->GetType() == cssEl::T_Class)
-	((cssClassInst*)av)->DestructToken();
+	((cssClassInst*)av->GetNonRefObj())->DestructToken();
     }
     cssEl::Ref(obj);		// make sure it doesn't get to 0 refcount in arg del..
     css_fun->Do(prg);

@@ -478,7 +478,7 @@ void cssCPtr_char::operator|=(cssEl& t)	{
 TypeDef* cssCPtr_enum::GetEnumType() const {
   if(enum_type) return enum_type;
   if((class_parent) && (class_parent->GetType() == T_TA)) {
-    cssTA* clp = (cssTA*)class_parent;
+    cssTA* clp = (cssTA*)class_parent->GetNonRefObj();
     if(clp->type_def) {
       MemberDef* md = clp->type_def->members.FindName(name); // find me..
       if(md)

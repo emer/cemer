@@ -622,7 +622,7 @@ void cssEl::Copy(const cssEl& cp) {
 cssEl* cssEl::MakePtrType(int ptrs) {
   if((GetType() == cssEl::T_C_Ptr) || (GetType() == cssEl::T_TA)) {
     bool zero_ptr = false;
-    cssCPtr* ths = (cssCPtr*)this;
+    cssCPtr* ths = (cssCPtr*)this->GetNonRefObj();
     if(ths->ptr_cnt == 0) {
       zero_ptr = true;
       ths->ptr_cnt++;		// prevent clone from complaining about making tokens
@@ -1950,7 +1950,7 @@ void cssCPtr::UpdateAfterEdit() {
 
 bool cssCPtr::operator==(cssEl& s) {
   if(s.GetType() == T_C_Ptr) {
-    cssCPtr* pt = (cssCPtr*)&s;
+    cssCPtr* pt = (cssCPtr*)s.GetNonRefObj();
     if(SamePtrLevel(pt))
       return ptr == pt->ptr;
     else
@@ -1961,7 +1961,7 @@ bool cssCPtr::operator==(cssEl& s) {
 
 bool cssCPtr::operator!=(cssEl& s) {
   if(s.GetType() == T_C_Ptr) {
-    cssCPtr* pt = (cssCPtr*)&s;
+    cssCPtr* pt = (cssCPtr*)s.GetNonRefObj();
     if(SamePtrLevel(pt))
       return ptr != pt->ptr;
     else
@@ -2344,11 +2344,11 @@ void cssSpace::TypeNameList(ostream& fh, int indent) const {
       fh << "\t\t\t";
     fh << mbr->name;
     if (mbr->GetType() == cssEl::T_Array) {
-      cssArray* ar = (cssArray*) mbr;
+      cssArray* ar = (cssArray*) mbr->GetNonRefObj();
       fh << '[' << ar->items->size << ']';
     }
     else if (mbr->GetType() == cssEl::T_ArrayType) {
-      cssArrayType* ar = (cssArrayType*) mbr;
+      cssArrayType* ar = (cssArrayType*) mbr->GetNonRefObj();
       fh << '[' << ar->size << ']';
     }
     fh << "\n";
@@ -4373,7 +4373,7 @@ void cssProgSpace::ListSrc(int stln) {
     }
     el->TypeInfo(*fh.fout);	// todo: pager
     if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el;
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
 	if(fun) fun->ListSrc(fh, 0, stln);
@@ -4415,7 +4415,7 @@ void cssProgSpace::ListImpl(int stln) {
     }
     el->TypeInfo(*fh.fout);	// todo: pager
     if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el;
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
 	if(fun) fun->ListImpl(fh, 1, stln);
@@ -4780,7 +4780,7 @@ bool cssProgSpace::SetBreak(int srcln) {
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el;
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
 	if(fun) {
@@ -4807,7 +4807,7 @@ void cssProgSpace::ShowBreaks() {
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el;
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
 	if(fun) fun->ShowBreaks();
@@ -4831,7 +4831,7 @@ bool cssProgSpace::DelBreak(int srcln) {
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el;
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
       for(int j=0;j<cl->methods->size;j++) {
 	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
 	if(fun) {

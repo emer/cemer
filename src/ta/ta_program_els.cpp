@@ -1086,3 +1086,95 @@ String ReturnExpr::GetDisplayName() const {
   return rval;
 }
 
+
+///////////////////////////////////////////////////////
+//		OtherProgramVar
+///////////////////////////////////////////////////////
+
+
+void OtherProgramVar::Initialize() {
+  set_other = false;
+}
+
+void OtherProgramVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(var_1);
+  UpdateProgVarRef_NewOwner(var_2);
+  UpdateProgVarRef_NewOwner(var_3);
+  UpdateProgVarRef_NewOwner(var_4);
+}
+
+void OtherProgramVar::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!other_prog, quiet, rval, "other_prog is NULL");
+  CheckProgVarRef(var_1, quiet, rval);
+  CheckProgVarRef(var_2, quiet, rval);
+  CheckProgVarRef(var_3, quiet, rval);
+  CheckProgVarRef(var_4, quiet, rval);
+}
+
+String OtherProgramVar::GetDisplayName() const {
+  String rval;
+  if(set_other)
+    rval = "To: ";
+  else
+    rval = "Fm: ";
+  if(other_prog)
+    rval += other_prog->name;
+  else
+    rval += "(ERROR: other_prog not set!)";
+  if(set_other)
+    rval += " Fm Vars: ";
+  else
+    rval += " To Vars: ";
+  if(var_1) rval += var_1->name + " ";
+  if(var_2) rval += var_2->name + " ";
+  if(var_3) rval += var_3->name + " ";
+  if(var_4) rval += var_4->name + " ";
+  return rval;
+}
+
+Program* OtherProgramVar::GetOtherProg() {
+  if(!other_prog) {
+    taMisc::CheckError("Other program is NULL in OtherProgramVar:",
+		       desc, "in program:", program()->name);
+  }
+  return other_prog.ptr();
+}
+
+bool OtherProgramVar::GenCss_OneVar(String& rval, ProgVarRef& var,
+				    const String& il, int var_no) {
+  if(!var) return false;
+  if(set_other)
+    rval += il + "other_prog->SetVar(\"" + var->name + "\", " + var->name +");\n";
+  else
+    rval += il + var->name + " = other_prog->GetVar(\"" + var->name + "\");\n";
+  return true;
+}
+
+const String OtherProgramVar::GenCssPre_impl(int indent_level) {
+  String rval;
+  rval = cssMisc::Indent(indent_level);
+  rval += "{ // other program var: "; 
+  if (other_prog)
+    rval += other_prog->name;
+  rval += "\n";
+  return rval;
+}
+
+const String OtherProgramVar::GenCssBody_impl(int indent_level) {
+  if (!other_prog) return _nilString;
+  String il = cssMisc::Indent(indent_level);
+  String rval;
+  rval += il + "Program* other_prog = this" + GetPath(NULL, program())+ "->GetOtherProg();\n";
+  GenCss_OneVar(rval, var_1, il, 0);
+  GenCss_OneVar(rval, var_2, il, 1);
+  GenCss_OneVar(rval, var_3, il, 2);
+  GenCss_OneVar(rval, var_4, il, 3);
+  return rval;
+}
+
+const String OtherProgramVar::GenCssPost_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "} // other program var\n";
+}
+

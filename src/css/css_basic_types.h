@@ -652,7 +652,8 @@ public:
   bool		IsNumericTypeStrict() const { cssEl* el = ((cssPtr*)this)->GetActualObj();
     if (el) return el->IsNumericTypeStrict(); else return false;}
 
-  cssEl*	GetActualObj() 		{ return ptr.El()->GetActualObj(); }
+  cssEl*	GetActualObj() const	{ return ptr.El()->GetActualObj(); }
+  cssEl*	GetNonPtrObj() const 	{ return ptr.El(); }
 
   virtual cssEl* GetNonPtrTypeObj() const;
   virtual cssTypes GetNonPtrType() const { return GetNonPtrTypeObj()->GetType(); }
@@ -884,7 +885,8 @@ public:
   bool		IsNumericTypeStrict() const { return ptr.El()->IsNumericTypeStrict(); }
   cssElPtr	GetAddr() const;
 
-  cssEl*	GetActualObj() 		{ return ptr.El()->GetActualObj(); }
+  cssEl*	GetActualObj() const	{ return ptr.El()->GetActualObj(); }
+  cssEl*	GetNonRefObj() const	{ return ptr.El(); }
 
   String 	PrintStr() const
   { String rv = ptr.El()->PrintStr(); rv.prepend("&"); return rv; }

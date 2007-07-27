@@ -35,6 +35,13 @@ public:
   cssTypes	GetType() const		{ return T_TA; }
   cssTypes	GetPtrType() const	{ return T_TA; }
 
+  virtual TypeDef* GetNonRefTypeDef() const	{ return type_def; }
+  // any kind of reference-semantics object can override to de-ref'd type
+  virtual int 	GetNonRefPtrCnt() const		{ return ptr_cnt; }
+  // any kind of reference-semantics object can override to de-ref'd ptr_cnt
+  virtual void* GetNonRefPtr() const		{ return ptr; }
+  // any kind of reference-semantics object can override to de-ref'd ptr
+
   String	PrintStr() const;
   String	PrintFStr() const;
   void 		PrintF(ostream& fh = cout) const 	{ Print(fh); }
@@ -168,6 +175,10 @@ class CSS_API cssSmartRef : public cssTA {
 public:
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;	// recursive
+
+  TypeDef* 	GetNonRefTypeDef() const;
+  int 		GetNonRefPtrCnt() const;
+  void* 	GetNonRefPtr() const;
 
   const char*	GetTypeName() const;
   void 		TypeInfo(ostream& fh = cout) const;

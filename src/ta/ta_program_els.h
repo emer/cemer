@@ -573,4 +573,36 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
+class TA_API OtherProgramVar : public ProgEl { 
+  // A program element for exchanging variable information between programs -- variables must have the same names in both programs
+INHERITED(ProgEl)
+public:
+  ProgramRef	other_prog; 	// #APPLY_IMMED the other program with variables that you want to get or set
+  bool		set_other;	// if true, values in other program are set from our variable values, otherwise our variables get values from those in other program
+  ProgVarRef	var_1;		// program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_2;		// program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_3;		// program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_4;		// program variable to operate on -- name must match name of variable in other program!
+
+  virtual Program*	GetOtherProg();
+  // safe call to get other program: emits error if other_prog is null (used by program)
+
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "Program"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(OtherProgramVar, Program);
+protected:
+  override void UpdateAfterEdit_impl();
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+
+  override const String	GenCssPre_impl(int indent_level); 
+  override const String	GenCssBody_impl(int indent_level);
+  override const String	GenCssPost_impl(int indent_level); 
+  virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var,
+			      const String& il, int var_no);
+private:
+  void	Initialize();
+  void	Destroy()	{ CutLinks(); }
+};
+
 #endif

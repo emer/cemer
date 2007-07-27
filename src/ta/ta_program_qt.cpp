@@ -890,6 +890,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_MemberAssign)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("prog()",
     tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("oth prg var",
+    tabMisc::root->GetTemplateInstance(&TA_OtherProgramVar)));
 
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("fun def",
