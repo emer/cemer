@@ -2,7 +2,7 @@
 LeabraProject .projects[0] { 
   Wizard_Group @.wizards = [1] {
     LeabraWizard @[0] { 
-      taBase_List @.layer_cfg = [3] {
+      LayerWizElList @.layer_cfg = [3] {
 	LayerWizEl @[0] { };
 	LayerWizEl @[1] { };
 	LayerWizEl @[2] { };
@@ -826,15 +826,6 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [2] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [6] {
-		    LayerView @[0] { };
-		    LayerView @[1] { };
-		    LayerView @[2] { };
-		    PrjnView @[3] { };
-		    PrjnView @[4] { };
-		    PrjnView @[5] { };
-		  };
-
 		  ScaleRange_List @.scale_ranges = [3] {
 		    ScaleRange @[0] { };
 		    ScaleRange @[1] { };
@@ -975,6 +966,11 @@ LeabraProject .projects[0] {
  templates {
   name=;
   el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
   el_def=0;
  };
  wizards {
@@ -1388,15 +1384,18 @@ LeabraProject .projects[0] {
   el_typ=Program;
   el_def=0;
   step_prog=NULL;
+  tags=;
   desc=;
   Program_Group @.gp[0] {
    name="LeabraAll_Std";
    el_typ=Program;
    el_def=0;
    step_prog=.projects[0].programs.gp[0][4]$0$;
+   tags=;
    desc="The full set of programs for training a standard Leabra network";
    Program @[0] {
     name="LeabraBatch";
+    tags=;
     desc="Iterate over training runs";
     flags=;
     objs {
@@ -1498,7 +1497,6 @@ LeabraProject .projects[0] {
 	flags=;
 	target=.projects[0].programs.gp[0][1]$5$;
 	targ_ld_init="*LeabraTrain*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1559,6 +1557,7 @@ LeabraProject .projects[0] {
    };
    Program @[1] {
     name="LeabraTrain";
+    tags=;
     desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task";
     flags=;
     objs {
@@ -1833,7 +1832,6 @@ LeabraProject .projects[0] {
 	flags=;
 	target=.projects[0].programs.gp[0][2]$12$;
 	targ_ld_init="*LeabraEpoch*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1919,6 +1917,7 @@ LeabraProject .projects[0] {
    };
    Program @[2] {
     name="LeabraEpoch";
+    tags=;
     desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
     flags=;
     objs {
@@ -2108,7 +2107,6 @@ LeabraProject .projects[0] {
       flags=NON_STD;
       target=.projects[0].programs.gp[1][1]$19$;
       targ_ld_init="*MakeEpoch*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2143,7 +2141,6 @@ LeabraProject .projects[0] {
 	flags=;
 	target=.projects[0].programs.gp[0][3]$20$;
 	targ_ld_init="*LeabraTrial*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2290,7 +2287,6 @@ LeabraProject .projects[0] {
       flags=;
       target=.projects[0].programs.gp[0][8]$24$;
       targ_ld_init="*LeabraEpochMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2317,6 +2313,7 @@ LeabraProject .projects[0] {
    };
    Program @[3] {
     name="LeabraTrial";
+    tags=;
     desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
     flags=;
     objs {
@@ -2430,7 +2427,6 @@ LeabraProject .projects[0] {
 	flags=;
 	target=$0$;
 	targ_ld_init="*LeabraSettle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2516,7 +2512,6 @@ LeabraProject .projects[0] {
       flags=;
       target=.projects[0].programs.gp[0][7]$27$;
       targ_ld_init="*LeabraTrialMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2549,6 +2544,7 @@ LeabraProject .projects[0] {
    };
    Program @[4] {
     name="LeabraSettle";
+    tags=;
     desc="iterates over cycles of updating until network has settled into a stable state, or output activations have exceeded a threshold";
     flags=;
     objs {
@@ -2663,7 +2659,6 @@ LeabraProject .projects[0] {
       flags=;
       target=.projects[0].programs.gp[0][6]$31$;
       targ_ld_init="*ApplyInputs*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2746,7 +2741,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	flags=;
 	target=.projects[0].programs.gp[0][5]$32$;
 	targ_ld_init="*LeabraCycle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2907,6 +2901,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
    Program @[5] {
     name="LeabraCycle";
+    tags=;
     desc="runs one cycle of leabra processing (updating net inputs and activations)";
     flags=;
     objs {
@@ -2987,8 +2982,9 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
    Program @[6] {
     name="ApplyInputs";
+    tags=;
     desc="apply the current input data to the network as external input and target values";
-    flags=NO_USER_RUN;
+    flags=;
     objs {
      name=;
      el_typ=LayerWriter;
@@ -3009,7 +3005,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	use_layer_type=1;
 	ext_flags=EXT;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -3019,7 +3014,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	use_layer_type=1;
 	ext_flags=TARG;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -3029,7 +3023,6 @@ else $#1#$ = $#0#$.min_cycles_phase2;
 	use_layer_type=1;
 	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ 	};
        };
       };
      };
@@ -3183,6 +3176,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
    Program @[7] {
     name="LeabraTrialMonitor";
+    tags=;
     desc="monitor trial-level data from the network";
     flags=;
     objs {
@@ -3590,6 +3584,7 @@ else $#1#$ = $#0#$.min_cycles_phase2;
    };
    Program @[8] {
     name="LeabraEpochMonitor";
+    tags=;
     desc="monitor epoch-level data from the network";
     flags=;
     objs {
@@ -3993,6 +3988,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    };
    Program @[9] {
     name="SaveWeights";
+    tags=;
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
     flags=;
     objs {
@@ -4357,9 +4353,11 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    el_typ=Program;
    el_def=0;
    step_prog=NULL;
+   tags=;
    desc=;
    Program @[0] {
     name="VisSearchOneTrial";
+    tags=;
     desc="one trial of visual search input/output patterns";
     flags=;
     objs {
@@ -6294,6 +6292,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    };
    Program @[1] {
     name="VisSearchEpoch";
+    tags=;
     desc="generate entire epoch's worth of visual search data";
     flags=;
     objs {
@@ -6404,7 +6403,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	flags=;
 	target=.projects[0].programs.gp[1][0]$66$;
 	targ_ld_init="*RenderInput*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -6554,53 +6552,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	 NetView @[0] {
 	  m_data=$1$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
-	  children {
-	   name=;
-	   el_typ=T3DataView;
-	   el_def=0;
-	   LayerView @[0] {
-	    m_data=.projects[0].networks[0].layers[0]$68$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.1666667: z=0: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   LayerView @[1] {
-	    m_data=.projects[0].networks[0].layers[1]$69$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.2857143: y=0.5: z=-0.2142857: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   LayerView @[2] {
-	    m_data=.projects[0].networks[0].layers[2]$70$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.2857143: y=0.8333333: z=0: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   PrjnView @[3] {
-	    m_data=.projects[0].networks[0].layers[1].projections[0]$71$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.03571429: y=0.1702381: z=0.03571429: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	   PrjnView @[4] {
-	    m_data=.projects[0].networks[0].layers[1].projections[1]$72$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.3214286: y=0.8297619: z=0.03571429: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	   PrjnView @[5] {
-	    m_data=.projects[0].networks[0].layers[2].projections[0]$73$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.3214286: y=0.5035715: z=-0.1785714: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
 	  scale {
@@ -6610,7 +6561,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$74$;
+	   spec=.colorspecs[0]$68$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -6637,7 +6588,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  display=0;
-	  ordered_uvg_list{ 	  };
+	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=14: y=14: z=3: };
@@ -6669,7 +6620,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[1][1].data[0]$75$;
+	    m_data=.projects[0].data.gp[1][1].data[0]$69$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -6677,7 +6628,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[1][1].data[1]$76$;
+	    m_data=.projects[0].data.gp[1][1].data[1]$70$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -6685,7 +6636,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[1][1].data[2]$77$;
+	    m_data=.projects[0].data.gp[1][1].data[2]$71$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -6693,7 +6644,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[1][1].data[3]$78$;
+	    m_data=.projects[0].data.gp[1][1].data[3]$72$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -6701,7 +6652,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[1][1].data[4]$79$;
+	    m_data=.projects[0].data.gp[1][1].data[4]$73$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
@@ -6709,7 +6660,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[1][1].data[5]$80$;
+	    m_data=.projects[0].data.gp[1][1].data[5]$74$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -6717,7 +6668,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[1][1].data[6]$81$;
+	    m_data=.projects[0].data.gp[1][1].data[6]$75$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -6725,7 +6676,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[1][1].data[7]$82$;
+	    m_data=.projects[0].data.gp[1][1].data[7]$76$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -6957,7 +6908,7 @@ FloatTransform @*(.m_transform) {scale={x=0.3579318: y=0.357932: z=0.3579319: }:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$74$;
+	   spec=$68$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -7007,7 +6958,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$83$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$77$;
 	    m_transform=NULL;
 	    name="Name";
 	    visible=1;
@@ -7029,7 +6980,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$84$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$78$;
 	    m_transform=NULL;
 	    name="Output";
 	    visible=1;
@@ -7061,7 +7012,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$74$;
+	   spec=$68$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -7098,7 +7049,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
   };
  };
- use_sim_log=0;
+ use_change_log=0;
+ last_change_desc=;
  networks {
   name=;
   el_typ=LeabraNetwork;
@@ -7121,7 +7073,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$85$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$79$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: send_delta=0: i_thr=STD: };
@@ -7134,8 +7086,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
-     hyst {on=0: b_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: };
-     acc {on=0: b_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: };
+     hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
+     acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
      act_reg {on=0: min=0: max=0.35: wt_dt=0.2: };
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
@@ -7227,7 +7179,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraBiasSpec @[0] {
        name="LeabraBiasSpec_0";
        desc=;
-       unique{ rnd;wt_limits;wt_scale;       };
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
        children {
 	name=;
 	el_typ=LeabraBiasSpec;
@@ -7237,6 +7189,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        inhib=0;
        wt_scale {abs=1: rel=1: };
+       wt_scale_init {init=0: abs=1: rel=1: };
        wt_sig {gain=6: off=1.25: };
        lrate=0.01;
        cur_lrate=0.01;
@@ -7248,7 +7201,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -7269,6 +7222,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      inhib=0;
      wt_scale {abs=1: rel=1: };
+     wt_scale_init {init=0: abs=1: rel=1: };
      wt_sig {gain=6: off=1.25: };
      lrate=0.01;
      cur_lrate=0.01;
@@ -7280,7 +7234,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -7907,7 +7861,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        misc_state2=0;
       };
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$86$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$80$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -7927,7 +7881,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.01: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$87$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$81$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -7955,12 +7909,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=$68$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$88$: };
+       from=.projects[0].networks[0].layers[0]$82$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$83$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$89$: };
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$84$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -7979,12 +7933,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=$70$;
-       spec {type=FullPrjnSpec: spec=$88$: };
+       from=.projects[0].networks[0].layers[2]$85$;
+       spec {type=FullPrjnSpec: spec=$83$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$89$: };
+       con_spec {type=LeabraConSpec: spec=$84$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -8017,7 +7971,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$86$: };
+     unit_spec {type=LeabraUnitSpec: spec=$80$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -8037,7 +7991,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=3.759892: g_i=3.759892: gp_g_i=0: g_i_orig=3.759892: };
      un_g_i {avg=3.759893: max=3.759892: max_i=0: };
      adapt_i {avg_avg=0.2179296: i_kwta_pt=-0.2999998: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$90$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$86$: };
      stm_gain=0.5;
      hard_clamped=0;
      dav=0;
@@ -8065,12 +8019,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=$69$;
-       spec {type=FullPrjnSpec: spec=$88$: };
+       from=.projects[0].networks[0].layers[1]$87$;
+       spec {type=FullPrjnSpec: spec=$83$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$89$: };
+       con_spec {type=LeabraConSpec: spec=$84$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -8103,7 +8057,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$86$: };
+     unit_spec {type=LeabraUnitSpec: spec=$80$: };
      ext_flag=TARG|EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -8123,7 +8077,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=4.117642: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=4.117643: max=4.117642: max_i=0: };
      adapt_i {avg_avg=0.03809929: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=$87$: };
+     spec {type=LeabraLayerSpec: spec=$81$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;

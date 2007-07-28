@@ -2,7 +2,7 @@
 CsProject .projects[0] { 
   Wizard_Group @.wizards = [1] {
     CsWizard @[0] { 
-      taBase_List @.layer_cfg = [3] {
+      LayerWizElList @.layer_cfg = [3] {
 	LayerWizEl @[0] { };
 	LayerWizEl @[1] { };
 	LayerWizEl @[2] { };
@@ -572,15 +572,6 @@ CsProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [6] {
-		    LayerView @[0] { };
-		    LayerView @[1] { };
-		    LayerView @[2] { };
-		    PrjnView @[3] { };
-		    PrjnView @[4] { };
-		    PrjnView @[5] { };
-		  };
-
 		  ScaleRange_List @.scale_ranges = [6] {
 		    ScaleRange @[0] { };
 		    ScaleRange @[1] { };
@@ -1240,7 +1231,6 @@ CsProject .projects[0] {
 	flags=;
 	target=.projects[0].programs.gp[0][1]$5$;
 	targ_ld_init="*CsTrain*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1646,7 +1636,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][2]$13$;
 	targ_ld_init="*CsEpoch*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1930,7 +1919,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][3]$20$;
 	targ_ld_init="*CsTrial*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2065,7 +2053,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][8]$24$;
       targ_ld_init="*CsEpochMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2218,7 +2205,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=$0$;
 	targ_ld_init="*CsSettle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2304,7 +2290,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][7]$27$;
       targ_ld_init="*CsTrialMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2454,7 +2439,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       target=.projects[0].programs.gp[0][6]$31$;
       targ_ld_init="*ApplyInputs*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2517,7 +2501,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=;
 	target=.projects[0].programs.gp[0][5]$32$;
 	targ_ld_init="*CsCycle*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2725,7 +2708,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     name="ApplyInputs";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
-    flags=NO_USER_RUN;
+    flags=;
     objs {
      name=;
      el_typ=LayerWriter;
@@ -2746,7 +2729,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	ext_flags=EXT;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
        };
        LayerWriterEl @[1] {
 	chan_name="Output";
@@ -2756,7 +2738,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	ext_flags=TARG;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ ;;;;;;;;;;;;;;;;;;;;;;;;;	};
        };
        LayerWriterEl @[2] {
 	chan_name="Name";
@@ -2766,7 +2747,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	use_layer_type=1;
 	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ 	};
        };
       };
      };
@@ -4233,53 +4213,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 NetView @[0] {
 	  m_data=$1$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
-	  children {
-	   name=;
-	   el_typ=T3DataView;
-	   el_def=0;
-	   LayerView @[0] {
-	    m_data=.projects[0].networks[0].layers[0]$53$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.1666667: z=0: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   LayerView @[1] {
-	    m_data=.projects[0].networks[0].layers[1]$54$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.5: z=0: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   LayerView @[2] {
-	    m_data=.projects[0].networks[0].layers[2]$55$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.8333333: z=0: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   PrjnView @[3] {
-	    m_data=.projects[0].networks[0].layers[1].projections[0]$56$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.1: y=0.1766667: z=0.1: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	   PrjnView @[4] {
-	    m_data=.projects[0].networks[0].layers[1].projections[1]$57$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.1: y=0.8233333: z=0.1: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	   PrjnView @[5] {
-	    m_data=.projects[0].networks[0].layers[2].projections[0]$58$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.1: y=0.51: z=0.1: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
 	  scale {
@@ -4289,7 +4222,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$59$;
+	   spec=.colorspecs[0]$53$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -4384,7 +4317,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[1][1].data[0]$60$;
+	    m_data=.projects[0].data.gp[1][1].data[0]$54$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -4392,7 +4325,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[1][1].data[1]$61$;
+	    m_data=.projects[0].data.gp[1][1].data[1]$55$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -4400,7 +4333,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[1][1].data[2]$62$;
+	    m_data=.projects[0].data.gp[1][1].data[2]$56$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -4408,7 +4341,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[1][1].data[3]$63$;
+	    m_data=.projects[0].data.gp[1][1].data[3]$57$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -4416,7 +4349,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[1][1].data[4]$64$;
+	    m_data=.projects[0].data.gp[1][1].data[4]$58$;
 	    m_transform=NULL;
 	    name="Input_avg_ext_rew";
 	    visible=1;
@@ -4424,7 +4357,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[1][1].data[5]$65$;
+	    m_data=.projects[0].data.gp[1][1].data[5]$59$;
 	    m_transform=NULL;
 	    name="Hidden_avg_ext_rew";
 	    visible=1;
@@ -4432,7 +4365,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[1][1].data[6]$66$;
+	    m_data=.projects[0].data.gp[1][1].data[6]$60$;
 	    m_transform=NULL;
 	    name="Output_avg_ext_rew";
 	    visible=1;
@@ -4440,7 +4373,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[1][1].data[7]$67$;
+	    m_data=.projects[0].data.gp[1][1].data[7]$61$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -4448,7 +4381,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
-	    m_data=.projects[0].data.gp[1][1].data[8]$68$;
+	    m_data=.projects[0].data.gp[1][1].data[8]$62$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -4456,7 +4389,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[9] {
-	    m_data=.projects[0].data.gp[1][1].data[9]$69$;
+	    m_data=.projects[0].data.gp[1][1].data[9]$63$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -4688,7 +4621,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$59$;
+	   spec=$53$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -4736,7 +4669,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
   };
  };
- use_sim_log=0;
+ use_change_log=0;
+ last_change_desc=;
  networks {
   name=;
   el_typ=CsNetwork;
@@ -4759,7 +4693,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=-1: max=1: range=2: scale=0.5: };
      bias_con_type=CsCon;
-     bias_spec {type=CsConSpec: spec=.projects[0].networks[0].specs[1]$70$: };
+     bias_spec {type=CsConSpec: spec=.projects[0].networks[0].specs[1]$64$: };
      sse_tol=0.5;
      real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
      noise {name="": type=NONE: mean=0: var=0.1: par=1: };
@@ -4831,7 +4765,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=-1: max=1: range=2: scale=0.5: };
      bias_con_type=CsCon;
-     bias_spec {type=CsConSpec: spec=$70$: };
+     bias_spec {type=CsConSpec: spec=$64$: };
      sse_tol=1;
      real_range {min=-0.98: max=0.98: range=1.96: scale=0.5102041: };
      noise {name="": type=NONE: mean=0: var=0.1: par=1: };
@@ -4901,7 +4835,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=SigmoidUnitSpec: spec=.projects[0].networks[0].specs[3]$71$: };
+     unit_spec {type=SigmoidUnitSpec: spec=.projects[0].networks[0].specs[3]$65$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -4929,12 +4863,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=$53$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$72$: };
+       from=.projects[0].networks[0].layers[0]$66$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$67$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$70$: };
+       con_spec {type=CsConSpec: spec=$64$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -4945,12 +4879,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=$55$;
-       spec {type=FullPrjnSpec: spec=$72$: };
+       from=.projects[0].networks[0].layers[2]$68$;
+       spec {type=FullPrjnSpec: spec=$67$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$70$: };
+       con_spec {type=CsConSpec: spec=$64$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -4975,7 +4909,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=SigmoidUnitSpec: spec=$71$: };
+     unit_spec {type=SigmoidUnitSpec: spec=$65$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -5003,12 +4937,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=$54$;
-       spec {type=FullPrjnSpec: spec=$72$: };
+       from=.projects[0].networks[0].layers[1]$69$;
+       spec {type=FullPrjnSpec: spec=$67$: };
        con_type=CsCon;
        recvcons_type=CsRecvCons;
        sendcons_type=CsSendCons;
-       con_spec {type=CsConSpec: spec=$70$: };
+       con_spec {type=CsConSpec: spec=$64$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -5033,7 +4967,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=SigmoidUnitSpec: spec=$71$: };
+     unit_spec {type=SigmoidUnitSpec: spec=$65$: };
      ext_flag=TARG;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {

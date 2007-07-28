@@ -60,8 +60,9 @@ Program .projects[0].programs.gp[0][2] {
 };
 Program .projects[0].programs.gp[0][2] {
  name="LeabraEpochGpData";
+ tags="Leabra, Std";
  desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
- flags=;
+ flags=SHOW_STEP;
  objs {
   name=;
   el_typ=taOBase;
@@ -102,7 +103,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[0] {
    name="group_order";
    var_type=T_HardEnum;
-   int_val=0;
+   int_val=1;
    hard_enum_type=NetGroupedDataLoop::Order;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
@@ -122,7 +123,7 @@ Program .projects[0].programs.gp[0][2] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc=;
   };
   ProgVar @[3] {

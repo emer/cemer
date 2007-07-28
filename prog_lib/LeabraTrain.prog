@@ -29,7 +29,7 @@ Program .projects[0].programs.gp[0][1] {
     ProgVar @[6] { };
   };
 
-  ProgEl_List @.init_code = [5] {
+  ProgEl_List @.init_code = [6] {
     AssignExpr @[0] { };
     MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
@@ -52,6 +52,7 @@ Program .projects[0].programs.gp[0][1] {
 	PrintExpr @[1] { };
       };
     };
+    AssignExpr @[5] { };
   };
 
   ProgEl_List @.prog_code = [7] {
@@ -377,6 +378,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
+  AssignExpr @[5] {
+   desc="grab the official network epoch counter: will be initialized if needed by now";
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].vars[1]$9$;
+   expr {
+    expr="network.epoch";
+    flags=;
+    var_expr="$#0#$.epoch";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
  };
  prog_code {
   name=;
@@ -491,7 +506,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   AssignExpr @[4] {
    desc="grab the official network epoch counter: will be initialized if needed by now";
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[1]$9$;
+   result_var=$9$;
    expr {
     expr="network.epoch";
     flags=;

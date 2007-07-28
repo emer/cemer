@@ -2,7 +2,7 @@
 SoProject .projects[0] { 
   Wizard_Group @.wizards = [1] {
     SoWizard @[0] { 
-      taBase_List @.layer_cfg = [3] {
+      LayerWizElList @.layer_cfg = [3] {
 	LayerWizEl @[0] { };
 	LayerWizEl @[1] { };
 	LayerWizEl @[2] { };
@@ -487,12 +487,6 @@ SoProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  T3DataView_List @.children = [3] {
-		    LayerView @[0] { };
-		    LayerView @[1] { };
-		    PrjnView @[2] { };
-		  };
-
 		  ScaleRange_List @.scale_ranges = [3] {
 		    ScaleRange @[0] { };
 		    ScaleRange @[1] { };
@@ -513,7 +507,7 @@ SoProject .projects[0] {
 
   Network_Group @.networks = [1] {
     SoNetwork @[0] { 
-      BaseSpec_Group @.specs = [4] {
+      BaseSpec_Group @.specs = [5] {
 	SomLayerSpec @[0] { 
 	  NeighborEl_List @.neighborhood = [81] {
 	    NeighborEl @[0] { };
@@ -602,6 +596,7 @@ SoProject .projects[0] {
 	FullPrjnSpec @[1] { };
 	SoftClConSpec @[2] { };
 	SomUnitSpec @[3] { };
+	HebbConSpec @[4] { };
       };
 
       Layer_Group @.layers = [2] {
@@ -1117,7 +1112,6 @@ SoProject .projects[0] {
 	flags=;
 	target=.projects[0].programs.gp[0][1]$5$;
 	targ_ld_init="*SoTrain*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1523,7 +1517,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=.projects[0].programs.gp[0][2]$13$;
 	targ_ld_init="*SoEpoch*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1688,7 +1681,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=14;
+      int_val=22;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -1807,7 +1800,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	target=$0$;
 	targ_ld_init="*SoTrial*";
-	call_init=0;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -1886,7 +1878,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$21$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$22$;
       order=PERMUTED;
-      item_idx_list{ 7;33;14;18;44;46;25;20;21;22;31;2;45;4;37;35;1;43;17;39;13;19;47;24;29;36;38;16;11;10;12;5;3;34;40;6;8;26;32;42;23;0;41;27;28;15;48;30;9;49;      };
+      item_idx_list{ 33;24;14;2;12;16;26;49;40;37;13;19;0;28;32;30;46;7;45;34;42;27;31;38;18;48;4;23;29;22;47;1;36;15;6;35;3;8;11;39;5;9;17;43;10;20;25;44;21;41;      };
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -1942,7 +1934,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       target=.projects[0].programs.gp[0][6]$23$;
       targ_ld_init="*SoEpochMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2067,7 +2058,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       target=.projects[0].programs.gp[0][4]$25$;
       targ_ld_init="*ApplyInputs*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2135,7 +2125,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       target=.projects[0].programs.gp[0][5]$26$;
       targ_ld_init="*SoTrialMonitor*";
-      call_init=0;
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -2170,7 +2159,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="ApplyInputs";
     tags=;
     desc="apply the current input data to the network as external input and target values";
-    flags=NO_USER_RUN;
+    flags=;
     objs {
      name=;
      el_typ=LayerWriter;
@@ -2191,7 +2180,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	use_layer_type=1;
 	ext_flags=EXT;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ 	};
        };
        LayerWriterEl @[1] {
 	chan_name="Name";
@@ -2201,7 +2189,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	use_layer_type=1;
 	ext_flags=;
 	noise {name="": type=NONE: mean=0: var=0.5: par=1: };
-	value_names{ 	};
        };
       };
      };
@@ -3588,30 +3575,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 NetView @[0] {
 	  m_data=$1$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
-	  children {
-	   name=;
-	   el_typ=T3DataView;
-	   el_def=0;
-	   LayerView @[0] {
-	    m_data=.projects[0].networks[0].layers[0]$45$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.4: y=0.25: z=-0.4: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   LayerView @[1] {
-	    m_data=.projects[0].networks[0].layers[1]$46$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0.75: z=0: }: };
-	    disp_mode=DISP_UNITS;
-	   };
-	   PrjnView @[2] {
-	    m_data=.projects[0].networks[0].layers[1].projections[0]$47$;
-FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0.45: y=0.255: z=-0.35: }: };
-	    children {
-	     name=;
-	     el_typ=T3DataView;
-	     el_def=0;
-	    };
-	   };
-	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  lay_disp_modes{ Input=0;Map=0;	  };
 	  scale {
@@ -3621,7 +3584,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$48$;
+	   spec=.colorspecs[0]$45$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -3648,7 +3611,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  display=1;
-	  ordered_uvg_list{ 1;	  };
+	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=10: y=10: z=2: };
@@ -3696,7 +3659,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
   };
  };
- use_sim_log=0;
+ use_change_log=0;
+ last_change_desc=;
  networks {
   name=;
   el_typ=SoNetwork;
@@ -4089,6 +4053,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      bias_spec {type=SoftClConSpec: spec=NULL: };
      sse_tol=0;
     };
+    HebbConSpec @[4] {
+     name=;
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=HebbConSpec;
+      el_def=0;
+     };
+     rnd {name="": type=UNIFORM: mean=0.5: var=0.5: par=1: };
+     wt_limits {type=MIN_MAX: min=-1: max=1: sym=0: };
+     lrate=0.1;
+     avg_act_source=LAYER_AVG_ACT;
+    };
    };
    layers {
     name=;
@@ -4126,7 +4104,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=SomUnitSpec: spec=.projects[0].networks[0].specs[3]$49$: };
+     unit_spec {type=SomUnitSpec: spec=.projects[0].networks[0].specs[3]$46$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -4136,9 +4114,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     spec {type=SomLayerSpec: spec=.projects[0].networks[0].specs[0]$50$: };
-     avg_act=0.07563242;
-     sum_act=0.1512648;
+     spec {type=SomLayerSpec: spec=.projects[0].networks[0].specs[0]$47$: };
+     avg_act=0.05880168;
+     sum_act=0.1176034;
     };
     SoLayer @[1] {
      name="Map";
@@ -4157,12 +4135,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=$45$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[1]$51$: };
+       from=.projects[0].networks[0].layers[0]$48$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[1]$49$: };
        con_type=SoCon;
        recvcons_type=SoRecvCons;
        sendcons_type=SoSendCons;
-       con_spec {type=SoftClConSpec: spec=.projects[0].networks[0].specs[2]$52$: };
+       con_spec {type=SoftClConSpec: spec=.projects[0].networks[0].specs[2]$50$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -4186,7 +4164,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=SomUnitSpec: spec=$49$: };
+     unit_spec {type=SomUnitSpec: spec=$46$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -4196,7 +4174,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     spec {type=SomLayerSpec: spec=$50$: };
+     spec {type=SomLayerSpec: spec=$47$: };
      avg_act=0;
      sum_act=0;
     };
@@ -4224,8 +4202,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=6376: sys=2360: tot=2191380707: }: end={usr=3218: sys=738: tot=2191370784: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=7116: sys=2794: tot=2191382049: }: end={usr=7116: sys=2794: tot=2191382049: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=36636: sys=3737: tot=2596422352: }: end={usr=3218: sys=738: tot=2191370784: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=37883: sys=3834: tot=2596423699: }: end={usr=37883: sys=3834: tot=2596423699: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };

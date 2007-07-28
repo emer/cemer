@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-Program .projects[0].programs[1] { 
+Program .projects[0].programs[0] { 
   ProgObjList @.objs = [1] {
     RndSeed_List @[0] { 
       taList @.seeds = [25] {
@@ -32,9 +32,10 @@ Program .projects[0].programs[1] {
     };
   };
 
-  ProgVar_List @.args = [2] {
+  ProgVar_List @.args = [3] {
     ProgVar @[0] { };
     ProgVar @[1] { };
+    ProgVar @[2] { };
   };
 
   ProgVar_List @.vars = [6] {
@@ -46,20 +47,26 @@ Program .projects[0].programs[1] {
     ProgVar @[5] { };
   };
 
-  ProgEl_List @.init_code = [5] {
-    MethodCall @[0] { 
+  ProgEl_List @.init_code = [6] {
+    AssignExpr @[0] { };
+    MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    AssignExpr @[1] { };
-    NetCounterInit @[2] { };
+    AssignExpr @[2] { };
     MethodCall @[3] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    MethodCall @[4] { };
+    IfGuiPrompt @[4] { 
+      ProgEl_List @.yes_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
+    AssignExpr @[5] { };
   };
 
   ProgEl_List @.prog_code = [8] {
@@ -69,14 +76,19 @@ Program .projects[0].programs[1] {
 	ProgArg @[0] { };
       };
     };
-    NetCounterInit @[2] { };
-    UserScript @[3] { };
-    MethodCall @[4] { 
+    MemberAssign @[2] { };
+    MethodCall @[3] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    MethodCall @[5] { };
+    IfElse @[4] { 
+      ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
+    AssignExpr @[5] { };
     WhileLoop @[6] { 
       ProgEl_List @.loop_code = [3] {
 	ProgramCall @[0] { 
@@ -92,12 +104,11 @@ Program .projects[0].programs[1] {
     MethodCall @[7] { };
   };
 };
-Program .projects[0].programs[1] {
+Program .projects[0].programs[0] {
  name="LeabraTrainBatchSeedList";
- desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task
-has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless
-of what happens in the training of each network, or where it is run (e.g., on different processors)";
- flags=;
+ tags="Leabra, RndSeedList";
+ desc="A complete training run of a Leabra network: iterating over epochs until the network has learned the task has a list of random seeds that are tied to the network batch counter, providing consistent runs regardless of what happens in the training of each network, or where it is run (e.g., on different processors)";
+ flags=SHOW_STEP;
  objs {
   name=;
   el_typ=RndSeed;
@@ -236,6 +247,11 @@ of what happens in the training of each network, or where it is run (e.g., on di
    };
   };
  };
+ types {
+  name=;
+  el_typ=DynEnumType;
+  el_def=0;
+ };
  args {
   name=;
   el_typ=ProgVar;
@@ -258,6 +274,14 @@ of what happens in the training of each network, or where it is run (e.g., on di
    flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
+  ProgVar @[2] {
+   name="no_prompts";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
+  };
  };
  vars {
   name=;
@@ -272,18 +296,18 @@ of what happens in the training of each network, or where it is run (e.g., on di
    desc=;
   };
   ProgVar @[1] {
+   name="epoch";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[2] {
    name="train_mode";
    var_type=T_HardEnum;
    int_val=1;
    hard_enum_type=Network::TrainMode;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc=;
-  };
-  ProgVar @[2] {
-   name="epoch";
-   var_type=T_Int;
-   int_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc=;
@@ -300,7 +324,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    name="rnd_seeds";
    var_type=T_Object;
    object_type=RndSeed_List;
-   object_val=.projects[0].programs[1].objs[0]$2$;
+   object_val=.projects[0].programs[0].objs[0]$2$;
    objs_ptr=1;
    flags=NULL_CHECK;
    desc=;
@@ -329,20 +353,36 @@ of what happens in the training of each network, or where it is run (e.g., on di
   name=;
   el_typ=MethodCall;
   el_def=0;
-  MethodCall @[0] {
+  AssignExpr @[0] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs[0].args[2]$4$;
+   expr {
+    expr="false";
+    flags=;
+    var_expr="false";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[1] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs[1].args[0]$4$;
+   obj=.projects[0].programs[0].args[0]$5$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=NULL;
+     arg_type=bool;
      type="bool";
      name="quiet";
+     required=0;
+     def_val="false";
      expr {
       expr="false";
       flags=;
@@ -355,10 +395,10 @@ of what happens in the training of each network, or where it is run (e.g., on di
     };
    };
   };
-  AssignExpr @[1] {
+  AssignExpr @[2] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[1].vars[5]$5$;
+   result_var=.projects[0].programs[0].vars[5]$6$;
    expr {
     expr="network.train_time";
     flags=;
@@ -369,18 +409,11 @@ of what happens in the training of each network, or where it is run (e.g., on di
     bad_vars{     };
    };
   };
-  NetCounterInit @[2] {
-   desc="initialize epoch counter ";
-   flags=;
-   network_var=$4$;
-   local_ctr_var=.projects[0].programs[1].vars[2]$6$;
-   counter=Network::epoch;
-  };
   MethodCall @[3] {
    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs[1].vars[4]$7$;
+   obj=.projects[0].programs[0].vars[4]$7$;
    method=RndSeed_List::UseSeed;
    meth_args {
     name=;
@@ -390,6 +423,8 @@ of what happens in the training of each network, or where it is run (e.g., on di
      arg_type=int;
      type="int";
      name="idx";
+     required=0;
+     def_val=;
      expr {
       expr="network.batch";
       flags=;
@@ -402,16 +437,55 @@ of what happens in the training of each network, or where it is run (e.g., on di
     };
    };
   };
-  MethodCall @[4] {
-   desc=;
+  IfGuiPrompt @[4] {
+   desc="don't initialize weights without checking";
    flags=;
-   result_var=NULL;
-   obj=$4$;
-   method=Network::Init_Weights;
-   meth_args {
+   prompt="Do you want to Initialize Network Weights";
+   yes_label="Yes";
+   no_label="No";
+   yes_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$5$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  AssignExpr @[5] {
+   desc="grab the official network epoch counter: will be initialized if needed by now";
+   flags=;
+   result_var=.projects[0].programs[0].vars[1]$8$;
+   expr {
+    expr="network.epoch";
+    flags=;
+    var_expr="$#0#$.epoch";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
    };
   };
  };
@@ -422,7 +496,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
   AssignExpr @[0] {
    desc=;
    flags=;
-   result_var=$5$;
+   result_var=$6$;
    expr {
     expr="network.train_time";
     flags=;
@@ -437,7 +511,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    desc=;
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$6$;
    method=TimeUsed::StartTimer;
    meth_args {
     name=;
@@ -447,6 +521,8 @@ of what happens in the training of each network, or where it is run (e.g., on di
      arg_type=bool;
      type="bool";
      name="reset_used";
+     required=0;
+     def_val="true";
      expr {
       expr="true";
       flags=;
@@ -459,27 +535,23 @@ of what happens in the training of each network, or where it is run (e.g., on di
     };
    };
   };
-  NetCounterInit @[2] {
-   desc="initialize epoch counter ";
+  MemberAssign @[2] {
+   desc="set network's training mode to our local value";
    flags=;
-   network_var=$4$;
-   local_ctr_var=$6$;
-   counter=Network::epoch;
-  };
-  UserScript @[3] {
-   desc="update network's train mode to be same as ours";
-   flags=;
-   script {
-    expr="network.train_mode = train_mode;";
-    flags=NO_VAR_ERRS;
-    var_expr="$#0#$.train_mode = $#1#$;";
+   obj=$5$;
+   path="train_mode";
+   expr {
+    expr="train_mode";
+    flags=;
+    var_expr="$#0#$";
     vars {
     };
-    var_names{ network;train_mode;    };
+    var_names{ train_mode;    };
     bad_vars{     };
    };
+   update_after=0;
   };
-  MethodCall @[4] {
+  MethodCall @[3] {
    desc="restore previous random seed (all runs produce same results); change to NewSeed to have new random numbers each time";
    flags=;
    result_var=NULL;
@@ -493,6 +565,8 @@ of what happens in the training of each network, or where it is run (e.g., on di
      arg_type=int;
      type="int";
      name="idx";
+     required=0;
+     def_val=;
      expr {
       expr="network.batch";
       flags=;
@@ -505,16 +579,66 @@ of what happens in the training of each network, or where it is run (e.g., on di
     };
    };
   };
-  MethodCall @[5] {
+  IfElse @[4] {
    desc=;
    flags=;
-   result_var=NULL;
-   obj=$4$;
-   method=Network::Init_Weights;
-   meth_args {
+   cond {
+    expr="no_prompts";
+    flags=;
+    var_expr="$#0#$";
+    vars {
+    };
+    var_names{ no_prompts;    };
+    bad_vars{     };
+   };
+   true_code {
     name=;
-    el_typ=ProgArg;
+    el_typ=ProgEl;
     el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$5$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  AssignExpr @[5] {
+   desc="grab the official network epoch counter: will be initialized if needed by now";
+   flags=;
+   result_var=$8$;
+   expr {
+    expr="network.epoch";
+    flags=;
+    var_expr="$#0#$.epoch";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
    };
   };
   WhileLoop @[6] {
@@ -527,7 +651,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
     ProgramCall @[0] {
      desc=;
      flags=;
-     target=.projects[0].programs.gp[0][2]$8$;
+     target=.projects[0].programs.gp[0][2]$9$;
      targ_ld_init="*LeabraEpoch*";
      prog_args {
       name=;
@@ -537,6 +661,8 @@ of what happens in the training of each network, or where it is run (e.g., on di
        arg_type=LeabraNetwork;
        type="LeabraNetwork*";
        name="network";
+       required=1;
+       def_val=;
        expr {
 	expr="network";
 	flags=;
@@ -551,6 +677,8 @@ of what happens in the training of each network, or where it is run (e.g., on di
        arg_type=DataTable;
        type="DataTable*";
        name="input_data";
+       required=1;
+       def_val=;
        expr {
 	expr="input_data";
 	flags=;
@@ -566,8 +694,8 @@ of what happens in the training of each network, or where it is run (e.g., on di
     NetCounterIncr @[1] {
      desc="increment the epoch counter";
      flags=;
-     network_var=$4$;
-     local_ctr_var=$6$;
+     network_var=$5$;
+     local_ctr_var=$8$;
      counter=Network::epoch;
     };
     IfBreak @[2] {
@@ -598,7 +726,7 @@ of what happens in the training of each network, or where it is run (e.g., on di
    desc=;
    flags=;
    result_var=NULL;
-   obj=$5$;
+   obj=$6$;
    method=TimeUsed::EndTimer;
    meth_args {
     name=;
