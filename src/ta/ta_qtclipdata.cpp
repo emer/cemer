@@ -1024,8 +1024,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
 
     // special new delayed code to expand and select the new guy!
     if(!list->HasOption("NO_EXPAND_ALL") && !new_obj->HasOption("NO_EXPAND_ALL")) {
-      tabMisc::DelayedFunCall(new_obj, "BrowserExpandAll");
-      tabMisc::DelayedFunCall(new_obj, "BrowserSelectMe");
+      tabMisc::DelayedFunCall_gui(new_obj, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
     }
 
     return taiClipData::ER_OK;

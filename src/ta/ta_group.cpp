@@ -602,8 +602,8 @@ TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ) {
   TAGPtr rval = NewGp_(no, typ);
   if(rval && taMisc::gui_active) {
     if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-      tabMisc::DelayedFunCall(rval, "BrowserExpandAll");
-      tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+      tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
   }
   return rval;

@@ -5811,7 +5811,7 @@ void iListDataPanel::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/)
   if (!item) return;
   taBase* ta = item->taData(); // null if n/a
   if (ta) {
-//     tabMisc::DelayedFunCall(ta, "BrowserSelectMe");
+//     tabMisc::DelayedFunCall_gui(ta, "BrowserSelectMe");
 //    ta->BrowserSelectMe();
     // neither of the above actually update the panel view to new item -- presumably because
     // it is still in use or something..

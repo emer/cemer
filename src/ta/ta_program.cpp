@@ -967,7 +967,7 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   it->SetName(src->GetName());
   it->UpdateAfterEdit();
   if(taMisc::gui_active)
-    tabMisc::DelayedFunCall(it, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(it, "BrowserSelectMe");
 }
 
 const String ProgVar_List::GenCss(int indent_level) const {
@@ -1971,7 +1971,7 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
   }
@@ -2165,7 +2165,7 @@ void ProgramCall::UpdateArgs() {
     pa->DataChanged(DCR_ITEM_UPDATED);
   }
   if(any_changes && taMisc::gui_active) {
-    tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
 }
 
@@ -3583,14 +3583,14 @@ taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
     pg->Load(path);
     Program* first_guy = pg->Leaf(0);
     if(taMisc::gui_active && first_guy)
-      tabMisc::DelayedFunCall(first_guy, "BrowserSelectMe");
+      tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
     return pg;
   }
 
   Program* pg = new_owner->NewEl(1, &TA_Program);
   pg->Load(path);
   if(taMisc::gui_active)
-    tabMisc::DelayedFunCall(pg, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(pg, "BrowserSelectMe");
   return pg;
 }
 

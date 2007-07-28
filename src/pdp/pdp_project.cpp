@@ -133,7 +133,7 @@ void Wizard::ThreeLayerNet() {
   layer_cfg[2]->io_type = LayerWizEl::OUTPUT;
   layer_cfg[2]->DataChanged(DCR_ITEM_UPDATED);
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(&layer_cfg, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(&layer_cfg, "BrowserExpandAll");
   }
 }
 
@@ -163,7 +163,7 @@ void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
     lel->DataChanged(DCR_ITEM_UPDATED);
   }
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(&layer_cfg, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(&layer_cfg, "BrowserExpandAll");
   }
 }
 
@@ -264,8 +264,8 @@ void Wizard::StdNetwork(Network* net) {
   net->StructUpdate(false);
   net->NewView();
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(net, "BrowserExpandAll");
-    tabMisc::DelayedFunCall(net, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
 }
 
@@ -290,8 +290,8 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
   }
   net->StructUpdate(false);
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(net, "BrowserExpandAll");
-    tabMisc::DelayedFunCall(net, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
 }
 
@@ -327,7 +327,7 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
     data_table->AddRows(n_patterns);
   data_table->StructUpdate(false);
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(data_table, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
   }
 }
 
@@ -354,7 +354,7 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   }
   data_table->StructUpdate(false);
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(data_table, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
   }
 }
 
@@ -365,7 +365,7 @@ void Wizard::StdOutputData() {
   DataTable* epc_data =
     proj->GetNewOutputDataTable("EpochOutputData");
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(epc_data, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(epc_data, "BrowserSelectMe");
   }
 }
 
@@ -398,7 +398,7 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
   }
   Program* first_guy = pg->Leaf(0);
   if(first_guy)
-    tabMisc::DelayedFunCall(first_guy, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
   return (Program_Group*)pg;
 }
 

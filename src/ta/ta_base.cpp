@@ -138,7 +138,13 @@ void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
   delayed_updateafteredit.Link(obj);
 }
 
-void tabMisc::DelayedFunCall(taBase* obj, const String& fun_name) {
+void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
+  if(!taMisc::gui_active) return;
+  NameVar nv(fun_name, Variant(obj));
+  delayed_funcalls.Add(nv);
+}
+
+void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
   NameVar nv(fun_name, Variant(obj));
   delayed_funcalls.Add(nv);
 }
@@ -1043,7 +1049,7 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
       if(rval && lobj) {
 	lobj->SetFileName(flr->fileName());
 	if(taMisc::gui_active && lobj != this) { // loaded a new guy
-	  tabMisc::DelayedFunCall(lobj, "BrowserSelectMe");
+	  tabMisc::DelayedFunCall_gui(lobj, "BrowserSelectMe");
 	}
       }
     }
@@ -1430,8 +1436,8 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
     taBase* rval = lst->DuplicateEl(chld);
     if(rval && taMisc::gui_active) {
       if(!lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-	tabMisc::DelayedFunCall(rval, "BrowserExpandAll");
-	tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+	tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }
     }
     return rval;
@@ -3059,8 +3065,8 @@ taBase* taList_impl::New_gui(int no, TypeDef* typ) {
   taBase* rval = New(no, typ);
   if(rval && taMisc::gui_active) {
     if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-      tabMisc::DelayedFunCall(rval, "BrowserExpandAll");
-      tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+      tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
   }
   return rval;

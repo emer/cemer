@@ -107,7 +107,7 @@ DataOpEl* DataOpList::AddColumn(const String& col_name, DataTable* dt) {
   dop->SetDataTable(dt);
   dop->UpdateAfterEdit();
   if(taMisc::gui_active)
-    tabMisc::DelayedFunCall(dop, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(dop, "BrowserSelectMe");
   return dop;
 }
 
@@ -120,10 +120,15 @@ void DataOpList::AddAllColumns(DataTable* dt) {
     dop = (DataOpEl*)New(1);
     dop->col_name = da->name;
   }
-  if(size > 0 && taMisc::gui_active) {
-    tabMisc::DelayedFunCall(FastEl(size-1), "BrowserSelectMe");
-  }
   SetDataTable(dt);
+}
+
+void DataOpList::AddAllColumns_gui(DataTable* dt) {
+  if(!dt) return;
+  AddAllColumns(dt);
+  if(size > 0 && taMisc::gui_active) {
+    tabMisc::DelayedFunCall_gui(FastEl(size-1), "BrowserSelectMe");
+  }
 }
 
 
@@ -2085,11 +2090,11 @@ const String DataCalcLoop::GenCssPost_impl(int indent_level) {
 }
 
 void DataCalcLoop::AddAllSrcColumns() {
-  src_cols.AddAllColumns(GetSrcData());
+  src_cols.AddAllColumns_gui(GetSrcData());
   UpdateColVars();
 }
 void DataCalcLoop::AddAllDestColumns() {
-  dest_cols.AddAllColumns(GetDestData());
+  dest_cols.AddAllColumns_gui(GetDestData());
   UpdateColVars();
 }
 

@@ -545,7 +545,7 @@ bool InitNamedUnits::GetUnitNamesVar() {
       taMisc::Info("Note: created new data table named:", rval->name, "in .data.InputData");
       rval->DataChanged(DCR_ITEM_UPDATED);
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall(rval, "BrowserSelectMe"); // todo: might be too radical.
+	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe"); // todo: might be too radical.
       }
     }
     unit_names_var->object_val = rval;
@@ -634,7 +634,7 @@ bool InitNamedUnits::InitDynEnums() {
     InitDynEnumFmUnitNames(det, ndc, prefix);
   }
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(&(my_prog->types), "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(&(my_prog->types), "BrowserExpandAll");
   }
   return true;
 }

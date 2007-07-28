@@ -1461,7 +1461,7 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
 DataCol* DataTable::NewCol_gui(DataCol::ValType val_type, const String& col_nm) {
   DataCol* rval = NewCol(val_type, col_nm);
   if(rval && taMisc::gui_active) {
-    tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
   }
   return rval;
 }
@@ -1568,7 +1568,7 @@ DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& c
 				      const MatrixGeom& cell_geom) {
   DataCol* rval = NewColMatrixN(val_type, col_nm, cell_geom);
   if(rval && taMisc::gui_active) {
-    tabMisc::DelayedFunCall(rval, "BrowserSelectMe");
+    tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
   }
   return rval;
 }

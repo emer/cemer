@@ -96,8 +96,10 @@ public:
   // close this object during the wait process (after other events have been processed and we are outside of any functions within the to-be-closed object)
   static void		DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
-  static void		DelayedFunCall(taBase* obj, const String& fun_name);
-  // perform a delayed function call on this object of given function name (using CallFun) -- if args required they will be prompted for, but that is probably not a great idea from the user's perspective.. best for void functions
+  static void		DelayedFunCall_gui(taBase* obj, const String& fun_name);
+  // perform a delayed function call on this object of given function name (using CallFun) -- if args required they will be prompted for, but that is probably not a great idea from the user's perspective.. best for void functions -- gui version for gui feedback events -- checks for gui_active
+  static void		DelayedFunCall_nogui(taBase* obj, const String& fun_name);
+  // perform a delayed function call on this object of given function name (using CallFun) -- if args required they will be prompted for, but that is probably not a great idea from the user's perspective.. best for void functions -- nogui version -- doesn't check for gui
 
   static void		DeleteRoot(); // get rid of root, if not nuked already
 

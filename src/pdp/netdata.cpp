@@ -311,7 +311,7 @@ void LayerWriter::AutoConfig(bool reset_existing) {
     lrw->DataChanged(DCR_ITEM_UPDATED);
   }
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
 }
 

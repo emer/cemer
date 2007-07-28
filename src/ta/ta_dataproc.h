@@ -71,7 +71,9 @@ public:
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt);
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
   virtual void	AddAllColumns(DataTable* dt);
-  // #CAT_DataOp #BUTTON add all columns from given data table
+  // #CAT_DataOp add all columns from given data table
+  virtual void	AddAllColumns_gui(DataTable* dt);
+  // #CAT_DataOp #BUTTON #LABEL_AddAllColumns add all columns from given data table
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
@@ -100,7 +102,7 @@ public:
   virtual DataOpEl* AddColumn(const String& col_name, DataTable* dt)
   { return ops.AddColumn(col_name, dt); }
   // #CAT_DataOp #BUTTON add a new column to operate on from given data table
-  virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns(dt); }
+  virtual void	AddAllColumns(DataTable* dt) { ops.AddAllColumns_gui(dt); }
   // #CAT_DataOp #BUTTON add all columns from given data table
 
   override taList_impl*	children_() {return &ops;}	

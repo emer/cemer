@@ -579,7 +579,7 @@ void Switch::CasesFmEnum() {
     CasesFmEnum_dyn();
 
   if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
 }
 
@@ -757,7 +757,7 @@ void MethodCall::UpdateAfterEdit_impl() {
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall(this, "BrowserExpandAll");
+	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
   }
