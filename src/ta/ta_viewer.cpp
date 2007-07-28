@@ -28,11 +28,12 @@
 #   include "css_qtconsole.h"
 # endif
 # include <QApplication>
+# include <QPrintDialog>
+# include <QPrinter>
+# include <QPixmap>
+# include <QPainter>
 # include <QScrollArea>
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QPixmap>
-#include <QPainter>
+# include <QSplitter>
 #endif
 
 //TODO: this file will need to have many routines modalized for TA_GUI
@@ -779,6 +780,7 @@ void ToolBar::GetWinState_impl() {
   // convert from screen coords to relative (note, allowed to be >1.0)
   lft = (float)r.left() / (float)(taiM->scrn_s.w); // all of these convert from screen coords
   top = (float)r.top() / (float)(taiM->scrn_s.h);
+  SetUserData("view_win_visible", widget()->isVisible());
   DataChanged(DCR_ITEM_UPDATED);
 }
 
@@ -786,6 +788,8 @@ void ToolBar::SetWinState_impl() {
   inherited::SetWinState_impl();
   //TODO: docked, etc.
   iToolBar* itb = widget(); //cache
+  bool vis = GetUserDataDef("view_win_visible", true).toBool();
+  itb->setVisible(vis);
   itb->setOrientation((Qt::Orientation)o);
   iRect r = itb->frameGeometry();
   r.x = (int)(lft * taiM->scrn_s.w);
@@ -938,6 +942,10 @@ bool MainWindowViewer::GetWinState() {
   toolbars.GetWinState();
   frames.GetWinState();
   docks.GetWinState();
+  // relative sizes of panels 
+  QSplitter* spl = widget()->body;
+  SetUserData("view_splitter_state",
+    String(spl->saveState().toBase64().constData()));
   return true;
 }
 
@@ -946,6 +954,12 @@ bool MainWindowViewer::SetWinState() {
   toolbars.SetWinState();
   frames.SetWinState();
   docks.SetWinState();
+  String str = GetUserDataAsString("view_splitter_state");
+  if (str.nonempty()) {
+    QByteArray ba = QByteArray::fromBase64(QByteArray(str.chars()));
+    QSplitter* spl = widget()->body;
+    spl->restoreState(ba);
+  }
   return true;
 }
 
