@@ -71,10 +71,12 @@ class taNBase;
 class taList_impl;
 class taBase_List;
 class taBase_PtrList;
+class taBase_RefList;
 class String_Array;
 class UserDataItem;
 class UserDataItem_List;
 class NameVar_Array;
+class taBase_FunCallList; //
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
@@ -84,9 +86,9 @@ public:
 
   static taBase_PtrList	delayed_close;
   // list of objs to be removed in the wait process (e.g. when objs delete themselves)
-  static taBase_PtrList	delayed_updateafteredit;
+  static taBase_RefList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
-  static NameVar_Array  delayed_funcalls;
+  static taBase_FunCallList  delayed_funcalls;
   // functions to call during the waiting process -- variant value is the object, and name is the function
 
   static void		WaitProc();
@@ -2434,6 +2436,32 @@ private:
   void Destroy()	{ };
 };
 TA_ARRAY_OPS(NameVar_Array)
+
+
+class taBase_FunCallList: public taOBase, public IRefListClient {
+  // function call list manager
+INHERITED(taOBase)
+public:
+  NameVar_Array		base_funs;	// variant val is base*, name is function name -- this is the primary list to use for calling funs, etc
+  taBase_RefList 	base_refs;	// references to base objects -- used ONLY for notify if they destroy -- this is a Unique list and is not in any matching order with base_funs
+
+  bool	AddBaseFun(taBase* obj, const String& fun_name); // add base + function -- no check for unique on base_funs
+  void	Reset();		// reset both lists
+  bool	DeleteBase_Funs(taBase* obj); // delete base from wherever it might appear in base_funs list
+  
+  TA_BASEFUNS_NOCOPY(taBase_FunCallList);
+
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;}
+
+public: // IRefListClient interface
+  override void	DataDestroying_Ref(taBase_RefList* src, taBase* ta);
+  override void	DataChanged_Ref(taBase_RefList* src, taBase* ta,
+				int dcr, void* op1, void* op2) { };
+private:
+  void Initialize();
+  void Destroy();
+};
 
 class TA_API UserDataItemBase: public taNBase {
   // ##INLINE ##NO_TOKENS base class for all simple user data -- name is key

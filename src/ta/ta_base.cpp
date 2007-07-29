@@ -127,26 +127,24 @@ const QPixmap* folder_open_pixmap() {
 taRootBase* tabMisc::root = NULL;
 
 taBase_PtrList 	tabMisc::delayed_close;
-taBase_PtrList 	tabMisc::delayed_updateafteredit;
-NameVar_Array   tabMisc::delayed_funcalls;
+taBase_RefList 	tabMisc::delayed_updateafteredit;
+taBase_FunCallList  tabMisc::delayed_funcalls;
 
 void tabMisc::DelayedClose(taBase* obj) {
   delayed_close.Link(obj);
 }
 
 void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
-  delayed_updateafteredit.Link(obj);
+  delayed_updateafteredit.Add(obj);
 }
 
 void tabMisc::DelayedFunCall_gui(taBase* obj, const String& fun_name) {
   if(!taMisc::gui_active) return;
-  NameVar nv(fun_name, Variant(obj));
-  delayed_funcalls.Add(nv);
+  delayed_funcalls.AddBaseFun(obj, fun_name);
 }
 
 void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
-  NameVar nv(fun_name, Variant(obj));
-  delayed_funcalls.Add(nv);
+  delayed_funcalls.AddBaseFun(obj, fun_name);
 }
 
 void tabMisc::WaitProc() {
@@ -190,8 +188,7 @@ bool tabMisc::DoDelayedUpdateAfterEdits() {
   bool did_some = false;
   if (delayed_updateafteredit.size > 0) {
     while(delayed_updateafteredit.size > 0) {
-      taBase* it = delayed_updateafteredit.FastEl(0);
-      delayed_updateafteredit.RemoveIdx(0);
+      taBase* it = delayed_updateafteredit.Pop();
       it->UpdateAfterEdit();
     }
     did_some = true;
@@ -201,16 +198,17 @@ bool tabMisc::DoDelayedUpdateAfterEdits() {
 
 bool tabMisc::DoDelayedFunCalls() {
   bool did_some = false;
-  if (delayed_funcalls.size > 0) {
-    while(delayed_funcalls.size > 0) {
-      NameVar& nv = delayed_funcalls.FastEl(0);
+  if (delayed_funcalls.base_funs.size > 0) {
+    while(delayed_funcalls.base_funs.size > 0) { // note this must be fifo!
+      NameVar& nv = delayed_funcalls.base_funs.FastEl(0);
       taBase* it = nv.value.toBase();
       String fun_nm = nv.name;
-      delayed_funcalls.RemoveIdx(0);
       if(it) {
 	it->CallFun(fun_nm);
       }
+      delayed_funcalls.base_funs.RemoveIdx(0); // note: we don't care about keeping lists in sync -- the refs list is only for delete notification
     }
+    delayed_funcalls.Reset();	// clear out both lists
     did_some = true;
   }
   return did_some;
@@ -3872,6 +3870,50 @@ bool NameVar_Array::SetVal(const String& nm, const Variant& vl) {
   }
 }
 
+//////////////////////////
+// taBase_FunCallList	//
+//////////////////////////
+
+void taBase_FunCallList::Initialize() { 
+  base_refs.setOwner(this);
+}
+
+void taBase_FunCallList::Destroy() {
+  base_refs.Reset();
+  base_funs.Reset();
+}
+
+void taBase_FunCallList::Reset() {
+  base_refs.Reset();
+  base_funs.Reset();
+}
+
+bool taBase_FunCallList::DeleteBase_Funs(taBase* obj) {
+  bool got_one = false;
+  for(int i = base_funs.size-1; i>=0; i--) {
+    NameVar& nv = base_funs.FastEl(i);
+    taBase* it = nv.value.toBase();
+    if(it == obj) {
+      base_funs.RemoveIdx(i);
+      got_one = true;
+    }
+  }
+  return got_one;
+}
+
+bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
+  NameVar nv(fun_name, Variant(obj));
+  base_funs.Add(nv);
+  base_refs.AddUnique(obj);
+  return true;
+}
+
+void taBase_FunCallList::DataDestroying_Ref(taBase_RefList* src, taBase* obj) {
+  if(src != &base_refs) return;	// presumably shouldn't happen
+  if(!DeleteBase_Funs(obj)) {
+    taMisc::Error("Internal error -- taBase_FunCallList DataDestroying_Ref didn't find base in base_funs!");
+  }
+}
 
 //////////////////////////
 // UserDataItemBase	//
