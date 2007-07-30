@@ -25,7 +25,7 @@
 
 #include "datagraph.h"
 #include "pdp_def.h"
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 // externals
 class GraphViews;

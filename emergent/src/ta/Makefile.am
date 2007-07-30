@@ -267,25 +267,25 @@ interceptor.moc.cpp:
 
 noinst_LTLIBRARIES =\
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES =\
-	libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-	libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
-libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
+libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
 	ta_TA.cpp \
 	ta_TA_type.h \
 	ta_TA_inst.h
 
-libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS =\
+libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS =\
 	$(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
 
-libtaTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
+libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
 taglobal.h ta_maketa_defs.h qtdefs.h:

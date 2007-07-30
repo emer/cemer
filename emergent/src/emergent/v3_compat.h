@@ -34,7 +34,7 @@
 #include "pdp_project.h"
 #include "netdata.h"
 
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 // forwards this file
 // from process.h

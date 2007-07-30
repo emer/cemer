@@ -22,7 +22,7 @@
 
 #include "pdpdeclare.h"
 #include "ta_qtviewer.h"
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 
 //////////////////////////////////////////////////

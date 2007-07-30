@@ -7,7 +7,7 @@ VPATH = @srcdir@
 
 TAHEADS =\
 	../ta/ta_TA_type.h \
-	../pdp/pdp_TA_type.h \
+	../emergent/emergent_TA_type.h \
 	leabra.h \
 	leabra_extra.h \
 	leabra_td.h \
@@ -37,19 +37,19 @@ include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libleabra_TypeAccess@PDP_SUFFIX@.la \
+	libleabra_EmergentToolkit@PDP_SUFFIX@.la \
 	libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
 libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libleabra_TypeAccess@PDP_SUFFIX@.la
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libleabra_TypeAccess@PDP_SUFFIX@.la
-libleabra_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
+libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libleabra_EmergentToolkit@PDP_SUFFIX@.la
+libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libleabra_EmergentToolkit@PDP_SUFFIX@.la
+libleabra_EmergentToolkit@PDP_SUFFIX@_la_SOURCES =\
 	leabra_TA.cpp \
 	leabra_TA_type.h \
 	leabra_TA_inst.h
-libleabra_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
-libleabra_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0
+libleabra_EmergentToolkit@PDP_SUFFIX@_la_CPPFLAGS = $(libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libleabra_EmergentToolkit@PDP_SUFFIX@_la_CXXFLAGS = -O0
 
 leabra_def.h:

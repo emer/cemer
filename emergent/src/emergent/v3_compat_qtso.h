@@ -28,7 +28,7 @@
 #include "ta_qtdata.h"
 #include "ta_qtdialog.h"
 
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 // forwards this file
 

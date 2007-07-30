@@ -27,7 +27,7 @@
 #include "ta_qtdialog.h"
 #include "ta_qtviewer.h"
 #include "t3viewer.h"
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 
 
