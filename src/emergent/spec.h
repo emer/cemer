@@ -21,7 +21,7 @@
 #define spec_h 1
 
 #include "pdp_base.h"
-#include "pdp_TA_type.h" // for templates
+#include "emergent_TA_type.h" // for templates
 
 // forwards this file
 

@@ -28,7 +28,7 @@
 
 #include "ta_geometry.h"
 #include "pdpdeclare.h"
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 // all of these functions are cached out in pdp_project.cc
 

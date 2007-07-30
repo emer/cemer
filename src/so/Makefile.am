@@ -7,7 +7,7 @@ VPATH = @srcdir@
 
 TAHEADS =\
 	../ta/ta_TA_type.h \
-	../pdp/pdp_TA_type.h \
+	../emergent/emergent_TA_type.h \
 	so.h \
 	som.h \
 	cl.h \
@@ -35,7 +35,7 @@ include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libso_TypeAccess@PDP_SUFFIX@.la \
+	libso_EmergentToolkit@PDP_SUFFIX@.la \
 	libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
 libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
@@ -43,17 +43,17 @@ libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
 libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libso_TypeAccess@PDP_SUFFIX@.la
+libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libso_EmergentToolkit@PDP_SUFFIX@.la
 
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libso_TypeAccess@PDP_SUFFIX@.la
+libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libso_EmergentToolkit@PDP_SUFFIX@.la
 
-libso_TypeAccess@PDP_SUFFIX@_la_SOURCES =\
+libso_EmergentToolkit@PDP_SUFFIX@_la_SOURCES =\
 	so_TA.cpp \
 	so_TA_type.h \
 	so_TA_inst.h
 
-libso_TypeAccess@PDP_SUFFIX@_la_CPPFLAGS = $(libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libso_EmergentToolkit@PDP_SUFFIX@_la_CPPFLAGS = $(libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
 
-libso_TypeAccess@PDP_SUFFIX@_la_CXXFLAGS = -O0
+libso_EmergentToolkit@PDP_SUFFIX@_la_CXXFLAGS = -O0
 
 so_def.h:

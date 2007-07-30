@@ -2,25 +2,25 @@
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
 include $(top_srcdir)/mfstamp.am
-PROJNAME = pdp_bin
+PROJNAME = emergent_bin
 DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-# pdp++
-bin_PROGRAMS = pdp@PDP_SUFFIX@++
-pdp@PDP_SUFFIX@___SOURCES = main.cpp
+# emergent++
+bin_PROGRAMS = emergent@PDP_SUFFIX@
+emergent@PDP_SUFFIX@_SOURCES = main.cpp
 
 # toggle creation of ta library. see configure.ac/acsite.m4
 if LIBTA
-pdp@PDP_SUFFIX@___LDADD =\
-	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
+emergent@PDP_SUFFIX@_LDADD =\
+	@abs_top_builddir@/src/emergent_lib/libemergent@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
 	@abs_top_builddir@/src/ta_lib/libtacss@PDP_SUFFIX@-@PACKAGE_VERSION@.la
 else
-pdp@PDP_SUFFIX@___LDADD =\
-	@abs_top_builddir@/src/pdp_lib/libpdp@PDP_SUFFIX@-@PACKAGE_VERSION@.la
+emergent@PDP_SUFFIX@_LDADD =\
+	@abs_top_builddir@/src/emergent_lib/libemergent@PDP_SUFFIX@-@PACKAGE_VERSION@.la
 endif
 
-pdp@PDP_SUFFIX@___CPPFLAGS = @PDP_INCLUDES@
-pdp@PDP_SUFFIX@___CXXFLAGS = @OPT_LEVEL@
+emergent@PDP_SUFFIX@_CPPFLAGS = @PDP_INCLUDES@
+emergent@PDP_SUFFIX@_CXXFLAGS = @OPT_LEVEL@
 

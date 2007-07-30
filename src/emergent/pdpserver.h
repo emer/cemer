@@ -23,7 +23,7 @@
 #include "ta_base.h"
 
 #include "pdp_base.h"
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 #ifndef __MAKETA__
 # include <QtNetwork/QAbstractSocket> // for state defines

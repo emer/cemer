@@ -26,7 +26,7 @@ dnl
 dnl Subst variables that start with PL_ are used in the plugin configuration
 
 # Set binary version here. The format allows for 99.99.99abc
-AC_INIT([pdp],[4.0.4],[pdp-discuss@psych-srv3.Colorado.EDU],[pdp++]) 
+AC_INIT([Emergent],[4.0.4],[Emergent-discuss@psych-srv3.Colorado.EDU],[Emergent]) 
 # Change both of these
 LIB_VERSION=1:0:0   #Set library version here
 LIB_VERSION_2=1.0.0
@@ -38,8 +38,8 @@ AC_SUBST([PL_LIB_VER],[${PACKAGE_VERSION}])
 AH_TEMPLATE([LIB_VERSION],[Library Version])
 AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
 
-SIM_AC_CONFIGURATION_SETTING([PDP++ binary version],[${PACKAGE_VERSION}])
-SIM_AC_CONFIGURATION_SETTING([TA/CSS library version],[${LIB_VERSION}])
+SIM_AC_CONFIGURATION_SETTING([Emergent binary version],[${PACKAGE_VERSION}])
+SIM_AC_CONFIGURATION_SETTING([The Emergent Toolkit library version],[${LIB_VERSION}])
 
 SIM_AC_UNIVERSAL_BINARIES 
 
@@ -48,14 +48,14 @@ AC_COPYRIGHT([
 Copyright, 1995-2005, Regents of the University of Colorado,
 Carnegie Mellon University, Princeton University.
 
-This file is part of TA/PDP++
+This file is part of Emergent
 
-  TA/PDP++ is free software; you can redistribute it and/or modify
+  Emergent/The Emergent Toolkit is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
 
-  TA/PDP++ is distributed in the hope that it will be useful,
+  Emergent/The Emergent Toolkit is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -96,7 +96,7 @@ esac
 dnl  non-modal, for now
 AC_DEFINE([V3_COMPAT],[],[turn on version 3.x compatability code])
 
-dnl  Check to see if a conflicting version of pdp++ or  is installed
+dnl  Check to see if a conflicting version of Emergent is installed
 if test x"$prefix" = x"NONE"; then
   prefix=/usr/local
 fi
@@ -108,7 +108,7 @@ dnl  A generic set of systemwide includes. Not all sub libraries
 dnl  require all of these includes, but this is less error-prone
 dnl  than manually specifying them for each library
 
-AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../so -I\$(srcdir)/../cs -I\$(srcdir)/../pdp -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
+AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../so -I\$(srcdir)/../cs -I\$(srcdir)/../emergent -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
 AC_CHECK_LIB([ode],[main])
 AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
@@ -334,10 +334,10 @@ AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\$/[$][$]/'`"])
 AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\$/\$\$/g'`"])
 AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
 
-includedir="${includedir}/pdp++"
+includedir="${includedir}/Emergent"
 
 if test x"$bundle" = x"true"; then
-  bundle_name="pdp-${PACKAGE_VERSION}.app"
+  bundle_name="Emergent-${PACKAGE_VERSION}.app"
   bundle_dir="`pwd`/${bundle_name}"
   bindir="${bundle_dir}/Contents/MacOS"
   libdir="${bundle_dir}/Contents/Frameworks/libpdp_tacss-${LIB_VERSION_2}.framework"
@@ -361,9 +361,9 @@ AC_CONFIG_FILES([Makefile
 		src/leabra/Makefile
 		src/so/Makefile
 		src/cs/Makefile
-		src/pdp/Makefile
-		src/pdp_lib/Makefile
-		src/pdp_bin/Makefile
+		src/emergent/Makefile
+		src/emergent_lib/Makefile
+		src/emergent_bin/Makefile
 		prog_lib/Makefile
 		test/Makefile
 		plugins/config.pri

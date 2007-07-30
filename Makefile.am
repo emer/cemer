@@ -5,14 +5,14 @@ EXTRA_DIST =\
 	src/ta/ta_maketa_defs.h \
 	src/ta/qtdefs.h \
 	src/css/css_def.h \
-	src/pdp/pdp_def.h \
+	src/emergent/pdp_def.h \
 	src/bp/bp_def.h \
 	src/leabra/leabra_def.h \
 	src/so/so_def.h \
 	src/cs/cs_def.h \
 	spec.tmpl.in \
 	src/ta/files.mta \
-	src/pdp/files.mta \
+	src/emergent/files.mta \
 	src/bp/files.mta \
 	src/leabra/files.mta \
 	src/so/files.mta \
@@ -43,13 +43,13 @@ DIST_SUBDIRS =\
 	src/css \
 	src/ta_lib \
         src/css_bin \
-	src/pdp \
+	src/emergent \
 	src/bp \
 	src/leabra \
 	src/so \
 	src/cs \
-	src/pdp_lib \
-	src/pdp_bin \
+	src/emergent_lib \
+	src/emergent_bin \
 	plugins \
 	prog_lib \
 	css_stdlib \
@@ -67,13 +67,13 @@ SUBDIRS =\
 	src/css \
 	@WANT_LIBTA@ \
 	@WANT_CSS_BIN@ \
-	src/pdp \
+	src/emergent \
 	src/bp \
 	src/leabra \
 	src/so \
 	src/cs \
-	src/pdp_lib \
-	src/pdp_bin \
+	src/emergent_lib \
+	src/emergent_bin \
 	@WANT_PLUGINS@ \
 	prog_lib \
 	css_stdlib \
@@ -93,7 +93,7 @@ if RPM
 #include aminclude.am
 
 EXTRA_DIST +=\
-	 aminclude.am \
+	aminclude.am \
 	spec.tmpl.in \
 	*do-stamp* \
 	PDP++-3.5.spec \
@@ -109,7 +109,7 @@ DISTCLEANFILES =\
 	src/ta/do-mfstamp \
 	src/css/do-mfstamp \
 	src/css_bin/do-mfstamp \
-	src/pdp/do-mfstamp \
+	src/emergent/do-mfstamp \
 	src/leabra/do-mfstamp \
 	src/bp/do-mfstamp \
 	src/leabra/do-mfstamp \
@@ -143,7 +143,7 @@ ${abs_top_builddir}/src/ta/ta_TA_type.h: ${abs_top_builddir}/src/maketa/maketa
 
 force_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/pdp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/emergent && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/so && ${MAKE} force_ta
@@ -151,7 +151,7 @@ force_ta:
 
 gendoc:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/pdp && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/emergent && ${MAKE} gendoc
 	cd ${abs_top_builddir}/src/bp && ${MAKE} gendoc
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} gendoc
 	cd ${abs_top_builddir}/src/so && ${MAKE} gendoc
@@ -159,7 +159,7 @@ gendoc:
 
 do_ta:
 	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/pdp && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/emergent && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta
 	cd ${abs_top_builddir}/src/so && ${MAKE} do_ta
@@ -174,12 +174,12 @@ spec.tmpl.in:
 # You net to export/setenv ${DEBEMAIL}
 deb:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/binary --requires=pdp-qt,pdp-coin,pdp-soqt,libode0c2,libode0-dev,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/binary --requires=emergent-qt,emergent-coin,emergent-soqt,libode0c2,libode0-dev,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev --include=/usr/local/lib/libemergent-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
 	cd /usr/local/apt && dpkg-scanpackages binary /dev/null | gzip -9c > binary/Packages.gz
 
 rpm2:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=pdp-qt,pdp-coin,pdp-soqt,pdp-soqt,pdp-simage,ode,ode-devel,gsl  --include=/usr/local/lib/libpdp-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-soqt,emergent-simage,ode,ode-devel,gsl  --include=/usr/local/lib/libemergent-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
 	createrepo /usr/local/yum
 
 packages: deb rpm2

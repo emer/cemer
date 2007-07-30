@@ -24,7 +24,7 @@
 #include "ta_datatable.h"
 #include "netstru.h"
 
-#include "pdp_TA_type.h"
+#include "emergent_TA_type.h"
 
 //////////////////////////////////////////
 //	Layer Reader / Writer		//

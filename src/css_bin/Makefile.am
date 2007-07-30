@@ -8,7 +8,7 @@ DEFS=
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-# pdp++
+# emergent
 bin_PROGRAMS = css@PDP_SUFFIX@
 
 css@PDP_SUFFIX@_SOURCES = main.cpp

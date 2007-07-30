@@ -45,7 +45,7 @@ MAKETA_FLAGS =\
 	-I@abs_top_srcdir@ \
 	-I@abs_top_srcdir@/src/ta/ios-g++-3.1 \
 	-I@abs_top_srcdir@/src/ta \
-	-I@abs_top_srcdir@/src/pdp \
+	-I@abs_top_srcdir@/src/emergent \
 	-I@abs_top_srcdir@/src/css \
 	-I@abs_top_srcdir@/src/leabra \
 	-I@abs_top_srcdir@/src/taiqtso \

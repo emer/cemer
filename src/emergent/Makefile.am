@@ -1,7 +1,7 @@
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-PROJNAME = pdp
+PROJNAME = emergent
 srcdir = @srcdir@
 VPATH = @srcdir@
 
@@ -76,25 +76,25 @@ SRCS =\
 	v3_compat.cpp
 
 
-include_HEADERS = $(HEADS) $(TAHEADS) pdp_TA_type.h pdp_TA_inst.h
+include_HEADERS = $(HEADS) $(TAHEADS) emergent_TA_type.h emergent_TA_inst.h
 
 include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	libpdpTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@.la
-libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
-libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-	libpdpTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@.la
-libpdpTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
-	pdp_TA.cpp \
-	pdp_TA_type.h \
-	pdp_TA_inst.h
-libpdpTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = $(libpdp@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
-libpdpTypeAccess@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
+	libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
+libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
+libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
+	libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
+	emergent_TA.cpp \
+	emergent_TA_type.h \
+	emergent_TA_inst.h
+libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = $(libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
 pdp_def.h:
