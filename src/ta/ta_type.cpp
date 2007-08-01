@@ -419,9 +419,9 @@ int taVersion::BeforeOrOf(char sep, String& in) {
 // 	     taMisc		//
 //////////////////////////////////
 
-String	taMisc::app_name = "ta_css"; // replaced with actual name at startup
+String	taMisc::app_name = "temt"; // replaced with actual name at startup
 String	taMisc::app_lib_name; // set in the main.cpp file
-String	taMisc::default_app_install_folder_name = "pdp++";
+String	taMisc::default_app_install_folder_name = "emergent";
 String	taMisc::org_name = "ccnlab"; 
 
 #ifdef SVN_REV

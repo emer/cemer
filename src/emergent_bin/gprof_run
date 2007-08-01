@@ -1,3 +1,3 @@
 #!/bin/csh -f
 
-gprof .libs/pdp_prof++ gmon.out | c++filt >$1
+gprof .libs/emergent_prof gmon.out | c++filt >$1
