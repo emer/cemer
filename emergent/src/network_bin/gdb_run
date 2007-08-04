@@ -1,3 +1,0 @@
-#!/bin/sh
-
-libtool --mode=execute gdb emergent_debug

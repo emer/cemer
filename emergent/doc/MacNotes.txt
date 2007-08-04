@@ -1,36 +1,0 @@
-Mac Port Notes
-
-ReadLine
-
-Readline is not installed by default. Obtained from:
-http://www.hmug.org/pub/MacOS_X/BSD/Libraries/System/readline/
-
-TODO:
-* may need to make sure default install location is overridden
-  to be /usr, not /usr/local, since gcc doesn't look in /usr/local/lib
-  by default
-OR link readline and jpeg libs in /usr/lib
-
-Things To Do
-
-1. Install readline per the Makefile.mac-g++
-2. Install jpeg per same.
-3. Install Qt3.3.4
-add the qt folder to DYLD_LIBRARY_PATH
-
-You should symlink the Qt libs into /usr/lib :ln -sf $QTDIR/lib/libqt.3.dylib /usr/libln -sf $QTDIR/lib/libqui.1.dylib /usr/libln -sf $QTDIR/lib/libqt-mt.3.dylib /usr/lib
-
-4. Install Coin/Inventor.
-
-You should symlink the Coin lib into /usr/lib:
-
-ln -s /Library/Frameworks/Inventor.framework/Versions/B/Libraries/libCoin.dylib /usr/lib
-
-5. Install Coin/SoQt.
-
-ln -s /Library/Frameworks/SoQt.framework/Versions/A/Libraries/libSoQt.dylib /usr/lib
-
-NOTES
-
-* it seems that gcc/qt combo requires us to explicitly instantiate templates
-  used from qt, including nested templates (ex QValueListPrivate<T>)

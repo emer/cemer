@@ -1,3 +1,0 @@
-#!/bin/sh
-
-libtool --mode=execute kdbg css_debug++

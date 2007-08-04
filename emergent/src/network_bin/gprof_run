@@ -1,3 +1,0 @@
-#!/bin/csh -f
-
-gprof .libs/emergent_prof gmon.out | c++filt >$1
