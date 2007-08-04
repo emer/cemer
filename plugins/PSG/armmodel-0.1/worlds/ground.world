@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+
+<gz:world 
+  xmlns:gz='http://playerstage.sourceforge.net/gazebo/xmlschema/#gz'
+  xmlns:model='http://playerstage.sourceforge.net/gazebo/xmlschema/#model'
+  xmlns:sensor='http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor'
+  xmlns:window='http://playerstage.sourceforge.net/gazebo/xmlschema/#window'
+  xmlns:param='http://playerstage.sourceforge.net/gazebo/xmlschema/#params'
+  xmlns:ui='http://playerstage.sourceforge.net/gazebo/xmlschema/#params'>
+
+<param:Global>
+  <gravity_>0.0 0.0 -9.8 </gravity_>
+  <stepTime_>0.020</stepTime_>
+  <speed>0.33</speed>
+</param:Global>
+    
+
+
+  <model:ObserverCam>
+    <id>userCam0</id>
+    <xyz>-0.289 -0.298 0.346</xyz>
+    <rpy>0 37 31</rpy>
+    <imageSize>640 480</imageSize>
+    <updateRate>10</updateRate>
+    <nearClip>0.2</nearClip>
+    <farClip>100</farClip>
+    <displayRays>false</displayRays>
+    <displayAxes>false</displayAxes>
+    <displayCoM>false</displayCoM>
+    <displayTextures>true</displayTextures>
+  </model:ObserverCam>  
+
+  <!--
+  <model:ObserverCam>
+    <id>userCam1</id>
+    <xyz>0.05 -0.4 0.3</xyz>
+    <rpy>0 31 90</rpy>
+    <imageSize>640 480</imageSize>
+    <updateRate>10</updateRate>
+    <nearClip>0.2</nearClip>
+    <farClip>50</farClip>
+    <displayRays>false</displayRays>
+    <displayAxes>false</displayAxes>
+    <displayCoM>false</displayCoM>
+    <displayTextures>true</displayTextures>
+  </model:ObserverCam>  
+  
+  <model:ObserverCam>
+    <id>userCam4</id>
+    <xyz>0.05 0.4 0.3</xyz>
+    <rpy>0 31 -90</rpy>
+    <imageSize>320 240</imageSize>
+    <updateRate>10</updateRate>
+    <nearClip>0.2</nearClip>
+    <farClip>50</farClip>
+    <displayRays>false</displayRays>
+    <displayAxes>false</displayAxes>
+    <displayCoM>false</displayCoM>
+    <displayTextures>false</displayTextures>
+    <renderMethod>auto</renderMethod>
+  </model:ObserverCam>  
+ 
+  <model:ObserverCam>
+    <id>userCam2</id>
+    <xyz>0.5 0.05 0.3</xyz>
+    <rpy>0 20 180</rpy>
+    <imageSize>320 240</imageSize>
+    <updateRate>10</updateRate>
+    <nearClip>0.2</nearClip>
+    <farClip>50</farClip>
+    <displayRays>false</displayRays>
+    <displayAxes>false</displayAxes>
+    <displayCoM>false</displayCoM>
+    <displayTextures>true</displayTextures>
+  </model:ObserverCam>
+
+  <model:ObserverCam>
+    <id>userCam3</id>
+    <xyz>0.00 0.00 0.5</xyz>
+    <rpy>0 90 0</rpy>
+    <imageSize>640 480</imageSize>
+    <updateRate>10</updateRate>
+    <nearClip>0.2</nearClip>
+    <farClip>100</farClip>
+    <displayRays>false</displayRays>
+    <displayAxes>false</displayAxes>
+    <displayCoM>false</displayCoM>
+    <displayTextures>true</displayTextures>
+  </model:ObserverCam>
+
+  -->
+
+  <model:LightSource>
+    <id>light0</id>
+    <xyz>-5.000 -5.000 10.000</xyz>
+  </model:LightSource>
+
+  <model:LightSource>
+    <id>light1</id>
+    <xyz>5.000 5.000 10.000</xyz>
+  </model:LightSource>
+  
+  <model:ArmModel>
+    <plugin>libarmmodel.so</plugin>
+    <skinBase>skins/base.3ds</skinBase>
+    <skinBaseScale>0.000991 0.000991 0.000991</skinBaseScale>
+    <_skinBaseScale>0.001023 0.001023 0.001023</_skinBaseScale>
+    <skinBaseXyz>0.000 -0.000 0.000</skinBaseXyz>
+    <skinBaseRpy>0.000 0.000 180.000</skinBaseRpy>
+    <skinLink0>skins/link0.3ds</skinLink0>
+    <skinLink0Scale>0.000991 0.000991 0.000991</skinLink0Scale>
+    <skinLink0Xyz>0.000 -0.000 0.000</skinLink0Xyz>
+    <skinLink0Rpy>0.000 0.000 180.000</skinLink0Rpy>
+ <!--
+  -->
+    <skinLink1>skins/link1.3ds</skinLink1>
+    <skinLink1Scale>0.000991 0.000991 0.000991</skinLink1Scale>
+    <skinLink1Xyz>0.000 0.000 -0.0030</skinLink1Xyz>
+    <skinLink1Rpy>0.000 0.000 180.000</skinLink1Rpy>
+    <position>0.164 -0.066 0.00 </position>
+    <!-- arm on ground => 0, arm on robot => 1 -->
+    <robot>0</robot>
+    <!-- No gripper => 0, Gripper => 1 -->
+    <gripper>1</gripper>
+    <skinGripperBase>skins/sliding_thing.3ds</skinGripperBase>
+    <skinGripperBaseScale>0.000991 0.000991 0.000991</skinGripperBaseScale>
+    <skinGripperBaseXyz>-0.023 -0.000 -0.0025</skinGripperBaseXyz>
+    <skinGripperBaseRpy>0.000 0.000 180.000</skinGripperBaseRpy>
+ <!--
+  -->
+    <skinLeftGripper>skins/gripper_l.3ds</skinLeftGripper>
+    <skinLeftGripperScale>0.001023 0.001023 0.001023</skinLeftGripperScale>
+    <skinLeftGripperXyz>0.002 -0.009 0.007</skinLeftGripperXyz>
+    <skinLeftGripperRpy>0.000 0.000 180.000</skinLeftGripperRpy>
+    <skinRightGripper>skins/gripper_r.3ds</skinRightGripper>
+    <skinRightGripperScale>0.001023 0.001023 0.001023</skinRightGripperScale>
+    <skinRightGripperXyz>0.002 0.0025 0.0255</skinRightGripperXyz>
+    <skinRightGripperRpy>0.000 0.000 180.000</skinRightGripperRpy>
+    <id>arm1</id>
+  </model:ArmModel>
+  
+ <!--
+  <model:SimpleSolid>
+    <xyz>0.164 -0.066 -0.000</xyz>
+    <rpy>0 -0 0</rpy>
+    <shape>cylinder</shape>
+    <size>0.016 0.04</size>
+    <mass>0.01</mass>
+    <color>1.0 0 0</color>
+    <skinFile>chesspawn.3ds</skinFile>
+    <skinScale>0.0012 0.0012 0.0012</skinScale>
+    <skinXyz>-0.05 -0.07 -0.05</skinXyz>
+  </model:SimpleSolid>
+  -->
+
+</gz:world>
+

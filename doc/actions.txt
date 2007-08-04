@@ -1,0 +1,84 @@
+Actions
+
+Actions on menus will follow the following paradigms:
+
+Unary Operations
+  ex. obj1:Class1
+  obj->Class1::Method()
+  
+  ex. n obj's, common subclass ClassX
+  for i from 0 to n-1
+     obj[i]->ClassX::Method()
+     
+     
+Binary/N-way Operations 
+
+Target/Source - Target is 1st selected;
+                Source(s) is remaining selected
+  ex. obj1, obj2:Class2
+  obj1->Method(Class2 obj2)
+  
+  ex. obj1, n obj's: common subclass ClassX
+  for i from 1 to n
+    obj1->Method(ClassX obj[i])
+
+Source/Target - Source is 1st selected (ex. a Spec)
+                Target(s) is remaining selected
+  ex. obj1::Class1, obj2
+  obj2->Method(Class1 obj1)
+  
+  ex. obj1, n obj's: common subclass ClassX
+  for i from 1 to n
+    obj[i]->Method(ClassX obj1)
+
+DEFINITIONS
+
+Prime - the first (or only) item selected
+N-ways - the second and subsequent items selected
+
+    
+SEMANTIC RULES
+
+1. Transitivity
+
+If 2 classes have methods as follows:
+  Class1::MethodA(Class2 obj)
+  Class2::MethodB(Class1 obj)
+then these methods must perform the same operation (i.e., lead to the same result.)
+
+
+
+ENUMERATING
+
+Given a set of 1 or more selected items, what menu choices to show?
+
+1. Find common subclass of all, to show the available Unary operators
+
+2. Find common subclass ClassX of N-way items (2-N).
+   List all operations on Prime that take a ClassX (or predecessor)
+   
+   
+EXAMPLES
+--------
+* indicates a function that should be present
+
+UNIT
+
+CopyWeights(Unit)
+SetConSpec(ConSpec)
+SetUnitSpec(UnitSpec)*
+
+PROJECTION
+
+SetConSpec(LayerSpec)
+
+UNIT_GROUP
+
+CopyWeights(Unit_Group)
+SetUnitSpec(UnitSpec)
+SetConSpec(ConSpec)
+
+LAYER
+
+CopyWeights(Layer)
+SetUnitSpec(UnitSpec)

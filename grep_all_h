@@ -1,0 +1,3 @@
+#!/bin/csh -f
+
+grep -R --exclude '*_TA*' "$*" src/*/*.h | more

@@ -1,0 +1,88 @@
+Tab Redesign
+
+bugs:
+* if you click AddTab on a View tab, it becomes the NetView,
+  and then later, sticks with NetView and won't change
+
+* edit panels sort on left, view panels on right
+* color code, so eps are diff color than vps
+* basic paradigm: 
+  clicking on a thing (tree, t3guy) shows that panel
+* issue with how it works when you click on something with
+  a current tab
+* DataTable panel views should really be with table tab
+prob: too many tabs will be created, and will be esp confusing
+  once user has several graphs, etc.
+  * requires adding buttons dynamically
+  * requires being able to remove buttons
+* Table panel views would enable like views for nets, layers, etc
+
+proposed change:
+
+* currently: user must click on a tab to open a new one;
+* proposed: user right clicks on an item and picks "New Tab" to open it;
+  rightclick won't focus
+
+
+
+
+Goal: develop an app window paradigm that enables convenient, productive, and flexible use of the Pdp program.
+
+Criteria
+
+* convenient
+
+* flexible -- not every use-case scenario may require the same kinds of information,
+  or the ability to look at different things
+
+* productive -- the user should be productive at the task at hand, such as network
+  design, network test, simulation runs, code development, log analysis
+
+* familiar and intuitive -- the user shouldn't have to master complex new paradigms,
+  and should find using the gui intuitive
+
+Current
+
+A tree-based browser and edit panels are a "browser".
+A 3d graphical window and edit panels are a "viewer".
+The viewer features "pinned" panels that are the controls for any major 
+constructs in the viewer, such as Network. (this paradigm is a bit flawed)
+
+Issues
+
+* ex. the Network 3-d viewer panel is a bit confusing
+* if there are multiple configurable objects, they each get a pinned panel;
+  this could be quite confusing, except if the panel activates when selecting
+  the item
+  
+* NOTE: the panel tab is not properly showing items selected in the viewer,
+  but it is supposed to
+
+Ideas
+
+* how about a 3-d viewer with closely associated view control tabs or sheets
+  (might help to make these a bit different than the panel tabs)
+  these control tabs are only for the viewer, not for the objects per se
+
+* you can have the browser tree and the viewer open in the same mega window
+* the browser tree or viewer objects can control the edit panel contents
+
+* we may need to use dockable windows (ugh!) to provide the flexibility for the 
+  user to organize the windows in a way that is useful and pleasing to them
+
+Pros
+
+* the little dock window captions can say what is in the window
+
+New Issues
+
+* if there are 2+ things that can control edit tab contents, you can get confusion
+  like, what is controlling the panel? how to i get back to the clicked item when
+  switching? how do i even do this switching?
+
+* with dock windows, things can get hairy if we allow detachable dock windows,
+  but we can control whether a window is dockable or not
+* if the windows are to be dockable, they have to have the dock window outline,
+  which takes up valuable space
+
+

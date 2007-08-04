@@ -1,0 +1,195 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][0] { 
+  ProgVar_List @.args = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    MethodCall @[0] { };
+    DataGenCall @[1] { 
+      ProgArg_List @.meth_args = [6] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs.gp[0][0] {
+ name="ReadImages";
+ desc="read list of images from a directory";
+ flags=;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="directory";
+   var_type=T_String;
+   string_val="images/objs100_330";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="where to look for images";
+  };
+  ProgVar @[1] {
+   name="filter";
+   var_type=T_String;
+   string_val=".jpg";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="filter to apply in selecting image files";
+  };
+  ProgVar @[2] {
+   name="names_table";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][1]$0$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=ImageProcCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][0].args[2]$1$;
+   method=DataTable::ResetData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  DataGenCall @[1] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   object_type=taDataGen;
+   method=taDataGen::GetDirFiles;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="dest";
+     expr {
+      expr="names_table";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ names_table;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="dir_path";
+     expr {
+      expr="directory";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ directory;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[2] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="filter";
+     expr {
+      expr="filter";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ filter;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[3] {
+     arg_type=bool;
+     type="bool";
+     name="recursive";
+     expr {
+      expr="false";
+      flags=;
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[4] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="fname_col_nm";
+     expr {
+      expr="\"FileName\"";
+      flags=;
+      var_expr="\"FileName\"";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[5] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="path_col_nm";
+     expr {
+      expr="\"FilePath\"";
+      flags=;
+      var_expr="\"FilePath\"";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+ };
+};

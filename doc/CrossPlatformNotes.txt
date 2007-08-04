@@ -1,0 +1,78 @@
+CROSS PLATFORM NOTES
+
+
+MEMORY ALLOCATION
+
+Note: for simplicity, references to 64-bit/8byte ptr systems have been deleted --
+see sources below if porting to 64-bits.
+
+Linux
+------
+
+[Assumes Linux uses Doug Lea's malloc]
+(from: http://gee.cs.oswego.edu/pub/misc/malloc.c)
+
+ Alignment:                              2 * sizeof(size_t) (default)
+       (i.e., 8 byte alignment with 4-byte size_t). This suffices for
+       nearly all current machines and C compilers. However, you can
+       define MALLOC_ALIGNMENT to be wider than this if necessary.
+
+  Minimum overhead per allocated chunk:   4  bytes
+       Each malloced chunk has a hidden word of overhead holding size
+       and status information.
+
+  Minimum allocated size: 4-byte ptrs:  16 bytes    (including 4 overhead)
+
+       When a chunk is freed, 12  additional bytes are
+       needed; 4 for a trailing size field and 8 bytes for
+       free list pointers. Thus, the minimum allocatable size is
+       16 bytes.
+
+       Even a request for zero bytes (i.e., malloc(0)) returns a
+       pointer to something of the minimum allocatable size.
+
+
+Windows
+-------
+
+[NOTE: there is still some confusion about what the exact scheme is]
+
+One Explanation:
+Assuming you use the Microsoft Visual C Runtime (msvcrt.dll), malloc
+will add 8 bytes and round-up to a paragraph (16 bytes). This will
+give 48 bytes per string, or 192 bytes for all strings together.  Of
+course, if the strings appear in your source code, these 192 bytes are
+consumed only once: the dictionary will share them with the source
+code.
+
+Another, from: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dngenlib/html/msdn_heapmm.asp
+
+Each chunk of heap memory allocated in either the default heap or a dynamic heap is subject to a 16-byte granularity and is charged a 16-byte header.
+
+
+
+Mac OS X
+--------
+
+(from: http://developer.apple.com/documentation/Performance/Conceptual/ManagingMemory/Tasks/MemoryAlloc.html#//apple_ref/doc/uid/20001881/CJBCFDGA)
+
+Small Blocks
+
+For allocations of less than a few virtual memory pages, malloc suballocates the requested amount from a list (or “pool”) of free blocks of increasing size. Any small blocks you deallocate using the free routine are added back to the pool and reused on a “best fit” basis. The memory pool is itself is comprised of several virtual memory pages and allocated using the vm_allocate routine.
+
+The granularity of any block returned by malloc is 16 bytes. Any blocks you allocate will be at least 16 bytes in size or comprised of a block that is a multiple of 16. Thus, if you request 4 bytes, malloc returns a block of 16 bytes. If you request 24 bytes, malloc returns a block of 32 bytes.
+
+Large Blocks
+
+For allocations greater than a few virtual memory pages, malloc uses the vm_allocate routine to obtain a block of the requested size.The vm_allocate routine assigns an address range to the new block in the virtual memory space of the current process but does not allocate any physical memory. Instead, the malloc routine pages in the memory for the allocated block as it is used.
+
+The granularity of large memory blocks is 4096 bytes, the size of a virtual memory page. If you are allocating a large memory buffer, you should consider making it a multiple of this size.
+
+Note: Large memory allocations are guaranteed to be page-aligned.
+
+For large allocations, you may find that it makes sense to allocate virtual memory using vm_allocate directly. The example in Listing 1 shows how to use the vm_allocate function.
+
+
+Notes:
+
+It seems that MacOs does not have any malloc overhead -- the memory is seemingly returned to the correct pool based on its address; i.e., the size of the block is a function of its allocation address.

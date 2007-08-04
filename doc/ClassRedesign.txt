@@ -1,0 +1,104 @@
+Clip Changes
+
+Current Clip Handling
+
+Enabling:
+
+Source:
+
+We start with an Item, or list of items
+
+ISelectable::QueryEditActions(list)
+  QueryEditActionsS
+  QueryEditActionsD
+  
+IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const {
+  taiDataLink* pdl = par_link();
+  taiDataLink* link = this->link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
+  if (link) {
+    link->ChildQueryEditActions_impl(this->md(), NULL, ms, allowed, forbidden); // ex. DROP of child on parent, to insert as first item
+    link->QueryEditActions_impl(ms, allowed, forbidden); // ex. COPY
+  }
+
+IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
+  // parent object will generally manage CUT, and DELETE
+  // parent object normally passes on to child object
+  taiDataLink* pdl = par_link();
+  taiDataLink* link = this->link();
+  if (pdl) pdl->ChildQueryEditActions_impl(par_md(), link, NULL, allowed, forbidden); // ex. CUT of child
+  if (link) {
+    link->QueryEditActions_impl(NULL, allowed, forbidden); // ex. COPY
+  }
+  
+  
+NEW CLIP HANDLING
+
+
+
+
+On/Between 
+
+* in QAbstractItemView::dragMoveEvent
+
+* drop valid/invalid and drop rect/line are independent --
+  the rect/line in does in QAbstractItemView::dragMoveEvent
+  but you could change the event's drop action!
+
+* position type (Above etc.) determined thus:
+  1. get index from pos: indexAt(pos)
+  2. get rect from index:  visualRect(index)
+  3. get type from pos and rect d->position(pos, rect) @@
+note: dropIndicatorPosition should be available in protected
+  mode after this event
+
+
+Probably Needed Overrides:
+
+* always for the drop action to be the same ("Move") --
+  
+
+Key impl routines:
+
+
+model::supportedDropActions()
+  - dynamically queried in dragMove to determine
+     proposed action or Ignore
+
+model::flags()
+  is: TreeModel::flags(), which is nonvirt 
+  TreeItem::flags which is data
+
+
+Proposed Changes
+
+dragMoveEvent
+  Pre:
+  * change proposedAction via
+     setDropAction
+  Post:
+  * use this->indicatorPosition and index/pos
+    to determine actual enable status of operation
+  * if operation not allowed, then ignore event
+
+Drop Event
+
+QTreeWidget
+ -- does the gui thing for self Moves (which will happen on Mac)
+QAbstractItemView
+  if model->dropMimeData(...)
+    accept
+  NOTE: this latter is delegated to QTreeWidget::accept
+  stop scrolling, update gui
+
+ 
+* need to bypass QTreeWidget handler, since it unconditionally
+  implements that gui-based moving
+* but can't bypass QAIV since it cleans up autoscrolling, etc.
+
+TEST:
+
+* make changes to dragMove
+* disable "before/after" operations
+* check item for "on" operations
+* resulting behavior should be same as clipboard op enabling

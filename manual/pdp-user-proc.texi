@@ -1,0 +1,1850 @@
+@c uncomment the following two lines for 'update every node' command
+@c @node  proc
+@c @chapter Processes and Statistics
+
+Processes in PDP++ play the role of orchestrating and coordinating the
+interactions between different object types in order to carry out
+particular tasks.  Processes are @i{objects} (@pxref{obj-basics-obj}),
+which means that they can have their own variables and functions. This
+is fundamentally different from the idea of a process as something that
+simply acts on a data structure.  There are many different kinds of
+process objects which have been designed to perform specific kinds of
+tasks.
+
+The scheduling processes coordinate the overall scheduling of processing
+during training and testing of networks, and are the "backbone" of
+processing system.  They are organized into a hierarchy of objects, each
+of which performs a specific level of processing:
+@example
+@group
+TrainProcess (loop over epochs)
+    EpochProcess (loop over trials)
+        TrialProcess (present a single pattern)
+        .
+        .
+    .
+    .
+@end group
+@end example
+
+The rest of the processes hang off of the schedule processes in
+different places, and perform specific tasks.  The largest category of
+such processes are @emph{statistics}, which compute and record data
+about the network, environment or other processes, and make this data
+available to the logs for displaying.
+
+Statistics often need to be viewed at multiple levels of processing.
+Thus, one often wants to simultaneously view the trial-wise and the
+aggregated epoch-summed squared error.  This is accomplished in PDP++ by
+having statistics which actually compute the squared-error for a given
+event in the trial process, but also copies of this squared-error
+statistic at subsequent (higher) levels of processing which perform the
+@emph{aggregation} of the statistic over these higher levels.
+
+Since the different time-grains of processing are represented by the
+schedule process hierarchy, other things like updating displays and
+logging data, which can also happen at different time-grains, are tied
+to the schedule process hierarchy.  Thus, one can decide to log data at
+the @b{TrialProcess}, @b{EpochProcess}, and/or @b{TrainProcess} level,
+and similarly for updating displays like the network viewer.
+
+The code to control a Process can either be hard-coded C++
+code, or a pointer to a CSS script file. This means that one can change
+the behavior of a Process simply a writing a CSS script and setting the
+Process to use it (@pxref{proc-css}).
+
+The best way to interact and configure processes is throught the project
+viewer (@pxref{proj-viewer}).  Processes edit dialogs are yellow
+(@code{SchedProcess}) gold (regular @code{Process}) or slate blue
+(@code{Stat}) in the default color scheme.
+
+The @b{EpochProcess} can also coordinate the processing of different
+events on different @emph{distributed memory processors} to achieve
+much faster processing on parallel hardware (@pxref{proc-epoch-dmem}).
+
+@menu
+* proc-base::                   The Basic Features of All Processes
+* proc-sched::                  The Schedule Process (SchedProcess)
+* proc-levels::                 The Different Levels of Schedule Processes
+* proc-special::                Specialized Processes
+* proc-stat::                   The Statistic Process
+* proc-stats::                  Different Types of Statistics
+* proc-css::                    Processes and CSS Scripts
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-base, proc-sched, proc, proc
+@section The Basic Features of all Processes
+@cindex Control Panel
+@cindex Process
+
+The base Process class provides the following variables for controlling
+its behavior:
+
+@table @code
+@item Enum type
+@findex type of Process
+This can be either @code{C_CODE} or @code{SCRIPT}, which determines if
+the Process is going to execute C code or CSS script code.  A script
+file must be attached to the process to run in @code{SCRIPT} mode.
+@item Modulo mod
+@vindex mod of Process
+This object controls how often a process is run.  It is applicable for
+processes and statistics that are placed in either the @code{loop_procs}
+or @code{loop_stats} groups of a scheduling process, and the modulo
+function is based on the counter variable of that parent process.  For
+@code{final_stats} and @code{final_procs}, the counter variable is that
+of the parent of the parent schedule process. If the @code{flag}
+variable of the @code{mod} object is not set then the process is never
+run. Otherwise the process is run if the parent's counter minus the
+@code{off} variable modulo the @code{m} variable is equal to zero (i.e.,
+it is run every @code{m} times, with a phase determined by the offset
+@code{off}).
+@item Network* network
+@vindex network of Process
+This is a pointer to the Network object on which the Process is acting.
+This pointer is copied automatically from the parent process, so it
+should be changed only at the highest level of the processing hierarchy,
+which will cause it to change in all the lower-level processes.
+@item Environment* environment
+@vindex environment of Process
+This is a pointer the Environment in which the Process acts. Like the
+network pointer, it is automatically copied from higher-level processes,
+and should be set at the highest level.
+@end table
+
+The basic Process class provides the following functions for controlling
+its behavior.  Some of these are available on the @i{Control Panel}
+buttons that appear at the bottom of the edit dialog and the control
+panel, and others are in the @i{Actions} menu.
+
+@table @code
+@item NewInit()
+@findex NewInit on Process
+Initializes the process using new random seed.  This seed is saved, and
+can be recalled using the @code{ReInit} function, but the previously
+saved seed is then lost.
+@item ReInit()
+@findex ReInit on Process
+Initializes the process using the previously-saved random seed.
+@item Run()
+@findex Run on Process
+This function checks which type of code the Process is supposed to
+use (C code or script) and executes the appropriate code.
+@item Step()
+@findex Step on Process
+Executes one step the process.  For schedule processes, this is
+controlled by the @code{step} field, which specifies at what sub-level
+of the heirarchy to step (e.g., setting step.proc to the trial process
+will mean that Step executes one step of the trial process -- it
+processes one event per Step).  Schedule processes also have @b{Step
+Up} and @b{Step Dn} buttons that are useful for controlling the stepping
+level within the process hierarchy.
+@item Stop()
+@findex Stop on Process
+Stops the process when running.
+@item Step Up()
+@findex Step Up on SchedProcess
+Moves the stepping level up one step in the heirarchy (e.g., from cycle
+up to settle).  Removes updating of the network by the previous stepping
+level (e.g., cycle no longer updates).  This only applies to Sched
+Processes. 
+@item Step Dn()
+@findex Step Dn on SchedProcess
+Moves the stepping level down one step in the heirarchy (e.g., from
+settle to cycle).  Adds updating of the network by the new stepping
+level (e.g., cycle now updates the network).  This only applies to Sched
+Processes.
+@item ControlPanel()
+@findex ControlPanel on Process
+Brings up a small control panel dialog for running the process.
+@item LoadScript (char* filename)
+@findex LoadScript on Process
+Sets the script file to be used by the Process to @code{filename} and
+compiles the script for execution. This function clears any previous
+script file being used by the process. It automatically sets the
+@code{type} variable to @code{SCRIPT}.
+@end table
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-sched, proc-levels, proc-base, proc
+@section The Schedule Process (SchedProcess)
+@cindex Schedule Processes
+@tindex SchedProcess
+
+Instead of putting all the control necessary to iterate over the several
+levels of processing needed to train a network (training, epochs,
+trials, settles, cycles, etc.) into one process object, we have divided
+up the processing hierarchy into a set of nested scheduling processes,
+each of which handles one level of processing.  This results in a lot of
+flexibility, since one can then change only the code controlling the
+trial, for example, or easily extend it using a CSS script.
+
+The Schedule Process (or @b{SchedProcess}) is an extension of the basic
+Process type. It provides more variables and functions with which one
+can control the execution of the Process.  It has fields for the parent
+and child processes in its hierarchy, support for counters that
+control the iteration of the process over time, places to link in
+@b{View} objects and @b{Log} objects to be updated, and groups to
+hold the various sub-processes and statistics that can be associated
+with a given level of processing.
+
+In order to support all of its extended functionality, the schedule
+process has a somewhat complicated execution structure.  However,
+understanding how a schedule process runs should make it easier to
+figure out how to get them to do what you want them to.
+
+The central function a schedule process performs is one of looping,
+where the process repeated performs some function.  In most cases, this
+function simply involves telling the process below it in the hierarchy
+to run.  Thus, an epoch process repeatedly loops over the trial process,
+for example.  The functions in a schedule process center around the main
+loop of processing,
+
+The main loop is written so as to be re-entrant.  Thus, something can
+cause the process to pop out of the loop (i.e., the user pressing
+@i{Stop}), and when it runs again, it will fall back down to the point
+where it was last running and pick up again where it left off.
+
+The places where the things that hang off of a schedule process, like
+statistics, logs and displays, can all be seen in the main schedule
+process loop code, which is reproduced here:
+
+@example
+void SchedProcess::C_Code() @{
+  bool stop_crit = false;        // a stopping criterion was reached
+  bool stop_force = false;       // either the Stop or Step reached
+
+  if(re_init) @{                // if its time to re-initialize, then do it
+    Init();                     // this sets the counters to zero, etc.
+    InitProcs();                // this runs any initialization processes
+  @}
+
+  do @{
+    Loop();                     // user defined code goes here
+    if(!bailing) @{
+      UpdateCounters();         // increment the counters (before logging)
+      LoopProcs();              // check/run loop procs (use mod of counter)
+      LoopStats();              // update in-loop statistics
+      if(log_loop)              // can log inside loop or after it...
+        UpdateLogs();           // generate log output and update logs
+      UpdateState();            // update process state vars (current event..)
+
+      stop_crit = Crit();       // check if stopping criterion was reached
+      if(!stop_crit) @{         // if at critera, going to quit anyway, so don't
+        stop_force = StopCheck(); // check for stopping (Stop or Step)
+      @}
+    @}
+  @}
+  while(!bailing && !stop_crit && !stop_force);
+  // loop until we reach criterion (e.g. ctr > max) or are forcibly stopped
+
+  if(stop_crit) @{              // we stopped because we reached criterion
+    Final();                    // user defined code at end of loop 
+    FinalProcs();               // call the final procs
+    FinalStats();               // run final_stats at end of loop
+    if(!log_loop)
+      UpdateLogs();             // if not logging in loop, logging at end 
+    UpdateDisplays();           // update displays after the loop
+    SetReInit(true);            // made it through the loop, so Init next time
+    FinalStepCheck();           // always stop at end if i'm the step process
+  @}
+  else @{                       // we we're forcibly stopped for some reason
+    bailing = true;             // now we're bailing out of all further procs
+  @}
+@}
+@end example
+
+The fall-through character of processing is made possible by storing all
+of the counter state variables on the process object itself, so it is
+preserved even when we pop out of the loop, and by only initializing
+once we make it through the loop (by setting the @code{re_init} flag).
+
+As you can see, there are two places where statistics get updated,
+inside the loop (@code{LoopStats()}) and after the loop
+(@code{FinalStats()}).  While it is more natural to think of computing
+statistics at the end of the loop (e.g., at the end of the trial or the
+end of the epoch), the need to aggregate statistic values over time
+(e.g., compute the sum of the squared-errors over an entire epoch)
+necessitates inside-the-loop statistics.
+
+Finally, it should be noted that all schedule processes are written to
+allow any number of intervening processes to be added in to the
+hierarchy at any point.  Thus, new and unanticipated levels of
+processing can be introduced by the user without breaking the
+assumptions of the existing process objects.  Basically, any time there
+is a dependency of one level of processing on another (e.g., the trial
+process looks to its parent epoch process to determine if it should be
+testing or training the network), the dependent process searches through
+the entire hierarchy for the type of process it depends on.
+
+@menu
+* proc-sched-vars::             Variables and Functions used in a SchedProcess
+* proc-sched-stats::            Statistics and Logging in a SchedProcess
+@end menu
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-sched-vars, proc-sched-stats, proc-sched, proc-sched
+@subsection Variables and Functions used in a SchedProcess
+
+The SchedProcess provides the following variables and functions (in
+addition to the ones already provided by the basic Process):
+
+@heading Variables
+
+@table @code
+@item bool can_stop
+@vindex can_stop of SchedProcess
+This variable is a flag that controls whether the SchedProcess can be
+interrupted during execution.  This also determines if GUI events are
+being processed.  Things can be speeded up a bit if this flag is turned
+off for low-level processes like the @code{CycleProcess}.
+@item TypeDef sub_proc_type
+@vindex sub_proc_type of SchedProcess
+This is type of process the @code{sub_proc} should be. If the
+@code{sub_proc} type does not inherit from this type then a new
+@code{sub_proc} is created of the correct type.
+@item  SchedProcess* sub_proc
+@vindex sub_proc of SchedProcess
+This is a pointer to the child Process (if it exists) of this
+SchedProcess.  This is the sub process that the process iterates over.
+@item StepParams step
+@vindex step of SchedProcess
+It is possible to single-step (or multiple step) through processing, and
+this controls how the @i{Step} function behaves. The @code{step}
+variable contains a pointer to the sub-process under the current one
+that represents the time-grain at which stepping should occur.  The
+number of times this step process is iterated per each @i{Step} (i.e.,
+each time the user hits the @i{Step} button) is determined by the
+@code{n} parameter.
+@item  Stat_Group loop_stats
+@vindex loop_stats of SchedProcess
+This is a group that contains the Statistic processes that will be
+executed within the loop of the schedule process (i.e., called by
+@code{LoopStats()} in the loop code shown above).  Thus, for a epoch
+process, these stats will be computed after every trial, since the epoch
+process loops over trials.  These are typically aggregation stats, which
+are adding up values computed in the trial process.  For example the
+epoch sum of squares error would be aggregated in the epoch loop stats.
+@item  Stat_Group final_stats
+@vindex final_stats of SchedProcess
+This is a group that contains the Statistic processes that will be
+executed at the end of the loop for this process.  This is typically
+where statistics go which are computed for the first time (i.e., not
+those that are simply aggregating values computed lower down in the
+hierarchy).
+@item Process_Group init_procs
+@vindex init_procs of SchedProcess
+This contains miscellaneous processes that get executed when the process
+is initialized.  Note that these are run only when the process is
+actually running, @emph{not} when the @i{ReInit} or @i{NewInit} buttons
+are hit.  Thus, if you hit one of these buttons, and then do a @i{Run},
+the first thing that will happen when the process is run is that the
+init_procs will be executed.
+@item Process_Group loop_procs
+@vindex loop_procs of SchedProcess
+These are miscellaneous processes that get executed inside the loop of
+the process.  For example, it is possible to link in a testing epoch
+process into the @code{loop_procs} of a training @b{TrainProcess}, with
+a mod value set to 10, for example, which will result in the network
+being tested after every 10 epochs of training.
+@item Process_Group final_procs
+@vindex final_procs of SchedProcess
+These are miscellaneous processes that get executed after the loop of
+the process, just before the final stats are computed.
+@item bool log_loop
+@vindex log_loop of SchedProcess
+Either the process sends its data at the end of its processing loop,
+which is the "natural" (and default) way to do things, since it
+corresponds with the name of the process (the end of the epoch process
+means once every epoch, while the loop of the epoch process is actually
+the end of every trial!), or it sends its data inside the loop, which
+can be useful to see the aggregation of the @code{loop_stats} statistics
+over time.  This flag, if checked, means that it logs inside the loop.
+@item bool log_counter
+@vindex log_counter of SchedProcess
+This flag determines if the counter associated with this process (e.g.,
+the epoch counter in the @b{TrainProcess}) is logged along with all the
+other data that is logged.
+@end table
+
+Many of the core functions on the schedule process object were
+documented in the main loop code shown previously.  In addition to the
+functions on the process object, the following functions are available
+in a schedule process (most can be found in the @i{Actions} menu of the
+edit dialog or control panel).
+
+@table @code
+@item InitMyLogs()
+@findex InitMyLogs on SchedProcess
+Clear all logs that this process updates.
+@item InitAllLogs()
+@findex  InitAllLogs on SchedProcess
+Clear all logs that exist in the Project that this SchedProcess is in.
+@item InitNetwork()
+@findex InitNetwork on SchedProcess
+Initialize the weights in the network associated with this process
+(calls @code{InitWtState()} on the network).
+@item InitAll();
+@findex InitAll on SchedProcess
+Initialize the process, network weights, and logs.
+@item RemoveFromLogs();
+@findex  RemoveFromLogs on SchedProcess
+Remove this SchedProcess from all the logs in the @code{logs} group and
+clear out the @code{logs} group.
+@item RemoveFromDisplays();
+@findex  RemoveFromDisplays on SchedProcess
+Remove this SchedProcess from all the displays in the @code{displays}
+group and clear out the @code{displays} group.
+@item CheckAllTypes();
+@findex  CheckAllTypes on SchedProcess
+This goes through all the objects in the network and makes sure that
+they are all of the minimum type necessary for all of the processes
+statistics being computed by this processing hierarchy.  This is done
+automatically whenever the training process is initialized, but it can
+be done manually just to make sure.  This check is useful, especially if
+you are experiencing unexplained crashing, because many process objects
+assume that the objects in the network are of the appropriate type.
+@end table
+
+The following are a set of functions that are particularly useful for
+configuring the processing hierarchy, and appear in the @i{Structure}
+menu of a SchedProc.
+
+@table @code
+@item MoveToSubGp(const char* gp_name)
+@findex MoveToSubGp on SchedProcess
+This moves the current process and all of its sub-processes to a new
+sub-group within the @code{.processes} group of the project.  Run this
+on the top-level process in a process hierarchy.  This is useful for
+organizing the menu when several processing hierarchies are present in
+the same project.
+@item ChangeNameSuffix(const char* new_name_sufx)
+@findex ChangeNameSuffix on SchedProcess
+This changes the portion of the sched process names after the underbar
+(_) to the new specified name.  This is the preferred way to give a
+whole hierarchy of sched procs the same semantically meaningful tag
+(e.g., a suffix of "Trn" for training processes, and "Tst" for testing
+processes.)  Run this on the top level process, as it works on all
+sub-processes.
+@item AddSuperProc(TypeDef* type)
+@findex AddSuperProc on SchedProcess
+This will add a new schedule process above this one, of the given type,
+while preserving as much of the existing structure as possible.  Thus,
+any aggregated stats will be aggregated through the new super proc, and
+it is inserted so that any previous super proc is now the super proc to
+the new super proc, etc.
+@item AddSubProc(TypeDef* type)
+@findex AddSubProc on SchedProcess
+Like AddSuperProc, but adds a new process below this one.
+@item RemoveSuperProc(TypeDef* type)
+@findex RemoveSuperProc on SchedProcess
+This is effectively the inverse of AddSuperProc -- removes parent
+process and closes up any existing aggregation links, etc.
+@item RemoveSubProc(TypeDef* type)
+@findex RemoveSubProc on SchedProcess
+This is effectively the inverse of AddSubProc -- removes sub
+process and closes up any existing aggregation links, etc.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-sched-stats,  , proc-sched-vars, proc-sched
+@subsection Statistics and Logging in a SchedProcess
+
+The relationship between statistics and logging in schedule processes is
+fairly straightforward, but there are some subtleties.  Basically, a
+schedule process sends two kinds of data to the log.  The first is a
+record of the current state of all the counters in the process hierarchy
+above (and if @code{log_counter} is checked, from) the logging process
+itself.  This tags the log data with the point in time when it was
+computed.  The other component is a series of columns of data that are
+generated by each of the statistic processes in either the loop or final
+statistics groups.
+
+This information is sent out to any logging processes that are being
+updated by the schedule process in question.  These logging processes
+then transform the data into the graphical form characteristic of the
+display they are using (e.g. a graph or a grid of color squares), and/or
+dump it to a log file, etc (@pxref{log}).
+
+Thus, the way to get a log to record some information is to have a
+statistic process which collects the information and sends it along to
+the log when the schedule process tells it to.  For this reason, when
+you want to monitor unit state variables over time, for example, you
+have to create a statistic process which gets these state variables, and
+sends them to the log (@pxref{proc-stats-monitor}).
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-levels, proc-special, proc-sched, proc
+@section Schedule Processes for Different Time-Grains
+
+Each schedule process handles processing at a different time grain.  The
+following time grains are supported by a standard set of schedule
+processes.  Note that a processing hierarchy typically has to start with
+at least an epoch process since that is what gets the events from the
+environment, and the lower-level processes look to the epoch process for
+the current event.
+
+@menu
+* proc-levels-batch::           Iterating over Networks: BatchProcess
+* proc-levels-train::           Iterating over Epochs: TrainProcess
+* proc-levels-epoch::           Iterating over Trials: EpochProcess
+* proc-levels-trial::           Presenting a Single Event: TrialProcess
+* proc-levels-settle::          Iterating over Cycles: SettleProcess
+* proc-levels-cycle::           Performing one Update: CycleProcess
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-levels-batch, proc-levels-train, proc-levels, proc-levels
+@subsection Iterating over Networks: BatchProcess
+@cindex Batch Process
+@cindex Process, Batch
+@tindex BatchProcess
+
+@vindex batch of BatchProcess
+The @b{BatchProcess} iterates over the training of networks.  This is
+useful in determining the average learning time for a given problem with
+different random initial weights, for example.  The batch process has a
+@code{batch} counter object, which records the number of networks that
+have been trained so far.  The appropriate sub-process type for a batch
+process is a @b{TrainProcess}, though it is possible to have multiple
+batch processes before the train process, in order to have multiple
+loops of network training (presumably with some parameter manipulation
+in between).
+
+@tindex GridSearchBatch
+There is a built-in batch process type that makes it easy to perform
+simple searches of parameter space called the @b{GridSearchBatch}.  This
+process increments a single parameter value in step with the batch
+counter, and applies this value to any parameter of the user's choosing.
+The parameter to be modified is specified by giving a CSS-style path to
+that parameter from the common project object (see @ref{css-tut-access}
+for details).  An example project which uses this grid search batch is
+@file{demo/bp/gridsearch_xor.proj.gz}, which can be consulted to see how
+it works in practice.  It also records the current value of the
+parameter to the log file.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-levels-train, proc-levels-epoch, proc-levels-batch, proc-levels
+@subsection Iterating over Epochs: TrainProcess
+@cindex Training Process
+@cindex Process, Training
+@tindex TrainProcess
+
+@vindex epoch of TrainProcess
+The @b{TrainProcess} iterates over epochs of training a network.  It
+typically has an @b{EpochProcess} as its @code{sub_proc}.  When this
+process is initialized (e.g. by @code{ReInit} or @code{NewInit}), it
+also initializes the weights of the network.  It has an @code{epoch}
+counter which is tied to the @code{epoch} counter on the network object,
+which this process increments after every epoch of training.  Note that
+if the epoch process under this training process is in @code{TEST} mode,
+then neither epoch counter is incremented.
+
+@tindex NEpochProcess
+There is an alternative kind of process which also iterates over epochs,
+called the @b{NEpochProcess}, which differs from the @b{TrainProcess} in
+that it does not initialize the network when it is initialized.  Also,
+it keeps its own @code{epoch} counter separate from that of the network.
+Thus, while it will increment the network's counter during training (but
+not turing testing), it @emph{will} increment its epoch counter even
+during testing.  Thus, it is useful for cases where you need to run
+multiple epochs of testing (e.g., to get multiple samples from settling
+in a stochastic network).
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-levels-epoch, proc-levels-trial, proc-levels-train, proc-levels
+@subsection Iterating over Trials: EpochProcess
+@cindex Epoch Process
+@cindex Process, Epoch
+@tindex EpochProcess
+
+The @b{EpochProcess} loops over the set of Events in the Environment
+(@pxref{env}). Each presentation of an event is known as a @i{trial},
+and this process typically has a @b{TrialProcess} as its
+@code{sub_proc}, although the situation is different when the
+environment contains sequences of events (@pxref{proc-special-seq}).
+
+The epoch process is responsible for ordering the presentation of events
+to the network.  Thus, at the beginning of the epoch (when the process
+is initialized), it tells the environment to initialize itself (using
+@code{InitEvents()}), and then obtains the total number of events in the
+environment (using @code{EventCount()}, see @ref{env-env}).  The epoch
+process then makes a list of event indexes, which represents the order
+in which events will be presented.  Depending on the state of the
+@code{order} variable, this list will either remain sequential or be
+randomized.
+
+The epoch process is also responsible for determining when to update the
+weights in the network, since this can usually be done either after each
+event or at the end of the epoch (depending on the state of the
+@code{wt_update} variable).  The epoch process itself calls the
+@code{UpdateWeights} function on the network, even when it is doing
+updates after each event.  Thus, lower-level processes should never call
+this function themselves.
+
+Also see the following information about Epoch Processes:
+
+@menu
+* proc-epoch-dmem::             Distributed Memory Computation in the EpochProcess
+@end menu
+
+The following variables are on the @b{EpochProcess}:
+
+@heading Variables
+@table @code
+@item Counter trial
+@vindex trial of EpochProcess
+The number of the current trial being executed.  This is the counter for
+the epoch process.  It is automatically initialized to be the number of
+events in the environment.
+@item Event* cur_event
+@vindex cur_event of EpochProcess
+This is a pointer to the current event being processed. After each
+trial, the EpochProcess updates this variable to point to the next event
+based on its list of event indexes.  It gets the event from the
+environment using the @code{GetEvent} function of the environment
+(@pxref{env-env}).
+@item Order order
+@vindex order of EpochProcess
+Controls the order in which Events are presented to the network. The
+values for this are:
+@table @code
+@item SEQUENTIAL
+Present events in sequential order (i.e. in the order they currently are
+in the Environment @code{events} group).
+@item PERMUTED
+Present events in permuted order.  This ensures that each event is only
+presented once per epoch, but the order is randomized.
+@item RANDOM
+This picks an event at random (with replacement) from the list of
+events.  This does not use the epoch process's list of events, and it
+allows the same event to be presented multiple times in an epoch, while
+other events might not be presented at all.
+@end table
+
+@item WtUpdate wt_update
+@vindex wt_update of EpochProcess
+Determines when the network's weights are updated (if at all).  The
+possible values are:
+@table @code
+@item TEST
+Don't update weights at all (for testing the network).  This also causes
+the training process to not increment the epoch counter of the network
+after each epoch, since the epoch counter is supposed to reflect the
+extent of training experience the network has had.
+@item ON_LINE
+Update the weights on-line (after every event).
+@item BATCH
+Update the weights after every epoch (batch mode).
+@item SMALL_BATCH
+Update the weights after every @code{batch_n} events.  This allows an
+intermediate level of batch mode learning which can be parameterized
+independent of the number of events in the epoch. 
+@end table
+@item int batch_n
+@vindex batch_n of EpochProcess
+Specifies the number of events between weight updates if
+@code{wt_update} is @code{SMALL_BATCH}.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-epoch-dmem, , , proc-levels-epoch
+@subsubsection Distributed Memory Computation in the EpochProcess
+@cindex Parallel Processing
+@cindex DMEM
+@cindex MPI
+@cindex Distributed Memory Processing
+@cindex Event-wise Distributed Memory Processing
+
+The EpochProcess supports distributed memory (@emph{dmem}) computation
+by farming out events across different distributed memory processors.
+For example, if you had 4 such processors available, and an
+environment of 16 events, each processor could process 4 of these
+events, resulting in a theoretical speedup of 4x.
+
+In all dmem cases (see @ref{net-dmem} for Network-level dmem) each
+processor maintains its own copy of the entire simulation project, and
+each performs largely the exact same set of functions to remain
+identical throughout the computation process.  Processing only
+diverges at carefully controlled points, and the results of this
+divergent processing are then shared across all processors so they can
+re-synchronize with each other.  Therfore, 99.99% of the code runs
+exactly the same under dmem as it does under a single-process, making
+the code extensions required to support this form of dmem minimal.
+
+If learning is taking place, the weight changes produced by each of
+these different sets of events must be integrated back together.
+@emph{This is means that weights must be updated in SMALL_BATCH or
+BATCH mode when using dmem.}
+
+Epoch-wise distributed memory computation can be combined with
+network-wise dmem (@pxref{net-dmem}).  The Network level
+@code{dmem_nprocs} parameter determines how many of the available
+processors are allocated to the network.  If there are multiples of
+these numbers of processors left over, they are allocated to the
+Epoch-level dmem computation, up to a maximum specified by the
+EpochProcess @code{dmem_nprocs} (which defaults to 1024, essentially
+saying, take all the remaining processors available).  For example, if
+there were 8 processors available, and each network was allocated 2
+processors, then there would be 4 sets of networks available for dmem
+processing of events.  Groups of two processors representing a
+complete network would work together on a given set of events.
+
+If @code{wt_update} is set to @code{BATCH}, then weights are
+synchronized across processors at the end of each epoch.  Results
+should be identical to those produced by running on a single-processor
+system under BATCH mode.
+
+If @code{wt_update} is @code{SMALL_BATCH}, then the @code{batch_n}
+parameter is @emph{divided} by the number of dmem processors at work
+to determine how frequently to share weight changes among processors.
+If @code{batch_n} is an even multiple of the number of dmem processors
+processing events, then results will be identical to those obtained on
+a single processor.  Otherwise, the effective batch_n value will be
+different.  For example, if there are 4 dmem processors, then a value
+of batch_n = 4 means that weights changes are applied after each
+processor processes one event.  However, batch_n = 6 cannot be
+processed in this way: changes will occur as though batch_n = 4.
+Similarly, batch_n = 1 actually means batch_n = 4.  If batch_n = 8,
+then weight changes are applied after every 2 sets of dmem event
+processing steps, etc.
+
+Note that @code{wt_update} cannot be @code{ONLINE} in dmem mode, and
+will be set to @code{SMALL_BATCH} automatically by default.
+
+For the @b{SequenceEpoch} process in @code{SMALL_BATCH} mode, weight
+updates can occur either at the @code{SEQUENCE} or @code{EVENT} level
+as determined by the @code{small_batch} field setting.  At the
+sequence level, each processor gets a different @emph{sequence} to
+process (instead of a different event), and weight changes are shared
+and applied every @code{batch_n} @emph{sequences} (subject to the same
+principles as for events as just described above, to maintain
+equivalent performance in single and dmem processing modes).  At the
+event level, each processor works on a different event within the
+sequence, and weight changes are applied every batch_n events as in a
+normal epoch process.  In addition, it is guaranteed that things are
+always synchronized and applied at the end of the sequence.
+
+Note that the event-wise model may not be that sensible under dmem if
+there is any state information carried between events in a sequence
+(e.g., a SRN context layer or any other form of active memory), as is
+often the case when using sequences, because this state information is
+NOT shared between processes within a sequence (it cannot be -- events
+are processed in parallel, not in sequence).
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-levels-trial, proc-levels-settle, proc-levels-epoch, proc-levels
+@subsection Presenting a Single Event: TrialProcess
+@cindex Trial Process
+@cindex Process, Trial
+@tindex TrialProcess
+
+The @b{TrialProcess} executes a single trial of processing, which
+corresponds to the presentation of a single @b{Event} to the network.
+This process is never used in its base form.  Instead, different
+algorithms derive versions of this process which perform
+algorithm-specific computations.
+
+@vindex cur_event of TrialProcess
+The trial process obtains the current event to be processed from the
+epoch process, which it finds somewhere above it in the processing
+hierarchy.  It keeps a pointer to this event in its own @code{cur_event}
+member.  It also typically depends on the epoch process @code{wt_update}
+field to determine if it should be computing weight changes or just
+testing the network.
+
+Some types of @b{TrialProcess} objects are terminal levels in the
+processing hierarchy, since they perform all of the basic computations
+directly on the network.  This is true of feedforward backpropagation,
+for example (@pxref{bp-proc}).  However, other types of trial process
+have sub-processes which perform iterative setting and cycling
+processes, which are described below.  This is true of the constraint
+satisfaction trial process, for example (@pxref{cs-proc}).
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-levels-settle, proc-levels-cycle, proc-levels-trial, proc-levels
+@subsection Iterating over Cycles: SettleProcess
+@cindex Settle Process
+@cindex Process, Settle
+@tindex SettleProcess
+
+The @b{SettleProcess} is a base type of process that is used to iterate
+over cycles of activation updating.  Thus, it typically has a
+@b{CycleProcess} as its sub-process.  In algorithms with recurrent
+connectivity, it is typically necessary to iteratively update the
+activation states of the units for some number of cycles.  This process
+controls this settling procedure.  Particular algorithms will derive
+their own version of the settle process.
+
+@vindex cycle of SettleProcess
+The @code{cycle} counter records the number of cycles of updating that
+have been performed.  Setting the @code{max} for this counter will limit
+settling to this number of cycles.  In addition, some algorithms use a
+@code{loop_stat} that measures the change in activation.   When this
+stat goes below its criterion threshold, the settle process will stop.
+Thus, the stat determines when the settling has reached an equilibrium
+state.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-levels-cycle,  , proc-levels-settle, proc-levels
+@subsection Performing one Update: CycleProcess
+@cindex Cycle Process
+@cindex Process, Cycle
+@tindex CycleProcess
+
+The @b{CycleProcess} performs algorithm-specific updating functions.  It
+processes a single cycle of activation updating, typically.  It is
+usually a sub-process of the @b{SettleProcess}.  It is almost always a
+terminal level of processing (it has no sub-processes).
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-special, proc-stat, proc-levels, proc
+@section Specialized Processes
+
+There are a number of specialized versions of the standard schedule
+processes, and other useful process objects for automating routine
+tasks.  These are discussed in detail in the following sections.
+
+@menu
+* proc-special-seq::            Processes for Sequences of Events
+* proc-special-inter::          Processes for Interactive Environments
+* proc-special-fork::           Processing Multiple Networks/Environments
+* proc-special-bridge::         Linking Networks Together with a Bridge
+* proc-special-misc::           Miscellaneous other Process Types
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-special-seq, proc-special-inter, proc-special, proc-special
+@subsection Processes for Sequences of Events
+@cindex Sequences of Events
+@cindex Process, Sequences
+@tindex SequenceEpoch
+@tindex SequenceProcess
+
+As discussed in @ref{env-seq}, environments can be constructed that
+specify sequences of events.  Certain algorithms can learn temporal
+contingencies between events, so it is important to be able to present
+the events in the proper sequence.  There are two specialized types of
+schedule processes that handle the presentation of sequences of events
+to the network, the @b{SequenceEpoch}, and the @b{SequenceProcess}.
+
+@vindex cur_event_gp of SequenceEpoch
+The @b{SequenceEpoch} is a version of the epoch process
+(@pxref{proc-levels-epoch}) which, instead of iterating over individual
+events, iterates over @emph{groups} of events.  Thus, this process uses
+the @code{GroupCount()} and @code{GetGroup()} functions on the
+environment instead of the event-wise ones (@pxref{env-env}).  Each
+group of events represents a collection of events that form a sequence.
+The sequence epoch adds a @code{cur_event_gp} field, which contains a
+pointer to the current event group that is being processed.
+
+See @ref{proc-epoch-dmem} for how these processes operate under
+distributed memory parallel processing.
+
+The @code{order} field on the sequence version of the epoch process now
+refers to the order of presentation of the groups (sequences) of events,
+and not the order of individual events within the sequences.  Also, the
+@code{SMALL_BATCH} mode of @code{wt_update} in the sequence epoch 
+can now take on one of two different possible meanings, depending on
+the state of the @code{small_batch} field.  In @code{SEQUENCE} mode,
+it means that weight changes are applied after @code{batch_n}
+sequences are processed.  In @code{EVENT} mode, it means that weight
+changes are applied after every @code{batch_n} events within the
+sequence (as in a standard EpochProcess).  Also, an additional weight
+update is performed at the end of the sequence in this mode to ensure
+that the weights are always updated at sequence boundaries, because
+the batch_n counter starts over at the start of each sequence.
+
+The @b{SequenceProcess} is typically created as a child of the
+@b{SequenceEpoch}, and it is the one that iterates over the particular
+events within a given group or sequence.  It obtains the current group
+of events from its parent sequence epoch process, and iterates over
+them.  It can control the order of presentation of events within the
+sequence, and has options for initializing the activation state of the
+network at the start of the sequence:
+
+@table @code
+@item Counter tick
+@vindex tick of SequenceProcess
+Each presentation of an event within a sequence is called a "tick", and
+this member counts the number of ticks that have gone by.  The
+@code{max} for this counter is automatically set to be the number of
+events in the current sequence.
+@item Event* cur_event
+@vindex cur_event of SequenceProcess
+This is a pointer to the current event being processed.
+@item Event_MGroup* cur_event_gp
+@vindex cur_event_gp of SequenceProcess
+This is a pointer to the current event group (sequence) being processed.
+It is obtained from the parent @b{SequenceEpoch}.
+@item Order order
+@vindex order of SequenceProcess
+This determines the order of presentation of the events within a
+sequence.  While sequences are usually presented in @code{SEQUENTIAL}
+order, it is conceivable that one might want @code{PERMUTED} or
+@code{RANDOM} orders as well, which are available (these work just like
+the equivalent in the epoch process, see @ref{proc-levels-epoch}).
+@item StateInit sequence_init
+@vindex sequence_init of SequenceProcess
+This determines if and how the activation state of the network is
+initialized at the start of the sequence.  @code{DO_NOTHING} means that
+no initialization is done, @code{INIT_STATE} means that the
+@code{InitState} function is called, and @code{MODIFY_STATE} means that
+the @code{ModifyState} function is called, which allows for
+algorithm-specific ways of changing state between sequences (e.g.
+decaying the activations).
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-special-inter, proc-special-fork, proc-special-seq, proc-special
+@subsection Processes for Interactive Environments
+@cindex Interactive Environments, Processes
+@cindex Processes, Interactive Environments
+@cindex Environments, Interactive
+@tindex InteractiveEpoch
+
+The @b{InteractiveEpoch} is a special epoch process for dealing with
+interactive environments (@b{InteractiveScriptEnv}, @ref{env-other}),
+where events are created on the fly at the start of each new trial,
+instead of being created entirely at the beginning of the epoch (as
+with a @b{ScriptEnv}, @ref{env-other}), or just being static, as with most
+environments.
+
+This process calls @code{InitEvents()} on the @code{environment} at
+the start of the epoch, which resets the @code{event_ctr} on the
+environment to 0.  It then calls @code{GetNextEvent()} on the
+environment at the start of each new trial.  In standard environments,
+this just gets the event at index event_ctr, and increments the
+counter.  If event_ctr is larger than the number of events, a NULL is
+returned indicating the end of the epoch.  In the InterativeScriptEnv,
+GetNextEvent() calls the associated script, which can then create the
+next event and return it to the epoch process (via the next_event
+field in the environment).
+
+See @file{demo/leabra/nav.proj.gz} for an example demonstrating the
+use of InteractiveEpoch and InteractiveScriptEnv.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-special-fork, proc-special-bridge, proc-special-inter, proc-special
+@subsection Processing Multiple Networks/Environments
+@cindex Processing, Multiple
+@tindex SyncEpochProc
+@tindex ForkProcess
+@tindex MultiEnvProcess
+
+There are times when it is useful to be able to compare two different
+networks as they simultaneously learn the same task, or compare the
+learning of the same network on different environments.  This can be
+accomplished by performing multiple streams of processing at the same
+time.
+
+The @b{SyncEpochProc} runs two different sub-processes through the same
+set of events from a common environment.  Thus, it can be used to train
+two different networks, even networks that use different algorithms, at
+the same time.  It essentially just adds a set of pointers to a
+@code{second_network} and a @code{second_proc_type} and
+@code{second_proc}, which identify the second branch of the processes to
+run, and which network to run them on.
+
+The @b{ForkProcess} can be used more generically to split processing at
+any level of the hierarchy.  Like the sync epoch process, it adds
+pointers to the second fork of processing, including a
+@code{second_environment}.
+
+@b{IMPORTANT NOTE:} You need to specifically add small script processes
+to the processes below a fork process that perform initialization and
+other operations on the second network -- the standard processes will
+only perform these operations on the first network!
+
+One use of multiple processing streams is to combine two different
+algorithms to form a hybrid network.  This can be done by synchronously
+running both networks, each with their own algorithm-specific training
+process, and linking them together with a @b{BridgeProcess}, which is
+described in the next section.
+
+The @b{MultiEnvProcess} can be used to iterate over multiple
+environments within one processing stream.  This can be useful for
+testing a number of different possible environments.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-special-bridge, proc-special-misc, proc-special-fork, proc-special
+@subsection Linking Networks Together with a Bridge
+@cindex Hybrid Networks
+@cindex Bridge Process
+@cindex Process, Bridge
+
+Most @b{TrialProcess} objects are implemented to work with a particular
+set of network objects that are part of a given algorithm.  Thus, the
+@b{BpTrial} process expects to operate on @b{BpUnits} and @b{BpCon}s,
+etc., and crashes otherwise.  This makes processing faster than if it
+had to check the type of every object operated on every time it did a
+computation.
+
+This situation makes it difficult to implement hybrid networks which
+combine components that operate under two different algorithms.  For
+example, a self-organizing network can be used to pre-process inputs to
+a backprop network.
+
+The way to do solve this problem in PDP++ is to use a @b{BridgeProcess},
+in conjunction with a @b{SyncEpochProc} as described in the previous
+section.  Thus, there are two trial processes that each operate
+synchronously within an epoch on the same events.  The bridge process
+copies activations or any other unit state variable from one network to
+the other, allowing them to act as if they were a single composite
+network.
+
+An example of a bridge process can be found in the @file{demo/bridge}
+directory.  This example just connects two backprop networks, but the
+principles are the same when you use two different kinds of algorithms.
+
+The parameters of the bridge process are as follows:
+
+@table @code
+@item Network* second_network
+@vindex second_network of BridgeProcess
+This is the other network that is being bridged (the first network is
+the one pointed to by the process @code{network} pointer).
+@item BridgeDirection direction
+@vindex direction of BridgeProcess
+This is the direction to copy--network one is the @code{network} pointer
+and network two is the @code{second_network} pointer.  Note that the
+@code{network} pointer is set by the process hierarchy that this process
+is in, which means that it can't be set arbitrarily. This is why one
+might need to switch the direction with this field.
+@item String src_layer_nm
+@vindex src_layer_nm of BridgeProcess
+This is the name of the layer in the source network.  Only entire layers
+can be copied with this process.
+@item String trg_layer_nm
+@vindex trg_layer_nm of BridgeProcess
+This is the name of the layer in the target network.
+@item String src_variable
+@vindex src_variable of BridgeProcess
+This is the variable name (e.g. "act") to copy from the unit.
+@item String trg_variable
+@vindex trg_variable of BridgeProcess
+This is the variable to copy the value into.  Typically, this is "ext"
+so that the input appears like external input to the unit, which will
+then be treated appropriately by the processing algorithm.
+@item Unit::ExtType trg_ext_flag
+@vindex trg_ext_flag of BridgeProcess
+This sets the unit flag on the target units to indicate that external
+input was received, if desired.  Note that the flag on the layer is
+@emph{not} set, which allows this external input to avoid being erased
+by the @code{InitExterns} call which usually precedes application of
+environmental patterns.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-special-misc,  , proc-special-bridge, proc-special
+@subsection Miscellaneous other Process Types
+
+@cindex Saving Networks
+@cindex Networks, Saving
+@tindex SaveNetsProc
+@tindex SaveWtsProc
+The @b{SaveNetsProc} and @b{SaveWtsProc} will simply save the current
+network or network weights to a file which has a file name composed of
+the name of the network (from its @code{name} field) plus the current
+values of the epoch and, if present, the batch counters.  This can be
+placed in the @code{loop_procs} or @code{final_procs} of the
+@b{TrainProcess} or the @b{BatchProcess} to save networks during
+training or after training, respectively.  Set the mod parameters to get
+it to save at different intervals (e.g., @code{m = 25} saves every 25
+epochs if in the train loop procs).
+
+@cindex Loading Networks, Automatically
+@cindex Networks, Loading Automatically
+@tindex LoadWtsProc
+The @b{LoadWtsProc} will load in a set of weights from a specified
+file, which is useful for example for performing repeated lesion tests
+on a given trained network -- build the network, load the weights,
+lesion it, test it, repeat!
+
+@cindex Initializing Networks, Automatically
+@cindex Networks, Initializing Automatically
+@tindex InitWtsProc
+The @b{InitWtsProc} will initialize the weights of a network.  The
+@b{TrainProcess} does this automatically when it is initialized, but
+there are other possible configurations of processes where you might
+need to initialize the weights at a different point.
+
+@cindex Analysis, of Network Representations
+@cindex Representations, Analysis
+@cindex Network, Analysis of
+@tindex DispDataEnvProc
+The @b{DispDataEnvProc} automatically performs an analysis of a data
+environment (a data environment contains data recorded from the
+network for the purposes of analysis, by the @code{CopyToEnvStat} stat
+(@pxref{proc-stats-misc}). See @ref{how-proc} for an overview of how
+this analysis process works, and @ref{env-analyze} for the types of
+analyses that can be performed.  The data environment to analyze is
+specified in @code{data_env} (the regular @code{environment} pointer
+points to the environment actually used by the entire process
+hierarchy, and is not used).  The type of analysis is specified in the
+@code{disp_type} field, and the results of the analysis are displayed
+in the log pointed to by the @code{disp_log} field (if this is NULL,
+or the wrong type, a new one is made).  The remaining parameters are
+used for different analysis routines, as described in greater detail
+in @ref{env-analyze}.
+
+@cindex Network Weights, Displaying
+@tindex DispNetWeightsProc
+The @b{DispNetWeightsProc} automatically displays the weights between
+two layers of the @code{network} in a grid log.  Useful for monitoring
+the development of the entire set of weights as the network learns
+(the netview can only display the weights to one unit, whereas this
+displays the weights to all units in the layer).  This is just a call
+to the @code{GridViewWeights} function on the Network
+(@pxref{net-net}).
+
+@tindex UnitActRFStatResetProc
+@tindex TimeCounterStatResetProc
+@tindex ClearLogProc
+There are a set of processes that reset other processes, stats, or
+logs -- these are usually placed at a higher level of the processing
+hierarchy in @code{init_procs}, to initialize things.  They are:
+@b{UnitActRFStatResetProc}, @b{TimeCounterStatResetProc}, and
+@b{ClearLogProc} -- their functions should be fairly obvious.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-stat, proc-stats  , proc-special, proc
+@section The Statistic Process
+@cindex Statistics
+@tindex Stat
+
+The Statistic Process is an extension of the basic Process object which
+is used for computing values that are then made available for recording
+and displaying in logs.  The basic @b{Stat} object defines an interface
+for computing and reporting data.  This interface is used by the
+schedule processes, who supervise the running of stats and the
+reporting of their data to the logs.
+
+Each statistic object can operate in one of two capacities.  The first
+is as the original @emph{computer} (or collector) of some kind of data.
+For example, a squared-error statistic (@b{SE_Stat}) knows how to go
+through a network and compute the squared difference between target
+values and actual activations.  Typically, this would be performed after
+every event is presented to the network, since that is when the relevant
+information is available in the state variables of the network.
+
+The second capacity of a statistic is as an @emph{aggregator} of data
+computed by another statistic.  This is needed in order to be able to
+compute the sum of the squared-errors over all of the trials in an
+epoch, for example.  When operating in aggregation mode, statistics work
+from data in the statistic they are aggregating from, instead of going
+out and collecting data from the network itself.
+
+Typically, the statistic and its aggregators are all of the same type
+(e.g., they are all @b{SE_Stat}s), and the aggregated values appear in
+the same member variable that the originally computed value appears in.
+Thus, this is where to look to set a stopping criterion for an
+aggregated stat value, for example.
+
+Each statistic knows how to create a series of aggregators all the way
+up the processing hierarchy.  This is done with the
+@code{CreateAggregates} function on the stat, which is available as an
+option when a statistic is created.  Thus, one always creates a
+statistic at the processing level where it will do the original
+computation.  If aggregates of this value are needed at higher levels,
+then make sure the @code{CreateAggregates} field is checked when the
+stat is created, or call it yourself later (e.g., from the @i{Actions}
+menu of a stat edit dialog).  You can also @code{UpdateAllAggregators},
+if you want to make sure their names reflect any changes (i.e., in
+@code{layer} or network aggregation operator), and @code{FindAggregator}
+to find the immediate aggregator of the current stat.
+
+It is recommend that you use the @i{NewStat} menu from the
+@i{.processes} menu of the project to create a new statistic, or use the
+Project Viewer (@pxref{proj-viewer}).  This will bring up a dialog with
+the default options of where to create the stat (i.e., at what
+processing level) that the stat itself suggested (each stat knows where
+it should do its original computation).
+
+@vindex time_agg of Stat
+There are several different kinds of aggregation operators that can be
+used to aggregate information over processing levels, including summing,
+averaging, etc.  The operator is selected as part of the @code{time_agg}
+member of the statistic. See below for descriptions of the different
+operators.
+
+Note that all aggregation statistics reside in the @code{loop_stats}
+group of the schedule processes, since they need to be run after every
+loop of the lower level statistic to collect its values and aggregate
+them over time.
+
+@vindex net_agg of Stat
+In addition to aggregating information over levels of processing,
+statistics are often aggregating information over objects in the
+network.  Thus, for example, the @b{SE_Stat} typically computes the sum
+of all the squared error terms over the output units in the network.
+The particular form of aggregation that a stat performs over network
+objects is controlled by the @code{net_agg} member.  Thus, it is
+possible to have the @b{SE_Stat} compute the average error over output
+units instead of the sum by changing this variable.
+
+@vindex name of Stat
+Finally, the name of a statistic as recorded in the log and as it
+appears in the @code{name} field is automatically set to reflect the
+kinds of aggregation being performed.  The first three-letter prefix (if
+there are two) reflects the @code{time_agg} operator.  The second
+three-letter prefix (or the only one) reflects the @code{net_agg}
+operator.  Further the layer name if the @code{layer} pointer is
+non-NULL is indicated in the name.  The stat @code{name} field is not
+automatically set if it does not contain the type name of the stat, so
+if you want to give a stat a custom name, don't include the type name in
+this. 
+
+@menu
+* proc-stat-agg::               Aggregation Operators and other Parameters
+* proc-stat-crit::              Using Statistics to Control Processes
+* proc-stat-impl::              Implementational Details about Stats
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stat-agg, proc-stat-crit, proc-stat, proc-stat
+@subsection Aggregation Operators and other Parameters
+
+For both the @code{time_agg} and the @code{net_agg} members of a stat,
+the following aggregation operators are defined:
+
+@tindex Aggregate
+@table @code
+@item  LAST
+@vindex LAST of Aggregate
+This simply copies the last value seen.  This is useful for aggregators
+that appear in the train and batch levels of processing, which typically
+just reflect the results of the most recent epoch of processing.  In the
+network-level aggregation, this would give the value of the last unit,
+which is not terribly useful.
+@item  SUM
+@vindex SUM of Aggregate
+This sums over all values.
+@item  PROD
+@vindex PROD of Aggregate
+This gives a product over all values.  When this operator is used, the
+result variable will be initialized to 1.
+@item  MIN
+@vindex MIN of Aggregate
+This gives the minimum value of all seen.  Note that when this is the
+aggregation operator, the result variable will be initialized to a very
+large number.
+@item  MAX
+@vindex MAX of Aggregate
+This gives the maximum value of all seen.  Note that when this is the
+aggregation operator, the result variable will be initialized to a very
+small number.
+@item  AVG
+@vindex AVG of Aggregate
+This gives the average of all values seen.  Since aggregation happens
+on-line, we use the on-line version of averaging, so the result is
+always the average of what has been seen so far.
+@item  COPY
+@vindex COPY of Aggregate
+@vindex copy_vals of Stat
+This results in the collection of individual values, which are kept in
+the @code{copy_vals} group of the stat.  Thus, it does not form a single
+summary number of all the values, instead it simply copies them
+verbatim.  This is useful for @b{MonitorStat} objects, which copy state
+variables from the network.  It can be used to view per-event values at
+the end of the epoch by doing a @code{time_agg} with the @code{COPY}
+operator.
+@item  COUNT
+@vindex COUNT of Aggregate
+This counts up the the number of times the values meet the comparison
+expression given in the @code{count} field of the agg member.  The count
+expression has relational operators and a comparison value, so one could
+for example count the number of times an error value was below some
+threshold.
+@end table
+
+In addition to the aggregation operator, the @code{time_agg} member has
+a pointer to the stat that this stat is aggregating @code{from}.  If
+this is @code{NULL}, then the stat is computing original information
+instead of aggregating.
+
+@vindex mod of Stat
+@vindex log_stat of Stat
+It is possible to control when the stat is computed, and if the data is
+logged, independently.  The @code{mod} member of a stat determines when
+and if it is computed (and when its criterion is checked, when it is
+logged, etc).  For stats located in the @code{loop_stats} group, this
+mod operator works on the process whose loop_stats the stat is in.  For
+stats located in the @code{final_stats} group, the mod operator works on
+the next higher up process in the hierarchy (i.e., a stat in the
+final_stats of a TrialProcess would use the trial counter from the
+parent EpochProcess).  The @code{log_stat} flag provides a way of
+turning on or off the logging of a statistic.  If the flag is not
+checked, a stat is not logged, but it is run and its criterion is
+checked (as per the mod settings).  Thus, one can keep lower-level stats
+which might be just collecting data for aggregation from generating too
+much log data.
+
+@vindex layer of Stat
+Finally, the computation of the stat over the objects in the network can
+be restricted to a given layer by setting the @code{layer} pointer.  The
+layer name will also appear in the stat log output and in the name field
+of the stat itself.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-stat-crit, proc-stat-impl, proc-stat-agg, proc-stat
+@subsection Using Statistics to Control Process Execution
+@cindex Stopping Criteria
+@cindex Processes, Controlling
+@tindex StatVal
+
+Often, one wants to stop training a network once it has reached some
+criterion of performance.  This can be done by setting the criterion
+values associated with a statistic value.  All statistic values are
+represented by a @b{StatVal} object, which has fields for representing
+the stopping criterion.  The criterion is represented with a relational
+operator (less than, equal to, etc.) and a comparison value.  The fields
+are as follows:
+
+@table @code
+@item float value
+@vindex value of StatVal
+This holds the current computed or aggregated value of the statistic.
+@item bool flag
+@vindex flag of StatVal
+This flag indicates if a stopping criterion is active for this
+statistic.  If it is not checked, the remaining fields are ignored.
+@item Relation rel
+@vindex rel of StatVal
+This is the relational operator to compare @code{value} and @code{val}.
+@item float val
+@vindex val of StatVal
+This is the comparison value to compare @code{value} with.
+@item int cnt
+@vindex cnt of StatVal
+This indicates how many times the relation must be met in order to pass
+criterion.  This can be useful to make sure a network has reliable
+performance under criterion by requiring it to pass muster 2 or 3 times
+in a row, for example.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stat-impl,  , proc-stat-crit, proc-stat
+@subsection Implementational Details about Stats
+
+If you will be writing your own statistic process, this provides some
+information that might be useful.
+
+The stat object provides a scaffolding for looping through the various
+objects in a network.  Thus, if you want to do something at the unit
+level, you can simply write a @code{Unit_Stat} function, and the stat
+will automatically iterate over layers and units to call the unit stat
+function on every unit.  This makes it relatively easy to write a new
+statistic.
+
+See the header file @file{src/pdp/stats.h} for more information about
+how a stat object works.  In particular, notice that there are
+recommended ways of speeding up otherwise generic functions that rely on
+type-scanned information.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats  , proc-css, proc-stat, proc
+@section Different Types of Statistics
+
+There are a number of built-in statistic types that come with the
+software.  They are as follows:
+
+@menu
+* proc-stats-se::               Summed-Error Statistics
+* proc-stats-monitor::          Monitoring Network State Variables
+* proc-stats-close-event::      Finding The Event Closest to the Current Output Pattern
+* proc-stats-compare::          Comparing or Computing on Stat Values
+* proc-stats-actrf::            Activity-based Receptive Fields
+* proc-stats-rt::               Reaction-time Based on Crossing an Activation Threshold
+* proc-stats-ctrs::             Statistics that Provide Counters (Time, Epoch, etc)
+* proc-stats-misc::             Miscellaneous Other Stat Types
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-se, proc-stats-monitor, proc-stats  , proc-stats
+@subsection Summed-Error Statistics
+@tindex SE_Stat
+@tindex CE_Stat
+@tindex RBpSE_Stat
+@cindex Squared Error Statistic
+@cindex Error, Statistic
+
+@vindex se of SE_Stat
+@vindex tolerance of SE_Stat
+The @b{SE_Stat} object is a stat that iterates over the units that have
+target values in a network, and computes the difference between the
+activation and the target value.  This is useful for monitoring learning
+performance over training.  The current value of this statistic can be
+found in the @code{se} member.  Also, there is a @code{tolerance}
+parameter which causes absolute differences of less than this amount to
+result in zero error.  Thus, if one only was interested in whether the
+network was on the right side of .5, you would set the tolerance to .5
+(assuming a 0 to 1 activation range).
+
+There is also a @b{CE_Stat} and a @b{RBpSE_Stat} defined in the Bp
+version of the executable.  These compute the cross-entropy error
+statistic and a version of squared-error that takes into account the
+@code{dt} parameter of the recurrent backprop algorithm.
+
+@tindex MaxActTrgStat
+The @b{MaxActTrgStat} computes an error statistic based only on the
+most active unit in the target layer(s).  If this most active unit
+(max act) has a target value of 1, then there is no error, otherwise
+there is an error.  This statistic is useful when there are multiple
+possible correct answers, and the network is expected to just choose
+one of them.  Thus, if its maximum act is a target, it is correct, and
+otherwise it is not.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-monitor, proc-stats-close-event, proc-stats-se, proc-stats
+@subsection Monitoring Network State Variables
+@cindex State Variables, Recording
+@cindex Monitoring State Variables
+@cindex Recording State Variables
+@tindex MonitorStat
+
+In order to be able to view network stat variables (e.g., unit
+activations) in one of the log displays (or record them to disk files),
+these state variables need to be monitored with a @b{MonitorStat}.
+
+The @b{NetView} provides a convenient interface for creating monitor
+stats and selecting which objects to monitor and what values to monitor
+from them (@pxref{net-view-actions}), as does the @b{Wizard} object
+(@pxref{how-wizard}).
+
+@vindex objects of MonitorStat
+@vindex variable of MonitorStat
+There are basically two parameters of relevance in the monitor stat.
+One is the @code{objects} that are being monitored.  This is a group
+which has links to the objects (see @ref{obj-group} for information on
+links).  The other is the @code{variable} to record from these objects.
+Note that if the variable is one found on units, but the object(s) are
+layers, then the stat will automatically get the unit variable from all
+of the units in the layer.  Similarly, if the variable is one on
+connections, but the object(s) are projections, all of the connections
+in the projection will be used.
+
+Typically, the @code{net_agg} operator @code{COPY} is used.  This
+results in a separate column of data for each object being monitored.
+This data is stored in the @code{mon_vals} group on the monitor stat.
+When these values are graphed or displayed in the grid log
+(@pxref{log-views-graph}, @ref{log-views-grid}), they appear as one big
+group that shares the same axis on the graph and is part of the same
+sub-grid on the grid.
+
+However, one can compute any kind of network aggregation from the
+monitored statistics, including MAX, AVG, etc.  These aggregations
+produce a single value in the @code{mon_vals} group.
+
+@vindex pre_proc_1,2,3 of MonitorStat
+It is also possible to perform three steps of pre-processing on the
+monitored values before they are recorded or aggregated into the monitor
+stat.  This pre-processing is controlled by the @code{pre_proc_1,2,3}
+members, which specify an operation and, optionally, arguements to that
+operation in the @code{arg} member.  Note that the thresholding function
+@code{THRESH} compares the value to the @code{arg}, and gives a result
+of @code{hi} if it is greater-than-or-equal, and @code{lo} if it is
+less-than the arg.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-close-event, proc-stats-compare, proc-stats-monitor, proc-stats
+@subsection Finding The Event Closest to the Current Output Pattern
+@tindex ClosestEventStat
+@cindex Closest Event, Statistic
+@cindex Event, Closest
+
+In order to understand what kinds of errors a network is making, or in
+the case where a network can produce multiple outputs for a given input,
+it is useful to be able to compare the actual output the network came up
+with against all of the possible training events to find the one that
+matches the closest.  The @b{ClosestEventStat} does exactly that.
+
+@vindex dist of ClosestEventStat
+@vindex ev_nm of ClosestEventStat
+@vindex sm_nm of ClosestEventStat
+The closest event stat reports both the distance in the @code{dist}
+field, and the name of the event which was closest to the current output
+pattern in the @code{ev_nm} field. If the @code{ev_nm} matches that of
+the currently presented event (@code{cur_event} of the TrialProcess),
+then @code{sm_nm} is 1, else it is 0.  The average of this value gives a
+"percent correct" measure for forced-choice performance among the
+different items in the environment.  The distance can be computed in
+several different ways, as described below:
+
+@table @code
+@item CompareType cmp_type
+@vindex cmp_type of ClosestEventStat
+This is the type of distance function to use in making the comparison:
+@table @code
+@item SUM_SQUARES
+sum of squares distance: sum[(x-y)^2]
+@item EUCLIDIAN
+euclidean distance: sqrt(sum[(x-y)^2])
+@item HAMMING_DIST
+hamming distance: sum[abs(x-y)]
+@item COVAR
+covariance: sum[(x-<x>)(y-<y>)]
+@item CORREL
+correlation: sum[(x-<x>)(y-<y>)] / sqrt(sum[x^2 y^2])
+@item INNER_PROD
+inner product: sum[x y]
+@item CROSS_ENTROPY
+cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
+@end table
+@item float dist_tol
+@vindex dist_tol of ClosestEventStat
+This is a tolerance value for distance comparisons, where absolute
+differences below this amount result in a 0 distance component.
+@item bool norm
+@vindex norm of ClosestEventStat
+If this flag is checked, and one of the distance comparisons is being
+performed, the values participating in the distance computation will be
+normalized to a zero-one range prior to computation.  If the
+@code{INNER_PROD} is being taken, this will result in a normalized
+inner-product measure (dividing by the magnitudes of the individual
+weight vectors).
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-compare, proc-stats-actrf, proc-stats-close-event, proc-stats
+@subsection Comparing or Computing on Stat Values
+@cindex Comparing Statistics
+@cindex Computing on Statistics
+@cindex Statistics, Comparing
+@cindex Statistics, Computing on
+@tindex CompareStat
+@tindex ComputeStat
+
+The @b{CompareStat} provides a general way of comparing the results of
+different statistics with each other.  Thus, one can actually use
+statistics to analyze one's data on-line, instead of dumping it all to a
+file and analyzing it after the fact.
+
+Similarly, the @b{ComputeStat} provides a general way of performing
+simple math computations on the results of other stat computations.  It
+can be used on one stat (e.g., for thresholding, absolute-value or other
+single-argument operations), or on two stats (e.g., for multiplying,
+subtracting, etc between two stats).
+
+The compare stat contains pointers to two other stats, @code{stat_1} and
+@code{stat_2}, which provide the data to compare.  The data consists of
+any stat val data that can be found on these stats.  Ideally, they both
+have the same number of data values, typically in their @code{copy_vals}
+group (e.g., from @b{MonitorStat}s that are @code{COPY}ing activations
+from two sets of units that are being compared).
+
+The types of comparisons are simply different distance functions that
+measure the distances between the two stat's data:
+
+@table @code
+@item CompareType cmp_type
+@vindex cmp_type of CompareStat
+This is the type of distance function to use in making the comparison:
+@table @code
+@item SUM_SQUARES
+sum of squares distance: sum[(x-y)^2]
+@item EUCLIDIAN
+euclidean distance: sqrt(sum[(x-y)^2])
+@item HAMMING_DIST
+hamming distance: sum[abs(x-y)]
+@item COVAR
+covariance: sum[(x-<x>)(y-<y>)]
+@item CORREL
+correlation: sum[(x-<x>)(y-<y>)] / sqrt(sum[x^2 y^2])
+@item INNER_PROD
+inner product: sum[x y]
+@item CROSS_ENTROPY
+cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
+@end table
+@item float dist_tol
+@vindex dist_tol of CompareStat
+This is a tolerance value for distance comparisons, where absolute
+differences below this amount result in a 0 distance component.
+@item bool norm
+@vindex norm of CompareStat
+If this flag is checked, and one of the distance comparisons is being
+performed, the values participating in the distance computation will be
+normalized to a zero-one range prior to computation.  If the
+@code{INNER_PROD} is being taken, this will result in a normalized
+inner-product measure (dividing by the magnitudes of the individual
+weight vectors).
+@item SimpleMathSpec pre_proc_1,2,3
+@vindex pre_proc_1,2,3 of CompareStat
+These allow for three steps of pre-processing on the values before they
+are compared.  These members specify an operation and, optionally,
+arguements to that operation in the @code{arg} member.  Note that the
+thresholding function @code{THRESH} compares the value to the
+@code{arg}, and gives a result of @code{hi} if it is
+greater-than-or-equal, and @code{lo} if it is less-than the arg.
+@end table
+
+The @b{ComputeStat} is like the compare stat, except that instead of
+computing the distance, the @code{compute_1,2,3} math operators are
+applied on the stats, and the result is aggregated according to
+@code{net_agg}.  Pre-processing of each stat independently is supported
+as with the compare stat.  To compute something between two stats (e.g.,
+subtract values), then you just set the compute_1 operator @code{opr} to
+@code{SUB}, and stat_2 values are subtracted from stat_1 values, with
+the result going into stat_1.  Subsequent compute_ operators can then
+manipulate this result (e.g, doing the @code{SQUARE}).  Note that they
+don't all have to involve both stats, and you can only use one stat (in
+which case compute_x just works like pre_proc_x).
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-actrf, proc-stats-rt, proc-stats-compare, proc-stats
+@subsection Activity-based Receptive Fields
+@cindex Receptive Fields, Activity Based
+@tindex UnitActRFStat
+
+The @b{UnitActRFStat} computes an effective receptive field for units
+based on their activation values when inputs are presented.  The idea is
+to present a wide range of inputs to the network while performing a
+weighted average over these input patterns as a function of the unit's
+activation for each.  When you do this averaging, all the things that
+the unit does not care about wash out, leaving an image of those things
+that reliably activate the unit.  Assuming that the inputs span a large
+enough space and provide for sufficient averaging, the resulting
+receptive field can be much more informative than just looking at the
+weights, since it takes into account any network dynamics, etc., and can
+be computed on units any number of layers removed from the inputs.
+Finally, the "input" that you average over need not literally be the
+input layer to the network -- it could be the output, or an
+intermediate hidden layer (or all of these at once).
+
+This stat requires a stable database for accumulating the averaged
+receptive fields -- an @b{Environment} is used for this purpose.  Note
+that you have to do an @code{InitRFVals} in order to initialize this
+environment before you start collecting the stats.  The statistics
+collect until @code{InitRFVals} is run again.
+
+@code{InitRFVals} can be performed automatically via a
+@b{UnitActRFStatResetProc}, which can be put in the @code{init_procs}
+of a higher processing level in the hierarchy.
+
+This stat has the following parameters:
+@table @code
+@item layer
+@vindex layer of UnitActRFStat
+Set this to point to the units that you want to record the receptive
+fields for.
+@item rf_layers
+@vindex rf_layers of UnitActRFStat
+This contains the layer(s) that you want to perform the averaging over
+(the input in the above description).
+@item data_env
+@vindex data_env of UnitActRFStat
+This points to the @b{Environment} that contains the resulting receptive
+fields, with one @b{Event} per unit.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-rt, proc-stats-ctrs, proc-stats-actrf, proc-stats
+@subsection Reaction-time Based on Crossing an Activation Threshold
+
+@cindex Reaction Time
+@tindex ActThreshRTStat
+The @b{ActThreshRTStat} records a reaction time (RT) from the network
+based on when activation levels in given layer (typically the output
+layer) exceed threshold. Experience in a variety of cases has shown
+that human reaction times can be best modeled by recording the number
+of processing cycles it takes for a response/output layer unit to
+exceed some kind of activity threshold.  In contrast, recording RT
+based on the change in activation over time going below a threshold
+(in @file{cs++} this is @b{CsMaxDa}; in @file{leabra++} it is
+@b{LeabraMaxDa}) is typically not such a good measure of human
+reaction time.
+
+This stat should typically be created in the @code{loop_stats} of the
+@b{SettleProcess}.  To configure this stat, just set the @code{layer}
+pointer to point to the response/output layer in the network, and set
+the @code{act_thresh} to the activation threshold.  Two values are
+recorded in this stat:
+
+@code{max_act} records the maximum activation in the response layer,
+and setting a stopcrit on this will actually result in stopping
+settling upon reaching threshold (note that the val of this stopcrit
+is automatically set to be the same as the @code{act_thresh} value,
+but the stopcrit flag is not active by default, so that it will not
+stop processing).
+
+@code{rt_cycles} records the number of settling cycles at the point
+when the maximum activation in the layer exceeded the @code{max_act}
+threshold (regardless of whether the settle process actually
+stopped at this point). 
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-ctrs, proc-stats-misc, proc-stats-rt, proc-stats
+@subsection Statistics that Provide Counters (Time, Epoch, etc)
+
+The following statistics all provide counter data, which are useful
+for providing X-axes for graphing and other data analysis.
+
+@tindex EpochCounterStat
+The @b{EpochCounterStat} records the current epoch number from the
+network.  This is useful for testing process hierarchies which start at
+the epoch level and thus do not have an epoch counter from the training
+process.
+
+@tindex ProcCounterStat
+The @b{ProcCounterStat} grabs a whole set of counters off of another
+process.  It is used for the same reason an epoch counter stat is used,
+except it also gives one access to batch counters and any other counters
+that might be present on the training process hierarchy.
+
+@tindex TimeCounterStat
+The @b{TimeCounterStat} simply increments its counter every time it is
+run, providing an ever-incrementing time count that spans across
+multiple loops through a given level of the process hierarchy.  Use
+the @b{TimeCounterResetProc} to automatically reset this time counter
+at some higher level of the process hierarchy (e.g., at the start of
+training, in the @code{TrainProcess} @code{init_procs}).
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proc-stats-misc,  , proc-stats-ctrs, proc-stats
+@subsection Miscellaneous Other Stat Types
+
+@tindex CyclesToSettle
+The @b{CyclesToSettle} statistics simply records the number of cycles it
+took to settle.  It should be placed in the @code{loop_stats} of the
+trial process, where it will be able to grab the final counter value
+from the settle process.  This is useful to record how fast a network is
+settling, which is often used as a proxy for reaction times, etc.  See
+also the @b{ActThreshRTStat} @ref{proc-stats-rt}.
+
+@tindex ScriptStat
+The @b{ScriptStat} is a statistic that is meant to be used with a CSS
+script.  It provides a generic group of @code{vals} into which the
+results of the statistic can be put, and an array of @code{s_args} for
+passing arguments to the script to control its behavior.  A very simple
+example script code for computing the difference between two unit
+activations is as follows:
+
+@example
+// this is a sample script stat script
+
+void DoStat() @{
+  if(vals.size != 1) @{  // first, create vals to hold results
+    // anything in vals is automatically logged, etc.
+    vals.EnforceSize(1);  // do whatever is necessary to get 1 val
+    vals[0].name = "act_diff";  // this is the header for the stat val
+  @}
+  // get the first unit (note that we can access 'network'
+  // and other member variables from the ScriptStat the script is in)
+  Unit* un1 = network.layers[1].units[0];
+  // and then the second unit
+  Unit* un2 = network.layers[1].units[1];
+
+  // compute value to put in statistic
+  float diff = un1->act - un2->act;
+
+  // then store result in the val.  note you can have as many
+  // vals as you want and compute as many things as you want!
+  vals[0].val = diff;
+@}
+
+// you *must* call the function so that when the script is run
+// the above function is actually run!
+DoStat();
+@end example
+
+@cindex Data Environment
+@cindex Environment, Data
+@tindex CopyToEnvStat
+The @b{CopyToEnvStat} takes data from another statistic and copies it
+into a data environment (just a basic environment that holds data for
+later analysis).  This is a key piece of a chain of steps involved in
+analyzing network representations, etc.  See @ref{how-proc} for an
+overview of how this analysis process works, and @ref{env-analyze} for
+the types of analyses that can be performed.  The
+@code{DispDataEnvProc} can automate the performance and display of
+these analysis routines (@pxref{proc-special-misc}).
+
+The key parameters on this stat are the @code{stat}, which points to
+the statistic to get data from, the @code{data_env}, which points to
+the environment to save the data in, and the @code{accum_scope}, which
+determines how much data to accumulate in the data env (e.g., EPOCH
+accumulates over an entire epoch, etc).
+
+@cindex Projection of Data onto a Vector
+@tindex ProjectionStat
+The @b{ProjectionStat} projects data from another statistic (e.g., a
+@code{MonitorStat}) onto a stored vector (@code{prjn_vector}), and
+records the resulting scalar value in @code{prjn}.  A projection is
+just computing the distance between two vectors, and the various
+parameters on this stat determine the type of distance computation to
+perform.  This is useful for analyzing network representations as they
+are generated based on for example a principal components analysis
+performed on another batch of previously-generated network
+activations.  To facilitate this, the buttons @code{VecFmPCA} and
+@code{VecFmEvent} provide a way to load the prjn vector from either a
+PCA (principal components analysis) performed on a data environment
+(@pxref{env-analyze}) or just from a stored event pattern (e.g., the
+environment can be used to draw a pattern to compare).
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc-css,  , proc-stats  , proc
+@section Processes and CSS Scripts
+
+Any kind of process can be configured to use a CSS script instead of its
+original hard-coded functions.  One simply sets the process type to
+@code{SCRIPT} and opens a script file in the @code{script_file} member
+of the process.
+
+When the process is run, it checks to see if it should run the script
+instead.  Note that if you are replacing a schedule process with a
+script, you have to replace the entire C_Code function.  This code can
+be used verbatim in CSS, and an example is given in
+@file{css/include/script_proc.css}.
+
+Note that the script is given transparent access to all of the members
+and member functions defined on the script object it is attached to.
+This allows one to mix existing hard-coded functions with script
+versions by simply calling the existing ones in some places, and calling
+new script-defined ones in other places.
+
+Where possible, it is generally preferable to use a @b{ScriptStat} or
+@b{ScriptProcess} instead of replacing an entire existing process with a
+script.  This will tend to be simpler and a more modular solution.

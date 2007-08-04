@@ -1,0 +1,84 @@
+# see Unix section for documentation of switches
+# this file is copied directly to .pri on Windows
+
+# for some whacky reason, CONFIG had way too much default stuff, so we init it here:
+CONFIG = lex yacc plugin warn_off uic resources qt incremental stl link_prl
+# TODO: this was in the list in Linux, but make sure this isn't nasty on Mac...
+CONFIG += qt_no_framework
+
+# on Unix, if empty, then inc/lib etc. paths are from install
+PDP4_DIR = $$(PDP4DIR)
+
+win32 {
+  CONFIG += dll
+#TODO: need to pass in the msvc target, ex Debug or Release (for pathing)
+#MSVC_TARGET = Debug
+
+  contains( MSVC_TARGET, Debug ) {
+    CONFIG += debug
+  } else { 
+    contains( MSVC_TARGET, Release ) {
+      CONFIG += release
+    } else {
+      MSVC_TARGET = Release
+      CONFIG += release
+      warning("MSVC_TARGET variable should be defined as either Debug or Release; 'Release' has been assumed")
+    }
+  }
+  
+  LIB_VER = 
+  SYS_PLUGIN_DIR = $$(PDP4DIR)/plugins
+  CONFIG_PRI = $$(PDP4DIR)/plugins/config.pri
+  PDP_SYS_DIR = $$(PDP4DIR)
+  PDP4_INC_DIR = $${PDP4_DIR}/src
+  MAKETA = $$(PDP4DIR)/bin/maketa
+  
+#TODO: add our pdp project depends on Windows, ex ode etc.
+#  LIBS +=   
+  
+} else {
+
+
+# needed to resolve autools paths
+#  prefix = @PL_prefix@
+#  exec_prefix = @PL_exec_prefix@
+#  bindir = @PL_bindir@
+# this will be the prefix path of pdp system directory, if installed
+#  datadir = @PL_datadir@
+#  includedir = @PL_includedir@
+  
+# TODO: need to fix the bugs in various issues of configure/sed
+  prefix = /usr/local
+  bindir = $${prefix}/bin
+  datadir = $${prefix}/share
+  includedir = $${prefix}/include
+    
+  CONFIG += @PL_DEBUG@
+  CONFIG += @PL_DMEM_COMPILE@
+  CONFIG += @PL_TA_NO_GUI@
+
+  LIBS += @PL_LIBS@
+
+# the tacss/pdp version string, for adding to libs and folder (Unix only)
+  LIB_VER = @PL_LIB_VER@
+
+  
+# the install target for plugins
+  SYS_PLUGIN_DIR = ${datadir}/pdp++/plugins
+  CONFIG_PRI = @abs_srcdir@/config.pri
+  
+  # now, the modal paths that depend on whether PDP4DIR is defined or not
+  isEmpty( PDP4_DIR ) {
+    PDP_SYS_DIR = ${datadir}/pdp++
+    PDP4_INC_DIR = $${includedir}/pdp++
+    MAKETA = $${bindir}/maketa
+  } else {
+    PDP_SYS_DIR = ${datadir}/pdp++
+    PDP4_INC_DIR = $${PDP4_DIR}/src
+    LIBS += -L$${PDP4_DIR}/src/ta_lib/.libs
+    LIBS += -L$${PDP4_DIR}/src/pdp_lib/.libs
+    MAKETA = $${PDP4_DIR}/src/maketa/maketa
+
+  }
+}
+

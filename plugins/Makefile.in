@@ -1,0 +1,96 @@
+CD = cd
+MKDIR = mkdir -p
+CP = cp
+QMAKE = $(QTDIR)/bin/qmake
+
+# standard autotools prefixes from configure
+#prefix = @PL_prefix@
+#exec_prefix = @PL_exec_prefix@
+#datadir = @PL_datadir@
+#includedir = @PL_includedir@
+
+  prefix = /usr/local
+  bindir = ${prefix}/bin
+  datadir = ${prefix}/share
+  includedir = ${prefix}/include
+
+# we use config.pri as a dependent to trigger rebuild of things when configure changes
+CONFIG_PRI = @abs_srcdir@/config.pri
+PDP_SYS_DIR = ${datadir}/pdp++
+
+all: qmake build
+
+#TODO: should make sure qmake is run, although default for "all" is to run it
+build: 
+	@echo " "
+	@echo "** Doing ($@) in all plugin directories**"
+	@echo " "
+	@for i in ./* ;\
+	do \
+	  if [ -d $$i ] ;\
+	  then \
+	    echo $$i; \
+	    $(CD) $$i;\
+	    if [ -f "NOBUILD" ]; then continue; fi; \
+	    if ( $(MAKE); ) then echo "* Successfully ran $@ in $$i";\
+	    else echo "*** Could not make $@ in $$i"; fi;\
+	    $(CD) ../../;\
+	  fi; \
+	done
+	@echo " "
+	@echo "** Make $@ successfully completed! **"
+	@echo " "
+
+# note: clean does not check the NOBUILD guy, on purpose
+clean: 
+	@echo " "
+	@echo "** Doing ($@) in all plugin directories**"
+	@echo " "
+	@for i in ./* ;\
+	do \
+	  if [ -d $$i ] ;\
+	  then \
+	    echo $$i; \
+	    $(CD) $$i;\
+	    if ( $(MAKE) $@; ) then echo "* Successfully made $@ in $$i";\
+	    else echo "*** Could not make $@ in $$i"; fi;\
+	    $(CD) ../../;\
+	  fi; \
+	done
+	@echo " "
+	@echo "** Make $@ successfully completed! **"
+	@echo " "
+
+qmake: 
+	@echo " "
+	@echo "** Doing ($@) in all plugin directories**"
+	@echo " "
+	@for i in ./* ;\
+	do \
+	  if [ -d $$i ] ;\
+	  then \
+	    echo $$i; \
+	    $(CD) $$i;\
+	    if [ -f "NOBUILD" ]; then continue; fi; \
+	    if ( $(QMAKE); ) then echo "* Successfully ran $@ in $$i";\
+	    else echo "*** Could not make $@ in $$i"; fi;\
+	    $(CD) ../../;\
+	  fi; \
+	done
+	@echo " "
+	@echo "** Make $@ successfully completed! **"
+	@echo " "
+
+install: 
+	@echo " "
+	@echo "** Doing ($@) in all plugin directories**"
+	@echo " "
+	$(MKDIR) $(PDP_SYS_DIR)/lib
+	$(CP) -Ru ../lib/plugins  $(PDP_SYS_DIR)/lib
+	$(MKDIR) $(PDP_SYS_DIR)/plugins
+	$(CP) -u config.pri shared_pre.pri shared.pri Makefile  $(PDP_SYS_DIR)/plugins
+	@echo " "
+	@echo "** Make $@ successfully completed! **"
+	@echo " "
+
+dist distdir:

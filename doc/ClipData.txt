@@ -1,0 +1,743 @@
+Clip Data Interface
+
+QT DND SEMANTICS
+
+Notes:
+* index *includes* hidden tree items
+
+1. Drop on View itself:
+  item: NULL (only situation without an item)
+  case: between or before top level item
+    index: index of that position, ex. before 1st, 
+      index=0; between 1st & 2nd, index = 1
+  case: empty area at bottom
+    index: # top level items (i.e. "after last top")
+2. Drop on an item:
+  item: the item
+  index: # of children of that item (ie., "after last")
+    NOTE: this means the index is 1 for all our tree
+      guys that have a dummy child item!!
+3. Drop between two items:
+  item: parent of the items
+  index: what index would be of a new item there
+    ex. if before 1st, index=0, if after last, index=N
+  NOTE: there is a subtle difference between the feedback
+    and meaning of "before first" vs. "1st after parent",
+    and "after last" vs. "before next parent" -- this 
+    distinction is very subtle, and requires just a tiny
+    change in moving the mouse; also, the feedback is very
+    subtle, being just a slight difference in the width
+    of the feedback line
+3a. Drop when IND=ABOVE_ITEM
+   item: parent
+   index: index of what item dropped there would be
+   Drop when IND=BELOW_ITEM
+   item: parent
+   index: index of what item dropped there would be
+NOTE: there does not seem to be a significant difference
+   between the two cases, other than the subtle distinction
+   of where the line is
+NOTE: you cannot do a "1st child" drop when the node is
+   collapsed; therefore, the situation of having to deal
+   with the 1st dummy child does not occur
+   
+MERGING THE DROPS
+
+* must watch out for the "index=1" on our not-opened items; this
+  will be different than the actual number of items
+* between etc. guys can't allow things like "Assign"
+* good news: the ops are all in one routine, so it is easy to 
+  filter right there, if necessary
+* descriptive term needs to be appropriate, ex. "Move Here" when
+  doing a between (not ex. Move After)
+* should probably just have a "between" flag of some kind, to clearly
+  distinguish the case
+* ISSUE: how do we decode the different cases in the drop???
+Notes:
+* we can decode the "drop on" by checking that the index== # visual
+  gui item children, ex. if 1 gui child, index==1;
+    maybe we need to add a flag, from the dragMoveEvent
+* we could have an "eff_idx" which meant:
+  -1: drop on the item
+  N: drop between items (or after parent), where N is the effective
+     index of where the new item will go; N=size means "append"
+* OR, we could just have a "on" flag to indicate On, otherwise, it
+  is one of the "betweens" or "before/after" guys
+Translating betweens:
+  case: for anything other than "at end", we can translate a
+    par/index to be "on INDEX child of par", i.e, it will go 
+    at that spot; we can use a flag to suppress Assign, and to
+    use the right word
+  case: for "at end" we just pass through as on par, with "on=false"
+    EXCEPT: this then becomes ambiguous when considering the item as a 
+    target itself of its parent
+  note: it is ok about the dummy childs, because we always decode the
+    par/end case wrt to the # gui items, and we never use the child gui
+    item
+  ISSUES: what about the "1st in list"??
+Client Code:
+  * VERY similar to before, including what is "the" item invoked
+  * add a "where" flag: 
+      ON: whenever on; 
+      BEFORE: translated "before this item" (item = item for before)
+      AT_END: translated "at end of list" (item = parent)
+  * when "where != ON", then you need to suppress Assign, and just always
+    use the "... Here" terminology; however, the actual semantics (ie item
+    being used) is the same as before
+
+BUGS
+
+* start 2 instances of pdp
+* in inst1, copy a group with subitems
+1. click on a group in inst2
+  Paste Into
+  * result: group is pasted as a peer, not into
+2. click on a group
+  Paste
+  * result: items from group are pasted as
+    items in the level of the group;
+  * the group itself is not evident
+  
+Note: group is actually loaded as PEER of the "this"
+  parent group
+  
+(order bug,  inproc or extproc)
+* assume items are listed in order: c5, c1
+* if you go c5,c1 Paste Into,
+  you get c5,c1
+* but if you go c1,c5 Paste Into,
+  there are still pasted as c5,c1
+i.e., the order of selection is not preserved
+  (why?)
+note: doesn't matter on what item you right click
+ to do the Copy
+
+
+QUERY CONTEXTS
+
+Item::QueryEditActions_(taiMimeSource* ms)
+  Item::DropHandler
+  Item::FillContextMenu(taiActions* menu)
+  
+Host::FillContextMenu(menu)
+  Item::FillContextMenu(items, menu)
+
+TreeView::this_contextMenuRequested
+  Item::FillContextMenu(items, menu)
+
+
+T3ViewspaceWidget::ContextMenuRequested
+  Host::FillContextMenu(menu)
+  
+QueryE
+
+* on DND drop, to populate menu (or determine short cut enables)
+  
+* on rightclick 
+
+QUESTIONS
+
+* where should we put the new clip ops, like SetSpec?
+  maybe easiest in something already there, like
+  the link?
+  * means need special sublink for every guy with
+    special clip ops
+
+REDESIGN
+
+* all clip ops must be in same section on menu,
+  and be clearly distinct from non-clip ops
+D* no non clip-ops for DND
+* maybe factor out src/dst handlers/queryers???
+  too complicated?
+* dst fully handles multi-items (NOT via
+  iteration of clip handler)
+* new clip ops:
+  signature is similar to current, but like:
+* should provide a way for contextually/dynamically
+  enabling actions, such as SetSpec
+
+Issues w/ Current
+
+* multi-select should really not be treated serially
+  as seq of single guys, ex. prob with reversing multi
+  paste
+* the "item on"/"parent" cascade is not deterministic,
+  because ALL could accept, say, a "paste", and the
+  user may intend the 2nd semantic, but on the action,
+  because the 1st guy enabled it, he'd trap it, and do
+  it
+* a BrowseMe guy gets a gui par link -- really shouldn't
+  (but this is not a clip issue)  
+  
+Issues w/ New
+
+* clip semantics is spare vs. dnd:
+  * have to have something selected to do a dest op
+* in order to place something:
+  * if only support "after", then no way to place at 0
+  * can't only support in items, because list could be
+    empty, so need to support child of parent
+* pasting ON is very item-dependent, and not that common:
+  SubSpec
+* DEF children -- need to basically treat the par of
+  list as if it were the list
+  
+Ideas:
+
+* resolve the clip paucity by providing the full set
+  of possibilities:
+  ex:
+  Paste -> As Child of Item
+        -> After Item
+* note that with lists, and with the "between" semantics,
+  it will often NOT make sense to enable ON, therefore,
+  in practice, we just need to insure you can put something
+  anywhere
+
+* "after" seems intuitive:
+  * on an item, is typically "After Item"
+  * on list is "Into List"
+  * HOWEVER: may be more intuitive for the item to go
+    last in a list, when pasting on list
+    HOWEVER: prob not intuitive for item to go before?
+    HOWEVER: what if you intent is "i want the item
+      to go "here"" (not "after here") -- in this case,
+      a "before" semantics is more appropriate
+      
+  * by default, with lists, when you add something,
+    you really typically want it to go to the end --
+    putting it at the beginning is fairly non-intuitive
+    
+* prob not necessary to provide both "before" and "after" for
+  each guy, but would be helpful to clearly specify,
+  ex. "Paste Here" or "Move Here"
+  NOTE: konqueror uses exactly this language in its DND
+    menus, but only, ex. "Paste File" in its clip menu
+    
+* to help resolve the parent/item ambiguity, separate 
+  actions cleanly into "on item" vs. "in parent" actions
+  
+
+GOALS
+
+* try to avoid "massive" redesign (even if it would be better!)
+  regression, time, always takes longer than think, etc.
+* try to "extend" rather than "replace"
+* need to establish 100% unambiguous enabling/action semantics,
+  such that the possibilities are uniquely enumerated, and the
+  right guy will respond to the right command
+* solve multi-paste issue (order wrong, plus should be bulk,
+  not serial)
+
+  
+HOW TO
+
+* we currently have the "item on" and "parent" tests/actions
+
+
+Mapping:
+
+DND:
+Tree:
+  Move/Copy/(Link) into:
+    we get exact place:
+
+
+NOTES:
+
+What ARE our paste requirements/possibilities?
+Order of precedence/ubiquity:
+
+As DST 
+  List: commensurable child items
+  Child-of-List: proxy for parent; commensurable child item
+  DefChildHost: proxy for the defchild List
+  
+What about item-based operations (not based on list)
+  SetSpec: drop a spec on commensurable host
+  SetVar: drop an object on a progvar
+  MakeVar: drop an object on the .args or .vars list
+  
+  
+As SRC:
+  Item: Copy or Cut
+  NOTE: never ambiguous, because we always choose 1 or more
+    items
+Notes: 
+  * whether an item can be Cut depends on if it is in
+  a List (assuming List agrees)
+  * don't care about defchild concept -- just drive by
+    the underlying list??? (EXCEPT: what about link lists?
+      the link parent is only derivable from the gui, not
+      the underlying guy!!!)
+  
+CHANGES:
+
+* Src ops: these will remain the same (???)
+* we should provide a new object directive to enable
+  some methods to expose "drop on" semantics, such as
+  "SetSpec"
+  * meth must take obj of type being passed
+  * for simplicity, maybe only permit single-src item?
+* for list ops:
+  * on parent: add at end
+  * on child: add at that position
+  NOTE: this provides all possibilities, and is intuitive
+* for multi guys, add the items to a special list, that is
+  really only designated for this purpose; we can then
+  have meths that would accept this list; automatically means
+  more than 1 item; items can be hetero
+* prob need to add a new query/action pair for multi guys
+* stream format:
+  * multi guys should now be that list, not the individual guys
+  * could still have same/similar taClip guys
+* add new DND dst op: "Update From" -- is basically a copy,
+  for when src item is >= class of dst item
+  
+dst ops: clip ops
+  Move Here -- list op
+  Copy Here -- list op
+  Update From -- item op
+action ops:
+  (based on dst directive, and commensurable src type on meth)
+ex. SetSpec
+  MakeVar(Arg)
+  
+Dst Ops:
+  Generic Parent:
+    Move/Paste/(Link) item into list/group
+     * at end
+     * at item (ie, items move down)
+     
+
+
+TEST SCENARIOS
+
+These scenarios test some of the exceptions and specials.
+
+* Copy from Table cell that contains an image should also
+  put the image onto the clipboard.
+  * this just needs to be in the Table copy logic
+
+* Query from cb into Table cell where cb has an image,
+  should enable pasting the image
+  * create the image type, and query for it in cb enabling;
+    on action, check the type, and use the image
+
+* Copy from a Table (or Mat) object should also put the 
+  data onto the clipboard, as well as the object itself,
+  IF there is only one object (SingleClip)
+  * we prob need to slightly refactor the ISelectableItem
+    code and delegate down to taBase, which can then be
+    overloaded in Matrix and Table
+  * taBase will need to know whether single/multi, so
+    it should prob have a similar reflexive i/f, ie
+    the first guy in the list gets the list (which includes
+    itself as item0)
+
+
+
+DESIGN
+
+Contexts
+
+"Context" is a fuzzy concept that refers to a certain set
+of objects or data types. 
+Current contexts:
+  Object -- relating to taBase objects
+  TabularData -- relating to Matrix and Table data
+
+taiClipData: QMimeData
+
+This is a non-extensible light subclass of QMimeData. It is
+used when the program needs to supply mimedata for the
+clipboard. It contains all the enums used in clip ops.
+
+taiMimeFactory: taNBase; handles generic types
+  taiObjectMimeFactory -- for taBase objects
+  taiTabularDataMimeFactory -- for Matrix and Table data
+
+These are used for making clipdata and putting it in a
+QMimeData (usually taiClipData) object. These are singleton
+classes, conveniently accessed via class::instance()
+method.
+
+Each context has one of these. They can be subclassed,
+such that a later context can have one that subclasses
+that of an earlier context.
+
+
+QUESTIONS:
+
+Q: Could it be possible for one mimetype to possibly be 
+decoded in more than one way?
+
+A(1): For our own generated formats, it makes sense that we
+be transitive: we decode the same formats as we encoded.
+Note that there is a difference between one format item,
+vs. possibly using it in more than one way.
+
+A(2): For external formats, it is possible we could interpret
+the data more than one way. For example, text/plain could
+be just text, or it could be a table of numbers.
+
+
+NOTES:
+
+Qt4 only seems to invoke the data routine on the MimeData
+on the clipboard when that data is fetched. In other words,
+if the data for that mimetype is not fetched, the data
+is not needed. This implies that we can either provide
+the data, or an object that will generate the data -- the
+latter is probably preferable for potentially large things,
+like huge datasets, etc.
+
+ONE mimetype can only have ONE data generator.
+but several mimetypes could share one generator
+
+So in any single clip source operation, there can be
+one and only one definitive controller/source for each
+mimetype enumerated.
+
+Qt4 seems to send an event that causes deletion of clipboard
+data once that data is fetched. Any eventloop calls after
+fetching will cause this data to be destroyed.
+
+If the user Copies something to the cb, then it is VERY
+likely they will subsequently paste it -- therefore, it is
+only of marginal importance to delay generation of data
+that will almost certainly be fetched anyway. This can
+DRAMATICALLY simplify things, since we can get the data
+right at the beginning, and don't need to worry about
+delayed generation, objects deleted, etc.
+
+BIG PICTURE
+
+a MimeData item is only:
+  1) a list of mimetype formats (strings)
+  2) the data for each type (ByteArray)
+Note that formats could possibly share data.
+
+For sourcing, our only basic goal is:
+  1) enumerate all the formats
+  2) provide the corresponding data
+     or a generator for the data
+
+For sinking, our only basic goal is:
+  1) look at the formats, and decide how
+     they apply in our context
+  2) decode the data, either to use it,
+     (ex Paste) or as necessary for (1)
+
+There is some fuzziness both ways, so that
+we can't assume this can be absolutely partitioned
+hierarchically and without overlap.
+
+Goals:
+
+Probably should separate the objects that
+*generate* the data and mimetypes, from the object
+that provides them -- this enables several different
+formats to cleanly co-exist, without fighting. It
+also makes it very simple: the provider is just a
+barely subclasses QMimeData, and the generators
+don't necessarily have to have any structure at all,
+and can just be routines on a convenient object.
+
+Likewise, since the clipboard can be providing
+several different types, we should not try to 
+wrap it in a specialized class; instead, we should
+provide classes that can interpret the data, and
+decode it to the degree necessary.
+
+Issues
+
+CURRENT ISSUES
+
+* too complicated
+
+* not cleanly extensible -- everything is bundled together
+* there is no way to cleanly extract the common header
+  stuff vs. the object data fore items
+  ex. the current scheme has creating the headerdesc 
+  text in the taiXxxClipData guy, but the data streaming
+  in the taiMimeItem guys
+* attempt to put the interfaces needed for encoding and
+  extraction of specific types in the central interfaces;
+  instead, the interfaces needed for everything should
+  be separated from those needed for specific contexts
+
+
+CLASS REQUIREMENTS
+
+QObject
+  taiMimeItem
+
+This is used for creating clipdata in a taiClipData, and
+for decoding clipdata in a taiExtMimeSource.
+
+Issues:
+
+* way too non-extensible; too tied up in the other
+  classes, such as how taiMimeSource needs to cast
+  to access taiObjMimeItem data
+* NOTE: this is currently what taiDataLink returns
+
+QMimeData
+  taiMimeSource
+
+This is used for all the clip enabling and action items.
+For enabling, it allows the context to determine what
+is on the clipboard, and whether it can be accepted.
+For actions, it allows the context to extract the data
+and perform the action. It wraps the current clipboard
+data.
+
+Issues:
+* the iteration interface is probably too complicated
+* the assumption is that this object provides direct
+  access to all properties of the various data types --
+  this really violates encapsulation and extensibility
+
+NEW DESIGN
+
+Sinking -- getting data from the clip system
+
+We have no way to know a priori what is on the clipboard.
+We have no way to predict how different subsystems could
+interpret standard clipboard data.
+There are two issues:
+1) what are all the different data types on the cb?
+2) how many ways can tacss interpret these?
+
+We have 2 clear consuming use-cases:
+
+1) clip op enabling -- given the context, and what is
+  on the clipboard, what can the user do with the cb?
+  NOTE: it is almost always the case that source operations
+  are completely independent of what is on the cb, since
+  a new source op simply overwrites the cb
+2) clip op action -- if the user chooses an enabled
+  option, we now must implement that, by getting the
+  data and doing something with it.
+Note that it could be the case that a base aspect of
+the system can only deal with some aspect of the cb,
+but a more derived portion can deal with more.
+
+Therefore, it seems we need some kind of scheme whereby
+the current cb data (in some rep) can be passed to a 
+series of "factories" or "subsystems" that might
+know how to interpret it. These should be relatively
+encapsulated, for two reasons:
+* basic goodness of encapsulation
+* extensibility
+* each context need not concern itself with data 
+  types it can't interpret or use
+
+For each datatype, there are two clear stages:
+1) establishing its existence
+2) decoding the corresponding data
+
+It would be best if the "existence" stage was able
+to extract the information needed for clip enabling
+operations -- this would enable those ops to be done
+efficiently, without decoding.
+
+
+MimeSourceManager
+
+It would make sense for these to be taBase classes,
+since then we could request an instance by classtype,
+and autoinstantiate them when needed at runtime.
+
+* looks at a QMimeData (ex from clipboard) and determines
+  whether this context can interpret the data
+* provides an interpreted (ie decoded) strongly 
+  classed object instance if this context can understand
+* note that we don't always want the fully interpreted
+  output -- it could be sufficient (ex clip enabling) to
+  simply know that data of a certain kind existed
+
+Interface:
+
+* query interface, to ask if the mimedata can be
+  interpreted by this MSM, ex. "tacss object"
+  or "tacss table data" etc.
+* decoder object factory: provides the client with an
+  instance object that can grok the details of the cb
+
+
+  
+taiClipData
+
+This is used to *supply* clipdata by the tacss system.
+
+* supplies the required QMimeData interface, for Qt
+
+
+Constraints:
+
+* there can only be *one* provision of a specific
+  mimetype in one cb instance, ex. only one text/plain
+  etc. -- therefore, there needs to be some kind
+  of clear-cut identity to the instances -- they need
+  to completely know what they will provide, probably
+  because of classing/subclassing
+
+Interfaces:
+
+* must implement the MimeData interface, to interface with
+  the Qt clipboard and dnd systems
+
+Subclasses:
+
+* must enumerate the formats it supports (supply the format list)
+* must provide the data for the supported formats
+
+Contexts:
+
+* there should probably be separate 
+  CreateClipData
+  InitClipData
+interfaces -- this will enable subclasses of ClipData
+to be made by extended parts of the system, while still
+enabling the earlier parts to do their thing (initialize it)
+
+
+NEW
+
+* no point in having a "taiMimeSource ms" passed all around,
+  because this already implies interpretation, and a *single*
+  object, but in fact, we want to know the details
+* it would be ok for a context to require some concrete
+  interpreted mimesource class, but this means some outer
+  or top controller needs to have done this:
+  MyContextFactory::isMySpecialFormat(QMimeData* md)
+  if so, then 
+  MyContextFactory::GetMySpecialMimeSource(QMimeData* md)
+
+* we should probably have a unified way of doing multi data,
+  such that there is no interaction/dependency of the header
+  with the type of data
+  * header has a generic common part, with count
+  * header then has N entries, with type-specific pattern
+  * all our sources must conform to this interface
+  * singleton-only formats simply only ever use 1 slot
+
+EXAMPLE
+
+MimeType vs. MimeExtract
+
+A MimeType refers to one single named data set on the clipboard.
+When generating, one and only one source can create the dataset.
+
+A MimeExtract is a way to interpret the data -- it is an entity
+with clear identity (ie properties) so that it can be extracted
+once, and then examined by various clients when making clip
+decisions. One MimeType dataset can give rise to more than one
+MimeExtract; for example, a tabular dataset on text/plain could
+give rise to a TextExtract and a TabularDataExtract. Thus, a
+client interested in text could consume the TextExtract, and a
+client that supported TabularData could consume that.
+
+Issues:
+
+* don't necessarily want to do all possible Extracts
+* let the clients drive the extraction process, by asking
+  for the extract
+* decoding extracts should be done JIT
+* need to have a clear distinction between extract
+  Descriptor properties vs. extract Content properties --
+  Descriptor can be made from either the mimetypes 
+  themselves, and/or desc mimetypes, and/or cursory examination
+  of the data; Content requires fetching and possibly decoding
+  the data.
+
+Ex.
+		Descriptor		Content
+Object		Classname		Obj data
+		Path
+Matrix		cols/rows		data itself
+
+Extract Names
+
+Each extract type has a keyname that is used to refer to it.
+These keynames are distinct from the mimetype names, to avoid
+confusion.
+
+taiMimeExtract
+  taiGenericMimeExtract
+  taiObjectMimeExtract
+
+This class is used to encapsulate a logical entity that can be
+extracted from the clipboard. It may comprise some kind of
+single element of information, or may have several. There
+will typically be a 1:1 mapping between tacss-specific 
+mimetypes and extracts.
+
+taiMimeItem 
+
+This is used to encapsulate individual items when the Extract
+comprises multiple items, such as objects.
+
+taiGenericMimeExtract
+
+This simply wraps the data of a given mimeType, without
+providing any additional interpretation. The keyname of this
+type is generally the corresponding mimeType.
+
+taiObjectMimeExtract
+  * taiObjectMimeItem
+
+Encapsulates one or more taBase objects.
+Used with: tacss/objectdesc and tacss/objectdata.
+Each object itself is represented by a taiObjectMimeItem
+object.
+
+
+Implementation:
+
+taiMimeItem
+  taiGenericMimeItem -- maps mimetype to raw data
+  taiObjectMimeItem -- only used in a taiObjectsMimeItem
+  taiMultiMimeItem (abstract base)
+    * taiMimeItem[]
+    taiObjectsMimeItem
+    * taiObjectItem[]
+  taiMatrixMimeItem -- for simple tabular data
+  taiTableMimeItem -- for DataTable data
+
+Implementation:
+
+We use the taBase instancing system to have instances already,
+who implement some virtual methods for extraction.
+It is always assumed that if we are asking for the type, that
+we therefore want an instance, so there is one method:
+
+virtual taiMimeItem* Extract(QMimeData* md)
+
+If that instance (specific Extract guy) can be made based
+on current mimedata, then it returns one, else NULL.
+Description props are automatically decoded during construction.
+Content props are decoded JIT.
+
+virtual void DecodeDesc_impl -- decodes the description props
+virtual void DecodeData_impl -- decodes the content
+
+void AssertData -- makes sure content is decoded
+
+
+taiMimeSource
+
+This is the container class that wraps the clipdata, and provides
+the various taiMimeItem guys. It is never subclassed.
+
+bool hasMimeItem(TypeDef* td, String mimetype = nil)
+  // true if has the specified keyname type; implies it can
+  // be fetched 
+
+taiMimeItem* GetMimeItem(TypeDef* td, String mimetype = nil);
+  // if has the type, gets it (decoded); mimetype only needed
+  // for things like the Generic guy
+  

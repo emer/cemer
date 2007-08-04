@@ -1,0 +1,270 @@
+\input texinfo
+@c give us a figure counter
+@iftex
+@tex
+\newcount\texfigno
+\global\parskip 4pt
+\setleading{12pt}
+@end tex
+@end iftex
+@setfilename pdp-user
+@settitle The PDP++ Software Users Manual
+@setchapternewpage on
+@headings double-sided
+
+@titlepage
+@title The PDP++ Software Users Manual
+@subtitle Version 3.0 (@today{})
+@author Chadley K. Dawson, Randall C. O'Reilly, and James L. McClelland.
+@page
+@vskip 0pt plus 1filll
+Manual Copyright @copyright{} 1995-2003 Chadley K. Dawson, Randall C. O'Reilly, 
+James L. McClelland, and Carnegie Mellon University
+
+Software Copyright @copyright{} 1995-2003 Randall C. O'Reilly, Chadley K. Dawson,
+James L. McClelland, and Carnegie Mellon University
+
+@end titlepage
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node Top, copyright, (dir), (dir)
+
+@unnumbered Welcome to the PDP++ Software Users Manual
+
+Chadley K. Dawson, Randall C. O'Reilly, and James L. McClelland.
+
+This describes version 3.0 of the PDP++ neural network simulation
+software.
+
+Manual revision date: @today{}.
+
+@menu
+* intro::               Introduction to the PDP++ Software
+* inst::                Installation Guide
+* over::                Conceptual Overview
+* tut::                 Tutorial Introduction (using Bp)
+* how::                 How-to Guide and the Wizard
+* gui::                 Guide to the Graphical User Interface (GUI)
+* css::                 Guide to the Script Language (CSS)
+* obj::                 Object Basics and Basic Objects
+* proj::                Projects (and Defaults, Scripts, SelectEdit)
+* net::                 Networks (Layers, Units, etc)
+* env::                 Environments, Events, and Patterns
+* proc::                Processes and Statistics
+* log::                 Logs and Graphs
+* bp::                  Backpropagation
+* cs::                  Constraint Satisfaction
+* so::                  Self-organizing Learning
+* leabra::              Leabra
+* prog::                Programming in PDP++
+* copyright::           Appendix A: Copyright Information
+* conceptindex::        Index of Key Concepts
+* typeindex::           Index of Class Types
+* varindex::            Index of Variables
+* funcindex::           Index of Functions
+@end menu
+
+@c ======================================
+@c @node  intro, inst, copyright, Top
+@node  intro, inst, copyright, Top
+@chapter Introduction to the PDP++ Software
+@include pdp-user-intro.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  inst, over, intro, Top
+@chapter Installation Guide
+@include pdp-user-inst.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node over, tut, inst, Top
+@chapter Conceptual Overview
+@include pdp-user-over.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node tut, how, over, Top
+@chapter Tutorial Introduction (using Bp)
+@include pdp-user-tut.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node how, gui, tut, Top
+@chapter How-to Guide
+@include pdp-user-how.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node gui, css, how, Top
+@chapter Guide to the Graphical User Interface (GUI)
+@include pdp-user-gui.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node css, obj, gui, Top
+@chapter Guide to the Script Language (CSS)
+@include pdp-user-css.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node obj, proj, css, Top
+@chapter Object Basics and Basic Objects
+@include pdp-user-obj.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  proj,  net, obj, Top
+@chapter Projects (and Defaults, Scripts)
+@include pdp-user-proj.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node net, env, proj, Top
+@chapter Networks (Layers, Units, etc)
+@include pdp-user-net.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node env, proc, net, Top
+@chapter Environments, Events, and Patterns
+@include pdp-user-env.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node proc, log, env, Top
+@chapter Processes and Statistics
+@include pdp-user-proc.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node log, bp, proc, Top
+@chapter Logs and Graphs
+@include pdp-user-log.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node bp, cs, log, Top
+@chapter Backpropagation
+@include pdp-user-bp.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node cs, so, bp, Top
+@chapter Constraint Satisfaction
+@include pdp-user-cs.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node so, leabra, cs, Top
+@chapter Self-organizing Learning
+@include pdp-user-so.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node leabra, prog, so, Top
+@chapter Leabra
+@include pdp-user-leabra.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node prog, conceptindex, leabra, Top
+@chapter Programming in PDP++
+@include pdp-user-prog.texi
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node copyright, intro, Top, Top
+@appendix Copyright Information
+
+Manual Copyright @copyright{} 1995 Chadley K. Dawson, Randall C. O'Reilly, 
+James L. McClelland, and Carnegie Mellon University
+
+Software Copyright @copyright{} 1995 Randall C. O'Reilly, Chadley K. Dawson,
+James L. McClelland, and Carnegie Mellon University
+
+Both updated through 2003 primarily by O'Reilly.
+
+We would like to acknowledge the contributions in writing the software
+of David Fogel, Gautam Vallabhajosyula, Alex Holcombe, and the
+contributions in testing, debugging, and improving the software of Yuko
+Munakata, Craig Stark, Todd Braver, Jonathan Cohen, Shaun Vecera, Deanna
+Barch, and the rest of the PDP Lab at CMU.  Finally, we would like to
+thank David Rumelhart for his early involvement in designing the overall
+shape of the simulator.
+
+The PDP++ specific portions of the software are copyright under the
+following conditions:
+
+Permission to use, copy, and modify this software and its documentation
+for any purpose other than distribution-for-profit is hereby granted
+without fee, provided that the above copyright notice and this
+permission notice appear in all copies of the software and related
+documentation.
+
+Permission to distribute the software or modified or extended versions
+thereof on a not-for-profit basis is explicitly granted, under the above
+conditions.  HOWEVER, THE RIGHT TO DISTRIBUTE THE SOFTWARE OR MODIFIED
+OR EXTENDED VERSIONS THEREOF FOR PROFIT IS *NOT* GRANTED EXCEPT BY PRIOR
+ARRANGEMENT AND WRITTEN CONSENT OF THE COPYRIGHT HOLDERS.
+
+The TypeAccess/C-Super-Script (TA/CSS) portions of the software are
+copyright under the following conditions:
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose is hereby granted without fee, provided
+that the above copyright notice and this permission notice appear in all
+copies of the software and related documentation.
+
+Note that the PDP++ software package, which contains this package, has a
+more restrictive copyright, which applies only to the PDP++-specific
+portions of the software, which are labeled as such.
+
+Note that the taString class, which is derived from the GNU String
+class, is Copyright @copyright{} 1988 Free Software Foundation, written
+by Doug Lea, and is covered by the GNU General Public License, see
+ta_string.h.  The iv_graphic library and some iv_misc classes were
+derived from the InterViews morpher example and other InterViews code,
+which is Copyright @copyright{} 1987, 1988, 1989, 1990, 1991 Stanford
+University Copyright @copyright{} 1991 Silicon Graphics, Inc.
+
+THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,
+INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY
+DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
+OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF
+LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+OF THIS SOFTWARE.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node conceptindex, typeindex, prog, Top
+@unnumbered Concept Index
+@printindex cp
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node typeindex, varindex, conceptindex, Top
+@unnumbered Class Type Index
+@printindex tp
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node varindex, funcindex, typeindex, Top
+@unnumbered Variable Index
+@printindex vr
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node funcindex,  , varindex, Top
+@unnumbered Function Index
+@printindex fn
+
+@c ***************************************
+@shortcontents
+@contents
+@bye

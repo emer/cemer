@@ -1,0 +1,241 @@
+Leak Bug
+
+* Edit Dialogs delete
+* first taiEditDataHost deletes
+  from the tabMisc list of hosts
+* then the iDialog deletes
+
+for browsers:
+
+* the EditDataPanel deletes
+  (as part of the MainWindow destruction chain)
+* but the taiEditDataHost does *not* delete 
+
+sequence:
+  ~iTabView runs
+    the list of panels is reset
+  EditDataPanel deletes
+
+
+
+
+Datatable Clip bugs
+
+(leabra_ra.proj)
+
+make a copy of SimpleLines for test
+
+Things that do work:
+1
+ * copy a bunch of cells in a col
+ * paste onto dest
+
+2
+ * copy a range of cells in Name col
+ * paste onto dest
+
+ 
+
+<<<<<<< .mine
+Differences:
+=======
+Bug1
+* copy 2x2 starting from mitvert
+* click on a dest cell in Name
+* Paste
+* the first row copies ok;
+  the second row: 
+    Name gets blanked
+    but Input cell gets copied ok
+>>>>>>> .r1608
+
+<<<<<<< .mine
+<<<<<<< .mine
+ * Linux shows + on drag; Mac does not
+
+
+Notes:
+
+ * the iTreeWidgetItem::acceptDrop is not used or called
+
+What is working, what not working:
+
+NOT working:
+* is not determining whether it is allowed to do dnd or not!
+
+* behavior is consistent with the built-in Qt dnd, whereby
+  it just does it at a gui level
+
+
+Experiments
+
+* put br's in linux, the two key ones are:
+  iTreeView::mimeData -- sh trigger at start
+    -- triggers on linux and mac
+  iTreeWidget::dropMimeData -- sh trigger at drop
+    -- NOT triggering in Mac
+
+Hypothesis:
+
+* maybe there is a mismatch between supported drop types
+  and what is happening: feedback indicates Move (no +),
+  and maybe Move is not enabled??
+  (but then why are items actually moving???)
+
+  
+=======
+>>>>>>> .r1582
+=======
+Diagnosis:
+ * clip data itself (on cb) seems fine
+ * tried larger areas: only 1st Name copies, rest are blanked
+
+Bug 2
+ * copy 3 Name cells
+ * go to 2nd last Name cell in dst
+ * Paste
+ * you get an out of range error msg
+FIXED
+
+Bug 3
+ * open Calc, put in a col of cells: a, b, c
+ * click on a dst Name cell
+ * Paste
+ * only the first cell gets copied: a
+
+ 
+
+>>>>>>> .r1608
+Tree Browsing Show/Hide
+
+Program Reset bug
+
+crash occurs as follows, in load of lib:
+
+Program::Reset
+  vars.Reset
+  removal of item ProgVar
+  ProgVar issues its DataDestroying
+  a RefList gets the DLDestroying
+  RL removes the el
+  RL disown/unref of item calls item.RemoveDataClient
+  item.RDC gets its link reference (the one that is invalid)
+  dl.RDB crashes when accessing the list of clients, because dl is invalid
+  NOTE: occurs on last ProgVar removal from vars, "trial"
+
+      
+it is actually the DataLink itself that must be invalid, since it has
+several illegal values (prob random memory)
+
+therefore, the taBase guy has his dl in his dl slot, when the dl is
+invalid
+
+How To Invoke the bug:
+
+ * open leabra_ra.proj
+ * select LeabraEpoch and Browse Me
+ * on first LE, do Reset
+ * you get the crash
+
+Mystery To Solve
+
+the "guy" in question is a ProgVar
+
+How can a ProgVar get into a state whereby the dl field is non-null
+(indicates an object) yet that address does not point to a valid DataLink?
+
+1. ProgVar itself is not a valid object (ie, bad pointer)
+  2. ProgVar has deleted, and we are still accessing it
+  3. dl field is not properly initialized to NULL
+4. dl field does not get set to NULL when its referent deletes
+5. dl field somehow gets set to a bad pointer, or already deleted DataLink
+6. (maybe a variant on something above) dl was valid at a point on call chain,
+   but a destroy action of some kind during the chain has invalidated the dl
+  7. memory corruption, perhaps caused by a bug in Load code
+  8. some other obscure issue of corruption or invalidness due to load code
+
+1. 
+  this is quite unlikely -- all the stuff from the obj is showing
+  in the gui, meaning all the accesses, fields, typeinfo, taiv's etc.
+  all had to be valid
+  * if object somehow deleted early, then the Destroy would have run,
+  and the dl should have been delete, 
+
+2.
+  for this to happen, the mlink field would still need to be unNULLed
+  since i put in a check for non-null, and object::delete calls the
+  link code on delete, this cannot be the one
+
+3. very unlikely, since taOBase.Initialize sets dl to NULL
+
+4.
+  this would require a bad reference address in the first place,
+  note that the original creation code was responsible for setting
+  the link
+
+7, 8: Load not needed 
+
+Description of Delete of CutLinks process for taOBase
+
+* Destroy always invokes CutLinks...
+* CutLinks: if there is a dl, call dl->DataDestroying
+* dl->DataDestroying pops all clients, calling their notify routine
+  when the list is empty, the link itself deletes
+  the link uses its address of its ref to null that ref
+Invariant: the link ref in host is valid, right up to point
+  where DataLink destroys; in ~DL, it nulls the ref
+
+DataLink invariants:
+
+* only one constructor, which requires a ref address 
+  2 params means can never be called implicitly
+* NOTE: creation doesn't set the ref instance!
+
+
+TRY
+
+* disable the CtrlPanel refreshing altogether, but still
+  put all the ProgVar guys on the RefList
+  * does not crash
+
+debug T3 selection
+
+leabra_ra.proj
+
+
+if you delete top layer, then next layer
+then select bottom layer,
+you get a segfault on bottom layer in the 
+iTabView::GetDataPanel() routine, for i = 5
+
+caused because the i=5 panel is the one created for the item
+previously selected then deleted -- that panel should
+no longer be on the list, because the item i
+
+
+after deleting the layer, when you click on the next layer,
+the iTabView::AddPanel gets called twice with the same panel
+
+an issue if we try to ActivatePanel based on link,
+but we aren't matching panel exactly
+
+why wasn't GetDataPanel returning the panel, based on link?
+context:
+
+
+
+* select Input layer
+
+If you then delete it:
+
+1. you don't get a Deselect event (so the T3 select list will now contain a zombie entry)
+2. you get the following errors:
+  removeChild: tried to remove non existent T3LayerNode
+  removeChild: tried to remove non existent T3PrjnNode
+
+2 implies that the node is being autodeleted before it is being manually deleted
+
+
+
+calls to AddRemove:
+w/ NetView

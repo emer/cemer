@@ -1,0 +1,173 @@
+Robotic Simulation in PDP++: Feasibility
+
+1. Introduction
+
+Robotic simulation would be a facility in PDP++ for simulating a simple robotic device in order to provide a complete closed loop system of sensory input, neural processing, and motor output (with effect in the simulated world.) Such a system would require the following elements:
+
+  * physical body simulator (motion, collision);
+  * motor effectors; and
+  * sensory input transducers.
+
+These elements will be discussed in the sections below. The term "simulon" is used to refer to a simulated entity.
+
+2. Physical Body Simulator
+
+One basic decision to be made is the kind of entity to be simulated. Animals have quite different physical, sensory, and motive properties than most typical robots. For example, animals typical locomote via walking, whereas many robots typically have wheels. Since PDP++ is being used primarily for research in cognitive neuroscience, it makes sense to accommodate simulons that are commensurable to animals.
+
+Since most animals (and most robots) have relatively stiff body frames, it is reasonable to limit the simulator to these types of models. A (relatively stiff) body requires two basic kinds of building blocks: body elements (frame, limbs, and appendages), and joints.
+
+3. Motor Effectors
+
+A muscle can be modelled as a force acting on two body elements in the direction of the points of attachment of the muscle.
+
+The simulated muscles will need to provide the following sensory elements:
+* tension
+* amount of stretch
+
+4. Sensory Input Transducers
+
+The following sensory inputs are basically required:
+* vision
+* proprioception (of muscle stretch, limb position, etc.)
+* touch
+
+4.1 Vision
+
+To provide vision, the simulon and its environs can be modelled visually using Inventor and/or OpenGL. Eyes then simply become cameras situated at the eyepoint(s) of the simulon. The resulting rendered bitmap can be fed into the data environment input. An added benefit of this form of simulation is that object cameras can be placed in the same rendered scene for an omniscient viewpoint of the simulation from any perspective.
+
+4.2 Proprioception
+
+The details of the animal proprioceptive system are quite complex, but the end result is relatively straightforward. For the purposes of simulation, it may be best to focus on achieving an equivalent result, rather than a low level simulation of the mechanism.
+
+Proprioception provides the following key data:
+* relative position of the limbs
+* tension of muscle 
+
+4.3 Touch
+
+"Touch" in animals comprises several distinct sensory modalities, such as pressure, temperature, and pain. The key modality to simulate is pressure at points of contact. 
+
+A mapping is made between the geometry of the body elements and a sensory field -- this will allow a specific contact point coordinate to be translated into an activation in an input array.
+
+4.4 Vestibular System
+
+If the simulon is to walk and otherwise move around, it may need a model vestibular system.
+
+MORE TBA
+
+
+
+5 Open Dynamics Engine (ODE)
+
+ODE is an open-source rigid body simulator. This section explains ODE and discusses how the requirements of the PDP++ simulator would be mapped onto ODE.
+
+ODE provides rigid bodies, joints, collision detection, friction, force application, and gravity (which may be zero.) Through the use of a parameter called "CRM", it is possible to create "squishy" objects, i.e., objects that can inter-penetrate to some degree. Objects ("bodies") have mass and a center of mass -- forces and motion are all relative to the center of mass. 
+
+Simulon		->	ODE
+body elements -> ODE bodies
+joints -> ODE joints
+muscles -> no direct physical mapping
+muscle forces -> forces applied to bodies
+
+5.? ODE Bodies
+
+ODE rigid bodies are simple shapes with a well-defined center of mass and a constant density. ODE provides the following shapes:
+* sphere
+* cylinder (flat-end)
+* capped cylinder (semi-spherically capped)
+* box
+
+Note that Bodies are *not* used to perform collision detection -- instead, ODE provides Geoms that one can attach to shapes. In essence, Bodies are used for the kinematic aspects of the simulation, whereas Geoms are used for collision detection.
+
+5.? ODE Geoms
+
+<QUOTE>
+To use the collision engine in a rigid body simulation, placeable geoms are associated with rigid body objects. This allows the collision engine to get the position and orientation of the geoms from the bodies. Note that geoms are distinct from rigid bodies in that a geom has geometrical properties (size, shape, position and orientation) but no dynamical properties (such as velocity or mass). A body and a geom together represent all the properties of the simulated object.
+
+Every geom is an instance of a class, such as sphere, plane, or box. There are a number of built-in classes, described below, and you can define your own classes as well.
+
+The point of reference of a placeable geoms is the point that is controlled by its position vector. The point of reference for the standard classes usually corresponds to the geom's center of mass. This feature allows the standard classes to be easily connected to dynamics bodies. If other points of reference are required, a transformation object can be used to encapsulate a geom.
+</QUOTE>
+
+5.? ODE Joints
+
+ODE provides the following kinds of joints:
+* ball and socket
+* hinge
+* piston
+* universal (i.e., like ball and socket, but constrains an extra degree of freedom)
+
+Joints can have additional constraints of motion applied, ex. to create a human elbow joint.
+
+Motors are supplied, that can act on joints, as described below:
+<QUOTE>
+Motors have two parameters: a desired speed, and the maximum force that is available to reach that speed. This is a very simple model of real life motors, engines or servos. However, is it quite useful when modeling a motor (or engine or servo) that is geared down with a gearbox before being connected to the joint. Such devices are often controlled by setting a desired speed, and can only generate a maximum amount of power to achieve that speed (which corresponds to a certain amount of force available at the joint).
+</QUOTE>
+
+In addition, there are functions for applying a given force or torque (as appropriate) to a joint.
+
+5.? Contact Detection
+
+Here is the description of collision detection from the ODE manual:
+
+<QUOTE>
+Collisions between bodies or between bodies and the static environment are handled as follows:
+
+   1. Before each simulation step, the user calls collision detection functions to determine what is touching what. These functions return a list of contact points. Each contact point specifies a position in space, a surface normal vector, and a penetration depth.
+
+   2. A special contact joint is created for each contact point. The contact joint is given extra information about the contact, for example the friction present at the contact surface, how bouncy or soft it is, and various other properties.
+
+   3. The contact joints are put in a joint "group", which allows them to be added to and removed from the system very quickly. The simulation speed goes down as the number of contacts goes up, so various strategies can be used to limit the number of contact points.
+
+   4. A simulation step is taken.
+
+   5. All contact joints are removed from the system. 
+</QUOTE>
+   
+5.? ODE Typical Simulation
+
+Here is a description of a typical simulation in ODE, from the manual:
+
+<QUOTE>
+A typical simulation will proceed like this:
+
+   1. Create a dynamics world.
+   2. Create bodies in the dynamics world.
+   3. Set the state (position etc) of all bodies.
+   4. Create joints in the dynamics world.
+   5. Attach the joints to the bodies.
+   6. Set the parameters of all joints.
+   7. Create a collision world and collision geometry objects, as necessary.
+   8. Create a joint group to hold the contact joints.
+   9. Loop:
+         1. Apply forces to the bodies as necessary.
+         2. Adjust the joint parameters as necessary.
+         3. Call collision detection.
+         4. Create a contact joint for every collision point, and put it in the contact joint group.
+         5. Take a simulation step.
+         6. Remove all joints in the contact joint group. 
+  10. Destroy the dynamics and collision worlds. 
+</QUOTE>
+
+
+6. Implementation 
+
+Physical Modeling Primitives
+
+Sensory Maps
+
+Motor Maps
+
+GUI
+
+It is not reasonable to propose a full blown interactive design gui -- rather, there should be a way to enter the model as a collection of parameters, either in existing PDP data structures and gui forms, a new form for this purpose, or perhaps simply as a file that is read in.
+
+
+
+References
+
+ODE User Manual, http://ode.org/ode-latest-userguide.html
+
+
+
+

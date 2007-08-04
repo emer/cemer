@@ -1,0 +1,527 @@
+T3 Selection
+
+* selection itself is an Inventor concept, mediated my UI
+* sel triggers an event, which we then trap and put a T3DataView guy on/off a list
+
+* our biggest issue is when an So guy deletes, it doesn't raise a deselect
+  * causes spurious "higher subpath" visual selection
+  * leaves us with an invalid selection in our list
+  
+Notes:
+
+* sels are paths; as such, there is a M:1 mapping between possible paths:So objs
+* sels are paths to So objs (so only indirectly to t3 guys)
+* we can't directly hook node deletion, nor probably do we want to
+* nodes just don't spontaneously delete; 
+
+
+fix:
+* spurious sel on delete of a guy
+
+What we could do:
+
+* we can filter the sels and deny, or replace -- we could thus only allow exactly
+  our kinds of nodes (ex t3 nodes) to be selected
+* we control when nodes get deleted (via Render_pre and Clear), and could remove them
+  from selection, prior to deletion
+
+ccn lab 4/25/07
+
+* member assign el
+
+* maybe some assoc between UnitNames and the network itself
+* input geometry designer for nets
+
+* mechanism to label cells in gridview
+
+ccn lab 4/18/07
+
+
+* when Brad did EpochTable and DataCalc/ComputeGroup thing, the program just aborted
+
+* "Frame" term too confusing?
+
+* look at v3 load conversion dialog -- seems that when you go "Cancel" it still proceeds with the conversion
+
+* copying a group does not give it a new name
+
+CURRENT BUGS
+
+Choice Dialog
+
+* the id-based priority/role assignment causes the dialog to reorder
+  the buttons, i.e. it puts them in an order established by role
+* the Copy To Clipboard guy causes the dialog to close
+* it is very non-standard and arcane, with its weird overrides, etc.
+* "no cancel" is confusing
+
+Notes:
+* semantics for Error, Warning, etc. are really irrelevant, since
+  there is nothing for user to do but click Ok
+* the taMisc::Choice api does not provide any explicit support for
+  the "no cancel" option
+* "no cancel" seems primarily just to support Ok-only
+
+Default Behavior:
+* Qt wants to put the Default button 1st, the Cancel button 2nd
+ (WARN: this could possibly be platform dependent! ex Mac may do
+  opposite.)
+  
+Possible Redesign:
+
+* should allocate the choice items in a fixed way, yet permit
+  them to be placed anywhere
+* if only 1 choice is provided, it is FORCED,
+  i.e., Cancel must always be explicitly provided in Choices
+* if more than 1 choice is provided, then Cancel *should*
+  be provided and *should* be last option
+* last option provided is the default Cancel/No/Reject
+* order should not be germane (but ID of course still is:
+  id=order)
+
+* 
+
+WORK PRIORITY
+-------------
+
+Items to Allocate/Prioritize:
+
+* in netstru and possible other, move the code from the CutLinks that
+  does all the fixups -- instead, checks should be put in the ConfigCheck thing,
+  etc.
+
+* #101 list API changes
+* Spec Editor (similar to prog editor -- shows children)
+* dnd for T3
+* spec gui enhancements:
+  * make a link and tree node for making subspecs be direct children
+  * enhance BaseSpec edit/drop to accept compatible subspec objects
+
+* various net objs have significant code in their CutLinks -- this is
+  Very Bad (TM) since CL is a destructive-like operation which should 
+  avoid significant operations
+  ex: UnitSpec::CutLinks()
+  
+* Show changes:
+Ps force expert idea is good & should just be the default: if there is a 
+def ant it is not set to that, then show.
+Also, just to be clear, ro should be rmv from show menu.
+* upgrade and test plugin system:
+  * tags in type info to check dependencies
+  * prefix or similar in proj files to indicate required plugins
+  * naming/registry spec for class and plugin naming
+  * separate enumeration from loading
+  * startup enumeration of plugins;
+  * dynamic (user controlled) loading of plugins
+
+Brad -- two additional treefilt-like things I'd like to see, for members:
+* TREECOLLAPSED_ProgramGroup -- in the program group, this list/group is 
+initially collapsed (not expanded)
+* TREEEXPANDED_xxx - opposite
+This way, we can control what is expanded and collapsed in different contexts.  
+I think in ProgramGroup we'd want objs to be there but collapsed.  Similarly, 
+in the progeditor (Program context), the args should be default collapsed..
+Also, can we use full name like ProgramGroup instead of ProgGp -- would make 
+it more transparent..  ProgEditor is Program? 
+
+*  Program Groups: execution control
+
+* change basis of coord axes for netview, layers, etc.
+* unit/group geom specification changes for layers
+
+* automatically bracket gui-invoked methods with Busy/Notbusy
+* UserData
+  * persistence
+  * schema
+
+---------------
+Alpha:
+
+Brad:
+
+* nuke float_RArray from datagraph
+* "disabled" generic state for viewing; "disabled" gui state for treeviews
+
+* clean up and/or extend data notify so that DataTable finish adding of row is clearly 
+  done, so various display or calculation clients can then update themselves
+
+* startup pathing cleanup + platform params: redo pdproot/main code + randy
+NOTE: Brad needs more info from Randy for next item:
+* ChangeType/UpdatePointers etc. gui patches
+
+* bug fixes and replacements for the arg dialogs, and replacing ItemChooser based guys (esp New dialog!).
+* minimal netview cleanup: transparent layer etc
+
+
+
+Brad done:
+* dnd icon bar for: progedit
+* shutdown cleanup + add window menu
+* remove extra scrollbar on console 
+* move edit dialog menus & buttons outside of the different panel sets in an edit
+* #CAT_ support for method, member choosers: simple is just column (1st col). bonus is menu..
+* fixed tab activating bugs
+* #CAT_ support for types
+* buttons have maximum width (20 chars, established in taiMisc::InitMetrics)
+* tabs for 3d views - required for these next guys (simple version):
+* T3 tabs should update if name changes
+* highlight progeditor lines w/red for ProgEl->CheckConfig == false #70
+* read-only, condedit off guys are now indicated by grey
+* highlighting working (label goes bold to indicate non-default value)
+* text controls have minimum width
+* add ... to edit a token pointer (replaces #93)
+* #99 (improper Mac prompt on Quit)
+* datatable ext bug (cannot reproduce; closed)
+* bool fields disappearing in inlines when shrinking panels
+* dnd extended to applying things: drag a layerspec and drop it on a layer
+  and this sets the layerspec.  need to just parse member funs that take
+  layerspec args + comment dir to disambiguate (or just pop up menu).
+* substantial changes to CheckConfig, to support UI highlighting, state
+  in the object, and a factored api for doing This and Child objects
+* #104 CheckConfig rework
+* get ClassBrowser panels working again
+* Program ControlPanel: extend list view for programs + their vars/args
+Graphing/Viewing:
+  * sort out DT/DA specs vs. TableView etc.
+  * T3 table/grid views
+* view_spec in GridTableView doesn't show in a panel anymore!
+
+
+Brad deferred:
+* add window menu (not hi pri, since likely only 2 or 3 wins anyway)
+* virtual console dock window, ex. be able to dock to bottom of any project window
+  (is this REALLY necessary??? there is only so much room...)
+Brad cancelled:
+* yellow surround for non-default values (NOTE: non-defaults already use BOLD captions)
+
+Randy:
+
+* reactivating basic wizard stuff for env + procs
+* add item / change name of objs guy update var: modify DataChanged on *list* object to 
+  trap and call fun.  name change is less clear: brad to add datachanged in taBase to check
+  owner for comment directive of "update me when child edited"
+* add #CAT + better desc for lots of core stuff
+* Datatable aggregation
+* GNU Scientific library integration + image processing (highvis) (imagereader + qt image readers)
+* Function libraries + "IncludeCodeEl"
+* export data tables and matrixes (including incremental output) 
+* profiler!
+* -nogui
+* dmem
+
+
+---------------
+Beta (feature complete, bugfix to release):
+
+General:
+* complete port to Windows
+* hover notes to add methoddef desc info in MethodCall, etc..
+* multiple selection across views/trees, etc & actions (toolbars) that become
+  activated in response to multiple selections: build out list of possible
+  actions by walking typedefs & looking at comment directives; traverse
+  list each time selection is updated and activate actions that match.  
+  order matters.
+* add "pin/unpin" capability to panels, and extend panel tab context menu 
+* dnd icon bar for:
+  netview/designer
+* network layer shortcut view: "sheet view" & iconify.
+* key shortcuts, particularly to invoke a string editor for string fields (all of them)
+* multi-cpu
+
+Brad:
+
+* T3 graphs  
+* save/restore state of viewers
+
+
+---------------
+Omega:
+
+* import data tables and matrixes
+* record scripts for gui operations: requied for dmem operation in gui mode.
+* revamp the 3D display of net objects: smart projection pointers,
+  etc....
+* 4-panel view of network, to enable rational moving/sizing of objects
+  - the moving/sizing
+* Printing Analysis, Design, and Implementation -- MAJOR
+
+
+Deferred:
+
+Done:
+* integrated viewers
+* dnd
+
+BUGS
+----
+
+Serious/Fatal:
+
+* new bug: external dest of a cut/paste has segment fault when it tries to do the remdatataken (but the source
+  call of this functionality works fine)
+* when deleting an open tree item, prompts "Apply Changes" -- cancel then crashes
+* ex. in Networks, delete the network -- moves up to .networks node, but still shows the deleted network in the group portion of the Networks edit panel (if you make a new browser, the .networks edit panel correctly shows no child networks in its group)
+* (??? maybe fixed) "wrong sizing behavior on group items in group edits" (bug text transcribed from written sheet -- may not be applicable any more)
+* UI often hangs -- one incident could be tracked to a line iTabBar::paint, where it calls inherited
+  just after setting pallete -- MAYBE CAN'T DO THIS RELIABLY
+* when pasting a new item into a list view, the text shows up as the previous item,
+  not the new item (but it is correct if you open a new browser and view it there)
+* (FIXED?) browser: clip handling not working in tree view
+* t3viewer: clip handling not working:
+  ex., Projection doesn't have its proper clip actions, ex Delete
+  caused because code gets the parent link from the visual object (NetView), not the 
+  containing object (taGroup)
+* in Chapter2/units.prj -- the Settle/LoopProc does not indicate the name of the script
+  (but did in v3.2); also, this project is not working, and probably has to do with this script;
+  note: doesn't even indicate script is loaded even when the script folder is current folder
+* MAKETA: under win32-msvc build (maybe others), typedef's must have a trailing comment, otherwise
+  the parser gets out of sync and the force_ta will fail
+* program crashes when deleting project
+  context: had main window, NetView, and a separate browse of XOR net open
+  deleted proj; caused a seg fault (in some Qt code, related to painting)
+* in Scripts, once you have a script file set, you can't seem to get it to 
+  reload the file (make changes to the file, select Open again, but it 
+  still retains the first contents.)
+* this seems to happen after one or more load errors have occurred, and you deleted
+  the project and tried again:
+  load fails with segfault in MemberDef::Dump_Load -- ex. was "epoch" (a var on net);
+  debugger indicates it has invalid data in its owner (MemberSpace); seems likes some
+  kind of memory corruption
+* on load of xor_2006-07-07_3.proj.gz --
+  "Attempt to create type of "Program" in list of type "Program_MGroup" -- most of the
+  programs seem to load, but the first, Train prog doesn't have its correct name, only
+  the generic name -- progs in the subgroup seem to load fine
+* HIGH PRIORITY: the pathing in pdpshell.cpp is utterly broken and needs revamping!!!!!
+* if you specify a project on the cmd line, it keeps reopening the same proj repeatedly
+* last data item missing in .projects group view (view_colors) --
+  the label is there, but  not the data control (perhaps this is why the names don't line up)
+  -- when you just look at the property panel directly (the project itself) it does show
+  the view_colors control properly
+  NOTE: if you view .defaults though, there are 4 props that show correctly, although
+  the labels still don't line up properly
+-- post qt4 browser:
+* in xor.proj, try using Move from edit panel item menu for the Train subgroup;
+  causes segfault -- stack indicates that Move is being called with NULL item pointers,
+  so somehow, between the arg dialog, and the css_stub call, the chosen items are
+  not being passed
+  
+* when doing Close Project with network in viewer, segfaults in taiDataHost::DeleteLater(obj)
+  -- the body (obj) seems to be invalid at this point
+  -- note: there are numerous nested Struct/DataUpdate calls, including ones caused by
+    deeply nested guys (ex. Layer.projections) on Network
+  * it is likely that the taiEditDataHost already destroyed the gui stuff, but the body etc.
+    are still hanging around able to do mischief BAD
+
+
+Medium Important:
+
+* in Browser, no-name items now showing empty tab (should show generic name, ie "Unit[0]")
+* can't seem to drag 3 items from listview -- only first 2 items seem to get dragged
+* don't repeatedly create new tabs for changed items if one such tab already exists
+* SelEdit: when you change the Mbr labels from the menu item, the Accept/Cancel gets lit up on the seledit dialog
+* SelEdit: dialog should rebuild after changing labels
+* In DataTable in browser, table indicates (ex) 10 rows, but each float_RArray only
+  indicates 1 in its 'size' member.
+* in maketa/win32-msvc it is adding spurious ta_Init_() call to ta files --
+  worked around by adding that as a dummy function in ta_type.h, but it is a bug that 
+  needs to be fixed (see mta_constr.cc line 1080)
+* when calling up Properties for int_Array, size shows as 1, even though it is greater
+* when you load an object from file, if the object is named, its name will show 
+  correctly in the panel, but will still have its default name (ex "MyType_0") in the tree view
+* for LayerWriter, TARG is not getting pulled from Layer
+* if you put a function in your Program that has the same name as a method on
+  the object, horrible things happen (first discovered when __Init() was called
+  Init() and there is also a Program::Init() ) -- see the fixed log below for more
+  details -- it seems to cause some horrible corruption that is then difficult to
+  diagnose what is happening
+* if you choose a non-gz proj file to save to, it warns about overwriting, but then
+  it just writes to a .gz file, leaving your non-gz file as it was
+* if you rename a panel object, its name is correct in panel and tree, but you still have
+  the old name showing in the description are at the top of the panel
+* selected several items in list view in .defaults (XOR proj) and selected Delete from menu;
+  program just hung, CPU indicated idle, but kdbg didn't include "Break" option to stop prog;
+  hit Run (?), and then kdbg indicated Segfault, Stack indicated inside rl_getc then sys calls;
+  note that recover file indicated that the last default selected had been deleted;
+  ADDENDUM: was able to reproduce by just loading test-prog_06-07-07_1 and deleting the two
+  defaults, segfaulting in the iListDataPanel::EditAction routine, enumerating (backwards)
+  the second item, ie item 0 of 2 items; segfaulted on the ISelectable::EditAction call;
+  note: single item delete works ok; and previous notes here indicate that the first item
+  iterated works ok (ie last item of selection is deleted), so it is subsequent item that
+  is failing;
+  note: other ops, like Copy multiple work ok (you can verify using clipview)
+* closed project w/ net viewer open; got series of Coin resource error msgs in output;
+  Coin raised an Abort 
+* there needs to be appropriate scoping for selecting objects in MethodCallEl -- right
+  now, it is just global, so you can grab vars not in scope
+* had netviewer open, had opened several tabs on it to view layers, and XOR net itself 
+  (the visibile tab); had another viewer open rooted on XOR net; closed it, mysterious
+  seg fault in taPtrList_impl::Remove (but nothing else indicated on Stack)
+* filer and related:
+  * when clicking on Network->SaveAs menu, no default file in dialog
+    (prob because still using the stream-based api, not the file-based)
+* in Script, when I load a script file, the Run button is not enabled
+  (check the other buttons as well, enabling does not seem correct -- might
+   be related to new enabling semantics for ghost)
+* create a new matrix; choose SetGeomN from menu and change; panel is not updated;
+  only when you click to something else and return does panel show correct values
+* using standard QTableView when values are numeric-ish seems to insert an up/down
+  edit control, which is limited to 2 decimal digits maximum
+* in EditPanel view of lists (with multi-grid), names not lining up to values 
+* if you close a project, the panel you are on remains open until you click on the
+  empty .projects item (this may presumably also apply to lesser items, although
+  usually you have to click on the item to action it, so it may be masked)
+-- post qt4 browse:
+* open xor.proj; click on "specs" to open; XORUnitSpec edit panel has some kind of
+  context menu open (looks like one of the data control TypeDef Menu thingies);l
+  note: does not happen for the Con or Prjn spec items
+* progedit -- needs scrollview for the edit frame, because it just renders out into
+  the hidden area of the window, so you have to size window big enough to see it
+* DRAG AND DROP!
+  
+
+Lower Priority (but perhaps still needed)
+
+* if you change the Geom on a Matrix, the Edit display is not correct
+
+Cosmetic/Usability/etc. (lower priority):
+
+* font for iAction-created taiMenuEl items is not being inherited from the parent taiMenu item
+* boxes in edit panels don't shrink as much as they could
+* should be bigger gap from labels to data in editpanels
+* right or middle click to create a new tab in browser
+* may want to add auto-line splitting to object descriptions <- YES! this is particularly important for SimLog dialog upon saving, which has a very long title, and occludes the buttons, etc
+* change default name in NetMonItem to just NetMonItem (no _#) because we qualify every name anyway
+  and the numbers will just get out of sync with list position anyway
+* need to add clipboard/drag/drop awareness to TableViews
+* Project Open dialog doesn't reopen using your previous directory
+* "Create New Object" dialog opens parented to root window, so it changes focus
+* browsers don't really have proper title, i.e. now they all say "root()" or "root() <N>" etc
+-- post qt4 browse:
+* fix the damned desc control so it sizes out to the end of the panel
+* add the buttons to the bottom (same as on the edit properties)
+* add a script panel to Programs so user just needs to click button to view script
+* taiField controls should have a min size, ex. see the List properties for colorspecs,
+  the color values are barely 1 numeral wide
+
+TODO
+----
+* menu changes to main menu, + context menu
+
+* finish the "over max" handlers in several menu types
+* finish the item/group checking code for rebuilds in gpiList datahost types
+* in group view on edits, :
+  1-scroll by item
+  2-option to even show all the group items; off by default
+* Color Bar controls
+* browser view state (cf Project View State, member of .project)
+
+* reordery dialog (ex for SelectEdit order)
+iEditGrid:
+* vertical separators in iEditGrid
+* fixed vert cell sizes in iEditGrid (ex. 2 or 3 for the window)
+* maybe need to use manual by-cell scrolling for iEditGrid, instead of automatic visual-scrolling
+* accommodate more than one edit panel viewed side-by-side (ex in a splitter)
+* save/load configuration of browser (with proj)
+* AND/OR (maybe for new) create a default view of tabs used for projects, ex. specs, networks, etc. (project view stuff)
+* HIPRI: any moving of Programs around pretty much needs to dirty ALL Progs, since they use
+  pathing to do calls and inits, and thus those paths will now have changed
+* HIPRI taiStreamArgType has to have its filtering etc updated because of taFiler changes
+
+CLIP/DRAGDROP
+
+* prob have to own item before loading OR PREFERABLY maybe call load on parent instead
+* default support for #LINKGROUP
+
+
+DONE (shown in reverse order, top=most recent)
+----
+* closing secondary browser windows was crashing -- was caused by incorrect delayed 
+  close logic; fixed
+* fixed all the registration issues in iEditGrid, including those introduced with
+  the addition of CompactEdit -- also cleaned up some longstanding minor layout issues
+* in a Matrix, select Remove Frame(n) for some n inside the matrix; the core
+  works correctly, but the Gui seems to lob off all the frames from n on
+* in Script, when you compile, the "script compiled" check does not get checked
+* when you have the CompactEdit panel, and add items from its menu, they don't show up
+  in the item area at the bottom (ex. ProgVar, edit the DynEnum items, try adding items)
+  NOTE: this was just a DynEnum class problem, because of DataChanged not forwarding; fixed
+* pdp is leaving the launch shell in half-duplex output mode (it is not echoing what you type)
+* need to do GetImage on other panels when the data changed or reverted
+* secondary view windows, "File/Close Browser" doesn't work
+* stripes continue in body but not names in iEditGrid
+* create a new (string) Matrix; set some dims; switch to Edit panel, it ABORTS
+* byte_Matrix data entry, seems to accept as if Hex, then display in Decimal
+* Project::file_name (taFNBase) should prob not show, and def not save filename
+* filer and related:
+  * saved a proj to name.proj and it actually saved to name.proj.gz
+  * made a new proj; selected file/save and it saved it without prompt
+    to BpProject_1.proj.gz (should have prompted, using that name)
+  * SaveAll menu missing
+* overall application: Expert Mode vs. Novice (to control complexity/visibility)
+* created a new program subgroup from menu;
+  went to its property sheet, renamed it;
+  the group disappeared from the tree; but opening in a new tree the renamed group is there
+* abstract out the CONDEDIT processing code and enable the same capabilities for
+  GHOST (for buttons); you can look for ":" to enable a backwards-compatability mode
+* just adding ex. a UserScriptEl to init_els doesn't dirty the Program
+* trying to compile a program that hit the following error line:
+yyparse(): css_parse.y line 797
+  yyerror("const type not accepted in this context");
+  nests down into: cssProg::Reset(); cssSpace::Reset(); then into
+  cssEl::unRefDone(); causes seg fault in debug code when 
+  accessing GetName() of 'it' ('it' is valid address)
+  'it' had address 6e2a08 which suggest in static program data area
+  major confound: can't find an implementation of yyerror
+   and in the code, it is calling cssProgSpace.Reset ????
+* NOTE: when CSS assigns a value, if it has a TA parent, it does UAE on that
+  parent, so, ex. when we have Program::ret_value, when the program assigns
+  value to ret_value, the Program gets a UAE! this is not expected!!!
+  Issues:
+  1) not expected UAEs
+  2) confound between design-time UAE's for things like changing prog,
+     vs. runtime UAEs for things like prog values changing
+* (at least) in Variant ui for int, the spinbox can only go up to 99
+* when loading a project, the list view says "Project_0" even if it has a different name, ex. "Proj"
+* project, t3views not reopening properly, in OnWindowOpen_impl of NetView, attempt to open
+  panel fails because NetView's datalink returns NULL (probably not being properly linked
+  during load, vs. new in program)
+* in proj.viewers -- have open viewer, then close that viewer; causes exception in
+  iDataBrowser::GetEditAction at point of accessing cur_item -- maybe cur_item has not been properly
+  changed or NULL'ed.
+  Also happens if you are only in browser window; ex. have 2 projects loaded; sel 2nd project in tree,
+  then select Close from the item menu.
+* main menus no longer working (ex File/Quit); but corresponding accel keys do invoke the command (ex Ctrl-Q for File/Quit)
+* main edit menus no longer enabling properly; but context menu has correct items shown
+--2005-02-05--
+* root::SaveSettings causes crash (NOTE: doesn't seem to be happening anymore)
+* if a ListViewPanel has been made, then program crashes on shutdown
+* multi-DD/clip
+* make sure that buttons and button menu methods can be accessed on context menu, and
+  main menu when no edit dialog
+* add directive to enable context menus to have methods in the root menu, not in a submenu
+* need to raise a DATA CHANGED when a list is sorted
+* CUT and UNLINK s/b mutually exclusive
+* .processes etc. have comment directives to hide things like subprocesses; should be shown in browser
+* "no" version of "BROWSE" directive
+--2004-11-19--
+* data handling for clipboard and D/D
+* finish cut/paste for groups
+** directive-based way to show ex. subgroup members in tree, but ex. remain Detail in Edit
+* use Transfer for Cut/Paste in process; Copy/Paste/Delete source  for Cut/Paste across apps
+--2004-11-12--
+* alpha completion of clipboard/dragdrop
+--2004-11-01--
+* need to do a GetImage before reshowing a tab panel
+* default for enums (iComboBox)
+* right-select New should open item in a dialog ( otherwise should be set in tree ???)
+* in the SelEdit context menus, always include all seledits, and just enable/disable them (so user gets nice positional stability)
+* can't size EditPanel section smaller than a full panel (no scroll bars)
+* TrainEpoch class has too-long desc, not broken by \n
+* BrowserWin doesn't seem to be constrained in size
+* can't shrink the browser when its panel area has been widened very wide
+--10/22/04--
+* in editpanels, full version of help text (ex. enums, subtypes)
+* SelectEdit add func causes crash
+* iCoord edit
+* Seledit extra labels not being shown for data or for functions
+* in SelEdit, only puts menubutton items on correct button when their button name is in the directive (because normal edits depend on the most recent cur_item being valid)

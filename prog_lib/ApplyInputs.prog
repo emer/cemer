@@ -1,0 +1,233 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][6] { 
+  ProgObjList @.objs = [1] {
+    LayerWriter @[0] { 
+      LayerDataEl_List @.layer_data = [3] {
+	LayerWriterEl @[0] { };
+	LayerWriterEl @[1] { };
+	LayerWriterEl @[2] { };
+      };
+    };
+  };
+
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgEl_List @.init_code = [2] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+  };
+
+  ProgEl_List @.prog_code = [1] {
+    MethodCall @[0] { };
+  };
+};
+Program .projects[0].programs.gp[0][6] {
+ name="ApplyInputs";
+ tags="Network, InputData, Apply";
+ desc="apply the current input data to the network as external input and target values";
+ flags=;
+ objs {
+  name=;
+  el_typ=LayerWriter;
+  el_def=0;
+  LayerWriter @[0] {
+   name="LayerWriter_0";
+   data=.projects[0].data.gp[0][0]$0$;
+   network=.projects[0].networks[0]$1$;
+   layer_data {
+    name=;
+    el_typ=LayerWriterEl;
+    el_def=0;
+    LayerWriterEl @[0] {
+     chan_name="Input";
+     net_target=LAYER;
+     layer_name="Input";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=EXT;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+    LayerWriterEl @[1] {
+     chan_name="Output";
+     net_target=LAYER;
+     layer_name="Output";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=TARG;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+    LayerWriterEl @[2] {
+     chan_name="Name";
+     net_target=TRIAL_NAME;
+     layer_name="Name";
+     offset {x=0: y=0: };
+     use_layer_type=1;
+     ext_flags=;
+     noise {name="": type=NONE: mean=0: var=0.5: par=1: };
+    };
+   };
+  };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=Network;
+   object_val=$1$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="network to apply inputs to -- typically set by calling program";
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=$0$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="input datatable containing input/output patterns";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="LayerWriter_0";
+   var_type=T_Object;
+   object_type=LayerWriter;
+   object_val=.projects[0].programs.gp[0][6].objs[0]$2$;
+   objs_ptr=1;
+   flags=NULL_CHECK;
+   desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="sets the datatable and network for the layer writer, so it knows what to write to";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][6].vars[0]$3$;
+   method=LayerWriter::SetDataNetwork;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataBlock_ptr;
+     type="DataBlock*";
+     name="db";
+     required=0;
+     def_val=;
+     expr {
+      expr="input_data";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ input_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     required=0;
+     def_val=;
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[1] {
+   desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
+   flags=;
+   result_var=NULL;
+   obj=$3$;
+   method=taList_impl::CheckConfig;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     required=0;
+     def_val="false";
+     expr {
+      expr="false";
+      flags=;
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="apply inputs to the network!  layer writer has all the key specs";
+   flags=;
+   result_var=NULL;
+   obj=$3$;
+   method=LayerWriter::ApplyInputData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+ };
+};

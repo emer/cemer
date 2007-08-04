@@ -1,0 +1,2116 @@
+@c uncomment the following two lines for 'update every node' command
+@c @node  net
+@c @chapter Networks (Layers, Units, etc)
+
+@cindex Network
+@tindex Network
+
+Every simulation is built around a network.  Networks contain layers of
+units, with connections between the units.  PDP++ provides objects at
+every level of structure from the @b{Network} down to the
+@b{Connection} from which neural network models can be constructed.
+While particular algorithms will define their own sub-classes of these
+basic object types the essential properties of these objects are
+relatively constant across different algorithms.  This chapter describes
+these basic properties.
+
+The user's primary interaction with the PDP++ software is through the
+@b{NetView}, described in @ref{net-view}.  This provides a graphical
+display of the network structure, and a means of creating and modifying
+the different elements of the network.
+
+For a tutorial introduction on how to use the @b{NetView} to build and
+connect a network, see @ref{tut-config}.
+
+@menu
+* net-net::                     The Network Object
+* net-layer::                   Layers and Unit Groups
+* net-prjn::                    Projections
+* net-unit::                    Units
+* net-con::                     Connections and Connection Groups
+* net-view::                    The Network Viewer
+* net-build::                   Building Networks using the Viewer
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-net, net-layer, net, net
+@section The Network Object
+
+The network object is basically a container for all the things that go
+in it.  Thus, it has a group of layers, which then contain units,
+projections, etc.  In addition, each network also has an epoch counter
+and a variable controlling the default layout of the layers.  The epoch
+counter reflects the number of @emph{training} epochs the network has
+seen (not testing). Finally, the network is instantiated in the user
+interface by one or more @b{NetView}s, which provide a window with menu
+actions, tools, etc. to operate on the network.
+
+Also see the following information about Networks:
+
+@menu
+* net-dmem::             Distributed Memory Computation in the Network
+@end menu
+
+@table @code
+@item Layer_MGroup layers
+@vindex layers of Network
+This is the group of layers that have been created in the network.  The
+layers then contain all of the remaining substructure of the network.
+@item int epoch
+@vindex epoch of Network
+The epoch counter indicates how many epochs of training the network has
+been subjected to. This counter is incremented by the training processes
+which act upon it, see @ref{proc-levels-epoch}.
+@item bool re_init
+@vindex re_init of Network
+This flag is set by training schedule process to indicate whether the
+network should be reinitialized when the process is initialized
+@ref{proc-levels-train}.
+@item LayerLayout lay_layout
+@vindex lay_layout of Layout
+This variable can be set to either @code{TWO_D} or @code{THREE_D}. It
+controls the default positioning of the layers when they are created,
+as well as the skew of the units when they are displayed.  @code{TWO_D}
+networks are arranged in one big X-Y grid, while @code{THREE_D} networks
+simulate a three-dimensional space where successive layers are located
+at successively higher Z coordinates, and units within a layer are
+arranged in an X-Y plane.
+@item Usr1SaveFmt usr1_save_fmt
+@vindex usr1_save_fmt of Network
+You can control how the network is saved when it receives the
+@code{USR1} signal (@pxref{proj-signals}) with this -- the full network
+or just the weights
+@item PThreadSpec pthread
+@vindex pthread of Network
+@cindex Parallel Processing
+@cindex SMP
+@cindex Threaded Processing
+This specifies parameters for parallel processing (SMP) of the network.
+Number of processors (threads) is specified by the @b{n_threads}
+parameter.  This works by compiling a list of layers for each thread to
+process, based on the number of connections and units in the layers
+(separate list for each).  The allocation algorithm tries to distribute
+the computation as evenly as possible.  This is relatively fine-grained
+parallelism, and due to the overhead involved in managing the threads,
+it only speeds up relatively large networks (i.e., > 50 units per layer,
+>= 4 layers).  Speedups can by upwards of 1.67 times as fast on dual
+pentium III systems.  You can also restrict parallelism to only
+connection-level computations by turning off @b{par_units} --- unit
+level speedup is typically quite quite small (but measurable..).
+
+@end table
+
+The network also has the following functions which can be activated by
+the corresponding menu selection in the @b{NetView} (@b{using the left
+hand menu}).
+
+In the @i{Object} menu:
+
+@table @code
+@item ReadOldPDPNet(File input_file, bool skip_dots)
+@item Copy_Weights()
+@findex Copy_Weights on Network
+Copies the weights from another similarly-configured network.  By
+duplicating a network and then later copying weights back from it, one
+can restore weight values to known values while tinkering with various
+parameters affecting network learning.
+@item WriteWeights(File output_file)
+@findex WriteWeights on Network
+Outputs bias and receiver weight values in a unit by unit format to a
+file (includes comments). NOTE: This is not the same format as the old
+pdp software.
+@item ReadWeights(File input_file)
+@findex ReadWeights on Network
+Loads in the bias and receiver weight values from a file created with
+the WriteWeights function above.
+@findex ReadOldPDPNet on Network
+Reads in a "filename.net" type file format from the old pdp software.
+@var{skip_dots} indicates whether to skip over "." values in the
+"network:" weight matrix section or to create zero valued weights
+instead. This function will attempt to use and extend existing network
+structure if it exists and create new network structure if necessary.
+Currently (v1.2) it does not handle "Bias:" sections or "LINKED" weight
+constraints. 
+@end table
+
+In the @i{Actions} menu:
+
+@table @code
+@item Build()
+@findex Build on Network
+Create units in all the layers according to the size and shape of the
+layers.  If units already exist, it makes sure they are of the right
+type, and arranged within the geometry of the layer.  This is accessed
+through the @i{Build All} button of the @b{NetView} (@pxref{net-view}).
+@item Connect()
+@findex Connect on Network
+Create connections on all the units according to the projections on the
+layers.  The projections define a pattern of connectivity, and the
+connections actually flesh this pattern out by individually connecting
+unit to unit.  Note that any existing connections are removed before
+connecting. This is accessed through the @i{Connect All} button of the
+@b{NetView} (@pxref{net-view}).
+@item Check Types()
+@findex CheckTypes on Network
+Checks to make sure all the objects and specs in the network are
+mutually compatible.
+@item Fix Prjn Indexes()
+@findex FixPrjnIndexes on Network
+Fixes the other_idx indexes on the connection groups --- CheckTypes
+might tell you you need to run this if your network was not properly
+connected.
+@item RemoveCons()
+@findex RemoveCons on Network
+Remove all the connections on the units in the network.  Like
+@code{RemoveUnits} this is useful for reducing the size of the network
+for saving.
+@item RemoveUnits()
+@findex RemoveUnits on Network
+Remove all the units from the network.  This can be useful for saving
+large networks, since all of the relevant structural information for
+rebuilding the network is typically present in the layers and
+projections.  Thus, one can save the "skeleton" and then simply press
+@i{Build All} and @i{Connect All} when the network is reloaded.
+@item InitState()
+@findex InitState on Network
+Initialize the state variables on the units.  This means activation-like
+variables, but not the weights.
+@item InitWtState()
+@findex InitWtState on Network
+Initialize the weight state information on the connections in accordance
+with their @b{ConSpecs}.  This also resets the epoch counter to zero.
+@item TransformWeights(PreProcessVals trans)
+@findex TransformWeights on Network
+Applies given transformation to weights.  Possible transformations
+include basic arithmetic operators (e.g., scaling via multiplication),
+and absolute value, thresholding, etc.
+@item AddNoiseToWeights(Random noise_spec)
+@findex AddNoiseToWeights on Network
+Adds noise to weights using given noise specification.  This can be
+useful for simulating damage to the network.
+@item PruneCons(PreProcessVals pre_proc, CountParam::Relation rel, float cmp_val)
+@findex PruneCons on Network
+Removes connections that (after a pre-processing transformation,
+e.g. absolute-value) meet the given relation in comparison to compare
+val (e.g., LESSTHANOREQUAL to some value).
+@item LesionCons(float p_lesion, bool permute)
+@findex LesionCons on Network
+Removes connections with probability p_lesion.  If permute is true, then
+a fixed number of weights will be lesioned, where this number is equal
+to the probablility times the number of weights.  Othewise, the actual
+number of weights lesioned will vary based on the probability.
+@item LesionUnits(float p_lesion, bool permute)
+@findex LesionUnits on Network
+Removes units with probability p_lesion.  If permute is true, then a
+fixed number of units will be lesioned, where this number is equal to
+the probablility times the number of units (on a layer-by-layer basis).
+Othewise, the actual number of units lesioned will vary based on the
+probability.
+@item TwoD_Or_ThreeD(LayerLayout layout_type)
+@findex TwoD_Or_ThreeD on Network
+Reposition the units and layers in either a 2D or 3D configuration.
+@item GridViewWeights(GridLog* grid_log, Layer* recv_lay, Layer* send_lay, int un_x, un_y, wt_x, wt_y)
+@findex GridViewWeights on Network
+Plots the entire set of weights into the recv_lay from the send_lay in
+the grid log specified (NULL = make a new one).  The un_x, un_y
+parameters can specify a more limited range of receiving units (-1 means
+entire layer), and the wt_x, wt_y similarly specify a more limited range
+of sending units (weights).
+@end table
+
+These other functions of the network might be useful to those writing
+scripts or programming in PDP++:
+
+@table @code
+@item ConnectUnits(Unit* receiving_unit, Unit* sending_unit);
+@findex ConnectUnits on Network
+Creates a connection from the sending_unit to the receiving_unit. A
+custom projection between the units' layers is created if necessary
+@end table
+
+Finally there are a number of other functions that can be found in
+@file{src/pdp/netstru.h} which are useful for programming.  In general the
+Network has a function corresponding to one that is performed on a
+lower-level object like a unit, and this function on the network simply
+calls the corresponding one on all of its layers, which then call the
+one on all of their units, etc.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node net-dmem, , , net-net
+@subsubsection Distributed Memory Computation in the Network
+
+The Network supports parallel processing across connections, where
+different distributed memory (dmem) processes compute different
+subsets of connections, and then share their results.  For example if
+4 processors were working on a single network, each would have
+connections for approximately 1/4 of the units in the network.  When
+the net input to the network is computed, each process computes this
+on its subset of connections, and then shares the results with all the
+other processes.
+
+Given the relatively large amount of communication required for
+synchronizing net inputs and other variables at each cycle of network
+computation, this is efficient only for relatively large networks
+(e.g., above 250 units per layer for 4 layers).  In benchmarks on
+Pentium 4 Xeon cluster system connected with a fast Myrinet
+fiber-optic switched network connection, networks of 500 units per
+layer for 4 layers achieved @emph{better} than 2x speedup by splitting
+across 2 processors, presumably by making the split network fit within
+processor cache whereas the entire one did not.  This did not scale
+that well for more than 2 processors, suggesting that cache is the
+biggest factor for this form of dmem processing.
+
+In all dmem cases (see @ref{proc-epoch-dmem} for event-wise dmem) each
+processor maintains its own copy of the entire simulation project, and
+each performs largely the exact same set of functions to remain
+identical throughout the computation process.  Processing only
+diverges at carefully controlled points, and the results of this
+divergent processing are then shared across all processors so they can
+re-synchronize with each other.  Therfore, 99.99% of the code runs
+exactly the same under dmem as it does under a single-process, making
+the code extensions required to support this form of parallel
+processing minimal.  This was not true for the pthread (parallel
+thread) model that was used in earlier releases -- it is now gone.
+
+The main parameter for controlling dmem processing is the
+@code{dmem_nprocs} field, which determines how many of the available
+processors are allocated to processing network connections.  Other
+processors left over after the network allocation are allocated to
+processing event-wise distributed memory computation (see
+@ref{proc-epoch-dmem} for information on this).  The other parameter
+is @code{dmem_sync_level}, which is set automatically by most
+algorithms based on the type of synchronization that they require
+(feedforward networks generally require layer-level synchronization,
+while recurrent, interactive networks require network-level
+synchronization).
+
+The one area where dmem processing can cause complications is in
+networks that use shared/linked weights, such as those that can be
+created by the @b{TesselPrjnSpec} projection spec
+(@pxref{net-prjn-tessel}).  If shared weights end up on different
+processors, they cannot be shared!  If these weights happen to be
+shared across unit groups, then you can set the @code{dmem_dist}
+parameter in the corresponding @b{Layer} to @code{DMEM_DIST_UNITGP},
+which will distribute connections across unit groups such that the
+first unit in each unit group are all allocated to the first
+processor, the second to the second, etc.  In this case, they can all
+share connections.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-layer, net-prjn, net-net, net
+@section Layers and Unit Groups
+@tindex Layer
+@cindex Layer
+
+Layers are basically just groups of units, but they also constitute the
+basic elements of connectivity as specified by the projections
+(@pxref{net-prjn}).  Thus, one can specify that a whole group of units
+should be connected in a particular fashion to another whole group of
+units, instead of going one-by-one through the units and telling each
+one individually how to connect to other units.  Note that the model
+used in PDP++ is the @emph{receiver} model -- a layer contains the
+projections it @emph{receives} from other layers, not the ones it sends
+to them.
+
+Further, in certain kinds of learning algorithms, particularly those
+with a self-organizing character, the Layer plays a computational role
+in that it implements competition among units, for example (@pxref{so}).
+In these algorithms, the @b{Layer} will have an accompanying
+@b{LayerSpec} that contains the parameters governing the computation
+that occurs in the layer.  However, in standard backpropagation and
+constraint satisfaction algorithms (@ref{bp}, @ref{cs}), the LayerSpec
+is not used.
+
+Layers have the following variables:
+
+@table @code
+@item int n_units
+@vindex n_units of Layer
+Number of units to create with Build command.  Entering a value of 0
+will cause the n_units to be computed based on the current geometry
+(i.e., n_units = x * y).
+@item Geometry geom
+@vindex geom of Layer
+Specifies the layer's 3D geometry for its units. It is used for display
+purposes, and for computing a default @code{n_units}.  Note that a
+@code{z} value of greater than 1 means that multiple sub-groups of units
+will be created in the layer, each of which having x * y units (by
+default).
+@item Geometry pos
+@vindex pos of Layer
+Specifies the layer's 3D position relative to the network. Used for
+display purposes and potentially for algorithms that depend on physical
+distance information.
+@item Geometry gp_geom
+@vindex gp_geom of Layer
+This is the geometry of the sub-groups of units within a layer (only
+applicable if @code{geom.z > 1}).  Groups will be arranged in the
+x,y geometry given by this parameter (i.e.,  @code{x * y} should be >=
+@code{geom.z}).
+@item Projection_Group projections
+@vindex projections of Layer
+The group of projections which specify the connections that this layer
+receives from other layers.
+@item Unit_Group units
+@vindex units of Layer
+The group of units within the layer.  The type of units which are
+created is determined by the @code{el_typ} on this group
+(@pxref{obj-group-variables}).  Note that sub-groups of units can be
+created, as given by the @code{geom.z} parameter, and as described
+in greater detail below.
+@item UnitSpec_SPtr unit_spec
+@vindex unit_spec of Layer
+The default unit specification for units created in this layer.  This is
+applied whenever the Build function is performed.
+@item bool lesion
+@vindex lesion of Layer
+When set to @code{true}, this layer is inactivated from all processing,
+as if it was not there in the first place.  This makes it possible to
+selectively pre-train certain layers within the network, for example.
+@item  Unit:ExtType ext_flag
+@vindex ext_flag of Layer
+Indicates which kind of external input the layer last received.
+Whenever input is applied to the network from an environment, the
+affected layer's flag is set, so that when it comes time to clear the
+unit flags, or perform any other input-specific processing, only
+relevant layers need to be processed.
+@end table
+
+The following layer functions are available, either in the layer edit
+dialog or in the CSS script language:
+
+@table @code
+@item Build()
+@findex Build on Layer
+Create @code{n_units} in the layer and arrange them according to the
+@code{geometry}.   If units already exist, they are enforced to be of
+the type of the unit group.  Thus, the best way to change the type of
+units in the layer is to change the @code{el_typ} of the units group and
+then do a Build() (see also @ref{net-net}).
+@item Connect()
+@findex Connect on Layer
+Actually creates the connections into each of the units in the layer
+according to the projections on this layer.  Note that any existing
+connections are removed before connecting.
+@item RemoveCons()
+@findex RemoveCons on Layer
+Removes any existing connections into units in the layer.
+@item DisConnect()
+@findex DisConnect on Layer
+This removes all the projections (and connections) that this layer
+receives from other layers, and all the projections that other layers
+receive from this layer.  Thus, it is stronger than @code{RemoveCons} in
+that it removes the projections as well as the connections.
+@item Copy_Weights(Layer *)
+@findex Copy_Weights on Layer
+Copies the weights from the other layer including unit bias weights.
+@item SetLayerSpec(LayerSpec *)
+@findex SetLayerSpec on Layer
+Sets the layer specification for this layer to be the given one.
+@item SetUnitSpec(UnitSpec *)
+@findex SetUnitSpec on Layer
+Sets the unit specification of all units in the layer to be the given
+one, and makes that the default unit spec for any new units that would
+be created in the layer.
+@item SetConSpec(ConSpec *)
+@findex SetConSpec on Layer
+Sets the connection specification of all projections in the layer to be
+the given one.
+@end table
+
+Note that the layer also has instances of other functions that are
+present on the network, such as @code{InitWtState} and @code{InitState}.
+
+@cindex Unit Groups
+@tindex Unit_Group
+The @b{Unit_Group} provides another level of organization between the
+layer and the units within the layer.  This can be useful for cases
+where different groups of units play specialized roles, but have
+otherwise the same connectivity to other layers (which is what makes
+them part of the same layer instead of being different layers).  This
+level of organization has been used to implement independent sub-pools
+of activation competition within a larger layer, for example.
+
+@vindex n_units of Unit_Group
+@vindex geom of Unit_Group
+@vindex pos of Unit_Group
+Unit groups are created as sub-groups within the @code{units} member of
+the layer.  The @code{z} value of the layer's geometry specification
+indicates how many groups to create, and each of them has @code{n_units}
+units arranged in the @code{geom.x, geom.y} geometry as specified in the
+layer.  However, once created, the unit groups can be individually
+re-sized, and they have their own @code{n_units}, @code{geom}, and
+@code{pos} variables.  To have a unit group always use the settings on
+the layer, the @code{n_units} should be set to 0.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn, net-unit, net-layer, net
+@section Projections
+@cindex Projection
+
+Projections represent a layer's connectivity with another layer.  They
+serve as a "template" for individual connections between units in the
+two layers, thus simplifying the specification of general patterns of
+connectivity.  The connectivity of the projection is specified in terms
+of the layer this projection's layer is receiving from.  Thus if you had
+an input layer connected to a hidden layer, then the hidden layer would
+have a projection with its @code{from} field set to the input layer.
+
+In addition to the @code{from} field, projections have a
+@b{ProjectionSpec} which determines the connectivity patterns to use
+when creating the actual connections between individual units.  There
+are a number of different forms of connectivity that can be specified
+with the different @b{ProjectionSpecs}, from the simple full
+connectivity to different forms of random, one-to-one, and "tesselated"
+or repeated patterns of connectivity.
+
+The projection object itself is primarily concerned with specifying
+@emph{where} to receive connections from, and what kinds of connection
+objects to create.  The @b{ProjectionSpec} is responsible for
+determining the @emph{pattern} of connectivity.
+
+@menu
+* net-prjn-prjn::               The Projection Class
+* net-prjn-spec::               The Projection Specification
+* net-prjn-special::            Specialized Types of Projection Specs
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-prjn, net-prjn-spec, net-prjn, net-prjn
+@subsection The Projection Class
+@tindex Projection
+
+The projection object is primarily concerned with specifying
+@emph{where} to receive connections from.  Also, it determines what type
+of connections (and connection groups and connection specs) should be
+created:
+
+@table @code
+@item PrjnSource from_type
+@vindex type of Projection
+Type of the projection source. This can have one of the following values:
+@itemize @bullet
+@item NEXT:
+Receive connections from the next layer in network.
+@item PREV:
+Receive connections from the previous layer in network.
+@item SELF:
+Receive connections from the same layer this projection is in.
+@item CUSTOM:
+Receive connections from the layer specified in the projection.
+@end itemize
+
+@item Layer* from
+@vindex from of Projection
+The layer this projection receives from. This is set automatically if
+@code{from_type} is not set to @code{CUSTOM}.
+@item ProjectionSpec_Sptr spec
+@vindex spec of Projection
+Points to the @b{ProjectionSpec} which controls the pattern of
+connectivity for this projection.
+@item TypeDef con_type
+@vindex con_type of Projection
+The type of @b{Connection} to create when making connections.
+@item TypeDef con_gp_type
+@vindex con_gp_type of ProjectionSpec
+The type of connection group to create when making connections.
+@item ConSpec_SPtr con_spec
+@vindex con_spec of ProjectionSpec
+The connection specification to use for the connections.
+@end table
+
+The Projection class has a number of member functions, most of which
+have the same function as those defined on the Layer and the Network.
+Refer to @ref{net-layer} and @ref{net-net} for further details.  The
+following are specific to projections:
+
+@table @code
+@item Copy_Weights(Projection* src)
+@findex Copy_Weights on Projection
+Copies the weights values from an equal sized projection to the weight
+values of the connections on this Projection.
+@item ApplyConSpec()
+@findex ApplyConSpec on Projection
+Sets the conspec of the all the connections for this projection to the
+projection's @code{con_spec} without rebuilding them.
+@end table
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-spec, net-prjn-special, net-prjn-prjn, net-prjn
+@subsection The Projection Specification
+@tindex ProjectionSpec
+
+The @b{ProjectionSpec} class describes the patterns of connectivity
+between units in the two layers involved in a projection.  The base
+ProjectionSpec class is a parent class for the more specific Projection
+Spec classes which are actually used (@pxref{obj-basics}). Nonetheless,
+it provides the basic functions and variables common to all Projection
+Specs.
+
+The projection spec actually implements many of the functions associated
+with the projection, so functionality can be modified just by changing
+the spec. 
+
+@vindex self_con of ProjectionSpec
+@vindex init_wts of ProjectionSpec
+There are two variables that are common to all projection specs.  One is
+the @code{self_con} flag.  This indicates if self-connections from a
+unit to itself should be created in @code{SELF} projections.  The other
+is @code{init_wts}, which indicates whether the connection weights
+should be initialized from this projection spec (see Tessel and Random,
+below) or via the ConSpec (which is the default, @pxref{net-con}).
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-special,  , net-prjn-spec, net-prjn
+@subsection Specialized Types of Projection Specs
+
+There are a number of different types of projection specification types
+which implement different kinds of connectivity patterns.  They are
+described below.
+
+@menu
+* net-prjn-full::               Full Connectivity
+* net-prjn-tessel::             Tesselated (Repeated) Patterns of Connectivity
+* net-prjn-random::             Random Patterns of Connectivity
+* net-prjn-unitgp::             Unit_Group Based Connectivity
+* net-prjn-misc::               Miscellaneous other Projection Types
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-full, net-prjn-tessel, net-prjn-special, net-prjn-special
+@subsubsection Full Connectivity
+@tindex  FullPrjnSpec
+
+The @b{FullPrjnSpec} is the most commonly used type of projection spec.
+It creates full connectivity between units.  There are no other
+parameters controlling its behavior, and not much else to say.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-tessel, net-prjn-random, net-prjn-full, net-prjn-special
+@subsubsection Tesselated (Repeated) Patterns of Connectivity
+@tindex TesselPrjnSpec
+
+The @b{TesselPrjnSpec} connects two layers using tesselations (repeated
+patterns) of connectivity.  These patterns are defined in terms of a
+"receptive field" which is a two-dimensional pattern of connectivity
+into a given receiving unit.  This pattern is defined in terms of
+two-dimensional X,Y offsets of the sending units relative to the
+position of a given receiving unit.  Thus, there is an assumed
+correspondence between the layout of the receiving and sending units.
+
+Which receiving units get this receptive field is determined by
+offset and skip parameters which allow one to have different receptive
+fields for the even and odd units, for example.
+
+The center of each receiving unit's receptive field over the sending
+layer is either in direct correspondence with the coordinates of the
+receiving unit within its layer, or there can be a scaling of the
+coordinates based on the relative sizes of the two layers, so that the
+receiving units evenly cover the sending layer.  Also, contiguous
+receivers can share the same effective receptive field center by using
+the @code{recv_group} parameters.
+
+In addition, since the @b{TesselPrjnSpec} creates repeated versions of
+the same connectivity pattern, it is a natural place to implement weight
+sharing. There is a choice on the spec, @code{link_type}, that
+can establish shared weights among all units in the same
+@code{recv_group} (@code{GP_LINK}), or each unit has the the same
+weights (@code{UN_LINK}).
+
+Finally, there are a number of functions which automatically generate
+receptive fields according to simple geometric shapes, or create
+receptive fields from patterns of selected units in the @b{NetView}
+(@pxref{net-view}).  Further, the weight values for these connections
+can be initialized to specified values (use the @code{init_wts} and set
+the @code{wt_val} values), and distance-based values can be computed
+automatically using functions.  These are described below.
+
+The spec has the following parameters:
+
+@table @code
+@item TwoDCoord recv_off
+@vindex recv_off of TesselPrjnSpec
+The offset (XY) in the layer for the start of the receiving units.
+Units before this offset do not get connections.
+@item TwoDCoord recv_n
+@vindex recv_n of TesselPrjnSpec
+The number of receiving units in each dimension (XY).  The default
+values of -1 means use all the receiving units (after the offset).
+@item TwoDCoord recv_skip
+@vindex recv_skip of TesselPrjnSpec
+The number of receiving units to skip in each dimension (XY).  Thus, one
+could have one spec controlling the even units and another for the odd
+units in a given layer.  NOTE: this is ignored when @code{GP_LINK} is
+used, for technical reasons.
+@item TwoDCoord recv_group
+@vindex recv_group of TesselPrjnSpec
+The number of receiving units to group together with the same receptive
+field center in each dimension (XY).  Thus, one can have groups of units
+with identical receptive fields.
+@item bool wrap
+@vindex wrap of TesselPrjnSpec
+Indicates whether or not to wrap coordinates at the edges of the sending
+layer (otherwise it clips at the layer edges).
+@item bool link_type
+@vindex link_type of TesselPrjnSpec
+Indicates whether and how to link together receiving weights:
+@table @code
+@item NO_LINK
+Each unit has its own weights, as is normally the case.
+@item GP_LINK
+Shares weights among an entire @code{recv_group} of units, where the 1st
+unit in each group has the same weights, etc.
+@item UN_LINK
+The same weights are shared between all units (each unit has the same
+weights).  Also see @code{link_src}.
+@end table
+@item TwoDCoord link_src
+@vindex link_src of TesselPrjnSpec
+The index of the receiving unit that should serve as the
+"source" unit for unit linked weights.  If sending coordinates are not
+being wrapped, then the first unit in the receiving layer will likely
+not have the full complement of connections, since some of them will
+have been clipped, so this allows a unit that has the full complement of
+connections to be indicated as the source, which has to have all the
+possible connections.
+@item FloatTwoDCoord send_scale
+@vindex send_scale of TesselPrjnSpec
+Scales the coordinates of the receiving unit in order to determine
+the coordinates of the center of the receptive field in the sending
+layer.  Thus, if in a given dimension (X or Y) there are only four units
+in the receiving layer and 8 units in the sending layer, one might want
+to use a scale of 2 in that dimension so the receivers will cover the
+whole sending layer.
+@item TwoDCoord send_border
+@vindex send_border of TesselPrjnSpec
+A border (offset) that is added to the receiving unit's coordinates
+(after scaling, see above) in order to determine the coordinates of the
+center of the receptive field in the sending layer.
+@item TessEl_List send_offs
+@vindex send_offs of TesselPrjnSpec
+A list of offsets of the sending units.  These offsets are
+relative to the center of the receiving unit's receptive field in the
+sending layer, computed as described above.  Each offset is a member of
+the class TessEl which has the members:
+@tindex TessEl
+@table @code
+@item TwoDCoord send_off
+@vindex send_off of TessEl
+The offset from the center of the receptive field.
+@item float wt_val
+@vindex wt_val of TessEl
+The value to assign to the weight of the connection.  These weight
+values are given to the weight upon creation of the connection, but if
+the @b{ConSpec} performs its own initialization of the weights, they
+will be lost.  Also, if learning is taking place, the only way to
+reinstate these values is to reconnect the network.
+@end table
+@end table
+
+The functions that make particular receptive fields are as follows:
+
+@table @code
+@item MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y)
+@findex MakeEllipse on TesselPrjnSpec
+Constructs an elliptical receptive field from the given parameters.  The
+ctr_x and y specify the center of the receptive field.  For example,
+half_width = half_height = 2, ctr_x = ctr_y = 0, gives a circle from -2
+to 2 in x and y.
+@item MakeRectangle(int width, int height, int ctr_x, int ctr_y)
+@findex MakeRectangle on TesselPrjnSpec
+Constructs a rectangular receptive field from the given parameters.
+ctr_x and _y are as in MakeEllipse (e.g., specifying a width, height of
+5 and ctr_x, _y of 0 gives x and y coordinates from -2 to 2.
+@item MakeFromNetView(NetView* view)
+@findex MakeFromNetView on TesselPrjnSpec
+Uses the currently selected units in the @b{NetView} to create a
+receptive field.  First select a receiving unit, which establishes the
+center of the receptive field (this should be in the receiving layer).
+Then, in the sending layer, select the receptive field pattern.  All
+units must be selected (use multiple-select) before this function is
+called.
+@item WeightsFromDist(float scale)
+@findex WeightsFromDist on TesselPrjnSpec
+Initializes the @code{wt_val} value of each element of the receptive
+field according to its distance in offset coordinates, scaled by the
+given scale parameter.  Note that @code{init_wts} must be set for these
+weights to be used in initializing the weights.
+@item WeightsFromGausDist(float scale, float sigma)
+@findex WeightsFromGausDist on TesselPrjnSpec
+Like the above, but it uses a Gaussian function of the distance, with a
+standard deviation equal to the given sigma parameter.
+@end table
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-random, net-prjn-unitgp, net-prjn-tessel, net-prjn-special
+@subsubsection Random Patterns of Connectivity
+@tindex UniformRandomPrjnSpec
+
+The @b{UniformRandomPrjnSpec} specifies a uniform random pattern of
+connectivity.  
+
+@vindex p_con of UniformRandomPrjnSpec
+@vindex permute of UniformRandomPrjnSpec
+@vindex same_seed of UniformRandomPrjnSpec
+@code{p_con} specifies the overall probability of connectivity --- a
+connection is made with a given sending unit with this probability.  The
+@code{permute} flag indicates that a randomly-ordered list of sending
+units is created, and p_con * n_units are selected for connecting ---
+creates exactly the same number of connections per receiving unit.
+@code{same_seed} specifies that this projection saves the random seed
+used for creating connections, so tht the pattern is the same every time
+(useful for being able to read in weight files for randomly connected
+networks).
+
+@tindex PolarRndPrjnSpec
+The @b{PolarRndPrjnSpec} creates randomized patterns of connectivity as
+a function of distance and angle between sending and receiving unit.
+Distance and angle are computed from the center of a receiving unit's
+receptive field in the sending layer, which, as with the
+@b{TesselPrjnSpec} described above, can be computed in different ways.
+Two different random functions control the distribution of connectivity
+in distance and angle.
+
+@vindex dist_type of PolarRndPrjnSpec
+The @code{dist_type} field controls how the distance is computed, as
+follows:
+@table @code
+@item XY_DIST
+Just a simple distance function using the receiver's coordinates in the
+sending layer.  This works fine when both layers are the same size.
+@item XY_DIST_CENTER
+The receiver's coordinates are transformed relative to the center of the
+sending layer.  This makes the distance distribution symmetrical.
+@item XY_DIST_NORM
+The receiver's coordinates are normalized by the total size of the
+sending layer.
+@item XY_DIST_CENTER_NORM
+The receiver's coordinates are normalized by the total size of the
+sending layer, and are computed relative to the center of the layer.
+This will result in a reasonable distance measure even when the two
+layers are of different sizes.
+@end table
+
+@vindex p_con of PolarRndPrjnSpec 
+@vindex rnd_dist of PolarRndPrjnSpec
+@vindex rnd_angle of PolarRndPrjnSpec
+@vindex max_retries of PolarRndPrjnSpec
+The @code{rnd_dist} and @code{rnd_angle} are @b{Random}
+(@pxref{obj-random}) classes that specify the distributions and
+associated parameters for connection distance and angle from the
+receiving unit.  Distance is scaled as above, and angle is done on a 0-1
+scale (i.e., the random number is multiplied by 2pi).  @code{p_con}
+determines how many connections are made.  A target value of p_con *
+n_units in the sending layer is used, and connections are attempted,
+rejecting attempts to reconnect to an existing connection, until
+@code{max_retries} such rejections have been made.  Thus, for very tight
+distributions, the same units will be selected again and again, and it
+may be impossible for @code{p_con} different connections to be
+established.  In this case, a warning message is issued.
+
+@vindex wrap of PolarRndPrjnSpec
+The @code{wrap} flag determines if the units are treated as one big
+wrapping-around surface, or if it is clipped at the edges of the layer.
+
+@vindex same_seed of PolarRndPrjnSpec
+@code{same_seed} functions as on the UniformRandomPrjnSpec
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-unitgp, net-prjn-misc, net-prjn-random, net-prjn-special
+@subsubsection Unit_Group Based Connectivity
+
+There are a couple of classes that specifically pay attention to the
+sub-groups of units within a layer, if these have been created (the
+other types of projections just ignore this level of structure).
+
+@tindex GpFullPrjnSpec
+@vindex n_con_groups of GpFullPrjnSpec
+There is a sub-class of the full projection called the
+@b{GpFullPrjnSpec}, which does the same thing the full prjn spec, but
+creates separate connection groups based on the sending and receiving
+unit-group structure.  Thus, the result is full connectivity, but this
+is broken down so separate unit sub-groups can be treated separately
+(e.g., if there were a weight-based competition between the units in a
+sub-group, or between sub-groups).  The @code{n_con_groups} parameter
+determines whether there is one con-group per @code{RECV_SEND_PAIR}, or
+just one per @code{SEND_ONLY}, which is one con-group per unit-group on
+the sending layer.
+
+@tindex GpOneToOnePrjnSpec
+The @b{GpOneToOnePrjnSpec} connects unit groups in two layers in a
+one-to-one fashion, much as the OneToOnePrjnSpec connects units in a
+layer in a one-to-one fashion.
+
+@tindex GpOneToManyPrjnSpec
+The @b{GpOneToManyPrjnSpec} connects one or more sending groups to all
+receiving groups.  It can greate these connections in a number of
+separate connection groups, or all in one group, depending on the
+@code{n_con_groups} parameter (see GpFullPrjnSpec above).  Note that the
+@code{recv_start} parameter is ignored, and only the @code{send_start},
+which determines which sending group to start with, and the
+@code{n_conns}, which determines how many sending groups to use beyond
+the start, are relevant.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-prjn-misc,  , net-prjn-unitgp, net-prjn-special
+@subsubsection Miscellaneous other Projection Types
+
+@tindex OneToOnePrjnSpec
+@vindex n_conns of OneToOnePrjnSpec
+@vindex recv_start of OneToOnePrjnSpec
+@vindex send_start of OneToOnePrjnSpec
+The @b{OneToOnePrjnSpec} simply connects units in a one-to-one fashion.
+This is typically for the entire set of units, but can be controlled by
+setting the @code{n_conns}, @code{recv_start} and @code{send_start}
+parameters, which specify the total number of connections to make and
+starting offsets.
+
+@tindex SymmetricPrjnSpec
+The @b{SymmetricPrjnSpec} makes receiving connections to units in the
+sending layer that are already receiving connections from units in the
+receiving layer.  Thus, it makes symmetric connectivity where another
+projection spec has defined the pattern from the other set of units.
+Note that the other projection spec must be associated with a layer that
+comes before the one this spec is on, otherwise it will not have any
+connections to copy from.
+
+@tindex ScriptPrjnSpec
+The @b{ScriptPrjnSpec} uses a CSS script to create the connections.  It
+contains an @code{s_args} array of Strings which are passed to script as
+arguments (@pxref{css}).  Any arbitrary form of connectivity can be
+described by writing the appropriate script.  Several useful functions
+on the unit are available for making connections, including
+@code{ConnectFrom}, which takes the sending unit and the projection as
+arguments, and returns the connection and the two connection groups
+associated with it.
+
+@tindex CustomPrjnSpec
+The @b{CustomPrjnSpec} is used when the connectivity
+between units is hand assembled. Thus it does not specify a connectivity
+function, and therefore performs no actions when the Build command is
+called on a Network.
+
+@tindex LinkPrjnSpec
+@vindex links on LinkPrjnSpec
+The @b{LinkPrjnSpec} does not create any connections itself.  Instead,
+it turns existing connections into linked connections.  The connections
+to be linked are specified by the layer name and unit index for both the
+sending and receiving units.  The connection function then finds the
+connection that connects these two units, and links it in with the other
+ones.  The first connection specified is the "owner" of the connection,
+and its weight values are the ones that are used.  The @code{links}
+member is the list of connections to be linked together.  This type of
+projection spec, since it does not create any projections itself, is
+typically assigned to a "dummy" self projection on one of the affected
+layers.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-unit, net-con, net-prjn, net
+@section Units
+@cindex Unit
+@tindex Unit
+@tindex UnitSpec
+
+Units are the basic computational elements of networks.  They typically
+integrate information from a number of sources (inputs), and perform
+some relatively simple type of processing on these inputs, and then
+output a single value which somehow summarizes its response to the
+inputs.
+
+The basic @b{Unit} class in PDP++ contains real valued variables for
+representing a unit's activation and its net input from other units as
+well as its target pattern and/or external training input. In addition
+the unit class contains subgroups of sending and receiving connections
+between other units, and a 'bias' connection, which may or may not be
+present depending on the algorithm. A unit also has a position which
+represents its relative offset from its layer's position in the netview
+(@pxref{net-view}).
+
+As with many objects in PDP++, the @b{Unit} relies on a corresponding
+@b{UnitSpec} to provide most of the functions and parameters that
+control the unit's behavior.  The unit itself contains the state
+variables.  Thus, different units can have different parameters and
+functions simply by changing which @b{UnitSpec} they point to.
+
+The following variables are found on the @b{Unit}:
+
+@table @code
+@item  UnitSpec_SPtr spec
+@vindex spec of Unit
+A pointer to the unit specifications for this unit (see below).
+@item Geometry pos
+@vindex pos of Unit
+Specifies the unit's 3-D position relative to the layer. Used for
+display purposes and optionally for certain projection patterns
+@item ExtType ext_flag
+@vindex ext_flag of Unit
+This flag indicates which kind of external input unit last
+received. This may have one of four values:
+@table @code
+@item NO_EXTERNAL
+Indicates that the unit received no input.
+@item TARG
+Indicates that the unit received a target value, which is in the
+@code{targ} field.
+@item EXT
+Indicates that the unit received external input, which is in the
+@code{ext} field.
+@item TARG_EXT
+Indicates that the unit received both a target and external input.
+@item COMP
+Indicates that the unit has a comparison value in its @code{targ} field.
+This is for computing an error statistic or other comparisons, but not
+for training the network.
+@item COMP_TARG
+Both a comparison and a target (this is redundant, since all target
+values are included in comparisons anyway..)
+@item COMP_EXT
+Both a comparsion and an external input.
+@item COMP_TARG_EXT
+All three.
+@end table
+
+@item float targ
+@vindex targ of Unit
+The target value that the unit is being taught to achieve (i.e.,
+for output units in a backpropagation network).
+@item float ext
+@vindex ext of Unit
+The external input that the unit received.  Depending on the
+algorithm, this can be added into the net input for the unit (soft
+clamping), or the unit' activation can be set to this value (hard
+clamping).
+@item float act
+@vindex act of Unit
+The unit's activation value, which is typically a function of its net
+input.
+@item float net
+@vindex net of Unit
+The unit's net input value, which is typically computed as a function of
+the sending unit's activations times their weights.
+@item Con_Group recv
+@vindex recv of Unit
+This group contains the unit's receiving connections.  Each projection
+creates its own sub-group within this group (@pxref{obj-group}), so
+@code{recv} just contains sub-groups which themselves contain the actual
+connections. 
+@item Con_Group send
+@vindex send of Unit
+This group contains sub-groups containing the unit's sending
+connections, one sub-group per projection (just like @code{recv}).
+@item Connection* bias
+@vindex bias of Unit
+A pointer to a @b{Connection} object which contains the bias weight for
+this Unit.  Bias weights are treated as special connections which do not
+have a corresponding sending unit.  This pointer may be NULL if the unit
+does not have a bias weight.  The type of connection created here is
+specified by the @code{bias_con_type} member of the UnitSpec, and the
+ConSpec for this connection is in the @code{bias_spec} member of the
+UnitSpec.
+@end table
+
+The basic @b{UnitSpec} class defines the set of computational functions
+on the unit, and has parameters which control the unit's behavior.
+Specific algorithms add more parameters to this object.
+
+@table @code
+@item MinMaxRange act_range
+@vindex act_range of UnitSpec
+The legal range of activation values for the unit.
+@item TypeDef* bias_con_type
+@vindex bias_con_type of UnitSpec
+The type of bias connection to create in the unit.  The default value
+for this is set by different algorithms, and it can be NULL if no bias
+connections are to be created.  The 'Build' operation should be
+performed if this connection type is changed manually.
+@item ConSpec_SPtr bias_spec
+@vindex bias_spec of UnitSpec
+This ConSpec controls the behavior of the bias on the unit in an
+algorithm-dependent fashion.
+@end table
+
+Note: the following information should be useful to those who wish to
+program in PDP++, but is not necessary for the average user to
+understand.
+
+@menu
+* net-unit-impl::               Implementational Details About Units
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-unit-impl,  , net-unit, net-unit
+@subsection Implementational Details About Units
+
+The base @b{UnitSpec} defines a standardized way of splitting up the
+computations that take place on a unit.  This allows there to be a
+single function at the level of the @b{Network} which iterates through
+all of the layers and they iterate through all of their units and call
+these functions.  This makes writing process code easier, and provides a
+conceptual skeleton on which to implement different algorithms.  Note
+that the unit has simple "stub" versions of these functions which simply
+call the corresponding one on the spec.  This also simplifies
+programming.
+
+@table @code
+@item InitState(Unit* u)
+@findex InitState on UnitSpec
+Initializes the unit's state variables, including activations, net
+input, etc.
+@item InitWtDelta(Unit* u)
+@findex InitWtDelta on UnitSpec
+Initializes the stored connection weight changes (i.e., changes that
+have not yet been applied to the weights).
+@item InitWtState(Unit* u)
+@findex InitWtState on UnitSpec
+Initializes the connection weight values for all of the receiving
+connections of the unit.
+@item Compute_Net(Unit* u)
+@findex Compute_Net on UnitSpec
+Iterates over the receiving connections of the unit and sets the
+unit's @code{net} field to the summed product of the sending unit's
+activation value times the weight.
+@item Send_Net(Unit* u)
+@findex Send_Net on UnitSpec
+Iterates over the @emph{sending} connections of the unit and
+increments the @code{net} field of the unit's it sends to.  This way of
+computing net input is useful when not all units send activation (i.e.,
+if there is a threshold for sending activation or "firing").  A given
+algorithm will either use @code{Compute_Net} or @code{Send_Net}, but not
+both.
+@item Compute_Act(Unit* u)
+@findex Compute_Act on UnitSpec
+Turns the net input value into an activation value, typically by
+applying a sigmoidal activation function, but this varies depending on
+the particular algorithm used.  The version in the base @b{UnitSpec}
+just copies the net input into the activation (i.e., it is linear).
+@item Compute_dWt(Unit* u)
+@findex Compute_dWt on UnitSpec
+Iterates over the receiving connections on the unit and
+calls the @code{Compute_dWt} function on them, which should compute the
+amount that the weights should be changed based on the current state of
+the network, and a learning rule which translates this into weight
+changes.  It should always add an increment the current weight change
+value, so that learning can occur either pattern-by-pattern ("online"
+mode) or over multiple patterns ("batch" mode).
+@item UpdateWeights(Unit* u)
+@findex UpdateWeights on UnitSpec
+Actually updates the weights by adding the changes
+computed by @code{Compute_dWt} to the weights, applying learning rates,
+etc.  This function should always reset the weight change variable after
+it updates the weights, so that @code{Compute_dWt} can always increment
+weight changes.  Note that this function is called by the
+@b{EpochProcess}, which decides whether to perform online or batch-mode
+learning (@pxref{proc-levels-epoch}). 
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-con, net-view, net-unit, net
+@section Connections
+@cindex Connection
+@cindex Group, Connection
+@tindex Connection
+@tindex Con_Group
+@tindex ConSpec
+
+The Connection class contains the weights which represent the strengths
+of the relationship between units.  Since there are typically many more
+connections than any other type of object in a simulation, these objects
+are treated specially to speed up processing speed and reduce their
+memory consumption.
+
+The main way in which connections are different than other objects, like
+Units, for example, is that they are usually operated on in a group.
+Thus, the @b{Con_Group} class becomes very important to determining how
+connections behave, which is not the case with a @b{Unit_Group}, for
+example.
+
+The @b{Con_Group}, and not each connection, contains a pointer to the
+@b{ConSpec} which governs the behavior of all of the connections in the
+group.  Also, @b{Con_Group}s can contain algorithm-specific parameters,
+and in general algorithms define their own type of @b{Con_Group}.  When
+connections are created by projections, a new @b{Con_Group} is created
+to hold all of the connections for each projection.
+
+@vindex wt of Connection
+The basic @b{Connection} class (which is often abbreviated @b{Con} when
+new types are defined based on it, e.g. @b{BpCon}) has only the weight
+value, @code{wt}.  Other algorithms will add other variables as needed.
+
+@vindex rnd of ConSpec
+The basic @b{ConSpec} connection specification has parameters for
+determining how a connection's weights are to be initialized.  The
+@code{rnd} field, which is of type @b{Random} (@pxref{obj-random}),
+allows for weights to be initialized with random values.  To get a
+specific weight value, use @code{UNIFORM} with a @code{mean} of the
+value you want and a @code{var} of zero.  The @code{NONE} type of
+randomization will simply not do anything to the weight value.  Note
+that this may be ignored if the @b{ProjectionSpec} which created the
+connections has its @code{init_wts} flag set (but most projection specs
+just use the ConSpec initialization anyway) (@pxref{net-prjn}).
+
+@cindex Weight Limits
+@vindex wt_limits of ConSpec
+@vindex min of WeightLimit
+@vindex max of WeightLimit
+@vindex type of WeightLimits
+
+Each ConSpec also has a WeightLimit object which controls how the
+weights are constrained. This object has @var{min} and @var{max} fields
+and a controling field called @var{type} which can have the following
+values: 
+@table @code
+@item NONE
+no weight limitations (default).
+@item GT_MIN
+constrain weights to be greater than min value.
+@item LT_MAX
+constrain weights to be less than max value.
+@item MIN_MAX
+constrain weights to be within min and max values.
+@end table
+
+@vindex sym of WeightLimits
+@cindex Symmetric Initial Weights
+@cindex Weights, Symmetric
+In addition the ConSpec has a boolean field called @var{sym} which
+if true, symmetrizes (sets to the same value) the initial weights
+across two different connections that reciprocally connect the same two
+units.
+
+The @b{ConSpec} is the place to look for parameters that determine how
+weights are updated, for example learning rate, etc.  These are all
+defined in algorithm-specific versions of the ConSpec.
+
+Note: the following information should be useful to those who wish to
+program in PDP++, but is not necessary for the average user to
+understand.
+
+@menu
+* net-con-impl::                 Implementational Details About Connections
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-con-impl,  , net-con, net-con
+@subsection Implementational Details About Connections
+
+The is a general policy regarding the organization of functions and
+parameters for connections, connection groups, and connection
+specifications:
+
+Only those functions that relate to the computational processing done by
+the connections should be defined in the connection spec, while the
+"structural" or other "administrative" functions should be defined in
+the connection group object so that the spec can be invariant with
+respect to these kinds of differences.  The idea is that the spec
+defines @emph{functional} aspects while the object defines various
+implementational aspects of an object's function (i.e. how the
+connections are arranged, etc..).
+
+@cindex Con_Group Structure
+@cindex Weight Linking
+Thus, the @b{Con_Group} type has a large number of functions that are
+useful for making, finding, and removing connections.  See the header
+file @file{src/pdp/netstru.h} for a listing of these.  The Con_Group has
+a special way of representing connectivity.  The group itself contains
+@b{Connection} objects, which define the state variables associated with
+the connection itself.  However, the pointer to the unit on the other
+side of the connection (the sending unit in the case of receiving
+connections, and the receiving unit in the case of sending connections),
+is kept in a separate list, which is in one-to-one correspondence with
+the connection objects.  This arrangement allows for the same connection
+state variables to be shared across connections between different units.
+Indeed, the sending and receiving connection groups from the same
+projection share a single connection object between them.  Some of the
+projection types (@pxref{net-prjn-tessel}, @ref{net-prjn-misc}) define
+additional forms of connection sharing.
+
+@cindex Connections, Saving and Loading
+Note that only one side of the connection is actually saved when a
+network is saved.  This is the receiving side by default.  Thus, after
+loading a project in from disk, the projection which manages the
+connections has to perform a @code{ReConnect_Load} function which builds
+the sending connections that correspond to the receiving connections
+that were just loaded in.  A similar kind of operation must take place
+after copying a network.
+
+For the functions that are defined in the @b{ConSpec}, a convention has
+been established regarding the division of labor between iterating
+through the connections in a group, and processing a given connection.
+Thus, there are two versions of each function defined in the con spec,
+one to apply to a single connection and another to apply to an entire
+Con_Group.  The one which applies to a single connection has the name
+@code{C_XXX} where @code{XXX} is the name of the Con_Group version.
+Since some implementations of algorithms use bias weights, which are
+represented by a connection without a surrounding connection group, it
+is sometimes necessary to define a bias-weight version of a
+connection-specific function.  Such a function will have the name
+@code{B_XXX}.
+
+Note that the @code{C_} version of the function is @emph{not} declared
+@code{virtual}, while the @b{Con_Group} is.  This was done for reasons
+of speed, since the @code{C_} versions can be inlined within the
+iteration defined in the con-group version.  However, it means that if
+you change one of the @code{C_} functions, @emph{you must redefined the
+associated con-group version!}
+
+Also note that the same object type, a @b{Con_Group} (and its associated
+@b{ConSpec}), is used for both sending and receiving connections.  Thus,
+the @b{ConSpec} will have functions that apply to both cases.
+
+As with the unit specs, a standard way of breaking up neural
+computations has been established by defining some basic functions on
+the con spec.  Only the Con_Group version of these functions are listed
+below, but a C_ version is also defined.  Also note that the C_ versions
+of these functions typically take a connection pointer, receiving unit,
+and sending unit arguments.  The functions are as follows:
+
+@table @code 
+@item InitWtState(Con_Group* cg, Unit* ru)
+@findex InitWtState on ConSpec
+Initialize state variables (i.e. at beginning of training).
+@item InitWtDelta(Con_Group* cg, Unit* ru)
+@findex InitWtDelta on ConSpec
+Initialize variables that change every delta-weight computation.  This
+clears any existing weight change computations.
+@item float Compute_Net(Con_Group* cn, Unit* ru)
+@findex Compute_Net on ConSpec
+Computes the net input from the connections in this group, assuming that
+they are receiving connections.
+@item Send_Net(Con_Group* cg, Unit* su)
+@findex Send_Net on ConSpec
+Adds the net input contribution from the given sending unit to all of
+the receiving units on the other side of these connections.  This
+assumes that the con group is a sending connection group of unit
+@code{su}.
+@item float Compute_Dist(Con_Group* cg, Unit* ru)
+@findex Compute_Dist on ConSpec
+Returns the distance (squared difference) between the unit activations
+and connection weights for all connections in group.  This assumes it is
+a receiving group.
+@item Compute_dWt(Con_Group* cg, Unit* ru)
+@findex Compute_dWt on ConSpec
+Computes the delta-weight change for all connections in the group.  This
+is typically called on the receiving connections, and is defined by
+specific algorithms.
+@item UpdateWeights(Con_Group* cg, Unit* ru)
+@findex UpdateWeights on ConSpec
+Updates the weights of the all the connections in the group. This again
+is defined by specific algorithms, but is called by generic functions up
+the network hierarchy.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-view, net-build, net-con, net
+@section Network Viewer
+@cindex Network Viewer
+@cindex Viewing, Networks
+@tindex NetView
+
+@ifset html
+@ifhtml
+<IMG SRC="pics/xor.netview.gif" ALIGN="MIDDLE" ALT="The Network Viewer">
+<P>
+<B> Figure: </B> The Network Viewer
+<P>
+@end ifhtml
+@end ifset
+@iftex
+@tex
+\medskip
+\global\advance\texfigno by 1
+\input epsf
+\epsfysize=3.0in
+\centerline{\epsfbox{/usr/local/pdp++/manual/pics/xor.netview.epsi}}
+\noindent {\bf Figure: \number\texfigno} The Network Viewer
+@end tex
+@end iftex
+@ifinfo
+Figure of: <The Network Viewer> here
+@end ifinfo
+
+The Network Viewer (NetView) provides an interactive pseudo-3D view of
+the network structure. A default view is associated with each network
+object, although networks may have as many additional NetViews as is
+necessary. The NetView can be spatially divided into four regions:
+Actions, Members, View, and Scale.
+
+@menu
+* net-view-actions::            The Action Region
+* net-view-members::            The Member Region
+* net-view-view::               The View Region
+* net-view-scale::              The Scale region
+@end menu
+
+The NetView contains the following variables which control some of the
+display features of View and Scale Regions:
+
+@heading NetView Variables
+
+@table @code
+@item  int  skew
+@vindex  skew of NetView
+The skew controls the pseudo-3d depth dimension of the NetView's units.
+A skew of zero provides no perceived depth (2D). The default is 0.15.
+@item UnitShape shape
+@vindex shape of NetView
+Controls the shape of the units in the NetView and how their values are
+graphically displayed.  This is also available as the @i{Disp Md} menu
+on the right-hand side of the NetView.  The possible choices are:
+@sp 1
+@table @code
+@item COLOR
+A rectangular shape filled with a color from the colorscale
+corresponding to its value. If the unit's value is less than the minimum
+value of the colorscale then it will appear as stippled version of the
+minimum color. Similar stippling will occur it is greater than the
+maximum value of the colorscale. If the unit contains no value for the
+selected member it will be displayed as a stippled version of the View
+Region's  background color.
+@sp 1
+@item AREA
+@item LINEAR
+A rectangular shape filled with a background color corresponding to the
+midpoint value of the colorscale and a foreground rectangular spiral shape
+of with an area corresponding to the ratio of the unit's value to
+maximum range on the scalebar. Unit values above the scalebar's midpoint
+have spirals filled with the color of the maximum value of the scalebar,
+while units with values less than the scalebar's midpoint have spirals
+filled with the color of the minimum value of the scalebar. AREA spirals
+scale the size of their area with respect their value/scalebarmax ratio.
+LINEAR spirals scale their width and height linearly with respect to
+their value/scalebarmax ratio.
+@sp 1
+@item FILL
+FILL is similar to the AREA UnitShape but instead of a centered spiral
+area the FILL UnitShape begins covering an area at the bottom of the
+Unit and "fills" the unit left to right and bottom to top, covering a
+percentage area of the unit equal to the units value/scalebarmax ratio.
+@sp 1
+@item DIR_FILL
+This is similar to FILL except that the unit is divided with a
+horizontal line across the middle. Unit values greater than the
+midpoint of the colorscale fill the upper half of the unit only, while
+values less than the midpoint of the colorscale only fill the lower half
+the unit.
+@sp 1
+@item THREE_D
+THREE_D Units utilize the pseudo-3D nature of the View Region to create
+a varying rectangular height field perspective of the unit's value. Unit
+values greater than the midpoint of the colorscale rise "above" the
+3-D plane of the unit and unit values less than the midpoint of the
+colorscale sink below the 3-D plane of the unit. The units are colored
+in the same was as the COLOR UnitShape.
+@sp 1
+@item ROUND
+Round units have a circular or oval shape and are colored in the same way
+as the COLOR UnitShape.
+@sp 1
+@item HGT_FIELD
+Like THREE_D, but each of the four corners of a unit are placed at the
+average height computed from the four adjacent units to that corner.
+This produces a smoothly-shaped field of height corresponding to average
+values of units.  The units are colored in the same was as the COLOR
+UnitShape.
+@sp 1
+@item HGT_PEAKS
+The same as HGT_FIELD, except that the center of the unit has a peak
+that is exactly the height corresponding to the value of the units.
+@end table
+
+@sp 1
+@item ColorScale* colorspec
+@vindex colorspec of NetView
+Controls the color spectrum used by the colorscale.
+(@pxref{gui-colors}).
+@item  float prjn_arrow_size
+@vindex prjn_arrow_size of NetView
+Controls the size of the arrowheads at the end of the projections.
+@item  float prjn_arrow_angle
+@vindex prjn_arrow_angle of NetView
+Controls the angle (sharpness) of the arrowheads at the end of the
+projections.  Smaller values = sharper arrowheads.
+@item FontSpec layer_font
+@vindex layer_font of NetView
+The X11 specification for the font to use in drawing the
+layer names in the View Region
+@item FontSpec unit_font
+@vindex unit_font of NetView
+The X11 specification for the font to use in drawing the
+unit names and values in the View Region.
+@item Label_Group labels
+@vindex labels of NetView
+This group contains the arbitrary network labels visible in the View
+Region. Labels are usually created and place using the "New Label"
+button in the Action Region, however the can also be directly created in
+this group. Editing these labels allows the user to change the text or
+font of the label, using a standard XWindows font specification string.
+@item NetViewGraph_Group idraw_graphics
+@vindex idraw_graphics of NetView
+This group contains the idraw graphics included in the network display
+-- the menus @i{Load Graphic} and @i{Remove Graphic} manipulate these
+objects.
+@item UnitTextDisplay unit_text
+@vindex unit_text of NetView
+Controls whether or not the unit's names and values are overlayed on top
+of the unit. This variable is also accessible directly in the NetView's
+Scale Region.
+@item SplitUnitLayout unit_layout
+@vindex unit_layout of NetView
+Controls how the units are split when multiple members are
+selected for display in the Member Region of the NetView.
+@item bool auto_scale
+@vindex auto_scale of NetView
+Controls whether or not the range of the scale in the
+Scale Region automatically adjust to range of values currently on display
+in the View Region. This variable is also accessible directly in the
+NetView's Scale Region as a toggle box.
+@item FloatGeometry spacing
+Controls the spacing of the units and layers in the View
+Region. Useful values range from "0" to "1.0".
+@end table
+
+The NetView provides the following functions on its @i{Action} Menu:
+
+@table @code
+@item SetColorSpec(ColorScaleSpec* colors)
+@findex SetColorSpec on NetView
+Set the color spectrum to use for color-coding values (NULL = use default).
+
+@item AutoPositionPrjnPoints()
+@findex AutoPositionPrjnPoints on NetView
+Initialize the positions of all of the projection arrows according to
+the automatic positioning algorithm.  If the positions are not quite
+ideal, the projections may be repositioned using the Move Mode (and
+this function removes any existing custom repositioning!)
+
+@item AutoPositionLayerNames()
+@findex AutoPositionLayerNames on NetView
+Initialize the the size and position of the Layer names to fit in the
+lower left-hand corner of the layer (removes any custom positioning!)
+
+@item ZoomLayer(Layer* lay, float mag_factor_x, float mag_factor_y)
+@findex ZoomLayer on NetView
+Set the magnification factors (zooming) for the display of a given layer.
+
+@item ResetLayerZoom()
+@findex ResetLayerZoom on NetView
+Reset (remove) any magnification/zooming (rescaling) of the display of
+layers in the netview (made via the Zoom button or ZoomLayer menu).
+
+@item FreezeNetZoom()
+@findex FreezeNetZoom on NetView
+Freeze (save) current network zooming/magnification (rescaling or
+repositioning) -- it will no longer auto-resize to fit entire network
+in display.
+
+@item AutoNetZoom()
+@findex AutoNetZoom on NetView
+Clear any frozen/saved magnification/zooming (rescaling or
+repositioning) of the network display, enabling auto-zooming to fit
+entire network in display.  This is the default.
+
+@item SetLayerFontSize(int point_size)
+@findex SetLayerFontSize on NetView
+Set the point size of the layer name font.
+
+@item SetUnitFontSize(int point_size)
+@findex SetUnitFontSize on NetView
+Set the point size of the unit name/value font .
+
+@item LoadGraphic(File name, float scale)
+@findex LoadGraphic on NetView
+Loads and Idraw image file of name @code{name} and scales
+it by @code{scale}. The image is displayed in background of the the View
+Region. 
+
+@item RemoveGraphics()
+@findex RemoveGraphics on NetView
+Removes all included graphics.
+@end table
+
+In addition the NetView provides a @i{Selection} menu with two sets of
+complementary functions.  The @b{Set} version of these sets a given
+parameter or specification of the objects selected in the NetView.  The
+@b{Show} version selects those objects in the NetView which have a given
+parameter or specification.  These are very useful for constructing the
+network, and providing visual feedback about its state.
+
+@table @code
+@item Set/ShowUnitSpec(UnitSpec* spec)
+@findex SetUnitSpec on NetView
+@findex ShowUnitSpec on NetView
+The unit specification, for units, groups of units, or layers.
+@item Set/ShowConSpec(ConSpec* spec)
+@findex SetConSpec on NetView
+@findex ShowConSpec on NetView
+The Connection specification, for projections.
+@item Set/ShowPrjnSpec(PrjnSpec* spec)
+@findex SetPrjnSpec on NetView
+@findex ShowPrjnSpec on NetView
+The Projection specification, for projections.
+@item Set/ShowPrjnConType(TypeDef* con_type)
+@findex SetPrjnConType on NetView
+@findex ShowPrjnConType on NetView
+The type of Connection object to be created by the projection
+(@code{con_type} of Projection).
+@item Set/ShowPrjnConGpType(TypeDef* con_gp_type)
+@findex SetPrjnConGpType on NetView
+@findex ShowPrjnConGpType on NetView
+The type of Con_Group to be created by the projections
+(@code{con_gp_type} of Projection).
+@item Set/ShowLayerSpec(LayerSpec* spec)
+@findex SetLayerSpec on NetView
+@findex ShowLayerSpec on NetView
+The Layer specification, for layers.
+@item Set/ShowLayerUnitType(TypeDef* unit_type)
+@findex SetLayerUnitType on NetView
+@findex ShowLayerUnitType on NetView
+The type of units to be created by the layer (@code{el_type} of the
+layer).
+@end table
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-view-actions, net-view-members, net-view, net-view
+@subsection The Action Region
+
+@ifset html
+@ifhtml
+<IMG SRC="pics/xor.netview.action.gif" ALIGN="MIDDLE" ALT="The NetView Actions Regions">
+<P>
+<B> Figure: </B> The NetView Actions Region
+<P>
+@end ifhtml
+@end ifset
+@iftex
+@tex
+\medskip
+\global\advance\texfigno by 1
+\input epsf
+\epsfysize=3.0in
+\centerline{\epsfbox{/usr/local/pdp++/manual/pics/xor.netview.action.epsi}}
+\noindent {\bf Figure: \number\texfigno} The NetView Actions Region
+@end tex
+@end iftex
+@ifinfo
+Figure of: <The NetView Actions Region> here
+@end ifinfo
+
+The Actions region in the upper left contains a set of buttons which
+perform actions on the view. At the very top of the region is a toggle
+switch which provides convenient switching on and off of the display.
+When the display is switched off, the View and Scale regions will not be
+updated by the processes in the view's updater list, regardless of changes
+to the state of the network. (@pxref{gui-win-view}).
+
+To the right of the Display toggle is the Coordinate Box. The Coordinate
+Box displays the current location (X,Y,Z) of objects when they are moved
+and the size of objects when they are reshaped. At other times, the
+box remains empty.
+
+Below the display toggle and Coordinate Box are Mode Buttons: Select,
+View, Move, ReShape, Zoom, and Rotate.  These buttons are mutually
+exclusive, so only one may be pressed at a given time. Selecting one of
+these buttons enables a different mode of interaction with the View
+Region, and are described further in that section of the manual.
+(@pxref{net-view-view})
+
+Below the Mode Buttons are the Major Action Buttons: @i{Build All},
+@i{Connect All}, @i{Update}, and @i{Init}. Each of these buttons
+performs an action when the button is released.  Sometimes one or more
+of these buttons will be hi-lighted, suggesting that the button's action
+should probably be performed due to the current state of the network.
+
+The @i{Build All} button creates units in all of the networks layers in
+accordance with the @code{n_units} field of the Layer and the Layer's
+geometry. The @i{Connect All} button creates connections on all the
+units in accordance with projections and projection specs of the
+network's layers (@pxref{net-net}).
+
+The @i{Update} button refreshes the View to reflect the current state
+of the network. In most cases the network will have communicated its
+changes to the NetView, however if the NetView appears to be out of
+sync, the "Update" button will update it accordingly. The @i{Init}
+button resets the view so that the network is scaled to fit in the
+window.  Zoom operations on the network objects as well as Move and
+Zoom operations on the view region itself are undone when the "Init"
+button is pressed, @i{unless you run Actions/FreezeNetZoom} -- this
+freezes the current zooming/move status of the netview until a
+subsequent @i{AutoNetZoom} is run. To reinitialize the projection
+points or the positions of the Layers' names select the corresponding
+function from the Actions menu of the NetView.  (@pxref{gui-actions}).
+
+Below the Major Action Buttons are the @i{Minor Action Buttons}. The
+names of these buttons change to reflect the possible actions to be
+performed on the objects currently selected in the View Region. In most
+cases the lower two buttons will provide @i{Remove} and @i{Edit} actions
+for the selected objects. The upper two buttons typically provide
+actions used for creating new network objects and connecting them.  For
+more information on how to use these buttons to build networks, see
+@ref{net-build}.
+
+At the bottom of the Action region is the @i{Monitor Values} menu. This
+menu provides a set of actions used for monitoring the values displayed
+in the NetView. To monitor values the user needs to create a
+@b{MonitorStat} statistic which handles the sampling and logging of the
+monitored values. To create the MonitorStat, the user first selects the
+network objects in the View Region to be monitored. Then after a member
+of the "Member Region" is selected, the user may select @i{New} from the
+@i{Monitor Values} menu. A dialog is then presented which asks the user
+for the process grain at which the values are to be monitored. The
+process grain is used to determine when the values are sampled from the
+network. In addition the process determines which Logs the sampled
+values are stored in. The dialog also asks the user for the network
+aggregation operator and whether or not aggregate statistics should be
+created in higher level processes. For simple monitoring, the default
+values of @code{COPY} and "NO" respectively will suffice. For more
+complicated monitoring the behavior of these variables is further
+explained in the statistics section of this manual
+(@pxref{proc-stats-monitor}).
+
+The @i{Monitor Values} menu also provides selections which allow the
+user to @i{Edit}, @i{Remove}, or change the objects or variables of
+previously created MonitorStats. To change the network objects which a
+MonitorStat is monitoring, simply select the objects in the "View
+Region" and choose @i{Set Objects} from the menu. To change the variable
+which is being monitored simply select the desired variable from the
+"Member Region" of the NetView and choose @i{Set Variable} from the
+menu.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-view-members, net-view-view, net-view-actions, net-view
+@subsection The Member Region
+
+@ifset html
+@ifhtml
+<IMG SRC="pics/xor.netview.member.gif" ALIGN="MIDDLE" ALT="The NetView Member Region">
+<P>
+<B> Figure: </B> The NetView Member Region
+<P>
+@end ifhtml
+@end ifset
+@iftex
+@tex
+\medskip
+\global\advance\texfigno by 1
+\input epsf
+\epsfysize=3.0in
+\centerline{\epsfbox{/usr/local/pdp++/manual/pics/xor.netview.member.epsi}}
+\noindent {\bf Figure: \number\texfigno} The NetView Member Region
+@end tex
+@end iftex
+@ifinfo
+Figure of: <The NetView Member Region> here
+@end ifinfo
+
+Below the Action region, in the lower left corner of the NetView is the
+Member Region. This region contains a vertical scrollbox of buttons
+which are labeled with the names of the member fields of the units and
+their connections in the NetView. If there are more member field buttons
+than can fit in the Member Region, the vertical scrollbar on the left of
+the Member Region will allow the user to scroll through all the desired
+member fields.
+
+By pressing one of the member buttons, the View Region will update to
+reflect the values of that member on the units it is associated with. In
+the case of connection member buttons, the user will need to pick a unit
+from which the connections are to be viewed. In this case, the View Mode
+action button in the Action Region will be automatically selected so
+that the user may pick a target unit. When The View Mode action button
+is selected the cursor will change to a pointing hand with which the
+user can pick units in the View Region. If the user chooses a unit
+member button instead of a connection member button, the display will
+revert to the default "Select" mode, and the "Select" Action button in
+the Action Region will be selected. In the "Select" mode, the pointer
+is usually an arrowhead.
+
+By using the middle mouse button the user may select multiple member
+values to be displayed. When more than one member value is selected, the
+selected member buttons are numbered in the order of selection. The
+units in the "View Region" will split in to multiple sections each
+representing one of the selected member values. The units may split
+horizontally or vertically depending upon the setting of the
+@code{unit_layout} member of the NetView.
+
+Selecting a member button with the right mouse button will provide a
+more detailed description of member variable.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-view-view, net-view-scale, net-view-members, net-view
+@subsection The View Region
+@cindex Layers, Display of
+@cindex Units, Display of
+@cindex Projections, Display of
+
+@ifset html
+@ifhtml
+<IMG SRC="pics/xor.netview.view.gif" ALIGN="MIDDLE" ALT="The NetView View Region">
+<P>
+<B> Figure: </B> The NetView View Region
+<P>
+@end ifhtml
+@end ifset
+@iftex
+@tex
+\medskip
+\global\advance\texfigno by 1
+\input epsf
+\epsfysize=3.0in
+\centerline{\epsfbox{/usr/local/pdp++/manual/pics/xor.netview.view.epsi}}
+\noindent {\bf Figure: \number\texfigno} The NetView View Region
+@end tex
+@end iftex
+@ifinfo
+Figure of: <The NetView View Region> here
+@end ifinfo
+
+
+The View Region is the core of the NetView and provides a multitude of
+configurable options to the user. The network's layers, units, and
+connections can be viewed, manipulated, scaled, and arranged as the user
+desires. In addition, arbitrary descriptive labels can be placed in the
+View Region to annotate the network. The user has full control over the
+colors used to view the network and can print the View Region itself
+using the PrintData() command on the NetView. Idraw image files may
+also be loaded into the View Region's background.
+
+Non-obvious actions you can perform on objects in the NetView:
+@table @b
+@item Single-click with left-mouse-button (LMB)
+Will select or deselect item, and update the action buttons at the left
+of the display.
+@item Single-click with right-mouse-button (RMB)
+Will bring up the edit dialog for that object (for Layer names and
+labels).
+@item Shift-LMB or middle-mouse-button
+Extends the selection to include multiple items.
+@end table
+
+@b{Layers} are displayed in the View Region as a rectangular boxes.  The
+position of the layers is controlled by their @code{pos} member and the
+layer's size is controlled by the layer's @code{geom} member
+variable.
+
+Within the Layer Box, @b{Units} are displayed as smaller
+rectangular boxes. The unit's @code{pos} variable controls its relative
+offset from the layer's position. If there are @b{Unit_Groups} within
+the layer, they are represented with their own box which surrounds the
+units they contain, and there are also two boxes associated with the
+layer in this case.  One box represents the default size of each
+subgroup of units in the layer, and is the primary one that is selected
+and manipulated in the interface.  An additional box surrounds all of
+the unit groups, and identifies the extent of the layer as
+whole.
+
+@b{Projections} are displayed as arrows starting at the sending
+layer's Layer Box and pointing at the receiving layer's LayerBox. In
+addition units and layers may have text near them which display their
+name or current value.
+
+The actions of the mouse in the View Region are dependent upon the mode
+of the region selected by the Mode Buttons in the Action Region of the
+NetView.
+
+In @b{Select Mode} the pointer is a small arrow. Clicking the left or
+right mouse button on an object selects the object under the pointer and
+unselects all other object. Clicking the middle mouse button selects
+also selects the object, but does not unselect the other selected
+objects. When an object is selected its border is drawn with a dashed
+line. Re-Selecting an already selected object Un-Selects the object.
+When a @b{Layer} or @b{Unit_Group} is selected, it will be displayed as
+grid instead of an outlined box. The grid provides the user with a
+depiction of how many units the layer or group contains, as well as the
+size and spacing of the units.
+
+The names of the @b{Minor Action Buttons} in the Action Region will
+change is accordance with the objects which are selected. Since layers,
+unit groups, and units overlap, a special selection method is
+implemented for deciding which object is selected. On the first click of
+the mouse button, the layer is selected. On the second click, the layer
+is unselected and the unit group is selected. On the third click, an
+individual unit is selected. On the fourth click the individual unit is
+unselected.
+
+In @b{View Mode} the pointer becomes a small pointing hand. This mode is
+used for selecting units from which to view sending or receiving weight
+values. View mode is orthogonal to select mode and is illustrated by a
+dotted line surrounding an object. Thus objects can be both selected
+and/or viewed at the same time. Since it is only useful to View
+individual units, clicking on a layer bypasses the Layer and Unit_Group
+selection of Select Mode and directly hi-lights a unit for viewing.
+Indeed, only units can be viewed.  Clicking with the middle mouse button
+invokes the split unit mode and shows the sending or receiving values
+for multiple units.
+
+In the other four modes, selection of objects occurs as in select mode.
+Each level of selection occurs on the up release of the mouse button,
+and these modes always operate on the currently selected object if there
+is one.
+
+Therefore, to @i{Move} a layer, simply click on the layer and hold down
+the mouse button and move the layer.
+
+To move a unit group, click on the layer and release, so that the unit
+group is selected.  Then, the next down press will grab the unit group
+for moving -- press and hold and move.
+
+To move a unit, click twice, once to get through the layer, again to get
+through the unit group, at which point the unit will be selected and
+grabbed for moving upon the next down click.
+
+In each of the following action modes, when the action is finished, the
+selected object is unselected. If no action was taken (i.e., the mouse
+button was clicked, but the mouse was not moved) the object remains
+selected. In this way, the user can select objects for editing and other
+Actions without being forced to re-choose the Select Mode button. In
+addition the View Region itself my be manipulated by clicking the mouse
+in the background of the View Region and not selecting any objects.
+
+In @b{Move Mode} layers, unit groups, and units are repositioned on a
+coordinate grid with spacing set at the size of an individual unit. As
+the layer or unit object is moved, the object will jump to the fixed
+grid position instead of moving smoothly with the mouse. As a layer or
+unit is moved, its position will be displayed in the Coordinate Box at
+the top of the Actions Region of the NetView. Using the left or middle
+mouse button moves the layer or unit objects in their x-y plane. Using
+the right mouse button allows movement in the x-z planes.
+
+The head and tail of a projection arrow can be repositioned in Move mode
+as well. Although the position of a projection's head or tail is not
+constrained to the same grid like movement of the layer and units, it is
+constrained to lie within the layer it is connected to.  Layer names and
+the arbitrary network labels may be moved without constraint.  Moving
+the View Region itself is accomplished by clicking in the background
+area of the view. The pointer will change to a flat hand and the View
+Region will "slide" as the user moves the mouse. Pressing the middle
+mouse button constrains the movement to be horizontal, while pressing
+the right mouse button constrains the movement to be vertical.
+
+@b{Reshape Mode} is used exclusively for changing the geometry of a
+layer or unit group.  By clicking and dragging on a layer or unit group,
+the geometry (and number of units if there are no actual units created
+yet) of the displayed grid changes as the mouse moves. The geometry of
+the layer or unit group is displayed in the Coordinate Box at the top of
+the Action Region.  If a layer or group already contains units, its area
+is constrained to be equal to or greater than the number of unit's in
+the layer or group. Thus a layer with 100 units could be sized to be
+10x10 or 20x5, but not 4x3.  Further reshaping a layer or group with
+units already in it will not change the number of units in the layer,
+while this will occur if there are no actual units.
+
+@b{Zoom Mode} is used to change the magnification (zooming) of objects
+in the View Region, or the overall view itself. It is primarily used
+to rescale layers for maximum visibility when you have a really big
+network.  You can reset the zooming of a layer with
+@i{Actions/ResetLayerZoom}, or impose a specific amount of zooming
+with @i{Actions/ZoomLayer}.  If the mouse is pressed in the background
+of the View Region, the entire View Region can be scaled. Dragging the
+mouse upward zooms in on the region at which the mouse was first
+pressed. Dragging downward likewise zooms outward. If the middle mouse
+button is pressed only the horizontal dimension is scaled. If the
+right mouse button is pressed only the vertical dimension is
+scaled. The Init Button in the Action Region can be used to undo
+background scaling and recenter the Network, and
+@i{Actions/FreezeNetZoom} will lock in the current overall view
+zooming until a subsequent @i{Actions/AutoNetZoom}.
+
+The Rotate mode is somewhat frivolous but can be used to further
+customize the objects in the View Region, or to manipulate imported
+Idraw graphics.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-view-scale,  , net-view-view, net-view
+@subsection The Scale region
+
+@ifset html
+@ifhtml
+<IMG SRC="pics/xor.netview.scale.gif" ALIGN="MIDDLE" ALT="The NetView Scale Region">
+<P>
+<B> Figure: </B> The NetView Scale Region
+<P>
+@end ifhtml
+@end ifset
+@iftex
+@tex
+\medskip
+\global\advance\texfigno by 1
+\input epsf
+\epsfysize=3.0in
+\centerline{\epsfbox{/usr/local/pdp++/manual/pics/xor.netview.scale.epsi}}
+\noindent {\bf Figure: \number\texfigno} The NetView Scale Region
+@end tex
+@end iftex
+@ifinfo
+Figure of: <The NetView Scale Region> here
+@end ifinfo
+
+The Scale Region is on the right edge of the NetView. At the top of the
+scale region is the Unit Text selector. This menu allows the user to
+directly access the NetView's @code{unit_text} member which controls
+whether or not unit names and/or values are displayed on the units.
+
+Next is the display mode selector, which directly accesses the
+@code{shape} member of the NetView, controlling how the unit values are
+displayed.
+
+Beneath this is the Auto Scale toggle. When the Auto Scale toggle is on,
+the values of the scalebar adjust to the positive and negative range of
+the the maximum of the value of the field selected in the Member Region.
+When the Auto Scale toggle is off, the up and down arrow buttons above
+and below the scalebar can be used to increase or decrease the range of
+the scale respectively. This can be used to "zoom" in on the differences
+between unit or connection values. In addition the user can click the
+mouse in the number region of the scalebar and type in the precise scale
+range by hand if so desired. The colors in the colorscale are determined
+by the @code{colorspec} field of the NetView.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  net-build,  , net-view, net
+@section Building Networks Using the Viewer
+
+The network viewer (@pxref{net-view}) can be used to build networks
+easily and rapidly.  The @i{Minor Action Buttons} in the action region
+(@pxref{net-view-actions}) in particular provide a series of actions
+that can be performed on objects selected in the view region
+(@pxref{net-view-view}) that allow one to build the network.  Also note
+that the tutorial covers some of the following material
+(@pxref{tut-config-networks}). 
+
+The first step in building the network is creating the layers.  The
+@i{New Layer(s)} button is highlighted when there are no layers in the
+network, and it is usable when nothing else is selected.  It will prompt
+for the number of layers to create.  After they are created, they show
+up in the view region.  Note that they might appear off-screen depending
+on how many were created, so you might have to hit the @i{Init} button
+to see them all.
+
+The @i{ReShape} button is used to shape layers into their desired size.
+Note that the size of the layer is displayed in the coordinate area at
+the very top of the "actions" region (@pxref{net-view-actions}).  The
+default assumption of the software is to create as many units as will
+fit in the shape of the layer (i.e., @code{n_units = X * Y}).  Whenever
+you use @i{ReShape} and there are no units in the layer currently, it
+will reset the @code{n_units} to fill the layer box completely. However,
+if you use @i{ReShape} and there @emph{are} units in the layer, the
+value of @code{n_units} is not changed.  Note, however, that it will be
+impossible to shape the layer to a size that is smaller than that which
+will contain all of the existing units.  For more info on layer
+parameters, see @ref{net-layer}.
+
+There are two ways of specifying a number of units that is less than the
+size of the layer.  One is to select the layer box, at which time, if it
+is empty, the @i{New Unit(s)} action button will become highlighted.
+This action will prompt you for the number of units to create (the
+default being the number that will fill the box completely).  By
+entering a number that is less than this default value, you will
+simultaneously create the units in the layer, and set the @code{n_units}
+value to be that number.  Thus, any subsequent @code{Build} actions on
+this layer will create that many units if they are not already there.
+
+The units within the layer can be moved around.  However, they must stay
+within the layer box.  Thus, you must reshape the layer to a larger size
+if you wish to move the units beyond the box.
+
+If the units within a layer are grouped into sub-groups, these
+constitute a distinct selection level, so that all the units in the
+group can be selected together.
+
+Note that the @i{Build All} button is highlighted whenever there is a
+layer that does not have its full complement of @code{n_units} units in
+it.  Pressing @i{Build All} will create units in all the layers which
+need them, and ensure that the units in the existing layers are of the
+type specified in the @code{units} group on the layer.
+
+After creating layers and units within them, the next step is to specify
+the connectivity between layers.  Alternatively, though less commonly
+(and more effortfully), connectivity can be specified on a unit-by-unit
+basis.  This is covered later in this section.  As was discussed above
+(@pxref{net-prjn}), it is easier to specify connectivity in terms of
+projections between layers.
+
+To create a new projection you select the @emph{receiving layer first}.
+Then, "extend" select the sending layer(s) (use the middle mouse button
+or hold down the shift key while selecting, which adds the selected item
+to the list of those things selected, instead of making it the only
+thing selected).  The @i{New Prjn(s)} button will be highlighted, and
+pressing it will create a projection into the first-selected receiving
+layer from the subsequently selected sending layer(s).
+
+Note that you can also create @emph{bi-directional projections} instead.
+Just use the @i{New BiPrjns} button instead of @i{New Prjn(s)}, and this
+will create a reciprocal projection into the sending layer from the
+receiving layer.
+
+To @emph{self-connect} a layer, simply select one layer, and press the
+@i{New Self Prjn} button.
+
+Just as with units in layers, one can create connections in projections
+either all at once with the @i{Connect All} button, or individually by
+selecting the projection and using the @i{Fill Prjn(s)} button, which
+will be highlighted if the projection does not yet have any connections
+associated with it.
+
+To connect units on an individual basis, one simply selects the
+receiving unit first and then the sending unit(s), and selects the
+@i{Connect Units} button (or the @i{BiCon Units} to
+bidirectionally-connect them).  The connections made in this way will be
+associated with a @b{CustomPrjnSpec}, which basically just ensures that
+the connectivity pattern will not be reset when the @i{Connect All}
+button is pressed (i.e., it has no @code{Connect} function because the
+connections are made one-by-one).
+
+The specifications associated with the objects in the network can be
+viewed and changed by using the @i{Selections} menu of the network
+viewer.  This allows one to associate different parameters or types of
+processing with different components of the network (e.g., projections
+with different patterns of connectivity, units with different activation
+functions or parameters, connections with different learning rates,
+etc..)
+
+Note that each layer has a default @b{UnitSpec} associated with it,
+which is applied to any new units created in the layer or when @i{Build}
+is performed.  Thus, if all of the units in the layer will be using the
+same unit spec, it is a good idea to just select the layer itself and
+then use @i{Selections/Set Unit Spec} to set the spec.  This will
+automatically apply this spec to all of the units in the layer.
+
+Also note that connection specifications (@b{ConSpec}s) are associated
+with projections.  Thus, projections will be selected when
+@i{Selections/Show Con Spec} is performed, and you should select
+projections when doing the @i{Selections/Set Con Spec}.
+
+Finally, all objects can be @i{Remove}d and @i{Edit}ed by selecting them
+and pressing the appropriate action button.  When editing a group of
+objects (i.e., after having multiply selected them and pressed
+@i{Edit}), these objects should remain the only ones selected until the
+dialog is either @i{Ok}ed or @i{Cancel}ed, since changing what is
+selected affects what the edit dialog thinks its editing, and you won't
+be able to @i{Apply} your editing changes if the selections change.
+

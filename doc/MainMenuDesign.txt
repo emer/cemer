@@ -1,0 +1,593 @@
+---------------------
+Main Viewing Redesign
+---------------------
+
+Old Classes
+
+non-Gui:
+
+taDataView
+  DataViewer -- all main window viewers
+    TabDataViewer -- adds a tabbed view/edit panel area
+    ClassBrowser -- for the special Class Browser
+    T3DataViewer -- for the 3D viewer
+        note: this handles a heterogenous set of items,
+        ex. a Network, logs, net output viewers, etc.
+
+taList<DataViewer>
+  DataViewer_List -- is .viewers in project
+
+taNBase
+  ToolBar
+
+taList<ToolBar>
+  ToolBar_List
+
+taBase
+  WinGeometry
+
+Containership:
+
+DataViewer
+  ToolBar[] toolbars (ToolBar_List)
+  -iDataViewer window
+
+
+Gui:
+
+QMainWindow
+  iDataViewer
+ISelectableHost
+    iTabDataViewer
+      iDataBrowserBase
+        iDataBrowser
+        iClassBrowser
+      iT3DataViewer
+
+QToolBar
+  iToolBar
+
+QList<iToolBar*>
+  iToolBar_List
+
+QTabBar
+  iTabBar -- manages one panel (iDataPanel)
+
+QWidget
+  iTabView -- manages iTabBar and multiple panels (iDataPanel)
+  
+
+QFrame
+IDataLinkClient
+  iDataPanel -- handles: having a client object; clipboard ops;
+      tab color/name; some virtual bases
+    iDataPanelFrame -- base for panels that are part of iDataPanelSet's
+      iListDataPanel -- subpanel to show the List View for a list/group
+          data is: taList/Group
+      iTextDataPanel -- shows text, ex. script program (note: not yet used)
+          data is: ???
+      EditDataPanel -- contains a property editor (taiEditData)
+          data is: taBase guy
+    iViewPanelFrame -- for Views, ex. the NetViewer controls
+    iDataPanelSet -- contains subpanels, with chooser button
+
+Containership:
+
+iDataViewer
+  iToolBar[] toolbars (iToolBar_List)
+  taiAction[] actions
+  -DataViewer viewer
+
+iTabDataViewer
+  :iDataViewer
+  iTabView[] tabViewer -- all the tab views (in splitters)
+
+iTabView
+  iTabBar
+    iTab[]
+  iDataPanel[] panels -- in a widget stack
+  
+  
+
+
+
+New Classes
+
+(A) indicates Abstract base
+
+non-Gui Classes:
+
+(ta_base.h)
+taOBase
+IDataLinkClient
+  taDataView
+    T3DataViewer
+    
+DataViewer:taDataView (A) -- anything common to all viewer types
+    can only assume its gui class is a QWidget
+    handles: can create a gui obj, either top level or in another window
+    has some virt methods for when its subclass is a top-level window
+  TopLevelViewer -- for anything that can have its own window
+    MainWindowViewer -- for the main window; has stuff only applicable to the main win;
+       can contain subordinate viewers; widget is iMainDataViewer
+       is a top-level window
+    DockWindowViewer -- for windows that are dockable
+      can be docked in a MainWindowViewer, or standalone (when undocked)
+      if standalone, then it can be a top-level window
+      when standalone, is in .viewers, else is in the .dockies of a MWV
+  FrameViewer (A) -- for principal contained views in main, such as browser, edit,
+     and T3 (in taMisc) -- these go in central area, in a splitter
+    BrowseViewer -- for the tree browser -- contains most of the logic
+      tabBrowseViewer -- for taBase root
+      ClassViewer -- for class item root
+    PanelViewer -- for the edit panels (can also be split)
+    T3DataViewer -- for T3 guys
+
+
+taList<FrameViewer>
+  FrameViewer_List
+
+taNBase
+  ToolBar
+
+taList<ToolBar>
+  ToolBar_List
+
+Containership Hierarchy:
+
+MainWindowViewer
+  FrameViewer[] (FrameViewer_List) frames -- frames in the center splitter area
+  ToolBar[] (ToolBar_List) toolbars
+  DockWindowViewer[] dockies (can also be viewed independently when undocked)
+
+T3DataViewer[] viewers -- note: these are taDataView, not DataViewer
+  T3DataView[] root_view.children -- each view can hold multiple 3D objects
+  
+Gui Classes:
+
+IViewerWidget -- interface that all viewer widgets must implement (since
+    view widgets don't all inherit from a single class, we need this)
+  DataViewer* m_viewer -- the viewer, passed in constructor
+  QWidget* conversion -- supplies the underlying QWidget
+  virtual Constr -- virtual constr routine that is called after new
+
+QMainWindow
+  iMainWindowViewer -- the widget for a MainWindowViewer
+    can handle toolbars, the compound central widget (thingies in splitter), 
+    and dock widgets
+
+QWidget (or QFrame)
+ISelectableHost
+  iFrameViewer (A) -- widget that can be managed by a iMainDataViewer
+      in its central widget area (in a splitter)
+    iBrowseViewer -- for the tree browser (generic enough for taBase and Class browsing)
+//      iBrowser
+//      iClassBrowser
+    iTabViewer -- generic, tabbed, for viewing panels
+    iT3DataViewer
+
+QTabBar
+  iTabBar -- manages one panel (iDataPanel)
+
+QWidget
+  iTabView -- manages iTabBar and multiple panels (iDataPanel)
+  
+
+QFrame
+IDataLinkClient
+  iDataPanel -- handles: having a client object; clipboard ops;
+      tab color/name; some virtual bases
+    iDataPanelFrame -- base for panels that are part of iDataPanelSet's
+      iListDataPanel -- subpanel to show the List View for a list/group
+          data is: taList/Group
+      iTextDataPanel -- shows text, ex. script program (note: not yet used)
+          data is: ???
+      EditDataPanel -- contains a property editor (taiEditData)
+          data is: taBase guy
+    iViewPanelFrame -- for Views, ex. the NetViewer controls
+      iT3DataPanel -- for the T3 viewing
+    iDataPanelSet -- contains subpanels, with chooser button
+
+QDockWidget
+  iDockWidget
+
+Gui Containership:
+
+iMainWindowViewer
+  iToolBar[] -- any toolbars
+  iFrameDataViewer[] -- any frames in the central area
+  iDockWidget[] dock_wins -- any docked windows
+
+iDataPanelSet
+  iDataPanelFrame[]
+  
+Nomenclature and Browse/View gui semantics
+
+A "Browser Window" and "Browse..." implies a viewer with:
+  * a treeview
+  * a panel frame
+but *not* a T3 viewer frame
+
+* if a browser is of a project or below, the viewer obj
+  gets put in the project viewers, otherwise in the
+  global viewers
+
+"View in..." implies adding the item to the indicated view
+Maybe *all* T3 viewing involves:
+  1) an independent design of the view
+  2) an invisible container for adding to viewers:
+     particularly controls: position, orientation, and
+      scaling of the content
+  3) a viewer, that contains concrete view containers,
+     which contain **links** to concrete views
+
+Persistence Semantics
+
+A main viewer that is in a project.viewers is persistent --
+closing the view will not delete the viewer.
+A main viewer that is in the root.viewers is by default
+transient -- closing it will delete it.
+TODO: define how to make persistent root viewers.
+
+
+
+What can be viewed??
+Now:
+  * Network
+  * Graph/Text logs (regardless of underlying impl)
+Planned:
+  * Net Output viewers (ex. text labels, etc.)
+  * Net Input viewers (ex. the jpg being applied, etc.)
+
+
+Proposal:
+
+ViewFrame
+  PersistableViewFrame
+    T3ViewFrame
+    (others)
+
+these get saved in a Project::.views collection
+they get *linked* into viewers
+Issues:
+* one guy can only have one window (unless we create
+  some kind of complicated proxy thing for handling
+  multiple windows)
+
+Questions
+
+How will we manage persistence, naming, and reference to viewers?
+Could get confusing to user. Note that things like Netview,
+ Graphviews, etc. generally have distinct life apart from being
+ viewed in any viewer -- does it make sense to only **link** to
+ these, and have them stored somehow with the entity? 
+
+Issues
+
+* the legacy iViewer maintained selection, and changed panels accordingly;
+  we will now have two different selectable thingies
+* will dockable windows be associated with a particular window or themselves?
+* should have the taBase and Qt stuff in different source files, and able to
+  conditionally compile out the Qt files (for !TA_GUI)
+  - implies we should delimit the routines that interact with the gui classes
+
+To Do's:
+
+* need to wire the cliphandlers to the main window when frame gets focus
+* make sure browser rooted in member shows the parent type.member as name in root
+  -- actually, for taBase, should be ObjName.member, for class, ParentType.member
+* need to dynamically enable Splitting, and forward to right sub frame
+* put open TopLevelWindow guys on taiMisc::viewer_wins -- one slight issue is 
+  that dock windows will need to be removed from this list when they dock
+* the iListDataPanel needs to hook up selection handler notifiers
+* program_qtso: need to wire the treeview/IEditDataHost up to the frame
+* add main menu item to:
+  * dynamically list current frames
+  * turn visibility of frames on and off
+  * add a new frame of a given type
+  * remove a frame
+  * (possibly) change order or placement of frames
+* every widget class should have a basic "new" and then a virtual Contr
+  -- every CreateWidget_impl must call the ->Constr
+* TabFrameViewer -- basically allows nested FrameView guys, in a tab
+* make toolbars descend from the DataViewer/IDataViewerWidget edifice
+* probably put in the legacy Render() behavior into T3DataView because all
+  its descendants were built on the premise that Render included a pre Clear_impl
+* in taProject, prob move the ProjectBase autoload stuff down, and
+  also process the viewers for auto_open
+* need to move/rationalize pdpMisc::WaitProc_PostLoadOpr() to ta somewhere
+  (tabMisc maybe)
+* dynamic mapping (ex. adding a new frame or subframe to a mapped view)
+
+From Randy's emails:
+
+Here's what I was imagining.  Every browser window comes with a 3d panel there 
+by default.  To populate it, you select "Create 3D View in.." and choose an 
+existing view (Default or whatever), or the "New View" option (which will 
+create a new tab in current browser).  
+
+Also, we need to clearly distinguish between the notion of a "browser window" 
+and a "3d view" which lives within the browser window in the 3rd panel.  The 
+current thing seems to conflate these (you do "open viewer" and you get both 
+a new browser and a new 3d view).  So, in addition to the "Create 3D View 
+In.." option, we would have the current "Browse From Here.." option that 
+creates a new browser window..
+
+
+
+SEEMS TO WORK
+
+* notify chain from TreeView to Frame up to Window, and back to Frames
+
+BUGS
+
+* in browseviewer, root item not selected by default (should be??? maybe not?)
+* when you go "openviewer" on a network, the resulting new 3-pane viewer
+  has the T3 panel not visible -- you have to move the slider to make it visible
+* no context menu in T3 view
+* after loading proj with net, the NetView panel is open; if you then click on
+  a dude in the tree, it doesn't make a new panel, you have to click on the 
+  empty panel, then click away/back to your desired guy
+* app/Quit with a projbrowser open (showing network) causes an abort deep in
+  the Coin library, related to Clear_impl during a Reset (because of a DataChanged)
+
+ISSUES
+* following msg related to netviewing: 
+  "Coin warning in SoQtComponent::setSize(): Invalid size setting: <0, 886>"
+
+Questions:
+
+
+New Design
+
+The new design comprises 3 main gui elements:
+  * a main window manager
+  * a central browsing/viewing area that can contain:
+    * tree browser
+    * view panels
+    * 3D viewers
+  * dock windows -- these are general windows, such as the console
+
+ToolBars
+
+ToolBars can be associated with the following:
+  * main window, to hold global actions (ex file, clipboard, printing, help)
+  * a particular type of object, for the actions of that object
+  * a particular kind of designer or view, for the commonly used actions of that view
+
+
+Things That Are Nuked:
+
+* DataViews no longer have a "Changed" semantics (this wasn't really used anyway)
+* DataViews no longer have built in file/save support (again, wasn't used)
+
+
+Summary of Action Stages
+
+
+there are probably too many concepts now, but here they are:
+
+Model Constr -- making the view model -- ex. this would be 
+  what got streamed back in from a file -- these are entirely
+   taBase-based structures -- they create gui things as needed
+  they follow all the normal rules for taBase structures
+Win Constr -- gui construction
+  CreateWidget_impl -- main container QWidget objs get created
+  Constr -- a virtual step called on Widgets after creation
+  Constr_post -- gui constr to do after entire thing in place
+Render
+  Render_pre -- setup stuff -- recursive
+  Render_impl -- meat and bones -- recursive
+  Render_impl -- post stuff after everything else
+Clear
+  Clear_impl -- recursive visual clearing -- 
+    really only used by T3 currently (nukes inventor
+    objs -- Render then recreates them)
+Reset
+  Reset_impl -- recursive model clear
+
+As an example, ViewWindow decomposes as follows:
+  WinConstr
+  Render
+
+View State
+
+* view state is set or fetched on demand (ie, it is not WYSIWYG)
+
+------------------
+Main Menu Redesign
+------------------
+ 
+Goals
+
+* main menus and toolbars should be dynamic and primarily directive driven
+
+Action Hierarchy
+
+Here is the hiearchy of actions:
+
+  * viewer -- intrinsic to the actual viewer gui itself
+  * app -- these are global actions, on the root object -- they
+    will appear on every top-level window (ex Help/About)
+  * view -- these are created by the DataViewer class/subclass
+  * root -- these are created by the root object type being shown
+  * dynamic -- these are created dynamically, based on context
+
+Issues
+
+* ordering: sometimes you want things inserted in certain locations
+  we need to be able to specify the following:
+    bottom: the item should always stay at the bottom (ex File/Quit)
+    top: the item should always stay at the top
+    "before X": item/group should go before X item/group
+    "after X": item/group should go after X item/group
+  
+* grouping: sometimes you want things in groups, which will be set off 
+  from other items with separators
+  
+* visible/invisible (???)
+* enabled/disabled
+* check menus: some items are for checkmarks
+* radio menus: group with mutually exclusive check items
+* shortcuts (underline character)
+* accelerators (control keys)
+* menu icons
+* toolbar icons
+* menus and toolbars are distinct: need to have parallel set of directives
+* what about modal or dynamic menus??? items that will appear or not
+  depending on what user is doing, or what exists, etc.
+* programmatic (script) access -- should be able to specify the action
+  in gui-centric way, not requiring detailed knowledge of the object
+* ellipses (...) for things invoking dialogs
+
+Simplifying Assumptions or Restrictions
+
+* there are no explicit separator directives (these were complicated)
+  instead, separators are automatically inserted between groups
+
+* groups should be intrinsic, and so apply to both menus and toolbars;
+  this makes sense, particularly if grouping gets used for things like
+  radio items, and for controlling insertion points
+  
+* some subitems are dynamic groups:
+  ex. Windows list, Export To (different formats) etc.
+  need a way to provide the entry for the dynamics, and then a way
+  for the dynamic entries to be added/removed
+
+* when a new item gets added to a group, it is always added at the end;
+  i.e. there is no way to place items inside a group 
+
+* dynamic submenus (ex window list) are only available on menus, not
+  tool bar items? (maybe ok if they are on toolbuttons);
+  these get populated in the "aboutToShow()" so there need not be any
+  global mechanism to maintain the lists, increasing encapsulation
+  and separation
+
+* radio item groups maybe cannot be extensible (but maybe they could
+  be if the method was virtual, and you added the inherited directives
+
+Can't Do First Pass
+
+* radio items in mainline menu items
+  (but we should still be able to do them as submenus, that are 
+  created in code)
+
+* check items -- hard to define how to keep the check correct
+
+Notes
+
+* you only need to specify the shortcut for menu bar items once;
+  maybe it should try to autocreate shortcuts where none specified
+
+* might be possible to do radio groups by smushing all the items
+  onto a single routine -- an attr indicates a radio item, and then
+  the constr code has to manually scan the directives and grab
+  all the items -- the grouping would be automatic, but you'd still
+  need to add a grp directive to make sure you had the seps etc.
+
+
+Comment Directives
+
+The following directives are only for main menus and tool bars.
+Note that unlike edit menu directives, all items on a main menu or toolbar
+must be explicitly specified (there is no implicit placement.)
+The "MM" root was chosen because menu items typically have numerous comment
+directives, so something short is better than something descriptive.
+
+MM -- specifies a main menu entry:
+  use | to separate hierarchy
+  use & prefix to specify shorcuts
+  ex. MM_&File|New_Project
+      MM_Tools|File_type|None
+
+ACT -- specifies an action, for use on a main menu or toolbar -- the 
+  method name in the action designator -- designators should be unique 
+ACT_xxx -- specifies an action, for use on a menu or toolbar --xxx is 
+  the action designator -- designators should be unique
+
+MENU_GP_xxx -- specifies menu group; add to every entry that should be together
+  ex. MENU_GP_FileProjActs -- groups have separators before/after
+
+TB -- specifies a toolbar entry
+  ex. TB_Default -- puts the action on the Default toolbar
+
+Menu/Toolbar modifiers
+
+IMG_xxx -- get a menu/toolbar icon from image called xxx, either a file or
+   Qt resource uri
+   ex. IMG_:/images/editcopy.png -- resource uri
+       IMG_:images/myicon.png -- file uri, relative to app root
+
+MENU_SUB -- the item is a submenu (probably dynamically populated)
+  the menu method is called in the aboutToShow() routine, which can then
+  populate the menu -- submenus that merely contain other action items
+  do not need to be explicitly associated with a menu method
+
+MENU_BEFORE_Xxx -- put this menu item before the indicated item OR group;
+MENU_AFTER_Xxx -- put this menu item after the indicated item OR group;
+
+MENU_FIRST -- always put this item first in its submenu or toolbar;
+  if used more than once, the last item encountered is always first-most
+MENU_LAST -- always put this item first in its submenu or toolbar;
+  if used more than once, the last item encountered is always last-most
+
+MENUGP_FIRST -- always put this group first in its submenu or toolbar;
+  if used more than once, the last group encountered is always first-most;
+  directive should be added to the first item in the group
+MENUGP_LAST -- always put this group first in its submenu or toolbar;
+  if used more than once, the last group encountered is always last-most;
+  directive should be added to the first item in the group
+
+ACT_ENABLE
+ACT_CHECK -- is a checkable bool menu item
+ACT_RADIO_0 -- is radio item, index 0 (0..N)
+
+Menu Method Signatures
+
+It is suggested that action methods should be created specifically for
+this purpose, and not be combined with general application methods -- 
+use an inline forward call if necessary.
+
+It is suggested to name action methods as follows:
+  ex. void EditCopyAction() -- does the "Edit/Copy" action
+
+
+
+
+
+void MenuMethod_Simple() -- a simple action-based menu
+void MenuMethod_DynSubMenu(taiSubMenu* submenu) -- a method that must populate a submenu 
+
+int MenuMethod_Bool(bool checked) -- called with the *new* value of 'checked'
+int MenuMethod_Radio(int radio) -- called with newly selected radio item
+      
+
+  
+Location Directives
+
+These directives provide hints on *where* to insert the item.
+
+IMPLEMENTATION
+
+First, the viewer will create a full list of actions.
+Then, it will make the menus and toolbars.
+
+MainMenuSpec:
+  value type that holds all the relevant data for a mm item:
+  name
+  path -- the | name, with all pathing
+  
+DataViewer:
+
+void Constr_Actions() -- enumerates all (static) actions, from all sources
+void Constr_Actions_this() -- static actions, from ourself (viewer), ex. clip actions
+void Constr_Actions_app_root() -- static actions, from the application root
+void Constr_Actions_root() -- static actions, from the root object Type
+void Constr_Actions_DataView() -- static actions, from our DataView
+
+void Constr_MainMenu() -- main menu construction
+void Constr_MainMenu_Base() -- for the base object (ourself)
+void Constr_MainMenu_Root() -- for the root object
+void Constr_MainMenu_Dynamic() -- for when the root state changes, ex. additional object,
+  window lists, etc.
+

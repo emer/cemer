@@ -1,0 +1,96 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][5] { 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    MethodCall @[0] { };
+    NetUpdateView @[1] { };
+  };
+};
+Program .projects[0].programs.gp[0][5] {
+ name="CsCycle";
+ tags="Cs, Std";
+ desc="runs one cycle of CS processing (updating net inputs and activations)";
+ flags=;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=CsNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="update_net_view";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="this does all the standard cs processing for one cycle of activation updating";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][5].args[0]$1$;
+   method=LeabraNetwork::Cycle_Run;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  NetUpdateView @[1] {
+   desc="update network views if update_net_view == true";
+   flags=;
+   network_var=$1$;
+   update_var=.projects[0].programs.gp[0][5].vars[0]$2$;
+  };
+ };
+};

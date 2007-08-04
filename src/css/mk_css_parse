@@ -1,0 +1,7 @@
+#!/bin/sh
+
+bison -dtvy css_parse.y
+sed -e "s/union/struct/g" y.tab.c >css_parse.cpp
+sed -e "s/union/struct/g" y.tab.h >css_parse.hx
+cmp -s css_parse.hx css_parse.h || (cp css_parse.hx css_parse.h)
+

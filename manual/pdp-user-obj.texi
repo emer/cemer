@@ -1,0 +1,871 @@
+@c uncomment the following two lines for 'update every node' command
+@c @node  obj
+@c @chapter Object Basics and Basic Objects
+
+PDP++ is written in the computer language C++. C++ extends the C
+language in many ways, but its primary addition is the concept of
+objects and object oriented programming (OOP). Many PDP concepts such as
+Units, Layers, and Networks easily fall into the object paradigm, while
+some other concepts such as Processes and Environments are initially
+difficult to grasp in this framework. The following chapters explain the
+particulars of the PDP concepts in the object-based paradigm in greater
+detail. This chapter establishes a number of conventions in PDP++ used
+for organizing and structuring its objects.  It is really only relevant
+if you will be programming with PDP++, either in the script language or
+directly in C++ --- the end user generally need not be concerned with
+this level of detail.
+
+In addition to these object basics, this chapter also describes a number
+of basic types of objects that are used in many different places within
+the software.  Examples of these include lists, groups, arrays, and
+specifications. 
+
+@menu
+* obj-basics::                  Object Basics
+* obj-array::                   Arrays
+* obj-group::                   Groups
+* obj-spec::                    Specifications
+* obj-random::                  Random Distributions
+@end menu
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-basics, obj-group, obj, obj
+@section Object Basics
+
+The following sections describe some basic ideas about objects and
+general things you can do with them.
+
+@menu
+* obj-basics-obj::              What is an Object?
+* obj-basics-names::            Object Names
+* obj-basics-files::            Saving and Loading Objects
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-basics-obj, obj-basics-names, obj-basics, obj-basics
+@subsection What is an Object?
+@cindex OOP
+@cindex Object Oriented Programming
+@cindex Objects
+@cindex Classes
+@cindex Methods
+@cindex Members
+@cindex Member Functions
+@cindex Inheritance, of Objects
+@cindex Class Inheritance
+
+An object has both fields with data and functions (aka methods) which it
+can perform.  A PDP Unit as an object might have the fields
+@code{activation} and @code{netinput}, and some functions like
+@code{ComputeActivation()} and @code{ClearNetInput()}. In C++ this might
+look like:
+
+@example
+class Unit @{
+  float         activation;     // this is a member holding activation
+  float         netinput;       // this is a member holding net input
+
+  virtual void  ComputeActivation(); // this is a function 
+  void          ClearNetInput();        // this is a function 
+@}
+@end example
+
+C++ also provides the mechanisms for object inheritance in which a new
+object can be defined as having the same fields and functions as its
+"parent" object with the addition of a few fields and/or functions of
+its own. In PDP++ the @b{BpUnit} object class inherits from the parent
+@b{Unit} class and adds fields such as @code{bias weight} and a BackProp
+version of @code{ComputeActivation}. In C++ this might look like:
+
+@example
+class BpUnit : public Unit @{
+  float         biasweight;     // a new member in addition to others
+
+  void          ComputeActivation(); // redefining this function
+  void          ClearBiasWeight();  // adding a new function
+@}
+@end example
+
+@cindex Overloading
+@cindex Redefining Methods
+@cindex Methods, Redefining
+By @i{overloading} the ComputeActivation function the BpUnit redefines the
+way in which the activation is computed. Since it doesn't overload the
+ClearNetInput function, the BPUnit clears its net input in the exact
+same way as the standard unit would. The new function ClearBiasWeight
+exists only on the BpUnit and is not available on the base Unit
+class. Through this type of class inheritance, PDP++ provides a
+hierarchical class structure for its objects.
+
+For a slightly more detailed treatment of some of the basic ideas in OOP
+and C++, see @ref{css-c++-intro}.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-basics-names, obj-basics-files, obj-basics-obj, obj-basics
+@subsection Object Names
+@cindex Object Names
+@cindex Names, Object
+
+In PDP++, many objects have a @code{name} field.  This gives the
+particular object an identifier that can be used to refer to it in the
+CSS script language (@pxref{css-tut-access}), and it makes it easier to
+identify when you need to point to it one of the GUI operations.
+
+All objects when created are given default names that consist of the
+their type followed by a number which increases for each subsequent
+object of that type which is created.  Thus, the first @b{Layer} created
+will be called "Layer_0", and so on.
+
+Note that the name given to an object is not necessarily the same name
+that object will have when saved to a file.  It is simply a value of a
+particular member of the object.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-basics-files,  , obj-basics-names, obj-basics
+@subsection Saving and Loading Objects
+@cindex Saving Objects
+@cindex Loading Objects
+@cindex Object Save Files
+@cindex Objects, Saving and Loading
+
+All PDP++ objects can also be saved to a file and loaded back in from
+that file.  Note that when you save an object that has sub-objects in it
+(i.e. a Layer, which has Units in it), those sub-objects are also saved
+in the file, and loaded back in as well.  Thus, to save all the elements
+of a project, one only has to save the project object, which will
+automatically save all of its sub-objects.
+
+There are two ways in which objects can be loaded back in: in one case,
+you load the file @emph{over} an existing object.  This corresponds to
+the @i{Load Over} menu item that you will frequently see in PDP++.  This
+will simply replace the values of the existing object with those saved
+in the file.  This also applies to any sub-objects. Note if the existing
+object has @emph{fewer} of some kind of sub-object than the saved file,
+new sub-objects will be created as needed.  However, the same is not
+also true if the existing object has @emph{more} of these
+sub-objects---they are not removed to make the existing object exactly
+the same as that which was saved in the file.  If you want to make sure
+the object is exactly as it was saved, open a new one, do not open over
+an existing one.
+
+To open a new object from a saved file, use the @i{Open in} menu item
+(instead of @i{Load Over}).  This is equivalent to opening a new item
+into a parent group object.  For example, the project has a group that
+contains its networks.  If you open a saved network file in this group,
+as opposed to over an existing network in the group, a new network will
+automatically be created (along with all of its saved substructure).
+
+Some types of objects have default "extensions" that are automatically
+added on to the file name to identify the type of file.  For example,
+projects are saved with a @file{.proj} extension.  Further, some objects
+automatically compress the file after saving, (and automatically
+uncompress it before loading) in order to save disk space.  This is
+because the file format objects are saved in is actually text-based and
+human readable.  Thus, it is much more efficient to save large files in
+a compressed form.  These files automatically get the compression suffix
+associated with the type of compression used (.gz for gzip, which is the
+default).
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-group, obj-array, obj-basics, obj
+@section Groups
+@cindex Groups
+@cindex Lists
+@cindex Group Object
+@cindex List Object
+@cindex Subgroups
+@cindex Substructure
+@cindex Links
+@cindex Group Ownership
+@cindex Ownership, Groups
+
+Groups are one of the major workhorse objects in the PDP++ software.
+Virtually every object is contained in a group object.  Thus, groups
+provide a way of managing other objects, creating them, ordering them,
+and iterating through them.
+
+A particular group typically manages objects of the same type.  Thus, a
+group of units always contains units of one form or another.  Groups
+have a @emph{default type} of object that they expect to contain, and
+this is what they will create if asked to create a new object.
+
+Groups also have a notion of a @emph{default element}, which can be
+useful.  For example, the default element of the group of color
+specifications on the root object is the default color spec that will be
+used by all windows that need a color spec.
+
+There are two basic types of groups.  The simpler form of group is
+actually just a @b{List}.  A @b{List} object manages a single list of
+elements, and does not allow for any sub-grouping of these elements.
+Lists are used to hold simple objects that probably don't need to have
+such subgroups.
+
+A @b{Group} may also contain subgroups, which are similar in type to the
+group itself. The nested structure of subgroups within subgroups within
+groups can be organized into a conceptual "tree" of groups and elements.
+The initial group comprises the base of the tree with each of its
+subgroups representing a branch. The subgroup's subgroups continually
+branch off until in the end a group is reached without any further
+subgroups. The actual elements of the group are conceptually represented
+as "leaves", and may occur within any group at any level of the group
+tree.
+
+@example
+ Ex:
+
+                        __(initial group)____
+                       /      |       \   \  \
+            (subgroup1)   (subgroup2) el6 el7 el8
+              /  |  \         |     \
+   (subgroup11) el2 el3 (subgroup21)(subgroup22)
+          |                   | \
+         el1                  el4 el5
+
+@end example
+
+In this example there are six groups and eight "leaf" elements. The
+leaves are numbered in their Depth First Search retrieval order which is
+used by the @code{Leaf()} function described in the group functions
+section @xref{obj-group-functions}.
+
+In some cases it useful for the same group element to occur in more than
+one group at time. The parent groups share the element, however, one
+group is assigned to be the owner (usually the initial group the element
+was created within). Usually a group will own all of its elements, but
+sometimes it may contain elements from other groups as well. Those
+elements which are owned by other groups are known as @emph{linked}
+elements, and are added to a group by using the @code{Link()} function
+described in the group functions section. When a group is deleted, it
+breaks its link to the linked elements, but does not delete them as it
+does the other elements it owns. Subgroups can also be linked.
+
+@example
+Ex:
+        (group1)                  (group2)
+        /   |   \                /    |  \
+(subgroup1) el1  \.............el2    el3 \
+  /  \                                     \
+el4   \...................................(subgroup2)
+@end example
+
+In this example group1 has a link to element el2 in group2. El2 is owned
+by group2 and is a link element of group1. In addition, subgroup1 has a
+link to subgroup2, which is owned by group2.
+
+The following sections document the various operations and variables of
+the group types. These are probably of most interest to users who will
+be manipulating groups in the CSS language, or in programming in PDP++.
+However, some of the group functions are available in the @i{Actions}
+menu in the gui, and their function might not be fully clear from their
+name and arguments.
+
+@menu
+* obj-group-iteration::         Iterating Through Group Elements
+* obj-group-variables::         Group Variables
+* obj-group-functions::         Group Functions
+* obj-group-edit::              Group Edit Dialog
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-group-iteration, obj-group-variables, obj-group, obj-group
+@subsection Iterating Through Group Elements
+@cindex Group Iteration
+@cindex Iteration, Groups
+
+The elements in a group with nested sub-structure can be accessed as
+though this structure were "flattened out".  This can be done more
+efficiently using an iterator scheme as opposed to repeatedly calling
+the @code{Leaf()} function.  The iterator for going through leaves is an
+object that remembers information about where it is in the group
+structure.  This iterator is of type @b{taLeafItr}, and a variable
+should be declared of this type before beginning a for loop to iterate.
+The @code{FirstEl} and @code{NextEl} functions use this iterator to
+traverse through the elements of the group.
+
+There is a macro which makes group traversal relatively painless.  The
+following example illustrates its use:
+
+@example
+  Unit* u;                      // a pointer to a unit object
+  taLeafItr i;                  // the iterator object
+  FOR_ITR_EL(Unit, u, layer->units., i) @{
+    u->DoSomething();
+  @}
+@end example
+
+The FOR_ITR_EL macro iterates though the leaves of a group. It accepts
+four arguments. The first is the type of object expected at the leaf
+level of the group. The second is a pointer to an object of that type.
+The third is group followed by its access method. In the example, the
+group is "layer->units", and the access method is the "." . If the group
+was instead a pointer to group called "mygroup" then the third argument
+would be "mygroup->". The fourth argument is the iterator object.
+
+To iterate through all the leaf groups (groups which contain leaf
+elements) the FOR_ITR_GP macro may be used. Its first argument is the
+group type (not the leaf type). The second is a pointer to group of that
+type. The third is pointer group and its access method. And again, the
+fourth argument is the iterator object.
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-group-variables, obj-group-functions, obj-group-iteration, obj-group
+@subsection Group Variables
+
+The Group class has the following variables:
+
+@table @code
+@item String  name
+@vindex name of Group
+The (optional) name of the group
+@item int size
+@vindex size of Group
+Number of elements in the group.
+@item TypeDef*  el_typ
+@vindex el_typ of Group
+The "minimum" type of an element in the Group. When objects are created,
+transferred, or linked in the group, only objects of this type, or
+objects of a type which inherits from this type are considered for
+inclusion. 
+@item int el_def
+@vindex el_def of Group
+The index of the default element of the group. This element is returned
+when the @code{Default_El()} function is called on the group.
+@item int leaves
+@vindex leaves of Group
+The number of leaves of the Group. This is the total sum of all the
+elements in this group plus all the elements of its subgroups, their
+subgroups and so on.
+@item Group gp
+@vindex Group of Group
+This is the group of subgroups.
+@item Geometry  pos
+@vindex pos of Group
+The Group's position. In some cases, the group is represented
+graphically and the position provides a relative offset for the elements
+of the group
+@item Geometry geom
+@vindex geom of Group
+The Group's geometry. Although the group is accessed linearly,
+it can be represented graphically in more than one dimension. The
+geometry specifies the layout of the group's elements.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-group-functions, obj-group-edit, obj-group-variables, obj-group
+@subsection Group Functions
+
+Groups have many functions for operating on the elements of the group.
+
+These functions return an element of the group. The element is an
+instance of the group's element type.
+@sp 1
+@table @code
+@item El (int i)
+@findex El on Group
+Returns the element of the group at index @code{i}. If the index is
+out of range, an out of rangeerror is reported, and @code{NULL} is
+returned. 
+@item DefaultEl()
+@findex DefaultEl on Group
+Returns the element indexed by the @code{default_el} variable of the
+group. 
+@item Leaf (int n)
+@findex Leaf on Group
+Performs a depth first search to find the nth leaf of the
+group tree.
+@item FirstEl()
+@findex FirstEl on Group
+Utilizes sets the internal leaf index to zero and return
+the first leaf.
+@item NextEl();
+@findex NextEl on Group
+Increments the internal leaf index and returns the leaf
+of that index.
+@item Pop()
+@findex Pop on Group
+Returns the last element of the group, and removes it from
+the group as well.
+@item Peek()
+@findex Peek on Group
+This function is similar to the @code{Pop()} function, but it does not
+remove the element.
+@end table
+
+These functions return an integer indicating the index of the element in
+the group. In all these functions if no match is found, a value of "-1"
+is returned.
+@sp 1
+@table @code
+@item FindEl (inst el)
+@findex FindEl on Group
+Returns the index of the element of the group which
+matches @code{el}.
+@item FindName (char* name)
+@findex FindName on Group
+Returns the index of the element which has a name field
+which matches @code{name}.
+@item Find (TypeDef t)
+@findex Find on Group
+Returns the index of the first element of type @code{T}.
+@item FindLeaf (char* name)
+@findex FindLeaf on Group
+Returns the leaf index of the leaf element which has a
+name field which matches @code{name}.
+@item FindLeafEl (inst el)
+@findex FindLeafEl on Group
+Returns the leaf index of the leaf element which matches
+@code{el}. 
+@end table
+
+These functions are used to add elements to the group.
+
+@table @code
+@item AddEl (inst el)
+@findex AddEl on Group
+Adds element @code{el} to the group
+@item AddUniqueName (inst el)
+@findex AddUniqueName on Group
+Adds an element @code{el} to the group and adds an instance
+index to its name if another element in the group has the same name.
+@item Push (inst el)
+@findex Push on Group
+Adds element @code{el} to the end of the group.
+@item PushUnique (inst el)
+@findex PushUnique on Group
+Adds element @code{el} to the end of group only if it is
+not in the group already.
+@item PushUniqueName (inst el)
+@findex PushUniqueName on Group
+Adds element @code{el} to the end of the group only if
+there are no other elements of the group with the same name.
+@item Insert (inst el, int i)
+@findex Insert on Group
+Inserts element @code{el} at position @code{i} in the group.
+If the position @code{i} is out of range, it is added to the beginning or
+end of the group accordingly.
+@item Replace (int i ,inst el)
+@findex Replace on Group
+Replaces the element at location @code{i} with the element
+@code{el}.
+@item ReplaceEl (inst rel, inst el)
+@findex ReplaceEl on Group
+Replaces the element @code{rel} of the group with element
+@code{el}. If no match is found, the element @code{el} is not inserted.
+@item ReplaceName (char* name, inst el)
+@findex ReplaceName on Group
+Replaces the element with the name @code{name} with the
+element @code{el}. If no match is found, the element @code{el} is not
+inserted.
+@item Transfer (inst el)
+@findex Transfer on Group
+Removes @code{el} from the group or owner it is currently
+in and adds it to this group.
+@item Link (inst el)
+@findex Link on Group
+Adds a link to the object @code{el} to this group.
+There are also corresponding functions (InsertLink, ReplaceLink, etc)
+which perform as the do the Add functions except they link instead of
+add (@pxref{obj-group}).
+@item New (int i, typedef t)
+@findex New on Group
+Creates @code{i} new objects of type @code{t} in the group.
+@end table
+
+These functions are used for removing elements from the group.
+@sp 1
+@table @code
+@item Remove (int i)
+@findex Remove on Group
+Removes the element at position i. If the element is owned
+by the group it deletes the element. If the element is a linked element,
+it deletes the link.
+@item Move (int from, int to)
+@findex Move on Group
+Removes an element from position @code{from} and inserts at position @code{to}.
+@item RemoveName (char* name)
+@findex RemoveName on Group
+Removes the element with a name matching @code{name}.
+@item RemoveLeafName (char* name)
+@findex RemoveLeafName on Group
+Removes the leaf with a name matching @code{name}.
+@item  RemoveAll()
+@findex RemoveAll on Group
+Removes all the elements of the group.
+@end table
+
+These functions return a subgroup of the group.
+@sp 1
+@table @code
+@item Gp (int i)
+@findex Gp on Group
+Returns the subgroup at index(i)
+@item LeafGp (int n)
+@findex LeafGp on Group
+Returns the nth subgroup which contains leaves.
+@item FirstGp()
+@findex FirstGp on Group
+Sets the group index to zero and returns the first
+subgroup with leaf elements.
+@item NextGp()
+@findex NextGp on Group
+Increments the group index and return the corresponding
+subgroup with leaf elements.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-group-edit,  , obj-group-functions, obj-group
+@subsection Group Edit Dialog
+
+The group edit dialog (GED) is in many ways like the the Edit dialog for
+other objects (@pxref{gui-edit}). In the GED however, all the elements
+of the group are editable at one time. The elements are represented in a
+horizontal scrollbox. If there are more elements than can be represented
+in the dialog, dragging the scrollbar under the scrollbox will allow
+access to the other members. The members are ordered sequentially from
+left to right.
+
+In some cases the elements of the groups may be of different types. When
+this occurs, all the members of all the element types are listed in the
+member names section of the dialog. Elements which do not contain a
+certain member in the member names section will have a blank field where
+the edit field of that member would normally appear. The dialog buttons
+(Ok, Apply, Revert, Cancel) apply to all the elements of the group.
+
+In addition to the standard editing control keys in the Edit Dialog, the
+following keys are are mapped to special functions.
+
+@itemize @asis
+@item Meta-f moves the Ibeam forward to the same field in the next group
+member 
+@item Meta-b moves the Ibeam backward to the same field in the previous
+group member 
+@end itemize
+
+Many of the functions described in the previous section
+(@pxref{obj-group-functions}) are available in the menus of the group
+edit dialog.  Note that if you want to operate on the subgroups (e.g.,
+to move them around), you can do EditSubGps which will pull up a dialog
+of these subgroups where the move and other actions apply to them.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-array, obj-spec, obj-group, obj
+@section Arrays
+@cindex Arrays
+@tindex Array
+
+Arrays are the data objects for related sequences of simple data
+structures like integers, floating point numbers, or strings. Each of
+these types has its own corresponding array type (ex. floating point
+numbers (floats) are arranged in a float_Array). All array types
+however have the the same structure of variables and access functions.
+
+The following sections document the various operations and variables of
+the array type. These are probably of most interest to users who will
+be manipulating arrays in the CSS language, or in programming in PDP++.
+However, some of the array functions are available in the @i{Actions}
+menu in the gui, and their function might not be fully clear from their
+name and arguments.
+
+@menu
+* obj-array-var::               Array Variables
+* obj-array-func::              Array Functions
+* obj-array-edit::              Array Editing
+@end menu
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-array-var, obj-array-func, obj-array, obj-array
+@subsection Array Variables
+
+The array classes have two important variables:
+@sp 1
+@table @code
+@item int size
+@vindex size of Array
+Indicates the number of elements in the array. Although the array
+may have allocated additional space, this is the number of elements in
+use.
+@item item err
+@vindex err of Array
+Indicates the value to return when the array is accessed out of
+range.(ex. If the array had a size of 5 and was asked for element 6
+or element -1 then the err value would be returned).
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-array-func, obj-array-edit, obj-array-var, obj-array
+@subsection Array Functions
+
+@table @code
+@item Alloc (int x)
+@findex Alloc on Array
+Allocates an array with space for x items.
+@item Reset()
+@findex Reset on Array
+Sets the size of the array to zero, but does not change or free the
+amount to allocated space.
+@item Remove(int x)
+@findex Remove on Array
+Removes the array element at index @code{x}.
+@item Permute()
+@findex Permute on Array
+Permutes the elements of the array into a random order.
+@item Sort()
+@findex Sort on Array
+Sorts the array in ascending order.
+@item ShiftLeft (int x)
+@findex ShiftLeft on Array
+Shifts all the elements in the array @code{x} positions to the left.
+@item ShiftLeftPct (float f)
+@findex ShiftLeftPct on Array
+Shifts the array to the left by @code{f} percent.
+@item El (int x)
+@findex El on Array
+Returns the element at index @code{x}, or err if out of range. Indexing
+starts at zero, therefore an array with five elements would have valid
+indices for zero to four.
+@item FastEl (int x)
+@findex FastEl on Array
+Fast element return. Returns the element at index @code{x} with no
+error checking. Caution: PDP++ may behave unexpectedly if this function
+is called with an index that is out of range.
+@item Pop()
+@findex Pop on Array
+Returns and removes the last element in the array.
+@item Peek()
+@findex Peek on Array
+Returns the last element in the array without removing it.
+@item Add (item i)
+@findex Add on Array
+Adds @code{i} to the array.
+@item Push (item i)
+@findex Push on Array
+Pushes (adds) @code{i} to the the end of the array
+@item Insert (item i, int num, int loc)
+@findex Insert on Array
+Inserts @code{num} copies of item @code{i} at location @code{loc} in the
+array.
+@item Find (item i, int loc)
+@findex Find on Array
+Returns the index of the first element in the array matching item
+@code{i} starting at location @code{loc}. 
+@item RemoveEl (item i)
+@findex RemoveEl on Array
+Removes the first element matching item @code{i}. Returns @code{TRUE} if
+a match is found and @code{FALSE} otherwise.
+@end table
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-array-edit,  , obj-array-func, obj-array
+@subsection Array Editing
+
+Arrays are editing using an enhanced version of the standard Edit Dialog
+@xref{gui-edit, ,The Edit Dialog}. The Array Edit Dialog arranges all of
+the elements of the array horizontally and allows the user to scroll
+though the array elements using a horizontal scroll bar at the bottom of
+the dialog. In addition, number arrays (floats, ints, etc..) can
+be edited using a Color Array Edit Dialog which is similar in layout to
+the Array Edit Dialog, but adds a color palette for painting the values
+@xref{gui-colors}.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-spec, obj-random, obj-array, obj
+@section Specifications
+@cindex Specifications
+@cindex Specs
+
+One of the important design considerations for the PDP++ software was the
+idea that one should separate state variables from specifications and
+parameters (@pxref{over-spec}).  The attributes of an object can often
+be divided into two types--the first type of attributes represent the
+object's state. These change over time and are usually distinct within
+each instance of an object.  The second group of attributes represent
+parameters of an object that tend to remain fixed over time, and often
+have values that are common among instances of the object class. This
+second group can be thought of as a @strong{specification} for the
+object class.
+
+For example: The car object class might have two attributes: color, and
+current-speed. The color attribute would be set when the car was built,
+and would (hopefully) not be changing very much. It would be classified
+as a specification parameter. The current-speed attribute is likely to
+be constantly changing as the car accelerates and decelerates. It is
+representative of the car's current state and would be classified in the
+first group, the car's state space. If you took a group of cars, chances
+are that some of them would share the same color, but they would
+probably be moving around at different speeds. Rather than have each car
+carry around an attribute for its color, the specification attributes
+are split off from the car and put into a special class called a
+car-specification or carspec. In this way cars with identical colors can
+share the same specification, while still having their own state
+attributes like current-speed.  By changing the color attribute in the
+specification, all the cars sharing that specification would have their
+color changed. This allows easy access to common parameters of an object
+class in one location. Rather than individually setting the color
+parameter for each instance of a car, the attribute can be set in just
+once in the spec.
+
+@cindex Spec Pointer
+@cindex Smart Pointer
+This idea is instantiated in a particular class of objects known as
+@b{Spec}s.  Specs also have special "smart pointers" that objects use to
+refer to them.  These spec pointers or @b{SPtr} objects ensure that a
+given object always has a corresponding spec, and that this spec is of
+an appropriate type.
+
+While specs are basically just classes that have parameters and
+functions that control other object's behavior, there are a couple of
+special properties that specs have which make them more powerful.
+
+Often when one wants to use two different specs of the same type, it is
+because one spec has one parameter different than the other.  For
+example, one spec might specify a learning rate of .01, and the other a
+learning rate of .001.  However, these specs might very well share
+several other parameters.
+
+@cindex Spec Inheritance
+@cindex Inheritance, Spec
+@vindex children of Spec
+To simplify the ability of specs to share some parameters and not
+others, a special system of @emph{spec inheritance} was developed.
+Basically, each spec has a group on it called @code{children}, in which
+"child" specs can be created.  These child specs inherit all of their
+parameters from the parent spec, except those specifically marked as
+unique to the child.  These fields appear with a check in the left-hand
+check-box when edited in the GUI.  Thus, whenever you change a value in
+the parent, the children automatically get this changed value, except if
+they have a unique value for this field, in which case they keep their
+current value.  For a tutorial demonstration of how this works, see
+(@pxref{tut-config-running}).
+
+@vindex type on SPtr
+@vindex spec on SPtr
+There are a couple of things to know about the "smart" spec pointers.
+These pointers have both a type field and the actual pointer to the
+spec.  When you change only the @code{type} field, it will automatically
+find a spec of that type, and set the pointer to that.  If one does not
+yet exist, one will be created automatically and the pointer set to it.
+If however you change the pointer directly to point to a different spec,
+and this spec is of a different type than that shown in the @code{type}
+field, then the type will prevail over the pointer you set.  Thus you
+have to change both the @code{type} and @code{spec} fields if you change
+the latter to point to a different type.
+
+The reason for this is that the spec pointer object does not know which
+field you actually changed, and for the nice automatic properties
+associated with changing the type field to work, the need to update both
+the type and the spec pointer is an unfortunate consequence.
+
+
+@c ======================================
+@c    <node>, <next>, <prev>, <up>
+@node  obj-random,  , obj-spec, obj
+@section Random Distributions
+@cindex Random Numbers
+@tindex Random
+
+Random distributions in PDP++ are handled by an instance of the class
+@b{Random}. This class has a number of functions which return a random
+number from the distribution named by the function. Alternately the
+distribution can be specified in the object itself in which case the
+@code{Gen()} function returns a value from the specified
+distribution. Many of the distributions require parameters which are
+again either passed to the specific functions or set on the Random
+object itself.
+
+Random class Variables:
+
+@table @code
+@item Type type
+@vindex type of Random
+Indicates the type of random variable to generate when the
+@code{Gen()} function is called. It can have one of the following values:
+@table @code
+@item UNIFORM
+A uniform distribution with @code{var} = half-range
+@item BINOMIAL
+A binomial distribution with @code{var} = p, @code{par} = n
+@item POISSON
+A Poisson distribution with @code{var} = lambda
+@item GAMMA
+A gamma distribution with @code{var} and @code{par} = stages
+@item GAUSSIAN
+A normal gaussian distribution with @code{var}
+@item NONE
+Returns the @code{mean} value
+@end table
+@item float mean
+@vindex mean of Random
+The mean of a random distribution
+
+@item float var
+@vindex var of Random
+The "variance" or rough equivalent (half-range)
+
+@item float par
+@vindex par of Random
+An extra parameter used for some distributions
+@end table
+
+Random Class Functions
+
+@table @code
+
+@item float ZeroOne()
+@findex ZeroOne on Random
+Returns a uniform random number between zero and one
+
+@item float Range(float rng)
+@findex Range on Random
+Returns a uniform random number with a given range centered at 0
+
+@item float Uniform(float half_rng)
+@findex Uniform on Random
+Returns a uniform random number with given half-range centered at 0
+
+@item float Binom(int n, float p)
+@findex Binom on Random
+Returns a random number from a binomial distribution with @code{n} trials
+each of probability @code{p}
+
+@item float Poisson(float l)
+@findex Poisson on Random
+Returns a random number from a Poisson distribution with parameter
+@code{l}
+
+@item float Gamma(float var, int j)
+@findex Gamma on Random
+Returns a random number from a Gamma distribution with variance
+@code{var} and @code{par} number of exponential stages
+
+@item float Gauss(float var)
+@findex Gauss on Random
+Returns a gaussian (normal) random number with a variance @code{var}
+
+@item float Gen()
+@findex Gen on Random
+Returns a random number using the distributions type @code{type} and the
+@code{mean}, @code{var}, and @code{par} variables on the Random object
+itself.
+@end table
+
+
+
+

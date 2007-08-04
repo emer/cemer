@@ -1,0 +1,214 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][3] { 
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgEl_List @.prog_code = [6] {
+    MethodCall @[0] { };
+    ProgramCall @[1] { 
+      ProgArg_List @.prog_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[2] { };
+    MethodCall @[3] { };
+    ProgramCall @[4] { 
+      ProgArg_List @.prog_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    NetUpdateView @[5] { };
+  };
+};
+Program .projects[0].programs.gp[0][3] {
+ name="SoTrial";
+ tags="So, Std";
+ desc="Self-organizing processing of a single input/output event or external information";
+ flags=;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=SoNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="network to operate on -- typically set by higher-level calling programs";
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="datatable containing training input/output patterns";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="update_net_view";
+   var_type=T_Bool;
+   bool_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="determines whether to update any network view displays after trial is completed";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=NetCounterInit;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  MethodCall @[0] {
+   desc="resets input data, before getting new external inputs data from apply inputs call";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][3].args[0]$2$;
+   method=Network::Init_InputData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  ProgramCall @[1] {
+   desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
+   flags=;
+   target=.projects[0].programs.gp[0][4]$3$;
+   targ_ld_init="*ApplyInputs*";
+   prog_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=LeabraNetwork;
+     type="SoNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type="DataTable*";
+     name="input_data";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_data";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ input_data;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[2] {
+   desc="initializes various counters at start of trial";
+   flags=;
+   result_var=NULL;
+   obj=$2$;
+   method=SoNetwork::Trial_Run;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  MethodCall @[3] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$2$;
+   method=LeabraNetwork::Compute_TrialStats;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  ProgramCall @[4] {
+   desc="records data about the trial-level processing to a datatable for graphing/processing";
+   flags=;
+   target=.projects[0].programs.gp[0][5]$4$;
+   targ_ld_init="*SoTrialMonitor*";
+   prog_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Network;
+     type="SoNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  NetUpdateView @[5] {
+   desc="update the network view(s) (only if update_net_view is true)";
+   flags=;
+   network_var=$2$;
+   update_var=.projects[0].programs.gp[0][3].vars[0]$5$;
+  };
+ };
+};

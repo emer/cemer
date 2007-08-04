@@ -1,0 +1,340 @@
+---------------------
+ViewData Design
+---------------------
+
+ViewData is data associated with an object that is used to facilitate or modify how that object is visualized in a given context.
+
+ViewData can be:
+  general: when it is applicable to several contexts
+  contextual: when it is applicable to a specific context
+
+ViewData is often set implicitly by the user when interacting with a viewable rendition of the object.
+
+Since there can be many disparate homologous views on a data item, it follows that the view data will need to be associated with its client instance. 
+
+ViewData can also be used for supporting additional user-suppplied data ("annotations"), for example:
+
+"note" -- just general text that can be used to, for example, explain why params are so
+"label" -- this could replace the "label" object used for labeling graphs etc.,
+    it could include coordinates used in locating the label when visualized
+"caption" -- for charts, graphs, etc., can be the text that should be the caption
+    when it is, ex. printed
+
+Design Questions
+----------------
+
+An obvious question arises: should "view data" be stored and strongly associated the view, or with the item being viewed? There may not be an optimal answer, and may be justification for both, consider:
+
+* a complex object like a graph may have view attributes of its own
+* users may strongly associate some kinds of attributes as belonging to the item,
+  not its clients, particularly when these are defaults.
+* the integrated view context can apply holistic, intelligent constraints, whereas this
+  will probably be extremely difficult with a generic editor
+  
+  
+Issues
+------
+
+* isn't it wasteful to load a whole whack of view data for every data object, even if that 
+  object isn't being viewed? ex. distributed simulations
+* putting the viewdata with the view, enables the entire thing to be loaded at once
+* having a bunch of disparate viewdata guys that need to be accessed/manipulated
+  will greatly complicate various viewers, vs. them just having their data integrated
+
+Benefits
+--------
+
+There may be a potentially large variety of attributes associated with viewing, many of 
+which take on default values
+* it seems unnecessary to bake in hardcoded view fields
+* 
+
+
+
+Goals:
+
+* provide a streamable, extensible set of view data for an instance
+* user should be able to interact directly with the view data in a guy
+* clients should be able to fetch specified view data from a guy
+
+* prob should be a mechanism of defaults, so clients can retrieve default
+  if nothing has been set 
+  rationale: prevent bloat; easy to change defaults;
+* try to prevent "orphan data": the build up of crud not associated anymore
+  with anything; this will confuse users and make setting in-use data more 
+  difficult
+
+Requirements:
+
+* don't saddle every single data item with the overhead of viewdata structures
+  if it is not using view data
+* likewise (less important) don't saddle classes with overhead for
+  schema if they don't use it
+* the user needs to be able to customize the various **schema** guys to his/her
+  preference, and it follows this needs to be savable
+* it should be possible (hopefully!) to manage specialized schema items in,
+  for example, link lists or such, so that there are other options than
+  only accessing in one big sea of data
+* editor of any instance must constrain that instance to legal values, so 
+  software doesn't become brittle due to bad low-level user editing
+
+Constraints:
+
+* it is not necessary for "value"-like classes to support instance view data
+* it is therefore not possible for "value"-like classes to support schema
+  (and defaults)
+* there should always be an "owner" for a schema item -- this is either class
+  itself ("default") or another originating class
+* **maybe** we require every class that will use schema data to declare
+  that intention (ex a macro, that creates the instance support); this will
+  avoid baking in overhead on every single class 
+* if previous, then maybe we can still provide a class-based "catch all"
+  implementation that might still support viewdata (ex a user comment)
+  but managing it maybe associatively in a hashtable list shared by 
+  all instances, for example.
+
+
+Questions/Comments:
+
+* can viewdata items be simple data values (ex Variant) or do they also
+  need to be able to be complex data items, such as geoms etc.?
+  
+* one benefit of having a set of concretely typed simple values is that
+  it simplifies typing, ex. with only Variant, you would need to infer
+  the type in a purely literal-based initialization
+* having strong typed values does not preclude have a Variant version,
+  nor does it preclude having Variant-based accessors
+  
+* one issue with complex objects is the need to then embed such objects
+  in the data item
+* if viewdata is strongly liked to a client, in a sense, that client
+  then serves as the "context" for the guy
+* a user should generally be interacting with a data item in the context
+  of using or viewing it -- editing view data directly doesn't sound like
+  a predominant use case; rather, the user will interact with the view,
+  which will have an integrated, unified user interface -- the view can
+  then indirectly store its view data wherever it makes most sense
+* IMPORTANT: will the schema and items be essentially "closed", or
+  will they be "open" (ie. extensible) -- there is an alternative,
+  too, which is a "hybrid" which is a theoretically extensible system
+  whose first incarnation is static
+  
+  closed: 
+    prob simpler to design/implement
+    restricted (prob) to basic values (int, float, string etc)
+  open:
+    maximum flexibility
+    prob more complex to implement
+  hybrid:
+    design base classes with an eye to extensibility
+    ex. maybe create a common subclass without actual data,
+    that can be used to extend for special cases
+    
+  
+Why, for example, would a user think to go to a certain low-level object, to edit 
+data related to viewing it in another context?
+
+
+Use Cases
+---------
+
+1. Window and Position data in DataView system
+  MainDataViewer: left, top, w, h of window
+  ChildViewers: visible, splitter pos
+
+2. Data Table 
+   could have properties controlling overall formatting and presentations
+
+3. Data Table Columns
+   format string
+   column width
+   visibility
+   
+4. Graph
+   Axes have a variety of controls, such as color choices, etc. but again,
+     maybe these things properly belong in the guys???
+
+5. NetView
+   Position of layers
+   things like: layer expanded/contracted
+   
+But again, why should that stuff be stored with the layer, and not its view?
+
+BUT, maybe we always want the layer contracted by default -- nowhere to put
+that *except* the layer!
+
+So maybe data items are best for *default* view values.
+
+Questions:
+
+* can i imagine a case where general "context" data is needed, w/o strong 
+  association with a client instance? this would in essence represent a
+  "default" for a given context (ex. "i always want X to be like 'value")
+* NxM explosion problem -- must not saddle definition of data items with
+  requirement that they grok a whole whack of schema defaults
+* a better approach, is for **client** guys to add their desired
+  view default schema items to **data** guys
+
+Schema
+------
+
+One issue that arises with the "option" and "display option" approaches is knowing what are the supported items. Another issue is default values. Schemas can help in both cases.
+
+A schema is a list of all the possible items that can be supported, along with their type, default value, and a description.
+
+A SchemaItem is simply an instance of its ViewData Item -- this obviates the need to
+create two classes for each instance, and also simplified creating instances from 
+defaults (simple clone),
+
+SchemaItem:
+  String key: unique name key -- external clients should use xxx.yyy type of notation,
+    where xxx is the principal key, and yyy is the client designator,
+    ex. pos.NetView
+  client: optional reference of some kind, for when client is not self
+  Variant value: contains the default value, which then also serves as the type
+  String desc: a description of the item, for the user
+
+Where should schema be stored???
+  * if stored in the typea system, it would be accessible/available for ALL types
+    of data, not just tab classes!!!
+  * since most classes (even many gui classes) have a definitive "TypeDef" object,
+    it might make sense to store the schema there
+  * benefit of TypeDef schema, is only need a small amount of code in TypeDef;
+    don't need to add a bunch of static data structures/routines in individual 
+    objects
+    
+Because schema needs to both have defaults, as well as being overridable, it
+tends to imply the need for a unified tab structure, even if the links are elsewhere
+ex.: a single master list (or group obj) to store all the schema items
+  when items are created, they get put into the list, and set into the TypeDef
+  * saving the schema is easy; loading the overrides is also easy
+  
+The schema will likely grow large -- if overridden items were kept for reference, it would
+be possible to minimize the schema.
+WAIT: it probably won't be THAT large -- we are just talking about the default items
+  for the various classes, only some scores or low hundreds of items likely in total
+  
+Schema also should exhibit *inheritance* -- a derived class needs to inherit the 
+schema of its parent class.
+
+Data/Schema Items
+----------
+
+Data Requirements
+* inherits from taBase (so they are streamable)
+* extensible (open) since specialized types need their own data
+* Variant for scalar data (type not user editable)
+
+* use a smartptr in the instance, for ptr to the list
+  - auto-nulls (no need to manually add to Initialize)
+  - auto-deletes (no need to manually add to Destroy)
+* provide base virtual routines in base class that returns
+  address of the list -- then user routines just need to call them
+* self-used or merely referenced data items get owned by the object
+* viewer created/owned items get owned by the viewer, and linked
+  into the referent object list
+  
+
+API Requirements
+----------------
+
+* easy to use, both for data programmer, client programmer, and user
+* minimize unnecessary overhead (ex. don't bake a "viewdata" list into
+  every taBase!)
+* the API functions on TypeDefs and on taBase objects should be
+  relatively commensurable, so you can logically just call the
+  TypeDef guys if you want to
+
+* maybe use the Statxxx prefix for static schema functions
+
+Ideally, the client just wants to get the data as easily as possible.
+
+ex.
+
+Getting View Data:
+
+const Variant GetViewValue(key) const // for default or unnamed context
+const Variant GetViewValue(key, context) const // for the specified context
+  
+Setting View Data:
+
+SetViewValue(value, key) // for default context
+SetViewValue(value, key, context) // for specified context
+
+
+Contexts
+--------
+
+A "context" is a fuzzy concept that could be:
+* a general kind of usage, that might be used by several classes
+* a very specific usage, particularly by a specific class (some view class)
+
+Supplying Schema
+----------------
+
+It will be best if schema is kept in source code, so that changes to source can
+be made in conjunction with schema. Perhaps the best way, is similar to the 
+TA stuff, in which you declare some static classes that are used as sources
+for the schema. If they are tab based, it might even be possible to just declare
+the instances themselves, maybe in a static init schema class
+
+static void InitSchema()
+statis void AddSchemaItem(SchemaItem*)
+
+ex.
+void InitSchema() {
+  AddSchemaItem(new SchemaItem("name", value, "description")
+  ... more
+  
+AddSchemaItem then delegates to the TypeDef.
+There could be a static bool variable to mark having been done.
+
+Usage
+-----
+
+Implementation
+--------------
+
+issues:
+* streamability, save/load/override etc.
+* ability to interact, user browsing, etc.
+* minimize overhead impact
+
+* to do validation, we probably need some kind of ValidateItem
+  call, that would be on the client (so self guy for defaults,
+  client guy for clienty) -- it would seem no special flag is
+  needed to differentiate defaults from instance, since presumably
+  defaults must also be valid instances
+* streaming will probably have to be modified to add in the
+  view data, since not every instance has support, and even
+  then it will be an owned-ptr
+  
+* streaming of schema stuff should be completely centralized,
+  through the TypeDef system -- it should all get put into a
+  list; probably on taMisc (with the rest of the savable options)
+  
+* MAJOR: if we only have a client ptr in the view data, then
+  there is no realistic way for the client to destroy the item,
+  unless the client also keeps a link list of the data!
+  
+* since it is the client who is using the data, it makes sense
+  for the client to OWN the data -- IF we need connections, then
+  maybe we can have a list in the client of the data
+  * client deletes: goes through list and informs data owners
+  * owner deletes (or item deletes): ref in client is removed
+
+* since our general api is generic, we have to be very careful
+  about having a routine like: 
+    ViewData* GetData(key) 
+  used like this:
+    SubViewData* = (SubViewData*) GetData(key)
+  * solutions:
+  1. provide a macro that does safe dynamic casting
+  2. require the client to supply the exact class
+
+TypeDef:
+  ViewData_PList	schema
+  
+
+Items should provide a constructor that enables setting every value.
+

@@ -1,0 +1,88 @@
+@c uncomment the following two lines for 'update every node' command
+@c @node  intro
+@c @chapter Introduction to the PDP++ Software
+
+As the field of connectionist modeling has grown, so has the need for
+a comprehensive simulation environment for the development and testing
+of connectionist models.  Our goal in developing PDP++ has been to
+integrate several powerful software development and user interface
+tools into a general purpose simulation environment that is both user
+friendly and user extensible.  The simulator is built in the C++
+programming language, and incorporates a state of the art script
+interpreter with the full expressive power of @i{C++}.  The graphical user
+interface is built with the Interviews toolkit, and allows full access
+to the data structures and processing modules out of which the
+simulator is built.  We have constructed several useful graphical
+modules for easy interaction with the structure and the contents of
+neural networks, and we've made it possible to change and adapt many
+things.  At the programming level, we have set things up in such a way
+as to make user extensions as painless as possible.  The programmer
+creates new C++ objects, which might be new kinds of units or new kinds
+of processes; once compiled and linked into the simulator, these new
+objects can then be accessed and used like any other.
+
+The system is very powerful, and as with all powerful things, one
+needs to learn how to handle it to get the most out of it.  But the
+system is also engineered for ease of use by the beginner.  Classic
+programs (such as backpropagation) and classic example simulations
+(like learning XOR) have been set up so the user can run them and
+explore their behavior with a few key strokes and mouse clicks.  It's
+easy to set up new examples and modify various parameters and explore
+the effects.  There are libraries of different unit and process types,
+so it is easy for you to put together novel simulations on your own.
+
+This manual provides a complete overview of the PDP++ system, starting
+from the simplest kind of uses and progressing to a full description
+of all of the features so you can get the most out of the system.  We
+strongly recommend reading the @ref{over} chapter in its entirety, and
+then stepping through the @ref{tut} chapter to get some hands-on
+familiarity with the system.  If the software is not yet installed on
+your system, you must follow the instructions in the @ref{inst}
+chapter to install it.  The remainder of the manual can be used as a
+reference as needed, or read through for a deeper understanding of how
+things really work.
+
+Before you'll be able to use this system, or even understand this
+manual, you will need some background.  First, you'll need to have a
+working understanding of the Unix operating system, the X11 window
+system, and your window manager (Motif, OpenWindows, or whatever you
+use).  You'll probably also need to know something about
+connectionist/neural network simulation models.  For general
+background, consider Chapters 1-4 of Parallel Distributed Processing,
+Volume 1 (Rumelhart, McClelland, and the PDP Research Group, 1986).
+While section BP of this tutorial presents back propagation as a
+procedure, it does not fully motivate it or discuss the reasons for
+its importance; for this we refer you to Chapter 8 of PDP Volume 1, to
+Chapter 4 of Explorations in Parallel Distributed Processing
+(McClelland and Rumelhart, 1988) or to Rumelhart, Hinton and Williams
+(1986).
+
+@b{New for 2.0:} The PDP++ software provides the basis for a large
+number of cognitive-neuroscience oriented simulations in the new book
+"Computational Explorations in Cognitive Neuroscience: Understanding the
+Mind by Simulating the Brain", by O'Reilly and Munakata, MIT Press, 2000
+(September).  These simulations use the @code{leabra++} algorithm, which
+is now provided with the PDP++ software in the @code{src/leabra}
+directory.  The simulations can be downloaded for free from either the
+MIT Press website (@file{http://www.mitpress.com} -- search for the book
+by title or authors) or from a link off of O'Reilly's we page at
+@file{http://psych.colorado.edu/~oreilly}.  Of course, to get the most
+out of them, it is recommended that you purchase the book ;).
+
+A mailing list is available for users of PDP++ to share ideas and help
+each other solve problems.  This list will be monitored by the authors
+of the PDP++ software, but ABSOLUTELY NO GUARANTEE or even SUGGESTION of
+technical assistance is implied by the existence of this list.  We have
+limited resources and are making the software available as a public
+service.  Please respect this by not asking for help from the authors
+directly.  To be added or removed from the mailing list, and/or to view
+archives of previous messages, see the instructions at the website,
+@file{http://psych.colorado.edu/~oreilly/PDP++/PDP++.html}.
+
+For bug reports (which we will accumulate and fix), write to
+@file{pdp++bugreport@@cnbc.cmu.edu}.  Again, there is no guarantee
+that your bug will be fixed.  However, sending in a complete description
+of the actions that lead to the bug so we can reproduce it is essential
+for anything to be done to fix it.  Also see the @file{TODO} files in
+the top level and various sub-directories (ta and css) for things we are
+planning to do.

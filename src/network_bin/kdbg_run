@@ -1,0 +1,3 @@
+#!/bin/sh
+
+libtool --mode=execute kdbg emergent_debug

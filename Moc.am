@@ -1,0 +1,7 @@
+SUFFIXES = .moc.cpp
+
+.h.moc.cpp:
+	$(QT_MOC) -o $@ $<
+
+clean-local:
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi

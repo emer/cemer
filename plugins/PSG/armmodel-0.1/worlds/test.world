@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<gz:world xmlns:gz="http://playerstage.sourceforge.net/gazebo/xmlschema/#gz" xmlns:model="http://playerstage.sourceforge.net/gazebo/xmlschema/#model" xmlns:window="http://playerstage.sourceforge.net/gazebo/xmlschema/#window" xmlns:params="http://playerstage.sourceforge.net/gazebo/xmlschema/#params">
+
+  <model:ObserverCam>
+    <id>userCam0</id>
+    <xyz>0.080 -1.355 0.814</xyz>
+    <rpy>-0 15 90</rpy>
+    <imageSize>640 480</imageSize>
+    <updateRate>10</updateRate>
+    <displayRays>true</displayRays>
+    <renderMethod>XLIB</renderMethod>
+  </model:ObserverCam>
+
+  <model:GroundPlane>
+    <id>ground1</id>
+  </model:GroundPlane>
+
+  <model:LightSource>
+    <id>light0</id>
+    <xyz>-10.000 -10.000 100.000</xyz>
+  </model:LightSource>
+
+  <model:SimpleSolid>
+    <id>sphere1</id>
+    <xyz>1 0 0.2</xyz>
+    <shape>sphere</shape>
+    <gravity>false</gravity>
+    <enable>true</enable>
+    <size>0.4</size>
+    <model:ArmModel>
+      <plugin>/usr/local/lib/libarmmodel.so</plugin>
+      <id>arm1</id>
+      <xyz>-0.150 -0.100 0.3100</xyz>
+      <rpy>0 0 -90</rpy>
+      <!-- arm on ground => 0, arm on robot => 1 -->
+      <robot>1</robot>
+      <!-- No gripper => 0, Gripper => 1 -->
+      <gripper>1</gripper>
+    </model:ArmModel>
+  </model:SimpleSolid>
+
+  <model:ArmModel>
+    <plugin>/usr/local/lib/libarmmodel.so</plugin>
+    <id>arm1</id>
+    <xyz>-0.150 -0.100 0.3100</xyz>
+    <rpy>0 0 -90</rpy>
+    <!-- arm on ground => 0, arm on robot => 1 -->
+    <robot>1</robot>
+    <!-- No gripper => 0, Gripper => 1 -->
+    <gripper>1</gripper>
+  </model:ArmModel>
+</gz:world>

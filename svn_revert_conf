@@ -1,0 +1,2 @@
+#!/bin/sh
+svn revert configure Makefile.in */Makefile.in src/*/Makefile.in

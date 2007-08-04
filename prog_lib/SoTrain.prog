@@ -1,0 +1,599 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][1] { 
+  ProgObjList @.objs = [1] {
+    RndSeed @[0] { };
+  };
+
+  ProgType_List @.types = [1] {
+    DynEnumType @[0] { 
+      DynEnumItem_List @.enums = [2] {
+	DynEnumItem @[0] { };
+	DynEnumItem @[1] { };
+      };
+    };
+  };
+
+  ProgVar_List @.args = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+  };
+
+  ProgVar_List @.vars = [7] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+  };
+
+  ProgEl_List @.init_code = [5] {
+    AssignExpr @[0] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    AssignExpr @[2] { };
+    IfElse @[3] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+
+      ProgEl_List @.false_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    IfGuiPrompt @[4] { 
+      ProgEl_List @.yes_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
+  };
+
+  ProgEl_List @.prog_code = [7] {
+    AssignExpr @[0] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MemberAssign @[2] { };
+    IfElse @[3] { 
+      ProgEl_List @.true_code = [2] {
+	MethodCall @[0] { };
+	PrintExpr @[1] { };
+      };
+    };
+    AssignExpr @[4] { };
+    WhileLoop @[5] { 
+      ProgEl_List @.loop_code = [3] {
+	ProgramCall @[0] { 
+	  ProgArg_List @.prog_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	NetCounterIncr @[1] { };
+	IfBreak @[2] { };
+      };
+    };
+    MethodCall @[6] { };
+  };
+};
+Program .projects[0].programs.gp[0][1] {
+ name="SoTrain";
+ tags="So, Std";
+ desc="A complete training run of a self organizing network: iterating over epochs until the network has learned the task";
+ flags=SHOW_STEP;
+ objs {
+  name=;
+  el_typ=RndSeed;
+  el_def=0;
+  RndSeed @[0] {
+   name="rnd_seed";
+   seed{ 46569340;-741400595;-1336936728;-753556395;-1563042830;-190630475;471635668;-204802645;1679938384;-1901742082;1320907382;-1250502658;1767707256;-303428918;882561627;-1071337226;-1545605703;-508633640;330611321;-1553509680;-1630269714;505032497;-638789781;2106565663;-1924018706;-1175614923;1966077645;-1231844713;-1552782875;270624576;271514718;371842869;-1653904119;940173432;1687744378;-119779670;-2019395119;-820970652;470699721;-1387420044;1123144374;-903016100;1873588645;-2052138529;-2120337059;1975089576;1407676635;61485105;-2092548987;-53796748;-2017165787;-1625709418;1849500312;-1278113902;-2010739706;-599825973;-590504928;782390536;-121318302;905360256;954487228;771087209;4833707;90893238;-1790089970;636504573;1364235795;-409413795;-1239398822;751360253;-767033065;-158850773;-443843312;-1518566456;-1087563524;1713162881;993682636;1871638729;2008549174;502810626;-2121565414;1049585865;388425887;1697635854;-266230977;-2075884799;-1304867963;-21558374;1352365237;531980125;1780638987;1122645837;1360231768;1681134970;-496481051;1184328989;-1360656276;-1102695993;448204827;1452592650;289811899;-2092556756;-1944942964;-1020062611;1343745486;1012767252;-1896972722;-1983741849;-1892305595;656704624;-614977378;1276785504;1601973941;1474871669;2022139702;170469414;700657010;1131475055;121354716;-1240788925;-1680395491;538690228;-921557634;-861687860;2018714663;-63989381;-902773546;476489096;164435752;560368457;-1459747505;1042894052;-357737864;-1188198900;-32153076;-1303201934;-488812616;51939408;-741304294;-413113496;-1171751741;-234651214;-1818172317;-2091318316;-670692866;2007324258;-802484063;-112049539;1551608394;-151432404;-131401439;271940865;-603530499;-1629989681;1045834363;-1038641630;965534881;1196907810;910457453;1669571232;324948773;12098362;-897759100;-554771226;1857467389;-1337270511;-1133498843;403051786;-2031179878;-1459587167;-156602631;125277005;1931236109;-403558295;693884032;1165186863;-362085418;-1206353734;-476757686;1053938560;-612896204;-1703739544;770998152;-697427617;109460996;-868049843;1779394944;1712433568;1210455617;1957627901;1010303786;-1980712367;1542778495;146114167;1976876213;1859569607;-1441806366;-2125415387;-761521367;407253593;286424805;-1233674718;-743406742;-556398024;-1584882413;1315639682;-80608131;647312517;-1650727351;-1932722328;-176783452;866237622;-574170462;-790926502;1316158451;2010114385;-1441604248;-137030229;1195406370;-1953919574;1772866596;-771073930;782140423;-916269406;591517541;-1526593350;226486650;-1581291515;190892711;1211388872;-1812291533;-1896714948;1187858526;-648977052;-2043534963;77972822;962322906;-233585169;271344394;264859105;-210975819;1621073343;43379432;-1942759813;-141992015;-481885137;1500787282;-569686346;-298007711;842434723;2132288585;1843976547;1122055846;-609554464;2013667469;-1784036293;1334570109;187083245;-1196695421;1719377128;740071921;-1757301222;-234377090;702973784;-1177977152;1889719699;59205028;-783556929;-1807385288;-1811647761;-407032433;-103357109;930348664;-1992712599;1919927369;-1273300613;1551183569;939051301;1422862767;-557084483;-201864690;-566317766;33347991;-1068193618;-932830627;1363271219;2051239128;-674688068;-601947525;567685753;1741925343;-1735483975;-1228255509;-697641966;-1139161893;-294532156;2137253291;-1208510661;1126902695;-739373143;687089982;454587555;-1148829571;737438282;1146456674;1233360192;-326062889;-346184489;-353141544;-841058660;-1734810383;-847421418;-1485494655;342445544;1771365826;-485948886;-1076573079;1262938740;1806048871;999855485;-39985007;1215675611;-1166398140;-1185393695;1945277651;974592543;317777537;502070060;253601188;-1949098243;-1831161115;1381447022;1913224471;-985063173;2135341862;-1558137166;477906112;-1626218223;2131097809;-583894173;680594996;-180326439;1161677912;-2043920012;817363686;-1843063785;-386717021;-1273007493;301591577;-677214150;-745193253;1065234071;-1915211277;-1298354570;106490150;2112050017;435045956;1517821497;1830282622;-1363704958;-1136237848;1595556283;-694257204;610195222;1142924058;-1467888108;-585492964;-537242966;-492957923;272959047;2072541813;260859191;1024417575;1594714840;644368915;21915126;171499910;734769495;-693794867;-476195903;-437952762;679160694;-619426548;-1146589334;418028936;295039017;181187247;-2060769394;-956004416;-339350412;-1679623303;-1115747314;619064900;-1318148515;-666272763;-1803082263;436845123;-698787588;1691981097;784482903;-326779677;-1929943567;1355761009;-201369917;1214905172;77834014;-1563296148;-83607299;1046975438;-6778913;993099622;1535040217;403828948;515995969;1761583427;2062873257;454534632;-1049256407;1345446452;-516973172;-167529969;-133059487;1659336272;1272580252;334261401;-426525946;1082226595;1502078613;-888197616;-2094376404;1228551124;1350988216;-537534291;2113979479;-977699424;2044710402;-1063197725;-728970987;-87941788;304265818;-840715974;-113545674;-2116036189;-399571136;1011202603;1397782452;-1866327769;1208728152;1472800733;800421773;-1334992541;-1673226744;-1381986890;1008287177;-1266355437;805240956;-1170108748;1077327255;-606278664;1347382994;1030399499;2084333348;-989167513;244723011;-1605519297;-1678944542;1749100594;-1650644750;-1468426108;1044571315;564987765;1920241664;-451650755;-326226097;-964929834;358170852;640458704;265379565;-572372385;2090243115;-2116489102;642960913;1030317975;740732790;-1285332622;-546675947;295296916;-681088181;-1557209776;455882051;432463961;1207248392;1800524921;-1857745595;-1790296591;-686391858;-775071535;-1337299253;908478527;1736260046;-1056925793;1805799041;2022406774;-1059978774;-817925147;-329723465;1932530174;1032950422;2080054570;1021019892;511759426;-1606872567;-478608553;147998245;-1987937381;30320224;1513162212;-1765678498;1025870930;-1507442591;-1941871593;-319898798;-2019212801;2121166812;1182427453;-2126470471;-323794731;-1701821315;-1559494869;90676798;289578632;735532475;-990713893;684724813;1878880119;-1545789019;1557243899;-512618053;428111794;1395621205;421161024;-487234723;1016038452;1070268067;-2016365713;693575970;805914252;-398605473;-714190480;-62804092;1837793641;-1061308369;731723652;-1940353731;859796229;1840844836;1621765573;637400193;9536019;-1433829714;-474150900;-1890765028;96980744;1054341211;-1919241957;175981074;-1840990896;123891089;-1049701011;-554429281;-174612538;-2085259276;595917898;1283532143;-1174559580;-1497838147;-516069989;-1614844103;1739224969;-990842133;694550476;-105506367;-2064712240;-522352607;1445915058;58196200;2100069842;-487343734;-684620199;199634383;1962728441;490898215;763273139;-1739534608;390015436;769502159;-1072721409;1764259521;1673763862;55961194;1310237738;-1597978032;-1198278988;-1509392855;-1542730669;-885655726;-52695469;-1182935057;1789855713;2036661697;-521937118;-1305037976;897484086;1018066611;289382917;1710398304;965032109;-2053180502;1370688434;-489985270;264769017;-1221146966;-410760522;-1977657128;   };
+   mti=624;
+  };
+ };
+ types {
+  name=;
+  el_typ=DynEnumType;
+  el_def=0;
+  DynEnumType @[0] {
+   name="RndInitType";
+   desc=;
+   enums {
+    name=;
+    el_typ=DynEnumItem;
+    el_def=0;
+    DynEnumItem @[0] {
+     name="OLD_SEED";
+     value=0;
+     desc="use stored random seed value (recreates same sequence every time)";
+    };
+    DynEnumItem @[1] {
+     name="NEW_SEED";
+     value=1;
+     desc="generate new random seed (new sequence of random numbers)";
+    };
+   };
+   bits=0;
+  };
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="network to train";
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="datatable with training patterns";
+  };
+  ProgVar @[2] {
+   name="no_prompts";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="max_epoch";
+   var_type=T_Int;
+   int_val=500;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="maximum number of epochs to run";
+  };
+  ProgVar @[1] {
+   name="epoch";
+   var_type=T_Int;
+   int_val=500;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="current epoch -- local copy, which is used to update network's epoch counter";
+  };
+  ProgVar @[2] {
+   name="train_mode";
+   var_type=T_HardEnum;
+   int_val=1;
+   hard_enum_type=Network::TrainMode;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
+  };
+  ProgVar @[3] {
+   name="rnd_init";
+   var_type=T_DynEnum;
+   dyn_enum_val {
+    enum_type=.projects[0].programs.gp[0][1].types[0]$2$;
+    value=1;
+   };
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="how to initialize the random numbers when the Init button is pressed";
+  };
+  ProgVar @[4] {
+   name="err_stopcrit";
+   var_type=T_Real;
+   real_val=-1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
+goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
+  };
+  ProgVar @[5] {
+   name="rnd_seed";
+   var_type=T_Object;
+   object_type=RndSeed;
+   object_val=.projects[0].programs.gp[0][1].objs[0]$3$;
+   objs_ptr=1;
+   flags=NULL_CHECK;
+   desc="random seed that is used at start of training -- if OldSeed is called";
+  };
+  ProgVar @[6] {
+   name="train_timer";
+   var_type=T_Object;
+   object_type=TimeUsed;
+   object_val=.projects[0].networks[0].train_time$4$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="records time used to train network (object lives on network -- this is a pointer to it)";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  AssignExpr @[0] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].args[2]$5$;
+   expr {
+    expr="false";
+    flags=;
+    var_expr="false";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[1] {
+   desc="check network to make sure it is ready to be run";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][1].args[0]$6$;
+   method=taBase::CheckConfig;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="quiet";
+     required=0;
+     def_val="false";
+     expr {
+      expr="false";
+      flags=;
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  AssignExpr @[2] {
+   desc="get our pointer to the network training time object";
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].vars[6]$7$;
+   expr {
+    expr="network.train_time";
+    flags=;
+    var_expr="$#0#$.train_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  IfElse @[3] {
+   desc="initialize random seed (either old or new)";
+   flags=;
+   cond {
+    expr="rnd_init == OLD_SEED";
+    flags=;
+    var_expr="$#0#$ == OLD_SEED";
+    vars {
+    };
+    var_names{ rnd_init;    };
+    bad_vars{     };
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="restore previous random seed (all runs produce same results)";
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs.gp[0][1].vars[5]$8$;
+     method=RndSeed::OldSeed;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="new random numbers each time";
+     flags=;
+     result_var=NULL;
+     obj=$8$;
+     method=RndSeed::NewSeed;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+  IfGuiPrompt @[4] {
+   desc="don't initialize weights without checking";
+   flags=;
+   prompt="Do you want to Initialize Network Weights";
+   yes_label="Yes";
+   no_label="No";
+   yes_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$6$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=MethodCall;
+  el_def=0;
+  AssignExpr @[0] {
+   desc="get our pointer to the network training time object";
+   flags=;
+   result_var=$7$;
+   expr {
+    expr="network.train_time";
+    flags=;
+    var_expr="$#0#$.train_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[1] {
+   desc="start timer to keep track of how long it takes to run entire training run";
+   flags=;
+   result_var=NULL;
+   obj=$7$;
+   method=TimeUsed::StartTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="reset_used";
+     required=0;
+     def_val="true";
+     expr {
+      expr="true";
+      flags=;
+      var_expr="true";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MemberAssign @[2] {
+   desc="set network's training mode to our local value";
+   flags=;
+   obj=$6$;
+   path="train_mode";
+   expr {
+    expr="train_mode";
+    flags=;
+    var_expr="$#0#$";
+    vars {
+    };
+    var_names{ train_mode;    };
+    bad_vars{     };
+   };
+   update_after=0;
+  };
+  IfElse @[3] {
+   desc=;
+   flags=;
+   cond {
+    expr="no_prompts";
+    flags=;
+    var_expr="$#0#$";
+    vars {
+    };
+    var_names{ no_prompts;    };
+    bad_vars{     };
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="initialize network weights: could also load pre-set weights or something else here";
+     flags=;
+     result_var=NULL;
+     obj=$6$;
+     method=Network::Init_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    PrintExpr @[1] {
+     desc=;
+     flags=;
+     expr {
+      expr="network.name << \" Weights Initialized\"";
+      flags=;
+      var_expr="$#0#$.name << \" Weights Initialized\"";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  AssignExpr @[4] {
+   desc="grab the official network epoch counter: will be initialized if needed by now";
+   flags=;
+   result_var=.projects[0].programs.gp[0][1].vars[1]$9$;
+   expr {
+    expr="network.epoch";
+    flags=;
+    var_expr="$#0#$.epoch";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  WhileLoop @[5] {
+   desc="main loop over epochs of training";
+   flags=;
+   loop_code {
+    name=;
+    el_typ=ProgramCall;
+    el_def=0;
+    ProgramCall @[0] {
+     desc="run the epoch program (one epoch), passes our network and input_data";
+     flags=;
+     target=.projects[0].programs.gp[0][2]$10$;
+     targ_ld_init="*SoEpoch*";
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=SoNetwork;
+       type="SoNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ network;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="input_data";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ input_data;	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
+    NetCounterIncr @[1] {
+     desc="increment the epoch counter (locally and on network)";
+     flags=;
+     network_var=$6$;
+     local_ctr_var=$9$;
+     counter=Network::epoch;
+    };
+    IfBreak @[2] {
+     desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here instead)";
+     flags=;
+     cond {
+      expr="network.cnt_err <= err_stopcrit";
+      flags=;
+      var_expr="$#0#$.cnt_err <= $#1#$";
+      vars {
+      };
+      var_names{ network;err_stopcrit;      };
+      bad_vars{       };
+     };
+    };
+   };
+   test {
+    expr="epoch < max_epoch";
+    flags=;
+    var_expr="$#0#$ < $#1#$";
+    vars {
+    };
+    var_names{ epoch;max_epoch;    };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[6] {
+   desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
+   flags=;
+   result_var=NULL;
+   obj=$7$;
+   method=TimeUsed::EndTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+ };
+};

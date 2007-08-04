@@ -1,0 +1,83 @@
+// startup and run a project in the background (nogui run or batch run), use like this:
+
+// [nice +10] pdp++ -nogui -p my_project.proj -f leabra_startup.css [args...] &
+
+// * nice +10 is optional but is nice to other users/processes if not running on
+//   a dedicated compute server
+// * -nogui runs w/out the gui
+// * -p my_project.proj is the name of the project to load
+// * -f leabra_startup.css loads and runs this script
+// * [args...] are other optional arguments as defined in the script, including:
+// ** epochs=xxx   number of epochs to run
+// ** batches=xxx  number of training batches to run
+// ** tag=xxx      additional text to append to log and network file names
+// ** logdir=xxx   subdirectory from current directory to put log files in
+// * & at the end puts the job in the background.
+
+void SetLogFile(String ext, String tag, String subdir, DataTable* dt, bool dmem=false) {
+  // if not sep log files by dmem, then only for first guy!
+  if(!dmem && (taMisc::dmem_proc != 0)) return;
+  // this function does all the work: gets file name from project
+  // and appends our specific stuff to it
+  String log_nm = dt->GetFileNameFmProject(ext, tag, subdir, dmem);
+  // tell the datatable object to save to this file name -- 
+  //   last arg is whether to restrict to dmem proc 0..
+  dt->SaveDataLog(log_nm, false, !dmem); 
+  // give the user some info:
+  if(taMisc::dmem_proc == 0)
+    cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
+}
+
+void Startup() {
+  if(.projects.size == 0) {
+    taMisc::Error("Error: project file not found!");
+    return;
+  }
+
+  taMisc::AddArgName("tag=", "FileTag");
+  taMisc::AddArgName("logdir=", "LogDir");
+  taMisc::AddArgName("epochs=", "EpochMax");
+  taMisc::AddArgName("batches=", "BatchMax");
+  taMisc::UpdateArgs();
+
+  if(taMisc::dmem_proc == 0)
+    cerr << "Loaded project: " << .projects[0].file_name << endl;
+
+  Program* train = .programs.LeabraTrain;
+  if(!train) {
+    taMisc::Error("Error: train program not found!");
+    return;
+  }    
+  Program* batch = .programs.LeabraBatch;
+  if(!batch) {
+    taMisc::Error("Error: batch program not found!");
+    return;
+  }    
+
+  if(taMisc::dmem_proc == 0)
+    cerr << "Initializing: " << batch->name << endl;
+  batch.Init();			// init first -- could have errors!
+
+  String tag = taMisc::FindArgByName("FileTag");
+  String logdir = taMisc::FindArgByName("LogDir");
+
+  train.SetVarFmArg("EpochMax", "max_epoch");
+  batch.SetVarFmArg("BatchMax", "max_batch");
+
+  // change last arg to true for debugging dmem..
+  SetLogFile(".epc.dat", tag, logdir, .data.EpochOutputData, false);
+  // trial-level data should always be dmem
+  SetLogFile(".trl.dat", tag, logdir, .data.TrialOutputData, true);
+
+  Program* saveweights = .programs.SaveWeights;
+  if(saveweights) {           // propagate the tag..
+    saveweights.SetVar("tag", tag);
+  }
+
+  if(taMisc::dmem_proc == 0)
+    cerr << "Starting to run: " << batch->name << endl;
+  batch.Run();
+}
+
+Startup();
+

@@ -1,0 +1,28 @@
+PLUGINS
+
+Build Includes, and folders
+
+ 
+Configure
+
+  
+Build
+
+Install
+
+  
+User Plugins
+
+* need to keep the stub .pri files up to date with the correct path to 
+  the current version of pdp
+  
+* need to copy the plugins stuff when making the user folder
+  
+WIZARD
+
+* need a general framework for wizards
+  * outer dialog
+  * pages
+  * page navigation, including navigability constraints
+  *
+  

@@ -1,0 +1,428 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][2] { 
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [5] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+  };
+
+  ProgEl_List @.init_code = [2] {
+    NetCounterInit @[0] { };
+    AssignExpr @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [9] {
+    NetCounterInit @[0] { };
+    AssignExpr @[1] { };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[3] { };
+    NetDataLoop @[4] { 
+      ProgEl_List @.loop_code = [2] {
+	ProgramCall @[0] { 
+	  ProgArg_List @.prog_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	IfElse @[1] { 
+	  ProgEl_List @.true_code = [1] {
+	    MethodCall @[0] { };
+	  };
+	};
+      };
+    };
+    IfElse @[5] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    MethodCall @[6] { };
+    ProgramCall @[7] { 
+      ProgArg_List @.prog_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    MethodCall @[8] { };
+  };
+};
+Program .projects[0].programs.gp[0][2] {
+ name="BpEpoch";
+ tags="Bp, Std";
+ desc="iterates over all of the items in a data table and calls BpTrial process on them";
+ flags=SHOW_STEP;
+ objs {
+  name=;
+  el_typ=taOBase;
+  el_def=0;
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=BpNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="network to operate on";
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="table of patterns to present to the network, one row at a time";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="data_loop_order";
+   var_type=T_HardEnum;
+   int_val=1;
+   hard_enum_type=DataLoop::Order;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="controls the order in which events (rows of the input data datatable) are presented to the network
+(SEQUENTIAL, PERMUTED, RANDOM)";
+  };
+  ProgVar @[1] {
+   name="trial";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="current trial (event) within the epoch -- increments automatically";
+  };
+  ProgVar @[2] {
+   name="trial_mon_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[1][0]$2$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
+  };
+  ProgVar @[3] {
+   name="epoch_timer";
+   var_type=T_Object;
+   object_type=TimeUsed;
+   object_val=.projects[0].networks[0].epoch_time$3$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
+  };
+  ProgVar @[4] {
+   name="data_loop_index";
+   var_type=T_Int;
+   int_val=6;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=NetCounterInit;
+  el_def=0;
+  NetCounterInit @[0] {
+   desc="initialize trial counter (local variable and in the network)";
+   flags=;
+   network_var=.projects[0].programs.gp[0][2].args[0]$4$;
+   local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$5$;
+   counter=Network::trial;
+  };
+  AssignExpr @[1] {
+   desc="get pointer to epoch timer object on network";
+   flags=;
+   result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
+   expr {
+    expr="network.epoch_time";
+    flags=;
+    var_expr="$#0#$.epoch_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=NetCounterInit;
+  el_def=0;
+  NetCounterInit @[0] {
+   desc="initialize trial counter (local variable and in the network)";
+   flags=;
+   network_var=$4$;
+   local_ctr_var=$5$;
+   counter=Network::trial;
+  };
+  AssignExpr @[1] {
+   desc="get pointer to epoch timer object on network";
+   flags=;
+   result_var=$6$;
+   expr {
+    expr="network.epoch_time";
+    flags=;
+    var_expr="$#0#$.epoch_time";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[2] {
+   desc="start the epoch timer to record computation time per epoch";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=TimeUsed::StartTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=bool;
+     type="bool";
+     name="reset_used";
+     required=0;
+     def_val="true";
+     expr {
+      expr="true";
+      flags=;
+      var_expr="true";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[3] {
+   desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][2].vars[2]$7$;
+   method=DataTable::ResetData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  NetDataLoop @[4] {
+   desc="iterates over the events/rows of input_data, according to data_loop_order variable";
+   flags=;
+   loop_code {
+    name=;
+    el_typ=ProgramCall;
+    el_def=0;
+    ProgramCall @[0] {
+     desc="run the trial program, passing network and input_data";
+     flags=;
+     target=.projects[0].programs.gp[0][3]$8$;
+     targ_ld_init="*BpTrial*";
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=BpNetwork;
+       type="BpNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ network;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="input_data";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ input_data;	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
+    IfElse @[1] {
+     desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
+     flags=;
+     cond {
+      expr="network.Compute_Weights_Test(trial+1)";
+      flags=;
+      var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
+      vars {
+      };
+      var_names{ network;trial;      };
+      bad_vars{       };
+     };
+     true_code {
+      name=;
+      el_typ=MethodCall;
+      el_def=0;
+      MethodCall @[0] {
+       desc="update the weight values based on changes computed by trial program";
+       flags=;
+       result_var=NULL;
+       obj=$4$;
+       method=Network::Compute_Weights;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+     };
+     false_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+     };
+    };
+   };
+   data_var=.projects[0].programs.gp[0][2].args[1]$9$;
+   index_var=.projects[0].programs.gp[0][2].vars[4]$10$;
+   order_var=.projects[0].programs.gp[0][2].vars[0]$11$;
+   order=PERMUTED;
+   item_idx_list{ 0;3;2;4;5;1;   };
+   dmem_nprocs=1;
+   dmem_this_proc=0;
+  };
+  IfElse @[5] {
+   desc="if full batch mode, update only at end of epoch";
+   flags=;
+   cond {
+    expr="network.wt_update == Network::BATCH";
+    flags=;
+    var_expr="$#0#$.wt_update == Network::BATCH";
+    vars {
+    };
+    var_names{ network;    };
+    bad_vars{     };
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="final update of weights based on accumulated changes";
+     flags=;
+     result_var=NULL;
+     obj=$4$;
+     method=Network::Compute_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
+  MethodCall @[6] {
+   desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
+   flags=;
+   result_var=NULL;
+   obj=$4$;
+   method=LeabraNetwork::Compute_EpochStats;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  ProgramCall @[7] {
+   desc="run program that records data from network and possibly other sources about the epoch";
+   flags=;
+   target=.projects[0].programs.gp[0][6]$12$;
+   targ_ld_init="*BpEpochMonitor*";
+   prog_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Network;
+     type="BpNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  MethodCall @[8] {
+   desc="done with the computation in the epoch -- record time it took";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=TimeUsed::EndTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+ };
+};

@@ -1,0 +1,89 @@
+// startup and run a project in the background, use like this:
+
+// [nice +10] pdp++ -nogui -p <myproj> -f leabra_startup.css [epochs=xxx batches=xxx...] &
+
+// * nice +10 is optional but is nice to other users/processes.
+// * -nogui runs w/out the gui
+// * -f startup.css loads and runs this script
+// * <myproj> is the full name of your project file 
+// * [epochs=...] are other optional arguments as defined in the script to control
+//	programs 
+// * & at the end puts the job in the background.
+
+// _pb = parallel batch version -- run different batches on different cpus
+// coordinates with a pb_qsub batch submission script that provides b_start/b_end args
+// to this script
+
+void SetArg(String arg_nm, String var_nm, Program* prog) {
+  String arg_str = taMisc::FindArgByName(arg_nm);
+  if(!arg_str.empty()) {
+    if(!prog->SetVar(var_nm, arg_str))
+      taMisc::Error("SetArg Error: variable:",var_nm,"not found in program:", prog->name);
+    else
+      cerr << "Set " << var_nm << " in " << prog->name << " to: " << arg_str << endl;
+  }
+}
+
+void SetLogFile(String ext, String tag, DataTable* dt) {	
+  String log_nm = dt->GetFileNameFmProject(ext, tag);
+  dt->SaveDataLog(log_nm);
+  cerr << "Saving data log of: " << dt->name << " to: " << log_nm << endl;
+}
+
+void Startup() {
+  if(.projects.size == 0) {
+    taMisc::Error("Error: project file not found!");
+    return;
+  }
+
+  taMisc::AddArgName("tag=", "FileTag");
+  taMisc::AddArgName("epochs=", "EpochMax");
+  taMisc::AddArgName("b_start=", "BatchStart");
+  taMisc::AddArgName("b_end=", "BatchEnd");
+  taMisc::UpdateArgs();
+
+  cerr << "Loaded project: " << .projects[0].file_name << endl;
+
+  //  Program* train = .programs.LeabraTrain;
+  Program* train = .programs.LeabraTrainBatchSeedList;
+  if(!train) {
+    taMisc::Error("Error: train program not found!");
+    return;
+  }    
+//   Program* batch = .programs.LeabraBatch;
+//   if(!batch) {
+//     taMisc::Error("Error: batch program not found!");
+//     return;
+//   }    
+
+  cerr << "Initializing: " << train->name << endl;
+  train.Init();			// init first: required before vars are avail
+
+  String tag = taMisc::FindArgByName("FileTag");
+
+  int b_start = (int)taMisc::FindArgByName("BatchStart");
+  int b_end = (int)taMisc::FindArgByName("BatchEnd");
+  SetArg("EpochMax", "max_epoch", train);
+
+  String b_sufx = "." + taMisc::LeadingZeros(b_start, 2);
+  tag += b_sufx;
+
+  SetLogFile(".epc.dat", tag, .data.EpochOutputData);
+  SetLogFile(".trl.dat", tag, .data.TrialOutputData);
+
+  cerr << "Starting to run: " << train->name << " b_start: " << b_start
+       << " b_end: " << b_end << endl;
+
+  // get network from train proc
+//   Network* network = train.args.network.object_val;
+  Network* network = .networks[0];
+
+  for(int bv = b_start; bv <= b_end; bv++) {
+    cerr << "batch: " << bv << endl;
+    network->batch = bv;
+    train.Run();
+  }
+}
+
+Startup();
+
