@@ -6,8 +6,8 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 TAHEADS =\
-	../ta/ta_TA_type.h \
-	../emergent/emergent_TA_type.h \
+	../../temt/ta/ta_TA_type.h \
+	../network/emergent_TA_type.h \
 	so.h \
 	som.h \
 	cl.h \
@@ -20,7 +20,6 @@ HEADS=\
 	cl.h \
 	zsh.h \
 	so_v3_compat.h
-
 
 SRCS=\
 	so.cpp \

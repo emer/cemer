@@ -83,10 +83,10 @@ irenderarea.moc.cpp:
 	$(QT_MOC) -DTA_USE_INVENTOR -o irenderarea.moc.cpp irenderarea.h
 
 interceptor.moc.cpp:
-	$(QT_MOC) -o interceptor.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta interceptor.h
+	$(QT_MOC) -o interceptor.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/temt/ta interceptor.h
 
 qconsole.moc.cpp:
-	$(QT_MOC) -o qconsole.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta qconsole.h
+	$(QT_MOC) -o qconsole.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/temt/ta qconsole.h
 
 itextbrowser.h:
 

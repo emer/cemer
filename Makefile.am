@@ -1,35 +1,35 @@
 CLEAN_FILES =  # TODO: Clean up xml files created by gendoc
 
 EXTRA_DIST =\
-	src/ta/ta_global.h \
-	src/ta/ta_maketa_defs.h \
-	src/ta/qtdefs.h \
-	src/css/css_def.h \
-	src/emergent/pdp_def.h \
-	src/bp/bp_def.h \
-	src/leabra/leabra_def.h \
-	src/so/so_def.h \
-	src/cs/cs_def.h \
+	src/temt/ta/ta_global.h \
+	src/temt/ta/ta_maketa_defs.h \
+	src/temt/ta/qtdefs.h \
+	src/temt/css/css_def.h \
+	src/emergent/network/pdp_def.h \
+	src/emergent/bp/bp_def.h \
+	src/emergent/leabra/leabra_def.h \
+	src/emergent/so/so_def.h \
+	src/emergent/cs/cs_def.h \
 	spec.tmpl.in \
-	src/ta/files.mta \
-	src/emergent/files.mta \
-	src/bp/files.mta \
-	src/leabra/files.mta \
-	src/so/files.mta \
-	src/cs/files.mta \
-	src/ta/home.xpm \
-	src/ta/ortho.xpm \
-	src/ta/perspective.xpm \
-	src/ta/pick.xpm \
-	src/ta/print.xpm \
-	src/ta/seek.xpm \
-	src/ta/set_home.xpm \
-	src/ta/snapshot.xpm \
-	src/ta/view.xpm \
-	src/ta/view_all.xpm \
-	src/ta/x.xpm \
-	src/ta/y.xpm \
-	src/ta/z.xpm
+	src/temt/ta/files.mta \
+	src/emergent/network/files.mta \
+	src/emergent/bp/files.mta \
+	src/emergent/leabra/files.mta \
+	src/emergent/so/files.mta \
+	src/emergent/cs/files.mta \
+	src/temt/ta/home.xpm \
+	src/temt/ta/ortho.xpm \
+	src/temt/ta/perspective.xpm \
+	src/temt/ta/pick.xpm \
+	src/temt/ta/print.xpm \
+	src/temt/ta/seek.xpm \
+	src/temt/ta/set_home.xpm \
+	src/temt/ta/snapshot.xpm \
+	src/temt/ta/view.xpm \
+	src/temt/ta/view_all.xpm \
+	src/temt/ta/x.xpm \
+	src/temt/ta/y.xpm \
+	src/temt/ta/z.xpm
 
 dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 
@@ -37,19 +37,19 @@ dist_pkgdata_DATA = AUTHORS ChangeLog COPYING COPYING.LIB INSTALL NEWS README
 # If you remove/add one of SUBDIRS, be sure to do the same at the bottom of configure.ac
 
 DIST_SUBDIRS =\
-	src/maketa \
-	src/taiqtso \
-	src/ta \
-	src/css \
-	src/ta_lib \
-        src/css_bin \
-	src/emergent \
-	src/bp \
-	src/leabra \
-	src/so \
-	src/cs \
-	src/emergent_lib \
-	src/emergent_bin \
+	src/temt/maketa \
+	src/temt/taiqtso \
+	src/temt/ta \
+	src/temt/css \
+	src/temt/ta_lib \
+        src/temt/css_bin \
+	src/emergent/bp \
+	src/emergent/leabra \
+	src/emergent/so \
+	src/emergent/cs \
+	src/emergent/network \
+	src/emergent/network_lib \
+	src/emergent/network_bin \
 	plugins \
 	prog_lib \
 	css_stdlib \
@@ -61,19 +61,19 @@ DIST_SUBDIRS =\
 	demo/virt_env
 
 SUBDIRS =\
-	src/maketa \
+	src/temt/maketa \
 	@WANT_TAIQTSO@ \
-	src/ta \
-	src/css \
+	src/temt/ta \
+	src/temt/css \
 	@WANT_LIBTA@ \
 	@WANT_CSS_BIN@ \
-	src/emergent \
-	src/bp \
-	src/leabra \
-	src/so \
-	src/cs \
-	src/emergent_lib \
-	src/emergent_bin \
+	src/emergent/network \
+	src/emergent/bp \
+	src/emergent/leabra \
+	src/emergent/so \
+	src/emergent/cs \
+	src/emergent/network_lib \
+	src/emergent/network_bin \
 	@WANT_PLUGINS@ \
 	prog_lib \
 	css_stdlib \
@@ -84,7 +84,7 @@ SUBDIRS =\
 	demo/so \
 	demo/virt_env
 
-EXTRA_DIST += src/ta/ios-g++-3.1 @WANT_PLUGINS@
+EXTRA_DIST += src/temt/ta/ios-g++-3.1 @WANT_PLUGINS@
 
 #For make rpm
 if RPM
@@ -105,25 +105,25 @@ DISTCLEANFILES =\
 	mfstamp \
 	do-mfstamp \
 	manual/do-mfstamp \
-	src/taiqtso/do-mfstamp \
-	src/ta/do-mfstamp \
-	src/css/do-mfstamp \
-	src/css_bin/do-mfstamp \
+	src/temt/taiqtso/do-mfstamp \
+	src/temt/ta/do-mfstamp \
+	src/temt/css/do-mfstamp \
+	src/temt/css_bin/do-mfstamp \
 	src/emergent/do-mfstamp \
-	src/leabra/do-mfstamp \
-	src/bp/do-mfstamp \
-	src/leabra/do-mfstamp \
-	src/so/do-mfstamp \
-	src/cs/do-mfstamp \
-	src/maketa/mfstamp \
-	src/maketa/do-mfstamp \
-	src/ta/ta_TA.ccx
+	src/emergent/leabra/do-mfstamp \
+	src/emergent/bp/do-mfstamp \
+	src/emergent/leabra/do-mfstamp \
+	src/emergent/so/do-mfstamp \
+	src/emergent/cs/do-mfstamp \
+	src/temt/maketa/mfstamp \
+	src/temt/maketa/do-mfstamp \
+	src/temt/ta/ta_TA.ccx
 
 endif
 
 # These actions occur immediately before a distribution tarball is created.
 dist-hook:
-	rm -fr $(distdir)/src/ta/ios-g++-3.1/.svn
+	rm -fr $(distdir)/src/temt/ta/ios-g++-3.1/.svn
 	cp -pR $(srcdir)/plugins $(distdir)/plugins
 	find $(distdir)/plugins -type d -name .svn -print | xargs -t rm -fr
 
@@ -134,36 +134,37 @@ linecount:
 # Update our changelog from the subversion repository
 # This has prerequisites. See:
 # http://grey.colorado.edu/cgi-bin/trac.cgi/wiki/CreatingaGNUcompliantChangeLogfromSubversioncommits
+# TODO: Update above url
 changelog:
 	svn log --xml --verbose | xsltproc /home/mingus/opt/svn2cl-0.3/svn2cl.xsl - > ChangeLog
 
 # todo: need to make some dependency on this so it gets activated..
-${abs_top_builddir}/src/ta/ta_TA_type.h: ${abs_top_builddir}/src/maketa/maketa
+${abs_top_builddir}/src/temt/ta/ta_TA_type.h: ${abs_top_builddir}/src/temt/maketa/maketa
 	$(MAKE) force_ta
 
 force_ta:
-	cd ${abs_top_builddir}/src/ta && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/emergent && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/bp && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/leabra && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/so && ${MAKE} force_ta
-	cd ${abs_top_builddir}/src/cs && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/temt/ta && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/emergent/network && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/emergent/bp && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/emergent/leabra && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/emergent/so && ${MAKE} force_ta
+	cd ${abs_top_builddir}/src/emergent/cs && ${MAKE} force_ta
 
 gendoc:
-	cd ${abs_top_builddir}/src/ta && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/emergent && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/bp && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/leabra && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/so && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/cs && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/temt/ta && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/emergent/network&& ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/emergent/bp && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/emergent/leabra && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/emergent/so && ${MAKE} gendoc
+	cd ${abs_top_builddir}/src/emergent/cs && ${MAKE} gendoc
 
 do_ta:
-	cd ${abs_top_builddir}/src/ta && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/emergent && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/bp && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/leabra && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/so && ${MAKE} do_ta
-	cd ${abs_top_builddir}/src/cs && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/temt/ta && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/emergent/network&& ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/emergent/bp && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/emergent/leabra && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/emergent/so && ${MAKE} do_ta
+	cd ${abs_top_builddir}/src/emergent/cs && ${MAKE} do_ta
 
 ifnames:
 	ifnames `find -name "*.cpp" -printf '%p ' -o -name "*.h" -printf '%p '` > ifnames.log

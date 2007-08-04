@@ -35,7 +35,7 @@ SRCS_GUI =\
 endif
 
 TAHEADS =\
-	../ta/ta_TA_type.h \
+	../../temt/ta/ta_TA_type.h \
 	pdpdeclare.h \
 	pdp_base.h \
 	spec.h \

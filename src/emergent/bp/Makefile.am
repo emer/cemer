@@ -6,8 +6,8 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 TAHEADS =\
-	../ta/ta_TA_type.h \
-	../emergent/emergent_TA_type.h \
+	../../temt/ta/ta_TA_type.h \
+	../network/emergent_TA_type.h \
 	bp.h \
 	rbp.h \
 	bp_v3_compat.h
@@ -16,7 +16,6 @@ HEADS=\
 	bp.h \
 	rbp.h \
 	bp_v3_compat.h
-
 
 SRCS=\
 	bp.cpp \

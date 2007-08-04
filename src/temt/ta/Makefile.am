@@ -263,7 +263,7 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 interceptor.moc.cpp:
-	$(QT_MOC) -o irenderarea.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/ta interceptor.h
+	$(QT_MOC) -o irenderarea.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/temt/ta interceptor.h
 
 noinst_LTLIBRARIES =\
 	libta@PDP_SUFFIX@_@PACKAGE_VERSION@.la \

@@ -10,23 +10,23 @@ nodist_EXTRA_libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = dummy.cxx
 
 if LIBTA
 libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-	@abs_top_builddir@/src/emergent/libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/bp/libbp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/leabra/libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/cs/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/emergent/network/libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/bp/libbp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/leabra/libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/cs/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 else
 libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-	@abs_top_builddir@/src/css/libcss@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/ta/libta@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/emergent/libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/bp/libbp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/leabra/libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/cs/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/temt/css/libcss@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/temt/ta/libta@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/network/libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/bp/libbp@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/leabra/libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/so/libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/emergent/cs/libcs@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 
 if TA_GUI
 libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD +=\
-	@abs_top_builddir@/src/taiqtso/libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/temt/taiqtso/libtaiqtso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
 endif
 endif

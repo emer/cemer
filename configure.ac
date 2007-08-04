@@ -63,7 +63,7 @@ This file is part of Emergent
 
 AC_DISABLE_STATIC                                      dnl Disable static libraries
 AC_CONFIG_AUX_DIR([cfg])                               dnl Stick extra stuff in /cfg
-AC_CONFIG_SRCDIR([src/ta/ta_global.h])                 dnl Make sure we're in the right place
+AC_CONFIG_SRCDIR([src/temt/ta/ta_global.h])                 dnl Make sure we're in the right place
 AC_CONFIG_HEADERS([config.h])                          dnl Create config.h
                                                        dnl NOTE: If using OSX, use DarwinPorts to get most recent automake verison
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.6])
@@ -107,8 +107,8 @@ fi
 dnl  A generic set of systemwide includes. Not all sub libraries
 dnl  require all of these includes, but this is less error-prone
 dnl  than manually specifying them for each library
-
-AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../bp -I\$(srcdir)/../css -I\$(srcdir)/../leabra -I\$(srcdir)/../so -I\$(srcdir)/../cs -I\$(srcdir)/../emergent -I\$(srcdir)/../ta -I\$(srcdir)/../taiqtso -I\$(srcdir)/../maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
+dnl TODO: modalize the includes based on whether this is toolkit-only mode
+AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../../emergent/bp -I\$(srcdir)/../../temt/css -I\$(srcdir)/../../emergent/leabra -I\$(srcdir)/../../emergent/so -I\$(srcdir)/../../emergent/cs -I\$(srcdir)/../../emergent/network -I\$(srcdir)/../../temt/ta -I\$(srcdir)/../../temt/taiqtso -I\$(srcdir)/../../temt/maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
 AC_CHECK_LIB([ode],[main])
 AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
@@ -155,13 +155,13 @@ fi
 dnl  --disable-libta
 dnl  note that this substitution occurs by default
 if test x"$libta" = x"true"; then
-   AC_SUBST([WANT_LIBTA],[src/ta_lib])
+   AC_SUBST([WANT_LIBTA],[src/temt/ta_lib])
 fi
 
 dnl  --disable-css-bin
 dnl  note that this substitution occurs by default
 if test x"$css_bin" = x"true"; then
-   AC_SUBST([WANT_CSS_BIN],[src/css_bin])
+   AC_SUBST([WANT_CSS_BIN],[src/temt/css_bin])
 fi
 
 dnl  --disable-maketa-opt
@@ -259,7 +259,7 @@ if test x"$gui" = x"true"; then
   AC_DEFINE([QT_SHARED],,[Used in qglobal.h.])
 
   dnl Tells top-level makefile.am to recurse through src/taiqtso in gui mode
-  AC_SUBST([WANT_TAIQTSO],[src/taiqtso])
+  AC_SUBST([WANT_TAIQTSO],[src/temt/taiqtso])
 else
   SIM_AC_CONFIGURATION_SETTING([GUI],[Disabled])	
   AC_DEFINE([TA_NO_GUI],,[Set when building nogui])
@@ -334,8 +334,9 @@ AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\$/[$][$]/'`"])
 AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\$/\$\$/g'`"])
 AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
 
-includedir="${includedir}/Emergent"
+includedir="${includedir}/emergent"
 
+dnl TODO: definitely broken from emergent name change
 if test x"$bundle" = x"true"; then
   bundle_name="Emergent-${PACKAGE_VERSION}.app"
   bundle_dir="`pwd`/${bundle_name}"
@@ -351,19 +352,19 @@ fi
 
 
 AC_CONFIG_FILES([Makefile
-		src/maketa/Makefile
-		src/taiqtso/Makefile
-		src/ta/Makefile
-		src/css/Makefile
-		src/css_bin/Makefile
-		src/ta_lib/Makefile
-		src/bp/Makefile
-		src/leabra/Makefile
-		src/so/Makefile
-		src/cs/Makefile
-		src/emergent/Makefile
-		src/emergent_lib/Makefile
-		src/emergent_bin/Makefile
+		src/temt/maketa/Makefile
+		src/temt/taiqtso/Makefile
+		src/temt/ta/Makefile
+		src/temt/css/Makefile
+		src/temt/css_bin/Makefile
+		src/temt/ta_lib/Makefile
+		src/emergent/bp/Makefile
+		src/emergent/leabra/Makefile
+		src/emergent/so/Makefile
+		src/emergent/cs/Makefile
+		src/emergent/network/Makefile
+		src/emergent/network_lib/Makefile
+		src/emergent/network_bin/Makefile
 		prog_lib/Makefile
 		test/Makefile
 		plugins/config.pri

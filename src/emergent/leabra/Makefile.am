@@ -6,8 +6,8 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 TAHEADS =\
-	../ta/ta_TA_type.h \
-	../emergent/emergent_TA_type.h \
+	../../temt/ta/ta_TA_type.h \
+	../network/emergent_TA_type.h \
 	leabra.h \
 	leabra_extra.h \
 	leabra_td.h \
