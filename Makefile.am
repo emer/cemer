@@ -41,15 +41,15 @@ DIST_SUBDIRS =\
 	src/temt/taiqtso \
 	src/temt/ta \
 	src/temt/css \
-	src/temt/ta_lib \
+	src/temt/lib \
         src/temt/css_bin \
 	src/emergent/bp \
 	src/emergent/leabra \
 	src/emergent/so \
 	src/emergent/cs \
 	src/emergent/network \
-	src/emergent/network_lib \
-	src/emergent/network_bin \
+	src/emergent/lib \
+	src/emergent/bin \
 	plugins \
 	prog_lib \
 	css_stdlib \
@@ -72,8 +72,8 @@ SUBDIRS =\
 	src/emergent/leabra \
 	src/emergent/so \
 	src/emergent/cs \
-	src/emergent/network_lib \
-	src/emergent/network_bin \
+	src/emergent/lib \
+	src/emergent/bin \
 	@WANT_PLUGINS@ \
 	prog_lib \
 	css_stdlib \

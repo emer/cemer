@@ -155,7 +155,7 @@ fi
 dnl  --disable-libta
 dnl  note that this substitution occurs by default
 if test x"$libta" = x"true"; then
-   AC_SUBST([WANT_LIBTA],[src/temt/ta_lib])
+   AC_SUBST([WANT_LIBTA],[src/temt/lib])
 fi
 
 dnl  --disable-css-bin
@@ -357,14 +357,14 @@ AC_CONFIG_FILES([Makefile
 		src/temt/ta/Makefile
 		src/temt/css/Makefile
 		src/temt/css_bin/Makefile
-		src/temt/ta_lib/Makefile
+		src/temt/lib/Makefile
 		src/emergent/bp/Makefile
 		src/emergent/leabra/Makefile
 		src/emergent/so/Makefile
 		src/emergent/cs/Makefile
 		src/emergent/network/Makefile
-		src/emergent/network_lib/Makefile
-		src/emergent/network_bin/Makefile
+		src/emergent/lib/Makefile
+		src/emergent/bin/Makefile
 		prog_lib/Makefile
 		test/Makefile
 		plugins/config.pri

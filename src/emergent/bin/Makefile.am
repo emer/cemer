@@ -14,11 +14,11 @@ emergent@PDP_SUFFIX@_SOURCES = main.cpp
 # toggle creation of ta library. see configure.ac/acsite.m4
 if LIBTA
 emergent@PDP_SUFFIX@_LDADD =\
-	@abs_top_builddir@/src/emergent/network_lib/libemergent@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
-	@abs_top_builddir@/src/temt/ta_lib/libtacss@PDP_SUFFIX@-@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/emergent/lib/libemergent@PDP_SUFFIX@-@PACKAGE_VERSION@.la \
+	@abs_top_builddir@/src/temt/lib/libtacss@PDP_SUFFIX@-@PACKAGE_VERSION@.la
 else
 emergent@PDP_SUFFIX@_LDADD =\
-	@abs_top_builddir@/src/emergent/network_lib/libemergent@PDP_SUFFIX@-@PACKAGE_VERSION@.la
+	@abs_top_builddir@/src/emergent/lib/libemergent@PDP_SUFFIX@-@PACKAGE_VERSION@.la
 endif
 
 emergent@PDP_SUFFIX@_CPPFLAGS = @PDP_INCLUDES@
