@@ -152,12 +152,6 @@ if test x"$rpm" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([rpm],[enabled...PLATFORMSUFFIX=${PLATFORM_SUFFIX}])
 fi
 
-dnl  --disable-libta
-dnl  note that this substitution occurs by default
-if test x"$libta" = x"true"; then
-   AC_SUBST([WANT_LIBTA],[src/temt/lib])
-fi
-
 dnl  --disable-css-bin
 dnl  note that this substitution occurs by default
 if test x"$css_bin" = x"true"; then
@@ -369,7 +363,7 @@ AC_CONFIG_FILES([Makefile
 		test/Makefile
 		plugins/config.pri
 		plugins/Makefile
-		css_stdlib/Makefile
+		css_lib/Makefile
 		demo/bp/Makefile
 		demo/cs/Makefile
 		demo/leabra/Makefile

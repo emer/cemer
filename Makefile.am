@@ -52,7 +52,7 @@ DIST_SUBDIRS =\
 	src/emergent/bin \
 	plugins \
 	prog_lib \
-	css_stdlib \
+	css_lib \
 	test \
 	demo/bp \
 	demo/cs \
@@ -65,7 +65,7 @@ SUBDIRS =\
 	@WANT_TAIQTSO@ \
 	src/temt/ta \
 	src/temt/css \
-	@WANT_LIBTA@ \
+	src/temt/lib \
 	@WANT_CSS_BIN@ \
 	src/emergent/network \
 	src/emergent/bp \
@@ -76,7 +76,7 @@ SUBDIRS =\
 	src/emergent/bin \
 	@WANT_PLUGINS@ \
 	prog_lib \
-	css_stdlib \
+	css_lib \
 	test \
 	demo/bp \
 	demo/cs \

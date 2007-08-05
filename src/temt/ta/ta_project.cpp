@@ -1168,11 +1168,11 @@ bool taRootBase::Startup_InitTA_folders() {
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
   
-/* NOTE: we give priorityto the PDP4DIR variable first, for
+/* NOTE: we give priority to the TEMTDIR variable first, for
    development purposes. Otherwise, we use the heuristic search
    based on the platform, and as a last resort, prompt user.
 */
-  app_dir = getenv("PDP4DIR");
+  app_dir = getenv("TEMTDIR");
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
 

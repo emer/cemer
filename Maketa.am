@@ -43,12 +43,12 @@ MAKETA_FLAGS =\
 	-css \
 	-cpp="@CXXCPP@" \
 	-I@abs_top_srcdir@ \
+	-I@abs_top_srcdir@/src/temt/taiqtso \
 	-I@abs_top_srcdir@/src/temt/ta/ios-g++-3.1 \
 	-I@abs_top_srcdir@/src/temt/ta \
 	-I@abs_top_srcdir@/src/temt/css \
 	-I@abs_top_srcdir@/src/emergent/network \
 	-I@abs_top_srcdir@/src/emergent/leabra \
-	-I@abs_top_srcdir@/src/emergent/taiqtso \
 	-I@abs_top_srcdir@/src/emergent/bp \
 	-I${QTDIR}/include/QtCore \
 	@MAKETA_CXXFLAGS@

@@ -57,11 +57,6 @@ AC_ARG_ENABLE([mpi],
 			     [Enable the Message Passing Interface.  @<:@default=disabled@:>@]),
 			     [mpi=true],
 			     [mpi=false])
-AC_ARG_ENABLE([libta],
-	      AC_HELP_STRING([--disable-libta],
-			     [Disable creation of TypeAccess library.  @<:@default=enabled@:>@]),
-			     [libta=false],
-			     [libta=true])
 AC_ARG_ENABLE([css_bin],
 	      AC_HELP_STRING([--disable-css-bin],
 			     [Disable creation of the css (C^c) executeable.  @<:@default=enabled@:>@]),

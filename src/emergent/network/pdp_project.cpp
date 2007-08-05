@@ -79,6 +79,7 @@ static void pdp_viewcolor_init() {
 
 void pdp_project_init() {
   pdp_viewcolor_init();
+  taMisc::default_app_install_folder_name = "Emergent";
 }
 
 // module initialization
