@@ -13,9 +13,9 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "pdp_program_qtso.h"
+#include "emergent_program_qtso.h"
 
-#include "pdp_program.h"
+#include "emergent_program.h"
 #include "ta_project.h"
 #include "ta_qtviewer.h"
 
@@ -41,4 +41,4 @@ void PDPProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_NetGroupedDataLoop)));
 }
 
-ToolBoxRegistrar pdp_ptb(PDPProgramToolBoxProc);
+ToolBoxRegistrar emergent_ptb(PDPProgramToolBoxProc);

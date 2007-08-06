@@ -18,9 +18,9 @@
 #ifndef  cs_h
 #define cs_h
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "netstru.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 #include "cs_def.h"
 #include "cs_TA_type.h"
@@ -37,7 +37,7 @@ class IACUnitSpec;
 class CsUnit;
 class CsLayer;
 class CsNetwork;
-class CsProject;
+class CsProject; //
 
 class CS_API CsCon : public Connection {
   // ##CAT_Cs connection values for constraint satisfaction

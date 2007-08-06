@@ -4051,8 +4051,9 @@ void LeabraWizard::Initialize() {
 }
 
 void LeabraWizard::StdNetwork(Network* net) {
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(net == NULL)
-    net = pdpMisc::GetNewNetwork(GET_MY_OWNER(LeabraProject));
+    net = proj->GetNewNetwork();
   if(net == NULL) return;
   inherited::StdNetwork(net);
   StdLayerSpecs((LeabraNetwork*)net);
@@ -4233,7 +4234,7 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   net->min_cycles = 150;
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
+  SelectEdit* edit = proj->FindMakeSelectEdit("UnitInhib");
   if(edit != NULL) {
     basic_us->SelectForEditNm("dt", edit, "excite");
     inhib_us->SelectForEditNm("dt", edit, "inhib");

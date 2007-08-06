@@ -21,7 +21,6 @@
 #define rbp_h
 
 #include "bp.h"
-#include "pdp_project.h"	// needed for Wizard
 
 class RBpConSpec;
 class RBpUnit;
@@ -33,7 +32,7 @@ class RBpSequence;
 class APBpCycle;
 class APBpSettle;
 class APBpTrial;
-class APBpMaxDa_De;
+class APBpMaxDa_De; //
 
 // _
 

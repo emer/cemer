@@ -18,9 +18,9 @@
 #ifndef bp_h
 #define bp_h
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "netstru.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 #include "bp_def.h"
 #include "bp_TA_type.h"
@@ -31,8 +31,7 @@ class BpCon;
 class BpRecvCons;
 class BpSendCons;
 class BpUnit;
-class BpUnitSpec;
-
+class BpUnitSpec; //
 
 // note: dwt is equivalent to the old dEdW and pdw = the old dwt
 

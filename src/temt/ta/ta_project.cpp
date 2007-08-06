@@ -379,11 +379,21 @@ void taProject::UpdateAfterEdit() {
 }
 
 taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
-  taBase* obj = data_proc.FindType(typ);
-  if(obj) return obj;
-  obj = data_proc.NewEl(1, typ);
-  obj->SetName(nm);
-  return obj;
+  taBase* rval = data_proc.FindType(typ);
+  if(rval) return rval;
+  rval = data_proc.NewEl(1, typ);
+  rval->SetName(nm);
+  rval->DataChanged(DCR_ITEM_UPDATED);
+  return rval;
+}
+
+SelectEdit* taProject::FindMakeSelectEdit(const String& nm) {
+  SelectEdit* rval = edits.FindName(nm);
+  if(rval) return rval;
+  rval = (SelectEdit*)edits.New(1);
+  rval->SetName(nm);
+  rval->DataChanged(DCR_ITEM_UPDATED);
+  return rval;
 }
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
@@ -897,13 +907,11 @@ bool taRootBase::VerifyHasPlugins() {
 
 void taRootBase::About() {
   String info;
-  info += "TA/CSS Info\n";
-  info += "This is the TA/CSS software package, version: ";
+  info += "The Emergent Toolbox (TEMT) Info\n";
+  info += "This is the TEMT software package, version: ";
   info += taMisc::version;
   info += "\n\n";
-  info += "Mailing List:       http://psych.colorado.edu/~oreilly/PDP++/pdp-discuss.html\n";
-  info += "WWW Page:           http://psych.colorado.edu/~oreilly/PDP++/PDP++.html\n";
-  info += "Anonymous FTP Site: ftp://grey.colorado.edu/pub/oreilly/pdp++/\n";
+  info += "WWW Page: http://grey.colorado.edu/temt\n";
   info += "\n\n";
 
   info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
@@ -1413,7 +1421,7 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
     String msg;
     if (!dir.exists(uplugin_dir) && !dir.mkdir(uplugin_dir)) {
       err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't make <pdp++_user>/plugins\n";
+      msg += "Startup_InitTA_initUserAppDir: can't make " + uplugin_dir + "\n";
     }
     if (!MakeUserPluginConfigProxy(uplugin_dir, "config.pri")) {
       err = true;
@@ -1434,9 +1442,13 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
       err = true;
       msg += "Startup_InitTA_initUserAppDir: can't copy plugins/Makefile\n";
     }
-    if (err) {
+    // todo: this err message is pointless until the plugins/Makefile can be
+    // installed, and it can't be installed because it would conflict with the Makefile.am
+    // that would allow it to be installed according to the standard configure
+    // auto everything whatever.  need a workaround, and then can remove false below..
+    if (false && err) {
       taMisc::Warning(msg);
-      taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running pdp++ but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
+      taMisc::Warning("Your user folder could not be set up properly to build plugins -- this will not affect running the basic application but will prevent you from building or compiling your own plugins. Please contact your system administrator.");
     }
   } // gui mode
   return true;
@@ -1533,8 +1545,9 @@ bool taRootBase::Startup_InitGui() {
   if(taMisc::use_gui && (taMisc::dmem_proc == 0)) {
     taiM_ = taiMisc::New(taMisc::use_gui);
     taiMC_ = taiM_;
-//     taiM->icon_bitmap = new QBitmap(pdp_bitmap_width,
-//     	pdp_bitmap_height, pdp_bitmap_bits);
+    // the following should be done in the specific app's Main function
+//     taiM->icon_bitmap = new QBitmap(emergent_bitmap_width,
+//     	emergent_bitmap_height, emergent_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
     taMisc::gui_active = true;	// officially active!
     Startup_InitViewColors();

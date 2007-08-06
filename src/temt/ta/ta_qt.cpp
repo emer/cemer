@@ -682,9 +682,6 @@ taiEditDataHost* taiMisc::FindEditPanel(void* obj, bool read_only,
   return NULL;
 }
 
-
-// old winb funcs
-
 void taiMisc::OpenWindows(){
   if(unopened_windows.size == 0)	return;
   if (taMisc::is_loading) return; // don't recurse
@@ -704,15 +701,12 @@ void taiMisc::OpenWindows(){
   cssiSession::RaiseObjEdits(); // make sure css objects are in front!
 
   taiMisc::RunPending();
-  for(i=taiMisc::active_edits.size-1; i>=0; i--) {
-    taiEditDataHost* dlg = taiMisc::active_edits.FastEl(i);
-    if((dlg->typ != NULL) && dlg->typ->InheritsFrom(TA_SelectEdit) && (dlg->state == taiDataHost::ACTIVE))
-      dlg->Raise();
-  }
-  taiMisc::RunPending();
 }
 
 void taiMisc::WaitProc() {
+  if(taMisc::gui_active) {
+    taiMisc::OpenWindows();
+  }
   taiMiscCore::WaitProc();
   if (!taMisc::gui_active) return;
   AbstractScriptBase::Wait_RecompileScripts();

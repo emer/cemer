@@ -18,9 +18,9 @@
 #ifndef so_h
 #define so_h
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "netstru.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 #include "so_def.h"
 #include "so_TA_type.h"
@@ -31,7 +31,7 @@ class SoRecvCons;
 class SoUnit;
 class SoUnitSpec;
 class SoLayer;
-class SoLayerSpec;
+class SoLayerSpec; //
 
 class SO_API SoCon : public Connection {
   // ##CAT_So generic self-organizing algorithm connection

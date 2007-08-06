@@ -62,7 +62,7 @@ void CsGoodStat::Initialize() {
 //////////////////////////////////
 
 bool V3CsProject::ConvertToV4_impl() {
-  PDPRoot* root = (PDPRoot*)tabMisc::root;
+  EmergentRoot* root = (EmergentRoot*)tabMisc::root;
   CsProject* nwproj = (CsProject*)root->projects.NewEl(1, &TA_CsProject);
 
   nwproj->desc = desc1 + "\n" + desc2 + "\n" + desc3 + "\n" + desc4;

@@ -1494,7 +1494,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   // select edit
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
+  SelectEdit* edit = proj->FindMakeSelectEdit("PVLV");
   if(edit != NULL) {
     if(!old_syn_dep)
       pvr_cons->SelectForEditNm("lrate", edit, "pvr");

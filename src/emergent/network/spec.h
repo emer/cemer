@@ -20,14 +20,14 @@
 #ifndef spec_h
 #define spec_h 1
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "emergent_TA_type.h" // for templates
 
 // forwards this file
 
 class BaseSpec;
 
-class PDP_API BaseSpec_Group: public taBase_Group {
+class EMERGENT_API BaseSpec_Group: public taBase_Group {
   // ##EXT_spec ##CAT_Spec ##SCOPE_Network group of specs
 INHERITED(taBase_Group)
 public:
@@ -63,7 +63,7 @@ public:
   TA_BASEFUNS_NOCOPY(BaseSpec_Group);
 };
 
-class PDP_API BaseSpec : public taNBase {
+class EMERGENT_API BaseSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec base specification class
 INHERITED(taNBase)
 public:
@@ -122,7 +122,7 @@ private:
   void 	Copy_(const BaseSpec& cp);
 };
 
-class PDP_API BaseSubSpec : public taNBase {
+class EMERGENT_API BaseSubSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##CAT_Spec specification class for sub-objects of specs
 INHERITED(taNBase)
 public:
@@ -152,7 +152,7 @@ private:
   void	Destroy();
 };
 
-class PDP_API SpecPtr_impl : public taOBase {
+class EMERGENT_API SpecPtr_impl : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Spec ##SMART_POINTER magic pointer to a spec
 INHERITED(taOBase)
 public:
@@ -265,7 +265,7 @@ private:
 };
 
 #define SpecPtr_of(T) \
-class PDP_API T ## _SPtr : public SpecPtr<T, TA_ ## T> { \
+class EMERGENT_API T ## _SPtr : public SpecPtr<T, TA_ ## T> { \
 private: \
   typedef SpecPtr<T, TA_ ## T> inherited;\
   void Copy_(const T ## _SPtr&) {} \

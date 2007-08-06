@@ -13,10 +13,10 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// pdp_program.h -- pdp extensions to program
+// emergent_program.h -- pdp extensions to program
 
-#ifndef PDP_PROGRAM_H
-#define PDP_PROGRAM_H
+#ifndef EMERGENT_PROGRAM_H
+#define EMERGENT_PROGRAM_H
 
 // #include "ta_program.h"
 // #include "ta_datatable.h"
@@ -26,13 +26,13 @@
 class Network;
 class Layer;
 
-#include "pdp_def.h"
+#include "emergent_def.h"
 #include "emergent_TA_type.h"
 
 // note: the motivation for supporting dmem within the basic data loops is so that the
 // same project can be run transparently in dmem or non-dmem mode without modification
 
-class PDP_API NetDataLoop: public DataLoop { 
+class EMERGENT_API NetDataLoop: public DataLoop { 
   // For network input data: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data. Note: assumes that there is a 'network' object pointer variable and an int 'trial' counter variable defined in the program!!
 INHERITED(DataLoop)
 public:
@@ -53,7 +53,7 @@ private:
   void	Destroy() { CutLinks(); }
 };
 
-class PDP_API NetGroupedDataLoop: public Loop { 
+class EMERGENT_API NetGroupedDataLoop: public Loop { 
   // loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data.  Note: assumes that there is a 'network' variable defined in program!!
 INHERITED(Loop)
 public:
@@ -99,7 +99,7 @@ private:
 
 // todo: remove at some point -- obsolete!
 
-class PDP_API BasicDataLoop: public NetDataLoop { 
+class EMERGENT_API BasicDataLoop: public NetDataLoop { 
   // DO NOT USE -- OBSOLETE! REPLACE WITH NetDataLoop!
 INHERITED(NetDataLoop)
 public:
@@ -114,7 +114,7 @@ private:
   void	Destroy() { }
 };
 
-class PDP_API GroupedDataLoop: public NetGroupedDataLoop { 
+class EMERGENT_API GroupedDataLoop: public NetGroupedDataLoop { 
   // DO NOT USE -- OBSOLETE! REPLACE WITH NetGroupedDataLoop!
 INHERITED(NetGroupedDataLoop)
 public:
@@ -129,7 +129,7 @@ private:
   void	Destroy() { }
 };
 
-class PDP_API NetCounterInit: public ProgEl { 
+class EMERGENT_API NetCounterInit: public ProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
@@ -154,7 +154,7 @@ private:
   void	Destroy();
 };
 
-class PDP_API NetCounterIncr: public ProgEl { 
+class EMERGENT_API NetCounterIncr: public ProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
 INHERITED(ProgEl)
 public:
@@ -179,7 +179,7 @@ private:
   void	Destroy();
 };
 
-class PDP_API NetUpdateView: public ProgEl { 
+class EMERGENT_API NetUpdateView: public ProgEl { 
   // update the network view, conditional on an update_net_view variable that is created by this progam element
 INHERITED(ProgEl)
 public:
@@ -206,7 +206,7 @@ private:
 //		Named Units Framework
 ////////////////////////////////////////////////////
 
-class PDP_API InitNamedUnits: public ProgEl { 
+class EMERGENT_API InitNamedUnits: public ProgEl { 
   // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which should be the first datatable in the args or vars -- Set Unit guys will look for it there)
 INHERITED(ProgEl)
 public:
@@ -252,7 +252,7 @@ private:
   void	Destroy();
 };
 
-class PDP_API SetUnitsLit: public ProgEl { 
+class EMERGENT_API SetUnitsLit: public ProgEl { 
   // set units in input_data table to present to the network: values supplied as literal items
 INHERITED(ProgEl)
 public:
@@ -283,7 +283,7 @@ private:
 };
 
 
-class PDP_API SetUnitsVar: public ProgEl { 
+class EMERGENT_API SetUnitsVar: public ProgEl { 
   // set units in input_data table to present to the network: values supplied as variables
 INHERITED(ProgEl)
 public:

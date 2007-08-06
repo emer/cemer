@@ -21,7 +21,7 @@
 
 #include "netstru.h"
 #include "netdata.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 #include "ta_data.h"
 #include "ta_filer.h"
 
@@ -5716,7 +5716,7 @@ void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 }
 
 
-// new monitor is in pdp_project.cc
+// new monitor is in emergent_project.cc
 
 ////////////////////////////////////////////
 //  	Wizard functions

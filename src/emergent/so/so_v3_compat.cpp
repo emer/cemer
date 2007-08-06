@@ -21,7 +21,7 @@
 //////////////////////////////////
 
 bool V3SoProject::ConvertToV4_impl() {
-  PDPRoot* root = (PDPRoot*)tabMisc::root;
+  EmergentRoot* root = (EmergentRoot*)tabMisc::root;
   SoProject* nwproj = (SoProject*)root->projects.NewEl(1, &TA_SoProject);
 
   nwproj->desc = desc1 + "\n" + desc2 + "\n" + desc3 + "\n" + desc4;

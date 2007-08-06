@@ -1370,7 +1370,7 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   // select edit
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
+  SelectEdit* edit = proj->FindMakeSelectEdit("TD");
   if(edit != NULL) {
     rewpred_cons->SelectForEditNm("lrate", edit, "rewpred");
     ersp->SelectForEditNm("rew", edit, "extrew");

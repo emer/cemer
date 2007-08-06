@@ -13,14 +13,12 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
+// emergent_qt.h : Qt and Inventor stuff for pdp
 
+#ifndef emergent_qt_h
+#define emergent_qt_h 1
 
-// pdp_qt.h : Qt and Inventor stuff for pdp
-
-#ifndef pdp_qt_h
-#define pdp_qt_h 1
-
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "spec.h"
 #include "ta_qttype.h"
 #include "ta_qtdata.h"
@@ -31,7 +29,7 @@
 
 
 
-class PDP_API taiSpecMember : public taiMember {
+class EMERGENT_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
@@ -47,4 +45,4 @@ protected:
   override void		GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 };
 
-#endif // pdp_qt_h
+#endif // emergent_qt_h

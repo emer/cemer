@@ -13,9 +13,9 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "css_machine.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 #ifdef TA_GUI
 # include "ta_qt.h"
@@ -23,12 +23,10 @@
 # include <QPixmap>
 #endif
 
-#include <signal.h>
-
 #ifdef TA_GUI
-#define pdp_bitmap_width 64
-#define pdp_bitmap_height 64
-static const unsigned char pdp_bitmap_bits[] = {
+#define emergent_bitmap_width 64
+#define emergent_bitmap_height 64
+static const unsigned char emergent_bitmap_bits[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0xff, 0x83, 0xff,
   0x1f, 0xfc, 0xff, 0x00, 0x10, 0x00, 0x82, 0x00, 0x10, 0x04, 0x80, 0x00,
   0x10, 0x00, 0x82, 0x00, 0x10, 0x04, 0x80, 0x00, 0x10, 0x1f, 0x82, 0xf8,
@@ -77,83 +75,23 @@ static const unsigned char pdp_bitmap_bits[] = {
 
 
 //////////////////////////
-//	pdpMisc		//
+//	EmergentMisc		//
 //////////////////////////
 
-bool 		pdpMisc::nw_itm_def_arg = false;
-PDPRoot* 	pdpMisc::root = NULL;
-String		pdpMisc::user_spec_def;
-float		pdpMisc::pdpZScale = 4.0f;
-
-int pdpMisc::Main(int& argc, const char *argv[]) {
-  taMisc::web_help_url = "http://grey.colorado.edu/pdp/index.php/Main_Page";
-  if(!taRootBase::Startup_Main(argc, argv, ta_Init_emergent, &TA_PDPRoot)) return 1;
+int EmergentMisc::Main(int& argc, const char *argv[]) {
+  taMisc::web_help_url = "http://grey.colorado.edu/emergent";
+  if(!taRootBase::Startup_Main(argc, argv, ta_Init_emergent, &TA_EmergentRoot)) return 1;
 #ifdef TA_GUI
   if(taMisc::use_gui) {
-    QPixmap* pm = new QPixmap((const char*)pdp_bitmap_bits);
+    QPixmap* pm = new QPixmap((const char*)emergent_bitmap_bits);
     qApp->setWindowIcon(*pm);
     delete pm;
   }
 #endif
-  root = (PDPRoot*)tabMisc::root;
-   //always use our wait proc, since there is a predefined chain backwards anyways...
-  taMisc::WaitProc = pdpMisc::WaitProc;
-//obs  root->LoadConfig();
-  cssMisc::TopShell->cmd_prog->CompileRunClear(".pdpinitrc");
+  cssMisc::TopShell->cmd_prog->CompileRunClear(".emergentrc");
   if(taRootBase::Startup_Run())
     return 0;
   else
     return 2;
 }
-
-#ifdef TA_GUI
-SelectEdit* pdpMisc::FindSelectEdit(ProjectBase* prj) {
-  return (SelectEdit*)prj->edits.DefaultEl();
-}
-
-SelectEdit* pdpMisc::FindMakeSelectEdit(ProjectBase* prj) {
-  SelectEdit* rval = (SelectEdit*)prj->edits.DefaultEl();
-  if(rval != NULL) return rval;
-  rval = (SelectEdit*)prj->edits.New(1, &TA_SelectEdit);
-  return rval;
-}
-#endif
-
-ColorScaleSpec* pdpMisc::GetDefaultColor() {
-  if((root == NULL) || !taMisc::gui_active)	return NULL;
-  return (ColorScaleSpec*)root->colorspecs.DefaultEl();
-}
-
-void pdpMisc::WaitProc() {
-  // todo: move this to ta
-// #ifdef DMEM_COMPILE
-//   if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc == 0)) {
-//     DMem_WaitProc();
-//   }
-// #endif
-
-#ifdef TA_GUI
-  if(taMisc::gui_active) {
-    taiMisc::OpenWindows();
-  }
-  taiMisc::WaitProc();
-#else
-  taiMiscCore::WaitProc();
-#endif
-}
-
-Network* pdpMisc::GetNewNetwork(ProjectBase* prj, TypeDef* typ) {
-  if(prj == NULL) return NULL;
-  Network* rval = (Network*)prj->networks.New(1, typ);
-#ifdef TA_GUI
-  taiMisc::RunPending();
-#endif
-  return rval;
-}
-
-Network* pdpMisc::GetDefNetwork(ProjectBase* prj) {
-  if(prj == NULL) return NULL;
-  return (Network*)prj->networks.DefaultEl();
-}
-
 

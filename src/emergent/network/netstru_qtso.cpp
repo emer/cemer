@@ -43,7 +43,7 @@
 
 //obs #include "netstru_so.h"
 #include "ta_geometry.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 #include "css_qt.h"		// for the cssiSession
 #include "ta_qtclipdata.h"
 #include "ta_qt.h"

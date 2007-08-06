@@ -2260,7 +2260,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   // select edit
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  SelectEdit* edit = pdpMisc::FindSelectEdit(proj);
+  SelectEdit* edit = proj->FindMakeSelectEdit("PBWM");
   if(edit != NULL) {
     pfc_units->SelectForEditNm("g_bar", edit, "pfc");
     pfcmsp->SelectForEditNm("gate", edit, "pfc_m");

@@ -129,7 +129,7 @@ void APBpMaxDa_De::Initialize() {
 //////////////////////////////////
 
 bool V3BpProject::ConvertToV4_impl() {
-  PDPRoot* root = (PDPRoot*)tabMisc::root;
+  EmergentRoot* root = (EmergentRoot*)tabMisc::root;
   BpProject* nwproj = (BpProject*)root->projects.NewEl(1, &TA_BpProject);
 
   nwproj->desc = desc1 + "\n" + desc2 + "\n" + desc3 + "\n" + desc4;

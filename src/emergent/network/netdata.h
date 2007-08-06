@@ -20,7 +20,7 @@
 #ifndef NETDATA_H
 #define NETDATA_H
 
-#include "pdp_def.h"
+#include "emergent_def.h"
 #include "ta_datatable.h"
 #include "netstru.h"
 
@@ -30,7 +30,7 @@
 //	Layer Reader / Writer		//
 //////////////////////////////////////////
 
-class PDP_API LayerDataEl: public taOBase  {
+class EMERGENT_API LayerDataEl: public taOBase  {
   // #VIRT_BASE #NO_INSTANCE #NO_TOKENS ##CAT_Network controls the reading/writing of information to/from layers and data blocks/tables
 friend class LayerDataEl_List;
 friend class LayerWriter_List;
@@ -86,7 +86,7 @@ private:
   void 	Destroy();
 };
 
-class PDP_API LayerDataEl_List: public taList<LayerDataEl> {
+class EMERGENT_API LayerDataEl_List: public taList<LayerDataEl> {
   // ##CAT_Network list of individual LayerDataEl objects
 INHERITED(taList<LayerDataEl>)
 public:
@@ -118,7 +118,7 @@ private:
 //////////////////////////////////////////////
 //		Layer Writer
 
-class PDP_API LayerWriterEl : public LayerDataEl {
+class EMERGENT_API LayerWriterEl : public LayerDataEl {
   // controls the writing of input data from a data source to a network layer
 INHERITED(LayerDataEl)
 public: 
@@ -142,7 +142,7 @@ private:
   void 	Destroy();
 };
 
-class PDP_API LayerWriter : public taNBase {
+class EMERGENT_API LayerWriter : public taNBase {
   // ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
@@ -184,7 +184,7 @@ private:
 //		Layer Reader
 
 /*TODO
-class PDP_API LayerReader: public LayerDataEl {
+class EMERGENT_API LayerReader: public LayerDataEl {
   // object that reads data from a Layer to a DataSink 
 INHERITED(LayerDataEl)
 public:
@@ -201,7 +201,7 @@ private:
 };
 
 
-class PDP_API LayerReader_List: public LayerDataEl_List {
+class EMERGENT_API LayerReader_List: public LayerDataEl_List {
   // ##TOKENS #INSTANCE list of LayerReader objects
 INHERITED(LayerDataEl_List)
 public:
@@ -221,7 +221,7 @@ private:
 //	Network Monitor: record values from objects!
 
 
-class PDP_API NetMonItem: public taNBase {
+class EMERGENT_API NetMonItem: public taNBase {
   // #NO_TOKENS ##CAT_Network used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
 INHERITED(taNBase)
 public:
@@ -316,7 +316,7 @@ private:
 };
 
 
-class PDP_API NetMonItem_List: public taList<NetMonItem> { 
+class EMERGENT_API NetMonItem_List: public taList<NetMonItem> { 
   // ##CAT_Network list of network monitor items
 INHERITED(taList<NetMonItem>)
 public:
@@ -331,7 +331,7 @@ private:
   void		Destroy() {}
 };
 
-class PDP_API NetMonitor: public taNBase {
+class EMERGENT_API NetMonitor: public taNBase {
   // ##TOKENS #NO_UPDATE_AFTER ##CAT_Network  ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
 INHERITED(taNBase)
 public:

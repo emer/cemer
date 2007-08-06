@@ -49,9 +49,9 @@
 #include "minmax.h"
 #include "t3viewer.h"
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "netstru.h"
-#include "pdp_qtso.h"
+#include "emergent_qtso.h"
 //#include "ta_qtdata.h"
 #include "emergent_TA_type.h"
 
@@ -95,7 +95,7 @@ protected:
 //   nvDataView		//
 //////////////////////////
 
-class PDP_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
+class EMERGENT_API nvDataView: public T3DataViewPar { // #VIRT_BASE most children of NetView
 INHERITED(T3DataViewPar)
 public:
   NetView*		nv();
@@ -125,7 +125,7 @@ private:
 // UnitView objects are only created and associated with a T3Unit object
 // when the need arises (ex. user selects a T3Unit in the gui)
 
-class PDP_API UnitView: public T3DataView {
+class EMERGENT_API UnitView: public T3DataView {
 INHERITED(T3DataView)
   friend class UnitGroupView;
 public:
@@ -149,7 +149,7 @@ private:
   void			Destroy() {CutLinks();}
 };
 
-class PDP_API UnitViewData { // #IGNORE dynamically maintained data for each unit so we don't need UnitViews
+class EMERGENT_API UnitViewData { // #IGNORE dynamically maintained data for each unit so we don't need UnitViews
 public:
   void*		disp_base;	// #IGNORE base pointer used for display
   UnitViewData() {Initialize();}
@@ -164,7 +164,7 @@ private:
 inline bool operator ==(const UnitViewData& a, const UnitViewData& b)
   {return ((a.disp_base == b.disp_base));}
 
-class PDP_API UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
+class EMERGENT_API UnitViewData_PArray: public taPlainArray<UnitViewData> { // #IGNORE
 INHERITED(taPlainArray<UnitViewData>)
 public:
   UnitViewData&		FastEl(const TwoDCoord& c) {return el[(c.y * m_x) + c.x];}
@@ -185,7 +185,7 @@ protected:
 //
 // The Units font is here, so we don't replicate it in every Unit
 
-class PDP_API UnitGroupView: public nvDataView {
+class EMERGENT_API UnitGroupView: public nvDataView {
 INHERITED(nvDataView)
   friend class LayerView;
 public:
@@ -233,7 +233,7 @@ private:
 };
 
 
-class PDP_API nvhDataView: public nvDataView { // #VIRT_BASE highlightable guys
+class EMERGENT_API nvhDataView: public nvDataView { // #VIRT_BASE highlightable guys
 INHERITED(nvDataView)
 public:
   void			setDefaultColor() {DoHighlightColor(false);} 
@@ -259,7 +259,7 @@ private:
 //     LayerView	//
 //////////////////////////
 
-class PDP_API LayerView: public nvhDataView {
+class EMERGENT_API LayerView: public nvhDataView {
 INHERITED(nvhDataView)
 public:
   enum DispMode {
@@ -312,7 +312,7 @@ private:
 //   PrjnView		//
 //////////////////////////
 
-class PDP_API PrjnView: public nvhDataView {
+class EMERGENT_API PrjnView: public nvhDataView {
 INHERITED(nvhDataView)
 friend class NetView;
 public:
@@ -341,7 +341,7 @@ private:
  * of iteration
 */
 
-class PDP_API NetView: public T3DataViewMain {
+class EMERGENT_API NetView: public T3DataViewMain {
 // ##DUMP_LOAD_POST
 INHERITED(T3DataViewMain)
 friend class NetViewAdapter;
@@ -482,7 +482,7 @@ private:
 //   NetViewPanel 	//
 //////////////////////////
 
-class PDP_API NetViewPanel: public iViewPanelFrame {
+class EMERGENT_API NetViewPanel: public iViewPanelFrame {
   // frame for gui interface to a NetView -- usually posted by the netview
 INHERITED(iViewPanelFrame)
   Q_OBJECT

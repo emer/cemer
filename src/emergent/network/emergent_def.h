@@ -14,8 +14,8 @@
 //   Lesser General Public License for more details.
 
 
-#ifndef PDP_DEF_H
-#define PDP_DEF_H
+#ifndef EMERGENT_DEF_H
+#define EMERGENT_DEF_H
 
 #include "ta_global.h"
 
@@ -24,17 +24,17 @@
 // from a DLL simpler. All files within this DLL are compiled with the TA_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
 // that uses this DLL. This way any other project whose source files include this file see 
-// PDP_API functions as being imported from a DLL, whereas this DLL sees symbols
+// EMERGENT_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
-#if ((defined(PDP_DLL)) && (defined(TA_OS_WIN) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
-  #ifdef PDP_EXPORTS
-  #define PDP_API __declspec(dllexport)
+#if ((defined(EMERGENT_DLL)) && (defined(TA_OS_WIN) && defined(_MSC_VER)) && (!defined(__MAKETA__)))
+  #ifdef EMERGENT_EXPORTS
+  #define EMERGENT_API __declspec(dllexport)
   #else
-  #define PDP_API __declspec(dllimport)
+  #define EMERGENT_API __declspec(dllimport)
   #endif
 #else 
-#define PDP_API
+#define EMERGENT_API
 #endif
 
 
-#endif // PDP_DEF_H
+#endif // EMERGENT_DEF_H

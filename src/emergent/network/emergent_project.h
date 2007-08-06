@@ -13,12 +13,10 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
+// emergent_project.h
 
-
-// pdp_project.h
-
-#ifndef pdp_project_h
-#define pdp_project_h 1
+#ifndef emergent_project_h
+#define emergent_project_h 1
 
 #include "ta_fontspec.h"
 #include "ta_project.h"
@@ -36,7 +34,7 @@
 //			Wizard			//
 //////////////////////////////////////////////////
 
-class PDP_API LayerWizEl : public taNBase {
+class EMERGENT_API LayerWizEl : public taNBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Wizard specifies basic parameters for a layer
 INHERITED(taNBase)
 public:
@@ -58,7 +56,7 @@ private:
   void	Destroy() 	{ };
 };
 
-class PDP_API LayerWizElList : public taList<LayerWizEl> {
+class EMERGENT_API LayerWizElList : public taList<LayerWizEl> {
   // ##CAT_Wizard a list of layer wiz elements
 INHERITED(taList<LayerWizEl>)
 public:
@@ -68,7 +66,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API Wizard : public taWizard {
+class EMERGENT_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
 public:
@@ -165,14 +163,17 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
-class PDP_API ProjectBase : public taProject {
+class EMERGENT_API ProjectBase : public taProject {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE Base class for a pdp project (do not create one of these -- create an algorithm-specific version)
 INHERITED(taProject)
 public:
   Network_Group		networks;	// Networks of interconnected units
 
-  DataTable_Group*	analysisDataGroup();
-  // returns default group used for auto-created analysis data
+  virtual Network* 	GetNewNetwork(TypeDef* typ = NULL);
+  // get a new network object
+  virtual Network* 	GetDefNetwork();
+  // get default network from project
+
   override void 	AssertDefaultWiz(bool auto_opn);
   // make the default wizard(s)
 
@@ -195,8 +196,7 @@ private:
   void 	Destroy()		{ CutLinks(); }
 };
 
-
-class PDP_API PDPRoot : public taRootBase {
+class EMERGENT_API EmergentRoot : public taRootBase {
   // structural root of object hierarchy
 INHERITED(taRootBase)
 public:
@@ -207,14 +207,11 @@ public:
   // #MENU #ARGC_0 #USE_RVAL #NO_REVERT_AFTER use object browser to find an object, starting with initial path if given
 #endif
 
-  void	InitLinks();
-  void	CutLinks();
-  TA_BASEFUNS(PDPRoot);
+  TA_BASEFUNS_NOCOPY(EmergentRoot);
 private:
-  NOCOPY(taRootBase)
   void 	Initialize();
-  void 	Destroy();
+  void 	Destroy() { };
 };
 
 
-#endif // pdp_project_h
+#endif // emergent_project_h

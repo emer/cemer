@@ -24,37 +24,40 @@
 #include "ta_datatable.h"
 #include "ta_math.h"
 #include "ta_time.h"
-
-#include "spec.h"
-
-#include "pdp_base.h"
-
-#ifdef TA_GUI
-//#include "ta_qtbrowse_def.h"
-#include "t3viewer.h"
-//#include "fontspec.h"
-#endif
-
 #include "ta_dmem.h"
 
-#ifndef __MAKETA__
-# include <math.h>
+#include "emergent_base.h"
+#include "spec.h"
+
+#ifdef TA_GUI
+#include "t3viewer.h"
 #endif
 
-class NetMonitor;
-class NetView;
-
-// forwards this file
-class Unit_Group;
-
+// pre-declare:
+class Connection;
+class ConSpec;
+class ConArray;
+class UnitPtrList;
+class RecvCons;
+class RecvCons_List;
+class ConPtrList;
+class SendCons;
+class SendCons_List;
+class UnitSpec;
 class Unit;
 SmartRef_Of(Unit,TA_Unit); // UnitRef
+class ProjectionSpec;
 class Projection;
 SmartRef_Of(Projection,TA_Projection); // ProjectionRef
+class Unit_Group;
 class Layer;
 SmartRef_Of(Layer,TA_Layer); // LayerRef
 class Network;
 SmartRef_Of(Network,TA_Network); // NetworkRef
+
+// externals
+class NetMonitor;
+class NetView; //
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -68,7 +71,7 @@ SmartRef_Of(Network,TA_Network); // NetworkRef
 // note that with the projection spec, its job is to define connectivity, so
 // it does have structural functions in the spec..
 
-class PDP_API SigmoidSpec : public taBase {
+class EMERGENT_API SigmoidSpec : public taBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
 INHERITED(taBase) //
 public:
@@ -102,7 +105,7 @@ private:
 };
 
 
-class PDP_API SchedItem : public taOBase {
+class EMERGENT_API SchedItem : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Network one element of a schedule
 INHERITED(taOBase)
 public:
@@ -120,7 +123,7 @@ private:
   void	Destroy() 	{ };
 };
 
-class PDP_API Schedule : public taList<SchedItem> {
+class EMERGENT_API Schedule : public taList<SchedItem> {
   // ##CAT_Network A schedule for parameters that vary over time
 INHERITED(taList<SchedItem>)
 public:
@@ -152,7 +155,7 @@ private:
 // it is up to the connection management code to ensure that when a
 // connection is removed, its associated sending link is also removed
 
-class PDP_API Connection {
+class EMERGENT_API Connection {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network base connection between two units
 public:
   float 	wt;		// weight of connection
@@ -176,7 +179,7 @@ public:
   for(int i=0; i<cg->cons.size; i++) \
     expr
 
-class PDP_API WeightLimits : public taBase {
+class EMERGENT_API WeightLimits : public taBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
 INHERITED(taBase)
 public:
@@ -208,7 +211,7 @@ private:
   void	Destroy()		{ };
 };
 
-class PDP_API ConSpec: public BaseSpec {
+class EMERGENT_API ConSpec: public BaseSpec {
   // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection 
 INHERITED(BaseSpec)
 public:
@@ -282,7 +285,7 @@ SpecPtr_of(ConSpec);
 //		RecvCons
 
 
-class PDP_API  ConArray : public taOBase {
+class EMERGENT_API  ConArray : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network a physically contiguous array of connections, for receiving con group -- only one alloc of connections is allowed (to preserve validity of links to existing connections)
 INHERITED(taOBase)
 public:
@@ -337,7 +340,7 @@ private:
   void 	Destroy();
 };
 
-class PDP_API UnitPtrList: public taPtrList<Unit> {
+class EMERGENT_API UnitPtrList: public taPtrList<Unit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
 public:
   int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
@@ -346,7 +349,7 @@ public:
   ~UnitPtrList()             { Reset(); }
 };
 
-class PDP_API RecvCons : public taOBase {
+class EMERGENT_API RecvCons : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network receiving connections: owns all the connection objects
 INHERITED(taOBase)
 public:
@@ -492,7 +495,7 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
-class PDP_API RecvCons_List: public taList<RecvCons> {
+class EMERGENT_API RecvCons_List: public taList<RecvCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of receiving connections, one per projection
 INHERITED(taList<RecvCons>)
 public:
@@ -525,14 +528,14 @@ private:
 /////////////////////////////////////////////////////////////////////////////////
 //		SendCons
 
-class PDP_API ConPtrList: public taPtrList<Connection> {
+class EMERGENT_API ConPtrList: public taPtrList<Connection> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of connection pointers, for sending connections
 public:
   ~ConPtrList()             { Reset(); }
 };
 
 
-class PDP_API SendCons : public taOBase {
+class EMERGENT_API SendCons : public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network sending connections: points to receiving connections
 INHERITED(taOBase)
 public:
@@ -608,7 +611,7 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
-class PDP_API SendCons_List: public taList<SendCons> {
+class EMERGENT_API SendCons_List: public taList<SendCons> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of sending connections, one per projection
 INHERITED(taList<SendCons>)
 public:
@@ -642,7 +645,7 @@ private:
 //////////////////////////////////////////////////////////////////////////////
 //		Units and UnitSpec
 
-class PDP_API UnitSpec: public BaseSpec {
+class EMERGENT_API UnitSpec: public BaseSpec {
   // ##CAT_Spec Generic Unit Specification
 INHERITED(BaseSpec)
   static RecvCons*	rcg_rval; // return value for connecting
@@ -705,7 +708,7 @@ private:
 
 SpecPtr_of(UnitSpec);
 
-class PDP_API Unit: public taOBase {
+class EMERGENT_API Unit: public taOBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit
 INHERITED(taOBase)
 protected:
@@ -885,7 +888,7 @@ private:
 // Projections are abrevieated prjn (as a oppesed to proj = project or proc = process)
 // ProjectionSpec does the connectivity, and optionally the weight init
 
-class PDP_API ProjectionSpec : public BaseSpec {
+class EMERGENT_API ProjectionSpec : public BaseSpec {
   // #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
 INHERITED(BaseSpec)
 public:
@@ -927,7 +930,7 @@ private:
 
 SpecPtr_of(ProjectionSpec);
 
-class PDP_API Projection: public taNBase {
+class EMERGENT_API Projection: public taNBase {
   // ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
 INHERITED(taNBase)
 public:
@@ -1063,7 +1066,7 @@ private:
   void 	Destroy();
 };
 
-class PDP_API Projection_Group: public taGroup<Projection> {
+class EMERGENT_API Projection_Group: public taGroup<Projection> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network group of projections
 INHERITED(taGroup<Projection>)
 public:
@@ -1153,7 +1156,7 @@ inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 }
 
 
-class PDP_API Unit_Group: public taGroup<Unit> {
+class EMERGENT_API Unit_Group: public taGroup<Unit> {
   // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL a group of units
 INHERITED(taGroup<Unit>)
 public:
@@ -1241,7 +1244,7 @@ private:
   void 	Destroy()		{ CutLinks(); }
 };
 
-class PDP_API LayerSpec : public BaseSpec {
+class EMERGENT_API LayerSpec : public BaseSpec {
   // generic layer specification
 INHERITED(BaseSpec)
 public:
@@ -1258,7 +1261,7 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class PDP_API LayerDistances : public taBase {
+class EMERGENT_API LayerDistances : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network specifies distance from input/output layers
 INHERITED(taBase)
 public:
@@ -1274,7 +1277,7 @@ private:
   void	Destroy()		{ };
 };
 
-class PDP_API Layer : public taNBase {
+class EMERGENT_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network layer containing units
 INHERITED(taNBase)
 public:
@@ -1566,7 +1569,7 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
-class PDP_API Layer_Group : public taGroup<Layer> {
+class EMERGENT_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers 
 INHERITED(taGroup<Layer>)
 public:
@@ -1583,7 +1586,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API NetViewFontSizes : public taBase {
+class EMERGENT_API NetViewFontSizes : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
 INHERITED(taBase)
 public:
@@ -1604,7 +1607,7 @@ private:
   void	Destroy()		{ };
 };
 
-class PDP_API NetViewParams : public taBase {
+class EMERGENT_API NetViewParams : public taBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
 INHERITED(taBase)
 public:
@@ -1632,7 +1635,7 @@ private:
 };
 
 
-class PDP_API Network : public taFBase {
+class EMERGENT_API Network : public taFBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network A network, containing layers, units, etc..
 INHERITED(taFBase)
 public:
@@ -2012,7 +2015,7 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
-class PDP_API Network_Group : public taGroup<Network> {
+class EMERGENT_API Network_Group : public taGroup<Network> {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network a group of networks
 INHERITED(taGroup<Network>)
 public:

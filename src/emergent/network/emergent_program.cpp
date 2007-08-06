@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "pdp_program.h"
+#include "emergent_program.h"
 #include "netstru.h"
 #include "css_machine.h"
 #include "ta_datatable_qtso.h"

@@ -14,13 +14,10 @@
 //   GNU General Public License for more details.
 
 
-
-// this is the main that is included to make pdplib executable
-
-#include "pdp_base.h"
+#include "emergent_base.h"
 
 int main(int argc, const char* argv[]) {
   taMisc::app_name = "emergent";
   taMisc::app_lib_name = "emergent";
-  return pdpMisc::Main(argc, argv);
+  return EmergentMisc::Main(argc, argv);
 }

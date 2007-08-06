@@ -18,11 +18,11 @@
 #ifndef PDPSERVER_H
 #define PDPSERVER_H
 
-#include "pdp_def.h"
+#include "emergent_def.h"
 
 #include "ta_base.h"
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "emergent_TA_type.h"
 
 #ifndef __MAKETA__
@@ -35,7 +35,7 @@ class PdpClientAdapter;
 class PdpServer;
 class PdpServerAdapter;
 
-class PDP_API PdpClientAdapter: public taBaseAdapter {
+class EMERGENT_API PdpClientAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
 friend class PdpClient;
   Q_OBJECT
@@ -51,7 +51,7 @@ public slots:
 #endif
 };
 
-class PDP_API PdpClient: public taOABase { 
+class EMERGENT_API PdpClient: public taOABase { 
   // #INSTANCE #TOKENS for tcp-based remote services -- represents one connected client 
 INHERITED(taOABase)
 public:
@@ -80,7 +80,7 @@ private:
   void 	Destroy();
 };
 
-class PDP_API PdpClient_List: public taList<PdpClient> {
+class EMERGENT_API PdpClient_List: public taList<PdpClient> {
 public:
   TA_BASEFUNS2_NOCOPY(PdpClient_List, taList<PdpClient>);
 
@@ -90,7 +90,7 @@ private:
 };
 
 
-class PDP_API PdpServerAdapter: public taBaseAdapter {
+class EMERGENT_API PdpServerAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
 friend class PdpServer;
   Q_OBJECT
@@ -104,7 +104,7 @@ public slots:
 #endif
 };
 
-class PDP_API PdpServer: public taOABase { 
+class EMERGENT_API PdpServer: public taOABase { 
   // #INSTANCE #TOKENS Pdp Server, for tcp-based remote services 
 INHERITED(taOABase)
 public:

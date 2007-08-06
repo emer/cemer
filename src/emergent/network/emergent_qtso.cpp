@@ -16,8 +16,8 @@
 
 
 
-#include "pdp_qtso.h"
-#include "pdp_project.h"
+#include "emergent_qtso.h"
+#include "emergent_project.h"
 #include "ta_qt.h"
 #include "ta_qtdialog.h"
 #include "css_console.h"

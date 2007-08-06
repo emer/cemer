@@ -39,52 +39,52 @@
 
 // regexp for template searching: '<[a-z|A-Z|_]\{2,\}>'
 
-// pdp_ti.cc: template instantiation file for pdp library
+// emergent_ti.cc: template instantiation file for pdp library
 
 
-#include "pdp_base.h"
-#include "pdp_project.h"
+#include "emergent_base.h"
+#include "emergent_project.h"
 #include "netstru_extra.h"
 #include "v3_compat.h"
 
 #ifdef TA_GUI
-//#include "pdp_qtso.h"
+//#include "emergent_qtso.h"
 #include "netstru_qtso.h"
 #endif
 
-template class PDP_API taList<TessEl>;
-template class PDP_API taList<GpTessEl>;
-//template class PDP_API taList<NetViewGraphic>;
-//template class PDP_API taList<NetViewScaleRange>;
-template class PDP_API taGroup<TypeDefault>;
+template class EMERGENT_API taList<TessEl>;
+template class EMERGENT_API taList<GpTessEl>;
+//template class EMERGENT_API taList<NetViewGraphic>;
+//template class EMERGENT_API taList<NetViewScaleRange>;
+template class EMERGENT_API taGroup<TypeDefault>;
 
 // pdplog.h
-template class PDP_API taGroup<PDPLog>; 
+template class EMERGENT_API taGroup<PDPLog>; 
 
-// pdp_project.h
-template class PDP_API taGroup<ProjectBase>; 
-template class PDP_API taGroup<Wizard>; // pdp_project.h
+// emergent_project.h
+template class EMERGENT_API taGroup<ProjectBase>; 
+template class EMERGENT_API taGroup<Wizard>; // emergent_project.h
 
 // netstru.h
-template class PDP_API taList<SchedItem>;
-template class PDP_API taList<Unit>;
-template class PDP_API taGroup<Unit>;
-template class PDP_API taGroup<Layer>; // netstru.h
-template class PDP_API taGroup<Network>; // netstru.h
+template class EMERGENT_API taList<SchedItem>;
+template class EMERGENT_API taList<Unit>;
+template class EMERGENT_API taGroup<Unit>;
+template class EMERGENT_API taGroup<Layer>; // netstru.h
+template class EMERGENT_API taGroup<Network>; // netstru.h
 
-template class PDP_API SpecPtr<ConSpec,TA_ConSpec>;
-template class PDP_API SpecPtr<UnitSpec,TA_UnitSpec>;
-template class PDP_API SpecPtr<ProjectionSpec,TA_ProjectionSpec>;
-template class PDP_API SpecPtr<EventSpec,TA_EventSpec>;
+template class EMERGENT_API SpecPtr<ConSpec,TA_ConSpec>;
+template class EMERGENT_API SpecPtr<UnitSpec,TA_UnitSpec>;
+template class EMERGENT_API SpecPtr<ProjectionSpec,TA_ProjectionSpec>;
+template class EMERGENT_API SpecPtr<EventSpec,TA_EventSpec>;
 
 // v3_compat.h
-template class PDP_API taGroup<Event>;
-template class PDP_API taList<Environment>;
-template class PDP_API taGroup<Environment>;
-template class PDP_API taGroup<Process>; 
-template class PDP_API taList<DataItem>; 
+template class EMERGENT_API taGroup<Event>;
+template class EMERGENT_API taList<Environment>;
+template class EMERGENT_API taGroup<Environment>;
+template class EMERGENT_API taGroup<Process>; 
+template class EMERGENT_API taList<DataItem>; 
 
 #ifdef TA_GUI
-template class PDP_API taPlainArray<UnitViewData>; // netstru_qtso.h
+template class EMERGENT_API taPlainArray<UnitViewData>; // netstru_qtso.h
 #endif
 

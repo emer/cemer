@@ -24,7 +24,7 @@
 
 #include "netstru.h"
 
-class PDP_API FullPrjnSpec : public ProjectionSpec {
+class EMERGENT_API FullPrjnSpec : public ProjectionSpec {
   // Full connectivity between layers
 INHERITED(ProjectionSpec)
 public:
@@ -38,7 +38,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API TessEl : public taOBase {
+class EMERGENT_API TessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification
 INHERITED(taOBase)
 public:
@@ -51,7 +51,7 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API TessEl_List : public taList<TessEl> {
+class EMERGENT_API TessEl_List : public taList<TessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of TessEl objects
 INHERITED(taList<TessEl>)
 public:
@@ -61,7 +61,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API TesselPrjnSpec : public ProjectionSpec {
+class EMERGENT_API TesselPrjnSpec : public ProjectionSpec {
   // arbitrary tesselations (repeating patterns) of connectivity
 INHERITED(ProjectionSpec)
 public:
@@ -104,7 +104,7 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API OneToOnePrjnSpec : public ProjectionSpec {
+class EMERGENT_API OneToOnePrjnSpec : public ProjectionSpec {
   // one-to-one connectivity (1st unit to 1st unit, etc)
 INHERITED(ProjectionSpec)
 public:
@@ -120,7 +120,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API UniformRndPrjnSpec : public ProjectionSpec {
+class EMERGENT_API UniformRndPrjnSpec : public ProjectionSpec {
   // Uniform random connectivity between layers -- only 'permute' stye randomness is supported, creates same number of connections per unit
 INHERITED(ProjectionSpec)
 public:
@@ -140,7 +140,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API PolarRndPrjnSpec : public ProjectionSpec {
+class EMERGENT_API PolarRndPrjnSpec : public ProjectionSpec {
   // random connectivity defined as a function of distance and angle
 INHERITED(ProjectionSpec)
 public:
@@ -183,7 +183,7 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API SymmetricPrjnSpec : public ProjectionSpec {
+class EMERGENT_API SymmetricPrjnSpec : public ProjectionSpec {
   // connects units with receiving connection where sending one already exists
 INHERITED(ProjectionSpec)
 public:
@@ -195,7 +195,7 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
+class EMERGENT_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
   // Script-controlled connectivity
 INHERITED(ProjectionSpec)
 public:
@@ -220,7 +220,7 @@ private:
   void 	Destroy();
 };
 
-class PDP_API CustomPrjnSpec : public ProjectionSpec {
+class EMERGENT_API CustomPrjnSpec : public ProjectionSpec {
   // connectivity is defined manually (i.e. unit-by-unit)
 INHERITED(ProjectionSpec)
 public:
@@ -237,7 +237,7 @@ private:
 //	UnitGroup-based PrjnSpecs	//
 //////////////////////////////////////////
 
-class PDP_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
+class EMERGENT_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
 INHERITED(OneToOnePrjnSpec)
 public:
@@ -249,7 +249,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
+class EMERGENT_API RndGpOneToOnePrjnSpec : public GpOneToOnePrjnSpec {
   // uniform random connectivity between one-to-one groups -- only 'permute' style random connectivity is supported (same number of connections across recv units)
 INHERITED(GpOneToOnePrjnSpec)
 public:
@@ -267,7 +267,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
+class EMERGENT_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-many connectivity (one sending gp to all recv units)
 INHERITED(OneToOnePrjnSpec)
 public:
@@ -291,7 +291,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API GpTessEl : public taOBase {
+class EMERGENT_API GpTessEl : public taOBase {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a tesselation specification for groups
 INHERITED(taOBase)
 public:
@@ -304,7 +304,7 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API GpTessEl_List : public taList<GpTessEl> {
+class EMERGENT_API GpTessEl_List : public taList<GpTessEl> {
   // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of GpTessEl objects
 INHERITED(taList<GpTessEl>)
 public:
@@ -314,7 +314,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API GpRndTesselPrjnSpec : public ProjectionSpec {
+class EMERGENT_API GpRndTesselPrjnSpec : public ProjectionSpec {
   // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit
 INHERITED(ProjectionSpec)
 public:
@@ -368,7 +368,7 @@ private:
   void	Destroy()	{ };
 };
 
-class PDP_API TiledRFPrjnSpec : public ProjectionSpec {
+class EMERGENT_API TiledRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec: connects entire receiving layer unit groups with overlapping tiled regions of sending layers
 INHERITED(ProjectionSpec)
 public:
@@ -405,7 +405,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API TiledGpRFPrjnSpec : public ProjectionSpec {
+class EMERGENT_API TiledGpRFPrjnSpec : public ProjectionSpec {
   // Tiled receptive field projection spec for entirely group-to-group connections: connects entire receiving layer unit groups with overlapping tiled regions of sending layer groups
 INHERITED(ProjectionSpec)
 public:
@@ -423,7 +423,7 @@ private:
   void 	Destroy()		{ };
 };
 
-class PDP_API TiledNovlpPrjnSpec : public ProjectionSpec {
+class EMERGENT_API TiledNovlpPrjnSpec : public ProjectionSpec {
   // Tiled non-overlapping projection spec: connects entire receiving layer unit groups with non-overlapping tiled regions of sending units
 INHERITED(ProjectionSpec)
 public:

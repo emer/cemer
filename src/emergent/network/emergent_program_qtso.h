@@ -13,38 +13,10 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
+// emergent_program_qtso.h -- pdp program extensions
+
+#ifndef EMERGENT_PROGRAM_QTSO_H
+#define EMERGENT_PROGRAM_QTSO_H
 
 
-#ifndef PDPVIEW_QT_H
-#define PDPVIEW_QT_H
-
-// pdpview_qt.h pdp viewer
-
-#include "pdpdeclare.h"
-#include "ta_qtviewer.h"
-#include "emergent_TA_type.h"
-
-
-//////////////////////////////////////////////////
-//	PDPView:  view for pdp system		//
-//////////////////////////////////////////////////
-
-class PDP_API PDPView : public DataViewer {
-  // #NO_TOKENS pdp version of a win view
-INHERITED(DataViewer)
-public:
-  void		AddNotify(TAPtr ud);
-  void		RemoveNotify(TAPtr ud);
-  TypeDef* 	UpdaterType()		{ return &TA_SchedProcess; }
-
-  TA_BASEFUNS_LITE_NOCOPY(PDPView);
-
-private:
-  void	Initialize()	{ };
-  void 	Destroy()	{ };
-};
-
-
-
-#endif // PDPVIEW_H
-
+#endif

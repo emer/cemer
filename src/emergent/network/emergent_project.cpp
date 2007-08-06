@@ -15,7 +15,7 @@
 
 // 
 
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 
 #include "ta_base.h"
@@ -62,28 +62,28 @@
 "azure";"Wizard";
 */
 
-static void pdp_viewcolor_init() {
+static void emergent_viewcolor_init() {
   if(!taMisc::view_colors) {
     taRootBase::Startup_InitViewColors();
   }
-  taMisc::view_colors->FindMakeViewColor("Network", "PDP++ Neural network", true, "VioletRed1");
-  taMisc::view_colors->FindMakeViewColor("ConSpec", "PDP++ Connection Spec", true, "SpringGreen");
-  taMisc::view_colors->FindMakeViewColor("Connection", "PDP++ Connection", true, "SpringGreen");
-  taMisc::view_colors->FindMakeViewColor("UnitSpec", "PDP++ Unit Spec", true, "violet");
-  taMisc::view_colors->FindMakeViewColor("Unit", "PDP++ Unit", true, "violet");
-  taMisc::view_colors->FindMakeViewColor("ProjectionSpec", "PDP++ Projection Spec", true, "orange");
-  taMisc::view_colors->FindMakeViewColor("Projection", "PDP++ Projection", true, "orange");
-  taMisc::view_colors->FindMakeViewColor("LayerSpec", "PDP++ Layer Spec", true, "MediumPurple1");
-  taMisc::view_colors->FindMakeViewColor("Layer", "PDP++ Layer", true, "MediumPurple1");
+  taMisc::view_colors->FindMakeViewColor("Network", "Emergent Neural network", true, "VioletRed1");
+  taMisc::view_colors->FindMakeViewColor("ConSpec", "Emergent Connection Spec", true, "SpringGreen");
+  taMisc::view_colors->FindMakeViewColor("Connection", "Emergent Connection", true, "SpringGreen");
+  taMisc::view_colors->FindMakeViewColor("UnitSpec", "Emergent Unit Spec", true, "violet");
+  taMisc::view_colors->FindMakeViewColor("Unit", "Emergent Unit", true, "violet");
+  taMisc::view_colors->FindMakeViewColor("ProjectionSpec", "Emergent Projection Spec", true, "orange");
+  taMisc::view_colors->FindMakeViewColor("Projection", "Emergent Projection", true, "orange");
+  taMisc::view_colors->FindMakeViewColor("LayerSpec", "Emergent Layer Spec", true, "MediumPurple1");
+  taMisc::view_colors->FindMakeViewColor("Layer", "Emergent Layer", true, "MediumPurple1");
 }
 
-void pdp_project_init() {
-  pdp_viewcolor_init();
+void emergent_project_init() {
+  emergent_viewcolor_init();
   taMisc::default_app_install_folder_name = "Emergent";
 }
 
 // module initialization
-InitProcRegistrar mod_init_pdp_project(pdp_project_init);
+InitProcRegistrar mod_init_emergent_project(emergent_project_init);
 
 
 //////////////////////////
@@ -171,7 +171,7 @@ void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
 void Wizard::StdNetwork(Network* net) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(net == NULL)
-    net = pdpMisc::GetNewNetwork(proj);
+    net = proj->GetNewNetwork();
   if(net == NULL) return;
   net->StructUpdate(true);
   layer_cfg.SetSize(n_layers);
@@ -273,7 +273,7 @@ void Wizard::StdNetwork(Network* net) {
 void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(net == NULL)
-    net = pdpMisc::GetNewNetwork(proj);
+    net = proj->GetNewNetwork();
   if(net == NULL) return;
   net->StructUpdate(true);
   for(int i=0;i<retina_spec->dogs.size; i++) {
@@ -311,7 +311,7 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
     data_table = proj->GetNewInputDataTable("StdInputData");
   }
   if(!net) {
-    net = pdpMisc::GetDefNetwork(GET_MY_OWNER(ProjectBase));
+    net = proj->GetDefNetwork();
   }
   if(!net) return;
   data_table->StructUpdate(true);
@@ -717,11 +717,6 @@ void ProjectBase::AutoBuildNets() {
   }
 }
 
-DataTable_Group* ProjectBase::analysisDataGroup() {
-  DataTable_Group* rval = (DataTable_Group*)data.FindMakeGpName("AnalysisData");
-  return rval;
-}
-
 void ProjectBase::AssertDefaultWiz(bool auto_opn) {
   taWizard* wiz = wizards.SafeEl(0);
 //TODO: need a better wizard making api -- factor out the make routine
@@ -735,28 +730,29 @@ void ProjectBase::AssertDefaultWiz(bool auto_opn) {
   }
 }
 
+Network* ProjectBase::GetNewNetwork(TypeDef* typ) {
+  Network* rval = (Network*)networks.New(1, typ);
+// #ifdef TA_GUI
+//   taiMisc::RunPending();
+// #endif
+  return rval;
+}
+
+Network* ProjectBase::GetDefNetwork() {
+  return (Network*)networks.DefaultEl();
+}
+
+
 //////////////////////////
-//  PDPRoot		//
+//  EmergentRoot	//
 //////////////////////////
 
-void PDPRoot::Initialize() {
+void EmergentRoot::Initialize() {
   projects.SetBaseType(&TA_ProjectBase); //note: must actually be one of the descendants
 }
 
-void PDPRoot::Destroy() {
-  CutLinks();
-}
-
-void PDPRoot::InitLinks() {
-  inherited::InitLinks();
-}
-
-void PDPRoot::CutLinks() {
-  inherited::CutLinks();
-}
-
 #ifdef TA_GUI
-TAPtr PDPRoot::Browse(const char* init_path) {
+TAPtr EmergentRoot::Browse(const char* init_path) {
   if(!taMisc::gui_active) return NULL;
 
   TAPtr iob = this;
@@ -774,26 +770,24 @@ TAPtr PDPRoot::Browse(const char* init_path) {
 }
 #endif
 
-void PDPRoot::About() {
+void EmergentRoot::About() {
   STRING_BUF(info, 2048);
-  info += "PDP Info\n";
-  info += "This is the PDP++ software package, version: ";
+  info += "Emergent Info\n";
+  info += "This is the Emergent software package, version: ";
   info += version;
   info += "\n\n";
-  info += "Mailing List:       http://psych.colorado.edu/~oreilly/PDP++/pdp-discuss.html\n";
-  info += "WWW Page:           http://psych.colorado.edu/~oreilly/PDP++/PDP++.html\n";
-  info += "Anonymous FTP Site: ftp://grey.colorado.edu/pub/oreilly/pdp++/\n";
+  info += "WWW Page: http://grey.colorado.edu/emergent\n";
   info += "\n\n";
 
   info += "Copyright (c) 1995-2006, Regents of the University of Colorado,\n\
 Carnegie Mellon University, Princeton University.\n\
  \n\
-TA/PDP++ is free software; you can redistribute it and/or modify\n\
+Emergent is free software; you can redistribute it and/or modify\n\
 it under the terms of the GNU General Public License as published by\n\
 the Free Software Foundation; either version 2 of the License, or\n\
 (at your option) any later version.\n\
  \n\
-TA/PDP++ is distributed in the hope that it will be useful,\n\
+Emergent is distributed in the hope that it will be useful,\n\
 but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
 GNU General Public License for more details.\n\

@@ -22,7 +22,7 @@
 #ifndef NETSTRU_SO_H
 #define NETSTRU_SO_H
 
-#include "pdp_def.h"
+#include "emergent_def.h"
 #include "t3node_so.h"
 
 // externals
@@ -60,7 +60,7 @@ class T3NetNode;
       shape: SoCylinder (could be changed to something else)
 */
 
-class PDP_API T3UnitNode: public T3NodeLeaf { //
+class EMERGENT_API T3UnitNode: public T3NodeLeaf { //
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -86,7 +86,7 @@ protected:
 };
 
 /*TODO
-class PDP_API T3UnitNode_Color: public T3UnitNode { // 2d color
+class EMERGENT_API T3UnitNode_Color: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;
 
@@ -114,7 +114,7 @@ private:
 }; */
 
 
-class PDP_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
+class EMERGENT_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Cylinder);
@@ -136,7 +136,7 @@ private:
   SoCylinder*		shape_; //#IGNORE
 };
 
-class PDP_API T3UnitNode_Circle: public T3UnitNode { // 2d color
+class EMERGENT_API T3UnitNode_Circle: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Circle);
@@ -158,7 +158,7 @@ private:
 };
 
 
-class PDP_API T3UnitNode_Block: public T3UnitNode { // 2d color
+class EMERGENT_API T3UnitNode_Block: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Block);
@@ -179,7 +179,7 @@ private:
   SoCube*		shape_; //#IGNORE
 };
 
-class PDP_API T3UnitNode_Rect: public T3UnitNode { // 2d color
+class EMERGENT_API T3UnitNode_Rect: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
 typedef T3UnitNode inherited;
   SO_NODE_HEADER(T3UnitNode_Rect);
@@ -205,7 +205,7 @@ private:
 //   T3UnitGroupNode	//
 //////////////////////////
 
-class PDP_API T3UnitGroupNode: public T3NodeParent {
+class EMERGENT_API T3UnitGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -253,7 +253,7 @@ protected:
 //////////////////////////
 
 
-class PDP_API T3LayerNode: public T3NodeParent {
+class EMERGENT_API T3LayerNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -297,7 +297,7 @@ private:
 //   T3PrjnNode		//
 //////////////////////////
 
-class PDP_API T3PrjnNode: public T3NodeParent {
+class EMERGENT_API T3PrjnNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 
@@ -328,7 +328,7 @@ private:
   void			init();
 };
 
-class PDP_API T3NetNode: public T3NodeParent {
+class EMERGENT_API T3NetNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
 

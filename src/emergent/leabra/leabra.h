@@ -18,9 +18,9 @@
 #ifndef leabra_h
 #define leabra_h
 
-#include "pdp_base.h"
+#include "emergent_base.h"
 #include "netstru.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 #include "fun_lookup.h"
 
@@ -988,7 +988,7 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //			Projection Level Code
 
-class PDP_API LeabraPrjn: public Projection {
+class LEABRA_API LeabraPrjn: public Projection {
   // ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:

@@ -20,7 +20,7 @@
 #include "css_ta.h"
 #include "ta_program_els.h"
 #include "netstru.h"
-#include "pdp_project.h"
+#include "emergent_project.h"
 
 
 #ifdef TA_GUI

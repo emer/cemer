@@ -13,10 +13,24 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// pdp_program_qtso.h -- pdp program extensions
+#ifndef emergent_base_h
+#define emergent_base_h
 
-#ifndef PDP_PROGRAM_QTSO_H
-#define PDP_PROGRAM_QTSO_H
+// everything includes emergent_base.h, this is the minimal include
 
+#include "ta_group.h" // this should get all the basic ta stuff
+#include "emergent_def.h"
+#include "emergent_TA_type.h"
 
-#endif
+// global decl
+class ProjectBase; //
+
+class EMERGENT_API EmergentMisc { 
+  // #NO_TOKENS miscellaneous things for Emergent
+public:
+  static int	Main(int& argc, const char* argv[]);
+  // #IGNORE the main startup function -- this is called from bin/main.cpp
+};
+
+#endif // emergent_base_h
+
