@@ -5,15 +5,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>pdp++</string>
+	<string>emergent</string>
 	<key>CFBundleIconFile</key>
-	<string>pdp++.icns</string>
+	<string>emergent.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>edu.colorado.psych.oreilly.pdp4.0++.pdp++</string>
+	<string>edu.colorado.grey.oreilly.emergent.emergent</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>4.0</string>
 	<key>CFBundleName</key>
-	<string>pdp++</string>
+	<string>emergent</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
