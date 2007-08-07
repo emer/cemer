@@ -72,6 +72,11 @@ const float t3Misc::char_base_fract(0.20f); //TODO: find correct val from coin s
 
 using namespace Qt;
 
+// from: http://doc.trolltech.com/4.3/opengl-samplebuffers-glwidget-cpp.html
+#ifndef GL_MULTISAMPLE
+# define GL_MULTISAMPLE  0x809D
+#endif
+
 //////////////////////////
 //	T3ExaminerViewer
 //////////////////////////

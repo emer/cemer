@@ -2438,7 +2438,7 @@ private:
 TA_ARRAY_OPS(NameVar_Array)
 
 
-class taBase_FunCallList: public taOBase, public IRefListClient {
+class TA_API taBase_FunCallList: public taOBase, public IRefListClient {
   // function call list manager
 INHERITED(taOBase)
 public:

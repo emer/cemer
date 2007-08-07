@@ -166,7 +166,9 @@ void* taPtrList_impl::FindName_(const String& nm, int& idx) const {
     else
       return NULL;
   }
- slow_search:
+#ifdef DEBUG
+slow_search:
+#endif
   for(int i=0; i < size; i++) {
     if(El_FindCheck_(el[i], nm)) {
       idx = i;

@@ -17,7 +17,7 @@
 			ConfigurationType="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(PDP4DIR)\plugins\HelloWorld&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(ODEDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(EMERGENTDIR)\plugins\HelloWorld&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(ODEDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="UNICODE;WIN32;QT_THREAD_SUPPORT;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_PLUGIN;HW_DLL;HW_EXPORT;TA_DLL"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -26,7 +26,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" qtmain.lib QtCore4.lib ta.lib"
+				AdditionalDependencies=" qtmain.lib QtCore4.lib temt.lib"
 				OutputFile="$(ConfigurationName)\hw.dll"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="FALSE"
@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\include&quot;;&quot;$(PDP4DIR)\plugins\HelloWorld&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(ODEDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories=".\GeneratedFiles;&quot;$(QTDIR)\include&quot;;&quot;.\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\include&quot;;&quot;$(EMERGENTDIR)\plugins\HelloWorld&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtNetwork&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(ODEDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
 				PreprocessorDefinitions="UNICODE;WIN32;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;QT_PLUGIN;HW_DLL;HW_EXPORTS;TA_DLL"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="TRUE"
@@ -71,7 +71,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta_debug.lib qtmaind.lib QtCored4.lib"
+				AdditionalDependencies="temt_debug.lib qtmaind.lib QtCored4.lib"
 				OutputFile="$(ConfigurationName)\hw.dll"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
@@ -102,7 +102,7 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
-			Name="ta"/>
+			Name="temt"/>
 	</References>
 	<Files>
 		<Filter
@@ -124,7 +124,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing hw.h..."
-						CommandLine="$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PLUGIN -DHW_DLL -DHW_EXPORT -DTA_DLL -I&quot;.\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(SolutionDir)&quot; -I&quot;$(PDP4DIR)\src&quot; -I&quot;$(PDP4DIR)\src\ta&quot; -I&quot;$(PDP4DIR)\src\taiqtso&quot; -I&quot;$(PDP4DIR)\src\css&quot; -I&quot;$(PDP4DIR)\include&quot; -I&quot;$(PDP4DIR)\plugins\HelloWorld&quot; -I&quot;$(QTDIR)\include\Qt&quot; -I&quot;$(QTDIR)\include\Qt3Support&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtNetwork&quot; -I&quot;$(QTDIR)\include\QtOpenGL&quot; -I&quot;$(COINDIR)\include&quot; -I&quot;$(ODEDIR)\include&quot; -I&quot;$(SolutionDir)\include&quot; &quot;..\..\..\..\plugins\HelloWorld\hw.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_hw.cpp&quot;
+						CommandLine="$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PLUGIN -DHW_DLL -DHW_EXPORT -DTA_DLL -I&quot;.\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(SolutionDir)&quot; -I&quot;$(EMERGENTDIR)\src&quot; -I&quot;$(EMERGENTDIR)\src\temt\ta&quot; -I&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot; -I&quot;$(EMERGENTDIR)\src\temt\css&quot; -I&quot;$(EMERGENTDIR)\include&quot; -I&quot;$(EMERGENTDIR)\plugins\HelloWorld&quot; -I&quot;$(QTDIR)\include\Qt&quot; -I&quot;$(QTDIR)\include\Qt3Support&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtNetwork&quot; -I&quot;$(QTDIR)\include\QtOpenGL&quot; -I&quot;$(COINDIR)\include&quot; -I&quot;$(ODEDIR)\include&quot; -I&quot;$(SolutionDir)\include&quot; &quot;..\..\..\..\plugins\HelloWorld\hw.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_hw.cpp&quot;
 "
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe;..\..\..\..\plugins\HelloWorld\hw.h"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_hw.cpp&quot;"/>
@@ -134,7 +134,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing hw.h..."
-						CommandLine="$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PLUGIN -DHW_DLL -DHW_EXPORTS -DTA_DLL -I&quot;.\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(SolutionDir)&quot; -I&quot;$(PDP4DIR)\src&quot; -I&quot;$(PDP4DIR)\src\ta&quot; -I&quot;$(PDP4DIR)\src\taiqtso&quot; -I&quot;$(PDP4DIR)\src\css&quot; -I&quot;$(PDP4DIR)\include&quot; -I&quot;$(PDP4DIR)\plugins\HelloWorld&quot; -I&quot;$(QTDIR)\include\Qt&quot; -I&quot;$(QTDIR)\include\Qt3Support&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtNetwork&quot; -I&quot;$(QTDIR)\include\QtOpenGL&quot; -I&quot;$(COINDIR)\include&quot; -I&quot;$(ODEDIR)\include&quot; -I&quot;$(SolutionDir)\include&quot; &quot;..\..\..\..\plugins\HelloWorld\hw.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_hw.cpp&quot;
+						CommandLine="$(QTDIR)\bin\moc.exe  -DUNICODE -DWIN32 -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_PLUGIN -DHW_DLL -DHW_EXPORTS -DTA_DLL -I&quot;.\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;.\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(SolutionDir)&quot; -I&quot;$(EMERGENTDIR)\src&quot; -I&quot;$(EMERGENTDIR)\src\temt\ta&quot; -I&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot; -I&quot;$(EMERGENTDIR)\src\temt\css&quot; -I&quot;$(EMERGENTDIR)\include&quot; -I&quot;$(EMERGENTDIR)\plugins\HelloWorld&quot; -I&quot;$(QTDIR)\include\Qt&quot; -I&quot;$(QTDIR)\include\Qt3Support&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtNetwork&quot; -I&quot;$(QTDIR)\include\QtOpenGL&quot; -I&quot;$(COINDIR)\include&quot; -I&quot;$(ODEDIR)\include&quot; -I&quot;$(SolutionDir)\include&quot; &quot;..\..\..\..\plugins\HelloWorld\hw.h&quot; -o &quot;.\GeneratedFiles\$(ConfigurationName)\moc_hw.cpp&quot;
 "
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe;..\..\..\..\plugins\HelloWorld\hw.h"
 						Outputs="&quot;.\GeneratedFiles\$(ConfigurationName)\moc_hw.cpp&quot;"/>

@@ -137,7 +137,7 @@ copy $(TargetDir)emergent*.exe $(SolutionDir)bin
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\emergent\network_bin\main.cpp">
+				RelativePath="..\..\..\src\emergent\bin\main.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">

@@ -33,25 +33,25 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
-				OutputFile="$(OutDir)/pdp_debug.dll"
+				AdditionalDependencies="temt_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				OutputFile="$(OutDir)/emergent_debug.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/pdp.pdb"
+				ProgramDatabaseFile="$(OutDir)/emergent_debug.pdb"
 				SubSystem="2"
 				OptimizeForWindows98="1"
-				ImportLibrary="$(OutDir)/pdp_debug.lib"
+				ImportLibrary="$(OutDir)/emergent_debug.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="@echo on
-copy $(TargetDir)pdp*.dll $(SolutionDir)lib
-copy $(TargetDir)pdp*.lib $(SolutionDir)lib
-copy $(TargetDir)pdp*.exp $(SolutionDir)lib
-copy $(TargetDir)pdp*.dll $(SolutionDir)bin
+copy $(TargetDir)emergent*.dll $(SolutionDir)lib
+copy $(TargetDir)emergent*.lib $(SolutionDir)lib
+copy $(TargetDir)emergent*.exp $(SolutionDir)lib
+copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -95,8 +95,8 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
-				OutputFile="$(OutDir)/pdp.dll"
+				AdditionalDependencies="temt.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				OutputFile="$(OutDir)/emergent.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				IgnoreDefaultLibraryNames="LIBCD.lib"
@@ -105,17 +105,17 @@ copy $(TargetDir)pdp*.dll $(SolutionDir)bin
 				OptimizeReferences="0"
 				EnableCOMDATFolding="2"
 				OptimizeForWindows98="1"
-				ImportLibrary="$(OutDir)/pdp.lib"
+				ImportLibrary="$(OutDir)/emergent.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="@echo on
-copy $(TargetDir)pdp*.dll $(SolutionDir)lib
-copy $(TargetDir)pdp*.lib $(SolutionDir)lib
-copy $(TargetDir)pdp*.exp $(SolutionDir)lib
-copy $(TargetDir)pdp*.dll $(SolutionDir)bin
+copy $(TargetDir)emergent*.dll $(SolutionDir)lib
+copy $(TargetDir)emergent*.lib $(SolutionDir)lib
+copy $(TargetDir)emergent*.exp $(SolutionDir)lib
+copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"

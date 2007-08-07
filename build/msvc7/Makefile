@@ -31,6 +31,7 @@ taiqtso_mocs: \
   irenderarea.moc.cpp \
   iscrollarea.moc.cpp \
   ispinbox.moc.cpp \
+  itextedit.moc.cpp \
   itextbrowser.moc.cpp \
   itreewidget.moc.cpp 
 
@@ -77,6 +78,9 @@ ispinbox.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ispinbox.h
 	$(MOC) %s -o $@
 
 itextbrowser.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\itextbrowser.h
+	$(MOC) %s -o $@
+
+itextedit.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\itextedit.h
 	$(MOC) %s -o $@
 
 itreewidget.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\itreewidget.h
@@ -284,14 +288,14 @@ css_qtdialog.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_qtdialog.h
 	$(MOC) %s -o $@
 
 
-PDP_HEADS_GUI =\
+NETWORK_HEADS_GUI =\
 	$(EMERGENTDIR)/src/emergent/network/pdpserver_qt.h \
 	$(EMERGENTDIR)/src/emergent/network/netstru_so.h \
 	$(EMERGENTDIR)/src/emergent/network/netstru_qtso.h \
 	$(EMERGENTDIR)/src/emergent/network/emergent_qtso.h \
 	$(EMERGENTDIR)/src/emergent/network/emergent_program_qtso.h 
 
-PDP_HEADS =\
+NETWORK_HEADS =\
 	$(EMERGENTDIR)/src/emergent/network/emergent_base.h \
 	$(EMERGENTDIR)/src/emergent/network/spec.h \
 	$(EMERGENTDIR)/src/emergent/network/netstru.h \
@@ -300,12 +304,12 @@ PDP_HEADS =\
 	$(EMERGENTDIR)/src/emergent/network/emergent_program.h \
 	$(EMERGENTDIR)/src/emergent/network/emergent_project.h \
 	$(EMERGENTDIR)/src/emergent/network/pdpserver.h \
-	$(PDP_HEADS_GUI) \
+	$(NETWORK_HEADS_GUI) \
 	$(EMERGENTDIR)/src/emergent/network/v3_compat.h
 
-PDP_MAKETA =\
+NETWORK_MAKETA =\
 	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
-	$(PDP_HEADS)
+	$(NETWORK_HEADS)
 
 
 network_mocs: \
@@ -396,31 +400,31 @@ ta_TA_type.hx: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
   
 ta_TA_type.h: ta_TA_type.hx
 
-emergent_TA_type.hx: $(TA_HEADS) $(PDP_HEADS) 
+emergent_TA_type.hx: $(TA_HEADS) $(NETWORK_HEADS) 
   $(CD) $(EMERGENTDIR)/src/emergent/network
-  $(MAKETA) $(MAKETA_FLAGS) pdp -f files.mta
+  $(MAKETA) $(MAKETA_FLAGS) emergent -f files.mta
   
 emergent_TA_type.h: emergent_TA_type.hx 
 
-bp_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
+bp_TA_type.hx: $(TA_HEADS) $(NETWORK_MAKETA) $(BP_HEADS)
   $(CD) $(EMERGENTDIR)/src/emergent/bp
   $(MAKETA) $(MAKETA_FLAGS) bp -f files.mta 
   
 bp_TA_type.h: bp_TA_type.hx
 
-cs_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(CS_HEADS)
+cs_TA_type.hx: $(TA_HEADS) $(NETWORK_MAKETA) $(CS_HEADS)
   $(CD) $(EMERGENTDIR)/src/emergent/cs
   $(MAKETA) $(MAKETA_FLAGS) cs -f files.mta 
   
 cs_TA_type.h: cs_TA_type.hx
 
-leabra_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
+leabra_TA_type.hx: $(TA_HEADS) $(NETWORK_MAKETA) $(LEABRA_HEADS)
   $(CD) $(EMERGENTDIR)/src/emergent/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra -f files.mta 
 
 leabra_TA_type.h: leabra_TA_type.hx
   
-so_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(SO_HEADS)
+so_TA_type.hx: $(TA_HEADS) $(NETWORK_MAKETA) $(SO_HEADS)
   $(CD) $(EMERGENTDIR)/src/emergent/so
   $(MAKETA) $(MAKETA_FLAGS) so -f files.mta 
   

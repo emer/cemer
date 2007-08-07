@@ -1,4 +1,4 @@
-How To Make a PDP Release
+How To Make an Emergent Release
 
 * of course bring the project up to date, and make sure everything runs in Debug build
 
@@ -25,7 +25,7 @@ How To Make a PDP Release
   * use something like WinZip to make a .zip file of setup_bin\Release --
     don't make a folder, just put the files into a the root of a zip
   * rename the zip file like this (ex. for rc1):
-    pdp++-4.0.3rc1.zip
+    emergent-4.0.3rc1.zip
   * make a self-extracting archive from that zip file -- it will have a .exe suffix --
     for the default extract folder, enter 'setup' so the files unpack to their own
     folder (so they are not mixed in with any other files anywhere)

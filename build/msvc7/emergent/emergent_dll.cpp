@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "pdp_def.h"
+#include "emergent_def.h"
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved

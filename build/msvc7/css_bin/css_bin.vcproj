@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta_debug.lib qtmaind.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib"
+				AdditionalDependencies="temt_debug.lib qtmaind.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib libjpeg.lib"
 				ShowProgress="2"
 				OutputFile="$(OutDir)/css_bin.exe"
 				LinkIncremental="2"
@@ -94,7 +94,7 @@ copy $(TargetDir)css*.exe $(SolutionDir)bin
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta.lib qtmain.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib"
+				AdditionalDependencies="temt.lib qtmain.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib libjpeg.lib"
 				OutputFile="$(OutDir)/css_bin.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(EMERGENTDIR)\lib&quot;;&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
@@ -129,7 +129,7 @@ copy $(TargetDir)css*.exe $(SolutionDir)bin
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
-			Name="ta"/>
+			Name="temt"/>
 	</References>
 	<Files>
 		<Filter

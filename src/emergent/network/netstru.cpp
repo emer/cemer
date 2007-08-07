@@ -966,7 +966,7 @@ int RecvCons::Dump_Load_Value(istream& strm, taBase*) {
 
   // first read in the units
   Unit_Group* ug = NULL;
-  if(prjn && prjn->from) 
+  if(prjn && prjn->from.ptr()) 
     ug = &(prjn->from->units);
   int c_count = 0;		// number of connections
   while(true) {
@@ -1068,7 +1068,7 @@ RecvCons* RecvCons_List::FindPrjn(Projection* aprjn, int& idx) const {
 RecvCons* RecvCons_List::FindFrom(Layer* from, int& idx) const {
   for(int g=0; g<size; g++) {
     RecvCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from)) {
+    if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
       idx = g;
       return cg;
     }
@@ -1093,7 +1093,7 @@ RecvCons* RecvCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) c
   int g;
   for(g=0; g<size; g++) {
     RecvCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from) &&
+    if((cg->prjn) && (cg->prjn->from.ptr() == from) &&
        (cg->prjn->InheritsFrom(prjn_td)))
     {
       idx = g;
@@ -1137,7 +1137,7 @@ bool RecvCons_List::RemoveFrom(Layer* from) {
   int g;
   for(g=size-1; g>=0; g--) {
     RecvCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from)) {
+    if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
       cg->prjn->projected = false;
       RemoveIdx(g);
       rval = true;
@@ -1372,7 +1372,7 @@ SendCons* SendCons_List::FindPrjn(Projection* aprjn, int& idx) const {
 SendCons* SendCons_List::FindFrom(Layer* from, int& idx) const {
   for(int g=0; g<size; g++) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from)) {
+    if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
       idx = g;
       return cg;
     }
@@ -1397,7 +1397,7 @@ SendCons* SendCons_List::FindTypeFrom(TypeDef* prjn_td, Layer* from, int& idx) c
   int g;
   for(g=0; g<size; g++) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from) &&
+    if((cg->prjn) && (cg->prjn->from.ptr() == from) &&
        (cg->prjn->InheritsFrom(prjn_td)))
     {
       idx = g;
@@ -1441,7 +1441,7 @@ bool SendCons_List::RemoveFrom(Layer* from) {
   int g;
   for(g=size-1; g>=0; g--) {
     SendCons* cg = FastEl(g);
-    if((cg->prjn) && (cg->prjn->from == from)) {
+    if((cg->prjn) && (cg->prjn->from.ptr() == from)) {
       cg->prjn->projected = false;
       RemoveEl(cg);
       rval = true;
@@ -2490,7 +2490,7 @@ void Projection::SetFrom() {
     }
     else {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex+1);
-      if(from == nwly) return;
+      if(from.ptr() == nwly) return;
 //       taBase::SetPointer((taBase**)&from, nwly);
       from = nwly;
       DataChanged(DCR_ITEM_UPDATED);
@@ -2503,14 +2503,14 @@ void Projection::SetFrom() {
     }
     else {
       Layer* nwly = (Layer*)mynet->layers.Leaf(myindex-1);
-      if(from == nwly) return;
+      if(from.ptr() == nwly) return;
 //       taBase::SetPointer((taBase**)&from, nwly);
       from = nwly;
       DataChanged(DCR_ITEM_UPDATED);
     }
     break;
   case SELF:
-    if(from == layer) return;
+    if(from.ptr() == layer) return;
 //     taBase::SetPointer((taBase**)&from, layer);
     from = layer;
     DataChanged(DCR_ITEM_UPDATED);
@@ -4642,7 +4642,7 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
   taLeafItr p;
   // check to see if a pjrn already exists
   FOR_ITR_EL(Projection, pjn, lay->projections., p) {
-    if((pjn->from == l_from) &&
+    if((pjn->from.ptr() == l_from) &&
        (pjn->spec->InheritsFrom(&TA_CustomPrjnSpec)) &&
        ((conspec == NULL) || (pjn->con_spec == conspec)))
       break; // ok found one
@@ -5777,7 +5777,7 @@ Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, 
   int i;
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
-    if(prj->from == send) {
+    if(prj->from.ptr() == send) {
       if((ps == NULL) && (cs == NULL)) {
 	nw_itm = false;
 	return prj;
@@ -5812,7 +5812,7 @@ Projection* Network::FindMakePrjnAdd(Layer* recv, Layer* send, ProjectionSpec* p
   int i;
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
-    if((prj->from == send)
+    if((prj->from.ptr() == send)
        && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
 	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
 	    ps->InheritsFrom(TA_FullPrjnSpec)))
@@ -5839,7 +5839,7 @@ Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* 
   int i;
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
-    if(prj->from == recv) {
+    if(prj->from.ptr() == recv) {
       if((ps == NULL) && (cs == NULL)) {
 	nw_itm = false;
 	return prj;
@@ -5874,7 +5874,7 @@ Projection* Network::FindMakeSelfPrjnAdd(Layer* recv, ProjectionSpec* ps, ConSpe
   int i;
   for(i=0;i<recv->projections.size;i++) {
     Projection* prj = (Projection*)recv->projections[i];
-    if((prj->from == recv)
+    if((prj->from.ptr() == recv)
        && ((ps == NULL) || (prj->spec.spec.ptr() == ps))
        && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
       nw_itm = false;
@@ -5898,7 +5898,7 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
   int i;
   for(i=recv->projections.size-1;i>=0;i--) {
     Projection* prj = (Projection*)recv->projections[i];
-    if((prj->from == send)
+    if((prj->from.ptr() == send)
        && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
 	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
 	    ps->InheritsFrom(TA_FullPrjnSpec)))

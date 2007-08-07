@@ -491,7 +491,7 @@ String NetMonItem::GetObjName(TAPtr obj) {
 
   if(obj->InheritsFrom(TA_Projection)) {
     Projection* prjn = (Projection*)obj;
-    if(prjn->from && prjn->layer) {
+    if(prjn->from.ptr() && prjn->layer) {
       return taMisc::StringMaxLen(prjn->layer->name, max_name_len) + "_Fm_" + 
 	taMisc::StringMaxLen(prjn->from->name, max_name_len);
     }
@@ -516,7 +516,7 @@ String NetMonItem::GetObjName(TAPtr obj) {
   }
   else if (obj->InheritsFrom(TA_RecvCons)) {
     RecvCons* cg = (RecvCons*)obj;
-    if(cg->prjn && cg->prjn->from) {
+    if(cg->prjn && cg->prjn->from.ptr()) {
       Unit* un = GET_OWNER(obj, Unit);
       if (un) {
 	return GetObjName(un) + "_r_" + taMisc::StringMaxLen(cg->prjn->from->name, max_name_len);

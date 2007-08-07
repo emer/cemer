@@ -33,7 +33,7 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
 
   int no = prjn->from->units.leaves;
-  if(!self_con && (prjn->from == prjn->layer))
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
     no--;
 
   // pre-allocate connections!
@@ -56,7 +56,7 @@ int FullPrjnSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt) 
   int rval = 0;
 
   int no = prjn->from->units.leaves;
-  if(!self_con && (prjn->from == prjn->layer))
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
     no--;
 
   int n_new_cons = (int)(p_add_con * (float)no);
@@ -352,7 +352,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
     rndm_seed.OldSeed();
 
   int no;
-  if(!self_con && (prjn->from == prjn->layer))
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
     no = (int) (p_con * (float)(prjn->from->units.leaves-1));
   else
     no = (int) (p_con * (float)prjn->from->units.leaves);
@@ -364,7 +364,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
   FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
     ru->ConnectAlloc(no, prjn);
 
-  if((prjn->from == prjn->layer) && sym_self) {
+  if((prjn->from.ptr() == prjn->layer) && sym_self) {
     Layer* lay = prjn->layer;
     // trick is to divide cons in half, choose recv, send at random
     // for 1/2 cons, then go through all units and make the symmetric cons..
@@ -576,7 +576,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
     ru_pos.x = cnt % ru_geom.x;
     RecvCons* recv_gp = NULL;
     int n_leaves = prjn->from->units.leaves;
-    if(!self_con && (prjn->from == prjn->layer))
+    if(!self_con && (prjn->from.ptr() == prjn->layer))
       n_leaves--;
     int trg_con = (int)(p_con * (float)n_leaves);
     FloatTwoDCoord suc;
@@ -1128,7 +1128,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
     Connect_Gps_SymSameGp(ru_gp, su_gp, p_con, prjn);
   }
   else {
-    if((prjn->from == prjn->layer) && sym_self) {
+    if((prjn->from.ptr() == prjn->layer) && sym_self) {
       Connect_Gps_SymSameLay(ru_gp, su_gp, p_con, prjn);
     }
     Connect_Gps_Std(ru_gp, su_gp, p_con, prjn);
@@ -1145,7 +1145,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, 
   FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
     for(int g=0;g<ru->send.size;g++) {
       SendCons* scg = ru->send.FastEl(g);
-      if((scg->prjn->layer != scg->prjn->from) || (scg->prjn->layer != prjn->layer))
+      if((scg->prjn->layer != scg->prjn->from.ptr()) || (scg->prjn->layer != prjn->layer))
 	continue;		// only deal with self projections to this same layer
       for(int i=0;i<scg->cons.size;i++) {
 	Unit* su = scg->Un(i);

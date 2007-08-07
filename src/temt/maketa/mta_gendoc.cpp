@@ -76,12 +76,13 @@ bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
      || (td != ta_smartptr_def && td->InheritsFrom(ta_smartptr_def)))
     return true;
 
-    TypeDef* main_parent = NULL;
-    if(td->children.size >= 1)
-      main_parent = td->children.FastEl(0);
+  TypeDef* main_parent = NULL;
+  if(td->children.size >= 1)
+    main_parent = td->children.FastEl(0);
 
-    if(main_parent && main_parent->HasOption("IGNORE"))
-      return true;
+  if(main_parent && main_parent->HasOption("IGNORE"))
+    return true;
+  return false;
 }
 
 void MTA::GenDoc(TypeSpace* ths, fstream& strm) {

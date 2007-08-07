@@ -153,7 +153,7 @@ bool PViLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
+    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
@@ -381,7 +381,7 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from == recv_gp->prjn->layer) { // self projection, skip it
+    if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
       continue;
     }
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
