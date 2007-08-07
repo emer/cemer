@@ -32,7 +32,7 @@ LeabraProject .projects[0] {
     };
     DataTable_Group @.gp[1] = [2] { 
       DataTable @[0] { 
-	DataTableCols @.data = [9] {
+	DataTableCols @.data = [12] {
 	  int_Data @[0] { 
       UserDataItem_List @*(.user_data_) { 
 	      UserDataItem @[0] { };
@@ -58,6 +58,9 @@ LeabraProject .projects[0] {
 	  float_Data @[6] { };
 	  float_Data @[7] { };
 	  float_Data @[8] { };
+	  float_Data @[9] { };
+	  float_Data @[10] { };
+	  float_Data @[11] { };
 	};
       };
       DataTable @[1] { 
@@ -81,7 +84,53 @@ LeabraProject .projects[0] {
 	};
       };
     };
-    DataTable_Group @.gp[2] { };
+    DataTable_Group @.gp[2] = [2] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [3] {
+	  float_Data @[0] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+	      UserDataItem @[1] { };
+      };
+};
+	  float_Data @[1] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+	      UserDataItem @[1] { };
+	      UserDataItem @[2] { };
+      };
+};
+	  String_Data @[2] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	};
+      };
+      DataTable @[1] { 
+    UserDataItem_List @*(.user_data_) { 
+	  UserDataItem @[0] { };
+    };
+
+	DataTableCols @.data = [3] {
+	  String_Data @[0] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[1] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[2] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	};
+      };
+    };
   };
 
   taBase_Group @.data_proc = [4] {
@@ -421,7 +470,7 @@ LeabraProject .projects[0] {
       Program @[7] { 
 	ProgObjList @.objs = [1] {
 	  NetMonitor @[0] { 
-	    NetMonItem_List @.items = [9] {
+	    NetMonItem_List @.items = [10] {
 	      NetMonItem @[0] { };
 	      NetMonItem @[1] { };
 	      NetMonItem @[2] { };
@@ -431,6 +480,7 @@ LeabraProject .projects[0] {
 	      NetMonItem @[6] { };
 	      NetMonItem @[7] { };
 	      NetMonItem @[8] { };
+	      NetMonItem @[9] { };
 	    };
 	  };
 	};
@@ -600,12 +650,40 @@ LeabraProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [2] {
+	  T3DataViewFrame_List @.frames = [4] {
 	    T3DataViewFrame @[0] { 
-	      T3DataView_List @.children = [1] {
+	      T3DataView_List @.children = [3] {
 		NetView @[0] { 
 		  ScaleRange_List @.scale_ranges = [1] {
 		    ScaleRange @[0] { };
+		  };
+		};
+		GraphTableView @[1] { 
+		  T3DataView_List @.children = [8] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		    GraphColView @[4] { };
+		    GraphColView @[5] { };
+		    GraphColView @[6] { };
+		    GraphColView @[7] { };
+		  };
+		};
+		GridTableView @[2] { 
+		  T3DataView_List @.children = [12] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		    GridColView @[3] { };
+		    GridColView @[4] { };
+		    GridColView @[5] { };
+		    GridColView @[6] { };
+		    GridColView @[7] { };
+		    GridColView @[8] { };
+		    GridColView @[9] { };
+		    GridColView @[10] { };
+		    GridColView @[11] { };
 		  };
 		};
 	      };
@@ -617,6 +695,28 @@ LeabraProject .projects[0] {
 		    GridColView @[0] { };
 		    GridColView @[1] { };
 		    GridColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[2] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[3] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
 		  };
 		};
 	      };
@@ -716,7 +816,7 @@ Here are the steps we'll go through, organized as separate document chapters (wh
 # [[.docs.BuildNet]] -- building the network
 # [[.docs.InputData]] -- make basic input patterns (data) to present to the network
 # [[.docs.Programs]] -- creating and controlling the programs that perform the simulation
-# [[.docs.OuptutData]] -- monitoring and analyzing the peformance of the model<br>
+# [[.docs.OutputData]] -- monitoring and analyzing the peformance of the model<br>
 # [[.docs.TaskProgram]] -- writing a program to construct the task input patterns, including more complex tasks.
 # [[.docs.PfcBg]] -- adding a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task.
 
@@ -735,22 +835,54 @@ Here are the steps we'll go through, organized as separate document chapters (wh
 
 The Wizard makes it easy to get started making a network.  It is located in the <code>wizards</code> section of the browser, and can always be found in the <code>LeabraWizard_0</code> tab at the top of this middle panel.  This link: [[.PanelTab.LeabraWizard_0]] will take you there (return to these docs by pressing the BuildNet tab).
 
-You will see that it is currently configured for 3 layers, which is fine for our purposes.  But how do we tell it how big to make these layers?  The wizard has some layer configuration information tucked inside of it -- to access it, you need to open up the wizard object in the browser (as is true of most things in this simulator).  This link: [[.wizards.LeabraWizard_0.layer_cfg.Input]] will take you directly to the configuration information for the Input layer.  You can see the browser expanding to reveal the other layer configuration information as well.
+You will see that it is currently configured for 3 layers, which is fine for our purposes.  But how do we tell it how big to make these layers?  The wizard has some layer configuration information tucked inside of it -- to access it, you need to open up the wizard object in the browser (as is true of most things in this simulator).  This link: [[.wizards.LeabraWizard_0.layer_cfg.Input]] will take you directly to the configuration information for the Input layer.  You can see the browser expanding to reveal the other layer configuration information as well.  Here are the layer sizes (<code>n_units</code>) you should enter:
 
-Enter 6 for <code>n_units</code> in the Input layer.  Then select the Hidden layer and enter 16 units, and 2 for the Output layer.  Note that the system automatically applies changes when you move from one selection to the next.
+* [[.wizards.LeabraWizard_0.layer_cfg.Input]] = 6
+* [[.wizards.LeabraWizard_0.layer_cfg.Hidden]] = 16
+* [[.wizards.LeabraWizard_0.layer_cfg.Output]] = 2
+
+Note that the system automatically applies changes when you move from one selection to the next.
 
 Next, return to the [[.PanelTab.LeabraWizard_0]] tab, and at the bottom, click the <code>Network</code> 
-menu button, and choose the <code>Std Network</code> option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
+menu button, and choose the [[.wizards.LeabraWizard_0.StdNetwork()|Network/StdNetwork]] option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
 
 You will see a network appear in the right view panel, and the left browser will expand to reveal all of the objects created (e.g., layers and specifications).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
 
-Now we'll move on to making the [[.docs.InputData]] for the simple target detection task.  Here are a few optional topics that you can explore if you wish:
+Now we'll move on to making the [[.docs.InputData]] for the simple target detection task.  Below are a few optional topics that you can explore if you wish (or come back to later at any time):
 
 == Manipulating the 3d View ==
 
+There are different modes and controls for the 3d view located on the extreme right-hand side of the window next to the network display.  Drag the mouse over them to see what they do (a \"tool tip\" should pop up when the mouse hovers over the button).
+
+To begin, you can experiment with the \"hand\" tool -- if you click the mouse and move it around, you'll see that you can manipulate the \"camera view\" into the 3d view of the network.
+
+Two key tips:
+* <b>Hold down Shift to move instead of rotate</b> (while moving the mouse).
+* <b>Pressing the \"home\" icon restores the initial view</b> (this is the first home one, not the blueprint guy -- the blueprint guy is for saving the current view state as the default view that the home button returns to.
+
+At some point you'll discover that if you don't completely stop before lifting the mouse button, the view continues to rotate -- kind of mezmerizing -- apologies if you spend too much time doing this (we certainly have.. :)
+
+If you have a scroll wheel, you'll see that it acts like a zoom.  The same effect can be had with the <b>Dolly</b> wheel (the term is an analogy to a camera dolly that moves a camera through a scene in filming a movie).
+
+The <b>Rotx</b> and <b>Roty</b> wheels rotate precisely around the x and y axes -- these are often more useful than the mouse-based rotation because they don't introduce off-angles.
+
+The <b>Flashlight</b> button is very useful for zooming in on something of interest (especially for large complicated displays) -- after clicking on it, then click on an object in the view (NOTE: text doesn't work for this purpose).  Thus button stays on until unclicked or another button is clicked, so you can do repeated exploration.
+
+Finally, for extra thrills, you can click the right mouse button (or ctrl+mouse on a Mac) and configure many interesting display options -- check out the different still draw styles, and the stereo options -- dig out those old red/green stereo glasses!
+
 == Configuring the Network View ==
 
+The middle panel tab labeled [[.PanelTab.Network_0]] provides various parameters for controlling the network display.  There are 3 main segments
+ (see the wiki [[.Wiki.Network_View]] page for more info):
+* Display parameters at the top (font sizes, display style etc) (mouse over to get more info, and explore!)
+* Network variable selector -- what value to display in the units in the network view (activations vs. weights vs. netinputs etc).  If you select one of the weight variables (e.g., r.wt for receiving weights into a selected unit; s.wt is for sending weights out), you then need to use the red arrow tool in the viewer to select a unit to view -- it will turn green, and you should be able to see its weights.
+* Spec selector and viewer -- this is very handy for seeing where your specs are used in the network -- try clicking on the <code>HiddenLayer</code> and then <code>Input_Output</code> -- note that the green layer border changes color indicating which layers are using these layer specs.  You can also use the context menu to edit the specs right there.
+
 == Changing the Network Configuration ==
+
+You can also configure the network layout interactively in the viewer, including repositioning the layers, and orienting the network display relative to other objects in the view (which we postpone for later, when this arises).
+
+To do this, select the <b>red arrow</b> tool, and you'll see that transparent purple arrow objects now appear on the layers, and a fancy box thing appears on the network text box.  These are the manipulation controls.  Try clicking on one of the horizontal arrows for the Output layer, and moving it around.  This moves within the \"horizontal\" plane (the X-Y plane for the network).  The vertical arrows not surprisingly move in the vertical dimension (the Z axis for the network).
 
 </body>
 </html>
@@ -767,9 +899,12 @@ Now we'll move on to making the [[.docs.InputData]] for the simple target detect
 
 (Note -- to return to this document, click on docs/InputData in the left browser window).
 
-We return to the [[.PanelTab.LeabraWizard_0]] wizard tab, and move across to the next menu button on the bottom labeled <code>Data</code>, and select the <code>Std Data</code> option.  This will bring up a dialog with mostly default information already filled in (and not modifyiable because there are no other options), but there is one parameter we need to specify: <code>n_patterns</code>.  Enter 6 -- one for each of the different input letters.
+We return to the [[.PanelTab.LeabraWizard_0]] wizard tab, and move across to the next menu button on the
+bottom labeled <code>Data</code>, and select the [[.wizards.LeabraWizard_0.StdData()|Data/StdData]] option.  This will bring up a dialog with mostly default information already filled in (and not modifyiable because there are no other options), but there is one parameter we need to specify: <code>n_patterns</code>.  Enter 6 -- one for each of the different input letters.
 
 This will construct a \"data table\" object (much like a spreadsheet or simple data base) that has columns automatically corresponding to the Input and Output layers of the network, with 6 rows where we can specify the different input patterns to the network, which define our simple target detection task.  The Name column is useful for labeling our patterns.  you'll see <code>(matrix)</code> in the Input and Output columns, and if you click on one of those, an extra editor shows up at the bottom of the window to allow you to enter values for the \"matrix\" of input and output units.  The Name column, in contrast, has just a single value for each row (i.e., a \"scalar\"), so it can be edited directly in the main table view.
+
+This data table object is called [[.data.gp.InputData.StdInputData]] and it lives in the <code>data/InputData subgroup</code> in the left browser, in case you need to get back to it.
 
 Here is what you should enter, where we're calling the 1st output unit the \"non-target\" and the 2nd one the target, and the Input units are ordered bottom-to-top, left-to-right:
 <table>
@@ -782,11 +917,16 @@ Here is what you should enter, where we're calling the 1st output unit the \"non
 <tr><td>Z</td><td>001<br>000</td><td>10</td></tr>
 </table>
 
+(If you're really lazy, you can just load in these data patterns from the file <code>sim_tutorial_input_data.dtbl</code> by doing [[.data.gp.InputData.StdInputData.Load()|Object/Load]]
+on the [[.data.gp.InputData.StdInputData]] object).
+
 == Visualizing the Data Patterns ==
 
-The best way to make sure you've entered the right patterns is to create a \"Grid View\" of your input data -- do this by selecting the <code>View/New Grid View</code> option from the menu at the top of the data table editor that you've been using to enter input patterns with.  This link will do this for you if you can't seem to find it: [[.data.gp.InputData.StdInputData.NewGridView()]].  Go ahead and keep the \"New Frame\" default for the dialog that pops up (you can also add multiple view elements together in a single 'frame' in the 3d view -- we'll do that later).
+The best way to make sure you've entered the right patterns is to create a \"Grid View\" of your input data -- do this by selecting the [[.data.gp.InputData.StdInputData.NewGridView()|View/New Grid View]] option from the menu at the top of the data table editor that you've been using to enter input patterns with.  Go ahead and keep the \"New Frame\" default for the dialog that pops up (you can also add multiple view elements together in a single 'frame' in the 3d view -- we'll do that later).
 
 This will create a [[.T3Tab.StdInputData]] tab in the right view panel, and display your input patterns, which hopefully match those shown in the above table.  If not, you can correct them by clicking back on StdInputData in the left browser -- you cannot edit values in the grid view display.
+
+There is also a new [[.PanelTab.StdInputData]] middle-panel tab, which contains various parameters for controlling the configuration of the grid view display.  You can mouse-over the fields to get more info.  Many of these require you to hit the Apply button at the bottom before they take effect on the view.
 
 The next step is to create [[.docs.Programs]] to control the presentation of these input patterns to the network.
 
@@ -803,7 +943,8 @@ The next step is to create [[.docs.Programs]] to control the presentation of the
 
 = Programs for Controlling the Simulation =
 
-Again return to the [[.PanelTab.LeabraWizard_0]] wizard panel, and now select <code>Programs/Std Programs</code> from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
+Again return to the [[.PanelTab.LeabraWizard_0]] wizard panel, and now select 
+[[.wizards.LeabraWizard_0.StdProgs()|Programs/Std Progs]] from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
 
 This created a set of standard programs that organize the presentation of input patterns to the network into a hierarchy of time scales:
 
@@ -815,6 +956,8 @@ This created a set of standard programs that organize the presentation of input 
 * LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
 
 There are also some other supporting programs that we'll discuss later.
+
+You might notice that the ApplyInputs program is opened up to show the LayerWriter_0 object -- this was auto-configured to apply the input data values to the appropriate (same name) layers in the network.  If you change the layer names or add additional layers, etc, you may need to go back to this object and hit the AutoConfig button to reconfigure it.  We'll do this later in the tutorial.
 
 == Running the Simulation ==
 
@@ -828,10 +971,10 @@ You should then see the network processing each of the input patterns for the ta
 Once it finishes, you can see more clearly what it is doing by hitting the [[.programs.gp.LeabraAll_Std.LeabraTrain.Step()|Step]] button, 
 which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text region at the bottom of the network 3d view display.  It has successfully learned the task!
 
+We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on them and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
+
 The next step is more clearly monitor the performance of the network as it learns, by recording 
 [[.docs.OutputData]] from the network.
-
-
 
 </body>
 </html>
@@ -843,11 +986,70 @@ The next step is more clearly monitor the performance of the network as it learn
    text="<html>
 <head></head>
 <body>
-= Monitoring, Analysing, and Displaying Output Data =
+= Monitoring, Analyzing, and Displaying Output Data =
 
-* Graph epoch data
-* record input/output patterns
-* etc.
+In this section we explore various ways of understanding better how the network is performing.
+
+== Graphing Learning Performance over Epochs ==
+
+To see how your network is learning a given task, the first step is to generate a graph of the learning performance (sum squared error on the training patterns) over epochs.  Fortunately, the default programs are already collecting this data for us, so we just need to display the graph.
+
+The data is being recorded in the [[.data.gp.OutputData.EpochOutputData]] data table object in the <code>data/OutputData subgroup</code>.  You should see a few rows of data from the previous run, and you should notice that the <code>avg_sse</code> column shows a general decrease in average sum-squared-error on the training patterns, ending in a 0, which is what stopped the training.
+
+To graph this data, you just generate a graph view of this data table.  As a general rule in the software, all view information is always generated by a given main object like a datatable or a network -- you don't create a graph and then associate data with it -- it goes the other way.  The menu selection to create the graph view is [[.data.gp.OutputData.EpochOutputData.NewGraphView()|View/New Graph View]].  This time, let's be adventurous and instead of putting this graph in a separate view frame, put it in the <code>Network_0</code> frame.
+
+If you happened to have put it in the wrong frame initially, don't worry -- just do the context menu over the frame view tab on the right (should be called EpochOutputData), and select Delete Frame.  Note that there can be multiple views of the same underlying data.
+
+You should see a graph appear in the upper right of your network display, showing a decreasing line from left to right.  By default the line is (redundantly) color coded for the plot value.  You can control this and many other features of the graph display in the graph control panel.
+
+But wait, where is that panel?  You should only see a [[.PanelTab.Network_0]] tab in the middle panel tabs.  If you click on that guy, and look at the bottom, you'll see selectors for the different view objects within this one view frame (Network_0 and EpochOutputData Graph).  Select the graph view tab at the bottom, and again mouse over the various controls and play around with them.  As you can see, there are many different ways of
+configuring the graphs -- feel free to explore.  Note that there are several other variables that you could plot, including average cycles to settle, and a count of the number of errors made across trials. Also see the wiki [[.Wiki.GraphView]] page for more details.
+
+To see your graph updating in real-time, you can re-init and run the [[.programs.gp.LeabraAll_Std.LeabraTrain]] program:
+ [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]] 
+[[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]].
+
+=== Arranging the 3d View ===
+
+Although the [[.T3Tab.Network_0]] view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, to fit in between the Hidden and Output layers.
+
+When you've got it the way you want, you can press the <b>eye</b> button to resize the display to fit, and maybe Dolly zoom in a bit.  You could perhaps pan to the right a bit with shift-mouse.  When it looks good, hit the <b>blueprint house</b> button (\"save home\"), which saves this view configuration.
+
+== Recording Network Activations for a Grid View ==
+
+Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select [[.networks[0].MonitorVar()|MonitorVar]].  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act\" (no quotes), to record activations.  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).
+
+Next, we need to make a Grid View of the resulting data, which will be recorded in the [[.data.gp.OutputData.TrialOutputData]] object -- do a 
+[[.data.gp.OutputData.TrialOutputData.NewGridView()|View/New Grid View]], and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
+
+The grid view will not contain the new information until the
+ [[.programs.gp.LeabraAll_Std.LeabraTrain]] program is 
+ [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]] and
+[[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]] again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
+
+To really make things clean, you can select the column headers of the columns you don't want to display (e.g., ext_rew, minus cycles) and do context menu/View Properties and then hit the Hide button at the bottom of the dialog that comes up.  Ideally, you'd just want to see the trial name, sse, and the different layer activation columns.
+
+Also, because there are just 6 events, we can set the rows to display to 6 in the grid view panel, to make the display fit just right.
+
+Again, you can run your program and see it update the display.
+
+== Analyzing the Hidden Layer Representations ==
+
+Now that we have some data from the network, we can perform some powerful analysis techniques on that data. 
+
+First, we can make a cluster plot of the Hidden Layer activations, to see if we can understand better what is being encoded.  To do this, find the [[.data_proc.data_anal]] object under <code>data_proc/data_anal</code> in the left browser.  This contains many useful analysis tools, organized by different topics in the buttons at the bottom.  Select
+ [[.data_proc.data_anal.Cluster()|HighDim/Cluster]], and set the following parameters (leave the rest at their defaults):
+* view = on (generate a graph of the cluster data)
+* src_data = TrialOutputData
+* data_col_nm = Hidden_act   (specifies the column of data that we want to cluster)
+* name_col_name = trial_name (specifies the column with labels for the cluster nodes)
+
+You should see a new graph show up, with the A,B,C,X,Y,Z labels grouped together into different clusters.  Most likely, you should observe in a trained network that the A and X are grouped together, separate from the other items.  Can you figure out why this would be the case?
+
+Another way to process this high-dimensional activation pattern data is to project it down into 2 dimensions.  Two techniques for this are principal components analysis (PCA) and multidimensiona scaling (MDS).  To try PCA, select
+[[.data_proc.data_anal.PCA2dPrjn()|HighDim/PCA2dPrjn]] -- fill in the same info you did for the Cluster plot.  You should see that the labels are distributed as points in a two-dimensional space, with the X-axis being the dimension (principal component) of the hidden layer activation patterns that captures the greatest amount of variance across patterns, and the Y-axis being the second strongest component.  Accordingly, you should see A and X on the left or the right side of the graph, and the others on the other side.  It is not clear what the vertical axis represents..
+
+There are many more things one could do, but hopefully this gives a flavor.  The next step: [[.docs.TaskProgram]] is to write a program to automatically generate our input patterns for training the network -- initially we'll start out with the simple task we ran already, but then we'll progressively expand to more complex tasks.  
 
 </body>
 </html>
@@ -1000,7 +1202,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 0;0;0;0;      };
+	    [6] 0;0;0;0;0;0;      };
      };
      int_Data @[1] {
       UserDataItem_List @*(.user_data_) {
@@ -1021,7 +1223,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 5;5;5;5;      };
+	    [6] 4;4;4;4;4;4;      };
      };
      int_Data @[2] {
       UserDataItem_List @*(.user_data_) {
@@ -1042,7 +1244,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 0;1;2;3;      };
+	    [6] 0;1;2;3;4;5;      };
      };
      String_Data @[3] {
       name="trial_name";
@@ -1054,7 +1256,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] "C";"Z";"A";"X";      };
+	    [6] "A";"B";"X";"Z";"C";"Y";      };
      };
      String_Data @[4] {
       name="group_name";
@@ -1066,7 +1268,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] ;;;;      };
+	    [6] ;;;;;;      };
      };
      int_Data @[5] {
       UserDataItem_List @*(.user_data_) {
@@ -1087,7 +1289,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 2;2;2;2;      };
+	    [6] 2;2;2;2;2;2;      };
      };
      float_Data @[6] {
       name="minus_cycles";
@@ -1099,7 +1301,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 24;15;25;17;      };
+	    [6] 19;15;17;15;24;15;      };
      };
      float_Data @[7] {
       name="sse";
@@ -1111,7 +1313,7 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 0;0;0;0;      };
+	    [6] 0;0;0;0;0;0;      };
      };
      float_Data @[8] {
       name="ext_rew";
@@ -1123,7 +1325,43 @@ The next step is more clearly monitor the performance of the network as it learn
       };
       ar {
        name=;
-	    [4] 0;0;0;0;      };
+	    [6] 0;0;0;0;0;0;      };
+     };
+     float_Data @[9] {
+      name="Input_act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 3;2;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [3 2 6] 0.94999999;0;0;0;0;0;0;0.94999999;0;0;0;0;0;0;0;0.94999999;0;0;0;0;0;0;0;0.94999999;0;0;0.94999999;0;0;0;0;0;0;0;0.94999999;0;      };
+     };
+     float_Data @[10] {
+      name="Hidden_act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 4;4;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [4 4 6] 0.00086805352;1.8642718e-10;0.330585;0.0015773361;0.93028665;9.0074366e-09;0.88704109;0.033813108;3.5524962e-17;0.038050365;6.7375536e-18;3.5077696e-09;0.8143025;0;5.76158e-12;1.5870679e-05;0.14163497;0;0.8233881;0.71903008;5.1851879e-07;0.00054625864;9.6354313e-05;0.91281921;8.0780159e-18;7.4803248e-16;0;0.40498275;3.5874049e-08;0.47268921;0.87569469;0;6.950488e-05;0.059135236;0.93415415;5.0818968e-13;0.90018451;0.71779019;1.7388861e-10;0;1.9112464e-05;0.12876695;1.1738714e-09;0.0022920975;0.32924685;0;3.3947881e-12;2.8693067e-11;0.13797449;0;0.1298116;0.77483231;5.4063669e-15;0.028271448;0.32306844;0.90327013;0;0.5036431;0.0031129136;0.81254017;0.0095546609;0.00047446505;0.53713733;0;0.79832458;0;0.83907288;0.85883737;1.0595816e-09;0.88461679;0.45203692;0.85695237;0;0.50920594;0;0.067914188;7.3147224e-15;3.2935127e-06;7.828154e-05;0;0.00016419968;0;0.001963885;0.87850517;8.9151555e-08;0.05604152;0.056203242;0.0010021889;3.9429768e-11;0.010948555;1.2222836e-05;0.94211942;3.3120289e-14;0.76022035;7.2917915e-06;0;      };
+     };
+     float_Data @[11] {
+      name="Output_act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 2;1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [2 1 6] 0;0.94999999;0.94999999;0;0;0.94999999;0.94999999;0;0.94999999;0;0.94999999;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1263,6 +1501,179 @@ The next step is more clearly monitor the performance of the network as it learn
    name="AnalysisData";
    el_typ=DataTable;
    el_def=0;
+   DataTable @[0] {
+    name="TrialOutputData_col_Hidden_act_Cluster";
+    desc=;
+    data {
+     name="data";
+     el_typ=float_Data;
+     el_def=0;
+     float_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="X_AXIS";
+	value 1 0=1;
+       };
+       UserDataItem @[1] {
+	name="MAX";
+	value 6 0=13.43964862823486;
+       };
+      };
+      name="X";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [53] 0;0;0;0;0;4.3747625;4.3747625;6.2901859;4.3747625;4.3747625;4.3747625;4.3747625;6.2901859;4.3747625;4.3747625;4.3747625;0;0;0;4.3747625;4.3747625;7.9630947;4.3747625;4.3747625;4.3747625;4.3747625;7.9630947;7.9630947;10.339836;7.9630947;7.9630947;7.9630947;7.9630947;10.339836;10.339836;11.686651;10.339836;10.339836;10.339836;10.339836;11.686651;10.339836;10.339836;10.339836;7.9630947;7.9630947;4.3747625;4.3747625;0;0;0;0;0;      };
+     };
+     float_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_1";
+	value 1 0=1;
+       };
+       UserDataItem @[1] {
+	name="MAX";
+	value 6 0=5.800000190734863;
+       };
+       UserDataItem @[2] {
+	name="MIN";
+	value 6 0=0.2000000029802322;
+       };
+      };
+      name="Y";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [53] 2.1875;2.1875;2.1875;2.1875;1;1;0.5;0.5;0.5;0.5;1;1.5;1.5;1.5;1.5;1;1;2.1875;3.375;3.375;2.5;2.5;2.5;2.5;3.375;4.25;4.25;3.5;3.5;3.5;3.5;4.25;5;5;4.5;4.5;4.5;4.5;5;5.5;5.5;5.5;5.5;5;5;4.25;4.25;3.375;3.375;2.1875;2.1875;2.1875;2.1875;      };
+     };
+     String_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_2";
+	value 1 0=1;
+       };
+      };
+      name="Label";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [53] ;;;;;;;"A";;;;;"X";;;;;;;;;"C";;;;;;;"Y";;;;;;;"B";;;;;"Z";;;;;;;;;;;;;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @[1] {
+    UserDataItem_List @*(.user_data_) {
+     name=;
+     el_typ=UserDataItemBase;
+     el_def=0;
+     UserDataItem @[0] {
+      name="PLOT_STYLE";
+      value 9 0="POINTS";
+     };
+    };
+    name="TrialOutputData_col_Hidden_act_PCA2dPrjn";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_2";
+	value 1 0=1;
+       };
+      };
+      name="trial_name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [6] "A";"B";"X";"Z";"C";"Y";      };
+     };
+     float_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="X_AXIS";
+	value 1 0=1;
+       };
+      };
+      name="x_prjn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [6] 0.80219531;-0.86114419;0.66741771;-0.95372766;-0.50205368;-0.75487661;      };
+     };
+     float_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="PLOT_1";
+	value 1 0=1;
+       };
+      };
+      name="y_prjn";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [6] -0.19432957;0.3668336;0.6415717;0.23273477;1.3112323;-0.32664657;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
   };
  };
  data_proc {
@@ -2042,7 +2453,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[1] {
       name="trial";
       var_type=T_Int;
-      int_val=4;
+      int_val=5;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="current trial (event) within the epoch -- increments automatically";
@@ -2068,7 +2479,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=4;
+      int_val=6;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
@@ -2265,7 +2676,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$23$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$24$;
       order=PERMUTED;
-      item_idx_list{ 2;5;0;3;1;4;      };
+      item_idx_list{ 0;1;3;5;2;4;      };
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -2402,7 +2813,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[0] {
       name="phase_no";
       var_type=T_Int;
-      int_val=1;
+      int_val=2;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
@@ -3098,7 +3509,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        LayerWriterEl @[2] {
 	chan_name="Name";
 	net_target=TRIAL_NAME;
-	layer_name=;
+	layer_name="Name";
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	ext_flags=;
@@ -3412,6 +3823,22 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+       };
+       NetMonItem @[9] {
+	name="act";
+	computed=0;
+	object_type=LeabraNetwork;
+	object=$1$;
+	variable="act";
+	var_label=;
+	name_style=AUTO_NAME;
+	max_name_len=6;
+	val_type=VT_FLOAT;
+	matrix=0;
+	matrix_geom{ 	};
+	pre_proc_1 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$1$;
@@ -4617,11 +5044,505 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   unit_trans=0.6;
 	  };
 	 };
+	 GraphTableView @[1] {
+	  m_data=$44$;
+FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }: rotate={x=0.8604479: y=-0.5067047: z=-0.05377775: rot=0.2454511: }: translate={x=1.109841: y=0.9358078: z=-0.06408901: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[1][1].data[0]$56$;
+	    m_transform=NULL;
+	    name="batch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[1][1].data[1]$57$;
+	    m_transform=NULL;
+	    name="epoch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[1][1].data[2]$58$;
+	    m_transform=NULL;
+	    name="avg_sse";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.6211656: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].data.gp[1][1].data[3]$59$;
+	    m_transform=NULL;
+	    name="cnt_err";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=2: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    m_data=.projects[0].data.gp[1][1].data[4]$60$;
+	    m_transform=NULL;
+	    name="avg_ext_rew";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[5] {
+	    m_data=.projects[0].data.gp[1][1].data[5]$61$;
+	    m_transform=NULL;
+	    name="avg_cycles";
+	    visible=1;
+	    fixed_range {fix_min=0: min=17.5: fix_max=0: max=25.83333: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[6] {
+	    m_data=.projects[0].data.gp[1][1].data[6]$62$;
+	    m_transform=NULL;
+	    name="epoch_time_tot";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[7] {
+	    m_data=.projects[0].data.gp[1][1].data[7]$63$;
+	    m_transform=NULL;
+	    name="epoch_time_usr";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=0.649613: y=0.6496129: z=0.6496134: }: rotate={x=0.8604479: y=-0.5067047: z=-0.05377775: rot=0.2454511: }: translate={x=1.109841: y=0.9358078: z=-0.06408901: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=4: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=4: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=4: };
+	   range {min=0: max=4: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Z;
+	   col_name="batch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_sse";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0.6211656: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0.6211656: };
+	   range {min=0: max=0.6211656: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	  };
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  color_mode=VALUE_COLOR;
+	  negative_draw=0;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  label_spacing=-1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$55$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  width=1;
+	  depth=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	 GridTableView @[2] {
+	  m_data=$15$;
+FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: rotate={x=1: y=0: z=0: rot=0.1187652: }: translate={x=1.070672: y=-0.3119916: z=-4.729297e-06: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].data.gp[1][0].data[0]$64$;
+	    m_transform=NULL;
+	    name="batch";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].data.gp[1][0].data[1]$65$;
+	    m_transform=NULL;
+	    name="epoch";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=.projects[0].data.gp[1][0].data[2]$66$;
+	    m_transform=NULL;
+	    name="trial";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[3] {
+	    m_data=.projects[0].data.gp[1][0].data[3]$67$;
+	    m_transform=NULL;
+	    name="trial_name";
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[4] {
+	    m_data=.projects[0].data.gp[1][0].data[4]$68$;
+	    m_transform=NULL;
+	    name="group_name";
+	    visible=0;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[5] {
+	    m_data=.projects[0].data.gp[1][0].data[5]$69$;
+	    m_transform=NULL;
+	    name="phase_no";
+	    visible=0;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[6] {
+	    m_data=.projects[0].data.gp[1][0].data[6]$70$;
+	    m_transform=NULL;
+	    name="minus_cycles";
+	    visible=0;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[7] {
+	    m_data=.projects[0].data.gp[1][0].data[7]$71$;
+	    m_transform=NULL;
+	    name="sse";
+	    visible=0;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[8] {
+	    m_data=.projects[0].data.gp[1][0].data[8]$72$;
+	    m_transform=NULL;
+	    name="ext_rew";
+	    visible=0;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[9] {
+	    m_data=.projects[0].data.gp[1][0].data[9]$73$;
+	    m_transform=NULL;
+	    name="Input_act";
+	    visible=1;
+	    text_width=3;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[10] {
+	    m_data=.projects[0].data.gp[1][0].data[10]$74$;
+	    m_transform=NULL;
+	    name="Hidden_act";
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[11] {
+	    m_data=.projects[0].data.gp[1][0].data[11]$75$;
+	    m_transform=NULL;
+	    name="Output_act";
+	    visible=1;
+	    text_width=2;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=0.779668: y=0.779668: z=0.779668: }: rotate={x=1: y=0: z=0: rot=0.1187652: }: translate={x=1.070672: y=-0.3119916: z=-4.729297e-06: }: };
+	  view_rows=6;
+	  view_range {min=0: max=5: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=2: max=6: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$55$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
 	};
        };
-       camera_pos {x=0.5: y=0.3420869: z=1.983959: };
+       camera_pos {x=0.8697404: y=0.5564175: z=2.785391: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=2.3871;
+       camera_focdist=3.112823;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
       T3DataViewFrame @[1] {
@@ -4643,7 +5564,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$56$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$76$;
 	    m_transform=NULL;
 	    name="Name";
 	    visible=1;
@@ -4654,7 +5575,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$57$;
+	    m_data=.projects[0].data.gp[0][0].data[1]$77$;
 	    m_transform=NULL;
 	    name="Input";
 	    visible=1;
@@ -4665,7 +5586,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$58$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$78$;
 	    m_transform=NULL;
 	    name="Output";
 	    visible=1;
@@ -4681,7 +5602,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  view_range {min=0: max=5: };
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  col_n=5;
+	  col_n=3;
 	  col_range {min=0: max=2: };
 	  width=1;
 	  grid_on=1;
@@ -4715,6 +5636,602 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        camera_pos {x=1.5325: y=0.5175: z=1.443747: };
        camera_orient {x=0: y=0: z=1: rot=0: };
        camera_focdist=1.453747;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[2] {
+       m_data=NULL;
+       name="TrialOutputData_col_Hidden_act_Cluster";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=.projects[0].data.gp[2][0]$79$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[2][0].data[0]$80$;
+	    m_transform=NULL;
+	    name="X";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[2][0].data[1]$81$;
+	    m_transform=NULL;
+	    name="Y";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[2][0].data[2]$82$;
+	    m_transform=NULL;
+	    name="Label";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=52: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="X";
+	   fixed_range {fix_min=0: min=0: fix_max=1: max=13.43965: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=13.43965: };
+	   range {min=0: max=13.43965: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Y";
+	   fixed_range {fix_min=1: min=0.2: fix_max=1: max=5.8: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0.2: max=5.8: };
+	   range {min=0.2: max=5.8: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Label";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	  };
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  color_mode=VALUE_COLOR;
+	  negative_draw=0;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  label_spacing=-1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$55$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  width=1;
+	  depth=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.4275: y=0.445: z=1.624621: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.637121;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[3] {
+       m_data=NULL;
+       name="TrialOutputData_col_Hidden_act_PCA2dPrjn";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=.projects[0].data.gp[2][1]$83$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[2][1].data[0]$84$;
+	    m_transform=NULL;
+	    name="trial_name";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[2][1].data[1]$85$;
+	    m_transform=NULL;
+	    name="x_prjn";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[2][1].data[2]$86$;
+	    m_transform=NULL;
+	    name="y_prjn";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=5: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="x_prjn";
+	   fixed_range {fix_min=0: min=-0.9537277: fix_max=0: max=0.8021953: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-0.9537277: max=0.8021953: };
+	   range {min=-0.9537277: max=0.8021953: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="y_prjn";
+	   fixed_range {fix_min=0: min=-0.3266466: fix_max=0: max=1.311232: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-0.3266466: max=1.311232: };
+	   range {min=-0.3266466: max=1.311232: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="trial_name";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	  };
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  graph_type=XY;
+	  plot_style=POINTS;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  color_mode=VALUE_COLOR;
+	  negative_draw=0;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  label_spacing=-1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$55$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  width=1;
+	  depth=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.451592: y=0.445: z=1.652272: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.664772;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
@@ -4758,7 +6275,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$59$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$87$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: send_delta=1: i_thr=STD: };
@@ -4886,7 +6403,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4919,7 +6436,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -4971,7 +6488,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$60$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$88$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -4983,15 +6500,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      icon_value=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
-     acts {avg=0.1583333: max=0.95: max_i=1: };
-     acts_p {avg=0.1583333: max=0.95: max_i=1: };
-     acts_m {avg=0.1583333: max=0.95: max_i=1: };
+     acts {avg=0.1583333: max=0.95: max_i=4: };
+     acts_p {avg=0.1583333: max=0.95: max_i=4: };
+     acts_m {avg=0.1583333: max=0.95: max_i=4: };
      phase_dif_ratio=1;
      kwta {k=1: pct=0.1666667: pct_c=0.8333333: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.1666667: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$61$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$89$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -5019,12 +6536,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$62$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$63$: };
+       from=.projects[0].networks[0].layers[0]$90$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$91$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$64$: };
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$92$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -5043,12 +6560,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[2]$65$;
-       spec {type=FullPrjnSpec: spec=$63$: };
+       from=.projects[0].networks[0].layers[2]$93$;
+       spec {type=FullPrjnSpec: spec=$91$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$64$: };
+       con_spec {type=LeabraConSpec: spec=$92$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -5081,7 +6598,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$60$: };
+     unit_spec {type=LeabraUnitSpec: spec=$88$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -5091,17 +6608,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {avg=0.4518408: max=0.6214532: max_i=7: };
-     i_thrs {avg=3.288795: max=4.572503: max_i=7: };
-     acts {avg=0.2721026: max=0.9135907: max_i=7: };
-     acts_p {avg=0.2721026: max=0.9135907: max_i=7: };
-     acts_m {avg=0.271262: max=0.9137977: max_i=7: };
-     phase_dif_ratio=0.9969106;
-     kwta {k=4: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.263178: k1_ithr=2.964001: ithr_r=0.3634747: ithr_diff=0.3047437: tie_brk=0: };
-     i_val {kwta=3.743507: g_i=3.743507: gp_g_i=0: g_i_orig=3.743507: };
-     un_g_i {avg=3.743507: max=3.743507: max_i=0: };
-     adapt_i {avg_avg=0.2482468: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$66$: };
+     netin {avg=0.4590682: max=0.6847615: max_i=11: };
+     i_thrs {avg=3.343001: max=5.036362: max_i=11: };
+     acts {avg=0.1691993: max=0.9421194: max_i=11: };
+     acts_p {avg=0.1691993: max=0.9421194: max_i=11: };
+     acts_m {avg=0.1691048: max=0.9421028: max_i=11: };
+     phase_dif_ratio=0.9994416;
+     kwta {k=4: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.274104: k1_ithr=3.032634: ithr_r=0.3431429: ithr_diff=0.2904632: tie_brk=0: };
+     i_val {kwta=3.777516: g_i=3.777516: gp_g_i=0: g_i_orig=3.777516: };
+     un_g_i {avg=3.777516: max=3.777516: max_i=0: };
+     adapt_i {avg_avg=0.2483672: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$94$: };
      stm_gain=0.5;
      hard_clamped=0;
      dav=0;
@@ -5116,7 +6633,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      name="Output";
      flags=;
      layer_type=TARGET;
-     pos {x=0: y=0: z=2: };
+     pos {x=1: y=1: z=2: };
      un_geom {x=2: y=1: n_not_xy=0: n=2: };
      unit_groups=0;
      gp_geom {x=1: y=1: n_not_xy=0: n=1: };
@@ -5129,12 +6646,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$67$;
-       spec {type=FullPrjnSpec: spec=$63$: };
+       from=.projects[0].networks[0].layers[1]$95$;
+       spec {type=FullPrjnSpec: spec=$91$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$64$: };
+       con_spec {type=LeabraConSpec: spec=$92$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -5167,7 +6684,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$60$: };
+     unit_spec {type=LeabraUnitSpec: spec=$88$: };
      ext_flag=TARG|EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -5177,17 +6694,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {avg=0.5567792: max=0.6454666: max_i=0: };
-     i_thrs {avg=4.075397: max=4.740142: max_i=0: };
+     netin {avg=0.3151529: max=0.3820235: max_i=0: };
+     i_thrs {avg=2.2632: max=2.764318: max_i=0: };
      acts {avg=0.475: max=0.95: max_i=0: };
      acts_p {avg=0.475: max=0.95: max_i=0: };
-     acts_m {avg=0.4669096: max=0.9289503: max_i=0: };
-     phase_dif_ratio=0.9829676;
-     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=4.740142: k1_ithr=3.410653: ithr_r=0.3291634: ithr_diff=0.2804746: tie_brk=0: };
-     i_val {kwta=3.743025: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
-     un_g_i {avg=3.743025: max=3.743025: max_i=0: };
-     adapt_i {avg_avg=0.4945785: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=$61$: };
+     acts_m {avg=0.4735676: max=0.9466937: max_i=0: };
+     phase_dif_ratio=0.9969844;
+     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=2.764318: k1_ithr=1.762081: ithr_r=0.4502986: ithr_diff=0.3625622: tie_brk=0: };
+     i_val {kwta=2.01264: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
+     un_g_i {avg=2.01264: max=2.01264: max_i=0: };
+     adapt_i {avg_avg=0.4951769: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     spec {type=LeabraLayerSpec: spec=$89$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -5206,11 +6723,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    small_batch_n=10;
    batch=0;
    epoch=5;
-   trial=4;
+   trial=5;
    cycle=15;
    time=0;
    group_name=;
-   trial_name="B";
+   trial_name="Y";
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -5220,10 +6737,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cnt_err_tol=0;
    cnt_err=0;
    cur_sum_sse=0;
-   avg_sse_n=5;
+   avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=21808: sys=4567: tot=2571203621: }: end={usr=21788: sys=4561: tot=2571202894: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=21808: sys=4567: tot=2571203621: }: end={usr=21788: sys=4561: tot=2571202894: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=6180: sys=1150: tot=2683278016: }: end={usr=6362: sys=1168: tot=2683278218: }: used={usr=182: sys=18: tot=202: }: n_used=1: };
+   epoch_time {name="epoch_time": start={usr=6326: sys=1164: tot=2683278177: }: end={usr=6362: sys=1168: tot=2683278218: }: used={usr=36: sys=4: tot=41: }: n_used=1: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
@@ -5262,19 +6779,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    sequence_init=DO_NOTHING;
    first_plus_dwt=ONLY_FIRST_DWT;
    phase=PLUS_PHASE;
-   phase_no=1;
+   phase_no=2;
    phase_max=2;
    cycle_max=60;
    min_cycles=15;
    min_cycles_phase2=35;
    minus_cycles=15;
    avg_cycles=17.5;
-   avg_cycles_sum=96;
-   avg_cycles_n=5;
+   avg_cycles_sum=0;
+   avg_cycles_n=0;
    netin_mod=1;
    send_delta=1;
    maxda_stopcrit=0.005;
-   maxda=3.561378e-06;
+   maxda=6.318092e-06;
    trg_max_act_stopcrit=1;
    trg_max_act=0;
    ext_rew=0;

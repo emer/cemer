@@ -3960,6 +3960,9 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
   MainWindowViewer* mwv = inst->viewer();
   if(!mwv) return;		// shouldn't happen!
 
+  taProject* proj = inst->curProject();
+  if(!proj) return;	// shouldn't happen!
+
   String fun_call;
   if(path.endsWith("()")) {	// function call!
     fun_call = path.after(".",-1);
@@ -3978,8 +3981,15 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
       taMisc::Warning("ta: URL -- could not activate Panel Tab named:", tbnm);
     }
   }
+  else if(path.startsWith(".Wiki.")) {
+    String new_path = "http://grey.colorado.edu/emergent/index.php/" + path.after(".Wiki.");
+    QUrl new_url(new_path);
+    QDesktopServices::openUrl(new_url);
+  }
   else {
-    taBase* tab = tabMisc::root->FindFromPath(path);
+    if(path.startsWith("."))
+      path = path.after(".");
+    taBase* tab = proj->FindFromPath(path);
     if (!tab) {
       taMisc::Warning("ta: URL",path,"not found as a path to an object!");
       return;

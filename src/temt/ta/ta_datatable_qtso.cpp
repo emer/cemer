@@ -3296,6 +3296,43 @@ void GraphTableView::InitFromUserData() {
   if(dt->HasUserData("NO_Z_AXIS")) {
     z_axis.on = false;
   }
+  if(dt->HasUserData("PLOT_STYLE")) {
+    int pstv = GetEnumVal(dt->GetUserDataAsString("PLOT_STYLE"));
+    if(pstv >= 0)
+      plot_style = (PlotStyle)pstv;
+  }
+  if(dt->HasUserData("GRAPH_TYPE")) {
+    int pstv = GetEnumVal(dt->GetUserDataAsString("GRAPH_TYPE"));
+    if(pstv >= 0)
+      graph_type = (GraphType)pstv;
+  }
+  if(dt->HasUserData("POINT_SIZE")) {
+    int pstv = GetEnumVal(dt->GetUserDataAsString("POINT_SIZE"));
+    if(pstv >= 0)
+      point_size = (PointSize)pstv;
+  }
+  if(dt->HasUserData("COLOR_MODE")) {
+    int pstv = GetEnumVal(dt->GetUserDataAsString("COLOR_MODE"));
+    if(pstv >= 0)
+      color_mode = (ColorMode)pstv;
+  }
+  if(dt->HasUserData("MATRIX_MODE")) {
+    int pstv = GetEnumVal(dt->GetUserDataAsString("MATRIX_MODE"));
+    if(pstv >= 0)
+      matrix_mode = (MatrixMode)pstv;
+  }
+  if(dt->HasUserData("LINE_WIDTH")) {
+    line_width = dt->GetUserDataAsFloat("LINE_WIDTH");
+  }
+  if(dt->HasUserData("POINT_SPACING")) {
+    point_spacing = dt->GetUserDataAsInt("POINT_SPACING");
+  }
+  if(dt->HasUserData("LABEL_SPACING")) {
+    label_spacing = dt->GetUserDataAsInt("LABEL_SPACING");
+  }
+  if(dt->HasUserData("BAR_SPACE")) {
+    bar_space = dt->GetUserDataAsFloat("BAR_SPACE");
+  }
 }
 
 void GraphTableView::UpdateFromDataTable_this(bool first) {

@@ -734,7 +734,11 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
   DataCol* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
   DataCol* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
 
-  // todo: user data..
+  xda->SetUserData("X_AXIS", true);
+  yda->SetUserData("PLOT_1", true);
+  if(nm)
+    nm->SetUserData("PLOT_2", true);
+  prjn_data->SetUserData("PLOT_STYLE", "POINTS");
 
   for(int i=0;i<src_data->rows;i++) {
     prjn_data->AddBlankRow();
@@ -780,6 +784,12 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
     nm = prjn_data->FindMakeColName(name_col_nm, idx, VT_STRING);
   DataCol* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
   DataCol* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
+
+  xda->SetUserData("X_AXIS", true);
+  yda->SetUserData("PLOT_1", true);
+  if(nm)
+    nm->SetUserData("PLOT_2", true);
+  prjn_data->SetUserData("PLOT_STYLE", "POINTS");
 
   for(int i=0;i<src_data->rows;i++) {
     prjn_data->AddBlankRow();
@@ -832,6 +842,12 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
     nm = prjn_data->FindMakeColName(name_col_nm, idx, VT_STRING);
   DataCol* xda = prjn_data->FindMakeColName("x_prjn", idx, VT_FLOAT);
   DataCol* yda = prjn_data->FindMakeColName("y_prjn", idx, VT_FLOAT);
+
+  xda->SetUserData("X_AXIS", true);
+  yda->SetUserData("PLOT_1", true);
+  if(nm)
+    nm->SetUserData("PLOT_2", true);
+  prjn_data->SetUserData("PLOT_STYLE", "POINTS");
 
   for(int i=0;i<src_data->rows;i++) {
     prjn_data->AddBlankRow();

@@ -1146,7 +1146,7 @@ public:
   virtual bool		EditDialog(bool modal = false);
   // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)
   virtual bool		EditPanel(bool new_tab = false, bool pin_tab = false);
-  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
+  // #MENU #ARGC_0 #MENU_ON_Object #MENU_CONTEXT #NO_SCRIPT #CAT_Display Edit this object in a panel in the gui browser (if new_tab == true, then a new edit panel tab is opened for it, if pin_tab == true then the new tab is pinned in place (option ignored for new_tab == false))
   virtual bool		BrowserSelectMe();
   // #CAT_Display select this item in the main project browser (only works if gui is active, etc) -- returns success
   virtual bool		BrowserExpandAll();

@@ -5,4 +5,5 @@ dist_pkgdata_leabra_DATA =\
 	model_and_task.proj \
 	simple_vis_search.proj \
 	sim_tutorial.proj \
+	sim_tutorial_input_data.dtbl \
 	sim_tutorial_final.proj

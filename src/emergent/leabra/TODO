@@ -6,15 +6,15 @@ commit:
 ------------
 current:
 
+* line type or other selector not working in graph view panel!
+
 * find use browse so progs in progedit? Prog editor show
-* list editor selects item for browse: editpanel(false)
 
 * selectedit browser name not updating when changed (in general, various name changes don't seem to update the browser)
 
 * use css parser to process progexpr: have progspace, parse a string, have a special callback
 function for whenever a variable is processed..
 
-* update bug list..
 * back button?
 * #22 -- update of netview ctrl panel -- happens even in simpler projects
 
