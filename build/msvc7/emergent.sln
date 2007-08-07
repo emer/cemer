@@ -3,18 +3,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maketa", "maketa\maketa.vcp
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ta", "ta\ta.vcproj", "{8469AE41-9D63-4819-B0F0-C30849686581}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "temt", "temt\temt.vcproj", "{8469AE41-9D63-4819-B0F0-C30849686581}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdp", "pdp\pdp.vcproj", "{CE66086C-AB6B-42B5-916F-4060AC936B55}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emergent", "emergent\emergent.vcproj", "{CE66086C-AB6B-42B5-916F-4060AC936B55}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75} = {A09A57A9-A2D6-4BEB-8CE5-90D611B6FC75}
 		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdp_bin", "pdp_bin\pdp_bin.vcproj", "{02BA2146-D457-443E-8B50-997AD5D45CA0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "emergent_bin", "emergent_bin\emergent_bin.vcproj", "{02BA2146-D457-443E-8B50-997AD5D45CA0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC} = {FDF5FAAF-B020-4CBA-9D29-79F1E497EFBC}
 	EndProjectSection
