@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="pdp_bin"
+	Name="emergent_bin"
 	ProjectGUID="{02BA2146-D457-443E-8B50-997AD5D45CA0}"
-	RootNamespace="pdp_bin"
+	RootNamespace="emergent_bin"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -20,8 +20,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
-				PreprocessorDefinitions="TA_DLL;PDP_DLL;DEBUG;WIN32;_DEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\temt\tamisc&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="TA_DLL;EMERGENT_DLL;DEBUG;WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -34,12 +34,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta_debug.lib pdp_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
-				OutputFile="$(OutDir)/pdp++_debug.exe"
+				AdditionalDependencies="temt_debug.lib emergent_debug.lib OpenGL32.lib Qt3Supportd4.lib QtCored4.lib QtGuid4.lib QtNetworkd4.lib QtOpenGLd4.lib coin2d.lib soqt1d.lib zlib1.lib"
+				OutputFile="$(OutDir)/emergent_debug.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/pdp_bin.pdb"
+				ProgramDatabaseFile="$(OutDir)/emergent_bin.pdb"
 				SubSystem="1"
 				OptimizeForWindows98="1"
 				EntryPointSymbol=""
@@ -49,7 +49,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="@echo on
-copy $(TargetDir)pdp*.exe $(SolutionDir)bin
+copy $(TargetDir)emergent*.exe $(SolutionDir)bin
 "/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
@@ -77,8 +77,8 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 			<Tool
 				Name="VCCLCompilerTool"
 				OptimizeForProcessor="3"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src\taiqtso&quot;;&quot;$(PDP4DIR)\src\css&quot;;&quot;$(PDP4DIR)\src\tamisc&quot;;&quot;$(PDP4DIR)\src\pdp&quot;;&quot;$(PDP4DIR)\src\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
-				PreprocessorDefinitions="TA_DLL;PDP_DLL;WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src\temt\taiqtso&quot;;&quot;$(EMERGENTDIR)\src\temt\css&quot;;&quot;$(EMERGENTDIR)\src\temt\tamisc&quot;;&quot;$(EMERGENTDIR)\src\emergent\network&quot;;&quot;$(EMERGENTDIR)\src\emergent\bp&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(QTDIR)\include\Qt3Support&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\Network&quot;;&quot;$(QTDIR)\include\QtOpenGL&quot;;&quot;$(COINDIR)\include&quot;;&quot;$(SolutionDir)\include&quot;"
+				PreprocessorDefinitions="TA_DLL;EMERGENT_DLL;WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
 				RuntimeTypeInfo="TRUE"
@@ -90,8 +90,8 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ta.lib pdp.lib qtmain.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
-				OutputFile="$(OutDir)/pdp++.exe"
+				AdditionalDependencies="temt.lib emergent.lib qtmain.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
+				OutputFile="$(OutDir)/emergent.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="FALSE"
@@ -104,7 +104,7 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 				Name="VCMIDLTool"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(TargetDir)pdp*.exe $(SolutionDir)bin"/>
+				CommandLine="copy $(TargetDir)emergent*.exe $(SolutionDir)bin"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -126,10 +126,10 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{CE66086C-AB6B-42B5-916F-4060AC936B55}"
-			Name="pdp"/>
+			Name="emergent"/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{8469AE41-9D63-4819-B0F0-C30849686581}"
-			Name="ta"/>
+			Name="temt"/>
 	</References>
 	<Files>
 		<Filter
@@ -137,7 +137,7 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\pdp_bin\main.cpp">
+				RelativePath="..\..\..\src\emergent\network_bin\main.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -168,7 +168,7 @@ copy $(TargetDir)pdp*.exe $(SolutionDir)bin
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath=".\pdp_bin.rc">
+				RelativePath=".\emergent_bin.rc">
 			</File>
 		</Filter>
 		<File

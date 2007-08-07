@@ -195,15 +195,17 @@
 #   define CSS_EXPORTS
 # endif
 
-# ifdef PDP_DLL
+# ifdef EMERGENT_DLL
 #   define BP_DLL
+#   define CS_DLL
 #   define LEABRA_DLL
-//TODO: the other net types
+#   define SO_DLL
 # endif
-# ifdef PDP_EXPORTS
+# ifdef EMERGENT_EXPORTS
 #   define BP_EXPORTS
+#   define CS_EXPORTS
 #   define LEABRA_EXPORTS
-//TODO: the other net types
+#   define SO_EXPORTS
 # endif
 # if defined(HAVE_LIBGSL) || defined(HAVE_LIBGSLCBLAS)
 #    define GSL_DLL // see gsl:Readme_GnuWin32.txt

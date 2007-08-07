@@ -1,17 +1,17 @@
 VCINSTALLDIR = C:\Program Files\Microsoft Visual Studio .NET 2003
-INCLUDE = "-I$(PDP4DIR)\src\ta" "-I$(PDP4DIR)/src/ta/ios-g++-3.1" \
-  "-I$(PDP4DIR)\src\taiqtso" "-I$(PDP4DIR)\src\css" \
-  "-I$(PDP4DIR)\src\pdp" "-I$(PDP4DIR)\src\bp"  "-I$(PDP4DIR)\src\leabra" \
+INCLUDE = "-I$(EMERGENTDIR)\src\temt\ta" "-I$(EMERGENTDIR)\src\temt\ta\ios-g++-3.1" \
+  "-I$(EMERGENTDIR)\src\temt\taiqtso" "-I$(EMERGENTDIR)\src\temt\css" \
+  "-I$(EMERGENTDIR)\src\emergent\network" "-I$(EMERGENTDIR)\src\emergent\bp"  "-I$(EMERGENTDIR)\src\emergent\leabra" \
   "-I$(QTDIR)/include/Qt" "-I$(QTDIR)/include/Qt3Support" \
   "-I$(QTDIR)/include/QtCore" "-I$(QTDIR)/include/QtGui" \
   "-I$(QTDIR)/include/QtNetwork" "-I$(QTDIR)/include/QtOpenGL" \
   "-I$(QTDIR)/include/QtXml" "-I$(COINDIR)/include/Inventor" \
-  "-I$(PDP4DIR)\build\msvc7" "-I$(PDP4DIR)\build\msvc7\include" \
+  "-I$(EMERGENTDIR)\build\msvc7" "-I$(EMERGENTDIR)\build\msvc7\include" \
   "-I$(VCDIR)\Vc7\include" "-I$(ODEDIR)\include"
 CD = cd   
 MOC = $(QTDIR)\bin\moc $(INCLUDE)
-#MAKETA = $(PDP4DIR)\build\msvc7\maketa\Debug\maketa.exe -v1
-MAKETA = $(PDP4DIR)\build\msvc7\bin\maketa.exe 
+#MAKETA = $(EMERGENTDIR)\build\msvc7\maketa\Debug\maketa.exe -v1
+MAKETA = $(EMERGENTDIR)\build\msvc7\bin\maketa.exe 
 
 
 all: maketa_files moc_files
@@ -34,135 +34,135 @@ taiqtso_mocs: \
   itextbrowser.moc.cpp \
   itreewidget.moc.cpp 
 
-ibutton.moc.cpp: $(PDP4DIR)\src\taiqtso\ibutton.h
+ibutton.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ibutton.h
 	$(MOC) %s -o $@
 
-icheckbox.moc.cpp: $(PDP4DIR)\src\taiqtso\icheckbox.h
+icheckbox.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\icheckbox.h
 	$(MOC) %s -o $@
 
-icombobox.moc.cpp: $(PDP4DIR)\src\taiqtso\icombobox.h
+icombobox.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\icombobox.h
 	$(MOC) %s -o $@
 
-icliptoolwidget.moc.cpp: $(PDP4DIR)\src\taiqtso\icliptoolwidget.h
+icliptoolwidget.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\icliptoolwidget.h
 	$(MOC) %s -o $@
 
-ieditgrid.moc.cpp: $(PDP4DIR)\src\taiqtso\ieditgrid.h
+ieditgrid.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ieditgrid.h
 	$(MOC) %s -o $@
 
-idimedit.moc.cpp: $(PDP4DIR)\src\taiqtso\idimedit.h
+idimedit.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\idimedit.h
 	$(MOC) %s -o $@
 
-iflowlayout.moc.cpp: $(PDP4DIR)\src\taiqtso\iflowlayout.h
+iflowlayout.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\iflowlayout.h
 	$(MOC) %s -o $@
 
-igeometry.moc.cpp: $(PDP4DIR)\src\taiqtso\igeometry.h
+igeometry.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\igeometry.h
 	$(MOC) %s -o $@
 
-ilabel.moc.cpp: $(PDP4DIR)\src\taiqtso\ilabel.h
+ilabel.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ilabel.h
 	$(MOC) %s -o $@
 
-ilineedit.moc.cpp: $(PDP4DIR)\src\taiqtso\ilineedit.h
+ilineedit.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ilineedit.h
 	$(MOC) %s -o $@
 
-interceptor.moc.cpp: $(PDP4DIR)\src\taiqtso\interceptor.h
+interceptor.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\interceptor.h
 	$(MOC) %s -o $@
 
-irenderarea.moc.cpp: $(PDP4DIR)\src\taiqtso\irenderarea.h
+irenderarea.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\irenderarea.h
 	$(MOC) %s -o $@
 
-iscrollarea.moc.cpp: $(PDP4DIR)\src\taiqtso\iscrollarea.h
+iscrollarea.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\iscrollarea.h
 	$(MOC) %s -o $@
 
-ispinbox.moc.cpp: $(PDP4DIR)\src\taiqtso\ispinbox.h
+ispinbox.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ispinbox.h
 	$(MOC) %s -o $@
 
-itextbrowser.moc.cpp: $(PDP4DIR)\src\taiqtso\itextbrowser.h
+itextbrowser.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\itextbrowser.h
 	$(MOC) %s -o $@
 
-itreewidget.moc.cpp: $(PDP4DIR)\src\taiqtso\itreewidget.h
+itreewidget.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\itreewidget.h
 	$(MOC) %s -o $@
 
-qconsole.moc.cpp: $(PDP4DIR)\src\taiqtso\qconsole.h
+qconsole.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\qconsole.h
 	$(MOC) %s -o $@
 
 TA_HEADS_TAMISC_GUI =\
-	$(PDP4DIR)/src/ta/colorbar_qt.h \
-	$(PDP4DIR)/src/taiqtso/safeptr_so.h \
-	$(PDP4DIR)/src/ta/t3node_so.h \
-	$(PDP4DIR)/src/ta/SoCapsule.h \
-	$(PDP4DIR)/src/ta/t3viewer.h \
-	$(PDP4DIR)/src/ta/colorbar_so.h \
-	$(PDP4DIR)/src/ta/ta_datatable_qtso.h \
-	$(PDP4DIR)/src/ta/ta_datatable_so.h \
-	$(PDP4DIR)/src/ta/ta_virtenv_qtso.h \
-	$(PDP4DIR)/src/ta/ta_virtenv_so.h 
+	$(EMERGENTDIR)/src/temt/ta/colorbar_qt.h \
+	$(EMERGENTDIR)/src/temt/taiqtso/safeptr_so.h \
+	$(EMERGENTDIR)/src/temt/ta/t3node_so.h \
+	$(EMERGENTDIR)/src/temt/ta/SoCapsule.h \
+	$(EMERGENTDIR)/src/temt/ta/t3viewer.h \
+	$(EMERGENTDIR)/src/temt/ta/colorbar_so.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_datatable_qtso.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_datatable_so.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_virtenv_qtso.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_virtenv_so.h 
 
 TA_HEADS_GUI =\
-	$(PDP4DIR)/src/ta/ta_qt.h \
-	$(PDP4DIR)/src/ta/ta_qtdata_def.h \
-	$(PDP4DIR)/src/ta/ta_qtdata.h \
-	$(PDP4DIR)/src/ta/ta_qtdialog.h \
-	$(PDP4DIR)/src/ta/ta_qttype_def.h \
-	$(PDP4DIR)/src/ta/ta_qttype.h \
-	$(PDP4DIR)/src/ta/ta_qtviewer.h \
-	$(PDP4DIR)/src/ta/ta_matrix_qt.h \
-	$(PDP4DIR)/src/ta/ta_qtclassbrowse.h \
-	$(PDP4DIR)/src/ta/ta_qtgroup.h \
-	$(PDP4DIR)/src/ta/ta_seledit.h \
-	$(PDP4DIR)/src/ta/ta_program_qt.h
+	$(EMERGENTDIR)/src/temt/ta/ta_qt.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtdata_def.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtdata.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtdialog.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qttype_def.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qttype.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtviewer.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_matrix_qt.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtclassbrowse.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtgroup.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_seledit.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_program_qt.h
 
 TA_HEADS_TAMISC =\
-	$(PDP4DIR)/src/ta/ta_time.h \
-	$(PDP4DIR)/src/ta/fun_lookup.h \
-	$(PDP4DIR)/src/ta/ta_data_extras.h \
-	$(PDP4DIR)/src/ta/ta_virtenv.h 
+	$(EMERGENTDIR)/src/temt/ta/ta_time.h \
+	$(EMERGENTDIR)/src/temt/ta/fun_lookup.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_data_extras.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_virtenv.h 
 
 TA_HEADS =\
-	$(PDP4DIR)/src/ta/ios-g++-3.1/streambuf.h \
-	$(PDP4DIR)/src/ta/ios-g++-3.1/iostream.h \
-	$(PDP4DIR)/src/ta/ios-g++-3.1/fstream.h \
-	$(PDP4DIR)/src/ta/ios-g++-3.1/sstream.h \
-	$(PDP4DIR)/build/msvc7/config.h \
-	$(PDP4DIR)/src/ta/ta_global.h \
-	$(PDP4DIR)/src/taiqtso/igeometry.h \
-	$(PDP4DIR)/src/ta/ta_def.h \
-	$(PDP4DIR)/src/ta/ta_platform.h \
-	$(PDP4DIR)/src/ta/ta_thread.h \
-	$(PDP4DIR)/src/ta/ta_string.h \
-	$(PDP4DIR)/src/ta/ta_stdef.h \
-	$(PDP4DIR)/src/ta/ta_variant.h \
-	$(PDP4DIR)/src/ta/ifont.h \
-	$(PDP4DIR)/src/ta/ta_mtrnd.h \
-	$(PDP4DIR)/src/ta/ta_list.h \
-	$(PDP4DIR)/src/ta/ta_filer.h \
-	$(PDP4DIR)/src/ta/icolor.h \
-	$(PDP4DIR)/src/ta/ta_type.h \
-	$(PDP4DIR)/src/ta/ta_base.h \
-	$(PDP4DIR)/src/ta/ta_fontspec.h \
-	$(PDP4DIR)/src/ta/minmax.h \
-	$(PDP4DIR)/src/ta/ta_group.h \
-	$(PDP4DIR)/src/ta/ta_qtclipdata.h \
-	$(PDP4DIR)/src/ta/colorscale.h \
-	$(PDP4DIR)/src/ta/ta_dmem.h \
-	$(PDP4DIR)/src/ta/ta_script.h \
-	$(PDP4DIR)/src/ta/ta_viewspec.h \
-	$(PDP4DIR)/src/ta/ta_viewer.h \
-	$(PDP4DIR)/src/ta/ta_program.h \
-	$(PDP4DIR)/src/ta/ta_program_els.h \
-	$(PDP4DIR)/src/ta/ta_matrix.h \
-	$(PDP4DIR)/src/ta/ta_math.h \
-	$(PDP4DIR)/src/ta/ta_geometry.h \
-	$(PDP4DIR)/src/ta/ta_data.h \
-	$(PDP4DIR)/src/ta/ta_datatable.h \
-	$(PDP4DIR)/src/ta/ta_dataproc.h \
-	$(PDP4DIR)/src/ta/ta_dataanal.h \
-	$(PDP4DIR)/src/ta/ta_datagen.h \
-	$(PDP4DIR)/src/ta/ta_imgproc.h \
-	$(PDP4DIR)/src/ta/ta_dump.h \
-	$(PDP4DIR)/src/ta/ta_defaults.h \
-	$(PDP4DIR)/src/ta/ta_plugin.h \
-	$(PDP4DIR)/src/ta/ta_plugin_p.h \
-	$(PDP4DIR)/src/ta/ta_project.h \
+	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/streambuf.h \
+	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/iostream.h \
+	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/fstream.h \
+	$(EMERGENTDIR)/src/temt/ta/ios-g++-3.1/sstream.h \
+	$(EMERGENTDIR)/build/msvc7/config.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_global.h \
+	$(EMERGENTDIR)/src/temt/taiqtso/igeometry.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_def.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_platform.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_thread.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_string.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_stdef.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_variant.h \
+	$(EMERGENTDIR)/src/temt/ta/ifont.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_mtrnd.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_list.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_filer.h \
+	$(EMERGENTDIR)/src/temt/ta/icolor.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_type.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_base.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_fontspec.h \
+	$(EMERGENTDIR)/src/temt/ta/minmax.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_group.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_qtclipdata.h \
+	$(EMERGENTDIR)/src/temt/ta/colorscale.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_dmem.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_script.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_viewspec.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_viewer.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_program.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_program_els.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_matrix.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_math.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_geometry.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_data.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_datatable.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_dataproc.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_dataanal.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_datagen.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_imgproc.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_dump.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_defaults.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_plugin.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_plugin_p.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_project.h \
 	$(TA_HEADS_GUI) \
 	$(TA_HEADS_TAMISC) \
 	$(TA_HEADS_TAMISC_GUI)
@@ -191,67 +191,67 @@ ta_mocs: \
   ta_type.moc.cpp \
   ta_virtenv_qtso.moc.cpp
 
-colorbar_qt.moc.cpp: $(PDP4DIR)\src\ta\colorbar_qt.h
+colorbar_qt.moc.cpp: $(EMERGENTDIR)\src\temt\ta\colorbar_qt.h
 	$(MOC) %s -o $@
 
-t3viewer.moc.cpp: $(PDP4DIR)\src\ta\t3viewer.h
+t3viewer.moc.cpp: $(EMERGENTDIR)\src\temt\ta\t3viewer.h
 	$(MOC) %s -o $@
 	
-ta_datatable.moc.cpp: $(PDP4DIR)\src\ta\ta_datatable.h
+ta_datatable.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_datatable.h
 	$(MOC) %s -o $@
 
-ta_datatable_qtso.moc.cpp: $(PDP4DIR)\src\ta\ta_datatable_qtso.h
+ta_datatable_qtso.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_datatable_qtso.h
 	$(MOC) %s -o $@
 
-ta_matrix.moc.cpp: $(PDP4DIR)\src\ta\ta_matrix.h
+ta_matrix.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_matrix.h
 	$(MOC) %s -o $@
 
-ta_matrix_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_matrix_qt.h
+ta_matrix_qt.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_matrix_qt.h
 	$(MOC) %s -o $@
 
-ta_plugin_p.moc.cpp: $(PDP4DIR)\src\ta\ta_plugin_p.h
+ta_plugin_p.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_plugin_p.h
 	$(MOC) %s -o $@
 
-ta_program_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_program_qt.h
+ta_program_qt.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_program_qt.h
 	$(MOC) %s -o $@
 
-ta_project.moc.cpp: $(PDP4DIR)\src\ta\ta_project.h
+ta_project.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_project.h
 	$(MOC) %s -o $@
 
-ta_qt.moc.cpp: $(PDP4DIR)\src\ta\ta_qt.h
+ta_qt.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qt.h
 	$(MOC) %s -o $@
 
-ta_qtclassbrowse.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclassbrowse.h
+ta_qtclassbrowse.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtclassbrowse.h
 	$(MOC) %s -o $@
 
-ta_qtclipdata.moc.cpp: $(PDP4DIR)\src\ta\ta_qtclipdata.h
+ta_qtclipdata.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtclipdata.h
 	$(MOC) %s -o $@
 
-ta_qtdata.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdata.h
+ta_qtdata.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtdata.h
 	$(MOC) %s -o $@
 
-ta_qtdata_def.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdata_def.h
+ta_qtdata_def.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtdata_def.h
 	$(MOC) %s -o $@
 
-ta_qtdialog.moc.cpp: $(PDP4DIR)\src\ta\ta_qtdialog.h
+ta_qtdialog.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtdialog.h
 	$(MOC) %s -o $@
 
-ta_qtgroup.moc.cpp: $(PDP4DIR)\src\ta\ta_qtgroup.h
+ta_qtgroup.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtgroup.h
 	$(MOC) %s -o $@
 
-ta_qttype_def.moc.cpp: $(PDP4DIR)\src\ta\ta_qttype_def.h
+ta_qttype_def.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qttype_def.h
 	$(MOC) %s -o $@
 
-ta_qttype.moc.cpp: $(PDP4DIR)\src\ta\ta_qttype.h
+ta_qttype.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qttype.h
 	$(MOC) %s -o $@
 
-ta_qtviewer.moc.cpp: $(PDP4DIR)\src\ta\ta_qtviewer.h
+ta_qtviewer.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtviewer.h
 	$(MOC) %s -o $@
 
-ta_type.moc.cpp: $(PDP4DIR)\src\ta\ta_type.h
+ta_type.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_type.h
 	$(MOC) %s -o $@
 
-ta_virtenv_qtso.moc.cpp: $(PDP4DIR)\src\ta\ta_virtenv_qtso.h
+ta_virtenv_qtso.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_virtenv_qtso.h
 	$(MOC) %s -o $@
 
 
@@ -265,117 +265,115 @@ css_mocs: \
 	css_qtdata.moc.cpp \
 	css_qtdialog.moc.cpp
 
-css_console.moc.cpp: $(PDP4DIR)\src\css\css_console.h
+css_console.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_console.h
 	$(MOC) %s -o $@
 
-css_machine.moc.cpp: $(PDP4DIR)\src\css\css_machine.h
+css_machine.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_machine.h
 	$(MOC) %s -o $@
 
-css_qttype.moc.cpp: $(PDP4DIR)\src\css\css_qttype.h
+css_qttype.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_qttype.h
 	$(MOC) %s -o $@
 
-css_qt.moc.cpp: $(PDP4DIR)\src\css\css_qt.h
+css_qt.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_qt.h
 	$(MOC) %s -o $@
 
-css_qtdata.moc.cpp: $(PDP4DIR)\src\css\css_qtdata.h
+css_qtdata.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_qtdata.h
 	$(MOC) %s -o $@
 
-css_qtdialog.moc.cpp: $(PDP4DIR)\src\css\css_qtdialog.h
+css_qtdialog.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_qtdialog.h
 	$(MOC) %s -o $@
 
 
 PDP_HEADS_GUI =\
-	$(PDP4DIR)/src/pdp/pdpview_qt.h \
-	$(PDP4DIR)/src/pdp/pdpserver_qt.h \
-	$(PDP4DIR)/src/pdp/netstru_so.h \
-	$(PDP4DIR)/src/pdp/netstru_qtso.h \
-	$(PDP4DIR)/src/pdp/pdp_qtso.h \
-	$(PDP4DIR)/src/pdp/pdp_program_qtso.h 
+	$(EMERGENTDIR)/src/emergent/network/pdpserver_qt.h \
+	$(EMERGENTDIR)/src/emergent/network/netstru_so.h \
+	$(EMERGENTDIR)/src/emergent/network/netstru_qtso.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_qtso.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_program_qtso.h 
 
 PDP_HEADS =\
-	$(PDP4DIR)/src/pdp/pdpdeclare.h \
-	$(PDP4DIR)/src/pdp/pdp_base.h \
-	$(PDP4DIR)/src/pdp/spec.h \
-	$(PDP4DIR)/src/pdp/netstru.h \
-	$(PDP4DIR)/src/pdp/netstru_extra.h \
-	$(PDP4DIR)/src/pdp/netdata.h \
-	$(PDP4DIR)/src/pdp/pdp_program.h \
-	$(PDP4DIR)/src/pdp/pdp_project.h \
-	$(PDP4DIR)/src/pdp/pdpserver.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_base.h \
+	$(EMERGENTDIR)/src/emergent/network/spec.h \
+	$(EMERGENTDIR)/src/emergent/network/netstru.h \
+	$(EMERGENTDIR)/src/emergent/network/netstru_extra.h \
+	$(EMERGENTDIR)/src/emergent/network/netdata.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_program.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_project.h \
+	$(EMERGENTDIR)/src/emergent/network/pdpserver.h \
 	$(PDP_HEADS_GUI) \
-	$(PDP4DIR)/src/pdp/v3_compat.h
+	$(EMERGENTDIR)/src/emergent/network/v3_compat.h
 
 PDP_MAKETA =\
-	$(PDP4DIR)/src/ta/ta_TA_type.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
 	$(PDP_HEADS)
 
 
-pdp_mocs: \
+network_mocs: \
 	netstru_qtso.moc.cpp \
-	pdp_program_qtso.moc.cpp \
-	pdp_qtso.moc.cpp \
+	emergent_program_qtso.moc.cpp \
+	emergent_qtso.moc.cpp \
 	pdpserver.moc.cpp \
 	pdpserver_qt.moc.cpp
 
-netstru_qtso.moc.cpp: $(PDP4DIR)\src\pdp\netstru_qtso.h
+netstru_qtso.moc.cpp: $(EMERGENTDIR)\src\emergent\network\netstru_qtso.h
 	$(MOC) %s -o $@
 	
-pdp_program_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_program_qtso.h
+emergent_program_qtso.moc.cpp: $(EMERGENTDIR)\src\emergent\network\emergent_program_qtso.h
 	$(MOC) %s -o $@
 
-pdp_qtso.moc.cpp: $(PDP4DIR)\src\pdp\pdp_qtso.h
+emergent_qtso.moc.cpp: $(EMERGENTDIR)\src\emergent\network\emergent_qtso.h
 	$(MOC) %s -o $@
 
-pdpserver.moc.cpp: $(PDP4DIR)\src\pdp\pdpserver.h
+pdpserver.moc.cpp: $(EMERGENTDIR)\src\emergent\network\pdpserver.h
 	$(MOC) %s -o $@
 
-pdpserver_qt.moc.cpp: $(PDP4DIR)\src\pdp\pdpserver_qt.h
+pdpserver_qt.moc.cpp: $(EMERGENTDIR)\src\emergent\network\pdpserver_qt.h
 	$(MOC) %s -o $@
 
 
 
 CS_HEADS =\
-	$(PDP4DIR)/src/cs/cs.h \
-	$(PDP4DIR)/src/cs/cs_v3_compat.h
+	$(EMERGENTDIR)/src/emergent/cs/cs.h \
+	$(EMERGENTDIR)/src/emergent/cs/cs_v3_compat.h
 
 CS_MAKETA =\
-	$(PDP4DIR)/src/ta/ta_TA_type.h \
-	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
 	$(CS_HEADS)
 
 BP_HEADS =\
-	$(PDP4DIR)/src/bp/bp.h \
-	$(PDP4DIR)/src/bp/rbp.h \
-	$(PDP4DIR)/src/bp/bp_v3_compat.h
+	$(EMERGENTDIR)/src/emergent/bp/bp.h \
+	$(EMERGENTDIR)/src/emergent/bp/rbp.h \
+	$(EMERGENTDIR)/src/emergent/bp/bp_v3_compat.h
 
 BP_MAKETA =\
-	$(PDP4DIR)/src/ta/ta_TA_type.h \
-	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
 	$(BP_HEADS)
 
 LEABRA_HEADS =\
-	$(PDP4DIR)/src/leabra/leabra.h \
-	$(PDP4DIR)/src/leabra/leabra_extra.h \
-	$(PDP4DIR)/src/leabra/leabra_td.h \
-	$(PDP4DIR)/src/leabra/leabra_pvlv.h \
-	$(PDP4DIR)/src/leabra/leabra_pbwm.h \
-	$(PDP4DIR)/src/leabra/leabra_v3_compat.h
+	$(EMERGENTDIR)/src/emergent/leabra/leabra.h \
+	$(EMERGENTDIR)/src/emergent/leabra/leabra_extra.h \
+	$(EMERGENTDIR)/src/emergent/leabra/leabra_td.h \
+	$(EMERGENTDIR)/src/emergent/leabra/leabra_pvlv.h \
+	$(EMERGENTDIR)/src/emergent/leabra/leabra_pbwm.h \
+	$(EMERGENTDIR)/src/emergent/leabra/leabra_v3_compat.h
 
 LEABRA_MAKETA =\
-	$(PDP4DIR)/src/ta/ta_TA_type.h \
-	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
 	$(LEABRA_HEADS)
 
 SO_HEADS =\
-	$(PDP4DIR)/src/so/so.h \
-	$(PDP4DIR)/src/so/som.h \
-	$(PDP4DIR)/src/so/cl.h \
-	$(PDP4DIR)/src/so/zsh.h \
-	$(PDP4DIR)/src/so/so_v3_compat.h
+	$(EMERGENTDIR)/src/emergent/so/so.h \
+	$(EMERGENTDIR)/src/emergent/so/som.h \
+	$(EMERGENTDIR)/src/emergent/so/cl.h \
+	$(EMERGENTDIR)/src/emergent/so/zsh.h \
+	$(EMERGENTDIR)/src/emergent/so/so_v3_compat.h
 
 SO_MAKETA =\
-	$(PDP4DIR)/src/ta/ta_TA_type.h \
-	$(PDP4DIR)/src/pdp/pdp_TA_type.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_TA_type.h \
+	$(EMERGENTDIR)/src/emergent/network/emergent_TA_type.h \
 	$(SO_HEADS)
 
 #MAKETA_FLAGS = /I "$(VCINSTALLDIR)\Vc7\include"
@@ -393,37 +391,37 @@ MAKETA_FLAGS = -css -autohx /D DEBUG $(INCLUDE) -win_dll
 
 #note: also makes _TA_inst.h and .cpp
 ta_TA_type.hx: $(TA_HEADS) $(CSS_HEADS) $(TAIQTSO_HEADS)
-  $(CD) $(PDP4DIR)/src/ta
+  $(CD) $(EMERGENTDIR)/src/temt/ta
   $(MAKETA) $(MAKETA_FLAGS) ta -f files.mta 
   
 ta_TA_type.h: ta_TA_type.hx
 
-pdp_TA_type.hx: $(TA_HEADS) $(PDP_HEADS) 
-  $(CD) $(PDP4DIR)/src/pdp
+emergent_TA_type.hx: $(TA_HEADS) $(PDP_HEADS) 
+  $(CD) $(EMERGENTDIR)/src/emergent/network
   $(MAKETA) $(MAKETA_FLAGS) pdp -f files.mta
   
-pdp_TA_type.h: pdp_TA_type.hx 
+emergent_TA_type.h: emergent_TA_type.hx 
 
 bp_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(BP_HEADS)
-  $(CD) $(PDP4DIR)/src/bp
+  $(CD) $(EMERGENTDIR)/src/emergent/bp
   $(MAKETA) $(MAKETA_FLAGS) bp -f files.mta 
   
 bp_TA_type.h: bp_TA_type.hx
 
 cs_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(CS_HEADS)
-  $(CD) $(PDP4DIR)/src/cs
+  $(CD) $(EMERGENTDIR)/src/emergent/cs
   $(MAKETA) $(MAKETA_FLAGS) cs -f files.mta 
   
 cs_TA_type.h: cs_TA_type.hx
 
 leabra_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(LEABRA_HEADS)
-  $(CD) $(PDP4DIR)/src/leabra
+  $(CD) $(EMERGENTDIR)/src/emergent/leabra
   $(MAKETA) $(MAKETA_FLAGS) leabra -f files.mta 
 
 leabra_TA_type.h: leabra_TA_type.hx
   
 so_TA_type.hx: $(TA_HEADS) $(PDP_MAKETA) $(SO_HEADS)
-  $(CD) $(PDP4DIR)/src/so
+  $(CD) $(EMERGENTDIR)/src/emergent/so
   $(MAKETA) $(MAKETA_FLAGS) so -f files.mta 
   
 so_TA_type.h: so_TA_type.hx
@@ -440,7 +438,7 @@ ta_files: ta_TA_type.h ta_mocs
 css_files: css_mocs
 
 
-pdp_files: pdp_TA_type.h pdp_mocs
+network_files: emergent_TA_type.h network_mocs
 
 bp_files: bp_TA_type.h
 

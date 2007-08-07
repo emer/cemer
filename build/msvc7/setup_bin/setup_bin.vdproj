@@ -1687,7 +1687,7 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_927E9FDDFADE429BBF0F2F11AE02C821"
             {
-            "SourcePath" = "8:..\\..\\..\\src\\ta\\images\\pdp++_32x32x256.ico"
+            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\images\\pdp++_32x32x256.ico"
             "TargetName" = "8:pdp++_32x32x256.ico"
             "Tag" = "8:"
             "Folder" = "8:_2CC1AE92E340477CBAE29B499B64198C"
@@ -2690,8 +2690,8 @@
         {
             "{9300C6CA-4CE0-41D6-A6CD-70E04FD37067}:_80420F4F62D342B199C70F10D02337DA"
             {
-            "Name" = "8:pdp++.proj"
-            "Description" = "8:pdp++ project file"
+            "Name" = "8:emergent.proj"
+            "Description" = "8:emergent project file"
             "Extensions" = "8:proj"
             "MIME" = "8:"
             "Icon" = "8:"
@@ -2880,7 +2880,7 @@
                 {
                     "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_14985F5E8CF44D92B78A3F4FC174DCCF"
                     {
-                    "Name" = "8:pdp++"
+                    "Name" = "8:emergent"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -2902,7 +2902,7 @@
                 {
                     "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_0F7F93C599224784BDA43B344E8EBF28"
                     {
-                    "Name" = "8:pdp++_user"
+                    "Name" = "8:emergent_user"
                     "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -2978,7 +2978,7 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:pdp++"
+        "ProductName" = "8:emergent"
         "ProductCode" = "8:{172B342B-94B8-44C4-A2CE-AE57F394FDF5}"
         "PackageCode" = "8:{30C0211A-BFB2-4BFE-B4B6-10678B1ECE44}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
@@ -2989,7 +2989,7 @@
         "Manufacturer" = "8:ccnlab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:pdp++"
+        "Title" = "8:emergent"
         "Subject" = "8:"
         "ARPCONTACT" = "8:"
         "Keywords" = "8:"
@@ -3188,7 +3188,7 @@
             }
             "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_C46173FCC08F458784FE95F703FA025A"
             {
-            "Name" = "8:pdp++"
+            "Name" = "8:emergent"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -3588,7 +3588,7 @@
         {
             "{8062640A-2EEE-46E9-AB67-688E9A886E9F}:_6F5199158E62482FA030432801BB2F1C"
             {
-            "SourcePath" = "8:..\\pdp\\Release\\pdp.dll"
+            "SourcePath" = "8:..\\emergent\\Release\\emergent.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -3616,7 +3616,7 @@
             }
             "{8062640A-2EEE-46E9-AB67-688E9A886E9F}:_CF8C64A0EFA94764B3BFE2265007B411"
             {
-            "SourcePath" = "8:..\\pdp_bin\\Release\\pdp++.exe"
+            "SourcePath" = "8:..\\emergent_bin\\Release\\emergent.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"
@@ -3644,7 +3644,7 @@
             }
             "{8062640A-2EEE-46E9-AB67-688E9A886E9F}:_E1468C288D044D87B570A158804AC285"
             {
-            "SourcePath" = "8:..\\ta\\Release\\ta.dll"
+            "SourcePath" = "8:..\\temt\\Release\\temt.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_2FBC5C10C1DC48BF889F9B4378E57309"

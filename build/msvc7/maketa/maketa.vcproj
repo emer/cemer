@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(SolutionDir)&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;DEBUG;WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(PDP4DIR)\src\ta&quot;;&quot;$(PDP4DIR)\src&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(SolutionDir)&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;WIN32;_WINDOWS"
 				RuntimeLibrary="4"
 				RuntimeTypeInfo="TRUE"
@@ -120,19 +120,19 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
-				RelativePath="..\..\..\src\maketa\maketa.cpp">
+				RelativePath="..\..\..\src\temt\maketa\maketa.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_constr.cpp">
+				RelativePath="..\..\..\src\temt\maketa\mta_constr.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_gendoc.cpp">
+				RelativePath="..\..\..\src\temt\maketa\mta_gendoc.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_lex.cpp">
+				RelativePath="..\..\..\src\temt\maketa\mta_lex.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_parse.cpp">
+				RelativePath="..\..\..\src\temt\maketa\mta_parse.cpp">
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp">
@@ -150,25 +150,25 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_list.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_list.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_mtrnd.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_mtrnd.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_platform.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_platform.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_string.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_string.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_ti.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_ti.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_type.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_type.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_variant.cpp">
+				RelativePath="..\..\..\src\temt\ta\ta_variant.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -179,43 +179,43 @@
 				RelativePath="..\config.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\maketa.h">
+				RelativePath="..\..\..\src\temt\maketa\maketa.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_constr.h">
+				RelativePath="..\..\..\src\temt\maketa\mta_constr.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_parse.h">
+				RelativePath="..\..\..\src\temt\maketa\mta_parse.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\maketa\mta_parse.y">
+				RelativePath="..\..\..\src\temt\maketa\mta_parse.y">
 			</File>
 			<File
 				RelativePath=".\stdafx.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_global.h">
+				RelativePath="..\..\..\src\temt\ta\ta_global.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_list.h">
+				RelativePath="..\..\..\src\temt\ta\ta_list.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_mtrnd.h">
+				RelativePath="..\..\..\src\temt\ta\ta_mtrnd.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_platform.h">
+				RelativePath="..\..\..\src\temt\ta\ta_platform.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_stdef.h">
+				RelativePath="..\..\..\src\temt\ta\ta_stdef.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_string.h">
+				RelativePath="..\..\..\src\temt\ta\ta_string.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_type.h">
+				RelativePath="..\..\..\src\temt\ta\ta_type.h">
 			</File>
 			<File
-				RelativePath="..\..\..\src\ta\ta_variant.h">
+				RelativePath="..\..\..\src\temt\ta\ta_variant.h">
 			</File>
 		</Filter>
 		<Filter
