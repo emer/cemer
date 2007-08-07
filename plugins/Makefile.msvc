@@ -6,8 +6,8 @@ MAKE = nmake
 
 
 # we use config.pri as a dependent to trigger rebuild of things when configure changes
-CONFIG_PRI = $(PDP4DIR)\plugins\config.pri
-PDP_SYS_DIR = $(PDP4DIR)
+CONFIG_PRI = $(EMERGENTDIR)\plugins\config.pri
+PDP_SYS_DIR = $(EMERGENTDIR)
 
 all: qmake build
 

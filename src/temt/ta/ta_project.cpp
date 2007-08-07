@@ -1176,11 +1176,11 @@ bool taRootBase::Startup_InitTA_folders() {
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
   
-/* NOTE: we give priority to the TEMTDIR variable first, for
+/* NOTE: we give priority to the EMERGENTDIR variable first, for
    development purposes. Otherwise, we use the heuristic search
    based on the platform, and as a last resort, prompt user.
 */
-  app_dir = getenv("TEMTDIR");
+  app_dir = getenv("EMERGENTDIR");
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
 
@@ -1377,12 +1377,12 @@ bool MakeUserPluginConfigProxy(const String& uplugin_dir,
 {
 //note: isEmpty takes a raw var, not its content
   String f(
-"tmpPDP4_DIR = $(PDP4DIR)\n"
-"isEmpty( tmpPDP4_DIR ) {\n"
-"  tmpPDP4_DIR = " + taMisc::app_dir + "\n"
+"tmpEMERGENT_DIR = $(EMERGENTDIR)\n"
+"isEmpty( tmpEMERGENT_DIR ) {\n"
+"  tmpEMERGENT_DIR = " + taMisc::app_dir + "\n"
 "}\n"
-"!include($${tmpPDP4_DIR}/plugins/" + fname + ")  {\n"
-"  error(\"could not find <pdp4dir>/plugins/" + fname + "\")\n"
+"!include($${tmpEMERGENT_DIR}/plugins/" + fname + ")  {\n"
+"  error(\"could not find <emergentdir>/plugins/" + fname + "\")\n"
 "}\n");
   String tfname = uplugin_dir + "/" + fname;
   if (FileWithContentExists(f, tfname)) return true;

@@ -1,5 +1,5 @@
 # Shared declarations for libpdp-based plugin
-# Assumes you have ${PDP4DIR} AND ${QTDIR} set
+# Assumes you have ${EMERGENTDIR} AND ${QTDIR} set
 
 # add the master config file as a pseudo-header so we are dependent on it
 HEADERS += $${CONFIG_PRI}
@@ -12,9 +12,9 @@ MSVC_FOLDER = msvc7
 maketa.target = $${TARGET}_TA_type.h
 
 win32 {
-  maketa.commands = $$(PDP4DIR)\\build\\$${MSVC_FOLDER}\\bin\\maketa.exe -css /D DEBUG -win_dll \
-  /I $$(PDP4DIR)\\build\\$${MSVC_FOLDER}\\include \
-  /I $$(PDP4DIR)\\build\\$${MSVC_FOLDER} \
+  maketa.commands = $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER}\\bin\\maketa.exe -css /D DEBUG -win_dll \
+  /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER}\\include \
+  /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER} \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 } else {
   maketa.commands = $${MAKETA} -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}

@@ -1,5 +1,5 @@
 # Make a plugin for pdp++
-# Assumes you have ${HOME}, ${PDP4DIR} AND ${QTDIR} set
+# Assumes you have ${HOME}, ${EMERGENTDIR} AND ${QTDIR} set
 
 !include( ../shared_pre.pri ) {
   message( "../shared_pre.pri file is missing or could not be included" )
@@ -18,7 +18,7 @@ HEADERS += $${TARGET}.h
 # you should also include xx_TA_type.h files that are referenced
 # directly or indirectly by your own headers
 
-MAKETA_HEADERS = $${PDP4_INC_DIR_ta}/ta_TA_type.h $${HEADERS}
+MAKETA_HEADERS = $${TEMT_INC_DIR_ta}/ta_TA_type.h $${HEADERS}
 
 
 # Declare all the source files, *except* the following:

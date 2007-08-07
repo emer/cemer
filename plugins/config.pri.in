@@ -7,7 +7,7 @@ CONFIG = lex yacc plugin warn_off uic resources qt incremental stl link_prl
 CONFIG += qt_no_framework
 
 # on Unix, if empty, then inc/lib etc. paths are from install
-PDP4_DIR = $$(PDP4DIR)
+EMERGENT_DIR = $$(EMERGENTDIR)
 
 win32 {
   CONFIG += dll
@@ -27,11 +27,11 @@ win32 {
   }
   
   LIB_VER = 
-  SYS_PLUGIN_DIR = $$(PDP4DIR)/plugins
-  CONFIG_PRI = $$(PDP4DIR)/plugins/config.pri
-  PDP_SYS_DIR = $$(PDP4DIR)
-  PDP4_INC_DIR = $${PDP4_DIR}/src
-  MAKETA = $$(PDP4DIR)/bin/maketa
+  SYS_PLUGIN_DIR = $$(EMERGENTDIR)/plugins
+  CONFIG_PRI = $$(EMERGENTDIR)/plugins/config.pri
+  EMERGENT_SYS_DIR = $$(EMERGENTDIR)
+  EMERGENT_INC_DIR = $${EMERGENT_DIR}/src
+  MAKETA = $$(EMERGENTDIR)/bin/maketa
   
 #TODO: add our pdp project depends on Windows, ex ode etc.
 #  LIBS +=   
@@ -43,7 +43,7 @@ win32 {
 #  prefix = @PL_prefix@
 #  exec_prefix = @PL_exec_prefix@
 #  bindir = @PL_bindir@
-# this will be the prefix path of pdp system directory, if installed
+# this will be the prefix path of emergent system directory, if installed
 #  datadir = @PL_datadir@
 #  includedir = @PL_includedir@
   
@@ -64,20 +64,20 @@ win32 {
 
   
 # the install target for plugins
-  SYS_PLUGIN_DIR = ${datadir}/pdp++/plugins
+  SYS_PLUGIN_DIR = ${datadir}/emergent/plugins
   CONFIG_PRI = @abs_srcdir@/config.pri
   
-  # now, the modal paths that depend on whether PDP4DIR is defined or not
-  isEmpty( PDP4_DIR ) {
-    PDP_SYS_DIR = ${datadir}/pdp++
-    PDP4_INC_DIR = $${includedir}/pdp++
+  # now, the modal paths that depend on whether EMERGENTDIR is defined or not
+  isEmpty( EMERGENT_DIR ) {
+    EMERGENT_SYS_DIR = ${datadir}/emergent
+    EMERGENT_INC_DIR = $${includedir}/emergent
     MAKETA = $${bindir}/maketa
   } else {
-    PDP_SYS_DIR = ${datadir}/pdp++
-    PDP4_INC_DIR = $${PDP4_DIR}/src
-    LIBS += -L$${PDP4_DIR}/src/ta_lib/.libs
-    LIBS += -L$${PDP4_DIR}/src/pdp_lib/.libs
-    MAKETA = $${PDP4_DIR}/src/maketa/maketa
+    EMERGENT_SYS_DIR = ${datadir}/pdp++
+    EMERGENT_INC_DIR = $${EMERGENT_DIR}/src
+    LIBS += -L$${EMERGENT_DIR}/src/temt/lib/.libs
+    LIBS += -L$${EMERGENT_DIR}/src/emergent/lib/.libs
+    MAKETA = $${EMERGENT_DIR}/src/temt/maketa/maketa
 
   }
 }

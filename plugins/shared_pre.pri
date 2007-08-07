@@ -7,13 +7,13 @@
 }
 TEMPLATE = lib
 
-# local root, relative to a plugin src folder, which works whether this is PDPDIR or mypdpdir
+# local root, relative to a plugin src folder, which works whether this is EMERGENTDIR or mypdpdir
 THIS_ROOT = ../..
 
 # the specific build folder of the version of msvc we are using
 win32 {
 # TODO: this would need to be changed for later versions
-  BUILD_MSVC = $$(PDP4DIR)/build/msvc7
+  BUILD_MSVC = $$(EMERGENTDIR)/build/msvc7
 }
 
 # we have up to 8 variants of binary, based on: debug, mpi, and nogui
@@ -70,75 +70,75 @@ BUILD_EXT_SF = $${BUILD_EXT_SF}$${BUILD_EXT}
 
 # note: all plugins search plugins for dependencies
 LIBS += -L$${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
-LIBS += -L$${PDP4_DIR}/lib/plugins$${BUILD_EXT_SF}
+LIBS += -L$${EMERGENT_DIR}/lib/plugins$${BUILD_EXT_SF}
 LIBS +=	-L$${THIS_ROOT}/lib
 win32 {
-  DEFINES += QT_DLL CSS_DLL TA_DLL TAIQTSO_DLL PDP_DLL BP_DLL CS_DLL LEABRA_DLL SO_DLL
+  DEFINES += QT_DLL CSS_DLL TEMT_DLL TAIQTSO_DLL EMERGENT_DLL BP_DLL CS_DLL LEABRA_DLL SO_DLL
   LIBS += -L$${BUILD_MSVC}/lib
-#  LIBS += $${BUILD_MSVC}/lib/ta$${BUILD_EXT_US}.lib
-#  LIBS += $${BUILD_MSVC}/lib/pdp$${BUILD_EXT_US}.lib
+#  LIBS += $${BUILD_MSVC}/lib/temt$${BUILD_EXT_US}.lib
+#  LIBS += $${BUILD_MSVC}/lib/emergent$${BUILD_EXT_US}.lib
   LIBS += -lta$${BUILD_EXT_US} -lpdp$${BUILD_EXT_US}
 } else {
-  LIBS += -L$${PDP4_DIR}/lib
-  LIBS += -ltacss$${BUILD_EXT_US}-$${LIB_VER}
-  LIBS += -lpdp$${BUILD_EXT_US}-$${LIB_VER}
+  LIBS += -L$${EMERGENT_DIR}/lib
+  LIBS += -ltemt$${BUILD_EXT_US}-$${LIB_VER}
+  LIBS += -lemergent$${BUILD_EXT_US}-$${LIB_VER}
 }
 
 # include paths
 INCLUDEPATH +=\
 	. \
-	$${PDP4_INC_DIR}  \
+	$${EMERGENT_INC_DIR}  \
 	$${THIS_ROOT}/include
 
 MAKETA_INCLUDEPATH +=\
 	-I. \
-	-I$${PDP4_INC_DIR} \
+	-I$${EMERGENT_INC_DIR} \
 	-I$${THIS_ROOT}/include	
 	
 # modal include folders -- these are diff depending on platform and dev/retail
-# on win32, we must have PDP4DIR defined, and we always deploy just like dev
-# on unix, we use PDP4DIR for dev, and have hier includes, else flat includes
-isEmpty( PDP4_DIR ) {
-  PDP4_INC_DIR_taiqtso = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_ta = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_css = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_pdp = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_bp = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_cs = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_leabra = $${PDP4_INC_DIR}
-  PDP4_INC_DIR_so = $${PDP4_INC_DIR}
+# on win32, we must have EMERGENTDIR defined, and we always deploy just like dev
+# on unix, we use EMERGENTDIR for dev, and have hier includes, else flat includes
+isEmpty( EMERGENT_DIR ) {
+  TEMT_INC_DIR_taiqtso = $${EMERGENT_INC_DIR}
+  TEMT_INC_DIR_ta = $${EMERGENT_INC_DIR}
+  TEMT_INC_DIR_css = $${EMERGENT_INC_DIR}
+  EMERGENT_INC_DIR_network = $${EMERGENT_INC_DIR}
+  EMERGENT_INC_DIR_bp = $${EMERGENT_INC_DIR}
+  EMERGENT_INC_DIR_cs = $${EMERGENT_INC_DIR}
+  EMERGENT_INC_DIR_leabra = $${EMERGENT_INC_DIR}
+  EMERGENT_INC_DIR_so = $${EMERGENT_INC_DIR}
   
 } else { # unix
-  PDP4_INC_DIR_taiqtso = $${PDP4_INC_DIR}/taiqtso
-  PDP4_INC_DIR_ta = $${PDP4_INC_DIR}/ta
-  PDP4_INC_DIR_css = $${PDP4_INC_DIR}/css
-  PDP4_INC_DIR_pdp = $${PDP4_INC_DIR}/pdp
-  PDP4_INC_DIR_bp = $${PDP4_INC_DIR}/bp
-  PDP4_INC_DIR_cs = $${PDP4_INC_DIR}/cs
-  PDP4_INC_DIR_leabra = $${PDP4_INC_DIR}/leabra
-  PDP4_INC_DIR_so = $${PDP4_INC_DIR}/so
+  TEMT_INC_DIR_taiqtso = $${EMERGENT_INC_DIR}/temt/taiqtso
+  TEMT_INC_DIR_ta = $${EMERGENT_INC_DIR}/temt/ta
+  TEMT_INC_DIR_css = $${EMERGENT_INC_DIR}/temt/css
+  EMERGENT_INC_DIR_network = $${EMERGENT_INC_DIR}/network
+  EMERGENT_INC_DIR_bp = $${EMERGENT_INC_DIR}/bp
+  EMERGENT_INC_DIR_cs = $${EMERGENT_INC_DIR}/cs
+  EMERGENT_INC_DIR_leabra = $${EMERGENT_INC_DIR}/leabra
+  EMERGENT_INC_DIR_so = $${EMERGENT_INC_DIR}/so
   
   INCLUDEPATH +=\
-	$${PDP4_INC_DIR}/taiqtso \
-	$${PDP4_INC_DIR}/ta \
-	$${PDP4_INC_DIR}/ta/ios-g++-3.1 \
-	$${PDP4_INC_DIR}/css \
-	$${PDP4_INC_DIR}/pdp \
-	$${PDP4_INC_DIR}/bp \
-	$${PDP4_INC_DIR}/cs \
-	$${PDP4_INC_DIR}/leabra \
-	$${PDP4_INC_DIR}/so
+	$${EMERGENT_INC_DIR}/temt/taiqtso \
+	$${EMERGENT_INC_DIR}/temt/ta \
+	$${EMERGENT_INC_DIR}/temt/ta/ios-g++-3.1 \
+	$${EMERGENT_INC_DIR}/temt/css \
+	$${EMERGENT_INC_DIR}/emergent/network \
+	$${EMERGENT_INC_DIR}/emergent/bp \
+	$${EMERGENT_INC_DIR}/emergent/cs \
+	$${EMERGENT_INC_DIR}/emergent/leabra \
+	$${EMERGENT_INC_DIR}/emergent/so
 	
   MAKETA_INCLUDEPATH +=\
-	-I$${PDP4_INC_DIR}/taiqtso \
-	-I$${PDP4_INC_DIR}/ta \
-	-I$${PDP4_INC_DIR}/ta/ios-g++-3.1 \
-	-I$${PDP4_INC_DIR}/css \
-	-I$${PDP4_INC_DIR}/pdp \
-	-I$${PDP4_INC_DIR}/bp \
-	-I$${PDP4_INC_DIR}/cs \
-	-I$${PDP4_INC_DIR}/leabra \
-	-I$${PDP4_INC_DIR}/so	
+	-I$${EMERGENT_INC_DIR}/temt/taiqtso \
+	-I$${EMERGENT_INC_DIR}/temt/ta \
+	-I$${EMERGENT_INC_DIR}/temt/ta/ios-g++-3.1 \
+	-I$${EMERGENT_INC_DIR}/temt/css \
+	-I$${EMERGENT_INC_DIR}/emergent/network \
+	-I$${EMERGENT_INC_DIR}/emergent/bp \
+	-I$${EMERGENT_INC_DIR}/emergent/cs \
+	-I$${EMERGENT_INC_DIR}/emergent/leabra \
+	-I$${EMERGENT_INC_DIR}/emergent/so	
 }
 
 win32 {
@@ -147,14 +147,14 @@ win32 {
 	
   MAKETA_INCLUDEPATH +=\
 	-I$${BUILD_MSVC}
-  DESTDIR = $${PDP4_DIR}/lib/plugins$${BUILD_EXT_SF}
+  DESTDIR = $${EMERGENT_DIR}/lib/plugins$${BUILD_EXT_SF}
 } else {
   INCLUDEPATH +=\
-	$${PDP4_DIR}
+	$${EMERGENT_DIR}
 	
   MAKETA_INCLUDEPATH +=\
-	-I$${PDP4_DIR}
+	-I$${EMERGENT_DIR}
 }
 
-#DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
+DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 
