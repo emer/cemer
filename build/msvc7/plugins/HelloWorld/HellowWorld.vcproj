@@ -202,7 +202,7 @@
 			Value=".\GeneratedFiles\$(ConfigurationName)"/>
 		<Global
 			Name="QtVersion"
-			Value="4.2.3"/>
+			Value="4.3.1"/>
 		<Global
 			Name="RccDir"
 			Value=".\GeneratedFiles"/>
