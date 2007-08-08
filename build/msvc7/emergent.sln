@@ -29,7 +29,7 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "setup_bin", "setup_bin\setu
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "plugins\HellowWorld\HellowWorld.vcproj", "{93CBAF00-4892-4660-8AE0-105317D6833D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloWorld", "plugins\HelloWorld\HelloWorld.vcproj", "{93CBAF00-4892-4660-8AE0-105317D6833D}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
