@@ -420,6 +420,7 @@ public:
 // contains sub-data's within a deck (aka Qt Stack) -- can toggle between them
 
 class TA_API taiDataDeck : public taiCompData {
+  Q_OBJECT
 public:
   inline QStackedWidget* rep() {return (QStackedWidget*)(QWidget*)m_rep;}
 

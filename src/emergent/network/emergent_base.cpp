@@ -75,11 +75,11 @@ static const unsigned char emergent_bitmap_bits[] = {
 
 
 //////////////////////////
-//	EmergentMisc		//
+//	EmergentMisc	//
 //////////////////////////
 
 int EmergentMisc::Main(int& argc, const char *argv[]) {
-  taMisc::web_help_url = "http://grey.colorado.edu/emergent";
+  taMisc::web_help_url = "http://grey.colorado.edu/emergent/index.php/User_hub";
   if(!taRootBase::Startup_Main(argc, argv, ta_Init_emergent, &TA_EmergentRoot)) return 1;
 #ifdef TA_GUI
   if(taMisc::use_gui) {

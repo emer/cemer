@@ -67,6 +67,7 @@ class TA_API DataTableModel: public QAbstractTableModel,
 INHERITED(QAbstractTableModel)
 friend class DataTableCols;
 friend class DataTable;
+  Q_OBJECT
 public:
 #ifndef __MAKETA__
   QPointer<QWidget>	gui_parent;
