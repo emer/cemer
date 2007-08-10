@@ -854,6 +854,17 @@ public:
   bool operator>=(cssEl& s) 	{ return (GetEnumRef(">=").NumVal() >= (Int)s); }
   bool operator==(cssEl& s);
   bool operator!=(cssEl& s);
+
+  void operator+=(cssEl& t);
+  void operator-=(cssEl& t);
+  void operator*=(cssEl& t);
+  void operator/=(cssEl& t);
+  void operator%=(cssEl& t);
+  void operator<<=(cssEl& t);
+  void operator>>=(cssEl& t);
+  void operator&=(cssEl& t);
+  void operator^=(cssEl& t);
+  void operator|=(cssEl& t);
 };
 
 #endif // css_ptr_i_h

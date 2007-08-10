@@ -1067,3 +1067,63 @@ bool cssCPtr_DynEnum::operator!=(cssEl& t) {
   return GetEnumRef().NumVal() != (Int)t;
 }
 
+void cssCPtr_DynEnum::operator+=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("+=");
+  de.SetNumVal(de.NumVal() + (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator-=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("-=");
+  de.SetNumVal(de.NumVal() - (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator*=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("*=");
+  de.SetNumVal(de.NumVal() * (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator/=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("/=");
+  de.SetNumVal(de.NumVal() / (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator%=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("%=");
+  de.SetNumVal(de.NumVal() % (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator<<=(cssEl& t) {
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("<<=");
+  de.SetNumVal(de.NumVal() << (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator>>=(cssEl& t) {
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef(">>=");
+  de.SetNumVal(de.NumVal() >> (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator&=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("&=");
+  de.SetNumVal(de.NumVal() & (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator^=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("^=");
+  de.SetNumVal(de.NumVal() ^ (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
+void cssCPtr_DynEnum::operator|=(cssEl& t)	{
+  if(!ROCheck()) return;
+  DynEnum& de = GetEnumRef("|=");
+  de.SetNumVal(de.NumVal() | (Int)t);
+  if(class_parent)	class_parent->UpdateAfterEdit();
+}
