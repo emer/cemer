@@ -4,6 +4,6 @@ dist_pkgdata_leabra_DATA =\
 	12ax4s.proj \
 	model_and_task.proj \
 	simple_vis_search.proj \
-	sim_tutorial.proj \
-	sim_tutorial_input_data.dtbl \
-	sim_tutorial_final.proj
+	ax_tutorial.proj \
+	ax_tutorial_input_data.dtbl \
+	ax_tutorial_final.proj
