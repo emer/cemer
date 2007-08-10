@@ -231,6 +231,7 @@ void Doc_Group::AutoEdit() {
 
 void taWizard::Initialize() {
   auto_open = true;
+  SetUserData("NO_CLIP", true);
 }
 
 //////////////////////////////////
@@ -308,14 +309,15 @@ void taProject::InitLinks_impl() {
   taBase::Own(viewers, this);
 
   // note: any derived programs should install additional guys..
-  FindMakeNewDataProc(&TA_taDataProc, "data_base");
-  FindMakeNewDataProc(&TA_taDataAnal, "data_anal");
-  FindMakeNewDataProc(&TA_taDataGen, "data_gen");
-  FindMakeNewDataProc(&TA_taImageProc, "image_proc");
+  // put in NO_CLIP to suppress clip ops, since we don't want any for these guys
+  FindMakeNewDataProc(&TA_taDataProc, "data_base")->SetUserData("NO_CLIP", true);
+  FindMakeNewDataProc(&TA_taDataAnal, "data_anal")->SetUserData("NO_CLIP", true);
+  FindMakeNewDataProc(&TA_taDataGen, "data_gen")->SetUserData("NO_CLIP", true);
+  FindMakeNewDataProc(&TA_taImageProc, "image_proc")->SetUserData("NO_CLIP", true);
   // not actually useful to have these guys visible..  no user-accessible matrix objs
   // if in datatable, it should be accessible in above
-//   FindMakeNewDataProc(&TA_taMath_float, "math_float");
-//   FindMakeNewDataProc(&TA_taMath_double, "math_double");
+//   FindMakeNewDataProc(&TA_taMath_float, "math_float")->SetUserData("NO_CLIP", true);
+//   FindMakeNewDataProc(&TA_taMath_double, "math_double")->SetUserData("NO_CLIP", true);
 }
 
 void taProject::InitLinks_post() {

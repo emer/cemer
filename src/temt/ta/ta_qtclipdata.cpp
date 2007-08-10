@@ -654,7 +654,10 @@ void taBase::QueryEditActionsS_impl(int& allowed, int& forbidden)
   allowed |= taiClipData::EA_COPY;
   if (isGuiReadOnly()) {
     forbidden |= (taiClipData::EA_CLEAR);
-  }  
+  }
+  // simple convention to forbid clip ops for things like Wizards: 
+  if (HasUserData("NO_CLIP")) 
+    forbidden |= taiClipData::EA_SRC_OPS;  
 }
 
 void taBase::QueryEditActionsD_impl(taiMimeSource* ms, int& allowed, int& forbidden)
