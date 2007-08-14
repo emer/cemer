@@ -1034,7 +1034,8 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
   for(int i=0; i<es->patterns.size; i++) {
     PatternSpec* ps = (PatternSpec*)es->patterns[i];
     if(ps->type == PatternSpec::INACTIVE) continue;
-    LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeLayerData(ps->name, ps->layer_name);
+    //LayerWriterEl* le = (LayerWriterEl*)
+    lw->layer_data.FindMakeLayerData(ps->name, ps->layer_name);
     Layer* lay = (Layer*)net->layers.FindLeafName(ps->layer_name);
     if(lay) {
       if(ps->type == PatternSpec::INPUT) lay->layer_type = Layer::INPUT;

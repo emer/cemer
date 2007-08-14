@@ -253,7 +253,6 @@ protected:
 
 protected:
   MemberDef*		m_md; // memberdef of this item in its parent
-  T3NodePtr		m_node_so; // Inventor node
 
   void			setNode(T3Node* node); // make changes via this
   
@@ -283,9 +282,10 @@ protected:
   override void		UpdateAfterEdit_impl();
 
 private:
+  T3NodePtr		m_node_so; // Inventor node DO NOT MOVE FROM PRIVATE!!! DON'T EVEN THINK ABOUT IT!!! YOU ARE STILL THINKING ABOUT IT... STOP!!!!!!!
   void	Copy_(const T3DataView& cp);
-  void			Initialize();
-  void			Destroy();
+  void	Initialize();
+  void	Destroy();
 };
 TA_SMART_PTRS(T3DataView);
 

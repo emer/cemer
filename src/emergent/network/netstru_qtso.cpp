@@ -153,16 +153,16 @@ void UnitView::Render_pre() {
 
   switch (nv->unit_disp_mode) {
   case NetView::UDM_CIRCLE:
-    m_node_so = new T3UnitNode_Circle(this, max_x, max_y, max_z, un_spc);
+    setNode(new T3UnitNode_Circle(this, max_x, max_y, max_z, un_spc));
     break;
   case NetView::UDM_RECT:
-    m_node_so = new T3UnitNode_Rect(this, max_x, max_y, max_z, un_spc);
+    setNode(new T3UnitNode_Rect(this, max_x, max_y, max_z, un_spc));
     break;
   case NetView::UDM_BLOCK:
-    m_node_so = new T3UnitNode_Block(this, max_x, max_y, max_z, un_spc);
+    setNode(new T3UnitNode_Block(this, max_x, max_y, max_z, un_spc));
     break;
   case NetView::UDM_CYLINDER:
-    m_node_so = new T3UnitNode_Cylinder(this, max_x, max_y, max_z, un_spc);
+    setNode(new T3UnitNode_Cylinder(this, max_x, max_y, max_z, un_spc));
     break;
   }
 
@@ -421,7 +421,7 @@ void UnitGroupView::Render_pre() {
     no_units = false;
 
   AllocUnitViewData();
-  m_node_so = new T3UnitGroupNode(this, no_units);
+  setNode(new T3UnitGroupNode(this, no_units));
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
@@ -1142,7 +1142,7 @@ void LayerView::Render_pre() {
   if(vw)
     show_drag = !vw->isViewing();
 
-  m_node_so = new T3LayerNode(this, show_drag);
+  setNode(new T3LayerNode(this, show_drag));
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -1340,7 +1340,7 @@ void PrjnView::DoHighlightColor(bool apply) {
 void PrjnView::Render_pre() {
   NetView* nv = this->nv();
   Projection* prjn = this->prjn(); // cache
-  m_node_so = new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width);
+  setNode(new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width));
   DoHighlightColor(false);
   inherited::Render_pre();
 }
@@ -1967,7 +1967,7 @@ void NetView::Render_pre() {
   if(vw)
     show_drag = !vw->isViewing();
 
-  m_node_so = new T3NetNode(this, show_drag);
+  setNode(new T3NetNode(this, show_drag));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);

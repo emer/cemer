@@ -6,17 +6,58 @@ T3 Selection
 * our biggest issue is when an So guy deletes, it doesn't raise a deselect
   * causes spurious "higher subpath" visual selection
   * leaves us with an invalid selection in our list
-  
+* new issues noted (8/13/07) - 
+  * if you have a datacol selected, then vert scroll, the whole bunch get selected
+  * possible causes this bug:
+    * sel a col, then Hide; vert scroll; then sel another col to operate on:
+    -- you find that sel_items has 2 in it at a certain point, and that if you do
+     a right click, you get a multi-sel situation, and the props for the original
+     col, i.e. it never gets deselected
+    -- if you sel, hide, then scroll, you get a desel event, but it seems to 
+       apply to the spurious sel of the entire header, and so leaves the previous
+       hidden guy on the sel list
+     
+hypothesis:
+
 Notes:
 
 * sels are paths; as such, there is a M:1 mapping between possible paths:So objs
 * sels are paths to So objs (so only indirectly to t3 guys)
+* BUT: you can pass a node to SoSelection::deselect()
+* the main issue is T3DataView guys getting ON sel list, then not getting removed
+  WHY? typically because node deletes, and that doesn't invoke Deselect cb
+  BUT: node only deletes under control of the selected guy...
+  SO: if a guy is selected, it needs to deselect itself when it deletes its node
+  
 * we can't directly hook node deletion, nor probably do we want to
 * nodes just don't spontaneously delete; 
+* prolly expensive to remove a path???
+* it is fast/efficient to check a ptr stored on a small list
+  * so when we accept a sel, we could put the node on a list
+* there is no easy way to get a viewer from a node, AND we are allowed to put
+  a node in >1 viewers;
+  THEREFORE the easiest and prolly best way is to simply search all viewers
+
 
 
 fix:
-* spurious sel on delete of a guy
+* 
+1) have easy access to all the SoSelection nodes
+2) keep a single, simple, global list of selected nodes --
+   this will make it very fast to check when the node deletes
+   ON: when selected (note: *regardless* if we put on t3 sel list
+   OFF: 1) when deselected;
+        2) when deleted (but only *after* deselecting it)
+
+changes:
+
+T3Node:
+  * add a static sel_list
+  * add a static callback process for delete
+  * on destroy, if on sel_list: call callback; 2) remove from list
+  
+iT3ViewerWidget
+  * on create, confirm T3Node callback in place
 
 What we could do:
 
@@ -24,6 +65,19 @@ What we could do:
   our kinds of nodes (ex t3 nodes) to be selected
 * we control when nodes get deleted (via Render_pre and Clear), and could remove them
   from selection, prior to deletion
+* we get an event when selected; this is what leads us to put in on the sel_list
+  we get the SoNode, from which we extract the T3Node ref, then put that on the list
+* 
+
+
+
+notes on sel/hide issue:
+
+* even if the col is hidden, it *does* deselect in "normal" cases, ie when we sel another
+  visible col
+* after hiding col, you don't get a desel event
+
+* something 
 
 ccn lab 4/25/07
 

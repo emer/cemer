@@ -870,7 +870,7 @@ void T3DataViewPar::ReInit() {
 //////////////////////////
 
 void T3DataViewRoot::Constr_Node_impl() {
-  m_node_so = new T3NodeParent;
+  setNode(new T3NodeParent);
 }
 
 void T3DataViewRoot::ChildRemoving(taDataView* child) {

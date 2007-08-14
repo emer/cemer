@@ -54,6 +54,7 @@ class iDataTableView;
 class iDataTablePanel; //
 
 // externals
+class T3GridColViewNode;
 class T3GridViewNode;
 class T3Axis;
 class T3GraphLine;
@@ -263,6 +264,7 @@ protected:
 class TA_API GridColView : public DataColView {
   // information for display of a data column in a grid display.  scalar columns are always displayed as text, and matrix as blocks (with optional value text, controlled by overall table spec)
 INHERITED(DataColView)
+friend class GridTableView;
 public:
   int		text_width; 	// width of the column (or each matrix col) in chars; also the min width in chars
   bool		scale_on; 	// adjust overall colorscale to include this data (if it is a matrix type)
@@ -288,6 +290,9 @@ protected:
   void			UpdateAfterEdit_impl();
   override void		UpdateFromDataCol_impl(bool first_time);
   override void		DataColUnlinked(); // called if data is NULL or destroys
+  
+  T3GridColViewNode*	MakeGridColViewNode(); // non-standard api/semantics -- makes/sets the node; only called by the GridTableView
+
 
 private:
   void 	Initialize();
@@ -347,7 +352,7 @@ public:
   virtual void 	ViewCol_At(int start);	// start viewing at indicated column value
   
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
-  T3GridViewNode* node_so() const {return (T3GridViewNode*)m_node_so.ptr();}
+  inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
 
   virtual void		InitFromUserData();
 
@@ -820,7 +825,7 @@ public:
 
 
   iGraphTableView_Panel*	lvp(){return (iGraphTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
-  T3GraphViewNode* node_so() const {return (T3GraphViewNode*)m_node_so.ptr();}
+  inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}
 
   override const iColor	bgColor(bool& ok) const;
   override String	GetLabel() const;

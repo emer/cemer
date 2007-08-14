@@ -186,9 +186,9 @@ void VEBodyView::SetBody(VEBody* ob) {
 }
 
 void VEBodyView::Render_pre() {
-  m_node_so = new T3VEBody(this);
+  setNode(new T3VEBody(this));
   VEWorldView* wv = parent();
-  SoSeparator* ssep = m_node_so->shapeSeparator();
+  SoSeparator* ssep = node_so()->shapeSeparator();
 
   VEBody* ob = Body();
   if(ob) {
@@ -198,7 +198,7 @@ void VEBodyView::Render_pre() {
 	SoSeparator* root = SoDB::readAll(&in);
 	if (root) {
 	  ssep->addChild(root);
-	  SoTransform* tx = m_node_so->txfm_shape();
+	  SoTransform* tx = node_so()->txfm_shape();
 	  ob->obj_xform.CopyTo(tx);
 	  goto finish;
 	}
@@ -233,7 +233,7 @@ void VEBodyView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = m_node_so->txfm_shape();
+      SoTransform* tx = node_so()->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEBody::LONG_Y)
@@ -247,7 +247,7 @@ void VEBodyView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = m_node_so->txfm_shape();
+      SoTransform* tx = node_so()->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEBody::LONG_Y)
@@ -338,7 +338,7 @@ void VEObjectView::BuildAll() {
 }
 
 void VEObjectView::Render_pre() {
-  m_node_so = new T3VEObject(this);
+  setNode(new T3VEObject(this));
   inherited::Render_pre();
 }
 
@@ -383,9 +383,9 @@ void VEStaticView::SetStatic(VEStatic* ob) {
 }
 
 void VEStaticView::Render_pre() {
-  m_node_so = new T3VEStatic(this);
+  setNode(new T3VEStatic(this));
   VEWorldView* wv = parent();
-  SoSeparator* ssep = m_node_so->shapeSeparator();
+  SoSeparator* ssep = node_so()->shapeSeparator();
 
   VEStatic* ob = Static();
   if(ob) {
@@ -395,7 +395,7 @@ void VEStaticView::Render_pre() {
 	SoSeparator* root = SoDB::readAll(&in);
 	if (root) {
 	  ssep->addChild(root);
-	  SoTransform* tx = m_node_so->txfm_shape();
+	  SoTransform* tx = node_so()->txfm_shape();
 	  ob->obj_xform.CopyTo(tx);
 	  goto finish;
 	}
@@ -431,7 +431,7 @@ void VEStaticView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = m_node_so->txfm_shape();
+      SoTransform* tx = node_so()->txfm_shape();
       if(ob->long_axis == VEStatic::LONG_X)
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEStatic::LONG_Y)
@@ -445,7 +445,7 @@ void VEStaticView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = m_node_so->txfm_shape();
+      SoTransform* tx = node_so()->txfm_shape();
       switch (ob->long_axis) {
       case VEStatic::LONG_X:
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
@@ -473,7 +473,7 @@ void VEStaticView::Render_pre() {
       sp->depth = ob->plane_vis_size.y;
       sp->height = .01f;
       ssep->addChild(sp);
-      SoTransform* tx = m_node_so->txfm_shape();
+      SoTransform* tx = node_so()->txfm_shape();
       switch (ob->plane_norm) {
       case VEStatic::NORM_X:
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
@@ -561,7 +561,7 @@ void VESpaceView::BuildAll() {
 }
 
 void VESpaceView::Render_pre() {
-  m_node_so = new T3VESpace(this);
+  setNode(new T3VESpace(this));
   inherited::Render_pre();
 }
 
@@ -740,7 +740,7 @@ void VEWorldView::BuildAll() {
 void VEWorldView::Render_pre() {
   InitPanel();
 
-  m_node_so = new T3VEWorld(this);
+  setNode(new T3VEWorld(this));
 
   CreateLights();
   CreateTextures();

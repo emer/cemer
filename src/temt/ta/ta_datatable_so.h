@@ -82,6 +82,8 @@ public:
   virtual void		setWidth(float wdth);
   virtual float		getWidth() { return width_; }
 
+  override void		addRemoveChildNode(SoNode* node, bool adding) {} // ignore 
+  
   T3GridViewNode(void* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
   // dataview is a GridTableView object
 protected:

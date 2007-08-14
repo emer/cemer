@@ -605,7 +605,7 @@ void DataTableView::BuildAll() {
 }
 
 void DataTableView::Render_pre() {
-  if (!m_node_so.ptr()) return; // shouldn't happen
+  if (!node_so()) return; // shouldn't happen
   InitPanel();
   if(m_lvp && m_lvp->t3vs) {
     m_lvp->t3vs->setSceneGraph(NULL);	// remove existing scene graph
@@ -854,6 +854,12 @@ void GridColView::ComputeColSizes() {
   }
 }
 
+T3GridColViewNode* GridColView::MakeGridColViewNode() {
+//NOTE: assumes that Clear has previously been called, so doesn't check for exist
+  T3GridColViewNode* colnd = new T3GridColViewNode(this);
+  setNode(colnd);
+  return colnd;
+}
 
 //////////////////////////////////
 //  GridTableView		//
@@ -1043,7 +1049,7 @@ void GridTableView::Render_pre() {
   if(vw)
     show_drag = !vw->isViewing();
 
-  m_node_so = new T3GridViewNode(this, width, show_drag);
+  setNode(new T3GridViewNode(this, width, show_drag));
 
   UpdatePanel();		// otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
@@ -1411,8 +1417,17 @@ void GridTableView::RenderGrid() {
 void GridTableView::RenderHeader() {
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
+  
+  // safely/correctly clear all the column headers
+  // we remove first manually from us...
   SoSeparator* hdr = node_so->header();
   hdr->removeAllChildren();
+  // and then remove ref in the ColView guys
+  for (int i = 0; i < colViewCount(); i++) {
+    GridColView* gcv = (GridColView*)colView(i);
+    gcv->Clear();
+  }
+  
   if (!header_on) return; // normally shouldn't be called if off
 
   SoComplexity* cplx = new SoComplexity;
@@ -1468,7 +1483,7 @@ void GridTableView::RenderHeader() {
       tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
     }
     col_wd_lst = col_widths[col_idx++]; // note incr
-    T3GridColViewNode* colnd = new T3GridColViewNode(cvs);
+    T3GridColViewNode* colnd = cvs->MakeGridColViewNode(); //note: non-standard semantics
     SoSeparator* colsep = colnd->topSeparator();
     colnd->material()->diffuseColor.setValue(0.0f, 0.0f, 0.0f); // black text
     SoTranslation* ttr = new SoTranslation();
@@ -1502,6 +1517,7 @@ void GridTableView::RenderHeader() {
     rect->height = head_height;
     rect->depth = gr_mg_sz;
     colnd->topSeparator()->addChild(rect);
+    cvs->setNode(colnd);
   }
 }
 
@@ -3000,7 +3016,7 @@ void GraphTableView::Render_pre() {
   if(vw)
     show_drag = !vw->isViewing();
 
-  m_node_so = new T3GraphViewNode(this, width, show_drag);
+  setNode(new T3GraphViewNode(this, width, show_drag));
 
 /*NOTES:
 1. Render_pre is only done once, or on STRUCT changes

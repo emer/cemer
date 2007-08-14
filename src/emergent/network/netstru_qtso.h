@@ -134,7 +134,7 @@ public:
 #endif
   Unit*			unit() const {return (Unit*)data();}
   UnitGroupView*	ugrv() {return GET_MY_OWNER(UnitGroupView);}
-  T3UnitNode*		node_so() const {return (T3UnitNode*)m_node_so.ptr();}
+  T3UnitNode*		node_so() const {return (T3UnitNode*)inherited::node_so();}
   NetView*		nv();
 
   override void		CutLinks();
@@ -195,7 +195,7 @@ public:
 
   Unit_Group*		ugrp() const {return (Unit_Group*)data();}
   UnitViewData&		uvd(const TwoDCoord& co) {return uvd_arr.FastEl(co);} // #IGNORE
-  T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)m_node_so.ptr();}
+  T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)inherited::node_so();}
 
   LayerView*		lv() const { return m_lv; }
   void			SetLayerView(LayerView* l) { m_lv = l; }
@@ -273,7 +273,7 @@ public:
   T3DataView_PtrList	ugrps; // #NO_SAVE #HIDDEN
 
   Layer*		layer() const {return (Layer*)data();}
-  T3LayerNode*		node_so() const {return (T3LayerNode*)m_node_so.ptr();}
+  T3LayerNode*		node_so() const {return (T3LayerNode*)inherited::node_so();}
 
   override void		BuildAll(); // creates fully populated subviews
   virtual void		UpdateUnitValues();
@@ -317,7 +317,7 @@ INHERITED(nvhDataView)
 friend class NetView;
 public:
   Projection*		prjn() const {return (Projection*)data();}
-  T3PrjnNode*		node_so() const {return (T3PrjnNode*)m_node_so.ptr();}
+  T3PrjnNode*		node_so() const {return (T3PrjnNode*)inherited::node_so();}
 
   T3_DATAVIEWFUNS(PrjnView, nvhDataView)
 protected:
@@ -393,7 +393,7 @@ public:
   NetViewParams		view_params;	// misc view parameters 
 
   Network*		net() const {return (Network*)data();}
-  T3NetNode*		node_so() const {return (T3NetNode*)m_node_so.ptr();}
+  T3NetNode*		node_so() const {return (T3NetNode*)inherited::node_so();}
   void 			setUnitSrc(UnitView* uv, Unit* unit); // updates picked unit
   void			setUnitDisp(int value); // sets a new md to display, index in membs
   void			setUnitDispMd(MemberDef* md); // sets a new md to display, lookup/set scale values
