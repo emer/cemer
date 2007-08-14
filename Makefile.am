@@ -1,5 +1,3 @@
-CLEAN_FILES =  # TODO: Clean up xml files created by gendoc
-
 EXTRA_DIST =\
 	src/temt/ta/ta_global.h \
 	src/temt/ta/ta_maketa_defs.h \
@@ -149,14 +147,6 @@ force_ta:
 	cd ${abs_top_builddir}/src/emergent/leabra && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/emergent/so && ${MAKE} force_ta
 	cd ${abs_top_builddir}/src/emergent/cs && ${MAKE} force_ta
-
-gendoc:
-	cd ${abs_top_builddir}/src/temt/ta && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/emergent/network&& ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/emergent/bp && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/emergent/leabra && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/emergent/so && ${MAKE} gendoc
-	cd ${abs_top_builddir}/src/emergent/cs && ${MAKE} gendoc
 
 do_ta:
 	cd ${abs_top_builddir}/src/temt/ta && ${MAKE} do_ta

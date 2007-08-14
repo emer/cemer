@@ -17,9 +17,6 @@ ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_inst.hx: ${PROJNAME}_TA.ccx
 .ccx.cpp:
 	cmp $@ $< || cp $< $@
 
-gendoc:
-	${MAKETA} -gendoc ${MAKETA_FLAGS} ${PROJNAME} -f files.mta;
-
 force_ta:
 	${MAKETA} ${MAKETA_FLAGS} ${PROJNAME} -f files.mta; \
 	cp ${PROJNAME}_TA_type.hx ${PROJNAME}_TA_type.h; \

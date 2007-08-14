@@ -119,7 +119,7 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
 
   strm << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
   strm << "<TypeSpace>\n";
-  strm << " <Name>" << ts->name.xml_esc() << "</Name>\n";
+  strm << " <TypeName>" << ts->name.xml_esc() << "</TypeName>\n";
 
   TypeDef* ta_base_def = ts->FindName("taBase");
 //   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
@@ -145,7 +145,7 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
     // now generate type info
 
     strm << " <TypeDef>\n";
-    strm << "  <Name>" << td->name.xml_esc() << "</Name>\n";
+    strm << "  <TypeDefName>" << td->name.xml_esc() << "</TypeDefName>\n";
     strm << (td->is_enum() ? "  <Type>enum</Type>\n":"");
     strm << (td->is_class() ? "  <Type>class</Type>\n":"");
     strm << (trim(td->desc).length() ? "  <Desc>"+trim(td->desc).xml_esc()+"</Desc>\n":"");
@@ -193,13 +193,13 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
 	    first_one = false;
 	  }
 	  strm << "   <EnumType>\n";
-	  strm << "    <Name>" << st->name.xml_esc() << "</Name>\n";
+	  strm << "    <EnumTypeName>" << st->name.xml_esc() << "</EnumTypeName>\n";
 	  EnumSpace* es = &st->enum_vals;
 	  if(es->size) {
 	    for (int j=0;j<es->size;j++) {
 	      EnumDef* ed = es->FastEl(j);
 	      strm << "    <EnumDef>\n";
-	      strm << "     <Name>" << ed->name.xml_esc() << "</Name>\n";
+	      strm << "     <EnumDefName>" << ed->name.xml_esc() << "</EnumDefName>\n";
 	      strm << (trim(ed->desc).length() ? "     <Desc>"+trim(ed->desc).xml_esc()+"</Desc>\n":"");
 	      strm << "     <Value>" << ed->enum_no << "</Value>\n";
 	      strm << "    </EnumDef>\n";
@@ -235,12 +235,12 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
 
 	if(first_one) {
 	  strm << "  <MemberSpace>\n";
-	  strm << (mems->name != "members" ? "   <Name>"+mems->name.xml_esc()+"</Name>\n":"");
+	  strm << (mems->name != "members" ? "   <MemberSpaceName>"+mems->name.xml_esc()+"</Name>\n":"");
 	  first_one = false;
 	}
 
 	strm << "    <MemberDef>\n";
-	strm << "     <Name>" << md->name << "</Name>\n";
+	strm << "     <MemberDefName>" << md->name << "</MemberDefName>\n";
 	strm << (trim(md->desc).length() ? "     <Desc>"+trim(md->desc).xml_esc()+"</Desc>\n":"");
 	strm << "     <Type>"+md->type->Get_C_Name().xml_esc()+"</Type>\n";
 
@@ -296,7 +296,7 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
 	}
 
 	strm << "    <MethodDef>\n";
-	strm << "     <Name>" << metd->name << "</Name>\n";
+	strm << "     <MethodDefName>" << metd->name << "</MethodDefName>\n";
 	strm << (trim(metd->desc).length() ? "     <Desc>"+trim(metd->desc).xml_esc()+"</Desc>\n":"");
 	strm << "     <Prototype>"+String(metd->prototype()).xml_esc()+"</Prototype>\n";
 
@@ -328,7 +328,7 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
       for (int j=0;j<es->size;j++) {
 	EnumDef* ed = es->FastEl(j);
 	strm << "   <EnumDef>\n";
-	strm << "    <Name>" << ed->name.xml_esc() << "</Name>\n";
+	strm << "    <EnumDefName>" << ed->name.xml_esc() << "</EnumDefName>\n";
 	strm << (trim(ed->desc).length() ? "    <Desc>"+trim(ed->desc).xml_esc()+"</Desc>\n":"");
 	strm << "    <Value>" << ed->enum_no << "</Value>\n";
 	strm << "   </EnumDef>\n";
