@@ -20,6 +20,7 @@
 #include "ta_platform.h"
 #include "ta_dump.h"
 #include "ta_plugin.h"
+#include "ta_gendoc.h"
 
 #include "css_ta.h"
 #include "css_console.h"
@@ -1040,6 +1041,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("Help", "\
  -- Prints out help on startup arguments and other usage information");
 
+  taMisc::AddArgName("-gendoc", "GenDoc");
+  taMisc::AddArgName("--gendoc", "GenDoc");
+  taMisc::AddArgNameDesc("GenDoc", "\
+ -- generates documentation source information in XML based on type information scanned by maketa");
+
   taMisc::AddArgName("-p", "Project");
   taMisc::AddArgName("--proj", "Project");
   taMisc::AddArgName("proj=", "Project");
@@ -1118,6 +1124,11 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 //       break;
 //     }
 //   }
+
+  if(taMisc::CheckArgByName("GenDoc")) { // auto nogui by default
+    taMisc::use_gui = false;
+    cssMisc::init_interactive = false;
+  }
 
   // need to use Init_Args and entire system because sometimes flags get munged together
   if(taMisc::CheckArgByName("NoGui"))
@@ -1730,6 +1741,11 @@ bool taRootBase::Startup_ProcessArgs() {
   }
   if(taMisc::CheckArgByName("Help")) {
     taMisc::HelpMsg();
+  }
+  if(taMisc::CheckArgByName("GenDoc")) {
+    fstream gen_doc_xml;
+    gen_doc_xml.open(taMisc::app_name + "_TA_doc.xml", ios::out);
+    taGenDoc::GenDoc(&(taMisc::types), gen_doc_xml);
   }
 
   // just load the thing!?

@@ -204,6 +204,7 @@ HEADS =\
 	ta_plugin.h \
 	ta_plugin_p.h \
 	ta_project.h \
+	ta_gendoc.h \
 	$(HEADS_GUI) \
 	$(HEADS_TAMISC) \
 	$(HEADS_TAMISC_GUI)
@@ -250,6 +251,7 @@ SRCS =\
 	ta_plugin_p.moc.cpp \
 	ta_project.cpp \
 	ta_project.moc.cpp \
+	ta_gendoc.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \
 	ta_ti.cpp \

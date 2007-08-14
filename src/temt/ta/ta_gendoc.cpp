@@ -13,12 +13,9 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-// mta_gendoc.cc
+// ta_gendoc.cpp
 
-#include "mta_constr.h"
-
-#include "ta/ta_platform.h"
-#include "ta/ta_type.h"
+#include "ta_gendoc.h"
 
 // The logical ordering is: enum, subtypes, members, methods
 // For member options, it goes guys with nothing, then expert, then hidden
@@ -28,7 +25,32 @@
 // 	     GenDoc		//
 //////////////////////////////////
 
-String_PArray* MTA::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
+bool taGenDoc::MemberSpace_Filter_Member(MemberSpace* ths, MemberDef* md) {
+  if((md->owner == ths) && !md->HasOption("IGNORE"))
+    return true;
+  return false;
+}
+
+bool taGenDoc::MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md) {
+  // always ignore these
+  if((md->name == "Copy_") || md->HasOption("IGNORE")
+     || ths->owner->IgnoreMeth(md->name))
+    return false;
+
+  if((md->owner != ths) && !ths->owner->HasOption("MULT_INHERIT"))
+    return false;		// don't reproduce owners functions (except multi inh)
+
+  // is_static is a problem in mult_inherit cases for compiler
+  if(ths->owner->HasOption("MULT_INHERIT")) {
+    if(!md->is_static)
+      return true;
+    return false;
+  }
+
+  return true;
+}
+
+String_PArray* taGenDoc::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
   TypeSpace* pp = &td->parents; // Potential parents
   for(int i=0;i<pp->size;i++) {
     TypeDef* this_par = pp->FastEl(i);
@@ -40,18 +62,20 @@ String_PArray* MTA::TypeDef_Get_Parents(TypeDef* td, String_PArray* bp) {
   return bp;
 }
 
-bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
+bool taGenDoc::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   /////////////////////////////////////////////////////////////
   // 	Filters! Returns true if you should filter this TypeDef
 
-  TypeDef* ta_base_def = ts->FindName("taBase");
+//   TypeDef* ta_base_def = ts->FindName("taBase");
   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
   TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
 
   // We only want "actual" types, not pointers or references to types, etc...
-  if (td->ptr || td->ref || td->formal || td->pre_parsed) 
+  if (td->ptr || td->ref || td->formal)
     return true;
 
+  if(!td->InheritsFormal(TA_class))
+    return true;
   if(td->InheritsFrom(&TA_const))
     return true;
 
@@ -68,8 +92,8 @@ bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
 	  || td->name == "taMisc"))
     return true;
 
-  if(spc_builtin.FindName(td->name)) 
-    return true;
+//    if(spc_builtin.FindName(td->name)) 
+//      return true;
 
   // no builtin guys
   if((td != ta_smartref_def && td->InheritsFrom(ta_smartref_def))
@@ -85,7 +109,7 @@ bool MTA::TypeDef_Filter_Type(TypeDef* td, TypeSpace* ts) {
   return false;
 }
 
-void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
+void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
 
   //////////////////////
   //     TypeSpace    //
@@ -98,8 +122,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
   strm << " <Name>" << ts->name.xml_esc() << "</Name>\n";
 
   TypeDef* ta_base_def = ts->FindName("taBase");
-  TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
-  TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
+//   TypeDef* ta_smartref_def = ts->FindName("taSmartRef");
+//   TypeDef* ta_smartptr_def = ts->FindName("taSmartPtr");
 
   for(int i=0;i<ts->size;i++) {
   
@@ -162,7 +186,7 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
       bool first_one = true;
       for(int q=0;q<subs->size;q++) {
 	TypeDef* st = subs->FastEl(q);
-	if(st->GetOwnerType() != td) continue;
+	if(st->GetOwnerType() != td) continue; // note: this should filter redundancies!
 	if(st->is_enum()) {
 	  if(first_one) {
 	    strm << "  <SubTypes>\n";
@@ -252,8 +276,8 @@ void MTA::GenDoc(TypeSpace* ths, fstream& strm) {
 	  continue;
 	}
 
-	if(metd->HasOption("EXPERT"))
-	  continue;
+// 	if(metd->HasOption("EXPERT"))
+// 	  continue;
 
 	if(ta_base_def && td != ta_base_def && ta_base_def->methods.FindName(metd->name))
 	  continue;		// firmly exclude any of the base guys, which tend to be
