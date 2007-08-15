@@ -1922,6 +1922,9 @@ void DocEditDataHost::GetImage_Membs() {
   if (!doc) return; // ex. for zombies
   
   QString text = doc->text; 
+  // to avoid the guy always jumping to the top after edit
+  // we compare, and don't update if the same
+  if (text == tedHtml->text()) return; 
   tedHtml->clear();
   tedHtml->insertPlainText(text); // we set the html as text
 }
