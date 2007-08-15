@@ -1226,7 +1226,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
     pv_units->SetUnique("act", true);
     pv_units->SetUnique("act_fun", true);
     pv_units->SetUnique("dt", true);
-    pv_units->SetUnique("opt_thresh", true);
+    //    pv_units->SetUnique("opt_thresh", true);
     pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
     pv_units->act.thr = .17f;
     pv_units->act.gain = 220.0f;
@@ -1235,7 +1235,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
     pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
     pv_units->dt.vm = .05f;
     pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
-    pv_units->opt_thresh.send = 0.0f; // scalar val may use this -- don't let it!
+    //    pv_units->opt_thresh.send = 0.0f; // scalar val may use this -- don't let it!
 
     pvi_cons->SetUnique("lmix", true);
     pvi_cons->lmix.err_sb = false; 
