@@ -166,7 +166,7 @@ test x"$exec_prefix" != xNONE && check_path=$exec_prefix/bin
 
 AC_CHECK_PROG([pdpexists],[pdp++],[true],[false],[${check_path}])
 if test x"${pdpexists}" = x"true"; then
-   SIM_AC_CONFIGURATION_WARNING([pdp++ is already installed in ${check_path}.])
+   SIM_AC_CONFIGURATION_WARNING([Emergent is already installed in ${check_path}.])
 fi
 ])
 
