@@ -756,7 +756,7 @@ const String taMatrix::FlatRangeToTSV(int row_fr, int col_fr, int row_to, int co
   STRING_BUF(rval, (col_to - col_fr + 1) * (row_to - row_fr + 1) * 10);
   // to access in 2d, you just ignore the higher dimension
   for (int row = row_fr; row <= row_to; ++row) {
-    if (row > 0) rval.cat('\n');
+    if (row > row_fr) rval.cat('\n');
     int idx = (row * dim(0)) + col_fr; 
     for (int col = col_fr; col <= col_to; ++col, ++idx) {
       if (col > col_fr) rval.cat('\t');
