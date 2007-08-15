@@ -297,10 +297,6 @@ public:
 
   ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
 
-  // following are obsolete! todo: remove!!
-  ProgExpr_List	    case_exprs;	// #HIDDEN #NO_SAVE obsolete!! expressions for the different cases to test for
-  ProgEl_List	    case_code; 	// #HIDDEN #NO_SAVE obsolete!! code to execute for each case, in one-to-one correspondence with the case_exprs (automatically filled with CodeBlocks)
-
   virtual void	    NewCase() 	{ cases.New(1); }
   // #BUTTON make a new case item
   virtual void	    CasesFmEnum();

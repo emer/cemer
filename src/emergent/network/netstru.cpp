@@ -1733,7 +1733,6 @@ TwoDCoord Unit::GetMyAbsPos() {
   if(ug->owner == lay) return pos; // simple: we're the only unit group
   rval.x = ug->pos.x * lay->un_geom.x + pos.x;
   rval.y = ug->pos.y * lay->un_geom.y + pos.y;
-  // todo: is ug->pos actually in ug units??
   return rval;
 }
 
@@ -2755,7 +2754,7 @@ void Unit_Group::Initialize() {
   own_lay = NULL;
   unique_geom = false;
   units_lesioned = false;
-  n_units = 0;			// todo: v3compat obs
+  n_units = 0;	// note: v3compat obs
 }
 
 void Unit_Group::InitLinks() {
@@ -2775,7 +2774,7 @@ void Unit_Group::Copy_(const Unit_Group& cp) {
   unique_geom = false;
   geom = cp.geom;
   output_name = cp.output_name;
-  n_units = cp.n_units;		// todo: v3compat obs
+  n_units = cp.n_units;	// note: v3compat obs
 }
 
 void Unit_Group::UpdateAfterEdit_impl() {
@@ -2794,11 +2793,6 @@ void Unit_Group::UpdateAfterEdit_impl() {
 
 void Unit_Group::RemoveAll() {
   units_lesioned = false;
-  // todo: obs?
-//   for(int i=0; i<size; i++) {
-//     if(FastEl(i)->owner == this)
-//       FastEl(i)->pos.z = -1;		// signal not to update display when units are removed
-//   }
   inherited::RemoveAll();
 }
 
@@ -3162,7 +3156,7 @@ void Layer::Initialize() {
   sse = 0.0f;
   icon_value = 0.0f;
 
-  n_units = 0;			// todo: v3compat obs
+  n_units = 0;			// note: v3compat obs
 }
 
 void Layer::InitLinks() {
@@ -3226,7 +3220,7 @@ void Layer::Copy_(const Layer& cp) {
   sse = cp.sse;
   icon_value = cp.icon_value;
 
-  n_units = cp.n_units;		// todo: v3compat obs
+  n_units = cp.n_units;		// note: v3compat obs
 
   // not copied
   //  send_prjns.BorrowUnique(cp.send_prjns); // link group
@@ -3243,7 +3237,7 @@ void Layer::UpdateAfterEdit() {
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if(lesion_) {			// todo: v3compat conversion obs remove later
+  if (lesion_) {		// obs: v3compat conversion obs remove later
     SetLayerFlag(LESIONED);
     lesion_ = false;
   }
@@ -3252,14 +3246,14 @@ void Layer::UpdateAfterEdit_impl() {
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
   // also causes problems during copy..
-  if(n_units > 0) {		// todo: v3compat conversion obs remove later
+  if(n_units > 0) {		// obs: v3compat conversion obs remove later
     if(n_units != un_geom.x * un_geom.y) {
       un_geom.n_not_xy = true;
       un_geom.n = n_units;
     }
     n_units = 0;
   }
-  if(un_geom.z > 1) {		// todo: v3compat conversion obs remove later
+  if(un_geom.z > 1) {		// obs: v3compat conversion obs remove later
     gp_geom.UpdateAfterEdit();	// get n from xy
     unit_groups = true;
     if(gp_geom.n != un_geom.z) {
@@ -5604,13 +5598,6 @@ void Network::TwoD_Or_ThreeD(LayerLayout lo){
   FOR_ITR_EL(Layer, lay, layers., j){
     lay->SetDefaultPos();
   }
-/*TODO   NetView* nv;
-  taLeafItr i;
-  FOR_ITR_EL(NetView, nv, views., i) {
-    nv->SetDefaultSkew();
-    nv->AutoPositionPrjnPoints();
-    nv->UpdateAfterEdit();
-  }*/
 }
 
 bool Network::UpdateUnitSpecs(bool force) {

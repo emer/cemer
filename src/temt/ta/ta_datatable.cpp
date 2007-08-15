@@ -851,7 +851,7 @@ DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
 const Variant DataTable::GetColUserData(const String& name,
   int col) const 
 {
-  DataCol* da = GetColData(col); // todo: quiet err?
+  DataCol* da = GetColData(col);
   if (da) return da->GetUserData(name);
   else return _nilVariant;
 }

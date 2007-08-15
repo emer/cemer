@@ -85,28 +85,3 @@ void iLabel::setUserData(const QVariant& value) {
   muser_data = value;
 }
 
-// NOTE: this is the Trolltech routine from QCheckbox, with the Highlight color setting added in the middle
-
-/*void iLabel::paintEvent(QPaintEvent* pe)
-{
-  QLabel::paintEvent(pe);
-  if (mhighlight) {
-/.TODO    QPainter p;
-    QRect irect = style()->subElementRect(QStyle::SE_CheckBoxContents, QStyleOptionButton, this);
-    p.setBrush(COLOR_BRIGHT_HILIGHT);
-    p.setPen(COLOR_BRIGHT_HILIGHT);
-//TODO: Qt4     p->setRasterOp(Qt::CopyROP);
-    QRect r;
-    r.setRect(irect.x(), irect.y() - 2, irect.width() + 2, 2);
-    p.drawRect(r);
-    r.setRect(irect.x() + irect.width() + 1, irect.y(), 2, irect.height() + 2);
-    p.drawRect(r);
-    r.setRect(irect.x() - 2, irect.y() + irect.height(), irect.width() + 2, 2);
-    p.drawRect(r);
-    r.setRect(irect.x() - 2, irect.y() - 2, 2, irect.height() + 2);
-    p.drawRect(r); 
-  } else {
-    //nothing
-  }
-}*/
-

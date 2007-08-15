@@ -80,11 +80,6 @@ public:
   DataLink_QObj(taiDataLink* dl_) {dl = dl_;} //
 };
 
-/*
-  TODO: the GetDataMemberDef is not too reliable, and only works for owned taOBase, but that is
-    typically sufficient for the browser, because typically only taOBase or later members are
-    ever shown in the browser, which is really all that call helps
-*/
 
 class TA_API taiDataLink: public taDataLink { // interface for viewing system
 INHERITED(taDataLink)
@@ -179,7 +174,7 @@ public:
 protected:
   static void		SearchStat(taBase* tab, iSearchDialog* sd, int level = 0); // for searching
   
-  tabDataLink(taBase* data_, taDataLink* &link_ref_); //TODO: implementation for non taOBase-derived types
+  tabDataLink(taBase* data_, taDataLink* &link_ref_); 
   override taiTreeDataNode* CreateTreeDataNode_impl(MemberDef* md, taiTreeDataNode* nodePar,
     iTreeView* tvPar, taiTreeDataNode* after, const String& node_name, int dn_flags);
   override void		QueryEditActions_impl(taiMimeSource* ms, int& allowed, int& forbidden);

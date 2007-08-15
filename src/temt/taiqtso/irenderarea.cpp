@@ -20,6 +20,8 @@
 #include <Inventor/Qt/SoQt.h>
 #include <Inventor/Qt/SoQtRenderArea.h>
 
+#include <iostream>
+using namespace std;
 
 iRenderAreaWrapper::iRenderAreaWrapper(SoQtRenderArea* ra, QWidget* parent)
 :QWidget(parent)
@@ -55,8 +57,8 @@ void iRenderAreaWrapper::resizeEvent(QResizeEvent* ev) {
 void iRenderAreaWrapper::setRenderArea(SoQtRenderArea* value) {
   if (m_renderArea == value) return;
   if (value && (value->getParentWidget() != this)) {
-      /*TODO: output following error message: "iRenderAreaWrapper::setRenderArea"
-      "The RenderArea must be owned by ViewspaceWidget being assigned."); */
+    cerr << "iRenderAreaWrapper::setRenderArea"
+      " The RenderArea must be owned by ViewspaceWidget being assigned.\n";
     return;
   }
   if (m_renderArea) {

@@ -169,7 +169,6 @@ private:
 
 SmartRef_Of(ColorScaleSpec,TA_ColorScaleSpec); // ColorScaleSpecRef
 
-// todo: should be a list?
 class TA_API ColorScaleSpec_Group : public taGroup<ColorScaleSpec> {
   // ##CAT_Display group of color scale specs
 INHERITED(taGroup<ColorScaleSpec>)

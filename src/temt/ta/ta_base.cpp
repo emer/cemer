@@ -597,7 +597,6 @@ String taBase::GetDisplayName() const {
 }
 
 String taBase::GetUniqueName() const { 
-//TODO: need a better way to concisely express this:
   return GetPath_Long();
 }
 
@@ -1029,7 +1028,6 @@ int taBase::Load_cvt(taFiler*& flr) {
 		".\n Many error messages are likely (and should be ignored)," +
 		 "\n and you will probably need to convert object using convert button",
         "Continue", "Cancel");
-//TODO: BA changed this to a cancellable operation 04/11/07 -- may need to be tested
   if (chs == 0) 
     return true;
   else return false;
@@ -2540,20 +2538,10 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
   // that asserts or clears the state, even if an invalid found early
   for (int i = 0; i < size; ++i) {
     taBase* child = (taBase*)FastEl_(i);
-//TODO: is a linked test necessary?? would it not be ok???
     // we only include owned items, not linked
     if (!child || (child->GetOwner() != this)) 
       continue;
-// #ifdef DEBUG
-//     bool prv_rval = rval;
-// #endif
     child->CheckConfig(quiet, rval);
-// #ifdef DEBUG
-//     if(prv_rval && !rval) {
-//       taMisc::CheckError("Child failed check on list:", GetPath(),
-// 			 "child:",String(i),"name:",child->GetName());
-//     }
-// #endif
   }
 }
 
@@ -3457,7 +3445,6 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   }
   if ((m_dbu_cnt > 0) || (parDbuCnt() > 0))
     return;
-  //TODO: need to confirm that supressing UAE's is not harmful...
   if (dcr <= DCR_ITEM_UPDATED_ND)
     DataUpdateAfterEdit();
   else if (dcr == DCR_UPDATE_VIEWS) {

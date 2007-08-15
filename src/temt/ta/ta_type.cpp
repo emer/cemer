@@ -266,7 +266,6 @@ void taiMiscCore::OnQuitting(CancelOp& cancel_op) {
 }
 
 int taiMiscCore::ProcessEvents() {
-//TODO: do more???  static void		WorkProc(); // the core idle loop process
   if (taMisc::in_event_loop) {
     QCoreApplication::processEvents();
   }
@@ -538,8 +537,6 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
 #else
 taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
 #endif
-// note: PRETTY is barely more expensive, since we compress files
-// todo: but it just said that compression is not the default!  only for debug mode!
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 
 String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
@@ -1380,22 +1377,27 @@ String taMisc::GetHomePath() {
   return taPlatform::getHomePath();
 }
 
-String taMisc::GetCurrentPath() {
 #ifndef NO_TA_BASE
+String taMisc::GetCurrentPath() {
   return QDir::currentPath();
-#else
-  return "";			// todo support?
-#endif
 }
 
 bool taMisc::SetCurrentPath(const String& path) {
-#ifndef NO_TA_BASE
   return QDir::setCurrent(path);
-#else
-  return false;			// todo support?
+}
 #endif
+/*
+String taMisc::GetCurrentPath() {
+  return QDir::currentPath();
+  return ".";
 }
 
+bool taMisc::SetCurrentPath(const String& path) {
+  return QDir::setCurrent(path);
+  return false;		// todo support?
+}
+
+*/
 // try to find file fnm in one of the include paths -- returns complete path to file
 String taMisc::FindFileOnPath(String_PArray& paths, const char* fname) {
   int acc = access(fname, F_OK);
@@ -2886,7 +2888,6 @@ MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
 //////////////////////////
 //   TypeItem		//
 //////////////////////////
-//TODO: was silly to make these lower case because hard to search; make upper case
 const String TypeItem::opt_show("SHOW");
 const String TypeItem::opt_no_show("NO_SHOW");
 const String TypeItem::opt_hidden("HIDDEN");
@@ -3104,7 +3105,7 @@ void MemberDef::Copy(const MemberDef& cp) {
   is_static = cp.is_static;
   addr = cp.addr;
   fun_ptr = cp.fun_ptr;
-// don't copy because delete is not ref counted (todo:)
+// don't copy because delete is not ref counted
 //  im = cp.im;
 // always invalidate show bits, so they get redone in our new context
   show_any = 0; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
@@ -3177,8 +3178,6 @@ bool MemberDef::ShowMember(
   byte show_eff = 0;
   // default viewability for edit is "any OR edit"
   // default viewability for tree is "tree", ie, any not good enough
-//TODO: this is not quite right, ex. "READ_ONLY" is a functional desig, not viewability
-// SO we prob need to finesse each one in the Calc, then just drive on the single guy
   switch (show_context) {
   case SC_ANY: show_eff = show_any; break;
   case SC_EDIT: show_eff = show_edit; break;
@@ -3340,7 +3339,7 @@ void MethodDef::Copy(const MethodDef& cp) {
   is_lexhide = cp.is_lexhide;
   addr = cp.addr;
   inh_opts = cp.inh_opts;
-  // don't delete because delete is not ref counted (todo:)
+  // don't delete because delete is not ref counted
 //  im = cp.im;
   fun_overld = cp.fun_overld;
   fun_argc = cp.fun_argc;

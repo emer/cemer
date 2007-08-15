@@ -1076,7 +1076,7 @@ public:
   // #IGNORE hard-coded options for this type
   bool		CheckList(const String_PArray& lst) const
   { return GetTypeDef()->CheckList(lst); }
-  // #IGNORE todo: what is this??
+  // #IGNORE 
 
   ///////////////////////////////////////////////////////////////////////////
   //   Clipboard Queries and Edit Actions (for drag-n-drop, cut/paste etc)

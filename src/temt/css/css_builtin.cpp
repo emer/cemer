@@ -1233,9 +1233,6 @@ static cssRealFun_stub1(tanh);
 static cssRealFun_stub1(acosh);
 static cssRealFun_stub1(asinh);
 static cssRealFun_stub1(atanh);
-//TODO: following were defined, but not used anywhere
-//static cssRealFun_stub1(erf);
-//static cssRealFun_stub1(erfc);
 #endif
 
 
@@ -2414,8 +2411,6 @@ bool cssMisc::Initialize() {
   // 	Process Args
   
   // note: these names are defined in ta_project.cpp: taRootBase::Startup_InitArgs
-  // todo: could fork off a call to css to have it do its own thing but it is
-  // so integrated anyway that who cares.
   cssMisc::startup_file = taMisc::FindArgByName("CssScript");
   cssMisc::startup_code = taMisc::FindArgByName("CssCode");
   if(!cssMisc::startup_code.empty())

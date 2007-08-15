@@ -486,13 +486,14 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
 
 
 void T3DataView::Initialize() {
-  flags = 0; //TODO: provide way to init
-  m_md = NULL; //TODO: set later
+  flags = 0; 
+  m_md = NULL; // set later
 //  m_viewer = NULL;
   last_child_node = NULL;
   m_transform = NULL;
-//TODO  setDragEnabled(flags & DNF_CAN_DRAG);
-//TODO  setDropEnabled(!(flags & DNF_NO_CAN_DROP));
+//TODO: if dnd done, put these where flags are set:
+//  setDragEnabled(flags & DNF_CAN_DRAG);
+//  setDropEnabled(!(flags & DNF_NO_CAN_DROP));
 #ifdef TA_PROFILE
   ++T3DataView_inst_cnt;
   if (cssMisc::refcnt_trace)
@@ -511,7 +512,6 @@ void T3DataView::Destroy() {
 }
 
 void T3DataView::Copy_(const T3DataView& cp) {
-//TODO: 4/12/07 added for consistency, but NOT tested, and likely may have issues!
   flags = cp.flags;
   m_md = cp.m_md;
   Clear_impl(); // hope this works!
@@ -601,13 +601,11 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
 void T3DataView::setNode(T3Node* node_) {
   if (m_node_so.ptr() == node_) return; // generally shouldn't happen
   if (m_node_so.ptr()) {
-    //TODO: detach the guy, and also force a gui deselect
     T3DataViewFrame* dvf = GetFrame();
     iT3DataViewFrame* idvf;
     if (dvf && (idvf = dvf->widget())) {
       idvf->NodeDeleting(m_node_so); // just desels all, for now
     }
- //   node_so()->dataView = NULL;
   }
   m_node_so = node_;
 }
@@ -625,11 +623,8 @@ void T3DataView::DataDestroying() {
   //NOTE: we may delete at this point -- do not put any more code
 }
 
-/*void T3DataView::DataChanged(int dcr, void* op1_, void* op2_) { //TODO
-}  */
-
 void T3DataView::DataStructUpdateEnd_impl() {
-  Reset(); // note: should be superfluous, since we did one on start -- TODO: maybe just nuke
+  Reset(); // note: should be superfluous, since we did one on start
   BuildAll();
   Render();
 }
@@ -648,11 +643,6 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 //   if (m_node_so)
 //     m_node_so->touch();
 }
-
-/*nn? void T3DataView::FillContextMenu_EditItems_impl(taiActions* menu, int allowed) {
-  //TODO
-}
-*/
 
 void T3DataView::FillContextMenu_impl(taiActions* menu) {
   TypeDef* typ = GetTypeDef();
@@ -751,20 +741,9 @@ void T3DataView::Render_pre() {
 }
 
 T3DataViewRoot* T3DataView::root() {
-  //TODO: maybe make more efficient
   T3DataViewRoot* rval = GET_MY_OWNER(T3DataViewRoot);
   return rval;
 }
-/*obs
-void T3DataView::SetPos(const TDCoord& pos) {
-  SetPos(pos.x, pos.y, pos.z);
-}
-
-void T3DataView::SetPos(int x, int y, int z) {
-  FloatTransform* ft = transform(true);
-//  ft->translate.SetXYZ(x, (z * pdpZScale) + 0.5f, -y);
-  ft->translate.SetXYZ(x, (z * pdpZScale) + 0.5f, -y);
-} */
 
 FloatTransform* T3DataView::transform(bool auto_create) {
   if (!m_transform && auto_create) {
@@ -783,26 +762,6 @@ void T3DataView::ViewProperties() {
 }
 
 
-/*obs String T3DataView::view_name() const {
-  // if we have a name, use that
-  // otherwise, if a member, use the member name,
-  // otherwise, get from the data
-  String rval = GetName();
-  if (!rval.empty()) return rval;
-
-  if ((flags & DNF_IS_MEMBER) && m_md)
-    return m_md->name;
-
-  //TODO: may need to delegate to link, and let link generate a name
-  // for anonymous list items
-  if (m_data)
-    return ((T3DataView*)this)->data()->GetName(); // safe unconstify
-
-  //TODO: should use centralized, base class default name
-  return String("(no name)");
-} */
-
-
 //////////////////////////
 //    T3DataViewPar	//
 //////////////////////////
@@ -819,7 +778,6 @@ void T3DataViewPar::CutLinks() {
 }
 
 void T3DataViewPar::Copy_(const T3DataViewPar& cp) {
-//TODO: 4/12/07 added for consistency, but NOT tested, and likely may have issues!
   Clear_impl(); // hope this works!
   children = cp.children; 
 }
@@ -1029,13 +987,13 @@ void iT3ViewspaceWidget::setRenderArea(SoQtRenderArea* value) {
     if(taMisc::antialiasing_level > 1) {
       fmt.setSampleBuffers(true);
       fmt.setSamples(taMisc::antialiasing_level);
-      qglw->setFormat(fmt);		// todo: this is supposedly deprecated..
+      qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
       qglw->makeCurrent();
       glEnable(GL_MULTISAMPLE);
     }
     else {
       fmt.setSampleBuffers(false);
-      qglw->setFormat(fmt);		// todo: this is supposedly deprecated..
+      qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
       qglw->makeCurrent();
       glDisable(GL_MULTISAMPLE);
     }
@@ -1154,8 +1112,6 @@ QScrollBar* iT3ViewspaceWidget::verScrollBar(bool auto_create) {
 }
 
 void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
-  //old TODO: what to do if nothing selected, but user right clicks???
-
   taiMenu* menu = new taiMenu(this, taiMenu::normal, taiMisc::fonSmall);
 
   FillContextMenu(menu);
@@ -1168,8 +1124,6 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
 
 void iT3ViewspaceWidget::EditAction_Delete() {
   ISelectableHost::EditAction_Delete();
-  // now make sure nothing is selected
-  //TODO: need to figure out how to do this!!!
 }
 
 void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
@@ -1195,7 +1149,7 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
 
 
 void iT3ViewspaceWidget::UpdateSelectedItems_impl() {
-  //TODO
+  // note: prolly not needed
 }
 
 //////////////////////////
@@ -1312,7 +1266,6 @@ void iT3DataViewFrame::Render_post() {
 }
 
 void iT3DataViewFrame::Reset_impl() {
-//TODO  m_sel_items.Reset();
   setSceneTop(NULL);
 }
 
@@ -1343,7 +1296,6 @@ void iT3DataViewFrame::setSceneTop(SoNode* node) {
 }
 
 void iT3DataViewFrame::T3DataViewClosing(T3DataView* node) {
-//TODO  RemoveSelectedItem(node);
 }
 
 iT3DataViewer* iT3DataViewFrame::viewerWidget() const {
@@ -1415,7 +1367,7 @@ void T3DataViewFrame::Clear_impl() {
 
 void T3DataViewFrame::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
-  root_view.host = widget()->t3vs; // TODO: prob should encapsulate this better
+  root_view.host = widget()->t3vs; 
   // note: set top view to the root, not us, because we don't pass doactions down
   widget()->t3vs->setTopView(&root_view);
 }
@@ -1429,7 +1381,6 @@ void T3DataViewFrame::Constr_post() {
 IDataViewWidget* T3DataViewFrame::ConstrWidget_impl(QWidget* gui_parent) {
   iT3DataViewFrame* rval = new iT3DataViewFrame(this, gui_parent);
   // make the corresponding viewpanelset
-  //TODO: need guards, but big problem if we skip here!!! need to find better place then
   MainWindowViewer* mwv = GET_MY_OWNER(MainWindowViewer);
   PanelViewer* pv = (PanelViewer*)mwv->FindFrameByType(&TA_PanelViewer);
   iTabViewer* itv = pv->widget();
@@ -1860,7 +1811,6 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   if (!obj) return NULL;
   T3DataViewFrame* fr = NULL;
   taProject* proj = (taProject*)obj->GetOwner(&TA_taProject);
-  //TODO: this would be more intuitive if done in current or top-most proj browser
   MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
   if (!vw) return NULL; // shouldn't happen
   T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);

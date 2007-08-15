@@ -876,7 +876,6 @@ public:
   int		GetParse() const	{ return CSS_PTR; }
   uint		GetSize() const		{ return sizeof(*this); }
   cssTypes 	GetType() const		{ return ptr.El()->GetType(); }
-  // todo: is this what we want? probably ok..
   cssTypes	GetPtrType() const	{ return ptr.El()->GetPtrType(); }
   const char*	GetTypeName() const	{ return ptr.El()->GetTypeName(); }
   cssEl*	GetTypeObject() const	{ return ptr.El()->GetTypeObject(); }

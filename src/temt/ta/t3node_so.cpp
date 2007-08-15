@@ -510,7 +510,6 @@ void SoFrame::renderH() {
 }
 
 void SoFrame::renderV() {
-  //TODO: change all below to draw vertical
   float w2 = base / 2.0f; // x (same as H)
   float d2 = depth / 2.0f; // z
   float h2 = height / 2.0f; // y
@@ -1269,8 +1268,6 @@ void SoMatrixGrid::render_text(bool build_text, int& t_idx, float xp, float xp1,
     txt->justification = SoAsciiText::CENTER;
     tsep->addChild(txt);
   }
-  // todo: could figure out how to do this without a separator
-  // but it just isn't clear that it is that big a deal..  very convenient
   SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
   SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
   float xfp = .5f * (xp + xp1);

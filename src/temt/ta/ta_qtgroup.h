@@ -372,8 +372,6 @@ public:
   String_PArray		lst_membs; // list of members, by name
   int			num_lst_fields; // number of editble list memberdefs with fields
 
-//TODO  int		Edit();
-  
   gpiListDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0); //(TypeDef* tp, void* base);
   gpiListDataHost() 				{ };
@@ -427,9 +425,6 @@ public:
   gpiCompactListDataHost() 				{ };
   ~gpiCompactListDataHost();
 
-
-//TODO  int		Edit();
-
   bool		ShowMember(MemberDef* md) const;
 
 protected:
@@ -455,7 +450,6 @@ class TA_API gpiArrayEditDataHost : public taiEditDataHost {
 INHERITED(taiEditDataHost)
 public:
   bool 		ShowMember(MemberDef* md) const;
-//TODO  int		Edit();
 
   gpiArrayEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
   	bool modal_ = false, QObject* parent = 0);

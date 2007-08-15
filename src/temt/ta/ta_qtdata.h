@@ -301,7 +301,7 @@ signals:
 
 
 
-class TA_API taiBitBox : public taiData { // supports enums that are bit fields (TODO: maybe support int fields too)
+class TA_API taiBitBox : public taiData { // supports enums that are bit fields 
   Q_OBJECT
 public:
   inline QWidget*	rep() const { return (QWidget*)(QWidget*)m_rep; }
@@ -311,7 +311,6 @@ public:
   taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
-  //TODO: maybe default highlighting???
   void		AddBoolItem(bool auto_apply, String name, int val, const String& desc = _nilString); // add an item to the list
 
   void 		GetImage(int val);  // set to this value, according to bit fields
@@ -350,9 +349,6 @@ public:
 protected:
   override void		GetImage_impl(const void* base) {GetImage((const MatrixGeom*)base);}
   override void		GetValue_impl(void* base) const {GetValue((MatrixGeom*)base);} 
-/*TODO  override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
-  override void 	this_EditAction(int param); // for when control is clipboard handler
-  override void 	this_SetActionsEnabled(); // for when control is clipboard handler */
 private:
   void 			Initialize(QWidget* gui_parent_);
 
@@ -523,7 +519,7 @@ public:
   };
 
   int			sel_type;
-  String		label() {return String(text());} // TODO: nuke, replace with refs to text()
+  String		label() {return String(text());} 
   Variant		usr_data; // default is Invalid, can also be int or void* 
 
   bool			canSelect(); // true if item can be taiMenu::curSel value

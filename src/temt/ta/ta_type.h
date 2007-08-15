@@ -917,7 +917,6 @@ public:
 
   /////////////////////////////////////////////////
   //	Commonly used utility functions on strings/arrays/values
-  // todo: these perhaps indicate shortcomings of associated objects -- fix them!
 
   static void	CharToStrArray(String_PArray& sa, const char* ch);
   // #CAT_Utility convert space-delimeted character string to a string array
@@ -951,11 +950,12 @@ public:
   // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
   static String GetHomePath();
   // #CAT_File get user's home directory path
+#ifndef NO_TA_BASE
   static String GetCurrentPath();
   // #CAT_File get current working directory path
   static bool 	SetCurrentPath(const String& path);
   // #CAT_File set current working directory to given path; returns success
-
+#endif
   static String	FindFileOnPath(String_PArray& paths, const char* fname);
   // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)
 

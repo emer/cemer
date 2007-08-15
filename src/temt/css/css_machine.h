@@ -99,8 +99,6 @@ class cssProg;
 class cssProgSpace;
 class cssCmdShell;
 
-// todo: move this somewhere else
-// todo: cannot inherit from ostream because ostream << methods are not virtual!!
 class pager_ostream {
   // class that provides one page at a time output of streamed inputs
 public:
@@ -366,9 +364,7 @@ public:
   };
 
   int		refn;		// number of times referred to
-// todo: tmp_str should be mutable, can get rid of all those const casts..
   mutable String tmp_str;	// string used by parsing system
-//obs  String 	tmp_str;	// temporary string when a char* cast is needed
   cssElPtr*	addr;		// address of this item (if other than 'this')
   String 	name;
   cssProg*	prog;		// cur program (filled in each time)

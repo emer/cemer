@@ -666,7 +666,6 @@ protected:
   override void		MakeWinName_impl();
   
   
-  virtual void		ConstrMainMenu_impl();
   virtual void		ConstrToolBars_impl();
   virtual void		ConstrFrames_impl();
   virtual void		ConstrDocks_impl();

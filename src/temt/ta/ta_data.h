@@ -140,13 +140,6 @@ public:
   
 public:
   /////////////////////////////////////////////////////////
-  // Properties interface
-  // todo: this is replaced by userdata, right!?
-//   virtual void		SetProperty(const String& name, const Variant& value) {}
-//   virtual const Variant GetProperty(const String& name) const {return _nilVariant;}
-  
-public:
-  /////////////////////////////////////////////////////////
   // DataSource interface
 
   //////////////////////////////////

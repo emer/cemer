@@ -927,8 +927,6 @@ public:
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
-  // todo: following should have #EXT_tsv as well..
-
   virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
   // #CAT_File #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings

@@ -90,7 +90,6 @@ public:
 };
 
 // the following was written by Dan Cer (modified by O'Reilly)
-// todo: could be re-written using float_Matrix
 class TA_API FunLookupND : public taNBase {
   // #NO_UPDATE_AFTER ##CAT_Math n-dimensional function lookup: function is defined for n_dims inputs and produces a corresponding interpolated output
 INHERITED(taNBase)

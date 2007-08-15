@@ -750,7 +750,6 @@ public:
   // operators
   void operator=(const cssEl& t);
 
-  // todo: look at more of these..
   cssEl* operator+(cssEl &t)
     { cssVariant *r = new cssVariant(GetVarRef("+"),""); r->val += t.GetVar(); return r; }
   cssEl* operator-(cssEl& t)

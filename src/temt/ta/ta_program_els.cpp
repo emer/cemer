@@ -503,22 +503,11 @@ String CaseBlock::GetDisplayName() const {
 
 void Switch::Initialize() {
   cases.SetBaseType(&TA_CaseBlock);
-  case_code.SetBaseType(&TA_CodeBlock);
 }
 
 void Switch::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateProgVarRef_NewOwner(switch_var);
-
-  if(case_code.size > 0) {	// todo: remove! obsolete conversion code!!
-    for(int i=0; i<case_code.size;i++) {
-      CaseBlock* cb = (CaseBlock*)cases.New(1);
-      cb->CopyFrom(case_code.FastEl(i));
-      cb->case_val.SetExpr(case_exprs.FastEl(i)->expr);
-    }
-    case_code.Reset();
-    case_exprs.Reset();
-  }
 }
 
 void Switch::CheckThisConfig_impl(bool quiet, bool& rval) {

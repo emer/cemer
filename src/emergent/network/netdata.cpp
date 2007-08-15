@@ -184,18 +184,12 @@ void LayerWriterEl::CheckThisConfig_impl(bool quiet, bool& rval) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
     if(!lay) return;		// already checked in parent
     TestWarning(lay->layer_type == Layer::HIDDEN, "CheckConfig",
-		"layer_type is HIDDEN -- not appropriate for writing to (by default). Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
-    // todo: do this check
-    // if(data->dims() == 4 && layer->uses_groups())
-//     ConfigError(offs.x != 0 || offs.y != 0, quiet, rval,
-//	"cannot have offsets for 4d data to unit groups");
-//     
+      "layer_type is HIDDEN -- not appropriate for writing to (by default). Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
   }
 }
 
 String LayerWriterEl::GetDisplayName() const {
   String rval = inherited::GetDisplayName();
-  // todo: could add some expert stuff..
   return rval;
 }
 

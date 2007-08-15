@@ -191,7 +191,6 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
     // don't enable null cells
     if (m_dt->hasData(index.column(), index.row() )) {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-      //TODO: determine if not editable, ex. maybe for matrix types
       DataCol* col = m_dt->GetColData(index.column(), true); // quiet
       if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
          col->isGuiReadOnly()) ) 
@@ -417,13 +416,10 @@ const String DataTableView::caption() const {
   if (dt) {
     rval = dt->GetDisplayName();
   } else rval = "(no table)";
-  //TODO: maybe we should also qualify with this view's designator
-  // since we can have many views of the same table
   return rval;
 }
 
 void DataTableView::ClearData() {
-//TODO: the data reset should actually call us back anyway
   m_rows = 0;
   if (dataTable()) {
     dataTable()->ResetData();
@@ -4457,7 +4453,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblPlotStyle->setToolTip("How to plot the lines");
   layTopCtrls->addWidget(lblPlotStyle);
   cmbPlotStyle = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
-    NULL, NULL, widg, taiData::flgAutoApply);
+    this, NULL, widg, taiData::flgAutoApply);
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
   //  layTopCtrls->addSpacing(taiM->hsep_c);
 
@@ -5173,11 +5169,12 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
       if (sel.width() < 1) return;
+/*note: not supporting col ops here
       if (op_code & OP_APPEND) {
-//TODO        tab->AddRows(sel.height());
-      } else if (op_code & OP_INSERT) {
-//TODO        tab->InsertRows(sel.row_fr, sel.height());
-      } else if (op_code & OP_DELETE) {
+      } else 
+      if (op_code & OP_INSERT) {
+      } else */
+      if (op_code & OP_DELETE) {
         if (taMisc::Choice("Are you sure you want to delete the selected columns? (this operation cannot be undone!)", "Yes", "Cancel") != 0) return;
         tab->StructUpdate(true);
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
@@ -5352,7 +5349,7 @@ void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
 }
 
 void iDataTableEditor::UpdateSelectedItems_impl() {
-//TODO
+//note: not needed
 }
 
 //////////////////////////
@@ -5379,8 +5376,6 @@ void iDataTablePanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   if(!isVisible() || !dte || !dte->isVisible()) return; // no update when hidden!
   inherited::DataChanged_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
-//TODO: maybe we should do something less crude???
-//  idt->updateConfig();
 }
 
 int iDataTablePanel::EditAction(int ea) {
@@ -5412,11 +5407,7 @@ int iDataTablePanel::GetEditActions() {
 }
 
 void iDataTablePanel::GetSelectedItems(ISelectable_PtrList& lst) {
-/*TODO  QListViewItemIterator it(list, QListViewItemIterator::Selected);
-  while (it.current()) {
-    lst.Add((taiListDataNode*)it.current());
-    ++it;
-  } */
+//note: not applicable
 }
 
 void iDataTablePanel::GetWinState_impl() {
@@ -5454,34 +5445,6 @@ void iDataTablePanel::SetWinState_impl() {
     }
   }
 }
-
-void iDataTablePanel::mb_View() {
-  //TODO:
-}
-
-/*void iDataTablePanel::idt_contextMenuRequested(QListViewItem* item, const QPoint & pos, int col ) {
-  //TODO: 'item' will be whatever is under the mouse, but we could have a multi select!!!
-  taiListDataNode* nd = (taiListDataNode*)item;
-  if (nd == NULL) return; //TODO: could possibly be multi select
-
-  taiMenu* menu = new taiMenu(this, taiMenu::popupmenu, taiMenu::normal, taiMisc::fonSmall);
-  //TODO: any for us first (ex. delete)
-
-  ISelectable_PtrList sel_list;
-  GetSelectedItems(sel_list);
-  nd->FillContextMenu(sel_list, menu); // also calls link menu filler
-
-  //TODO: any for us last (ex. delete)
-  if (menu->count() > 0) { //only show if any items!
-    menu->exec(pos);
-  }
-  delete menu;
-}
-
-void iDataTablePanel::list_selectionChanged() {
-  viewer_win()->UpdateUi();
-}*/
-
 
 String iDataTablePanel::panel_type() const {
   static String str("Data Table");
@@ -6075,7 +6038,7 @@ bool taiMatrixDataMimeItem::Constr_impl(const String&) {
 }
 
 void  taiMatrixDataMimeItem::DecodeData_impl() {
-//TODO: note: maybe nothing!
+//note: maybe nothing!
 }
 
 
@@ -6166,7 +6129,7 @@ done:
 }
 
 void taiTableDataMimeItem::DecodeData_impl() {
-//TODO: note: maybe nothing!
+//note: maybe nothing!
 }
 
 void taiTableDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {

@@ -546,7 +546,7 @@ bool Variant::isNumeric() const {
       m_is_numeric = ok;
       m_is_numeric_valid = true;
 #else
-      // TODO: should reallysupport, but not needed for maketa
+      // note: should reallysupport, but not needed for maketa
       warn("isNumeric() routine without Qt");
 #endif
     }
@@ -649,7 +649,7 @@ Variant& Variant::operator+=(double rhs) {
   return *this;
 }
 
-Variant& Variant::operator+=(const Variant& rhs) {//TODO
+Variant& Variant::operator+=(const Variant& rhs) {
   switch (rhs.type()) {
   case T_Int: return operator+=(rhs.d.i);
   case T_UInt: return operator+=(rhs.d.u);
@@ -741,7 +741,7 @@ Variant& Variant::operator-=(double rhs) {
   return *this;
 }
 
-Variant& Variant::operator-=(const Variant& rhs) {//TODO
+Variant& Variant::operator-=(const Variant& rhs) {
   switch (rhs.type()) {
   case T_Int: return operator-=(rhs.d.i);
   case T_UInt: return operator-=(rhs.d.u);
@@ -832,7 +832,7 @@ Variant& Variant::operator*=(double rhs) {
   return *this;
 }
 
-Variant& Variant::operator*=(const Variant& rhs) {//TODO
+Variant& Variant::operator*=(const Variant& rhs) {
   switch (rhs.type()) {
   case T_Int: return operator*=(rhs.d.i);
   case T_UInt: return operator*=(rhs.d.u);
@@ -923,7 +923,7 @@ Variant& Variant::operator/=(double rhs) {
   return *this;
 }
 
-Variant& Variant::operator/=(const Variant& rhs) {//TODO
+Variant& Variant::operator/=(const Variant& rhs) {
   switch (rhs.type()) {
   case T_Int: return operator/=(rhs.d.i);
   case T_UInt: return operator/=(rhs.d.u);
@@ -2199,7 +2199,6 @@ QVariant Variant::toQVariant() const {
   case T_String: 
     return QVariant(getString().chars());
 /* others are invalid
-//TODO: maybe add extensions to QVariant handlers to handle our types.
   case T_Ptr: 
     return QVariant(d.ptr); // renders as hex
 #ifndef NO_TA_BASE
@@ -2220,16 +2219,6 @@ QVariant Variant::toQVariant() const {
   return QVariant();
 }
 #endif 
-
-//#ifdef DEBUG
-// some test code
-void test1() {
-  Variant var1;
-  Variant var2 = 100U;
-  var1 = var2 + 2.0;
-}
-//#endif
-
 
 /////////////////////////////////////////////////////////
 // NameVar

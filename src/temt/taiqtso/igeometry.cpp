@@ -82,54 +82,6 @@ void iBox3f::MaxOf(const iBox3f& val1, const iBox3f& val2) {
   max.z = MAX(val1.max.z, val2.max.z);
 }
 
-//////////////////////////
-//   iTransform		//
-//////////////////////////
-/*
-static SbMat unity_mat = {
-  {1.0f, 0.0f, 0.0f, 0.0f},
-  {0.0f, 1.0f, 0.0f, 0.0f},
-  {0.0f, 0.0f, 1.0f, 0.0f},
-  {0.0f, 0.0f, 0.0f, 1.0f}
-};
-
-iTransform::iTransform() {
-  memset(vals, 0, sizeof(vals));
-  a11 = 1.0f; a22 = 1.0f; a33 = 1.0f; a44 = 1.0f;
-}
-
-iTransform::iTransform(const iTransform& src) {
-  memcpy(vals, src.vals, sizeof(vals));
-}
-
-bool iTransform::isUnity() const {
-  return (vals == unity_mat);
-}
-
-void iTransform::rotate(const iVec3f &axis, const float angle) {
-  //TODO:
-}
-
-void iTransform::rotate(const iVec3f &rotateFrom, const iVec3f &rotateTo) {
-}
-
-void iTransform::scale(float s) {
-  scale(s, s, s);
-}
-
-void iTransform::scale(float sx, float sy, float sz) {
-  a11 *= sx;  a22 *= sy;  a33 *= sz;
-}
-
-void iTransform::translate (float dx, float dy, float dz) {
-  a41 += dx;  a42 += dy;  a43 += dz;
-}
-
-*/
-
-#ifdef TA_USE_INVENTOR
-#endif
-
 
 #ifdef TA_GUI
 iPoint::iPoint(const QPoint& val)

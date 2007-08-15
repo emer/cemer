@@ -594,16 +594,6 @@ static const unsigned char image8_data[] = {
       
     signals:
       SelectableHostNotifySignal -- forwarder, from all internal guys
-      
-      
-    
-TODO:
-  * iFrames should not themselves be ISelectable hosts -- let the actual gui thingies
-    implement this, ex the TreeView -- the instance itself then needs to know it
-    is indeed a host, and it can call something to register or connect
-  * axiomatically, all ISHs should also be cliphandlers, since they get focus, have
-    selectable items, etc. Since most of the cliphandling code is actually in the 
-    ISelectable guy, it makes sense for ISH to also implement cliphandling.
     
 */
 
@@ -628,14 +618,6 @@ void IDataHost::SetItemAsHandler(taiData* item, bool set_it) {
   }
 }
 
-
-
-/*
-//TODO:
- following used to be in taiDataLink::DataChanged
-  if (viewer_win())
-    viewer_win()->UpdateTabNames(); //in case any changed
-*/
 
 //////////////////////////
 //   taiDataLink 	//
@@ -842,7 +824,7 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
     taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;
     if (cnt == 0) menu->AddSep();
-    mth_rep->AddToMenu(menu); //TODO: need to make sure this works for MENU, BUTTON, and MENU_BUTTON types
+    mth_rep->AddToMenu(menu); 
     ++cnt;
   }
 
@@ -1273,22 +1255,6 @@ taiTreeDataNode* tabGroupDataLink::CreateTreeDataNode_impl(MemberDef* md, taiTre
   return rval;
 }
 
-//void tabListDataLink::InitDataNode(BrListViewItem* node);
-
-
-/* maybe need this:
-String tabListItemsDataLink::GetText(DataLinkText dlt) const {
-  //TODO: replace with better choice for tab text
-  switch (dlt) {
-  case DLT_TAB_TEXT:
-    return data()->GetDataType() + " items";
-  case DLT_TREE_NAME:
-    return "list"; //note: would only happen in a list of lists
-  default:
-    return "";
-  }
-} */
-
 
 //////////////////////////////////
 //  IDataViewWidget		//
@@ -1501,8 +1467,6 @@ show_menu:
   act = menu->AddItem("C&ancel", -1);
   act->setShortcut(QKeySequence("Esc"));
 
-  // 
-  //TODO: any for us last (ex. delete)
   // get current mouse position
   QPoint men_pos = widget()->mapToGlobal(pos);
   
@@ -1539,8 +1503,6 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
   if (ea == 0) return;
   if (menu->count() > 0)
     menu->AddSep();
-  //TODO: maybe always show the basic ones, and only enable/disable
-  //TODO: provide a way to add these via already existing Actions (ex toolbar)
 //  cut copy paste link delete
   taiAction* mel;
   if (ea & taiClipData::EA_CUT) {
@@ -1679,7 +1641,6 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
       QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
       rval = taiClipData::ER_OK;
-      //TODO: if CUT, now need to undoably delete!
     } else { // other ops, like Duplicate, Clear or Unlink
       for (int i = 0; i < sel_items.size; ++i) {
         ISelectable* is = sel_items.SafeEl(i);
@@ -2537,9 +2498,8 @@ void iFrameViewer::SelectableHostNotifySlot_Internal(ISelectableHost* src, int o
     emit SelectableHostNotifySignal(src, op);
   --shn_changing;
 }
+
 void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int op) {
-//TODO: maybe this should be forwarded to a virtual that can be overridden???
-//or maybe it should be virtual???
   if (shn_changing > 0) return; // reflection back down, ignore it
   switch (op) {
   case ISelectableHost::OP_GOT_FOCUS:
@@ -2595,20 +2555,6 @@ void iBrowseViewer::Init() {
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
 
-/*TODO: sort this out iTabView* iBrowseViewer::AddTabView(QWidget* parCtrl, iTabView* splitBuddy) {
-  iTabView* rval = inherited::AddTabView(parCtrl, splitBuddy);
-  // create a tab in the new tabview, based on cur item
-  iDataPanel* pn;
-  ISelectable* ci = curItem();
-  if (!ci) goto exit;
-  pn = NULL;
-  pn = rval->GetDataPanel(ci->link());
-  rval->SetPanel(pn);
-
-exit:
-  return rval;
-} */
-
 void iBrowseViewer::ApplyRoot() {
   void* m_root = root(); //cache
   if (!m_root) return;
@@ -2643,16 +2589,10 @@ void iBrowseViewer::ApplyRoot() {
   lvwDataTree->setItemExpanded(node, true); // always open root node
 }
 
-/*was not an override! void iBrowseViewer::DataPanelDestroying(iDataPanel* panel) {
-  // remove from tabs, deleting tabs (except always leave at least one tab, except when we are destroying)
-  //note: not called by the blank panel, since it has no link
-  tabView()->DataPanelDestroying(panel);
-} */
-
 void iBrowseViewer::lvwDataTree_FillContextMenuHookPost(ISelectable_PtrList& /*sel_items*/,
    taiActions* menu) 
 {
-//TODO:  FillContextMenu(menu);
+//note: nothing
 }
 
 void iBrowseViewer::Refresh_impl() {

@@ -36,10 +36,6 @@
 # include <QSplitter>
 #endif
 
-//TODO: this file will need to have many routines modalized for TA_GUI
-// typically, just stub entire thing out -- maybe we can just stub out
-// all these funs in the header, and then collect them all here in a #ifdef
-
 
 //////////////////////////
 //   DataViewer		//
@@ -93,7 +89,6 @@ void DataViewer::CutLinks() {
 
 void DataViewer::Copy_(const DataViewer& cp) {
   visible = cp.visible; //note: not the same as mapped
-//TODO: should probably call Clear() too
 }
 
 void DataViewer::CloseWindow_impl() { // only called if mapped
@@ -136,7 +131,7 @@ bool DataViewer::GetWinState() {
 void DataViewer::Hide() {
   if (!isMapped()) return;
   Hide_impl();
-  //TODO: set the "visible" property false
+  visible = false;
 }
 
 void DataViewer::Hide_impl() {
@@ -159,7 +154,7 @@ void DataViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 void DataViewer::Show() {
   if (!isMapped()) return;
   Show_impl();
-  //TODO: set the "visible" property true
+  visible = true;
 }
 
 void DataViewer::Show_impl() {
@@ -434,7 +429,6 @@ void ClassBrowseViewer::RootToStr() {
     root_str = _nilString;
     return;
   }
-//nn  taMisc::TypeInfoKind tik = taMisc::TypeToTypeInfoKind(root_typ);
   //TODO: full description of type, requires support from ta_type for searching/converting
   // for now, we only support the root typespace
   if (m_root == &taMisc::types)
@@ -1015,7 +1009,6 @@ void MainWindowViewer::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent); // prob just creates the widget
   if (!dvwidget()) return; // shouldn't happen
 
-  ConstrMainMenu_impl();
   ConstrToolBars_impl();
   ConstrFrames_impl();
   ConstrDocks_impl();
@@ -1045,10 +1038,6 @@ void MainWindowViewer::ConstrFrames_impl() {
     ((DataViewer*)fv)->Constr_impl(NULL);
     win->AddFrameViewer(fv->widget());
   }
-}
-
-void MainWindowViewer::ConstrMainMenu_impl() {
- // TODO: new main menu constr 
 }
 
 void MainWindowViewer::ConstrToolBars_impl() {

@@ -82,9 +82,7 @@ public:
   ScriptButton(char* name, ivAction *a, char* srp);
   void release(const ivEvent&);
 };
-
-
-*/ //TODO
+*/ 
 
 class taiToken;
 class taiTypeHier;
@@ -241,7 +239,6 @@ private:
   void		Init();
 };
 
-//TODO: taiDHB should be used to rebase taiDH
 class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient
 { // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(QObject)

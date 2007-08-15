@@ -1139,8 +1139,8 @@ public: // IDataLinkClient i/f
 protected:
   DataTableRef		m_dt;
   DataTableModel*	m_model;
-  taMatrix*		m_cell_par; // parent of cell -- we connect to it
-  taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row
+  taMatrix*		m_cell_par; // parent of cell -- we link to it
+  taMatrixPtr		m_cell; // current cell 
   QModelIndex		m_cell_index; // we keep this to refresh cell if data changes
   void			setCellMat(taMatrix* cell, const QModelIndex& index);
   void			ConfigView(); // setup or change view, esp after col ins/deletes
@@ -1180,7 +1180,6 @@ protected:
   
 protected slots:
   void			tv_hasFocus(iTableView* sender); // for both tableviews
-  void			mb_View(); // View button on minibar
 };
 
 /* TODO
