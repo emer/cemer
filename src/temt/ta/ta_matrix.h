@@ -414,6 +414,7 @@ public:
   // #CAT_Modify true if using fixed (externally managed) data storage
   int			sliceCount() const;
   // #IGNORE number of extant slices
+  taMatrix*		slicePar() const {return slice_par;} // if exists; rarely used
 
   virtual int		defAlignment() const;
   // #CAT_Display default Qt alignment, left for text, right for nums

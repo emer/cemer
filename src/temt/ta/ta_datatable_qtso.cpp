@@ -5227,6 +5227,7 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
 :inherited(parent)
 {
   m_model = NULL;
+  m_cell_par = NULL;
   layOuter = new QVBoxLayout(this);
   splMain = new QSplitter(this);
   splMain->setOrientation(Qt::Vertical);
@@ -5248,6 +5249,9 @@ iDataTableEditor::~iDataTableEditor() {
     delete m_model;
     m_model = NULL;
   }
+  if (m_cell_par) {
+    setCellMat(NULL, QModelIndex());
+  }
 }
 
 void iDataTableEditor::ConfigView() {
@@ -5265,6 +5269,15 @@ void iDataTableEditor::ConfigView() {
   }
   tvCell->setVisible(show_cell);
   
+}
+
+void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
+  // note: following should always be true
+  if (m_cell_par && (m_cell_par == dl->taData())) {
+    // ok, probably the col is deleting, so unlink ourself now!
+    setCellMat(NULL, QModelIndex());
+    // WARNING: m_cell_par will now be NULL
+  }
 }
 
 void iDataTableEditor::Refresh() {
@@ -5289,6 +5302,24 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   ConfigView();
 }
 
+void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index) {
+  tvCell->setMatrix(mat);
+  m_cell = mat; 
+  m_cell_index = index;
+  // unlink old parent
+  if (m_cell_par) {
+    m_cell_par->RemoveDataClient(this);
+    m_cell_par = NULL;
+  }
+  // link new parent, if any
+  if (mat) {
+    m_cell_par = mat->slicePar();
+    if (m_cell_par) { // should exist!!!
+      m_cell_par->AddDataClient(this);
+    }
+  }
+}
+
 void iDataTableEditor::tvTable_layoutChanged()
 {
   ConfigView();
@@ -5298,22 +5329,14 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
   DataTable* dt_ = dt(); // cache
   int colidx = index.column();
   DataCol* col = dt_->GetColData(colidx, true); // quiet
-  // note: we return from following if, otherwise fall through to do the contra
   if (col && col->is_matrix) {
-    m_cell = dt_->GetValAsMatrix(index.column(), index.row());
-    m_cell_index = index;
-    //TODO: the ref above will screw up things like deleting the col
-    // we need to be able to "unlock" this defacto lock on the col!!!!
-    if (m_cell.ptr()) {
-      tvCell->setMatrix(m_cell);
+    taMatrix* tcell = dt_->GetValAsMatrix(index.column(), index.row());
+    if (tcell) {
+      setCellMat(tcell, index);
       return;
-    } 
-  } else {  
-    tvCell->setMatrix(NULL);
-    m_cell = NULL; // good to at least release this asap!!!
-    m_cell_index = QModelIndex(); // empty is invalid
+    }
   }
-
+  setCellMat(NULL, QModelIndex());
 }
 
 void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,

@@ -1095,7 +1095,10 @@ protected:
 };
 #endif // MAKETA
 
-class TA_API iDataTableEditor: public QWidget, public ISelectableHost {
+class TA_API iDataTableEditor: public QWidget,
+  public virtual ISelectableHost, 
+  public virtual IDataLinkClient 
+{
   Q_OBJECT // ##NO_CSS
 INHERITED(QWidget)
 public:
@@ -1119,18 +1122,27 @@ public slots:
     const QModelIndex & bottomRight); // #IGNORE
   void 			tvTable_layoutChanged(); // #IGNORE
 
+public: // ITypedObject i/f
+  override void*	This() {return this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iDataTableEditor;}
   
 public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const {return false;} // always
-  override QWidget*	widget() {return this;} 
+  override QWidget*	widget() {return this;} //
 protected:
-  override void		UpdateSelectedItems_impl(); 
+  override void		UpdateSelectedItems_impl(); //
+
+public: // IDataLinkClient i/f
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {}
 
 protected:
   DataTableRef		m_dt;
   DataTableModel*	m_model;
+  taMatrix*		m_cell_par; // parent of cell -- we connect to it
   taMatrixPtr		m_cell; // current cell TODO: this ref will prevent col from growing for new row
   QModelIndex		m_cell_index; // we keep this to refresh cell if data changes
+  void			setCellMat(taMatrix* cell, const QModelIndex& index);
   void			ConfigView(); // setup or change view, esp after col ins/deletes
 };
 
