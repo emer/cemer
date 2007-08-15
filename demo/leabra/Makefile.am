@@ -6,4 +6,6 @@ dist_pkgdata_leabra_DATA =\
 	simple_vis_search.proj \
 	ax_tutorial.proj \
 	ax_tutorial_input_data.dtbl \
-	ax_tutorial_final.proj
+	ax_tutorial_final.proj \
+	ax_tutorial_cptax.proj \
+	ax_tutorial_cptax.net

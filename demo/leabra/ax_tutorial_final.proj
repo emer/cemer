@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-LeabraProject .projects[0] { 
+LeabraProject .projects[1] { 
   Doc_Group @.docs = [8] {
     taDoc @[0] { };
     taDoc @[1] { };
@@ -873,7 +873,7 @@ LeabraProject .projects[0] {
     };
   };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="Project_0";
  desc=;
  templates {
@@ -1001,7 +1001,7 @@ To do this, select the <b>red arrow</b> tool, and you'll see that transparent pu
 <head></head>
 <body>
 
-= Input Data  (Pattenrs to Present to the Network) =
+= Input Data  (Patterns to Present to the Network) =
 
 (Note -- to return to this document, click on docs/InputData in the left browser window).
 
@@ -1314,6 +1314,106 @@ You have now done a little bit of each of the critical main elements of simulati
 <head></head>
 <body>
 = CPT-AX Program =
+
+The next challenge is to write a program that will generate the CPT-AX task (CPT stands for continuous performance task), which is the logical extension of our simple AX task to the ''sequential'' domain.  Instead of A and X each being targets, the target is now
+an A ''followed by'' an X in sequence.  Other sequences such as A followed by Y or B followed by X are 
+non-target sequences, which nevertheless overlap with the target sequence.  In our simplified version of this task (and in several of the actual experiments on people), we restrict the sequences to cue-probe pairs, where cues are A,B,C and probes are X,Y,Z.  See e.g., Braver, T.S., Barch, D.M. & Cohen, J.D. (1999). Cognition and control in schizophrenia: A computational model of dopamine and prefrontal function. ''Biological Psychiatry, 46,'' 312-328, for an application of this task and further discussion and references.
+
+One implementational detail in how this task is run is key for generating interesting behavioral and neural data: the frequency of the A-X target sequence is set to be relatively high (typically 70%), so that it becomes the default expectation.  Then, the two related non-target sequences become much more interesting.  For A-Y, there should be a strong expectation of getting an X, which will be influenced by the extent to which the A cue is well remembered.  Errors on this trial type, where people might press \"target\" at the Y, would actually suggest strong maintenance of the A cue.  A similar argument applies to B-X, where the X is typically a target, but if you remember the B cue, you should not press the target key.  The C,Z items serve as baseline controls, as does the B-Y sequence.
+
+== Plan for the Program ==
+
+With the above in mind, we can sketch out the logic of our overall program:
+* Flip a weighted coin to determine whether we want to generate a target sequence or not.  70% of the time we generate a target sequence, in which case we just produce A followed by X and that is easy.
+* Generating a non-target sequence is harder.  We need to randomly select from the cues (A,B,C) and the probes (X,Y,Z), while ensuring that we don't randomly pick A-X.  We'll discuss a couple of different strategies for this.
+* We can do the above cue-probe generation process multiple times to generate a larger set of trials that we will run on a given epoch worth of network training.  That is just a simple for loop around the above code.
+
+== List of Variables ==
+
+Once we have this plan in place, we can create a set of variables that we'll need -- the general flow of programming in this system involves creating variables and then opearating on them, so getting the variables down is the key first step:
+* pct_target -- how frequent should the target sequence be?  this is actually a proportion, but pct is a much simpler label -- for the default case it should be .7
+* rnd_number -- a random number between 0 and 1 (floating point or Real) that we'll generate to simulate the flipping of a weighted coin.
+* cue -- the identity of the cue input (A,B, or C) represented as a DynEnum of type Input, taking on values I_A, I_B, or I_C.
+* probe -- the identity of the probe input (X,Y, or Z), represented by an Input DynEnum as well.
+* output_unit -- correct answer for the output layer (DynEnum of type Output) -- we'll have the model respond \"non-target\" for all the cue items, and \"target\" for the targets.
+
+== Getting Started: Copy and Modify ==
+
+The easiest way to get started is to duplicate and modify the existing AXTaskGen program (this is a general rule -- if there is a program that has several elements that you want, just copy and modify instead of starting from scratch).  To do this, click on the AXTaskGen program in the left browser, and use the context menu to select Duplicate.  In the new program, enter the name as CPTAXGen, and update the description to reflect what we're doing.
+
+Now go to EditProgram, and click on the ForLoop object in the prog_code, and use the context menu to Delete that object -- this will also delete everything within it, which is almost all of the code from the previous program.  All that should remain is the ResetDataRows at the start (which we can use in any case).
+
+We can now setup our variables as indicated above.  Just rename input_unit to cue, then duplicate it and call it probe.  Then drag a new var (from Var/Fun toolbox) into vars and call it \"pct_target\", and set the type to Real, and enter a value of .7.  Duplicate it, and call it \"rnd_number\".  It would be a good idea to enter the descriptions for each variable in their desc fields (you can copy and paste from the above text if you want).
+
+== Flipping a Weighted Coin For the Target ==
+
+The first step in our actual program code is to flip a weighted coin to decide if it is a target sequence or not.  We do this by generating a random number (rnd_number) which is uniformly distributed between 0 and 1.  We then see if this number is ''less than'' our target percent value -- this will be true 70% of the time for a value of .7, and that is what we want!
+
+* in the Toolbox, Misc Fun, there is a random() guy -- grab that and put it at the end of your program (drop on prog_code or after the reset data rows).  Set the result_var to rnd_number, and click on the method -- in the browser window that comes up, you can select different categories (in the menu at the top) of random numbers to generate -- select \"Float\", and then pick ZeroOne.  This will set rnd_number = a random number between 0 and 1.
+* Go to Ctrl toolbox and drag <code>if</code> to the end of your program.  In the cond expression, type/select: <code>rnd_number &lt; pct_target</code>.
+
+The true_code for this if is now the target case, and the false_code is the non-target.  To set the target values, we just need to assign cue and probe to A and X respectively.  Drag var= from the Var/Fun toolbox into true_code, and set the result_var to cue, and choose the I_A enum from the enum_lookup button.  Drag var= again and set probe = I_X.  Finally, drag var= and set output_unit = O_T.
+
+== Generating the Non-Target ==
+
+There are two strategies for generating the non-target sequence that excludes A-X:
+* Brute force: randomly generate a cue and a probe and check that they aren't A-X -- if they are, then repeat the process until they aren't.  This is not particularly efficient, but it is easy to code.
+* Choose from a list: generate a list of all possible cue-probe combinations, remove A-X from this list, and then randomly select an item from this list.  This is more efficient overall, but harder to code.  It is left as an excercise for later, as it demonstrates some important techniques.
+
+To do the brute-force method, you need to enclose the random generation code in a \"do\" loop, which does some things (generates the random cue/probe) and then tests whether it should loop again (if it is A-X) or not.
+
+Drag the <b>do</b> guy from Ctrl into your false_code of the target if test.  Enter/lookup <code>cue == I_A && probe == I_X</code> as the test for continuing to loop ( == is the equality operator, and && is logical AND).
+
+Now inside the loop_code, we need to randomly generate a cue and a probe.  Drag the random() guy from Misc Fun in there, and set the result_var to cue.  For the method, select the Int category, and choose IntMinMax -- we'll specify a minimum and maximum value to generate random numbers between.  Notice that the min and max arguments open up below this element -- these are the values that will be passed to the IntMinMax function.  Click on min, and enter/lookup I_A.  For the max, enter I_C + 1, because this IntMinMax function generates values ''exclusive'' of max (this is consistent with the C programming language convention, where values go between 0 and n-1 instead of 1 to n).
+
+Just duplicate this RandomCall element, and change cue -> probe and min = I_X, max = I_Z+1.  Finally, drag var= and set output_unit = O_N to show that this is a non-target case (quicker to drag AssignExpr guy from true_code and change O_T to O_N).
+
+To test the program at this point, you can drag a print var object to the end of the code, and select cue, probe, and output_unit for the vars to print, and do Init and Run and see that it tends to produce a predominance of A-X and O_T.  To really test it, set pct_target = 0, and Run some more.  You should never see an A-X, and only O_N.
+
+== Generating the Input Data Patterns ==
+
+The last step is to produce the input data patterns for the values we have generated.  This is just a matter of adding a couple of <code>new row</code> guys from the Data toolbox and <code>set units var</code> from the Network toolbox to set the units.
+* drag the <code>new row</code> from Data Toolbox to the end of the program (drop on prog_code) and set data_var to input_data.
+* drag the <code>set units var</code> from Network toobox to the end, and set unit 1 to the cue variable.
+* Because the output is a literal in this case (O_N or non-target), we cannot set it using this element, which requires a variable.  So, you need to drag the <code>set units lit</code> to the end, and set the enum_type to Output, and the value to O_N.
+* drag and drop the AddNewDataRow and SetUnitsVar guys on top of prog_code and select Copy Into to duplicate them at the end of the program, and change cue to probe in the set units var, and select output_unit for unit 2 to also set that guy.
+* finally, drag a Data/row done guy to the end to tell it to update the view (select input_data as the data_var).
+
+[[.programs.CPTAXGen.Init()|Init]]
+and [[.programs.CPTAXGen.Run()|Run]] the program while looking at the 
+[[.T3Tab.StdInputData]] view tab.  You should see it generate a valid cue-probe input that matches what is printed out on the console.  Keep running to see a range of inputs.
+
+== Generating Multiple Cue-Probe Trials ==
+
+The last bit of programming needed is to simply loop over the existing set of code multiple times to create several cue-probe sets per epoch for the network to train on.  Drag a for loop from Ctrl on top of the 2nd line of the program (RandomCall).  Then, multi-select the rest of the program code (only the guys at the main level, not the true_code or false_code within the if statement (this is done with alt-click on linux or mac-command-click on the mac -- note that order matters so select down in order!), and then drag the whole thing into the loop_code of the for guy.  Pretty slick.
+
+If you just Run it like this, you'll get 10 trials.  It would be good to make the number of trials a variable that can be set.  Drag a var into vars and call it \"n_trials\", and set it to 50 (Int = integer type).  Then, click on the for loop and replace the 10 in the test expression with n_trials.
+
+You can probably turn off the console printout by now -- just click on the PrintVar guy and click the OFF flag -- this keeps it around in case you want to do some debugging or something later, but it is not actually used in the code.
+
+== Updating the Control Panel ==
+
+If you go back to the Program Ctrl tab for the CPTAXGen program (instead of Edit Program where we've been), you'll see that all of the args and vars are present there.  However, some of those vars are actually more internal variables that the end-user doesn't need to set or configure.  So, we should remove those from the control panel, leaving only the pct_target and n_trials variables.  To do this, go back to Edit Program and click on each of the vars, and turn off the CTRL_PANEL flag for all but pct_target and n_trials.  Then go back and marvel at the clean interface you've provided for your grateful user!  The mouse-over tooltip even shows whatever comment you entered in the desc field for that variable.  This can provide a quick but quite usable interface for many different programs.
+
+== Calling from the Epoch Program ==
+
+The final final step is to call the CPTAXGen program every epoch, so that we get a new random selection of trials every epoch (keeps the network from simply memorizing the particular sample we happen to have generated).  To do this, we go to the [[.programs.gp.LeabraAll_Std.LeabraEpoch]] program in the LeabraAll_Std subgroup of programs, and do Edit Program.  Then drag the prog() guy from the Var/Fun toolbox just after the 3rd line of the prog_code, which starts the timer recording how long the epoch takes to process (it is a MethodCall, in blue).  Then select CPTAXGen for the target.  Note that this automatically brings up the input_data arg, and it even automatically fills this in with the input_data variable in the LeabraEpoch program -- if an arg has the same name as a variable in the calling program, it is used automatically (of course you can always change it if that isn't right).
+
+There is one additional and <b>very critical</b> final step with the LeabraEpoch program.  Go to the Program Ctrl tab, and observe the set of program vars available for you to set.  The first one, called <code>data_loop_order</code> is set to <code>PERMUTED</code> by default -- this means that the trials (rows of the input data table) are presented in a shuffled random order (without replacment, so each trial only appears once).  Clearly this is not going to be good for our <i>sequential</i> input data.  So, change it to <code>SEQUENTIAL</code>, which will present the trials in sequential order.  Given that we're doing the randomization within our program, this should be just fine.  There is also another way of doing this that involves creating grouped trials (i.e., cue-probe), where you can randomize the order of the groups, but present the trials within the group in sequential order.  The LeabraEpochGpData program available in the standard program library does this, but that is beyond the scope of this project.
+
+== Running the Network ==
+
+Now you're finally ready to run the network on this CPT-AX task!  Go back to the LeabraTrain process, do Init and Run on it (initialize the weights) and see what happens!?
+
+You should see that it will run and run and never fully learn the task (it will stop training if the error goes to zero).  There is some chance that it might get there just by virtue of a lucky set of trials -- try hitting Run again -- it should not stay at zero, and will keep running.
+
+You probably want to turn off the network and trial output data views at some point -- just click off the display button on their respective control panels under the Network_0 view tab.
+
+It shouldn't come as that much of a surprise that the network doesn't fully learn the task -- this task requires working memory, and this network hasn't got any!  In fact, it is quite surprising that it is able to learn as well as it can.  Turns out it can learn to use weight changes as a kind of fairly unreliable form of working memory.  Plus, the default target of AX is highly frequent, so it can get pretty far by focusing a lot on that.
+
+In the next and final segment, we give this network some working memory, and see if that helps: [[.docs.PfcBg]]
+
+
 </body>
 </html>
 ";
@@ -1324,7 +1424,70 @@ You have now done a little bit of each of the critical main elements of simulati
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Adding a Prefrontal Cortex, Basal Ganglia Working Memory System =
+
+There are many different ways of giving a neural network some amount of working or active memory, to hold on to prior events.  Perhaps the simplest is to add a \"simple recurrent network\" (SRN) context layer that holds on to the prior time step's hidden layer activations, and then feeds back into the hidden layer to provide context for the current inputs.
+
+However, there are various limitations of this simple SRN memory, which can be overcome by having an active gating mechanism that determines when to hold onto information and when to forget it.  One scientific theory is that the basal ganglia provide this function, by interacting with the prefrontal cortex, which is widely regarded as the brain area responsible for holding onto working memory.  The specific implementation of this idea, called PBWM (prefrontal-cortex basal-ganglia working memory; O'Reilly & Frank, 2006, Neural Computation) is available through the Leabra wizard, and we'll use that.
+
+First, to prepare the model for the PBWM components, we need to move the Input layer up to the same level as the output layer.  For anatomically-inspired reasons, PBWM locates various brain-stem dopamine systems in the lower level of the model.  To do this, click on the red arrow in the [[.T3Tab.Network_0]] panel, and click on the virtical arrow poking through the green Input layer border, and drag it up to the level of the Output layer.  The Output layer should move out of the way, and that is all you need to do, but if things don't look right, you can drag layers around with the horizontal arrows too.
+
+Next, go to the [[.PanelTab.LeabraWizard_0]], and 
+select [[.wizards.LeabraWizard_0.BgPFC()|Network/Bg PFC]].  A dialog with several options and lots of information comes up.  Turn off <code>fm_hid_cons</code>, and turn on <code>nolrn_pfc</code>.  This makes the PFC working memory layer activated directly from the input layer, and not the hidden layer, and it makes it a direct copy of the input layer, instead of having it learn new representations.  These are \"hacks\" that simplfy the model and make it easier to understand -- performance is generally the same without them.  When you hit OK, you'll get  a series of dialogs with information -- just keep hitting OK until it is done.  You should see a rather more elaborate network now, with many more layers.
+
+For complete details about these layers, see the  [[http://psych.colorado.edu/~oreilly/pubs-abstr.html#OReillyFrank06|O'Reilly and Frank, 2006]] paper (O'Reilly, R.C. & Frank, M.J. (2006). Making Working Memory Work: A Computational Model of Learning in the Frontal Cortex and Basal Ganglia. <i>Neural Computation, 18,</i> 283-328.)  Here is a very brief overview:
+* First, note that there are four separate <b>stripes</b> (groups of units) in the PFC and Matrix layers -- this was determined by the <code>n_stripes</code> parameter in the wizard.  Each stripe can be independently updated, such that this system can remember up to 4 different things at the same time, each with a different \"updating policy\" of when memories are updated and maintained.  The active maintenance of the memory is in PFC, and the updating signals (and updating policy more generally) come from the Matrix units (a subset of basal ganglia units).
+* PV* and LV* and friends at the very bottom layer of the network: these represent the dopaminergic system, which provides reinforcement learning signals to train up the dynamic gating system in the basal ganglia.  The PV layers represent primary values of reward (i.e., actual externally-delivered reward values), while the LV layers represent learned (\"anticipated\") values -- together, they account for Pavlovian conditioning phenomena and associated dopaminergic firing data.
+* Matrix: this is the dynamic gating system representing the matrix units of the basal ganglia.  Every even-index unit within a stripe represents \"Go\", while the odd-index units represent \"NoGo.\"  The Go units cause updating of the PFC, while the NoGo units cause the PFC to maintain its existing memory representation.
+* SNrThal: represents the substantia nigra pars reticulata (SNr) and the associated area of the thalamus, which produce a competition among the Go/NoGo units within a given stripe.  If there is more overall Go activity in a given stripe, then the associated SNrThal unit gets activated, and it drives updating in PFC.
+* PFC: has 4 different stripes each of which has a localist one-to-one representation of the input units (due to the nolrn_pfc flag).  Thus, you can look at these PFC representations and see directly what the network is maintaining.
+
+== Setting the RewTarg Input ==
+
+Before we can run the model, we need to do one extra bit of configuration.  The PBWM model learns from rewards and punishments generated based on how it is performing the task. Only the reward values generated on the probe trials are relevant, however, so we need to tell the model when the relevant trials are.  This is done using the RewTarg layer (in the bottom layer), which is a new input layer that was added by the wizard.  When we set this unit activation to 1, then that tells the network that this is a trial when reward should be computed based on the difference between the network's output and the correct answer.  Note that this is not the direct value of the reward itself, just the indicator of when reward should be computed.
+
+The procedural steps for making this RewTarg work are mostly the same for any kind of change in the input data table structure (e.g., adding more input units), so these steps are generally useful:
+* First, go to the [[.PanelTab.LeabraWizard_0]] and 
+select [[.wizards.LeabraWizard_0.UpdateInputDataFmNet()|Data/UpdateInputDataFmNet]] -- this will automatically reconfigure your StdInputData table to include the RewTarg input (and it will adjust it to any other changes you might make in your network -- a very useful function!).
+* Next, we need to update the program that applies the input data to the network, so that it will appropriately apply the new RewTarg input to the network.  This is the [[.programs.gp.LeabraAll_Std.ApplyInputs]] program in LeabraAll_Std subgroup.  
+In its objs section, there is an object called  [[.programs.gp.LeabraAll_Std.ApplyInputs.LayerWriter_0]], which provides the info for mapping input data the network layers. 
+Hit [[.programs.gp.LeabraAll_Std.ApplyInputs.LayerWriter_0.AutoConfig()|AutoConfig]] on this object, and it will automatically update based on the new input data and network configuration.
+* Now we need to modify our [[.programs.CPTAXGen]] program to set this RewTarg input value correctly.  This requires several steps:
+** Update the unit names so we can refer to the rew targ input using an enum: click on the InitNamedUnits object in the init_code section of the program (under Edit Program tab) and hit the [[.programs.CPTAXGen.init_code[0].InitNamesTable()|InitNamesTable]] button -- this will update the UnitNames data table to match the updates in the input data table.
+** Go to [[.data.gp.InputData.UnitNames]] and enter the name \"rew_targ\" for the single RewTarg unit.
+** Go back to InitNamedUnits and do [[.programs.CPTAXGen.init_code[0].InitDynEnums()|InitDynEnums]] -- this will add a RewTarg DynEnum in the types section (it would also update the enums based on any other changes you might have made in the UnitNames table -- again a very useful function to remember)
+** Now we are finally ready to add the code to set the rew_targ input for the probe trial.  Just drag a <code>set units lit</code> from the Network toolbox to end of the prog_code before the DoneWritingRowData guy, and set the enum_type to RewTarg, and the value should be R_rew_targ.
+
+Finally, you can hit [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]]
+and [[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]] on the LeabraTrain program to run your new network (select Yes to Initialize the weights).
+
+== Increasing the Hidden Layer Size ==
+
+It may or may not learn the task very quickly (depends on your random initial weights, etc).  It turns out from playing with this model a bit that the initial 16 unit hidden layer is just a bit too small to handle all the new information being represented in the PFC layer.  So, click on the Hidden layer's green border in the Network_0 3d view, and you should see the edit panel for the network in the middle panel.  Locate the <code>un_geom</code> line, and change it to 5 x 5 (25 units) instead of 4 x 4.  When you hit apply, the layer will change size in the display, but the extra units will not be filled in.  You need to click back on the Network_0 tab in the middle panel, and hit the Build button at the bottom to rebuild the network based on the changes you made.
+
+Now [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]]
+and [[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]] on the LeabraTrain program again, select Yes to initialize the weights, and you should see the network learning within 10-20 epochs or so (again, toggle off the display button on the Network view control panel to speed things up -- same with the TrialOutputData Grid display).
+
+== Displaying Unit Names ==
+
+Once the network has learned, we can use the Step button on the Train program to see how it operates step by step (turn the network and trial grid log display's back on).  By default, the step goes one settle at a time -- you can change this to LeabraTrial to get one trial at a time.
+
+To better visualize what is happening, you can change the input, output, and PFC layers to display the name of the most active unit, rather than just the raw unit activations.  This makes it just that much easier to figure out what the network is doing.
+
+There are two steps to this.  First, we need to get the unit name labels from the UnitNames data table into our network.  Then, we need to configure the network display to show the labels instead of the units.
+# Go to our good friend the [[.programs.CPTAXGen.init_code[0]|InitNamedUnits]] object in the 
+init_code of the [[.programs.CPTAXGen]] program.  There is a LabelNetwork button there, but if you press it, you'll get an error about not finding a network variable to apply the names to.  To create this variable, you can just copy the network variable from the args section of any of the programs in the LeabraAll_Std subgroup, and put it in the args of the CPTAXGen program (do context menu copy on the network variable and then context menu paste on args, or you can actually open up the args section of a program in the left browser and drag the network directly into your CPTAXGen args in the middle browser -- that is a convenient way to do various copies).  
+Then do [[.programs.CPTAXGen.init_code[0].LabelNetwork()|LabelNetwork]] again, and this time it should work.
+# In the [[.T3Tab.Network_0]] view, select the red arrow and then click on the Input layer (green border) to select it, and then use the context menu (right mouse button or mac-command-mouse) to select <code>Disp Output Name</code>.  Repeat this for the Output and PFC layers.
+
+Now Step your LeabraTrain program, and you should see the names of the active units.
+
+In the network that we trained (which you can load into Network_0 by clicking on that guy and doing Object/Load and selecting <code>ax_tutorial_cptax.net</code>), it is very clear that the middle two stripes update for an A or a C, while the first and third stripe update for B.  No stripes update for any of the probe stimuli.  This encoding of the cue but not the probe is just what you'd expect the network to learn.
+
+It might be easier to see what the network is doing if you change the pct_target to .25 or something instead of .7 -- you don't have to spend so much time clicking through AX trials.
+
+That is all we have for now.  You might notice a project called <code>12ax4s.proj</code> in this same directory -- that is an even more complex version of the CPT-AX task involving an outer-loop of 1 or 2 stimuli that determines what the inner-loop target sequence is (AX or BY).  These same mechanisms can learn that more difficult task, though it takes longer.  It is described in detail in the O'Reilly & Frank 2006 paper referenced above.
+
 </body>
 </html>
 ";
@@ -2143,7 +2306,7 @@ You have now done a little bit of each of the critical main elements of simulati
      name="input_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$0$;
+     object_val=.projects[1].data.gp[0][0]$0$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
      desc=;
@@ -2157,7 +2320,7 @@ You have now done a little bit of each of the critical main elements of simulati
      name="unit_names";
      var_type=T_Object;
      object_type=taOBase;
-     object_val=.projects[0].data.gp[0][1]$1$;
+     object_val=.projects[1].data.gp[0][1]$1$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
      desc=;
@@ -2166,7 +2329,7 @@ You have now done a little bit of each of the critical main elements of simulati
      name="input_unit";
      var_type=T_DynEnum;
      dyn_enum_val {
-      enum_type=.projects[0].programs[0].types[0]$2$;
+      enum_type=.projects[1].programs[0].types[0]$2$;
       value=5;
      };
      objs_ptr=0;
@@ -2177,7 +2340,7 @@ You have now done a little bit of each of the critical main elements of simulati
      name="output_unit";
      var_type=T_DynEnum;
      dyn_enum_val {
-      enum_type=.projects[0].programs[0].types[1]$3$;
+      enum_type=.projects[1].programs[0].types[1]$3$;
       value=0;
      };
      objs_ptr=0;
@@ -2202,8 +2365,8 @@ You have now done a little bit of each of the critical main elements of simulati
     InitNamedUnits @[0] {
      desc=;
      flags=;
-     input_data_var=.projects[0].programs[0].args[0]$4$;
-     unit_names_var=.projects[0].programs[0].vars[0]$5$;
+     input_data_var=.projects[1].programs[0].args[0]$4$;
+     unit_names_var=.projects[1].programs[0].vars[0]$5$;
      network_var=NULL;
      init_label_net=1;
      n_lay_name_chars=1;
@@ -2244,7 +2407,7 @@ You have now done a little bit of each of the critical main elements of simulati
 	AssignExpr @[0] {
 	 desc=;
 	 flags=;
-	 result_var=.projects[0].programs[0].vars[2]$6$;
+	 result_var=.projects[1].programs[0].vars[2]$6$;
 	 expr {
 	  expr="O_T";
 	  flags=;
@@ -2280,7 +2443,7 @@ You have now done a little bit of each of the critical main elements of simulati
        desc=;
        flags=;
        message=;
-       print_var=.projects[0].programs[0].vars[1]$7$;
+       print_var=.projects[1].programs[0].vars[1]$7$;
        print_var2=$6$;
        print_var3=NULL;
        print_var4=NULL;
@@ -2356,7 +2519,7 @@ You have now done a little bit of each of the critical main elements of simulati
    name="LeabraAll_Std";
    el_typ=Program;
    el_def=0;
-   step_prog=.projects[0].programs.gp[0][4]$8$;
+   step_prog=.projects[1].programs.gp[0][4]$8$;
    tags="Leabra, Std, All";
    desc="The full set of programs for training a standard Leabra network";
    Program @[0] {
@@ -2382,7 +2545,7 @@ You have now done a little bit of each of the critical main elements of simulati
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=.projects[0].networks[0]$9$;
+      object_val=.projects[1].networks[0]$9$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
@@ -2435,8 +2598,8 @@ You have now done a little bit of each of the critical main elements of simulati
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=;
-      network_var=.projects[0].programs.gp[0][0].args[0]$10$;
-      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$11$;
+      network_var=.projects[1].programs.gp[0][0].args[0]$10$;
+      local_ctr_var=.projects[1].programs.gp[0][0].vars[0]$11$;
       counter=Network::batch;
      };
     };
@@ -2461,7 +2624,7 @@ You have now done a little bit of each of the critical main elements of simulati
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
 	flags=;
-	target=.projects[0].programs.gp[0][1]$12$;
+	target=.projects[1].programs.gp[0][1]$12$;
 	targ_ld_init="*LeabraTrain*";
 	prog_args {
 	 name=;
@@ -2641,7 +2804,7 @@ You have now done a little bit of each of the critical main elements of simulati
       name="rnd_init";
       var_type=T_DynEnum;
       dyn_enum_val {
-       enum_type=.projects[0].programs.gp[0][1].types[0]$13$;
+       enum_type=.projects[1].programs.gp[0][1].types[0]$13$;
        value=0;
       };
       objs_ptr=0;
@@ -2661,7 +2824,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects[0].programs.gp[0][1].objs[0]$14$;
+      object_val=.projects[1].programs.gp[0][1].objs[0]$14$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="random seed that is used at start of training -- if OldSeed is called";
@@ -2670,7 +2833,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].train_time$15$;
+      object_val=.projects[1].networks[0].train_time$15$;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
@@ -2693,7 +2856,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[0] {
       desc=;
       flags=;
-      result_var=.projects[0].programs.gp[0][1].args[2]$16$;
+      result_var=.projects[1].programs.gp[0][1].args[2]$16$;
       expr {
        expr="false";
        flags=;
@@ -2708,7 +2871,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="check network to make sure it is ready to be run";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][1].args[0]$17$;
+      obj=.projects[1].programs.gp[0][1].args[0]$17$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -2735,7 +2898,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[2] {
       desc="get our pointer to the network training time object";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[6]$18$;
+      result_var=.projects[1].programs.gp[0][1].vars[6]$18$;
       expr {
        expr="network.train_time";
        flags=;
@@ -2766,7 +2929,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	desc="restore previous random seed (all runs produce same results)";
 	flags=;
 	result_var=NULL;
-	obj=.projects[0].programs.gp[0][1].vars[5]$19$;
+	obj=.projects[1].programs.gp[0][1].vars[5]$19$;
 	method=RndSeed::OldSeed;
 	meth_args {
 	 name=;
@@ -2944,7 +3107,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[4] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[1]$20$;
+      result_var=.projects[1].programs.gp[0][1].vars[1]$20$;
       expr {
        expr="network.epoch";
        flags=;
@@ -2965,7 +3128,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        ProgramCall @[0] {
 	desc="run the epoch program (one epoch), passes our network and input_data";
 	flags=;
-	target=.projects[0].programs.gp[0][2]$21$;
+	target=.projects[1].programs.gp[0][2]$21$;
 	targ_ld_init="*LeabraEpoch*";
 	prog_args {
 	 name=;
@@ -3114,7 +3277,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data.gp[1][0]$22$;
+      object_val=.projects[1].data.gp[1][0]$22$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
@@ -3123,7 +3286,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].epoch_time$23$;
+      object_val=.projects[1].networks[0].epoch_time$23$;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
@@ -3154,14 +3317,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=;
-      network_var=.projects[0].programs.gp[0][2].args[0]$24$;
-      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$25$;
+      network_var=.projects[1].programs.gp[0][2].args[0]$24$;
+      local_ctr_var=.projects[1].programs.gp[0][2].vars[1]$25$;
       counter=Network::trial;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=;
-      result_var=.projects[0].programs.gp[0][2].vars[3]$26$;
+      result_var=.projects[1].programs.gp[0][2].vars[3]$26$;
       expr {
        expr="network.epoch_time";
        flags=;
@@ -3230,7 +3393,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][2].vars[2]$27$;
+      obj=.projects[1].programs.gp[0][2].vars[2]$27$;
       method=DataTable::ResetData;
       meth_args {
        name=;
@@ -3248,7 +3411,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
 	flags=;
-	target=.projects[0].programs.gp[0][3]$28$;
+	target=.projects[1].programs.gp[0][3]$28$;
 	targ_ld_init="*LeabraTrial*";
 	prog_args {
 	 name=;
@@ -3324,9 +3487,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      data_var=.projects[0].programs.gp[0][2].args[1]$29$;
-      index_var=.projects[0].programs.gp[0][2].vars[4]$30$;
-      order_var=.projects[0].programs.gp[0][2].vars[0]$31$;
+      data_var=.projects[1].programs.gp[0][2].args[1]$29$;
+      index_var=.projects[1].programs.gp[0][2].vars[4]$30$;
+      order_var=.projects[1].programs.gp[0][2].vars[0]$31$;
       order=PERMUTED;
       item_idx_list{ 0;1;3;5;2;4;      };
       dmem_nprocs=1;
@@ -3382,7 +3545,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgramCall @[7] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=;
-      target=.projects[0].programs.gp[0][8]$32$;
+      target=.projects[1].programs.gp[0][8]$32$;
       targ_ld_init="*LeabraEpochMonitor*";
       prog_args {
        name=;
@@ -3496,8 +3659,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=;
-      network_var=.projects[0].programs.gp[0][3].args[0]$33$;
-      local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$34$;
+      network_var=.projects[1].programs.gp[0][3].args[0]$33$;
+      local_ctr_var=.projects[1].programs.gp[0][3].vars[0]$34$;
       counter=LeabraNetwork::phase_no;
      };
     };
@@ -3619,7 +3782,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=;
-      target=.projects[0].programs.gp[0][7]$35$;
+      target=.projects[1].programs.gp[0][7]$35$;
       targ_ld_init="*LeabraTrialMonitor*";
       prog_args {
        name=;
@@ -3647,7 +3810,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="update the network view(s) (only if update_net_view is true)";
       flags=;
       network_var=$33$;
-      update_var=.projects[0].programs.gp[0][3].vars[1]$36$;
+      update_var=.projects[1].programs.gp[0][3].vars[1]$36$;
      };
     };
    };
@@ -3736,8 +3899,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=;
-      network_var=.projects[0].programs.gp[0][4].args[0]$37$;
-      local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$38$;
+      network_var=.projects[1].programs.gp[0][4].args[0]$37$;
+      local_ctr_var=.projects[1].programs.gp[0][4].vars[0]$38$;
       counter=Network::cycle;
      };
     };
@@ -3768,7 +3931,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=;
-      target=.projects[0].programs.gp[0][6]$39$;
+      target=.projects[1].programs.gp[0][6]$39$;
       targ_ld_init="*ApplyInputs*";
       prog_args {
        name=;
@@ -3839,7 +4002,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        AssignExpr @[0] {
 	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
 	flags=;
-	result_var=.projects[0].programs.gp[0][4].vars[1]$40$;
+	result_var=.projects[1].programs.gp[0][4].vars[1]$40$;
 	expr {
 	 expr="network.min_cycles";
 	 flags=;
@@ -3881,7 +4044,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=;
-	target=.projects[0].programs.gp[0][5]$41$;
+	target=.projects[1].programs.gp[0][5]$41$;
 	targ_ld_init="*LeabraCycle*";
 	prog_args {
 	 name=;
@@ -4038,7 +4201,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="update network views, if update_net_view == true";
       flags=;
       network_var=$37$;
-      update_var=.projects[0].programs.gp[0][4].vars[2]$42$;
+      update_var=.projects[1].programs.gp[0][4].vars[2]$42$;
      };
     };
    };
@@ -4107,7 +4270,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="this does all the standard leabra processing for one cycle of activation updating";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].args[0]$43$;
+      obj=.projects[1].programs.gp[0][5].args[0]$43$;
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        name=;
@@ -4119,7 +4282,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="update network views if update_net_view == true";
       flags=;
       network_var=$43$;
-      update_var=.projects[0].programs.gp[0][5].vars[0]$44$;
+      update_var=.projects[1].programs.gp[0][5].vars[0]$44$;
      };
     };
    };
@@ -4206,7 +4369,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[0][6].objs[0]$45$;
+      object_val=.projects[1].programs.gp[0][6].objs[0]$45$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
@@ -4230,7 +4393,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][6].vars[0]$46$;
+      obj=.projects[1].programs.gp[0][6].vars[0]$46$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -4534,7 +4697,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][7].objs[0]$47$;
+      object_val=.projects[1].programs.gp[0][7].objs[0]$47$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
@@ -4558,7 +4721,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="set the network and datatable for the NetMonitor";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][7].vars[1]$48$;
+      obj=.projects[1].programs.gp[0][7].vars[1]$48$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -4663,7 +4826,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="add a new blank row to the data";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][7].vars[0]$49$;
+      obj=.projects[1].programs.gp[0][7].vars[0]$49$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -4699,7 +4862,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][7].args[0]$50$;
+      obj=.projects[1].programs.gp[0][7].args[0]$50$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name=;
@@ -4886,7 +5049,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
        };
       };
       network=$9$;
-      data=.projects[0].data.gp[1][1]$51$;
+      data=.projects[1].data.gp[1][1]$51$;
       rmv_orphan_cols=1;
      };
     };
@@ -4926,7 +5089,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][8].objs[0]$52$;
+      object_val=.projects[1].programs.gp[0][8].objs[0]$52$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="network monitor object that contains full specs for what to record and where to get it";
@@ -4958,7 +5121,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[0] {
       desc="get the epoch timer from current network";
       flags=;
-      result_var=.projects[0].programs.gp[0][8].vars[2]$53$;
+      result_var=.projects[1].programs.gp[0][8].vars[2]$53$;
       expr {
        expr="network.epoch_time";
        flags=;
@@ -4973,7 +5136,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="set data and network on NetMonitor object";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][8].vars[1]$54$;
+      obj=.projects[1].programs.gp[0][8].vars[1]$54$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -5078,7 +5241,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="add a new blank row to the data";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][8].vars[0]$55$;
+      obj=.projects[1].programs.gp[0][8].vars[0]$55$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -5363,7 +5526,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[4]$56$;
+      result_var=.projects[1].programs.gp[0][9].vars[4]$56$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -5407,7 +5570,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[3]$57$;
+      result_var=.projects[1].programs.gp[0][9].vars[3]$57$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -5451,7 +5614,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[3] {
       desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[5]$58$;
+      result_var=.projects[1].programs.gp[0][9].vars[5]$58$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
        flags=;
@@ -5465,8 +5628,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[2]$59$;
-      obj=.projects[0].programs.gp[0][9].args[0]$60$;
+      result_var=.projects[1].programs.gp[0][9].vars[2]$59$;
+      obj=.projects[1].programs.gp[0][9].args[0]$60$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name=;
@@ -5591,7 +5754,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$61$;
+   m_data=.projects[1]$61$;
    name="Browser";
    visible=1;
    m_is_root=0;
@@ -5704,7 +5867,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[1][1].data[0]$63$;
+	    m_data=.projects[1].data.gp[1][1].data[0]$63$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -5712,7 +5875,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[1][1].data[1]$64$;
+	    m_data=.projects[1].data.gp[1][1].data[1]$64$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -5720,7 +5883,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[1][1].data[2]$65$;
+	    m_data=.projects[1].data.gp[1][1].data[2]$65$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -5728,7 +5891,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[1][1].data[3]$66$;
+	    m_data=.projects[1].data.gp[1][1].data[3]$66$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -5736,7 +5899,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[1][1].data[4]$67$;
+	    m_data=.projects[1].data.gp[1][1].data[4]$67$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
@@ -5744,7 +5907,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[1][1].data[5]$68$;
+	    m_data=.projects[1].data.gp[1][1].data[5]$68$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -5752,7 +5915,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[1][1].data[6]$69$;
+	    m_data=.projects[1].data.gp[1][1].data[6]$69$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -5760,7 +5923,7 @@ FloatTransform @*(.m_transform) {scale={x=0.649613: y=0.6496129: z=0.6496134: }:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[1][1].data[7]$70$;
+	    m_data=.projects[1].data.gp[1][1].data[7]$70$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -6024,7 +6187,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[1][0].data[0]$71$;
+	    m_data=.projects[1].data.gp[1][0].data[0]$71$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -6035,7 +6198,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[1][0].data[1]$72$;
+	    m_data=.projects[1].data.gp[1][0].data[1]$72$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -6046,7 +6209,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[1][0].data[2]$73$;
+	    m_data=.projects[1].data.gp[1][0].data[2]$73$;
 	    m_transform=NULL;
 	    name="trial";
 	    visible=1;
@@ -6057,7 +6220,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    m_data=.projects[0].data.gp[1][0].data[3]$74$;
+	    m_data=.projects[1].data.gp[1][0].data[3]$74$;
 	    m_transform=NULL;
 	    name="trial_name";
 	    visible=1;
@@ -6068,7 +6231,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    m_data=.projects[0].data.gp[1][0].data[4]$75$;
+	    m_data=.projects[1].data.gp[1][0].data[4]$75$;
 	    m_transform=NULL;
 	    name="group_name";
 	    visible=0;
@@ -6079,7 +6242,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    m_data=.projects[0].data.gp[1][0].data[5]$76$;
+	    m_data=.projects[1].data.gp[1][0].data[5]$76$;
 	    m_transform=NULL;
 	    name="phase_no";
 	    visible=0;
@@ -6090,7 +6253,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[6] {
-	    m_data=.projects[0].data.gp[1][0].data[6]$77$;
+	    m_data=.projects[1].data.gp[1][0].data[6]$77$;
 	    m_transform=NULL;
 	    name="minus_cycles";
 	    visible=0;
@@ -6101,7 +6264,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[7] {
-	    m_data=.projects[0].data.gp[1][0].data[7]$78$;
+	    m_data=.projects[1].data.gp[1][0].data[7]$78$;
 	    m_transform=NULL;
 	    name="sse";
 	    visible=0;
@@ -6112,7 +6275,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[8] {
-	    m_data=.projects[0].data.gp[1][0].data[8]$79$;
+	    m_data=.projects[1].data.gp[1][0].data[8]$79$;
 	    m_transform=NULL;
 	    name="ext_rew";
 	    visible=0;
@@ -6123,7 +6286,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[9] {
-	    m_data=.projects[0].data.gp[1][0].data[9]$80$;
+	    m_data=.projects[1].data.gp[1][0].data[9]$80$;
 	    m_transform=NULL;
 	    name="Input_act";
 	    visible=1;
@@ -6134,7 +6297,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[10] {
-	    m_data=.projects[0].data.gp[1][0].data[10]$81$;
+	    m_data=.projects[1].data.gp[1][0].data[10]$81$;
 	    m_transform=NULL;
 	    name="Hidden_act";
 	    visible=1;
@@ -6145,7 +6308,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[11] {
-	    m_data=.projects[0].data.gp[1][0].data[11]$82$;
+	    m_data=.projects[1].data.gp[1][0].data[11]$82$;
 	    m_transform=NULL;
 	    name="Output_act";
 	    visible=1;
@@ -6209,14 +6372,14 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=.projects[0].data.gp[2][0]$83$;
+	  m_data=.projects[1].data.gp[2][0]$83$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[2][0].data[0]$84$;
+	    m_data=.projects[1].data.gp[2][0].data[0]$84$;
 	    m_transform=NULL;
 	    name="X";
 	    visible=1;
@@ -6224,7 +6387,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[2][0].data[1]$85$;
+	    m_data=.projects[1].data.gp[2][0].data[1]$85$;
 	    m_transform=NULL;
 	    name="Y";
 	    visible=1;
@@ -6232,7 +6395,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[2][0].data[2]$86$;
+	    m_data=.projects[1].data.gp[2][0].data[2]$86$;
 	    m_transform=NULL;
 	    name="Label";
 	    visible=1;
@@ -6507,14 +6670,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=.projects[0].data.gp[2][1]$87$;
+	  m_data=.projects[1].data.gp[2][1]$87$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[2][1].data[0]$88$;
+	    m_data=.projects[1].data.gp[2][1].data[0]$88$;
 	    m_transform=NULL;
 	    name="trial_name";
 	    visible=1;
@@ -6522,7 +6685,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[2][1].data[1]$89$;
+	    m_data=.projects[1].data.gp[2][1].data[1]$89$;
 	    m_transform=NULL;
 	    name="x_prjn";
 	    visible=1;
@@ -6530,7 +6693,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[2][1].data[2]$90$;
+	    m_data=.projects[1].data.gp[2][1].data[2]$90$;
 	    m_transform=NULL;
 	    name="y_prjn";
 	    visible=1;
@@ -6812,7 +6975,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$91$;
+	    m_data=.projects[1].data.gp[0][0].data[0]$91$;
 	    m_transform=NULL;
 	    name="Name";
 	    visible=1;
@@ -6823,7 +6986,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$92$;
+	    m_data=.projects[1].data.gp[0][0].data[1]$92$;
 	    m_transform=NULL;
 	    name="Input";
 	    visible=1;
@@ -6834,7 +6997,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$93$;
+	    m_data=.projects[1].data.gp[0][0].data[2]$93$;
 	    m_transform=NULL;
 	    name="Output";
 	    visible=1;
@@ -6887,7 +7050,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][1].data[0]$94$;
+	    m_data=.projects[1].data.gp[0][1].data[0]$94$;
 	    m_transform=NULL;
 	    name="Input";
 	    visible=1;
@@ -6898,7 +7061,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[0][1].data[1]$95$;
+	    m_data=.projects[1].data.gp[0][1].data[1]$95$;
 	    m_transform=NULL;
 	    name="Output";
 	    visible=1;
@@ -6991,7 +7154,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$96$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[1].networks[0].specs[3].children[0]$96$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: send_delta=1: i_thr=STD: };
@@ -7192,7 +7355,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       name=;
       el_typ=LeabraPrjn;
       el_def=0;
-	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[0];
+	    Projection_Group @. = [0] = LeabraPrjn .projects[1].networks[0].layers[1].projections[0];
      };
      units {
       name=;
@@ -7204,7 +7367,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$97$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[1].networks[0].specs[0]$97$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -7224,7 +7387,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.1666667: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$98$: };
+     spec {type=LeabraLayerSpec: spec=.projects[1].networks[0].specs[1].children[0]$98$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -7252,12 +7415,12 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       LeabraPrjn @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$99$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$100$: };
+       from=.projects[1].networks[0].layers[0]$99$;
+       spec {type=FullPrjnSpec: spec=.projects[1].networks[0].specs[2]$100$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$101$: };
+       con_spec {type=LeabraConSpec: spec=.projects[1].networks[0].specs[3]$101$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -7276,7 +7439,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       LeabraPrjn @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[2]$102$;
+       from=.projects[1].networks[0].layers[2]$102$;
        spec {type=FullPrjnSpec: spec=$100$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
@@ -7302,7 +7465,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       name=;
       el_typ=LeabraPrjn;
       el_def=0;
-	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[2].projections[0];
+	    Projection_Group @. = [0] = LeabraPrjn .projects[1].networks[0].layers[2].projections[0];
      };
      units {
       name=;
@@ -7334,7 +7497,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      i_val {kwta=3.777516: g_i=3.777516: gp_g_i=0: g_i_orig=3.777516: };
      un_g_i {avg=3.777516: max=3.777516: max_i=0: };
      adapt_i {avg_avg=0.2483672: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$103$: };
+     spec {type=LeabraLayerSpec: spec=.projects[1].networks[0].specs[1]$103$: };
      stm_gain=0.5;
      hard_clamped=0;
      dav=0;
@@ -7362,7 +7525,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       LeabraPrjn @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$104$;
+       from=.projects[1].networks[0].layers[1]$104$;
        spec {type=FullPrjnSpec: spec=$100$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
@@ -7388,7 +7551,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       name=;
       el_typ=LeabraPrjn;
       el_def=0;
-	    Projection_Group @. = [0] = LeabraPrjn .projects[0].networks[0].layers[1].projections[1];
+	    Projection_Group @. = [0] = LeabraPrjn .projects[1].networks[0].layers[1].projections[1];
      };
      units {
       name=;

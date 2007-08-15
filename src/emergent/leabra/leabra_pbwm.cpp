@@ -1533,6 +1533,59 @@ void PFCOutLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
   return; 			// no need to do this!
 }
 
+//////////////////////////////////////////
+// 		PFCLVPrjnSpec		//
+//////////////////////////////////////////
+
+void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Unit_Group* rugp, Unit_Group* sugp) {
+  int no = sugp->leaves;
+
+  // pre-allocate connections!
+  Unit* ru, *su;
+  taLeafItr ru_itr, su_itr;
+  FOR_ITR_EL(Unit, ru, rugp->, ru_itr) {
+    ru->ConnectAlloc(no, prjn);
+  }
+
+  FOR_ITR_EL(Unit, ru, rugp->, ru_itr) {
+    FOR_ITR_EL(Unit, su, sugp->, su_itr) {
+      if(self_con || (ru != su))
+	ru->ConnectFrom(su, prjn);
+    }
+  }
+}
+
+void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+
+  Unit_Group* lv_gp = &(prjn->layer->units); // lv = recv
+  Unit_Group* pfc_gp = &(prjn->from->units); // pfc = send
+
+  if(lv_gp->gp.size <= 1) {	// just full connectivity
+    Connect_Gp(prjn, lv_gp, pfc_gp);
+  }
+  else if(lv_gp->gp.size == pfc_gp->gp.size) { // just one-to-one
+    for(int i=0; i<lv_gp->gp.size; i++) {
+      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(i);
+      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
+      Connect_Gp(prjn, rgp, sgp);
+    }
+  }
+  else if(lv_gp->gp.size == pfc_gp->gp.size + 1) { // full plus one-to-one
+    Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(0);
+    Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
+    for(int i=0; i<pfc_gp->gp.size; i++) { // then gp one-to-one
+      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(i+1);
+      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
+      Connect_Gp(prjn, rgp, sgp);
+    }
+  }
+  else {
+    TestError(true, "Connect_impl", "Number of LV unit groups (stripes) must be either 1, equal to number of PFC stripes (sending prjn), or PFC stripes + 1 -- was not any of these -- connection failed");
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////
@@ -1546,23 +1599,23 @@ void PFCOutLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 static void set_n_stripes(LeabraNetwork* net, char* nm, int n_stripes, int n_units, bool sp) {
   LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
   if(lay == NULL) return;
+  lay->gp_geom.n_not_xy = true;
   lay->gp_geom.n = n_stripes;
+  lay->gp_geom.UpdateAfterEdit();
   lay->unit_groups = true;
-  if(n_units > 0) lay->un_geom.n = n_units;
+  if(n_units > 0) {
+    lay->un_geom.n_not_xy = true;
+    lay->un_geom.n = n_units;
+    lay->un_geom.UpdateAfterEdit();
+  }
   if(sp) {
     lay->gp_spc.x = 1;
     lay->gp_spc.y = 1;
   }
   lay->UpdateAfterEdit();
-  if(n_stripes <= 4) {
-    if(lay->name.contains("Patch")) {
-      lay->gp_geom.x = 1;
-      lay->gp_geom.y = n_stripes;
-    }
-    else {
-      lay->gp_geom.x = n_stripes;
-      lay->gp_geom.y = 1;
-    }
+  if(n_stripes <= 5) {
+    lay->gp_geom.x = n_stripes;
+    lay->gp_geom.y = 1;
   }
 }
 
@@ -1590,8 +1643,8 @@ void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units)
   set_n_stripes(net, "SNrThal", n_stripes, -1, false);
   set_n_stripes(net, "SNrThal_mnt", n_stripes, -1, false);
   set_n_stripes(net, "SNrThal_out", n_stripes, -1, false);
-  set_n_stripes(net, "LVe", n_stripes, -1, false);
-  set_n_stripes(net, "LVi", n_stripes, -1, false);
+  set_n_stripes(net, "LVe", n_stripes+1, -1, false);
+  set_n_stripes(net, "LVi", n_stripes+1, -1, false);
   net->LayoutUnitGroups();
   net->Build();
 }
@@ -1841,6 +1894,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   ProjectionSpec* pfc_selfps = (ProjectionSpec*)prjns->FindMakeSpec("PFCSelf", &TA_OneToOnePrjnSpec);
   GpRndTesselPrjnSpec* intra_pfcps = (GpRndTesselPrjnSpec*)prjns->FindMakeSpec("IntraPFC", &TA_GpRndTesselPrjnSpec);
   TesselPrjnSpec* input_pfc = (TesselPrjnSpec*)prjns->FindMakeSpec("Input_PFC", &TA_TesselPrjnSpec);
+  PFCLVPrjnSpec* pfc_lv_prjn = (PFCLVPrjnSpec*)prjns->FindMakeSpec("PFC_LV_Prjn", &TA_PFCLVPrjnSpec);
   if(topfc == NULL || pfc_selfps == NULL || intra_pfcps == NULL || gponetoone == NULL || input_pfc == NULL) return;
 
   input_pfc->send_offs.New(1); // this is all it takes!
@@ -1921,8 +1975,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     // critics need up reflect updating!
     net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
-    net->FindMakePrjn(lve, pfc_m, fullprjn, lve_cons);
-    net->FindMakePrjn(lvi, pfc_m, fullprjn, lvi_cons);
+    net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
+    net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
   }
   else {			// !out_gate
     if(mat_fm_pfc_full)
@@ -1935,8 +1989,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
     net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
-    net->FindMakePrjn(lve, pfc_m, fullprjn, lve_cons);
-    net->FindMakePrjn(lvi, pfc_m, fullprjn, lvi_cons);
+    net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
+    net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
   }
 
 //   if(make_patch) {

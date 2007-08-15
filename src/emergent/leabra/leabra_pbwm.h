@@ -517,4 +517,24 @@ private:
   void	Destroy()		{ CutLinks(); }
 };
 
+//////////////////////////////////////////
+//	    Special PFC LV PrjnSpec 	//
+//////////////////////////////////////////
+
+class LEABRA_API PFCLVPrjnSpec : public FullPrjnSpec {
+  // A special projection spec for PFC to LVe/i layers. If n unit groups (stripes) in LV == PFC, then it makes Gp one-to-one projections; if LV stripes == 1, it makes a single full projection; if LV stripes == PFC + 1, the first projection is full and the subsequent are gp one-to-one
+INHERITED(FullPrjnSpec)
+public:
+
+  virtual void Connect_Gp(Projection* prjn, Unit_Group* rugp, Unit_Group* sugp);
+  // make a projection from all senders in sugp into all receivers in rugp
+
+  void	Connect_impl(Projection* prjn);
+
+  TA_BASEFUNS_NOCOPY(PFCLVPrjnSpec);
+private:
+  void	Initialize()		{ };
+  void 	Destroy()		{ };
+};
+
 #endif // leabra_pbwm_h
