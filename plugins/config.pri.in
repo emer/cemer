@@ -3,9 +3,11 @@
 
 # for some whacky reason, CONFIG had way too much default stuff, so we init it here:
 CONFIG = lex yacc plugin warn_off uic resources qt incremental stl link_prl
-# TODO: this was in the list in Linux, but make sure this isn't nasty on Mac...
-CONFIG += qt_no_framework
-
+# NOTE: nasty on Mac! causes libtool to fail to find libs
+#   but it was in the default list on Linux
+!macx {
+  CONFIG += qt_no_framework
+}
 # on Unix, if empty, then inc/lib etc. paths are from install
 EMERGENT_DIR = $$(EMERGENTDIR)
 

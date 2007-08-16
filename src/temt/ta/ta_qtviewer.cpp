@@ -4988,6 +4988,9 @@ void iDataPanel::Render() {
     Render_impl();
     SetWinState();
     m_rendered = true;
+//NOTE: added 08/16/07 BA to try to solve netctrlpanel not initing right
+    InitPanel();
+    UpdatePanel();
   }
 }
 
