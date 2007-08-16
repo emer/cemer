@@ -1371,7 +1371,7 @@ public:
   virtual void  LayoutUnitGroups();
   // #MENU #CONFIRM #CAT_Structure layout the unit groups according to layer group geometry and spacing
   virtual void  ConnectFrom(Layer* lay);
-  // #DYN12N #CAT_Structure connect from one or more other layers to this layer (receive from other layer(s))
+  // #DYN12N #CAT_Structure connect from one or more other layers to this layer (receive from other layer(s)) -- in network view, receiver is FIRST layer selected
   virtual void  ConnectBidir(Layer* lay);
   // #DYN12N #CAT_Structure bidirectionally connect with one or more other layers to (receive from and send to other layer(s))
   virtual void  Connect();

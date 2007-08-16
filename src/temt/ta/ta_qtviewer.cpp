@@ -3927,9 +3927,15 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
     QDesktopServices::openUrl(new_url);
   }
   else {
-    if(path.startsWith("."))
-      path = path.after(".");
-    taBase* tab = proj->FindFromPath(path);
+    taBase* tab = NULL;
+    if(path.startsWith(".projects")) {
+      tab = tabMisc::root->FindFromPath(path);
+    }
+    else {
+      if(path.startsWith("."))
+	path = path.after(".");
+      tab = proj->FindFromPath(path);
+    }
     if (!tab) {
       taMisc::Warning("ta: URL",path,"not found as a path to an object!");
       return;
