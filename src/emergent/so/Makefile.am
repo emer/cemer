@@ -34,25 +34,25 @@ include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libso_EmergentToolkit@PDP_SUFFIX@.la \
-	libso@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	libso_EmergentToolkit@EMERGENT_SUFFIX@.la \
+	libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
 
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
+libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
 
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @EMERGENT_INCLUDES@
+libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libso_EmergentToolkit@PDP_SUFFIX@.la
+libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libso_EmergentToolkit@EMERGENT_SUFFIX@.la
 
-libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libso_EmergentToolkit@PDP_SUFFIX@.la
+libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libso_EmergentToolkit@EMERGENT_SUFFIX@.la
 
-libso_EmergentToolkit@PDP_SUFFIX@_la_SOURCES =\
+libso_EmergentToolkit@EMERGENT_SUFFIX@_la_SOURCES =\
 	so_TA.cpp \
 	so_TA_type.h \
 	so_TA_inst.h
 
-libso_EmergentToolkit@PDP_SUFFIX@_la_CPPFLAGS = $(libso@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libso_EmergentToolkit@EMERGENT_SUFFIX@_la_CPPFLAGS = $(libso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
 
-libso_EmergentToolkit@PDP_SUFFIX@_la_CXXFLAGS = -O0
+libso_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
 so_def.h:

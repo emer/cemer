@@ -67,10 +67,10 @@ AC_CONFIG_SRCDIR([src/temt/ta/ta_global.h])                 dnl Make sure we're 
 AC_CONFIG_HEADERS([config.h])                          dnl Create config.h
                                                        dnl NOTE: If using OSX, use DarwinPorts to get most recent automake verison
 AM_INIT_AUTOMAKE([-Wall -Werror gnu tar-pax nostdinc 1.9.6])
-PDP_CANONICAL_HOST                                     dnl Do a few host checks, mostly for MSVC stuff
-PDP_PROG_CXX                                           dnl Modify compiler optimization
-PDP_CANONICAL_COMPILER
-PDP_SET_BUILD_MODE                                     dnl Set up our build modes
+EMERGENT_CANONICAL_HOST                                     dnl Do a few host checks, mostly for MSVC stuff
+EMERGENT_PROG_CXX                                           dnl Modify compiler optimization
+EMERGENT_CANONICAL_COMPILER
+EMERGENT_SET_BUILD_MODE                                     dnl Set up our build modes
 m4_undefine([AC_PROG_F77])                             dnl Get rid of those stupid fortran checks
 m4_defun([AC_PROG_F77],[])
 AC_PROG_CXXCPP                                         dnl Detect our C++ preprocessor
@@ -101,14 +101,14 @@ if test x"$prefix" = x"NONE"; then
   prefix=/usr/local
 fi
 if test x"$debug" = x"false" -a x"$bundle" = x"false"; then
-  PDP_PROG_PDP
+  EMERGENT_PROG_EMERGENT
 fi
 
 dnl  A generic set of systemwide includes. Not all sub libraries
 dnl  require all of these includes, but this is less error-prone
 dnl  than manually specifying them for each library
 dnl TODO: modalize the includes based on whether this is toolkit-only mode
-AC_SUBST([PDP_INCLUDES],["-I\$(srcdir)/../../emergent/bp -I\$(srcdir)/../../temt/css -I\$(srcdir)/../../emergent/leabra -I\$(srcdir)/../../emergent/so -I\$(srcdir)/../../emergent/cs -I\$(srcdir)/../../emergent/network -I\$(srcdir)/../../temt/ta -I\$(srcdir)/../../temt/taiqtso -I\$(srcdir)/../../temt/maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
+AC_SUBST([EMERGENT_INCLUDES],["-I\$(srcdir)/../../emergent/bp -I\$(srcdir)/../../temt/css -I\$(srcdir)/../../emergent/leabra -I\$(srcdir)/../../emergent/so -I\$(srcdir)/../../emergent/cs -I\$(srcdir)/../../emergent/network -I\$(srcdir)/../../temt/ta -I\$(srcdir)/../../temt/taiqtso -I\$(srcdir)/../../temt/maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
 AC_CHECK_LIB([ode],[main])
 AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
@@ -122,7 +122,7 @@ AC_CHECK_LIB([gsl],[main],
                [SIM_AC_CONFIGURATION_WARNING([Failed to detect the GNU Scientific Library])])
 
 dnl  svn revision number support
-PDP_SVN_REVISION
+EMERGENT_SVN_REVISION
 
 dnl  Fix pthread bug. See:  http://softwareforums.intel.com/ids/board/message?board.id=16&message.id=3484 
 #CXXFLAGS="$CXXFLAGS -D_GLIBCXX_GTHREAD_USE_WEAK=0"
@@ -283,7 +283,7 @@ if test x"$profile" = x"true"; then
   AC_DEFINE([GPROF],[],[enables profiling control functions])
 fi
 
-PDP_DETERMINE_SUFFIX                                dnl Infixing
+EMERGENT_DETERMINE_SUFFIX                                dnl Infixing
 
 if test x"bundle" = x"false"; then
   SIM_AC_CONFIGURATION_SETTING([Installation prefix],[${prefix}])
@@ -305,7 +305,7 @@ LDFLAGS="`echo "$LDFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`
 LIBS="`echo "$LIBS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
 
 
-AC_SUBST([PDP_SUFFIX])
+AC_SUBST([EMERGENT_SUFFIX])
 AC_SUBST([abs_top_builddir])
 AC_SUBST([abs_srcdir])
 AC_SUBST([srcdir])
@@ -331,11 +331,12 @@ AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
 includedir="${includedir}/emergent"
 
 dnl TODO: definitely broken from emergent name change
+dnl TODO: definitely doubly broken
 if test x"$bundle" = x"true"; then
   bundle_name="Emergent-${PACKAGE_VERSION}.app"
   bundle_dir="`pwd`/${bundle_name}"
   bindir="${bundle_dir}/Contents/MacOS"
-  libdir="${bundle_dir}/Contents/Frameworks/libpdp_tacss-${LIB_VERSION_2}.framework"
+  libdir="${bundle_dir}/Contents/Frameworks/libemergent_temt-${LIB_VERSION_2}.framework"
   datadir="${bundle_dir}/Contents/Resources"
   infodir="$datadir"
   includedir="${bundle_dir}/Contents/Frameworks/${bundle_name}.framework/Headers"

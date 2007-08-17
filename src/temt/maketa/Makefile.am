@@ -51,6 +51,6 @@ ta_ti.cpp ta_platform.cpp ta_platform_unix.cpp ta_string.cpp ta_variant.cpp ta_m
 
 bin_PROGRAMS = maketa
 maketa_SOURCES = $(HEADS) $(SRCS)
-maketa_CPPFLAGS = @PDP_INCLUDES@ -DNO_TA_BASE @MAKETA_OPT@
+maketa_CPPFLAGS = @EMERGENT_INCLUDES@ -DNO_TA_BASE @MAKETA_OPT@
 BUILT_SOURCES = ta_TA_type.h
 CLEANFILES = ta_TA_type.h ta_TA_inst.h

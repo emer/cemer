@@ -1,22 +1,22 @@
-dnl 					         PDP_SVN_REVISION
+dnl 					         EMERGENT_SVN_REVISION
 dnl *************************************************************
 dnl Set SVN_REV to the revision of the local repository
 dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Copyright, 1995-2007, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
 dnl
-dnl This file is part of TA/PDP++
+dnl This file is part of Emergent
 dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   Emergent is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
 dnl   the Free Software Foundation; either version 2 of the License, or
 dnl   (at your option) any later version.
 dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   Emergent is distributed in the hope that it will be useful,
 dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
-AC_DEFUN([PDP_SVN_REVISION],[
+AC_DEFUN([EMERGENT_SVN_REVISION],[
 
 if test "`svn info --xml | grep "<ro"`"='<root>http://grey.colorado.edu/svn/repos</root>'; then 
 	SVN_REV=`svn info . | grep Revision | sed 's/Revision: //'`
@@ -27,26 +27,26 @@ else
 fi
 ])
 
-dnl 					       PDP_SET_BUILD_MODE
+dnl 					       EMERGENT_SET_BUILD_MODE
 dnl *************************************************************
 dnl Figure out what kind of build mode we are doing, and prep
 dnl the system for it
 dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Copyright, 1995-2007, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
 dnl
-dnl This file is part of TA/PDP++
+dnl This file is part of Emergent
 dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   Emergent is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
 dnl   the Free Software Foundation; either version 2 of the License, or
 dnl   (at your option) any later version.
 dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   Emergent is distributed in the hope that it will be useful,
 dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
-AC_DEFUN([PDP_SET_BUILD_MODE],[
+AC_DEFUN([EMERGENT_SET_BUILD_MODE],[
 AC_ARG_ENABLE([gui],
 	      AC_HELP_STRING([--disable-gui],
 			     [Disable compiling with a GUI. @<:@default=enabled@:>@]),
@@ -79,13 +79,13 @@ AC_ARG_ENABLE([maketa_opt],
 			     [maketa_opt=true])
 AC_ARG_ENABLE([bundle],
 	      AC_HELP_STRING([--enable-bundle],
-			     [Create an OSX Bundle upon make install. Creates, e.g., pdp-4.0.2.app  @<:@default=disabled@:>@]),
+			     [Create an OSX Bundle upon make install. Creates, e.g., emergent-4.0.2.app  @<:@default=disabled@:>@]),
 			     [bundle=true],
 			     [bundle=false])
 
 AC_ARG_ENABLE([plugins],
 	      AC_HELP_STRING([--enable-plugins],
-			     [Enable plugin development support. Source code will be installed to `/usr/local/pdp++/src' and `/usr/local/pdp++/plugins' will be created.  @<:@default=enabled@:>@]),
+			     [Enable plugin development support. Source code will be installed to `/usr/local/emergent/src' and `/usr/local/emergent/plugins' will be created.  @<:@default=enabled@:>@]),
 			     [plugins=true],
 			     [plugins=false])
 AC_ARG_ENABLE([readline],
@@ -120,28 +120,28 @@ AM_CONDITIONAL([CSS_BIN],[test $css_bin = true])
 ])
 
 
-dnl 					             PDP_PROG_CXX
+dnl 					             EMERGENT_PROG_CXX
 dnl *************************************************************
 dnl This macro allows us to set our own level of optimization
 dnl on C++ files. We use it to set -O0 on all TA files all the
 dnl time and to not do any optimization in --enable-debug mode
 dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Copyright, 1995-2007, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
 dnl
-dnl This file is part of TA/PDP++
+dnl This file is part of Emergent
 dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   Emergent is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
 dnl   the Free Software Foundation; either version 2 of the License, or
 dnl   (at your option) any later version.
 dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   Emergent is distributed in the hope that it will be useful,
 dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 
-AC_DEFUN([PDP_PROG_CXX],[
+AC_DEFUN([EMERGENT_PROG_CXX],[
 
 AC_LANG_CPLUSPLUS
 save_user_CXXFLAGS=${CXXFLAGS}
@@ -153,185 +153,180 @@ CXXFLAGS=${save_user_CXXFLAGS}
 SIM_AC_COMPILER_OPTIMIZATION
 ])
 
-dnl 					             PDP_PROG_PDP
+dnl 					             EMERGENT_PROG_EMERGENT
 dnl *************************************************************
-dnl This macro checks for the existence of the pdp
+dnl This macro checks for the existence of the emergent
 dnl executable in the chosen installation path and emits a warning
 dnl ************************************************************
-AC_DEFUN([PDP_PROG_PDP],[
+AC_DEFUN([EMERGENT_PROG_EMERGENT],[
 # Did the user specify an installation path?
 check_path=$ac_default_prefix/bin
 test x"$prefix" != xNONE && check_path=$prefix/bin
 test x"$exec_prefix" != xNONE && check_path=$exec_prefix/bin
 
-AC_CHECK_PROG([pdpexists],[pdp++],[true],[false],[${check_path}])
-if test x"${pdpexists}" = x"true"; then
+AC_CHECK_PROG([emergentexists],[emergent],[true],[false],[${check_path}])
+if test x"${emergentexists}" = x"true"; then
    SIM_AC_CONFIGURATION_WARNING([Emergent is already installed in ${check_path}.])
 fi
 ])
 
-dnl					   PDP_CANONICAL_COMPILER
+dnl					   EMERGENT_CANONICAL_COMPILER
 dnl *************************************************************
 dnl  A couple of compiler checks for setting AM_CONDITIONALs
 dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Copyright, 1995-2007, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
 dnl
-dnl This file is part of TA/PDP++
+dnl This file is part of Emergent
 dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   Emergent is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
 dnl   the Free Software Foundation; either version 2 of the License, or
 dnl   (at your option) any later version.
 dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   Emergent is distributed in the hope that it will be useful,
 dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
-AC_DEFUN([PDP_CANONICAL_COMPILER],[
+AC_DEFUN([EMERGENT_CANONICAL_COMPILER],[
 
-pdp_gpp=false
-pdp_cl=false
-pdp_other_compiler=false
+emergent_gpp=false
+emergent_cl=false
+emergent_other_compiler=false
 
 case $CXX in
        g++)
-          pdp_gpp=true
+          emergent_gpp=true
        ;;
        cl)
-          pdp_cl=true        
+          emergent_cl=true        
        ;;
        *)
-          pdp_other_compiler=true
-          AC_MSG_WARN([$CXX compiler detected. PDP++ has only been tested on gcc and cl. Proceed at your own risk.])
+          emergent_other_compiler=true
+          AC_MSG_WARN([$CXX compiler detected. Emergent has only been tested on gcc and cl. Proceed at your own risk.])
        ;;
 esac
 
-AM_CONDITIONAL([GCC],[test $pdp_gpp=true])
-AM_CONDITIONAL([CL],[test $pdp_cl=true])
-AM_CONDITIONAL([OTHER_COMPILER],[test $pdp_other_compiler=true])
+AM_CONDITIONAL([GCC],[test $emergent_gpp=true])
+AM_CONDITIONAL([CL],[test $emergent_cl=true])
+AM_CONDITIONAL([OTHER_COMPILER],[test $emergent_other_compiler=true])
 
 ])
 
 
-dnl					       PDP_CANONICAL_HOST
+dnl					       EMERGENT_CANONICAL_HOST
 dnl *************************************************************
 dnl  These tests are used mainly for Maketa.am at this point.
 dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Copyright, 1995-2007, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
 dnl
-dnl This file is part of TA/PDP++
+dnl This file is part of Emergent
 dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   Emergent is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
 dnl   the Free Software Foundation; either version 2 of the License, or
 dnl   (at your option) any later version.
 dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   Emergent is distributed in the hope that it will be useful,
 dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 
-AC_DEFUN([PDP_CANONICAL_HOST],[
+AC_DEFUN([EMERGENT_CANONICAL_HOST],[
 AC_REQUIRE([AC_CANONICAL_HOST])
-pdp_linux=false
-pdp_darwin=false
-pdp_cygwin=false
-pdp_mingw32=false
-pdp_windows=false
+emergent_linux=false
+emergent_darwin=false
+emergent_cygwin=false
+emergent_mingw32=false
+emergent_windows=false
 
 case $host in
 	*linux*)
                 AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 		AC_DEFINE([LINUX],[1],[When on linux])
-                pdp_linux=true
+                emergent_linux=true
 	;;
 		*darwin*)
                 LDFLAGS="$LDFLAGS -L/opt/local/lib -L/sw/lib"
                 AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
-                pdp_darwin=true
+                emergent_darwin=true
 	;;
 	*-*-msdos* | *-*-go32* | *-*-cygwin* | *-*-windows*)
 
 		AC_DEFINE([CYGWIN],[1],[When on cygwin])
 		AC_DEFINE([WIN32],[1],[When on cygwin])
-                pdp_cygwin=true
-                pdp_windows=true
+                emergent_cygwin=true
+                emergent_windows=true
 	;;
         *-*-mingw32*)
                 CXXFLAGS="$CXXFLAGS -I/usr/local/include"
                 LDFLAGS="$LDFLAGS -L/usr/local/lib"
 		AC_DEFINE([CYGWIN],[1],[When on cygwin,mingw])
 		AC_DEFINE([WIN32],[1],[When on win])
-                pdp_mingw32=true
-                pdp_windows=true
+                emergent_mingw32=true
+                emergent_windows=true
         ;;
 	*)
 
 	;;
 esac
 
-AM_CONDITIONAL([LINUX],[test $pdp_linux=true])
-AM_CONDITIONAL([DARWIN],[test $pdp_darwin=true])
-AM_CONDITIONAL([CYGWIN],[test $pdp_cygwin=true])
-AM_CONDITIONAL([WINDOWS],[test $pdp_windows=true])
-AM_CONDITIONAL([MINGW32],[test $pdp_mingw32=true])
-# AC_MSG_WARN([pdp_linux : $pdp_linux])
-# AC_MSG_WARN([pdp_darwin : $pdp_darwin])
-# AC_MSG_WARN([pdp_cygwin : $pdp_cygwin])
-# AC_MSG_WARN([pdp_mingw32 : $pdp_mingw32])
-# AC_MSG_WARN([pdp_windows : $pdp_windows])
+AM_CONDITIONAL([LINUX],[test $emergent_linux=true])
+AM_CONDITIONAL([DARWIN],[test $emergent_darwin=true])
+AM_CONDITIONAL([CYGWIN],[test $emergent_cygwin=true])
+AM_CONDITIONAL([WINDOWS],[test $emergent_windows=true])
+AM_CONDITIONAL([MINGW32],[test $emergent_mingw32=true])
 
 SIM_AC_CONFIGURATION_SETTING([Host],[$host])
-]) dnl PDP_CANONICAL_HOST
+]) dnl EMERGENT_CANONICAL_HOST
 
         ;;
 esac
 
 
-dnl 					     PDP_DETERMINE_SUFFIX
+dnl 					     EMERGENT_DETERMINE_SUFFIX
 dnl *************************************************************
 dnl  * Adds program version to libraries
 dnl  * In debug mode, adds configure flag dependent suffixes. 
 dnl    E.g. bp_nogui_debug_mpi++
 dnl *************************************************************
-dnl Copyright, 1995-2005, Regents of the University of Colorado,
+dnl Copyright, 1995-2007, Regents of the University of Colorado,
 dnl Carnegie Mellon University, Princeton University.
 dnl
-dnl This file is part of TA/PDP++
+dnl This file is part of Emergent
 dnl
-dnl   TA/PDP++ is free software; you can redistribute it and/or modify
+dnl   Emergent is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License as published by
 dnl   the Free Software Foundation; either version 2 of the License, or
 dnl   (at your option) any later version.
 dnl
-dnl   TA/PDP++ is distributed in the hope that it will be useful,
+dnl   Emergent is distributed in the hope that it will be useful,
 dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details.
 
-AC_DEFUN([PDP_DETERMINE_SUFFIX],[
+AC_DEFUN([EMERGENT_DETERMINE_SUFFIX],[
 if test "$gui" = "false" ; then
-	PDP_SUFFIX="${PDP_SUFFIX}_nogui"
+	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_nogui"
 fi
 if test "$debug" = "true" ; then
-	PDP_SUFFIX="${PDP_SUFFIX}_debug"
+	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_debug"
 fi
 if test x"$mpi" = x"true"; then
-	PDP_SUFFIX="${PDP_SUFFIX}_mpi"
+	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_mpi"
 fi
 if test x"$profile" = x"true"; then
-	PDP_SUFFIX="${PDP_SUFFIX}_prof"
+	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_prof"
 fi
 if test x"$nightly" = x"true"; then
-	PDP_SUFFIX="${PDP_SUFFIX}_nightly"
+	EMERGENT_SUFFIX="${EMERGENT_SUFFIX}_nightly"
 fi
-SIM_AC_CONFIGURATION_SETTING([Mode infix],[${PDP_SUFFIX}])
+SIM_AC_CONFIGURATION_SETTING([Mode infix],[${EMERGENT_SUFFIX}])
 
-]) dnl PDP_DETERMINE_SUFFIX
+]) dnl EMERGENT_DETERMINE_SUFFIX
 
 dnl ACX_MPI([ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]]) (modified)
 dnl *************************************************************

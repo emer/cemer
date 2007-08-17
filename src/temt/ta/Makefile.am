@@ -268,26 +268,26 @@ interceptor.moc.cpp:
 	$(QT_MOC) -o irenderarea.moc.cpp -I@abs_top_builddir@ -I@abs_top_builddir@/src/temt/ta interceptor.h
 
 noinst_LTLIBRARIES =\
-	libta@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la \
+	libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
 
-libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES =\
-	libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES =\
+	libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
 
-libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
-libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-	libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(SRCS) $(HEADS)
+libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @EMERGENT_INCLUDES@
+libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
+	libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
 
-libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
+libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
 	ta_TA.cpp \
 	ta_TA_type.h \
 	ta_TA_inst.h
 
-libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS =\
-	$(libta@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS =\
+	$(libta@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
 
-libtaEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
+libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
 taglobal.h ta_maketa_defs.h qtdefs.h:

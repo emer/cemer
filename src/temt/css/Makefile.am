@@ -69,9 +69,9 @@ make_css_parse:
 	sed -e "s/union/struct/g" y.tab.h >css_parse.hxx;
 	cmp css_parse.hxx css_parse.h || cp css_parse.hxx css_parse.h;
 
-noinst_LTLIBRARIES = libcss@PDP_SUFFIX@_@PACKAGE_VERSION@.la
-libcss@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
-libcss@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libcss@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+noinst_LTLIBRARIES = libcss@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
+libcss@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
+libcss@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @EMERGENT_INCLUDES@
+libcss@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
 cssdef.h:

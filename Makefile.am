@@ -3,7 +3,7 @@ EXTRA_DIST =\
 	src/temt/ta/ta_maketa_defs.h \
 	src/temt/ta/qtdefs.h \
 	src/temt/css/css_def.h \
-	src/emergent/network/pdp_def.h \
+	src/emergent/network/emergent_def.h \
 	src/emergent/bp/bp_def.h \
 	src/emergent/leabra/leabra_def.h \
 	src/emergent/so/so_def.h \
@@ -94,7 +94,6 @@ EXTRA_DIST +=\
 	aminclude.am \
 	spec.tmpl.in \
 	*do-stamp* \
-	PDP++-3.5.spec \
 	RPMChangeLog 
 
 DISTCLEANFILES =\

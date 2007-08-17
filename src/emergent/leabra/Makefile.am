@@ -37,19 +37,19 @@ include $(top_srcdir)/Maketa.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libleabra_EmergentToolkit@PDP_SUFFIX@.la \
-	libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@.la
+	libleabra_EmergentToolkit@EMERGENT_SUFFIX@.la \
+	libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
 
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libleabra_EmergentToolkit@PDP_SUFFIX@.la
-libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libleabra_EmergentToolkit@PDP_SUFFIX@.la
-libleabra_EmergentToolkit@PDP_SUFFIX@_la_SOURCES =\
+libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
+libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @EMERGENT_INCLUDES@
+libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD = libleabra_EmergentToolkit@EMERGENT_SUFFIX@.la
+libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_DEPENDENCIES = libleabra_EmergentToolkit@EMERGENT_SUFFIX@.la
+libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_SOURCES =\
 	leabra_TA.cpp \
 	leabra_TA_type.h \
 	leabra_TA_inst.h
-libleabra_EmergentToolkit@PDP_SUFFIX@_la_CPPFLAGS = $(libleabra@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
-libleabra_EmergentToolkit@PDP_SUFFIX@_la_CXXFLAGS = -O0
+libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_CPPFLAGS = $(libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
 leabra_def.h:

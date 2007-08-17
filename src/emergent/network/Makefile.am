@@ -78,18 +78,18 @@ include $(top_srcdir)/Moc.am
 include $(top_srcdir)/mfstamp.am
 
 noinst_LTLIBRARIES =\
-	libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@.la \
-	libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
-libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
-libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @PDP_INCLUDES@
-libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
-libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
-	libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@.la
-libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
+	libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la \
+	libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
+libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES = $(HEADS) $(SRCS)
+libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = @EMERGENT_INCLUDES@
+libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
+libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
+	libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
+libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
 	emergent_TA.cpp \
 	emergent_TA_type.h \
 	emergent_TA_inst.h
-libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = $(libemergent@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
-libemergentEmergentToolkit@PDP_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
+libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = $(libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
+libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
 emergent_def.h:
