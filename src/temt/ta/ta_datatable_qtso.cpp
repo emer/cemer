@@ -1,5 +1,5 @@
 // Carnegie Mellon University, Princeton University.
-// Copyright, 1995-2005, Regents of the University of Colorado,
+// Copyright, 1995-2007, Regents of the University of Colorado,
 //
 // This file is part of The Emergent Toolkit
 //

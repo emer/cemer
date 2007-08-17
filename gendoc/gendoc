@@ -382,13 +382,25 @@ if __name__ == "__main__":
                                             else:
                                                 mem_opts.append(option.strip())                                
 
+                                # desc (optional)
+                                if getattr(memberdef, 'desc'):
+                                    memberdefdesc = memberdef.desc.string
+                                else:
+                                    memberdefdesc = ""
+
                                 h_mem_def += "<h3 id=\"" + memberdefname + "\">" + memberdefname + "</h3>\n"
+
+                                if len(memberdefdesc):
+                                    h_mem_def += "<div class=\"met_def\">"
+                                    h_mem_def += "<b>Desc</b>: " + memberdefdesc
+                                    h_mem_def += "</div>\n"
 
                                 # Adds a listing of the options and categories a type is in
                                 if mem_opts:
                                     h_mem_def +=  "<div class=\"met_def\"><b>Options:</b> " + ', '.join(mem_opts) + "</div>\n"
                                 if mem_cats:
                                     h_mem_def +=  "<div class=\"met_def\"><b>Categories:</b> " + ', '.join(mem_cats) + "</div>\n"
+
 
                             h_mem_def += "</div>\n"
 

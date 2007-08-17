@@ -1,4 +1,4 @@
-// Copyright, 1995-2005, Regents of the University of Colorado,
+// Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-// Copyright (C) 1995-2005 Regents of the University of Colorado,
+// Copyright (C) 1995-2007 Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 // 
 // This library is free software; you can redistribute it and/or

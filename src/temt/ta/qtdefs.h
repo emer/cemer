@@ -1,4 +1,4 @@
-// #IGNORE Copyright, 1995-2005, Regents of the University of Colorado,
+// #IGNORE Copyright, 1995-2007, Regents of the University of Colorado,
 // #IGNORE Carnegie Mellon University, Princeton University.
 //
 // #IGNORE This file is part of The Emergent Toolkit
