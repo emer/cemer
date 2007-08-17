@@ -2072,6 +2072,7 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
 
   GridTableView* glv = this->glv(); //cache
+  if (!glv) return;
 
   chkDisplay->setChecked(glv->display_on);
   chkHeaders->setChecked(glv->header_on);
