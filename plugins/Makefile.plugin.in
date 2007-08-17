@@ -88,7 +88,7 @@ install:
 	$(MKDIR) $(EMERGENT_SYS_DIR)/lib
 	$(CP) -Ru ../lib/plugins  $(EMERGENT_SYS_DIR)/lib
 	$(MKDIR) $(EMERGENT_SYS_DIR)/plugins
-	$(CP) -u config.pri shared_pre.pri shared.pri Makefile  $(EMERGENT_SYS_DIR)/plugins
+	$(CP) -u config.pri shared_pre.pri shared.pri Makefile.plugin $(EMERGENT_SYS_DIR)/plugins
 	@echo " "
 	@echo "** Make $@ successfully completed! **"
 	@echo " "
