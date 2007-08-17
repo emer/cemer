@@ -45,7 +45,7 @@ SIM_AC_UNIVERSAL_BINARIES
 
 AC_PREREQ([2.59])                                      dnl Autoconf 2.59 required
 AC_COPYRIGHT([
-Copyright, 1995-2005, Regents of the University of Colorado,
+Copyright, 1995-2007, Regents of the University of Colorado,
 Carnegie Mellon University, Princeton University.
 
 This file is part of Emergent
