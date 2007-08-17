@@ -92,6 +92,7 @@ copy $(TargetDir)emergent*.exe $(SolutionDir)bin
 				Name="VCLinkerTool"
 				AdditionalDependencies="temt.lib emergent.lib qtmain.lib OpenGL32.lib Qt3Support4.lib QtCore4.lib QtGui4.lib QtNetwork4.lib QtOpenGL4.lib coin2.lib soqt1.lib zlib1.lib"
 				OutputFile="$(OutDir)/emergent.exe"
+				Version="4.0.6"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(QTDIR)\lib&quot;;&quot;$(COINDIR)\lib&quot;;&quot;$(SolutionDir)\lib&quot;"
 				GenerateDebugInformation="FALSE"
@@ -167,6 +168,9 @@ copy $(TargetDir)emergent*.exe $(SolutionDir)bin
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath="..\..\..\src\temt\ta\images\emergent_32x32x256.ico">
+			</File>
 			<File
 				RelativePath=".\emergent_bin.rc">
 			</File>
