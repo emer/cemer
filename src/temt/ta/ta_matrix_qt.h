@@ -157,6 +157,9 @@ public:
   override bool		isFixedRowCount() const;
   override bool		isFixedColCount() const {return true;}
   
+  void			GetSel(CellRange& sel); 
+   // gets current selection, factoring in BOT_ZERO if needed
+  
   iMatrixTableView(QWidget* parent = NULL);
   
 public: // cliphandler i/f

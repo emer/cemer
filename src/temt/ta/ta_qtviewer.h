@@ -2133,7 +2133,7 @@ public:
     SO_MEMB_NAME	= 0x0004, // #LABEL_member_name
     SO_MEMB_VAL		= 0x0008, // #LABEL_member_value searches in the values of members, especially strings
 #ifndef __MAKETA__
-    SO_DEF_OPTIONS	= SO_OBJ_NAME | SO_OBJ_DESC
+    SO_DEF_OPTIONS	= SO_OBJ_NAME | SO_OBJ_DESC | SO_MEMB_NAME | SO_MEMB_VAL
 #endif
   };
   
