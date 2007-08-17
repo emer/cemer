@@ -26,7 +26,7 @@ dnl
 dnl Subst variables that start with PL_ are used in the plugin configuration
 
 # Set binary version here. The format allows for 99.99.99abc
-AC_INIT([Emergent],[4.0.4],[Emergent-discuss@psych-srv3.Colorado.EDU],[Emergent]) 
+AC_INIT([Emergent],[4.0.5],[Emergent-discuss@psych-srv3.Colorado.EDU],[Emergent]) 
 # Change both of these
 LIB_VERSION=1:0:0   #Set library version here
 LIB_VERSION_2=1.0.0

@@ -1,3 +1,2012 @@
+2007-08-17 05:26  baisa
+
+	* emergent/trunk/src/temt/ta/ta_matrix_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_matrix_qt.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h: bug BugID:3 bug
+	  BugID:22 bug BugID:88
+
+2007-08-17 04:48  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/test/leabra_ra.proj: updated leabra_ra.proj with
+	  StdInputData grid view for #66
+
+2007-08-16 21:54  oreilly
+
+	* emergent/trunk/src/temt/ta/images/emergent_16x16x256.ico:
+	  emergent_16x16x256 ico
+
+2007-08-16 20:47  baisa
+
+	* emergent/trunk/plugins/config.pri.in,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp: fixed bug BugID:22
+	  but WITH regression risk
+
+2007-08-16 16:57  oreilly
+
+	* emergent/trunk/src/temt/ta/images/emergent_32x32x256.ico:
+	  emergent_32x32x256 ico
+
+2007-08-16 16:52  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp: added comment in
+	  ConnectFrom, fixed url processing for .projects[.. (Find) vs
+	  project relative .docs... (taDoc)
+
+2007-08-15 21:09  mingus
+
+	* emergent/trunk/acsite.m4: pdp -> emergent
+
+2007-08-15 16:13  baisa
+
+	* emergent/trunk/src/temt/ta/ta_qtgroup.cpp: fixed and annotated
+	  bug BugID:84
+
+2007-08-15 15:01  baisa
+
+	* emergent/trunk/src/temt/ta/ta_matrix.cpp: fixed bug BugID:44
+
+2007-08-15 08:43  oreilly
+
+	* emergent/trunk/demo/leabra/Makefile.am,
+	  emergent/trunk/demo/leabra/ax_tutorial.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_cptax.net,
+	  emergent/trunk/demo/leabra/ax_tutorial_cptax.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_final.proj,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/test/test.proj: complete ax_tutorial + pbwm
+	  PFCLVPrjnSpec
+
+2007-08-15 05:56  baisa
+
+	* emergent/trunk/src/emergent/network/emergent_project.h,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/temt/css/css_basic_types.h,
+	  emergent/trunk/src/temt/css/css_builtin.cpp,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.h,
+	  emergent/trunk/src/temt/css/css_machine.cpp,
+	  emergent/trunk/src/temt/css/css_machine.h,
+	  emergent/trunk/src/temt/ta/colorscale.h,
+	  emergent/trunk/src/temt/ta/fun_lookup.h,
+	  emergent/trunk/src/temt/ta/t3node_so.cpp,
+	  emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_data.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata.h,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.h,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.h,
+	  emergent/trunk/src/temt/ta/ta_variant.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h,
+	  emergent/trunk/src/temt/taiqtso/igeometry.cpp,
+	  emergent/trunk/src/temt/taiqtso/ilabel.cpp,
+	  emergent/trunk/src/temt/taiqtso/irenderarea.cpp: brad's TODOs I
+
+2007-08-15 03:24  oreilly
+
+	* emergent/trunk/demo/leabra/12ax4s.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_cptax.proj,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/test/leabra_std.proj,
+	  emergent/trunk/test/test.proj: added test/test.proj illustrating
+	  netview ctrlpanel issue
+
+2007-08-15 02:56  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_matrix.h: fixed BugID:4
+
+2007-08-14 20:11  baisa
+
+	* emergent/trunk/doc/bugs.txt,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/emergent/network/netstru_qtso.h,
+	  emergent/trunk/src/emergent/network/v3_compat.cpp,
+	  emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/t3viewer.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_so.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp: bug 68 plus
+	  related bugs
+
+2007-08-14 19:19  mingus
+
+	* emergent/trunk/gendoc/GenDoc.py, emergent/trunk/gendoc/gendoc:
+	  move GenDoc.py -> gendoc
+
+2007-08-14 19:18  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/Maketa.am,
+	  emergent/trunk/gendoc/GenDoc.py,
+	  emergent/trunk/src/temt/ta/ta_gendoc.cpp: remove gendoc code
+	  from makefiles, port to new emergent/css xml files, disambiguate
+	  <Name> tags
+
+2007-08-14 06:16  oreilly
+
+	* emergent/trunk/src/temt/maketa/mta_gendoc.cpp,
+	  emergent/trunk/src/temt/ta/Makefile.am,
+	  emergent/trunk/src/temt/ta/ta_gendoc.cpp,
+	  emergent/trunk/src/temt/ta/ta_gendoc.h,
+	  emergent/trunk/src/temt/ta/ta_project.cpp: fixed main_parent bug
+	  in gendoc, added ta_gendoc (copy of mta_gendoc) that runs in
+	  main app and generates a single file based on full integrated
+	  type information. src/emergent/bin>./emergent_debug --gendoc
+
+2007-08-13 20:43  oreilly
+
+	* emergent/trunk/src/temt/ta/images/emergent_128x128.png,
+	  emergent/trunk/src/temt/ta/images/emergent_32x32.ico,
+	  emergent/trunk/src/temt/ta/images/emergent_32x32.png: emergent
+	  icons
+
+2007-08-13 08:33  oreilly
+
+	* emergent/trunk/demo/leabra/ax_tutorial_cptax.proj: more updates
+	  of ax_tutorial
+
+2007-08-12 08:37  oreilly
+
+	* emergent/trunk/demo/leabra/ax_tutorial_cptax.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_final.proj: cptax
+	  addition to ax tutorial -- not quite done yet..
+
+2007-08-12 05:56  oreilly
+
+	* emergent/trunk/install_mac_app,
+	  emergent/trunk/install_mac_app/emergent.app,
+	  emergent/trunk/install_mac_app/emergent.app/Contents,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/Frameworks,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/Info.plist,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/MacOS,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/MacOS/emergent,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/PlugIns,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/Resources,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/Resources/emergent.icns,
+	  emergent/trunk/install_mac_app/emergent.app/Contents/SharedFrameworks,
+	  emergent/trunk/mac_app: changed dir to install_mac_app
+
+2007-08-12 05:50  oreilly
+
+	* emergent/trunk/mac_app: added mac_app/emergent.app for mac
+	  package -- install this in /Applications
+
+2007-08-12 05:05  oreilly
+
+	* emergent/trunk/src/emergent/bin/emergent.app/Contents/Resources/emergent.icns,
+	  emergent/trunk/src/emergent/bin/emergent_debug.app/Contents/Resources/emergent.icns:
+	  updated test mac icons
+
+2007-08-11 08:33  oreilly
+
+	* emergent/trunk/src/emergent/bin/emergent.app/Contents/Resources/emergent.icns,
+	  emergent/trunk/src/emergent/bin/emergent_debug.app/Contents/Resources/emergent.icns:
+	  testing new emer icons on mac
+
+2007-08-10 09:01  oreilly
+
+	* emergent/trunk/demo/leabra/Makefile.am,
+	  emergent/trunk/demo/leabra/ax_tutorial.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_final.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_input_data.dtbl,
+	  emergent/trunk/demo/leabra/sim_tutorial.proj,
+	  emergent/trunk/demo/leabra/sim_tutorial_final.proj,
+	  emergent/trunk/demo/leabra/sim_tutorial_input_data.dtbl:
+	  sim_tutorial -> ax_tutorial
+
+2007-08-10 08:45  oreilly
+
+	* emergent/trunk/demo/leabra/sim_tutorial.proj,
+	  emergent/trunk/demo/leabra/sim_tutorial_final.proj,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.cpp,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp: sim_tutorial
+	  almost done, fixed ++ operator (+=, etc) for css cptr of DynEnum
+
+2007-08-10 01:23  baisa
+
+	* emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtclipdata.cpp: NO_CLIP to stop
+	  clip ops
+
+2007-08-09 17:07  oreilly
+
+	* emergent/trunk/demo/cs/Makefile.am: demo/cs/Makefile.am fix for
+	  removed proj
+
+2007-08-09 02:25  baisa
+
+	* emergent/trunk/src/emergent/network/emergent_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata.h: tiny Help url change
+
+2007-08-08 16:26  baisa
+
+	* emergent/trunk/build/msvc7/emergent.sln,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj: win
+	  changes
+
+2007-08-08 15:44  baisa
+
+	* emergent/trunk/build/msvc7/plugins/HelloWorld/HelloWorld.vcproj,
+	  emergent/trunk/build/msvc7/plugins/HelloWorld/HellowWorld.vcproj:
+	  rename
+
+2007-08-08 15:43  baisa
+
+	* emergent/trunk/build/msvc7/plugins/HelloWorld,
+	  emergent/trunk/build/msvc7/plugins/HelloWorld/HellowWorld.vcproj,
+	  emergent/trunk/build/msvc7/plugins/HellowWorld: rename
+
+2007-08-08 07:14  oreilly
+
+	* emergent/trunk/demo/cs/424_v3.proj: removed 424_v3.proj
+
+2007-08-08 06:02  baisa
+
+	* emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj: changes
+	  to win
+
+2007-08-07 19:29  baisa
+
+	* emergent/trunk/build/msvc7/HowToMakeRelease.txt,
+	  emergent/trunk/build/msvc7/Makefile,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent_dll.cpp,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.vcproj,
+	  emergent/trunk/build/msvc7/plugins/HellowWorld/HellowWorld.vcproj,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/temt/maketa/mta_gendoc.cpp,
+	  emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_list.cpp: changes for win
+
+2007-08-07 09:28  oreilly
+
+	* emergent/trunk/demo/leabra/Makefile.am,
+	  emergent/trunk/demo/leabra/sim_tutorial_final.proj,
+	  emergent/trunk/demo/leabra/sim_tutorial_input_data.dtbl,
+	  emergent/trunk/src/emergent/bin/emergent.app/Contents/Resources/emergent.icns,
+	  emergent/trunk/src/emergent/bin/emergent_debug.app/Contents/Resources/emergent.icns,
+	  emergent/trunk/src/emergent/leabra/TODO,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_dataanal.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp: graphview userdata
+	  parsing of most all graph params; added .Wiki.X syntax to ta:
+	  URL lots of progress on the sim_tutorial -- not copied over to
+	  the initial blank guy yet though.
+
+2007-08-07 03:04  baisa
+
+	* emergent/trunk/build/msvc7/Makefile,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent_dll.cpp,
+	  emergent/trunk/build/msvc7/emergent/emergent_prebuild.cmd,
+	  emergent/trunk/build/msvc7/emergent/pdp.vcproj,
+	  emergent/trunk/build/msvc7/emergent/pdp_dll.cpp,
+	  emergent/trunk/build/msvc7/emergent/pdp_prebuild.cmd,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.rc,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent_bin/pdp_bin.rc,
+	  emergent/trunk/build/msvc7/emergent_bin/pdp_bin.vcproj,
+	  emergent/trunk/build/msvc7/maketa/maketa.vcproj,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj,
+	  emergent/trunk/build/msvc7/temt/ta.vcproj,
+	  emergent/trunk/build/msvc7/temt/ta_dll.cpp,
+	  emergent/trunk/build/msvc7/temt/ta_prebuild.cmd,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj,
+	  emergent/trunk/build/msvc7/temt/temt_dll.cpp,
+	  emergent/trunk/build/msvc7/temt/temt_prebuild.cmd,
+	  emergent/trunk/src/temt/ta/ta_global.h: intermediate win checkin
+
+2007-08-07 01:51  baisa
+
+	* emergent/trunk/build/msvc7/emergent,
+	  emergent/trunk/build/msvc7/emergent.sln,
+	  emergent/trunk/build/msvc7/emergent_bin,
+	  emergent/trunk/build/msvc7/pdp,
+	  emergent/trunk/build/msvc7/pdp++.sln,
+	  emergent/trunk/build/msvc7/pdp_bin,
+	  emergent/trunk/build/msvc7/ta, emergent/trunk/build/msvc7/temt:
+	  intermediate win
+
+2007-08-07 01:29  baisa
+
+	* emergent/trunk/AUTHORS: this should fail
+
+2007-08-07 00:30  baisa
+
+	* emergent/trunk/plugins/PSG/NOBUILD: disabled PSG
+
+2007-08-07 00:29  baisa
+
+	* emergent/trunk/plugins/HelloWorld/hw.pro,
+	  emergent/trunk/plugins/Makefile.in,
+	  emergent/trunk/plugins/Makefile.msvc,
+	  emergent/trunk/plugins/config.pri.in,
+	  emergent/trunk/plugins/shared.pri,
+	  emergent/trunk/plugins/shared_pre.pri,
+	  emergent/trunk/src/temt/ta/ta_project.cpp: changes to plugin
+	  building for linux
+
+2007-08-06 09:09  oreilly
+
+	* emergent/trunk/demo/leabra/12ax4s.proj,
+	  emergent/trunk/demo/leabra/simple_vis_search.proj,
+	  emergent/trunk/demo/virt_env/ve_arm.proj: some demo project
+	  updates
+
+2007-08-06 08:28  oreilly
+
+	* emergent/trunk/src/emergent/bin/emergent.app/Contents/Info.plist,
+	  emergent/trunk/src/emergent/bin/emergent.app/Contents/Resources/emergent.icns,
+	  emergent/trunk/src/emergent/bin/emergent.app/Contents/Resources/pdp++.icns:
+	  updated emergent.app
+
+2007-08-06 07:28  oreilly
+
+	* emergent/trunk/src/emergent/lib/Makefile.am: forgot one more
+	  LIBTA guy in lib -- was causing multiple static inits and thus
+	  multiple entries in toolbox!! (I nuked LIBTA option because it
+	  doesn't make any sense with the separation of temt and emergent)
+
+2007-08-06 04:24  oreilly
+
+	* emergent/trunk/demo/virt_env/Makefile.am,
+	  emergent/trunk/postinstall-pak.in,
+	  emergent/trunk/src/emergent/bin/main.cpp,
+	  emergent/trunk/src/emergent/bp/bp.h,
+	  emergent/trunk/src/emergent/bp/bp_v3_compat.cpp,
+	  emergent/trunk/src/emergent/bp/bp_vt.cpp,
+	  emergent/trunk/src/emergent/bp/rbp.h,
+	  emergent/trunk/src/emergent/cs/cs.h,
+	  emergent/trunk/src/emergent/cs/cs_v3_compat.cpp,
+	  emergent/trunk/src/emergent/cs/cs_vt.cpp,
+	  emergent/trunk/src/emergent/leabra/files.mta,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_v3_compat.cpp,
+	  emergent/trunk/src/emergent/network/Makefile.am,
+	  emergent/trunk/src/emergent/network/emergent_base.cpp,
+	  emergent/trunk/src/emergent/network/emergent_base.h,
+	  emergent/trunk/src/emergent/network/emergent_def.h,
+	  emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program.h,
+	  emergent/trunk/src/emergent/network/emergent_program_qtso.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program_qtso.h,
+	  emergent/trunk/src/emergent/network/emergent_project.cpp,
+	  emergent/trunk/src/emergent/network/emergent_project.h,
+	  emergent/trunk/src/emergent/network/emergent_qtso.cpp,
+	  emergent/trunk/src/emergent/network/emergent_qtso.h,
+	  emergent/trunk/src/emergent/network/emergent_ti.cpp,
+	  emergent/trunk/src/emergent/network/files.mta,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_extra.h,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/emergent/network/netstru_qtso.h,
+	  emergent/trunk/src/emergent/network/netstru_so.h,
+	  emergent/trunk/src/emergent/network/pdp_base.cpp,
+	  emergent/trunk/src/emergent/network/pdp_base.h,
+	  emergent/trunk/src/emergent/network/pdp_def.h,
+	  emergent/trunk/src/emergent/network/pdp_program.cpp,
+	  emergent/trunk/src/emergent/network/pdp_program.h,
+	  emergent/trunk/src/emergent/network/pdp_program_qtso.cpp,
+	  emergent/trunk/src/emergent/network/pdp_program_qtso.h,
+	  emergent/trunk/src/emergent/network/pdp_project.cpp,
+	  emergent/trunk/src/emergent/network/pdp_project.h,
+	  emergent/trunk/src/emergent/network/pdp_qtso.cpp,
+	  emergent/trunk/src/emergent/network/pdp_qtso.h,
+	  emergent/trunk/src/emergent/network/pdp_ti.cpp,
+	  emergent/trunk/src/emergent/network/pdpbitmaps.h,
+	  emergent/trunk/src/emergent/network/pdpdeclare.h,
+	  emergent/trunk/src/emergent/network/pdplog_qtso.cpp,
+	  emergent/trunk/src/emergent/network/pdplog_qtso.h,
+	  emergent/trunk/src/emergent/network/pdpserver.h,
+	  emergent/trunk/src/emergent/network/pdpserver_qt.h,
+	  emergent/trunk/src/emergent/network/pdpview_qt.cpp,
+	  emergent/trunk/src/emergent/network/pdpview_qt.h,
+	  emergent/trunk/src/emergent/network/spec.cpp,
+	  emergent/trunk/src/emergent/network/spec.h,
+	  emergent/trunk/src/emergent/network/v3_compat.cpp,
+	  emergent/trunk/src/emergent/network/v3_compat.h,
+	  emergent/trunk/src/emergent/network/v3_compat_qtso.cpp,
+	  emergent/trunk/src/emergent/network/v3_compat_qtso.h,
+	  emergent/trunk/src/emergent/so/so.h,
+	  emergent/trunk/src/emergent/so/so_v3_compat.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_qt.cpp: hopefully final cleanup of
+	  pdp->emergent, plus some residual final cleanup of things like
+	  pdpMisc which had just a few items needing to move to ta PDP4DIR
+	  -> TEMTDIR (very few people will use this anyway..) one last
+	  thing is pdpserver which I just left -- presumably to be moved
+	  into a plugin and redone and then ultimately into ta.
+
+2007-08-05 19:51  oreilly
+
+	* emergent/trunk/Makefile.am, emergent/trunk/Maketa.am,
+	  emergent/trunk/acsite.m4, emergent/trunk/configure.ac,
+	  emergent/trunk/css_lib, emergent/trunk/css_lib/Makefile.am,
+	  emergent/trunk/css_stdlib, emergent/trunk/grep_all,
+	  emergent/trunk/grep_all_cpp, emergent/trunk/grep_all_h,
+	  emergent/trunk/src/emergent/bin/Makefile.am,
+	  emergent/trunk/src/emergent/network/pdp_project.cpp,
+	  emergent/trunk/src/temt/css_bin/Makefile.am,
+	  emergent/trunk/src/temt/lib/Makefile.am,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.h: rename all working, also
+	  renamed libtacss -> libtemt, just need to do pdp_* files in
+	  network/*, then should be all done!
+
+2007-08-05 17:45  oreilly
+
+	* emergent/trunk/Makefile.am, emergent/trunk/configure.ac,
+	  emergent/trunk/src/emergent/bin,
+	  emergent/trunk/src/emergent/bin/Makefile.am,
+	  emergent/trunk/src/emergent/lib,
+	  emergent/trunk/src/emergent/network_bin,
+	  emergent/trunk/src/emergent/network_lib,
+	  emergent/trunk/src/temt/css_bin/Makefile.am,
+	  emergent/trunk/src/temt/lib, emergent/trunk/src/temt/ta_lib:
+	  emergent: renamed network_* to lib/bin and ta_lib etc -- not
+	  tested yet
+
+2007-08-04 07:02  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/Maketa.am,
+	  emergent/trunk/configure.ac,
+	  emergent/trunk/src/emergent/bp/Makefile.am,
+	  emergent/trunk/src/emergent/cs/Makefile.am,
+	  emergent/trunk/src/emergent/leabra/Makefile.am,
+	  emergent/trunk/src/emergent/network/Makefile.am,
+	  emergent/trunk/src/emergent/network_bin/Makefile.am,
+	  emergent/trunk/src/emergent/network_lib/Makefile.am,
+	  emergent/trunk/src/emergent/so/Makefile.am,
+	  emergent/trunk/src/temt/css/Makefile.am,
+	  emergent/trunk/src/temt/css_bin/Makefile.am,
+	  emergent/trunk/src/temt/ta/Makefile.am,
+	  emergent/trunk/src/temt/ta_lib/Makefile.am,
+	  emergent/trunk/src/temt/taiqtso/Makefile.am: successful build
+	  (only non-debug/mpi tested)
+
+2007-08-04 05:38  mingus
+
+	* emergent/trunk/src/css_bin, emergent/trunk/src/temt/css_bin:
+	  moving stuff
+	* emergent/trunk/src/emergent/todo,
+	  emergent/trunk/src/emergent/utils, emergent/trunk/src/ta_lib,
+	  emergent/trunk/src/temt/ta_lib, emergent/trunk/src/todo,
+	  emergent/trunk/src/utils: moving stuff
+
+2007-08-04 05:36  mingus
+
+	* emergent/trunk/src/bp, emergent/trunk/src/cs,
+	  emergent/trunk/src/css, emergent/trunk/src/emergent,
+	  emergent/trunk/src/emergent/bp, emergent/trunk/src/emergent/cs,
+	  emergent/trunk/src/emergent/leabra,
+	  emergent/trunk/src/emergent/network,
+	  emergent/trunk/src/emergent/network_bin,
+	  emergent/trunk/src/emergent/network_lib,
+	  emergent/trunk/src/emergent/so,
+	  emergent/trunk/src/emergent/test, emergent/trunk/src/leabra,
+	  emergent/trunk/src/maketa, emergent/trunk/src/network,
+	  emergent/trunk/src/network_bin, emergent/trunk/src/network_lib,
+	  emergent/trunk/src/so, emergent/trunk/src/ta,
+	  emergent/trunk/src/taiqtso, emergent/trunk/src/temt/css,
+	  emergent/trunk/src/temt/maketa, emergent/trunk/src/temt/ta,
+	  emergent/trunk/src/temt/taiqtso, emergent/trunk/src/test: moving
+	  stuff around
+
+2007-08-04 05:31  mingus
+
+	* emergent/emergent, emergent/trunk: moving stuff
+
+2007-08-04 05:11  mingus
+
+	* emergent/emergent, emergent/emergent/src,
+	  emergent/trunk/emergent: more moving
+
+2007-08-01 04:03  pdpsvn
+
+	* emergent/trunk/emergent/src/emergent_bin/emergent.app,
+	  emergent/trunk/emergent/src/emergent_bin/emergent.app/Contents/MacOS/emergent,
+	  emergent/trunk/emergent/src/emergent_bin/emergent.app/Contents/MacOS/pdp++,
+	  emergent/trunk/emergent/src/emergent_bin/emergent_debug.app,
+	  emergent/trunk/emergent/src/emergent_bin/emergent_debug.app/Contents/MacOS/emergent_debug,
+	  emergent/trunk/emergent/src/emergent_bin/emergent_debug.app/Contents/MacOS/pdp_debug++,
+	  emergent/trunk/emergent/src/emergent_bin/emergent_prof.app,
+	  emergent/trunk/emergent/src/emergent_bin/emergent_prof.app/Contents/MacOS/emergent_prof,
+	  emergent/trunk/emergent/src/emergent_bin/emergent_prof.app/Contents/MacOS/pdp_prof++,
+	  emergent/trunk/emergent/src/emergent_bin/gdb_run,
+	  emergent/trunk/emergent/src/emergent_bin/gprof_run,
+	  emergent/trunk/emergent/src/emergent_bin/kdbg_run,
+	  emergent/trunk/emergent/src/emergent_bin/main.cpp,
+	  emergent/trunk/emergent/src/emergent_bin/pdp++.app,
+	  emergent/trunk/emergent/src/emergent_bin/pdp_debug++.app,
+	  emergent/trunk/emergent/src/emergent_bin/pdp_prof++.app,
+	  emergent/trunk/emergent/src/ta/ta_type.cpp: quick and dirty
+	  first pass pdp++ -> emergent cleanup for app dir and mac .app
+	  guys
+
+2007-07-30 21:21  mingus
+
+	* emergent, pdp4.0: nuke /pdp4.0
+
+2007-07-30 21:19  mingus
+
+	* pdp4.0, pdp4.0/tags/pdp-4.0.0a, pdp4.0/tags/pdp-4.0.0a/3rdparty,
+	  pdp4.0/tags/pdp-4.0.0a/3rdparty/SoQt,
+	  pdp4.0/tags/pdp-4.0.0a/3rdparty/SoQt/1.3.0,
+	  pdp4.0/tags/pdp-4.0.0a/3rdparty/SoQt/1.3.0/build,
+	  pdp4.0/tags/pdp-4.0.0a/3rdparty/SoQt/1.3.0/build/mscv7,
+	  pdp4.0/tags/pdp-4.0.0a/3rdparty/SoQt/1.3.0/build/mscv7/src,
+	  pdp4.0/tags/pdp-4.0.0a/bin, pdp4.0/tags/pdp-4.0.0a/bin/bak,
+	  pdp4.0/tags/pdp-4.0.0a/build,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/bin,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/include,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/lib,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/maketa,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/pdp,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/pdp_bin,
+	  pdp4.0/tags/pdp-4.0.0a/build/msvc7/ta,
+	  pdp4.0/tags/pdp-4.0.0a/cfg, pdp4.0/tags/pdp-4.0.0a/doc,
+	  pdp4.0/tags/pdp-4.0.0a/include, pdp4.0/tags/pdp-4.0.0a/lib,
+	  pdp4.0/tags/pdp-4.0.0a/manual, pdp4.0/tags/pdp-4.0.0a/plugins,
+	  pdp4.0/tags/pdp-4.0.0a/plugins/tacss/HelloWorld,
+	  pdp4.0/tags/pdp-4.0.0a/src, pdp4.0/tags/pdp-4.0.0a/src/bp,
+	  pdp4.0/tags/pdp-4.0.0a/src/cs, pdp4.0/tags/pdp-4.0.0a/src/css,
+	  pdp4.0/tags/pdp-4.0.0a/src/css_bin,
+	  pdp4.0/tags/pdp-4.0.0a/src/leabra,
+	  pdp4.0/tags/pdp-4.0.0a/src/leabra/proj,
+	  pdp4.0/tags/pdp-4.0.0a/src/maketa,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app/Contents,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app/Contents/Frameworks,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app/Contents/MacOS,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app/Contents/PlugIns,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app/Contents/Resources,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_bin/pdp_debug++.app/Contents/SharedFrameworks,
+	  pdp4.0/tags/pdp-4.0.0a/src/pdp_lib,
+	  pdp4.0/tags/pdp-4.0.0a/src/so, pdp4.0/tags/pdp-4.0.0a/src/ta,
+	  pdp4.0/tags/pdp-4.0.0a/src/ta/ios-g++-3.1,
+	  pdp4.0/tags/pdp-4.0.0a/src/ta_lib,
+	  pdp4.0/tags/pdp-4.0.0a/src/taiqtso,
+	  pdp4.0/tags/pdp-4.0.0a/src/test,
+	  pdp4.0/tags/pdp-4.0.0a/src/todo,
+	  pdp4.0/tags/pdp-4.0.0a/src/utils,
+	  pdp4.0/tags/pdp-4.0.0a/src/utils/lef,
+	  pdp4.0/tags/pdp-4.0.0a/src/utils/lef/Debug,
+	  pdp4.0/tags/pdp-4.0.0a/test, pdp4.0/tags/pdp-4.0.1b1,
+	  pdp4.0/tags/pdp-4.0.1b1/3rdparty,
+	  pdp4.0/tags/pdp-4.0.1b1/3rdparty/SoQt,
+	  pdp4.0/tags/pdp-4.0.1b1/3rdparty/SoQt/1.3.0,
+	  pdp4.0/tags/pdp-4.0.1b1/3rdparty/SoQt/1.3.0/build,
+	  pdp4.0/tags/pdp-4.0.1b1/3rdparty/SoQt/1.3.0/build/mscv7,
+	  pdp4.0/tags/pdp-4.0.1b1/3rdparty/SoQt/1.3.0/build/mscv7/src,
+	  pdp4.0/tags/pdp-4.0.1b1/bin, pdp4.0/tags/pdp-4.0.1b1/bin/bak,
+	  pdp4.0/tags/pdp-4.0.1b1/build,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/bin,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/include,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/lib,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/maketa,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/pdp,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/pdp_bin,
+	  pdp4.0/tags/pdp-4.0.1b1/build/msvc7/ta,
+	  pdp4.0/tags/pdp-4.0.1b1/cfg, pdp4.0/tags/pdp-4.0.1b1/doc,
+	  pdp4.0/tags/pdp-4.0.1b1/include, pdp4.0/tags/pdp-4.0.1b1/lib,
+	  pdp4.0/tags/pdp-4.0.1b1/manual, pdp4.0/tags/pdp-4.0.1b1/plugins,
+	  pdp4.0/tags/pdp-4.0.1b1/plugins/tacss/HelloWorld,
+	  pdp4.0/tags/pdp-4.0.1b1/src, pdp4.0/tags/pdp-4.0.1b1/src/bp,
+	  pdp4.0/tags/pdp-4.0.1b1/src/cs, pdp4.0/tags/pdp-4.0.1b1/src/css,
+	  pdp4.0/tags/pdp-4.0.1b1/src/css_bin,
+	  pdp4.0/tags/pdp-4.0.1b1/src/leabra,
+	  pdp4.0/tags/pdp-4.0.1b1/src/leabra/proj,
+	  pdp4.0/tags/pdp-4.0.1b1/src/maketa,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app/Contents,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app/Contents/Frameworks,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app/Contents/MacOS,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app/Contents/PlugIns,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app/Contents/Resources,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_bin/pdp_debug++.app/Contents/SharedFrameworks,
+	  pdp4.0/tags/pdp-4.0.1b1/src/pdp_lib,
+	  pdp4.0/tags/pdp-4.0.1b1/src/so, pdp4.0/tags/pdp-4.0.1b1/src/ta,
+	  pdp4.0/tags/pdp-4.0.1b1/src/ta/ios-g++-3.1,
+	  pdp4.0/tags/pdp-4.0.1b1/src/ta_lib,
+	  pdp4.0/tags/pdp-4.0.1b1/src/taiqtso,
+	  pdp4.0/tags/pdp-4.0.1b1/src/test,
+	  pdp4.0/tags/pdp-4.0.1b1/src/todo,
+	  pdp4.0/tags/pdp-4.0.1b1/src/utils,
+	  pdp4.0/tags/pdp-4.0.1b1/src/utils/lef,
+	  pdp4.0/tags/pdp-4.0.1b1/src/utils/lef/Debug,
+	  pdp4.0/tags/pdp-4.0.1b1/test, pdp4.0/tags/pdp-4.0.1b1/trunk,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/3rdparty,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/3rdparty/SoQt,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/3rdparty/SoQt/1.3.0,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/3rdparty/SoQt/1.3.0/build,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/3rdparty/SoQt/1.3.0/build/mscv7,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/3rdparty/SoQt/1.3.0/build/mscv7/src,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/bin,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/bin/bak,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/bin,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/include,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/lib,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/maketa,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/pdp,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/pdp_bin,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/build/msvc7/ta,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/cfg,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/doc,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/include,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/lib,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/manual,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/plugins,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/plugins/tacss/HelloWorld,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/bp,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/cs,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/css,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/css_bin,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/leabra,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/leabra/proj,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/maketa,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app/Contents,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app/Contents/Frameworks,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app/Contents/MacOS,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app/Contents/PlugIns,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app/Contents/Resources,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_bin/pdp_debug++.app/Contents/SharedFrameworks,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/pdp_lib,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/so,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/ta,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/ta/ios-g++-3.1,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/ta_lib,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/taiqtso,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/test,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/todo,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/utils,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/utils/lef,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/src/utils/lef/Debug,
+	  pdp4.0/tags/pdp-4.0.1b1/trunk/test,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app/Contents,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app/Contents/Frameworks,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app/Contents/MacOS,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app/Contents/PlugIns,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app/Contents/Resources,
+	  pdp4.0/trunk/emergent/src/emergent_bin/pdp_debug++.app/Contents/SharedFrameworks:
+	  ignore
+
+2007-07-30 20:57  mingus
+
+	* pdp4.0/trunk/emergent/Makefile.am,
+	  pdp4.0/trunk/emergent/Maketa.am,
+	  pdp4.0/trunk/emergent/configure.ac,
+	  pdp4.0/trunk/emergent/src/bp/Makefile.am,
+	  pdp4.0/trunk/emergent/src/bp/files.mta,
+	  pdp4.0/trunk/emergent/src/cs/Makefile.am,
+	  pdp4.0/trunk/emergent/src/cs/files.mta,
+	  pdp4.0/trunk/emergent/src/css_bin/Makefile.am,
+	  pdp4.0/trunk/emergent/src/emergent/Makefile.am,
+	  pdp4.0/trunk/emergent/src/emergent/netdata.h,
+	  pdp4.0/trunk/emergent/src/emergent/netstru_qtso.h,
+	  pdp4.0/trunk/emergent/src/emergent/pdp_base.cpp,
+	  pdp4.0/trunk/emergent/src/emergent/pdp_base.h,
+	  pdp4.0/trunk/emergent/src/emergent/pdp_program.h,
+	  pdp4.0/trunk/emergent/src/emergent/pdp_qtso.h,
+	  pdp4.0/trunk/emergent/src/emergent/pdplog_qtso.h,
+	  pdp4.0/trunk/emergent/src/emergent/pdpserver.h,
+	  pdp4.0/trunk/emergent/src/emergent/pdpview_qt.h,
+	  pdp4.0/trunk/emergent/src/emergent/spec.h,
+	  pdp4.0/trunk/emergent/src/emergent/v3_compat.h,
+	  pdp4.0/trunk/emergent/src/emergent/v3_compat_qtso.h,
+	  pdp4.0/trunk/emergent/src/emergent_bin/Makefile.am,
+	  pdp4.0/trunk/emergent/src/emergent_lib/Makefile.am,
+	  pdp4.0/trunk/emergent/src/leabra/Makefile.am,
+	  pdp4.0/trunk/emergent/src/so/Makefile.am,
+	  pdp4.0/trunk/emergent/src/so/files.mta,
+	  pdp4.0/trunk/emergent/src/ta/Makefile.am: bin/libs now Emergent
+	  and everything compiles and works. Next is putting the Toolkit
+	  in its own package
+
+2007-07-30 19:03  mingus
+
+	* pdp4.0/trunk/emergent/src/emergent,
+	  pdp4.0/trunk/emergent/src/emergent_bin,
+	  pdp4.0/trunk/emergent/src/emergent_lib,
+	  pdp4.0/trunk/emergent/src/pdp,
+	  pdp4.0/trunk/emergent/src/pdp_bin,
+	  pdp4.0/trunk/emergent/src/pdp_lib: pdp to emergent
+
+2007-07-30 18:47  mingus
+
+	* pdp4.0/emergent, pdp4.0/trunk, pdp4.0/trunk/emergent:
+	  emergent->trunk/emergent
+
+2007-07-30 18:45  mingus
+
+	* pdp4.0/emergent, pdp4.0/trunk: intermediate moving
+
+2007-07-29 02:52  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h:
+	  added taBase_RefList protection for delayedfuncall.
+
+2007-07-28 17:43  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_viewer.cpp: toolbar vis state; panel sizes
+
+2007-07-28 06:54  pdpsvn
+
+	* pdp4.0/trunk/demo/bp/bp_xor.proj,
+	  pdp4.0/trunk/demo/cs/424_cs.proj,
+	  pdp4.0/trunk/demo/cs/424_cs_det.proj,
+	  pdp4.0/trunk/demo/cs/cs_ra.proj,
+	  pdp4.0/trunk/demo/leabra/12ax4s.proj,
+	  pdp4.0/trunk/demo/leabra/model_and_task.proj,
+	  pdp4.0/trunk/demo/leabra/simple_vis_search.proj,
+	  pdp4.0/trunk/demo/so/som.proj,
+	  pdp4.0/trunk/prog_lib/LeabraEpochGpData.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrain.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrainBatchSeedList.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrainBatchSeedNThr.prog: updated
+	  more programs and demos
+
+2007-07-28 06:07  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netdata.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_program.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.h,
+	  pdp4.0/trunk/src/ta/ta_datatable.cpp,
+	  pdp4.0/trunk/src/ta/ta_group.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtclipdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp: explicit _gui and _nogui
+	  versions of tabMisc::DelayedFunCall and created a _gui version
+	  of DataOpList::AddAllColumns to prevent transient call of
+	  delayedfuncall for obj that then gets deleted -- was causing
+	  crash on objrec model in linux (but strangely not mac..)
+
+2007-07-27 23:43  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_qt.cpp, pdp4.0/trunk/src/ta/ta_qt.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_viewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_viewer.h: Save View stuff
+
+2007-07-27 08:23  pdpsvn
+
+	* pdp4.0/trunk/src/css/css_basic_types.cpp,
+	  pdp4.0/trunk/src/css/css_basic_types.h,
+	  pdp4.0/trunk/src/css/css_builtin.cpp,
+	  pdp4.0/trunk/src/css/css_c_ptr_types.cpp,
+	  pdp4.0/trunk/src/css/css_lex.cpp,
+	  pdp4.0/trunk/src/css/css_machine.cpp,
+	  pdp4.0/trunk/src/css/css_machine.h,
+	  pdp4.0/trunk/src/css/css_qtconsole.cpp,
+	  pdp4.0/trunk/src/css/css_qtdata.cpp,
+	  pdp4.0/trunk/src/css/css_ta.cpp, pdp4.0/trunk/src/css/css_ta.h,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp: fixed bug with Object*
+	  args for functions (from icond model), and added important new
+	  protection in css for casting from a cssRef obj based on
+	  GetType() -- the ref passes along the GetType from what it refs
+	  to, but code uses this for making casts which then breaks. Added
+	  GetNonRefObj() to fix -- always use this for casts of css
+	  objects based on type. added similar functionality for cssTA for
+	  cssSmartRef guys which is what fixed the Object* arg bug. Also
+	  added OtherProgramVar ProgEl for exchanging var values between
+	  progs.
+
+2007-07-25 08:50  pdpsvn
+
+	* pdp4.0/trunk/demo/leabra/Makefile.am,
+	  pdp4.0/trunk/demo/leabra/sim_tutorial.proj,
+	  pdp4.0/trunk/demo/leabra/sim_tutorial_final.proj: demos:
+	  sim_tutorial.proj
+
+2007-07-25 04:22  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.cpp: added missing
+	  if(taMisc::gui_active) guards on BrowserSelect calls
+
+2007-07-24 20:16  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/SaveWeightsSpecs.prog,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp: important crash fix for
+	  prog ctrl panel
+
+2007-07-24 06:27  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/BpAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/BpBatch.prog,
+	  pdp4.0/trunk/prog_lib/BpEpoch.prog,
+	  pdp4.0/trunk/prog_lib/BpTrain.prog,
+	  pdp4.0/trunk/prog_lib/CsAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/CsBatch.prog,
+	  pdp4.0/trunk/prog_lib/CsEpoch.prog,
+	  pdp4.0/trunk/prog_lib/CsSettle.prog,
+	  pdp4.0/trunk/prog_lib/CsTrain.prog,
+	  pdp4.0/trunk/prog_lib/CsTrial.prog,
+	  pdp4.0/trunk/prog_lib/Makefile.am,
+	  pdp4.0/trunk/prog_lib/SoAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/SoBatch.prog,
+	  pdp4.0/trunk/prog_lib/SoEpoch.prog,
+	  pdp4.0/trunk/prog_lib/SoTrain.prog,
+	  pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/so/so.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp: * updated other algos progs
+	  with new flags * re-enabled list view double-click (needed to
+	  emit the itemDoubleClicked signal ourselves after custom code) *
+	  added BrowserSelectMe after main Load if obj is diff from this *
+	  added separate new_tab and pin_tab args to taBase::EditPanel fun
+
+2007-07-24 02:29  mingus
+
+	* pdp4.0/trunk/Makefile.am: Add mta/xpm files to EXTRA_DIST for a
+	  working make dist target
+	* pdp4.0/trunk/gendoc/GenDoc.py, pdp4.0/trunk/prm: Move python
+	  gendoc stuff to own file
+
+2007-07-23 08:16  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/pdp/netdata.cpp,
+	  pdp4.0/trunk/src/pdp/netdata.h,
+	  pdp4.0/trunk/src/pdp/pdp_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/test/leabra_ra.proj: fixed waitproc reentrance and
+	  added some processevents to prevent any weird things with
+	  browser updating. also auto-select on AddBlank. got rid of
+	  value_names (on previous --forgot to mention -- will cause load
+	  warnings).
+
+2007-07-23 07:33  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/ApplyInputs.prog,
+	  pdp4.0/trunk/prog_lib/LeabraAll_Std.progp,
+	  pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/pdp/netdata.h,
+	  pdp4.0/trunk/src/pdp/pdp_project.cpp,
+	  pdp4.0/trunk/src/pdp/v3_compat.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/test/leabra_ra.proj,
+	  pdp4.0/trunk/test/leabra_std.proj: * fixed selectedit compare
+	  for inlines to obey HIDDEN etc
+
+2007-07-23 01:43  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/ApplyInputs.prog,
+	  pdp4.0/trunk/prog_lib/LeabraAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/LeabraBatch.prog,
+	  pdp4.0/trunk/prog_lib/LeabraEpoch.prog,
+	  pdp4.0/trunk/prog_lib/LeabraSettle.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrain.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrial.prog,
+	  pdp4.0/trunk/prog_lib/SaveWeights.prog,
+	  pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/ta/ta_datatable.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable.h,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp,
+	  pdp4.0/trunk/test/leabra_std.proj: * impl CTRL_READ_ONLY flag in
+	  prog vars * updated leabra programs with new flags
+
+2007-07-22 09:17  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_qt.h,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.h,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp: * impl NO_STEP flag in ctrl
+	  panel * added #ARG_VAL_FM_FUN directive for method args -- calls
+	  a GetGuiArgVal taBase fun to determine default initial arg value
+	  in gui -- very flexible soln to various such problems. * added
+	  special proglibel browser (BugID:33) uses tags as categories,
+	  added multi_cats support to itembrowser codebase -- this uses
+	  that. also shows date modified and file/url
+
+2007-07-22 06:03  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_group.cpp,
+	  pdp4.0/trunk/src/ta/ta_group.h,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/taiqtso/itreewidget.cpp: * VIRT_BASE types do
+	  not show up in type selector! also added err msg for creating
+	  one * fixed lazyChildren (i.e., lazy programmer!) so it only
+	  shows "+" things where they are actually required -- required
+	  looking at the size of the list etc and several other tweaks,
+	  and the new autoexpand/select code is actualy critical for
+	  making it all work right, by driving the final update signal to
+	  redraw the new guy in the browser! * convert old file: cancel
+	  doesn't work -- fixed that logic so it cancels..
+
+2007-07-21 08:50  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/ApplyInputs.prog,
+	  pdp4.0/trunk/prog_lib/BpAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/BpBatch.prog,
+	  pdp4.0/trunk/prog_lib/BpEpoch.prog,
+	  pdp4.0/trunk/prog_lib/BpTestAll.progp,
+	  pdp4.0/trunk/prog_lib/BpTrain.prog,
+	  pdp4.0/trunk/prog_lib/BpTrial.prog,
+	  pdp4.0/trunk/prog_lib/CPT12axAll.progp,
+	  pdp4.0/trunk/prog_lib/CsAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/CsBatch.prog,
+	  pdp4.0/trunk/prog_lib/CsEpoch.prog,
+	  pdp4.0/trunk/prog_lib/CsSettle.prog,
+	  pdp4.0/trunk/prog_lib/CsTrain.prog,
+	  pdp4.0/trunk/prog_lib/CsTrial.prog,
+	  pdp4.0/trunk/prog_lib/LeabraAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/LeabraBatch.prog,
+	  pdp4.0/trunk/prog_lib/LeabraEpoch.prog,
+	  pdp4.0/trunk/prog_lib/LeabraEpochGpData.prog,
+	  pdp4.0/trunk/prog_lib/LeabraSettle.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrain.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrainBatchSeedList.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrainBatchSeedNThr.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrial.prog,
+	  pdp4.0/trunk/prog_lib/MultiInputData.prog,
+	  pdp4.0/trunk/prog_lib/SoAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/SoBatch.prog,
+	  pdp4.0/trunk/prog_lib/SoEpoch.prog,
+	  pdp4.0/trunk/prog_lib/SoTrain.prog,
+	  pdp4.0/trunk/prog_lib/SoTrial.prog,
+	  pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/pdp/netdata.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_program.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_project.cpp,
+	  pdp4.0/trunk/src/pdp/spec.cpp, pdp4.0/trunk/src/ta/t3viewer.cpp,
+	  pdp4.0/trunk/src/ta/t3viewer.h, pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_viewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_viewer.h,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/itextedit.cpp,
+	  pdp4.0/trunk/src/taiqtso/itextedit.h,
+	  pdp4.0/trunk/src/taiqtso/qconsole.cpp,
+	  pdp4.0/trunk/test/leabra_ra.proj,
+	  pdp4.0/trunk/test/leabra_std.proj: * added autoexpand/select to
+	  Wizard new gui & other new wiz funs, dupl get rval call on it,
+	  layerwriter auto, new monitor, init name units, and proably
+	  more.. * select view tab with url in doc, do callfun from url:
+	  http://grey.colorado.edu/pdp/index.php/TaDoc -- doc should now
+	  be "turing complete" in being able to do anything we might want!
+	  * emacs keys for all QTextEdit guys (iTextEdit class added) *
+	  fixed all the call_init things from proglibs I am now ready to
+	  start making the self-documented build everything tutorial!
+
+2007-07-20 08:36  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/leabra/leabra.h,
+	  pdp4.0/trunk/src/pdp/netstru.h, pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtclipdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_script.cpp,
+	  pdp4.0/trunk/src/ta/ta_viewer.h,
+	  pdp4.0/trunk/test/leabra_ra.proj: * programs always regenerate
+	  script code, and always recompile on Init!! progs can depend on
+	  external datatables that don't go stale, and it just doesn't
+	  cost much to always be sure! * modal dialogs now call Cancel()
+	  -- was getting crash upon closing project from old changelog
+	  dialog that wasn't dismissed.. * added tabMisc::DelayedFunCall
+	  -- use this to postpone a function call for the wait proc.. *
+	  added BrowserExpandAll, CancelAll on taBase.. override in
+	  program items to favor that browser if avail. call these with
+	  New_gui and in the clip new token code, using delayed fun and it
+	  all seems good. also have #NO_EXPAND_ALL -- put on unit groups
+	  etc and seems to work fine -- you can double click on a project
+	  all you damn want. if you really want something done, do it
+	  yourself! sure works well! :) * added STARTUP_RUN flag on
+	  programs -- runs programs after project is loaded. this is
+	  probably the preferred way to do it, instead of having a
+	  separate startup script -- just make a startup program that
+	  grabs the args, etc. maybe need a few special args for that.
+
+2007-07-19 07:51  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/pdp/pdp_program.cpp,
+	  pdp4.0/trunk/src/ta/t3viewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_so.cpp,
+	  pdp4.0/trunk/src/ta/ta_imgproc.cpp: * record ImageSize in
+	  retinal data * t3view tab menu fixed -- yesterday's nuke was too
+	  general -- found the right place * wider gridview scrollbars not
+	  in correct place
+
+2007-07-18 08:43  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/BpAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/BpBatch.prog,
+	  pdp4.0/trunk/prog_lib/BpTrain.prog,
+	  pdp4.0/trunk/prog_lib/CsAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/CsBatch.prog,
+	  pdp4.0/trunk/prog_lib/CsTrain.prog,
+	  pdp4.0/trunk/prog_lib/LeabraAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/LeabraTrain.prog,
+	  pdp4.0/trunk/prog_lib/SoAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/SoBatch.prog,
+	  pdp4.0/trunk/prog_lib/SoTrain.prog,
+	  pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h,
+	  pdp4.0/trunk/src/leabra/leabra_extra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_extra.h,
+	  pdp4.0/trunk/src/leabra/leabra_pbwm.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_pbwm.h,
+	  pdp4.0/trunk/src/leabra/leabra_pvlv.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_pvlv.h,
+	  pdp4.0/trunk/src/leabra/leabra_td.cpp,
+	  pdp4.0/trunk/src/pdp/netdata.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/pdp/netstru_extra.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/pdp/pdp_project.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_project.h, pdp4.0/trunk/src/so/so.h,
+	  pdp4.0/trunk/src/ta/t3viewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdata.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.h, pdp4.0/trunk/test/leabra_ra.proj,
+	  pdp4.0/trunk/test/leabra_std.proj: Massive PDP++ odds-and-ends
+	  polish cleanup stuff: * Name empty frame for first object in it
+	  * function select edit: addition name should be additional, not
+	  replace on Button * DataProg -- set names of sub-specs * one
+	  function to add Program controls to select edit (with prefix
+	  name) * wizard stdprogs calls autoconfig on layerwriter *
+	  projection from is a smartref, not a raw pointer! also, fixed
+	  updating when name changes in setfrom * prjn names are read only
+	  * fixed that crazy "Add Frame" thing after selecting in t3view
+	  -- overloaded right mouse button event thing: basic default one
+	  and the one in the examiner viewer. just got rid of the default
+	  one and use the one in the examiner viewer -- you just can't
+	  have two competing ones, and viewer guy us MUCH more useful. *
+	  get current epoch in LeabraTrain (add IfGui thing to other algos
+	  with this too) * token and typedef selector optimizations: if
+	  only one item available on new selector, select it and make it
+	  read only. if none available, then so indicate, also read only *
+	  fixed netview spec selection bug: ItemSelected signal no longer
+	  operative from iTree -- need to use Notify guy * added
+	  Compute_TopKActs / Netins on LeabraLayer -- good for familiarity
+	  signals..
+
+2007-07-17 19:31  pdpsvn
+
+	* pdp4.0/trunk/src/maketa/maketa.cpp: mta->gen_doc was
+	  unitialized, causing it to be the value of the previous memory
+	  content, which was almost always > 0, and thus true...
+
+2007-07-16 20:33  mingus
+
+	* pdp4.0/trunk/gendoc, pdp4.0/trunk/gendoc/GenDoc.php: Working
+	  mediawiki extension for gendoc. Provides a new tag <gendoc>,
+	  used, e.g., <gendoc>ta/DataTable</gendoc>, which can be used
+	  multiple times in any article. On page load, if the article
+	  title matches a file in /usr/local/gendoc, automatically inlines
+	  that iframe at the very end of the article, even if that article
+	  doesn't "exist" yet.
+
+2007-07-16 07:20  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/pdp_program.cpp: network data loops set
+	  writing index as well as reading index, in case you're modifying
+	  input data as you go.
+
+2007-07-15 09:11  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h: pdp++: added i_thr = ALL to
+	  include bias.wt
+
+2007-07-15 07:45  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_dataproc.h,
+	  pdp4.0/trunk/src/ta/ta_imgproc.h,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_program_els.h: pdp++: can now do progcall
+	  in init_code; made Initialize__ private, did TA_BASEFUNS_NOCOPY
+	  on ImageProcCall -- maybe fixes kubuntu bug..
+
+2007-07-14 08:23  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.h: pdp++: minor fix on ForLoop
+	* pdp4.0/trunk/src/ta/ta_imgproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_imgproc.h,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp: pdp++: fadeedge in image
+	  processing, for loop vars are connected initially, changelog
+	  docs update text.
+
+2007-07-13 08:51  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.h,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp,
+	  pdp4.0/trunk/src/ta/ta_qttype.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h: pdp++: fixed search into
+	  DEF_CHILD guys and split doc editor into 3 sub-panels.
+
+2007-07-12 08:57  pdpsvn
+
+	* pdp4.0/trunk/demo/virt_env/ve_arm.proj,
+	  pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/ta/ta_virtenv.cpp,
+	  pdp4.0/trunk/src/ta/ta_virtenv.h,
+	  pdp4.0/trunk/src/ta/ta_virtenv_qtso.cpp: pdp++: virtenv code fix
+	  rotation bug
+
+2007-07-12 07:30  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h,
+	  pdp4.0/trunk/src/leabra/leabra_extra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_pbwm.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_pvlv.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_td.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_datatable.cpp: CheckConfig_Layer now
+	  calls lay->CheckError so msg shows layer with problem, and
+	  INVALID baseflags are now set on layer by using CheckThisConfig
+	  to call it. relaxed contstraint that PFCOutLayerSpec needs to
+	  recv from maint -- can also find MarkerCons from regular layer..
+	  also made DataTable more robust to loading v3 log files.
+
+2007-07-11 09:10  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp: minor doc fixes
+
+2007-07-11 03:49  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netdata.h,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h: Doc panel fixes,
+	  LayerWriterEl GetName(), graph legend always includes 1st guy.
+
+2007-07-10 20:52  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_project.cpp: updated wiki parser for docs.
+
+2007-07-10 09:08  pdpsvn
+
+	* pdp4.0/trunk/src/ta/t3viewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.h,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtgroup.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/test/leabra_ra.proj: * docs now support basic wiki
+	  syntax, including *, ==, [[, ''', and ta:.path url's which
+	  actually activate the object at the path! standard external
+	  url's also supported. * fixed version in root -- now always
+	  updated
+
+2007-07-09 22:45  pdpsvn
+
+	* pdp4.0/trunk/Makefile.am: minor
+
+2007-07-09 22:12  pdpsvn
+
+	* pdp4.0/trunk/Makefile.am: Modify debian package creation command
+
+2007-07-09 19:45  pdpsvn
+
+	* pdp4.0/trunk/blah: Eureka
+
+2007-07-09 19:43  pdpsvn
+
+	* pdp4.0/trunk/blah: Try this out in trunk/pdp4.0
+
+2007-07-09 16:59  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h: fixed program button issue
+
+2007-07-09 16:37  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h: fixed mouse down issue
+
+2007-07-09 16:33  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h: fixed mouse down issue
+
+2007-07-09 10:31  pdpsvn
+
+	* pdp4.0/trunk/src/ta/t3viewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h:
+	  new multisample antialiasing works on linux too! changed name to
+	  antialiasing_levels and set default to 4
+
+2007-07-09 09:58  pdpsvn
+
+	* pdp4.0/trunk/src/ta/t3viewer.cpp: fast antialising -- works on
+	  mac -- testing on linux..
+
+2007-07-09 08:02  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/leabra/leabra_extra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_extra.h,
+	  pdp4.0/trunk/src/pdp/netstru_extra.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_extra.h: projection fixes for V1rf.
+
+2007-07-09 04:36  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp: fixed t3 tabs, 1st autoload
+	  now focuses
+
+2007-07-08 07:22  pdpsvn
+
+	* pdp4.0/trunk/src/ta/t3viewer.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_group.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.h,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h,
+	  pdp4.0/trunk/test/leabra_ra.proj,
+	  pdp4.0/trunk/test/leabra_std.proj: sim_log -> ChangeLog stored
+	  internally in the docs -- very nice and encapsulated. fixed a
+	  few other minor bugs.
+
+2007-07-08 06:37  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_base.cpp,
+	  pdp4.0/trunk/src/ta/t3viewer.cpp,
+	  pdp4.0/trunk/src/ta/t3viewer.h,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.h,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/src/ta/ta_virtenv_qtso.cpp: new tabs, plus misc rc2
+	  polish fixes
+
+2007-07-07 19:21  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtviewer.cpp: fixed EditPanel() and also
+	  search focus
+
+2007-07-07 08:40  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp: added forbidden names and
+	  checks for program vars etc to avoid css syntax errors
+
+2007-07-07 06:26  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/ta/t3node_so.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_variant.cpp: * NameVar was not loading
+	  properly because SetFmStr was not working with T_Invalid type --
+	  updateFromString must have been changed at some point to not
+	  work with invalid -- fixed by just detecting Invalid and doing a
+	  string assign to value, otherwise calling updateFromString. This
+	  fixes the loading of lay_disp_mode values which are a
+	  NameVar_Array. * removed various calls to taiMisc::RunPending()
+	  in netstru_qtso.cpp -- in general this seems like a bad idea and
+	  could cause various event loops to get out of whack, etc.
+	  however, if we notice any new misbehavior from netview updating
+	  the we can reenable (my tests have not revealed any so far!) *
+	  fixed color image display in T3 -- turns out bw & color ARE
+	  consistent.. duh.. not sure how that got so messed up..
+
+2007-07-07 05:23  pdpsvn
+
+	* pdp4.0/trunk/plugins/config.pri.in,
+	  pdp4.0/trunk/plugins/shared_pre.pri: msvc plugins now building
+	  but still a runtime issue (segfaults on HelloWorld obj in gui)
+
+2007-07-06 03:47  pdpsvn
+
+	* pdp4.0/trunk/configure.ac,
+	  pdp4.0/trunk/plugins/HelloWorld/hw.pro,
+	  pdp4.0/trunk/plugins/config.pri.in,
+	  pdp4.0/trunk/plugins/shared_pre.pri,
+	  pdp4.0/trunk/src/ta/ta_project.cpp: plugin building changes
+
+2007-07-05 17:28  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h: autoedit working
+
+2007-07-05 14:18  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_qtviewer.cpp: int checkin for autoopen
+
+2007-07-05 04:12  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netdata.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp: computed NetMonitor vals no
+	  longer set (were being set to nil, potentially overwriting) and
+	  cleaned up display name for DataVarProg
+
+2007-07-04 05:10  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.h: added CopyCommonColsRow
+	  consumer version, other guy is now _impl
+
+2007-07-03 21:42  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_math.cpp, pdp4.0/trunk/src/ta/ta_math.h,
+	  pdp4.0/trunk/test/leabra_ra.proj: added N to computations under
+	  Group operator; leabra_ra.proj has auto_open for Wizard to test
+	  new EditPanel guy..
+
+2007-07-03 18:40  pdpsvn
+
+	* pdp4.0/trunk/doc/WikiOutline.txt,
+	  pdp4.0/trunk/doc/todo_beta.txt, pdp4.0/trunk/src/ta/ta_base.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h: untested EditPanel
+
+2007-07-03 07:16  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h: tweaks to leabra trial-based
+	  accommodation (for dorsal hv model)
+
+2007-07-03 06:12  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/LeabraAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/LeabraBatch.prog,
+	  pdp4.0/trunk/prog_lib/LeabraTrain.prog,
+	  pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h,
+	  pdp4.0/trunk/src/leabra/leabra_td.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/test/leabra_ra.proj,
+	  pdp4.0/trunk/test/leabra_std.proj: * added EditPanel stub and
+	  calls in auto_open in ta_project.cpp; * added no_prompt arg in
+	  LeabraTrial, set by LeabraBatch -- gets rid of MOST redundant
+	  prompts -- seems to work pretty well to me.. ;) * updated
+	  netview_qtso.cpp GetValue_impl to just always do req_full_redraw
+	  = true existing impl had prjn_width compare backward, so it was
+	  actually mostly doing full redraw, which when fixed was masking
+	  many other cases that actually require full redraw, to the point
+	  that it doesn't make any sense to check -- just do it!!
+
+2007-07-03 04:27  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/ta/ta_program.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp: netstru ctrl panel converted
+
+2007-07-02 23:14  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/ta/ta_datatable.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp: fixed netview bug
+
+2007-07-02 06:03  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_data.h,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp,
+	  pdp4.0/trunk/src/ta/ta_dataproc.h,
+	  pdp4.0/trunk/src/ta/ta_datatable.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp: DataVarProgMatrix --
+	  simple read/write of (small n) matrix data to prog vars, plus
+	  associated "Cell" versions of various datatable accessor
+	  functions.
+
+2007-07-01 06:35  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru_extra.h,
+	  pdp4.0/trunk/src/pdp/spec.h: minor #BUTTON changes for NewChild
+	  on spec and for main funs of Tessel Prjns..
+
+2007-06-30 20:03  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.h: graph ctrl panel changes
+
+2007-06-30 07:37  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/LeabraAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/LeabraTrain.prog,
+	  pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_els.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_type.h, pdp4.0/trunk/test/leabra_ra.proj,
+	  pdp4.0/trunk/test/leabra_std.proj: added IfGuiPrompt program
+	  element -- prompts user if in gui mode; otherwise just runs in
+	  nogui mode -- added this to LeabraTrain so it prompts about
+	  initializing the weights -- provides a workaround for current
+	  Stale bug, and more generally allows for people to mess with the
+	  programs and not lose their weights.. downside is having to
+	  answer the prompts. what do people think about this??
+
+2007-06-29 23:03  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.h,
+	  pdp4.0/trunk/src/ta/ta_dump.cpp, pdp4.0/trunk/src/ta/ta_dump.h,
+	  pdp4.0/trunk/src/ta/ta_matrix_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_matrix_qt.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_qt.h,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtdialog.h,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.cpp,
+	  pdp4.0/trunk/src/ta/ta_qtviewer.h,
+	  pdp4.0/trunk/src/ta/ta_type.cpp, pdp4.0/trunk/src/ta/ta_type.h,
+	  pdp4.0/trunk/src/ta/ta_virtenv_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_virtenv_qtso.h,
+	  pdp4.0/trunk/test/leabra_ra.proj: infra changes for CtrlPanels,
+	  changed GridView
+
+2007-06-29 18:52  pdpsvn
+
+	* pdp4.0/trunk/demo/cs/Makefile.am,
+	  pdp4.0/trunk/demo/leabra/Makefile.am,
+	  pdp4.0/trunk/demo/so/Makefile.am,
+	  pdp4.0/trunk/demo/virt_env/Makefile.am: ignore last, use this
+
+2007-06-29 18:50  pdpsvn
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/configure.ac,
+	  pdp4.0/trunk/demo/bp/Makefile.am: demo/* will now be installed
+
+2007-06-29 17:18  pdpsvn
+
+	* pdp4.0/trunk/demo/cs/424_cs.proj,
+	  pdp4.0/trunk/demo/cs/424_cs_det.proj,
+	  pdp4.0/trunk/demo/cs/424_cs_det_v4.proj,
+	  pdp4.0/trunk/demo/cs/424_cs_v4.proj,
+	  pdp4.0/trunk/demo/leabra/12ax4s.proj,
+	  pdp4.0/trunk/demo/leabra/12ax4s_demo_v4.proj,
+	  pdp4.0/trunk/demo/leabra/model_and_task.proj,
+	  pdp4.0/trunk/demo/leabra/model_and_task_v4.proj,
+	  pdp4.0/trunk/demo/so/som.proj, pdp4.0/trunk/demo/so/som_v4.proj,
+	  pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/ta/ta_dataproc.cpp: * layer now ALWAYS computes
+	  its own sse for both TARG and COMP -- added flags to determine
+	  if it adds sse to overall network sse. * fixed writing of string
+	  dynenum to datatables.
+
+2007-06-28 19:00  pdpsvn
+
+	* pdp4.0/trunk/build/msvc7/Makefile,
+	  pdp4.0/trunk/build/msvc7/config.h,
+	  pdp4.0/trunk/build/msvc7/ta/ta.vcproj,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.h,
+	  pdp4.0/trunk/src/ta/ta_base.cpp, pdp4.0/trunk/src/ta/ta_base.h:
+	  intermediate changes
+
+2007-06-28 09:12  pdpsvn
+
+	* pdp4.0/trunk/demo/bp/Makefile.am,
+	  pdp4.0/trunk/demo/bp/som_v4.proj,
+	  pdp4.0/trunk/demo/so/som_v4.proj,
+	  pdp4.0/trunk/demo/virt_env/Banana.iv,
+	  pdp4.0/trunk/demo/virt_env/ground.png,
+	  pdp4.0/trunk/demo/virt_env/ve_arm.proj,
+	  pdp4.0/trunk/demo/virt_env/wood.png,
+	  pdp4.0/trunk/test/Banana.iv, pdp4.0/trunk/test/ground.png,
+	  pdp4.0/trunk/test/ve_arm.proj, pdp4.0/trunk/test/wood.png: next
+	  round of demo moves..
+
+2007-06-28 09:08  pdpsvn
+
+	* pdp4.0/trunk/demo, pdp4.0/trunk/demo/bp,
+	  pdp4.0/trunk/demo/bp/bp_xor.proj,
+	  pdp4.0/trunk/demo/bp/som_v4.proj, pdp4.0/trunk/demo/cs,
+	  pdp4.0/trunk/demo/cs/424_cs_det_v4.proj,
+	  pdp4.0/trunk/demo/cs/424_cs_v4.proj,
+	  pdp4.0/trunk/demo/cs/424_v3.proj,
+	  pdp4.0/trunk/demo/cs/cs_ra.proj, pdp4.0/trunk/demo/leabra,
+	  pdp4.0/trunk/demo/leabra/12ax4s_demo_v4.proj,
+	  pdp4.0/trunk/demo/leabra/model_and_task_v4.proj,
+	  pdp4.0/trunk/demo/leabra/simple_vis_search.proj,
+	  pdp4.0/trunk/demo/so, pdp4.0/trunk/demo/virt_env,
+	  pdp4.0/trunk/src/ta/ta_math.h, pdp4.0/trunk/src/ta/ta_program.h,
+	  pdp4.0/trunk/test/12ax4s_demo_v4.proj,
+	  pdp4.0/trunk/test/424_cs_det_v4.proj,
+	  pdp4.0/trunk/test/424_cs_v4.proj, pdp4.0/trunk/test/424_v3.proj,
+	  pdp4.0/trunk/test/Makefile.am, pdp4.0/trunk/test/bp_xor.proj,
+	  pdp4.0/trunk/test/cs_ra.proj,
+	  pdp4.0/trunk/test/model_and_task_v4.proj,
+	  pdp4.0/trunk/test/simple_vis_search.proj,
+	  pdp4.0/trunk/test/som_v4.proj, pdp4.0/trunk/test/ve_arm.proj:
+	  exposed all program flags incl NON_STD and NEW_EL, made various
+	  ta_math guys have name field that is HIDDEN_INLINE, first pass
+	  at demo reorg -- not sure about make stuff for that..
+
+2007-06-28 04:17  pdpsvn
+
+	* pdp4.0/trunk/Maketa.am, pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/bp/files.mta, pdp4.0/trunk/src/cs/Makefile.am,
+	  pdp4.0/trunk/src/cs/files.mta,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/leabra/files.mta,
+	  pdp4.0/trunk/src/maketa/maketa.cpp,
+	  pdp4.0/trunk/src/maketa/maketa.h,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/pdp/files.mta, pdp4.0/trunk/src/so/Makefile.am,
+	  pdp4.0/trunk/src/so/files.mta, pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/ta/files.mta,
+	  pdp4.0/trunk/src/ta/ta_platform.cpp,
+	  pdp4.0/trunk/src/ta/ta_platform.h,
+	  pdp4.0/trunk/src/ta/ta_project.cpp: beta of maketa changes
+
+2007-06-27 08:51  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_type.cpp: minor tweak
+
+2007-06-27 07:48  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_project.cpp,
+	  pdp4.0/trunk/src/pdp/pdp_project.h,
+	  pdp4.0/trunk/src/ta/ta_datatable.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable.h,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_filer.cpp,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta/ta_qttype.cpp,
+	  pdp4.0/trunk/src/ta/ta_seledit.h,
+	  pdp4.0/trunk/src/ta/ta_type.cpp,
+	  pdp4.0/trunk/test/model_and_task_v4.proj: lots of fixes:
+	  multiple EXT in ta_filer, network rebuilds after loading so
+	  units show, fixed wizard StdInputData, optimized updates of
+	  graph: only one redraw.
+
+2007-06-27 05:07  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_global.h,
+	  pdp4.0/trunk/src/ta/ta_program_qt.cpp,
+	  pdp4.0/trunk/src/ta/ta_program_qt.h,
+	  pdp4.0/trunk/src/ta/ta_seledit.h: 528
+
+2007-06-26 19:40  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp: force set of specs
+	  during loading -- nets saved with units were not getting specs
+	  set upon loading. changed violet to purple for y5 default color
+	  (violet too light)
+
+2007-06-26 07:01  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/leabra/leabra.cpp,
+	  pdp4.0/trunk/src/leabra/leabra.h: wt_scale_init in Leabra --
+	  initial weight scaling values
+
+2007-06-25 08:31  pdpsvn
+
+	* pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_datatable_qtso.cpp: fixed #345: too easy
+	  to zoom to nothingness -- put a min scale of .1
+
+2007-06-25 08:22  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO, pdp4.0/trunk/src/pdp/netstru.h,
+	  pdp4.0/trunk/src/pdp/netstru_qtso.cpp,
+	  pdp4.0/trunk/src/ta/ta_imgproc.cpp: optimization in imgproc for
+	  scaling: does crop prior to scale for scale factors > 1.3 also
+	  minor guards in places that crashed on me while tooling around.
+
+2007-06-25 06:56  pdpsvn
+
+	* pdp4.0/trunk/prm, pdp4.0/trunk/src/maketa/mta_gendoc.cpp:
+	  GenDoc, working parentage
+
+2007-06-25 02:41  pdpsvn
+
+	* pdp4.0/trunk/src/maketa/maketa.h,
+	  pdp4.0/trunk/src/maketa/mta_gendoc.cpp: Intermediate GenDoc:
+	  TypeDef_Get_Parents TypeDef_Filter_Type
+
+2007-06-24 06:07  pdpsvn
+
+	* pdp4.0/trunk/README, pdp4.0/trunk/prm,
+	  pdp4.0/trunk/src/maketa/maketa.h,
+	  pdp4.0/trunk/src/maketa/mta_gendoc.cpp: Intermediate GenDoc
+	  update
+
+2007-06-23 07:36  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/CsAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/CsSettle.prog, pdp4.0/trunk/src/cs/cs.cpp,
+	  pdp4.0/trunk/src/cs/cs_v3_compat.cpp,
+	  pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/test/424_cs_det_v4.proj,
+	  pdp4.0/trunk/test/424_cs_v4.proj: cs totally done -- imports old
+	  projects, runs in Boltzmann mode, etc. all good! just need a few
+	  tweaks to rbp and then all the old algos are supported!
+
+2007-06-23 06:35  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/TODO,
+	  pdp4.0/trunk/src/leabra/leabra_pbwm.cpp,
+	  pdp4.0/trunk/src/leabra/leabra_pbwm.h,
+	  pdp4.0/trunk/src/leabra/leabra_pvlv.cpp: got rid of superfluous
+	  dependency on SNcLayer -- Da layer can provide da for matrix
+	  layers as well as everyone else.
+
+2007-06-22 22:08  pdpsvn
+
+	* pdp4.0/trunk/doc/WikiOutline.txt: wiki outline
+
+2007-06-22 06:33  pdpsvn
+
+	* pdp4.0/trunk/prog_lib/BpAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/BpBatch.prog,
+	  pdp4.0/trunk/prog_lib/BpEpoch.prog,
+	  pdp4.0/trunk/prog_lib/BpEpochMonitor.prog,
+	  pdp4.0/trunk/prog_lib/BpTrain.prog,
+	  pdp4.0/trunk/prog_lib/BpTrial.prog,
+	  pdp4.0/trunk/prog_lib/BpTrialMonitor.prog,
+	  pdp4.0/trunk/prog_lib/CsAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/CsCycle.prog,
+	  pdp4.0/trunk/prog_lib/CsEpoch.prog,
+	  pdp4.0/trunk/prog_lib/CsSettle.prog,
+	  pdp4.0/trunk/prog_lib/CsTrial.prog,
+	  pdp4.0/trunk/prog_lib/SoAll_Std.progp,
+	  pdp4.0/trunk/prog_lib/SoBatch.prog,
+	  pdp4.0/trunk/prog_lib/SoEpoch.prog,
+	  pdp4.0/trunk/prog_lib/SoEpochMonitor.prog,
+	  pdp4.0/trunk/prog_lib/SoTrain.prog,
+	  pdp4.0/trunk/prog_lib/SoTrial.prog,
+	  pdp4.0/trunk/prog_lib/SoTrialMonitor.prog,
+	  pdp4.0/trunk/src/cs/cs.cpp, pdp4.0/trunk/src/cs/cs.h,
+	  pdp4.0/trunk/src/leabra/leabra.h,
+	  pdp4.0/trunk/src/pdp/netstru.cpp, pdp4.0/trunk/test/cs_ra.proj:
+	  finally got cs fully working, and updated tags on bp, cs, so std
+	  progs. fixed null segv in netstru con spec test (for So) and
+	  method comment in leabra header.
+
+2007-06-21 06:47  pdpsvn
+
+	* pdp4.0/trunk/src/leabra/leabra_pbwm.cpp: pbwm unit_groups
+	  testing fixed.
+
+2007-06-20 06:46  pdpsvn
+
+	* pdp4.0/trunk/src/ta/images/pdp++_32x32.png: added a png of the
+	  app ico for Linux use
+
+2007-06-19 17:39  pdpsvn
+
+	* pdp4.0/trunk/config.h.in, pdp4.0/trunk/prog_lib/Makefile.in,
+	  pdp4.0/trunk/src/maketa/Makefile.in: minor .in deletes
+
+2007-06-19 05:10  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_datatable.h,
+	  pdp4.0/trunk/src/ta/ta_math.h: set IGNORE on 2 new funcs with
+	  mpi params
+
+2007-06-19 02:52  pdpsvn
+
+	* pdp4.0/trunk/build/msvc7/HowToMakeRelease.txt,
+	  pdp4.0/trunk/build/msvc7/setup_bin/setup_bin.vdproj: updates for
+	  the defininitive 4.0.3rc1 release
+
+2007-06-19 01:55  pdpsvn
+
+	* pdp4.0/trunk/3rdparty/simage-1.6.1.tar.gz: added a precompiled
+	  simage and sndfile
+
+2007-06-19 01:54  pdpsvn
+
+	* pdp4.0/trunk/build/msvc7/bin/libsndfile.dll,
+	  pdp4.0/trunk/build/msvc7/bin/simage1.dll: added a precompiled
+	  simage and sndfile
+
+2007-06-19 01:44  pdpsvn
+
+	* pdp4.0/trunk/plugins/Makefile.msvc,
+	  pdp4.0/trunk/plugins/config.pri.in: Makefile for msvc named with
+	  msvc ext
+
+2007-06-18 21:57  pdpsvn
+
+	* pdp4.0/trunk/Maketa.am, pdp4.0/trunk/configure.ac: use
+	  ./configure MAKETA_CXXFLAGS=-I/blah to pass flags to maketa
+
+2007-06-18 20:56  pdpsvn
+
+	* pdp4.0/trunk/src/ta/ta_type.cpp: small fix that only affects
+	  mpi_debug builds
+
+2007-06-18 19:14  pdpsvn
+
+	* pdp4.0/trunk/Makefile.in, pdp4.0/trunk/css_stdlib/Makefile.in:
+	  .in removes continued
+
+2007-06-18 19:03  pdpsvn
+
+	* pdp4.0/trunk/build/msvc7/config.h,
+	  pdp4.0/trunk/build/msvc7/pdp++.sln, pdp4.0/trunk/configure,
+	  pdp4.0/trunk/configure.std,
+	  pdp4.0/trunk/plugins/HelloWorld/hw.cpp,
+	  pdp4.0/trunk/src/bp/Makefile.in,
+	  pdp4.0/trunk/src/cs/Makefile.in,
+	  pdp4.0/trunk/src/css/Makefile.in,
+	  pdp4.0/trunk/src/css_bin/Makefile.in,
+	  pdp4.0/trunk/src/leabra/Makefile.in,
+	  pdp4.0/trunk/src/pdp/Makefile.in,
+	  pdp4.0/trunk/src/pdp_bin/Makefile.in,
+	  pdp4.0/trunk/src/pdp_lib/Makefile.in,
+	  pdp4.0/trunk/src/so/Makefile.in,
+	  pdp4.0/trunk/src/ta/Makefile.in,
+	  pdp4.0/trunk/src/ta_lib/Makefile.in,
+	  pdp4.0/trunk/src/taiqtso/Makefile.in,
+	  pdp4.0/trunk/test/Makefile.in: removed most Makefile.in and
+	  renamed configure
+
+2007-06-17 18:53  pdpsvn
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/Makefile.in,
+	  pdp4.0/trunk/configure, pdp4.0/trunk/configure.ac,
+	  pdp4.0/trunk/postinstall-pak.in, pdp4.0/trunk/postremove-pak.in:
+	  Fixes for Fedora 7
+
+2007-06-17 03:45  pdpsvn
+
+	* pdp4.0/trunk/Makefile.am, pdp4.0/trunk/Makefile.in,
+	  pdp4.0/trunk/config.h.in, pdp4.0/trunk/configure,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/css_stdlib/Makefile.in,
+	  pdp4.0/trunk/prog_lib/Makefile.in,
+	  pdp4.0/trunk/src/bp/Makefile.in,
+	  pdp4.0/trunk/src/cs/Makefile.in,
+	  pdp4.0/trunk/src/css/Makefile.in,
+	  pdp4.0/trunk/src/css_bin/Makefile.in,
+	  pdp4.0/trunk/src/leabra/Makefile.in,
+	  pdp4.0/trunk/src/maketa/Makefile.in,
+	  pdp4.0/trunk/src/pdp/Makefile.in,
+	  pdp4.0/trunk/src/pdp_bin/Makefile.in,
+	  pdp4.0/trunk/src/pdp_lib/Makefile.in,
+	  pdp4.0/trunk/src/so/Makefile.in,
+	  pdp4.0/trunk/src/ta/Makefile.in,
+	  pdp4.0/trunk/src/ta_lib/Makefile.in,
+	  pdp4.0/trunk/src/taiqtso/Makefile.in,
+	  pdp4.0/trunk/test/Makefile.in: Re-update revision numbers.
+	  Someone overwrote my changes\!
+
+2007-06-17 00:29  pdpsvn
+
+	* pdp4.0/trunk/Makefile.in, pdp4.0/trunk/config.h.in,
+	  pdp4.0/trunk/configure, pdp4.0/trunk/css_stdlib/Makefile.in,
+	  pdp4.0/trunk/prog_lib/Makefile.in,
+	  pdp4.0/trunk/src/bp/Makefile.in,
+	  pdp4.0/trunk/src/cs/Makefile.in,
+	  pdp4.0/trunk/src/css/Makefile.in,
+	  pdp4.0/trunk/src/css_bin/Makefile.in,
+	  pdp4.0/trunk/src/leabra/Makefile.in,
+	  pdp4.0/trunk/src/maketa/Makefile.in,
+	  pdp4.0/trunk/src/pdp/Makefile.in,
+	  pdp4.0/trunk/src/pdp_bin/Makefile.in,
+	  pdp4.0/trunk/src/pdp_lib/Makefile.in,
+	  pdp4.0/trunk/src/so/Makefile.in,
+	  pdp4.0/trunk/src/ta/Makefile.in,
+	  pdp4.0/trunk/src/ta/ta_project.cpp,
+	  pdp4.0/trunk/src/ta_lib/Makefile.in,
+	  pdp4.0/trunk/src/taiqtso/Makefile.in,
+	  pdp4.0/trunk/test/Makefile.in: tweaked user plugin test startup
+
+2007-06-16 23:39  pdpsvn
+
+	* pdp4.0/trunk/build/msvc7/pdp++.sln,
+	  pdp4.0/trunk/build/msvc7/plugins/HellowWorld/HellowWorld.vcproj,
+	  pdp4.0/trunk/plugins/HelloWorld/hw.cpp,
+	  pdp4.0/trunk/plugins/HelloWorld/hw.h,
+	  pdp4.0/trunk/src/ta/ta_base.h, pdp4.0/trunk/src/ta/ta_virtenv.h,
+	  pdp4.0/trunk/src/ta/ta_virtenv_qtso.h: added explicit inherited
+	  to copy ctors
+
+2007-06-16 21:58  pdpsvn
+
+	* pdp4.0/trunk/ChangeLog, pdp4.0/trunk/Makefile.in,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/css_stdlib/Makefile.in,
+	  pdp4.0/trunk/prm, pdp4.0/trunk/prog_lib/Makefile.in,
+	  pdp4.0/trunk/src/bp/Makefile.am,
+	  pdp4.0/trunk/src/bp/Makefile.in,
+	  pdp4.0/trunk/src/cs/Makefile.am,
+	  pdp4.0/trunk/src/cs/Makefile.in,
+	  pdp4.0/trunk/src/css/Makefile.am,
+	  pdp4.0/trunk/src/css/Makefile.in,
+	  pdp4.0/trunk/src/css_bin/Makefile.in,
+	  pdp4.0/trunk/src/leabra/Makefile.am,
+	  pdp4.0/trunk/src/leabra/Makefile.in,
+	  pdp4.0/trunk/src/maketa/Makefile.am,
+	  pdp4.0/trunk/src/maketa/Makefile.in,
+	  pdp4.0/trunk/src/pdp/Makefile.am,
+	  pdp4.0/trunk/src/pdp/Makefile.in,
+	  pdp4.0/trunk/src/pdp_bin/Makefile.in,
+	  pdp4.0/trunk/src/pdp_lib/Makefile.in,
+	  pdp4.0/trunk/src/so/Makefile.am,
+	  pdp4.0/trunk/src/so/Makefile.in,
+	  pdp4.0/trunk/src/ta/Makefile.am,
+	  pdp4.0/trunk/src/ta/Makefile.in,
+	  pdp4.0/trunk/src/ta_lib/Makefile.in,
+	  pdp4.0/trunk/src/taiqtso/Makefile.am,
+	  pdp4.0/trunk/src/taiqtso/Makefile.in,
+	  pdp4.0/trunk/test/Makefile.in: Update ChangeLog, add our headers
+	  to /pdp++
+
+2007-06-16 21:03  pdpsvn
+
+	* pdp4.0/trunk/Makefile.in, pdp4.0/trunk/configure,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/css_stdlib/Makefile.in,
+	  pdp4.0/trunk/plugins/Makefile.in,
+	  pdp4.0/trunk/plugins/config.pri.in,
+	  pdp4.0/trunk/prog_lib/Makefile.in,
+	  pdp4.0/trunk/src/bp/Makefile.in,
+	  pdp4.0/trunk/src/cs/Makefile.in,
+	  pdp4.0/trunk/src/css/Makefile.in,
+	  pdp4.0/trunk/src/css_bin/Makefile.in,
+	  pdp4.0/trunk/src/leabra/Makefile.in,
+	  pdp4.0/trunk/src/maketa/Makefile.in,
+	  pdp4.0/trunk/src/pdp/Makefile.in,
+	  pdp4.0/trunk/src/pdp_bin/Makefile.in,
+	  pdp4.0/trunk/src/pdp_lib/Makefile.in,
+	  pdp4.0/trunk/src/so/Makefile.in,
+	  pdp4.0/trunk/src/ta/Makefile.in,
+	  pdp4.0/trunk/src/ta_lib/Makefile.in,
+	  pdp4.0/trunk/src/taiqtso/Makefile.in,
+	  pdp4.0/trunk/test/Makefile.in: plugin changes
+
+2007-06-16 18:43  pdpsvn
+
+	* pdp4.0/trunk/plugins/Makefile.in,
+	  pdp4.0/trunk/src/ta/ta_project.cpp: made user plugin permissive
+	  so still starts
+
+2007-06-16 18:02  pdpsvn
+
+	* pdp4.0/trunk/Makefile.in, pdp4.0/trunk/configure,
+	  pdp4.0/trunk/configure.ac, pdp4.0/trunk/css_stdlib/Makefile.in,
+	  pdp4.0/trunk/prm, pdp4.0/trunk/prog_lib/Makefile.in,
+	  pdp4.0/trunk/src/bp/Makefile.in,
+	  pdp4.0/trunk/src/cs/Makefile.in,
+	  pdp4.0/trunk/src/css/Makefile.in,
+	  pdp4.0/trunk/src/css_bin/Makefile.in,
+	  pdp4.0/trunk/src/leabra/Makefile.in,
+	  pdp4.0/trunk/src/maketa/Makefile.in,
+	  pdp4.0/trunk/src/pdp/Makefile.in,
+	  pdp4.0/trunk/src/pdp_bin/Makefile.in,
+	  pdp4.0/trunk/src/pdp_lib/Makefile.in,
+	  pdp4.0/trunk/src/so/Makefile.in,
+	  pdp4.0/trunk/src/ta/Makefile.in,
+	  pdp4.0/trunk/src/ta_lib/Makefile.in,
+	  pdp4.0/trunk/src/taiqtso/Makefile.in,
+	  pdp4.0/trunk/test/Makefile.in: Fix prm and update version info:
+	  libpdp/tacss-4.0.3rc1.so.1.0.0
+
 2007-06-16 07:37  pdpsvn
 
 	* pdp4.0/trunk/svn_revert_conf: svn_revert_conf script in trunk

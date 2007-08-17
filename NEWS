@@ -1,5 +1,8 @@
 PDP++ Features by Release
 
+Release 4.0.4 (3/8/1007)
+    * Too many new features to list here. See our wiki and earn your rite of passage by building the software from source and completing the AXTutorial :) http://grey.colorado.edu/emergent/index.php/Main_Page 
+
 Release 3.1 (10/2003)
 
     * This is primarily a bug fix release -- see the ChangeLog for details (there were lots of them). A few significant bugs were fixed with leabra++, including fixing a problem that resulted in the accumulation of roundoff errors in the weight values, to the point that it could affect training results on some especially sensitive models (esp those using shared weights). Also, all new types defined in a css script (e.g., new classes, enums, etc) are now local to a given script scope, instead of being globally shared among all scripts, as was the case previously. This prevents numerous unintentional conflicts between scripts, and sharing of types across scripts is such a tenuous and bad idea that it was never really used anyway. 

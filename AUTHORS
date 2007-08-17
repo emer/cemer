@@ -1,5 +1,5 @@
 the change in spain
-The PDP++ software was originally written by Randall C. O'Reilly (now at Department of Psychology, University of Colorado Boulder), Chadley K. Dawson, and James L. McClelland, under the affiliation of the following entities:
+The Emergent software (originally PDP++) was written by Randall C. O'Reilly (now at Department of Psychology, University of Colorado Boulder), Chadley K. Dawson, and James L. McClelland, under the affiliation of the following entities:
 
     * Carnegie Mellon University
     * CMU Department of Psychology
@@ -8,11 +8,12 @@ The PDP++ software was originally written by Randall C. O'Reilly (now at Departm
 
 It is now maintained and developed primarily by O'Reilly.
 
-
-Contributors to PDP++
-The following people have contributed to the PDP++ code, and their efforts are much appreciated!
+Contributors to Emergent
+The following people have contributed to the Emergent code, and their efforts are much appreciated!
 
     * Daniel Cer (cerd@cs.colorado.edu), did major work on the dmem/MPI distributed memory code, and the multi-dimensional lookup table code.
     * Danke Xie (dxie@cogsci.ucsd.edu), wrote a pthread version of bp++, and contributed fixes to som.cc.
     * Josh Brown (jwbrown@artsci.wustl.edu), wrote the RNS++ code (see link on main page).
     * Michael Frank (frankmja@grey.colorado.edu), numerous bug reports and testing.
+    * Brad Aisa (Brad.Aisa@colorado.edu), whose contributions would not fit on this line, or any line
+    * Brian Mingus (brian.mingus@colorado.edu), for a shiny new build system and automatic document generation
