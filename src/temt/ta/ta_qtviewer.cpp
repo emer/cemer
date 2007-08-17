@@ -3202,8 +3202,9 @@ QStringList iBaseClipWidgetAction::mimeTypes() const {
 //////////////////////////
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
-: inherited(parent, (Qt::WType_TopLevel |Qt:: WStyle_SysMenu | Qt::WStyle_MinMax |
-  Qt::WDestructiveClose)), IDataViewWidget(viewer_)
+: inherited(parent, (Qt::Window |Qt:: WindowSystemMenuHint | 
+  Qt::WStyle_Minimize | Qt::WStyle_Maximize
+  )), IDataViewWidget(viewer_)
 {
   Init();
   m_is_root = viewer_->isRoot(); // need to do before Constr
@@ -3227,6 +3228,7 @@ iMainWindowViewer::~iMainWindowViewer() {
 }
 
 void iMainWindowViewer::Init() {
+  setAttribute(Qt::WA_DeleteOnClose);
   //note: only a bare init -- most stuff done in virtual Constr() called after new
   menu = NULL;
   body = NULL;
@@ -3239,6 +3241,12 @@ void iMainWindowViewer::Init() {
   setMaximumSize(ss.width(), ss.height());
   // set default size as the big hor dialog
 //  resize(taiM->dialogSize(taiMisc::hdlg_b));
+//for some GD reason, we can't get the icon to show by doing this:
+//setWindowIcon(QApplication::windowIcon()); // supposed to be automatic, but doesn't seem to be...
+// so we curse and swear, and do this:
+  QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
+  QPixmap app_ico(app_ico_nm);
+  setWindowIcon(app_ico);
 
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
