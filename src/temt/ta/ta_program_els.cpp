@@ -1,7 +1,7 @@
 // Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
-// This file is part of Emergent
+// This file is part of The Emergent Toolkit
 //
 //   Emergent is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
