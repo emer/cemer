@@ -21,7 +21,7 @@ needs to be run as root
 """
 
 # Standard library imports
-import os, tempfile, sys
+import os, tempfile, sys, string
 from optparse import OptionParser
 
 # Third party imports
@@ -96,12 +96,15 @@ if __name__ == "__main__":
         os.makedirs(gendoc_dir + "temt")
 
         # CSS
-        css = ".navcontainer ul li {align:left; list-style-type: none;margin: 0;display: block;float: left;font: 13px \"Lucida Grande\", verdana, sans-serif;text-align: center;}\n"
+        css = ".navcontainer ul li {align:left; list-style-type: none;margin:0px;display: block;float: left;font: 13px \"Lucida Grande\", verdana, sans-serif;text-align: center;}\n"
         css += "a {color: #000;text-decoration: none;display: block;border: 1px solid #A8B090;padding-left:6px;padding-right:6px;padding-top:4px;padding-bottom:4px;}\n"
         css += "a:hover  { background: url(\"http://grey.colorado.edu/emergent/images/c/c9/NavBarBgHover.gif\") repeat-x 20px; }\n"
         css += ".met_def {clear:both;word-wrap: break-word;margin-top:20px;margin-left:30px;border:1px;background-color:#f8f8f8;font-size:12px;}\n"
-        css += "#td_opts {clear:both;}\n"
-        css += ".metdefh3 {clear:both;}"
+        css += ".metdefh3 {clear:both;}\n"
+        css += "table.prettytable {clear:both;margin: 1em 1em 1em 2em;background: whitesmoke;border-collapse: collapse; font: 12px \"Lucida Grande\", verdana, sans-serif;}\n"
+        css += "table.prettytable th, table.prettytable td {border: 1px silver solid;padding: 0.2em;}\n"
+        css += "table.prettytable th {background: gainsboro;text-align: left;}\n"
+        css += "table.prettytable caption {margin-left: inherit;margin-right: inherit;}\n"
 
         css_file = open(gendoc_dir + "gendoc.css","w")
         css_file.write(css);css_file.close()
@@ -116,7 +119,7 @@ if __name__ == "__main__":
             print "Fatal error: Could not find emergent_TA_doc.xml AND css_TA_doc.xml in", pwd
             sys.exit(1)
 
-        for project in ['emergent', 'css']:
+        for project in ['css','emergent']:
 
             print "Scanning:", project
 
@@ -124,7 +127,6 @@ if __name__ == "__main__":
                 this_xml = emer_path
             if project == 'css':
                 this_xml = temt_path
-
 
             f = open(this_xml)
             xml = f.read()
@@ -137,12 +139,22 @@ if __name__ == "__main__":
         
             # Populate list of typedef names
             typedef_names = []
+
+            # Prep list of lists for alpha-index
+            index_alpha = [[] for i in xrange(26)]
+
             for typedef in typedefs:
                 if len(typedef):
                     # Name (required)
                     if getattr(typedef, 'typedefname'):
                         typedefname = typedef('typedefname')[0].string
                         typedef_names.append(typedefname)
+
+                        # Get data for the alpha-index
+                    for letter in range(len(index_alpha)):
+                            if typedefname[0] in [string.uppercase[letter],string.lowercase[letter]]:
+                                index_alpha[letter].append(typedefname)
+
                     else:
                         # Require the typedef to have a name
                         continue
@@ -231,8 +243,6 @@ if __name__ == "__main__":
                         h_body += "<h4 class=\"metdefh3\">Categories</h4>\n"
                         h_body +=  "<div class=\"met_def\">" + ', '.join(cats) + "</div>\n"
 
-
-
                     this_file = open(file_name,"w")
 
                     h_head = "<!DOCTYPE html\n"
@@ -248,9 +258,81 @@ if __name__ == "__main__":
 
                     h_jump = "<div class=\"navcontainer\">\n" # Begin navcontainer div
                     h_jump += "<ul>\n"
-                    h_jump += "<li><a href=\"#TypeDef\" >TypeDef</a></li>\n" # Removed id=active
+                    h_jump += "<li><a href=\"#TypeDef\" >Classes</a></li>\n" # Removed id=active
 
-                    h_td = "<h1 id=\"TypeDef\" style=\"clear:both\">" + "typedef " + typedefname + "</h1>\n"
+                    h_td = "<h1 id=\"TypeDef\" style=\"clear:both\">" + "class " + typedefname + "</h1>\n"
+
+                    # SubTypes (optional)
+                    # SubTypes contain EnumTypes contain EnumDefs
+
+                    h_sub_def, h_sub_def_jump, h_sub_def_head = '', '', ''
+
+                    if getattr(typedef, 'subtypes'):
+                        subtypes = typedef.subtypes
+
+                        h_jump += "<li><a href=\"#EnumTypes\" >Enums</a></li>\n"
+                        h_sub_def_head += "<h2 style=\"clear:both\" id=\"EnumTypes\" style=\"clear:both\">Enums</h2>\n"
+
+                        h_sub_def_jump = "<div class=\"navcontainer\">\n"
+                        h_sub_def_jump += "<ul>\n"
+
+                        #h_sub_def += "<h3 id=\"EnumDefs\" >EnumDefs</h2>\n"
+                        h_sub_def += "<table class=\"prettytable\">\n"
+                        h_sub_def += "<tr>\n"
+                        h_sub_def += "<th>enum</th><th>name</th><th>value</th><th>desc</th>\n"
+                        h_sub_def += "</tr>\n"
+
+                        # Get a sorted list of EnumDefnames for the navigation bar
+
+                        if getattr(subtypes, 'enumtype'):
+                            enumtypes = subtypes.findAll('enumtype', recursive=False)
+                            if len(enumtypes):
+                                enumtype_names = []
+                                for enumtype in enumtypes:
+
+                                    enumtypename = enumtype.enumtypename.string
+                                    enumtype_names.append(enumtypename)
+
+                                    h_sub_def += "<tr id=\"" + enumtypename + "\">\n"
+                                    h_sub_def += "<td>" + enumtypename + "</td><td></td><td></td><td></td>\n"
+                                    h_sub_def += "</tr>\n"
+
+                                    enumdefs = enumtype.findAll('enumdef', recursive=False)
+
+                                    # EnumDefs (optional)
+                                    for enumdef in enumdefs:
+                                        if len(enumdefs):
+                                            enumdefname = enumdef.enumdefname.string
+                                            h_sub_def += "<tr>\n"
+                                            h_sub_def += "<td></td>"
+
+                                            # EnumDefName (mandatory)
+                                            enumdefname = enumdef.enumdefname.string
+                                            h_sub_def += "<td>" + enumdefname + "</td>\n"
+
+                                            # EnumDef value (mandatory)
+                                            if getattr(enumdef, 'value'):
+                                                enumdefvalue = enumdef.value.string
+                                                h_sub_def += "<td>" + enumdefvalue + "</td>\n"
+                                            else:
+                                                h_sub_def += "<td></td>\n"
+
+                                            # EnumDef description (optional)
+                                            if getattr(enumdef, 'desc'):
+                                                enumdefdesc = enumdef.desc.string
+                                                h_sub_def += "<td>" + enumdefdesc + "</td>\n"
+                                            else:
+                                                h_sub_def += "<td></td>\n"
+
+                                            h_sub_def += "</tr>\n"
+
+                                h_sub_def += "</table>\n"
+
+                                enumtype_names.sort()
+                                for this_enumtype in enumtype_names:
+                                    h_sub_def_jump += "<li><a href=\"#" + this_enumtype + "\">" + this_enumtype + "</a></li>\n"
+                                h_sub_def_jump += "</ul>\n"
+                                h_sub_def_jump += "</div>\n"
 
                     h_mem_def, h_mem_def_jump, h_mem_def_head = '', '', ''
 
@@ -271,8 +353,8 @@ if __name__ == "__main__":
                             h_mem_def = ""
                             membdef_names = []
 
-                            h_jump += "<li><a href=\"#MemberDef\">MemberDef</a></li>\n" # removed id=active
-                            h_mem_def_head = "<h2 id=\"MemberDef\" style=\"clear:both\">MemberDefs</h2>\n"
+                            h_jump += "<li><a href=\"#MemberDef\">Members</a></li>\n" # removed id=active
+                            h_mem_def_head = "<h2 id=\"MemberDef\" style=\"clear:both\">Members</h2>\n"
                             h_mem_def_jump = "<div class=\"navcontainer\">\n"
                             h_mem_def_jump += "<ul>\n"
                             h_mem_def += "<div style=\"clear:both;\">\n"
@@ -336,8 +418,8 @@ if __name__ == "__main__":
                         if len(methodspace):
                             methoddefs = methodspace.findAll('methoddef')
         
-                            h_jump += "<li><a href=\"#MethodDef\" >MethodDef</a></li>\n" # removed id=active
-                            h_met_def_head = "<h2 id=\"MethodDef\" style=\"clear:both\">MethodDefs</h2>\n"
+                            h_jump += "<li><a href=\"#MethodDef\" >Methods</a></li>\n" # removed id=active
+                            h_met_def_head = "<h2 id=\"MethodDef\" style=\"clear:both\">Methods</h2>\n"
                             h_met_def_jump = "<div class=\"navcontainer\">\n"
                             h_met_def_jump += "<ul>\n"
 
@@ -380,7 +462,6 @@ if __name__ == "__main__":
                             metdef_names.sort()
                             for methoddefname in metdef_names:
                                 h_met_def_jump += "<li><a href=\"#" + methoddefname + "\">" + methoddefname + "</a></li>\n"
-
 
                     # EnumSpace (optional)
                     h_enum_def, h_enum_def_jump, h_enum_def_head = '', '', ''
@@ -426,7 +507,6 @@ if __name__ == "__main__":
                             h_enum_def_jump += "</ul>\n"
                             h_enum_def_jump += "</div>\n"
 
-
                     # This should come at the end of each typedef,
                     # nested on the same level as memberdefs, methoddefs, etc...
 
@@ -439,7 +519,6 @@ if __name__ == "__main__":
                     h_foot = "</body>\n"
                     h_foot += "</html>\n"
 
-
                     ##################################
                     #        HTML AGGREGATION        #
                     ##################################
@@ -450,21 +529,21 @@ if __name__ == "__main__":
                     # This is all header bits, including the types parents/children/options
                     html = h_head + h_td + h_jump + h_body
 
-                    # Add MethodDefs
-                    if getattr(typedef, 'methodspace'):
-                        html += h_met_def_head + h_jump + "<p><br/></p> " + h_met_def_jump + h_met_def
+                    # Add SubTypes/EnumTypes
+                    if getattr(typedef, 'subtypes'):
+                        html += h_sub_def_head + h_jump + "<p><br/></p> " + h_sub_def_jump + h_sub_def
 
                     # Add MemberDefs
                     if getattr(typedef, 'memberspace'):
                         html += h_mem_def_head + h_jump + "<p><br/></p> " + h_mem_def_jump + h_mem_def
 
-                    # Add EnumDefs
-                    if getattr(typedef, 'enumspace'):
-                        html += h_enum_def_head + h_jump + "<p><br/></p> " + h_enum_def_jump + h_enum_def
+                    # Add MethodDefs
+                    if getattr(typedef, 'methodspace'):
+                        html += h_met_def_head + h_jump + "<p><br/></p> " + h_met_def_jump + h_met_def
 
-                    # Add SubTypes/EnumTypes
-                    #if getattr(typedef, 'subtypes'):
-                    #    html += h_sub_def_head + "<p><br/></p> " + h_jump + h_sub_def
+                    # Add EnumDefs
+                    #if getattr(typedef, 'enumspace'):
+                    #    html += h_enum_def_head + h_jump + "<p><br/></p> " + h_enum_def_jump + h_enum_def
 
                     html += h_foot
 
@@ -475,65 +554,98 @@ if __name__ == "__main__":
                     this_file.write(pretty_html)
                     this_file.close()
 
+            # Generate and write the alphabetical index
+            # Convert NavigableStrings to strings
 
+            for letter in range(len(index_alpha)):
+                for clas in range(len(index_alpha[letter])):
+                    index_alpha[letter][clas] = str(index_alpha[letter][clas])
 
-#                     # SubTypes (optional)
-#                     # SubTypes contain EnumTypes contain EnumDefs
+            # Sort by lowercase
+            for letter in range(len(index_alpha)):
+                index_alpha[letter].sort(key=str.lower)
 
-#                     h_sub_def, h_sub_def_jump, h_sub_def_head, h_sub_sub_def_head = '', '', '', ''
+            # Get counts for four-column layout
+            count = 0
+            for letter in index_alpha:
+                count += len(letter)
 
-#                     if getattr(typedef, 'subtypes'):
-#                         subtypes = typedef.subtypes
-#                         h_jump += "<li><a href=\"#EnumTypes\" >EnumType</a></li>\n"
-#                         h_sub_def_head += "<h2 id=\"EnumTypes\" style=\"clear:both\">EnumType</h2>\n"
-#                         h_sub_sub_def_head += "<h3 id=\"EnumDefs\" style=\"clear:both\">EnumDefs</h2>\n"
+            alpha_index_html = "<!DOCTYPE html\n"
+            alpha_index_html += "    PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
+            alpha_index_html += "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
+            alpha_index_html += "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n"
+            alpha_index_html += "<head>\n"
+            alpha_index_html += "<title>The Emergent Document Generator</title>\n"
+            alpha_index_html += """<style type=\"text/css\" media=\"screen\"><!--
+body { background: #EEE; font-family: Georgia; }
+p { font-family: Georgia; }
+#content { position: relative; }
 
-#                         # Get a sorted list of EnumDefnames for the navigation bar
+#col1 { 
+left: 0; 
+width: 25%; 
+z-index: 100; 
+} 
 
-#                         if getattr(typedef, 'enumtype'):
-#                             enumtypes = subtypes.findAll('enumtype', recursive=False)
-#                             if len(enumtypes):
-#                                 for enumtype in enumtypes:
-#                                     enumtypename = enumtype.enumtypename.string
-#                                     enumdefs = enumtype.findAll('enumdef', recursive=False)
+#col2 { 
+left: 25%; 
+width: 33%; 
+z-index: 100; 
+} 
 
-#                                     # EnumDefs (optional)
-#                                     for enumdef in enumdefs:
-#                                         enumdefname = enumdef.enumdefname.string
-#                                         enumdef_names = []
+#col3 { 
+left: 50%; 
+width: 50%; 
+} 
 
-#                                         if len(enumdefs):
+#col4 { 
+left: 75%;  
+width: 100%; 
+} 
 
-#                                             h_sub_def_jump = "<div class=\"navcontainer\">\n"
-#                                             h_sub_def_jump += "<ul>\n"
+#col1, #col2, #col3, #col4 { 
+background: #FFF; 
+border: none;
+position: absolute; 
+/*/*/width: 25%; /*resets to work for NN4*/
+} 
+//--></style>"""
+            alpha_index_html += "</head>\n"
+            alpha_index_html += "<body>\n"
+            alpha_index_html += "<div id=\"content\">\n"
 
-#                                             for enumdef in enumdefs:
-#                                                 # EnumDefName (mandatory)
-#                                                 enumdefname = enumdef.enumdefname.string
-#                                                 enumdef_names.append(enumdefname)
+            # Write four-column HTML
+            typessofar = 0
+            columnssofar = 0
+            for letter in range(len(index_alpha)):
+                for clas in index_alpha[letter]:
 
-#                                                 # EnumDef description (optional)
-#                                                 if getattr(enumdef, 'desc'):
-#                                                     enumdefdesc = enumdef.desc.string
-#                                                 else:
-#                                                     enumdefdesc = None
+                    # If we've reached the end of the column, finish it and start a new one
+                    if typessofar in [0, count/4,(count/4)*2,(count/4)*3]:
+                        columnssofar += 1
 
-#                                                 # EnumDef value (mandatory)
-#                                                 if getattr(enumdef, 'value'):
-#                                                     enumdefvalue = enumdef.value.string
-#                                                 else:
-#                                                     enumdefvalue = None
+                        # Add closing tags every time except the first time
+                        if not typessofar == 0:
+                            alpha_index_html += "</ul>\n"
+                            alpha_index_html += "</p>\n"
 
-#                                                 h_sub_def += "<h4 class=\"metdefh3\" id=\"" + enumdefname + "\">" + enumdefname + " = " + enumdefvalue + "</h3>\n"
+                        # Add opening tags every time except the last time
+                        alpha_index_html += "<div id=\"col" + str(columnssofar) + "\">\n"
+                        alpha_index_html += "<ul>\n"
 
-#                                                 if enumdefdesc:
-#                                                     h_sub_def += "<div class=\"met_def\">"
-#                                                     h_sub_def += "<b>Desc: </b>" + enumdefdesc + "<br/><br/>"
-#                                                     h_sub_def += "</div>\n"
+                    alpha_index_html += "<li><a href=\"http://grey.colorado.edu/emergent/index.php/Emergent/" + clas + "\">" + clas + "</a></li>\n"
+                    typessofar += 1
 
-#                                             enumdef_names.sort()
-#                                             for enumdefname in enumdef_names:
-#                                                 h_sub_def_jump += "<li><a href=\"#" + enumdefname + "\">" + enumdefname + "</a></li>\n"
+            # Add closing tags
+            alpha_index_html += "</ul>\n"
+            alpha_index_html += "</div>\n"
+            alpha_index_html += "</div>\n"
+            alpha_index_html += h_foot
 
-#                                             h_mem_def_jump += "</ul>\n"
-#                                             h_mem_def_jump += "</div>\n"
+            if project == 'emergent':
+                alpha_index_file = open(gendoc_dir + "emergent/" + "alpha_index.html","w")
+            if project == 'css':
+                alpha_index_file = open(gendoc_dir + "temt/" + "alpha_index.html","w")
+
+            alpha_index_file.write(alpha_index_html)
+            alpha_index_file.close()

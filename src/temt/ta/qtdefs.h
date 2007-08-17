@@ -1,7 +1,7 @@
 // #IGNORE Copyright, 1995-2005, Regents of the University of Colorado,
 // #IGNORE Carnegie Mellon University, Princeton University.
 //
-// #IGNORE This file is part of TA/CSS
+// #IGNORE This file is part of The Emergent Toolkit
 //
 // #IGNORE   This library is free software; you can redistribute it and/or
 // #IGNORE   modify it under the terms of the GNU Lesser General Public

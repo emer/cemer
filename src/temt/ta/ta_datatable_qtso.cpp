@@ -1,7 +1,7 @@
 // Carnegie Mellon University, Princeton University.
 // Copyright, 1995-2005, Regents of the University of Colorado,
 //
-// This file is part of TA/CSS
+// This file is part of The Emergent Toolkit
 //
 //   This library is free software; you can redistribute it and/or
 //   modify it under the terms of the GNU Lesser General Public
