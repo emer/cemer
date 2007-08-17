@@ -45,30 +45,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0FC58745D8994F67AB1321253FAED0F4"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0FC58745D8994F67AB1321253FAED0F4"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0FC58745D8994F67AB1321253FAED0F4"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0FC58745D8994F67AB1321253FAED0F4"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_11A7A5FFFF47447F8C8B83A7643C2749"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -94,6 +70,12 @@
         "Entry"
         {
         "MsmKey" = "8:_21D57AE1021B408691A4DBB952AFFC23"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_291B346D35714B999D063C0A83DAFA84"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -130,6 +112,12 @@
         "Entry"
         {
         "MsmKey" = "8:_449B3F1B764D4B34B2579D85AD7CE013"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_461C9BBEF20A43EFA4239DEC16AB0B1C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -185,6 +173,30 @@
         {
         "MsmKey" = "8:_58C938D5EBEF41678EF9C79EFF911124"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9774D4EA054575BADD39E726624549"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9774D4EA054575BADD39E726624549"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9774D4EA054575BADD39E726624549"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B9774D4EA054575BADD39E726624549"
+        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -471,6 +483,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C35D682017E94438A4195EA815AFFDD1"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C35D682017E94438A4195EA815AFFDD1"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C35D682017E94438A4195EA815AFFDD1"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C50424B4AA03466A9CAA9628968D3191"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -502,6 +532,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C928DCF91CAC4363A1D692F868B77B9F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CA93BCFBA2F740B9AD4974B0AFDB6E6F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -629,24 +665,6 @@
         {
         "MsmKey" = "8:_E86C6B928D1E474B8C69E0084D3CEFF9"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E9315610158E4CD6A81A558A11CFCF87"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E9315610158E4CD6A81A558A11CFCF87"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E9315610158E4CD6A81A558A11CFCF87"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -949,6 +967,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_291B346D35714B999D063C0A83DAFA84"
+            {
+            "SourcePath" = "8:..\\..\\..\\test\\leabra_ra.proj"
+            "TargetName" = "8:leabra_ra.proj"
+            "Tag" = "8:"
+            "Folder" = "8:_8A03BD118B3A4688A0D7E205850E5AB1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_2BAF18CF475EF3A7A9D5846438835C6C"
             {
             "SourcePath" = "8:OPENGL32.dll"
@@ -1031,8 +1069,28 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_449B3F1B764D4B34B2579D85AD7CE013"
             {
-            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\sim_tutorial_final.proj"
-            "TargetName" = "8:sim_tutorial_final.proj"
+            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\ax_tutorial_final.proj"
+            "TargetName" = "8:ax_tutorial_final.proj"
+            "Tag" = "8:"
+            "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_461C9BBEF20A43EFA4239DEC16AB0B1C"
+            {
+            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\ax_tutorial_cptax.proj"
+            "TargetName" = "8:ax_tutorial_cptax.proj"
             "Tag" = "8:"
             "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
             "Condition" = "8:"
@@ -1511,8 +1569,8 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_7C4B6BCC28EA48BF83AE0E8F8FB46F08"
             {
-            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\sim_tutorial_input_data.dtbl"
-            "TargetName" = "8:sim_tutorial_input_data.dtbl"
+            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\ax_tutorial_input_data.dtbl"
+            "TargetName" = "8:ax_tutorial_input_data.dtbl"
             "Tag" = "8:"
             "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
             "Condition" = "8:"
@@ -1751,8 +1809,8 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_927E9FDDFADE429BBF0F2F11AE02C821"
             {
-            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\images\\pdp++_32x32x256.ico"
-            "TargetName" = "8:pdp++_32x32x256.ico"
+            "SourcePath" = "8:..\\..\\..\\src\\temt\\ta\\images\\emergent_32x32x256.ico"
+            "TargetName" = "8:emergent_32x32x256.ico"
             "Tag" = "8:"
             "Folder" = "8:_2CC1AE92E340477CBAE29B499B64198C"
             "Condition" = "8:"
@@ -2111,8 +2169,8 @@
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_B84549795F0A4BD7AE73699DBF21B926"
             {
-            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\sim_tutorial.proj"
-            "TargetName" = "8:sim_tutorial.proj"
+            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\ax_tutorial.proj"
+            "TargetName" = "8:ax_tutorial.proj"
             "Tag" = "8:"
             "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
             "Condition" = "8:"
@@ -2253,6 +2311,26 @@
             {
             "SourcePath" = "8:..\\..\\..\\demo\\leabra\\model_and_task.proj"
             "TargetName" = "8:model_and_task.proj"
+            "Tag" = "8:"
+            "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CA93BCFBA2F740B9AD4974B0AFDB6E6F"
+            {
+            "SourcePath" = "8:..\\..\\..\\demo\\leabra\\ax_tutorial_cptax.net"
+            "TargetName" = "8:ax_tutorial_cptax.net"
             "Tag" = "8:"
             "Folder" = "8:_F58B6B1B33BD4BEB9F3C7FC18A2A9A08"
             "Condition" = "8:"
@@ -2929,6 +3007,17 @@
                         {
                         }
                     }
+                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_8A03BD118B3A4688A0D7E205850E5AB1"
+                    {
+                    "Name" = "8:test"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_4EB27095EE4B4790A65A05E93C9F03CB"
+                        "Folders"
+                        {
+                        }
+                    }
                     "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_FBEDC73CCB58415B9B5ACF89946CD0A6"
                     {
                     "Name" = "8:css_lib"
@@ -3074,22 +3163,22 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{EA34F12B-E1DE-40CF-929F-AD2BE8B1A050}"
-        "PackageCode" = "8:{97D5A7B7-7C6A-4D58-A6A9-1A4A6ED4B101}"
+        "ProductCode" = "8:{AC79A9F7-3053-4309-BA1A-D42D21F915B3}"
+        "PackageCode" = "8:{8B7984CD-ABA0-4E55-BE71-02DF56FDDB3E}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:4.0.4"
-        "Manufacturer" = "8:ccnlab"
+        "ProductVersion" = "8:4.0.5"
+        "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
-        "ARPHELPLINK" = "8:"
+        "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"
         "Title" = "8:Emergent"
         "Subject" = "8:"
         "ARPCONTACT" = "8:"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPURLINFOABOUT" = "8:http://ccnlab.colorado.edu/"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -3678,7 +3767,7 @@
         }
         "MergeModule"
         {
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_0FC58745D8994F67AB1321253FAED0F4"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_5B9774D4EA054575BADD39E726624549"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -3692,7 +3781,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_E9315610158E4CD6A81A558A11CFCF87"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_C35D682017E94438A4195EA815AFFDD1"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"

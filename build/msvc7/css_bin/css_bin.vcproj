@@ -145,6 +145,9 @@ copy $(TargetDir)css*.exe $(SolutionDir)bin
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\resource.h">
+			</File>
+			<File
 				RelativePath=".\Resource.h">
 			</File>
 		</Filter>
@@ -152,6 +155,9 @@ copy $(TargetDir)css*.exe $(SolutionDir)bin
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\css_bin.rc">
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt">

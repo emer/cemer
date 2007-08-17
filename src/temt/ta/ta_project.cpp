@@ -1144,7 +1144,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 #endif
   return true;
 }
-  	
+ 	
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   setlocale(LC_ALL, "");
 
@@ -1158,6 +1158,9 @@ new QApplication(argc, (char**)argv); // accessed as qApp
     new QApplication(argc, (char**)argv); // accessed as qApp
     milestone |= SM_QAPP_OBJ;
 # endif
+    QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
+    QPixmap app_ico(app_ico_nm);
+    QApplication::setWindowIcon(app_ico);
   } else 
 #endif
   {

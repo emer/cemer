@@ -1,20 +1,34 @@
 How To Make an Emergent Release
 
-* of course bring the project up to date, and make sure everything runs in Debug build
+notes: 
+  * when you change from Debug to Release or vv you must touch config.h to force remaketa
+    just open config.h, add space/backspace/save
+
+Release Steps
+
+* bring the project up to date, and make sure everything runs in Debug build
+
+* Version
+  * establish the new version number for this new release -- each new release MUST
+    have a newer version number; ex if last release was 4.0.2 then it must
+    be increased to at least 4.0.3 -- therefore, the Mac and Linux versions must 
+    follow this rule as well
+  * change the file and product version numbers for:
+    * temt library
+    * emergent library
+    * css app (css_bin)
+    * emergent app (emergent_bin)
+  * change the Version in the setup_bin
+    The system will automatically offer to change the ProductCode and PackageCode, accept
+    those -- DO NOT CHANGE THE UpgradeCode
 
 * make the Release build, and make sure it works
 
 * the following need to be checked/updated in the setup_bin project -- open the 
   individual view panels, such as File System to add/change files
   * demo projects, and related files (ex Banana image)
-  * any new dlls, or if the version of dep dlls changed, you will probably need to 
-    re-add the files
-
-* Version
-  you must increment the version number, ex if last release was 4.0.2 then it must
-  be increased to at least 4.0.3
-  The system will automatically offer to change the ProductCode and PackageCode, accept
-  those -- DO NOT CHANGE THE UpgradeCode
+  * any new dlls, or if the version of dependent dlls changed, you will probably
+    need to re-add the files
 
 * make setup_bin
 

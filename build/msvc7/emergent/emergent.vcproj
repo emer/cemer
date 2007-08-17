@@ -155,6 +155,9 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\resource.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\temt\ta\ta_TA_inst.h">
 			</File>
 			<File
@@ -165,6 +168,9 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\emergent.rc">
+			</File>
 		</Filter>
 		<Filter
 			Name="network"
@@ -172,21 +178,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 			<Filter
 				Name="Source Files"
 				Filter="">
-				<File
-					RelativePath="..\..\..\src\emergent\network\netdata.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_extra.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_qtso.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_so.cpp">
-				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\network\emergent_base.cpp">
 				</File>
@@ -206,6 +197,21 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\network\emergent_ti.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\emergent\network\netdata.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_extra.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_qtso.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_so.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\emergent\network\pdpserver.cpp">
 				</File>
 				<File
@@ -221,21 +227,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 			<Filter
 				Name="Header Files"
 				Filter="">
-				<File
-					RelativePath="..\..\..\src\emergent\network\netdata.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_extra.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_qtso.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_so.h">
-				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\network\emergent_base.h">
 				</File>
@@ -255,6 +246,21 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\network\emergent_qtso.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\emergent\network\netdata.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_extra.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_qtso.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_so.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\emergent\network\pdpserver.h">
 				</File>
 				<File
@@ -270,9 +276,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 			<Filter
 				Name="Built Files"
 				Filter="">
-				<File
-					RelativePath="..\..\..\src\emergent\network\netstru_qtso.moc.cpp">
-				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\network\emergent_program_qtso.moc.cpp">
 				</File>
@@ -294,6 +297,9 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\network\emergent_TA_type.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\network\netstru_qtso.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\network\pdpserver.moc.cpp">

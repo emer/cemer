@@ -164,6 +164,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				RelativePath="..\config.h">
 			</File>
 			<File
+				RelativePath=".\resource.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\temt\ta\ta_global.h">
 			</File>
 		</Filter>
@@ -171,6 +174,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			<File
+				RelativePath=".\temt.rc">
+			</File>
 		</Filter>
 		<Filter
 			Name="taiqtso"
@@ -583,6 +589,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_fontspec.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_gendoc.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_geometry.cpp">
 				</File>
 				<File
@@ -779,6 +788,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_fontspec.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_gendoc.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_geometry.h">
 				</File>
 				<File
@@ -937,6 +949,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_project.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\temt\ta\ta_qrc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_qt.moc.cpp">

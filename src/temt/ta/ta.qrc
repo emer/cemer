@@ -13,5 +13,7 @@
   <file>images/tab_unpushed.png</file>
   <file>images/tab_pushed.png</file>
   <file>images/tab_locked.png</file>
+  <file>images/emergent_16x16x256.ico</file>
+  <file>images/emergent_32x32.png</file>
 </qresource>
 </RCC>
