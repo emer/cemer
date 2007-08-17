@@ -1450,10 +1450,10 @@ bool taRootBase::Startup_InitTA_initUserAppDir() {
     }
     // copy the Makefile
     QFile::remove(uplugin_dir + "/Makefile");
-    if (!QFile::copy(taMisc::app_dir + "/plugins/Makefile",
+    if (!QFile::copy(taMisc::app_dir + "/plugins/Makefile.plugin",
         uplugin_dir + "/Makefile")) {
       err = true;
-      msg += "Startup_InitTA_initUserAppDir: can't copy plugins/Makefile\n";
+      msg += "Startup_InitTA_initUserAppDir: can't copy plugins/Makefile.plugin\n";
     }
     // todo: this err message is pointless until the plugins/Makefile can be
     // installed, and it can't be installed because it would conflict with the Makefile.am
