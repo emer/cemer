@@ -1012,7 +1012,7 @@ This will construct a \"data table\" object (much like a spreadsheet or simple d
 
 This data table object is called [[.data.gp.InputData.StdInputData]] and it lives in the <code>data/InputData subgroup</code> in the left browser, in case you need to get back to it.
 
-Here is what you should enter, where we're calling the 1st output unit the \"non-target\" and the 2nd one the target, and the Input units are ordered bottom-to-top, left-to-right:
+Here is what you should enter, where we're calling the 1st output unit the \"non-target\" and the 2nd one the target, and the Input units are ordered left-to-right, bottom-to-top:
 <table>
 <tr><th>Name</th> <th>Input</th> <th>Output</th></tr>
 <tr><td>A</td><td>000<br>100</td><td>01</td></tr>
@@ -1117,13 +1117,13 @@ To see your graph updating in real-time, you can re-init and run the [[.programs
 
 === Arranging the 3d View ===
 
-Although the [[.T3Tab.Network_0]] view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, to fit in between the Hidden and Output layers.
+Although the [[.T3Tab.Network_0]] view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, by clicking on the face of the cube (not on any of the purple elements), to fit in between the Hidden and Output layers.
 
 When you've got it the way you want, you can press the <b>eye</b> button to resize the display to fit, and maybe Dolly zoom in a bit.  You could perhaps pan to the right a bit with shift-mouse.  When it looks good, hit the <b>blueprint house</b> button (\"save home\"), which saves this view configuration.
 
 == Recording Network Activations for a Grid View ==
 
-Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select [[.networks[0].MonitorVar()|MonitorVar]].  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act\" (no quotes), to record activations.  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).
+Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select [[.networks[0].MonitorVar()|MonitorVar]].  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act_m\" (no quotes), to record minus-phase activations (the monitor runs at the end of the trial, after the plus phase).  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).
 
 Next, we need to make a Grid View of the resulting data, which will be recorded in the [[.data.gp.OutputData.TrialOutputData]] object -- do a 
 [[.data.gp.OutputData.TrialOutputData.NewGridView()|View/New Grid View]], and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
@@ -1213,7 +1213,7 @@ To begin your program, locate the Network category, and drag (click and hold and
 
 This Init nm units is a very powerful program element, which does a lot of configuration when it is first dropped into place.  You'll see various things being created in your project, and you should get an error message indicating that it could not find the input_data table.  Just hit OK to the error message, and let's take stock of what just happened (and fix the error).
 
-You should see that a variable named <code>input_data</code> was created in the <code>vars</code> section, and <code>unit_names</code> was created in the <code>vars</code> section.  These are both \"pointer\" variables that provide a local \"handle\" within the program to refer to objects that actually live outside of the program, in the <code>data</code> section of the overall project.
+You should see that a variable named <code>input_data</code> was created in the <code>args</code> section, and <code>unit_names</code> was created in the <code>vars</code> section.  These are both \"pointer\" variables that provide a local \"handle\" within the program to refer to objects that actually live outside of the program, in the <code>data</code> section of the overall project.
 
 Click on the [[.programs.AXTaskGen.args.input_data]] object, and take some time to mouse over the various fields and read the tooltips.  We want to set the <code>object_val</code> field to point to our StdInputData data table -- click on it and select it.
 
@@ -1221,7 +1221,7 @@ Now go down to the  [[.programs.AXTaskGen.vars.unit_names]] object, and note tha
 
 === Entering UnitNames ===
 
-Now that we have set input_data, we can go back to the InputNamedUnits guy in the init_code, and hit the [[.programs.AXTaskGen.init_code[0].InitNamesTable()|Init Names Table]] button.  This will pull up an informational dialog -- hit OK.
+Now that we have set input_data, we can go back to the InitNamedUnits guy in the init_code, and hit the [[.programs.AXTaskGen.init_code[0].InitNamesTable()|Init Names Table]] button.  This will pull up an informational dialog -- hit OK.
 Now go back up to the [[.data.gp.InputData.UnitNames]] data table, and you should see two columns: Input and Output, with a single row of data.  Click on the Input matrix and enter text labels for each of the units, as follows:
 
 <table>
@@ -1293,7 +1293,7 @@ Now that you have all the key logic of your task, you just need to write the res
 
 The first step is achieved by dragging a <code>reset_rows</code> guy from the Data toolbox to the first line of the program code (drop right on top of the for loop).  Then select the input_data variable for the data_var.
 
-Next, drag the <code>new_row</code> guy into the loop_code, right before the final IfBreak guy (drop on top of it).  Again select input_data as the data_var.  This will add a new blank row to the data table.  Then, drag <code>set units var</code> from the Network toolbox into the loop_code, again on top of IfBreak.  This is a magic little program element that uses the name of the DynEnum type of a variable, plus its value, to determine which unit to activate in the input data table.  All you have to do is select input_unit for unit1, and output_unit for unit2, and you're done -- it automatically located the input_data datatable (based on its name).
+Next, drag the <code>new_row</code> guy into the loop_code, right before the final IfBreak guy (drop on top of it).  Again select input_data as the data_var.  This will add a new blank row to the data table.  Then, drag <code>set units var</code> from the Network toolbox into the loop_code, again on top of IfBreak.  This is a magic little program element that uses the name of the DynEnum type of a variable, plus its value, to determine which unit to activate in the input data table.  All you have to do is select input_unit for unit1, and output_unit for unit2, and you're done -- it automatically located the input_data datatable (based on its name).  Note that you want to make sure you don't put one of the vars as the offset variable, which allows you to have for example multiple slots of the same units repeated in an input layer -- the offset determines which slot to put things in.
 
 Finally, go back to the Data toolbox, and drag the row_done guy on top of IfBreak -- this just lets the system know that you're done writing to the current row of data, and that it can update any relevant displays.
 
@@ -1743,7 +1743,7 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
       };
       ar {
        name=;
-	    [6] "A";"B";"X";"Z";"C";"Y";      };
+	    [6] "A_T";"B_N";"X_T";"Z_N";"C_N";"Y_N";      };
      };
      String_Data @[4] {
       name="group_name";
@@ -1815,7 +1815,7 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
 	    [6] 0;0;0;0;0;0;      };
      };
      float_Data @[9] {
-      name="Input_act";
+      name="Input_act_m";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
       cell_geom{ 3;2;      };
@@ -1827,7 +1827,7 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
 	    [3 2 6] 0.94999999;0;0;0;0;0;0;0.94999999;0;0;0;0;0;0;0;0.94999999;0;0;0;0;0;0;0;0.94999999;0;0;0.94999999;0;0;0;0;0;0;0;0.94999999;0;      };
      };
      float_Data @[10] {
-      name="Hidden_act";
+      name="Hidden_act_m";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
       cell_geom{ 4;4;      };
@@ -1836,10 +1836,10 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
       };
       ar {
        name=;
-	    [4 4 6] 0.00086805352;1.8642718e-10;0.330585;0.0015773361;0.93028665;9.0074366e-09;0.88704109;0.033813108;3.5524962e-17;0.038050365;6.7375536e-18;3.5077696e-09;0.8143025;0;5.76158e-12;1.5870679e-05;0.14163497;0;0.8233881;0.71903008;5.1851879e-07;0.00054625864;9.6354313e-05;0.91281921;8.0780159e-18;7.4803248e-16;0;0.40498275;3.5874049e-08;0.47268921;0.87569469;0;6.950488e-05;0.059135236;0.93415415;5.0818968e-13;0.90018451;0.71779019;1.7388861e-10;0;1.9112464e-05;0.12876695;1.1738714e-09;0.0022920975;0.32924685;0;3.3947881e-12;2.8693067e-11;0.13797449;0;0.1298116;0.77483231;5.4063669e-15;0.028271448;0.32306844;0.90327013;0;0.5036431;0.0031129136;0.81254017;0.0095546609;0.00047446505;0.53713733;0;0.79832458;0;0.83907288;0.85883737;1.0595816e-09;0.88461679;0.45203692;0.85695237;0;0.50920594;0;0.067914188;7.3147224e-15;3.2935127e-06;7.828154e-05;0;0.00016419968;0;0.001963885;0.87850517;8.9151555e-08;0.05604152;0.056203242;0.0010021889;3.9429768e-11;0.010948555;1.2222836e-05;0.94211942;3.3120289e-14;0.76022035;7.2917915e-06;0;      };
+	    [4 4 6] 0.0007748428;1.8021125e-10;0.32331741;0.0019309942;0.93022227;7.535081e-09;0.88770843;0.036474437;3.7571483e-17;0.040755983;8.0857848e-18;3.596458e-09;0.81156451;0;1.0769928e-11;1.5113206e-05;0.13927773;0;0.81822073;0.71513301;1.2646751e-06;0.00033343484;7.4296258e-05;0.91307771;9.1823467e-18;4.6828306e-16;0;0.36845002;4.8680285e-08;0.5027135;0.87847728;0;2.7425769e-05;0.07395792;0.93472517;1.3627946e-12;0.8987366;0.73668641;3.1963172e-11;0;3.8813487e-05;0.1721389;7.6480227e-09;0.0029396499;0.26096094;0;1.8927884e-11;1.3279798e-11;0.13643098;0;0.1192784;0.77405798;7.2327898e-15;0.025253506;0.32054776;0.90339899;0;0.5134328;0.0038447143;0.80833828;0.010647692;0.00051107316;0.54262626;0;0.81142741;0;0.82815242;0.86149889;1.4161991e-08;0.88335788;0.45469081;0.8573119;0;0.57157737;0;0.03205432;6.8163583e-15;5.7824795e-06;6.5824483e-05;0;0.00015390132;0;0.0016450838;0.87851274;1.044e-07;0.052287742;0.054671656;0.00088880572;4.9231196e-11;0.01107135;1.4991418e-05;0.94210285;3.2169505e-14;0.76432014;6.997248e-06;0;      };
      };
      float_Data @[11] {
-      name="Output_act";
+      name="Output_act_m";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=1;
       cell_geom{ 2;1;      };
@@ -1848,7 +1848,7 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
       };
       ar {
        name=;
-	    [2 1 6] 0;0.94999999;0.94999999;0;0;0.94999999;0.94999999;0;0.94999999;0;0.94999999;0;      };
+	    [2 1 6] 0.0006008888;0.9448815;0.92700517;0.0058395118;0.032959547;0.88953876;0.93393862;0.0029684214;0.85667211;0.056286857;0.94669366;0.00044155453;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4640,11 +4640,11 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @[9] {
-	name="act";
+	name="act_m";
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$9$;
-	variable="act";
+	variable="act_m";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
@@ -6288,7 +6288,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	   GridColView @[9] {
 	    m_data=.projects[1].data.gp[1][0].data[9]$80$;
 	    m_transform=NULL;
-	    name="Input_act";
+	    name="Input_act_m";
 	    visible=1;
 	    text_width=3;
 	    scale_on=1;
@@ -6299,7 +6299,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	   GridColView @[10] {
 	    m_data=.projects[1].data.gp[1][0].data[10]$81$;
 	    m_transform=NULL;
-	    name="Hidden_act";
+	    name="Hidden_act_m";
 	    visible=1;
 	    text_width=4;
 	    scale_on=1;
@@ -6310,7 +6310,7 @@ FloatTransform @*(.m_transform) {scale={x=0.779668: y=0.779668: z=0.779668: }: r
 	   GridColView @[11] {
 	    m_data=.projects[1].data.gp[1][0].data[11]$82$;
 	    m_transform=NULL;
-	    name="Output_act";
+	    name="Output_act_m";
 	    visible=1;
 	    text_width=2;
 	    scale_on=1;
@@ -7282,7 +7282,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=0;
+	cur_val=1;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -7315,7 +7315,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=0;
+      cur_val=1;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -7606,7 +7606,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
    cycle=15;
    time=0;
    group_name=;
-   trial_name="Y";
+   trial_name="Y_N";
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -7618,8 +7618,8 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=6180: sys=1150: tot=2683278016: }: end={usr=6362: sys=1168: tot=2683278218: }: used={usr=182: sys=18: tot=202: }: n_used=1: };
-   epoch_time {name="epoch_time": start={usr=6326: sys=1164: tot=2683278177: }: end={usr=6362: sys=1168: tot=2683278218: }: used={usr=36: sys=4: tot=41: }: n_used=1: };
+   train_time {name="train_time": start={usr=7242: sys=2166: tot=2773306912: }: end={usr=7353: sys=2186: tot=2773307043: }: used={usr=111: sys=20: tot=131: }: n_used=1: };
+   epoch_time {name="epoch_time": start={usr=7331: sys=2182: tot=2773307017: }: end={usr=7353: sys=2186: tot=2773307043: }: used={usr=22: sys=4: tot=26: }: n_used=1: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
