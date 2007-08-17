@@ -1,19 +1,14 @@
-the change in spain
-The Emergent software (originally PDP++) was written by Randall C. O'Reilly (now at Department of Psychology, University of Colorado Boulder), Chadley K. Dawson, and James L. McClelland, under the affiliation of the following entities:
+The Emergent software was developed primarily by:
+    * Brad Aisa
+    * Randall O'Reilly
+    * Brian Mingus
+All at the University of Colorado, Boulder
 
-    * Carnegie Mellon University
-    * CMU Department of Psychology
-    * The Center for the Neural Basis of Cognition (CNBC)
-    * The center for Neural Processes in Cognition (NPC) 
+The PDP++ software, upon which Emergent is based, was originally written by
+Randall C. O'Reilly, Chadley K. Dawson, and James L. McClelland
 
-It is now maintained and developed primarily by O'Reilly.
-
-Contributors to Emergent
-The following people have contributed to the Emergent code, and their efforts are much appreciated!
-
+Other contributors to PDP++
     * Daniel Cer (cerd@cs.colorado.edu), did major work on the dmem/MPI distributed memory code, and the multi-dimensional lookup table code.
     * Danke Xie (dxie@cogsci.ucsd.edu), wrote a pthread version of bp++, and contributed fixes to som.cc.
     * Josh Brown (jwbrown@artsci.wustl.edu), wrote the RNS++ code (see link on main page).
-    * Michael Frank (frankmja@grey.colorado.edu), numerous bug reports and testing.
-    * Brad Aisa (Brad.Aisa@colorado.edu), whose contributions would not fit on this line, or any line
-    * Brian Mingus (brian.mingus@colorado.edu), for a shiny new build system and automatic document generation
+    * Michael Frank (frankmj@grey.colorado.edu), numerous bug reports and testing.
