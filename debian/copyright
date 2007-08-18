@@ -1,0 +1,26 @@
+This package was debianized by Brian Mingus <brian.mingus@colorado.edu> on
+Sat, 18 Aug 2007 09:45:04 -0600.
+
+It was downloaded from ftp://grey.colorado.edu/pub/oreilly/emergent
+
+Upstream Author: Randall O'Reilly
+
+Copyright: Copyright, 1995-2005, Regents of the University of Colorado, Carnegie Mellon University, Princeton University.
+
+License:
+
+Copyright, 1995-2005, Regents of the University of
+Colorado, Carnegie Mellon University, Princeton University.
+
+Emergent is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the
+License, or (at your option) any later version.
+
+Emergent is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+The Debian packaging is (C) 2007, Brian Mingus <brian.mingus@colorado.edu> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.

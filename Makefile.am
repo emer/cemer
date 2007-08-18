@@ -56,7 +56,8 @@ DIST_SUBDIRS =\
 	demo/cs \
 	demo/leabra \
 	demo/so \
-	demo/virt_env
+	demo/virt_env \
+	src/temt/ta/images
 
 SUBDIRS =\
 	src/temt/maketa \
@@ -72,7 +73,7 @@ SUBDIRS =\
 	src/emergent/cs \
 	src/emergent/lib \
 	src/emergent/bin \
-	@WANT_PLUGINS@ \
+	plugins \
 	prog_lib \
 	css_lib \
 	test \
@@ -80,9 +81,10 @@ SUBDIRS =\
 	demo/cs \
 	demo/leabra \
 	demo/so \
-	demo/virt_env
+	demo/virt_env \
+	src/temt/ta/images
 
-EXTRA_DIST += src/temt/ta/ios-g++-3.1 @WANT_PLUGINS@
+EXTRA_DIST += src/temt/ta/ios-g++-3.1
 
 #For make rpm
 if RPM
