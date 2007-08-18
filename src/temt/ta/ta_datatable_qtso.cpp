@@ -4516,10 +4516,12 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // X AXis
   layXAxis = new QHBoxLayout(layWidg);
 
+  int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
+
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
   lblXAxis->setToolTip("Column of data to plot for the X Axis");
   layXAxis->addWidget(lblXAxis);
-  lelXAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lelXAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layXAxis->addWidget(lelXAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4540,7 +4542,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
   lblZAxis->setToolTip("Column of data to plot for the Z Axis");
   layZAxis->addWidget(lblZAxis);
-  lelZAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lelZAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layZAxis->addWidget(lelZAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4566,7 +4568,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
   lbl1Axis->setToolTip("First column of data to plot");
   lay1Axis->addWidget(lbl1Axis);
-  lel1Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel1Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay1Axis->addWidget(lel1Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4582,7 +4584,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl2Axis = taiM->NewLabel("Y2:", widg, font_spec);
   lbl2Axis->setToolTip("Second column of data to plot (optional)");
   lay2Axis->addWidget(lbl2Axis);
-  lel2Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel2Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay2Axis->addWidget(lel2Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4609,7 +4611,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
   lbl3Axis->setToolTip("Second column of data to plot (optional)");
   lay3Axis->addWidget(lbl3Axis);
-  lel3Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel3Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay3Axis->addWidget(lel3Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4636,7 +4638,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
   lbl4Axis->setToolTip("Second column of data to plot (optional)");
   lay4Axis->addWidget(lbl4Axis);
-  lel4Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel4Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay4Axis->addWidget(lel4Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4663,7 +4665,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
   lbl5Axis->setToolTip("Second column of data to plot (optional)");
   lay5Axis->addWidget(lbl5Axis);
-  lel5Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel5Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay5Axis->addWidget(lel5Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4691,7 +4693,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
   lbl1Err->setToolTip("Column of for the 1st column's error bar data");
   layErr1->addWidget(lbl1Err);
-  lel1Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel1Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layErr1->addWidget(lel1Err->GetRep());
   onc1Err = new iCheckBox("On!", widg);
   onc1Err->setToolTip("Display error bars for 1st column's data?");
@@ -4702,7 +4704,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl2Err = taiM->NewLabel("2 Err:", widg, font_spec);
   lbl2Err->setToolTip("Column of for the 2nd column's error bar data");
   layErr1->addWidget(lbl2Err);
-  lel2Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel2Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layErr1->addWidget(lel2Err->GetRep());
   onc2Err = new iCheckBox("On!", widg);
   onc2Err->setToolTip("Display error bars for 2nd column's data?");
@@ -4713,7 +4715,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl3Err = taiM->NewLabel("3 Err:", widg, font_spec);
   lbl3Err->setToolTip("Column of for the 3nd column's error bar data");
   layErr1->addWidget(lbl3Err);
-  lel3Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel3Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layErr1->addWidget(lel3Err->GetRep());
   onc3Err = new iCheckBox("On!", widg);
   onc3Err->setToolTip("Display error bars for 3nd column's data?");
@@ -4727,7 +4729,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl4Err = taiM->NewLabel("4 Err:", widg, font_spec);
   lbl4Err->setToolTip("Column of for the 4nd column's error bar data");
   layErr2->addWidget(lbl4Err);
-  lel4Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel4Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layErr2->addWidget(lel4Err->GetRep());
   onc4Err = new iCheckBox("On!", widg);
   onc4Err->setToolTip("Display error bars for 4nd column's data?");
@@ -4738,7 +4740,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl5Err = taiM->NewLabel("5 Err:", widg, font_spec);
   lbl5Err->setToolTip("Column of for the 5nd column's error bar data");
   layErr2->addWidget(lbl5Err);
-  lel5Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lel5Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layErr2->addWidget(lel5Err->GetRep());
   onc5Err = new iCheckBox("On!", widg);
   onc5Err->setToolTip("Display error bars for 5nd column's data?");
@@ -4770,7 +4772,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblCAxis = taiM->NewLabel("Color\nAxis:", widg, font_spec);
   lblCAxis->setToolTip("Column of data for COLOR_AXIS color mode");
   layCAxis->addWidget(lblCAxis);
-  lelCAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lelCAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layCAxis->addWidget(lelCAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4804,7 +4806,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
   layRAxis->addWidget(lblRAxis);
-  lelRAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg);
+  lelRAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   layRAxis->addWidget(lelRAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 

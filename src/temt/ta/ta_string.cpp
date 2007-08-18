@@ -1008,6 +1008,22 @@ String String::after(const char* t, int startpos) const {
   return _substr(first, length() - first);
 }
 
+
+String String::between(const String& st_str, const String& ed_str, int startpos) const {
+  String aft = after(st_str, startpos);
+  return aft.before(ed_str);
+}
+
+String String::between(char st_c, char ed_c, int startpos) const {
+  String aft = after(st_c, startpos);
+  return aft.before(ed_c);
+}
+
+String String::between(const char* st_str, const char* ed_str, int startpos) const {
+  String aft = after(st_str, startpos);
+  return aft.before(ed_str);
+}
+
 String String::from(const String& y, int startpos) const {
   int first = search(startpos, length(), y.chars(), y.length());
   return _substr(first, length() - first);

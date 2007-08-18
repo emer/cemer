@@ -344,6 +344,11 @@ public:
   String		after(const char* t, int startpos = 0) const;
   // substring after (not including) target string
 
+  String		between(const String& st_str, const String& ed_str, int startpos = 0) const;
+  String		between(char st_c, char ed_c, int startpos = 0) const;
+  String		between(const char* st_str, const char* ed_str, int startpos = 0) const;
+  // substring between (not including) target strings
+
   inline String		left(int len) const {return before(len);} // leftmost len chars
   String		right(int len) const; // rightmost len chars
 
