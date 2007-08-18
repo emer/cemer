@@ -13,3 +13,6 @@ X-KDE-SubstituteUID=false
 Emergent
 
 dcop kded kbuildsycoca recreate
+
+ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
+ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
