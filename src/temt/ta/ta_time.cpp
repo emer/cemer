@@ -141,3 +141,8 @@ String TimeUsed::GetString() {
 void taDateTime::Initialize() {
   secs_1jan_1970 = 0;
 }
+
+void taDateTime::fromString(const String &s, const String &format) {
+  if(format.empty()) fmQDateTime(QDateTime::fromString(s));
+  else fmQDateTime(QDateTime::fromString(s, format));
+}

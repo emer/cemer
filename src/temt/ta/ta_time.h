@@ -119,9 +119,8 @@ public:
   { return (String)qDateTime().toString(format); }
   // convert to a string representation: format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
 
-  void fromString(const String &s, const String &format)
-  { fmQDateTime(QDateTime::fromString(s, format)); }
-  // convert to a string representation: format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
+  void fromString(const String &s, const String &format="");
+  // convert to a string representation: if format is non-empty, format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
 
   void addSecs(int secs) 	{ fmQDateTime(qDateTime().addSecs(secs)); }
   void addMinutes(int mins) 	{ fmQDateTime(qDateTime().addSecs(mins * 60)); }
@@ -166,9 +165,9 @@ public:
   static uint fmDateToTime_t(int year, int month, int day)
   { taDateTime dt; dt.setDate(year, month, day); return dt.toTime_t(); }
   // get a time_t value (secs since Jan 1, 1970) from a date
-  static uint fmStringToTime_t(const String& s, const String& format)
+  static uint fmStringToTime_t(const String& s, const String& format = "")
   { taDateTime dt; dt.fromString(s, format); return dt.toTime_t(); }
-  // get a time_t value (secs since Jan 1, 1970) from a date string: format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
+  // get a time_t value (secs since Jan 1, 1970) from a date string: if format is empty, default conversion is used; format is: d=day number, dd=d with leading zero, ddd=short day name, dddd=long day name, M=month number, MM=M with leading zero, MMM=short month name, MMMM=long month name, yy=2 digit year, yyyy=4 digit year, h=hour, hh=hour with leading zero, m=minute, mm=minute with leading zero, s=second, ss=leading zero, AP=AM or PM, ap=am or pm
   static int daysBetween_Time_t(uint st_time, uint ed_time) 
   { taDateTime sdt; sdt.setTime_t(st_time); taDateTime edt; edt.setTime_t(ed_time);
     return sdt.daysTo(edt); }

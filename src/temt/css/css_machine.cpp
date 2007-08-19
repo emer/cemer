@@ -934,7 +934,7 @@ cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
     if(md->fun_argd >= 0)
       return new cssMbrCFun(VarArg, base, md->stubp, md->name);
     else
-      return new cssMbrCFun(md->fun_argc, base, md->stubp, md->name);
+      return new cssMbrCFun(md->fun_argc+1, base, md->stubp, md->name); // add 1 for the 'this'
   }
   else {
     cssMisc::Error(prog, "Function pointer not callable:", md->name, "of type:", md->type->name,
@@ -1024,8 +1024,10 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 	break;
     }
     act_argc = ((int)stack->size - stack_start) - 1;
-    for(int i=act_argc; i>0; i--)
+    for(int i=act_argc; i>0; i--) {
       args[i] = stack->Pop();
+//       args[i] = stack->Pop_NoUnRef();
+    }
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
@@ -1047,8 +1049,10 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
       return -1;
     }
 
-    for(int i=act_argc; i>0; i--)
+    for(int i=act_argc; i>0; i--) {
       args[i] = stack->Pop();
+//       args[i] = stack->Pop_NoUnRef();
+    }
 
     if(stack->Peek() == &cssMisc::Void)	// get rid of arg stop..
       stack->Pop();
@@ -1065,8 +1069,10 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 
 void cssElFun::DoneArgs(cssEl** args, int& act_argc) {
   int i;
-  for(i=1; i <= act_argc; i++)
+  for(i=1; i <= act_argc; i++) {
     cssEl::Done(args[i]);
+    //    cssEl::unRefDone(args[i]);
+  }
   act_argc = 0;
 }
 
@@ -1198,8 +1204,10 @@ int cssElInCFun::BindArgs(cssEl** args, int& act_argc) {
     return -1;
   }
   act_argc = argc;
-  for(int i=act_argc; i>0; i--)
+  for(int i=act_argc; i>0; i--) {
     args[i] = stack->Pop();
+  //    args[i] = stack->Pop_NoUnRef();
+  }
 
   return act_argc;
 }
@@ -1249,11 +1257,18 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   BindArgs(args, act_argc);
   if(act_argc < 0)
     return cssEl::ExecError;
+  cssEl* ths_arg = args[1];
+  // need to get rid of the 'this' pointer, which is now args[1] -- pack down list
+  for(int i=2;i<=act_argc;i++)
+    args[i-1] = args[i];
+  act_argc--;			// remove this
   cssEl* tmp = (*funp)(ths, act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;
   prog->Stack()->Push(tmp);
   DoneArgs(args, act_argc);
+  cssEl::Done(ths_arg);		// not in args list so do it separately
+  //  cssEl::unRefDone(ths_arg);
   return dostat;
 }
 
@@ -2147,21 +2162,6 @@ cssElPtr& cssSpace::PushUniqNameOld(cssEl* it) {
   }
   cssEl::Done(it);
   return el_retv;
-}
-
-
-cssEl* cssSpace::Pop() {
-  cssEl* tmp;
-  if(size == 0) return &cssMisc::Void;
-  tmp = els[--size];
-  cssEl::unRef(tmp);
-  return tmp;
-}
-
-void cssSpace::DelPop() {
-  cssEl* tmp = Pop();
-  if(tmp != &cssMisc::Void)
-    cssEl::Done(tmp);
 }
 
 bool cssSpace::Replace(cssEl* old, cssEl* nw) {

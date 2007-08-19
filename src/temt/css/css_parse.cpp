@@ -2969,11 +2969,11 @@ case 263:
             if(yyvsp[-1].el.El()->GetType() == cssEl::T_MbrScriptFun)
 	      Code1(cssBI::push_cur_this); /* push this as first arg.. */
 	    else if(yyvsp[-1].el.El()->GetType() == cssEl::T_MbrCFun) {
-	      /* only push this for MbrCFun that are builtins (Load, Save, or InheritsFrom) on a script class! */
-	      cssMbrCFun* mbrfun = (cssMbrCFun*)yyvsp[-1].el.El();
-	      if((mbrfun->funp == &cssClassType::InheritsFrom_stub) ||
-		 (mbrfun->funp == &cssClassType::Load_stub) ||
-		 (mbrfun->funp == &cssClassType::Save_stub))
+/* 	      cssMbrCFun* mbrfun = (cssMbrCFun*)$1.El(); */
+	      /* always push this for all mbrc funs (change from prev behavior) */
+/* 	      if((mbrfun->funp == &cssClassType::InheritsFrom_stub) || */
+/* 		 (mbrfun->funp == &cssClassType::Load_stub) || */
+/* 		 (mbrfun->funp == &cssClassType::Save_stub)) */
 		Code1(cssBI::push_cur_this); /* push this as first arg.. */
 	    } ;
     break;}

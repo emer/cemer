@@ -731,8 +731,16 @@ public:
   cssElPtr&	Push(cssEl* it);
   cssElPtr&	PushUniqNameNew(cssEl* it);
   cssElPtr&	PushUniqNameOld(cssEl* it);
-  cssEl*	Pop();			// this pop unRef's -- you must do Done
-  void		DelPop(); 		// pop and delete item
+  cssEl*	Pop()
+  { if(size == 0) return &cssMisc::Void; cssEl* rval = els[--size]; cssEl::unRef(rval);
+    return rval; }
+  // get last guy, remove from space, and unRef it, but not done -- assumes item is multiply reffed or will be Done'd later (probably not the best design..)
+  cssEl*	Pop_NoUnRef()
+  { if(size == 0) return &cssMisc::Void; cssEl* rval = els[--size]; return rval; }
+  // just gets the last guy and doesn't unref -- for arg binding -- unrefdone later!
+  void		DelPop()
+  { cssEl* rval = Pop(); if(rval != &cssMisc::Void) cssEl::Done(rval); }
+  // pop and delete (done) item
   bool		Remove(cssEl* it); 	// not a good idea, because ptrs are index based
   bool		Replace(cssEl* old, cssEl* nw); // replace at index with it
   cssEl*	Peek() const

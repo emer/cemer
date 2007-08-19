@@ -327,8 +327,9 @@ static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
   }
   // push the 'this' pointer for builtin functions
   else if(mbfun->GetType() == cssEl::T_MbrCFun) {
-    if(ths->GetType() == cssEl::T_Class)
-      cp->Stack()->Push(ths);
+    // just always push on stack because otherwise the this gets nuked!!!
+//     if(ths->GetType() == cssEl::T_Class)
+    cp->Stack()->Push(ths);
   }
   if(cp->top->debug >= 2) {
     cerr << "\nCalling member function: " << mbfun->name << endl;
