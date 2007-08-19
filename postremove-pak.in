@@ -17,4 +17,7 @@ if [ -h /usr/local/lib/libCoin.so.40 ]; then
     print Removing symlink /usr/local/lib/libCoin.so.40
     rm /usr/local/lib/libCoin.so.40
 fi
-
+if [ -h /usr/local/lib/libsimage.so.20 ]; then
+    print Removing symlink /usr/local/lib/libsimage.so.20
+    rm /usr/local/lib/libsimage.so.20
+fi
