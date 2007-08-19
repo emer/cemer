@@ -111,7 +111,6 @@ dnl TODO: modalize the includes based on whether this is toolkit-only mode
 AC_SUBST([EMERGENT_INCLUDES],["-I\$(srcdir)/../../emergent/bp -I\$(srcdir)/../../temt/css -I\$(srcdir)/../../emergent/leabra -I\$(srcdir)/../../emergent/so -I\$(srcdir)/../../emergent/cs -I\$(srcdir)/../../emergent/network -I\$(srcdir)/../../temt/ta -I\$(srcdir)/../../temt/taiqtso -I\$(srcdir)/../../temt/maketa -I\$(abs_top_builddir) -I\$(srcdir) -I\$(srcdir)/src -I\$(srcdir)/../.. -I\$(srcdir)/.."])
 
 AC_CHECK_LIB([ode],[main])
-#AC_CHECK_LIB([termcap],[main]) # TODO: This is a temporary hack to get rpms working on Fedora that were built on Kubuntu
 AC_CHECK_LIB([m],[main])
 AC_CHECK_LIB([gslcblas],[main])
 
