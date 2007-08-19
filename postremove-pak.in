@@ -1,3 +1,20 @@
 #!/bin/sh
-rm /usr/local/lib/libpdp-@PACKAGE_VERSION@.so.1 /usr/local/lib/libtacss-@PACKAGE_VERSION@.so.1 /usr/local/lib/libSoQt.so.20 /usr/local/lib/libCoin.so.40
+
+# Due to a bug in CheckInstall, we have to do this manually.
+if [ -h /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.1 ]; then
+    print Removing symlink /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.1
+    rm /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.1
+fi
+if [ -h /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1 ]; then
+    print Removing symlink /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1
+    rm /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1
+fi
+if [ -h /usr/local/lib/libSoQt.so.20 ]; then
+    print Removing symlink /usr/local/lib/libSoQt.so.20
+    rm /usr/local/lib/libSoQt.so.20
+fi
+if [ -h /usr/local/lib/libCoin.so.40 ]; then
+    print Removing symlink /usr/local/lib/libCoin.so.40
+    rm /usr/local/lib/libCoin.so.40
+fi
 

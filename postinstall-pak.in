@@ -1,9 +1,32 @@
 #!/bin/sh
-# Due to a bug in CheckInstall, we have to do this manually.
-# It sucks. Hopefully they will fix it, otherwise we need
-# to stop using CheckInstall.
-ln -s /usr/local/lib/libpdp-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/libpdp-@PACKAGE_VERSION@.so.1
-ln -s /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1
-ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
-ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
 
+# Create a K Menu icon for Emergent
+cat > /usr/share/applications/Emergent.desktop <<Emergent
+[Desktop Entry]
+Exec=/usr/local/bin/emergent
+GenericName=Neural Network Simulation Software
+Icon=/usr/local/share/Emergent/images/Emergent_128x128.png
+Name=Emergent
+StartupNotify=true
+Terminal=0
+Type=Application
+X-KDE-SubstituteUID=false
+Emergent
+
+# Due to a bug in CheckInstall, we have to do this manually.
+file=libemergent-@PACKAGE_VERSION@.so.1
+if [ ! -h /usr/local/lib/$file ]; then
+    ln -s /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/$file
+fi
+
+file=libtemt-@PACKAGE_VERSION@.so.1
+if [ ! -h /usr/local/lib/$file ]; then
+    ln -s /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/$file
+fi
+
+if [ ! -h /usr/local/lib/libSoQt.so.20 ]; then
+    ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
+fi
+if [ ! -h /usr/local/lib/libCoin.so.40 ]; then
+    ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
+fi
