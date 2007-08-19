@@ -166,14 +166,16 @@ spec.tmpl.in:
 # You net to export/setenv ${DEBEMAIL}
 deb:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/binary --requires=emergent-qt,emergent-coin,emergent-soqt,libode0c2,libode0-dev,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev --include=/usr/local/lib/libemergent-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/binary --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-ode,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev
 
 deb-update-repo:
 	cd /usr/local/apt && dpkg-scanpackages binary /dev/null | gzip -9c > binary/Packages.gz
 
 rpm2:
 	if test -e trunk.spec; then rm -f trunk.spec;fi
-	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-soqt,emergent-simage,ode,ode-devel,gsl  --include=/usr/local/lib/libemergent-${PACKAGE_VERSION}.so.0,/usr/local/lib/libtacss-${PACKAGE_VERSION}.so.0
+	checkinstall -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-simage,ode,ode-devel,gsl
+
+yum-update-repo:
 	createrepo /usr/local/yum
 
-packages: deb rpm2
+packages: deb rpm2 deb-update-repo yum-update-repo
