@@ -47,6 +47,11 @@ dnl   but WITHOUT ANY WARRANTY; without even the implied warranty of
 dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 dnl   GNU General Public License for more details. 
 AC_DEFUN([EMERGENT_SET_BUILD_MODE],[
+AC_ARG_ENABLE([libta],
+              AC_HELP_STRING([--disable-libta],
+                             [Disable creation of TypeAccess library.  @<:@default=enabled@:>@]),
+                             [libta=false],
+                             [libta=true])
 AC_ARG_ENABLE([gui],
 	      AC_HELP_STRING([--disable-gui],
 			     [Disable compiling with a GUI. @<:@default=enabled@:>@]),
