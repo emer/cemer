@@ -1,41 +1,75 @@
 #!/bin/sh
 
 # Create a K Menu icon for Emergent
+echo Creating /usr/share/applications/Emergent.desktop K menu item
 cat > /usr/share/applications/Emergent.desktop <<Emergent
+
 [Desktop Entry]
-Exec=/usr/local/bin/emergent
+Categories=Education;
+Exec=env LD_LIBRARY_PATH=/usr/local/lib /usr/local/bin/emergent %f
 GenericName=Neural Network Simulation Software
-Icon=/usr/local/share/Emergent/images/Emergent_128x128.png
+Hidden=false
+Icon=/usr/local/share/Emergent/images/emergent_32x32.png
+Icon[en_US]=/usr/local/share/Emergent/images/emergent_32x32.png
 Name=Emergent
+Name[en_US]=Emergent
 StartupNotify=true
-Terminal=0
+Terminal=false
 Type=Application
 X-KDE-SubstituteUID=false
+Comment[en_US]=Neural Network Simulation Software
+Comment=Neural Network Simulation Software
+
 Emergent
+
+echo Creating /etc/xdg/menus/emergent.menu for application menu item
+cat > /etc/xdg/menus/emergent.menu <<Emergent
+
+<Menu>
+ <Menu>
+  <Name>Education</Name>
+  <Layout>
+   <Merge type="files" />
+   <Filename>Emergent.desktop</Filename>
+  </Layout>
+  <Include>
+   <Filename>Emergent.desktop</Filename>
+  </Include>
+ </Menu>
+</Menu>
+
+Emergent
+
 
 # Due to a bug in CheckInstall, we have to do this manually.
 file=libemergent-@PACKAGE_VERSION@.so.1
 if [ ! -h /usr/local/lib/$file ]; then
+    echo Creating symlink ln -s /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/$file
     ln -s /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/$file
 fi
 
 file=libtemt-@PACKAGE_VERSION@.so.1
 if [ ! -h /usr/local/lib/$file ]; then
+    echo Creating symlink ln -s /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/$file
     ln -s /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.@LIB_VERSION_2@ /usr/local/lib/$file
 fi
 
 if [ ! -h /usr/local/lib/libSoQt.so.20 ]; then
+    echo Creating symlink ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
     ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
 fi
 if [ ! -h /usr/local/lib/libCoin.so.40 ]; then
+    echo Creating symlink ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
     ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
 fi
 if [ ! -h /usr/local/lib/libsimage.so.20 ]; then
+    echo Creating symlink ln -s /usr/local/lib/libsimage.so.20.6.1 /usr/local/lib/libsimage.so.20
     ln -s /usr/local/lib/libsimage.so.20.6.1 /usr/local/lib/libsimage.so.20
 fi
 # For Fedora
 if [ -h /usr/lib/libtiff.so.3 ]; then
     if [ ! -h /usr/lib/libtiff.so.4 ]; then
+	echo Creating symlink ln -s /usr/lib/libtiff.so.3 /usr/lib/libtiff.so.4
 	ln -s /usr/lib/libtiff.so.3 /usr/lib/libtiff.so.4
     fi
 fi

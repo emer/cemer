@@ -1,22 +1,36 @@
 #!/bin/sh
 
+# Remove menu items
+if [ -e /usr/share/applications/Emergent.desktop ]; then
+    echo Removing menu item from /usr/share/applications/Emergent.desktop
+    rm /usr/share/applications/Emergent.desktop
+fi
+
+if [ -e /etc/xdg/menus/emergent.menu ]; then
+    echo echo Removing menu item from /etc/xdg/menus/emergent.menu
+fi
+
 # Due to a bug in CheckInstall, we have to do this manually.
 if [ -h /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.1 ]; then
     echo Removing symlink /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.1
     rm /usr/local/lib/libemergent-@PACKAGE_VERSION@.so.1
 fi
+
 if [ -h /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1 ]; then
     echo Removing symlink /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1
     rm /usr/local/lib/libtemt-@PACKAGE_VERSION@.so.1
 fi
+
 if [ -h /usr/local/lib/libSoQt.so.20 ]; then
     echo Removing symlink /usr/local/lib/libSoQt.so.20
     rm /usr/local/lib/libSoQt.so.20
 fi
+
 if [ -h /usr/local/lib/libCoin.so.40 ]; then
     echo Removing symlink /usr/local/lib/libCoin.so.40
     rm /usr/local/lib/libCoin.so.40
 fi
+
 if [ -h /usr/local/lib/libsimage.so.20 ]; then
     echo Removing symlink /usr/local/lib/libsimage.so.20
     rm /usr/local/lib/libsimage.so.20
