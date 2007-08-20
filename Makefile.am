@@ -166,16 +166,16 @@ spec.tmpl.in:
 # You net to export/setenv ${DEBEMAIL}
 deb:
 	if test -e *.spec; then rm -f *.spec;fi
-	if test -e /usr/local/apt/binary/${PACKAGE_NAME}_${PACKAGE_VERSION}-1_i386.deb;then rm /usr/local/apt/binary/${PACKAGE_NAME}_${PACKAGE_VERSION}-1_i386.deb;fi
-	checkinstall --fstrans -D -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/binary --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-ode,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev
+	if test -e /usr/local/apt/binary/emergent_${PACKAGE_VERSION}-1_i386.deb;then rm /usr/local/apt/binary/emergent_${PACKAGE_VERSION}-1_i386.deb;fi
+	checkinstall --fstrans -D -y --install=no --pkgname=emergent --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir=/usr/local/apt/binary --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-ode,libsimage20c2,libsimage-dev,libsndfile1,libsndfile1-dev,libgsl0,libgsl0-dev
 
 deb-update-repo:
 	cd /usr/local/apt && dpkg-scanpackages binary /dev/null | gzip -9c > binary/Packages.gz
 
 rpm2:
 	if test -e *.spec; then rm -f *.spec;fi
-	if test -e /usr/local/yum/${PACKAGE_NAME}-${PACKAGE_VERSION}-1.${build_cpu}.rpm;then rm /usr/local/yum/${PACKAGE_NAME}-${PACKAGE_VERSION}-1.${build_cpu}.rpm;fi
-	checkinstall --fstrans -R -y --install=no --pkgname=${PACKAGE_NAME} --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-simage,ode,ode-devel,gsl
+	if test -e /usr/local/yum/emergent-${PACKAGE_VERSION}-1.${build_cpu}.rpm;then rm /usr/local/yum/emergent-${PACKAGE_VERSION}-1.${build_cpu}.rpm;fi
+	checkinstall --fstrans -R -y --install=no --pkgname=emergent --pkgversion=${PACKAGE_VERSION} --arch=${build_cpu} --pkglicense=GPL --maintainer=${DEBEMAIL} --reset-uids=yes --pakdir /usr/local/yum --requires=emergent-qt,emergent-coin,emergent-soqt,emergent-simage,ode,ode-devel,gsl
 
 yum-update-repo:
 	createrepo /usr/local/yum
