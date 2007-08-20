@@ -62,10 +62,19 @@ if [ ! -h /usr/local/lib/libCoin.so.40 ]; then
     echo Creating symlink ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
     ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
 fi
+if [ ! -h /usr/local/lib/libCoin.so ]; then
+    echo Creating symlink ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so
+    ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so
+fi
 if [ ! -h /usr/local/lib/libsimage.so.20 ]; then
     echo Creating symlink ln -s /usr/local/lib/libsimage.so.20.6.1 /usr/local/lib/libsimage.so.20
     ln -s /usr/local/lib/libsimage.so.20.6.1 /usr/local/lib/libsimage.so.20
 fi
+if [ ! -h /usr/local/lib/libsimage.so ]; then
+    echo Creating symlink ln -s /usr/local/lib/libsimage.so.20.6.1 /usr/local/lib/libsimage.so
+    ln -s /usr/local/lib/libsimage.so.20.6.1 /usr/local/lib/libsimage.so
+fi
+
 # For Fedora
 if [ -h /usr/lib/libtiff.so.3 ]; then
     if [ ! -h /usr/lib/libtiff.so.4 ]; then
