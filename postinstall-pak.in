@@ -58,6 +58,10 @@ if [ ! -h /usr/local/lib/libSoQt.so.20 ]; then
     echo Creating symlink ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
     ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so.20
 fi
+if [ ! -h /usr/local/lib/libSoQt.so ]; then
+    echo Creating symlink ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so
+    ln -s /usr/local/lib/libSoQt.so.20.4.1 /usr/local/lib/libSoQt.so
+fi
 if [ ! -h /usr/local/lib/libCoin.so.40 ]; then
     echo Creating symlink ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
     ln -s /usr/local/lib/libCoin.so.40.4.5 /usr/local/lib/libCoin.so.40
