@@ -2535,6 +2535,7 @@ bool Projection::UpdateConSpecs(bool force) {
   if((!(bool)layer) || (!(bool)from)) return false;
   if(!force && (con_spec.SPtr() == m_prv_con_spec)) return false;
   ConSpec* sp = con_spec.SPtr();
+  if(!sp) return false;
   m_prv_con_spec = sp;		// don't redo it
   Unit* u;
   taLeafItr i;
@@ -2573,8 +2574,15 @@ bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
 }
 
 bool Projection::SetConSpec(ConSpec* sp) {
-  if(sp == NULL)	return false;
-  con_spec.SetSpec(sp);
+  if(!sp)	return false;
+  if(!con_spec.SetSpec(sp)) return false;
+  if(!con_spec.CheckSpec(con_type, true)) { // quiet
+    if(taMisc::Choice("The con spec you are setting is not compatible with the con type for connections in this projection -- should I change the con type to be: " +  con_spec->min_obj_type->name
+		      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
+		      "Yes", "No") == 0) {
+      con_type = con_spec->min_obj_type;
+    }
+  }
   return UpdateConSpecs();
 }
 
@@ -2648,10 +2656,10 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) 
 void Projection::CheckThisConfig_impl(bool quiet, bool& rval) { 
   inherited::CheckThisConfig_impl(quiet, rval);
   
-  if(!spec.CheckSpec()) {
+  if(!spec.CheckSpec(GetTypeDef())) {
     rval = false;
   }
-  if(!con_spec.CheckSpec()) {
+  if(!con_spec.CheckSpec(con_type)) {
     rval = false;
   }
   if(CheckError((recvcons_type == &TA_RecvCons), quiet, rval,
@@ -3540,6 +3548,9 @@ bool Layer::CheckConnect(bool quiet) {
 void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
   // note: network also called our checks
   // slightly non-standard, since we bail on first error
+  if(!unit_spec.CheckSpec(units.el_typ)) {
+    rval = false;
+  }
   if (!CheckBuild(quiet)) {rval = false; return;}
   if (!CheckConnect(quiet)) {rval = false; return;}
   inherited::CheckThisConfig_impl(quiet, rval);
@@ -4046,8 +4057,15 @@ bool Layer::UpdateConSpecs(bool force) {
 }
 
 bool Layer::SetUnitSpec(UnitSpec* sp) {
-  if(sp == NULL)	return false;
-  unit_spec.SetSpec(sp);
+  if(!sp)	return false;
+  if(!unit_spec.SetSpec(sp)) return false;
+  if(!unit_spec.CheckSpec(units.el_typ, true)) { // quiet
+    if(taMisc::Choice("The unit spec you are setting is not compatible with the unit type for units in this layer -- should I change the unit type to be: " +  unit_spec->min_obj_type->name
+		      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
+		      "Yes", "No") == 0) {
+      units.el_typ = unit_spec->min_obj_type;
+    }
+  }
   return UpdateUnitSpecs();
 }
 

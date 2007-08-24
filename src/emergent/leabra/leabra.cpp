@@ -3160,7 +3160,7 @@ void LeabraLayer::Compute_Weights() {
 
 void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!spec.CheckSpec()) {
+  if(!spec.CheckSpec(GetTypeDef())) {
     rval = false; // fatal
     return;
   }

@@ -160,7 +160,7 @@ public:
   TypeDef*	type;		// #APPLY_IMMED #TYPE_ON_base_type The type of the spec to use
 
   virtual BaseSpec* GetSpec() const	{ return NULL; } // get the spec pointer
-  virtual void	SetSpec(BaseSpec*)	{ };	 	// set the spec pointer
+  virtual bool	SetSpec(BaseSpec*)	{ return false; } // set the spec pointer
 
   BaseSpec* 	operator=(BaseSpec* cp)	{ SetSpec(cp); return cp; }
 
@@ -189,39 +189,52 @@ public:
   inline T*		SPtr() const		{ return spec.ptr(); }
   // use this call to access the spec pointer value in all client calls -- fast!
   override BaseSpec*	GetSpec() const		{ return SPtr(); }
-  void		SetSpec(BaseSpec* es)   {
-    if (spec.ptr() == es) return; // low level setting, ex. streaming, handled in UAE
-    if(!owner) return;
+
+  override bool		SetSpec(BaseSpec* es)   {
+    if (spec.ptr() == es) return true; // low level setting, ex. streaming, handled in UAE
+    if(!owner) return false;
     if(!es || (es->InheritsFrom(base_type) && es->CheckObjectType(owner))) {
       spec.set(es);
       if(es) { type = es->GetTypeDef(); }
       owner->UpdateAfterEdit();	// owner might need to apply this change to all sub guys
+      return true;
     }
-    else {
-      taMisc::Error("SetSpec: incorrect type of Spec:",
-		    es->GetPath(), "of type:", es->GetTypeDef()->name,
-		    "should be at least:", base_type->name,"in object:",owner->GetPath());
-    }
+    taMisc::Error("SetSpec: incorrect type of Spec:",
+		  es->GetPath(), "of type:", es->GetTypeDef()->name,
+		  "should be at least:", base_type->name,"in object:",owner->GetPath());
+    return false;
   }
-  bool		CheckSpec(TAPtr own_obj)   {
-    if(own_obj == NULL) return false;
+
+  bool		CheckSpec_impl(TypeDef* obj_td, taBase* own_obj, bool quiet = false)   {
+    if(!obj_td || !own_obj) return false;
     if(!spec) {
-      taMisc::CheckError("CheckSpec: spec is NULL in", own_obj->GetPath());
+      if(!quiet)
+	taMisc::CheckError("CheckSpec: spec is NULL in", own_obj->GetPath());
       return false;
     }
     if(!spec->InheritsFrom(base_type)) {
-      taMisc::CheckError("CheckSpec: incorrect type of spec:", spec->GetPath(),
-			 "of type:", spec->GetTypeDef()->name,
-			 "should be at least:", base_type->name,"in object:",own_obj->GetPath());
+      if(!quiet)
+	taMisc::CheckError("CheckSpec: incorrect type of spec:", spec->GetPath(),
+			   "of type:", spec->GetTypeDef()->name,
+			   "should be at least:", base_type->name,"in object:",own_obj->GetPath());
       return false;
     }
-    return spec->CheckObjectType(own_obj);
+    if(!obj_td->InheritsFrom(spec->min_obj_type)) {
+      if(!quiet)
+	taMisc::CheckError("CheckSpec: incorrect type of object:", obj_td->name,
+			   "for spec of type:", spec->GetTypeDef()->name,
+			   "should be at least:", spec->min_obj_type->name,
+			   "in object:",own_obj->GetPath());
+      return false;
+    }
+    return true;
   }
-  bool		CheckSpec() { return CheckSpec(owner); }
+  bool		CheckSpec(TypeDef* obj_td, bool quiet = false)
+  { return CheckSpec_impl(obj_td, owner, quiet); }
 
-  void		SetDefaultSpec(TAPtr ownr, TypeDef* td)
+  void		SetDefaultSpec(taBase* ownr, TypeDef* td)
   { SpecPtr_impl::SetDefaultSpec(ownr, td); }
-  void		SetDefaultSpec(TAPtr ownr)
+  void		SetDefaultSpec(taBase* ownr)
   { SetDefaultSpec(ownr, T::StatTypeDef(1)); }
 
   virtual T* 	NewChild()
@@ -240,24 +253,6 @@ public:
   void  CutLinks()		{ spec.CutLinks(); SpecPtr_impl::CutLinks(); }
   
   TA_TMPLT2_BASEFUNS_LITE(SpecPtr,T,typ)
-  
-/*  void  Copy(const SpecPtr<T,typ>& cp)  { StructUpdate(true); inherited::Copy(cp); Copy__(cp); StructUpdate(false); }
-
-  SpecPtr () { Initialize(); }
-  SpecPtr (const SpecPtr<T,typ>& cp) { Initialize(); Copy__(cp); }
-  ~SpecPtr () { Destroy(); }
-  taBase* Clone() { return new SpecPtr<T,typ>(*this); }
-  void  UnSafeCopy(TAPtr cp) { if(cp->InheritsFrom(&TA_SpecPtr))
-    Copy(*((SpecPtr<T,typ>*)cp));
-    else if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this); }
-  void  CastCopyTo(TAPtr cp) { SpecPtr<T,typ>& rf = 
-    *((SpecPtr<T,typ>*)cp); rf.Copy(*this); }
-  TAPtr MakeToken(){ return (TAPtr)(new SpecPtr<T,typ>); }
-  TAPtr MakeTokenAry(int n){ return (TAPtr)(new SpecPtr<T,typ>[n]); }
-  SpecPtr<T,typ>& operator=(const SpecPtr<T,typ>& cp) { Copy(cp); return *this;}
-  TypeDef* GetTypeDef() const { return &TA_SpecPtr; }
-  static TypeDef* StatTypeDef(int) { return &TA_SpecPtr; }
-*/
 private:
   void	Copy_(const SpecPtr<T,typ>& cp) { spec.set(cp.SPtr()); } 
   void 	Initialize()		{ }
