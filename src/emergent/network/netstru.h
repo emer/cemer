@@ -272,7 +272,7 @@ public:
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const ConSpec& cp);
-  TA_BASEFUNS_LITE(ConSpec);
+  TA_BASEFUNS(ConSpec);
 private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
