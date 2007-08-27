@@ -600,7 +600,7 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 
 void NVSpec::Initialize() {
   da_gain = .5f;
-  trn_trg = 0.1f;
+  val_thr = 0.1f;
 }
 
 void NVLayerSpec::Initialize() {
@@ -610,7 +610,7 @@ void NVLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
-  bias_val.val = .5f;		// default is no-information case; extrew = .5
+  bias_val.val = 1.0f;		// this is the completely novel value
 }
 
 void NVLayerSpec::Defaults() {
@@ -709,7 +709,7 @@ bool NVLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 float NVLayerSpec::Compute_NVDa(LeabraLayer* lay) {
   // currently only supporting one unit
   DaModUnit* nvsu = (DaModUnit*)lay->units.Leaf(0);
-  float nvd = nvsu->act_m - nv.trn_trg;
+  float nvd = nvsu->act_m - nv.val_thr;
   if(nvd < 0.0f) nvd = 0.0f;
   float nv_da = nvd - nvsu->misc_1;
   return nv.da_gain * nv_da;
@@ -731,7 +731,7 @@ void NVLayerSpec::Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay, 
      LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-     u->ext = nv.trn_trg;		// clamp to pve value
+     u->ext = 0.0f;		// clamp to pve value
      ClampValue(ugp, net); 	// apply new value
      Compute_ExtToPlus(ugp, net); // copy ext values to act_p
      Compute_dWt_Ugp(ugp, lay, net);
@@ -744,7 +744,7 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, bool er_avail) {
     nvsu->misc_1 = 0.0f;	// reset
   }
   else {
-    float nvd = nvsu->act_m - nv.trn_trg;
+    float nvd = nvsu->act_m - nv.val_thr;
     if(nvd < 0.0f) nvd = 0.0f;
     nvsu->misc_1 = nvd;
   }

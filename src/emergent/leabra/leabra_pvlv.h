@@ -318,7 +318,7 @@ class LEABRA_API NVSpec : public taBase {
 INHERITED(taBase)
 public:
   float		da_gain;	// gain for novelty value dopamine signal
-  float		trn_trg;	// #DEF_0.1 training target value
+  float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(NVSpec);
@@ -328,7 +328,7 @@ private:
 };
 
 class LEABRA_API NVLayerSpec : public ScalarValLayerSpec {
-  // novelty value (NV) layer: learns to 
+  // novelty value (NV) layer: starts with a bias of 1.0, and learns to activate 0.0 value -- value signal is how novel the stimulus is
 INHERITED(ScalarValLayerSpec)
 public:
   NVSpec	nv;	// novelty value specs
