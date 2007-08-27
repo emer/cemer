@@ -425,7 +425,8 @@ void taProject::PostLoadAutos() {
     taiMiscCore::ProcessEvents();
     vwr->SelectPanelTabNo(1);
   }
-  programs.RunStartupProgs();	// only at last step!
+  // this is done separately in startup code
+  //  programs.RunStartupProgs();	// only at last step!
 }
 
 MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {
@@ -1071,6 +1072,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--interactive", "CssInteractive");
   taMisc::AddArgNameDesc("CssInteractive", "\
  -- Specifies that the css console should remain active after running a css script file upon startup");
+
+  taMisc::AddArgName("-ni", "CssNonInteractive");
+  taMisc::AddArgName("--non-interactive", "CssNonInteractive");
+  taMisc::AddArgNameDesc("CssNonInteractive", "\
+ -- Specifies that the css console should NOT be activated at all during running (e.g., if a STARTUP_RUN program is present that will run and then quit out)");
 
   taMisc::AddArgName("-u", "UserDir");
   taMisc::AddArgName("--user_dir", "UserDir");
@@ -1770,7 +1776,12 @@ bool taRootBase::Startup_ProcessArgs() {
 bool taRootBase::Startup_RunStartupScript() {
   cssMisc::TopShell->RunStartupScript();
 
-  if(!cssMisc::init_interactive) taiMC_->Quit();
+  bool startup_run = false;
+  if(tabMisc::root->projects.size == 1) {
+    taProject* prj = tabMisc::root->projects[0];
+    startup_run = prj->programs.RunStartupProgs();
+  }
+  if(!cssMisc::init_interactive || (!taMisc::gui_active && startup_run)) taiMC_->Quit();
 
   return true;
 }

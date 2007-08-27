@@ -119,6 +119,10 @@ public:
   // copy ext values to act_p
   virtual void 	Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations as external rewards and change weights
+//   virtual void 	Update_PVPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail);
+//   // update the prior PV value, stored in pv unit misc_1 values
+  virtual void	Update_PVPrior(LeabraLayer* lay, bool er_avail, float pve_val);
+  // update the prior PV value, stored in pv unit misc_1 values
 
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
 
@@ -271,13 +275,13 @@ public:
 
   virtual float	Compute_ActEqAvg(LeabraLayer* lay);
   // compute average over value representation subgroups of act_eq values
-  virtual float Compute_LvDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp);
+  virtual float Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
-  virtual float	Compute_LvDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay);
+  virtual float	Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
-  virtual void 	Update_LvPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail);
+  virtual void 	Update_LVPrior_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, bool er_avail);
   // update the prior Lv value, stored in lv unit misc_1 values
-  virtual void	Update_LvPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail);
+  virtual void	Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail);
   // update the prior Lv value, stored in lv unit misc_1 values
 
   void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
@@ -302,6 +306,54 @@ public:
   TA_BASEFUNS_NOCOPY(LViLayerSpec);
 private:
   void 	Initialize()		{ };
+  void	Destroy()		{ };
+};
+
+//////////////////////////////////////////
+//	  Novelty Value Layer (NV)	//
+//////////////////////////////////////////
+
+class LEABRA_API NVSpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
+INHERITED(taBase)
+public:
+  float		da_gain;	// gain for novelty value dopamine signal
+  float		trn_trg;	// #DEF_0.1 training target value
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(NVSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API NVLayerSpec : public ScalarValLayerSpec {
+  // novelty value (NV) layer: learns to 
+INHERITED(ScalarValLayerSpec)
+public:
+  NVSpec	nv;	// novelty value specs
+
+  virtual float	Compute_NVDa(LeabraLayer* lay);
+  // compute novelty value da value
+  virtual void 	Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
+  // compute plus phase activations as train target value and change weights
+  virtual void	Update_NVPrior(LeabraLayer* lay, bool er_avail);
+  // update the prior Nv value, stored in nv unit misc_1 values
+
+  virtual void 	Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork* net);
+  // copy ext values to act_p
+
+  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  void	Defaults();
+
+  TA_SIMPLE_BASEFUNS(NVLayerSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
   void	Destroy()		{ };
 };
 

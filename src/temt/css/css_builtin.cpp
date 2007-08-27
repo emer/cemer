@@ -2417,7 +2417,8 @@ bool cssMisc::Initialize() {
   if(!cssMisc::startup_code.empty())
     cssMisc::startup_code += "\n";		  // add a final cr for good measure
 
-  if(taMisc::CheckArgByName("CssScript") || taMisc::CheckArgByName("CssCode")) {
+  if(taMisc::CheckArgByName("CssScript") || taMisc::CheckArgByName("CssCode")
+     || taMisc::CheckArgByName("CssNonInteractive")) {
     // if code specified, default is then to not run in interactive mode (otherwise yes)
     cssMisc::init_interactive = false;
   }

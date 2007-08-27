@@ -15,12 +15,6 @@ current:
 * use css parser to process progexpr: have progspace, parse a string, have a special callback
 function for whenever a variable is processed..
 
-* back button?
-* #22 -- update of netview ctrl panel -- happens even in simpler projects
-
-* check: test datatable /matrix cut/paste ops
-* program stuff for dealing with startup args?
-
 == Virtual Env
 
 * add complexity params to various levels
