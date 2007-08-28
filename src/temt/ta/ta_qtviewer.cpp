@@ -2510,6 +2510,9 @@ void iFrameViewer::SelectableHostNotifySlot_External(ISelectableHost* src, int o
   
 }
 
+MainWindowViewer* iFrameViewer::mainWindowViewer() {
+  return (m_viewer) ? ((FrameViewer*)m_viewer)->mainWindowViewer() : NULL;
+}
 
 //////////////////////////
 //   iBrowseViewer 	//
@@ -4473,10 +4476,13 @@ void iTabView::Init() {
   layDetail->addWidget(tbPanels);
   wsPanels = new QStackedWidget(this);
   layDetail->addWidget(wsPanels);
-  //add a dummy data panel with id=0 to show blank
-  tbPanels->addTab("");
-  connect(tbPanels, SIGNAL(currentChanged(int)),
+  // add a dummy data panel with id=0 to show blank (except dialogs)
+  MainWindowViewer* mwv = tabViewerWin()->mainWindowViewer();
+  if (!mwv->isDialog()) {
+    tbPanels->addTab("");
+    connect(tbPanels, SIGNAL(currentChanged(int)),
       this, SLOT(panelSelected(int)) );
+  }
 }
 
 void iTabView::Activated(bool val) {

@@ -156,7 +156,7 @@ public:
   virtual bool		deleteOnWinClose() const {return false;}
   inline IDataViewWidget* dvwidget() const {return m_dvwidget;}
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
-  MainWindowViewer*	parent() const {return (MainWindowViewer*)m_parent;} 
+  MainWindowViewer*	parent() const; 
   override TypeDef*	parentType() const {return &TA_MainWindowViewer;} 
   QWidget*		widget();
   virtual iMainWindowViewer* viewerWindow() const;
@@ -579,6 +579,7 @@ public:
   
   bool			m_is_root; // #READ_ONLY #SAVE #NO_SHOW
   bool			m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
+  bool			m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
   
 #ifdef TA_GUI
   taiMenu_List*		ta_menus; // #IGNORE menu representations (from methods, non-menubuttons only)
@@ -589,6 +590,7 @@ public:
   FrameViewer_List 	frames;	// the frames shown in the center splitter area
   DockViewer_List	docks; // #EXPERT currently docked windows -- removed if they undock
 
+  inline bool		isDialog() const {return m_is_dialog;}
   override bool		isRoot() const {return m_is_root;}
   inline bool		isProjViewer() const {return m_is_proj_viewer;}
 //parent note: we inherit MainWindowViewer type, but actually never have a taDataView parent

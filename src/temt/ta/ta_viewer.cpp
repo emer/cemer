@@ -255,6 +255,13 @@ bool DataViewer::isMapped() const {
   return (m_dvwidget);
 }
 
+MainWindowViewer* DataViewer::parent() const {
+  if (!m_parent) {
+    m_parent = (taDataView*)GetOwner(parentType()); // NULL if no owner, or no compatible type
+  }
+  return dynamic_cast<MainWindowViewer*>(m_parent); // dyn for safety
+} 
+
 /*obs void DataViewer::ReSize(float width, float height) {
   if (!taMisc::gui_active || (dvwidget() == NULL)) return;
   if ((width > 0.0f) && (height > 0.0f)) {
@@ -873,14 +880,10 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(TAPtr root) {
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_browser_type);
   rval->SetData(root);
   rval->m_is_root = false;
+  rval->m_is_dialog = true;
   PanelViewer* pv = new PanelViewer;
   rval->frames.Add(pv);
   // nuke or modify some stuff usually added:
-  // hide toolbars by default
-  for (int i = 0; i < rval->toolbars.size; i++) {
-    ToolBar* tb = rval->toolbars.FastEl(i);
-    tb->setVisible(false);
-  }
   // browsers are added to the global viewers, and not persistent
   if (tabMisc::root)
     tabMisc::root->viewers.Add(rval); // does InitLinks
@@ -910,6 +913,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
 void MainWindowViewer::Initialize() {
   m_is_root = false;
   m_is_proj_viewer = false;
+  m_is_dialog = false;
   menu = NULL;
   cur_menu = NULL;
   ta_menus = new taiMenu_List;
@@ -929,9 +933,10 @@ void MainWindowViewer::InitLinks() {
   taBase::Own(frames, this);
   taBase::Own(docks, this);
 
-  // add default toolbars to new instance or if missing from loaded
-  //TODO: cleaner if we put this in AssertDefaultToolBars
-  AddToolBarByType(&TA_ToolBar, "Application");
+  // add default toolbars to new (non-dialog) instance or if missing from loaded
+  if (!isDialog()) {
+    AddToolBarByType(&TA_ToolBar, "Application");
+  }
 }
 
 void MainWindowViewer::Copy_(const MainWindowViewer& cp) {

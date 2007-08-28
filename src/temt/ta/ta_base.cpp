@@ -1786,6 +1786,7 @@ bool taBase::EditDialog(bool modal) {
   if (wv) {
     wv->ViewWindow();
     iMainWindowViewer* iwv = wv->widget();
+    iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
     return iwv->AssertPanel((taiDataLink*)GetDataLink());
       //bool new_tab, bool new_tab_lock)
   }
@@ -3564,6 +3565,7 @@ void taDataView::SetData(taBase* ta) {
 
 TAPtr taDataView::SetOwner(TAPtr own) {
   TAPtr rval = inherited::SetOwner(own);
+  // note: we have to do this here and in InitLinks
   m_parent = (taDataView*)GetOwner(parentType()); // NULL if no owner, or no compatible type
   return rval;
 }
