@@ -24,11 +24,14 @@ dist_pkgdata_prog_lib_DATA =\
 	DataCalcSample.prog \
 	LeabraAll_Std.progp \
 	LeabraBatch.prog \
+	LeabraBatch_pb.prog \
 	LeabraCycle.prog \
 	LeabraEpoch.prog \
 	LeabraEpochGpData.prog \
 	LeabraEpochMonitor.prog \
 	LeabraSettle.prog \
+	LeabraStartup.prog \
+	LeabraStartup_pb.prog \
 	LeabraTrain.prog \
 	LeabraTrainBatchSeedList.prog \
 	LeabraTrainBatchSeedNThr.prog \
