@@ -866,6 +866,27 @@ MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_ty
   return rval;
 }
 
+MainWindowViewer* MainWindowViewer::NewEditDialog(TAPtr root) {
+  if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer))) 
+    def_browser_type = &TA_MainWindowViewer; // just in case
+  
+  MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_browser_type);
+  rval->SetData(root);
+  rval->m_is_root = false;
+  PanelViewer* pv = new PanelViewer;
+  rval->frames.Add(pv);
+  // nuke or modify some stuff usually added:
+  // hide toolbars by default
+  for (int i = 0; i < rval->toolbars.size; i++) {
+    ToolBar* tb = rval->toolbars.FastEl(i);
+    tb->setVisible(false);
+  }
+  // browsers are added to the global viewers, and not persistent
+  if (tabMisc::root)
+    tabMisc::root->viewers.Add(rval); // does InitLinks
+  return rval;
+} 
+
 MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   if (!proj) return NULL;
   if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer))) 

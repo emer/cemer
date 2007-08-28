@@ -3345,6 +3345,12 @@ void iMainWindowViewer::AddToolBar(iToolBar* itb) {
   // create a menu entry to show/hide it, regardless if visible now
   toolBarMenu->AddItem(itb->name(), taiMenu::toggle,
     taiAction::men_act, this, SLOT(this_ToolBarSelect(taiAction*)), (void*)itb);
+  // if initially invisible, hide it
+  ToolBar* tb = itb->viewer();
+  if (!tb) return; // shouldn't happen
+  if (!tb->visible) {
+    tb->Hide();
+  }
 //nn  toolbars.append(tb);
 }
 

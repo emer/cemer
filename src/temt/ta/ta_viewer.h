@@ -571,6 +571,8 @@ public:
     // convenience class: makes a 2-pane class browser (browse+panels)
   static MainWindowViewer* NewProjectBrowser(taProject* proj); 
     // makes a standard 3-pane project viewer
+  static MainWindowViewer* NewEditDialog(TAPtr root); 
+    // makes a 1-pane taBase window only showing the edit panels
 
   static MainWindowViewer* GetDefaultProjectBrowser(taProject* proj = NULL);
     // get the default pb for given project, or whatever one is current if NULL
