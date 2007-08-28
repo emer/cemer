@@ -50,7 +50,11 @@ Release Steps
     version installed, and has a Reset point set to before any pdp install
   * first test on the existing version -- it should install without any complaints about
     the version etc. (it does a silent upgrade)
+
+* Test as virgin install
   * then, roll back the VM -- there should be no install of pdp
   * install again, and test
 
+* Upload finished .exe
+  TBD
 
