@@ -5324,6 +5324,7 @@ iDataPanelSetBase::~iDataPanelSetBase() {
   for (int i = panels.size - 1; i >= 0 ; --i) {
     iDataPanel* pn = panels.FastEl(i);
     pn->setTabView(NULL);
+    pn->ClearDataPanelSet();
   }
 }
 
@@ -5602,7 +5603,7 @@ iViewPanelSet::iViewPanelSet(taiDataLink* link_)
 }
 
 iViewPanelSet::~iViewPanelSet() {
-  panels.Reset(); // don't need/want to find any when child panels deleting
+//  panels.Reset(); // don't need/want to find any when child panels deleting
 }
 
 void iViewPanelSet::AddSubPanel(iViewPanelFrame* pn) {

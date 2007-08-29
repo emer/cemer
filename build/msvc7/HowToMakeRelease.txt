@@ -13,6 +13,7 @@ Release Steps
     have a newer version number; ex if last release was 4.0.2 then it must
     be increased to at least 4.0.3 -- therefore, the Mac and Linux versions must 
     follow this rule as well
+  * change VERSION string in config.h
   * change the file and product version numbers for:
     * temt library
     * emergent library

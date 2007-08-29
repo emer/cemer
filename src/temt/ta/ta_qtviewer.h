@@ -1214,6 +1214,7 @@ public:
   virtual QWidget*	centralWidget() const; // contents
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
   void			setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
+  virtual void		ClearDataPanelSet() {} // used for clearing by the set in its dtor
   virtual bool		dirty() {return HasChanged();}
     // true if panel should not be replaced, but a new panel should be opened for the new item
   virtual bool		lockInPlace() const {return false;}
@@ -1311,6 +1312,7 @@ public:
   override iTabViewer*	tabViewerWin() const;
 
 
+  override void		ClearDataPanelSet() {m_dps = NULL;}
   override void		ClosePanel();
   override void		UpdatePanel(); // we add a test for HasChanged and invoke the inherited
   override String 	TabText() const; // text for the panel tab -- usually just the text of the sel_node
@@ -1372,6 +1374,7 @@ public:
   override bool		isViewPanelFrame() const {return true;}
 
 
+  override void		ClearDataPanelSet() {m_dps = NULL;}
   void			MakeButtons(QBoxLayout* par_lay = NULL, QWidget* par_widg = NULL);
     // make the Apply/Revert btns, par=this if NULL, if no lay, use par_widg
   override void		InitPanel(); // we do a more elaborate check for m_dv and !updating
