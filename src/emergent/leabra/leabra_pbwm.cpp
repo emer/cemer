@@ -1649,14 +1649,12 @@ void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units)
   net->Build();
 }
 
-void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
-			 bool fm_hid_cons, bool fm_out_cons, bool da_mod_all,
-			 int n_stripes, bool mat_fm_pfc_full, bool out_gate,
-			 bool nolrn_pfc, bool lr_sched) {
-  PVLV(net, bio_labels, localist_val, fm_hid_cons, fm_out_cons, da_mod_all);
+void LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
+			int n_stripes, bool out_gate, bool nolrn_pfc) {
+  PVLV(net, da_mod_all);
   // first configure PVLV system..
 
-  String msg = "Configuring BG PFC (Basal Ganglia Prefrontal Cortex) Layers:\n\n\
+  String msg = "Configuring PBWM (Prefrontal-cortex Basal-ganglia Working Memory) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
  messages in the interim):\n\n";
@@ -1678,13 +1676,9 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   net->RemoveUnits();
 
-  String pvenm = "PVe_LHA";  String pvinm = "PVi_VSpatch";  String pvrnm = "PVr_VShab";
-  String lvenm = "LVe_CNA";  String lvinm = "LVi_VSpatch";
-  String vtanm = "VTA";
-  if(!bio_labels) {
-    pvenm = "PVe"; 	pvinm = "PVi";    pvrnm = "PVr";
-    lvenm = "LVe";    lvinm = "LVi";    vtanm = "DA";
-  }
+  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
+  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+  String vtanm = "DA";
 
   //////////////////////////////////////////////////////////////////////////////////
   // make layers
@@ -1696,6 +1690,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
   LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
   LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
+  LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
   LeabraLayer* vta = (LeabraLayer*)net->FindLayer(vtanm);
   if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return;
 
@@ -1743,8 +1738,10 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   //////////////////////////////////////////////////////////////////////////////////
   // sort layers
 
-  rew_targ_lay->name = "0000";  pve->name = "0001"; pvr->name = "0002"; pvi->name = "0003";  
-  lve->name = "0004";  lvi->name = "0005";    vta->name = "0006";
+  rew_targ_lay->name = "0000";  pve->name = "0001";
+  pvr->name = "0002";  pvi->name = "0003";  
+  lve->name = "0005";  lvi->name = "0006";
+  nv->name =  "0008"; vta->name = "0009";
 
   matrix_m->name = "ZZZ4";  
   snrthal_m->name = "ZZZ6";
@@ -1758,8 +1755,11 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   net->layers.Sort();
 
-  rew_targ_lay->name = "RewTarg";  pve->name = pvenm;  pvr->name = pvrnm; pvi->name = pvinm;
-  lve->name = lvenm;  	lvi->name = lvinm;	vta->name = vtanm;
+  rew_targ_lay->name = "RewTarg";  pve->name = pvenm;
+  pvr->name = pvrnm;  pvi->name = pvinm; 
+  lve->name = lvenm; lvi->name = lvinm;
+  nv->name = nvnm;   vta->name = vtanm;
+
   if(out_gate) {
     snrthal_m->name = "SNrThal_mnt";
     snrthal_o->name = "SNrThal_out";
@@ -1787,7 +1787,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
     lay->SetUnitType(&TA_DaModUnit);
     if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
-       && lay != lve && lay != lvi && lay != vta
+       && lay != lve && lay != lvi && lay != nv && lay != vta
        && lay != snc && lay != snrthal_m && lay != matrix_m && lay != pfc_m
        && lay != snrthal_o && lay != matrix_o && lay != pfc_o) {
       other_lays.Link(lay);
@@ -1835,9 +1835,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
   LeabraConSpec* pvr_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVConSpec);
   LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
   LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
-  // old syn_dep:
-//   LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_LVConSpec);
-//   LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_LVConSpec);
+  PVConSpec* nv_cons = (PVConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
 
   LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
   if(topfc_cons == NULL) return;
@@ -1959,14 +1957,8 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     // todo: what kind of descending connectivity should this have??
     // basic assumption would be that all subcortical comes from _o!
     // but it could have prjns from pfc_m via subsets of non-gated pfc units..
-    if(mat_fm_pfc_full) {
-      net->FindMakePrjn(matrix_m, pfc_m, fullprjn, mfmpfc_cons);
-      net->FindMakePrjn(matrix_o, pfc_m, fullprjn, mofmpfc_cons);
-    }
-    else {
-      net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
-      net->FindMakePrjn(matrix_o, pfc_m, gponetoone, mofmpfc_cons);
-    }
+    net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
+    net->FindMakePrjn(matrix_o, pfc_m, fullprjn, mofmpfc_cons);
 
     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
     //  net->FindMakeSelfPrjn(pfc_m, intra_pfcps, intra_pfc);
@@ -1977,12 +1969,10 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
     net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
     net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
+    net->FindMakePrjn(nv,  pfc_m, fullprjn, nv_cons);
   }
   else {			// !out_gate
-    if(mat_fm_pfc_full)
-      net->FindMakePrjn(matrix_m, pfc_m, fullprjn, mfmpfc_cons);
-    else
-      net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
+    net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
 
     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
     //  net->FindMakeSelfPrjn(pfc, intra_pfcps, intra_pfc);
@@ -1991,6 +1981,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
     net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
     net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
+    net->FindMakePrjn(nv,  pfc_m, fullprjn, nv_cons);
   }
 
 //   if(make_patch) {
@@ -2022,30 +2013,22 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
     else {
       net->FindMakePrjn(hl, pfc_m, fullprjn, learn_cons);
     }
-    if(fm_hid_cons) {
-      if(pfc_m_new && !nolrn_pfc)
-	net->FindMakePrjn(pfc_m, hl, fullprjn, topfc_cons);
-      if(matrix_m_new)
-	net->FindMakePrjn(matrix_m, hl, fullprjn, matrix_cons);
-      if(matrix_o_new)
-	net->FindMakePrjn(matrix_o, hl, fullprjn, matrixo_cons);
+    // todo: make a new prjn creator function that does the right thing..
+//     if(fm_hid_cons) {
+//       if(pfc_m_new && !nolrn_pfc)
+// 	net->FindMakePrjn(pfc_m, hl, fullprjn, topfc_cons);
+//       if(matrix_m_new)
+// 	net->FindMakePrjn(matrix_m, hl, fullprjn, matrix_cons);
+//       if(matrix_o_new)
+// 	net->FindMakePrjn(matrix_o, hl, fullprjn, matrixo_cons);
 //       if(make_patch && patch_new) {
 // 	net->FindMakePrjn(patch, hl, fullprjn, lve_cons);
 //       }
-    }
   }
-  if(fm_out_cons) {
+  if(pfc_m_new && !nolrn_pfc) {
     for(i=0;i<output_lays.size;i++) {
       Layer* ol = (Layer*)output_lays[i];
-      if(pfc_m_new && !nolrn_pfc)
-	net->FindMakePrjn(pfc_m, ol, fullprjn, topfc_cons);
-      if(matrix_m_new)
-	net->FindMakePrjn(matrix_m, ol, fullprjn, matrix_cons);
-      if(matrix_o_new)
-	net->FindMakePrjn(matrix_o, ol, fullprjn, matrixo_cons);
-//       if(make_patch && patch_new) {
-// 	net->FindMakePrjn(patch, ol, fullprjn, lve_cons);
-//       }
+      net->FindMakePrjn(pfc_m, ol, fullprjn, topfc_cons);
     }
   }
 
@@ -2054,15 +2037,14 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   // todo: update these values!
 
-  if(lr_sched) {
-    learn_cons->lrs_value = LeabraConSpec::EXT_REW_STAT;
-    learn_cons->lrate_sched.SetSize(2);
-    SchedItem* si = (SchedItem*)learn_cons->lrate_sched.FastEl(0);
-    si->start_val = 1.0f;
-    si = (SchedItem*)learn_cons->lrate_sched.FastEl(1);
-    si->start_ctr = 90;
-    si->start_val = .1f;
-  }
+  // lr sched:
+  learn_cons->lrs_value = LeabraConSpec::EXT_REW_STAT;
+  learn_cons->lrate_sched.SetSize(2);
+  SchedItem* si = (SchedItem*)learn_cons->lrate_sched.FastEl(0);
+  si->start_val = 1.0f;
+  si = (SchedItem*)learn_cons->lrate_sched.FastEl(1);
+  si->start_ctr = 90;
+  si->start_val = .1f;
 
   // slow learning rate on to pfc cons!
   topfc_cons->SetUnique("lrate", true);
@@ -2258,7 +2240,7 @@ void LeabraWizard::BgPFC(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
     snrthal_o->un_geom.n = 1;
     if(snrthal_o_new) {
-      snrthal_o->pos.z = 0; snrthal_o->pos.y = 6;
+      snrthal_o->pos.z = 0; snrthal_o->pos.y = 4;
       snrthal_o->pos.x = snrthal_m->pos.x + snrthal_m->act_geom.x + 2;
     }
     lay_set_geom(snrthal_o, half_stripes);

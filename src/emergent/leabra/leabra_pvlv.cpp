@@ -599,7 +599,7 @@ void LVeLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 //////////////////////////////////////////
 
 void NVSpec::Initialize() {
-  da_gain = .5f;
+  da_gain = 1.0f;
   val_thr = 0.1f;
 }
 
@@ -698,7 +698,7 @@ bool NVLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-		  "requires recv connections to be of type PVConSpec")) {
+		       "requires recv connections to be of type PVConSpec")) {
       return false;
     }
   }
@@ -1166,9 +1166,7 @@ void PVLVDaLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
-			bool fm_hid_cons, bool fm_out_cons, bool da_mod_all,
-			bool old_syn_dep) {
+void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -1192,46 +1190,37 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   // make layers
 
   bool	lve_new = false;
-  String pvenm = "PVe_LHA";  String pvinm = "PVi_VSpatch";  String pvrnm = "PVr_VShab";
-  String lvenm = "LVe_CNA";  String lvinm = "LVi_CNA";
-  String vtanm = "VTA";
-  String alt_pvenm = "PVe";  String alt_pvinm = "PVi";  String alt_pvrnm = "PVr";
-  String alt_lvenm = "LVe";  String alt_lvinm = "LVi";
-  String alt_vtanm = "DA";
-  if(!bio_labels) {
-    pvenm = "PVe"; 	pvinm = "PVi";    pvrnm = "PVr"; 
-    lvenm = "LVe";    lvinm = "LVi";    vtanm = "DA";
-    alt_pvenm = "PVe_LHA"; alt_pvinm = "PVi_VSpatch"; alt_pvrnm = "PVr_VShab";
-    alt_lvenm = "LVe_CNA"; alt_lvinm = "LVi_VSpatch";
-    alt_vtanm = "VTA";
-  }
+  bool	pvr_new = false;
+  bool	nv_new = false;
+  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
+  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+  String vtanm = "DA";
 
   bool dumbo;
   LeabraLayer* rew_targ_lay = (LeabraLayer*)net->FindMakeLayer("RewTarg");
-  LeabraLayer* pve = (LeabraLayer*)net->FindMakeLayer(pvenm, NULL, dumbo, alt_pvenm);
-  LeabraLayer* pvr = NULL;
-  if(!old_syn_dep)
-    pvr = (LeabraLayer*)net->FindMakeLayer(pvrnm, NULL, dumbo, alt_pvrnm);
-  LeabraLayer* pvi = (LeabraLayer*)net->FindMakeLayer(pvinm, NULL, dumbo, alt_pvinm);
-  LeabraLayer* lve = (LeabraLayer*)net->FindMakeLayer(lvenm, NULL, lve_new, alt_lvenm);
-  LeabraLayer* lvi = (LeabraLayer*)net->FindMakeLayer(lvinm, NULL, dumbo, alt_lvinm);
-  LeabraLayer* vta = (LeabraLayer*)net->FindMakeLayer(vtanm, NULL, dumbo, alt_vtanm);
+  LeabraLayer* pve = (LeabraLayer*)net->FindMakeLayer(pvenm, NULL, dumbo);
+  LeabraLayer* pvr = (LeabraLayer*)net->FindMakeLayer(pvrnm, NULL, pvr_new);
+  LeabraLayer* pvi = (LeabraLayer*)net->FindMakeLayer(pvinm, NULL, dumbo);
+  LeabraLayer* lve = (LeabraLayer*)net->FindMakeLayer(lvenm, NULL, lve_new);
+  LeabraLayer* lvi = (LeabraLayer*)net->FindMakeLayer(lvinm, NULL, dumbo);
+  LeabraLayer* nv =  (LeabraLayer*)net->FindMakeLayer(nvnm, NULL, nv_new);
+  LeabraLayer* vta = (LeabraLayer*)net->FindMakeLayer(vtanm, NULL, dumbo);
   if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return;
 
   //////////////////////////////////////////////////////////////////////////////////
   // sort layers
 
   rew_targ_lay->name = "0000";  pve->name = "0001";
-  if(!old_syn_dep)
-    pvr->name = "0002";
-  pvi->name = "0003";  lve->name = "0004";  lvi->name = "0005";    vta->name = "0006";
+  pvr->name = "0002";  pvi->name = "0003";  
+  lve->name = "0005";  lvi->name = "0006";
+  nv->name =  "0008"; vta->name = "0009";
 
   net->layers.Sort();
 
   rew_targ_lay->name = "RewTarg";  pve->name = pvenm;
-  if(!old_syn_dep)
-    pvr->name = pvrnm;
-  pvi->name = pvinm;  lve->name = lvenm; lvi->name = lvinm; vta->name = vtanm;
+  pvr->name = pvrnm;  pvi->name = pvinm; 
+  lve->name = lvenm; lvi->name = lvinm;
+  nv->name = nvnm;   vta->name = vtanm;
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
@@ -1247,7 +1236,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
     lay->SetUnitType(&TA_DaModUnit);
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
-       lay != lvi && lay != vta
+       lay != lvi && lay != nv && lay != vta
        && !laysp->InheritsFrom(&TA_PFCLayerSpec) && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
        && !laysp->InheritsFrom(&TA_PatchLayerSpec) 
        && !laysp->InheritsFrom(&TA_SNcLayerSpec) && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
@@ -1287,18 +1276,10 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   if(learn_cons == NULL) return;
 
   PVConSpec* pvi_cons = (PVConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
-  PVConSpec* pvr_cons = NULL;
-  LeabraConSpec* lve_cons = NULL;
-  LeabraConSpec* lvi_cons = NULL;
-  if(old_syn_dep) {
-    lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_LVConSpec);
-    lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_LVConSpec);
-  }
-  else {
-    pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVConSpec);
-    lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
-    lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
-  }
+  PVConSpec* pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVConSpec);
+  LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
+  LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
+  PVConSpec* nv_cons = (PVConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
   if(bg_bias == NULL) return;
   LeabraConSpec* fixed_bias = (LeabraConSpec*)bg_bias->FindMakeChild("FixedBias", &TA_LeabraBiasSpec);
@@ -1308,13 +1289,12 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
     return;
 
   ExtRewLayerSpec* pvesp = (ExtRewLayerSpec*)layers->FindMakeSpec(pvenm + "Layer", &TA_ExtRewLayerSpec);
-  PVrLayerSpec* pvrsp = NULL;
-  if(!old_syn_dep)
-    pvrsp = (PVrLayerSpec*)layers->FindMakeSpec(pvrnm + "Layer", &TA_PVrLayerSpec, dumbo, alt_pvrnm + "Layer");
-  PViLayerSpec* pvisp = (PViLayerSpec*)layers->FindMakeSpec(pvinm + "Layer", &TA_PViLayerSpec, dumbo, alt_pvinm + "Layer");
-  LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec, dumbo, alt_lvenm + "Layer");
-  LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec, dumbo, alt_lvinm + "Layer");
-  PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindMakeSpec(vtanm + "Layer", &TA_PVLVDaLayerSpec, dumbo, alt_vtanm + "Layer");
+  PVrLayerSpec* pvrsp = (PVrLayerSpec*)layers->FindMakeSpec(pvrnm + "Layer", &TA_PVrLayerSpec, dumbo);
+  PViLayerSpec* pvisp = (PViLayerSpec*)layers->FindMakeSpec(pvinm + "Layer", &TA_PViLayerSpec, dumbo);
+  LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec, dumbo);
+  LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec, dumbo);
+  NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec, dumbo);
+  PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindMakeSpec(vtanm + "Layer", &TA_PVLVDaLayerSpec);
   if(lvesp == NULL || pvesp == NULL || pvisp == NULL || dasp == NULL) return;
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
@@ -1332,9 +1312,9 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   fixed_bias->SetUnique("lrate", true);
   fixed_bias->lrate = 0.0f;
 
-  if(!old_syn_dep)
-    pvr_cons->SetUnique("lrate", true);
+  pvr_cons->SetUnique("lrate", true);
   pvi_cons->SetUnique("lrate", true);
+  nv_cons->SetUnique("lrate", true);
   lve_cons->SetUnique("lrate", true);
   lvi_cons->SetUnique("lrate", true);
 
@@ -1345,6 +1325,20 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   lve_cons->SetUnique("lmix", false);
   lve_cons->SetUnique("lrate_sched", false);
   lve_cons->SetUnique("lrs_value", false);
+
+  pvr_cons->SetUnique("rnd", false);
+  pvr_cons->SetUnique("wt_limits", false);
+  pvr_cons->SetUnique("wt_sig", false);
+  pvr_cons->SetUnique("lmix", false);
+  pvr_cons->SetUnique("lrate_sched", false);
+  pvr_cons->SetUnique("lrs_value", false);
+
+  nv_cons->SetUnique("rnd", false);
+  nv_cons->SetUnique("wt_limits", false);
+  nv_cons->SetUnique("wt_sig", false);
+  nv_cons->SetUnique("lmix", false);
+  nv_cons->SetUnique("lrate_sched", false);
+  nv_cons->SetUnique("lrs_value", false);
 
   // NOT unique: inherit from lve:
   lvi_cons->SetUnique("rnd", false);
@@ -1363,125 +1357,62 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   pv_units->SetUnique("g_bar", true);
 
-  lvesp->lv.syn_dep = old_syn_dep;
+  lvesp->lv.syn_dep = false; // old_syn_dep;
 
-  if(localist_val) {
-    pvesp->scalar.rep = ScalarValSpec::LOCALIST;
-    pvisp->scalar.rep = ScalarValSpec::LOCALIST;
-    lvesp->scalar.rep = ScalarValSpec::LOCALIST;
-
-    pvesp->scalar.min_sum_act = .2f;
-    pvisp->scalar.min_sum_act = .2f;
-    lvesp->scalar.min_sum_act = .2f;
-
-    lvesp->bias_val.un = ScalarValBias::GC;
-    lvesp->bias_val.wt = ScalarValBias::NO_WT;
-    if(old_syn_dep)
-      lvesp->bias_val.val = 0.0f;
-    else
-      lvesp->bias_val.val = 0.5f;
-    pvisp->bias_val.un = ScalarValBias::GC;
-    pvisp->bias_val.wt = ScalarValBias::NO_WT;
-    pvisp->bias_val.val = 0.5f;
-    pvisp->pv_detect.thr_min = .2f;
-    pvisp->pv_detect.thr_max = .8f;
-
-    pvesp->compute_i = LeabraLayerSpec::KWTA_AVG_INHIB; pvesp->i_kwta_pt = 0.9f;
-    pvisp->compute_i = LeabraLayerSpec::KWTA_AVG_INHIB; pvisp->i_kwta_pt = 0.9f;
-    lvesp->compute_i = LeabraLayerSpec::KWTA_AVG_INHIB; lvesp->i_kwta_pt = 0.9f;
-
-    pvesp->kwta.k_from = KWTASpec::USE_K; pvesp->gp_kwta.k_from = KWTASpec::USE_K;
-    pvesp->kwta.k = 1; 	pvesp->gp_kwta.k = 1; 
-    pvisp->kwta.k_from = KWTASpec::USE_K; pvisp->gp_kwta.k_from = KWTASpec::USE_K;
-    pvisp->kwta.k = 1; 	pvisp->gp_kwta.k = 1; 
-    lvesp->kwta.k_from = KWTASpec::USE_K; lvesp->gp_kwta.k_from = KWTASpec::USE_K;
-    lvesp->kwta.k = 1; 	lvesp->gp_kwta.k = 1; 
-
-    pvesp->unit_range.min = 0.0f;  pvesp->unit_range.max = 1.0f;
-    pvesp->unit_range.UpdateAfterEdit();
-    pvesp->val_range = pvesp->unit_range;
-
-    pvisp->unit_range.min = 0.0f;  pvisp->unit_range.max = 1.0f;
-    pvisp->unit_range.UpdateAfterEdit();
-    pvisp->val_range = pvisp->unit_range;
-
-    lvesp->unit_range.min = 0.0f;  lvesp->unit_range.max = 1.0f;
-    lvesp->unit_range.UpdateAfterEdit();
-    lvesp->val_range = lvesp->unit_range;
-
-    pv_units->SetUnique("act", true);
-    pv_units->SetUnique("act_fun", true);
-    pv_units->SetUnique("dt", true);
-    //    pv_units->SetUnique("opt_thresh", true);
-    pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
-    pv_units->act.thr = .17f;
-    pv_units->act.gain = 220.0f;
-    pv_units->act.nvar = .01f;
-    pv_units->g_bar.l = .1f;
-    pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
-    pv_units->dt.vm = .05f;
-    pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
-    //    pv_units->opt_thresh.send = 0.0f; // scalar val may use this -- don't let it!
-
-    pvi_cons->SetUnique("lmix", true);
-    pvi_cons->lmix.err_sb = false; 
-    pvi_cons->SetUnique("rnd", true);
-    pvi_cons->rnd.mean = 0.1f;
-    pvi_cons->rnd.var = 0.0f;
+  // setup localist values!
+  ScalarValLayerSpec* valspecs[6] = {pvesp, pvisp, lvesp, lvisp, pvrsp, nvsp};
+  for(int i=0;i<6;i++) {
+    ScalarValLayerSpec* lsp = valspecs[i];
+    lsp->scalar.rep = ScalarValSpec::LOCALIST;
+    lsp->scalar.min_sum_act = .2f;
+    lsp->compute_i = LeabraLayerSpec::KWTA_AVG_INHIB; lsp->i_kwta_pt = 0.9f;
+    lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 1;
+    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 1; 
+    lsp->unit_range.min = 0.0f;  lsp->unit_range.max = 1.0f;
+    lsp->unit_range.UpdateAfterEdit();
+    lsp->val_range = lsp->unit_range;
   }
-  else {			// GAUSSIAN
-    pvesp->scalar.rep = ScalarValSpec::GAUSSIAN;
-    pvisp->scalar.rep = ScalarValSpec::GAUSSIAN;
-    lvesp->scalar.rep = ScalarValSpec::GAUSSIAN;
 
-    lvesp->bias_val.un = ScalarValBias::GC;
-    lvesp->bias_val.wt = ScalarValBias::NO_WT;
-    if(old_syn_dep)
-      lvesp->bias_val.val = 0.0f;
-    else
-      lvesp->bias_val.val = 0.5f;
-    pvisp->bias_val.un = ScalarValBias::GC;
-    pvisp->bias_val.wt = ScalarValBias::NO_WT;
-    pvisp->bias_val.val = 0.5f;
+  lvesp->bias_val.un = ScalarValBias::GC;
+  lvesp->bias_val.wt = ScalarValBias::NO_WT;
+  lvesp->bias_val.val = 0.5f;
+  pvisp->bias_val.un = ScalarValBias::GC;
+  pvisp->bias_val.wt = ScalarValBias::NO_WT;
+  pvisp->bias_val.val = 0.5f;
+  pvrsp->bias_val.un = ScalarValBias::GC;
+  pvrsp->bias_val.wt = ScalarValBias::NO_WT;
+  pvrsp->bias_val.val = 0.5f;
+  nvsp->bias_val.un = ScalarValBias::GC;
+  nvsp->bias_val.wt = ScalarValBias::NO_WT;
+  nvsp->bias_val.val = 1.0f;
+  pvisp->pv_detect.thr_min = .2f;
+  pvisp->pv_detect.thr_max = .8f;
+  pvrsp->pv_detect.thr_min = .2f;
+  pvrsp->pv_detect.thr_max = .8f;
 
-    pvesp->compute_i = LeabraLayerSpec::KWTA_INHIB; pvesp->i_kwta_pt = 0.25f;
-    pvisp->compute_i = LeabraLayerSpec::KWTA_INHIB; pvisp->i_kwta_pt = 0.25f;
-    lvesp->compute_i = LeabraLayerSpec::KWTA_INHIB; lvesp->i_kwta_pt = 0.25f;
+  pv_units->SetUnique("act", true);
+  pv_units->SetUnique("act_fun", true);
+  pv_units->SetUnique("dt", true);
+  //    pv_units->SetUnique("opt_thresh", true);
+  pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
+  pv_units->act.thr = .17f;
+  pv_units->act.gain = 220.0f;
+  pv_units->act.nvar = .01f;
+  pv_units->g_bar.l = .1f;
+  pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
+  pv_units->dt.vm = .05f;
+  pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
+  //    pv_units->opt_thresh.send = 0.0f; // scalar val may use this -- don't let it!
 
-    pvesp->kwta.k = 3; 	pvesp->gp_kwta.k = 3; 
-    pvisp->kwta.k = 3; 	pvisp->gp_kwta.k = 3; 
-    lvesp->kwta.k = 3; 	lvesp->gp_kwta.k = 3; 
-
-    pvesp->unit_range.min = -0.50f;  pvesp->unit_range.max = 1.5f;
-    pvesp->unit_range.UpdateAfterEdit();
-
-    pvisp->unit_range.min = -0.5f;  pvisp->unit_range.max = 1.5f;
-    pvisp->unit_range.UpdateAfterEdit();
-
-    lvesp->unit_range.min = -0.5f;  lvesp->unit_range.max = 1.5f;
-    lvesp->unit_range.UpdateAfterEdit();
-
-    pv_units->SetUnique("act", true);
-    pv_units->SetUnique("act_fun", true);
-    pv_units->SetUnique("dt", true);
-    pv_units->act_fun = LeabraUnitSpec::NOISY_XX1;
-    pv_units->act.thr = .25f;
-    pv_units->act.gain = 600.0f;
-    pv_units->act.nvar = .005f;
-    pv_units->g_bar.l = .1f;
-    pv_units->g_bar.h = .015f;  pv_units->g_bar.a = .045f;
-    pv_units->dt.vm = .2f;
-
-    pvi_cons->SetUnique("lmix", true);
-    pvi_cons->lmix.err_sb = true;
-    pvi_cons->SetUnique("rnd", true);
-    pvi_cons->rnd.mean = 0.1f;
-    pvi_cons->rnd.var = 0.0f;
-  }
+  pvi_cons->SetUnique("lmix", true);
+  pvi_cons->lmix.err_sb = false; 
+  pvi_cons->SetUnique("rnd", true);
+  pvi_cons->rnd.mean = 0.1f;
+  pvi_cons->rnd.var = 0.0f;
 
   pvi_cons->lrate = .01f;
-  if(!old_syn_dep)
-    pvr_cons->lrate = .02f;
+  pvr_cons->lrate = .02f;
+  nv_cons->lrate = .0005f;
   lve_cons->lrate = .05f;
   lvi_cons->lrate = .001f;
 
@@ -1515,38 +1446,28 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   if(lve->un_geom.n != n_lv_u) { lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }
   if(lvi->un_geom.n != n_lv_u) { lvi->un_geom.n = n_lv_u; lvi->un_geom.x = n_lv_u; lvi->un_geom.y = 1; }
   if(pve->un_geom.n != n_lv_u) { pve->un_geom.n = n_lv_u; pve->un_geom.x = n_lv_u; pve->un_geom.y = 1; }
-  if(!old_syn_dep) {
-    if(pvr->un_geom.n != n_lv_u) { pvr->un_geom.n = n_lv_u; pvr->un_geom.x = n_lv_u; pvr->un_geom.y = 1; }
-  }
+  if(pvr->un_geom.n != n_lv_u) { pvr->un_geom.n = n_lv_u; pvr->un_geom.x = n_lv_u; pvr->un_geom.y = 1; }
+  if(nv->un_geom.n != n_lv_u) { nv->un_geom.n = n_lv_u; nv->un_geom.x = n_lv_u; nv->un_geom.y = 1; }
   vta->un_geom.n = 1;
   rew_targ_lay->un_geom.n = 1;
   rew_targ_lay->layer_type = Layer::INPUT;
 
   if(lve_new) {
-    if(localist_val) {
-      pve->pos.z = 0; pve->pos.y = 0; pve->pos.x = 0;
-      pvi->pos.z = 0; pvi->pos.y = 2; pvi->pos.x = 0;
-      if(!old_syn_dep) {
-	pvr->pos.z = 0; pvr->pos.y = 4; pvr->pos.x = 0;
-      }
-      rew_targ_lay->pos.z = 0; rew_targ_lay->pos.y = 6; rew_targ_lay->pos.x = 0;
+    pve->pos.z = 0; pve->pos.y = 0; pve->pos.x = 0;
+    pvi->pos.z = 0; pvi->pos.y = 2; pvi->pos.x = 0;
 
-      vta->pos.z = 0; vta->pos.y = 4; vta->pos.x = 6;
+    vta->pos.z = 0; vta->pos.y = 4; vta->pos.x = 6;
+    rew_targ_lay->pos.z = 0; rew_targ_lay->pos.y = 4; rew_targ_lay->pos.x = 15;
 
-      lve->pos.z = 0; lve->pos.y = 0; lve->pos.x = 9;
-      lvi->pos.z = 0; lvi->pos.y = 2; lvi->pos.x = 9;
-    }
-    else {
-      rew_targ_lay->pos.z = 0; rew_targ_lay->pos.y = 6; rew_targ_lay->pos.x = 0;
-      pve->pos.z = 0; pve->pos.y = 6; pve->pos.x = 0;
-      vta->pos.z = 0; vta->pos.y = 1; vta->pos.x = n_lv_u + 2;
-      pvi->pos.z = 0; pvi->pos.y = 4; pvi->pos.x = 0;
-      lvi->pos.z = 0; lvi->pos.y = 2; lvi->pos.x = 0;
-      lve->pos.z = 0; lve->pos.y = 0; lve->pos.x = 0;
-      if(!old_syn_dep) {
-	pvr->pos.z = 0; pvr->pos.y = 8; pvr->pos.x = 0;
-      }
-    }
+    lve->pos.z = 0; lve->pos.y = 0; lve->pos.x = 6;
+    lvi->pos.z = 0; lvi->pos.y = 2; lvi->pos.x = 6;
+  }
+
+  if(pvr_new) {
+    pvr->pos.z = 0; pvr->pos.y = 4; pvr->pos.x = 0;
+  }
+  if(nv_new) {
+    nv->pos.z = 0;  nv->pos.y = 4; nv->pos.x = 9;
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1557,9 +1478,8 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   lve->SetLayerSpec(lvesp);	lve->SetUnitSpec(lv_units);
   lvi->SetLayerSpec(lvisp);	lvi->SetUnitSpec(lv_units);
   vta->SetLayerSpec(dasp);	vta->SetUnitSpec(da_units);
-  if(!old_syn_dep) {
-    pvr->SetLayerSpec(pvrsp);	pvr->SetUnitSpec(pv_units);
-  }
+  pvr->SetLayerSpec(pvrsp);	pvr->SetUnitSpec(pv_units);
+  nv->SetLayerSpec(nvsp);	nv->SetUnitSpec(pv_units);
 
   pv_units->bias_spec.SetSpec(bg_bias);
   lv_units->bias_spec.SetSpec(bg_bias);
@@ -1568,61 +1488,58 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
 
+  // TODO: reduce these connections!!  don't need so many..  fix checkconfigs too
+
   // FindMakePrjn(Layer* recv, Layer* send,
   net->FindMakePrjn(pve, rew_targ_lay, onetoone, marker_cons);
   net->FindMakePrjn(pvi, pve, onetoone, marker_cons);
-  net->FindMakePrjn(lve, pvi, onetoone, marker_cons);
-  net->FindMakePrjn(lvi, pvi, onetoone, marker_cons);
+//   net->FindMakePrjn(pvi, vta, onetoone, marker_cons);
+
+  net->FindMakePrjn(pvr, pve, onetoone, marker_cons);
+//   net->FindMakePrjn(pvr, vta, onetoone, marker_cons);
+
+  net->FindMakePrjn(lve, pvr, onetoone, marker_cons);
+  //  net->FindMakePrjn(lve, pvi, onetoone, marker_cons);
+//   net->FindMakePrjn(lve, vta, onetoone, marker_cons);
+ 
+  net->FindMakePrjn(lvi, pvr, onetoone, marker_cons);
+ //  net->FindMakePrjn(lvi, pvi, onetoone, marker_cons);
+//   net->FindMakePrjn(lvi, vta, onetoone, marker_cons);
 
   net->FindMakePrjn(vta, pvi, onetoone, marker_cons);
   net->FindMakePrjn(vta, lve, onetoone, marker_cons);
   net->FindMakePrjn(vta, lvi, onetoone, marker_cons);
+  net->FindMakePrjn(vta, pvr, onetoone, marker_cons);
 
-  net->FindMakePrjn(pvi,  vta, onetoone, marker_cons);
-  net->FindMakePrjn(lve,  vta, onetoone, marker_cons);
-  net->FindMakePrjn(lvi,  vta, onetoone, marker_cons);
-
-  if(!old_syn_dep) {
-    net->FindMakePrjn(pvr, pve, onetoone, marker_cons);
-    net->FindMakePrjn(lve, pvr, onetoone, marker_cons);
-    net->FindMakePrjn(lvi, pvr, onetoone, marker_cons);
-    net->FindMakePrjn(vta, pvr, onetoone, marker_cons);
-    net->FindMakePrjn(pvr,  vta, onetoone, marker_cons);
-  }
-
-
-  if(lve_new || fm_hid_cons || fm_out_cons) {
+  if(lve_new) {
     for(i=0;i<input_lays.size;i++) {
       Layer* il = (Layer*)input_lays[i];
       net->FindMakePrjn(pvi, il, fullprjn, pvi_cons);
       net->FindMakePrjn(lve, il, fullprjn, lve_cons);
       net->FindMakePrjn(lvi, il, fullprjn, lvi_cons);
-      if(!old_syn_dep) {
-	net->FindMakePrjn(pvr, il, fullprjn, pvr_cons);
-      }
+      net->FindMakePrjn(pvr, il, fullprjn, pvr_cons);
     }
-    if(fm_hid_cons) {
-      for(i=0;i<hidden_lays.size;i++) {
-	Layer* hl = (Layer*)hidden_lays[i];
-	net->FindMakePrjn(pvi, hl, fullprjn, pvi_cons);
-	net->FindMakePrjn(lve, hl, fullprjn, lve_cons);
-	net->FindMakePrjn(lvi, hl, fullprjn, lvi_cons);
-	if(!old_syn_dep) {
-	  net->FindMakePrjn(pvr, hl, fullprjn, pvr_cons);
-	}
-      }
-    }
-    if(fm_out_cons) {
-      for(i=0;i<output_lays.size;i++) {
-	Layer* ol = (Layer*)output_lays[i];
-	net->FindMakePrjn(pvi, ol, fullprjn, pvi_cons);
-	net->FindMakePrjn(lve, ol, fullprjn, lve_cons);
-	net->FindMakePrjn(lvi, ol, fullprjn, lvi_cons);
-	if(!old_syn_dep) {
-	  net->FindMakePrjn(pvr, ol, fullprjn, pvr_cons);
-	}
-      }
-    }
+    // todo: maybe make these separate functions? -- could be one fun
+    // that connects or disconnects a given layer into the PVLV system 
+    // that is an excellent idea!!!
+//     if(fm_hid_cons) {
+//       for(i=0;i<hidden_lays.size;i++) {
+// 	Layer* hl = (Layer*)hidden_lays[i];
+// 	net->FindMakePrjn(pvi, hl, fullprjn, pvi_cons);
+// 	net->FindMakePrjn(lve, hl, fullprjn, lve_cons);
+// 	net->FindMakePrjn(lvi, hl, fullprjn, lvi_cons);
+// 	net->FindMakePrjn(pvr, hl, fullprjn, pvr_cons);
+//       }
+//     }
+//     if(fm_out_cons) {
+//       for(i=0;i<output_lays.size;i++) {
+// 	Layer* ol = (Layer*)output_lays[i];
+// 	net->FindMakePrjn(pvi, ol, fullprjn, pvi_cons);
+// 	net->FindMakePrjn(lve, ol, fullprjn, lve_cons);
+// 	net->FindMakePrjn(lvi, ol, fullprjn, lvi_cons);
+// 	net->FindMakePrjn(pvr, ol, fullprjn, pvr_cons);
+//       }
+//     }
   }
   if(da_mod_all) {
     for(i=0;i<other_lays.size;i++) {
@@ -1643,12 +1560,9 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
 
   bool ok = pvisp->CheckConfig_Layer(pvi, true) && lvesp->CheckConfig_Layer(lve, true)
     && lvisp->CheckConfig_Layer(lve, true)
-    && dasp->CheckConfig_Layer(vta, true) && pvesp->CheckConfig_Layer(pve, true);
-
-  if(!old_syn_dep && ok) {
-    ok = pvrsp->CheckConfig_Layer(pvr, true);
-  }
-
+    && dasp->CheckConfig_Layer(vta, true) && pvesp->CheckConfig_Layer(pve, true)
+    && pvrsp->CheckConfig_Layer(pvr, true) && nvsp->CheckConfig_Layer(nv, true);
+  
   if(!ok) {
     msg =
       "PVLV: An error in the configuration has occurred (it should be the last message\
@@ -1667,9 +1581,8 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   pvisp->UpdateAfterEdit();
   lvesp->UpdateAfterEdit();
   lvisp->UpdateAfterEdit();
-
-  if(!old_syn_dep)
-    pvisp->UpdateAfterEdit();
+  pvrsp->UpdateAfterEdit();
+  nvsp->UpdateAfterEdit();
   
   for(j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
@@ -1682,18 +1595,14 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool bio_labels, bool localist_val,
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   SelectEdit* edit = proj->FindMakeSelectEdit("PVLV");
   if(edit != NULL) {
-    if(!old_syn_dep)
-      pvr_cons->SelectForEditNm("lrate", edit, "pvr");
+    pvr_cons->SelectForEditNm("lrate", edit, "pvr");
     pvi_cons->SelectForEditNm("lrate", edit, "pvi");
     lve_cons->SelectForEditNm("lrate", edit, "lve");
     lvi_cons->SelectForEditNm("lrate", edit, "lvi");
-    //    lve_cons->SelectForEditNm("syn_dep", edit, "lve");
+    nv_cons->SelectForEditNm("lrate", edit, "nv");
     pvesp->SelectForEditNm("rew", edit, "pve");
 //     lvesp->SelectForEditNm("lv", edit, "lve");
-    if(!old_syn_dep)
-      pvrsp->SelectForEditNm("pv_detect", edit, "pvr");
-    else
-      pvisp->SelectForEditNm("pv_detect", edit, "pvi");
+    pvrsp->SelectForEditNm("pv_detect", edit, "pvr");
 //     pvisp->SelectForEditNm("scalar", edit, "pvi");
 //     lvesp->SelectForEditNm("scalar", edit, "lve");
 //     pvisp->SelectForEditNm("bias_val", edit, "pvi");

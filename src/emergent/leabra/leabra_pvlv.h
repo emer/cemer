@@ -317,7 +317,7 @@ class LEABRA_API NVSpec : public taBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
 INHERITED(taBase)
 public:
-  float		da_gain;	// gain for novelty value dopamine signal
+  float		da_gain;	// #DEF_1 gain for novelty value dopamine signal
   float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
 
   void 	Defaults()	{ Initialize(); }

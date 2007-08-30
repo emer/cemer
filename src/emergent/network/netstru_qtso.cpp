@@ -2373,37 +2373,38 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layFontsEtc->addWidget(chkXYSquare);
 
-  gbDisplayValues = new QGroupBox("Display Values", widg);
-  layTopCtrls->addWidget(gbDisplayValues, 1);
-  layDisplayValues = new QVBoxLayout(gbDisplayValues);
-
   ////////////////////////////////////////////////////////////////////////////
+  //  gbDisplayValues = new QGroupBox("Display Values", widg);
+  //  layTopCtrls->addWidget(gbDisplayValues, 1);
+  //  gbDisplayValues->setFlat(true);		  // make it take up less space
+  layDisplayValues = new QVBoxLayout(layTopCtrls); //gbDisplayValues);
+
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
-  chkAutoScale = new QCheckBox("auto scale", gbDisplayValues);
+  chkAutoScale = new QCheckBox("auto scale", widg);
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layColorScaleCtrls->addWidget(chkAutoScale);
 
-  butScaleDefault = new QPushButton("Set Defaults", gbDisplayValues);
+  butScaleDefault = new QPushButton("Set Defaults", widg);
   butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScaleCtrls->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
   
   ////////////////////////////////////////////////////////////////////////////
   layColorBar = new QHBoxLayout(layDisplayValues);
-  cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, gbDisplayValues);
+  cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
 //  cbar->setMaximumWidth(30);
 //   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   
-  butSetColor = new QPushButton("Colors", gbDisplayValues);
+  butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorBar->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 
   ////////////////////////////////////////////////////////////////////////////
-  lvDisplayValues = new Q3ListView(gbDisplayValues);
+  lvDisplayValues = new Q3ListView(widg);
   lvDisplayValues->addColumn("Value", 80);
   lvDisplayValues->addColumn("Description");
   lvDisplayValues->setShowSortIndicator(false);
@@ -2414,10 +2415,11 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   ////////////////////////////////////////////////////////////////////////////
   // Spec tree
-  gbSpecs = new QGroupBox("Specs", widg);
-  layTopCtrls->addWidget(gbSpecs, 1);
-  laySpecs = new QVBoxLayout(gbSpecs);
-  tvSpecs = new iTreeView(gbSpecs, iTreeView::TV_AUTO_EXPAND);
+//   gbSpecs = new QGroupBox("Specs", widg);
+//   gbSpecs->setFlat(true); // make it take up less space
+//   layTopCtrls->addWidget(gbSpecs, 1);
+  laySpecs = new QVBoxLayout(layTopCtrls);
+  tvSpecs = new iTreeView(widg, iTreeView::TV_AUTO_EXPAND);
   tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
   laySpecs->addWidget(tvSpecs, 1);
   tvSpecs->setColumnCount(2);
