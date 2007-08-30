@@ -3285,6 +3285,9 @@ void taiItemPtrBase::UpdateImage(void* cur_sel) {
   if(hasOnlyOneItem()) {
     rep()->setEnabled(false);	// if only one option, this is it -- will override m_sel!
   }
+  else {
+    rep()->setEnabled(true);
+  }
   rep()->setText(labelText());
 }
 
@@ -3859,8 +3862,8 @@ bool taiTokenPtrButton::countTokensToN(int& cnt, TypeDef* td, int n, void*& last
       continue;
     if (!ShowToken(btmp)) continue;
     cnt++;
-    if(cnt >= n) return true;	// got it!
     last_itm = (void*)btmp;
+    if(cnt >= n) return true;	// got it!
   }
   if(td->tokens.sub_tokens == 0) return false; // not gonna happen
 
@@ -3892,7 +3895,10 @@ bool taiTokenPtrButton::hasOnlyOneItem() {
   if(HasFlag(flgNullOk)) {
     // now check that we don't have any others -- same logic as has no items
     if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
-    return !countTokensToN(cnt, targ_typ, 1, last_itm);
+    if(!countTokensToN(cnt, targ_typ, 1, last_itm)) {
+      m_sel = NULL;		// select NULL
+      return true;
+    }
   }
   if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return false; // no way
   bool got_two = countTokensToN(cnt, targ_typ, 2, last_itm); // if we get 2, then we're bust!
