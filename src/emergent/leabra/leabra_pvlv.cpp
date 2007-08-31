@@ -765,6 +765,8 @@ void NVLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;
+  lv_only_2p = false;
+  pv_only_1p = false;
   use_actual_er = false;
   syn_dep = false;
   min_lvi = 0.1f;
@@ -1034,7 +1036,7 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
     lv_da += nvls->Compute_NVDa(nv_lay);
   }
 
-  // note that multiple LV subgroups are supported, but not multiple PV's
+  // note that multiple LV subgroups are supported, but not multiple PV's (yet!)
   DaModUnit* pvisu = (DaModUnit*)pvi_lay->units.Leaf(0);
   float pvd = pve_val - pvisu->act_m; 
   float pv_da = pvd - pvisu->misc_1;
@@ -1043,16 +1045,27 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   DaModUnit* u;
   taLeafItr i;
   FOR_ITR_EL(DaModUnit, u, lay->units., i) {
-    if(net->phase_no == 0) {	// not used at this point..
-      u->dav = lv_da; 		// lviu->act_eq - avgbl;
+    if(net->phase_no == 0) {
+      u->dav = 0.0f;
     }
-    else {
-      // IF_PV_ELSE_LV mode always:
-      if(er_avail) {
-	u->dav = da.da_gain * pv_da;
+    else if(net->phase_no == net->phase_max-1) { // final phase = do everything
+      if(er_avail) {				 // either PV or LV
+	if(net->phase_no == 2 && da.pv_only_1p)
+	  u->dav = 0.0f;
+	else
+	  u->dav = da.da_gain * pv_da;
       }
-      else {
+      else 
 	u->dav = da.da_gain * lv_da;
+    }
+    else if(net->phase_no == 1) { // if 2 plus phases, this will not be last, so it just has pv
+      if(er_avail)
+	u->dav = da.da_gain * pv_da;
+      else {
+	if(da.lv_only_2p)
+	  u->dav = 0.0f;
+	else 
+	  u->dav = da.da_gain * lv_da;
       }
     }
 
