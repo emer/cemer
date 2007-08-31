@@ -4116,18 +4116,18 @@ void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
 //			Unit Inhib
 ///////////////////////////////////////////////////////////////
 
-void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
+bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   net->RemoveUnits();
   
   LeabraUnitSpec* basic_us = (LeabraUnitSpec*)net->FindSpecType(&TA_LeabraUnitSpec);
   if(TestError(!basic_us, "UnitInhib", "basic LeabraUnitSpec not found, bailing!")) {
-    return;
+    return false;
   }
   LeabraUnitSpec* inhib_us = (LeabraUnitSpec*)basic_us->children.FindMakeSpec("InhibUnits", &TA_LeabraUnitSpec);
 
   LeabraConSpec* basic_cs = (LeabraConSpec*)net->FindSpecType(&TA_LeabraConSpec);
   if(TestError(!basic_cs, "UnitInhib", "basic LeabraConSpec not found, bailing!")) {
-    return;
+    return false;
   }
   LeabraConSpec* inhib_cs = (LeabraConSpec*)basic_cs->children.FindMakeSpec("InhibCons", &TA_LeabraConSpec);
 
@@ -4136,13 +4136,13 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 
   LeabraLayerSpec* basic_ls = (LeabraLayerSpec*)net->FindSpecType(&TA_LeabraLayerSpec);
   if(TestError(!basic_ls, "UnitInhib", "basic LeabraLayerSpec not found, bailing!")) {
-    return;
+    return false;
   }
   LeabraLayerSpec* inhib_ls = (LeabraLayerSpec*)basic_ls->children.FindMakeSpec("InhibLayers", &TA_LeabraLayerSpec);
 
   FullPrjnSpec* fullprjn = (FullPrjnSpec*)net->FindSpecType(&TA_FullPrjnSpec);
   if(TestError(!fullprjn, "UnitInhib", "basic FullPrjnSpec not found, bailing!")) {
-    return;
+    return false;
   }
 
   // todo: optimize these params..
@@ -4247,6 +4247,7 @@ void LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
     net->SelectForEditNm("cycle_max", edit, net->name);
     net->SelectForEditNm("min_cycles", edit, net->name);
   }
+  return true;
 }
 
 void LeabraWizard::StdProgs() {

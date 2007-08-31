@@ -1166,7 +1166,7 @@ void PVLVDaLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
+bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -1205,7 +1205,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   LeabraLayer* lvi = (LeabraLayer*)net->FindMakeLayer(lvinm, NULL, dumbo);
   LeabraLayer* nv =  (LeabraLayer*)net->FindMakeLayer(nvnm, NULL, nv_new);
   LeabraLayer* vta = (LeabraLayer*)net->FindMakeLayer(vtanm, NULL, dumbo);
-  if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return;
+  if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return false;
 
   //////////////////////////////////////////////////////////////////////////////////
   // sort layers
@@ -1238,8 +1238,7 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
        lay != lvi && lay != nv && lay != vta
        && !laysp->InheritsFrom(&TA_PFCLayerSpec) && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
-       && !laysp->InheritsFrom(&TA_PatchLayerSpec) 
-       && !laysp->InheritsFrom(&TA_SNcLayerSpec) && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
+       && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
       if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
@@ -1265,15 +1264,15 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   BaseSpec_Group* cons = net->FindMakeSpecGp(gpprfx + "Cons");
   BaseSpec_Group* layers = net->FindMakeSpecGp(gpprfx + "Layers");
   BaseSpec_Group* prjns = net->FindMakeSpecGp(gpprfx + "Prjns");
-  if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
+  if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
 
   LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_DaModUnitSpec);
   LeabraUnitSpec* lv_units = (LeabraUnitSpec*)pv_units->FindMakeChild("LVUnits", &TA_DaModUnitSpec);
   LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_DaModUnitSpec);
-  if(lv_units == NULL || pv_units == NULL || da_units == NULL) return;
+  if(lv_units == NULL || pv_units == NULL || da_units == NULL) return false;
 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
-  if(learn_cons == NULL) return;
+  if(learn_cons == NULL) return false;
 
   PVConSpec* pvi_cons = (PVConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
   PVConSpec* pvr_cons = (PVConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVConSpec);
@@ -1281,12 +1280,12 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
   PVConSpec* nv_cons = (PVConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
-  if(bg_bias == NULL) return;
+  if(bg_bias == NULL) return false;
   LeabraConSpec* fixed_bias = (LeabraConSpec*)bg_bias->FindMakeChild("FixedBias", &TA_LeabraBiasSpec);
 
   LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
   if(lve_cons == NULL || marker_cons == NULL || fixed_bias == NULL)
-    return;
+    return false;
 
   ExtRewLayerSpec* pvesp = (ExtRewLayerSpec*)layers->FindMakeSpec(pvenm + "Layer", &TA_ExtRewLayerSpec);
   PVrLayerSpec* pvrsp = (PVrLayerSpec*)layers->FindMakeSpec(pvrnm + "Layer", &TA_PVrLayerSpec, dumbo);
@@ -1295,11 +1294,11 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec, dumbo);
   NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec, dumbo);
   PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindMakeSpec(vtanm + "Layer", &TA_PVLVDaLayerSpec);
-  if(lvesp == NULL || pvesp == NULL || pvisp == NULL || dasp == NULL) return;
+  if(lvesp == NULL || pvesp == NULL || pvisp == NULL || dasp == NULL) return false;
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
-  if(fullprjn == NULL || onetoone == NULL) return;
+  if(fullprjn == NULL || onetoone == NULL) return false;
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
@@ -1488,58 +1487,29 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
 
-  // TODO: reduce these connections!!  don't need so many..  fix checkconfigs too
-
   // FindMakePrjn(Layer* recv, Layer* send,
   net->FindMakePrjn(pve, rew_targ_lay, onetoone, marker_cons);
-  net->FindMakePrjn(pvi, pve, onetoone, marker_cons);
-//   net->FindMakePrjn(pvi, vta, onetoone, marker_cons);
-
   net->FindMakePrjn(pvr, pve, onetoone, marker_cons);
-//   net->FindMakePrjn(pvr, vta, onetoone, marker_cons);
+  net->FindMakePrjn(pvi, pve, onetoone, marker_cons);
 
   net->FindMakePrjn(lve, pvr, onetoone, marker_cons);
-  //  net->FindMakePrjn(lve, pvi, onetoone, marker_cons);
-//   net->FindMakePrjn(lve, vta, onetoone, marker_cons);
- 
   net->FindMakePrjn(lvi, pvr, onetoone, marker_cons);
- //  net->FindMakePrjn(lvi, pvi, onetoone, marker_cons);
-//   net->FindMakePrjn(lvi, vta, onetoone, marker_cons);
 
   net->FindMakePrjn(vta, pvi, onetoone, marker_cons);
   net->FindMakePrjn(vta, lve, onetoone, marker_cons);
   net->FindMakePrjn(vta, lvi, onetoone, marker_cons);
   net->FindMakePrjn(vta, pvr, onetoone, marker_cons);
+  net->FindMakePrjn(vta, nv,  onetoone, marker_cons);
 
   if(lve_new) {
     for(i=0;i<input_lays.size;i++) {
       Layer* il = (Layer*)input_lays[i];
+      net->FindMakePrjn(pvr, il, fullprjn, pvr_cons);
       net->FindMakePrjn(pvi, il, fullprjn, pvi_cons);
       net->FindMakePrjn(lve, il, fullprjn, lve_cons);
       net->FindMakePrjn(lvi, il, fullprjn, lvi_cons);
-      net->FindMakePrjn(pvr, il, fullprjn, pvr_cons);
+      net->FindMakePrjn(nv,  il, fullprjn, nv_cons);
     }
-    // todo: maybe make these separate functions? -- could be one fun
-    // that connects or disconnects a given layer into the PVLV system 
-    // that is an excellent idea!!!
-//     if(fm_hid_cons) {
-//       for(i=0;i<hidden_lays.size;i++) {
-// 	Layer* hl = (Layer*)hidden_lays[i];
-// 	net->FindMakePrjn(pvi, hl, fullprjn, pvi_cons);
-// 	net->FindMakePrjn(lve, hl, fullprjn, lve_cons);
-// 	net->FindMakePrjn(lvi, hl, fullprjn, lvi_cons);
-// 	net->FindMakePrjn(pvr, hl, fullprjn, pvr_cons);
-//       }
-//     }
-//     if(fm_out_cons) {
-//       for(i=0;i<output_lays.size;i++) {
-// 	Layer* ol = (Layer*)output_lays[i];
-// 	net->FindMakePrjn(pvi, ol, fullprjn, pvi_cons);
-// 	net->FindMakePrjn(lve, ol, fullprjn, lve_cons);
-// 	net->FindMakePrjn(lvi, ol, fullprjn, lvi_cons);
-// 	net->FindMakePrjn(pvr, ol, fullprjn, pvr_cons);
-//       }
-//     }
   }
   if(da_mod_all) {
     for(i=0;i<other_lays.size;i++) {
@@ -1610,5 +1580,63 @@ void LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 //    dasp->SelectForEditNm("avg_da", edit, "vta");
     dasp->SelectForEditNm("da", edit, "vta");
   }
+  return true;
 }
 
+bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
+				     bool disconnect) {
+
+  // String pvenm = "PVe";
+  String pvinm = "PVi";  String pvrnm = "PVr";
+  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+
+//   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
+  LeabraLayer* pvr = (LeabraLayer*)net->FindLayer(pvrnm);
+  LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
+  LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
+  LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
+  LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
+
+  BaseSpec_Group* prjns = net->FindMakeSpecGp("PFC_BG_Prjns");
+  BaseSpec_Group* cons = net->FindMakeSpecGp("PFC_BG_Cons");
+
+  ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
+
+  LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
+  if(TestError(!learn_cons, "PVLV_ConnectLayer", "LearnCons not found -- not properly configured for PVLV"))
+    return false;
+
+  LeabraConSpec* pvi_cons = (LeabraConSpec*)learn_cons->children.FindSpecName("PVi");
+  LeabraConSpec* pvr_cons = (LeabraConSpec*)pvi_cons->children.FindSpecName("PVr");
+  LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->children.FindSpecName("LVe");
+  if(TestError(!lve_cons, "PVLV_ConnectLayer", "LVe Cons not found -- not properly configured for PVLV"))
+    return false;
+  LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->children.FindSpecName("LVi");
+  LeabraConSpec* nv_cons =  (LeabraConSpec*)pvi_cons->children.FindSpecName("NV");
+
+  if(disconnect) {
+    if(pvr && pvr_cons)
+      net->RemovePrjn(pvr, sending_layer);
+    if(pvi && pvi_cons)
+      net->RemovePrjn(pvi, sending_layer);
+    if(lve && lve_cons)
+      net->RemovePrjn(lve, sending_layer);
+    if(lvi && lvi_cons)
+      net->RemovePrjn(lvi, sending_layer);
+    if(nv && nv_cons)
+      net->RemovePrjn(nv,  sending_layer);
+  }
+  else {
+    if(pvr && pvr_cons)
+      net->FindMakePrjn(pvr, sending_layer, fullprjn, pvr_cons);
+    if(pvi && pvi_cons)
+      net->FindMakePrjn(pvi, sending_layer, fullprjn, pvi_cons);
+    if(lve && lve_cons)
+      net->FindMakePrjn(lve, sending_layer, fullprjn, lve_cons);
+    if(lvi && lvi_cons)
+      net->FindMakePrjn(lvi, sending_layer, fullprjn, lvi_cons);
+    if(nv && nv_cons)
+      net->FindMakePrjn(nv,  sending_layer, fullprjn, nv_cons);
+  }
+  return true;
+}

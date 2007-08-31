@@ -2096,22 +2096,26 @@ public:
   virtual void	StdLayerSpecs(LeabraNetwork* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)
 
-  virtual void	SRNContext(LeabraNetwork* net);
+  virtual bool	SRNContext(LeabraNetwork* net);
   // #MENU_BUTTON configure a simple-recurrent-network context layer in the network
 
-  virtual void	UnitInhib(LeabraNetwork* net, int n_inhib_units=10);
+  virtual bool	UnitInhib(LeabraNetwork* net, int n_inhib_units=10);
   // #MENU_BUTTON configures unit-based inhibition for all layers in the network
 
-  virtual void 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);
+  virtual bool 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure standard TD reinforcement learning layers; bio_labels = use biologically-based labels for layers, else functional; td_mod_all = have td value modulate all the regular units in the network
 
-  virtual void 	PVLV(LeabraNetwork* net, bool da_mod_all = false);
+  virtual bool 	PVLV(LeabraNetwork* net, bool da_mod_all = false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure PVLV (pavlovian primary value and learned value) learning layers in a network -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system); da_mod_all = have da value modulate all the regular units in the network
 
-  virtual void 	PBWM(LeabraNetwork* net, bool da_mod_all = false,
+  virtual bool PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
+				 bool disconnect = false);
+  // #MENU_BUTTON #NO_SCOPE_1 make (or break if disconnect = true) connections between given sending_layer in given network and the learning PVLV layers (PVr, PVi, LVe, LVi, NV), each of which should typically receive from the same sending layers
+
+  virtual bool 	PBWM(LeabraNetwork* net, bool da_mod_all = false,
 		     int n_stripes=4, bool out_gate=false,
-		     bool nolrn_pfc=false);
-  // #MENU_BUTTON configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
+		     bool no_lrn_pfc=false);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
   virtual void SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)

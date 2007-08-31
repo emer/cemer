@@ -1902,21 +1902,21 @@ void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
 //			SRN Context
 ///////////////////////////////////////////////////////////////
 
-void LeabraWizard::SRNContext(LeabraNetwork* net) {
+bool LeabraWizard::SRNContext(LeabraNetwork* net) {
   if(TestError(!net, "SRNContext", "must have basic constructed network first")) {
-    return;
+    return false;
   }
   OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)net->FindMakeSpec("CtxtPrjn", &TA_OneToOnePrjnSpec);
   LeabraContextLayerSpec* ctxts = (LeabraContextLayerSpec*)net->FindMakeSpec("CtxtLayerSpec", &TA_LeabraContextLayerSpec);
 
   if((otop == NULL) || (ctxts == NULL)) {
-    return;
+    return false;
   }
 
   LeabraLayer* hidden = (LeabraLayer*)net->FindLayer("Hidden");
   LeabraLayer* ctxt = (LeabraLayer*)net->FindMakeLayer("Context");
   
-  if((hidden == NULL) || (ctxt == NULL)) return;
+  if((hidden == NULL) || (ctxt == NULL)) return false;
 
   ctxt->SetLayerSpec(ctxts);
   ctxt->un_geom = hidden->un_geom;
@@ -1925,5 +1925,6 @@ void LeabraWizard::SRNContext(LeabraNetwork* net) {
   net->FindMakePrjn(ctxt, hidden, otop); // one-to-one into the ctxt layer
   net->FindMakePrjn(hidden, ctxt); 	 // std prjn back into the hidden from context
   net->Build();
+  return true;
 }
 

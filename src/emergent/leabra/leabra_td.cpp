@@ -1126,7 +1126,7 @@ void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
+bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   String msg = "Configuring TD Temporal Differences Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -1160,7 +1160,7 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   LeabraLayer* tdrp = (LeabraLayer*)net->FindMakeLayer(tdrpnm, NULL, tdrp_new);
   LeabraLayer* tdint = (LeabraLayer*)net->FindMakeLayer(tdintnm);
   LeabraLayer* tdda = (LeabraLayer*)net->FindMakeLayer(tddanm);
-  if(rew_targ_lay == NULL || tdrp == NULL || extrew == NULL || tdint == NULL || tdda == NULL) return;
+  if(rew_targ_lay == NULL || tdrp == NULL || extrew == NULL || tdint == NULL || tdda == NULL) return false;
   if(tdrp_new) {
     extrew->pos.z = 0; extrew->pos.y = 4; extrew->pos.x = 0;
     tdrp->pos.z = 0; tdrp->pos.y = 2; tdrp->pos.x = 0;
@@ -1194,8 +1194,7 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda
        && !laysp->InheritsFrom(&TA_PFCLayerSpec) && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
-       && !laysp->InheritsFrom(&TA_PatchLayerSpec) 
-       && !laysp->InheritsFrom(&TA_SNcLayerSpec) && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
+       && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
       if(lay->layer_type == Layer::HIDDEN)
 	hidden_lays.Link(lay);
@@ -1221,33 +1220,33 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   BaseSpec_Group* cons = net->FindMakeSpecGp(gpprfx + "Cons");
   BaseSpec_Group* layers = net->FindMakeSpecGp(gpprfx + "Layers");
   BaseSpec_Group* prjns = net->FindMakeSpecGp(gpprfx + "Prjns");
-  if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return;
+  if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
 
   LeabraUnitSpec* rewpred_units = (LeabraUnitSpec*)units->FindMakeSpec("TDRewPredUnits", &TA_DaModUnitSpec);
   LeabraUnitSpec* td_units = (LeabraUnitSpec*)units->FindMakeSpec("TdUnits", &TA_DaModUnitSpec);
-  if(rewpred_units == NULL || td_units == NULL) return;
+  if(rewpred_units == NULL || td_units == NULL) return false;
 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
-  if(learn_cons == NULL) return;
+  if(learn_cons == NULL) return false;
 
   TDRewPredConSpec* rewpred_cons = (TDRewPredConSpec*)learn_cons->FindMakeChild("TDRewPredCons", &TA_TDRewPredConSpec);
   LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
-  if(bg_bias == NULL) return;
+  if(bg_bias == NULL) return false;
   LeabraConSpec* fixed_bias = (LeabraConSpec*)bg_bias->FindMakeChild("FixedBias", &TA_LeabraBiasSpec);
 
   LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
   if(rewpred_cons == NULL || marker_cons == NULL || fixed_bias == NULL)
-    return;
+    return false;
 
   ExtRewLayerSpec* ersp = (ExtRewLayerSpec*)layers->FindMakeSpec("ExtRewLayer", &TA_ExtRewLayerSpec);
   TDRewPredLayerSpec* tdrpsp = (TDRewPredLayerSpec*)layers->FindMakeSpec(tdrpnm + "Layer", &TA_TDRewPredLayerSpec);
   TDRewIntegLayerSpec* tdintsp = (TDRewIntegLayerSpec*)layers->FindMakeSpec(tdintnm + "Layer", &TA_TDRewIntegLayerSpec);
   TdLayerSpec* tdsp = (TdLayerSpec*)layers->FindMakeSpec(tddanm + "Layer", &TA_TdLayerSpec);
-  if(tdrpsp == NULL || ersp == NULL || tdintsp == NULL || tdsp == NULL) return;
+  if(tdrpsp == NULL || ersp == NULL || tdintsp == NULL || tdsp == NULL) return false;
 
   ProjectionSpec* fullprjn = (ProjectionSpec*)prjns->FindMakeSpec("FullPrjn", &TA_FullPrjnSpec);
   ProjectionSpec* onetoone = (ProjectionSpec*)prjns->FindMakeSpec("OneToOne", &TA_OneToOnePrjnSpec);
-  if(fullprjn == NULL || onetoone == NULL) return;
+  if(fullprjn == NULL || onetoone == NULL) return false;
 
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
@@ -1377,4 +1376,5 @@ void LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     tdrpsp->SelectForEditNm("rew_pred", edit, "tdrp");
     tdintsp->SelectForEditNm("rew_integ", edit, "tdint");
   }
+  return true;
 }

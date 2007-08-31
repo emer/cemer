@@ -28,58 +28,6 @@
 //////////////////////////////////////////////////////////////////
 
 //////////////////////////////////
-//	  Patch/SNc	 	//
-//////////////////////////////////
-
-class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
-  // simulates Patch as a LV layer: currently no doing anything different than regular LV
-INHERITED(LVeLayerSpec)
-public:
-
-  TA_BASEFUNS(PatchLayerSpec);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
-class LEABRA_API SNcMiscSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc parameters for SNc layer
-INHERITED(taBase)
-public:
-  enum PatchMode {
-    NO_PATCH,			// no patch at all
-    PATCH			// use patch: Note currently not supported.
-  };
-
-  PatchMode	patch_mode;	// #APPLY_IMMED #DEF_NO_PATCH how to run the patch computation
-  float		patch_gain;	// #CONDEDIT_ON_patch_mode:PATCH #DEF_0.5 proportion of patch (stripe-specific) da relative to global abl da
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(SNcMiscSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
-  // computes PVLV 'Da' signal, uses inputs from the patch to provide stripe-specific modulation (NOTE: not currently supported -- this layer spec is currently optional and does the same thing as PVLVDaLayerSpec); Does not do SNrThal modulation, which is computed directly in Matrix units
-INHERITED(PVLVDaLayerSpec)
-public:
-  SNcMiscSpec	snc;		// misc SNc specific parameters controlling influence of patch modulation
-
-//   void	Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
-
-  void	HelpConfig();	// #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
-  void	Defaults();
-
-  TA_SIMPLE_BASEFUNS(SNcLayerSpec);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
-//////////////////////////////////
 //	  Matrix Con/Units	//
 //////////////////////////////////
 
