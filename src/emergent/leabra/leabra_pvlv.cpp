@@ -1527,6 +1527,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   // build and check
 
   net->Build();
+  net->LayerPos_Cleanup();
 
   bool ok = pvisp->CheckConfig_Layer(pvi, true) && lvesp->CheckConfig_Layer(lve, true)
     && lvisp->CheckConfig_Layer(lve, true)

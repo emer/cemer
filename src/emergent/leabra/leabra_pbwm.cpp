@@ -2064,7 +2064,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
   snrthal_m->un_geom.n = 1;
   if(snrthal_m_new) {
-    snrthal_m->pos.z = 0; snrthal_m->pos.y = 6; snrthal_m->pos.x = lve->pos.x;
+    snrthal_m->pos.z = 0; snrthal_m->pos.y = 4; snrthal_m->pos.x = lve->pos.x + 8;
   }
   lay_set_geom(snrthal_m, half_stripes);
 
@@ -2104,6 +2104,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // build and check
 
   SetPFCStripes(net, n_stripes);
+
+  net->LayerPos_Cleanup();
 
   bool ok = pfcmsp->CheckConfig_Layer(pfc_m, true) && matrixsp->CheckConfig_Layer(matrix_m, true)
     && snrthalsp->CheckConfig_Layer(snrthal_m, true);
