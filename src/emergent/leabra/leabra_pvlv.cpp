@@ -766,7 +766,7 @@ void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;
   lv_only_2p = false;
-  pv_only_1p = false;
+  nv_only_2p = false;
   use_actual_er = false;
   syn_dep = false;
   min_lvi = 0.1f;
@@ -1032,8 +1032,9 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
   float lv_da = lve_sp->Compute_LVDa(lve_lay, lvi_lay);
 
   // nv only contributes to lv, not pv..
+  float nv_da = 0.0f;
   if(nv_lay) {
-    lv_da += nvls->Compute_NVDa(nv_lay);
+    nv_da = nvls->Compute_NVDa(nv_lay);
   }
 
   // note that multiple LV subgroups are supported, but not multiple PV's (yet!)
@@ -1049,23 +1050,20 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
       u->dav = 0.0f;
     }
     else if(net->phase_no == net->phase_max-1) { // final phase = do everything
-      if(er_avail) {				 // either PV or LV
-	if(net->phase_no == 2 && da.pv_only_1p)
-	  u->dav = 0.0f;
-	else
-	  u->dav = da.da_gain * pv_da;
-      }
+      if(er_avail) 				 // either PV or LV
+	u->dav = da.da_gain * pv_da;
       else 
-	u->dav = da.da_gain * lv_da;
+	u->dav = da.da_gain * (lv_da + nv_da);
     }
     else if(net->phase_no == 1) { // if 2 plus phases, this will not be last, so it just has pv
       if(er_avail)
 	u->dav = da.da_gain * pv_da;
       else {
-	if(da.lv_only_2p)
-	  u->dav = 0.0f;
-	else 
-	  u->dav = da.da_gain * lv_da;
+	u->dav = 0.0f;
+	if(!da.lv_only_2p)
+	  u->dav += da.da_gain * lv_da;
+	if(!da.nv_only_2p)
+	  u->dav += da.da_gain * nv_da;
       }
     }
 

@@ -367,8 +367,8 @@ INHERITED(taBase)
 public:
   float		da_gain;	// #DEF_1 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
-  bool		lv_only_2p;	// only add LV (and NV) values in second plus phase (only if there are two plus phases being used) -- could be better for output gating which only learns in first plus and only depends on PV values logically
-  bool		pv_only_1p;	// only add PV values in first plus phase (only if there are two plus phases being used) -- with lv_only_2p this effects a complete dissociation between LV for PFC updating and PV for immediate output response learning (output gating)
+  bool		lv_only_2p;	// only add LV values in second plus phase (only if there are two plus phases being used) -- could be better for output gating which only learns in first plus and only depends on PV values logically
+  bool		nv_only_2p;	// only add NV values in second plus phase (only if there are two plus phases being used) -- could be better for output gating which only learns in first plus and only depends on PV values logically
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)
   float		min_lvi;	// #CONDEDIT_ON_syn_dep #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)
