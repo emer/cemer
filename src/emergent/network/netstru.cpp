@@ -3108,6 +3108,16 @@ Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
   return NULL;
 }
 
+TwoDCoord Unit_Group::GetGpGeomPos() {
+  if(!own_lay) return pos;
+  TwoDCoord rval;
+  if(own_lay->un_geom.x + own_lay->gp_spc.x > 0)
+    rval.x = pos.x / (own_lay->un_geom.x + own_lay->gp_spc.x);
+  if(own_lay->un_geom.y + own_lay->gp_spc.y > 0)
+    rval.y = pos.y / (own_lay->un_geom.y + own_lay->gp_spc.y);
+  return rval;
+}
+
 bool Unit_Group::Dump_QuerySaveChildren() {
   if(own_lay && own_lay->own_net && !own_lay->own_net->HasNetFlag(Network::SAVE_UNITS)
      && !own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE))

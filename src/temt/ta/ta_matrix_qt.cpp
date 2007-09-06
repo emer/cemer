@@ -462,7 +462,7 @@ iMatrixEditor::~iMatrixEditor() {
 void iMatrixEditor::init() {
   m_model = NULL;
   layOuter = new QVBoxLayout(this);
-  layOuter->setMargin(2);
+  layOuter->setMargin(2); layOuter->setSpacing(2);
   layDims = new QHBoxLayout(layOuter);
   tv = new iMatrixTableView(this);
   layOuter->addWidget(tv);

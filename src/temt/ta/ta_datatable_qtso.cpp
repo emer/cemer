@@ -1842,7 +1842,8 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
   
   widg = new QWidget();
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
-  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
+  layWidg = new QVBoxLayout(widg); //def margin/spacing=2  
+  layWidg->setMargin(0); layWidg->setSpacing(0);
   setCentralWidget(widg);
 }
 
@@ -5229,6 +5230,7 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   m_model = NULL;
   m_cell_par = NULL;
   layOuter = new QVBoxLayout(this);
+  layOuter->setMargin(0); layOuter->setSpacing(0);
   splMain = new QSplitter(this);
   splMain->setOrientation(Qt::Vertical);
   layOuter->addWidget(splMain);

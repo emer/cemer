@@ -848,6 +848,7 @@ void taiDataHostBase::Constr_Widget() {
   widget()->setFont(taiM->dialogFont(ctrl_size));
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look
+  vblDialog->setMargin(2);
 }
 
 void taiDataHostBase::Constr_WinName() {

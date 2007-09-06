@@ -1552,6 +1552,10 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   TwoDCoord ru_geo = recv_lay->gp_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
 
+  int sg_sz_tot = send_gp_size.Product();
+  Unit_Group* su_gp0 = (Unit_Group*)send_lay->units.gp[0];
+  int alloc_no = sg_sz_tot * su_gp0->size;
+
   TwoDCoord ruc;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
@@ -1559,10 +1563,6 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st = ruc * send_gp_skip;
-
-      // allocate conns
-      Unit_Group* su_gp0 = (Unit_Group*)send_lay->units.gp[0];
-      int alloc_no = send_gp_size.Product() * su_gp0->size;
 
       for(int rui=0;rui<ru_gp->size;rui++) {
 	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);

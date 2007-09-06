@@ -993,12 +993,14 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layOuter = new QVBoxLayout(widg);
+  layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vsep_c);
 
   ////////////////////////////////////////////////////////////////////////////
   layCams = new QHBoxLayout(layOuter);
 
   layCam0 = new QVBoxLayout(layCams);
+  layCam0->setMargin(0);
   labcam0 = new QLabel(widg);
   layCam0->addWidget(labcam0);
   labcam0_txt = new QLabel(widg);
@@ -1006,6 +1008,7 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   layCam0->addWidget(labcam0_txt);
 
   layCam1 = new QVBoxLayout(layCams);
+  layCam1->setMargin(0);
   labcam1 = new QLabel(widg);
   layCam1->addWidget(labcam1);
   labcam1_txt = new QLabel(widg);

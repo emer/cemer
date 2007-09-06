@@ -1753,7 +1753,7 @@ void DecodeTwoDValLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 }
 
 ////////////////////////////////////////////////////////////
-//
+//	V1RFPrjnSpec
 
 void V1RFPrjnSpec::Initialize() {
   init_wts = true;
@@ -1826,7 +1826,7 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  Unit_Group* rugp = (Unit_Group*)ru->GetOwner(&TA_Unit_Group);
+  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
   
   bool on_rf = true;
@@ -1890,6 +1890,217 @@ void V1RFPrjnSpec::GraphFilter(DataTable* graph_data, int recv_unit_no) {
 void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
   rf_spec.GridFilter(graph_data);
 }
+
+////////////////////////////////////////////////////////////
+//	SaliencyPrjnSpec
+
+void SaliencyPrjnSpec::Initialize() {
+  init_wts = true;
+  feat_gps = 2;
+  surround_width = 1;
+  surround_sigma = .5f;;
+  surround_max = .5f;
+  units_per_feat_gp = 4;
+}
+
+void SaliencyPrjnSpec::ComputeSurroundWts() {
+  int fltsz = surround_width*2 + 1;
+  surround_wts.SetGeom(2, fltsz, fltsz);
+  float eff_sig = surround_sigma * (float)surround_width;
+  int x,y;
+  for(y=-surround_width; y<=surround_width; y++) {
+    for(x=-surround_width; x<=surround_width; x++) {
+      float dist = taMath_float::hypot(x, y);
+      //      float val = taMath_float::gauss_den_sig(dist, eff_sig);
+      float val = taMath_float::gauss_den(dist/ eff_sig); // this produces actual changes in overall width once normalized - other version does not!
+      if(dist == 0.0f) val = 0.0f;
+      surround_wts.Set(val, x+surround_width, y+surround_width);
+    }
+  }
+  taMath_float::vec_norm_max(&surround_wts, surround_max); 
+}
+
+void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+  if(TestWarning(prjn->from->units.gp.size == 0, "Connect_impl",
+		 "requires sending layer to have unit groups!")) {
+    return;
+  }
+
+  ComputeSurroundWts();
+
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord rug_geo = recv_lay->gp_geom;
+  TwoDCoord ruu_geo = recv_lay->un_geom;
+  TwoDCoord su_geo = send_lay->gp_geom;
+
+  int fltsz = surround_width*2 + 1;
+  int sg_sz_tot = fltsz * fltsz;
+  Unit_Group* su_gp0 = (Unit_Group*)send_lay->units.gp[0];
+  int alloc_no = sg_sz_tot * su_gp0->size;
+
+  units_per_feat_gp = su_gp0->size / feat_gps;
+
+  int feat_no = 0;
+  TwoDCoord rug;
+  for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
+    for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
+      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
+      if(ru_gp == NULL) continue;
+
+      int rui = 0;
+      TwoDCoord ruc;
+      for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
+	for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
+
+	  TwoDCoord su_st = ruc;	// center of su
+
+	  Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
+	  if(!ru_u) break;
+	  ru_u->ConnectAlloc(alloc_no, prjn);
+
+	  TwoDCoord suc;
+	  for(suc.y = -surround_width; suc.y <= surround_width; suc.y++) {
+	    for(suc.x = -surround_width; suc.x <= surround_width; suc.x++) {
+	      TwoDCoord sugc = su_st + suc;
+	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+	      if(su_gp == NULL) continue;
+
+	      for(int sui=0;sui<su_gp->size;sui++) {
+		Unit* su_u = (Unit*)su_gp->FastEl(sui);
+		if(!self_con && (su_u == ru_u)) continue;
+		ru_u->ConnectFrom(su_u, prjn);
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
+
+void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+
+  TwoDCoord rug_geo = recv_lay->gp_geom;
+  TwoDCoord rgp_pos = rugp->GetGpGeomPos();
+  
+  int feat_no = rgp_pos.y * rug_geo.x + rgp_pos.x; // unit group index
+  int my_feat_gp = feat_no / units_per_feat_gp;
+  int fg_st = my_feat_gp * units_per_feat_gp;
+  int fg_ed = fg_st + units_per_feat_gp;
+
+  TwoDCoord ruu_geo = recv_lay->un_geom;
+  TwoDCoord su_st;		// su starting (center) geometry
+  su_st.x = ru->idx % ruu_geo.x;
+  su_st.y = ru->idx / ruu_geo.x;
+
+  TwoDCoord su_geo = send_lay->gp_geom;
+
+  int su_idx = 0;
+  TwoDCoord suc;
+  for(suc.y = -surround_width; suc.y <= surround_width; suc.y++) {
+    for(suc.x = -surround_width; suc.x <= surround_width; suc.x++) {
+      TwoDCoord sugc = su_st + suc;
+      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+      if(su_gp == NULL) continue;
+
+      float wt = surround_wts.FastEl(suc.x+surround_width, suc.y+surround_width);
+
+      if(suc == 0) {
+	for(int sui=0;sui<su_gp->size;sui++) {
+	  if(sui == feat_no)
+	    cg->Cn(su_idx++)->wt = 1.0f; // our feature
+	  else
+	    cg->Cn(su_idx++)->wt = 0.0f; // everyone else
+	}
+      }
+      else {
+	for(int sui=0;sui<su_gp->size;sui++) {
+	  if(sui != feat_no && sui >= fg_st && sui < fg_ed) 
+	    cg->Cn(su_idx++)->wt = wt;
+	  else
+	    cg->Cn(su_idx++)->wt = 0.0f; // not in our group or is guy itself
+	}
+      }
+    }
+  }
+}
+
+void SaliencyPrjnSpec::GraphFilter(DataTable* graph_data) {
+  ComputeSurroundWts();
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
+  DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
+  DataCol* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
+
+  xda->SetUserData("X_AXIS", true);
+  zda->SetUserData("Z_AXIS", true);
+  valda->SetUserData("PLOT_1", true);
+
+  int x,z;
+  for(z=-surround_width; z<=surround_width; z++) {
+    for(x=-surround_width; x<=surround_width; x++) {
+      float val = surround_wts.FastEl(x+surround_width, z+surround_width);
+      graph_data->AddBlankRow();
+      xda->SetValAsFloat(x, -1);
+      zda->SetValAsFloat(z, -1);
+      valda->SetValAsFloat(val, -1);
+    }
+  }
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGraphView();
+}
+
+void SaliencyPrjnSpec::GridFilter(DataTable* graph_data) {
+  ComputeSurroundWts();
+  int fltsz = surround_width*2 + 1;
+
+  taProject* proj = GET_MY_OWNER(taProject);
+  bool newguy = false;
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    newguy = true;
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, fltsz, fltsz);
+
+  float maxv = taMath_float::vec_max(&surround_wts, idx);
+
+  graph_data->SetUserData("N_ROWS", 1);
+  graph_data->SetUserData("SCALE_MIN", -maxv);
+  graph_data->SetUserData("SCALE_MAX", maxv);
+  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+
+  graph_data->AddBlankRow();
+  matda->SetValAsMatrix(&surround_wts, -1);
+
+  graph_data->StructUpdate(false);
+  if(newguy)
+    graph_data->NewGridView();
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

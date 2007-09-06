@@ -196,13 +196,12 @@ void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
   int x,y;
   for(y=-filter_width; y<=filter_width; y++) {
     for(x=-filter_width; x<=filter_width; x++) {
-      float sqdist = (float)(x * x + y * y);
-      float dist = sqrt(sqdist);
+      float dist = taMath_float::hypot(x, y);
       float ong = 0.0f;
       float offg = 0.0f;
       if(!circle_edge || (dist <= filter_width)) { // only set values inside of filter radius
-	ong = GaussVal(sqdist, on_sigma);
-	offg = GaussVal(sqdist, off_sigma);
+	ong = taMath_float::gauss_den_sig(dist, on_sigma);
+	offg = taMath_float::gauss_den_sig(dist, off_sigma);
       }
       on_flt.Set(ong, x+filter_width, y+filter_width);
       off_flt.Set(offg, x+filter_width, y+filter_width);

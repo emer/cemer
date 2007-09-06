@@ -396,7 +396,11 @@ public:
   // #CAT_Probability gamma deviate: how long to wait until j events with  unit lambda 
 
   static double gauss_den(double x);
-  // #CAT_Probability gaussian (normal) distribution 
+  // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)
+  static double gauss_den_sig(double x, double sigma);
+  // #CAT_Probability gaussian (normal) distribution with explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x^2 / (2 * sigma^2))
+  static double gauss_den_sq_sig(double x_sq, double sigma);
+  // #CAT_Probability gaussian (normal) distribution with x already squared and explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x_sq / (2 * sigma^2))
   static double gauss_cum(double z);
   // #CAT_Probability cumulative gaussian (unit variance) to z 
   static double gauss_inv(double p);
@@ -777,6 +781,80 @@ public:
   // #CAT_Trigonometry The hyperbolic-sine = e^z - e^-z / 2
   static float  tanh(float z) { return std::tanh(z); }
   // #CAT_Trigonometry The hyperbolic-tangent = sinh(z) / cosh(z)
+
+  /////////////////////////////////////////////////////////////////////////////////
+  // Probability distributions and related functions
+
+  static float fact_ln(int n);
+  // #CAT_Probability natural log (ln) of n factorial (n!)
+  static float bico_ln(int n, int j);
+  // #CAT_Probability natural log (ln) of n choose j (binomial)
+  static float hyperg(int j, int s, int t, int n);
+  // #CAT_Probability hypergeometric (j t's of sample s in n) 
+  static float gamma_ln(float z);
+  // #CAT_Probability natural log (ln) of gamma function (not gamma distribution): generalization of (n-1)! to real values 
+//   static float  lgamma(float z) { return std::lgamma(z); }
+//   // #CAT_Probability natural log (ln) of gamma function (not gamma distribution): generalization of (n-1)! to real values 
+//   static float tgamma(float z) { return std::tgamma(z); }
+//   // #CAT_Probability true gamma function (not gamma distribution): generalization of (n-1)! to real values 
+
+  static float gamma_p(float a, float x);
+  // #CAT_Probability incomplete gamma function 
+  static float gamma_q(float a, float x);
+  // #CAT_Probability incomplete gamma function (complement of p)
+  static float beta(float z, float w);
+  // #CAT_Probability beta function 
+  static float beta_i(float a, float b, float x);
+  // #CAT_Probability incomplete beta function 
+
+  static float binom_den(int n, int j, float p);
+  // #CAT_Probability binomial probability function 
+  static float binom_cum(int n, int j, float p);
+  // #CAT_Probability cumulative binomial probability 
+  static float binom_dev(int n, float p);
+  // #CAT_Probability binomial deviate: p prob with n trials 
+
+  static float poisson_den(int j, float l);
+  // #CAT_Probability poisson distribution 
+  static float poisson_cum(int j, float l);
+  // #CAT_Probability cumulative Poisson P_l(<j) (0 thru j-1) 
+  static float poisson_dev(float l);
+  // #CAT_Probability poisson deviate:  mean is l 
+
+  static float gamma_den(int j, float l, float t);
+  // #CAT_Probability gamma probability distribution: j events, l lambda, t time 
+  static float gamma_cum(int j, float l, float t);
+  // #CAT_Probability gamma cumulative: j events, l lambda, t time 
+  static float gamma_dev(int j);
+  // #CAT_Probability gamma deviate: how long to wait until j events with  unit lambda 
+
+  static float gauss_den(float x);
+  // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)
+  static float gauss_den_sig(float x, float sigma);
+  // #CAT_Probability gaussian (normal) distribution with explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x^2 / (2 * sigma^2))
+  static float gauss_den_sq_sig(float x_sq, float sigma);
+  // #CAT_Probability gaussian (normal) distribution with x already squared and explicit sigma: 1 / (sigma * sqrt(2 * PI)) * exp(-x_sq / (2 * sigma^2))
+  static float gauss_cum(float z);
+  // #CAT_Probability cumulative gaussian (unit variance) to z 
+  static float gauss_inv(float p);
+  // #CAT_Probability inverse of the cumulative for p: z value for given p 
+  static float gauss_dev();
+  // #CAT_Probability gaussian deviate: normally distributed 
+  static float erf(float x);
+  // #CAT_Probability the error function: used for computing the normal distribution
+  static float erfc(float x);
+  // #CAT_Probability complement of the error function (1.0 - erf(x)) */
+
+  static float chisq_p(float X, float v);
+  // #CAT_Probability P(X^2 | v) 
+  static float chisq_q(float X, float v);
+  // #CAT_Probability Q(X^2 | v) (complement) 
+  static float students_cum(float t, float df);
+  // #CAT_Probability cumulative student's distribution df deg of free t test
+  static float students_den(float t, float df);
+  // #CAT_Probability density fctn of student's distribution df deg of free t test
+  static float Ftest_q(float F, float v1, float v2);
+  // #CAT_Probability F distribution probability F | (v1 < v2) 
 
   /////////////////////////////////////////////////////////////////////////////////
   // Vector operations (operate on Matrix objects, treating as a single linear guy)

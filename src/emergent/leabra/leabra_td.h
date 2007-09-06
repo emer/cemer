@@ -110,9 +110,10 @@ class LEABRA_API OutErrSpec : public taBase {
 INHERITED(taBase)
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
-  bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
+  bool		graded;		// #DEF_false #APPLY_IMMED compute a graded reward signal as a function of number of correct output values
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
   bool		seq_all_cor;	// #DEF_false require that all RewTarg events in a sequence be correct before giving reward (on the last event in sequence);  if graded is checked, this reward is a graded function of % correct
+  float		scalar_val_max;	// #CONDEDIT_ON_graded maximum value for scalar value output layers when using a graded value -- reward is error normalized by this value, and clipped at min/max
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(OutErrSpec);

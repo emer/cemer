@@ -910,9 +910,7 @@ public:
   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
   
   void 		Connect_impl(Projection* prjn);
-
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
-  // set gabor weights
 
   virtual void	GraphFilter(DataTable* disp_data, int recv_unit_no);
   // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
@@ -922,6 +920,38 @@ public:
   TA_SIMPLE_BASEFUNS(V1RFPrjnSpec);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+// todo: change this to be one big layer with recv unit groups geom = features in V1
+// and each recv group has entire V1 layer.  Basically an inversion of V1 geometry (units <-> groups)
+
+class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
+  // Saliency projection spec from V1 layer: receiving layer must have a unit group for each feature, with each unit group having the V1 unit group geometry -- gets excitatory connection from feature corresponding to group index, and from all-but that feature in surrounding sending areas, producing a contrast enhancement effect.  Competition within group and across whole layer produces pop-out dynamics
+INHERITED(ProjectionSpec)
+public:
+  int		feat_gps;	// number of feature groups contained within V1 unit group -- surround connections are only for within-group connections
+  int		surround_width;	// how many surround layers to receive from
+  float		surround_sigma;	// sigma of gaussian connections from surround (normalized by width)
+  float		surround_max;	// max value of surround weight
+
+  float_Matrix	surround_wts;	// #READ_ONLY #NO_SAVE weights for surround units
+  int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
+  
+  void 		Connect_impl(Projection* prjn);
+  void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  virtual void	ComputeSurroundWts();
+  // compute surround weights based on current parameters
+
+  virtual void	GraphFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the surround weights gaussian into data table and generate a graph
+  virtual void	GridFilter(DataTable* disp_data);
+  // #BUTTON #NULL_OK plot the surround weights gaussian into data table and generate a grid view
+
+  TA_SIMPLE_BASEFUNS(SaliencyPrjnSpec);
 private:
   void	Initialize();
   void 	Destroy()		{ };

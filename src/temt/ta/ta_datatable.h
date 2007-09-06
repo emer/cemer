@@ -657,8 +657,8 @@ public:
   virtual void		AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
   virtual int		AddBlankRow() 
-  { if (AddRows(1)) {wr_itr = rows - 1; return wr_itr;} else return -1; }
-  // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets write (sink) index to this last row (as in WriteItem), so that subsequent datablock routines refer to this new row, and returns row #
+  { if (AddRows(1)) {rd_itr = wr_itr = rows - 1; return wr_itr;} else return -1; }
+  // #MENU #MENU_ON_Rows #CAT_Rows add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row #
   virtual bool		AddRows(int n = 1);
   // #MENU #CAT_Rows add n rows, returns true if successfully added
   virtual bool		InsertRows(int st_row, int n_rows=1);

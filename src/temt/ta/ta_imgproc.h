@@ -87,11 +87,6 @@ public:
   float_Matrix	off_filter;	// #READ_ONLY #NO_SAVE #SHOW off-gaussian (values are positive)
   float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE #SHOW net overall filter (for display purposes)
 
-  static float	GaussVal(float sqdist, float sig) {
-    return 1.0f / (4.0f * taMath_float::pi * sig * sig) *
-      taMath_float::exp(-sqdist / (2.0f * sig * sig)); }
-  // #CAT_DoGFilter compute gaussian valuee 
-
   float		FilterPoint(int x, int y, float r_val, float g_val, float b_val);
   // #CAT_DoGFilter apply filter at given x,y point to given color values
 

@@ -1225,6 +1225,8 @@ public:
   Unit* 	FindUnitFmCoord(const TwoDCoord& coord)
   { return FindUnitFmCoord(coord.x,coord.y); }
   // #CAT_Structure returns unit at given coordinates within layer
+  TwoDCoord	GetGpGeomPos();
+  // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
 
   // implement save_rmv_units:
   override bool	Dump_QuerySaveChildren();

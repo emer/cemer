@@ -1844,11 +1844,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
     net->FindMakePrjn(pfc_o, pfc_m, onetoone, marker_cons);
 
-    // todo: what kind of descending connectivity should this have??
-    // basic assumption would be that all subcortical comes from _o!
-    // but it could have prjns from pfc_m via subsets of non-gated pfc units..
     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
-    net->FindMakePrjn(matrix_o, pfc_m, fullprjn, mofmpfc_cons);
+    net->FindMakePrjn(matrix_o, pfc_m, gponetoone, mofmpfc_cons);
 
     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
     //  net->FindMakeSelfPrjn(pfc_m, intra_pfcps, intra_pfc);
@@ -1969,7 +1966,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_cons->wt_sig.off = 1.0f;
 
     mofmpfc_cons->SetUnique("wt_scale", true);
-    mofmpfc_cons->wt_scale.rel = .2f;
+    mofmpfc_cons->wt_scale.rel = 1.0f; // works better with gp-one-to-one
     mofmpfc_cons->SetUnique("lmix", false);
 
     // snrthalosp->SetUnique("kwta", true);
