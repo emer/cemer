@@ -3731,6 +3731,14 @@ void Layer::Init_Weights_post() {
     u->Init_Weights_post();
 }
 
+void Layer::SetLayUnitExtFlags(int flg) {
+  SetExtFlag(flg);
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->SetExtFlag((Unit::ExtType)flg);
+}
+
 void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
     Random* ran, const PosTwoDCoord* offset) 
 {

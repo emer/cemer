@@ -1843,7 +1843,7 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
   widg = new QWidget();
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2  
-  layWidg->setMargin(0); layWidg->setSpacing(0);
+  layWidg->setMargin(0); layWidg->setSpacing(2);
   setCentralWidget(widg);
 }
 

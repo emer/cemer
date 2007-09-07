@@ -925,9 +925,6 @@ private:
   void 	Destroy()		{ };
 };
 
-// todo: change this to be one big layer with recv unit groups geom = features in V1
-// and each recv group has entire V1 layer.  Basically an inversion of V1 geometry (units <-> groups)
-
 class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
   // Saliency projection spec from V1 layer: receiving layer must have a unit group for each feature, with each unit group having the V1 unit group geometry -- gets excitatory connection from feature corresponding to group index, and from all-but that feature in surrounding sending areas, producing a contrast enhancement effect.  Competition within group and across whole layer produces pop-out dynamics
 INHERITED(ProjectionSpec)
@@ -952,6 +949,19 @@ public:
   // #BUTTON #NULL_OK plot the surround weights gaussian into data table and generate a grid view
 
   TA_SIMPLE_BASEFUNS(SaliencyPrjnSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+class LEABRA_API GpAggregatePrjnSpec : public ProjectionSpec {
+  // aggregates across a layer with unit groups into a receiving layer that has the same geometry as each of the unit groups -- each unit receives from the corresponding unit in each of the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+  
+  void 		Connect_impl(Projection* prjn);
+
+  TA_SIMPLE_BASEFUNS(GpAggregatePrjnSpec);
 private:
   void	Initialize();
   void 	Destroy()		{ };

@@ -1419,6 +1419,9 @@ public:
   void		UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
   // #CAT_Activation un-set external input data flag
 
+  virtual void	SetLayUnitExtFlags(int flg);
+  // #CAT_Activation set external input data flags for layer and all units in the layer
+
   virtual void	ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
     Random* ran = NULL, const PosTwoDCoord* offset = NULL);
   // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end

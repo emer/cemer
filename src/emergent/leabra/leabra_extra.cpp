@@ -1953,7 +1953,7 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
   for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
     for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
       Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
-      if(ru_gp == NULL) continue;
+      if(!ru_gp) continue;
 
       int rui = 0;
       TwoDCoord ruc;
@@ -1971,7 +1971,7 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
 	    for(suc.x = -surround_width; suc.x <= surround_width; suc.x++) {
 	      TwoDCoord sugc = su_st + suc;
 	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
-	      if(su_gp == NULL) continue;
+	      if(!su_gp) continue;
 
 	      for(int sui=0;sui<su_gp->size;sui++) {
 		Unit* su_u = (Unit*)su_gp->FastEl(sui);
@@ -2013,7 +2013,7 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
     for(suc.x = -surround_width; suc.x <= surround_width; suc.x++) {
       TwoDCoord sugc = su_st + suc;
       Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
-      if(su_gp == NULL) continue;
+      if(!su_gp) continue;
 
       float wt = surround_wts.FastEl(suc.x+surround_width, suc.y+surround_width);
 
@@ -2101,6 +2101,45 @@ void SaliencyPrjnSpec::GridFilter(DataTable* graph_data) {
     graph_data->NewGridView();
 }
 
+////////////////////////////////////////////////////////////
+//	GpAggregatePrjnSpec
+
+void GpAggregatePrjnSpec::Initialize() {
+}
+
+void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(prjn->from->units.gp.size == 0, "Connect_impl",
+		 "requires sending layer to have unit groups!")) {
+    return;
+  }
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord su_geo = send_lay->gp_geom;
+  int n_su_gps = su_geo.Product();
+
+  int alloc_no = n_su_gps; 	// number of cons per recv unit
+
+  for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
+    Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
+    if(!ru_u) break;
+    ru_u->ConnectAlloc(alloc_no, prjn);
+    
+    TwoDCoord suc;
+    for(suc.y = 0; suc.y <= su_geo.y; suc.y++) {
+      for(suc.x = 0; suc.x <= su_geo.x; suc.x++) {
+	Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc);
+	if(!su_gp) continue;
+	Unit* su_u = (Unit*)su_gp->SafeEl(ri);
+	if(su_u) {
+	  ru_u->ConnectFrom(su_u, prjn);
+	}
+      }
+    }
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
