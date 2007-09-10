@@ -3096,6 +3096,8 @@ String iToolBar_List::El_GetName_(void* it) const {
 void iApplicationToolBar::Constr_post() {
   iMainWindowViewer* win = viewerWindow(); //cache
   iToolBar* tb = this;
+  int icon_sz = taiM_->label_height(taiMisc::sizMedium);
+  tb->setIconSize(QSize(icon_sz, icon_sz));
   win->fileNewAction->addTo(tb);
   win->fileOpenAction->addTo(tb);
   win->fileSaveAction->addTo(tb);
@@ -3448,12 +3450,12 @@ void iMainWindowViewer::Constr_Menu_impl() {
 
   // project actions -- we always create them (for menu consistency) but selectively enable
   fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence("Ctrl+N"), _fileNewAction ));
-  fileNewAction->setIconSet( QIconSet( QPixmap(":/images/filenew.png") ) );
+  fileNewAction->setIcon( QIcon( ":/images/filenew.png") );
   fileOpenAction = AddAction(new taiAction("&Open Project...", QKeySequence("Ctrl+O"), _fileOpenAction ));
-  fileOpenAction->setIconSet( QIconSet( QPixmap(":/images/fileopen.png") ) );
+  fileOpenAction->setIcon( QIcon( QPixmap(":/images/fileopen.png") ) );
   
   fileSaveAction = AddAction(new taiAction("&Save Project", QKeySequence("Ctrl+S"), _fileSaveAction ));
-  fileSaveAction->setIconSet( QIconSet( QPixmap(":/images/filesave.png") ) );
+  fileSaveAction->setIcon( QIcon( QPixmap(":/images/filesave.png") ) );
   fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), _fileSaveAsAction ));
   fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence("Ctrl+L"), _fileSaveAsAction ));
   fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction" ));
@@ -3485,7 +3487,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction" ));
   
   filePrintAction = AddAction(new taiAction("&Print...", QKeySequence("Ctrl+P"), _filePrintAction ));
-  filePrintAction->setIconSet( QIconSet( QPixmap(":/images/fileprint.png") ) );
+  filePrintAction->setIcon( QIcon( QPixmap(":/images/fileprint.png") ) );
   if (!isRoot()) {
     fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence("Ctrl+W"), _fileCloseWindowAction ));
     connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()) );
@@ -3501,27 +3503,27 @@ void iMainWindowViewer::Constr_Menu_impl() {
   
   editUndoAction = AddAction(new taiAction("&Undo", QKeySequence("Ctrl+Z"), _editUndoAction ));
   editUndoAction->setEnabled( FALSE );
-  editUndoAction->setIconSet( QIconSet( QPixmap(":/images/editundo.png") ) );
+  editUndoAction->setIcon( QIcon( QPixmap(":/images/editundo.png") ) );
   editRedoAction = AddAction(new taiAction("&Redo", QKeySequence("Ctrl+Y"), _editRedoAction ));
   editRedoAction->setEnabled( FALSE );
-  editRedoAction->setIconSet( QIconSet( QPixmap(":/images/editredo.png") ) );
+  editRedoAction->setIcon( QIcon( QPixmap(":/images/editredo.png") ) );
   editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence("Ctrl+X"), _editCutAction ));
-  editCutAction->setIconSet( QIconSet( QPixmap(":/images/editcut.png") ) );
+  editCutAction->setIcon( QIcon( QPixmap(":/images/editcut.png") ) );
   editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence("Ctrl+C"), _editCopyAction ));
-  editCopyAction->setIconSet( QIconSet( QPixmap(":/images/editcopy.png") ) );
+  editCopyAction->setIcon( QIcon( QPixmap(":/images/editcopy.png") ) );
   //note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
   editDupeAction = AddAction(new taiAction(taiClipData::EA_DUPE, "Duplicate", QKeySequence(), "editDuplicateAction" ));
   editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence("Ctrl+V"), _editPasteAction ));
   QPixmap editpaste(":/images/editpaste.png");
-  editPasteAction->setIconSet( QIconSet( editpaste ) );
+  editPasteAction->setIcon( QIcon( editpaste ) );
   editPasteIntoAction = AddAction(new taiAction(taiClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence("Ctrl+V"), "editPasteIntoAction" ));
-  editPasteIntoAction->setIconSet( QIconSet( editpaste ) );
+  editPasteIntoAction->setIcon( QIcon( editpaste ) );
   editPasteAssignAction = AddAction(new taiAction(taiClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence("Ctrl+V"), "editPasteAssignAction" ));
-  editPasteAssignAction->setIconSet( QIconSet( editpaste ) );
+  editPasteAssignAction->setIcon( QIcon( editpaste ) );
   editPasteAppendAction = AddAction(new taiAction(taiClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence("Ctrl+V"), "editPasteAppendAction" ));
-  editPasteAppendAction->setIconSet( QIconSet( editpaste ) );
+  editPasteAppendAction->setIcon( QIcon( editpaste ) );
   editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
-//  editDeleteAction->setIconSet( QIconSet( editpaste ) );
+//  editDeleteAction->setIcon( QIcon( editpaste ) );
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence("Ctrl+L"), _editLinkAction ));
   editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence("Ctrl+L"), "editLinkIntoAction" ));
   editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));

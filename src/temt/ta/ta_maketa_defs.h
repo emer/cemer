@@ -217,7 +217,7 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QIconSet {
+class QIcon {
 //  
 public:
 	int dummy; // #IGNORE

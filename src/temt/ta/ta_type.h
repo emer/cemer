@@ -576,6 +576,17 @@ public:
     VO_AUTO_SELECT_NEW	= 0x002, // #LABEL_AutoSelectNew automatically select (the first) of a new tree item that is made with New or similar menu commands
     VO_AUTO_EXPAND_NEW	= 0x004, // #LABEL_AutoExpandNew automatically expand new tree items that are made with New or similar menu commands
   };
+
+  enum	GuiStyle {	// style options provided by the gui system (not all are available on all platforms)
+    GS_DEFAULT,		// #LABEL_Default use the default style for whatever platform you're running on
+    GS_PLASTIQUE,	// #LABEL_Plastique default style on linux -- a good choice to try
+    GS_CLEANLOOKS,	// #LABEL_CleanLooks similar overall to plastique, with a bit more of a windows look
+    GS_MOTIF,		// #LABEL_Motif a classic look from the 90's -- one of the first 3d-looks
+    GS_CDE,		// #LABEL_CDE Common Desktop Environment -- a bit lighter and cleaner than MOTIF, but overall very similar to it
+    GS_MACINTOSH,	// #LABEL_Macintosh only available on a macintosh!
+    GS_WINDOWS,		// #LABEL_Windows standard old-school Microsoft Windows (pre XP)
+    GS_WINDOWSXP,	// #LABEL_WindowsXP Windows XP look -- only available on Windows XP or higher
+  };    
   
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
@@ -594,6 +605,7 @@ public:
   ////////////////////////////////////////////////////////
   // 	TA GUI parameters
 
+  static GuiStyle	gui_style;	// #SAVE #CAT_GUI #DEF_GS_DEFAULT style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
   static String		font_name;	// #SAVE #CAT_GUI default font name to use
   static int		font_size;	// #SAVE #CAT_GUI default font size to use
   static ConsoleType	console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART

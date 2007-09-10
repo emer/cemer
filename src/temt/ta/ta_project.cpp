@@ -1156,12 +1156,16 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
-// quasi-temp hack because Mac style on Mac breaks layouts in 4.3.1
-# if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
-    QApplication::setStyle("windows"); // this looks nice and works
-# endif
+    if(taMisc::gui_style != taMisc::GS_DEFAULT) {
+      String gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style);
+      if(gstyle.nonempty()) {
+	gstyle = gstyle.after("GS_");
+	gstyle.downcase();
+	QApplication::setStyle(gstyle); // this looks nice and works
+      }
+    }
 # ifdef TA_USE_INVENTOR
-new QApplication(argc, (char**)argv); // accessed as qApp
+    new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
     milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
 # else
@@ -1803,8 +1807,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_InitDMem(argc, argv)) goto startup_failed;
   if(!Startup_InitArgs(argc, argv)) goto startup_failed;
   if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
-  if(!Startup_InitApp(argc, argv)) goto startup_failed;
   if(!Startup_InitTA(ta_init_fun)) goto startup_failed;
+  if(!Startup_InitApp(argc, argv)) goto startup_failed;
   if(!Startup_InitTypes()) goto startup_failed;
   if(!Startup_EnumeratePlugins()) goto startup_failed;
   if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration

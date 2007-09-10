@@ -499,6 +499,7 @@ taMisc::ConsoleType taMisc::console_type = CT_GUI;
 taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE_PAGING_NOGUI | CO_GUI_TRACKING);
 #endif
 
+taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int	taMisc::display_width = 80;
 int	taMisc::tree_indent = 12;
 int	taMisc::max_menu = 1000; // no cost now in QT for making it large..

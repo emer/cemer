@@ -150,6 +150,10 @@ enum {
 void
 T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
 {
+
+  // note that the parent of this guy has a gridlayout that is causing icons
+  // to overlap in mac mode, most likely due to a mac bug in 4.3.1, that is due to
+  // be fixed in 4.4.0
   for (int i=0; i <= PRINT_BUTTON; i++) {
     QPushButton * p = new QPushButton(parent);
     // Button focus doesn't really make sense in the way we're using
@@ -159,15 +163,6 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
     // extra frame around it, up to 3 pixels or more. This causes
     // pixmaps on buttons to look tiny, which is not what we want.
     p->setIconSize(QSize(24, 24));
-
-#if (defined Q_WS_MAC && QT_VERSION >= 0x030100) && defined(HAVE_QSTYLEFACTORY_H)
-    // Since Qt/Mac 3.1.x, all pushbuttons (even those < 32x32) are drawn 
-    // using the Aqua style, i.e. with rounded edges and shading. This
-    // looks really ugly in the viewer decoration. Drawing the buttons
-    // in the Windows style gives us the flat, square buttons we want.
-    QStyle * style = QStyleFactory::create("windows");
-    if (style) { p->setStyle(style); }
-#endif
 
     switch (i) {
     case INTERACT_BUTTON:

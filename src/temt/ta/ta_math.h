@@ -1153,7 +1153,7 @@ public:
 
   Type		type;		// #APPLY_IMMED type of random variable to generate
   double	mean;		// mean of random distribution
-  double	var;		// #CONDEDIT_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = SD, not variance; uniform = half-range)
+  double	var;		// #CONDEDIT_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
   double	par;		// #CONDEDIT_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)
 
   double 	Gen() const;
@@ -1189,8 +1189,8 @@ public:
   // #CAT_Float poisson with parameter l (var)
   static double Gamma(double var, int j)  { return var * taMath_double::gamma_dev(j); }
   // #CAT_Float gamma with given variance, number of exponential stages (par)
-  static double Gauss(double var)  	{ return var * taMath_double::gauss_dev(); }
-  // #CAT_Float gaussian (normal) random number with given variance
+  static double Gauss(double stdev)  	{ return stdev * taMath_double::gauss_dev(); }
+  // #CAT_Float gaussian (normal) random number with given standard deviation
 
   static double UniformDen(double x, double range)
   { double rval = 0.0; if(fabs(x) <= range) rval = 1.0 / (2.0 * range); return rval; }
@@ -1201,8 +1201,8 @@ public:
   // #CAT_Float poisson density with parameter l (var)
   static double GammaDen(int j, double l, double t)  { return taMath_double::gamma_den(j,l,t); }
   // #CAT_Float gamma density at time t with given number of stages (par), lambda (var)
-  static double GaussDen(double x, double var)  	{ return taMath_double::gauss_den(x / var); }
-  // #CAT_Float gaussian (normal) density for given variance (0 mean)
+  static double GaussDen(double x, double stdev)  	{ return taMath_double::gauss_den_sig(x, stdev); }
+  // #CAT_Float gaussian (normal) density for given standard deviation (0 mean)
 
   void	Initialize();
   void	Destroy()		 { };

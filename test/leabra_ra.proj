@@ -4603,6 +4603,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    visible=1;
    m_is_root=0;
    m_is_proj_viewer=1;
+   m_is_dialog=0;
    toolbars {
     name=;
     el_typ=ToolBar;
