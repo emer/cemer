@@ -1156,13 +1156,17 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
+    // get optional style override
+    String gstyle;
     if(taMisc::gui_style != taMisc::GS_DEFAULT) {
-      String gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style);
-      if(gstyle.nonempty()) {
-	gstyle = gstyle.after("GS_");
-	gstyle.downcase();
-	QApplication::setStyle(gstyle); // this looks nice and works
-      }
+      gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style).after("GS_").downcase();
+    }
+// quasi-temp hack because Mac style on Mac breaks layouts in 4.3.1
+# if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
+    if (gstyle.empty()) gstyle = "windows"; // this looks nice and works
+# endif
+    if(gstyle.nonempty()) {
+      QApplication::setStyle(gstyle);
     }
 # ifdef TA_USE_INVENTOR
     new QApplication(argc, (char**)argv); // accessed as qApp
