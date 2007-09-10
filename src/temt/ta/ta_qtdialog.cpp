@@ -1179,6 +1179,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
   }
 //nn  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   QHBoxLayout* layH = new QHBoxLayout();
+  layH->setMargin(0);
   layH->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
 /*  layH->addItem(new QSpacerItem(2, row_height, QSizePolicy::Fixed), row, 0,
     1, 1, (Qt::AlignRight | Qt::AlignVCenter)); */
@@ -1199,6 +1200,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
   layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); 
   QHBoxLayout* hbl = new QHBoxLayout();
+  hbl->setMargin(0);
   layBody->addLayout(hbl, row, 1);
   hbl->addWidget(data, 0);
   if (!fill_hor) hbl->addStretch();
@@ -1298,8 +1300,14 @@ void taiDataHost::Constr_Body() {
   QVBoxLayout* vbl = new QVBoxLayout(body);
   vbl->setMargin(0);
   layBody = new QGridLayout();
+#if QT_VERSION >= 0x040300
+  layBody->setHorizontalSpacing(LAYBODY_SPACING);
+  layBody->setVerticalSpacing(0);
+  layBody->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
+#else
   layBody->setSpacing(LAYBODY_SPACING);
   layBody->setMargin(LAYBODY_MARGIN);
+#endif
   layBody->setColumnStretch(1,1);
   vbl->addLayout(layBody);
   vbl->addStretch(1);

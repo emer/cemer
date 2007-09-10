@@ -1,3 +1,44 @@
+Mac layout bug
+
+(solved the too big bug already)
+
+* the "shifting down" seems to occur for even the simplest guys:
+  ex. LeabraLayerSpec::DecaySpec
+this type is a simple taBase nested type, with no conds etc.
+it gets cut off just like everything else in the nested guy
+
+Mac Qt-4.3.1 DND bug
+
+most salient evidence: 
+QAbstractItemView::startDrag
+
+        if (drag->start(supportedActions) == Qt::MoveAction)
+            d->clearOrRemove();
+
+in 4.2.3 this line does not hit the clearOrRemove, but in
+4.3.1 it does -- for this to happen, we must now be getting
+Qt::MoveAction returned from drag->start
+
+QtDropAction QDrag::start
+  returns QDragManager->drag result
+
+QDropAction QDragManager::drag
+* only one place where a QDropAction obj is made, and it is stack
+  var; this code executes:
+QWidgetPrivate::qt_mac_dnd_event
+        if(!de.isAccepted()) {
+            interrestedInDrag = false;
+            SetDragDropAction(dragRef, kDragActionNothing);
+
+
+TrackDrag must set the MoveAction in dragRef
+
+DragActions ret
+GetDragDropAction(dragRef, ret)
+return qt_mac_dnd_map_mac_default_action(ret)
+ * this must be returning QMoveAction
+
+
 T3 Selection
 
 * selection itself is an Inventor concept, mediated my UI

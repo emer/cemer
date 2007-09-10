@@ -1156,6 +1156,10 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
+// quasi-temp hack because Mac style on Mac breaks layouts in 4.3.1
+# if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
+    QApplication::setStyle("windows"); // this looks nice and works
+# endif
 # ifdef TA_USE_INVENTOR
 new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance

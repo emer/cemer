@@ -59,14 +59,19 @@ class TA_API taiCompData : public taiData {
 INHERITED(taiData)
   Q_OBJECT
 public:
-
+  enum LayoutType { // the type of layout being used
+    LT_HBox,
+    LT_Flow,
+    LT_Stacked
+  };
+  
   taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags = 0);
   override ~taiCompData();
 
   taiDataList		data_el;
 
   QLayout*		GetLayout() {return (QLayout*)lay;} // override
-  bool			hasFlowLayout() const; // else has hbox (the default)
+  inline LayoutType	layType() const {return lay_type;}
   QWidget*		widgets(int index);
   int			widgetCount();
 
@@ -85,8 +90,10 @@ signals:
 protected:
   QLayout*		lay;	// may be ignored/unused by subclasses
   int			last_spc;	// space after last widget, -1 = none
-  inline iFlowLayout*	layFlow() const {return (iFlowLayout*)lay;} // only if hasFlow
+  LayoutType		lay_type;
   inline QHBoxLayout*	layHBox() const {return (QHBoxLayout*)lay;} // only if !hasFlow
+  inline iFlowLayout*	layFlow() const {return (iFlowLayout*)lay;} // only if hasFlow
+  inline QStackedLayout* layStacked() const {return (QStackedLayout*)lay;} // only if hasFlow
   override void		ChildAdd(taiData* child);
   override void		ChildRemove(taiData* child);
   virtual void		AddChildWidget_impl(QWidget* child_widget, int spacing,
@@ -218,9 +225,9 @@ class TA_API taiPlusToggle : public taiCompData {
   Q_OBJECT
 INHERITED(taiCompData)
 public:
-  taiData*	data; // set by caller after creating contained class
-  iCheckBox* 	but_rep;
-  inline QFrame* 	rep() {return (QFrame*)(QWidget*)m_rep;} //parent of contained controls
+  taiData*		data; // set by caller after creating contained class
+  iCheckBox* 		but_rep;
+  inline QWidget* 	rep() {return (QWidget*)m_rep;} //parent of contained controls
 
   taiPlusToggle(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   ~taiPlusToggle();
@@ -418,15 +425,11 @@ public:
 class TA_API taiDataDeck : public taiCompData {
   Q_OBJECT
 public:
-  inline QStackedWidget* rep() {return (QStackedWidget*)(QWidget*)m_rep;}
+  inline QWidget* rep() {return (QWidget*)m_rep;}
 
-  override void	InitLayout() {} // nothing in this class
-  override void	EndLayout() {} // nothing in this class
   taiDataDeck(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
 
   virtual void  GetImage(int i);
-protected:
-  override void AddChildWidget_impl(QWidget* child_widget, int spacing, int stretch); //
 };
 
 

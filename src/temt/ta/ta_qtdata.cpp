@@ -58,6 +58,7 @@
 #include <QMenuBar>
 #include <QPointer>
 #include <qpushbutton.h>
+#include <QStackedLayout>
 #include <QStackedWidget>
 #include <qstring.h>
 #include <QTimer>
@@ -216,6 +217,13 @@ iLabel* taiData::MakeLabel(QWidget* gui_parent, int font_spec) const {
   return rval;
 }
 
+QWidget* taiData::MakeLayoutWidget(QWidget* gui_parent) const {
+  QWidget* wid = new QWidget(gui_parent);
+  wid->setAttribute(Qt::WA_LayoutUsesWidgetRect, true);
+  wid->setMaximumHeight(taiM->max_control_height(defSize()));
+  return wid;
+}
+
 bool taiData::readOnly() {
   if (mparent != NULL)
     return (mparent->readOnly() || (mflags & flgReadOnly));
@@ -247,6 +255,9 @@ void taiData::SetRep(QWidget* val) {
   }
   m_rep = val;
   if (m_rep) {
+#ifdef TA_OS_MAC
+    m_rep->setAttribute(WA_LayoutUsesWidgetRect, true);
+#endif
     m_rep->installEventFilter(this);
   }
 }
@@ -291,6 +302,7 @@ taiCompData::taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWid
 {
   lay = NULL; // usually created in InitLayout;
   last_spc = -1;
+  lay_type = LT_HBox; // default
   mwidgets = new QObjectList();
 }
 
@@ -315,13 +327,19 @@ void taiCompData::ChildRemove(taiData* child) {
 }
 
 void taiCompData::InitLayout() { //virtual/overridable
-  if (hasFlowLayout()) {
-    lay = new iFlowLayout(GetRep(), 0, -1, (Qt::AlignLeft));
-    lay->setMargin(0); // in Qt4 it adds style-dependent defaults
-  } else {
+  switch (lay_type) {
+  case LT_HBox:
     lay = new QHBoxLayout(GetRep());
-    lay->setMargin(0); // in Qt4 it adds style-dependent defaults
+    break;
+  case LT_Flow:
+    lay = new iFlowLayout(GetRep(), 0, -1, (Qt::AlignLeft));
+    break;
+  case LT_Stacked:
+    lay = new QStackedLayout(GetRep());
+    break;
+  //no default -- must handle all cases
   }
+  lay->setMargin(0); // supposedly deprecated...
   last_spc = taiM->hsep_c; // give it a bit of room
 }
 
@@ -330,10 +348,14 @@ void taiCompData::AddChildMember(MemberDef* md) {
   
   // establish container
   QWidget* wid;
-  if (hasFlowLayout()) {
-    wid = new QWidget(GetRep());
-  } else {
+  switch (lay_type) {
+  case LT_HBox:
     wid = GetRep(); // directly into the guy
+    break;
+  case LT_Flow:
+  case LT_Stacked:
+    wid = MakeLayoutWidget(GetRep());
+    break;
   }
   // get gui representation of data
   int child_flags = (mflags & flg_INHERIT_MASK);
@@ -343,24 +365,26 @@ void taiCompData::AddChildMember(MemberDef* md) {
   String name;
   String desc;
   taiDataHost::GetName(md, name, desc);
-//QLabel* lbl = taiM->NewLabel(nm, GetRep());
-//  iLabel* lbl = MakeLabel(nm, wid);
   iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat, md);
   
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
 	  this, SLOT(ChildDataChanged(taiData*)) );
 	  
-  if (hasFlowLayout()) {
+  switch (lay_type) {
+  case LT_HBox:
+    AddChildWidget(lbl, 1); // taiM->hsep_c);
+    AddChildWidget(ctrl, taiM->hsep_c);
+    break;
+  case LT_Flow:
+  case LT_Stacked:
     QHBoxLayout* hbl = new QHBoxLayout(wid);
     hbl->setMargin(0);
     hbl->setSpacing(taiM->hsep_c);
     hbl->addWidget(lbl);
     hbl->addWidget(ctrl);
     AddChildWidget(wid, -1); // no explicit seps
-  } else {
-    AddChildWidget(lbl, 1); // taiM->hsep_c);
-    AddChildWidget(ctrl, taiM->hsep_c);
+    break;
   }
 
   // add description text tooltips
@@ -371,9 +395,14 @@ void taiCompData::AddChildMember(MemberDef* md) {
 }
 
 void taiCompData::EndLayout() { //virtual/overridable
-
-  if (!hasFlowLayout() && (last_spc != -1)) {
+  switch (lay_type) {
+  case LT_HBox:
     layHBox()->addStretch();
+    break;
+  case LT_Flow:
+    break;
+  case LT_Stacked:
+    break;
   }
 }
 
@@ -389,19 +418,23 @@ void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
 void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing,
   int stretch) 
 { 
-  if (hasFlowLayout()) {
-    layFlow()->addWidget(child_widget);
-  } else {
+  switch (lay_type) {
+  case LT_HBox:
     if (spacing != -1)
-      lay->addItem(new QSpacerItem(last_spc, 0, QSizePolicy::Fixed));
+      //lay->addItem(new QSpacerItem(last_spc, 0, QSizePolicy::Fixed));
+      layHBox()->addSpacing(last_spc);
     layHBox()->addWidget(child_widget, stretch, (Qt::AlignLeft | Qt::AlignVCenter));
+    child_widget->show();
+    break;
+  case LT_Flow:
+    layFlow()->addWidget(child_widget);
+    child_widget->show();
+    break;
+  case LT_Stacked:
+    layStacked()->addWidget(child_widget);
+    layStacked()->setAlignment(child_widget, (Qt::AlignLeft | Qt::AlignVCenter));
+    break;
   }
-  child_widget->show();
-}
-
-
-bool taiCompData::hasFlowLayout() const {
-  return (mflags & flgFlowLayout);
 }
 
 QWidget* taiCompData::widgets(int index) {
@@ -780,7 +813,7 @@ bool taiToggle::GetValue() const {
 taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiCompData(typ_, host_, par, gui_parent_, flags_)
 {
-  SetRep(new QFrame(gui_parent_));
+  SetRep(MakeLayoutWidget(gui_parent_));
   but_rep = NULL;
   data = NULL;
 }
@@ -796,7 +829,7 @@ void taiPlusToggle::applyNow() {
 }
 
 void taiPlusToggle::InitLayout() {
-  taiCompData::InitLayout();
+  inherited::InitLayout();
   but_rep = new iCheckBox(rep());
   AddChildWidget(but_rep, taiM->hsep_c);
   if (HasFlag(flgToggleReadOnly)) {
@@ -974,10 +1007,8 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
   }
 }
 
-
 void taiBitBox::Initialize(QWidget* gui_parent_) {
-  SetRep(new QWidget(gui_parent_));
-  rep()->setFixedHeight(taiM->label_height(defSize()));
+  SetRep(MakeLayoutWidget(gui_parent_));
   lay = new QHBoxLayout(m_rep);
   lay->setMargin(0); // in Qt4 it adds style-dependent defaults
 }
@@ -1095,9 +1126,11 @@ bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
 
 
 taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags)
-: inherited(typ_, host_, par, gui_parent_, flags)
+  QWidget* gui_parent_, int flags_)
+: inherited(typ_, host_, par, gui_parent_, flags_)
 {
+  if (flags_ & flgFlowLayout)
+    lay_type = LT_Flow;
   if (host_) {
     show = host_->show();
   } else {
@@ -1130,8 +1163,7 @@ void taiPolyData::AddTypeMembers() {
 }
 
 void taiPolyData::Constr(QWidget* gui_parent_) {
-  SetRep(new QWidget(gui_parent_));
-  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+  SetRep(MakeLayoutWidget(gui_parent_));
   if (host != NULL) {
     SET_PALETTE_BACKGROUND_COLOR(rep(), host->colorOfCurRow());
   }
@@ -1205,31 +1237,19 @@ iColor taiColor::GetValue() const {
 //////////////////////////////////
 
 taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: taiCompData(typ_, host_, par, gui_parent_, flags) {
-  SetRep(new QStackedWidget(gui_parent_));
-  rep()->setMaximumHeight(taiM->max_control_height(defSize()));
+: taiCompData(typ_, host_, par, gui_parent_, flags) 
+{
+  lay_type = LT_Stacked;
+  SetRep(MakeLayoutWidget(gui_parent_));
   if (host != NULL) {
     SET_PALETTE_BACKGROUND_COLOR(rep(), host->colorOfCurRow());
   }
 }
 
 void taiDataDeck::GetImage(int i) {
-  rep()->setCurrentIndex(i);
-/*nuke  // note: Q3WidgetStack doesn't seem to completely hide underneath widgets...
-  cur_deck = i;
-  rep()->raiseWidget(i);
-  for (int j = 0; j < widgetCount(); ++j) {
-    QWidget* w = widgets(j);
-    if (i == j) w->show();
-    else        w->hide();
-  } */
+  layStacked()->setCurrentIndex(i);
 }
 
-void taiDataDeck::AddChildWidget_impl(QWidget* child_widget, int spacing,
-  int /*stretch*/)
-{//note: stretch not needed/used
-  (rep()->addWidget(child_widget));
-}
 
 
 //////////////////////////////////
@@ -1252,9 +1272,8 @@ void taiVariantBase::Constr(QWidget* gui_parent_) {
   togVal = NULL;
   m_updating = 0;
   
-  QWidget* rep_ = new QWidget(gui_parent_);
+  QWidget* rep_ = MakeLayoutWidget(gui_parent_);
   SetRep(rep_);
-  rep_->setMaximumHeight(taiM->max_control_height(defSize()));
   if (host != NULL) {
     SET_PALETTE_BACKGROUND_COLOR(rep_, host->colorOfCurRow());
   }
@@ -3178,7 +3197,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   null_text = " NULL";
   if (flags_ & flgEditDialog) {
     // put the stuff in the gui
-    QWidget* act_par = new QWidget(gui_parent_);
+    QWidget* act_par = MakeLayoutWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
     lay->setSpacing(1);

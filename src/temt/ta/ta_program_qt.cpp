@@ -114,6 +114,7 @@ int taiProgVarIntValMember::BidForMember(MemberDef* md, TypeDef* td){
 taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
 					 int flags_) {
   taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
+  rval->InitLayout();
   gui_parent_ = rval->GetRep();
   taiIncrField*	int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
   taiComboBox*	enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
@@ -121,7 +122,7 @@ taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   rval->AddChildWidget(int_rep->rep());
   rval->data_el.Add(enum_rep);
   rval->AddChildWidget(enum_rep->rep());
-
+  rval->EndLayout();
   return rval;
 }
 

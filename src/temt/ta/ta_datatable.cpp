@@ -1622,7 +1622,7 @@ DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
       da = nda;
       nda->EnforceRows(rows);	// keep row-constant
       StructUpdate(false);
-    } else if ((da->cell_dims() != cell_geom.size) || (!da->is_matrix)) {
+    } else if ((!da->cell_geom.Equal(cell_geom)) || (!da->is_matrix)) {
       StructUpdate(true);
       da->cell_geom = cell_geom;
       da->is_matrix = true;

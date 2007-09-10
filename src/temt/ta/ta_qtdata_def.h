@@ -183,6 +183,8 @@ public:
   iLabel*		MakeLabel(QWidget* gui_parent = NULL, int font_spec = 0) const; // convenience func, sets fonts etc.
   iLabel*		MakeLabel(const String& text, QWidget* gui_parent = NULL,
     int font_spec = 0) const; // convenience func, sets fonts etc.
+  QWidget*		MakeLayoutWidget(QWidget* gui_parent = NULL) const;
+    // makes a layout widget, with max height set, and tweaked for Mac
   
 #ifndef __MAKETA__
 signals:
