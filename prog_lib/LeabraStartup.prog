@@ -1,6 +1,11 @@
 // ta_Dump File v2.0
 Program .projects[0].programs[0] { 
-  ProgVar_List @.vars = [9] {
+  ProgVar_List @.args = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+  };
+
+  ProgVar_List @.vars = [7] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -8,11 +13,9 @@ Program .projects[0].programs[0] {
     ProgVar @[4] { };
     ProgVar @[5] { };
     ProgVar @[6] { };
-    ProgVar @[7] { };
-    ProgVar @[8] { };
   };
 
-  ProgEl_List @.prog_code = [27] {
+  ProgEl_List @.prog_code = [22] {
     IfReturn @[0] { };
     Comment @[1] { };
     MiscCall @[2] { 
@@ -39,36 +42,41 @@ Program .projects[0].programs[0] {
 	ProgArg @[1] { };
       };
     };
-    MiscCall @[6] { 
-      ProgArg_List @.meth_args = [2] {
+    MiscCall @[6] { };
+    Comment @[7] { };
+    PrintExpr @[8] { };
+    MethodCall @[9] { };
+    MiscCall @[10] { 
+      ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
-	ProgArg @[1] { };
       };
     };
-    MiscCall @[7] { };
-    Comment @[8] { };
-    PrintExpr @[9] { };
-    MethodCall @[10] { };
     MiscCall @[11] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    MiscCall @[12] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    MiscCall @[13] { 
-      ProgArg_List @.meth_args = [2] {
+    MethodCall @[12] { 
+      ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
+	ProgArg @[2] { };
       };
     };
-    VarIncr @[14] { };
-    MiscCall @[15] { 
-      ProgArg_List @.meth_args = [1] {
+    MethodCall @[13] { 
+      ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    Comment @[14] { };
+    MethodCall @[15] { 
+      ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
       };
     };
     MethodCall @[16] { 
@@ -79,10 +87,11 @@ Program .projects[0].programs[0] {
       };
     };
     MethodCall @[17] { 
-      ProgArg_List @.meth_args = [3] {
+      ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
+	ProgArg @[3] { };
       };
     };
     MethodCall @[18] { 
@@ -92,46 +101,21 @@ Program .projects[0].programs[0] {
 	ProgArg @[2] { };
       };
     };
-    Comment @[19] { };
-    MethodCall @[20] { 
-      ProgArg_List @.meth_args = [4] {
+    OtherProgramVar @[19] { };
+    PrintExpr @[20] { };
+    ProgramCall @[21] { 
+      ProgArg_List @.prog_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
       };
     };
-    MethodCall @[21] { 
-      ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-      };
-    };
-    MethodCall @[22] { 
-      ProgArg_List @.meth_args = [4] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
-      };
-    };
-    MethodCall @[23] { 
-      ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-      };
-    };
-    OtherProgramVar @[24] { };
-    PrintExpr @[25] { };
-    ProgramCall @[26] { };
   };
 };
 Program .projects[0].programs[0] {
- name="LeabraStartup_pb";
- tags="Leabra, Startup, Parallel Batch";
- desc="run project in the background (replaces leabra_startup.css) -- parallel batch version for running on a cluster";
+ name="LeabraStartup";
+ tags="Leabra, Startup";
+ desc="run project in the background (replaces leabra_startup.css)
+command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batches=xxx] [Tag=xxx]";
  flags=STARTUP_RUN;
  objs {
   name=;
@@ -147,6 +131,24 @@ Program .projects[0].programs[0] {
   name=;
   el_typ=ProgVar;
   el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="network to operate on -- updates batch counter on network and passes it to train program";
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$1$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="datatable with training patterns -- not used by this program, but passed to train program";
+  };
  };
  vars {
   name=;
@@ -156,7 +158,7 @@ Program .projects[0].programs[0] {
    name="train";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][1]$0$;
+   object_val=.projects[0].programs.gp[0][1]$2$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="set this to point to your train process";
@@ -165,7 +167,7 @@ Program .projects[0].programs[0] {
    name="batch";
    var_type=T_Object;
    object_type=Program;
-   object_val=.projects[0].programs.gp[0][0]$1$;
+   object_val=.projects[0].programs.gp[0][0]$3$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="set this to point to your batch process";
@@ -173,20 +175,12 @@ Program .projects[0].programs[0] {
   ProgVar @[2] {
    name="tag";
    var_type=T_String;
-   string_val="_gui";
+   string_val=;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
   ProgVar @[3] {
-   name="batch_str";
-   var_type=T_String;
-   string_val="00";
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc="batch number as a string (leading zeros)";
-  };
-  ProgVar @[4] {
    name="log_dir";
    var_type=T_String;
    string_val=;
@@ -194,36 +188,28 @@ Program .projects[0].programs[0] {
    flags=CTRL_PANEL|NULL_CHECK;
    desc="log file directory";
   };
-  ProgVar @[5] {
+  ProgVar @[4] {
    name="log_file_nm";
    var_type=T_String;
    string_val=;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=NULL_CHECK;
    desc="name of log file";
   };
-  ProgVar @[6] {
-   name="batch_start";
-   var_type=T_Int;
-   int_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc="batch starting number";
-  };
-  ProgVar @[7] {
+  ProgVar @[5] {
    name="EpochOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][1]$2$;
+   object_val=.projects[0].data.gp[1][1]$4$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc=;
   };
-  ProgVar @[8] {
+  ProgVar @[6] {
    name="TrialOutputData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$3$;
+   object_val=.projects[0].data.gp[1][0]$5$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc=;
@@ -414,9 +400,9 @@ Program .projects[0].programs[0] {
      required=0;
      def_val="\"\"";
      expr {
-      expr="\"b_start=\"";
+      expr="\"batches=\"";
       flags=;
-      var_expr="\"b_start=\"";
+      var_expr="\"batches=\"";
       vars {
       };
       var_names{       };
@@ -430,9 +416,9 @@ Program .projects[0].programs[0] {
      required=0;
      def_val="\"\"";
      expr {
-      expr="\"BatchStart\"";
+      expr="\"BatchMax\"";
       flags=;
-      var_expr="\"BatchStart\"";
+      var_expr="\"BatchMax\"";
       vars {
       };
       var_names{       };
@@ -442,50 +428,6 @@ Program .projects[0].programs[0] {
    };
   };
   MiscCall @[6] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::AddArgName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="flag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"b_end=\"";
-      flags=;
-      var_expr="\"b_end=\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="name";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"BatchEnd\"";
-      flags=;
-      var_expr="\"BatchEnd\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  MiscCall @[7] {
    desc="key step: actually process args!";
    flags=;
    result_var=NULL;
@@ -497,11 +439,11 @@ Program .projects[0].programs[0] {
     el_def=0;
    };
   };
-  Comment @[8] {
+  Comment @[7] {
    desc="Initialize and set variables from args";
    flags=;
   };
-  PrintExpr @[9] {
+  PrintExpr @[8] {
    desc=;
    flags=;
    expr {
@@ -514,11 +456,11 @@ Program .projects[0].programs[0] {
     bad_vars{     };
    };
   };
-  MethodCall @[10] {
+  MethodCall @[9] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[0].programs[0].vars[1]$4$;
+   obj=.projects[0].programs[0].vars[1]$6$;
    method=Program::Init;
    meth_args {
     name=;
@@ -526,10 +468,10 @@ Program .projects[0].programs[0] {
     el_def=0;
    };
   };
-  MiscCall @[11] {
+  MiscCall @[10] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[0].vars[2]$5$;
+   result_var=.projects[0].programs[0].vars[2]$7$;
    object_type=taMisc;
    method=taMisc::FindArgByName;
    meth_args {
@@ -554,96 +496,10 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MiscCall @[12] {
+  MiscCall @[11] {
    desc=;
    flags=;
-   result_var=.projects[0].programs[0].vars[6]$6$;
-   object_type=taMisc;
-   method=taMisc::FindArgByName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="nm";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"BatchStart\"";
-      flags=;
-      var_expr="\"BatchStart\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  MiscCall @[13] {
-   desc=;
-   flags=;
-   result_var=.projects[0].programs[0].vars[3]$7$;
-   object_type=taMisc;
-   method=taMisc::LeadingZeros;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=int;
-     type="int";
-     name="num";
-     required=0;
-     def_val=;
-     expr {
-      expr="batch_start";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ batch_start;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=int;
-     type="int";
-     name="len";
-     required=0;
-     def_val=;
-     expr {
-      expr="2";
-      flags=;
-      var_expr="2";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  VarIncr @[14] {
-   desc=;
-   flags=;
-   var=$5$;
-   expr {
-    expr="\".\" + batch_str";
-    flags=;
-    var_expr="\".\" + batch_str";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
-   };
-  };
-  MiscCall @[15] {
-   desc=;
-   flags=;
-   result_var=.projects[0].programs[0].vars[4]$8$;
+   result_var=.projects[0].programs[0].vars[3]$8$;
    object_type=taMisc;
    method=taMisc::FindArgByName;
    meth_args {
@@ -668,7 +524,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[16] {
+  MethodCall @[12] {
    desc=;
    flags=;
    result_var=NULL;
@@ -728,11 +584,11 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[17] {
+  MethodCall @[13] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$4$;
+   obj=$6$;
    method=Program::SetVarFmArg;
    meth_args {
     name=;
@@ -745,69 +601,9 @@ Program .projects[0].programs[0] {
      required=1;
      def_val=;
      expr {
-      expr="\"BatchStart\"";
+      expr="\"BatchMax\"";
       flags=;
-      var_expr="\"BatchStart\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="var_nm";
-     required=1;
-     def_val=;
-     expr {
-      expr="\"batch\"";
-      flags=;
-      var_expr="\"batch\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[2] {
-     arg_type=bool;
-     type="bool";
-     name="quiet";
-     required=0;
-     def_val="false";
-     expr {
-      expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  MethodCall @[18] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   obj=$4$;
-   method=Program::SetVarFmArg;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="arg_nm";
-     required=1;
-     def_val=;
-     expr {
-      expr="\"BatchEnd\"";
-      flags=;
-      var_expr="\"BatchEnd\"";
+      var_expr="\"BatchMax\"";
       vars {
       };
       var_names{       };
@@ -848,15 +644,15 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  Comment @[19] {
+  Comment @[14] {
    desc="Set log files";
    flags=;
   };
-  MethodCall @[20] {
+  MethodCall @[15] {
    desc="last arg is to include dmem proc number";
    flags=;
-   result_var=.projects[0].programs[0].vars[5]$10$;
-   obj=.projects[0].programs[0].vars[7]$11$;
+   result_var=.projects[0].programs[0].vars[4]$10$;
+   obj=.projects[0].programs[0].vars[5]$11$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -928,7 +724,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[21] {
+  MethodCall @[16] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=;
    result_var=NULL;
@@ -988,11 +784,11 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[22] {
+  MethodCall @[17] {
    desc="last arg is to include dmem proc number";
    flags=OFF;
    result_var=$10$;
-   obj=.projects[0].programs[0].vars[8]$12$;
+   obj=.projects[0].programs[0].vars[6]$12$;
    method=taBase::GetFileNameFmProject;
    meth_args {
     name=;
@@ -1064,7 +860,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[23] {
+  MethodCall @[18] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=OFF;
    result_var=NULL;
@@ -1124,17 +920,17 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  OtherProgramVar @[24] {
+  OtherProgramVar @[19] {
    desc=;
    flags=;
    other_prog=.projects[0].programs.gp[0][9]$13$;
    set_other=1;
-   var_1=$5$;
+   var_1=$7$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
   };
-  PrintExpr @[25] {
+  PrintExpr @[20] {
    desc=;
    flags=;
    expr {
@@ -1147,15 +943,47 @@ Program .projects[0].programs[0] {
     bad_vars{     };
    };
   };
-  ProgramCall @[26] {
+  ProgramCall @[21] {
    desc=;
    flags=;
-   target=$1$;
+   target=$3$;
    targ_ld_init="*LeabraBatch*";
    prog_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
+    ProgArg @[0] {
+     arg_type=LeabraNetwork;
+     type="LeabraNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     expr {
+      expr="network";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ network;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type="DataTable*";
+     name="input_data";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_data";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ input_data;      };
+      bad_vars{       };
+     };
+    };
    };
   };
  };

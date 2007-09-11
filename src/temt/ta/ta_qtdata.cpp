@@ -219,7 +219,9 @@ iLabel* taiData::MakeLabel(QWidget* gui_parent, int font_spec) const {
 
 QWidget* taiData::MakeLayoutWidget(QWidget* gui_parent) const {
   QWidget* wid = new QWidget(gui_parent);
+#if (QT_VERSION >= 0x040300)
   wid->setAttribute(Qt::WA_LayoutUsesWidgetRect, true);
+#endif
   wid->setMaximumHeight(taiM->max_control_height(defSize()));
   return wid;
 }
@@ -255,7 +257,7 @@ void taiData::SetRep(QWidget* val) {
   }
   m_rep = val;
   if (m_rep) {
-#ifdef TA_OS_MAC
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300)
     m_rep->setAttribute(WA_LayoutUsesWidgetRect, true);
 #endif
     m_rep->installEventFilter(this);

@@ -1162,9 +1162,9 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
       gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style).after("GS_").downcase();
     }
 // quasi-temp hack because Mac style on Mac breaks layouts in 4.3.1
-# if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
-    if (gstyle.empty()) gstyle = "windows"; // this looks nice and works
-# endif
+// # if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
+//     if (gstyle.empty()) gstyle = "windows"; // this looks nice and works
+// # endif
     if(gstyle.nonempty()) {
       QApplication::setStyle(gstyle);
     }

@@ -1,0 +1,1159 @@
+// ta_Dump File v2.0
+LeabraProject .projects[0] { 
+  Doc_Group @.docs = [1] {
+    taDoc @[0] { };
+  };
+
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+
+      LayerWizElList @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] { };
+    DataTable_Group @.gp[1] = [1] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [4] {
+	  String_Data @[0] { };
+	  float_Data @[1] { };
+	  float_Data @[2] { };
+	  float_Data @[3] { };
+	};
+      };
+    };
+    DataTable_Group @.gp[2] = [1] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [5] {
+	  String_Data @[0] { };
+	  float_Data @[1] { };
+	  float_Data @[2] { };
+	  float_Data @[3] { };
+	  float_Data @[4] { };
+	};
+      };
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [1] {
+    Program @[0] { 
+      ProgVar_List @.args = [2] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+      };
+
+      ProgEl_List @.prog_code = [5] {
+	Comment @[0] { };
+	DataCalcLoop @[1] { 
+	  DataOpList @.src_cols = [4] {
+	    DataOpEl @[0] { };
+	    DataOpEl @[1] { };
+	    DataOpEl @[2] { };
+	    DataOpEl @[3] { };
+	  };
+
+	  ProgEl_List @.loop_code = [2] {
+	    AssignExpr @[0] { };
+	    DataCalcSetSrcRow @[1] { };
+	  };
+
+	  ProgVar_List @.src_col_vars = [4] {
+	    ProgVar @[0] { };
+	    ProgVar @[1] { };
+	    ProgVar @[2] { };
+	    ProgVar @[3] { };
+	  };
+	};
+	Comment @[2] { };
+	ResetDataRows @[3] { };
+	DataCalcLoop @[4] { 
+	  DataOpList @.src_cols = [4] {
+	    DataOpEl @[0] { };
+	    DataOpEl @[1] { };
+	    DataOpEl @[2] { };
+	    DataOpEl @[3] { };
+	  };
+
+	  DataOpList @.dest_cols = [1] {
+	    DataOpEl @[0] { };
+	  };
+
+	  ProgEl_List @.loop_code = [1] {
+	    IfElse @[0] { 
+	      ProgEl_List @.true_code = [4] {
+		DataCalcAddDestRow @[0] { };
+		DataCalcCopyCommonCols @[1] { };
+		AssignExpr @[2] { };
+		DataCalcSetDestRow @[3] { };
+	      };
+	    };
+	  };
+
+	  ProgVar_List @.src_col_vars = [4] {
+	    ProgVar @[0] { };
+	    ProgVar @[1] { };
+	    ProgVar @[2] { };
+	    ProgVar @[3] { };
+	  };
+
+	  ProgVar_List @.dest_col_vars = [1] {
+	    ProgVar @[0] { };
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [4] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		  };
+		};
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+};
+LeabraProject .projects[0] {
+ name="Project_0";
+ desc=;
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+  taDoc @[0] {
+   name="DataCalcLoopDocs";
+   auto_open=1;
+   text="<html>
+<head></head>
+<body>
+== Data Calc Loop Demo Project ==
+
+This project shows how to use the DataCalcLoop system to iteratively process rows of a datatable.
+
+The program [[.programs.DataCalcLoopDemo]] runs two different types of data calc loops:
+* the first modifes a single data table, by computing a new column from existing columns.  Specifically, AvgValue is computed as the average of Value1 and Value2 -- you can enter new values in the SomeData table and see that it updates them in the bar graph at the right.
+* the second creates a new data table by selecting values from an existing one, and computing new values as well.  Specifically, it extracts \"train\" data from the SomeData into TrainData data table, and computes the MaxValue column.
+
+The program should be well enough documented to follow along in the Edit Program code.  Be sure to read the comments for extra tips.
+
+</body>
+</html>
+";
+  };
+ };
+ wizards {
+  name=;
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=1;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name="Input";
+     n_units=25;
+     io_type=INPUT;
+    };
+    LayerWizEl @[1] {
+     name="Hidden";
+     n_units=25;
+     io_type=HIDDEN;
+    };
+    LayerWizEl @[2] {
+     name="Output";
+     n_units=25;
+     io_type=OUTPUT;
+    };
+   };
+   connectivity=BIDIRECTIONAL;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="SomeData";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [10] "train_a";"train_b";"train_c";"train_d";"train_e";"test_a";"test_b";"test_c";"test_d";"test_e";      };
+     };
+     float_Data @[1] {
+      name="Value1";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [10] 0.40000001;0.5;0.2;0.69999999;0.30000001;0.5;0.69999999;0.40000001;0.80000001;0.40000001;      };
+     };
+     float_Data @[2] {
+      name="Value2";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [10] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;0.30000001;0.80000001;0.5;0.89999998;0.30000001;      };
+     };
+     float_Data @[3] {
+      name="AvgValue";
+      desc="this value is computed in the data calc loop!";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [10] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;0.40000001;0.75;0.44999999;0.85000002;0.35000002;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="TrainData";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [5] "train_a";"train_b";"train_c";"train_d";"train_e";      };
+     };
+     float_Data @[1] {
+      name="Value1";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [5] 0.40000001;0.5;0.2;0.69999999;0.30000001;      };
+     };
+     float_Data @[2] {
+      name="Value2";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [5] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;      };
+     };
+     float_Data @[3] {
+      name="AvgValue";
+      desc="this value is computed in the data calc loop!";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [5] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;      };
+     };
+     float_Data @[4] {
+      name="MaxValue";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [5] 0.40000001;0.60000002;0.30000001;0.69999999;0.40000001;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  tags=;
+  desc=;
+  Program @[0] {
+   name="DataCalcLoopDemo";
+   tags=;
+   desc=;
+   flags=;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="SomeData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].data.gp[1][0]$0$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="TrainData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].data.gp[2][0]$1$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    Comment @[0] {
+     desc="First example just does computations on the source data table itself (AvgValue)";
+     flags=;
+    };
+    DataCalcLoop @[1] {
+     desc=;
+     flags=;
+     src_data_var=.projects[0].programs[0].args[0]$2$;
+     dest_data_var=NULL;
+     src_cols {
+      name="src_cols";
+      el_typ=DataOpEl;
+      el_def=0;
+      DataOpEl @[0] {
+       col_name="Name";
+      };
+      DataOpEl @[1] {
+       col_name="Value1";
+      };
+      DataOpEl @[2] {
+       col_name="Value2";
+      };
+      DataOpEl @[3] {
+       col_name="AvgValue";
+      };
+     };
+     dest_cols {
+      name="dest_cols";
+      el_typ=DataOpEl;
+      el_def=0;
+     };
+     loop_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      AssignExpr @[0] {
+       desc="use AssignExpr to compute columns from other s_values";
+       flags=;
+       result_var=.projects[0].programs[0].prog_code[1].src_col_vars[3]$3$;
+       expr {
+	expr=".5 * (s_Value1 +  s_Value2)";
+	flags=;
+	var_expr=".5 * ($#0#$ +  $#1#$)";
+	vars {
+	};
+	var_names{ s_Value1;s_Value2;	};
+	bad_vars{ 	};
+       };
+      };
+      DataCalcSetSrcRow @[1] {
+       desc="apply any source column computations back to source data table";
+       flags=;
+       src_data_var=$2$;
+       dest_data_var=NULL;
+      };
+     };
+     src_col_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="s_Name";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+      ProgVar @[1] {
+       name="s_Value1";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+      ProgVar @[2] {
+       name="s_Value2";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+      ProgVar @[3] {
+       name="s_AvgValue";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+     };
+     dest_col_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    Comment @[2] {
+     desc="Next, we do some filtering and calculation from source into a new dest data table (TrainData)";
+     flags=;
+    };
+    ResetDataRows @[3] {
+     desc="reset train data so its ready";
+     flags=;
+     data_var=.projects[0].programs[0].args[1]$4$;
+    };
+    DataCalcLoop @[4] {
+     desc="IMPORTANT: only add the dest_cols you are actually going to compute values for -- use CopyCommonCols to copy any other values that just need to be copied";
+     flags=;
+     src_data_var=$2$;
+     dest_data_var=$4$;
+     src_cols {
+      name="src_cols";
+      el_typ=DataOpEl;
+      el_def=0;
+      DataOpEl @[0] {
+       col_name="Name";
+      };
+      DataOpEl @[1] {
+       col_name="Value1";
+      };
+      DataOpEl @[2] {
+       col_name="Value2";
+      };
+      DataOpEl @[3] {
+       col_name="AvgValue";
+      };
+     };
+     dest_cols {
+      name="dest_cols";
+      el_typ=DataOpEl;
+      el_def=0;
+      DataOpEl @[0] {
+       col_name="MaxValue";
+      };
+     };
+     loop_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      IfElse @[0] {
+       desc="select train data based on Name column";
+       flags=;
+       cond {
+	expr="s_Name.contains(\"train_\")";
+	flags=;
+	var_expr="$#0#$.contains(\"train_\")";
+	vars {
+	};
+	var_names{ s_Name;	};
+	bad_vars{ 	};
+       };
+       true_code {
+	name=;
+	el_typ=ProgEl;
+	el_def=0;
+	DataCalcAddDestRow @[0] {
+	 desc="add a new row";
+	 flags=;
+	 src_data_var=$2$;
+	 dest_data_var=$4$;
+	};
+	DataCalcCopyCommonCols @[1] {
+	 desc="first, copy over everything in common between two tables";
+	 flags=;
+	 src_data_var=$2$;
+	 dest_data_var=$4$;
+	 only_named_cols=0;
+	};
+	AssignExpr @[2] {
+	 desc="compute new destination column value";
+	 flags=;
+	 result_var=.projects[0].programs[0].prog_code[4].dest_col_vars[0]$5$;
+	 expr {
+	  expr="MAX(s_Value1, s_Value2)";
+	  flags=;
+	  var_expr="MAX($#0#$, $#1#$)";
+	  vars {
+	  };
+	  var_names{ s_Value1;s_Value2;	  };
+	  bad_vars{ 	  };
+	 };
+	};
+	DataCalcSetDestRow @[3] {
+	 desc="last step is to write d_ variables into the actual data table";
+	 flags=;
+	 src_data_var=$2$;
+	 dest_data_var=$4$;
+	};
+       };
+       false_code {
+	name=;
+	el_typ=ProgEl;
+	el_def=0;
+       };
+      };
+     };
+     src_col_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="s_Name";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+      ProgVar @[1] {
+       name="s_Value1";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+      ProgVar @[2] {
+       name="s_Value2";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+      ProgVar @[3] {
+       name="s_AvgValue";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+     };
+     dest_col_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="d_MaxValue";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK;
+       desc=;
+      };
+     };
+    };
+   };
+  };
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$6$;
+   name="Browser";
+   visible=1;
+   m_is_root=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name="Tree";
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$6$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name="Panels";
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="T3Frames";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="SomeData";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$0$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[1][0].data[0]$7$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    fixed_range {fix_min=1: min=-1: fix_max=1: max=10: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[1][0].data[1]$8$;
+	    m_transform=NULL;
+	    name="Value1";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0.2: fix_max=0: max=0.8: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[1][0].data[2]$9$;
+	    m_transform=NULL;
+	    name="Value2";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.9: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].data.gp[1][0].data[3]$10$;
+	    m_transform=NULL;
+	    name="AvgValue";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=9: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="Name";
+	   fixed_range {fix_min=1: min=-1: fix_max=1: max=10: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-1: max=10: };
+	   range {min=-1: max=10: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Value1";
+	   fixed_range {fix_min=0: min=0.2: fix_max=0: max=0.8: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0.2: max=0.9: };
+	   range {min=0.2: max=0.9: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Value2";
+	   fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.9: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0.3: max=0.9: };
+	   range {min=0.3: max=0.9: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="AvgValue";
+	   fixed_range {fix_min=0: min=0.25: fix_max=0: max=0.85: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0.25: max=0.85: };
+	   range {min=0.25: max=0.85: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	  };
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  graph_type=BAR;
+	  plot_style=LINE_AND_POINTS;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  color_mode=FIXED_COLOR;
+	  negative_draw=0;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  label_spacing=-1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=.colorspecs[0]$11$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  width=1;
+	  depth=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.428465: y=0.445: z=1.625717: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.638217;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ use_change_log=0;
+ last_change_desc=;
+ networks {
+  name=;
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};

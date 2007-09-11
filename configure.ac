@@ -370,6 +370,7 @@ AC_CONFIG_FILES([Makefile
 		demo/leabra/Makefile
 		demo/so/Makefile
 		demo/virt_env/Makefile
+		demo/data_proc/Makefile
 		src/temt/ta/images/Makefile
                 postremove-pak
                 postinstall-pak])

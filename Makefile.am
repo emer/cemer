@@ -57,6 +57,7 @@ DIST_SUBDIRS =\
 	demo/leabra \
 	demo/so \
 	demo/virt_env \
+	demo/data_proc \
 	src/temt/ta/images
 
 SUBDIRS =\
@@ -82,6 +83,7 @@ SUBDIRS =\
 	demo/leabra \
 	demo/so \
 	demo/virt_env \
+	demo/data_proc \
 	src/temt/ta/images
 
 EXTRA_DIST += src/temt/ta/ios-g++-3.1

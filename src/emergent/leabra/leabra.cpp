@@ -1617,6 +1617,10 @@ bool LeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		    "sum of trg_netin_rel values for layer:",String(sum_trg_netin_rel),
 		    "!= 1.0 -- must fix!");
   }
+
+  lay->CheckError((inhib_group == UNIT_GROUPS && lay->units.gp.size == 0), quiet, rval,
+		  "inhib_group is UNIT_GROUPS but layer does not have any unit groups!  will not work.");
+		     
   return rval;
 }
 
