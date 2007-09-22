@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 
-#include "pdpserver.h"
+#include "ta_server.h"
 
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QTcpServer>
@@ -30,44 +30,44 @@
 // /TEMP
 
 //////////////////////////
-//  PdpClientAdapter	//
+//  TemtClientAdapter	//
 //////////////////////////
 
-void PdpClientAdapter::sock_disconnected() {
+void TemtClientAdapter::sock_disconnected() {
   owner()->sock_disconnected();
 }
 
-void PdpClientAdapter::sock_readyRead() {
+void TemtClientAdapter::sock_readyRead() {
   owner()->sock_readyRead();
 }
 
-void PdpClientAdapter::sock_stateChanged(QAbstractSocket::SocketState socketState) {
+void TemtClientAdapter::sock_stateChanged(QAbstractSocket::SocketState socketState) {
   owner()->sock_stateChanged(socketState);
 }
 
 
 
 //////////////////////////
-//  PdpClient		//
+//  TemtClient		//
 //////////////////////////
 
-void PdpClient::Initialize() {
+void TemtClient::Initialize() {
   connected = false;
   server = NULL;
-  SetAdapter(new PdpClientAdapter(this));
+  SetAdapter(new TemtClientAdapter(this));
 }
 
-void PdpClient::Destroy() {
+void TemtClient::Destroy() {
   CloseClient();
 }
 
-void PdpClient::Copy_(const PdpClient& cp) {
+void TemtClient::Copy_(const TemtClient& cp) {
 //NOTE: not designed to be copied
   CloseClient();
   if (server != cp.server) server = NULL;
 }
 
-void PdpClient::CloseClient() {
+void TemtClient::CloseClient() {
   if (!connected) return;
   if (sock) {
     sock->disconnectFromHost();
@@ -79,7 +79,7 @@ void PdpClient::CloseClient() {
   connected = false;
 }
 
-void PdpClient::SetSocket(QTcpSocket* sock_) {
+void TemtClient::SetSocket(QTcpSocket* sock_) {
   sock = sock_;
   connected = true;
   QObject::connect(sock_, SIGNAL(disconnected()),
@@ -90,14 +90,14 @@ void PdpClient::SetSocket(QTcpSocket* sock_) {
     adapter(), SLOT(sock_stateChanged(QAbstractSocket::SocketState)));
 }            
 
-void PdpClient::sock_disconnected() {
+void TemtClient::sock_disconnected() {
   connected = false;
   sock = NULL; // goodbye...
   if (server) server->ClientDisconnected(this);
 //NO MORE CODE: we will be deleted!
 }
 
-void PdpClient::sock_readyRead() {
+void TemtClient::sock_readyRead() {
   if (!sock) return; 
   // we only do lines -- will call us again when a line is ready
   if (!sock->canReadLine()) return;
@@ -145,50 +145,50 @@ void PdpClient::sock_readyRead() {
   }
 }
 
-void PdpClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
+void TemtClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
   //nothing yet
 }
 
 
 //////////////////////////
-//  PdpServerAdapter	//
+//  TemtServerAdapter	//
 //////////////////////////
 
-void PdpServerAdapter::server_newConnection() {
+void TemtServerAdapter::server_newConnection() {
   owner()->server_newConnection();
 }
 
 
 //////////////////////////
-//  PdpServer		//
+//  TemtServer		//
 //////////////////////////
 
-void PdpServer::Initialize() {
+void TemtServer::Initialize() {
   port = 5360;
   open = false;
   server = NULL;
-  SetAdapter(new PdpServerAdapter(this));
+  SetAdapter(new TemtServerAdapter(this));
 }
 
-void PdpServer::Destroy() {
+void TemtServer::Destroy() {
   CloseServer(false);
 }
 
-void PdpServer::Copy_(const PdpServer& cp) {
+void TemtServer::Copy_(const TemtServer& cp) {
   CloseServer();
   port = cp.port;
 //NOTE: don't copy the clients -- always flushed
 }
 
-void PdpServer::ClientDisconnected(PdpClient* client) {
+void TemtServer::ClientDisconnected(TemtClient* client) {
   // only called for asynchronous disconnects (not ones we force)
   clients.RemoveEl(client);
 }
 
-void PdpServer::CloseServer(bool notify) {
+void TemtServer::CloseServer(bool notify) {
   if (!open) return;
   while (clients.size > 0) {
-    PdpClient* cl = clients.FastEl(clients.size - 1);
+    TemtClient* cl = clients.FastEl(clients.size - 1);
     cl->server = NULL; // prevents callback
     cl->CloseClient();
     clients.RemoveEl(cl);
@@ -201,7 +201,11 @@ void PdpServer::CloseServer(bool notify) {
   if (notify) DataChanged(DCR_ITEM_UPDATED);
 }
 
-bool PdpServer::OpenServer() {
+void TemtServer::InitServer_impl(bool& ok) {
+  // nothing
+}
+
+bool TemtServer::OpenServer() {
   if (open) return true;
   server = new QTcpServer();
   if (!server->listen(QHostAddress::Any, port)) {
@@ -219,7 +223,7 @@ bool PdpServer::OpenServer() {
   return true;
 }
 
-void  PdpServer::server_newConnection() {
+void  TemtServer::server_newConnection() {
   // setup data writing for hello or error block
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
@@ -236,7 +240,7 @@ void  PdpServer::server_newConnection() {
     ts->disconnectFromHost();
     return;
   }
-  PdpClient* cl = (PdpClient*)clients.New(1);
+  TemtClient* cl = (TemtClient*)clients.New(1);
   cl->server = this;
   cl->SetSocket(ts);
     

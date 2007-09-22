@@ -268,6 +268,7 @@ public:
   taPluginBase_List	plugin_deps; // #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
   taiMimeFactory_List	mime_factories; // #NO_SAVE #HIDDEN_TREE extensible list of mime factories
   ColorScaleSpec_Group 	colorspecs;	// Color Specs
+  taBase_List		objs;  // #SHOW_TREE #EXPERT_TREE #NO_SAVE misc place for app-global objs, usually for system use, ex. tcp server
   String_Array		recent_files; // #NO_SHOW recently loaded files
   String_Array		recent_paths; // #NO_SHOW recently used paths
 #ifdef DEBUG

@@ -13,35 +13,31 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// pdpserver.h -- pdp server
+// ta_server.h -- tcp/ip server
 
-#ifndef PDPSERVER_H
-#define PDPSERVER_H
-
-#include "emergent_def.h"
+#ifndef TA_SERVER_H
+#define TA_SERVER_H
 
 #include "ta_base.h"
-
-#include "emergent_base.h"
-#include "emergent_TA_type.h"
+#include "ta_TA_type.h"
 
 #ifndef __MAKETA__
 # include <QtNetwork/QAbstractSocket> // for state defines
 #endif
 
 // forwards
-class PdpClient;
-class PdpClientAdapter;
-class PdpServer;
-class PdpServerAdapter;
+class TemtClient;
+class TemtClientAdapter;
+class TemtServer;
+class TemtServerAdapter;
 
-class EMERGENT_API PdpClientAdapter: public taBaseAdapter {
+class TA_API TemtClientAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
-friend class PdpClient;
+friend class TemtClient;
   Q_OBJECT
 public:
-  inline PdpClient*	owner() {return (PdpClient*)taBaseAdapter::owner;}
-  PdpClientAdapter(PdpClient* owner_): taBaseAdapter((taOABase*)owner_) {}
+  inline TemtClient*	owner() {return (TemtClient*)taBaseAdapter::owner;}
+  TemtClientAdapter(TemtClient* owner_): taBaseAdapter((taOABase*)owner_) {}
   
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
@@ -51,17 +47,17 @@ public slots:
 #endif
 };
 
-class EMERGENT_API PdpClient: public taOABase { 
+class TA_API TemtClient: public taOABase { 
   // #INSTANCE #TOKENS for tcp-based remote services -- represents one connected client 
 INHERITED(taOABase)
 public:
   bool			connected; // #READ_ONLY #SHOW #NO_SAVE true when the client is connected
   
-  inline PdpClientAdapter* adapter() {return (PdpClientAdapter*)taOABase::adapter;} // #IGNORE
-  TA_BASEFUNS(PdpClient);
+  inline TemtClientAdapter* adapter() {return (TemtClientAdapter*)taOABase::adapter;} // #IGNORE
+  TA_BASEFUNS(TemtClient);
 
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
-  PdpServer*		server; // (will never change) set on create; NOT refcnted
+  TemtServer*		server; // (will never change) set on create; NOT refcnted
   
   void			CloseClient();
   void			SetSocket(QTcpSocket* sock);
@@ -75,28 +71,28 @@ protected:
   QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
 #endif
 private:
-  void	Copy_(const PdpClient& cp);
+  void	Copy_(const TemtClient& cp);
   void	Initialize();
   void 	Destroy();
 };
 
-class EMERGENT_API PdpClient_List: public taList<PdpClient> {
+class TA_API TemtClient_List: public taList<TemtClient> {
 public:
-  TA_BASEFUNS2_NOCOPY(PdpClient_List, taList<PdpClient>);
+  TA_BASEFUNS2_NOCOPY(TemtClient_List, taList<TemtClient>);
 
 private:
-  void	Initialize() {SetBaseType(&TA_PdpClient);}
+  void	Initialize() {SetBaseType(&TA_TemtClient);}
   void 	Destroy() {}
 };
 
 
-class EMERGENT_API PdpServerAdapter: public taBaseAdapter {
+class TA_API TemtServerAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner
-friend class PdpServer;
+friend class TemtServer;
   Q_OBJECT
 public:
-  inline PdpServer*	owner() {return (PdpServer*)taBaseAdapter::owner;}
-  PdpServerAdapter(PdpServer* owner_): taBaseAdapter((taOABase*)owner_) {}
+  inline TemtServer*	owner() {return (TemtServer*)taBaseAdapter::owner;}
+  TemtServerAdapter(TemtServer* owner_): taBaseAdapter((taOABase*)owner_) {}
   
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
@@ -104,24 +100,27 @@ public slots:
 #endif
 };
 
-class EMERGENT_API PdpServer: public taOABase { 
-  // #INSTANCE #TOKENS Pdp Server, for tcp-based remote services 
+class TA_API TemtServer: public taOABase { 
+  // #INSTANCE #TOKENS Temt Server, for tcp-based remote services 
 INHERITED(taOABase)
 public:
   unsigned short	port; // #DEF_5360 port number to use -- each instance must have unique port
   bool			open; // #NO_SAVE #SHOW #READ_ONLY set when server is open and accepting connections
-  PdpClient_List	clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
+  TemtClient_List	clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
   
-  inline PdpServerAdapter* adapter() {return (PdpServerAdapter*)taOABase::adapter;} // #IGNORE
+  inline TemtServerAdapter* adapter() {return (TemtServerAdapter*)taOABase::adapter;} // #IGNORE
 
+  bool			InitServer() // initializes the server
+    {bool ok = true; InitServer_impl(ok); return ok;}
+  
   bool			OpenServer(); // #BUTTON #GHOST_ON_open open the server and accept connections
   void			CloseServer(bool notify = true); // #BUTTON #GHOST_OFF_open #ARGC_0 stop the server and close open connections
   
 // callbacks
-  void			ClientDisconnected(PdpClient* client); // #IGNORE
+  void			ClientDisconnected(TemtClient* client); // #IGNORE
 
-  SIMPLE_LINKS(PdpServer);
-  TA_BASEFUNS(PdpServer);
+  SIMPLE_LINKS(TemtServer);
+  TA_BASEFUNS(TemtServer);
 
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public: // slot forwardees
@@ -131,9 +130,11 @@ public: // slot forwardees
 protected:
   QTcpServer*		server; // #IGNORE
   
-  PdpClient*		m_client; // #IGNORE unitary client
+  TemtClient*		m_client; // #IGNORE unitary client
+  
+  virtual void		InitServer_impl(bool& ok); // impl routine, set ok=f for failure
 private:
-  void	Copy_(const PdpServer& cp); // copying not really supported...
+  void	Copy_(const TemtServer& cp); // copying not really supported...
   void	Initialize();
   void 	Destroy();
 };

@@ -158,6 +158,7 @@ TAHEADS =\
 	ta_defaults.h \
 	ta_plugin.h \
 	ta_plugin_p.h \
+	ta_server.h \
 	ta_project.h \
 	$(TAHEADS_GUI) \
 	$(TAHEADS_TAMISC) \

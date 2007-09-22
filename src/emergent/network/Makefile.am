@@ -8,21 +8,18 @@ VPATH = @srcdir@
 if TA_GUI
 
 TAHEADS_GUI =\
-	pdpserver_qt.h \
 	netstru_so.h \
 	netstru_qtso.h \
 	emergent_qtso.h \
 	emergent_program_qtso.h 
 
 HEADS_GUI =\
-	pdpserver_qt.h \
 	netstru_so.h \
 	netstru_qtso.h \
 	emergent_qtso.h \
 	emergent_program_qtso.h 
 
 SRCS_GUI =\
-	pdpserver_qt.cpp \
 	netstru_so.cpp \
 	emergent_qtso.cpp \
 	netstru_qtso.cpp \
@@ -40,7 +37,6 @@ TAHEADS =\
 	netdata.h \
 	emergent_program.h \
 	emergent_project.h \
-	pdpserver.h \
 	$(TAHEADS_GUI) \
 	v3_compat.h
 

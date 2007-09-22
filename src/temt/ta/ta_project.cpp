@@ -762,6 +762,7 @@ void taRootBase::InitLinks() {
   taBase::Own(colorspecs, this);
   // create colorspecs even if nogui, since they are referenced in projects
   colorspecs.SetDefaultColor();	
+  taBase::Own(objs, this);
   taBase::Own(recent_files, this);
   taBase::Own(recent_paths, this);
   taiMimeFactory_List::setInstance(&mime_factories);
@@ -777,6 +778,7 @@ void taRootBase::CutLinks() {
 #endif
   recent_paths.CutLinks();
   recent_files.CutLinks();
+  objs.CutLinks();
   colorspecs.CutLinks();
   mime_factories.CutLinks();
   plugin_deps.CutLinks();
@@ -1106,6 +1108,16 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("--ref_count_trace", "CssRefCountTrace");
   taMisc::AddArgNameDesc("CssRefCountTrace", "\
  -- Specifies that css reference count tracing should be performed (debugging tool)");
+  
+  // Server variables
+  taMisc::AddArgName("--server", "Server");
+  taMisc::AddArgNameDesc("Server", "\
+ -- Run the app as a tcp server");
+
+  taMisc::AddArgName("--port", "Port");
+  taMisc::AddArgName("port=", "Port");
+  taMisc::AddArgNameDesc("Port", "\
+ -- Specifies the tcp port for server mode (def=5360");
 
   taMisc::Init_Args(argc, argv);
   return true;
