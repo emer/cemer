@@ -52,7 +52,6 @@ HEADS =\
 	netdata.h \
 	emergent_program.h \
 	emergent_project.h \
-	pdpserver.h \
 	v3_compat.h \
 	$(HEADS_GUI)
 
@@ -64,8 +63,6 @@ SRCS =\
 	netdata.cpp \
 	emergent_program.cpp \
 	emergent_project.cpp \
-	pdpserver.cpp \
-	pdpserver.moc.cpp \
 	$(SRCS_GUI) \
 	emergent_ti.cpp \
 	v3_compat.cpp
