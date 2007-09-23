@@ -736,7 +736,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      int_val=14;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
-     desc=;
+     desc="width of the smoothing gaussian kernel for smoothing the epoch data";
     };
     ProgVar @[2] {
      name="kern_sig";
@@ -744,7 +744,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      real_val=7;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
-     desc=;
+     desc="sigma (standard deviation) of the gaussian smoothing kernel";
     };
     ProgVar @[3] {
      name="EpochData";
@@ -1812,7 +1812,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=245: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  x_axis {
@@ -1849,10 +1849,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="cnt_err";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=25: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=25: };
-	   range {min=0: max=25: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -2150,7 +2150,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=245: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  x_axis {
@@ -2187,10 +2187,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="cnt_err";
-	   fixed_range {fix_min=0: min=2.886822: fix_max=0: max=23.52796: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=2.886822: max=23.52796: };
-	   range {min=2.886822: max=23.52796: };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-07: max=6e-07: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;

@@ -2333,7 +2333,8 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
 ////////////////////////
 
 void Projection::Initialize() {
-  //  layer = from = NULL;
+  layer = NULL;
+  //  from = NULL; // now a layerref
   from_type = PREV;
   con_type = &TA_Connection;
   recvcons_type = &TA_RecvCons;
