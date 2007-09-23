@@ -1,0 +1,794 @@
+// ta_Dump File v2.0
+Program .projects[0].programs[0] { 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [10] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
+    ProgVar @[9] { };
+  };
+
+  ProgEl_List @.prog_code = [18] {
+    MethodCall @[0] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+      };
+    };
+    DataGroupProg @[2] { 
+      DataOpList @.ops = [4] {
+	DataGroupEl @[0] { };
+	DataGroupEl @[1] { };
+	DataGroupEl @[2] { };
+	DataGroupEl @[3] { };
+      };
+    };
+    PrintExpr @[3] { };
+    MethodCall @[4] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    PrintVar @[5] { };
+    MathCall @[6] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    UserScript @[7] { };
+    PrintExpr @[8] { };
+    MethodCall @[9] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    PrintVar @[10] { };
+    UserScript @[11] { };
+    PrintExpr @[12] { };
+    MethodCall @[13] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+    PrintVar @[14] { };
+    MathCall @[15] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    UserScript @[16] { };
+    DataAnalCall @[17] { 
+      ProgArg_List @.meth_args = [9] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+	ProgArg @[8] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs[0] {
+ name="EpochsToTrain";
+ tags="Data, Analysis, Epoch, Training";
+ desc="performs various stats on epochs to train to criterion, across multiple batches, including an additional err threshold that can be different than the training stopping criterion, and also the minimum error value achieved across batches";
+ flags=STARTUP_RUN;
+ objs {
+  name=;
+  el_typ=taNBase;
+  el_def=0;
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="log_fname";
+   var_type=T_String;
+   string_val=;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="log file name to load -- leave empty to choose from browser";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="err_thresh";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="alternative error threshold to use";
+  };
+  ProgVar @[1] {
+   name="kern_width";
+   var_type=T_Int;
+   int_val=14;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[2] {
+   name="kern_sig";
+   var_type=T_Real;
+   real_val=7;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[3] {
+   name="EpochData";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data[0]$0$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[4] {
+   name="EpochData_Group";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[2][0]$1$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[5] {
+   name="stats";
+   var_type=T_String;
+   string_val="n=10; min=0; max=0; mean=0; median=0; mode=0; stdev=0; sem=0;";
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[6] {
+   name="max_idx";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[7] {
+   name="max_val";
+   var_type=T_Real;
+   real_val=3.783505853677006e-44;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[8] {
+   name="min_val";
+   var_type=T_Real;
+   real_val=0;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+  ProgVar @[9] {
+   name="EpochData_SmoothGauss";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[2][1]$2$;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc=;
+  };
+ };
+ functions {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs[0].vars[3]$3$;
+   method=DataTable::RemoveAllRows;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  MethodCall @[1] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$3$;
+   method=DataTable::LoadData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="fname";
+     required=1;
+     def_val=;
+     expr {
+      expr="log_fname";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ log_fname;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable::Delimiters;
+     type="DataTable::Delimiters";
+     name="delim";
+     required=0;
+     def_val="DataTable::TAB";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[2] {
+     arg_type=bool;
+     type="bool";
+     name="quote_str";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[3] {
+     arg_type=int;
+     type="int";
+     name="max_recs";
+     required=0;
+     def_val="-1";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  DataGroupProg @[2] {
+   desc=;
+   flags=;
+   src_data_var=$3$;
+   dest_data_var=.projects[0].programs[0].vars[4]$4$;
+   group_spec {
+    name="group_spec";
+    ops {
+     name=;
+     el_typ=DataGroupEl;
+     el_def=0;
+     DataGroupEl @[0] {
+      col_name="batch";
+      agg {name="": op=GROUP: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[1] {
+      col_name="epoch";
+      agg {name="": op=LAST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[2] {
+      col_name="cnt_err";
+      agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[0].vars[0]$5$: }: };
+     };
+     DataGroupEl @[3] {
+      col_name="cnt_err";
+      agg {name="": op=MIN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+    };
+   };
+  };
+  PrintExpr @[3] {
+   desc=;
+   flags=;
+   expr {
+    expr="\"=====================\\n\" << \"Epochs to criterion:\"";
+    flags=;
+    var_expr="\"=====================\\n\" << \"Epochs to criterion:\"";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[4] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs[0].vars[5]$6$;
+   obj=$4$;
+   method=DataTable::ColStats;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataCol_ptr;
+     type="DataCol*";
+     name="col";
+     required=0;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.epoch_last";
+      flags=;
+      var_expr="$#0#$.data.epoch_last";
+      vars {
+      };
+      var_names{ EpochData_Group;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  PrintVar @[5] {
+   desc=;
+   flags=;
+   message=;
+   print_var=$6$;
+   print_var2=NULL;
+   print_var3=NULL;
+   print_var4=NULL;
+   print_var5=NULL;
+   print_var6=NULL;
+  };
+  MathCall @[6] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs[0].vars[7]$7$;
+   object_type=taMath_float;
+   method=taMath_float::vec_max;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=0;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.epoch_last.ar";
+      flags=;
+      var_expr="$#0#$.data.epoch_last.ar";
+      vars {
+      };
+      var_names{ EpochData_Group;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int_ref;
+     type="int&";
+     name="idx";
+     required=0;
+     def_val=;
+     expr {
+      expr="max_idx";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ max_idx;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  UserScript @[7] {
+   desc=;
+   flags=;
+   script {
+    expr="Relation rel;  rel.rel = Relation::EQUAL; rel.val = max_val;
+cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_last.ar, rel) << endl;
+";
+    flags=NO_VAR_ERRS;
+    var_expr="Relation rel;  rel.rel = Relation::EQUAL; rel.val = $#0#$;
+cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_last.ar, rel) << endl;
+";
+    vars {
+    };
+    var_names{ max_val;    };
+    bad_vars{ rel;    };
+   };
+  };
+  PrintExpr @[8] {
+   desc=;
+   flags=;
+   expr {
+    expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
+    flags=;
+    var_expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[9] {
+   desc=;
+   flags=;
+   result_var=$6$;
+   obj=$4$;
+   method=DataTable::ColStats;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataCol_ptr;
+     type="DataCol*";
+     name="col";
+     required=0;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_find_first";
+      flags=;
+      var_expr="$#0#$.data.cnt_err_find_first";
+      vars {
+      };
+      var_names{ EpochData_Group;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  PrintVar @[10] {
+   desc=;
+   flags=;
+   message=;
+   print_var=$6$;
+   print_var2=NULL;
+   print_var3=NULL;
+   print_var4=NULL;
+   print_var5=NULL;
+   print_var6=NULL;
+  };
+  UserScript @[11] {
+   desc=;
+   flags=;
+   script {
+    expr="rel.rel = Relation::EQUAL; rel.val = -1;
+cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl;
+";
+    flags=NO_VAR_ERRS;
+    var_expr="rel.rel = Relation::EQUAL; rel.val = -1;
+cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl;
+";
+    vars {
+    };
+    var_names{     };
+    bad_vars{ rel;    };
+   };
+  };
+  PrintExpr @[12] {
+   desc=;
+   flags=;
+   expr {
+    expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
+    flags=;
+    var_expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
+    vars {
+    };
+    var_names{     };
+    bad_vars{     };
+   };
+  };
+  MethodCall @[13] {
+   desc=;
+   flags=;
+   result_var=$6$;
+   obj=$4$;
+   method=DataTable::ColStats;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataCol_ptr;
+     type="DataCol*";
+     name="col";
+     required=0;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_min";
+      flags=;
+      var_expr="$#0#$.data.cnt_err_min";
+      vars {
+      };
+      var_names{ EpochData_Group;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  PrintVar @[14] {
+   desc=;
+   flags=;
+   message=;
+   print_var=$6$;
+   print_var2=NULL;
+   print_var3=NULL;
+   print_var4=NULL;
+   print_var5=NULL;
+   print_var6=NULL;
+  };
+  MathCall @[15] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs[0].vars[8]$8$;
+   object_type=taMath_float;
+   method=taMath_float::vec_min;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=0;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_min.ar";
+      flags=;
+      var_expr="$#0#$.data.cnt_err_min.ar";
+      vars {
+      };
+      var_names{ EpochData_Group;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int_ref;
+     type="int&";
+     name="idx";
+     required=0;
+     def_val=;
+     expr {
+      expr="max_idx";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ max_idx;      };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+  UserScript @[16] {
+   desc=;
+   flags=;
+   script {
+    expr="rel.rel = Relation::EQUAL; rel.val = min_val;
+cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_min.ar, rel) << endl;
+";
+    flags=NO_VAR_ERRS;
+    var_expr="rel.rel = Relation::EQUAL; rel.val = $#0#$;
+cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_min.ar, rel) << endl;
+";
+    vars {
+    };
+    var_names{ min_val;    };
+    bad_vars{ rel;    };
+   };
+  };
+  DataAnalCall @[17] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   object_type=taDataAnal;
+   method=taDataAnal::SmoothGauss;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="smooth_data";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_SmoothGauss";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ EpochData_SmoothGauss;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[1] {
+     arg_type=bool;
+     type="bool";
+     name="view";
+     required=1;
+     def_val=;
+     expr {
+      expr="false";
+      flags=;
+      var_expr="false";
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[2] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="src_data";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ EpochData;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[3] {
+     arg_type=int;
+     type="int";
+     name="kern_half_wd";
+     required=1;
+     def_val=;
+     expr {
+      expr="kern_width";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ kern_width;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[4] {
+     arg_type=float;
+     type="float";
+     name="kern_sigma";
+     required=1;
+     def_val=;
+     expr {
+      expr="kern_sig";
+      flags=;
+      var_expr="$#0#$";
+      vars {
+      };
+      var_names{ kern_sig;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[5] {
+     arg_type=bool;
+     type="bool";
+     name="neg_tail";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[6] {
+     arg_type=bool;
+     type="bool";
+     name="pos_tail";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[7] {
+     arg_type=bool;
+     type="bool";
+     name="keep_edges";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[8] {
+     arg_type=bool;
+     type="bool";
+     name="float_only";
+     required=0;
+     def_val="true";
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
+      bad_vars{       };
+     };
+    };
+   };
+  };
+ };
+};
