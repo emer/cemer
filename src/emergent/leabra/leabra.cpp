@@ -2112,6 +2112,8 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, Leabr
       Compute_Inhib_kWTA(lay, ug, thr, net);
     else if(compute_i == KWTA_AVG_INHIB)
       Compute_Inhib_kWTA_Avg(lay, ug, thr, net);
+    else if(compute_i == KWTA_KV2K_INHIB)
+      Compute_Inhib_kWTA_kv2k(lay, ug, thr, net);
     else if(compute_i == AVG_MAX_PT_INHIB)
       Compute_Inhib_AvgMaxPt(lay, ug, thr, net);
     else if(compute_i == MAX_INHIB)
@@ -2122,7 +2124,85 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, Leabr
   thr->i_val.g_i_orig = thr->i_val.g_i;	// retain original values..
 }
 
-void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
+// basic sorting function:
+
+void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(Unit_Group* ug, LeabraInhib* thr,
+					      LeabraSort& act_buf, LeabraSort& inact_buf,
+					      int k_eff, float& k_net, int& k_idx) {
+  LeabraUnit* u;
+  taLeafItr i;
+  int j;
+  if(act_buf.size != k_eff) { // need to fill the sort buf..
+    act_buf.size = 0;
+    j = 0;
+    for(u = (LeabraUnit*)ug->FirstEl(i); u && (j < k_eff);
+	u = (LeabraUnit*)ug->NextEl(i), j++)
+    {
+      act_buf.Add(u);		// add unit to the list
+      if(u->i_thr < k_net) {
+	k_net = u->i_thr;	k_idx = j;
+      }
+    }
+    inact_buf.size = 0;
+    // now, use the "replace-the-lowest" sorting technique
+    for(; u; u = (LeabraUnit*)ug->NextEl(i)) {
+      if(u->i_thr <=  k_net) {	// not bigger than smallest one in sort buffer
+	inact_buf.Add(u);
+	continue;
+      }
+      inact_buf.Add(act_buf[k_idx]); // now inactive
+      act_buf.ReplaceIdx(k_idx, u);// replace the smallest with it
+      k_net = u->i_thr;		// assume its the smallest
+      for(j=0; j < k_eff; j++) { 	// and recompute the actual smallest
+	float tmp = act_buf[j]->i_thr;
+	if(tmp < k_net) {
+	  k_net = tmp;		k_idx = j;
+	}
+      }
+    }
+  }
+  else {				// keep the ones around from last time, find k_net
+    for(j=0; j < k_eff; j++) { 	// these should be the top ones, very fast!!
+      float tmp = act_buf[j]->i_thr;
+      if(tmp < k_net) {
+	k_net = tmp;		k_idx = j;
+      }
+    }
+    // now, use the "replace-the-lowest" sorting technique (on the inact_list)
+    for(j=0; j < inact_buf.size; j++) {
+      u = inact_buf[j];
+      if(u->i_thr <=  k_net)		// not bigger than smallest one in sort buffer
+	continue;
+      inact_buf.ReplaceIdx(j, act_buf[k_idx]);	// now inactive
+      act_buf.ReplaceIdx(k_idx, u);// replace the smallest with it
+      k_net = u->i_thr;		// assume its the smallest
+      int i;
+      for(i=0; i < k_eff; i++) { 	// and recompute the actual smallest
+	float tmp = act_buf[i]->i_thr;
+	if(tmp < k_net) {
+	  k_net = tmp;		k_idx = i;
+	}
+      }
+    }
+  }
+}
+
+void LeabraLayerSpec::Compute_Inhib_BreakTie(LeabraInhib* thr) {
+  thr->kwta.ithr_diff = (thr->kwta.k_ithr - thr->kwta.k1_ithr) / thr->kwta.k_ithr;
+  thr->kwta.tie_brk = 0;
+  if(tie_brk.on && (thr->kwta.k_ithr > tie_brk.k_thr)) {
+    if(thr->kwta.ithr_diff < tie_brk.diff_thr) {
+      // we now have an official tie: break it by reducing firing of "others"
+      thr->kwta.k1_ithr = (1.0f - tie_brk.diff_thr) * thr->kwta.k_ithr;
+      thr->kwta.tie_brk = 1;
+    }
+  }
+}
+
+// actual kwta impls:
+
+void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr,
+					 LeabraNetwork*) {
   if(ug->leaves <= 1) {	// this is undefined
     thr->Inhib_SetVals(i_kwta_pt);
     return;
@@ -2130,70 +2210,15 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInh
 
   int k_plus_1 = thr->kwta.k + 1;	// expand cutoff to include N+1th one
   k_plus_1 = MIN(ug->leaves,k_plus_1);
-
-  float net_k1 = FLT_MAX;
+  float k1_net = FLT_MAX;
   int k1_idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  int j;
-  if(thr->active_buf.size != k_plus_1) { // need to fill the sort buf..
-    thr->active_buf.size = 0;
-    j = 0;
-    for(u = (LeabraUnit*)ug->FirstEl(i); u && (j < k_plus_1);
-	u = (LeabraUnit*)ug->NextEl(i), j++)
-    {
-      thr->active_buf.Add(u);		// add unit to the list
-      if(u->i_thr < net_k1) {
-	net_k1 = u->i_thr;	k1_idx = j;
-      }
-    }
-    thr->inact_buf.size = 0;
-    // now, use the "replace-the-lowest" sorting technique
-    for(; u; u = (LeabraUnit*)ug->NextEl(i)) {
-      if(u->i_thr <=  net_k1) {	// not bigger than smallest one in sort buffer
-	thr->inact_buf.Add(u);
-	continue;
-      }
-      thr->inact_buf.Add(thr->active_buf[k1_idx]); // now inactive
-      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
-      net_k1 = u->i_thr;		// assume its the smallest
-      for(j=0; j < k_plus_1; j++) { 	// and recompute the actual smallest
-	float tmp = thr->active_buf[j]->i_thr;
-	if(tmp < net_k1) {
-	  net_k1 = tmp;		k1_idx = j;
-	}
-      }
-    }
-  }
-  else {				// keep the ones around from last time, find net_k1
-    for(j=0; j < k_plus_1; j++) { 	// these should be the top ones, very fast!!
-      float tmp = thr->active_buf[j]->i_thr;
-      if(tmp < net_k1) {
-	net_k1 = tmp;		k1_idx = j;
-      }
-    }
-    // now, use the "replace-the-lowest" sorting technique (on the inact_list)
-    for(j=0; j < thr->inact_buf.size; j++) {
-      u = thr->inact_buf[j];
-      if(u->i_thr <=  net_k1)		// not bigger than smallest one in sort buffer
-	continue;
-      thr->inact_buf.ReplaceIdx(j, thr->active_buf[k1_idx]);	// now inactive
-      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
-      net_k1 = u->i_thr;		// assume its the smallest
-      int i;
-      for(i=0; i < k_plus_1; i++) { 	// and recompute the actual smallest
-	float tmp = thr->active_buf[i]->i_thr;
-	if(tmp < net_k1) {
-	  net_k1 = tmp;		k1_idx = i;
-	}
-      }
-    }
-  }
+
+  Compute_Inhib_kWTA_Sort(ug, thr, thr->active_buf, thr->inact_buf, k_plus_1, k1_net, k1_idx);
 
   // active_buf now has k+1 most active units, get the next-highest one
   int k_idx = -1;
   float net_k = FLT_MAX;
-  for(j=0; j < k_plus_1; j++) {
+  for(int j=0; j < k_plus_1; j++) {
     float tmp = thr->active_buf[j]->i_thr;
     if((tmp < net_k) && (j != k1_idx)) {
       net_k = tmp;		k_idx = j;
@@ -2201,7 +2226,7 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInh
   }
   if(k_idx == -1) {		// we didn't find the next one
     k_idx = k1_idx;
-    net_k = net_k1;
+    net_k = k1_net;
   }
 
   LeabraUnit* k1_u = (LeabraUnit*)thr->active_buf[k1_idx];
@@ -2221,78 +2246,25 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer*, Unit_Group* ug, LeabraInh
   thr->kwta.Compute_IThrR();
 }
 
-void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
+void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr,
+					     LeabraNetwork*) {
   if(ug->leaves <= 1) {	// this is undefined
     thr->Inhib_SetVals(i_kwta_pt);
     return;
   }
 
-  int k_plus_1 = thr->kwta.k;	// keep cutoff at k
+  int k_eff = thr->kwta.k;	// keep cutoff at k
+  float k_net = FLT_MAX;
+  int k_idx = 0;
 
-  float net_k1 = FLT_MAX;
-  int k1_idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  int j;
-  if(thr->active_buf.size != k_plus_1) { // need to fill the sort buf..
-    thr->active_buf.size = 0;
-    j = 0;
-    for(u = (LeabraUnit*)ug->FirstEl(i); u && (j < k_plus_1);
-	u = (LeabraUnit*)ug->NextEl(i), j++)
-    {
-      thr->active_buf.Add(u);		// add unit to the list
-      if(u->i_thr < net_k1) {
-	net_k1 = u->i_thr;	k1_idx = j;
-      }
-    }
-    thr->inact_buf.size = 0;
-    // now, use the "replace-the-lowest" sorting technique
-    for(; u; u = (LeabraUnit*)ug->NextEl(i)) {
-      if(u->i_thr <=  net_k1) {	// not bigger than smallest one in sort buffer
-	thr->inact_buf.Add(u);
-	continue;
-      }
-      thr->inact_buf.Add(thr->active_buf[k1_idx]); // now inactive
-      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
-      net_k1 = u->i_thr;		// assume its the smallest
-      for(j=0; j < k_plus_1; j++) { 	// and recompute the actual smallest
-	float tmp = thr->active_buf[j]->i_thr;
-	if(tmp < net_k1) {
-	  net_k1 = tmp;		k1_idx = j;
-	}
-      }
-    }
-  }
-  else {				// keep the ones around from last time, find net_k1
-    for(j=0; j < k_plus_1; j++) { 	// these should be the top ones, very fast!!
-      float tmp = thr->active_buf[j]->i_thr;
-      if(tmp < net_k1) {
-	net_k1 = tmp;		k1_idx = j;
-      }
-    }
-    // now, use the "replace-the-lowest" sorting technique (on the inact_list)
-    for(j=0; j < thr->inact_buf.size; j++) {
-      u = thr->inact_buf[j];
-      if(u->i_thr <=  net_k1)		// not bigger than smallest one in sort buffer
-	continue;
-      thr->inact_buf.ReplaceIdx(j, thr->active_buf[k1_idx]);	// now inactive
-      thr->active_buf.ReplaceIdx(k1_idx, u);// replace the smallest with it
-      net_k1 = u->i_thr;		// assume its the smallest
-      int i;
-      for(i=0; i < k_plus_1; i++) { 	// and recompute the actual smallest
-	float tmp = thr->active_buf[i]->i_thr;
-	if(tmp < net_k1) {
-	  net_k1 = tmp;		k1_idx = i;
-	}
-      }
-    }
-  }
+  Compute_Inhib_kWTA_Sort(ug, thr, thr->active_buf, thr->inact_buf, k_eff, k_net, k_idx);
 
   // active_buf now has k most active units, get averages of both groups
+  int j;
   float k_avg = 0.0f;
-  for(j=0; j < k_plus_1; j++)
+  for(j=0; j < k_eff; j++)
     k_avg += thr->active_buf[j]->i_thr;
-  k_avg /= (float)k_plus_1;
+  k_avg /= (float)k_eff;
 
   float oth_avg = 0.0f;
   for(j=0; j < thr->inact_buf.size; j++)
@@ -2316,75 +2288,120 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer*, Unit_Group* ug, Leabr
   thr->kwta.Compute_IThrR();
 }
 
-void LeabraLayerSpec::Compute_Inhib_BreakTie(LeabraInhib* thr) {
-  thr->kwta.ithr_diff = (thr->kwta.k_ithr - thr->kwta.k1_ithr) / thr->kwta.k_ithr;
-  thr->kwta.tie_brk = 0;
-  if(tie_brk.on && (thr->kwta.k_ithr > tie_brk.k_thr)) {
-    if(thr->kwta.ithr_diff < tie_brk.diff_thr) {
-      // we now have an official tie: break it by reducing firing of "others"
-      thr->kwta.k1_ithr = (1.0f - tie_brk.diff_thr) * thr->kwta.k_ithr;
-      thr->kwta.tie_brk = 1;
-    }
+void LeabraLayerSpec::Compute_Inhib_kWTA_kv2k(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr,
+					      LeabraNetwork*) {
+  if(ug->leaves <= 1) {	// this is undefined
+    thr->Inhib_SetVals(i_kwta_pt);
+    return;
   }
+
+  int k_eff = thr->kwta.k;
+  float k_net = FLT_MAX;
+  int k_idx = 0;
+
+  Compute_Inhib_kWTA_Sort(ug, thr, thr->active_buf, thr->inact_buf, k_eff, k_net, k_idx);
+
+  // active_buf now has k most active units, get average from act buf
+  int j;
+  float oth_avg = 0.0f;
+  float k_avg = 0.0f;
+  for(j=0; j < k_eff; j++)
+    k_avg += thr->active_buf[j]->i_thr;
+  k_avg /= (float)k_eff;
+
+  int k2_eff = 2 * thr->kwta.k;
+  if(k2_eff >= ug->leaves) {
+    // just use inact buf: same as kwta_avg in this case..
+    for(j=0; j < thr->inact_buf.size; j++)
+      oth_avg += thr->inact_buf[j]->i_thr;
+    if(thr->inact_buf.size > 0)
+      oth_avg /= (float)thr->inact_buf.size;
+  }
+  else {
+    // find 2k guys
+    float k2_net = FLT_MAX;
+    int k2_idx = 0;
+    Compute_Inhib_kWTA_Sort(ug, thr, thr->active_2k_buf, thr->inact_2k_buf, k2_eff, k2_net, k2_idx);
+
+    for(j=0; j < thr->active_2k_buf.size; j++)
+      oth_avg += thr->active_2k_buf[j]->i_thr;
+    if(thr->active_2k_buf.size > 0)
+      oth_avg /= (float)thr->active_2k_buf.size;
+  }
+
+  // place kwta inhibition between two averages
+  // this uses the adapting point!
+  float pt = i_kwta_pt;
+  if(adapt_i.type == AdaptISpec::KWTA_PT)
+    pt = thr->adapt_i.i_kwta_pt;
+  thr->kwta.k_ithr = k_avg;
+  thr->kwta.k1_ithr = oth_avg;
+
+  Compute_Inhib_BreakTie(thr);
+
+  float nw_gi = thr->kwta.k1_ithr + pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
+  nw_gi = MAX(nw_gi, 0.0f);
+  thr->i_val.kwta = nw_gi;
+  thr->kwta.Compute_IThrR();
 }
 
 void LeabraLayerSpec::Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net) {
   // computing the top *groups*, not units here!
-  int k_plus_1 = lay->kwta.k;	// only get top k
+  int k_eff = lay->kwta.k;	// only get top k
 
-  float net_k1 = FLT_MAX;
-  int k1_idx = 0;
+  float k_net = FLT_MAX;
+  int k_idx = 0;
   LeabraUnit_Group* u;
   int i;
   int j;
-  if(lay->active_buf.size != k_plus_1) { // need to fill the sort buf..
+  if(lay->active_buf.size != k_eff) { // need to fill the sort buf..
     lay->active_buf.size = 0;
-    for(i = 0; i < k_plus_1; i++) {
+    for(i = 0; i < k_eff; i++) {
       u = (LeabraUnit_Group*)lay->units.gp[i], 
       lay->active_buf.Add((LeabraUnit*)u);		// add unit to the list
-      if(u->i_val.g_i < net_k1) {
-	net_k1 = u->i_val.g_i;	k1_idx = i;
+      if(u->i_val.g_i < k_net) {
+	k_net = u->i_val.g_i;	k_idx = i;
       }
     }
     lay->inact_buf.size = 0;
     // now, use the "replace-the-lowest" sorting technique
     for(; i<lay->units.gp.size; i++) {
       u = (LeabraUnit_Group*)lay->units.gp[i];
-      if(u->i_val.g_i <=  net_k1) {	// not bigger than smallest one in sort buffer
+      if(u->i_val.g_i <=  k_net) {	// not bigger than smallest one in sort buffer
 	lay->inact_buf.Add((LeabraUnit*)u);
 	continue;
       }
-      lay->inact_buf.Add(lay->active_buf[k1_idx]); // now inactive
-      lay->active_buf.ReplaceIdx(k1_idx, (LeabraUnit*)u);// replace the smallest with it
-      net_k1 = u->i_val.g_i;		// assume its the smallest
-      for(j=0; j < k_plus_1; j++) { 	// and recompute the actual smallest
+      lay->inact_buf.Add(lay->active_buf[k_idx]); // now inactive
+      lay->active_buf.ReplaceIdx(k_idx, (LeabraUnit*)u);// replace the smallest with it
+      k_net = u->i_val.g_i;		// assume its the smallest
+      for(j=0; j < k_eff; j++) { 	// and recompute the actual smallest
 	float tmp = ((LeabraUnit_Group*)lay->active_buf[j])->i_val.g_i;
-	if(tmp < net_k1) {
-	  net_k1 = tmp;		k1_idx = j;
+	if(tmp < k_net) {
+	  k_net = tmp;		k_idx = j;
 	}
       }
     }
   }
-  else {				// keep the ones around from last time, find net_k1
-    for(j=0; j < k_plus_1; j++) { 	// these should be the top ones, very fast!!
+  else {				// keep the ones around from last time, find k_net
+    for(j=0; j < k_eff; j++) { 	// these should be the top ones, very fast!!
       float tmp = ((LeabraUnit_Group*)lay->active_buf[j])->i_val.g_i;
-      if(tmp < net_k1) {
-	net_k1 = tmp;		k1_idx = j;
+      if(tmp < k_net) {
+	k_net = tmp;		k_idx = j;
       }
     }
     // now, use the "replace-the-lowest" sorting technique (on the inact_list)
     for(j=0; j < lay->inact_buf.size; j++) {
       u = (LeabraUnit_Group*)lay->inact_buf[j];
-      if(u->i_val.g_i <=  net_k1)		// not bigger than smallest one in sort buffer
+      if(u->i_val.g_i <=  k_net)		// not bigger than smallest one in sort buffer
 	continue;
-      lay->inact_buf.ReplaceIdx(j, lay->active_buf[k1_idx]);	// now inactive
-      lay->active_buf.ReplaceIdx(k1_idx, (LeabraUnit*)u);// replace the smallest with it
-      net_k1 = u->i_val.g_i;		// assume its the smallest
+      lay->inact_buf.ReplaceIdx(j, lay->active_buf[k_idx]);	// now inactive
+      lay->active_buf.ReplaceIdx(k_idx, (LeabraUnit*)u);// replace the smallest with it
+      k_net = u->i_val.g_i;		// assume its the smallest
       int i;
-      for(i=0; i < k_plus_1; i++) { 	// and recompute the actual smallest
+      for(i=0; i < k_eff; i++) { 	// and recompute the actual smallest
 	float tmp = ((LeabraUnit_Group*)lay->active_buf[i])->i_val.g_i;
-	if(tmp < net_k1) {
-	  net_k1 = tmp;		k1_idx = i;
+	if(tmp < k_net) {
+	  k_net = tmp;		k_idx = i;
 	}
       }
     }
@@ -2719,17 +2736,17 @@ void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
 
 float LeabraLayerSpec::Compute_TopKAvgAct_ugp(LeabraLayer* lay, Unit_Group* ug,
 					      LeabraInhib* thr, LeabraNetwork*) {
-  int k_plus_1 = thr->kwta.k;	// keep cutoff at k
+  int k_eff = thr->kwta.k;	// keep cutoff at k
 
-  if(TestError(k_plus_1 <= 0 || thr->active_buf.size != k_plus_1, "Compute_TopKAvgAct_ugp",
+  if(TestError(k_eff <= 0 || thr->active_buf.size != k_eff, "Compute_TopKAvgAct_ugp",
 	       "Only usable when using a kwta function!")) {
     return -1;
   }
 
   float k_avg = 0.0f;
-  for(int j=0; j < k_plus_1; j++)
+  for(int j=0; j < k_eff; j++)
     k_avg += thr->active_buf[j]->act_eq;
-  k_avg /= (float)k_plus_1;
+  k_avg /= (float)k_eff;
 
   return k_avg;
 }
@@ -2753,17 +2770,17 @@ float LeabraLayerSpec::Compute_TopKAvgAct(LeabraLayer* lay, LeabraNetwork* net) 
 
 float LeabraLayerSpec::Compute_TopKAvgNetin_ugp(LeabraLayer* lay, Unit_Group* ug,
 					      LeabraInhib* thr, LeabraNetwork*) {
-  int k_plus_1 = thr->kwta.k;	// keep cutoff at k
+  int k_eff = thr->kwta.k;	// keep cutoff at k
 
-  if(TestError(k_plus_1 <= 0 || thr->active_buf.size != k_plus_1, "Compute_TopKAvgNetin_ugp",
+  if(TestError(k_eff <= 0 || thr->active_buf.size != k_eff, "Compute_TopKAvgNetin_ugp",
 	       "Only usable when using a kwta function!")) {
     return -1;
   }
 
   float k_avg = 0.0f;
-  for(int j=0; j < k_plus_1; j++)
+  for(int j=0; j < k_eff; j++)
     k_avg += thr->active_buf[j]->net;
-  k_avg /= (float)k_plus_1;
+  k_avg /= (float)k_eff;
 
   return k_avg;
 }

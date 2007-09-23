@@ -1173,6 +1173,7 @@ public:
   enum Compute_I {		// how to compute the inhibition
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
     KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
+    KWTA_KV2K_INHIB,		// average of top k vs avg of next k
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer!
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
@@ -1260,18 +1261,24 @@ public:
   // #CAT_Activation stage two: compute the inhibition for layer
   virtual void	Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of inhibition computation for either layer or unit group
+
+  virtual void	Compute_Inhib_kWTA_Sort(Unit_Group* ug, LeabraInhib* thr, LeabraSort& act_buf, LeabraSort& inact_buf, int k_eff, float& k_net, int& k_idx);
+  // #CAT_Activation implementation of sort into active and inactive unit buffers -- basic to various kwta functions: eff_k = effective k to use, k_net = net of kth unit (lowest unit in act_buf), k_idx = index of kth unit
+  virtual void 	Compute_Inhib_BreakTie(LeabraInhib* thr);
+  // #CAT_Activation break any ties in the kwta function
+
   virtual void	Compute_Inhib_kWTA(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of basic kwta inhibition computation
   virtual void	Compute_Inhib_kWTA_Avg(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of kwta avg-based inhibition computation
+  virtual void	Compute_Inhib_kWTA_kv2k(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation implementation of k vs. 2k wta avg-based inhibition computation
   virtual void	Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of avg-max-pt inhibition computation
   virtual void	Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of max inhibition computation
   virtual void	Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation implementation of GPS_THEN_UNITS kwta on groups
-  virtual void 	Compute_Inhib_BreakTie(LeabraInhib* thr);
-  // #CAT_Activation break any ties in the kwta function
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation Stage 3.25: for layer groups, need to propagate inhib out to unit groups
@@ -1492,6 +1499,8 @@ INHERITED(taBase)
 public:
   LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units
   LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units
+  LeabraSort 	active_2k_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of 2k active units
+  LeabraSort 	inact_2k_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of 2k inactive units
 
   AvgMaxVals	netin;		// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
   AvgMaxVals	i_thrs;		// #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
