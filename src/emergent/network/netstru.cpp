@@ -3195,7 +3195,8 @@ void Layer::InitLinks() {
   taBase::Own(dmem_share_units, this);
 #endif
   own_net = GET_MY_OWNER(Network);
-  SetDefaultPos();
+  if(pos == 0)
+    SetDefaultPos();
   units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
 }
@@ -3370,20 +3371,24 @@ bool Layer::SetLayerSpec(LayerSpec*) {
 }
 
 void Layer::SetDefaultPos() {
-  if (own_net == NULL) return;
+  if(!own_net) return;
   int index = own_net->layers.FindLeafEl(this);
+  pos = 0;
   switch(own_net->lay_layout) {
-  case Network::THREE_D:
-    pos.z = index; pos.y=0;
-    return;
-  case Network::TWO_D:
-    pos.z = 0;
-    pos.y = 0;
-    int i;
-    for(i=0;i<index;i++) {
+  case Network::THREE_D: {
+    for(int i=0;i<index;i++) {
       Layer* lay = (Layer*)own_net->layers.Leaf(i);
-      pos.y = MAX(pos.y, lay->pos.y + lay->un_geom.y) + 2;
+      pos.z = MAX(pos.z, lay->pos.z + 1);
     }
+    break;
+  }
+  case Network::TWO_D: {
+    for(int i=0;i<index;i++) {
+      Layer* lay = (Layer*)own_net->layers.Leaf(i);
+      pos.y = MAX(pos.y, lay->pos.y + lay->un_geom.y + 2);
+    }
+    break;
+  }
   }
 }
 
