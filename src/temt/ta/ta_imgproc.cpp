@@ -172,9 +172,9 @@ void DoGFilterSpec::UpdateAfterEdit_impl() {
 
 float DoGFilterSpec::FilterPoint(int x, int y, float r_val, float g_val, float b_val) {
   if(color_chan == BLACK_WHITE) {
-    float grey = (r_val + g_val + b_val) / 3.0f;
-    return grey * (on_filter.FastEl(x+filter_width, y+filter_width) * grey - 
-		   off_filter.FastEl(x+filter_width, y+filter_width) * grey);
+    float grey = r_val + g_val + b_val;
+    return grey * (on_filter.FastEl(x+filter_width, y+filter_width) - 
+		   off_filter.FastEl(x+filter_width, y+filter_width));
   }
   else if(color_chan == RED_GREEN) {
     return (on_filter.FastEl(x+filter_width, y+filter_width) * r_val - 
@@ -762,7 +762,6 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
 void DoGRetinaSpec::Initialize() {
   dog.name = name;
   spacing.name = name;
-  renorm_thresh = .001f;
 }
 
 void DoGRetinaSpec::UpdateAfterEdit_impl() {
@@ -785,7 +784,7 @@ void DoGRetinaSpec::PlotSpacing(DataTable* graph_data, float val) {
 }
 
 bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_output,
-			       float_Matrix& retina_img, bool superimpose) {
+				 float_Matrix& retina_img, bool superimpose) {
   dog.UpdateFilter();		// just to be sure
 
   TwoDCoord img_size = spacing.retina_size;
@@ -851,16 +850,12 @@ bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_outp
 	off_out->FastEl(xo, yo) = -cnvl;
     }
   }
+
+  // note: used to do separate normalization of on/off channels here..
+  // this is important for superimpose, but it is not good for full
+  // color filtering, because things get artificially strong..
+  // to do superimpose, only renorm after the final superimpose!!
   
-  int idx;
-  float on_max = taMath_float::vec_max(on_out, idx);
-  if(on_max > renorm_thresh)
-     taMath_float::vec_norm_max(on_out);
-
-  float off_max = taMath_float::vec_max(off_out, idx);
-  if(off_max > renorm_thresh)
-    taMath_float::vec_norm_max(off_out);
-
   if(superimpose) {			// add them back in!
     taMath_float::vec_add(&on_output, on_out);
     taMath_float::vec_add(&off_output, off_out);
@@ -1805,7 +1800,7 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
 				      float move_x, float move_y,
 				      float scale, float rotate,
 				      float ret_move_x, float ret_move_y,
-				      bool superimpose)
+				      bool superimpose, bool renorm)
 {
   if (!dt) return false;
   if(dogs.size == 0) return false;
@@ -1882,6 +1877,7 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
   taImageProc::FadeEdgesToBorder_float(*ret_img, max_off_width); 
   // and make double-sure.. on final image
 
+  float max_val = 0.0f;
   for(int i=0;i<dogs.size;i++) {
     DoGRetinaSpec* sp = dogs[i];
     DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
@@ -1894,10 +1890,43 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
     taBase::Ref(on_mat);
     taBase::Ref(off_mat);
     taImageProc::DoGFilterRetina(*on_mat, *off_mat, *ret_img, *sp, superimpose);
+    if(renorm) {
+      int idx;
+      float on_max = taMath_float::vec_max(on_mat, idx);
+      float off_max = taMath_float::vec_max(off_mat, idx);
+      max_val = MAX(max_val, on_max);
+      max_val = MAX(max_val, off_max);
+    }
     taBase::unRefDone(on_mat);
     taBase::unRefDone(off_mat);
   }
   taBase::unRefDone(ret_img);
+
+  if(renorm) {
+    float rescale = 1.0f;
+    if(max_val > 0.00001f)
+      rescale = 1.0f / max_val;
+
+    // normalize with single max for all channels, so they are all on a comparable scale
+    if(rescale != 1.0f) {
+      for(int i=0;i<dogs.size;i++) {
+	DoGRetinaSpec* sp = dogs[i];
+	DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+					     sp->spacing.output_size.x, sp->spacing.output_size.y);
+	DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+					      2, sp->spacing.output_size.x, sp->spacing.output_size.y);
+
+	float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+	float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+	taBase::Ref(on_mat);
+	taBase::Ref(off_mat);
+	taMath_float::vec_mult_scalar(on_mat, rescale);
+	taMath_float::vec_mult_scalar(off_mat, rescale);
+	taBase::unRefDone(on_mat);
+	taBase::unRefDone(off_mat);
+      }
+    }
+  }
 
   float_Matrix* isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
   taBase::Ref(isz_mat);
@@ -1918,10 +1947,10 @@ bool RetinaSpec::FilterImageData(float_Matrix& img_data, DataTable* dt,
 				 float move_x, float move_y,
 				 float scale, float rotate,
 				 float ret_move_x, float ret_move_y,
-				 bool superimpose)
+				 bool superimpose, bool renorm)
 {
   bool rval = FilterImageData_impl(img_data, dt, move_x, move_y, scale, rotate,
-				   ret_move_x, ret_move_y, superimpose);
+				   ret_move_x, ret_move_y, superimpose, renorm);
   if(rval)
     dt->WriteClose();
   return rval;
@@ -1931,7 +1960,7 @@ bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
 			     float move_x, float move_y,
 			     float scale, float rotate,
 			     float ret_move_x, float ret_move_y,
-			     bool superimpose)
+			     bool superimpose, bool renorm)
 {
   if (!dt) return false;
   float_Matrix img_data;
@@ -1943,7 +1972,7 @@ bool RetinaSpec::FilterImage(taImage& img, DataTable* dt,
     img.ImageToGrey_float(img_data);
   }
   bool rval = FilterImageData_impl(img_data, dt, move_x, move_y, scale, rotate,
-				   ret_move_x, ret_move_y, superimpose);
+				   ret_move_x, ret_move_y, superimpose, renorm);
   int idx;
   if(rval) {
     String imgnm = img.name;
@@ -1962,13 +1991,13 @@ bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
 				 float move_x, float move_y,
 				 float scale, float rotate,
 				 float ret_move_x, float ret_move_y,
-				 bool superimpose)
+				 bool superimpose, bool renorm)
 {
   if (!dt) return false;
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
   return FilterImage(img, dt, move_x, move_y, scale, rotate,
-		     ret_move_x, ret_move_y, superimpose);
+		     ret_move_x, ret_move_y, superimpose, renorm);
 }
 
 bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) {
@@ -2011,7 +2040,7 @@ bool RetinaSpec::LookAtImageData_impl(float_Matrix& img_data, DataTable* dt,
 				      float move_x, float move_y,
 				      float scale, float rotate, 
 				      float ret_move_x, float ret_move_y,
-				      bool superimpose, bool attend) {
+				      bool superimpose, bool attend, bool renorm) {
   if(dogs.size == 0) return false;
 
   // find the fovea filter: one with smallest input_size
@@ -2046,7 +2075,7 @@ bool RetinaSpec::LookAtImageData_impl(float_Matrix& img_data, DataTable* dt,
     scale = .01f;
 
   bool rval = FilterImageData_impl(img_data, dt, move_x, move_y, scale, rotate,
-				   ret_move_x, ret_move_y, superimpose);
+				   ret_move_x, ret_move_y, superimpose, renorm);
   if(rval) {
     if(attend)
       AttendRegion(dt, region);
@@ -2067,11 +2096,11 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
 				 float move_x, float move_y,
 				 float scale, float rotate, 
 				 float ret_move_x, float ret_move_y,
-				 bool superimpose, bool attend) {
+				 bool superimpose, bool attend, bool renorm) {
   bool rval = LookAtImageData_impl(img_data, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 				   move_x, move_y, scale, rotate, 
 				   ret_move_x, ret_move_y,
-				   superimpose, attend);
+				   superimpose, attend, renorm);
   if(rval)
     dt->WriteClose();
   return rval;
@@ -2084,7 +2113,7 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
 			     float move_x, float move_y,
 			     float scale, float rotate, 
 			     float ret_move_x, float ret_move_y,
-			     bool superimpose, bool attend) {
+			     bool superimpose, bool attend, bool renorm) {
   float_Matrix img_data;
   taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
   if(color_type == COLOR) {
@@ -2095,7 +2124,7 @@ bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
   }
   bool rval = LookAtImageData_impl(img_data, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 				   move_x, move_y, scale, rotate,
-				   ret_move_x, ret_move_y, superimpose, attend);
+				   ret_move_x, ret_move_y, superimpose, attend, renorm);
   if(rval) {
     int idx;
     String imgnm = img.name;
@@ -2117,12 +2146,12 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 				 float move_x, float move_y,
 				 float scale, float rotate, 
 				 float ret_move_x, float ret_move_y,
-				 bool superimpose, bool attend) {
+				 bool superimpose, bool attend, bool renorm) {
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
   return LookAtImage(img, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 		     move_x, move_y, scale, rotate,
-		     ret_move_x, ret_move_y, superimpose, attend);
+		     ret_move_x, ret_move_y, superimpose, attend, renorm);
 }
 
 //////////////////////////////////////////////////////////////////////////////////

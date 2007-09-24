@@ -435,11 +435,20 @@ public:
   static bool  vec_add(double_Matrix* a, const double_Matrix* b);
   // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
   static bool  vec_sub(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic subtract elements in two vectors: a(i) += b(i)
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i)
   static bool  vec_mult_els(double_Matrix* a, const double_Matrix* b);
   // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
   static bool  vec_div_els(double_Matrix* a, const double_Matrix* b);
   // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
+
+  static bool  vec_add_scalar(double_Matrix* a, double b);
+  // #CAT_Arithmetic add scalar value b to elements in vector a: a(i) += b
+  static bool  vec_sub_scalar(double_Matrix* a, double b);
+  // #CAT_Arithmetic subtract scalar value b to elements in vector a: a(i) -= b
+  static bool  vec_mult_scalar(double_Matrix* a, double b);
+  // #CAT_Arithmetic multiply scalar value b to elements in vector a: a(i) *= b
+  static bool  vec_div_scalar(double_Matrix* a, double b);
+  // #CAT_Arithmetic divide scalar value b to elements in vector a: a(i) /= b
 
   static bool	vec_simple_math(double_Matrix* vec, const SimpleMathSpec& math_spec);
   // #CAT_Arithmetic apply standard kinds of simple math operators to values in the vector
@@ -873,11 +882,20 @@ public:
   static bool  vec_add(float_Matrix* a, const float_Matrix* b);
   // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
   static bool  vec_sub(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic subtract elements in two vectors: a(i) += b(i)
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i)
   static bool  vec_mult_els(float_Matrix* a, const float_Matrix* b);
   // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
   static bool  vec_div_els(float_Matrix* a, const float_Matrix* b);
   // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
+
+  static bool  vec_add_scalar(float_Matrix* a, float b);
+  // #CAT_Arithmetic add scalar value b to elements in vector a: a(i) += b
+  static bool  vec_sub_scalar(float_Matrix* a, float b);
+  // #CAT_Arithmetic subtract scalar value b to elements in vector a: a(i) -= b
+  static bool  vec_mult_scalar(float_Matrix* a, float b);
+  // #CAT_Arithmetic multiply scalar value b to elements in vector a: a(i) *= b
+  static bool  vec_div_scalar(float_Matrix* a, float b);
+  // #CAT_Arithmetic divide scalar value b to elements in vector a: a(i) /= b
 
   static bool	vec_simple_math(float_Matrix* vec, const SimpleMathSpec& math_spec);
   // #CAT_Arithmetic apply standard kinds of simple math operators to values in the vector

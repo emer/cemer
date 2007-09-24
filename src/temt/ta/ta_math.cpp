@@ -787,6 +787,31 @@ bool taMath_double::vec_div_els(double_Matrix* a, const double_Matrix* b) {
   return true;
 }
 
+bool taMath_double::vec_add_scalar(double_Matrix* a, double b) {
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) += b;
+  return true;
+}
+
+bool taMath_double::vec_sub_scalar(double_Matrix* a, double b) {
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) -= b;
+  return true;
+}
+
+bool taMath_double::vec_mult_scalar(double_Matrix* a, double b) {
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) *= b;
+  return true;
+}
+
+bool taMath_double::vec_div_scalar(double_Matrix* a, double b) {
+  if(b == 0.0) return false;
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) /= b;
+  return true;
+}
+
 bool taMath_double::vec_simple_math(double_Matrix* vec, const SimpleMathSpec& math_spec) {
   for(int i=0;i<vec->size;i++)
     vec->FastEl_Flat(i) = math_spec.Evaluate(vec->FastEl_Flat(i));
@@ -2505,6 +2530,31 @@ bool taMath_float::vec_div_els(float_Matrix* a, const float_Matrix* b) {
   if(!vec_check_same_size(a, b)) return false;
   for(int i=0;i<a->size;i++)
     a->FastEl_Flat(i) /= b->FastEl_Flat(i);
+  return true;
+}
+
+bool taMath_float::vec_add_scalar(float_Matrix* a, float b) {
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) += b;
+  return true;
+}
+
+bool taMath_float::vec_sub_scalar(float_Matrix* a, float b) {
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) -= b;
+  return true;
+}
+
+bool taMath_float::vec_mult_scalar(float_Matrix* a, float b) {
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) *= b;
+  return true;
+}
+
+bool taMath_float::vec_div_scalar(float_Matrix* a, float b) {
+  if(b == 0.0) return false;
+  for(int i=0;i<a->size;i++)
+    a->FastEl_Flat(i) /= b;
   return true;
 }
 
