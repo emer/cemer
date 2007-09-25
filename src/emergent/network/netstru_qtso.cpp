@@ -96,8 +96,8 @@
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
-//temp
-#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 
 //#include <OS/file.h>
 
@@ -866,7 +866,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
     for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
       Unit* unit = ugrp->FindUnitFmCoord(pos);
-      if(nv->unit_con_md && (unit == nv->unit_src)) {
+      if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
 	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
       }
       float zp = .5f * sc_val / max_z;
@@ -1141,6 +1141,9 @@ void LayerView::Render_pre() {
   SoQtViewer* vw = GetViewer();
   if(vw)
     show_drag = !vw->isViewing();
+
+  NetView* nv = this->nv();
+  if(!nv->lay_mv) show_drag = false;
 
   setNode(new T3LayerNode(this, show_drag));
   DoHighlightColor(false);
@@ -1484,10 +1487,14 @@ void NetView::Initialize() {
   unit_md_flags = MD_UNKNOWN;
   nvp = NULL;
   display = true;
+  lay_mv = true;
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
-  unit_src = NULL;
   unit_con_md = false;
+  wt_line_disp = false;
+  wt_line_width = 4.0f;
+  wt_line_thr = .5f;
+  wt_line_swt = false;
 }
 
 void NetView::Destroy() {
@@ -2041,6 +2048,7 @@ void NetView::Render_impl() {
   node_so->setCaption(data()->GetName().chars());
 
   Render_net_text();
+  Render_wt_lines();
 
   inherited::Render_impl();
   //  taiMisc::RunPending();
@@ -2113,9 +2121,197 @@ void NetView::Render_net_text() {
   }
 }
 
+void NetView::Render_wt_lines() {
+  T3NetNode* node_so = this->node_so(); //cache
+
+  bool do_lines = (bool)unit_src && wt_line_disp;
+  SoIndexedLineSet* ils = node_so->wtLinesSet();
+  SoDrawStyle* drw = node_so->wtLinesDraw();
+  SoVertexProperty* vtx_prop = node_so->wtLinesVtxProp();
+
+  SoMFVec3f& vertex = vtx_prop->vertex;
+  SoMFUInt32& color = vtx_prop->orderedRGBA;
+  SoMFInt32& coords = ils->coordIndex;
+  SoMFInt32& mats = ils->materialIndex;
+
+  if(!do_lines) {
+    vertex.setNum(0);
+    color.setNum(0);
+    coords.setNum(0);
+    mats.setNum(0);
+    return;
+  }
+
+  drw->style = SoDrawStyleElement::LINES;
+  drw->lineWidth = wt_line_width;
+  vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED);
+
+  // count the number of lines etc
+  int n_prjns = 0;
+  int n_vtx = 0;
+  int n_coord = 0;
+  int n_mat = 0;
+
+  if(wt_line_swt) {
+    for(int g=0;g<unit_src->send.size;g++) {
+      SendCons* cgp = unit_src->send.FastEl(g);
+      Projection* prjn = cgp->prjn;
+      if(!prjn || !prjn->from || !prjn->layer) continue;
+
+      n_prjns++;
+      int n_con = 0;
+      for(int i=0;i<cgp->cons.size; i++) {
+	float wt = fabsf(cgp->Cn(i)->wt);
+	if(wt >= wt_line_thr) n_con++;
+      }
+
+      n_vtx += 1 + n_con;   // one for recv + senders
+      n_coord += 3 * n_con; // start, end -1 for each coord
+      n_mat += n_con;       // one per line
+    }
+  }
+  else {
+    for(int g=0;g<unit_src->recv.size;g++) {
+      RecvCons* cgp = unit_src->recv.FastEl(g);
+      Projection* prjn = cgp->prjn;
+      if(!prjn || !prjn->from || !prjn->layer) continue;
+
+      n_prjns++;
+      int n_con = 0;
+      for(int i=0;i<cgp->cons.size; i++) {
+	float wt = fabsf(cgp->Cn(i)->wt);
+	if(wt >= wt_line_thr) n_con++;
+      }
+
+      n_vtx += 1 + n_con;   // one for recv + senders
+      n_coord += 3 * n_con; // start, end -1 for each coord
+      n_mat += n_con;       // one per line
+    }
+  }
+
+  vertex.setNum(n_vtx);
+  color.setNum(n_mat);
+  coords.setNum(n_coord);
+  mats.setNum(n_mat);
+
+  SbVec3f* vertex_dat = vertex.startEditing();
+  uint32_t* color_dat = color.startEditing();
+  int32_t* coords_dat = coords.startEditing();
+  int32_t* mats_dat = mats.startEditing();
+  int v_idx = 0;
+  int c_idx = 0;
+  int cidx = 0;
+  int midx = 0;
+
+  TwoDCoord ru_pos = unit_src->GetMyAbsPos();
+  FloatTDCoord src;		// source and dest coords
+  FloatTDCoord dst;
+
+  float max_xy = MAX(max_size.x, max_size.y);
+  float lay_ht = T3LayerNode::height / max_xy;
+
+  iColor tc;
+  T3Color col;
+  float sc_val;
+  float trans = view_params.unit_trans;
+
+  if(wt_line_swt) {
+    for(int g=0;g<unit_src->send.size;g++) {
+      SendCons* cgp = unit_src->send.FastEl(g);
+      Projection* prjn = cgp->prjn;
+      if(!prjn || !prjn->from || !prjn->layer) continue;
+      Layer* lay_fr = prjn->layer; // switched!
+      Layer* lay_to = prjn->from;
+
+      // y = network z coords -- same for all cases  (add .5f to z..)
+      src.y = ((float)lay_to->pos.z+.5f) / max_size.z;
+      dst.y = ((float)lay_fr->pos.z+.5f) / max_size.z;
+
+      // move above/below layer plane
+      if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
+      else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
+      else { src.y += lay_ht; dst.y += lay_ht; }
+
+      src.x = ((float)lay_to->pos.x + (float)ru_pos.x + .5f) / max_size.x;
+      src.z = -((float)lay_to->pos.y + (float)ru_pos.y + .5f) / max_size.y;
+
+      int ru_idx = v_idx;
+      vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
+
+      for(int i=0;i<cgp->cons.size; i++) {
+	Unit* su = cgp->Un(i);
+	float wt = cgp->Cn(i)->wt;
+	if(fabsf(wt) < wt_line_thr) continue;
+
+	TwoDCoord su_pos = su->GetMyAbsPos();
+	dst.x = ((float)lay_fr->pos.x + (float)su_pos.x + .5f) / max_size.x;
+	dst.z = -((float)lay_fr->pos.y + (float)su_pos.y + .5f) / max_size.y;
+
+	coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
+	mats_dat[midx++] = c_idx;	// one per
+
+	vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
+
+	// color
+	GetUnitColor(wt, tc, sc_val);
+	col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+	float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+	color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      }
+    }
+  }
+  else {
+    for(int g=0;g<unit_src->recv.size;g++) {
+      RecvCons* cgp = unit_src->recv.FastEl(g);
+      Projection* prjn = cgp->prjn;
+      if(!prjn || !prjn->from || !prjn->layer) continue;
+      Layer* lay_fr = prjn->from;
+      Layer* lay_to = prjn->layer;
+
+      // y = network z coords -- same for all cases  (add .5f to z..)
+      src.y = ((float)lay_to->pos.z+.5f) / max_size.z;
+      dst.y = ((float)lay_fr->pos.z+.5f) / max_size.z;
+
+      // move above/below layer plane
+      if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
+      else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
+      else { src.y += lay_ht; dst.y += lay_ht; }
+
+      src.x = ((float)lay_to->pos.x + (float)ru_pos.x + .5f) / max_size.x;
+      src.z = -((float)lay_to->pos.y + (float)ru_pos.y + .5f) / max_size.y;
+
+      int ru_idx = v_idx;
+      vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
+
+      for(int i=0;i<cgp->cons.size; i++) {
+	Unit* su = cgp->Un(i);
+	float wt = cgp->Cn(i)->wt;
+	if(fabsf(wt) < wt_line_thr) continue;
+
+	TwoDCoord su_pos = su->GetMyAbsPos();
+	dst.x = ((float)lay_fr->pos.x + (float)su_pos.x + .5f) / max_size.x;
+	dst.z = -((float)lay_fr->pos.y + (float)su_pos.y + .5f) / max_size.y;
+
+	coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
+	mats_dat[midx++] = c_idx;	// one per
+
+	vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
+
+	// color
+	GetUnitColor(wt, tc, sc_val);
+	col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+	float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+	color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+      }
+    }
+  }
+  vertex.finishEditing();
+  color.finishEditing();
+  coords.finishEditing();
+  mats.finishEditing();
+}
+
 void NetView::Reset_impl() {
-  unit_src = NULL;
-  unit_con_md = false;
   prjns.Reset();
   layers.Reset();
   inherited::Reset_impl();
@@ -2163,14 +2359,14 @@ void NetView::SetColorSpec(ColorScaleSpec* color_spec) {
 void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
   if (unit_src == unit) return; // no change
   // if there was existing unit, unpick it
-  if (unit_src) {
+  if ((bool)unit_src) {
     UnitView* uv_src = FindUnitView(unit_src);
     if (uv_src) {
       uv_src->picked = false;
     }
   }
   unit_src = unit;
-  if (unit_src) {
+  if ((bool)unit_src) {
     if(uv)
       uv->picked = true;
   }
@@ -2257,6 +2453,7 @@ void NetView::DataUpdateView_impl() {
   if (!display) return;
   UpdateUnitValues();
   Render_net_text();
+  Render_wt_lines();
 }
 
 void NetView::UpdatePanel() {
@@ -2309,6 +2506,12 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   layDispCheck->addWidget(chkDisplay);
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
+  chkLayMove = new QCheckBox("Lay\nMv!", widg);
+  chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
+  connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkLayMove);
+//   layDispCheck->addSpacing(taiM->hsep_c);
+
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
@@ -2341,7 +2544,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc = new QHBoxLayout(layViewParams);
 
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
-  lblPrjnWdth->setToolTip("Width of projection lines -- .001 is default (very thin!) -- increase if editing projections so they are easier to select.");
+  lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
   layFontsEtc->addWidget(lblPrjnWdth);
   fldPrjnWdth = new taiField(&TA_float, this, NULL, widg);
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
@@ -2382,6 +2585,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
   chkAutoScale = new QCheckBox("auto scale", widg);
+  chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layColorScaleCtrls->addWidget(chkAutoScale);
 
@@ -2390,6 +2594,28 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
   
+  chkWtLines = new QCheckBox("Wt\nLines!", widg);
+  chkWtLines->setToolTip("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude");
+  connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layColorScaleCtrls->addWidget(chkWtLines);
+
+  chkWtLineSwt = new QCheckBox("swt", widg);
+  chkWtLineSwt->setToolTip("Display the sending weights out of the unit instead of the receiving weights into it");
+  connect(chkWtLineSwt, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layColorScaleCtrls->addWidget(chkWtLineSwt);
+
+  lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
+  lblWtLineWdth->setToolTip("Width of weight lines"); 
+  layColorScaleCtrls->addWidget(lblWtLineWdth);
+  fldWtLineWdth = new taiField(&TA_float, this, NULL, widg);
+  layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
+
+  lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
+  lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown.");
+  layColorScaleCtrls->addWidget(lblWtLineThr);
+  fldWtLineThr = new taiField(&TA_float, this, NULL, widg);
+  layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
+
   ////////////////////////////////////////////////////////////////////////////
   layColorBar = new QHBoxLayout(layDisplayValues);
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
@@ -2482,10 +2708,16 @@ void NetViewPanel::UpdatePanel_impl() {
   }
   
   chkDisplay->setChecked(nv->display);
+  chkLayMove->setChecked(nv->lay_mv);
   cmbUnitText->GetEnumImage(nv->unit_text_disp);
   cmbDispMode->GetEnumImage(nv->unit_disp_mode);
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
   fldPrjnWdth->GetImage((String)nv->view_params.prjn_width);
+
+  chkWtLines->setChecked(nv->wt_line_disp);
+  chkWtLineSwt->setChecked(nv->wt_line_swt);
+  fldWtLineWdth->GetImage((String)nv->wt_line_width);
+  fldWtLineThr->GetImage((String)nv->wt_line_thr);
 
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
   fldUnitFont->GetImage((String)nv->font_sizes.unit);
@@ -2518,6 +2750,7 @@ void NetViewPanel::GetValue_impl() {
   req_full_redraw = true;	// not worth micro-managing: MOST changes require full redraw!
 
   nv->display = chkDisplay->isChecked();
+  nv->lay_mv = chkLayMove->isChecked();
 
   int i; 
   cmbUnitText->GetEnumValue(i);
@@ -2538,6 +2771,11 @@ void NetViewPanel::GetValue_impl() {
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
   nv->font_sizes.unit = (float)fldUnitFont->GetValue();
   nv->font_sizes.layer = (float)fldLayFont->GetValue();
+
+  nv->wt_line_disp = chkWtLines->isChecked();
+  nv->wt_line_swt = chkWtLineSwt->isChecked();
+  nv->wt_line_width = (float)fldWtLineWdth->GetValue();
+  nv->wt_line_thr = (float)fldWtLineThr->GetValue();
 
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }

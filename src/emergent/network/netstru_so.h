@@ -39,6 +39,8 @@ class SoTranslate2Dragger; // #IGNORE
 class SoTransformBoxDragger; // #IGNORE
 class SoCalculator; // #IGNORE
 class SoComplexity; // #IGNORE
+class SoIndexedLineSet; // #IGNORE
+class SoDrawStyle; // #IGNORE
 
 // forwards
 class T3UnitNode;
@@ -342,6 +344,10 @@ public:
   SoFrame*		shape() {return shape_;}
   SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
   SoSeparator*		getNetText();		      // get a new net text separator
+  SoSeparator*		wtLinesSep() {return wt_lines_;}
+  SoDrawStyle*		wtLinesDraw() {return wt_lines_draw_;}
+  SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;}
+  SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;}
 
   T3NetNode(void* dataView_ = NULL, bool show_draggers = true);
 
@@ -352,6 +358,10 @@ protected:
 protected:
   SoFrame*		shape_; //#IGNORE
   SoSeparator* 		net_text_; // network text variables
+  SoSeparator* 		wt_lines_; // weight lines
+  SoDrawStyle*		wt_lines_draw_;
+  SoIndexedLineSet*	wt_lines_set_;
+  SoVertexProperty*	wt_lines_vtx_prop_;
 
   bool			show_drag_;
   T3TransformBoxDragger* drag_;	// my position dragger

@@ -378,10 +378,11 @@ public:
   ColorScale		scale; //contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  // Auto ranges for member buttons
   bool			display;       // whether to update the display when values change (under control of programs)
+  bool			lay_mv;       // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   MemberSpace		membs;		// #NO_SAVE #NO_COPY list of all the members possible in units; note: all items are new clones
   String_Array	  	ordered_uvg_list; // #HIDDEN #NO_COPY selected var buttons
   // unit display flags
-  Unit*			unit_src; // #NO_SAVE #NO_COPY unit last picked (if any) for display
+  UnitRef		unit_src; // #NO_SAVE #NO_COPY unit last picked (if any) for display
   bool			unit_con_md;  // #NO_SAVE true if memberdef is from a connection as opposed to a direct unit var
   MemberDef*		unit_disp_md; // #NO_SAVE memberdef (if any) of Unit (or Connection) to display
   ScaleRange*		unit_sr; // #NO_SAVE #NO_COPY scalerange of disp_md
@@ -391,6 +392,10 @@ public:
   FloatTDCoord		max_size;	// maximum size in each dimension of the net
   NetViewFontSizes	font_sizes;	// font sizes for various items
   NetViewParams		view_params;	// misc view parameters 
+  bool			wt_line_disp;	// display weights from selected unit as lines?
+  float			wt_line_width;	// width of weight lines
+  float			wt_line_thr;	// threshold on fabs(wt) value -- don't display below this value
+  bool			wt_line_swt;	// plot sending weights instead of recv weights
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)inherited::node_so();}
@@ -456,7 +461,6 @@ public:
   T3_DATAVIEWFUNS(NetView, T3DataViewMain)
 
 protected:
-  Unit*			m_unit_src; // #IGNORE unit last picked (if any) for display
   NetViewPanel*		nvp; // created during first Render
 
   override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
@@ -468,6 +472,7 @@ protected:
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   void			Render_net_text();
+  void			Render_wt_lines();
   override void		Reset_impl(); // #IGNORE
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void			viewWin_NotifySignal(ISelectableHost* src, int op);
@@ -494,6 +499,7 @@ public:
   QVBoxLayout*		layViewParams;
   QHBoxLayout*		  layDispCheck;
   QCheckBox*		    chkDisplay;
+  QCheckBox*		    chkLayMove;
   QLabel*		    lblUnitText;
   taiComboBox*		    cmbUnitText;
   QLabel*		    lblDispMode;
@@ -517,6 +523,12 @@ public:
   QHBoxLayout*		  layColorScaleCtrls;
   QCheckBox*		    chkAutoScale;       // autoscale ck_box
   QPushButton*		    butScaleDefault;    // revert to default  
+  QCheckBox*		    chkWtLines;
+  QCheckBox*		    chkWtLineSwt;
+  QLabel*		    lblWtLineWdth;
+  taiField*		    fldWtLineWdth;
+  QLabel*		    lblWtLineThr;
+  taiField*		    fldWtLineThr;
   QHBoxLayout*		 layColorBar;
   ScaleBar*		   cbar;	      // colorbar
   QPushButton*		   butSetColor;

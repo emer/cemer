@@ -46,6 +46,8 @@
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/engines/SoCompose.h>
 #include <Inventor/engines/SoCalculator.h>
+#include <Inventor/nodes/SoIndexedLineSet.h>
+#include <Inventor/nodes/SoDrawStyle.h>
 
 #include <math.h>
 #include <limits.h>
@@ -618,6 +620,14 @@ T3NetNode::T3NetNode(void* dataView_, bool show_draggers)
   txfm_shape()->translation.setValue(.5f, .5f * h - .5f, -.5f);
   shape_->setDimensions(x, y, 0.02f, -0.02f);
   net_text_ = NULL;
+  wt_lines_ = new SoSeparator;
+  wt_lines_draw_ = new SoDrawStyle;
+  wt_lines_->addChild(wt_lines_draw_);
+  wt_lines_set_ = new SoIndexedLineSet;
+  wt_lines_vtx_prop_ = new SoVertexProperty;
+  wt_lines_set_->vertexProperty.setValue(wt_lines_vtx_prop_); // does ref/unref
+  wt_lines_->addChild(wt_lines_set_);
+  addChild(wt_lines_);
 }
 
 T3NetNode::~T3NetNode()
@@ -634,3 +644,4 @@ SoSeparator* T3NetNode::getNetText() {
   net_text_ = new SoSeparator;
   return net_text_;
 }
+

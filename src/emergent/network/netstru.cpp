@@ -1731,8 +1731,8 @@ TwoDCoord Unit::GetMyAbsPos() {
   if(!lay) return rval;
   Unit_Group* ug = GET_MY_OWNER(Unit_Group);
   if(ug->owner == lay) return pos; // simple: we're the only unit group
-  rval.x = ug->pos.x * lay->un_geom.x + pos.x;
-  rval.y = ug->pos.y * lay->un_geom.y + pos.y;
+  rval.x = ug->pos.x + pos.x;
+  rval.y = ug->pos.y + pos.y;
   return rval;
 }
 
