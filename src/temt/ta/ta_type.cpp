@@ -3915,7 +3915,7 @@ String TypeDef::Get_C_Name() const {
   if(ref) {
     TypeDef* nrt;
     if((nrt = GetNonRefType()) == NULL) {
-      taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
+//       taMisc::Error("Null NonRefType in TypeDef::Get_C_Name()", name);
       return name;
     }
     rval = nrt->Get_C_Name() + "&";
@@ -3925,7 +3925,7 @@ String TypeDef::Get_C_Name() const {
   if (ptr > 0) {
     TypeDef* npt;
     if((npt = GetNonPtrType()) == NULL) {
-      taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
+//       taMisc::Error("Null NonPtrType in TypeDef::Get_C_Name()", name);
       return name;
     }
     rval = npt->Get_C_Name() + GetPtrString();

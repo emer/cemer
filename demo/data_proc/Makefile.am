@@ -4,4 +4,5 @@ dist_pkgdata_data_proc_DATA =\
 	data_calc_loop.proj \
 	epoch_log_analysis.proj \
 	epoch_log_analysis.sh \
-	epoch_log_analysis_sample_data.epc.dat
+	epoch_log_analysis_sample_data.epc.dat \
+	canvas_drawing.proj

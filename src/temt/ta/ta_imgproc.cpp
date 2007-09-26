@@ -47,6 +47,24 @@ bool taImage::LoadImage(const String& fname) {
   return true;
 }
 
+bool taImage::SaveImage(const String& fname) {
+  if (fname.empty()) {
+    taFiler* flr = GetLoadFiler(fname);
+    name = flr->fileName();
+    flr->Close();
+    taRefN::unRefDone(flr);
+  }
+  else {
+    name = fname;
+  }
+  QString fn = (const char*)name;
+  if(!q_img.save(fn)) {
+    taMisc::Error("SaveImage: could not save image file:", name);
+    return false;
+  }
+  return true;
+}
+
 float taImage::GetPixelGrey_float(int x, int y) {
   if(q_img.isNull()) {
     return -1.0f;
@@ -71,13 +89,16 @@ bool taImage::ImageToGrey_float(float_Matrix& img_data) {
   if(q_img.isNull()) {
     return false;
   }
-  img_data.SetGeom(2, q_img.width(), q_img.height());
+  int ht = q_img.height();
+  int wd = q_img.width();
 
-  for(int y=0; y<q_img.height(); y++) {
-    for(int x=0; x< q_img.width(); x++) {
+  img_data.SetGeom(2, wd, ht);
+
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
       QRgb pix = q_img.pixel(x, y);
       float gval = qGray(pix) / 255.0f;
-      img_data.Set(gval, x, q_img.height()-1 - y);
+      img_data.Set(gval, x, ht-1 - y);
     }
   }
   return true;
@@ -87,19 +108,94 @@ bool taImage::ImageToRGB_float(float_Matrix& rgb_data) {
   if(q_img.isNull()) {
     return false;
   }
-  rgb_data.SetGeom(3, q_img.width(), q_img.height(), 3); // r,g,b = 3rd dim
+  int ht = q_img.height();
+  int wd = q_img.width();
 
-  for(int y=0; y<q_img.height(); y++) {
-    for(int x=0; x< q_img.width(); x++) {
+  rgb_data.SetGeom(3, wd, ht, 3); // r,g,b = 3rd dim
+
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
       QRgb pix = q_img.pixel(x, y);
       float rval = qRed(pix) / 255.0f;
       float gval = qGreen(pix) / 255.0f;
       float bval = qBlue(pix) / 255.0f;
-      rgb_data.Set(rval, x, q_img.height()-1 -y, 0);
-      rgb_data.Set(gval, x, q_img.height()-1 -y, 1);
-      rgb_data.Set(bval, x, q_img.height()-1 -y, 2);
+      rgb_data.Set(rval, x, ht-1 -y, 0);
+      rgb_data.Set(gval, x, ht-1 -y, 1);
+      rgb_data.Set(bval, x, ht-1 -y, 2);
     }
   }
+  return true;
+}
+
+bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
+  if(q_img.isNull() || !dt) {
+    return false;
+  }
+  int ht = q_img.height();
+  int wd = q_img.width();
+
+  taMatrix* mat = dt->GetValAsMatrix(col, row);
+  if(!mat) return false;
+  taBase::Ref(mat);
+
+  bool rval = true;
+
+  DataUpdate(true);
+  if(mat->dims() == 2) {
+    for(int y=0; y<ht; y++) {
+      for(int x=0; x< wd; x++) {
+	QRgb pix = q_img.pixel(x, y);
+	float gval = qGray(pix) / 255.0f;
+	mat->SetFmVar(gval, x, ht-1 - y);
+      }
+    }
+  }
+  else if(mat->dims() == 3) {
+    for(int y=0; y<ht; y++) {
+      for(int x=0; x< wd; x++) {
+	QRgb pix = q_img.pixel(x, y);
+	float rval = qRed(pix) / 255.0f;
+	float gval = qGreen(pix) / 255.0f;
+	float bval = qBlue(pix) / 255.0f;
+	mat->SetFmVar(rval, x, ht-1 - y, 0);
+	mat->SetFmVar(gval, x, ht-1 - y, 1);
+	mat->SetFmVar(bval, x, ht-1 - y, 2);
+      }
+    }
+  }
+  else {
+    TestError(true, "ImageToDataCell", "cell matrix is not either 2 or 3 dimensional");
+    rval = false;
+  }
+
+  taBase::unRef(mat);
+  DataUpdate(false); 
+
+  return rval;
+}
+
+bool taImage::ImageToDataCellName(DataTable* dt, const String& col_nm, int row) {
+  if(q_img.isNull() || !dt) {
+    return false;
+  }
+  int col;
+  DataCol* da = dt->FindColName(col_nm, col, true);
+  if(!da) return false;
+  return ImageToDataCell(dt, col, row);
+}
+
+bool taImage::ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type,
+				bool rgb) {
+  if(q_img.isNull() || !dt) {
+    return false;
+  }
+  int ht = q_img.height();
+  int wd = q_img.width();
+
+  if(rgb)
+    dt->FindMakeColMatrix(col_nm, val_type, 3, wd, ht, 3);
+  else
+    dt->FindMakeColMatrix(col_nm, val_type, 2, wd, ht);
   return true;
 }
 
@@ -148,6 +244,255 @@ bool taImage::TranslateImage(float move_x, float move_y, bool smooth) {
     q_img = q_img.transformed(mat); // default is fast
   return true;
 }
+
+bool taImage::GetImageSize(int& width, int& height) {
+  width = q_img.width();
+  height = q_img.height();
+  if(q_img.isNull()) {
+    return false;
+  }
+  return true;
+}
+
+bool taImage::SetImageSize(int width, int height) {
+  int cur_wd, cur_ht;
+  GetImageSize(cur_wd, cur_ht);
+  if(width == cur_wd && height == cur_ht) return false;
+  q_img = QImage(QSize(width,height), QImage::Format_ARGB32);
+  return true;
+}
+
+
+///////////////////////////////////////////
+//	taCanvas
+
+void taCanvas::Initialize() {
+  coord_type = PIXELS;
+  cur_path = NULL;
+  m_init = false;
+}
+void taCanvas::Destroy() {
+  DeletePath();
+}
+
+void taCanvas::Copy_(const taCanvas& cp) {
+  coord_type = cp.coord_type;
+}
+
+void taCanvas::InitCanvas() {
+  if(q_img.isNull()) {
+    SetImageSize(256,256);
+  }
+  if(q_painter.isActive())
+    q_painter.end();
+  q_painter.begin(&q_img);
+  DeletePath();
+  q_painter.setBackgroundMode(Qt::OpaqueMode);
+  q_painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing, true);
+
+  fill_brush.setStyle(Qt::SolidPattern);
+  
+  int cur_wd, cur_ht;
+  GetImageSize(cur_wd, cur_ht);
+  if(coord_type == PIXELS) {
+    //    q_painter.setWorldTransform(QTransform(1.0, 0.0, 0.0, -1.0, 0.0, cur_ht), false);
+    q_painter.translate(0, cur_ht);
+    q_painter.scale(1.0, -1.0);
+  }
+  else {
+    q_painter.translate(0, cur_ht); // could be 1.0 instead..
+    q_painter.scale(cur_wd, -cur_ht);
+  }
+  m_init = true;
+}
+
+void taCanvas::EraseRGBA(float r, float g, float b, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setRgbF(r, g, b, a);
+  q_painter.setBackground(QBrush(clr));
+
+  if(coord_type == PIXELS) {
+    int cur_wd, cur_ht;
+    GetImageSize(cur_wd, cur_ht);
+    q_painter.eraseRect(QRectF(0.0f,0.0f, cur_wd,cur_ht));
+  }
+  else {
+    q_painter.eraseRect(QRectF(0.0f,0.0f, 1.0f, 1.0f));
+  }
+}
+
+void taCanvas::EraseName(const String& name) {
+  if(!CheckInit()) return;
+  QColor clr((const char*)name);
+  q_painter.setBackground(QBrush(clr));
+
+  if(coord_type == PIXELS) {
+    int cur_wd, cur_ht;
+    GetImageSize(cur_wd, cur_ht);
+    q_painter.eraseRect(QRectF(0.0f,0.0f, cur_wd,cur_ht));
+  }
+  else {
+    q_painter.eraseRect(QRectF(0.0f,0.0f, 1.0f, 1.0f));
+  }
+}
+
+void taCanvas::Point(float x1, float y1) {
+  if(!CheckInit()) return;
+  q_painter.drawPoint(QPointF(x1, y1));
+}
+
+void taCanvas::Line(float x1, float y1, float x2, float y2) {
+  if(!CheckInit()) return;
+  q_painter.drawLine(QPointF(x1, y1), QPointF(x2, y2));
+}
+
+void taCanvas::Rect(float l, float b, float r, float t) {
+  if(!CheckInit()) return;
+  q_painter.drawRect(QRectF(QPointF(l, b), QSizeF(r-l, t-b)));
+}
+void taCanvas::Circle(float x, float y, float r) {
+  if(!CheckInit()) return;
+  q_painter.drawEllipse(QRectF(QPointF(x-.5f*r, y-.5f*r), QSizeF(r, r)));
+}
+void taCanvas::Ellipse(float x, float y, float rx, float ry) {
+  if(!CheckInit()) return;
+  q_painter.drawEllipse(QRectF(QPointF(x - .5f*rx, y - .5f*ry), QSizeF(rx, ry)));
+}
+void taCanvas::FillRect(float l, float b, float r, float t) {
+  if(!CheckInit()) return;
+  q_painter.fillRect(QRectF(QPointF(l, b), QSizeF(r-l, t-b)), fill_brush);
+}
+void taCanvas::FillCircle(float x, float y, float r) {
+  if(!CheckInit()) return;
+  QPainterPath pp;
+  pp.addEllipse(QRectF(QPointF(x-.5f*r, y-.5f*r), QSizeF(r, r)));
+  q_painter.fillPath(pp, fill_brush);
+}
+void taCanvas::FillEllipse(float x, float y, float rx, float ry) {
+  if(!CheckInit()) return;
+  QPainterPath pp;
+  pp.addEllipse(QRectF(QPointF(x - .5f*rx, y - .5f*ry), QSizeF(rx, ry)));
+  q_painter.fillPath(pp, fill_brush);
+}
+
+void taCanvas::NewPath() {
+  if(!CheckInit()) return;
+  if(TestError(cur_path, "NewPath", "New path called before previous one was closed!")) return;
+  cur_path = new QPainterPath;
+}
+
+void taCanvas::MoveTo(float x, float y) {
+  if(!CheckInit()) return;
+  if(!cur_path) NewPath();
+  cur_path->moveTo(x,y);
+}
+void taCanvas::LineTo(float x, float y) {
+  if(!CheckInit()) return;
+  if(TestError(!cur_path, "LineTo", "No current path -- must call NewPath first!")) return;
+  cur_path->lineTo(x,y);
+}
+void taCanvas::CurveTo(float x, float y, float x1, float y1, float x2, float y2) {
+  if(!CheckInit()) return;
+  if(TestError(!cur_path, "CurveTo", "No current path -- must call NewPath first!")) return;
+  cur_path->cubicTo(x1,y1, x2,y2, x,y);
+}
+void taCanvas::DrawPath() {
+  if(!CheckInit()) return;
+  if(TestError(!cur_path, "DrawPath", "No current path -- must call NewPath first!")) return;
+  q_painter.drawPath(*cur_path);
+  DeletePath();
+}
+void taCanvas::FillPath() {
+  if(!CheckInit()) return;
+  if(TestError(!cur_path, "FillPath", "No current path -- must call NewPath first!")) return;
+  q_painter.fillPath(*cur_path, fill_brush);
+  DeletePath();
+}
+
+void taCanvas::DrawFillPath() {
+  if(!CheckInit()) return;
+  if(TestError(!cur_path, "DrawFillPath", "No current path -- must call NewPath first!")) return;
+  q_painter.fillPath(*cur_path, fill_brush);
+  q_painter.drawPath(*cur_path);
+  DeletePath();
+}
+
+void taCanvas::DeletePath() {
+  if(!cur_path) return;
+  delete cur_path;
+  cur_path = NULL;
+}
+
+void taCanvas::TextLeft(const String& txt, float x, float y) {
+  if(!CheckInit()) return;
+  q_painter.save();
+  q_painter.resetMatrix();
+  int cur_wd, cur_ht;
+  GetImageSize(cur_wd, cur_ht);
+  float xp, yp;
+  if(coord_type == PIXELS) {
+    xp = x; yp = cur_ht - y;
+  }
+  else {
+    xp = x * (float)cur_wd; yp = cur_ht - (y * (float)cur_ht);
+  }
+  q_painter.drawText(QPointF(xp,yp), txt);
+  q_painter.restore();
+}
+void taCanvas::TextCenter(const String& txt, float x, float y) {
+  if(!CheckInit()) return;
+  // this is harder.. need a rectangle..
+//   q_painter.drawText(QPointF(x,y), Qt::AlignCenter, txt);
+}
+void taCanvas::TextRight(const String& txt, float x, float y) {
+  if(!CheckInit()) return;
+  // this is harder.. need a rectangle..
+  //  q_painter.drawText(QPointF(x,y), Qt::AlignRight, txt);
+}
+
+void taCanvas::ClipRect(float l, float b, float r, float t) {
+  if(!CheckInit()) return;
+}
+
+void taCanvas::PenColorRGBA(float r, float g, float b, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setRgbF(r, g, b, a);
+  QPen pen = q_painter.pen();
+  pen.setColor(clr);
+  q_painter.setPen(pen);
+  
+}
+void taCanvas::PenColorName(const String& name) {
+  if(!CheckInit()) return;
+  QColor clr((const char*)name);
+  QPen pen = q_painter.pen();
+  pen.setColor(clr);
+  q_painter.setPen(pen);
+}
+void taCanvas::PenWidth(float width) {
+  if(!CheckInit()) return;
+  QPen pen = q_painter.pen();
+  pen.setWidthF(width);
+  q_painter.setPen(pen);
+}
+void taCanvas::FillColorRGBA(float r, float g, float b, float a) {
+  if(!CheckInit()) return;
+  QColor clr;
+  clr.setRgbF(r, g, b, a);
+  fill_brush.setColor(clr);
+}
+void taCanvas::FillColorName(const String& name) {
+  if(!CheckInit()) return;
+  QColor clr((const char*)name);
+  fill_brush.setColor(clr);
+}
+void taCanvas::SetFont(const String& font_name, int point_size, int weight, bool italic) {
+  if(!CheckInit()) return;
+  q_painter.setFont(QFont(font_name, point_size, weight, italic));
+}
+
 
 ///////////////////////////////////////////
 //	DoG Filter
