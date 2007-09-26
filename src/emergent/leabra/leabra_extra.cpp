@@ -1794,8 +1794,8 @@ void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st;
-      su_st.x = (int)floor((float)(ruc.x+1) * rf_move.x) - rf_half_wd.x;
-      su_st.y = (int)floor((float)(ruc.y+1) * rf_move.y) - rf_half_wd.y;
+      su_st.x = rf_half_wd.x + (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+      su_st.y = rf_half_wd.y + (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
 
       su_st.SetGtEq(0);		// always keep entire rf in bounds!
       TwoDCoord su_ed = su_st + rf_width;
