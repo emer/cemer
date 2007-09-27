@@ -930,23 +930,19 @@ class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
   int		feat_gps;	// number of feature groups contained within V1 unit group -- surround connections are only for within-group connections
-  int		surround_width;	// how many surround layers to receive from
-  float		surround_sigma;	// sigma of gaussian connections from surround (normalized by width)
-  float		surround_max;	// max value of surround weight
+  int		convergence;	// how many sending groups to count as a single entity from the perspective of the saliency computation -- values larger than 1 make the saliency layer smaller than the sending layer
+  DoGFilterSpec	dog_wts;	// Difference of Gaussians filter for setting the weights -- determines the width of the projection, etc -- where the net filter values are positive, receives excitation from the target feature, else from all-but the target feature
+  float		wt_mult;	// multiplier on weight values coming from the dog_wts 
 
-  float_Matrix	surround_wts;	// #READ_ONLY #NO_SAVE weights for surround units
   int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
   
   void 		Connect_impl(Projection* prjn);
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
-  virtual void	ComputeSurroundWts();
-  // compute surround weights based on current parameters
-
   virtual void	GraphFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the surround weights gaussian into data table and generate a graph
+  // #BUTTON #NULL_OK plot the DoG center-surround weights into data table and generate a graph
   virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the surround weights gaussian into data table and generate a grid view
+  // #BUTTON #NULL_OK plot the DoG center-surround weights into data table and generate a grid view
 
   TA_SIMPLE_BASEFUNS(SaliencyPrjnSpec);
 private:

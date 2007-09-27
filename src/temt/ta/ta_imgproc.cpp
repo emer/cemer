@@ -518,8 +518,7 @@ void DoGFilterSpec::UpdateAfterEdit_impl() {
 float DoGFilterSpec::FilterPoint(int x, int y, float r_val, float g_val, float b_val) {
   if(color_chan == BLACK_WHITE) {
     float grey = r_val + g_val + b_val;
-    return grey * (on_filter.FastEl(x+filter_width, y+filter_width) - 
-		   off_filter.FastEl(x+filter_width, y+filter_width));
+    return grey * net_filter.FastEl(x+filter_width, y+filter_width);
   }
   else if(color_chan == RED_GREEN) {
     return (on_filter.FastEl(x+filter_width, y+filter_width) * r_val - 
@@ -560,6 +559,7 @@ void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
     float net = on_flt.FastEl_Flat(i) - off_flt.FastEl_Flat(i);
     net_flt.FastEl_Flat(i) = net;
   }
+  //  taMath_float::vec_norm_abs_max(&net_flt); // max norm = 1
 }
 
 void DoGFilterSpec::UpdateFilter() {

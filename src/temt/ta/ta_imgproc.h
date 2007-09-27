@@ -197,9 +197,9 @@ public:
   float		on_sigma;	// width of the narrower central 'on' gaussian
   float		off_sigma;	// width of the wider surround 'off' gaussian (typically 2 * on_sigma)
   bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of radius filter_width -- makes the filter more radially symmetric
-  float_Matrix	on_filter;	// #READ_ONLY #NO_SAVE #SHOW on-gaussian 
-  float_Matrix	off_filter;	// #READ_ONLY #NO_SAVE #SHOW off-gaussian (values are positive)
-  float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE #SHOW net overall filter (for display purposes)
+  float_Matrix	on_filter;	// #READ_ONLY #NO_SAVE on-gaussian 
+  float_Matrix	off_filter;	// #READ_ONLY #NO_SAVE off-gaussian (values are positive)
+  float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE net overall filter (for display purposes)
 
   float		FilterPoint(int x, int y, float r_val, float g_val, float b_val);
   // #CAT_DoGFilter apply filter at given x,y point to given color values
