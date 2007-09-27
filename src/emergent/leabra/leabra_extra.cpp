@@ -1960,8 +1960,7 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
       for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
 	for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
 
-	  TwoDCoord su_st = ruc*convergence - fltwd;
-	  //	  su_st = (su_st / convergence) * convergence;	// *start* of su, digitized
+	  TwoDCoord su_st = ruc*convergence - convergence*fltwd;
 
 	  Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
 	  if(!ru_u) break;
@@ -2009,11 +2008,8 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
 
   TwoDCoord ruu_geo = recv_lay->un_geom;
   TwoDCoord su_st;		// su starting (left)
-  su_st.x = (ru->idx % ruu_geo.x)*convergence - fltwd;
-  su_st.y = (ru->idx / ruu_geo.x)*convergence - fltwd;
-
-
-  //  su_st = (su_st / convergence) * convergence;	// *start* of su, digitized
+  su_st.x = (ru->idx % ruu_geo.x)*convergence - convergence*fltwd;
+  su_st.y = (ru->idx / ruu_geo.x)*convergence - convergence*fltwd;
 
   TwoDCoord su_geo = send_lay->gp_geom;
 
