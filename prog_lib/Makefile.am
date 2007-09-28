@@ -11,6 +11,7 @@ dist_pkgdata_prog_lib_DATA =\
 	BpTrain.prog \
 	BpTrial.prog \
 	BpTrialMonitor.prog \
+	CanvasDemo.prog \
 	CPT12axAll.progp \
 	CsAll_Std.progp \
 	CsBatch.prog \
