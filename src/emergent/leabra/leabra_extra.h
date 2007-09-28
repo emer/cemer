@@ -933,6 +933,7 @@ public:
   int		convergence;	// how many sending groups to count as a single entity from the perspective of the saliency computation -- values larger than 1 make the saliency layer smaller than the sending layer
   DoGFilterSpec	dog_wts;	// Difference of Gaussians filter for setting the weights -- determines the width of the projection, etc -- where the net filter values are positive, receives excitation from the target feature, else from all-but the target feature
   float		wt_mult;	// multiplier on weight values coming from the dog_wts 
+  float		surr_mult;	// multiplier on surround weight values -- DoG has very weak surround in general so it can be useful to increase that
 
   int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
   

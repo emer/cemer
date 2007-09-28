@@ -1914,6 +1914,7 @@ void SaliencyPrjnSpec::Initialize() {
   dog_wts.on_sigma = 1;
   dog_wts.off_sigma = 2;
   wt_mult = 1.0f;
+  surr_mult = 1.0f;
   units_per_feat_gp = 4;
 }
 
@@ -2035,7 +2036,7 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
       else {
 	for(int sui=0;sui<su_gp->size;sui++) {
 	  if(sui != feat_no && sui >= fg_st && sui < fg_ed) 
-	    cg->Cn(su_idx++)->wt = -wt;
+	    cg->Cn(su_idx++)->wt = -surr_mult * wt;
 	  else
 	    cg->Cn(su_idx++)->wt = 0.0f; // not in our group or is guy itself
 	}
