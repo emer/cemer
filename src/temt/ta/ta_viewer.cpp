@@ -832,6 +832,19 @@ MainWindowViewer* MainWindowViewer::GetDefaultProjectBrowser(taProject* proj) {
   for (int i = taiMisc::active_wins. size - 1; i >= 0; --i) {
     iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i); 
     // check if it is a proj viewer
+    if (!ivw || !ivw->isProjBrowser()) continue;
+    // if proj specified, check if same
+    if (proj && (ivw->curProject() != proj)) continue;
+    return ivw->viewer();
+  } 
+  return NULL;
+}
+
+MainWindowViewer* MainWindowViewer::GetDefaultProjectViewer(taProject* proj) {
+// look in list of viewer wins for most current
+  for (int i = taiMisc::active_wins. size - 1; i >= 0; --i) {
+    iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i); 
+    // check if it is a proj viewer
     if (!ivw || !ivw->isProjViewer()) continue;
     // if proj specified, check if same
     if (proj && (ivw->curProject() != proj)) continue;
@@ -895,14 +908,39 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer))) 
     def_viewer_type = &TA_MainWindowViewer; // just in case
   
+  FrameViewer* fv = NULL;
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   rval->SetData(proj);
-  rval->m_is_proj_viewer = true;
+  rval->m_not_is_proj_browser = false;
+  // tree guy
   tabBrowseViewer* cb = tabBrowseViewer::New(proj);
   rval->frames.Add(cb);
-  FrameViewer* fv = rval->AddFrameByType(&TA_PanelViewer);
-  fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+  // panel guy
+  fv = rval->AddFrameByType(&TA_PanelViewer);
+  MainWindowViewer* viewer = NULL; // only for 2x2 mode
+  switch (taMisc::proj_view_pref) {
+  case taMisc::PVP_2x2: {
+    viewer = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
+    fv = viewer->AddFrameByType(&TA_PanelViewer);
+    fv = viewer->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+    viewer->SetData(proj);
+    viewer->m_is_proj_viewer = true;
+    // twiddle sizes a bit, to get overlap
+    rval->SetUserData("view_win_wd", 0.6667f);
+    viewer->SetUserData("view_win_lft", 0.3333f);
+    viewer->SetUserData("view_win_wd", 0.6667f);
+  } break;
+  case taMisc::PVP_3PANE: {
+    fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+    rval->m_is_proj_viewer = true;
+  } break;
+  // no default, must handle all cases
+  }
   // always added to the viewer collection
+  // 2x2 only -- better to add this first, because it ends up underneath
+  if (viewer) {
+    proj->viewers.Add(viewer); // will get auto-opened later
+  }
   proj->viewers.Add(rval);
   // global toolbar
   ToolBoxDockViewer* tb = ToolBoxDockViewer::New(); // initializes
@@ -912,6 +950,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
 
 void MainWindowViewer::Initialize() {
   m_is_root = false;
+  m_not_is_proj_browser = true; // note: for compatability
   m_is_proj_viewer = false;
   m_is_dialog = false;
   menu = NULL;

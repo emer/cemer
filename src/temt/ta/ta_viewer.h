@@ -576,8 +576,11 @@ public:
 
   static MainWindowViewer* GetDefaultProjectBrowser(taProject* proj = NULL);
     // get the default pb for given project, or whatever one is current if NULL
+  static MainWindowViewer* GetDefaultProjectViewer(taProject* proj = NULL);
+    // get the default pv for given project, or whatever one is current if NULL -- for 3-pane B==V for 2x2 B is the tree guy V is the T3 guy
   
   bool			m_is_root; // #READ_ONLY #SAVE #NO_SHOW
+  bool			m_not_is_proj_browser; // #READ_ONLY #SAVE #NO_SHOW (~ for compat reasons)
   bool			m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
   bool			m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
   
@@ -590,10 +593,15 @@ public:
   FrameViewer_List 	frames;	// the frames shown in the center splitter area
   DockViewer_List	docks; // #EXPERT currently docked windows -- removed if they undock
 
-  inline bool		isDialog() const {return m_is_dialog;}
+  bool			isDialog() const {return m_is_dialog;}
   override bool		isRoot() const {return m_is_root;}
-  inline bool		isProjViewer() const {return m_is_proj_viewer;}
-//parent note: we inherit MainWindowViewer type, but actually never have a taDataView parent
+  bool			isProjBrowser() const {return !m_not_is_proj_browser;}
+    // main proj window with tree browser (always t for 3-pane guy)
+  bool			isProjViewer() const {return m_is_proj_viewer;}
+    // main proj window with t3 guy (always t for 3-pane guy)
+  bool			isProjShower() const 
+    {return m_is_proj_viewer || !m_not_is_proj_browser;} // if a proj viewer or browser 
+
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();} 
 
 

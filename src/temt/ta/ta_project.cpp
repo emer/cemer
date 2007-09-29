@@ -440,7 +440,7 @@ MainWindowViewer* taProject::AssertDefaultProjectBrowser(bool auto_open) {
     vwr->SetData(this);
   }
   if (auto_open) {
-    vwr->ViewWindow();
+    OpenViewers();
   }
   return vwr;
 }
@@ -464,9 +464,17 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
   MainWindowViewer* vwr =  MakeProjectBrowser_impl();
   if (viewer_name != "(default name)")
     vwr->SetName(viewer_name);
-  vwr->ViewWindow();
-  
+  OpenViewers(); // opens both 2x2 if we made those
 }
+
+void taProject::OpenViewers() {
+  for (int i = 0; i < viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
+    if (!vwr) continue;
+    vwr->ViewWindow(); // noop if already open
+  }
+}
+
 
 DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("InputData");

@@ -198,6 +198,7 @@ public:
 
   override void		PostLoadAutos();
   // perform post-loading automatic functions
+  void			OpenViewers(); // open any yet unopen viewers
 
   void	UpdateAfterEdit();
   virtual void		InitLinks_impl(); // #IGNORE use this instead of InitLinks in subclasses

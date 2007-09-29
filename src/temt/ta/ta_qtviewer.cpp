@@ -3213,6 +3213,7 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 {
   Init();
   m_is_root = viewer_->isRoot(); // need to do before Constr
+  m_is_proj_browser = viewer_->isProjBrowser(); // need to do before Constr
   m_is_proj_viewer = viewer_->isProjViewer(); // need to do before Constr
   // note: caller will still do a virtual Constr() on us after new
 }
@@ -3240,12 +3241,16 @@ void iMainWindowViewer::Init() {
   last_clip_handler = NULL;
   last_sel_server = NULL;
   m_is_root = false;
+  m_is_proj_browser = false;
   m_is_proj_viewer = false;
-  // set maximum size
-  iSize ss = taiM->scrn_s;
-  setMaximumSize(ss.width(), ss.height());
-  // set default size as the big hor dialog
-//  resize(taiM->dialogSize(taiMisc::hdlg_b));
+  
+  // allow win to be any size, even bigger than screen -- esp important for
+  // multi-monitor situations, so you can size across screens
+  // note that we do constrain windows on restore to be on screen, even if
+  // their metrics indicated very big -- VERY IMPORTANT FOR MAC 
+//  iSize ss = taiM->scrn_s;
+//  setMaximumSize(ss.width(), ss.height());
+
 //for some GD reason, we can't get the icon to show by doing this:
 //setWindowIcon(QApplication::windowIcon()); // supposed to be automatic, but doesn't seem to be...
 // so we curse and swear, and do this:
@@ -3474,7 +3479,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
   connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
   connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
-  if (isProjViewer()) {
+  if (isProjShower()) {
     connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
     connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
     connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
@@ -3620,14 +3625,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
 
 taProject* iMainWindowViewer::curProject() const {
   taProject* rval = NULL;
-  if (isProjViewer()) {
+  if (isProjShower()) {
     MainWindowViewer* db = viewer();
     if (!db) return NULL; // shouldn't happen
-    BrowseViewer* bv = (BrowseViewer*)db->FindFrameByType(&TA_BrowseViewer);
-    if (!bv) return NULL; // generally shouldn't happen (we usually have a browse tree)
-    if (!bv->root()) return NULL; //shouldn't happen
-    if (!bv->rootType()->InheritsFrom(&TA_taProject)) return NULL; // we aren't a project
-    rval = (taProject*)bv->root();
+    rval = dynamic_cast<taProject*>(db->data());
   }
   return rval;
 }
@@ -4036,7 +4037,7 @@ void iMainWindowViewer::Refresh_impl() {
 }
 
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
-  if (!isProjViewer()) return; // changes only applied for proj viewers
+  if (!isProjShower()) return; // changes only applied for proj showers
 
   taProject* proj = curProject();
   if (isDirty() && !(proj && proj->m_no_save)) {

@@ -922,8 +922,11 @@ public:
   
   taProject*		curProject() const; // only if we are a projviewer
   inline bool		isRoot() const {return m_is_root;} // if this is app root, closing quits
+  inline bool		isProjBrowser() const {return m_is_proj_browser;} // if a project browser, persistent
   inline bool		isProjViewer() const {return m_is_proj_viewer;} // if a project viewer, persistent
-
+  inline bool		isProjShower() const 
+    {return m_is_proj_viewer || m_is_proj_browser;} // if either
+  
   inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
@@ -1034,7 +1037,8 @@ protected slots:
 
 protected:
   bool			m_is_root; // true if this is a root window (has Quit menu)
-  bool			m_is_proj_viewer; // true if this is a project viewer (false for simple browsers)
+  bool			m_is_proj_browser; // true if this is a project browser (false for simple browsers)
+  bool			m_is_proj_viewer; // true if this is a project viewer
   override void 	closeEvent(QCloseEvent* ev);
   bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);

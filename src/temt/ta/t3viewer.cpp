@@ -1806,7 +1806,7 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
   if (!obj) return NULL;
   T3DataViewFrame* fr = NULL;
   taProject* proj = (taProject*)obj->GetOwner(&TA_taProject);
-  MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectBrowser(proj);
+  MainWindowViewer* vw = MainWindowViewer::GetDefaultProjectViewer(proj);
   if (!vw) return NULL; // shouldn't happen
   T3DataViewer* t3vw = (T3DataViewer*)vw->FindFrameByType(&TA_T3DataViewer);
   if (!t3vw) return NULL; // shouldn't happen
