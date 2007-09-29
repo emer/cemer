@@ -1045,7 +1045,7 @@ public:
   enum InhibType {		// how to compute the inhibition
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
     KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
-    KWTA_KV2K_INHIB,		// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
+    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
@@ -1219,7 +1219,7 @@ public:
   enum Compute_I {		// legacy conversion inhib compute enum -- keep sync'd with LeabraInhibSpec!!
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
     KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
-    KWTA_KV2K_INHIB,		// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
+    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer

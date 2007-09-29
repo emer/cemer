@@ -908,6 +908,7 @@ INHERITED(ProjectionSpec)
 public:
   GaborV1Spec	rf_spec;	// #SHOW_TREE receptive field specs
   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
+  float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
   
   void 		Connect_impl(Projection* prjn);
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);

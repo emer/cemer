@@ -1506,7 +1506,7 @@ void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
 //////////////////////////
 
 void LeabraInhibSpec::Initialize() {
-  type = KWTA_KV2K_INHIB;
+  type = KWTA_KV2K;
   kwta_pt = .25f;
   min_i = 0.0f;
   comp_thr = .5f;
@@ -2133,7 +2133,7 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, Leabr
       Compute_Inhib_kWTA(lay, ug, thr, net);
     else if(inhib.type == LeabraInhibSpec::KWTA_AVG_INHIB)
       Compute_Inhib_kWTA_Avg(lay, ug, thr, net);
-    else if(inhib.type == LeabraInhibSpec::KWTA_KV2K_INHIB)
+    else if(inhib.type == LeabraInhibSpec::KWTA_KV2K)
       Compute_Inhib_kWTA_kv2k(lay, ug, thr, net);
     else if(inhib.type == LeabraInhibSpec::KWTA_COMP_COST)
       Compute_Inhib_kWTA_CompCost(lay, ug, thr, net);

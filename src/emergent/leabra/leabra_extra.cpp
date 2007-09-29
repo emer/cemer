@@ -1755,6 +1755,7 @@ void DecodeTwoDValLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 
 void V1RFPrjnSpec::Initialize() {
   init_wts = true;
+  dog_surr_mult = 1.0f;
 }
 
 void V1RFPrjnSpec::UpdateAfterEdit_impl() {
@@ -1867,7 +1868,7 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
 	else	       cg->Cn(i)->wt = 0.0f;
       }
       else {
-	if(val < 0.0f) 	cg->Cn(i)->wt = -val;
+	if(val < 0.0f) 	cg->Cn(i)->wt = -dog_surr_mult * val;
 	else		cg->Cn(i)->wt = 0.0f;
       }
     }
