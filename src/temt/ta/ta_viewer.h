@@ -554,7 +554,7 @@ private:
 
 
 class TA_API MainWindowViewer : public TopLevelViewer {
-  // #NO_TOKENS #VIRT_BASE ##DEF_NAME_ROOT_Browser the uber controller for main windows
+  // ##DEF_NAME_ROOT_Browser the uber controller for main windows
 INHERITED(TopLevelViewer)
 friend class taDataLink;
 friend class ToolBar_List;

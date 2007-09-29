@@ -174,13 +174,28 @@ bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
     // both these cases are essentially identical -- the index indicates
     // the new target position -- but we need to differentiate the
     // "before" case in our semantics, from the "at end" case
-    if (index == parent->childCount()) {
-      // "at end" case -- item is correct, but we set the flag
-      where = iTreeWidgetItem::WI_AT_END;
-    } else { // "before" case
-      // so we'll change to that item..
-      where = iTreeWidgetItem::WI_BEFORE;
-      item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
+    // NOTE: if parent==NULL then this is the root list, ie us
+    if (parent) {
+      if (index == parent->childCount()) {
+        // "at end" case -- item is correct, but we set the flag
+        where = iTreeWidgetItem::WI_AT_END;
+      } else { // "before" case
+        // so we'll change to that item..
+        where = iTreeWidgetItem::WI_BEFORE;
+        item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
+      }
+    } else { // use us
+      if (index == topLevelItemCount()) {
+        // "at end" case -- item is correct, but we set the flag
+        where = iTreeWidgetItem::WI_AT_END;
+        //NOTE: this case cannot be handled, since there is no parent item
+        // which could handle the drop, therefore, without redesign, we
+        // can't process an "after last" on the root, ex. in a listview
+      } else { // "before" case
+        // so we'll change to that item..
+        where = iTreeWidgetItem::WI_BEFORE;
+        item = dynamic_cast<iTreeWidgetItem*>(topLevelItem(index));
+      }
     }
     break;
   case OnItem: // default case
