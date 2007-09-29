@@ -100,7 +100,7 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u, Le
 void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   lay->hard_clamped = true;	// cache this flag
   lay->SetExtFlag(Unit::EXT);
-  lay->Inhib_SetVals(i_kwta_pt);		// assume 0 - 1 clamped inputs
+  lay->Inhib_SetVals(inhib.kwta_pt);		// assume 0 - 1 clamped inputs
 
   LeabraUnit* u;
   taLeafItr i;
@@ -304,10 +304,9 @@ void ScalarValLayerSpec::Initialize() {
   gp_kwta.k = 1;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("compute_i", true);
-  compute_i = KWTA_AVG_INHIB;
-  SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .9f;
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .9f;
 
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
     unit_range.min = -0.5f;   unit_range.max = 1.5f;
@@ -443,8 +442,8 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
     if(scalar.rep == ScalarValSpec::LOCALIST) {
       scalar.min_sum_act = .2f;
       kwta.k = 1;
-      compute_i = KWTA_AVG_INHIB;
-      i_kwta_pt = 0.9f;
+      inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+      inhib.kwta_pt = 0.9f;
       us->g_bar.h = .03f; us->g_bar.a = .09f;
       us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
       us->act.thr = .17f;
@@ -470,8 +469,8 @@ void ScalarValLayerSpec::ReConfig(Network* net, int n_units) {
       }
     }
     else if(scalar.rep == ScalarValSpec::GAUSSIAN) {
-      compute_i = KWTA_INHIB;
-      i_kwta_pt = 0.25f;
+      inhib.type = LeabraInhibSpec::KWTA_INHIB;
+      inhib.kwta_pt = 0.25f;
       us->g_bar.h = .015f; us->g_bar.a = .045f;
       us->act_fun = LeabraUnitSpec::NOISY_XX1;
       us->act.thr = .25f;
@@ -1153,10 +1152,9 @@ void TwoDValLayerSpec::Initialize() {
   gp_kwta.k = 9;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("compute_i", true);
-  compute_i = KWTA_AVG_INHIB;
-  SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .6f;
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .6f;
 
   if(twod.rep == TwoDValSpec::GAUSSIAN) {
     x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit();
@@ -1298,8 +1296,8 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
     if(twod.rep == TwoDValSpec::LOCALIST) {
       twod.min_sum_act = .2f;
       kwta.k = 1;
-      compute_i = KWTA_AVG_INHIB;
-      i_kwta_pt = 0.9f;
+      inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+      inhib.kwta_pt = 0.9f;
       us->g_bar.h = .03f; us->g_bar.a = .09f;
       us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
       us->act.thr = .17f;
@@ -1325,8 +1323,8 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       }
     }
     else if(twod.rep == TwoDValSpec::GAUSSIAN) {
-      compute_i = KWTA_INHIB;
-      i_kwta_pt = 0.25f;
+      inhib.type = LeabraInhibSpec::KWTA_INHIB;
+      inhib.kwta_pt = 0.25f;
       us->g_bar.h = .015f; us->g_bar.a = .045f;
       us->act_fun = LeabraUnitSpec::NOISY_XX1;
       us->act.thr = .25f;
@@ -1905,9 +1903,10 @@ void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
 //	SaliencyPrjnSpec
 
 void SaliencyPrjnSpec::Initialize() {
-  init_wts = true;
-  feat_gps = 2;
+  //  init_wts = true;
   convergence = 1;
+  feat_only = true;
+  feat_gps = 2;
   dog_wts.color_chan = DoGFilterSpec::BLACK_WHITE;
   dog_wts.filter_width = 3;
   dog_wts.filter_size = 7;
@@ -1930,7 +1929,59 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
 		 "requires sending layer to have unit groups!")) {
     return;
   }
+  if(feat_only)
+    Connect_feat_only(prjn);
+  else
+    Connect_full_dog(prjn);
+}
 
+void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord rug_geo = recv_lay->gp_geom;
+  TwoDCoord ruu_geo = recv_lay->un_geom;
+  TwoDCoord su_geo = send_lay->gp_geom;
+
+  int fltsz = convergence;
+  int sg_sz_tot = fltsz * fltsz;
+
+  int feat_no = 0;
+  TwoDCoord rug;
+  for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
+    for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
+      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
+      if(!ru_gp) continue;
+
+      int rui = 0;
+      TwoDCoord ruc;
+      for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
+	for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
+
+	  TwoDCoord su_st = ruc*convergence;
+
+	  Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
+	  if(!ru_u) break;
+	  ru_u->ConnectAlloc(sg_sz_tot, prjn);
+
+	  TwoDCoord suc;
+	  for(suc.y = 0; suc.y < fltsz; suc.y++) {
+	    for(suc.x = 0; suc.x < fltsz; suc.x++) {
+	      TwoDCoord sugc = su_st + suc;
+	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+	      if(!su_gp) continue;
+
+	      Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
+	      if(su_u)
+		ru_u->ConnectFrom(su_u, prjn);
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
+
+void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
   dog_wts.UpdateFilter();
   taMath_float::vec_norm_abs_max(&(dog_wts.net_filter)); // renorm to abs max = 1
 
@@ -1988,6 +2039,10 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  if(feat_only) {		// just use regular..
+    inherited::C_Init_Weights(prjn, cg, ru);
+    return;
+  }
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 

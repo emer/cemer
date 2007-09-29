@@ -778,10 +778,9 @@ void PVLVDaLayerSpec::Initialize() {
   kwta.k = 1;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("compute_i", true);
-  compute_i = KWTA_INHIB;
-  SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .25;
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  inhib.kwta_pt = .25;
 }
 
 void PVLVDaLayerSpec::Defaults() {
@@ -1361,7 +1360,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     ScalarValLayerSpec* lsp = valspecs[i];
     lsp->scalar.rep = ScalarValSpec::LOCALIST;
     lsp->scalar.min_sum_act = .2f;
-    lsp->compute_i = LeabraLayerSpec::KWTA_AVG_INHIB; lsp->i_kwta_pt = 0.9f;
+    lsp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB; lsp->inhib.kwta_pt = 0.9f;
     lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 1;
     lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 1; 
     lsp->unit_range.min = 0.0f;  lsp->unit_range.max = 1.0f;

@@ -1038,6 +1038,34 @@ public:
 
 // misc data-holding structures
 
+class LEABRA_API LeabraInhibSpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system (kwta, unit inhib, etc)
+INHERITED(taBase)
+public:
+  enum InhibType {		// how to compute the inhibition
+    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
+    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
+    KWTA_KV2K_INHIB,		// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
+    KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
+    AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
+    MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
+    UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
+  };
+
+  InhibType	type;		// #APPLY_IMMED how to compute inhibition (g_i)
+  float		kwta_pt;	// [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
+  float		comp_thr;	// #CONDEDIT_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
+  float		comp_gain;	// #CONDEDIT_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
+  float		gp_pt;		// #CONDEDIT_ON_type:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(LeabraInhibSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API KWTASpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies k-winner-take-all parameters
 INHERITED(taBase)
@@ -1170,15 +1198,6 @@ class LEABRA_API LeabraLayerSpec : public LayerSpec {
   // ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:
-  enum Compute_I {		// how to compute the inhibition
-    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
-    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
-    KWTA_KV2K_INHIB,		// average of top k vs avg of next k
-    AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer!
-    MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
-    UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
-  };
-
   enum InhibGroup {
     ENTIRE_LAYER,		// treat entire layer as one inhibitory group (even if subgroups exist)
     UNIT_GROUPS,		// treat sub unit groups as separate inhibitory groups (but also uses gp_i and gp_g if set, to have some sharing of inhib across groups
@@ -1186,17 +1205,29 @@ public:
   };
 
   InhibGroup	inhib_group;	// #APPLY_IMMED #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
+  LeabraInhibSpec inhib;	// how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
-  Compute_I	compute_i;	// #APPLY_IMMED #CAT_Activation how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
-  float		i_kwta_pt;	// #CAT_Activation [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
-  float		gp_i_pt;	// #CAT_Activation #CONDEDIT_ON_compute_i:AVG_MAX_PT_INHIB [Default: .2] for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
   AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
   LayNetRescaleSpec net_rescale; // #CAT_Activation rescale layer-wide netinputs to prevent blowup, when max net exceeds specified net value
   LayAbsNetAdaptSpec abs_net_adapt; // #CAT_Learning adapt absolute netinput values (must call AbsRelNetin functions, and AdaptAbsNetin)
+
+  // old parameters that have been moved into LeabraInhibSpec: only for converting old projects!
+  enum Compute_I {		// legacy conversion inhib compute enum -- keep sync'd with LeabraInhibSpec!!
+    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
+    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
+    KWTA_KV2K_INHIB,		// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
+    KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
+    AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
+    MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
+    UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
+  };
+  Compute_I	old_compute_i;	// #READ_ONLY #NO_SAVE #HIDDEN #AKA_compute_i how to compute inhibition (g_i): two forms of kwta or unit-level inhibition
+  float		old_i_kwta_pt;	// #READ_ONLY #NO_SAVE #HIDDEN #AKA_i_kwta_pt point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		old_gp_i_pt;	// #READ_ONLY #NO_SAVE #HIDDEN #AKA_gp_i_pt for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
 
   virtual void	Init_Weights(LeabraLayer* lay);
   // #CAT_Learning initialize weight values and other permanent state
@@ -1273,6 +1304,8 @@ public:
   // #CAT_Activation implementation of kwta avg-based inhibition computation
   virtual void	Compute_Inhib_kWTA_kv2k(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of k vs. 2k wta avg-based inhibition computation
+  virtual void	Compute_Inhib_kWTA_CompCost(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation implementation of kwta competitor cost inhibition computation
   virtual void	Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation implementation of avg-max-pt inhibition computation
   virtual void	Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);

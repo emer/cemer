@@ -162,10 +162,9 @@ void MatrixLayerSpec::Initialize() {
   gp_kwta.pct = .25f;
   //  SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
-  //  SetUnique("compute_i", true);
-  compute_i = KWTA_INHIB;
-  //  SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .25f;
+  //  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  inhib.kwta_pt = .25f;
 
   bg_type = MAINT;
 }
@@ -779,10 +778,9 @@ void SNrThalLayerSpec::Initialize() {
   tie_brk.on = true;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("compute_i", true);
-  compute_i = KWTA_AVG_INHIB;
-  SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .6f;
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .6f;
 }
 
 void SNrThalLayerSpec::Defaults() {
@@ -933,10 +931,9 @@ void PFCLayerSpec::Initialize() {
   gp_kwta.pct = .15f;
   SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
-  SetUnique("compute_i", true);
-  compute_i = KWTA_AVG_INHIB;
-  SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .6f;
+  SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .6f;
   SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
@@ -1260,10 +1257,9 @@ void PFCOutLayerSpec::Initialize() {
   gp_kwta.pct = .15f;
 //   SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
-//   SetUnique("compute_i", true);
-  compute_i = KWTA_AVG_INHIB;
-//   SetUnique("i_kwta_pt", true);
-  i_kwta_pt = .6f;
+//   SetUnique("inhib", true);
+  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  inhib.kwta_pt = .6f;
 //   SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
@@ -1371,8 +1367,8 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   kwta = pfcsp->kwta;
   gp_kwta = pfcsp->gp_kwta;
   inhib_group = pfcsp->inhib_group;
-  compute_i = pfcsp->compute_i;
-  i_kwta_pt = pfcsp->i_kwta_pt;
+  inhib.type = pfcsp->inhib.type;
+  inhib.kwta_pt = pfcsp->inhib.kwta_pt;
 
   // check for ordering of layers!
   int myidx = lay->own_net->layers.FindLeafEl(lay);
@@ -2013,8 +2009,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // set these to fix old projects..
   matrixsp->gp_kwta.k_from = KWTASpec::USE_PCT;
   matrixsp->gp_kwta.pct = .25f;
-  matrixsp->compute_i = LeabraLayerSpec::KWTA_INHIB;
-  matrixsp->i_kwta_pt = .25f;
+  matrixsp->inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  matrixsp->inhib.kwta_pt = .25f;
   matrixsp->UpdateAfterEdit();
 
   if(out_gate) {

@@ -270,10 +270,7 @@ void BaseSpec::SetUnique(int memb_no, bool on) {
 }
 
 bool BaseSpec::GetUnique(const char* memb_nm) {
-  MemberDef* md = FindMember(memb_nm);
-  if(md)
-    return GetUnique(md->idx);
-  TestError(true, "GetUnique", "Member named:", memb_nm, "not found");
+  if(unique.FindEl(memb_nm) >= 0) return true;
   return false;
 }
 
