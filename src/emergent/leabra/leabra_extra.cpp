@@ -1864,11 +1864,13 @@ void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
       int su_y = i / send_x;
       float val = rf_spec.gabor_rf.amp * df->net_filter.SafeEl(su_x, su_y);
       if(on_rf) {
+	if(df->on_sigma > df->off_sigma) val *= dog_surr_mult;
 	if(val > 0.0f) cg->Cn(i)->wt = val;
 	else	       cg->Cn(i)->wt = 0.0f;
       }
       else {
-	if(val < 0.0f) 	cg->Cn(i)->wt = -dog_surr_mult * val;
+	if(df->off_sigma > df->on_sigma) val *= dog_surr_mult;
+	if(val < 0.0f) 	cg->Cn(i)->wt = -val;
 	else		cg->Cn(i)->wt = 0.0f;
       }
     }
