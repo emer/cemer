@@ -21,6 +21,7 @@
 #include "ta_dump.h"
 #include "ta_plugin.h"
 #include "ta_gendoc.h"
+#include "ta_server.h"
 
 #include "css_ta.h"
 #include "css_console.h"
@@ -462,9 +463,20 @@ MainWindowViewer* taProject::NewProjectBrowser() {
 
 void taProject::OpenNewProjectBrowser(String viewer_name) {
   MainWindowViewer* vwr =  MakeProjectBrowser_impl();
-  if (viewer_name != "(default name)")
+  if (viewer_name != "(default name)") {
     vwr->SetName(viewer_name);
+    vwr->DataChanged(DCR_ITEM_UPDATED);
+  }
   OpenViewers(); // opens both 2x2 if we made those
+}
+
+void taProject::OpenNewProjectViewer(String viewer_name) {
+  MainWindowViewer* vwr =  MainWindowViewer::NewProjectViewer(this); // added to viewers
+  if (viewer_name != "(default name)") {
+    vwr->SetName(viewer_name);
+    vwr->DataChanged(DCR_ITEM_UPDATED);
+  }
+  vwr->ViewWindow();
 }
 
 void taProject::OpenViewers() {
@@ -1865,6 +1877,18 @@ bool taRootBase::Startup_Run() {
   }
 #endif
 
+  // if in server mode, make it now!
+  if (taMisc::args.FindName("Server") >= 0) {
+    TemtServer* server = (TemtServer*)instance()->objs.New(1, &TA_TemtServer);
+    server->port = (ushort)taMisc::args.GetValDef("Port", 5360).toUInt();
+    if (server->InitServer() && server->OpenServer()) {
+      cerr << "TemtServer is now running and waiting for connections\n";
+    } else {
+      cerr << "ERROR: could not Initialize or Open TemtServer\n";
+    }
+  }
+  
+  
   // first thing to do upon entering event loop:
   QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
 

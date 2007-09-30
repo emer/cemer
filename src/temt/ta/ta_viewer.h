@@ -570,7 +570,9 @@ public:
   static MainWindowViewer* NewClassBrowser(void* root, TypeDef* root_typ, MemberDef* root_md = NULL); 
     // convenience class: makes a 2-pane class browser (browse+panels)
   static MainWindowViewer* NewProjectBrowser(taProject* proj); 
-    // makes a standard 3-pane project viewer
+    // makes a standard 3-pane project viewer (3-view) or 2 (2x2) -- returns the guy with tree
+  static MainWindowViewer* NewProjectViewer(taProject* proj); 
+    // makes a standard 3d viewer, with panel (useful for more graphs, etc.)
   static MainWindowViewer* NewEditDialog(TAPtr root); 
     // makes a 1-pane taBase window only showing the edit panels
 

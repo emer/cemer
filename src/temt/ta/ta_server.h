@@ -51,7 +51,15 @@ class TA_API TemtClient: public taOABase {
   // #INSTANCE #TOKENS for tcp-based remote services -- represents one connected client 
 INHERITED(taOABase)
 public:
-  bool			connected; // #READ_ONLY #SHOW #NO_SAVE true when the client is connected
+  enum ClientState {
+    CS_READY,	// expecting a command
+    CS_DATA_IN,	// expecting another line of data in (from previous command)
+    CS_DISCONNECTED // client has disconnected
+  };
+  
+  ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state 
+  
+  bool			isConnected() const {return (state != CS_DISCONNECTED);}
   
   inline TemtClientAdapter* adapter() {return (TemtClientAdapter*)taOABase::adapter;} // #IGNORE
   TA_BASEFUNS(TemtClient);
@@ -62,6 +70,16 @@ public:
   void			CloseClient();
   void			SetSocket(QTcpSocket* sock);
 
+  void			SendError(const String& err_msg); // send error reply
+  void			SendOk(int lines = -1);
+  void			SendOk(int lines, const String& addtnl); //
+  
+  void			WriteLine(const String& ln); // low level write, note: adds eol
+  
+public: // commands, all are cmdXXX where XXX is exact command name
+  virtual void		cmdOpenProject();
+  virtual void		cmdCloseProject();
+  
 public: // slot forwardees
   void 			sock_readyRead();
   void 			sock_disconnected(); 
@@ -69,6 +87,18 @@ public: // slot forwardees
 
 protected:
   QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
+  String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue
+  
+// every command line is parsed into the following pieces before dispatching the command:
+  String		cmd_line; // the last cmd line
+  String		cmd; // this is the first item, the command
+  String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done
+  NameVar_PArray	name_params; // name params; str quoting/escaping already done
+  
+  void			setState(ClientState cs);
+  
+  void			HandleLines(); // line handling loop
+  void			ParseCommand(const String& cl);
 #endif
 private:
   void	Copy_(const TemtClient& cp);

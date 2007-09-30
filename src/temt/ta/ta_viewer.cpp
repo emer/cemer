@@ -948,6 +948,23 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   return rval;
 }
 
+MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
+  if (!proj) return NULL;
+  if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer))) 
+    def_viewer_type = &TA_MainWindowViewer; // just in case
+  
+  MainWindowViewer* viewer  = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
+  FrameViewer* fv = viewer->AddFrameByType(&TA_PanelViewer);
+  fv = viewer->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+  viewer->SetData(proj);
+  viewer->m_is_proj_viewer = true;
+  // twiddle sizes a bit, to get overlap
+  viewer->SetUserData("view_win_lft", 0.3333f);
+  viewer->SetUserData("view_win_wd", 0.6667f);
+  proj->viewers.Add(viewer); // will get auto-opened later
+  return viewer;
+}
+
 void MainWindowViewer::Initialize() {
   m_is_root = false;
   m_not_is_proj_browser = true; // note: for compatability

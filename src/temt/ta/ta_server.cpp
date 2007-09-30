@@ -19,10 +19,11 @@
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
-//TEMP
+#include <QRegExp>
+
 #include <QByteArray>
 #include <QDataStream>
-// end TEMP
+
 
 //TEMP prob handle commands in another file
 #include "ta_viewer.h"
@@ -52,7 +53,7 @@ void TemtClientAdapter::sock_stateChanged(QAbstractSocket::SocketState socketSta
 //////////////////////////
 
 void TemtClient::Initialize() {
-  connected = false;
+  state = CS_READY; // implicit in fact we were created
   server = NULL;
   SetAdapter(new TemtClientAdapter(this));
 }
@@ -68,7 +69,7 @@ void TemtClient::Copy_(const TemtClient& cp) {
 }
 
 void TemtClient::CloseClient() {
-  if (!connected) return;
+  if (!isConnected()) return;
   if (sock) {
     sock->disconnectFromHost();
     // probably called back immediately, so check again
@@ -76,12 +77,114 @@ void TemtClient::CloseClient() {
       sock = NULL;
     }
   }
-  connected = false;
+  setState(CS_DISCONNECTED);
+}
+
+void TemtClient::cmdOpenProject() {
+//TEMP
+SendError("OpenProject not implemented yet");
+return;
+  
+//TODO: checks: 
+// * cannot be one open (OR: auto close it???)
+// * maybe check if already open, ignore??? say ok??? error???
+
+  String proj_file = pos_params.SafeEl(0); // always arg 1
+  taBase* proj_ = NULL;
+  //TODO: pathing???
+  if (tabMisc::root->projects.Load(proj_file, &proj_)) {
+    taProject* proj = dynamic_cast<taProject*>(proj_);
+    if (proj) {
+      if (taMisc::gui_active) {
+        MainWindowViewer::NewProjectBrowser(proj);
+      }
+    }
+    SendOk();
+    return;
+  } else {
+    SendError("file \"" + proj_file + "\" not found");
+  }
+
+}
+
+void TemtClient::cmdCloseProject() {
+//TEMP
+SendError("CloseProject not implemented yet");
+}
+
+void TemtClient::ParseCommand(const String& cl) {
+  cmd_line = trim(cl); // remove leading/trailing ws, including eol's
+  cmd = _nilString;
+  pos_params.Reset();
+  name_params.Reset();
+  
+  // we use the pos_params as an intermediate guy during processing...
+//TEMP 
+// TODO: need to properly parse, manually, each guy, to make sure, ex. that 
+// strings are pulled intact, that a quoted string with a = in it doesn't get
+// pulled as a name= etc. etc.
+
+  // note: following from Qt help file
+  //TODO: following not correct, need to manually deal with "" and remove "" 
+  QString str = cmd_line;
+  QStringList list;
+  list = str.split(QRegExp("\\s+"));
+  for (int i = 0; i < list.count(); ++i) {
+    pos_params.Add(list.at(i));
+  }
+  
+  // pull 1st guy as the command
+  if (pos_params.size > 0) {
+    cmd = pos_params.FastEl(0);
+    pos_params.RemoveIdx(0);
+  }
+  // pull guys w/ = as name=value, and they must all be after starting =
+  int i = 0;
+  int got_name_val = false;
+  String item;
+  while (i < pos_params.size) {
+    item = pos_params.FastEl(i);
+    if (item.contains("=")) {
+      got_name_val = true; // they must all be from here on
+      String name;
+      String val;
+      NameVar::Parse(item, name, val); // we already checked for =
+      name_params.SetVal(name, val); // note: could conceivably be a duplicate
+      pos_params.RemoveIdx(i); 
+    } else {
+      if (got_name_val) { // were expecting all the rest to be n=v guys
+        SendError("all remaining params were expected to be name=value but found: " + item);
+        return;
+      }
+    }
+    ++i;
+  }
+
+// /TEMP  
+  
+  
+  if (cmd.length() == 0) {
+    // empty lines just echoed
+    WriteLine(_nilString);
+    return;
+  }
+  
+  //TODO: we can (should!) look up and dispatch via name!
+  if (cmd == "CloseProject") {
+    cmdCloseProject();
+  } else if (cmd == "OpenProject") {
+    cmdOpenProject();
+  } else {
+    //TODO: need subclass hook, and/or change to symbolic, so subclass can do cmdXXX routine
+    // unknown command
+    String err = "\"" + cmd + "\" is an unknown command";
+    SendError(err);
+  }
+  
 }
 
 void TemtClient::SetSocket(QTcpSocket* sock_) {
   sock = sock_;
-  connected = true;
   QObject::connect(sock_, SIGNAL(disconnected()),
     adapter(), SLOT(sock_disconnected()));
   QObject::connect(sock_, SIGNAL(readyRead()),
@@ -90,9 +193,16 @@ void TemtClient::SetSocket(QTcpSocket* sock_) {
     adapter(), SLOT(sock_stateChanged(QAbstractSocket::SocketState)));
 }            
 
+void TemtClient::setState(ClientState cs) {
+  if (state == cs) return;
+  //ADD ANY TRANSITION STUFF HERE
+  state = cs;
+}
+
 void TemtClient::sock_disconnected() {
-  connected = false;
+  state = CS_DISCONNECTED;
   sock = NULL; // goodbye...
+  cmdCloseProject();
   if (server) server->ClientDisconnected(this);
 //NO MORE CODE: we will be deleted!
 }
@@ -103,6 +213,7 @@ void TemtClient::sock_readyRead() {
   if (!sock->canReadLine()) return;
   
   QByteArray ba;
+  String line;
   // need to keep fetching lines, since we only get notified once
   // note: typical case is we get one full line at a time
   bool ok = true; // in case reading goes daft
@@ -113,35 +224,36 @@ void TemtClient::sock_readyRead() {
       ok = false;
       break;
     }
-    String line(ba.data(), line_len); // note: includes \n
-  
-  //TEMP -- for demo -- doesn't have any state
+    line.set(ba.data(), (int)line_len); // note: includes \n
     // strip nl -- should be only one, because that's what a line is
     line = line.before('\n');
     // strip r, like from telnet
     line = line.before('\r');
-    String cmd = line.before(" ");
-    String args = line.after(" ");
-    if (cmd == "open") {
-      taBase* proj_ = NULL;
-      if (tabMisc::root->projects.Load(args, &proj_)) {
-        taProject* proj = dynamic_cast<taProject*>(proj_);
-        if (proj) {
-          if (taMisc::gui_active) {
-            MainWindowViewer::NewProjectBrowser(proj);
-          }
-        }
-        sock->write(QByteArray("OK open\n"));
-      } else {
-        sock->write(QByteArray("ERROR 3 : file not found\n"));
-      }
-    } 
-    else {
-      sock->write(QByteArray("ERROR 2 : unknown command\n"));
-    }
+    lines.Add(line);
   }
-  if (!ok) {
-    sock->write(QByteArray("ERROR 4 : an unknown read error occurred\n"));
+  HandleLines();
+}
+
+void TemtClient::HandleLines() {
+  // so, we've grabbed as many lines as we can now, so what do we do???
+  // cases:
+  // DATA_IN: if all received, then dispatch handler, else return
+  // READY: we can pull first guy, and do a command
+  while (lines.size > 0) {
+    switch (state) {
+    case CS_READY: {
+      String line = lines.FastEl(0);
+      lines.RemoveIdx(0);
+      ParseCommand(line);
+    } break;
+    case CS_DATA_IN: {
+      //TODO: if not yet up to expected, then exit, else call dispatcher 
+    } break;
+    case CS_DISCONNECTED: {
+    //shouldn't happen!!!
+    } break;
+    // handle all cases!
+    };
   }
 }
 
@@ -149,6 +261,32 @@ void TemtClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
   //nothing yet
 }
 
+void TemtClient::SendError(const String& err_msg) {
+  String ln = "ERROR";
+  if (err_msg.length() > 0)
+    ln.cat(" ").cat(err_msg);
+  WriteLine(ln);
+}
+
+void TemtClient::SendOk(int lines) {
+  SendOk(lines, _nilString);
+}
+
+void TemtClient::SendOk(int lines, const String& addtnl) {
+  String ln = "OK";
+  if (lines >= 0) {
+    ln.cat(" lines=").cat(lines);
+    if (addtnl.length() > 0)
+      ln.cat(" ").cat(addtnl);
+  }
+  WriteLine(ln);
+}
+
+void TemtClient::WriteLine(const String& ln) {
+  if (!isConnected()) return;
+  String lnt = ln + "\n";
+  sock->write(QByteArray(lnt.chars(), lnt.length()));
+}
 
 //////////////////////////
 //  TemtServerAdapter	//

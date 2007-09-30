@@ -245,9 +245,11 @@ public:
 
   Variant	GetVal(const String& nm);
   // get value from name; isNull if not found
+  Variant	GetValDef(const String& nm, const Variant& def);
+  // get value from name; def if not found
   bool		GetAllVals(const String& nm, String_PArray& vals);
   // get all values having given name (converts to strings)
-  bool		SetVal(const String& nm, const Variant& vl);
+  bool		SetVal(const String& nm, const Variant& val);
   // set value by name; if name already on list, it is updated (rval = true); else new item added
 
   const String 	AsString(const String& sep = def_sep) const;

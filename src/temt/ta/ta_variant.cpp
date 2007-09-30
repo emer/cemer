@@ -2220,18 +2220,26 @@ QVariant Variant::toQVariant() const {
 }
 #endif 
 
-/////////////////////////////////////////////////////////
-// NameVar
+//////////////////////////////////
+//  NameVar			//
+//////////////////////////////////
+
+bool NameVar::Parse(const String& raw, String name, String val) {
+  String namet = trim(raw.before('='));
+  if (namet.length() == 0) return false;
+  name = namet;
+  val = trim(raw.after('='));
+  return true;
+}
 
 void NameVar::SetFmStr(const String& val) {
-  if(val.contains('=')) {
-    name = val.before('=');
-    String vls = val.after('=');
+  String valt;
+  if (Parse(val, name, valt)) {
     if(value.type() == Variant::T_Invalid) {
-      value = vls;		// sets as string
+      value = valt;		// sets as string
     }
     else {
-      value.updateFromString(vls);
+      value.updateFromString(valt);
     }
   }
   // else error!  todo.

@@ -188,6 +188,13 @@ Variant NameVar_PArray::GetVal(const String& nm) {
   return FastEl(idx).value;
 }
 
+Variant NameVar_PArray::GetValDef(const String& nm, const Variant& def) {
+  int idx = FindName(nm);
+  if (idx < 0) return def;
+  return FastEl(idx).value;
+}
+
+
 bool NameVar_PArray::GetAllVals(const String& nm, String_PArray& vals) {
   for(int i=0;i<size; i++) {
     NameVar& nv = FastEl(i);

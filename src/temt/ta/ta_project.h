@@ -170,7 +170,10 @@ public:
   virtual void 		AssertDefaultWiz(bool auto_opn) {} 
     // make sure the default wizard(s) are made, and optionally open them
   virtual void		OpenNewProjectBrowser(String proj_browser_name = "(default name)");
-    // #MENU #MENU_ON_View #MENU_CONTEXT
+    // #MENU #MENU_ON_View #MENU_CONTEXT open a new browser, either 3-pane or 2-2-pane (tree + viewer)
+  virtual void		OpenNewProjectViewer(String proj_browser_name = "(default name)");
+    // #MENU #MENU_ON_View #MENU_CONTEXT open a new 3D viewer (with panels)
+
 
   virtual DataTable*	GetNewInputDataTable(const String& nw_nm="", bool msg=false);
   // createa a new data table in data.InputData (used for data generation functions).  nw_nm = name for new table, msg = issue a warning message about the creation of this table
