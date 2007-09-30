@@ -126,7 +126,7 @@ String cssCPtr_bool::GetStr() const {
 void cssCPtr_bool::operator=(const String& cp) {
   if(!ROCheck()) return;
   if(ptr_cnt > 0) { NopErr("=(String)"); return; }
-  bool myb = GetBoolRef("=");
+  bool& myb = GetBoolRef("=");
   if(cp == "false")
     myb = false;
   else if(cp == "true")
