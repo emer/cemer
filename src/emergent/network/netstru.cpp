@@ -2414,13 +2414,36 @@ void Projection::Copy_(const Projection& cp) {
   direction = cp.direction;
 
   m_prv_con_spec = cp.m_prv_con_spec;
+
+  // this will update all pointers under us to new network if we are copied from other guy
+  // only if the network is not otherwise already copying too!!
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
 }
 
 void Projection::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   SetFrom();
+
+  if((bool)from) {
+    Network* mynet = GET_MY_OWNER(Network);
+    Network* fmnet = GET_OWNER(from, Network);
+    if(fmnet != mynet) {
+      Layer* ly = mynet->FindLayer(from->name);
+      if(ly) {
+	from_type = CUSTOM;	// most likely already is..
+	from = ly;
+      }
+      else {
+	TestWarning(true, "UAE", "'from' layer is not within this Network, and layer of same name was not found, so setting from = PREV -- most likely you need to fix this!");
+	from_type = PREV;
+	SetFrom();
+      }
+    }
+  }
+
   if((bool)from)
     name = "Fm_" + from->name;
+
   UpdateConSpecs((bool)taMisc::is_loading);
 //   if(taMisc::is_loading) return;
 //   if(!taMisc::gui_active) return;
@@ -3242,6 +3265,10 @@ void Layer::Copy_(const Layer& cp) {
 
   n_units = cp.n_units;		// note: v3compat obs
 
+  // this will update all pointers under us to new network if we are copied from other guy
+  // only if the network is not otherwise already copying too!!
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
+
   // not copied
   //  send_prjns.BorrowUnique(cp.send_prjns); // link group
 }
@@ -3903,7 +3930,7 @@ float Layer::Compute_SSE(int& n_vals, bool unit_avg, bool sqrt) {
     sse /= (float)n_vals;
   if(sqrt)
     sse = sqrtf(sse);
-  if(HasLayerFlag(NO_ADD_SSE)) {
+  if(HasLayerFlag(NO_ADD_SSE) || ((ext_flag & Unit::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }

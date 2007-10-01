@@ -114,6 +114,7 @@ void UserScript::Initialize() {
 }
 
 const String UserScript::GenCssBody_impl(int indent_level) {
+  script.ParseExpr();		// re-parse just to be sure!
   String rval(cssMisc::IndentLines(script.GetFullExpr(), indent_level));
   // strip trailing non-newline ws, and make sure there is a trailing newline
   rval = trimr(rval);
@@ -164,6 +165,7 @@ void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String WhileLoop::GenCssPre_impl(int indent_level) {
+  test.ParseExpr();		// re-parse just to be sure!
   return cssMisc::Indent(indent_level) + "while (" + test.GetFullExpr() + ") {\n";
 }
 
@@ -190,6 +192,7 @@ const String DoLoop::GenCssPre_impl(int indent_level) {
 }
 
 const String DoLoop::GenCssPost_impl(int indent_level) {
+  test.ParseExpr();		// re-parse just to be sure!
   String rval = cssMisc::Indent(indent_level) + "} while (" + test.GetFullExpr() + ");\n";
   return rval;
 }
@@ -245,6 +248,9 @@ void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String ForLoop::GenCssPre_impl(int indent_level) {
+  init.ParseExpr();		// re-parse just to be sure!
+  test.ParseExpr();		// re-parse just to be sure!
+  iter.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval = cssMisc::Indent(indent_level) + 
     "for (" + init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr() + ") {\n";
@@ -275,6 +281,7 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String IfContinue::GenCssBody_impl(int indent_level) {
+  cond.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval = cssMisc::Indent(indent_level) + 
     "if(" + cond.GetFullExpr() + ") continue;\n";
@@ -300,6 +307,7 @@ void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String IfBreak::GenCssBody_impl(int indent_level) {
+  cond.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval = cssMisc::Indent(indent_level) + 
     "if(" + cond.GetFullExpr() + ") break;\n";
@@ -324,6 +332,7 @@ void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String IfReturn::GenCssBody_impl(int indent_level) {
+  cond.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval = cssMisc::Indent(indent_level) + 
     "if(" + cond.GetFullExpr() + ") return;\n";
@@ -355,6 +364,7 @@ void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String IfElse::GenCssPre_impl(int indent_level) {
+  cond.ParseExpr();		// re-parse just to be sure!
   String rval = cssMisc::Indent(indent_level);
   rval += "if(" + cond.GetFullExpr() + ") {\n";
   return rval; 
@@ -475,6 +485,7 @@ void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String CaseBlock::GenCssPre_impl(int indent_level) {
+  case_val.ParseExpr();		// re-parse just to be sure!
   if(prog_code.size == 0) return _nilString;
   String il = cssMisc::Indent(indent_level);
   String rval = il + "case " + case_val.GetFullExpr() + ": {\n";
@@ -658,6 +669,7 @@ void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String AssignExpr::GenCssBody_impl(int indent_level) {
+  expr.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval += cssMisc::Indent(indent_level);
   if (!result_var) {
@@ -699,6 +711,7 @@ void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String VarIncr::GenCssBody_impl(int indent_level) {
+  expr.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval += cssMisc::Indent(indent_level);
   if (!var) {
@@ -806,21 +819,20 @@ String MethodCall::GetDisplayName() const {
 }
 
 //////////////////////////
-//    MemberAssign	//
+//    MemberProgEl	//
 //////////////////////////
 
-bool MemberAssign::ShowVarFilter(void* var_) {
+bool MemberProgEl::ShowVarFilter(void* var_) {
   ProgVar* var = static_cast<ProgVar*>(var_);
   return (var->var_type == ProgVar::T_Object);
 }
 
-void MemberAssign::Initialize() {
+void MemberProgEl::Initialize() {
   obj_type = &TA_taBase; // placeholder
   member_lookup = NULL;
-  update_after = false;
 }
 
-void MemberAssign::UpdateAfterEdit_impl() {
+void MemberProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(member_lookup) {
     if(!path.empty() && (path.lastchar() != '.')) path += ".";
@@ -833,7 +845,7 @@ void MemberAssign::UpdateAfterEdit_impl() {
   UpdateProgVarRef_NewOwner(obj);
 }
 
-bool MemberAssign::GetTypeFromPath(bool quiet) {
+bool MemberProgEl::GetTypeFromPath(bool quiet) {
   if(!obj) {
     obj_type = &TA_taBase; // placeholder
     return false;
@@ -845,11 +857,19 @@ bool MemberAssign::GetTypeFromPath(bool quiet) {
   return (bool)md;
 }
 
-void MemberAssign::CheckThisConfig_impl(bool quiet, bool& rval) {
+void MemberProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
   CheckProgVarRef(obj, quiet, rval);
   CheckError(path.empty(), quiet, rval, "path is empty");
+}
+
+//////////////////////////
+//    MemberAssign	//
+//////////////////////////
+
+void MemberAssign::Initialize() {
+  update_after = false;
 }
 
 void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -858,6 +878,7 @@ void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String MemberAssign::GenCssBody_impl(int indent_level) {
+  expr.ParseExpr();		// re-parse just to be sure!
   STRING_BUF(rval, 80);
   rval += cssMisc::Indent(indent_level);
   if (!(bool)obj || path.empty() || expr.empty()) {
@@ -865,11 +886,8 @@ const String MemberAssign::GenCssBody_impl(int indent_level) {
    return rval;
   }
   
-  rval += obj->name;
-  rval += "->";
-  rval += path + " = ";
-  rval += expr.GetFullExpr();
-  rval += ";\n";
+  rval += obj->name + "->" + path + " = ";
+  rval += expr.GetFullExpr() + ";\n";
   if (update_after) {
     rval += cssMisc::Indent(indent_level);
     rval += obj->name.cat("->UpdateAfterEdit();\n");
@@ -882,10 +900,60 @@ String MemberAssign::GetDisplayName() const {
     return "(object or path not selected)";
   
   String rval;
-  rval += obj->name;
-  rval += "->";
-  rval += path + " = ";
+  rval = obj->name + "->" + path + " = ";
   rval += expr.GetFullExpr();
+  return rval;
+}
+
+//////////////////////////
+//    MemberFmArg	//
+//////////////////////////
+
+void MemberFmArg::Initialize() {
+  update_after = false;
+  quiet = false;
+}
+
+void MemberFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(arg_name.empty(), quiet, rval, "arg_name is empty");
+}
+
+const String MemberFmArg::GenCssBody_impl(int indent_level) {
+  STRING_BUF(rval, 80);
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String il2 = cssMisc::Indent(indent_level+2);
+  rval += il;
+  if (!(bool)obj || path.empty() || arg_name.empty()) {
+    rval += "//WARNING: MemberFmArg not generated here -- obj or path not specified or expr empty\n";
+   return rval;
+  }
+
+  String flpth = obj->name + "->" + path;
+  
+  rval += "{ String arg_str = taMisc::FindArgByName(\"" + arg_name + "\");\n";
+  rval += il1 + "if(arg_str.nonempty()) {\n";
+  rval += il2 + flpth + " = ";
+  rval += "arg_str;\n";
+  if (update_after) {
+    rval += il2 + obj->name.cat("->UpdateAfterEdit();\n");
+  }
+
+  if(!quiet)
+    rval += il2 + "taMisc::Info(\"Set " + flpth + "\", \"to:\", arg_str);\n";
+  rval += il1 + "}\n";
+  rval += il + "}\n";
+  return rval;
+}
+
+String MemberFmArg::GetDisplayName() const {
+  if (!obj || path.empty())
+    return "(object or path not selected)";
+  
+  String rval;
+  rval = obj->name + "->" + path + " = ";
+  rval += "Arg: " + arg_name;
   return rval;
 }
 
@@ -992,6 +1060,7 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 const String PrintExpr::GenCssBody_impl(int indent_level) {
+  expr.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval += cssMisc::Indent(indent_level);
   rval += "cerr << " + expr.GetFullExpr() + " << endl;\n";
@@ -1063,6 +1132,7 @@ void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 const String ReturnExpr::GenCssBody_impl(int indent_level) {
+  expr.ParseExpr();		// re-parse just to be sure!
   String rval;
   rval += cssMisc::Indent(indent_level);
   rval += "return " + expr.GetFullExpr() + ";\n";

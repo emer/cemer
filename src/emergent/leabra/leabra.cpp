@@ -3420,6 +3420,11 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   stm_gain = cp.stm_gain;
   hard_clamped = cp.hard_clamped;
   misc_iar = cp.misc_iar;
+
+  // this will update spec pointer to new network if we are copied from other guy
+  // only if the network is not otherwise already copying too!!
+  // (other pointers are already dealt with in Layer)
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
 }
 
 void LeabraLayer::ResetSortBuf() {

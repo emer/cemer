@@ -1299,7 +1299,8 @@ public:
     LF_NONE		= 0, 		// #NO_BIT
     LESIONED		= 0x0001,	// this layer is temporarily lesioned (inactivated for all network-level processing functions)
     ICONIFIED		= 0x0002, 	// only display a single unit showing icon_value (set in algorithm-specific manner)
-    NO_ADD_SSE		= 0x0004,	// do NOT add this layer's sse value (sum squared error) -- computed for TARG (TARGET) or COMP (OUTPUT) layers -- to the overall network sse value
+    NO_ADD_SSE		= 0x0004,	// do NOT add this layer's sse value (sum squared error) to the overall network sse value: this is for all types of SSE computed for ext_flag = TARG (layer_type = TARGET) or ext_flag = COMP (layer_type = OUTPUT) layers
+    NO_ADD_COMP_SSE	= 0x0008,	// do NOT add this layer's sse value (sum squared error) to the overall network sse value: ONLY for ext_flag = COMP (OUTPUT) flag settings (NO_ADD_SSE blocks all contributions) -- this is relevant if the layer type or ext_flags are switched dynamically and only TARGET errors are relevant
   };
 
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure Network this layer is in

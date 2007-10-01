@@ -540,7 +540,23 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
   Network* net = GET_MY_OWNER(Network);
   if(!net || net->isDestroying()) return;
 
+  Network* owner_net = GET_OWNER(owner, Network);
+  if(!owner_net || owner_net->isDestroying()) return;
+
   BaseSpec* sp = GetSpec();
+
+  if(sp && (owner_net != net)) {	// oops!
+    // try to find same name one first:
+    BaseSpec_Group* spgp = GetSpecGroup();
+    if(spgp) {
+      BaseSpec* nsp = spgp->FindSpecName(sp->name);
+      SetSpec(nsp);		// set -- either null or a candidate
+    }
+    else {
+      SetSpec(NULL);		// get rid of existing -- will try to find new one
+    }
+  }
+
   if(sp) {
     if(sp->isDestroying()) {	// shouldn't happen, but just in case
       SetSpec(NULL);

@@ -889,10 +889,6 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_MethodCall)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("memb=",
     tabMisc::root->GetTemplateInstance(&TA_MemberAssign)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("prog()",
-    tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("oth prg var",
-    tabMisc::root->GetTemplateInstance(&TA_OtherProgramVar)));
 
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("fun def",
@@ -901,6 +897,12 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_FunctionCall)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("return",
     tabMisc::root->GetTemplateInstance(&TA_ReturnExpr)));
+
+  tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("prog()",
+    tabMisc::root->GetTemplateInstance(&TA_ProgramCall)));
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("oth prg var",
+    tabMisc::root->GetTemplateInstance(&TA_OtherProgramVar)));
 
   ////////////////////////////////////////////////////////////////////////////
   //		Print/Misc
@@ -936,6 +938,10 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_DataGenCall)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("img proc()",
     tabMisc::root->GetTemplateInstance(&TA_ImageProcCall)));
+
+  tb->AddSeparator(sec);
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("memb=arg",
+    tabMisc::root->GetTemplateInstance(&TA_MemberFmArg)));
 
   ////////////////////////////////////////////////////////////////////////////
   //		Data processing

@@ -1250,7 +1250,12 @@ bool taRootBase::Startup_InitTA_folders() {
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
 
-  app_dir = QCoreApplication::applicationDirPath();
+  //  app_dir = QCoreApplication::applicationDirPath();
+  app_dir = "";			// TODO: above is just causing error right now, so 
+  // have commented it out for time being until replaced by native version (bug #154)
+  // note that this actually doesn't seem to be causing any problems, and a quick
+  // review of code below suggests that windows is the only platform where this is 
+  // actually being used!
 #ifdef TA_OS_WIN
 /*
   {app_dir}\bin
@@ -1327,7 +1332,8 @@ bool taRootBase::Startup_InitTA_folders() {
 #endif // all modality
 
   // common code for failure to grok the app path
-  app_dir = QCoreApplication::applicationDirPath();
+  //  app_dir = QCoreApplication::applicationDirPath();
+  // TODO: see note above.
   // first, maybe it is actually the exe's folder itself?
   if (isAppDir(app_dir)) goto have_app_dir;
   

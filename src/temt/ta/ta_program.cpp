@@ -1565,6 +1565,7 @@ const String ProgArg_List::GenCssBody_impl(int /*indent_level*/) {
       //note: we test for violations of rules about def expressions, so
       // ok for us to just break here when we get to the first def
       if (!pa->required && pa->expr.empty()) break;
+      pa->expr.ParseExpr();		// re-parse just to be sure!
       if (i > 0) rval += ", ";
       rval += pa->expr.GetFullExpr();
     }
@@ -2103,6 +2104,7 @@ const String ProgramCall::GenCssBody_impl(int indent_level) {
     ProgArg* ths_arg = prog_args.FastEl(i);
     nm = ths_arg->name;
     ProgVar* prg_var = target->args.FindName(nm);
+    ths_arg->expr.ParseExpr();		// re-parse just to be sure!
     String argval = ths_arg->expr.GetFullExpr();
     if (!prg_var || argval.empty()) continue; 
     set_one = true;
@@ -2416,6 +2418,7 @@ const String FunctionCall::GenCssBody_impl(int indent_level) {
   for (int i = 0; i < fun_args.size; ++i) {
     ProgArg* ths_arg = fun_args.FastEl(i);
     if(i > 0) rval += ", ";
+    ths_arg->expr.ParseExpr();		// re-parse just to be sure!
     rval += ths_arg->expr.GetFullExpr();
   }
   rval += ");\n";
@@ -2953,7 +2956,8 @@ bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet
   bool rval = SetVar(var_nm, arg_str);
   if(TestError(!rval, "SetVarFmArg", "variable:",var_nm,
 	       "not found in program:", name)) return false;
-  taMisc::Info("Set", var_nm, "in program:", name, "to:", arg_str);
+  if(!quiet)
+    taMisc::Info("Set", var_nm, "in program:", name, "to:", arg_str);
   return true;
 }
 

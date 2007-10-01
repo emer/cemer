@@ -104,9 +104,10 @@ Program .projects[0].programs[0] {
     OtherProgramVar @[19] { };
     PrintExpr @[20] { };
     ProgramCall @[21] { 
-      ProgArg_List @.prog_args = [2] {
+      ProgArg_List @.prog_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
+	ProgArg @[2] { };
       };
     };
   };
@@ -115,7 +116,7 @@ Program .projects[0].programs[0] {
  name="LeabraStartup";
  tags="Leabra, Startup";
  desc="run project in the background (replaces leabra_startup.css)
-command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batches=xxx] [Tag=xxx]";
+command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batches=xxx] [tag=xxx]";
  flags=STARTUP_RUN;
  objs {
   name=;
@@ -981,6 +982,22 @@ command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batche
       vars {
       };
       var_names{ input_data;      };
+      bad_vars{       };
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="max_batch";
+     required=1;
+     def_val=;
+     expr {
+      expr=;
+      flags=;
+      var_expr=;
+      vars {
+      };
+      var_names{       };
       bad_vars{       };
      };
     };

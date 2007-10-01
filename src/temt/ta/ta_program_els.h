@@ -404,8 +404,8 @@ private:
   void	Destroy()	{CutLinks();}
 }; 
 
-class TA_API MemberAssign: public ProgEl { 
-  // set a member (attribute) on an object to a value given by an expression
+class TA_API MemberProgEl: public ProgEl { 
+  // #VIRT_BASE base class for dealing with members of objects
 INHERITED(ProgEl)
 public:
   static bool		ShowVarFilter(void* var); // filter for button, only obj types
@@ -418,20 +418,54 @@ public:
   // path to the member -- can just be member name (use member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
   MemberDef*		member_lookup;
   // #AKA_member #TYPE_ON_obj_type #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
+  
+  virtual bool		GetTypeFromPath(bool quiet = false);
+  // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberProgEl, Program);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API MemberAssign: public MemberProgEl { 
+  // set a member (attribute) on an object to a value given by an expression
+INHERITED(MemberProgEl)
+public:
   ProgExpr		expr; // the expression to compute and assign to the member
-  bool			update_after; // call UpdateAfterEdit after setting the member
+  bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  virtual bool		GetTypeFromPath(bool quiet = false);
-  // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
-
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberAssign, Program);
+  TA_SIMPLE_BASEFUNS(MemberAssign);
 protected:
-  override void		UpdateAfterEdit_impl();
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API MemberFmArg: public MemberProgEl { 
+  // set a member (attribute) on an object to a value given by a startup argument passed to overall program when it was run -- if argument was not set, nothing happens
+INHERITED(MemberProgEl)
+public:
+  String		arg_name; // name of the startup argument -- value is looked up by this key word
+  bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
+  bool			quiet;	      // do not emit a message when arg is set and member value is assigned (otherwise, informational msg is printed -- useful for startup code output)
+  
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+
+  TA_SIMPLE_BASEFUNS(MemberFmArg);
+protected:
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:
