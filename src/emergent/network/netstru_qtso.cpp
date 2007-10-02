@@ -1,41 +1,17 @@
-/* -*- C++ -*- */
-/*=============================================================================
-//									      //
-// This file is part of the PDP++ software package.			      //
-//									      //
-// Copyright (C) 1995 Randall C. O'Reilly, Chadley K. Dawson, 		      //
-//		      James L. McClelland, and Carnegie Mellon University     //
-//     									      //
-// Permission to use, copy, and modify this software and its documentation    //
-// for any purpose other than distribution-for-profit is hereby granted	      //
-// without fee, provided that the above copyright notice and this permission  //
-// notice appear in all copies of the software and related documentation.     //
-//									      //
-// Permission to distribute the software or modified or extended versions     //
-// thereof on a not-for-profit basis is explicitly granted, under the above   //
-// conditions. 	HOWEVER, THE RIGHT TO DISTRIBUTE THE SOFTWARE OR MODIFIED OR  //
-// EXTENDED VERSIONS THEREOF FOR PROFIT IS *NOT* GRANTED EXCEPT BY PRIOR      //
-// ARRANGEMENT AND WRITTEN CONSENT OF THE COPYRIGHT HOLDERS.                  //
-// 									      //
-// Note that the taString class, which is derived from the GNU String class,  //
-// is Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and   //
-// is covered by the GNU General Public License, see ta_string.h.             //
-// The iv_graphic library and some iv_misc classes were derived from the      //
-// InterViews morpher example and other InterViews code, which is             //
-// Copyright (C) 1987, 1988, 1989, 1990, 1991 Stanford University             //
-// Copyright (C) 1991 Silicon Graphics, Inc.				      //
-//									      //
-// THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,         //
-// EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 	      //
-// WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  	      //
-// 									      //
-// IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE FOR ANY SPECIAL,    //
-// INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES  //
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT     //
-// ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY,      //
-// ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS        //
-// SOFTWARE. 								      //
-==============================================================================*/
+// Copyright, 1995-2007, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of Emergent
+//
+//   Emergent is free software; you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation; either version 2 of the License, or
+//   (at your option) any later version.
+//
+//   Emergent is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
 
 // stuff to implement unit view..
 
@@ -2125,6 +2101,10 @@ void NetView::Render_wt_lines() {
   T3NetNode* node_so = this->node_so(); //cache
 
   bool do_lines = (bool)unit_src && wt_line_disp;
+  Layer* src_lay = NULL;
+  if(unit_src)
+    src_lay =GET_OWNER(unit_src, Layer);
+  if(!src_lay) do_lines = false;
   SoIndexedLineSet* ils = node_so->wtLinesSet();
   SoDrawStyle* drw = node_so->wtLinesDraw();
   SoVertexProperty* vtx_prop = node_so->wtLinesVtxProp();
@@ -2152,41 +2132,39 @@ void NetView::Render_wt_lines() {
   int n_coord = 0;
   int n_mat = 0;
 
-  if(wt_line_swt) {
-    for(int g=0;g<unit_src->send.size;g++) {
-      SendCons* cgp = unit_src->send.FastEl(g);
-      Projection* prjn = cgp->prjn;
-      if(!prjn || !prjn->from || !prjn->layer) continue;
+  bool swt = wt_line_swt;
 
-      n_prjns++;
-      int n_con = 0;
-      for(int i=0;i<cgp->cons.size; i++) {
-	float wt = fabsf(cgp->Cn(i)->wt);
-	if(wt >= wt_line_thr) n_con++;
-      }
+  for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
+    taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
+    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+    if(!prjn || !prjn->from || !prjn->layer) continue;
 
-      n_vtx += 1 + n_con;   // one for recv + senders
-      n_coord += 3 * n_con; // start, end -1 for each coord
-      n_mat += n_con;       // one per line
+    n_prjns++;
+    int n_con = 0;
+    for(int i=0;i<(swt ? ((SendCons*)cg)->cons.size : ((RecvCons*)cg)->cons.size); i++) {
+      float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
+      if(wt >= wt_line_thr) n_con++;
     }
+
+    n_vtx += 1 + n_con;   // one for recv + senders
+    n_coord += 3 * n_con; // start, end -1 for each coord
+    n_mat += n_con;       // one per line
   }
-  else {
-    for(int g=0;g<unit_src->recv.size;g++) {
-      RecvCons* cgp = unit_src->recv.FastEl(g);
-      Projection* prjn = cgp->prjn;
-      if(!prjn || !prjn->from || !prjn->layer) continue;
 
-      n_prjns++;
-      int n_con = 0;
-      for(int i=0;i<cgp->cons.size; i++) {
-	float wt = fabsf(cgp->Cn(i)->wt);
-	if(wt >= wt_line_thr) n_con++;
-      }
+  if((bool)wt_prjn_lay) {
+    // this does all the heavy lifting: projecting into unit wt_prjn
+    net()->ProjectUnitWeights(unit_src, wt_line_thr, swt);
 
-      n_vtx += 1 + n_con;   // one for recv + senders
-      n_coord += 3 * n_con; // start, end -1 for each coord
-      n_mat += n_con;       // one per line
+    int n_con = 0;
+    Unit* u;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, u, wt_prjn_lay->units., ui) {
+      if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
     }
+
+    n_vtx += 1 + n_con;   // one for recv + senders
+    n_coord += 3 * n_con; // start, end -1 for each coord
+    n_mat += n_con;       // one per line
   }
 
   vertex.setNum(n_vtx);
@@ -2215,96 +2193,89 @@ void NetView::Render_wt_lines() {
   float sc_val;
   float trans = view_params.unit_trans;
 
-  if(wt_line_swt) {
-    for(int g=0;g<unit_src->send.size;g++) {
-      SendCons* cgp = unit_src->send.FastEl(g);
-      Projection* prjn = cgp->prjn;
-      if(!prjn || !prjn->from || !prjn->layer) continue;
-      Layer* lay_fr = prjn->layer; // switched!
-      Layer* lay_to = prjn->from;
+  for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
+    taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
+    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+    if(!prjn || !prjn->from || !prjn->layer) continue;
+    Layer* lay_fr = (swt ? prjn->layer : prjn->from);
+    Layer* lay_to = (swt ? prjn->from : prjn->layer);
 
-      // y = network z coords -- same for all cases  (add .5f to z..)
-      src.y = ((float)lay_to->pos.z+.5f) / max_size.z;
-      dst.y = ((float)lay_fr->pos.z+.5f) / max_size.z;
+    // y = network z coords -- same for all cases  (add .5f to z..)
+    src.y = ((float)lay_to->pos.z+.5f) / max_size.z;
+    dst.y = ((float)lay_fr->pos.z+.5f) / max_size.z;
 
-      // move above/below layer plane
-      if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
-      else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
-      else { src.y += lay_ht; dst.y += lay_ht; }
+    // move above/below layer plane
+    if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
+    else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
+    else { src.y += lay_ht; dst.y += lay_ht; }
 
-      src.x = ((float)lay_to->pos.x + (float)ru_pos.x + .5f) / max_size.x;
-      src.z = -((float)lay_to->pos.y + (float)ru_pos.y + .5f) / max_size.y;
+    src.x = ((float)lay_to->pos.x + (float)ru_pos.x + .5f) / max_size.x;
+    src.z = -((float)lay_to->pos.y + (float)ru_pos.y + .5f) / max_size.y;
 
-      int ru_idx = v_idx;
-      vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
+    int ru_idx = v_idx;
+    vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
-      for(int i=0;i<cgp->cons.size; i++) {
-	Unit* su = cgp->Un(i);
-	float wt = cgp->Cn(i)->wt;
-	if(fabsf(wt) < wt_line_thr) continue;
+    for(int i=0;i<(swt ? ((SendCons*)cg)->cons.size : ((RecvCons*)cg)->cons.size); i++) {
+      Unit* su = (swt ? ((SendCons*)cg)->Un(i) : ((RecvCons*)cg)->Un(i));
+      float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
+      if(fabsf(wt) < wt_line_thr) continue;
 
-	TwoDCoord su_pos = su->GetMyAbsPos();
-	dst.x = ((float)lay_fr->pos.x + (float)su_pos.x + .5f) / max_size.x;
-	dst.z = -((float)lay_fr->pos.y + (float)su_pos.y + .5f) / max_size.y;
+      TwoDCoord su_pos = su->GetMyAbsPos();
+      dst.x = ((float)lay_fr->pos.x + (float)su_pos.x + .5f) / max_size.x;
+      dst.z = -((float)lay_fr->pos.y + (float)su_pos.y + .5f) / max_size.y;
 
-	coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
-	mats_dat[midx++] = c_idx;	// one per
+      coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
+      mats_dat[midx++] = c_idx;	// one per
 
-	vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
+      vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
 
-	// color
-	GetUnitColor(wt, tc, sc_val);
-	col.setValue(tc.redf(), tc.greenf(), tc.bluef());
-	float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-	color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
-      }
+      // color
+      GetUnitColor(wt, tc, sc_val);
+      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
   }
-  else {
-    for(int g=0;g<unit_src->recv.size;g++) {
-      RecvCons* cgp = unit_src->recv.FastEl(g);
-      Projection* prjn = cgp->prjn;
-      if(!prjn || !prjn->from || !prjn->layer) continue;
-      Layer* lay_fr = prjn->from;
-      Layer* lay_to = prjn->layer;
 
-      // y = network z coords -- same for all cases  (add .5f to z..)
-      src.y = ((float)lay_to->pos.z+.5f) / max_size.z;
-      dst.y = ((float)lay_fr->pos.z+.5f) / max_size.z;
+  if((bool)wt_prjn_lay) {
+    // y = network z coords -- same for all cases  (add .5f to z..)
+    src.y = ((float)src_lay->pos.z+.5f) / max_size.z;
+    dst.y = ((float)wt_prjn_lay->pos.z+.5f) / max_size.z;
 
-      // move above/below layer plane
-      if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
-      else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
-      else { src.y += lay_ht; dst.y += lay_ht; }
+    // move above/below layer plane
+    if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
+    else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
+    else { src.y += lay_ht; dst.y += lay_ht; }
 
-      src.x = ((float)lay_to->pos.x + (float)ru_pos.x + .5f) / max_size.x;
-      src.z = -((float)lay_to->pos.y + (float)ru_pos.y + .5f) / max_size.y;
+    src.x = ((float)src_lay->pos.x + (float)ru_pos.x + .5f) / max_size.x;
+    src.z = -((float)src_lay->pos.y + (float)ru_pos.y + .5f) / max_size.y;
 
-      int ru_idx = v_idx;
-      vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
+    int ru_idx = v_idx;
+    vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
-      for(int i=0;i<cgp->cons.size; i++) {
-	Unit* su = cgp->Un(i);
-	float wt = cgp->Cn(i)->wt;
-	if(fabsf(wt) < wt_line_thr) continue;
+    Unit* su;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, su, wt_prjn_lay->units., ui) {
+      float wt = su->wt_prjn;
+      if(fabsf(wt) < wt_line_thr) continue;
 
-	TwoDCoord su_pos = su->GetMyAbsPos();
-	dst.x = ((float)lay_fr->pos.x + (float)su_pos.x + .5f) / max_size.x;
-	dst.z = -((float)lay_fr->pos.y + (float)su_pos.y + .5f) / max_size.y;
+      TwoDCoord su_pos = su->GetMyAbsPos();
+      dst.x = ((float)wt_prjn_lay->pos.x + (float)su_pos.x + .5f) / max_size.x;
+      dst.z = -((float)wt_prjn_lay->pos.y + (float)su_pos.y + .5f) / max_size.y;
 
-	coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
-	mats_dat[midx++] = c_idx;	// one per
+      coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
+      mats_dat[midx++] = c_idx;	// one per
 
-	vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
+      vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
 
-	// color
-	GetUnitColor(wt, tc, sc_val);
-	col.setValue(tc.redf(), tc.greenf(), tc.bluef());
-	float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-	color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
-      }
+      // color
+      GetUnitColor(wt, tc, sc_val);
+      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
     }
   }
+
   vertex.finishEditing();
   color.finishEditing();
   coords.finishEditing();
@@ -2616,6 +2587,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   fldWtLineThr = new taiField(&TA_float, this, NULL, widg);
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
 
+  int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
+
+  lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
+  lblWtPrjnLay->setToolTip("Layer to display weight projection values onto for selected unit (values are visible on all units in the wt_prjn unit variable if this setting is non-null)");
+  layColorScaleCtrls->addWidget(lblWtPrjnLay);
+  gelWtPrjnLay = new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags);
+  layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
+
   ////////////////////////////////////////////////////////////////////////////
   layColorBar = new QHBoxLayout(layDisplayValues);
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
@@ -2718,6 +2697,7 @@ void NetViewPanel::UpdatePanel_impl() {
   chkWtLineSwt->setChecked(nv->wt_line_swt);
   fldWtLineWdth->GetImage((String)nv->wt_line_width);
   fldWtLineThr->GetImage((String)nv->wt_line_thr);
+  gelWtPrjnLay->GetImage(&(nv->net()->layers), nv->wt_prjn_lay.ptr());
 
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
   fldUnitFont->GetImage((String)nv->font_sizes.unit);
@@ -2776,6 +2756,7 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_line_swt = chkWtLineSwt->isChecked();
   nv->wt_line_width = (float)fldWtLineWdth->GetValue();
   nv->wt_line_thr = (float)fldWtLineThr->GetValue();
+  nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
 
   nv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }

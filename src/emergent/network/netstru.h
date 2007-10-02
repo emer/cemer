@@ -737,6 +737,10 @@ public: //
   // #DMEM_SHARE_SET_2 #CAT_Activation activation value -- what the unit communicates to others
   float 	net;
   // #DMEM_SHARE_SET_1 #CAT_Activation net input value -- what the unit receives from others
+  float		wt_prjn;
+  // #NO_SAVE #CAT_Statistic weight projection value -- computed by Network::ProjectUnitWeights (triggered in GUI by setting wt prjn variable in netview control panel to point to a layer instead of NULL) -- represents weight values projected through any intervening layers from source unit (selected unit in netview or passed to ProjectUnitWeights function directly)
+  float		tmp_calc1;
+  // #NO_SAVE #READ_ONLY #HIDDEN #CAT_Statistic temporary calculation variable (used for computing wt_prjn and prossibly other things)
   RecvCons_List	recv;
   // #CAT_Structure Receiving connections, one set of connections for each projection (collection of connections) received from other units
   SendCons_List send;
@@ -1046,8 +1050,8 @@ public:
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 
-  virtual void	WeightsToTable(DataTable* dt);
-  // #MENU #NULL_OK #CAT_Structure TODO:define send entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual void	WeightsToTable(DataTable* dt, const String& col_nm = "");
+  // #MENU #NULL_OK #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
@@ -1301,6 +1305,8 @@ public:
     ICONIFIED		= 0x0002, 	// only display a single unit showing icon_value (set in algorithm-specific manner)
     NO_ADD_SSE		= 0x0004,	// do NOT add this layer's sse value (sum squared error) to the overall network sse value: this is for all types of SSE computed for ext_flag = TARG (layer_type = TARGET) or ext_flag = COMP (layer_type = OUTPUT) layers
     NO_ADD_COMP_SSE	= 0x0008,	// do NOT add this layer's sse value (sum squared error) to the overall network sse value: ONLY for ext_flag = COMP (OUTPUT) flag settings (NO_ADD_SSE blocks all contributions) -- this is relevant if the layer type or ext_flags are switched dynamically and only TARGET errors are relevant
+    PROJECT_WTS_NEXT    = 0x0010,	// #NO_SHOW this layer is next in line for weight projection operation
+    PROJECT_WTS_DONE    = 0x0020,	// #NO_SHOW this layer is done with weight projection operation (prevents loops)
   };
 
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure Network this layer is in
@@ -1914,6 +1920,9 @@ public:
 
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #NULL_OK_0 #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+
+  virtual void	ProjectUnitWeights(Unit* un, float wt_thr = 0.5f, bool swt = false);
+  // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in anal1 on each unit (anal2 is used as a sum variable)  wt_thr is threshold on max-normalized weights (max=1) for following a given weight value to accumulate (so weaker weights are excluded).  values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence
 
   virtual bool	UpdateUnitSpecs(bool force = false);
   // #CAT_Structure update unit specs for entire network (calls layer version of this function)

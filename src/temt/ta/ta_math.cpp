@@ -782,8 +782,11 @@ bool taMath_double::vec_mult_els(double_Matrix* a, const double_Matrix* b) {
 
 bool taMath_double::vec_div_els(double_Matrix* a, const double_Matrix* b) {
   if(!vec_check_same_size(a, b)) return false;
-  for(int i=0;i<a->size;i++)
-    a->FastEl_Flat(i) /= b->FastEl_Flat(i);
+  for(int i=0;i<a->size;i++) {
+    double bv = b->FastEl_Flat(i);
+    if(bv != 0.0)
+      a->FastEl_Flat(i) /= bv;
+  }
   return true;
 }
 
@@ -2528,8 +2531,11 @@ bool taMath_float::vec_mult_els(float_Matrix* a, const float_Matrix* b) {
 
 bool taMath_float::vec_div_els(float_Matrix* a, const float_Matrix* b) {
   if(!vec_check_same_size(a, b)) return false;
-  for(int i=0;i<a->size;i++)
-    a->FastEl_Flat(i) /= b->FastEl_Flat(i);
+  for(int i=0;i<a->size;i++) {
+    float bv = b->FastEl_Flat(i);
+    if(bv != 0.0f)
+      a->FastEl_Flat(i) /= bv;
+  }
   return true;
 }
 

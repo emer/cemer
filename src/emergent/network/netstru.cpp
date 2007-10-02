@@ -1653,6 +1653,7 @@ void Unit::Initialize() {
   ext = 0.0f;
   act = 0.0f;
   net = 0.0f;
+  wt_prjn = tmp_calc1 = 0.0f;
   n_recv_cons = 0;
   idx = -1;
   m_unit_spec = NULL;
@@ -1691,6 +1692,8 @@ void Unit::Copy_(const Unit& cp) {
   ext = cp.ext;
   act = cp.act;
   net = cp.net;
+  wt_prjn = cp.wt_prjn;
+  tmp_calc1 = cp.tmp_calc1;
   recv = cp.recv;
   send = cp.send;
   bias = cp.bias;
@@ -2451,48 +2454,34 @@ void Projection::UpdateAfterEdit_impl() {
 //   if(!net) return;
 }
 
-void Projection::WeightsToTable(DataTable* dt) {
+void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   if(!(bool)from) return;
-/*TODO
-  if (dt == NULL) {
-    dt = pdpMisc::GetNewEnv(GET_MY_OWNER(ProjectBase));
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
   }
-  if(env == NULL) return;
+  dt->StructUpdate(true);
+  dt->ResetData();
 
-  env->events.Reset();
-  env->SetName((String)"WeightsToEnv: " + layer->GetName() + ", " + GetName());
+  String col_nm = col_nm_;
+  if(col_nm.empty()) col_nm = from->name;
 
-  EventSpec* es = env->GetAnEventSpec();
-  es->UpdateAfterEdit();	// make sure its all done with internals..
-  es->patterns.SetSize(1);
+  int idx;
+  DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2, from->act_geom.x, from->act_geom.y);
 
-  PatternSpec* ps = (PatternSpec*)es->patterns[0];
-  ps->n_vals = from->units.leaves;
-  ps->geom = from->act_geom;
-  ps->UpdateAfterEdit();	// this will sort out cases where nvals > geom
-  es->UpdateAllEvents();	// get them all straightened out
-
-  int idx = 0;
   taLeafItr ri;
   Unit* ru;
   FOR_ITR_EL(Unit, ru, layer->units., ri) {
     RecvCons* cg = ru->recv.FindFrom(from);
     if(cg == NULL)
       break;
-    Event* ev = (Event*)env->events.NewEl(1);
-    if(!ru->name.empty())
-      ev->name = ru->name;
-    else
-      ev->name = layer->name + String("[") + String(idx) + String("]");
-    Pattern* pat = (Pattern*)ev->patterns[0];
+    dt->AddBlankRow();
     int wi;
-    for(wi=0;wi<cg->size;wi++) {
-      pat->value.Set(wi, cg->Cn(wi)->wt);
+    for(wi=0;wi<cg->cons.size;wi++) {
+      scol->SetValAsFloatM(cg->Cn(wi)->wt, -1, wi);
     }
-    idx++;
   }
-  //TODO: in v4, clients like env must add their own datalink to net and act on the DataXXX events
-//  env->InitAllViews(); */
+  dt->StructUpdate(false);
 }
 
 void Projection::SetFrom() {
@@ -5771,6 +5760,115 @@ void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
   recv_lay->WeightsToTable(dt, send_lay);
 }
 
+void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
+  if(!src_u) return;
+
+  // first initialize all vars
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, layers., li) {
+    if(lay->lesioned()) continue;
+    lay->ClearLayerFlag(Layer::PROJECT_WTS_NEXT);
+    lay->ClearLayerFlag(Layer::PROJECT_WTS_DONE);
+    Unit* u;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, u, lay->units., ui) {
+      u->wt_prjn = u->tmp_calc1 = 0.0f;
+    }
+  }
+
+  // do initial propagation
+  for(int g = 0; g < (swt ? src_u->send.size : src_u->recv.size); g++) {
+    taOBase* cg = (swt ? (taOBase*)src_u->send.FastEl(g) : (taOBase*)src_u->recv.FastEl(g));
+    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+    if(!prjn) continue;
+    Layer* slay = (swt ? prjn->layer : prjn->from);
+
+    if(slay->lesioned() || (prjn->from == prjn->layer)) continue; // no self prjns!!
+    slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT);
+
+    if(swt) {
+      SendCons* scg = (SendCons*)cg;
+      for(int ci = 0; ci < scg->cons.size; ci++) {
+	float wtv = scg->Cn(ci)->wt;
+	Unit* su = scg->Un(ci);
+	su->wt_prjn += wtv;
+	su->tmp_calc1 += 1.0f;	// sum to 1
+      }
+    }
+    else {
+      RecvCons* scg = (RecvCons*)cg;
+      for(int ci = 0; ci < scg->cons.size; ci++) {
+	float wtv = scg->Cn(ci)->wt;
+	Unit* su = scg->Un(ci);
+	su->wt_prjn += wtv;
+	su->tmp_calc1 += 1.0f;	// sum to 1
+      }
+    }
+  }
+
+  // now it is just the same loop until there are no more guys!
+  bool got_some = false;
+  do {
+    got_some = false;
+    Layer* lay;
+    taLeafItr li;
+    FOR_ITR_EL(Layer, lay, layers., li) {
+      if(lay->lesioned() || !lay->HasLayerFlag(Layer::PROJECT_WTS_NEXT)) continue;
+
+      lay->SetLayerFlag(Layer::PROJECT_WTS_DONE); // we're done!
+      
+      // first normalize the weights on this guy
+      float abs_max = 0.0f;
+      Unit* u;
+      taLeafItr ui;
+      FOR_ITR_EL(Unit, u, lay->units., ui) {
+	if(u->tmp_calc1 > 0.0f)
+	  u->wt_prjn /= u->tmp_calc1;
+	abs_max = MAX(abs_max, fabsf(u->wt_prjn));
+      }
+
+      if(abs_max == 0.0f) abs_max = 1.0f;
+
+      FOR_ITR_EL(Unit, u, lay->units., ui) {
+	u->wt_prjn /= abs_max;	// normalize
+	if(u->wt_prjn < wt_thr) continue; // bail
+
+	// propagate!
+	for(int g = 0; g < (swt ? u->send.size : u->recv.size); g++) {
+	  taOBase* cg = (swt ? (taOBase*)u->send.FastEl(g) : (taOBase*)u->recv.FastEl(g));
+	  Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+	  if(!prjn) continue;
+	  Layer* slay = (swt ? prjn->layer : prjn->from);
+
+	  if(slay->lesioned() || (prjn->from == prjn->layer) ||
+	     slay->HasLayerFlag(Layer::PROJECT_WTS_DONE)) continue;
+	  slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT); // next..
+	  got_some = true;			       // keep going..
+
+	  if(swt) {
+	    SendCons* scg = (SendCons*)cg;
+	    for(int ci = 0; ci < scg->cons.size; ci++) {
+	      float wtv = scg->Cn(ci)->wt;
+	      Unit* su = scg->Un(ci);
+	      su->wt_prjn += u->wt_prjn * wtv;
+	      su->tmp_calc1 += u->wt_prjn;
+	    }
+	  }
+	  else {
+	    RecvCons* scg = (RecvCons*)cg;
+	    for(int ci = 0; ci < scg->cons.size; ci++) {
+	      float wtv = scg->Cn(ci)->wt;
+	      Unit* su = scg->Un(ci);
+	      su->wt_prjn += u->wt_prjn * wtv;
+	      su->tmp_calc1 += u->wt_prjn;
+	    }
+	  }
+	}
+      }
+    }
+  } while(got_some);
+}
 
 // new monitor is in emergent_project.cc
 

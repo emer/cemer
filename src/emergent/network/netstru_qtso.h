@@ -48,6 +48,7 @@
 #include "colorbar_qt.h"
 #include "minmax.h"
 #include "t3viewer.h"
+#include "ta_qtgroup.h"
 
 #include "emergent_base.h"
 #include "netstru.h"
@@ -396,6 +397,7 @@ public:
   float			wt_line_width;	// width of weight lines
   float			wt_line_thr;	// threshold on fabs(wt) value -- don't display below this value
   bool			wt_line_swt;	// plot sending weights instead of recv weights
+  LayerRef		wt_prjn_lay; 	// layer to display projected weights for
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)inherited::node_so();}
@@ -529,6 +531,8 @@ public:
   taiField*		    fldWtLineWdth;
   QLabel*		    lblWtLineThr;
   taiField*		    fldWtLineThr;
+  QLabel*		    lblWtPrjnLay;
+  taiGroupElsButton*	    gelWtPrjnLay;
   QHBoxLayout*		 layColorBar;
   ScaleBar*		   cbar;	      // colorbar
   QPushButton*		   butSetColor;
