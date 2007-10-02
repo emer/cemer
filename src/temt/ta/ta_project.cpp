@@ -401,13 +401,18 @@ SelectEdit* taProject::FindMakeSelectEdit(const String& nm) {
 }
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
+//NOTE: doesn't really work properly in 2x2
   // try official default first
-  MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl()); 
-  if (vwr) return vwr;
-  // otherwise iterate
+//  MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl()); 
+//  if (vwr) return vwr;
+
+//TODO: this is not really that good, becaus
+  MainWindowViewer* vwr = NULL;
+  // iterate to find 1st Browser -- will actually be 2nd item in 2x2
   for (int i = 0; i < viewers.size; ++i) {
     vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
-    if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
+    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
+    if (vwr && vwr->isProjBrowser()) return vwr;
   }
   return NULL;
 }
