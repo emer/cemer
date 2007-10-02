@@ -166,6 +166,7 @@ TA_HEADS =\
 	$(EMERGENTDIR)/src/temt/ta/ta_defaults.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin_p.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_server.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_project.h \
 	$(TA_HEADS_GUI) \
 	$(TA_HEADS_TAMISC) \
@@ -192,6 +193,7 @@ ta_mocs: \
   ta_qttype.moc.cpp \
   ta_qtviewer.moc.cpp \
   ta_qtgroup.moc.cpp \
+  ta_server.moc.cpp \
   ta_type.moc.cpp \
   ta_virtenv_qtso.moc.cpp
 
@@ -252,6 +254,9 @@ ta_qttype.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qttype.h
 ta_qtviewer.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtviewer.h
 	$(MOC) %s -o $@
 
+ta_server.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_server.h
+	$(MOC) %s -o $@
+
 ta_type.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_type.h
 	$(MOC) %s -o $@
 
@@ -289,7 +294,6 @@ css_qtdialog.moc.cpp: $(EMERGENTDIR)\src\temt\css\css_qtdialog.h
 
 
 NETWORK_HEADS_GUI =\
-	$(EMERGENTDIR)/src/emergent/network/pdpserver_qt.h \
 	$(EMERGENTDIR)/src/emergent/network/netstru_so.h \
 	$(EMERGENTDIR)/src/emergent/network/netstru_qtso.h \
 	$(EMERGENTDIR)/src/emergent/network/emergent_qtso.h \
@@ -303,7 +307,6 @@ NETWORK_HEADS =\
 	$(EMERGENTDIR)/src/emergent/network/netdata.h \
 	$(EMERGENTDIR)/src/emergent/network/emergent_program.h \
 	$(EMERGENTDIR)/src/emergent/network/emergent_project.h \
-	$(EMERGENTDIR)/src/emergent/network/pdpserver.h \
 	$(NETWORK_HEADS_GUI) \
 	$(EMERGENTDIR)/src/emergent/network/v3_compat.h
 
@@ -315,9 +318,7 @@ NETWORK_MAKETA =\
 network_mocs: \
 	netstru_qtso.moc.cpp \
 	emergent_program_qtso.moc.cpp \
-	emergent_qtso.moc.cpp \
-	pdpserver.moc.cpp \
-	pdpserver_qt.moc.cpp
+	emergent_qtso.moc.cpp 
 
 netstru_qtso.moc.cpp: $(EMERGENTDIR)\src\emergent\network\netstru_qtso.h
 	$(MOC) %s -o $@
@@ -327,13 +328,6 @@ emergent_program_qtso.moc.cpp: $(EMERGENTDIR)\src\emergent\network\emergent_prog
 
 emergent_qtso.moc.cpp: $(EMERGENTDIR)\src\emergent\network\emergent_qtso.h
 	$(MOC) %s -o $@
-
-pdpserver.moc.cpp: $(EMERGENTDIR)\src\emergent\network\pdpserver.h
-	$(MOC) %s -o $@
-
-pdpserver_qt.moc.cpp: $(EMERGENTDIR)\src\emergent\network\pdpserver_qt.h
-	$(MOC) %s -o $@
-
 
 
 CS_HEADS =\

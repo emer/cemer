@@ -2357,7 +2357,7 @@ void NetView::SetColorSpec(ColorScaleSpec* color_spec) {
 }
 
 void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
-  if (unit_src == unit) return; // no change
+  if (unit_src.ptr() == unit) return; // no change
   // if there was existing unit, unpick it
   if ((bool)unit_src) {
     UnitView* uv_src = FindUnitView(unit_src);

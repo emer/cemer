@@ -212,12 +212,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\network\netstru_so.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\emergent\network\pdpserver.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\pdpserver_qt.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\emergent\network\spec.cpp">
 				</File>
 				<File
@@ -261,12 +255,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\network\netstru_so.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\emergent\network\pdpserver.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\pdpserver_qt.h">
-				</File>
-				<File
 					RelativePath="..\..\..\src\emergent\network\spec.h">
 				</File>
 				<File
@@ -300,12 +288,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\network\netstru_qtso.moc.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\pdpserver.moc.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\network\pdpserver_qt.moc.cpp">
 				</File>
 			</Filter>
 		</Filter>
