@@ -1246,3 +1246,248 @@ void NetMonitor::GetMonVals() {
 }
 
 
+
+//////////////////////////
+//  NetMonitor		//
+//////////////////////////
+
+void ActBasedRF::Initialize() {
+  norm_mode = NORM_TRG_UNIT_RF_LAY;
+  threshold = .5f;
+}
+
+void ActBasedRF::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void ActBasedRF::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!rf_data, quiet, rval, "rf_data is NULL");
+  CheckError(!network, quiet, rval,"network is NULL");
+  CheckError(!trg_layer, quiet, rval,"trg_layer is NULL");
+}
+
+String ActBasedRF::GetDisplayName() const {
+  String rval = name;
+  if(network) rval += " fm net: " + network->name;
+  if(rf_data) rval += " to data: " + rf_data->name;
+  if(trg_layer) rval += " trg lay: " + trg_layer->name;
+  return rval;
+}
+
+void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
+  int rows = trg_layer->units.leaves;
+  int idx;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, net->layers., li) {
+    if(lay->lesioned() || lay->Iconified()) continue;
+    DataCol* da;
+    if(lay->unit_groups)
+      da = dt->FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
+			  lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
+    else
+      da = dt->FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
+			  lay->un_geom.y);
+    da->EnforceRows(rows);
+  }
+}
+
+void ActBasedRF::InitData() {
+  if(!network || !rf_data || !trg_layer) return;
+  ConfigDataTable(rf_data, network);
+  ConfigDataTable(&sum_data, network);
+  ConfigDataTable(&wt_data, network);
+
+  for(int i=0;i<rf_data->data.size; i++) {
+    DataCol* da = rf_data->data.FastEl(i);
+    ((float_Matrix*)da->AR())->InitVals();
+  }
+  for(int i=0;i<sum_data.data.size; i++) {
+    DataCol* da = sum_data.data.FastEl(i);
+    ((float_Matrix*)da->AR())->InitVals();
+  }
+  for(int i=0;i<wt_data.data.size; i++) {
+    DataCol* da = wt_data.data.FastEl(i);
+    ((float_Matrix*)da->AR())->InitVals();
+  }
+}
+
+void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
+  rf_data = dt;
+  network = net;
+  trg_layer = tlay;
+
+  if(!network || !rf_data || !trg_layer) return;
+  rf_data->ResetData();
+  sum_data.ResetData();
+  wt_data.ResetData();
+  InitData();
+}
+
+bool ActBasedRF::IncrementSums() {
+  if(!network || !rf_data || !trg_layer) return false;
+
+  int idx;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, network->layers., li) {
+    if(lay->lesioned() || lay->Iconified()) continue;
+    DataCol* sum_da = NULL;
+    DataCol* wt_da = NULL;
+    if(lay->unit_groups) {
+      sum_da = sum_data.FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
+					lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
+      wt_da = wt_data.FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
+					lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
+    }
+    else {
+      sum_da = sum_data.FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
+					lay->un_geom.y);
+      wt_da = wt_data.FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
+				       lay->un_geom.y);
+    }
+
+    int tidx = 0;
+    Unit* tu;
+    taLeafItr tui;
+    for(tu = trg_layer->units.FirstEl(tui); tu; tu = trg_layer->units.NextEl(tui), tidx++) {
+      float tact = fabsf(tu->act);
+      if(tact < threshold) continue; // not this time!
+
+      // todo: could probably re-write below using matrix cell data directly
+      int sidx = 0;
+      Unit* su;
+      taLeafItr sui;
+      for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
+	float sm = sum_da->GetValAsFloatM(tidx, sidx);
+	float wt = wt_da->GetValAsFloatM(tidx, sidx);
+
+	sm += tu->act * su->act;
+	wt += tact;
+
+	sum_da->SetValAsFloatM(sm, tidx, sidx);
+	wt_da->SetValAsFloatM(wt, tidx, sidx);
+      }
+    }
+  }
+  return true;
+}
+
+bool ActBasedRF::ComputeRF() {
+  if(!rf_data) return false;
+  if(rf_data->data.size != sum_data.data.size || sum_data.data.size != wt_data.data.size)
+    return false;
+
+  for(int i=0;i<rf_data->data.size; i++) {
+    DataCol* rf_da = rf_data->data.FastEl(i);
+    DataCol* sum_da = sum_data.data.FastEl(i);
+    DataCol* wt_da = sum_data.data.FastEl(i);
+  
+    *(rf_da->AR()) = *(sum_da->AR()); // fast matrix copy
+    taMath_float::vec_div_els((float_Matrix*)rf_da->AR(), (float_Matrix*)wt_da->AR()); // divide
+  }
+
+  int idx;
+  
+  switch(norm_mode) {
+  case NO_NORM:
+    break;
+  case NORM_TRG_UNIT: {
+    // per row, across cols
+    for(int r=0;r<rf_data->rows; r++) {
+      float max_val = 0.0f;
+      for(int i=0;i<rf_data->data.size; i++) {
+	DataCol* rf_da = rf_data->data.FastEl(i);
+	float_Matrix* mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
+	taBase::Ref(mat);
+	float mx = taMath_float::vec_abs_max(mat, idx);
+	max_val = MAX(mx, max_val);
+	taBase::unRefDone(mat);
+      }
+      float sc = 1.0f;
+      if(max_val > 0.0f)
+	sc = 1.0f / max_val;
+      for(int i=0;i<rf_data->data.size; i++) {
+	DataCol* rf_da = rf_data->data.FastEl(i);
+	float_Matrix* mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
+	taBase::Ref(mat);
+	taMath_float::vec_mult_scalar(mat, sc);
+	taBase::unRefDone(mat);
+      }
+    }
+    break;
+  }
+  case NORM_TRG_LAYER: {
+    // over entire set of data
+    float max_val = 0.0f;
+    for(int i=0;i<rf_data->data.size; i++) {
+      DataCol* rf_da = rf_data->data.FastEl(i);
+      float mx = taMath_float::vec_abs_max((float_Matrix*)rf_da->AR(), idx);
+      max_val = MAX(mx, max_val);
+    }
+    float sc = 1.0f;
+    if(max_val > 0.0f)
+      sc = 1.0f / max_val;
+    for(int i=0;i<rf_data->data.size; i++) {
+      DataCol* rf_da = rf_data->data.FastEl(i);
+      taMath_float::vec_mult_scalar((float_Matrix*)rf_da->AR(), sc);
+    }
+    break;
+  }
+  case NORM_RF_LAY: {
+    // per column
+    for(int i=0;i<rf_data->data.size; i++) {
+      DataCol* rf_da = rf_data->data.FastEl(i);
+      taMath_float::vec_norm_abs_max((float_Matrix*)rf_da->AR());
+    }
+    break;
+  }
+  case NORM_TRG_UNIT_RF_LAY: {
+    // per cell
+    for(int r=0;r<rf_data->rows; r++) {
+      for(int i=0;i<rf_data->data.size; i++) {
+	DataCol* rf_da = rf_data->data.FastEl(i);
+	float_Matrix* mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
+	taBase::Ref(mat);
+	taMath_float::vec_norm_abs_max(mat);
+	taBase::unRefDone(mat);
+      }
+    }
+    break;
+  }
+  }
+  return true;
+}
+
+bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
+  if(!network || !rf_data || !trg_layer) return false;
+
+  if(TestError(trg_unit_no >= rf_data->rows, "CopyRFtoNetWtPrjn", "trg_unit_no is greater than number of target units"))
+    return false;
+
+  int idx;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, network->layers., li) {
+    if(lay->lesioned() || lay->Iconified()) continue;
+    DataCol* rf_da = NULL;
+    if(lay->unit_groups) {
+      rf_da = rf_data->FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
+					lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
+    }
+    else {
+      rf_da = rf_data->FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
+					lay->un_geom.y);
+    }
+
+    int mx = MAX(lay->units.leaves, rf_da->cell_size());
+
+    for(int i=0;i<mx; i++) {
+      Unit* u = lay->units.Leaf(i);
+      float rfv = rf_da->GetValAsFloatM(trg_unit_no, i);
+      u->wt_prjn = rfv;
+    }
+  }
+  return true;
+}

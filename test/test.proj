@@ -109,7 +109,7 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [1] {
+  Program_Group @.programs = [2] {
     Program @[0] { 
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
@@ -227,6 +227,44 @@ LeabraProject .projects[0] {
 	    ProgArg @[1] { };
 	  };
 	};
+      };
+    };
+    Program @[1] { 
+      ProgObjList @.objs = [2] {
+	ActBasedRF @[0] { };
+	DataTable @[1] { 
+	  DataTableCols @.data = [3] {
+	    float_Data @[0] { };
+	    float_Data @[1] { };
+	    float_Data @[2] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.args = [1] {
+	ProgVar @[0] { };
+      };
+
+      ProgVar_List @.vars = [4] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+      };
+
+      ProgEl_List @.init_code = [2] {
+	AssignExpr @[0] { };
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+      };
+
+      ProgEl_List @.prog_code = [1] {
+	MethodCall @[0] { };
       };
     };
     Program_Group @.gp[0] = [10] { 
@@ -601,7 +639,7 @@ LeabraProject .projects[0] {
 	  };
 	};
 
-	ProgEl_List @.prog_code = [4] {
+	ProgEl_List @.prog_code = [5] {
 	  MethodCall @[0] { };
 	  MethodCall @[1] { };
 	  MethodCall @[2] { };
@@ -609,6 +647,11 @@ LeabraProject .projects[0] {
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
+	    };
+	  };
+	  ProgramCall @[4] { 
+	    ProgArg_List @.prog_args = [1] {
+	      ProgArg @[0] { };
 	    };
 	  };
 	};
@@ -739,7 +782,7 @@ LeabraProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [3] {
+	  T3DataViewFrame_List @.frames = [4] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [4] {
 		NetView @[0] { 
@@ -813,6 +856,17 @@ LeabraProject .projects[0] {
 	      };
 	    };
 	    T3DataViewFrame @[2] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[3] { 
 	      T3DataView_List @.children = [1] {
 		GridTableView @[0] { 
 		  T3DataView_List @.children = [3] {
@@ -2394,11 +2448,244 @@ command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batche
     };
    };
   };
+  Program @[1] {
+   name="ActBasedRField";
+   tags="Statistic, Receptive Field";
+   desc="computes an activation based receptive field using ActBasedRF object type -- allows you to see how units in a selected target layer relate to activations of units throughout the network";
+   flags=;
+   objs {
+    name=;
+    el_typ=ActBasedRF;
+    el_def=0;
+    ActBasedRF @[0] {
+     name="ActBasedRF_0";
+     rf_data=.projects[0].programs[1].objs[1]$16$;
+     network=$1$;
+     trg_layer=.projects[0].networks[0].layers[1]$17$;
+     norm_mode=NORM_TRG_UNIT_RF_LAY;
+     threshold=0.5;
+    };
+    DataTable @[1] {
+     name="act_rf_data";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       name="Input";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 25] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;       };
+      };
+      float_Data @[1] {
+       name="Hidden";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 25] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;       };
+      };
+      float_Data @[2] {
+       name="Output";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 25] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="network";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     object_val=$1$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="ActBasedRF_0";
+     var_type=T_Object;
+     object_type=ActBasedRF;
+     object_val=.projects[0].programs[1].objs[0]$18$;
+     objs_ptr=1;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="act_rf_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$16$;
+     objs_ptr=1;
+     flags=NULL_CHECK;
+     desc="data table to record activation based receptive field information into";
+    };
+    ProgVar @[2] {
+     name="trg_layer_name";
+     var_type=T_String;
+     string_val="Hidden";
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="trg_layer";
+     var_type=T_Object;
+     object_type=LeabraLayer;
+     object_val=$17$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc="target layer to get receptive field data for";
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc=;
+     flags=;
+     result_var=.projects[0].programs[1].vars[3]$19$;
+     expr {
+      expr="network.FindLayer(trg_layer_name)";
+      flags=;
+      var_expr="$#0#$.FindLayer($#1#$)";
+      vars {
+      };
+      var_names{ network;trg_layer_name;      };
+      bad_vars{       };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[1].vars[0]$20$;
+     method=ActBasedRF::InitAll;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=0;
+       def_val=;
+       expr {
+	expr="act_rf_data";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ act_rf_data;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Network_ptr;
+       type="Network*";
+       name="net";
+       required=0;
+       def_val=;
+       expr {
+	expr="network";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ network;	};
+	bad_vars{ 	};
+       };
+      };
+      ProgArg @[2] {
+       arg_type=Layer_ptr;
+       type="Layer*";
+       name="tlay";
+       required=0;
+       def_val=;
+       expr {
+	expr="trg_layer";
+	flags=;
+	var_expr="$#0#$";
+	vars {
+	};
+	var_names{ trg_layer;	};
+	bad_vars{ 	};
+       };
+      };
+     };
+    };
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$20$;
+     method=ActBasedRF::IncrementSums;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
   Program_Group @.gp[0] {
    name="LeabraAll_Std";
    el_typ=Program;
    el_def=0;
-   step_prog=.projects[0].programs.gp[0][4]$16$;
+   step_prog=.projects[0].programs.gp[0][4]$21$;
    tags="Leabra, Std, All";
    desc="The full set of programs for training a standard Leabra network";
    Program @[0] {
@@ -2477,8 +2764,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batche
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=;
-      network_var=.projects[0].programs.gp[0][0].args[0]$17$;
-      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$18$;
+      network_var=.projects[0].programs.gp[0][0].args[0]$22$;
+      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$23$;
       counter=Network::batch;
      };
     };
@@ -2489,8 +2776,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batche
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=;
-      network_var=$17$;
-      local_ctr_var=$18$;
+      network_var=$22$;
+      local_ctr_var=$23$;
       counter=Network::batch;
      };
      WhileLoop @[1] {
@@ -2562,8 +2849,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batche
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
 	flags=;
-	network_var=$17$;
-	local_ctr_var=$18$;
+	network_var=$22$;
+	local_ctr_var=$23$;
 	counter=Network::batch;
        };
       };
@@ -2683,7 +2970,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [Epochs=xxx] [Batche
       name="rnd_init";
       var_type=T_DynEnum;
       dyn_enum_val {
-       enum_type=.projects[0].programs.gp[0][1].types[0]$19$;
+       enum_type=.projects[0].programs.gp[0][1].types[0]$24$;
        value=0;
       };
       objs_ptr=0;
@@ -2703,7 +2990,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects[0].programs.gp[0][1].objs[0]$20$;
+      object_val=.projects[0].programs.gp[0][1].objs[0]$25$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="random seed that is used at start of training -- if OldSeed is called";
@@ -2712,7 +2999,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].train_time$21$;
+      object_val=.projects[0].networks[0].train_time$26$;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
@@ -2735,7 +3022,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[0] {
       desc=;
       flags=;
-      result_var=.projects[0].programs.gp[0][1].args[2]$22$;
+      result_var=.projects[0].programs.gp[0][1].args[2]$27$;
       expr {
        expr="false";
        flags=;
@@ -2750,7 +3037,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="check network to make sure it is ready to be run";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][1].args[0]$23$;
+      obj=.projects[0].programs.gp[0][1].args[0]$28$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -2777,7 +3064,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[2] {
       desc="get our pointer to the network training time object";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[6]$24$;
+      result_var=.projects[0].programs.gp[0][1].vars[6]$29$;
       expr {
        expr="network.train_time";
        flags=;
@@ -2808,7 +3095,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	desc="restore previous random seed (all runs produce same results)";
 	flags=;
 	result_var=NULL;
-	obj=.projects[0].programs.gp[0][1].vars[5]$25$;
+	obj=.projects[0].programs.gp[0][1].vars[5]$30$;
 	method=RndSeed::OldSeed;
 	meth_args {
 	 name=;
@@ -2825,7 +3112,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	desc="new random numbers each time";
 	flags=;
 	result_var=NULL;
-	obj=$25$;
+	obj=$30$;
 	method=RndSeed::NewSeed;
 	meth_args {
 	 name=;
@@ -2849,7 +3136,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=;
 	result_var=NULL;
-	obj=$23$;
+	obj=$28$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name=;
@@ -2880,7 +3167,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[0] {
       desc="get our pointer to the network training time object";
       flags=;
-      result_var=$24$;
+      result_var=$29$;
       expr {
        expr="network.train_time";
        flags=;
@@ -2895,7 +3182,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="start timer to keep track of how long it takes to run entire training run";
       flags=;
       result_var=NULL;
-      obj=$24$;
+      obj=$29$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -2922,7 +3209,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      MemberAssign @[2] {
       desc="set network's training mode to our local value";
       flags=;
-      obj=$23$;
+      obj=$28$;
       path="train_mode";
       expr {
        expr="train_mode";
@@ -2955,7 +3242,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=;
 	result_var=NULL;
-	obj=$23$;
+	obj=$28$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name=;
@@ -2986,7 +3273,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      AssignExpr @[4] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[1]$26$;
+      result_var=.projects[0].programs.gp[0][1].vars[1]$31$;
       expr {
        expr="network.epoch";
        flags=;
@@ -3007,7 +3294,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        ProgramCall @[0] {
 	desc="run the epoch program (one epoch), passes our network and input_data";
 	flags=;
-	target=.projects[0].programs.gp[0][2]$27$;
+	target=.projects[0].programs.gp[0][2]$32$;
 	targ_ld_init="*LeabraEpoch*";
 	prog_args {
 	 name=;
@@ -3050,8 +3337,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        NetCounterIncr @[1] {
 	desc="increment the epoch counter (locally and on network)";
 	flags=;
-	network_var=$23$;
-	local_ctr_var=$26$;
+	network_var=$28$;
+	local_ctr_var=$31$;
 	counter=Network::epoch;
        };
        IfBreak @[2] {
@@ -3082,7 +3369,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
       flags=;
       result_var=NULL;
-      obj=$24$;
+      obj=$29$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -3165,7 +3452,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].epoch_time$28$;
+      object_val=.projects[0].networks[0].epoch_time$33$;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
@@ -3196,14 +3483,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=;
-      network_var=.projects[0].programs.gp[0][2].args[0]$29$;
-      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$30$;
+      network_var=.projects[0].programs.gp[0][2].args[0]$34$;
+      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$35$;
       counter=Network::trial;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=;
-      result_var=.projects[0].programs.gp[0][2].vars[3]$31$;
+      result_var=.projects[0].programs.gp[0][2].vars[3]$36$;
       expr {
        expr="network.epoch_time";
        flags=;
@@ -3222,14 +3509,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=;
-      network_var=$29$;
-      local_ctr_var=$30$;
+      network_var=$34$;
+      local_ctr_var=$35$;
       counter=Network::trial;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=;
-      result_var=$31$;
+      result_var=$36$;
       expr {
        expr="network.epoch_time";
        flags=;
@@ -3244,7 +3531,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="start the epoch timer to record computation time per epoch";
       flags=;
       result_var=NULL;
-      obj=$31$;
+      obj=$36$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -3272,7 +3559,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][2].vars[2]$32$;
+      obj=.projects[0].programs.gp[0][2].vars[2]$37$;
       method=DataTable::ResetData;
       meth_args {
        name=;
@@ -3290,7 +3577,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
 	flags=;
-	target=.projects[0].programs.gp[0][3]$33$;
+	target=.projects[0].programs.gp[0][3]$38$;
 	targ_ld_init="*LeabraTrial*";
 	prog_args {
 	 name=;
@@ -3350,7 +3637,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  desc="update the weight values based on changes computed by trial program";
 	  flags=;
 	  result_var=NULL;
-	  obj=$29$;
+	  obj=$34$;
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   name=;
@@ -3366,9 +3653,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	};
        };
       };
-      data_var=.projects[0].programs.gp[0][2].args[1]$34$;
-      index_var=.projects[0].programs.gp[0][2].vars[4]$35$;
-      order_var=.projects[0].programs.gp[0][2].vars[0]$36$;
+      data_var=.projects[0].programs.gp[0][2].args[1]$39$;
+      index_var=.projects[0].programs.gp[0][2].vars[4]$40$;
+      order_var=.projects[0].programs.gp[0][2].vars[0]$41$;
       order=PERMUTED;
       item_idx_list{ 1;5;2;4;0;3;      };
       dmem_nprocs=1;
@@ -3394,7 +3681,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	desc="final update of weights based on accumulated changes";
 	flags=;
 	result_var=NULL;
-	obj=$29$;
+	obj=$34$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name=;
@@ -3413,7 +3700,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=;
       result_var=NULL;
-      obj=$29$;
+      obj=$34$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name=;
@@ -3424,7 +3711,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgramCall @[7] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=;
-      target=.projects[0].programs.gp[0][8]$37$;
+      target=.projects[0].programs.gp[0][8]$42$;
       targ_ld_init="*LeabraEpochMonitor*";
       prog_args {
        name=;
@@ -3452,7 +3739,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="done with the computation in the epoch -- record time it took";
       flags=;
       result_var=NULL;
-      obj=$31$;
+      obj=$36$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -3538,8 +3825,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=;
-      network_var=.projects[0].programs.gp[0][3].args[0]$38$;
-      local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$39$;
+      network_var=.projects[0].programs.gp[0][3].args[0]$43$;
+      local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$44$;
       counter=LeabraNetwork::phase_no;
      };
     };
@@ -3550,15 +3837,15 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetCounterInit @[0] {
       desc="initialize the local phase_no counter, and corresponding network one";
       flags=;
-      network_var=$38$;
-      local_ctr_var=$39$;
+      network_var=$43$;
+      local_ctr_var=$44$;
       counter=LeabraNetwork::phase_no;
      };
      MethodCall @[1] {
       desc="initializes various counters at start of trial";
       flags=;
       result_var=NULL;
-      obj=$38$;
+      obj=$43$;
       method=LeabraNetwork::Trial_Init;
       meth_args {
        name=;
@@ -3576,7 +3863,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        ProgramCall @[0] {
 	desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
 	flags=;
-	target=$16$;
+	target=$21$;
 	targ_ld_init="*LeabraSettle*";
 	prog_args {
 	 name=;
@@ -3619,15 +3906,15 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        NetCounterIncr @[1] {
 	desc="increment the phase number (also on network)";
 	flags=;
-	network_var=$38$;
-	local_ctr_var=$39$;
+	network_var=$43$;
+	local_ctr_var=$44$;
 	counter=LeabraNetwork::phase_no;
        };
        MethodCall @[2] {
 	desc="increments other phase state information to prepare for the next phase of settling";
 	flags=;
 	result_var=NULL;
-	obj=$38$;
+	obj=$43$;
 	method=LeabraNetwork::Trial_UpdatePhase;
 	meth_args {
 	 name=;
@@ -3650,7 +3937,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
       flags=;
       result_var=NULL;
-      obj=$38$;
+      obj=$43$;
       method=LeabraNetwork::Trial_Final;
       meth_args {
        name=;
@@ -3661,7 +3948,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=;
-      target=.projects[0].programs.gp[0][7]$40$;
+      target=.projects[0].programs.gp[0][7]$45$;
       targ_ld_init="*LeabraTrialMonitor*";
       prog_args {
        name=;
@@ -3688,8 +3975,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      NetUpdateView @[5] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=;
-      network_var=$38$;
-      update_var=.projects[0].programs.gp[0][3].vars[1]$41$;
+      network_var=$43$;
+      update_var=.projects[0].programs.gp[0][3].vars[1]$46$;
      };
     };
    };
@@ -3778,8 +4065,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=;
-      network_var=.projects[0].programs.gp[0][4].args[0]$42$;
-      local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$43$;
+      network_var=.projects[0].programs.gp[0][4].args[0]$47$;
+      local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$48$;
       counter=Network::cycle;
      };
     };
@@ -3790,15 +4077,15 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      NetCounterInit @[0] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=;
-      network_var=$42$;
-      local_ctr_var=$43$;
+      network_var=$47$;
+      local_ctr_var=$48$;
       counter=Network::cycle;
      };
      MethodCall @[1] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=;
       result_var=NULL;
-      obj=$42$;
+      obj=$47$;
       method=Network::Init_InputData;
       meth_args {
        name=;
@@ -3810,7 +4097,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=;
-      target=.projects[0].programs.gp[0][6]$44$;
+      target=.projects[0].programs.gp[0][6]$49$;
       targ_ld_init="*ApplyInputs*";
       prog_args {
        name=;
@@ -3854,7 +4141,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="initializes various counters at start of settling";
       flags=;
       result_var=NULL;
-      obj=$42$;
+      obj=$47$;
       method=LeabraNetwork::Settle_Init;
       meth_args {
        name=;
@@ -3881,7 +4168,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        AssignExpr @[0] {
 	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
 	flags=;
-	result_var=.projects[0].programs.gp[0][4].vars[1]$45$;
+	result_var=.projects[0].programs.gp[0][4].vars[1]$50$;
 	expr {
 	 expr="network.min_cycles";
 	 flags=;
@@ -3900,7 +4187,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        AssignExpr @[0] {
 	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
 	flags=;
-	result_var=$45$;
+	result_var=$50$;
 	expr {
 	 expr="network.min_cycles_phase2";
 	 flags=;
@@ -3923,7 +4210,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        ProgramCall @[0] {
 	desc="run the cycle program, which computes one cycle of activations";
 	flags=;
-	target=.projects[0].programs.gp[0][5]$46$;
+	target=.projects[0].programs.gp[0][5]$51$;
 	targ_ld_init="*LeabraCycle*";
 	prog_args {
 	 name=;
@@ -3950,8 +4237,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        NetCounterIncr @[1] {
 	desc="increment cycle counter (also on network)";
 	flags=;
-	network_var=$42$;
-	local_ctr_var=$43$;
+	network_var=$47$;
+	local_ctr_var=$48$;
 	counter=Network::cycle;
        };
        IfContinue @[2] {
@@ -3997,7 +4284,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=;
       result_var=NULL;
-      obj=$42$;
+      obj=$47$;
       method=LeabraNetwork::Settle_Final;
       meth_args {
        name=;
@@ -4026,7 +4313,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	desc="compute trial-level statistics";
 	flags=;
 	result_var=NULL;
-	obj=$42$;
+	obj=$47$;
 	method=LeabraNetwork::Compute_TrialStats;
 	meth_args {
 	 name=;
@@ -4061,7 +4348,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	desc="get external reward information";
 	flags=;
 	result_var=NULL;
-	obj=$42$;
+	obj=$47$;
 	method=LeabraNetwork::Compute_ExtRew;
 	meth_args {
 	 name=;
@@ -4079,8 +4366,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      NetUpdateView @[9] {
       desc="update network views, if update_net_view == true";
       flags=;
-      network_var=$42$;
-      update_var=.projects[0].programs.gp[0][4].vars[2]$47$;
+      network_var=$47$;
+      update_var=.projects[0].programs.gp[0][4].vars[2]$52$;
      };
     };
    };
@@ -4149,7 +4436,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="this does all the standard leabra processing for one cycle of activation updating";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].args[0]$48$;
+      obj=.projects[0].programs.gp[0][5].args[0]$53$;
       method=LeabraNetwork::Cycle_Run;
       meth_args {
        name=;
@@ -4160,8 +4447,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
       flags=;
-      network_var=$48$;
-      update_var=.projects[0].programs.gp[0][5].vars[0]$49$;
+      network_var=$53$;
+      update_var=.projects[0].programs.gp[0][5].vars[0]$54$;
      };
     };
    };
@@ -4248,7 +4535,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[0][6].objs[0]$50$;
+      object_val=.projects[0].programs.gp[0][6].objs[0]$55$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
@@ -4272,7 +4559,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][6].vars[0]$51$;
+      obj=.projects[0].programs.gp[0][6].vars[0]$56$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -4316,7 +4603,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=;
       result_var=NULL;
-      obj=$51$;
+      obj=$56$;
       method=taList_impl::CheckConfig;
       meth_args {
        name=;
@@ -4349,7 +4636,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=;
       result_var=NULL;
-      obj=$51$;
+      obj=$56$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name=;
@@ -4522,7 +4809,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="Output_act";
 	computed=0;
 	object_type=LeabraLayer;
-	object=.projects[0].networks[0].layers[2]$52$;
+	object=.projects[0].networks[0].layers[2]$57$;
 	variable="act";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4576,7 +4863,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][7].objs[0]$53$;
+      object_val=.projects[0].programs.gp[0][7].objs[0]$58$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
@@ -4600,7 +4887,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="set the network and datatable for the NetMonitor";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][7].vars[1]$54$;
+      obj=.projects[0].programs.gp[0][7].vars[1]$59$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -4644,7 +4931,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
       flags=;
       result_var=NULL;
-      obj=$54$;
+      obj=$59$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -4672,7 +4959,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
       flags=;
       result_var=NULL;
-      obj=$54$;
+      obj=$59$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -4705,7 +4992,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="add a new blank row to the data";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][7].vars[0]$55$;
+      obj=.projects[0].programs.gp[0][7].vars[0]$60$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -4717,7 +5004,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="get the new monitor data from the network and other sources -- this does the main work";
       flags=;
       result_var=NULL;
-      obj=$54$;
+      obj=$59$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -4729,7 +5016,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="update views and other things after writing new data to monitor data table";
       flags=;
       result_var=NULL;
-      obj=$55$;
+      obj=$60$;
       method=DataBlock::WriteClose;
       meth_args {
        name=;
@@ -4741,7 +5028,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][7].args[0]$56$;
+      obj=.projects[0].programs.gp[0][7].args[0]$61$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name=;
@@ -4776,6 +5063,33 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 vars {
 	 };
 	 var_names{ 	 };
+	 bad_vars{ 	 };
+	};
+       };
+      };
+     };
+     ProgramCall @[4] {
+      desc=;
+      flags=;
+      target=.projects[0].programs[1]$62$;
+      targ_ld_init="*ActBasedRField*";
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=LeabraNetwork;
+	type="LeabraNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network";
+	 flags=;
+	 var_expr="$#0#$";
+	 vars {
+	 };
+	 var_names{ network;	 };
 	 bad_vars{ 	 };
 	};
        };
@@ -4930,7 +5244,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="Hidden_Fm_Input_r_wt";
 	computed=0;
 	object_type=LeabraPrjn;
-	object=.projects[0].networks[0].layers[1].projections[0]$57$;
+	object=.projects[0].networks[0].layers[1].projections[0]$63$;
 	variable="r.wt";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4984,7 +5298,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][8].objs[0]$58$;
+      object_val=.projects[0].programs.gp[0][8].objs[0]$64$;
       objs_ptr=1;
       flags=NULL_CHECK;
       desc="network monitor object that contains full specs for what to record and where to get it";
@@ -4993,7 +5307,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$28$;
+      object_val=$33$;
       objs_ptr=0;
       flags=NULL_CHECK;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
@@ -5016,7 +5330,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[0] {
       desc="get the epoch timer from current network";
       flags=;
-      result_var=.projects[0].programs.gp[0][8].vars[2]$59$;
+      result_var=.projects[0].programs.gp[0][8].vars[2]$65$;
       expr {
        expr="network.epoch_time";
        flags=;
@@ -5031,7 +5345,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="set data and network on NetMonitor object";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][8].vars[1]$60$;
+      obj=.projects[0].programs.gp[0][8].vars[1]$66$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -5075,7 +5389,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="check configuration and emit errors/warnings for problems";
       flags=;
       result_var=NULL;
-      obj=$60$;
+      obj=$66$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -5103,7 +5417,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="update the monitor items and data schema based on current settings of NetMonitor";
       flags=;
       result_var=NULL;
-      obj=$60$;
+      obj=$66$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -5136,7 +5450,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="add a new blank row to the data";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][8].vars[0]$61$;
+      obj=.projects[0].programs.gp[0][8].vars[0]$67$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -5148,7 +5462,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
       flags=;
       result_var=NULL;
-      obj=$60$;
+      obj=$66$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -5159,7 +5473,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[2] {
       desc="get the epoch timer from current network";
       flags=;
-      result_var=$59$;
+      result_var=$65$;
       expr {
        expr="network.epoch_time";
        flags=;
@@ -5174,7 +5488,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
       flags=;
       result_var=NULL;
-      obj=$61$;
+      obj=$67$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -5234,7 +5548,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
       flags=;
       result_var=NULL;
-      obj=$61$;
+      obj=$67$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -5294,7 +5608,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="update after writing new data to monitor data table";
       flags=;
       result_var=NULL;
-      obj=$61$;
+      obj=$67$;
       method=DataBlock::WriteClose;
       meth_args {
        name=;
@@ -5421,7 +5735,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[4]$62$;
+      result_var=.projects[0].programs.gp[0][9].vars[4]$68$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -5465,7 +5779,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[3]$63$;
+      result_var=.projects[0].programs.gp[0][9].vars[3]$69$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -5509,7 +5823,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      AssignExpr @[3] {
       desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[5]$64$;
+      result_var=.projects[0].programs.gp[0][9].vars[5]$70$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
        flags=;
@@ -5523,8 +5837,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
       flags=;
-      result_var=.projects[0].programs.gp[0][9].vars[2]$65$;
-      obj=.projects[0].programs.gp[0][9].args[0]$66$;
+      result_var=.projects[0].programs.gp[0][9].vars[2]$71$;
+      obj=.projects[0].programs.gp[0][9].args[0]$72$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name=;
@@ -5600,7 +5914,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       desc="save the weights to that file name";
       flags=;
       result_var=NULL;
-      obj=$66$;
+      obj=$72$;
       method=Network::SaveWeights;
       meth_args {
        name=;
@@ -5649,7 +5963,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$67$;
+   m_data=.projects[0]$73$;
    name="DefaultProjectBrowser";
    visible=1;
    m_is_root=0;
@@ -5679,7 +5993,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$67$;
+     m_root=$73$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -5717,7 +6031,7 @@ FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$68$;
+	   spec=.colorspecs[0]$74$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -5775,7 +6089,7 @@ FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }
 	  };
 	  display=1;
 	  lay_mv=1;
-	  ordered_uvg_list{ anal1;	  };
+	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=7: z=3: };
@@ -5802,7 +6116,7 @@ FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=1;
-	  wt_prjn_lay=$52$;
+	  wt_prjn_lay=$57$;
 	 };
 	 GridTableView @[1] {
 	  m_data=$6$;
@@ -5812,7 +6126,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[1][0].data[0]$69$;
+	    m_data=.projects[0].data.gp[1][0].data[0]$75$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -5823,7 +6137,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[1][0].data[1]$70$;
+	    m_data=.projects[0].data.gp[1][0].data[1]$76$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -5834,7 +6148,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[1][0].data[2]$71$;
+	    m_data=.projects[0].data.gp[1][0].data[2]$77$;
 	    m_transform=NULL;
 	    name="trial";
 	    visible=1;
@@ -5845,7 +6159,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    m_data=.projects[0].data.gp[1][0].data[3]$72$;
+	    m_data=.projects[0].data.gp[1][0].data[3]$78$;
 	    m_transform=NULL;
 	    name="trial_name";
 	    visible=1;
@@ -5856,7 +6170,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    m_data=.projects[0].data.gp[1][0].data[4]$73$;
+	    m_data=.projects[0].data.gp[1][0].data[4]$79$;
 	    m_transform=NULL;
 	    name="group_name";
 	    visible=0;
@@ -5867,7 +6181,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    m_data=.projects[0].data.gp[1][0].data[5]$74$;
+	    m_data=.projects[0].data.gp[1][0].data[5]$80$;
 	    m_transform=NULL;
 	    name="phase_no";
 	    visible=0;
@@ -5878,7 +6192,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[6] {
-	    m_data=.projects[0].data.gp[1][0].data[6]$75$;
+	    m_data=.projects[0].data.gp[1][0].data[6]$81$;
 	    m_transform=NULL;
 	    name="minus_cycles";
 	    visible=1;
@@ -5889,7 +6203,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[7] {
-	    m_data=.projects[0].data.gp[1][0].data[7]$76$;
+	    m_data=.projects[0].data.gp[1][0].data[7]$82$;
 	    m_transform=NULL;
 	    name="sse";
 	    visible=1;
@@ -5900,7 +6214,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[8] {
-	    m_data=.projects[0].data.gp[1][0].data[8]$77$;
+	    m_data=.projects[0].data.gp[1][0].data[8]$83$;
 	    m_transform=NULL;
 	    name="ext_rew";
 	    visible=0;
@@ -5911,7 +6225,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[9] {
-	    m_data=.projects[0].data.gp[1][0].data[9]$78$;
+	    m_data=.projects[0].data.gp[1][0].data[9]$84$;
 	    m_transform=NULL;
 	    name="Output_act";
 	    visible=1;
@@ -5943,7 +6257,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=-0.9999813: 
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$68$;
+	   spec=$74$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -5964,7 +6278,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[1][1].data[0]$79$;
+	    m_data=.projects[0].data.gp[1][1].data[0]$85$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -5975,7 +6289,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[1][1].data[1]$80$;
+	    m_data=.projects[0].data.gp[1][1].data[1]$86$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -5986,7 +6300,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[1][1].data[2]$81$;
+	    m_data=.projects[0].data.gp[1][1].data[2]$87$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -5997,7 +6311,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    m_data=.projects[0].data.gp[1][1].data[3]$82$;
+	    m_data=.projects[0].data.gp[1][1].data[3]$88$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -6008,7 +6322,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    m_data=.projects[0].data.gp[1][1].data[4]$83$;
+	    m_data=.projects[0].data.gp[1][1].data[4]$89$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=0;
@@ -6019,7 +6333,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[5] {
-	    m_data=.projects[0].data.gp[1][1].data[5]$84$;
+	    m_data=.projects[0].data.gp[1][1].data[5]$90$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -6030,7 +6344,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[6] {
-	    m_data=.projects[0].data.gp[1][1].data[6]$85$;
+	    m_data=.projects[0].data.gp[1][1].data[6]$91$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -6041,7 +6355,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[7] {
-	    m_data=.projects[0].data.gp[1][1].data[7]$86$;
+	    m_data=.projects[0].data.gp[1][1].data[7]$92$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -6052,7 +6366,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[8] {
-	    m_data=.projects[0].data.gp[1][1].data[8]$87$;
+	    m_data=.projects[0].data.gp[1][1].data[8]$93$;
 	    m_transform=NULL;
 	    name="Hidden_Fm_Input_r_wt";
 	    visible=1;
@@ -6084,7 +6398,7 @@ FloatTransform @*(.m_transform) {scale={x=0.8087503: y=0.80875: z=0.80875: }: ro
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$68$;
+	   spec=$74$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -6105,7 +6419,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=$79$;
+	    m_data=$85$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -6113,7 +6427,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=$80$;
+	    m_data=$86$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -6121,7 +6435,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=$81$;
+	    m_data=$87$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -6129,7 +6443,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=$82$;
+	    m_data=$88$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -6137,7 +6451,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=$83$;
+	    m_data=$89$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
@@ -6145,7 +6459,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=$84$;
+	    m_data=$90$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -6153,7 +6467,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=$85$;
+	    m_data=$91$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -6161,7 +6475,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=$86$;
+	    m_data=$92$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -6169,7 +6483,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[8] {
-	    m_data=$87$;
+	    m_data=$93$;
 	    m_transform=NULL;
 	    name="Hidden_Fm_Input_r_wt";
 	    visible=1;
@@ -6401,7 +6715,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$68$;
+	   spec=$74$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -6451,7 +6765,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=$79$;
+	    m_data=$85$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -6459,7 +6773,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=$80$;
+	    m_data=$86$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -6467,7 +6781,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=$81$;
+	    m_data=$87$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -6475,7 +6789,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=$82$;
+	    m_data=$88$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -6483,7 +6797,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=$83$;
+	    m_data=$89$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
@@ -6491,7 +6805,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=$84$;
+	    m_data=$90$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -6499,7 +6813,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=$85$;
+	    m_data=$91$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -6507,7 +6821,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=$86$;
+	    m_data=$92$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -6739,7 +7053,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$68$;
+	   spec=$74$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -6789,7 +7103,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$88$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$94$;
 	    m_transform=NULL;
 	    name="Name";
 	    visible=1;
@@ -6800,7 +7114,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$89$;
+	    m_data=.projects[0].data.gp[0][0].data[1]$95$;
 	    m_transform=NULL;
 	    name="Input";
 	    visible=1;
@@ -6811,7 +7125,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$90$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$96$;
 	    m_transform=NULL;
 	    name="Output";
 	    visible=1;
@@ -6843,7 +7157,100 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$68$;
+	   spec=$74$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.5325: y=0.5175: z=1.443747: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.453747;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[3] {
+       m_data=NULL;
+       name="act_rf_data";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataView;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$16$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[1].objs[1].data[0]$97$;
+	    m_transform=NULL;
+	    name="Input";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].programs[1].objs[1].data[1]$98$;
+	    m_transform=NULL;
+	    name="Hidden";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=.projects[0].programs[1].objs[1].data[2]$99$;
+	    m_transform=NULL;
+	    name="Output";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$74$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -6894,7 +7301,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_def=0;
     UserData_DocLink @[0] {
      name="DocLink";
-     doc=.projects[0].docs[1]$91$;
+     doc=.projects[0].docs[1]$100$;
     };
    };
    name="LeabraNetwork_0";
@@ -6914,7 +7321,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$92$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$101$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: send_delta=0: i_thr=STD: };
@@ -7137,7 +7544,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$93$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$102$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -7157,7 +7564,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.04: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$94$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$103$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -7185,12 +7592,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$95$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$96$: };
+       from=.projects[0].networks[0].layers[0]$104$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$105$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$97$: };
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$106$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -7209,12 +7616,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=$52$;
-       spec {type=FullPrjnSpec: spec=$96$: };
+       from=$57$;
+       spec {type=FullPrjnSpec: spec=$105$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$97$: };
+       con_spec {type=LeabraConSpec: spec=$106$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -7247,7 +7654,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$93$: };
+     unit_spec {type=LeabraUnitSpec: spec=$102$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -7267,7 +7674,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=3.990983: g_i=3.990983: gp_g_i=0: g_i_orig=3.990983: };
      un_g_i {avg=3.990982: max=3.990983: max_i=0: };
      adapt_i {avg_avg=0.2323506: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$98$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$107$: };
      stm_gain=0.5;
      hard_clamped=0;
      dav=0;
@@ -7295,12 +7702,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraPrjn @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$99$;
-       spec {type=FullPrjnSpec: spec=$96$: };
+       from=$17$;
+       spec {type=FullPrjnSpec: spec=$105$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$97$: };
+       con_spec {type=LeabraConSpec: spec=$106$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -7333,7 +7740,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$93$: };
+     unit_spec {type=LeabraUnitSpec: spec=$102$: };
      ext_flag=TARG|EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -7353,7 +7760,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      i_val {kwta=2.659091: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=2.659091: max=2.659091: max_i=0: };
      adapt_i {avg_avg=0.06341866: i_kwta_pt=-0.6297244: g_bar_i=1: g_bar_l=0.1: };
-     spec {type=LeabraLayerSpec: spec=$94$: };
+     spec {type=LeabraLayerSpec: spec=$103$: };
      stm_gain=0.5;
      hard_clamped=1;
      dav=0;
@@ -7388,8 +7795,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=2029: sys=282: tot=3166845278: }: end={usr=2445: sys=316: tot=3166845727: }: used={usr=416: sys=34: tot=449: }: n_used=1: };
-   epoch_time {name="epoch_time": start={usr=2376: sys=309: tot=3166845652: }: end={usr=2445: sys=316: tot=3166845727: }: used={usr=69: sys=7: tot=75: }: n_used=1: };
+   train_time {name="train_time": start={usr=5252: sys=716: tot=3172346602: }: end={usr=5448: sys=736: tot=3172346821: }: used={usr=196: sys=20: tot=219: }: n_used=1: };
+   epoch_time {name="epoch_time": start={usr=5416: sys=733: tot=3172346785: }: end={usr=5448: sys=736: tot=3172346820: }: used={usr=32: sys=3: tot=35: }: n_used=1: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };

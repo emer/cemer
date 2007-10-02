@@ -168,7 +168,7 @@ bool taImage::ImageToDataCell(DataTable* dt, int col, int row) {
     rval = false;
   }
 
-  taBase::unRef(mat);
+  taBase::unRefDone(mat);
   DataUpdate(false); 
 
   return rval;

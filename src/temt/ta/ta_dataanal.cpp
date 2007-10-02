@@ -832,6 +832,9 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
   float_Matrix yprjn;
   taMath_float::mat_prjn(&yprjn, (float_Matrix*)da->AR(), yrow, metric, norm, tol);
 
+  taBase::UnRef(xrow);
+  taBase::UnRef(yrow);
+
   DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
 
   GetDest(prjn_data, src_data, "col_" + data_col_nm + "_RowPat2dPrjn");
