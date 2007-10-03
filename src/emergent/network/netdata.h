@@ -414,15 +414,15 @@ public:
   };
 
   DataTableRef	rf_data;
-  // the data table containing the results of the receptive field computation (is completely configured by this object!) -- columns are layers of the network, and rows are units of the trg_layer -- this is computed from sum_data / wt_data followed by normalization
+  // the data table containing the results of the receptive field computation (is completely configured by this object!) -- columns are layers of the network, and rows are units of the trg_layer -- this is computed from sum_data / wt_array followed by normalization
   DataTable	sum_data;
-  // #READ_ONLY #HIDDEN #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_data followed by normalization
-  DataTable	wt_data;
-  // #READ_ONLY #HIDDEN #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activations: rf_data is sum_data / wt_data followed by normalization 
+  // #READ_ONLY #HIDDEN #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_array followed by normalization
+  float_Matrix	wt_array;
+  // #READ_ONLY #HIDDEN #NO_SAVE array of length = number of units in trg_layer -- contains accumulated weights for each unit
   NetworkRef	network;
   // the network to operate on -- all layers (except lesioned or iconified) are computed, with each layer getting a column of the data table
   LayerRef	trg_layer;
-  // the target layer to compute receptive fields for: each unit in the layer gets a row of the data table, and the columns in that row show the activation based receptive field for that unit for all the other layers in the network
+  // #NO_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table, and the columns in that row show the activation based receptive field for that unit for all the other layers in the network
   NormMode	norm_mode;
   // how to normalize the resulting values
   float		threshold;

@@ -333,11 +333,11 @@ public:
   ///////////////////////////////////////////////////////////////
   // Matrix ops -- you must Ref/UnRef taMatrix return types
   taMatrix*	GetValAsMatrix(int row);
-  // #CAT_XpertAccess gets the cell as a slice of the entire column (note: not const -- you can write it)
+  // #CAT_XpertAccess gets the cell as a slice of the entire column (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
   // #CAT_XpertModify set the matrix cell from a same-sized matrix 
   taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
-  // #CAT_XpertAccess gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it)
+  // #CAT_XpertAccess gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
   bool		GetMinMaxScale(MinMax& mm);
   // #CAT_Display get min-max range of values contained within this column 
   
@@ -668,6 +668,8 @@ public:
   // #MENU #MENU_ON_Rows #CAT_Rows Remove n rows of data, starting at st_row.  st_row = -1 means last row, and n_rows = -1 means remove from starting row to end
   virtual void		RemoveAllRows() { ResetData(); }
   // #MENU #CAT_Rows #CONFIRM remove all of the rows of data, but keep the column structure
+  virtual void		EnforceRows(int n_rows);
+  // #CAT_Rows ensure that there are exactly n_rows in the table, removing or adding as needed
   virtual bool		DuplicateRow(int row_no, int n_copies=1);
   // #MENU #CAT_Rows duplicate given row number, making given number of copies of it (adds new rows at the end)
   const Variant		GetColUserData(const String& name, int col) const;
@@ -867,11 +869,11 @@ public:
   // 	Entire Matrix
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
-  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
   // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
-  // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; YOU MUST REF MATRIX; note: not const because you can write it
+  // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
 
   int 			GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void			GetFlatGeom(const CellRange& cr, int& tot_cols, 

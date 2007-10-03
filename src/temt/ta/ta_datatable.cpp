@@ -759,6 +759,15 @@ void DataTable::AllocRows(int n) {
   }
 }
 
+void DataTable::EnforceRows(int nr) {
+  if(rows > nr) {
+    RemoveRows(nr, rows - nr);
+  }
+  else if(rows < nr) {
+    AddRows(nr - rows);
+  }
+}
+
 bool DataTable::AssertSinkChannel(ChannelSpec* cs) {
   if (TestError(!cs, "AssertSinkChannel", "channel spec is null")) return false;
   DataCol* da = GetColForChannelSpec_impl(cs);

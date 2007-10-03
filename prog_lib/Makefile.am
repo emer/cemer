@@ -1,6 +1,7 @@
 pkgdata_prog_libdir = $(pkgdatadir)/prog_lib
 
 dist_pkgdata_prog_lib_DATA =\
+	ActBasedRField.prog \
 	ApplyInputs.prog \
 	ApplyInputsImage.prog \
 	BpAll_Std.progp \

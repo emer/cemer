@@ -1276,6 +1276,7 @@ String ActBasedRF::GetDisplayName() const {
 }
 
 void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
+  dt->StructUpdate(true);
   int rows = trg_layer->units.leaves;
   int idx;
   Layer* lay;
@@ -1289,15 +1290,16 @@ void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
     else
       da = dt->FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
 			  lay->un_geom.y);
-    da->EnforceRows(rows);
   }
+  dt->EnforceRows(rows);
+  dt->StructUpdate(false);
 }
 
 void ActBasedRF::InitData() {
   if(!network || !rf_data || !trg_layer) return;
   ConfigDataTable(rf_data, network);
   ConfigDataTable(&sum_data, network);
-  ConfigDataTable(&wt_data, network);
+  wt_array.SetGeom(1, trg_layer->units.leaves);
 
   for(int i=0;i<rf_data->data.size; i++) {
     DataCol* da = rf_data->data.FastEl(i);
@@ -1307,10 +1309,8 @@ void ActBasedRF::InitData() {
     DataCol* da = sum_data.data.FastEl(i);
     ((float_Matrix*)da->AR())->InitVals();
   }
-  for(int i=0;i<wt_data.data.size; i++) {
-    DataCol* da = wt_data.data.FastEl(i);
-    ((float_Matrix*)da->AR())->InitVals();
-  }
+  wt_array.InitVals();
+  rf_data->UpdateAllViews();
 }
 
 void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
@@ -1321,7 +1321,6 @@ void ActBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay) {
   if(!network || !rf_data || !trg_layer) return;
   rf_data->ResetData();
   sum_data.ResetData();
-  wt_data.ResetData();
   InitData();
 }
 
@@ -1334,18 +1333,13 @@ bool ActBasedRF::IncrementSums() {
   FOR_ITR_EL(Layer, lay, network->layers., li) {
     if(lay->lesioned() || lay->Iconified()) continue;
     DataCol* sum_da = NULL;
-    DataCol* wt_da = NULL;
     if(lay->unit_groups) {
       sum_da = sum_data.FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
-					lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
-      wt_da = wt_data.FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,
 					lay->un_geom.y, lay->gp_geom.x, lay->gp_geom.y);
     }
     else {
       sum_da = sum_data.FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
 					lay->un_geom.y);
-      wt_da = wt_data.FindMakeColName(lay->name, idx, VT_FLOAT, 2, lay->un_geom.x,
-				       lay->un_geom.y);
     }
 
     int tidx = 0;
@@ -1355,20 +1349,17 @@ bool ActBasedRF::IncrementSums() {
       float tact = fabsf(tu->act);
       if(tact < threshold) continue; // not this time!
 
-      // todo: could probably re-write below using matrix cell data directly
+      wt_array.FastEl(tidx) += tact;
+
+      float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(tidx);
+      taBase::Ref(sum_mat);
       int sidx = 0;
       Unit* su;
       taLeafItr sui;
       for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
-	float sm = sum_da->GetValAsFloatM(tidx, sidx);
-	float wt = wt_da->GetValAsFloatM(tidx, sidx);
-
-	sm += tu->act * su->act;
-	wt += tact;
-
-	sum_da->SetValAsFloatM(sm, tidx, sidx);
-	wt_da->SetValAsFloatM(wt, tidx, sidx);
+	sum_mat->FastEl(sidx) += tu->act * su->act;
       }
+      taBase::unRefDone(sum_mat);
     }
   }
   return true;
@@ -1376,16 +1367,32 @@ bool ActBasedRF::IncrementSums() {
 
 bool ActBasedRF::ComputeRF() {
   if(!rf_data) return false;
-  if(rf_data->data.size != sum_data.data.size || sum_data.data.size != wt_data.data.size)
+  if(TestError(rf_data->data.size != sum_data.data.size ||
+	       sum_data.rows != wt_array.size, "ComputeRF", "data tables not the same size, do InitData and re-run!"))
     return false;
 
+  // first, do the normalization
   for(int i=0;i<rf_data->data.size; i++) {
     DataCol* rf_da = rf_data->data.FastEl(i);
     DataCol* sum_da = sum_data.data.FastEl(i);
-    DataCol* wt_da = sum_data.data.FastEl(i);
-  
-    *(rf_da->AR()) = *(sum_da->AR()); // fast matrix copy
-    taMath_float::vec_div_els((float_Matrix*)rf_da->AR(), (float_Matrix*)wt_da->AR()); // divide
+    
+    for(int r=0;r<rf_data->rows; r++) {
+      float wt = wt_array.FastEl(r);
+      float sc = 1.0f;
+      if(wt > 0.0f)
+	sc = 1.0f / wt;
+      float_Matrix* rf_mat = (float_Matrix*)rf_da->GetValAsMatrix(r);
+      float_Matrix* sum_mat = (float_Matrix*)sum_da->GetValAsMatrix(r);
+      taBase::Ref(rf_mat);
+      taBase::Ref(sum_mat);
+      
+      for(int j=0;j<rf_mat->size; j++) {
+	rf_mat->FastEl(j) = sum_mat->FastEl(j) * sc;
+      }
+
+      taBase::unRefDone(rf_mat);
+      taBase::unRefDone(sum_mat);
+    }
   }
 
   int idx;
@@ -1457,6 +1464,8 @@ bool ActBasedRF::ComputeRF() {
     break;
   }
   }
+
+  rf_data->UpdateAllViews();
   return true;
 }
 
@@ -1489,5 +1498,6 @@ bool ActBasedRF::CopyRFtoNetWtPrjn(int trg_unit_no) {
       u->wt_prjn = rfv;
     }
   }
+  network->UpdateAllViews();
   return true;
 }
