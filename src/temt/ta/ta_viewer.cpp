@@ -911,7 +911,6 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   FrameViewer* fv = NULL;
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   rval->SetData(proj);
-  rval->m_not_is_proj_browser = false;
   // tree guy
   tabBrowseViewer* cb = tabBrowseViewer::New(proj);
   rval->frames.Add(cb);
@@ -920,19 +919,20 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   MainWindowViewer* viewer = NULL; // only for 2x2 mode
   switch (taMisc::proj_view_pref) {
   case taMisc::PVP_2x2: {
+    rval->setBrowserViewer(true, false);
     viewer = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
     fv = viewer->AddFrameByType(&TA_PanelViewer);
     fv = viewer->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
     viewer->SetData(proj);
-    viewer->m_is_proj_viewer = true;
+    viewer->setBrowserViewer(false, true);
     // twiddle sizes a bit, to get overlap
     rval->SetUserData("view_win_wd", 0.6667f);
     viewer->SetUserData("view_win_lft", 0.3333f);
     viewer->SetUserData("view_win_wd", 0.6667f);
   } break;
   case taMisc::PVP_3PANE: {
+    rval->setBrowserViewer(true, true);
     fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
-    rval->m_is_proj_viewer = true;
   } break;
   // no default, must handle all cases
   }
@@ -957,7 +957,7 @@ MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
   FrameViewer* fv = viewer->AddFrameByType(&TA_PanelViewer);
   fv = viewer->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
   viewer->SetData(proj);
-  viewer->m_is_proj_viewer = true;
+  viewer->setBrowserViewer(false, true);
   // twiddle sizes a bit, to get overlap
   viewer->SetUserData("view_win_lft", 0.3333f);
   viewer->SetUserData("view_win_wd", 0.6667f);
@@ -967,7 +967,7 @@ MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
 
 void MainWindowViewer::Initialize() {
   m_is_root = false;
-  m_not_is_proj_browser = true; // note: for compatability
+  m_is_viewer_xor_browser = false; // note: weird, for compatability w <=4.0.6
   m_is_proj_viewer = false;
   m_is_dialog = false;
   menu = NULL;
@@ -1188,6 +1188,19 @@ void MainWindowViewer::FrameSizeToSize(iSize& sz) {
 
 void MainWindowViewer::Hide_impl() {
   widget()->lower();
+}
+
+bool MainWindowViewer::isProjBrowser() const {
+  return m_is_proj_viewer ? !m_is_viewer_xor_browser : m_is_viewer_xor_browser;
+}
+
+bool MainWindowViewer::isProjShower() const {
+  return !(m_is_proj_viewer || m_is_viewer_xor_browser);
+}
+   
+void MainWindowViewer::setBrowserViewer(bool is_browser, bool is_viewer) {
+  m_is_proj_viewer = is_viewer;
+  m_is_viewer_xor_browser = is_viewer ? !is_browser : is_browser;
 }
 
 void MainWindowViewer::MakeWinName_impl() {

@@ -7733,41 +7733,62 @@ bool taBase::BrowserSelectMe() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
-  if(!mwv) return false;
-  iMainWindowViewer* imwv = mwv->widget();
-  if(!imwv) return false;
-
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  return (bool)imwv->AssertBrowserItem(link);
+  
+  bool rval = false;
+  // iterate to find all Browsers 
+  for (int i = 0; i < proj->viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+  
+    rval = rval || (bool)imwv->AssertBrowserItem(link);
+  }
+  return rval;
 }
 
 bool taBase::BrowserExpandAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
-  if(!mwv) return false;
-  iMainWindowViewer* imwv = mwv->widget();
-  if(!imwv) return false;
-
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  return (bool)imwv->BrowserExpandAllItem(link);
+  
+  bool rval = false;
+  // iterate to find all Browsers 
+  for (int i = 0; i < proj->viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+  
+    rval = rval || (bool)imwv->BrowserExpandAllItem(link);
+  }
+  return rval;
 }
 
 bool taBase::BrowserCollapseAll() {
   if(!taMisc::gui_active) return false;
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  MainWindowViewer* mwv = proj->GetDefaultProjectBrowser();
-  if(!mwv) return false;
-  iMainWindowViewer* imwv = mwv->widget();
-  if(!imwv) return false;
-
   taiDataLink* link = (taiDataLink*)GetDataLink();
   if (!link) return false;
-  return (bool)imwv->BrowserCollapseAllItem(link);
+  
+  bool rval = false;
+  // iterate to find all Browsers 
+  for (int i = 0; i < proj->viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+  
+    rval = rval || (bool)imwv->BrowserCollapseAllItem(link);
+  }
+  return rval;
 }
 

@@ -582,7 +582,7 @@ public:
     // get the default pv for given project, or whatever one is current if NULL -- for 3-pane B==V for 2x2 B is the tree guy V is the T3 guy
   
   bool			m_is_root; // #READ_ONLY #SAVE #NO_SHOW
-  bool			m_not_is_proj_browser; // #READ_ONLY #SAVE #NO_SHOW (~ for compat reasons)
+  bool			m_is_viewer_xor_browser; // #READ_ONLY #SAVE #NO_SHOW (weird, for compat w <=4.0.6)
   bool			m_is_proj_viewer; // #READ_ONLY #SAVE #NO_SHOW
   bool			m_is_dialog; // #READ_ONLY #SAVE #NO_SHOW when we use the viewer as an edit dialog
   
@@ -597,12 +597,12 @@ public:
 
   bool			isDialog() const {return m_is_dialog;}
   override bool		isRoot() const {return m_is_root;}
-  bool			isProjBrowser() const {return !m_not_is_proj_browser;}
+  bool			isProjBrowser() const;
     // main proj window with tree browser (always t for 3-pane guy)
   bool			isProjViewer() const {return m_is_proj_viewer;}
     // main proj window with t3 guy (always t for 3-pane guy)
-  bool			isProjShower() const 
-    {return m_is_proj_viewer || !m_not_is_proj_browser;} // if a proj viewer or browser 
+  bool			isProjShower() const; // if a proj viewer or browser 
+  void			setBrowserViewer(bool is_browser, bool is_viewer); // use this to set the weird  bits
 
   inline iMainWindowViewer* widget() {return (iMainWindowViewer*)inherited::widget();} 
 
