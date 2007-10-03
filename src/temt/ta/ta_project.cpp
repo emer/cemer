@@ -327,7 +327,7 @@ void taProject::InitLinks_post() {
     AssertDefaultProjectBrowser(true);
     AssertDefaultWiz(true);	// make default and do edit it
   } else {
-    AssertDefaultProjectBrowser(false);
+//NO    AssertDefaultProjectBrowser(false);
     AssertDefaultWiz(false);	// make default and don't edit it
   }
   // then select second tab -- see PostLoadAutos for more info

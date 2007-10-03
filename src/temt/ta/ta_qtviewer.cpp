@@ -4040,6 +4040,18 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjShower()) return; // changes only applied for proj showers
 
   taProject* proj = curProject();
+  // only closing last browser is important (easier to check that here than below)
+  MainWindowViewer* mwv = viewer();
+  if (!mwv) return; // shouldn't happen
+  if (!mwv->isProjBrowser()) return;
+  // ok, if this isn't last, then bail
+  int cnt = 0; // just bail if 2+
+  for (int i = 0; i < proj->viewers.size; i++) {
+    mwv = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    if (!mwv || !(mwv->isProjBrowser() && mwv->isMapped())) continue;
+    if (++cnt >= 2) return;
+  }
+  
   if (isDirty() && !(proj && proj->m_no_save)) {
     bool forced = (cancel_op == CO_NOT_CANCELLABLE);
     int chs;
