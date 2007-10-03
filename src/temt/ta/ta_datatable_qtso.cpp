@@ -2493,13 +2493,17 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
 	DataCol* da = GetDAPtr();
 	if(da) {
 	  int rnum = (int)lab_val;// lab_val is row number!
-	  if(rnum >= 0 && rnum < da->rows())
+	  if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
 	    label = da->GetValAsString(rnum);
+	  else
+	    label = "";		// empty it!
 	}
       }
-      t3ax->addLabel(label.chars(),
+      if(label.nonempty()) {
+	t3ax->addLabel(label.chars(),
 		     iVec3f(fm.x, fm.y - y_lab_off, fm.z),
 		     SoAsciiText::CENTER);
+      }
     }
   }
 }

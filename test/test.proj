@@ -6104,7 +6104,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    name="DefaultProjectBrowser";
    visible=1;
    m_is_root=0;
-   m_not_is_proj_browser=0;
+   m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
@@ -6636,7 +6636,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	  };
 	  main_xform {scale={x=0.4119503: y=0.4119501: z=0.4119501: }: rotate={x=-1.000219: y=0: z=0: rot=0.005980202: }: translate={x=0.2203933: y=0.9595687: z=0.002735832: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=5: };
+	  view_range {min=0: max=21: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  x_axis {
@@ -6645,10 +6645,10 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=5: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=21: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=5: };
-	   range {min=0: max=5: };
+	   data_range {min=0: max=21: };
+	   range {min=0: max=21: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -6974,7 +6974,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=5: };
+	  view_range {min=0: max=21: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  x_axis {
@@ -6983,10 +6983,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=5: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=21: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=5: };
-	   range {min=0: max=5: };
+	   data_range {min=0: max=21: };
+	   range {min=0: max=21: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -7602,7 +7602,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.1: err=0.9: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -7635,7 +7635,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.1: err=0.9: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };

@@ -4041,6 +4041,7 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
 
   taProject* proj = curProject();
   // only closing last browser is important (easier to check that here than below)
+  if(!proj) return;		// does happen!
   MainWindowViewer* mwv = viewer();
   if (!mwv) return; // shouldn't happen
   if (!mwv->isProjBrowser()) return;
