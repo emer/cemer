@@ -5784,7 +5784,7 @@ void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
     if(!prjn) continue;
     Layer* slay = (swt ? prjn->layer : prjn->from);
 
-    if(slay->lesioned() || (prjn->from == prjn->layer)) continue; // no self prjns!!
+    if(slay->lesioned() || (prjn->from.ptr() == prjn->layer)) continue; // no self prjns!!
     slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT);
 
     if(swt) {
@@ -5841,7 +5841,7 @@ void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
 	  if(!prjn) continue;
 	  Layer* slay = (swt ? prjn->layer : prjn->from);
 
-	  if(slay->lesioned() || (prjn->from == prjn->layer) ||
+	  if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
 	     slay->HasLayerFlag(Layer::PROJECT_WTS_DONE)) continue;
 	  slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT); // next..
 	  got_some = true;			       // keep going..

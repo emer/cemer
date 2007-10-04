@@ -26,6 +26,7 @@
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -85,6 +86,7 @@ copy $(TargetDir)css*.exe $(SolutionDir)bin
 				PreprocessorDefinitions="TA_DLL;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
+				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -145,10 +147,10 @@ copy $(TargetDir)css*.exe $(SolutionDir)bin
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
-				RelativePath=".\resource.h">
+				RelativePath=".\Resource.h">
 			</File>
 			<File
-				RelativePath=".\Resource.h">
+				RelativePath=".\resource.h">
 			</File>
 		</Filter>
 		<Filter

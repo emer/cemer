@@ -28,12 +28,13 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				EnableEnhancedInstructionSet="2"
+				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4250;4661"/>
+				DisableSpecificWarnings="4258"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -94,12 +95,13 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
+				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4250;4661;4311"/>
+				DisableSpecificWarnings="4258"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -631,9 +633,6 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_program_qt.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\temt\ta\ta_server.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\src\temt\ta\ta_project.cpp">
 				</File>
 				<File
@@ -665,6 +664,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_seledit.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\temt\ta\ta_server.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_string.cpp">
@@ -839,9 +841,6 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_program_qt.h">
 				</File>
 				<File
-					RelativePath="..\..\..\src\temt\ta\ta_server.h">
-				</File>
-				<File
 					RelativePath="..\..\..\src\temt\ta\ta_project.h">
 				</File>
 				<File
@@ -882,6 +881,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_seledit.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\temt\ta\ta_server.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_stdef.h">
@@ -987,10 +989,10 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_qttype_def.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\temt\ta\ta_server.moc.cpp">
+					RelativePath="..\..\..\src\temt\ta\ta_qtviewer.moc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\src\temt\ta\ta_qtviewer.moc.cpp">
+					RelativePath="..\..\..\src\temt\ta\ta_server.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_TA.cpp">
