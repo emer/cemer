@@ -1,0 +1,1 @@
+Welcome to the Emergent Neural Network Simulation System installer. You will be guided through the steps necessary to install emergent. When you are finished, just go to your /Applications folder, and double click on 'emergent.app'
