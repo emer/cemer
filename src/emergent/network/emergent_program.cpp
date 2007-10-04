@@ -233,6 +233,7 @@ const String NetGroupedDataLoop::GenCssPre_impl(int indent_level) {
   rval += id3 + "else item_data_row_idx = data_loop->item_idx_list[" + it_idx_nm + "];\n";
   rval += id3 + "if(!" + data_nm + "->ReadItem(item_data_row_idx)) break;\n";
   rval += id3 + data_nm + "->WriteItem(item_data_row_idx); // set write to same as read, in case mods happening along the way\n";
+  rval += id3 + "trial = " + it_idx_nm + "; network.trial = " + it_idx_nm + ";\n";
   return rval;
 }
 
