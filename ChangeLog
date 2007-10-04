@@ -1,3 +1,1389 @@
+2007-10-04 16:02  mingus
+
+	* emergent/trunk/install_mac_app/installer_files,
+	  emergent/trunk/install_mac_app/installer_files/COPYING.txt,
+	  emergent/trunk/install_mac_app/installer_files/INTRODUCTION.txt,
+	  emergent/trunk/install_mac_app/installer_files/emergent_installer.jpg:
+	  Aux files for using PackageMaker
+
+2007-10-04 06:04  baisa
+
+	* emergent/trunk/build/msvc7/bin/coin2.dll,
+	  emergent/trunk/build/msvc7/bin/coin2d.dll,
+	  emergent/trunk/build/msvc7/bin/soqt1.dll,
+	  emergent/trunk/build/msvc7/bin/soqt1d.dll,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.rc,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.vcproj,
+	  emergent/trunk/build/msvc7/maketa/maketa.vcproj,
+	  emergent/trunk/build/msvc7/plugins/HelloWorld/HelloWorld.vcproj,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj,
+	  emergent/trunk/src/emergent/network/netstru.cpp: Windows build
+	  changes
+
+2007-10-04 01:26  oreilly
+
+	* emergent/trunk/src/emergent/network/emergent_program.cpp: Net
+	  Data Loop Gp now updates trial counters
+
+2007-10-03 06:48  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/test/test.proj: * temporary fix for proj viewer
+	  close crash (bug 160) * fixed display of axis labels that have
+	  string values -- only displays where there are actual labels.
+
+2007-10-03 03:45  oreilly
+
+	* emergent/trunk/configure.ac,
+	  emergent/trunk/prog_lib/ActBasedRField.prog,
+	  emergent/trunk/prog_lib/Makefile.am,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/test/test.proj: * NEW VERSION NUMBER: 4.0.7 *
+	  Activation based receptive field: ActBasedRF and
+	  ActBasedRField.prog * EnforceRows on DataTable
+
+2007-10-03 03:03  baisa
+
+	* emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp: seemingly all the
+	  3-pane 2x2 bugs resolved
+
+2007-10-03 01:57  baisa
+
+	* emergent/trunk/src/temt/ta/ta_qtdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h,
+	  emergent/trunk/test/leabra_ra.proj: intermediate checkin
+
+2007-10-02 23:00  oreilly
+
+	* emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/temt/ta/ta_dataanal.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/test/test.proj: ActBasedRF 99% done -- just needs
+	  a bit more testing -- gotta run until 7pm unfortunately
+
+2007-10-02 07:45  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/emergent/network/netstru_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/test/test.proj: weight projection through
+	  intervening layers! selectd wt prjn in netview control to choose
+	  a layer to project onto. underlying routine projects everywhere,
+	  is visible as wt_prjn variable on units. looks very promising so
+	  far!
+
+2007-10-02 05:04  baisa
+
+	* emergent/trunk/src/temt/ta/ta_project.cpp: bug BugID:155 2x2
+	  should now be fully working
+
+2007-10-02 04:37  baisa
+
+	* emergent/trunk/build/msvc7/Makefile,
+	  emergent/trunk/build/msvc7/config.h,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp: Windows
+	  codebase updates
+
+2007-10-01 05:48  oreilly
+
+	* emergent/trunk/prog_lib/LeabraBatch.prog,
+	  emergent/trunk/prog_lib/LeabraStartup.prog,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/spec.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/test/leabra_ra.proj: * Layer::NO_ADD_COMP_SSE
+	  (for Tom) * MemberFmArg prog element (stashed in misc_fun
+	  toolbox) sets member from arg val (Jeremy's idea) * bug #152:
+	  UpdatePointersNewPar in Copy_ for Layer and Projection, and for
+	  spec ptrs -- makes sure that specs et al always point to
+	  something within current network after a copy or move. * bug
+	  #87: call ParseExpr() for all ProgExpr during CssCode gen --
+	  ensures that when Init is pressed, all variables will be
+	  re-parsed so you don't get dangling unbound vars that when you
+	  later rename won't fix all cases..
+
+2007-09-30 04:29  oreilly
+
+	* emergent/trunk/src/temt/css/css_c_ptr_types.cpp: c_bool
+	  operator= string fix -- wasn't setting value!
+
+2007-09-30 02:28  baisa
+
+	* emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_server.cpp,
+	  emergent/trunk/src/temt/ta/ta_server.h,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.h,
+	  emergent/trunk/src/temt/ta/ta_variant.cpp,
+	  emergent/trunk/src/temt/ta/ta_variant.h,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h: main internal
+	  infrastructure and basic docs done for server
+
+2007-09-29 07:43  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp: dog
+	  surr_mult fix
+
+2007-09-29 06:53  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h: minor kwta
+	  cleanup
+
+2007-09-29 06:15  baisa
+
+	* emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h: intermediate checkin,
+	  new windowing facilities
+
+2007-09-29 06:00  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/network/spec.cpp: New
+	  LeabraLayerSpec inhib organization: compute_i, i_kwta_pt,
+	  gp_i_pt all integrated plus the new params for the new
+	  KWTA_COMP_COST function -- competitor cost this function
+	  produces 100% reliable popout across a range of display configs
+	  in the hv popout test guy. So, at least we have that one figured
+	  out now.. ;)
+
+2007-09-29 00:25  baisa
+
+	* emergent/trunk/src/temt/ta/ta_viewer.h,
+	  emergent/trunk/src/temt/taiqtso/itreewidget.cpp: bug bugID:92
+
+2007-09-28 23:04  baisa
+
+	* emergent/trunk/src/emergent/network/pdpserver_qt.cpp,
+	  emergent/trunk/src/emergent/network/pdpserver_qt.h: rm
+
+2007-09-28 04:55  oreilly
+
+	* emergent/trunk/prog_lib/CanvasDemo.prog,
+	  emergent/trunk/prog_lib/Makefile.am,
+	  emergent/trunk/test/test.proj: added canvas demo to proglib
+
+2007-09-28 03:15  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h: surr_mult in
+	  salience prjn spec.
+
+2007-09-27 16:39  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp: Fixed
+	  offset for SaliencyPrjnSpec
+
+2007-09-27 08:47  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.h: fixed DOG filter to use
+	  flt_net; also in V1RFPrjnSpec -- uses net just like gabor.
+	  Saliency now uses DoG too and has convergence parameter for
+	  sampling down large V1_high layer.
+
+2007-09-26 17:41  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp: small v1rf
+	  prjn fix for move != half width
+
+2007-09-26 07:31  oreilly
+
+	* emergent/trunk/demo/data_proc/Makefile.am,
+	  emergent/trunk/demo/data_proc/canvas_drawing.proj,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.h,
+	  emergent/trunk/src/temt/ta/ta_type.cpp: added taCanvas object
+	  (inherits from taImage) which supports basic graphical drawing
+	  operations on the image. Interface is similar to old "xcss"
+	  program and can be used for similar stimulus construction
+	  projects, now with all the power and convenience of Programs!
+
+2007-09-25 21:06  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/emergent/network/netstru_qtso.h,
+	  emergent/trunk/src/emergent/network/netstru_so.cpp,
+	  emergent/trunk/src/emergent/network/netstru_so.h,
+	  emergent/trunk/test/test.proj: wt_lines: display weight values
+	  as lines for selected unit.
+
+2007-09-24 20:33  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/test/test.proj: fixed positioning of new layers
+	  -- just goes 1 beyond current max z instead of setting z to # of
+	  layers. also doesn't reposition if transferred to a subgroup.
+
+2007-09-24 07:11  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.h,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h: DoGFilterRetina was
+	  normalizing things in the extreme, producing weird results: it
+	  separately normalized each on and off component for each filter.
+	  Now, normalization is by the max val across all filters, so you
+	  get a clear relative scaling of color vs. bw etc. much saner.
+	  Also, grey = sum of rgb, not avg, which ensures that colors are
+	  relative to intensity. Added some vector by scalar ops in math.
+
+2007-09-23 16:49  oreilly
+
+	* emergent/trunk/demo/data_proc/epoch_log_analysis.proj,
+	  emergent/trunk/prog_lib/EpochsToTrain.prog,
+	  emergent/trunk/src/emergent/network/netstru.cpp: layer = NULL in
+	  Projection::Initialize fixes project conversion bug..
+
+2007-09-23 05:53  oreilly
+
+	* emergent/trunk/demo/data_proc/Makefile.am,
+	  emergent/trunk/demo/data_proc/epoch_log_analysis.proj,
+	  emergent/trunk/demo/data_proc/epoch_log_analysis.sh,
+	  emergent/trunk/demo/data_proc/epoch_log_analysis_sample_data.epc.dat,
+	  emergent/trunk/prog_lib/EpochsToTrain.prog,
+	  emergent/trunk/prog_lib/LeabraTrainBatchSeedList.prog,
+	  emergent/trunk/prog_lib/Makefile.am: added epoch_log_analysis
+	  demo project, and some other related updates.
+
+2007-09-23 03:42  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h: added new leabra
+	  kwta mode -- KWTA_KV2K -- k vs. 2k -- takes avg of top k vs.
+	  average of next k -- should have several nice properties in
+	  terms of not being dragged down by tail of distribution, and
+	  only being concerned with the units right around the "edge".
+	  this also generalizes well to the k=1 case, where it is
+	  equivalent to std (non avg based) KWTA, which is where it is
+	  typically used.
+
+2007-09-22 04:49  baisa
+
+	* emergent/trunk/src/emergent/network/Makefile.am,
+	  emergent/trunk/src/emergent/network/files.mta,
+	  emergent/trunk/src/temt/ta/Makefile.am,
+	  emergent/trunk/src/temt/ta/files.mta,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_server.cpp,
+	  emergent/trunk/src/temt/ta/ta_server.h: server moved and
+	  compiling ok
+
+2007-09-22 03:38  baisa
+
+	* emergent/trunk/src/emergent/network/Makefile.am,
+	  emergent/trunk/src/emergent/network/pdpserver.cpp,
+	  emergent/trunk/src/emergent/network/pdpserver.h,
+	  emergent/trunk/src/temt/ta/Makefile.am,
+	  emergent/trunk/src/temt/ta/ta_server.cpp,
+	  emergent/trunk/src/temt/ta/ta_server.h: moved server files to
+	  temt
+
+2007-09-11 04:51  oreilly
+
+	* emergent/trunk/Makefile.am, emergent/trunk/configure.ac,
+	  emergent/trunk/demo/data_proc,
+	  emergent/trunk/demo/data_proc/Makefile.am,
+	  emergent/trunk/demo/data_proc/data_calc_loop.proj,
+	  emergent/trunk/prog_lib/LeabraBatch.prog,
+	  emergent/trunk/prog_lib/LeabraStartup.prog,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdata.cpp,
+	  emergent/trunk/test/leabra_ra.proj: added demo/data_proc with
+	  data_calc_loop demo project added warning about UNIT_GROUPS kwta
+	  inhib_group without any unit groups! made new layout
+	  configuration flags conditional on qt > 4.3.0 fixed
+	  prog_lib/LeabraStartup to actually work, and LeabraBatch
+	  max_batch is not an arg, just a var.
+
+2007-09-10 16:58  baisa
+
+	* emergent/trunk/src/temt/ta/ta_project.cpp: small change to style
+	  setting to force on Mac until Qt bugs fixed
+
+2007-09-10 08:13  oreilly
+
+	* emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_maketa_defs.h,
+	  emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.h,
+	  emergent/trunk/test/leabra_ra.proj: 1. removed windows style
+	  default for mac, and added a style selector in preferences so
+	  you can choose. Selecting Plastique on mac seems to work quite
+	  well, and avoids the existing mac bugs, however it is slow. 2.
+	  to get this to work, I switched order of InitApp and InitTA in
+	  startup -- this could be dicey but everything seems to work so
+	  far, but we should keep it in mind for the future if anything
+	  strange is happening. 3. made top application toolbar smaller on
+	  mac etc by setting icon size to label height. 4. fixed Gauss
+	  description. 5. renamed QIconSet -> QIcon (IconSet is obsolete).
+
+2007-09-10 05:24  baisa
+
+	* emergent/trunk/doc/bugs.txt,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdata.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata_def.h,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.cpp: workaround for bug
+	  BugID:108
+
+2007-09-07 06:55  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp: added spacing
+	  back to graph/grid control panels; added SetLayUnitExtFlags on
+	  layer -- can be used to avoid LayerWriter entirely. added
+	  GpAggregatePrjnSpec -- integrates units across unit groups.
+
+2007-09-06 07:43  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.h,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_matrix_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp: fixed various
+	  fat margins (datatables, properties, etc) -- QVBoxLayout ->
+	  setMargin(2) or so. added Saliency projection spec for dorsal
+	  pathway (Itti). fixed gaussian functions and added explicit
+	  sigma versions in taMath. added float versions of probability
+	  functions. added UnitGroup::GetGpGeomPos to get a unit group's
+	  position within the layer->gp_geom coords.
+	  DataTable::AddBlankRow sets rd_itr (read index) in addition to
+	  write index (fixes DataVarProg read in TrialMonitor). added
+	  special code for scalar value layer output error reward
+	  computation in PVLV/TD -- only looks at 1st unit, uses scalar
+	  value max value to determine max err.
+
+2007-09-02 06:20  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h: removed
+	  phase-based differences in pv & lv -- combined is best!
+
+2007-09-01 19:22  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h: nv only 2p
+
+2007-08-31 22:13  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h: new pvlv
+	  options: lv_only_2p and pv_only_1p
+
+2007-08-31 07:04  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp: minor leabra
+	  wizard layout fixes
+
+2007-08-31 06:05  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp: leabra pbwm
+	  wizard cleanup, removed legacy SNc and Patch layers
+
+2007-08-30 07:13  oreilly
+
+	* emergent/trunk/src/emergent/leabra/TODO,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp: made
+	  netview ctrl panel more compact (got rid of GroupBox) and vastly
+	  simplified PVLV and PBWM wizards -- more to do on that + testing.
+
+2007-08-30 05:13  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_qtdata.cpp,
+	  emergent/trunk/test/test.proj: fix for #130
+
+2007-08-29 03:18  baisa
+
+	* emergent/trunk/build/msvc7/HowToMakeRelease.txt,
+	  emergent/trunk/build/msvc7/config.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h: bug BugID:126
+
+2007-08-28 21:23  baisa
+
+	* emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h: revise EditDialog
+
+2007-08-28 05:35  oreilly
+
+	* emergent/trunk/prog_lib/LeabraStartup.prog,
+	  emergent/trunk/prog_lib/Makefile.am: proglib install
+
+2007-08-28 04:41  baisa
+
+	* emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h: BugID:98 edit dialog
+
+2007-08-28 04:38  baisa
+
+	* emergent/trunk/build/msvc7/HowToMakeRelease.txt,
+	  emergent/trunk/build/msvc7/lib/msvcp71.dll,
+	  emergent/trunk/build/msvc7/lib/msvcr71.dll,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj: 4.0.5 win
+	  build changes
+
+2007-08-27 18:28  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h: updated NV
+	  computation: has a threshold; target is always 0
+
+2007-08-27 06:27  oreilly
+
+	* emergent/trunk/prog_lib/LeabraBatch_pb.prog,
+	  emergent/trunk/prog_lib/LeabraStartup_pb.prog: new programs in
+	  std prog_lib: parallel batch version of LeabraBatch,
+	  LeabraStartup_pb -- completely self-contained STARTUP_RUN
+	  program -- no need for a separate startup script -- just run
+	  -nogui -ni and it will do the rest!
+
+2007-08-27 06:25  oreilly
+
+	* emergent/trunk/prog_lib/LeabraTrainBatchSeedNThr.prog,
+	  emergent/trunk/src/emergent/leabra/TODO,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/temt/css/css_builtin.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.cpp: * added initial impl
+	  of Novelty Value in PVLV system (completely optional) * added
+	  -ni --non-interactive startup arg to force no-console (for
+	  STARTUP_RUN programs) * moved STARTUP_RUN programs to same place
+	  as -f startup scripts.. completely post loading project.
+
+2007-08-25 07:24  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.h: fixed #118 --
+	  ConSpec had TA_BASEFUNS_LITE for some strange reason -- wasn't
+	  registering tokens
+
+2007-08-24 09:08  oreilly
+
+	* emergent/trunk/configure.ac,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/spec.h: changed revision to
+	  4.0.6, fixed CheckSpec stuff for units and prjns -- wasn't
+	  checking before (as a result of removing proper spec ptrs in
+	  units and congroups)
+
+2007-08-20 20:27  mingus
+
+	* emergent/trunk/postinstall-pak.in: soqt symlink, whoops
+
+2007-08-20 19:52  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/postinstall-pak.in:
+	  ubuntu now uses emergent-simage instead of libsimage20c2 and
+	  libsimage-dev. add symlinks for
+	  libCoin.so,libSoQt.so,libsimage.so
+
+2007-08-20 05:15  mingus
+
+	* emergent/trunk/Makefile.am: Emergent->emergent packages
+
+2007-08-19 21:53  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/postinstall-pak.in,
+	  emergent/trunk/postremove-pak.in: menu icons work on
+	  fedora/kubuntu gnome/kde, improved make packages target
+
+2007-08-19 20:12  oreilly
+
+	* emergent/trunk/src/temt/css/css_builtin.cpp,
+	  emergent/trunk/src/temt/css/css_machine.cpp,
+	  emergent/trunk/src/temt/css/css_machine.h,
+	  emergent/trunk/src/temt/css/css_parse.cpp,
+	  emergent/trunk/src/temt/css/css_parse.y,
+	  emergent/trunk/src/temt/ta/ta_time.cpp,
+	  emergent/trunk/src/temt/ta/ta_time.h: Fix of pernicious css bug:
+	  'this' arg for member C functions was being nuked by member_fun
+	  call prior to being used for subsequent function call itself now
+	  ALWAYS push this on the stack and just ignore it for MbrCFuns.
+
+2007-08-19 18:21  mingus
+
+	* emergent/trunk/postremove-pak.in: minor postinst script
+
+2007-08-19 17:38  mingus
+
+	* emergent/trunk/postinstall-pak.in,
+	  emergent/trunk/postremove-pak.in: updated pre/post install
+	  scripts for fedora symlinks
+
+2007-08-19 16:19  mingus
+
+	* emergent/trunk/Makefile.am: update package targets
+
+2007-08-19 15:40  mingus
+
+	* emergent/trunk/acsite.m4: minor readdition
+
+2007-08-19 15:30  mingus
+
+	* emergent/trunk/postinstall-pak.in,
+	  emergent/trunk/postremove-pak.in: improved pre/post install
+	  scripts
+
+2007-08-19 14:58  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/configure.ac,
+	  emergent/trunk/debian, emergent/trunk/plugins/Makefile.am,
+	  emergent/trunk/src/temt/ta/images/Makefile.am: fix
+	  plugins/images makefiles, remove debian subdir, new
+	  deb-update-repo makefile target
+
+2007-08-18 22:09  mingus
+
+	* emergent/trunk/debian/postinst: minor debian
+
+2007-08-18 21:32  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/configure.ac,
+	  emergent/trunk/debian, emergent/trunk/debian/changelog,
+	  emergent/trunk/debian/compat, emergent/trunk/debian/control,
+	  emergent/trunk/debian/copyright, emergent/trunk/debian/dirs,
+	  emergent/trunk/debian/docs,
+	  emergent/trunk/debian/emergent.substvars,
+	  emergent/trunk/debian/files, emergent/trunk/debian/postinst,
+	  emergent/trunk/debian/rules: new debian pkg subdir, install
+	  K-menu icon to /usr/local/share/Emergent/images
+
+2007-08-18 19:53  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_string.cpp,
+	  emergent/trunk/src/temt/ta/ta_string.h,
+	  emergent/trunk/src/temt/ta/ta_time.h: graphview axis fixes,
+	  string between, datetime but not working
+
+2007-08-18 03:15  oreilly
+
+	* emergent/trunk/src/temt/ta/images/emergent_icon.svg: svn version
+	  of icon
+
+2007-08-17 21:38  baisa
+
+	* emergent/trunk/src/temt/ta/ta_qtviewer.cpp: misc win changes
+	  plus icon updates
+
+2007-08-17 19:48  baisa
+
+	* emergent/trunk/build/msvc7/HowToMakeRelease.txt,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.rc,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj,
+	  emergent/trunk/src/temt/ta/images/pdp++.tiff,
+	  emergent/trunk/src/temt/ta/images/pdp++_32x32.bmp,
+	  emergent/trunk/src/temt/ta/images/pdp++_32x32.png,
+	  emergent/trunk/src/temt/ta/images/pdp++_32x32x256.ico,
+	  emergent/trunk/src/temt/ta/ta.qrc,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qrc.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h: misc win changes plus
+	  icon updates
+
+2007-08-17 18:57  mingus
+
+	* emergent/trunk/configure.ac,
+	  emergent/trunk/src/emergent/bp/bp_def.h,
+	  emergent/trunk/src/emergent/cs/cs_def.h,
+	  emergent/trunk/src/emergent/leabra/leabra_def.h,
+	  emergent/trunk/src/emergent/network/emergent_def.h,
+	  emergent/trunk/src/emergent/network/v3_compat.cpp,
+	  emergent/trunk/src/emergent/network/v3_compat.h,
+	  emergent/trunk/src/emergent/so/so_def.h,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_so.cpp,
+	  emergent/trunk/src/temt/ta/ta_list.cpp,
+	  emergent/trunk/src/temt/ta/ta_list.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_qt.h,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_qtclassbrowse.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtclassbrowse.h,
+	  emergent/trunk/src/temt/ta/ta_qtmodel.h,
+	  emergent/trunk/src/temt/ta/ta_type.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv_so.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv_so.h: More copyright
+	  updates
+
+2007-08-17 18:32  oreilly
+
+	* emergent/trunk/demo/leabra/ax_tutorial.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_cptax.proj,
+	  emergent/trunk/demo/leabra/ax_tutorial_final.proj: updated
+	  ax_tutorial
+
+2007-08-17 17:22  baisa
+
+	* emergent/trunk/build/msvc7/emergent_bin/emergent_bin.rc,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.vcproj: win
+	  resource file
+
+2007-08-17 08:33  mingus
+
+	* emergent/trunk/Makefile.am, emergent/trunk/acsite.m4,
+	  emergent/trunk/configure.ac,
+	  emergent/trunk/src/emergent/bin/Makefile.am,
+	  emergent/trunk/src/emergent/bp/Makefile.am,
+	  emergent/trunk/src/emergent/cs/Makefile.am,
+	  emergent/trunk/src/emergent/leabra/Makefile.am,
+	  emergent/trunk/src/emergent/lib/Makefile.am,
+	  emergent/trunk/src/emergent/network/Makefile.am,
+	  emergent/trunk/src/emergent/so/Makefile.am,
+	  emergent/trunk/src/temt/css/Makefile.am,
+	  emergent/trunk/src/temt/css_bin/Makefile.am,
+	  emergent/trunk/src/temt/lib/Makefile.am,
+	  emergent/trunk/src/temt/maketa/Makefile.am,
+	  emergent/trunk/src/temt/ta/Makefile.am,
+	  emergent/trunk/src/temt/taiqtso/Makefile.am: Expunge all
+	  references to "PDP" from build system
+
+2007-08-17 06:49  mingus
+
+	* emergent/trunk/configure.ac: Update copyright year to 2007
+
+2007-08-17 06:47  mingus
+
+	* emergent/trunk/build/msvc7/include/zconf.h,
+	  emergent/trunk/build/msvc7/include/zlib.h,
+	  emergent/trunk/gendoc/gendoc, emergent/trunk/include/zconf.h,
+	  emergent/trunk/include/zlib.h,
+	  emergent/trunk/plugins/HelloWorld/hw_def.h,
+	  emergent/trunk/src/emergent/bin/main.cpp,
+	  emergent/trunk/src/emergent/bp/Resource.h,
+	  emergent/trunk/src/emergent/bp/bp.cpp,
+	  emergent/trunk/src/emergent/bp/bp.h,
+	  emergent/trunk/src/emergent/bp/bp_def.h,
+	  emergent/trunk/src/emergent/bp/bp_ti.cpp,
+	  emergent/trunk/src/emergent/bp/bp_v3_compat.cpp,
+	  emergent/trunk/src/emergent/bp/bp_v3_compat.h,
+	  emergent/trunk/src/emergent/bp/rbp.cpp,
+	  emergent/trunk/src/emergent/bp/rbp.h,
+	  emergent/trunk/src/emergent/cs/cs.cpp,
+	  emergent/trunk/src/emergent/cs/cs.h,
+	  emergent/trunk/src/emergent/cs/cs_def.h,
+	  emergent/trunk/src/emergent/cs/cs_ti.cpp,
+	  emergent/trunk/src/emergent/cs/cs_v3_compat.cpp,
+	  emergent/trunk/src/emergent/cs/cs_v3_compat.h,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_def.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ti.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_v3_compat.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_v3_compat.h,
+	  emergent/trunk/src/emergent/network/emergent_base.cpp,
+	  emergent/trunk/src/emergent/network/emergent_base.h,
+	  emergent/trunk/src/emergent/network/emergent_def.h,
+	  emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program.h,
+	  emergent/trunk/src/emergent/network/emergent_program_qtso.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program_qtso.h,
+	  emergent/trunk/src/emergent/network/emergent_project.cpp,
+	  emergent/trunk/src/emergent/network/emergent_project.h,
+	  emergent/trunk/src/emergent/network/emergent_qtso.cpp,
+	  emergent/trunk/src/emergent/network/emergent_qtso.h,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/emergent/network/netstru_extra.h,
+	  emergent/trunk/src/emergent/network/netstru_so.cpp,
+	  emergent/trunk/src/emergent/network/netstru_so.h,
+	  emergent/trunk/src/emergent/network/pdpserver.cpp,
+	  emergent/trunk/src/emergent/network/pdpserver.h,
+	  emergent/trunk/src/emergent/network/pdpserver_qt.cpp,
+	  emergent/trunk/src/emergent/network/pdpserver_qt.h,
+	  emergent/trunk/src/emergent/network/spec.cpp,
+	  emergent/trunk/src/emergent/network/spec.h,
+	  emergent/trunk/src/emergent/network/v3_compat.cpp,
+	  emergent/trunk/src/emergent/network/v3_compat.h,
+	  emergent/trunk/src/emergent/so/cl.cpp,
+	  emergent/trunk/src/emergent/so/cl.h,
+	  emergent/trunk/src/emergent/so/so.cpp,
+	  emergent/trunk/src/emergent/so/so.h,
+	  emergent/trunk/src/emergent/so/so_def.h,
+	  emergent/trunk/src/emergent/so/so_ti.cpp,
+	  emergent/trunk/src/emergent/so/so_v3_compat.cpp,
+	  emergent/trunk/src/emergent/so/so_v3_compat.h,
+	  emergent/trunk/src/emergent/so/som.cpp,
+	  emergent/trunk/src/emergent/so/som.h,
+	  emergent/trunk/src/emergent/so/zsh.cpp,
+	  emergent/trunk/src/emergent/so/zsh.h,
+	  emergent/trunk/src/temt/css/css_basic_types.cpp,
+	  emergent/trunk/src/temt/css/css_basic_types.h,
+	  emergent/trunk/src/temt/css/css_builtin.cpp,
+	  emergent/trunk/src/temt/css/css_builtin.h,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.cpp,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.h,
+	  emergent/trunk/src/temt/css/css_console.cpp,
+	  emergent/trunk/src/temt/css/css_console.h,
+	  emergent/trunk/src/temt/css/css_def.h,
+	  emergent/trunk/src/temt/css/css_extern_support.h,
+	  emergent/trunk/src/temt/css/css_lex.cpp,
+	  emergent/trunk/src/temt/css/css_machine.cpp,
+	  emergent/trunk/src/temt/css/css_machine.h,
+	  emergent/trunk/src/temt/css/css_misc_funs.cpp,
+	  emergent/trunk/src/temt/css/css_misc_funs.h,
+	  emergent/trunk/src/temt/css/css_qt.cpp,
+	  emergent/trunk/src/temt/css/css_qt.h,
+	  emergent/trunk/src/temt/css/css_qtconsole.cpp,
+	  emergent/trunk/src/temt/css/css_qtconsole.h,
+	  emergent/trunk/src/temt/css/css_qtdata.cpp,
+	  emergent/trunk/src/temt/css/css_qtdata.h,
+	  emergent/trunk/src/temt/css/css_qtdialog.cpp,
+	  emergent/trunk/src/temt/css/css_qtdialog.h,
+	  emergent/trunk/src/temt/css/css_qttype.cpp,
+	  emergent/trunk/src/temt/css/css_qttype.h,
+	  emergent/trunk/src/temt/css/css_ta.cpp,
+	  emergent/trunk/src/temt/css/css_ta.h,
+	  emergent/trunk/src/temt/css/css_ti.cpp,
+	  emergent/trunk/src/temt/css/hard_of_css.h,
+	  emergent/trunk/src/temt/css/readline_win.cpp,
+	  emergent/trunk/src/temt/css/xmemory.cpp,
+	  emergent/trunk/src/temt/css_bin/main.cpp,
+	  emergent/trunk/src/temt/maketa/icolor.h,
+	  emergent/trunk/src/temt/maketa/maketa.cpp,
+	  emergent/trunk/src/temt/maketa/maketa.h,
+	  emergent/trunk/src/temt/maketa/maketa_ti.cpp,
+	  emergent/trunk/src/temt/maketa/mta_constr.cpp,
+	  emergent/trunk/src/temt/maketa/mta_constr.h,
+	  emergent/trunk/src/temt/maketa/mta_gendoc.cpp,
+	  emergent/trunk/src/temt/maketa/mta_lex.cpp,
+	  emergent/trunk/src/temt/maketa/ta_parse.h,
+	  emergent/trunk/src/temt/ta/colorbar_qt.cpp,
+	  emergent/trunk/src/temt/ta/colorbar_qt.h,
+	  emergent/trunk/src/temt/ta/colorbar_so.cpp,
+	  emergent/trunk/src/temt/ta/colorbar_so.h,
+	  emergent/trunk/src/temt/ta/colorscale.cpp,
+	  emergent/trunk/src/temt/ta/colorscale.h,
+	  emergent/trunk/src/temt/ta/fun_lookup.cpp,
+	  emergent/trunk/src/temt/ta/fun_lookup.h,
+	  emergent/trunk/src/temt/ta/icolor.cpp,
+	  emergent/trunk/src/temt/ta/icolor.h,
+	  emergent/trunk/src/temt/ta/ifont.cpp,
+	  emergent/trunk/src/temt/ta/ifont.h,
+	  emergent/trunk/src/temt/ta/minmax.cpp,
+	  emergent/trunk/src/temt/ta/minmax.h,
+	  emergent/trunk/src/temt/ta/qtdefs.h,
+	  emergent/trunk/src/temt/ta/t3node_so.cpp,
+	  emergent/trunk/src/temt/ta/t3node_so.h,
+	  emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/t3viewer.h,
+	  emergent/trunk/src/temt/ta/ta_TA.msvc.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_data.cpp,
+	  emergent/trunk/src/temt/ta/ta_data.h,
+	  emergent/trunk/src/temt/ta/ta_data_extras.cpp,
+	  emergent/trunk/src/temt/ta/ta_data_extras.h,
+	  emergent/trunk/src/temt/ta/ta_dataanal.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataanal.h,
+	  emergent/trunk/src/temt/ta/ta_datagen.cpp,
+	  emergent/trunk/src/temt/ta/ta_datagen.h,
+	  emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_so.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_so.h,
+	  emergent/trunk/src/temt/ta/ta_def.h,
+	  emergent/trunk/src/temt/ta/ta_defaults.cpp,
+	  emergent/trunk/src/temt/ta/ta_defaults.h,
+	  emergent/trunk/src/temt/ta/ta_dmem.cpp,
+	  emergent/trunk/src/temt/ta/ta_dmem.h,
+	  emergent/trunk/src/temt/ta/ta_dump.cpp,
+	  emergent/trunk/src/temt/ta/ta_dump.h,
+	  emergent/trunk/src/temt/ta/ta_filer.cpp,
+	  emergent/trunk/src/temt/ta/ta_filer.h,
+	  emergent/trunk/src/temt/ta/ta_filer_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_fontspec.cpp,
+	  emergent/trunk/src/temt/ta/ta_fontspec.h,
+	  emergent/trunk/src/temt/ta/ta_gendoc.cpp,
+	  emergent/trunk/src/temt/ta/ta_gendoc.h,
+	  emergent/trunk/src/temt/ta/ta_geometry.cpp,
+	  emergent/trunk/src/temt/ta/ta_geometry.h,
+	  emergent/trunk/src/temt/ta/ta_global.h,
+	  emergent/trunk/src/temt/ta/ta_group.cpp,
+	  emergent/trunk/src/temt/ta/ta_group.h,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.h,
+	  emergent/trunk/src/temt/ta/ta_maketa_defs.h,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_matrix.cpp,
+	  emergent/trunk/src/temt/ta/ta_matrix.h,
+	  emergent/trunk/src/temt/ta/ta_matrix_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_matrix_qt.h,
+	  emergent/trunk/src/temt/ta/ta_mtrnd.cpp,
+	  emergent/trunk/src/temt/ta/ta_mtrnd.h,
+	  emergent/trunk/src/temt/ta/ta_platform.cpp,
+	  emergent/trunk/src/temt/ta/ta_platform.h,
+	  emergent/trunk/src/temt/ta/ta_platform_cygwin.cpp,
+	  emergent/trunk/src/temt/ta/ta_plugin.h,
+	  emergent/trunk/src/temt/ta/ta_plugin_p.cpp,
+	  emergent/trunk/src/temt/ta/ta_plugin_p.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_qt.h,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_qt.h,
+	  emergent/trunk/src/temt/ta/ta_qtclipdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtclipdata.h,
+	  emergent/trunk/src/temt/ta/ta_qtcursors.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdata.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata_def.h,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.h,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.h,
+	  emergent/trunk/src/temt/ta/ta_qtmodel.cpp,
+	  emergent/trunk/src/temt/ta/ta_qttype.cpp,
+	  emergent/trunk/src/temt/ta/ta_qttype.h,
+	  emergent/trunk/src/temt/ta/ta_qttype_def.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h,
+	  emergent/trunk/src/temt/ta/ta_script.cpp,
+	  emergent/trunk/src/temt/ta/ta_script.h,
+	  emergent/trunk/src/temt/ta/ta_seledit.cpp,
+	  emergent/trunk/src/temt/ta/ta_seledit.h,
+	  emergent/trunk/src/temt/ta/ta_stdef.h,
+	  emergent/trunk/src/temt/ta/ta_string.cpp,
+	  emergent/trunk/src/temt/ta/ta_string.h,
+	  emergent/trunk/src/temt/ta/ta_thread.cpp,
+	  emergent/trunk/src/temt/ta/ta_thread.h,
+	  emergent/trunk/src/temt/ta/ta_ti.cpp,
+	  emergent/trunk/src/temt/ta/ta_time.cpp,
+	  emergent/trunk/src/temt/ta/ta_time.h,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type_constr.cpp,
+	  emergent/trunk/src/temt/ta/ta_type_constr.h,
+	  emergent/trunk/src/temt/ta/ta_type_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_variant.cpp,
+	  emergent/trunk/src/temt/ta/ta_variant.h,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h,
+	  emergent/trunk/src/temt/ta/ta_viewspec.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewspec.h,
+	  emergent/trunk/src/temt/taiqtso/ibutton.cpp,
+	  emergent/trunk/src/temt/taiqtso/ibutton.h,
+	  emergent/trunk/src/temt/taiqtso/icheckbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/icheckbox.h,
+	  emergent/trunk/src/temt/taiqtso/ichooserdialog.cpp,
+	  emergent/trunk/src/temt/taiqtso/ichooserdialog.h,
+	  emergent/trunk/src/temt/taiqtso/icliptoolwidget.cpp,
+	  emergent/trunk/src/temt/taiqtso/icliptoolwidget.h,
+	  emergent/trunk/src/temt/taiqtso/icombobox.cpp,
+	  emergent/trunk/src/temt/taiqtso/icombobox.h,
+	  emergent/trunk/src/temt/taiqtso/idimedit.cpp,
+	  emergent/trunk/src/temt/taiqtso/idimedit.h,
+	  emergent/trunk/src/temt/taiqtso/ieditgrid.cpp,
+	  emergent/trunk/src/temt/taiqtso/ieditgrid.h,
+	  emergent/trunk/src/temt/taiqtso/iflowlayout.cpp,
+	  emergent/trunk/src/temt/taiqtso/iflowlayout.h,
+	  emergent/trunk/src/temt/taiqtso/igeometry.cpp,
+	  emergent/trunk/src/temt/taiqtso/igeometry.h,
+	  emergent/trunk/src/temt/taiqtso/igroup_so.h,
+	  emergent/trunk/src/temt/taiqtso/ihilightbutton.cpp,
+	  emergent/trunk/src/temt/taiqtso/ihilightbutton.h,
+	  emergent/trunk/src/temt/taiqtso/ilabel.cpp,
+	  emergent/trunk/src/temt/taiqtso/ilabel.h,
+	  emergent/trunk/src/temt/taiqtso/ilineedit.cpp,
+	  emergent/trunk/src/temt/taiqtso/ilineedit.h,
+	  emergent/trunk/src/temt/taiqtso/imisc_so.cpp,
+	  emergent/trunk/src/temt/taiqtso/imisc_so.h,
+	  emergent/trunk/src/temt/taiqtso/irenderarea.cpp,
+	  emergent/trunk/src/temt/taiqtso/irenderarea.h,
+	  emergent/trunk/src/temt/taiqtso/iscrollarea.cpp,
+	  emergent/trunk/src/temt/taiqtso/iscrollarea.h,
+	  emergent/trunk/src/temt/taiqtso/ispinbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/ispinbox.h,
+	  emergent/trunk/src/temt/taiqtso/itextbrowser.cpp,
+	  emergent/trunk/src/temt/taiqtso/itextbrowser.h,
+	  emergent/trunk/src/temt/taiqtso/itextedit.cpp,
+	  emergent/trunk/src/temt/taiqtso/itextedit.h,
+	  emergent/trunk/src/temt/taiqtso/itransformer.cpp,
+	  emergent/trunk/src/temt/taiqtso/itransformer.h,
+	  emergent/trunk/src/temt/taiqtso/itreewidget.cpp,
+	  emergent/trunk/src/temt/taiqtso/itreewidget.h,
+	  emergent/trunk/src/temt/taiqtso/ivcrbuttons.cpp,
+	  emergent/trunk/src/temt/taiqtso/ivcrbuttons.h,
+	  emergent/trunk/src/temt/taiqtso/iwidgetlist.cpp,
+	  emergent/trunk/src/temt/taiqtso/iwidgetlist.h,
+	  emergent/trunk/src/temt/taiqtso/safeptr_so.cpp,
+	  emergent/trunk/src/temt/taiqtso/safeptr_so.h,
+	  emergent/trunk/src/temt/taiqtso/stdafx.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtdefs.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtso.cpp,
+	  emergent/trunk/src/temt/taiqtso/taiqtso.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtso_TA.cpp,
+	  emergent/trunk/src/temt/taiqtso/taiqtso_def.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtso_ti.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_iflowbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_iflowbox.h,
+	  emergent/trunk/src/temt/taiqtso/test_iflowlayout.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_iflowlayout.h,
+	  emergent/trunk/src/temt/taiqtso/test_ispinbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_ispinbox.h,
+	  emergent/trunk/src/temt/taiqtso/test_itreeview.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_itreeview.h,
+	  emergent/trunk/src/temt/taiqtso/test_main.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_mainwindow.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_mainwindow.h,
+	  emergent/trunk/src/temt/taiqtso/test_simplewidgets.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_simplewidgets.h,
+	  emergent/trunk/src/temt/taiqtso/vcrbitmaps.h: Update copyright
+	  year to 2007
+
+2007-08-17 06:44  oreilly
+
+	* emergent/trunk/AUTHORS, emergent/trunk/NEWS,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_list.cpp,
+	  emergent/trunk/src/temt/ta/ta_list.h,
+	  emergent/trunk/src/temt/ta/ta_qtclassbrowse.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtclassbrowse.h,
+	  emergent/trunk/src/temt/ta/ta_type.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv_so.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv_so.h: several of the
+	  classes in temt/ta/ had really ancient copyrights! also updated
+	  AUTHORS and NEWS (after previous ones!)
+
+2007-08-17 06:27  mingus
+
+	* emergent/trunk/AUTHORS, emergent/trunk/ChangeLog,
+	  emergent/trunk/NEWS, emergent/trunk/configure.ac: Going through
+	  release checklist. AUTHORS, NEWS, ChangeLog, Binary version
+
+2007-08-17 06:26  baisa
+
+	* emergent/trunk/plugins/Makefile.plugin.in: small update for
+	  Makefile.plugin
+
+2007-08-17 06:19  mingus
+
+	* emergent/trunk/configure.ac, emergent/trunk/plugins/Makefile.in,
+	  emergent/trunk/plugins/Makefile.plugin.in,
+	  emergent/trunk/src/temt/ta/ta_project.cpp: Fixes for adding the
+	  plugins/Makefile, BugID: 54
+
+2007-08-17 05:38  mingus
+
+	* emergent/trunk/gendoc/gendoc,
+	  emergent/trunk/src/emergent/bin/main.cpp,
+	  emergent/trunk/src/emergent/bp/Resource.h,
+	  emergent/trunk/src/emergent/bp/bp.cpp,
+	  emergent/trunk/src/emergent/bp/bp.h,
+	  emergent/trunk/src/emergent/bp/bp_def.h,
+	  emergent/trunk/src/emergent/bp/bp_ti.cpp,
+	  emergent/trunk/src/emergent/bp/bp_v3_compat.cpp,
+	  emergent/trunk/src/emergent/bp/bp_v3_compat.h,
+	  emergent/trunk/src/emergent/bp/rbp.cpp,
+	  emergent/trunk/src/emergent/bp/rbp.h,
+	  emergent/trunk/src/emergent/cs/cs.cpp,
+	  emergent/trunk/src/emergent/cs/cs.h,
+	  emergent/trunk/src/emergent/cs/cs_def.h,
+	  emergent/trunk/src/emergent/cs/cs_ti.cpp,
+	  emergent/trunk/src/emergent/cs/cs_v3_compat.cpp,
+	  emergent/trunk/src/emergent/cs/cs_v3_compat.h,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_def.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ti.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_v3_compat.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_v3_compat.h,
+	  emergent/trunk/src/emergent/network/emergent_base.cpp,
+	  emergent/trunk/src/emergent/network/emergent_base.h,
+	  emergent/trunk/src/emergent/network/emergent_def.h,
+	  emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program.h,
+	  emergent/trunk/src/emergent/network/emergent_program_qtso.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program_qtso.h,
+	  emergent/trunk/src/emergent/network/emergent_project.cpp,
+	  emergent/trunk/src/emergent/network/emergent_project.h,
+	  emergent/trunk/src/emergent/network/emergent_qtso.cpp,
+	  emergent/trunk/src/emergent/network/emergent_qtso.h,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/emergent/network/netstru_extra.h,
+	  emergent/trunk/src/emergent/network/netstru_so.cpp,
+	  emergent/trunk/src/emergent/network/netstru_so.h,
+	  emergent/trunk/src/emergent/network/pdpserver.cpp,
+	  emergent/trunk/src/emergent/network/pdpserver.h,
+	  emergent/trunk/src/emergent/network/pdpserver_qt.cpp,
+	  emergent/trunk/src/emergent/network/pdpserver_qt.h,
+	  emergent/trunk/src/emergent/network/spec.cpp,
+	  emergent/trunk/src/emergent/network/spec.h,
+	  emergent/trunk/src/emergent/network/v3_compat.cpp,
+	  emergent/trunk/src/emergent/network/v3_compat.h,
+	  emergent/trunk/src/emergent/so/cl.cpp,
+	  emergent/trunk/src/emergent/so/cl.h,
+	  emergent/trunk/src/emergent/so/so.cpp,
+	  emergent/trunk/src/emergent/so/so.h,
+	  emergent/trunk/src/emergent/so/so_def.h,
+	  emergent/trunk/src/emergent/so/so_ti.cpp,
+	  emergent/trunk/src/emergent/so/so_v3_compat.cpp,
+	  emergent/trunk/src/emergent/so/so_v3_compat.h,
+	  emergent/trunk/src/emergent/so/som.cpp,
+	  emergent/trunk/src/emergent/so/som.h,
+	  emergent/trunk/src/emergent/so/zsh.cpp,
+	  emergent/trunk/src/emergent/so/zsh.h,
+	  emergent/trunk/src/temt/css/css_basic_types.cpp,
+	  emergent/trunk/src/temt/css/css_basic_types.h,
+	  emergent/trunk/src/temt/css/css_builtin.cpp,
+	  emergent/trunk/src/temt/css/css_builtin.h,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.cpp,
+	  emergent/trunk/src/temt/css/css_c_ptr_types.h,
+	  emergent/trunk/src/temt/css/css_console.cpp,
+	  emergent/trunk/src/temt/css/css_console.h,
+	  emergent/trunk/src/temt/css/css_def.h,
+	  emergent/trunk/src/temt/css/css_extern_support.h,
+	  emergent/trunk/src/temt/css/css_lex.cpp,
+	  emergent/trunk/src/temt/css/css_machine.cpp,
+	  emergent/trunk/src/temt/css/css_machine.h,
+	  emergent/trunk/src/temt/css/css_misc_funs.cpp,
+	  emergent/trunk/src/temt/css/css_misc_funs.h,
+	  emergent/trunk/src/temt/css/css_qt.cpp,
+	  emergent/trunk/src/temt/css/css_qt.h,
+	  emergent/trunk/src/temt/css/css_qtconsole.cpp,
+	  emergent/trunk/src/temt/css/css_qtconsole.h,
+	  emergent/trunk/src/temt/css/css_qtdata.cpp,
+	  emergent/trunk/src/temt/css/css_qtdata.h,
+	  emergent/trunk/src/temt/css/css_qtdialog.cpp,
+	  emergent/trunk/src/temt/css/css_qtdialog.h,
+	  emergent/trunk/src/temt/css/css_qttype.cpp,
+	  emergent/trunk/src/temt/css/css_qttype.h,
+	  emergent/trunk/src/temt/css/css_ta.cpp,
+	  emergent/trunk/src/temt/css/css_ta.h,
+	  emergent/trunk/src/temt/css/css_ti.cpp,
+	  emergent/trunk/src/temt/css/hard_of_css.h,
+	  emergent/trunk/src/temt/css/readline_win.cpp,
+	  emergent/trunk/src/temt/css/xmemory.cpp,
+	  emergent/trunk/src/temt/css_bin/main.cpp,
+	  emergent/trunk/src/temt/maketa/icolor.h,
+	  emergent/trunk/src/temt/maketa/maketa.cpp,
+	  emergent/trunk/src/temt/maketa/maketa.h,
+	  emergent/trunk/src/temt/maketa/maketa_ti.cpp,
+	  emergent/trunk/src/temt/maketa/mta_constr.cpp,
+	  emergent/trunk/src/temt/maketa/mta_constr.h,
+	  emergent/trunk/src/temt/maketa/mta_gendoc.cpp,
+	  emergent/trunk/src/temt/maketa/mta_lex.cpp,
+	  emergent/trunk/src/temt/maketa/ta_parse.h,
+	  emergent/trunk/src/temt/ta/colorbar_qt.cpp,
+	  emergent/trunk/src/temt/ta/colorbar_qt.h,
+	  emergent/trunk/src/temt/ta/colorbar_so.cpp,
+	  emergent/trunk/src/temt/ta/colorbar_so.h,
+	  emergent/trunk/src/temt/ta/colorscale.cpp,
+	  emergent/trunk/src/temt/ta/colorscale.h,
+	  emergent/trunk/src/temt/ta/fun_lookup.cpp,
+	  emergent/trunk/src/temt/ta/fun_lookup.h,
+	  emergent/trunk/src/temt/ta/icolor.cpp,
+	  emergent/trunk/src/temt/ta/icolor.h,
+	  emergent/trunk/src/temt/ta/ifont.cpp,
+	  emergent/trunk/src/temt/ta/ifont.h,
+	  emergent/trunk/src/temt/ta/minmax.cpp,
+	  emergent/trunk/src/temt/ta/minmax.h,
+	  emergent/trunk/src/temt/ta/qtdefs.h,
+	  emergent/trunk/src/temt/ta/t3node_so.cpp,
+	  emergent/trunk/src/temt/ta/t3node_so.h,
+	  emergent/trunk/src/temt/ta/t3viewer.cpp,
+	  emergent/trunk/src/temt/ta/t3viewer.h,
+	  emergent/trunk/src/temt/ta/ta_TA.msvc.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_data.cpp,
+	  emergent/trunk/src/temt/ta/ta_data.h,
+	  emergent/trunk/src/temt/ta/ta_data_extras.cpp,
+	  emergent/trunk/src/temt/ta/ta_data_extras.h,
+	  emergent/trunk/src/temt/ta/ta_dataanal.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataanal.h,
+	  emergent/trunk/src/temt/ta/ta_datagen.cpp,
+	  emergent/trunk/src/temt/ta/ta_datagen.h,
+	  emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_so.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_so.h,
+	  emergent/trunk/src/temt/ta/ta_def.h,
+	  emergent/trunk/src/temt/ta/ta_defaults.cpp,
+	  emergent/trunk/src/temt/ta/ta_defaults.h,
+	  emergent/trunk/src/temt/ta/ta_dmem.cpp,
+	  emergent/trunk/src/temt/ta/ta_dmem.h,
+	  emergent/trunk/src/temt/ta/ta_dump.cpp,
+	  emergent/trunk/src/temt/ta/ta_dump.h,
+	  emergent/trunk/src/temt/ta/ta_filer.cpp,
+	  emergent/trunk/src/temt/ta/ta_filer.h,
+	  emergent/trunk/src/temt/ta/ta_filer_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_fontspec.cpp,
+	  emergent/trunk/src/temt/ta/ta_fontspec.h,
+	  emergent/trunk/src/temt/ta/ta_gendoc.cpp,
+	  emergent/trunk/src/temt/ta/ta_gendoc.h,
+	  emergent/trunk/src/temt/ta/ta_geometry.cpp,
+	  emergent/trunk/src/temt/ta/ta_geometry.h,
+	  emergent/trunk/src/temt/ta/ta_global.h,
+	  emergent/trunk/src/temt/ta/ta_group.cpp,
+	  emergent/trunk/src/temt/ta/ta_group.h,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.h,
+	  emergent/trunk/src/temt/ta/ta_maketa_defs.h,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_matrix.cpp,
+	  emergent/trunk/src/temt/ta/ta_matrix.h,
+	  emergent/trunk/src/temt/ta/ta_matrix_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_matrix_qt.h,
+	  emergent/trunk/src/temt/ta/ta_mtrnd.cpp,
+	  emergent/trunk/src/temt/ta/ta_mtrnd.h,
+	  emergent/trunk/src/temt/ta/ta_platform.cpp,
+	  emergent/trunk/src/temt/ta/ta_platform.h,
+	  emergent/trunk/src/temt/ta/ta_platform_cygwin.cpp,
+	  emergent/trunk/src/temt/ta/ta_plugin.h,
+	  emergent/trunk/src/temt/ta/ta_plugin_p.cpp,
+	  emergent/trunk/src/temt/ta/ta_plugin_p.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_qt.h,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h,
+	  emergent/trunk/src/temt/ta/ta_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_qt.h,
+	  emergent/trunk/src/temt/ta/ta_qtclipdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtclipdata.h,
+	  emergent/trunk/src/temt/ta/ta_qtcursors.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdata.h,
+	  emergent/trunk/src/temt/ta/ta_qtdata_def.h,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.h,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.h,
+	  emergent/trunk/src/temt/ta/ta_qtmodel.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtmodel.h,
+	  emergent/trunk/src/temt/ta/ta_qttype.cpp,
+	  emergent/trunk/src/temt/ta/ta_qttype.h,
+	  emergent/trunk/src/temt/ta/ta_qttype_def.h,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtviewer.h,
+	  emergent/trunk/src/temt/ta/ta_script.cpp,
+	  emergent/trunk/src/temt/ta/ta_script.h,
+	  emergent/trunk/src/temt/ta/ta_seledit.cpp,
+	  emergent/trunk/src/temt/ta/ta_seledit.h,
+	  emergent/trunk/src/temt/ta/ta_stdef.h,
+	  emergent/trunk/src/temt/ta/ta_string.cpp,
+	  emergent/trunk/src/temt/ta/ta_string.h,
+	  emergent/trunk/src/temt/ta/ta_thread.cpp,
+	  emergent/trunk/src/temt/ta/ta_thread.h,
+	  emergent/trunk/src/temt/ta/ta_ti.cpp,
+	  emergent/trunk/src/temt/ta/ta_time.cpp,
+	  emergent/trunk/src/temt/ta/ta_time.h,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type_constr.cpp,
+	  emergent/trunk/src/temt/ta/ta_type_constr.h,
+	  emergent/trunk/src/temt/ta/ta_type_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_variant.cpp,
+	  emergent/trunk/src/temt/ta/ta_variant.h,
+	  emergent/trunk/src/temt/ta/ta_viewer.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewer.h,
+	  emergent/trunk/src/temt/ta/ta_viewspec.cpp,
+	  emergent/trunk/src/temt/ta/ta_viewspec.h,
+	  emergent/trunk/src/temt/taiqtso/ibutton.cpp,
+	  emergent/trunk/src/temt/taiqtso/ibutton.h,
+	  emergent/trunk/src/temt/taiqtso/icheckbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/icheckbox.h,
+	  emergent/trunk/src/temt/taiqtso/ichooserdialog.cpp,
+	  emergent/trunk/src/temt/taiqtso/ichooserdialog.h,
+	  emergent/trunk/src/temt/taiqtso/icliptoolwidget.cpp,
+	  emergent/trunk/src/temt/taiqtso/icliptoolwidget.h,
+	  emergent/trunk/src/temt/taiqtso/icombobox.cpp,
+	  emergent/trunk/src/temt/taiqtso/icombobox.h,
+	  emergent/trunk/src/temt/taiqtso/idimedit.cpp,
+	  emergent/trunk/src/temt/taiqtso/idimedit.h,
+	  emergent/trunk/src/temt/taiqtso/ieditgrid.cpp,
+	  emergent/trunk/src/temt/taiqtso/ieditgrid.h,
+	  emergent/trunk/src/temt/taiqtso/iflowlayout.cpp,
+	  emergent/trunk/src/temt/taiqtso/iflowlayout.h,
+	  emergent/trunk/src/temt/taiqtso/igeometry.cpp,
+	  emergent/trunk/src/temt/taiqtso/igeometry.h,
+	  emergent/trunk/src/temt/taiqtso/igroup_so.h,
+	  emergent/trunk/src/temt/taiqtso/ihilightbutton.cpp,
+	  emergent/trunk/src/temt/taiqtso/ihilightbutton.h,
+	  emergent/trunk/src/temt/taiqtso/ilabel.cpp,
+	  emergent/trunk/src/temt/taiqtso/ilabel.h,
+	  emergent/trunk/src/temt/taiqtso/ilineedit.cpp,
+	  emergent/trunk/src/temt/taiqtso/ilineedit.h,
+	  emergent/trunk/src/temt/taiqtso/imisc_so.cpp,
+	  emergent/trunk/src/temt/taiqtso/imisc_so.h,
+	  emergent/trunk/src/temt/taiqtso/irenderarea.cpp,
+	  emergent/trunk/src/temt/taiqtso/irenderarea.h,
+	  emergent/trunk/src/temt/taiqtso/iscrollarea.cpp,
+	  emergent/trunk/src/temt/taiqtso/iscrollarea.h,
+	  emergent/trunk/src/temt/taiqtso/ispinbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/ispinbox.h,
+	  emergent/trunk/src/temt/taiqtso/itextbrowser.cpp,
+	  emergent/trunk/src/temt/taiqtso/itextbrowser.h,
+	  emergent/trunk/src/temt/taiqtso/itextedit.cpp,
+	  emergent/trunk/src/temt/taiqtso/itextedit.h,
+	  emergent/trunk/src/temt/taiqtso/itransformer.cpp,
+	  emergent/trunk/src/temt/taiqtso/itransformer.h,
+	  emergent/trunk/src/temt/taiqtso/itreewidget.cpp,
+	  emergent/trunk/src/temt/taiqtso/itreewidget.h,
+	  emergent/trunk/src/temt/taiqtso/ivcrbuttons.cpp,
+	  emergent/trunk/src/temt/taiqtso/ivcrbuttons.h,
+	  emergent/trunk/src/temt/taiqtso/iwidgetlist.cpp,
+	  emergent/trunk/src/temt/taiqtso/iwidgetlist.h,
+	  emergent/trunk/src/temt/taiqtso/safeptr_so.cpp,
+	  emergent/trunk/src/temt/taiqtso/safeptr_so.h,
+	  emergent/trunk/src/temt/taiqtso/stdafx.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtdefs.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtso.cpp,
+	  emergent/trunk/src/temt/taiqtso/taiqtso.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtso_TA.cpp,
+	  emergent/trunk/src/temt/taiqtso/taiqtso_def.h,
+	  emergent/trunk/src/temt/taiqtso/taiqtso_ti.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_iflowbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_iflowbox.h,
+	  emergent/trunk/src/temt/taiqtso/test_iflowlayout.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_iflowlayout.h,
+	  emergent/trunk/src/temt/taiqtso/test_ispinbox.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_ispinbox.h,
+	  emergent/trunk/src/temt/taiqtso/test_itreeview.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_itreeview.h,
+	  emergent/trunk/src/temt/taiqtso/test_main.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_mainwindow.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_mainwindow.h,
+	  emergent/trunk/src/temt/taiqtso/test_simplewidgets.cpp,
+	  emergent/trunk/src/temt/taiqtso/test_simplewidgets.h,
+	  emergent/trunk/src/temt/taiqtso/vcrbitmaps.h: Update copyright
+	  notices, BugID: 78, BugID: 79
+
 2007-08-17 05:26  baisa
 
 	* emergent/trunk/src/temt/ta/ta_matrix_qt.cpp,
