@@ -57,5 +57,7 @@ Release Steps
   * install again, and test
 
 * Upload finished .exe
-  TBD
+  * scp it to grey in your home dir (ex. using WinSCP on Win box, or scp on linux)
+  * sudo su cp it to ~ftp/pub/emergent
+
 
