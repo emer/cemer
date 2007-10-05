@@ -1156,18 +1156,6 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
 #endif
 
   // process gui flag right away -- has other implications
-//   // we will just take the last one found on cmd line
-//   for (int i = taMisc::argc - 1; i > 0; --i) {
-//     String arg = argv[i];
-//      if (arg.endsWith("-nogui")) {
-//       taMisc::use_gui = false; 
-//       break;
-//     } else if (arg.endsWith("-gui")) {
-//       taMisc::use_gui = true; 
-//       break;
-//     }
-//   }
-
   if(taMisc::CheckArgByName("GenDoc")) { // auto nogui by default
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
@@ -1255,21 +1243,22 @@ bool taRootBase::Startup_InitTA_folders() {
   if (app_dir.nonempty() && isAppDir(app_dir))
     goto have_app_dir;
 
-  //  app_dir = QCoreApplication::applicationDirPath();
-  app_dir = "";			// TODO: above is just causing error right now, so 
-  // have commented it out for time being until replaced by native version (bug #154)
-  // note that this actually doesn't seem to be causing any problems, and a quick
-  // review of code below suggests that windows is the only platform where this is 
-  // actually being used!
+//WARNING: cannot use QCoreApplication::applicationDirPath() at this point because
+// QCoreApplication has not been instantiated yet
 #ifdef TA_OS_WIN
 /*
   {app_dir}\bin
 */
+  //note: this is not how Qt does it, but it seems windows follows normal rules
+  // and passes the arg[0] as the full path to the executable, so we just get path
+  {
+  QFileInfo fi(taMisc::args_raw.SafeEl(0));
+  app_dir = fi.path();
   // note: Qt docs say it returns the '/' version...
   if (app_dir.endsWith("/bin") || app_dir.endsWith("\bin")) {
     app_dir = app_dir.at(0, app_dir.length() - 4);
     if (isAppDir(app_dir)) goto have_app_dir;
-  }
+  }}
 #else // Mac and Unix -- defaults
   // this is the normal install default, and possible alternate
   app_dir = "/usr/local/share/" + taMisc::default_app_install_folder_name;
@@ -1868,7 +1857,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // note: Startup_ProcessArgs() is called after having entered the event loop
   // note: don't call event loop yet, because we haven't initialized main event loop
   // happens in Startup_Run()
-  instance()->Save(); 
+  instance()->Save();
   return true;
   
 startup_failed:
