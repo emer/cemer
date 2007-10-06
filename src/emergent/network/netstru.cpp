@@ -2138,6 +2138,7 @@ int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFor
 }
 
 void Unit::GetLocalistName() {
+  if(name.nonempty()) return;	// only if not otherwise named!
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned()) continue;

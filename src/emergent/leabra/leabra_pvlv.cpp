@@ -1347,8 +1347,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   lvisp->SetUnique("decay", false);
   lvisp->SetUnique("kwta", false);
   lvisp->SetUnique("inhib_group", false);
-  lvisp->SetUnique("compute_i", false);
-  lvisp->SetUnique("i_kwta_pt", false);
+  lvisp->SetUnique("inhib", false);
 
   pv_units->SetUnique("g_bar", true);
 

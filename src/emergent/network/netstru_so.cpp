@@ -453,6 +453,17 @@ T3LayerNode::T3LayerNode(void* dataView_, bool show_draggers)
 
     z_dragger_->addFinishCallback(T3LayerNode_ZDragFinishCB, (void*)this);
   }
+  else {
+    xy_drag_sep_ = NULL;
+    xy_drag_xf_ = NULL;
+    xy_dragger_ = NULL;
+    xy_drag_calc_ = NULL;
+
+    z_drag_sep_ = NULL;
+    z_drag_xf_ = NULL;
+    z_dragger_ = NULL;
+    z_drag_calc_ = NULL;
+  }
 
   SoSeparator* ss = shapeSeparator(); // cache
   shape_ = new SoFrame();
@@ -477,8 +488,22 @@ void T3LayerNode::render() {
   txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac);
 
   if(show_drag_) {
+    float len = .08f;	// bar_len
+    len = MIN(len, .5f * fx);
+
+    float wd = .1f * len;	// bar_width
+    float cr = .2f * len;	// cone radius
+    float ch = .4f * len;	// cone height
+
     String expr = "oA = vec3f(" + String(xfrac) + " + A[0], B[0], -(" + String(yfrac) + " + A[1]))";
     xy_drag_calc_->expression = expr.chars();
+
+    if(len != .08f) {
+      xy_dragger_->setPart("translator", new T3Translate2Translator(false, len, wd, cr, ch));
+      xy_dragger_->setPart("translatorActive", new T3Translate2Translator(true, len, wd, cr, ch));
+      z_dragger_->setPart("translator", new T3Translate1Translator(false, len, wd, cr, ch));
+      z_dragger_->setPart("translatorActive", new T3Translate1Translator(true, len, wd, cr, ch));
+    }
   }
 }
 

@@ -534,6 +534,7 @@ public:
   bool		val_mult_lrn;	// #DEF_false for learning, effectively multiply the learning rate by the minus-plus phase difference in overall represented value (i.e., if overall value is the same, no learning takes place)
   bool		clip_val;	// ensure that value remains within specified range
   bool		send_thr;	// use unitspec.opt_thresh.send threshold to cut off small activation contributions to overall average value (i.e., if unit's activation is below this threshold, it doesn't contribute to weighted average computation)
+  bool		init_nms;	// initialize unit names when weights are initialized
 
   float		min;		// #READ_ONLY #NO_SAVE #NO_INHERIT minimum unit value
   float		range;		// #READ_ONLY #NO_SAVE #NO_INHERIT range of unit values

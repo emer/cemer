@@ -335,6 +335,7 @@ void MatrixLayerSpec::Init_Weights(LeabraLayer* lay) {
 	      DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
 	      u->misc_1 = avgda_rnd_go.avgda_thr;	// initialize to above rnd go val..
 	      );
+  LabelUnits(lay);
 }
 
 
@@ -757,6 +758,22 @@ void MatrixLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   }
   inherited::Compute_dWt(lay, net);
 }
+
+void MatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
+  for(int i=0;i<ugp->size;i++) {
+    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i % 2); // GO = 0, NOGO = 1
+    if(go_no == PFCGateSpec::GATE_GO)
+      u->name = "Go";
+    else
+      u->name = "No";
+  }
+}
+
+void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
+  UNIT_GP_ITR(lay, LabelUnits_impl(ugp); );
+}
+
 
 //////////////////////////////////
 //	SNrThal Layer Spec	//

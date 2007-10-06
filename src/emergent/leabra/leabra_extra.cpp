@@ -235,6 +235,7 @@ void ScalarValSpec::Initialize() {
   val_mult_lrn = false;
   clip_val = true;
   send_thr = false;
+  init_nms = true;
 
   min = val = 0.0f;
   range = incr = 1.0f;
@@ -587,6 +588,8 @@ void ScalarValLayerSpec::Compute_BiasVal(LeabraLayer* lay) {
 void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay) {
   LeabraLayerSpec::Init_Weights(lay);
   Compute_BiasVal(lay);
+  if(scalar.init_nms)
+    LabelUnits(lay);
 }
 
 void ScalarValLayerSpec::Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net) {
@@ -726,12 +729,13 @@ float ScalarValLayerSpec::ReadValue(Unit_Group* ugp, LeabraNetwork*) {
 void ScalarValLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
   if(ugp->size < 3) return;	// must be at least a few units..
   scalar.InitVal(0.0f, ugp->size, unit_range.min, unit_range.range);
-  int i;
-  for(i=1;i<ugp->size;i++) {
+  for(int i=1;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
     float cur = scalar.GetUnitVal(i);
     u->name = (String)cur;
   }
+  LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+  u->name = "val";		// overall value
 }
 
 void ScalarValLayerSpec::LabelUnits(LeabraLayer* lay) {

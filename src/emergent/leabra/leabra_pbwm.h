@@ -287,6 +287,11 @@ public:
   virtual void 	Compute_MotorGate(LeabraLayer* lay, LeabraNetwork* net);
   // compute gating signal for OUTPUT Matrix_out
 
+  virtual void	LabelUnits_impl(Unit_Group* ugp);
+  // label units with Go/No (unit group) -- auto done in InitWeights
+  virtual void	LabelUnits(LeabraLayer* lay);
+  // label units with Go/No -- auto done in InitWeights
+
   void	Init_Weights(LeabraLayer* lay);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
