@@ -18,7 +18,7 @@
 #ifndef EMERGENT_PROGRAM_H
 #define EMERGENT_PROGRAM_H
 
-// #include "ta_program.h"
+#include "ta_program_els.h"
 // #include "ta_datatable.h"
 #include "ta_dataproc.h"
 #include "ta_dmem.h"
@@ -312,6 +312,19 @@ protected:
 private:
   void	Initialize();
   void	Destroy();
+};
+
+class EMERGENT_API WtInitPrompt: public IfGuiPrompt { 
+  // special program element for prompting whether to initialize network weights -- only prompts if network has been trained (epoch > 0) -- requires a variable named: network -- will complain if not found!
+INHERITED(IfGuiPrompt)
+public:
+  TA_BASEFUNS_NOCOPY(WtInitPrompt);
+protected:
+  override const String	GenCssPre_impl(int indent_level); 
+
+private:
+  void	Initialize();
+  void	Destroy()	{ } //
 };
 
 

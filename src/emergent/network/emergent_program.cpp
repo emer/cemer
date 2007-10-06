@@ -938,3 +938,28 @@ const String SetUnitsVar::GenCssBody_impl(int indent_level) {
 }
 
 
+//////////////////////////
+//  WtInitPrompt	//
+//////////////////////////
+
+void WtInitPrompt::Initialize() {
+  prompt = "Do you want to Initialize Network Weights? (WARNING: this will erase all previous training!)";
+  yes_label = "Yes";
+  no_label = "No";
+}
+
+const String WtInitPrompt::GenCssPre_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  String rval;
+  if(taMisc::gui_active) {	// todo: add server flag check
+    rval = il + "{ int chs = 0;\n";
+    rval += il + "  if(network->epoch > 0) chs = taMisc::Choice(\"" + prompt + "\", \""
+      + yes_label + "\", \""
+      + no_label + "\");\n";
+    rval += cssMisc::Indent(indent_level+1) + "if(chs == 0) {\n";
+  }
+  else {
+    rval = il + "{\n";		// just a block to run..
+  }
+  return rval; 
+}
