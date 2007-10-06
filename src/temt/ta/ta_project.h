@@ -221,7 +221,7 @@ private:
   void	Initialize();
   void 	Destroy() { CutLinks(); }
 };
-
+TA_SMART_PTRS(taProject)
 
 class TA_API Project_Group : public taGroup<taProject> {
   //  ##CAT_Project group of projects

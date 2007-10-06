@@ -166,8 +166,8 @@ TA_HEADS =\
 	$(EMERGENTDIR)/src/temt/ta/ta_defaults.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin_p.h \
-	$(EMERGENTDIR)/src/temt/ta/ta_server.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_project.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_server.h \
 	$(TA_HEADS_GUI) \
 	$(TA_HEADS_TAMISC) \
 	$(TA_HEADS_TAMISC_GUI)

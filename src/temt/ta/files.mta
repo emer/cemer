@@ -41,8 +41,8 @@
 ./ta_defaults.h
 ./ta_plugin.h
 ./ta_plugin_p.h
-./ta_server.h
 ./ta_project.h
+./ta_server.h
 ./ta_qt.h
 ./ta_qtdata_def.h
 ./ta_qtdata.h

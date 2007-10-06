@@ -2224,7 +2224,7 @@ QVariant Variant::toQVariant() const {
 //  NameVar			//
 //////////////////////////////////
 
-bool NameVar::Parse(const String& raw, String name, String val) {
+bool NameVar::Parse(const String& raw, String& name, String& val) {
   String namet = trim(raw.before('='));
   if (namet.length() == 0) return false;
   name = namet;

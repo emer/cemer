@@ -20,6 +20,7 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 #include <QRegExp>
+#include <QTimer>
 
 #include <QByteArray>
 #include <QDataStream>
@@ -33,6 +34,28 @@
 //////////////////////////
 //  TemtClientAdapter	//
 //////////////////////////
+
+void TemtClientAdapter::init() {
+  prog_rval = Program::RV_OK;
+  pds = PDS_NONE;
+}
+
+void TemtClientAdapter::prog_Run() {
+  if (!prog) {
+    prog_rval = Program::RV_NO_PROGRAM;
+    return;
+  }
+  pds = PDS_RUNNING;
+  prog->Run();
+  prog_rval = (Program::ReturnVal)prog->ret_val;
+  pds = PDS_DONE;
+}
+
+void TemtClientAdapter::SetProg(Program* prog_) {
+  prog = prog_;
+  pds = PDS_SET;
+  prog_rval = Program::RV_OK;
+}
 
 void TemtClientAdapter::sock_disconnected() {
   owner()->sock_disconnected();
@@ -112,6 +135,77 @@ void TemtClient::cmdCloseProject() {
 SendError("CloseProject not implemented yet");
 }
 
+void TemtClient::cmdRunProgram() {
+  String pnm = pos_params.SafeEl(0);
+  if (pnm.empty()) {
+    SendError("ProgramError program name expected");
+    return;
+  }
+  
+  // check if a prog already running
+  Program::RunState grs = Program::GetGlobalRunState();
+  if (!((grs == Program::DONE) || (grs == Program::NOT_INIT))) {
+    SendError("ProgramError " + pnm + " program already running");
+    return;
+  }
+  // make sure project
+  taProject* proj = GetCurrentProject();
+  if (!proj) {
+    SendError("ProgramError " + pnm + " no project open");
+    return;
+  }
+  
+  // get program, make sure exists
+  Program* prog = proj->programs.FindLeafName(pnm);
+  if (!prog) {
+    SendError("ProgramError " + pnm + " not found");
+    return;
+  }
+  
+  // check that not already running
+  Program::RunState rs = prog->run_state;
+  if (!((rs == Program::DONE) || (rs == Program::NOT_INIT))) {
+    SendError("ProgramError " + pnm + " program already running");
+    return;
+  }
+  
+  // check that it is initialized, otherwise call Init
+  if (rs == Program::NOT_INIT) {
+    //NOTE: Init is synchronous
+    prog->Init();
+    if (prog->ret_val != Program::RV_OK) {
+      SendError("ProgramError " + pnm + " Init failed with ret_val: "
+        + String(prog->ret_val));
+      return;
+    }
+  }
+  
+  // run
+  adapter()->SetProg(prog);
+  QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
+  SendReply("ProgramRunning " + pnm);
+}
+
+void TemtClient::cmdEcho() {
+  String r = cmd;
+  for (int i = 0; i < pos_params.size; ++i) {
+    r.cat(" ");
+    r.cat(pos_params.FastEl(i));
+  }
+  for (int i = 0; i < name_params.size; ++i) {
+    r.cat(" ");
+    NameVar& nv = name_params.FastEl(i);
+    r.cat(nv.name + "=" + nv.value.toString());
+  }
+  SendReply( r);
+}
+
+taProject* TemtClient::GetCurrentProject() {
+  if (!cur_proj)
+    cur_proj = tabMisc::root->projects.SafeEl(0);
+  return cur_proj.ptr();
+}
+
 void TemtClient::ParseCommand(const String& cl) {
   cmd_line = trim(cl); // remove leading/trailing ws, including eol's
   cmd = _nilString;
@@ -170,10 +264,17 @@ void TemtClient::ParseCommand(const String& cl) {
   }
   
   //TODO: we can (should!) look up and dispatch via name!
-  if (cmd == "CloseProject") {
+/*  if (cmd == "CloseProject") {
     cmdCloseProject();
-  } else if (cmd == "OpenProject") {
+  } else 
+  if (cmd == "OpenProject") {
     cmdOpenProject();
+  } else { */
+  if (cmd == "Echo") {
+    cmdEcho();
+  } else
+  if (cmd == "RunProgram") {
+    cmdRunProgram();
   } else {
     //TODO: need subclass hook, and/or change to symbolic, so subclass can do cmdXXX routine
     // unknown command
@@ -266,6 +367,10 @@ void TemtClient::SendError(const String& err_msg) {
   if (err_msg.length() > 0)
     ln.cat(" ").cat(err_msg);
   WriteLine(ln);
+}
+
+void TemtClient::SendReply(const String& r) {
+  WriteLine(r);
 }
 
 void TemtClient::SendOk(int lines) {

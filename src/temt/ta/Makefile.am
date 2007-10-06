@@ -158,8 +158,8 @@ TAHEADS =\
 	ta_defaults.h \
 	ta_plugin.h \
 	ta_plugin_p.h \
-	ta_server.h \
 	ta_project.h \
+	ta_server.h \
 	$(TAHEADS_GUI) \
 	$(TAHEADS_TAMISC) \
 	$(TAHEADS_TAMISC_GUI)
@@ -204,8 +204,8 @@ HEADS =\
 	ta_defaults.h \
 	ta_plugin.h \
 	ta_plugin_p.h \
-	ta_server.h \
 	ta_project.h \
+	ta_server.h \
 	ta_gendoc.h \
 	$(HEADS_GUI) \
 	$(HEADS_TAMISC) \
@@ -251,10 +251,10 @@ SRCS =\
 	ta_defaults.cpp \
 	ta_plugin_p.cpp \
 	ta_plugin_p.moc.cpp \
-	ta_server.cpp \
-	ta_server.moc.cpp \
 	ta_project.cpp \
 	ta_project.moc.cpp \
+	ta_server.cpp \
+	ta_server.moc.cpp \
 	ta_gendoc.cpp \
 	$(SRCS_GUI) \
 	ta_qrc.cpp \

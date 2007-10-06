@@ -19,11 +19,12 @@
 #define TA_SERVER_H
 
 #include "ta_base.h"
-#include "ta_TA_type.h"
+#include "ta_project.h"
 
 #ifndef __MAKETA__
 # include <QtNetwork/QAbstractSocket> // for state defines
 #endif
+
 
 // forwards
 class TemtClient;
@@ -36,15 +37,32 @@ class TA_API TemtClientAdapter: public taBaseAdapter {
 friend class TemtClient;
   Q_OBJECT
 public:
+  enum ProgDispatchState {
+    PDS_NONE,
+    PDS_SET, // not dispatched yet
+    PDS_RUNNING, // Run called
+    PDS_DONE // Run finished -- note, could be an error
+  };
+  
+  ProgramRef		prog; // program to run
+  ProgDispatchState	pds; 
+  Program::ReturnVal	prog_rval; // rval 
+  
   inline TemtClient*	owner() {return (TemtClient*)taBaseAdapter::owner;}
-  TemtClientAdapter(TemtClient* owner_): taBaseAdapter((taOABase*)owner_) {}
+  
+  void			SetProg(Program* prog);
+  
+  TemtClientAdapter(TemtClient* owner_): taBaseAdapter((taOABase*)owner_) {init();}
   
 #ifndef __MAKETA__ // maketa chokes on the net class types etc.
 public slots:
+  void			prog_Run(); // run the prog
   void 			sock_readyRead();
   void 			sock_disconnected(); //note: we only allow one for now, so monitor it here
   void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
 #endif
+private:
+  void init();
 };
 
 class TA_API TemtClient: public taOABase { 
@@ -71,6 +89,7 @@ public:
   void			SetSocket(QTcpSocket* sock);
 
   void			SendError(const String& err_msg); // send error reply
+  void			SendReply(const String& r); // send reply
   void			SendOk(int lines = -1);
   void			SendOk(int lines, const String& addtnl); //
   
@@ -79,6 +98,8 @@ public:
 public: // commands, all are cmdXXX where XXX is exact command name
   virtual void		cmdOpenProject();
   virtual void		cmdCloseProject();
+  virtual void		cmdEcho(); // echos, for test
+  virtual void		cmdRunProgram(); 
   
 public: // slot forwardees
   void 			sock_readyRead();
@@ -94,6 +115,9 @@ protected:
   String		cmd; // this is the first item, the command
   String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done
   NameVar_PArray	name_params; // name params; str quoting/escaping already done
+  taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
+  
+  taProject*		GetCurrentProject(); // gets, and maybe asserts
   
   void			setState(ClientState cs);
   

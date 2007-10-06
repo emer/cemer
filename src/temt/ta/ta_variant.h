@@ -723,7 +723,7 @@ inline bool operator!=(const taMatrix* a, const Variant& b) {return !b.eqMatrix(
 class TA_API NameVar {
   // a name-value representation, using a String and a Variant
 public:
-  static bool	Parse(const String& raw, String name, String value);
+  static bool	Parse(const String& raw, String& name, String& value);
   // pulls the nm and val out of name=value (ignores ws around the =); true if = found
   
   String	name;		// the name

@@ -31,7 +31,7 @@ class DataTable;
 // forwards
 class DynEnumType;
 class Program;
-SmartRef_Of(Program,TA_Program); // ProgramRef
+TA_SMART_PTRS(Program); // ProgramRef
 class Program_Group;
 class Program_List;
 class ProgLibEl;
@@ -929,6 +929,8 @@ public:
   static String_Array	forbidden_names;
   // #NO_SAVE #READ_ONLY #HIDDEN names that should not be used for variables and other such things because they are already in use
 
+  static RunState	GetGlobalRunState(); // gets the global run state, i.e. is ANY program running, stopped, etc.
+  
   Program_Group*	prog_gp;
   // #NO_SHOW #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
 
@@ -1131,7 +1133,6 @@ private:
   void	Initialize();
   void	Destroy();
 };
-
 
 class TA_API Program_List : public taList<Program> {
   // ##CAT_Program a list of programs

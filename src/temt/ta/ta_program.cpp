@@ -2547,6 +2547,12 @@ bool Program::stop_req = false;
 bool Program::step_mode = false;
 Program_Group* Program::step_gp = NULL;
 
+Program::RunState Program::GetGlobalRunState() {
+//TODO: must somehow hook setRunState and such on dudes to track this
+// we are just blindly returning DONE for now!!!
+  return Program::DONE;
+}
+
 void Program::Initialize() {
   run_state = NOT_INIT;
   flags = PF_NONE;
