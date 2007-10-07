@@ -1146,14 +1146,22 @@ void LayerView::Render_impl() {
     node_so->setGeom(lay->act_geom.x, lay->act_geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z);
   }
   node_so->setCaption(data()->GetName().chars());
-  node_so->resizeCaption(nv->font_sizes.layer);
 
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_wd = T3LayerNode::width / max_xy;
+  float fx = (float)lay->act_geom.x / nv->max_size.x;
 
-  SbVec3f tran(0.0f, -nv->font_sizes.layer, lay_wd);
+  // ensure that the layer label does not go beyond width of layer itself!
+  float eff_lay_font_size = nv->font_sizes.layer;
+  float lnm_wd = (eff_lay_font_size * lay->name.length()) / t3Misc::char_ht_to_wd_pts;
+  if(lnm_wd > fx) {
+    eff_lay_font_size = (fx / (float)lay->name.length()) * t3Misc::char_ht_to_wd_pts;
+  }
+  node_so->resizeCaption(eff_lay_font_size);
+
+
+  SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
   node_so->transformCaption(tran);
-
 
   inherited::Render_impl();
 }
