@@ -164,7 +164,7 @@ void T3GridViewNode::render() {
   col_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);
   // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
-  transformCaption(iVec3f(0.1f, -((float)font->size.getValue()), 0.0f)); // move caption below the frame
+  transformCaption(iVec3f(0.1f, -((float)font->size.getValue()), 0.02f)); // move caption below the frame
 }
 
 //////////////////////////
@@ -875,7 +875,7 @@ void T3GraphViewNode::render() {
   }
   // note: also change in DragFinishCB in qtso
   SoFont* font = captionFont(true);
-  transformCaption(iVec3f(0.1f, -((float)font->size.getValue() + frame_margin), 0.0f)); // move caption below the frame
+  transformCaption(iVec3f(0.1f, -((float)font->size.getValue() + frame_margin), 0.02f)); // move caption below the frame
   float vert_off = frame_margin + 2.0f * frame_width;
   row_sb_tx_->translation.setValue(0.5f * width_, -vert_off, -frame_width); // Z is to go below label
   row_sb_tx_->scaleFactor.setValue(width_, 1.0f, 1.0f);

@@ -200,7 +200,7 @@ SoTransform* T3Node::captionTransform(bool auto_create) {
 }
 
 void T3Node::setDefaultCaptionTransform() {
-  transformCaption(iVec3f(0.0f, 0.005f, 0.002f));
+  transformCaption(iVec3f(0.0f, -0.02f, 0.02f));
   resizeCaption(.05f);	// default size
 }
 
@@ -237,7 +237,7 @@ void T3Node::transformCaption(const SbRotation* rotate, const iVec3f* translate)
     txfm->rotation.setValue(*rotate);
   }
   if (translate)
-    txfm->translation.setValue(SbVec3f(translate->x, translate->y, translate->z + 0.02f)); // offset slightly
+    txfm->translation.setValue(SbVec3f(translate->x, translate->y, translate->z));
 }
 
 

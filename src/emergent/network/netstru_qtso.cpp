@@ -1148,6 +1148,13 @@ void LayerView::Render_impl() {
   node_so->setCaption(data()->GetName().chars());
   node_so->resizeCaption(nv->font_sizes.layer);
 
+  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  float lay_wd = T3LayerNode::width / max_xy;
+
+  SbVec3f tran(0.0f, -nv->font_sizes.layer, lay_wd);
+  node_so->transformCaption(tran);
+
+
   inherited::Render_impl();
 }
 
