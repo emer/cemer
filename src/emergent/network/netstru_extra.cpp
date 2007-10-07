@@ -268,8 +268,8 @@ void TesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
   ruc += recv_off;	// then re-add offset
   FloatTwoDCoord scruc = ruc;
   scruc *= send_scale;
-  sctr = scruc;		// center of sending units
-  sctr += send_border;
+  scruc += send_border;
+  sctr = scruc;		// take int part at the end
 }
 
 void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projection* prjn) {

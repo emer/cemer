@@ -71,7 +71,7 @@ public:
   TwoDCoord	recv_group;	// group together this many units under the same starting coord, resulting in a tile pattern
   bool		wrap;		// whether to wrap coordinates around (else clip)
   FloatTwoDCoord send_scale;	// scale to apply to transform receiving unit coords into sending unit coords
-  TwoDCoord	send_border;	// border size around sending layer (constant offset to add to sending offsets)
+  FloatTwoDCoord send_border;	// border size around sending layer (constant offset to add to sending offsets)
 
   TessEl_List	send_offs;	// offsets of the sending units
 
