@@ -2,12 +2,12 @@ leabra todo list:
 
 commit:
 
-* fix PBWM & PVLV wizards & add funs to create/remove prjns into PVLV layers..
+* fix wiki parser
+
+* auto scale always symmetric auto scale!
 
 ------------
 current:
-
-* line type or other selector not working in graph view panel!
 
 * find use browse so progs in progedit? Prog editor show
 
@@ -39,8 +39,6 @@ function for whenever a variable is processed..
 
 == PVLV:
 
-* output gate guys only get pv da, not lv??
-
 * add group_name to CondEnv code -- Epochgp PERMUTED, etc..
 
 * create simulated SIR test case.. 2 repeated guys with reward assoc.
@@ -53,11 +51,6 @@ function for whenever a variable is processed..
 
 ---
 
-* leabra inhib: compute distance from "ideal" inhib based on k target netin (e.g., .4)
-  and add extra inhib in proportion.  set point in for inhib value itself.  makes the
-  weakly activated units more weak, and the strongly activated more weak too!  pop out??
-
-
 -----------
 check:
 
@@ -66,7 +59,6 @@ Program issues
 
 --------------
 
-* css include path & files from old css..
 * p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
 * css #include: make a new codeblock and put all the include stuff in there,
    to get rid of zaplast?  how to best handle?
@@ -75,14 +67,6 @@ Program issues
 
 ------------------
 hv model
-
-* move all key db's to programs: makes it more robust
-
-* document fixes:
-* IT fm output: adapt goes up to .12, no adapt is down at .018 -- change it fm output target.
-  itfmo05  -- still bust; 
-* main thing is high: v2 from v4 seems to be bad..  try run with just norel adapt + output
-* output should get more from IT than V4??  check wiki for prior experiments..
 
 * add 3d model rendering using inventor..
  
@@ -105,7 +89,6 @@ css:
 
 ------------------
 * datatable views:
-  - initial panel is not updated..  just stick in render_impl and be done with it??  no..
   - add data_spacing to graph view?
 
 -----------
@@ -117,12 +100,7 @@ current bugs:
 -------
 lower pri:
 
-* cleanup other uses of RunPending -> process events or remove??  test for
-  need for css Cont RunPending -- test in hv model.
-
 * add #CAT to everything in leabra_*.h, and fixup comments
 
 * test FILE string_stream.css: ptr = 0?
-
-* view colors: enum with different built-in styles
 

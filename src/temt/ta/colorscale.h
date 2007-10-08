@@ -262,12 +262,13 @@ public:
   void			SetFromScaleRange(ScaleRange* sr);
 
   // funcs used to be in bar:
-  void			ModRange(float val);
-  void			ModRoundRange(float val);
-  void			FixRangeZero();
-  void			SetMinMax(float mn,float mx);
-  void			UpdateMinMax(float mn, float mx); // maybe expand bounds
-  bool			UpdateMinMax(float val); // maybe expand bounds, returning true if expanded
+  virtual void		ModRange(float val);
+  virtual void		ModRoundRange(float val);
+  virtual void		FixRangeZero();
+  virtual void		SetMinMax(float mn,float mx);
+  virtual void		UpdateMinMax(float mn, float mx); // maybe expand bounds
+  virtual bool		UpdateMinMax(float val); // maybe expand bounds, returning true if expanded
+  virtual void		SymRange();		 // symmetrize min/max values around zero
 
   void	InitLinks();
   void	CutLinks();

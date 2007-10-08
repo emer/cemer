@@ -675,6 +675,12 @@ void ColorScale::UpdateMinMax(float mn, float mx) {
   FixRangeZero();
 }
 
+void ColorScale::SymRange() {
+  float mxabs = MAX(fabsf(min), fabsf(max));
+  min = -mxabs; max = mxabs;
+  FixRangeZero();
+}
+
 
 //////////////////////////
 //	ViewColors	//

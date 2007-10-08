@@ -1242,6 +1242,7 @@ void GridTableView::GetScaleRange() {
     DataCol* da = cvs->dataCol();
     if(!da->isNumeric() || !da->is_matrix) continue;
     da->GetMinMaxScale(sc_rg);
+    sc_rg.SymRange();		// keep range symmetric around zero!
     if(!got_one)
       colorscale.SetMinMax(sc_rg.min, sc_rg.max);
     else

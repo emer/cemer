@@ -85,6 +85,8 @@ public:
   { min = MAX(it.min, min); max = MIN(it.max, max); }
   void  WithinRange(float min_, float max_) // #IGNORE put my range within given one
   { min = MAX(min_, min); max = MIN(max_, max); }
+  void	SymRange() // symmetrize my range around zero, with max abs value of current min, max
+  { float mxabs = MAX(fabsf(min), fabsf(max)); min = -mxabs; max = mxabs; }
 
   float	Normalize(float val) const	{ return (val - min) * Scale(); }
   // normalize given value to 0-1 range given current in max

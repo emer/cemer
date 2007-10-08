@@ -2409,6 +2409,7 @@ void NetView::UpdateAutoScale() {
     }
   }
   if (updated) { //note: could really only not be updated if there were no items
+    scale.SymRange();		// keep it symmetric
     if (unit_sr)
       unit_sr->SetFromScale(scale); // update values
     if (nvp) {
