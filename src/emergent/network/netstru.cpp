@@ -2193,6 +2193,20 @@ int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   return rval;
 }
 
+void Unit::VarToTable(DataTable* dt, const String& variable) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("Unit_Var_" + variable, true);
+  }
+
+  Network* net = GET_MY_OWNER(Network);
+
+  NetMonitor nm;
+  nm.AddUnit(this, variable);
+  nm.SetDataNetwork(dt, net);
+  nm.UpdateDataTable();
+  nm.GetMonVals();
+}
 
 
 ////////////////////////////
@@ -2483,6 +2497,21 @@ void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
     }
   }
   dt->StructUpdate(false);
+}
+
+void Projection::VarToTable(DataTable* dt, const String& variable) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+  }
+
+  Network* net = GET_MY_OWNER(Network);
+
+  NetMonitor nm;
+  nm.AddProjection(this, variable);
+  nm.SetDataNetwork(dt, net);
+  nm.UpdateDataTable();
+  nm.GetMonVals();
 }
 
 void Projection::SetFrom() {
@@ -3112,6 +3141,21 @@ bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const char* variable) {
       break;
   }
   return true;
+}
+
+void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+  }
+
+  Network* net = GET_MY_OWNER(Network);
+
+  NetMonitor nm;
+  nm.AddUnitGroup(this, variable);
+  nm.SetDataNetwork(dt, net);
+  nm.UpdateDataTable();
+  nm.GetMonVals();
 }
 
 Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
@@ -4171,6 +4215,21 @@ void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
     gotone = true;
   }
   TestError(!gotone, "WeightsToTable", "No sending projection from:", send_lay->name);
+}
+
+void Layer::VarToTable(DataTable* dt, const String& variable) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+  }
+
+  Network* net = GET_MY_OWNER(Network);
+
+  NetMonitor nm;
+  nm.AddLayer(this, variable);
+  nm.SetDataNetwork(dt, net);
+  nm.UpdateDataTable();
+  nm.GetMonVals();
 }
 
 Unit* Layer::FindUnitFmCoord(int x, int y) {
@@ -5759,6 +5818,19 @@ void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 {
   if(recv_lay == NULL) return;
   recv_lay->WeightsToTable(dt, send_lay);
+}
+
+void Network::VarToTable(DataTable* dt, const String& variable) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+  }
+
+  NetMonitor nm;
+  nm.AddNetwork(this, variable);
+  nm.SetDataNetwork(dt, this);
+  nm.UpdateDataTable();
+  nm.GetMonVals();
 }
 
 void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {

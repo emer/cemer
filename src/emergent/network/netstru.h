@@ -858,6 +858,9 @@ public: //
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit
 
+  virtual void	VarToTable(DataTable* dt, const String& variable);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
+
   virtual void 	LinkSendCons();
   // #CAT_Structure link sending connections based on recv cons (after load, copy)
 
@@ -1051,7 +1054,10 @@ public:
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 
   virtual void	WeightsToTable(DataTable* dt, const String& col_nm = "");
-  // #MENU #NULL_OK #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer
+  // #MENU #NULL_OK  #NULL_TEXT_0_NewTable #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer
+  virtual void	VarToTable(DataTable* dt, const String& variable);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
+
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
@@ -1223,6 +1229,9 @@ public:
   // #CAT_Structure sets unit values from values in the given array
   virtual bool	UnitValuesFromMatrix(float_Matrix& mat, const char* variable);
   // #CAT_Structure sets unit values from values in the given array
+
+  virtual void	VarToTable(DataTable* dt, const String& variable);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
 
   Unit*		FindUnitFmCoord(int x, int y);
   // #CAT_Structure find unit from given set of x and y coordinates
@@ -1516,7 +1525,9 @@ public:
   // #CAT_Structure switch any layers using old_sp to using new_sp
 
   virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
-  // #MENU #NULL_OK_0 #CAT_Structure TODO:define send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual void	VarToTable(DataTable* dt, const String& variable);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for projection variables, specify prjns.; for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
 
   Unit*		FindUnitFmCoord(int x, int y);
   // #CAT_Structure find unit within layer from given coordinates (layer relative coords), taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
@@ -1919,7 +1930,9 @@ public:
   // #MENU #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
 
   virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
-  // #MENU #NULL_OK_0 #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual void	VarToTable(DataTable* dt, const String& variable);
+  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (if a network, one col, if a layer, number of layers, etc).  for projection data, specify: prjns.xxx  for weight values, specify r. or s. (e.g., r.wt) -- this uses a NetMonitor internally (just does AddNetwork with variable, then gets data), so see documentation there for more information
 
   virtual void	ProjectUnitWeights(Unit* un, float wt_thr = 0.5f, bool swt = false);
   // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in anal1 on each unit (anal2 is used as a sum variable)  wt_thr is threshold on max-normalized weights (max=1) for following a given weight value to accumulate (so weaker weights are excluded).  values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence
