@@ -85,4 +85,7 @@ libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_SOURCES =\
 libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS = $(libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
 libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
+clean-local:
+	-rm -f libemergent*
+
 emergent_def.h:

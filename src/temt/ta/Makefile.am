@@ -294,4 +294,8 @@ libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS =\
 
 libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
+clean-local:
+	-rm -f libta*
+
 taglobal.h ta_maketa_defs.h qtdefs.h:
+

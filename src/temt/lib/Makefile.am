@@ -22,5 +22,6 @@ libtemt@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD +=\
 	@abs_top_builddir@/src/temt/taiqtso/libtaiqtso@EMERGENT_SUFFIX@_@PACKAGE_VERSION@.la
 endif
 
-
+clean-local:
+	-rm -f libtemt*
 

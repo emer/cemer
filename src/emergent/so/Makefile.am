@@ -55,4 +55,7 @@ libso_EmergentToolkit@EMERGENT_SUFFIX@_la_CPPFLAGS = $(libso@EMERGENT_SUFFIX@_@P
 
 libso_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
+clean-local:
+	-rm -f libso*
+
 so_def.h:

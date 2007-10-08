@@ -46,4 +46,7 @@ libcs_EmergentToolkit@EMERGENT_SUFFIX@_la_CPPFLAGS = $(libcs@EMERGENT_SUFFIX@_@P
 
 libcs_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
+clean-local:
+	-rm -f libcs*
+
 cs_def.h:

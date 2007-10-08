@@ -49,4 +49,7 @@ libbp_EmergentToolkit@EMERGENT_SUFFIX@_la_CPPFLAGS = $(libbp@EMERGENT_SUFFIX@_@P
 
 libbp_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
+clean-local:
+	-rm -f libbp*
+
 bp_def.h:

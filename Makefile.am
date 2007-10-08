@@ -122,6 +122,10 @@ DISTCLEANFILES =\
 
 endif
 
+uninstall-local:
+	-rm -f $(DESTDIR)$(libdir)/libtemt*
+	-rm -f $(DESTDIR)$(libdir)/libemergent*
+
 # These actions occur immediately before a distribution tarball is created.
 dist-hook:
 	rm -fr $(distdir)/src/temt/ta/ios-g++-3.1/.svn

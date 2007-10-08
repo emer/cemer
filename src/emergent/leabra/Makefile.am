@@ -52,4 +52,7 @@ libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_SOURCES =\
 libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_CPPFLAGS = $(libleabra@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CPPFLAGS)
 libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
+clean-local:
+	-rm -f libleabra*
+
 leabra_def.h:
