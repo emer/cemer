@@ -24,4 +24,4 @@ endif
 
 clean-local:
 	-rm -f libtemt*
-
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi

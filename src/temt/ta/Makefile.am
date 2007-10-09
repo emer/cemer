@@ -296,6 +296,7 @@ libtaEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -O0
 
 clean-local:
 	-rm -f libta*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 
 taglobal.h ta_maketa_defs.h qtdefs.h:
 

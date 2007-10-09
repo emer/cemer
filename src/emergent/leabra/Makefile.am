@@ -54,5 +54,6 @@ libleabra_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
 clean-local:
 	-rm -f libleabra*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 
 leabra_def.h:

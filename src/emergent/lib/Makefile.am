@@ -17,4 +17,5 @@ libemergent@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_LIBADD =\
 
 clean-local:
 	-rm -f libemergent*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 

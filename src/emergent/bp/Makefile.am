@@ -51,5 +51,6 @@ libbp_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
 clean-local:
 	-rm -f libbp*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 
 bp_def.h:

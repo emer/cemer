@@ -76,5 +76,6 @@ libcss@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = @OPT_LEVEL@
 
 clean-local:
 	-rm -f libcss*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 
 cssdef.h:

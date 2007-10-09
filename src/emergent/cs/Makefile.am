@@ -48,5 +48,6 @@ libcs_EmergentToolkit@EMERGENT_SUFFIX@_la_CXXFLAGS = -O0
 
 clean-local:
 	-rm -f libcs*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 
 cs_def.h:

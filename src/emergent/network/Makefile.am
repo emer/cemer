@@ -87,5 +87,6 @@ libemergentEmergentToolkit@EMERGENT_SUFFIX@_@PACKAGE_VERSION@_la_CXXFLAGS = -g -
 
 clean-local:
 	-rm -f libemergent*
+	if [ -n "`ls *\.moc\.cpp`" ];then rm `ls *\.moc\.cpp`;fi
 
 emergent_def.h:
