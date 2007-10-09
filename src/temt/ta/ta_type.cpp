@@ -681,7 +681,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 {
 #if defined(DMEM_COMPILE)
 //TODO: should provide a way to log these somehow
-  if(taMisc::dmem_proc > 0) return;
+//  if(taMisc::dmem_proc > 0) return;
 #endif
   cerr << "***WARNING: " << SuperCat(a, b, c, d, e, f, g, h, i) << endl;
   FlushConsole();
@@ -718,7 +718,7 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-  if(taMisc::dmem_proc > 0) return;
+  //  if(taMisc::dmem_proc > 0) return;
 #endif
   // always send to console
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
@@ -742,7 +742,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
   if(!test) return false;
 
 #ifdef DMEM_COMPILE
-  if(taMisc::dmem_proc > 0) return true;
+  //  if(taMisc::dmem_proc > 0) return true;
 #endif
 
   if(obj) {
@@ -796,7 +796,9 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 			 const char* e, const char* f, const char* g, const char* h, const char* i)
 {
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
-  if(taMisc::dmem_proc > 0) return;
+  // this is actually a bad idea -- can miss ideosynchratic errors, and if you
+  // get an error these days it is terminal anyway, so just bail!!
+//   if(taMisc::dmem_proc > 0) return;
 #endif
   if (beep_on_error) cerr << '\a'; // BEL character
   cerr << "***ERROR: " << SuperCat(a, b, c, d, e, f, g, h, i)  << endl;
