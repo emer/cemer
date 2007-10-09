@@ -2200,12 +2200,16 @@ void Unit::VarToTable(DataTable* dt, const String& variable) {
   }
 
   Network* net = GET_MY_OWNER(Network);
+  if(!net) return;
 
   NetMonitor nm;
+  taBase::Own(nm, this);
   nm.AddUnit(this, variable);
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
+  dt->AddBlankRow();
   nm.GetMonVals();
+  dt->WriteClose();
 }
 
 
@@ -2506,12 +2510,16 @@ void Projection::VarToTable(DataTable* dt, const String& variable) {
   }
 
   Network* net = GET_MY_OWNER(Network);
+  if(!net) return;
 
   NetMonitor nm;
+  taBase::Own(nm, this);
   nm.AddProjection(this, variable);
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
+  dt->AddBlankRow();
   nm.GetMonVals();
+  dt->WriteClose();
 }
 
 void Projection::SetFrom() {
@@ -3150,12 +3158,16 @@ void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
   }
 
   Network* net = GET_MY_OWNER(Network);
+  if(!net) return;
 
   NetMonitor nm;
+  taBase::Own(nm, this);
   nm.AddUnitGroup(this, variable);
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
+  dt->AddBlankRow();
   nm.GetMonVals();
+  dt->WriteClose();
 }
 
 Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
@@ -4224,12 +4236,16 @@ void Layer::VarToTable(DataTable* dt, const String& variable) {
   }
 
   Network* net = GET_MY_OWNER(Network);
+  if(!net) return;
 
   NetMonitor nm;
+  taBase::Own(nm, this);
   nm.AddLayer(this, variable);
   nm.SetDataNetwork(dt, net);
   nm.UpdateDataTable();
+  dt->AddBlankRow();
   nm.GetMonVals();
+  dt->WriteClose();
 }
 
 Unit* Layer::FindUnitFmCoord(int x, int y) {
@@ -5827,10 +5843,13 @@ void Network::VarToTable(DataTable* dt, const String& variable) {
   }
 
   NetMonitor nm;
+  taBase::Own(nm, this);
   nm.AddNetwork(this, variable);
   nm.SetDataNetwork(dt, this);
   nm.UpdateDataTable();
+  dt->AddBlankRow();
   nm.GetMonVals();
+  dt->WriteClose();
 }
 
 void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
