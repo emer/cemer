@@ -26,14 +26,21 @@ Release Steps
 * make the Release build, and make sure it works
 
 * the following need to be checked/updated in the setup_bin project -- open the 
-  individual view panels, such as File System to add/change files
+  individual view panels, such as File System to add/change files -- note that you
+  can look for new guys by sorting by date desc and comparing to last release date
+  below (some will be changes, but there will be relatively few files newer than
+  release date, so it is easy to compare them to the setup_bin list)
   * demo projects, and related files (ex Banana image)
+  * prog_lib, css_lib
   * any new dlls, or if the version of dependent dlls changed, you will probably
     need to re-add the files
 
 * make setup_bin
 
-  make the Release version of the setup project
+  * make the Release version of the setup project
+  * NOTE: sometimes VS puts in a SETUP.CAB that it shouldn't -- this is a huge
+    file that just replicates the stuff in the .msi, so if that is there
+    then delete it before making the zip
 
 * Make a zip
 
@@ -62,5 +69,7 @@ Release Steps
   * edit release template, to update:
   http://grey.colorado.edu/emergent/index.php/Template:Native_packages
 
-
+* Record dates of releases here
+10/03/07  4.0.7
+10/09/07  4.0.8
 
