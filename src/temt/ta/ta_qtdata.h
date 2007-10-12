@@ -834,6 +834,8 @@ protected:
       QWidget* gui_parent_, int flags_ = 0); 
 };
 
+class Q3ListBox; // #IGNORE
+class Q3ListBoxItem; // #IGNORE
 
 //////////////////////////////////
 // 	taiObjChooser		//
@@ -1292,7 +1294,7 @@ public:
   virtual void		GetUpdateMenu(const taiMenuAction* actn = NULL); 
     // gets or updates the menu
 
-
+private: //test for usage
   taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = (flgNullOk | flgEditOk)); // uses flags flgNullOk, flgEditOk,
 //            bool nul_not=false, bool edt_not=false);

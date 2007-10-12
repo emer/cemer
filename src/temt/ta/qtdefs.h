@@ -74,8 +74,6 @@ class	QItemDelegate;		// #IGNORE
 class	QLabel;			// #IGNORE 
 class	QLayout;		// #IGNORE 
 class	QLineEdit;		// #IGNORE 
-class	Q3ListBox;		// #IGNORE 
-class	Q3ListBoxItem;		// #IGNORE 
 class	QMainWindow;		// #IGNORE 
 class	QMenu;			// #IGNORE  Qt4
 class	QMenuBar;		// #IGNORE 

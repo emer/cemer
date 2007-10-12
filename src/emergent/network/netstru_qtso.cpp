@@ -42,9 +42,9 @@
 #include <qclipboard.h>
 #include <QGroupBox>
 #include <qlayout.h>
-#include <Q3ListView>
 #include <QScrollArea>
 #include <qpushbutton.h>
+#include <QTreeWidget>
 #include <qwidget.h>
 
 #include <Inventor/SbLinear.h>
@@ -2625,15 +2625,16 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 
   ////////////////////////////////////////////////////////////////////////////
-  lvDisplayValues = new Q3ListView(widg);
-  lvDisplayValues->addColumn("Value", 80);
-  lvDisplayValues->addColumn("Description");
-  lvDisplayValues->setShowSortIndicator(false);
-  lvDisplayValues->setSorting(-1); // not sorted, shown in add order
-  lvDisplayValues->setSelectionMode(Q3ListView::Extended);
+  lvDisplayValues = new QTreeWidget(widg);
+  lvDisplayValues->setRootIsDecorated(false); // makes it look like a list
+  QStringList hdr;
+  hdr << "Value" << "Description";
+  lvDisplayValues->setHeaderLabels(hdr);
+  lvDisplayValues->setSortingEnabled(false);
+  lvDisplayValues->setSelectionMode(QAbstractItemView::ExtendedSelection);
   layDisplayValues->addWidget(lvDisplayValues, 1);
-  connect(lvDisplayValues, SIGNAL(selectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
-
+  connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
+  
   ////////////////////////////////////////////////////////////////////////////
   // Spec tree
 //   gbSpecs = new QGroupBox("Specs", widg);
@@ -2720,11 +2721,12 @@ void NetViewPanel::UpdatePanel_impl() {
   fldLayFont->GetImage((String)nv->font_sizes.layer);
   // update var selection
   int i = 0;
-  Q3ListViewItemIterator it(lvDisplayValues);
-  Q3ListViewItem* item;
-  while ((item = it.current())) {
+  QTreeWidgetItemIterator it(lvDisplayValues);
+  QTreeWidgetItem* item = NULL;
+  while (*it) {
+    item = *it;
     bool is_selected = (nv->ordered_uvg_list.FindEl(item->text(0)) >= 0);
-    lvDisplayValues->setSelected(item, is_selected);
+    item->setSelected(is_selected);
     // if list is size 1 make sure that there is a scale_range entry for this one
     ++it;
     ++i;
@@ -2827,10 +2829,12 @@ void NetViewPanel::GetVars() {
   if (nv_->membs.size == 0) return;
 
   MemberDef* md;
-  Q3ListViewItem* lvi = NULL;
+  QTreeWidgetItem* lvi = NULL;
   for (int i=0; i < nv_->membs.size; i++) {
     md = nv_->membs[i];
-    lvi = new Q3ListViewItem(lvDisplayValues, lvi, md->name, md->desc);
+    QStringList itm;
+    itm << md->name << md->desc;
+    lvi = new QTreeWidgetItem(lvDisplayValues, itm);
   }
 }
 
@@ -2851,10 +2855,11 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   int i = 0;
   //redo the list each time, to guard against stale values
   nv_->ordered_uvg_list.Reset(); 
-  Q3ListViewItemIterator it(lvDisplayValues);
-  Q3ListViewItem* item;
-  while ((item = it.current())) {
-    if (lvDisplayValues->isSelected(item)) {
+  QTreeWidgetItemIterator it(lvDisplayValues);
+  QTreeWidgetItem* item = NULL;
+  while (*it) {
+    item = *it;
+    if (item->isSelected()) {
       if (nv_->ordered_uvg_list.FindEl(item->text(0)) < 0) {
         nv_->ordered_uvg_list.Add(item->text(0));
       }

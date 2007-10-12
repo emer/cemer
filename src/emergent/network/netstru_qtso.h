@@ -65,11 +65,6 @@
   #include <qwidget.h>
 #endif
 
-//#include "minmax.h" // for height_field
-
-//externals
-class Q3ListView; // #IGNORE
-
 // forwards
 
 class UnitGroupView; //
@@ -536,7 +531,7 @@ public:
   QHBoxLayout*		 layColorBar;
   ScaleBar*		   cbar;	      // colorbar
   QPushButton*		   butSetColor;
-  Q3ListView*		 lvDisplayValues;
+  QTreeWidget*		 lvDisplayValues;
   
   QGroupBox*		gbSpecs;
   QVBoxLayout*		laySpecs;
