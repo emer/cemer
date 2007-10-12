@@ -253,7 +253,7 @@ case $host in
                 emergent_linux=true
 	;;
 		*darwin*)
-                LDFLAGS="$LDFLAGS -L/opt/local/lib -L/sw/lib"
+                LDFLAGS="$LDFLAGS -L/opt/local/lib -L/sw/lib -L/Library/Frameworks"
                 AC_DEFINE([HAVE_QT_CONSOLE],,[Used in Unix/Mac, but not Win])
 		AC_DEFINE([DARWIN],[1],[When on darwin])
 		AC_DEFINE([LINUX],[1],[When on darwin])
@@ -5121,8 +5121,8 @@ case $host_os in
 
       sim_ac_universal_flags="-arch i386 -arch ppc $sim_ac_universal_sdk_flags"
       
-      CFLAGS="$sim_ac_universal_flags $CFLAGS"
-      CXXFLAGS="$sim_ac_universal_flags $CXXFLAGS"
+      CXXFLAGS="-arch i386 -arch ppc $CXXFLAGS"
+      #LDFLAGS="-arch i386 -arch ppc $LDFLAGS"
 
       # disable dependency tracking since we can't use -MD when cross-compiling
       enable_dependency_tracking=no

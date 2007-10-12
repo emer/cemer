@@ -41,7 +41,7 @@ AC_DEFINE_DIR([LIB_VERSION],[LIB_VERSION]) # Co-opting this macro
 SIM_AC_CONFIGURATION_SETTING([Emergent binary version],[${PACKAGE_VERSION}])
 SIM_AC_CONFIGURATION_SETTING([The Emergent Toolkit library version],[${LIB_VERSION}])
 
-SIM_AC_UNIVERSAL_BINARIES 
+
 
 AC_PREREQ([2.59])                                      dnl Autoconf 2.59 required
 AC_COPYRIGHT([
@@ -299,10 +299,12 @@ esac
     
 # Remove duplicate entries. TODO: Will this cause problems on MinGW?
 # NOTE: on quadrigraphs: [ is @<:@  and ] is @:>@  
-CXXFLAGS="`echo "$CXXFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
-LDFLAGS="`echo "$LDFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
+
+#CXXFLAGS="`echo "$CXXFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
+#LDFLAGS="`echo "$LDFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
 LIBS="`echo "$LIBS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
 
+SIM_AC_UNIVERSAL_BINARIES 
 
 AC_SUBST([EMERGENT_SUFFIX])
 AC_SUBST([abs_top_builddir])
@@ -314,15 +316,20 @@ AC_SUBST([CXXCPP])
 AC_SUBST([MAKETA_CXXFLAGS])
 
 
+# The following series of very hacky nasty subst's are for plugin makefile integration
+
 AC_SUBST([PL_LIBS],["`echo "$LIBS"`"])
 AC_SUBST([PL_prefix],["`echo "$prefix"`"])
-dnl: note hack, because gd exec_prefix subs out as "NONE" for some whacky reason
-dnl AC_SUBST([PL_exec_prefix],["`echo "$exec_prefix"`"])
+
+# note hack, because gd exec_prefix subs out as "NONE" for some whacky reason
+# AC_SUBST([PL_exec_prefix],["`echo "$exec_prefix"`"])
 AC_SUBST([PL_exec_prefix],["`echo "$prefix"`"])
-dnl replace the single $ with 2 $ so qmake subs at qmake time
-dnl replace whacky "datarootdir" nonsense too
+
+# replace the single $ with 2 $ so qmake subs at qmake time
+# replace whacky "datarootdir" nonsense too
 AC_SUBST([PL_bindir],["`echo "$bindir" | sed 's/\$/\$\$/g'`"])
-dnl dnw AC_SUBST([PL_bindir],[$(eval echo ${bindir})])
+
+# dnw AC_SUBST([PL_bindir],[$(eval echo ${bindir})])
 AC_SUBST([PL_datadir],["`echo "$datadir" | sed 's/\$/[$][$]/'`"])
 AC_SUBST([PL_includedir],["`echo "$includedir" | sed 's/\$/\$\$/g'`"])
 AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
@@ -330,12 +337,11 @@ AC_SUBST([PL_abs_top_builddir],["`echo "$abs_top_builddir"`"])
 includedir="${includedir}/emergent"
 
 dnl TODO: definitely broken from emergent name change
-dnl TODO: definitely doubly broken
 if test x"$bundle" = x"true"; then
   bundle_name="Emergent-${PACKAGE_VERSION}.app"
   bundle_dir="`pwd`/${bundle_name}"
   bindir="${bundle_dir}/Contents/MacOS"
-  libdir="${bundle_dir}/Contents/Frameworks/libemergent_temt-${LIB_VERSION_2}.framework"
+  libdir="${bundle_dir}/Contents/Frameworks/libemergenttemt-${LIB_VERSION_2}.framework"
   datadir="${bundle_dir}/Contents/Resources"
   infodir="$datadir"
   includedir="${bundle_dir}/Contents/Frameworks/${bundle_name}.framework/Headers"
@@ -343,7 +349,6 @@ if test x"$bundle" = x"true"; then
   SIM_AC_CONFIGURATION_SETTING([OSX Bundle],[./$bundle_name])
 
 fi
-
 
 AC_CONFIG_FILES([Makefile
 		src/temt/maketa/Makefile
