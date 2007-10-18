@@ -837,6 +837,8 @@ void MemberProgEl::UpdateAfterEdit_impl() {
   if(member_lookup) {
     if(!path.empty() && (path.lastchar() != '.')) path += ".";
     path += member_lookup->name;
+    if(member_lookup->type->InheritsFormal(&TA_class))
+      path += ".";
     member_lookup = NULL;
   }
 

@@ -2,14 +2,14 @@
 Program_Group .projects[0].programs.gp[0] { 
   Program_Group .projects[0].programs.gp[0] = [10] {
     Program @[0] { 
-      ProgVar_List @.args = [3] {
+      ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
-	ProgVar @[2] { };
       };
 
-      ProgVar_List @.vars = [1] {
+      ProgVar_List @.vars = [2] {
 	ProgVar @[0] { };
+	ProgVar @[1] { };
       };
 
       ProgEl_List @.init_code = [1] {
@@ -541,14 +541,6 @@ Program_Group .projects[0].programs.gp[0] {
     flags=CTRL_PANEL|NULL_CHECK;
     desc="datatable with training patterns -- not used by this program, but passed to train program";
    };
-   ProgVar @[2] {
-    name="max_batch";
-    var_type=T_Int;
-    int_val=10;
-    objs_ptr=0;
-    flags=CTRL_PANEL|NULL_CHECK;
-    desc="maximum number of batch runs to perform";
-   };
   };
   vars {
    name=;
@@ -561,6 +553,14 @@ Program_Group .projects[0].programs.gp[0] {
     objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="batch counter";
+   };
+   ProgVar @[1] {
+    name="max_batch";
+    var_type=T_Int;
+    int_val=10;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK;
+    desc="maximum number of batch runs to perform";
    };
   };
   functions {
@@ -2291,7 +2291,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Input";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=EXT;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[1] {
@@ -2300,13 +2300,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Output";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=TARG;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name="Name";
+      layer_name=;
       offset {x=0: y=0: };
       use_layer_type=1;
       ext_flags=;
