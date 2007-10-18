@@ -26,6 +26,7 @@ dist_pkgdata_prog_lib_DATA =\
 	DataCalcSample.prog \
 	EpochsToTrain.prog \
 	LeabraAll_Std.progp \
+	LeabraAll_Test.progp \
 	LeabraBatch.prog \
 	LeabraBatch_pb.prog \
 	LeabraCycle.prog \

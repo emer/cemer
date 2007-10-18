@@ -367,6 +367,7 @@ INHERITED(taBase)
 public:
   float		da_gain;	// #DEF_1 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
+  float		min_pvi;	// #DEF_0.1 minimum PVi value, so that a low PVe value (~0) makes for negative DA: DA_pv = PVe - MAX(PVi, min_pvi)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when PV is detected (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
   bool		syn_dep;	// #DEF_false old synaptic depression-based mechanism: note that this uses LV_PLUS_IF_PV mode automatically (and otherwise lv_delta mode uses IV_PV_ELSE_LV)
   float		min_lvi;	// #CONDEDIT_ON_syn_dep #DEF_0.1 minimum LVi value, so that a low LVe value (~0) makes for negative DA: DA_lv = LVe - MAX(LVi, min_lvi)

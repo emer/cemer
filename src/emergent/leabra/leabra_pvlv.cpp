@@ -765,6 +765,7 @@ void NVLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
 void PVLVDaSpec::Initialize() {
   da_gain = 1.0f;
   tonic_da = 0.0f;
+  min_pvi = 0.0f;
   use_actual_er = false;
   syn_dep = false;
   min_lvi = 0.1f;
@@ -1035,7 +1036,7 @@ void PVLVDaLayerSpec::Compute_Da_LvDelta(LeabraLayer* lay, LeabraNetwork* net) {
 
   // note that multiple LV subgroups are supported, but not multiple PV's (yet!)
   DaModUnit* pvisu = (DaModUnit*)pvi_lay->units.Leaf(0);
-  float pvd = pve_val - pvisu->act_m; 
+  float pvd = pve_val - MAX(pvisu->act_m, da.min_pvi); 
   float pv_da = pvd - pvisu->misc_1;
 
   lay->dav = 0.0f;
