@@ -43,6 +43,7 @@
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
+  ++err_cnt;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   //TODO: should log errors on nodes > 0!!!
   if(taMisc::dmem_proc > 0) return;

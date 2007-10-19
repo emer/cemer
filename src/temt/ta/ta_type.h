@@ -735,6 +735,7 @@ public:
 
   static bool		use_gui;	// #READ_ONLY #NO_SAVE #NO_SHOW whether the user has specified to use the gui or not (default = true)
   static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has been started up or not
+  static bool		server_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if remote server has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static ContextFlag	is_post_loading;// #READ_ONLY #NO_SAVE #NO_SHOW true if currently in the post load routine (DUMP_POST_LOAD)
   static ContextFlag	is_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object
@@ -748,7 +749,9 @@ public:
   static bool		check_quiet; 	// #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_confirm_success; // #IGNORE mode we are in; set by CheckConfigStart
   static bool		check_ok; 	// #IGNORE cumulative AND of all nested oks
-
+  static int		err_cnt; //  #READ_ONLY #NO_SAVE cumulative error count; can be used/reset by Server to detect for errors after it calls a routine
+  static int		CheckClearErrCnt(); // gets current value, and clears
+  
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
   static QPointer<QMainWindow>	console_win;	// #IGNORE the console window 
 #endif

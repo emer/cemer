@@ -1030,6 +1030,8 @@ public:
   // #CAT_Variables set the value of a program variable (using SetVar) based on the value of startup argument arg_nm -- typically called from startup scripts -- displays information about variable set if !quiet
   virtual Variant	GetVar(const String& var_nm);
   // #CAT_Variables get the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program
+  bool			HasVar(const String& var_nm);
+  // EXPERT #CAT_Variables true if has a var/arg called var_nm (only top-level variables in vars or args) -- can be called from within a running program
   static bool		IsForbiddenName(const String& chk_nm, bool warn=true);
   // #CAT_Code check given name against list of forbidden names -- variables and other objects should check and if forbidden, add an extra character or something
 

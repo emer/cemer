@@ -613,6 +613,7 @@ signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
 bool	taMisc::use_gui = false; // set to default in Init_Gui
 bool 	taMisc::gui_active = false;
+bool 	taMisc::server_active = false; // true while connected
 ContextFlag	taMisc::is_loading;
 ContextFlag	taMisc::is_post_loading;
 ContextFlag	taMisc::is_saving;
@@ -640,6 +641,7 @@ void (*taMisc::WaitProc)() = NULL;
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
 String 	taMisc::LexBuf;
+int taMisc::err_cnt;
 
 /////////////////////////////////////////////////////////////////
 // 		taMisc funs
@@ -675,6 +677,12 @@ void taMisc::LoadConfig() {
 
 /////////////////////////////////////////////////
 //	Errors, Warnings, Simple Dialogs
+
+int taMisc::CheckClearErrCnt() {
+  int rval = err_cnt;
+  err_cnt = 0;
+  return rval;
+}
 
 void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
@@ -795,6 +803,7 @@ bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
 void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char* d,
 			 const char* e, const char* f, const char* g, const char* h, const char* i)
 {
+  ++err_cnt;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
   // this is actually a bad idea -- can miss ideosynchratic errors, and if you
   // get an error these days it is terminal anyway, so just bail!!

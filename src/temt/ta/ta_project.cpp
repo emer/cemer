@@ -968,6 +968,39 @@ void taRootBase::AddTemplates() {
   templates.Add(Program::MakeTemplate());
 }
 
+taBase* taRootBase::FindGlobalObject(TypeDef* base_type, 
+    const String& name)
+{
+  for (int i = 0; i < objs.size; ++i) {
+    taBase* rval = objs.FastEl(i);
+    if (!rval || !rval->InheritsFrom(base_type))
+      continue;
+    if (name.empty() || (rval->GetName() == name))
+      return rval;
+  }
+  return NULL;
+}
+
+void taRootBase::OpenRemoteServer(ushort port) {
+  TemtServer* srv = (TemtServer*)FindGlobalObject(&TA_TemtServer);
+  if (!srv) {
+    srv = (TemtServer*)objs.New(1, &TA_TemtServer);
+  }
+  if (srv->isOpen()) return;
+  srv->port = port;
+  if (!srv->OpenServer()) {
+    taMisc::Error("Could not open server");
+  }
+  
+}
+
+void taRootBase::CloseRemoteServer() {
+  TemtServer* srv = (TemtServer*)FindGlobalObject(&TA_TemtServer);
+  if (!srv) return; // if doesn't exist, don't create!
+  if (!srv->isOpen()) return;
+  srv->CloseServer();
+}
+
 taBase* taRootBase::GetTemplateInstance(TypeDef* typ) {
   return GetTemplateInstance_impl(typ, &templates);
 } 

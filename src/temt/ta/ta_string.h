@@ -125,7 +125,7 @@ public:
   
   static const String	CharToCppLiteral(char c); // converts a character to a C++ valid literal; can be embedded in a C++ string
   static const String	StringToCppLiteral(const String& str); // converts a string to a C++ valid literal
-    
+  
 // global functions:
 
   friend int        split(const String& x, String res[], int maxn,

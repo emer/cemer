@@ -279,19 +279,28 @@ public:
   taBase_Group		test_group; // #EXPERT #NO_SAVE #LINK_GROUP group for testing clip ops etc.
 #endif
   
+  void		OpenRemoteServer(ushort port = 5360);
+  // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application
+  void		CloseRemoteServer();
+  // #MENU #MENU_ON_Server Close an open Server, if any
+  
   virtual void  Options();
   // edit global settings/parameters (taMisc)
   virtual void	About();
-  // #MENU get information/copyright notice
+  // #MENU #MENU_ON_Object get information/copyright notice
   virtual void	SaveAll();
   // saves all the projects
   
   void		AddRecentFile(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   void		AddRecentPath(const String& value); // #IGNORE add this path to the recent list
+  
+  taBase*	FindGlobalObject(TypeDef* base_type = &TA_taBase, 
+    const String& name = _nilString);
+    // find an object deriving from base_type, with given name, or any name if blank
 
 #ifdef GPROF			// turn on for profiling
   virtual void  MonControl(bool on);
-  // #MENU set profile monitoring: on=true = on, else off.  starts out off..
+  // #MENU #MENU_ON_Object set profile monitoring: on=true = on, else off.  starts out off..
 #endif
   
   taBase*	GetTemplateInstance(TypeDef* typ);

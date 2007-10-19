@@ -420,6 +420,7 @@ const String String::StringToCppLiteral(const String& str) {
   return rval;
 }
 
+
 String::String(uint slen, uint sz, char fill) {
   if (sz == 0) sz = slen;
   if (fill == '\0') slen = 0;

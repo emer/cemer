@@ -2956,6 +2956,10 @@ Variant Program::GetVar(const String& nm) {
   return var->GetVar();
 }
 
+bool Program::HasVar(const String& var_nm) {
+  return (FindVarName(var_nm));
+}
+
 bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet) {
   String arg_str = taMisc::FindArgByName(arg_nm);
   if(arg_str.empty()) return false; // no arg, no action

@@ -90,16 +90,19 @@ public:
 
   void			SendError(const String& err_msg); // send error reply
   void			SendReply(const String& r); // send reply
-  void			SendOk(int lines = -1);
-  void			SendOk(int lines, const String& addtnl); //
+  void			SendOk(const String& msg = _nilString); // send ok, w/ optional msg or data (should not have an eol)
+//  void			SendOk(int lines = -1);
+//  void			SendOk(int lines, const String& addtnl); //
   
   void			WriteLine(const String& ln); // low level write, note: adds eol
   
 public: // commands, all are cmdXXX where XXX is exact command name
-  virtual void		cmdOpenProject();
   virtual void		cmdCloseProject();
   virtual void		cmdEcho(); // echos, for test
+  virtual void 		cmdGetVar();
+  virtual void		cmdOpenProject();
   virtual void		cmdRunProgram(); 
+  virtual void		cmdSetVar();
   
 public: // slot forwardees
   void 			sock_readyRead();
@@ -107,6 +110,10 @@ public: // slot forwardees
   void 			sock_stateChanged(QAbstractSocket::SocketState socketState);
 
 protected:
+  static String 	ReadQuotedString(const String& str, int& p, bool& err);
+  static String		NextToken(const String& str, int& p, bool& err);
+    // skip ws, get the next token; removes quotes and processes quoted/escaped strings
+    
   QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
   String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue
   
@@ -118,6 +125,7 @@ protected:
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
   
   taProject*		GetCurrentProject(); // gets, and maybe asserts
+  Program* 		GetAssertProgram(const String& pnm); // gets, and sends errs if not found
   
   void			setState(ClientState cs);
   
@@ -163,6 +171,8 @@ public:
   TemtClient_List	clients; // #SHOW #NO_SAVE #READ_ONLY how many clients are connected
   
   inline TemtServerAdapter* adapter() {return (TemtServerAdapter*)taOABase::adapter;} // #IGNORE
+  
+  bool			isOpen() const {return open;}
 
   bool			InitServer() // initializes the server
     {bool ok = true; InitServer_impl(ok); return ok;}

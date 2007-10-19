@@ -75,6 +75,97 @@ void TemtClientAdapter::sock_stateChanged(QAbstractSocket::SocketState socketSta
 //  TemtClient		//
 //////////////////////////
 
+String TemtClient::ReadQuotedString(const String& str, int& p, bool& err) {
+  // conservative buff
+  int max = str.length() - 1;
+  STRING_BUF(rval, ((max - p) + 1));
+  ++p; // skip opening "
+  
+  char c;
+  while ((p <= max) && !err) {
+    c = str[p++];
+    if (c == '\"') break; // discard closing " and exit
+    // check for escaped char, process that if so
+    if (c == '\\') {
+      if (p > max) { // missing esc operand 
+        err = true;
+        break; // unexpected
+      }
+      c = str[p++];
+      switch (c) { 
+      case 'n': c = '\n'; break;
+      case 't': c = '\t'; break;
+      case 'v': c = '\v'; break;
+      case 'b': c = '\b'; break;
+      case 'r': c = '\r'; break;
+      case 'f': c = '\f'; break;
+      case '?': c = '?'; break;
+      case '\\': c = '\\'; break;
+      case '\'': c = '\'';
+      case '\"': c = '\"'; 
+      default: {
+        // we expect 3 octal digits (note: restriction from general \o \oo \ooo)
+        // look for octal format, else just use next char (prob an error)
+        String oct; 
+        for (int i = 0; i < 3; ++i) {
+          // not octal char, or ran out unexpectedly
+          if (!((c >= '0') && (c <= '9'))) {
+            err = true;
+            return rval; // unexpected exit
+          }
+          oct.cat(c);
+          // if not last already, read next
+          if (i < 2) {
+            if (p > max) {
+              err = true;
+              return rval; // unexpected exit
+            }
+            c = str[p++];
+          }
+        }
+        // convert from octal
+        c = (char)strtol(oct.chars(), NULL, 8);
+        } break;
+      } 
+    }  
+    rval.cat(c);
+  }
+  return rval;
+}
+
+String TemtClient::NextToken(const String& str, int& p, bool& err) {
+  int max = str.length() - 1;
+  // skip ws
+  char c;
+  while ((p <= max) && !err) {
+    c = str[p];
+    if (!isspace(c)) break;
+    ++p;
+  }
+  if (p > max) return _nilString; // end
+  
+  // look for " and put us in quoted mode if so
+  c = str[p];
+  if (c == '\"') 
+    return ReadQuotedString(str, p, err);
+  
+  // single = is a token
+  if (c == '=') {
+    ++p;
+    return "=";
+  }
+  
+  // ok, read a raw token, which is chars up to ws or =
+  String rval;
+  while (p <= max) {
+    c = str[p];
+    if ((c == '=') || isspace(c)) break;
+    rval.cat(c);
+    ++p;
+  }
+  return rval;
+}
+
 void TemtClient::Initialize() {
   state = CS_READY; // implicit in fact we were created
   server = NULL;
@@ -135,57 +226,6 @@ void TemtClient::cmdCloseProject() {
 SendError("CloseProject not implemented yet");
 }
 
-void TemtClient::cmdRunProgram() {
-  String pnm = pos_params.SafeEl(0);
-  if (pnm.empty()) {
-    SendError("ProgramError program name expected");
-    return;
-  }
-  
-  // check if a prog already running
-  Program::RunState grs = Program::GetGlobalRunState();
-  if (!((grs == Program::DONE) || (grs == Program::NOT_INIT))) {
-    SendError("ProgramError " + pnm + " program already running");
-    return;
-  }
-  // make sure project
-  taProject* proj = GetCurrentProject();
-  if (!proj) {
-    SendError("ProgramError " + pnm + " no project open");
-    return;
-  }
-  
-  // get program, make sure exists
-  Program* prog = proj->programs.FindLeafName(pnm);
-  if (!prog) {
-    SendError("ProgramError " + pnm + " not found");
-    return;
-  }
-  
-  // check that not already running
-  Program::RunState rs = prog->run_state;
-  if (!((rs == Program::DONE) || (rs == Program::NOT_INIT))) {
-    SendError("ProgramError " + pnm + " program already running");
-    return;
-  }
-  
-  // check that it is initialized, otherwise call Init
-  if (rs == Program::NOT_INIT) {
-    //NOTE: Init is synchronous
-    prog->Init();
-    if (prog->ret_val != Program::RV_OK) {
-      SendError("ProgramError " + pnm + " Init failed with ret_val: "
-        + String(prog->ret_val));
-      return;
-    }
-  }
-  
-  // run
-  adapter()->SetProg(prog);
-  QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
-  SendReply("ProgramRunning " + pnm);
-}
-
 void TemtClient::cmdEcho() {
   String r = cmd;
   for (int i = 0; i < pos_params.size; ++i) {
@@ -198,6 +238,144 @@ void TemtClient::cmdEcho() {
     r.cat(nv.name + "=" + nv.value.toString());
   }
   SendReply( r);
+}
+
+void TemtClient::cmdRunProgram() {
+  String pnm = pos_params.SafeEl(0);
+  if (pnm.empty()) {
+    SendError("RunProgram: program name expected");
+    return;
+  }
+  
+  // make sure project
+  taProject* proj = GetCurrentProject();
+  if (!proj) {
+    SendError("RunProgram " + pnm + ": no project open");
+    return;
+  }
+  
+  // get program, make sure exists
+  Program* prog = GetAssertProgram(pnm);
+  if (!prog) return;
+  
+  // check if a prog already running
+  Program::RunState grs = Program::GetGlobalRunState();
+  if (!((grs == Program::DONE) || (grs == Program::NOT_INIT))) {
+    SendError("RunProgram " + pnm + ": program already running");
+    return;
+  }
+  
+  // check that not already running
+  Program::RunState rs = prog->run_state;
+  if (!((rs == Program::DONE) || (rs == Program::NOT_INIT))) {
+    SendError("RunProgram " + pnm + ": already running");
+    return;
+  }
+  
+  // check that it is initialized, otherwise call Init
+  if (rs == Program::NOT_INIT) {
+    //NOTE: Init is synchronous
+    prog->Init();
+    if (prog->ret_val != Program::RV_OK) {
+      SendError("RunProgram " + pnm + "->Init() failed with ret_val: "
+        + String(prog->ret_val));
+      return;
+    }
+  }
+  
+  // run
+  adapter()->SetProg(prog);
+  QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
+  SendReply("RunProgram: '" + pnm + "' running");
+}
+
+Program* TemtClient::GetAssertProgram(const String& pnm) {
+// does many checks, to make sure the prog exists
+  if (pnm.empty()) {
+    SendError("program name expected");
+    return NULL;
+  }
+  
+  // make sure project
+  taProject* proj = GetCurrentProject();
+  if (!proj) {
+    SendError("no project open");
+    return NULL;
+  }
+  
+  // get program, make sure exists
+  Program* prog = proj->programs.FindLeafName(pnm);
+  if (!prog) {
+    SendError("Program '" + pnm + "' not found");
+    return NULL;
+  }
+  return prog;
+}
+
+void TemtClient::cmdGetVar() {
+  String pnm = pos_params.SafeEl(0);
+  Program* prog = GetAssertProgram(pnm);
+  if (!prog) return;
+  // note: ok if running
+  
+  // 2nd param must be a var name
+  String nm = pos_params.SafeEl(1);;
+  // note: check name first, because GetVar raises error
+  if (!prog->HasVar(nm)) {
+    SendError("Var '" + nm + "' not found");
+    return;
+  }
+  ProgVar* var = prog->FindVarName(nm);
+  if (!var) { // shouldn't happen
+    SendError("Var '" + nm + "' could unexpectedly not be retrieved");
+    return;
+  }
+  
+  // get the value, possibly converting
+  String val;
+  if (var->var_type == ProgVar::T_String) {
+    val = String::StringToCppLiteral(var->string_val);
+  } else {
+    val = var->GetVar().toString();
+  }
+  SendOk(val);
+}
+
+void TemtClient::cmdSetVar() {
+  String pnm = pos_params.SafeEl(0);
+  Program* prog = GetAssertProgram(pnm);
+  if (!prog) return;
+  // note: ok if running
+  // note: would work for 0 params  
+  
+  
+  // verify all params
+  String nm;
+  for (int i = 0; i < name_params.size; ++i) {
+    nm = name_params.FastEl(i).name;
+    // note: check name first, because GetVar raises error
+    if (!prog->HasVar(nm)) {
+      SendError("Var '" + nm + "' not found");
+      return;
+    }
+    // check if type ok to set -- assume it will be found since name is ok
+    ProgVar* var = prog->FindVarName(nm);
+    if (!var) continue; // shouldn't happen, but should get caught next stage
+    if (var->var_type == ProgVar::T_Object) {
+      SendError("Var '" + nm + "' is an Object--setting is not supported");
+      return;
+    }
+  }
+  
+  // set
+  for (int i = 0; i < name_params.size; ++i) {
+    NameVar& nv = name_params.FastEl(i);
+    if (!prog->SetVar(nv.name, nv.value)) {
+      SendError("An error occurred while seeting Var or Arg '" + nm + "'");
+      return;
+    }
+  }
+  SendOk("vars set");
 }
 
 taProject* TemtClient::GetCurrentProject() {
@@ -220,42 +398,51 @@ void TemtClient::ParseCommand(const String& cl) {
 
   // note: following from Qt help file
   //TODO: following not correct, need to manually deal with "" and remove "" 
-  QString str = cmd_line;
-  QStringList list;
-  list = str.split(QRegExp("\\s+"));
-  for (int i = 0; i < list.count(); ++i) {
-    pos_params.Add(list.at(i));
+  String str = cmd_line;
+  int p = 0;
+  bool err = false;
+  // we process cmd in two steps:
+  // 1) we just put each token in the pos list
+  // 2) then we process stuff
+  String tok = NextToken(str, p, err);;
+  while (tok.nonempty() && !err) {
+    pos_params.Add(tok);
+    tok = NextToken(str, p, err);;
   }
+  
+  // TODO: check err
   
   // pull 1st guy as the command
   if (pos_params.size > 0) {
     cmd = pos_params.FastEl(0);
     pos_params.RemoveIdx(0);
   }
+  
   // pull guys w/ = as name=value, and they must all be after starting =
   int i = 0;
   int got_name_val = false;
   String item;
+  String next_item;
   while (i < pos_params.size) {
     item = pos_params.FastEl(i);
-    if (item.contains("=")) {
+    next_item = pos_params.SafeEl(i + 1);
+    if (next_item == "=") {
       got_name_val = true; // they must all be from here on
-      String name;
-      String val;
-      NameVar::Parse(item, name, val); // we already checked for =
-      name_params.SetVal(name, val); // note: could conceivably be a duplicate
-      pos_params.RemoveIdx(i); 
+      String val = pos_params.SafeEl(i + 2);
+      name_params.SetVal(item, val); // note: could conceivably be a duplicate
+      // remove the 3 items -- first 2 are certainly present
+      pos_params.RemoveIdx(i); // name
+      pos_params.RemoveIdx(i); // =
+      if (i < pos_params.size)
+        pos_params.RemoveIdx(i); // value
     } else {
       if (got_name_val) { // were expecting all the rest to be n=v guys
         SendError("all remaining params were expected to be name=value but found: " + item);
         return;
       }
+      ++i;
     }
-    ++i;
   }
-
-// /TEMP  
-  
   
   if (cmd.length() == 0) {
     // empty lines just echoed
@@ -275,6 +462,12 @@ void TemtClient::ParseCommand(const String& cl) {
   } else
   if (cmd == "RunProgram") {
     cmdRunProgram();
+  } else
+  if (cmd == "SetVar") {
+    cmdSetVar();
+  } else
+  if (cmd == "GetVar") {
+    cmdGetVar();
   } else {
     //TODO: need subclass hook, and/or change to symbolic, so subclass can do cmdXXX routine
     // unknown command
@@ -373,7 +566,15 @@ void TemtClient::SendReply(const String& r) {
   WriteLine(r);
 }
 
-void TemtClient::SendOk(int lines) {
+void TemtClient::SendOk(const String& msg) {
+  String ln = "OK";
+  if (msg.nonempty()) {
+    ln.cat(" ").cat(msg);
+  }
+  WriteLine(ln);
+}
+
+/*void TemtClient::SendOk(int lines) {
   SendOk(lines, _nilString);
 }
 
@@ -385,7 +586,7 @@ void TemtClient::SendOk(int lines, const String& addtnl) {
       ln.cat(" ").cat(addtnl);
   }
   WriteLine(ln);
-}
+}*/
 
 void TemtClient::WriteLine(const String& ln) {
   if (!isConnected()) return;
@@ -441,6 +642,7 @@ void TemtServer::CloseServer(bool notify) {
     server = NULL;
   }
   open = false;
+  taMisc::server_active = false;
   if (notify) DataChanged(DCR_ITEM_UPDATED);
 }
 
@@ -450,6 +652,10 @@ void TemtServer::InitServer_impl(bool& ok) {
 
 bool TemtServer::OpenServer() {
   if (open) return true;
+  if (taMisc::server_active) {
+    taMisc::Error("A server is already open");
+    return false;
+  }
   server = new QTcpServer();
   if (!server->listen(QHostAddress::Any, port)) {
     taMisc::Error("Could not open the server: ",
@@ -463,6 +669,7 @@ bool TemtServer::OpenServer() {
 
   open = true;
   DataChanged(DCR_ITEM_UPDATED);
+  taMisc::server_active = true;
   return true;
 }
 
@@ -487,7 +694,7 @@ void  TemtServer::server_newConnection() {
   cl->server = this;
   cl->SetSocket(ts);
     
-  String banner = "pdp++ server v" + taMisc::version + "\n";
+  String banner = "Emergent Server v" + taMisc::version + "\n";
   out << banner.chars(); 
   ts->write(block);
   DataChanged(DCR_ITEM_UPDATED);
