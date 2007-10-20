@@ -951,7 +951,7 @@ void WtInitPrompt::Initialize() {
 const String WtInitPrompt::GenCssPre_impl(int indent_level) {
   String il = cssMisc::Indent(indent_level);
   String rval;
-  if(taMisc::gui_active) {	// todo: add server flag check
+  if(taMisc::gui_active && !taMisc::server_active) {
     rval = il + "{ int chs = 0;\n";
     rval += il + "  if(network->epoch > 0) chs = taMisc::Choice(\"" + prompt + "\", \""
       + yes_label + "\", \""
