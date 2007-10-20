@@ -312,6 +312,113 @@ Program* TemtClient::GetAssertProgram(const String& pnm) {
   return prog;
 }
 
+DataTable* TemtClient::GetAssertTable(const String& nm) {
+// does many checks, to make sure the table and prog exists
+  if (nm.empty()) {
+    SendError("table name expected");
+    return NULL;
+  }
+  
+  // make sure project
+  taProject* proj = GetCurrentProject();
+  if (!proj) {
+    SendError("no project open");
+    return NULL;
+  }
+  
+  DataTable* tab = NULL;
+  // if a local table, then resolve
+  String pnm = nm.before(".");
+  if (pnm.empty()) {
+    // global table
+    tab = proj->data.FindLeafName(nm);
+  } else { // local table
+    String tnm = nm.after(".");
+    Program* prog = GetAssertProgram(pnm);
+    if (!prog) return NULL; //note: will already have sent error
+    tab = dynamic_cast<DataTable*>(prog->objs.FindName(nm));
+  }
+  if (!tab) {
+    SendError("Table '" + pnm + "' not found");
+    return NULL;
+  }
+  return tab;
+}
+
+bool TemtClient::TableParams::ValidateParams() {
+  // all the possible params
+  row_from = tc->name_params.GetValDef("row_from", 0).toInt();
+  row_to = tc->name_params.GetValDef("row_to", -1).toInt();
+  col_from = tc->name_params.GetValDef("col_from", 0).toInt();
+  col_to = tc->name_params.GetValDef("col_to", -1).toInt();
+  header = tc->name_params.GetValDef("header", false).toBool();
+  
+  // validate and normalize the params
+  if (row_from < 0) row_from = tab->rows + row_from;
+  if ((row_from < 0) || (row_from >= tab->rows)) {
+    tc->SendError("row_from '" + String(row_from) + "' out of bounds");
+    return false;
+  }
+  
+  if (row_to < 0) row_to = tab->rows + row_to;
+  if ((row_to < 0) || (row_to >= tab->rows)) {
+    tc->SendError("row_to '" + String(row_to) + "' out of bounds");
+    return false;
+  }
+  
+  if (col_from < 0) col_from = tab->cols() + col_from;
+  if ((col_from < 0) || (col_from >= tab->cols())) {
+    tc->SendError("col_from '" + String(col_from) + "' out of bounds");
+    return false;
+  }
+  
+  if (col_to < 0) col_to = tab->cols() + col_to;
+  if ((col_to < 0) || (col_to >= tab->cols())) {
+    tc->SendError("col_to '" + String(col_to) + "' out of bounds");
+    return false;
+  }
+  
+  lines = row_to - row_from + 1;
+  if (header) ++lines;
+  return true;
+}
+
+void TemtClient::cmdGetDataTable() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  if (!p.ValidateParams()) return;
+  
+  // ok, we can do it!
+  SendOk("line=" + String(p.lines));
+  
+  ostringstream ostr;
+  String ln;
+  
+  // header row, if any
+  if (p.header) {
+    tab->SaveHeader_strm(ostr);
+    ln = ostr.str().c_str();
+    Write(ln);
+  }
+  
+  // rows
+  for (int row = p.row_from; row <= p.row_to; ++row) {
+    ostr.str("");
+    ostr.clear();
+    tab->SaveDataRow_strm(ostr, row, DataTable::TAB, 
+      true, // quote_str
+      false, // row_mark
+      p.col_from, p.col_to);
+    ln = ostr.str().c_str();
+    Write(ln);
+  }
+  
+}
+
 void TemtClient::cmdGetVar() {
   String pnm = pos_params.SafeEl(0);
   Program* prog = GetAssertProgram(pnm);
@@ -457,6 +564,12 @@ void TemtClient::ParseCommand(const String& cl) {
   if (cmd == "OpenProject") {
     cmdOpenProject();
   } else { */
+  if (cmd == "GetDataTable") {
+    cmdGetDataTable();
+  } else
+  if (cmd == "GetVar") {
+    cmdGetVar();
+  } else
   if (cmd == "Echo") {
     cmdEcho();
   } else
@@ -465,9 +578,6 @@ void TemtClient::ParseCommand(const String& cl) {
   } else
   if (cmd == "SetVar") {
     cmdSetVar();
-  } else
-  if (cmd == "GetVar") {
-    cmdGetVar();
   } else {
     //TODO: need subclass hook, and/or change to symbolic, so subclass can do cmdXXX routine
     // unknown command
@@ -587,6 +697,11 @@ void TemtClient::SendOk(int lines, const String& addtnl) {
   }
   WriteLine(ln);
 }*/
+
+void TemtClient::Write(const String& txt) {
+  if (!isConnected()) return;
+  sock->write(QByteArray(txt.chars(), txt.length()));
+}
 
 void TemtClient::WriteLine(const String& ln) {
   if (!isConnected()) return;

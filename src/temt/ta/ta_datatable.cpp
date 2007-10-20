@@ -1994,10 +1994,19 @@ void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
   strm << endl;
 }
 
-void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim, bool quote_str) {
+void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
+  bool quote_str, bool row_mark, int col_fr, int col_to) 
+{
   char cdlm = GetDelim(delim);
-  strm << "_D:";		// indicates data row
-  for(int i=0;i<data.size;i++) {
+  if (row_mark)
+    strm << "_D:";		// indicates data row
+  // validate and adjust col range
+  if (col_fr < 0) col_fr = data.size + col_fr;
+  if (col_fr < 0) col_fr = 0;
+  if (col_to < 0) col_to = data.size + col_to;
+  if ((col_to < 0) || (col_to >= data.size)) 
+    col_to = data.size - 1;
+  for(int i = col_fr; i <= col_to;i++) {
     DataCol* da = data.FastEl(i);
     if(!da->saveToDataFile()) continue;
     if (da->cell_size() == 0) continue;
@@ -2005,6 +2014,8 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim, bool 
     if(da->isMatrix()) {
       for(int j=0;j<da->cell_size(); j++) {
 	String val = da->GetValAsStringM(row, j);
+	//TODO: 1) need to check for Variant.String type
+	// 2) prob need to use fully escaped format, or at least escape "
 	if(quote_str && (da->valType() == VT_STRING))
 	  strm << cdlm << "\"" << val << "\"";
 	else
@@ -2013,6 +2024,7 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim, bool 
     }
     else {
       String val = da->GetValAsString(row);
+      //TODO: see above in mat
       if(quote_str && (da->valType() == VT_STRING))
 	strm << cdlm << "\"" << val << "\"";
       else

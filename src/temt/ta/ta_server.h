@@ -68,6 +68,7 @@ private:
 class TA_API TemtClient: public taOABase { 
   // #INSTANCE #TOKENS for tcp-based remote services -- represents one connected client 
 INHERITED(taOABase)
+friend class TableParams;
 public:
   enum ClientState {
     CS_READY,	// expecting a command
@@ -95,10 +96,12 @@ public:
 //  void			SendOk(int lines, const String& addtnl); //
   
   void			WriteLine(const String& ln); // low level write, note: adds eol
+  void			Write(const String& txt); // low level write
   
 public: // commands, all are cmdXXX where XXX is exact command name
   virtual void		cmdCloseProject();
   virtual void		cmdEcho(); // echos, for test
+  virtual void 		cmdGetDataTable();
   virtual void 		cmdGetVar();
   virtual void		cmdOpenProject();
   virtual void		cmdRunProgram(); 
@@ -113,7 +116,24 @@ protected:
   static String 	ReadQuotedString(const String& str, int& p, bool& err);
   static String		NextToken(const String& str, int& p, bool& err);
     // skip ws, get the next token; removes quotes and processes quoted/escaped strings
+#ifndef __MAKETA__
+  class TableParams {
+  public:
+    TemtClient* tc;
+    DataTable* tab;
+    int row_from;
+    int row_to;
+    int col_from;
+    int col_to;
+    bool header;
+    int lines;
     
+    bool	ValidateParams();
+    TableParams(TemtClient* tc_, DataTable* tab_)
+      {tc = tc_; tab = tab_;}
+      
+  };
+#endif
   QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
   String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue
   
@@ -125,6 +145,7 @@ protected:
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
   
   taProject*		GetCurrentProject(); // gets, and maybe asserts
+  DataTable* 		GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats
   Program* 		GetAssertProgram(const String& pnm); // gets, and sends errs if not found
   
   void			setState(ClientState cs);

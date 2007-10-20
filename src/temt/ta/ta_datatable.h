@@ -896,9 +896,10 @@ public:
   // #CAT_File #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings
   virtual void 		SaveHeader_strm(ostream& strm, Delimiters delim = TAB);
   // #CAT_File #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings
-  virtual void 		SaveDataRow_strm(ostream& strm, int row=-1, Delimiters delim = TAB,
-					 bool quote_str = true); 
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings
+  virtual void 		SaveDataRow_strm(ostream& strm, int row=-1,
+    Delimiters delim = TAB, bool quote_str = true, bool row_mark = true,
+    int col_fr = 0, int col_to = -1); 
+  // #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end
   virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
 					 bool quote_str = true); 
   // #CAT_File #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings
