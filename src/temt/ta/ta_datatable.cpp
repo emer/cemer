@@ -1970,25 +1970,42 @@ void DataTable::RowsAdding(int n, bool begin) {
   first mat cell also has <dims:dx,dy..>
 */
 
-void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim) {
+void DataTable::SaveHeader_strm(ostream& strm, Delimiters delim,
+    bool row_mark, int col_fr, int col_to) 
+{
   char cdlm = GetDelim(delim);
-  strm << "_H:";		// indicates header
+  bool need_delim = false; // goes true after first col written
+  if (row_mark) {
+    strm << "_H:";		// indicates header
+    need_delim = true;
+  }
+  // validate and adjust col range
+  if (col_fr < 0) col_fr = data.size + col_fr;
+  if (col_fr < 0) col_fr = 0;
+  if (col_to < 0) col_to = data.size + col_to;
+  if ((col_to < 0) || (col_to >= data.size)) 
+    col_to = data.size - 1;
   MatrixGeom dims;
   for(int i=0;i<data.size;i++) {
     DataCol* da = data.FastEl(i);
     if(!da->saveToDataFile()) continue;
     if (da->cell_size() == 0) continue;
 
+    if (need_delim)
+      strm << cdlm;
+    need_delim = true;
     if(da->isMatrix()) {
       for(int j=0;j<da->cell_size(); j++) {
+        if (j > 0)
+	  strm << cdlm;
 	da->cell_geom.DimsFmIndex(j, dims);
 	String hdnm = da->EncodeHeaderName(dims);
-	strm << cdlm << hdnm;
+	strm << hdnm;
       }
     }
     else {
       String hdnm = da->EncodeHeaderName(dims); //note: dims ignored
-      strm << cdlm << hdnm;
+      strm << hdnm;
     }
   }
   strm << endl;
@@ -1998,8 +2015,11 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
   bool quote_str, bool row_mark, int col_fr, int col_to) 
 {
   char cdlm = GetDelim(delim);
-  if (row_mark)
+  bool need_delim = false; // goes true after first col written
+  if (row_mark) {
     strm << "_D:";		// indicates data row
+    need_delim = true;
+  }
   // validate and adjust col range
   if (col_fr < 0) col_fr = data.size + col_fr;
   if (col_fr < 0) col_fr = 0;
@@ -2010,25 +2030,29 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
     DataCol* da = data.FastEl(i);
     if(!da->saveToDataFile()) continue;
     if (da->cell_size() == 0) continue;
-
+    if (need_delim)
+      strm << cdlm;
+    need_delim = true;
     if(da->isMatrix()) {
       for(int j=0;j<da->cell_size(); j++) {
+        if (j > 0)
+          strm << cdlm;
 	String val = da->GetValAsStringM(row, j);
 	//TODO: 1) need to check for Variant.String type
 	// 2) prob need to use fully escaped format, or at least escape "
 	if(quote_str && (da->valType() == VT_STRING))
-	  strm << cdlm << "\"" << val << "\"";
+	  strm << "\"" << val << "\"";
 	else
-	  strm << cdlm << val;
+	  strm << val;
       }
     }
     else {
       String val = da->GetValAsString(row);
       //TODO: see above in mat
       if(quote_str && (da->valType() == VT_STRING))
-	strm << cdlm << "\"" << val << "\"";
+	strm << "\"" << val << "\"";
       else
-	strm << cdlm << val;
+	strm << val;
     }
   }
   strm << endl;

@@ -99,12 +99,14 @@ public:
   void			Write(const String& txt); // low level write
   
 public: // commands, all are cmdXXX where XXX is exact command name
+  virtual void 		cmdAppendData();
   virtual void		cmdCloseProject();
   virtual void		cmdEcho(); // echos, for test
-  virtual void 		cmdGetDataTable();
+  virtual void 		cmdGetData();
   virtual void 		cmdGetVar();
   virtual void		cmdOpenProject();
   virtual void		cmdRunProgram(); 
+  virtual void 		cmdSetData();
   virtual void		cmdSetVar();
   
 public: // slot forwardees
@@ -119,8 +121,15 @@ protected:
 #ifndef __MAKETA__
   class TableParams {
   public:
+    enum Cmd {
+      Get,
+      Append,
+      Set
+    };
+    
     TemtClient* tc;
     DataTable* tab;
+    int rows; // Append/Set only
     int row_from;
     int row_to;
     int col_from;
@@ -128,7 +137,7 @@ protected:
     bool header;
     int lines;
     
-    bool	ValidateParams();
+    bool	ValidateParams(Cmd cmd = Get);
     TableParams(TemtClient* tc_, DataTable* tab_)
       {tc = tc_; tab = tab_;}
       

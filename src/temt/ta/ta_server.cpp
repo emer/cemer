@@ -194,6 +194,25 @@ void TemtClient::CloseClient() {
   setState(CS_DISCONNECTED);
 }
 
+void TemtClient::cmdCloseProject() {
+//TEMP
+SendError("CloseProject not implemented yet");
+}
+
+void TemtClient::cmdEcho() {
+  String r = cmd;
+  for (int i = 0; i < pos_params.size; ++i) {
+    r.cat(" ");
+    r.cat(pos_params.FastEl(i));
+  }
+  for (int i = 0; i < name_params.size; ++i) {
+    r.cat(" ");
+    NameVar& nv = name_params.FastEl(i);
+    r.cat(nv.name + "=" + nv.value.toString());
+  }
+  SendReply( r);
+}
+
 void TemtClient::cmdOpenProject() {
 //TEMP
 SendError("OpenProject not implemented yet");
@@ -219,25 +238,6 @@ return;
     SendError("file \"" + proj_file + "\" not found");
   }
 
-}
-
-void TemtClient::cmdCloseProject() {
-//TEMP
-SendError("CloseProject not implemented yet");
-}
-
-void TemtClient::cmdEcho() {
-  String r = cmd;
-  for (int i = 0; i < pos_params.size; ++i) {
-    r.cat(" ");
-    r.cat(pos_params.FastEl(i));
-  }
-  for (int i = 0; i < name_params.size; ++i) {
-    r.cat(" ");
-    NameVar& nv = name_params.FastEl(i);
-    r.cat(nv.name + "=" + nv.value.toString());
-  }
-  SendReply( r);
 }
 
 void TemtClient::cmdRunProgram() {
@@ -287,6 +287,11 @@ void TemtClient::cmdRunProgram() {
   adapter()->SetProg(prog);
   QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
   SendReply("RunProgram: '" + pnm + "' running");
+}
+
+void TemtClient::cmdSetData() {
+//TEMP
+SendError("SetData not implemented yet");
 }
 
 Program* TemtClient::GetAssertProgram(const String& pnm) {
@@ -345,26 +350,63 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
   return tab;
 }
 
-bool TemtClient::TableParams::ValidateParams() {
-  // all the possible params
+bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
+  // all the possible params -- not all defined for all cmds
+  rows = tc->name_params.GetValDef("rows", 1).toInt();
   row_from = tc->name_params.GetValDef("row_from", 0).toInt();
   row_to = tc->name_params.GetValDef("row_to", -1).toInt();
   col_from = tc->name_params.GetValDef("col_from", 0).toInt();
   col_to = tc->name_params.GetValDef("col_to", -1).toInt();
   header = tc->name_params.GetValDef("header", false).toBool();
   
-  // validate and normalize the params
-  if (row_from < 0) row_from = tab->rows + row_from;
-  if ((row_from < 0) || (row_from >= tab->rows)) {
-    tc->SendError("row_from '" + String(row_from) + "' out of bounds");
-    return false;
+  // init vals that need to be correctly set even if validation fails
+  if (header) lines = 1; else lines = 0;
+  
+  // cmd decodes
+  bool get = false;
+  bool get_set = false;
+  bool append = false;
+  switch (cmd) {
+  case TemtClient::TableParams::Get:
+    get = true;
+    get_set = true;
+    break;
+  case TemtClient::TableParams::Append:
+    append = true;
+    break;
+  case TemtClient::TableParams::Set:
+    get_set = true;
+    break;
   }
   
-  if (row_to < 0) row_to = tab->rows + row_to;
-  if ((row_to < 0) || (row_to >= tab->rows)) {
-    tc->SendError("row_to '" + String(row_to) + "' out of bounds");
-    return false;
+  // validate and normalize the params
+  if (get_set) {
+    if (row_from < 0) row_from = tab->rows + row_from;
+    if (row_to < 0) row_to = tab->rows + row_to;
+    
+    if ((row_from < 0) || (row_from >= tab->rows)) {
+      tc->SendError("row_from '" + String(row_from) + "' out of bounds");
+      return false;
+    }
+    
+    
+    if ((row_to < 0) || (row_to >= tab->rows)) {
+      tc->SendError("row_to '" + String(row_to) + "' out of bounds");
+      return false;
+    }
   }
+  
+  if (append) {
+    if (rows < 0) {
+      tc->SendError("rows '" + String(rows) + "' out of bounds");
+      return false;
+    }
+    row_from = tab->rows;
+    row_to = (row_from + rows) - 1;
+  }
+  
+  // make sure lines is valid now, before possibly bailing on other conditions
+  lines += (row_to - row_from) + 1;
   
   if (col_from < 0) col_from = tab->cols() + col_from;
   if ((col_from < 0) || (col_from >= tab->cols())) {
@@ -378,12 +420,74 @@ bool TemtClient::TableParams::ValidateParams() {
     return false;
   }
   
-  lines = row_to - row_from + 1;
-  if (header) ++lines;
   return true;
 }
 
-void TemtClient::cmdGetDataTable() {
+void TemtClient::cmdAppendData() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Append);
+  //NOTE: p will have already sent an ERROR if cmd_ok is false
+  // any subsequenct failure must send an ERROR
+  
+  
+  // ok, now we must block/waiting until all expected lines received
+  // note: some of the expected lines may already be in lines buffer
+  setState(CS_DATA_IN);
+  
+  while ((lines.size < p.lines) && (state != CS_DISCONNECTED)) {
+    //TODO: prolly should institute timer or some mechanism to break out
+    taiMiscCore::ProcessEvents(); // while indirectly call sock_readyRead() for data
+  }
+  
+  if (state == CS_DISCONNECTED)
+    return;
+  
+  setState(CS_READY);
+  
+  if (cmd_ok) 
+    SendOk();
+/*  
+  
+  
+  istringstream istr;
+  String ln;
+  
+  
+  
+  
+  
+  
+  // ok, we can do it!
+  SendOk("line=" + String(p.lines));
+  
+  
+  // header row, if any
+  if (p.header) {
+    tab->SaveHeader_strm(ostr);
+    ln = ostr.str().c_str();
+    Write(ln);
+  }
+  
+  // rows
+  for (int row = p.row_from; row <= p.row_to; ++row) {
+    ostr.str("");
+    ostr.clear();
+    tab->SaveDataRow_strm(ostr, row, DataTable::TAB, 
+      true, // quote_str
+      false, // row_mark
+      p.col_from, p.col_to);
+    ln = ostr.str().c_str();
+    Write(ln);
+  }
+  */
+}
+
+void TemtClient::cmdGetData() {
   String tnm = pos_params.SafeEl(0);
   DataTable* tab = GetAssertTable(tnm);
   if (!tab) return;
@@ -564,8 +668,11 @@ void TemtClient::ParseCommand(const String& cl) {
   if (cmd == "OpenProject") {
     cmdOpenProject();
   } else { */
-  if (cmd == "GetDataTable") {
-    cmdGetDataTable();
+  if (cmd == "AppendData") {
+    cmdAppendData();
+  } else
+  if (cmd == "GetData") {
+    cmdGetData();
   } else
   if (cmd == "GetVar") {
     cmdGetVar();
@@ -651,12 +758,14 @@ void TemtClient::HandleLines() {
       ParseCommand(line);
     } break;
     case CS_DATA_IN: {
-      //TODO: if not yet up to expected, then exit, else call dispatcher 
+      // we would have reached here re-entrantly, within a cmd, so just exit
+      return;
     } break;
     case CS_DISCONNECTED: {
     //shouldn't happen!!!
     } break;
-    // handle all cases!
+    //default:
+    // handle all cases explicitly!
     };
   }
 }
