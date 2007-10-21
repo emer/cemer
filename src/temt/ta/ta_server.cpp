@@ -440,8 +440,11 @@ void TemtClient::cmdAppendData() {
   setState(CS_DATA_IN);
   
   while ((lines.size < p.lines) && (state != CS_DISCONNECTED)) {
-    //TODO: prolly should institute timer or some mechanism to break out
-    taiMiscCore::ProcessEvents(); // while indirectly call sock_readyRead() for data
+    // note: signals not invoked again inside this event loop
+    if (sock->canReadLine())
+      sock_readyRead();
+    else
+      sock->waitForReadyRead();
   }
   
   if (state == CS_DISCONNECTED)
@@ -449,8 +452,17 @@ void TemtClient::cmdAppendData() {
   
   setState(CS_READY);
   
+    //TODO: move inside the error branch
+    // must remove first n lines
+    while ((p.lines > 0) && (lines.size > 0)) {
+      lines.RemoveIdx(0);
+      p.lines--;
+    }
+  
   if (cmd_ok) 
     SendOk();
+  else {
+  }
 /*  
   
   
