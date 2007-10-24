@@ -478,9 +478,13 @@ inline int64_t String::toInt64(bool* ok, int base) const
 inline uint64_t String::toUInt64(bool* ok, int base) const 
   {QString tmp(chars()); return tmp.toULongLong(ok, base);}
 inline float String::toFloat(bool* ok) const 
-  {QString tmp(chars()); return tmp.toFloat(ok);}
+{ QString tmp(chars()); bool okk; float rval = tmp.toFloat(&okk);
+  if(!okk && freq(',') == 1) { tmp.replace(',', '.'); rval = tmp.toFloat(&okk); } 
+  if(ok) *ok = okk; return rval; }
 inline double String::toDouble(bool* ok) const 
-  {QString tmp(chars()); return tmp.toDouble(ok);}
+{ QString tmp(chars()); bool okk; double rval = tmp.toDouble(&okk);
+  if(!okk && freq(',') == 1) { tmp.replace(',', '.'); rval = tmp.toDouble(&okk); } 
+  if(ok) *ok = okk; return rval; }
 #else 
 //NOTE: these are primarily just for maketa, and are not fully functional
 inline short String::toShort(bool* ok, int base) const 
