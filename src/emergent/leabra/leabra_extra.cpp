@@ -824,7 +824,7 @@ float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int
   LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   // only count if target value is within range -- otherwise considered a non-target
-  if(u->ext_flag & Unit::TARG && val_range.RangeTestEq(u->targ)) {
+  if(u->ext_flag & (Unit::TARG | Unit::COMP) && val_range.RangeTestEq(u->targ)) {
     n_vals++;
     float uerr = u->targ - u->act_m;
     if(fabsf(uerr) < us->sse_tol)
@@ -836,7 +836,7 @@ float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int
 
 float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(lay->ext_flag & Unit::TARG)) return 0.0f;
+  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
   UNIT_GP_ITR(lay, 
 	      lay->sse += Compute_SSE_Ugp(ugp, lay, n_vals);
@@ -846,6 +846,11 @@ float ScalarValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_a
     lay->sse /= (float)n_vals;
   if(sqrt)
     lay->sse = sqrtf(lay->sse);
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+    rval = 0.0f;
+    n_vals = 0;
+  }
   return rval;
 }
 
@@ -1683,8 +1688,8 @@ float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& 
     LeabraUnit* y_tu = (LeabraUnit*)ugp->FastEl(k*2+1);
     LeabraUnitSpec* us = (LeabraUnitSpec*)x_tu->GetUnitSpec();
     // only count if target value is within range -- otherwise considered a non-target
-    if((x_tu->ext_flag & Unit::TARG) && x_val_range.RangeTestEq(x_tu->targ) && 
-       (y_tu->ext_flag & Unit::TARG) && y_val_range.RangeTestEq(y_tu->targ)) {
+    if((x_tu->ext_flag & (Unit::TARG | Unit::COMP)) && x_val_range.RangeTestEq(x_tu->targ) && 
+       (y_tu->ext_flag & (Unit::TARG | Unit::COMP)) && y_val_range.RangeTestEq(y_tu->targ)) {
       n_vals++;
 
       // now find minimum dist actual activations
@@ -1708,7 +1713,7 @@ float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& 
 
 float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(lay->ext_flag & Unit::TARG)) return 0.0f;
+  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
   lay->sse = 0.0f;
   UNIT_GP_ITR(lay, 
 	      lay->sse += Compute_SSE_Ugp(ugp, lay, n_vals);
@@ -1718,6 +1723,11 @@ float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg
     lay->sse /= (float)n_vals;
   if(sqrt)
     lay->sse = sqrtf(lay->sse);
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+    rval = 0.0f;
+    n_vals = 0;
+  }
   return rval;
 }
 
