@@ -4130,6 +4130,7 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
 bool Layer::UpdateUnitSpecs(bool force) {
   if(!force && (unit_spec.SPtr() == m_prv_unit_spec)) return false;
   UnitSpec* sp = unit_spec.SPtr();
+  if(!sp) return false;
   m_prv_unit_spec = sp;		// don't redo it
   Unit* u;
   taLeafItr i;

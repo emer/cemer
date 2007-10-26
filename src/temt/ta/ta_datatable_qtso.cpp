@@ -2217,6 +2217,16 @@ void GraphAxisBase::CutLinks() {
 
 void GraphAxisBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  color.UpdateAfterEdit();
+  UpdateFmColLookup();
+  UpdateOnFlag();
+}
+
+void GraphAxisBase::UpdateOnFlag() {
+  // nop at base level
+}
+
+void GraphAxisBase::UpdateFmColLookup() {
   if(col_lookup) {
     // first save fixed_range values back to that guy
     GraphColView* gcv = GetColPtr();
@@ -2224,15 +2234,21 @@ void GraphAxisBase::UpdateAfterEdit_impl() {
       gcv->fixed_range = fixed_range;
     }
     col_name = col_lookup->GetName();
+    cerr << "updated fm col: " << col_name << endl;
     fixed_range = col_lookup->fixed_range;	     // get range from that guy
-    taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
+    if(col_lookup->refn <= 1) {
+      cerr << "oops: refn <= 1" << endl;
+    }
+    else {
+      taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
+    }
   }
-  color.UpdateAfterEdit();
 }
 
 void GraphAxisBase::SetColPtr(GraphColView* cgv) {
   taBase::SetPointer((taBase**)&col_lookup, cgv);
-  UpdateAfterEdit();
+  UpdateFmColLookup();
+  UpdateOnFlag();
 }
 
 
@@ -2675,6 +2691,12 @@ void GraphPlotView::Initialize() {
 //   inherited::CutLinks();
 // }
 
+void GraphPlotView::UpdateOnFlag() {
+  if(on) {
+    if(!GetColPtr()) on = false; // not actually on!
+  }
+}
+
 void GraphPlotView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
@@ -2688,10 +2710,6 @@ void GraphPlotView::UpdateAfterEdit_impl() {
     point_style = (PointStyle)T3GraphLine::MarkerStyle_MIN;
   else if (point_style > (PointStyle)T3GraphLine::MarkerStyle_MAX)
     point_style = (PointStyle)T3GraphLine::MarkerStyle_MAX;
-
-  if(on) {
-    if(!GetColPtr()) on = false; // not actually on!
-  }
 }
 
 //////////////////////////////////
@@ -2702,8 +2720,7 @@ void GraphAxisView::Initialize() {
   row_num = false;
 }
 
-void GraphAxisView::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+void GraphAxisView::UpdateOnFlag() {
   if(on) {
     if(!row_num && !GetColPtr()) on = false; // not actually on!
   }
@@ -2886,28 +2903,28 @@ void GraphTableView::UpdateAfterEdit_impl(){
   z_axis.axis_length = depth;
 
   x_axis.on = true;		// try to keep it on
-  x_axis.UpdateAfterEdit();
-  z_axis.UpdateAfterEdit();
+  x_axis.UpdateOnFlag();
+  z_axis.UpdateOnFlag();
   plot_1.on = true;		// try to keep it on
-  plot_1.UpdateAfterEdit();
-  plot_2.UpdateAfterEdit();
-  plot_3.UpdateAfterEdit();
-  plot_4.UpdateAfterEdit();
-  plot_5.UpdateAfterEdit();
-  err_1.UpdateAfterEdit();
-  err_2.UpdateAfterEdit();
-  err_3.UpdateAfterEdit();
-  err_4.UpdateAfterEdit();
-  err_5.UpdateAfterEdit();
-  color_axis.UpdateAfterEdit();
-  raster_axis.UpdateAfterEdit();
+  plot_1.UpdateOnFlag();
+  plot_2.UpdateOnFlag();
+  plot_3.UpdateOnFlag();
+  plot_4.UpdateOnFlag();
+  plot_5.UpdateOnFlag();
+  err_1.UpdateOnFlag();
+  err_2.UpdateOnFlag();
+  err_3.UpdateOnFlag();
+  err_4.UpdateOnFlag();
+  err_5.UpdateOnFlag();
+  color_axis.UpdateOnFlag();
+  raster_axis.UpdateOnFlag();
 
   // don't bother: not generlizable and not supported
 //   if(plot_2.on && !plot_1.on) { // move to pl1
 //     plot_1.col_name = plot_2.col_name;
 //     plot_2.col_name = "";
-//     plot_1.UpdateAfterEdit();
-//     plot_2.UpdateAfterEdit();
+//     plot_1.UpdateOnFlag();
+//     plot_2.UpdateOnFlag();
 //   }
 
   if(!plot_1.on) {
@@ -2969,7 +2986,7 @@ void GraphTableView::UpdateAfterEdit_impl(){
     if((plot_style != THRESH_LINE) && (plot_style !=  THRESH_POINT))
       color_mode = VALUE_COLOR;
     raster_axis.on = true;
-    raster_axis.UpdateAfterEdit();
+    raster_axis.UpdateOnFlag();
     if(!raster_axis.on) {
       taMisc::Warning("GraphTableView -- graph_type = RASTER and no valid col_name found for raster_axis -- nothing will be plotted!");
     }
@@ -2985,7 +3002,7 @@ void GraphTableView::UpdateAfterEdit_impl(){
 
   if(color_mode == COLOR_AXIS) {
     color_axis.on = true;
-    color_axis.UpdateAfterEdit();
+    color_axis.UpdateOnFlag();
     if(!color_axis.on) {
       taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
     }
@@ -3184,14 +3201,14 @@ void GraphTableView::FindDefaultXZAxes() {
     if(da->HasUserData("X_AXIS")) {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
-      x_axis.UpdateAfterEdit();
+      x_axis.UpdateOnFlag();
       set_x = true;
     }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
       z_axis.on = true;
       z_axis.InitFromUserData();
-      z_axis.UpdateAfterEdit();
+      z_axis.UpdateOnFlag();
     }
   }
   if(set_x) return;
@@ -3205,13 +3222,13 @@ void GraphTableView::FindDefaultXZAxes() {
       z_axis.col_name = cvs->name;
       z_axis.on = true;		// found one
       z_axis.InitFromUserData();
-      z_axis.UpdateAfterEdit();
+      z_axis.UpdateOnFlag();
       break;			// done
     }
     else {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
-      x_axis.UpdateAfterEdit();
+      x_axis.UpdateOnFlag();
       set_x = true;
     }
   }
@@ -3222,7 +3239,7 @@ void GraphTableView::FindDefaultXZAxes() {
       if(da->is_matrix || !da->isNumeric()) continue;
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
-      x_axis.UpdateAfterEdit();
+      x_axis.UpdateOnFlag();
       set_x = true;
       break;
     }
@@ -3237,7 +3254,7 @@ void GraphTableView::FindDefaultPlot1() {
     if(da->HasUserData("PLOT_1")) {
       plot_1.col_name = cvs->name;
       plot_1.InitFromUserData();
-      plot_1.UpdateAfterEdit();
+      plot_1.UpdateOnFlag();
       got_1 = true;
     }
   }
@@ -3251,7 +3268,7 @@ void GraphTableView::FindDefaultPlot1() {
     if(x_axis.col_name == cvs->name) continue; // don't make it same as X!
     plot_1.col_name = cvs->name;
     plot_1.InitFromUserData();
-    plot_1.UpdateAfterEdit();
+    plot_1.UpdateOnFlag();
     break;			// once you get one, that's it
   }
 }
@@ -3267,47 +3284,47 @@ void GraphTableView::InitFromUserData() {
     DataCol* da = cvs->dataCol();
     if(da->HasUserData("PLOT_2")) {
       plot_2.col_name = cvs->name;  plot_2.on = true;
-      plot_2.InitFromUserData();    plot_2.UpdateAfterEdit();
+      plot_2.InitFromUserData();    plot_2.UpdateOnFlag();
     }
     if(da->HasUserData("PLOT_3")) {
       plot_3.col_name = cvs->name; plot_3.on = true;
-      plot_3.InitFromUserData();   plot_3.UpdateAfterEdit();
+      plot_3.InitFromUserData();   plot_3.UpdateOnFlag();
     }
     if(da->HasUserData("PLOT_4")) {
       plot_4.col_name = cvs->name; plot_4.on = true;
-      plot_4.InitFromUserData();   plot_4.UpdateAfterEdit();
+      plot_4.InitFromUserData();   plot_4.UpdateOnFlag();
     }
     if(da->HasUserData("PLOT_5")) {
       plot_5.col_name = cvs->name; plot_5.on = true;
-      plot_5.InitFromUserData();   plot_5.UpdateAfterEdit();
+      plot_5.InitFromUserData();   plot_5.UpdateOnFlag();
     }
     if(da->HasUserData("ERR_1")) {
       err_1.col_name = cvs->name;  err_1.on = true;
-      err_1.InitFromUserData();    err_1.UpdateAfterEdit();
+      err_1.InitFromUserData();    err_1.UpdateOnFlag();
     }
     if(da->HasUserData("ERR_2")) {
       err_2.col_name = cvs->name;  err_2.on = true;
-      err_2.InitFromUserData();    err_2.UpdateAfterEdit();
+      err_2.InitFromUserData();    err_2.UpdateOnFlag();
     }
     if(da->HasUserData("ERR_3")) {
       err_3.col_name = cvs->name;  err_3.on = true;
-      err_3.InitFromUserData();    err_3.UpdateAfterEdit();
+      err_3.InitFromUserData();    err_3.UpdateOnFlag();
     }
     if(da->HasUserData("ERR_4")) {
       err_4.col_name = cvs->name;  err_4.on = true;
-      err_4.InitFromUserData();    err_4.UpdateAfterEdit();
+      err_4.InitFromUserData();    err_4.UpdateOnFlag();
     }
     if(da->HasUserData("ERR_5")) {
       err_5.col_name = cvs->name;  err_5.on = true;
-      err_5.InitFromUserData();    err_5.UpdateAfterEdit();
+      err_5.InitFromUserData();    err_5.UpdateOnFlag();
     }
     if(da->HasUserData("COLOR_AXIS")) {
       color_axis.col_name = cvs->name;   color_axis.on = true;
-      color_axis.InitFromUserData();     color_axis.UpdateAfterEdit();
+      color_axis.InitFromUserData();     color_axis.UpdateOnFlag();
     }
     if(da->HasUserData("RASTER_AXIS")) {
       raster_axis.col_name = cvs->name;  raster_axis.on = true;
-      raster_axis.InitFromUserData();    raster_axis.UpdateAfterEdit();
+      raster_axis.InitFromUserData();    raster_axis.UpdateOnFlag();
     }
   }
 
@@ -4959,53 +4976,53 @@ void iGraphTableView_Panel::GetValue_impl() {
   
   glv->setScaleData(false, cbar->min(), cbar->max());
   
-  glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
   glv->x_axis.row_num = rncXAxis->isChecked();
   pdtXAxis->GetValue_(&(glv->x_axis.fixed_range));
+  glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
 
   // if setting a col for 1st time, we automatically turn on (since it would be ro)
   GraphColView* tcol = (GraphColView*)lelZAxis->GetValue();
   if (tcol && !glv->z_axis.GetColPtr())
     oncZAxis->setChecked(true);
   glv->z_axis.on = oncZAxis->isChecked();
-  glv->z_axis.SetColPtr(tcol);
-  glv->z_axis.row_num = rncZAxis->isChecked();
   pdtZAxis->GetValue_(&(glv->z_axis.fixed_range));
+  glv->z_axis.row_num = rncZAxis->isChecked();
+  glv->z_axis.SetColPtr(tcol);
 
-  glv->plot_1.SetColPtr((GraphColView*)lel1Axis->GetValue());
   pdt1Axis->GetValue_(&(glv->plot_1.fixed_range)); // this can change, so update
+  glv->plot_1.SetColPtr((GraphColView*)lel1Axis->GetValue());
   
   tcol = (GraphColView*)lel2Axis->GetValue();
   if (tcol && !glv->plot_2.GetColPtr())
     onc2Axis->setChecked(true);
   glv->plot_2.on = onc2Axis->isChecked();
-  glv->plot_2.SetColPtr(tcol);
   pdt2Axis->GetValue_(&(glv->plot_2.fixed_range)); // this can change, so update
   glv->alt_y_2 = chk2AltY->isChecked();
+  glv->plot_2.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel3Axis->GetValue();
   if (tcol && !glv->plot_3.GetColPtr())
     onc3Axis->setChecked(true);
   glv->plot_3.on = onc3Axis->isChecked();
-  glv->plot_3.SetColPtr(tcol);
   pdt3Axis->GetValue_(&(glv->plot_3.fixed_range)); // this can change, so update
   glv->alt_y_3 = chk3AltY->isChecked();
+  glv->plot_3.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel4Axis->GetValue();
   if (tcol && !glv->plot_4.GetColPtr())
     onc4Axis->setChecked(true);
   glv->plot_4.on = onc4Axis->isChecked();
-  glv->plot_4.SetColPtr(tcol);
   pdt4Axis->GetValue_(&(glv->plot_4.fixed_range)); // this can change, so update
   glv->alt_y_4 = chk4AltY->isChecked();
+  glv->plot_4.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel5Axis->GetValue();
   if (tcol && !glv->plot_5.GetColPtr())
     onc5Axis->setChecked(true);
   glv->plot_5.on = onc5Axis->isChecked();
-  glv->plot_5.SetColPtr(tcol);
   pdt5Axis->GetValue_(&(glv->plot_5.fixed_range)); // this can change, so update
   glv->alt_y_5 = chk5AltY->isChecked();
+  glv->plot_5.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel1Err->GetValue();
   if (tcol && !glv->err_1.GetColPtr())

@@ -619,6 +619,10 @@ public:
   virtual void		InitFromUserData();
   // initialize various settings from the user data of the data column
   override bool		hasViewProperties() const { return true; }
+  virtual void		UpdateOnFlag();
+  // update the 'on' flag for this column, taking into account whether there is actually any data column set (if not, on must be false)
+  virtual void		UpdateFmColLookup();
+  // if col_lookup is set, update our values from it
 
   void InitLinks();
   void CutLinks();
@@ -676,6 +680,8 @@ public:
   LineStyle	line_style;	// the style in which the line is drawn
   PointStyle	point_style;	// the style in which the points are drawn
 
+  override void		UpdateOnFlag();
+
 //   void InitLinks();
 //   void CutLinks();
   SIMPLE_COPY(GraphPlotView);
@@ -697,12 +703,10 @@ public:
 
   override void 	ComputeRange();
   override bool 	UpdateRange();
+  override void		UpdateOnFlag();
 
   SIMPLE_COPY(GraphAxisView);
   T3_DATAVIEWFUNS(GraphAxisView, GraphAxisBase)
-protected:
-  override void 	UpdateAfterEdit_impl();
-
 private:
   void			Initialize();
   void			Destroy() { };
