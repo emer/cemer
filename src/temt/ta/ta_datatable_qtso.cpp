@@ -2234,10 +2234,10 @@ void GraphAxisBase::UpdateFmColLookup() {
       gcv->fixed_range = fixed_range;
     }
     col_name = col_lookup->GetName();
-    cerr << "updated fm col: " << col_name << endl;
+//     cerr << "updated fm col: " << col_name << endl;
     fixed_range = col_lookup->fixed_range;	     // get range from that guy
     if(col_lookup->refn <= 1) {
-      cerr << "oops: refn <= 1" << endl;
+//       cerr << "oops: refn <= 1" << endl;
     }
     else {
       taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
