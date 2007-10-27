@@ -751,7 +751,8 @@ protected:
     else if (alloc_size < 0) {if (fixed_dealloc) fixed_dealloc(el);}}
     el = (T*)nw; fixed_dealloc = NULL;}
   override void*	FastRealloc_(int n)
-  { el = (T*)realloc((char*)el, n * sizeof(T)); return el; }
+  { T* nwel = (T*)realloc((char*)el, n * sizeof(T));
+    if(TestError(!nwel, "FastRealloc_", "could not realloc memory -- matrix is too big! reverting to old size -- could be fatal!")) return NULL; el = nwel; return el; }
   override bool		El_Equal_(const void* a, const void* b) const
     { return (*((T*)a) == *((T*)b)); }
   override void		El_Copy_(void* to, const void* fm) {*((T*)to) = *((T*)fm); }

@@ -485,8 +485,8 @@ void taMatrix::Add_(const void* it) {
   if(TestError(!canResize(), "Add", "resizing not allowed")) return;
   if(TestError((dims() != 1), "Add", "only allowed when dims=1")) return;
   int idx = frames();
-  EnforceFrames(idx + 1);
-  El_Copy_(FastEl_Flat_(idx), it);
+  if(EnforceFrames(idx + 1))
+    El_Copy_(FastEl_Flat_(idx), it);
 }
 
 bool taMatrix::AddFrames(int n) {
@@ -500,12 +500,16 @@ bool taMatrix::Alloc_(int new_alloc) {
   if (alloc_size < new_alloc)	{
     if(fastAlloc() && (alloc_size > 0)) {		// fast alloc = malloc/realloc
       char* old = (char*)data();
-      FastRealloc_(new_alloc);
+      if(!FastRealloc_(new_alloc))
+	return false;
       ta_intptr_t delta = (char*)data() - old;
       UpdateSlices_Realloc(delta);
     }
     else {
       char* nw = (char*)MakeArray_(new_alloc);
+      if(TestError(!nw, "Alloc_", "could not allocate matrix memory -- matrix is too big!  reverting to old size -- coudl be fatal!")) {
+	return false;
+      }
       for (int i = 0; i < size; ++i) {
 	El_Copy_(nw + (El_SizeOf_() * i), FastEl_Flat_(i));
       }
@@ -940,9 +944,9 @@ bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
   // notifies
   DataUpdate(true);
   // don't notify, because we are doing it (it can't boggle excisions)
-  EnforceFrames(frames_ - n_fr, false); // this properly resizes, and reclaims orphans
+  bool rval = EnforceFrames(frames_ - n_fr, false); // this properly resizes, and reclaims orphans
   DataUpdate(false);
-  return true;
+  return rval;
 }
 
 bool taMatrix::InsertFrames(int st_fr, int n_fr) {

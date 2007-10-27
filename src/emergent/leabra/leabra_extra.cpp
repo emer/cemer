@@ -1922,6 +1922,7 @@ void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
 void SaliencyPrjnSpec::Initialize() {
   //  init_wts = true;
   convergence = 1;
+  reciprocal = false;
   feat_only = true;
   feat_gps = 2;
   dog_wts.color_chan = DoGFilterSpec::BLACK_WHITE;
@@ -1955,6 +1956,18 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
 void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
+
+  if(reciprocal) {
+    recv_lay = prjn->from;
+    send_lay = prjn->layer;
+
+    Unit* su;
+    taLeafItr su_itr;
+    FOR_ITR_EL(Unit, su, send_lay->units., su_itr) {
+      su->ConnectAlloc(1, prjn); // only ever have 1!
+    }
+  }
+
   TwoDCoord rug_geo = recv_lay->gp_geom;
   TwoDCoord ruu_geo = recv_lay->un_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
@@ -1978,7 +1991,8 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
 
 	  Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
 	  if(!ru_u) break;
-	  ru_u->ConnectAlloc(sg_sz_tot, prjn);
+	  if(!reciprocal)
+	    ru_u->ConnectAlloc(sg_sz_tot, prjn);
 
 	  TwoDCoord suc;
 	  for(suc.y = 0; suc.y < fltsz; suc.y++) {
@@ -1988,8 +2002,12 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
 	      if(!su_gp) continue;
 
 	      Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
-	      if(su_u)
-		ru_u->ConnectFrom(su_u, prjn);
+	      if(su_u) {
+		if(reciprocal)
+		  su_u->ConnectFrom(ru_u, prjn);
+		else
+		  ru_u->ConnectFrom(su_u, prjn);
+	      }
 	    }
 	  }
 	}
@@ -2001,6 +2019,8 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
 void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
   dog_wts.UpdateFilter();
   taMath_float::vec_norm_abs_max(&(dog_wts.net_filter)); // renorm to abs max = 1
+
+  if(TestError(reciprocal, "Connect_full_dog", "full DoG connection not supported in reciprocal mode!!!")) return;
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;

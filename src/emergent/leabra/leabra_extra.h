@@ -932,6 +932,7 @@ class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
   int		convergence;	// how many sending groups to count as a single entity from the perspective of the saliency computation -- values larger than 1 make the saliency layer smaller than the sending layer
+  bool		reciprocal;	// opposite direction connection: feedback to the features 
   bool		feat_only;	// only get excitatory input from feature only -- no DoG or anything else -- just pure feature aggregation (for use with kwta-based popout dynamics)
   int		feat_gps;	// number of feature groups contained within V1 unit group -- surround connections are only for within-group connections
   DoGFilterSpec	dog_wts;	// #CONDEDIT_OFF_feat_only Difference of Gaussians filter for setting the weights -- determines the width of the projection, etc -- where the net filter values are positive, receives excitation from the target feature, else from all-but the target feature
