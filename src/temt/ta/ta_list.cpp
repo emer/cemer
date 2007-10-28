@@ -68,31 +68,61 @@ taPtrList_impl::~taPtrList_impl() {
 // allocate by powers of two, minus the amount of overhead required by the
 // memory manger
 
-void taPtrList_impl::Alloc(int sz) {
-  if(alloc_size >= sz)	return;	// no need to increase..
+bool taPtrList_impl::Alloc(int sz) {
+  if(alloc_size >= sz)	return true;	// no need to increase..
+  int old_alloc_sz = alloc_size;
   sz = MAX(16-TA_ALLOC_OVERHEAD-1,sz);		// once allocating, use a minimum of 16
   alloc_size += TA_ALLOC_OVERHEAD; // increment to full power of 2
   while((alloc_size-TA_ALLOC_OVERHEAD) <= sz) alloc_size <<= 1;
   alloc_size -= TA_ALLOC_OVERHEAD;
-  if(el == NULL)
+  if(!el) {
     el = (void**)malloc(alloc_size * sizeof(void*));
-  else
-    el = (void**)realloc((char *) el, alloc_size * sizeof(void*));
+    if(!el) {
+      taMisc::Error("taPtrList_impl::Alloc -- malloc failed -- pointer list is too long! could be fatal.");
+      alloc_size = 0;
+      return false;
+    }
+  }
+  else {
+    void** nwel = (void**)realloc((char *) el, alloc_size * sizeof(void*));
+    if(!nwel) {
+      taMisc::Error("taPtrList_impl::Alloc -- realloc failed -- pointer list is too long! could be fatal.");
+      alloc_size = old_alloc_sz;
+      return false;
+    }
+    el = nwel;
+  }
+  return true;
 }
 
-void taPtrList_impl::AllocExact(int sz) {
+bool taPtrList_impl::AllocExact(int sz) {
+  int old_alloc_sz = alloc_size;
   alloc_size = MAX(sz, size);
-  if(el == NULL)
+  if(!el) {
     el = (void**)malloc(alloc_size * sizeof(void*));
-  else
-    el = (void**)realloc((char *) el, alloc_size * sizeof(void*));
+    if(!el) {
+      taMisc::Error("taPtrList_impl::AllocExact -- malloc failed -- pointer list is too long! could be fatal.");
+      alloc_size = 0;
+      return false;
+    }
+  }
+  else {
+    void** nwel = (void**)realloc((char *) el, alloc_size * sizeof(void*));
+    if(!nwel) {
+      taMisc::Error("taPtrList_impl::AllocExact -- realloc failed -- pointer list is too long! could be fatal.");
+      alloc_size = old_alloc_sz;
+      return false;
+    }
+    el = nwel;
+  }
+  return true;
 }
 
 void taPtrList_impl::BuildHashTable(int sz) {
   if(hash_table == NULL)
     hash_table = new taHashTable();
 
-  hash_table->Alloc(sz);
+  if(!hash_table->Alloc(sz)) return;
   int i;
   for(i=0; i<size; i++)
     hash_table->Add(El_GetHashVal_(el[i]), i);
@@ -253,8 +283,9 @@ bool taPtrList_impl::SwapIdx(int pos1, int pos2) {
 void taPtrList_impl::AddOnly_(void* it) {
 //TODO: note, the logistics of the DataChanged are wrong, since ex. Add_
 // causes the notification before it has set the index and owned the item, renaming it
-  if(size+1 >= alloc_size)
-    Alloc(size+1);
+  if(size+1 >= alloc_size) {
+    if(!Alloc(size+1)) return;
+  }
   el[size++] = it;
 }
 
@@ -627,7 +658,7 @@ void* taPtrList_impl::DuplicateEl_(void* it) {
 }
 
 void taPtrList_impl::Stealth_Borrow(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   int i;
   for(i=0; i < cp.size; i++) {
     AddOnly_(cp.el[i]);
@@ -650,7 +681,7 @@ void taPtrList_impl::Trim(int n) {
 }
 
 void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   int i;
   for(i=0; i < cp.size; i++) {
     if(cp.el[i] == NULL)
@@ -671,7 +702,7 @@ void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
 // they use the scratch_list for keeping a copy of the old list
 
 void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Borrow(*this);	// get this into scratch for find (since replacing
 				// we need to refer to these items (no stealth)
@@ -695,7 +726,7 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
   scratch_list.Reset();
 }
 void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Stealth_Borrow(*this);	// get this into scratch for find
   int i;
@@ -714,13 +745,13 @@ void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
 }
 
 void taPtrList_impl::Borrow(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   int i;
   for(i=0; i < cp.size; i++)
     Link_(cp.el[i]);
 }
 void taPtrList_impl::BorrowUnique(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Stealth_Borrow(*this);	// get this into scratch for find
   int i;
@@ -732,7 +763,7 @@ void taPtrList_impl::BorrowUnique(const taPtrList_impl& cp) {
   scratch_list.size = 0;
 }
 void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Borrow(*this);	// get this into scratch for find (using replace..)
   int i;
@@ -747,7 +778,7 @@ void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
   scratch_list.Reset();
 }
 void taPtrList_impl::BorrowUniqNameOld(const taPtrList_impl& cp) {
-  Alloc(size + cp.size);
+  if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Stealth_Borrow(*this);	// get this into scratch for find
   int i;
@@ -775,7 +806,7 @@ void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {
 
 void taPtrList_impl::Copy_Duplicate(const taPtrList_impl& cp) {
   int mx_sz = MAX(size, cp.size);
-  Alloc(mx_sz);
+  if(!Alloc(mx_sz)) return;
   Copy_Common(cp);
   Copy_Duplicate_impl(cp);
 }
@@ -813,7 +844,9 @@ void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
   // if we have more items than cp, then trim ourself, otherwise make room
   if (size > cp.size)
     Trim(cp.size);
-  else Alloc(cp.size);
+  else {
+    if(!Alloc(cp.size)) return;
+  }
   // do a pairwise check for items we can keep; remove others
   // we can keep owned items of same type, or same links, or NULL
   // copy commensurable owned items as we encounter them
@@ -950,16 +983,17 @@ void taHashTable::Add(taHashVal hash, int index) {
   bucket_max = MAX(bucket_max, bucket->size);
 }
 
-void taHashTable::Alloc(int sz) {
+bool taHashTable::Alloc(int sz) {
   Reset();			// get rid of any existing ones
   bucket_max = 0;
   int act_sz = 0;
   int cnt = 0;
   while((cnt < n_primes) && (act_sz < sz))	act_sz = n_bucket_primes[cnt++];
-  taPtrList<taHashBucket>::Alloc(act_sz);
+  if(!taPtrList<taHashBucket>::Alloc(act_sz)) return false;
   int i;
   for(i=0; i<act_sz; i++)	// initialize with nulls
     AddOnly_(NULL);
+  return true;
 }
 
 int taHashBucket::FindHashEl(taHashVal hash) const {
@@ -1020,7 +1054,7 @@ void taHashTable::RemoveAll() {
 /////////////////////////
 
 void taFixedArray_impl::Add_(const void* it) {
-  Alloc_(size + 1);
+  if(!Alloc_(size + 1)) return;
   El_Copy_(FastEl_(size++), it);
 }
 
@@ -1031,17 +1065,22 @@ bool taFixedArray_impl::AddUnique_(const void* it) {
   return true;
 }
 
-void taFixedArray_impl::Alloc_(uint alloc) {
+bool taFixedArray_impl::Alloc_(uint alloc) {
   char* nw = (char*)MakeArray_(alloc);
+  if(!nw) {
+    taMisc::Error("taFixedArray_impl::Alloc_ -- malloc error -- array is too big -- could be fatal!");
+    return false;
+  }
   for (int i = 0; i < size; ++i) {
     El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
   }
   SetArray_(nw);
+  return true;
 }
 
 void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
   if (cp.size < size) ReclaimOrphans_(cp.size, size - 1);
-  else Alloc_(cp.size);
+  else if(!Alloc_(cp.size)) return;
   
   for (int i=0; i < cp.size; ++i) {
     El_Copy_(FastEl_(i), cp.FastEl_(i));
@@ -1052,7 +1091,7 @@ void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
 void taFixedArray_impl::SetSize(int new_size) {
   if (new_size < 0) new_size = 0;
   if (new_size > size) {
-    Alloc_(new_size);
+    if(!Alloc_(new_size)) return;
     const void* blank = El_GetBlank_();
     for (int i = size; i < new_size; ++i) {
       El_Copy_(FastEl_(i), blank);
@@ -1092,7 +1131,7 @@ void taFixedArray_impl::InitVals_(const void* it, int start, int end) {
 void taFixedArray_impl::Insert_(const void* it, int where, int n) {
   if ((where > size) || (n <= 0)) return; // errors
   if (where < 0) where = size; // -1 means at end
-  Alloc_(size + n);	// pre-add stuff
+  if(!Alloc_(size + n)) return;	// pre-add stuff
 
   int i;
   // if not appending, move the items
@@ -1125,8 +1164,10 @@ void taArray_impl::Clear_Tmp_() {
 }
 
 void taArray_impl::AddOnly_(const void* it) {
-  if (size >= alloc_size)
-    Alloc(size+1);
+  if (size >= alloc_size) {
+    if(!Alloc(size+1))
+      return;
+  }
   El_Copy_(FastEl_(size++), it);
 }
 
@@ -1149,18 +1190,23 @@ bool taArray_impl::AddUnique_(const void* it) {
   return true;
 }
 
-void taArray_impl::Alloc(int sz) {
+bool taArray_impl::Alloc(int sz) {
   if (alloc_size < sz)	{
     // start w/ 4, double up to 64, then 1.5x thereafter
     if (alloc_size == 0) alloc_size = MAX(4, sz);
     else if (alloc_size < 64) alloc_size = MAX((alloc_size * 2), sz);
     else alloc_size =  MAX(((alloc_size * 3) / 2) , sz);
     char* nw = (char*)MakeArray_(alloc_size);
+    if(!nw) {
+      taMisc::Error("taArray_impl::Alloc -- malloc error -- array too big! this may be fatal");
+      return false;
+    }
     for (int i = 0; i < size; ++i) {
       El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
     }
     SetArray_(nw);
   }
+  return true;
 }
 
 void taArray_impl::AddBlank(int n_els) {
@@ -1170,7 +1216,9 @@ void taArray_impl::AddBlank(int n_els) {
 
 void taArray_impl::Copy_(const taArray_impl& cp) {
   if (cp.size < size) ReclaimOrphans_(cp.size, size - 1);
-  else if (cp.size > alloc_size) Alloc(cp.size);
+  else if (cp.size > alloc_size) {
+    if(!Alloc(cp.size)) return;
+  }
   
   for (int i=0; i < cp.size; ++i) {
     El_Copy_(FastEl_(i), cp.FastEl_(i));
@@ -1182,7 +1230,7 @@ void taArray_impl::SetSize(int new_size) {
   if (new_size < 0) new_size = 0;
   if (new_size == size) return; 
   else if (new_size > size) {
-    Alloc(new_size);
+    if(!Alloc(new_size)) return;
     Clear_Tmp_();
     Insert_(El_GetTmp_(), size, new_size - size);
   } else if (new_size < size)  {
@@ -1218,8 +1266,9 @@ void taArray_impl::InitVals_(const void* it, int start, int end) {
 
 void taArray_impl::Insert_(const void* it, int where, int n) {
   if((where > size) || (n <= 0)) return;
-  if ((size + n) > alloc_size)
-    Alloc(size + n);	// pre-add stuff
+  if ((size + n) > alloc_size) {
+    if(!Alloc(size + n)) return;	// pre-add stuff
+  }
   if((where==size) || (where < 0)) {
     int i;
     for (i=0; i<n; i++) AddOnly_(it);

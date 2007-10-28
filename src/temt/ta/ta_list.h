@@ -320,9 +320,9 @@ public:
   virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
   inline bool	InRange(int idx) const { return ((idx < size) && (idx >= 0)); }
-  virtual void	Alloc(int sz);
+  virtual bool	Alloc(int sz);
   // #CAT_Modify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
-  virtual void	AllocExact(int sz);
+  virtual bool	AllocExact(int sz);
   // #CAT_Modify allocate exact number specified
   void		Trim(int n); // #IGNORE if larger than n, trim to n (does NOT expand)
   virtual void 	Reset()			{ RemoveAll(); }
@@ -635,7 +635,7 @@ public:
   int			bucket_max;	// maximum size of any bucket
   KeyType		key_type;
 
-  void			Alloc(int sz);
+  bool			Alloc(int sz);
   // allocate in prime-number increments
   void			RemoveAll();
 
@@ -681,7 +681,7 @@ public:
   virtual void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE only called when size changes 
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
-  virtual void		Alloc(int n); // allocate storage for at least the given size
+  virtual bool		Alloc(int n); // allocate storage for at least the given size
   virtual void		Reset()	{ Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED); };
   // reset the list to zero size (does not free memory)
   ////////////////////////////////////////////////
@@ -893,7 +893,7 @@ public: // accessible but generally not used implementation overrides
   // #IGNORE element at posn; i must be in bounds 
 
 protected: 
-  virtual void		Alloc_(uint n); // set capacity to n
+  virtual bool		Alloc_(uint n); // set capacity to n
   virtual void*		MakeArray_(int i) const = 0; // #IGNORE make a new array of item type
   virtual void		SetArray_(void* nw) = 0;
 

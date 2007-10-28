@@ -507,7 +507,7 @@ bool taMatrix::Alloc_(int new_alloc) {
     }
     else {
       char* nw = (char*)MakeArray_(new_alloc);
-      if(TestError(!nw, "Alloc_", "could not allocate matrix memory -- matrix is too big!  reverting to old size -- coudl be fatal!")) {
+      if(TestError(!nw, "Alloc_", "could not allocate matrix memory -- matrix is too big!  reverting to old size -- could be fatal!")) {
 	return false;
       }
       for (int i = 0; i < size; ++i) {
