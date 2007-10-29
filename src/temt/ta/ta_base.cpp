@@ -448,7 +448,7 @@ void taBase::CutLinks_taAuto(TypeDef* td) {
       taBase* mb = (taBase*)md->GetOff(this);
       mb->CutLinks();
     }
-    else if(md->type->ptr == 1) {
+    else if(md->type->ptr == 1 && !md->HasOption("NO_SET_POINTER")) {
       taBase** mb = (taBase**)md->GetOff(this);
       taBase::DelPointer(mb);
     }
@@ -2054,7 +2054,8 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = 0;
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)) {
+    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)
+       && !md->HasOption("NO_SET_POINTER")) {
       taBase** ptr = (taBase**)md->GetOff(this);
       nchg += taBase::UpdatePointers_NewPar_Ptr(ptr, old_par, new_par);
     }
@@ -2158,7 +2159,8 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   int nchg = 0;
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)) {
+    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)
+       && !md->HasOption("NO_SET_POINTER")) {
       taBase** ptr = (taBase**)md->GetOff(this);
       nchg += taBase::UpdatePointers_NewParType_Ptr(ptr, par_typ, new_par);
     }
@@ -2249,7 +2251,8 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int nchg = 0;
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) {
+    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)
+       && !md->HasOption("NO_SET_POINTER")) {
       taBase** ptr = (taBase**)md->GetOff(this);
       nchg += taBase::UpdatePointers_NewObj_Ptr(ptr, this, old_ptr, new_ptr);
     }

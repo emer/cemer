@@ -701,6 +701,8 @@ public:
 
   inline virtual void	Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute netin average
+  inline virtual void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, float inhib_val);
+  // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance
   inline virtual void	Compute_InhibAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute inhib netin average
   virtual void	Compute_HardClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
@@ -912,6 +914,9 @@ public:
   void		Compute_NetinAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinAvg(this, lay, athr, net); }
   // #CAT_Activation compute netin average
+  void		Compute_ApplyInhib(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net, float inhib_val)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, lay, athr, net, inhib_val); }
+  // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance
   void		Compute_InhibAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_InhibAvg(this, lay, athr, net); }
   // #CAT_Activation compute inhib netin average
@@ -1205,7 +1210,7 @@ public:
   };
 
   InhibGroup	inhib_group;	// #APPLY_IMMED #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
-  LeabraInhibSpec inhib;	// how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer
+  LeabraInhibSpec inhib;	// #CAT_Activation how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
@@ -1290,7 +1295,8 @@ public:
   // #CAT_Activation initialize the inhibitory state values
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation stage two: compute the inhibition for layer
-  virtual void	Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				   LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of inhibition computation for either layer or unit group
 
   virtual void	Compute_Inhib_kWTA_Sort(Unit_Group* ug, LeabraInhib* thr, LeabraSort& act_buf, LeabraSort& inact_buf, int k_eff, float& k_net, int& k_idx);
@@ -1298,26 +1304,38 @@ public:
   virtual void 	Compute_Inhib_BreakTie(LeabraInhib* thr);
   // #CAT_Activation break any ties in the kwta function
 
-  virtual void	Compute_Inhib_kWTA(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_kWTA(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				   LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of basic kwta inhibition computation
-  virtual void	Compute_Inhib_kWTA_Avg(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_kWTA_Avg(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				       LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of kwta avg-based inhibition computation
-  virtual void	Compute_Inhib_kWTA_kv2k(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_kWTA_kv2k(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+					LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of k vs. 2k wta avg-based inhibition computation
-  virtual void	Compute_Inhib_kWTA_CompCost(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_kWTA_CompCost(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+					    LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of kwta competitor cost inhibition computation
-  virtual void	Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				       LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of avg-max-pt inhibition computation
-  virtual void	Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  virtual void	Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
+				  LeabraNetwork* net, LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of max inhibition computation
-  virtual void	Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net,
+				       LeabraInhibSpec& ispec);
   // #CAT_Activation implementation of GPS_THEN_UNITS kwta on groups
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation Stage 3.25: for layer groups, need to propagate inhib out to unit groups
 
-  ////// Stage 3.5: second pass of inhibition to do averaging
+  ////// Stage 3.5: apply computed inhib value to individual unit inhibitory conductances
+  virtual void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation apply computed inhib value to individual unit inhibitory conductances
+  virtual void	Compute_ApplyInhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation implementation of apply inhibition computation for either layer or unit group
 
+  ////// Stage 3.75: second pass of inhibition to do averaging
   virtual void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation stage three: compute average inhibition value
   virtual void 	Compute_InhibAvg_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
@@ -1528,7 +1546,6 @@ private:
 
 class LEABRA_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
-INHERITED(taBase)
 public:
   LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units
   LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units
@@ -1577,7 +1594,8 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem 
 #endif
 
-  void	BuildUnits();
+  override void	BuildUnits();
+
   void	Init_Weights() 	{ if(spec) spec->Init_Weights(this); }
   // #CAT_Learning initialize weight values and other permanent state
   void	Init_ActAvg() 	{ spec->Init_ActAvg(this); }
@@ -1611,11 +1629,13 @@ public:
   // #CAT_Activation clamp and compute averages of net inputs that were already computed
 
   void	Compute_Inhib(LeabraNetwork* net) 	{ spec->Compute_Inhib(this, net); }
-  // #CAT_Activation stage two: compute the inhibition for layer
+  // #CAT_Activation compute the inhibition for layer
   void	Compute_LayInhibToGps(LeabraNetwork* net) { spec->Compute_LayInhibToGps(this, net); }
-  // #CAT_Activation Stage 3.25: for layer groups, need to propagate inhib out to unit groups
+  // #CAT_Activation for layer groups, need to propagate inhib out to unit groups
+  void	Compute_ApplyInhib(LeabraNetwork* net)	{ spec->Compute_ApplyInhib(this, net); }
+  // #CAT_Activation apply inhibition value to unit inhibitory conductances
   void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, net); }
-  // #CAT_Activation stage three: compute average inhibition value
+  // #CAT_Activation compute average inhibition value (integrating unit inhib etc)
 
   void	Compute_Act()				{ spec->Compute_Act(this, NULL); }
   void	Compute_Act(LeabraNetwork* net) 	{ spec->Compute_Act(this, net); }
@@ -2007,7 +2027,8 @@ public:
   virtual void	Compute_Netin();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
   virtual void	Compute_Clamp_NetAvg();	// #CAT_Cycle add in clamped netinput values (computed once at start of settle) and average netinput values
   virtual void	Compute_Inhib(); // #CAT_Cycle compute inhibitory conductances (kwta)
-  virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances
+  virtual void	Compute_ApplyInhib(); // #CAT_Cycle apply inhibitory conductances from kwta to individual units
+  virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances (unit-level inhib)
   virtual void	Compute_Act();	// #CAT_Cycle compute activations, and max delta activation
 
   virtual void	Cycle_Run();	// #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
@@ -2109,19 +2130,22 @@ void LeabraUnitSpec::Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInh
   u->i_thr = Compute_IThresh(u, lay, net);
 }
 
+void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork*, float inhib_val) {
+  if(inhib_val <= 0.0f) return;	// nothing to apply
+  // if you have a computed inhibition value, apply it full force, overwriting anything else
+  u->g_i_raw = inhib_val;
+  u->gc.i = inhib_val;
+  u->prv_g_i = inhib_val;
+  u->g_i_delta = 0.0f;
+}
+
 void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* thr, LeabraNetwork*) {
   if(act.send_delta) {
     u->g_i_raw += u->g_i_delta;
     u->gc.i = u->g_i_raw;
   }
-  if(thr->i_val.g_i > 0.0f)
-    u->gc.i = thr->i_val.g_i; // add in inhibition from global inhib fctn
-  else {
-    u->gc.i = u->prv_g_i + dt.net * (u->gc.i - u->prv_g_i);
-  }
+  u->gc.i = u->prv_g_i + dt.net * (u->gc.i - u->prv_g_i);
   u->prv_g_i = u->gc.i;
-  // don't add -- either or!
-  //  u->gc.i += g_bar.i * thr->i_val.g_i; // add in inhibition from global inhib fctn
 }
 
 //////////////////////////////////

@@ -2185,6 +2185,118 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
+///////////////////////////////////////////////////////////////
+//			V1 Layer
+///////////////////////////////////////////////////////////////
+
+void LeabraV1Layer::Initialize() {
+}
+
+void LeabraV1Layer::BuildUnits() {
+  inherited::BuildUnits();
+  // build feature unit groups
+  feat_gps.gp.SetSize(un_geom.n); // one group per unit in unit groups
+  for(int fg=0; fg<feat_gps.gp.size; fg++) {
+    LeabraUnit_Group* fugp = (LeabraUnit_Group*)feat_gps.gp[fg];
+    fugp->Reset();		// start over
+    for(int gg=0; gg<units.gp.size; gg++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)units.gp[gg];
+      if(rugp->size <= fg) continue;
+      LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(fg);
+      fugp->Link(ru);
+    }
+  }
+}
+
+void LeabraV1Layer::ResetSortBuf() {
+  inherited::ResetSortBuf();
+  for(int fg=0; fg<feat_gps.gp.size; fg++) {
+    LeabraUnit_Group* fugp = (LeabraUnit_Group*)feat_gps.gp[fg];
+    fugp->Inhib_ResetSortBuf();
+  }
+}
+
+void LeabraV1LayerSpec::Initialize() {
+  min_obj_type = &TA_LeabraV1Layer;
+}
+
+bool LeabraV1LayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
+
+  bool rval = true;
+  lay->CheckError(lay->units.gp.size == 0, quiet, rval,
+		  "does not have unit groups -- MUST have unit groups!");
+  vlay->CheckError(vlay->feat_gps.gp.size != vlay->un_geom.n, quiet, rval,
+		   "not proper number of feature unit groups for layer size!");
+  return rval;
+}
+
+void LeabraV1LayerSpec::Compute_Active_K(LeabraLayer* lay) {
+  inherited::Compute_Active_K(lay);
+
+  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
+  for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
+    LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
+    Compute_Active_K_impl(lay, fugp, (LeabraInhib*)fugp, feat_kwta);
+  }
+}
+
+void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay->hard_clamped)	return;	// say no more..
+  inherited::Compute_Inhib(lay, net);
+
+  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
+
+  if(feat_inhib.type == LeabraInhibSpec::UNIT_INHIB) return;
+
+  vlay->feat_lay_thr.Inhib_SetVals(0.0f);
+  for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
+    LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
+    LeabraInhib* thr = (LeabraInhib*)fugp;
+    Compute_Inhib_impl(lay, fugp, thr, net, feat_inhib);
+    float gp_g_i = fugp->i_val.g_i;
+    if(feat_kwta.gp_i)
+      gp_g_i *= feat_kwta.gp_g;
+    vlay->feat_lay_thr.i_val.g_i = MAX(vlay->feat_lay_thr.i_val.g_i, gp_g_i);
+  }
+}
+
+void LeabraV1LayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay->units.gp.size == 0) return;
+  inherited::Compute_LayInhibToGps(lay, net);
+
+  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
+
+  if(feat_kwta.gp_i) {
+    for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
+      LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
+      fugp->i_val.gp_g_i = vlay->feat_lay_thr.i_val.g_i;
+      fugp->i_val.g_i = MAX(fugp->i_val.g_i, vlay->feat_lay_thr.i_val.g_i);
+    }
+  }
+}
+
+void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  if((net->cycle >= 0) && lay->hard_clamped)
+    return;			// don't do this during normal processing
+
+  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
+
+  for(int g=0; g<lay->units.gp.size; g++) {
+    LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+
+    for(int ui=0; ui<rugp->size; ui++) {
+      LeabraUnit* u = (LeabraUnit*)rugp->FastEl(ui);
+      LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[ui];
+
+      float ival = MAX(rugp->i_val.g_i, fugp->i_val.g_i); // max of either group
+      u->Compute_ApplyInhib(lay, (LeabraInhib*)rugp, net, ival);
+    }
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////

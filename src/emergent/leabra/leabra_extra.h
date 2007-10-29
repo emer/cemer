@@ -971,5 +971,41 @@ private:
   void 	Destroy()		{ };
 };
 
+class LEABRA_API LeabraV1Layer : public LeabraLayer {
+  // Specialized layer that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups)
+INHERITED(LeabraLayer)
+public:
+  LeabraUnit_Group		feat_gps;    // #LINK_GROUP #NO_SAVE #READ_ONLY #HIDDEN feature-level unit groups: the .gp subgroups are populated with sub unit groups, one per feature group, each containing links to the units
+  LeabraInhib			feat_lay_thr; // #NO_SAVE #READ_ONLY #HIDDEN feature layer-level inhbition threshold stuff (use instead of layer's own thr values)
+
+  override void	BuildUnits();
+  override void	ResetSortBuf();
+
+  TA_SIMPLE_BASEFUNS(LeabraV1Layer);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
+  // LayerSpec that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups, and must be of LeabraV1Layer type!)
+INHERITED(LeabraLayerSpec)
+public:
+  LeabraInhibSpec feat_inhib;	// #CAT_Activation how to compute inhibition for feature groups -- for kwta modes, a single global inhibition value is computed for the entire layer
+  KWTASpec	feat_kwta;	// #CAT_Activation desired activity level for feature groups (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+
+  override void	Compute_Active_K(LeabraLayer* lay);
+  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+
+  override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+  
+  TA_SIMPLE_BASEFUNS(LeabraV1LayerSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
 #endif // leabra_extra_h
 
