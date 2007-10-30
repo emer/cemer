@@ -2188,7 +2188,8 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
+int DataTable::LoadHeader_strm(istream& strm, Delimiters delim)
+{
   char cdlm = GetDelim(delim);
   load_col_idx.Reset();
   load_mat_idx.Reset();
@@ -2229,7 +2230,8 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
   return c;
 }
 
-int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str) {
+int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
+{
   char cdlm = GetDelim(delim);
   StructUpdate(true);
   bool added_row = false;
@@ -2241,6 +2243,7 @@ int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
     c = ReadTillDelim(strm, str, cdlm, quote_str);
     if(c == EOF) break;
     if(str == "_H:") {
+    //TODO: call w/ extra params
       c = LoadHeader_strm(strm, delim);
       if(c == EOF) break;
       continue;

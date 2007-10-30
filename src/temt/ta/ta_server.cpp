@@ -344,27 +344,21 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
     tab = dynamic_cast<DataTable*>(prog->objs.FindName(nm));
   }
   if (!tab) {
-    SendError("Table '" + pnm + "' not found");
+    SendError("Table '" + nm + "' not found");
     return NULL;
   }
   return tab;
 }
 
 bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
-  // all the possible params -- not all defined for all cmds
-  rows = tc->name_params.GetValDef("rows", 1).toInt();
-  row_from = tc->name_params.GetValDef("row_from", 0).toInt();
-  row_to = tc->name_params.GetValDef("row_to", -1).toInt();
-  col_from = tc->name_params.GetValDef("col_from", 0).toInt();
-  col_to = tc->name_params.GetValDef("col_to", -1).toInt();
-  header = tc->name_params.GetValDef("header", false).toBool();
-  
-  // init vals that need to be correctly set even if validation fails
-  if (header) lines = 1; else lines = 0;
+  // defaults for values -- some of the guys below alter these, before we read them
+  rows = 1;
+  header = false;
   
   // cmd decodes
   bool get = false;
   bool get_set = false;
+  bool remove = false;
   bool append = false;
   switch (cmd) {
   case TemtClient::TableParams::Get:
@@ -373,22 +367,36 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
     break;
   case TemtClient::TableParams::Append:
     append = true;
+    header = true;
+    break;
+  case TemtClient::TableParams::Remove:
+    rows = -1;
+    remove = true;
     break;
   case TemtClient::TableParams::Set:
     get_set = true;
     break;
   }
   
+  // all the possible params -- not all defined for all cmds
+  rows = tc->name_params.GetValDef("rows", rows).toInt();
+  row_from = tc->name_params.GetValDef("row_from", 0).toInt();
+  row_to = tc->name_params.GetValDef("row_to", -1).toInt();
+  col_from = tc->name_params.GetValDef("col_from", 0).toInt();
+  col_to = tc->name_params.GetValDef("col_to", -1).toInt();
+  header = tc->name_params.GetValDef("header", header).toBool();
+  
+  // init vals that need to be correctly set even if validation fails
+  if (header) lines = 1; else lines = 0;
+  
   // validate and normalize the params
+  if (row_from < 0) row_from = tab->rows + row_from;
+  if (row_to < 0) row_to = tab->rows + row_to;
   if (get_set) {
-    if (row_from < 0) row_from = tab->rows + row_from;
-    if (row_to < 0) row_to = tab->rows + row_to;
-    
     if ((row_from < 0) || (row_from >= tab->rows)) {
       tc->SendError("row_from '" + String(row_from) + "' out of bounds");
       return false;
     }
-    
     
     if ((row_to < 0) || (row_to >= tab->rows)) {
       tc->SendError("row_to '" + String(row_to) + "' out of bounds");
@@ -403,6 +411,21 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
     }
     row_from = tab->rows;
     row_to = (row_from + rows) - 1;
+  }
+  
+  if (remove) {
+    // note: only ok for row_from to be out of bounds if empty
+    if ((row_from < 0) && (tab->rows > 0)) {
+      tc->SendError("row_from '" + String(row_from) + "' out of bounds");
+      return false;
+    }
+    if (rows < 0) {
+      rows = tab->rows;
+    }
+    // adjust rows to be true rows
+    if ((row_from + rows) > tab->rows)
+      rows = tab->rows - row_from;
+    return true; // skip all the other stuff
   }
   
   // make sure lines is valid now, before possibly bailing on other conditions
@@ -452,51 +475,40 @@ void TemtClient::cmdAppendData() {
   
   setState(CS_READY);
   
-    //TODO: move inside the error branch
+  if (!cmd_ok) { // error of some occurred, so we just accepted lines
     // must remove first n lines
     while ((p.lines > 0) && (lines.size > 0)) {
       lines.RemoveIdx(0);
       p.lines--;
     }
-  
-  if (cmd_ok) 
-    SendOk();
-  else {
-  }
-/*  
-  
-  
-  istringstream istr;
-  String ln;
-  
-  
-  
-  
-  
-  
-  // ok, we can do it!
-  SendOk("line=" + String(p.lines));
-  
-  
-  // header row, if any
-  if (p.header) {
-    tab->SaveHeader_strm(ostr);
-    ln = ostr.str().c_str();
-    Write(ln);
+    return;
   }
   
-  // rows
-  for (int row = p.row_from; row <= p.row_to; ++row) {
-    ostr.str("");
-    ostr.clear();
-    tab->SaveDataRow_strm(ostr, row, DataTable::TAB, 
-      true, // quote_str
-      false, // row_mark
-      p.col_from, p.col_to);
-    ln = ostr.str().c_str();
-    Write(ln);
+  // trivial case with no lines
+  if (p.lines == 0) goto ok_exit;
+  
+  {
+  
+  //note: we must have enough lines to have made it here
+  tab->StructUpdate(true);
+  while ((p.lines > 0) && (lines.size > 0)) {
+    String ln;
+    //note: parser needs the eol, so we have to add it back in
+    ln = lines.FastEl(0) + '\n';
+    lines.RemoveIdx(0);
+    p.lines--;
+    // note: making a new one each loop simplifies things
+    istringstream istr(ln.chars());
+  
+    tab->LoadData_strm(istr, DataTable::TAB, 
+      true // quote_str
+      );
   }
-  */
+  tab->StructUpdate(false);
+  }
+ok_exit:
+  // ok, we did!
+  SendOk();
 }
 
 void TemtClient::cmdGetData() {
@@ -562,6 +574,26 @@ void TemtClient::cmdGetVar() {
     val = var->GetVar().toString();
   }
   SendOk(val);
+}
+
+void TemtClient::cmdRemoveData() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Remove);
+  if (!cmd_ok) return;
+  
+  // ok if none
+  if (p.row_from >= 0) {
+    if (!tab->RemoveRows(p.row_from, p.rows)) {
+      SendError("RemoveRows command on table '" + tnm + "' did not succeed");
+      return;
+    }
+  }
+  SendOk();
 }
 
 void TemtClient::cmdSetVar() {
@@ -683,14 +715,17 @@ void TemtClient::ParseCommand(const String& cl) {
   if (cmd == "AppendData") {
     cmdAppendData();
   } else
+  if (cmd == "Echo") {
+    cmdEcho();
+  } else
   if (cmd == "GetData") {
     cmdGetData();
   } else
   if (cmd == "GetVar") {
     cmdGetVar();
   } else
-  if (cmd == "Echo") {
-    cmdEcho();
+  if (cmd == "RemoveData") {
+    cmdRemoveData();
   } else
   if (cmd == "RunProgram") {
     cmdRunProgram();

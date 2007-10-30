@@ -105,6 +105,7 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void 		cmdGetData();
   virtual void 		cmdGetVar();
   virtual void		cmdOpenProject();
+  virtual void 		cmdRemoveData();
   virtual void		cmdRunProgram(); 
   virtual void 		cmdSetData();
   virtual void		cmdSetVar();
@@ -124,6 +125,7 @@ protected:
     enum Cmd {
       Get,
       Append,
+      Remove,
       Set
     };
     
