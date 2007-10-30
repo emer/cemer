@@ -2248,7 +2248,13 @@ void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
 
   LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
 
-  if(feat_inhib.type == LeabraInhibSpec::UNIT_INHIB) return;
+  if(feat_inhib.type == LeabraInhibSpec::UNIT_INHIB) {
+    for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
+      LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
+      fugp->i_val.g_i = 0.0f;
+    }
+    return;
+  }
 
   vlay->feat_lay_thr.Inhib_SetVals(0.0f);
   for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
