@@ -2592,7 +2592,8 @@ void LeabraLayerSpec::Compute_InhibAvg_impl(LeabraLayer* lay, Unit_Group* ug, Le
   taLeafItr i;
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    u->Compute_InhibAvg(lay, thr, net);
+    if(inhib.type == LeabraInhibSpec::UNIT_INHIB)
+      u->Compute_InhibAvg(lay, thr, net);
     thr->un_g_i.avg += u->gc.i;
     if(u->gc.i > thr->un_g_i.max) {
       thr->un_g_i.max = u->gc.i;
