@@ -734,6 +734,11 @@ void DataTable::UpdateAfterEdit_impl() {
   CheckForCalcs();
 }
 
+void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  data.CheckConfig(quiet, rval);
+}
+
 bool DataTable::AddRows(int n) {
   if(TestError((cols() == 0), "AddRows", "no columns!")) return false;
   if(TestError((n < 1), "AddRows", "n rows < 1")) return false;

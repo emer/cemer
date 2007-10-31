@@ -135,6 +135,11 @@ void DataOpList::AddAllColumns_gui(DataTable* dt) {
 void DataOpBaseSpec::Initialize() {
 }
 
+void DataOpBaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  ops.CheckConfig(quiet, rval);
+}
+
 /////////////////////////////////////////////////////////
 //   Specific el's
 /////////////////////////////////////////////////////////
@@ -228,6 +233,7 @@ void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(col_lookup) {
     CheckError(col_lookup->is_matrix, quiet, rval, "cannot use matrix column to select");
   }
+  CheckError(use_var && !var, quiet, rval, "use_var is selected but no var variable is set!");
 }
 
 void DataSelectSpec::Initialize() {

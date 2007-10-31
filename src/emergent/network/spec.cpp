@@ -226,6 +226,11 @@ void BaseSpec::UpdateAfterEdit_impl() {
   UpdateSpec();
 }
 
+void BaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  children.CheckConfig(quiet, rval);
+}
+
 BaseSpec* BaseSpec::NewChild(TypeDef* child_type) {
   BaseSpec* rval = (BaseSpec*)children.New_gui(1, child_type);
   rval->UpdateSpec();

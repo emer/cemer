@@ -658,6 +658,7 @@ public:
   TA_SIMPLE_BASEFUNS(RetinaSpec);
 protected:
   void	UpdateAfterEdit_impl();
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
 };
 
 SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef
@@ -697,6 +698,7 @@ public:
   TA_SIMPLE_BASEFUNS(V1GaborSpec);
 protected:
   void	UpdateAfterEdit_impl();
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
 };
 
 

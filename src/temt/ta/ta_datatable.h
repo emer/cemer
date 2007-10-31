@@ -1034,9 +1034,10 @@ public:
 
 protected: 
   override void	UpdateAfterEdit_impl();
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
+
   /////////////////////////////////////////////////////////
   // IMPL
-  
 
   void			RowsAdding(int n, bool begin);
   // indicate beginning and end of row adding -- you have to pass the same n each time; NOT nestable

@@ -116,6 +116,7 @@ public:
   TA_BASEFUNS(BaseSpec);
 protected:
   void	UpdateAfterEdit_impl();
+  override void CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void 	Initialize();
   void	Destroy();

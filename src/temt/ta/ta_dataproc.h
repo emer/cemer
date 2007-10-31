@@ -108,6 +108,8 @@ public:
   override taList_impl*	children_() {return &ops;}	
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
+protected:
+  override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
   void 	Destroy()		{ };

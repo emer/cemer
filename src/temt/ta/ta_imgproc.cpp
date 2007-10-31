@@ -1975,6 +1975,11 @@ void RetinaSpec::UpdateAfterEdit_impl() {
   UpdateRetinaSize();
 }
 
+void RetinaSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  dogs.CheckConfig(quiet, rval);
+}
+
 void RetinaSpec::DefaultFilters() {
   StructUpdate(false);
   if(color_type == COLOR)
@@ -2511,6 +2516,11 @@ void V1GaborSpec::Initialize() {
 void V1GaborSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // todo: anything here??
+}
+
+void V1GaborSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  gabors.CheckConfig(quiet, rval);
 }
 
 void V1GaborSpec::DefaultFilters() {
