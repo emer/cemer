@@ -1298,7 +1298,8 @@ void CsWizard::Initialize() {
   connectivity = BIDIRECTIONAL;
 }
 
-void CsWizard::StdProgs() {
-  StdProgs_impl("CsAll_Std");
+bool CsWizard::StdProgs() {
+  if(!StdProgs_impl("CsAll_Std")) return false;
+  return true;
 }
 

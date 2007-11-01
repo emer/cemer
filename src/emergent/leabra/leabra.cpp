@@ -4185,17 +4185,22 @@ void LeabraWizard::Initialize() {
   connectivity = BIDIRECTIONAL;
 }
 
-void LeabraWizard::StdNetwork(Network* net) {
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  if(net == NULL)
+bool LeabraWizard::StdNetwork(Network* net) {
+  if(!net) {
+    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = proj->GetNewNetwork();
-  if(net == NULL) return;
-  inherited::StdNetwork(net);
-  StdLayerSpecs((LeabraNetwork*)net);
+    if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
+  }
+  if(!inherited::StdNetwork(net)) return false;
+  return StdLayerSpecs((LeabraNetwork*)net);
 }
 
-void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
-  if(net == NULL) return;
+bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
+  if(!net) {
+    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+    net = (LeabraNetwork*)proj->GetNewNetwork();
+    if(TestError(!net, "StdLayerSpecs", "network is NULL and could not make a new one -- aborting!")) return false;
+  }
   LeabraLayerSpec* hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_LeabraLayerSpec);
   hid->name = "HiddenLayer";
   LeabraLayerSpec* inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
@@ -4236,7 +4241,7 @@ void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   LeabraBiasSpec* bs = (LeabraBiasSpec*)net->specs.FindType(&TA_LeabraBiasSpec);
   if(bs != NULL) {
     LeabraConSpec* ps = (LeabraConSpec*)bs->FindParent();
-    if(ps != NULL) return;
+    if(ps != NULL) return false;
     ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
     if(ps != NULL) {
       ps->children.Transfer(bs);
@@ -4244,6 +4249,7 @@ void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
 //       winbMisc::DelayedMenuUpdate(ps);
     }
   }
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -4251,6 +4257,12 @@ void LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////
 
 bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
+  if(!net) {
+    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+    net = (LeabraNetwork*)proj->GetNewNetwork();
+    if(TestError(!net, "UnitInhib", "network is NULL and could not make a new one -- aborting!")) return false;
+  }
+
   net->RemoveUnits();
   
   LeabraUnitSpec* basic_us = (LeabraUnitSpec*)net->FindSpecType(&TA_LeabraUnitSpec);
@@ -4384,10 +4396,11 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   return true;
 }
 
-void LeabraWizard::StdProgs() {
+bool LeabraWizard::StdProgs() {
   // todo: could check for subgroups and do LeabraAll_GpData instead
   //Program_Group* pg = 
-  StdProgs_impl("LeabraAll_Std");
+  if(!StdProgs_impl("LeabraAll_Std")) return false;
   // todo: could do something more here..
+  return true;
 }
 

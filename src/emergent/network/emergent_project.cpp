@@ -121,7 +121,7 @@ void Wizard::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
-void Wizard::ThreeLayerNet() {
+bool Wizard::ThreeLayerNet() {
   n_layers = 3;
   layer_cfg.SetSize(n_layers);
   layer_cfg[0]->name = "Input";
@@ -136,9 +136,10 @@ void Wizard::ThreeLayerNet() {
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(&layer_cfg, "BrowserExpandAll");
   }
+  return true;
 }
 
-void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
+bool Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
   n_layers = n_inputs + n_hiddens + n_outputs;
   layer_cfg.SetSize(n_layers);
   int i;
@@ -166,13 +167,16 @@ void Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(&layer_cfg, "BrowserExpandAll");
   }
+  return true;
 }
 
-void Wizard::StdNetwork(Network* net) {
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if(net == NULL)
+bool Wizard::StdNetwork(Network* net) {
+  if(!net) {
+    ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+    if(TestError(!proj, "StdNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
     net = proj->GetNewNetwork();
-  if(net == NULL) return;
+    if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
+  }
   net->StructUpdate(true);
   layer_cfg.SetSize(n_layers);
   net->layers.SetSize(n_layers);
@@ -268,13 +272,16 @@ void Wizard::StdNetwork(Network* net) {
     tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
+  return true;
 }
 
-void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if(net == NULL)
+bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
+  if(!net) {
+    ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+    if(TestError(!proj, "RetinaSpecNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
     net = proj->GetNewNetwork();
-  if(net == NULL) return;
+    if(TestError(!net, "RetinaSpecNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
+  }
   net->StructUpdate(true);
   for(int i=0;i<retina_spec->dogs.size; i++) {
     DoGRetinaSpec* sp = retina_spec->dogs[i];
@@ -294,18 +301,20 @@ void Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
     tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
+  return true;
 }
 
 //////////////////////////////////
 // 	Enviro Wizard		//
 //////////////////////////////////
 
-void Wizard::StdData(Network* net, DataTable* data_table, int n_patterns, bool group) {
+bool Wizard::StdData(Network* net, DataTable* data_table, int n_patterns, bool group) {
   StdOutputData();
   StdInputData(net, data_table, n_patterns, group);
+  return true;
 }
 
-void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
+bool Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, bool group) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!data_table) {
     data_table = proj->GetNewInputDataTable("StdInputData");
@@ -313,7 +322,8 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
   if(!net) {
     net = proj->GetDefNetwork();
   }
-  if(!net) return;
+  if(TestError(!net, "StdInputData", "could not find network to get data config from!"))
+    return false;
   data_table->StructUpdate(true);
   if(group) {
     int gp_idx = 0;
@@ -330,10 +340,12 @@ void Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
   }
+  return true;
 }
 
-void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
-  if(!data_table || !net) return;
+bool Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
+  if(TestError(!data_table || !net, "UpdateInputDataFmNet",
+	       "must specify both a network and a data table")) return false;
   data_table->StructUpdate(true);
   taLeafItr li;
   Layer* lay;
@@ -357,9 +369,10 @@ void Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
   }
+  return true;
 }
 
-void Wizard::StdOutputData() {
+bool Wizard::StdOutputData() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   // DataTable* trl_data 
   proj->GetNewOutputDataTable("TrialOutputData");
@@ -368,15 +381,17 @@ void Wizard::StdOutputData() {
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(epc_data, "BrowserSelectMe");
   }
+  return true;
 }
 
 //////////////////////////////////
 // 	Progs Wizard		//
 //////////////////////////////////
 
-void Wizard::StdProgs() {
+bool Wizard::StdProgs() {
   taMisc::Error("This must be redefined in algorithm-specific project!",
 		"Just call StdProgs_impl with name of std program from proglib");
+  return false;
 }
 
 Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {

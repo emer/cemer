@@ -2193,8 +2193,7 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader_strm(istream& strm, Delimiters delim)
-{
+int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
   char cdlm = GetDelim(delim);
   load_col_idx.Reset();
   load_mat_idx.Reset();
@@ -2235,21 +2234,20 @@ int DataTable::LoadHeader_strm(istream& strm, Delimiters delim)
   return c;
 }
 
-int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
-{
+int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str) {
   char cdlm = GetDelim(delim);
   StructUpdate(true);
   bool added_row = false;
   int last_mat_col = -1;
-  int col = 0;
+  int load_col = 0;		// loading column (always incr)
+  int data_col = 0;		// data column (datacol index in data table)
   int c;
   while(true) {
     String str;
     c = ReadTillDelim(strm, str, cdlm, quote_str);
     if(c == EOF) break;
     if(str == "_H:") {
-    //TODO: call w/ extra params
-      c = LoadHeader_strm(strm, delim);
+      c = LoadHeader_impl(strm, delim);
       if(c == EOF) break;
       continue;
     }
@@ -2259,38 +2257,61 @@ int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
       AddBlankRow();		
       added_row = true;
     }
-    int use_col = col;
     if(load_col_idx.size > 0) {
-      use_col = load_col_idx[col];
+      data_col = load_col_idx[load_col];
     }
-    if(TestWarning((use_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
+    if(TestWarning((data_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
       c = '\n';
       break;
     }
-    DataCol* da = data.FastEl(use_col);
+    DataCol* da = data.FastEl(data_col);
     if(da->isMatrix()) {
       int mat_idx = 0;
       if(load_mat_idx.size > 0) {
-	mat_idx = load_mat_idx[col];
+	mat_idx = load_mat_idx[load_col];
+	da->SetValAsStringM(str, -1, mat_idx);
       }
       else {
 	if(last_mat_col >= 0)
-	  mat_idx = col - last_mat_col;
+	  mat_idx = load_col - last_mat_col;
 	else 
-	  last_mat_col = col;
+	  last_mat_col = load_col;
+	if(mat_idx >= da->cell_size()) { // filled up the matrix!
+	  data_col++;
+	  if(TestWarning((data_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
+	    c = '\n';
+	    break;
+	  }
+	  da = data.FastEl(data_col);
+	  last_mat_col = -1;
+	  da->SetValAsString(str, -1);
+	}
+	else {
+	  da->SetValAsStringM(str, -1, mat_idx);
+	}
       }
-      da->SetValAsStringM(str, -1, mat_idx);
     }
     else {
       last_mat_col = -1;
       da->SetValAsString(str, -1);
+      data_col++;
     }
-    col++;
+    load_col++;
     if(c == '\n') break;
     if(c == '\r') { if(strm.peek() == '\n') strm.get(); break; }
   }
   StructUpdate(false);
   return c;
+}
+
+int DataTable::LoadHeader_strm(istream& strm, Delimiters delim) {
+  return LoadHeader_impl(strm, delim);
+}
+
+int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str) {
+  load_col_idx.Reset();
+  load_mat_idx.Reset();
+  return LoadDataRow_impl(strm, delim, quote_str);
 }
 
 void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, int max_recs) {
@@ -2299,7 +2320,7 @@ void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str, i
   load_mat_idx.Reset();
   int st_row = rows;
   while(true) {
-    int c = LoadDataRow_strm(strm, delim, quote_str);
+    int c = LoadDataRow_impl(strm, delim, quote_str);
     if(c == EOF) break;
     if((max_recs > 0) && (rows - st_row >= max_recs)) break;
   }
@@ -2310,17 +2331,19 @@ int DataTable::LoadHeader(const String& fname, Delimiters delim) {
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false);
   int rval = 0;
   if(flr->istrm)
-    rval = LoadHeader_strm(*flr->istrm, delim);
+    rval = LoadHeader_impl(*flr->istrm, delim);
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;
 }
 
 int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str) {
+  load_col_idx.Reset();
+  load_mat_idx.Reset();
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   int rval = 0;
   if(flr->istrm)
-    rval = LoadDataRow_strm(*flr->istrm, delim, quote_str);
+    rval = LoadDataRow_impl(*flr->istrm, delim, quote_str);
   flr->Close();
   taRefN::unRefDone(flr);
   return rval;

@@ -1164,6 +1164,14 @@ void PVLVDaLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
 bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
+  if(!net) {
+    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+    net = (LeabraNetwork*)proj->GetNewNetwork();
+    if(TestError(!net, "PVLV", "network is NULL and could not make a new one -- aborting!"))
+      return false;
+    if(!StdNetwork(net)) return false;
+  }
+
   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
  There is one thing you will need to check manually after this automatic configuration\
  process completes (this note will be repeated when things complete --- there may be some\
@@ -1582,6 +1590,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 
 bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
 				     bool disconnect) {
+  if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
 
   // String pvenm = "PVe";
   String pvinm = "PVi";  String pvrnm = "PVr";

@@ -1796,6 +1796,7 @@ bool taRootBase::Startup_Console() {
     if (console_options & taMisc::CO_GUI_TRACKING) {
       QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
       QMainWindow* cwin = new QMainWindow();
+      cwin->setWindowTitle("css Console");
       cwin->setCentralWidget((QWidget*)con);
       cwin->resize((int)(.95 * taiM->scrn_s.w), (int)(.25 * taiM->scrn_s.h));
       cwin->move((int)(.025 * taiM->scrn_s.w), (int)(.7 * taiM->scrn_s.h));

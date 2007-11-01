@@ -1,0 +1,759 @@
+// css code to manage bibtex entries
+
+class Spacer {
+  // #INLINE dummy class to widen out the edit dialog!
+public:
+  String	spacer_a;
+  String	spacer_b;
+  String	spacer_c;
+  String	spacer_d;
+  String	spacer_e;
+  String	spacer_f;
+  String	spacer_g;
+  String	spacer_h;
+  String	spacer_i;
+};
+
+enum BibTypes {
+  ARTICLE,
+  BOOK,
+  BOOKLET,
+  COLLECTION,
+  CONFERENCE,
+  INBOOK,
+  INCOLLECTION,
+  INPROCEEDINGS,
+  MANUAL,
+  MASTERSTHESIS,
+  MISC,
+  PATENT,
+  PHDTHESIS,
+  PROCEEDINGS,
+  TECHREPORT,
+  UNPUBLISHED,
+  N_BibTypes,
+};
+
+class Reference {
+  // #EDIT_WIDTH_800 contains all the information about a given reference
+public:
+  int_Array	rec_locs; 	// #HIDDEN record locations
+  fstream	in_strm;	// #HIDDEN the input stream
+
+  String	bibfile;	// what biblio file to save this reference to?  empty = no save.  excludes prefix. and .bib
+  BibTypes	bibtype;	// what type of bib entry?
+  String	bibkey;		// bibtex key
+  String	title;		// title of article
+  String	author;		// author(s) as a single string
+  String_Array	author_ary;	// #HIDDEN array of author names
+  String 	journal;	// journal title
+  String 	year;		// year of publication
+  String	volume;		// volume number
+  String	number;		// issue number
+  String	pages;		// pages
+  // book fields
+  String	address;	// publisher's addres
+  String	publisher;	// publisher
+  String	booktitle;	// title of book (different from regular title if in a collection)
+  String	editor;		// editor(s) of the book
+  String_Array	editor_ary;	// #HIDDEN array of editor names
+  String	edition;	// possible edition information (optional, usu just in title)
+  String	chapter;	// chapter number
+  // tech report fields
+  String	institution;	// The sponsoring institution of a technical report
+  String	trtype;		// The type of technical report - e.g., Research Note.
+  // thesis fields
+  String	school;		// The name of the school where a thesis was written.
+  // misc less-used fields
+  String	organization;	// The organization that sponsors a conference or publishes a manual.
+  String	affiliation;	// author's affiliation
+  String	location;	// E.g., the city in which a conference took place.
+  String	month;		// month of publication (or conference)
+  String	url;		// www location of file
+  String	pdf;		// location of PDF file
+  String	copyright;	// copyright information
+  String	howpublished;	// how something strange has been published.
+  String	series;		// name of a series of books
+  String	keywords;	// Key words used for searching or possibly for annotation.
+  String	abstract;	// published abstract of the paper
+  String	contents;	// table of contents of a book
+  String	annote;		// Annotation for an annotated bibliography; brief note
+  String	note;		// Any additional information that can help the reader. First word should be capitalized.
+  String	language;	// language document is written in
+  String	price;		// The price of the material.
+  String	size;		// The physical dimensions of the work.
+  String	isbn;		// The International Standard Book Number.
+  String	issn;		// The International Standard Serial Number. Used to identify a journal.
+  String	lccn;		// The Library of Congress Call Number.
+  String	pmid;		// pub med id number
+  String	doi;		// digital object identifier http://www.doi.org/
+  String	key;		// used for alphabetizing and making labels when author/editor fields missing.  NOT the bibkey!
+  String	crossref;	// cross reference to another bib entry (to be avoided!!)
+  String	timestamp;	// when the entry was last updated
+  float		filter_score;	// automatic filtering goodness score
+  //  Spacer	spacer;		// dummy class to widen out the edit dialog
+
+  void		FmBibTex(istream& strm); // read in a ref from a bibtex file
+  void		ToBibTex(ostream& strm); // output ref to a bibtex file
+  void		ToBibFile(String prfix); // output ref to a bibtex file specified by bibfile, using prefix as directory and file prefix info
+
+  String        ClnBrk(String str); // get rid of brackets from string
+  String	GetApaAuth();	// translate author list into apa format 
+  String	GetApaEd();	// translate editor into apa format 
+  String	GetApaRef(bool html = false); // translate ref into apa format (optionally use html formatting codes)
+
+  void		AuthFmAry(); 		// generate author string from author_ary
+  void		AryFmAuth(); 		// generate author_ary from author field (and separated)
+  void		EditorFmAry(); 		// generate editor string from editor_ary
+  void		AryFmEditor(); 		// generate editor_ary from editor field (and separated)
+  void          GetAuthFirstLast(String auth, String& fnm, String& lnm);
+  String	AuthInitsOnly(String auth, bool spc = false);
+  // transform a single author name to lastname, initials format (e.g., apa style); if spc = true, add a space betwn initials (i.e., tex style)
+  String	EdInitsOnly(String auth, bool spc = false);
+  // transform a single editor name to initials lastname format (e.g., apa style); if spc = true, add a space betwn initials (i.e., tex style)
+
+  String	GenBibKey(); 		// generate bibtex key from author/editor & year
+  int 		GetScienceVol(int no); // get Science vol from number
+  int 		GetNatureVol(int no); // get Nature vol from number
+  String 	RestOfCols(String_Array& cols, int st);	// get rest of cols as a string
+
+  BibTypes	BibTypeFmStr(String bs);// get bib type from string
+  String	BibTypeStr();	// get string version of bib type (for making entry)
+
+  void		TitleToArray(String_Array& ary); // get words in title to string array
+
+  void		Reset();	// reset all fields
+
+  Reference();
+  ~Reference();
+};
+
+Reference::Reference() {
+//   author_ary = new String_Array;
+//   editor_ary = new String_Array;
+//   rec_locs = new int_Array;
+}
+
+Reference::~Reference() {
+//   delete author_ary;
+//   delete editor_ary;
+//   delete rec_locs;
+}
+
+void Reference::Reset() {
+//   bibfile = "";
+  bibtype = ARTICLE;
+  bibkey = "";
+  title = "";
+  author = "";
+  author_ary.Reset();
+  journal = "";
+  year = "";
+  volume = "";
+  number = "";
+  pages = "";
+  address = "";
+  publisher ="";
+  booktitle="";
+  editor="";
+  editor_ary.Reset();
+  edition="";
+  chapter="";
+  institution="";
+  trtype="";
+  school="";
+  organization="";
+  affiliation="";
+  location="";
+  month="";
+  url="";
+  pdf="";
+  copyright="";
+  howpublished="";
+  series="";
+  keywords="";
+  abstract="";
+  contents="";
+  annote="";
+  note="";
+  language="";
+  price="";
+  size="";
+  isbn="";
+  issn="";
+  lccn="";
+  pmid="";
+  doi="";
+  key="";
+  crossref="";
+  timestamp="";
+  filter_score = 0;
+}
+
+void Reference::AuthFmAry() {
+  author = "";
+  int i;
+  for(i=0;i<author_ary.size;i++) {
+    author += author_ary[i];
+    if(i < author_ary.size-1)
+      author += " and ";
+  }
+}
+
+void Reference::AryFmAuth() {
+  author_ary.Reset();
+  String rest = author;
+  while(!rest.empty()) {
+    if(rest.contains(" and ")) {
+      String auth = rest.before(" and ");
+      rest = rest.after(" and ");
+      author_ary.Add(auth);
+    }
+    else {
+      author_ary.Add(rest);
+      rest = "";
+    }
+  }
+}
+
+void Reference::EditorFmAry() {
+  editor = "";
+  int i;
+  for(i=0;i<editor_ary.size;i++) {
+    editor += editor_ary[i];
+    if(i < editor_ary.size-1)
+      editor += " and ";
+  }
+}
+
+void Reference::AryFmEditor() {
+  editor_ary.Reset();
+  String rest = editor;
+  while(!rest.empty()) {
+    if(rest.contains(" and ")) {
+      String auth = rest.before(" and ");
+      rest = rest.after(" and ");
+      editor_ary.Add(auth);
+    }
+    else {
+      editor_ary.Add(rest);
+      rest = "";
+    }
+  }
+}
+
+String Reference::ClnBrk(String str) {
+  str.gsub("{","");
+  str.gsub("}","");
+  return str;
+}
+
+void Reference::GetAuthFirstLast(String auth, String& fnm, String& lnm) {
+  if(auth.contains(", ")) {
+    lnm = auth.before(", ");
+    fnm = auth.after(", ");
+  }
+  else if(auth.contains(" ")) {
+    lnm = auth.after(" ", -1);	// just the last word..
+    fnm = auth.before(" ", -1);
+  }
+  else {
+    lnm = auth;
+    fnm = "";
+  }
+}
+
+String Reference::AuthInitsOnly(String auth, bool spc) {
+  String lnm, fnm;
+  GetAuthFirstLast(auth, fnm, lnm);
+  String inits;
+  while(!fnm.empty()) {
+    String nm;
+    if(fnm.contains(" ")) {
+      nm = fnm.before(" ");
+      fnm = fnm.after(" ");
+    }
+    else {
+      nm = fnm;
+      fnm = "";
+    }
+    inits += (String)(char)nm.firstchar() + ".";
+    if(spc && !fnm.empty())
+      inits += " ";
+  }
+  return lnm + ", " + inits;
+}
+
+String Reference::EdInitsOnly(String auth, bool spc) {
+  String lnm, fnm;
+  GetAuthFirstLast(auth, fnm, lnm);
+  String inits;
+  while(!fnm.empty()) {
+    String nm;
+    if(fnm.contains(" ")) {
+      nm = fnm.before(" ");
+      fnm = fnm.after(" ");
+    }
+    else {
+      nm = fnm;
+      fnm = "";
+    }
+    inits += (String)(char)nm.firstchar() + ".";
+    if(spc && !fnm.empty())
+      inits += " ";
+  }
+  return inits + " " + lnm;
+}
+
+String Reference::GenBibKey() {
+  String new_key;
+  int mx_au = MIN(author_ary.size, 3);
+  int i;
+  if(mx_au == 0) {
+    mx_au = MIN(editor_ary.size, 3);
+    if(mx_au == 0) {
+      taMisc::Error("Bibkey Error: there are no authors or editors for this work:", title);
+      return bibkey;
+    }
+    for(i=0;i<mx_au;i++) {
+      String au = editor_ary[i];
+      String lnm, fnm;
+      GetAuthFirstLast(au, fnm, lnm);
+      new_key += lnm;
+    }
+    if(editor_ary.size > 3)
+      new_key += "EtAl";
+  }
+  else {
+    for(i=0;i<mx_au;i++) {
+      String au = author_ary[i];
+      String lnm, fnm;
+      GetAuthFirstLast(au, fnm, lnm);
+      new_key += lnm;
+    }
+    if(author_ary.size > 3)
+      new_key += "EtAl";
+  }
+  
+  year.downcase();
+  if(year.length() == 4)
+    new_key += year.at(2,2);
+  else if((year == "in press") || (year == "submitted") || (year == "in preparation") ||
+	  (year == "under revisions"))
+    new_key += "IP";
+  else if((year == "unpublished") || (year == "unpublished manuscript"))
+    new_key += "UP";
+  else if(year.empty())
+    cerr << "empty year: " << title << ": " << bibkey << endl;
+  else
+    taMisc::Error("BibKey Error: year is non-standard:", year, "in:", bibkey);
+
+  if(new_key.contains(" "))
+    new_key.gsub(" ", "");
+  if(new_key.contains("'"))
+    new_key.gsub("'", "");
+  if(new_key.contains("`"))
+    new_key.gsub("`", "");
+  if(new_key.contains("-"))
+    new_key.gsub("-", "");
+  if(new_key.contains("\\"))
+    new_key.gsub("\\", "");
+  if(new_key.contains("\""))
+    new_key.gsub("\"", "");
+  if(new_key.contains("Jr."))
+    new_key.gsub("Jr.", "");
+  if(new_key.contains("{"))
+    new_key.gsub("{", "");
+  if(new_key.contains("}"))
+    new_key.gsub("}", "");
+  if(new_key.contains("~"))
+    new_key.gsub("~", "");
+  if(new_key.contains("III"))
+    new_key.gsub("III", "");
+  if(new_key.contains("II"))
+    new_key.gsub("II", "");
+  if(new_key.contains("St."))
+    new_key.gsub("St.", "St");
+  return new_key;
+}
+
+String Reference::BibTypeStr() {
+  String bs = bibtype;
+  // keep it upcase as in JabRef
+  //  bs.downcase();
+  return bs;
+}
+
+BibTypes Reference::BibTypeFmStr(String bs) {
+  bs.upcase();
+  BibTypes bt;
+  for(bt = 0; bt < N_BibTypes; bt++) {
+    String pbs = bt;
+    if(pbs == bs) return bt;
+  }
+  cerr << "Error: bibtype: " << bs << " Not Found!" << endl;
+  return N_BibTypes;		// not found!
+}
+
+void Reference::ToBibTex(ostream& strm) {
+  strm << "" << endl;
+  strm << "@" << BibTypeStr() << "{" << bibkey << "," << endl;
+  if(!author.empty()) 	strm << "  author = {" << author << "}," << endl;
+  if(!title.empty()) 	strm << "  title = {" << title << "}," << endl;
+  if(!booktitle.empty()) strm <<"  booktitle = {" << booktitle << "}," << endl;
+  if(!journal.empty()) 	strm << "  journal = {" << journal << "}," << endl;
+  if(!publisher.empty()) strm <<"  publisher = {" << publisher << "}," << endl;
+  if(!year.empty()) 	strm << "  year = {" << year << "}," << endl;
+  if(!editor.empty()) 	strm << "  editor = {" << editor << "}," << endl;
+  if(!volume.empty())	strm << "  volume = {" << volume << "}," << endl;
+  if(!pages.empty()) 	strm << "  pages = {" << pages << "}," << endl;
+  if(!number.empty()) 	strm << "  number = {" << number << "}," << endl;
+  if(!month.empty()) 	strm << "  month = {" << month << "}," << endl;
+
+  if(!address.empty()) 	strm << "  address = {" << address << "}," << endl;
+  if(!edition.empty()) 	strm << "  edition = {" << edition << "}," << endl;
+  if(!chapter.empty()) 	strm << "  chapter = {" << chapter << "}," << endl;
+  if(!institution.empty())strm<<"  institution = {" << institution << "}," << endl;
+  if(!trtype.empty()) 	strm << "  type = {" << trtype << "}," << endl;
+  if(!school.empty()) 	strm << "  school = {" << school << "}," << endl;
+  if(!organization.empty())strm<<"  organization = {" << organization << "}," << endl;
+  if(!affiliation.empty()) strm<<"  affiliation = {" << affiliation << "}," << endl;
+  if(!location.empty()) strm << "  location = {" << location << "}," << endl;
+  if(!url.empty()) 	strm << "  url = {" << url << "}," << endl;
+  if(!pdf.empty()) 	strm << "  pdf = {" << pdf << "}," << endl;
+  if(!copyright.empty()) strm <<"  copyright = {" << copyright << "}," << endl;
+  if(!howpublished.empty())strm <<"  howpublished = {" << howpublished << "}," << endl;
+  if(!series.empty()) 	strm << "  series = {" << series << "}," << endl;
+  if(!keywords.empty()) strm << "  keywords = {" << keywords << "}," << endl;
+  if(!abstract.empty()) strm << "  abstract = {" << abstract << "}," << endl;
+  if(!contents.empty()) strm << "  contents = {" << contents << "}," << endl;
+  if(!annote.empty())   strm << "  annote = {" << annote << "}," << endl;
+  if(!note.empty()) 	strm << "  note = {" << note << "}," << endl;
+  if(!language.empty()) strm << "  language = {" << language << "}," << endl;
+  if(!price.empty()) 	strm << "  price = {" << price << "}," << endl;
+  if(!size.empty()) 	strm << "  size = {" << size << "}," << endl;
+  if(!isbn.empty()) 	strm << "  isbn = {" << isbn << "}," << endl;
+  if(!issn.empty()) 	strm << "  issn = {" << issn << "}," << endl;
+  if(!lccn.empty()) 	strm << "  lccn = {" << lccn << "}," << endl;
+  if(!pmid.empty()) 	strm << "  pmid = {" << pmid << "}," << endl;
+  if(!doi.empty()) 	strm << "  doi = {" << doi << "}," << endl;
+  if(!key.empty()) 	strm << "  key = {" << key << "}," << endl;
+  if(!crossref.empty()) strm << "  crossref = {" << crossref << "}," << endl;
+  if(!timestamp.empty()) strm << "  timestamp = {" << timestamp << "}," << endl;
+  if(filter_score != 0.0) strm << "  filter_score = {" << filter_score << "}," << endl;
+  strm << "}" << endl;
+}
+
+void Reference::ToBibFile(String prfix) {
+  String fnm = prfix + bibfile + ".bib";
+  fstream fh;
+  fh.open(fnm, ios::out | ios::app);
+  ToBibTex(fh);
+  fh.close();
+}
+
+int Reference::GetScienceVol(int no) {
+  // vol 271 = number 5245 = starting point;  51 issues per year = 13/13/13/12
+  int dif = no - 5246;
+  int yrvol = dif / 51;
+  int vol = yrvol * 4;		// 4 per year
+  int rmdr = dif % 51;
+  if(rmdr < 39)
+    vol += rmdr / 13;
+  else
+    vol += 3;
+  return 271 + vol;
+}
+
+int Reference::GetNatureVol(int no) {
+  // vol 385 = number 6611 = starting point;  51 issues per year = 9/8/9/9/9/7
+  int dif = no - 6612;
+  int yrvol = dif / 51;
+  int vol = yrvol * 6;		// 6 per year
+  int rmdr = dif % 51;
+  if(rmdr < 9)
+    vol = vol;			// that's it.
+  else if(rmdr < 18)
+    vol += 1;
+  else if(rmdr < 44)
+    vol += 2 + ((rmdr - 17) / 9);
+  else 
+    vol += 5;
+  return 385 + vol;
+}
+
+String Reference::RestOfCols(String_Array& cols, int st) {
+  String rval;
+  int i;
+  for(i=st;i<cols.size;i++) {
+    rval += cols[i];
+    if(i<cols.size-1)
+      rval += " ";
+  }
+  return rval;
+}
+
+
+void Reference::FmBibTex(istream& strm) {
+  while(!strm.eof() && !strm.bad()) {
+    String_Array& cols = ReadLine(strm);
+    if(strm.eof() || strm.bad()) break;
+    if(cols.size == 0) continue;
+    if(cols[0].length() < 1) continue;
+    if((cols.size >= 1) && (cols[0].firstchar() == '@')) {
+      String bs = cols[0].after("@");
+      String rest = RestOfCols(cols, 1);
+      if(bs.contains("{")) {
+	rest = bs.after("{") + rest;
+	bs = bs.before("{");
+      }
+      else if(rest.contains("{")) {
+	rest = rest.after("{");
+      }
+      bibtype = BibTypeFmStr(bs);
+      rest = rest.before(",",-1);
+      bibkey = rest;
+      break;
+    }
+  }
+  if(strm.eof() || strm.bad()) return;
+
+  while(!strm.eof() && !strm.bad()) {
+    String_Array& cols = ReadLine(strm);
+    if(strm.eof() || strm.bad()) break;
+    if(cols.size == 1 && cols[0] == "}") break;
+    if(cols.size <= 2) continue;
+
+    String fld = cols[0];
+    fld.downcase();
+    String val;
+    if(cols[1] == "=") {
+      val = RestOfCols(cols, 2);
+      if(val.contains("{")) {
+// 	val = val.after("{");
+	if(val == "{}") {
+	  val = "";
+	}
+      }
+      else {
+	cerr << "Error: no { bracket for entry: " << bibkey << ", skipping: " << val << endl;
+	break;
+      }
+    }
+    else {
+      val = RestOfCols(cols, 1);
+//       if(val.contains("{"))
+// 	val = val.after("{");
+    }
+
+    if(val.length() >= 2) {
+      bool got_end = false;
+      if((val.lastchar() == ',') && val.elem(val.length()-2) == '}') {
+	if(val.freq("{") == val.freq("}")) {
+	  val = val.after("{");
+	  val = val.before("},", -1);
+	  got_end = true;
+	}
+      }
+      else if(val.lastchar() == '}') {
+	if(val.freq("{") == val.freq("}")) {
+	  val = val.after("{");
+	  val = val.before("}", -1);
+	  got_end = true;
+	}
+      }
+
+      if(!got_end) {		// keep going!
+	while(!strm.eof() && !strm.bad()) {
+	  String_Array& scols = ReadLine(strm);
+	  if(strm.eof() || strm.bad()) break;
+	  String sval = RestOfCols(scols, 0);
+	  if(sval.length() >= 2) {
+	    if((sval.lastchar() == ',') && sval.elem(sval.length()-2) == '}') {
+	      val += " " + sval;
+	      if(val.freq("{") == val.freq("}")) {
+		val = val.after("{");
+		val = val.before("},", -1);
+		break;	// all done!
+	      }
+	    }
+ 	    else if(sval.lastchar() == '}') {
+ 	      val += " " + sval;
+	      if(val.freq("{") == val.freq("}")) {
+		val = val.after("{");
+		val = val.before("}", -1);
+		break;	// all done!
+	      }
+ 	    }
+	    else {
+	      val += " " + sval;
+	    }
+	  }
+	}
+      }
+    }
+
+    switch(fld) {
+    case "title": title = val; break;
+    case "author": { author = val; AryFmAuth(); } break;
+    case "journal": journal = val; break;
+    case "year": year = val; break;
+    case "volume": volume = val; break;
+    case "number": number = val; break;
+    case "pages": pages = val; break;
+    case "address": address = val; break;
+    case "publisher": publisher = val; break;
+    case "booktitle": booktitle = val; break;
+    case "editor": { editor = val; AryFmEditor(); } break;
+    case "edition": edition = val; break;
+    case "chapter": chapter = val; break;
+    case "institution": institution = val; break;
+    case "type": trtype = val; break;
+    case "school": school = val; break;
+    case "organization": organization = val; break;
+    case "affiliation": affiliation = val; break;
+    case "location": location = val; break;
+    case "month": month = val; break;
+    case "url": url = val; break;
+    case "pdf": pdf = val; break;
+    case "copyright": copyright = val; break;
+    case "howpublished": howpublished = val; break;
+    case "series": series = val; break;
+    case "keywords":  keywords = val;  break;
+    case "abstract": abstract = val; break;
+    case "contents": contents = val; break;
+    case "annote": annote = val; break;
+    case "note": note = val; break;
+    case "language": language = val; break;
+    case "price": price = val; break;
+    case "size": size = val; break;
+    case "isbn": isbn = val; break;
+    case "issn": issn = val; break;
+    case "lccn": lccn = val; break;
+    case "pmid": pmid = val; break;
+    case "doi": doi = val; break;
+    case "key": key = val; break;
+    case "crossref": crossref = val; break;
+    case "timestamp": timestamp = val; break;
+    case "filter_score": filter_score = val; break;
+    case "pii":  break;		// recognize but ignore!
+    case "owner":  break;		// recognize but ignore!
+    default: 
+      cerr << "Error: field: " << fld << " not recognized!" << endl;
+      break;
+    }
+  }
+}
+
+String Reference::GetApaAuth() {
+  if(author_ary.size == 1)
+    return AuthInitsOnly(author_ary[0]);
+  String auth;
+  int i;
+  for(i=0;i<author_ary.size;i++) {
+    auth += AuthInitsOnly(author_ary[i]);
+    if(i < author_ary.size-2)
+      auth += ", ";
+    else if(i == author_ary.size-2)
+      auth += " & ";
+  }
+  return auth;
+}
+
+String Reference::GetApaEd() {
+  int cnt = 0;
+  String eds;
+  String rest = editor;
+  while(!rest.empty()) {
+    String ed;
+    if(rest.contains(" and ")) {
+      ed = rest.before(" and ");
+      rest = rest.after(" and ");
+    }
+    else {
+      ed = rest;
+      rest = "";
+    }
+    eds += EdInitsOnly(ed);
+    cnt++;
+    if(!rest.empty()) {
+      if(!rest.contains(" and "))
+	eds += " & ";
+      else
+	eds += ", ";
+    }
+  }
+  if(cnt == 1)
+    eds += " (Ed)";
+  else
+    eds += " (Eds)";
+  return eds;
+}
+
+String Reference::GetApaRef(bool html) {
+  String ref = GetApaAuth() + " (" + year + "). " + ClnBrk(title);
+  if(ref.lastchar() != '.') ref += ".";
+  ref += " ";
+  if(bibtype == ARTICLE) {
+    if(html) ref += "<I>";
+    ref += journal;
+    if(!volume.empty())
+      ref += ", " + volume + ",";
+    if(html) ref += "</I>";
+    if(!pages.empty())
+      ref += " " + pages;
+    ref += ".";
+  }
+  else if(bibtype == INCOLLECTION) {
+    ref += GetApaEd() + " ";
+    if(html) ref += "<I>";
+    ref += booktitle + ",";
+    if(html) ref += "</I>";
+    if(!pages.empty())
+      ref += " " + pages + ",";
+    ref += " " + address + ": " + publisher + ".";
+  }
+  else if(bibtype == TECHREPORT) {
+    ref += " Technical Report " + number + " " + institution + ".";
+  }
+  else if(bibtype == BOOK) {
+    ref += address + ": " + publisher + ".";
+  }
+  else if(bibtype == INPROCEEDINGS) {
+    if(html) ref += "<I>";
+    ref += booktitle + ",";
+    if(html) ref += "</I>";
+    if(!editor.empty()) {
+      ref += GetApaEd() + ", ";
+    }
+    if(!pages.empty())
+      ref += pages + ", ";
+    if(!address.empty())
+      ref += address + "; ";
+    if(!publisher.empty())
+      ref += publisher;
+  }
+  else if(bibtype == PHDTHESIS) {
+    ref += "Phd Thesis, " + school + ", " + address;
+  }
+  return ref;
+}
+
+void Reference::TitleToArray(String_Array& ary) {
+  ary.Reset();
+  String tit = title;
+
+  while(!tit.empty()) {
+    String wrd = tit;
+    if(tit.contains(" ")) {
+      wrd = tit.before(" ");
+      tit = tit.after(" ");
+    }
+    else {
+      tit = "";
+    }
+    ary.Add(wrd);
+  }
+}
+  
+

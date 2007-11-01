@@ -2156,10 +2156,10 @@ class LEABRA_API LeabraWizard : public Wizard {
   // ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  override void StdNetwork(Network* net = NULL);
+  override bool StdNetwork(Network* net = NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
 
-  virtual void	StdLayerSpecs(LeabraNetwork* net);
+  virtual bool	StdLayerSpecs(LeabraNetwork* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)
 
   virtual bool	SRNContext(LeabraNetwork* net);
@@ -2183,10 +2183,10 @@ public:
 		     bool no_lrn_pfc=false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
 
-  virtual void SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
+  virtual bool SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units=-1);
   // #MENU_BUTTON set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
 
-  override void	StdProgs();
+  override bool	StdProgs();
 
   TA_BASEFUNS_NOCOPY(LeabraWizard);
 private:

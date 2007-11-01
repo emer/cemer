@@ -567,7 +567,7 @@ class CS_API CsWizard : public Wizard {
 INHERITED(Wizard)
 public:
 
-  override void	StdProgs();
+  override bool	StdProgs();
 
   TA_BASEFUNS_NOCOPY(CsWizard);
 private:

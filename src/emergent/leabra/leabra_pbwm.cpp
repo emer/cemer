@@ -1576,7 +1576,7 @@ static void lay_set_geom(LeabraLayer* lay, int half_stripes) {
   lay->UpdateAfterEdit();
 }
 
-void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
+bool LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units) {
   set_n_stripes(net, "PFC", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true);
   set_n_stripes(net, "PFC_out", n_stripes, n_units, true);
@@ -1590,10 +1590,19 @@ void LeabraWizard::SetPFCStripes(LeabraNetwork* net, int n_stripes, int n_units)
   set_n_stripes(net, "LVi", n_stripes+1, -1, false);
   net->LayoutUnitGroups();
   net->Build();
+  return true;
 }
 
 bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 			int n_stripes, bool out_gate, bool nolrn_pfc) {
+  if(!net) {
+    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+    net = (LeabraNetwork*)proj->GetNewNetwork();
+    if(TestError(!net, "PBWM", "network is NULL and could not make a new one -- aborting!"))
+      return false;
+    if(!StdNetwork(net)) return false;
+  }
+
   // first configure PVLV system..
   if(TestError(!PVLV(net, da_mod_all), "PBWM", "could not make PVLV")) return false;
 

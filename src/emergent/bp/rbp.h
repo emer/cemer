@@ -289,7 +289,7 @@ class BP_API BpWizard : public Wizard {
   // backprop-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  virtual void	SRNContext(Network* net);
+  virtual bool	SRNContext(Network* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE configure a simple-recurrent-network context layer in the network
 
 //obs  virtual bool	ToTimeEvents(Environment* env);
@@ -297,7 +297,7 @@ public:
 //obs  virtual void	ToRBPEvents(Environment* env, int targ_time = 2);
   // #MENU_BUTTON convert events to format suitable for training by RBP, with inputs coming on first, and then targets coming on after targ_time time steps
 
-  override void	StdProgs();
+  override bool	StdProgs();
 
   TA_BASEFUNS_NOCOPY(BpWizard);
 private:

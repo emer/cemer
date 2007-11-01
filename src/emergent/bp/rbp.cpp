@@ -421,26 +421,27 @@ void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u) {
 void BpWizard::Initialize() {
 }
 
-void BpWizard::StdProgs() {
-  StdProgs_impl("BpAll_Std");
+bool BpWizard::StdProgs() {
+  if(!StdProgs_impl("BpAll_Std")) return false;
+  return true;
 }
 
-void BpWizard::SRNContext(Network* net) {
-  if(net == NULL) {
+bool BpWizard::SRNContext(Network* net) {
+  if(!net) {
     taMisc::Error("SRNContext: must have basic constructed network first");
-    return;
+    return false;
   }
   OneToOnePrjnSpec* otop = (OneToOnePrjnSpec*)net->FindMakeSpec("CtxtPrjn", &TA_OneToOnePrjnSpec);
   BpContextSpec* ctxts = (BpContextSpec*)net->FindMakeSpec("CtxtUnits", &TA_BpContextSpec);
 
   if((otop == NULL) || (ctxts == NULL)) {
-    return;
+    return false;
   }
 
   Layer* hidden = net->FindLayer("Hidden");
   Layer* ctxt = net->FindMakeLayer("Context");
 
-  if((hidden == NULL) || (ctxt == NULL)) return;
+  if((hidden == NULL) || (ctxt == NULL)) return false;
 
   ctxt->SetUnitSpec(ctxts);
   ctxt->un_geom = hidden->un_geom;
@@ -450,6 +451,7 @@ void BpWizard::SRNContext(Network* net) {
   net->FindMakePrjn(hidden, ctxt); 	 // std prjn back into the hidden from context
   net->Build();
   net->Connect();
+  return true;
 }
 
 /* obs bool BpWizard::ToTimeEvents(Environment* env) {
