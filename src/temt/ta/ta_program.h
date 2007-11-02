@@ -1111,6 +1111,8 @@ public: // ScriptBase i/f
   // #IGNORE
 
 protected:
+  static int		m_global_run_ct;
+  
   String		m_scriptCache; // cache of script, managed by implementation
   String		m_listingCache; // cache of listing, managed by implementation
   bool			m_checked; // flag to help us avoid doing CheckConfig twice

@@ -286,7 +286,7 @@ void TemtClient::cmdRunProgram() {
   // run
   adapter()->SetProg(prog);
   QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
-  SendReply("RunProgram: '" + pnm + "' running");
+  SendOk();
 }
 
 void TemtClient::cmdSetData() {
@@ -679,6 +679,21 @@ void TemtClient::cmdGetVar() {
   SendOk(val);
 }
 
+void TemtClient::cmdGetRunState() {
+  int run_state = 0; // temp
+  if (pos_params.size == 0) {
+    // global version
+    run_state = Program::GetGlobalRunState();
+  } else {
+    // program version
+    String pnm = pos_params.SafeEl(0);
+    Program* prog = GetAssertProgram(pnm);
+    if (!prog) return;
+    run_state = prog->run_state;
+  }
+  SendOk(String(run_state));
+}
+
 void TemtClient::cmdRemoveData() {
   String tnm = pos_params.SafeEl(0);
   DataTable* tab = GetAssertTable(tnm);
@@ -832,6 +847,9 @@ void TemtClient::ParseCommand(const String& cl) {
   } else
   if (cmd == "GetVar") {
     cmdGetVar();
+  } else
+  if (cmd == "GetRunState") {
+    cmdGetRunState();
   } else
   if (cmd == "RemoveData") {
     cmdRemoveData();

@@ -106,6 +106,7 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void 		cmdGetDataCell();
   virtual void 		cmdGetDataMatrixCell();
   virtual void 		cmdGetVar();
+  virtual void 		cmdGetRunState();
   virtual void		cmdOpenProject();
   virtual void 		cmdRemoveData();
   virtual void		cmdRunProgram(); 

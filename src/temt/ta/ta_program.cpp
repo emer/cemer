@@ -2546,11 +2546,15 @@ String_Array Program::forbidden_names;
 bool Program::stop_req = false;
 bool Program::step_mode = false;
 Program_Group* Program::step_gp = NULL;
+int Program::m_global_run_ct;
 
 Program::RunState Program::GetGlobalRunState() {
 //TODO: must somehow hook setRunState and such on dudes to track this
 // we are just blindly returning DONE for now!!!
-  return Program::DONE;
+  if (m_global_run_ct > 0)
+    return Program::RUN;
+  else
+    return Program::DONE;
 }
 
 void Program::Initialize() {
@@ -2746,7 +2750,20 @@ bool Program::PreCompileScript_impl() {
 
 void Program::setRunState(RunState value) {
   if (run_state == value) return;
+  // manage global state -- do this before updating ourself
+  // note: DONE <-> NOT_INIT are not state changes
+  // going to "done" always decs the ref count
+  if (((value == DONE) && (run_state != NOT_INIT)) ||
+    ((value == NOT_INIT) && (run_state != DONE)) )
+    --m_global_run_ct;
+  // going into a run state from DONE or NOT_INIT bumps ct
+  if (((run_state == DONE) || (run_state == NOT_INIT)) &&
+   ((value == INIT) || (value == RUN) || (value == STOP)) )
+    ++m_global_run_ct;
+  // note: all the others, like INIT->RUN or RUN->STOP do nothing to global
+    
   run_state = value;
+  
   // DO NOT DO THIS!! Definitely generates too much overhead
   // datachanged called only after macroscopic action
   //  DataChanged(DCR_ITEM_UPDATED_ND);
