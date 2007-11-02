@@ -103,11 +103,15 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void		cmdCloseProject();
   virtual void		cmdEcho(); // echos, for test
   virtual void 		cmdGetData();
+  virtual void 		cmdGetDataCell();
+  virtual void 		cmdGetDataMatrixCell();
   virtual void 		cmdGetVar();
   virtual void		cmdOpenProject();
   virtual void 		cmdRemoveData();
   virtual void		cmdRunProgram(); 
   virtual void 		cmdSetData();
+  virtual void 		cmdSetDataCell();
+  virtual void 		cmdSetDataMatrixCell();
   virtual void		cmdSetVar();
   
 public: // slot forwardees
@@ -126,24 +130,40 @@ protected:
       Get,
       Append,
       Remove,
-      Set
+      Set,
+      Cell // Get and Set, set mat param
     };
     
     TemtClient* tc;
     DataTable* tab;
     int rows; // Append/Set only
-    int row_from;
+    union {
+    int row_from; 
+    int row;
+    };
     int row_to;
-    int col_from;
+    union {
+    int col_from; 
+    int col;
+    };
     int col_to;
+    union {
     bool header;
+    bool mat;
+    };
+    union {
     int lines;
+    int cell;
+    };
     
-    bool	ValidateParams(Cmd cmd = Get);
+    bool	ValidateParams(Cmd cmd = Get, bool mat = false);
     TableParams(TemtClient* tc_, DataTable* tab_)
       {tc = tc_; tab = tab_;}
       
   };
+
+  virtual void 		cmdGetDataCell_impl(TableParams& p);
+  virtual void 		cmdSetDataCell_impl(TableParams& p);
 #endif
   QPointer<QTcpSocket>	sock; // #IGNORE the socket for the connected client
   String_PArray		lines; // have to buffer between raw in and processing them -- this is a queue

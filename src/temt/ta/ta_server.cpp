@@ -350,7 +350,7 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
   return tab;
 }
 
-bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
+bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, bool mat_) {
   // defaults for values -- some of the guys below alter these, before we read them
   rows = 1;
   header = false;
@@ -360,6 +360,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
   bool get_set = false;
   bool remove = false;
   bool append = false;
+  bool is_cell = false;
   switch (cmd) {
   case TemtClient::TableParams::Get:
     get = true;
@@ -376,6 +377,40 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
   case TemtClient::TableParams::Set:
     get_set = true;
     break;
+  case TemtClient::TableParams::Cell:
+    is_cell = true;
+    mat = mat_;
+    cell = 0;
+    break;
+  }
+  
+  // cell guys are pos params, so do them, and bail
+  // also, they use uniony guys
+  if (is_cell) {
+    bool ok = true;
+    // get col, row, and cell params
+    col = tc->pos_params.SafeEl(1).toInt(&ok);
+    if (col < 0) col = tab->cols() + col;
+    // check in bounds
+    if (!ok || (col < 0) || (col >= tab->cols())) {
+      tc->SendError("col '" + String(col) + "' out of bounds");
+      return false;
+    }
+    
+    row = tc->pos_params.SafeEl(2).toInt(&ok); 
+    if (row < 0) row = tab->rows + row;
+    if (!ok || (row < 0) || (row >= tab->rows)) {
+      tc->SendError("row '" + String(row) + "' out of bounds");
+      return false;
+    }
+    
+    if (mat)
+      cell = tc->pos_params.SafeEl(3).toInt(&ok);
+      if (!ok || (cell < 0) || (cell >= tab->data.FastEl(col)->cell_geom.Product())) {
+        tc->SendError("cell '" + String(cell) + "' out of bounds");
+        return false;
+      }
+    return true;
   }
   
   // all the possible params -- not all defined for all cmds
@@ -427,7 +462,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd) {
       rows = tab->rows - row_from;
     return true; // skip all the other stuff
   }
-  
+    
   // make sure lines is valid now, before possibly bailing on other conditions
   lines += (row_to - row_from) + 1;
   
@@ -545,6 +580,74 @@ void TemtClient::cmdGetData() {
     Write(ln);
   }
   
+}
+
+void TemtClient::cmdGetDataCell() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  if (!p.ValidateParams(TableParams::Cell, false)) return;
+  
+  cmdGetDataCell_impl(p);
+}
+
+void TemtClient::cmdGetDataMatrixCell() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  if (!p.ValidateParams(TableParams::Cell, true)) return;
+  
+  cmdGetDataCell_impl(p);
+}
+
+void TemtClient::cmdGetDataCell_impl(TableParams& p) {
+  Variant v = p.tab->GetMatrixFlatVal(p.col, p.row, p.cell);
+  String res;
+  if (v.isStringType())
+    res = String::StringToCppLiteral(v.toString());
+  else res = v.toString();
+  return SendOk(res);
+}
+
+void TemtClient::cmdSetDataCell() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  if (!p.ValidateParams(TableParams::Cell, false)) return;
+  
+  cmdSetDataCell_impl(p);
+}
+
+void TemtClient::cmdSetDataMatrixCell() {
+  String tnm = pos_params.SafeEl(0);
+  DataTable* tab = GetAssertTable(tnm);
+  if (!tab) return;
+  // note: ok if running
+  
+  TableParams p(this, tab);
+  if (!p.ValidateParams(TableParams::Cell, true)) return;
+  
+  cmdSetDataCell_impl(p);
+}
+
+void TemtClient::cmdSetDataCell_impl(TableParams& p) {
+  int param = p.mat ? 4 : 3;
+  if (param >= pos_params.size) {
+    SendError("not enough params");
+    return;
+  }
+  String val = pos_params.FastEl(param);
+  p.tab->SetMatrixFlatVal(val, p.col, p.row, p.cell);
+  SendOk();
 }
 
 void TemtClient::cmdGetVar() {
@@ -721,6 +824,12 @@ void TemtClient::ParseCommand(const String& cl) {
   if (cmd == "GetData") {
     cmdGetData();
   } else
+  if (cmd == "GetDataCell") {
+    cmdGetDataCell();
+  } else
+  if (cmd == "GetDataMatrixCell") {
+    cmdGetDataMatrixCell();
+  } else
   if (cmd == "GetVar") {
     cmdGetVar();
   } else
@@ -729,6 +838,12 @@ void TemtClient::ParseCommand(const String& cl) {
   } else
   if (cmd == "RunProgram") {
     cmdRunProgram();
+  } else
+  if (cmd == "SetDataCell") {
+    cmdSetDataCell();
+  } else
+  if (cmd == "SetDataMatrixCell") {
+    cmdSetDataMatrixCell();
   } else
   if (cmd == "SetVar") {
     cmdSetVar();
