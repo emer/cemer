@@ -27,42 +27,42 @@
 #include "ta_TA_type.h"
 
 static int follow(int expect, int ifyes, int ifno) {
-  int c = cssMisc::cur_top->Prog()->Getc();
+  int c = cssMisc::cur_top->Getc();
 
   if(c == expect) return ifyes;
-  cssMisc::cur_top->Prog()->unGetc();
+  cssMisc::cur_top->unGetc();
   return ifno;
 }
 
 static int follow2(int expect1, int if1, int expect2, int if2, int ifno) {
-  int c = cssMisc::cur_top->Prog()->Getc();
+  int c = cssMisc::cur_top->Getc();
 
   if(c == expect1) return if1;
   if(c == expect2) return if2;
-  cssMisc::cur_top->Prog()->unGetc();
+  cssMisc::cur_top->unGetc();
   return ifno;
 }
 
 static int follow3(int expect1, int if1, int expect2, int if2,
 		   int expect3, int if3, int ifno) {
-  int c = cssMisc::cur_top->Prog()->Getc();
+  int c = cssMisc::cur_top->Getc();
 
   if(c == expect1) return if1;
   if(c == expect2) return if2;
   if(c == expect3) return if3;
-  cssMisc::cur_top->Prog()->unGetc();
+  cssMisc::cur_top->unGetc();
   return ifno;
 }
 
 static int skip_white_nocr() {
   int c;
-  while (isspace(c=cssMisc::cur_top->Prog()->Getc()) && (c != '\n'));
+  while (isspace(c=cssMisc::cur_top->Getc()) && (c != '\n'));
   return c;
 }
 
 static int skip_white() {
   int c;
-  while (isspace(c=cssMisc::cur_top->Prog()->Getc()));
+  while (isspace(c=cssMisc::cur_top->Getc()));
   return c;
 }
 
@@ -101,15 +101,10 @@ int yylex()
   cssElPtr s;
 
   // for parsing class comments
-  int last_tok_line = cssMisc::cur_top->Prog()->tok_line;
-  char* last_tok =
-     cssMisc::cur_top->Prog()->GetSrcLC(last_tok_line,
-                                        cssMisc::cur_top->Prog()->tok_col);
-  do {
-    // actual start of the lex
-    cssMisc::cur_top->Prog()->st_col = cssMisc::cur_top->Prog()->col;
-    cssMisc::cur_top->Prog()->st_line = cssMisc::cur_top->Prog()->line;
+  int last_tok_line = cssMisc::cur_top->tok_src_ln;
+  char* last_tok = cssMisc::cur_top->CurTokSrc();
 
+  do {
     // filter out cr's only when not parsing commands
     if(cssMisc::cur_top->parsing_command) {
       if(cssMisc::cur_top->debug >= 4)
@@ -120,14 +115,13 @@ int yylex()
       c = skip_white();
 
     // start of the current token
-    cssMisc::cur_top->Prog()->tok_col = cssMisc::cur_top->Prog()->col-1;
-    cssMisc::cur_top->Prog()->tok_line = cssMisc::cur_top->Prog()->line;
+    cssMisc::cur_top->StoreCurTokSrcPos();
 
     // for parsing class comments
     bool classcmt = ((cssMisc::cur_class != NULL) &&
                      (cssMisc::cur_method == NULL) &&
-                     (cssMisc::cur_top->Prog()->tok_line == last_tok_line ||
-                      cssMisc::cur_top->Prog()->tok_line == last_tok_line + 1) &&
+                     (cssMisc::cur_top->tok_src_ln == last_tok_line ||
+                      cssMisc::cur_top->tok_src_ln == last_tok_line + 1) &&
                      (*last_tok == ';' || *last_tok == '{'));
 
     if(c == EOF) {
@@ -135,9 +129,9 @@ int yylex()
     }
 
     if(c == '#') {
-      nxt = cssLex::readword(cssMisc::cur_top->Prog(), cssMisc::cur_top->Prog()->Getc());
+      nxt = cssLex::readword(cssMisc::cur_top->Prog(), cssMisc::cur_top->Getc());
       if(cssLex::Buf == "!") {		// skip line on #!
-	while(((c = cssMisc::cur_top->Prog()->Getc()) != EOF) && (c != '\n'));
+	while(((c = cssMisc::cur_top->Getc()) != EOF) && (c != '\n'));
 	continue;		// restart scan on next line
       }
 
@@ -152,8 +146,8 @@ int yylex()
     }
 
     if(c == '.') {
-      nxt = cssMisc::cur_top->Prog()->Getc();
-      cssMisc::cur_top->Prog()->unGetc(); // look ahead
+      nxt = cssMisc::cur_top->Getc();
+      cssMisc::cur_top->unGetc(); // look ahead
       if(!(isdigit(nxt)))
 	return '.';		// pointsat
     }
@@ -161,8 +155,8 @@ int yylex()
     bool got_minus_num = false;
    if(cssMisc::parsing_args) {	// note this is important because otherwise ##-## is parsed wrong (subtraction)
      if(c == '-') {
-	nxt = cssMisc::cur_top->Prog()->Getc();
-	cssMisc::cur_top->Prog()->unGetc(); // look ahead
+	nxt = cssMisc::cur_top->Getc();
+	cssMisc::cur_top->unGetc(); // look ahead
 	if(!(isdigit(nxt) || (nxt == '.')))
 	  return follow3('=', CSS_ASGN_SUB, '-', CSS_MINMIN, '>', CSS_POINTSAT, '-');
 	got_minus_num = true;
@@ -182,11 +176,11 @@ int yylex()
         else if((c == 'x' || c == 'X') && prev == '0') gothex = true;
         cssLex::Buf += (char)c;
 	prev = c;
-      } while(((c=cssMisc::cur_top->Prog()->Getc()) != EOF) &&
+      } while(((c=cssMisc::cur_top->Getc()) != EOF) &&
 	      ((c == '.') || isxdigit(c) ||
 	       (((prev == 'e') || (prev == 'E')) && (c == '-'))));
 
-      cssMisc::cur_top->Prog()->unGetc();
+      cssMisc::cur_top->unGetc();
 
       const char* startp = (const char*) cssLex::Buf;
       char* endp = NULL;
@@ -201,7 +195,7 @@ int yylex()
       if(*endp == 'f') // float (not double) designator
 	endp++;
       while (endp++ < startp + cssLex::Buf.length())
-         cssMisc::cur_top->Prog()->unGetc();
+         cssMisc::cur_top->unGetc();
 
       return CSS_NUMBER;
     }
@@ -231,22 +225,6 @@ int yylex()
       }
       if(src_prog) {
 	if((s = src_prog->types.FindName((char*)cssLex::Buf)) != 0) {
-	  yylval.el = s;
-	  if((s.El())->GetParse() == CSS_PTR)
-	    return CSS_PTRTYPE;
-	  else
-	    return CSS_TYPE;
-	}
-      }
-      if((s = cssMisc::cur_top->prog_types.FindName((char*)cssLex::Buf)) != 0) {
-	yylval.el = s;
-	if((s.El())->GetParse() == CSS_PTR)
-	  return CSS_PTRTYPE;
-	else
-	  return CSS_TYPE;
-      }
-      if(src_prog) {
-	if((s = src_prog->prog_types.FindName((char*)cssLex::Buf)) != 0) {
 	  yylval.el = s;
 	  if((s.El())->GetParse() == CSS_PTR)
 	    return CSS_PTRTYPE;
@@ -340,9 +318,9 @@ int yylex()
     if(c == '\"') {
       cssLex::Buf = "";
 
-      while(((c=cssMisc::cur_top->Prog()->Getc()) != EOF) && (c != '\"')) {
+      while(((c=cssMisc::cur_top->Getc()) != EOF) && (c != '\"')) {
 	if(c == '\\') {
-	  c=cssMisc::cur_top->Prog()->Getc();
+	  c=cssMisc::cur_top->Getc();
 	  if((c == '\n') || (c == '\r'))
 	    continue;
 	  else
@@ -358,9 +336,9 @@ int yylex()
     if(c == '\'') {
       int iv;
 
-      while(((c=cssMisc::cur_top->Prog()->Getc()) != EOF) && (c != '\'')) {
+      while(((c=cssMisc::cur_top->Getc()) != EOF) && (c != '\'')) {
 	if(c == '\\')
-	  iv = ctrl_char(c=cssMisc::cur_top->Prog()->Getc());
+	  iv = ctrl_char(c=cssMisc::cur_top->Getc());
 	else
 	  iv = c;
       }
@@ -369,17 +347,17 @@ int yylex()
     }
 
     if(c == '/') {
-      if(((c = cssMisc::cur_top->Prog()->Getc()) == '/') || (c == '*')) { 	// comment
+      if(((c = cssMisc::cur_top->Getc()) == '/') || (c == '*')) { 	// comment
         cssLex::Buf = "";
         if(c == '/') {
-          while(((c=cssMisc::cur_top->Prog()->Getc()) != EOF) && (c != '\n'))
+          while(((c=cssMisc::cur_top->Getc()) != EOF) && (c != '\n'))
             if (classcmt && (c != '\r'))
               cssLex::Buf += (char)c;
         }
 	else {
-	  while(((c=cssMisc::cur_top->Prog()->Getc()) != EOF)) {
+	  while(((c=cssMisc::cur_top->Getc()) != EOF)) {
             if(c == '*') {
-              if((c = cssMisc::cur_top->Prog()->Getc()) == '/')
+              if((c = cssMisc::cur_top->Getc()) == '/')
 		break;
               else if (classcmt)
                 cssLex::Buf += '*';
@@ -396,28 +374,28 @@ int yylex()
       }
       else {
 	c = '/';
-	cssMisc::cur_top->Prog()->unGetc();
+	cssMisc::cur_top->unGetc();
       }
     }
 
     if(c == ';') {
-      while ((nxt=cssMisc::cur_top->Prog()->Getc()) == ' ' || (nxt == '\t') || (nxt == '\r'));
+      while ((nxt=cssMisc::cur_top->Getc()) == ' ' || (nxt == '\t') || (nxt == '\r'));
       if(nxt != '\n')
-	cssMisc::cur_top->Prog()->unGetc(); // not a newline after semicolon
+	cssMisc::cur_top->unGetc(); // not a newline after semicolon
       return c;
     }
 
     switch (c) {
     case '<': {
-      nxt = cssMisc::cur_top->Prog()->Getc();
+      nxt = cssMisc::cur_top->Getc();
       if(nxt == '=')	return CSS_LE;
-      if(nxt != '<')	{ cssMisc::cur_top->Prog()->unGetc(); return CSS_LT; }
+      if(nxt != '<')	{ cssMisc::cur_top->unGetc(); return CSS_LT; }
       return follow('=', CSS_ASGN_LSHIFT, CSS_LSHIFT);
     }
     case '>': {
-      nxt = cssMisc::cur_top->Prog()->Getc();
+      nxt = cssMisc::cur_top->Getc();
       if(nxt == '=')	return CSS_GE;
-      if(nxt != '>')	{ cssMisc::cur_top->Prog()->unGetc(); return CSS_GT; }
+      if(nxt != '>')	{ cssMisc::cur_top->unGetc(); return CSS_GT; }
       return follow('=', CSS_ASGN_RSHIFT, CSS_RSHIFT);
     }
     case '=':

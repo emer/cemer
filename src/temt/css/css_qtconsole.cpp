@@ -126,11 +126,8 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
     cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg();
     cssElPtr elp;
     if(!(elp = cssMisc::cur_top->types.FindName(par_path))) {
-      if(!(elp = cssMisc::cur_top->prog_types.FindName(par_path))) {
-	if(src_prog) {
-	  if(!(elp = src_prog->types.FindName(par_path)))
-	    elp = src_prog->prog_types.FindName(par_path);
-	}
+      if(src_prog) {
+	elp = src_prog->types.FindName(par_path);
       }
     }
     if(elp) {

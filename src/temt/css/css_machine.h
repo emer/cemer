@@ -1161,10 +1161,10 @@ public:
 
   virtual String	PrintStr() const;
   virtual void 		ListSrc(pager_ostream& fh, int indent = 0) const; // source code
-  virtual void		ListImpl(pager_ostream& fh, int indent = 0) const; // machine impl
+  virtual void		ListMachine(pager_ostream& fh, int indent = 0) const; // machine impl
 
-  virtual cssEl::RunStat 	Do();
-  virtual void 		SetLine(css_progdx it) 	{ line = it; }
+  virtual cssEl::RunStat Do();
+  virtual void 		SetJump(css_progdx it) 	{ };
   virtual css_progdx	GetJump()		{ return -1; }
   virtual bool		IsJump()		{ return false; }
 
@@ -1186,13 +1186,12 @@ class CSS_API cssIJump : public cssInst {
 public:
   css_progdx    jumpto;			// idx to jump to
 
-  String	PrintStr() const;
-  void 		ListSrc(pager_ostream& fh, int = 0) const;
-  void		ListImpl(pager_ostream& fh, int = 0) const;
-  cssEl::RunStat 	Do();
-  void 		SetLine(css_progdx it) 		{ jumpto = it; }
-  css_progdx	GetJump()			{ return jumpto; }
-  bool		IsJump()			{ return true; }
+  override String	PrintStr() const;
+  override void		ListMachine(pager_ostream& fh, int = 0) const;
+  override cssEl::RunStat 	Do();
+  override void 	SetJump(css_progdx it) 		{ jumpto = it; }
+  override css_progdx	GetJump()			{ return jumpto; }
+  override bool		IsJump()			{ return true; }
 
   void		Copy(const cssIJump& cp);
   cssIJump(const cssProg* prg, css_progdx jmp);
@@ -1201,25 +1200,6 @@ public:
 
   virtual cssInst* Clone() { return new cssIJump(*this); }
 };
-
-class CSS_API cssListEl {
-public:
-  css_progdx    stpc;		// starting pc for this line
-  int		ln;		// line no in source code
-  String	src;		// source code for line, specifically for 
-  String	full_src;	// full source code 
-
-  void		Copy(const cssListEl& cp)
-  { stpc = cp.stpc; ln = cp.ln; src = cp.src; }
-
-  cssListEl()			{ stpc = 0;   ln = 0; }
-  cssListEl(css_progdx pc, int l, const String& cd)
-  { stpc = pc;  ln = l;  src = cd;  }
-  cssListEl(const cssListEl& cp)	{ Copy(cp); }
-
-  cssListEl* 	Clone()	{ return new cssListEl(*this); }
-};
-
 
 class CSS_API cssFrame {
 public:
@@ -1276,7 +1256,6 @@ public:
   // flag state values
   enum State_Flags {
     State_Run		= 0x0001,
-    State_WasBurped	= 0x0002,  	// last line was burped, (delete src if necc)
     State_IsTmpProg	= 0x0004, 	// is a temporary program, not part of main progs
     State_NoBreak	= 0x0008, 	// do not break while running this guy
   };
@@ -1297,8 +1276,6 @@ public:
 
   cssInst**	insts;			// the instructions themselves
   css_progdx 	size;			// number of instructions
-  css_progdx	parse_st_size;		// starting size for parsing
-  int		parse_st_src_size;	// source starting size for parsing
 
   cssFrame** 	frame;			// anything dynamic goes here
   int		fr_size;		// how deep is your frame?
@@ -1307,14 +1284,9 @@ public:
   cssSpace	statics;		// static variables
   cssSpace	saved_stack;		// saved stack state
 
-  cssListEl**	source;			// keep the source code here
-  int 		src_size;		// number of lines of source code
-  int 		line;			// current source[] index number (parsing)
-  int 		col;			// current source[] column number (parsing)
-  int		st_line;		// where started parsing...
-  int		st_col;
-  int		tok_line;		// where the current token started
-  int		tok_col;
+  int		first_src_ln;		// first source code line represented in this program
+  int		last_src_ln;		// last source code line
+
   int		state;			// prog-specific state
 
   int_Array	breaks;			// breakpoints
@@ -1337,7 +1309,6 @@ public:
   // internal functions
   void		AllocInst(int sz);
   void		AllocFrame(int sz);
-  void		AllocSrc(int sz);
 
   cssInst* 	Inst(int i) const
   { cssInst* rval = NULL; if((int)i<size) rval = insts[i]; return rval; }
@@ -1372,35 +1343,18 @@ public:
   // pop the top pointer, set to value returned by SetTop upon exit of scope
 
   // source, debugging
-  String	GetSrc() const;
-  String	GetSrcLC(int ln, int cl=0) const;
-  int		CurSrcLn(css_progdx pcval); 	// extrnl srcln
-  int		CurSrcLn()			{ return CurSrcLn(PC()); }
-  String	GetCurSrcLn()			{ return GetSrcLC(CurSrcLn()); }
-  int		CurSrcLC(css_progdx pcval); 	// internal ln cnt
-  int		CurSrcLC()			{ return CurSrcLC(PC()); }
-  String	GetCurSrcLC()			{ return GetSrcLC(CurSrcLC()); }
-  int		FindSrcLn(int ln);		// find the particular one
-  int		ClosestSrcLn(int ln);		// find closest to ln
-  int		HasSrcLn(int st, int ed);	// find one in the given range
-  int           CurSrcCharsLeft();              // number of chars remaining in cur src ln
+  int		GetSrcLn(css_progdx pcval) const; // get source line number for given code index
+  int		CurSrcLn() const	{ return GetSrcLn(PC()); }
+  int		FindSrcLn(int ln) const;	// find first program inst idx for overall source line ln
 
-  void		ListSrc(pager_ostream& fh, int indent = 0, int stln = -1); // source code
-  void 		ListImpl(pager_ostream& fh, int indent = 0, int stinst = -1); // machine impl
+  void 		ListSrc() const; // list source code for prog (esp for functions)
+  void 		ListMachine(pager_ostream& fh, int indent = 0, int stinst = -1) const; // machine impl
   void		ListLocals(pager_ostream& fh, int frdx = -1, int indent = 0);
 
   // coding
   int 		AddCode(cssInst* it);
   cssElPtr&	AddAuto(cssEl* it);
   cssElPtr&	AddLiteral(cssEl* it);
-  int 		AddSrc(const char* line);
-  void		MarkParseStart()
-  { parse_st_size = size; parse_st_src_size = src_size; }
-  void		ZapFrom(int zp_size, int zp_src_size); // zap from
-  void          ZapFromSrc(int zp_src_size); // zap only source, not inst
-  void		ZapLastParse()		{ ZapFrom(parse_st_size, parse_st_src_size); }
-  int 		Getc();
-  void 		unGetc()		{ col--; }
 
   int 		Code(cssEl* it);
   int 		Code(cssElPtr &it);
@@ -1410,8 +1364,8 @@ public:
   int		ReplaceCode(int idx, cssEl* it);
   void		UnCode()		{ if(size > 0) delete insts[--size]; }
   void		ResetLasts() 		{ lastif = -1; lastelseif = false; }
-  void		BurpSrc(); 		// source was read in advance, burp it
-  int		Undo(int srcln);
+  int		Undo(int srcln);      // undo coding of given source line
+  void		ZapFrom(int zp_size); // zap (remove) program code from zp_size to end of current size
 
   cssElPtr&	FindAutoName(const char* nm);	// lookup by name
   cssElPtr&	FindLiteral(Int it)	{ return literals.Find(it); }
@@ -1419,7 +1373,7 @@ public:
   cssElPtr&	FindLiteral(const String& it) { return literals.Find(it); }
 
   // execution
-  void 		SetPC(css_progdx npc);
+  void 		SetPC(css_progdx npc) 	{ Frame()->pc = MIN(npc, size); }
   cssProg*	SetSrcPC(int srcln); 	// this one goes by src ln
   cssEl*	Cont();	 		// continue with rest of program
   cssEl*	Cont(css_progdx st)	{ SetPC(st); return Cont(); }
@@ -1446,8 +1400,6 @@ public:
   bool 		CheckWatch();
   void		ShowWatchpoints(ostream& fh = cout);
 
-protected:
-  int 		ReadLn(istream& fh);	// read the line in from filein
 };
 
 class CSS_API cssProgStack {
@@ -1489,8 +1441,8 @@ public:
   cssSpace	hard_vars;		// space-specific extern vars
   cssSpace	hard_funs;		// space-specific extern funs
   cssSpace	statics;		// global variables (in space)
+  cssSpace	enums;			// enums defined in space
   cssSpace	types;			// types defined in space
-  cssSpace	prog_types;		// external Program or Script types (just like types, but in a special space to make it easier to update)
 
   int		step_mode;		// step mode: if > 0, next Cont will run this # of lines
   cssEl::RunStat run_stat; 		// flag to tell if running: set to Stopping to stop, or BreakPoint
@@ -1500,9 +1452,20 @@ public:
   cssWatchList	watchpoints;		// watch points
 
   istream*	src_fin;		// source input stream
-  int 		src_ln;			// present source line no (parsing)
-  int		st_src_ln;		// starting source line no
-  int		list_ln;		// present source line no (listing)
+  String	cur_fnm;		// current source file name
+  int		cur_fnm_lno;		// line number within current file name
+
+  String_Array	src_list;		// complete source code listing across all files (including #includes), by line number
+  String_Array	src_list_fnm;		// source file name for each line in src_list
+  int_Array	src_list_lno;		// original line number within source file for each line in src_list
+
+  int 		src_ln;			// present source line no in src_list (parsing)
+  int 		src_col;		// current source column number in src_list (parsing)
+  int		list_ln;		// present source line no in src_list (listing)
+  int		list_n;			// number of lines to display in the listing
+
+  int		tok_src_ln;		// where the current token started
+  int		tok_src_col;
 
   bool		parsing_command; 	// true if we are presently parsing a command
   bool		external_stop;		// to stop execution externally, set this
@@ -1518,13 +1481,13 @@ public:
   bool		HaveCmdShell();		// check if cmd_shell is set, issue warning if not
   cssProgSpace*	GetSrcProg();		// if I am a cmd prog, then return my corresponding src_prog, else NULL
 
-  cssProgStack* ProgStack()		{ return progs[size-1]; }
-  cssProgStack* ProgStack(int prdx)	{ return progs[prdx]; }
-  cssProg*	Prog()			{ return ProgStack()->prog; }
-  cssProg*	Prog(int prdx)		{ return ProgStack(prdx)->prog; }
-  int		Prog_Fr()		{ return ProgStack()->fr_no; }
-  int		Prog_Fr(int prdx)	{ return ProgStack(prdx)->fr_no; }
-  cssProg*	PrvProg()		{ if(size <= 1) return NULL; return ProgStack(size-2)->prog; }
+  cssProgStack* ProgStack() const	{ return progs[size-1]; }
+  cssProgStack* ProgStack(int prdx) const { return progs[prdx]; }
+  cssProg*	Prog() const		{ return ProgStack()->prog; }
+  cssProg*	Prog(int prdx) const	{ return ProgStack(prdx)->prog; }
+  int		Prog_Fr() const		{ return ProgStack()->fr_no; }
+  int		Prog_Fr(int prdx) const	{ return ProgStack(prdx)->fr_no; }
+  cssProg*	PrvProg() const		{ if(size <= 1) return NULL; return ProgStack(size-2)->prog; }
 
   // internal coding, programs
   void		SetName(const char* nm); 		// updates all names
@@ -1539,6 +1502,27 @@ public:
   cssProg*	Pop();
   cssProg*	Pull();			// popping while running
   cssScriptFun*	GetCurrentFun();	// find current function (or null if not in one)
+
+  // internal coding, source
+  int 		Getc();			// this is the one function for getting the next character from the input -- everything must go through this -- uses src_fin for input file -- returns EOF if at end
+  int 		unGetc();		// undo last character get (backup 1 position in source)
+  int           CurSrcCharsLeft();      // number of chars remaining in cur src ln
+  void		StoreCurTokSrcPos();	// store current token source position in tok_src_ln,col
+
+  String	GetSrcLnCol(int ln, int cl=0) const; // get source code given line and column
+  String	GetSrcLn(int ln) const;		  // get source line with line number \t src
+  String	GetFullSrcLn(int ln) const;
+  // get full source listing on 2 lines with 1st line = file name and line number
+
+  String	CurParseSrc() const; 	// current parsing source (src_ln, src_col)
+  String	CurTokSrc() const; 	// current token src fm tok_src_ln, tok_src_col
+  String	CurFullTokSrc() const; 	// current full token src fm tok_src_ln, tok_src_col
+  String	CurFullRunSrc() const;	// current full running PC() source
+  String	GetSrcListFnm(int i) const; // list fnm -- empty = name
+  void 		ListSrc_impl(pager_ostream& fh, int stln = -1) const;
+  // implementation of list source
+  void 		ListMachine_impl(pager_ostream& fh, int ln) const;
+  // list underlying machine code for given source code line
 
   // internal coding, variables
   cssElPtr&	AddAuto(cssEl* it) 	{ return Prog()->AddAuto(it); }
@@ -1597,15 +1581,14 @@ public:
   bool		ReturnFun();	// process function return
 
   // display, status
-  int		ListDebug()
+  int		ListDebug() const
   { int rval=debug; if(debug >= 2) rval=2; return rval; }
   void		SetDebug(int dblev);
-  void 		ListSrc(int stln = -1);	// source code
-  void 		ListImpl(int stln = -1); // machine code implementation
-  void		List(int stln = -1);
   void		Status();
   void		BackTrace(int levels_back=-1);
 
+  void 		ListSrc(int stln = -1);	// list source code
+  void 		ListFun(const String& fun_nm);	// list a function of given name
   void		ListConstants();
   void		ListDefines();
   void		ListEnums();
@@ -1632,6 +1615,9 @@ public:
   void		ShowWatchpoints();
 
 protected:
+  int 		ReadLn(istream* fh);	// used in Getc -- read the line in from filein
+  int		AddSrcList(const String& nw_lst=""); // usedin Getc -- add a new line to source code listing, returns line no
+
   int 		alloc_size;		// allocated number of prog_stacks
   int		old_debug;		// saved version
   cssElPtr	el_retv;		// return value for getel

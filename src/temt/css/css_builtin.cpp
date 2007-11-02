@@ -871,21 +871,28 @@ static cssEl* cssElCFun_list_stub(int na, cssEl* arg[]) {
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
   if(na > 0) {
-    if((arg[1]->GetType() == cssEl::T_ScriptFun) ||
+    if(na == 2) {
+      int nl = (int)*(arg[2]);
+      if(nl > 0) csh->src_prog->list_n = nl;
+    }
+    if(arg[1]->GetPtrType() == cssEl::T_String) {
+      csh->src_prog->ListFun(arg[1]->GetStr());
+    }
+    else if(arg[1]->GetPtrType() == cssEl::T_Int) {
+      csh->src_prog->ListSrc((int)*(arg[1]));
+    }
+    else if((arg[1]->GetType() == cssEl::T_ScriptFun) ||
        (arg[1]->GetType() == cssEl::T_MbrScriptFun))
     {
       cssScriptFun* fe = (cssScriptFun*)arg[1]->GetNonRefObj();
-      if(cp->top->ListDebug() >= 2)
-	fe->fun->ListImpl(csh->pgout);
-      else
-	fe->fun->ListSrc(csh->pgout);
+      fe->fun->ListSrc();
     }
     else {
-      csh->src_prog->List(*arg[1]);
+      csh->src_prog->ListSrc();
     }
   }
   else {
-    csh->src_prog->List();
+    csh->src_prog->ListSrc();
   }
   return &cssMisc::Void;
 }
@@ -1111,12 +1118,12 @@ static void Install_Commands() {
 "topic [<arg>] Provides info on a number of different topics -- type info without\
  any args to get a detailed list of the info topics available.");
   cssElCFun_inst(cssMisc::Commands, list, 		cssEl::VarArg, CSS_COMMAND,
-"[<start_ln> [<n_lns>]] [<function>] Lists the program source (or\
+"[<start_ln> [<n_lns>]] [<\"function\">] Lists the program source (and\
  machine code, if debug is 2 or greater), optionally starting at the\
  given source line number, and continuing for either 20 lines (the\
  initial default) or the number given by the second argument (which\
  then becomes the new default).  Alternatively, a function name can be\
- given, which will start the listing at the beginning of that function\
+ given (in quotes), which will start the listing at the beginning of that function\
  (even if the function is extern-al and does not appear in a\
  line-number based list).  list with no arguments will resume where the\
  last one left off.");
@@ -2165,17 +2172,15 @@ char* css_keyword_generator(const char* text, int state) {
   }
 
   cssSpace* spc = NULL;
-  int extra_spcs = 3;		// both type spaces
+  int extra_spcs = 2;		// both type spaces
   if(cssMisc::cur_class != NULL)
     extra_spcs++;
 
   if(spc_idx == 0)
     spc = &(cssMisc::cur_top->types);
   else if(spc_idx == 1)
-    spc = &(cssMisc::cur_top->prog_types);
-  else if(spc_idx == 2)
     spc = &cssMisc::TypesSpace;
-  else if((cssMisc::cur_class != NULL) && (spc_idx == 3))
+  else if((cssMisc::cur_class != NULL) && (spc_idx == 2))
     spc = cssMisc::cur_class->types;
   else
     spc = cssMisc::cur_top->GetParseSpace(spc_idx-extra_spcs);

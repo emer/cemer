@@ -325,7 +325,7 @@ public:
   void 		C_Init_dWt(RecvCons* cg, Connection* cn, Unit* ru, Unit* su)
   { ConSpec::C_Init_dWt(cg, cn, ru, su); ((FastWtCon*)cn)->sdwt=0.0f; }
 
-  void SetCurLrate(int epoch, LeabraNetwork* net);
+  override void SetCurLrate(LeabraNetwork* net, int epoch);
 
   inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraRecvCons* cg,
 				  float ru_act, float su_act)

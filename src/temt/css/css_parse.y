@@ -277,7 +277,7 @@ vardefn:  type tynames end term		{
 	    if($1.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    cssMisc::cur_top->Prog()->insts[$3-1]->SetLine($3);
+	    cssMisc::cur_top->Prog()->insts[$3-1]->SetJump($3);
 	    if($2 < 0) $$ = $3-1; /* if no coding, its the end, else not */
 	    else $$ = $2; }
         ;
@@ -345,7 +345,7 @@ arraydim:
         ;
 
 enumdefn: enumname '{' enums '}' end term {
-            cssMisc::cur_top->Prog()->insts[$5-1]->SetLine($5); $$ = $5-1;
+            cssMisc::cur_top->Prog()->insts[$5-1]->SetJump($5); $$ = $5-1;
 	    if(cssMisc::cur_enum->name.before(5) == "enum_") /* don't keep anon enums around */
 	      delete cssMisc::cur_enum;
 	    cssMisc::parsing_args = false; /* needed for - numbers */
@@ -391,7 +391,8 @@ enumitms: name			{
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssSpace* en_own;
 	    if(cssMisc::cur_class != NULL) en_own = cssMisc::cur_class->types;
-	    else en_own = &(cssMisc::Enums);
+	    /* todo: global keyword??   else en_own = &(cssMisc::Enums); */
+	    else en_own = &(cssMisc::cur_top->enums);
 	    cssElPtr itm_ptr = en_own->FindName((const char*)*nm); 	cssEnum* itm;
 	    if(itm_ptr != 0) { /* redef */
 	      itm = (cssEnum*)itm_ptr.El();
@@ -408,7 +409,8 @@ enumitms: name			{
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssSpace* en_own;
 	    if(cssMisc::cur_class != NULL) en_own = cssMisc::cur_class->types;
-	    else en_own = &(cssMisc::Enums);
+	    /* todo: global keyword??   else en_own = &(cssMisc::Enums); */
+	    else en_own = &(cssMisc::cur_top->enums);
 	    cssElPtr itm_ptr = en_own->FindName((const char*)*nm);	cssEnum* itm;
 	    if(itm_ptr != 0) { /* redef */
 	      itm = (cssEnum*)itm_ptr.El();
@@ -425,15 +427,15 @@ enumitms: name			{
 
 classdefn:
           CSS_CLASS classhead '{' classcmt membs '}' end term {
-            cssMisc::cur_top->Prog()->insts[$7-1]->SetLine($7); $$ = $7-1;
+            cssMisc::cur_top->Prog()->insts[$7-1]->SetJump($7); $$ = $7-1;
             cssMisc::cur_class->GetComments(cssMisc::cur_class, $4);
             cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
         | CSS_CLASS classhead '{' classcmt '}' end term {
-            cssMisc::cur_top->Prog()->insts[$6-1]->SetLine($6); $$ = $6-1;
+            cssMisc::cur_top->Prog()->insts[$6-1]->SetJump($6); $$ = $6-1;
             cssMisc::cur_class->GetComments(cssMisc::cur_class, $4);
             cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
         | CSS_CLASS classfwd end term {
-            cssMisc::cur_top->Prog()->insts[$3-1]->SetLine($3); $$ = $3-1;
+            cssMisc::cur_top->Prog()->insts[$3-1]->SetJump($3); $$ = $3-1;
             cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
         ;
 
@@ -656,14 +658,14 @@ classcmt: /* nothing */                 { $$.Reset(); }
         ;
 
 fundefn:  fundname funargs end term	{	/* pre-declare function */
-            cssMisc::cur_top->Prog()->insts[$3-1]->SetLine($3);	$$ = $3-1;
+            cssMisc::cur_top->Prog()->insts[$3-1]->SetJump($3);	$$ = $3-1;
 	    cssScriptFun* fun = (cssScriptFun*)$1.El();
 	    fun->argc = $2; fun->GetArgDefs(); }
 
           /* define for the first time (bra creates a cssCodeBlock) */
         | fundname funargs end bra	{
 	    cssScriptFun* fun = (cssScriptFun*)$1.El();
-	    cssMisc::cur_top->Prog()->insts[$3-1]->SetLine($4+1); $$ = $3-1;
+	    cssMisc::cur_top->Prog()->insts[$3-1]->SetJump($4+1); $$ = $3-1;
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
 	    fun->retv_type->MakeToken(cssMisc::ConstExpr); /* create return val w/ name */
 	    cssCodeBlock* bra_blk = (cssCodeBlock*)(cssMisc::cur_top->Prog()->insts[$4]->inst.El());
@@ -686,7 +688,7 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
 	    if($1.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
-	    cssMisc::cur_top->Prog()->insts[$4-1]->SetLine($5+1);	$$ = $4-1;
+	    cssMisc::cur_top->Prog()->insts[$4-1]->SetJump($5+1);	$$ = $4-1;
 	    cssScriptFun* fun = (cssScriptFun*)$2.El();
 	    fun->SetRetvType($1.El());
 	    cssMisc::ConstExpr->Stack()->Push(new cssString(cssRetv_Name)); /* the return val */
@@ -709,7 +711,7 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
 	    cssElPtr fun_ptr;  fun_ptr.SetNVirtMethod(cls, cls->methods->GetIndex(fun));
 	    css_progdx nxt_ln = Code1(fun_ptr); /* code it so it shows up in a listing.. */
 	    cssMisc::cur_top->SetPush(fun->fun); /* put it on the stack.. */
-	    cssMisc::cur_top->Prog()->insts[$3-1]->SetLine(nxt_ln+1); $$ = $3-1; }
+	    cssMisc::cur_top->Prog()->insts[$3-1]->SetJump(nxt_ln+1); $$ = $3-1; }
         ;
 
 fundname:  type name 			{
@@ -1229,7 +1231,7 @@ comb_expr:
         | expr '=' expr 		{ Code1(cssBI::asgn); }
         | expr '=' '{'			{
 	    int c; String inp;
-	    while(((c = cssMisc::cur_top->Prog()->Getc()) != '}') && (c != EOF)) inp += (char)c;
+	    while(((c = cssMisc::cur_top->Getc()) != '}') && (c != EOF)) inp += (char)c;
 	    cssSStream* ss = new cssSStream();
 	    cssMisc::cur_top->AddLiteral(ss);
  	    stringstream* sss = (stringstream*)ss->GetVoidPtr();
@@ -1361,10 +1363,10 @@ memb_expr:
 	  /* argstop is put in by member_fun; member_fun skips over end jump, 
 	     uses it to find member_call*/
 	  $$ = $1.ival;
-	  cssMisc::cur_top->Prog()->insts[$2-1]->SetLine(Code1(cssBI::member_call)); }
+	  cssMisc::cur_top->Prog()->insts[$2-1]->SetJump(Code1(cssBI::member_call)); }
         | membfun end exprlist ')'  	{
 	  $$ = $1.ival;
-	  cssMisc::cur_top->Prog()->insts[$2-1]->SetLine(Code1(cssBI::member_call));
+	  cssMisc::cur_top->Prog()->insts[$2-1]->SetJump(Code1(cssBI::member_call));
 	  if(($1.el.El()->GetType() == cssEl::T_ElCFun) ||
 	     ($1.el.El()->GetType() == cssEl::T_MbrCFun) ||
 	     ($1.el.El()->GetType() == cssEl::T_ScriptFun) ||
@@ -1515,18 +1517,16 @@ void yyerror(char* s) { 	/* called for yacc syntax error */
   if(cssMisc::cur_top->cmd_shell != NULL)
     fh = cssMisc::cur_top->cmd_shell->ferr;
 
-  String src = cssMisc::cur_top->Prog()->GetSrcLC(cssMisc::cur_top->Prog()->tok_line);
+  String src = cssMisc::cur_top->CurFullTokSrc();
   if(strcmp(s, "parse error") == 0) {
     src.gsub('\t',' ');		// replace tabs
-    *fh << cssMisc::cur_top->name << ": Syntax Error, line " << cssMisc::cur_top->src_ln << ":\n"
-      << src;
-    for(i=0; i < cssMisc::cur_top->Prog()->tok_col; i++)
+    *fh << "Syntax Error " << src;
+    for(i=0; i < cssMisc::cur_top->tok_src_col; i++)
       *fh << " ";
     *fh << "^\n";
   }
   else {
-    *fh << cssMisc::cur_top->name << ": " << s << " line " << cssMisc::cur_top->src_ln << ":\n"
-      << src;
+    *fh << s << src;
   }
   taMisc::FlushConsole();
 }

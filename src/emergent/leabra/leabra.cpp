@@ -178,7 +178,7 @@ void LeabraConSpec::Defaults() {
   Initialize();
 }
 
-void LeabraConSpec::SetCurLrate(int epoch, LeabraNetwork* net) {
+void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
   cur_lrate = lrate;		// as a backup..
   if(lrs_value == NO_LRS) return;
 
@@ -632,13 +632,9 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u) {
   u->act_avg = .5 * (act_reg.max + MAX(act_reg.min, 0.0f));
 }  
 
-void LeabraUnitSpec::SetCurLrate(LeabraUnit* u, LeabraNetwork* net, int epoch) {
-  ((LeabraConSpec*)bias_spec.SPtr())->SetCurLrate(epoch, net);
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(!recv_gp->cons.size) continue;
-    recv_gp->SetCurLrate(epoch, net);
-  }
+void LeabraUnitSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
+  if(bias_spec.SPtr())
+    ((LeabraConSpec*)bias_spec.SPtr())->SetCurLrate(net, epoch);
 }
 
 ////////////////////////////////////////////
@@ -1477,6 +1473,11 @@ void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   trg_netin_rel = cp.trg_netin_rel;
 }
 
+void LeabraPrjn::SetCurLrate(LeabraNetwork* net, int epoch) {
+  if(con_spec.SPtr())
+    ((LeabraConSpec*)con_spec.SPtr())->SetCurLrate(net, epoch);
+}
+
 void LeabraPrjn::Init_Stats() {
   netin_avg = 0.0f;
   netin_rel = 0.0f;
@@ -1694,10 +1695,14 @@ void LeabraLayerSpec::Init_ActAvg(LeabraLayer* lay) {
 }
 
 void LeabraLayerSpec::SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch) {
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->SetCurLrate(net, epoch);
+  if(lay->unit_spec.SPtr()) {
+    ((LeabraUnitSpec*)lay->unit_spec.SPtr())->SetCurLrate(net, epoch);
+  }
+  LeabraPrjn* p;
+  taLeafItr pi;
+  FOR_ITR_EL(LeabraPrjn, p, lay->projections., pi) {
+    p->SetCurLrate(net, epoch);
+  }
 }
 
 LeabraLayer* LeabraLayerSpec::FindLayerFmSpec(LeabraLayer* lay, int& prjn_idx, TypeDef* layer_spec) {
@@ -3716,7 +3721,6 @@ void LeabraNetwork::Cycle_Run() {
     Compute_InhibAvg();
   }
   Compute_Act();
-  //  taiMiscCore::RunPending();
 }
 
 //////////////////////////////////
@@ -3910,8 +3914,6 @@ void LeabraNetwork::Settle_Final() {
 // 	Trial-Level Functions	//
 //////////////////////////////////
 
-// todo: currently called in Trial_Init -- could be in a more efficient location, but
-// cost is minimal, so not bothering for now..
 void LeabraNetwork::SetCurLrate() {
   LeabraLayer* lay;
   taLeafItr l;
@@ -3968,7 +3970,7 @@ void LeabraNetwork::Compute_dWt_NStdLay() {
 }
 
 void LeabraNetwork::Trial_Init() {
-  SetCurLrate();		// todo: this is excessive but not clear where else to call it..
+  SetCurLrate();
 
   cycle = -1;
   phase = MINUS_PHASE;
@@ -3979,28 +3981,6 @@ void LeabraNetwork::Trial_Init() {
     phase_max = 1;		// just do one loop (the minus phase)
     is_testing = true;
   }
-
-  // todo: this is now the responsibility of the prog
-//   if(cur_event != NULL) {
-//     if(cur_event->spec->InheritsFrom(TA_PhaseOrderEventSpec)) {
-//       PhaseOrderEventSpec* es = (PhaseOrderEventSpec*)cur_event->spec.SPtr();
-//       if(es->phase_order == PhaseOrderEventSpec::MINUS_PLUS)
-// 	phase = MINUS_PHASE;
-//       else if(es->phase_order == PhaseOrderEventSpec::MINUS_ONLY) {
-// 	phase = MINUS_PHASE;
-// 	phase_no.SetMax(1);
-//       }
-//       else if(es->phase_order == PhaseOrderEventSpec::PLUS_MINUS) {
-// 	phase = PLUS_PHASE;
-// 	if(is_testing)
-// 	  phase_no.SetMax(2);	// need to present plus phase first, then minus..
-//       }
-//       else if(es->phase_order == PhaseOrderEventSpec::PLUS_ONLY) {
-// 	phase = PLUS_PHASE;
-// 	phase_no.SetMax(1);
-//       }
-//     }
-//   }
 
   if(!is_testing) {
     if(phase_order == PLUS_ONLY) {
@@ -4027,16 +4007,6 @@ void LeabraNetwork::Trial_Init() {
 }
 
 void LeabraNetwork::Trial_UpdatePhase() {
-  // todo: prog needs to deal
-//   if((cur_event != NULL) && (cur_event->spec->InheritsFrom(TA_PhaseOrderEventSpec))) {
-//     PhaseOrderEventSpec* es = (PhaseOrderEventSpec*)cur_event->spec.SPtr();
-//     if(es->phase_order == PhaseOrderEventSpec::MINUS_PLUS)
-//       phase = PLUS_PHASE;
-//     else if(es->phase_order == PhaseOrderEventSpec::PLUS_MINUS)
-//       phase = MINUS_PHASE;
-//   }
-//   else {
-
   if(phase_order == PLUS_NOTHING) {
     phase = MINUS_PHASE;
   }

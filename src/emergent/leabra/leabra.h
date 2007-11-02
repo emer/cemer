@@ -39,6 +39,8 @@ class LeabraUnitSpec;
 class LeabraUnit;
 class LeabraUnit_Group;
 
+class LeabraPrjn;
+
 class LeabraInhib;
 class LeabraLayerSpec;
 class LeabraLayer;
@@ -338,7 +340,7 @@ public:
   inline virtual void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus);
   // #CAT_Learning update weights for bias connection
 
-  virtual void	SetCurLrate(int epoch, LeabraNetwork* net);
+  virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
   // #CAT_Learning set current learning rate based on schedule given epoch (or error value)
 
   virtual void	CreateWtSigFun(); // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv
@@ -394,10 +396,6 @@ public:
     ((LeabraConSpec*)GetConSpec())->C_Init_Weights_Post(this, cn, ru, su);
   }
   // #CAT_Learning hook for setting other weight-like values after initializing the weight value
-
-  void	SetCurLrate(int epoch, LeabraNetwork* net) { ((LeabraConSpec*)GetConSpec())->SetCurLrate(epoch, net); }
-  //#CAT_Learning set current learning rate based on lrate schedule and network values
-
   void	Copy_(const LeabraRecvCons& cp);
   TA_BASEFUNS(LeabraRecvCons);
 private:
@@ -664,7 +662,7 @@ public:
   virtual void 	Init_ActAvg(LeabraUnit* u);
   // #CAT_Activation initialize average activation values, used to control learning
 
-  virtual void	SetCurLrate(LeabraUnit* u, LeabraNetwork* net, int epoch);
+  virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
   // #CAT_Learning set current learning rate based on epoch
 
   //////////////////////////////////////////
@@ -887,10 +885,6 @@ public:
   void		Init_Acts(LeabraLayer* lay)
   { ((LeabraUnitSpec*)GetUnitSpec())->Init_Acts(this, lay); }
 
-  void		SetCurLrate(LeabraNetwork* net, int epoch)
-  { ((LeabraUnitSpec*)GetUnitSpec())->SetCurLrate(this, net, epoch); }
-  // #CAT_Learning set current learning rate based on epoch
-
   void		Compute_NetinScale(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinScale(this, lay, net); }
   // #CAT_Activation compute net input scaling values and input from hard-clamped inputs
@@ -1007,6 +1001,9 @@ public:
   int		avg_netin_n; // #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
 
   float		trg_netin_rel;	// #CAT_Learning target value for avg_netin_rel -- used for adapting scaling and actual layer activations to achieve desired relative netinput levels -- important for large multilayered networks, where bottom-up projections should be stronger than top-down ones.  this value can be set automatically based on the projection direction and other projections, as determined by the con spec
+
+  virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
+  // #CAT_Learning set current learning rate based on epoch
 
   virtual void	Init_Stats();	// #CAT_Statistic intialize statistic counters
 

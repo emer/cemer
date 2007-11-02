@@ -47,23 +47,13 @@ function for whenever a variable is processed..
 
 == Graph
 
+* 3d bars & filled bars
 * logarithmic units on axis
 
----
-
------------
-check:
-
 ------------------
-Program issues
+Program/css issues
 
---------------
-
-* p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
-* css #include: make a new codeblock and put all the include stuff in there,
-   to get rid of zaplast?  how to best handle?
-* css listing is still lame.  maybe just have completely separate global text list, 
-  with pointers into that?
+* css: p ((v1 > 0.0) ? (1.0 / v1): 0.0) : gives a div0 error -- should not!
 
 ------------------
 hv model

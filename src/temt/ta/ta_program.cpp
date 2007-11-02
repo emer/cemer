@@ -3195,27 +3195,27 @@ const String Program::ProgramListing() {
 void  Program::UpdateProgVars() {
   // note: this assumes that script has been ClearAll'd
   script->prog_vars.Reset(); // removes/unref-deletes
-  script->prog_types.Reset(); // removes/unref-deletes
   
   // add the ones in the object -- note, we use *pointers* to these
-  cssEl* el = NULL;
-  el = new cssCPtr_enum(&run_state, 1, "run_state",
-			TA_Program.sub_types.FindName("RunState"));
-  script->prog_vars.Push(el);
-  el = new cssCPtr_int(&ret_val, 1, "ret_val");
-  script->prog_vars.Push(el);
-  el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
-  script->prog_vars.Push(el);
+  // these are already installed by the InstallThis routine!!
+//   cssEl* el = NULL;
+//   el = new cssCPtr_enum(&run_state, 1, "run_state",
+// 			TA_Program.sub_types.FindName("RunState"));
+//   script->prog_vars.Push(el);
+//   el = new cssCPtr_int(&ret_val, 1, "ret_val");
+//   script->prog_vars.Push(el);
+//   el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
+//   script->prog_vars.Push(el);
 
   // add new in the program
   for (int i = 0; i < args.size; ++i) {
     ProgVar* sv = args.FastEl(i);
-    el = sv->NewCssEl();
+    cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el);
   } 
   for (int i = 0; i < vars.size; ++i) {
     ProgVar* sv = vars.FastEl(i);
-    el = sv->NewCssEl();
+    cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
   } 
 }
@@ -3285,7 +3285,6 @@ void Program::RunLoadInitCode() {
   init_scr.ClearAll();
 
   init_scr.prog_vars.Reset(); // removes/unref-deletes
-  init_scr.prog_types.Reset(); // removes/unref-deletes
   
   // add the ones in the object -- note, we use *pointers* to these
   // just the most relevant guys: not all the other stuff!

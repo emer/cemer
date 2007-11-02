@@ -217,15 +217,13 @@ void cssMisc::OutputSourceLoc(cssProg* prog) {
 
   if(top->state & (cssProg::State_Run)) {
     if(taMisc::dmem_proc == 0) {
-      *(fh) << top->name << ": line " << top->Prog()->CurSrcLn() << "\n"
-	    << top->Prog()->GetSrcLC(top->Prog()->CurSrcLC()) << "\n";
+      *(fh) << top->CurFullRunSrc();
       taMisc::FlushConsole();
     }
   }
   else {			// parsing
     if(taMisc::dmem_proc == 0) {
-      *(fh) << top->name << ": line " << top->src_ln << "\n"
-	    << top->Prog()->GetSrcLC(top->Prog()->tok_line) << "\n";
+      *(fh) << top->CurFullTokSrc();
       taMisc::FlushConsole();
     }
   }
@@ -576,13 +574,9 @@ cssEl* cssEl::GetTypeObject() const {
   if((prog) && (prog->top)) {
     if((s = prog->top->types.FindName((char*)tp_nm)) != 0)
       return s.El();
-    if((s = prog->top->prog_types.FindName((char*)tp_nm)) != 0)
-      return s.El();
   }
   if(cssMisc::cur_top) {
     if((s = cssMisc::cur_top->types.FindName((char*)tp_nm)) != 0)
-      return s.El();
-    if((s = cssMisc::cur_top->prog_types.FindName((char*)tp_nm)) != 0)
       return s.El();
   }
   if((s = cssMisc::TypesSpace.FindName((char*)tp_nm)) != 0)
@@ -2026,11 +2020,11 @@ int cssLex::readword(cssProg* prog, int c) {
   Buf = "";
 
   Buf += (char)c;
-  while (((c=prog->Getc()) != EOF) && (isalnum(c) || (c == '_')))
+  while (((c=prog->top->Getc()) != EOF) && (isalnum(c) || (c == '_')))
   { Buf += (char)c; }
   if(c == EOF)
     return EOF;
-  prog->unGetc();
+  prog->top->unGetc();
   return c;
 }
 
@@ -2054,14 +2048,12 @@ cssDef::cssDef(const cssDef& cp, const char* nm) {
 
 void cssDef::Skip_To_Endif(cssProg* prog) {
   int cur_prog_size = prog->size;
-  int cur_prog_src_size = prog->src_size;
-
   int incount = 0;
 
   while(1) {
-    int c = prog->Getc();
+    int c = prog->top->Getc();
     if(c == '#') {
-      cssLex::readword(prog, prog->Getc());
+      cssLex::readword(prog, prog->top->Getc());
       if(cssLex::Buf == "endif") {
 	if(incount == 0)
 	  break;
@@ -2076,12 +2068,8 @@ void cssDef::Skip_To_Endif(cssProg* prog) {
     if(c == EOF)
       break;
   }
-  prog->unGetc();
-  prog->ZapFrom(cur_prog_size, cur_prog_src_size);
-
-// keep on numbering..
-//  prog->top->src_ln = cur_src_ln;
-//  prog->top->list_ln = cur_list_ln;
+  prog->top->unGetc();
+  prog->ZapFrom(cur_prog_size);
 }
 
 cssEl::RunStat cssDef::Do(cssProg*) {
@@ -2467,32 +2455,38 @@ void cssSpace::Sort() {
 // 	cssInst: Instructions	//
 //////////////////////////////////
 
+// class CSS_API cssListEl {
+// public:
+//   css_progdx    stpc;		// starting pc for this line
+//   int		ln;		// line no in source code
+//   String	src;		// source code for line, specifically for this code element
+//   String	full_src;	// full source code 
+
+//   void		Copy(const cssListEl& cp)
+//   { stpc = cp.stpc; ln = cp.ln; src = cp.src; full_src = cp.full_src; }
+
+//   cssListEl()			{ stpc = 0;   ln = 0; }
+//   cssListEl(css_progdx pc, int l, const String& cd)
+//   { stpc = pc;  ln = l;  src = cd;  }
+//   cssListEl(const cssListEl& cp)	{ Copy(cp); }
+
+//   cssListEl* 	Clone()	{ return new cssListEl(*this); }
+// };
+
+
 String cssInst::PrintStr() const {
-  if(line > prog->src_size-1) return "";
-  cssListEl* src = prog->source[line];
-  String rval = String(src->ln) + "\t" + src->src;
-  return rval;
+  return prog->top->GetSrcLn(line);
 }
 
 void cssInst::ListSrc(pager_ostream& fh, int indent) const {
-  if(line > prog->src_size-1) return;
-  cssListEl* src = prog->source[line];
-  fh << String(src->ln) << "   " << src->full_src;
+  fh << PrintStr();
+  taMisc::FlushConsole();
 }
 
-void cssInst::ListImpl(pager_ostream& fh, int indent) const {
-  String src_ln = "0000";
-  String src_full = "n/a\n";
-  if(line < prog->src_size) {
-    cssListEl* src = prog->source[line];
-    src_ln = taMisc::LeadingZeros(src->ln, 4);
-    src_full = src->full_src;
-  }
-  if(src_full.lastchar() != '\n') src_full += '\n';
-  fh << cssMisc::Indent(indent) << src_ln << "   "
-     << taMisc::LeadingZeros(idx,4) << "   "
-     << inst.PrintStr() << "   " << inst.El()->PrintStr()
-     << "   #>> " << src_full;
+void cssInst::ListMachine(pager_ostream& fh, int indent) const {
+  fh << cssMisc::Indent(indent) << taMisc::LeadingZeros(idx,5) << "  "
+     << inst.PrintStr() << "   " << inst.El()->PrintStr() << "\n";
+  taMisc::FlushConsole();
 }
 
 void cssInst::Constr() {
@@ -2547,6 +2541,7 @@ void cssInst::SetInst(const cssElPtr& it) {
      ((it.ptr == (void*)&(prog->top->statics)) ||
       (it.ptr == (void*)&(prog->top->hard_vars)) ||
       (it.ptr == (void*)&(prog->top->prog_vars)) ||
+      (it.ptr == (void*)&(prog->top->enums)) ||
       (it.ptr == (void*)&(prog->top->hard_funs))))
   {
     cssScriptFun* cur_fun = prog->top->GetCurrentFun();
@@ -2605,22 +2600,13 @@ cssEl::RunStat cssInst::Do() {	// any "do" must be surrounded by a break catcher
 // IJump
 
 String cssIJump::PrintStr() const {
-  cssListEl* src = prog->source[line];
-  String rval = String(src->ln) + "   " + src->src + " // Jump-> " + String(jumpto);
-  return rval;
+  return cssInst::PrintStr() + " // Jump-> " + String(jumpto);
 }
 
-void cssIJump::ListSrc(pager_ostream& fh, int indent) const {
-  cssListEl* src = prog->source[line];
-  fh << String(src->ln) << "   " << prog->GetSrcLC(line);
-}
-
-void cssIJump::ListImpl(pager_ostream& fh, int indent) const {
-  cssListEl* src = prog->source[line];
-  fh << cssMisc::Indent(indent) << taMisc::LeadingZeros(src->ln, 4) << "   "
-     << taMisc::LeadingZeros(idx,4) << "  Jump-> "
-     << taMisc::LeadingZeros(jumpto,4) << "   "
-     << "#>> " << prog->GetSrcLC(line);
+void cssIJump::ListMachine(pager_ostream& fh, int indent) const {
+  fh << cssMisc::Indent(indent) << taMisc::LeadingZeros(idx,5) << "  Jump-> "
+     << taMisc::LeadingZeros(jumpto,5) << "\n";
+  taMisc::FlushConsole();
 }
 
 cssEl::RunStat cssIJump::Do() {
@@ -2695,7 +2681,6 @@ void cssProg::Constr() {
 
   insts = (cssInst**)malloc(alloc_size * sizeof(cssInst*));
   size = 0;
-  parse_st_size = 0; parse_st_src_size = 0;
 
   frame = (cssFrame**)malloc(fr_alloc_size * sizeof(cssFrame*));
   fr_size = 0;
@@ -2704,11 +2689,9 @@ void cssProg::Constr() {
   statics.name = "Statics";
   saved_stack.name = "Saved Stack";
 
-  source = (cssListEl**)malloc(src_alloc_size * sizeof(cssListEl*));
-  src_size = 0;
-  line = 0;  col = 0;
-  st_line = 0; st_col = 0;
-  tok_line = 0; tok_col = 0;
+  first_src_ln = -1;
+  last_src_ln = -1;
+
   state = 0;
   lastif = -1;
   lastelseif = false;
@@ -2720,13 +2703,8 @@ void cssProg::Copy(const cssProg& cp) {
   statics.Copy(cp.statics);
   Autos()->Copy(cp.frame[0]->autos);
 
-  AllocSrc(cp.src_size+1);
-  int i;
-  for(i=0; i<cp.src_size; i++)
-    source[i] = cp.source[i]->Clone();
-
   AllocInst(cp.size+1);
-  for(i=0; i<cp.size; i++) {
+  for(int i=0; i<cp.size; i++) {
     cssInst* nwi = cp.insts[i]->Clone();
     insts[i] = nwi;
     nwi->prog = this;
@@ -2739,13 +2717,9 @@ void cssProg::Copy(const cssProg& cp) {
       nwi->inst.ptr = (void*)this;
   }
   size = cp.size;
-  src_size = cp.src_size;
-  line = cp.line;
-  col = cp.col;
-  st_line = cp.st_line;
-  st_col = cp.st_col;
-  tok_line = cp.tok_line;
-  tok_col = cp.tok_col;
+  first_src_ln = cp.first_src_ln;
+  last_src_ln = cp.last_src_ln;
+
   state = cp.state;
   lastif = cp.lastif;
   lastelseif = cp.lastelseif;
@@ -2767,7 +2741,6 @@ cssProg::~cssProg() {
   Reset();
   DelFrame();			// get rid of 1st frame
   free(insts);
-  free(source);
   free(frame);
 }
 
@@ -2791,15 +2764,6 @@ void cssProg::AllocFrame(int sz) {
   while((fr_alloc_size-TA_ALLOC_OVERHEAD) <= sz) fr_alloc_size <<= 1;
   fr_alloc_size -= TA_ALLOC_OVERHEAD;
   frame = (cssFrame**)realloc(frame, fr_alloc_size * sizeof(cssFrame*));
-}
-
-void cssProg::AllocSrc(int sz) {
-  if(src_alloc_size >= sz)	return;	// no need to increase..
-  sz = MAX(16,sz);		// once allocating, use a minimum of 16
-  src_alloc_size += TA_ALLOC_OVERHEAD; // increment to full power of 2
-  while((src_alloc_size-TA_ALLOC_OVERHEAD) <= sz) src_alloc_size <<= 1;
-  src_alloc_size -= TA_ALLOC_OVERHEAD;
-  source = (cssListEl**)realloc(source, src_alloc_size * sizeof(cssListEl*));
 }
 
 int cssProg::AddFrame() {
@@ -2834,9 +2798,6 @@ void cssProg::ResetCode() {
   for(i=0; i<size; i++)
     delete insts[i];
   size = 0;
-  for(i=0; i<src_size; i++)
-    delete source[i];
-  src_size = 0;
 }
 
 cssScriptFun* cssProg::GetCurrentFun() {
@@ -2853,105 +2814,44 @@ cssScriptFun* cssProg::GetCurrentFun() {
 //	cssProg: Source, Debugging	//
 //////////////////////////////////////////
 
-String cssProg::GetSrc() const {
-  String rval;
-  if(line < src_size) {
-    rval = source[line]->src;
-    if(col > 0)
-      rval = rval.from(col);
-  }
-  return rval;
-}
-
-String cssProg::GetSrcLC(int ln, int cl) const {
-  String rval;
-  if(ln < src_size) {
-    rval = source[ln]->src;
-    if(cl > 0)
-      rval = rval.from(cl);
-  }
-  return rval;
-}
-
-int cssProg::CurSrcLn(css_progdx pcval) {
-  if(pcval > size-1)
-    return 0;
-  return source[insts[pcval]->line]->ln;
-}
-
-int cssProg::CurSrcLC(css_progdx pcval) {
+int cssProg::GetSrcLn(css_progdx pcval) const {
   if(pcval > size-1)
     return 0;
   return insts[pcval]->line;
 }
 
-int cssProg::FindSrcLn(int ln) {
-  int i;
-  for(i = 0; i< src_size; i++) {
-    if(source[i]->ln == ln)
-      return i;
-  }
-  return -1;
-}
-int cssProg::ClosestSrcLn(int ln) {
-  int i;
-  for(i = 0; i< src_size; i++) {
-    if(source[i]->ln >= ln)
-      return i;
-  }
-  return -1;
-}
-// specifies a range
-int cssProg::HasSrcLn(int st, int ed) {
-  int i;
-  for(i = 0; i< src_size; i++) {
-    if((source[i]->ln >= st) && (source[i]->ln <= ed))
+int cssProg::FindSrcLn(int ln) const {
+  if(ln < first_src_ln || ln > last_src_ln) return -1;
+  for(int i = 0; i< size; i++) {
+    if(insts[i]->line == ln)
       return i;
   }
   return -1;
 }
 
-int cssProg::CurSrcCharsLeft() {
-  if(line < src_size)
-    return source[line]->src.length() - col;
-  return 0;
-}
-
-void cssProg::ListSrc(pager_ostream& fh, int indent, int stln) {
-  if(owner_fun)
-    top->list_ln = -1;		// reset for functions
-  int st = 0;
-  if(stln >= 0) {
-    st = ClosestSrcLn(stln);
-    if(st < 0) return;
-  }
-  for(int i=st; i<src_size; i++) {
-    cssListEl* src = source[i];
-    if(src->ln > top->list_ln) {
-      top->list_ln = src->ln;
-      fh << String(src->ln) << "\t" << src->full_src;
-    }
-    if(size > src->stpc) {
-      cssEl* el = insts[src->stpc]->inst.El();
-      if(el->GetType() == cssEl::T_CodeBlock) {
-	el->GetSubProg()->ListSrc(fh, indent + 1);
-      }
+void cssProg::ListSrc() const {
+  if(!top->HaveCmdShell()) return;
+  pager_ostream& fh = top->cmd_shell->pgout;
+  fh.start();
+  for(int ln = first_src_ln; ln <= last_src_ln; ln++) {
+    fh << top->GetSrcLn(ln);
+    taMisc::FlushConsole();
+    if(top->ListDebug() >= 2) {
+      ListMachine(fh, 1, ln);
     }
   }
 }
 
-void cssProg::ListImpl(pager_ostream& fh, int indent, int stln) {
-  int st = 0;
-  if(stln >= 0) {
-    int st_src = ClosestSrcLn(stln);
-    if(st_src < 0) return;
-    st = source[st_src]->stpc;
-  }
-  for(int i=st; i < size; i++) {
-    insts[i]->ListImpl(fh, indent);
+
+void cssProg::ListMachine(pager_ostream& fh, int indent, int ln) const {
+  int stpc = FindSrcLn(ln);
+  if(stpc < 0) return;
+  for(int i=stpc; i < size; i++) {
+    if(insts[i]->line == ln) 
+      insts[i]->ListMachine(fh, indent);
     cssEl* el = insts[i]->inst.El();
     if(el->GetType() == cssEl::T_CodeBlock) {
-      el->GetSubProg()->ListImpl(fh, indent + 1);
+      el->GetSubProg()->ListMachine(fh, indent + 1, ln);
     }
   }
 }
@@ -3010,67 +2910,19 @@ cssElPtr& cssProg::AddLiteral(cssEl* it) {
   return el_retv;
 }
 
-int cssProg::AddSrc(const char* ln) {
-  if(src_size+1 >= src_alloc_size)
-    AllocSrc(src_size+1);
-  top->src_ln++;
-  source[src_size++] = new cssListEl(size, top->src_ln, ln);
-  return src_size-1;
-}
-
-int cssProg::Getc() {
-  state &= ~State_WasBurped;
-  // if possible, we return an unconsumed char already in input lines
-  if ((line < src_size) && (col < (int)source[line]->src.length()))
-    return (int) (source[line]->src[col++]);
-
-  if(!top->src_fin) return EOF;
-  if(ReadLn(*(top->src_fin)) == EOF)
-    return EOF;
-    
-  // ok, presumably we got more text, so are now recursively calling ourself again
-  return Getc();
-}
-
-int cssProg::ReadLn(istream& fh) {
-  int c;
-  line = AddSrc("");			// new line
-  while (((c = fh.get()) != EOF) && (c != '\n')) {
-    source[line]->src += (char)c;	// add
-  }
-  source[line]->full_src = source[line]->src + "\n";
-  //todo: note: seems wrong to exit here with EOF, without doing rest of routine...
-  if (c == EOF)
-    return EOF;
-  
-  source[line]->src += '\n';	// always end with a newline
-  if (top->debug >= 3) {
-    cerr << "\nsrc ===> " << source[line]->src;	// get a source code trace here..
-    taMisc::FlushConsole();
-  }
-  col = 0;
-
-  st_col = col;			// reset the st_lines..
-  st_line = line;
-
-  return 1;
-}
-
 int cssProg::Code(cssEl* it) {
   if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
-  while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssElPtr elp;
   elp.SetDirect(it);
-  cssInst* tmp = new cssInst(this, elp, line, col);
+  cssInst* tmp = new cssInst(this, elp, top->src_ln, top->src_col);
   tmp->idx = AddCode(tmp);
   return tmp->idx;
 }
 int cssProg::Code(cssElPtr& it) {
   if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
-  while(line >= src_size) AddSrc("\n");	  // in case we have no source..
-  cssInst* tmp = new cssInst(this, it, line, col);
+  cssInst* tmp = new cssInst(this, it, top->src_ln, top->src_col);
   tmp->idx = AddCode(tmp);
   return tmp->idx;
 }
@@ -3085,9 +2937,8 @@ int cssProg::Code(const char* nm) {
 int cssProg::Code(css_progdx it) {
   if((cssMisc::code_cur_top) && (cssMisc::code_cur_top->Prog() != this))
     return cssMisc::code_cur_top->Prog()->Code(it);
-  while(line >= src_size) AddSrc("\n");	  // in case we have no source..
   cssIJump* tmp;
-  tmp = new cssIJump(this, it, line, col);
+  tmp = new cssIJump(this, it, top->src_ln, top->src_col);
   tmp->idx = AddCode(tmp);
   return tmp->idx;
 }
@@ -3108,61 +2959,50 @@ int cssProg::ReplaceCode(int idx, cssEl* it) {
   return tmp->idx;
 }
 
-void cssProg::ZapFrom(int zp_size, int zp_src_size) {
+void cssProg::ZapFrom(int zp_size) {
   int i;
   for(i=zp_size; i<size; i++)
     delete insts[i];
   size = zp_size;
-  for(i=zp_src_size; i<src_size; i++)
-    delete source[i];
-  src_size = zp_src_size;
-}
-void cssProg::ZapFromSrc(int zp_src_size) {
-  int i;
-  for(i=zp_src_size; i<src_size; i++)
-    delete source[i];
-  src_size = zp_src_size;
-}
-
-void cssProg::BurpSrc() {
-  line = st_line;
-  col = st_col;
-  state |= State_WasBurped;
 }
 
 int cssProg::Undo(int srcln) {
-  int srcdx, i, rval = -1;
-  int diff;
-  css_progdx bppc;
+  // todo: not currently supported
+  cssMisc::Warning(this, "Undo not currently supported, sorry!");
+  return -1;
+  
+//   int srcdx, i, rval = -1;
+//   int diff;
+//   css_progdx bppc;
 
-  if((srcdx = FindSrcLn(srcln)) < 0) {
-    for(int i=0; i < size; i++) {
-      cssEl* tmp = insts[i]->inst.El();
-      if(tmp->GetType() == cssEl::T_CodeBlock) {
-	if((rval = tmp->GetSubProg()->Undo(srcln)) >= 0)
-	  return rval;
-      }
-    }
-    return -1;
-  }
-  bppc = source[srcdx]->stpc;
-  for(i = bppc; i < size; i++) {
-    if(source[insts[i]->line]->ln > srcln) {
-      break;
-    }
-  }
-  diff = i - bppc;		// amount to delete
-  for(i=bppc; i < size-diff; i++) {
-    delete insts[i];
-    insts[i] = insts[i+diff];
-  }
-  size -= diff;
-  src_size--;
-  for(i=srcdx; i < src_size; i++) {
-    delete source[i];
-    source[i] = source[i+1];
-  }
-  return bppc;
+//   if((srcdx = FindSrcLn(srcln)) < 0) {
+//     for(int i=0; i < size; i++) {
+//       cssEl* tmp = insts[i]->inst.El();
+//       if(tmp->GetType() == cssEl::T_CodeBlock) {
+// 	if((rval = tmp->GetSubProg()->Undo(srcln)) >= 0)
+// 	  return rval;
+//       }
+//     }
+//     return -1;
+//   }
+//   bppc = source[srcdx]->stpc;
+//   for(i = bppc; i < size; i++) {
+//     if(source[insts[i]->line]->ln > srcln) {
+//       break;
+//     }
+//   }
+//   diff = i - bppc;		// amount to delete
+//   for(i=bppc; i < size-diff; i++) {
+//     delete insts[i];
+//     insts[i] = insts[i+diff];
+//   }
+//   size -= diff;
+//   src_size--;
+//   for(i=srcdx; i < src_size; i++) {
+//     delete source[i];
+//     source[i] = source[i+1];
+//   }
+//   return bppc;
 }
 
 cssElPtr& cssProg::FindAutoName(const char* nm) {	// lookup by name
@@ -3178,12 +3018,6 @@ cssElPtr& cssProg::FindAutoName(const char* nm) {	// lookup by name
 //	cssProg: Execution	 	//
 //////////////////////////////////////////
 
-void cssProg::SetPC(css_progdx npc) {
-  Frame()->pc = MIN(npc, size);
-  if((PC() < size) && (insts[PC()]->line < src_size))
-    top->list_ln = source[insts[PC()]->line]->ln;
-}
-
 cssProg* cssProg::SetSrcPC(int srcln) {
   int srcdx;
 
@@ -3198,7 +3032,7 @@ cssProg* cssProg::SetSrcPC(int srcln) {
     }
     return NULL;
   }
-  SetPC(source[srcdx]->stpc);
+  SetPC(srcdx);
   return this;
 }
 
@@ -3208,15 +3042,14 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
 
   pager_ostream& fh = top->cmd_shell->pgout;
   if(top->debug <= 1) {
-    cssListEl* src = source[nxt->line];
-    if(src) {
-      if(src->ln != last_src_ln)
-	nxt->ListSrc(fh);
-      last_src_ln = src->ln;
+    if(nxt->line != last_src_ln) {
+      nxt->ListSrc(fh);
+      last_src_ln = nxt->line;
     }
   }
   else {
-    nxt->ListImpl(fh, top->size-1); // indent
+    nxt->ListSrc(fh);
+    nxt->ListMachine(fh, top->size-1); // indent
     if(top->debug >= 3) {
       Stack()->List(fh, top->size); // indent
     }
@@ -3301,7 +3134,7 @@ cssEl* cssProg::Cont() {
     }
     else {
       if(PC() < size)
-	stc = source[insts[PC()]->line]->ln;
+	stc = insts[PC()]->line;
       else
 	stc = -1;
       lim = stc + top->step_mode;
@@ -3329,7 +3162,7 @@ cssEl* cssProg::Cont() {
 	else
 	  top->run_stat = rval;
 	if(top->debug < 2)
-	  stc = source[nxt->line]->ln;
+	  stc = nxt->line;
 	else
 	  stc++;
       }
@@ -3393,10 +3226,7 @@ bool cssProg::SetBreak(int srcln) {
     }
     return false;
   }
-//   if(source[srcdx]->stpc == 0)
-//     breaks.Add(source[srcdx]->stpc + 1); // avoid the "1st instr" problem
-//   else
-  breaks.Add(source[srcdx]->stpc);
+  breaks.Add(srcdx);
   return true;
 }
 
@@ -3428,8 +3258,7 @@ bool cssProg::DelBreak(int srcln) {
     }
     return false;
   }
-  css_progdx bppc = source[srcdx]->stpc;
-  return breaks.RemoveEl(bppc);
+  return breaks.RemoveEl(srcdx);
 }
 
 
@@ -3495,8 +3324,15 @@ void cssProgSpace::Constr() {
     debug = 0;
 
   src_fin = NULL;
-  src_ln = 0; st_src_ln = 0;
+  cur_fnm_lno = 0;
+
+  src_ln = 0;
+  src_col = 0;
   list_ln = 0;
+  list_n = 20;
+
+  tok_src_ln = 0;
+  tok_src_col = 0;
 
   parsing_command = false;
   external_stop = false;
@@ -3552,9 +3388,9 @@ void cssProgSpace::SetName(const char* nm) {
   prog_vars.name = name + ".prog_vars";
   hard_vars.name = name + ".hard_vars";
   hard_funs.name = name + ".hard_funs";
+  enums.name = name + ".enums";
   statics.name = name + ".statics";
   types.name = name + ".types";
-  prog_types.name = name + ".prog_types";
 }
 
 void cssProgSpace::Reset() {
@@ -3565,8 +3401,16 @@ void cssProgSpace::Reset() {
   Restart();
   Prog()->Reset();		// reset our top-level guy
   Prog()->top = this;		// this one gets us as a top for sure
-  src_ln = 0;   st_src_ln = 0;
+  src_list.Reset();
+  src_list_fnm.Reset();
+  src_list_lno.Reset();
+  src_ln = 0;
+  src_col = 0;
   list_ln = 0;
+  cur_fnm = name;
+  cur_fnm_lno = 0;
+  tok_src_ln = 0;
+  tok_src_col = 0;
   parsing_command = false;
   external_stop = false;
   run_stat = cssEl::Waiting;
@@ -3578,6 +3422,7 @@ void cssProgSpace::ClearAll() {
 #endif // TA_GUI
   Reset();
   statics.Reset();
+  enums.Reset();
   types.Reset();
 }
 
@@ -3622,23 +3467,8 @@ cssProg* cssProgSpace::PopProg() {
 
 // this is for coding, setting of top occurs here
 void cssProgSpace::Push(cssProg* it) {
-  cssProg* prv = Prog();
   AddProg(it);
-  cssProg* cur = Prog();
   it->top = this;		// set top to be this
-  src_ln--;			// isn't really a new line..
-  cur->line = cur->AddSrc(prv->GetSrc());
-  cur->col = 0;
-  cur->source[cur->line]->full_src = prv->GetSrcLC(prv->line);
-  if(prv->state & cssProg::State_WasBurped) {
-    if(prv->col == 0) {			// new line here
-      prv->src_size--;			// undo last add
-      delete prv->source[prv->src_size];	// get rid of the list el
-      prv->line--;
-    }
-    prv->state &= ~cssProg::State_WasBurped;
-  }
-  prv->col = strlen(prv->GetSrcLC(prv->line)); // put col at end of cur line
   parse_depth++;
   if(debug >= 2) {
     cerr << "Pushed new prog: " << it->name << " depth: " << parse_depth << endl;
@@ -3656,12 +3486,6 @@ cssProg* cssProgSpace::Pop() {
   if(size > 1) {
     cssProg* prv = PopProg();
     prv->top = cssMisc::Top;
-    if(strcmp(prv->GetSrc(), "") != 0) {
-      src_ln--;		// isn't really a new line..
-      Prog()->line = Prog()->AddSrc(prv->GetSrc());
-      Prog()->col = 0;
-      prv->col = strlen(prv->GetSrcLC(prv->line));
-    }
     parse_depth--;
     if(debug >= 2) {
       cerr << "Popped prog: " << prv->name << " depth: " << parse_depth << endl;
@@ -3690,6 +3514,202 @@ cssScriptFun* cssProgSpace::GetCurrentFun() {
     return pg->owner_fun;
   }
   return NULL;
+}
+
+//////////////////////////////////////////////////
+// 	cssProgSpace: Internal, Source  	//
+//////////////////////////////////////////////////
+
+int cssProgSpace::AddSrcList(const String& nw_lst) {
+  src_ln++;
+  cur_fnm_lno++;
+  src_list.SetSize(src_ln+1);
+  src_list[src_ln] = nw_lst;
+  src_list_fnm.SetSize(src_ln+1);
+  src_list_lno.SetSize(src_ln+1);
+  src_list_fnm[src_ln] = cur_fnm;
+  src_list_lno[src_ln] = cur_fnm_lno;
+
+  if(Prog()->first_src_ln < 0) {
+    Prog()->first_src_ln = src_ln;
+    Prog()->last_src_ln = src_ln;
+  }
+  else {
+    Prog()->first_src_ln = MIN(Prog()->first_src_ln, src_ln);
+    Prog()->last_src_ln = MAX(Prog()->last_src_ln, src_ln);
+  }
+  return src_ln;
+}
+
+int cssProgSpace::Getc() {
+  while(true) {
+    if(src_ln == 0) {
+      if(ReadLn(src_fin) == EOF)
+	return EOF;
+    }
+    String& src = src_list[src_ln];
+    if(src_col < src.length())
+      return (int) (src[src_col++]);
+    if(src_ln < src_list.size-1) { // could have been ungot back up a line, now getting again
+      src_ln++; continue;
+    }
+    if(ReadLn(src_fin) == EOF)
+      return EOF;
+  }
+}
+
+int cssProgSpace::unGetc() {
+  src_col--;
+  if(src_col < 0) {
+    while(true) {
+      src_ln--;
+      if(src_ln < 0) {
+	src_col = 0;
+	src_ln = 0; 
+	return EOF;
+      }
+      if(src_ln < src_list.size) {
+	String& src = src_list[src_ln];
+	src_col = src.length()-1;
+	if(src_col <0) continue;
+	return 1;
+      }
+    }
+  }
+  return 1;
+}
+
+int cssProgSpace::CurSrcCharsLeft() {
+  if(src_ln == 0 || src_ln >= src_list.size) return 0;
+  return src_list[src_ln].length() - src_col;
+}
+
+int cssProgSpace::ReadLn(istream* fh) {
+  if(!fh) return EOF;
+  int c;
+  AddSrcList();			// new blank line
+  String& src = src_list[src_ln];
+  while (((c = fh->get()) != EOF) && (c != '\n')) {
+    src += (char)c;	// add
+  }
+  if(c == EOF)
+    return EOF;
+  
+  src += '\n';	// always end with a newline
+  if(debug >= 3) {
+    cerr << "\nsrc ===> " << src;	// get a source code trace here..
+    taMisc::FlushConsole();
+  }
+  src_col = 0;
+
+  return 1;
+}
+
+void cssProgSpace::StoreCurTokSrcPos() {
+  tok_src_col = src_col-1;
+  tok_src_ln = src_ln;
+}
+
+//////////////////////////////////////////////////
+// 	cssProgSpace: Source Access		//
+//////////////////////////////////////////////////
+
+String cssProgSpace::GetSrcLnCol(int ln, int cl) const {
+  String rval = "\n";
+  if(ln < src_list.size) {
+    rval = src_list[ln];
+    if(cl > 0)
+      rval = rval.from(cl);
+  }
+  return rval;
+}
+
+String cssProgSpace::GetSrcLn(int ln) const {
+  String rval = "\n";
+  if(ln >= src_list.size) return rval;
+  rval = taMisc::LeadingZeros(ln, 6) + "\t" + taMisc::LeadingZeros(src_list_lno[ln], 6)
+    + "\t" + src_list[ln];
+  if(rval.lastchar() != '\n')
+    rval += "\n";
+  return rval;
+}
+
+String cssProgSpace::GetFullSrcLn(int ln) const {
+  String rval = "\n";
+  if(ln >= src_list.size) return rval;
+
+  rval = src_list_fnm[ln] + " line: " + taMisc::LeadingZeros(src_list_lno[ln], 6);
+  rval += "\n" + src_list[ln];
+  return rval;
+}
+
+String cssProgSpace::CurParseSrc() const {
+  return GetSrcLnCol(src_ln, src_col);
+}
+
+String cssProgSpace::CurTokSrc() const {
+  return GetSrcLnCol(tok_src_ln, tok_src_col);
+}
+
+String cssProgSpace::CurFullTokSrc() const {
+  return GetFullSrcLn(tok_src_ln);
+}
+
+String cssProgSpace::CurFullRunSrc() const {
+  return GetFullSrcLn(Prog()->CurSrcLn());
+}
+
+String cssProgSpace::GetSrcListFnm(int i) const {
+  String rval = src_list_fnm[i];
+  if(rval.empty())
+    rval = name;
+  return rval;
+}
+
+void cssProgSpace::ListMachine_impl(pager_ostream& fh, int ln) const {
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun) fun->ListMachine(fh, 1, ln);
+      }
+    }
+  }
+
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
+      el->GetSubProg()->ListMachine(fh, 1, ln);
+    }
+  }
+  Prog(0)->ListMachine(fh, 1, ln);
+}
+
+void cssProgSpace::ListSrc_impl(pager_ostream& fh, int stln) const {
+  int st = 1;
+  if(stln >= 0)
+    st = stln;
+  String curf;
+  int ln;
+  int mx_ln = MIN(src_list.size, st + list_n);
+  for(ln=st; ln<mx_ln; ln++) {
+    String fnm = GetSrcListFnm(ln);
+    if(curf != fnm) {
+      curf = fnm;
+      fh << "file: " << curf << "\n";    
+    }
+    fh << GetSrcLn(ln);
+    taMisc::FlushConsole();
+    if(ListDebug() >= 2) {
+      ListMachine_impl(fh, ln);
+    }
+  }
+  if(mx_ln == src_list.size)
+    ((cssProgSpace*)this)->list_ln = 0;
+  else
+    ((cssProgSpace*)this)->list_ln = ln;
 }
 
 //////////////////////////////////////////////////
@@ -3781,11 +3801,13 @@ cssElPtr& cssProgSpace::FindName(const char* nm) {	// lookup by name
   }
   if ((el_retv = statics.FindName(nm)) != 0)
     return el_retv;
+  if ((el_retv = prog_vars.FindName(nm)) != 0)
+    return el_retv;
   if ((el_retv = hard_funs.FindName(nm)) != 0)
     return el_retv;
   if ((el_retv = hard_vars.FindName(nm)) != 0)
     return el_retv;
-  return prog_vars.FindName(nm);
+  return enums.FindName(nm);
 }
 
 // idx is an arbitrary number, returns NULL when no more values
@@ -3840,27 +3862,29 @@ cssSpace* cssProgSpace::GetParseSpace(int idx) {
   else if(idx == dynamics)
     return &statics;
   else if(idx == dynamics+1)
-    return &hard_funs;
-  else if(idx == dynamics+2)
-    return &hard_vars;
-  else if(idx == dynamics+3)	// global variables
-    return &cssMisc::Externs;
-  else if(idx == dynamics+4)
-    return &cssMisc::HardFuns;
-  else if(idx == dynamics+5)
-    return &cssMisc::HardVars;
-  else if(idx == dynamics+6)
-    return &cssMisc::Commands;
-  else if(idx == dynamics+7)
-    return &cssMisc::Functions;
-  else if(idx == dynamics+8)
-    return &cssMisc::Constants;
-  else if(idx == dynamics+9)
-    return &cssMisc::Enums;
-  else if(idx == dynamics+10)
-    return &cssMisc::Settings;
-  else if(idx == dynamics+11)
     return &prog_vars;
+  else if(idx == dynamics+2)
+    return &hard_funs;
+  else if(idx == dynamics+3)
+    return &hard_vars;
+  else if(idx == dynamics+4)
+    return &enums;
+  else if(idx == dynamics+5)	// global variables
+    return &cssMisc::Externs;
+  else if(idx == dynamics+6)
+    return &cssMisc::HardFuns;
+  else if(idx == dynamics+7)
+    return &cssMisc::HardVars;
+  else if(idx == dynamics+8)
+    return &cssMisc::Commands;
+  else if(idx == dynamics+9)
+    return &cssMisc::Functions;
+  else if(idx == dynamics+10)
+    return &cssMisc::Constants;
+  else if(idx == dynamics+11)
+    return &cssMisc::Enums;
+  else if(idx == dynamics+12)
+    return &cssMisc::Settings;
   else
     return NULL;
 }
@@ -3895,9 +3919,6 @@ cssElPtr& cssProgSpace::ParseName(const char* nm) {
 
 cssElPtr& cssProgSpace::FindTypeName(const char* nm) {
   cssElPtr& tp_ptr = types.FindName(nm);
-  if(tp_ptr != 0)
-    return tp_ptr;
-  tp_ptr = prog_types.FindName(nm);
   if(tp_ptr != 0)
     return tp_ptr;
   return cssMisc::TypesSpace.FindName(nm);
@@ -3981,21 +4002,22 @@ int cssProgSpace::GetFile(fstream& fh, const char* fname) {
 
 // this compiles one line of code, does not allow for run-last type shell execution
 int cssProgSpace::CompileLn(istream& fh, bool* err) {
-  Prog()->MarkParseStart();
-  int old_src_ln = src_ln;
+  cssProg* parse_prog = Prog();
+  int parse_prog_sz = Prog()->size;
+
   int retval = cssProg::YY_Ok;
   do {
     ResetParseFlags();
     retval = yyparse();		// parse current line
   } while(retval == cssProg::YY_Parse);
 
-  if (retval == cssProg::YY_Err) { // remove source code associated with errors
+  if (retval == cssProg::YY_Err) { // remove code associated with errors
     if (err) *err = true;
-    src_ln = old_src_ln;
-    Prog()->ZapLastParse();
+    parse_prog->ZapFrom(parse_prog_sz);
   }
-  else
+  else {
     DoCompileCtrl();		// do any compile control things necessary
+  }
 
   return retval;
 }
@@ -4034,6 +4056,8 @@ bool cssProgSpace::Compile(const char* fname) {
     if(!dir.empty())
       taMisc::css_include_paths.AddUnique(dir);
     SetName(fname);
+    cur_fnm = fname;
+    cur_fnm_lno = 0;
     rval = Compile(fh);
     fh.close(); fh.clear();
   }
@@ -4048,9 +4072,15 @@ bool cssProgSpace::CompileCode(const String& code) {
 }
 
 void cssProgSpace::Include(const char* fname) {
-  String cur_name = name;
+  String save_name = name;
+  String save_fnm = cur_fnm;
+  int save_lno = cur_fnm_lno;
+
   Compile(fname);
-  SetName(cur_name);
+
+  SetName(save_name);
+  cur_fnm = save_fnm;
+  cur_fnm_lno = save_lno;
 }
 
 void cssProgSpace::CompileRunClear(const char* fname) {
@@ -4102,31 +4132,30 @@ bool cssProgSpace::DoCompileCtrl() {
 bool cssProgSpace::ParseElseCheck() {
   int c;
   bool got_else = false;
-  cssProg* prg = Prog();
-  while (isspace(c=prg->Getc())); // skip space
+  while (isspace(c=Getc())); // skip space
   if(c == 'e') {
-    if(prg->Getc() == 'l') {
-      if(prg->Getc() == 's') {
-	if(prg->Getc() == 'e') {
+    if(Getc() == 'l') {
+      if(Getc() == 's') {
+	if(Getc() == 'e') {
 	  got_else = true;
-	  prg->unGetc(); prg->unGetc();
-	  prg->unGetc(); prg->unGetc();
+	  unGetc(); unGetc();
+	  unGetc(); unGetc();
 	}
 	else {
-	  prg->unGetc(); prg->unGetc();
-	  prg->unGetc(); prg->unGetc();
+	  unGetc(); unGetc();
+	  unGetc(); unGetc();
 	}
       }
       else {
-	prg->unGetc(); prg->unGetc(); prg->unGetc();
+	unGetc(); unGetc(); unGetc();
       }
     }
     else {
-      prg->unGetc(); prg->unGetc();
+      unGetc(); unGetc();
     }
   }
   else {
-    prg->unGetc();
+    unGetc();
   }
   return got_else;
 }
@@ -4343,96 +4372,63 @@ void cssProgSpace::SetDebug(int dblev) {
   yydebug = (dblev > 3);
 }
 
+void cssProgSpace::ListFun(const String& fnm) {
+  if(!HaveCmdShell()) return;
+  pager_ostream& fh = cmd_shell->pgout;
+  fh.start();
+
+  bool got_one = false;
+  String clnm;
+  String funm = fnm;
+  if(fnm.contains("::")) {
+    clnm = fnm.before("::");
+    funm = fnm.after("::");
+  }
+
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
+      if(clnm.nonempty() && cl->name != clnm) continue;
+      cssElPtr ptr = cl->methods->FindName(funm); // find name of this type..
+      if(ptr != 0) {
+	cssMbrScriptFun* meth = (cssMbrScriptFun*)cl->methods->FastEl(ptr.dx);
+	fh << "\nListing of Method: " << cl->name << "::" << meth->name << "\n";
+	cssProg* fun = meth->GetSubProg();
+	if(fun)
+	  fun->ListSrc();
+	got_one = true;
+      }
+    }
+  }
+
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->name == funm) {
+      if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
+	fh << "\nListing of Function: " << el->name << "\n";
+	el->GetSubProg()->ListSrc();
+	got_one = true;
+      }
+    }
+  }
+  if(!got_one)
+    cssMisc::Warning(Prog(), "Function", fnm, "not found!");
+}
+
 void cssProgSpace::ListSrc(int stln) {
   if(!HaveCmdShell()) return;
   pager_ostream& fh = cmd_shell->pgout;
   fh.start();
-  list_ln = -1;
-  if(stln < 0 && size > 1) {	// prog currently running; start list from there
-    stln = Prog()->CurSrcLn();
+  if(stln < 0) {
+    if(size > 1)	// prog currently running; start list from there
+      stln = Prog()->CurSrcLn();
+    else
+      stln = list_ln;
   }
   fh << "\nListing of Program: " << name << "\n";
-  // only output functions upon first functions print..
-  bool first_type = true;
-  bool first_fun = true;
-  for(int i=0;i<types.size;i++) {
-    cssEl* el = types[i];
-    if(first_type) {
-      fh << "\nTypes:\n\n";
-      first_type = false;
-    }
-    el->TypeInfo(*fh.fout);	// todo: pager
-    if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
-      for(int j=0;j<cl->methods->size;j++) {
-	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun) fun->ListSrc(fh, 0, stln);
-      }
-    }
-  }
-  for(int i=0;i<statics.size;i++) {
-    cssEl* el = statics[i];
-    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
-      if(first_fun) {
-	fh << "\nFunctions:\n\n";
-	first_fun = false;
-      }
-      fh << el->PrintStr() << "\n";
-      el->GetSubProg()->ListSrc(fh, 0, stln);
-    }
-  }
-  Prog(0)->ListSrc(fh, 0, stln);
+  ListSrc_impl(fh, stln);
   fh << "\n";
-}
-
-void cssProgSpace::ListImpl(int stln) {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-  fh.start();
-  list_ln = -1;
-  if(stln < 0 && size > 1) {	// prog currently running; start list from there
-    stln = Prog()->CurSrcLn();
-  }
-  fh << "\nListing of Program: " << name << "\n";
-  // only output functions upon first functions print..
-  bool first_type = true;
-  bool first_fun = true;
-  for(int i=0;i<types.size;i++) {
-    cssEl* el = types[i];
-    if(first_type) {
-      fh << "\nTypes:\n\n";
-      first_type = false;
-    }
-    el->TypeInfo(*fh.fout);	// todo: pager
-    if(el->GetType() == cssEl::T_ClassType) {
-      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
-      for(int j=0;j<cl->methods->size;j++) {
-	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-	if(fun) fun->ListImpl(fh, 1, stln);
-      }
-    }
-  }
-  for(int i=0;i<statics.size;i++) {
-    cssEl* el = statics[i];
-    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
-      if(first_fun) {
-	fh << "\nFunctions:\n\n";
-	first_fun = false;
-      }
-      fh << el->PrintStr() << "\n";
-      el->GetSubProg()->ListImpl(fh, 1, stln);
-    }
-  }
-  Prog(0)->ListImpl(fh, 0, stln);
-  fh << "\n";
-}
-
-void cssProgSpace::List(int stln) {
-  if(!HaveCmdShell()) return;
-  if(ListDebug() >= 2)
-    ListImpl(stln);
-  else
-    ListSrc(stln);
 }
 
 void cssProgSpace::ListConstants() {
@@ -4447,6 +4443,9 @@ void cssProgSpace::ListDefines() {
 
 void cssProgSpace::ListEnums() {
   if(!HaveCmdShell()) return;
+  cmd_shell->pgout << "\nEnumerated types in local program space\n";
+  enums.NameList(cmd_shell->pgout);
+  cmd_shell->pgout << "\nEnumerated types in global name space\n";
   cssMisc::Enums.NameList(cmd_shell->pgout);
 }
 
@@ -4473,9 +4472,13 @@ void cssProgSpace::ListGlobals() {
   
   fh << "Global vars:\n";
   cssMisc::HardVars.List(fh);
+  fh << "\n";
   cssMisc::Externs.List(fh);
+  fh << "\n";
   hard_vars.List(fh);
+  fh << "\n";
   prog_vars.List(fh);
+  fh << "\n";
 }
 
 void cssProgSpace::ListLocals(int levels_back) {
@@ -4496,10 +4499,13 @@ void cssProgSpace::ListObjHards() {
   if(!HaveCmdShell()) return;
   pager_ostream& fh = cmd_shell->pgout;
   
-  fh << "Containing object (Script or Program) vars:\n";
+  fh << "Containing object (Script or Program) vars (in reverse search order):\n";
   hard_vars.List(fh);
-  prog_vars.List(fh);
+  fh << "\n";
   hard_funs.List(fh);
+  fh << "\n";
+  prog_vars.List(fh);
+  fh << "\n";
 }
 
 void cssProgSpace::ListSettings() {
@@ -4524,7 +4530,6 @@ void cssProgSpace::ListTypes() {
   fh << "\n==========================\n";
   fh << "Types local to current top-level program space (" << name << "):" << "\n";
   cmd_shell->src_prog->types.NameList(fh);
-  cmd_shell->src_prog->prog_types.NameList(fh);
 }
 
 static char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",
@@ -4974,7 +4979,7 @@ void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
 void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
   cmd_prog->CompileCode(ln);
   if(cmd_prog->debug >= 2) {
-    cmd_prog->ListImpl();
+    cmd_prog->ListSrc(0);
   }
   bool run_cmd = true;
   if(cmd_prog->parse_depth > 0) { // user entered a { so don't run yet
@@ -4982,7 +4987,7 @@ void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
       cerr << "<cmdshell: parsing more (depth)>\n";
     run_cmd = false;
   }
-  if(cmd_prog->Prog()->CurSrcCharsLeft() > 0) { // more stuff left to parse, not sure about this
+  if(cmd_prog->CurSrcCharsLeft() > 0) { // more stuff left to parse, not sure about this
     if(cmd_prog->debug > 0)
       cerr << "<cmdshell: more left to parse)>\n";
     run_cmd = false;
