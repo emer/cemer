@@ -283,9 +283,19 @@ void TemtClient::cmdRunProgram() {
     }
   }
   
+  bool sync = name_params.GetValDef("sync", false).toBool();
   // run
-  adapter()->SetProg(prog);
-  QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
+  if (sync) {
+    prog->Run();
+    if (prog->ret_val != Program::RV_OK) {
+      SendError("RunProgram " + pnm + "->Run() failed with ret_val: "
+        + String(prog->ret_val));
+      return;
+    }
+  } else { // async
+    adapter()->SetProg(prog);
+    QTimer::singleShot(0, adapter(), SLOT(prog_Run()));
+  }
   SendOk();
 }
 
