@@ -240,7 +240,7 @@ return;
 
 }
 
-void TemtClient::cmdRunProgram() {
+void TemtClient::cmdRunProgram(bool sync) {
   String pnm = pos_params.SafeEl(0);
   if (pnm.empty()) {
     SendError("RunProgram: program name expected");
@@ -283,7 +283,6 @@ void TemtClient::cmdRunProgram() {
     }
   }
   
-  bool sync = name_params.GetValDef("sync", false).toBool();
   // run
   if (sync) {
     prog->Run();
@@ -865,7 +864,10 @@ void TemtClient::ParseCommand(const String& cl) {
     cmdRemoveData();
   } else
   if (cmd == "RunProgram") {
-    cmdRunProgram();
+    cmdRunProgram(true);
+  } else
+  if (cmd == "RunProgramAsync") {
+    cmdRunProgram(false);
   } else
   if (cmd == "SetDataCell") {
     cmdSetDataCell();
