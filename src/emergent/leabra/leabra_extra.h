@@ -987,16 +987,30 @@ private:
   void 	Destroy()		{ };
 };
 
+class LEABRA_API V1FeatInhibSpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for V1 layer units based on feature-level inhibition
+INHERITED(taBase)
+public:
+  float		feat_gain;	// multiplier for feature-level inhibition
+  float		dist_sigma;	// Gaussian std deviation (sigma) for weighting competitors based on distance, in normalized units relative to max x,y size dimension of the layer group geometry
+  float		i_rat_thr;	// optimization threshold of unit i_thr relative to group's inhib threshold -- if less than this threshold, no distance costs are assessed
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(V1FeatInhibSpec);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
-  // LayerSpec that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups, and must be of LeabraV1Layer type!)
+  // LayerSpec that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups, and must be of LeabraV1Layer type!) -- feature inhibition is based on distance -- adds to layer-level gp_g based inhib for each unit in proportion to distance from active units
 INHERITED(LeabraLayerSpec)
 public:
-  LeabraInhibSpec feat_inhib;	// #CAT_Activation how to compute inhibition for feature groups -- for kwta modes, a single global inhibition value is computed for the entire layer
-  KWTASpec	feat_kwta;	// #CAT_Activation desired activity level for feature groups (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
+  V1FeatInhibSpec	feat_inhib; // feature-level inhibition parameters
 
-  override void	Compute_Active_K(LeabraLayer* lay);
-  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
-  override void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group* fug, LeabraNetwork* net);
+  // compute active units in active_buf for given feature unit group
+
   override void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
 
   override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
