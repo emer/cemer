@@ -302,6 +302,7 @@ void LVConSpec::Initialize() {
 void LVSpec::Initialize() {
   delta_on_sum = false;
   use_actual_er = false;
+  min_lvi = 0.0f;
   syn_dep = false;
 }
 
@@ -509,18 +510,18 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp) {
   DaModUnit* lveu = (DaModUnit*)lve_ugp->FastEl(0);
   DaModUnit* lviu = (DaModUnit*)lvi_ugp->FastEl(0);
 
-  float lvd = lveu->act_eq - lviu->act_eq;
+  float lvd = lveu->act_eq - MAX(lviu->act_eq, lv.min_lvi);
   float lv_da = lvd - lveu->misc_1;
   return lv_da;
 }
 
 float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay) {
   float lv_da = 0.0f;
-  if(lv.delta_on_sum) {
+  if(lv.delta_on_sum) { // note: this is not the default!  doesn't work as well as other
     DaModUnit* lveu = (DaModUnit*)lve_lay->units.Leaf(0); // first guy holds prior val
     float lve_avg = Compute_ActEqAvg(lve_lay);
     float lvi_avg = Compute_ActEqAvg(lvi_lay);
-    float lvd = lve_avg - lvi_avg;
+    float lvd = lve_avg - MAX(lvi_avg, lv.min_lvi);
     lv_da = lvd - lveu->misc_1;
   }
   else {

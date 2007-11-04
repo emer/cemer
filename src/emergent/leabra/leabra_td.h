@@ -143,8 +143,8 @@ INHERITED(ScalarValLayerSpec)
 public:
   enum RewardType {		// how do we get the reward values?
     OUT_ERR_REW,		// get rewards as a function of errors on the output layer ONLY WHEN RewTarg layer act > .5 -- get from markerconspec from output layer(s)
-    EXT_REW,			// get rewards as external inputs marked as ext_flag = TARG to the first unit in the layer
-    DA_REW			// get rewards from da values on first unit in layer
+    EXT_REW,			// get rewards as external inputs marked as ext_flag = TARG to the first unit in the layer (if ext val == norew_val, then no ext rew signaled)
+    DA_REW			// get rewards from da values on first unit in layer  (if ext val == norew_val, then no ext rew signaled)
   };
 
   RewardType	rew_type;	// #APPLY_IMMED how do we get the reward values?

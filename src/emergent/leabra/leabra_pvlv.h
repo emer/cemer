@@ -251,6 +251,7 @@ INHERITED(taBase)
 public:
   bool		delta_on_sum;	// #DEF_false if there are multiple lv subgroups, compute the temporal delta on the summed lv values (else deltas are per each sub-group, then summed)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
+  float		min_lvi;	// minimum effective lvi value, for computing lv da
   bool		syn_dep;	// #DEF_false #APPLY_IMMED use the old synaptic depression version of LV
 
   void 	Defaults()	{ Initialize(); }

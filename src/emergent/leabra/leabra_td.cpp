@@ -513,9 +513,16 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay, 
      DaModUnit* u = (DaModUnit*)ugp->Leaf(0);
-     u->misc_1 = 1.0f;		// indication of reward!
      float er = u->ext;
-     Compute_UnitDa(er, u, ugp, lay, net);
+     if(er == rew.norew_val) {
+       u->misc_1 = 0.0f;	// indication of no reward!
+       u->ext = rew.norew_val;	// this is appropriate to set here..
+       ClampValue(ugp, net);
+     }
+     else {
+       u->misc_1 = 1.0f;		// indication of reward!
+       Compute_UnitDa(er, u, ugp, lay, net);
+     }
      );
 }
 
@@ -524,7 +531,15 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
     (lay, 
      DaModUnit* u = (DaModUnit*)ugp->Leaf(0);
      float er = u->dav;
-     Compute_UnitDa(er, u, ugp, lay, net);
+     if(er == rew.norew_val) {
+       u->misc_1 = 0.0f;	// indication of no reward!
+       u->ext = rew.norew_val;	// this is appropriate to set here..
+       ClampValue(ugp, net);
+     }
+     else {
+       u->misc_1 = 1.0f;		// indication of reward!
+       Compute_UnitDa(er, u, ugp, lay, net);
+     }
      );
 }
 

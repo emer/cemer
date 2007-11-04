@@ -1239,6 +1239,10 @@ void NetMonitor::UpdateDataTable(bool reset_first) {
 }
 
 void NetMonitor::GetMonVals() {
+  if(TestError(!data, "GetMonVals", "data pointer not set!"))
+    return;
+  if(TestError(!data->WriteAvailable(), "GetMonVals", "Cannot write to data -- maybe need to set WriteItem to point to row to write to?"))
+    return;
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
     nmi->GetMonVals(data);
