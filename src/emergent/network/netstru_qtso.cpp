@@ -2070,7 +2070,8 @@ void NetView::Render_net_text() {
   int chld_idx = 0;
   int disp_idx = 0;
   int per_row = 2;
-  int n_rows = 8;
+  int n_rows = 9;
+  // todo: could optimize 1st 3 counters to be on 1 row to save a row..
   for(int i=td->members.size-1; i>=0; i--) {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;

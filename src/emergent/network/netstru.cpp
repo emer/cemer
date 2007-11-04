@@ -4402,7 +4402,9 @@ void Network::Initialize() {
 
   batch = 0;
   epoch = 0;
+  group = 0;
   trial = 0;
+  tick = 0;
   cycle = 0;
   time = 0.0f;
 
@@ -4492,7 +4494,9 @@ void Network::Copy_(const Network& cp) {
 
   batch = cp.batch;
   epoch = cp.epoch;
+  group = cp.group;
   trial = cp.trial;
+  tick = cp.tick;
   cycle = cp.cycle;
   time = cp.time;
   group_name = cp.group_name;
@@ -5273,7 +5277,9 @@ void Network::Init_Counters() {
   // this is one you do not reinit: loops over inits!
 //   batch = 0;
   epoch = 0;
+  group = 0;
   trial = 0;
+  tick = 0;
   cycle = 0;
   time = 0.0f;
 }

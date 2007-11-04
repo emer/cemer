@@ -377,13 +377,14 @@ public:
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
 
   virtual void	Copy_NoData(const DataCol& cp);
-  // #CAT_ObjectMgmt copy the structure of the datatable without getting all the data
+  // #CAT_Copy copy the structure of the datatable without getting all the data
   virtual void 	CopyFromCol_Robust(const DataCol& cp); 
-  // #CAT_ObjectMgmt copy col, but don't change schema; robust to differences in type and format of the cells
+  // #CAT_Copy copy col, but don't change schema; robust to differences in type and format of the cells
   virtual void	CopyFromRow(int dest_row, const DataCol& cp, int src_row);
-  // #CAT_ObjectMgmt copy one row from source to given row in this object, assumes that the two have the same type and, if matrix, cell_size
+  // #CAT_Copy copy one row from source to given row in this object, assumes that the two have the same type and, if matrix, cell_size
   virtual void	CopyFromRow_Robust(int dest_row, const DataCol& cp, int src_row);
-  // #CAT_ObjectMgmt copy one row from source to given row in this object, robust to differences in type and format of the cells
+  // #CAT_Copy copy one row from source to given row in this object, robust to differences in type and format of the cells
+
   //IMPORTANT: DO NOT CHANGE THE FOLLOWING METHODS TO VIRTUAL
   void		ChangeColType(ValType new_type);
   // #CAT_ObjectMgmt #MENU change the type of the data in this col, without loss of data
@@ -1016,11 +1017,13 @@ public:
   virtual int  		MaxLength();		// #IGNORE
 
   virtual void	Copy_NoData(const DataTable& cp);
-  // #CAT_ObjectMgmt copy only the column structure, but no data, from other data table
+  // #CAT_Copy copy only the column structure, but no data, from other data table
   virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
-  // #CAT_ObjectMgmt copy one row from source to given row in this object: source must have exact same column structure as this!!
-  virtual bool	CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row);
-  // #CAT_ObjectMgmt copy one column, row from source -- is robust to differences in type and matrix sizing (returns false if not successful)
+  // #CAT_Copy copy one row from source to given row in this object: source must have exact same column structure as this!!
+  virtual bool	CopyCell(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row);
+  // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
+  virtual bool	CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) { return CopyCell(dest_col, dest_row, src, src_col, src_row); }
+  // #CAT_Obsolete this is an obsolete name for CopyCell -- use CopyCell instead
 
   virtual void	UniqueColNames();
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)

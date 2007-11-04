@@ -716,10 +716,10 @@ void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
 }
 
 
-bool DataTable::CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) {
+bool DataTable::CopyCell(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) {
   DataCol* dar = data.SafeEl(dest_col);
   DataCol* sar = src.data.SafeEl(src_col);
-  if(TestError(!dar || !sar, "CopyColRow", "column(s) out of range, not copied!"))
+  if(TestError(!dar || !sar, "CopyCell", "column(s) out of range, not copied!"))
     return false;
   dar->CopyFromRow_Robust(dest_row, *sar, src_row);
   return true;
