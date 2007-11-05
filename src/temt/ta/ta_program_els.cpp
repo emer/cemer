@@ -892,7 +892,7 @@ const String MemberAssign::GenCssBody_impl(int indent_level) {
   rval += expr.GetFullExpr() + ";\n";
   if (update_after) {
     rval += cssMisc::Indent(indent_level);
-    rval += obj->name.cat("->UpdateAfterEdit();\n");
+    rval += obj->name + "->UpdateAfterEdit();\n";
   }
   return rval;
 }
@@ -912,7 +912,7 @@ String MemberAssign::GetDisplayName() const {
 //////////////////////////
 
 void MemberFmArg::Initialize() {
-  update_after = false;
+  update_after = true;
   quiet = false;
 }
 
@@ -939,7 +939,7 @@ const String MemberFmArg::GenCssBody_impl(int indent_level) {
   rval += il2 + flpth + " = ";
   rval += "arg_str;\n";
   if (update_after) {
-    rval += il2 + obj->name.cat("->UpdateAfterEdit();\n");
+    rval += il2 + obj->name + "->UpdateAfterEdit();\n";
   }
 
   if(!quiet)
