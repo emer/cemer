@@ -109,6 +109,22 @@ int core_nprocs;		// total number of processors
 const int core_max_nprocs = 64; // maximum number of processors!
 QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
 
+// returns value of i before inc, then incs
+#ifdef Q_OS_MAC
+#include <libkern/OSAtomic.h>
+#define  __sync_fetch_and_add(a, b) (OSAtomicAdd32(b,a)-1)
+#else // linux
+inline int __sync_fetch_and_add(int * operand, int incr)
+{
+    asm volatile (
+        "lock xaddl %1, %0\n" // add incr to operand
+        :  // no output
+        : "m" (*operand), "r" (incr)
+    );
+    return incr;
+}
+#endif
+
 class QNetThread: public QThread {
 public:
    void run();
@@ -159,8 +175,10 @@ public:
 
 const int n_layers = 2;
 int n_units;			// number of units per layer
+int n_units_flat; // total number of units (flattened, all layers)
 int n_cycles;			// number of cycles of updating
 Unit* layers[n_layers];		// layers = arrays of units
+Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
 
 // construct the network
@@ -168,10 +186,13 @@ int n_tot; // total units (reality check)
 void MakeNet() {
   layers[0] = new Unit[n_units];
   layers[1] = new Unit[n_units];
-
+  layers_flat = new Unit*[n_units_flat];
+  int i_fl = 0;
   for(int i=0;i<n_units;i++) {
     Unit& un1 = layers[0][i];
     Unit& un2 = layers[1][i];
+    layers_flat[i_fl++] = &un1;
+    layers_flat[i_fl++] = &un2;
 
     // random initial activations [0..1]
     un1.act = (float)rand() / RAND_MAX;
@@ -209,27 +230,11 @@ void DeleteNet() {
 int l;
 int g_u;
 
-//NOTE: needs to be replaced by the Intel xadd instruction
-// returns value of i before inc, then incs
-inline int atomic_inc(int* dst) {
-  return (*dst)++;
-}
-
-int __sync_fetch_and_add(int * operand, int incr)
-{
-    asm volatile (
-        "lock xaddl %1, %0\n" // add incr to operand
-        :  // no output
-        : "m" (*operand), "r" (incr)
-    );
-    return incr;
-}
-
 
 void ComputeNets_inner() {
   int my_u = __sync_fetch_and_add(&g_u, 1);
-  while (my_u < n_units) {
-    Unit& un = layers[l][my_u];
+  while (my_u < n_units_flat) {
+    Unit& un = *(layers_flat[my_u]); //note: accessed flat
     un.net = 0.0f;
 
     for(int j=0;j<n_units;j++) {
@@ -244,7 +249,7 @@ void ComputeNets() {
   // compute net input = activation times weights
   // this is the "inner loop" that takes all the time!
   
-  for(l=0;l<n_layers;l++) {
+/*  for(l=0;l<n_layers;l++) {
     g_u = 0;
     // start all the other threads first...
     for (int t = 1; t < core_nprocs; ++t)
@@ -252,7 +257,14 @@ void ComputeNets() {
       
     // and then work on it myself too (if others haven't finished yet!)
     ComputeNets_inner();
-  }
+  }*/
+  g_u = 0;
+  // start all the other threads first...
+  for (int t = 1; t < core_nprocs; ++t)
+  threads[t]->start();
+  
+  // and then work on it myself too (if others haven't finished yet!)
+  ComputeNets_inner();
 }
 
 
@@ -294,6 +306,7 @@ int main(int argc, char* argv[]) {
   srand(56);			// always start with the same seed!
 
   n_units = (int)strtol(argv[1], NULL, 0);
+  n_units_flat = n_units * n_layers;
   n_cycles = (int)strtol(argv[2], NULL, 0);
   core_nprocs = (int)strtol(argv[3], NULL, 0);
   if (core_nprocs <= 0) core_nprocs = 1;
