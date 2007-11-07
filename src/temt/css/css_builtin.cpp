@@ -46,6 +46,9 @@
 #ifdef TA_OS_LINUX
 #include <sys/time.h>
 #endif
+#ifdef TA_OS_MAC
+#include <sys/time.h>
+#endif
 
 #if (defined(TA_OS_WIN))
 #include <complex>

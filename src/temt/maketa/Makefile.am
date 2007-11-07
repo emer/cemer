@@ -1,7 +1,6 @@
 #*********************************************************
 #  Process this file with automake to produce Makefile.in
 #*********************************************************
-LIBS=
 DEFS= @NOOP_MAKETA@
 PROJNAME = maketa
 srcdir = @srcdir@
