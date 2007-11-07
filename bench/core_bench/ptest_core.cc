@@ -117,9 +117,9 @@ QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (do
 inline int __sync_fetch_and_add(int * operand, int incr)
 {
     asm volatile (
-        "lock xaddl %1, %0\n" // add incr to operand
-        :  // no output
-        : "m" (*operand), "r" (incr)
+        "lock xaddl %0, %1\n" // add incr to operand
+        :  "=r" (incr) // no output
+        : "m" (*operand), "0" (incr)
     );
     return incr;
 }

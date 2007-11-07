@@ -1,12 +1,12 @@
 #!/bin/csh -f
 
-#./ptest_core 50 40000 1
-#./ptest_core 50 40000 2
-#./ptest_core 50 40000 4
+./ptest_core 50 40000 1
+./ptest_core 50 40000 2
+./ptest_core 50 40000 4
 
-#./ptest_core 50 400000 1
-
-#./ptest_core 100 100000 1
+./ptest_core 100 10000 1
+./ptest_core 100 10000 2
+./ptest_core 100 10000 4
 
 #./ptest_core 500 4000 1
 
