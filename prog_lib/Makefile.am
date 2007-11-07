@@ -9,7 +9,6 @@ dist_pkgdata_prog_lib_DATA =\
 	BpBatch.prog \
 	BpEpoch.prog \
 	BpEpochMonitor.prog \
-	BpTestAll.progp \
 	BpTrain.prog \
 	BpTrial.prog \
 	BpTrialMonitor.prog \
