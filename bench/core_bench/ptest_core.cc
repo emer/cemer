@@ -104,7 +104,12 @@ TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
 
 // core version 
 #include <QtCore/QThread>
+#include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
 #include <QtCore/QCoreApplication>
+#include <pthread.h>
+#include <sys/signal.h>
+
 int core_nprocs;		// total number of processors
 const int core_max_nprocs = 64; // maximum number of processors!
 QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
@@ -127,8 +132,60 @@ inline int __sync_fetch_and_add(int * operand, int incr)
 
 class QNetThread: public QThread {
 public:
-   void run();
+  inline bool	isActive() const {return m_active;}
+  inline bool	isSuspended() const {return m_suspended;}
+  
+  void 		suspend();
+  void		resume();
+  void		terminate();
+  
+  QNetThread();
+protected:
+  QMutex	mutex;
+  QWaitCondition	wc;
+  bool		m_suspended;
+  bool		m_active;
+  Qt::HANDLE	m_thread_id; // for the thread, set in run
+  
+  void 		run();
+  void		run_impl();
 };
+
+QNetThread::QNetThread() {
+  m_thread_id = 0;
+  m_active = false;
+  m_suspended = false;
+}
+
+void QNetThread::suspend() {
+  if (m_suspended) return;
+  m_suspended = true;
+  wc.wait(&mutex);;
+}
+
+void QNetThread::resume() {
+  if (!m_suspended) return;
+  wc.wakeAll();;
+  m_suspended = true;
+}
+
+void QNetThread::run() {
+  m_active = true;
+  m_thread_id = currentThreadId();
+  mutex.lock();
+  while (m_active) {
+    run_impl();
+    suspend();
+  }
+  mutex.unlock();
+}
+
+void QNetThread::terminate() {
+  m_active = false;
+  if (!isFinished()) resume();
+  QThread::terminate();
+}
+
 
 void MakeThreads() {
   for (int i = 1; i < core_nprocs; i++) {
@@ -260,8 +317,13 @@ void ComputeNets() {
   }*/
   g_u = 0;
   // start all the other threads first...
-  for (int t = 1; t < core_nprocs; ++t)
-  threads[t]->start();
+  for (int t = 1; t < core_nprocs; ++t) {
+    QNetThread* th = (QNetThread*)threads[t];
+    if (th->isActive())
+      th->resume();
+    else
+      th->start();
+  }
   
   // and then work on it myself too (if others haven't finished yet!)
   ComputeNets_inner();
@@ -285,9 +347,10 @@ float ComputeActs() {
 // core code
 
 
-void QNetThread::run() {
+void QNetThread::run_impl() {
   ComputeNets_inner();
 }
+
 
 
 int main(int argc, char* argv[]) {
