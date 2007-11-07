@@ -146,8 +146,7 @@ You will see that it is currently configured for 3 layers, which is fine for our
 
 Note that the system automatically applies changes when you move from one selection to the next.
 
-Next, return to the [[.PanelTab.LeabraWizard_0]] tab, and at the bottom, click the <code>Network</code> 
-menu button, and choose the [[.wizards.LeabraWizard_0.StdNetwork()|Network/StdNetwork]] option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
+Next, return to the [[.PanelTab.LeabraWizard_0]] tab, and at the bottom, click the <code>Network</code> menu button, and choose the [[.wizards.LeabraWizard_0.StdNetwork()|Network/StdNetwork]] option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
 
 You will see a network appear in the right view panel, and the left browser will expand to reveal all of the objects created (e.g., layers and specifications).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
 
@@ -246,8 +245,7 @@ The next step is to create [[.docs.Programs]] to control the presentation of the
 
 = Programs for Controlling the Simulation =
 
-Again return to the [[.PanelTab.LeabraWizard_0]] wizard panel, and now select 
-[[.wizards.LeabraWizard_0.StdProgs()|Programs/Std Progs]] from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
+Again return to the [[.PanelTab.LeabraWizard_0]] wizard panel, and now select [[.wizards.LeabraWizard_0.StdProgs()|Programs/Std Progs]] from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
 
 This created a set of standard programs that organize the presentation of input patterns to the network into a hierarchy of time scales:
 
@@ -325,10 +323,7 @@ Another common analysis task is to look at the pattern of activations across tri
 Next, we need to make a Grid View of the resulting data, which will be recorded in the [[.data.gp.OutputData.TrialOutputData]] object -- do a 
 [[.data.gp.OutputData.TrialOutputData.NewGridView()|View/New Grid View]], and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
 
-The grid view will not contain the new information until the
- [[.programs.gp.LeabraAll_Std.LeabraTrain]] program is 
- [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]] and
-[[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]] again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
+The grid view will not contain the new information until the  [[.programs.gp.LeabraAll_Std.LeabraTrain]] program is [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]] and [[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]] again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
 
 To really make things clean, you can select the column headers of the columns you don't want to display (e.g., ext_rew, minus cycles) and do context menu/View Properties and then hit the Hide button at the bottom of the dialog that comes up.  Ideally, you'd just want to see the trial name, sse, and the different layer activation columns.
 
@@ -825,7 +820,9 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
    name="Browser";
    visible=1;
    m_is_root=0;
+   m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
+   m_is_dialog=0;
    toolbars {
     name=;
     el_typ=ToolBar;

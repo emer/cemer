@@ -101,6 +101,35 @@ static String wiki_parse_str_between(const String& cl, const String& sts, const 
   return _nilString;
 }
 
+static bool wiki_parse_check_seq(const String& cl, int cur_pos, char trg, char trg1 = '\0', 
+				 char trg2 = '\0', char trg3 = '\0') {
+  int ln = cl.length();
+  if(cl[cur_pos] != trg) return false;
+  if(trg1 == '\0') return true;
+  if(cur_pos+1 >= ln || cl[cur_pos+1] != trg1) return false;
+  if(trg2 == '\0') return true;
+  if(cur_pos+2 >= ln || cl[cur_pos+2] != trg2) return false;
+  if(trg3 == '\0') return true;
+  if(cur_pos+3 >= ln || cl[cur_pos+3] != trg3) return false;
+  return true;
+}
+
+static int wiki_parse_find_term(const String& cl, int cur_pos, char trg, char trg1 = '\0', 
+				 char trg2 = '\0', char trg3 = '\0') {
+  int ln = cl.length();
+  for(int i=cur_pos; i<ln; i++) {
+    if(cl[i] != trg) continue;
+    if(trg1 == '\0') return i;
+    if(i+1 >= ln || cl[i+1] != trg1) continue;
+    if(trg2 == '\0') return i+1;
+    if(i+2 >= ln || cl[i+2] != trg2) continue;
+    if(trg3 == '\0') return i+2;
+    if(i+3 >= ln || cl[i+3] != trg3) continue;
+    return i+3;
+  }
+  return -1;
+}
+
 String taDoc::WikiParse(const String& in_str) {
   String rval;
   String rest = in_str;
@@ -166,45 +195,61 @@ String taDoc::WikiParse(const String& in_str) {
       cl.gsub(" =", " </h1>");
     }
 
-    // links
-    String href = wiki_parse_str_between(cl, "[[", "]]");
-    if(!href.empty()) {
-      bool ta_tag = false;
-      if(href.startsWith('.')) {
-	ta_tag = true;
-	href = "ta:" + href;
-      }
-      String tag = href;
-      if(tag.contains('|')) {
-	href = href.before('|');
-	tag = tag.after('|');
-      }
-      else if(ta_tag) {
-	if(tag.contains("()")) {
-	  String fnm = tag.after('.',-1);
-	  tag = tag.before('.',-1);
-	  if(tag.contains('.')) { // should!
-	    tag = tag.after('.',-1);
+    // now process remainder of string looking for various formatting things
+    int cur_pos = 0;
+    
+    while(cur_pos < cl.length()) {
+      if(wiki_parse_check_seq(cl, cur_pos, '[', '[')) {
+	int epos = wiki_parse_find_term(cl, cur_pos+2, ']', ']');
+	if(epos > cur_pos+2) {
+	  String href = cl.at(cur_pos+2, epos-cur_pos-3); // 2 * delim -1
+	  bool ta_tag = false;
+	  if(href.startsWith('.')) {
+	    ta_tag = true;
+	    href = "ta:" + href;
 	  }
-	  tag += "." + fnm;
-	}
-	else {
-	  tag = tag.after('.',-1);
+	  String tag = href;
+	  if(tag.contains('|')) {
+	    href = href.before('|');
+	    tag = tag.after('|');
+	  }
+	  else if(ta_tag) {
+	    if(tag.contains("()")) {
+	      String fnm = tag.after('.',-1);
+	      tag = tag.before('.',-1);
+	      if(tag.contains('.')) { // should!
+		tag = tag.after('.',-1);
+	      }
+	      tag += "." + fnm;
+	    }
+	    else {
+	      tag = tag.after('.',-1);
+	    }
+	  }
+	  cl = cl.before(cur_pos) + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after(epos);
+	  cur_pos = epos+1;
+	  continue;
 	}
       }
-      cl = cl.before("[[") + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after("]]");
-    }
-
-    // bold
-    String bld = wiki_parse_str_between(cl, " '''", "''' ");
-    if(!bld.empty()) {
-      cl = cl.before(" '''") + " <b>" + bld + "</b> " + cl.after("''' ");
-    }
-    else {
-      bld = wiki_parse_str_between(cl, " ''", "'' ");
-      if(!bld.empty()) {
-	cl = cl.before(" ''") + " <i>" + bld + "</i> " + cl.after("'' ");
+      if(wiki_parse_check_seq(cl, cur_pos, '\'', '\'', '\'')) { // bold
+	int epos = wiki_parse_find_term(cl, cur_pos+3, '\'', '\'', '\'');
+	if(epos > cur_pos+3) {
+	  String bld = cl.at(cur_pos+3, epos-cur_pos-5); // 2 * delim -1
+	  cl = cl.before(cur_pos) + " <b>" + bld + "</b> " + cl.after(epos);
+	  cur_pos = epos+1;
+	  continue;
+	}
       }
+      if(wiki_parse_check_seq(cl, cur_pos, '\'', '\'')) { // emph
+	int epos = wiki_parse_find_term(cl, cur_pos+2, '\'', '\'');
+	if(epos > cur_pos+2) {
+	  String bld = cl.at(cur_pos+2, epos-cur_pos-3); // 2 * delim -1
+	  cl = cl.before(cur_pos) + " <i>" + bld + "</i> " + cl.after(epos);
+	  cur_pos = epos+1;
+	  continue;
+	}
+      }
+      cur_pos++;
     }
 
     rval += cl + "\n";
