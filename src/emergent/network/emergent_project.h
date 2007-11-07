@@ -103,8 +103,14 @@ public:
 
   virtual bool	StdProgs();
   // #MENU_BUTTON #MENU_ON_Programs #CONFIRM create a standard set of programs for running the algorithm specified by this project
+  virtual bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1);
+  // #MENU_BUTTON #MENU_SEP_BEFORE #CONFIRM #NULL_OK_0 create a standard set of testing programs for testing the network -- the call_test_from argument specifies a training program to call the testing program from (NULL for none), and call_in_loop & call_modulus specify whether to call in the loop of that program (else at the end), and how frequently to call it (modulus -- in terms of network.epoch by default -- can change to loop counter or anything else, and modulus is hard-coded -- could make it a variable instead).  Testing versions of std OutputData tables are made -- test programs use 3rd & 4th tables in data.gp.OuputData for output by default, so check that!
 
-  virtual Program_Group* StdProgs_impl(const String& prog_nm); // #IGNORE impl that actually loads progs from proglib with given name; returns new program group or NULL if not found
+  virtual Program_Group* StdProgs_impl(const String& prog_nm);
+  // #IGNORE impl that actually loads progs from proglib with given name; returns new program group or NULL if not found
+  virtual Program_Group* TestProgs_impl(const String& prog_nm, Program* call_test_from,
+					bool call_in_loop=true, int call_modulus=1);
+  // #IGNORE impl that actually loads progs from proglib with given name; returns new program group or NULL if not found
 
   void	UpdateAfterEdit();
   void 	InitLinks();

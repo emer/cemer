@@ -326,6 +326,7 @@ INHERITED(Wizard)
 public:
 
   override bool	StdProgs();
+  override bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1);
 
   TA_BASEFUNS_NOCOPY(SoWizard);
 private:

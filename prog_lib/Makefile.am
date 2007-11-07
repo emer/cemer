@@ -5,6 +5,7 @@ dist_pkgdata_prog_lib_DATA =\
 	ApplyInputs.prog \
 	ApplyInputsImage.prog \
 	BpAll_Std.progp \
+	BpAll_Test.progp \
 	BpBatch.prog \
 	BpEpoch.prog \
 	BpEpochMonitor.prog \
@@ -15,6 +16,7 @@ dist_pkgdata_prog_lib_DATA =\
 	CanvasDemo.prog \
 	CPT12axAll.progp \
 	CsAll_Std.progp \
+	CsAll_Test.progp \
 	CsBatch.prog \
 	CsCycle.prog \
 	CsEpoch.prog \
@@ -46,6 +48,7 @@ dist_pkgdata_prog_lib_DATA =\
 	SaveWeights.prog \
 	SaveWeightsSpecs.prog \
 	SoAll_Std.progp \
+	SoAll_Test.progp \
 	SoBatch.prog \
 	SoEpoch.prog \
 	SoEpochMonitor.prog \

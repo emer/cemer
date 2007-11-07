@@ -850,7 +850,7 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
   int rest_idx = -1;
   int n_tot = 0;
   for(int i=0;i<6;i++) {
-    if(nary[i] == 0) break;
+    if(!dary[i]) break;
     GetDest(dary[i], src, "SplitByN_" + String(i));
     dary[i]->StructUpdate(true);
     dary[i]->Copy_NoData(*src);
@@ -886,16 +886,21 @@ bool taDataProc::SplitRowsN(DataTable* src, DataTable* dest_1, int n1, DataTable
     }
     else {
       ni++;
-      if((nary[ni] == 0) || !dary[ni]) break;
+      if(!dary[ni]) break;
       st_n = row;
       end_n = st_n + nary[ni];
 
-      dary[ni]->AddBlankRow();
-      dary[ni]->CopyFromRow(-1, *src, row);
+      if(nary[ni] > 0) {
+	dary[ni]->AddBlankRow();
+	dary[ni]->CopyFromRow(-1, *src, row);
+      }
+      else {
+	row--;			// negate this row
+      }
     }
   }
   for(int i=0;i<6;i++) {
-    if(nary[i] == 0) break;
+    if(!dary[i]) break;
     dary[i]->StructUpdate(false);
   }
   return true;
@@ -911,7 +916,7 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
   int rest_idx = -1;
   int n_tot = 0;
   for(int i=0;i<6;i++) {
-    if(nary[i] == 0) break;
+    if(!dary[i]) break;
     GetDest(dary[i], src, "SplitByN_" + String(i));
     dary[i]->StructUpdate(true);
     dary[i]->Copy_NoData(*src);
@@ -951,16 +956,21 @@ bool taDataProc::SplitRowsNPermuted(DataTable* src, DataTable* dest_1, int n1, D
     }
     else {
       ni++;
-      if((nary[ni] == 0) || !dary[ni]) break;
+      if(!dary[ni]) break;
       st_n = row;
       end_n = st_n + nary[ni];
 
-      dary[ni]->AddBlankRow();
-      dary[ni]->CopyFromRow(-1, *src, idxs[row]);
+      if(nary[ni] > 0) {
+	dary[ni]->AddBlankRow();
+	dary[ni]->CopyFromRow(-1, *src, idxs[row]);
+      }
+      else {
+	row--;			// negate this row
+      }
     }
   }
   for(int i=0;i<6;i++) {
-    if(nary[i] == 0) break;
+    if(!dary[i]) break;
     dary[i]->StructUpdate(false);
   }
   return true;

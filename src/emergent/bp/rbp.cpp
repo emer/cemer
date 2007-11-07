@@ -426,6 +426,12 @@ bool BpWizard::StdProgs() {
   return true;
 }
 
+bool BpWizard::TestProgs(Program* call_test_from, bool call_in_loop, int call_modulus) {
+  if(!TestProgs_impl("BpAll_Test", call_test_from, call_in_loop, call_modulus))
+    return false;
+  return true;
+}
+
 bool BpWizard::SRNContext(Network* net) {
   if(!net) {
     taMisc::Error("SRNContext: must have basic constructed network first");

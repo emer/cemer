@@ -22,6 +22,7 @@
 #include "ta_dump.h"
 #include "css_ta.h"
 #include "netdata.h"
+#include "ta_program_els.h"
 
 #ifdef TA_GUI
 # include "css_qt.h"
@@ -389,8 +390,14 @@ bool Wizard::StdOutputData() {
 //////////////////////////////////
 
 bool Wizard::StdProgs() {
-  taMisc::Error("This must be redefined in algorithm-specific project!",
-		"Just call StdProgs_impl with name of std program from proglib");
+  TestError(true, "StdProgs", "This must be redefined in algorithm-specific project!",
+	     "Just call StdProgs_impl with name of std program from prog lib");
+  return false;
+}
+
+bool Wizard::TestProgs(Program* call_test_from, bool call_in_loop, int call_modulus) {
+  TestError(true, "TestProgs", "This must be redefined in algorithm-specific project!",
+	     "Just call StdProgs_impl with name of std program from prog lib");
   return false;
 }
 
@@ -418,6 +425,70 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
   return (Program_Group*)pg;
 }
 
+Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_from,
+				      bool call_in_loop, int call_modulus) {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+
+  // make testing output data tables -- used by the test programs
+  DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("OutputData");
+  if(dgp->size < 4) {
+    proj->GetNewOutputDataTable("TrialTestOutputData", true); // msg = true
+    proj->GetNewOutputDataTable("EpochTestOutputData", true);
+  }
+
+  taBase* rval = proj->programs.NewFromLibByName(prog_nm);
+  if(!rval) return NULL;
+  if(!rval->InheritsFrom(&TA_Program_Group)) {
+    taMisc::Error("Wizard::TestProgs_impl program named:", prog_nm,
+		  "is not a group of programs -- invalid for this function");
+    return NULL;
+  }
+
+  Program_Group* pg = (Program_Group*)rval;
+  Program* apin = pg->FindName("ApplyInputsTest");
+  if(apin) {
+    LayerWriter* lw = (LayerWriter*)apin->objs.FindType(&TA_LayerWriter);
+    if(lw) {
+      lw->AutoConfig();
+    }
+  }
+  Program* first_guy = pg->Leaf(0);
+  if(first_guy) {
+    tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
+    if(call_test_from) {
+      if(call_in_loop) {
+	Loop* loopel = (Loop*)call_test_from->prog_code.FindType(&TA_Loop);
+	if(!TestWarning(!loopel, "TestProgs", "Loop program element not found -- cannot call test program within loop!")) {
+	  if(call_modulus > 1) {
+	    IfElse* ife = (IfElse*)loopel->loop_code.New(1, &TA_IfElse);
+	    ife->SetProgFlag(ProgEl::NEW_EL);
+	    ife->cond.SetExpr("network.epoch % " + String(call_modulus) + " == 0");
+	    ife->desc = "only call every n epochs -- make sure epochs is appropriate, and its also a good idea to make n a variable";
+
+	    ProgramCall* pcall = (ProgramCall*)ife->true_code.New(1, &TA_ProgramCall);
+	    pcall->SetProgFlag(ProgEl::NEW_EL);
+	    pcall->target = first_guy;	    pcall->UpdateArgs();
+	    pcall->desc = "call testing program";
+	  }
+	  else {
+	    ProgramCall* pcall = (ProgramCall*)loopel->loop_code.New(1, &TA_ProgramCall);
+	    pcall->SetProgFlag(ProgEl::NEW_EL);
+	    pcall->target = first_guy;	    pcall->UpdateArgs();
+	    pcall->desc = "call testing program";
+	  }
+	}
+      }
+      else {
+	ProgramCall* pcall = (ProgramCall*)call_test_from->prog_code.New(1, &TA_ProgramCall);
+	pcall->SetProgFlag(ProgEl::NEW_EL);
+	pcall->target = first_guy;	pcall->UpdateArgs();
+	pcall->desc = "call testing program";
+      }
+    }
+  }
+  return (Program_Group*)pg;
+}
+
 /* TEMP
 
 void Wizard::NetAutoSave(SchedProcess* proc, bool just_weights) {
@@ -427,23 +498,6 @@ void Wizard::NetAutoSave(SchedProcess* proc, bool just_weights) {
   else
     proc->final_procs.FindMakeProc(NULL, &TA_SaveNetsProc);
   taMisc::DelayedMenuUpdate(proc);
-}
-
-EpochProcess* Wizard::AutoTestProc(SchedProcess* tproc, Environment* tenv) {
-  if((tproc == NULL) || (tenv == NULL)) return NULL;
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  EpochProcess* cve = (EpochProcess*)pdpMisc::FindMakeProc(proj, "TestEpoch", &TA_EpochProcess);
-  cve->CreateSubProcs();
-  cve->SetEnv(tenv);
-  cve->wt_update = EpochProcess::TEST;
-  cve->order = EpochProcess::SEQUENTIAL;
-  tproc->loop_procs.Link(cve);
-  GetStatsFromProc(cve, tproc, SchedProcess::LOOP_STATS, Aggregate::LAST);
-  EpochProcess* trepc = tproc->GetMyEpochProc();
-  if(trepc != NULL)
-    GetStatsFromProc(cve, trepc, SchedProcess::FINAL_STATS, Aggregate::LAST);
-  AddCountersToTest(cve, tproc);
-  return cve;
 }
 
 EpochProcess* Wizard::CrossValidation(SchedProcess* tproc, Environment* tenv) {

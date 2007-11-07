@@ -14,6 +14,28 @@ LeabraProject .projects[0] {
     };
   };
 
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] = [3] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [1] {
+	  String_Data @[0] { };
+	};
+      };
+      DataTable @[1] { 
+	DataTableCols @.data = [1] {
+	  String_Data @[0] { };
+	};
+      };
+      DataTable @[2] { 
+	DataTableCols @.data = [1] {
+	  String_Data @[0] { };
+	};
+      };
+    };
+    DataTable_Group @.gp[1] { };
+    DataTable_Group @.gp[2] { };
+  };
+
   taBase_Group @.data_proc = [4] {
     taDataProc @[0] { 
    UserDataItem_List @*(.user_data_) { 
@@ -37,50 +59,10 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [2] {
-    Program @[0] { 
-      ProgType_List @.types = [1] {
-	DynEnumType @[0] { 
-	  DynEnumItem_List @.enums = [2] {
-	    DynEnumItem @[0] { };
-	    DynEnumItem @[1] { };
-	  };
-	};
-      };
-
-      ProgEl_List @.prog_code = [1] {
-	ProgramCall @[0] { };
-      };
-    };
-    Program @[1] { 
-      ProgType_List @.types = [1] {
-	DynEnumType @[0] { 
-	  DynEnumItem_List @.enums = [2] {
-	    DynEnumItem @[0] { };
-	    DynEnumItem @[1] { };
-	  };
-	};
-      };
-    };
-  };
-
   DataViewer_List @.viewers = [1] {
     MainWindowViewer @[0] { 
-   UserDataItem_List @*(.user_data_) { 
-	UserDataItem @[0] { };
-	UserDataItem @[1] { };
-	UserDataItem @[2] { };
-	UserDataItem @[3] { };
-	UserDataItem @[4] { };
-	UserDataItem @[5] { };
-   };
-
       ToolBar_List @.toolbars = [1] {
-	ToolBar @[0] { 
-     UserDataItem_List @*(.user_data_) { 
-	    UserDataItem @[0] { };
-     };
-};
+	ToolBar @[0] { };
       };
 
       FrameViewer_List @.frames = [3] {
@@ -94,16 +76,7 @@ LeabraProject .projects[0] {
       };
 
       DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @[0] { 
-     UserDataItem_List @*(.user_data_) { 
-	    UserDataItem @[0] { };
-	    UserDataItem @[1] { };
-	    UserDataItem @[2] { };
-	    UserDataItem @[3] { };
-	    UserDataItem @[4] { };
-	    UserDataItem @[5] { };
-     };
-};
+	ToolBoxDockViewer @[0] { };
       };
     };
   };
@@ -174,6 +147,81 @@ LeabraProject .projects[0] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
+   DataTable @[0] {
+    name="Src";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [3] "one";"two";"three";      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @[1] {
+    name="Dest1";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [3] "one";"two";"three";      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+   DataTable @[2] {
+    name="Dest2";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @[0] {
+      name="Name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [3] "one";"two";"three";      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
   };
   DataTable_Group @.gp[1] {
    name="OutputData";
@@ -246,185 +294,13 @@ LeabraProject .projects[0] {
   step_prog=NULL;
   tags=;
   desc=;
-  Program @[0] {
-   name="Program_1";
-   tags=;
-   desc=;
-   flags=;
-   objs {
-    name=;
-    el_typ=taNBase;
-    el_def=0;
-   };
-   types {
-    name=;
-    el_typ=ProgType;
-    el_def=0;
-    DynEnumType @[0] {
-     name="my_type";
-     desc=;
-     enums {
-      name=;
-      el_typ=DynEnumItem;
-      el_def=0;
-      DynEnumItem @[0] {
-       name="Shay";
-       value=0;
-       desc=;
-      };
-      DynEnumItem @[1] {
-       name="Splay";
-       value=1;
-       desc=;
-      };
-     };
-     bits=0;
-    };
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   functions {
-    name=;
-    el_typ=Function;
-    el_def=0;
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-    ProgramCall @[0] {
-     desc=;
-     flags=;
-     target=.projects[0].programs[1]$0$;
-     targ_ld_init="*Program_2*";
-     prog_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-   };
-  };
-  Program @[1] {
-   name="Program_2";
-   tags=;
-   desc=;
-   flags=;
-   objs {
-    name=;
-    el_typ=taNBase;
-    el_def=0;
-   };
-   types {
-    name=;
-    el_typ=DynEnumType;
-    el_def=0;
-    DynEnumType @[0] {
-     name="my_type";
-     desc=;
-     enums {
-      name=;
-      el_typ=DynEnumItem;
-      el_def=0;
-      DynEnumItem @[0] {
-       name="Hey";
-       value=0;
-       desc=;
-      };
-      DynEnumItem @[1] {
-       name="Bey";
-       value=1;
-       desc=;
-      };
-     };
-     bits=0;
-    };
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   functions {
-    name=;
-    el_typ=Function;
-    el_def=0;
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-  };
  };
  viewers {
   name=;
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {
-     name="view_win_lft";
-     value 6 0=0;
-    };
-    UserDataItem @[1] {
-     name="view_win_top";
-     value 6 0=0.0009727626456879079;
-    };
-    UserDataItem @[2] {
-     name="view_win_wd";
-     value 6 0=0.9944853186607361;
-    };
-    UserDataItem @[3] {
-     name="view_win_ht";
-     value 6 0=0.4143968820571899;
-    };
-    UserDataItem @[4] {
-     name="view_win_iconified";
-     value 1 0=0;
-    };
-    UserDataItem @[5] {
-     name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAABEQAAAh8AAAK0AQAAAAYBAAAAAQ==";
-    };
-   };
-   m_data=.projects[0]$1$;
+   m_data=.projects[0]$0$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -436,15 +312,6 @@ LeabraProject .projects[0] {
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_win_visible";
-       value 1 0=1;
-      };
-     };
      m_data=NULL;
      name="Application";
      visible=0;
@@ -463,7 +330,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$1$;
+     m_root=$0$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -504,35 +371,6 @@ LeabraProject .projects[0] {
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="view_win_lft";
-       value 6 0=0;
-      };
-      UserDataItem @[1] {
-       name="view_win_top";
-       value 6 0=0.008754863403737545;
-      };
-      UserDataItem @[2] {
-       name="view_win_wd";
-       value 6 0=0.05943627282977104;
-      };
-      UserDataItem @[3] {
-       name="view_win_ht";
-       value 6 0=0.3433852195739746;
-      };
-      UserDataItem @[4] {
-       name="view_win_iconified";
-       value 1 0=0;
-      };
-      UserDataItem @[5] {
-       name="view_visible";
-       value 1 0=1;
-      };
-     };
      m_data=NULL;
      name="Tools";
      visible=1;

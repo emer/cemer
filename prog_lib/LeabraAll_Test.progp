@@ -2,17 +2,17 @@
 Program_Group .projects[0].programs.gp[1] { 
   Program_Group .projects[0].programs.gp[1] = [7] {
     Program @[0] { 
-      ProgVar_List @.args = [2] {
+      ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
-	ProgVar @[1] { };
       };
 
-      ProgVar_List @.vars = [5] {
+      ProgVar_List @.vars = [6] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
 	ProgVar @[3] { };
 	ProgVar @[4] { };
+	ProgVar @[5] { };
       };
 
       ProgEl_List @.init_code = [2] {
@@ -373,7 +373,12 @@ Program_Group .projects[0].programs.gp[1] {
     flags=CTRL_PANEL|NULL_CHECK;
     desc="network to operate on";
    };
-   ProgVar @[1] {
+  };
+  vars {
+   name=;
+   el_typ=ProgVar;
+   el_def=0;
+   ProgVar @[0] {
     name="input_data";
     var_type=T_Object;
     object_type=DataTable;
@@ -382,12 +387,7 @@ Program_Group .projects[0].programs.gp[1] {
     flags=CTRL_PANEL|NULL_CHECK;
     desc="table of patterns to present to the network, one row at a time";
    };
-  };
-  vars {
-   name=;
-   el_typ=ProgVar;
-   el_def=0;
-   ProgVar @[0] {
+   ProgVar @[1] {
     name="data_loop_order";
     var_type=T_HardEnum;
     int_val=0;
@@ -397,7 +397,7 @@ Program_Group .projects[0].programs.gp[1] {
     desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
    };
-   ProgVar @[1] {
+   ProgVar @[2] {
     name="trial";
     var_type=T_Int;
     int_val=0;
@@ -405,16 +405,16 @@ Program_Group .projects[0].programs.gp[1] {
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
     desc="current trial (event) within the epoch -- increments automatically";
    };
-   ProgVar @[2] {
+   ProgVar @[3] {
     name="trial_mon_data";
     var_type=T_Object;
     object_type=DataTable;
-    object_val=.projects[0].data.gp[1][0]$3$;
+    object_val=.projects[0].data.gp[1][2]$3$;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
    };
-   ProgVar @[3] {
+   ProgVar @[4] {
     name="epoch_timer";
     var_type=T_Object;
     object_type=TimeUsed;
@@ -423,7 +423,7 @@ Program_Group .projects[0].programs.gp[1] {
     flags=NULL_CHECK;
     desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
    };
-   ProgVar @[4] {
+   ProgVar @[5] {
     name="data_loop_index";
     var_type=T_Int;
     int_val=6;
@@ -450,13 +450,13 @@ Program_Group .projects[0].programs.gp[1] {
     desc="initialize trial counter (local variable and in the network)";
     flags=;
     network_var=.projects[0].programs.gp[1][0].args[0]$5$;
-    local_ctr_var=.projects[0].programs.gp[1][0].vars[1]$6$;
+    local_ctr_var=.projects[0].programs.gp[1][0].vars[2]$6$;
     counter=Network::trial;
    };
    AssignExpr @[1] {
     desc="get pointer to epoch timer object on network";
     flags=;
-    result_var=.projects[0].programs.gp[1][0].vars[3]$7$;
+    result_var=.projects[0].programs.gp[1][0].vars[4]$7$;
     expr {
      expr="network.epoch_time";
      flags=;
@@ -481,7 +481,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MemberAssign @[1] {
     desc="set to testing mode";
-    flags=;
+    flags=NEW_EL;
     obj=$5$;
     path="train_mode";
     expr {
@@ -541,7 +541,7 @@ Program_Group .projects[0].programs.gp[1] {
     desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
     flags=;
     result_var=NULL;
-    obj=.projects[0].programs.gp[1][0].vars[2]$8$;
+    obj=.projects[0].programs.gp[1][0].vars[3]$8$;
     method=DataTable::ResetData;
     meth_args {
      name=;
@@ -635,9 +635,9 @@ Program_Group .projects[0].programs.gp[1] {
       };
      };
     };
-    data_var=.projects[0].programs.gp[1][0].args[1]$10$;
-    index_var=.projects[0].programs.gp[1][0].vars[4]$11$;
-    order_var=.projects[0].programs.gp[1][0].vars[0]$12$;
+    data_var=.projects[0].programs.gp[1][0].vars[0]$10$;
+    index_var=.projects[0].programs.gp[1][0].vars[5]$11$;
+    order_var=.projects[0].programs.gp[1][0].vars[1]$12$;
     order=PERMUTED;
     item_idx_list{ 1;2;0;3;4;5;    };
     dmem_nprocs=1;
@@ -719,7 +719,7 @@ Program_Group .projects[0].programs.gp[1] {
    };
    MemberAssign @[9] {
     desc="set back to training mode";
-    flags=;
+    flags=NEW_EL;
     obj=$5$;
     path="train_mode";
     expr {
@@ -1473,7 +1473,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Input";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=EXT;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[1] {
@@ -1482,13 +1482,13 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Output";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=TARG;
+      ext_flags=;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name="Name";
+      layer_name=;
       offset {x=0: y=0: };
       use_layer_type=1;
       ext_flags=;
@@ -1805,7 +1805,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     network=$1$;
-    data=$3$;
+    data=.projects[0].data.gp[1][0]$28$;
     rmv_orphan_cols=1;
    };
   };
@@ -1845,7 +1845,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     name="trial_netmon";
     var_type=T_Object;
     object_type=NetMonitor;
-    object_val=.projects[0].programs.gp[1][5].objs[0]$28$;
+    object_val=.projects[0].programs.gp[1][5].objs[0]$29$;
     objs_ptr=1;
     flags=NULL_CHECK;
     desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
@@ -1869,7 +1869,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="set the network and datatable for the NetMonitor";
     flags=;
     result_var=NULL;
-    obj=.projects[0].programs.gp[1][5].vars[1]$29$;
+    obj=.projects[0].programs.gp[1][5].vars[1]$30$;
     method=NetMonitor::SetDataNetwork;
     meth_args {
      name=;
@@ -1913,7 +1913,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
     flags=;
     result_var=NULL;
-    obj=$29$;
+    obj=$30$;
     method=taBase::CheckConfig;
     meth_args {
      name=;
@@ -1941,7 +1941,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="update the monitor items and data schema based on current settings of the NetMonitor object";
     flags=;
     result_var=NULL;
-    obj=$29$;
+    obj=$30$;
     method=NetMonitor::UpdateMonitors;
     meth_args {
      name=;
@@ -1974,7 +1974,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="add a new blank row to the data";
     flags=;
     result_var=NULL;
-    obj=.projects[0].programs.gp[1][5].vars[0]$30$;
+    obj=.projects[0].programs.gp[1][5].vars[0]$31$;
     method=DataTable::AddBlankRow;
     meth_args {
      name=;
@@ -1986,7 +1986,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="get the new monitor data from the network and other sources -- this does the main work";
     flags=;
     result_var=NULL;
-    obj=$29$;
+    obj=$30$;
     method=NetMonitor::GetMonVals;
     meth_args {
      name=;
@@ -1998,7 +1998,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="update views and other things after writing new data to monitor data table";
     flags=;
     result_var=NULL;
-    obj=$30$;
+    obj=$31$;
     method=DataBlock::WriteClose;
     meth_args {
      name=;
@@ -2010,7 +2010,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
     flags=;
     result_var=NULL;
-    obj=.projects[0].programs.gp[1][5].args[0]$31$;
+    obj=.projects[0].programs.gp[1][5].args[0]$32$;
     method=Network::DMem_ShareTrialData;
     meth_args {
      name=;
@@ -2197,7 +2197,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
     network=$1$;
-    data=.projects[0].data.gp[1][1]$32$;
+    data=.projects[0].data.gp[1][1]$33$;
     rmv_orphan_cols=1;
    };
   };
@@ -2228,7 +2228,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     name="epoch_mon_data";
     var_type=T_Object;
     object_type=DataTable;
-    object_val=$32$;
+    object_val=.projects[0].data.gp[1][3]$34$;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="data table to write the epoch data to";
@@ -2237,7 +2237,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     name="epoch_netmon";
     var_type=T_Object;
     object_type=NetMonitor;
-    object_val=.projects[0].programs.gp[1][6].objs[0]$33$;
+    object_val=.projects[0].programs.gp[1][6].objs[0]$35$;
     objs_ptr=1;
     flags=NULL_CHECK;
     desc="network monitor object that contains full specs for what to record and where to get it";
@@ -2269,7 +2269,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    AssignExpr @[0] {
     desc="get the epoch timer from current network";
     flags=;
-    result_var=.projects[0].programs.gp[1][6].vars[2]$34$;
+    result_var=.projects[0].programs.gp[1][6].vars[2]$36$;
     expr {
      expr="network.epoch_time";
      flags=;
@@ -2284,7 +2284,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="set data and network on NetMonitor object";
     flags=;
     result_var=NULL;
-    obj=.projects[0].programs.gp[1][6].vars[1]$35$;
+    obj=.projects[0].programs.gp[1][6].vars[1]$37$;
     method=NetMonitor::SetDataNetwork;
     meth_args {
      name=;
@@ -2328,7 +2328,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="check configuration and emit errors/warnings for problems";
     flags=;
     result_var=NULL;
-    obj=$35$;
+    obj=$37$;
     method=taBase::CheckConfig;
     meth_args {
      name=;
@@ -2356,7 +2356,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="update the monitor items and data schema based on current settings of NetMonitor";
     flags=;
     result_var=NULL;
-    obj=$35$;
+    obj=$37$;
     method=NetMonitor::UpdateMonitors;
     meth_args {
      name=;
@@ -2389,7 +2389,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="add a new blank row to the data";
     flags=;
     result_var=NULL;
-    obj=.projects[0].programs.gp[1][6].vars[0]$36$;
+    obj=.projects[0].programs.gp[1][6].vars[0]$38$;
     method=DataTable::AddBlankRow;
     meth_args {
      name=;
@@ -2401,7 +2401,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="get the new monitor data and stor it into the data table -- this does the main job here";
     flags=;
     result_var=NULL;
-    obj=$35$;
+    obj=$37$;
     method=NetMonitor::GetMonVals;
     meth_args {
      name=;
@@ -2412,7 +2412,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
    AssignExpr @[2] {
     desc="get the epoch timer from current network";
     flags=;
-    result_var=$34$;
+    result_var=$36$;
     expr {
      expr="network.epoch_time";
      flags=;
@@ -2427,7 +2427,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
     flags=;
     result_var=NULL;
-    obj=$36$;
+    obj=$38$;
     method=DataTable::SetValColName;
     meth_args {
      name=;
@@ -2487,7 +2487,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
     flags=;
     result_var=NULL;
-    obj=$36$;
+    obj=$38$;
     method=DataTable::SetValColName;
     meth_args {
      name=;
@@ -2547,7 +2547,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
     desc="update after writing new data to monitor data table";
     flags=;
     result_var=NULL;
-    obj=$36$;
+    obj=$38$;
     method=DataBlock::WriteClose;
     meth_args {
      name=;

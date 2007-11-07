@@ -298,6 +298,7 @@ public:
   // #MENU_BUTTON convert events to format suitable for training by RBP, with inputs coming on first, and then targets coming on after targ_time time steps
 
   override bool	StdProgs();
+  override bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1);
 
   TA_BASEFUNS_NOCOPY(BpWizard);
 private:

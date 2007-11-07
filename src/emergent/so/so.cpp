@@ -380,3 +380,9 @@ bool SoWizard::StdProgs() {
   return true;
 }
 
+bool SoWizard::TestProgs(Program* call_test_from, bool call_in_loop, int call_modulus) {
+  if(!TestProgs_impl("SoAll_Test", call_test_from, call_in_loop, call_modulus))
+    return false;
+  return true;
+}
+
