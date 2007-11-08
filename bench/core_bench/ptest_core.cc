@@ -124,7 +124,7 @@ NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created, none for [
 #ifdef Q_OS_MAC
 # include <libkern/OSAtomic.h>
 # define  __sync_fetch_and_add(a, b) (OSAtomicAdd32(b,a)-1)
-#elseif defined(Q_OS_WIN32)
+#elif defined(Q_OS_WIN32)
 # error not defined for Windows yet
 #else // unix
 inline int __sync_fetch_and_add(int* operand, int incr)
@@ -259,7 +259,8 @@ int n_cycles;			// number of cycles of updating
 Unit* layers[n_layers];		// layers = arrays of units
 Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
-bool nibble = true;
+bool nibble = true; // setting false disables nibbling and adds sync to loop
+bool send_based = false; // setting false simulates receiver based write pattern
 
 // construct the network
 
@@ -378,10 +379,17 @@ void NetInTask::run() {
   int my_u = __sync_fetch_and_add(&g_u, core_nprocs);
   while (my_u < n_units_flat) {
     Unit& un = *(layers_flat[my_u]); //note: accessed flat
-    un.net = 0.0f;
-
-    for(int j=0;j<n_units;j++) {
-      un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
+    if (send_based) {
+      un.net = 0.0f;
+      for(int j=0;j<n_units;j++) {
+        un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
+      }
+    } else { // recv_based
+      float net = 0.0f;
+      for(int j=0;j<n_units;j++) {
+        net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
+      }
+      un.net = net;
     }
     __sync_fetch_and_add(&n_tot, 1);
     __sync_fetch_and_add(&t_tot, 1); // because of helping hand clobbers
