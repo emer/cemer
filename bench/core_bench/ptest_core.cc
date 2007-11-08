@@ -260,7 +260,7 @@ Unit* layers[n_layers];		// layers = arrays of units
 Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
 bool nibble = true; // setting false disables nibbling and adds sync to loop
-bool send_based = false; // setting false simulates receiver based write pattern
+bool send_based = true; // setting false simulates receiver based write pattern
 
 // construct the network
 
