@@ -50,6 +50,7 @@ DIST_SUBDIRS =\
 	src/emergent/bin \
 	plugins \
 	prog_lib \
+	3dobj_lib \
 	css_lib \
 	test \
 	demo/bp \
@@ -76,6 +77,7 @@ SUBDIRS =\
 	src/emergent/bin \
 	plugins \
 	prog_lib \
+	3dobj_lib \
 	css_lib \
 	test \
 	demo/bp \

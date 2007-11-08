@@ -365,6 +365,7 @@ AC_CONFIG_FILES([Makefile
 		src/emergent/lib/Makefile
 		src/emergent/bin/Makefile
 		prog_lib/Makefile
+		3dobj_lib/Makefile
 		test/Makefile
 		plugins/config.pri
 		plugins/Makefile
