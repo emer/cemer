@@ -1657,6 +1657,48 @@ private:
   void	Destroy()		{ };
 };
 
+class EMERGENT_API NetViewObj : public taNBase {
+  // ##CAT_Network ##EXT_nvobj network view object (3d object or text) -- is displayed in network view
+INHERITED(taNBase)
+public:	
+  enum ObjType {		// what type of object to create
+    TEXT,			// text label
+    OBJECT,			// 3d object loaded from an open inventor format 3d object file
+  };
+
+  String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
+  FloatTDCoord	pos;  		// 3d position of object (can be moved within network view)
+  FloatRotation	rot;  		// 3d rotation of body, specifying an axis and a rot along that axis in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  FloatTDCoord	scale; 		// 3d scaling of object along each dimension (applied prior to rotation)
+  ObjType	obj_type;	// #APPLY_IMMED type of object to display
+  String	obj_fname;	// #CONDEDIT_ON_obj_type:OBJECT file name of Open Inventor file that contains the 3d geometry of the object
+  String	text;		// #CONDEDIT_ON_obj_type:TEXT text to display for text type of object
+  float		font_size;	// #CONDEDIT_ON_obj_type:TEXT font size to display text in, in normalized units (the entire network is 1x1x1, so this should typically be a smaller fraction like .05)
+  bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
+  taColor	color; 		// #CONDEDIT_ON_set_color default color if not otherwise defined (a=alpha used for transparency)
+
+  override String	GetDesc() const { return desc; }
+
+  TA_SIMPLE_BASEFUNS(NetViewObj);
+protected:
+  override void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void  Destroy()	{ CutLinks(); }
+};
+
+SmartRef_Of(NetViewObj,TA_NetViewObj); // NetViewObjRef
+
+class EMERGENT_API NetViewObj_Group : public taGroup<NetViewObj> {
+  // ##CAT_Network a group of network view objects
+INHERITED(taGroup<NetViewObj>)
+public:
+  TA_BASEFUNS_NOCOPY(NetViewObj_Group);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_NetViewObj); }
+  void 	Destroy()		{ };
+};
+
 
 class EMERGENT_API Network : public taFBase {
   // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network A network, containing layers, units, etc..
@@ -1711,6 +1753,7 @@ public:
 
   BaseSpec_Group specs; 	// #CAT_Structure Specifications for network parameters
   Layer_Group	layers;		// #CAT_Structure Layers or Groups of Layers
+  NetViewObj_Group view_objs;	// #CAT_Display objects to display in the network 3d view
 
   NetFlags	flags;		// #CAT_Structure flags controlling various aspects of network function
 
@@ -1849,8 +1892,12 @@ public:
 
 #ifdef TA_GUI
   virtual NetView* NewView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
+  // #NULL_OK #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
 #endif
+  virtual NetViewObj* NewViewText(const String& txt);
+  // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects
+  virtual NetViewObj* NewGlassBrain();
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
 
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs

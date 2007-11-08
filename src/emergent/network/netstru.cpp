@@ -4388,6 +4388,20 @@ void NetViewParams::Initialize() {
   unit_trans = 0.6f;
 }
 
+void NetViewObj::Initialize() {
+  obj_type = TEXT;
+  text = "Select, Context Menu to Edit";
+  scale = 1.0f;
+  font_size = .05f;
+  set_color = false;
+  color.Set(0.0f, 0.0f, 0.0f);
+}
+
+void NetViewObj::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // anything?
+}
+
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
@@ -4445,6 +4459,7 @@ void Network::InitLinks() {
   proj = GET_MY_OWNER(ProjectBase);
   taBase::Own(specs, this);
   taBase::Own(layers, this);
+  taBase::Own(view_objs, this);
   taBase::Own(max_size, this);
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
@@ -4475,6 +4490,7 @@ void Network::CutLinks() {
 #endif
   RemoveCons();			// do this first in optimized way!
   RemoveUnitGroups();		// then units
+  view_objs.CutLinks();
   layers.CutLinks();		// then std kills
   specs.CutLinks();
   proj = NULL;
@@ -4484,6 +4500,7 @@ void Network::CutLinks() {
 void Network::Copy_(const Network& cp) {
   specs = cp.specs;
   layers = cp.layers;
+  view_objs = cp.view_objs;
 
   auto_build = cp.auto_build;
 
@@ -4822,6 +4839,39 @@ NetView* Network::NewView(T3DataViewFrame* fr) {
   return NetView::New(this, fr);
 }
 #endif
+
+NetViewObj* Network::NewViewText(const String& txt) {
+  StructUpdate(true);
+  NetViewObj* rval = view_objs.NewEl(1);
+  rval->obj_type = NetViewObj::TEXT;
+  if(txt.nonempty())
+    rval->text = txt;
+  StructUpdate(false);
+  return rval;
+}
+
+NetViewObj* Network::NewGlassBrain() {
+  StructUpdate(true);
+  NetViewObj* lh = view_objs.NewEl(1);
+  lh->name = "LeftHemisphere";
+  lh->desc = "left hemisphere of human cortex";
+  lh->obj_type = NetViewObj::OBJECT;
+  lh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_L.iv";
+  lh->set_color = true;
+  lh->color.Set(.7f, .7f, .7f, .5f);
+  lh->pos.x = -.25f; lh->pos.y = .5f; lh->pos.z = -1.0f;
+
+  NetViewObj* rh = view_objs.NewEl(1);
+  rh->name = "RightHemisphere";
+  rh->desc = "right hemisphere of human cortex";
+  rh->obj_type = NetViewObj::OBJECT;
+  rh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_R.iv";
+  rh->set_color = true;
+  rh->color.Set(.7f, .7f, .7f, .5f);
+  rh->pos.x = 1.25f; rh->pos.y = .5f; rh->pos.z = -1.0f;
+  StructUpdate(false);
+  return rh;
+}
 
 Layer* Network::NewLayer() {
   return layers.NewEl(1);

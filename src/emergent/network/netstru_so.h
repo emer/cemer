@@ -330,6 +330,32 @@ private:
   void			init();
 };
 
+//////////////////////////
+//   T3NetViewObjNode	//
+//////////////////////////
+
+class TA_API T3NetViewObj : public T3NodeLeaf {
+  // network view object
+#ifndef __MAKETA__
+typedef T3NodeLeaf inherited;
+  SO_NODE_HEADER(T3NetViewObj);
+#endif // def __MAKETA__
+public:
+  static void	initClass();
+
+  T3NetViewObj(void* obj = NULL, bool show_drag = false);
+
+protected:
+  bool			 show_drag_;
+  T3TransformBoxDragger* drag_;	// my position dragger
+
+  ~T3NetViewObj();
+};
+
+//////////////////////////
+//   T3NetNode		//
+//////////////////////////
+
 class EMERGENT_API T3NetNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;

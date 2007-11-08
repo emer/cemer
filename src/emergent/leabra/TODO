@@ -2,10 +2,6 @@ leabra todo list:
 
 commit:
 
-* fix wiki parser
-
-* auto scale always symmetric auto scale!
-
 ------------
 current:
 
@@ -35,7 +31,7 @@ function for whenever a variable is processed..
 
 == Program
 
-* progexpr: not finding variables in function args, leading - sign is problematic
+* progexpr: not finding variables in function args, leading - sign is problematic -- css parser will fix
 
 == PVLV:
 
@@ -60,18 +56,6 @@ hv model
 
 * add 3d model rendering using inventor..
  
-* train model to identify location of key target:
-  CHL:
-  minus phase is where looking now; plus is where next
-  if correct recognition on plus, then it serves to train, else not!
-  MINUS_MINUS_PLUS or prev MINUS vs this PLUS with repetition of
-  same item
-
-  RL:
-  spatial system on t-1 decides where to look at t
-  if model recognizes object at t, pvlv gets reward
-  cs association with good look decisions drives reward at t-1
-
 -----------
 css:
 

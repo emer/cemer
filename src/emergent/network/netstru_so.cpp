@@ -596,6 +596,47 @@ void T3PrjnNode::setArrowColor(const SbColor& clr, float transp) {
   arr_mat->transparency.setValue(transp);
 }
 
+/////////////////////////////////////////////
+//	NetViewObj
+
+SO_NODE_SOURCE(T3NetViewObj);
+
+void T3NetViewObj::initClass()
+{
+  SO_NODE_INIT_CLASS(T3NetViewObj, T3NodeLeaf, "T3NodeLeaf");
+}
+
+extern void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragger);
+// defined in qtso
+
+T3NetViewObj::T3NetViewObj(void* obj, bool show_drag)
+:inherited(obj)
+{
+  SO_NODE_CONSTRUCTOR(T3NetViewObj);
+
+  show_drag_ = show_drag;
+  // todo: impl dragger!?
+  drag_ = NULL;
+  if(show_drag_) {
+    drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
+//     drag_->xf_->translation.setValue(0.0f, -.5f, 0.0f);
+
+//     String expr = "oA = vec3f(.5 + A[0], -.5 + A[1], -.5 + A[2])";
+//     drag_->trans_calc_->expression = expr.chars();
+
+    txfm_shape()->translation.connectFrom(&drag_->dragger_->translation);
+    txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);
+    txfm_shape()->scaleFactor.connectFrom(&drag_->dragger_->scaleFactor);
+
+    drag_->dragger_->addFinishCallback(T3NetViewObj_DragFinishCB, (void*)this);
+    insertChildBefore(topSeparator(), drag_, txfm_shape());
+  }
+}
+
+T3NetViewObj::~T3NetViewObj()
+{
+  
+}
 
 //////////////////////////
 //   T3NetNode		//

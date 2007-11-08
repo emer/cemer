@@ -1419,6 +1419,151 @@ void PrjnView::Reset_impl() {
   inherited::Reset_impl();
 }
 
+///////////////////////////////////////////////////////////////////////
+//	NetViewObjView
+
+void NetViewObjView::Initialize(){
+  data_base = &TA_NetViewObj;
+}
+
+void NetViewObjView::Copy_(const NetViewObjView& cp) {
+  name = cp.name;
+}
+
+void NetViewObjView::Destroy() {
+  CutLinks();
+}
+
+bool NetViewObjView::SetName(const String& value) { 
+  name = value;  
+  return true; 
+} 
+
+void NetViewObjView::SetObj(NetViewObj* ob) {
+  if (Obj() == ob) return;
+  SetData(ob);
+  if(ob) {
+    if (name != ob->name) {
+      name = ob->name;
+    }
+  }
+}
+
+void NetViewObjView::Render_pre() {
+  SoQtViewer* vw = GetViewer();
+  bool show_drag = false;
+  if(vw)
+    show_drag = !vw->isViewing();
+
+  NetView* nv = GET_MY_OWNER(NetView);
+  if(nv && !nv->lay_mv) show_drag = false;
+
+  setNode(new T3NetViewObj(this, show_drag));
+  SoSeparator* ssep = node_so()->shapeSeparator();
+
+  NetViewObj* ob = Obj();
+  if(ob) {
+    if(ob->obj_type == NetViewObj::OBJECT) {
+      SoInput in;
+      if (in.openFile(ob->obj_fname)) {
+	SoSeparator* root = SoDB::readAll(&in);
+	if (root) {
+	  ssep->addChild(root);
+	  goto finish;
+	}
+      }
+      taMisc::Error("object file:", ob->obj_fname, "not found!");
+    }
+    else {
+      SoSeparator* tsep = new SoSeparator();
+      SoComplexity* cplx = new SoComplexity;
+      cplx->value.setValue(taMisc::text_complexity);
+      tsep->addChild(cplx);
+      SoFont* fnt = new SoFont();
+      fnt->name = "Arial";
+      fnt->size.setValue(ob->font_size);
+      tsep->addChild(fnt);
+      SoAsciiText* txt = new SoAsciiText();
+      SoMFString* mfs = &(txt->string);
+      mfs->setValue(ob->text.chars());
+      tsep->addChild(txt);
+      ssep->addChild(tsep);
+    }
+  }
+ finish:
+
+  inherited::Render_pre();
+}
+
+void NetViewObjView::Render_impl() {
+  inherited::Render_impl();
+
+  T3NetViewObj* node_so = (T3NetViewObj*)this->node_so(); // cache
+  if(!node_so) return;
+  NetViewObj* ob = Obj();
+  if(!ob) return;
+
+  SoTransform* tx = node_so->transform();
+  tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
+  tx->scaleFactor.setValue(ob->scale.x, ob->scale.y, ob->scale.z);
+  tx->rotation.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
+
+  if(ob->set_color) {
+    SoMaterial* mat = node_so->material();
+    mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
+    mat->transparency.setValue(1.0f - ob->color.a);
+  }
+}
+
+// callback for netview transformer dragger
+void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3NetViewObj* nvoso = (T3NetViewObj*)userData;
+  NetViewObjView* nvov = (NetViewObjView*)nvoso->dataView();
+  NetViewObj* nvo = nvov->Obj();
+  NetView* nv = GET_OWNER(nvov, NetView);
+
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(nvo->rot.x, nvo->rot.y, nvo->rot.z), nvo->rot.rot);
+
+  SbVec3f trans = dragger->translation.getValue();
+//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+  trans[0] *= nvo->scale.x;
+  trans[1] *= nvo->scale.y;
+  trans[2] *= nvo->scale.z;
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  nvo->pos += tr;
+
+  const SbVec3f& scale = dragger->scaleFactor.getValue();
+//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  nvo->scale *= sc;
+
+  SbVec3f axis;
+  float angle;
+  dragger->rotation.getValue(axis, angle);
+//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    SbRotation rot;
+    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+    SbRotation nw_rot = rot * cur_rot;
+    nw_rot.getValue(axis, angle);
+    nvo->rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+  }
+
+//   float h = 0.04f; // nominal amount of height, so we don't vanish
+  nvoso->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  nvoso->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  nvoso->txfm_shape()->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  nv->UpdateDisplay();
+}
+
 //////////////////////////
 //   NetView		//
 //////////////////////////
@@ -1611,6 +1756,14 @@ void NetView::BuildAll() { // populates all T3 guys
       lay_disp_modes.MoveIdx(i, li);
       lay_disp_modes.FastEl(li).value = (int)lv->disp_mode;
     }
+  }
+
+  NetViewObj* obj;
+  taLeafItr oi;
+  FOR_ITR_EL(NetViewObj, obj, net()->view_objs., oi) {
+    NetViewObjView* ov = new NetViewObjView();
+    ov->SetObj(obj);
+    children.Add(ov);
   }
 }
 
@@ -1884,7 +2037,7 @@ void NetView::InitDisplay(bool init_panel) {
   // descend into sub items
   LayerView* lv;
   taListItr i;
-  FOR_ITR_EL(LayerView, lv, children., i) {
+  FOR_ITR_EL(LayerView, lv, layers., i) {
     InitDisplay_Layer(lv, false);
   }
 }
@@ -2395,7 +2548,7 @@ void NetView::UpdateAutoScale() {
   taListItr i;
   scale.SetMinMax(99999.0f, -99999.0f);
   bool updated = false;
-  FOR_ITR_EL(LayerView, lv, children., i) {
+  FOR_ITR_EL(LayerView, lv, layers., i) {
     UnitGroupView* ugrv;
     taListItr j;
     FOR_ITR_EL(UnitGroupView, ugrv, lv->children., j) {
