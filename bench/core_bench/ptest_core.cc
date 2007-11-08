@@ -110,9 +110,12 @@ TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
 #include <pthread.h>
 #include <sys/signal.h>
 
+class NetInTask;
+
 int core_nprocs;		// total number of processors
 const int core_max_nprocs = 64; // maximum number of processors!
 QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
+NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
 
 // returns value of i before inc, then incs
 #ifdef Q_OS_MAC
@@ -130,17 +133,26 @@ inline int __sync_fetch_and_add(int * operand, int incr)
 }
 #endif
 
-class QNetThread: public QThread {
+class Task {
+public:
+  virtual void	run() = 0;
+};
+
+class QTaskThread: public QThread {
 public:
   inline bool	isActive() const {return m_active;}
   inline bool	isSuspended() const {return m_suspended;}
   
-  void 		suspend();
+  Task*		task() const {return m_task;}
+  void		setTask(Task* t) {m_task = t;}
+  
+//  void 		suspend();
   void		resume();
   void		terminate();
   
-  QNetThread();
+  QTaskThread();
 protected:
+  Task*		m_task;
   QMutex	mutex;
   QWaitCondition	wc;
   bool		m_suspended;
@@ -151,51 +163,52 @@ protected:
   void		run_impl();
 };
 
-QNetThread::QNetThread() {
+QTaskThread::QTaskThread() {
+  m_task = NULL;
   m_thread_id = 0;
   m_active = false;
-  m_suspended = false;
+  m_suspended = true;
 }
 
-void QNetThread::suspend() {
+/*void QTaskThread::suspend() {
   if (m_suspended) return;
   m_suspended = true;
   wc.wait(&mutex);;
-}
+}*/
 
-void QNetThread::resume() {
+void QTaskThread::resume() {
   if (!m_suspended) return;
-  wc.wakeAll();;
-  m_suspended = true;
-}
-
-void QNetThread::run() {
-  m_active = true;
-  m_thread_id = currentThreadId();
   mutex.lock();
-  while (m_active) {
-    run_impl();
-    suspend();
-  }
+  m_suspended = false;
+  wc.wakeAll();;
   mutex.unlock();
 }
 
-void QNetThread::terminate() {
+void QTaskThread::run() {
+  m_active = true;
+  m_thread_id = currentThreadId();
+  while (m_active) {
+    mutex.lock();
+    while (m_suspended)
+      wc.wait(&mutex);
+      
+    if (m_task)
+      m_task->run();
+    m_suspended = true;
+    mutex.unlock();
+  }
+}
+
+void QTaskThread::terminate() {
   m_active = false;
   if (!isFinished()) resume();
   QThread::terminate();
 }
 
 
-void MakeThreads() {
-  for (int i = 1; i < core_nprocs; i++) {
-    threads[i] = new QNetThread;
-  }
-}
-
 void DeleteThreads() {
   for (int t = core_nprocs - 1; t >= 1; t--) {
-    QThread* th = threads[t];
+    QTaskThread* th = (QTaskThread*)threads[t];
     if (th->isRunning()) {
       th->terminate();
       th->wait();
@@ -287,20 +300,14 @@ void DeleteNet() {
 int l;
 int g_u;
 
+class NetInTask: public Task {
+public:
+  int		t_tot;
+  void		run();
+  
+  NetInTask();
+};
 
-void ComputeNets_inner() {
-  int my_u = __sync_fetch_and_add(&g_u, 1);
-  while (my_u < n_units_flat) {
-    Unit& un = *(layers_flat[my_u]); //note: accessed flat
-    un.net = 0.0f;
-
-    for(int j=0;j<n_units;j++) {
-      un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
-    }
-    my_u = __sync_fetch_and_add(&g_u, 1);
-    __sync_fetch_and_add(&n_tot, 1);
-  }
-}
 
 void ComputeNets() {
   // compute net input = activation times weights
@@ -318,15 +325,12 @@ void ComputeNets() {
   g_u = 0;
   // start all the other threads first...
   for (int t = 1; t < core_nprocs; ++t) {
-    QNetThread* th = (QNetThread*)threads[t];
-    if (th->isActive())
-      th->resume();
-    else
-      th->start();
+    QTaskThread* th = (QTaskThread*)threads[t];
+    th->resume();
   }
   
   // and then work on it myself too (if others haven't finished yet!)
-  ComputeNets_inner();
+  netin_tasks[0]->run();
 }
 
 
@@ -347,8 +351,35 @@ float ComputeActs() {
 // core code
 
 
-void QNetThread::run_impl() {
-  ComputeNets_inner();
+NetInTask::NetInTask() {
+  t_tot = 0;
+}
+
+void NetInTask::run() {
+  int my_u = __sync_fetch_and_add(&g_u, 1);
+  while (my_u < n_units_flat) {
+    Unit& un = *(layers_flat[my_u]); //note: accessed flat
+    un.net = 0.0f;
+
+    for(int j=0;j<n_units;j++) {
+      un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
+    }
+    my_u = __sync_fetch_and_add(&g_u, 1);
+    __sync_fetch_and_add(&n_tot, 1);
+    ++t_tot;
+  }
+
+}
+
+void MakeThreads() {
+  for (int i = 0; i < core_nprocs; i++) {
+    netin_tasks[i] = new NetInTask;
+    if (i == 0) continue;
+    QTaskThread* th = new QTaskThread;
+    threads[i] = th;
+    th->setTask(netin_tasks[i]);
+    th->start(); // starts paused
+  }
 }
 
 
@@ -408,6 +439,13 @@ int main(int argc, char* argv[]) {
   double n_con_trav = n_wts * n_cycles;
   double con_trav_sec = ((double)n_con_trav / tot_time) / 1.0e6;
   int n_tot_exp = n_units * n_layers * n_cycles;
+
+  printf("thread\tt_tot\n");
+  for (int t = 0; t < core_nprocs; t++) {
+    NetInTask* tsk = netin_tasks[t];
+    printf("%d\t%d\n", t, tsk->t_tot);
+  }
+
 
   printf("procs, %d, \tunits, %d, \tweights, %g, \tcycles, %d, \tcon_trav, %g, \tsecs, %g, \tMcon/sec, %g, \tn_tot (exp/act), %d, %d\n",
           core_nprocs, n_units, n_wts, n_cycles, n_con_trav, tot_time, con_trav_sec, n_tot_exp, n_tot);
