@@ -114,6 +114,7 @@ class NetInTask;
 
 int core_nprocs;		// total number of processors
 const int core_max_nprocs = 64; // maximum number of processors!
+const int unit_gran = 16; // granularity per greedy grab
 QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
 NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
 
@@ -135,7 +136,10 @@ inline int __sync_fetch_and_add(int * operand, int incr)
 
 class Task {
 public:
+  int		task_id;
   virtual void	run() = 0;
+  
+  Task() {task_id = -1;}
 };
 
 class QTaskThread: public QThread {
@@ -211,9 +215,8 @@ void DeleteThreads() {
     QTaskThread* th = (QTaskThread*)threads[t];
     if (th->isRunning()) {
       th->terminate();
-      th->wait();
     }
-    delete th;
+    //delete th;
   }
 }
 
@@ -356,7 +359,9 @@ NetInTask::NetInTask() {
 }
 
 void NetInTask::run() {
-  int my_u = __sync_fetch_and_add(&g_u, 1);
+// granular greedy
+  int my_u = __sync_fetch_and_add(&g_u, unit_gran);
+  int gran_ct = unit_gran;
   while (my_u < n_units_flat) {
     Unit& un = *(layers_flat[my_u]); //note: accessed flat
     un.net = 0.0f;
@@ -364,20 +369,24 @@ void NetInTask::run() {
     for(int j=0;j<n_units;j++) {
       un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
     }
-    my_u = __sync_fetch_and_add(&g_u, 1);
     __sync_fetch_and_add(&n_tot, 1);
     ++t_tot;
+    if (--gran_ct == 0) {
+      gran_ct = unit_gran;
+      my_u = __sync_fetch_and_add(&g_u, unit_gran);
+    } else ++my_u;
   }
-
 }
 
 void MakeThreads() {
   for (int i = 0; i < core_nprocs; i++) {
-    netin_tasks[i] = new NetInTask;
+    NetInTask* tsk = new NetInTask;
+    tsk->task_id = i;
+    netin_tasks[i] = tsk;
     if (i == 0) continue;
     QTaskThread* th = new QTaskThread;
     threads[i] = th;
-    th->setTask(netin_tasks[i]);
+    th->setTask(tsk);
     th->start(); // starts paused
   }
 }
