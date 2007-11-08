@@ -150,7 +150,7 @@ public:
   Task*		task() const {return m_task;}
   void		setTask(Task* t) {m_task = t;}
   
-//  void 		suspend();
+  void 		suspend();
   void		resume();
   void		terminate();
   
@@ -174,11 +174,12 @@ QTaskThread::QTaskThread() {
   m_suspended = true;
 }
 
-/*void QTaskThread::suspend() {
+void QTaskThread::suspend() {
   if (m_suspended) return;
+  mutex.lock();
   m_suspended = true;
-  wc.wait(&mutex);;
-}*/
+  mutex.unlock();
+}
 
 void QTaskThread::resume() {
   if (!m_suspended) return;
@@ -327,8 +328,10 @@ void ComputeNets() {
   }*/
   g_u = 0;
   // start all the other threads first...
+  // have to suspend then resume in case not finished from last time
   for (int t = 1; t < core_nprocs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
+    th->suspend();
     th->resume();
   }
   
