@@ -114,23 +114,28 @@ class NetInTask;
 
 int core_nprocs;		// total number of processors
 const int core_max_nprocs = 64; // maximum number of processors!
-const int unit_gran = 16; // granularity per greedy grab
+int unit_gran = 16; // granularity per greedy grab
 QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
 NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
 
-// returns value of i before inc, then incs
+//NOTE: the gcc version of this doesn't seem to exist -- it causes a linker fail
+// so we define our own
+// returns value of i before add, then adds requested amount
 #ifdef Q_OS_MAC
-#include <libkern/OSAtomic.h>
-#define  __sync_fetch_and_add(a, b) (OSAtomicAdd32(b,a)-1)
-#else // linux
-inline int __sync_fetch_and_add(int * operand, int incr)
+# include <libkern/OSAtomic.h>
+# define  __sync_fetch_and_add(a, b) (OSAtomicAdd32(b,a)-1)
+#elseif defined(Q_OS_WIN32)
+# error not defined for Windows yet
+#else // unix
+inline int __sync_fetch_and_add(int* operand, int incr)
 {
-    asm volatile (
-        "lock xaddl %0, %1\n" // add incr to operand
-        :  "=r" (incr) // no output
-        : "m" (*operand), "0" (incr)
-    );
-    return incr;
+  // atomically get value of operand before op, then add incr to it
+  asm volatile (
+      "lock xaddl %0, %1\n" // add incr to operand
+      :  "=r" (incr) // incr gets replaced by the value of operand before inc
+      : "m" (*operand), "0" (incr)
+  );
+  return incr;
 }
 #endif
 
@@ -242,7 +247,7 @@ public:
   float act;			// activation value
   float net;			// net input value
   Connection* recv_wts;		// receiving weights
-
+  char dummy[600]; // yes Virginia, Leabra units really are bigger than ~640 bytes!
 };
 
 // network configuration information
@@ -254,6 +259,7 @@ int n_cycles;			// number of cycles of updating
 Unit* layers[n_layers];		// layers = arrays of units
 Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
+bool nibble = true;
 
 // construct the network
 
@@ -301,12 +307,12 @@ void DeleteNet() {
   }
 }
 
-int l;
-int g_u;
 
 class NetInTask: public Task {
 public:
   int		t_tot;
+  int		g_u; // mostly accessed by own thread, but main also gives "helping hand"
+  
   void		run();
   
   NetInTask();
@@ -317,26 +323,32 @@ void ComputeNets() {
   // compute net input = activation times weights
   // this is the "inner loop" that takes all the time!
   
-/*  for(l=0;l<n_layers;l++) {
-    g_u = 0;
-    // start all the other threads first...
-    for (int t = 1; t < core_nprocs; ++t)
-      threads[t]->start();
-      
-    // and then work on it myself too (if others haven't finished yet!)
-    ComputeNets_inner();
-  }*/
-  g_u = 0;
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
   for (int t = 1; t < core_nprocs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
-    th->suspend();
+    NetInTask* tsk = netin_tasks[t];
+//    th->suspend(); // prob already suspended
+    tsk->g_u = t;
     th->resume();
   }
   
-  // and then work on it myself too (if others haven't finished yet!)
-  netin_tasks[0]->run();
+  // then do my part
+  NetInTask* tsk = netin_tasks[0];
+  tsk->g_u = 0;
+  tsk->run();
+  // then lend a "helping hand"
+  for (int t = 1; t < core_nprocs; ++t) {
+    if (nibble) {
+      NetInTask* tsk = netin_tasks[t];
+      // note: its ok if tsk finishes between our test and calling run
+      if (tsk->g_u < n_units_flat)
+        tsk->run();
+    } else { // need to sync
+      QTaskThread* th = (QTaskThread*)threads[t];
+      th->suspend(); // suspending is syncing with completion of loop
+    }
+  }
 }
 
 
@@ -358,11 +370,24 @@ float ComputeActs() {
 
 
 NetInTask::NetInTask() {
+  g_u = 0;
   t_tot = 0;
 }
 
 void NetInTask::run() {
-// granular greedy
+  int my_u = __sync_fetch_and_add(&g_u, core_nprocs);
+  while (my_u < n_units_flat) {
+    Unit& un = *(layers_flat[my_u]); //note: accessed flat
+    un.net = 0.0f;
+
+    for(int j=0;j<n_units;j++) {
+      un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
+    }
+    __sync_fetch_and_add(&n_tot, 1);
+    __sync_fetch_and_add(&t_tot, 1); // because of helping hand clobbers
+    my_u = __sync_fetch_and_add(&g_u, core_nprocs);
+  }
+/*// granular greedy
   int my_u = __sync_fetch_and_add(&g_u, unit_gran);
   int gran_ct = unit_gran;
   while (my_u < n_units_flat) {
@@ -379,6 +404,7 @@ void NetInTask::run() {
       my_u = __sync_fetch_and_add(&g_u, unit_gran);
     } else ++my_u;
   }
+*/
 }
 
 void MakeThreads() {
@@ -399,10 +425,12 @@ void MakeThreads() {
 int main(int argc, char* argv[]) {
   QCoreApplication app(argc, argv);
   
-  if(argc < 3) {
-    printf("must have 3 args:\n\t<n_units>\tnumber of units in each of 2 layers\n");
-    printf("\t<n_cycles>\tnumber of cycles\n");
-    printf("\t<n_procs>\tnumber of cores or procs\n");
+  if(argc < 4) {
+    printf("must have min 3 args:\n"
+      "\t<n_units>\tnumber of units in each of 2 layers\n"
+      "\t<n_cycles>\tnumber of cycles\n"
+      "\t<n_procs>\tnumber of cores or procs\n"
+      "\t<unit_gran>\tgranularity (default=16)\n");
     return 1;
   }
 
@@ -415,6 +443,11 @@ int main(int argc, char* argv[]) {
   n_units_flat = n_units * n_layers;
   n_cycles = (int)strtol(argv[2], NULL, 0);
   core_nprocs = (int)strtol(argv[3], NULL, 0);
+  if (argc > 4) {
+    unit_gran = (int)strtol(argv[4], NULL, 0);
+    if (unit_gran <= 0) unit_gran = 1;
+    if (unit_gran > 128) unit_gran = 128;
+  }
   if (core_nprocs <= 0) core_nprocs = 1;
   else if (core_nprocs > core_max_nprocs) core_nprocs = core_max_nprocs;
 
