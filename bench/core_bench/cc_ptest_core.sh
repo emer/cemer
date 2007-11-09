@@ -1,10 +1,8 @@
 #!/bin/csh -f
 
 # cocor command
-set CC = "g++ -O2"
-set CCd = "g++ -g"
+set CC = "g++ -mtune=prescott -msse -mfpmath=sse"
 echo $CC
-$CC -o ptest_core ptest_core.cc -lm -lQtCore -I$QTDIR/include -L$QTDIR/lib
+$CC -g -O2 -o ptest_core ptest_core.cc -lm -lQtCore -I$QTDIR/include -L$QTDIR/lib
 
-echo $CCd
-$CCd -o ptest_cored ptest_core.cc -lm -lQtCore -I$QTDIR/include -L$QTDIR/lib
+$CC -g -o ptest_cored ptest_core.cc -lm -lQtCore -I$QTDIR/include -L$QTDIR/lib

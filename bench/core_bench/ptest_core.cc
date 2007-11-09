@@ -246,8 +246,9 @@ class Unit {
 public:
   float act;			// activation value
   float net;			// net input value
-  Connection* recv_wts;		// receiving weights
+  Connection* recv_wts;		// receiving weights (or sending weights in send mode)
   char dummy[600]; // yes Virginia, Leabra units really are bigger than ~640 bytes!
+  Unit() {act = 0; net = 0;}
 };
 
 // network configuration information
@@ -260,7 +261,7 @@ Unit* layers[n_layers];		// layers = arrays of units
 Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
 bool nibble = true; // setting false disables nibbling and adds sync to loop
-bool send_based = true; // setting false simulates receiver based write pattern
+bool send_based = false; // setting false simulates receiver based write pattern
 
 // construct the network
 
@@ -281,7 +282,7 @@ void MakeNet() {
 
     un1.recv_wts = new Connection[n_units];
     un2.recv_wts = new Connection[n_units];
-
+      
     // setup reciprocal connections between units
     for(int j=0;j<n_units;j++) {
       Connection& cn1 = un1.recv_wts[j];
@@ -360,6 +361,7 @@ float ComputeActs() {
     for(int i=0;i<n_units;i++) {
       Unit& un = layers[l][i];
       un.act = 1.0f / (1.0f + expf(-un.net));
+      un.net = 0.0f; // only needed for sender-based, but cheaper to just do than test
       tot_act += un.act;
     }
   }
@@ -380,9 +382,12 @@ void NetInTask::run() {
   while (my_u < n_units_flat) {
     Unit& un = *(layers_flat[my_u]); //note: accessed flat
     if (send_based) {
+      // note: this isn't really the proper algo, since we are set up for 
+      // rcver based, but we are fully recip connected so the # ops is right
+      // we assume the previous act calc cleared the netin
       un.net = 0.0f;
       for(int j=0;j<n_units;j++) {
-        un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
+        un.recv_wts[j].su->net += un.recv_wts[j].wt * un.act;
       }
     } else { // recv_based
       float net = 0.0f;
@@ -458,7 +463,14 @@ int main(int argc, char* argv[]) {
   }
   if (core_nprocs <= 0) core_nprocs = 1;
   else if (core_nprocs > core_max_nprocs) core_nprocs = core_max_nprocs;
-
+  
+  // switch params
+  for (int arg = 4; arg < argc; arg++) {
+    if (strcmp(argv[arg], "-send") == 0)
+      send_based = true;
+    //TODO: any more
+  }
+  
   MakeThreads();
   MakeNet();
 
@@ -500,8 +512,8 @@ int main(int argc, char* argv[]) {
   }
 
 
-  printf("procs, %d, \tunits, %d, \tweights, %g, \tcycles, %d, \tcon_trav, %g, \tsecs, %g, \tMcon/sec, %g, \tn_tot (exp/act), %d, %d\n",
-          core_nprocs, n_units, n_wts, n_cycles, n_con_trav, tot_time, con_trav_sec, n_tot_exp, n_tot);
+  printf("procs, %d, \tunits, %d, \tweights, %g, \tcycles, %d, \tcon_trav, %g, \tsecs, %g, \tMcon/sec, %g, \tn_tot (exp/act), %d, %d\tsend, %d\n",
+          core_nprocs, n_units, n_wts, n_cycles, n_con_trav, tot_time, con_trav_sec, n_tot_exp, n_tot, send_based);
 
   DeleteThreads();
   DeleteNet();
