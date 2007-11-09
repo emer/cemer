@@ -4757,28 +4757,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     NetViewObj @[0] {
      name="LeftHemisphere";
      desc="left hemisphere of human cortex";
-     pos {x=-0.25: y=0.5: z=-1: };
-     rot {x=0: y=0: z=1: rot=0: };
-     scale {x=1: y=1: z=1: };
-     obj_type=OBJECT;
-     obj_fname="/Users/oreilly/emergent_dbg/3dobj_lib/glass_brain_L.iv";
-     text="Select, Context Menu to Edit";
-     font_size=0.05;
-     set_color=1;
-     color {r=0.6941177: g=0.6941177: b=0.6941177: a=0.4941176: };
-    };
-    NetViewObj @[1] {
-     name="RightHemisphere";
-     desc="right hemisphere of human cortex";
      pos {x=1.25: y=0.5: z=-1: };
      rot {x=0: y=0: z=1: rot=0: };
      scale {x=1: y=1: z=1: };
      obj_type=OBJECT;
-     obj_fname="/Users/oreilly/emergent_dbg/3dobj_lib/glass_brain_R.iv";
-     text="Select, Context Menu to Edit";
+     obj_fname="/usr/local/share/Emergent/3dobj_lib/glass_brain_LH.iv";
+     text="file: glass_brain_L.iv not loaded!";
      font_size=0.05;
      set_color=1;
-     color {r=0.6941177: g=0.6941177: b=0.6941177: a=0.4941176: };
+     color {r=0.6941177: g=0.6941177: b=0.6941177: a=0.4901961: };
+    };
+    NetViewObj @[1] {
+     name="RightHemisphere";
+     desc="right hemisphere of human cortex";
+     pos {x=-0.25: y=0.5: z=-1: };
+     rot {x=0: y=0: z=1: rot=0: };
+     scale {x=1: y=1: z=1: };
+     obj_type=OBJECT;
+     obj_fname="/usr/local/share/Emergent/3dobj_lib/glass_brain_RH.iv";
+     text="file: glass_brain_R.iv not loaded!";
+     font_size=0.05;
+     set_color=1;
+     color {r=0.6941177: g=0.6941177: b=0.6941177: a=0.4901961: };
     };
     NetViewObj @[2] {
      name="NetViewObj_2";

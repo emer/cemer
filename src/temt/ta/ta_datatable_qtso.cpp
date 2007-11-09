@@ -2789,14 +2789,19 @@ void GraphTableView::Initialize() {
   z_axis.axis = GraphAxisBase::Z;
   plot_1.color.name = "black";
   plot_1.point_style = GraphPlotView::CIRCLE;
+  plot_1.color.UpdateAfterEdit();	// needed to pick up color name
   plot_2.color.name = "red";
   plot_2.point_style = GraphPlotView::SQUARE;
+  plot_2.color.UpdateAfterEdit();
   plot_3.color.name = "blue";
   plot_3.point_style = GraphPlotView::DIAMOND;
+  plot_3.color.UpdateAfterEdit();
   plot_4.color.name = "green3";
   plot_4.point_style = GraphPlotView::TRIANGLE;
+  plot_4.color.UpdateAfterEdit();
   plot_5.color.name = "purple";
   plot_5.point_style = GraphPlotView::PLUS;
+  plot_5.color.UpdateAfterEdit();
   alt_y_2 = false;
   alt_y_3 = false;
   alt_y_4 = false;

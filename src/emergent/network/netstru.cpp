@@ -4854,21 +4854,21 @@ NetViewObj* Network::NewGlassBrain() {
   StructUpdate(true);
   NetViewObj* lh = view_objs.NewEl(1);
   lh->name = "LeftHemisphere";
-  lh->desc = "left hemisphere of human cortex";
+  lh->desc = "left hemisphere of human cortex (glass brain)";
   lh->obj_type = NetViewObj::OBJECT;
-  lh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_L.iv";
+  lh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_LH.iv";
   lh->set_color = true;
   lh->color.Set(.7f, .7f, .7f, .5f);
-  lh->pos.x = -.25f; lh->pos.y = .5f; lh->pos.z = -1.0f;
+  lh->pos.x = 1.25f; lh->pos.y = .5f; lh->pos.z = -1.0f;
 
   NetViewObj* rh = view_objs.NewEl(1);
   rh->name = "RightHemisphere";
-  rh->desc = "right hemisphere of human cortex";
+  rh->desc = "right hemisphere of human cortex (glass brain)";
   rh->obj_type = NetViewObj::OBJECT;
-  rh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_R.iv";
+  rh->obj_fname = taMisc::app_dir + "/3dobj_lib/glass_brain_RH.iv";
   rh->set_color = true;
   rh->color.Set(.7f, .7f, .7f, .5f);
-  rh->pos.x = 1.25f; rh->pos.y = .5f; rh->pos.z = -1.0f;
+  rh->pos.x = -.25f; rh->pos.y = .5f; rh->pos.z = -1.0f;
   StructUpdate(false);
   return rh;
 }

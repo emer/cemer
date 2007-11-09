@@ -1464,17 +1464,22 @@ void NetViewObjView::Render_pre() {
   NetViewObj* ob = Obj();
   if(ob) {
     if(ob->obj_type == NetViewObj::OBJECT) {
-      SoInput in;
-      if (in.openFile(ob->obj_fname)) {
-	SoSeparator* root = SoDB::readAll(&in);
-	if (root) {
-	  ssep->addChild(root);
-	  goto finish;
+      int acc = access(ob->obj_fname, F_OK);
+      if (acc == 0) {
+	SoInput in;
+	if (in.openFile(ob->obj_fname)) {
+	  SoSeparator* root = SoDB::readAll(&in);
+	  if (root) {
+	    ssep->addChild(root);
+	    goto finish;
+	  }
 	}
       }
-      taMisc::Error("object file:", ob->obj_fname, "not found!");
+      taMisc::Warning("object file:", ob->obj_fname, "not found or unable to be loaded!");
+      ob->obj_type = NetViewObj::TEXT;
+      ob->text = "file: " + taMisc::GetFileFmPath(ob->obj_fname) + " not loaded!";
     }
-    else {
+    if(ob->obj_type == NetViewObj::TEXT) {
       SoSeparator* tsep = new SoSeparator();
       SoComplexity* cplx = new SoComplexity;
       cplx->value.setValue(taMisc::text_complexity);
