@@ -173,10 +173,23 @@ if test x"$debug" = x"true"; then
   export CONFIG=debug
 
   SIM_AC_CONFIGURATION_SETTING([Debugging],[Enabled])
-  SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -Wall])
+
   AC_DEFINE([DEBUG],,[Used when debugging])
   AC_SUBST([PL_DEBUG],[debug])
-  AC_SUBST([OPT_LEVEL],["-g -Wall"])                       dnl No optimization in debug mode
+
+  case $host in
+          *darwin*)
+                   dnl use DWARF debugging symbols on OSX (for Leopard)
+                   AC_SUBST([OPT_LEVEL],["-gstabs+ -Wall"])  dnl No optimization in debug mode
+                   SIM_AC_CONFIGURATION_SETTING([Optimization],[-gstabs+ -Wall])
+          ;;
+          *)
+                   dnl do default thing
+                   AC_SUBST([OPT_LEVEL],["-g -Wall"])  dnl No optimization in debug mode
+                   SIM_AC_CONFIGURATION_SETTING([Optimization],[-g -Wall])
+          ;;                   
+  esac
+
   dnl Checks for headers
   AC_FUNC_ALLOCA
   AC_HEADER_DIRENT
