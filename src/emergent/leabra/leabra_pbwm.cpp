@@ -1503,24 +1503,69 @@ void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Unit_Group* rugp, Unit_Group* s
 void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
 
+  LeabraLayer* lv_lay = (LeabraLayer*)prjn->layer;
+  int tot_pfc_prjns = 0;
+  int tot_pfc_stripes = 0;
+  int my_start_stripe = 0;
+  int my_prjn_idx = 0;
+  for(int i=0; i< lv_lay->projections.size; i++) {
+    Projection* prj = lv_lay->projections[i];
+    if(prj->spec.SPtr()->InheritsFrom(&TA_PFCLVPrjnSpec)) {
+      if(prj == prjn) {
+	my_start_stripe = tot_pfc_stripes;
+	my_prjn_idx = tot_pfc_prjns;
+      }
+      tot_pfc_prjns++;
+      tot_pfc_stripes += prj->from->units.gp.size;
+    }
+  }
+
   Unit_Group* lv_gp = &(prjn->layer->units); // lv = recv
   Unit_Group* pfc_gp = &(prjn->from->units); // pfc = send
 
-  if(lv_gp->gp.size <= 1) {	// just full connectivity
+  int n_lv_stripes = lv_gp->gp.size;
+  int n_pfc_stripes = pfc_gp->gp.size;
+
+  if(n_lv_stripes <= 1) {	// just full connectivity
     Connect_Gp(prjn, lv_gp, pfc_gp);
   }
-  else if(lv_gp->gp.size == pfc_gp->gp.size) { // just one-to-one
-    for(int i=0; i<lv_gp->gp.size; i++) {
+  else if(n_lv_stripes == n_pfc_stripes) { // just one-to-one
+    for(int i=0; i<n_pfc_stripes; i++) {
       Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(i);
       Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
       Connect_Gp(prjn, rgp, sgp);
     }
   }
-  else if(lv_gp->gp.size == pfc_gp->gp.size + 1) { // full plus one-to-one
+  else if(n_lv_stripes == n_pfc_stripes + 1) { // full plus one-to-one
     Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(0);
     Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
-    for(int i=0; i<pfc_gp->gp.size; i++) { // then gp one-to-one
+    for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
       Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(i+1);
+      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
+      Connect_Gp(prjn, rgp, sgp);
+    }
+  }
+  else if(n_lv_stripes == tot_pfc_stripes) { // multi-pfc just one-to-one
+    for(int i=0; i<n_pfc_stripes; i++) {
+      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + i);
+      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
+      Connect_Gp(prjn, rgp, sgp);
+    }
+  }
+  else if(n_lv_stripes == tot_pfc_stripes + 1) { // multi-pfc full plus one-to-one
+    Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(0);
+    Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
+    for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
+      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + i+1);
+      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
+      Connect_Gp(prjn, rgp, sgp);
+    }
+  }
+  else if(n_lv_stripes == tot_pfc_stripes + tot_pfc_prjns) { // multi-pfc separate full plus one-to-one
+    Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + my_prjn_idx);
+    Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
+    for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
+      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + my_prjn_idx + i+1);
       Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
       Connect_Gp(prjn, rgp, sgp);
     }
