@@ -455,15 +455,15 @@ public:
 
   virtual void	SaveWeights_strm(ostream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+  virtual int	LoadWeights_strm(istream& strm, Unit* ru, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) -- rval is taMisc::ReadTagStatus, TAG_END if successful
   static int 	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-				 bool quiet = true);
+				 bool quiet = false);
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
   virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+  virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
 
   int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
@@ -773,15 +773,15 @@ public: //
   // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member)
   virtual void	SaveWeights_strm(ostream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int	LoadWeights_strm(istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+  virtual int	LoadWeights_strm(istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus, TAG_END if successful
   static int	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-				 bool quiet = true);
+				 bool quiet = false);
   // #IGNORE skip over saved weight values -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
   virtual void	SaveWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int	LoadWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+  virtual int	LoadWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   void		SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
@@ -988,12 +988,12 @@ public:
   virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual int	LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-				 bool quiet = true);
+				 bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt)
   virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
-			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // convenience functions for those defined in the spec
@@ -1185,16 +1185,16 @@ public:
   virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual int	LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-				 bool quiet = true);
+				 bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
   static int	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-				 bool quiet = true);
+				 bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
   virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
-			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual bool	BuildUnits();
@@ -1368,16 +1368,16 @@ public:
   virtual void	SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual int	LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-			         bool quiet = true);
+			         bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
   static int	SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
-			         bool quiet = true);
+			         bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
   virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
-			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = true);
+			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual void  BuildUnits();
@@ -1831,11 +1831,11 @@ public:
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)
   virtual void	SaveWeights_strm(ostream& strm, WtSaveFormat fmt = NET_FMT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual bool	LoadWeights_strm(istream& strm, bool quiet = true);
+  virtual bool	LoadWeights_strm(istream& strm, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
   virtual void	SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
   // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual bool	LoadWeights(const String& fname="", bool quiet = true);
+  virtual bool	LoadWeights(const String& fname="", bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
