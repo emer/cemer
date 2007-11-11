@@ -1534,9 +1534,7 @@ void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  trans[0] *= nvo->scale.x;
-  trans[1] *= nvo->scale.y;
-  trans[2] *= nvo->scale.z;
+  trans[0] *= nvo->scale.x;  trans[1] *= nvo->scale.y;  trans[2] *= nvo->scale.z;
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
   nvo->pos += tr;
 
@@ -2148,8 +2146,7 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-  trans[0] *= nv->main_xform.scale.x;
-  trans[1] *= nv->main_xform.scale.y;
+  trans[0] *= nv->main_xform.scale.x;  trans[1] *= nv->main_xform.scale.y;
   trans[2] *= nv->main_xform.scale.z;
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
   nv->main_xform.translate += tr;

@@ -146,6 +146,7 @@ public:
   static VEWorldView* New(VEWorld* wl, T3DataViewFrame*& fr);
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
+  bool		drag_objs;	// allow user to drag/rotate/rescale objects
 
   virtual const String	caption() const; // what to show in viewer
 
@@ -209,8 +210,11 @@ INHERITED(iViewPanelFrame)
 public:
 
   QVBoxLayout*		layOuter;
-  QHBoxLayout*		 layCams;
+  QHBoxLayout*		 layDispCheck;
+  QCheckBox*		  chkDisplay;
+  QCheckBox*		  chkDragObjs;
 
+  QHBoxLayout*		 layCams;
   QVBoxLayout*		  layCam0;
   QLabel*		  labcam0;
   QLabel*		  labcam0_txt;
@@ -230,6 +234,7 @@ public: // IDataLinkClient interface
 
 protected:
   override void		UpdatePanel_impl();
+  override void		GetValue_impl();
 
 // public slots:
 //   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview

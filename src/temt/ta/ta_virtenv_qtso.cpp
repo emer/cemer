@@ -164,8 +164,14 @@ void VEBodyView::SetBody(VEBody* ob) {
 }
 
 void VEBodyView::Render_pre() {
-  setNode(new T3VEBody(this));
+  bool show_drag = true;;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
   VEWorldView* wv = parent();
+  if(!wv->drag_objs) show_drag = false;
+
+  setNode(new T3VEBody(this, show_drag));
   SoSeparator* ssep = node_so()->shapeSeparator();
 
   VEBody* ob = Body();
@@ -269,6 +275,57 @@ void VEBodyView::Render_impl() {
   mat->transparency.setValue(1.0f - ob->color.a);
 }
 
+// callback for transformer dragger
+void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3VEBody* obso = (T3VEBody*)userData;
+  VEBodyView* obv = (VEBodyView*)obso->dataView();
+  VEBody* ob = obv->Body();
+  VEWorldView* wv = obv->parent();
+
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
+
+  SbVec3f trans = dragger->translation.getValue();
+//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  ob->cur_pos += tr;
+  ob->init_pos = ob->cur_pos;
+
+  const SbVec3f& scale = dragger->scaleFactor.getValue();
+//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  ob->radius *= sc.x;
+  ob->length *= sc.x;
+  ob->box *= sc;
+  ob->obj_xform.scale *= sc;
+
+  SbVec3f axis;
+  float angle;
+  dragger->rotation.getValue(axis, angle);
+//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    SbRotation rot;
+    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+    SbRotation nw_rot = rot * cur_rot;
+    nw_rot.getValue(axis, angle);
+    ob->cur_rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+    ob->init_rot = ob->cur_rot;
+  }
+
+//   float h = 0.04f; // nominal amount of height, so we don't vanish
+  obso->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  obso->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  obso->txfm_shape()->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  wv->UpdateDisplay();
+}
+
 //////////////////////////
 //   VEObjectView	//
 //////////////////////////
@@ -361,8 +418,14 @@ void VEStaticView::SetStatic(VEStatic* ob) {
 }
 
 void VEStaticView::Render_pre() {
-  setNode(new T3VEStatic(this));
+  bool show_drag = true;;
+  SoQtViewer* vw = GetViewer();
+  if(vw)
+    show_drag = !vw->isViewing();
   VEWorldView* wv = parent();
+  if(!wv->drag_objs) show_drag = false;
+
+  setNode(new T3VEStatic(this, show_drag));
   SoSeparator* ssep = node_so()->shapeSeparator();
 
   VEStatic* ob = Static();
@@ -492,6 +555,55 @@ void VEStaticView::Render_impl() {
   mat->transparency.setValue(1.0f - ob->color.a);
 }
 
+// callback for transformer dragger
+void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
+  SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
+  T3VEStatic* obso = (T3VEStatic*)userData;
+  VEStaticView* obv = (VEStaticView*)obso->dataView();
+  VEStatic* ob = obv->Static();
+  VEWorldView* wv = obv->parent();
+
+  SbRotation cur_rot;
+  cur_rot.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
+
+  SbVec3f trans = dragger->translation.getValue();
+//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
+  cur_rot.multVec(trans, trans); // rotate the translation by current rotation
+  FloatTDCoord tr(trans[0], trans[1], trans[2]);
+  ob->pos += tr;
+
+  const SbVec3f& scale = dragger->scaleFactor.getValue();
+//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
+  FloatTDCoord sc(scale[0], scale[1], scale[2]);
+  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  ob->radius *= sc.x;
+  ob->length *= sc.x;
+  ob->box *= sc;
+  ob->obj_xform.scale *= sc;
+
+  SbVec3f axis;
+  float angle;
+  dragger->rotation.getValue(axis, angle);
+//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+  if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
+    SbRotation rot;
+    rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
+    SbRotation nw_rot = rot * cur_rot;
+    nw_rot.getValue(axis, angle);
+    ob->rot.SetXYZR(axis[0], axis[1], axis[2], angle);
+  }
+
+//   float h = 0.04f; // nominal amount of height, so we don't vanish
+  obso->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+  obso->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  obso->txfm_shape()->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->translation.setValue(0.0f, 0.0f, 0.0f);
+  dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+  dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
+
+  wv->UpdateDisplay();
+}
+
 //////////////////////////
 //   VESpaceView	//
 //////////////////////////
@@ -594,6 +706,8 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
 }
 
 void VEWorldView::Initialize() {
+  display_on = true;
+  drag_objs = true;
   data_base = &TA_VEWorld;
 //   children.SetBaseType(&TA_VEObjectView);
   cam_renderer = NULL;
@@ -612,6 +726,7 @@ void VEWorldView::CutLinks() {
 
 void VEWorldView::Copy_(const VEWorldView& cp) {
   display_on = cp.display_on;
+  drag_objs = cp.drag_objs;
 }
 
 void VEWorldView::UpdateAfterEdit_impl() {
@@ -997,6 +1112,16 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   layOuter->setSpacing(taiM->vsep_c);
 
   ////////////////////////////////////////////////////////////////////////////
+  layDispCheck = new QHBoxLayout(layOuter);
+  chkDisplay = new QCheckBox("Display!", widg);
+  connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkDisplay);
+
+  chkDragObjs = new QCheckBox("Drag Objs!", widg);
+  connect(chkDragObjs, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkDragObjs);
+
+  ////////////////////////////////////////////////////////////////////////////
   layCams = new QHBoxLayout(layOuter);
 
   layCam0 = new QVBoxLayout(layCams);
@@ -1028,10 +1153,14 @@ VEWorldViewPanel::~VEWorldViewPanel() {
 void VEWorldViewPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   VEWorldView* wv_ = wv();
+  if(!wv_) return;
   
   VEWorld* wl = wv_->World();
   if(!wl) return;
   
+  chkDisplay->setChecked(wv_->display_on);
+  chkDragObjs->setChecked(wv_->drag_objs);
+
   if(wl->camera_0) {
     QImage img = wv_->GetCameraImage(0);
     if(!img.isNull()) {
@@ -1061,3 +1190,11 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   }
 }
 
+void VEWorldViewPanel::GetValue_impl() {
+  inherited::GetValue_impl();
+  VEWorldView* wv_ = wv();
+  if (!wv_) return;
+
+  wv_->display_on = chkDisplay->isChecked();
+  wv_->drag_objs = chkDragObjs->isChecked();
+}

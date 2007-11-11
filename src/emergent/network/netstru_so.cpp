@@ -615,14 +615,9 @@ T3NetViewObj::T3NetViewObj(void* obj, bool show_drag)
   SO_NODE_CONSTRUCTOR(T3NetViewObj);
 
   show_drag_ = show_drag;
-  // todo: impl dragger!?
   drag_ = NULL;
   if(show_drag_) {
     drag_ = new T3TransformBoxDragger(0.06f, .04f, .03f);
-//     drag_->xf_->translation.setValue(0.0f, -.5f, 0.0f);
-
-//     String expr = "oA = vec3f(.5 + A[0], -.5 + A[1], -.5 + A[2])";
-//     drag_->trans_calc_->expression = expr.chars();
 
     txfm_shape()->translation.connectFrom(&drag_->dragger_->translation);
     txfm_shape()->rotation.connectFrom(&drag_->dragger_->rotation);
