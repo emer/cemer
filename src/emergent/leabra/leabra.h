@@ -687,10 +687,10 @@ public:
   //////////////////////////////////
 
   void 		Send_Netin(Unit* u) { UnitSpec::Send_Netin(u); }
-  void 		Send_Netin(LeabraUnit* u, LeabraLayer* lay);
+  void 		Send_Netin(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation send netinput; add ext input, sender-based
 
-  virtual void 	Send_NetinDelta(LeabraUnit* u, LeabraLayer* lay);
+  virtual void 	Send_NetinDelta(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold
 
   ////////////////////////////////////////////////////////////////
@@ -898,11 +898,11 @@ public:
   { ((LeabraUnitSpec*)GetUnitSpec())->Send_ClampNet(this, lay, net); }
   // #CAT_Activation compute net input from hard-clamped inputs (sender based)
 
-  void		Send_Netin(LeabraLayer* lay)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Netin(this, lay); }
+  void		Send_Netin(LeabraLayer* lay, LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Netin(this, lay, net); }
   // #CAT_Activation send netinput; add ext input, sender-based
-  void		Send_NetinDelta(LeabraLayer* lay)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Send_NetinDelta(this, lay); }
+  void		Send_NetinDelta(LeabraLayer* lay, LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_NetinDelta(this, lay, net); }
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold
 
   void		Compute_NetinAvg(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net)
@@ -1269,9 +1269,9 @@ public:
   //	Stage 1: netinput 	  //
   //////////////////////////////////
 
-  virtual void 	Send_Netin(LeabraLayer* lay);
+  virtual void 	Send_Netin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute net inputs
-  virtual void 	Send_NetinDelta(LeabraLayer* lay);
+  virtual void 	Send_NetinDelta(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute net inputs as changes in activation
 
   ////////////////////////////////////////////////////////////////
@@ -1617,10 +1617,12 @@ public:
   void	Send_ClampNet(LeabraNetwork* net) 	{ spec->Send_ClampNet(this, net); }
   // #CAT_Activation prior to settling: compute input from hard-clamped
 
-  void	Send_Netin()				{ spec->Send_Netin(this); }
+  void	Send_Netin(LeabraNetwork* net)		{ spec->Send_Netin(this, net); }
   // #CAT_Activation compute net inputs
-  void	Send_NetinDelta()			{ spec->Send_NetinDelta(this); }
+  void	Send_Netin()				{ spec->Send_Netin(this, NULL); }
+  void	Send_NetinDelta(LeabraNetwork* net)	{ spec->Send_NetinDelta(this, net); }
   // #CAT_Activation compute net inputs as changes in activation
+  void	Send_NetinDelta()			{ spec->Send_NetinDelta(this, NULL); }
 
   void	Compute_Clamp_NetAvg(LeabraNetwork* net)  { spec->Compute_Clamp_NetAvg(this, net); }
   // #CAT_Activation clamp and compute averages of net inputs that were already computed
@@ -2005,6 +2007,12 @@ public:
 
   int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
   bool		send_delta;	// #DEF_true #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
+  float		send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
+  int		send_pct_n;	// #READ_ONLY #CAT_Statistic number of units sending activation this cycle
+  int		send_pct_tot;	// #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
+  float		avg_send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average proportion of units sending activation over an epoch
+  float		avg_send_pct_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
+  int		avg_send_pct_n; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
 
   float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
   float		maxda;		// #GUI_READ_ONLY #SHOW maximum #CAT_Statistic #VIEW change in activation (delta-activation) over network; used in stopping settling
@@ -2089,6 +2097,8 @@ public:
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)
   virtual void	Compute_AvgExtRew();
   // #CAT_Statistic compute average external reward information (at an epoch-level timescale)
+  virtual void	Compute_AvgSendPct();
+  // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
   override void	Compute_EpochStats();
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   override void	SetProjectionDefaultTypes(Projection* prjn);

@@ -772,9 +772,11 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
 //	Stage 1: netinput 	  //
 ////////////////////////////////////
 
-void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*) {
+void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net) {
   // sender-based (and this fun not called on hard_clamped EXT layers)
+  net->send_pct_tot++;
   if(u->act > opt_thresh.send) {
+    net->send_pct_n++;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -784,9 +786,11 @@ void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*) {
   }
 }
 
-void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
+void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net) {
+  net->send_pct_tot++;
   if(u->act > opt_thresh.send) {
     if(fabsf(u->act_delta) > opt_thresh.delta) {
+      net->send_pct_n++;
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -797,6 +801,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*) {
     }
   }
   else if(u->act_sent > opt_thresh.send) {
+    net->send_pct_n++;
     u->act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
@@ -1916,24 +1921,24 @@ void LeabraLayerSpec::Send_ClampNet(LeabraLayer* lay, LeabraNetwork* net) {
 //	Stage 1: netinput 	//
 //////////////////////////////////
 
-void LeabraLayerSpec::Send_Netin(LeabraLayer* lay) {
+void LeabraLayerSpec::Send_Netin(LeabraLayer* lay, LeabraNetwork* net) {
   // hard-clamped input layers are already computed in the clmp_net value
   if(lay->hard_clamped) return;
 
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->Send_Netin(lay);
+    u->Send_Netin(lay, net);
 }
 
-void LeabraLayerSpec::Send_NetinDelta(LeabraLayer* lay) {
+void LeabraLayerSpec::Send_NetinDelta(LeabraLayer* lay, LeabraNetwork* net) {
   // hard-clamped input layers are already computed in the clmp_net value
   if(lay->hard_clamped) return;
 
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->Send_NetinDelta(lay);
+    u->Send_NetinDelta(lay, net);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -3565,6 +3570,12 @@ void LeabraNetwork::Initialize() {
   //  send_delta = false;
   send_delta = true;		// so much faster -- should always be on by default
 
+  send_pct = 0.0f;
+  send_pct_n = send_pct_tot = 0;
+  avg_send_pct = 0.0f;
+  avg_send_pct_sum = 0.0f;
+  avg_send_pct_n = 0;
+
   maxda_stopcrit = .005f;
   maxda = 0.0f;
   
@@ -3593,6 +3604,11 @@ void LeabraNetwork::Init_Stats() {
   avg_cycles_sum = 0.0f;
   avg_cycles_n = 0;
 
+  send_pct_n = send_pct_tot = 0;
+  avg_send_pct = 0.0f;
+  avg_send_pct_sum = 0.0f;
+  avg_send_pct_n = 0;
+
   ext_rew = 0.0f;
   avg_ext_rew = 0.0f;
   avg_ext_rew_sum = 0.0f;
@@ -3613,19 +3629,33 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::Compute_Netin() {
   Init_Netin();		// this is done first because of sender-based net
+  send_pct_n = send_pct_tot = 0;
   if(send_delta) {
     LeabraLayer* l;
     taLeafItr i;
     FOR_ITR_EL(LeabraLayer, l, layers., i) {
       if(!l->lesioned())
-	l->Send_NetinDelta();
+	l->Send_NetinDelta(this);
     }
 #ifdef DMEM_COMPILE
     dmem_share_units.Sync(3);
 #endif
   }
   else {
-    Send_Netin();
+    LeabraLayer* l;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraLayer, l, layers., i) {
+      if(!l->lesioned())
+	l->Send_Netin(this);
+    }
+#ifdef DMEM_COMPILE
+    DMem_SyncNet();
+#endif
+  }
+  if(send_pct_tot > 0) {
+    send_pct = (float)send_pct_n / (float)send_pct_tot;
+    avg_send_pct_sum += send_pct;
+    avg_send_pct_n++;
   }
 }
 
@@ -4123,6 +4153,14 @@ void LeabraNetwork::Compute_AvgCycles() {
   avg_cycles_n = 0;
 }
 
+void LeabraNetwork::Compute_AvgSendPct() {
+  if(avg_send_pct_n > 0) {
+    avg_send_pct = avg_send_pct_sum / (float)avg_send_pct_n;
+  }
+  avg_send_pct_sum = 0.0f;
+  avg_send_pct_n = 0;
+}
+
 void LeabraNetwork::Compute_AvgExtRew() {
   if(avg_ext_rew_n > 0) {
     avg_ext_rew = avg_ext_rew_sum / (float)avg_ext_rew_n;
@@ -4135,6 +4173,7 @@ void LeabraNetwork::Compute_EpochStats() {
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
   Compute_AvgExtRew();
+  Compute_AvgSendPct();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
