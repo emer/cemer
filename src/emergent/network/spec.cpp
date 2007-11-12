@@ -210,8 +210,12 @@ void BaseSpec::InitLinks() {
   taBase::Own(unique, this);
   taBase::Own(children, this);
   children.SetBaseType(GetTypeDef());
-  if(!taMisc::is_loading)
+  // put in a struct bracket so thing does a full refresh when getting subspec'ed or root spec'ed
+  if(!taMisc::is_loading) {
+    StructUpdate(true);
     UpdateSpec();
+    StructUpdate(false);
+  }
 }
 
 void BaseSpec::CutLinks() {
@@ -411,8 +415,11 @@ void BaseSubSpec::Destroy() {
 void BaseSubSpec::InitLinks() {
   taNBase::InitLinks();
   taBase::Own(unique, this);
-  if(!taMisc::is_loading)
+  if(!taMisc::is_loading) {
+    StructUpdate(true);
     UpdateSpec();
+    StructUpdate(false);
+  }
 }
 
 void BaseSubSpec::UpdateAfterEdit_impl() {

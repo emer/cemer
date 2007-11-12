@@ -123,8 +123,8 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
     else
       taiMember::GetImage_impl(dat, base);
   } else {
-    taiPlusToggle* rval = (taiPlusToggle*)dat;
-    if(!rval->data) {
+    taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
+    if(!rval || !rval->data) {
       cerr << "spec mbr bug: null data in: " << mbr->name << endl;
       return;
     }
@@ -160,7 +160,11 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
     return;
   }
 
-  taiPlusToggle* rval = (taiPlusToggle*)dat;
+  taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
+  if(!rval || !rval->data) {
+    cerr << "spec mbr bug: null data in: " << mbr->name << endl;
+    return;
+  }
   if(typ->InheritsFrom(TA_BaseSpec)) {
     BaseSpec* es = (BaseSpec*)base;
     es->SetUnique(mbr->idx,rval->GetValue());
