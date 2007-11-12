@@ -1051,6 +1051,10 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
           // for fm>to, to will just be the dst, because fm pushes to down
           list->MoveIdx(list->size - 1, itm_idx);
         }
+	// special new delayed code to expand and select the new guy!
+	if(!list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
+	  tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe"); // select new guy in case new owner was not expaned yet and needs expansion!
+	}
       } else return taiClipData::ER_ERROR;
     }
     return taiClipData::ER_OK;

@@ -1936,7 +1936,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // note: Startup_ProcessArgs() is called after having entered the event loop
   // note: don't call event loop yet, because we haven't initialized main event loop
   // happens in Startup_Run()
-  instance()->Save();
+  if(taMisc::gui_active && (taMisc::dmem_proc == 0))	// only guy and don't have all the other nodes save
+    instance()->Save();
   return true;
   
 startup_failed:
