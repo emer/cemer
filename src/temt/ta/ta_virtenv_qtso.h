@@ -45,6 +45,9 @@ public:
   override bool		SetName(const String& nm);
   override String	GetName() const 	{ return name; } 
 
+  virtual void		SetDraggerPos();
+  // set dragger position, based on shape
+
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEBodyView& cp);
   TA_BASEFUNS(VEBodyView);
@@ -98,6 +101,9 @@ public:
 
   override bool		SetName(const String& nm);
   override String	GetName() const 	{ return name; } 
+
+  virtual void		SetDraggerPos();
+  // set dragger position, based on shape
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEStaticView& cp);

@@ -1535,15 +1535,20 @@ QPixmap T3DataViewFrame::GrabImage(bool& got_image) {
 }
 
 bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
-  if(img_fmt != EPS) {
-    return inherited::SaveImageAs(fname, img_fmt);
-  }
-
   if(!widget()) return false;
+  if(img_fmt == EPS)
+    return SaveImageEPS(fname);
+  if(img_fmt == IV)
+    return SaveImageIV(fname);
+
+  return inherited::SaveImageAs(fname, img_fmt);
+}      
+
+bool T3DataViewFrame::SaveImageEPS(const String& fname) {
   SoQtViewer* viewer = widget()->ra();
   if(!viewer) return false;
 
-  String ext = String(".") + image_exts.SafeEl(img_fmt);
+  String ext = String(".") + image_exts.SafeEl(EPS);
   taFiler* flr = GetSaveFiler(fname, ext);
   if(!flr->ostrm) {
     flr->Close();
@@ -1606,6 +1611,28 @@ bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   return true;
 }
 
+bool T3DataViewFrame::SaveImageIV(const String& fname) {
+  SoQtViewer* viewer = widget()->ra();
+  if(!viewer) return false;
+
+  String ext = String(".") + image_exts.SafeEl(IV);
+  taFiler* flr = GetSaveFiler(fname, ext);
+  if(!flr->ostrm) {
+    flr->Close();
+    taRefN::unRefDone(flr);
+    return false;
+  }
+  flr->Close();
+
+  SoOutput out;
+  if(!out.openFile(flr->fileName())) return false;
+  SoWriteAction wa(&out);
+  wa.apply(viewer->getSceneManager()->getSceneGraph());
+  out.closeFile();
+
+  taRefN::unRefDone(flr);
+  return true;
+}
 
 
 //////////////////////////

@@ -139,10 +139,11 @@ friend class MainWindowViewer;
 //friend class WindowState;
 public:
   enum ImageFormat {
-    EPS,			// encapsulated postscript file (only for inventor objects)
+    EPS,			// encapsulated postscript file (only for 3D view objects)
     JPEG,			// JPEG -- best lossy compression (small file sizes) and ubiquitous
     PNG,			// Portable Network Graphics -- best lossless compression (larger files, but better than raw) and ubiquitous
     PPM,			// Portable Pixmap -- good for converting to other formats -- no compression
+    IV,				// Open Inventor format (only for 3D view objects)
   };
   
   static void		GetFileProps(TypeDef* td, String& fltr, bool& cmprs);

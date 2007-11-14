@@ -595,6 +595,11 @@ public:
   override QPixmap	GrabImage(bool& got_image);
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = EPS);
 
+  virtual bool		SaveImageEPS(const String& fname = "");
+  // save image in EPS format
+  virtual bool		SaveImageIV(const String& fname = "");
+  // save image in IV (open inventor) format
+
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); // we notify viewer
   void	InitLinks();
   void	CutLinks();

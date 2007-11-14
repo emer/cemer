@@ -83,6 +83,7 @@ void VEBody::Initialize() {
   radius = .2f;
   length = 1.0f;
   box = 1.0f;
+  set_color = true;
   color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
   fixed_joint_id = NULL;
 }
@@ -839,6 +840,7 @@ void VEStatic::Initialize() {
   plane_norm = NORM_Y;
   plane_height = 0.0f;
   plane_vis_size = 100.0f;
+  set_color = true;
   color.Set(0.4f, 0.3f, .1f, 1.0f);	// brownish..
 }
 

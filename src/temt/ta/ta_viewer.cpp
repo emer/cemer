@@ -44,12 +44,13 @@
 String_Array DataViewer::image_exts;
 
 bool DataViewer::InitImageExts() {
-  if(image_exts.size == PPM+1) return false;
+  if(image_exts.size == IV+1) return false;
   image_exts.Reset();
   image_exts.Add("eps");
   image_exts.Add("jpg");
   image_exts.Add("png");
   image_exts.Add("ppm");
+  image_exts.Add("iv");
   return true;
 }
 
@@ -186,8 +187,8 @@ QPixmap DataViewer::GrabImage(bool& got_image) {
 }
 
 bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
-  if(TestError(img_fmt == EPS, "SaveImageAs",
-	       "EPS (encapsulated postscript) not supported for this type of view"))
+  if(TestError(img_fmt == EPS || img_fmt == IV, "SaveImageAs",
+	       "EPS (encapsulated postscript) or IV (Open Inventor) not supported for this type of view"))
     return false;
   bool rval = false;
   String ext = image_exts.SafeEl(img_fmt);

@@ -86,6 +86,8 @@ public:
 
   T3VEBody(void* bod = NULL, bool show_drag = false);
 
+  T3TransformBoxDragger* getDragger() { return drag_; }	// my position dragger
+
 protected:
   bool			 show_drag_;
   T3TransformBoxDragger* drag_;	// my position dragger
@@ -118,6 +120,8 @@ public:
   static void	initClass();
 
   T3VEStatic(void* stat = NULL, bool show_drag = false);
+
+  T3TransformBoxDragger* getDragger() { return drag_; }	// my position dragger
 
 protected:
   bool			 show_drag_;

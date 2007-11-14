@@ -171,8 +171,9 @@ void VEBodyView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  setNode(new T3VEBody(this, show_drag));
-  SoSeparator* ssep = node_so()->shapeSeparator();
+  T3VEBody* obv = new T3VEBody(this, show_drag);
+  setNode(obv);
+  SoSeparator* ssep = obv->shapeSeparator();
 
   VEBody* ob = Body();
   if(ob) {
@@ -182,7 +183,7 @@ void VEBodyView::Render_pre() {
 	SoSeparator* root = SoDB::readAll(&in);
 	if (root) {
 	  ssep->addChild(root);
-	  SoTransform* tx = node_so()->txfm_shape();
+	  SoTransform* tx = obv->txfm_shape();
 	  ob->obj_xform.CopyTo(tx);
 	  goto finish;
 	}
@@ -217,7 +218,7 @@ void VEBodyView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = node_so()->txfm_shape();
+      SoTransform* tx = obv->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEBody::LONG_Y)
@@ -231,7 +232,7 @@ void VEBodyView::Render_pre() {
       sp->radius = ob->radius;
       sp->height = ob->length;
       ssep->addChild(sp);
-      SoTransform* tx = node_so()->txfm_shape();
+      SoTransform* tx = obv->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
 	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEBody::LONG_Y)
@@ -255,7 +256,44 @@ void VEBodyView::Render_pre() {
   }      
  finish:
 
+  SetDraggerPos();
+
   inherited::Render_pre();
+}
+
+void VEBodyView::SetDraggerPos() {
+  T3VEBody* obv = (T3VEBody*)node_so();
+  if(!obv) return;
+  VEBody* ob = Body();
+  if(!ob) return;
+
+  // set dragger position
+  T3TransformBoxDragger* drag = obv->getDragger();
+  if(!drag) return;
+
+  switch(ob->shape) {
+  case VEBody::SPHERE: {
+    drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->radius);
+    break;
+  }
+  case VEBody::CAPSULE:
+  case VEBody::CYLINDER: {
+    if(ob->long_axis == VEBody::LONG_X)
+      drag->xf_->translation.setValue(-ob->length*.5f, -ob->radius, ob->radius);
+    else if(ob->long_axis == VEBody::LONG_Y)
+      drag->xf_->translation.setValue(-ob->radius, -ob->length*.5f, ob->radius);
+    else if(ob->long_axis == VEBody::LONG_Z)
+      drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->length*.5f);
+    break;
+  }
+  case VEBody::BOX: {
+    drag->xf_->translation.setValue(-ob->box.x*.5f, -ob->box.y*.5f, ob->box.z*.5f);
+    break;
+  }
+  case VEBody::NO_SHAPE: {
+    break;
+  }
+  }
 }
 
 void VEBodyView::Render_impl() {
@@ -270,9 +308,15 @@ void VEBodyView::Render_impl() {
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
-  SoMaterial* mat = node_so->material();
-  mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
-  mat->transparency.setValue(1.0f - ob->color.a);
+  if(ob->set_color) {
+    SoMaterial* mat = node_so->material();
+    mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
+    mat->transparency.setValue(1.0f - ob->color.a);
+  }
+  else {
+    SoMaterial* mat = node_so->material();
+    mat->transparency.setValue(0.0f);
+  }
 }
 
 // callback for transformer dragger
@@ -535,7 +579,46 @@ void VEStaticView::Render_pre() {
   }      
  finish:
 
+  SetDraggerPos();
+
   inherited::Render_pre();
+}
+
+void VEStaticView::SetDraggerPos() {
+  T3VEStatic* obv = (T3VEStatic*)node_so();
+  if(!obv) return;
+  VEStatic* ob = Static();
+  if(!ob) return;
+
+  // set dragger position
+  T3TransformBoxDragger* drag = obv->getDragger();
+  if(!drag) return;
+  switch(ob->shape) {
+  case VEStatic::SPHERE: {
+    drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->radius);
+    break;
+  }
+  case VEStatic::CAPSULE:
+  case VEStatic::CYLINDER: {
+    if(ob->long_axis == VEStatic::LONG_X)
+      drag->xf_->translation.setValue(-ob->length*.5f, -ob->radius, ob->radius);
+    else if(ob->long_axis == VEStatic::LONG_Y)
+      drag->xf_->translation.setValue(-ob->radius, -ob->length*.5f, ob->radius);
+    else if(ob->long_axis == VEStatic::LONG_Z)
+      drag->xf_->translation.setValue(-ob->radius, -ob->radius, ob->length*.5f);
+    break;
+  }
+  case VEStatic::BOX: {
+    drag->xf_->translation.setValue(-ob->box.x*.5f, -ob->box.y*.5f, ob->box.z*.5f);
+    break;
+  }
+  case VEStatic::PLANE: {
+    break;
+  }
+  case VEStatic::NO_SHAPE: {
+    break;
+  }
+  }
 }
 
 void VEStaticView::Render_impl() {
@@ -550,9 +633,11 @@ void VEStaticView::Render_impl() {
   tx->translation.setValue(ob->pos.x, ob->pos.y, ob->pos.z);
   tx->rotation.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
 
-  SoMaterial* mat = node_so->material();
-  mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
-  mat->transparency.setValue(1.0f - ob->color.a);
+  if(ob->set_color) {
+    SoMaterial* mat = node_so->material();
+    mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
+    mat->transparency.setValue(1.0f - ob->color.a);
+  }
 }
 
 // callback for transformer dragger

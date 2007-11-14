@@ -190,7 +190,8 @@ public:
   FloatTransform obj_xform;	// full transform to apply to body file to align/size/etc with body
   String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE file name of Inventor file that describes body appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
-  taColor	color; 		// default color of body if not otherwise defined (a used for transparency)
+  bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
+  taColor	color; 		// #CONDEDIT_ON_set_color default color of body if not otherwise defined (a used for transparency)
   VETextureRef	texture;	// #SCOPE_VEWorld #NULL_OK texture mapping of an image to the object (textures are shared resources defined in VEWorld)
   VESurface	surface;	// physics surface properties of the body (softness, bounciness)
   ODEIntParams	softness;	// set the cfm and erp values higher here to make the surface softer
@@ -628,7 +629,8 @@ public:
   FloatTransform obj_xform;	// full transform to apply to object file to align/size/etc with static item
   String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
-  taColor	color; 		// default color of static item if not otherwise defined (a used for transparency)
+  bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
+  taColor	color; 		// #CONDEDIT_ON_set_color default color of static item if not otherwise defined (a used for transparency)
   VETextureRef	texture;	// #SCOPE_VEWorld texture mapping of an image to the object (textures are shared resources defined in VEWorld)
   VESurface	surface;	// surface properties of the static item
   ODEIntParams	softness;	// set the cfm and erp values higher here to make the surface softer
