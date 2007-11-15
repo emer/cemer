@@ -1454,7 +1454,7 @@ void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     // note that random go is added into activation at the snrthal level, not here.
 
     float gain = out_gate.base_gain;
-    if(snru->act_eq > snrthalsp->snrthal.go_thr) {
+    if(!snrthal_lay->lesioned() && (snru->act_eq > snrthalsp->snrthal.go_thr)) {
       if(out_gate.graded_go) 
 	gain += snru->act_eq * out_gate.go_gain;
       else

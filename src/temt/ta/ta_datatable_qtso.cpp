@@ -509,6 +509,7 @@ void DataTableView::DataUpdateView_impl() {
 }
 
 void DataTableView::DataUpdateAfterEdit_impl() {
+  inherited::DataUpdateAfterEdit_impl();
   // this is actually fully redundant..
   //  UpdateDisplay(true);
 }

@@ -870,6 +870,11 @@ void VEWorldView::InitDisplay(bool init_panel) {
 //   }
 }
 
+void VEWorldView::DataUpdateView_impl() {
+  if(!display_on) return;
+  UpdateDisplay(true);
+}
+
 void VEWorldView::UpdateDisplay(bool update_panel) {
   if (update_panel) UpdatePanel();
   Render_impl();

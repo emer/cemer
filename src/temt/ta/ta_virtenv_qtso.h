@@ -202,6 +202,7 @@ protected:
 #endif
   SoOffscreenRenderer*	cam_renderer;
 
+  override void		DataUpdateView_impl();
   override void 	UpdateAfterEdit_impl();
 
   override void		Render_pre();
