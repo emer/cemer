@@ -113,10 +113,10 @@ TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
 class NetInTask;
 
 int core_nprocs;		// total number of processors
-const int core_max_nprocs = 64; // maximum number of processors!
+const int core_max_nprocs = 32; // maximum number of processors!
 int unit_gran = 16; // granularity per greedy grab
-QThread* threads[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
-NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created, none for [0] (done in main thread)
+QThread* threads[core_max_nprocs]; // only core_nprocs-1 created, none for [0] (main thread)
+NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created
 
 //NOTE: the gcc version of this doesn't seem to exist -- it causes a linker fail
 // so we define our own
@@ -138,6 +138,20 @@ inline int __sync_fetch_and_add(int* operand, int incr)
   return incr;
 }
 #endif
+inline void SafeFloatPlus(float* dst, float val) { *dst += val;}
+
+/*
+inline void SafeFloatPlus(float* dst, float val) {
+try_again:
+  float tmp1 = *dst; // we'll make sure tmp1 is still the value
+  float tmp2 = tmp1 + val;
+  // note: we cast everything to int, but these are just memory ops, so it is ok
+  if (!q_atomic_test_and_set_acquire_int(
+    (int*)dst, 
+    *reinterpret_cast<int*>(&tmp1), // expected, i.e. the same as it was before
+    *reinterpret_cast<int*>(&tmp2))
+  ) goto try_again; // TODO: should count
+}*/
 
 class Task {
 public:
@@ -246,8 +260,11 @@ class Unit {
 public:
   float act;			// activation value
   float net;			// net input value
-  Connection* recv_wts;		// receiving weights (or sending weights in send mode)
-  char dummy[600]; // yes Virginia, Leabra units really are bigger than ~640 bytes!
+  Connection* send_wts;		// sending weights
+  char dummy[20]; // bump a bit, to spread these guys out
+  float net_p[core_max_nprocs]; // partial net for some algos
+  
+  bool		DoDelta(); // returns true if we should do a delta; typically we just use a random %, ex. 8%
   Unit() {act = 0; net = 0;}
 };
 
@@ -261,7 +278,8 @@ Unit* layers[n_layers];		// layers = arrays of units
 Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
 bool nibble = true; // setting false disables nibbling and adds sync to loop
-bool send_based = false; // setting false simulates receiver based write pattern
+
+bool Unit::DoDelta() {return true;} // all for now
 
 // construct the network
 
@@ -280,13 +298,13 @@ void MakeNet() {
     un1.act = (float)rand() / RAND_MAX;
     un2.act = (float)rand() / RAND_MAX;
 
-    un1.recv_wts = new Connection[n_units];
-    un2.recv_wts = new Connection[n_units];
+    un1.send_wts = new Connection[n_units];
+    un2.send_wts = new Connection[n_units];
       
     // setup reciprocal connections between units
     for(int j=0;j<n_units;j++) {
-      Connection& cn1 = un1.recv_wts[j];
-      Connection& cn2 = un2.recv_wts[j];
+      Connection& cn1 = un1.send_wts[j];
+      Connection& cn2 = un2.send_wts[j];
       cn1.su = &(layers[1][j]);
       cn2.su = &(layers[0][j]);
 
@@ -303,7 +321,7 @@ void DeleteNet() {
   for(int l=0;l<n_layers;l++) {
     for(int i=0;i<n_units;i++) {
       Unit& un = layers[l][i];
-      delete un.recv_wts;
+      delete un.send_wts;
     }
     delete layers[l];  
   }
@@ -312,19 +330,31 @@ void DeleteNet() {
 
 class NetInTask: public Task {
 public:
-  int		t_tot;
-  int		g_u; // mostly accessed by own thread, but main also gives "helping hand"
+  int	g_u; 
   
-  void		run();
+  int		t_tot;
   
   NetInTask();
 };
+//int NetInTask::g_u; 
 
+class NetInTask_1: public NetInTask {
+// for single threaded approach -- optimum for that
+public:
+  void		run();
+};
+
+class NetInTask_N: public NetInTask {
+// for N threaded approach -- optimum for that
+public:
+  void		run();
+};
 
 void ComputeNets() {
   // compute net input = activation times weights
   // this is the "inner loop" that takes all the time!
   
+ // NetInTask::g_u = 0;
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
   for (int t = 1; t < core_nprocs; ++t) {
@@ -377,52 +407,55 @@ NetInTask::NetInTask() {
   t_tot = 0;
 }
 
-void NetInTask::run() {
+void NetInTask_1::run() {
+  register float act; // optimize
+  while (g_u < n_units_flat) {
+    Unit& un = *(layers_flat[g_u]); //note: accessed flat
+    if (!un.DoDelta()) goto next; // doesn't need a send this time
+    act = un.act; // optimize
+    // note: this isn't really the proper algo, since we are set up for 
+    // rcver based, but we are fully recip connected so the # ops is right
+    // we assume the previous act calc cleared the netin
+    for(int j=0;j<n_units;j++) {
+      Connection& cn = un.send_wts[j];
+      cn.su->net += cn.wt * act;
+    }
+    ++n_tot;
+    ++t_tot;
+next:
+    ++g_u;
+  }
+}
+
+void NetInTask_N::run() {
+  register float act; // optimize
   int my_u = __sync_fetch_and_add(&g_u, core_nprocs);
   while (my_u < n_units_flat) {
     Unit& un = *(layers_flat[my_u]); //note: accessed flat
-    if (send_based) {
-      // note: this isn't really the proper algo, since we are set up for 
-      // rcver based, but we are fully recip connected so the # ops is right
-      // we assume the previous act calc cleared the netin
-      un.net = 0.0f;
-      for(int j=0;j<n_units;j++) {
-        un.recv_wts[j].su->net += un.recv_wts[j].wt * un.act;
-      }
-    } else { // recv_based
-      float net = 0.0f;
-      for(int j=0;j<n_units;j++) {
-        net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
-      }
-      un.net = net;
+    if (!un.DoDelta()) goto next; // doesn't need a send this time
+    act = un.act; // optimize
+    // note: this isn't really the proper algo, since we are set up for 
+    // rcver based, but we are fully recip connected so the # ops is right
+    // we assume the previous act calc cleared the netin
+    for(int j=0;j<n_units;j++) {
+      Connection& cn = un.send_wts[j];
+//      SafeFloatPlus(&(un.send_wts[j].su->net), un.send_wts[j].wt * un.act);
+      cn.su->net += cn.wt * act;
     }
     __sync_fetch_and_add(&n_tot, 1);
     __sync_fetch_and_add(&t_tot, 1); // because of helping hand clobbers
+next:
     my_u = __sync_fetch_and_add(&g_u, core_nprocs);
   }
-/*// granular greedy
-  int my_u = __sync_fetch_and_add(&g_u, unit_gran);
-  int gran_ct = unit_gran;
-  while (my_u < n_units_flat) {
-    Unit& un = *(layers_flat[my_u]); //note: accessed flat
-    un.net = 0.0f;
-
-    for(int j=0;j<n_units;j++) {
-      un.net += un.recv_wts[j].wt * un.recv_wts[j].su->act;
-    }
-    __sync_fetch_and_add(&n_tot, 1);
-    ++t_tot;
-    if (--gran_ct == 0) {
-      gran_ct = unit_gran;
-      my_u = __sync_fetch_and_add(&g_u, unit_gran);
-    } else ++my_u;
-  }
-*/
 }
 
 void MakeThreads() {
-  for (int i = 0; i < core_nprocs; i++) {
-    NetInTask* tsk = new NetInTask;
+  if (core_nprocs == 1) {
+    NetInTask* tsk = new NetInTask_1;
+    tsk->task_id = 0;
+    netin_tasks[0] = tsk;
+  } else for (int i = 0; i < core_nprocs; i++) {
+    NetInTask* tsk = new NetInTask_N;
     tsk->task_id = i;
     netin_tasks[i] = tsk;
     if (i == 0) continue;
@@ -466,8 +499,8 @@ int main(int argc, char* argv[]) {
   
   // switch params
   for (int arg = 4; arg < argc; arg++) {
-    if (strcmp(argv[arg], "-send") == 0)
-      send_based = true;
+/*    if (strcmp(argv[arg], "-send") == 0)
+      send_based = true;*/
     //TODO: any more
   }
   
@@ -512,8 +545,8 @@ int main(int argc, char* argv[]) {
   }
 
 
-  printf("procs, %d, \tunits, %d, \tweights, %g, \tcycles, %d, \tcon_trav, %g, \tsecs, %g, \tMcon/sec, %g, \tn_tot (exp/act), %d, %d\tsend, %d\n",
-          core_nprocs, n_units, n_wts, n_cycles, n_con_trav, tot_time, con_trav_sec, n_tot_exp, n_tot, send_based);
+  printf("procs, %d, \tunits, %d, \tweights, %g, \tcycles, %d, \tcon_trav, %g, \tsecs, %g, \tMcon/sec, %g, \tn_tot (exp/act), %d\n",
+          core_nprocs, n_units, n_wts, n_cycles, n_con_trav, tot_time, con_trav_sec, n_tot_exp, n_tot);
 
   DeleteThreads();
   DeleteNet();
