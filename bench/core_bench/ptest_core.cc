@@ -245,14 +245,25 @@ void DeleteThreads() {
 // then share this net across nodes
 // and then compute activations, and repeat.
 
+class Connection;
+class ConSpec;
 class Unit;
+
 
 class Connection {
   // one connection between units
 public:
   float wt;			// connection weight value
   float dwt;			// delta-weight
-  Unit* su;			// sending unit
+  float	pdw;
+};
+
+class ConSpec {
+  int	dummy[8];
+public:
+  
+  void C_Send_Netin(void*, Connection* cn, Unit* ru, float su_act_eff);
+  void Send_Netin(Unit* cg, Unit* su);
 };
 
 class Unit {
@@ -261,12 +272,21 @@ public:
   float act;			// activation value
   float net;			// net input value
   Connection* send_wts;		// sending weights
+  Unit**	units;
+  ConSpec*	cs;
   char dummy[20]; // bump a bit, to spread these guys out
   float net_p[core_max_nprocs]; // partial net for some algos
   
+  Connection* 	Cn(int i) const { return &(send_wts[i]); }
+  // #CAT_Structure gets the connection at the given index
+  Unit*		Un(int i) const { return units[i]; }
+  
   bool		DoDelta(); // returns true if we should do a delta; typically we just use a random %, ex. 8%
+  
+  
   Unit() {act = 0; net = 0;}
 };
+
 
 // network configuration information
 
@@ -278,12 +298,25 @@ Unit* layers[n_layers];		// layers = arrays of units
 Unit** layers_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
 bool nibble = true; // setting false disables nibbling and adds sync to loop
+bool single = false; // true for single thread mode, to compare against nprocs=1
+
+
+void ConSpec::C_Send_Netin(void*, Connection* cn, Unit* ru, float su_act_eff) {
+  ru->net += su_act_eff * cn->wt;
+}
+void ConSpec::Send_Netin(Unit* cg, Unit* su) {
+  float su_act_eff = su->act;
+  for(int i=0; i<n_units; i++) \
+    C_Send_Netin(NULL, cg->Cn(i), cg->Un(i), su_act_eff);
+}
+
 
 bool Unit::DoDelta() {return true;} // all for now
 
 // construct the network
 
 void MakeNet() {
+  ConSpec* cs = new ConSpec; // everyone shares
   layers[0] = new Unit[n_units];
   layers[1] = new Unit[n_units];
   layers_flat = new Unit*[n_units_flat];
@@ -293,24 +326,29 @@ void MakeNet() {
     Unit& un2 = layers[1][i];
     layers_flat[i_fl++] = &un1;
     layers_flat[i_fl++] = &un2;
+    
+    un1.cs = cs;
+    un2.cs = cs;
 
     // random initial activations [0..1]
     un1.act = (float)rand() / RAND_MAX;
     un2.act = (float)rand() / RAND_MAX;
 
     un1.send_wts = new Connection[n_units];
+    un1.units = new Unit*[n_units];
     un2.send_wts = new Connection[n_units];
+    un2.units = new Unit*[n_units];
       
     // setup reciprocal connections between units
     for(int j=0;j<n_units;j++) {
       Connection& cn1 = un1.send_wts[j];
       Connection& cn2 = un2.send_wts[j];
-      cn1.su = &(layers[1][j]);
-      cn2.su = &(layers[0][j]);
 
       // random weight values [-2..2]
       cn1.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
       cn2.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+      un1.units[j] = &(layers[1][j]);
+      un2.units[j] = &(layers[0][j]);
     }
   }
 }
@@ -338,7 +376,7 @@ public:
 };
 //int NetInTask::g_u; 
 
-class NetInTask_1: public NetInTask {
+class NetInTask_0: public NetInTask {
 // for single threaded approach -- optimum for that
 public:
   void		run();
@@ -407,19 +445,12 @@ NetInTask::NetInTask() {
   t_tot = 0;
 }
 
-void NetInTask_1::run() {
-  register float act; // optimize
+
+void NetInTask_0::run() {
   while (g_u < n_units_flat) {
-    Unit& un = *(layers_flat[g_u]); //note: accessed flat
-    if (!un.DoDelta()) goto next; // doesn't need a send this time
-    act = un.act; // optimize
-    // note: this isn't really the proper algo, since we are set up for 
-    // rcver based, but we are fully recip connected so the # ops is right
-    // we assume the previous act calc cleared the netin
-    for(int j=0;j<n_units;j++) {
-      Connection& cn = un.send_wts[j];
-      cn.su->net += cn.wt * act;
-    }
+    Unit* un = layers_flat[g_u]; //note: accessed flat
+    if (!un->DoDelta()) goto next; // doesn't need a send this time
+    un->cs->Send_Netin(un, un);
     ++n_tot;
     ++t_tot;
 next:
@@ -431,17 +462,9 @@ void NetInTask_N::run() {
   register float act; // optimize
   int my_u = __sync_fetch_and_add(&g_u, core_nprocs);
   while (my_u < n_units_flat) {
-    Unit& un = *(layers_flat[my_u]); //note: accessed flat
-    if (!un.DoDelta()) goto next; // doesn't need a send this time
-    act = un.act; // optimize
-    // note: this isn't really the proper algo, since we are set up for 
-    // rcver based, but we are fully recip connected so the # ops is right
-    // we assume the previous act calc cleared the netin
-    for(int j=0;j<n_units;j++) {
-      Connection& cn = un.send_wts[j];
-//      SafeFloatPlus(&(un.send_wts[j].su->net), un.send_wts[j].wt * un.act);
-      cn.su->net += cn.wt * act;
-    }
+    Unit* un = layers_flat[my_u]; //note: accessed flat
+    if (!un->DoDelta()) goto next; // doesn't need a send this time
+    un->cs->Send_Netin(un, un);
     __sync_fetch_and_add(&n_tot, 1);
     __sync_fetch_and_add(&t_tot, 1); // because of helping hand clobbers
 next:
@@ -450,8 +473,8 @@ next:
 }
 
 void MakeThreads() {
-  if (core_nprocs == 1) {
-    NetInTask* tsk = new NetInTask_1;
+  if (single) {
+    NetInTask* tsk = new NetInTask_0;
     tsk->task_id = 0;
     netin_tasks[0] = tsk;
   } else for (int i = 0; i < core_nprocs; i++) {
@@ -499,8 +522,9 @@ int main(int argc, char* argv[]) {
   
   // switch params
   for (int arg = 4; arg < argc; arg++) {
-/*    if (strcmp(argv[arg], "-send") == 0)
-      send_based = true;*/
+    if (strcmp(argv[arg], "-single") == 0)
+      single = true;
+      core_nprocs = 1; // must be
     //TODO: any more
   }
   
