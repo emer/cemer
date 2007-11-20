@@ -1,39 +1,45 @@
 #!/bin/csh -f
 
-./ptest_core 50 60000 1
-./ptest_core 50 60000 1
+#echo "**SINGLE THREAD OPTIMIZED**"
+./ptest_core 52 6000 0 -header
+./ptest_core 52 6000 0
 
-./ptest_core 500 1000 1
-./ptest_core 500 1000 1
+./ptest_core 500 100 0
+./ptest_core 500 100 0
 
-./ptest_core 5000 10 1
-./ptest_core 5000 10 1
-
-./ptest_core 8000 6 1
-./ptest_core 8000 6 1
+./ptest_core 5000 6 0
+./ptest_core 5000 6 0
 
 
-./ptest_core 50 60000 2
-./ptest_core 50 60000 2
+#echo "**1 THREAD**"
+./ptest_core 52 6000 1
+./ptest_core 52 6000 1
 
-./ptest_core 500 2000 2
-./ptest_core 500 2000 2
+./ptest_core 500 100 1
+./ptest_core 500 100 1
 
-./ptest_core 5000 20 2
-./ptest_core 5000 20 2
-
-./ptest_core 8000 6 2
-./ptest_core 8000 6 2
+./ptest_core 5000 6 1
+./ptest_core 5000 6 1
 
 
-./ptest_core 50 60000 4
-./ptest_core 50 60000 4
+#echo "**2 THREAD**"
+./ptest_core 52 6000 2
+./ptest_core 52 6000 2
 
-./ptest_core 500 4000 4
-./ptest_core 500 4000 4
+./ptest_core 500 100 2
+./ptest_core 500 100 2
 
-./ptest_core 5000 40 4
-./ptest_core 5000 40 4
+./ptest_core 5000 6 2
+./ptest_core 5000 6 2
 
-./ptest_core 8000 6 4
-./ptest_core 8000 6 4
+
+#echo "**4 THREAD**"
+./ptest_core 52 6000 4
+./ptest_core 52 6000 4
+
+./ptest_core 500 100 4
+./ptest_core 500 100 4
+
+./ptest_core 5000 6 4
+./ptest_core 5000 6 4
+

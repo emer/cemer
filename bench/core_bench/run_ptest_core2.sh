@@ -13,7 +13,7 @@ echo "**SINGLE THREADED**"
 
 echo "**1 THREADED**"
 ./ptest_core2 52 6000 1
-./ptest_core2 48 6000 1
+./ptest_core2 52 6000 1
 
 ./ptest_core2 500 100 1
 ./ptest_core2 500 100 1
