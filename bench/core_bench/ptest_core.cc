@@ -12,7 +12,6 @@
 // SWITCHES THAT CAN BE SET
 
 //#define USE_VAL -- adds a "float* val" to point directly to correct net val
-//#define USE_SAFE -- adds 1 net[] per thread
 
 ////////////////////////////////////////////////////////////////////////////////////
 // timing code
@@ -365,14 +364,7 @@ class Unit {
   // a simple unit
 public:
   float act;			// activation value
-#ifdef USE_SAFE
-  union {
-#endif
-    float net;			// net input value
-#ifdef USE_SAFE
-    float net_p[core_max_nprocs]; // partial net for some algos
-  };
-#endif
+  float net;			// net input value
   Connection* send_wts;		// sending weights
   int		task_id; // which task will process this guy
   Unit_List	targs;
@@ -418,9 +410,6 @@ Unit_List units_flat;		// layers = arrays of units
 int n_tot; // total units (reality check)
 bool nibble = true; // setting false disables nibbling and adds sync to loop
 bool single = false; // true for single thread mode, to compare against nprocs=1
-#ifdef USE_SAFE
-  bool safe = false; // default is true for single, false for multi -- whether uses the net_p[]
-#endif
 int send_act = 0x10000; // send activation, as a fraction of 2^16 -- 0 if 100%
 int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
 
@@ -438,11 +427,7 @@ Unit::Unit() {
   send_wts = NULL; 
   cs = NULL; 
   task_id = 0;
-#ifdef USE_SAFE
-  for (int i = 0; i < core_max_nprocs; ++i) net_p[i] = 0;
-#else
   net = 0;
-#endif
   my_rand = rand();
 }
 
@@ -473,14 +458,7 @@ void Layer::Connect(Layer* lay_to) {
       Connection& cn = un_fr->send_wts[un_fr->targs.size++];
       cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
 #ifdef USE_VAL
-# ifdef USE_SAFE
-      if (safe) {
-        cn.val = &(un_to->net_p[un_fr->task_id]);
-      } else 
-# endif
-      {
-        cn.val = &(un_to->net);
-      }
+      cn.val = &(un_to->net);
 #endif      
       if (++un_to_idx >= n_units) un_to_idx = 0;
     }
@@ -592,34 +570,13 @@ void ComputeNets() {
 float ComputeActs() {
   // compute activations (only order number of units)
   float tot_act = 0.0f;
-#ifdef USE_SAFE
-  if (safe) {
-    for(int l=0;l<n_layers;l++) {
-      Layer* lay = layers[l];
-      for(int i=0;i<lay->units.size;i++) {
-        Unit& un = *(lay->units.FastEl(i));
-        // accumulate subnets into net[0]
-        float& net = un.net_p[0];
-        for (int j = 1; j < core_nprocs; ++j) {
-          net += un.net_p[j];
-          un.net_p[j] = 0; // for next time
-        }
-        un.act = 1.0f / (1.0f + expf(-net));
-        un.net = 0.0f; // for next time
-        tot_act += un.act;
-      }
-    }
-  } else 
-#endif
-  { // !safe
-    for(int l=0;l<n_layers;l++) {
-      Layer* lay = layers[l];
-      for(int i=0;i<lay->units.size;i++) {
-        Unit& un = *(lay->units.FastEl(i));
-        un.act = 1.0f / (1.0f + expf(-un.net));
-        un.net = 0.0f; // only needed for sender-based, but cheaper to just do than test
-        tot_act += un.act;
-      }
+  for(int l=0;l<n_layers;l++) {
+    Layer* lay = layers[l];
+    for(int i=0;i<lay->units.size;i++) {
+      Unit& un = *(lay->units.FastEl(i));
+      un.act = 1.0f / (1.0f + expf(-un.net));
+      un.net = 0.0f; // only needed for sender-based, but cheaper to just do than test
+      tot_act += un.act;
     }
   }
   return tot_act;
@@ -665,31 +622,12 @@ void NetInTask_0::run() {
   }
 }
 
-#ifdef USE_SAFE
-void Send_Netin_N_safe(Unit* su, int task_id) {
-  float su_act_eff = su->act;
-  Connection* cns = su->send_wts; // array pointer
-#ifdef USE_VAL
-  for(int i=0; i<su->targs.size; i++)
-    Send_Netin_inner_0(cns[i].wt, cns[i].val, su_act_eff);
-#else
-  Unit** uns = su->targs.Els(); // unit pointer
-  for(int i=0; i<su->targs.size; i++)
-    Send_Netin_inner_0(cns[i].wt, &(uns[i]->net_p[task_id]), su_act_eff);
-#endif
-}
-#endif
-
 void NetInTask_N::run() {
   int my_u = AtomicFetchAdd(&g_u, core_nprocs);
   while (my_u < n_units_flat) {
     Unit* un = units_flat.FastEl(my_u); //note: accessed flat
     if (un->DoDelta()) {
-#ifdef USE_SAFE
-      if (safe) Send_Netin_N_safe(un, task_id);
-      else      
-#endif
-        Send_Netin_0(un);
+      Send_Netin_0(un);
       AtomicFetchAdd(&n_tot, 1);
       //AtomicFetchAdd(&t_tot, 1); // because of helping hand clobbers
     }
@@ -732,10 +670,6 @@ int main(int argc, char* argv[]) {
       "\t<n_cons>\tnumber of cons per unit (def=n_units)\n"
       "\t<send_act>\tpercent (/100) avg activation level (def = 100)\n"
       "optional commands: \n"
-#ifdef USE_SAFE
-      "\t-safe=1\tfor n_procs>=1 use the safe (vectored .net[] in) (def=1)\n"
-      "\t-safe=0\tfor n_procs>=1 use the unsafe (single .net in) (def=1)\n"
-#endif
       "\t-log=0\tdo not log optional values to ptest_core.log\n"
       "\t-log=1\t(def) log optional values to ptest_core.log\n"
     );
@@ -754,13 +688,9 @@ int main(int argc, char* argv[]) {
   core_nprocs = (int)strtol(argv[3], NULL, 0);
   if (core_nprocs <= 0) {
     single = true;
-//    safe = false; default
     core_nprocs = 1;
   } else {
     single = false;
-#ifdef USE_SAFE
-    safe = true;
-#endif
     if (core_nprocs > core_max_nprocs) core_nprocs = core_max_nprocs;
   }
   
