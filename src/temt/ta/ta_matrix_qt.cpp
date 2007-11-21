@@ -463,7 +463,8 @@ void iMatrixEditor::init() {
   m_model = NULL;
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2); layOuter->setSpacing(2);
-  layDims = new QHBoxLayout(layOuter);
+//  layDims = new QHBoxLayout(layOuter);
+  layDims = new QHBoxLayout; layOuter->addLayout(layDims);
   tv = new iMatrixTableView(this);
   layOuter->addWidget(tv);
 }
@@ -531,7 +532,7 @@ void iMatrixPanel::UpdatePanel_impl() {
 void iMatrixPanel::Render_impl() {
   if (me) return; // shouldn't happen
   me = new iMatrixEditor();
-  me->setName("MatrixEditor"); // diagnostic
+  me->setObjectName("MatrixEditor"); // diagnostic
   setCentralWidget(me); //sets parent
   taMatrix* mat_ = mat();
   me->setMatrix(mat_);

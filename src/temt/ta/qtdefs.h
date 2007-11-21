@@ -16,7 +16,6 @@
 // #IGNORE qtdefs.h -- Qt definitions, for inclusion in any header file
 //TODO: some of the defs in TA_GUI list may belong in USE_QT section
 
-
 #ifndef QTDEFS_H
 #define QTDEFS_H
 
@@ -51,7 +50,7 @@ class	QButtonGroup;		// #IGNORE note: not a widget
 class	QCanvas;		// #IGNORE 
 class	QCheckBox;		// #IGNORE 
 class	QColor;			// #IGNORE 
-class	QColorGroup;		// #IGNORE 
+//class	QColorGroup;		// #IGNORE 
 class	QComboBox;		// #IGNORE 
 class	QCursor;		// #IGNORE 
 class	QDialog;		// #IGNORE 
@@ -65,8 +64,7 @@ class	QGridLayout;		// #IGNORE
 class	QGroupBox;		// #IGNORE 
 class	QHBox;			// #IGNORE 
 class	QHBoxLayout;		// #IGNORE 
-class	Q3HButtonGroup;		// #IGNORE 
-//nuke class	Q3Header;		// #IGNORE 
+//nuke class	Q3HButtonGroup;		// #IGNORE 
 class	QHostAddress;		// #IGNORE
 class	QIcon;			// #IGNORE
 class	QImage;			// #IGNORE
@@ -119,9 +117,9 @@ class	QToolTip;		// #IGNORE
 class	QTreeWidget;		// #IGNORE
 class	QTreeWidgetItem;	// #IGNORE
 class	QValidator;		// #IGNORE 
-class	Q3VBox;			// #IGNORE 
+//nuke class	Q3VBox;			// #IGNORE 
 class	QVBoxLayout;		// #IGNORE 
-class	Q3VButtonGroup;		// #IGNORE 
+//nuke class	Q3VButtonGroup;		// #IGNORE 
 class	QWidget;		// #IGNORE 
 
 // #IGNORE Events
@@ -138,6 +136,13 @@ class	QPaintEvent;		// #IGNORE
 class	QResizeEvent;		// #IGNORE 
 class	QShowEvent;		// #IGNORE 
 
+# ifdef QT3_SUPPORT
+# else
+#define setPaletteBackgroundColor(c)\
+{QPalette palette;\
+ palette.setColor(backgroundRole(), c);\
+ setPalette(palette); }
+# endif
 
 #ifdef TA_USE_INVENTOR
 // #IGNORE Common So Classes

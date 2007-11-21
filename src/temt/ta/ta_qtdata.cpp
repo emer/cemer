@@ -555,7 +555,7 @@ void iFieldEditDialog::setText(const QString& value) {
 }
 
 void iFieldEditDialog::btnApply_clicked() {
-  field->rep()->setText(txtText->text());
+  field->rep()->setText(txtText->toPlainText());
   // unless explicitly overridden, we always do an autoapply 
   if (!(field->flags() & taiData::flgNoEditDialogAutoApply)) {
     field->applyNow();
@@ -1519,7 +1519,7 @@ taiAction::taiAction(const QString& label_, const QKeySequence& accel, const cha
 {
   init(taiMenu::use_default);
   setShortcut(accel);
-  setName(name_);
+  setObjectName(name_);
 }
 
 taiAction::taiAction(const QString& label_, QObject* receiver, const char* member, const QKeySequence& accel)
@@ -1538,7 +1538,7 @@ taiAction::taiAction(const Variant& usr_data_, const QString& label_, const QKey
   init(taiMenu::use_default);
   usr_data = usr_data_;
   setShortcut(accel);
-  setName(name_);
+  setObjectName(name_);
 }
 
 taiAction::~taiAction() {
@@ -2480,7 +2480,7 @@ void taiObjChooser::init(const char* captn, bool selonly, QWidget* par_window_) 
   caption = captn;
   select_only = selonly;
   msel_obj = NULL;
-  setCaption(caption);
+  setWindowTitle(caption);
   setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_s));
 }
@@ -2835,7 +2835,7 @@ void taiItemChooser::init(const String& caption_) {
   m_view = -1; // until set to valid value
   m_cat_filter = 0; // default is all
   setModal(true);
-  setCaption(caption);
+  setWindowTitle(caption);
 //  setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_m));
 }
@@ -3348,7 +3348,7 @@ void taiMemberDefButton::BuildChooser(taiItemChooser* ic, int view) {
   switch (view) {
   case 0: 
     BuildChooser_0(ic); 
-    ic->items->sortItems(0, Qt::Ascending);
+    ic->items->sortItems(0, Qt::AscendingOrder);
     break; 
   default: break; // shouldn't happen
   }
@@ -3438,12 +3438,12 @@ void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
   switch (view) {
   case 0: 
     BuildChooser_0(ic); 
-    ic->items->sortItems(0, Qt::Ascending);
+    ic->items->sortItems(0, Qt::AscendingOrder);
     break; 
   case 1: 
-    ic->items->sortItems(1, Qt::Ascending); // so items aren't sorted by 0
+    ic->items->sortItems(1, Qt::AscendingOrder); // so items aren't sorted by 0
     BuildChooser_1(ic, targ_typ, NULL); 
-    ic->items->sortItems(1, Qt::Ascending); 
+    ic->items->sortItems(1, Qt::AscendingOrder); 
     break; 
   default: break; // shouldn't happen
   }
@@ -3618,7 +3618,7 @@ void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
       item->setData(1, Qt::DisplayRole, " "); //note: no desc
     }
     BuildChooser_0(ic, targ_typ, NULL); 
-    ic->items->sortItems(0, Qt::Ascending);
+    ic->items->sortItems(0, Qt::AscendingOrder);
     break; 
   default: break; // shouldn't happen
   }
@@ -3742,7 +3742,7 @@ void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
       item->setData(1, Qt::DisplayRole, nullText());
     }
     BuildChooser_0(ic, targ_typ, NULL); 
-    ic->items->sortItems(0, Qt::Ascending);
+    ic->items->sortItems(0, Qt::AscendingOrder);
     break; 
   default: break; // shouldn't happen
   }
@@ -3945,7 +3945,7 @@ void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
       item->setData(1, Qt::DisplayRole, " ");
     }
     BuildChooser_0(ic, targ_typ, NULL); 
-    ic->items->sortItems(0, Qt::Ascending); 
+    ic->items->sortItems(0, Qt::AscendingOrder); 
     break; 
   default: break; // shouldn't happen
   }

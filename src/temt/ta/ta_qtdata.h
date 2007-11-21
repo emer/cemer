@@ -528,7 +528,10 @@ public:
   bool			canSelect(); // true if item can be taiMenu::curSel value
   virtual bool		isSubMenu() 	{ return false; }
   bool			isGrouped(); // indicates if item in a group, ie is a radio group action
-  
+#ifndef QT3_SUPPORT
+  bool			addTo(QWidget* w) 
+    {if (w) w->addAction(this); else return false; return true;}
+#endif
   void			AddTo(taiActions* targ); // convenience function
   
   taiAction(int sel_type_, const String& label_); // used by taiMenu etc.

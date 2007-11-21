@@ -1160,7 +1160,7 @@ void gpiMultiEditDataHost::Constr_Box() {
   taiEditDataHost::Constr_Box();
 
   scrMulti = new iScrollArea(splBody);
-  scrMulti->viewport()->setPaletteBackgroundColor(bg_color);
+  SET_PALETTE_BACKGROUND_COLOR(scrMulti->viewport(), bg_color);
   scrMulti->setWidgetResizable(true);
   multi = new QWidget();
   scrMulti->setWidget(multi);
@@ -1168,7 +1168,7 @@ void gpiMultiEditDataHost::Constr_Box() {
   lay_multi = new QHBoxLayout(multi);
   lay_multi->setMargin(0);
   multi_body = new iEditGrid(header_row, 2, 1, 1, 1, multi);  // , hmargins, vmargins, rows, cols, par
-  multi_body->setPaletteBackgroundColor(bg_color);
+  SET_PALETTE_BACKGROUND_COLOR(multi_body, bg_color);
   multi_body->setHiLightColor(bg_color_dark);
   multi_body->setRowHeight(row_height);
   lay_multi->addWidget(multi_body);
@@ -1924,7 +1924,7 @@ void DocEditDataHost::GetImage_Membs() {
   QString text = doc->text; 
   // to avoid the guy always jumping to the top after edit
   // we compare, and don't update if the same
-  if (text == tedHtml->text()) return; 
+  if (text == tedHtml->toPlainText()) return; 
   tedHtml->clear();
   tedHtml->insertPlainText(text); // we set the html as text
 }
@@ -1934,7 +1934,7 @@ void DocEditDataHost::GetValue_Membs() {
   taDoc* doc = this->doc();
   if (!doc) return; // ex. for zombies
   
-  doc->text = tedHtml->text();
+  doc->text = tedHtml->toPlainText();
   doc->UpdateAfterEdit();
   taiMisc::Update(doc);
 }

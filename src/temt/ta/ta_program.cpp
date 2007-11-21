@@ -2853,7 +2853,7 @@ void Program::Step() {
   if (ret_val != 0) {//TODO: use enums and sensible output string
     taiChoiceDialog::ErrorDialog(NULL, String(
       "The Program did not run -- ret_val=").cat(String(ret_val)),
-      QString("Operation Failed"));
+      "Operation Failed");
   }
   step_mode = false;
   step_gp = NULL;

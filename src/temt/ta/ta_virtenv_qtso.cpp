@@ -1202,7 +1202,7 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   layOuter->setSpacing(taiM->vsep_c);
 
   ////////////////////////////////////////////////////////////////////////////
-  layDispCheck = new QHBoxLayout(layOuter);
+  layDispCheck = new QHBoxLayout; layOuter->addLayout(layDispCheck);
   chkDisplay = new QCheckBox("Display!", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
@@ -1212,9 +1212,9 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   layDispCheck->addWidget(chkDragObjs);
 
   ////////////////////////////////////////////////////////////////////////////
-  layCams = new QHBoxLayout(layOuter);
+  layCams = new QHBoxLayout; layOuter->addLayout(layCams);
 
-  layCam0 = new QVBoxLayout(layCams);
+  layCam0 = new QVBoxLayout; layCams->addLayout(layCam0);
   layCam0->setMargin(0);
   labcam0 = new QLabel(widg);
   layCam0->addWidget(labcam0);
@@ -1222,7 +1222,7 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   labcam0_txt->setText("Camera 0");
   layCam0->addWidget(labcam0_txt);
 
-  layCam1 = new QVBoxLayout(layCams);
+  layCam1 = new QVBoxLayout; layCams->addLayout(layCam1);
   layCam1->setMargin(0);
   labcam1 = new QLabel(widg);
   layCam1->addWidget(labcam1);

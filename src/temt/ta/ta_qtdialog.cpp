@@ -134,7 +134,7 @@ void HiLightButton::setHiLight(bool value) {
   if (value) {
      setPaletteBackgroundColor(mhiLight_color);
   } else {
-     setPaletteBackgroundColor(QApplication::palette().color(QPalette::Active, QColorGroup::Button));
+     setPaletteBackgroundColor(QApplication::palette().color(QPalette::Active, QPalette::Button));
   }
   mhiLight = value;
 }
@@ -281,9 +281,9 @@ QAbstractButton* taiChoiceDialog::Constr_OneBut(String lbl, int id, ButtonRole r
 
 void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
   // we allow 0-n numeric keys to be accelerators for the buttons
-  int key_ascii = ev->ascii();
-  if ((key_ascii >= '0') && (key_ascii <= '9')) {
-    int but_index = key_ascii - '0';
+  int key_code = ev->key();
+  if ((key_code >= Qt::Key_0) && (key_code <= Qt::Key_9)) {
+    int but_index = key_code - Qt::Key_0;
     QPushButton* but = (QPushButton*)bgChoiceButtons->button(but_index);
     if (but != NULL) {
       // simulate effect of pressing the button
@@ -585,7 +585,7 @@ void iMethodButtonMgr::DoAddMethButton(QAbstractButton* but) {
   but->setFont(taiM->buttonFont(taiMisc::fonMedium));
   but->setFixedHeight(taiM->button_height(taiMisc::sizMedium));
   if (but->parent() != widg) {
-    but->reparent(widg, QPoint(0, 0));
+    widg->setParent(but);
   }
   m_lay->addWidget(but);
   but->show(); // needed when rebuilding
@@ -691,7 +691,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
   state = EXISTS;
 
   // default background colors
-  setBgColor(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
+  setBgColor(QApplication::palette().color(QPalette::Active, QPalette::Background));
   
   InitGuiFields(false);
 
@@ -754,7 +754,7 @@ void taiDataHostBase::Revert() {
 void taiDataHostBase::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
-    dlg->close(true); // destructive close
+    dlg->deleteLater(); dlg->close(); // destructive close
     dlg = NULL;
   }
 }
@@ -825,7 +825,7 @@ void taiDataHostBase::Constr_impl() {
   // create container for ok/cancel/apply etc. buttons
   widButtons = new QWidget(); // parented when we do setButtonsWidget
   widButtons->setAutoFillBackground(true);
-  widButtons->setPaletteBackgroundColor(bg_color);
+  SET_PALETTE_BACKGROUND_COLOR(widButtons, bg_color);
   layButtons = new QHBoxLayout(widButtons);
   layButtons->setMargin(0);
 //def  layButtons->setMargin(2); // facilitates container
@@ -844,7 +844,7 @@ void taiDataHostBase::Constr_Strings(const char* prompt, const char* win_title) 
 void taiDataHostBase::Constr_Widget() {
   if (mwidget != NULL) return;
   mwidget = new QWidget();
-  widget()->setPaletteBackgroundColor(bg_color);
+  SET_PALETTE_BACKGROUND_COLOR(widget(), bg_color);
   widget()->setFont(taiM->dialogFont(ctrl_size));
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look
@@ -939,7 +939,7 @@ void taiDataHostBase::DoConstr_Dialog(iDialog*& dlg) {
     dlg = new iDialog(this, NULL, Qt::WindowMinimizeButtonHint);
   // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
   // BUT it is also highly unusable to make them owned, since then they obscure parent window
-  dlg->setCaption(win_str);
+  dlg->setWindowTitle(win_str);
 //  dlg->setMinimumWidth(400); //TODO: maybe parameterize; note: would need to set layout FreeResize as well
 }
 
@@ -1099,15 +1099,12 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   f.setBold(true);
   wid->setFont(f);
   wid->setFixedHeight(taiM->label_height(ctrl_size));
-  wid->setPaletteBackgroundColor(colorOfRow(row));
+  SET_PALETTE_BACKGROUND_COLOR(wid, colorOfRow(row));
   if (!desc.empty()) {
     wid->setToolTip(desc);
   }
   if (row < 0)
-    row = layBody->numRows();
-  if (layBody->numRows() < (row + 1)) {
-    layBody->expand(row + 1, 2);
-  }
+    row = layBody->rowCount();
   layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   QHBoxLayout* layH = new QHBoxLayout();
   
@@ -1173,16 +1170,10 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
     this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row );
   // add a label item in first column
   if (row < 0)
-    row = layBody->numRows();
-  if (layBody->numRows() < (row + 1)) {
-    layBody->expand(row + 1, 2);
-  }
-//nn  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
+    row = layBody->rowCount();
   QHBoxLayout* layH = new QHBoxLayout();
   layH->setMargin(0);
   layH->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-/*  layH->addItem(new QSpacerItem(2, row_height, QSizePolicy::Fixed), row, 0,
-    1, 1, (Qt::AlignRight | Qt::AlignVCenter)); */
   layH->addSpacing(2);
   layBody->addLayout(layH, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
   label->show(); // needed for rebuilds, to make the widget show
@@ -1192,10 +1183,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
 int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
   // add a data item in second column
   if (row < 0)
-    row = layBody->numRows();
-  if (layBody->numRows() < (row + 1)) {
-    layBody->expand(row + 1, 2);
-  }
+    row = layBody->rowCount();
   // note1: margins not automatically baked in to max height
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
   layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); 
@@ -1213,7 +1201,7 @@ void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& 
   QLabel* label = new QLabel(name, (QWidget*)NULL);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  label->setPaletteBackgroundColor(colorOfRow(row));
+  SET_PALETTE_BACKGROUND_COLOR(label, colorOfRow(row));
   if (!desc.empty()) {
     label->setToolTip(desc);
   }
@@ -1281,12 +1269,12 @@ void taiDataHost::Constr_Box() {
   //note: see ClearBody for guards against deleting the structural widgets when clearing
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
   scrBody = new iScrollArea(scr_par);
-  scrBody->viewport()->setPaletteBackgroundColor(bg_color_dark);
+  SET_PALETTE_BACKGROUND_COLOR(scrBody->viewport(), bg_color_dark);
 //Qt3  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
   scrBody->setWidgetResizable(true); 
   body = new iStripeWidget();
   scrBody->setWidget(body);
-  body->setPaletteBackgroundColor(bg_color);
+  SET_PALETTE_BACKGROUND_COLOR(body, bg_color);
   ((iStripeWidget*)body)->setHiLightColor(bg_color_dark);
   ((iStripeWidget*)body)->setStripeHeight(row_height + (2 * LAYBODY_MARGIN));
   //TODO: if adding spacing, need to include LAYBODY_SPACING;
@@ -1325,8 +1313,8 @@ void taiDataHost::Constr_Methods_impl() { //note: conditional constructions used
     tmp = new QFrame(); // tmp = new QFrame(widget());
     tmp->setVisible(false); // prevents it showing as global win in some situations
     tmp->setAutoFillBackground(true); // for when disconnected from us
-    tmp->setPaletteBackgroundColor(bg_color);
-    tmp->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
+    SET_PALETTE_BACKGROUND_COLOR(tmp, bg_color);
+    tmp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
     tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
   }
   if (!layMethButtons) {
@@ -1616,7 +1604,7 @@ void  taiDialog::Constr_Box() {
 
 void taiDialog::AddName(int index, String& name, String& desc, QWidget* buddy) {
    // add a data item in data column
-    if (body->numRows() < (index + 1))
+    if (body->rowCount() < (index + 1))
       body->setNumRows(index + 1);
     body->verticalHeader()->setLabel(index, name);
     // set a tooltip on buddy, if supplied
@@ -1628,7 +1616,7 @@ void taiDialog::AddName(int index, String& name, String& desc, QWidget* buddy) {
 
 void taiDialog::AddData(int index, QWidget* data) {
    // add a data item in data column
-    if (body->numRows() < (index + 1))
+    if (body->rowCount() < (index + 1))
       body->setNumRows(index + 1);
     body->setCellWidget(index, 0, data);
     int h;
@@ -1951,7 +1939,7 @@ void taiEditDataHost::DoAddMethButton(QAbstractButton* but) {
   but->setFont(taiM->buttonFont(taiMisc::fonMedium));
   but->setFixedHeight(taiM->button_height(taiMisc::sizMedium));
   if (but->parent() != frmMethButtons) {
-    but->reparent(frmMethButtons, QPoint(0, 0));
+     but->setParent(frmMethButtons);
   }
   layMethButtons->addWidget(but);
   but->show(); // needed when rebuilding
@@ -2132,9 +2120,9 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     else {
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
       if (mb_dat->visible()) {
-        layBody->setRowSpacing(cur_row, row_height + (2 * LAYBODY_MARGIN)); 
+        layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN)); 
       } else {
-        layBody->setRowSpacing(cur_row, 0); 
+        layBody->setRowMinimumHeight(cur_row, 0); 
       }
       ++cur_row;
     }
@@ -2335,7 +2323,7 @@ void taiStringDataHost::GetImage() {
 }
 
 void taiStringDataHost::GetValue() {
-  String val = edit->text();
+  String val = edit->toPlainText();
   mbr->type->SetValStr(val, mbr->GetOff(cur_base), cur_base, mbr);
 }
 

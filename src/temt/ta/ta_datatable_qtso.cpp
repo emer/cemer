@@ -1891,24 +1891,24 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 {
   int font_spec = taiMisc::fonMedium;
 
-  layTopCtrls = new QHBoxLayout(layWidg);
+  layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
 
-  chkDisplay = new QCheckBox("Disp!", widg, "chkDisplay");
+  chkDisplay = new QCheckBox("Disp!", widg); chkDisplay->setObjectName("chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
 
-  chkHeaders =  new QCheckBox("Hdrs!", widg, "chkHeaders");
+  chkHeaders =  new QCheckBox("Hdrs!", widg ); chkHeaders->setObjectName("chkHeaders");
   chkHeaders->setToolTip("Whether to display a top row of headers indicating the name of the columns");
   connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkHeaders);
 
-  chkRowNum =  new QCheckBox("Row\n#!", widg, "chkRowNum");
+  chkRowNum =  new QCheckBox("Row\n#!", widg); chkRowNum->setObjectName("chkRowNum");
   chkRowNum->setToolTip("Whether to display the row number as the first column");
   connect(chkRowNum, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkRowNum);
 
-  chk2dFont =  new QCheckBox("2d\nFont!", widg, "chk2dFont");
+  chk2dFont =  new QCheckBox("2d\nFont!", widg); chk2dFont->setObjectName("chk2dFont");
   chk2dFont->setToolTip("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display");
   connect(chk2dFont, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chk2dFont);
@@ -1934,7 +1934,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 //   layTopCtrls->addWidget(butClear);
 //   connect(butClear, SIGNAL(pressed()), this, SLOT(butClear_pressed()) );
 
-  layVals = new QHBoxLayout(layWidg);
+  layVals = new QHBoxLayout; layWidg->addLayout(layVals);
 
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
@@ -1974,13 +1974,13 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  layMatrix = new QHBoxLayout(layWidg);
+  layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
 
   lblMatrix = taiM->NewLabel("Matrix\nDisplay", widg, font_spec);
   lblMatrix->setToolTip("This row contains parameters that control the display of matrix values (shown in a grid of colored blocks)");
   layMatrix->addWidget(lblMatrix);
 
-  chkValText =  new QCheckBox("Val\nTxt!", widg, "chkValText");
+  chkValText =  new QCheckBox("Val\nTxt!", widg); chkValText->setObjectName( "chkValText");
   chkValText->setToolTip("Whether to display text of the matrix block values.");
   connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layMatrix->addWidget(chkValText);
@@ -2009,7 +2009,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////////////
   // 	Colorscale etc
-  layColorScale = new QHBoxLayout(layWidg);
+  layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
   
   chkAutoScale = new QCheckBox("auto\nscale", widg);
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
@@ -4462,9 +4462,9 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   int font_spec = taiMisc::fonMedium;
 
   ////////////////////////////////////////////////////////////////////
-  layTopCtrls = new QHBoxLayout(layWidg);
+  layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
 
-  chkDisplay = new QCheckBox("Disp!", widg, "chkDisplay");
+  chkDisplay = new QCheckBox("Disp!", widg); chkDisplay->setObjectName("chkDisplay");
   chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
@@ -4487,7 +4487,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
   //  layTopCtrls->addSpacing(taiM->hsep_c);
 
-  chkNegDraw =  new QCheckBox("Neg\nDraw!", widg, "chkNegDraw");
+  chkNegDraw =  new QCheckBox("Neg\nDraw!", widg); chkNegDraw->setObjectName("chkNegDraw");
   chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
   connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDraw);
@@ -4499,7 +4499,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
 
   ////////////////////////////////////////////////////////////////////
-  layVals = new QHBoxLayout(layWidg);
+  layVals = new QHBoxLayout; layWidg->addLayout(layVals);
 
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
@@ -4543,7 +4543,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // X AXis
-  layXAxis = new QHBoxLayout(layWidg);
+  layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
 
   int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
 
@@ -4554,7 +4554,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layXAxis->addWidget(lelXAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  rncXAxis = new QCheckBox("Row\nNum", widg, "rncXAxis");
+  rncXAxis = new QCheckBox("Row\nNum", widg); rncXAxis->setObjectName("rncXAxis");
   rncXAxis->setToolTip("Use row number instead of column value for axis value");
   connect(rncXAxis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layXAxis->addWidget(rncXAxis);
@@ -4566,7 +4566,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // Z AXis
-  layZAxis = new QHBoxLayout(layWidg);
+  layZAxis = new QHBoxLayout; layWidg->addLayout(layZAxis);
 
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
   lblZAxis->setToolTip("Column of data to plot for the Z Axis");
@@ -4580,7 +4580,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(oncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(oncZAxis);
 
-  rncZAxis = new QCheckBox("Row\nNum", widg, "rncZAxis");
+  rncZAxis = new QCheckBox("Row\nNum", widg); rncZAxis->setObjectName("rncZAxis");
   rncZAxis->setToolTip("Use row number instead of column value for axis value");
   connect(rncZAxis, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   layZAxis->addWidget(rncZAxis);
@@ -4592,7 +4592,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 1 AXis
-  lay1Axis = new QHBoxLayout(layWidg);
+  lay1Axis = new QHBoxLayout; layWidg->addLayout(lay1Axis);
 
   lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
   lbl1Axis->setToolTip("First column of data to plot");
@@ -4608,7 +4608,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 2 AXis
-  lay2Axis = new QHBoxLayout(layWidg);
+  lay2Axis = new QHBoxLayout; layWidg->addLayout(lay2Axis);
 
   lbl2Axis = taiM->NewLabel("Y2:", widg, font_spec);
   lbl2Axis->setToolTip("Second column of data to plot (optional)");
@@ -4622,7 +4622,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay2Axis->addWidget(onc2Axis);
 
-  chk2AltY =  new QCheckBox("Alt\nY", widg, "chk2AltY");
+  chk2AltY =  new QCheckBox("Alt\nY", widg); chk2AltY->setObjectName("chk2AltY");
   chk2AltY->setToolTip("Whether to setup an alternate Y axis for this second column of data (otherwise it shares with the first plot's Y axis)");
   connect(chk2AltY, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   //  layPlots->addWidget(chk2AltY);
@@ -4635,7 +4635,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 3 AXis
-  lay3Axis = new QHBoxLayout(layWidg);
+  lay3Axis = new QHBoxLayout; layWidg->addLayout(lay3Axis);
 
   lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
   lbl3Axis->setToolTip("Second column of data to plot (optional)");
@@ -4649,7 +4649,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(onc3Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay3Axis->addWidget(onc3Axis);
 
-  chk3AltY =  new QCheckBox("Alt\nY", widg, "chk3AltY");
+  chk3AltY =  new QCheckBox("Alt\nY", widg); chk3AltY->setObjectName("chk3AltY");
   chk3AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
   connect(chk3AltY, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   //  layPlots->addWidget(chk3AltY);
@@ -4662,7 +4662,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 4 AXis
-  lay4Axis = new QHBoxLayout(layWidg);
+  lay4Axis = new QHBoxLayout; layWidg->addLayout(lay4Axis);
 
   lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
   lbl4Axis->setToolTip("Second column of data to plot (optional)");
@@ -4689,7 +4689,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // 5 AXis
-  lay5Axis = new QHBoxLayout(layWidg);
+  lay5Axis = new QHBoxLayout; layWidg->addLayout(lay5Axis);
 
   lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
   lbl5Axis->setToolTip("Second column of data to plot (optional)");
@@ -4703,7 +4703,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(onc5Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay5Axis->addWidget(onc5Axis);
 
-  chk5AltY =  new QCheckBox("Alt\nY", widg, "chk5AltY");
+  chk5AltY =  new QCheckBox("Alt\nY", widg); chk5AltY->setObjectName("chk5AltY");
   chk5AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
   connect(chk5AltY, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
   //  layPlots->addWidget(chk5AltY);
@@ -4716,7 +4716,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // Error bars
-  layErr1 = new QHBoxLayout(layWidg);
+  layErr1 = new QHBoxLayout; layWidg->addLayout(layErr1);
   
   // Err1
   lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
@@ -4753,7 +4753,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   layErr1->addStretch();
 
-  layErr2 = new QHBoxLayout(layWidg);
+  layErr2 = new QHBoxLayout; layWidg->addLayout(layErr2);
   // Err4
   lbl4Err = taiM->NewLabel("4 Err:", widg, font_spec);
   lbl4Err->setToolTip("Column of for the 4nd column's error bar data");
@@ -4789,7 +4789,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   ////////////////////////////////////////////////////////////////////////////
   // 	Colors
 
-  layCAxis = new QHBoxLayout(layWidg);
+  layCAxis = new QHBoxLayout; layWidg->addLayout(layCAxis);
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
   lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
   layCAxis->addWidget(lblColorMode);
@@ -4816,7 +4816,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // second row: color bar + button
-  layColorScale = new QHBoxLayout(layWidg);
+  layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
   cbar = new HCScaleBar(&tlv->colorscale, ScaleBar::RANGE, true, true, widg);
 //  cbar->setMaximumWidth(30);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
@@ -4830,7 +4830,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////
   // Raster Axis
-  layRAxis = new QHBoxLayout(layWidg);
+  layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
 
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");

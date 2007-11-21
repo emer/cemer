@@ -60,7 +60,9 @@ QSize iStripeWidget::minimumSizeHint() const {
 
 void iStripeWidget::setColors(const QColor& hilight, const QColor& bg) {
   mhiLightColor = hilight; // cached for rebuild
-  setPaletteBackgroundColor(bg);
+  QPalette palette;
+  palette.setColor(this->backgroundRole(), bg);
+  this->setPalette(palette);
   update();
 }
 
@@ -244,7 +246,7 @@ void iEditGrid::clearLater() { // clears all contained items, but does it via de
   delete layOuter;
   createContent();
   adjustMinHeight();
-  setColors(mhilightColor, paletteBackgroundColor());
+  setColors(mhilightColor, palette().color(this->backgroundRole()));
 }
 
 void iEditGrid::resizeRows_impl() {
@@ -264,7 +266,9 @@ void iEditGrid::setColNameWidget(int col, QWidget* name) {
 }
 
 void iEditGrid::setColors(const QColor& hilight, const QColor& bg) {
-  setPaletteBackgroundColor(bg);
+  QPalette palette;
+  palette.setColor(this->backgroundRole(), bg);
+  this->setPalette(palette);
   mhilightColor = hilight; // cached for rebuild
   if (mnames) {
     bodyNames->setColors(hilight, bg);

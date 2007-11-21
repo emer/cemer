@@ -12,6 +12,7 @@
 // SWITCHES THAT CAN BE SET
 
 //#define USE_VAL -- adds a "float* val" to point directly to correct net val
+#define USE_RECV_SMART
 
 ////////////////////////////////////////////////////////////////////////////////////
 // timing code
@@ -176,12 +177,12 @@ TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
 #include <pthread.h>
 #include <sys/signal.h>
 
-class NetInTask;
+class NetTask;
 
 int core_nprocs;		// total number of processors
 const int core_max_nprocs = 32; // maximum number of processors!
 QThread* threads[core_max_nprocs]; // only core_nprocs-1 created, none for [0] (main thread)
-NetInTask* netin_tasks[core_max_nprocs]; // only core_nprocs created
+NetTask* netin_tasks[core_max_nprocs]; // only core_nprocs created
 
 
 //NOTE: the gcc version of __sync_fetch_and_add doesn't seem to exist
@@ -207,9 +208,11 @@ inline int AtomicFetchAdd(int* operand, int incr)
 class Task {
 public:
   int		task_id;
+  int		proc_id; // current proc being run
+  
   virtual void	run() = 0;
   
-  Task() {task_id = -1;}
+  Task() {task_id = -1; proc_id = 0;}
 };
 
 class QTaskThread: public QThread {
@@ -324,6 +327,7 @@ public:
   // element at index
   T**		Els() const		{ return (T**)el; }
   T*		FastEl(int i) const		{ return (T*)el[i]; }
+  T*		operator[](int i) const		{ return (T*)el[i]; }
   void		Set(T* it, int i)		{  el[i] = it; }
   taPtrList() {}
   explicit taPtrList(int alloc) {Alloc(alloc);}
@@ -363,6 +367,7 @@ public:
 class Unit {
   // a simple unit
 public:
+  bool		do_delta; // for recv_smart
   float act;			// activation value
   float net;			// net input value
   Connection* send_wts;		// sending weights
@@ -375,7 +380,7 @@ public:
   // #CAT_Structure gets the connection at the given index
   Unit*		Un(int i) const { return targs.FastEl(i); }
   
-  bool		DoDelta(); // returns true if we should do a delta; typically we just use a random %, ex. 8%
+  bool		DoDelta(); // returns true if we should do a delta; also sets the do_delta
   
   
   Unit();
@@ -397,6 +402,57 @@ public:
 };
 int Layer::un_to_idx;
 
+typedef taPtrList<Layer>	Layer_List;
+
+class Network {
+public:
+  static bool	recv_based; // true for recv, false for send
+  static bool	recv_smart; // fort recv-based, does the smart recv algo
+  
+  Unit_List 	units_flat;		// layers = arrays of units
+  Layer_List	layers;
+  
+  void		Build(); 
+  void 		ComputeNets();
+  float 	ComputeActs();
+  
+  Network();
+  ~Network();
+};
+bool Network::recv_based; // true for recv, false for send
+bool Network::recv_smart; 
+
+class NetTask: public Task {
+public:
+  enum Proc {
+    P_Send_Netin,
+    P_Recv_Netin,
+    P_ComputeAct
+  };
+  
+// All
+  int		g_u; 
+  int		t_tot; // shared by Xxx_Netin
+  void		run();
+
+// Send_Netin
+  inline static void Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff);
+    // highly optimized inner loop
+  inline static void 	Send_Netin_0(Unit* su); // shared by 0 and N
+  virtual void	Send_Netin() = 0; // NetIn
+  
+// Recv_Netin
+  inline static void 	Recv_Netin_0(Unit* ru); // shared by 0 and N
+  virtual void	Recv_Netin(); // default is the _0 version
+  
+  
+// ComputeAct  
+  inline static void ComputeAct_inner(Unit* un);
+  float		my_act;
+  virtual void	ComputeAct(); // default does it globally
+  
+  NetTask();
+};
 
 // network configuration information
 
@@ -405,13 +461,14 @@ int n_units;			// number of units per layer
 int n_cons; // number of cons per unit
 int n_units_flat; // total number of units (flattened, all layers)
 int n_cycles;			// number of cycles of updating
-Layer** layers;		// layers 
-Unit_List units_flat;		// layers = arrays of units
+Network net;		// global network 
 int n_tot; // total units (reality check)
+float tot_act; // check on tot act
 bool nibble = true; // setting false disables nibbling and adds sync to loop
 bool single = false; // true for single thread mode, to compare against nprocs=1
-int send_act = 0x10000; // send activation, as a fraction of 2^16 -- 0 if 100%
+int send_act = 0x10000; // send activation, as a fraction of 2^16 
 int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
+bool calc_act = true;
 
 /*void ConSpec::C_Send_Netin(void*, Connection* cn, Unit* ru, float su_act_eff) {
   ru->net += su_act_eff * cn->wt;
@@ -429,6 +486,7 @@ Unit::Unit() {
   task_id = 0;
   net = 0;
   my_rand = rand();
+  do_delta = true; // for first iteration, before it is set in ComputeActs
 }
 
 Unit::~Unit() {
@@ -436,7 +494,8 @@ Unit::~Unit() {
 }
 
 bool Unit::DoDelta() {
-  return ((this_rand ^ my_rand) & 0xffff) < send_act;
+  do_delta = ((this_rand ^ my_rand) & 0xffff) < send_act;
+  return do_delta;
 } 
 
 // construct the network
@@ -465,8 +524,21 @@ void Layer::Connect(Layer* lay_to) {
   }
 }
 
-void MakeNet() {
-  layers = new Layer*[n_layers];
+
+// delete the network
+
+Network::Network() {
+}
+
+Network::~Network() {
+  for(int l=0;l<n_layers;l++) {
+    Layer* lay = layers[l];
+    delete lay;
+  }
+}
+
+void Network::Build() {
+  layers.Alloc(n_layers);
   n_units_flat = n_units * n_layers;
   units_flat.Alloc(n_units_flat);
   
@@ -474,7 +546,7 @@ void MakeNet() {
   // make all layers and units first
   for (int l = 0; l < n_layers; l++) {
     Layer* lay = new Layer;
-    layers[l] = lay;
+    layers.Set(lay, layers.size++);
     lay->units.Alloc(n_units);
     
     for (int i=0;i<n_units;i++) {
@@ -497,65 +569,47 @@ void MakeNet() {
     if (lay_prv < 0) lay_prv = n_layers - 1;
     layers[lay_prv]->Connect(layers[lay_ths]);
     layers[lay_ths]->Connect(layers[lay_nxt]);
+    if (n_layers == 2) break; // special case
   }
 }
 
-// delete the network
 
-void DeleteNet() {
-  for(int l=0;l<n_layers;l++) {
-    Layer* lay = layers[l];
-    delete lay;
-  }
-  delete[] layers;  
-}
-
-
-class NetInTask: public Task {
-public:
-  int		g_u; 
-  int		t_tot;
-  
-  NetInTask();
-};
-//int NetInTask::g_u; 
-
-class NetInTask_0: public NetInTask {
+class NetTask_0: public NetTask {
 // for single threaded approach -- optimum for that
 public:
-  void		run();
+  void		Send_Netin();
+//  void		ComputeAct();
 };
 
-class NetInTask_N: public NetInTask {
+class NetTask_N: public NetTask {
 // for N threaded approach -- optimum for that
 public:
-  void		run();
+  void		Send_Netin();
+  void		Recv_Netin();
+  void		ComputeAct();
 };
 
-void ComputeNets() {
-  this_rand = rand(); // for this cycle
-  // compute net input = activation times weights
-  // this is the "inner loop" that takes all the time!
-  
- // NetInTask::g_u = 0;
+void DoProc(int proc_id) {
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
   for (int t = 1; t < core_nprocs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
-    NetInTask* tsk = netin_tasks[t];
-//    th->suspend(); // prob already suspended
+    NetTask* tsk = netin_tasks[t];
+    th->suspend(); // prob already suspended
     tsk->g_u = t;
+    tsk->proc_id = proc_id;
     th->resume();
   }
   
   // then do my part
-  NetInTask* tsk = netin_tasks[0];
+  NetTask* tsk = netin_tasks[0];
   tsk->g_u = 0;
+  tsk->proc_id = proc_id;
   tsk->run();
   // then lend a "helping hand"
   for (int t = 1; t < core_nprocs; ++t) {
     if (nibble) {
-      NetInTask* tsk = netin_tasks[t];
+      NetTask* tsk = netin_tasks[t];
       // note: its ok if tsk finishes between our test and calling run
       if (tsk->g_u < n_units_flat)
         tsk->run();
@@ -567,18 +621,22 @@ void ComputeNets() {
 }
 
 
-float ComputeActs() {
+void Network::ComputeNets() {
+  if (recv_based)
+    DoProc(NetTask::P_Recv_Netin);
+  else
+    DoProc(NetTask::P_Send_Netin);
+}
+
+float Network::ComputeActs() {
   // compute activations (only order number of units)
-  float tot_act = 0.0f;
-  for(int l=0;l<n_layers;l++) {
-    Layer* lay = layers[l];
-    for(int i=0;i<lay->units.size;i++) {
-      Unit& un = *(lay->units.FastEl(i));
-      un.act = 1.0f / (1.0f + expf(-un.net));
-      un.net = 0.0f; // only needed for sender-based, but cheaper to just do than test
-      tot_act += un.act;
-    }
+  tot_act = 0.0f;
+  DoProc(NetTask::P_ComputeAct);
+  for (int t = 0; t < core_nprocs; ++t) {
+    NetTask* tsk = netin_tasks[t];
+    tot_act += tsk->my_act;
   }
+  this_rand = rand(); // for next cycle
   return tot_act;
 }
 
@@ -586,17 +644,28 @@ float ComputeActs() {
 // core code
 
 
-NetInTask::NetInTask() {
+NetTask::NetTask() {
   g_u = 0;
   t_tot = 0;
+  my_act = 0.0f;
 }
 
+void NetTask::run() {
+  switch (proc_id) {
+  case P_Send_Netin: Send_Netin(); break;
+  case P_Recv_Netin: Recv_Netin(); break;
+  case P_ComputeAct: ComputeAct(); break;
+  }
+}
+
+
 float tru_net;
-inline void Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff) {
+void NetTask::Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff) {
   *ru_net += su_act_eff * cn_wt;
   //tru_net = *ru_net + su_act_eff * cn_wt;
 }
-void Send_Netin_0(Unit* su) {
+
+void NetTask::Send_Netin_0(Unit* su) {
   float su_act_eff = su->act;
   Connection* cns = su->send_wts; // array pointer
 #ifdef USE_VAL
@@ -609,10 +678,58 @@ void Send_Netin_0(Unit* su) {
 #endif
 }
 
+void NetTask::Recv_Netin_0(Unit* ru) {
+  float ru_net = 0.0f;
+  Connection* cns = ru->send_wts; // array pointer
+#ifdef USE_VAL
+  for(int i=0; i<ru->targs.size; i++)
+    ru_net += *(cns[i].val) * cns[i].wt;
+#else
+  Unit** uns = ru->targs.Els(); // unit pointer
+  for(int i=0; i<ru->targs.size; i++)
+    if (uns[i]->do_delta)
+      ru_net += uns[i]->act * cns[i].wt;
+#endif
+  ru->net = ru_net;
+}
 
-void NetInTask_0::run() {
+
+void NetTask::Recv_Netin() {
+  Unit** units = net.units_flat.Els();
   while (g_u < n_units_flat) {
-    Unit* un = units_flat.FastEl(g_u); //note: accessed flat
+    Unit* un = units[g_u]; //note: accessed flat
+    Recv_Netin_0(un);
+    AtomicFetchAdd(&n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
+      //++t_tot;
+    ++g_u;
+  }
+}
+
+void NetTask::ComputeAct_inner(Unit* un) {
+  un->act = 1.0f / (1.0f + expf(-un->net));
+  un->net = 0.0f; // only needed for sender-based, but cheaper to just do than test
+#ifdef USE_RECV_SMART
+  if (Network::recv_smart) un->DoDelta(); // sets flag
+#endif
+}
+
+void NetTask::ComputeAct() {
+  Unit** units = net.units_flat.Els();
+  // compute activations (only order number of units)
+  my_act = 0.0f;
+  while (g_u < n_units_flat) {
+    Unit* un = units[g_u]; //note: accessed flat
+    ComputeAct_inner(un);
+    my_act += un->act;
+    ++g_u;
+  }
+}
+
+
+void NetTask_0::Send_Netin() {
+  Unit** units = net.units_flat.Els();
+  while (g_u < n_units_flat) {
+    Unit* un = units[g_u]; //note: accessed flat
     if (un->DoDelta()) {
       Send_Netin_0(un);
       AtomicFetchAdd(&n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
@@ -622,10 +739,11 @@ void NetInTask_0::run() {
   }
 }
 
-void NetInTask_N::run() {
+void NetTask_N::Send_Netin() {
+  Unit** units = net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, core_nprocs);
   while (my_u < n_units_flat) {
-    Unit* un = units_flat.FastEl(my_u); //note: accessed flat
+    Unit* un = units[my_u]; //note: accessed flat
     if (un->DoDelta()) {
       Send_Netin_0(un);
       AtomicFetchAdd(&n_tot, 1);
@@ -635,14 +753,38 @@ void NetInTask_N::run() {
   }
 }
 
+void NetTask_N::Recv_Netin() {
+  Unit** units = net.units_flat.Els();
+  int my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  while (my_u < n_units_flat) {
+    Unit* un = units[my_u]; //note: accessed flat
+    Recv_Netin_0(un);
+    AtomicFetchAdd(&n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
+      //++t_tot;
+    my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  }
+}
+
+void NetTask_N::ComputeAct() {
+  Unit** units = net.units_flat.Els();
+  int my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  my_act = 0.0f;
+  while (my_u < n_units_flat) {
+    Unit* un = units[my_u];
+    ComputeAct_inner(un);
+    my_act += un->act;
+    my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  }
+}
+
 
 void MakeThreads() {
   if (single) {
-    NetInTask* tsk = new NetInTask_0;
+    NetTask* tsk = new NetTask_0;
     tsk->task_id = 0;
     netin_tasks[0] = tsk;
   } else for (int i = 0; i < core_nprocs; i++) {
-    NetInTask* tsk = new NetInTask_N;
+    NetTask* tsk = new NetTask_N;
     tsk->task_id = i;
     netin_tasks[i] = tsk;
     if (i == 0) continue;
@@ -665,19 +807,19 @@ int main(int argc, char* argv[]) {
       "\t<n_cycles>\tnumber of cycles\n"
       "\t<n_procs>\tnumber of cores or procs (0=fast single-threaded model)\n"
       "optional positional params -- none can be skipped: \n"
-      "\t<n_lays>\tnumber of layers (min 3, def=3)\n"
-      "\t<n_cons>\tnumber of cons per unit (def=n_units)\n"
-      "\t<n_cons>\tnumber of cons per unit (def=n_units)\n"
+      "\t<n_lays>\tnumber of layers (min 2, def=3, max 128)\n"
+      "\t<n_cons>\tnumber of cons per unit-projection (def=n_units)\n"
       "\t<send_act>\tpercent (/100) avg activation level (def = 100)\n"
       "optional commands: \n"
-      "\t-log=0\tdo not log optional values to ptest_core.log\n"
-      "\t-log=1\t(def) log optional values to ptest_core.log\n"
+      "\t-log=0\t(def) do not log optional values to ptest_core.log\n"
+      "\t-log=1\tlog optional values to ptest_core.log\n"
+      "\t-act=0\tdo not calculate activation\n"
     );
     return 1;
   }
-
+  net.recv_based = true; net.recv_smart = true;
   
-  bool use_log_file = true;
+  bool use_log_file = false;
 
   srand(56);			// always start with the same seed!
 
@@ -698,13 +840,13 @@ int main(int argc, char* argv[]) {
   n_layers = 3; // def
   if ((argc > 4) && (*argv[4] != '-')) {
     n_layers = (int)strtol(argv[4], NULL, 0);
-    if (n_layers <= 2) n_layers = 3;
+    if (n_layers < 2) n_layers = 2;
     if (n_layers > 128) n_layers = 128;
   }
   n_cons = n_units; // def
   if ((argc > 5) && (*argv[5] != '-')) {
     n_cons = (int)strtol(argv[5], NULL, 0);
-    if ((n_cons <= 0) || (n_cons > n_units)) 
+    if (n_cons <= 0) 
       n_cons = n_units;
   }
   
@@ -735,11 +877,13 @@ int main(int argc, char* argv[]) {
       use_log_file = true;
     if (strcmp(argv[arg], "-log=0") == 0)
       use_log_file = false;
+    if (strcmp(argv[arg], "-act=0") == 0)
+      calc_act = false;
     //TODO: any more
   }
   
   MakeThreads();
-  MakeNet();
+  net.Build();
 
   FILE* logfile;
   if (use_log_file) {
@@ -755,10 +899,12 @@ int main(int argc, char* argv[]) {
 
   // this is the key computation loop
   for(int cyc = 0; cyc < n_cycles; cyc++) {
-    ComputeNets();
-    float tot_act = ComputeActs();
-    if(use_log_file)
-      fprintf(logfile,"%d\t%g\n", cyc, tot_act);
+    net.ComputeNets();
+    if (calc_act) {
+      float tot_act = net.ComputeActs();
+      if(use_log_file)
+        fprintf(logfile,"%d\t%g\n", cyc, tot_act);
+    }
   }
 
   time_used.GetUsed(start);
@@ -777,7 +923,7 @@ int main(int argc, char* argv[]) {
   if(use_log_file) {
     fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
     for (int t = 0; t < core_nprocs; t++) {
-      NetInTask* tsk = netin_tasks[t];
+      NetTask* tsk = netin_tasks[t];
       QTaskThread* th = (QTaskThread*)threads[t];
       double start_lat = 0;
       double run_time = 0;
@@ -798,6 +944,6 @@ int main(int argc, char* argv[]) {
     con_trav_sec, tsend_act, core_nprocs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
 
   DeleteThreads();
-  DeleteNet();
+//  DeleteNet();
 }
 

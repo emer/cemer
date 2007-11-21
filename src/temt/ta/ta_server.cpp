@@ -1075,7 +1075,7 @@ bool TemtServer::OpenServer() {
   server = new QTcpServer();
   if (!server->listen(QHostAddress::Any, port)) {
     taMisc::Error("Could not open the server: ",
-      server->errorString());
+      server->errorString().toLatin1());
     delete server;
     server = NULL;
     return false;

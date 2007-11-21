@@ -167,18 +167,18 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
     switch (i) {
     case INTERACT_BUTTON:
       interactbutton = p;
-      p->setToggleButton(TRUE);
-      p->setPixmap(QPixmap((const char **)pick_xpm));
-      p->setOn(this->isViewing() ? FALSE : TRUE);
+      p->setCheckable(TRUE);
+      p->setIcon(QPixmap((const char **)pick_xpm));
+      p->setChecked(this->isViewing() ? FALSE : TRUE);
       p->setToolTip("Interact (ESC key): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
       connect(p, SIGNAL(clicked()),
 	      this, SLOT(interactbuttonClicked()));
       break;
     case EXAMINE_BUTTON:
       viewbutton = p;
-      p->setToggleButton(TRUE);
-      p->setPixmap(QPixmap((const char **)view_xpm));
-      p->setOn(this->isViewing());
+      p->setCheckable(TRUE);
+      p->setIcon(QPixmap((const char **)view_xpm));
+      p->setChecked(this->isViewing());
       p->setToolTip("Camera View (ESC key): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
       QObject::connect(p, SIGNAL(clicked()),
 		       this, SLOT(viewbuttonClicked()));
@@ -186,39 +186,39 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
     case HOME_BUTTON:
       QObject::connect(p, SIGNAL(clicked()), this, SLOT(homebuttonClicked()));
       p->setToolTip("Home View (Home key): Restores display to the 'home' viewing configuration\n(set by next button down, saved with the project)");
-      p->setPixmap(QPixmap((const char **)home_xpm));
+      p->setIcon(QPixmap((const char **)home_xpm));
       break;
     case SET_HOME_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
 		       this, SLOT(sethomebuttonClicked()));
       p->setToolTip("Save Home: Saves the current 'home' viewing configuration \n(click button above to go back to this view) -- saved with the project");
-      p->setPixmap(QPixmap((const char **)set_home_xpm));
+      p->setIcon(QPixmap((const char **)set_home_xpm));
       break;
     case VIEW_ALL_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
 		       this, SLOT(viewallbuttonClicked()));
       p->setToolTip("View All: repositions the camera view to the standard initial view with everything in view");
-      p->setPixmap(QPixmap((const char **)view_all_xpm));
+      p->setIcon(QPixmap((const char **)view_all_xpm));
       break;
     case SEEK_BUTTON:
       seekbutton = p;
-      p->setToggleButton(TRUE);
-      p->setOn(isSeekMode());
+      p->setCheckable(TRUE);
+      p->setChecked(isSeekMode());
       QObject::connect(p, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
       p->setToolTip("Seek: Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
-      p->setPixmap(QPixmap((const char **)seek_xpm));
+      p->setIcon(QPixmap((const char **)seek_xpm));
       break;
     case SNAPSHOT_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
 		       this, SLOT(snapshotbuttonClicked()));
       p->setToolTip("Snapshot: save the current image to a file\nEPS format gives best resolution but transparency etc not captured\n -- use EPS primarily for graphs and grids\n PNG is best for lossless compression \n JPEG is best for lossy compression (see jpeg_qualty in preferences)");
-      p->setPixmap(QPixmap((const char **)snapshot_xpm));
+      p->setIcon(QPixmap((const char **)snapshot_xpm));
       break;
     case PRINT_BUTTON:
       QObject::connect(p, SIGNAL(clicked()),
 		       this, SLOT(printbuttonClicked()));
       p->setToolTip("Print: print the current image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
-      p->setPixmap(QPixmap((const char **)print_xpm));
+      p->setIcon(QPixmap((const char **)print_xpm));
       break;
     default:
       assert(0);
@@ -330,9 +330,9 @@ T3ExaminerViewer::interactbuttonClicked(void)
 {
   if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
   if (interactbutton)
-    interactbutton->setOn(TRUE);
+    interactbutton->setChecked(TRUE);
   if (viewbutton)
-    viewbutton->setOn(FALSE);
+    viewbutton->setChecked(FALSE);
   if (isViewing())
     setViewing(FALSE); // other guys assume buttons!
   T3DataViewFrame* dvf = GetFrame();
@@ -349,9 +349,9 @@ T3ExaminerViewer::viewbuttonClicked(void)
 {
   if(isSeekMode()) setSeekMode_doit(FALSE);	// get out of seek mode
   if (interactbutton)
-    interactbutton->setOn(FALSE);
+    interactbutton->setChecked(FALSE);
   if (viewbutton)
-    viewbutton->setOn(TRUE);
+    viewbutton->setChecked(TRUE);
   if (!isViewing())
     setViewing(TRUE); // other guys assume buttons!
   T3DataViewFrame* dvf = GetFrame();
@@ -396,7 +396,7 @@ void
 T3ExaminerViewer::setSeekMode_doit(SbBool enable)
 {
   if (seekbutton)
-    seekbutton->setOn(enable);
+    seekbutton->setChecked(enable);
   inherited::setSeekMode(enable); // actually do it!
 }
 
@@ -1202,11 +1202,16 @@ void iT3DataViewFrame::fileExportInventor() {
     fd = new QFileDialog(this, "fd");
     fd->setFilter( "Inventor files (*.iv)" );
   }
-  fd->setMode(QFileDialog::AnyFile);
+  fd->setFileMode(QFileDialog::AnyFile);
   if (!fd->exec()) return;
-  QString fileName = fd->selectedFile();
+  QString fileName;
+  {QStringList files = fd->selectedFiles();
+  QString selected;
+  if (!files.isEmpty())
+     fileName = files[0];}
+
   // check if exists, to warn user
-  QFile f(fileName);
+  QFile f(fileName.toLatin1());
   if (f.exists()) {
     if (taiChoiceDialog::ChoiceDialog(this, 
       "That file already exists, overwrite it?",
@@ -1214,7 +1219,7 @@ void iT3DataViewFrame::fileExportInventor() {
       "&Ok" + taiChoiceDialog::delimiter + "&Cancel") != 0) return;
   }
   SoOutput out;
-  if (!out.openFile(fileName)) {
+  if (!out.openFile(fileName.toLatin1())) {
     taiChoiceDialog::ErrorDialog(this, "Could not open file.", "File error", false);
     return;
   }

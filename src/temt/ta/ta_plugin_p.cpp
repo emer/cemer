@@ -47,7 +47,7 @@ bool taPluginInst::InitPlugin() {
     load_state = LS_PLUG_INIT;
     return true;
   } else {
-    taMisc::Error("**Initialization of plugin '", fileName(), "' failed with err code ", String(err),
+    taMisc::Error("**Initialization of plugin '", fileName().toLatin1(), "' failed with err code ", String(err),
       " -- try recompiling the plugin, or else remove it from the plugin folder");
   }
   load_state = LS_INIT_FAIL;
@@ -57,7 +57,7 @@ bool taPluginInst::InitPlugin() {
 bool taPluginInst::InitTypes() {
   IPlugin* ipl = plugin();
   if (!plugin_rep) {
-    taMisc::Warning("Unexpected missing plugin_rep for: ", fileName());
+    taMisc::Warning("Unexpected missing plugin_rep for: ", fileName().toLatin1());
   } else if (ipl) {
     taMisc::in_plugin_init++;
     TypeDef* td_last = taMisc::plugin_loading;
@@ -70,10 +70,10 @@ bool taPluginInst::InitTypes() {
       return true;
     } else {
       taMisc::Warning("Plugin::InitializeTypes() failed with error code ", String(err),
-        " for plugin: ", fileName());
+        " for plugin: ", fileName().toLatin1());
     }
   } else {
-    taMisc::Warning("Could not get IPlugin interface for plugin: ", fileName());
+    taMisc::Warning("Could not get IPlugin interface for plugin: ", fileName().toLatin1());
   }
   load_state = LS_TYPE_FAIL;
   return false;

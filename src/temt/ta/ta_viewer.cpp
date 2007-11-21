@@ -773,7 +773,7 @@ void ToolBar::Copy_(const ToolBar& cp) {
 
 void ToolBar::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
-  widget()->setName(name);
+  widget()->setObjectName(name);
 }
 
 void ToolBar::GetWinState_impl() {

@@ -87,8 +87,8 @@ void iTreeWidget::contextMenuEvent(QContextMenuEvent* e)
         p += QPoint( width() / 2, ( r.height() / 2 ) );
       else
         p += QPoint( columnWidth( 0 ) / 2, ( r.height() / 2 ) );
-      p.rx() = QMAX( 0, p.x() );
-      p.rx() = QMIN( visibleRegion().boundingRect().width(), p.x() ); //TEST
+      p.rx() = qMax( 0, p.x() );
+      p.rx() = qMin( visibleRegion().boundingRect().width(), p.x() ); //TEST
       emit contextMenuRequested(item, viewport()->mapToGlobal( p ), -1 );
     }
   } else {

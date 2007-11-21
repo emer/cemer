@@ -161,7 +161,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     break;
   }
 
-  fd->setCaption(caption);
+  fd->setWindowTitle(caption);
   
   //  cerr << m_fname << endl;
   // todo: for some reason it is not using this arg if the file already exists!

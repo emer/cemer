@@ -2534,7 +2534,7 @@ void iBrowseViewer::Init() {
   lay->setMargin(0);  lay->setSpacing(0);
   lvwDataTree = new iTreeView(this);
   lay->addWidget(lvwDataTree);
-  lvwDataTree->setName("lvwDataTree");
+  lvwDataTree->setObjectName("lvwDataTree");
   lvwDataTree->setSortingEnabled(false); // preserve enumeration order of items
   lvwDataTree->setSelectionMode(QAbstractItemView::ExtendedSelection); // multiselect
   lvwDataTree->setDefaultExpandLevels(8); // set fairly deep for ExpandAll
@@ -2872,7 +2872,8 @@ void iTabViewer::viewSplit(int o) {
   // create a new splitter whose parent is the old parent of the splitee tabview
   QSplitter* splNew = new QSplitter((Qt::Orientation)o, old->parentWidget());
   // reparent the existing tabview to the new splitter
-  old->reparent(splNew, 0, QPoint(), true);
+//Qt3  old->reparent(splNew, 0, QPoint(), true);
+  splNew->setParent(old);
   splNew->show();
 
   // create the new tab view, and split space evenly
@@ -2886,9 +2887,9 @@ void iTabViewer::viewSplit(int o) {
   // fix up the visual order and size to the way it was before reparenting
   if (old_par_is_spl) {
     if (move_first)// will need to move our new pair back into first place in parent splitter
-        old_par_spl->moveToFirst(splNew);
+      old_par_spl->insertWidget(0, splNew);//old_par_spl->moveToFirst(splNew);
     else
-        old_par_spl->moveToLast(splNew);
+      old_par_spl->addWidget(splNew); //old_par_spl->moveToLast(splNew);
     old_par_spl->setSizes(par_spl_sizes);
   }
   // divide the space evenly
@@ -2909,8 +2910,9 @@ void iTabViewer::viewSplitHorizontal() {
 //////////////////////////
 
 iDockViewer::iDockViewer(DockViewer* viewer_, QWidget* parent)
-:inherited(parent, Qt::WDestructiveClose), IDataViewWidget(viewer_)
+:inherited(parent), IDataViewWidget(viewer_)
 {
+  setAttribute(Qt::WA_DeleteOnClose, true);
   Init();
 }
 
@@ -3057,7 +3059,7 @@ iToolBar::~iToolBar() {
 }
 
 void iToolBar::Init() {
-  setLabel(viewer()->GetName());
+  setWindowTitle(viewer()->GetName());
 }
 
 void iToolBar::hideEvent(QHideEvent* e) {
@@ -3085,7 +3087,7 @@ void iToolBar::Showing(bool showing) {
 //////////////////////////////////
 
 String iToolBar_List::El_GetName_(void* it) const {
-  return ((QWidget*)it)->name(); 
+  return ((QWidget*)it)->objectName(); 
 }
 
 
@@ -3208,7 +3210,7 @@ QStringList iBaseClipWidgetAction::mimeTypes() const {
 
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::Window |Qt:: WindowSystemMenuHint | 
-  Qt::WStyle_Minimize | Qt::WStyle_Maximize
+  Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint
   )), IDataViewWidget(viewer_)
 {
   Init();
@@ -3353,7 +3355,7 @@ void iMainWindowViewer::AddToolBar(iToolBar* itb) {
   itb->m_window = this;
   addToolBar(itb); //TODO: should specify area
   // create a menu entry to show/hide it, regardless if visible now
-  toolBarMenu->AddItem(itb->name(), taiMenu::toggle,
+  toolBarMenu->AddItem(itb->objectName(), taiMenu::toggle,
     taiAction::men_act, this, SLOT(this_ToolBarSelect(taiAction*)), (void*)itb);
   // if initially invisible, hide it
   ToolBar* tb = itb->viewer();
@@ -5419,7 +5421,8 @@ void iDataPanelSetBase::OnWindowBind_impl(iTabViewer* itv) {
 
 void iDataPanelSetBase::removeChild(QObject* obj) {
   panels.RemoveEl_(obj); // harmless if not a panel
-  inherited::removeChild(obj);
+  if (obj)
+    obj->setParent(0);
 }
 
 void iDataPanelSetBase::ResolveChanges(CancelOp& cancel_op) {
@@ -5486,7 +5489,7 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
   // first visible button should be down
   if (id == 0) but->setDown(true); // first button should be down
-  but->setToggleButton(true);
+  but->setCheckable(true);
   but->setText(pn->panel_type());
   buttons->addButton(but, id);
   // layout position is same as button (no preceding layouts/wids)
@@ -5667,7 +5670,6 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
   m_custom_name = custom_name_; // optional
   // note: just autoexpands the first fill, user must adjust after that
   list = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
-  list->setName("list"); // nn???
   setCentralWidget(list);
   list->setSelectionMode(QTreeWidget::ExtendedSelection);
   list->setSortingEnabled(true);
@@ -7561,7 +7563,7 @@ void iSearchDialog::RootSet(taiDataLink* root) {
     cap += root->GetPath();
   }
   cap += " - " + taMisc::app_name;
-  setCaption(cap);
+  setWindowTitle(cap);
 }
 
 void iSearchDialog::ParseSearchString() {

@@ -585,14 +585,14 @@ inline String operator + (char* x, const String& y)
 inline String operator + (const QString& x, const String& y)
 {
   String r;  
-  r.setRep(Scat(x.latin1(), x.length(), y.chars(), y.length()));
+  r.setRep(Scat(x.toLatin1(), x.length(), y.chars(), y.length()));
   return r;
 }
 
 inline String operator + (const String& x, const QString& y)
 {
   String r;  
-  r.setRep(Scat(x.chars(), x.length(), y.latin1(), y.length()));
+  r.setRep(Scat(x.chars(), x.length(), y.toLatin1(), y.length()));
   return r;
 }
 #endif

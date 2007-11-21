@@ -486,7 +486,7 @@ void ScaleBar::InitLayout() {
     layOuter->addWidget(max_frep);
     if (shrinker) { //note: both or none
       // put them side by side, to save vert room
-      QBoxLayout* layBut = new QHBoxLayout(layOuter);
+      QBoxLayout* layBut = new QHBoxLayout; layOuter->addLayout(layBut);
       layBut->setMargin(0); //spacing=2
       layBut->setSpacing(0); //abut
       layBut->addWidget(enlarger);
@@ -494,7 +494,7 @@ void ScaleBar::InitLayout() {
      }
   } else { // vert
     if (enlarger) { //note: both or none
-      QBoxLayout* layBut = new QHBoxLayout(layOuter);
+      QBoxLayout* layBut = new QHBoxLayout; layOuter->addLayout(layBut);
       layBut->setMargin(0); //spacing=2
       layBut->addWidget(enlarger);
       layBut->addWidget(shrinker);
@@ -514,7 +514,7 @@ void ScaleBar::editor_accept() {
   String min_str(min(), "%5.3f");
   String max_str(max(), "%5.3f");
   // check the string values, because converting numbers will cause roundoff
-  if ((min_str == min_frep->text().ascii()) && (max_str == max_frep->text().ascii())) return;
+  if ((min_str == min_frep->text()) && (max_str == max_frep->text())) return;
 
 
   if (!GetScaleValues()) return;

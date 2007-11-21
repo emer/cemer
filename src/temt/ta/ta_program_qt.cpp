@@ -633,7 +633,7 @@ void iProgramEditor::setEditBgColor(const iColor& value) {
 }
 
 void iProgramEditor::defEditBgColor() {
-  setEditBgColor(QApplication::palette().color(QPalette::Active, QColorGroup::Background));
+  setEditBgColor(QApplication::palette().color(QPalette::Active, QPalette::Background));
 }
 
 void iProgramEditor::setEditNode(TAPtr value, bool autosave) {

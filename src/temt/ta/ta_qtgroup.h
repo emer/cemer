@@ -241,7 +241,7 @@ public:
       // return an instance if there are any functions, else returns NULL;
 
   taiDataList	funs;
-  inline Q3VBox* 	rep() {return (Q3VBox*)(QWidget*)m_rep;}
+//  inline Q3VBox* 	rep() {return (Q3VBox*)(QWidget*)m_rep;}
 
   virtual void  	CallFuns(void* obj);
 
