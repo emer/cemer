@@ -94,7 +94,7 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
-				EnableEnhancedInstructionSet="0"
+				EnableEnhancedInstructionSet="2"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
