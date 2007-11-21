@@ -334,7 +334,7 @@ private:
 //   T3NetViewObjNode	//
 //////////////////////////
 
-class TA_API T3NetViewObj : public T3NodeLeaf {
+class EMERGENT_API T3NetViewObj : public T3NodeLeaf {
   // network view object
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;

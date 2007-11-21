@@ -481,7 +481,7 @@ public:
   // 	Reference counting mechanisms, all static just for consistency..
 public:
 
-  static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
+  inline static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
   static void  		Ref(taBase& it)		{ it.refn++; }	     // #IGNORE
   static void  		Ref(taBase* it) 	{ it->refn++; }	     // #IGNORE
   static void		UnRef(taBase* it) {unRef(it); Done(it);} // #IGNORE

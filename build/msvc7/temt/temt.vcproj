@@ -94,14 +94,14 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;TA_DLL;TA_EXPORTS;QT_DLL;QT_GUI_LIB;QT_CORE_LIB;QT_THREAD_SUPPORT;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
-				EnableEnhancedInstructionSet="2"
+				EnableEnhancedInstructionSet="0"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="0"
-				DisableSpecificWarnings="4258"/>
+				DisableSpecificWarnings="4250;4661;4311;4258"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool

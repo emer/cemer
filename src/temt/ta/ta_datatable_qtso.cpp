@@ -2237,7 +2237,7 @@ void GraphAxisBase::UpdateFmColLookup() {
     col_name = col_lookup->GetName();
 //     cerr << "updated fm col: " << col_name << endl;
     fixed_range = col_lookup->fixed_range;	     // get range from that guy
-    if(col_lookup->refn <= 1) {
+    if(taBase::GetRefn(col_lookup) <= 1) {
 //       cerr << "oops: refn <= 1" << endl;
     }
     else {

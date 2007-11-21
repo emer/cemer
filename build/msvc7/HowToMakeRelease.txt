@@ -46,8 +46,8 @@ Release Steps
 
   * use something like WinZip to make a .zip file of setup_bin\Release --
     don't make a folder, just put the files into a the root of a zip
-  * rename the zip file like this (ex. for rc1):
-    emergent-4.0.3rc1.zip
+  * rename the zip file like this (ex. for 4.0.9):
+    emergent-4.0.9.zip
   * make a self-extracting archive from that zip file -- it will have a .exe suffix --
     for the default extract folder, enter 'setup' so the files unpack to their own
     folder (so they are not mixed in with any other files anywhere)
@@ -63,9 +63,21 @@ Release Steps
   * then, roll back the VM -- there should be no install of pdp
   * install again, and test
 
+* (Optional) Make an Athlon Version
+
+  * for the 4 binary projects, change 
+    Project/C/C++/Code Generation/Enable Enhanced Instruction Set
+  FROM: /arch:/SSE2
+    TO: (not set)
+  * make a file change to config.h (to trigger full recompile)
+  * recompile and rebuild entire project
+  * rename zip:
+    emergent-4.0.9-athlon.zip
+  * VERY IMPORTANT: change the SSE property back
+
 * Upload finished .exe
   * scp it to grey in your home dir (ex. using WinSCP on Win box, or scp on linux)
-  * sudo su cp it to ~ftp/pub/emergent
+  * 'sudo cp' it to ~ftp/pub/emergent
   * edit release template, to update:
   http://grey.colorado.edu/emergent/index.php/Template:Native_packages
 

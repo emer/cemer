@@ -2103,8 +2103,8 @@ static float gcf(float a, float x) {
 
 float taMath_float::gamma_ln(float z) {
   float x,tmp,ser;		/* make sure float-precision.. */
-  static float cof[6]={ 76.18009173, -86.50532033, 24.01409822,
-			 -1.231739516, 0.120858003e-2, -0.536382e-5 };
+  static float cof[6]={ 76.18009173f, -86.50532033f, 24.01409822f,
+			 -1.231739516f, 0.120858003e-2f, -0.536382e-5f };
   int j;
 
   x=z-1.0;

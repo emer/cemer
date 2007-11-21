@@ -331,7 +331,7 @@ private:
 //   NetViewObj		//
 //////////////////////////
 
-class TA_API NetViewObjView: public T3DataView {
+class EMERGENT_API NetViewObjView: public T3DataView {
   // view of net view object
 INHERITED(T3DataView)
 public:
