@@ -82,6 +82,7 @@ Release Steps
   http://grey.colorado.edu/emergent/index.php/Template:Native_packages
 
 * Record dates of releases here
-10/03/07  4.0.7
+11/20/07  4.0.9
 10/09/07  4.0.8
+10/03/07  4.0.7
 
