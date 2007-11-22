@@ -262,7 +262,11 @@ public:
   float* val; // pointer to the net guy to use
 #endif
   float dwt;			// delta-weight
-  float	pdw;
+//  float	pdw;
+//NOTE: CUDA works with indexes, so we trade the float pdw for the
+// target or src index here -- it doesn't affect the algorithm
+// speed or the base comparison speed, because it is only used in Build
+  int	val_idx; // flat index of Unit -- this is a crutc
 };
 
 class ConSpec {
@@ -282,7 +286,8 @@ public:
   float act;			// activation value
   float net;			// net input value
   Connection* 	send_wts;		// sending weights
-  int		task_id; // which task will process this guy
+//nn  int		task_id; // which task will process this guy
+  int		flat_idx; // global index, used for cuda build
   Unit_List	targs;
   ConSpec*	cs;
   char dummy[16]; // bump a bit, to spread these guys out
@@ -394,7 +399,7 @@ Unit::Unit() {
   act = 0; 
   send_wts = NULL; 
   cs = NULL; 
-  task_id = 0;
+  flat_idx = -1;
   net = 0;
   my_rand = rand();
 #ifdef USE_RECV_SMART
@@ -435,6 +440,7 @@ void Layer::Connect(Layer* lay_to) {
 #ifdef USE_VAL
       cn.val = &(un_to->net);
 #endif      
+      cn.val_idx = un_to->flat_idx;
       if (++un_to_idx >= n_units) un_to_idx = 0;
     }
   }
@@ -471,7 +477,7 @@ void Network::Build() {
       un->targs.Alloc(n_cons * 2);
       
       lay->units.Set(un, lay->units.size++);
-      un->task_id = units_flat.size % n_procs;
+      un->flat_idx = units_flat.size;
       units_flat.Set(un, units_flat.size++);
       un->cs = cs;
     } 
@@ -495,6 +501,9 @@ class NetTask_C: public NetTask {
 public:
   static float* acts; // net guys
   static float* nets; // net guys
+  
+  static bool	GetCon(int un_idx, int con_idx, int* snd_idx, float* wt);
+    // callback for net building
   static int	Init(); // inits
   
   void		Send_Netin();
@@ -633,10 +642,26 @@ int NetTask_C::Init() {
   nets = (float*)calloc(n_units_flat, sizeof(float));
   uint n_gran = (uint)((n_cons + (CON_CHUNK_SZ - 1)) & ~CON_CHUNK_SZ);
   uint n_con_chunks = (uint)((n_layers * n_units * n_gran * 2) / CON_CHUNK_SZ);
-cerr << "calling AllocUnits: n_units=" << n_units_flat << ", n_con_chunks="
+cerr << "calling cuAllocUnits: n_units=" << n_units_flat << ", n_con_chunks="
   << n_con_chunks << "\n";
   int result = cuAllocUnits((uint)n_units_flat, n_con_chunks);
+  if (result != 0) return result;
+cerr << "calling cuCpHD_Cons\n";
+  result = cuCpHD_Cons(GetCon);
   return result; // s/b 0
+}
+
+bool NetTask_C::GetCon(int un_idx, int con_idx, int* snd_idx, float* wt) {
+  Unit* un = net.units_flat.FastEl(un_idx);
+  //NOTE: because con size is same everywhere, we can test easily, 
+  // but real algo must take from Cons
+  if (con_idx <= (n_cons * 2)) {
+    Connection& cn = un->send_wts[con_idx];
+    *snd_idx = cn.val_idx;
+    *wt = cn.wt;
+    return false;
+  } 
+  return true;
 }
 
 void NetTask_C::Send_Netin() {
@@ -660,9 +685,14 @@ void NetTask_C::Recv_Netin() {
 }
 
 void NetTask_C::ComputeAct() {
+  my_act = 0.0f;
   for (int i = 0; i < n_units_flat; i++) {
-    acts[i] = 1.0f / (1.0f + expf(-nets[i]));
+//    acts[i] = 1.0f / (1.0f + expf(-nets[i]));
+//TEMP
+acts[i] = (double)RAND_MAX / (double)rand();
+    my_act += acts[i];
   }
+  cuCpHD_Acts(acts);
 }
 
 

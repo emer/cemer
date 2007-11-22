@@ -33,7 +33,8 @@ typedef unsigned int uint;
 // connections are allocated in blocks of 32; unused will have un=wt=0
 
 // callback functions
-typedef void (*cbGetCon)(uint un_idx, uint con_idx, uint* snd_idx, float* wt);
+typedef bool (*cbGetCon)(int un_idx, int con_idx, int* snd_idx, float* wt);
+  // get the indicated weight, return true when done
 
 
 // all CUDA functions return 0 on success
@@ -44,7 +45,7 @@ int cuAllocUnits(uint n_units, uint n_con_chunks);
 int cuCpHD_Acts(float* acts);
   // transfer the acts from host to device
 
-int cuCpHD_ConUns(uint un_idx, uint n_cons, cbGetCon GetCon);
+int cuCpHD_Cons(cbGetCon GetCon);
   // transfer the connection units host to device
 
 int cuCpDH_Nets(float* nets);
