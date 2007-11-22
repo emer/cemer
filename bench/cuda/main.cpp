@@ -493,12 +493,16 @@ void Network::Build() {
 class NetTask_C: public NetTask {
 // for CUDA approach -- optimum for that
 public:
+  static float* acts; // net guys
+  static float* nets; // net guys
   static int	Init(); // inits
   
   void		Send_Netin();
   void		Recv_Netin();
   void		ComputeAct();
 };
+float* NetTask_C::acts; 
+float* NetTask_C::nets; 
 
 void DoProc(int proc_id) {
   NetTask* tsk = net_tasks[0];
@@ -625,6 +629,8 @@ void NetTask::ComputeAct() {
 }
 
 int NetTask_C::Init() {
+  acts = (float*)calloc(n_units_flat, sizeof(float));
+  nets = (float*)calloc(n_units_flat, sizeof(float));
   uint n_gran = (uint)((n_cons + (CON_CHUNK_SZ - 1)) & ~CON_CHUNK_SZ);
   uint n_con_chunks = (uint)((n_layers * n_units * n_gran * 2) / CON_CHUNK_SZ);
 cerr << "calling AllocUnits: n_units=" << n_units_flat << ", n_con_chunks="
@@ -649,19 +655,14 @@ void NetTask_C::Send_Netin() {
 
 void NetTask_C::Recv_Netin() {
   cuRecv_Netin();
+  cuCpDH_Nets(nets);
   AtomicFetchAdd(&n_tot, n_units_flat);
 }
 
 void NetTask_C::ComputeAct() {
-/*TODO  Unit** units = net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, n_procs);
-  my_act = 0.0f;
-  while (my_u < n_units_flat) {
-    Unit* un = units[my_u];
-    ComputeAct_inner(un);
-    my_act += un->act;
-    my_u = AtomicFetchAdd(&g_u, n_procs);
-  }*/
+  for (int i = 0; i < n_units_flat; i++) {
+    acts[i] = 1.0f / (1.0f + expf(-nets[i]));
+  }
 }
 
 

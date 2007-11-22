@@ -72,7 +72,9 @@ int un_idx = bx*N_THREADS+tx;
   for (int ci = 0; ci < CON_CHUNK_SZ; ci++) {
     tnet += acts[con_chunk[ci].snd_idx] * con_chunk[ci].wt; 
   }
-  net[un_idx] += tnet; 
+//  net[un_idx] += tnet; 
+//TEMP
+net[un_idx] += __int_as_float(tx);
 }
 
 extern "C" {
@@ -105,16 +107,19 @@ int cuAllocUnits(uint n_units_, uint n_con_chunks_) {
   return 0;
 }
 
-int cuCpHD_Acts(cbGetAct GetAct) {
+int cuCpHD_Acts(float* acts) {
+  CUDA_SAFE_CALL(cudaMemcpyToSymbol("acts", acts, n_units * sizeof(float)));
+  return 0;
+}
+
+int cuCpHD_Cons(uint un_idx, uint n_cons, cbGetCon GetCon) {
     return 0;
 }
 
-int cuCpHD_Cons(uint un_idx, uint n_cons, cbGetAct GetCon) {
-    return 0;
-}
-
-int cuCpDH_Nets(cbSetNet SetNet) {
-    return 0;
+int cuCpDH_Nets(float* nets) {
+  CUDA_SAFE_CALL(cudaMemcpy((void*)nets, &net,
+    n_units * sizeof(float), cudaMemcpyDeviceToHost));
+  return 0;
 }
 
 void cuRecv_Netin()

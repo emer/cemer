@@ -33,11 +33,7 @@ typedef unsigned int uint;
 // connections are allocated in blocks of 32; unused will have un=wt=0
 
 // callback functions
-typedef float (*cbGetAct)(uint un_idx);
 typedef void (*cbGetCon)(uint un_idx, uint con_idx, uint* snd_idx, float* wt);
-typedef void (*cbSetNet)(uint un_idx, float net);
-
-typedef void* hcuda; // opaque handle to CUDA-allocated memory
 
 
 // all CUDA functions return 0 on success
@@ -45,13 +41,13 @@ extern "C" {
 int cuAllocUnits(uint n_units, uint n_con_chunks);
 // allocate space on device for n_units, with a total of n_con_chunks
 
-int cuCpHD_Acts(cbGetAct GetAct);
+int cuCpHD_Acts(float* acts);
   // transfer the acts from host to device
 
-int cuCpHD_ConUns(uint un_idx, uint n_cons, cbGetAct GetCon);
+int cuCpHD_ConUns(uint un_idx, uint n_cons, cbGetCon GetCon);
   // transfer the connection units host to device
 
-int cuCpDH_Nets(cbSetNet SetNet);
+int cuCpDH_Nets(float* nets);
   // transfer the nets from device to host
   
 void cuRecv_Netin();
