@@ -530,6 +530,18 @@ public:
   { return true; }
   // #IGNORE validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string 
 
+  virtual bool		BinaryFile_Supported() { return false; }
+  // indicates if binary file format is supported (default no)
+  virtual int		BinarySave_strm(ostream& strm);
+  // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+  virtual void 		BinarySave(const String& fname="");
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_mat saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+  virtual int		BinaryLoad_strm(istream& strm);
+  // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+  virtual void 		BinaryLoad(const String& fname="");
+  // #CAT_File #MENU #MENU_ON_Object #EXT_mat saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+
+
   void			SetDefaultName() { };
   ostream& 		Output(ostream& strm, int indent = 0) const;
   ostream& 		OutputR(ostream& strm, int indent = 0) const
@@ -636,6 +648,11 @@ protected:
   // dump the value, term with ; generic is fine for numbers, override for strings, variants, etc.
   virtual int		Dump_Load_Item(istream& strm, int idx); 
   // load the ;-term'ed value ; generic is fine for numbers, override for strings, variants, etc.; ret is last char read, usually ;
+  
+  virtual void		BinarySave_Item(ostream& strm, int idx) { }; 
+  // binary dump the value -- just straight binary output -- must overload in specific classes
+  virtual void		BinaryLoad_Item(istream& strm, int idx) { }; 
+  // binary load the value -- just straight binary format -- must overload in specific classes
 
   override void		CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
     bool& allowed, bool& forbidden) const;
@@ -870,6 +887,7 @@ public:
 
   virtual void		InitVals(float val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
+  override bool		BinaryFile_Supported() { return true; }
     
   TA_MATRIX_FUNS_FAST(float_Matrix, float);
 public:
@@ -881,6 +899,11 @@ public:
 protected:
   STATIC_CONST float	blank; // #IGNORE
   override void		Dump_Save_Item(ostream& strm, int idx); // stream in full precision
+
+  override void		BinarySave_Item(ostream& strm, int idx)
+  { strm.write((char*)&(FastEl_Flat(idx)), sizeof(float)); }; 
+  override void		BinaryLoad_Item(istream& strm, int idx)
+  { strm.read((char*)&(FastEl_Flat(idx)), sizeof(float)); }; 
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -903,6 +926,7 @@ public:
     
   virtual void		InitVals(double val=0.0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
+  override bool		BinaryFile_Supported() { return true; }
     
   TA_MATRIX_FUNS_FAST(double_Matrix, double);
   
@@ -923,6 +947,10 @@ public:
 protected:
   STATIC_CONST double	blank; // #IGNORE
   override void		Dump_Save_Item(ostream& strm, int idx); // stream in full precision
+  override void		BinarySave_Item(ostream& strm, int idx)
+  { strm.write((char*)&(FastEl_Flat(idx)), sizeof(double)); }; 
+  override void		BinaryLoad_Item(istream& strm, int idx)
+  { strm.read((char*)&(FastEl_Flat(idx)), sizeof(double)); }; 
 private:
   void		Initialize() {}
   void		Destroy() {}
@@ -945,6 +973,7 @@ public:
   
   virtual void		InitVals(int val=0) { for(int i=0;i<size;i++) FastEl_Flat(i) = val; }
   // initialize values to given fixed value
+  override bool		BinaryFile_Supported() { return true; }
 
   TA_MATRIX_FUNS_FAST(int_Matrix, int);
   
@@ -956,6 +985,10 @@ public:
   override void		El_SetFmVar_(void* it, const Variant& var) {*((int*)it) = var.toInt(); };  // #IGNORE
 protected:
   STATIC_CONST int	blank; // #IGNORE
+  override void		BinarySave_Item(ostream& strm, int idx)
+  { strm.write((char*)&(FastEl_Flat(idx)), sizeof(int)); }; 
+  override void		BinaryLoad_Item(istream& strm, int idx)
+  { strm.read((char*)&(FastEl_Flat(idx)), sizeof(int)); }; 
 private:
   void		Initialize() {}
   void		Destroy() {} //
@@ -976,6 +1009,7 @@ public:
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts 0-255 or octal or hex forms
+  override bool		BinaryFile_Supported() { return true; }
   
   TA_MATRIX_FUNS_FAST(byte_Matrix, byte);
   
@@ -987,6 +1021,10 @@ public: //
   override void		El_SetFmVar_(void* it, const Variant& var) {*((byte*)it) = var.toByte(); };  // #IGNORE
 protected:
   STATIC_CONST byte	blank; // #IGNORE
+  override void		BinarySave_Item(ostream& strm, int idx)
+  { strm.write((char*)&(FastEl_Flat(idx)), sizeof(byte)); }; 
+  override void		BinaryLoad_Item(istream& strm, int idx)
+  { strm.read((char*)&(FastEl_Flat(idx)), sizeof(byte)); }; 
 private:
   void		Initialize() {}
   void		Destroy() {} //
@@ -1039,6 +1077,7 @@ public:
   
   override bool		StrValIsValid(const String& str, String* err_msg = NULL) const;
     // accepts in form: "r g b" or RRGGBB in hex
+  override bool		BinaryFile_Supported() { return true; }
   
   TA_MATRIX_FUNS_FAST(rgb_Matrix, rgb_t);
   
@@ -1050,6 +1089,10 @@ public: //
   override void		El_SetFmVar_(void* it, const Variant& var) {((rgb_t*)it)->setInt(var.toInt()); };  // #IGNORE
 protected:
   STATIC_CONST rgb_t	blank; // #IGNORE
+  override void		BinarySave_Item(ostream& strm, int idx)
+  { strm.write((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); }; 
+  override void		BinaryLoad_Item(istream& strm, int idx)
+  { strm.read((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); }; 
 private:
   void		Initialize() {}
   void		Destroy() {} //

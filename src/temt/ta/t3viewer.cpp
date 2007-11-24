@@ -1632,7 +1632,9 @@ bool T3DataViewFrame::SaveImageIV(const String& fname) {
   SoOutput out;
   if(!out.openFile(flr->fileName())) return false;
   SoWriteAction wa(&out);
-  wa.apply(viewer->getSceneManager()->getSceneGraph());
+
+  wa.apply(root_view.node_so()); // just the data, not the whole camera
+  //  wa.apply(viewer->getSceneManager()->getSceneGraph());
   out.closeFile();
 
   taRefN::unRefDone(flr);

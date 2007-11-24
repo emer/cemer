@@ -687,6 +687,103 @@ int taMatrix::Dump_Save_Value(ostream& strm, TAPtr par, int indent) {
   return true;
 }
 
+/////////////////////////////////////
+// 	Binary Dump Format
+
+int taMatrix::BinaryLoad_strm(istream& strm) {
+  if(TestError(!BinaryFile_Supported(), "BinaryLoad", "Binary load is not supported for this type of matrix")) return false;
+  int c = taMisc::skip_white(strm);
+  if(c == EOF)	return EOF;
+  if(c == ';')	return 2;	// signal that its a path
+  if(c == '}') {
+    if(strm.peek() == ';') strm.get();
+    return 2;
+  }
+
+  if (c != '{') {
+    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
+    return false;
+  }
+  // now, load members (if we have dims, will exit at that point)
+  int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, NULL);
+  // 3 is a hacky code to tell us that it got the [ 
+  if ((rval != 3) || (rval == EOF)) return rval;
+  
+  // we now expect dims, if not completely null
+  c = taMisc::skip_white(strm);
+  if (c == EOF)    return EOF;
+  
+  if (c == '[') {
+    MatrixGeom ar; // temp, while streaming
+    if (strm.peek() == '[')
+      strm.get(); // actually gets the [
+    do {
+      c = taMisc::read_word(strm); // also consumes next char, whether sp or ]
+      ar.Add(taMisc::LexBuf.toInt());
+    } while ((c != ']') && (c != EOF));
+    //note: should always be at least one dim if we had [ but we check anyway
+    if (ar.size > 0) {
+      SetGeomN(ar);
+      //note: we always write the correct number, so early termination is an error!
+      int i = 0;
+      while (i < size) {
+        BinaryLoad_Item(strm, i++);
+      }
+    }
+  }
+  // because we had data, we have to clean up
+  c = taMisc::read_till_rbracket(strm);
+  if (c==EOF)	return EOF;
+  c = taMisc::read_till_semi(strm);
+  if (c==EOF)	return EOF;
+  return true;
+}
+
+int taMatrix::BinarySave_strm(ostream& strm) {
+  if(TestError(!BinaryFile_Supported(), "BinarySave", "Binary save is not supported for this type of matrix")) return false;
+  // save the members -- it puts the { out
+  //int rval = 
+  inherited::Dump_Save_Value(strm, NULL, 0);
+  
+  // save data, if not completely null
+  int i;
+  if (geom.size > 0) {
+    taMisc::indent(strm, 0);
+    // dims
+    strm << "[";
+    for (i=0; i< geom.size; ++i) {
+      if (i > 0) strm << " ";
+      strm << geom.FastEl(i);
+    }
+    strm << "]";
+    // values
+    for (i=0; i < size; ++i) {
+      BinarySave_Item(strm, i);
+    }
+  }
+ 
+  return true;
+}
+
+void taMatrix::BinarySave(const String& fname) {
+  if(TestError(!BinaryFile_Supported(), "BinarySave", "Binary save is not supported for this type of matrix")) return;
+  taFiler* flr = GetSaveFiler(fname, ".mat", false, "Binary Matrix");
+  if (flr->ostrm) {
+    BinarySave_strm(*flr->ostrm);
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+void taMatrix::BinaryLoad(const String& fname) {
+  if(TestError(!BinaryFile_Supported(), "BinaryLoad", "Binary load is not supported for this type of matrix")) return;
+  taFiler* flr = GetLoadFiler(fname, ".mat", false, "Binary Matrix");
+  if(flr->istrm)
+    BinaryLoad_strm(*flr->istrm);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
 // This is *the* routine for resizing, so all data change ops/tracking
 // can go through this
 bool taMatrix::EnforceFrames(int n, bool notify) {

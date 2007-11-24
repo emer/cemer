@@ -26,7 +26,7 @@ dnl
 dnl Subst variables that start with PL_ are used in the plugin configuration
 
 # Set binary version here. The format allows for 99.99.99abc
-AC_INIT([Emergent],[4.0.9],[Emergent-discuss@psych-srv3.Colorado.EDU],[Emergent]) 
+AC_INIT([Emergent],[4.0.10],[Emergent-discuss@psych-srv3.Colorado.EDU],[Emergent]) 
 # Change both of these
 LIB_VERSION=1:0:0   #Set library version here
 LIB_VERSION_2=1.0.0
@@ -52,8 +52,7 @@ This file is part of Emergent
 
   Emergent is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  the Free Software Foundation; version 2 of the License.
 
   Emergent is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of

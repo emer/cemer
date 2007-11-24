@@ -53,7 +53,8 @@ HEADS =\
 	css_parse.h \
 	hard_of_css.h \
 	css_misc_funs.h \
-	$(HEADS_GUI)
+	$(HEADS_GUI) \
+	css_def.h
 
 include_HEADERS = $(HEADS) $(TAHEADS)
 

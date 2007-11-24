@@ -47,7 +47,6 @@
 #include <Inventor/engines/SoCompose.h>
 #include <Inventor/engines/SoCalculator.h>
 #include <Inventor/nodes/SoIndexedLineSet.h>
-#include <Inventor/nodes/SoDrawStyle.h>
 
 #include <math.h>
 #include <limits.h>

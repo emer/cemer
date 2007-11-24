@@ -2226,7 +2226,6 @@ protected:
   void		El_SetFmStr_(void* it, const String& val)
   { float tmp = (float)val; *((float*)it) = tmp; }
 private:
-  NOCOPY(int_Array)
   void Initialize()	{err = 0.0f; };
   void Destroy()	{ };
 };
@@ -2239,7 +2238,7 @@ public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
   override void*	GetTA_Element(int i, TypeDef*& eltd) 
   { eltd = &TA_double; if(InRange(i)) return FastEl_(i); return NULL; }
-  TA_BASEFUNS(double_Array);
+  TA_BASEFUNS_NOCOPY(double_Array);
   TA_ARRAY_FUNS(double_Array, double)
 protected:
   int		El_Compare_(const void* a, const void* b) const
@@ -2250,7 +2249,6 @@ protected:
   void		El_SetFmStr_(void* it, const String& val)
   { double tmp = (double)val; *((double*)it) = tmp; }
 private:
-  NOCOPY(double_Array)
   void Initialize()	{err = 0.0;};
   void Destroy()	{ };
 };

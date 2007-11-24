@@ -209,7 +209,11 @@ HEADS =\
 	ta_gendoc.h \
 	$(HEADS_GUI) \
 	$(HEADS_TAMISC) \
-	$(HEADS_TAMISC_GUI)
+	$(HEADS_TAMISC_GUI) \
+	ta_global.h \
+	qtdefs.h \
+	ta_maketa_defs.h \
+	../../../config.h
 
 SRCS =\
 	ta_platform.cpp \

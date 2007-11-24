@@ -1713,12 +1713,12 @@ void Unit::UpdateAfterEdit_impl() {
 }
 
 int Unit::GetMyLeafIndex() {
-  if(idx < 0) return idx;
-  Layer* lay = GET_MY_OWNER(Layer);
-  if(!lay) return -1;
-  Unit_Group* ug = GET_MY_OWNER(Unit_Group);
-  if(ug->owner == lay) return idx; // simple: we're the only unit group
+  if(idx < 0 || !owner) return idx;
+  Unit_Group* ug = (Unit_Group*)owner;
+  if(ug->owner->InheritsFrom(&TA_Layer))
+    return idx; // simple: we're the only unit group
   // note: this assumes only one layer of subgroups, which is all that is supported anyway
+  Layer* lay = (Layer*)ug->owner->GetOwner();
   int cum_idx = 0;
   for(int i=0;i<lay->units.gp.size;i++) {
     Unit_Group* sg = (Unit_Group*)lay->units.gp.FastEl(i);
