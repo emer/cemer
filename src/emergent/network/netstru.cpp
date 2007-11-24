@@ -1718,7 +1718,7 @@ int Unit::GetMyLeafIndex() {
   if(ug->owner->InheritsFrom(&TA_Layer))
     return idx; // simple: we're the only unit group
   // note: this assumes only one layer of subgroups, which is all that is supported anyway
-  Layer* lay = (Layer*)ug->owner->GetOwner();
+  Layer* lay = (Layer*)ug->owner->GetOwner()->GetOwner();
   int cum_idx = 0;
   for(int i=0;i<lay->units.gp.size;i++) {
     Unit_Group* sg = (Unit_Group*)lay->units.gp.FastEl(i);

@@ -268,7 +268,8 @@ public:
 protected:
   void* 		dataView_;
   SoAsciiText*		captionNode_;
-  const char*  		getFileFormatName() const {return SoSeparator::getFileFormatName();} // override
+  const char*  		getFileFormatName() const {return "Separator"; }
+  // makes output files fully general
   virtual SoSeparator*	captionSeparator(bool auto_create = false) = 0;
   SoTransform*		captionTransform(bool auto_create = false);
   virtual void		setDefaultCaptionTransform(); // call transformCaption to set the default transform; this is called after creating Node first time
@@ -364,7 +365,7 @@ public:
   SoFrame(Orientation ori = Hor, float in = 0.05f);
 
 protected:
-  const char*  	getFileFormatName() const {return SoTriangleStripSet::getFileFormatName();} // override
+  const char*  	getFileFormatName() const {return "TriangleStripSet"; } 
   void 		render(); // #IGNORE
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE
@@ -390,8 +391,7 @@ public:
   SoRect();
 
 protected:
-  const char*  	getFileFormatName() const
-  { return SoTriangleStripSet::getFileFormatName(); } // override
+  const char*  	getFileFormatName() const {return "TriangleStripSet"; } 
   void 		render(); // #IGNORE
   void 		renderH(); // #IGNORE
   void 		renderV(); // #IGNORE
@@ -415,6 +415,8 @@ public:
 
   SoLineBox3d(float wd = 1.0f, float ht = 1.0f, float dp = 1.0f);
 protected:
+  const char*  	getFileFormatName() const {return "IndexedLineSet"; } 
+
 };
 
 class TA_API SoImageEx: public SoSeparator { 
@@ -435,6 +437,8 @@ public:
   
   SoImageEx();
 protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
+
   SoRect*		shape;
   byte_Matrix		img;
   iVec2i		d; // cached for clarity
@@ -495,6 +499,8 @@ public:
   ~SoMatrixGrid();
 
 protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
+
   SoIndexedTriangleStripSet* shape_;
   SoTransform*		transform_; // for entire object: goes first in this
   SoVertexProperty*	vtx_prop_;
@@ -568,6 +574,8 @@ public:
   ~So3DHeightField();
 
 protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
+
   SoIndexedTriangleStripSet* shape_;
   SoTransform*		transform_; // for entire object: goes first in this
   SoVertexProperty*	vtx_prop_;
@@ -654,6 +662,8 @@ public:
   SoTransform*		xf_;		// transform -- set as you need
   SoTransformBoxDragger* dragger_;	// dragger
   SoCalculator*		trans_calc_;    // translation calculator -- gets from translation of dragger
+protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
 };
 
 //////////////////////////////////
@@ -669,6 +679,9 @@ public:
   static void		initClass();
   T3Translate1Translator(bool active = false, float bar_len = 2.0f, float bar_width=0.1f,
 			   float cone_radius=0.25f, float cone_ht=.5f);
+protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
+
 };
 
 class TA_API T3Translate2Translator: public SoSeparator { 
@@ -681,6 +694,8 @@ public:
   static void		initClass();
   T3Translate2Translator(bool active = false, float bar_len = 2.0f, float bar_width=0.1f,
 			   float cone_radius=0.25f, float cone_ht=.5f);
+protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
 };
 
 
@@ -736,6 +751,8 @@ public:
   void	DragFinishCB(SoTranslate1Dragger* dragger);
   // callback: do not touch!
 protected:
+  const char*  	getFileFormatName() const {return "Separator"; } 
+
   float	width_;
   float	depth_;	
   int	minimum_;
