@@ -640,11 +640,14 @@ void NetTask::ComputeAct() {
 int NetTask_C::Init() {
   acts = (float*)calloc(n_units_flat, sizeof(float));
   nets = (float*)calloc(n_units_flat, sizeof(float));
-  uint n_gran = (uint)((n_cons + (CON_CHUNK_SZ - 1)) & ~CON_CHUNK_SZ);
-  uint n_con_chunks = (uint)((n_layers * n_units * n_gran * 2) / CON_CHUNK_SZ);
-cerr << "calling cuAllocUnits: n_units=" << n_units_flat << ", n_con_chunks="
-  << n_con_chunks << "\n";
-  int result = cuAllocUnits((uint)n_units_flat, n_con_chunks);
+  // silo size will be based on N_THREAD-normalized units 
+  uint n_units_gran = (uint)(((n_layers * n_units) + (N_THREADS - 1)) & ~(N_THREADS-1));
+  // chunks per unit also need to be normalized (rounded up to nearest chunk size)
+  uint n_gran2 = (uint)(((n_cons * 2) + (CON_CHUNK_SZ - 1)) & ~(CON_CHUNK_SZ-1));
+  uint silo_sz = (uint)((n_units_gran * n_gran2) / (CON_CHUNK_SZ * N_THREADS));
+cerr << "calling cuAllocMem: n_units=" << n_units_flat << ", silo_sz="
+  << silo_sz << "\n";
+  int result = cuAllocMem((uint)n_units_flat, silo_sz);
   if (result != 0) return result;
 cerr << "calling cuCpHD_Cons\n";
   result = cuCpHD_Cons(GetCon);
@@ -655,7 +658,7 @@ bool NetTask_C::GetCon(int un_idx, int con_idx, int* snd_idx, float* wt) {
   Unit* un = net.units_flat.FastEl(un_idx);
   //NOTE: because con size is same everywhere, we can test easily, 
   // but real algo must take from Cons
-  if (con_idx <= (n_cons * 2)) {
+  if (con_idx < (n_cons * 2)) {
     Connection& cn = un->send_wts[con_idx];
     *snd_idx = cn.val_idx;
     *wt = cn.wt;
@@ -687,9 +690,7 @@ void NetTask_C::Recv_Netin() {
 void NetTask_C::ComputeAct() {
   my_act = 0.0f;
   for (int i = 0; i < n_units_flat; i++) {
-//    acts[i] = 1.0f / (1.0f + expf(-nets[i]));
-//TEMP
-acts[i] = (double)RAND_MAX / (double)rand();
+    acts[i] = 1.0f / (1.0f + expf(-nets[i]));
     my_act += acts[i];
   }
   cuCpHD_Acts(acts);

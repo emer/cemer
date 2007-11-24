@@ -17,14 +17,17 @@
 #include <cutil.h>
 
 // note: low level defines, but needed so we can declare max's correctly
-#define N_BLOCKS 32
 #define N_THREADS 32
 
+// each thread defines a "silo"; a unit is always processed in its own
+// silo, defined as unit_idx % N_THREADS
+
 // high level defines
-#define CON_CHUNK_SZ 32
-#define MAX_UNIT_BLOCKS 15
-#define MAX_UNITS (MAX_UNIT_BLOCKS * N_BLOCKS * N_THREADS)
-#define MAX_CON_CHUNKS (376 * N_BLOCKS * N_THREADS * CON_CHUNK_SZ)
+#define CON_CHUNK_SZ 32 // note: this is independent of N_THREADS
+#define MAX_UNITS (65536 / sizeof(float)) // note: assumes we can use entire constant mem
+// following, assume 512M, 8-byte chunks
+#define MAX_CON_CHUNKS (0x20000000 / (CON_CHUNK_SZ * 8))
+#define MAX_SILO_SZ (MAX_CON_CHUNKS / N_THREADS)
 
 #ifndef uint
 typedef unsigned int uint;
@@ -34,15 +37,18 @@ typedef unsigned int uint;
 
 // callback functions
 typedef bool (*cbGetCon)(int un_idx, int con_idx, int* snd_idx, float* wt);
-  // get the indicated weight, return true when done
+  // get the indicated weight, return true when done (when con_idx > max_idx)
 
 
 // all CUDA functions return 0 on success
 extern "C" {
-int cuAllocUnits(uint n_units, uint n_con_chunks);
-// allocate space on device for n_units, with a total of n_con_chunks
+int cuAllocMem(uint n_units, uint silo_sz_);
+// allocate space on device for n_units, with a total of silo_sz con chunks per silo
 
-int cuCpHD_Acts(float* acts);
+int cuFreeMem();
+// free previously alloc'ed mem
+
+int cuCpHD_Acts(const float* acts);
   // transfer the acts from host to device
 
 int cuCpHD_Cons(cbGetCon GetCon);
