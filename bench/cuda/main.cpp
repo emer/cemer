@@ -285,14 +285,14 @@ public:
 #endif
   float act;			// activation value
   float net;			// net input value
-  Connection* 	send_wts;		// sending weights
+  Connection* 	cons; // recv: senders/wts to this; send: targets/wts from this
 //nn  int		task_id; // which task will process this guy
   int		flat_idx; // global index, used for cuda build
-  Unit_List	targs;
+  Unit_List	targs; // for recv, is the recv from units; for send, is the send targets
   ConSpec*	cs;
   char dummy[16]; // bump a bit, to spread these guys out
   
-  Connection* 	Cn(int i) const { return &(send_wts[i]); }
+  Connection* 	Cn(int i) const { return &(cons[i]); }
   // #CAT_Structure gets the connection at the given index
   Unit*		Un(int i) const { return targs.FastEl(i); }
   
@@ -307,16 +307,19 @@ protected:
 
 class Layer {
 public:
-  static int	un_to_idx; // circular guy we globally use to pick next target unit
+  static int	next_un_idx; // circular guy we globally use to pick next target unit
   
   Unit_List	units;
   
-  void		Connect(Layer* to); // connect from me to
+  void		Connect(Layer* to);
   
   Layer();
   ~Layer();
+protected:
+  void 		Connect_To_Send(Layer* lay_to);
+  void 		Connect_From_Recv(Layer* lay_fr);
 };
-int Layer::un_to_idx;
+int Layer::next_un_idx;
 
 typedef taPtrList<Layer>	Layer_List;
 
@@ -397,7 +400,7 @@ void ConSpec::Send_Netin(Unit* cg, Unit* su) {
 
 Unit::Unit() {
   act = 0; 
-  send_wts = NULL; 
+  cons = NULL; 
   cs = NULL; 
   flat_idx = -1;
   net = 0;
@@ -408,7 +411,7 @@ Unit::Unit() {
 }
 
 Unit::~Unit() {
-  delete[] send_wts;
+  delete[] cons;
 }
 
 bool Unit::DoDelta() {
@@ -429,19 +432,43 @@ Layer::~Layer() {
     delete units.FastEl(--(units.size));
 }
 
-void Layer::Connect(Layer* lay_to) {
+void Layer::Connect(Layer* to) {
+  if (Network::recv_based) 
+    to->Connect_From_Recv(this);
+  else 
+    Connect_To_Send(to);
+}
+
+void Layer::Connect_To_Send(Layer* lay_to) {
   for (int u_fr = 0; u_fr < this->units.size; u_fr++) {
     Unit* un_fr = units.FastEl(u_fr);
     for (int con = 0; con < n_cons; con++) {
-      Unit* un_to = lay_to->units.FastEl(un_to_idx);
+      Unit* un_to = lay_to->units.FastEl(next_un_idx);
       un_fr->targs.Set(un_to, un_fr->targs.size);
-      Connection& cn = un_fr->send_wts[un_fr->targs.size++];
+      Connection& cn = un_fr->cons[un_fr->targs.size++];
       cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
 #ifdef USE_VAL
       cn.val = &(un_to->net);
 #endif      
       cn.val_idx = un_to->flat_idx;
-      if (++un_to_idx >= n_units) un_to_idx = 0;
+      if (++next_un_idx >= n_units) next_un_idx = 0;
+    }
+  }
+}
+
+void Layer::Connect_From_Recv(Layer* lay_fr) {
+  for (int u_to = 0; u_to < this->units.size; u_to++) {
+    Unit* un_to = units.FastEl(u_to);
+    for (int con = 0; con < n_cons; con++) {
+      Unit* un_fr = lay_fr->units.FastEl(next_un_idx);
+      un_to->targs.Set(un_fr, un_to->targs.size);
+      Connection& cn = un_to->cons[un_to->targs.size++];
+      cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+#ifdef USE_VAL
+      cn.val = &(un_fr->act);
+#endif      
+      cn.val_idx = un_fr->flat_idx;
+      if (++next_un_idx >= n_units) next_un_idx = 0;
     }
   }
 }
@@ -473,7 +500,7 @@ void Network::Build() {
     
     for (int i=0;i<n_units;i++) {
       Unit* un = new Unit;
-      un->send_wts = new Connection[n_cons * 2];
+      un->cons = new Connection[n_cons * 2];
       un->targs.Alloc(n_cons * 2);
       
       lay->units.Set(un, lay->units.size++);
@@ -564,7 +591,7 @@ void NetTask::Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff) {
 
 void NetTask::Send_Netin_0(Unit* su) {
   float su_act_eff = su->act;
-  Connection* cns = su->send_wts; // array pointer
+  Connection* cns = su->cons; // array pointer
 #ifdef USE_VAL
   for(int i=0; i<su->targs.size; i++)
     Send_Netin_inner_0(cns[i].wt, cns[i].val, su_act_eff);
@@ -577,7 +604,7 @@ void NetTask::Send_Netin_0(Unit* su) {
 
 void NetTask::Recv_Netin_0(Unit* ru) {
   float ru_net = 0.0f;
-  Connection* cns = ru->send_wts; // array pointer
+  Connection* cns = ru->cons; // array pointer
 #ifdef USE_VAL
   for(int i=0; i<ru->targs.size; i++)
     ru_net += *(cns[i].val) * cns[i].wt;
@@ -641,12 +668,12 @@ int NetTask_C::Init() {
   acts = (float*)calloc(n_units_flat, sizeof(float));
   nets = (float*)calloc(n_units_flat, sizeof(float));
   // silo size will be based on N_THREAD-normalized units 
-  uint n_units_gran = (uint)(((n_layers * n_units) + (N_THREADS - 1)) & ~(N_THREADS-1));
+  uint n_units_gran = (uint)((n_units_flat + (N_THREADS - 1)) & ~(N_THREADS-1));
   // chunks per unit also need to be normalized (rounded up to nearest chunk size)
   uint n_gran2 = (uint)(((n_cons * 2) + (CON_CHUNK_SZ - 1)) & ~(CON_CHUNK_SZ-1));
   uint silo_sz = (uint)((n_units_gran * n_gran2) / (CON_CHUNK_SZ * N_THREADS));
 cerr << "calling cuAllocMem: n_units=" << n_units_flat << ", silo_sz="
-  << silo_sz << "\n";
+  << silo_sz << " (n_gran2=" << n_gran2 << ")\n";
   int result = cuAllocMem((uint)n_units_flat, silo_sz);
   if (result != 0) return result;
 cerr << "calling cuCpHD_Cons\n";
@@ -659,7 +686,7 @@ bool NetTask_C::GetCon(int un_idx, int con_idx, int* snd_idx, float* wt) {
   //NOTE: because con size is same everywhere, we can test easily, 
   // but real algo must take from Cons
   if (con_idx < (n_cons * 2)) {
-    Connection& cn = un->send_wts[con_idx];
+    Connection& cn = un->cons[con_idx];
     *snd_idx = cn.val_idx;
     *wt = cn.wt;
     return false;
@@ -843,6 +870,9 @@ int main(int argc, char* argv[]) {
   // cons travelled will depend on activation percent, so we calc exactly
   double n_con_trav = n_tot * (n_cons * 2.0);
   double con_trav_sec = ((double)n_con_trav / tot_time) / 1.0e6;
+  // but effective is based on raw numbers
+  double n_eff_con_trav = n_layers * n_units * n_cycles * (n_cons * 2.0);
+  double eff_con_trav_sec = ((double)n_eff_con_trav / tot_time) / 1.0e6;
 
   if(use_log_file) {
 /*nn    fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
@@ -862,10 +892,10 @@ int main(int argc, char* argv[]) {
     fclose(logfile);
 
   if (hdr)
-  printf("Mcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\n");
+  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\n");
   if (single) n_procs = 0;
-  printf("%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\n",
-    con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
+  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\n",
+    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
 
   DeleteTasks();
 //  DeleteNet();

@@ -179,10 +179,10 @@ TimeUsed TimeUsed::operator/(const TimeUsed& td) const {
 
 class NetTask;
 
-int core_nprocs;		// total number of processors
+int n_procs;		// total number of processors
 const int core_max_nprocs = 32; // maximum number of processors!
-QThread* threads[core_max_nprocs]; // only core_nprocs-1 created, none for [0] (main thread)
-NetTask* netin_tasks[core_max_nprocs]; // only core_nprocs created
+QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
+NetTask* netin_tasks[core_max_nprocs]; // only n_procs created
 
 
 //NOTE: the gcc version of __sync_fetch_and_add doesn't seem to exist
@@ -299,7 +299,7 @@ void QTaskThread::terminate() {
 
 
 void DeleteThreads() {
-  for (int t = core_nprocs - 1; t >= 1; t--) {
+  for (int t = n_procs - 1; t >= 1; t--) {
     QTaskThread* th = (QTaskThread*)threads[t];
     if (th->isActive()) {
       th->terminate();
@@ -562,7 +562,7 @@ void Network::Build() {
       un->targs.Alloc(n_cons * 2);
       
       lay->units.Set(un, lay->units.size++);
-      un->task_id = units_flat.size % core_nprocs;
+      un->task_id = units_flat.size % n_procs;
       units_flat.Set(un, units_flat.size++);
       un->cs = cs;
     } 
@@ -599,7 +599,7 @@ public:
 void DoProc(int proc_id) {
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
-  for (int t = 1; t < core_nprocs; ++t) {
+  for (int t = 1; t < n_procs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
     NetTask* tsk = netin_tasks[t];
     th->suspend(); // prob already suspended
@@ -614,7 +614,7 @@ void DoProc(int proc_id) {
   tsk->proc_id = proc_id;
   tsk->run();
   // then lend a "helping hand"
-  for (int t = 1; t < core_nprocs; ++t) {
+  for (int t = 1; t < n_procs; ++t) {
     if (nibble) {
       NetTask* tsk = netin_tasks[t];
       // note: its ok if tsk finishes between our test and calling run
@@ -639,7 +639,7 @@ float Network::ComputeActs() {
   // compute activations (only order number of units)
   tot_act = 0.0f;
   DoProc(NetTask::P_ComputeAct);
-  for (int t = 0; t < core_nprocs; ++t) {
+  for (int t = 0; t < n_procs; ++t) {
     NetTask* tsk = netin_tasks[t];
     tot_act += tsk->my_act;
   }
@@ -750,7 +750,7 @@ void NetTask_0::Send_Netin() {
 
 void NetTask_N::Send_Netin() {
   Unit** units = net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  int my_u = AtomicFetchAdd(&g_u, n_procs);
   while (my_u < n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     if (un->DoDelta()) {
@@ -758,31 +758,31 @@ void NetTask_N::Send_Netin() {
       AtomicFetchAdd(&n_tot, 1);
       //AtomicFetchAdd(&t_tot, 1); // because of helping hand clobbers
     }
-    my_u = AtomicFetchAdd(&g_u, core_nprocs);
+    my_u = AtomicFetchAdd(&g_u, n_procs);
   }
 }
 
 void NetTask_N::Recv_Netin() {
   Unit** units = net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  int my_u = AtomicFetchAdd(&g_u, n_procs);
   while (my_u < n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
       //++t_tot;
-    my_u = AtomicFetchAdd(&g_u, core_nprocs);
+    my_u = AtomicFetchAdd(&g_u, n_procs);
   }
 }
 
 void NetTask_N::ComputeAct() {
   Unit** units = net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, core_nprocs);
+  int my_u = AtomicFetchAdd(&g_u, n_procs);
   my_act = 0.0f;
   while (my_u < n_units_flat) {
     Unit* un = units[my_u];
     ComputeAct_inner(un);
     my_act += un->act;
-    my_u = AtomicFetchAdd(&g_u, core_nprocs);
+    my_u = AtomicFetchAdd(&g_u, n_procs);
   }
 }
 
@@ -792,7 +792,7 @@ void MakeThreads() {
     NetTask* tsk = new NetTask_0;
     tsk->task_id = 0;
     netin_tasks[0] = tsk;
-  } else for (int i = 0; i < core_nprocs; i++) {
+  } else for (int i = 0; i < n_procs; i++) {
     NetTask* tsk = new NetTask_N;
     tsk->task_id = i;
     netin_tasks[i] = tsk;
@@ -837,13 +837,13 @@ int main(int argc, char* argv[]) {
   //TODO: parameterize this!
   n_units_flat = n_units * n_layers;
   n_cycles = (int)strtol(argv[2], NULL, 0);
-  core_nprocs = (int)strtol(argv[3], NULL, 0);
-  if (core_nprocs <= 0) {
+  n_procs = (int)strtol(argv[3], NULL, 0);
+  if (n_procs <= 0) {
     single = true;
-    core_nprocs = 1;
+    n_procs = 1;
   } else {
     single = false;
-    if (core_nprocs > core_max_nprocs) core_nprocs = core_max_nprocs;
+    if (n_procs > core_max_nprocs) n_procs = core_max_nprocs;
   }
   
   // optional positional params
@@ -927,12 +927,15 @@ int main(int argc, char* argv[]) {
 
   double n_wts = n_layers * n_units * n_cons * 2.0;   // bidirectional connected layers
   // cons travelled will depend on activation percent, so we calc exactly
-  double n_con_trav = n_tot * n_cons * 2.0;
+  double n_con_trav = n_tot * (n_cons * 2.0);
   double con_trav_sec = ((double)n_con_trav / tot_time) / 1.0e6;
-
+  // but effective is based on raw numbers
+  double n_eff_con_trav = n_layers * n_units * n_cycles * (n_cons * 2.0);
+  double eff_con_trav_sec = ((double)n_eff_con_trav / tot_time) / 1.0e6;
+  
   if(use_log_file) {
     fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
-    for (int t = 0; t < core_nprocs; t++) {
+    for (int t = 0; t < n_procs; t++) {
       NetTask* tsk = netin_tasks[t];
       QTaskThread* th = (QTaskThread*)threads[t];
       double start_lat = 0;
@@ -948,10 +951,10 @@ int main(int argc, char* argv[]) {
     fclose(logfile);
 
   if (hdr)
-  printf("Mcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\n");
-  if (single) core_nprocs = 0;
-  printf("%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\n",
-    con_trav_sec, tsend_act, core_nprocs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
+  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\n");
+  if (single) n_procs = 0;
+  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\n",
+    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
 
   DeleteThreads();
 //  DeleteNet();

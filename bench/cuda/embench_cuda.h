@@ -17,13 +17,13 @@
 #include <cutil.h>
 
 // note: low level defines, but needed so we can declare max's correctly
-#define N_THREADS 32
+#define N_THREADS 64
 
 // each thread defines a "silo"; a unit is always processed in its own
 // silo, defined as unit_idx % N_THREADS
 
 // high level defines
-#define CON_CHUNK_SZ 32 // note: this is independent of N_THREADS
+#define CON_CHUNK_SZ 64 // note: this is independent of N_THREADS
 #define MAX_UNITS (65536 / sizeof(float)) // note: assumes we can use entire constant mem
 // following, assume 512M, 8-byte chunks
 #define MAX_CON_CHUNKS (0x20000000 / (CON_CHUNK_SZ * 8))
