@@ -2094,7 +2094,7 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!dt) {
     DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    dt = dgp->NewEl(1, &TA_DataTable); // todo: should be in InputData
+    dt = dgp->NewEl(1, &TA_DataTable);
     if(!name.empty())
       dt->name = name + "_InputData";
     else
@@ -2618,7 +2618,7 @@ void V1GaborSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!dt) {
     DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    dt = dgp->NewEl(1, &TA_DataTable); // todo: should be in InputData
+    dt = dgp->NewEl(1, &TA_DataTable);
     if(!name.empty())
       dt->name = name + "_InputData";
     else

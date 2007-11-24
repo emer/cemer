@@ -761,7 +761,7 @@ int taMatrix::BinarySave_strm(ostream& strm) {
       BinarySave_Item(strm, i);
     }
   }
- 
+  strm << endl << "};" << endl;	// terminate
   return true;
 }
 
