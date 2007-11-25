@@ -1,0 +1,56 @@
+Design Notes
+
+Sender-based
+
+Issues
+* writing: one write per conn
+  -- will absolutely necessitate tnet in shared memory
+* any source unit can (and often will) contain targets
+  for any other unit, per prjn 
+  
+What we know
+
+* for any given Unit, its targets are a disjoint set
+  (or, we can make sure this is true);
+  therefore, guaranteed to not clobber
+* prjns for a small set, providing sharp delimitation 
+  on both the sending and target neuron pools
+  
+* any time you need to synchronize, you have to put
+  all the threads needing sync in one block
+  
+Strategy
+
+* work by target layer, per incoming prjn
+* since the net is the thing that can be clobbered, we
+  prolly need to put updates of one set of nets all in
+  one block, so we can synchronize
+* maybe each thread works on one con, with the block working
+  on one unit at a time, syncing between each
+* blocks can work on separate layers
+  
+* each thread works on one source unit -- these can be random
+
+Restrictions
+
+* once we get the nets in shared, we pretty much need to
+  only work in that thread bank, otherwise we just face the
+  same problem of too many writes
+
+
+Definitions
+
+* Target Layer Chunk -- one processing unit of target layers
+* TLC must be small enough so all its nets can fit in shared mem
+* prolly also need chunks in order to make sure we have lots of
+  blocks
+  
+TLC
+
+* chunk size tension: 
+  too low, not enough threads/block
+  too high, too many wasted threads when it doesn't fit
+
+Data Structures
+
+by Unit Group:

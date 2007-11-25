@@ -1,0 +1,50 @@
+embench_cuda 2048 100 1 4 256 -header -log=1
+
+* note: benchmarks are extremely stable, indicating that it is mostly
+  CUDA and that there is almost no variability in the CUDA times
+  
+Mcon    snd_act procs   layers  units   cons    weights cycles  con_trav       secs     n_tot
+645.278 100     1       4       2048    256     4.1943e+06      100     4.1943e+08      0.65    819200
+
+* there was no performance change going from 
+  32 threads to 64 threads
+  
+* no performance change in using a loop vs.
+  unrolling it (32 iters) in Recv_Netin
+  
+* changing CON_CHUNK_SZ from 32 to 512 (to match
+  actual number of cons per unit) -- seems to cause performance
+  to drop:
+  
+[baisa@lucius cuda]$ embench_cuda 2048 100 1 4 256 -header -log=1
+calling cuAllocMem: n_units=8192, silo_sz=128 (n_gran2=512)
+calling cuCpHD_Cons
+Mcon    snd_act procs   layers  units   cons    weights cycles  con_trav       secs     n_tot
+566.798 100     1       4       2048    256     4.1943e+06      100     4.1943e+08      0.74    819200
+574.562 100     1       4       2048    256     4.1943e+06      100     4.1943e+08      0.73    819200
+574.562 100     1       4       2048    256     4.1943e+06      100     4.1943e+08      0.73    819200
+
+with more units:
+[baisa@lucius cuda]$ embench_cuda 4096 100 1 4 256 -header -log=1
+calling cuAllocMem: n_units=16384, silo_sz=256 (n_gran2=512)
+calling cuCpHD_Cons
+
+Mcon    snd_act procs   layers  units   cons    weights cycles  con_trav       secs     n_tot
+436.907 100     1       4       4096    256     8.38861e+06     100     8.38861e+08     1.92    1638400
+436.907 100     1       4       4096    256     8.38861e+06     100     8.38861e+08     1.92    1638400
+
+: hypothesis: ????
+
+CHUNK_SZ=128:
+[baisa@lucius cuda]$ embench_cuda 4096 100 1 4 256 -header -log=1
+calling cuAllocMem: n_units=16384, silo_sz=1024 (n_gran2=512)
+calling cuCpHD_Cons
+Mcon    snd_act procs   layers  units   cons    weights cycles  con_trav       secs     n_tot
+527.585 100     1       4       4096    256     8.38861e+06     100     8.38861e+08     1.59    1638400
+
+CHUNK_SZ=64:
+[baisa@lucius cuda]$ embench_cuda 4096 100 1 4 256 -header -log=1
+calling cuAllocMem: n_units=16384, silo_sz=2048 (n_gran2=512)
+calling cuCpHD_Cons
+Mcon    snd_act procs   layers  units   cons    weights cycles  con_trav       secs     n_tot
+521.032 100     1       4       4096    256     8.38861e+06     100     8.38861e+08     1.61    1638400

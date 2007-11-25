@@ -665,19 +665,23 @@ void NetTask::ComputeAct() {
 }
 
 int NetTask_C::Init() {
+  int result = -1;
   acts = (float*)calloc(n_units_flat, sizeof(float));
   nets = (float*)calloc(n_units_flat, sizeof(float));
-  // silo size will be based on N_THREAD-normalized units 
-  uint n_units_gran = (uint)((n_units_flat + (N_THREADS - 1)) & ~(N_THREADS-1));
-  // chunks per unit also need to be normalized (rounded up to nearest chunk size)
-  uint n_gran2 = (uint)(((n_cons * 2) + (CON_CHUNK_SZ - 1)) & ~(CON_CHUNK_SZ-1));
-  uint silo_sz = (uint)((n_units_gran * n_gran2) / (CON_CHUNK_SZ * N_THREADS));
-cerr << "calling cuAllocMem: n_units=" << n_units_flat << ", silo_sz="
-  << silo_sz << " (n_gran2=" << n_gran2 << ")\n";
-  int result = cuAllocMem((uint)n_units_flat, silo_sz);
-  if (result != 0) return result;
-cerr << "calling cuCpHD_Cons\n";
-  result = cuCpHD_Cons(GetCon);
+  if (Network::recv_based) {
+    // silo size will be based on N_THREAD-normalized units 
+    uint n_units_gran = (uint)((n_units_flat + (RCV_N_THREADS - 1)) & ~(RCV_N_THREADS-1));
+    // chunks per unit also need to be normalized (rounded up to nearest chunk size)
+    uint n_gran2 = (uint)(((n_cons * 2) + (RCV_CON_CHUNK_SZ - 1)) & ~(RCV_CON_CHUNK_SZ-1));
+    uint silo_sz = (uint)((n_units_gran * n_gran2) / (RCV_CON_CHUNK_SZ * RCV_N_THREADS));
+  cerr << "calling cuAllocMem: n_units=" << n_units_flat << ", silo_sz="
+    << silo_sz << " (n_gran2=" << n_gran2 << ")\n";
+    result = cuRecv_AllocMem((uint)n_units_flat, silo_sz);
+    if (result != 0) return result;
+  cerr << "calling cuCpHD_Cons\n";
+    result = cuRecv_CpHD_Cons(GetCon);
+  } else {
+  }
   return result; // s/b 0
 }
 

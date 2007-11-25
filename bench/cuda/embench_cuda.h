@@ -16,18 +16,18 @@
 // includes, project
 #include <cutil.h>
 
-// note: low level defines, but needed so we can declare max's correctly
-#define N_THREADS 64
+// Common constants
+#define MAX_UNITS (65536 / sizeof(float)) // note: assumes we can use entire constant mem
+
+// Receiver-based constants
 
 // each thread defines a "silo"; a unit is always processed in its own
-// silo, defined as unit_idx % N_THREADS
-
-// high level defines
-#define CON_CHUNK_SZ 64 // note: this is independent of N_THREADS
-#define MAX_UNITS (65536 / sizeof(float)) // note: assumes we can use entire constant mem
+// silo, defined as unit_idx % RCV_N_THREADS
+#define RCV_N_THREADS 64
+#define RCV_CON_CHUNK_SZ 64 // note: this is independent of RCV_N_THREADS
 // following, assume 512M, 8-byte chunks
-#define MAX_CON_CHUNKS (0x20000000 / (CON_CHUNK_SZ * 8))
-#define MAX_SILO_SZ (MAX_CON_CHUNKS / N_THREADS)
+#define RCV_MAX_CON_CHUNKS (0x20000000 / (RCV_CON_CHUNK_SZ * 8))
+#define RCV_MAX_SILO_SZ (RCV_MAX_CON_CHUNKS / RCV_N_THREADS)
 
 #ifndef uint
 typedef unsigned int uint;
@@ -42,23 +42,26 @@ typedef bool (*cbGetCon)(int un_idx, int con_idx, int* snd_idx, float* wt);
 
 // all CUDA functions return 0 on success
 extern "C" {
-int cuAllocMem(uint n_units, uint silo_sz_);
-// allocate space on device for n_units, with a total of silo_sz con chunks per silo
-
-int cuFreeMem();
-// free previously alloc'ed mem
-
+// common
 int cuCpHD_Acts(const float* acts);
   // transfer the acts from host to device
-
-int cuCpHD_Cons(cbGetCon GetCon);
-  // transfer the connection units host to device
-
 int cuCpDH_Nets(float* nets);
   // transfer the nets from device to host
-  
+ 
+// Receiver-based
+int cuRecv_AllocMem(uint n_units, uint silo_sz_);
+// allocate space on device for n_units, with a total of silo_sz con chunks per silo
+int cuRecv_FreeMem();
+// free previously alloc'ed mem
+int cuRecv_CpHD_Cons(cbGetCon GetCon);
+  // transfer the connection units host to device
 void cuRecv_Netin();
   // calculate all netins 
+  
+// Sender-based
+
+void cuSend_Netin(uint n_units, int units[]);
+  // process only the units list in the array (by flat_idx)
 }
 
 #endif
