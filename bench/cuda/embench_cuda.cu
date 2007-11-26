@@ -15,7 +15,8 @@
 /* Common elements (send and recv)
 */
 
-uint	h_n_units;
+uint	h_n_units; // this is the requested # units
+uint	h_n_units_adj; // adjusted number of units (only used by us)
 __constant__
 float		c_acts[MAX_UNITS]; // only [h_n_units] init'ed/used
 float*		d_nets; // [h_n_units];
@@ -56,66 +57,62 @@ updates do not need to be syncronized.
 
 // Types
 
-typedef struct con {
-  int	snd_idx;
-  float	wt;
-} con_t;
-
-
-typedef int blk_map_t[RCV_N_THREADS];
-//typedef con_t con_blk_t[RCV_CON_CHUNK_SZ][RCV_N_THREADS];
-typedef int con_si_blk_t[RCV_CON_CHUNK_SZ][RCV_N_THREADS];
-typedef float con_wt_blk_t[RCV_CON_CHUNK_SZ][RCV_N_THREADS];
+typedef int con_si_blk_t[RCV_N_THREADS];
+typedef float con_wt_blk_t[RCV_N_THREADS];
 
 // Global data structures
 
-//__device__
-uint	n_con_chunks; // just for reference
-//__device__
+uint	n_cons_pu; 
 uint	n_blks; // number of [RCV_N_THREADS] blocks needed
 
-blk_map_t*	d_blk_map; // [n_blks][RCV_N_THREADS]
-//con_blk_t*	d_con_blks; // [n_blks][RCV_N_THREADS]
-con_si_blk_t*	d_con_si_blks; // [n_blks][RCV_N_THREADS]
-con_wt_blk_t*	d_con_wt_blks; // [n_blks][RCV_N_THREADS]
+con_si_blk_t*	d_con_si_blks; // [n_blks][n_cons_pu][RCV_N_THREADS]
+con_wt_blk_t*	d_con_wt_blks; // [n_blks][n_cons_pu][RCV_N_THREADS]
+
+// can compute act in place, in the net var
+__global__ 
+void kComputeActs(
+  const float* d_nets,
+  float* d_acts
+) {
+  int un_idx = blockIdx.x * blockDim.x + threadIdx.x;
+  float tact =  1.0f / (1.0f + expf(-d_acts[un_idx]));
+  __syncthreads();
+  d_acts[un_idx] = tact; 
+}
 
 __global__ 
 void kRecv_Netin(
+  int n_cons_pu,
   float* d_nets,
-  blk_map_t* d_blk_map,
   con_si_blk_t* d_con_si_blks,
   con_wt_blk_t* d_con_wt_blks
 ) {
   // block/thread indexes, for clarity
   int blk = blockIdx.x;
   int tx = threadIdx.x;
-  int un_idx = d_blk_map[blk][tx];
+  int blki = blk * n_cons_pu;
+  int un_idx = blk * blockDim.x + tx;
   float tnet = 0.0f;
-  for (int ci = 0; ci < RCV_CON_CHUNK_SZ; ci++) {
-/*    con_t& con = d_con_blks[blk][ci][tx];
-    tnet += c_acts[con.snd_idx] * con.wt; */
-    tnet += c_acts[d_con_si_blks[blk][ci][tx]] * d_con_wt_blks[blk][ci][tx]; 
+  for (int ci = 0; ci < n_cons_pu; ci++, blki++) {
+    tnet += c_acts[d_con_si_blks[blki][tx]] * d_con_wt_blks[blki][tx]; 
   }
-  d_nets[un_idx] += tnet; 
-  __syncthreads();
+  d_nets[un_idx] = tnet; 
 }
 
 extern "C" {
 
-int cuRecv_AllocMem(uint n_units_, uint silo_sz_) {
-  if ((n_units_ == 0) || (silo_sz_ == 0))
+int cuRecv_AllocMem(uint n_units_, uint n_cons_pu_) {
+  if ((n_units_ == 0) || (n_cons_pu_ == 0))
     return 1;
     
-  // round up number of blks needed to even processable number
-  
-   // round up the number of chunks needed to an even processable number
-  n_con_chunks = (silo_sz_ * RCV_N_THREADS); // for reference
-//printf("cuAllocMem: n_con_chunks=%d\n",n_con_chunks); 
-  if ((n_units_ > MAX_UNITS) || (silo_sz_ > RCV_MAX_SILO_SZ))
+  // round up number of units needed to even processable number
+  h_n_units_adj = (n_units_ + (RCV_N_THREADS - 1)) & ~(RCV_N_THREADS - 1);
+  if ((n_units_ > MAX_UNITS) || (n_cons_pu_ > RCV_MAX_CON_SZ))
     return 2;
     
   h_n_units = n_units_;
-  n_blks = silo_sz_; // s/b min 1
+  n_cons_pu = n_cons_pu_;
+  n_blks = h_n_units / RCV_N_THREADS; // s/b min 1
   
   CUT_DEVICE_INIT();
   
@@ -126,22 +123,15 @@ int cuRecv_AllocMem(uint n_units_, uint silo_sz_) {
   CUDA_SAFE_CALL(cudaMemcpyToSymbol("c_acts", mem, mem_size));
   free(mem);
   // alloc nets (no init, since overwritten anyway)
+  // we allocate dummys if needed
+  mem_size = h_n_units * sizeof(float);
   CUDA_SAFE_CALL(cudaMalloc((void**) &d_nets, mem_size));
   
-  
-//printf("cuAllocMem: n_blks=%d\n",n_blks); 
-  // block map
-  mem_size = n_blks * sizeof(blk_map_t);
-  CUDA_SAFE_CALL(cudaMalloc((void**) &d_blk_map, mem_size));
-  CUDA_SAFE_CALL(cudaMemset(d_blk_map, 0, mem_size));
-    
-/*  mem_size = n_blks * sizeof(con_blk_t);
-  CUDA_SAFE_CALL(cudaMalloc((void**) &d_con_blks, mem_size));
-  CUDA_SAFE_CALL(cudaMemset(d_con_blks, 0, mem_size));*/
-  mem_size = n_blks * sizeof(con_si_blk_t);
+  // allocate cons, including for dummys (just have si=0,wt=0)
+  mem_size = n_blks * n_cons_pu * sizeof(con_si_blk_t);
   CUDA_SAFE_CALL(cudaMalloc((void**) &d_con_si_blks, mem_size));
   CUDA_SAFE_CALL(cudaMemset(d_con_si_blks, 0, mem_size));
-  mem_size = n_blks * sizeof(con_wt_blk_t);
+  mem_size = n_blks * n_cons_pu * sizeof(con_wt_blk_t);
   CUDA_SAFE_CALL(cudaMalloc((void**) &d_con_wt_blks, mem_size));
   CUDA_SAFE_CALL(cudaMemset(d_con_wt_blks, 0, mem_size));
   
@@ -150,66 +140,38 @@ int cuRecv_AllocMem(uint n_units_, uint silo_sz_) {
 }
 
 int cuRecv_FreeMem() {
-  CUDA_SAFE_CALL(cudaFree((void*) d_nets));
-  d_nets = NULL;
-  CUDA_SAFE_CALL(cudaFree((void*) d_blk_map));
-  d_blk_map = NULL;
-/*  CUDA_SAFE_CALL(cudaFree((void*) d_con_blks));
-  d_con_blks = NULL;*/
-  CUDA_SAFE_CALL(cudaFree((void*) d_con_si_blks));
-  d_con_si_blks = NULL;
   CUDA_SAFE_CALL(cudaFree((void*) d_con_wt_blks));
   d_con_wt_blks = NULL;
+  CUDA_SAFE_CALL(cudaFree((void*) d_con_si_blks));
+  d_con_si_blks = NULL;
+  CUDA_SAFE_CALL(cudaFree((void*) d_nets));
+  d_nets = NULL;
 
   return 0;
 }
 
 int cuRecv_CpHD_Cons(cbGetCon GetCon) {
-  int chunks_copied = 0; // sanity check
-//  con_blk_t* con_buf = (con_blk_t*)calloc(n_blks, sizeof(con_blk_t));
-  con_si_blk_t* con_si_buf = (con_si_blk_t*)calloc(n_blks, sizeof(con_si_blk_t));
-  con_wt_blk_t* con_wt_buf = (con_wt_blk_t*)calloc(n_blks, sizeof(con_wt_blk_t));
+  int n_con_blks = n_blks * n_cons_pu;
+  con_si_blk_t* con_si_buf = (con_si_blk_t*)calloc(n_con_blks, sizeof(con_si_blk_t));
+  con_wt_blk_t* con_wt_buf = (con_wt_blk_t*)calloc(n_con_blks, sizeof(con_wt_blk_t));
+
 // we work one silo at a time, each silo is a warp thread
   for (int silo = 0; silo < RCV_N_THREADS; silo++) {
-    int un_idx = silo;
     int blk = 0; // block x
-    while (un_idx < h_n_units) {
-      int con_idx = 0;
-      bool done = false;
-      while (!done) {
-        int chunk_idx = 0; // note: only advanced if val read, so ==0 means none read
-        while (chunk_idx < RCV_CON_CHUNK_SZ) {
-//          con_t& con = con_buf[blk][chunk_idx][silo];
-          int* con_snd_idx = &(con_si_buf[blk][chunk_idx][silo]);
-          float* con_wt = &(con_wt_buf[blk][chunk_idx][silo]);
-          done = GetCon(un_idx, con_idx, con_snd_idx, con_wt);
-          if (done) break;
-          con_idx++;
-          chunk_idx++;
-        }
-        // chunk_idx is now # of cons read
-        if (chunk_idx > 0) { // write chunk and blk map entry
-          void* ptr;
-          int flat_chunk_idx = (blk * RCV_N_THREADS) + silo;
-          // block map guy -- points to this unit
-          ptr = (void*)((char*)d_blk_map + (flat_chunk_idx * sizeof(int)));
-          CUDA_SAFE_CALL(cudaMemcpy(ptr, &un_idx,
-            sizeof(int), cudaMemcpyHostToDevice));
-
-          // bump block pointers/counters
-          chunks_copied++;
-          blk++;
-        }
+    // note: only iterate actual units, dummys are defaulted to 0,0
+    for (int un_idx = silo; un_idx < h_n_units; un_idx += RCV_N_THREADS, blk++) {
+      int blki = blk*n_cons_pu;
+      for (int con_idx = 0; con_idx < n_cons_pu; con_idx++, blki++) {
+        int* con_snd_idx = &(con_si_buf[blki][silo]);
+        float* con_wt = &(con_wt_buf[blki][silo]);
+        GetCon(un_idx, con_idx, con_snd_idx, con_wt);
       }
-      un_idx += RCV_N_THREADS;
     }
   }
-/*  CUDA_SAFE_CALL(cudaMemcpy(d_con_blks, con_buf,
-     sizeof(con_blk_t) * n_blks, cudaMemcpyHostToDevice));*/
   CUDA_SAFE_CALL(cudaMemcpy(d_con_si_blks, con_si_buf,
-     sizeof(con_si_blk_t) * n_blks, cudaMemcpyHostToDevice));
+     sizeof(con_si_blk_t) * n_con_blks, cudaMemcpyHostToDevice));
   CUDA_SAFE_CALL(cudaMemcpy(d_con_wt_blks, con_wt_buf,
-     sizeof(con_wt_blk_t) * n_blks, cudaMemcpyHostToDevice));
+     sizeof(con_wt_blk_t) * n_con_blks, cudaMemcpyHostToDevice));
 //printf("Copied %d chunks (%d expected)\n", chunks_copied, n_con_chunks);  
     
 //  free(con_buf);
@@ -225,17 +187,32 @@ void cuRecv_Netin()
     dim3 grid(n_blks, 1, 1);
     dim3 threads(RCV_N_THREADS, 1, 1);
     
-    // clear nets
-    CUDA_SAFE_CALL(cudaMemset(d_nets, 0, h_n_units * sizeof(float)));
-    
     // execute the kernel
-//    kRecv_Netin<<< grid, threads >>>(d_nets, d_blk_map, d_con_blks);
     kRecv_Netin<<< grid, threads >>>(
-      d_nets, d_blk_map, d_con_si_blks, d_con_wt_blks);
+      n_cons_pu, d_nets, d_con_si_blks, d_con_wt_blks);
 
     // check if kernel execution generated and error
     CUT_CHECK_ERROR("Kernel execution failed");
 }
+
+
+void cuComputeActs(float* acts)
+{
+    // setup execution parameters
+    dim3 grid(n_blks, 1, 1);
+    dim3 threads(RCV_N_THREADS, 1, 1);
+    
+    // execute the kernel -- uses d_nets as the result (allowed)
+    kComputeActs<<< grid, threads >>>(
+      d_nets, d_nets);
+
+  CUDA_SAFE_CALL(cudaMemcpy((void*)acts, (void*)d_nets,
+    h_n_units * sizeof(float), cudaMemcpyDeviceToHost));
+    
+    // check if kernel execution generated and error
+    CUT_CHECK_ERROR("Kernel execution failed");
+}
+
 
 
 };

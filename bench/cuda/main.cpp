@@ -669,16 +669,8 @@ int NetTask_C::Init() {
   acts = (float*)calloc(n_units_flat, sizeof(float));
   nets = (float*)calloc(n_units_flat, sizeof(float));
   if (Network::recv_based) {
-    // silo size will be based on N_THREAD-normalized units 
-    uint n_units_gran = (uint)((n_units_flat + (RCV_N_THREADS - 1)) & ~(RCV_N_THREADS-1));
-    // chunks per unit also need to be normalized (rounded up to nearest chunk size)
-    uint n_gran2 = (uint)(((n_cons * 2) + (RCV_CON_CHUNK_SZ - 1)) & ~(RCV_CON_CHUNK_SZ-1));
-    uint silo_sz = (uint)((n_units_gran * n_gran2) / (RCV_CON_CHUNK_SZ * RCV_N_THREADS));
-  cerr << "calling cuAllocMem: n_units=" << n_units_flat << ", silo_sz="
-    << silo_sz << " (n_gran2=" << n_gran2 << ")\n";
-    result = cuRecv_AllocMem((uint)n_units_flat, silo_sz);
+    result = cuRecv_AllocMem((uint)n_units_flat, (n_cons * 2));
     if (result != 0) return result;
-  cerr << "calling cuCpHD_Cons\n";
     result = cuRecv_CpHD_Cons(GetCon);
   } else {
   }
@@ -714,16 +706,18 @@ void NetTask_C::Send_Netin() {
 
 void NetTask_C::Recv_Netin() {
   cuRecv_Netin();
-  cuCpDH_Nets(nets);
+//nn  cuCpDH_Nets(nets);
   AtomicFetchAdd(&n_tot, n_units_flat);
 }
 
 void NetTask_C::ComputeAct() {
+  cuComputeActs(acts);
+/*  
   my_act = 0.0f;
   for (int i = 0; i < n_units_flat; i++) {
     acts[i] = 1.0f / (1.0f + expf(-nets[i]));
     my_act += acts[i];
-  }
+  }*/
   cuCpHD_Acts(acts);
 }
 
