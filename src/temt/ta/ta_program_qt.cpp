@@ -854,6 +854,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   
   tb->AddSeparator(sec);
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("if",
+    tabMisc::root->GetTemplateInstance(&TA_If)));
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("if.else",
     tabMisc::root->GetTemplateInstance(&TA_IfElse)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("if.cont",
     tabMisc::root->GetTemplateInstance(&TA_IfContinue)));

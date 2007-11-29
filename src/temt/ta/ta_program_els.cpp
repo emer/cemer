@@ -344,6 +344,59 @@ String IfReturn::GetDisplayName() const {
 }
 
 //////////////////////////
+//  If			//
+//////////////////////////
+
+void If::Initialize() {
+  //  cond.expr = "true";
+}
+
+void If::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
+  CheckEqualsError(cond.expr, quiet, rval);
+}
+
+void If::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  true_code.CheckConfig(quiet, rval);
+}
+
+const String If::GenCssPre_impl(int indent_level) {
+  cond.ParseExpr();		// re-parse just to be sure!
+  String rval = cssMisc::Indent(indent_level);
+  rval += "if(" + cond.GetFullExpr() + ") {\n";
+  return rval; 
+}
+
+const String If::GenCssBody_impl(int indent_level) {
+  String rval = true_code.GenCss(indent_level + 1);
+  return rval;
+}
+
+const String If::GenListing_children(int indent_level) {
+  String rval = true_code.GenListing(indent_level + 1);
+  return rval;
+}
+
+const String If::GenCssPost_impl(int indent_level) {
+  return cssMisc::Indent(indent_level) + "}\n";
+}
+
+String If::GetDisplayName() const {
+  return "if (" + cond.expr + ")";
+}
+
+void If::PreGenChildren_impl(int& item_id) {
+  true_code.PreGen(item_id);
+}
+
+ProgVar* If::FindVarName(const String& var_nm) const {
+  ProgVar* pv = true_code.FindVarName(var_nm);
+  return pv;
+}
+
+//////////////////////////
 //  IfElse		//
 //////////////////////////
 
@@ -351,23 +404,9 @@ void IfElse::Initialize() {
   //  cond.expr = "true";
 }
 
-void IfElse::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(cond.expr.empty(), quiet, rval,  "condition expression is empty");
-  CheckEqualsError(cond.expr, quiet, rval);
-}
-
 void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  true_code.CheckConfig(quiet, rval);
   false_code.CheckConfig(quiet, rval);
-}
-
-const String IfElse::GenCssPre_impl(int indent_level) {
-  cond.ParseExpr();		// re-parse just to be sure!
-  String rval = cssMisc::Indent(indent_level);
-  rval += "if(" + cond.GetFullExpr() + ") {\n";
-  return rval; 
 }
 
 const String IfElse::GenCssBody_impl(int indent_level) {
@@ -388,21 +427,14 @@ const String IfElse::GenListing_children(int indent_level) {
   return rval;
 }
 
-const String IfElse::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "}\n";
-}
-
-String IfElse::GetDisplayName() const {
-  return "if (" + cond.expr + ")";
-}
-
 void IfElse::PreGenChildren_impl(int& item_id) {
-  true_code.PreGen(item_id);
+  inherited::PreGenChildren_impl(item_id);
   false_code.PreGen(item_id);
 }
+
 ProgVar* IfElse::FindVarName(const String& var_nm) const {
-  ProgVar* pv = true_code.FindVarName(var_nm);
-  if(pv) return pv;
+  ProgVar* pv = inherited::FindVarName(var_nm);
+  if (pv) return pv;
   return false_code.FindVarName(var_nm);
 }
 

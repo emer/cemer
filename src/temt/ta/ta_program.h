@@ -283,6 +283,7 @@ public:
     CTRL_PANEL		= 0x0001, // show this variable in the control panel
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK		= 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
+    RESULT		= 0x0008, // this is a result arg -- don't include it in the calling args
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used

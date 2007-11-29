@@ -1589,16 +1589,18 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
       any_changes = true;
     }
   }
-  // add args in target not in us, and put in the right order
+  // add non-result args in target not in us, and put in the right order
   for (ti = 0; ti < targ.size; ++ti) {
     pv =targ.FastEl(ti);
     FindName(pv->name, i);
     if (i < 0) {
-      pa = new ProgArg();
-      pa->name = pv->name;
-      pa->UpdateFromVar(*pv);
-      Insert(pa, ti);
-      any_changes = true;
+      if (!(pv->flags & ProgVar::RESULT)) {
+        pa = new ProgArg();
+        pa->name = pv->name;
+        pa->UpdateFromVar(*pv);
+        Insert(pa, ti);
+        any_changes = true;
+      }
     } else if (i != ti) {
       MoveIdx(i, ti);
       any_changes = true;

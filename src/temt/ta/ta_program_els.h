@@ -212,19 +212,18 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API IfElse: public ProgEl { 
-  // a conditional test element: if(condition) then true_code; else false_code
+class TA_API If: public ProgEl { 
+  // a conditional test element: if(condition) then true_code
 INHERITED(ProgEl)
 public:
   ProgExpr	    cond; 	// condition expression to test for true or false
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
-  ProgEl_List	    false_code; // #SHOW_TREE items to execute if condition false
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS(IfElse);
+  TA_SIMPLE_BASEFUNS(If);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -232,6 +231,26 @@ protected:
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
+  override const String	GenListing_children(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();} //
+};
+
+class TA_API IfElse: public If { 
+  // a conditional test element: if(condition) then true_code; else false_code
+INHERITED(If)
+public:
+  ProgEl_List	    	false_code; // #SHOW_TREE items to execute if condition false
+
+  override ProgVar*	FindVarName(const String& var_nm) const;
+  
+  TA_SIMPLE_BASEFUNS(IfElse);
+protected:
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
+  override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssBody_impl(int indent_level); //replaces If
   override const String	GenListing_children(int indent_level);
 
 private:
