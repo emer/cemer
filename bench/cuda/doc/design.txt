@@ -7,7 +7,10 @@ Issues
   -- will absolutely necessitate tnet in shared memory
 * any source unit can (and often will) contain targets
   for any other unit, per prjn 
-  
+* in real sim, layers have diff sizes, therefore there
+  won't be an even matching of unitgroup size to units,
+  i.e. some ugs will have dangling 
+
 What we know
 
 * for any given Unit, its targets are a disjoint set
@@ -18,7 +21,16 @@ What we know
   
 * any time you need to synchronize, you have to put
   all the threads needing sync in one block
+* how many ways to insure no clobbering?
+* only 16K memory, supposed to only use 1/2, so 8K
+  /4 means max 2K net guys in one block
   
+Questions
+
+* can't fit all nets at once, so need to iterate
+  block will thus do a subset of nets
+
+
 Strategy
 
 * work by target layer, per incoming prjn
@@ -36,6 +48,8 @@ Restrictions
 * once we get the nets in shared, we pretty much need to
   only work in that thread bank, otherwise we just face the
   same problem of too many writes
+* since there is no cross-block sync method, you cannot have
+  subsums located across blocks
 
 
 Definitions

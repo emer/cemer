@@ -43,11 +43,7 @@ int cuCpDH_Nets(float* nets) {
 Description of Algorithm
 
 This is a receiver-based algorithm.
-Each thread computes partial d_nets inputs for a single Unit. 
-Each such partial computation is called a "chunk" -- there
-are 32 weights per chunk; therefore, each projection is
-represented in atoms of chunks; any unused are set to 0:0.f
-(i.e. Unit 0 is also a dummy.)
+Each thread computes the d_net input for a single Unit. 
 
 The Warp size (RCV_N_THREADS) is used to make sure that different
 units are processed in parallel-- the allocation algorithm 
@@ -216,3 +212,96 @@ void cuComputeActs(float* acts)
 
 
 };
+
+
+/* Sender-based
+
+Description of Algorithm
+
+This is a sender-based algorithm -- it is significantly more
+complex than the receiver-algorithm.
+
+Computation is organized around layers, and then smaller
+groups of units from within a layer called a unitgroup (this
+is not the same as a UnitGroup in Emergent, but the concept
+is similar.)
+
+The sending connections of a unit are organized into a list,
+by target unitgroup. Each fixed-size item of this list is
+a conchunk.
+
+
+
+Each block is dedicated to calculating nets for a set of
+unitgroups. Shared memory is used to hold the net values for
+that set.
+
+Each block processes a single sending unit's
+connections at one time -- since the unit will have a disjoint
+set of targets, this insures that each thread will be writing
+to a different shared memory net value, so there can be
+no conflicts or need for synchronization.
+ 
+The block will loop until all the units that send values to
+any of its nets have been finished.
+
+Note that there is not a full mapping from sending unit to 
+unitgroup -- for full connections, there will be, but for
+partial connection patterns, some ugs will only have some
+sending conns from a unit -- in this case there will either
+need be dummy targets -- by convention, the dummy neurons
+are the topmost ones (at end of act array)
+
+by:
+bx:
+
+tx: con_idx
+
+Data:
+
+Runtime layout:
+
+nets [blks][SND_UG_SZ]
+*/
+
+// CONSTANTS
+
+#define SND_UG_SZ 
+
+#define NETS_PER_BLOCK 
+// Types
+
+
+// Global data structures
+
+uint	n_cons_pu; 
+uint	n_blks; // number of [RCV_N_THREADS] blocks needed
+
+con_si_blk_t*	d_con_si_blks; // [n_blks][n_cons_pu][RCV_N_THREADS]
+con_wt_blk_t*	d_con_wt_blks; // [n_blks][n_cons_pu][RCV_N_THREADS]
+
+__global__ 
+void kSend_Netin(
+  int n_cons_pu,
+  float* d_nets,
+  con_si_blk_t* d_con_si_blks,
+  con_wt_blk_t* d_con_wt_blks
+) {
+  extern __shared__ float s_nets[]; //[SND_UG_SZ]
+  
+  // block/thread indexes, for clarity
+  int blk = blockIdx.x;
+  int tx = threadIdx.x;
+  
+  // init net
+  s_nets[tx] = 0;
+  
+  int blki = blk * n_cons_pu;
+  int un_idx = blk * blockDim.x + tx;
+  float tnet = 0.0f;
+  for (int ci = 0; ci < n_cons_pu; ci++, blki++) {
+    tnet += c_acts[d_con_si_blks[blki][tx]] * d_con_wt_blks[blki][tx]; 
+  }
+  d_nets[un_idx] = tnet; 
+}
+

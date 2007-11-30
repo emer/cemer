@@ -37,6 +37,10 @@ typedef unsigned int uint;
 typedef bool (*cbGetCon)(int un_idx, int con_idx, int* snd_idx, float* wt);
   // get the indicated weight, return true when done (when con_idx > max_idx)
 
+typedef bool (*cbGetUnitInfo)(int un_idx, int* n_cons);
+  // get the requested values for the unit
+typedef void (*cbGetLayerInfo)(int lay_idx, int* n_units);
+  // get the requested values for the unit
 
 // all CUDA functions return 0 on success
 extern "C" {
@@ -60,6 +64,8 @@ void cuRecv_Netin();
   
 // Sender-based
 
+int cuSend_CpHD_Cons(int n_layers, cbGetUnitInfo GetUnitInfo, cbGetCon GetCon);
+  // transfer the connection units host to device
 void cuSend_Netin(uint n_units, int units[]);
   // process only the units list in the array (by flat_idx)
 }
