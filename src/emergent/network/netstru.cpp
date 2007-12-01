@@ -552,7 +552,7 @@ Connection* RecvCons::FindRecipRecvCon(Unit* su, Unit* ru, Layer* ru_lay) {
   int g;
   for(g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
-    if(!cg->prjn || (cg->prjn->from != ru_lay)) continue;
+    if(!cg->prjn || (cg->prjn->from.ptr() != ru_lay)) continue;
     Connection* con = cg->FindConFrom(ru);
     if(con) return con;
   }
@@ -3400,7 +3400,7 @@ void Layer::SyncSendPrjns() {
   for(pi=send_prjns.size-1; pi>=0; pi--) {
     p = (Projection*)send_prjns.FastEl(pi);
     if(p == NULL) continue;
-    if((!(bool)p->layer) || (p->from != this))
+    if((!(bool)p->layer) || (p->from.ptr() != this))
       send_prjns.RemoveIdx(pi);	// get rid of it!
   }
 }
@@ -4223,7 +4223,7 @@ void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   Projection* p;
   taLeafItr i;
   FOR_ITR_EL(Projection, p, projections., i) {
-    if(p->from != send_lay) continue;
+    if(p->from.ptr() != send_lay) continue;
     p->WeightsToTable(dt);
     gotone = true;
   }
@@ -4592,7 +4592,7 @@ void Network::RemoveMonitors() {
   TokenSpace& ts = TA_NetMonitor.tokens;
   for (int i = 0; i < ts.size; ++i) {
     NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
-    if(nm->network != this) continue;
+    if(nm->network.ptr() != this) continue;
     nm->RemoveMonitors();
   }
 }
@@ -4601,7 +4601,7 @@ void Network::UpdateMonitors() {
   TokenSpace& ts = TA_NetMonitor.tokens;
   for (int i = 0; i < ts.size; ++i) {
     NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
-    if(nm->network != this) continue;
+    if(nm->network.ptr() != this) continue;
     nm->UpdateDataTable();
   }
 }
@@ -6085,11 +6085,11 @@ Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, 
 	nw_itm = false;
 	return prj;
       }
-      if((ps) && (prj->spec.spec != ps)) {
+      if((ps) && (prj->spec.spec.ptr() != ps)) {
 	use_prj = prj;
 	break;
       }
-      if((cs) && (prj->con_spec.spec != cs)) {
+      if((cs) && (prj->con_spec.spec.ptr() != cs)) {
 	use_prj = prj;
 	break;
       }
@@ -6147,11 +6147,11 @@ Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* 
 	nw_itm = false;
 	return prj;
       }
-      if((ps) && (prj->spec.spec != ps)) {
+      if((ps) && (prj->spec.spec.ptr() != ps)) {
 	use_prj = prj;
 	break;
       }
-      if((cs) && (prj->con_spec.spec != cs)) {
+      if((cs) && (prj->con_spec.spec.ptr() != cs)) {
 	use_prj = prj;
 	break;
       }

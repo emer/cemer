@@ -1137,7 +1137,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
 
 void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
 					  Projection* prjn) {
-  if((prjn->from != prjn->layer) || !sym_self)
+  if((prjn->from.ptr() != prjn->layer) || !sym_self)
     return;			// not applicable otherwise!
 
   Unit* ru;

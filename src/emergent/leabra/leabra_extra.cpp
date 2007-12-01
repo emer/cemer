@@ -891,7 +891,7 @@ void ScalarValSelfPrjnSpec::Connect_UnitGroup(Unit_Group* gp, Projection* prjn) 
 
 void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn) {
   if(!prjn->from)	return;
-  if(TestError(prjn->from != prjn->layer, "Connect_impl", "must be used as a self-projection!")) {
+  if(TestError(prjn->from.ptr() != prjn->layer, "Connect_impl", "must be used as a self-projection!")) {
     return;
   }
 

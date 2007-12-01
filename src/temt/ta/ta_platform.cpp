@@ -117,6 +117,7 @@ String taPlatform::unescapeBackslash(const String& in) {
 // Windows implementation
 
 #include "windows.h"
+#include <errno.h>
 #ifndef NO_TA_BASE
 # include "shlobj.h"
 #endif
