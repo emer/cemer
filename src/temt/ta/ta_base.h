@@ -632,6 +632,7 @@ public:
   virtual void 		SetDefaultName_impl(int idx); // #IGNORE called from within, or by list -- NAME_TYPE will determine what we do with idx
   virtual String	GetTypeDecoKey() const { return _nilString; }
   // #IGNORE lookup key for visual decoration of an item reflecting its overall type information, used for font colors in the gui browser, for example
+  virtual bool		GetQuiet() const {return false;} // general-purpose fuzzy flag for suppressing Warning messages from an object, maybe because it is special, user shuts them off, etc.
   virtual String	GetStateDecoKey() const;
   // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for backgroundt colors in the gui browser, for example
 

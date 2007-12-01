@@ -1912,11 +1912,16 @@ public:
   virtual void	Init_Weights_post();
   // #IGNORE run after init weight state (ie. to scale weights)
 
+  virtual void	Init_Metrics(); 
+  // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers
+  
   virtual void	Init_Counters();
-  // #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
+  // #EXPERT #CAT_Counter initialize all counter variables on network (called in Init_Weights; except batch because that loops over inits!)
   virtual void	Init_Stats();
-  // #CAT_Statistic initialize statistic variables on network
-
+  // #EXPERT #CAT_Statistic initialize statistic variables on network
+  virtual void	Init_Timers();
+  // #EXPERT #CAT_Statistic initialize statistic variables on network
+  
   virtual void	Compute_Netin();
   // #CAT_Activation Compute NetInput: weighted activation from other units
   virtual void	Send_Netin();

@@ -1270,7 +1270,7 @@ bool ProgExprBase::ParseExpr() {
     int c;
     while((pos < len) && isspace(c=expr[pos])) { var_expr.cat((char)c); pos++; } // skip_white
     if((c == '.') && ((pos+1 < len) && !isdigit(expr[pos+1]))) { // a path expr
-      if((pos > 0) && isspace(expr[pos-1])) {
+      if(((pos > 0) && isspace(expr[pos-1])) && !pel->GetQuiet()) {
         taMisc::Warning("ProgExpr in program element:", pel->GetDisplayName(),"\n in Program:",prog->name," note that supplying full paths to objects is not typically very robust and is discouraged");
       }
       var_expr.cat((char)c); pos++; 

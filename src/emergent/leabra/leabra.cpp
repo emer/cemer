@@ -3605,6 +3605,7 @@ void LeabraNetwork::Init_Stats() {
   avg_cycles_n = 0;
 
   send_pct_n = send_pct_tot = 0;
+  send_pct = 0.0f;
   avg_send_pct = 0.0f;
   avg_send_pct_sum = 0.0f;
   avg_send_pct_n = 0;

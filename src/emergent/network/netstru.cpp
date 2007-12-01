@@ -5315,12 +5315,17 @@ void Network::Init_Weights() {
 
   Init_Acts();			// also re-init state at this point..
 
-  Init_Counters();
-  Init_Stats();
+  Init_Metrics();
 
   sse = 0;
   UpdateAllViews();
   taMisc::DoneBusy();
+}
+
+void Network::Init_Metrics() {
+  Init_Counters();
+  Init_Stats();
+  Init_Timers();
 }
 
 void Network::Init_Counters() {
@@ -5343,6 +5348,16 @@ void Network::Init_Stats() {
   cur_sum_sse = 0.0f;
   avg_sse_n = 0;
   cur_cnt_err = 0.0f;
+}
+
+void Network::Init_Timers() {
+  train_time.ResetUsed();
+  epoch_time.ResetUsed();
+  trial_time.ResetUsed();
+  settle_time.ResetUsed();
+  cycle_time.ResetUsed();
+  wt_sync_time.ResetUsed();
+  misc_time.ResetUsed();
 }
 
 void Network::Init_Weights_post() {
