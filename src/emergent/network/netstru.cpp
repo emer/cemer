@@ -4464,13 +4464,13 @@ void Network::InitLinks() {
   taBase::Own(font_sizes, this);
   taBase::Own(view_params, this);
 
-  taBase::Own(train_time, this);  train_time.name = "train_time";
-  taBase::Own(epoch_time, this);  epoch_time.name = "epoch_time";
-  taBase::Own(trial_time, this);  trial_time.name = "trial_time";
-  taBase::Own(settle_time, this);  settle_time.name = "settle_time";
-  taBase::Own(cycle_time, this);  cycle_time.name = "cycle_time";
-  taBase::Own(wt_sync_time, this); wt_sync_time.name = "wt_sync_time";
-  taBase::Own(misc_time, this);  misc_time.name = "misc_time";
+  taBase::Own(train_time, this);  //train_time.name = "train_time";
+  taBase::Own(epoch_time, this);  //epoch_time.name = "epoch_time";
+  taBase::Own(trial_time, this);  //trial_time.name = "trial_time";
+  taBase::Own(settle_time, this);  //settle_time.name = "settle_time";
+  taBase::Own(cycle_time, this);  //cycle_time.name = "cycle_time";
+  taBase::Own(wt_sync_time, this); //wt_sync_time.name = "wt_sync_time";
+  taBase::Own(misc_time, this);  //misc_time.name = "misc_time";
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_net_comm, this);

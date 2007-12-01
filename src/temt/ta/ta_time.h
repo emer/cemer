@@ -23,20 +23,20 @@ class TA_API taTime : public taBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
 INHERITED(taBase)
 public:
-  double	usr;		// user clock ticks -- time spent on this process
-  double	sys;		// system clock ticks -- time spent in the kernel on behalf of this process
+  double	usr;		// #HIDDEN user clock ticks -- time spent on this process
+  double	sys;		// #HIDDEN system clock ticks -- time spent in the kernel on behalf of this process
   double	tot;		// total time ticks (all clock ticks on the CPU for all processes -- wall-clock time)
 
-  virtual void 	operator += (const taTime& td)	{ usr += td.usr; sys += td.sys; tot += td.tot; }
-  virtual void 	operator -= (const taTime& td)	{ usr -= td.usr; sys -= td.sys; tot -= td.tot; }
-  virtual void 	operator *= (const taTime& td)	{ usr *= td.usr; sys *= td.sys; tot *= td.tot; }
-  virtual void 	operator /= (const taTime& td)	{ usr /= td.usr; sys /= td.sys; tot /= td.tot; }
-  virtual taTime operator + (const taTime& td) const;
-  virtual taTime operator - (const taTime& td) const;
-  virtual taTime operator * (const taTime& td) const;
-  virtual taTime operator / (const taTime& td) const;
+  void 	operator += (const taTime& td)	{ usr += td.usr; sys += td.sys; tot += td.tot; }
+  void 	operator -= (const taTime& td)	{ usr -= td.usr; sys -= td.sys; tot -= td.tot; }
+  void 	operator *= (const taTime& td)	{ usr *= td.usr; sys *= td.sys; tot *= td.tot; }
+  void 	operator /= (const taTime& td)	{ usr /= td.usr; sys /= td.sys; tot /= td.tot; }
+  taTime operator + (const taTime& td) const;
+  taTime operator - (const taTime& td) const;
+  taTime operator * (const taTime& td) const;
+  taTime operator / (const taTime& td) const;
 
-  virtual double TicksToSecs(double ticks); // convert ticks to seconds
+  double TicksToSecs(double ticks); // convert ticks to seconds
 
   double GetUsrSecs()		{ return TicksToSecs(usr); }
   // get usr time as seconds and fractions thereof
@@ -45,9 +45,9 @@ public:
   double GetTotSecs()		{ return TicksToSecs(tot); }
   // get tot time as seconds and fractions thereof
 
-  virtual void	ZeroTime();	// zero out the times
-  virtual void	GetTime();	// get current clock timing information, for computing difference at later point in time
-  virtual String GetString(int len=15, int prec=7);
+  void	ZeroTime();	// zero out the times
+  void	GetTime();	// get current clock timing information, for computing difference at later point in time
+  String GetString(int len=15, int prec=7);
   // get string output as seconds and fractions of seconds, using given length and precision values for the time values
 
   void 	Initialize();
@@ -56,14 +56,16 @@ public:
   TA_BASEFUNS(taTime);
 };
 
-class TA_API TimeUsed : public taNBase {
+class TA_API TimeUsed : public taOBase {
   // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
-INHERITED(taNBase)
+INHERITED(taOBase)
 public:
-  taTime	start;		// starting time
-  taTime	end;		// ending time
-  taTime	used;		// total time used
-  int		n_used;		// number of individual times the timer has been used without resetting accumulation
+//  String	name;		// #NO_SHOW #NO_SAVE #READ_ONLY only for backwards compatibility for proj load, can be deleted at some point
+  taTime	start;		// #HIDDEN starting time
+  taTime	end;		// #HIDDEN ending time
+  taTime	used;		// #HIDDEN total time used
+  double 	s_used;		// #SHOW #GUI_READ_ONLY total number of seconds used
+  int		n_used;		// #SHOW #GUI_READ_ONLY number of individual times the timer has been used without resetting accumulation
 
   virtual void	StartTimer(bool reset_used = true);
   // record the current time as the starting time, and optionally reset the time used information

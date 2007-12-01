@@ -105,7 +105,7 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [1] {
+  Program_Group @.programs = [2] {
     Program @[0] { 
       ProgVar_List @.args = [2] {
 	ProgVar @[0] { };
@@ -247,6 +247,12 @@ LeabraProject .projects[0] {
 	    ProgArg @[0] { };
 	  };
 	};
+      };
+    };
+    Program @[1] { 
+      ProgEl_List @.prog_code = [2] {
+	CodeBlock @[0] { };
+	CodeBlock @[1] { };
       };
     };
     Program_Group @.gp[0] = [10] { 
@@ -2435,6 +2441,70 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	bad_vars{ 	};
        };
       };
+     };
+    };
+   };
+  };
+  Program @[1] {
+   name="Program_12";
+   tags=;
+   desc=;
+   flags=;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    CodeBlock @[0] {
+     desc=;
+     flags=;
+     prog_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+     };
+    };
+    CodeBlock @[1] {
+     desc=;
+     flags=;
+     prog_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
      };
     };
    };
@@ -5945,7 +6015,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.01: err=0.99: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -5978,7 +6048,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.01: err=0.99: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -6332,13 +6402,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=1254: sys=27: tot=430465660: }: end={usr=2698: sys=30: tot=430467127: }: used={usr=1444: sys=3: tot=1467: }: n_used=1: };
-   epoch_time {name="epoch_time": start={usr=1654: sys=27: tot=430466073: }: end={usr=2698: sys=30: tot=430467127: }: used={usr=1044: sys=3: tot=1054: }: n_used=1: };
-   trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   misc_time {name="misc_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {start={usr=1254: sys=27: tot=430465660: }: end={usr=2698: sys=30: tot=430467127: }: used={usr=1444: sys=3: tot=1467: }: s_used=0: n_used=1: };
+   epoch_time {start={usr=1654: sys=27: tot=430466073: }: end={usr=2698: sys=30: tot=430467127: }: used={usr=1044: sys=3: tot=1054: }: s_used=0: n_used=1: };
+   trial_time {start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   settle_time {start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cycle_time {start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   wt_sync_time {start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   misc_time {start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    dmem_sync_level=DMEM_SYNC_NETWORK;
    dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;

@@ -103,6 +103,7 @@ String taTime::GetString(int len, int prec) {
 //////////////////////////
 
 void TimeUsed::Initialize() {
+  s_used = 0.0;
   n_used = 0;
 }
 
@@ -113,12 +114,14 @@ void TimeUsed::StartTimer(bool reset_used) {
 
 void TimeUsed::EndTimer() {
   end.GetTime();
-  used = end - start;
+  used += end - start;
+  s_used = used.TicksToSecs(used.tot);
   n_used++;
 }
 
 void TimeUsed::ResetUsed() {
   used.ZeroTime();
+  s_used = 0.0;
   n_used = 0;
 }
 
