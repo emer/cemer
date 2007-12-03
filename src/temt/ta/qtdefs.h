@@ -32,10 +32,13 @@ class	QBitArray;		// #IGNORE
 class	QDir;			// #IGNORE
 class	QEvent;			// #IGNORE 
 class	QObject;		// #IGNORE 
+class	QMutex;			// #IGNORE
 class	QString;		// #IGNORE 
 class	QStringList;		// #IGNORE 
+class	QThread;		// #IGNORE
 class	QTimer;			// #IGNORE 
 class	QVariant;		// #IGNORE 
+class	QWaitCondition;		// #IGNORE
 
 // #IGNORE Qt Gui defines -- only when TA_GUI
 

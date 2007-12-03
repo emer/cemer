@@ -830,6 +830,7 @@ void taRootBase::InitLinks() {
   taBase::Own(plugin_deps, this);
   taBase::Own(mime_factories, this);
   taBase::Own(colorspecs, this);
+  taBase::Own(engines, this);
   // create colorspecs even if nogui, since they are referenced in projects
   colorspecs.SetDefaultColor();	
   taBase::Own(objs, this);
@@ -849,6 +850,7 @@ void taRootBase::CutLinks() {
   recent_paths.CutLinks();
   recent_files.CutLinks();
   objs.CutLinks();
+  engines.CutLinks();
   colorspecs.CutLinks();
   mime_factories.CutLinks();
   plugin_deps.CutLinks();

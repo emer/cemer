@@ -168,10 +168,13 @@
 #elif !defined(TA_OS_UNIX)
 #  define TA_OS_UNIX
 #endif
-/* prob not needed
-#if defined(TA_OS_DARWIN) && !defined(QT_LARGEFILE_SUPPORT)
-# define TA_LARGEFILE_SUPPORT 64
-#endif */
+
+// we don't try using threaded engine on non-Intel platforms
+// esp legacy PPC Macs wherein xtremely unlikely to have multi threads
+//TODO: need to add NO_TA_USE_THREADS, and need a way to auto shut off for PPC
+#if (!defined(NO_TA_USE_THREADS))
+# define TA_USE_THREADS
+#endif
 
 // misc stuff
 

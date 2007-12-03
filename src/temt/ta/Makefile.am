@@ -158,6 +158,7 @@ TAHEADS =\
 	ta_defaults.h \
 	ta_plugin.h \
 	ta_plugin_p.h \
+	ta_engine.h \
 	ta_project.h \
 	ta_server.h \
 	$(TAHEADS_GUI) \
@@ -204,6 +205,7 @@ HEADS =\
 	ta_defaults.h \
 	ta_plugin.h \
 	ta_plugin_p.h \
+	ta_engine.h \
 	ta_project.h \
 	ta_server.h \
 	ta_gendoc.h \
@@ -255,6 +257,8 @@ SRCS =\
 	ta_defaults.cpp \
 	ta_plugin_p.cpp \
 	ta_plugin_p.moc.cpp \
+	ta_engine.cpp \
+	ta_engine.moc.cpp \
 	ta_project.cpp \
 	ta_project.moc.cpp \
 	ta_server.cpp \
