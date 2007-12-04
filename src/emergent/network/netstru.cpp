@@ -1656,6 +1656,7 @@ void Unit::Initialize() {
   wt_prjn = tmp_calc1 = 0.0f;
   n_recv_cons = 0;
   idx = -1;
+  flat_idx = -1;
   m_unit_spec = NULL;
 }
 
@@ -1682,6 +1683,7 @@ void Unit::CutLinks() {
   bias.CutLinks();
   m_unit_spec = NULL;
   idx = -1;
+  flat_idx = -1;
   inherited::CutLinks();
 }
 

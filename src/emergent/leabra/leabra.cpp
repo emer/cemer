@@ -4420,3 +4420,33 @@ bool LeabraWizard::TestProgs(Program* call_test_from, bool call_in_loop, int cal
   return true;
 }
 
+
+//////////////////////////////////
+//  LeabraEngine		//
+//////////////////////////////////
+
+void LeabraEngine::Initialize() {
+}
+
+void LeabraEngine::Destroy() {
+}
+
+
+//////////////////////////////////
+//  LeabraTask			//
+//////////////////////////////////
+
+void LeabraTask::Initialize() {
+}
+
+void LeabraTask::Destroy() {
+}
+
+void LeabraTask::run() {
+  switch (proc_id) {
+  case P_Send_Netin: //Send_Netin(); break;
+  case P_Recv_Netin: //Recv_Netin(); break;
+  case P_ComputeAct: //ComputeAct(); break;
+  default: inherited::run(); break;
+  }
+}

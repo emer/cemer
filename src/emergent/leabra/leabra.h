@@ -23,6 +23,7 @@
 #include "emergent_project.h"
 
 #include "fun_lookup.h"
+#include "ta_engine.h"
 
 #include "leabra_def.h"
 #include "leabra_TA_type.h"
@@ -46,7 +47,12 @@ class LeabraLayerSpec;
 class LeabraLayer;
 
 class LeabraNetwork;
-class LeabraProject; //
+class LeabraProject; 
+
+class LeabraEngine;
+TA_SMART_PTRS(LeabraEngine);
+class LeabraTask;
+TA_SMART_PTRS(LeabraTask);//
 
 // _
 
@@ -2201,5 +2207,38 @@ private:
   void 	Initialize();
   void 	Destroy()	{ };
 };
+
+
+class LEABRA_API LeabraEngine: public taEngine {
+// abstract definition of LeabraEngine
+INHERITED(taEngine)
+public:
+  
+  TA_BASEFUNS_NOCOPY(LeabraEngine);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class LEABRA_API LeabraTask: public taTask {
+// one instance of a task for doing Leabra algorithm calculations -- concretely defines the default impl in absence of any other engine
+INHERITED(taTask)
+public:
+  enum Proc { // the proc to execute
+    P_Send_Netin,
+    P_Recv_Netin,
+    P_ComputeAct
+  };
+  
+  override void		run(); 
+  
+  TA_BASEFUNS_NOCOPY(LeabraTask);
+
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
 
 #endif // leabra_h

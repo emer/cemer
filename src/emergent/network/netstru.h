@@ -753,6 +753,8 @@ public: //
   // #CAT_Structure position in space relative to owning group, layer
   int		idx;
   // #READ_ONLY #HIDDEN #CAT_Structure index of this unit within containing unit group
+  int		flat_idx;
+  // #READ_ONLY #HIDDEN #CAT_Structure index of this unit in a flat array of units (used by some Engines)
 
 #ifdef DMEM_COMPILE
   static int	dmem_this_proc;	// #IGNORE processor rank for this processor RELATIVE TO COMMUNICATOR for the network

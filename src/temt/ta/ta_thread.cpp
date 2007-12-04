@@ -14,7 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ta_thread.h"
-  
+/*  
 int taAtomic::GetNextValue(volatile int& i, int&result, int maxval, int inc_by) {
   int old_i;
   int newval; // don't continue if success would put us out of bounds
@@ -44,3 +44,4 @@ int taAtomic::GetPrevValue(volatile int& i, int&result, int minval, int dec_by) 
     }
   }
 }
+*/

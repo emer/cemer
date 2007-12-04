@@ -20,7 +20,7 @@
 #define TA_THREAD_H
 
 #include "ta_def.h"
-
+/*
 class TA_API taAtomic {
   // ##NO_INSTANCE static class for doing atomic (threadsafe) operations
 public:
@@ -60,6 +60,6 @@ inline int taAtomic::TestAndSet(volatile int& i, int expected, int newval)
 #else
 //NOTE: shouldn't need these...
 #endif
-
+*/
 #endif
 
