@@ -281,7 +281,7 @@ protected:
   { int rval=-1; if(*((void**)a) > *((void**)b)) rval=1; else if(*((void**)a) == *((void**)b)) rval=0; return rval; }
   bool		El_Equal_(const void* a, const void* b) const
     { return (*((void**)a) == *((void**)b)); }
-  String	El_GetStr_(const void* it) const { return (int)(*((void**)it)); }
+  String	El_GetStr_(const void* it) const { return (ta_intptr_t)(*((void**)it)); }
   void		El_SetFmStr_(void* it, const String& val)
   { int tmp = (int)val; *((void**)it) = (void*)tmp; }
 };
