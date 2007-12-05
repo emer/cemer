@@ -205,7 +205,7 @@ int  Variant::cmpUInt(uint val) const {
   case T_Bool: return cmp((uint)d.b, val);
   case T_Int: return cmp((uint)d.i, val);
   case T_UInt: return cmp(d.u, val);
-  case T_Int64:  return cmp((uint64_t)d.i64, val);
+  case T_Int64:  return cmp((ta_uint64_t)d.i64, val);
   case T_UInt64: return cmp(d.u64, val);
   case T_Double: return cmp(d.d, val);
   case T_Char: return cmp((uint)d.c, val);
@@ -213,27 +213,27 @@ int  Variant::cmpUInt(uint val) const {
   }
 }
 
-int  Variant::cmpInt64(int64_t val) const {
+int  Variant::cmpInt64(ta_int64_t val) const {
   if (isNull()) return -2;
   switch (m_type) {
   case T_Bool: return cmp((int)d.b, val);
   case T_Int: return cmp(d.i, val);
-  case T_UInt: return cmp(d.u, (uint64_t)val);
+  case T_UInt: return cmp(d.u, (ta_uint64_t)val);
   case T_Int64:  return cmp(d.i64, val);
-  case T_UInt64: return cmp(d.u64, (uint64_t)val);
+  case T_UInt64: return cmp(d.u64, (ta_uint64_t)val);
   case T_Double: return cmp(d.d, val);
   case T_Char: return cmp(d.c, val);
   default: return -2;
   }
 }
 
-int  Variant::cmpUInt64(uint64_t val) const {
+int  Variant::cmpUInt64(ta_uint64_t val) const {
   if (isNull()) return -2;
   switch (m_type) {
   case T_Bool: return cmp((uint)d.b, val);
   case T_Int: return cmp((uint)d.i, val);
   case T_UInt: return cmp(d.u, val);
-  case T_Int64:  return cmp((uint64_t)d.i64, val);
+  case T_Int64:  return cmp((ta_uint64_t)d.i64, val);
   case T_UInt64: return cmp(d.u64, val);
   case T_Double: return cmp(d.d, val);
   case T_Char: return cmp((uint)d.c, val);
@@ -356,7 +356,7 @@ bool  Variant::eqUInt(uint val) const {
   case T_Bool: return ((uint)d.b == val);
   case T_Int: return ((d.i > 0) && (d.i == (int)val));
   case T_UInt:  return (d.u == val);
-  case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int64_t)val));
+  case T_Int64:  return ((d.i64 > 0) && (d.i64 == (ta_int64_t)val));
   case T_UInt64: return (d.u64 == val);
   case T_Double:
     return qFuzzyCompare(d.d, (double)val);
@@ -367,10 +367,10 @@ bool  Variant::eqUInt(uint val) const {
   }
 }
 
-bool  Variant::eqInt64(int64_t val) const {
+bool  Variant::eqInt64(ta_int64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
-  case T_Bool: return ((int64_t)d.b == val);
+  case T_Bool: return ((ta_int64_t)d.b == val);
   case T_Int: return (d.i == val);
   case T_UInt: 
     return ((val > 0) && (d.u == val));
@@ -385,10 +385,10 @@ bool  Variant::eqInt64(int64_t val) const {
   }
 }
 
-bool  Variant::eqUInt64(uint64_t val) const {
+bool  Variant::eqUInt64(ta_uint64_t val) const {
   if (isNull()) return false;
   switch (m_type) {
-  case T_Bool: return ((uint64_t)d.b == val);
+  case T_Bool: return ((ta_uint64_t)d.b == val);
   case T_Int: return ((d.i > 0) && (d.i == (int)val));
   case T_UInt:  return (d.u == val);
   case T_Int64:  return ((d.i64 > 0) && (d.i64 == (int)val));
@@ -610,7 +610,7 @@ Variant& Variant::operator+=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator+=(int64_t rhs) {
+Variant& Variant::operator+=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i + rhs); break;
   case T_UInt: setInt64(d.u + rhs); break;
@@ -623,7 +623,7 @@ Variant& Variant::operator+=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator+=(uint64_t rhs) {
+Variant& Variant::operator+=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i + rhs); break;
   case T_UInt: setUInt64(d.u + rhs); break;
@@ -702,7 +702,7 @@ Variant& Variant::operator-=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator-=(int64_t rhs) {
+Variant& Variant::operator-=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i - rhs); break;
   case T_UInt: setInt64(d.u - rhs); break;
@@ -715,7 +715,7 @@ Variant& Variant::operator-=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator-=(uint64_t rhs) {
+Variant& Variant::operator-=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i - rhs); break;
   case T_UInt: setUInt64(d.u - rhs); break;
@@ -793,7 +793,7 @@ Variant& Variant::operator*=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator*=(int64_t rhs) {
+Variant& Variant::operator*=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i * rhs); break;
   case T_UInt: setInt64(d.u * rhs); break;
@@ -806,7 +806,7 @@ Variant& Variant::operator*=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator*=(uint64_t rhs) {
+Variant& Variant::operator*=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i * rhs); break;
   case T_UInt: setUInt64(d.u * rhs); break;
@@ -884,7 +884,7 @@ Variant& Variant::operator/=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator/=(int64_t rhs) {
+Variant& Variant::operator/=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i / rhs); break;
   case T_UInt: setInt64(d.u / rhs); break;
@@ -897,7 +897,7 @@ Variant& Variant::operator/=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator/=(uint64_t rhs) {
+Variant& Variant::operator/=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i / rhs); break;
   case T_UInt: setUInt64(d.u / rhs); break;
@@ -972,7 +972,7 @@ Variant& Variant::operator%=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator%=(int64_t rhs) {
+Variant& Variant::operator%=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i % rhs); break;
   case T_UInt: setInt64(d.u % rhs); break;
@@ -984,7 +984,7 @@ Variant& Variant::operator%=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator%=(uint64_t rhs) {
+Variant& Variant::operator%=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i % rhs); break;
   case T_UInt: setUInt64(d.u % rhs); break;
@@ -1043,7 +1043,7 @@ Variant& Variant::operator<<=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator<<=(int64_t rhs) {
+Variant& Variant::operator<<=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i << rhs); break;
   case T_UInt: setInt64(d.u << rhs); break;
@@ -1055,7 +1055,7 @@ Variant& Variant::operator<<=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator<<=(uint64_t rhs) {
+Variant& Variant::operator<<=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i << rhs); break;
   case T_UInt: setUInt64(d.u << rhs); break;
@@ -1115,7 +1115,7 @@ Variant& Variant::operator>>=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator>>=(int64_t rhs) {
+Variant& Variant::operator>>=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i >> rhs); break;
   case T_UInt: setInt64(d.u >> rhs); break;
@@ -1127,7 +1127,7 @@ Variant& Variant::operator>>=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator>>=(uint64_t rhs) {
+Variant& Variant::operator>>=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i >> rhs); break;
   case T_UInt: setUInt64(d.u >> rhs); break;
@@ -1187,7 +1187,7 @@ Variant& Variant::operator&=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator&=(int64_t rhs) {
+Variant& Variant::operator&=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i & rhs); break;
   case T_UInt: setInt64(d.u & rhs); break;
@@ -1199,7 +1199,7 @@ Variant& Variant::operator&=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator&=(uint64_t rhs) {
+Variant& Variant::operator&=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i & rhs); break;
   case T_UInt: setUInt64(d.u & rhs); break;
@@ -1259,7 +1259,7 @@ Variant& Variant::operator|=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator|=(int64_t rhs) {
+Variant& Variant::operator|=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i | rhs); break;
   case T_UInt: setInt64(d.u | rhs); break;
@@ -1271,7 +1271,7 @@ Variant& Variant::operator|=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator|=(uint64_t rhs) {
+Variant& Variant::operator|=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i | rhs); break;
   case T_UInt: setUInt64(d.u | rhs); break;
@@ -1331,7 +1331,7 @@ Variant& Variant::operator^=(uint rhs) {
   return *this;
 }
 
-Variant& Variant::operator^=(int64_t rhs) {
+Variant& Variant::operator^=(ta_int64_t rhs) {
   switch (m_type) {
   case T_Int: setInt64(d.i ^ rhs); break;
   case T_UInt: setInt64(d.u ^ rhs); break;
@@ -1343,7 +1343,7 @@ Variant& Variant::operator^=(int64_t rhs) {
   return *this;
 }
 
-Variant& Variant::operator^=(uint64_t rhs) {
+Variant& Variant::operator^=(ta_uint64_t rhs) {
   switch (m_type) {
   case T_Int: setUInt64(d.i ^ rhs); break;
   case T_UInt: setUInt64(d.u ^ rhs); break;
@@ -1412,7 +1412,7 @@ Variant& Variant::operator-() {
   case T_Int: d.i = -d.i; break;
   case T_UInt: d.u = (uint)-((int)d.u); break; // forces unsigned
   case T_Int64: d.i64 = -d.i64; break;
-  case T_UInt64: d.u64 = (uint64_t)-((int64_t)d.u64); break; // forces unsigned
+  case T_UInt64: d.u64 = (ta_uint64_t)-((ta_int64_t)d.u64); break; // forces unsigned
   case T_Double: d.d = -d.d; break;
   case T_Char: d.c = -d.c; break;
   default: warn("unary - operator"); break ;
@@ -1583,14 +1583,14 @@ void Variant::setUInt(uint val, bool null) {
   m_is_null = null;
 }
 
-void Variant::setInt64(int64_t val, bool null) {
+void Variant::setInt64(ta_int64_t val, bool null) {
   releaseType();
   d.i64 = val;
   m_type = T_Int64;
   m_is_null = null;
 }
 
-void Variant::setUInt64(uint64_t val, bool null) {
+void Variant::setUInt64(ta_uint64_t val, bool null) {
   releaseType();
   d.u64 = val;
   m_type = T_UInt64;
@@ -1839,7 +1839,7 @@ uint Variant::toUInt() const {
   return 0;
 }
 
-int64_t Variant::toInt64() const {
+ta_int64_t Variant::toInt64() const {
   switch (m_type) {
   case T_Invalid: 
     break ;
@@ -1852,15 +1852,15 @@ int64_t Variant::toInt64() const {
   case T_Int64:
     return d.i64;
   case T_UInt64:
-    return (int64_t)d.u64;
+    return (ta_int64_t)d.u64;
   case T_Double:
-    return (int64_t)d.d;
+    return (ta_int64_t)d.d;
   case T_Char:
     return d.c;
   case T_String: 
     return getString().toInt64();
   case T_Ptr: 
-    return (int64_t)d.ptr;
+    return (ta_int64_t)d.ptr;
   case T_Base: 
   case T_Matrix:
     break ;
@@ -1869,7 +1869,7 @@ int64_t Variant::toInt64() const {
   return 0;
 }
 
-uint64_t Variant::toUInt64() const {
+ta_uint64_t Variant::toUInt64() const {
   switch (m_type) {
   case T_Invalid: 
     break ;
@@ -1884,13 +1884,13 @@ uint64_t Variant::toUInt64() const {
   case T_UInt64:
     return d.u64;
   case T_Double:
-    return (uint64_t)d.d;
+    return (ta_uint64_t)d.d;
   case T_Char:
     return d.c;
   case T_String: 
     return getString().toUInt64();
   case T_Ptr: 
-    return (uint64_t)d.ptr;
+    return (ta_uint64_t)d.ptr;
   case T_Base: 
   case T_Matrix:
     break ;

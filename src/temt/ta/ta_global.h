@@ -283,7 +283,10 @@ typedef unsigned char   byte;
 #endif // skip over for maketa
 
 // defaults (and maketa values) for our Trolltech/MacOS hack:
+// and also for 64-bit issues in ILP64 where int64_t gets defined as long
 #ifndef ta_intptr_t
+# define ta_int64_t long long
+# define ta_uint64_t unsigned long long
 # define ta_intptr_t intptr_t
 # define ta_uintptr_t uintptr_t
 #endif

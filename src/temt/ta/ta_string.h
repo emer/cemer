@@ -174,8 +174,8 @@ public:
   String(uint u, const char* format = "%u");
   String(long i, const char* format = "%ld"); //note: don't use long any more, compatibility only
   String(ulong u, const char* format = "%lu"); //note: don't use long any more, compatibility only
-  String(int64_t i64); //NOTE: no fmts because they are not cross-platform standard
-  String(uint64_t u64); //NOTE: no fmts because they are not cross-platform standard
+  String(ta_int64_t i64); //NOTE: no fmts because they are not cross-platform standard
+  String(ta_uint64_t u64); //NOTE: no fmts because they are not cross-platform standard
   String(float f, const char* format = "%g");
   String(double d, const char* format = "%lg");
   explicit String(void* p); //converts to hex
@@ -223,8 +223,8 @@ public:
   ushort 		toUShort(bool* ok = 0, int base = 10) const; 
   int 			toInt(bool* ok = 0, int base = 10) const; 
   uint 			toUInt(bool* ok = 0, int base = 10) const; 
-  int64_t 		toInt64(bool* ok = 0, int base = 10) const; 
-  uint64_t 		toUInt64(bool* ok = 0, int base = 10) const; 
+  ta_int64_t 		toInt64(bool* ok = 0, int base = 10) const; 
+  ta_uint64_t 		toUInt64(bool* ok = 0, int base = 10) const; 
   float 		toFloat(bool* ok = 0) const; 
   double 		toDouble(bool* ok = 0) const; 
 
@@ -456,9 +456,9 @@ inline int String::toInt(bool* ok, int base) const
   {QString tmp(chars()); return tmp.toInt(ok, base);}
 inline uint String::toUInt(bool* ok, int base) const 
   {QString tmp(chars()); return tmp.toUInt(ok, base);}
-inline int64_t String::toInt64(bool* ok, int base) const 
+inline ta_int64_t String::toInt64(bool* ok, int base) const 
   {QString tmp(chars()); return tmp.toLongLong(ok, base);}
-inline uint64_t String::toUInt64(bool* ok, int base) const 
+inline ta_uint64_t String::toUInt64(bool* ok, int base) const 
   {QString tmp(chars()); return tmp.toULongLong(ok, base);}
 inline float String::toFloat(bool* ok) const 
 { QString tmp(chars()); bool okk; float rval = tmp.toFloat(&okk);
@@ -478,9 +478,9 @@ inline int String::toInt(bool* ok, int base) const
   {if (ok) *ok = true; return strtol(chars(), NULL, base);}
 inline uint String::toUInt(bool* ok, int base) const 
   {if (ok) *ok = true; return strtoul(chars(), NULL, base);}
-inline int64_t String::toInt64(bool* ok, int base) const 
+inline ta_int64_t String::toInt64(bool* ok, int base) const 
   {if (ok) *ok = true; return strtoll(chars(), NULL, base);}
-inline uint64_t String::toUInt64(bool* ok, int base) const 
+inline ta_uint64_t String::toUInt64(bool* ok, int base) const 
   {if (ok) *ok = true; return strtoull(chars(), NULL, base);}
 inline float String::toFloat(bool* ok) const 
   {if (ok) *ok = true; return (float)strtod(chars(), NULL);}

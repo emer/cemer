@@ -455,7 +455,7 @@ String::String(ulong u, const char* format) {
   newRep(Salloc(buf, -1));
 }
 
-String::String(int64_t i64) {
+String::String(ta_int64_t i64) {
   char buf[64];
   char* format;
 #ifdef _MSC_VER // MSVC
@@ -479,7 +479,7 @@ String::String(int64_t i64) {
   newRep(Salloc(buf, -1));
 }
 
-String::String(uint64_t u64) {
+String::String(ta_uint64_t u64) {
   char buf[64];
   char* format;
 #ifdef _MSC_VER // formats may be ms specific
