@@ -250,55 +250,55 @@ typedef unsigned char   byte;
 
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 // god bless Microsoft c++...
-#ifdef TA_OS_WIN
+# ifdef _MSCVER
   typedef unsigned char		uint8_t;
   typedef unsigned int		uint;
   typedef unsigned int      	uint32_t;
   typedef signed __int64      	int64_t;
   typedef unsigned __int64    	uint64_t;
-# if defined(_WIN64)
-    typedef __int64	    	intptr_t;
-    typedef unsigned __int64	uintptr_t;
-# else
-    typedef int			intptr_t;
-    typedef unsigned int	uintptr_t;
-# endif
   //note: prob should inline these, rather than macros, but don't want naggling little
   // type differences to cause compile issues
 # define strtoll _strtoi64
 # define strtoull _strtoui64
-#elif (defined(TA_OS_MAC))
-// and god bless Trolltech and Mac OS...
-# if (TA_POINTER_SIZE == 4)
-#   define ta_intptr_t int
-#   define ta_uintptr_t unsigned int
-# elif (TA_POINTER_SIZE == 8)
-#   define ta_intptr_t qint64
-#   define ta_uintptr_t quint64
-# else
-#   error "TA_POINTER_SIZE should be 4 or 8"
-# endif
-#endif // intptr_t hacks
-
+# endif // intptr_t hacks
 #endif // skip over for maketa
 
-// defaults (and maketa values) for our Trolltech/MacOS hack:
-// and also for 64-bit issues in ILP64 where int64_t gets defined as long
-#ifndef ta_intptr_t
-# define ta_intptr_t intptr_t
-# define ta_uintptr_t uintptr_t
-#endif
-//TODO: fix up this mess!
-# define ta_int64_t long long
-# define ta_uint64_t unsigned long long
 
-// when using QVariants for ptrs
+// wordsize dependent stuff -- MSVC is (of course!) different
 #if (TA_POINTER_SIZE == 4)
+# if (defined(_WIN32))
+    typedef int			intptr_t;
+    typedef unsigned int	uintptr_t;
+    typedef int			ta_intptr_t;
+    typedef unsigned int	ta_uintptr_t;
+# else // gcc 
+    typedef int			ta_intptr_t;
+    typedef unsigned int	ta_uintptr_t;
+# endif
 # define QVARIANT_TO_INTPTR(qv) (qv.toInt())
+
 #elif (TA_POINTER_SIZE == 8)
+# if defined(_WIN64)
+    typedef __int64	    	intptr_t;
+    typedef unsigned __int64	uintptr_t;
+    typedef __int64	    	ta_intptr_t;
+    typedef unsigned __int64	ta_uintptr_t;
+# else // gcc
+    typedef long long		ta_intptr_t;
+    typedef unsigned long long	ta_uintptr_t;
+# endif
 # define QVARIANT_TO_INTPTR(qv) (qv.toLongLong())
+
 #else
 # error "TA_POINTER_SIZE should be 4 or 8"
+#endif
+
+#ifdef _MSCVER
+  typedef __int64	    	ta_int64_t;
+  typedef unsigned __int64	ta_uint64_t;
+#else // gcc
+  typedef long long		ta_int64_t;
+  typedef unsigned long long	ta_uint64_t;
 #endif
 
 // misc. compiler hacks for MAKETA
