@@ -204,6 +204,22 @@ int yylex()
 
       cssLex::readword(cssMisc::cur_top->Prog(), c);
 
+      // if processing a path, don't go looking stuff up anywhere else!!! 
+      // took too long to figure this one out..
+      if(cssMisc::cur_top->parse_path_expr || cssMisc::cur_scope) {
+	yylval.nm = cssLex::Buf;
+	return CSS_NAME;
+      }
+
+      if(cssMisc::cur_top->ext_parse_fun_pre) {
+	int rval = (*(cssMisc::cur_top->ext_parse_fun_pre))
+	  (cssMisc::cur_top->ext_parse_user_data, (char*)cssLex::Buf, s);
+	if(rval != 0) {
+	  yylval.el = s;
+	  return rval;
+	}
+      }
+
       cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg(); // also check in src_prog if cmd shell
 
       if(cssLex::Buf.before(3) == "TA_") {
@@ -309,6 +325,14 @@ int yylex()
 	    }
 	  }
 	  return s.El()->GetParse();
+	}
+      }
+      if(cssMisc::cur_top->ext_parse_fun_post) {
+	int rval = (*(cssMisc::cur_top->ext_parse_fun_post))
+	  (cssMisc::cur_top->ext_parse_user_data, (char*)cssLex::Buf, s);
+	if(rval != 0) {
+	  yylval.el = s;
+	  return rval;
 	}
       }
       yylval.nm = cssLex::Buf;

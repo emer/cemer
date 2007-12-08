@@ -2925,6 +2925,11 @@ void GraphTableView::UpdateAfterEdit_impl(){
   color_axis.UpdateOnFlag();
   raster_axis.UpdateOnFlag();
 
+  DataTable* dt = dataTable();
+  bool no_cols = true;
+  if(dt && dt->data.size > 0)
+    no_cols = false;
+
   // don't bother: not generlizable and not supported
 //   if(plot_2.on && !plot_1.on) { // move to pl1
 //     plot_1.col_name = plot_2.col_name;
@@ -2934,7 +2939,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
 //   }
 
   if(!plot_1.on) {
-    taMisc::Warning("GraphTableView -- plot_1 is not on -- perhaps no valid col_name found for plot_1 -- nothing will be plotted!");
+    if(!no_cols) {
+      taMisc::Warning("GraphTableView -- plot_1 is not on -- perhaps no valid col_name found for plot_1 -- nothing will be plotted!");
+    }
   }
   else if(plot_1.isString()) {
     taMisc::Warning("GraphTableView -- plot_1 is a string -- must be a numeric value -- nothing will be plotted");
@@ -2967,9 +2974,11 @@ void GraphTableView::UpdateAfterEdit_impl(){
   }
 
   if(!x_axis.on) {
-    taMisc::Warning("GraphTableView -- X axis is not on -- perhaps no valid col_name found for x_axis -- switching to row_num!");
-    x_axis.row_num = true;
-    x_axis.on = true;
+    if(!no_cols) {
+      taMisc::Warning("GraphTableView -- X axis is not on -- perhaps no valid col_name found for x_axis -- switching to row_num!");
+      x_axis.row_num = true;
+      x_axis.on = true;
+    }
   }
   else {
     if(x_axis.isString()) {
@@ -2994,7 +3003,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
     raster_axis.on = true;
     raster_axis.UpdateOnFlag();
     if(!raster_axis.on) {
-      taMisc::Warning("GraphTableView -- graph_type = RASTER and no valid col_name found for raster_axis -- nothing will be plotted!");
+      if(!no_cols) {
+	taMisc::Warning("GraphTableView -- graph_type = RASTER and no valid col_name found for raster_axis -- nothing will be plotted!");
+      }
     }
     else {
       GraphColView* ra = raster_axis.GetColPtr();
@@ -3010,7 +3021,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
     color_axis.on = true;
     color_axis.UpdateOnFlag();
     if(!color_axis.on) {
-      taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
+      if(!no_cols) {
+	taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
+      }
     }
     else {
       GraphColView* ca = color_axis.GetColPtr();

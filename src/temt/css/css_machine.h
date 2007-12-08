@@ -1409,6 +1409,9 @@ public:
   int		fr_no;
 };
 
+// for an external parsing function that is called first -- can use the css parser
+// to parse expressions -- used in ProgExpr 
+typedef int (*css_progspace_ext_parse_fun)(void* udata, const char* parse_nm, cssElPtr& el_ptr);
 
 class CSS_API cssProgSpace: public QObject {
   // an entire program space, including all functions defined, variables etc.
@@ -1461,6 +1464,7 @@ public:
 
   int 		src_ln;			// present source line no in src_list (parsing)
   int 		src_col;		// current source column number in src_list (parsing)
+  int		src_pos;		// absolute source position from start of file/string (parsing)
   int		list_ln;		// present source line no in src_list (listing)
   int		list_n;			// number of lines to display in the listing
 
@@ -1468,9 +1472,18 @@ public:
   int		tok_src_col;
 
   bool		parsing_command; 	// true if we are presently parsing a command
+  bool		parse_path_expr;	// currently parsing a path expression (disable looking up other variables!)
+
   bool		external_stop;		// to stop execution externally, set this
 
+  css_progspace_ext_parse_fun ext_parse_fun_pre;
+  // external parsing function -- called with a symbol name before parsing any internal names (pre)
+  css_progspace_ext_parse_fun ext_parse_fun_post;
+  // external parsing function -- called with a symbol name after attempting everything to parse and failing (post)
+  void*		ext_parse_user_data; 	// user data passed to parse fun as first arg (typically object pointer)
+
   cssCmdShell*	cmd_shell;		// controlling command shell
+
 
   void Constr();
   cssProgSpace();

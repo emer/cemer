@@ -409,7 +409,8 @@ void taProject::Copy_(const taProject& cp) {
   data.Reset();
 
   edits.Reset();
-  
+
+  tags = cp.tags;
   templates = cp.templates;
   docs = cp.docs;
   wizards = cp.wizards;

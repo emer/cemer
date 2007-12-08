@@ -1352,7 +1352,7 @@ memb_expr:
         /* this syntax is non-standard, but it means "top of some root heierarchy"
 	   and you need to define some function push_root which pushes a root element
 	   on the stack */
-        | '.' membname			{ $$ = Code3(cssBI::push_root, $2, cssBI::points_at); }
+        | getmemb membname		{ $$ = Code3(cssBI::push_root, $2, cssBI::points_at); }
 	| scopetype membname		{
 	  cssMisc::cur_scope = NULL;
 	    cssEl* scp = $1.El()->GetScoped((const char*)*($2.El()));
@@ -1449,17 +1449,18 @@ name:	  CSS_NAME			{
 	    cssMisc::Warning(cssMisc::cur_top->Prog(), "Warning: hiding function:", $1.El()->PrintStr()); }
 	;
 
-getmemb:  '.'			/* these are treated identically in parsing */
-        | CSS_POINTSAT
+getmemb:  '.'				{ /* these are treated identically in parsing */
+           cssMisc::cur_top->parse_path_expr = true; }
+        | CSS_POINTSAT			{
+           cssMisc::cur_top->parse_path_expr = true; }
         ;
 
 membname: CSS_NAME			{
-   	    String tmpstr = String($1);
-            $$ = cssMisc::cur_top->AddLiteral(tmpstr); }
-        | CSS_STRING
-        | membnms		{ /* this is source of shift-reduce problems */
-	    String tmpstr = String($1.El()->GetName());
-	    $$ = cssMisc::cur_top->AddLiteral(tmpstr); }
+   	   String tmpstr = String($1);
+           $$ = cssMisc::cur_top->AddLiteral(tmpstr);
+           cssMisc::cur_top->parse_path_expr = false; }
+        | CSS_STRING			{
+           cssMisc::cur_top->parse_path_expr = false; }
         ;
 
 membnms:  CSS_VAR
@@ -1526,7 +1527,7 @@ void yyerror(char* s) { 	/* called for yacc syntax error */
     *fh << "^\n";
   }
   else {
-    *fh << s << src;
+    *fh << s << " " << src;
   }
   taMisc::FlushConsole();
 }

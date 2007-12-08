@@ -1927,6 +1927,7 @@ const String DataJoinProg::GenCssBody_impl(int indent_level) {
 /////////////////////////////////////////////////////////
 
 void DataCalcLoop::Initialize() {
+  src_row_var.name = "src_row";
 }
 
 void DataCalcLoop::UpdateAfterEdit_impl() {
@@ -2035,6 +2036,8 @@ void DataCalcLoop::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 ProgVar* DataCalcLoop::FindVarName(const String& var_nm) const {
+  if(var_nm == "src_row")
+    return (ProgVar*)&src_row_var;
   ProgVar* pv = src_col_vars.FindName(var_nm);
   if(pv) return pv;
   pv = dest_col_vars.FindName(var_nm);

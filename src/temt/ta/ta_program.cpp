@@ -304,9 +304,10 @@ void DynEnumType::SeqNumberItems(int first_val) {
 
 taBase* DynEnumType::FindTypeName(const String& nm) const {
   if(name == nm) return (taBase*)this;
-  int idx;
-  if((idx = FindNameIdx(nm)) >= 0) 
+  int idx = FindNameIdx(nm);
+  if(idx >= 0)  {
     return enums.FastEl(idx);
+  }
   return NULL;
 }
 
@@ -495,6 +496,7 @@ void ProgVar::Initialize() {
   hard_enum_type = NULL;
   objs_ptr = false;
   flags = (VarFlags)(CTRL_PANEL | NULL_CHECK);
+  parse_css_el = NULL;
 }
 
 void ProgVar::Destroy() {
@@ -508,6 +510,7 @@ void ProgVar::InitLinks() {
 }
 
 void ProgVar::CutLinks() {
+  FreeParseCssEl();
   object_val.CutLinks();
   dyn_enum_val.CutLinks();
   inherited::CutLinks();
@@ -591,6 +594,24 @@ void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
 //   if((var_type == T_Object) && (object_val)) {
 //     object_val->CheckConfig(quiet, rval);
 //   }
+}
+
+void ProgVar::SetParseCssEl() {
+  if(!parse_css_el) {
+    parse_css_el = NewCssEl();
+    cssEl::Ref(parse_css_el);
+  }
+}
+
+void ProgVar::FreeParseCssEl() {
+  if(parse_css_el) {
+    cssEl::unRefDone(parse_css_el);
+    parse_css_el = NULL;
+  }
+}
+
+void ProgVar::ResetParseStuff() {
+  FreeParseCssEl();
 }
 
 TypeDef* ProgVar::act_object_type() const {
@@ -1125,8 +1146,13 @@ int ProgVarRef_List::UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, t
 //   ProgExprBase	//
 //////////////////////////
 
+cssProgSpace ProgExprBase::parse_prog;
+cssSpace ProgExprBase::parse_tmp;
+
 void ProgExprBase::Initialize() {
   flags = PE_NONE;
+  parse_ve_off = 11;
+  parse_ve_pos = 0;
 }
 
 void ProgExprBase::Destroy() {	
@@ -1254,88 +1280,134 @@ void ProgExprBase::ParseExpr_SkipPath(int& pos) {
     { var_expr.cat((char)c); pos++; }
 }
 
+
+int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr) {
+  String vnm = nm;
+  if(vnm == "__tmp") return 0;	// skip that guy
+  ProgExprBase* pe = (ProgExprBase*)udata;
+  Program* prog = GET_OWNER(pe, Program);
+  int idx = 0;
+  ProgVar* var = NULL;
+  Function* fun = GET_OWNER(pe, Function); // first look inside any function we might live within
+  if(fun)
+    var = fun->FindVarName(vnm);
+  if(!var)
+    var = prog->FindVarName(vnm);
+  if(var) {
+    if(!pe->vars.FindVar(var, idx)) {
+      ProgVarRef* prf = new ProgVarRef;
+      prf->Init(pe);	// we own it
+      prf->set(var);
+      pe->vars.Add(prf);
+      pe->var_names.Add(vnm);
+      idx = pe->vars.size-1;
+    }
+    var->SetParseCssEl();
+    el_ptr.SetDirect(var->parse_css_el);
+    // update var_expr
+    String subst = "$#" + (String)idx + "#$";
+    String add_chunk = pe->expr.at(pe->parse_ve_pos-pe->parse_ve_off, parse_prog.src_pos - pe->parse_ve_pos - vnm.length());
+//     String vnm_chunk = pe->expr.at(parse_prog.src_pos - pe->parse_ve_off - vnm.length(), vnm.length());
+    pe->var_expr += add_chunk;
+    pe->var_expr += subst;
+    pe->parse_ve_pos = parse_prog.src_pos;
+
+//     cerr << "var: " << vnm << " pos: " << pe->parse_ve_pos-pe->parse_ve_off << " add_chunk: " << add_chunk
+// 	 << " vnm_chunk: " << vnm_chunk << endl;
+
+    return var->parse_css_el->GetParse();
+  }
+  else {
+    // not found -- check to see if it is some other thing:
+    taBase* ptyp = prog->FindTypeName(vnm);
+    if(ptyp) {
+      if(ptyp->InheritsFrom(&TA_DynEnumType)) {
+	cssEnumType* etyp = new cssEnumType(ptyp->GetName());
+	pe->parse_tmp.Push(etyp);
+	el_ptr.SetDirect(etyp);
+	return CSS_TYPE;
+      }
+      else if(ptyp->InheritsFrom(&TA_DynEnumItem)) {
+	DynEnumItem* eit = (DynEnumItem*)ptyp;
+	cssEnum* eval = new cssEnum(eit->value, eit->name);
+	pe->parse_tmp.Push(eval);
+	el_ptr.SetDirect(eval);
+	return CSS_VAR;
+      }
+    }
+  }
+  return 0;			// not found!
+}
+
+int ProgExprBase::cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_ptr) {
+  String vnm = nm;
+  if(vnm == "__tmp" || vnm == "this") return 0;	// skip that guy
+  ProgExprBase* pe = (ProgExprBase*)udata;
+  pe->bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+//   cerr << "added bad var: " << vnm << endl;
+  return 0;				// we don't do any cleanup -- return false
+}
+
 bool ProgExprBase::ParseExpr() {
-  Program* prog = GET_MY_OWNER(Program);
-  if(!prog) return true;
+  Program_Group* pgp = GET_MY_OWNER(Program_Group);
+  if(TestError(!pgp, "ParseExpr", "no parent Program_Group found -- report to developers as bug"))
+    return false;
+  String pnm = GetPath_Long(NULL, pgp);
+
+  // todo: temporary fix for saved wrong flags, remove after a while (4.0.10)
   ProgEl* pel = GET_MY_OWNER(ProgEl);
-  expr.gsub("->", ".");		// -> is too hard to parse.. ;)
-  int pos = 0;
-  int len = expr.length();
+  if(pel) {
+    pel->SetProgExprFlags();
+  }
+
   vars.Reset();
   var_names.Reset();
   bad_vars.Reset();
-  if(expr.empty()) return true;
   var_expr = _nilString;
-  do {
-    int c;
-    while((pos < len) && isspace(c=expr[pos])) { var_expr.cat((char)c); pos++; } // skip_white
-    if((c == '.') && ((pos+1 < len) && !isdigit(expr[pos+1]))) { // a path expr
-      if(((pos > 0) && isspace(expr[pos-1])) && !pel->GetQuiet()) {
-        taMisc::Warning("ProgExpr in program element:", pel->GetDisplayName(),"\n in Program:",prog->name," note that supplying full paths to objects is not typically very robust and is discouraged");
-      }
-      var_expr.cat((char)c); pos++; 
-      ParseExpr_SkipPath(pos);
-      continue;
+  String parse_expr;
+  if(HasExprFlag(FULL_STMT)) {
+    parse_expr = expr;
+    parse_ve_off = 0;
+  }
+  else if(HasExprFlag(FOR_LOOP_EXPR)) {
+    parse_expr = "for(" + expr + ";;) .i;";
+    parse_ve_off = 4;
+  }
+  else {
+    parse_expr = "int __tmp= " + expr + ";";
+    parse_ve_off = 11;		// offset is 11 due to 'int _tmp= '
+  }
+  parse_ve_pos = parse_ve_off;
+  if(expr.empty()) return true;
+
+  parse_prog.SetName(pnm);
+  parse_prog.ClearAll();
+  parse_prog.ext_parse_fun_pre = &cssExtParseFun_pre;
+  parse_prog.ext_parse_fun_post = &cssExtParseFun_post;
+  parse_prog.ext_parse_user_data = (void*)this;
+  //  parse_prog.SetDebug(6);
+
+  parse_prog.CompileCode(parse_expr);	// use css to do all the parsing!
+
+  for(int i=0;i<vars.size;i++)  {
+    ProgVarRef* vrf = vars.FastEl(i);
+    if(!TestError(!vrf->ptr(), "ParseExpr", "vrf->ptr() == NULL -- this shouldn't happen -- report as a bug!")) {
+      ProgVar* var = (ProgVar*)vrf->ptr();
+      var->ResetParseStuff();
     }
-    if((c == '.') || (c == '-') || isdigit(c)) { // number
-      var_expr.cat((char)c); pos++;
-      while((pos < len) && (isxdigit(c=expr[pos]) || ispunct(c)))
-	{ var_expr.cat((char)c); pos++; } // skip numbers and expressions
-      continue;
-    }
-    if(c=='\"') {		// string literal
-      var_expr.cat((char)c); pos++;
-      while((pos < len) && !(((c=expr[pos]) == '\"') && (expr[pos-1] != '\\')))
-	{ var_expr.cat((char)c); pos++; }
-      continue;
-    }
-    if(isalpha(c) || (c == '_')) {
-      int stpos = pos;
-      pos++;
-      while((pos < len) && (isalnum(c=expr[pos]) || (c=='_'))) 
-	{ pos++; }
-      String vnm = expr.at(stpos, pos-stpos); // this should be a variable name!
-      int idx = 0;
-      ProgVar* var = NULL;
-      Function* fun = GET_MY_OWNER(Function); // first look inside any function we might live within
-      if(fun)
-	var = fun->FindVarName(vnm);
-      if(!var)
-	var = prog->FindVarName(vnm);
-      if(var) {
-	if(vars.FindVar(var, idx)) {
-	  var_expr += "$#" + (String)idx + "#$";
-	}
-	else {
-	  ProgVarRef* prf = new ProgVarRef;
-	  prf->Init(this);	// we own it
-	  prf->set(var);
-	  vars.Add(prf);
-	  var_expr += "$#" + (String)(vars.size-1) + "#$"; // needs full both-sided brackets!
-	  var_names.Add(vnm);
-	}
-      }
-      else {
-	// not found -- check to see if it is some other thing:
-	taBase* ptyp = prog->FindTypeName(vnm);
-	if(!ptyp) {
-	  cssElPtr cssptr = cssMisc::ParseName(vnm);
-	  if(!cssptr) {
-	    if(vnm != "this")		// special
-	      bad_vars.AddUnique(vnm);	// this will trigger err msg later..
-	  }
-	}
-	var_expr += vnm;		// add it back (no special indications..)
-      }
-      // now check if there is a path-like expr after this one: if so, then skip it
-      // we don't want to get hung up on member names etc
-      if((pos < len) && (((c=expr[pos])=='.') || (c==':'))) {
-	ParseExpr_SkipPath(pos);
-      }
-      continue;
-    }
-    var_expr.cat((char)c); pos++;		// just suck it in and continue..
-  } while(pos < len);
+  }
+  // get the rest
+  if(parse_ve_pos-parse_ve_off < expr.length()) {
+    String end_chunk = expr.at(parse_ve_pos-parse_ve_off, expr.length() - (parse_ve_pos-parse_ve_off));
+    var_expr += end_chunk;
+//     cerr << "added end_chunk: " << end_chunk << endl;
+  }
+
+  parse_tmp.Reset();
+  parse_prog.ClearAll();
+
+//   cerr << "var_expr: " << var_expr << endl;
+
   return (bad_vars.size == 0);	// do we have any bad variables??
 }
 
@@ -2622,7 +2694,9 @@ void Program::Copy_(const Program& cp) {
     script->ClearAll();
     script->prog_vars.Reset();
   }
+  tags = cp.tags;
   desc = cp.desc;
+  flags = cp.flags;
   objs = cp.objs;
   types = cp.types;
   args = cp.args;

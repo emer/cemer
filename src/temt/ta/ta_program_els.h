@@ -85,9 +85,11 @@ public:
   virtual void	    	ExportToFile(ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
   virtual void	    	ExportToFileName(const String& fnm); // export script to file
   
+  override void		SetProgExprFlags();
   override String	GetDisplayName() const;
   TA_SIMPLE_BASEFUNS(UserScript);
 protected:
+  override void UpdateAfterEdit_impl();
   override const String	GenCssBody_impl(int indent_level);
 
 private:
@@ -140,6 +142,7 @@ public:
   ProgExprBase	    	iter; // the iteration operation run after each loop (e.g., increment the loop variable; 'i++')
 
   override String	GetDisplayName() const;
+  override void		SetProgExprFlags();
 
   TA_SIMPLE_BASEFUNS(ForLoop);
 protected:
@@ -149,7 +152,6 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssPost_impl(int indent_level); 
-
 private:
   void	Initialize();
   void	Destroy()	{}
@@ -485,6 +487,36 @@ public:
   TA_SIMPLE_BASEFUNS(MemberFmArg);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API MemberMethodCall: public MemberProgEl { 
+  // ##DEF_CHILD_meth_args call a method on a member of an object
+INHERITED(MemberProgEl)
+public:
+  ProgVarRef		result_var;
+  // where to store the result of the method call (optional -- can be NULL)
+  MethodDef*		method;
+  // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj->path
+  ProgArg_List		meth_args;
+  // #SHOW_TREE arguments to be passed to the method
+
+  ProgExpr		expr; // the expression to compute and assign to the member
+  bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
+  
+  override taList_impl*	children_() {return &meth_args;}	
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "Function"; }
+
+  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberMethodCall, Program);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
 private:

@@ -148,6 +148,7 @@ class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
+  String 		tags;	   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
   Doc_Group		docs; // documents, typically linked to other objects
   Wizard_Group    	wizards; // Wizards for automatically configuring simulation objects

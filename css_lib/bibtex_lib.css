@@ -129,15 +129,9 @@ public:
 };
 
 Reference::Reference() {
-//   author_ary = new String_Array;
-//   editor_ary = new String_Array;
-//   rec_locs = new int_Array;
 }
 
 Reference::~Reference() {
-//   delete author_ary;
-//   delete editor_ary;
-//   delete rec_locs;
 }
 
 void Reference::Reset() {

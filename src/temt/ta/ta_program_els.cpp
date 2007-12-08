@@ -107,10 +107,22 @@ ProgVar* ProgVars::FindVarName(const String& var_nm) const {
 //    UserScript	//
 //////////////////////////
 
+
+// todo: remove after a while (4.0.10)
+void UserScript::SetProgExprFlags() {
+  script.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  script.SetExprFlag(ProgExpr::FULL_STMT); // full statements for parsing
+}
+
 void UserScript::Initialize() {
   static String _def_user_script("// TODO: Add your CSS script code here.\n");
   script.expr = _def_user_script;
-  script.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  SetProgExprFlags();
+}
+
+void UserScript::UpdateAfterEdit_impl() {
+  SetProgExprFlags();
+  inherited::UpdateAfterEdit_impl();
 }
 
 const String UserScript::GenCssBody_impl(int indent_level) {
@@ -205,17 +217,26 @@ String DoLoop::GetDisplayName() const {
 //  ForLoop		//
 //////////////////////////
 
+// todo: remove after a while (4.0.10)
+void ForLoop::SetProgExprFlags() {
+  init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+
+  init.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing
+  iter.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);
+}
+
 void ForLoop::Initialize() {
   // the following are just default examples for the user
   init.expr = "i = 0";
   test.expr = "i < 10";
   iter.expr = "i++";
-  init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  SetProgExprFlags();
 }
 
 void ForLoop::UpdateAfterEdit_impl() {
+  SetProgExprFlags();
   inherited::UpdateAfterEdit_impl();
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
@@ -869,7 +890,8 @@ void MemberProgEl::UpdateAfterEdit_impl() {
   if(member_lookup) {
     if(!path.empty() && (path.lastchar() != '.')) path += ".";
     path += member_lookup->name;
-    if(member_lookup->type->InheritsFormal(&TA_class))
+    if(member_lookup->type->InheritsFormal(&TA_class) &&
+       !member_lookup->type->InheritsFrom(&TA_taString))
       path += ".";
     member_lookup = NULL;
   }
@@ -988,6 +1010,77 @@ String MemberFmArg::GetDisplayName() const {
   String rval;
   rval = obj->name + "->" + path + " = ";
   rval += "Arg: " + arg_name;
+  return rval;
+}
+
+//////////////////////////
+//    MemberMethodCall	//
+//////////////////////////
+
+void MemberMethodCall::Initialize() {
+  method = NULL;
+}
+
+void MemberMethodCall::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateProgVarRef_NewOwner(result_var);
+
+//  if(!taMisc::is_loading && method)
+  if (method) { // needed to set required etc.
+    if(meth_args.UpdateFromMethod(method)) { // changed
+      if(taMisc::gui_active) {
+	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+      }
+    }
+  }
+}
+
+void MemberMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckProgVarRef(result_var, quiet, rval);
+  CheckError(!method, quiet, rval, "method is NULL");
+}
+
+void MemberMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckChildConfig_impl(quiet, rval);
+  meth_args.CheckConfig(quiet, rval);
+}
+
+const String MemberMethodCall::GenCssBody_impl(int indent_level) {
+  String rval;
+  rval += cssMisc::Indent(indent_level);
+  if (!((bool)obj && method)) {
+    rval += "//WARNING: MemberMethodCall not generated here -- obj or method not specified\n";
+   return rval;
+  }
+  
+  if(result_var)
+    rval += result_var->name + " = ";
+  rval += obj->name + "->" + path + "->";
+  rval += method->name;
+  rval += meth_args.GenCssBody_impl(indent_level);
+  rval += ";\n";
+  
+  return rval;
+}
+
+String MemberMethodCall::GetDisplayName() const {
+  if (!obj || !method)
+    return "(object or method not selected)";
+  
+  String rval;
+  if(result_var)
+    rval += result_var->name + "=";
+  rval += obj->name + "->" + path + "->";
+  rval += method->name;
+  rval += "(";
+  for(int i=0;i<meth_args.size;i++) {
+    ProgArg* pa = meth_args[i];
+    if (i > 0)
+      rval += ", ";
+    rval += pa->GetDisplayName();
+  }
+  rval += ")";
   return rval;
 }
 

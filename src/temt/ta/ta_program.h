@@ -25,6 +25,9 @@
 #include "ta_def.h"
 #include "ta_TA_type.h"
 
+class cssElPtr;		// #IGNORE
+class cssSpace;		// #IGNORE
+
 // external refs
 class DataTable;
 
@@ -142,6 +145,9 @@ public:
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();
 
+  override bool		FindCheck(const String& nm) const  { return (name == nm); }
+  // don't check inherits!!!
+
   inline void 	Initialize() 			{ value = 0; }
   inline void 	Destroy()			{ };
   inline void 	Copy_(const DynEnumItem& cp)	{ value = cp.value; desc = cp.desc; }
@@ -158,7 +164,7 @@ public:
 
   virtual int	FindNumIdx(int val) const; // find index of given numerical value
   virtual int	FindNameIdx(const String& nm) const
-  { int rval=0; FindName(nm, rval); return rval;}
+  { int rval=-1; FindName(nm, rval); return rval;}
   // find index of given name value
 
   virtual void	OrderItems();
@@ -298,6 +304,8 @@ public:
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
+
+  cssEl*	parse_css_el;	// #HIDDEN #READ_ONLY #NO_SAVE css el for parsing
   
   bool			schemaChanged(); // true if schema for most recent change differed from prev change
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused
@@ -308,7 +316,13 @@ public:
   virtual const String	GenListing(bool is_arg = false, int indent_level = 0); // generate listing of program
   
   virtual cssEl*	NewCssEl();
-  // get a new cssEl of an appropriate type, name/value initialized
+  // #IGNORE get a new cssEl of an appropriate type, name/value initialized
+  virtual void		SetParseCssEl();
+  // #IGNORE set parse_css_el to NewCssEl() if NULL
+  virtual void		FreeParseCssEl();
+  // #IGNORE free parse_css_el
+  virtual void		ResetParseStuff();
+  // #IGNORE reset all parsing stuff
 
   virtual void	SetInt(int val); // set variable type to INT and set value
   virtual void	SetReal(double val);  // set variable type to REAL and set value
@@ -440,16 +454,23 @@ public:
   enum ExprFlags { // #BITS flags for program expression setting
     PE_NONE		= 0, // #NO_BIT
     NO_VAR_ERRS		= 0x0001, // do not generate error messages for variables that cannot be found (e.g., for more complex expressions that might create local variables)
+    FULL_STMT		= 0x0002, // expression is full css statement(s), not just isolated expressions -- this affects how the parsing works
+    FOR_LOOP_EXPR	= 0x0004, // expression is an initializer or increment for a for loop -- requires different parsing due to possibility of commas..
   };
 
   String	expr;		// #EDIT_DIALOG #LABEL_ enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
-  ExprFlags	flags;		// #HIDDEN Flags for controlling expression behavior
+  ExprFlags	flags;		// #HIDDEN #NO_SAVE Flags for controlling expression behavior -- should not be saved because they are set by the owning program every time
   String	var_expr;	// #READ_ONLY #HIDDEN expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
 
   ProgVarRef_List vars;		// #READ_ONLY #HIDDEN list of program variables that appear in the expression
   String_Array	var_names;	// #READ_ONLY #HIDDEN original variable names associated with vars list -- useful for user info if a variable goes out of existence..
   String_Array	bad_vars;	// #READ_ONLY #HIDDEN list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
+
+  static cssProgSpace	parse_prog; // #IGNORE program space for parsing
+  static cssSpace	parse_tmp;  // #IGNORE temporary el's created during parsing (for types)
+  int			parse_ve_off; // #IGNORE offset to position information (for expressions = 10, otherwise 0)
+  int			parse_ve_pos; // #IGNORE position within expr during parsing for copying to var_expr
 
   bool		empty() const {return expr.empty();} 
     // #IGNORE quicky test for whether has anything or not, without needing to render
@@ -458,6 +479,11 @@ public:
     
   virtual bool	SetExpr(const String& ex);
   // set to use given expression -- calls ParseExpr followed by UpdateAfterEdit_impl
+
+  static int 	cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr);
+  // external parsing function for css: pre for initial parsing
+  static int 	cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_ptr);
+  // external parsing function for css: post if nothing else gets it (bad var)
 
   virtual bool	ParseExpr();
   // parse the current expr for variables and update vars and var_expr accordingly (returns false if there are some bad_vars)
@@ -642,6 +668,9 @@ public:
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
+
+  virtual void		SetProgExprFlags() { };
+  // special temporary function to set flags for any ProgExpr objects -- needed for new css parsing and loading of old projects which saved these flags causes errors, so this fixes that.. todo: remove me after a few releases (introduced in 4.0.10)
 
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();

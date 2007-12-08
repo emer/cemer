@@ -3328,6 +3328,7 @@ void cssProgSpace::Constr() {
 
   src_ln = 0;
   src_col = 0;
+  src_pos = 0;
   list_ln = 0;
   list_n = 20;
 
@@ -3335,7 +3336,12 @@ void cssProgSpace::Constr() {
   tok_src_col = 0;
 
   parsing_command = false;
+  parse_path_expr = false;
   external_stop = false;
+
+  ext_parse_fun_pre = NULL;
+  ext_parse_fun_post = NULL;
+  ext_parse_user_data = NULL;
 
   cmd_shell = NULL;
 
@@ -3406,12 +3412,15 @@ void cssProgSpace::Reset() {
   src_list_lno.Reset();
   src_ln = 0;
   src_col = 0;
+  src_pos = 0;
   list_ln = 0;
   cur_fnm = name;
   cur_fnm_lno = 0;
   tok_src_ln = 0;
   tok_src_col = 0;
+  //  ResetParseFlags(); // can't call this here because it calls a Reset() of const expr!!!
   parsing_command = false;
+  parse_path_expr = false;
   external_stop = false;
   run_stat = cssEl::Waiting;
 }
@@ -3548,8 +3557,10 @@ int cssProgSpace::Getc() {
 	return EOF;
     }
     String& src = src_list[src_ln];
-    if(src_col < src.length())
+    if(src_col < src.length()) {
+      src_pos++;
       return (int) (src[src_col++]);
+    }
     if(src_ln < src_list.size-1) { // could have been ungot back up a line, now getting again
       src_ln++; continue;
     }
@@ -3559,12 +3570,14 @@ int cssProgSpace::Getc() {
 }
 
 int cssProgSpace::unGetc() {
+  src_pos--;
   src_col--;
   if(src_col < 0) {
     while(true) {
       src_ln--;
       if(src_ln < 0) {
 	src_col = 0;
+	src_pos = 0;
 	src_ln = 0; 
 	return EOF;
       }
@@ -4102,11 +4115,13 @@ void cssProgSpace::Undo(int st) {
 }
 
 void cssProgSpace::ResetParseFlags() {
+  parse_path_expr = false;
   parsing_command = false;
   cssMisc::CodeTop();
   cssMisc::ConstExprTop->Reset();
   cssMisc::parsing_args = false;
   cssMisc::parsing_membdefn = false;
+  cssMisc::cur_scope = NULL;
 }
 
 bool cssProgSpace::DoCompileCtrl() {
