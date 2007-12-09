@@ -129,8 +129,8 @@ public:
   cssTA_Base() 						: cssTA()	    { Constr();}
   cssTA_Base(void* it, int pc, TypeDef* td, const char* nm=NULL, cssEl* cls_par=NULL,
 	     bool ro=false) : cssTA(it,pc,td,nm,cls_par,ro)	{ Constr(); }
-  cssTA_Base(const cssTA_Base& cp)			: cssTA(cp) 	    { Constr();}
-  cssTA_Base(const cssTA_Base& cp, const char* nm)	: cssTA(cp,nm) 	    { Constr();}
+  cssTA_Base(const cssTA_Base& cp);
+  cssTA_Base(const cssTA_Base& cp, const char* nm);
   ~cssTA_Base();
 
   cssCloneOnly(cssTA_Base);

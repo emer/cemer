@@ -20,6 +20,7 @@
 #include "css_c_ptr_types.h"
 #include "css_ta.h"
 #include "ta_project.h"
+#include "ta_program_els.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -507,6 +508,11 @@ void ProgVar::InitLinks() {
   taBase::Own(object_val, this);
   taBase::Own(dyn_enum_val, this);
   inherited::InitLinks();
+  if(!taMisc::is_loading) {
+    ProgVars* pvs = GET_MY_OWNER(ProgVars);
+    if(pvs)
+      SetVarFlag(LOCAL_VAR);
+  }
 }
 
 void ProgVar::CutLinks() {
@@ -540,6 +546,11 @@ void ProgVar::Copy_(const ProgVar& cp) {
 	UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject); // only look outside of program
     }
   }
+  ProgVars* pvs = GET_MY_OWNER(ProgVars);
+  if(pvs)
+    SetVarFlag(LOCAL_VAR);
+  else
+    ClearVarFlag(LOCAL_VAR);
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
@@ -559,7 +570,17 @@ void ProgVar::UpdateAfterEdit_impl() {
       setStale();
     }
   }
-
+  ProgVars* pvs = GET_MY_OWNER(ProgVars);
+  if(pvs) {
+    SetVarFlag(LOCAL_VAR);
+    int_val = 0;
+    real_val = 0.0;
+    bool_val = false;
+    object_val = NULL;
+  }
+  else {
+    ClearVarFlag(LOCAL_VAR);
+  }
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {

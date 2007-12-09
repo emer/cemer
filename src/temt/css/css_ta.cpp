@@ -397,6 +397,30 @@ void cssTA_Base::Constr() {
   }
 }
 
+cssTA_Base::cssTA_Base(const cssTA_Base& cp) : cssTA(cp) {
+  if(ptr_cnt == 0 && ptr) {	// we copied from other guy
+    ptr = NULL;			// nullify, so it will be created in Constr()
+  }
+  Constr();
+  if(ptr_cnt == 0 && ptr && cp.ptr) {
+    taBase* obj = (taBase*)ptr;
+    taBase* oth = (taBase*)cp.ptr;
+    obj->UnSafeCopy(oth);
+  }
+}
+
+cssTA_Base::cssTA_Base(const cssTA_Base& cp, const char* nm) : cssTA(cp,nm) {
+  if(ptr_cnt == 0 && ptr) {	// we copied from other guy
+    ptr = NULL;			// nullify, so it will be created in Constr()
+  }
+  Constr();
+  if(ptr_cnt == 0 && ptr && cp.ptr) {
+    taBase* obj = (taBase*)ptr;
+    taBase* oth = (taBase*)cp.ptr;
+    obj->UnSafeCopy(oth);
+  }
+}
+
 cssTA_Base::~cssTA_Base() {
   if((ptr_cnt == 0) && ptr && (flags & OWN_OBJ)) {
     taBase* ths = (taBase*)ptr;

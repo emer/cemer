@@ -1391,11 +1391,13 @@ public:
   virtual void  LayoutUnitGroups();
   // #MENU #CONFIRM #CAT_Structure layout the unit groups according to layer group geometry and spacing
   virtual void  ConnectFrom(Layer* lay);
-  // #DYN12N #CAT_Structure connect from one or more other layers to this layer (receive from other layer(s)) -- in network view, receiver is FIRST layer selected
+  // #DYN12N #CAT_Structure connect from one or more other layers to this layer (receive from other layer(s)) -- in network view, receiver is FIRST layer selected -- makes a new projection between layers
   virtual void  ConnectBidir(Layer* lay);
-  // #DYN12N #CAT_Structure bidirectionally connect with one or more other layers to (receive from and send to other layer(s))
+  // #DYN12N #CAT_Structure bidirectionally connect with one or more other layers to (receive from and send to other layer(s)) -- makes new projections between layers
+  virtual void  ConnectSelf();
+  // #MENU #CONFIRM #CAT_Structure #MENU_CONTEXT create a new self-connection within this layer (a projection to/from this layer)
   virtual void  Connect();
-  // #MENU #CONFIRM #CAT_Structure connect the layer
+  // #MENU #CONFIRM #CAT_Structure connect the layer -- construct connections according to existing projections
   virtual bool	CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built 
   virtual bool	CheckConnect(bool quiet=false);

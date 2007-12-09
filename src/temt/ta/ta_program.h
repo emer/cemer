@@ -290,22 +290,23 @@ public:
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK		= 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
     RESULT		= 0x0008, // this is a result arg -- don't include it in the calling args
+    LOCAL_VAR		= 0x0010, // #NO_SHOW this is a local variable which does not set or update values!
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
-  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum integer value (also for enum types)
-  double	real_val;	// #CONDSHOW_ON_var_type:T_Real real value
-  String	string_val;	// #CONDSHOW_ON_var_type:T_String #EDIT_DIALOG string value
-  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool boolean value
+  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_OFF_flags:LOCAL_VAR integer value (also for enum types)
+  double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_OFF_flags:LOCAL_VAR real value
+  String	string_val;	// #CONDSHOW_ON_var_type:T_String #CONDEDIT_OFF_flags:LOCAL_VAR #EDIT_DIALOG string value
+  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_OFF_flags:LOCAL_VAR boolean value
   TypeDef*	object_type; 	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
-  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #TYPE_ON_object_type #NO_SCOPE object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
+  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_OFF_flags:LOCAL_VAR #TYPE_ON_object_type #NO_SCOPE object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
   TypeDef*	hard_enum_type;	// #APPLY_IMMED #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
-  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_ dynamic enum value
+  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #CONDEDIT_OFF_flags:LOCAL_VAR #LABEL_ dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
 
-  cssEl*	parse_css_el;	// #HIDDEN #READ_ONLY #NO_SAVE css el for parsing
+  cssEl*	parse_css_el;	// #IGNORE css el for parsing
   
   bool			schemaChanged(); // true if schema for most recent change differed from prev change
   void			Cleanup(); // #IGNORE we call this after changing value, to cleanup unused

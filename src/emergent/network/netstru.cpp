@@ -3377,16 +3377,40 @@ void Layer::DeIconify()	{
 void Layer::ConnectFrom(Layer* from_lay) {
   Network* net = GET_MY_OWNER(Network);
   if (!net) return;
-  //Projection* prjn =
-  net->FindMakePrjn(this, from_lay);
+  Projection* prjn = net->FindMakePrjn(this, from_lay);
+  if(prjn) {
+    prjn->UpdateAfterEdit();
+    if(taMisc::gui_active)
+      tabMisc::DelayedFunCall_gui(prjn, "BrowserSelectMe");
+  }
 }
 
 void Layer::ConnectBidir(Layer* from_lay) {
   Network* net = GET_MY_OWNER(Network);
   if (!net) return;
-  //Projection* prjn =
-  net->FindMakePrjn(this, from_lay);
-  net->FindMakePrjn(from_lay, this);
+  Projection* prjn = net->FindMakePrjn(this, from_lay);
+  if(prjn) {
+    prjn->UpdateAfterEdit();
+    if(taMisc::gui_active)
+      tabMisc::DelayedFunCall_gui(prjn, "BrowserSelectMe");
+  }
+  prjn = net->FindMakePrjn(from_lay, this);
+  if(prjn) {
+    prjn->UpdateAfterEdit();
+    if(taMisc::gui_active)
+      tabMisc::DelayedFunCall_gui(prjn, "BrowserSelectMe");
+  }
+}
+
+void Layer::ConnectSelf() {
+  Network* net = GET_MY_OWNER(Network);
+  if (!net) return;
+  Projection* prjn = net->FindMakeSelfPrjn(this);
+  if(prjn) {
+    prjn->UpdateAfterEdit();
+    if(taMisc::gui_active)
+      tabMisc::DelayedFunCall_gui(prjn, "BrowserSelectMe");
+  }
 }
 
 void Layer::SyncSendPrjns() {
