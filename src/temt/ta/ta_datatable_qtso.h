@@ -339,6 +339,8 @@ public:
   override void	UpdateDisplay(bool update_panel = true);
   // note: we also don't update panel if it is updating
 
+  void		ShowAllCols();
+  // #BUTTON #CONFIRM show all columns in the data table (turn their visible flags on) -- this is the only way to turn visible back on once it is turned off!
   void		SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON set the color scale spec to determine the palette of colors representing values
 

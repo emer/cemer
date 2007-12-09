@@ -1747,6 +1747,14 @@ void GridTableView::SetColorSpec(ColorScaleSpec* color_spec) {
   UpdateDisplay(true);
 }
 
+void GridTableView::ShowAllCols() {
+  for (int i = 0; i < colViewCount(); i++) {
+    GridColView* gcv = (GridColView*)colView(i);
+    gcv->visible = true;
+  }
+  UpdateDisplay(true);
+}
+
 void GridTableView::setWidth(float wdth) {
   width = wdth;
   T3GridViewNode* node_so = this->node_so();

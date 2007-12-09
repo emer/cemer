@@ -1,19 +1,5 @@
 // css code to manage bibtex entries
 
-class Spacer {
-  // #INLINE dummy class to widen out the edit dialog!
-public:
-  String	spacer_a;
-  String	spacer_b;
-  String	spacer_c;
-  String	spacer_d;
-  String	spacer_e;
-  String	spacer_f;
-  String	spacer_g;
-  String	spacer_h;
-  String	spacer_i;
-};
-
 enum BibTypes {
   ARTICLE,
   BOOK,
@@ -91,7 +77,6 @@ public:
   String	crossref;	// cross reference to another bib entry (to be avoided!!)
   String	timestamp;	// when the entry was last updated
   float		filter_score;	// automatic filtering goodness score
-  //  Spacer	spacer;		// dummy class to widen out the edit dialog
 
   void		FmBibTex(istream& strm); // read in a ref from a bibtex file
   void		ToBibTex(ostream& strm); // output ref to a bibtex file
@@ -123,16 +108,7 @@ public:
   void		TitleToArray(String_Array& ary); // get words in title to string array
 
   void		Reset();	// reset all fields
-
-  Reference();
-  ~Reference();
 };
-
-Reference::Reference() {
-}
-
-Reference::~Reference() {
-}
 
 void Reference::Reset() {
 //   bibfile = "";
