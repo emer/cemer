@@ -56,11 +56,10 @@ public:
   TA_BASEFUNS(taTime);
 };
 
-class TA_API TimeUsed : public taOBase {
+class TA_API TimeUsed : public taNBase {
   // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
-INHERITED(taOBase)
+INHERITED(taNBase)
 public:
-//  String	name;		// #NO_SHOW #NO_SAVE #READ_ONLY only for backwards compatibility for proj load, can be deleted at some point
   taTime	start;		// #HIDDEN starting time
   taTime	end;		// #HIDDEN ending time
   taTime	used;		// #HIDDEN total time used
