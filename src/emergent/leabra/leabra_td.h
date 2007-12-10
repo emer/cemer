@@ -254,7 +254,7 @@ public:
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
   void	Defaults();
 
-  TA_SIMPLE_BASEFUNS(TDRewPredLayerSpec);
+  TA_BASEFUNS_NOCOPY(TDRewPredLayerSpec);
 protected:
   void	UpdateAfterEdit_impl();
 private:

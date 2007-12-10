@@ -160,7 +160,7 @@ void LeabraNegBiasSpec::Initialize() {
 // 	TrialSynDepConSpec	//
 //////////////////////////////////
 
-void SynDepSpec::Initialize() {
+void TrialSynDepSpec::Initialize() {
   rec = 1.0f;
   depl = 1.1f;
 }
@@ -173,6 +173,36 @@ void TrialSynDepConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(syn_dep.rec <= 0.0f)	// can't go to zero!
     syn_dep.rec = 1.0f;
+}
+
+//////////////////////////////////
+// 	CycleSynDepConSpec	//
+//////////////////////////////////
+
+void CycleSynDepSpec::Initialize() {
+  rec = 0.01f;
+  asymp_act = 0.4f;
+  depl = rec * (1.0f - asymp_act); // here the drive is constant
+}
+
+void CycleSynDepSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  if(rec < .00001f) rec = .00001f;
+  // chg = rec * (1 - cur) - dep * drive = 0; // equilibrium point
+  // rec * (1 - cur) = dep * drive
+  // dep = rec * (1 - cur) / drive
+  depl = rec * (1.0f - asymp_act); // here the drive is constant
+  depl = MAX(depl, 0.0f);
+}
+
+void CycleSynDepConSpec::Initialize() {
+  min_obj_type = &TA_CycleSynDepCon;
+}
+
+void CycleSynDepConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  syn_dep.UpdateAfterEdit();
 }
 
 //////////////////////////////////

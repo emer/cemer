@@ -5,4 +5,5 @@ emergent_TA_type.h
 ./leabra_td.h
 ./leabra_pvlv.h
 ./leabra_pbwm.h
+./leabra_ct.h
 ./leabra_v3_compat.h

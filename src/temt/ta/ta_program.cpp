@@ -1687,13 +1687,11 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
     pv =targ.FastEl(ti);
     FindName(pv->name, i);
     if (i < 0) {
-      if (!(pv->flags & ProgVar::RESULT)) {
-        pa = new ProgArg();
-        pa->name = pv->name;
-        pa->UpdateFromVar(*pv);
-        Insert(pa, ti);
-        any_changes = true;
-      }
+      pa = new ProgArg();
+      pa->name = pv->name;
+      pa->UpdateFromVar(*pv);
+      Insert(pa, ti);
+      any_changes = true;
     } else if (i != ti) {
       MoveIdx(i, ti);
       any_changes = true;

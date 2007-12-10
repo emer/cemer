@@ -13,6 +13,7 @@ TAHEADS =\
 	leabra_td.h \
 	leabra_pvlv.h \
 	leabra_pbwm.h \
+	leabra_ct.h \
 	leabra_v3_compat.h
 
 HEADS=\
@@ -21,6 +22,7 @@ HEADS=\
 	leabra_td.h \
 	leabra_pvlv.h \
 	leabra_pbwm.h \
+	leabra_ct.h \
 	leabra_v3_compat.h
 
 SRCS=\
@@ -29,6 +31,7 @@ SRCS=\
 	leabra_td.cpp \
 	leabra_pvlv.cpp \
 	leabra_pbwm.cpp \
+	leabra_ct.cpp \
 	leabra_v3_compat.cpp
 
 include_HEADERS = $(HEADS) $(TAHEADS) leabra_TA_type.h leabra_TA_inst.h

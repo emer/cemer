@@ -139,6 +139,9 @@ private:
   void	Destroy()		{ };
 };
 
+//////////////////////////////////////////
+// 	Synaptic Depression: Trial Level
+
 class LEABRA_API TrialSynDepCon : public LeabraCon {
   // synaptic depression connection at the trial level (as opposed to cycle level)
 INHERITED(LeabraCon)
@@ -148,15 +151,15 @@ public:
   TrialSynDepCon() { effwt = 0.0f; }
 };
 
-class LEABRA_API SynDepSpec : public taBase {
+class LEABRA_API TrialSynDepSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
 INHERITED(taBase)
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
 
-  SIMPLE_COPY(SynDepSpec);
-  TA_BASEFUNS(SynDepSpec);
+  SIMPLE_COPY(TrialSynDepSpec);
+  TA_BASEFUNS(TrialSynDepSpec);
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -166,7 +169,7 @@ class LEABRA_API TrialSynDepConSpec : public LeabraConSpec {
   // synaptic depression connection at the trial level (as opposed to cycle level)
 INHERITED(LeabraConSpec)
 public:
-  SynDepSpec	syn_dep;	// synaptic depression specifications
+  TrialSynDepSpec	syn_dep;	// synaptic depression specifications
 
   void C_Depress_Wt(TrialSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
     // NOTE: fctn of sender act and wt: could be just sender or sender*recv.. 
@@ -224,43 +227,60 @@ public:
     CON_GROUP_LOOP(cg, rval += C_Compute_Netin((TrialSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
-  void C_Send_Inhib(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    ru->gc.i += ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act * cn->effwt;
+  void C_Send_Inhib(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->gc.i += su_act_eff * cn->effwt;
   }
   void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su) {
-    CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
-  void C_Send_Netin(LeabraSendCons* cg, TrialSynDepCon* cn, Unit* ru, Unit* su) {
-    ru->net += ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act * cn->effwt;
+  void C_Send_Netin(LeabraSendCons* cg, TrialSynDepCon* cn, Unit* ru, float su_act_eff) {
+    ru->net += su_act_eff * cn->effwt;
   }
   void Send_Netin(SendCons* cg, Unit* su) {
-    if(inhib)
-      Send_Inhib((LeabraSendCons*)cg, (LeabraUnit*)su);
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    }
     else {
-      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (TrialSynDepCon*)cg->Cn(i), cg->Un(i), su));
+      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (TrialSynDepCon*)cg->Cn(i), cg->Un(i), su_act_eff));
     }
   }
-  void C_Send_InhibDelta(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    ru->g_i_delta += ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta * cn->effwt;
+
+  void C_Send_InhibDelta(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += su_act_delta_eff * cn->effwt;
   }
   void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su) {
-    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
   }
-  void C_Send_NetinDelta(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    ru->net_delta += ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta * cn->effwt;
+  void C_Send_NetinDelta(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += su_act_delta_eff * cn->effwt;
   }
   void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
-    if(inhib)
-      Send_InhibDelta(cg, su);
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
     else {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
     }
   }
-  void C_Send_ClampNet(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    ru->clmp_net += ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act * cn->effwt;
+  void C_Send_ClampNet(LeabraSendCons* cg, TrialSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->clmp_net += su_act_eff * cn->effwt;
   }
   void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
-    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su));
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (TrialSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
 
   TA_SIMPLE_BASEFUNS(TrialSynDepConSpec);
@@ -271,6 +291,147 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
+//////////////////////////////////////////
+//      Synaptic Depression: Cycle Level
+
+class LEABRA_API CycleSynDepCon : public LeabraCon {
+  // synaptic depression connection at the trial level (as opposed to cycle level)
+INHERITED(LeabraCon)
+public:
+  float		effwt;		// #NO_SAVE effective weight value (can be depressed) -- used for sending ativation
+
+  CycleSynDepCon() { effwt = 0.0f; }
+};
+
+class LEABRA_API CycleSynDepSpec : public taBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
+INHERITED(taBase)
+public:
+  float		rec;		// #DEF_0.01 rate of recovery from depression
+  float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
+  float		depl;		// #READ_ONLY #SHOW rate of depletion of synaptic efficacy as a function of sender-receiver activations (computed from rec, asymp_act)
+
+  inline void	Depress(float& effwt, float wt, float ru_act, float su_act) {
+    float drive = ru_act * su_act * effwt;
+    float deff = rec * (1.0f - effwt) - depl * drive;
+    effwt += deff;
+    if(effwt > wt) effwt = wt;
+    if(effwt < 0.0f) effwt = 0.0f;
+  }
+
+  SIMPLE_COPY(CycleSynDepSpec);
+  TA_BASEFUNS(CycleSynDepSpec);
+protected:
+  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CycleSynDepConSpec : public LeabraConSpec {
+  // synaptic depression connection at the trial level (as opposed to cycle level)
+INHERITED(LeabraConSpec)
+public:
+  CycleSynDepSpec	syn_dep;	// synaptic depression specifications
+
+  void C_Depress_Wt(CycleSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    syn_dep.Depress(cn->effwt, cn->wt, ru->act_eq, su->act_eq);
+  }
+  virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
+    CON_GROUP_LOOP(cg, C_Depress_Wt((CycleSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+  }
+
+  void C_Reset_EffWt(CycleSynDepCon* cn) {
+    cn->effwt = cn->wt;
+  }
+  virtual void Reset_EffWt(LeabraRecvCons* cg) {
+    CON_GROUP_LOOP(cg, C_Reset_EffWt((CycleSynDepCon*)cg->Cn(i)));
+  }
+  virtual void Reset_EffWt(LeabraSendCons* cg) {
+    CON_GROUP_LOOP(cg, C_Reset_EffWt((CycleSynDepCon*)cg->Cn(i)));
+  }
+
+  void 	C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+    CycleSynDepCon* lcn = (CycleSynDepCon*)cn; lcn->effwt = lcn->wt;
+  }
+
+  float C_Compute_Netin(CycleSynDepCon* cn, Unit*, Unit* su) {
+    return cn->effwt * su->act;
+  }
+  float Compute_Netin(RecvCons* cg, Unit* ru) {
+    float rval=0.0f;
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CycleSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
+    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  }
+  void C_Send_Inhib(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->gc.i += su_act_eff * cn->effwt;
+  }
+  void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su) {
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+  }
+  void C_Send_Netin(LeabraSendCons* cg, CycleSynDepCon* cn, Unit* ru, float su_act_eff) {
+    ru->net += su_act_eff * cn->effwt;
+  }
+  void Send_Netin(SendCons* cg, Unit* su) {
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (CycleSynDepCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+    }
+  }
+
+  void C_Send_InhibDelta(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += su_act_delta_eff * cn->effwt;
+  }
+  void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su) {
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+  }
+  void C_Send_NetinDelta(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += su_act_delta_eff * cn->effwt;
+  }
+  void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+  }
+  void C_Send_ClampNet(LeabraSendCons* cg, CycleSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->clmp_net += su_act_eff * cn->effwt;
+  }
+  void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (CycleSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+  }
+
+  TA_SIMPLE_BASEFUNS(CycleSynDepConSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+/////////////////////////////////////////////////
+//		Fast Weights
 
 class LEABRA_API FastWtCon : public LeabraCon {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value

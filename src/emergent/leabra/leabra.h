@@ -1776,8 +1776,9 @@ void LeabraConSpec::Send_Netin(SendCons* cg, Unit* su) {
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
   float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
-  if(inhib)
+  if(inhib) {
     CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+  }
   else {
     CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (LeabraCon*)cg->Cn(i), cg->Un(i), su_act_eff));
   }
@@ -1801,8 +1802,9 @@ void LeabraConSpec::C_Send_NetinDelta(LeabraSendCons*, LeabraCon* cn, LeabraUnit
 void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
   Unit* ru = cg->Un(0);
   float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
-  if(inhib)
+  if(inhib) {
     CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+  }
   else {
     CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
   }
