@@ -311,6 +311,11 @@ void LayerWriter::AutoConfig(bool reset_existing) {
 
 bool LayerWriter::ApplyInputData() {
   if(!data || !network) return false;
+  if(TestError(!data->ReadAvailable(), "ApplyInputData",
+	       "data not available for reading from datatable:", data->GetName(),
+	       "you must perform a ReadItem or ReadFirst/Next on data to select row to read input patterns from (std Epoch program does this in NetDataLoop)")) {
+    return false;
+  }
   bool rval = true;
   for (int i = 0; i < layer_data.size; ++i) {
     LayerWriterEl* lw = (LayerWriterEl*)layer_data.FastEl(i);

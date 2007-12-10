@@ -884,7 +884,7 @@ taMatrix* DataTable::GetMatrixData_impl(int chan) {
   int i;
   if(TestError(!da->is_matrix, "GetMatrixData_impl", "column is not a matrix")) return NULL;
   if(TestError(!idx(rd_itr, da->rows(), i), "GetMatrixData_impl",
-	       "read index is out of range")) return NULL;
+	       "read index is out of range -- need to set with ReadItem or ReadFirst/Next")) return NULL;
   return da->AR()->GetFrameSlice_(i);
 }
 
