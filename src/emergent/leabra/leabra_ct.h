@@ -54,13 +54,15 @@ class LEABRA_API CtLeabraConSpec : public CycleSynDepConSpec {
   // continuous time leabra con spec: most abstract version of continous time
 INHERITED(CycleSynDepConSpec)
 public:
+  bool		avg_srp_dwt;	// use average send-recv product over interval for dwt (else just use snapshot activations at end of each phase)
 
   inline void C_Compute_Srp(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     cn->srp_p += su->act_eq * ru->act_eq;
   }
 
   inline void C_Compute_CtCycle(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    C_Compute_Srp(cn, ru, su);
+    if(avg_srp_dwt)
+      C_Compute_Srp(cn, ru, su);
     C_Depress_Wt(cn, ru, su);
   }
 
@@ -71,19 +73,8 @@ public:
   
   // todo: hebbian is all whacky now too.
 
-  inline float C_Compute_Err(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su, float srp_norm) {
-    cn->srp_p *= srp_norm;
-    float err = cn->srp_p - cn->srp_m;
-    // now update for next phase..
-    cn->srp_m = cn->srp_p;
-    cn->srp_p = 0.0f;
-    // wt is negative in linear form, so using opposite sign of usual here
-    if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f + cn->wt);
-      else		err *= -cn->wt;	
-    }
-    return err;
-  }
+  inline float C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su,
+			     float srp_norm);
 
   inline void Compute_dWt(RecvCons* cg, Unit* ru);
 
@@ -147,6 +138,8 @@ INHERITED(DaModUnitSpec)
 public:
   virtual void 	Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute one cycle of continuous time processing
+  virtual void 	Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
 
   override void Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
 
@@ -163,6 +156,9 @@ public:
   void		Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net)
   { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_CtCycle(this, lay, net); }
   // #CAT_Learning compute one cycle of continuous time processing
+  void		Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net)
+  { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_ActMP(this, lay, net); }
+  // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraUnit);
 private:
@@ -180,6 +176,9 @@ class LEABRA_API CtLeabraLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   virtual void 	Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute one cycle of continuous time processing
+  virtual void 	Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraLayerSpec);
 // protected:
@@ -195,6 +194,10 @@ INHERITED(LeabraLayer)
 public:
   void 	Compute_CtCycle(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_CtCycle(this, net); };
+  // #CAT_Learning compute one cycle of continuous time processing
+  void 	Compute_ActMP(CtLeabraNetwork* net) 
+  { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_ActMP(this, net); };
+  // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraLayer);
 private:
@@ -218,6 +221,11 @@ public:
   // #CAT_Cycle compute one cycle of continuous-time processing, after activations are updated
   override void	Cycle_Run();
 
+  virtual void 	Compute_ActMP() ;
+  // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
+
+  override void	SetProjectionDefaultTypes(Projection* prjn);
+
   TA_SIMPLE_BASEFUNS(CtLeabraNetwork);
 protected:
   void	UpdateAfterEdit_impl();
@@ -230,26 +238,41 @@ private:
 /////////////////////////////////////////////////
 //		Inlines
 
+inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su, float srp_norm) {
+  float err;
+  if(avg_srp_dwt) {
+    cn->srp_p *= srp_norm;
+    err = cn->srp_p - cn->srp_m;
+    // now update for next phase..
+    cn->srp_m = cn->srp_p;
+    cn->srp_p = 0.0f;
+  }
+  else {
+    err = (ru->p_act_p * su->p_act_p) - (ru->p_act_m * su->p_act_m);
+  }
+  // wt is negative in linear form, so using opposite sign of usual here
+  if(lmix.err_sb) {
+    if(err > 0.0f)	err *= (1.0f + cn->wt);
+    else		err *= -cn->wt;	
+  }
+  return err;
+}
+
 inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  LeabraUnit* lru = (LeabraUnit*)ru;
+  CtLeabraUnit* lru = (CtLeabraUnit*)ru;
   LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
   Compute_SAvgCor(lcg, lru);
   LeabraLayer* slay = (LeabraLayer*)cg->prjn->from.ptr();
   float srp_norm = ((CtLeabraNetwork*)slay->own_net)->srp_norm; // NOTE: must be Ct Net!
-  if(slay->acts_p.avg >= savg_cor.thresh) {
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
-      if(!(su->in_subgp &&
-	   (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	float orig_wt = cn->wt;
-	C_Compute_LinFmWt(lcg, cn); // get weight into linear form
-	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-		      C_Compute_Err(cn, lru, su, srp_norm));  
-	cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
-      }
-    }
+  for(int i=0; i<cg->cons.size; i++) {
+    CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
+    CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
+    float orig_wt = cn->wt;
+    C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+    C_Compute_dWt(cn, lru, 
+		  C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
+		  C_Compute_Err(cn, lru, su, srp_norm));  
+    cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
   }
 }
 

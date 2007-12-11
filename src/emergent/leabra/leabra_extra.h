@@ -314,7 +314,7 @@ public:
 
   inline void	Depress(float& effwt, float wt, float ru_act, float su_act) {
     float drive = ru_act * su_act * effwt;
-    float deff = rec * (1.0f - effwt) - depl * drive;
+    float deff = rec * (wt - effwt) - depl * drive;
     effwt += deff;
     if(effwt > wt) effwt = wt;
     if(effwt < 0.0f) effwt = 0.0f;
