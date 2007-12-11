@@ -98,11 +98,15 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [1] {
     Program @[0] { 
+      ProgObjList @.objs = [1] {
+	Relation @[0] { };
+      };
+
       ProgVar_List @.args = [1] {
 	ProgVar @[0] { };
       };
 
-      ProgVar_List @.vars = [11] {
+      ProgVar_List @.vars = [12] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
@@ -114,6 +118,7 @@ LeabraProject .projects[0] {
 	ProgVar @[8] { };
 	ProgVar @[9] { };
 	ProgVar @[10] { };
+	ProgVar @[11] { };
       };
 
       ProgEl_List @.prog_code = [26] {
@@ -278,6 +283,7 @@ LeabraProject .projects[0] {
 LeabraProject .projects[0] {
  name="Project_0";
  desc=;
+ tags=;
  templates {
   name=;
   el_typ=taBase;
@@ -697,8 +703,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
    flags=STARTUP_RUN;
    objs {
     name=;
-    el_typ=taNBase;
+    el_typ=Relation;
     el_def=0;
+    Relation @[0] {name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: };
    };
    types {
     name=;
@@ -736,7 +743,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      int_val=14;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
-     desc="width of the smoothing gaussian kernel for smoothing the epoch data";
+     desc=;
     };
     ProgVar @[2] {
      name="kern_sig";
@@ -744,7 +751,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      real_val=7;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
-     desc="sigma (standard deviation) of the gaussian smoothing kernel";
+     desc=;
     };
     ProgVar @[3] {
      name="EpochData";
@@ -814,6 +821,15 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      flags=NULL_CHECK;
      desc="pointer to ourself so we can set our own variables from startup args";
     };
+    ProgVar @[11] {
+     name="rel";
+     var_type=T_Object;
+     object_type=Relation;
+     object_val=.projects[0].programs[0].objs[0]$4$;
+     objs_ptr=1;
+     flags=CTRL_PANEL|NULL_CHECK;
+     desc=;
+    };
    };
    functions {
     name=;
@@ -856,7 +872,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="\"\"";
        expr {
 	expr="\"logfile=\"";
-	flags=;
 	var_expr="\"logfile=\"";
 	vars {
 	};
@@ -872,7 +887,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="\"\"";
        expr {
 	expr="\"LogFile\"";
-	flags=;
 	var_expr="\"LogFile\"";
 	vars {
 	};
@@ -900,7 +914,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="\"\"";
        expr {
 	expr="\"log=\"";
-	flags=;
 	var_expr="\"log=\"";
 	vars {
 	};
@@ -916,7 +929,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="\"\"";
        expr {
 	expr="\"LogFile\"";
-	flags=;
 	var_expr="\"LogFile\"";
 	vars {
 	};
@@ -944,7 +956,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="\"\"";
        expr {
 	expr="\"err_thresh=\"";
-	flags=;
 	var_expr="\"err_thresh=\"";
 	vars {
 	};
@@ -960,7 +971,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="\"\"";
        expr {
 	expr="\"ErrThresh\"";
-	flags=;
 	var_expr="\"ErrThresh\"";
 	vars {
 	};
@@ -986,7 +996,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[10]$4$;
+     obj=.projects[0].programs[0].vars[10]$5$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -1000,7 +1010,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="\"LogFile\"";
-	flags=;
 	var_expr="\"LogFile\"";
 	vars {
 	};
@@ -1016,7 +1025,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="\"log_fname\"";
-	flags=;
 	var_expr="\"log_fname\"";
 	vars {
 	};
@@ -1032,7 +1040,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="false";
        expr {
 	expr="true";
-	flags=;
 	var_expr="true";
 	vars {
 	};
@@ -1046,7 +1053,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=$4$;
+     obj=$5$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -1060,7 +1067,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="\"ErrThresh\"";
-	flags=;
 	var_expr="\"ErrThresh\"";
 	vars {
 	};
@@ -1076,7 +1082,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="\"err_thresh\"";
-	flags=;
 	var_expr="\"err_thresh\"";
 	vars {
 	};
@@ -1092,7 +1097,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="false";
        expr {
 	expr="true";
-	flags=;
 	var_expr="true";
 	vars {
 	};
@@ -1110,7 +1114,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[3]$5$;
+     obj=.projects[0].programs[0].vars[3]$6$;
      method=DataTable::RemoveAllRows;
      meth_args {
       name=;
@@ -1122,7 +1126,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=$5$;
+     obj=$6$;
      method=DataTable::LoadData;
      meth_args {
       name=;
@@ -1136,7 +1140,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="log_fname";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1152,7 +1155,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="DataTable::TAB";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1168,7 +1170,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="true";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1184,7 +1185,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val="-1";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1197,8 +1197,8 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     DataGroupProg @[10] {
      desc=;
      flags=;
-     src_data_var=$5$;
-     dest_data_var=.projects[0].programs[0].vars[4]$6$;
+     src_data_var=$6$;
+     dest_data_var=.projects[0].programs[0].vars[4]$7$;
      group_spec {
       name="group_spec";
       ops {
@@ -1215,7 +1215,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        };
        DataGroupEl @[2] {
 	col_name="cnt_err";
-	agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[0].vars[0]$7$: }: };
+	agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[0].vars[0]$8$: }: };
        };
        DataGroupEl @[3] {
 	col_name="cnt_err";
@@ -1229,7 +1229,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      flags=;
      expr {
       expr="\"=====================\\n\" << \"Epochs to criterion:\"";
-      flags=;
       var_expr="\"=====================\\n\" << \"Epochs to criterion:\"";
       vars {
       };
@@ -1240,8 +1239,8 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     MethodCall @[12] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[5]$8$;
-     obj=$6$;
+     result_var=.projects[0].programs[0].vars[5]$9$;
+     obj=$7$;
      method=DataTable::ColStats;
      meth_args {
       name=;
@@ -1255,7 +1254,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="EpochData_Group.data.epoch_last";
-	flags=;
 	var_expr="$#0#$.data.epoch_last";
 	vars {
 	};
@@ -1269,7 +1267,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      message=;
-     print_var=$8$;
+     print_var=$9$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -1279,7 +1277,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     MathCall @[14] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[7]$9$;
+     result_var=.projects[0].programs[0].vars[7]$10$;
      object_type=taMath_float;
      method=taMath_float::vec_max;
      meth_args {
@@ -1294,7 +1292,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="EpochData_Group.data.epoch_last.ar";
-	flags=;
 	var_expr="$#0#$.data.epoch_last.ar";
 	vars {
 	};
@@ -1310,7 +1307,6 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        def_val=;
        expr {
 	expr="max_idx";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1324,17 +1320,16 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      script {
-      expr="Relation rel;  rel.rel = Relation::EQUAL; rel.val = max_val;
+      expr="rel.rel = Relation::EQUAL; rel.val = max_val;
 cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_last.ar, rel) << endl;
 ";
-      flags=NO_VAR_ERRS;
-      var_expr="Relation rel;  rel.rel = Relation::EQUAL; rel.val = $#0#$;
-cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_last.ar, rel) << endl;
+      var_expr="$#0#$.rel = Relation::EQUAL; $#0#$.val = $#1#$;
+cerr << \"N at Max: \" << taMath_float::vec_count($#2#$.data.epoch_last.ar, $#0#$) << endl;
 ";
       vars {
       };
-      var_names{ max_val;      };
-      bad_vars{ rel;      };
+      var_names{ rel;max_val;EpochData_Group;      };
+      bad_vars{       };
      };
     };
     PrintExpr @[16] {
@@ -1342,19 +1337,18 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
      flags=;
      expr {
       expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
-      flags=;
-      var_expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
+      var_expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << $#0#$";
       vars {
       };
-      var_names{       };
+      var_names{ err_thresh;      };
       bad_vars{       };
      };
     };
     MethodCall @[17] {
      desc=;
      flags=;
-     result_var=$8$;
-     obj=$6$;
+     result_var=$9$;
+     obj=$7$;
      method=DataTable::ColStats;
      meth_args {
       name=;
@@ -1368,7 +1362,6 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
        def_val=;
        expr {
 	expr="EpochData_Group.data.cnt_err_find_first";
-	flags=;
 	var_expr="$#0#$.data.cnt_err_find_first";
 	vars {
 	};
@@ -1382,7 +1375,7 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
      desc=;
      flags=;
      message=;
-     print_var=$8$;
+     print_var=$9$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -1393,17 +1386,18 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
      desc=;
      flags=;
      script {
-      expr="rel.rel = Relation::EQUAL; rel.val = -1;
-cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl;
+      expr="rel.rel = Relation::EQUAL;
+rel.val = -1;
+cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl; 
 ";
-      flags=NO_VAR_ERRS;
-      var_expr="rel.rel = Relation::EQUAL; rel.val = -1;
-cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl;
+      var_expr="$#0#$.rel = Relation::EQUAL;
+$#0#$.val = -1;
+cerr << \"N failed: \" << taMath_float::vec_count($#1#$.data.cnt_err_find_first.ar, $#0#$) << endl; 
 ";
       vars {
       };
-      var_names{       };
-      bad_vars{ rel;      };
+      var_names{ rel;EpochData_Group;      };
+      bad_vars{       };
      };
     };
     PrintExpr @[20] {
@@ -1411,7 +1405,6 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
      flags=;
      expr {
       expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
-      flags=;
       var_expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
       vars {
       };
@@ -1422,8 +1415,8 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
     MethodCall @[21] {
      desc=;
      flags=;
-     result_var=$8$;
-     obj=$6$;
+     result_var=$9$;
+     obj=$7$;
      method=DataTable::ColStats;
      meth_args {
       name=;
@@ -1437,7 +1430,6 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
        def_val=;
        expr {
 	expr="EpochData_Group.data.cnt_err_min";
-	flags=;
 	var_expr="$#0#$.data.cnt_err_min";
 	vars {
 	};
@@ -1451,7 +1443,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
      desc=;
      flags=;
      message=;
-     print_var=$8$;
+     print_var=$9$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -1461,7 +1453,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
     MathCall @[23] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[8]$10$;
+     result_var=.projects[0].programs[0].vars[8]$11$;
      object_type=taMath_float;
      method=taMath_float::vec_min;
      meth_args {
@@ -1476,7 +1468,6 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
        def_val=;
        expr {
 	expr="EpochData_Group.data.cnt_err_min.ar";
-	flags=;
 	var_expr="$#0#$.data.cnt_err_min.ar";
 	vars {
 	};
@@ -1492,7 +1483,6 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
        def_val=;
        expr {
 	expr="max_idx";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1509,14 +1499,13 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
       expr="rel.rel = Relation::EQUAL; rel.val = min_val;
 cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_min.ar, rel) << endl;
 ";
-      flags=NO_VAR_ERRS;
       var_expr="rel.rel = Relation::EQUAL; rel.val = $#0#$;
-cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_min.ar, rel) << endl;
+cerr << \"N at Min: \" << taMath_float::vec_count($#1#$.data.cnt_err_min.ar, rel) << endl;
 ";
       vars {
       };
-      var_names{ min_val;      };
-      bad_vars{ rel;      };
+      var_names{ min_val;EpochData_Group;      };
+      bad_vars{ rel;EQUAL;val;      };
      };
     };
     DataAnalCall @[25] {
@@ -1537,7 +1526,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val=;
        expr {
 	expr="EpochData_SmoothGauss";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1553,7 +1541,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val=;
        expr {
 	expr="false";
-	flags=;
 	var_expr="false";
 	vars {
 	};
@@ -1569,7 +1556,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val=;
        expr {
 	expr="EpochData";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1585,7 +1571,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val=;
        expr {
 	expr="kern_width";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1601,7 +1586,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val=;
        expr {
 	expr="kern_sig";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -1617,7 +1601,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val="true";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1633,7 +1616,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val="true";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1649,7 +1631,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val="true";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1665,7 +1646,6 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
        def_val="true";
        expr {
 	expr=;
-	flags=;
 	var_expr=;
 	vars {
 	};
@@ -1683,10 +1663,11 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$11$;
+   m_data=.projects[0]$12$;
    name=;
    visible=1;
    m_is_root=0;
+   m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
    m_is_dialog=0;
    toolbars {
@@ -1712,7 +1693,7 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$11$;
+     m_root=$12$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -1746,7 +1727,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data[0].data[0]$12$;
+	    m_data=.projects[0].data[0].data[0]$13$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -1754,7 +1735,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data[0].data[1]$13$;
+	    m_data=.projects[0].data[0].data[1]$14$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -1762,7 +1743,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data[0].data[2]$14$;
+	    m_data=.projects[0].data[0].data[2]$15$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -1770,7 +1751,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data[0].data[3]$15$;
+	    m_data=.projects[0].data[0].data[3]$16$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -1778,7 +1759,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data[0].data[4]$16$;
+	    m_data=.projects[0].data[0].data[4]$17$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
@@ -1786,7 +1767,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data[0].data[5]$17$;
+	    m_data=.projects[0].data[0].data[5]$18$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -1794,7 +1775,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data[0].data[6]$18$;
+	    m_data=.projects[0].data[0].data[6]$19$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -1802,7 +1783,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data[0].data[7]$19$;
+	    m_data=.projects[0].data[0].data[7]$20$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -2034,7 +2015,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$20$;
+	   spec=.colorspecs[0]$21$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -2084,7 +2065,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[2][1].data[0]$21$;
+	    m_data=.projects[0].data.gp[2][1].data[0]$22$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -2092,7 +2073,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[2][1].data[1]$22$;
+	    m_data=.projects[0].data.gp[2][1].data[1]$23$;
 	    m_transform=NULL;
 	    name="epoch";
 	    visible=1;
@@ -2100,7 +2081,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[2][1].data[2]$23$;
+	    m_data=.projects[0].data.gp[2][1].data[2]$24$;
 	    m_transform=NULL;
 	    name="avg_sse";
 	    visible=1;
@@ -2108,7 +2089,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[2][1].data[3]$24$;
+	    m_data=.projects[0].data.gp[2][1].data[3]$25$;
 	    m_transform=NULL;
 	    name="cnt_err";
 	    visible=1;
@@ -2116,7 +2097,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[2][1].data[4]$25$;
+	    m_data=.projects[0].data.gp[2][1].data[4]$26$;
 	    m_transform=NULL;
 	    name="avg_ext_rew";
 	    visible=1;
@@ -2124,7 +2105,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[2][1].data[5]$26$;
+	    m_data=.projects[0].data.gp[2][1].data[5]$27$;
 	    m_transform=NULL;
 	    name="avg_cycles";
 	    visible=1;
@@ -2132,7 +2113,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[2][1].data[6]$27$;
+	    m_data=.projects[0].data.gp[2][1].data[6]$28$;
 	    m_transform=NULL;
 	    name="epoch_time_tot";
 	    visible=1;
@@ -2140,7 +2121,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[2][1].data[7]$28$;
+	    m_data=.projects[0].data.gp[2][1].data[7]$29$;
 	    m_transform=NULL;
 	    name="epoch_time_usr";
 	    visible=1;
@@ -2372,7 +2353,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$20$;
+	   spec=$21$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
