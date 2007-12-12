@@ -27,7 +27,6 @@
 
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
-  avg_srp_dwt = false;
   savg_cor.thresh = -1.0f;
 }
 
@@ -60,23 +59,12 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_CtCycle(u);
   }
-  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_CtCycle((CtLeabraCon*)u->bias.Cn(0), u);
+  //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_CtCycle((CtLeabraCon*)u->bias.Cn(0), u);
 }
 
 void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
   u->p_act_m = u->p_act_p;	// update activations for learning
   u->p_act_p = u->act_eq;
-}
-
-void CtLeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  // don't adapt bias weights on clamped inputs..: why?  what possible consequence could it have!?
-  // furthermore: it is not right for units that are clamped in 2nd plus phase!
-  //  if(!((u->ext_flag & Unit::EXT) && !(u->ext_flag & Unit::TARG))) {
-
-  float srp_norm = ((CtLeabraNetwork*)net)->srp_norm;
-  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWt_Ct((CtLeabraCon*)u->bias.Cn(0), u, srp_norm);
-    //  }
-  UnitSpec::Compute_dWt(u);
 }
 
 //////////////////////////////////
@@ -121,12 +109,10 @@ void CtLeabraLayerSpec::Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net) 
 void CtLeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_CtLeabraLayer);
   cycles_per_tick = 10;
-  srp_norm = 1.0f / (float)cycles_per_tick;
 }
 
 void CtLeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  srp_norm = 1.0f / (float)cycles_per_tick;
 }
 
 void CtLeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -169,6 +155,3 @@ void CtLeabraNetwork::Compute_ActMP() {
 ////////////////////////////////////////////////
 //		TODO
 
-// 1. Need CtLeabraPrjn or something to get types for prjns -- is this in network?
-//    auto-creating didn't work!
-// 2. can't set the CtLeabraBiasSpec in UnitSpec.

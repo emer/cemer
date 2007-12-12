@@ -2446,7 +2446,8 @@ void Projection::Copy_(const Projection& cp) {
 
 void Projection::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  SetFrom();
+  if(!taMisc::is_loading)
+    SetFrom();
 
   if((bool)from) {
     Network* mynet = GET_MY_OWNER(Network);
@@ -2463,10 +2464,8 @@ void Projection::UpdateAfterEdit_impl() {
 	SetFrom();
       }
     }
-  }
-
-  if((bool)from)
     name = "Fm_" + from->name;
+  }
 
   UpdateConSpecs((bool)taMisc::is_loading);
 //   if(taMisc::is_loading) return;
