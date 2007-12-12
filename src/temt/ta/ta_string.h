@@ -369,7 +369,8 @@ public:
   char&			operator [] (int i); // writable -- NOTE: every use calls makeUnique
   char			elem(int i) const; // get the character at index i
   char			firstchar() const {return mrep->s[0];} // get the first character, '\0 if empty
-  char			lastchar() const {return mrep->s[mrep->len - 1];}  // get the last character; '\0 if empty
+  char			lastchar() const 
+    {if (mrep->len) return mrep->s[mrep->len - 1]; else return '\0';}  // get the last character; '\0 if empty
   
 // conversion
   operator const char*() const {return mrep->s;}

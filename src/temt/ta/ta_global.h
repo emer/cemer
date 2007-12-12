@@ -22,9 +22,9 @@
 #include "config.h"
 
 #ifndef __MAKETA__
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+# include <stdlib.h>
+# include <string.h>
+# include <limits.h>
 #endif
 
 // Qt includes -- we typically only don't include Qt when building maketa, otherwise,
@@ -36,12 +36,11 @@
 
 //NOTE: qconfig.h has the endianness and ptr size, but no dependencies, and
 // no Qt-dependencies
-//TODO: longer-term, we should push these into our config.h
-//#include <qconfig.h>
+#include <qconfig.h>
 // define our own versions of stuff we need from qconfig.h, so remainder
 // of the file is independent of that stuff
 #define TA_LARGEFILE_SUPPORT QT_LARGEFILE_SUPPORT // usually 64
-#define TA_POINTER_SIZE 4 // QT_POINTER_SIZE // 4 or 8, all use MUST error if not 4/8
+#define TA_POINTER_SIZE  QT_POINTER_SIZE // 4 or 8, all use MUST error if not 4/8
 // byte order -- note, rarely used, primarily to optimize placement of rgb
 // 
 #define TA_BIG_ENDIAN Q_BIG_ENDIAN

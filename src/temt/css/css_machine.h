@@ -491,8 +491,8 @@ public:
   virtual Variant GetVar() const 		{ return _nilVariant; }
   virtual operator Real() const	 		{ return 0; }
   virtual operator Int() const	 		{ return 0; }
-  virtual operator int64_t() const	 	{ return 0LL; }
-  virtual operator uint64_t() const	 	{ return 0ULL; }
+  virtual operator ta_int64_t() const	 	{ return 0LL; }
+  virtual operator ta_uint64_t() const	 	{ return 0ULL; }
   virtual operator bool() const			{ return (Int)*this; }
 
   // these are never redefined: every class defines a GetStr and GetVar instead --
@@ -569,8 +569,8 @@ public:
   // assign from types
   virtual void operator=(Real)	 		{ NopErr("=(Real)"); }
   virtual void operator=(Int)			{ NopErr("=(Int)"); }
-  virtual void operator=(int64_t cp)		{ operator=((Int)cp); }
-  virtual void operator=(uint64_t cp)		{ operator=((Int)cp); }
+  virtual void operator=(ta_int64_t cp)		{ operator=((Int)cp); }
+  virtual void operator=(ta_uint64_t cp)		{ operator=((Int)cp); }
   virtual void operator=(const String&)	 	{ NopErr("=(String)"); }
   virtual void operator=(const Variant& val); 
   // usually not overridden, just dispatches according to type
@@ -1073,8 +1073,8 @@ public:
  
   operator Real() const		{ CvtErr("(Real)"); return 0.0; }
   operator Int() const		{ CvtErr("(Int)"); return 0; }
-  operator int64_t() const	{ CvtErr("(int64_t)"); return 0LL; }
-  operator uint64_t() const	{ CvtErr("(uint64_t)"); return 0ULL; }
+  operator ta_int64_t() const	{ CvtErr("(ta_int64_t)"); return 0LL; }
+  operator ta_uint64_t() const	{ CvtErr("(ta_uint64_t)"); return 0ULL; }
 
   operator void*() const	{ return GetVoidPtr(1); }
   operator void**() const	{ return (void**)GetVoidPtr(2); }

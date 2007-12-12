@@ -189,7 +189,7 @@ public:
 class CSS_API cssInt64 : public cssEl {
   // a 64-bt integer value
 public:
-  int64_t		val;
+  ta_int64_t		val;
 
   int		GetParse() const	{ return CSS_VAR; }
   uint		GetSize() const		{ return sizeof(*this); }
@@ -223,69 +223,69 @@ public:
   operator unsigned char() const 	{ return (unsigned char)val; }
   operator unsigned short() const	{ return (unsigned short)val; }
   operator unsigned long() const	{ return (unsigned long)val; }
-  operator int64_t() const	 	{ return val; }
-  operator uint64_t() const	 	{ return (uint64_t)val; }
+  operator ta_int64_t() const	 	{ return val; }
+  operator ta_uint64_t() const	 	{ return (ta_uint64_t)val; }
 
 //  operator void*() const; //TODO64 -- Int64 should hold pointers in 64-bit version
 //  operator void**() const;
 
-  void operator=(Real cp) 		{ val = (int64_t)cp; }
+  void operator=(Real cp) 		{ val = (ta_int64_t)cp; }
   void operator=(Int cp)		{ val = (int)cp; }
-  void operator=(int64_t cp)		{ val = cp; }
-  void operator=(uint64_t cp)		{ val = cp; }
+  void operator=(ta_int64_t cp)		{ val = cp; }
+  void operator=(ta_uint64_t cp)		{ val = cp; }
   void operator=(const String& cp)	{ val = cp.toInt64(); }
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
   void operator=(void**)	{ CvtErr("(void**)"); }
 
   // operators
-  void operator=(const cssEl& s) { val = (int64_t)s; }
+  void operator=(const cssEl& s) { val = (ta_int64_t)s; }
 
   cssEl* operator+(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val += (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val += (ta_int64_t)t; return r; }
   cssEl* operator-(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val -= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val -= (ta_int64_t)t; return r; }
   cssEl* operator*()		{ return cssEl::operator*(); }
   cssEl* operator*(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val *= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val *= (ta_int64_t)t; return r; }
   cssEl* operator/(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val /= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val /= (ta_int64_t)t; return r; }
   cssEl* operator%(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val %= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val %= (ta_int64_t)t; return r; }
   cssEl* operator<<(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val <<= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val <<= (ta_int64_t)t; return r; }
   cssEl* operator>>(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val >>= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val >>= (ta_int64_t)t; return r; }
   cssEl* operator&(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val &= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val &= (ta_int64_t)t; return r; }
   cssEl* operator^(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val ^= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val ^= (ta_int64_t)t; return r; }
   cssEl* operator|(cssEl& t)
-  { cssInt64* r = new cssInt64(*this,""); r->val |= (int64_t)t; return r; }
+  { cssInt64* r = new cssInt64(*this,""); r->val |= (ta_int64_t)t; return r; }
 
   cssEl* operator-()
   { cssInt64* r = new cssInt64(*this,""); r->val = -val; return r; }
 
-  void operator+=(cssEl& t) 	{ val += (int64_t)t; }
-  void operator-=(cssEl& t) 	{ val -= (int64_t)t; }
-  void operator*=(cssEl& t) 	{ val *= (int64_t)t; }
-  void operator/=(cssEl& t) 	{ val /= (int64_t)t; }
-  void operator%=(cssEl& t) 	{ val %= (int64_t)t; }
-  void operator<<=(cssEl& t) 	{ val <<= (int64_t)t; }
-  void operator>>=(cssEl& t) 	{ val >>= (int64_t)t; }
-  void operator&=(cssEl& t) 	{ val &= (int64_t)t; }
-  void operator^=(cssEl& t) 	{ val ^= (int64_t)t; }
-  void operator|=(cssEl& t) 	{ val |= (int64_t)t; }
+  void operator+=(cssEl& t) 	{ val += (ta_int64_t)t; }
+  void operator-=(cssEl& t) 	{ val -= (ta_int64_t)t; }
+  void operator*=(cssEl& t) 	{ val *= (ta_int64_t)t; }
+  void operator/=(cssEl& t) 	{ val /= (ta_int64_t)t; }
+  void operator%=(cssEl& t) 	{ val %= (ta_int64_t)t; }
+  void operator<<=(cssEl& t) 	{ val <<= (ta_int64_t)t; }
+  void operator>>=(cssEl& t) 	{ val >>= (ta_int64_t)t; }
+  void operator&=(cssEl& t) 	{ val &= (ta_int64_t)t; }
+  void operator^=(cssEl& t) 	{ val ^= (ta_int64_t)t; }
+  void operator|=(cssEl& t) 	{ val |= (ta_int64_t)t; }
 
-  bool operator< (cssEl& s) 	{ return (val < (int64_t)s); }
-  bool operator> (cssEl& s) 	{ return (val > (int64_t)s); }
-  bool operator<=(cssEl& s) 	{ return (val <= (int64_t)s); }
-  bool operator>=(cssEl& s) 	{ return (val >= (int64_t)s); }
-  bool operator==(cssEl& s) 	{ return (val == (int64_t)s); }
-  bool operator!=(cssEl& s) 	{ return (val != (int64_t)s); }
+  bool operator< (cssEl& s) 	{ return (val < (ta_int64_t)s); }
+  bool operator> (cssEl& s) 	{ return (val > (ta_int64_t)s); }
+  bool operator<=(cssEl& s) 	{ return (val <= (ta_int64_t)s); }
+  bool operator>=(cssEl& s) 	{ return (val >= (ta_int64_t)s); }
+  bool operator==(cssEl& s) 	{ return (val == (ta_int64_t)s); }
+  bool operator!=(cssEl& s) 	{ return (val != (ta_int64_t)s); }
 };
 
-#define cssInt64_inst(l,n,x)          l .Push(new cssInt64((int64_t) n,(const char *) #x))
+#define cssInt64_inst(l,n,x)          l .Push(new cssInt64((ta_int64_t) n,(const char *) #x))
 #define cssInt64_inst_nm(l,n,s)       l .Push(new cssInt64(n, s))
 #define cssInt64_inst_ptr(l,n,x)      l .Push(cssBI::x = new cssInt64(n, #x))
 #define cssInt64_inst_ptr_nm(l,n,x,s) l .Push(cssBI::x = new cssInt64(n, s))
@@ -326,8 +326,8 @@ public:
 
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = (Real)cp; }
-  void operator=(int64_t cp)		{ operator=((Real)cp); }
-  void operator=(uint64_t cp)		{ operator=((Real)cp); }
+  void operator=(ta_int64_t cp)		{ operator=((Real)cp); }
+  void operator=(ta_uint64_t cp)		{ operator=((Real)cp); }
   void operator=(const String& cp)	{ val = atof((const char*)cp); }
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
@@ -442,8 +442,8 @@ public:
 
   void operator=(Real cp) 		{ val = String(cp); }
   void operator=(Int cp)		{ val = String(cp); }
-  void operator=(int64_t cp)		{ val = String(cp); }
-  void operator=(uint64_t cp)		{ val = String(cp); }
+  void operator=(ta_int64_t cp)		{ val = String(cp); }
+  void operator=(ta_uint64_t cp)		{ val = String(cp); }
   void operator=(const String& cp)	{ val = cp; }
 
   void operator=(void*)	 	{ CvtErr("(void*)"); }
@@ -576,15 +576,15 @@ public:
   operator Real() const	 { return val.toDouble();}
   operator float() const { return val.toFloat();}
   operator Int() const	 { return val.toInt();}
-  operator int64_t() const { return val.toInt64(); }
-  operator uint64_t() const { return val.toUInt64(); }
+  operator ta_int64_t() const { return val.toInt64(); }
+  operator ta_uint64_t() const { return val.toUInt64(); }
   operator taBase*() const;
   operator bool() const	{ return val.toBool(); }
   
   void operator=(Real cp) 		{ val = cp; }
   void operator=(Int cp)		{ val = cp; }
-  void operator=(int64_t cp)		{ val = cp; }
-  void operator=(uint64_t cp)		{ val = cp; }
+  void operator=(ta_int64_t cp)		{ val = cp; }
+  void operator=(ta_uint64_t cp)		{ val = cp; }
   void operator=(const String& cp)	{ val = cp; }
   void operator=(const Variant& cp)	{ val = cp;}
 
