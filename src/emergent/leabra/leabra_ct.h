@@ -111,6 +111,10 @@ public:
   // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
+  virtual void 	Compute_ActM(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute minus phase activations (snapshot prior to learning)
+  virtual void 	Compute_ActP(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS(CtLeabraUnitSpec);
 private:
@@ -128,6 +132,12 @@ public:
   void		Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net)
   { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_ActMP(this, lay, net); }
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
+  void		Compute_ActM(CtLeabraLayer* lay, CtLeabraNetwork* net)
+  { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_ActM(this, lay, net); }
+  // #CAT_Learning compute minus phase activations (snapshot prior to learning)
+  void		Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net)
+  { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_ActP(this, lay, net); }
+  // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraUnit);
 private:
@@ -148,6 +158,10 @@ public:
   // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
+  virtual void 	Compute_ActM(CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute minus phase activations (snapshot prior to learning)
+  virtual void 	Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraLayerSpec);
 // protected:
@@ -167,6 +181,12 @@ public:
   void 	Compute_ActMP(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_ActMP(this, net); };
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
+  void 	Compute_ActM(CtLeabraNetwork* net) 
+  { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_ActM(this, net); };
+  // #CAT_Learning compute minus phase activations (snapshot prior to learning)
+  void 	Compute_ActP(CtLeabraNetwork* net) 
+  { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_ActP(this, net); };
+  // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraLayer);
 private:
@@ -191,6 +211,10 @@ public:
 
   virtual void 	Compute_ActMP() ;
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
+  virtual void 	Compute_ActM() ;
+  // #CAT_Learning compute minus phase activations (snapshot prior to learning)
+  virtual void 	Compute_ActP() ;
+  // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
   override void	SetProjectionDefaultTypes(Projection* prjn);
 

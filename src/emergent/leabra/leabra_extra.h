@@ -308,7 +308,7 @@ class LEABRA_API CycleSynDepSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
 INHERITED(taBase)
 public:
-  float		rec;		// #DEF_0.01 rate of recovery from depression
+  float		rec;		// #DEF_0.002 rate of recovery from depression
   float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
   float		depl;		// #READ_ONLY #SHOW rate of depletion of synaptic efficacy as a function of sender-receiver activations (computed from rec, asymp_act)
 

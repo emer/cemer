@@ -180,7 +180,7 @@ void TrialSynDepConSpec::UpdateAfterEdit_impl() {
 //////////////////////////////////
 
 void CycleSynDepSpec::Initialize() {
-  rec = 0.01f;
+  rec = 0.002f;
   asymp_act = 0.4f;
   depl = rec * (1.0f - asymp_act); // here the drive is constant
 }

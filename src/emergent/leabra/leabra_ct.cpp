@@ -67,6 +67,14 @@ void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNe
   u->p_act_p = u->act_eq;
 }
 
+void CtLeabraUnitSpec::Compute_ActM(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
+  u->p_act_m = u->act_eq;
+}
+
+void CtLeabraUnitSpec::Compute_ActP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
+  u->p_act_p = u->act_eq;
+}
+
 //////////////////////////////////
 // 	Ct Layer
 //////////////////////////////////
@@ -98,6 +106,22 @@ void CtLeabraLayerSpec::Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net) 
   taLeafItr i;
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
     u->Compute_ActMP(lay, net);
+  }
+}
+
+void CtLeabraLayerSpec::Compute_ActM(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  CtLeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+    u->Compute_ActM(lay, net);
+  }
+}
+
+void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  CtLeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+    u->Compute_ActP(lay, net);
   }
 }
 
@@ -148,6 +172,23 @@ void CtLeabraNetwork::Compute_ActMP() {
   FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
     if(lay->lesioned())	continue;
     lay->Compute_ActMP(this);
+  }
+}
+
+void CtLeabraNetwork::Compute_ActM() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_ActM(this);
+  }
+}
+void CtLeabraNetwork::Compute_ActP() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_ActP(this);
   }
 }
   
