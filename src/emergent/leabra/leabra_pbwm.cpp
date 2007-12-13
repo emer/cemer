@@ -1110,7 +1110,7 @@ void PFCLayerSpec::ResetSynDep(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
 }
 
 
-void PFCLayerSpec::Compute_MaintUpdt(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net) {
+void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net) {
   if(updt_act == NO_UPDT) return;
   for(int j=0;j<ugp->size;j++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(j);
@@ -1153,7 +1153,14 @@ void PFCLayerSpec::Compute_MaintUpdt(LeabraUnit_Group* ugp, MaintUpdtAct updt_ac
 void PFCLayerSpec::Compute_TmpClear(LeabraLayer* lay, LeabraNetwork* net) {
   for(int mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
-    Compute_MaintUpdt(ugp, TMP_CLEAR, lay, net); // temporary clear for trans input!
+    Compute_MaintUpdt_ugp(ugp, TMP_CLEAR, lay, net); // temporary clear for trans input!
+  }
+}
+
+void PFCLayerSpec::Compute_MaintUpdt(MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net) {
+  for(int mg=0;mg<lay->units.gp.size;mg++) {
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
+    Compute_MaintUpdt_ugp(ugp, updt_act, lay, net);
   }
 }
 
@@ -1178,7 +1185,7 @@ void PFCLayerSpec::Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net) {
       if(ugp->misc_state <= 0) { // empty stripe
 	if(gate_sig == PFCGateSpec::GATE_GO) {
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_GO;
-	  Compute_MaintUpdt(ugp, STORE, lay, net);
+	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);
 	}
 	else {
 	  ugp->misc_state1 = PFCGateSpec::EMPTY_NOGO;
@@ -1188,7 +1195,7 @@ void PFCLayerSpec::Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net) {
       else {			// latched stripe
 	if(gate_sig == PFCGateSpec::GATE_GO) {
 	  ugp->misc_state1 = PFCGateSpec::LATCH_GO;
-	  Compute_MaintUpdt(ugp, CLEAR, lay, net); // clear in first phase
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net); // clear in first phase
 	}
 	else {
 	  ugp->misc_state1 = PFCGateSpec::LATCH_NOGO;
@@ -1203,7 +1210,7 @@ void PFCLayerSpec::Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net) {
 	    ugp->misc_state1 = PFCGateSpec::LATCH_GOGO;
 	  else
 	    ugp->misc_state1 = PFCGateSpec::EMPTY_GO;
-	  Compute_MaintUpdt(ugp, STORE, lay, net);
+	  Compute_MaintUpdt_ugp(ugp, STORE, lay, net);
 	}
       }
     }

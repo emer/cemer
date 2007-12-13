@@ -2913,6 +2913,8 @@ void GraphTableView::CutLinks() {
 void GraphTableView::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
 
+  if(taMisc::is_loading) return;
+
   x_axis.axis_length = width;
   z_axis.axis_length = depth;
 

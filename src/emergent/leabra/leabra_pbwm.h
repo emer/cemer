@@ -405,7 +405,9 @@ public:
 
   virtual void 	ResetSynDep(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // reset synaptic depression for sending cons from unit that was just toggled off in plus phase 1
-  virtual void 	Compute_MaintUpdt(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
+  virtual void 	Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
+  // update maintenance state variables (gc.h, misc_1) based on given action: ugp impl
+  virtual void 	Compute_MaintUpdt(MaintUpdtAct updt_act, LeabraLayer* lay, LeabraNetwork* net);
   // update maintenance state variables (gc.h, misc_1) based on given action
   virtual void	SendGateStates(LeabraLayer* lay, LeabraNetwork* net);
   // send misc_state gating state variables to the snrthal and matrix layers
