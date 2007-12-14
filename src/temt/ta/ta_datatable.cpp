@@ -707,7 +707,6 @@ void DataTable::Copy_NoData(const DataTable& cp) {
   // and must insure data model is sync'ed propery
   //  ResetData();
   RemoveAllCols();
-  taiMisc::RunPending();
   // don't copy the flags!
 //   data_flags = cp.data_flags;
   data.Copy_NoData(cp.data);

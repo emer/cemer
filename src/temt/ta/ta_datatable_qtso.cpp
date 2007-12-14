@@ -398,6 +398,19 @@ void DataTableView::UpdateAfterEdit_impl() {
   //note: UAE calls setDirty, which is where we do most of the rejigging
 }
 
+void DataTableView::IgnoredDataChanged(taDataLink* dl, int dcr,
+    void* op1, void* op2) 
+{
+  // if it is a struct begin or end, we better not ignore it, because
+  // it could require us to reset, so we free locked matrix col slices
+  // this could reduce our invisible efficiency BUT is necessary!!!
+  if ((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
+      (dcr == DCR_STRUCT_UPDATE_END))
+  {
+    DataDataChanged(dl, dcr, op1, op2);
+  }
+}
+
 String DataTableView::GetLabel() const {
   DataTable* dt = dataTable(); 
   if(dt) return dt->GetName();

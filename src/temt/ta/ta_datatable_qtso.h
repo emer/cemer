@@ -205,6 +205,10 @@ public:
   void	Copy_(const DataTableView& cp);
   T3_DATAVIEWFUNS(DataTableView, T3DataViewMain) //
 
+// IDataLinkClient i/f
+  override void		IgnoredDataChanged(taDataLink* dl, int dcr,
+    void* op1, void* op2);
+
 protected:
 #ifndef __MAKETA__
   QPointer<iDataTableView_Panel> m_lvp; //note: will be a subclass of this, per the log type
