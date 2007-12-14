@@ -198,7 +198,7 @@ void DataSelectEl::Initialize() {
 
 String DataSelectEl::GetDisplayName() const {
   String rval = col_name + " " + 
-    GetTypeDef()->GetEnumString("Relation", rel)+ " ";
+    GetTypeDef()->GetEnumString("Relations", rel)+ " ";
   if(use_var && (bool)var)
     rval += var->name;
   else

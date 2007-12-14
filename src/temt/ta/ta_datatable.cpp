@@ -705,7 +705,9 @@ void DataTable::Copy_(const DataTable& cp) {
 void DataTable::Copy_NoData(const DataTable& cp) {
   // note: CANNOT just set rows=0, because we must reclaim mat space (ex strings)
   // and must insure data model is sync'ed propery
-  ResetData();
+  //  ResetData();
+  RemoveAllCols();
+  taiMisc::RunPending();
   // don't copy the flags!
 //   data_flags = cp.data_flags;
   data.Copy_NoData(cp.data);
