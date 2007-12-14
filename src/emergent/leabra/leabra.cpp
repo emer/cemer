@@ -1196,13 +1196,16 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer*, LeabraInhib*,
       u->act_avg += act.avg_dt * (u->act_eq - u->act_avg);
   }
   else {
-    if(net->phase == LeabraNetwork::MINUS_PHASE)
+    if(net->phase == LeabraNetwork::MINUS_PHASE) {
       u->act_m = u->act_eq;
+    }
     else if((net->phase == LeabraNetwork::PLUS_PHASE) && (net->phase_no < 2)) {
       // act_p is only for first plus phase: others require something else
       u->act_p = u->act_eq;
       if(act.avg_dt > 0.0f)
 	u->act_avg += act.avg_dt * (u->act_eq - u->act_avg);
+    }
+    if(net->phase_no == 1) {
       u->act_dif = u->act_p - u->act_m;
     }
   }
@@ -3900,10 +3903,10 @@ void LeabraNetwork::Settle_Init() {
   else if(phase_no == 1) {
     if(phase_order == PLUS_NOTHING) { // actually a nothing phase
       DecayPhase2();
-      TargExtToComp();
+      TargExtToComp();		// all external input is now 'comparison'
     }
     else
-      DecayPhase();		    // prepare for next phase
+      DecayPhase();		// prepare for next phase
   }
 
   Compute_Active_K();		// compute here because could depend on pat_n
@@ -4028,6 +4031,10 @@ void LeabraNetwork::Trial_Init() {
       phase_max = 2;
       phase = PLUS_PHASE;
     }
+    else if(phase_order == PLUS_MINUS) {
+      phase_max = 2;
+      phase = PLUS_PHASE;
+    }
   }
 
   // todo: this seems kinda silly and should perhaps just be put in the prog: not worth the extra state vars
@@ -4038,7 +4045,7 @@ void LeabraNetwork::Trial_Init() {
 }
 
 void LeabraNetwork::Trial_UpdatePhase() {
-  if(phase_order == PLUS_NOTHING) {
+  if((phase_order == PLUS_NOTHING) || (phase_order == PLUS_MINUS)) {
     phase = MINUS_PHASE;
   }
   else {

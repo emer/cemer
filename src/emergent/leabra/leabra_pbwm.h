@@ -321,6 +321,7 @@ public:
   float		avg_net_dt;	// #DEF_0.005 time-averaged netinput computation integration rate
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
+  float		net_off;	// netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- can be useful for preventing all nogo situations
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
@@ -435,15 +436,24 @@ private:
 //////////////////////////////////////////
 
 class LEABRA_API PFCOutGateSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifications for pfc output gating
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for pfc output gating
 INHERITED(taBase)
 public:
   float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
-  float		go_gain;	// #DEF_0.5 how much extra to add for a Go signal
+  float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_go;	// #DEF_false use a graded Go signal as a function of strength of corresponding SNrThal unit?
+
+  inline void	SetBaseGain(float bg)
+  { base_gain = bg;
+    if(base_gain > 1.0f) base_gain = 1.0f; if(base_gain < 0.0f) base_gain = 0.0f;
+    go_gain = 1.0f - base_gain; }
+  // set base gain value with limits enforced and go_gain updated
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCOutGateSpec);
+protected:
+  void  UpdateAfterEdit_impl();
+
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -453,7 +463,19 @@ class LEABRA_API PFCOutLayerSpec : public LeabraLayerSpec {
   // Prefrontal cortex output gated layer: gets gating signal from SNrThal and activations from PFC_mnt layer: gating modulates strength of activation
 INHERITED(LeabraLayerSpec)
 public:
-  PFCOutGateSpec out_gate;		// parameters controlling the output gating of pfc units
+  enum	BGSValue {		// what value to drive the base gain schedule with
+    NO_BGS,			// don't use a base gain schedule
+    EPOCH,			// current epoch counter
+    EXT_REW_STAT,		// avg_ext_rew value on network (computed over an "epoch" of training): value is * 100 (0..100) 
+    EXT_REW_AVG	= 0x0F,		// uses average reward computed by ExtRew layer (if present): value is units[0].act_avg (avg_rew) * 100 (0..100) 
+  };
+
+  PFCOutGateSpec out_gate;	// #CAT_PFC parameters controlling the output gating of pfc units
+  BGSValue	gain_sched_value; // #CAT_PFC what value drives the base_gain schedule (Important: affects values entered in start_ctr fields of schedule!)
+  Schedule	gain_sched;	// #CAT_PFC schedule of out_gate.base_gain values as a function of training epochs or other -- note that these are the literal values and not multipliers on the value entered in out_gate.base_gain -- they replace that value
+
+  virtual void	SetCurBaseGain(LeabraNetwork* net);
+  // set current base gain based on gain_sched if in use
 
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
 
@@ -467,6 +489,9 @@ public:
   void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PFCOutLayerSpec);
+protected:
+  void  UpdateAfterEdit_impl();
+
 private:
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }

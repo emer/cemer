@@ -783,6 +783,7 @@ void SNrThalMiscSpec::Initialize() {
   avg_net_dt = .005f;
   go_thr = 0.1f;
   rnd_go_inc = 0.2f;
+  net_off = 0.0f;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -881,6 +882,8 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraLayer* matrix_lay = FindLayerFmSpec(lay, mtx_prjn_idx, &TA_MatrixLayerSpec);
   MatrixLayerSpec* mls = (MatrixLayerSpec*)matrix_lay->spec.SPtr();
 
+  float net_off_rescale = 1.0f / (1.0f + snrthal.net_off);
+
   for(int mg=0; mg<lay->units.gp.size; mg++) {
     LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[mg];
     float gonogo = 0.0f;
@@ -908,11 +911,14 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
 	}
       }
     }
+
+    float net_eff = net_off_rescale * (gonogo + snrthal.net_off);
+
     for(int i=0;i<rugp->size;i++) {
       DaModUnit* ru = (DaModUnit*)rugp->FastEl(i);
-      ru->net = gonogo;
+      ru->net = net_eff;
       if(net->phase == LeabraNetwork::MINUS_PHASE)
-	ru->p_act_m = gonogo;	// save this for err_rnd_go computation
+	ru->p_act_m = net_eff;	// save this for err_rnd_go computation
     }
   }
 }
@@ -1274,7 +1280,17 @@ void PFCOutGateSpec::Initialize() {
   graded_go = false;
 }
 
+void PFCOutGateSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  go_gain = 1.0f - base_gain;
+}
+
+
 void PFCOutLayerSpec::Initialize() {
+  gain_sched_value = NO_BGS;
+  gain_sched.interpolate = false;
+  gain_sched.default_val = .5f;
+
   // this guy should always inherit from PFCLayerSpec
 //   SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_PCT;
@@ -1289,6 +1305,12 @@ void PFCOutLayerSpec::Initialize() {
   decay.phase = 0.0f;
   decay.phase2 = 0.1f;
   decay.clamp_phase2 = false;	// this is the one exception!
+}
+
+void PFCOutLayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  out_gate.UpdateAfterEdit();
+  gain_sched.UpdateAfterEdit();
 }
 
 void PFCOutLayerSpec::Defaults() {
@@ -1412,7 +1434,44 @@ bool PFCOutLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return true;
 }
 
-void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork*) {
+void PFCOutLayerSpec::SetCurBaseGain(LeabraNetwork* net) {
+  if(gain_sched_value == NO_BGS) return;
+
+  if(gain_sched_value == EXT_REW_AVG) {
+    LeabraLayer* er_lay = LeabraLayerSpec::FindLayerFmSpecNet(net, &TA_ExtRewLayerSpec);
+    if(er_lay != NULL) {
+      LeabraUnit* un = (LeabraUnit*)er_lay->units.Leaf(0);
+      float avg_rew = un->act_avg;
+      int ar_pct = (int)(100.0f * avg_rew);
+      out_gate.SetBaseGain(gain_sched.GetVal(ar_pct));
+      return;
+    }
+    else {
+      TestWarning(true, "SetCurLrate", "appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH!");
+      SetUnique("gain_sched_value", true);
+      gain_sched_value = EPOCH;
+      UpdateAfterEdit();
+    }
+  }
+  if(gain_sched_value == EXT_REW_STAT) {
+    int arval = 0;
+    if(net->epoch < 1) {
+      arval = gain_sched.last_ctr;
+    }
+    else {
+      arval = (int)(100.0f * net->avg_ext_rew);
+    }
+    out_gate.SetBaseGain(gain_sched.GetVal(arval));
+  }
+
+  if(gain_sched_value == EPOCH) {
+    out_gate.SetBaseGain(gain_sched.GetVal(net->epoch));
+  }
+}
+
+void PFCOutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+  SetCurBaseGain(net);
+
   // not to hard clamp: needs to update in 2nd plus phase!
   lay->hard_clamped = false;
   lay->Init_InputData();

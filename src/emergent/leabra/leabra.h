@@ -251,7 +251,7 @@ public:
   float		lrate;		// #DEF_0.01 #CAT_Learning learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   LRSValue	lrs_value;	// #CAT_Learning what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
-  Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (multiplies lrate!)
+  Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs or as a function of performance, as determined by lrs_value (NOTE: these factors multiply lrate to give the cur_lrate value)
   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning
   SAvgCorSpec	savg_cor;	// #CAT_Learning for Hebbian and netinput computation: correction for sending average act levels (i.e., renormalization); also norm_con_n for normalizing netinput computation
   AdaptRelNetinSpec rel_net_adapt; // #CAT_Learning adapt relative netinput values based on targets for fm_input, fm_output, and lateral projections -- not used by default (call Compute_RelNetinAdapt to activate; requires Compute_RelNetin and Compute_AvgRelNetin for underlying data)
@@ -1981,6 +1981,7 @@ public:
 
   enum PhaseOrder {
     MINUS_PLUS,			// standard minus-plus (err and assoc)
+    PLUS_MINUS,			// reverse order: plus phase first
     PLUS_ONLY,			// only present the plus phase (hebbian-only)
     MINUS_PLUS_NOTHING,		// auto-encoder version with final 'nothing' minus phase
     PLUS_NOTHING,		// just the auto-encoder (no initial minus phase)
