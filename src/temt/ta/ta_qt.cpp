@@ -74,6 +74,14 @@ int tai_rl_hook_proc() {
 // 	taiMisc: miscellaneous useful stuff 		//
 //////////////////////////////////////////////////////////
 
+iMainWindowViewer* iTopLevelWindow_List::FindMainWindowById(int id) {
+  for (int i = 0; i < size; ++i) {
+    iMainWindowViewer* rval = SafeElAsMainWindow(i);
+    if (rval && (rval->uniqueId() == id)) return rval;
+  }
+  return NULL;
+} 
+
 iMainWindowViewer* iTopLevelWindow_List::SafeElAsMainWindow(int i) {
   return dynamic_cast<iMainWindowViewer*>(SafeEl(i)->widget());
 }

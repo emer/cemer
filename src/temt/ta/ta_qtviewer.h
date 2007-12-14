@@ -71,6 +71,7 @@ class iSearchDialog;
 
 // externals
 class taGroup_impl;
+class taProject;
 
 
 class TA_API DataLink_QObj: public QObject {
@@ -920,6 +921,7 @@ public:
 
   QObject* 		clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
   
+  taProject*		myProject() const; // project of which this viewer is a part
   taProject*		curProject() const; // only if we are a projviewer
   inline bool		isRoot() const {return m_is_root;} // if this is app root, closing quits
   inline bool		isProjBrowser() const {return m_is_proj_browser;} // if a project browser, persistent
@@ -927,6 +929,7 @@ public:
   inline bool		isProjShower() const 
     {return m_is_proj_viewer || m_is_proj_browser;} // if either
   
+  int 			uniqueId() const {return m_unique_id;} // for urls 
   inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;} 
 
   virtual taiAction*	AddAction(taiAction* act); // add the action to the list, returning the instance (for convenience)
@@ -1036,9 +1039,12 @@ protected slots:
   virtual void 		this_DockSelect(taiAction* me); // user has selected or unselected one of the docks
 
 protected:
+  static int		s_next_unique_id;
+  
   bool			m_is_root; // true if this is a root window (has Quit menu)
   bool			m_is_proj_browser; // true if this is a project browser (false for simple browsers)
   bool			m_is_proj_viewer; // true if this is a project viewer
+  int			m_unique_id;
   override void 	closeEvent(QCloseEvent* ev);
   bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);

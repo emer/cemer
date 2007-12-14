@@ -52,6 +52,8 @@ class TA_API iTopLevelWindow_List: public taPtrList<IDataViewWidget> {
 public:
   iMainWindowViewer*	SafeElAsMainWindow(int i); 
     // returns item cast as requested, or NULL if not of that type
+  iMainWindowViewer*	FindMainWindowById(int id); 
+    // find the main window with indicated uniqueId NULL if not of that type
   iDockViewer*		SafeElAsDockWindow(int i);
     // returns item cast as requested, or NULL if not of that type
   iMainWindowViewer*	Peek_MainWindow(); // finds the topmost main window, NULL if none

@@ -3208,6 +3208,8 @@ QStringList iBaseClipWidgetAction::mimeTypes() const {
 //  iMainWindowViewer	//
 //////////////////////////
 
+int iMainWindowViewer::s_next_unique_id;
+
 iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
 : inherited(parent, (Qt::Window |Qt:: WindowSystemMenuHint | 
   Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint
@@ -3217,6 +3219,7 @@ iMainWindowViewer::iMainWindowViewer(MainWindowViewer* viewer_, QWidget* parent)
   m_is_root = viewer_->isRoot(); // need to do before Constr
   m_is_proj_browser = viewer_->isProjBrowser(); // need to do before Constr
   m_is_proj_viewer = viewer_->isProjViewer(); // need to do before Constr
+  m_unique_id = s_next_unique_id++;
   // note: caller will still do a virtual Constr() on us after new
 }
 
@@ -3635,6 +3638,19 @@ taProject* iMainWindowViewer::curProject() const {
   return rval;
 }
 
+taProject* iMainWindowViewer::myProject() const {
+  MainWindowViewer* db = viewer();
+  if (!db) return NULL; // shouldn't happen
+  // first, check if a project browser, if so, then we have our puppy
+  taBase* data = db->data();
+  if (!data) return NULL;
+  taProject* rval = dynamic_cast<taProject*>(data);
+  // otherwise, will need to get its parent
+  if (!rval) {
+    rval = (taProject*)data->GetOwner(&TA_taProject);
+  }
+  return rval;
+}
 
 void iMainWindowViewer::emit_EditAction(int param) {
   emit EditAction(param);
@@ -3891,8 +3907,9 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
   String path = url.path(); // will only be part before #, if any
   String vw_num = String(url.fragment()).after("#");
   iMainWindowViewer* inst = NULL;
+  // if num after is an int, then it is uniqueId of the window
   if (vw_num.isInt()) {
-    inst = taiMisc::active_wins.SafeElAsMainWindow(vw_num.toInt());
+    inst = taiMisc::active_wins.FindMainWindowById(vw_num.toInt());
   } 
   if (!inst)  {
     inst = taiMisc::active_wins.Peek_MainWindow();
@@ -3902,7 +3919,7 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
   MainWindowViewer* mwv = inst->viewer();
   if(!mwv) return;		// shouldn't happen!
 
-  taProject* proj = inst->curProject();
+  taProject* proj = inst->myProject();
   if(!proj) return;	// shouldn't happen!
 
   String fun_call;
