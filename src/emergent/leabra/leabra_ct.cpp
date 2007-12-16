@@ -25,9 +25,34 @@
 // 	Ct cons
 //////////////////////////////////
 
+void CtCaDepSpec::Initialize() {
+  ca_inc = .02f;
+  ca_dec = .02f;
+  
+  sd_ca_thr = 0.2f;
+  sd_ca_gain = .7f;
+  sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
+
+  lrd_ca_thr = 0.2f;
+  lrd_ca_gain = .7f;
+  lrd_ca_thr_rescale = lrd_ca_gain / (1.0f - lrd_ca_thr);
+}
+
+
+void CtCaDepSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
+  lrd_ca_thr_rescale = lrd_ca_gain / (1.0f - lrd_ca_thr);
+}
+
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;
+}
+
+void CtLeabraConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ca_dep.UpdateAfterEdit();
 }
 
 void CtLeabraRecvCons::Initialize() {
@@ -44,6 +69,12 @@ void CtLeabraBiasSpec::Initialize() {
 
 void CtLeabraUnit::Initialize() {
   bias.con_type = &TA_CtLeabraCon;
+  cai_avg = 0.0f;
+  cai_max = 0.0f;
+  syndep_avg = 0.0f;
+  syndep_max = 0.0f;
+  lrdep_avg = 0.0f;
+  lrdep_max = 0.0f;
 }
 
 void CtLeabraUnitSpec::Initialize() {
@@ -54,12 +85,24 @@ void CtLeabraUnitSpec::Initialize() {
 }
 
 void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
+  CtLeabraConSpec* cspec = NULL;
+  u->cai_avg = 0.0f;
+  u->cai_max = 0.0f;
   for(int g=0; g<u->recv.size; g++) {
     CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_CtCycle(u);
+    recv_gp->Compute_CtCycle(u, u->cai_avg, u->cai_max);
+    cspec = (CtLeabraConSpec*)recv_gp->GetConSpec();
   }
   //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_CtCycle((CtLeabraCon*)u->bias.Cn(0), u);
+  if(u->n_recv_cons > 0)
+    u->cai_avg /= (float)u->n_recv_cons;
+  if(cspec) {
+    u->syndep_avg = 1.0f - cspec->ca_dep.SynDep(u->cai_avg);
+    u->syndep_max = 1.0f - cspec->ca_dep.SynDep(u->cai_max);
+    u->lrdep_avg = 1.0f - cspec->ca_dep.LrateDep(u->cai_avg);
+    u->lrdep_max = 1.0f - cspec->ca_dep.LrateDep(u->cai_max);
+  }
 }
 
 void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {

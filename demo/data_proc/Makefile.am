@@ -5,4 +5,5 @@ dist_pkgdata_data_proc_DATA =\
 	epoch_log_analysis.proj \
 	epoch_log_analysis.sh \
 	epoch_log_analysis_sample_data.epc.dat \
-	canvas_drawing.proj
+	canvas_drawing.proj \
+	ca_eq_sim.proj

@@ -40,32 +40,189 @@ class CtLeabraNetwork; //
 //   because it is a difference.. anything in common just subtracts out.  so,
 //   no need to explore exponential integrations, etc -- just keep it simple blocks
 
-class LEABRA_API CtLeabraCon : public CycleSynDepCon {
+class LEABRA_API CtLeabraCon : public LeabraCon {
   // continuous time leabra con: most abstract version of continous time
-INHERITED(CycleSynDepCon)
+INHERITED(LeabraCon)
 public:
-  // nothing special at this time..
+  float		effwt;		// #NO_SAVE effective weight value (can be depressed) -- used for sending ativation
+  float		cai;		// #NO_SAVE intracellular postsynaptic calcium current integrated over cycles, used for synaptic depression and learning 
+
+  CtLeabraCon() { effwt = 0.0f; cai = 0.0f; }
 };
 
-class LEABRA_API CtLeabraConSpec : public CycleSynDepConSpec {
-  // continuous time leabra con spec: most abstract version of continous time
-INHERITED(CycleSynDepConSpec)
+class LEABRA_API CtCaDepSpec : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
+INHERITED(taBase)
 public:
+  float		ca_inc;		// time constant for increases in Ca_i (from NMDA etc currents)
+  float		ca_dec;		// time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
 
-//   inline void C_Compute_CtCycle(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-//     C_Depress_Wt(cn, ru, su);
-//   }
+  float		sd_ca_thr;	// synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
+  float		sd_ca_gain;	// multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
+  float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr (= sd_ca_gain/(1 - sd_ca_thr))
 
-  virtual void Compute_CtCycle(LeabraRecvCons* cg, LeabraUnit* ru) {
+  float		lrd_ca_thr;	// learning rate depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect subsequent learning ability
+  float		lrd_ca_gain;	// multiplier on cai value for computing learning rate depression -- modulates overall level of depression independent of rate parameters
+  float		lrd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account lrd_ca_gain and lrd_ca_thr (= lrd_ca_gain/(1 - lrd_ca_thr))
+
+  inline void	CaUpdt(float& cai, float effwt, float ru_act, float su_act) {
+    float drive = ru_act * su_act; //  * effwt; // todo: include effwt or not here??  not!
+    cai += ca_inc * (1.0f - cai) * drive - ca_dec * cai;
+  }
+
+  inline float	SynDep(float cai) {
+    float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
+    return cao_thr * cao_thr; // squared
+  }
+
+  inline float	LrateDep(float cai) {
+    float cao_thr = (cai > lrd_ca_thr) ? (1.0 - lrd_ca_thr_rescale * (cai - lrd_ca_thr)) : 1.0f;
+    return cao_thr * cao_thr; // squared
+  }
+
+  SIMPLE_COPY(CtCaDepSpec);
+  TA_BASEFUNS(CtCaDepSpec);
+protected:
+  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
+  // continuous time leabra con spec: most abstract version of continous time
+INHERITED(LeabraConSpec)
+public:
+  CtCaDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy and learning rate
+  
+  /////////////////////////////////////////////////////////////////////////////////////
+  // 		Ca updating and synaptic depression
+
+  void C_Compute_Cai(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    ca_dep.CaUpdt(cn->cai, cn->effwt, ru->act_eq, su->act_eq);
+  }
+  // connection-level Cai update
+  virtual void Compute_Cai(LeabraRecvCons* cg, LeabraUnit* ru) {
+    CON_GROUP_LOOP(cg, C_Compute_Cai((CtLeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+  }
+  // connection-group level Cai update
+
+  void C_Depress_Wt(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
+  }
+  // connection-level synaptic depression
+  virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
     CON_GROUP_LOOP(cg, C_Depress_Wt((CtLeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+  }
+  // connection-group level synaptic depression
+
+  inline void C_Compute_CtCycle(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su, float& cai_avg, float& cai_max) {
+    C_Compute_Cai(cn, ru, su);
+    C_Depress_Wt(cn, ru, su);
+    cai_avg += cn->cai;
+    cai_max = MAX(cn->cai, cai_max);
+  }
+  // one cycle of updating at connection-level 
+  virtual void Compute_CtCycle(LeabraRecvCons* cg, LeabraUnit* ru, float& cai_avg, float& cai_max) {
+    CON_GROUP_LOOP(cg, C_Compute_CtCycle((CtLeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i), cai_avg, cai_max));
   }
   // one cycle of processing at a Ct synapse -- expensive!!  todo: need to find ways to optimize
   
+  void C_Reset_EffWt(CtLeabraCon* cn) {
+    cn->effwt = cn->wt;
+  }
+  virtual void Reset_EffWt(LeabraRecvCons* cg) {
+    CON_GROUP_LOOP(cg, C_Reset_EffWt((CtLeabraCon*)cg->Cn(i)));
+  }
+  virtual void Reset_EffWt(LeabraSendCons* cg) {
+    CON_GROUP_LOOP(cg, C_Reset_EffWt((CtLeabraCon*)cg->Cn(i)));
+  }
+
+  void 	C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+    CtLeabraCon* lcn = (CtLeabraCon*)cn; lcn->effwt = lcn->wt;
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  // 		Following are all standard code revised to use effwt instead of wt
+  
+  float C_Compute_Netin(CtLeabraCon* cn, Unit*, Unit* su) {
+    return cn->effwt * su->act;
+  }
+  float Compute_Netin(RecvCons* cg, Unit* ru) {
+    float rval=0.0f;
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CtLeabraCon*)cg->Cn(i), ru, cg->Un(i)));
+    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  }
+  void C_Send_Inhib(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->gc.i += su_act_eff * cn->effwt;
+  }
+  void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su) {
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+  }
+  void C_Send_Netin(LeabraSendCons* cg, CtLeabraCon* cn, Unit* ru, float su_act_eff) {
+    ru->net += su_act_eff * cn->effwt;
+  }
+  void Send_Netin(SendCons* cg, Unit* su) {
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (CtLeabraCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+    }
+  }
+
+  void C_Send_InhibDelta(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += su_act_delta_eff * cn->effwt;
+  }
+  void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su) {
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+  }
+  void C_Send_NetinDelta(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += su_act_delta_eff * cn->effwt;
+  }
+  void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+  }
+  void C_Send_ClampNet(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->clmp_net += su_act_eff * cn->effwt;
+  }
+  void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  // 		Special learning functions
+  
+  inline void  C_Compute_dWt(CtLeabraCon* cn, LeabraUnit* ru, float heb, float err);
+
   inline float C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su);
 
   inline void Compute_dWt(RecvCons* cg, Unit* ru);
 
   TA_BASEFUNS_NOCOPY(CtLeabraConSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -76,8 +233,8 @@ class LEABRA_API CtLeabraRecvCons : public LeabraRecvCons {
 INHERITED(LeabraRecvCons)
 public:
 
-  void	Compute_CtCycle(LeabraUnit* ru)
-  { ((CtLeabraConSpec*)GetConSpec())->Compute_CtCycle(this, ru); }
+  void	Compute_CtCycle(LeabraUnit* ru, float& cai_avg, float& cai_max)
+  { ((CtLeabraConSpec*)GetConSpec())->Compute_CtCycle(this, ru, cai_avg, cai_max); }
   // #CAT_Learning compute one cycle of continuous time processing
 
   TA_BASEFUNS_NOCOPY(CtLeabraRecvCons);
@@ -126,6 +283,13 @@ class LEABRA_API CtLeabraUnit : public DaModUnit {
   // continuous time leabra unit: most abstract version of continous time
 INHERITED(DaModUnit)
 public:
+  float		cai_avg;	// #NO_SAVE average level of cai in my incoming connections -- just for analysis and debugging in early development -- remove later
+  float		cai_max;	// #NO_SAVE maximum level of cai in my incoming connections -- just for analysis and debugging in early development -- remove later
+  float		syndep_avg;	// #NO_SAVE average level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
+  float		syndep_max;	// #NO_SAVE maximum level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
+  float		lrdep_avg;	// #NO_SAVE average level of lrate depression in my incoming connections -- just for analysis and debugging in early development -- remove later
+  float		lrdep_max;	// #NO_SAVE maximum level of lrate depression in my incoming connections -- just for analysis and debugging in early development -- remove later
+
   void		Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net)
   { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_CtCycle(this, lay, net); }
   // #CAT_Learning compute one cycle of continuous time processing
@@ -246,6 +410,11 @@ inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru,
     else		err *= -cn->wt;	
   }
   return err;
+}
+
+inline void CtLeabraConSpec::C_Compute_dWt(CtLeabraCon* cn, LeabraUnit*, float heb, float err) {
+  float dwt = lmix.err * err + lmix.hebb * heb;
+  cn->dwt += cur_lrate * ca_dep.LrateDep(cn->cai) * dwt;
 }
 
 inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
