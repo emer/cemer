@@ -219,7 +219,7 @@ public:
 
   inline void Compute_dWt(RecvCons* cg, Unit* ru);
 
-  TA_BASEFUNS_NOCOPY(CtLeabraConSpec);
+  TA_SIMPLE_BASEFUNS(CtLeabraConSpec);
 protected:
   void 	UpdateAfterEdit_impl();
 
