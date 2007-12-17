@@ -167,6 +167,7 @@ public:
   override void 	setDirty(bool value); 
 
   MainWindowViewer*	GetDefaultProjectBrowser(); // gets one if there is, else NULL
+  MainWindowViewer*	GetDefaultProjectViewer(); // gets one if there is, else NULL
   virtual MainWindowViewer* AssertDefaultProjectBrowser(bool auto_opn); 
     // make sure the default project browser is made, and optionally open it
   virtual void 		AssertDefaultWiz(bool auto_opn) {} 

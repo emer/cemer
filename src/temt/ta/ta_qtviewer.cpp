@@ -3903,40 +3903,60 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
 }
 
 void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
-  //TODO: diagnostics on failures
+// URLs can be suffixed with a "#Xxx" where Xxx is a window id
+// if they are not, then the window will default as follows:
+//  T3 stuff: main project T3 window 
+//  Panel and Tree stuff: main project browser window
+//  these are the same for 2-pane, but different for 3-pane
+
+
+
+//TODO: diagnostics on failures
+
+  //NOTE: URLs only open in the main project browser for that project
   String path = url.path(); // will only be part before #, if any
-  String vw_num = String(url.fragment()).after("#");
-  iMainWindowViewer* inst = NULL;
-  // if num after is an int, then it is uniqueId of the window
-  if (vw_num.isInt()) {
-    inst = taiMisc::active_wins.FindMainWindowById(vw_num.toInt());
+  // we usually embed the uniqueId of the win that had the invoking url
+  String win_id = String(url.fragment()).after("#");
+  
+  // if win_id is an int, then it is uniqueId of the window
+  iMainWindowViewer* idoc_win = NULL; // win from which url was invoked
+  if (win_id.isInt()) {
+    idoc_win = taiMisc::active_wins.FindMainWindowById(win_id.toInt());
   } 
-  if (!inst)  {
-    inst = taiMisc::active_wins.Peek_MainWindow();
+//NOTE: this is a big prob if no id, because how to know what project???
+  if (!idoc_win)  {
+//TEMP
+taMisc::Warning("Cannot determine project from URL!");
+return;
+//    inst = taiMisc::active_wins.Peek_MainWindow();
   }
-  if (!inst) return; // shouldn't happen!
 
-  MainWindowViewer* mwv = inst->viewer();
-  if(!mwv) return;		// shouldn't happen!
-
-  taProject* proj = inst->myProject();
+  // get the project -- should be able to get from any viewer/browser
+  taProject* proj = idoc_win->myProject();
   if(!proj) return;	// shouldn't happen!
+  
+  // for uniformity and simplicity, we look up the canonical windows
+  // and corresponding viewers for the tree/panels and panels/t3 frames
+  // note that these are the same for 2-pane
+  MainWindowViewer* proj_brow = proj->GetDefaultProjectBrowser();
+  MainWindowViewer* proj_view = proj->GetDefaultProjectViewer();
+  iMainWindowViewer* iproj_brow = NULL;
+  if (proj_brow)
+    iproj_brow = proj_brow->widget();
+/*nn  iMainWindowViewer* iproj_view = NULL;
+  if (proj_view)
+    iproj_view = proj_view->widget(); */
 
-  String fun_call;
-  if(path.endsWith("()")) {	// function call!
-    fun_call = path.after(".",-1);
-    fun_call = fun_call.before("()");
-    path = path.before(".",-1);	// get part before last call
-  }
+
   if(path.startsWith(".T3Tab.")) {
     String tbnm = path.after(".T3Tab.");
-    if(!mwv->SelectT3ViewTabName(tbnm)) {
+    if(!proj_view || !proj_view->SelectT3ViewTabName(tbnm)) {
       taMisc::Warning("ta: URL -- could not activate 3D View Tab named:", tbnm);
     }      
   }
   else if(path.startsWith(".PanelTab.")) {
     String tbnm = path.after(".PanelTab.");
-    if(!mwv->SelectPanelTabName(tbnm)) {
+    if(!proj_brow || !proj_brow->SelectPanelTabName(tbnm)) {
       taMisc::Warning("ta: URL -- could not activate Panel Tab named:", tbnm);
     }
   }
@@ -3946,6 +3966,12 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
     QDesktopServices::openUrl(new_url);
   }
   else {
+    String fun_call;
+    if(path.endsWith("()")) {	// function call!
+      fun_call = path.after(".",-1);
+      fun_call = fun_call.before("()");
+      path = path.before(".",-1);	// get part before last call
+    }
     taBase* tab = NULL;
     if(path.startsWith(".projects")) {
       tab = tabMisc::root->FindFromPath(path);
@@ -3964,9 +3990,12 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
     }
     else {
       taiDataLink* link = (taiDataLink*)tab->GetDataLink();
-      if (!link) return;
+      if (!link || !iproj_brow) {
+        taMisc::Warning("ta: URL",path,"not found as a path to an object!");
+        return;
+      }
       //  iTreeViewItem* item = 
-      inst->AssertBrowserItem(link);
+      iproj_brow->AssertBrowserItem(link);
     }
   }
 }
@@ -5928,8 +5957,14 @@ iDocDataPanel::~iDocDataPanel() {
 void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
 					 const QUrl& url, bool& cancel) 
 {
+  // embed our viewer id, so handler can find project, etc.
+  QUrl new_url(url);
+  if (url.fragment().isEmpty()) {
+    if (viewerWindow())
+      new_url.setFragment(QString::number(viewerWindow()->uniqueId()));
+  }
   // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
-  QDesktopServices::openUrl(url);
+  QDesktopServices::openUrl(new_url);
   cancel = true;
   //NOTE: we never let results call its own setSource because we don't want
   // link clicking to cause us to change our source page

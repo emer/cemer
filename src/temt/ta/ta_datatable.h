@@ -934,6 +934,8 @@ protected:
   static int_Array	load_col_idx; // #IGNORE mapping of column numbers in data load to column indexes based on header name matches
   static int_Array	load_mat_idx; // #IGNORE mapping of column numbers in data to matrix indicies in columns, based on header info
 
+  virtual bool 		CopyCell_impl(DataCol* dar, int dest_row,
+    const DataTable& src, DataCol* sar, int src_row); // #IGNORE
   virtual int 		LoadHeader_impl(istream& strm, Delimiters delim = TAB);
   // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
   virtual int 		LoadDataRow_impl(istream& strm, Delimiters delim = TAB,
@@ -1024,6 +1026,8 @@ public:
   // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
   virtual bool	CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) { return CopyCell(dest_col, dest_row, src, src_col, src_row); }
   // #CAT_Obsolete this is an obsolete name for CopyCell -- use CopyCell instead
+  bool		CopyCellName(const String& dest_col_name, int dest_row, const DataTable& src, const String& src_col_name, int src_row);
+  // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
 
   virtual void	UniqueColNames();
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)
