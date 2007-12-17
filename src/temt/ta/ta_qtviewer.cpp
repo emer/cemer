@@ -3903,15 +3903,8 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
 }
 
 void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
-// URLs can be suffixed with a "#Xxx" where Xxx is a window id
-// if they are not, then the window will default as follows:
-//  T3 stuff: main project T3 window 
-//  Panel and Tree stuff: main project browser window
-//  these are the same for 2-pane, but different for 3-pane
-
-
-
-//TODO: diagnostics on failures
+// URLs are usually suffixed with a "#Xxx" where Xxx is the uniqueId()
+// of the window in which is embedded the doc viewer
 
   //NOTE: URLs only open in the main project browser for that project
   String path = url.path(); // will only be part before #, if any
@@ -3923,23 +3916,24 @@ void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
   if (win_id.isInt()) {
     idoc_win = taiMisc::active_wins.FindMainWindowById(win_id.toInt());
   } 
-//NOTE: this is a big prob if no id, because how to know what project???
-  if (!idoc_win)  {
-//TEMP
-taMisc::Warning("Cannot determine project from URL!");
-return;
-//    inst = taiMisc::active_wins.Peek_MainWindow();
-  }
+//NOTE: if idoc_win is NULL, then the only really valid thing after this
+// is a WIKI or Web url...
 
   // get the project -- should be able to get from any viewer/browser
-  taProject* proj = idoc_win->myProject();
-  if(!proj) return;	// shouldn't happen!
+  taProject* proj = NULL;
+  if (idoc_win) {
+    proj = idoc_win->myProject();
+  }
   
   // for uniformity and simplicity, we look up the canonical windows
   // and corresponding viewers for the tree/panels and panels/t3 frames
   // note that these are the same for 2-pane
-  MainWindowViewer* proj_brow = proj->GetDefaultProjectBrowser();
-  MainWindowViewer* proj_view = proj->GetDefaultProjectViewer();
+  MainWindowViewer* proj_brow = NULL;
+  MainWindowViewer* proj_view = NULL;
+  if (proj) {
+    proj_brow = proj->GetDefaultProjectBrowser();
+    proj_view = proj->GetDefaultProjectViewer();
+  }
   iMainWindowViewer* iproj_brow = NULL;
   if (proj_brow)
     iproj_brow = proj_brow->widget();
@@ -3947,7 +3941,9 @@ return;
   if (proj_view)
     iproj_view = proj_view->widget(); */
 
-
+//IMPORTANT NOTE: You *must* check ALL objects for NULL in the following
+// cascades, because there are conditions under which it is possible for
+// something not to have a value
   if(path.startsWith(".T3Tab.")) {
     String tbnm = path.after(".T3Tab.");
     if(!proj_view || !proj_view->SelectT3ViewTabName(tbnm)) {
@@ -3979,7 +3975,8 @@ return;
     else {
       if(path.startsWith("."))
 	path = path.after(".");
-      tab = proj->FindFromPath(path);
+      if (proj)
+        tab = proj->FindFromPath(path);
     }
     if (!tab) {
       taMisc::Warning("ta: URL",path,"not found as a path to an object!");
@@ -5959,9 +5956,9 @@ void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,
 {
   // embed our viewer id, so handler can find project, etc.
   QUrl new_url(url);
-  if (url.fragment().isEmpty()) {
+  if (!url.hasFragment()) {
     if (viewerWindow())
-      new_url.setFragment(QString::number(viewerWindow()->uniqueId()));
+      new_url.setFragment("#" + QString::number(viewerWindow()->uniqueId()));
   }
   // goes to: iMainWindowViewer::globalUrlHandler  in ta_qtviewer.cpp
   QDesktopServices::openUrl(new_url);
