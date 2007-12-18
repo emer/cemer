@@ -30,6 +30,11 @@ void CtCaDepSpec::Initialize() {
   ca_dec = .02f;
   ca_effdrive = true;
 
+  old_sd = false;
+  rec = .002f;
+  asymp_act = 0.4f;
+  depl = rec * (1.0f - asymp_act); // here the drive is constant
+
   sd_sq = false;
   sd_ca_thr = 0.2f;
   sd_ca_gain = .7f;
@@ -45,6 +50,13 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
   lrd_ca_thr_rescale = lrd_ca_gain / (1.0f - lrd_ca_thr);
+
+  if(rec < .00001f) rec = .00001f;
+  // chg = rec * (1 - cur) - dep * drive = 0; // equilibrium point
+  // rec * (1 - cur) = dep * drive
+  // dep = rec * (1 - cur) / drive
+  depl = rec * (1.0f - asymp_act); // here the drive is constant
+  depl = MAX(depl, 0.0f);
 }
 
 void CtLeabraConSpec::Initialize() {
@@ -100,8 +112,8 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
   if(u->n_recv_cons > 0)
     u->cai_avg /= (float)u->n_recv_cons;
   if(cspec) {
-    u->syndep_avg = 1.0f - cspec->ca_dep.SynDep(u->cai_avg);
-    u->syndep_max = 1.0f - cspec->ca_dep.SynDep(u->cai_max);
+//     u->syndep_avg = 1.0f - cspec->ca_dep.SynDep(u->cai_avg);
+//     u->syndep_max = 1.0f - cspec->ca_dep.SynDep(u->cai_max);
     u->lrdep_avg = 1.0f - cspec->ca_dep.LrateDep(u->cai_avg);
     u->lrdep_max = 1.0f - cspec->ca_dep.LrateDep(u->cai_max);
   }

@@ -58,6 +58,12 @@ public:
   float		ca_dec;		// time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
   bool		ca_effdrive;	// include effwt in the calcium driving equations?
 
+  bool		old_sd;		// use old syndep eqs!
+  float		rec;		// #DEF_0.002 rate of recovery from depression
+  float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
+  float		depl;		// #READ_ONLY #SHOW rate of depletion of synaptic efficacy as a function of sender-receiver activations (computed from rec, asymp_act)
+  
+
   bool		sd_sq;		// square the cai value for syndep
   float		sd_ca_thr;	// synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
   float		sd_ca_gain;	// multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
@@ -74,10 +80,20 @@ public:
     cai += ca_inc * (1.0f - cai) * drive - ca_dec * cai;
   }
 
-  inline float	SynDep(float cai) {
-    float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
-    if(sd_sq) return cao_thr * cao_thr;
-    else      return cao_thr;	
+  inline float	SynDep(float cai, float effwt, float wt, float ru_act, float su_act) {
+    if(old_sd) {
+      float drive = ru_act * su_act * effwt;
+      float deff = rec * (wt - effwt) - depl * drive;
+      float rval = effwt + deff;
+      if(rval > wt) rval = wt;
+      if(rval < 0.0f) rval = 0.0f;
+      return rval;
+    }
+    else {
+      float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
+      if(sd_sq) return wt * cao_thr * cao_thr;
+      else      return wt * cao_thr;	
+    }
   }
 
   inline float	LrateDep(float cai) {
@@ -114,7 +130,7 @@ public:
   // connection-group level Cai update
 
   void C_Depress_Wt(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
+    cn->effwt = ca_dep.SynDep(cn->cai, cn->effwt, cn->wt, ru->act_eq, su->act_eq);
   }
   // connection-level synaptic depression
   virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -419,7 +435,7 @@ inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru,
 
 inline void CtLeabraConSpec::C_Compute_dWt(CtLeabraCon* cn, LeabraUnit*, float heb, float err) {
   float dwt = lmix.err * err + lmix.hebb * heb;
-  cn->dwt += cur_lrate * ca_dep.LrateDep(cn->cai) * dwt;
+  cn->dwt += cur_lrate * dwt; // ca_dep.LrateDep(cn->cai) * dwt;
 }
 
 inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
