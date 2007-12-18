@@ -28,7 +28,9 @@
 void CtCaDepSpec::Initialize() {
   ca_inc = .02f;
   ca_dec = .02f;
-  
+  ca_effdrive = true;
+
+  sd_sq = false;
   sd_ca_thr = 0.2f;
   sd_ca_gain = .7f;
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);

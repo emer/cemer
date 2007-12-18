@@ -56,7 +56,9 @@ INHERITED(taBase)
 public:
   float		ca_inc;		// time constant for increases in Ca_i (from NMDA etc currents)
   float		ca_dec;		// time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
+  bool		ca_effdrive;	// include effwt in the calcium driving equations?
 
+  bool		sd_sq;		// square the cai value for syndep
   float		sd_ca_thr;	// synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
   float		sd_ca_gain;	// multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
   float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr (= sd_ca_gain/(1 - sd_ca_thr))
@@ -66,13 +68,16 @@ public:
   float		lrd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account lrd_ca_gain and lrd_ca_thr (= lrd_ca_gain/(1 - lrd_ca_thr))
 
   inline void	CaUpdt(float& cai, float effwt, float ru_act, float su_act) {
-    float drive = ru_act * su_act; //  * effwt; // todo: include effwt or not here??  not!
+    float drive = ru_act * su_act;
+    if(ca_effdrive)
+      drive *= effwt;
     cai += ca_inc * (1.0f - cai) * drive - ca_dec * cai;
   }
 
   inline float	SynDep(float cai) {
     float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
-    return cao_thr * cao_thr; // squared
+    if(sd_sq) return cao_thr * cao_thr;
+    else      return cao_thr;	
   }
 
   inline float	LrateDep(float cai) {
