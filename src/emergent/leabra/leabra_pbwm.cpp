@@ -134,7 +134,7 @@ void MatrixErrRndGoSpec::Initialize() {
   min_cor = 5;			// use 1.0 for output
   min_errs = 1;
   err_p = 1.0f;
-  gain = 0.2f;			// use .5 for output
+  gain = 0.0f;			// use .5 for output
   if_go_p = 0.0f;
   err_da = 10.0f;
 }
@@ -783,7 +783,7 @@ void SNrThalMiscSpec::Initialize() {
   avg_net_dt = .005f;
   go_thr = 0.1f;
   rnd_go_inc = 0.2f;
-  net_off = 0.0f;
+  net_off = 0.5f;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -2129,7 +2129,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   pfc_units->dt.vm = .1f;	// slower is better..  .1 is even better!
 
   snrthal_units->dt.vm = .1f;
-  snrthal_units->act.gain = 20.0f;
+  snrthal_units->act.gain = 600.0f;
 
   // set projection parameters
   topfc->p_con = .4f;

@@ -30,14 +30,9 @@ void CtCaDepSpec::Initialize() {
   ca_dec = .02f;
   ca_effdrive = true;
 
-  old_sd = false;
-  rec = .002f;
-  asymp_act = 0.4f;
-  depl = rec * (1.0f - asymp_act); // here the drive is constant
-
   sd_sq = false;
-  sd_ca_thr = 0.2f;
-  sd_ca_gain = .7f;
+  sd_ca_thr = 0.3f;
+  sd_ca_gain = 0.5f;
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
 
   lrd_ca_thr = 0.2f;
@@ -50,8 +45,19 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
   lrd_ca_thr_rescale = lrd_ca_gain / (1.0f - lrd_ca_thr);
+}
 
-  if(rec < .00001f) rec = .00001f;
+
+void CtSynDepSpec::Initialize() {
+  use_sd = false;
+  rec = .002f;
+  asymp_act = 0.4f;
+  depl = rec * (1.0f - asymp_act); // here the drive is constant
+}
+
+void CtSynDepSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+   if(rec < .00001f) rec = .00001f;
   // chg = rec * (1 - cur) - dep * drive = 0; // equilibrium point
   // rec * (1 - cur) = dep * drive
   // dep = rec * (1 - cur) / drive

@@ -54,19 +54,13 @@ class LEABRA_API CtCaDepSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
 INHERITED(taBase)
 public:
-  float		ca_inc;		// time constant for increases in Ca_i (from NMDA etc currents)
-  float		ca_dec;		// time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
-  bool		ca_effdrive;	// include effwt in the calcium driving equations?
+  float		ca_inc;		// e.g., .01 or .02 time constant for increases in Ca_i (from NMDA etc currents)
+  float		ca_dec;		// e.g., .01 or .02 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
+  bool		ca_effdrive;	// #DEF_false include effwt in the calcium driving equations?
 
-  bool		old_sd;		// use old syndep eqs!
-  float		rec;		// #DEF_0.002 rate of recovery from depression
-  float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
-  float		depl;		// #READ_ONLY #SHOW rate of depletion of synaptic efficacy as a function of sender-receiver activations (computed from rec, asymp_act)
-  
-
-  bool		sd_sq;		// square the cai value for syndep
-  float		sd_ca_thr;	// synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
-  float		sd_ca_gain;	// multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
+  bool		sd_sq;		// #DEF_true square the cai value for syndep
+  float		sd_ca_thr;	// e.g., .02 for .01 inc/dec, or .03 for .02 inc/dec synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
+  float		sd_ca_gain;	// e.g., .03 for .01 inc/dec or .05 for .02 inc/dec multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
   float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr (= sd_ca_gain/(1 - sd_ca_thr))
 
   float		lrd_ca_thr;	// learning rate depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect subsequent learning ability
@@ -81,19 +75,9 @@ public:
   }
 
   inline float	SynDep(float cai, float effwt, float wt, float ru_act, float su_act) {
-    if(old_sd) {
-      float drive = ru_act * su_act * effwt;
-      float deff = rec * (wt - effwt) - depl * drive;
-      float rval = effwt + deff;
-      if(rval > wt) rval = wt;
-      if(rval < 0.0f) rval = 0.0f;
-      return rval;
-    }
-    else {
-      float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
-      if(sd_sq) return wt * cao_thr * cao_thr;
-      else      return wt * cao_thr;	
-    }
+    float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
+    if(sd_sq) return wt * cao_thr * cao_thr;
+    else      return wt * cao_thr;	
   }
 
   inline float	LrateDep(float cai) {
@@ -111,11 +95,40 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API CtSynDepSpec : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for direct synaptic depression without intermediate Ca
+INHERITED(taBase)
+public:
+  bool		use_sd;		// use this direct syndep eqs instead of integrated ca mechanism
+  float		rec;		// #DEF_0.002 rate of recovery from depression
+  float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
+  float		depl;		// #READ_ONLY #SHOW rate of depletion of synaptic efficacy as a function of sender-receiver activations (computed from rec, asymp_act)
+
+  inline float	SynDep(float cai, float effwt, float wt, float ru_act, float su_act) {
+    float drive = ru_act * su_act * effwt;
+    float deff = rec * (wt - effwt) - depl * drive;
+    float rval = effwt + deff;
+    if(rval > wt) rval = wt;
+    if(rval < 0.0f) rval = 0.0f;
+    return rval;
+  }
+
+  SIMPLE_COPY(CtSynDepSpec);
+  TA_BASEFUNS(CtSynDepSpec);
+protected:
+  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
   // continuous time leabra con spec: most abstract version of continous time
 INHERITED(LeabraConSpec)
 public:
   CtCaDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy and learning rate
+  CtSynDepSpec	syn_dep;	// direct synaptic depression without any calcium-based mechanisms
   
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Ca updating and synaptic depression
@@ -129,18 +142,28 @@ public:
   }
   // connection-group level Cai update
 
-  void C_Depress_Wt(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  void C_Depress_Wt_Sd(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    cn->effwt = syn_dep.SynDep(cn->cai, cn->effwt, cn->wt, ru->act_eq, su->act_eq);
+  }
+  // connection-level synaptic depression: syn dep direct
+  void C_Depress_Wt_Ca(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     cn->effwt = ca_dep.SynDep(cn->cai, cn->effwt, cn->wt, ru->act_eq, su->act_eq);
   }
-  // connection-level synaptic depression
+  // connection-level synaptic depression: ca mediated
   virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Depress_Wt((CtLeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+    if(syn_dep.use_sd)
+      CON_GROUP_LOOP(cg, C_Depress_Wt_Sd((CtLeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+    else
+      CON_GROUP_LOOP(cg, C_Depress_Wt_Ca((CtLeabraCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
   }
   // connection-group level synaptic depression
 
   inline void C_Compute_CtCycle(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su, float& cai_avg, float& cai_max) {
     C_Compute_Cai(cn, ru, su);
-    C_Depress_Wt(cn, ru, su);
+    if(syn_dep.use_sd)
+      C_Depress_Wt_Sd(cn, ru, su);
+    else
+      C_Depress_Wt_Ca(cn, ru, su);
     cai_avg += cn->cai;
     cai_max = MAX(cn->cai, cai_max);
   }
@@ -435,7 +458,7 @@ inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru,
 
 inline void CtLeabraConSpec::C_Compute_dWt(CtLeabraCon* cn, LeabraUnit*, float heb, float err) {
   float dwt = lmix.err * err + lmix.hebb * heb;
-  cn->dwt += cur_lrate * dwt; // ca_dep.LrateDep(cn->cai) * dwt;
+  cn->dwt += cur_lrate * ca_dep.LrateDep(cn->cai) * dwt;
 }
 
 inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
