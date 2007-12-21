@@ -2768,6 +2768,107 @@ MemberDef* MemberSpace::FindAddrPtr(void* base, void* mbr, int& idx) const {
   return NULL;
 }
 
+#ifdef NO_TA_BASE
+bool MemberSpace::AddUnique(MemberDef* item) {
+  bool rval = inherited::AddUnique(item);
+  if (rval) CheckAddProperty(item);
+  return rval;
+}
+
+bool MemberSpace::AddUniqNameNew(MemberDef* item) {
+  bool rval = inherited::AddUniqNameNew(item);
+  if (rval) CheckAddProperty(item);
+  return rval;
+}
+
+void MemberSpace::CheckAddProperty(MemberDef* item) {
+  PropertySpace& ps = owner->properties;
+  // see if it is a GET guy
+  String prop_name = item->OptionAfter("GET_");
+  if (prop_name.nonempty()) {
+    PropertyDef* pd = ps.FindName(prop_name);
+    if (!pd) {
+      pd = new PropertyDef(prop_name);
+      ps.Add(pd);
+    }
+    pd->get_mbr = item;
+  }
+  // see if it is a SET guy
+  prop_name = item->OptionAfter("SET_");
+  if (prop_name.nonempty()) {
+    PropertyDef* pd = ps.FindName(prop_name);
+    if (!pd) {
+      pd = new PropertyDef(prop_name);
+      ps.Add(pd);
+    }
+    pd->set_mbr = item;
+  }
+}
+
+#endif
+
+//////////////////////////////////
+// 	    PropertySpace		//
+//////////////////////////////////
+
+String	PropertySpace::El_GetName_(void* it) const 
+  { return ((PropertyDef*)it)->name; }
+TALPtr 	PropertySpace::El_GetOwnerList_(void* it) const 
+  { return ((PropertyDef*)it)->owner; }
+void*	PropertySpace::El_SetOwner_(void* it) { return ((PropertyDef*)it)->owner = this; }
+void	PropertySpace::El_SetIndex_(void* it, int i)
+  { ((PropertyDef*)it)->idx = i; }
+void*	PropertySpace::El_Ref_(void* it) { taRefN::Ref((PropertyDef*)it); return it; }
+void* 	PropertySpace::El_unRef_(void* it) { taRefN::unRef((PropertyDef*)it); return it; }
+void	PropertySpace::El_Done_(void* it) { taRefN::Done((PropertyDef*)it); }
+void*	PropertySpace::El_MakeToken_(void* it)  { return (void*)((PropertyDef*)it)->MakeToken(); }
+void*	PropertySpace::El_Copy_(void* trg, void* src)
+{ ((PropertyDef*)trg)->Copy(*((PropertyDef*)src)); return trg; }
+
+PropertySpace::~PropertySpace() { 
+  Reset();
+  if (data_link) {
+    data_link->DataDestroying(); // link NULLs our pointer
+  }
+}
+
+
+//////////////////////////////////
+// PropertySpace: Find By Name	//
+//////////////////////////////////
+
+int PropertySpace::FindNameOrType(const char *nm) const {	// lookup by name
+  int rval = 0; //init just to keep msvc happy
+  // first check names
+  if(FindName(nm),rval)
+    return rval;
+
+  // then type names
+  return FindTypeName(nm);
+}
+
+int PropertySpace::FindTypeName(const char* nm) const {
+  for(int i=0; i<size; i++) {
+    if(FastEl(i)->type->InheritsFrom(nm))
+      return i;
+  }
+  return -1;
+}
+
+PropertyDef* PropertySpace::FindNameR(const char* nm) const {
+  PropertyDef* rval;
+  if((rval = FindName(nm)))
+    return rval;
+
+  int i;
+  for(i=0; i < size; i++) {
+    if((FastEl(i)->type->ptr == 0) &&
+       ((rval = FastEl(i)->type->properties.FindNameR(nm)) != NULL))
+      return rval;
+  }
+  return NULL;
+}
+
 
 //////////////////////////////////
 // 	    MethodSpace		//
@@ -2793,6 +2894,8 @@ MethodSpace::~MethodSpace() {
 }
 
 bool MethodSpace::AddUniqNameNew(MethodDef *it) {
+  bool result = false;
+  {
 /*NOTE:
   At present, typea is only able to manage a single method per name.
   We only retain the last one scanned (so we always replace previously
@@ -2807,7 +2910,7 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   if (!it->is_static) // of course statics can't be virtual
     rval = FindVirtualBase(it, idx); //note: only finds virtuals, not non-virtuals
   if (rval) {
-    if (it == rval) return false; // could be the same one..
+    if (it == rval) {result = false; goto end;} // could be the same one..
     it->is_virtual = true; // may not have been set for implicit override
     it->is_override = true; // this is our job to set
     // the overload count will be same for an override
@@ -2828,7 +2931,7 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
     rval = FindName(it->name, idx);
     if (rval) {
       replace = true; 
-      if (it == rval) return false; // could be the same one..
+      if (it == rval) {result = false; goto end;}// could be the same one..
       it->fun_overld = rval->fun_overld;
       // if the args are identical, then we are lexically hiding the previous
       // one -- we will therefore replace it, but of course not set "override"
@@ -2845,11 +2948,50 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   }
   if (replace) {
     ReplaceIdx(idx, it);		// new one replaces old if overloaded or overridden
-    return false;
+    result = false;
+    goto end;
   }
-  taPtrList<MethodDef>::Add(it);
-  return true;			// yes, its unique
+  inherited::Add(it);
+  result = true;			// yes, its unique
+  } // block, for jump
+end:
+#ifdef NO_TA_BASE
+  if (result) CheckAddProperty(it);
+#endif
+  return result;
 }
+
+#ifdef NO_TA_BASE
+bool MethodSpace::AddUnique(MethodDef* item) {
+  bool rval = inherited::AddUnique(item);
+  if (rval) CheckAddProperty(item);
+  return rval;
+}
+
+void MethodSpace::CheckAddProperty(MethodDef* item) {
+  PropertySpace& ps = owner->properties;
+  // see if it is a GET guy
+  String prop_name = item->OptionAfter("GET_");
+  if (prop_name.nonempty()) {
+    PropertyDef* pd = ps.FindName(prop_name);
+    if (!pd) {
+      pd = new PropertyDef(prop_name);
+      ps.Add(pd);
+    }
+    pd->get_mth = item;
+  }
+  // see if it is a SET guy
+  prop_name = item->OptionAfter("SET_");
+  if (prop_name.nonempty()) {
+    PropertyDef* pd = ps.FindName(prop_name);
+    if (!pd) {
+      pd = new PropertyDef(prop_name);
+      ps.Add(pd);
+    }
+    pd->set_mth = item;
+  }
+}
+#endif
 
 MethodDef* MethodSpace::FindAddr(ta_void_fun funa, int& idx) const {
   int i;
@@ -2934,10 +3076,7 @@ TypeItem::TypeItem()
 
 TypeItem::TypeItem(const TypeItem& cp) {
   init();
-  name 		= cp.name;
-  desc		= cp.desc;
-  opts		= cp.opts;
-  lists		= cp.lists;
+  Copy_(cp);
 }
 
 void TypeItem::init()
@@ -2953,6 +3092,10 @@ TypeItem::~TypeItem() {
 }
 
 void TypeItem::Copy(const TypeItem& cp) {
+  Copy_(cp);
+}
+
+void TypeItem::Copy_(const TypeItem& cp) {
   name 		= cp.name;
   desc		= cp.desc;
   opts		= cp.opts;
@@ -3014,11 +3157,6 @@ String TypeItem::GetLabel() const {
 //////////////////////////
 
 
-void EnumDef::Initialize() {
-  owner = NULL;
-  enum_no = 0;
-}
-
 EnumDef::EnumDef()
 :inherited()
 {
@@ -3046,11 +3184,20 @@ EnumDef::EnumDef(const EnumDef& cp)
 :inherited(cp)
 {
   Initialize();
-  Copy(cp);
+  Copy_(cp);
+}
+
+void EnumDef::Initialize() {
+  owner = NULL;
+  enum_no = 0;
 }
 
 void EnumDef::Copy(const EnumDef& cp) {
   inherited::Copy(cp);
+  Copy_(cp);
+}
+
+void EnumDef::Copy_(const EnumDef& cp) {
   enum_no = cp.enum_no;
 }
 
@@ -3065,17 +3212,12 @@ bool EnumDef::CheckList(const String_PArray& lst) const {
 
 
 //////////////////////////////////
-// 	     MemberDef		//
+//  MemberDefBase		//
 //////////////////////////////////
 
-void MemberDef::Initialize() {
-  owner = NULL;
+void MemberDefBase::Initialize() {
   type = NULL;
-  off = NULL;
-  base_off = 0;
   is_static = false;
-  addr = NULL;
-  fun_ptr = false;
 #ifdef TA_GUI
   im = NULL;
 #endif
@@ -3084,46 +3226,46 @@ void MemberDef::Initialize() {
   show_tree = 0;
 }
 
-MemberDef::MemberDef()
+MemberDefBase::MemberDefBase()
 :inherited()
 {
   Initialize();
 }
 
-MemberDef::MemberDef(const char* nm)
+MemberDefBase::MemberDefBase(const char* nm)
 :inherited()
 {
   Initialize();
   name = nm;
 }
 
-MemberDef::MemberDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
-		     ta_memb_ptr mptr, bool is_stat, void* maddr, bool funp)
+MemberDefBase::MemberDefBase(TypeDef* ty, const char* nm, const char* dsc,
+  const char* op, const char* lis, bool is_stat)
 :inherited()
 {
   Initialize();
   type = ty; name = nm; desc = dsc;
   taMisc::CharToStrArray(opts,op);
   taMisc::CharToStrArray(lists,lis);
-  off = mptr; is_static = is_stat; addr = maddr;  fun_ptr = funp;
+  is_static = is_stat;
 }
 
-MemberDef::MemberDef(const MemberDef& cp)
+MemberDefBase::MemberDefBase(const MemberDefBase& cp)
 :inherited(cp)
 {
   Initialize();
-  Copy(cp);
+  Copy_(cp);
 }
 
-void MemberDef::Copy(const MemberDef& cp) {
+void MemberDefBase::Copy(const MemberDefBase& cp) {
   inherited::Copy(cp);
+  Copy_(cp);
+}
+
+void MemberDefBase::Copy_(const MemberDefBase& cp) {
   type = cp.type;
   inh_opts = cp.inh_opts;
-  off = cp.off;
-  base_off = cp.base_off;
   is_static = cp.is_static;
-  addr = cp.addr;
-  fun_ptr = cp.fun_ptr;
 // don't copy because delete is not ref counted
 //  im = cp.im;
 // always invalidate show bits, so they get redone in our new context
@@ -3132,7 +3274,7 @@ void MemberDef::Copy(const MemberDef& cp) {
   show_tree = 0;
 }
 
-MemberDef::~MemberDef() {
+MemberDefBase::~MemberDefBase() {
 #ifndef NO_TA_BASE
 # ifndef NO_TA_GUI
   if (im != NULL) {delete im; im = NULL;}
@@ -3140,7 +3282,7 @@ MemberDef::~MemberDef() {
 #endif
 }
 
-bool MemberDef::CheckList(const String_PArray& lst) const {
+bool MemberDefBase::CheckList(const String_PArray& lst) const {
   int i;
   for(i=0; i<lists.size; i++) {
     if(lst.FindEl(lists.FastEl(i)) >= 0)
@@ -3149,41 +3291,7 @@ bool MemberDef::CheckList(const String_PArray& lst) const {
   return false;
 }
 
-void* MemberDef::GetOff(const void* base) const {
-  void* rval = addr;
-  if (!is_static)
-    rval = (void*)&((ta_memb_ptr_class*)((char*)base+base_off)->*off);
-  return rval;
-}
-
-const String MemberDef::GetPathName() const {
-  String rval; 
-  TypeDef* owtp = GetOwnerType();
-  if (owtp) 
-    rval = owtp->GetPathName();
-  rval += "::" + name;
-  return rval;
-} 
-
-const Variant MemberDef::GetValVar(const void* base, void* par) const {
-  return type->GetValVar(GetOff(base), par, this); //TODO: no par???
-}
-
-bool MemberDef::ValIsDefault(const void* base, int for_show) const {
-  String defval = OptionAfter("DEF_");
-  void* mbr_base = GetOff(base);
-  // if it has an explicit default, compare using the string
-  // we do this regardless whether it is a simple value, or an object
-  if (defval.nonempty()) {
-    String act_val = type->GetValStr(mbr_base);
-    return (act_val == defval);
-  }
-  // otherwise, delegate to the type -- objects recurse into us
-  // if a default value was specified, compare and set the highlight accordingly
-  return type->ValIsDefault(mbr_base, this, for_show);
-}
-
-bool MemberDef::ShowMember(
+bool MemberDefBase::ShowMember(
   int show_forbidden,
   TypeItem::ShowContext show_context,
   int show_allowed) const 
@@ -3212,7 +3320,7 @@ bool MemberDef::ShowMember(
   return (show_eff & (byte)show_allowed & ~(byte)show_forbidden);
 }
   
-void MemberDef::ShowMember_CalcCache() const {
+void MemberDefBase::ShowMember_CalcCache() const {
 #ifndef NO_TA_BASE
   // default children are never shown
   TypeDef* par_typ = GetOwnerType();
@@ -3247,7 +3355,7 @@ void MemberDef::ShowMember_CalcCache() const {
   //NOTE: lists/groups, we only show by default in lists/groups, embedded lists/groups
 }
 
-void MemberDef::ShowMember_CalcCache_impl(byte& show, const String& suff) const {
+void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) const {
   show |= 0x80; // set the "done" flag
   
   //note: keep in mind that these show bits are the opposite of the show flags,
@@ -3286,6 +3394,193 @@ void MemberDef::ShowMember_CalcCache_impl(byte& show, const String& suff) const 
       show |= (byte)taMisc::IS_NORMAL;
 }
 
+
+
+//////////////////////////////////
+// 	     MemberDef		//
+//////////////////////////////////
+
+void MemberDef::Initialize() {
+  owner = NULL;
+  off = NULL;
+  base_off = 0;
+  addr = NULL;
+  fun_ptr = false;
+}
+
+MemberDef::MemberDef()
+:inherited()
+{
+  Initialize();
+}
+
+MemberDef::MemberDef(const char* nm)
+:inherited(nm)
+{
+  Initialize();
+}
+
+MemberDef::MemberDef(TypeDef* ty, const char* nm, const char* dsc,
+  const char* op, const char* lis, ta_memb_ptr mptr, bool is_stat,
+  void* maddr, bool funp)
+:inherited(ty, nm, dsc, op, lis, is_stat)
+{
+  Initialize();
+  off = mptr; addr = maddr;  fun_ptr = funp;
+}
+
+MemberDef::MemberDef(const MemberDef& cp)
+:inherited(cp)
+{
+  Initialize();
+  Copy_(cp);
+}
+
+void MemberDef::Copy(const MemberDef& cp) {
+  inherited::Copy(cp);
+  Copy_(cp);
+}
+
+void MemberDef::Copy_(const MemberDef& cp) {
+  off = cp.off;
+  base_off = cp.base_off;
+  addr = cp.addr;
+  fun_ptr = cp.fun_ptr;
+}
+
+MemberDef::~MemberDef() {
+}
+
+void* MemberDef::GetOff(const void* base) const {
+  void* rval = addr;
+  if (!is_static)
+    rval = (void*)&((ta_memb_ptr_class*)((char*)base+base_off)->*off);
+  return rval;
+}
+
+const String MemberDef::GetPathName() const {
+  String rval; 
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) 
+    rval = owtp->GetPathName();
+  rval += "::" + name;
+  return rval;
+} 
+
+const Variant MemberDef::GetValVar(const void* base) const {
+  return type->GetValVar(GetOff(base), this);
+}
+
+void MemberDef::SetValVar(const Variant& val, void* base, void* par) {
+  return type->SetValVar(val, GetOff(base), par, this);
+}
+
+bool MemberDef::ValIsDefault(const void* base, int for_show) const {
+  String defval = OptionAfter("DEF_");
+  void* mbr_base = GetOff(base);
+  // if it has an explicit default, compare using the string
+  // we do this regardless whether it is a simple value, or an object
+  if (defval.nonempty()) {
+    String act_val = type->GetValStr(mbr_base);
+    return (act_val == defval);
+  }
+  // otherwise, delegate to the type -- objects recurse into us
+  // if a default value was specified, compare and set the highlight accordingly
+  return type->ValIsDefault(mbr_base, this, for_show);
+}
+
+
+
+
+//////////////////////////////////
+// 	     PropertyDef		//
+//////////////////////////////////
+
+void PropertyDef::Initialize() {
+  owner = NULL;
+#ifdef NO_TA_BASE
+  get_mbr = NULL;
+  get_mth = NULL;
+  set_mbr = NULL;
+  set_mth = NULL;
+#endif
+  prop_get = NULL;
+  prop_set = NULL;
+}
+
+PropertyDef::PropertyDef()
+:inherited()
+{
+  Initialize();
+}
+
+PropertyDef::PropertyDef(const char* nm)
+:inherited(nm)
+{
+  Initialize();
+}
+
+PropertyDef::PropertyDef(TypeDef* ty, const char* nm, const char* dsc,
+  const char* op, const char* lis, ta_prop_get_fun get, ta_prop_set_fun set,
+  bool is_stat)
+:inherited(ty, nm, dsc, op, lis, is_stat)
+{
+  Initialize();
+  prop_get = get; 
+  prop_set = set;
+}
+
+PropertyDef::PropertyDef(const PropertyDef& cp)
+:inherited(cp)
+{
+  Initialize();
+  Copy_(cp);
+}
+
+void PropertyDef::Copy(const PropertyDef& cp) {
+  inherited::Copy(cp);
+  Copy_(cp);
+}
+
+void PropertyDef::Copy_(const PropertyDef& cp) {
+  prop_get = cp.prop_get; 
+  prop_set =cp.prop_set;
+}
+
+PropertyDef::~PropertyDef() {
+}
+
+/*nn?? const String PropertyDef::GetPathName() const {
+  String rval; 
+  TypeDef* owtp = GetOwnerType();
+  if (owtp) 
+    rval = owtp->GetPathName();
+  rval += "::" + name;
+  return rval;
+} */
+
+const Variant PropertyDef::GetValVar(const void* base) const {
+  if (prop_get)
+    return prop_get(base);
+  else return _nilVariant;
+}
+
+void PropertyDef::SetValVar(const Variant& val, void* base, void* par) {
+  if (prop_set)
+    prop_set(base, val);
+}
+
+bool PropertyDef::ValIsDefault(const void* base, int for_show) const {
+  String defval = OptionAfter("DEF_");
+  Variant val = GetValVar(base);
+  // if it has an explicit default, compare using the string
+  // we do this regardless whether it is a simple value, or an object
+  if (defval.nonempty()) {
+    return (val.toString() == defval);
+  }
+  // otherwise, just accept if it is the simple type
+  return val.isDefault();
+}
 
 
 
@@ -3583,6 +3878,8 @@ void TypeDef::Initialize() {
   sub_types.owner = this;
   members.name = "members";
   members.owner = this;
+  properties.name = "properties";
+  properties.owner = this;
   methods.name = "methods";
   methods.owner = this;
   templ_pars.name = "templ_pars";
@@ -3654,11 +3951,15 @@ TypeDef::TypeDef(const TypeDef& cp)
 :inherited(cp)
 {
   Initialize();
-  Copy(cp);
+  Copy_(cp);
 }
 
 void TypeDef::Copy(const TypeDef& cp) {
   inherited::Copy(cp);
+  Copy_(cp);
+}
+
+void TypeDef::Copy_(const TypeDef& cp) {
 #ifdef NO_TA_BASE
   pre_parsed	= cp.pre_parsed;
 #else
@@ -3691,8 +3992,9 @@ void TypeDef::Copy(const TypeDef& cp) {
   enum_vals	= cp.enum_vals;
   //  sub_types 	= cp.sub_types;
   sub_types.Duplicate(cp.sub_types);// important: add to subtypes..
-  members	= cp.members  ;
-  methods	= cp.methods  ;
+  members	= cp.members;
+  properties	= cp.properties;
+  methods	= cp.methods;
   templ_pars	= cp.templ_pars;
 
   sub_types.ReplaceParents(cp.sub_types, sub_types); // make our sub types consistent
@@ -4024,6 +4326,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   enum_vals.BorrowUniqNameOld(it->enum_vals);
   sub_types.BorrowUniqNameOld(it->sub_types);
   members.BorrowUniqNameOld(it->members);
+  properties.BorrowUniqNameOld(it->properties);
   methods.BorrowUniqNameOld(it->methods);
   return it;
 }
@@ -4806,7 +5109,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
   return name;
 }
 
-const Variant TypeDef::GetValVar(const void* base_, void*, const MemberDef* memb_def) const 
+const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) const 
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
@@ -5049,7 +5352,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	String en_nm = strval.after("::");
 	TypeDef* td = taMisc::types.FindName(tp_nm);
 	if(td != NULL) {
-	  td->SetValStr(en_nm, base, par, memb_def);
+	  td->SetValStr(en_nm, base, memb_def);
 	  return;
 	}
 	EnumDef* ed = FindEnum(en_nm);
@@ -5236,7 +5539,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	  }
 	}
 	if((md != NULL) && !mb_val.empty())
-	  md->type->SetValStr(mb_val, md->GetOff(base), base, md, sc);
+	  md->type->SetValStr(mb_val, md->GetOff(base), par, md, sc);
       }
 #ifndef NO_TA_BASE
       if(InheritsFrom(TA_taBase)) {
@@ -5324,6 +5627,171 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       }
     }
   }
+}
+
+void TypeDef::SetValVar(const Variant& val, void* base, void* par,
+  MemberDef* memb_def) 
+{
+  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+    MethodDef* fun = TA_taRegFun.methods.FindName(val.toString());
+    if((fun != NULL) && (fun->addr != NULL))
+      *((ta_void_fun*)base) = fun->addr;
+    return;
+  }
+  if (ptr == 0) {
+    if(DerivesFrom(TA_bool)) {
+      *((bool*)base) = val.toBool(); return;
+    }
+    else if(DerivesFrom(TA_int)) {
+      *((int*)base) = val.toInt(); return;}
+    else if(DerivesFrom(TA_float)) {
+      *((float*)base) = val.toFloat(); return;}
+    else if(DerivesFormal(TA_enum)) {
+      // if it is a number, assume direct value, otherwise it is a string
+      if (val.isNumeric()) {
+        *((int*)base) = val.toInt();
+        return;
+      }
+      String strval = val.toString();
+      if(strval.contains(')')) {
+	strval = strval.after(')');
+	if(strval.empty())	// oops
+	  strval = val.toString();
+      }
+      strval.gsub(" ",""); strval.gsub("\t",""); strval.gsub("\n","");
+      if(strval.contains("::")) {
+	String tp_nm = strval.before("::");
+	String en_nm = strval.after("::");
+	TypeDef* td = taMisc::types.FindName(tp_nm);
+	if(td != NULL) {
+	  td->SetValStr(en_nm, base, par, memb_def);
+	  return;
+	}
+	EnumDef* ed = FindEnum(en_nm);
+	if(ed) {
+	  *((int*)base) = ed->enum_no;
+	  return;
+	}
+	taMisc::Warning("Enum named:", strval, "not found in enum type:", name);
+      }
+      if(strval.contains('|')) { // bits
+	int bits = 0;
+	while(strval.nonempty()) {
+	  String curstr = strval;
+	  if(strval.contains('|')) {
+	    curstr = strval.before('|');
+	    strval = strval.after('|');
+	  }
+	  else
+	    strval = _nilString;
+	  EnumDef* ed = FindEnum(curstr);
+	  if(ed) {
+	    bits |= ed->enum_no;
+	  }
+	  else {
+	    taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
+	  }
+	}
+	*((int*)base) = bits;
+	return;
+      }
+      else {
+	EnumDef* ed = FindEnum(strval);
+	if(ed) {
+	  *((int*)base) = ed->enum_no;
+	  return;
+	}
+	int intval = (int)strval;
+	*((int*)base) = intval;
+	return;
+      }
+    }
+    else if(DerivesFrom(TA_taString)) {
+      *((String*)base) = val.toString(); return;}
+    // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
+    else if (DerivesFrom(TA_Variant)) {
+      *((Variant*)base) = val; return;
+    }
+    // note: char is treated as an ansi character
+    else if (DerivesFrom(TA_char)) {
+    //TODO: char conversion heuristics
+      *((char*)base) = val.toChar(); return;}
+    // signed char is treated like a number
+    else if (DerivesFrom(TA_signed_char)) {
+      *((signed char*)base) = (signed char)val.toInt(); return;}
+    // unsigned char is "byte" in ta/pdp and treated like a number
+    else if (DerivesFrom(TA_unsigned_char)) {
+      *((unsigned char*)base) = val.toByte(); return;}
+    else if(DerivesFrom(TA_short)) {
+      *((short*)base) = (short)val.toInt(); return;}
+    else if(DerivesFrom(TA_unsigned_short)) {
+      *((unsigned short*)base) = (unsigned short)val.toUInt(); return;}
+    else if(DerivesFrom(TA_unsigned_int)) {
+      *((uint*)base) = val.toUInt(); return;}
+    else if(DerivesFrom(TA_int64_t)) {
+      *((int64_t*)base) = val.toInt64(); return;}
+    else if(DerivesFrom(TA_uint64_t)) {
+      *((uint64_t*)base) = val.toUInt64(); return;}
+    else if(DerivesFrom(TA_double)) {
+      *((double*)base) = val.toDouble(); return;}
+#ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taList_impl)) {
+    //TODO: not handled!
+    }
+    else if(DerivesFrom(TA_taArray_base)) {
+      taArray_base* gp = (taArray_base*)base;
+      if(gp != NULL)
+	gp->InitFromString(val.toString());
+      return;
+    }
+    else if(DerivesFrom(TA_taArray_impl)) {
+      taArray_impl* gp = (taArray_impl*)base;
+      if (gp != NULL) {
+	gp->InitFromString(val.toString());
+      }
+      return;
+    }
+    else if (DerivesFrom(TA_taSmartPtr)) {
+      // we just delegate, since we are binary compat
+      TA_taBase_ptr.SetValVar(val, base, par, memb_def);
+      return;
+    }
+    else if(DerivesFrom(TA_taSmartRef)) {
+      //VERY DANGEROUS!!!! No type checking!!!!
+      taSmartRef& ref = *((taSmartRef*)base);
+      ref = val.toBase();
+      return;
+    }
+#endif
+  }
+  else if(ptr == 1) {
+#ifndef NO_TA_BASE
+    if (DerivesFrom(TA_taBase)) {
+      TAPtr bs = val.toBase();
+      if (bs && !bs->GetTypeDef()->DerivesFrom(this)) {
+        taMisc::Warning("Attempt to set member of type", this->name, " from ",
+          bs->GetTypeDef()->name);
+        return;
+      
+      }
+      if (memb_def  && memb_def->HasOption("OWN_POINTER")) {
+	if(par == NULL)
+	  taMisc::Warning("*** NULL parent for owned pointer:");
+	else
+	  taBase::OwnPointer((TAPtr*)base, bs, (TAPtr)par);
+      }
+      else {
+        if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
+	  (*(TAPtr*)base) = bs;
+        else
+	  taBase::SetPointer((TAPtr*)base, bs);
+      }
+      return;
+    }
+#endif
+  }
+  // if we get to here, the value can't be assigned
+  taMisc::Warning("Type value was not assigned from Variant.");
 }
 
 

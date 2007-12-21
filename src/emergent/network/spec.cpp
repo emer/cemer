@@ -15,16 +15,12 @@
 
 
 
-// spec.cc
+// spec.cpp
 
 #include "spec.h"
-#include "emergent_project.h"
-#ifdef TA_GUI
-  #include "ta_qtgroup.h"
-#endif
 
 #ifdef V3_COMPAT
-#include "v3_compat.h"
+# include "v3_compat.h"
 #endif
 
 //////////////////////////////////

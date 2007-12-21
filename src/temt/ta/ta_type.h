@@ -54,11 +54,13 @@ class TA_API taDataLink;
 class TA_API taDataLinkItr;
 class TA_API EnumSpace;
 class TA_API MemberSpace;
+class TA_API PropertySpace;
 class TA_API MethodSpace;
 class TA_API TypeSpace;
 class TA_API EnumDef;
 class TA_API MemberDef;
 class TA_API MethodDef;
+class TA_API PropertyDef;
 class TA_API TypeDef; //
 
 /*
@@ -181,7 +183,13 @@ public:
   virtual ~ta_memb_ptr_class()	{ }; // make sure it has a vtable..
 };
 
-typedef int ta_memb_ptr_class::* ta_memb_ptr;
+typedef int ta_memb_ptr_class::* ta_memb_ptr; //
+
+// for Properties
+
+typedef Variant (*ta_prop_get_fun)(const void*);
+typedef void (*ta_prop_set_fun)(void*, const Variant&);
+
 
 class taBase;
 typedef taBase* TAPtr;		// pointer to a taBase type
@@ -1387,45 +1395,45 @@ public:
 
   void operator=(const MemberSpace& cp)	{ Borrow(cp); }
 
-  virtual MemberDef*	FindCheck(const char* nm, void* base, void*& ptr) const;
+  MemberDef*	FindCheck(const char* nm, void* base, void*& ptr) const;
   // breadth-first find pass for the recursive procedures
 
   int			FindNameOrType(const char* nm) const;
   // checks name and type name in 2 passes
-  virtual int		FindTypeName(const char* nm) const;
+  int		FindTypeName(const char* nm) const;
   // find by name of type
-  virtual MemberDef*	FindNameR(const char* nm) const;
+  MemberDef*	FindNameR(const char* nm) const;
   // recursive find of name (or type name)
-  virtual MemberDef* 	FindNameAddr(const char* nm, void* base, void*& ptr) const;
+  MemberDef* 	FindNameAddr(const char* nm, void* base, void*& ptr) const;
   // find of name returning address of found member
-  virtual MemberDef*	FindNameAddrR(const char* nm, void* base, void*& ptr) const;
+  MemberDef*	FindNameAddrR(const char* nm, void* base, void*& ptr) const;
   // recursive find of name returning address of found member
 
-  virtual MemberDef*	FindType(TypeDef* it, int& idx=no_index) const;
+  MemberDef*	FindType(TypeDef* it, int& idx=no_index) const;
   // find by type, inherits from
-  virtual MemberDef*	FindTypeR(TypeDef* it) const;
+  MemberDef*	FindTypeR(TypeDef* it) const;
   // recursive find of type
-  virtual MemberDef* 	FindTypeAddr(TypeDef* it, void* base, void*& ptr) const;
+  MemberDef* 	FindTypeAddr(TypeDef* it, void* base, void*& ptr) const;
   // find of type returning address of found member
-  virtual MemberDef*	FindTypeAddrR(TypeDef* it, void* base, void*& ptr) const;
+  MemberDef*	FindTypeAddrR(TypeDef* it, void* base, void*& ptr) const;
   // recursive find of type returning address of found member
 
-  virtual int		FindDerives(TypeDef* it) const;
-  virtual MemberDef*	FindTypeDerives(TypeDef* it,  int& idx=no_index) const;
+  int		FindDerives(TypeDef* it) const;
+  MemberDef*	FindTypeDerives(TypeDef* it,  int& idx=no_index) const;
   // find by type, derives from
 
-  virtual MemberDef*	FindAddr(void* base, void* mbr, int& idx=no_index) const;
+  MemberDef*	FindAddr(void* base, void* mbr, int& idx=no_index) const;
   // find by address given base of class and address of member
-  virtual int		FindPtr(void* base, void* mbr) const;
-  virtual MemberDef*	FindAddrPtr(void* base, void* mbr, int& idx=no_index) const;
+  int		FindPtr(void* base, void* mbr) const;
+  MemberDef*	FindAddrPtr(void* base, void* mbr, int& idx=no_index) const;
   // find by address of a member that is a pointer given base and pointer addr
 
-  virtual void		CopyFromSameType(void* trg_base, void* src_base);
+  void		CopyFromSameType(void* trg_base, void* src_base);
   // copy all members from class of the same type as me
-  virtual void		CopyOnlySameType(void* trg_base, void* src_base);
+  void		CopyOnlySameType(void* trg_base, void* src_base);
   // copy only those members in my type (no inherited ones)
 
-  virtual bool		CompareSameType(Member_List& mds, void_PArray& trg_bases,
+  bool		CompareSameType(Member_List& mds, void_PArray& trg_bases,
 					void_PArray& src_bases, 
 					void* trg_base, void* src_base,
 					int show_forbidden = taMisc::NO_HIDDEN,
@@ -1434,18 +1442,70 @@ public:
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   // IO
-  virtual ostream&   	OutputType(ostream& strm, int indent = 0) const;
+  ostream&   	OutputType(ostream& strm, int indent = 0) const;
 
-  virtual ostream&   	Output(ostream& strm, void* base, int indent) const;
-  virtual ostream&   	OutputR(ostream& strm, void* base, int indent) const;
+  ostream&   	Output(ostream& strm, void* base, int indent) const;
+  ostream&   	OutputR(ostream& strm, void* base, int indent) const;
 
   // for dump files
-  virtual int   	Dump_Save(ostream& strm, void* base, void* par, int indent);
-  virtual int   	Dump_SaveR(ostream& strm, void* base, void* par, int indent);
-  virtual int   	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
+  int   	Dump_Save(ostream& strm, void* base, void* par, int indent);
+  int   	Dump_SaveR(ostream& strm, void* base, void* par, int indent);
+  int   	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
-  virtual int   	Dump_Load(istream& strm, void* base, void* par,
+  int   	Dump_Load(istream& strm, void* base, void* par,
 				  const char* prv_read_nm = NULL, int prv_c = 0);
+#ifdef NO_TA_BASE
+  bool	AddUnique(MemberDef* item);
+  bool	AddUniqNameNew(MemberDef* item);
+  void	CheckAddProperty(MemberDef* item);
+#endif
+};
+
+
+//////////////////////////
+//   PropertySpace	//
+//////////////////////////
+
+class TA_API Property_List: public taPtrList<PropertyDef> {
+  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS simple list of members
+public:
+  Property_List() {}
+};
+
+class TA_API PropertySpace: public Property_List {
+  // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS space of members
+INHERITED(Property_List)
+protected:
+  String	GetListName_() const		{ return name; }
+  String 	El_GetName_(void* it) const;
+  TALPtr 	El_GetOwnerList_(void* it) const;
+  void*		El_SetOwner_(void* it);
+  void		El_SetIndex_(void* it, int i);
+
+  void*		El_Ref_(void* it);
+  void* 	El_unRef_(void* it);
+  void		El_Done_(void* it);
+  void*		El_MakeToken_(void* it);
+  void*		El_Copy_(void* trg, void* src);
+
+public:
+  String 	name;		// of the space
+  TypeDef*	owner;		// owner is a typedef
+  taDataLink*	data_link;
+
+  void		Initialize()		{ owner = NULL; data_link = NULL;}
+  PropertySpace()				{ Initialize(); }
+  PropertySpace(const PropertySpace& cp)	{ Initialize(); Borrow(cp); }
+  ~PropertySpace();
+
+  void operator=(const PropertySpace& cp)	{ Borrow(cp); }
+
+  int			FindNameOrType(const char* nm) const;
+  // checks name and type name in 2 passes
+  int			FindTypeName(const char* nm) const;
+  // find by name of type
+  PropertyDef*		FindNameR(const char* nm) const;
+  // recursive find of name (or type name)
 };
 
 
@@ -1500,6 +1560,11 @@ public:
 
   // IO
   virtual ostream&   	OutputType(ostream& strm, int indent = 0) const;
+  
+#ifdef NO_TA_BASE
+  bool	AddUnique(MethodDef* item);
+  void	CheckAddProperty(MethodDef* item);
+#endif
 };
 
 
@@ -1609,19 +1674,17 @@ public:
 
 private:
   void		init(); // #IGNORE
+  void		Copy_(const TypeItem& cp);
 };
 
 class TA_API EnumDef : public TypeItem { //  defines an enum member
-#ifndef __MAKETA__
-typedef TypeItem inherited;
-#endif
+INHERITED(TypeItem)
 public:
   EnumSpace*	owner;		// the owner of this one
 
   int		enum_no;	// number (value) of the enum
 
 
-  void		Initialize();
   void		Copy(const EnumDef& cp);
 
   EnumDef();
@@ -1635,45 +1698,36 @@ public:
   { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
   bool		CheckList(const String_PArray& lst) const;
   // check if enum has a list in common with given one
+private:
+  void		Initialize();
+  void		Copy_(const EnumDef& cp);
 };
 
-class TA_API MemberDef : public TypeItem { //  defines a class member
+
+class TA_API MemberDefBase : public TypeItem { // #VIRT_BASE #NO_INSTANCE common subclass of MemberDef and PropertyDef
 INHERITED(TypeItem)
 public:
-  MemberSpace*	owner;
-
   TypeDef*	type;		// of this item
   String_PArray	inh_opts;	// inherited options ##xxx
-  ta_memb_ptr	off;		// offset of member from owner type
-  int		base_off;	// offset for base of owner
   bool		is_static;	// true if this member is static
-  void*         addr;		// address of static member
-  bool		fun_ptr;	// true if this is a pointer to a function
 #ifdef TA_GUI
-  taiMember*	im;		// gui structure for edit representation (was: iv)
+  taiMember*	im;		// gui structure for edit representation -- if this is a memberdef that is the storage for a property, then the im is assigned to the property
 #endif
 
-  bool		ValIsDefault(const void* base, 
-    int for_show = taMisc::IS_EXPERT) const; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+  virtual bool		ValIsDefault(const void* base, 
+    int for_show = taMisc::IS_EXPERT) const = 0; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
   
-  void 		Initialize();
-  void		Copy(const MemberDef& cp);
-  MemberDef();
-  MemberDef(const char* nm);
-  MemberDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
-	    ta_memb_ptr mptr, bool is_stat = false, void* maddr=NULL, bool funp = false);
-  MemberDef(const MemberDef& cp);
-  virtual ~MemberDef();
-  MemberDef*	Clone()		{ return new MemberDef(*this); }
-  MemberDef*	MakeToken()	{ return new MemberDef(); }
+  void		Copy(const MemberDefBase& cp);
+  MemberDefBase();
+  MemberDefBase(const char* nm);
+  MemberDefBase(TypeDef* ty, const char* nm, const char* dsc, const char* op,
+    const char* lis, bool is_stat = false);
+  MemberDefBase(const MemberDefBase& cp);
+  ~MemberDefBase();
 
-  void*			GetOff(const void* base) const;
-  override TypeDef* 	GetOwnerType() const
-  { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
-  override const String	GetPathName() const; 
-    // name used for saving a reference in stream files, can be used to lookup again
-
-  const Variant		GetValVar(const void* base, void* par = NULL) const;
+  virtual const Variant	GetValVar(const void* base) const = 0;
+  virtual void	SetValVar(const Variant& val, void* base,
+    void* par = NULL) = 0;
   
   bool		CheckList(const String_PArray& lst) const;
   // check if member has a list in common with given one
@@ -1683,6 +1737,53 @@ public:
     int show_allowed = taMisc::SHOW_CHECK_MASK) const;
   // decide whether to output or not based on options (READ_ONLY, HIDDEN, etc)
 
+protected:
+  // note: bits in the show* vars are set to indicate the value, ie READ_ONLY has that bit set
+  mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
+  mutable byte	show_edit;
+  mutable byte	show_tree;
+
+  void		ShowMember_CalcCache() const; // called when show_any=0, ie, not configured yet
+  void		ShowMember_CalcCache_impl(byte& show, const String& suff) const;
+private:
+  void 		Initialize();
+  void		Copy_(const MemberDefBase& cp);
+};
+
+
+class TA_API MemberDef : public MemberDefBase { //  defines a class member
+INHERITED(MemberDefBase)
+public:
+  MemberSpace*	owner;
+
+  ta_memb_ptr	off;		// offset of member from owner type
+  int		base_off;	// offset for base of owner
+  void*         addr;		// address of static member
+  bool		fun_ptr;	// true if this is a pointer to a function
+
+  override bool	ValIsDefault(const void* base, 
+    int for_show = taMisc::IS_EXPERT) const; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+  
+  void		Copy(const MemberDef& cp);
+  MemberDef();
+  MemberDef(const char* nm);
+  MemberDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
+	    ta_memb_ptr mptr, bool is_stat = false, void* maddr=NULL, bool funp = false);
+  MemberDef(const MemberDef& cp);
+  ~MemberDef();
+  MemberDef*	Clone()		{ return new MemberDef(*this); }
+  MemberDef*	MakeToken()	{ return new MemberDef(); }
+
+  void*			GetOff(const void* base) const;
+  override TypeDef* 	GetOwnerType() const
+  { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+  override const String	GetPathName() const; 
+    // name used for saving a reference in stream files, can be used to lookup again
+
+  override const Variant GetValVar(const void* base) const;
+  override void	SetValVar(const Variant& val, void* base, void* par = NULL);
+    // note: par is only needed really needed for owned taBase ptrs)
+  
   void		CopyFromSameType(void* trg_base, void* src_base);
   // copy all members from same type
   void		CopyOnlySameType(void* trg_base, void* src_base);
@@ -1707,15 +1808,52 @@ public:
   int	 	Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
   int	 	Dump_Load(istream& strm, void* base, void* par); //
-protected:
-  // note: bits in the show* vars are set to indicate the value, ie READ_ONLY has that bit set
-  mutable byte	show_any; // bits for show any -- 0 indicates not determined yet, 0x80 is flag
-  mutable byte	show_edit;
-  mutable byte	show_tree;
-
-  void		ShowMember_CalcCache() const; // called when show_any=0, ie, not configured yet
-  void		ShowMember_CalcCache_impl(byte& show, const String& suff) const;
+private:
+  void 		Initialize();
+  void		Copy_(const MemberDef& cp);
 };
+
+
+class TA_API PropertyDef : public MemberDefBase { //  defines a class member
+INHERITED(MemberDefBase)
+public:
+  PropertySpace*	owner;
+
+#ifdef NO_TA_BASE
+  MemberDef*		get_mbr; // if a member getter found
+  MethodDef*		get_mth; // if a method getter found
+  MemberDef*		set_mbr; // if a member setter found
+  MethodDef*		set_mth; // if a method setter found
+#endif
+  ta_prop_get_fun 	prop_get; // stub function to get the property (as Variant)
+  ta_prop_set_fun 	prop_set; // stub function to set the property (as Variant)
+  
+  override bool		ValIsDefault(const void* base, 
+    int for_show = taMisc::IS_EXPERT) const; // true if the member contains its default value, either DEF_ or the implicit default; for_show is only for types, to choose which members to recursively include; we are usually only interested in Expert guys
+  
+  void			Copy(const PropertyDef& cp);
+  PropertyDef();
+  PropertyDef(const char* nm);
+  PropertyDef(TypeDef* ty, const char* nm, const char* dsc, const char* op,
+    const char* lis, ta_prop_get_fun get, ta_prop_set_fun set,
+    bool is_stat = false);
+  PropertyDef(const PropertyDef& cp);
+  ~PropertyDef();
+  PropertyDef*	Clone()		{ return new PropertyDef(*this); }
+  PropertyDef*	MakeToken()	{ return new PropertyDef(); }
+
+  override TypeDef* 	GetOwnerType() const
+  { TypeDef* rval=NULL; if((owner) && (owner->owner)) rval=owner->owner; return rval; }
+
+  override const Variant GetValVar(const void* base) const;
+  override void	SetValVar(const Variant& val, void* base, void* par = NULL);
+    // note: par is only needed really needed for owned taBase ptrs)
+  
+private:
+  void 		Initialize();
+  void		Copy_(const PropertyDef& cp);
+};
+
 
 class TA_API MethodDef : public TypeItem {// defines a class method
 #ifndef __MAKETA__
@@ -1833,6 +1971,7 @@ public:
   EnumSpace	enum_vals;	// if type is an enum, these are the labels
   TypeSpace	sub_types;	// sub types scoped within class (incl enums)
   MemberSpace	members;	// member variables for class
+  PropertySpace	properties;	// properties for class
   MethodSpace	methods;	// member functions (methods) for class
   String_PArray	ignore_meths;	// methods to be ignored
   TypeSpace	templ_pars;	// template parameters
@@ -1841,7 +1980,6 @@ public:
   bool		is_enum() const; // true if an enum 
   bool		is_class() const; // true if it is a class
   
-  void 		Initialize();
   void		Copy(const TypeDef& cp);
   TypeDef();
   TypeDef(const char* nm);
@@ -1994,14 +2132,16 @@ public:
   String	GetValStr(const void* base, void* par=NULL,
     MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT) const;
   // get a string representation of value
-  const Variant	GetValVar(const void* base, void* par=NULL,
-    const MemberDef* memb_def = NULL) const;
+  const Variant	GetValVar(const void* base, const MemberDef* memb_def = NULL) const;
   // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns TAPtr types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
+  void		SetValVar(const Variant& val, void* base, void* par = NULL,
+    MemberDef* memb_def = NULL);
+  // sets value from a Variant representation; primarily for value types (int, etc.); 
   bool		ValIsDefault(const void* base, const MemberDef* memb_def, 
     int for_show = taMisc::IS_EXPERT) const; // true if the type contains its defaults
   bool 		ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
     // true only if value is empty, ex 0 or "" 
-  void		SetValStr(const String& val, void* base, void* par=NULL,
+  void		SetValStr(const String& val, void* base, void* par = NULL,
     MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
   // set the value from a string representation
 
@@ -2061,6 +2201,9 @@ public:
   TypeDef*	FindTypeWithMember(const char* nm, MemberDef** md); // returns the type or child type with memberdef md
 protected:
   mutable signed char	 m_cacheInheritsNonAtomicClass;
+private:
+  void 		Initialize();
+  void		Copy_(const TypeDef& cp);
 };
 
 #endif // ta_type_h

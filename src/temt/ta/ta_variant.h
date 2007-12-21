@@ -747,5 +747,31 @@ public:
 
 // see ta_type.h for a NameVar_PArray -- array of name-values..
 
+class TA_API VarCvt { // variant converter -- esp used in stub routines for autoconverting
+public:
+  operator bool() const {return v.toBool();}
+  operator byte() const {return v.toByte();}
+  operator int() const {return v.toInt();}
+  operator uint() const {return v.toUInt();}
+  operator ta_int64_t() const {return v.toInt64();}
+  operator ta_uint64_t() const {return v.toUInt64();} //
+//  operator float() const {return v.toFloat();}
+  operator float() const {return (float)v.toDouble();}
+  operator double() const {return v.toDouble();}
+  operator char() const {return v.toChar();}
+  operator void*() const {return v.toPtr();}
+  operator String() const {return v.toString();}
+  operator Variant() const {return v;} // for completeness
+#ifndef NO_TA_BASE
+  operator taBase*() const {return v.toBase();}
+  operator taMatrix*() const {return v.toMatrix();} //
+#endif  
+#ifndef __MAKETA__
+  VarCvt(const Variant& v_): v(v_){}
+#endif
+protected:
+  const Variant&	v;
+};
+
 #endif
 

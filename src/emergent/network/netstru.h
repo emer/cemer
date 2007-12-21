@@ -54,10 +54,30 @@ class Layer;
 SmartRef_Of(Layer,TA_Layer); // LayerRef
 class Network;
 SmartRef_Of(Network,TA_Network); // NetworkRef
+class EngineData; //
 
 // externals
 class NetMonitor;
 class NetView; //
+
+class EngineData { // extensible runtime-only structure that contains network-global data organized for efficient access by runtime Engines -- basically the core Unit values, plus convenience mgt functions -- all * are [size] arrays
+public:
+  uint		size; // number of units -- set via setSize() to alloc dudes
+#if (TA_POINTER_SIZE == 8)
+  int		_dummy; // pad for 64
+#endif
+  Unit*		units; // flat array of pointers to the network units -- index here is the canonical flat_index in the Unit
+  float*	act; // unit.act the activation values
+  float*	net; // unit.net the net input (net excit for Leabra)
+  
+  bool		setSize(uint size); // returns 'true' if size changed
+  
+  EngineData();
+  virtual ~EngineData();
+  
+protected:
+  virtual void	setSize_impl(); // extend this for new array guys -- only called on change
+};
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by

@@ -110,6 +110,8 @@ extern void TypeDef_Generate_Types(TypeDef* ths, ostream& strm);
 extern void TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm);
 extern void TypeDef_Generate_Instances(TypeDef* ths, ostream& strm);
 */
+extern void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& strm);
+extern void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& strm);
 extern void MethodSpace_Generate_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm);
 extern void MethodDef_InitTempArgVars(MethodDef* md, ostream& strm, int act_argc);
 extern void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int act_argc);

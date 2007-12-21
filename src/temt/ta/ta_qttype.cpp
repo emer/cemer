@@ -127,7 +127,7 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
     // implied boolean member mode (note: legacy for GHOST, new for CONDEDIT
     // for GHOST, it is new to support dotted submembers
     // just get it as a Variant and interpret as boolean
-    Variant mbr_val(md->type->GetValVar(mbr_base, mbr_par_base, md));
+    Variant mbr_val(md->type->GetValVar(mbr_base, md));
     val_is_eq = mbr_val.toBool();
   } else {
     // explicit value mode (note: legacy for CONDEDIT, new for GHOST

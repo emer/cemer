@@ -399,6 +399,10 @@ void MTA::TypeDef_Generate_Instances(TypeDef* ths, ostream& strm) {
 
   if(this->gen_css && !ths->HasOption("NO_CSS"))
     MethodSpace_Generate_Stubs(&(ths->methods), ths, strm);
+    
+  // generate property stubs
+  MemberSpace_Generate_PropStubs(&(ths->members), ths, strm);
+  MethodSpace_Generate_PropStubs(&(ths->methods), ths, strm);
 }
 
 void MTA::TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm) {
@@ -413,6 +417,70 @@ void MTA::TypeSpace_Generate_Instances(TypeSpace* ths, ostream& strm) {
 //  	      CSS Stubs		//
 //////////////////////////////////
 // (part 2 of _TA.cc file)
+
+String VariantToTargetConversion(TypeDef* param_td) {
+  String conv;
+  if (param_td) { // better exist!
+    if (param_td->InheritsFrom(TA_taBase) && (param_td->ptr == 1)) {
+      conv = "dynamic_cast<" + param_td->GetNonPtrType()->Get_C_Name() +
+        "*>(val.toBase())";
+    } else { // anything else -- if illegal, will show up as compile error in TA.cpp
+//      conv = "(" + param_td->GetNonConstType()->GetNonRefType()->Get_C_Name() + ")VarCvt(val)";
+      conv = "VarCvt(val)";
+    }
+  }
+  return conv;
+}
+
+void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
+  for (int i=0; i<ths->size; i++) {
+    MemberDef* md = ths->FastEl(i);
+    // getter stub
+    String prop_name = md->OptionAfter("GET_");
+    if (prop_name.nonempty()) {
+      strm << "  Variant ta_" << ownr->name << "_" << md->name << "_get(";
+      strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst) {return Variant(inst->" << md->name << ");}\n";
+    }
+    // setter stub
+    prop_name = md->OptionAfter("SET_");
+    if (prop_name.nonempty()) {
+      // make conversion for the setter param
+      TypeDef* param_td = md->type;
+      if (param_td) { // better exist!
+        String conv = VariantToTargetConversion(param_td);
+        strm << "  void ta_" << ownr->name << "_" << md->name << "_set(";
+        strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst, const Variant& val) {inst->" << md->name 
+          << " = " << conv << ";}\n";
+      }
+    }
+  }
+}
+
+void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
+  for (int i=0; i<ths->size; i++) {
+    MethodDef* md = ths->FastEl(i);
+    // getter stub
+    String prop_name = md->OptionAfter("GET_");
+    if (prop_name.nonempty()) {
+      strm << "  Variant ta_" << ownr->name << "_" << md->name << "_get(";
+      strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst) {return Variant(inst->" << md->name << "());}\n";
+    }
+   // setter stub
+    prop_name = md->OptionAfter("SET_");
+    if (prop_name.nonempty()) {
+      // make conversion for the setter param
+      TypeDef* param_td = md->arg_types.SafeEl(0);
+      if (param_td) { // better exist!
+        String conv = VariantToTargetConversion(param_td);
+        strm << "  void ta_" << ownr->name << "_" << md->name << "_set(";
+        strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst, const Variant& val) {inst->" << md->name 
+          << "(" << conv << ");}\n";
+      } else {
+      cerr << "**ERROR " << md->name << "SET method must have at least one arg!\n";
+      }
+    }
+  }
+}
 
 
 void MethodSpace_Generate_Stubs(MethodSpace* ths, TypeDef* ownr, ostream& strm) {

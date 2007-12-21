@@ -81,6 +81,21 @@ void tac_AddMembers(TypeDef& tp, MemberDef_data* dt) {
   }
 }
 
+void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt) {
+  while((dt != NULL) && (dt->type != NULL) || (dt->type_nm != NULL)) {
+    if(dt->type == NULL)
+      dt->type = tac_GetTypeFmName(tp, dt->type_nm);
+    if(dt->type != NULL) {
+      PropertyDef* md;
+      md = new PropertyDef(dt->type, dt->name, dt->desc, dt->opts, dt->lists,
+	dt->prop_get, dt->prop_set, dt->is_static);
+      tp.properties.AddUniqNameNew(md);
+    }
+    dt++;
+  }
+}
+
+
 void tac_AddMethods(TypeDef& tp, MethodDef_data* dt) {
   while((dt != NULL) && (dt->type != NULL) || (dt->type_nm != NULL)) {
     if(dt->type == NULL)

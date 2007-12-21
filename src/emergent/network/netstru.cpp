@@ -31,6 +31,37 @@
 #include "netstru_qtso.h"
 #endif
 
+
+//////////////////////////
+//  EngineData		//
+//////////////////////////
+
+EngineData::EngineData() {
+  size = 0;
+  units = NULL;
+  act = NULL;
+  net = NULL;
+}
+
+EngineData::~EngineData() {
+  setSize(0);
+}
+
+bool EngineData::setSize(uint size_) {
+  if (size == size_) return false;
+  size = size_;
+  setSize_impl();
+  return true;
+}
+
+void EngineData::setSize_impl() {
+  realloc(&units, sizeof(Unit*) * size);
+  realloc(&act, sizeof(float) * size);
+  realloc(&net, sizeof(float) * size);
+}
+
+
+
 //////////////////////////
 //  SigmoidSpec		//
 //////////////////////////

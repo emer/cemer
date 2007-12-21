@@ -297,7 +297,7 @@ public:
   HiLightButton*  revert_but;
 
   iColor		bgColor() const {return bg_color;}
-  virtual void		setBgColor(const iColor& new_bg); // #SET_bg_color
+  virtual void		setBgColor(const iColor& new_bg); 
 
   inline bool		isDialog() {return (host_type == HT_DIALOG);} 
     // 'true' when we will be been posted as a dialog

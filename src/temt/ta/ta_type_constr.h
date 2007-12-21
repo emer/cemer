@@ -44,6 +44,19 @@ public:
   bool		fun_ptr;
 };
 
+class TA_API PropertyDef_data {
+public:
+  TypeDef* 	type;		// either the type is known
+  char*		type_nm;	// or its a type::subtype, given by this name
+  char*		name;
+  char*		desc;
+  char*		opts;
+  char*		lists;
+  bool		is_static;
+  ta_prop_get_fun prop_get; // stub function to get the property (as Variant)
+  ta_prop_set_fun prop_set; // stub function to set the property (as Variant)
+};
+
 class TA_API MethodArgs_data {
 public:
   TypeDef*	type;		// either the type is known
@@ -82,6 +95,7 @@ extern TA_API void tac_AddEnum(TypeDef& tp, char* name, char* desc, char* inh_op
 			char* opts, char* lists, EnumDef_data* dt);
 extern TA_API void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt);
 extern TA_API void tac_AddMembers(TypeDef& tp, MemberDef_data* dt);
+extern TA_API void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt);
 extern TA_API void tac_AddMethods(TypeDef& tp, MethodDef_data* dt);
 
 #endif // ta_type_constr_h
