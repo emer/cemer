@@ -815,6 +815,14 @@ String cssSmartRef::GetStr() const {
   return cssTA::GetStr();
 }
 
+cssSmartRef::operator taBase*() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(sr && sr->ptr()) {
+    return sr->ptr();
+  }
+  return NULL;
+}
+
 void cssSmartRef::operator=(taBase* cp) {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(!sr) return;

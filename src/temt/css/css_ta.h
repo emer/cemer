@@ -205,6 +205,7 @@ public:
   String GetStr() const;
   operator void*() const;
   operator bool() const;
+  operator taBase*() const;
 
   void operator=(const String& s);
   void operator=(const cssEl& s);

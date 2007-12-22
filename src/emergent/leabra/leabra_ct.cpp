@@ -26,14 +26,14 @@
 //////////////////////////////////
 
 void CtCaDepSpec::Initialize() {
-  intwt_dt = 1.0f;
-  ca_inc = .02f;
-  ca_dec = .02f;
+  intwt_dt = 0.002f;
+  ca_inc = .01f;
+  ca_dec = .01f;
   ca_effdrive = true;
 
   sd_sq = false;
-  sd_ca_thr = 0.3f;
-  sd_ca_gain = 0.5f;
+  sd_ca_thr = 0.2f;
+  sd_ca_gain = 0.3f;
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
 
   lrd_ca_thr = 0.2f;
