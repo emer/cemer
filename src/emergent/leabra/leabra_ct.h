@@ -45,15 +45,18 @@ class LEABRA_API CtLeabraCon : public LeabraCon {
 INHERITED(LeabraCon)
 public:
   float		effwt;		// #NO_SAVE effective weight value (can be depressed) -- used for sending ativation
+  float		intwt;		// #NO_SAVE slowly integrating weight value -- exponentially approaches current learned weight value -- mediates between wt and effwt!
   float		cai;		// #NO_SAVE intracellular postsynaptic calcium current integrated over cycles, used for synaptic depression and learning 
 
-  CtLeabraCon() { effwt = 0.0f; cai = 0.0f; }
+  CtLeabraCon() { effwt = 0.0f; intwt = 0.0f; cai = 0.0f; }
 };
 
 class LEABRA_API CtCaDepSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
 INHERITED(taBase)
 public:
+  float		intwt_dt;	// time constant for integrating intwt value relative to current weight value (1.0 = always equal; .002 = nice and slow..)
+
   float		ca_inc;		// e.g., .01 or .02 time constant for increases in Ca_i (from NMDA etc currents)
   float		ca_dec;		// e.g., .01 or .02 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
   bool		ca_effdrive;	// #DEF_false include effwt in the calcium driving equations?
@@ -66,6 +69,10 @@ public:
   float		lrd_ca_thr;	// learning rate depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect subsequent learning ability
   float		lrd_ca_gain;	// multiplier on cai value for computing learning rate depression -- modulates overall level of depression independent of rate parameters
   float		lrd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account lrd_ca_gain and lrd_ca_thr (= lrd_ca_gain/(1 - lrd_ca_thr))
+
+  inline void	IntWtUpdt(float& intwt, float wt) {
+    intwt += intwt_dt * (wt - intwt);
+  }
 
   inline void	CaUpdt(float& cai, float effwt, float ru_act, float su_act) {
     float drive = ru_act * su_act;
@@ -135,6 +142,7 @@ public:
 
   void C_Compute_Cai(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     ca_dep.CaUpdt(cn->cai, cn->effwt, ru->act_eq, su->act_eq);
+    ca_dep.IntWtUpdt(cn->intwt, cn->wt);
   }
   // connection-level Cai update
   virtual void Compute_Cai(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -143,11 +151,11 @@ public:
   // connection-group level Cai update
 
   void C_Depress_Wt_Sd(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    cn->effwt = syn_dep.SynDep(cn->cai, cn->effwt, cn->wt, ru->act_eq, su->act_eq);
+    cn->effwt = syn_dep.SynDep(cn->cai, cn->effwt, cn->intwt, ru->act_eq, su->act_eq);
   }
   // connection-level synaptic depression: syn dep direct
   void C_Depress_Wt_Ca(CtLeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    cn->effwt = ca_dep.SynDep(cn->cai, cn->effwt, cn->wt, ru->act_eq, su->act_eq);
+    cn->effwt = ca_dep.SynDep(cn->cai, cn->effwt, cn->intwt, ru->act_eq, su->act_eq);
   }
   // connection-level synaptic depression: ca mediated
   virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -184,7 +192,7 @@ public:
   }
 
   void 	C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
-    CtLeabraCon* lcn = (CtLeabraCon*)cn; lcn->effwt = lcn->wt;
+    CtLeabraCon* lcn = (CtLeabraCon*)cn; lcn->effwt = lcn->wt; lcn->intwt = lcn->wt;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////

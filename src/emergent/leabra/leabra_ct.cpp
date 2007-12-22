@@ -26,6 +26,7 @@
 //////////////////////////////////
 
 void CtCaDepSpec::Initialize() {
+  intwt_dt = 1.0f;
   ca_inc = .02f;
   ca_dec = .02f;
   ca_effdrive = true;
