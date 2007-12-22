@@ -85,6 +85,23 @@ int String_PArray::FindContains(const String& op, int start) const {
   return -1;
 }
 
+int String_PArray::FindStartsWith(const String& op, int start) const {
+  int i;
+  if(start < 0) {		// search backwards if start < 0
+    for(i=size-1; i>=0; i--) {
+      if(FastEl(i).startsWith(op))
+	return i;
+    }
+  }
+  else {
+    for(i=start; i<size; i++) {
+      if(FastEl(i).startsWith(op))
+	return i;
+    }
+  }
+  return -1;
+}
+
 void String_PArray::SetFromString(String str, const String& sep) {
   Reset();
   int pos = str.index(sep);
@@ -3105,7 +3122,7 @@ void TypeItem::Copy_(const TypeItem& cp) {
 String TypeItem::OptionAfter(const String& op) const {
   int opt;
   String tmp_label;
-  if((opt = opts.FindContains(op,-1)) >= 0) { // search bckwrds for overrides..
+  if((opt = opts.FindStartsWith(op,-1)) >= 0) { // search bckwrds for overrides..
     tmp_label = opts.FastEl(opt).after(op);
   }
   return tmp_label;
@@ -3114,7 +3131,7 @@ String TypeItem::OptionAfter(const String& op) const {
 bool TypeItem::HasOptionAfter(const String& prefix, const String& op) const {
   int idx = -1;
   do {
-    if ((idx = opts.FindContains(prefix, idx + 1)) >= 0) {
+    if ((idx = opts.FindStartsWith(prefix, idx + 1)) >= 0) {
       if (opts.FastEl(idx).after(prefix) == op) return true;
     }
   } while (idx >= 0);

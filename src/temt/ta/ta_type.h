@@ -201,7 +201,9 @@ public:
   static const String	def_sep; // ", "
   
   int	FindContains(const String& op, int start=0) const;
-  // find item that contains string -- start < 0 = start from end
+  // find item that contains string -- start < 0 = start from end of array (not strings!)
+  int	FindStartsWith(const String& op, int start=0) const;
+  // find item that starts with string -- start < 0 = start from end of array (not strings!)
 
   const String 	AsString(const String& sep = def_sep) const;
   void		SetFromString(String str, const String& sep = def_sep);
