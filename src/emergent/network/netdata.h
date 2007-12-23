@@ -244,12 +244,18 @@ public:
   MatrixGeom		matrix_geom;	// #CONDEDIT_ON_matrix:true geometry of matrix to create if a matrix type
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
+  ChannelSpec_List	agg_specs;	// #HIDDEN_TREE #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
   MemberSpace   	members;	// #IGNORE memberdefs
   voidptr_Array		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
+
+  Aggregate		agg;		// #CONDEDIT_OFF_computed:true aggregation operation to perform (reduces vector data down to a single scalar value)
+
   SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
   SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
   SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
   
+  String  	GetAutoName(taBase* obj); 
+  // get auto-name value based on current values
   String  	GetObjName(TAPtr obj); 
   // get name of object for naming monitored values -- uses GetDisplayName by default but is optimized for various network objects; uses max_name_len constraint
   String	GetChanName(taBase* obj, int chan_idx);
@@ -276,6 +282,8 @@ public:
   TA_BASEFUNS(NetMonItem);//
   
 protected:
+  float_Matrix		agg_tmp_calc; // temp calc matrix for agg data
+
   void	UpdateAfterEdit_impl();
   int			cell_num; // current cell number, when adding mon vals
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
@@ -284,10 +292,14 @@ protected:
 					     int dcr, void* op1_, void* op2_);
 
   ChannelSpec* 		AddScalarChan(const String& valname, ValType vt);
+  ChannelSpec* 		AddScalarChan_Agg(const String& valname, ValType vt);
+  // add to the agg_specs just to keep it consistent
   MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType vt,
 				      const MatrixGeom* geom = NULL);
   // caller resp for somehow setting geom if NULL; clears cell_num
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
+  void 			GetMonVals_Agg(DataBlock* db);
+  // special version for agg case
 
   // these are for finding the members and building the stat
   // out of the objects and the variable

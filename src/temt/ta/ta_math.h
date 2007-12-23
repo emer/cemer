@@ -86,6 +86,7 @@ public:
     COUNT, 			// Count of the number times count relation was true
     MEDIAN,			// middle item (note: requires sorting)
     MODE,			// most frequent item (note: requires sorting)
+    NONE,			// no aggregation operation
   };
 
 #ifdef __MAKETA__

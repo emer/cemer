@@ -1324,6 +1324,8 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_median(vec);
   case Aggregate::MODE:
     return taMath_double::vec_mode(vec);
+  case Aggregate::NONE:
+    return 0.0;
   }
   return 0.0;
 }
@@ -3075,6 +3077,8 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_median(vec);
   case Aggregate::MODE:
     return taMath_float::vec_mode(vec);
+  case Aggregate::NONE:
+    return 0.0;
   }
   return 0.0;
 }

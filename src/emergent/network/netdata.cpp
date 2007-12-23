@@ -395,12 +395,15 @@ void NetMonItem::Initialize() {
   val_type = VT_FLOAT;
   matrix = false;
   cell_num  = 0;
+  agg.op = Aggregate::NONE;
 }
 
 void NetMonItem::InitLinks() {
   inherited::InitLinks();
   taBase::Own(val_specs,this);
+  taBase::Own(agg_specs,this);
   taBase::Own(ptrs,this);
+  taBase::Own(agg,this);
   taBase::Own(pre_proc_1,this);
   taBase::Own(pre_proc_2,this);
   taBase::Own(pre_proc_3,this);
@@ -412,8 +415,10 @@ void NetMonItem::CutLinks() {
   pre_proc_3.CutLinks();
   pre_proc_2.CutLinks();
   pre_proc_1.CutLinks();
+  agg.CutLinks();
   ResetMonVals();
   val_specs.CutLinks();
+  agg_specs.CutLinks();
   object.CutLinks();
   object_type = NULL;
   lookup_var = NULL;
@@ -433,6 +438,7 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   val_type = cp.val_type;
   matrix = cp.matrix;
   matrix_geom = cp.matrix_geom;
+  agg = cp.agg;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
@@ -445,6 +451,20 @@ void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
     CheckError(!object, quiet, rval, "object is NULL");
     CheckError(variable.empty(), quiet, rval,"variable is empty");
   }
+}
+
+String NetMonItem::GetAutoName(taBase* obj) {
+  if(!obj) return "";
+  String rval;
+  if(agg.op != Aggregate::NONE) {
+    rval = agg.GetAggName() + "_";
+    rval.downcase();
+  }
+  if(obj->InheritsFrom(&TA_Network)) // special case
+    rval += (var_label.empty() ? variable : var_label);
+  else
+    rval += GetObjName(obj) + "_" + (var_label.empty() ? variable : var_label);
+  return rval;
 }
 
 void NetMonItem::UpdateAfterEdit_impl() {
@@ -468,15 +488,12 @@ void NetMonItem::UpdateAfterEdit_impl() {
     if(name_style == MY_NAME) {
       if(!computed) {
 	if(name.empty()) {
-	  name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
+	  name = GetAutoName(object);
 	}
       }
     }
     else {			// AUTO_NAME = always update!
-      if(object->InheritsFrom(&TA_Network)) // special case
-	name = (var_label.empty() ? variable : var_label);
-      else
-	name = GetObjName(object) + "_" + (var_label.empty() ? variable : var_label);
+      name = GetAutoName(object);
     }
     name = taMisc::StringCVar(name);		// keep it clean for css var names
     ScanObject();
@@ -556,10 +573,7 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
       rval = name + "_" + String(col_idx);
   }
   else {
-    if(obj->InheritsFrom(&TA_Network)) // special case
-      rval = (var_label.empty() ? variable : var_label);
-    else 
-      rval = GetObjName(obj) + "_" + (var_label.empty() ? variable : var_label);
+    rval = GetAutoName(obj);
   }
   rval = taMisc::StringCVar(rval); // keep it clean for css var names
   return rval;
@@ -569,7 +583,15 @@ MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType vt,
 					     const MatrixGeom* geom) 
 {
   cell_num = 0;
-  MatrixChannelSpec* cs = (MatrixChannelSpec*)val_specs.New(1, &TA_MatrixChannelSpec);
+  MatrixChannelSpec* cs;
+  if(agg.op != Aggregate::NONE) {
+    AddScalarChan(valname, vt);
+    cs = (MatrixChannelSpec*)agg_specs.New(1, &TA_MatrixChannelSpec); // add to agg_specs!
+  }
+  else {
+    // usual..
+    cs = (MatrixChannelSpec*)val_specs.New(1, &TA_MatrixChannelSpec);
+  }
   cs->SetName(valname);
   cs->val_type = vt;
   cs->uses_cell_names = false;	// not!
@@ -591,6 +613,15 @@ ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType vt) {
   return cs;
 }
 
+ChannelSpec* NetMonItem::AddScalarChan_Agg(const String& valname, ValType vt) {
+  cell_num = 0;//maybe should be 1!
+  ChannelSpec* cs = (ChannelSpec*)agg_specs.New(1, &TA_ChannelSpec);
+  cs->SetName(valname);
+  cs->val_type = vt;
+  cs->UpdateAfterEdit();
+  return cs;
+}
+
 const KeyString  NetMonItem::key_obj_name("obj_name");
 const KeyString  NetMonItem::key_obj_type("obj_type");
 const KeyString  NetMonItem::key_obj_var("obj_var");
@@ -604,6 +635,7 @@ String NetMonItem::GetColText(const KeyString& key, int itm_idx) const {
 
 void NetMonItem::ResetMonVals() {
   val_specs.RemoveAll();
+  agg_specs.RemoveAll();
   ptrs.Reset();
   members.RemoveAll();
 }
@@ -677,6 +709,9 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
 	String valname = GetChanName(name_obj, val_specs.size);
 	ValType vt = ValTypeForType(md->type);
         AddScalarChan(valname, vt);
+	if(agg.op != Aggregate::NONE) {
+	  AddScalarChan_Agg(valname, vt); // add the agg guy just to keep it consistent
+	}
       }
       // if not adding a column, it is part of a pre-allocated matrix; just add vars
       ptrs.Add(obj);
@@ -1076,6 +1111,11 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
 void NetMonItem::GetMonVals(DataBlock* db) {
   if ((!db) || variable.empty() || computed)  return;
 
+  if(agg.op != Aggregate::NONE) {
+    GetMonVals_Agg(db);
+    return;
+  }
+
   int mon = 0; 
   //note: there should always be the exact same number of mons as items to set,
   // but in case of mismatch, the GetMonVal will return Invalid,
@@ -1095,6 +1135,36 @@ void NetMonItem::GetMonVals(DataBlock* db) {
     } else { // scalar
       GetMonVal(mon++, mbval);
       db->SetData(mbval, cs->chan_num);
+    }
+  }
+}
+
+void NetMonItem::GetMonVals_Agg(DataBlock* db) {
+  if ((!db) || variable.empty() || computed)  return;
+
+  if(TestError(agg_specs.size != val_specs.size, "GetMonVals_Agg",
+	       "internal error: agg_specs.size != val_specs.size! -- report as bug!"))
+    return;
+
+  int mon = 0; 
+  //note: there should always be the exact same number of mons as items to set,
+  // but in case of mismatch, the GetMonVal will return Invalid,
+  Variant mbval;
+  for (int ch = 0; ch < val_specs.size; ++ch) {
+    ChannelSpec* vcs = val_specs.FastEl(ch);
+    ChannelSpec* acs = agg_specs.FastEl(ch);
+    if (acs->isMatrix()) {
+      int vals = acs->cellGeom().Product();
+      agg_tmp_calc.SetGeom(1,vals);
+      for (int j = 0; j < vals; ++j) {
+	GetMonVal(mon++, mbval); // note: we don't care if not set, ie invalid
+	agg_tmp_calc.SetFmVar_Flat(mbval, j);
+      }
+      mbval = taMath_float::vec_aggregate(&agg_tmp_calc, agg);
+      db->SetData(mbval, vcs->chan_num);
+    } else { // scalar
+      GetMonVal(mon++, mbval);
+      db->SetData(mbval, vcs->chan_num);
     }
   }
 }

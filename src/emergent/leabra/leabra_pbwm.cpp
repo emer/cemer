@@ -2102,8 +2102,8 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     mofmpfc_cons->wt_scale.rel = 1.0f; // works better with gp-one-to-one
     mofmpfc_cons->SetUnique("lmix", false);
 
-    // snrthalosp->SetUnique("kwta", true);
-    // but otherwise just inherit it..
+    snrthalosp->SetUnique("kwta", true);
+    snrthalosp->kwta.pct = .25f; // generally works better!
 
     matrixosp->SetUnique("err_rnd_go", true);
     matrixosp->err_rnd_go.min_cor = 1;
