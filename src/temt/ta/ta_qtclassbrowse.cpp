@@ -793,8 +793,12 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     break;
     }
   case taMisc::TIK_PROPERTY:  {
-    PropertyDef* md = static_cast<PropertyDef*>(ti);
-    //nothing specific
+    PropertyDef* pd = static_cast<PropertyDef*>(ti);
+    // for properties only, indicate (so can distinguish from members in .properties)
+    chk = new iCheckBox(true, body);
+    chk->setReadOnly(true);
+    AddName(row, "is_property", "this is a property (not a member)", NULL);
+    AddData(row++, chk, true);
     break;
     }
   case taMisc::TIK_METHOD:  {

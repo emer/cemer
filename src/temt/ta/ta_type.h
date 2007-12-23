@@ -1500,9 +1500,16 @@ public:
   // recursive find of name (or type name)
 #ifdef NO_TA_BASE  
   PropertyDef*		AssertProperty(const char* nm, bool& is_new,
-    MemberDef* get_mbr = NULL, MemberDef* set_mbr = NULL,
-    MethodDef* get_mth = NULL, MethodDef* set_mth = NULL);
-  // assert property, optionally supplying one or more getter/setter 
+    bool get_nset, MemberDef* mbr)
+    {return AssertProperty_impl(nm, is_new, get_nset, mbr, NULL);}
+  // assert property, supplying accessor 
+  PropertyDef*		AssertProperty(const char* nm, bool& is_new,
+    bool get_nset, MethodDef* mth)
+    {return AssertProperty_impl(nm, is_new, get_nset, NULL, mth);}
+  // assert property, supplying accessor 
+protected:  
+  PropertyDef*		AssertProperty_impl(const char* nm, bool& is_new,
+    bool get_nset, MemberDef* mbr, MethodDef* mth);
 #endif
 };
 

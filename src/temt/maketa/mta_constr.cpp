@@ -439,7 +439,7 @@ void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
     // getter stub
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
-      ownr->properties.AssertProperty(prop_name, is_new, md);
+      ownr->properties.AssertProperty(prop_name, is_new, true, md);
       strm << "  Variant ta_" << ownr->name << "_" << prop_name 
         << "_get(const void* inst){return Variant(((const "
         << ownr->GetNonPtrType()->Get_C_Name() 
@@ -449,7 +449,7 @@ void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
     prop_name = md->OptionAfter("SET_");
     if (prop_name.nonempty()) {
       // make conversion for the setter param
-      ownr->properties.AssertProperty(prop_name, is_new, NULL, md);
+      ownr->properties.AssertProperty(prop_name, is_new, false, md);
       TypeDef* param_td = md->type;
       if (param_td) { // better exist!
         String conv = VariantToTargetConversion(param_td);
@@ -469,7 +469,7 @@ void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
     // getter stub
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
-      ownr->properties.AssertProperty(prop_name, is_new, NULL, NULL, md);
+      ownr->properties.AssertProperty(prop_name, is_new, true, md);
       strm << "  Variant ta_" << ownr->name << "_" << prop_name 
         << "_get(const void* inst){return Variant(((const "
         << ownr->GetNonPtrType()->Get_C_Name()
@@ -481,7 +481,7 @@ void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
       // make conversion for the setter param
       TypeDef* param_td = md->arg_types.SafeEl(0);
       if (param_td) { // better exist!
-        ownr->properties.AssertProperty(prop_name, is_new, NULL, NULL, NULL, md);
+        ownr->properties.AssertProperty(prop_name, is_new, false, md);
         String conv = VariantToTargetConversion(param_td);
         strm << "  void ta_" << ownr->name << "_" << prop_name 
           << "_set(void* inst, const Variant& val) {(("

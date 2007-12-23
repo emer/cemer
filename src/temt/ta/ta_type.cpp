@@ -2830,43 +2830,54 @@ void PropertyDef::setType(TypeDef* typ) {
 }
 
 #ifdef NO_TA_BASE  
-PropertyDef* PropertySpace::AssertProperty(const char* nm, bool& is_new,
-    MemberDef* get_mbr, MemberDef* set_mbr,
-    MethodDef* get_mth, MethodDef* set_mth)
+PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
+    bool get_nset, MemberDef* mbr, MethodDef* mth)
 {
   MemberDefBase* md = FindName(nm);
-  PropertyDef* pd = dynamic_cast<PropertyDef*>(pd);
-  if (md && !pd) {
-    cerr << "**ERROR: attempt to find PropertyDef but MemberDef already exists\n";
+  PropertyDef* pd = dynamic_cast<PropertyDef*>(md);
+  //note: following actually won't happen, because maketa doesn't add members
+  if (md && !pd) {"PropertySpace::AssertProperty: attempt to find PropertyDef '",
+    nm, "' but MemberDef already exists\n";
     return NULL;
   }
+  TypeItem* ti = NULL;
   if (!pd) {
     pd = new PropertyDef(nm);
     Add(pd);
     is_new = true;
   } else 
     is_new = false;
-  if (get_mbr) {
-    pd->setType(get_mbr->type);
-    taRefN::SetRefDone(*((taRefN**)&pd->get_mbr), get_mbr);
+  if (mbr) {
+    ti = mbr;
+    if (get_nset) {
+      pd->setType(mbr->type);
+      taRefN::SetRefDone(*((taRefN**)&pd->get_mbr), mbr);
+    } else {
+      pd->setType(mbr->type);
+      taRefN::SetRefDone(*((taRefN**)&pd->set_mbr), mbr);
+    }
   }
-  if (set_mbr) {
-    pd->setType(set_mbr->type);
-    taRefN::SetRefDone(*((taRefN**)&pd->set_mbr), set_mbr);
+  if (mth) {
+    ti = mth;
+    if (get_nset) {
+      TypeDef* td = mth->type;
+      if (td)
+        td = td->GetNonConstType();
+      pd->setType(td);
+      taRefN::SetRefDone(*((taRefN**)&pd->get_mth), mth);
+    } else {
+      TypeDef* td = mth->arg_types.SafeEl(0);
+      if (td)
+        td = td->GetNonConstNonRefType();
+      pd->setType(td);
+      taRefN::SetRefDone(*((taRefN**)&pd->set_mth), mth);
+    }
   }
-  if (get_mth) {
-    TypeDef* td = get_mth->type;
-    if (td)
-      td = td->GetNonConstType();
-    pd->setType(td);
-    taRefN::SetRefDone(*((taRefN**)&pd->get_mth), get_mth);
-  }
-  if (set_mth) {
-    TypeDef* td = set_mth->arg_types.SafeEl(0);
-    if (td)
-      td = td->GetNonConstNonRefType();
-    pd->setType(td);
-    taRefN::SetRefDone(*((taRefN**)&pd->set_mth), set_mth);
+  // new getters control all the opts, desc, etc.
+  if (is_new && get_nset) {
+    pd->desc = ti->desc;
+    pd->opts = ti->opts;
+    pd->lists = ti->lists;
   }
   return pd;
 }
