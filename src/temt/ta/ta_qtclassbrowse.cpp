@@ -55,11 +55,13 @@ taClassDataLink::taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataL
   switch (tik) {
   case taMisc::TIK_ENUM: m_type = &TA_EnumDef; break;
   case taMisc::TIK_MEMBER: m_type = &TA_MemberDef; break;
+  case taMisc::TIK_PROPERTY: m_type = &TA_PropertyDef; break;
   case taMisc::TIK_METHOD: m_type = &TA_MethodDef; break;
   case taMisc::TIK_TYPE: m_type = &TA_TypeDef; break;
   case taMisc::TIK_ENUMSPACE: m_type = &TA_EnumSpace; break;
   case taMisc::TIK_TOKENSPACE: m_type = &TA_TokenSpace; break;
   case taMisc::TIK_MEMBERSPACE: m_type = &TA_MemberSpace; break;
+  case taMisc::TIK_PROPERTYSPACE: m_type = &TA_PropertySpace; break;
   case taMisc::TIK_METHODSPACE: m_type = &TA_MethodSpace; break;
   case taMisc::TIK_TYPESPACE: m_type = &TA_TypeSpace; break;
   default: m_type = NULL; // compiler food
@@ -67,14 +69,16 @@ taClassDataLink::taClassDataLink(taMisc::TypeInfoKind tik_, void* data_, taDataL
 }
 
 TypeDef* taClassDataLink::GetDataTypeDef() const {
-  switch(tik) {
+  switch (tik) {
   case taMisc::TIK_ENUM: return &TA_EnumDef;
   case taMisc::TIK_MEMBER: return &TA_MemberDef;
+  case taMisc::TIK_PROPERTY: return &TA_PropertyDef;
   case taMisc::TIK_METHOD: return &TA_MethodDef;
   case taMisc::TIK_TYPE: return &TA_TypeDef;
   case taMisc::TIK_ENUMSPACE: return &TA_EnumSpace;
   case taMisc::TIK_TOKENSPACE: return &TA_TokenSpace;
   case taMisc::TIK_MEMBERSPACE: return &TA_MemberSpace;
+  case taMisc::TIK_PROPERTYSPACE: return &TA_PropertySpace;
   case taMisc::TIK_METHODSPACE: return &TA_MethodSpace;
   case taMisc::TIK_TYPESPACE: return &TA_TypeSpace;
   default: return &TA_void; // compiler food; anything but NULL!!!
@@ -107,6 +111,7 @@ bool taTypeInfoDataLink::HasChildItems() {
   switch(tik) {
   case taMisc::TIK_ENUM: break;
   case taMisc::TIK_MEMBER: break;
+  case taMisc::TIK_PROPERTY: break;
   case taMisc::TIK_METHOD: break;
   case taMisc::TIK_TYPE: {
     TypeDef* td = static_cast<TypeDef*>(data());
@@ -348,6 +353,59 @@ String taMemberSpaceDataLink::ChildGetColText(taDataLink* child, const KeyString
 }
 
 
+//////////////////////////
+//  taPropertySpaceDataLink	//
+//////////////////////////
+
+taPropertySpaceDataLink::taPropertySpaceDataLink(PropertySpace* data_)
+:inherited(taMisc::TIK_PROPERTYSPACE, data_, data_->data_link)
+{
+}
+
+taiDataLink* taPropertySpaceDataLink::GetListChild(int itm_idx) {
+  MemberDefBase* el = static_cast<MemberDefBase*>(data()->SafeEl(itm_idx)); 
+  if (el == NULL) return NULL;
+  
+  taiDataLink* dl = taiViewType::StatGetDataLink(el, &TA_MemberDefBase);
+  return dl;
+}
+
+int taPropertySpaceDataLink::NumListCols() const {
+  return 2;
+}
+
+String taPropertySpaceDataLink::GetColHeading(const KeyString& key) const {
+  static String prop_name_("Prop Name");
+  static String prop_typ_("Memb Type");
+  if (key == taBase::key_name) return prop_name_;
+  else if (key == taBase::key_type) return prop_typ_;
+  else return inherited::GetColHeading(key);
+}
+
+const KeyString taPropertySpaceDataLink::GetListColKey(int col) const {
+  switch (col) {
+  case 0: return taBase::key_name;
+  case 1: return taBase::key_type;
+  default: return _nilKeyString;
+  }
+}
+
+String taPropertySpaceDataLink::ChildGetColText(taDataLink* child, const KeyString& key,
+  int itm_idx) const
+{
+  String rval;
+  if (child != NULL) {
+    MemberDefBase* el = static_cast<MemberDefBase*>(static_cast<taTypeInfoDataLink*>(child)->data());
+    if (key == taBase::key_name) { 
+      if (el->is_static) rval = " static "; //note: sleazy leading space to sort before non-static
+      rval += el->name; 
+    } else if (key == taBase::key_type)  rval = el->type->Get_C_Name();
+    else return inherited::ChildGetColText(child, key, itm_idx);
+  }
+  return rval;
+}
+
+
 //////////////////////////////////
 //  taTypeInfoTreeDataNode	//
 //////////////////////////////////
@@ -383,6 +441,9 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
     }
     break;
   case taMisc::TIK_MEMBER: {
+    }
+    break;
+  case taMisc::TIK_PROPERTY: {
     }
     break;
   case taMisc::TIK_METHOD: {
@@ -455,6 +516,13 @@ void taTypeInfoTreeDataNode::CreateChildren_impl() {
         NULL, this, last_child_node, "methods", flags); 
     }
    
+    // properties 
+    if (td->properties.size > 0) {
+      dl = taiViewType::StatGetDataLink(&td->properties, &TA_PropertySpace);
+      last_child_node = dl->CreateTreeDataNode( 
+        NULL, this, last_child_node, "properties", flags); 
+    }
+    
     // child types
     TypeSpace* ct = &td->children;
     if (ct->size > 0) {
@@ -494,7 +562,7 @@ taTypeSpaceTreeDataNode::taTypeSpaceTreeDataNode(taTypeSpaceDataLink_Base* link_
 }
 
 void taTypeSpaceTreeDataNode::init(taTypeSpaceDataLink_Base* link_, int flags_) {
-  m_child_type = NULL; 
+/*  m_child_type = NULL; 
   switch (link_->tik) {
   case taMisc::TIK_ENUMSPACE: 
     m_child_tik = taMisc::TIK_ENUM; 
@@ -512,9 +580,13 @@ void taTypeSpaceTreeDataNode::init(taTypeSpaceDataLink_Base* link_, int flags_) 
     m_child_tik = taMisc::TIK_MEMBER; 
     m_child_type = &TA_MemberDef; 
     break;
+  case taMisc::TIK_PROPERTYSPACE: 
+    m_child_tik = taMisc::TIK_MEMBER; 
+    m_child_type = &TA_MemberDef; 
+    break;
   default:  break;
   //TODO: TOKENS, if used
-  }
+  }*/
 }
 
 taTypeSpaceTreeDataNode::~taTypeSpaceTreeDataNode() {
@@ -524,7 +596,7 @@ taTypeInfoDataLink* taTypeSpaceTreeDataNode::child_link(int idx) {
   taiDataLink* dl = NULL;
   TypeItem* ti = static_cast<TypeItem*>(data()->SafeEl_(idx));
   if (ti != NULL) {
-    dl = taiViewType::StatGetDataLink(ti, child_type());
+    dl = taiViewType::StatGetDataLink(ti, ti->GetTypeDef());
   }
   return static_cast<taTypeInfoDataLink*>(dl);
 }
@@ -680,6 +752,31 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
   AddName(row, "options", "ta # options, including inherited", NULL);
   AddData(row++, rep, true);
   
+  // stuff shared for Members/Props
+  MemberDefBase* md = dynamic_cast<MemberDefBase*>(ti);
+  if (md) {
+    // type
+    rep = new iLineEdit(md->type->Get_C_Name(), body);
+    rep->setReadOnly(true);
+    AddName(row, "type", "type of the member/property", NULL);
+    AddData(row++, rep, true);
+    // static
+    chk = new iCheckBox(md->is_static, body);
+    chk->setReadOnly(true);
+    AddName(row, "is_static", "static (non-instance) member/property", NULL);
+    AddData(row++, chk, true);
+    // read-only
+    chk = new iCheckBox(md->isReadOnly(), body);
+    chk->setReadOnly(true);
+    AddName(row, "readOnly", "member/property is read-only (including in CSS/programs)", NULL);
+    AddData(row++, chk, true);
+    // gui read-only
+    chk = new iCheckBox(md->isGuiReadOnly(), body);
+    chk->setReadOnly(true);
+    AddName(row, "guiReadOnly", "member/property is read-only in the gui (but may be writable in CSS/programs)", NULL);
+    AddData(row++, chk, true);
+  }
+  
   switch (tik) {
   case taMisc::TIK_ENUM: {
     EnumDef* ed = static_cast<EnumDef*>(ti);
@@ -692,20 +789,14 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     }
   case taMisc::TIK_MEMBER:  {
     MemberDef* md = static_cast<MemberDef*>(ti);
-    // type
-    rep = new iLineEdit(md->type->Get_C_Name(), body);
-    rep->setReadOnly(true);
-    AddName(row, "type", "type of the member", NULL);
-    AddData(row++, rep, true);
-    
-    chk = new iCheckBox(md->is_static, body);
-    chk->setReadOnly(true);
-    AddName(row, "is_static", "static (non-instance) member", NULL);
-    AddData(row++, chk, true);
-    
+    //nothing specific
     break;
     }
-
+  case taMisc::TIK_PROPERTY:  {
+    PropertyDef* md = static_cast<PropertyDef*>(ti);
+    //nothing specific
+    break;
+    }
   case taMisc::TIK_METHOD:  {
     MethodDef* md = static_cast<MethodDef*>(ti);
     // return type
@@ -784,6 +875,7 @@ int taTypeInfoViewType::BidForView(TypeDef* td) {
     td->InheritsFrom(&TA_EnumSpace) ||
     td->InheritsFrom(&TA_TokenSpace) ||
     td->InheritsFrom(&TA_MemberSpace) ||
+    td->InheritsFrom(&TA_PropertySpace) ||
     td->InheritsFrom(&TA_MethodSpace) ||
     td->InheritsFrom(&TA_TypeSpace)
   )
@@ -800,6 +892,7 @@ taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
   switch (tik) {
   case taMisc::TIK_ENUM:
   case taMisc::TIK_MEMBER:
+  case taMisc::TIK_PROPERTY:
   case taMisc::TIK_METHOD:
   case taMisc::TIK_TYPE: {
     TypeItem* ti = static_cast<TypeItem*>(el);
@@ -810,6 +903,11 @@ taiDataLink* taTypeInfoViewType::GetDataLink(void* el, TypeDef* td) {
     MemberSpace* s = static_cast<MemberSpace*>(el);
     if (s->data_link != NULL) return static_cast<taiDataLink*>(s->data_link);
     else return new taMemberSpaceDataLink(s);
+    }
+  case taMisc::TIK_PROPERTYSPACE: {
+    PropertySpace* s = static_cast<PropertySpace*>(el);
+    if (s->data_link != NULL) return static_cast<taiDataLink*>(s->data_link);
+    else return new taPropertySpaceDataLink(s);
     }
   case taMisc::TIK_METHODSPACE: {
     MethodSpace* s = static_cast<MethodSpace*>(el);

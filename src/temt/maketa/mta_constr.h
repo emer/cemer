@@ -174,6 +174,17 @@ extern void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& 
 
 
 //////////////////////////////////
+// 	   Property Data	//
+//////////////////////////////////
+
+extern void TypeDef_Generate_PropertyData(TypeDef* ths, ostream& strm);
+extern void TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm);
+
+extern bool PropertySpace_Filter_Property(PropertySpace* ths, PropertyDef* md);
+extern void PropertySpace_Generate_Data(PropertySpace* ths, TypeDef* ownr, ostream& strm);
+
+
+//////////////////////////////////
 // 	  Init Function		//
 //////////////////////////////////
 // (part 4 of _TA.cc file)

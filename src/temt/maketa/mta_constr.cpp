@@ -435,21 +435,27 @@ String VariantToTargetConversion(TypeDef* param_td) {
 void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
   for (int i=0; i<ths->size; i++) {
     MemberDef* md = ths->FastEl(i);
+    bool is_new = false;
     // getter stub
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
-      strm << "  Variant ta_" << ownr->name << "_" << md->name << "_get(";
-      strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst) {return Variant(inst->" << md->name << ");}\n";
+      ownr->properties.AssertProperty(prop_name, is_new, md);
+      strm << "  Variant ta_" << ownr->name << "_" << prop_name 
+        << "_get(const void* inst){return Variant(((const "
+        << ownr->GetNonPtrType()->Get_C_Name() 
+        << "*)inst)->" << md->name << ");}\n";
     }
     // setter stub
     prop_name = md->OptionAfter("SET_");
     if (prop_name.nonempty()) {
       // make conversion for the setter param
+      ownr->properties.AssertProperty(prop_name, is_new, NULL, md);
       TypeDef* param_td = md->type;
       if (param_td) { // better exist!
         String conv = VariantToTargetConversion(param_td);
-        strm << "  void ta_" << ownr->name << "_" << md->name << "_set(";
-        strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst, const Variant& val) {inst->" << md->name 
+        strm << "  void ta_" << ownr->name << "_" << prop_name 
+          << "_set(void* inst, const Variant& val) {(("
+          << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name 
           << " = " << conv << ";}\n";
       }
     }
@@ -459,11 +465,15 @@ void MemberSpace_Generate_PropStubs(MemberSpace* ths, TypeDef* ownr, ostream& st
 void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
   for (int i=0; i<ths->size; i++) {
     MethodDef* md = ths->FastEl(i);
+    bool is_new = false;
     // getter stub
     String prop_name = md->OptionAfter("GET_");
     if (prop_name.nonempty()) {
-      strm << "  Variant ta_" << ownr->name << "_" << md->name << "_get(";
-      strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst) {return Variant(inst->" << md->name << "());}\n";
+      ownr->properties.AssertProperty(prop_name, is_new, NULL, NULL, md);
+      strm << "  Variant ta_" << ownr->name << "_" << prop_name 
+        << "_get(const void* inst){return Variant(((const "
+        << ownr->GetNonPtrType()->Get_C_Name()
+        << "*)inst)->" << md->name << "());}\n";
     }
    // setter stub
     prop_name = md->OptionAfter("SET_");
@@ -471,9 +481,11 @@ void MethodSpace_Generate_PropStubs(MethodSpace* ths, TypeDef* ownr, ostream& st
       // make conversion for the setter param
       TypeDef* param_td = md->arg_types.SafeEl(0);
       if (param_td) { // better exist!
+        ownr->properties.AssertProperty(prop_name, is_new, NULL, NULL, NULL, md);
         String conv = VariantToTargetConversion(param_td);
-        strm << "  void ta_" << ownr->name << "_" << md->name << "_set(";
-        strm << ownr->GetNonPtrType()->Get_C_Name() << "* inst, const Variant& val) {inst->" << md->name 
+        strm << "  void ta_" << ownr->name << "_" << prop_name 
+          << "_set(void* inst, const Variant& val) {(("
+          << ownr->GetNonPtrType()->Get_C_Name() << "*)inst)->" << md->name 
           << "(" << conv << ");}\n";
       } else {
       cerr << "**ERROR " << md->name << "SET method must have at least one arg!\n";
@@ -886,6 +898,7 @@ void TypeDef_Generate_Data(TypeDef* ths, ostream& strm) {
       TypeDef_Generate_EnumData(ths, strm);
       TypeDef_Generate_MemberData(ths, strm);
       TypeDef_Generate_MethodData(ths, strm);
+      TypeDef_Generate_PropertyData(ths, strm);
     }
   }
   if(ths->InheritsFrom(TA_taRegFun)
@@ -1196,6 +1209,101 @@ void TypeDef_Init_MethodData(TypeDef* ths, ostream& strm) {
 
 
 //////////////////////////////////
+// 	  Property Data		//
+//////////////////////////////////
+
+/*NOTE: in maketa we only ever use the .properties to hold PropertyDef objs
+*/
+void TypeDef_Generate_PropertyData(TypeDef* ths, ostream& strm) {
+  int cnt = 0;
+  int i;
+  for(i=0; i<ths->properties.size; i++) {
+    if(PropertySpace_Filter_Property(&(ths->properties), 
+      dynamic_cast<PropertyDef*>(ths->properties.FastEl(i)))) {
+      cnt++;
+      break;
+    }
+  }
+  if(cnt <= 0) return;
+
+  PropertySpace_Generate_Data(&(ths->properties), ths, strm);
+}
+
+bool PropertySpace_Filter_Property(PropertySpace* ths, PropertyDef* md) {
+  if (!md) return false;
+  if((md->owner == ths) && !md->HasOption("IGNORE"))
+    return true;
+  return false;
+}
+
+void PropertySpace_Generate_Data(PropertySpace* ths, TypeDef* ownr, ostream& strm) {
+  String mbr_off_nm;
+
+  int n_non_statics = 0;
+  int i;
+  for(i=0; i<ths->size; i++) {
+    PropertyDef* md = dynamic_cast<PropertyDef*>(ths->FastEl(i));
+    if(!PropertySpace_Filter_Property(ths, md))
+      continue;
+    if(!md->is_static)
+      n_non_statics++;
+  }
+
+  strm << "static PropertyDef_data TA_" << ownr->name << "_PropertyDef[]={\n";
+
+  for(i=0; i<ths->size; i++) {
+    PropertyDef* md = dynamic_cast<PropertyDef*>(ths->FastEl(i));
+    if(!PropertySpace_Filter_Property(ths, md))
+      continue;
+
+    String str_opts = taMisc::StrArrayToChar(md->opts);
+    String str_lists = taMisc::StrArrayToChar(md->lists);
+
+    String tpfld = TypeDef_Generate_TypeFields(md->type, ownr);
+    strm << "  {" << tpfld << ",\"" << md->name << "\",\"" << md->desc << "\",\""
+	 << str_opts << "\",\"" << str_lists << "\",\n";
+
+    if (md->is_static) {
+      strm << "1,";
+    } else {
+      strm << "0,";
+    }
+    String prop_stub;
+    if (md->get_mth || md->get_mbr) {
+      prop_stub = "ta_" + ownr->name + "_" + md->name + "_get";
+      strm << prop_stub << ",";
+    } else {
+      strm << "NULL,";
+    }
+    if (md->set_mth || md->set_mbr) {
+      prop_stub = "ta_" + ownr->name + "_" + md->name + "_set";
+      strm << prop_stub;
+    } else {
+      strm << "NULL";
+    }
+    strm << "},\n";
+  }
+  strm << "  NULL};\n";
+}
+
+void TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm) {
+  int cnt = 0;
+  int i;
+  for(i=0; i<ths->properties.size; i++) {
+    if(PropertySpace_Filter_Property(&(ths->properties), 
+      dynamic_cast<PropertyDef*>(ths->properties.FastEl(i)))) {
+      cnt++;
+      break;
+    }
+  }
+  if(cnt == 0) return;
+
+  strm << "    tac_AddProperties(TA_" << ths->name << ","
+       << "TA_" << ths->name << "_PropertyDef);\n";
+}
+
+
+//////////////////////////////////
 // 	  Init Function		//
 //////////////////////////////////
 // (part 4 of _TA.cc file)
@@ -1462,6 +1570,7 @@ void TypeDef_Generate_Init(TypeDef* ths, ostream& strm) {
 	SubTypeSpace_Generate_Init(&(ths->sub_types), ths, strm);
 	TypeDef_Init_MemberData(ths, strm);
 	TypeDef_Init_MethodData(ths, strm);
+	TypeDef_Init_PropertyData(ths, strm);
       }
     }
   }

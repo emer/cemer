@@ -442,11 +442,11 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl(item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
-  virtual T*	FindName(const String& item_nm, int& idx=no_index) const { return (T*)FindName_(item_nm, idx); }
+  T*		FindName(const String& item_nm, int& idx=no_index) const { return (T*)FindName_(item_nm, idx); }
   // find given named element (NULL = not here), sets idx
-  virtual T*	Pop()				{ return (T*)Pop_(); }
+  T*		Pop()				{ return (T*)Pop_(); }
   // pop the last element off the stack
-  virtual T*	Peek() const			{ return (T*)Peek_(); }
+  T*		Peek() const			{ return (T*)Peek_(); }
   // peek at the last element on the stack
 
   virtual T*	AddUniqNameOld(T* item)		{ return (T*)AddUniqNameOld_((void*)item); }

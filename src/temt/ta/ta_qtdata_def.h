@@ -158,7 +158,7 @@ public:
   QLabel*		label() const {return m_label;}
   void			setLabel(QLabel* value) {m_label = value;}
   virtual void		setHighlight(bool value);	// #SET_Highlight
-  virtual bool		readOnly();	// #GET_ReadOnly true if the control should be read only -- partially delegates to parent
+  virtual bool		readOnly() const; // #GET_ReadOnly true if the control should be read only -- partially delegates to parent
   virtual bool		fillHor() {return false;} // override to true to fill prop cell, ex. edit controls
   bool			visible() const {return m_visible;}
   bool			setVisible(bool value); // for CONDSHOW guys, makes lbl/rep vis or not, also triggers VisibleChanged if changes; ret true if visible changed

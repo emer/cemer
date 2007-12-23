@@ -862,9 +862,9 @@ public:
   TypeDef*		typ_par_obj; 	// parent object that is a typedef (get tokens)
   TAPtr			scope_ref;	// reference object for scoping
 
-  TAPtr			sel_obj() {return msel_obj;}	// #GET_Sel_obj current selected object
-  void			setSel_obj(const TAPtr value);	// #SET_Sel_obj
-  String		sel_str() {return msel_str;} 	// #GET_Sel_str string rep of current selection
+  TAPtr			sel_obj() const {return msel_obj;}// current selected object
+  void			setSel_obj(const TAPtr value);	// 
+  String		sel_str() const {return msel_str;} 	// string rep of current selection
   String_Array		items;		// the items in the list
 
   QGridLayout*		layOuter;

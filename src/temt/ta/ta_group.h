@@ -303,7 +303,7 @@ public:
   virtual taGroup<T>* NewGp(int n_gps=1, TypeDef* typ=NULL) { return (taGroup<T>*)NewGp_(n_gps, typ);}
   // #CAT_Modify Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
-  virtual T*	FindName(const char* item_nm, int& idx=no_idx)  const
+  T*		FindName(const char* item_nm, int& idx=no_idx)  const
   { return (T*)FindName_(item_nm, idx); }
   // #CAT_Access Find element with given name (nm) (NULL = not here), sets idx to leaf idx or -1
   virtual T*	FindNameContains(const String& item_nm, int& idx=no_idx) const
@@ -312,7 +312,7 @@ public:
   virtual T* 	FindType(TypeDef* item_tp, int& idx=no_idx) const { return (T*)FindType_(item_tp, idx); }
   // #CAT_Access find given type element (NULL = not here), sets idx to leaf idx or -1
 
-  virtual T*	Pop()				{ return (T*)Pop_(); }
+  T*		Pop()				{ return (T*)Pop_(); }
   // #CAT_Modify pop the last element off the stack
   virtual T*	Peek()				{ return (T*)Peek_(); }
   // #CAT_Access peek at the last element on the stack

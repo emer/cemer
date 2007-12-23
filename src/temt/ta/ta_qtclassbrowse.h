@@ -170,6 +170,23 @@ public:
 };
 
 
+class TA_API taPropertySpaceDataLink: public taTypeSpaceDataLink_Base {
+  // DataLink for PropertySpace objects -- note that it also manages the ListView nodes
+INHERITED(taTypeSpaceDataLink_Base)
+public:
+  PropertySpace*		data() {return (PropertySpace*)m_data;}
+  override taiDataLink*	GetListChild(int itm_idx); // returns NULL when no more
+  override int		NumListCols() const;
+  override const KeyString GetListColKey(int col) const;
+  override String	GetColHeading(const KeyString& key) const;
+  override String	ChildGetColText(taDataLink* child, const KeyString& key,
+    int itm_idx = -1) const;
+
+  taPropertySpaceDataLink(PropertySpace* data_);
+  DL_FUNS(taPropertySpaceDataLink) //
+};
+
+
 class TA_API taTypeInfoTreeDataNode: public taiTreeDataNode { // node for type info, like type, enum, method, etc.
 INHERITED(taiTreeDataNode)
 public:
@@ -199,8 +216,8 @@ class TA_API taTypeSpaceTreeDataNode: public taiTreeDataNode { // node for space
 INHERITED(taiTreeDataNode)
 public:
   const taMisc::TypeInfoKind	tik;
-  taMisc::TypeInfoKind		child_tik() const {return m_child_tik;}
-  TypeDef*		child_type() const {return m_child_type;}
+//  taMisc::TypeInfoKind		child_tik() const {return m_child_tik;}
+//  TypeDef*		child_type() const {return m_child_type;}
   
   taPtrList_impl* 	data() {return ((taTypeSpaceDataLink_Base*)m_link)->data();}
   taTypeInfoDataLink* 	child_link(int idx);
@@ -225,8 +242,8 @@ public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_taTypeSpaceTreeDataNode;}
 protected:
-  taMisc::TypeInfoKind		m_child_tik;
-  TypeDef*		m_child_type;
+//  taMisc::TypeInfoKind		m_child_tik;
+//  TypeDef*		m_child_type;
 //  override void		DataChanged_impl(int dcr, void* op1, void* op2);
   override void 	CreateChildren_impl(); // called by the Node when it needs to create its children
   void			CreateListItem(taiTreeDataNode* par_node, taiTreeDataNode* after_node, void* el);

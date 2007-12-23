@@ -3503,5 +3503,20 @@ void taiTypeBase::InitializeTypes(bool gui) {
     } // td->InheritsFormal(TA_class)
 
   } // for each Type
+  
+  // link in compatible members as properties of every type
+  // "compatible" means that it isn't already a property, and is otherwise accessible
+  for (i=0; i < taMisc::types.size; ++i){
+    td = taMisc::types.FastEl(i);
+    for (int j = 0; j < td->members.size; ++j) {
+      MemberDef* md = td->members.FastEl(j);
+      MemberDefBase* pd = td->properties.FindName(md->name);
+      if (pd) continue;
+      // ok, see if it is "compatible"
+      if (!pd->type->isVarCompat()) continue; // can't read/write by Variant
+      // TODO: anything????
+      td->properties.Link(md);
+    }
+  }  
 }
 

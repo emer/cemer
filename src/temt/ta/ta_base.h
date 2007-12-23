@@ -1818,7 +1818,7 @@ public:
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl((TAPtr)item)); }
   // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ #CAT_Access Edit given list item
 
-  virtual T*	FindName(const String& item_nm, int& idx=no_idx) const
+  T*		FindName(const String& item_nm, int& idx=no_idx) const
   { return (T*)FindName_(item_nm, idx); }
   // #MENU #USE_RVAL #ARGC_1 #CAT_Access Find element with given name (item_nm)
   virtual T*	FindNameContains(const String& item_nm, int& idx=no_idx) const
@@ -1829,9 +1829,9 @@ public:
 
   T*		First() const			{ return (T*)First_(); }
   // #CAT_Access look at the first element; NULL if none
-  virtual T*	Pop()				{ return (T*)Pop_(); }
+  T*		Pop()				{ return (T*)Pop_(); }
   // #CAT_Modify pop the last element off the stack
-  virtual T*	Peek() const			{ return (T*)Peek_(); }
+  T*		Peek() const			{ return (T*)Peek_(); }
   // #CAT_Access peek at the last element on the stack, if any
 
   virtual T*	AddUniqNameOld(T* item)		{ return (T*)AddUniqNameOld_((void*)item); }

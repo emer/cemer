@@ -85,7 +85,10 @@ TypeDef TA_templ_inst		("templ_inst", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_ta_array		("ta_array", 	1, 0, 0, 1, 1);	// formal
 TypeDef TA_taRegFun		("taRegFun", 	1, 0, 0, 0, 1); // pseudo formal, for global functions
 TypeDef TA_TypeDef		("TypeDef", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_EnumDef		("EnumDef", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_MemberDefBase	("MemberDefBase", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_MemberDef		("MemberDef", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_PropertyDef		("PropertyDef",	1, 0, 0, 0, 1, 1);
 TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1, 1, "void*");
 

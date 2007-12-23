@@ -226,7 +226,7 @@ QWidget* taiData::MakeLayoutWidget(QWidget* gui_parent) const {
   return wid;
 }
 
-bool taiData::readOnly() {
+bool taiData::readOnly() const {
   if (mparent != NULL)
     return (mparent->readOnly() || (mflags & flgReadOnly));
   else

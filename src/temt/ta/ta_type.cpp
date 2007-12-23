@@ -994,9 +994,11 @@ taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
 #ifndef NO_TA_BASE
   if (td->InheritsFrom(&TA_TypeDef)) tik = TIK_TYPE;
   else if (td->InheritsFrom(&TA_MemberDef)) tik = TIK_MEMBER;
+  else if (td->InheritsFrom(&TA_PropertyDef)) tik = TIK_PROPERTY;
   else if (td->InheritsFrom(&TA_MethodDef)) tik = TIK_METHOD;
   else if (td->InheritsFrom(&TA_MemberSpace)) tik = TIK_MEMBERSPACE;
   else if (td->InheritsFrom(&TA_MethodSpace)) tik = TIK_METHODSPACE;
+  else if (td->InheritsFrom(&TA_PropertySpace)) tik = TIK_PROPERTYSPACE;
   else if (td->InheritsFrom(&TA_TypeSpace)) tik = TIK_TYPESPACE;
   else if (td->InheritsFrom(&TA_EnumDef)) tik = TIK_ENUM;
   else if (td->InheritsFrom(&TA_EnumSpace)) tik = TIK_ENUMSPACE;
@@ -2537,24 +2539,47 @@ void TokenSpace::List(ostream &strm) const {
 // 	    MemberSpace		//
 //////////////////////////////////
 
-String	MemberSpace::El_GetName_(void* it) const { return ((MemberDef*)it)->name; }
-TALPtr 	MemberSpace::El_GetOwnerList_(void* it) const { return ((MemberDef*)it)->owner; }
-void*	MemberSpace::El_SetOwner_(void* it) { return ((MemberDef*)it)->owner = this; }
-void	MemberSpace::El_SetIndex_(void* it, int i){ ((MemberDef*)it)->idx = i; }
+String	MemberDefBase_List::El_GetName_(void* it) const 
+  { return ((MemberDefBase*)it)->name; }
+TALPtr 	MemberDefBase_List::El_GetOwnerList_(void* it) const 
+  { return ((MemberDefBase*)it)->owner; }
+void*	MemberDefBase_List::El_SetOwner_(void* it)
+  { return ((MemberDefBase*)it)->owner = this; }
+void	MemberDefBase_List::El_SetIndex_(void* it, int i)
+  { ((MemberDefBase*)it)->idx = i; }
 
-void*	MemberSpace::El_Ref_(void* it)    { taRefN::Ref((MemberDef*)it); return it; }
-void* 	MemberSpace::El_unRef_(void* it)  { taRefN::unRef((MemberDef*)it); return it; }
-void	MemberSpace::El_Done_(void* it)	  { taRefN::Done((MemberDef*)it); }
-void*	MemberSpace::El_MakeToken_(void* it)  { return (void*)((MemberDef*)it)->MakeToken(); }
-void*	MemberSpace::El_Copy_(void* trg, void* src)
-{ ((MemberDef*)trg)->Copy(*((MemberDef*)src)); return trg; }
+void*	MemberDefBase_List::El_Ref_(void* it)
+  { taRefN::Ref((MemberDefBase*)it); return it; }
+void* 	MemberDefBase_List::El_unRef_(void* it)
+  { taRefN::unRef((MemberDefBase*)it); return it; }
+void	MemberDefBase_List::El_Done_(void* it)
+  { taRefN::Done((MemberDefBase*)it); }
 
-MemberSpace::~MemberSpace() { 
+
+void*	MemberDefBase_List::El_MakeToken_(void* it) { 
+  switch (((MemberDefBase*)it)->typeInfoKind()) {
+  case taMisc::TIK_MEMBER: 
+    return (void*)((MemberDef*)it)->MakeToken();
+  case taMisc::TIK_PROPERTY:
+    return (void*)((PropertyDef*)it)->MakeToken();
+  }
+  return NULL; // shouldn't happen!
+}
+
+// note: this use the "pseudo-virtual" type guy
+void*	MemberDefBase_List::El_Copy_(void* trg, void* src)
+  { ((MemberDefBase*)trg)->Copy(((MemberDefBase*)src)); 
+  return trg; 
+}
+
+MemberDefBase_List::~MemberDefBase_List() { 
   Reset();
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
 }
+
+
 
 MemberDef* MemberSpace::FindCheck(const char* nm, void* base, void*& ptr) const {
 #ifndef NO_TA_BASE
@@ -2785,70 +2810,67 @@ MemberDef* MemberSpace::FindAddrPtr(void* base, void* mbr, int& idx) const {
   return NULL;
 }
 
-#ifdef NO_TA_BASE
-bool MemberSpace::AddUnique(MemberDef* item) {
-  bool rval = inherited::AddUnique(item);
-  if (rval) CheckAddProperty(item);
-  return rval;
-}
 
-bool MemberSpace::AddUniqNameNew(MemberDef* item) {
-  bool rval = inherited::AddUniqNameNew(item);
-  if (rval) CheckAddProperty(item);
-  return rval;
-}
 
-void MemberSpace::CheckAddProperty(MemberDef* item) {
-  PropertySpace& ps = owner->properties;
-  // see if it is a GET guy
-  String prop_name = item->OptionAfter("GET_");
-  if (prop_name.nonempty()) {
-    PropertyDef* pd = ps.FindName(prop_name);
-    if (!pd) {
-      pd = new PropertyDef(prop_name);
-      ps.Add(pd);
-    }
-    pd->get_mbr = item;
+//////////////////////////////////
+//  PropertySpace		//
+//////////////////////////////////
+
+void PropertyDef::setType(TypeDef* typ) {
+  if (!typ) {
+    taMisc::Error("PropertyDef::", name, ": attempt to set NULL type!");
+    return;
   }
-  // see if it is a SET guy
-  prop_name = item->OptionAfter("SET_");
-  if (prop_name.nonempty()) {
-    PropertyDef* pd = ps.FindName(prop_name);
-    if (!pd) {
-      pd = new PropertyDef(prop_name);
-      ps.Add(pd);
-    }
-    pd->set_mbr = item;
+  if (type) {
+    if (type != typ)
+      taMisc::Warning("PropertyDef::", name, ": changed type from ",
+        type->name, " to ", typ->name);
   }
+  type = typ;
 }
 
+#ifdef NO_TA_BASE  
+PropertyDef* PropertySpace::AssertProperty(const char* nm, bool& is_new,
+    MemberDef* get_mbr, MemberDef* set_mbr,
+    MethodDef* get_mth, MethodDef* set_mth)
+{
+  MemberDefBase* md = FindName(nm);
+  PropertyDef* pd = dynamic_cast<PropertyDef*>(pd);
+  if (md && !pd) {
+    cerr << "**ERROR: attempt to find PropertyDef but MemberDef already exists\n";
+    return NULL;
+  }
+  if (!pd) {
+    pd = new PropertyDef(nm);
+    Add(pd);
+    is_new = true;
+  } else 
+    is_new = false;
+  if (get_mbr) {
+    pd->setType(get_mbr->type);
+    taRefN::SetRefDone(*((taRefN**)&pd->get_mbr), get_mbr);
+  }
+  if (set_mbr) {
+    pd->setType(set_mbr->type);
+    taRefN::SetRefDone(*((taRefN**)&pd->set_mbr), set_mbr);
+  }
+  if (get_mth) {
+    TypeDef* td = get_mth->type;
+    if (td)
+      td = td->GetNonConstType();
+    pd->setType(td);
+    taRefN::SetRefDone(*((taRefN**)&pd->get_mth), get_mth);
+  }
+  if (set_mth) {
+    TypeDef* td = set_mth->arg_types.SafeEl(0);
+    if (td)
+      td = td->GetNonConstNonRefType();
+    pd->setType(td);
+    taRefN::SetRefDone(*((taRefN**)&pd->set_mth), set_mth);
+  }
+  return pd;
+}
 #endif
-
-//////////////////////////////////
-// 	    PropertySpace		//
-//////////////////////////////////
-
-String	PropertySpace::El_GetName_(void* it) const 
-  { return ((PropertyDef*)it)->name; }
-TALPtr 	PropertySpace::El_GetOwnerList_(void* it) const 
-  { return ((PropertyDef*)it)->owner; }
-void*	PropertySpace::El_SetOwner_(void* it) { return ((PropertyDef*)it)->owner = this; }
-void	PropertySpace::El_SetIndex_(void* it, int i)
-  { ((PropertyDef*)it)->idx = i; }
-void*	PropertySpace::El_Ref_(void* it) { taRefN::Ref((PropertyDef*)it); return it; }
-void* 	PropertySpace::El_unRef_(void* it) { taRefN::unRef((PropertyDef*)it); return it; }
-void	PropertySpace::El_Done_(void* it) { taRefN::Done((PropertyDef*)it); }
-void*	PropertySpace::El_MakeToken_(void* it)  { return (void*)((PropertyDef*)it)->MakeToken(); }
-void*	PropertySpace::El_Copy_(void* trg, void* src)
-{ ((PropertyDef*)trg)->Copy(*((PropertyDef*)src)); return trg; }
-
-PropertySpace::~PropertySpace() { 
-  Reset();
-  if (data_link) {
-    data_link->DataDestroying(); // link NULLs our pointer
-  }
-}
-
 
 //////////////////////////////////
 // PropertySpace: Find By Name	//
@@ -2872,8 +2894,8 @@ int PropertySpace::FindTypeName(const char* nm) const {
   return -1;
 }
 
-PropertyDef* PropertySpace::FindNameR(const char* nm) const {
-  PropertyDef* rval;
+MemberDefBase* PropertySpace::FindNameR(const char* nm) const {
+  MemberDefBase* rval;
   if((rval = FindName(nm)))
     return rval;
 
@@ -2972,43 +2994,8 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   result = true;			// yes, its unique
   } // block, for jump
 end:
-#ifdef NO_TA_BASE
-  if (result) CheckAddProperty(it);
-#endif
   return result;
 }
-
-#ifdef NO_TA_BASE
-bool MethodSpace::AddUnique(MethodDef* item) {
-  bool rval = inherited::AddUnique(item);
-  if (rval) CheckAddProperty(item);
-  return rval;
-}
-
-void MethodSpace::CheckAddProperty(MethodDef* item) {
-  PropertySpace& ps = owner->properties;
-  // see if it is a GET guy
-  String prop_name = item->OptionAfter("GET_");
-  if (prop_name.nonempty()) {
-    PropertyDef* pd = ps.FindName(prop_name);
-    if (!pd) {
-      pd = new PropertyDef(prop_name);
-      ps.Add(pd);
-    }
-    pd->get_mth = item;
-  }
-  // see if it is a SET guy
-  prop_name = item->OptionAfter("SET_");
-  if (prop_name.nonempty()) {
-    PropertyDef* pd = ps.FindName(prop_name);
-    if (!pd) {
-      pd = new PropertyDef(prop_name);
-      ps.Add(pd);
-    }
-    pd->set_mth = item;
-  }
-}
-#endif
 
 MethodDef* MethodSpace::FindAddr(ta_void_fun funa, int& idx) const {
   int i;
@@ -3233,6 +3220,7 @@ bool EnumDef::CheckList(const String_PArray& lst) const {
 //////////////////////////////////
 
 void MemberDefBase::Initialize() {
+  owner = NULL;
   type = NULL;
   is_static = false;
 #ifdef TA_GUI
@@ -3277,6 +3265,19 @@ MemberDefBase::MemberDefBase(const MemberDefBase& cp)
 void MemberDefBase::Copy(const MemberDefBase& cp) {
   inherited::Copy(cp);
   Copy_(cp);
+}
+
+void MemberDefBase::Copy(const MemberDefBase* cp) {
+  if (typeInfoKind() == cp->typeInfoKind())
+  switch (typeInfoKind()) {
+  case taMisc::TIK_MEMBER:
+    ((MemberDef*)this)->Copy(*(const MemberDef*)cp);
+    return;
+  case taMisc::TIK_PROPERTY:
+    ((PropertyDef*)this)->Copy(*(const PropertyDef*)cp);
+    return;
+  }
+  Copy(*cp); // should never happen!
 }
 
 void MemberDefBase::Copy_(const MemberDefBase& cp) {
@@ -3418,7 +3419,6 @@ void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) co
 //////////////////////////////////
 
 void MemberDef::Initialize() {
-  owner = NULL;
   off = NULL;
   base_off = 0;
   addr = NULL;
@@ -3488,6 +3488,14 @@ const Variant MemberDef::GetValVar(const void* base) const {
   return type->GetValVar(GetOff(base), this);
 }
 
+bool MemberDef::isReadOnly() const {
+  return HasOption("READ_ONLY");
+}
+
+bool MemberDef::isGuiReadOnly() const {
+  return (HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY"));
+}
+
 void MemberDef::SetValVar(const Variant& val, void* base, void* par) {
   return type->SetValVar(val, GetOff(base), par, this);
 }
@@ -3510,11 +3518,10 @@ bool MemberDef::ValIsDefault(const void* base, int for_show) const {
 
 
 //////////////////////////////////
-// 	     PropertyDef		//
+// 	    PropertyDef		//
 //////////////////////////////////
 
 void PropertyDef::Initialize() {
-  owner = NULL;
 #ifdef NO_TA_BASE
   get_mbr = NULL;
   get_mth = NULL;
@@ -3554,6 +3561,15 @@ PropertyDef::PropertyDef(const PropertyDef& cp)
   Copy_(cp);
 }
 
+PropertyDef::~PropertyDef() {
+#ifdef NO_TA_BASE
+  SetRefDone(*((taRefN**)&get_mbr), NULL);
+  SetRefDone(*((taRefN**)&get_mth), NULL);
+  SetRefDone(*((taRefN**)&set_mbr), NULL);
+  SetRefDone(*((taRefN**)&set_mth), NULL);
+#endif
+}
+
 void PropertyDef::Copy(const PropertyDef& cp) {
   inherited::Copy(cp);
   Copy_(cp);
@@ -3562,9 +3578,6 @@ void PropertyDef::Copy(const PropertyDef& cp) {
 void PropertyDef::Copy_(const PropertyDef& cp) {
   prop_get = cp.prop_get; 
   prop_set =cp.prop_set;
-}
-
-PropertyDef::~PropertyDef() {
 }
 
 /*nn?? const String PropertyDef::GetPathName() const {
@@ -3580,6 +3593,14 @@ const Variant PropertyDef::GetValVar(const void* base) const {
   if (prop_get)
     return prop_get(base);
   else return _nilVariant;
+}
+
+bool PropertyDef::isReadOnly() const {
+  return (prop_set == NULL);
+}
+
+bool PropertyDef::isGuiReadOnly() const {
+  return isReadOnly();
 }
 
 void PropertyDef::SetValVar(const Variant& val, void* base, void* par) {
@@ -4227,6 +4248,17 @@ TypeDef* TypeDef::GetNonConstType() const {
   TypeDef* rval = (TypeDef*)this;
   while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
     if(!rval->DerivesFrom(TA_const))
+      return rval;
+  }
+  return NULL;
+}
+
+TypeDef* TypeDef::GetNonConstNonRefType() const {
+  if(!(DerivesFrom(TA_const) || ref))  return (TypeDef*)this;
+
+  TypeDef* rval = (TypeDef*)this;
+  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
+    if (!(rval->DerivesFrom(TA_const) || rval->ref))
       return rval;
   }
   return NULL;
@@ -5124,6 +5156,17 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 //      return String((int)*((void**)base));
   }
   return name;
+}
+
+bool TypeDef::isVarCompat() const {
+  // a few "blockers"
+  if (ref || (ptr > 1) || InheritsFrom(TA_void)) return false;
+#ifndef NO_TA_BASE
+  if ((ptr ==1) && !InheritsFrom(TA_taBase)) return false;
+#endif
+  if (InheritsNonAtomicClass()) return false;
+  // ok, hopefully the rest are ok!
+  return true;
 }
 
 const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) const 
