@@ -26,44 +26,26 @@
 //////////////////////////////////
 
 void CtCaDepSpec::Initialize() {
-  intwt_dt = 0.002f;
+  intwt_dt = 0.001f;
   ca_inc = .01f;
   ca_dec = .01f;
-  ca_effdrive = true;
-
-  sd_sq = false;
   sd_ca_thr = 0.2f;
   sd_ca_gain = 0.3f;
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
-
-  lrd_ca_thr = 0.2f;
-  lrd_ca_gain = .7f;
-  lrd_ca_thr_rescale = lrd_ca_gain / (1.0f - lrd_ca_thr);
 }
-
 
 void CtCaDepSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
-  lrd_ca_thr_rescale = lrd_ca_gain / (1.0f - lrd_ca_thr);
 }
 
-
-void CtSynDepSpec::Initialize() {
-  use_sd = false;
-  rec = .002f;
-  asymp_act = 0.4f;
-  depl = rec * (1.0f - asymp_act); // here the drive is constant
+void CtLearnSpec::Initialize() {
+  sravg_dt = 0.1f;
+  use_sravg_m = false;
 }
 
-void CtSynDepSpec::UpdateAfterEdit_impl() {
+void CtLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-   if(rec < .00001f) rec = .00001f;
-  // chg = rec * (1 - cur) - dep * drive = 0; // equilibrium point
-  // rec * (1 - cur) = dep * drive
-  // dep = rec * (1 - cur) / drive
-  depl = rec * (1.0f - asymp_act); // here the drive is constant
-  depl = MAX(depl, 0.0f);
 }
 
 void CtLeabraConSpec::Initialize() {
@@ -94,8 +76,6 @@ void CtLeabraUnit::Initialize() {
   cai_max = 0.0f;
   syndep_avg = 0.0f;
   syndep_max = 0.0f;
-  lrdep_avg = 0.0f;
-  lrdep_max = 0.0f;
 }
 
 void CtLeabraUnitSpec::Initialize() {
@@ -119,11 +99,29 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
   if(u->n_recv_cons > 0)
     u->cai_avg /= (float)u->n_recv_cons;
   if(cspec) {
-//     u->syndep_avg = 1.0f - cspec->ca_dep.SynDep(u->cai_avg);
-//     u->syndep_max = 1.0f - cspec->ca_dep.SynDep(u->cai_max);
-    u->lrdep_avg = 1.0f - cspec->ca_dep.LrateDep(u->cai_avg);
-    u->lrdep_max = 1.0f - cspec->ca_dep.LrateDep(u->cai_max);
+    u->syndep_avg = 1.0f - cspec->ca_dep.SynDep(u->cai_avg);
+    u->syndep_max = 1.0f - cspec->ca_dep.SynDep(u->cai_max);
   }
+}
+
+void CtLeabraUnitSpec::Compute_SrAvg(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
+  for(int g=0; g<u->recv.size; g++) {
+    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_SrAvg(u);
+  }
+  // todo:
+  //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SrAvg((CtLeabraCon*)u->bias.Cn(0), u);
+}
+
+void CtLeabraUnitSpec::Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
+  for(int g=0; g<u->recv.size; g++) {
+    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_dWtFlip(u);
+  }
+  // todo:
+  //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u);
 }
 
 void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
@@ -156,12 +154,26 @@ void CtLeabraLayerSpec::Initialize() {
 }
 
 void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  if(lay->hard_clamped) return;
-
   CtLeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
     u->Compute_CtCycle(lay, net);
+  }
+}
+
+void CtLeabraLayerSpec::Compute_SrAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  CtLeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+    u->Compute_SrAvg(lay, net);
+  }
+}
+
+void CtLeabraLayerSpec::Compute_dWtFlip(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  CtLeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+    u->Compute_dWtFlip(lay, net);
   }
 }
 
@@ -217,6 +229,24 @@ void CtLeabraNetwork::Compute_CtCycle() {
   FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
     if(lay->lesioned())	continue;
     lay->Compute_CtCycle(this);
+  }
+}
+  
+void CtLeabraNetwork::Compute_SrAvg() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_SrAvg(this);
+  }
+}
+  
+void CtLeabraNetwork::Compute_dWtFlip() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_dWtFlip(this);
   }
 }
   
