@@ -154,6 +154,8 @@ void CtLeabraLayerSpec::Initialize() {
 }
 
 void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  if(lay->hard_clamped) return;	// this is key!  clamped layers do not age!
+
   CtLeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
