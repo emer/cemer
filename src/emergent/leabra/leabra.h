@@ -2002,6 +2002,7 @@ public:
   FirstPlusdWt	first_plus_dwt;	// #CONDEDIT_ON_phase_order:MINUS_PLUS_PLUS #CAT_Learning how to change weights on first plus phase if 2 plus phases (applies only to standard leabralayer specs -- others must decide on their own!)
 
   Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
+  bool		nothing_phase;	// #GUI_READ_ONLY #SHOW #CAT_Counter the current phase is a NOTHING phase (phase will indicate MINUS for learning purposes)
   int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
   int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 

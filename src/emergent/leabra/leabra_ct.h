@@ -317,7 +317,7 @@ class LEABRA_API CtLeabraUnit : public DaModUnit {
 INHERITED(DaModUnit)
 public:
   float		cai_avg;	// #NO_SAVE average level of cai in my incoming connections -- just for analysis and debugging in early development -- remove later
-  float		cai_max;	// #NO_SAVE maximum level of cai in my incoming connections -- just for analysis and debugging in early development -- remove later
+  float		cai_max;	// #NO_SAVE maximum level of cai in my incoming connections -- used for determining when to learn
   float		syndep_avg;	// #NO_SAVE average level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
   float		syndep_max;	// #NO_SAVE maximum level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
 
@@ -382,6 +382,10 @@ class LEABRA_API CtLeabraLayer : public LeabraLayer {
   // continuous time leabra layer: most abstract version of continous time
 INHERITED(LeabraLayer)
 public:
+  float		mean_cai_max;	// mean across units of cai_max value for each unit, which is max cai across all incoming connections
+  float		mean_cai_max_m;	// minus-phase mean_cai_max value (from prior time of learning)
+  float		mean_cai_max_p;	// plus-phase mean_cai_max value (at current point of learning)
+
   void 	Compute_CtCycle(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_CtCycle(this, net); };
   // #CAT_Learning compute one cycle of continuous time processing
@@ -402,7 +406,8 @@ public:
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_ActP(this, net); };
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
-  TA_BASEFUNS_NOCOPY(CtLeabraLayer);
+  void	Copy_(const CtLeabraLayer& cp);
+  TA_BASEFUNS(CtLeabraLayer);
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -413,11 +418,52 @@ private:
 // 	Ct Network
 //////////////////////////////////
 
+
+class LEABRA_API CtNetLearnSpec : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for network-level params of continuous time learning rule
+INHERITED(taBase)
+public:
+  enum CtLearnMode { 		// how to do learning
+    CT_MANUAL,			// user/programs "manually" control when activation updating and learning occur
+    CT_USE_PHASE,		// automatic learning based on cai_max values: use available phase information to constrain learning periods: don't learn during nothing phase except one dwt flip (rbm), and always compute an MP update at onset of stimuli after nothing phase
+  };
+
+  CtLearnMode	mode;	  	// how to do learning under the continuous time model
+  int		interval;  	// number of cycles between learning intervals (as long as cai_max sign is the same)
+  int		noth_dwt_int;	// interval for doing a single dWtFlip in nothing phase (RBM) (-1 = don't do)
+  bool		neg_flip;	// use dWtFlip if cai_max gradient is negative 
+  bool		neg_skip;	// skip any form of learning altogether for negative gradient cases
+  int		sgn_cnt;	// how many cycles with a consistent sign for the mean_cai_max delta value does it take to decide that the sign has changed
+
+  SIMPLE_COPY(CtNetLearnSpec);
+  TA_BASEFUNS(CtNetLearnSpec);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+
 class LEABRA_API CtLeabraNetwork : public LeabraNetwork {
   // continuous time leabra network: most abstract version of continous time -- uses tick counter to mark when weight updates are performed
 INHERITED(LeabraNetwork)
 public:
-  int		cycles_per_tick;  // #DEF_10 #CAT_Counter number of cycles to perform per each tick of processing, where a tick consists of one weight update based on continuously sampled activation states
+  CtNetLearnSpec ct_learn;	// #CAT_Learning learning parameters for continuous time algorithm
+
+  float		cai_max;	// #READ_ONLY #EXPERT #CAT_Statistic mean across entire network of maximum level of cai per unit in incoming connections -- used for determining when to learn
+  float		cai_max_prv; // #READ_ONLY #EXPERT #CAT_Statistic previous time step's value
+  float		cai_max_delta; // #READ_ONLY #EXPERT #CAT_Statistic delta of current value relative to previous (prv) value
+  float		ct_prv_sign;	// #READ_ONLY #EXPERT #CAT_Statistic previous sign value
+  int		ct_n_diff_sign;	// #READ_ONLY #EXPERT #CAT_Statistic count of time with different sign
+
+  float		cai_max_m;	// #READ_ONLY #EXPERT #CAT_Statistic minus-phase cai_max value (from prior time of learning)
+  float		cai_max_p;	// #READ_ONLY #EXPERT #CAT_Statistic plus-phase cai_max value (at current point of learning)
+  float		cai_max_dif; // #READ_ONLY #EXPERT #CAT_Statistic plus - minus difference plus-phase cai_max value (at current point of learning)
+  float		ct_lrn_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time when ct last learned
+  float		ct_lrn_time_int; // #GUI_READ_ONLY #EXPERT #CAT_Statistic time interval between last learning episodes
+  int		ct_lrn_now;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic Ct learned now -- 0 = no learning, +2 = normal dwt, -2 = negative dwt, +1 = ActMP
 
   virtual void 	Compute_CtCycle() ;
   // #CAT_Cycle compute one cycle of continuous-time processing, after activations are updated
@@ -425,7 +471,12 @@ public:
   // #CAT_Cycle update sending-receiving average activation
   virtual void 	Compute_dWtFlip() ;
   // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
-  override void	Cycle_Run();
+
+  virtual void 	CtLearn_UsePhase() ;
+  // #CAT_Learning perform CT_USE_PHASE version of automatic Ct learning
+  virtual void 	CtLearn_IncTick() ;
+  // #CAT_Learning increment the tick counter and all associated processing: update all the cai_max values, and do Compute_ActMP
+
 
   virtual void 	Compute_ActMP() ;
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
@@ -433,6 +484,9 @@ public:
   // #CAT_Learning compute minus phase activations (snapshot prior to learning)
   virtual void 	Compute_ActP() ;
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
+
+  override void	Cycle_Run();
+  override void	Init_Weights();
 
   override void	SetProjectionDefaultTypes(Projection* prjn);
 

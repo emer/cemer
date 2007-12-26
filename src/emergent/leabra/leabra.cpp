@@ -3557,6 +3557,7 @@ void LeabraNetwork::Initialize() {
   sequence_init = DO_NOTHING;
   first_plus_dwt = ONLY_FIRST_DWT;
   phase = MINUS_PHASE;
+  nothing_phase = false;
   phase_no = 0;
   phase_max = 2;
 
@@ -3594,6 +3595,7 @@ void LeabraNetwork::Initialize() {
 void LeabraNetwork::Init_Counters() {
   inherited::Init_Counters();
   phase = MINUS_PHASE;
+  nothing_phase = false;
   phase_no = 0;
 }
 
@@ -4008,6 +4010,7 @@ void LeabraNetwork::Trial_Init() {
 
   cycle = -1;
   phase = MINUS_PHASE;
+  nothing_phase = false;
   phase_max = 2;
   bool is_testing = false;
 
@@ -4045,20 +4048,27 @@ void LeabraNetwork::Trial_Init() {
 }
 
 void LeabraNetwork::Trial_UpdatePhase() {
+  // this assumes that phase_no > 0 -- called after updating phase_no
+  nothing_phase = false;
   if((phase_order == PLUS_NOTHING) || (phase_order == PLUS_MINUS)) {
     phase = MINUS_PHASE;
+    if(phase_order == PLUS_NOTHING)
+      nothing_phase = true;
   }
   else {
     if(phase_no == 1)
       phase = PLUS_PHASE;
-    else {
-      if(phase_order == MINUS_PLUS_NOTHING)
+    else {			// phase_no == 2
+      if(phase_order == MINUS_PLUS_NOTHING) {
 	phase = MINUS_PHASE;
-      else if(phase_order == MINUS_PLUS_PLUS)
+	nothing_phase = true;
+      }
+      else if(phase_order == MINUS_PLUS_PLUS) {
 	phase = PLUS_PHASE;
+      }
       else if(phase_order == MINUS_PLUS_2) {
 	if(phase_no == 2) phase = MINUS_2;
-	else phase = PLUS_2;
+	else phase = PLUS_2;	// phase_no == 3
       }	    
     }
   }
