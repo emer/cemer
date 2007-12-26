@@ -39,15 +39,6 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
 }
 
-void CtLearnSpec::Initialize() {
-  sravg_dt = 0.1f;
-  use_sravg_m = false;
-}
-
-void CtLearnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
-
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;
@@ -102,16 +93,6 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
     u->syndep_avg = 1.0f - cspec->ca_dep.SynDep(u->cai_avg);
     u->syndep_max = 1.0f - cspec->ca_dep.SynDep(u->cai_max);
   }
-}
-
-void CtLeabraUnitSpec::Compute_SrAvg(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
-  for(int g=0; g<u->recv.size; g++) {
-    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_SrAvg(u);
-  }
-  // todo:
-  //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SrAvg((CtLeabraCon*)u->bias.Cn(0), u);
 }
 
 void CtLeabraUnitSpec::Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
@@ -176,14 +157,6 @@ void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net
     lay->mean_cai_max /= (float)lay->units.leaves;
 }
 
-void CtLeabraLayerSpec::Compute_SrAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  CtLeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
-    u->Compute_SrAvg(lay, net);
-  }
-}
-
 void CtLeabraLayerSpec::Compute_dWtFlip(CtLeabraLayer* lay, CtLeabraNetwork* net) {
   CtLeabraUnit* u;
   taLeafItr i;
@@ -228,9 +201,8 @@ void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
 void CtNetLearnSpec::Initialize() {
   mode = CT_USE_PHASE;
   interval = 10;
-  noth_dwt_int = 5;
-  neg_flip = false;
-  neg_skip = false;
+  noth_dwt_int = 10;
+  lrn_bumps = true;
   sgn_cnt = 1;
 }
 
@@ -328,6 +300,7 @@ void CtLeabraNetwork::CtLearn_UsePhase() {
   if(nothing_phase) {
     if(cycle == ct_learn.noth_dwt_int) {
       CtLearn_IncTick();
+      ct_lrn_now = -2;
       Compute_dWtFlip();
     }
     return;			// otherwise no processing!
@@ -338,17 +311,23 @@ void CtLeabraNetwork::CtLearn_UsePhase() {
   cai_max_prv = cai_max;
 
   bool got_crit = false;
-  if((cai_max_delta < 0.0f && ct_prv_sign <= 0.0f) || // zero counts as negative
-     (cai_max_delta > 0.0f && ct_prv_sign > 0.0f)) {
-    if(ct_n_diff_sign > 0) ct_n_diff_sign = 0;
-    ct_n_diff_sign--;				      // count down
-    if(ct_n_diff_sign % ct_learn.interval == 0)
-      got_crit = true;		// enough time at same sign = learn
+  if(ct_learn.lrn_bumps) {
+    if((cai_max_delta < 0.0f && ct_prv_sign <= 0.0f) || // zero counts as negative
+       (cai_max_delta > 0.0f && ct_prv_sign > 0.0f)) {
+      if(ct_n_diff_sign > 0) ct_n_diff_sign = 0;
+      ct_n_diff_sign--;				      // count down
+      if(ct_n_diff_sign % ct_learn.interval == 0)
+	got_crit = true;		// enough time at same sign = learn
+    }
+    else {			// diff sign
+      if(ct_n_diff_sign < 0) ct_n_diff_sign = 0;
+      ct_n_diff_sign++;
+      if(ct_n_diff_sign >= ct_learn.sgn_cnt) 
+	got_crit = true;
+    }
   }
-  else {			// diff sign
-    if(ct_n_diff_sign < 0) ct_n_diff_sign = 0;
-    ct_n_diff_sign++;
-    if(ct_n_diff_sign >= ct_learn.sgn_cnt) 
+  else {
+    if((int)time % ct_learn.interval == 0)
       got_crit = true;
   }
   if(!got_crit) return;		// no learning for you!
@@ -356,28 +335,17 @@ void CtLeabraNetwork::CtLearn_UsePhase() {
   CtLearn_IncTick();
 
   if(cai_max_dif < 0.0f) {
-    ct_lrn_now = -2;
-    if(ct_learn.neg_flip)
-      Compute_dWtFlip();
-    else if(!ct_learn.neg_skip)
-      Compute_dWt();
+    ct_lrn_now = -2;		// marker
   }
   else {
     ct_lrn_now = 2;
+  }
+  if(train_mode != TEST) {	// always just do wt update
     Compute_dWt();
   }
-  // todo: explore a version that does update weight right then and there..
+  // todo: explore a version that does update weight right then and there ?
 }
 
-void CtLeabraNetwork::Compute_SrAvg() {
-  CtLeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_SrAvg(this);
-  }
-}
-  
 void CtLeabraNetwork::Compute_dWtFlip() {
   CtLeabraLayer* lay;
   taLeafItr l;
