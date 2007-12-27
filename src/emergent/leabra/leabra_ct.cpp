@@ -42,6 +42,7 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;
+  sym_dif = false;
 }
 
 void CtLeabraConSpec::UpdateAfterEdit_impl() {
@@ -85,6 +86,7 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_CtCycle(u, u->cai_avg, u->cai_max);
     cspec = (CtLeabraConSpec*)recv_gp->GetConSpec();
+    cspec->sym_dif = net->ct_learn.sym_dif; // todo: not very efficient -- quick and dirty..
   }
   //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_CtCycle((CtLeabraCon*)u->bias.Cn(0), u);
   if(u->n_recv_cons > 0)
@@ -101,11 +103,12 @@ void CtLeabraUnitSpec::Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_dWtFlip(u);
   }
-  // todo:
+  // todo?:
   //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u);
 }
 
 void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
+  u->act_m2 = u->p_act_m;	// double-back just for testing sym_dif learning
   u->p_act_m = u->p_act_p;	// update activations for learning
   u->p_act_p = u->act_eq;
 }
@@ -127,14 +130,10 @@ void CtLeabraLayer::Initialize() {
   units.SetBaseType(&TA_CtLeabraUnit);
   unit_spec.SetBaseType(&TA_CtLeabraUnitSpec);
   mean_cai_max = 0.0f;
-  mean_cai_max_m = 0.0f;
-  mean_cai_max_p = 0.0f;
 }  
 
 void CtLeabraLayer::Copy_(const CtLeabraLayer& cp) {
   mean_cai_max = cp.mean_cai_max;
-  mean_cai_max_m = cp.mean_cai_max_m;
-  mean_cai_max_p = cp.mean_cai_max_p;
 }
 
 void CtLeabraLayerSpec::Initialize() {
@@ -171,8 +170,6 @@ void CtLeabraLayerSpec::Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net) 
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
     u->Compute_ActMP(lay, net);
   }
-  lay->mean_cai_max_m = lay->mean_cai_max_p;
-  lay->mean_cai_max_p = lay->mean_cai_max;
 }
 
 void CtLeabraLayerSpec::Compute_ActM(CtLeabraLayer* lay, CtLeabraNetwork* net) {
@@ -181,7 +178,6 @@ void CtLeabraLayerSpec::Compute_ActM(CtLeabraLayer* lay, CtLeabraNetwork* net) {
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
     u->Compute_ActM(lay, net);
   }
-  lay->mean_cai_max_m = lay->mean_cai_max;
 }
 
 void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
@@ -190,7 +186,6 @@ void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
     u->Compute_ActP(lay, net);
   }
-  lay->mean_cai_max_p = lay->mean_cai_max;
 }
 
 
@@ -199,25 +194,19 @@ void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
 //////////////////////////////////
 
 void CtNetLearnSpec::Initialize() {
-  mode = CT_USE_PHASE;
-  interval = 10;
+  mode = CT_NOTHING_SYNC;
+  interval = 5;
   noth_dwt_int = 10;
-  lrn_bumps = true;
-  sgn_cnt = 1;
+  first_cyc_st = 0;
+  syndep_int = 1;
+  sym_dif = false;
 }
 
 void CtLeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_CtLeabraLayer);
   cai_max = 0.0f;
-  cai_max_prv = 0.0f;
-  cai_max_delta = 0.0f;
-  ct_prv_sign = 0.0f;
-  ct_n_diff_sign = 0;
-  cai_max_m = 0.0f;
-  cai_max_p = 0.0f;
-  cai_max_dif = 0.0f;
   ct_lrn_time = 0.0f;
-  ct_lrn_time_int = 0.0f;
+  ct_lrn_cycle = 0;
   ct_lrn_now = 0;
 }
 
@@ -233,120 +222,103 @@ void CtLeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   prjn->con_spec.SetBaseType(&TA_CtLeabraConSpec);
 }
 
-void CtLeabraNetwork::Init_Weights() {
-  inherited::Init_Weights();
+void CtLeabraNetwork::Init_Counters() {
+  inherited::Init_Counters();
+  ct_cycle = 0;
+}
+
+void CtLeabraNetwork::Init_Stats() {
+  inherited::Init_Stats();
   cai_max = 0.0f;
-  cai_max_prv = 0.0f;
-  cai_max_delta = 0.0f;
-  ct_prv_sign = 0.0f;
-  ct_n_diff_sign = 0;
-  cai_max_m = 0.0f;
-  cai_max_p = 0.0f;
-  cai_max_dif = 0.0f;
   ct_lrn_time = 0.0f;
-  ct_lrn_time_int = 0.0f;
+  ct_lrn_cycle = 0;
   ct_lrn_now = 0;
 }
 
 void CtLeabraNetwork::Compute_CtCycle() {
-  cai_max = 0.0f;
-  int nmax = 0;
-  CtLeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_CtCycle(this);
-    if(lay->layer_type == Layer::HIDDEN) {
-      cai_max += lay->mean_cai_max;
-      nmax++;
+  if(ct_cycle % ct_learn.syndep_int == 0) {
+    cai_max = 0.0f;
+    int nmax = 0;
+    CtLeabraLayer* lay;
+    taLeafItr l;
+    FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+      if(lay->lesioned())	continue;
+      lay->Compute_CtCycle(this);
+      if(lay->layer_type == Layer::HIDDEN) {
+	cai_max += lay->mean_cai_max;
+	nmax++;
+      }
     }
+    if(nmax > 0)
+      cai_max /= (float)nmax;
   }
-  if(nmax > 0)
-    cai_max /= (float)nmax;
+
+  ct_cycle++;			// increment now, prior to learning -- learning uses
 
   switch(ct_learn.mode) {
   case CtNetLearnSpec::CT_MANUAL:
     break;
-  case CtNetLearnSpec::CT_USE_PHASE:
-    CtLearn_UsePhase();
+  case CtNetLearnSpec::CT_NOTHING_SYNC:
+    CtLearn_NothingSync();
     break;
   }
 }
 
-// TODO: impl attenuating sensory responses to inputs instead of NOTHING
-// phase stuff -- should produce more realistic dynamics -- novelty filter etc..
+// Note: 2632 has all the bump detection code, etc
 
-void CtLeabraNetwork::CtLearn_IncTick() {
-  ct_prv_sign = cai_max_delta;
-  cai_max_m = cai_max_p;
-  cai_max_p = cai_max;
-  cai_max_dif = cai_max_p - cai_max_m;
-  ct_lrn_time_int = time - ct_lrn_time;
-  ct_lrn_time = time;
-  tick++;
-  Compute_ActMP();				      // encode new values
-}
-  
-void CtLeabraNetwork::CtLearn_UsePhase() {
+// TODO: impl attenuating sensory responses to inputs instead of NOTHING
+// phase stuff -- could produce more realistic dynamics -- novelty filter etc..
+
+void CtLeabraNetwork::CtLearn_NothingSync() {
   ct_lrn_now = 0;
-  if(phase_no == 0 && cycle == 0) { // start of new input phase -- auto update to new vals
-    // issue is: will this be too late already for start of minus -- does minus need to be last of nothing??
-    CtLearn_IncTick();
-    ct_lrn_now = 1;		// update
-    ct_prv_sign = 0.0;		// reset
+  if(phase_no == 0 && cycle == ct_learn.first_cyc_st) {
+    // start of new input phase -- auto update to new vals
+    Compute_ActMP();
+    if(ct_learn.sym_dif)	// do it again to propagate all the way back..
+      Compute_ActMP();
+    ct_lrn_now = 1;		// indicates update without actual learning
+    ct_cycle = 1;		// time starts now -- 1 is to prevent learn interval right now
     return;
   }
 
   if(nothing_phase) {
     if(cycle == ct_learn.noth_dwt_int) {
-      CtLearn_IncTick();
-      ct_lrn_now = -2;
-      Compute_dWtFlip();
+      Compute_ActMP();				      // encode new values
+      ct_lrn_now = -2;				      // indicates flip actual learning
+      Compute_CtdWtFlip();
     }
     return;			// otherwise no processing!
   }
 
-  // otherwise, it is fully generic and automatic based on peaks and intervals..
-  cai_max_delta = cai_max - cai_max_prv;
-  cai_max_prv = cai_max;
+  if(ct_cycle % ct_learn.interval != 0) return; // not time to learn
 
-  bool got_crit = false;
-  if(ct_learn.lrn_bumps) {
-    if((cai_max_delta < 0.0f && ct_prv_sign <= 0.0f) || // zero counts as negative
-       (cai_max_delta > 0.0f && ct_prv_sign > 0.0f)) {
-      if(ct_n_diff_sign > 0) ct_n_diff_sign = 0;
-      ct_n_diff_sign--;				      // count down
-      if(ct_n_diff_sign % ct_learn.interval == 0)
-	got_crit = true;		// enough time at same sign = learn
-    }
-    else {			// diff sign
-      if(ct_n_diff_sign < 0) ct_n_diff_sign = 0;
-      ct_n_diff_sign++;
-      if(ct_n_diff_sign >= ct_learn.sgn_cnt) 
-	got_crit = true;
-    }
-  }
-  else {
-    if((int)time % ct_learn.interval == 0)
-      got_crit = true;
-  }
-  if(!got_crit) return;		// no learning for you!
-  
-  CtLearn_IncTick();
-
-  if(cai_max_dif < 0.0f) {
-    ct_lrn_now = -2;		// marker
-  }
-  else {
-    ct_lrn_now = 2;
-  }
+  Compute_ActMP();
+  ct_lrn_now = 2;				      // indicates actual learning
   if(train_mode != TEST) {	// always just do wt update
-    Compute_dWt();
+    Compute_CtdWt();
   }
   // todo: explore a version that does update weight right then and there ?
 }
 
-void CtLeabraNetwork::Compute_dWtFlip() {
+void CtLeabraNetwork::Compute_CtdWt() {
+  inherited::Compute_dWt();
+}
+
+void CtLeabraNetwork::Compute_dWt() {
+  return;			// nop to prevent spurious
+}
+
+void CtLeabraNetwork::Compute_dWt_NStdLay() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    if(lay->spec.SPtr()->GetTypeDef() != &TA_CtLeabraLayerSpec)
+      lay->Compute_dWt(this);
+  }
+}
+
+void CtLeabraNetwork::Compute_CtdWtFlip() {
   CtLeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
@@ -358,14 +330,12 @@ void CtLeabraNetwork::Compute_dWtFlip() {
 void CtLeabraNetwork::Cycle_Run() {
   inherited::Cycle_Run();
   Compute_CtCycle();
-  // program code needs to do this after incrementing time++:
-//   if(time % ct_learn.interval == 0) {
-//     tick++;
-//     Compute_dWt();
-//   }
 }
 
 void CtLeabraNetwork::Compute_ActMP() {
+  // assume we're learning now..
+  ct_lrn_time = time;
+  ct_lrn_cycle = ct_cycle;
   CtLeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {

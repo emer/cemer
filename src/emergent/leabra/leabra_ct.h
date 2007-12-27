@@ -93,6 +93,7 @@ class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   CtCaDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy and learning rate
+  bool		sym_dif;	// #HIDDEN #READ_ONLY #NO_SAVE set automatically by network version of this variable -- symmetric differential learning mechanism (experimental)
   
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Ca updating and synaptic depression
@@ -342,8 +343,6 @@ class LEABRA_API CtLeabraLayer : public LeabraLayer {
 INHERITED(LeabraLayer)
 public:
   float		mean_cai_max;	// mean across units of cai_max value for each unit, which is max cai across all incoming connections
-  float		mean_cai_max_m;	// minus-phase mean_cai_max value (from prior time of learning)
-  float		mean_cai_max_p;	// plus-phase mean_cai_max value (at current point of learning)
 
   void 	Compute_CtCycle(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_CtCycle(this, net); };
@@ -380,15 +379,16 @@ class LEABRA_API CtNetLearnSpec : public taBase {
 INHERITED(taBase)
 public:
   enum CtLearnMode { 		// how to do learning
-    CT_MANUAL,			// user/programs "manually" control when activation updating and learning occur
-    CT_USE_PHASE,		// automatic learning based on cai_max values: use available phase information to constrain learning periods: don't learn during nothing phase except one dwt flip (rbm), and always compute an MP update at onset of stimuli after nothing phase
+    CT_MANUAL,			// user/programs manually control when activation updating and learning occur
+    CT_NOTHING_SYNC,		// the nothing phase acts as a key synchronizing element, where the nothing phase is hypothesized to derive from a phasic thalamic gating after a stimulus has been processed for a sufficient amount of time -- no learning occurs in this phase except for a single dWtFlip call at noth_dwt_int cycles into the nothing phase -- serves as a 'ratchet' in the learning mechanism to enable learning to start fresh for the next pattern after the nothign phase (in addition to clearing out the activations)
   };
 
   CtLearnMode	mode;	  	// how to do learning under the continuous time model
   int		interval;  	// number of cycles between learning intervals (as long as cai_max sign is the same)
-  int		noth_dwt_int;	// interval for doing a single dWtFlip in nothing phase (RBM) (-1 = don't do)
-  bool		lrn_bumps;	// learn on the bump inflection points
-  int		sgn_cnt;	// how many cycles with a consistent sign for the mean_cai_max delta value does it take to decide that the sign has changed
+  int		noth_dwt_int;	// interval for doing a single dWtFlip in nothing phase (as in Hinton's Restricted Boltzmann Machine (RBM)) (-1 = don't do)
+  int		first_cyc_st;	// what cycle in first phase (after previous nothing phase) does the ct_cycle start counting up -- i.e., what is the actual effective end of prior nothing?
+  int		syndep_int;	// interval for doing synaptic depression and associated Ca_i integration calcuations -- numbers > 1 result in faster processing..
+  bool		sym_dif;	// experimental symmetric differential learning -- coordinate with conspec param too!
 
   SIMPLE_COPY(CtNetLearnSpec);
   TA_BASEFUNS(CtNetLearnSpec);
@@ -407,29 +407,21 @@ INHERITED(LeabraNetwork)
 public:
   CtNetLearnSpec ct_learn;	// #CAT_Learning learning parameters for continuous time algorithm
 
-  float		cai_max;	// #READ_ONLY #EXPERT #CAT_Statistic mean across entire network of maximum level of cai per unit in incoming connections -- used for determining when to learn
-  float		cai_max_prv; // #READ_ONLY #EXPERT #CAT_Statistic previous time step's value
-  float		cai_max_delta; // #READ_ONLY #EXPERT #CAT_Statistic delta of current value relative to previous (prv) value
-  float		ct_prv_sign;	// #READ_ONLY #EXPERT #CAT_Statistic previous sign value
-  int		ct_n_diff_sign;	// #READ_ONLY #EXPERT #CAT_Statistic count of time with different sign
-
-  float		cai_max_m;	// #READ_ONLY #EXPERT #CAT_Statistic minus-phase cai_max value (from prior time of learning)
-  float		cai_max_p;	// #READ_ONLY #EXPERT #CAT_Statistic plus-phase cai_max value (at current point of learning)
-  float		cai_max_dif; // #READ_ONLY #EXPERT #CAT_Statistic plus - minus difference plus-phase cai_max value (at current point of learning)
-  float		ct_lrn_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time when ct last learned
-  float		ct_lrn_time_int; // #GUI_READ_ONLY #EXPERT #CAT_Statistic time interval between last learning episodes
+  int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from ratchet offset point (depends on algorithm -- for CT_NOTHING_SYNC, starts at first settling phase (end of nothing phase) and goes up -- integrates across any minus or plus phases present
+  float		cai_max;	// #READ_ONLY #EXPERT #CAT_Statistic mean across entire network of maximum level of cai per unit in incoming connections -- could potentially be used for determining when to learn, though this proves difficult in practice..
+  float		ct_lrn_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic value of time field when ct last learned
+  int		ct_lrn_cycle;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic value of ct_cycle field when ct last learned
   int		ct_lrn_now;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic Ct learned now -- 0 = no learning, +2 = normal dwt, -2 = negative dwt, +1 = ActMP
 
   virtual void 	Compute_CtCycle() ;
   // #CAT_Cycle compute one cycle of continuous-time processing, after activations are updated
-  virtual void 	Compute_dWtFlip() ;
+  virtual void 	Compute_CtdWt() ;
+  // #CAT_Learning compute ct version of delta weight (actually does same as usual Compute_dWt, but that is overwritten to do nothing to prevent standard programs from breaking things)
+  virtual void 	Compute_CtdWtFlip() ;
   // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
 
-  virtual void 	CtLearn_UsePhase() ;
-  // #CAT_Learning perform CT_USE_PHASE version of automatic Ct learning
-  virtual void 	CtLearn_IncTick() ;
-  // #CAT_Learning increment the tick counter and all associated processing: update all the cai_max values, and do Compute_ActMP
-
+  virtual void 	CtLearn_NothingSync() ;
+  // #CAT_Learning perform CT_NOTHING_SYNC version of automatic Ct learning (see enum in ct_learn for details)
 
   virtual void 	Compute_ActMP() ;
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
@@ -438,8 +430,11 @@ public:
   virtual void 	Compute_ActP() ;
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
+  override void	Init_Counters();
+  override void	Init_Stats();
   override void	Cycle_Run();
-  override void	Init_Weights();
+  override void	Compute_dWt();
+  override void	Compute_dWt_NStdLay();
 
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
@@ -492,7 +487,13 @@ inline void CtLeabraBiasSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
 
 inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru,
 					    CtLeabraUnit* su) {
-  float err = (ru->p_act_p * su->p_act_p) - (ru->p_act_m * su->p_act_m);
+  float err;
+  if(sym_dif) {
+    err = 2.0f * (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p) - (ru->act_m2 * su->act_m2);
+  }
+  else {
+    err = (ru->p_act_p * su->p_act_p) - (ru->p_act_m * su->p_act_m);
+  }
   // wt is negative in linear form, so using opposite sign of usual here
   if(lmix.err_sb) {
     if(err > 0.0f)	err *= (1.0f + cn->wt);
@@ -525,7 +526,13 @@ inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 inline void CtLeabraConSpec::C_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru,
 						CtLeabraUnit* su) {
   // note: no hebbian or anything here -- just pure flipped dwt!
-  float err = (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p);
+  float err;
+  if(sym_dif) {
+    err = 2.0f * (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p) - (ru->act_m2 * su->act_m2); // note: exact same as before!  symmetric means never having to flip!
+  }
+  else {
+    err = (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p);
+  }
   // wt is negative in linear form, so using opposite sign of usual here
   if(lmix.err_sb) {
     if(err > 0.0f)	err *= (1.0f + cn->wt);
