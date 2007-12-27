@@ -271,13 +271,15 @@ void CtLeabraNetwork::Compute_CtCycle() {
 
 void CtLeabraNetwork::CtLearn_NothingSync() {
   ct_lrn_now = 0;
-  if(phase_no == 0 && cycle == ct_learn.first_cyc_st) {
-    // start of new input phase -- auto update to new vals
-    Compute_ActMP();
-    if(ct_learn.sym_dif)	// do it again to propagate all the way back..
+  if(phase_no == 0 && cycle <= ct_learn.first_cyc_st) {
+    if(cycle == ct_learn.first_cyc_st) {
+      // start of new input phase -- auto update to new vals
       Compute_ActMP();
-    ct_lrn_now = 1;		// indicates update without actual learning
-    ct_cycle = 1;		// time starts now -- 1 is to prevent learn interval right now
+      if(ct_learn.sym_dif)	// do it again to propagate all the way back..
+	Compute_ActMP();
+      ct_lrn_now = 1;		// indicates update without actual learning
+      ct_cycle = 1;		// time starts now -- 1 is to prevent learn interval right now
+    }
     return;
   }
 
