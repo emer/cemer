@@ -1778,6 +1778,46 @@ bool taRootBase::Startup_LoadPlugins() {
   return true;
 }
 
+void taRootBase::Startup_EnumerateEnginesR(TypeDef* typ) {
+  // enumerate engines by cloning all instances that are not VIRTs
+  taEngine* eng = (taEngine*)typ->GetInstance();
+  if (eng) {
+    TypeDef* td = eng->GetTypeDef();
+    if (!td->HasOption("VIRT_BASE")) {
+      // replace with clone, and add to list
+      eng = (taEngine*)eng->Clone();
+      if (eng) {
+        // default
+        taEngine_Group* grp = &tabMisc::root->engines;
+        String cat = typ->OptionAfter("CAT_");
+        if (cat.nonempty()) {
+          grp = (taEngine_Group*)(grp->gp.FindName(cat));
+          if (!grp) {
+            grp = (taEngine_Group*)tabMisc::root->engines.NewGp();
+            grp->SetName(cat);
+          }
+        }
+        grp->Add(eng);
+      }
+    }
+ }
+  for (int i = 0; i < typ->children.size; ++i) {
+    TypeDef* chld = typ->children.FastEl(i);
+    // just get the base type guy
+    if ((chld->ptr > 0) || (chld->ref) || 
+      (chld->InheritsFormal(&TA_const))) continue;
+    Startup_EnumerateEnginesR(chld);
+  }
+}
+
+bool taRootBase::Startup_EnumerateEngines() {
+  // enumerate engines by cloning all instances that are not VIRTs
+  // we have to work backward through tokens, because list will expand
+  // as we add our new instances
+  Startup_EnumerateEnginesR(&TA_taEngine);
+  return true;
+}
+
 bool taRootBase::Startup_ConsoleType() {
   // arbitrate console options
   // first, make sure requested console_type is a legal value for this platform
@@ -1942,6 +1982,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_InitTypes()) goto startup_failed;
   if(!Startup_EnumeratePlugins()) goto startup_failed;
   if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration
+  if(!Startup_EnumerateEngines()) goto startup_failed; 
   if(!Startup_InitCss()) goto startup_failed;
   if(!Startup_InitGui()) goto startup_failed; // note: does the taiType bidding
   if(!Startup_ConsoleType()) goto startup_failed;

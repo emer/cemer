@@ -32,35 +32,6 @@
 #endif
 
 
-//////////////////////////
-//  EngineData		//
-//////////////////////////
-
-EngineData::EngineData() {
-  size = 0;
-  units = NULL;
-  act = NULL;
-  net = NULL;
-}
-
-EngineData::~EngineData() {
-  setSize(0);
-}
-
-bool EngineData::setSize(uint size_) {
-  if (size == size_) return false;
-  size = size_;
-  setSize_impl();
-  return true;
-}
-
-void EngineData::setSize_impl() {
-  realloc(&units, sizeof(Unit*) * size);
-  realloc(&act, sizeof(float) * size);
-  realloc(&net, sizeof(float) * size);
-}
-
-
 
 //////////////////////////
 //  SigmoidSpec		//
@@ -3836,6 +3807,13 @@ void  Layer::Init_Netin() {
     u->Init_Netin();
 }
 
+void  Layer::Init_NetinDelta() {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i)
+    u->Init_NetinDelta();
+}
+
 void  Layer::Init_Acts() {
   ext_flag = Unit::NO_EXTERNAL;
   Unit* u;
@@ -4461,7 +4439,9 @@ void NetViewObj::UpdateAfterEdit_impl() {
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
-
+  min_engine = &TA_NetEngine;
+  taBase::Own(net_engine, this);
+  
   flags = NF_NONE;
   auto_build = AUTO_BUILD;
 
@@ -4509,6 +4489,12 @@ void Network::Initialize() {
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
   dmem_agg_sum.agg_op = MPI_SUM;
 #endif
+}
+
+void Network::Destroy()	{ 
+  net_inst = NULL;
+  net_engine = NULL;
+  CutLinks(); 
 }
 
 void Network::InitLinks() {
@@ -4633,6 +4619,21 @@ void Network::UpdtAfterNetMod() {
 #endif
 }
 
+void Network::SmartRef_DataRefChanging(taSmartRef* ref, taBase* obj,
+  bool setting)
+{
+  inherited::SmartRef_DataRefChanging(ref, obj, setting);
+  if (ref == &net_engine) {
+    if (setting) {
+      net_inst = net_engine->MakeEngineInst();
+      taBase::Own(net_inst, this); // also does InitLinks
+      taBase::UnRef(net_inst); // we just want 1 ref
+    } else {
+      net_inst = NULL;
+    } 
+  }
+}
+
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
   // noop for base case: algorithms must override!
   prjn->spec.type = &TA_FullPrjnSpec; 
@@ -4718,6 +4719,9 @@ void Network::Build() {
   BuildUnits();
   Connect();
   StructUpdate(false);
+  if (net_inst.ptr()) {
+    net_inst->OnBuild();
+  }
   taMisc::DoneBusy();
 }
 
@@ -4996,6 +5000,15 @@ void Network::Init_Netin(){
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesioned())
       l->Init_Netin();
+  }
+}
+
+void Network::Init_NetinDelta(){
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(!l->lesioned())
+      l->Init_NetinDelta();
   }
 }
 
@@ -6314,4 +6327,69 @@ taiDataLink* Network::ConstrDataLink(DataViewer* viewer_, const TypeDef* link_ty
 */
 #endif
 
+//////////////////////////
+//  NetEngineInst	//
+//////////////////////////
+
+void NetEngineInst::Initialize() {
+  unit_size = 0;
+  units = NULL;
+//  act = NULL;
+//  netin = NULL;
+}
+
+void NetEngineInst::Destroy() {
+  setUnitSize(0);
+}
+
+void NetEngineInst::OnBuild_impl() {
+  Network* net = this->net(); // cache
+  // set unit size, and init ptrs to Units
+  setUnitSize((uint)net->n_units);
+  int idx = 0;
+  Layer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(Layer, lay, net->layers., li) {
+    Unit* un;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, un, lay->units., ui) {
+      un->flat_idx = idx;
+      units[idx] = un;
+      idx++;
+    }
+  }
+}
+
+taBase* NetEngineInst::SetOwner(taBase* own) {
+  if (own && !own->InheritsFrom(&TA_Network)) return NULL;
+  return inherited::SetOwner(own);
+}
+
+bool NetEngineInst::setUnitSize(int val) {
+  if ((unit_size == val) || (val < 0)) return false;
+  unit_size = val;
+  UnitSizeChanged_impl();
+  return true;
+}
+
+void NetEngineInst::UnitSizeChanged_impl() {
+  units = (Unit**)realloc(units, sizeof(Unit*) * (uint)unit_size);
+//  act = (float*)realloc(act, sizeof(float) * (uint)unit_size);
+//  netin = (float*)realloc(netin, sizeof(float) * (uint)unit_size);
+}
+
+
+//////////////////////////////////
+//  NetEngine		//
+//////////////////////////////////
+
+void NetEngine::Initialize() {
+}
+
+void NetEngine::Destroy() {
+}
+
+taEngineInst* NetEngine::NewEngineInst_impl() const {
+  return new NetEngineInst;
+}
 

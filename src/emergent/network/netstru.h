@@ -25,6 +25,7 @@
 #include "ta_math.h"
 #include "ta_time.h"
 #include "ta_dmem.h"
+#include "ta_engine.h"
 
 #include "emergent_base.h"
 #include "spec.h"
@@ -54,30 +55,14 @@ class Layer;
 SmartRef_Of(Layer,TA_Layer); // LayerRef
 class Network;
 SmartRef_Of(Network,TA_Network); // NetworkRef
-class EngineData; //
+class NetEngineInst; //
+TA_SMART_PTRS(NetEngineInst);//
+class NetEngine;
+TA_SMART_PTRS(NetEngine);//
 
 // externals
 class NetMonitor;
 class NetView; //
-
-class EngineData { // extensible runtime-only structure that contains network-global data organized for efficient access by runtime Engines -- basically the core Unit values, plus convenience mgt functions -- all * are [size] arrays
-public:
-  uint		size; // number of units -- set via setSize() to alloc dudes
-#if (TA_POINTER_SIZE == 8)
-  int		_dummy; // pad for 64
-#endif
-  Unit*		units; // flat array of pointers to the network units -- index here is the canonical flat_index in the Unit
-  float*	act; // unit.act the activation values
-  float*	net; // unit.net the net input (net excit for Leabra)
-  
-  bool		setSize(uint size); // returns 'true' if size changed
-  
-  EngineData();
-  virtual ~EngineData();
-  
-protected:
-  virtual void	setSize_impl(); // extend this for new array guys -- only called on change
-};
 
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
@@ -815,6 +800,8 @@ public: //
   // #MENU #MENU_ON_Actions initialize unit external input data variables
   virtual void 	Init_Netin()	{ net = 0.0f; }
   // #CAT_Activation initialize netinput state prior to computing it (for sender-based)
+  virtual void 	Init_NetinDelta()	{ net = 0.0f; }
+  // #CAT_Activation initialize netinput state prior to computing it (for sender-delta-based)
 
   // these are convenience functions for those defined in the spec
   void 	Init_Acts()		{ GetUnitSpec()->Init_Acts(this); }
@@ -1445,6 +1432,8 @@ public:
   // #CAT_Activation Initializes external and target inputs
   virtual void  Init_Netin();
   // #CAT_Activation Initialize the net-input state variable(s) (prior to Send_Netin)
+  virtual void  Init_NetinDelta();
+  // #CAT_Activation Initialize the net-input state variable(s) (prior to Send_Netin)
   virtual void  Init_Acts();
   // #CAT_Activation Initialize the unit state variables
   virtual void  Init_dWt();
@@ -1835,6 +1824,9 @@ public:
   NetViewParams	view_params;   // #CAT_Display misc netview parameters
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
+  TypeDef*	min_engine;	// #READ_ONLY #NO_SAVE the minimum type of the engine
+  NetEngineRef	net_engine; // #NO_SAVE #TYPE_ON_min_engine the engine being used for this net
+  NetEngineInstPtr net_inst; // #IGNORE the Inst created by the Engine 
 
   inline void		SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on
@@ -1863,6 +1855,7 @@ public:
   // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
+
   void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls BuildUnits and Connect)
   virtual void  BuildUnits();
@@ -1926,6 +1919,8 @@ public:
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs
   virtual void  Init_Netin();
+  // #CAT_Activation Initialize the netinput variable(s) (prior to Send_Netin)
+  virtual void  Init_NetinDelta();
   // #CAT_Activation Initialize the netinput variable(s) (prior to Send_Netin)
   virtual void  Init_Acts();
   // #MENU #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
@@ -2067,6 +2062,8 @@ public:
   virtual void	SetProjectionDefaultTypes(Projection* prjn);
   // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types
 
+//  void		SetEngine(NetEngine* eng); // #NO_NULL #BUTTON set the engine for this network
+  
 #ifdef DMEM_COMPILE
   DMemComm	dmem_net_comm;	// #IGNORE the dmem communicator for the network-level dmem computations (the inner subgroup of units, each of size dmem_nprocs_actual)
   DMemComm	dmem_trl_comm;	// #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials) -- this is the outer subgroup
@@ -2107,6 +2104,7 @@ public:
 
   override String 	GetTypeDecoKey() const { return "Network"; }
 
+  void	SmartRef_DataRefChanging(taSmartRef* ref, taBase* obj, bool setting);
   void 	InitLinks();
   void	CutLinks();
   void 	Copy_(const Network& cp);
@@ -2118,7 +2116,7 @@ protected:
   override void	CheckChildConfig_impl(bool quiet, bool& rval);
 private:
   void 	Initialize();
-  void 	Destroy()	{ CutLinks(); }
+  void 	Destroy();
 };
 
 class EMERGENT_API Network_Group : public taGroup<Network> {
@@ -2133,5 +2131,46 @@ private:
   void	Initialize() 		{SetBaseType(&TA_Network);}
   void 	Destroy()		{ };
 };
+
+
+class EMERGENT_API NetEngineInst: public taEngineInst { // ##NO_CSS extensible runtime-only structure that contains network-global data organized for efficient access by runtime Engines -- basically the core Unit values, plus convenience mgt functions -- all * are [size] arrays
+INHERITED(taEngineInst)
+public:
+  Unit**		units; // flat array of pointers to the network units -- index here is the canonical flat_idx in the Unit
+//  float*		act; // unit.act the activation values
+//  float*		netin; // unit.net the net input (net excit for Leabra)
+  
+  inline Network* 	net() const {return (Network*)owner;} // lexically replaced in subclasses
+  inline int		unitSize() const {return unit_size;}
+  bool			setUnitSize(int val); // returns 'true' if size changed
+  
+  void			OnBuild() {OnBuild_impl();} // #IGNORE
+  
+  override taBase*	SetOwner(taBase* own);
+  TA_BASEFUNS_NOCOPY(NetEngineInst);
+protected:
+  int			unit_size;
+  virtual void		UnitSizeChanged_impl();
+  virtual void		OnBuild_impl(); // main build
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class EMERGENT_API NetEngine: public taEngine {
+// ##CAT_NetEngine abstract definition of NetEngine
+INHERITED(taEngine)
+public:
+  
+  NetEngineInst*	MakeEngineInst() const 
+    {return (NetEngineInst*)MakeEngineInst_impl();} // #IGNORE
+  TA_BASEFUNS_NOCOPY(NetEngine);
+protected:
+  virtual taEngineInst*	NewEngineInst_impl() const; // override to make exact type
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
 
 #endif /* netstru_h */

@@ -544,6 +544,28 @@ bool taMatrix::canResize() const {
   return (alloc_size >= 0);
 }
 
+void taMatrix::Clear(int fm, int to) {
+  if (size == 0) return;
+  if (to < 0) to = size - 1; 
+  if (fm > to) return;
+  if (TestError((fm >= size), "Clear", "fm exceeds size")) return;
+  if (TestError((to >= size), "Clear", "to exceeds size")) return;
+  Clear_impl(fm, to);
+} 
+
+void taMatrix::Clear_impl(int fm, int to) {
+  if (fastAlloc()) {
+    size_t sz = ((to - fm) + 1) * El_SizeOf_();
+    memset(FastEl_Flat_(fm), 0, sz);
+  } else {
+    const void* bl = El_GetBlank_();
+    for (int i = fm; i <= to; ++i) {
+      El_Copy_(FastEl_Flat_(i), bl);
+    }
+  }
+}
+
+
 void taMatrix::CanCopyCustom_impl(bool to, const taBase* cp, bool quiet,
     bool& allowed, bool& forbidden) const
 {

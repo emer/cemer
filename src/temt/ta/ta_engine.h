@@ -24,11 +24,6 @@
 #include "ta_def.h"
 #include "ta_TA_type.h"
 
-#ifndef __MAKETA__
-# include <QtCore/QThread>
-# include <QtCore/QMutex>
-# include <QtCore/QWaitCondition>
-#endif
 
 // external refs
 
@@ -38,22 +33,29 @@ TA_SMART_PTRS(taEngine);
 class taTask;
 TA_SMART_PTRS(taTask);
 class taEngine_Group;
+class taEngineInst;
 
 
-class TA_API taTask: public taNBase {
+class TA_API taTask: public taOBase {
   // ##TOKENS ##INSTANCE ##CAT_Task a single processing instance for an engine
-INHERITED(taNBase)
+INHERITED(taOBase)
 public:
   int			task_id; // unique id per logical set, ex. one per thread
   int			proc_id; // current proc being run
   
+  inline taEngineInst*	inst() const {return m_inst;} // typically lex override
+  
   virtual void		run() {} // must be overridden, to dispatch actual proc
   
+  override int		GetIndex() const {return task_id;}
+  override void		SetIndex(int val) {task_id = val;}
+  override taBase*	SetOwner(taBase* own);
   TA_BASEFUNS(taTask);
-
+protected:
+  taEngineInst*		m_inst; // set automatically in SetOwner
 private:
   void	Copy_(const taTask& cp) {}
-  void	Initialize() {task_id = -1; proc_id = 0;}
+  void	Initialize();
   void	Destroy() {}
 };
 
@@ -70,41 +72,39 @@ private:
 }; //
 
 
-class TA_API taEngine: public taNBase {
-  // ##TOKENS ##INSTANCE ##CAT_Task a singleton object that will handle the tasks of its class
-INHERITED(taNBase)
+class TA_API taEngineInst: public taOBase { // ##NO_INSTANCE #VIRT_BASE ##NO_TOKENS extensible runtime-only structure that contains client-global data and tasks organized for efficient access by runtime Engines
+INHERITED(taOBase)
 public:
-  taTask_List		tasks; // #NO_SAVE
+  taEngineRef		m_engine;
+  taTask_List		tasks; // #NO_SAVE -- set tasks with setTaskCount
   
   inline int		taskCount() const {return tasks.size;} // #NO_SHOW
+  virtual void		setTaskCount(int val);
   taTask*		task(int i) {return tasks.FastEl(i);} // #NO_SHOW
   
   void	InitLinks();
   void	CutLinks();
-  TA_BASEFUNS(taEngine);
-
+  TA_BASEFUNS_NOCOPY(taEngineInst);
 private:
-  void	Copy_(const taEngine& cp);
   void	Initialize();
   void	Destroy();
 };
 
-template<class T>
-class TA_API taEngineT: public taEngine {
-  // template to create sets of Engine/Task pairs
-INHERITED(taEngine)
+class TA_API taEngine: public taNBase {
+  // ##TOKENS ##INSTANCE #VIRT_BASE ##DEF_NAME_STYLE_2 an object that manages XxxInst instances of a specific computing engine
+INHERITED(taNBase)
 public:
-
-  T*			task(int i) {return static_cast<T*>(tasks.FastEl(i));} // #NO_SHOW
   
-  TA_TMPLT_BASEFUNS(taEngineT,T);
-
+  taEngineInst*		MakeEngineInst() const {return MakeEngineInst_impl();}
+  
+  TA_BASEFUNS_NOCOPY(taEngine);
+protected:
+  virtual taEngineInst*	MakeEngineInst_impl() const;
+  virtual taEngineInst*	NewEngineInst_impl() const {return NULL;} // override to make exact type
 private:
-  TMPLT_NOCOPY(taEngineT,T)
-  void	Initialize() {tasks.SetBaseType(T::StatTypeDef(0));} 
-  void	Destroy() {}
+  void	Initialize();
+  void	Destroy();
 };
-
 
 
 class TA_API taEngine_Group : public taGroup<taEngine> {
@@ -125,6 +125,28 @@ private:
 #ifdef TA_USE_THREADS
 
 #ifndef __MAKETA__
+
+#include <QtCore/QList>
+#include <QtCore/QThread>
+#include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
+
+#if defined(TA_OS_WIN)
+# error not defined for Windows yet
+#else // unix incl Intel Mac
+inline int AtomicFetchAdd(int* operand, int incr)
+{
+  // atomically get value of operand before op, then add incr to it
+  asm volatile (
+    "lock\n\t"
+    "xaddl %0, %1\n" // add incr to operand
+    : "=r" (incr) // incr gets replaced by the value of operand before inc
+    : "m"(*operand), "0"(incr)
+  );
+  return incr;
+}
+#endif
+
 class TA_API taTaskThread: public QThread {
 INHERITED(QThread)
 public:
@@ -158,6 +180,9 @@ protected:
   
   override void 	run();
 };
+
+typedef QList<taTaskThread*> taTaskThread_List;
+
 #endif  // QTaskThread
 
 

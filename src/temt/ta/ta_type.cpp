@@ -2562,8 +2562,9 @@ void*	MemberDefBase_List::El_MakeToken_(void* it) {
     return (void*)((MemberDef*)it)->MakeToken();
   case taMisc::TIK_PROPERTY:
     return (void*)((PropertyDef*)it)->MakeToken();
+  default: return NULL; // shouldn't happen!
   }
-  return NULL; // shouldn't happen!
+  return NULL; // compiler food
 }
 
 // note: this use the "pseudo-virtual" type guy
@@ -3287,6 +3288,7 @@ void MemberDefBase::Copy(const MemberDefBase* cp) {
   case taMisc::TIK_PROPERTY:
     ((PropertyDef*)this)->Copy(*(const PropertyDef*)cp);
     return;
+  default: break; // compiler food
   }
   Copy(*cp); // should never happen!
 }

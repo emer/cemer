@@ -23,7 +23,6 @@
 #include "emergent_project.h"
 
 #include "fun_lookup.h"
-#include "ta_engine.h"
 
 #include "leabra_def.h"
 #include "leabra_TA_type.h"
@@ -50,7 +49,6 @@ class LeabraNetwork;
 class LeabraProject; 
 
 class LeabraEngine;
-TA_SMART_PTRS(LeabraEngine);
 class LeabraTask;
 TA_SMART_PTRS(LeabraTask);//
 
@@ -92,6 +90,7 @@ TA_SMART_PTRS(LeabraTask);//
 // weight is always stored as a negative value, so that shared weights or multiple
 // weight updates do not try to linearize the already-linear value.  The learning
 // rules have been updated to assume that wt is negative (and linear).
+
 
 // use this macro for iterating over either unit groups one-by-one, or the one
 // unit group that is the layer->units, and applying 'code' to either
@@ -675,7 +674,7 @@ public:
   //	Stage 0: at start of settling	  // 
   //////////////////////////////////////////
 
-  virtual void	Init_Netin(LeabraUnit* u);
+//  virtual void	Init_Netin(LeabraUnit* u);
   virtual void	Init_Acts(LeabraUnit* u, LeabraLayer* lay);
   void		Init_Acts(Unit* u)	{ UnitSpec::Init_Acts(u); }
 
@@ -886,8 +885,10 @@ public:
   { ((LeabraUnitSpec*)GetUnitSpec())->Init_ActAvg(this); }
   // #CAT_Activation initialize average activation
 
-  void		Init_Netin()
-  { ((LeabraUnitSpec*)GetUnitSpec())->Init_Netin(this); }
+/*was  void		Init_Netin()
+  { ((LeabraUnitSpec*)GetUnitSpec())->Init_Netin(this); }*/
+  void		Init_Netin();
+  void		Init_NetinDelta();
   void		Init_Acts(LeabraLayer* lay)
   { ((LeabraUnitSpec*)GetUnitSpec())->Init_Acts(this, lay); }
 
@@ -989,6 +990,7 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
+
 
 //////////////////////////////////////////////////////////////////////////
 //			Projection Level Code
@@ -2213,12 +2215,39 @@ private:
 };
 
 
-class LEABRA_API LeabraEngine: public taEngine {
+class LEABRA_API LeabraEngineInst: public NetEngineInst {
+INHERITED(NetEngineInst)
+public:
+  UnitPtrList		send_units; // list of only the sending units for a cycle
+  float_Matrix		excit; // [task][un_idx] -- scratchpad excit (net)
+  float_Matrix		inhib; // [task][un_idx] -- scratchpad inhit (g.i)
+  
+  inline LeabraUnit*	unit(int i) const {return (LeabraUnit*)units[i];}
+  inline LeabraNetwork* net() const {return (LeabraNetwork*)owner;} 
+  
+  virtual bool		OnSend_Netin() {return false;}
+  virtual bool		OnSend_Netin_Delta() {return false;}
+  
+  SIMPLE_LINKS(LeabraEngineInst);
+  TA_BASEFUNS_NOCOPY(LeabraEngineInst);
+protected:
+  void			AssertScratchDims(int tasks, int units); // asserts mod4
+  void			RollupWritebackScratch(); 
+    // rolls up, so sum is in [0][], and writes back
+  virtual void		GetSendDeltaUnits(); // fill the send_units list
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class LEABRA_API LeabraEngine: public NetEngine {
 // abstract definition of LeabraEngine
-INHERITED(taEngine)
+INHERITED(NetEngine)
 public:
   
   TA_BASEFUNS_NOCOPY(LeabraEngine);
+protected:
+  taEngineInst*		NewEngineInst_impl() const;
 private:
   void	Initialize();
   void	Destroy();
@@ -2226,23 +2255,112 @@ private:
 
 
 class LEABRA_API LeabraTask: public taTask {
-// one instance of a task for doing Leabra algorithm calculations -- concretely defines the default impl in absence of any other engine
+// #VIRT_BASE #NO_INSTANCE one instance of a task for doing Leabra algorithm calculations -- concretely defines the default impl in absence of any other engine
 INHERITED(taTask)
 public:
   enum Proc { // the proc to execute
     P_Send_Netin,
-    P_Recv_Netin,
-    P_ComputeAct
+    P_Send_NetinDelta,
   };
+  
+  inline LeabraEngineInst* inst() const {return (LeabraEngineInst*)m_inst;} 
   
   override void		run(); 
   
   TA_BASEFUNS_NOCOPY(LeabraTask);
-
+protected:
+  virtual void		DoSend_Netin() {}
+  virtual void		DoSend_NetinDelta() {}
+  
 private:
   void	Initialize();
   void	Destroy();
 };
+
+#ifdef TA_USE_THREADS
+
+class LeabraThreadEngineTask;
+
+class LEABRA_API LeabraThreadEngine: public LeabraEngine {
+// threaded LeabraEngine
+INHERITED(LeabraEngine)
+public:
+  int			n_threads; // #MIN_1 #MAX_64 number of threads to use -- typically==number of cores
+  bool			nibble; // #DEF_true set false to disable nibbling (for debugging threads)
+  
+  TA_BASEFUNS_NOCOPY(LeabraThreadEngine);
+protected:
+  taEngineInst* 	NewEngineInst_impl() const;
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class LEABRA_API LeabraThreadEngineInst: public LeabraEngineInst {
+INHERITED(LeabraEngineInst)
+friend class LeabraThreadEngineTask;
+public:
+  static const int	UNIT_CHUNK_SIZE = 64 / TA_POINTER_SIZE;
+    // number of units to process by a thread in one chunk
+  static const int	MAX_THREADS = 32; // arbitrary number -- bump when 64 core chips arrive ;)
+#ifndef __MAKETA__
+  taTaskThread**	threads; // one per task, except [0] -- init to MAX_THREADS
+#endif  
+  bool			nibble; // #DEF_true set false to disable nibbling (for debugging threads)
+
+  inline LeabraThreadEngineTask* task(int i) const {return (LeabraThreadEngineTask*)tasks[i];}
+  inline LeabraThreadEngine* engine() const {return (LeabraThreadEngine*)m_engine.ptr();}
+  override void		setTaskCount(int val);
+  
+  void 			DoProc(int proc_id);
+
+  override bool		OnSend_Netin();
+  override bool		OnSend_Netin_Delta(); //
+  
+//  SIMPLE_LINKS(LeabraThreadEngineInst);
+  TA_BASEFUNS_NOCOPY(LeabraThreadEngineInst);
+protected:
+  int			n_units; // this is the number of units that will be proc'ed in the algo
+  override void		OnBuild_impl(); // main build
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+class LEABRA_API LeabraThreadEngineTask: public LeabraTask {
+// task
+INHERITED(LeabraTask)
+public:
+#ifndef __MAKETA__ // stupid maketa chokes on 'inline static'
+  inline static void 	StatC_Send_Inhib(LeabraCon* cn, float* ru_i, float su_act_eff) 
+    {*ru_i += su_act_eff * cn->wt;} // #IGNORE
+  inline static void 	StatC_Send_Excit(LeabraCon* cn, float* ru_e, float su_act_eff) 
+    {*ru_e += su_act_eff * cn->wt;} // #IGNORE
+#endif
+
+  int			g_u; // index of unit on which to start
+  int			scr_units; // number of slots in scratch -- is mod4 value
+  float*		excit; // our subportion of excit scratch
+  float*		inhib; // our subportion of excit scratch
+  bool			init_done; // lets us safely nibble from main task
+  
+  inline LeabraThreadEngineInst* inst() const {return (LeabraThreadEngineInst*)m_inst;} 
+  
+  TA_BASEFUNS_NOCOPY(LeabraThreadEngineTask);
+protected:
+  void			InitScratch_Send_Netin();
+  override void		DoSend_Netin();
+  void 			DoSend_Netin_Gp(bool is_inhib, SendCons* cg, Unit* su);
+  override void		DoSend_NetinDelta();
+private:
+  void	Initialize();
+  void	Destroy() {}
+};
+
+
+#endif // TA_USE_THREADS
 
 
 #endif // leabra_h

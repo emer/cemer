@@ -333,6 +333,8 @@ public:
   // #IGNORE enumeration of plugins 
   static bool	Startup_LoadPlugins();
   // #IGNORE final initialize of plugins 
+  static bool	Startup_EnumerateEngines();
+  // #IGNORE make a list of all available engines, both native and plugins 
   static bool	Startup_InitCss();
   // #IGNORE initialize css script system
   static bool	Startup_InitGui();
@@ -400,6 +402,8 @@ protected:
   static bool 	Startup_InitTA_folders();  // #IGNORE 
   static bool 	Startup_InitTA_getMissingAppDir();  // #IGNORE 
   static bool 	Startup_InitTA_initUserAppDir();  // #IGNORE 
+  static void	Startup_EnumerateEnginesR(TypeDef* typ);
+  // #IGNORE recursively enumerate from typ 
   bool		AddRecentFile_impl(const String& value); // #IGNORE add this file to the recent list (also adds the path to recent paths)
   bool		AddRecentPath_impl(const String& value); // #IGNORE add this path to the recent list;
   virtual void		AddTemplates(); // called in InitLinks -- extend to add new templates

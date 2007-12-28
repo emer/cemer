@@ -21,15 +21,54 @@
 //      taTask  	  //
 ////////////////////////////
 
-/*void taTask::Initialize() {
+void taTask::Initialize() {
+  task_id = -1; 
+  proc_id = 0;
+  m_inst = NULL;
 }
 
-void taTask::Destroy() {
+/*void taTask::Destroy() {
 }
 
 void taTask::Copy_(const taTask& cp) {
 } */
 
+
+taBase* taTask::SetOwner(taBase* own) {
+  if (own) {
+    m_inst = (taEngineInst*)own->GetOwner(&TA_taEngineInst);
+  } else {
+    m_inst = NULL;
+  }
+  return inherited::SetOwner(own);
+}
+
+////////////////////////////
+//  taEngineInst  	  //
+////////////////////////////
+
+void taEngineInst::Initialize() {
+  taBase::Own(m_engine, this);
+}
+
+void taEngineInst::Destroy() {
+  m_engine = NULL;
+}
+
+void taEngineInst::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(&tasks, this);
+}
+
+void taEngineInst::CutLinks() {
+  tasks.CutLinks();
+  inherited::CutLinks();
+}
+
+void taEngineInst::setTaskCount(int val) {
+  if (val == tasks.size) return;
+  else tasks.SetSize(val);
+}
 
 ////////////////////////////
 //      taEngine  	  //
@@ -41,18 +80,10 @@ void taEngine::Initialize() {
 void taEngine::Destroy() {
 }
 
-void taEngine::Copy_(const taEngine& cp) {
-  tasks = cp.tasks;
-}
-
-void taEngine::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(&tasks, this);
-}
-
-void taEngine::CutLinks() {
-  tasks.CutLinks();
-  inherited::CutLinks();
+taEngineInst* taEngine::MakeEngineInst_impl() const {
+  taEngineInst* rval = NewEngineInst_impl();
+  rval->m_engine = const_cast<taEngine*>(this);
+  return rval;
 }
 
 #ifdef TA_USE_THREADS

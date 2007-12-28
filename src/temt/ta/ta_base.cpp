@@ -2306,6 +2306,8 @@ void taSmartRef::DataLinkDestroying(taDataLink* dl) {
   if (m_own) {
     taBase* tmp_ptr = m_ptr;
     m_ptr = NULL;
+    //send a changing ref, in case it only monitors for setting/clearing (not destroying)
+    m_own->SmartRef_DataRefChanging(this, NULL, false); 
     m_own->SmartRef_DataDestroying(this, tmp_ptr); 
     //NO MORE CODE HERE -- object may have destroyed itself
   } else 

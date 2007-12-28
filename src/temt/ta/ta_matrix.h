@@ -498,6 +498,8 @@ public:
 
   virtual void		Reset();
   // #CAT_Modify remove all items
+  void			Clear(int fm = 0, int to = -1); 
+  // #CAT_Modify optimized clear, defaults to clearing all items
   
   void			SetGeom(int size, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)  
@@ -612,6 +614,7 @@ protected:
   // #IGNORE reallocate existing array, only valid for fastAlloc() objects
   virtual void		ReclaimOrphans_(int from, int to) {}
   // called when elements can be reclaimed, ex. for strings
+  virtual void		Clear_impl(int fm, int to); 
   
   virtual void		Add_(const void* it);
   // compatibility function -- only valid if dims=1
