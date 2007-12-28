@@ -330,6 +330,8 @@ public:
   virtual void 	Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
+  override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+
   TA_BASEFUNS_NOCOPY(CtLeabraLayerSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();

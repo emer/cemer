@@ -142,6 +142,14 @@ void CtLeabraLayerSpec::Initialize() {
   decay.phase = 0.0f;
 }
 
+bool CtLeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
+  bool rval = inherited::CheckConfig_Layer(lay, quiet);
+  if(!rval) return false;
+  CheckError(decay.event != 0.0f || decay.phase != 0.0f, quiet, rval,
+	     "decay.event or phase is not zero -- must be for continuous time learning to function properly");
+  return rval;
+}
+
 void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net) {
   if(lay->hard_clamped) return;	// this is key!  clamped layers do not age!
 
