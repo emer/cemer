@@ -2175,8 +2175,7 @@ class LEABRA_API LeabraWizard : public Wizard {
   // ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  override bool StdNetwork(Network* net = NULL);
-  // #MENU_BUTTON #MENU_ON_Network #NULL_OK make a standard network according to the current settings (if net == NULL, new network is created)
+  override bool StdNetwork(TypeDef* net_type = &TA_LeabraNetwork, Network* net = NULL);
 
   virtual bool	StdLayerSpecs(LeabraNetwork* net);
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (KWTA_AVG 25% for hiddens, KWTA PAT_K for input/output)

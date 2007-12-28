@@ -375,6 +375,10 @@ void SoProject::Initialize() {
   networks.SetBaseType(&TA_SoNetwork);
 }
 
+void SoWizard::Initialize() {
+  default_net_type = &TA_SoNetwork;
+}
+
 bool SoWizard::StdProgs() {
   if(!StdProgs_impl("SoAll_Std")) return false;
   return true;

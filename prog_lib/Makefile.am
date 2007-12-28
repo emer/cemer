@@ -24,6 +24,7 @@ dist_pkgdata_prog_lib_DATA =\
 	CsTrain.prog \
 	CsTrial.prog \
 	CsTrialMonitor.prog \
+	CtLeabraSettle.prog \
 	DataCalcSample.prog \
 	EpochsToTrain.prog \
 	LeabraAll_Std.progp \

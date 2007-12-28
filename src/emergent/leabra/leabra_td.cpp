@@ -1159,7 +1159,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "TD", "network is NULL and could not make a new one -- aborting!"))
       return false;
-    if(!StdNetwork(net)) return false;
+    if(!StdNetwork(&TA_LeabraNetwork, net)) return false;
   }
 
   String msg = "Configuring TD Temporal Differences Layers:\n\n\

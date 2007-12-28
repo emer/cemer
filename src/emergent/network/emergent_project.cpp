@@ -104,6 +104,7 @@ void Wizard::Initialize() {
   n_layers = 3;
   layer_cfg.SetBaseType(&TA_LayerWizEl);
   connectivity = FEEDFORWARD;
+  default_net_type = &TA_Network;
 }
 
 void Wizard::InitLinks() {
@@ -171,11 +172,11 @@ bool Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
   return true;
 }
 
-bool Wizard::StdNetwork(Network* net) {
+bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
   if(!net) {
     ProjectBase* proj = GET_MY_OWNER(ProjectBase);
     if(TestError(!proj, "StdNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
-    net = proj->GetNewNetwork();
+    net = proj->GetNewNetwork(net_type);
     if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
   }
   net->StructUpdate(true);

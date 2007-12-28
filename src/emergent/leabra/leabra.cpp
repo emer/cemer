@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "leabra.h"
+#include "leabra_ct.h"
 
 #include "ta_platform.h"
 #include "netstru_extra.h"
@@ -4229,15 +4230,16 @@ void LeabraProject::Initialize() {
 
 void LeabraWizard::Initialize() {
   connectivity = BIDIRECTIONAL;
+  default_net_type = &TA_LeabraNetwork;
 }
 
-bool LeabraWizard::StdNetwork(Network* net) {
+bool LeabraWizard::StdNetwork(TypeDef* net_type, Network* net) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-    net = proj->GetNewNetwork();
+    net = proj->GetNewNetwork(net_type);
     if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
   }
-  if(!inherited::StdNetwork(net)) return false;
+  if(!inherited::StdNetwork(net_type, net)) return false;
   return StdLayerSpecs((LeabraNetwork*)net);
 }
 
@@ -4247,9 +4249,17 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "StdLayerSpecs", "network is NULL and could not make a new one -- aborting!")) return false;
   }
-  LeabraLayerSpec* hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_LeabraLayerSpec);
+  LeabraLayerSpec* hid;
+  if(net->InheritsFrom(&TA_CtLeabraNetwork))
+    hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_CtLeabraLayerSpec);
+  else
+    hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_LeabraLayerSpec);
   hid->name = "HiddenLayer";
-  LeabraLayerSpec* inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
+  LeabraLayerSpec* inout;
+  if(net->InheritsFrom(&TA_CtLeabraNetwork))
+    inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_CtLeabraLayerSpec);
+  else
+    inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
   hid->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   hid->inhib.kwta_pt = .6f;
   inout->SetUnique("inhib", true);
@@ -4257,8 +4267,6 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   inout->inhib.type = LeabraInhibSpec::KWTA_INHIB;
   inout->inhib.kwta_pt = .25f;
   inout->kwta.k_from = KWTASpec::USE_PAT_K;
-  // todo: !!!
-//   winbMisc::DelayedMenuUpdate(hid);
 
   int i;
   if(net->layers.size == layer_cfg.size) {	// likely to be using specs
@@ -4284,15 +4292,20 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   }
 
   // move the bias spec under the con spec
-  LeabraBiasSpec* bs = (LeabraBiasSpec*)net->specs.FindType(&TA_LeabraBiasSpec);
+  LeabraBiasSpec* bs;
+  if(net->InheritsFrom(&TA_CtLeabraNetwork))
+    bs = (LeabraBiasSpec*)net->specs.FindType(&TA_CtLeabraBiasSpec);
+  else
+    bs = (LeabraBiasSpec*)net->specs.FindType(&TA_LeabraBiasSpec);
   if(bs != NULL) {
     LeabraConSpec* ps = (LeabraConSpec*)bs->FindParent();
     if(ps != NULL) return false;
-    ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
+    if(net->InheritsFrom(&TA_CtLeabraNetwork))
+      ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_CtLeabraConSpec, bs);
+    else
+      ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
     if(ps != NULL) {
       ps->children.Transfer(bs);
-      // todo: !!!
-//       winbMisc::DelayedMenuUpdate(ps);
     }
   }
   return true;

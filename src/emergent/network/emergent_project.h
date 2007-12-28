@@ -78,14 +78,15 @@ public:
   int		n_layers;	// number of layers
   LayerWizElList layer_cfg;	// provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
+  TypeDef*	default_net_type; // #TYPE_Network default type of network to create
 
   virtual bool	ThreeLayerNet();
   // #MENU_BUTTON #MENU_ON_Defaults set configuration to a standard three-layer network (input, hidden, output) -- DOESN'T MAKE NETWORK (use StdEnv!)
   virtual bool	MultiLayerNet(int n_inputs = 1, int n_hiddens = 1, int n_outputs = 1);
   // #MENU_BUTTON set configuration for specified number of each type of layer -- DOESN'T MAKE NETWORK (use StdEnv!)
 
-  virtual bool	StdNetwork(Network* net=NULL);
-  // #MENU_BUTTON #MENU_ON_Network #NULL_OK #NULL_TEXT_NewNetwork make a standard network according to the current settings (if net == NULL, new network is created)
+  virtual bool	StdNetwork(TypeDef* net_type, Network* net=NULL);
+  // #MENU_BUTTON #MENU_ON_Network #NULL_OK_1 #NULL_TEXT_NewNetwork #TYPE_ON_default_net_type make a standard network according to the current settings (if net == NULL, new network is created)
   virtual bool	RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net=NULL);
   // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_spec (if net == NULL, new network is created)
 

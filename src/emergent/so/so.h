@@ -330,7 +330,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(SoWizard);
 private:
-  void 	Initialize() 	{ };
+  void 	Initialize();
   void 	Destroy()	{ };
 };
 

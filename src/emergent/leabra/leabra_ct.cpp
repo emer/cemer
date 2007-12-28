@@ -208,6 +208,7 @@ void CtLeabraNetwork::Initialize() {
   ct_lrn_time = 0.0f;
   ct_lrn_cycle = 0;
   ct_lrn_now = 0;
+  phase_order = MINUS_PLUS_NOTHING;
 }
 
 void CtLeabraNetwork::UpdateAfterEdit_impl() {
