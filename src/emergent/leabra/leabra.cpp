@@ -4507,13 +4507,14 @@ void LeabraEngineInst::RollupWritebackScratch() {
 //NOTE: may be more efficient to pipeline the writing with the rollup, to avoid 
 // cache overflow
   int size = excit.dim(0); // same for both
+  const int task_cnt = excit.dim(1); // same for both
   //TODO: make this much more efficient, either call a GSL routine, or do a SSE
-  for (int t = excit.dim(1) - 1; t > 0; --t) {
+  for (int t = task_cnt - 1; t > 0; --t) {
     for (int i = 0; i < size; ++i) {
       excit.FastEl(i, 0) += excit.FastEl(i, t);
     }
   }
-  for (int t = inhib.dim(1) - 1; t > 0; --t) {
+  for (int t = task_cnt - 1; t > 0; --t) {
     for (int i = 0; i < size; ++i) {
       inhib.FastEl(i, 0) += inhib.FastEl(i, t);
     }
@@ -4600,24 +4601,27 @@ void LeabraThreadEngineInst::Destroy() {
 void LeabraThreadEngineInst::DoProc(int proc_id) {
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
-  for (int t = 1; t < taskCount(); ++t) {
-    taTaskThread* tt = (taTaskThread*)threads[t];
-    LeabraThreadEngineTask* tsk = (LeabraThreadEngineTask*)tasks[t];
-    tt->suspend(); // prob already suspended
+  // init tasks and start all >0 tasks
+  LeabraThreadEngineTask* tsk = NULL;
+  for (int t = 0; t < taskCount(); ++t) {
+    tsk = task(t);
     tsk->g_u = t * UNIT_CHUNK_SIZE;
+    tsk->init_done = false;
     tsk->proc_id = proc_id;
-    tt->resume();
+    // note: task0 done in main thread
+    if (t > 0) {
+      taTaskThread* tt = (taTaskThread*)threads[t];
+      tt->suspend(); // prob already suspended
+      tt->resume();
+    }
   }
   
   // then do my part
-  LeabraThreadEngineTask* tsk = (LeabraThreadEngineTask*)tasks[0];
-  tsk->g_u = 0;
-  tsk->init_done = false;
-  tsk->proc_id = proc_id;
+  tsk = task(0);
   tsk->run();
   // then lend a "helping hand" (if enabled)
   if (nibble) for (int t = 1; t < taskCount(); ++t) {
-    LeabraThreadEngineTask* tsk = (LeabraThreadEngineTask*)tasks[t];
+    tsk = task(t);
     // note: its ok if tsk finishes between our test and calling run
     if ((tsk->g_u < n_units) && (tsk->init_done))
       tsk->run();
@@ -4691,22 +4695,29 @@ return false;
 void LeabraThreadEngineInst::setTaskCount(int val) {
   if (val < 0) val = 0;
   if (val > MAX_THREADS) val = MAX_THREADS;
-  //NOTE: we don't create a thread for [0] because that is done in main thread
-  // if size is different, then adjust as appropriate (only one of these may run:)
-  // remove excess
-  for (int i = taskCount() - 1; ((i > 0 && (i >= val))); --i) {
-    taTaskThread* tt = threads[i];
-    taTaskThread::DeleteTaskThread(tt);
-    threads[i] = NULL;
-  }
-  // added needed new
-  for (int i = taskCount();  i < val; ++i) {
-    if (i > 0) {
-      taTaskThread* tt = new taTaskThread;
-      threads[i] = tt;
+  int old_cnt = taskCount();
+  inherited::setTaskCount(val);
+  if (old_cnt == val) return;
+  if (old_cnt > val) {
+    // remove excess
+    for (int i = old_cnt - 1; ((i > 0 && (i >= val))); --i) {
+      taTaskThread* tt = threads[i];
+      taTaskThread::DeleteTaskThread(tt);
+      threads[i] = NULL;
+    }
+  } else { // need new
+    //NOTE: we don't create a thread for [0] because that is done in main thread
+    // if size is different, then adjust as appropriate (only one of these may run:)
+    // added needed new
+    for (int i = old_cnt; i < val; ++i) {
+      if (i > 0) {
+        taTaskThread* tt = new taTaskThread;
+        threads[i] = tt;
+        tt->setTask(task(i));
+        tt->start(); // starts paused
+      }
     }
   }
-  inherited::setTaskCount(val);
 }
 
 
@@ -4761,6 +4772,10 @@ void LeabraThreadEngineTask::InitScratch_Send_Netin() {
 
 void LeabraThreadEngineTask::DoSend_Netin() {
   LeabraThreadEngineInst* inst = this->inst();
+  // local copies of constants
+  const int n_units = inst->n_units;
+  // span is the chunk size, times the number of threads working in parallel
+  const int span_size = LeabraThreadEngineInst::UNIT_CHUNK_SIZE * inst->taskCount();
   // guard init, because [0] could nibble us!
   if (!init_done) {
     InitScratch_Send_Netin();
@@ -4769,9 +4784,9 @@ void LeabraThreadEngineTask::DoSend_Netin() {
 //HEREAFTER could get "nibbled" -- run by [0]
     
   // we work in chunks... so make a local guy
-  int m_u = AtomicFetchAdd(&g_u, LeabraThreadEngineInst::UNIT_CHUNK_SIZE);
+  int m_u = AtomicFetchAdd(&g_u, span_size);
   int chnki = 0; // count units within the chunk
-  while (m_u < inst->n_units) {
+  while (m_u < n_units) {
     LeabraUnit* u = (LeabraUnit*)inst->send_units[m_u];
     
     for(int g=0; g<u->send.size; g++) {
@@ -4786,7 +4801,7 @@ void LeabraThreadEngineTask::DoSend_Netin() {
       ++m_u;
     } else {
       chnki = 0;
-      m_u = AtomicFetchAdd(&g_u, LeabraThreadEngineInst::UNIT_CHUNK_SIZE);
+      m_u = AtomicFetchAdd(&g_u, span_size);
     }
   }
    //donzo! that's it
