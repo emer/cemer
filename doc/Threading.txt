@@ -90,3 +90,36 @@ assume the following:
   locked into always choosing the same exact and predicted values
 * it would be great if it could be weighed to try to get exact values, and "good" predictions,
   and only hit "bad" or "uncertain" predictions as little as possible
+  
+Delta
+
+There are basically 3 different mechanisms:
+* clamp net
+  clmp_net input is its own thing, always added to net
+  the Send for hard_clamped layers is done once, 
+* normal act/net
+* act_delta, act_sent, net_delta
+
+Hard Clamped
+* independent of delta mode
+* always used (not conditional)
+* has its own dedicated net target (clmp_net)
+* can only be used for excit (error detect if attempt with inhib)
+* lay.hard_clamped is set in:
+  in Settle_Init:
+    Compute_HardClamp
+     clamp.hard && (lay->ext_flag & Unit::EXT)
+    (also, for 3-phase in phase >2: Compute_HardClampPhase2)
+* then sent later in Settle_Init
+  Send_ClampNet (if hard_clamped set)
+* clmp_net is cleared in:
+  Init_ClampNet
+  called from Network::Send_ClampNet
+  
+  
+Some key routines:
+  Network::SettleInit
+    Compute_HardClamp -- computes hard clamp, and sets lay.hard_clamped
+    Send_ClampNet -- clears all clmp_net, and sends hard_clamped ones
+      Init_ClampNet -- clears ALL un.clmp_net values
+  
