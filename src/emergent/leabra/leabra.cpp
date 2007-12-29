@@ -1183,9 +1183,10 @@ void LeabraUnitSpec::ExtToComp(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
 void LeabraUnitSpec::TargExtToComp(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   if(!(u->ext_flag & Unit::TARG_EXT))
     return;
-  u->ext_flag = Unit::COMP;
-  u->targ = u->ext;
+  if(u->ext_flag & Unit::EXT)
+    u->targ = u->ext;
   u->ext = 0.0f;
+  u->ext_flag = Unit::COMP;
 }
 
 void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer*, LeabraInhib*,
