@@ -45,6 +45,8 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;
+  lmix.hebb = 0.0001f;
+  lmix.err = 0.9999f;
 }
 
 void CtLeabraConSpec::UpdateAfterEdit_impl() {
@@ -155,16 +157,22 @@ void CtLeabraLayerSpec::Initialize() {
 bool CtLeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
   if(!rval) return false;
-  CheckError(decay.event != 0.0f || decay.phase != 0.0f, quiet, rval,
-	     "decay.event or phase is not zero -- must be for continuous time learning to function properly");
-
+  if(CheckError(decay.event != 0.0f || decay.phase != 0.0f, quiet, rval,
+		"decay.event or phase is not zero -- must be for continuous time learning to function properly",
+		"I just set it for you in layer spec:", name,
+		"(make sure this is appropriate for all layers that use this spec!)")) {
+    SetUnique("decay", true);
+    decay.event = 0.0f;
+    decay.phase = 0.0f;
+  }
+     
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError((us->opt_thresh.learn >= 0.0f) || us->opt_thresh.updt_wts, quiet, rval,
-		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
+  if(lay->CheckError(us->opt_thresh.updt_wts, quiet, rval,
+		"UnitSpec opt_thresh.updt_wts must be false to allow proper learning of all units",
 		"I just set it for you in spec:", us->name,
 		"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("opt_thresh", true);
-    us->opt_thresh.learn = -1.0f;
+    //    us->opt_thresh.learn = -1.0f;
     us->opt_thresh.updt_wts = false;
   }
   return rval;
@@ -235,7 +243,10 @@ void CtLeabraNetwork::Initialize() {
   ct_lrn_time = 0.0f;
   ct_lrn_cycle = 0;
   ct_lrn_now = 0;
+
+  // set new defaults for some key things:
   phase_order = MINUS_PLUS_NOTHING;
+  maxda_stopcrit = -1.0f;
 }
 
 void CtLeabraNetwork::UpdateAfterEdit_impl() {
