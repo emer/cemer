@@ -58,7 +58,7 @@ Program_Group .projects[0].programs.gp[1] {
 	ProgVar @[1] { };
       };
 
-      ProgVar_List @.vars = [10] {
+      ProgVar_List @.vars = [12] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
@@ -69,9 +69,11 @@ Program_Group .projects[0].programs.gp[1] {
 	ProgVar @[7] { };
 	ProgVar @[8] { };
 	ProgVar @[9] { };
+	ProgVar @[10] { };
+	ProgVar @[11] { };
       };
 
-      ProgEl_List @.functions = [1] {
+      Function_List @.functions = [1] {
 	Function @[0] { 
 	  ProgVar_List @.args = [4] {
 	    ProgVar @[0] { };
@@ -199,9 +201,11 @@ Program_Group .projects[0].programs.gp[1] {
  el_typ=Program;
  el_def=0;
  step_prog=.projects[0].programs.gp[1][1]$0$;
+ tags=;
  desc="Generate InputData for 12-AX CPT task: Epoch + Trial";
  Program @[0] {
   name="CPT12axEpoch";
+  tags=;
   desc="Generate a full epoch's worth of trials for the 12-AX CPT task";
   flags=;
   objs {
@@ -304,7 +308,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -320,7 +323,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="trial_no";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -333,7 +335,6 @@ Program_Group .projects[0].programs.gp[1] {
     };
     init {
      expr="trial_no = 0";
-     flags=NO_VAR_ERRS;
      var_expr="$#0#$ = 0";
      vars {
      };
@@ -342,7 +343,6 @@ Program_Group .projects[0].programs.gp[1] {
     };
     test {
      expr="trial_no < n_per_epc";
-     flags=NO_VAR_ERRS;
      var_expr="$#0#$ < $#1#$";
      vars {
      };
@@ -351,7 +351,6 @@ Program_Group .projects[0].programs.gp[1] {
     };
     iter {
      expr="trial_no++";
-     flags=NO_VAR_ERRS;
      var_expr="$#0#$++";
      vars {
      };
@@ -363,6 +362,7 @@ Program_Group .projects[0].programs.gp[1] {
  };
  Program @[1] {
   name="CPT12axTrial";
+  tags=;
   desc="Generate one trial (outer loop with multiple inner loops) of the 12-AX CPT Task";
   flags=;
   objs {
@@ -481,7 +481,7 @@ Program_Group .projects[0].programs.gp[1] {
    ProgVar @[1] {
     name="trial_no";
     var_type=T_Int;
-    int_val=24;
+    int_val=25;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="trial number, for making group names unique";
@@ -518,7 +518,7 @@ Program_Group .projects[0].programs.gp[1] {
    ProgVar @[3] {
     name="n_inner_trials";
     var_type=T_Int;
-    int_val=3;
+    int_val=2;
     objs_ptr=0;
     flags=CTRL_PANEL|NULL_CHECK;
     desc="number of inner-loop trials";
@@ -528,7 +528,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_DynEnum;
     dyn_enum_val {
      enum_type=.projects[0].programs.gp[1][1].types[0]$3$;
-     value=6;
+     value=7;
     };
     objs_ptr=0;
     flags=NULL_CHECK;
@@ -539,7 +539,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_DynEnum;
     dyn_enum_val {
      enum_type=$3$;
-     value=2;
+     value=1;
     };
     objs_ptr=0;
     flags=NULL_CHECK;
@@ -550,7 +550,7 @@ Program_Group .projects[0].programs.gp[1] {
     var_type=T_DynEnum;
     dyn_enum_val {
      enum_type=$3$;
-     value=3;
+     value=4;
     };
     objs_ptr=0;
     flags=NULL_CHECK;
@@ -570,7 +570,7 @@ Program_Group .projects[0].programs.gp[1] {
    ProgVar @[8] {
     name="group_name";
     var_type=T_String;
-    string_val="24_I_ONE";
+    string_val="24_I_TWO";
     objs_ptr=0;
     flags=NULL_CHECK;
     desc="name of current group of trials";
@@ -584,10 +584,27 @@ Program_Group .projects[0].programs.gp[1] {
     flags=CTRL_PANEL|NULL_CHECK;
     desc=;
    };
+   ProgVar @[10] {
+    name="network";
+    var_type=T_Object;
+    object_type=LeabraNetwork;
+    object_val=.projects[0].networks[0]$6$;
+    objs_ptr=0;
+    flags=CTRL_PANEL|NULL_CHECK;
+    desc=;
+   };
+   ProgVar @[11] {
+    name="i";
+    var_type=T_Int;
+    int_val=0;
+    objs_ptr=0;
+    flags=NULL_CHECK;
+    desc=;
+   };
   };
   functions {
    name=;
-   el_typ=ProgEl;
+   el_typ=Function;
    el_def=0;
    Function @[0] {
     desc=;
@@ -646,18 +663,18 @@ Program_Group .projects[0].programs.gp[1] {
     };
     fun_code {
      name=;
-     el_typ=ProgEl;
+     el_typ=AddNewDataRow;
      el_def=0;
      AddNewDataRow @[0] {
       desc=;
       flags=;
-      data_var=.projects[0].programs.gp[1][1].args[0]$6$;
+      data_var=.projects[0].programs.gp[1][1].args[0]$7$;
      };
      MethodCall @[1] {
       desc="set the task name ";
       flags=;
       result_var=NULL;
-      obj=$6$;
+      obj=$7$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -671,7 +688,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="group";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -687,7 +703,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val="\"\"";
 	expr {
 	 expr="\"Group\"";
-	 flags=;
 	 var_expr="\"Group\"";
 	 vars {
 	 };
@@ -703,7 +718,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -716,10 +730,10 @@ Program_Group .projects[0].programs.gp[1] {
      SetUnitsVar @[2] {
       desc=;
       flags=;
-      input_data_var=$6$;
+      input_data_var=$7$;
       set_nm=1;
       offset=NULL;
-      unit_1=.projects[0].programs.gp[1][1].functions[0].args[1]$7$;
+      unit_1=.projects[0].programs.gp[1][1].functions[0].args[1]$8$;
       unit_2=NULL;
       unit_3=NULL;
       unit_4=NULL;
@@ -727,10 +741,10 @@ Program_Group .projects[0].programs.gp[1] {
      SetUnitsVar @[3] {
       desc=;
       flags=;
-      input_data_var=$6$;
+      input_data_var=$7$;
       set_nm=1;
       offset=NULL;
-      unit_1=.projects[0].programs.gp[1][1].functions[0].args[2]$8$;
+      unit_1=.projects[0].programs.gp[1][1].functions[0].args[2]$9$;
       unit_2=NULL;
       unit_3=NULL;
       unit_4=NULL;
@@ -740,7 +754,6 @@ Program_Group .projects[0].programs.gp[1] {
       flags=;
       cond {
        expr="rew_targ";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -749,16 +762,16 @@ Program_Group .projects[0].programs.gp[1] {
       };
       true_code {
        name=;
-       el_typ=ProgEl;
+       el_typ=SetUnitsLit;
        el_def=0;
        SetUnitsLit @[0] {
 	desc=;
 	flags=;
-	input_data_var=$6$;
+	input_data_var=$7$;
 	set_nm=0;
 	offset=0;
 	unit_1 {
-	 enum_type=.projects[0].programs.gp[1][1].types[2]$9$;
+	 enum_type=.projects[0].programs.gp[1][1].types[2]$10$;
 	 value=0;
 	};
 	unit_2 {
@@ -796,9 +809,10 @@ Program_Group .projects[0].programs.gp[1] {
    InitNamedUnits @[0] {
     desc=;
     flags=;
-    input_data_var=$6$;
-    unit_names_var=.projects[0].programs.gp[1][1].vars[9]$10$;
-    network_var=NULL;
+    input_data_var=$7$;
+    unit_names_var=.projects[0].programs.gp[1][1].vars[9]$11$;
+    network_var=.projects[0].programs.gp[1][1].vars[10]$12$;
+    init_label_net=1;
     n_lay_name_chars=1;
    };
   };
@@ -809,7 +823,7 @@ Program_Group .projects[0].programs.gp[1] {
    RandomCall @[0] {
     desc=;
     flags=;
-    result_var=.projects[0].programs.gp[1][1].vars[4]$11$;
+    result_var=.projects[0].programs.gp[1][1].vars[4]$13$;
     object_type=Random;
     method=Random::IntZeroN;
     meth_args {
@@ -824,7 +838,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="2";
-       flags=;
        var_expr="2";
        vars {
        };
@@ -837,10 +850,9 @@ Program_Group .projects[0].programs.gp[1] {
    VarIncr @[1] {
     desc="add starting task offset";
     flags=;
-    var=$11$;
+    var=$13$;
     expr {
      expr="I_ONE";
-     flags=;
      var_expr="I_ONE";
      vars {
      };
@@ -851,7 +863,7 @@ Program_Group .projects[0].programs.gp[1] {
    RandomCall @[2] {
     desc=;
     flags=;
-    result_var=.projects[0].programs.gp[1][1].vars[3]$12$;
+    result_var=.projects[0].programs.gp[1][1].vars[3]$14$;
     object_type=Random;
     method=Random::IntMinMax;
     meth_args {
@@ -866,7 +878,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="1";
-       flags=;
        var_expr="1";
        vars {
        };
@@ -882,7 +893,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="max_maint";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -895,14 +905,13 @@ Program_Group .projects[0].programs.gp[1] {
    AssignExpr @[3] {
     desc=;
     flags=;
-    result_var=.projects[0].programs.gp[1][1].vars[8]$13$;
+    result_var=.projects[0].programs.gp[1][1].vars[8]$15$;
     expr {
      expr="(String)trial_no + \"_\" + (String)task";
-     flags=;
-     var_expr="(String)$#0#$ + \"_\" + (String)task";
+     var_expr="(String)$#0#$ + \"_\" + (String)$#1#$";
      vars {
      };
-     var_names{ trial_no;     };
+     var_names{ trial_no;task;     };
      bad_vars{      };
     };
    };
@@ -910,7 +919,7 @@ Program_Group .projects[0].programs.gp[1] {
     desc="Create the Task Event";
     flags=;
     result_var=NULL;
-    fun=.projects[0].programs.gp[1][1].functions[0]$14$;
+    fun=.projects[0].programs.gp[1][1].functions[0]$16$;
     fun_args {
      name=;
      el_typ=ProgArg;
@@ -923,7 +932,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="group_name";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -939,7 +947,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="task";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -955,7 +962,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="O_L";
-       flags=;
        var_expr="O_L";
        vars {
        };
@@ -971,7 +977,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -1000,7 +1005,7 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Real;
 	real_val=0;
 	objs_ptr=0;
-	flags=CTRL_PANEL|NULL_CHECK;
+	flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
 	desc="random probability value for generating a target";
        };
        ProgVar @[1] {
@@ -1008,7 +1013,7 @@ Program_Group .projects[0].programs.gp[1] {
 	var_type=T_Int;
 	int_val=0;
 	objs_ptr=0;
-	flags=CTRL_PANEL|NULL_CHECK;
+	flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
 	desc="random A or B cue/probe value";
        };
        ProgVar @[2] {
@@ -1019,7 +1024,7 @@ Program_Group .projects[0].programs.gp[1] {
 	 value=-1;
 	};
 	objs_ptr=0;
-	flags=CTRL_PANEL|NULL_CHECK;
+	flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
 	desc="output value for the probe trial: depends on whether this is a target cue-probe sequence for given task";
        };
       };
@@ -1027,7 +1032,7 @@ Program_Group .projects[0].programs.gp[1] {
      RandomCall @[1] {
       desc=;
       flags=;
-      result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[0]$15$;
+      result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[0]$17$;
       object_type=Random;
       method=Random::ZeroOne;
       meth_args {
@@ -1041,7 +1046,6 @@ Program_Group .projects[0].programs.gp[1] {
       flags=;
       cond {
        expr="trg_rnd_prob < targ_pct";
-       flags=;
        var_expr="$#0#$ < $#1#$";
        vars {
        };
@@ -1055,7 +1059,7 @@ Program_Group .projects[0].programs.gp[1] {
        RandomCall @[0] {
 	desc=;
 	flags=;
-	result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[1]$16$;
+	result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[1]$18$;
 	object_type=Random;
 	method=Random::IntZeroN;
 	meth_args {
@@ -1070,7 +1074,6 @@ Program_Group .projects[0].programs.gp[1] {
 	  def_val=;
 	  expr {
 	   expr="2";
-	   flags=;
 	   var_expr="2";
 	   vars {
 	   };
@@ -1083,10 +1086,9 @@ Program_Group .projects[0].programs.gp[1] {
        AssignExpr @[1] {
 	desc=;
 	flags=;
-	result_var=.projects[0].programs.gp[1][1].vars[5]$17$;
+	result_var=.projects[0].programs.gp[1][1].vars[5]$19$;
 	expr {
 	 expr="I_A + a_or_b";
-	 flags=;
 	 var_expr="I_A + $#0#$";
 	 vars {
 	 };
@@ -1097,10 +1099,9 @@ Program_Group .projects[0].programs.gp[1] {
        AssignExpr @[2] {
 	desc=;
 	flags=;
-	result_var=.projects[0].programs.gp[1][1].vars[6]$18$;
+	result_var=.projects[0].programs.gp[1][1].vars[6]$20$;
 	expr {
 	 expr="I_X + a_or_b";
-	 flags=;
 	 var_expr="I_X + $#0#$";
 	 vars {
 	 };
@@ -1116,7 +1117,7 @@ Program_Group .projects[0].programs.gp[1] {
        RandomCall @[0] {
 	desc=;
 	flags=;
-	result_var=$17$;
+	result_var=$19$;
 	object_type=Random;
 	method=Random::IntMinMax;
 	meth_args {
@@ -1131,7 +1132,6 @@ Program_Group .projects[0].programs.gp[1] {
 	  def_val=;
 	  expr {
 	   expr="I_A";
-	   flags=;
 	   var_expr="I_A";
 	   vars {
 	   };
@@ -1147,7 +1147,6 @@ Program_Group .projects[0].programs.gp[1] {
 	  def_val=;
 	  expr {
 	   expr="I_C+1";
-	   flags=;
 	   var_expr="I_C+1";
 	   vars {
 	   };
@@ -1160,7 +1159,7 @@ Program_Group .projects[0].programs.gp[1] {
        RandomCall @[1] {
 	desc=;
 	flags=;
-	result_var=$18$;
+	result_var=$20$;
 	object_type=Random;
 	method=Random::IntMinMax;
 	meth_args {
@@ -1175,7 +1174,6 @@ Program_Group .projects[0].programs.gp[1] {
 	  def_val=;
 	  expr {
 	   expr="I_X";
-	   flags=;
 	   var_expr="I_X";
 	   vars {
 	   };
@@ -1191,7 +1189,6 @@ Program_Group .projects[0].programs.gp[1] {
 	  def_val=;
 	  expr {
 	   expr="I_Z+1";
-	   flags=;
 	   var_expr="I_Z+1";
 	   vars {
 	   };
@@ -1209,7 +1206,6 @@ Program_Group .projects[0].programs.gp[1] {
       cond {
        expr="((task == I_ONE) && (cue == I_A) && (probe == I_X)) 
   || ((task == I_TWO) && (cue == I_B) && (probe == I_Y))";
-       flags=;
        var_expr="(($#0#$ == I_ONE) && ($#1#$ == I_A) && ($#2#$ == I_X)) 
   || (($#0#$ == I_TWO) && ($#1#$ == I_B) && ($#2#$ == I_Y))";
        vars {
@@ -1224,10 +1220,9 @@ Program_Group .projects[0].programs.gp[1] {
        AssignExpr @[0] {
 	desc=;
 	flags=;
-	result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[2]$19$;
+	result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[2]$21$;
 	expr {
 	 expr="O_R";
-	 flags=;
 	 var_expr="O_R";
 	 vars {
 	 };
@@ -1243,10 +1238,9 @@ Program_Group .projects[0].programs.gp[1] {
        AssignExpr @[0] {
 	desc=;
 	flags=;
-	result_var=$19$;
+	result_var=$21$;
 	expr {
 	 expr="O_L";
-	 flags=;
 	 var_expr="O_L";
 	 vars {
 	 };
@@ -1260,7 +1254,7 @@ Program_Group .projects[0].programs.gp[1] {
       desc="Create the Cue Event";
       flags=;
       result_var=NULL;
-      fun=$14$;
+      fun=$16$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -1273,7 +1267,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="group_name";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1289,7 +1282,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="cue";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1305,7 +1297,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="O_L";
-	 flags=;
 	 var_expr="O_L";
 	 vars {
 	 };
@@ -1321,7 +1312,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -1335,7 +1325,7 @@ Program_Group .projects[0].programs.gp[1] {
       desc="Create the Probe Event";
       flags=;
       result_var=NULL;
-      fun=$14$;
+      fun=$16$;
       fun_args {
        name=;
        el_typ=ProgArg;
@@ -1348,7 +1338,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="group_name";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1364,7 +1353,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="probe";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1380,7 +1368,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="probe_output";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1396,7 +1383,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="true";
-	 flags=;
 	 var_expr="true";
 	 vars {
 	 };
@@ -1409,35 +1395,32 @@ Program_Group .projects[0].programs.gp[1] {
      DoneWritingDataRow @[6] {
       desc=;
       flags=;
-      data_var=$6$;
+      data_var=$7$;
      };
     };
     init {
-     expr="int i = 0";
-     flags=NO_VAR_ERRS;
-     var_expr="int i = 0";
+     expr="i = 0";
+     var_expr="$#0#$ = 0";
      vars {
      };
-     var_names{      };
-     bad_vars{ i;     };
+     var_names{ i;     };
+     bad_vars{      };
     };
     test {
      expr="i < n_inner_trials";
-     flags=NO_VAR_ERRS;
-     var_expr="i < $#0#$";
+     var_expr="$#0#$ < $#1#$";
      vars {
      };
-     var_names{ n_inner_trials;     };
-     bad_vars{ i;     };
+     var_names{ i;n_inner_trials;     };
+     bad_vars{      };
     };
     iter {
      expr="i++";
-     flags=NO_VAR_ERRS;
-     var_expr="i++";
+     var_expr="$#0#$++";
      vars {
      };
-     var_names{      };
-     bad_vars{ i;     };
+     var_names{ i;     };
+     bad_vars{      };
     };
    };
   };

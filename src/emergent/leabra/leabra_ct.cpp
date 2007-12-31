@@ -21,14 +21,17 @@
 #include <limits.h>
 #include <float.h>
 
+// todo: turn off output (target) first and then rest of inputs in nothing phase (after flip)
+// option..
+
 //////////////////////////////////
 // 	Ct cons
 //////////////////////////////////
 
 void CtCaDepSpec::Initialize() {
-  intwt_dt = 0.001f;
-  ca_inc = .01f;
-  ca_dec = .01f;
+  intwt_dt = 0.02f;		// base per-cycle is .001
+  ca_inc = .2f;			// base per-cycle is .01
+  ca_dec = .2f;			// base per-cycle is .01
   sd_ca_thr = 0.2f;
   sd_ca_gain = 0.3f;
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
@@ -42,7 +45,6 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;
-  sym_dif = false;
 }
 
 void CtLeabraConSpec::UpdateAfterEdit_impl() {
@@ -86,7 +88,6 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_CtCycle(u, u->cai_avg, u->cai_max);
     cspec = (CtLeabraConSpec*)recv_gp->GetConSpec();
-    cspec->sym_dif = net->ct_learn.sym_dif; // todo: not very efficient -- quick and dirty..
   }
   //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_CtCycle((CtLeabraCon*)u->bias.Cn(0), u);
   if(u->n_recv_cons > 0)
@@ -97,18 +98,27 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
   }
 }
 
+void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  CtLeabraUnit* cu = (CtLeabraUnit*)u;
+  if((cu->p_act_p <= opt_thresh.learn) && (cu->p_act_m <= opt_thresh.learn))
+    return;
+  Compute_dWt_impl(u, lay, net);
+}
+
+
 void CtLeabraUnitSpec::Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
+  if((u->p_act_p <= opt_thresh.learn) && (u->p_act_m <= opt_thresh.learn))
+    return;
+
   for(int g=0; g<u->recv.size; g++) {
     CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
     recv_gp->Compute_dWtFlip(u);
   }
-  // todo?:
-  //  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u);
+  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u);
 }
 
 void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
-  u->act_m2 = u->p_act_m;	// double-back just for testing sym_dif learning
   u->p_act_m = u->p_act_p;	// update activations for learning
   u->p_act_p = u->act_eq;
 }
@@ -147,6 +157,16 @@ bool CtLeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   if(!rval) return false;
   CheckError(decay.event != 0.0f || decay.phase != 0.0f, quiet, rval,
 	     "decay.event or phase is not zero -- must be for continuous time learning to function properly");
+
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  if(lay->CheckError((us->opt_thresh.learn >= 0.0f) || us->opt_thresh.updt_wts, quiet, rval,
+		"UnitSpec opt_thresh.learn must be -1 to allow proper learning of all units",
+		"I just set it for you in spec:", us->name,
+		"(make sure this is appropriate for all layers that use this spec!)")) {
+    us->SetUnique("opt_thresh", true);
+    us->opt_thresh.learn = -1.0f;
+    us->opt_thresh.updt_wts = false;
+  }
   return rval;
 }
 
@@ -203,11 +223,10 @@ void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
 
 void CtNetLearnSpec::Initialize() {
   mode = CT_NOTHING_SYNC;
-  interval = 5;
+  interval = 20;
   noth_dwt_int = 10;
-  first_cyc_st = 0;
-  syndep_int = 1;
-  sym_dif = false;
+  syndep_int = 20;
+  noth_trg_first = false;
 }
 
 void CtLeabraNetwork::Initialize() {
@@ -280,15 +299,10 @@ void CtLeabraNetwork::Compute_CtCycle() {
 
 void CtLeabraNetwork::CtLearn_NothingSync() {
   ct_lrn_now = 0;
-  if(phase_no == 0 && cycle <= ct_learn.first_cyc_st) {
-    if(cycle == ct_learn.first_cyc_st) {
-      // start of new input phase -- auto update to new vals
-      Compute_ActMP();
-      if(ct_learn.sym_dif)	// do it again to propagate all the way back..
-	Compute_ActMP();
-      ct_lrn_now = 1;		// indicates update without actual learning
-      ct_cycle = 1;		// time starts now -- 1 is to prevent learn interval right now
-    }
+  if(phase_no == 0 && cycle == 0) {
+    Compute_ActMP();
+    ct_lrn_now = 1;		// indicates update without actual learning
+    ct_cycle = 1;		// time starts now -- 1 is to prevent learn interval right now
     return;
   }
 
@@ -336,6 +350,12 @@ void CtLeabraNetwork::Compute_CtdWtFlip() {
     if(lay->lesioned())	continue;
     lay->Compute_dWtFlip(this);
   }
+  if(ct_learn.noth_trg_first) {
+    TargExtToComp();		// all external input is now 'comparison'
+    Compute_HardClamp();	// recompute -- should turn everything off
+    Compute_NetinScale();	// and then compute net scaling
+    Send_ClampNet();		// and send net from clamped inputs
+  }
 }
   
 void CtLeabraNetwork::Cycle_Run() {
@@ -372,6 +392,27 @@ void CtLeabraNetwork::Compute_ActP() {
   }
 }
   
+void CtLeabraNetwork::Settle_Init_Decay() {
+  if(phase_no >= 3) { // second plus phase or more: use phase2..
+    DecayPhase2();
+  }
+  else if(phase_no == 2) {
+    DecayPhase2();		// decay before 2nd phase set
+    if(phase_order == MINUS_PLUS_NOTHING) {
+      if(!ct_learn.noth_trg_first)
+	TargExtToComp();		// all external input is now 'comparison'
+    }
+  }
+  else if(phase_no == 1) {
+    if(phase_order == PLUS_NOTHING) { // actually a nothing phase
+      DecayPhase2();
+      if(!ct_learn.noth_trg_first)
+	TargExtToComp();		// all external input is now 'comparison'
+    }
+    else
+      DecayPhase();		// prepare for next phase
+  }
+}	
 
 ////////////////////////////////////////////////
 //		TODO

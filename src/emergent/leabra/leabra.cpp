@@ -3910,10 +3910,8 @@ void LeabraNetwork::PostSettle_NStdLay() {
   }
 }
 
-void LeabraNetwork::Settle_Init() {
-  int tmp_cycle = cycle;
-  cycle = -2;			// special signal for settle init
 
+void LeabraNetwork::Settle_Init_Decay() {
   if(phase_no >= 3) { // second plus phase or more: use phase2..
     DecayPhase2();
   }
@@ -3931,6 +3929,13 @@ void LeabraNetwork::Settle_Init() {
     else
       DecayPhase();		// prepare for next phase
   }
+}
+
+void LeabraNetwork::Settle_Init() {
+  int tmp_cycle = cycle;
+  cycle = -2;			// special signal for settle init
+
+  Settle_Init_Decay();
 
   Compute_Active_K();		// compute here because could depend on pat_n
   PhaseInit();

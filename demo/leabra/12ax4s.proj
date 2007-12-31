@@ -852,7 +852,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[1] { };
 	};
 
-	ProgVar_List @.vars = [11] {
+	ProgVar_List @.vars = [12] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
@@ -864,6 +864,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[8] { };
 	  ProgVar @[9] { };
 	  ProgVar @[10] { };
+	  ProgVar @[11] { };
 	};
 
 	Function_List @.functions = [1] {
@@ -1431,6 +1432,7 @@ LeabraProject .projects[0] {
 
 
 ";
+ tags=;
  templates {
   name=;
   el_typ=taBase;
@@ -1508,6 +1510,7 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
     };
    };
    connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
   };
  };
  edits {
@@ -2361,7 +2364,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -2377,7 +2379,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -2393,7 +2394,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="true";
-	   flags=;
 	   var_expr="true";
 	   vars {
 	   };
@@ -2413,7 +2413,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       };
       test {
        expr="batch < max_batch";
-       flags=;
        var_expr="$#0#$ < $#1#$";
        vars {
        };
@@ -2694,7 +2693,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=.projects[0].programs.gp[0][1].args[2]$8$;
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -2720,7 +2718,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -2736,7 +2733,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=.projects[0].programs.gp[0][1].vars[7]$10$;
       expr {
        expr="network.train_time";
-       flags=;
        var_expr="$#0#$.train_time";
        vars {
        };
@@ -2750,7 +2746,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=.projects[0].programs.gp[0][1].vars[5]$11$;
       expr {
        expr="0";
-       flags=;
        var_expr="0";
        vars {
        };
@@ -2776,7 +2771,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val=;
 	expr {
 	 expr="network.batch";
-	 flags=;
 	 var_expr="$#0#$.batch";
 	 vars {
 	 };
@@ -2813,7 +2807,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	flags=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
-	 flags=;
 	 var_expr="$#0#$.name << \" Weights Initialized\"";
 	 vars {
 	 };
@@ -2829,7 +2822,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=.projects[0].programs.gp[0][1].vars[1]$13$;
       expr {
        expr="network.epoch";
-       flags=;
        var_expr="$#0#$.epoch";
        vars {
        };
@@ -2848,7 +2840,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=$10$;
       expr {
        expr="network.train_time";
-       flags=;
        var_expr="$#0#$.train_time";
        vars {
        };
@@ -2874,7 +2865,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val="true";
 	expr {
 	 expr="true";
-	 flags=;
 	 var_expr="true";
 	 vars {
 	 };
@@ -2890,7 +2880,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=$11$;
       expr {
        expr="0";
-       flags=;
        var_expr="0";
        vars {
        };
@@ -2905,7 +2894,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       path="train_mode";
       expr {
        expr="train_mode";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2932,7 +2920,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val=;
 	expr {
 	 expr="network.batch";
-	 flags=;
 	 var_expr="$#0#$.batch";
 	 vars {
 	 };
@@ -2947,7 +2934,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       flags=;
       cond {
        expr="no_prompts";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2975,7 +2961,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	flags=;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
-	 flags=;
 	 var_expr="$#0#$.name << \" Weights Initialized\"";
 	 vars {
 	 };
@@ -2996,7 +2981,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=$13$;
       expr {
        expr="network.epoch";
-       flags=;
        var_expr="$#0#$.epoch";
        vars {
        };
@@ -3028,7 +3012,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -3044,7 +3027,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -3066,7 +3048,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	flags=;
 	cond {
 	 expr="network.cnt_err <= err_stopcrit";
-	 flags=;
 	 var_expr="$#0#$.cnt_err <= $#1#$";
 	 vars {
 	 };
@@ -3083,7 +3064,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  var=$11$;
 	  expr {
 	   expr="1";
-	   flags=;
 	   var_expr="1";
 	   vars {
 	   };
@@ -3096,7 +3076,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  flags=;
 	  cond {
 	   expr="n_under_cnt >=  n_under_thr";
-	   flags=;
 	   var_expr="$#0#$ >=  $#1#$";
 	   vars {
 	   };
@@ -3115,7 +3094,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  result_var=$11$;
 	  expr {
 	   expr="0";
-	   flags=;
 	   var_expr="0";
 	   vars {
 	   };
@@ -3128,7 +3106,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       };
       test {
        expr="epoch < max_epoch";
-       flags=;
        var_expr="$#0#$ < $#1#$";
        vars {
        };
@@ -3280,7 +3257,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=.projects[0].programs.gp[0][2].vars[4]$19$;
       expr {
        expr="network.epoch_time";
-       flags=;
        var_expr="$#0#$.epoch_time";
        vars {
        };
@@ -3306,7 +3282,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       result_var=$19$;
       expr {
        expr="network.epoch_time";
-       flags=;
        var_expr="$#0#$.epoch_time";
        vars {
        };
@@ -3332,7 +3307,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val="true";
 	expr {
 	 expr="true";
-	 flags=;
 	 var_expr="true";
 	 vars {
 	 };
@@ -3371,7 +3345,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -3387,7 +3360,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val=;
 	expr {
 	 expr="25";
-	 flags=;
 	 var_expr="25";
 	 vars {
 	 };
@@ -3421,7 +3393,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -3437,7 +3408,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -3452,7 +3422,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	flags=;
 	cond {
 	 expr="network.Compute_Weights_Test(trial+1)";
-	 flags=;
 	 var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
 	 vars {
 	 };
@@ -3499,7 +3468,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       flags=;
       cond {
        expr="network.wt_update == Network::BATCH";
-       flags=;
        var_expr="$#0#$.wt_update == Network::BATCH";
        vars {
        };
@@ -3570,7 +3538,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -3710,7 +3677,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -3726,7 +3692,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -3758,7 +3723,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
       };
       test {
        expr="phase_no < network.phase_max";
-       flags=;
        var_expr="$#0#$ < $#1#$.phase_max";
        vars {
        };
@@ -3795,7 +3759,6 @@ To run the simulation, go to [[.programs.gp.LeabraAll_Std.LeabraTrainBatchSeedNT
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -3944,7 +3907,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -3960,7 +3922,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -3987,7 +3948,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       cond {
        expr="network.phase_no <= 1";
-       flags=;
        var_expr="$#0#$.phase_no <= 1";
        vars {
        };
@@ -4004,7 +3964,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	result_var=.projects[0].programs.gp[0][4].vars[1]$36$;
 	expr {
 	 expr="network.min_cycles";
-	 flags=;
 	 var_expr="$#0#$.min_cycles";
 	 vars {
 	 };
@@ -4023,7 +3982,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	result_var=$36$;
 	expr {
 	 expr="network.min_cycles_phase2";
-	 flags=;
 	 var_expr="$#0#$.min_cycles_phase2";
 	 vars {
 	 };
@@ -4057,7 +4015,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  def_val=;
 	  expr {
 	   expr="network";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -4079,7 +4036,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=;
 	cond {
 	 expr="cycle < min_cycles";
-	 flags=;
 	 var_expr="$#0#$ < $#1#$";
 	 vars {
 	 };
@@ -4093,7 +4049,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	cond {
 	 expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
-	 flags=;
 	 var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
  ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
 	 vars {
@@ -4105,7 +4060,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
       test {
        expr="cycle < network.cycle_max";
-       flags=;
        var_expr="$#0#$ < $#1#$.cycle_max";
        vars {
        };
@@ -4131,7 +4085,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=;
       cond {
        expr="network.phase == LeabraNetwork::MINUS_PHASE";
-       flags=;
        var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
        vars {
        };
@@ -4166,7 +4119,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=;
       cond {
        expr="network.phase_no == 1";
-       flags=;
        var_expr="$#0#$.phase_no == 1";
        vars {
        };
@@ -4424,7 +4376,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -4440,7 +4391,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -4468,7 +4418,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -4502,7 +4451,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       path="trial_name";
       expr {
        expr="network.trial_name.before(\"_\")";
-       flags=;
        var_expr="$#0#$.trial_name.before(\"_\")";
        vars {
        };
@@ -4540,6 +4488,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4556,6 +4505,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4572,6 +4522,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4588,6 +4539,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4604,6 +4556,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4620,6 +4573,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4636,6 +4590,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4652,6 +4607,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4668,6 +4624,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4684,6 +4641,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4700,6 +4658,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4716,6 +4675,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4732,6 +4692,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4748,6 +4709,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4764,6 +4726,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4848,7 +4811,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -4864,7 +4826,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -4892,7 +4853,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -4920,7 +4880,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="true";
-	 flags=;
 	 var_expr="true";
 	 vars {
 	 };
@@ -4977,7 +4936,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="fabs(network.layers.DA.units[0].act_p2)";
-	 flags=;
 	 var_expr="fabs($#0#$.layers.DA.units[0].act_p2)";
 	 vars {
 	 };
@@ -4993,7 +4951,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"DA\"";
-	 flags=;
 	 var_expr="\"DA\"";
 	 vars {
 	 };
@@ -5009,7 +4966,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -5037,7 +4993,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network.layers.PVe.units[0].act_p2";
-	 flags=;
 	 var_expr="$#0#$.layers.PVe.units[0].act_p2";
 	 vars {
 	 };
@@ -5053,7 +5008,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"PVe\"";
-	 flags=;
 	 var_expr="\"PVe\"";
 	 vars {
 	 };
@@ -5069,7 +5023,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -5097,7 +5050,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network.layers.PVi.units[0].act_m";
-	 flags=;
 	 var_expr="$#0#$.layers.PVi.units[0].act_m";
 	 vars {
 	 };
@@ -5113,7 +5065,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"PVi\"";
-	 flags=;
 	 var_expr="\"PVi\"";
 	 vars {
 	 };
@@ -5129,7 +5080,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -5157,7 +5107,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network.layers.LVe.units[0].act_p2";
-	 flags=;
 	 var_expr="$#0#$.layers.LVe.units[0].act_p2";
 	 vars {
 	 };
@@ -5173,7 +5122,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"LVe\"";
-	 flags=;
 	 var_expr="\"LVe\"";
 	 vars {
 	 };
@@ -5189,7 +5137,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -5217,7 +5164,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network.layers.LVi.units[0].act_p2";
-	 flags=;
 	 var_expr="$#0#$.layers.LVi.units[0].act_p2";
 	 vars {
 	 };
@@ -5233,7 +5179,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"LVi\"";
-	 flags=;
 	 var_expr="\"LVi\"";
 	 vars {
 	 };
@@ -5249,7 +5194,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -5277,7 +5221,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="fabs(network.layers.DA.units[0].act_p2)";
-	 flags=;
 	 var_expr="fabs($#0#$.layers.DA.units[0].act_p2)";
 	 vars {
 	 };
@@ -5293,7 +5236,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"absDA\"";
-	 flags=;
 	 var_expr="\"absDA\"";
 	 vars {
 	 };
@@ -5309,7 +5251,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 flags=;
 	 var_expr="-1";
 	 vars {
 	 };
@@ -5349,7 +5290,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -5365,7 +5305,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="1";
 	expr {
 	 expr="1";
-	 flags=;
 	 var_expr="1";
 	 vars {
 	 };
@@ -5404,6 +5343,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5420,6 +5360,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5436,6 +5377,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5452,6 +5394,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5468,6 +5411,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5484,6 +5428,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5500,6 +5445,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5516,6 +5462,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5532,6 +5479,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5548,6 +5496,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5564,6 +5513,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5580,6 +5530,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5596,6 +5547,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5612,6 +5564,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5628,6 +5581,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5644,6 +5598,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5660,6 +5615,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5750,7 +5706,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       result_var=.projects[0].programs.gp[0][8].vars[2]$52$;
       expr {
        expr="network.epoch_time";
-       flags=;
        var_expr="$#0#$.epoch_time";
        vars {
        };
@@ -5776,7 +5731,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="epoch_mon_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -5792,7 +5746,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -5820,7 +5773,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -5848,7 +5800,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="true";
-	 flags=;
 	 var_expr="true";
 	 vars {
 	 };
@@ -5893,7 +5844,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       result_var=$52$;
       expr {
        expr="network.epoch_time";
-       flags=;
        var_expr="$#0#$.epoch_time";
        vars {
        };
@@ -5909,9 +5859,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
 epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 
 ";
-       flags=NO_VAR_ERRS;
        var_expr="$#0#$.SetDataByName($#1#$.used.GetTotSecs(), \"epoch_time_tot\");
-epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
+$#0#$.SetDataByName($#1#$.used.GetUsrSecs(), \"epoch_time_usr\");
 
 ";
        vars {
@@ -5938,7 +5887,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 0)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 0)";
 	 vars {
 	 };
@@ -5954,7 +5902,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"A_da\"";
-	 flags=;
 	 var_expr="\"A_da\"";
 	 vars {
 	 };
@@ -5982,7 +5929,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 1)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 1)";
 	 vars {
 	 };
@@ -5998,7 +5944,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"B_da\"";
-	 flags=;
 	 var_expr="\"B_da\"";
 	 vars {
 	 };
@@ -6026,7 +5971,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 2)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 2)";
 	 vars {
 	 };
@@ -6042,7 +5986,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"C_da\"";
-	 flags=;
 	 var_expr="\"C_da\"";
 	 vars {
 	 };
@@ -6070,7 +6013,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 3)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 3)";
 	 vars {
 	 };
@@ -6086,7 +6028,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"one_da\"";
-	 flags=;
 	 var_expr="\"one_da\"";
 	 vars {
 	 };
@@ -6114,7 +6055,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 4)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 4)";
 	 vars {
 	 };
@@ -6130,7 +6070,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"two_da\"";
-	 flags=;
 	 var_expr="\"two_da\"";
 	 vars {
 	 };
@@ -6158,7 +6097,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 5)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 5)";
 	 vars {
 	 };
@@ -6174,7 +6112,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"X_da\"";
-	 flags=;
 	 var_expr="\"X_da\"";
 	 vars {
 	 };
@@ -6202,7 +6139,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="grouped_data.GetValColName(\"DA_mean\", 6)";
-	 flags=;
 	 var_expr="$#0#$.GetValColName(\"DA_mean\", 6)";
 	 vars {
 	 };
@@ -6218,7 +6154,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="\"Y_da\"";
-	 flags=;
 	 var_expr="\"Y_da\"";
 	 vars {
 	 };
@@ -6233,7 +6168,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       flags=NON_STD;
       cond {
        expr="grouped_data.data.size > 6";
-       flags=;
        var_expr="$#0#$.data.size > 6";
        vars {
        };
@@ -6262,7 +6196,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="grouped_data.GetValColName(\"DA_mean\", 7)";
-	   flags=;
 	   var_expr="$#0#$.GetValColName(\"DA_mean\", 7)";
 	   vars {
 	   };
@@ -6278,7 +6211,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val="\"\"";
 	  expr {
 	   expr="\"Z_da\"";
-	   flags=;
 	   var_expr="\"Z_da\"";
 	   vars {
 	   };
@@ -6311,7 +6243,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="0";
-	   flags=;
 	   var_expr="0";
 	   vars {
 	   };
@@ -6327,7 +6258,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val="\"\"";
 	  expr {
 	   expr="\"Z_da\"";
-	   flags=;
 	   var_expr="\"Z_da\"";
 	   vars {
 	   };
@@ -6459,7 +6389,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       flags=;
       cond {
        expr="taMisc::dmem_proc > 0";
-       flags=;
        var_expr="taMisc::dmem_proc > 0";
        vars {
        };
@@ -6475,12 +6404,11 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	flags=;
 	script {
 	 expr="return;";
-	 flags=NO_VAR_ERRS;
 	 var_expr="return;";
 	 vars {
 	 };
 	 var_names{ 	 };
-	 bad_vars{ return;	 };
+	 bad_vars{ 	 };
 	};
        };
       };
@@ -6508,7 +6436,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="network.batch";
-	 flags=;
 	 var_expr="$#0#$.batch";
 	 vars {
 	 };
@@ -6524,7 +6451,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="2";
-	 flags=;
 	 var_expr="2";
 	 vars {
 	 };
@@ -6552,7 +6478,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="network.epoch";
-	 flags=;
 	 var_expr="$#0#$.epoch";
 	 vars {
 	 };
@@ -6568,7 +6493,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="4";
-	 flags=;
 	 var_expr="4";
 	 vars {
 	 };
@@ -6584,11 +6508,10 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=.projects[0].programs.gp[0][9].vars[5]$57$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-       flags=;
-       var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
+       var_expr="$#0#$ + \".\" + $#1#$ + \"_\" + $#2#$";
        vars {
        };
-       var_names{ tag;       };
+       var_names{ tag;batch_str;epoch_str;       };
        bad_vars{        };
       };
      };
@@ -6610,7 +6533,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="\".wts.gz\"";
-	 flags=;
 	 var_expr="\".wts.gz\"";
 	 vars {
 	 };
@@ -6626,7 +6548,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="final_tag";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -6642,7 +6563,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="wts_subdir";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -6658,7 +6578,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="false";
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -6686,7 +6605,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="\"\"";
 	expr {
 	 expr="fname";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -6702,7 +6620,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val="Network::NET_FMT";
 	expr {
 	 expr="Network::NET_FMT";
-	 flags=;
 	 var_expr="Network::NET_FMT";
 	 vars {
 	 };
@@ -6827,7 +6744,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -6843,7 +6759,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="trial_no";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -6856,7 +6771,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
       init {
        expr="trial_no = 0";
-       flags=NO_VAR_ERRS;
        var_expr="$#0#$ = 0";
        vars {
        };
@@ -6865,7 +6779,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
       test {
        expr="trial_no < n_per_epc";
-       flags=NO_VAR_ERRS;
        var_expr="$#0#$ < $#1#$";
        vars {
        };
@@ -6874,7 +6787,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       };
       iter {
        expr="trial_no++";
-       flags=NO_VAR_ERRS;
        var_expr="$#0#$++";
        vars {
        };
@@ -7117,6 +7029,14 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       flags=CTRL_PANEL|NULL_CHECK;
       desc=;
      };
+     ProgVar @[11] {
+      name="i";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=NULL_CHECK;
+      desc=;
+     };
     };
     functions {
      name=;
@@ -7204,7 +7124,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="group";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -7220,7 +7139,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val="\"\"";
 	  expr {
 	   expr="\"Group\"";
-	   flags=;
 	   var_expr="\"Group\"";
 	   vars {
 	   };
@@ -7236,7 +7154,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="-1";
-	   flags=;
 	   var_expr="-1";
 	   vars {
 	   };
@@ -7273,7 +7190,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	flags=;
 	cond {
 	 expr="rew_targ";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -7358,7 +7274,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="2";
-	 flags=;
 	 var_expr="2";
 	 vars {
 	 };
@@ -7374,7 +7289,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       var=$71$;
       expr {
        expr="I_ONE";
-       flags=;
        var_expr="I_ONE";
        vars {
        };
@@ -7400,7 +7314,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="1";
-	 flags=;
 	 var_expr="1";
 	 vars {
 	 };
@@ -7416,7 +7329,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="max_maint";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -7432,11 +7344,10 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       result_var=.projects[0].programs.gp[1][1].vars[8]$73$;
       expr {
        expr="(String)trial_no + \"_\" + (String)task";
-       flags=;
-       var_expr="(String)$#0#$ + \"_\" + (String)task";
+       var_expr="(String)$#0#$ + \"_\" + (String)$#1#$";
        vars {
        };
-       var_names{ trial_no;       };
+       var_names{ trial_no;task;       };
        bad_vars{        };
       };
      };
@@ -7457,7 +7368,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="group_name";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -7473,7 +7383,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="task";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -7489,7 +7398,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="O_L";
-	 flags=;
 	 var_expr="O_L";
 	 vars {
 	 };
@@ -7505,7 +7413,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	def_val=;
 	expr {
 	 expr="false";
-	 flags=;
 	 var_expr="false";
 	 vars {
 	 };
@@ -7534,7 +7441,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  var_type=T_Real;
 	  real_val=0;
 	  objs_ptr=0;
-	  flags=CTRL_PANEL|NULL_CHECK;
+	  flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
 	  desc="random probability value for generating a target";
 	 };
 	 ProgVar @[1] {
@@ -7542,7 +7449,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  var_type=T_Int;
 	  int_val=0;
 	  objs_ptr=0;
-	  flags=CTRL_PANEL|NULL_CHECK;
+	  flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
 	  desc="random A or B cue/probe value";
 	 };
 	 ProgVar @[2] {
@@ -7553,7 +7460,7 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	   value=-1;
 	  };
 	  objs_ptr=0;
-	  flags=CTRL_PANEL|NULL_CHECK;
+	  flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
 	  desc="output value for the probe trial: depends on whether this is a target cue-probe sequence for given task";
 	 };
 	};
@@ -7575,7 +7482,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	flags=;
 	cond {
 	 expr="trg_rnd_prob < targ_pct";
-	 flags=;
 	 var_expr="$#0#$ < $#1#$";
 	 vars {
 	 };
@@ -7604,7 +7510,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	    def_val=;
 	    expr {
 	     expr="2";
-	     flags=;
 	     var_expr="2";
 	     vars {
 	     };
@@ -7620,7 +7525,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  result_var=.projects[0].programs.gp[1][1].vars[5]$77$;
 	  expr {
 	   expr="I_A + a_or_b";
-	   flags=;
 	   var_expr="I_A + $#0#$";
 	   vars {
 	   };
@@ -7634,7 +7538,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  result_var=.projects[0].programs.gp[1][1].vars[6]$78$;
 	  expr {
 	   expr="I_X + a_or_b";
-	   flags=;
 	   var_expr="I_X + $#0#$";
 	   vars {
 	   };
@@ -7665,7 +7568,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	    def_val=;
 	    expr {
 	     expr="I_A";
-	     flags=;
 	     var_expr="I_A";
 	     vars {
 	     };
@@ -7681,7 +7583,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	    def_val=;
 	    expr {
 	     expr="I_C+1";
-	     flags=;
 	     var_expr="I_C+1";
 	     vars {
 	     };
@@ -7709,7 +7610,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	    def_val=;
 	    expr {
 	     expr="I_X";
-	     flags=;
 	     var_expr="I_X";
 	     vars {
 	     };
@@ -7725,7 +7625,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	    def_val=;
 	    expr {
 	     expr="I_Z+1";
-	     flags=;
 	     var_expr="I_Z+1";
 	     vars {
 	     };
@@ -7743,7 +7642,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	cond {
 	 expr="((task == I_ONE) && (cue == I_A) && (probe == I_X)) 
   || ((task == I_TWO) && (cue == I_B) && (probe == I_Y))";
-	 flags=;
 	 var_expr="(($#0#$ == I_ONE) && ($#1#$ == I_A) && ($#2#$ == I_X)) 
   || (($#0#$ == I_TWO) && ($#1#$ == I_B) && ($#2#$ == I_Y))";
 	 vars {
@@ -7761,7 +7659,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  result_var=.projects[0].programs.gp[1][1].prog_code[5].loop_code[0].local_vars[2]$79$;
 	  expr {
 	   expr="O_R";
-	   flags=;
 	   var_expr="O_R";
 	   vars {
 	   };
@@ -7780,7 +7677,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  result_var=$79$;
 	  expr {
 	   expr="O_L";
-	   flags=;
 	   var_expr="O_L";
 	   vars {
 	   };
@@ -7807,7 +7703,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="group_name";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -7823,7 +7718,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="cue";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -7839,7 +7733,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="O_L";
-	   flags=;
 	   var_expr="O_L";
 	   vars {
 	   };
@@ -7855,7 +7748,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="false";
-	   flags=;
 	   var_expr="false";
 	   vars {
 	   };
@@ -7882,7 +7774,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="group_name";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -7898,7 +7789,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="probe";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -7914,7 +7804,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="probe_output";
-	   flags=;
 	   var_expr="$#0#$";
 	   vars {
 	   };
@@ -7930,7 +7819,6 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
 	  def_val=;
 	  expr {
 	   expr="true";
-	   flags=;
 	   var_expr="true";
 	   vars {
 	   };
@@ -7947,31 +7835,28 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
        };
       };
       init {
-       expr="int i = 0";
-       flags=NO_VAR_ERRS;
-       var_expr="int i = 0";
+       expr="i = 0";
+       var_expr="$#0#$ = 0";
        vars {
        };
-       var_names{        };
-       bad_vars{ i;       };
+       var_names{ i;       };
+       bad_vars{        };
       };
       test {
        expr="i < n_inner_trials";
-       flags=NO_VAR_ERRS;
-       var_expr="i < $#0#$";
+       var_expr="$#0#$ < $#1#$";
        vars {
        };
-       var_names{ n_inner_trials;       };
-       bad_vars{ i;       };
+       var_names{ i;n_inner_trials;       };
+       bad_vars{        };
       };
       iter {
        expr="i++";
-       flags=NO_VAR_ERRS;
-       var_expr="i++";
+       var_expr="$#0#$++";
        vars {
        };
-       var_names{        };
-       bad_vars{ i;       };
+       var_names{ i;       };
+       bad_vars{        };
       };
      };
     };
@@ -8186,7 +8071,9 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
    name="DefaultProjectBrowser";
    visible=1;
    m_is_root=0;
+   m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
+   m_is_dialog=0;
    toolbars {
     name=;
     el_typ=ToolBar;
@@ -8293,6 +8180,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	  };
 	  display=1;
+	  lay_mv=1;
 	  ordered_uvg_list{ act;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NAMES;
@@ -8316,6 +8204,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	  };
+	  wt_line_disp=0;
+	  wt_line_width=4;
+	  wt_line_thr=0.5;
+	  wt_line_swt=0;
+	  wt_prjn_lay=NULL;
 	 };
 	 GraphTableView @[1] {
 	  m_data=$49$;
@@ -9310,18 +9203,23 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       LeabraLayerSpec @[0] {
        name="Input";
        desc=;
-       unique{ kwta;inhib_group;compute_i;i_kwta_pt;       };
+       unique{ kwta;inhib_group;compute_i;i_kwta_pt;inhib;       };
        children {
 	name=;
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
        inhib_group=ENTIRE_LAYER;
+       inhib {
+	type=KWTA_INHIB;
+	kwta_pt=0.25;
+	min_i=0;
+	comp_thr=0.5;
+	comp_gain=2;
+	gp_pt=0.2;
+       };
        kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-       compute_i=KWTA_INHIB;
-       i_kwta_pt=0.25;
-       gp_i_pt=0.2;
        tie_brk {on=0: k_thr=1: diff_thr=0.2: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
        clamp {hard=1: gain=0.5: d_gain=0: };
@@ -9337,18 +9235,23 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       LeabraLayerSpec @[1] {
        name="Output";
        desc=;
-       unique{ kwta;inhib_group;compute_i;i_kwta_pt;       };
+       unique{ kwta;inhib_group;compute_i;i_kwta_pt;inhib;       };
        children {
 	name=;
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
        inhib_group=ENTIRE_LAYER;
+       inhib {
+	type=KWTA_INHIB;
+	kwta_pt=0.25;
+	min_i=0;
+	comp_thr=0.5;
+	comp_gain=2;
+	gp_pt=0.2;
+       };
        kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-       compute_i=KWTA_INHIB;
-       i_kwta_pt=0.25;
-       gp_i_pt=0.2;
        tie_brk {on=0: k_thr=1: diff_thr=0.2: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
        clamp {hard=1: gain=0.5: d_gain=0: };
@@ -9363,11 +9266,16 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
       };
      };
      inhib_group=ENTIRE_LAYER;
+     inhib {
+      type=KWTA_AVG_INHIB;
+      kwta_pt=0.6;
+      min_i=0;
+      comp_thr=0.5;
+      comp_gain=2;
+      gp_pt=0.2;
+     };
      kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     compute_i=KWTA_AVG_INHIB;
-     i_kwta_pt=0.6;
-     gp_i_pt=0.2;
      tie_brk {on=0: k_thr=1: diff_thr=0.2: };
      adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10476,18 +10384,23 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      ExtRewLayerSpec @[0] {
       name="PVeLayer";
       desc=;
-      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;      };
+      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;inhib;      };
       children {
        name=;
        el_typ=ExtRewLayerSpec;
        el_def=0;
       };
       inhib_group=ENTIRE_LAYER;
+      inhib {
+       type=KWTA_AVG_INHIB;
+       kwta_pt=0.9;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_AVG_INHIB;
-      i_kwta_pt=0.9;
-      gp_i_pt=0.2;
       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10499,30 +10412,35 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: init_nms=1: };
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
       val_range {min=0: max=1: range=1: scale=1: };
       rew_type=OUT_ERR_REW;
       avg_rew {sub_avg=0: avg_dt=0.005: };
-      out_err {err_tol=0.5: graded=0: no_off_err=0: seq_all_cor=0: };
+      out_err {err_tol=0.5: graded=0: no_off_err=0: seq_all_cor=0: scalar_val_max=1: };
       rew {err_val=0: norew_val=0.5: rew_val=1: };
      };
      PViLayerSpec @[1] {
       name="PViLayer";
       desc=;
-      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;      };
+      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;inhib;      };
       children {
        name=;
        el_typ=PViLayerSpec;
        el_def=0;
       };
       inhib_group=ENTIRE_LAYER;
+      inhib {
+       type=KWTA_AVG_INHIB;
+       kwta_pt=0.9;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_AVG_INHIB;
-      i_kwta_pt=0.9;
-      gp_i_pt=0.2;
       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10534,7 +10452,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: init_nms=1: };
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };
@@ -10543,7 +10461,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      LVeLayerSpec @[2] {
       name="LVeLayer";
       desc=;
-      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;      };
+      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;inhib;      };
       children {
        name=;
        el_typ=LViLayerSpec;
@@ -10551,18 +10469,23 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        LViLayerSpec @[0] {
 	name="LViLayer";
 	desc=;
-	unique{ decay;decay;compute_i;i_kwta_pt;decay;	};
+	unique{ decay;decay;compute_i;i_kwta_pt;decay;inhib;	};
 	children {
 	 name=;
 	 el_typ=LViLayerSpec;
 	 el_def=0;
 	};
 	inhib_group=ENTIRE_LAYER;
+	inhib {
+	 type=KWTA_AVG_INHIB;
+	 kwta_pt=0.9;
+	 min_i=0;
+	 comp_thr=0.5;
+	 comp_gain=2;
+	 gp_pt=0.2;
+	};
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-	compute_i=KWTA_AVG_INHIB;
-	i_kwta_pt=0.9;
-	gp_i_pt=0.2;
 	tie_brk {on=0: k_thr=1: diff_thr=0.2: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
 	clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10574,19 +10497,24 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
 	 tol=0.1;
 	 abs_lrate=0.05;
 	};
-	scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+	scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: init_nms=1: };
 	unit_range {min=0: max=1: range=1: scale=1: };
 	bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
 	val_range {min=0: max=1: range=1: scale=1: };
-	lv {delta_on_sum=0: use_actual_er=0: syn_dep=0: };
+	lv {delta_on_sum=0: use_actual_er=0: min_lvi=0: syn_dep=0: };
        };
       };
       inhib_group=ENTIRE_LAYER;
+      inhib {
+       type=KWTA_AVG_INHIB;
+       kwta_pt=0.9;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_AVG_INHIB;
-      i_kwta_pt=0.9;
-      gp_i_pt=0.2;
       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10598,27 +10526,32 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: };
+      scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: val_mult_lrn=0: clip_val=1: send_thr=0: init_nms=1: };
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };
-      lv {delta_on_sum=0: use_actual_er=0: syn_dep=0: };
+      lv {delta_on_sum=0: use_actual_er=0: min_lvi=0: syn_dep=0: };
      };
      PVLVDaLayerSpec @[3] {
       name="DALayer";
       desc=;
-      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;      };
+      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;inhib;      };
       children {
        name=;
-       el_typ=SNcLayerSpec;
+       el_typ=PVLVDaLayerSpec;
        el_def=0;
       };
       inhib_group=ENTIRE_LAYER;
+      inhib {
+       type=KWTA_INHIB;
+       kwta_pt=0.25;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_INHIB;
-      i_kwta_pt=0.25;
-      gp_i_pt=0.2;
       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10630,23 +10563,28 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      da {da_gain=2: tonic_da=0: use_actual_er=0: syn_dep=0: min_lvi=0.1: };
+      da {da_gain=2: tonic_da=0: min_pvi=0: use_actual_er=0: syn_dep=0: min_lvi=0.1: };
      };
      PFCLayerSpec @[4] {
       name="PFCLayer";
       desc=;
-      unique{ gp_kwta;inhib_group;compute_i;i_kwta_pt;decay;      };
+      unique{ gp_kwta;inhib_group;compute_i;i_kwta_pt;decay;inhib;      };
       children {
        name=;
        el_typ=PFCLayerSpec;
        el_def=0;
       };
       inhib_group=UNIT_GROUPS;
+      inhib {
+       type=KWTA_AVG_INHIB;
+       kwta_pt=0.6;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_AVG_INHIB;
-      i_kwta_pt=0.6;
-      gp_i_pt=0.2;
       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10670,11 +10608,16 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        el_def=0;
       };
       inhib_group=UNIT_GROUPS;
+      inhib {
+       type=KWTA_INHIB;
+       kwta_pt=0.25;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_INHIB;
-      i_kwta_pt=0.25;
-      gp_i_pt=0.2;
       tie_brk {on=0: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10696,18 +10639,23 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      SNrThalLayerSpec @[6] {
       name="SNrThalLayer";
       desc=;
-      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;i_kwta_pt;      };
+      unique{ kwta;inhib_group;compute_i;i_kwta_pt;decay;i_kwta_pt;inhib;      };
       children {
        name=;
        el_typ=SNrThalLayerSpec;
        el_def=0;
       };
       inhib_group=ENTIRE_LAYER;
+      inhib {
+       type=KWTA_AVG_INHIB;
+       kwta_pt=0.6;
+       min_i=0;
+       comp_thr=0.5;
+       comp_gain=2;
+       gp_pt=0.2;
+      };
       kwta {k_from=USE_PCT: k=12: pct=0.75: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-      compute_i=KWTA_AVG_INHIB;
-      i_kwta_pt=0.6;
-      gp_i_pt=0.2;
       tie_brk {on=1: k_thr=1: diff_thr=0.2: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
       clamp {hard=1: gain=0.5: d_gain=0: };
@@ -10719,7 +10667,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
        tol=0.1;
        abs_lrate=0.05;
       };
-      snrthal {avg_net_dt=0.005: go_thr=0.1: rnd_go_inc=0.2: };
+      snrthal {net_off=0.5: go_thr=0.1: rnd_go_inc=0.2: avg_net_dt=0.005: };
      };
     };
     BaseSpec_Group @.gp[3] {
@@ -12874,6 +12822,11 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
      misc_iar{      };
     };
    };
+   view_objs {
+    name=;
+    el_typ=NetViewObj;
+    el_def=0;
+   };
    flags=;
    auto_build=AUTO_BUILD;
    train_mode=TRAIN;
@@ -12881,7 +12834,9 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
    small_batch_n=10;
    batch=0;
    epoch=0;
+   group=0;
    trial=0;
+   tick=0;
    cycle=0;
    time=0;
    group_name="23_I_ONE";
@@ -12897,13 +12852,13 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
    cur_sum_sse=28.62888;
    avg_sse_n=91;
    cur_cnt_err=19;
-   train_time {name="train_time": start={usr=6488: sys=788: tot=2674945158: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=6488: sys=788: tot=2674945158: }: end={usr=29740: sys=3026: tot=2596397842: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
-   misc_time {name="misc_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: n_used=0: };
+   train_time {name="train_time": start={usr=6488: sys=788: tot=2674945158: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=6488: sys=788: tot=2674945158: }: end={usr=29740: sys=3026: tot=2596397842: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   wt_sync_time {name="wt_sync_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   misc_time {name="misc_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    dmem_sync_level=DMEM_SYNC_NETWORK;
    dmem_nprocs=1;
    usr1_save_fmt=JUST_WEIGHTS;
@@ -12937,6 +12892,7 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
    sequence_init=DO_NOTHING;
    first_plus_dwt=ONLY_FIRST_DWT;
    phase=PLUS_PHASE;
+   nothing_phase=0;
    phase_no=0;
    phase_max=3;
    cycle_max=60;
@@ -12948,6 +12904,12 @@ FloatTransform @*(.m_transform) {scale={x=0.33: y=0.33: z=0.33: }: rotate={x=0: 
    avg_cycles_n=91;
    netin_mod=1;
    send_delta=1;
+   send_pct=0;
+   send_pct_n=0;
+   send_pct_tot=0;
+   avg_send_pct=0;
+   avg_send_pct_sum=0;
+   avg_send_pct_n=0;
    maxda_stopcrit=0.005;
    maxda=0.004933476;
    trg_max_act_stopcrit=1;

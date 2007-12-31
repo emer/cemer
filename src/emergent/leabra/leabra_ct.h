@@ -55,10 +55,10 @@ class LEABRA_API CtCaDepSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
 INHERITED(taBase)
 public:
-  float		intwt_dt;	// #DEF_0.001 time constant for integrating intwt value relative to current weight value
+  float		intwt_dt;	// #DEF_0.02 time constant for integrating intwt value relative to current weight value -- default base value is .001 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
 
-  float		ca_inc;		// #DEF_0.01 time constant for increases in Ca_i (from NMDA etc currents)
-  float		ca_dec;		// #DEF_0.01 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse)
+  float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
+  float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
 
   float		sd_ca_thr;	// #DEF_0.2 synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
   float		sd_ca_gain;	// #DEF_0.3 multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
@@ -93,7 +93,6 @@ class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   CtCaDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy and learning rate
-  bool		sym_dif;	// #HIDDEN #READ_ONLY #NO_SAVE set automatically by network version of this variable -- symmetric differential learning mechanism (experimental)
   
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Ca updating and synaptic depression
@@ -244,6 +243,8 @@ INHERITED(LeabraBiasSpec)
 public:
   override inline void B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru);
 
+  inline void B_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru);
+
   TA_BASEFUNS_NOCOPY(CtLeabraBiasSpec);
 private:
   void 	Initialize();
@@ -263,6 +264,7 @@ public:
   // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
+  override void	Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void 	Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
@@ -270,6 +272,7 @@ public:
   // #CAT_Learning compute minus phase activations (snapshot prior to learning)
   virtual void 	Compute_ActP(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
+
 
   TA_BASEFUNS(CtLeabraUnitSpec);
 private:
@@ -386,11 +389,10 @@ public:
   };
 
   CtLearnMode	mode;	  	// how to do learning under the continuous time model
-  int		interval;  	// number of cycles between learning intervals (as long as cai_max sign is the same)
-  int		noth_dwt_int;	// interval for doing a single dWtFlip in nothing phase (as in Hinton's Restricted Boltzmann Machine (RBM)) (-1 = don't do)
-  int		first_cyc_st;	// what cycle in first phase (after previous nothing phase) does the ct_cycle start counting up -- i.e., what is the actual effective end of prior nothing?
-  int		syndep_int;	// interval for doing synaptic depression and associated Ca_i integration calcuations -- numbers > 1 result in faster processing..
-  bool		sym_dif;	// experimental symmetric differential learning -- coordinate with conspec param too!
+  int		interval;  	// #DEF_20 number of cycles between learning intervals (as long as cai_max sign is the same)
+  int		noth_dwt_int;	// #DEF_10 interval for doing a single dWtFlip in nothing phase (as in Hinton's Restricted Boltzmann Machine (RBM)) (-1 = don't do)
+  int		syndep_int;	// #DEF_20 interval for doing synaptic depression and associated Ca_i integration calcuations -- numbers > 1 result in faster processing and actually work better too -- need to adjust the conspec ca/syndep rate constants in step with this (multiply by this number)
+  bool		noth_trg_first;	// turn off the target values first in the nothing phase, then after noth_dwt_int (dWtFlip) turn off the external inputs too -- allows dWtFlip to focus learning on targets as opposed to reconstructing the entire input
 
   SIMPLE_COPY(CtNetLearnSpec);
   TA_BASEFUNS(CtNetLearnSpec);
@@ -437,6 +439,7 @@ public:
   override void	Cycle_Run();
   override void	Compute_dWt();
   override void	Compute_dWt_NStdLay();
+  override void Settle_Init_Decay();
 
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
@@ -487,15 +490,21 @@ inline void CtLeabraBiasSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
     cn->dwt += cur_lrate * err;
 }
 
+inline void CtLeabraBiasSpec::B_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru) {
+  CtLeabraUnit* lru = (CtLeabraUnit*)ru;
+  float err = lru->p_act_m - lru->p_act_p;
+  if(fabsf(err) >= dwt_thresh)
+    cn->dwt += cur_lrate * err;
+}
+
+// symmetric differential operator version of the learning rule.. works ok..
+//   if(sym_dif) {
+//     err = 2.0f * (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p) - (ru->act_m2 * su->act_m2);
+//   }
+
 inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru,
 					    CtLeabraUnit* su) {
-  float err;
-  if(sym_dif) {
-    err = 2.0f * (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p) - (ru->act_m2 * su->act_m2);
-  }
-  else {
-    err = (ru->p_act_p * su->p_act_p) - (ru->p_act_m * su->p_act_m);
-  }
+  float err = (ru->p_act_p * su->p_act_p) - (ru->p_act_m * su->p_act_m);
   // wt is negative in linear form, so using opposite sign of usual here
   if(lmix.err_sb) {
     if(err > 0.0f)	err *= (1.0f + cn->wt);
@@ -528,13 +537,7 @@ inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
 inline void CtLeabraConSpec::C_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru,
 						CtLeabraUnit* su) {
   // note: no hebbian or anything here -- just pure flipped dwt!
-  float err;
-  if(sym_dif) {
-    err = 2.0f * (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p) - (ru->act_m2 * su->act_m2); // note: exact same as before!  symmetric means never having to flip!
-  }
-  else {
-    err = (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p);
-  }
+  float err = (ru->p_act_m * su->p_act_m) - (ru->p_act_p * su->p_act_p);
   // wt is negative in linear form, so using opposite sign of usual here
   if(lmix.err_sb) {
     if(err > 0.0f)	err *= (1.0f + cn->wt);
