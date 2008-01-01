@@ -1249,6 +1249,10 @@ void taMisc::AddArgName(const String& flag, const String& nm) {
   taMisc::arg_names.Add(NameVar(flag, (Variant)nm));
 }
 
+void taMisc::AddEqualsArgName(const String& arg_nm) {
+  taMisc::arg_names.Add(NameVar(arg_nm + "=", (Variant)arg_nm));
+}
+
 void taMisc::AddArgNameDesc(const String& nm, const String& desc) {
   taMisc::arg_name_descs.Add(NameVar(nm, (Variant)desc));
 }

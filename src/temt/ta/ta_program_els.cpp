@@ -888,7 +888,14 @@ void MemberProgEl::Initialize() {
 void MemberProgEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(member_lookup) {
-    if(!path.empty() && (path.lastchar() != '.')) path += ".";
+    if(!path.empty() && (path.lastchar() != '.')) {
+      if(path.contains('.')) {
+	path = path.through('.',-1);
+      }
+      else {
+	path = "";
+      }
+    }
     path += member_lookup->name;
     if(member_lookup->type->InheritsFormal(&TA_class) &&
        !member_lookup->type->InheritsFrom(&TA_taString))
@@ -1362,5 +1369,99 @@ const String OtherProgramVar::GenCssBody_impl(int indent_level) {
 
 const String OtherProgramVar::GenCssPost_impl(int indent_level) {
   return cssMisc::Indent(indent_level) + "} // other program var\n";
+}
+
+///////////////////////////////////////////////////////
+//		ProgVarFmArg
+///////////////////////////////////////////////////////
+
+
+void ProgVarFmArg::Initialize() {
+}
+
+void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!prog, quiet, rval, "prog is NULL");
+  CheckError(var_name.empty(), quiet, rval, "var_name is empty");
+  CheckError(arg_name.empty(), quiet, rval, "arg_name is empty");
+}
+
+String ProgVarFmArg::GetDisplayName() const {
+  String rval;
+  rval = "Set Var: " + var_name + " in: ";
+  if(prog)
+    rval += prog->name;
+  else
+    rval += "(ERROR: prog not set!)";
+  rval += " Fm Arg: " + arg_name;
+  return rval;
+}
+
+Program* ProgVarFmArg::GetOtherProg() {
+  if(!prog) {
+    taMisc::CheckError("Program is NULL in ProgVarFmArg:",
+		       desc, "in program:", program()->name);
+  }
+  return prog.ptr();
+}
+
+const String ProgVarFmArg::GenCssBody_impl(int indent_level) {
+  if (!prog) return _nilString;
+  String il = cssMisc::Indent(indent_level);
+  String rval = il + "{ // prog var fm arg: " + prog->name;
+  rval += "\n";
+  rval += il + "  Program* other_prog = this" + GetPath(NULL, program())+ "->GetOtherProg();\n";
+  rval += il + "  other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");\n";
+  rval += il + "} // prog var fm arg\n";
+  return rval;
+}
+
+
+///////////////////////////////////////////////////////
+//		RegisterArgs
+///////////////////////////////////////////////////////
+
+
+void RegisterArgs::Initialize() {
+}
+
+String RegisterArgs::GetDisplayName() const {
+  String rval = "Register Args";
+  return rval;
+}
+
+const String RegisterArgs::GenCssBody_impl(int indent_level) {
+  String rval;
+  Program* prog = program();
+  if(!prog) return rval;
+  rval += cssMisc::Indent(indent_level) + "// Register Args:\n";
+  AddArgsFmCode(rval, prog->prog_code, indent_level);
+  rval += cssMisc::Indent(indent_level) + "taMisc::UpdateArgs();\n";
+  return rval;
+}
+
+void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  for(int i=0;i<progs.size;i++) {
+    ProgEl* pel = progs[i];
+    if(pel->InheritsFrom(&TA_ProgVarFmArg)) {
+      ProgVarFmArg* pva = (ProgVarFmArg*)pel;
+      gen_code += il + "taMisc::AddEqualsArgName(\"" + pva->arg_name + "\");\n";
+    }
+    else if(pel->InheritsFrom(&TA_MemberFmArg)) {
+      MemberFmArg* mfa = (MemberFmArg*)pel;
+      gen_code += il + "taMisc::AddEqualsArgName(\"" + mfa->arg_name + "\");\n";
+    }
+    else {			// look for sub-lists
+      TypeDef* td = pel->GetTypeDef();
+      for(int j=0;j<td->members.size;j++) {
+	MemberDef* md = td->members[j];
+	if(md->type->InheritsFrom(&TA_ProgEl_List)) {
+	  ProgEl_List* nxt_prgs = (ProgEl_List*)md->GetOff(pel);
+	  AddArgsFmCode(gen_code, *nxt_prgs, indent_level);
+	}
+      }
+    }
+  }
 }
 

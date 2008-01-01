@@ -48,12 +48,12 @@ Program .projects[0].programs.gp[0][2] {
       };
     };
     MethodCall @[6] { };
-    ProgramCall @[7] { 
+    MethodCall @[7] { };
+    ProgramCall @[8] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    MethodCall @[8] { };
   };
 };
 Program .projects[0].programs.gp[0][2] {
@@ -170,7 +170,6 @@ Program .projects[0].programs.gp[0][2] {
    result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
    expr {
     expr="network.epoch_time";
-    flags=;
     var_expr="$#0#$.epoch_time";
     vars {
     };
@@ -196,7 +195,6 @@ Program .projects[0].programs.gp[0][2] {
    result_var=$6$;
    expr {
     expr="network.epoch_time";
-    flags=;
     var_expr="$#0#$.epoch_time";
     vars {
     };
@@ -222,7 +220,6 @@ Program .projects[0].programs.gp[0][2] {
      def_val="true";
      expr {
       expr="true";
-      flags=;
       var_expr="true";
       vars {
       };
@@ -268,7 +265,6 @@ Program .projects[0].programs.gp[0][2] {
        def_val=;
        expr {
 	expr="network";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -284,7 +280,6 @@ Program .projects[0].programs.gp[0][2] {
        def_val=;
        expr {
 	expr="input_data";
-	flags=;
 	var_expr="$#0#$";
 	vars {
 	};
@@ -299,7 +294,6 @@ Program .projects[0].programs.gp[0][2] {
      flags=;
      cond {
       expr="network.Compute_Weights_Test(trial+1)";
-      flags=;
       var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
       vars {
       };
@@ -343,7 +337,6 @@ Program .projects[0].programs.gp[0][2] {
    flags=;
    cond {
     expr="network.wt_update == Network::BATCH";
-    flags=;
     var_expr="$#0#$.wt_update == Network::BATCH";
     vars {
     };
@@ -385,7 +378,19 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  ProgramCall @[7] {
+  MethodCall @[7] {
+   desc="done with the computation in the epoch -- record time it took";
+   flags=;
+   result_var=NULL;
+   obj=$6$;
+   method=TimeUsed::EndTimer;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  ProgramCall @[8] {
    desc="run program that records data from network and possibly other sources about the epoch";
    flags=;
    target=.projects[0].programs.gp[0][6]$12$;
@@ -402,7 +407,6 @@ Program .projects[0].programs.gp[0][2] {
      def_val=;
      expr {
       expr="network";
-      flags=;
       var_expr="$#0#$";
       vars {
       };
@@ -410,18 +414,6 @@ Program .projects[0].programs.gp[0][2] {
       bad_vars{       };
      };
     };
-   };
-  };
-  MethodCall @[8] {
-   desc="done with the computation in the epoch -- record time it took";
-   flags=;
-   result_var=NULL;
-   obj=$6$;
-   method=TimeUsed::EndTimer;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
    };
   };
  };

@@ -166,12 +166,12 @@ Program_Group .projects[0].programs.gp[0] {
 	  };
 	};
 	MethodCall @[6] { };
-	ProgramCall @[7] { 
+	MethodCall @[7] { };
+	ProgramCall @[8] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	MethodCall @[8] { };
       };
     };
     Program @[3] { 
@@ -620,7 +620,6 @@ Program_Group .projects[0].programs.gp[0] {
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -636,7 +635,6 @@ Program_Group .projects[0].programs.gp[0] {
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -652,7 +650,6 @@ Program_Group .projects[0].programs.gp[0] {
 	def_val=;
 	expr {
 	 expr="true";
-	 flags=;
 	 var_expr="true";
 	 vars {
 	 };
@@ -672,7 +669,6 @@ Program_Group .projects[0].programs.gp[0] {
     };
     test {
      expr="batch < max_batch";
-     flags=;
      var_expr="$#0#$ < $#1#$";
      vars {
      };
@@ -841,7 +837,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     result_var=.projects[0].programs.gp[0][1].args[2]$9$;
     expr {
      expr="false";
-     flags=;
      var_expr="false";
      vars {
      };
@@ -867,7 +862,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -883,7 +877,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     result_var=.projects[0].programs.gp[0][1].vars[6]$11$;
     expr {
      expr="network.train_time";
-     flags=;
      var_expr="$#0#$.train_time";
      vars {
      };
@@ -896,7 +889,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     flags=;
     cond {
      expr="rnd_init == OLD_SEED";
-     flags=;
      var_expr="$#0#$ == OLD_SEED";
      vars {
      };
@@ -965,7 +957,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       expr {
        expr="network.name << \" Weights Initialized\"";
-       flags=;
        var_expr="$#0#$.name << \" Weights Initialized\"";
        vars {
        };
@@ -986,7 +977,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     result_var=$11$;
     expr {
      expr="network.train_time";
-     flags=;
      var_expr="$#0#$.train_time";
      vars {
      };
@@ -1012,7 +1002,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       def_val="true";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -1029,7 +1018,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     path="train_mode";
     expr {
      expr="train_mode";
-     flags=;
      var_expr="$#0#$";
      vars {
      };
@@ -1043,7 +1031,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     flags=;
     cond {
      expr="no_prompts";
-     flags=;
      var_expr="$#0#$";
      vars {
      };
@@ -1071,7 +1058,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       expr {
        expr="network.name << \" Weights Initialized\"";
-       flags=;
        var_expr="$#0#$.name << \" Weights Initialized\"";
        vars {
        };
@@ -1092,7 +1078,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     result_var=.projects[0].programs.gp[0][1].vars[1]$13$;
     expr {
      expr="network.epoch";
-     flags=;
      var_expr="$#0#$.epoch";
      vars {
      };
@@ -1124,7 +1109,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1140,7 +1124,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1162,7 +1145,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       cond {
        expr="network.cnt_err <= err_stopcrit";
-       flags=;
        var_expr="$#0#$.cnt_err <= $#1#$";
        vars {
        };
@@ -1173,7 +1155,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
     test {
      expr="epoch < max_epoch";
-     flags=;
      var_expr="$#0#$ < $#1#$";
      vars {
      };
@@ -1309,7 +1290,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     result_var=.projects[0].programs.gp[0][2].vars[3]$19$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -1335,7 +1315,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     result_var=$19$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -1361,7 +1340,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       def_val="true";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -1407,7 +1385,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1423,7 +1400,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1438,7 +1414,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       cond {
        expr="network.Compute_Weights_Test(trial+1)";
-       flags=;
        var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
        vars {
        };
@@ -1482,7 +1457,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     flags=;
     cond {
      expr="network.wt_update == Network::BATCH";
-     flags=;
      var_expr="$#0#$.wt_update == Network::BATCH";
      vars {
      };
@@ -1524,7 +1498,19 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      el_def=0;
     };
    };
-   ProgramCall @[7] {
+   MethodCall @[7] {
+    desc="done with the computation in the epoch -- record time it took";
+    flags=;
+    result_var=NULL;
+    obj=$19$;
+    method=TimeUsed::EndTimer;
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+    };
+   };
+   ProgramCall @[8] {
     desc="run program that records data from network and possibly other sources about the epoch";
     flags=;
     target=.projects[0].programs.gp[0][8]$25$;
@@ -1541,7 +1527,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1549,18 +1534,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        bad_vars{        };
       };
      };
-    };
-   };
-   MethodCall @[8] {
-    desc="done with the computation in the epoch -- record time it took";
-    flags=;
-    result_var=NULL;
-    obj=$19$;
-    method=TimeUsed::EndTimer;
-    meth_args {
-     name=;
-     el_typ=ProgArg;
-     el_def=0;
     };
    };
   };
@@ -1693,7 +1666,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1709,7 +1681,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -1741,7 +1712,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
     test {
      expr="phase_no < network.phase_max";
-     flags=;
      var_expr="$#0#$ < $#1#$.phase_max";
      vars {
      };
@@ -1778,7 +1748,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1927,7 +1896,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1943,7 +1911,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="input_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1970,7 +1937,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     flags=;
     cond {
      expr="network.phase_no <= 1";
-     flags=;
      var_expr="$#0#$.phase_no <= 1";
      vars {
      };
@@ -1987,7 +1953,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=.projects[0].programs.gp[0][4].vars[1]$33$;
       expr {
        expr="network.min_cycles";
-       flags=;
        var_expr="$#0#$.min_cycles";
        vars {
        };
@@ -2006,7 +1971,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=$33$;
       expr {
        expr="network.min_cycles_phase2";
-       flags=;
        var_expr="$#0#$.min_cycles_phase2";
        vars {
        };
@@ -2040,7 +2004,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -2062,7 +2025,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       cond {
        expr="cycle < min_cycles";
-       flags=;
        var_expr="$#0#$ < $#1#$";
        vars {
        };
@@ -2076,7 +2038,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       cond {
        expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
-       flags=;
        var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
  ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
        vars {
@@ -2088,7 +2049,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     test {
      expr="cycle < network.cycle_max";
-     flags=;
      var_expr="$#0#$ < $#1#$.cycle_max";
      vars {
      };
@@ -2114,7 +2074,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     flags=;
     cond {
      expr="network.phase == LeabraNetwork::MINUS_PHASE";
-     flags=;
      var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
      vars {
      };
@@ -2149,7 +2108,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     flags=;
     cond {
      expr="network.phase_no == 1";
-     flags=;
      var_expr="$#0#$.phase_no == 1";
      vars {
      };
@@ -2389,7 +2347,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="input_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2405,7 +2362,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2433,7 +2389,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -2489,6 +2444,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2505,6 +2461,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2521,6 +2478,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2537,6 +2495,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2553,6 +2512,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2569,6 +2529,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2585,6 +2546,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2601,6 +2563,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2617,6 +2580,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2701,7 +2665,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="trial_mon_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2717,7 +2680,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2745,7 +2707,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -2773,7 +2734,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -2842,7 +2802,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="trial_mon_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -2858,7 +2817,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="1";
       expr {
        expr="1";
-       flags=;
        var_expr="1";
        vars {
        };
@@ -2897,6 +2855,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2913,6 +2872,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2929,6 +2889,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2945,6 +2906,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2961,6 +2923,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2977,6 +2940,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2993,6 +2957,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -3009,6 +2974,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -3090,7 +3056,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     result_var=.projects[0].programs.gp[0][8].vars[2]$46$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -3116,7 +3081,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="epoch_mon_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -3132,7 +3096,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -3160,7 +3123,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -3188,7 +3150,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -3233,7 +3194,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     result_var=$46$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -3259,7 +3219,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="epoch_timer.used.GetTotSecs()";
-       flags=;
        var_expr="$#0#$.used.GetTotSecs()";
        vars {
        };
@@ -3275,7 +3234,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="\"epoch_time_tot\"";
-       flags=;
        var_expr="\"epoch_time_tot\"";
        vars {
        };
@@ -3291,7 +3249,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="-1";
-       flags=;
        var_expr="-1";
        vars {
        };
@@ -3319,7 +3276,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="epoch_timer.used.GetUsrSecs()";
-       flags=;
        var_expr="$#0#$.used.GetUsrSecs()";
        vars {
        };
@@ -3335,7 +3291,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="\"epoch_time_usr\"";
-       flags=;
        var_expr="\"epoch_time_usr\"";
        vars {
        };
@@ -3351,7 +3306,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="-1";
-       flags=;
        var_expr="-1";
        vars {
        };
@@ -3481,7 +3435,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     flags=;
     cond {
      expr="taMisc::dmem_proc > 0";
-     flags=;
      var_expr="taMisc::dmem_proc > 0";
      vars {
      };
@@ -3507,7 +3460,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network.batch";
-       flags=;
        var_expr="$#0#$.batch";
        vars {
        };
@@ -3523,7 +3475,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="2";
-       flags=;
        var_expr="2";
        vars {
        };
@@ -3551,7 +3502,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network.epoch";
-       flags=;
        var_expr="$#0#$.epoch";
        vars {
        };
@@ -3567,7 +3517,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="4";
-       flags=;
        var_expr="4";
        vars {
        };
@@ -3583,11 +3532,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
     result_var=.projects[0].programs.gp[0][9].vars[5]$51$;
     expr {
      expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-     flags=;
-     var_expr="$#0#$ + \".\" + batch_str + \"_\" + epoch_str";
+     var_expr="$#0#$ + \".\" + $#1#$ + \"_\" + $#2#$";
      vars {
      };
-     var_names{ tag;     };
+     var_names{ tag;batch_str;epoch_str;     };
      bad_vars{      };
     };
    };
@@ -3609,7 +3557,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="\".wts.gz\"";
-       flags=;
        var_expr="\".wts.gz\"";
        vars {
        };
@@ -3625,7 +3572,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="final_tag";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -3641,7 +3587,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="wts_subdir";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -3657,7 +3602,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -3685,7 +3629,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="fname";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -3701,7 +3644,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="Network::NET_FMT";
       expr {
        expr="Network::NET_FMT";
-       flags=;
        var_expr="Network::NET_FMT";
        vars {
        };

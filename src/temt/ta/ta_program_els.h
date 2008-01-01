@@ -474,10 +474,10 @@ private:
 }; 
 
 class TA_API MemberFmArg: public MemberProgEl { 
-  // set a member (attribute) on an object to a value given by a startup argument passed to overall program when it was run -- if argument was not set, nothing happens
+  // set a member (attribute) on an object to a value given by a startup argument passed to overall program when it was run -- if argument was not set by user, nothing happens.  IMPORTANT: must also include a RegisterArgs program element BEFORE this item in the program code to register this argument and process the command list
 INHERITED(MemberProgEl)
 public:
-  String		arg_name; // name of the startup argument -- value is looked up by this key word
+  String		arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   bool			quiet;	      // do not emit a message when arg is set and member value is assigned (otherwise, informational msg is printed -- useful for startup code output)
   
@@ -685,5 +685,51 @@ private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
 };
+
+class TA_API ProgVarFmArg: public ProgEl { 
+  // sets a variable (vars or args) in a program from a startup command-line argument (if arg was not set by user, nothing happens). IMPORTANT: must also include a RegisterArgs program element BEFORE this item in the program code to register this argument and process the command list
+INHERITED(ProgEl)
+public:
+  ProgramRef		prog; 	// #APPLY_IMMED program that you want to set variable from argument in
+  String		var_name; // name of variable in program to set
+  String		arg_name; // argument name -- this will be passed on the command line as <arg_name>=<value> (no spaces) (e.g., if arg_name is "rate" then command line would be rate=0.01 and internal arg name is just "rate" -- can be accessed using taMisc arg functions using that name)
+
+  virtual Program*	GetOtherProg();
+  // safe call to get other program: emits error if other_prog is null (used by program)
+
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  TA_SIMPLE_BASEFUNS(ProgVarFmArg);
+
+protected:
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+  void		AddArgsFmCode(String& gen_code, ProgEl_List& progs);
+  // main function: iterates recursively through progs, adding any that add args to gen_code
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API RegisterArgs: public ProgEl { 
+  // register command-line arguments for any MemberFmArg or ProgVarFmArg program elements contained in the prog_code of the program that this item appears in.  calls taMisc::UpdateArgs(), so any any other taMisc::AddArgName MiscCall's placed before this will also be processed
+INHERITED(ProgEl)
+public:
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  TA_SIMPLE_BASEFUNS(RegisterArgs);
+
+protected:
+  override const String	GenCssBody_impl(int indent_level);
+
+  void		AddArgsFmCode(String& gen_code, ProgEl_List& progs, int indent_level);
+  // main function: iterates recursively through progs, adding any that add args to gen_code
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
 
 #endif

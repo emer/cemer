@@ -77,7 +77,6 @@ void CtLeabraUnit::Initialize() {
 void CtLeabraUnitSpec::Initialize() {
   min_obj_type = &TA_CtLeabraUnit;
   bias_con_type = &TA_CtLeabraCon;
-  opt_thresh.learn = -1.0f;
   opt_thresh.updt_wts = false;
 }
 

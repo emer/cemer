@@ -51,13 +51,13 @@ Program_Group .projects[0].programs.gp[1] {
 	  };
 	};
 	MethodCall @[7] { };
-	ProgramCall @[8] { 
+	MethodCall @[8] { };
+	ProgramCall @[9] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	MemberAssign @[9] { };
-	MethodCall @[10] { };
+	MemberAssign @[10] { };
       };
     };
     Program @[1] { 
@@ -368,7 +368,6 @@ Program_Group .projects[0].programs.gp[1] {
     result_var=.projects[0].programs.gp[1][0].vars[4]$7$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -395,7 +394,6 @@ Program_Group .projects[0].programs.gp[1] {
     path="train_mode";
     expr {
      expr="Network::TEST";
-     flags=;
      var_expr="Network::TEST";
      vars {
      };
@@ -410,7 +408,6 @@ Program_Group .projects[0].programs.gp[1] {
     result_var=$7$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -436,7 +433,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val="true";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -482,7 +478,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="network";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -498,7 +493,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="input_data";
-	 flags=;
 	 var_expr="$#0#$";
 	 vars {
 	 };
@@ -513,7 +507,6 @@ Program_Group .projects[0].programs.gp[1] {
       flags=;
       cond {
        expr="network.Compute_Weights_Test(trial+1)";
-       flags=;
        var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
        vars {
        };
@@ -557,7 +550,6 @@ Program_Group .projects[0].programs.gp[1] {
     flags=;
     cond {
      expr="network.wt_update == Network::BATCH";
-     flags=;
      var_expr="$#0#$.wt_update == Network::BATCH";
      vars {
      };
@@ -599,7 +591,19 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
     };
    };
-   ProgramCall @[8] {
+   MethodCall @[8] {
+    desc="done with the computation in the epoch -- record time it took";
+    flags=;
+    result_var=NULL;
+    obj=$7$;
+    method=TimeUsed::EndTimer;
+    meth_args {
+     name=;
+     el_typ=ProgArg;
+     el_def=0;
+    };
+   };
+   ProgramCall @[9] {
     desc="run program that records data from network and possibly other sources about the epoch";
     flags=;
     target=.projects[0].programs.gp[1][4]$12$;
@@ -616,7 +620,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -626,14 +629,13 @@ Program_Group .projects[0].programs.gp[1] {
      };
     };
    };
-   MemberAssign @[9] {
+   MemberAssign @[10] {
     desc="set back to training mode";
     flags=NEW_EL;
     obj=$5$;
     path="train_mode";
     expr {
      expr="Network::TRAIN";
-     flags=;
      var_expr="Network::TRAIN";
      vars {
      };
@@ -641,18 +643,6 @@ Program_Group .projects[0].programs.gp[1] {
      bad_vars{      };
     };
     update_after=0;
-   };
-   MethodCall @[10] {
-    desc="done with the computation in the epoch -- record time it took";
-    flags=;
-    result_var=NULL;
-    obj=$7$;
-    method=TimeUsed::EndTimer;
-    meth_args {
-     name=;
-     el_typ=ProgArg;
-     el_def=0;
-    };
    };
   };
  };
@@ -756,7 +746,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -772,7 +761,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="input_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -823,7 +811,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -962,7 +949,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="input_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -978,7 +964,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1006,7 +991,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -1062,6 +1046,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1078,6 +1063,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1094,6 +1080,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1110,6 +1097,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1126,6 +1114,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1142,6 +1131,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1226,7 +1216,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="trial_mon_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1242,7 +1231,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1270,7 +1258,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -1298,7 +1285,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -1367,7 +1353,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="trial_mon_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1383,7 +1368,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="1";
       expr {
        expr="1";
-       flags=;
        var_expr="1";
        vars {
        };
@@ -1422,6 +1406,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1438,6 +1423,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1454,6 +1440,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1470,6 +1457,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1486,6 +1474,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1502,6 +1491,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1583,7 +1573,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     result_var=.projects[0].programs.gp[1][4].vars[2]$27$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -1609,7 +1598,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="epoch_mon_data";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1625,7 +1613,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       flags=;
        var_expr="$#0#$";
        vars {
        };
@@ -1653,7 +1640,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="false";
-       flags=;
        var_expr="false";
        vars {
        };
@@ -1681,7 +1667,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="false";
       expr {
        expr="true";
-       flags=;
        var_expr="true";
        vars {
        };
@@ -1726,7 +1711,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     result_var=$27$;
     expr {
      expr="network.epoch_time";
-     flags=;
      var_expr="$#0#$.epoch_time";
      vars {
      };
@@ -1752,7 +1736,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="epoch_timer.used.GetTotSecs()";
-       flags=;
        var_expr="$#0#$.used.GetTotSecs()";
        vars {
        };
@@ -1768,7 +1751,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="\"\"";
       expr {
        expr="\"epoch_time_tot\"";
-       flags=;
        var_expr="\"epoch_time_tot\"";
        vars {
        };
@@ -1784,7 +1766,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="-1";
-       flags=;
        var_expr="-1";
        vars {
        };
@@ -1812,7 +1793,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="epoch_timer.used.GetUsrSecs()";
-       flags=;
        var_expr="$#0#$.used.GetUsrSecs()";
        vars {
        };
@@ -1828,7 +1808,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val="\"\"";
       expr {
        expr="\"epoch_time_usr\"";
-       flags=;
        var_expr="\"epoch_time_usr\"";
        vars {
        };
@@ -1844,7 +1823,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="-1";
-       flags=;
        var_expr="-1";
        vars {
        };

@@ -901,6 +901,8 @@ public:
 
   static void	AddArgName(const String& flag, const String& name);
   // #CAT_Args add an argument flag name to be processed from startup args (e.g., flag = -f, name = CssScript; see arg_names)
+  static void	AddEqualsArgName(const String& arg_name);
+  // #CAT_Args add an argument that uses equals to set value, as in <arg_name>=<value> -- uses arg_name also for the logical name of the argument for later reference (without the ='s sign)
   static void	AddArgNameDesc(const String& name, const String& desc);
   // #CAT_Args add a description of an argument flag name (see arg_name_descs)
 
