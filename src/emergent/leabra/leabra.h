@@ -446,7 +446,6 @@ public:
   float		gain;		// #DEF_600 gain (gamma) of the sigmoidal rate-coded activation function 
   float		nvar;		// #DEF_0.005 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
   float		avg_dt;		// #DEF_0.005 time constant for integrating activation average (computed across trials)
-  bool		send_delta;	// #DEF_true #READ_ONLY send only changes in activation when it changes beyond opt_thresh.delta: COPIED FROM LeabraSettle!
   IThrFun	i_thr;		// #DEF_STD how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing)
 
   void 	Defaults()	{ Initialize(); }
@@ -2138,7 +2137,7 @@ private:
 //////////////////////////
 
 void LeabraUnitSpec::Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
-  if(act.send_delta) {
+  if(net->send_delta) {
     u->net_raw += u->net_delta;
     u->net += u->clmp_net + u->net_raw;
   }
@@ -2159,8 +2158,8 @@ void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayer*, LeabraInhib
   u->g_i_delta = 0.0f;
 }
 
-void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* thr, LeabraNetwork*) {
-  if(act.send_delta) {
+void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* thr, LeabraNetwork* net) {
+  if(net->send_delta) {
     u->g_i_raw += u->g_i_delta;
     u->gc.i = u->g_i_raw;
   }

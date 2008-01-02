@@ -368,7 +368,6 @@ void ActFunSpec::Initialize() {
   gain = 600.0f;
   nvar = .005f;
   avg_dt = .005f;
-  send_delta = true;
   i_thr = STD;
 }
 
@@ -534,9 +533,7 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
   Network* net = GET_MY_OWNER(Network);
   bool rval = true;
-
-  act.send_delta = ((LeabraNetwork*)net)->send_delta; // always copy from network, so it is global..
-  
+ 
   for(int g=0; g<un->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)un->send.FastEl(g);
     if(send_gp->cons.size < 2) continue;

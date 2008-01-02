@@ -63,7 +63,7 @@ void MatrixUnitSpec::InitLinks() {
 }
 
 void MatrixUnitSpec::Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
-  if(act.send_delta) {
+  if(net->send_delta) {
     u->net_raw += u->net_delta;
     u->net += u->clmp_net + u->net_raw;
   }
