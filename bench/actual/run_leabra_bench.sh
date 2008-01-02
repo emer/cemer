@@ -7,6 +7,8 @@
 
 # send_delta=true/false (default = true) -- toggles use of delta-based netin
 
+# threads=
+
 # log_epc=true (default false) -- generate epoch log (for debugging)
 
 # log_trl=true (default false) -- generate trial log (for debugging)
@@ -14,7 +16,8 @@
 # tag=<tag> -- extra tag to apply to log file name (for debugging)
 
 set opts=""
-#set opts="send_delta=true"
+#set opts="send_delta=false"
+#set opts="threads=true"
 
 echo " "
 echo "=============================================================="
@@ -26,9 +29,9 @@ echo "MEDIUM Network (5 x 100 units)"
 emergent -nogui -ni -p leabra_bench.proj epochs=20 pats=10 units=100 $opts
 echo " "
 echo "=============================================================="
-echo "LARGE Network (5 x 500 units)"
-emergent -nogui -ni -p leabra_bench.proj epochs=2 pats=10 units=625 $opts
+echo "LARGE Network (5 x 625 units)"
+emergent -nogui -ni -p leabra_bench.proj epochs=1 pats=10 units=625 $opts
 echo " "
 echo "=============================================================="
-echo "HUGE Network (5 x 1000 units)"
-emergent -nogui -ni -p leabra_bench.proj epochs=1 pats=10 units=1024 $opts
+echo "HUGE Network (5 x 1024 units)"
+emergent -nogui -ni -p leabra_bench.proj epochs=1 pats=5 units=1024 $opts
