@@ -258,7 +258,6 @@ SRCS =\
 	ta_plugin_p.cpp \
 	ta_plugin_p.moc.cpp \
 	ta_engine.cpp \
-	ta_engine.moc.cpp \
 	ta_project.cpp \
 	ta_project.moc.cpp \
 	ta_server.cpp \

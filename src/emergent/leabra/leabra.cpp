@@ -4651,7 +4651,9 @@ tsk->n_units_done = 0;
   // then do my part
   tsk = task(0);
   tsk->run();
+#ifdef DEBUG
 n_units_done = tsk->n_units_done;
+#endif
   // then lend a "helping hand" (if enabled)
   if (nibble) for (int t = 1; t < n_tasks; ++t) {
     tsk = task(t);
@@ -4664,7 +4666,9 @@ n_units_done = tsk->n_units_done;
   for (int t = 1; t < n_tasks; ++t) {
     tt = threads[t];
     tt->suspend(); // suspending is syncing with completion of loop
+#ifdef DEBUG
 n_units_done += task(t)->n_units_done;
+#endif
   }
 #ifdef DEBUG
   if (n_units != n_units_done)
