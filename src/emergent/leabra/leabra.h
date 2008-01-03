@@ -293,8 +293,6 @@ public:
 
   inline void 	C_Send_Inhib(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
   // #CAT_Activation sender-based inhibitiory net input computation
-  inline virtual void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su);
-  // #CAT_Activation sender-based inhibitiory net input computation
 
   inline void 	C_Send_NetinDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
   // #CAT_Activation sender-based delta net input computation (send_delta mode only)
@@ -302,8 +300,6 @@ public:
   // #CAT_Activation sender-based delta net input computation (send_delta mode only)
 
   inline void 	C_Send_InhibDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
-  // #CAT_Activation sender-based delta inhibitiory net input computation (send_delta mode only)
-  inline virtual void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Activation sender-based delta inhibitiory net input computation (send_delta mode only)
 
   inline void 	C_Send_ClampNet(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
@@ -1761,13 +1757,6 @@ float LeabraConSpec::Compute_Netin(RecvCons* cg, Unit* ru) {
 void LeabraConSpec::C_Send_Inhib(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
   ru->gc.i += su_act_eff * cn->wt;
 }
-void LeabraConSpec::Send_Inhib(LeabraSendCons* cg, LeabraUnit* su) {
-  // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
-  // LeabraUnitSpec::CheckConfig checks that this is ok.
-  Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
-  CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
-}
 
 void LeabraConSpec::C_Send_Netin(LeabraSendCons*, LeabraCon* cn, Unit* ru, float su_act_eff) {
   ru->net += su_act_eff * cn->wt;
@@ -1789,11 +1778,6 @@ void LeabraConSpec::Send_Netin(SendCons* cg, Unit* su) {
 
 void LeabraConSpec::C_Send_InhibDelta(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
   ru->g_i_delta += su_act_delta_eff * cn->wt;
-}
-void LeabraConSpec::Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su) {
-  Unit* ru = cg->Un(0);
-  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
-  CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
 }
 
 void LeabraConSpec::C_Send_NetinDelta(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
@@ -2225,15 +2209,17 @@ public:
   inline LeabraNetwork* net() const {return (LeabraNetwork*)owner;} 
   
   virtual bool		OnSend_Netin() {return false;}
-  virtual bool		OnSend_Netin_Delta() {return false;}
+  virtual bool		OnSend_NetinDelta() {return false;}
   
   SIMPLE_LINKS(LeabraEngineInst);
   TA_BASEFUNS_NOCOPY(LeabraEngineInst);
 protected:
+  int			n_tasks; // how many tasks actually being used this DoProc
   void			AssertScratchDims(int tasks, int units); // asserts mod4
-  void			RollupWritebackScratch(); 
-    // rolls up, so sum is in [0][], and writes back
-  virtual void		GetSendDeltaUnits(); // fill the send_units list
+  void			RollupWritebackScratch_Netin(); 
+    // rolls up, so sum is in [0][], and writes back, for Netin algo
+  void			RollupWritebackScratch_NetinDelta(); 
+    // rolls up, so sum is in [0][], and writes back, for NetinDelta algo
 private:
   void	Initialize();
   void	Destroy();
@@ -2284,7 +2270,7 @@ class LEABRA_API LeabraThreadEngine: public LeabraEngine {
 // threaded LeabraEngine
 INHERITED(LeabraEngine)
 public:
-  int			n_threads; // #MIN_1 #MAX_64 number of threads to use -- typically==number of cores
+  int			n_threads; // #MIN_1 #MAX_32 number of threads to use -- typically==number of cores
   bool			nibble; // #DEF_true set false to disable nibbling (for debugging threads)
   
   TA_BASEFUNS_NOCOPY(LeabraThreadEngine);
@@ -2301,7 +2287,7 @@ INHERITED(LeabraEngineInst)
 friend class LeabraThreadEngineTask;
 public:
   static const int	UNIT_CHUNK_SIZE = 64 / TA_POINTER_SIZE;
-    // number of units to process by a thread in one chunk
+    // number of units to process by a thread in one chunk; MUST BE power of 2
   static const int	MAX_THREADS = 32; // arbitrary number -- bump when 64 core chips arrive ;)
 #ifndef __MAKETA__
   taTaskThread**	threads; // one per task, except [0] -- init to MAX_THREADS
@@ -2315,12 +2301,15 @@ public:
   void 			DoProc(int proc_id);
 
   override bool		OnSend_Netin();
-  override bool		OnSend_Netin_Delta(); //
+  override bool		OnSend_NetinDelta(); //
   
 //  SIMPLE_LINKS(LeabraThreadEngineInst);
   TA_BASEFUNS_NOCOPY(LeabraThreadEngineInst);
 protected:
   int			n_units; // this is the number of units that will be proc'ed in the algo
+#ifdef DEBUG
+  int			n_units_done; // sanity check to insure threading working right
+#endif
   override void		OnBuild_impl(); // main build
 private:
   void	Initialize();
@@ -2338,6 +2327,7 @@ public:
   inline static void 	StatC_Send_Excit(LeabraCon* cn, float* ru_e, float su_act_eff) 
     {*ru_e += su_act_eff * cn->wt;} // #IGNORE
 #endif
+int			n_units_done;
 
   int			g_u; // index of unit on which to start
   int			scr_units; // number of slots in scratch -- is mod4 value
@@ -2349,10 +2339,16 @@ public:
   
   TA_BASEFUNS_NOCOPY(LeabraThreadEngineTask);
 protected:
-  void			InitScratch_Send_Netin();
+#ifdef DEBUG
+  int			m_u; // put it in class to help debugging
+#endif
   override void		DoSend_Netin();
-  void 			DoSend_Netin_Gp(bool is_inhib, SendCons* cg, Unit* su);
+  void			InitScratch_Send_Netin();
+  void 			DoSend_Netin_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
+  
   override void		DoSend_NetinDelta();
+  void			InitScratch_Send_NetinDelta();
+  void 			DoSend_NetinDelta_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
 private:
   void	Initialize();
   void	Destroy() {}

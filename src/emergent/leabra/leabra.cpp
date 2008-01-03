@@ -3648,13 +3648,17 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::Compute_Netin() {
   send_pct_n = send_pct_tot = 0;
-  if(send_delta) {
-    Init_NetinDelta();	// this is done first because of sender-based net
-    LeabraLayer* l;
-    taLeafItr i;
-    FOR_ITR_EL(LeabraLayer, l, layers., i) {
-      if(!l->lesioned())
-	l->Send_NetinDelta(this);
+  if (send_delta) {
+    if (!(net_inst.ptr() &&
+      ((LeabraEngineInst*)(net_inst.ptr()))->OnSend_NetinDelta())) 
+    {
+      Init_NetinDelta();	// this is done first because of sender-based net
+      LeabraLayer* l;
+      taLeafItr i;
+      FOR_ITR_EL(LeabraLayer, l, layers., i) {
+        if(!l->lesioned())
+          l->Send_NetinDelta(this);
+      }
     }
 #ifdef DMEM_COMPILE
     dmem_share_units.Sync(3);
@@ -4478,6 +4482,7 @@ bool LeabraWizard::TestProgs(Program* call_test_from, bool call_in_loop, int cal
 //////////////////////////////////
 
 void LeabraEngineInst::Initialize() {
+  n_tasks = 1;
 }
 
 void LeabraEngineInst::Destroy() {
@@ -4490,34 +4495,17 @@ void LeabraEngineInst::AssertScratchDims(int tasks, int units) {
   inhib.SetGeom(2, units, tasks);
 }
 
-void LeabraEngineInst::GetSendDeltaUnits() {
-//TODO
-/*  LeabraNetwork* net = this->net();
-  send_units.Reset();
-  LeabraLayer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
-    if (lay->lesioned() ||
-      lay->hard_clamped)) continue;
-    LeabraUnit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(LeabraUnit, un, lay->units., ui)
-      u->Send_NetinDelta(lay, net);
-  }*/
-}
-
-void LeabraEngineInst::RollupWritebackScratch() {
+void LeabraEngineInst::RollupWritebackScratch_Netin() {
 //NOTE: may be more efficient to pipeline the writing with the rollup, to avoid 
 // cache overflow
   int size = excit.dim(0); // same for both
-  const int task_cnt = excit.dim(1); // same for both
   //TODO: make this much more efficient, either call a GSL routine, or do a SSE
-  for (int t = task_cnt - 1; t > 0; --t) {
+  for (int t = n_tasks - 1; t > 0; --t) {
     for (int i = 0; i < size; ++i) {
       excit.FastEl(i, 0) += excit.FastEl(i, t);
     }
   }
-  for (int t = task_cnt - 1; t > 0; --t) {
+  for (int t = n_tasks - 1; t > 0; --t) {
     for (int i = 0; i < size; ++i) {
       inhib.FastEl(i, 0) += inhib.FastEl(i, t);
     }
@@ -4528,6 +4516,32 @@ void LeabraEngineInst::RollupWritebackScratch() {
     LeabraUnit* un = (LeabraUnit*)units[i];
     un->net = excit.FastEl_Flat(i);
     un->gc.i = inhib.FastEl_Flat(i);
+  }
+}
+
+void LeabraEngineInst::RollupWritebackScratch_NetinDelta() {
+//NOTE: may be more efficient to pipeline the writing with the rollup, to avoid 
+// cache overflow
+  int size = excit.dim(0); // same for both
+  //TODO: make this much more efficient, either call a GSL routine, or do a SSE
+  for (int t = n_tasks - 1; t > 0; --t) {
+    for (int i = 0; i < size; ++i) {
+      excit.FastEl(i, 0) += excit.FastEl(i, t);
+    }
+  }
+  for (int t = n_tasks - 1; t > 0; --t) {
+    for (int i = 0; i < size; ++i) {
+      inhib.FastEl(i, 0) += inhib.FastEl(i, t);
+    }
+  }
+  // write back
+  size = unitSize(); // exact
+  for (int i = 0; i < size; ++i) {
+    LeabraUnit* un = (LeabraUnit*)units[i];
+    un->net = 0.0f;	// important for soft-clamped layers
+    un->gc.i = 0.0f;
+    un->net_delta = excit.FastEl_Flat(i);
+    un->g_i_delta = inhib.FastEl_Flat(i);
   }
 }
 
@@ -4593,6 +4607,9 @@ void LeabraThreadEngineInst::Initialize() {
   threads = (taTaskThread**)calloc(MAX_THREADS, sizeof(taTaskThread*));
   nibble = true;
   n_units = 0;
+#ifdef DEBUG
+  n_units_done = 0;
+#endif
 }
 
 void LeabraThreadEngineInst::Destroy() {
@@ -4602,19 +4619,31 @@ void LeabraThreadEngineInst::Destroy() {
 }
 
 void LeabraThreadEngineInst::DoProc(int proc_id) {
+  // number of tasks will either be =threads, or less, if fewer units
+  n_tasks = ((n_units + (UNIT_CHUNK_SIZE - 1)) & (~UNIT_CHUNK_SIZE)) / UNIT_CHUNK_SIZE;
+  if (n_tasks < 1) n_tasks = 1;
+  else if (n_tasks > taskCount()) n_tasks = taskCount();
+  
+#ifdef DEBUG
+  n_units_done = 0;
+#endif
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
   // init tasks and start all >0 tasks
   LeabraThreadEngineTask* tsk = NULL;
-  for (int t = 0; t < taskCount(); ++t) {
+  taTaskThread* tt = NULL;
+  for (int t = 0; t < n_tasks; ++t) {
+    // note: task0 done in main thread, so no thread for it
     tsk = task(t);
+    if (t > 0) {
+      tt = threads[t];
+      tt->suspend(); // supposed to already be suspended!
+    }
     tsk->g_u = t * UNIT_CHUNK_SIZE;
     tsk->init_done = false;
     tsk->proc_id = proc_id;
-    // note: task0 done in main thread
+tsk->n_units_done = 0;
     if (t > 0) {
-      taTaskThread* tt = (taTaskThread*)threads[t];
-      tt->suspend(); // prob already suspended
       tt->resume();
     }
   }
@@ -4622,8 +4651,9 @@ void LeabraThreadEngineInst::DoProc(int proc_id) {
   // then do my part
   tsk = task(0);
   tsk->run();
+n_units_done = tsk->n_units_done;
   // then lend a "helping hand" (if enabled)
-  if (nibble) for (int t = 1; t < taskCount(); ++t) {
+  if (nibble) for (int t = 1; t < n_tasks; ++t) {
     tsk = task(t);
     // note: its ok if tsk finishes between our test and calling run
     if ((tsk->g_u < n_units) && (tsk->init_done))
@@ -4631,16 +4661,26 @@ void LeabraThreadEngineInst::DoProc(int proc_id) {
   }
   // always need to sync regardless of nibbling, since thread can be finishing
   // its chunks
-  for (int t = 1; t < taskCount(); ++t) {
-    taTaskThread* tt = (taTaskThread*)threads[t];
+  for (int t = 1; t < n_tasks; ++t) {
+    tt = threads[t];
     tt->suspend(); // suspending is syncing with completion of loop
+n_units_done += task(t)->n_units_done;
   }
+#ifdef DEBUG
+  if (n_units != n_units_done)
+    taMisc::Error("LeabraThreadEngineInst::DoProc: n_units != n_units_done (exp/done: ",
+    String(n_units), "/", String(n_units_done));
+#endif
 }
 
 
 void LeabraThreadEngineInst::OnBuild_impl() {
-  LeabraThreadEngine* engine = this->engine();
   inherited::OnBuild_impl();
+  // alloc enough space for all units in send, because
+  // we use the list like a fully allocated array, to avoid
+  // unnecessary writes in non-delta (since most cycles will have same sends) 
+  send_units.Alloc(unitSize());
+  LeabraThreadEngine* engine = this->engine();
   setTaskCount(engine->n_threads);
   nibble = engine->nibble;
   // assert scratchpad guys (note: task threads do the clear)
@@ -4658,8 +4698,10 @@ void LeabraThreadEngineInst::OnBuild_impl() {
 
 bool LeabraThreadEngineInst::OnSend_Netin() {
   LeabraNetwork* net = this->net();
-  // build list of send units
-  send_units.Reset();
+  // build list of send units -- we treat the list like an array
+  // which is kinda sleazy, but it works fine (because we alloc'ed for all on build)
+  int cnt = 0;
+//  send_units.Reset();
   LeabraLayer* lay;
   taLeafItr li;
   FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
@@ -4672,27 +4714,64 @@ bool LeabraThreadEngineInst::OnSend_Netin() {
         
         if (un->act > us->opt_thresh.send) {
           net->send_pct_n++;
-          send_units.Add(un);
+          if (send_units.el[cnt] != un)
+            send_units.el[cnt] = un;
+          ++cnt;
         }
       }
     }
+  }
+  send_units.size = cnt;
+  //note: could very well be 0 send units...
+  
+  // dispatch the tasks
+  n_units = cnt;
+  DoProc(LeabraTask::P_Send_Netin);
+  
+  // rollup the scratch and write back
+  RollupWritebackScratch_Netin();
+
+  return true;
+}
+
+bool LeabraThreadEngineInst::OnSend_NetinDelta() {
+  LeabraNetwork* net = this->net();
+  // we just build the unit list the conventional way, because with delta,
+  // the list of active units will change a lot, so no real benefit to 
+  // comparing to previous to avoid writes
+  send_units.Reset();
+  LeabraLayer* lay;
+  taLeafItr li;
+  FOR_ITR_EL(LeabraLayer, lay, net->layers., li) {
+    LeabraUnit* un;
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.spec.ptr();
+    taLeafItr ui;
+    FOR_ITR_EL(LeabraUnit, un, lay->units., ui) {
+      if (!(lay->lesioned() || lay->hard_clamped)) {
+        net->send_pct_tot++;
+        if (un->act > us->opt_thresh.send) {
+          if (fabsf(un->act_delta) > us->opt_thresh.delta) {
+            net->send_pct_n++;
+            send_units.Add(un);
+          }
+        } 
+        else if (un->act_sent <= us->opt_thresh.send) {
+          net->send_pct_n++;
+          send_units.Add(un);
+        }
+      }
+   }
   }
   //note: could very well be 0 send units...
   
   // dispatch the tasks
   n_units = send_units.size;
-  DoProc(LeabraTask::P_Send_Netin);
+  DoProc(LeabraTask::P_Send_NetinDelta);
   
   // rollup the scratch and write back
-  RollupWritebackScratch();
+  RollupWritebackScratch_NetinDelta();
 
   return true;
-}
-
-bool LeabraThreadEngineInst::OnSend_Netin_Delta() {
-return false;
-  //TODO
-  // build list of send units
 }
 
 void LeabraThreadEngineInst::setTaskCount(int val) {
@@ -4734,7 +4813,9 @@ void LeabraThreadEngineTask::Initialize() {
   init_done = false;
 }
 
-void LeabraThreadEngineTask::DoSend_Netin_Gp(bool is_excit, SendCons* cg, Unit* su) {
+void LeabraThreadEngineTask::DoSend_Netin_Gp(bool is_excit, 
+  SendCons* cg, LeabraUnit* su)
+{
   // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
@@ -4763,9 +4844,8 @@ void LeabraThreadEngineTask::InitScratch_Send_Netin() {
   // do the inhib first, since likely not used, so cache excit
   memset(inhib, 0, sizeof(float) * scr_units);
   if (task_id == 0) {
+    //NOTE: only need to init into task[0][]
     for (int i = 0; i < unit_size; ++i) {
-    //TEMP: not needed once we nuke clmp_net
-      //NOTE: only need to init into task[0][]
       excit[i] = inst->unit(i)->clmp_net;
     }
   } else {
@@ -4778,7 +4858,7 @@ void LeabraThreadEngineTask::DoSend_Netin() {
   // local copies of constants
   const int n_units = inst->n_units;
   // span is the chunk size, times the number of threads working in parallel
-  const int span_size = LeabraThreadEngineInst::UNIT_CHUNK_SIZE * inst->taskCount();
+  const int span_size = LeabraThreadEngineInst::UNIT_CHUNK_SIZE * inst->n_tasks;
   // guard init, because [0] could nibble us!
   if (!init_done) {
     InitScratch_Send_Netin();
@@ -4806,12 +4886,104 @@ void LeabraThreadEngineTask::DoSend_Netin() {
       chnki = 0;
       m_u = AtomicFetchAdd(&g_u, span_size);
     }
+#ifdef DEBUG
+++n_units_done;//    AtomicFetchAdd(&(inst->n_units_done), 1);
+#endif
   }
    //donzo! that's it
 }
 
+void LeabraThreadEngineTask::DoSend_NetinDelta_Gp(bool is_excit,
+  SendCons* cg, LeabraUnit* su) 
+{
+  // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+  // LeabraUnitSpec::CheckConfig checks that this is ok.
+  Unit* ru = cg->Un(0);
+  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+  if (is_excit) {
+    CON_GROUP_LOOP(cg, 
+      StatC_Send_Excit(
+        (LeabraCon*)cg->Cn(i), 
+        &excit[((LeabraUnit*)cg->Un(i))->flat_idx],
+        su_act_delta_eff)
+      );
+  } else {
+    CON_GROUP_LOOP(cg, 
+      StatC_Send_Inhib(
+        (LeabraCon*)cg->Cn(i), 
+        &inhib[((LeabraUnit*)cg->Un(i))->flat_idx],
+        su_act_delta_eff)
+      );
+  }
+}
+
+
+void LeabraThreadEngineTask::InitScratch_Send_NetinDelta() {
+//  LeabraThreadEngineInst* inst = this->inst();
+  // do the inhib first, since likely not used, so cache excit
+  memset(inhib, 0, sizeof(float) * scr_units);
+  memset(excit, 0, sizeof(float) * scr_units);
+}
+
 void LeabraThreadEngineTask::DoSend_NetinDelta() {
-  //TODO
+  LeabraThreadEngineInst* inst = this->inst();
+  // local copies of constants
+  const int n_units = inst->n_units;
+  // span is the chunk size, times the number of threads working in parallel
+  const int span_size = LeabraThreadEngineInst::UNIT_CHUNK_SIZE * inst->n_tasks;
+  // guard init, because [0] could nibble us!
+  if (!init_done) {
+    InitScratch_Send_NetinDelta();
+    init_done = true; // so [0] can nibble us
+  }
+//HEREAFTER could get "nibbled" -- run by [0]
+    
+  // we work in chunks... so make a local guy
+#ifndef DEBUG
+  int //local var for speed
+#endif
+  m_u = AtomicFetchAdd(&g_u, span_size);
+  int chnki = 0; // count units within the chunk
+  while (m_u < n_units) {
+    LeabraUnit* u = (LeabraUnit*)inst->send_units[m_u];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+
+    // note: because we did these tests for putting units on the send list
+    // we can then use the first part of first condition to distinguish the two cases
+    if (u->act > us->opt_thresh.send) {
+      // case: above threshold, and delta above delta threshold
+      for(int g=0; g<u->send.size; g++) {
+        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+        LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+        if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size) continue;
+        bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
+        DoSend_NetinDelta_Gp(is_excit, send_gp, u);
+      }
+      u->act_sent = u->act;	// cache the last sent value
+    } else {
+      // case: below threshold, and haven't unsent yet
+      u->act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
+      for(int g=0; g<u->send.size; g++) {
+        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+        LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+        if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
+        bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
+        DoSend_NetinDelta_Gp(is_excit, send_gp, u);
+      }
+      u->act_sent = 0.0f;		// now it effectively sent a 0..
+    }
+    
+    if (++chnki < LeabraThreadEngineInst::UNIT_CHUNK_SIZE) {
+      ++m_u;
+    } else {
+      chnki = 0;
+      m_u = AtomicFetchAdd(&g_u, span_size);
+    }
+#ifdef DEBUG
+++n_units_done;//    AtomicFetchAdd(&(inst->n_units_done), 1);
+#endif
+  }
+   //donzo! that's it
 }
 
 #endif // TA_USE_THREADS

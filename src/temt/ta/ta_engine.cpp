@@ -125,7 +125,7 @@ void taTaskThread::resume() {
   mutex.lock();
   m_suspended = false;
   start_latency.StartTimer(false); // no reset
-  wc.wakeAll();;
+  wc.wakeAll();
   mutex.unlock();
 }
 
@@ -133,17 +133,17 @@ void taTaskThread::run() {
   m_thread_id = currentThreadId();
   while (m_active) {
     mutex.lock();
-    while (m_suspended)
+    if (m_suspended)
       wc.wait(&mutex);
-      
+    
     start_latency.EndTimer();
     if (m_task) {
       run_time.StartTimer(false); // no reset
       m_task->run();
       run_time.EndTimer();
     }
+    
     m_suspended = true;
-    if (!m_active) break;
     mutex.unlock();
   }
 }

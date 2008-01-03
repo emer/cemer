@@ -1825,7 +1825,7 @@ public:
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
   TypeDef*	min_engine;	// #READ_ONLY #NO_SAVE the minimum type of the engine
-  NetEngineRef	net_engine; // #NO_SAVE #TYPE_ON_min_engine the engine being used for this net
+  NetEngineRef	net_engine; // #APPLY_IMMED #NO_SAVE #TYPE_ON_min_engine the engine being used for this net
   NetEngineInstPtr net_inst; // #IGNORE the Inst created by the Engine 
 
   inline void		SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
