@@ -191,7 +191,7 @@ void taiType::AddToType(TypeDef* td) {
 }
 
 taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-	taiType* parent_type_, int flags)
+	taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   //note: user can pass in flgReadOnly to force readonly, but we can also force it
   bool ro = isReadOnly(par, host_);
@@ -199,20 +199,20 @@ taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent
   if (parent_type_ != NULL)
     ro = ro || parent_type_->isReadOnly(par);
   if (ro)
-    flags |= taiData::flgReadOnly;
+    flags_ |= taiData::flgReadOnly;
   if (requiresInline())
-    flags |= taiData::flgInline;
-  if ((flags & taiData::flgReadOnly) && !handlesReadOnly()) {
-    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags);
-  } else if ((flags & taiData::flgInline) && allowsInline()) {
-    return GetDataRepInline_impl(host_, par, gui_parent_, flags);
+    flags_ |= taiData::flgInline;
+  if ((flags_ & taiData::flgReadOnly) && !handlesReadOnly()) {
+    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
+  } else if ((flags_ & taiData::flgInline) && allowsInline()) {
+    return GetDataRepInline_impl(host_, par, gui_parent_, flags_, mbr);
   } else {
-    return GetDataRep_impl(host_, par, gui_parent_, flags);
+    return GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
   }
 }
 
 taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   // taiField: your friend when all else fails...
   taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
@@ -220,10 +220,10 @@ taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
 }
 
 taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent, int flags_) 
+  QWidget* gui_parent, int flags_, MemberDef* mbr_) 
 {
   // base type doesn't know what to do for inline, so just returns the basic guy
-  return GetDataRep_impl(host_, par, gui_parent, flags_);
+  return GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
 }
 
 void taiType::GetImage(taiData* dat, const void* base) {
@@ -293,15 +293,16 @@ int taiIntType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
 //TODO: the taiIncrField control can only handle int values, so can't handle uint range
 // should either replace with a DoubleSpin, or longlongspin
   taiIncrField* rval = new taiIncrField(typ, host_, par, gui_parent_, flags_);
   // put limits on values -- start w/ explicit ones, them limit them by datatype
   int min = INT_MIN;
-  if (typ->HasOption("POS_ONLY")) // do this one first, then max of min
+  if (mbr && mbr->HasOption("POS_ONLY")) // do this one first, then max of min
     min = 0;
-  String val = typ->OptionAfter("MIN_");
+  String val;
+  if (mbr) val = mbr->OptionAfter("MIN_");
   int it;
   // we are very conservative, and make sure the value can be converted
   if (val.nonempty() && val.isInt()) {
@@ -309,7 +310,7 @@ taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
     min = MAX(min, it);
   }
   int max = INT_MAX;
-  val = typ->OptionAfter("MAX_");
+  if (mbr) val = mbr->OptionAfter("MAX_");
   if (val.nonempty() && val.isInt()) {
     it = val.toInt();
     max = MIN(max, it);
@@ -398,7 +399,7 @@ int taiEnumType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   isBit = ((typ != NULL) && (typ->HasOption("BITS")));
   if (isBit) {
     return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
@@ -459,7 +460,7 @@ int taiBoolType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiBoolType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_){
+taiData* taiBoolType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*){
   taiToggle* rval = new taiToggle(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -486,7 +487,7 @@ int taiStringType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -511,7 +512,7 @@ int taiVariantType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiVariantType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiVariantType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiVariant* rval = new taiVariant(host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -546,19 +547,19 @@ if (td->name == "taSmartRef") {
 }
 
 taiData* taiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-  taiType* parent_type_, int flags_) 
+  taiType* parent_type_, int flags_, MemberDef* mbr_) 
 {
   if (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"))
     flags_ |= taiData::flgInline;
-  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_); 
+  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_, mbr_); 
 }
 
-taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiEditButton* rval = taiEditButton::New(NULL, NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
 
-taiData* taiClassType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiClassType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiPolyData* rval = taiPolyData::New(true, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -588,7 +589,7 @@ int taiMatrixGeomType::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiMatrixGeomType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiMatrixGeomType::GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiDimEdit *rval = new taiDimEdit(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -606,7 +607,7 @@ int taiColorType::BidForType(TypeDef* td) {
 }
 
 taiData* taiColorType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
- QWidget* gui_parent_, int flags_) 
+ QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   taiColor *rval = new taiColor(typ, host_, par, gui_parent_, flags_);
   return rval;
@@ -647,7 +648,7 @@ int gpiListType::BidForType(TypeDef* td) {
     return (taiClassType::BidForType(td) +1);
   return 0;
 }
-taiData* gpiListType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiListType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -662,7 +663,7 @@ int gpiGroupType::BidForType(TypeDef* td) {
     return (gpiListType::BidForType(td) +1);
   return 0;
 }
-taiData* gpiGroupType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiGroupType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -681,7 +682,7 @@ int gpiArray_Type::BidForType(TypeDef* td) {
   }
 }
 
-taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiArrayEditButton *rval =
     new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   return rval;
@@ -702,7 +703,7 @@ int taiTokenPtrType::BidForType(TypeDef* td) {
 }
 
 taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   // setting mode now is good for rest of life
   if (typ->DerivesFrom(TA_taBase))
@@ -821,9 +822,9 @@ int taiTypePtr::BidForType(TypeDef* td) {
 // and can't therefore figure out what kind of datarep to use..
 // need to have a datarep that is a "string or type menu" kind of thing..
 
-taiData* taiTypePtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiTypePtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   if (orig_typ == NULL)
-    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_);
+    return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr_);
 
   taiTypeDefButton* rval =
     new taiTypeDefButton(typ, host_, par, gui_parent_, flags_);
@@ -861,7 +862,7 @@ int taiFilePtrType::BidForType(TypeDef* td) {
   return 0;
 }
 
-taiData* taiFilePtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiFilePtrType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   return new taiFileButton(typ,  host_, par, gui_parent_, flags_);
 }
 
@@ -1042,43 +1043,43 @@ bool taiMember::handlesReadOnly() {
 
 
 taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-	taiType* parent_type_, int flags)
-{
+	taiType* parent_type_, int flags_, MemberDef*)
+{//note: we ignore MemberDef because we use our own
   bool ro = isReadOnly(par, host_);
   // we must communicate read_only when getting item
   //TODO: probably should also use parent_type in determining ro, as base class does
   if (ro)
-    flags |= taiData::flgReadOnly;
+    flags_ |= taiData::flgReadOnly;
   if (((mbr->HasOption(TypeItem::opt_inline)) ||
        (mbr->HasOption(TypeItem::opt_edit_inline))) 
     && mbr->type->it->allowsInline())
-    flags |= taiData::flgInline;
+    flags_ |= taiData::flgInline;
   if (mbr->HasOption(TypeItem::opt_EDIT_DIALOG)) // if a string field, puts up an editor button
-    flags |= taiData::flgEditDialog;
+    flags_ |= taiData::flgEditDialog;
   if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
-    flags |= taiData::flgAutoApply;
+    flags_ |= taiData::flgAutoApply;
   if (mbr->HasOption("NO_EDIT_APPLY_IMMED"))
-    flags |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
+    flags_ |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
   if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
-    flags |= taiData::flgNoAlpha; // just in case this is needed
+    flags_ |= taiData::flgNoAlpha; // just in case this is needed
     
-  ro = (flags & taiData::flgReadOnly); // just for clarity and parity with Image/Value
+  ro = (flags_ & taiData::flgReadOnly); // just for clarity and parity with Image/Value
   taiData* rval = NULL;
   if (ro || !isCondEdit()) { // condedit is irrelevant
-    rval = GetArbitrateDataRep(host_, par, gui_parent_, flags);
+    rval = GetArbitrateDataRep(host_, par, gui_parent_, flags_, mbr);
   } else { // rw && condEdit 
-    taiDataDeck* deck = new taiDataDeck(typ, host_, par, gui_parent_, flags);
+    taiDataDeck* deck = new taiDataDeck(typ, host_, par, gui_parent_, flags_);
   
     deck->InitLayout();
     // rw child -- always the impl of this guy
     gui_parent_ = deck->GetRep();
-    taiData* child = GetArbitrateDataRep(host_, deck, gui_parent_, flags);;
+    taiData* child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);
     deck->AddChildWidget(child->GetRep());
     child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
     
     // ro child, either ro of this guy, or default if we don't handle ro
-    flags |= taiData::flgReadOnly;
-    child = GetArbitrateDataRep(host_, deck, gui_parent_, flags);;
+    flags_ |= taiData::flgReadOnly;
+    child = GetArbitrateDataRep(host_, deck, gui_parent_, flags_, mbr);;
     deck->AddChildWidget(child->GetRep());
     child->SetMemberDef(mbr); // not used much, ex. used by taiField for edit dialog info
     deck->EndLayout();
@@ -1089,9 +1090,9 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
 }
 
 taiData* taiMember::GetDataRep_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
-  taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_);
+  taiData* dat = mbr->type->it->GetDataRep(host_, par, gui_parent_, this, flags_, mbr);
   return dat;
 }
 
@@ -1285,7 +1286,7 @@ TypeDef* taiMember::GetTargetType(const void* base) {
 };
 
 taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
-  QWidget* gui_parent_, int flags_)
+  QWidget* gui_parent_, int flags_, MemberDef*)
 {
   taiData* rval = NULL;
   
@@ -1294,9 +1295,9 @@ taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
   } else {*/
     bool ro = (flags_ & taiData::flgReadOnly); 
     if (ro && !handlesReadOnly()) {
-      rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags_);
+      rval = taiMember::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
     } else {
-      rval = GetDataRep_impl(host_, par, gui_parent_, flags_);
+      rval = GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
     }
 //}
   return rval;
@@ -1342,7 +1343,7 @@ int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   // setting mode now is good for rest of life
   if (mbr->type->DerivesFrom(TA_taBase))
@@ -1498,7 +1499,7 @@ int taiDefaultToken::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiDefaultToken::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiDefaultToken::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiDefaultEdit* tde = new taiDefaultEdit(mbr->type->GetNonPtrType());
   taiEditButton *rval =	taiEditButton::New(NULL,	tde, mbr->type->GetNonPtrType(),
      host_, par, gui_parent_, flags_);
@@ -1529,7 +1530,7 @@ int taiSubTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiSubTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiSubTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* td = NULL;
   String typ_nm = mbr->OptionAfter("SUBTYPE_");
   if (!typ_nm.empty())
@@ -1579,7 +1580,7 @@ int taiTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-  int flags_) 
+  int flags_, MemberDef*) 
 {
   if (mbr->HasOption("NULL_OK"))
     flags_ |= taiData::flgNullOk;
@@ -1634,7 +1635,7 @@ int taiEnumTypePtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiEnumTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, 
-  int flags_) 
+  int flags_, MemberDef*) 
 {
   if (mbr->HasOption("NULL_OK"))
     flags_ |= taiData::flgNullOk;
@@ -1656,7 +1657,7 @@ int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiMemberDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   taiMemberDefButton* rval =  new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
@@ -1688,7 +1689,7 @@ int taiMethodDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiMethodDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   taiMethodDefButton* rval = new taiMethodDefButton(typ, host_, 
     par, gui_parent_, flags_);
@@ -1720,7 +1721,7 @@ int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiFunPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiFunPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   taiButtonMenu* rval = new taiButtonMenu(taiMenu::radio_update, taiMisc::fonSmall,
       typ, host_, par, gui_parent_, flags_);
   rval->AddItem("NULL");
@@ -1773,7 +1774,7 @@ int taiCondEditMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_,
-   taiData* par, QWidget* gui_parent_, int flags_) 
+   taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   // only get read-only for modal dialogs (otherwise, no chance to update!)
   bool use_ro = (!host_->isModal()); 
@@ -1860,15 +1861,15 @@ int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
 }
 
 taiData* taiTDefaultMember::GetDataRep(IDataHost* host_,
-  taiData* par, QWidget* gui_parent_, int flags_)
+  taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_)
 {
   taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   taiData* rdat;
   if (m_sub_types)
-    rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_);
+    rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
   else
-    rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_);
+    rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
   rval->data = rdat;
   rval->AddChildWidget(rdat->GetRep());
   rval->EndLayout();
@@ -2036,7 +2037,7 @@ void taiArgType::GetValue_impl(taiData* dat, void*) {
     arg_typ->it->GetValue(dat, arg_base);
 }
 
-taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (arg_base == NULL) return NULL;
 
   if (use_it)
@@ -2186,7 +2187,7 @@ cssEl* taiStreamArgType::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiStreamArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiStreamArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (!gf) {
     // we get and initialize the filer once
     gf = taBase::StatGetFiler(meth);
@@ -2263,7 +2264,7 @@ cssEl* taiTokenPtrArgType::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiTokenPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiTokenPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   int token_flags = 0;
   if (GetHasOption("NULL_OK"))
@@ -2396,7 +2397,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   int flags = flags_;
   if (GetHasOption("NULL_OK"))
     flags |= taiData::flgNullOk;
@@ -2455,7 +2456,7 @@ cssEl* taiMemberPtrArgType::GetElFromArg(const char* nm, void*) {
 }
 
 taiData* taiMemberPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags_) 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
 {
   taiMemberDefButton* rval = new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
@@ -2494,7 +2495,7 @@ cssEl* taiMethodPtrArgType::GetElFromArg(const char* nm, void*) {
   return arg_val;
 }
 
-taiData* taiMethodPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiMethodPtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MethodDef* init_md = typ->methods.FindName("Load");
   if (*((MethodDef**)arg_base) != NULL)
     init_md = *((MethodDef**)arg_base);
@@ -2632,7 +2633,7 @@ int taiROListMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiROListMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiROListMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListEditButton *rval = new gpiListEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   rval->read_only = true;
   return rval;
@@ -2658,7 +2659,7 @@ int taiROGroupMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiROGroupMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiROGroupMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiGroupEditButton *rval = new gpiGroupEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   rval->read_only = true;
   return rval;
@@ -2685,7 +2686,7 @@ int taiROArrayMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* taiROArrayMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiROArrayMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiArrayEditButton *rval = new gpiArrayEditButton(NULL, typ, host_, par, gui_parent_, flags_);
   rval->read_only = true;
   return rval;
@@ -2710,7 +2711,7 @@ int gpiDefaultEl::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* gpiDefaultEl::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiDefaultEl::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListEls *rval = new gpiListEls(taiMenu::buttonmenu, taiMisc::fonSmall,
 	NULL, typ, host_, par, gui_parent_, (flags_ | taiData::flgNullOk | taiData::flgNoList));
   return rval;
@@ -2744,7 +2745,7 @@ int gpiLinkGP::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* gpiLinkGP::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiLinkGP::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiLinkEditButton* rval = new gpiLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -2768,7 +2769,7 @@ int gpiLinkList::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* gpiLinkList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiLinkList::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   gpiListLinkEditButton* rval = new gpiListLinkEditButton(NULL, mbr->type, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -2793,7 +2794,7 @@ int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiFromGpTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
   int new_flags = flags_;
@@ -2905,7 +2906,7 @@ cssEl* gpiInObjArgType::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* gpiInObjArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiInObjArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   int new_flags = (flags_ & ~taiData::flgNoList); //note: exclude flgNoList
   if (GetHasOption("NULL_OK"))
     new_flags |= taiData::flgNullOk;
@@ -2971,7 +2972,7 @@ cssEl* gpiFromGpArgType::GetElFromArg(const char* nm, void* base) {
   return arg_val;
 }
 
-taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* gpiFromGpArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
   int new_flags = flags_;

@@ -155,9 +155,31 @@ inline int AtomicFetchAdd(int* operand, int incr)
 }
 #endif
 
+//
+
+/* TaskThread
+  A task thread is a worker thread that is created once, and designed for
+  running a task in a "one-shot" manner, followed by syncronization.
+  
+  The usage is as follows:
+  
+  - create/start -- this puts the thread in the Blocked condition
+  - assign a task
+  - 'resume' -- this releases the thread to run the task
+  - thread is now running
+  - 'sync' -- this waits for the thread to finish the task -- the main thread
+      will block until the thread is finished
+
+*/
 class TA_API taTaskThread: public QThread {
 INHERITED(QThread)
 public:
+  enum ThreadState {
+    TS_BLOCKED, // waiting to be released (to run the task)
+    TS_RUNNING, // running the task
+    TS_DONE,    // finished running the task, waiting to sync
+  };
+  
   static void		DeleteTaskThread(taTaskThread* tt); 
    // use this to delete, do not delete directly!
 
@@ -165,12 +187,12 @@ public:
   TimeUsed		run_time; // amount of time actually running jobs
   
   inline bool		isActive() const {return m_active;}
-  inline bool		isSuspended() const {return m_suspended;}
+//  inline bool		isSuspended() const {return m_suspended;}
   
   taTask*		task() const {return m_task;}
   void			setTask(taTask* t);
-  void 			suspend();
-  void			resume();
+  void 			sync(); // sync up with the thread after finished running task
+  void			release(); // release the task ready to run
   void			terminate(); //note: lexical override only
   
   taTaskThread(); // NEVER make static version, only via new, and always delete with Delete method
@@ -179,11 +201,12 @@ protected:
   ~taTaskThread(); // do not elevate to public, always delete through static guy
   
   QMutex		mutex;// #IGNORE
-  QWaitCondition 	wc;// #IGNORE
+  QWaitCondition 	released;// #IGNORE
+  QWaitCondition 	synced;// #IGNORE
   Qt::HANDLE		m_thread_id; // for the thread, set in run
   
   taTaskRef		m_task;
-  bool			m_suspended;
+  ThreadState		m_state;
   bool			m_active;
   
   override void 	run();

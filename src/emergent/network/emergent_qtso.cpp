@@ -89,24 +89,25 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
 
 
 taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
-  QWidget* gui_parent, int flags_) 
+  QWidget* gui_parent, int flags_, MemberDef* mbr_) 
 {
+  if (!mbr_) mbr_ = mbr;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     taiData* rdat;
     if (m_sub_types != NULL)
-      rdat = sub_types()->GetDataRep(host_, par, gui_parent);
+      rdat = sub_types()->GetDataRep(host_, par, gui_parent, NULL, flags_, mbr_);
     else
-      rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_);
+      rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
     return rdat;
   } else {
     taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, flags_);
     rval->InitLayout();
     taiData* rdat;
     if (m_sub_types)
-      rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_);
+      rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
     else
-      rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_);
+      rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
     rval->data = rdat;
     rval->AddChildWidget(rdat->GetRep());
     rval->EndLayout();

@@ -4586,7 +4586,7 @@ void LeabraTask::run() {
 //////////////////////////////////
 
 void LeabraThreadEngine::Initialize() {
-  n_threads = taPlatform::cpuCount();
+  n_threads = taMisc::cpus;
   nibble = true;
 }
 
@@ -4634,26 +4634,20 @@ void LeabraThreadEngineInst::DoProc(int proc_id) {
   taTaskThread* tt = NULL;
   for (int t = 0; t < n_tasks; ++t) {
     // note: task0 done in main thread, so no thread for it
+    //NOTE: threads must have been idle or previously sync'ed!!!
     tsk = task(t);
-    if (t > 0) {
-      tt = threads[t];
-      tt->suspend(); // supposed to already be suspended!
-    }
     tsk->g_u = t * UNIT_CHUNK_SIZE;
     tsk->init_done = false;
     tsk->proc_id = proc_id;
-tsk->n_units_done = 0;
     if (t > 0) {
-      tt->resume();
+      tt = threads[t];
+      tt->release();
     }
   }
   
   // then do my part
   tsk = task(0);
   tsk->run();
-#ifdef DEBUG
-n_units_done = tsk->n_units_done;
-#endif
   // then lend a "helping hand" (if enabled)
   if (nibble) for (int t = 1; t < n_tasks; ++t) {
     tsk = task(t);
@@ -4665,10 +4659,7 @@ n_units_done = tsk->n_units_done;
   // its chunks
   for (int t = 1; t < n_tasks; ++t) {
     tt = threads[t];
-    tt->suspend(); // suspending is syncing with completion of loop
-#ifdef DEBUG
-n_units_done += task(t)->n_units_done;
-#endif
+    tt->sync(); // suspending is syncing with completion of loop
   }
 #ifdef DEBUG
   if (n_units != n_units_done)
@@ -4891,7 +4882,7 @@ void LeabraThreadEngineTask::DoSend_Netin() {
       m_u = AtomicFetchAdd(&g_u, span_size);
     }
 #ifdef DEBUG
-++n_units_done;//    AtomicFetchAdd(&(inst->n_units_done), 1);
+    AtomicFetchAdd(&(inst->n_units_done), 1);
 #endif
   }
    //donzo! that's it
@@ -4942,11 +4933,8 @@ void LeabraThreadEngineTask::DoSend_NetinDelta() {
   }
 //HEREAFTER could get "nibbled" -- run by [0]
     
-  // we work in chunks... so make a local guy
-#ifndef DEBUG
-  int //local var for speed
-#endif
-  m_u = AtomicFetchAdd(&g_u, span_size);
+  // we work in chunks... so must make a local guy
+  int m_u = AtomicFetchAdd(&g_u, span_size);
   int chnki = 0; // count units within the chunk
   while (m_u < n_units) {
     LeabraUnit* u = (LeabraUnit*)inst->send_units[m_u];
@@ -4984,7 +4972,7 @@ void LeabraThreadEngineTask::DoSend_NetinDelta() {
       m_u = AtomicFetchAdd(&g_u, span_size);
     }
 #ifdef DEBUG
-++n_units_done;//    AtomicFetchAdd(&(inst->n_units_done), 1);
+    AtomicFetchAdd(&(inst->n_units_done), 1);
 #endif
   }
    //donzo! that's it

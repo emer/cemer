@@ -88,6 +88,8 @@ taEngineInst* taEngine::MakeEngineInst_impl() const {
 
 #ifdef TA_USE_THREADS
 
+#include <QMutexLocker>
+
 /*
   Note: the Wait/Mutex synchronization paradigm here was taken
   from Qt documentation. It is non-obvious, non-trivial, and you
@@ -109,7 +111,7 @@ taTaskThread::taTaskThread() {
   m_thread_id = 0;
   m_task = NULL;
   m_active = true;
-  m_suspended = true;
+  m_state = TS_BLOCKED;
   // note: not a taBase, so we need to do init links here
   start_latency.InitLinks();
   run_time.InitLinks();
@@ -120,21 +122,26 @@ taTaskThread::~taTaskThread() {
   start_latency.CutLinks();
 }
 
-void taTaskThread::resume() {
-  if (!m_suspended) return;
-  mutex.lock();
-  m_suspended = false;
+void taTaskThread::release() {
+  QMutexLocker ml(&mutex); // locked now
+/*  if (m_state != TS_BLOCKED) {
+    taMisc::Error("taTaskThread::release: expected m_state to be TS_BLOCKED was: ",
+    String(m_state));
+    return;
+  }*/
   start_latency.StartTimer(false); // no reset
-  wc.wakeAll();
-  mutex.unlock();
+  m_state = TS_RUNNING;
+  released.wakeAll();
+  //ml unlocks on delete
 }
 
 void taTaskThread::run() {
   m_thread_id = currentThreadId();
   while (m_active) {
     mutex.lock();
-    if (m_suspended)
-      wc.wait(&mutex);
+    while (m_state != TS_RUNNING)
+      released.wait(&mutex);
+    mutex.unlock();
     
     start_latency.EndTimer();
     if (m_task) {
@@ -143,22 +150,24 @@ void taTaskThread::run() {
       run_time.EndTimer();
     }
     
-    m_suspended = true;
+    mutex.lock();
+    m_state = TS_DONE;
+    synced.wakeAll();
     mutex.unlock();
   }
 }
 
 void taTaskThread::setTask(taTask* t) {
   if (m_task.ptr() == t) return;
-  suspend();
   m_task = t;
 }
 
-void taTaskThread::suspend() {
-  if (m_suspended) return;
-  mutex.lock();
-  m_suspended = true;
-  mutex.unlock();
+void taTaskThread::sync() {
+  QMutexLocker ml(&mutex); // locked now
+  while (m_state != TS_DONE)
+    synced.wait(&mutex);
+  m_state = TS_BLOCKED;
+  //ml unlocks
 }
 
 void taTaskThread::terminate() {
@@ -167,8 +176,8 @@ void taTaskThread::terminate() {
   mutex.lock();
   m_active = false;
   m_task = NULL; // don't call setTask, because that also suspends
-  m_suspended = false; // need to resume so it will finish!
-  wc.wakeAll();;
+  m_state = TS_RUNNING; // need to resume so it will finish!
+  released.wakeAll();;
   mutex.unlock();
 //  QThread::terminate(); //WARNING: including this causes the dude to hang
 }

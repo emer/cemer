@@ -1060,7 +1060,6 @@ void taMisc::Decode_Signal(int err) {
 
 void taMisc::Initialize() {
   not_constr = false;
-  cpus = taPlatform::cpuCount();
 }
 
 void taMisc::AddInitHook(init_proc_t init_proc) {
@@ -1080,6 +1079,11 @@ void taMisc::Init_Hooks() {
 }
 
 void taMisc::Init_Defaults_PreLoadConfig() {
+  cpus = taPlatform::cpuCount();
+  // max_cpu
+  int max_cpus = FindArgByName("MaxCpus").toInt(); // 0 if doesn't exist
+  if ((max_cpus > 0) && (max_cpus <= taPlatform::cpuCount()))
+    cpus = max_cpus;
 }
 
 void taMisc::Init_Defaults_PostLoadConfig() {

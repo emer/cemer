@@ -1227,6 +1227,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("CssRefCountTrace", "\
  -- Specifies that css reference count tracing should be performed (debugging tool)");
   
+  taMisc::AddArgName("--max_cpus", "MaxCpus");
+  taMisc::AddArgName("max_cpus=", "MaxCpus");
+  taMisc::AddArgNameDesc("MaxCpus", "\
+ -- Maximum number of cpus (ex 2 typically faster than 4 on pseudo-quad core cpus)");
+  
   // Server variables
   taMisc::AddArgName("--server", "Server");
   taMisc::AddArgNameDesc("Server", "\

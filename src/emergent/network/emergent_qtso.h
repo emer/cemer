@@ -40,7 +40,7 @@ public:
 
   TAQT_MEMBER_INSTANCE(taiSpecMember, taiMember);
 protected:
-  override taiData*	GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  override taiData*	GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
   override void		GetArbitrateImage(taiData* dat, const void* base);
   override void		GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 };

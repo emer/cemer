@@ -103,8 +103,8 @@ public:
 
 
   virtual taiData*	GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-  	taiType* parent_type_ = NULL, int flags = 0);
-  // get taiData rep of type -- delegates to _impl of type, except if readonly and it can't handle ro; bg_color is for striping
+  	taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  // get taiData rep of type -- delegates to _impl of type, except if readonly and it can't handle ro
   virtual bool		CanBrowse() {return false;} // only things from taBase classes up can be browse nodes
 
   virtual void		GetImage(taiData* dat, const void* base);
@@ -117,9 +117,9 @@ public:
   TAQT_TYPE_INSTANCE(taiType, taiTypeBase);
 protected:
   virtual bool		isReadOnly(taiData* dat, IDataHost* host_ = NULL); // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
-  virtual taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_);
+  virtual taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior uses a taiField type
-  virtual taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_);
+  virtual taiData*	GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior same as GetDataRep_impl
 
   virtual void		GetImage_impl(taiData* dat, const void* base);

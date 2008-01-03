@@ -2327,7 +2327,6 @@ public:
   inline static void 	StatC_Send_Excit(LeabraCon* cn, float* ru_e, float su_act_eff) 
     {*ru_e += su_act_eff * cn->wt;} // #IGNORE
 #endif
-int			n_units_done;
 
   int			g_u; // index of unit on which to start
   int			scr_units; // number of slots in scratch -- is mod4 value
@@ -2339,9 +2338,6 @@ int			n_units_done;
   
   TA_BASEFUNS_NOCOPY(LeabraThreadEngineTask);
 protected:
-#ifdef DEBUG
-  int			m_u; // put it in class to help debugging
-#endif
   override void		DoSend_Netin();
   void			InitScratch_Send_Netin();
   void 			DoSend_Netin_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
