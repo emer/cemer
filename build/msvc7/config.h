@@ -239,6 +239,8 @@
 /* This switch is set when linking with Qt. */
 #define TA_USE_QT 
 
+#define V3_COMPAT
+
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #define TIME_WITH_SYS_TIME 1
 

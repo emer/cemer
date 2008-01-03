@@ -131,7 +131,6 @@ TA_HEADS =\
 	$(EMERGENTDIR)/src/temt/taiqtso/igeometry.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_def.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_platform.h \
-	$(EMERGENTDIR)/src/temt/ta/ta_thread.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_string.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_stdef.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_variant.h \
@@ -166,6 +165,7 @@ TA_HEADS =\
 	$(EMERGENTDIR)/src/temt/ta/ta_defaults.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin_p.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_engine.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_project.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_server.h \
 	$(TA_HEADS_GUI) \
@@ -355,6 +355,7 @@ LEABRA_HEADS =\
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_td.h \
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_pvlv.h \
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_pbwm.h \
+	$(EMERGENTDIR)/src/emergent/leabra/leabra_ct.h \
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_v3_compat.h
 
 LEABRA_MAKETA =\

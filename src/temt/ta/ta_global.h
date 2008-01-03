@@ -171,7 +171,7 @@
 // we don't try using threaded engine on non-Intel platforms
 // esp legacy PPC Macs wherein xtremely unlikely to have multi threads
 //TODO: need to add NO_TA_USE_THREADS for config control
-#if (!defined(NO_TA_USE_THREADS) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64)))
+#if (!defined(NO_TA_USE_THREADS) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64)) || defined(QT_ARCH_WINDOWS))
 # define TA_USE_THREADS
 #endif
 
@@ -249,12 +249,14 @@ typedef unsigned char   byte;
 
 #ifndef __MAKETA__ // we define all these in maketa/ta_type.h so don't need them during scanning
 // god bless Microsoft c++...
-# ifdef _MSCVER
+# ifdef _MSC_VER
   typedef unsigned char		uint8_t;
   typedef unsigned int		uint;
   typedef unsigned int      	uint32_t;
-  typedef signed __int64      	int64_t;
-  typedef unsigned __int64    	uint64_t;
+  //typedef signed __int64      	int64_t;
+  //typedef unsigned __int64    	uint64_t;
+  typedef long long      	int64_t;
+  typedef unsigned long long   	uint64_t;
   //note: prob should inline these, rather than macros, but don't want naggling little
   // type differences to cause compile issues
 # define strtoll _strtoi64
@@ -292,13 +294,15 @@ typedef unsigned char   byte;
 # error "TA_POINTER_SIZE should be 4 or 8"
 #endif
 
-#ifdef _MSCVER
-  typedef __int64	    	ta_int64_t;
-  typedef unsigned __int64	ta_uint64_t;
-#else // gcc
+//#ifdef _MSC_VER
+//# define ta_int64_t signed __int64;//int64_t;
+//# define ta_uint64_t uint64_t;
+  //typedef __int64	    	ta_int64_t;
+  //typedef unsigned __int64	ta_uint64_t;
+//#else // gcc
   typedef long long		ta_int64_t;
   typedef unsigned long long	ta_uint64_t;
-#endif
+//#endif
 
 // misc. compiler hacks for MAKETA
 

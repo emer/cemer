@@ -149,7 +149,7 @@ void taTaskThread::run() {
 }
 
 void taTaskThread::setTask(taTask* t) {
-  if (m_task == t) return;
+  if (m_task.ptr() == t) return;
   suspend();
   m_task = t;
 }

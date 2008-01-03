@@ -34,7 +34,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4258"/>
+				DisableSpecificWarnings="4250;4258"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -582,6 +582,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_dump.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_engine.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_filer.cpp">
 				</File>
 				<File
@@ -670,9 +673,6 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_string.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\temt\ta\ta_thread.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_ti.cpp">
@@ -784,6 +784,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_dump.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_engine.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_filer.h">
 				</File>
 				<File
@@ -890,9 +893,6 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_string.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\temt\ta\ta_thread.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_time.h">

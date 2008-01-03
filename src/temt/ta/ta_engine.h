@@ -132,7 +132,15 @@ private:
 #include <QtCore/QWaitCondition>
 
 #if defined(TA_OS_WIN)
-# error not defined for Windows yet
+inline int AtomicFetchAdd(int* operand, int incr)
+{
+  // atomically get value of operand before op, then add incr to it
+  __asm {
+    mov	  eax, incr
+    lock xadd  [operand], eax  // add incr to operand
+  }
+  // returns eax which is now value of operand before;
+}
 #else // unix incl Intel Mac
 inline int AtomicFetchAdd(int* operand, int incr)
 {

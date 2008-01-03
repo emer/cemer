@@ -398,6 +398,9 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\leabra\leabra.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\emergent\leabra\leabra_ct.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra_extra.cpp">
 				</File>
 				<File
@@ -421,6 +424,9 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\emergent\leabra\leabra_ct.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra_def.h">

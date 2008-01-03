@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(SolutionDir)&quot;"
+				AdditionalIncludeDirectories="&quot;$(EMERGENTDIR)\src\temt&quot;;&quot;$(EMERGENTDIR)\src\temt\ta&quot;;&quot;$(EMERGENTDIR)\src&quot;;&quot;$(QTDIR)\include\Qt&quot;;&quot;$(SolutionDir)&quot;"
 				PreprocessorDefinitions="NO_TA_BASE;WIN32;_WINDOWS"
 				RuntimeLibrary="4"
 				ForceConformanceInForLoopScope="TRUE"
