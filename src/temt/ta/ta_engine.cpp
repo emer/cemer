@@ -69,7 +69,7 @@ void taEngineInst::CutLinks() {
 }
 
 void taEngineInst::AssertLogTable() {
-  if (!use_log || log_table) return;
+  if (!use_log || (bool)log_table) return;
   taProject* proj = GET_MY_OWNER(taProject);
   if (proj) {
     DataTable* dt = proj->GetNewAnalysisDataTable(m_engine->GetName());

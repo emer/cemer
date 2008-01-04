@@ -4711,7 +4711,7 @@ void LeabraThreadEngineInst::OnBuild_impl() {
     tsk->inhib = (float*)inhib.FastEl_Flat_(fm);
   }
   // assert data cols if logging enabled
-  if (!(use_log && log_table)) return;
+  if (!(use_log && (bool)log_table)) return;
   // note: for thread guys, we just alloc #cpus, even if not all used
   col_n_units = log_table->FindMakeCol("n_units", VT_INT);
   col_n_units->desc = "number of units in this cycle";

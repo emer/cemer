@@ -19,6 +19,7 @@
 
 #if (defined(TA_OS_WIN))
 # include <time.h>
+# include <windows.h>
 #else
 # include <sys/time.h>
 # include <sys/times.h>
@@ -77,10 +78,24 @@ void taTime::GetTime() {
 //TODO: define for windows
 class TimeUsedHRd {
 public:
-  void		GetStartTime() { }
-  void		GetEndTime() {}
-  double	GetTotSecs() { return 0.0;}
+  static LARGE_INTEGER freq;
+  LARGE_INTEGER start;
+  LARGE_INTEGER end;
+  LARGE_INTEGER used;
+  void		GetStartTime() { QueryPerformanceCounter(&start);}
+  void		GetEndTime() { 
+    QueryPerformanceCounter(&end);
+    used.QuadPart = end.QuadPart - start.QuadPart;
+    }
+  double	GetTotSecs() {
+    if (freq.QuadPart == 0) {
+      QueryPerformanceFrequency(&freq);
+    } 
+    double rval = used.QuadPart / (double)(freq.QuadPart);
+    return rval;}
 };
+
+LARGE_INTEGER TimeUsedHRd::freq;
 
 #else
 
