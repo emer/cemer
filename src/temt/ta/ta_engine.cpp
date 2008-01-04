@@ -147,7 +147,7 @@ void taTaskThread::release() {
     String(m_state));
     return;
   }*/
-  start_latency.StartTimer(false); // no reset
+  start_latency.StartTimer(); // reset
   m_state = TS_RUNNING;
   released.wakeAll();
   //ml unlocks on delete
@@ -163,7 +163,7 @@ void taTaskThread::run() {
     
     start_latency.EndTimer();
     if (m_task) {
-      run_time.StartTimer(false); // no reset
+      run_time.StartTimer(); // reset
       m_task->run();
       run_time.EndTimer();
     }
