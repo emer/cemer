@@ -50,8 +50,8 @@ int taiDynEnumMember::BidForMember(MemberDef* md, TypeDef* td){
   return 0;
 }
 
-taiData* taiDynEnumMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-					 int flags_) {
+taiData* taiDynEnumMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   isBit = false;		// oops -- we don't have base and can't find out!
   if (isBit) {
     return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
@@ -111,8 +111,8 @@ int taiProgVarIntValMember::BidForMember(MemberDef* md, TypeDef* td){
   return 0;
 }
 
-taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-					 int flags_) {
+taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
@@ -1568,7 +1568,9 @@ int taiProgLibElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, T
   return gpiFromGpArgType::BidForArgType(aidx,argt,md,td)+1;
 }
 
-taiData* taiProgLibElArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) {
+taiData* taiProgLibElArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_, MemberDef* mbr_)
+{
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)	return NULL;
   int new_flags = flags_;

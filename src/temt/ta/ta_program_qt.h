@@ -37,7 +37,8 @@ class TA_API taiDynEnumMember : public taiMember {
   // an int member with #DYNENUM_ON_xxx flag indicating DynEnumType guy
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 
   TAQT_MEMBER_INSTANCE(taiDynEnumMember, taiMember);
 protected:
@@ -54,7 +55,8 @@ class TA_API taiProgVarIntValMember : public taiMember {
   // the int_val member in a ProgVar -- switches from plain int to hard_enum
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 
   TAQT_MEMBER_INSTANCE(taiProgVarIntValMember, taiMember);
 protected:
@@ -367,7 +369,8 @@ class TA_API taiProgLibElArgType : public gpiFromGpArgType {
   // for ProgLibEl* ptr args
 public:
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
   void		GetImage_impl(taiData* dat, const void* base);
   void		GetValue_impl(taiData* dat, void* base);
 
