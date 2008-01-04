@@ -73,6 +73,7 @@ void taEngineInst::AssertLogTable() {
   taProject* proj = GET_MY_OWNER(taProject);
   if (proj) {
     DataTable* dt = proj->GetNewAnalysisDataTable(m_engine->GetName());
+    dt->Reset();
     log_table = dt;
   }
 }
@@ -80,6 +81,13 @@ void taEngineInst::AssertLogTable() {
 void taEngineInst::setTaskCount(int val) {
   if (val == tasks.size) return;
   else tasks.SetSize(val);
+}
+
+void taEngineInst::WriteLogRecord() {
+  if (!(use_log && (bool)log_table)) return;
+  if ((max_rows >= 0) && (log_table->rows >= max_rows)) return; 
+  log_table->AddBlankRow();
+  WriteLogRecord_impl();
 }
 
 ////////////////////////////
@@ -92,6 +100,7 @@ void taEngine::Initialize() {
 #else
   use_log = false;
 #endif
+  max_rows = 2000;
 }
 
 void taEngine::Destroy() {
@@ -101,6 +110,7 @@ taEngineInst* taEngine::MakeEngineInst_impl() const {
   taEngineInst* rval = NewEngineInst_impl();
   rval->m_engine = const_cast<taEngine*>(this);
   rval->use_log = use_log;
+  rval->max_rows = max_rows;
   return rval;
 }
 

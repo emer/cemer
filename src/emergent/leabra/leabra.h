@@ -2294,6 +2294,7 @@ public:
   taTaskThread*		threads[MAX_THREADS]; // one per task, except [0]
 #endif  
 // timers, for convenience
+  TimeUsedHR		tm_tot; // total
   TimeUsedHR		tm_send_units;
   TimeUsedHR		tm_make_threads;
   TimeUsedHR		tm_run0; // only for t0, threads have their own
@@ -2320,6 +2321,7 @@ public:
 //  data cols, set OnBuild if logging true
   DataCol*		col_n_units;
   DataCol*		col_n_tasks;
+  DataCol*		col_tm_tot;
   DataCol*		col_tm_send_units;
   DataCol*		col_tm_make_threads;
   DataCol*		col_tm_release;

@@ -4497,52 +4497,51 @@ void LeabraEngineInst::AssertScratchDims(int tasks, int units) {
 }
 
 void LeabraEngineInst::RollupWritebackScratch_Netin() {
-//NOTE: may be more efficient to pipeline the writing with the rollup, to avoid 
-// cache overflow
-  int size = excit.dim(0); // same for both
-  //TODO: make this much more efficient, either call a GSL routine, or do a SSE
-  for (int t = n_tasks - 1; t > 0; --t) {
-    for (int i = 0; i < size; ++i) {
-      excit.FastEl(i, 0) += excit.FastEl(i, t);
-    }
-  }
-  for (int t = n_tasks - 1; t > 0; --t) {
-    for (int i = 0; i < size; ++i) {
-      inhib.FastEl(i, 0) += inhib.FastEl(i, t);
-    }
-  }
-  // write back
-  size = unitSize(); // exact
+  const int size = unitSize(); 
+  const int stride = excit.dim(0); // same for both
+  // arrays, as constant addr's
+  float* ea = (float*)excit.data();
+  float* ia = (float*)inhib.data();
+  float ex;
+  float in; 
+  LeabraUnit* un;
   for (int i = 0; i < size; ++i) {
+    ex = ea[i];
+    in = ia[i];
+    for (int t = 1; t < n_tasks; ++t) {
+      const int ut = (stride*t) + i;
+      ex += ea[ut]; 
+      in += ia[ut]; 
+    }
     LeabraUnit* un = (LeabraUnit*)units[i];
-    un->net = excit.FastEl_Flat(i);
-    un->gc.i = inhib.FastEl_Flat(i);
+    un->net = ex;
+    un->gc.i = in;
   }
 }
 
+
 void LeabraEngineInst::RollupWritebackScratch_NetinDelta() {
-//NOTE: may be more efficient to pipeline the writing with the rollup, to avoid 
-// cache overflow
-  int size = excit.dim(0); // same for both
-  //TODO: make this much more efficient, either call a GSL routine, or do a SSE
-  for (int t = n_tasks - 1; t > 0; --t) {
-    for (int i = 0; i < size; ++i) {
-      excit.FastEl(i, 0) += excit.FastEl(i, t);
-    }
-  }
-  for (int t = n_tasks - 1; t > 0; --t) {
-    for (int i = 0; i < size; ++i) {
-      inhib.FastEl(i, 0) += inhib.FastEl(i, t);
-    }
-  }
-  // write back
-  size = unitSize(); // exact
+  const int size = unitSize(); 
+  const int stride = excit.dim(0); // same for both
+  // arrays, as constant addr's
+  float* ea = (float*)excit.data();
+  float* ia = (float*)inhib.data();
+  float ex;
+  float in; 
+  LeabraUnit* un;
   for (int i = 0; i < size; ++i) {
+    ex = ea[i];
+    in = ia[i];
+    for (int t = 1; t < n_tasks; ++t) {
+      const int ut = (stride*t) + i;
+      ex += ea[ut]; 
+      in += ia[ut]; 
+    }
     LeabraUnit* un = (LeabraUnit*)units[i];
     un->net = 0.0f;	// important for soft-clamped layers
     un->gc.i = 0.0f;
-    un->net_delta = excit.FastEl_Flat(i);
-    un->g_i_delta = inhib.FastEl_Flat(i);
+    un->net_delta = ex;
+    un->g_i_delta = in;
   }
 }
 
@@ -4717,24 +4716,29 @@ void LeabraThreadEngineInst::OnBuild_impl() {
   col_n_units->desc = "number of units in this cycle";
   col_n_tasks = log_table->FindMakeCol("n_tasks", VT_INT);
   col_n_tasks->desc = "number of tasks used in this cycle";
+  col_tm_tot = log_table->FindMakeCol("tm_tot", VT_DOUBLE);
+  col_tm_tot->desc = "time spent (us/un) for entire process";
   col_tm_send_units = log_table->FindMakeCol("tm_send_units", VT_DOUBLE);
-  col_tm_send_units->desc = "time spent in t0 to build the send_units list";
+  col_tm_send_units->desc = "time spent (us/un) in t0 to build the send_units list";
   col_tm_make_threads = log_table->FindMakeCol("tm_make_threads", VT_DOUBLE);
-  col_tm_make_threads->desc = "time spent in t0 making the other threads, and starting them";
+  col_tm_make_threads->desc = "time spent (us/un) in t0 making the other threads, and starting them";
   col_tm_release = log_table->FindMakeColMatrix("tm_release", VT_DOUBLE, 1, taMisc::cpus);
-  col_tm_release->desc = "time spent in t1-tN between release() call and when it runs";
+  col_tm_release->desc = "time spent (us/un) in t1-tN between release() call and when it runs";
   col_tm_run = log_table->FindMakeColMatrix("tm_run", VT_DOUBLE, 1, taMisc::cpus);
-  col_tm_run->desc = "time spent in each thread running its own data";
+  col_tm_run->desc = "time spent (us/un) in each thread running its own data";
   col_tm_nibble = log_table->FindMakeCol("tm_nibble", VT_DOUBLE);
-  col_tm_nibble->desc = "time spent in t0 nibbling other threads";
+  col_tm_nibble->desc = "time spent (us/un) in t0 nibbling other threads";
   col_tm_sync = log_table->FindMakeCol("tm_sync", VT_DOUBLE);
-  col_tm_sync->desc = "time spent in t0 syncing to other threads";
+  col_tm_sync->desc = "time spent (us/un) in t0 syncing to other threads";
   col_tm_roll_write = log_table->FindMakeCol("tm_roll_write", VT_DOUBLE);
-  col_tm_roll_write->desc = "time spent in t0 rolling up excit/inhib and writing back to net";
+  col_tm_roll_write->desc = "time spent (us/un) in t0 rolling up excit/inhib and writing back to net";
 }
 
 bool LeabraThreadEngineInst::OnSend_Netin() {
-  if (use_log) tm_send_units.StartTimer(); // reset; stopped in DoProc
+  if (use_log) {
+    tm_tot.StartTimer();
+    tm_send_units.StartTimer(); // reset; stopped in DoProc
+  }
   LeabraNetwork* net = this->net();
   // build list of send units -- we treat the list like an array
   // which is kinda sleazy, but it works fine (because we alloc'ed for all on build)
@@ -4768,14 +4772,20 @@ bool LeabraThreadEngineInst::OnSend_Netin() {
   
   // rollup the scratch and write back
   RollupWritebackScratch_Netin();
-  if (use_log) tm_roll_write.EndTimer(); 
+  if (use_log) {
+    tm_roll_write.EndTimer(); 
+    tm_tot.EndTimer();
+  }
   WriteLogRecord();
 
   return true;
 }
 
 bool LeabraThreadEngineInst::OnSend_NetinDelta() {
-  if (use_log) tm_send_units.StartTimer(); // reset; stopped in DoProc
+  if (use_log) {
+    tm_tot.StartTimer();
+    tm_send_units.StartTimer(); // reset; stopped in DoProc
+  }
   LeabraNetwork* net = this->net();
   // we just build the unit list the conventional way, because with delta,
   // the list of active units will change a lot, so no real benefit to 
@@ -4811,7 +4821,10 @@ bool LeabraThreadEngineInst::OnSend_NetinDelta() {
   
   // rollup the scratch and write back
   RollupWritebackScratch_NetinDelta();
-  if (use_log) tm_roll_write.EndTimer(); 
+  if (use_log) {
+    tm_roll_write.EndTimer(); 
+    tm_tot.EndTimer();
+  }
   WriteLogRecord();
   return true;
 }
@@ -4846,23 +4859,25 @@ void LeabraThreadEngineInst::setTaskCount(int val) {
 
 void LeabraThreadEngineInst::WriteLogRecord_impl() {
   int t = 0;
-  log_table->AddBlankRow();
+  // normalize all results to be us/unit
+  const double fact = 1000000.0 / (double) ((n_units) ? n_units : 1.0);
   col_n_units->SetValAsInt(n_units, -1);
   col_n_tasks->SetValAsInt(n_tasks, -1);
-  col_tm_send_units->SetValAsDouble(tm_send_units.s_used*1000.0, -1);
-  col_tm_make_threads->SetValAsDouble(tm_make_threads.s_used*1000.0, -1);
+  col_tm_tot->SetValAsDouble(tm_tot.s_used*fact, -1);
+  col_tm_send_units->SetValAsDouble(tm_send_units.s_used*fact, -1);
+  col_tm_make_threads->SetValAsDouble(tm_make_threads.s_used*fact, -1);
   for (t = 1; t < n_tasks; ++t) {
     taTaskThread* tt = threads[t];
-    col_tm_release->SetValAsDoubleM(tt->start_latency.s_used*1000.0, -1, t);
+    col_tm_release->SetValAsDoubleM(tt->start_latency.s_used*fact, -1, t);
   }
-  col_tm_run->SetValAsDoubleM(tm_run0.s_used*1000.0, -1, 0);
+  col_tm_run->SetValAsDoubleM(tm_run0.s_used*fact, -1, 0);
   for (t = 1; t < n_tasks; ++t) {
     taTaskThread* tt = threads[t];
-    col_tm_run->SetValAsDoubleM(tt->run_time.s_used*1000.0, -1, t);
+    col_tm_run->SetValAsDoubleM(tt->run_time.s_used*fact, -1, t);
   }
-  col_tm_nibble->SetValAsDouble(tm_nibble.s_used*1000.0, -1);
-  col_tm_sync->SetValAsDouble(tm_sync.s_used*1000.0, -1);
-  col_tm_roll_write->SetValAsDouble(tm_roll_write.s_used*1000.0, -1);
+  col_tm_nibble->SetValAsDouble(tm_nibble.s_used*fact, -1);
+  col_tm_sync->SetValAsDouble(tm_sync.s_used*fact, -1);
+  col_tm_roll_write->SetValAsDouble(tm_roll_write.s_used*fact, -1);
 }
 
 //////////////////////////////////

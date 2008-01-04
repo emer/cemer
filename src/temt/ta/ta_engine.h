@@ -80,13 +80,14 @@ public:
   taTask_List		tasks; // #NO_SAVE -- set tasks with setTaskCount
   DataTableRef		log_table; // log table, if set
   bool			use_log; // copied from engine
+  int			max_rows; // stop logging after this many rows (-1=unlimited)
   
   inline int		taskCount() const {return tasks.size;} // #NO_SHOW
   virtual void		setTaskCount(int val);
   taTask*		task(int i) {return tasks.FastEl(i);} // #NO_SHOW
   
   virtual void		AssertLogTable(); // call at some point, before logging
-  void			WriteLogRecord() {if (use_log) WriteLogRecord_impl();}
+  void			WriteLogRecord();
   
   void	InitLinks();
   void	CutLinks();
@@ -104,6 +105,7 @@ class TA_API taEngine: public taNBase {
 INHERITED(taNBase)
 public:
   bool			use_log; // use a log table (name=engine name) to log performance stats
+  int			max_rows; // stop logging after this many rows (-1=unlimited)
   
   taEngineInst*		MakeEngineInst() const {return MakeEngineInst_impl();}
   
