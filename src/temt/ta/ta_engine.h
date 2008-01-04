@@ -131,29 +131,8 @@ private:
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 
-#if defined(TA_OS_WIN)
-inline int AtomicFetchAdd(int* operand, int incr)
-{
-  // atomically get value of operand before op, then add incr to it
-  __asm {
-    mov	  eax, incr
-    lock xadd  [operand], eax  // add incr to operand
-  }
-  // returns eax which is now value of operand before;
-}
-#else // unix incl Intel Mac
-inline int AtomicFetchAdd(int* operand, int incr)
-{
-  // atomically get value of operand before op, then add incr to it
-  asm volatile (
-    "lock\n\t"
-    "xaddl %0, %1\n" // add incr to operand
-    : "=r" (incr) // incr gets replaced by the value of operand before inc
-    : "m"(*operand), "0"(incr)
-  );
-  return incr;
-}
-#endif
+#define AtomicFetchAdd(p_operand, incr) \
+   q_atomic_fetch_and_add_int(p_operand, incr)
 
 //
 
