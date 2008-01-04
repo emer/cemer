@@ -74,6 +74,14 @@ void taTime::GetTime() {
   sys = 0.0;
 }
 
+//TODO: define for windows
+class TimeUsedHRd {
+public:
+  void		GetStartTime() { }
+  void		GetEndTime() {}
+  double	GetTotSecs() { return 0.0;}
+};
+
 #else
 
 double taTime::TicksToSecs(double ticks) {
@@ -88,6 +96,34 @@ void taTime::GetTime() {
   usr = t.tms_utime;
   sys = t.tms_stime;
 }
+
+// computes a-b
+#define ONE_MILLION 1000000
+timeval timeval_diff(timeval a, timeval b) {
+  a.tv_sec -= b.tv_sec;
+  a.tv_usec -= b.tv_usec;
+  if (a.tv_usec < 0) {
+    a.tv_sec-- ;
+    a.tv_usec += ONE_MILLION;
+  }
+  return a;
+}
+
+class TimeUsedHRd {
+public:
+  timeval	start;
+  timeval	end;
+  timeval	used;
+  void		GetStartTime() { gettimeofday(&start, NULL);}
+  void		GetEndTime() { 
+    gettimeofday(&end, NULL);
+    used = timeval_diff(end, start);}
+  double	GetTotSecs() { 
+    double rval = used.tv_usec / 1000000.0;
+    if (used.tv_sec) rval += used.tv_sec;
+    return rval;
+    }
+};
 
 #endif
 
@@ -108,8 +144,8 @@ void TimeUsed::Initialize() {
 }
 
 void TimeUsed::StartTimer(bool reset_used) {
-  start.GetTime();
   if(reset_used) ResetUsed();
+  start.GetTime();
 }
 
 void TimeUsed::EndTimer() {
@@ -136,6 +172,45 @@ String TimeUsed::GetString() {
   }
   return rval;
 }
+
+//////////////////////////
+// 	TimeUsedHR 	//
+//////////////////////////
+
+
+void TimeUsedHR::Initialize() {
+  s_used = 0.0;
+  n_used = 0;
+  d = new TimeUsedHRd;
+}
+
+void TimeUsedHR::Destroy() {
+  delete d;
+  d = NULL;
+}
+
+void TimeUsedHR::Copy_(const TimeUsedHR& cp) {
+  *d = *(cp.d);
+  s_used = cp.s_used;
+  n_used = cp.n_used;
+}
+
+void TimeUsedHR::StartTimer(bool reset_used) {
+  if (reset_used) ResetUsed();
+  d->GetStartTime();
+}
+
+void TimeUsedHR::EndTimer() {
+  d->GetEndTime();
+  s_used += d->GetTotSecs();
+  n_used++;
+}
+
+void TimeUsedHR::ResetUsed() {
+  s_used = 0.0;
+  n_used = 0;
+}
+
 
 //////////////////////////
 // 	taDateTime 	//

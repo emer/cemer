@@ -4604,21 +4604,30 @@ taEngineInst* LeabraThreadEngine::NewEngineInst_impl() const {
 
 void LeabraThreadEngineInst::Initialize() {
   tasks.SetBaseType(&TA_LeabraThreadEngineTask);
-  threads = (taTaskThread**)calloc(MAX_THREADS, sizeof(taTaskThread*));
+  memset(threads, 0, sizeof(threads));
   nibble = true;
   n_units = 0;
 #ifdef DEBUG
   n_units_done = 0;
 #endif
+  col_n_units = NULL;
+  col_n_tasks = NULL;
+  col_tm_send_units = NULL;
+  col_tm_make_threads = NULL;
+  col_tm_release = NULL;
+  col_tm_run = NULL;
+  col_tm_nibble = NULL;
+  col_tm_sync = NULL;
+
 }
 
 void LeabraThreadEngineInst::Destroy() {
   setTaskCount(0);
-  free(threads);
-  threads = NULL;
 }
 
 void LeabraThreadEngineInst::DoProc(int proc_id) {
+  if (use_log) tm_send_units.EndTimer(); // 
+  if (use_log) tm_make_threads.StartTimer(); // reset; stopped in DoProc
   // number of tasks will either be =threads, or less, if fewer units
   n_tasks = ((n_units + (UNIT_CHUNK_SIZE - 1)) & (~UNIT_CHUNK_SIZE)) / UNIT_CHUNK_SIZE;
   if (n_tasks < 1) n_tasks = 1;
@@ -4644,28 +4653,39 @@ void LeabraThreadEngineInst::DoProc(int proc_id) {
       tt->release();
     }
   }
+  if (use_log) tm_make_threads.EndTimer();
   
   // then do my part
+  if (use_log) tm_run0.StartTimer(); 
   tsk = task(0);
   tsk->run();
+  if (use_log) tm_run0.EndTimer(); 
+  
   // then lend a "helping hand" (if enabled)
-  if (nibble) for (int t = 1; t < n_tasks; ++t) {
-    tsk = task(t);
-    // note: its ok if tsk finishes between our test and calling run
-    if ((tsk->g_u < n_units) && (tsk->init_done))
-      tsk->run();
+  if (nibble) {
+    if (use_log) tm_nibble.StartTimer(); 
+    for (int t = 1; t < n_tasks; ++t) {
+      tsk = task(t);
+      // note: its ok if tsk finishes between our test and calling run
+      if ((tsk->g_u < n_units) && (tsk->init_done))
+        tsk->run();
+    }
+    if (use_log) tm_nibble.EndTimer(); 
   }
   // always need to sync regardless of nibbling, since thread can be finishing
   // its chunks
+  if (use_log) tm_sync.StartTimer(); 
   for (int t = 1; t < n_tasks; ++t) {
     tt = threads[t];
     tt->sync(); // suspending is syncing with completion of loop
   }
+  if (use_log) tm_sync.EndTimer(); 
 #ifdef DEBUG
   if (n_units != n_units_done)
     taMisc::Error("LeabraThreadEngineInst::DoProc: n_units != n_units_done (exp/done: ",
     String(n_units), "/", String(n_units_done));
 #endif
+  if (use_log) tm_roll_write.StartTimer(); 
 }
 
 
@@ -4689,9 +4709,31 @@ void LeabraThreadEngineInst::OnBuild_impl() {
     tsk->excit = (float*)excit.FastEl_Flat_(fm);
     tsk->inhib = (float*)inhib.FastEl_Flat_(fm);
   }
+  // assert data cols if logging enabled
+  if (!(use_log && log_table)) return;
+  // note: for thread guys, we just alloc #cpus, even if not all used
+  col_n_units = log_table->FindMakeCol("n_units", VT_INT);
+  col_n_units->desc = "number of units in this cycle";
+  col_n_tasks = log_table->FindMakeCol("n_tasks", VT_INT);
+  col_n_tasks->desc = "number of tasks used in this cycle";
+  col_tm_send_units = log_table->FindMakeCol("tm_send_units", VT_DOUBLE);
+  col_tm_send_units->desc = "time spent in t0 to build the send_units list";
+  col_tm_make_threads = log_table->FindMakeCol("tm_make_threads", VT_DOUBLE);
+  col_tm_make_threads->desc = "time spent in t0 making the other threads, and starting them";
+  col_tm_release = log_table->FindMakeColMatrix("tm_release", VT_DOUBLE, 1, taMisc::cpus);
+  col_tm_release->desc = "time spent in t1-tN between release() call and when it runs";
+  col_tm_run = log_table->FindMakeColMatrix("tm_run", VT_DOUBLE, 1, taMisc::cpus);
+  col_tm_run->desc = "time spent in each thread running its own data";
+  col_tm_nibble = log_table->FindMakeCol("tm_nibble", VT_DOUBLE);
+  col_tm_nibble->desc = "time spent in t0 nibbling other threads";
+  col_tm_sync = log_table->FindMakeCol("tm_sync", VT_DOUBLE);
+  col_tm_sync->desc = "time spent in t0 syncing to other threads";
+  col_tm_roll_write = log_table->FindMakeCol("tm_roll_write", VT_DOUBLE);
+  col_tm_roll_write->desc = "time spent in t0 rolling up excit/inhib and writing back to net";
 }
 
 bool LeabraThreadEngineInst::OnSend_Netin() {
+  if (use_log) tm_send_units.StartTimer(); // reset; stopped in DoProc
   LeabraNetwork* net = this->net();
   // build list of send units -- we treat the list like an array
   // which is kinda sleazy, but it works fine (because we alloc'ed for all on build)
@@ -4725,11 +4767,14 @@ bool LeabraThreadEngineInst::OnSend_Netin() {
   
   // rollup the scratch and write back
   RollupWritebackScratch_Netin();
+  if (use_log) tm_roll_write.EndTimer(); 
+  WriteLogRecord();
 
   return true;
 }
 
 bool LeabraThreadEngineInst::OnSend_NetinDelta() {
+  if (use_log) tm_send_units.StartTimer(); // reset; stopped in DoProc
   LeabraNetwork* net = this->net();
   // we just build the unit list the conventional way, because with delta,
   // the list of active units will change a lot, so no real benefit to 
@@ -4765,7 +4810,8 @@ bool LeabraThreadEngineInst::OnSend_NetinDelta() {
   
   // rollup the scratch and write back
   RollupWritebackScratch_NetinDelta();
-
+  if (use_log) tm_roll_write.EndTimer(); 
+  WriteLogRecord();
   return true;
 }
 
@@ -4797,6 +4843,26 @@ void LeabraThreadEngineInst::setTaskCount(int val) {
   }
 }
 
+void LeabraThreadEngineInst::WriteLogRecord_impl() {
+  int t = 0;
+  log_table->AddBlankRow();
+  col_n_units->SetValAsInt(n_units, -1);
+  col_n_tasks->SetValAsInt(n_tasks, -1);
+  col_tm_send_units->SetValAsDouble(tm_send_units.s_used*1000.0, -1);
+  col_tm_make_threads->SetValAsDouble(tm_make_threads.s_used*1000.0, -1);
+  for (t = 1; t < n_tasks; ++t) {
+    taTaskThread* tt = threads[t];
+    col_tm_release->SetValAsDoubleM(tt->start_latency.s_used*1000.0, -1, t);
+  }
+  col_tm_run->SetValAsDoubleM(tm_run0.s_used*1000.0, -1, 0);
+  for (t = 1; t < n_tasks; ++t) {
+    taTaskThread* tt = threads[t];
+    col_tm_run->SetValAsDoubleM(tt->run_time.s_used*1000.0, -1, t);
+  }
+  col_tm_nibble->SetValAsDouble(tm_nibble.s_used*1000.0, -1);
+  col_tm_sync->SetValAsDouble(tm_sync.s_used*1000.0, -1);
+  col_tm_roll_write->SetValAsDouble(tm_roll_write.s_used*1000.0, -1);
+}
 
 //////////////////////////////////
 //  LeabraThreadEngineTask	//

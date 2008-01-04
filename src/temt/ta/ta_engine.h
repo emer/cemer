@@ -20,6 +20,7 @@
 
 #include "ta_group.h"
 #include "ta_time.h"
+#include "ta_datatable.h"
 
 #include "ta_def.h"
 #include "ta_TA_type.h"
@@ -77,14 +78,22 @@ INHERITED(taOBase)
 public:
   taEngineRef		m_engine;
   taTask_List		tasks; // #NO_SAVE -- set tasks with setTaskCount
+  DataTableRef		log_table; // log table, if set
+  bool			use_log; // copied from engine
   
   inline int		taskCount() const {return tasks.size;} // #NO_SHOW
   virtual void		setTaskCount(int val);
   taTask*		task(int i) {return tasks.FastEl(i);} // #NO_SHOW
   
+  virtual void		AssertLogTable(); // call at some point, before logging
+  void			WriteLogRecord() {if (use_log) WriteLogRecord_impl();}
+  
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS_NOCOPY(taEngineInst);
+protected:
+  virtual void		WriteLogRecord_impl() {}
+
 private:
   void	Initialize();
   void	Destroy();
@@ -94,6 +103,7 @@ class TA_API taEngine: public taNBase {
   // ##TOKENS ##INSTANCE #VIRT_BASE ##DEF_NAME_STYLE_2 an object that manages XxxInst instances of a specific computing engine
 INHERITED(taNBase)
 public:
+  bool			use_log; // use a log table (name=engine name) to log performance stats
   
   taEngineInst*		MakeEngineInst() const {return MakeEngineInst_impl();}
   
@@ -130,9 +140,23 @@ private:
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
+#include <QtCore/qatomic.h>
 
 #define AtomicFetchAdd(p_operand, incr) \
    q_atomic_fetch_and_add_int(p_operand, incr)
+
+#if (QT_VERSION < 0x040300) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64))
+inline int q_atomic_fetch_and_add_int(volatile int *ptr, int value)
+{
+    asm volatile("lock\n"
+                 "xaddl %0,%1"
+                 : "=r" (value), "+m" (*ptr)
+                 : "0" (value)
+                 : "memory");
+    return value;
+}
+
+#endif
 
 //
 
@@ -162,8 +186,8 @@ public:
   static void		DeleteTaskThread(taTaskThread* tt); 
    // use this to delete, do not delete directly!
 
-  TimeUsed		start_latency; // amount of time waiting to start
-  TimeUsed		run_time; // amount of time actually running jobs
+  TimeUsedHR		start_latency; // amount of time waiting to start
+  TimeUsedHR		run_time; // amount of time actually running jobs
   
   inline bool		isActive() const {return m_active;}
 //  inline bool		isSuspended() const {return m_suspended;}

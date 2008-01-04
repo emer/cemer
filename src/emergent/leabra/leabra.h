@@ -2290,8 +2290,16 @@ public:
     // number of units to process by a thread in one chunk; MUST BE power of 2
   static const int	MAX_THREADS = 32; // arbitrary number -- bump when 64 core chips arrive ;)
 #ifndef __MAKETA__
-  taTaskThread**	threads; // one per task, except [0] -- init to MAX_THREADS
+  taTaskThread*		threads[MAX_THREADS]; // one per task, except [0]
 #endif  
+// timers, for convenience
+  TimeUsedHR		tm_send_units;
+  TimeUsedHR		tm_make_threads;
+  TimeUsedHR		tm_run0; // only for t0, threads have their own
+  TimeUsedHR		tm_nibble;
+  TimeUsedHR		tm_sync;
+  TimeUsedHR		tm_roll_write;
+  
   bool			nibble; // #DEF_true set false to disable nibbling (for debugging threads)
 
   inline LeabraThreadEngineTask* task(int i) const {return (LeabraThreadEngineTask*)tasks[i];}
@@ -2303,14 +2311,29 @@ public:
   override bool		OnSend_Netin();
   override bool		OnSend_NetinDelta(); //
   
-//  SIMPLE_LINKS(LeabraThreadEngineInst);
-  TA_BASEFUNS_NOCOPY(LeabraThreadEngineInst);
+  SIMPLE_LINKS(LeabraThreadEngineInst);
+  TA_BASEFUNS_NOCOPY(LeabraThreadEngineInst); //
+  
+#ifndef __MAKETA__ 
+
+//  data cols, set OnBuild if logging true
+  DataCol*		col_n_units;
+  DataCol*		col_n_tasks;
+  DataCol*		col_tm_send_units;
+  DataCol*		col_tm_make_threads;
+  DataCol*		col_tm_release;
+  DataCol*		col_tm_run;
+  DataCol*		col_tm_nibble;
+  DataCol*		col_tm_sync;
+  DataCol*		col_tm_roll_write;
+#endif 
 protected:
   int			n_units; // this is the number of units that will be proc'ed in the algo
 #ifdef DEBUG
   int			n_units_done; // sanity check to insure threading working right
 #endif
   override void		OnBuild_impl(); // main build
+  override void		WriteLogRecord_impl(); // only called if use_log
 private:
   void	Initialize();
   void	Destroy();

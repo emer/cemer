@@ -6358,6 +6358,7 @@ void NetEngineInst::OnBuild_impl() {
       idx++;
     }
   }
+  AssertLogTable();
 }
 
 taBase* NetEngineInst::SetOwner(taBase* own) {

@@ -48,10 +48,13 @@ taBase* taTask::SetOwner(taBase* own) {
 ////////////////////////////
 
 void taEngineInst::Initialize() {
+  use_log = false; // set by Engine
   taBase::Own(m_engine, this);
+  taBase::Own(log_table, this);
 }
 
 void taEngineInst::Destroy() {
+  log_table = NULL;
   m_engine = NULL;
 }
 
@@ -65,6 +68,15 @@ void taEngineInst::CutLinks() {
   inherited::CutLinks();
 }
 
+void taEngineInst::AssertLogTable() {
+  if (!use_log || log_table) return;
+  taProject* proj = GET_MY_OWNER(taProject);
+  if (proj) {
+    DataTable* dt = proj->GetNewAnalysisDataTable(m_engine->GetName());
+    log_table = dt;
+  }
+}
+
 void taEngineInst::setTaskCount(int val) {
   if (val == tasks.size) return;
   else tasks.SetSize(val);
@@ -75,6 +87,11 @@ void taEngineInst::setTaskCount(int val) {
 ////////////////////////////
 
 void taEngine::Initialize() {
+#ifdef DEBUG
+  use_log = true;
+#else
+  use_log = false;
+#endif
 }
 
 void taEngine::Destroy() {
@@ -83,6 +100,7 @@ void taEngine::Destroy() {
 taEngineInst* taEngine::MakeEngineInst_impl() const {
   taEngineInst* rval = NewEngineInst_impl();
   rval->m_engine = const_cast<taEngine*>(this);
+  rval->use_log = use_log;
   return rval;
 }
 
