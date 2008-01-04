@@ -4051,7 +4051,8 @@ void LeabraNetwork::Trial_Init() {
       phase_max = 1;
       phase = PLUS_PHASE;
     }
-    else if((phase_order == MINUS_PLUS_NOTHING) || (phase_order == MINUS_PLUS_PLUS)) {
+    else if((phase_order == MINUS_PLUS_NOTHING) || (phase_order == MINUS_PLUS_PLUS) ||
+	    (phase_order == MINUS_PLUS_MINUS)) {
       phase_max = 3;
     }
     else if(phase_order == MINUS_PLUS_2) {
@@ -4086,7 +4087,7 @@ void LeabraNetwork::Trial_UpdatePhase() {
     if(phase_no == 1)
       phase = PLUS_PHASE;
     else {			// phase_no == 2
-      if(phase_order == MINUS_PLUS_NOTHING) {
+      if((phase_order == MINUS_PLUS_NOTHING) || (phase_order == MINUS_PLUS_MINUS)) {
 	phase = MINUS_PHASE;
 	nothing_phase = true;
       }

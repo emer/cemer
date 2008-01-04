@@ -5,6 +5,7 @@ foreach i ($*)
     echo $i
     set fn=$i:r
     sed -e "s/LeabraLayer/CtLeabraLayer/g" -e "s/LeabraUnit/CtLeabraUnit/g" \
+    -e "s/CtLeabraUnit_Group/LeabraUnit_Group/g" -e "s/DaModUnit/CtLeabraUnit/g" \
     -e "s/LeabraCon/CtLeabraCon/g" -e "s/LeabraBias/CtLeabraBias/g" \
     -e "s/LeabraNetwork/CtLeabraNetwork/g" -e "s/LeabraRecvCons/CtLeabraRecvCons/g" \
     $i >$fn.ct.proj

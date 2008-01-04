@@ -1969,6 +1969,7 @@ public:
     PLUS_MINUS,			// reverse order: plus phase first
     PLUS_ONLY,			// only present the plus phase (hebbian-only)
     MINUS_PLUS_NOTHING,		// auto-encoder version with final 'nothing' minus phase
+    MINUS_PLUS_MINUS,		// special for ct leabra where you can't clear out the input entirely -- system needs to modulate wt scale strength in 2nd minus phase -- this 2nd minus is also marked as a nothing_phase 
     PLUS_NOTHING,		// just the auto-encoder (no initial minus phase)
     MINUS_PLUS_PLUS,		// two plus phases for gated context layer updating
     MINUS_PLUS_2		// two minus-plus phases (for pfc/bg system)
