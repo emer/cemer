@@ -145,7 +145,7 @@ private:
 #define AtomicFetchAdd(p_operand, incr) \
    q_atomic_fetch_and_add_int(p_operand, incr)
 
-#if (QT_VERSION < 0x040300) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64))
+#if (QT_VERSION < 0x040300) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64) || defined(QT_ARCH_MACOSX))
 inline int q_atomic_fetch_and_add_int(volatile int *ptr, int value)
 {
     asm volatile("lock\n"

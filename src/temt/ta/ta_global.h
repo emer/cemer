@@ -171,7 +171,7 @@
 // we don't try using threaded engine on non-Intel platforms
 // esp legacy PPC Macs wherein xtremely unlikely to have multi threads
 //TODO: need to add NO_TA_USE_THREADS for config control
-#if (!defined(NO_TA_USE_THREADS) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64)) || defined(QT_ARCH_WINDOWS))
+#if (!defined(NO_TA_USE_THREADS) && (defined(QT_ARCH_I386) || defined(QT_ARCH_X86_64)) || defined(QT_ARCH_WINDOWS) || defined(QT_ARCH_MACOSX))
 # define TA_USE_THREADS
 #endif
 
