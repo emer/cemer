@@ -151,7 +151,7 @@ taTaskThread::~taTaskThread() {
 }
 
 void taTaskThread::release() {
-  QMutexLocker ml(&mutex); // locked now
+  mutex.lock();
 /*  if (m_state != TS_BLOCKED) {
     taMisc::Error("taTaskThread::release: expected m_state to be TS_BLOCKED was: ",
     String(m_state));
@@ -159,8 +159,9 @@ void taTaskThread::release() {
   }*/
   start_latency.StartTimer(); // reset
   m_state = TS_RUNNING;
+  mutex.unlock();
+//note: unlock mutex BEFORE release to avoid spurious context switches
   released.wakeAll();
-  //ml unlocks on delete
 }
 
 void taTaskThread::run() {
@@ -180,8 +181,8 @@ void taTaskThread::run() {
     
     mutex.lock();
     m_state = TS_DONE;
-    synced.wakeAll();
     mutex.unlock();
+    synced.wakeAll();
   }
 }
 
