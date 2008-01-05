@@ -2246,7 +2246,8 @@ INHERITED(taTask)
 public:
   enum Proc { // the proc to execute
     P_Send_Netin,
-    P_Send_NetinDelta,
+    P_Send_NetinDelta_flat,
+    P_Send_NetinDelta_list,
   };
   
   inline LeabraEngineInst* inst() const {return (LeabraEngineInst*)m_inst;} 
@@ -2256,7 +2257,8 @@ public:
   TA_BASEFUNS_NOCOPY(LeabraTask);
 protected:
   virtual void		DoSend_Netin() {}
-  virtual void		DoSend_NetinDelta() {}
+  virtual void		DoSend_NetinDelta_flat() {}
+  virtual void		DoSend_NetinDelta_list() {}
   
 private:
   void	Initialize();
@@ -2336,6 +2338,8 @@ protected:
   int			n_units_done; // sanity check to insure threading working right
 #endif
   override void		OnBuild_impl(); // main build
+  bool			OnSend_NetinDelta_flat(); // using all units
+  bool			OnSend_NetinDelta_list(); // using a prebuilt list
   override void		WriteLogRecord_impl(); // only called if use_log
 private:
   void	Initialize();
@@ -2368,7 +2372,8 @@ protected:
   void			InitScratch_Send_Netin();
   void 			DoSend_Netin_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
   
-  override void		DoSend_NetinDelta();
+  override void		DoSend_NetinDelta_flat();
+  override void		DoSend_NetinDelta_list();
   void			InitScratch_Send_NetinDelta();
   void 			DoSend_NetinDelta_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
 private:
