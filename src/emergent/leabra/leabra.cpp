@@ -4504,7 +4504,6 @@ void LeabraEngineInst::RollupWritebackScratch_Netin() {
   float* ia = (float*)inhib.data();
   float ex;
   float in; 
-  LeabraUnit* un;
   for (int i = 0; i < size; ++i) {
     ex = ea[i];
     in = ia[i];
@@ -4528,7 +4527,6 @@ void LeabraEngineInst::RollupWritebackScratch_NetinDelta() {
   float* ia = (float*)inhib.data();
   float ex;
   float in; 
-  LeabraUnit* un;
   for (int i = 0; i < size; ++i) {
     ex = ea[i];
     in = ia[i];
