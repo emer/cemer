@@ -1716,6 +1716,10 @@ void Unit::UpdateAfterEdit_impl() {
   pos.z = 0;			// always zero: can't go out of plane
 }
 
+bool Unit::lesioned() const { // used by engines
+  return own_lay_()->lesioned();
+}
+
 int Unit::GetMyLeafIndex() {
   if(idx < 0 || !owner) return idx;
   Unit_Group* ug = (Unit_Group*)owner;
@@ -5463,20 +5467,28 @@ void Network::Send_Netin() {
 }
 
 void Network::Compute_Act_default() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Compute_Act();
+  if (!((bool)net_inst &&
+      net_inst->OnCompute_Act())) 
+  {
+    Layer* l;
+    taLeafItr i;
+    FOR_ITR_EL(Layer, l, layers., i) {
+      if(!l->lesioned())
+        l->Compute_Act();
+    }
   }
 }
 
 void Network::Compute_dWt() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Compute_dWt();
+  if (!((bool)net_inst &&
+      net_inst->OnCompute_dWt())) 
+  {
+    Layer* l;
+    taLeafItr i;
+    FOR_ITR_EL(Layer, l, layers., i) {
+      if(!l->lesioned())
+        l->Compute_dWt();
+    }
   }
 }
 
@@ -5498,11 +5510,15 @@ bool Network::Compute_Weights_Test(int trial_no) {
 }
 
 void Network::Compute_Weights_impl() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
-    if(!l->lesioned())
-      l->Compute_Weights();
+  if (!((bool)net_inst &&
+      net_inst->OnCompute_Weights())) 
+  {
+    Layer* l;
+    taLeafItr i;
+    FOR_ITR_EL(Layer, l, layers., i) {
+      if(!l->lesioned())
+        l->Compute_Weights();
+    }
   }
 }
 
@@ -6346,10 +6362,12 @@ void NetEngineInst::OnBuild_impl() {
   Network* net = this->net(); // cache
   // set unit size, and init ptrs to Units
   setUnitSize((uint)net->n_units);
+  layers.Reset();
   int idx = 0;
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, net->layers., li) {
+    layers.Add(lay);
     Unit* un;
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {

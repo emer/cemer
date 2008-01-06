@@ -876,6 +876,8 @@ public:
   float		spk_amp;	// #CAT_Activation amplitude of spiking output (for depressing synapse activation function)
   float		misc_1;		// #NO_VIEW #CAT_Activation miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
 
+  inline LeabraLayer*	own_lay() const {return (LeabraLayer*)own_lay_();}
+
   void		Init_ActAvg()
   { ((LeabraUnitSpec*)GetUnitSpec())->Init_ActAvg(this); }
   // #CAT_Activation initialize average activation
@@ -1639,9 +1641,7 @@ public:
   void	Compute_InhibAvg(LeabraNetwork* net)	{ spec->Compute_InhibAvg(this, net); }
   // #CAT_Activation compute average inhibition value (integrating unit inhib etc)
 
-  void	Compute_Act()				{ spec->Compute_Act(this, NULL); }
-  void	Compute_Act(LeabraNetwork* net) 	{ spec->Compute_Act(this, net); }
-  // #CAT_Activation stage three: compute final activation
+  override void	Compute_Act()	{ spec->Compute_Act(this, (LeabraNetwork*)own_net); }
 
   float	Compute_TopKAvgAct(LeabraNetwork* net)  { return spec->Compute_TopKAvgAct(this, net); }
   // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
@@ -1669,9 +1669,7 @@ public:
   void	Compute_SelfReg_Trial(LeabraNetwork* net) { spec->Compute_SelfReg_Trial(this, net); }
   // #CAT_Activation update self-regulation (accommodation, hysteresis) at end of trial
 
-  void	Compute_dWt() 				{ spec->Compute_dWt(this, NULL); }
-  void	Compute_dWt(LeabraNetwork* net) 	{ spec->Compute_dWt(this, net); }
-  // #CAT_Learning learn: compute the weight changes
+  override void	Compute_dWt() 	{ spec->Compute_dWt(this, (LeabraNetwork*)own_net); }
   void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
   // #CAT_Learning use this if weights will be used again for activations prior to being updated
   override void	Compute_Weights();
@@ -2068,8 +2066,6 @@ public:
   // #CAT_TrialFinal update self-regulation (accommodation, hysteresis) at end of trial
   virtual void	Compute_dWt_NStdLay();
   // #CAT_TrialFinal compute weight change on non-nstandard layers (depends on which phase is being run)
-  virtual void	Compute_dWt();
-  // #CAT_TrialFinal compute weight change on all layers
   virtual void	Compute_ExtRew();
   // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
   virtual void	Compute_MinusCycles();
@@ -2207,6 +2203,7 @@ public:
   float_Matrix		inhib; // [task][un_idx] -- scratchpad inhit (g.i)
   
   inline LeabraUnit*	unit(int i) const {return (LeabraUnit*)units[i];}
+  inline LeabraLayer*	layer(int i) const {return (LeabraLayer*)layers.FastEl(i);}
   inline LeabraNetwork* net() const {return (LeabraNetwork*)owner;} 
   
   virtual bool		OnSend_Netin() {return false;}
@@ -2245,6 +2242,9 @@ class LEABRA_API LeabraTask: public taTask {
 INHERITED(taTask)
 public:
   enum Proc { // the proc to execute
+    P_Compute_Act,
+    P_Compute_dWt,
+    P_Compute_Weights,
     P_Send_Netin,
     P_Send_NetinDelta_flat,
     P_Send_NetinDelta_list,
@@ -2256,6 +2256,9 @@ public:
   
   TA_BASEFUNS_NOCOPY(LeabraTask);
 protected:
+  virtual void		DoCompute_Act() {}
+  virtual void		DoCompute_dWt() {}
+  virtual void		DoCompute_Weights() {}
   virtual void		DoSend_Netin() {}
   virtual void		DoSend_NetinDelta_flat() {}
   virtual void		DoSend_NetinDelta_list() {}
@@ -2310,8 +2313,12 @@ public:
   inline LeabraThreadEngine* engine() const {return (LeabraThreadEngine*)m_engine.ptr();}
   override void		setTaskCount(int val);
   
-  void 			DoProc(int proc_id);
+  void 			DoUnitProc(int proc_id);
+  void 			DoLayerProc(int proc_id);
 
+  override bool		OnCompute_Act(); // Layer 
+  override bool		OnCompute_dWt(); // Layer 
+  override bool		OnCompute_Weights(); // Layer 
   override bool		OnSend_Netin();
   override bool		OnSend_NetinDelta(); //
   
@@ -2333,9 +2340,9 @@ public:
   DataCol*		col_tm_roll_write;
 #endif 
 protected:
-  int			n_units; // this is the number of units that will be proc'ed in the algo
+  int			n_items; // this is the number of items that will be proc'ed in the algo
 #ifdef DEBUG
-  int			n_units_done; // sanity check to insure threading working right
+  int			n_items_done; // sanity check to insure threading working right
 #endif
   override void		OnBuild_impl(); // main build
   bool			OnSend_NetinDelta_flat(); // using all units
@@ -2351,6 +2358,7 @@ class LEABRA_API LeabraThreadEngineTask: public LeabraTask {
 // task
 INHERITED(LeabraTask)
 public:
+  static int		g_l; // layers are done globally
 #ifndef __MAKETA__ // stupid maketa chokes on 'inline static'
   inline static void 	StatC_Send_Inhib(LeabraCon* cn, float* ru_i, float su_act_eff) 
     {*ru_i += su_act_eff * cn->wt;} // #IGNORE
@@ -2358,16 +2366,22 @@ public:
     {*ru_e += su_act_eff * cn->wt;} // #IGNORE
 #endif
 
-  int			g_u; // index of unit on which to start
+// variables shared by any kind of task:
+  bool			init_done; // lets us safely nibble from main task
+  int			g_i; // index of unit, layer, etc. on which to start
+  
+// Unit routine variables:
   int			scr_units; // number of slots in scratch -- is mod4 value
   float*		excit; // our subportion of excit scratch
   float*		inhib; // our subportion of excit scratch
-  bool			init_done; // lets us safely nibble from main task
   
+// Layer routine variables:
+
   inline LeabraThreadEngineInst* inst() const {return (LeabraThreadEngineInst*)m_inst;} 
   
-  TA_BASEFUNS_NOCOPY(LeabraThreadEngineTask);
+  TA_BASEFUNS_NOCOPY(LeabraThreadEngineTask); //
 protected:
+// Unit routines:  
   override void		DoSend_Netin();
   void			InitScratch_Send_Netin();
   void 			DoSend_Netin_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
@@ -2375,7 +2389,12 @@ protected:
   override void		DoSend_NetinDelta_flat();
   override void		DoSend_NetinDelta_list();
   void			InitScratch_Send_NetinDelta();
-  void 			DoSend_NetinDelta_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
+  void 			DoSend_NetinDelta_Gp(bool is_excit, SendCons* cg, LeabraUnit* su); //
+  
+// Layer routines:
+  override void		DoCompute_Act(); //
+  override void		DoCompute_dWt(); //
+  override void		DoCompute_Weights(); //
 private:
   void	Initialize();
   void	Destroy() {}

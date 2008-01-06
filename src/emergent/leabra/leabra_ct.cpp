@@ -349,7 +349,7 @@ void CtLeabraNetwork::Compute_dWt_NStdLay() {
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
     if(lay->lesioned())	continue;
     if(lay->spec.SPtr()->GetTypeDef() != &TA_CtLeabraLayerSpec)
-      lay->Compute_dWt(this);
+      lay->Compute_dWt();
   }
 }
 

@@ -771,6 +771,9 @@ public: //
   virtual void 	DMem_SetThisProc(int proc) 	{ dmem_this_proc = proc; } // #IGNORE
 #endif
 
+  bool			lesioned() const; // #IGNORE mainly used by engines when walking the flat list of units
+  inline Layer*		own_lay_() const;
+  
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
   inline void	SetUnitSpec(UnitSpec* us) { m_unit_spec = us; if(us) bias.SetConSpec(us->bias_spec.SPtr()); }
@@ -1268,6 +1271,8 @@ private:
   void 	Destroy()		{ CutLinks(); }
 };
 
+inline Layer* Unit::own_lay_() const {return ((Unit_Group*)owner)->own_lay;}
+
 class EMERGENT_API LayerSpec : public BaseSpec {
   // generic layer specification
 INHERITED(BaseSpec)
@@ -1620,6 +1625,13 @@ public:
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
+};
+
+class EMERGENT_API Layer_PtrList : public taPtrList<Layer> {
+  // ##IGNORE used in lookaside lists 
+INHERITED(taPtrList<Layer>)
+public:
+  Layer_PtrList() {}
 };
 
 class EMERGENT_API NetViewFontSizes : public taBase {
@@ -2137,14 +2149,21 @@ class EMERGENT_API NetEngineInst: public taEngineInst { // ##NO_CSS extensible r
 INHERITED(taEngineInst)
 public:
   Unit**		units; // flat array of pointers to the network units -- index here is the canonical flat_idx in the Unit
-//  float*		act; // unit.act the activation values
-//  float*		netin; // unit.net the net input (net excit for Leabra)
+  Layer_PtrList		layers;
   
   inline Network* 	net() const {return (Network*)owner;} // lexically replaced in subclasses
   inline int		unitSize() const {return unit_size;}
   bool			setUnitSize(int val); // returns 'true' if size changed
   
+  inline int		layerSize() const {return layers.size;}
+  inline Layer*		layer(int i) const {return layers.FastEl(i);}
+  
   void			OnBuild() {OnBuild_impl();} // #IGNORE
+  
+  // engineable routines -- if false returned, then default net one is done
+  virtual bool		OnCompute_Act() {return false;}
+  virtual bool		OnCompute_dWt() {return false;}
+  virtual bool		OnCompute_Weights() {return false;}
   
   override taBase*	SetOwner(taBase* own);
   TA_BASEFUNS_NOCOPY(NetEngineInst);

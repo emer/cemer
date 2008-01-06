@@ -18,7 +18,7 @@
 #set opts=""
 #set opts="send_delta=false"
 #set opts="threads=true max_cpus=2"
-set opts="send_delta=false threads=true max_cpus=2"
+set opts="threads=true max_cpus=2"
 
 echo " "
 echo "=============================================================="
