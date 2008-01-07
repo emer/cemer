@@ -281,8 +281,12 @@ GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
       el->InitDisplay();
       el->UpdateDisplay();
       fr = el->GetFrame();
-      if(fr)
-	fr->Show();
+      if(fr) {
+	MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+	if(mwv) {
+	  mwv->SelectT3ViewTabName(fr->name);
+	}
+      }
       return el;
     }
   }
@@ -301,8 +305,12 @@ GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
       el->InitDisplay();
       el->UpdateDisplay();
       fr = el->GetFrame();
-      if(fr)
-	fr->Show();
+      if(fr) {
+	MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+	if(mwv) {
+	  mwv->SelectT3ViewTabName(fr->name);
+	}
+      }
       return el;
     }
   }

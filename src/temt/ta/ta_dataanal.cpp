@@ -144,6 +144,7 @@ bool ClustNode::Cluster(taMath::DistMetric metric, bool norm, float tol) {
 }
 
 void ClustNode::GraphData(DataTable* dt) {
+  dt->StructUpdate(true);
   SetYs(0.5f);
   nn_dist = 0.0f;
   dt->Reset();
@@ -163,6 +164,7 @@ void ClustNode::GraphData(DataTable* dt) {
   da_y->GetMinMaxScale(ymm);
   da_y->SetUserData("MAX", ymm.max + .3f);
   da_y->SetUserData("MIN", 0.2f);
+  dt->StructUpdate(false);
 }
 
 void ClustNode::GraphData_impl(DataTable* dt) {
@@ -462,6 +464,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   bool rval = DistMatrix(&dmat, src_data, data_col_nm, metric, norm, tol);
   if(!rval) return false;
   GetDest(dist_mat, src_data, "DistMatrix");
+  dist_mat->StructUpdate(true);
   if(!name_col_nm.empty()) {
     DataCol* nmda = GetStringDataCol(src_data, name_col_nm);
     if(nmda) {
@@ -480,6 +483,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 	  dist_mat->SetValAsFloat(dmat.FastEl(j,i), j+1, -1);
 	}
       }
+      dist_mat->StructUpdate(false);
       if(view) dist_mat->FindMakeGridView();
       return true;
     }
@@ -494,6 +498,7 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   dist_mat->SetUserData("AUTO_SCALE", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
+  dist_mat->StructUpdate(false);
   if(view) dist_mat->FindMakeGridView();
   return true;
 }
@@ -536,6 +541,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 			      metric, norm, tol);
   if(!rval) return false;
   GetDest(dist_mat, src_data_a, src_data_b->name + "_DistMatrix");
+  dist_mat->StructUpdate(true);
   if(!name_col_nm_a.empty() && !name_col_nm_b.empty()) {
     DataCol* nmda_a = GetStringDataCol(src_data_a, name_col_nm_a);
     DataCol* nmda_b = GetStringDataCol(src_data_b, name_col_nm_b);
@@ -556,6 +562,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 	  dist_mat->SetValAsFloat(dmat.FastEl(j,i), j+1, -1);
 	}
       }
+      dist_mat->StructUpdate(false);
       if(view) dist_mat->FindMakeGridView();
       return true;
     }
@@ -570,6 +577,7 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   dist_mat->SetUserData("AUTO_SCALE", true);
   dist_mat->AddBlankRow();
   dmda->SetValAsMatrix(&dmat, -1);
+  dist_mat->StructUpdate(false);
   if(view) dist_mat->FindMakeGridView();
   return true;
 }
