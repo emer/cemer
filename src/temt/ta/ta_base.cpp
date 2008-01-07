@@ -1100,7 +1100,7 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
    
   if (fname.nonempty()) {
     flr->setFileName(fname);
-    flr->Append();
+    flr->open_append();
   } else { 
     String tfname = GetFileName();
     if (tfname.empty())

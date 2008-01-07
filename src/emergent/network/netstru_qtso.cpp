@@ -2201,7 +2201,12 @@ void NetView::Render_impl() {
   T3NetNode* node_so = this->node_so(); //cache
   if(!node_so) return;
   node_so->resizeCaption(font_sizes.net_name);
-  node_so->setCaption(data()->GetName().chars());
+
+  String cap_txt = data()->GetName() + " Value: ";
+  if(unit_disp_md)
+    cap_txt += unit_disp_md->name;
+
+  node_so->setCaption(cap_txt.chars());
 
   Render_net_text();
   Render_wt_lines();
