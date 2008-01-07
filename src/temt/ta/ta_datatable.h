@@ -1015,6 +1015,11 @@ public:
   virtual GraphTableView* NewGraphView(T3DataViewFrame* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU #MENU_CONTEXT #CAT_Display open a graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
+  virtual GridTableView* FindMakeGridView(T3DataViewFrame* fr = NULL);
+  // #CAT_Display find existing or make a new grid view (graphical rows and columns) of this table (NULL=use existing empty frame if any, else make new frame)
+  virtual GraphTableView* FindMakeGraphView(T3DataViewFrame* fr = NULL);
+  // #CAT_Display find existing or make a new graph view of this table (NULL=use existing empty frame if any, else make new frame)
+
   virtual int  		MinLength();		// #IGNORE
   virtual int  		MaxLength();		// #IGNORE
 

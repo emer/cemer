@@ -352,36 +352,46 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(MemberDef* disp_md) {
 
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
-  SoQtViewer* viewer = nv->GetViewer();
-  SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
-  SoRayPickAction rp( viewer->getViewportRegion());
-  rp.setPoint(mouseevent->getPosition());
-  rp.apply(viewer->getSceneManager()->getSceneGraph());
+  T3DataViewFrame* fr = nv->GetFrame();
+  bool got_one = false;
+  for(int i=0;i<fr->root_view.children.size;i++) {
+    taDataView* dv = fr->root_view.children[i];
+    if(dv->InheritsFrom(&TA_NetView)) {
+      NetView* tnv = (NetView*)dv;
+      SoQtViewer* viewer = tnv->GetViewer();
+      SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+      SoRayPickAction rp( viewer->getViewportRegion());
+      rp.setPoint(mouseevent->getPosition());
+      rp.apply(viewer->getSceneManager()->getSceneGraph());
 
-  SoPickedPoint* pp = rp.getPickedPoint(0);
-  if(!pp) return;
-  SoNode* pobj = pp->getPath()->getNodeFromTail(2);
-  if(!pobj) return;
-//   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
-  if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-//     cerr << "not unitgroupnode!" << endl;
-    return;
+      SoPickedPoint* pp = rp.getPickedPoint(0);
+      if(!pp) continue;
+      SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+      if(!pobj) continue;
+      //   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
+      if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+	//     cerr << "not unitgroupnode!" << endl;
+	continue;
+      }
+      UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
+      SbVec3f pt = pp->getObjectPoint(pobj); 
+      //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
+      int xp = (int)(pt[0] * tnv->max_size.x);
+      int yp = (int)-(pt[2] * tnv->max_size.y);
+      //   cerr << xp << ", " << yp << endl;
+      Unit_Group* ugrp = act_ugv->ugrp();
+      xp -= ugrp->pos.x; yp -= ugrp->pos.y;
+      if((xp >= 0) && (xp < ugrp->geom.x) && (yp >= 0) && (yp < ugrp->geom.y)) {
+	Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
+	if(unit) tnv->setUnitSrc(NULL, unit);
+      }
+      tnv->InitDisplay();
+      tnv->UpdateDisplay();
+      got_one = true;
+    }
   }
-  UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
-  SbVec3f pt = pp->getObjectPoint(pobj); 
-//   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
-  int xp = (int)(pt[0] * nv->max_size.x);
-  int yp = (int)-(pt[2] * nv->max_size.y);
-//   cerr << xp << ", " << yp << endl;
-  Unit_Group* ugrp = act_ugv->ugrp();
-  xp -= ugrp->pos.x; yp -= ugrp->pos.y;
-  if((xp >= 0) && (xp < ugrp->geom.x) && (yp >= 0) && (yp < ugrp->geom.y)) {
-    Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
-    if(unit) nv->setUnitSrc(NULL, unit);
-  }
-  nv->InitDisplay();
-  nv->UpdateDisplay();
-  ecb->setHandled();
+  if(got_one)
+    ecb->setHandled();
 }
 
 void UnitGroupView::Render_pre() {

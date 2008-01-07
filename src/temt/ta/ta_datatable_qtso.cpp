@@ -270,6 +270,47 @@ GraphTableView* DataTable::NewGraphView(T3DataViewFrame* fr) {
 }
 
 
+GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    GridTableView* el;
+    FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
+      // update from user stuff
+      el->InitFromUserData();
+      el->InitDisplay();
+      el->UpdateDisplay();
+      fr = el->GetFrame();
+      if(fr)
+	fr->Show();
+      return el;
+    }
+  }
+
+  return GridTableView::New(this, fr);
+}
+
+GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    GraphTableView* el;
+    FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
+      // update from user stuff
+      el->InitFromUserData();
+      el->InitDisplay();
+      el->UpdateDisplay();
+      fr = el->GetFrame();
+      if(fr)
+	fr->Show();
+      return el;
+    }
+  }
+  return GraphTableView::New(this, fr);
+}
+
+
+
 //////////////////////////
 //   DataColView	//
 //////////////////////////
