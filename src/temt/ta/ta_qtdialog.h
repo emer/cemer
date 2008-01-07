@@ -410,12 +410,13 @@ public:
   static void		GetMembDesc(MemberDef* md, String& dsc_str, String indent);
   static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
   static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
-    const String& desc, taiData* buddy = NULL, MemberDef* md = NULL,
+    const String& desc, taiData* buddy = NULL, int dat_idx = -1,
     QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0); 
     // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
   
   int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
   int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
+  int		dat_cnt; // count of actual data controls added -- used to mark flat data index of control for right click menu
 
 
   QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
@@ -474,7 +475,8 @@ public slots:
 
 protected:
   bool			show_meth_buttons; // true if any are created
-  MemberDef*		sel_item_md; // only used during handling of context menu for select edits
+//  MemberDef*		sel_item_md; // only used during handling of context menu for select edits
+  int			sel_item_idx; // only used during handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
@@ -524,7 +526,7 @@ public:
 class TA_API MembSet { // #IGNORE
 public:
   Member_List		memb_el; // member elements (1:1 with data_el), empty in inline mode
-  taiDataList 		data_el; // data elements (1:1 with memb_el WHEN section 
+  taiDataList 		data_el; // data elements (1:1 with memb_el WHEN section shown)
   bool			show; // flag to help by indicating whether to show or not
   
   MembSet() {show = false;}
@@ -538,6 +540,9 @@ public:
   int			def_size; // set to how many you want to use default processing
   void			SetMinSize(int n); // make sure there are at least n sets
   void			ResetItems(bool data_only = false); // calls Reset on all lists
+  bool			GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat = NULL);
+   // get the flat dat (both optional) as a flat idx
+  int			GetDataSize() const; // # data items
   
   MembSet_List()  {def_size = 0;}
   ~MembSet_List() { Reset(); }

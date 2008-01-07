@@ -498,6 +498,7 @@ public:
 
 protected:
   int			sele_set; // our set in membs
+  int			sele_flat_idx_min; // first flat index 
   QMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
   override void		Constr_Body();

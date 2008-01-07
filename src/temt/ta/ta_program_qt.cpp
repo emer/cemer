@@ -434,7 +434,7 @@ void iProgramEditor::Base_Add() {
       String desc;
       taiDataHost::GetName(md, name, desc);
       iLabel* lbl = taiDataHost::MakeInitEditLabel(name, body,
-        ctrl_size,  desc, mb_dat, md//,  
+        ctrl_size,  desc, mb_dat, -1//,  
         /*TODO:ctxt this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)),*/ /*row */);
       
       hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));

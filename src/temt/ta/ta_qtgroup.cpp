@@ -1645,6 +1645,7 @@ gpiSelectEditDataHost::gpiSelectEditDataHost(void* base, TypeDef* td, bool read_
 {
   sele = (SelectEdit*)base;
   // we use the default membs, and add one for the sele guys
+  sele_flat_idx_min = 0; // set later
   sele_set = membs.size; // index of new guy we add:
   membs.SetMinSize(membs.size + 1);
   mnuRemoveMember = NULL;
@@ -1692,6 +1693,8 @@ void gpiSelectEditDataHost::Constr_Body() {
 
   // delete any previous sele members
   memb_el(sele_set).Reset();
+  // mark place
+  sele_flat_idx_min = membs.GetDataSize();
   String nm;
   String help_text;
   for (int i = 0; i < sele->members.size; ++i) {
@@ -1711,6 +1714,7 @@ void gpiSelectEditDataHost::Constr_Body() {
       nm = new_lbl + " " + nm;
     AddName(row, nm, help_text, mb_dat, md);
     MakeMenuItem(mnuRemoveMember, nm, i, i, SLOT(mnuRemoveMember_select(int)));
+    ++dat_cnt;
   }
   // we deleted the normally not-deleted methods, so redo them here
   if (rebuild_body) {
@@ -1795,21 +1799,23 @@ void gpiSelectEditDataHost::Constr_Methods() {
 
 void gpiSelectEditDataHost::DoRemoveSelEdit() {
    // removes the sel_item_index item -- need to reduce by 1 because of pre-existing items on seledit dialog
-  int sel_item_index = memb_el(sele_set).FindEl(sel_item_md);
+//  int sel_item_index = memb_el(sele_set).FindEl(sel_item_md);
+  int sel_item_index = sel_item_idx - sele_flat_idx_min;
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
 #ifdef DEBUG
   else
-    taMisc::Error("gpiSelectEditDataHost::DoRemoveSelEdit: could not find item index from MethodDef");
+    taMisc::Error("gpiSelectEditDataHost::DoRemoveSelEdit: could not find item");
 #endif
 }
 
 void gpiSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   QMenu* menu, int& last_id)
 {
-  MemberDef* md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
-  int sel_item_index = memb_el(sele_set).FindEl(md);
+//  MemberDef* md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
+//  int sel_item_index = memb_el(sele_set).FindEl(md);
+  int sel_item_index = sel_item_idx - sele_flat_idx_min;
   if (sel_item_index < 0) return; // only add for user-added items
   menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
 }

@@ -367,7 +367,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
   String name;
   String desc;
   taiDataHost::GetName(md, name, desc);
-  iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat, md);
+  iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
   
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),

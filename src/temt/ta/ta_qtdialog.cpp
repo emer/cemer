@@ -1068,7 +1068,8 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
 
   row_height = 1; // actual value set in Constr
   cur_row = 0;
-  sel_item_md = NULL;
+  dat_cnt = 0;
+  sel_item_idx = -1;
   rebuild_body = false;
 }
 
@@ -1132,13 +1133,15 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
 }
 
 iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
-  int ctrl_size, const String& desc, taiData* buddy, MemberDef* md,
+  int ctrl_size, const String& desc, taiData* buddy, int dat_idx,
   QObject* ctx_obj, const char* ctx_slot, int row)
 {
   iLabel* label = new iLabel(row, name, par);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  if (md) label->setUserData((ta_intptr_t)md);
+  //note: can't use row as index, since there are section headers, so just use flat
+//  if (md) label->setUserData((ta_intptr_t)md);
+  if (dat_idx >= 0) label->setUserData(dat_idx);
   if (ctx_obj) QObject::connect(
     label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
       ctx_obj, ctx_slot );
@@ -1166,8 +1169,9 @@ iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
 int taiDataHost::AddName(int row, const String& name, const String& desc,
    taiData* buddy, MemberDef* md)
 {
-  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy, md, 
-    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row );
+  int dat_idx = (md) ? dat_cnt : -1; // legacy compat
+  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy, dat_idx,
+    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
   // add a label item in first column
   if (row < 0)
     row = layBody->rowCount();
@@ -1455,7 +1459,11 @@ void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e)
 }
 
 void taiDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
-  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
+//  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
+  sel_item_idx = -1;
+  QVariant var = sender->userData();
+  if (var.isValid())
+    sel_item_idx = var.toInt();
 }
 
 void taiDataHost::Iconify(bool value) {
@@ -1644,6 +1652,33 @@ void taiDataHost::UnSetRevert(){
 // 	MembSet_List		//
 //////////////////////////////////
 
+bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat) {
+  for (int i = 0; i < size; ++i) {
+    MembSet* ms = FastEl(i);
+    int msd_size = ms->data_el.size; 
+    if (idx >= msd_size) {
+      idx -= msd_size;
+      continue;
+    }
+    if (idx < msd_size) {
+      if (mbr) *mbr = ms->memb_el.SafeEl(idx);
+      if (dat) *dat = ms->data_el.SafeEl(idx); // supposed to be 1:1, but safer
+      return true;
+    }
+    break; // out of range
+  }
+  return false;
+}
+
+int MembSet_List::GetDataSize() const {
+  int rval = 0;
+  for (int i = 0; i < size; ++i) {
+    MembSet* ms = FastEl(i);
+    rval += ms->data_el.size;
+  }
+  return rval;
+}
+
 void MembSet_List::ResetItems(bool data_only) {
   for (int i = size - 1; i >= 0; --i) {
     MembSet* ms = FastEl(i);
@@ -1793,6 +1828,7 @@ void taiEditDataHost::Enum_Members() {
 void taiEditDataHost::Constr_Body() {
   inherited::Constr_Body();
   if (inline_mode) {
+    dat_cnt = 0;
     Constr_Inline();
   } else {
     Constr_Data_Labels();
@@ -1800,7 +1836,8 @@ void taiEditDataHost::Constr_Body() {
 }
 
 void taiEditDataHost::Constr_Data_Labels() {
-  int idx = 0;
+  int idx = 0; // basically a row counter
+  dat_cnt = 0; // NOT advanced for the section rows
   // Normal members
   if (MS_NORM >= membs.def_size) return; // don't do those
   if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
@@ -1866,6 +1903,7 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
     GetName(md, name, desc);
     AddName(idx, name, desc, mb_dat, md);
     ++idx;
+    ++dat_cnt;
   }
 }
 
@@ -1951,7 +1989,10 @@ void taiEditDataHost::DoRaise_Panel() {
 
 void taiEditDataHost::DoSelectForEdit(int param){
   //NOTE: this handler adds if not on, or removes if already on
-  MemberDef* md = sel_item_md;
+//  MemberDef* md = sel_item_md;
+  MemberDef* md = NULL;
+  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
+    return; // not supposed to happen
   TypeDef* td = SelectEdit::StatTypeDef(0);
   SelectEdit* se = (SelectEdit*)td->tokens.SafeEl_(param);
   if (!md || !se || !cur_base) return; //shouldn't happen...
@@ -2016,8 +2057,9 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
 {
   // have to be a taBase to use SelEdit
   if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; 
-  MemberDef* md = sel_item_md; // from inherited routine
-  if (md == NULL) return;
+  MemberDef* md = NULL; //sel_item_md; // from inherited routine
+  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
+    return; 
   // get list of select edits
   TypeDef* td = SelectEdit::StatTypeDef(0);
   if (td->tokens.size == 0) return;
