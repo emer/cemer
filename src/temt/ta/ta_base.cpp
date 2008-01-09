@@ -2004,6 +2004,28 @@ bool taBase::UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* ne
   return true;
 }
 
+bool taBase::UpdatePointers_NewPar_PtrNoSet(taBase** ptr, taBase* old_par, taBase* new_par,
+					    bool null_not_found) {
+  if(!*ptr || !old_par || !new_par) return false;
+  if(*ptr == old_par) {
+    *ptr = new_par;
+    return true;
+  }
+  taBase* old_own = (*ptr)->GetOwner(old_par->GetTypeDef());
+  if(old_own != old_par) return false;
+  String old_path = (*ptr)->GetPath(NULL, old_par);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    *ptr = new_guy;
+  else {
+    if(null_not_found)
+      *ptr = NULL;
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
 bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBase* new_par,
 					 bool null_not_found) {
   if(!ref.ptr() || !old_par || !new_par) return false;
@@ -2050,29 +2072,40 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
 
 int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   TypeDef* td = GetTypeDef();
-  int nchg = 0;
+  int nchg = 0;			// total number changed
+  int mychg = 0;		// my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)
-       && !md->HasOption("NO_SET_POINTER")) {
+    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)) {
       taBase** ptr = (taBase**)md->GetOff(this);
-      nchg += taBase::UpdatePointers_NewPar_Ptr(ptr, old_par, new_par);
+      if(md->HasOption("NO_SET_POINTER")) {
+	int chg = taBase::UpdatePointers_NewPar_PtrNoSet(ptr, old_par, new_par);
+	nchg += chg; mychg += chg;
+      }
+      else {
+	int chg = taBase::UpdatePointers_NewPar_Ptr(ptr, old_par, new_par);
+	nchg += chg; mychg += chg;
+      }
     }
     else if(md->type->ptr == 0) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
 	taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-	nchg += taBase::UpdatePointers_NewPar_Ref(*ref, old_par, new_par);
+	int chg = taBase::UpdatePointers_NewPar_Ref(*ref, old_par, new_par);
+	nchg += chg; mychg += chg;
       }
       if(md->type->InheritsFrom(TA_taSmartPtr)) {
 	taSmartPtr* ref = (taSmartPtr*)md->GetOff(this);
-	nchg += taBase::UpdatePointers_NewPar_SmPtr(*ref, old_par, new_par);
+	int chg = taBase::UpdatePointers_NewPar_SmPtr(*ref, old_par, new_par);
+	nchg += chg; mychg += chg;
       }
       else if(md->type->InheritsFrom(TA_taBase)) {
 	taBase* obj = (taBase*)md->GetOff(this);
-	nchg += obj->UpdatePointers_NewPar(old_par, new_par);
+	nchg += obj->UpdatePointers_NewPar(old_par, new_par); // doesn't count for me
       }
     }
   }
+  if(mychg > 0)
+    UpdateAfterEdit();		// uae me: i changed
   return nchg;
 }
 
@@ -2104,6 +2137,27 @@ bool taBase::UpdatePointers_NewParType_Ptr(taBase** ptr, TypeDef* par_typ, taBas
   else {
     if(null_not_found)
       taBase::SetPointer(ptr, NULL);
+    return false;
+  }
+  // note: this does not call UAE: assumption is that it is a like-for-like switch..
+  return true;
+}
+
+bool taBase::UpdatePointers_NewParType_PtrNoSet(taBase** ptr, TypeDef* par_typ, taBase* new_par,
+					   bool null_not_found) {
+  if(!*ptr || !new_par) return false;
+  if((*ptr)->InheritsFrom(par_typ)) {
+    *ptr = new_par;
+    return true;
+  }
+  taBase* old_own = (*ptr)->GetOwner(par_typ);
+  String old_path = (*ptr)->GetPath(NULL, old_own);
+  taBase* new_guy = new_par->FindFromPath(old_path);
+  if(new_guy)
+    *ptr = new_guy;
+  else {
+    if(null_not_found)
+      *ptr = NULL;
     return false;
   }
   // note: this does not call UAE: assumption is that it is a like-for-like switch..
@@ -2155,22 +2209,31 @@ bool taBase::UpdatePointers_NewParType_Ref(taSmartRef& ref, TypeDef* par_typ, ta
 
 int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   TypeDef* td = GetTypeDef();
-  int nchg = 0;
+  int nchg = 0;			// total number changed
+  int mychg = 0;		// my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)
-       && !md->HasOption("NO_SET_POINTER")) {
+    if(md->type->DerivesFrom(TA_taBase) && (md->type->ptr == 1)) {
       taBase** ptr = (taBase**)md->GetOff(this);
-      nchg += taBase::UpdatePointers_NewParType_Ptr(ptr, par_typ, new_par);
+      if(md->HasOption("NO_SET_POINTER")) {
+	int chg = taBase::UpdatePointers_NewParType_PtrNoSet(ptr, par_typ, new_par);
+	nchg += chg; mychg += chg;
+      }
+      else {
+	int chg = taBase::UpdatePointers_NewParType_Ptr(ptr, par_typ, new_par);
+	nchg += chg; mychg += chg;
+      }
     }
     else if(md->type->ptr == 0) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
 	taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-	nchg += taBase::UpdatePointers_NewParType_Ref(*ref, par_typ, new_par);
+	int chg = taBase::UpdatePointers_NewParType_Ref(*ref, par_typ, new_par);
+	nchg += chg; mychg += chg;
       }
       if(md->type->InheritsFrom(TA_taSmartPtr)) {
 	taSmartPtr* ref = (taSmartPtr*)md->GetOff(this);
-	nchg += taBase::UpdatePointers_NewParType_SmPtr(*ref, par_typ, new_par);
+	int chg = taBase::UpdatePointers_NewParType_SmPtr(*ref, par_typ, new_par);
+	nchg += chg; mychg += chg;
       }
       else if(md->type->InheritsFrom(TA_taBase)) {
 	taBase* obj = (taBase*)md->GetOff(this);
@@ -2178,6 +2241,8 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
       }
     }
   }
+  if(mychg > 0)
+    UpdateAfterEdit();		// uae me: i changed
   return nchg;
 }
 
@@ -2189,6 +2254,16 @@ bool taBase::UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner,
   if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
   // don't replace on children of the old object
   taBase::SetPointer(ptr, new_ptr);
+  ptr_owner->UpdateAfterEdit();	// update this guy who owns the pointer
+  return true;
+}
+
+bool taBase::UpdatePointers_NewObj_PtrNoSet(taBase** ptr, taBase* ptr_owner, 
+					    taBase* old_ptr, taBase* new_ptr) {
+  if(!*ptr || (*ptr != old_ptr)) return false;
+  if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
+  // don't replace on children of the old object
+  *ptr = new_ptr;
   ptr_owner->UpdateAfterEdit();	// update this guy who owns the pointer
   return true;
 }
@@ -2247,22 +2322,31 @@ int taBase::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
 
 int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   TypeDef* td = GetTypeDef();
-  int nchg = 0;
+  int nchg = 0;			// total number changed
+  int mychg = 0;		// my actual guys changed
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members[m];
-    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)
-       && !md->HasOption("NO_SET_POINTER")) {
+    if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) {
       taBase** ptr = (taBase**)md->GetOff(this);
-      nchg += taBase::UpdatePointers_NewObj_Ptr(ptr, this, old_ptr, new_ptr);
+      if(md->HasOption("NO_SET_POINTER")) {
+	int chg = taBase::UpdatePointers_NewObj_PtrNoSet(ptr, this, old_ptr, new_ptr);
+	nchg += chg; mychg += chg;
+      }
+      else {
+	int chg = taBase::UpdatePointers_NewObj_Ptr(ptr, this, old_ptr, new_ptr);
+	nchg += chg; mychg += chg;
+      }
     }
     else if(md->type->ptr == 0) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
 	taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-	nchg += taBase::UpdatePointers_NewObj_Ref(*ref, this, old_ptr, new_ptr);
+	int chg = taBase::UpdatePointers_NewObj_Ref(*ref, this, old_ptr, new_ptr);
+	nchg += chg; mychg += chg;
       }
       else if(md->type->InheritsFrom(TA_taSmartPtr)) {
 	taSmartPtr* ref = (taSmartPtr*)md->GetOff(this);
-	nchg += taBase::UpdatePointers_NewObj_SmPtr(*ref, this, old_ptr, new_ptr);
+	int chg = taBase::UpdatePointers_NewObj_SmPtr(*ref, this, old_ptr, new_ptr);
+	nchg += chg; mychg += chg;
       }
       else if(md->type->InheritsFrom(TA_taBase)) {
 	taBase* obj = (taBase*)md->GetOff(this);
@@ -2270,6 +2354,8 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
       }
     }
   }
+  if(mychg > 0)
+    UpdateAfterEdit();		// uae me: i changed
   return nchg;
 }
 

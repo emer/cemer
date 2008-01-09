@@ -77,10 +77,19 @@ void SelectEditItem::Copy_(const SelectEditItem& cp) {
 }
 
 String SelectEditItem::caption() const {
-  String nm = label;
-  if (nm.nonempty()) nm += " ";
-  nm += typeItem()->GetLabel();
-  return nm;
+  return label;
+//   String nm = label;
+//   if (nm.nonempty()) nm += " ";
+//   nm += typeItem()->GetLabel();
+//   return nm;
+}
+
+String SelectEditItem::GetName() const {
+  return label;
+//   String nm = label;
+//   if (nm.nonempty()) nm += " ";
+//   nm += typeItem()->GetLabel();
+//   return nm;
 }
 
 String SelectEditItem::GetColText(const KeyString& key, int itm_idx) const {
@@ -139,7 +148,7 @@ void EditMbrItem_Group::GetMembsFmStrs() {
   FOR_ITR_EL_REV(EditMbrItem, item, this->, itr) {
     taBase* bs = item->base;
     if (bs == NULL) { // didn't get loaded, bail..
-      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, item->item_nm, "in object to edit");
+      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
       item->Close();
       continue;
     }
@@ -224,7 +233,7 @@ void EditMthItem_Group::GetMethsFmStrs() {
   FOR_ITR_EL_REV(EditMthItem, item, this->, itr) {
     taBase* bs = item->base;
     if (bs == NULL) { // didn't get loaded, bail..
-      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, item->item_nm, "in object to edit");
+      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
       item->Close();
       continue;
     }
@@ -450,12 +459,16 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md, const char* lbl)
   bool rval = false;
   if (bidx >= 0) {
     item->label = lbl;
+    if(item->label.nonempty()) item->label += " ";
+    item->label += md->GetLabel();
   } else {
     item = (EditMbrItem*)mbrs.New(1);
     item->base = base;
     item->mbr = md;
     item->item_nm = md->name;
     item->label = lbl;
+    if(item->label.nonempty()) item->label += " ";
+    item->label += md->GetLabel();
     BaseAdded(base);
     rval = true;
   }
@@ -481,12 +494,16 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth, const char* lbl
   bool rval = false;
   if (bidx >= 0) {
     item->label = lbl;
+    if(item->label.nonempty()) item->label += " ";
+    item->label += mth->GetLabel();
   } else {
     item = (EditMthItem*)mths.New(1);
     item->base = base;
     item->mth = mth;
     item->item_nm = mth->name;
     item->label = lbl;
+    if(item->label.nonempty()) item->label += " ";
+    item->label += mth->GetLabel();
     BaseAdded(base);
     rval = true;
   }
@@ -527,12 +544,16 @@ void SelectEdit::ConvertLegacy() {
     item->base = mbr_bases.FastEl(i);
     item->label = config.mbr_labels.SafeEl(i);
     item->item_nm = mbr_strs.SafeEl(i);
+    if(item->label.nonempty()) item->label += " ";
+    item->label += item->item_nm;//md->GetLabel();
   }
   for (int i = 0; i < meth_bases.size; ++i) {
     EditMthItem* item = (EditMthItem*)mths.New(1);
     item->base = meth_bases.FastEl(i);
     item->label = config.meth_labels.SafeEl(i);
     item->item_nm = meth_strs.SafeEl(i);
+    if(item->label.nonempty()) item->label += " ";
+    item->label += item->item_nm;//md->GetLabel();
   }
   mbr_bases.Reset();
   config.mbr_labels.Reset();

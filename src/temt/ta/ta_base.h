@@ -1183,6 +1183,9 @@ public:
   static bool	UpdatePointers_NewPar_Ptr(taBase** ptr, taBase* old_par, taBase* new_par,
 					  bool null_not_found = true);
   // #IGNORE update pointer if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated
+  static bool	UpdatePointers_NewPar_PtrNoSet(taBase** ptr, taBase* old_par, taBase* new_par,
+					       bool null_not_found = true);
+  // #IGNORE update pointer if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated (NO_SET_POINTER version)
   static bool	UpdatePointers_NewPar_SmPtr(taSmartPtr& ptr, taBase* old_par, taBase* new_par,
 					    bool null_not_found = true);
   // #IGNORE update pointer if it used to point to an object under old_par parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.  used for updating after a copy operation: returns true if updated
@@ -1198,6 +1201,9 @@ public:
   static bool	UpdatePointers_NewParType_Ptr(taBase** ptr, TypeDef* par_typ, taBase* new_par,
 					  bool null_not_found = false);
   // #IGNORE update pointer if it used to point to an object under par_typ parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.
+  static bool	UpdatePointers_NewParType_PtrNoSet(taBase** ptr, TypeDef* par_typ, taBase* new_par,
+					  bool null_not_found = false);
+  // #IGNORE update pointer if it used to point to an object under par_typ parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set. (NO_SET_POINTER version)
   static bool	UpdatePointers_NewParType_SmPtr(taSmartPtr& ptr, TypeDef* par_typ,
 						taBase* new_par, bool null_not_found = false);
   // #IGNORE update pointer if it used to point to an object under par_typ parent, have it point to the corresponding object under new_par (based on path) -- set to null if not found if option set.
@@ -1211,6 +1217,9 @@ public:
   static bool	UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner, 
 					  taBase* old_ptr, taBase* new_ptr);
   // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner
+  static bool	UpdatePointers_NewObj_PtrNoSet(taBase** ptr, taBase* ptr_owner, 
+					  taBase* old_ptr, taBase* new_ptr);
+  // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner -- NO_SET_POINTER version
   static bool	UpdatePointers_NewObj_SmPtr(taSmartPtr& ptr, taBase* ptr_owner, 
 					    taBase* old_ptr, taBase* new_ptr);
   // #IGNORE update pointer to new_ptr if it used to point to old_ptr; call UAE on ptr_owner
