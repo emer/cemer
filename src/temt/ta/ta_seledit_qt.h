@@ -58,10 +58,7 @@ public:
   iSelectEditDataHost()	{ Initialize();};
   ~iSelectEditDataHost();
 
-  override bool ShowMember(MemberDef* md) const;
-
 protected:
-  QMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
   void 			Constr_Methods();
 

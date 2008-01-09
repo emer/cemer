@@ -59,20 +59,12 @@ iSelectEditDataHost::~iSelectEditDataHost() {
 void iSelectEditDataHost::Initialize()
 {
   sele = NULL;
-  mnuRemoveMember = NULL;
-}
-
-bool iSelectEditDataHost::ShowMember(MemberDef* md) const {
-  if (md->im == NULL) return false;
-  if((md->name == "config")) return true;
-  return false;
 }
 
 void iSelectEditDataHost::Constr_Body() {
   if (rebuild_body) {
     meth_el.Reset();
   }
-  mnuRemoveMember = new QMenu();
   inherited::Constr_Body();
   // we deleted the normally not-deleted methods, so redo them here
   if (rebuild_body) {
@@ -93,7 +85,6 @@ void iSelectEditDataHost::ClearBody_impl() {
   // note: no show menu in this class
   cur_menu = NULL;
   cur_menu_but = NULL;
-  mnuRemoveMember = NULL;
   if (menu) {
     menu->Reset();
   }
@@ -137,8 +128,6 @@ void iSelectEditDataHost::Constr_Data_Labels() {
       String new_lbl = item->caption();
       GetName(md, nm, help_text); //note: we just call this to get the help text
       AddName(row, new_lbl, help_text, mb_dat, md);
-      MakeMenuItem(mnuRemoveMember, nm, dat_cnt, dat_cnt,
-        SLOT(mnuRemoveMember_select(int)));
       ++dat_cnt;
     }
     def_grp = false;
@@ -148,88 +137,81 @@ void iSelectEditDataHost::Constr_Data_Labels() {
 
 void iSelectEditDataHost::Constr_Methods() {
   inherited::Constr_Methods();
-/*TODO  QMenu* mnuRemoveMethod_menu = new QMenu();
-  QMenu* mnuRemoveMethod_menu_but = new QMenu();
-  QMenu* mnuRemoveMethod_but = new QMenu();
+  Insert_Methods();
   if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
     cur_menu->AddSep();
-//TODO Qt4    QMenu* menu_tmp = cur_menu->rep_popup();
-//    menu_tmp->insertItem("Remove field", mnuRemoveMember);
-//    taiMenu* taimen_tmp = cur_menu->AddSubMenu("Remove function");
-//    menu_tmp = taimen_tmp->rep_popup();
-//    menu_tmp->insertItem("Main menu", mnuRemoveMethod_menu);
-//    menu_tmp->insertItem("Menu buttons", mnuRemoveMethod_menu_but);
-//    menu_tmp->insertItem("Buttons", mnuRemoveMethod_but); 
   }
 
-
-  for (int i = 0; i < sele->methods.size; ++i) {
-    MethodDef* md = sele->methods.FastEl(i);
-    if(md->im == NULL) continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(sele->meth_bases.FastEl(i), this, NULL, frmMethButtons);
-    if (mth_rep == NULL) continue;
-    meth_el.Add(mth_rep);
-    QMenu* rem_men = NULL; // remove menu
-
-    String men_nm = sele->config.meth_labels.FastEl(i);
-    if (mth_rep->is_menu_item) {
+  taGroupItr itr;
+  EditMthItem_Group* grp;
+  //int set_idx = 0;
+  FOR_ITR_GP(EditMthItem_Group, grp, sele->mths., itr) {
+    if (grp->size == 0) continue;
+    //note: root group uses only buttons (hard wired)
+    EditMthItem_Group::MthGroupType group_type = grp->group_type;
+    
+    // make a menu or button group if needed
+    String men_nm = grp->GetDisplayName();
+    if (men_nm.empty()) // shouldn't happen
+      men_nm = "Actions";
+    switch (group_type) {
+    case EditMthItem_Group::GT_MENU: {
+      cur_menu = ta_menus.FindName(men_nm);
+      if (cur_menu == NULL) {
+        cur_menu = menu->AddSubMenu(men_nm);
+        ta_menus.Add(cur_menu);
+      }
+    } break;
+    case EditMthItem_Group::GT_MENU_BUTTON: { 
+      cur_menu_but = ta_menu_buttons.FindName(men_nm);
+      if (cur_menu_but == NULL) {
+        cur_menu_but = taiActions::New
+          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+                  NULL, this, NULL, widget());
+        cur_menu_but->setLabel(men_nm);
+        DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+        ta_menu_buttons.Add(cur_menu_but);
+      }
+    } break;
+    default: break; // nothing for butts
+    } // switch group_type
+          
+    for (int i = 0; i < grp->size; ++i) {
+      EditMthItem* item = grp->FastEl(i);
+      MethodDef* md = item->mth;
+      taBase* base = item->base;
+      if ((md->im == NULL) || (base == NULL)) continue;
+      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
+      if (mth_rep == NULL) continue;
+      meth_el.Add(mth_rep);
+  
       //NOTE: for seledit functions, we never place them on the last menu or button, because that may
       // make no sense -- the label specifies the place, or Actions if no label
-      if (md->HasOption("MENU_BUTTON")) { // menu button item
-        if (men_nm.empty())
-          men_nm = "Actions";
-        cur_menu_but = ta_menu_buttons.FindName(men_nm);
-        if (cur_menu_but == NULL) {
-          cur_menu_but = taiActions::New
-            (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
-                    NULL, this, NULL, widget());
-          cur_menu_but->setLabel(men_nm);
-          DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
-          ta_menu_buttons.Add(cur_menu_but);
-          rem_men = new QMenu();
-          mnuRemoveMethod_menu_but->insertItem(men_nm, rem_men);
-        } else {
-          rem_men = FindMenuItem(mnuRemoveMethod_menu_but, men_nm);
-        }
-        mth_rep->AddToMenu(cur_menu_but);
-      } else { // menubar item
-        if (men_nm.empty())
-          men_nm = "Actions";
-        cur_menu = ta_menus.FindName(men_nm);
-        if (cur_menu == NULL) {
-          cur_menu = menu->AddSubMenu(men_nm);
-          ta_menus.Add(cur_menu);
-          rem_men = new QMenu();
-          mnuRemoveMethod_menu->insertItem(men_nm, rem_men);
-        } else {
-          rem_men = FindMenuItem(mnuRemoveMethod_menu, men_nm);
-        }
+      String mth_cap = item->caption();
+      switch (group_type) {
+      case EditMthItem_Group::GT_BUTTONS:  {
+        AddMethButton(mth_rep, mth_cap);
+      } break;
+      case EditMthItem_Group::GT_MENU: {
         mth_rep->AddToMenu(cur_menu);
-      }
-      //note: we assume mth_rep methods will use GetLabel() to provide the menu text
-      if (rem_men) MakeMenuItem(rem_men, md->GetLabel(), i, i, SLOT(mnuRemoveMethod_select(int)));
+      } break;
+      case EditMthItem_Group::GT_MENU_BUTTON: { 
+        mth_rep->AddToMenu(cur_menu_but);
+      } break;
+      } // switch group_type
     }
-    else {			// BUTTON
-      if (men_nm.nonempty())
-        men_nm += " " + md->GetLabel();
-      else
-	men_nm = md->GetLabel();
-      AddMethButton(mth_rep, men_nm);
-      MakeMenuItem(mnuRemoveMethod_but, men_nm, i, i, SLOT(mnuRemoveMethod_select(int)));
-    }
-  }*/
+  } // groups
 }
 
 void iSelectEditDataHost::DoRemoveSelEdit() {
-   // removes the sel_item_index item -- need to reduce by 1 because of pre-existing items on seledit dialog
-//  int sel_item_index = memb_el(sele_set).FindEl(sel_item_md);
+   // removes the sel_item_index item 
   int sel_item_index = sel_item_idx;
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
 #ifdef DEBUG
   else
-    taMisc::Error("gpiSelectEditDataHost::DoRemoveSelEdit: could not find item");
+    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
 #endif
 }
 
@@ -237,7 +219,7 @@ void iSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   QMenu* menu, int& last_id)
 {
   int sel_item_index = sel_item_idx;
-  if (sel_item_index < 0) return; // only add for user-added items
+  if (sel_item_index < 0) return; 
   menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
 }
 
@@ -306,7 +288,7 @@ void iSelectEditDataHost::mnuRemoveMethod_select(int idx) {
 
 
 //////////////////////////
-//   iProgramPanelBase 	//
+//   iSelectEditPanel 	//
 //////////////////////////
 
 iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)

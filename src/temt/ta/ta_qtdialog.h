@@ -608,7 +608,7 @@ public:
     // for controls -- construct then edit 
   void			GetImage(bool force); //override
   void			GetValue(); //override
-  virtual bool		ShowMember(MemberDef* md) const;
+  virtual bool		ShowMember(MemberDef* md) const; // #OBS
   virtual void		SetCurMenu(MethodDef* md); // sets or creates the cur_menu, for subsequent adding of items
   virtual void		SetCurMenuButton(MethodDef* md);
   override void		Raise() {if (isPanel()) DoRaise_Panel(); else taiDataHost::Raise();}

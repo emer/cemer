@@ -114,8 +114,19 @@ class TA_API EditMthItem_Group : public taGroup<EditMthItem> {
   // ##CAT_Display group of select edit dialog objects
 INHERITED(taGroup<EditMthItem>)
 public:
-
+  enum MthGroupType {
+    GT_BUTTONS,		// make a buttons in the dialog for aach method
+    GT_MENU_BUTTON,	// make a button group for the methods (subgroups only)
+    GT_MENU		// make a menu for the methods (subgroups only)
+  };
+  
+  bool			is_root; // #NO_SHOW #READ_ONLY #NO_SAVE
+  MthGroupType		group_type; // #GHOST_ON_is_root how to organize and display the methods in this group
+  
   void			GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)
+  
+  void			SetGroupType(MthGroupType group_type);
+   // #MENU #MENU_CONTEXT set how the methods will be displayed in the SelectEdit dialog
   
   override int		NumListCols() const {return 4;}
   // base name, base type, meth name, memb label
@@ -124,10 +135,12 @@ public:
   override const KeyString GetListColKey(int col) const;
   override String 	GetTypeDecoKey() const { return "SelectEdit"; }
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  TA_BASEFUNS_NOCOPY(EditMthItem_Group);
+  void	InitLinks();
+  TA_BASEFUNS(EditMthItem_Group);
 private:
-  void	Initialize() { SetBaseType(&TA_EditMthItem);}
-  void 	Destroy()		{ };
+  void	Initialize();
+  void 	Destroy() { };
+  void	Copy_(const EditMthItem_Group& cp);
 };
 
 

@@ -2231,7 +2231,7 @@ void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
     GetValue();
   }
 }
-
+ 
 bool taiEditDataHost::ShowMember(MemberDef* md) const {
   return (md->ShowMember(show(), TypeItem::SC_EDIT) && (md->im != NULL));
 }

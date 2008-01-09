@@ -195,6 +195,23 @@ void EditMthItem::Copy_(const EditMthItem& cp) {
 //  EditMthItem_Group		//
 //////////////////////////////////
 
+void EditMthItem_Group::Initialize() {
+  SetBaseType(&TA_EditMthItem);
+  is_root = true;
+  group_type = GT_BUTTONS; // for root only
+}
+
+void EditMthItem_Group::Copy_(const EditMthItem_Group& cp) {
+  group_type = cp.group_type; 
+}
+
+void EditMthItem_Group::InitLinks() {
+  inherited::InitLinks();
+  is_root = IsRoot();
+  if (!is_root)
+    group_type = GT_MENU_BUTTON;
+}
+
 void EditMthItem_Group::DataChanged(int dcr, void* op1, void* op2) 
 {
   inherited::DataChanged(dcr, op1, op2);
@@ -239,6 +256,12 @@ const KeyString EditMthItem_Group::GetListColKey(int col) const {
   default: break;
   }
   return inherited::GetListColKey(col);
+}
+
+void EditMthItem_Group::SetGroupType(MthGroupType group_type_) {
+  if (is_root && (group_type_ != GT_BUTTONS))
+    taMisc::Error("The root group may only show buttons -- create a subgroup for menus or button groups");
+  group_type = group_type_;
 }
 
 
