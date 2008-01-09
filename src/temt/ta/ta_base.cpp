@@ -610,6 +610,11 @@ TAPtr taBase::GetOwner(TypeDef* td) const {
   return own->GetOwner(td);
 }
 
+TAPtr taBase::GetThisOrOwner(TypeDef* td) {
+  if (InheritsFrom(td)) return this;
+  return GetOwner(td);
+}
+
 bool taBase::IsChildOf(const taBase* obj) const {
   // note: we define ourself as a child of ourself
   const taBase* tobj = this;
@@ -1178,12 +1183,6 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
   
   taDataLink* dl = data_link();
   if (dl) dl->DataDataChanged(dcr, op1, op2);
-#ifdef TA_GUI
-  // notify SelectEdits
-  if (taMisc::gui_active && (dcr <= DCR_ITEM_UPDATED_ND)) {
-    SelectEdit::BaseDataChangedAll(this, DCR_ITEM_UPDATED, NULL, NULL);
-  }
-#endif
 }
 
 void taBase::setDirty(bool value) {
@@ -2329,9 +2328,6 @@ void taOBase::Destroy() {
 }
 
 void taOBase::CutLinks() {
-#ifdef TA_GUI
-  SelectEdit::BaseClosingAll(this); // close any select edits affecting this guy (before cutting owner!)
-#endif
   if (m_data_link) {
     m_data_link->DataDestroying(); // link NULLs our pointer
     delete m_data_link; // NULLS the ref

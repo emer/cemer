@@ -25,6 +25,7 @@
 #include "css_basic_types.h"
 #include "css_ta.h"
 #include "ta_seledit.h"
+#include "ta_project.h"
 #include "ta_TA_type.h"
 
 #include <QApplication>
@@ -1993,8 +1994,9 @@ void taiEditDataHost::DoSelectForEdit(int param){
   MemberDef* md = NULL;
   if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
     return; // not supposed to happen
-  TypeDef* td = SelectEdit::StatTypeDef(0);
-  SelectEdit* se = (SelectEdit*)td->tokens.SafeEl_(param);
+  taProject* proj = (taProject*)((taBase*)cur_base)->GetThisOrOwner(&TA_taProject);
+  if (!proj) return;
+  SelectEdit* se = proj->edits.Leaf(param);
   if (!md || !se || !cur_base) return; //shouldn't happen...
   int idx;
   if ((idx = se->FindMbrBase((taBase*)cur_base, md)) >= 0)
@@ -2061,13 +2063,13 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
     return; 
   // get list of select edits
-  TypeDef* td = SelectEdit::StatTypeDef(0);
-  if (td->tokens.size == 0) return;
+  taProject* proj = (taProject*)((taBase*)cur_base)->GetThisOrOwner(&TA_taProject);
+  if (!proj || proj->edits.leaves == 0) return;
   // if any edits, populate menu for adding, for all seledits not already on
   QMenu* sub = new QMenu(body);
   sub->setFont(menu->font());
-  for (int i = 0; i < td->tokens.size; ++i) {
-    SelectEdit* se = (SelectEdit*)td->tokens[i];
+  for (int i = 0; i < proj->edits.leaves; ++i) {
+    SelectEdit* se = proj->edits.Leaf(i);
     sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
     sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
     // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
@@ -2080,8 +2082,8 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   // TODO: if any edits, populate menu for removing, for all seledits already on
   sub = new QMenu(body);
   sub->setFont(menu->font());
-  for (int i = 0; i < td->tokens.size; ++i) {
-    SelectEdit* se = (SelectEdit*)td->tokens[i];
+  for (int i = 0; i < proj->edits.leaves; ++i) {
+    SelectEdit* se = proj->edits.Leaf(i);
     sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
     sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
     // determine if already on that seledit, and disable if it isn't

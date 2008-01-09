@@ -27,22 +27,6 @@
 #include "css_basic_types.h"
 #include "css_ta.h"
 #include "ta_TA_type.h"
-//TODO: determine why classes from igeometry.h end up in ta_misc TA file, not ta file --
-// igeometry.h is included in ta_qt.h
-//#  include "ta_misc_TA_type.h"
-
-
-
-/* NUKE
-#include <ta/enter_iv.h>
-#include <InterViews/font.h>
-#include <IV-look/kit.h>
-#include <IV-look/dialogs.h>
-#include <InterViews/layout.h>
-#include <InterViews/style.h>
-#include <InterViews/window.h>
-#include <ta/leave_iv.h>
-*/
 
 
 //////////////////////////
@@ -3090,20 +3074,6 @@ int SArgEdit::BidForEdit(TypeDef* td){
 
 taiEditDataHost* SArgEdit::CreateDataHost(void* base, bool readonly) {
   return new SArgEditDataHost(base, typ, readonly);
-}
-
-//////////////////////////////////
-//	gpiSelectEdit		//
-//////////////////////////////////
-
-int gpiSelectEdit::BidForEdit(TypeDef* td) {
-  if (td->InheritsFrom(TA_SelectEdit))
-    return taiEdit::BidForEdit(td)+1;
-  return 0;
-}
-
-taiEditDataHost* gpiSelectEdit::CreateDataHost(void* base, bool readonly) {
-  return new gpiSelectEditDataHost(base, typ, readonly);
 }
 
 

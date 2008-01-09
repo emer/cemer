@@ -482,43 +482,6 @@ protected:
   override void		Constr_AryData();
 };
 
-class TA_API gpiSelectEditDataHost : public taiEditDataHost {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
-INHERITED(taiEditDataHost)
-  Q_OBJECT
-public:
-  SelectEdit*	sele;
-
-  gpiSelectEditDataHost(void* base, TypeDef* td, bool read_only_ = false,
-  	bool modal_ = false, QObject* parent = 0);
-  gpiSelectEditDataHost()		{ };
-  ~gpiSelectEditDataHost();
-
-  override bool ShowMember(MemberDef* md) const;
-
-protected:
-  int			sele_set; // our set in membs
-  int			sele_flat_idx_min; // first flat index 
-  QMenu*		mnuRemoveMember;  // #IGNORE we build this during body phase, but then add during method phase
-  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
-  override void		Constr_Body();
-  void 			Constr_Methods();
-
-  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
-  void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
-  QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
-
-  override void		GetValue_Membs_def();
-  virtual void		GetValue_SeleMembs();
-  override void		GetImage_Membs_def();
-  virtual void		GetImage_SeleMembs();
-
-protected slots:
-  virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
-  virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
-  virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
-};
-
 //////////////////////////////////
 //  DocEditDataHost		//
 //////////////////////////////////

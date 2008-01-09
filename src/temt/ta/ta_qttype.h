@@ -923,14 +923,6 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-class TA_API gpiSelectEdit : public taiEdit {
-public:
-  int		BidForEdit(TypeDef* td);
-  TAQT_EDIT_INSTANCE(gpiSelectEdit, taiEdit);
-protected:
-  override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
-};
-
 
 //////////////////////////
 //   Viewer Types 	//
@@ -995,8 +987,6 @@ public:
 protected:
   override taiDataLink*	CreateDataLink_impl(taBase* data_);
 };
-
-
 
 #endif // tai_type_h
 

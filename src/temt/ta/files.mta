@@ -42,6 +42,7 @@
 ./ta_plugin.h
 ./ta_plugin_p.h
 ./ta_engine.h
+./ta_seledit.h
 ./ta_project.h
 ./ta_server.h
 ./ta_qt.h
@@ -54,8 +55,8 @@
 ./ta_matrix_qt.h
 ./ta_qtclassbrowse.h
 ./ta_qtgroup.h
-./ta_seledit.h
 ./ta_program_qt.h
+./ta_seledit_qt.h
 ./ta_time.h
 ./fun_lookup.h
 ./ta_data_extras.h

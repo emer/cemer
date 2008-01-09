@@ -508,7 +508,7 @@ String taGroup_impl::GetValStr(const TypeDef* td, void* par,
  }
 
 taBase* taGroup_impl::Leaf_(int idx) const {
-  if(idx >= leaves)
+  if ((idx < 0) || (idx >= leaves))
     return NULL;
   if(size && (idx < size))
     return (taBase*)el[idx];

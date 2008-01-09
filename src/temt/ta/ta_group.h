@@ -51,9 +51,11 @@ public:
   int		i;		// index of current leaf element
 };
 
+// forward iteration *cannot* involve adding or deleting
 #define FOR_ITR_EL(T, el, grp, itr) \
 for(el = (T*) grp FirstEl(itr); el; el = (T*) grp NextEl(itr))
 
+// reverse iteration is allowed to involve deleting of current or later element
 #define FOR_ITR_EL_REV(T, el, grp, itr) \
 for(el = (T*) grp LastEl(itr); el; el = (T*) grp PrevEl(itr))
 
@@ -129,19 +131,24 @@ public:
   taBase*	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf iter init
   { taBase* rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
     if(lf.cgp != NULL) rval=(taBase*)lf.cgp->el[0]; return rval; }
+  inline taBase*	FirstEl(taLeafItr& lf) const {return FirstEl_(lf);} // #IGNORE
   taBase*	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
   { if (++lf.i >= lf.cgp->size) {
     lf.i = 0; if (!(lf.cgp = leaf_gp->SafeEl(++lf.g))) return NULL; }
     return (taBase*)lf.cgp->el[lf.i];}
+  inline taBase*	NextEl(taLeafItr& lf) const {return NextEl_(lf);} // #IGNORE
 
   taBase*	 	LastEl_(taLeafItr& lf) const	// #IGNORE last leaf iter init
   { if (!(lf.cgp = LastGp_(lf.g))) return NULL;
     lf.i = lf.cgp->size - 1; return (taBase*)lf.cgp->el[lf.i];  }
-  taBase*	 	PrevEl_(taLeafItr& lf)	const	// #IGNORE prev leaf
+  inline taBase*	LastEl(taLeafItr& lf) const {return LastEl_(lf);} // #IGNORE
+  taBase*	 	PrevEl_(taLeafItr& lf)	const	// #IGNORE prev leaf -- delete item safe
   { if (--lf.i < 0) {
+      if (leaf_gp == NULL) InitLeafGp(); // in case we did a delete of an item
       if (!(lf.cgp = leaf_gp->SafeEl(--lf.g))) return NULL; 
       lf.i = lf.cgp->size - 1;}
     return (taBase*)lf.cgp->el[lf.i];}
+  inline taBase*	PrevEl(taLeafItr& lf) const {return PrevEl_(lf);} // #IGNORE
 
   virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL);	// #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items

@@ -302,7 +302,7 @@ void SelectEdit_Group::AutoEdit() {
   taLeafItr i;
   SelectEdit* se;
   FOR_ITR_EL(SelectEdit, se, this->, i) {
-    if(se->config.auto_edit)
+    if(se->autoEdit())
       se->EditPanel(true, true);	// true,true = new tab, pinned in place
   }
 }
@@ -440,7 +440,7 @@ taBase* taProject::FindMakeNewDataProc(TypeDef* typ, const String& nm) {
 SelectEdit* taProject::FindMakeSelectEdit(const String& nm) {
   SelectEdit* rval = edits.FindName(nm);
   if(rval) return rval;
-  rval = (SelectEdit*)edits.New(1);
+  rval = (SelectEdit*)edits.New(1); // ControlEdit
   rval->SetName(nm);
   rval->DataChanged(DCR_ITEM_UPDATED);
   return rval;

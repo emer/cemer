@@ -1062,6 +1062,7 @@ void iProgramCtrlDataHost::Enum_Members() {
 
 
 void iProgramCtrlDataHost::Constr_Data_Labels() {
+  dat_cnt = -1; //sele not supported here (yet) because cur_base is not base of vars etc.
   Program* prog = this->prog();
   refs.Reset();
   membs.ResetItems(); // all Meths and data
@@ -1101,7 +1102,8 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       int row = AddData(-1, data);
       nm = "step_prog";
       help_text = md->desc;
-      AddName(row, nm, help_text, mb_dat); 
+      AddName(row, nm, help_text, mb_dat/*, md*/); 
+//      ++dat_cnt;
     }
   }
   // args and vars
@@ -1153,8 +1155,9 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       int row = AddData(-1, data);
       nm = pv->name;
       help_text = pv->desc;
-      AddName(row, nm, help_text, mb_dat); 
+      AddName(row, nm, help_text, mb_dat/*, md*/); 
       refs.Add(pv);
+//      ++dat_cnt;
     }
   } // j == set
 }

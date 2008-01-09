@@ -646,6 +646,7 @@ public:
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
   virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
+  virtual TAPtr		GetThisOrOwner(TypeDef* td); // #CAT_ObjectMgmt get this obj or first owner that is of type td
   bool 			IsParentOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect parent of the obj (or is the obj)
   bool			IsChildOf(const taBase* obj) const; // #CAT_ObjectMgmt true if this object is a direct or indirect child of the obj (or is the obj)
   ///////////////////////////////////////////////////////////////////////////
@@ -2497,12 +2498,5 @@ private:
 };
 
 TA_SMART_PTRS(UserDataItem_List) // UserDataItem_ListPtr
-
-// define selectedit if no gui
-#ifdef TA_NO_GUI
-class TA_API SelectEdit {
-  bool	do_nothing;
-};
-#endif // def TA_NO_GUI
 
 #endif // ta_base_h

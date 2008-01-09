@@ -56,7 +56,7 @@ TAHEADS_GUI =\
 	ta_matrix_qt.h \
 	ta_qtclassbrowse.h \
 	ta_qtgroup.h \
-	ta_seledit.h \
+	ta_seledit_qt.h \
 	ta_program_qt.h 
 
 HEADS_GUI =\
@@ -71,7 +71,7 @@ HEADS_GUI =\
 	ta_matrix_qt.h \
 	ta_qtclassbrowse.h \
 	ta_qtcursors.h \
-	ta_seledit.h \
+	ta_seledit_qt.h \
 	ta_program_qt.h  
 
 SRCS_GUI =\
@@ -92,7 +92,8 @@ SRCS_GUI =\
 	ta_qtclassbrowse.cpp \
 	ta_qtclassbrowse.moc.cpp \
 	ta_qttype.cpp \
-	ta_seledit.cpp \
+	ta_seledit_qt.cpp \
+	ta_seledit_qt.moc.cpp \
 	ta_program_qt.cpp  \
 	ta_program_qt.moc.cpp \
 	ta_filer_qt.cpp
@@ -159,6 +160,7 @@ TAHEADS =\
 	ta_plugin.h \
 	ta_plugin_p.h \
 	ta_engine.h \
+	ta_seledit.h \
 	ta_project.h \
 	ta_server.h \
 	$(TAHEADS_GUI) \
@@ -206,6 +208,7 @@ HEADS =\
 	ta_plugin.h \
 	ta_plugin_p.h \
 	ta_engine.h \
+	ta_seledit.h \
 	ta_project.h \
 	ta_server.h \
 	ta_gendoc.h \
@@ -258,6 +261,7 @@ SRCS =\
 	ta_plugin_p.cpp \
 	ta_plugin_p.moc.cpp \
 	ta_engine.cpp \
+	ta_seledit.cpp \
 	ta_project.cpp \
 	ta_project.moc.cpp \
 	ta_server.cpp \
