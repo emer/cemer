@@ -124,9 +124,9 @@ void iSelectEditDataHost::Constr_Data_Labels() {
       QWidget* data = mb_dat->GetRep();
       int row = AddData(-1, data);
   
-      help_text = "";
+      help_text = item->GetDesc();
       String new_lbl = item->caption();
-      GetName(md, nm, help_text); //note: we just call this to get the help text
+      //obs GetName(md, nm, help_text); //note: we just call this to get the help text
       AddName(row, new_lbl, help_text, mb_dat, md);
       ++dat_cnt;
     }

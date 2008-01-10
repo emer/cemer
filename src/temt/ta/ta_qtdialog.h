@@ -407,7 +407,6 @@ INHERITED(taiDataHostBase)
   Q_OBJECT
 friend class iDialog;
 public:
-  static void		GetMembDesc(MemberDef* md, String& dsc_str, String indent);
   static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
   static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
     const String& desc, taiData* buddy = NULL, int dat_idx = -1,

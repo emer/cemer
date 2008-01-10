@@ -71,25 +71,23 @@ void SelectEditItem::Destroy() {
 }
 
 void SelectEditItem::Copy_(const SelectEditItem& cp) {
-  item_nm = cp.item_nm;
   label = cp.label;
+  desc = cp.desc;
   base = cp.base;
+  item_nm = cp.item_nm;
 }
 
 String SelectEditItem::caption() const {
   return label;
-//   String nm = label;
-//   if (nm.nonempty()) nm += " ";
-//   nm += typeItem()->GetLabel();
-//   return nm;
+}
+
+String SelectEditItem::GetDesc() const {
+  if (desc.nonempty()) return desc;
+  return (typeItem()) ? typeItem()->desc : _nilString;
 }
 
 String SelectEditItem::GetName() const {
   return label;
-//   String nm = label;
-//   if (nm.nonempty()) nm += " ";
-//   nm += typeItem()->GetLabel();
-//   return nm;
 }
 
 String SelectEditItem::GetColText(const KeyString& key, int itm_idx) const {
@@ -101,15 +99,6 @@ String SelectEditItem::GetColText(const KeyString& key, int itm_idx) const {
   else return inherited::GetColText(key, itm_idx);
 }
 
-String SelectEditItem::GetDisplayName() const {
-  String rval;
-  if (base) rval = base->GetName();
-  TypeItem* ti = typeItem();
-  if (rval.nonempty() && ti) rval += ":";
-  if (ti) rval += ti->name;
-  return rval;
-  
-}
 
 //////////////////////////////////
 //  EditMbrItem		//
@@ -453,7 +442,9 @@ bool SelectEdit::SelectMemberNm(taBase* base, const char* md, const char* lbl) {
   return SelectMember(base, mda, lbl);
 }
 
-bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md, const char* lbl) {
+bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
+  const char* lbl)
+{
   int bidx = -1;
   EditMbrItem* item = (EditMbrItem*)SelectEditItem::StatFindItemBase(&mbrs, base, md, bidx);
   bool rval = false;
@@ -466,6 +457,7 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md, const char* lbl)
     item->base = base;
     item->mbr = md;
     item->item_nm = md->name;
+    MemberDef::GetMembDesc(md, item->desc, "");
     item->label = lbl;
     if(item->label.nonempty()) item->label += " ";
     item->label += md->GetLabel();
@@ -502,6 +494,7 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth, const char* lbl
     item->mth = mth;
     item->item_nm = mth->name;
     item->label = lbl;
+    item->desc = mth->desc;
     if(item->label.nonempty()) item->label += " ";
     item->label += mth->GetLabel();
     BaseAdded(base);

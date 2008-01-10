@@ -1773,6 +1773,7 @@ private:
 class TA_API MemberDef : public MemberDefBase { //  defines a class member
 INHERITED(MemberDefBase)
 public:
+  static void		GetMembDesc(MemberDef* md, String& dsc_str, String indent); // gets a detailed description, typically for tooltip
 
   ta_memb_ptr	off;		// offset of member from owner type
   int		base_off;	// offset for base of owner

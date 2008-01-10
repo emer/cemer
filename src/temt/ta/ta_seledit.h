@@ -38,16 +38,17 @@ public:
   static bool		StatRemoveItemBase(taGroup_impl* grp, taBase* base);
     // remove any items with this base
   
-  String		item_nm; // #READ_ONLY #SHOW name of the member or method
+  String		desc; // #EDIT_DIALOG description (appears as tooltip for item)
   String		label;	 // full display label for item in edit dialog
   taBase*		base; // #READ_ONLY #SHOW #NO_SET_POINTER the mbr/mth base (not ref'ed)
+  String		item_nm; // #READ_ONLY #SHOW name of the member or method
   
   String 		caption() const; // the string used in the editor
   virtual TypeItem*	typeItem() const {return NULL;} // the mbr or mth
   
   override String	GetName() const;
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
-  override String	GetDisplayName() const;
+  override String	GetDesc() const;
   TA_BASEFUNS(SelectEditItem);
 private:
   void	Initialize();

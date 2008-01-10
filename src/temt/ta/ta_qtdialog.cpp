@@ -1022,44 +1022,10 @@ void taiDataHostBase::WidgetDeleting() {
 // 	taiDataHost		//
 //////////////////////////////////
 
-void taiDataHost::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
-  String desc = md->desc;
-  String defval = md->OptionAfter("DEF_");
-  if(!defval.empty())
-    desc = String("[Default: ") + defval + "] " + desc;
-  else
-    desc = desc;
-  if(!indent.empty())
-    desc = indent + md->GetLabel() + String(": ") + desc;
-  if (!dsc_str.empty())
-    dsc_str += "<br>";
-  dsc_str += desc;
-  if(md->type->InheritsFormal(TA_class) &&
-     (md->type->HasOption("INLINE") || md->type->HasOption("EDIT_INLINE"))) {
-    indent += "  ";
-    for (int i=0; i < md->type->members.size; ++i) {
-      MemberDef* smd = md->type->members.FastEl(i);
-      if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT) ||
-        smd->HasOption("HIDDEN_INLINE"))
-	continue;
-      GetMembDesc(smd, dsc_str, indent);
-    }
-  } else if (md->type->InheritsFormal(TA_enum)) {
-    for (int i = 0; i < md->type->enum_vals.size; ++i) {
-      EnumDef* ed = md->type->enum_vals.FastEl(i);
-      if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;
-      desc = indent + "  " + ed->GetLabel() + String(": ") + ed->desc;
-      if (!dsc_str.empty())
-        dsc_str += "<br>";
-      dsc_str += desc;
-    }
-  }
-}
-
 void taiDataHost::GetName(MemberDef* md, String& name, String& desc) {
   name = md->GetLabel();
   desc = ""; // just in case
-  GetMembDesc(md, desc, "");
+  MemberDef::GetMembDesc(md, desc, "");
 }
 
 taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
