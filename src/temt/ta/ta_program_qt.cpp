@@ -1036,6 +1036,7 @@ iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
   if (pg) { // better exist!
     refs_struct.Add(pg);
   }
+  sel_edit_mbrs = false; 
 }
 
 iProgramCtrlDataHost::~iProgramCtrlDataHost() {
@@ -1062,7 +1063,7 @@ void iProgramCtrlDataHost::Enum_Members() {
 
 
 void iProgramCtrlDataHost::Constr_Data_Labels() {
-  dat_cnt = -1; //sele not supported here (yet) because cur_base is not base of vars etc.
+  dat_cnt = 0; 
   Program* prog = this->prog();
   refs.Reset();
   membs.ResetItems(); // all Meths and data
@@ -1103,7 +1104,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       nm = "step_prog";
       help_text = md->desc;
       AddName(row, nm, help_text, mb_dat/*, md*/); 
-//      ++dat_cnt;
+      ++dat_cnt;
     }
   }
   // args and vars
@@ -1157,7 +1158,7 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       help_text = pv->desc;
       AddName(row, nm, help_text, mb_dat/*, md*/); 
       refs.Add(pv);
-//      ++dat_cnt;
+      ++dat_cnt;
     }
   } // j == set
 }
@@ -1193,6 +1194,20 @@ void iProgramCtrlDataHost::DataChanged_Ref(taBase_RefList* ref, taBase* base,
   //note: don't need to check for is_loading because we defer until after
   // we need to do a fullblown reshow, to handle things like name changes of vars, etc.
   ReShow_Async();
+}
+
+MemberDef* iProgramCtrlDataHost::GetMemberPropsForSelect(int sel_idx, taBase** base,
+    String& lbl, String& desc)
+{
+  return NULL;
+/*
+  MemberDef* md = NULL;
+  if (!(membs.GetFlatDataItem(sel_idx, &md) && md))
+    return NULL;
+  if (base) *base = cur_base;
+  String tlbl = ((taBase*)cur_base)->GetName().elidedTo(16);
+  lbl = tlbl;
+  return md;*/
 }
 
 

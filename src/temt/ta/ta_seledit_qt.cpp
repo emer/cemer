@@ -59,6 +59,7 @@ iSelectEditDataHost::~iSelectEditDataHost() {
 void iSelectEditDataHost::Initialize()
 {
   sele = NULL;
+  sel_edit_mbrs = false; // not for us!!!
 }
 
 void iSelectEditDataHost::Constr_Body() {

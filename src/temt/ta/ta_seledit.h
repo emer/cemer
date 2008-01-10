@@ -41,7 +41,7 @@ public:
   String		desc; // #EDIT_DIALOG description (appears as tooltip for item)
   String		label;	 // full display label for item in edit dialog
   taBase*		base; // #READ_ONLY #SHOW #NO_SET_POINTER the mbr/mth base (not ref'ed)
-  String		item_nm; // #READ_ONLY #SHOW name of the member or method
+  String		item_nm; // #READ_ONLY #NO_SHOW #NO_SAVE #OBSOLETE name of the member or method
   
   String 		caption() const; // the string used in the editor
   virtual TypeItem*	typeItem() const {return NULL;} // the mbr or mth
@@ -61,12 +61,14 @@ class TA_API EditMbrItem: public SelectEditItem {
   //  ##CAT_Display base class for membs/meths in a Edit
   INHERITED(SelectEditItem)
 public:
-  MemberDef*		mbr; // #READ_ONLY #SHOW #NO_SAVE the mbr type
+  MemberDef*		mbr; // #READ_ONLY #SHOW the mbr type
   
   override TypeItem*	typeItem() const {return mbr;} // the mbr or mth
   
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   TA_BASEFUNS(EditMbrItem);
+protected:
+  void			UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy();
@@ -77,12 +79,14 @@ class TA_API EditMthItem: public SelectEditItem {
   //  ##CAT_Display base class for meths in a Edit
   INHERITED(SelectEditItem)
 public:
-  MethodDef*		mth; // #READ_ONLY #SHOW #NO_SAVE the mbr type
+  MethodDef*		mth; // #READ_ONLY #SHOW the mbr type
   
   override TypeItem*	typeItem() const {return mth;} // the mbr or mth
   
 //  override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   TA_BASEFUNS(EditMthItem);
+protected:
+  void			UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy();
@@ -94,9 +98,6 @@ class TA_API EditMbrItem_Group : public taGroup<EditMbrItem> {
   // ##CAT_Display group of select edit dialog objects
 INHERITED(taGroup<EditMbrItem>)
 public:
-
-  void			GetMembsFmStrs(); // #IGNORE get members from strings (upon loading)
-  
   override int		NumListCols() const {return 5;}
   // base name, base type, memb name, memb type, memb label
   override String	GetColHeading(const KeyString& key) const;
@@ -123,8 +124,6 @@ public:
   
   bool			is_root; // #NO_SHOW #READ_ONLY #NO_SAVE
   MthGroupType		group_type; // #GHOST_ON_is_root how to organize and display the methods in this group
-  
-  void			GetMethsFmStrs(); // #IGNORE get methods from strings (upon loading)
   
   void			SetGroupType(MthGroupType group_type);
    // #MENU #MENU_CONTEXT set how the methods will be displayed in the SelectEdit dialog
@@ -195,14 +194,18 @@ public: // public API
   // #MENU #MENU_ON_SelectEdit search given object for member names that contain given string, and add them to this editor
   virtual int	CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
   // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this select edit; no_ptrs = ignore pointer fields
-  virtual bool	SelectMember(taBase* base, MemberDef* md, const char* lbl);
-  // add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)
-  virtual bool	SelectMemberNm(taBase* base, const char* md, const char* lbl);
-  // add new member to edit if it isn't already here (returns true), otherwise update lbl (returns false)
-  virtual bool	SelectMethod(taBase* base, MethodDef* md, const char* lbl);
-  // add new method to edit if it isn't already here (returns true), otherwise remove (returns false)
-  virtual bool	SelectMethodNm(taBase* base, const char* md, const char* lbl);
-  // add new method to edit if it isn't already here (returns true), otherwise remove (returns false)
+  virtual bool	SelectMember(taBase* base, MemberDef* md,
+    const String& lbl, const String& desc = _nilString);
+  // add new member to edit if it isn't already here (returns true)
+  virtual bool	SelectMemberNm(taBase* base, const String& md_nm,
+    const String& lbl, const String& desc = _nilString);
+  // add new member to edit if it isn't already here (returns true)
+  virtual bool	SelectMethod(taBase* base, MethodDef* md,
+    const String& lbl, const String& desc = _nilString);
+  // add new method to edit if it isn't already here (returns true)
+  virtual bool	SelectMethodNm(taBase* base, const String& md,
+    const String& lbl, const String& desc = _nilString);
+  // add new method to edit if it isn't already here (returns true)
   
   virtual int	FindMbrBase(taBase* base, MemberDef* md);
   // find a given base and member, returns index
@@ -232,9 +235,9 @@ protected:
   virtual void		RemoveField_impl(int idx);
   virtual void		RemoveFun_impl(int idx);
   virtual bool		SelectMember_impl(taBase* base, MemberDef* md,
-    const char* lbl);
+    const String& lbl, const String& desc);
   virtual bool		SelectMethod_impl(taBase* base, MethodDef* md,
-    const char* lbl);
+    const String& lbl, const String& desc);
   
 private:
   void	Initialize();
@@ -250,13 +253,6 @@ public: // legacy routines/members
   taBase_List	meth_bases;	// #NO_SHOW #NO_SAVE #LINK_GROUP #READ_ONLY the bases for each element in the list
   String_Array	meth_strs;	// #NO_SHOW #NO_SAVE #READ_ONLY string names of meths on bases -- used for saving
   void		ConvertLegacy();
-//  void	UpdateAllBases();	// perform update-after-edit on all base objects
-//  virtual void	NewEdit();
-  // closes current edit dialog and makes a new one (with any changes)
-//  void		GetAllPaths();	// #IGNORE get paths for all current objects
-//  void		BaseChangeSave(); // #IGNORE close edit dialog and save paths to current bases
-//  void		BaseChangeReShow(); // #IGNORE re-show the edit dialog loading bases from saved paths
-//  bool		BaseDataChanged(taBase* obj,int dcr, void* op1_, void* op2_);
 };
 
 

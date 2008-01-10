@@ -1038,6 +1038,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   dat_cnt = 0;
   sel_item_idx = -1;
   rebuild_body = false;
+  sel_edit_mbrs = true; // inherited guys can turn off
 }
 
 taiDataHost::~taiDataHost() {
@@ -1955,22 +1956,37 @@ void taiEditDataHost::DoRaise_Panel() {
 }
 
 void taiEditDataHost::DoSelectForEdit(int param){
-  //NOTE: this handler adds if not on, or removes if already on
-//  MemberDef* md = sel_item_md;
-  MemberDef* md = NULL;
-  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
-    return; // not supposed to happen
   taProject* proj = (taProject*)((taBase*)cur_base)->GetThisOrOwner(&TA_taProject);
   if (!proj) return;
+  
   SelectEdit* se = proj->edits.Leaf(param);
-  if (!md || !se || !cur_base) return; //shouldn't happen...
+ 
+  taBase* base = NULL;
+  String lbl;
+  String desc;
+  MemberDef* md = GetMemberPropsForSelect(sel_item_idx, &base, lbl, desc);
+  
+  if (!md || !se || !base) return; //shouldn't happen...
+  
+  //NOTE: this handler adds if not on, or removes if already on
   int idx;
-  if ((idx = se->FindMbrBase((taBase*)cur_base, md)) >= 0)
+  if ((idx = se->FindMbrBase(base, md)) >= 0)
     se->RemoveField(idx);
   else {
-    String lbl = ((taBase*)cur_base)->GetName();
-    se->SelectMember((taBase*)cur_base, md, lbl.elidedTo(16));
+    se->SelectMember((taBase*)cur_base, md, lbl, desc);
   }
+}
+
+MemberDef* taiEditDataHost::GetMemberPropsForSelect(int sel_idx, taBase** base,
+    String& lbl, String& desc)
+{
+  MemberDef* md = NULL;
+  if (!(membs.GetFlatDataItem(sel_idx, &md) && md))
+    return NULL;
+  if (base) *base = (taBase*)cur_base;
+  String tlbl = ((taBase*)cur_base)->GetName().elidedTo(16);
+  lbl = tlbl;
+  return md;
 }
 
 void taiEditDataHost::DoConstr_Dialog(iDialog*& dlg) {
@@ -2031,34 +2047,38 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   // get list of select edits
   taProject* proj = (taProject*)((taBase*)cur_base)->GetThisOrOwner(&TA_taProject);
   if (!proj || proj->edits.leaves == 0) return;
-  // if any edits, populate menu for adding, for all seledits not already on
-  QMenu* sub = new QMenu(body);
-  sub->setFont(menu->font());
-  for (int i = 0; i < proj->edits.leaves; ++i) {
-    SelectEdit* se = proj->edits.Leaf(i);
-    sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
-    sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
-    // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
-    if (se->FindMbrBase((taBase*)cur_base, md) >= 0)
-      sub->setItemEnabled(i, false);
+  if (sel_edit_mbrs) { 
+
+    // if any edits, populate menu for adding, for all seledits not already on
+    QMenu* sub = new QMenu(body);
+    sub->setFont(menu->font());
+    for (int i = 0; i < proj->edits.leaves; ++i) {
+      SelectEdit* se = proj->edits.Leaf(i);
+      sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
+      sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
+      // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
+      if (se->FindMbrBase((taBase*)cur_base, md) >= 0)
+        sub->setItemEnabled(i, false);
+    }
+    menu->insertItem("Add to SelectEdit", sub, ++last_id);
+    if (sub->count() == 0)
+      menu->setItemEnabled(last_id, false); // show item for usability, but disable
+      
+    // TODO: if any edits, populate menu for removing, for all seledits already on
+    sub = new QMenu(body);
+    sub->setFont(menu->font());
+    for (int i = 0; i < proj->edits.leaves; ++i) {
+      SelectEdit* se = proj->edits.Leaf(i);
+      sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
+      sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
+      // determine if already on that seledit, and disable if it isn't
+      if (se->FindMbrBase((taBase*)cur_base, md) < 0)
+        sub->setItemEnabled(i, false);
+    }
+    menu->insertItem("Remove from SelectEdit", sub, ++last_id);
+    if (sub->count() == 0)
+      menu->setItemEnabled(last_id, false); // show item for usability, but disable
   }
-  menu->insertItem("Add to SelectEdit", sub, ++last_id);
-  if (sub->count() == 0)
-    menu->setItemEnabled(last_id, false); // show item for usability, but disable
-  // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = new QMenu(body);
-  sub->setFont(menu->font());
-  for (int i = 0; i < proj->edits.leaves; ++i) {
-    SelectEdit* se = proj->edits.Leaf(i);
-    sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
-    sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
-    // determine if already on that seledit, and disable if it isn't
-    if (se->FindMbrBase((taBase*)cur_base, md) < 0)
-      sub->setItemEnabled(i, false);
-  }
-  menu->insertItem("Remove from SelectEdit", sub, ++last_id);
-  if (sub->count() == 0)
-    menu->setItemEnabled(last_id, false); // show item for usability, but disable
 }
 
 void taiEditDataHost::GetButtonImage(bool force) {

@@ -474,6 +474,7 @@ public slots:
 
 protected:
   bool			show_meth_buttons; // true if any are created
+  bool			sel_edit_mbrs; // support right-click for seledit of mbrs
 //  MemberDef*		sel_item_md; // only used during handling of context menu for select edits
   int			sel_item_idx; // only used during handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
@@ -638,6 +639,9 @@ protected:
   void			Constr_MethButtons();
   override void 	Constr_RegNotifies();
   override void		Constr_Final();
+  virtual MemberDef*	GetMemberPropsForSelect(int sel_idx, taBase** base,
+    String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play
+
   override void		FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id);
   virtual void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
   virtual void		GetImage_Membs(); // for overridding
@@ -656,7 +660,7 @@ protected:
   override void 	DoConstr_Dialog(iDialog*& dlg);
 
 protected slots:
-  virtual void	DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
+  virtual void		DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
   virtual void		bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 

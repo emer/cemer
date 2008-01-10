@@ -115,6 +115,13 @@ void EditMbrItem::Copy_(const EditMbrItem& cp) {
   mbr = cp.mbr;
 }
 
+void EditMbrItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (desc.empty() && mbr)
+    MemberDef::GetMembDesc(mbr, desc, "");
+    
+}
+
 String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
   if (key == "mbr_type") 
     return (mbr) ? mbr->type->name : String("NULL");
@@ -131,33 +138,12 @@ void EditMbrItem_Group::DataChanged(int dcr, void* op1, void* op2)
   SelectEdit::StatDataChanged_Group(this, dcr, op1, op2);
 }
 
-void EditMbrItem_Group::GetMembsFmStrs() {
-  EditMbrItem* item;
-  taLeafItr itr;
-  FOR_ITR_EL_REV(EditMbrItem, item, this->, itr) {
-    taBase* bs = item->base;
-    if (bs == NULL) { // didn't get loaded, bail..
-      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
-      item->Close();
-      continue;
-    }
-    String nm = item->item_nm;
-    MemberDef* md = bs->GetTypeDef()->members.FindName((const char*)nm);
-    if(md == NULL) {
-      taMisc::Warning("*** SelectEdit: couldn't find member:", nm, "in object to edit:",bs->GetPath());
-      item->Close();
-      continue;
-    }
-    item->mbr = md;
-  }
-}
-
 String EditMbrItem_Group::GetColHeading(const KeyString& key) const {
   if (key == "base_name") return "Base Name";
   else if (key == "base_type") return "Base Type";
   else if (key == "item_name") return "Member Name";
   else if (key == "mbr_type") return "Member Type";
-  else if (key == "label") return "Base Type";
+  else if (key == "label") return "Label";
   else return inherited::GetColHeading(key);
 }
 
@@ -188,6 +174,13 @@ void EditMthItem::Copy_(const EditMthItem& cp) {
   mth = cp.mth;
 }
 
+void EditMthItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if (desc.empty() && mth)
+    desc = mth->desc;
+    
+}
+
 
 //////////////////////////////////
 //  EditMthItem_Group		//
@@ -216,32 +209,12 @@ void EditMthItem_Group::DataChanged(int dcr, void* op1, void* op2)
   SelectEdit::StatDataChanged_Group(this, dcr, op1, op2);
 }
 
-void EditMthItem_Group::GetMethsFmStrs() {
-  EditMthItem* item;
-  taLeafItr itr;
-  FOR_ITR_EL_REV(EditMthItem, item, this->, itr) {
-    taBase* bs = item->base;
-    if (bs == NULL) { // didn't get loaded, bail..
-      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
-      item->Close();
-      continue;
-    }
-    String nm = item->item_nm;
-    MethodDef* md = bs->GetTypeDef()->methods.FindName((const char*)nm);
-    if(md == NULL) {
-      taMisc::Warning("*** SelectEdit: couldn't find method:", nm, "in object to edit:",bs->GetPath());
-      item->Close();
-      continue;
-    }
-    item->mth = md;
-  }
-}
 
 String EditMthItem_Group::GetColHeading(const KeyString& key) const {
   if (key == "base_name") return "Base Name";
   else if (key == "base_type") return "Base Type";
   else if (key == "item_name") return "Method Name";
-  else if (key == "label") return "label";
+  else if (key == "label") return "Label";
   else return inherited::GetColHeading(key);
 }
 
@@ -303,9 +276,6 @@ void SelectEdit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); 
   if (taMisc::is_loading) {
     ConvertLegacy(); // LEGACY
-    mbrs.GetMembsFmStrs();
-    mths.GetMethsFmStrs();
-    //TODO: must ref pointers????
   }
 }
 
@@ -385,8 +355,8 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
     taBase* itmb = (taBase*)src_bases[i];
     String nma = "A: " + itma->GetDisplayName().elidedTo(20);
     String nmb = "B: " + itmb->GetDisplayName().elidedTo(20);
-    SelectMember_impl(itma, mds[i], nma);
-    SelectMember_impl(itmb, mds[i], nmb);
+    SelectMember_impl(itma, mds[i], nma, _nilString);
+    SelectMember_impl(itmb, mds[i], nmb, _nilString);
   }
   ReShowEdit(true);
   return mds.size;
@@ -429,75 +399,81 @@ int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
   return rval;
 }
 
-bool SelectEdit::SelectMember(taBase* base, MemberDef* md, const char* lbl) {
-  bool rval = SelectMember_impl(base, md, lbl);
+bool SelectEdit::SelectMember(taBase* base, MemberDef* md,
+  const String& lbl, const String& desc) 
+{
+  bool rval = SelectMember_impl(base, md, lbl, desc);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool SelectEdit::SelectMemberNm(taBase* base, const char* md, const char* lbl) {
+bool SelectEdit::SelectMemberNm(taBase* base, const String& md_nm,
+  const String& lbl, const String& desc) 
+{
   if(base == NULL) return false;
-  MemberDef* mda = (MemberDef*)base->FindMember(md);
-  if(mda == NULL) return false;
-  return SelectMember(base, mda, lbl);
+  MemberDef* md = (MemberDef*)base->FindMember(md_nm);
+  if (md == NULL) return false;
+  return SelectMember(base, md, lbl, desc);
 }
 
 bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
-  const char* lbl)
+  const String& lbl, const String& desc)
 {
   int bidx = -1;
   EditMbrItem* item = (EditMbrItem*)SelectEditItem::StatFindItemBase(&mbrs, base, md, bidx);
   bool rval = false;
-  if (bidx >= 0) {
-    item->label = lbl;
-    if(item->label.nonempty()) item->label += " ";
-    item->label += md->GetLabel();
-  } else {
-    item = (EditMbrItem*)mbrs.New(1);
+  if (bidx < 0) {
+    item = new EditMbrItem;
     item->base = base;
     item->mbr = md;
     item->item_nm = md->name;
-    MemberDef::GetMembDesc(md, item->desc, "");
+    if (desc.empty()) 
+      MemberDef::GetMembDesc(md, item->desc, "");
+    else item->desc = desc;
     item->label = lbl;
     if(item->label.nonempty()) item->label += " ";
     item->label += md->GetLabel();
-    BaseAdded(base);
+    mbrs.Add(item); // will trigger BaseAdded
     rval = true;
   }
   return rval;
 }
 
-bool SelectEdit::SelectMethod(taBase* base, MethodDef* md, const char* lbl) {
-  bool rval = SelectMethod_impl(base, md, lbl);
+bool SelectEdit::SelectMethod(taBase* base, MethodDef* md,
+  const String& lbl, const String& desc) 
+{
+  bool rval = SelectMethod_impl(base, md, lbl, desc);
   ReShowEdit(true); //forced
   return rval;
 }
 
-bool SelectEdit::SelectMethodNm(taBase* base, const char* md, const char* lbl) {
+bool SelectEdit::SelectMethodNm(taBase* base, const String& md_nm,
+  const String& lbl, const String& desc) 
+{
   if(base == NULL) return false;
-  MethodDef* mda = (MethodDef*)base->GetTypeDef()->methods.FindName(md);
-  if(mda == NULL) return false;
-  return SelectMethod(base, mda, lbl);
+  MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
+  if (md == NULL) return false;
+  return SelectMethod(base, md, lbl, desc);
 }
 
-bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth, const char* lbl) {
+bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
+  const String& lbl, const String& desc)
+{
   int bidx = -1;
   EditMthItem* item = (EditMthItem*)SelectEditItem::StatFindItemBase(&mths, base, mth, bidx);
   bool rval = false;
-  if (bidx >= 0) {
-    item->label = lbl;
-    if(item->label.nonempty()) item->label += " ";
-    item->label += mth->GetLabel();
-  } else {
-    item = (EditMthItem*)mths.New(1);
+  if (bidx < 0) {
+    item = new EditMthItem;
     item->base = base;
     item->mth = mth;
     item->item_nm = mth->name;
     item->label = lbl;
-    item->desc = mth->desc;
-    if(item->label.nonempty()) item->label += " ";
+    if (desc.empty())
+      item->desc = desc;
+    else item->desc = mth->desc;
+    if (item->label.nonempty()) item->label += " ";
     item->label += mth->GetLabel();
-    BaseAdded(base);
+    mths.Add(item); // will call BaseAdded
     rval = true;
   }
   return rval;
@@ -529,196 +505,74 @@ int SelectEdit::FindMethBase(taBase* base, MethodDef* md) {
 //////////////////////////////////
 
 void SelectEdit::ConvertLegacy() {
-  if (!(config.auto_edit || (mbr_bases.size > 0) || (meth_bases.size > 0)))
-    return;
-  auto_edit = config.auto_edit;
-  for (int i = 0; i < mbr_bases.size; ++i) {
-    EditMbrItem* item = (EditMbrItem*)mbrs.New(1);
-    item->base = mbr_bases.FastEl(i);
-    item->label = config.mbr_labels.SafeEl(i);
-    item->item_nm = mbr_strs.SafeEl(i);
-    if(item->label.nonempty()) item->label += " ";
-    item->label += item->item_nm;//md->GetLabel();
+  if (config.auto_edit || (mbr_bases.size > 0) || (meth_bases.size > 0)) {
+    auto_edit = config.auto_edit;
+    for (int i = 0; i < mbr_bases.size; ++i) {
+      EditMbrItem* item = (EditMbrItem*)mbrs.New(1);
+      item->base = mbr_bases.FastEl(i);
+      item->label = config.mbr_labels.SafeEl(i);
+      item->item_nm = mbr_strs.SafeEl(i);
+      if(item->label.nonempty()) item->label += " ";
+      item->label += item->item_nm;//md->GetLabel();
+    }
+    for (int i = 0; i < meth_bases.size; ++i) {
+      EditMthItem* item = (EditMthItem*)mths.New(1);
+      item->base = meth_bases.FastEl(i);
+      item->label = config.meth_labels.SafeEl(i);
+      item->item_nm = meth_strs.SafeEl(i);
+      if(item->label.nonempty()) item->label += " ";
+      item->label += item->item_nm;//md->GetLabel();
+    }
+    mbr_bases.Reset();
+    config.mbr_labels.Reset();
+    mbr_strs.Reset();
+    meth_bases.Reset();
+    config.meth_labels.Reset();
+    meth_strs.Reset();
   }
-  for (int i = 0; i < meth_bases.size; ++i) {
-    EditMthItem* item = (EditMthItem*)mths.New(1);
-    item->base = meth_bases.FastEl(i);
-    item->label = config.meth_labels.SafeEl(i);
-    item->item_nm = meth_strs.SafeEl(i);
-    if(item->label.nonempty()) item->label += " ";
-    item->label += item->item_nm;//md->GetLabel();
-  }
-  mbr_bases.Reset();
-  config.mbr_labels.Reset();
-  mbr_strs.Reset();
-  meth_bases.Reset();
-  config.meth_labels.Reset();
-  meth_strs.Reset();
+  { // load memberdefs -- this only needed for legacy, and for brief crossover period projs
+  EditMbrItem* item;
+  taLeafItr itr;
+  FOR_ITR_EL_REV(EditMbrItem, item, this->mbrs., itr) {
+    taBase* bs = item->base;
+    if (bs == NULL) { // didn't get loaded, bail..
+      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
+      item->Close();
+      continue;
+    }
+    if (!item->mbr && item->item_nm.nonempty()) {
+      String nm = item->item_nm;
+      item->mbr = bs->GetTypeDef()->members.FindName((const char*)nm);
+    }
+    if (item->mbr == NULL) {
+      taMisc::Warning("*** SelectEdit: couldn't find member:", item->item_nm, "in object to edit:",bs->GetPath());
+      item->Close();
+      continue;
+    }
+  }}
+  // GetMethsFmStrs() 
+  {
+  EditMthItem* item;
+  taLeafItr itr;
+  FOR_ITR_EL_REV(EditMthItem, item, this->mths., itr) {
+    taBase* bs = item->base;
+    if (bs == NULL) { // didn't get loaded, bail..
+      taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
+      item->Close();
+      continue;
+    }
+    if (!item->mth && item->item_nm.nonempty()) {
+      String nm = item->item_nm;
+      item->mth = bs->GetTypeDef()->methods.FindName((const char*)nm);
+    }
+    if (item->mth == NULL) {
+      taMisc::Warning("*** SelectEdit: couldn't find method:", item->item_nm, "in object to edit:",bs->GetPath());
+      item->Close();
+      continue;
+    }
+  }}
 }
 
-/*void SelectEdit::UpdateAfterEdit() {
-//  taNBase::UpdateAfterEdit(); // prob shouldn't do this, because it makes the dialog go Apply/Revert
-  if((mbr_base_paths.size > 0) || (meth_base_paths.size > 0)) {
-    BaseChangeReShow();		// must have been saved, so reopen it!
-  }
-  config.mbr_labels.SetSize(mbr_bases.size);
-  config.meth_labels.SetSize(meth_bases.size);
-  mbr_strs.SetSize(mbr_bases.size);
-  meth_strs.SetSize(meth_bases.size);
-  if(taMisc::is_loading) {
-    GetMembsFmStrs();
-    GetMethsFmStrs();
-  }
-  ReShowEdit(true); //forced
-}*/
-
-/*bool SelectEdit::BaseClosing(taBase* base) {
-  bool gotone = false;
-  int i;
-  for(i=mbr_bases.size-1;i>=0;i--) {
-    taBase* bs = mbr_bases.FastEl(i);
-    if(!bs) continue;
-    char* staddr = (char*)bs;
-    char* endaddr=staddr+bs->GetSize();
-    char* vbase = (char*)base;
-    if((vbase >= staddr) && (vbase <= endaddr)) {
-      RemoveField_impl(i);
-      gotone = true;
-    }
-  }
-
-  for(i=meth_bases.size-1;i>=0;i--) {
-    taBase* bs = meth_bases.FastEl(i);
-    if(bs == base) {
-      RemoveFun_impl(i);
-      gotone = true;
-    }
-  }
-  if (gotone) ReShowEdit(true);
-  return gotone;
-}
-
-bool SelectEdit::BaseDataChanged(taBase* base,
-    int dcr, void* op1_, void* op2_) 
-{
-  bool rval = false;
-  int i;
-  for(i=mbr_bases.size-1;i>=0;i--) {
-    taBase* bs = mbr_bases.FastEl(i);
-    if(!bs) continue;
-    char* staddr = (char*)bs;
-    char* endaddr=staddr+bs->GetSize();
-    char* vbase = (char*)base;
-    if((vbase >= staddr) && (vbase <= endaddr)) {
-      rval = true;
-      break;
-    }
-  }
-
-  if (!rval) for(i=meth_bases.size-1;i>=0;i--) {
-    taBase* bs = meth_bases.FastEl(i);
-    if(bs == base) {
-      rval = true;
-      break;
-    }
-  }
-  if (rval) DataChanged(DCR_ITEM_UPDATED, NULL, NULL);
-
-  return rval;
-}*/
-
-
-/*void SelectEdit::BaseChangeReShow() {
-  if((mbr_base_paths.size == 0) && (meth_base_paths.size == 0)) return;
-
-  if(mbr_base_paths.size > 0) {
-    mbr_bases.Reset();		// get rid of the mbr_bases!
-    int i;
-    for(i=0;i<mbr_base_paths.size;i++) {
-      String path = mbr_base_paths.FastEl(i);
-      taBase* bs = tabMisc::root->FindFromPath(path);
-      if(!bs) {
-	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
-	members.RemoveIdx(i);  mbr_strs.RemoveIdx(i);  config.mbr_labels.RemoveIdx(i);  mbr_base_paths.RemoveIdx(i);
-	i--;
-	continue;
-      }
-      mbr_bases.Link(bs);
-    }
-    mbr_base_paths.Reset();
-  }
-
-  if(meth_base_paths.size > 0) {
-    meth_bases.Reset();		// get rid of the meth_bases!
-    int i;
-    for(i=0;i<meth_base_paths.size;i++) {
-      String path = meth_base_paths.FastEl(i);
-      taBase* bs = tabMisc::root->FindFromPath(path);
-      if(!bs) {
-	taMisc::Error("SelectEdit::BaseChangeReOpen: could not find object from path:",path);
-	methods.RemoveIdx(i);  meth_strs.RemoveIdx(i);  config.meth_labels.RemoveIdx(i);  meth_base_paths.RemoveIdx(i);
-	i--;
-	continue;
-      }
-      meth_bases.Link(bs);
-    }
-    meth_base_paths.Reset();
-  }
-
-  ReShowEdit(true); //forced
-}*/
-
-/*int SelectEdit::Dump_Load_Value(istream& strm, taBase* par) {
-  members.Reset();
-  mbr_bases.Reset();
-  mbr_strs.Reset();
-  config.mbr_labels.Reset();
-
-  methods.Reset();
-  meth_bases.Reset();
-  meth_strs.Reset();
-  config.meth_labels.Reset();
-
-  return inherited::Dump_Load_Value(strm, par);
-  ReShowEdit(true); //forced
-} */
-
-/*void SelectEdit::GetAllPaths() {
-  if(mbr_bases.size > 0) {
-    mbr_base_paths.Reset();
-    for(int i=0;i<mbr_bases.size;i++) {
-      mbr_base_paths.Add(mbr_bases.FastEl(i)->GetPath());
-    }
-  }
-  if(meth_bases.size > 0) {
-    meth_base_paths.Reset();
-    int i;
-    for(i=0;i<meth_bases.size;i++) {
-      meth_base_paths.Add(meth_bases.FastEl(i)->GetPath());
-    }
-  }
-}
-
-void SelectEdit::UpdateAllBases() {
-  int i;
-  for(i=0;i<mbr_bases.size;i++) {
-    taBase* bs = mbr_bases.FastEl(i);
-    if(!bs) continue;
-    bs->UpdateAfterEdit();
-    taiMisc::Update(bs);
-  }
-  for(i=0;i<meth_bases.size;i++) {
-    taBase* bs = meth_bases.FastEl(i);
-    if(bs == NULL) continue;
-    bs->UpdateAfterEdit();
-  }
-} */
-
-
-/*void SelectEdit::NewEdit() {
-  DataChanged(DCR_STRUCT_UPDATE_BEGIN);
-  DataChanged(DCR_STRUCT_UPDATE_END);
-}*/
 
 /*int SelectEdit::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = 0;

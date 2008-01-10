@@ -307,6 +307,8 @@ protected: //
   override void		Enum_Members();
   override void		Constr_Data_Labels();
   override void 	Cancel_impl(); 
+  override MemberDef*	GetMemberPropsForSelect(int sel_idx, taBase** base,
+    String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play
   override void		GetValue_Membs_def();
   override void		GetImage_Membs();
 
