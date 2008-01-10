@@ -864,7 +864,7 @@ int RecvCons::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool q
 }
 
 void RecvCons::SaveWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, ru, fmt);
   flr->Close();
@@ -872,7 +872,7 @@ void RecvCons::SaveWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat
 }
 
 int RecvCons::LoadWeights(const String& fname, Unit* ru, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = 0;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, ru, fmt, quiet);
@@ -2128,7 +2128,7 @@ int Unit::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet
 }
 
 void Unit::SaveWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, prjn, fmt);
   flr->Close();
@@ -2136,7 +2136,7 @@ void Unit::SaveWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFo
 }
 
 int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, prjn, fmt, quiet);
@@ -2760,7 +2760,7 @@ int Projection::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
 }
 
 void Projection::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
   flr->Close();
@@ -2768,7 +2768,7 @@ void Projection::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
 }
 
 int Projection::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
@@ -2991,7 +2991,7 @@ int Unit_Group::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
 }
 
 void Unit_Group::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
   flr->Close();
@@ -2999,7 +2999,7 @@ void Unit_Group::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
 }
 
 int Unit_Group::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
@@ -4035,7 +4035,7 @@ int Layer::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quie
 }
 
 void Layer::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
   flr->Close();
@@ -4043,7 +4043,7 @@ void Layer::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
 }
 
 int Layer::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
@@ -5659,7 +5659,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
 }
 
 void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
   flr->Close();
@@ -5667,7 +5667,7 @@ void Network::SaveWeights(const String& fname, Network::WtSaveFormat fmt) {
 }
 
 bool Network::LoadWeights(const String& fname, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts.gz", true);
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
   bool rval = false;
   if(flr->istrm)
     rval = LoadWeights_strm(*flr->istrm, quiet);

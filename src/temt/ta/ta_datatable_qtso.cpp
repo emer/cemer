@@ -65,6 +65,10 @@
 #include <Inventor/nodes/SoComplexity.h>
 #include <Inventor/nodes/SoText2.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
+#include <Inventor/nodes/SoEventCallback.h>
+#include <Inventor/events/SoMouseButtonEvent.h>
+#include <Inventor/actions/SoRayPickAction.h>
+#include <Inventor/SoPickedPoint.h>
 
 #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
@@ -682,7 +686,7 @@ void DataTableView::Render_impl() {
   T3Node* node_so = this->node_so(); // cache
   if(!node_so) return;
   SoFont* font = node_so->captionFont(true);
-  float font_size = 0.4f;
+  float font_size = 0.3f;
   font->size.setValue(font_size); // is in same units as geometry units of network
   node_so->setCaption(caption().chars());
   //NOTE: will need to move caption appropriately in subclass
@@ -2752,6 +2756,7 @@ void GraphPlotView::Initialize() {
   axis = Y;
   line_style = SOLID;
   point_style = CIRCLE;
+  eff_y_axis = NULL;
 }
 
 // void GraphPlotView::InitLinks() {
@@ -2914,6 +2919,8 @@ void GraphTableView::Initialize() {
   two_d_font = false;	// true -- this is causing mysterious so crash, disabled for now
   two_d_font_scale = 350.0f;
 
+  last_sel_pt = 0.0f;
+
   colorscale.auto_scale = false;
   colorscale.min = -1.0f; colorscale.max = 1.0f;
 
@@ -2951,6 +2958,7 @@ void GraphTableView::InitLinks() {
   taBase::Own(color_axis, this);
   taBase::Own(raster_axis, this);
   taBase::Own(colorscale, this);
+  taBase::Own(last_sel_pt, this);
 }
 
 void GraphTableView::CutLinks() {
@@ -3121,6 +3129,61 @@ String GraphTableView::GetName() const {
   return inherited::GetName() + " Graph";
 }
 
+const String GraphTableView::caption() const {
+  String rval = inherited::caption();
+  if(last_sel_col_nm.nonempty()) {
+    rval += " pt: " + last_sel_col_nm + " = " + last_sel_pt.GetStr();
+  }
+  return rval;
+}
+
+void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
+  GraphTableView* nv = (GraphTableView*)userData;
+  T3DataViewFrame* fr = nv->GetFrame();
+  bool got_one = false;
+  for(int i=0;i<fr->root_view.children.size;i++) {
+    taDataView* dv = fr->root_view.children[i];
+    if(dv->InheritsFrom(&TA_GraphTableView)) {
+      GraphTableView* tgv = (GraphTableView*)dv;
+      SoQtViewer* viewer = tgv->GetViewer();
+      SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
+      SoRayPickAction rp( viewer->getViewportRegion());
+      rp.setPoint(mouseevent->getPosition());
+      rp.apply(viewer->getSceneManager()->getSceneGraph());
+
+      SoPickedPoint* pp = rp.getPickedPoint(0);
+      if(!pp) continue;
+      SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+      if(!pobj) continue;
+      //   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
+      if(!pobj->isOfType(T3GraphLine::getClassTypeId())) {
+	//     cerr << "not graph line!" << endl;
+	continue;
+      }
+      GraphAxisBase* gab = (GraphAxisBase*)((T3GraphLine*)pobj)->dataView();
+      if(!gab) continue;
+      if(!gab->InheritsFrom(&TA_GraphPlotView)) continue;
+      GraphPlotView* gpv = (GraphPlotView*)gab;
+      if(!gpv->eff_y_axis) continue;
+      SbVec3f pt = pp->getObjectPoint(pobj); 
+//       cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
+      if(pt[1] == 0.0f && pt[2] == 0.0f) continue; // indicates an axis caption line!
+      float xv = tgv->x_axis.range.Project(pt[0] / tgv->width);
+      float yv = gpv->eff_y_axis->range.Project(pt[1]);
+      float zv = 0.0f;
+      if(tgv->z_axis.on)
+	zv = tgv->z_axis.range.Project(pt[2] / tgv->depth);
+      tgv->last_sel_pt.SetXYZ(xv, yv, zv);
+      tgv->last_sel_col_nm = gpv->col_name;
+      //      tgv->InitDisplay();
+      tgv->UpdateDisplay();
+      got_one = true;
+    }
+  }
+  if(got_one)
+    ecb->setHandled();
+}
+
 void GraphTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
   SoQtViewer* vw = GetViewer();
@@ -3135,6 +3198,10 @@ void GraphTableView::Render_pre() {
 3. we can set the frame bg color to the default for graphs
 
 */
+
+  SoEventCallback* ecb = new SoEventCallback;
+  ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), GraphTableView_MouseCB, this);
+  node_so()->addChild(ecb);
 
   inherited::Render_pre();
 }
@@ -4073,6 +4140,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
 
+  plv.eff_y_axis = &yax;		// set this for point clicking!
+
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
@@ -4271,6 +4340,8 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
 
+  plv.eff_y_axis = &yax;		// set this for point clicking!
+
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
   t3gl->setMarkerSize((T3GraphLine::MarkerSize)point_size);
@@ -4414,6 +4485,8 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
   if(!da_str) return;
   DataCol* da_x = x_axis.GetDAPtr();
   DataCol* da_z = z_axis.GetDAPtr();
+
+  plv_str.eff_y_axis = &plv_y;		// set this for point clicking!
 
   // always plot in color assoc with plv_str, regardless of mode!
   t3gl->startBatch();

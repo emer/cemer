@@ -685,6 +685,7 @@ public:
 
   LineStyle	line_style;	// the style in which the line is drawn
   PointStyle	point_style;	// the style in which the points are drawn
+  GraphPlotView* eff_y_axis;	// #NO_SAVE #READ_ONLY #NO_SET_POINTER effective y axis for this guy at this point in time
 
   override void		UpdateOnFlag();
 
@@ -804,6 +805,9 @@ public:
   bool			two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
   float			two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
 
+  String		last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
+  FloatTDCoord		last_sel_pt; 	// #READ_ONLY #SHOW #NO_SAVE values of last selected point
+
   static float		tick_size; 	// #DEF_0.05 size of tick marks
 
   bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
@@ -840,6 +844,7 @@ public:
   override const iColor	bgColor(bool& ok) const;
   override String	GetLabel() const;
   override String	GetName() const;
+  override const String	caption() const;
 
   override bool		hasViewProperties() const { return true; }
   

@@ -150,7 +150,7 @@ public:
   inline int MaxVal() const	{ int mx = MAX(x, y); return mx; }
   inline int MinVal() const	{ int mn = MIN(x, y); return mn; }
 
-  inline String GetStr() { return String(x) + ", " + String(y); }
+  inline String GetStr() const { return String(x) + ", " + String(y); }
 
   bool		FitN(int n);		// adjust x and y to fit x total elements
 
@@ -342,7 +342,7 @@ public:
   inline int MaxVal() const	{ int mx = MAX(x, y); mx = MAX(mx, z); return mx; }
   inline int MinVal() const	{ int mn = MIN(x, y); mn = MIN(mn, z); return mn; }
 
-  inline String GetStr() { return String(x) + ", " + String(y) + ", " + String(z); }
+  inline String GetStr() const { return String(x) + ", " + String(y) + ", " + String(z); }
 
   bool		FitNinXY(int n);	// adjust x and y to fit x total elements
 
@@ -484,7 +484,7 @@ public:
   inline float MaxVal() const	{ float mx = MAX(x, y); return mx; }
   inline float MinVal() const	{ float mn = MIN(x, y); return mn; }
 
-  inline String GetStr() { return String(x) + ", " + String(y); }
+  inline String GetStr() const { return String(x) + ", " + String(y); }
 private:
   inline void 	Copy_(const FloatTwoDCoord& cp)	{ x = cp.x; y = cp.y; }
   inline void 	Initialize() 			{ x = y = 0.0; }
@@ -611,7 +611,7 @@ public:
 
   static inline float Sgn(float val) { return (val >= 0.0) ? 1.0 : -1.0; }
 
-  inline String GetStr() { return String(x) + ", " + String(y) + ", " + String(z); }
+  inline String GetStr() const { return String(x) + ", " + String(y) + ", " + String(z); }
 #ifdef TA_GUI
   operator iVec3f() const {return iVec3f(x, y, z);}
 #endif
@@ -647,7 +647,7 @@ public:
     xx = x; yy = y; zz = z; rr = rot;
   }
 
-  String 		GetStr() {return FloatTDCoord::GetStr() + ", " + String(rot); }
+  String 		GetStr() const {return FloatTDCoord::GetStr() + ", " + String(rot); }
 
   FloatRotation(float xx, float yy, float zz, float rr)	{SetXYZR(xx, yy, zz, rr); }
   FloatRotation(int xx, int yy, int zz, float rr) 	{SetXYZR(xx, yy, zz, rr); }
@@ -768,7 +768,7 @@ public:
   inline bool operator == (float td) const { return (val == td); }
   inline bool operator != (float td) const { return (val != td); }
 
-  inline String GetStr() { return String(val) + ":" + String(idx); }
+  inline String GetStr() const { return String(val) + ":" + String(idx); }
 };
 
 inline ValIdx operator + (float td, const ValIdx& v) {

@@ -38,8 +38,8 @@ public:
   static bool		StatRemoveItemBase(taGroup_impl* grp, taBase* base);
     // remove any items with this base
   
-  String		desc; // #EDIT_DIALOG description (appears as tooltip for item)
   String		label;	 // full display label for item in edit dialog
+  String		desc; // #EDIT_DIALOG description (appears as tooltip for item)
   taBase*		base; // #READ_ONLY #SHOW #NO_SET_POINTER the mbr/mth base (not ref'ed)
   String		item_nm; // #READ_ONLY #NO_SHOW #NO_SAVE #OBSOLETE name of the member or method
   
