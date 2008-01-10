@@ -5076,6 +5076,14 @@ void iDataPanel::setPinned(bool value) {
     tabView()->UpdateTabNames(); //updates the icons
 }
 
+void iDataPanel::hideEvent(QHideEvent* ev) {
+  // note: we only call the impl, because each guy gets it, so we don't
+  // want sets to then invoke this twice
+  CancelOp cancel_op = CO_PROCEED;
+  if (m_rendered) ResolveChanges_impl(cancel_op);
+  inherited::hideEvent(ev);
+}
+
 void iDataPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   // note: we only call the impl, because each guy gets it, so we don't
@@ -5328,6 +5336,13 @@ void iViewPanelFrame::MakeButtons(QBoxLayout* lay, QWidget* par) {
   InternalSetModified(false);
 }
 
+void iViewPanelFrame::ResolveChanges_impl(CancelOp& cancel_op) {
+  // called by root on closing, dialog on closing, etc. etc., when hiding
+  if (HasChanged()) {
+    Apply();
+  }
+}
+ 
 void iViewPanelFrame::Revert() {
   GetImage();
   InternalSetModified(false);
@@ -5449,7 +5464,7 @@ void iDataPanelSetBase::SetWinState() {
 bool iDataPanelSetBase::HasChanged() {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
-    if (pn->HasChanged()) return true;
+    if (pn->HasChanged_impl()) return true;
   }
   return false;
 }

@@ -198,7 +198,7 @@ INHERITED(iDataPanelFrame)
 public:
   iProgramEditor*	pe;
   
-  override bool		HasChanged(); // 'true' if user has unsaved changes
+  override bool		HasChanged_impl(); // 'true' if user has unsaved changes
   void			FillList();
 
   iProgramPanelBase(taiDataLink* dl_);
@@ -332,7 +332,7 @@ public:
   Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
   override String	panel_type() const {return "Program Ctrl";}
 
-  override bool		HasChanged(); // 'true' if user has unsaved changes
+  override bool		HasChanged_impl(); // 'true' if user has unsaved changes
   void			FillList();
 
   iProgramCtrlPanel(taiDataLink* dl_);

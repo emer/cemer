@@ -172,7 +172,7 @@ public:
   override String	panel_type() const; // this string is on the subpanel button for this panel
   override void		Closing(CancelOp& cancel_op);
   override const iColor GetTabColor(bool selected, bool& ok) const; // special color for tab; NULL means use default
-  override bool		HasChanged(); // 'true' if user has unsaved changes -- used to prevent browsing away
+  override bool		HasChanged_impl(); // 'true' if user has unsaved changes -- used to prevent browsing away
   override void		UpdatePanel(); // always do it, even when hidden; the edit sorts it out
   EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_);
   ~EditDataPanel();

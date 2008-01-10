@@ -434,7 +434,7 @@ const iColor EditDataPanel::GetTabColor(bool selected, bool& ok) const {
     return inherited::GetTabColor(selected, ok);
 }
 
-bool EditDataPanel::HasChanged() {
+bool EditDataPanel::HasChanged_impl() {
   if (owner) return owner->HasChanged();
   else       return false;
 }

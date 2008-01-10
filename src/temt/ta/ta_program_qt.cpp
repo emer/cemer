@@ -695,7 +695,7 @@ void iProgramPanelBase::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   //NOTE: don't need to do anything because DataModel will handle it
 }
 
-bool iProgramPanelBase::HasChanged() {
+bool iProgramPanelBase::HasChanged_impl() {
   return pe->HasChanged();
 }
 
@@ -1410,7 +1410,7 @@ void iProgramCtrlPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   // not in this case!
 }
 
-bool iProgramCtrlPanel::HasChanged() {
+bool iProgramCtrlPanel::HasChanged_impl() {
   if (pc) return pc->HasChanged();
   else return false;
 }

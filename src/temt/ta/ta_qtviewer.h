@@ -1255,7 +1255,8 @@ public:
     {ok = false; return iColor();} // special color for tab; NULL means use default
   virtual void		FrameShowing(bool showing, bool focus = false); // called esp by t3 frames when show/hide; lets us show hide the tabs
 
-  virtual bool		HasChanged() {return false;} // 'true' if user has unsaved changes -- used to prevent browsing away
+  virtual bool		HasChanged() {return HasChanged_impl();} // 'true' if user has unsaved changes -- used to autosave when browsing away etc.
+  virtual bool		HasChanged_impl() {return false;} // this impl applies only to a single panel, not to sets
   virtual void		OnWindowBind(iTabViewer* itv);
     // called in post, when all windows are built
   virtual void		ResolveChanges(CancelOp& cancel_op);
@@ -1286,6 +1287,7 @@ protected:
   QVBoxLayout* 		layOuter; 
   QScrollArea*		scr; // central scrollview
   override void 	customEvent(QEvent* ev_);
+  override void		hideEvent(QHideEvent* ev); // auto-apply
   override void		showEvent(QShowEvent* ev);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // tab name may have changed
   virtual void		OnWindowBind_impl(iTabViewer* itv) {}
@@ -1434,6 +1436,7 @@ protected:
   
   virtual void		GetValue_impl() {}
   void			InternalSetModified(bool value); // does all the gui config
+  override void 	ResolveChanges_impl(CancelOp& cancel_op); //generic behavior
   void 			UpdateButtons();
 };
 
