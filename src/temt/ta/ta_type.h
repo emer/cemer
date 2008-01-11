@@ -662,8 +662,8 @@ public:
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static MatrixView	matrix_view;	// #SAVE #CAT_GUI #EXPERT #DEF_BOT_ZERO whether to show matrices with 0 row at top or bottom of view
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
-  static short		num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_12 number of recent files to save
-  static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_20 number of recent paths to save
+  static short		num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent files to save
+  static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save
 
   ////////////////////////////////////////////////////////
   // 	File/Paths Info
