@@ -7189,7 +7189,11 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
 
 void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (!this->children_created) return;
+  if (!this->children_created) {
+    if (dcr == DCR_LIST_ITEM_INSERT)
+      enableLazyChildren(); // shows that there are now children
+    return;
+  }
   switch (dcr) {
   case DCR_LIST_INIT: break;
   case DCR_LIST_ITEM_INSERT: {	// op1=item, op2=item_after, null=at beginning
@@ -7421,7 +7425,11 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
 
 void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if (!this->children_created) return;
+  if (!this->children_created) {
+    if (dcr == DCR_GROUP_INSERT)
+      enableLazyChildren(); // shows that there are now children
+    return;
+  }
   AssertLastListItem();
   switch (dcr) {
   case DCR_GROUP_INSERT: {	// op1=item, op2=item_after, null=at beginning
