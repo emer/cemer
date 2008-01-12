@@ -790,6 +790,13 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
   case taMisc::TIK_MEMBER:  {
     MemberDef* md = static_cast<MemberDef*>(ti);
     //nothing specific
+    // size
+    iSpinBox* repi = new iSpinBox(body);
+    repi->setValue((ta_intptr_t)md->GetOff(NULL));
+    repi->setReadOnly(true);
+//    AddName(row, "size", "size, in bytes, of the type", repi);
+    AddName(row, "offset", "offset, in bytes, of the member", NULL);
+    AddData(row++, repi);
     break;
     }
   case taMisc::TIK_PROPERTY:  {
