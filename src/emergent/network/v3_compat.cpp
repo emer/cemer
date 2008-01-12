@@ -885,11 +885,13 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
       for(int pi=0; pi < ev->patterns.size; pi++) {
 	Pattern* pat = (Pattern*)ev->patterns[pi];
 	taMatrix* mat = dt->GetValAsMatrix(st_col + 1 + pi, -1);
-	taBase::Ref(mat);
-	for(int vi=0; vi<pat->value.size; vi++) {
-	  mat->SetFmVar_Flat(pat->value[vi], vi);
+	if(mat) {
+	  taBase::Ref(mat);
+	  for(int vi=0; vi<pat->value.size; vi++) {
+	    mat->SetFmVar_Flat(pat->value[vi], vi);
+	  }
+	  taBase::unRefDone(mat);
 	}
-	taBase::unRefDone(mat);
       }
     }
     if(env->InheritsFrom(&TA_ScriptEnv)) {
