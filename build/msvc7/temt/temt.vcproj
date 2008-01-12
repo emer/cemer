@@ -669,6 +669,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_seledit.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_seledit_qt.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_server.cpp">
 				</File>
 				<File
@@ -886,6 +889,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_seledit.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_seledit_qt.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_server.h">
 				</File>
 				<File
@@ -990,6 +996,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_qtviewer.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\temt\ta\ta_seledit_qt.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_server.moc.cpp">

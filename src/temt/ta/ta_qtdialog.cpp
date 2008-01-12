@@ -1876,11 +1876,14 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
 }
 
 void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title) {
+//NOTE: this is INSANE!
   win_str = String(win_title);
+  String desc; 
   if (typ != NULL) {
     prompt_str = typ->name;
     if (typ->InheritsFrom(TA_taBase)) {
       TAPtr rbase = (TAPtr)cur_base;
+      desc = rbase->GetDesc(); // often empty -- use td if so
       if(rbase->GetOwner() != NULL)
         win_str += String(" ") + rbase->GetPath();
       if(rbase->GetName() != "") {
@@ -1890,13 +1893,14 @@ void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title)
       else
         win_str += String(" (") + typ->name + ")";
     }
+    if (desc.empty()) desc = typ->desc;
   }
   String sapr;
   if (aprompt != NULL) sapr = aprompt;
   if (!sapr.empty())
     prompt_str += ": " + sapr;
   else
-    if (typ != NULL) prompt_str +=  ": " + typ->desc;
+    if (desc.nonempty()) prompt_str +=  ": " + desc;
 }
 
 void taiEditDataHost::Constr_Methods_impl() {

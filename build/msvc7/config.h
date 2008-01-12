@@ -1,7 +1,7 @@
 /* config.h.  Manually maintained for Windows build.  */
 
 /* Version number of package */
-#define VERSION "4.0.9"
+#define VERSION "4.0.11"
 
 
 /* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP

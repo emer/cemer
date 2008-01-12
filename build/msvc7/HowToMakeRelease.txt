@@ -47,7 +47,7 @@ Release Steps
   * use something like WinZip to make a .zip file of setup_bin\Release --
     don't make a folder, just put the files into a the root of a zip
   * rename the zip file like this (ex. for 4.0.9):
-    emergent-4.0.9.zip
+    emergent-4.0.9-win32.zip
   * make a self-extracting archive from that zip file -- it will have a .exe suffix --
     for the default extract folder, enter 'setup' so the files unpack to their own
     folder (so they are not mixed in with any other files anywhere)

@@ -160,7 +160,7 @@ private:
 };
 
 
-class TA_API SelectEdit: public taNBase, public IRefListClient {
+class TA_API SelectEdit: public taNBase, public virtual IRefListClient {
   // ##EXT_edit ##CAT_Display Selectively edit members from different objects
   INHERITED(taNBase)
 public:

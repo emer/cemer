@@ -112,7 +112,7 @@ TA_HEADS_GUI =\
 	$(EMERGENTDIR)/src/temt/ta/ta_matrix_qt.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_qtclassbrowse.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_qtgroup.h \
-	$(EMERGENTDIR)/src/temt/ta/ta_seledit.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_seledit_qt.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_program_qt.h
 
 TA_HEADS_TAMISC =\
@@ -166,6 +166,7 @@ TA_HEADS =\
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_plugin_p.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_engine.h \
+	$(EMERGENTDIR)/src/temt/ta/ta_seledit.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_project.h \
 	$(EMERGENTDIR)/src/temt/ta/ta_server.h \
 	$(TA_HEADS_GUI) \
@@ -193,6 +194,7 @@ ta_mocs: \
   ta_qttype.moc.cpp \
   ta_qtviewer.moc.cpp \
   ta_qtgroup.moc.cpp \
+  ta_seledit_qt.moc.cpp \
   ta_server.moc.cpp \
   ta_type.moc.cpp \
   ta_virtenv_qtso.moc.cpp
@@ -252,6 +254,9 @@ ta_qttype.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qttype.h
 	$(MOC) %s -o $@
 
 ta_qtviewer.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_qtviewer.h
+	$(MOC) %s -o $@
+
+ta_seledit_qt.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_seledit_qt.h
 	$(MOC) %s -o $@
 
 ta_server.moc.cpp: $(EMERGENTDIR)\src\temt\ta\ta_server.h
