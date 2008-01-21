@@ -4435,7 +4435,7 @@ if $sim_ac_with_qt; then
 
   # Check for Mac OS framework installation
   if test -z "$QTDIR"; then
-    Library/Frameworks
+	sim_ac_qt_framework_dir=/Library/Frameworks
     # FIXME: Should we also look for the Qt framework in other  
     # default framework locations (such as ~/Library/Frameworks)?
     # Or require the user to specify this explicitly, e.g. by
