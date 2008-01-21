@@ -4501,7 +4501,7 @@ if $sim_ac_with_qt; then
           if $sim_ac_qglobal_unresolved; then
             SIM_AC_CHECK_HEADER_SILENT([Qt/qglobal.h],
                                        [sim_ac_qglobal_unresolved=false
-                                        sim_ac_QTDIR_cppflags="-I$i -I$i/Qt -I$i/QtCore -I$i/QtNetwork -I$i/Qt3Support -I$i/QtGui"
+                                        sim_ac_QTDIR_cppflags="-I$i -I$i/Qt -I$i/QtCore -I$i/QtNetwork -I$i/Qt3Support -I$i/QtGui -I$i/QtOpenGL"
                                        ])
           fi
         fi
