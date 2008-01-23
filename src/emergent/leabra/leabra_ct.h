@@ -88,11 +88,31 @@ private:
   void 	Destroy()	{ };
 };
 
+
+class LEABRA_API CtDwtNorm : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra renormalize weight changes 
+INHERITED(taBase)
+public:
+  bool		on;		// whether to do normalized dwt Compute_Weights function 
+  float		norm_pct;	// #CONDEDIT_ON_on what proportion of full normalization to apply to the delta weights (0 = no norm, 1 = full norm)
+
+  SIMPLE_COPY(CtDwtNorm);
+  TA_BASEFUNS(CtDwtNorm);
+  //protected:
+  //  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+
 class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
   // continuous time leabra con spec: most abstract version of continous time
 INHERITED(LeabraConSpec)
 public:
   CtCaDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy and learning rate
+  CtDwtNorm	dwt_norm;	// renormalize weight changes to compensate for overal mean changes
   
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Ca updating and synaptic depression
@@ -210,6 +230,16 @@ public:
   inline void Compute_dWtFlip(LeabraRecvCons* cg, CtLeabraUnit* ru);
   // compute flipped version of dwt (plus-minus reversed)
 
+
+  inline void C_Compute_Weights_Norm(CtLeabraCon* cn, CtLeabraRecvCons* cg,
+		     CtLeabraUnit*, CtLeabraUnit*, CtLeabraUnitSpec*, float dwnorm);
+  // compute new weights from changes, dwt_norm.on version with given norm factor
+  inline void C_Compute_WeightsActReg_Norm(CtLeabraCon* cn, CtLeabraRecvCons* cg,
+		   CtLeabraUnit* ru, CtLeabraUnit* su, CtLeabraUnitSpec* rus, float dwnorm);
+  // compute new weights from changes, dwt_norm.on version with given norm factor
+
+  inline void Compute_Weights(RecvCons* cg, Unit* ru);
+
   TA_SIMPLE_BASEFUNS(CtLeabraConSpec);
 protected:
   void 	UpdateAfterEdit_impl();
@@ -223,6 +253,7 @@ class LEABRA_API CtLeabraRecvCons : public LeabraRecvCons {
   // continuous time leabra recv cons: most abstract version of continous time
 INHERITED(LeabraRecvCons)
 public:
+  float		dwt_mean;	// mean delta-weight changes (only computed for dwt_norm.on)
 
   void	Compute_CtCycle(CtLeabraUnit* ru, float& cai_avg, float& cai_max)
   { ((CtLeabraConSpec*)GetConSpec())->Compute_CtCycle(this, ru, cai_avg, cai_max); }
@@ -231,7 +262,8 @@ public:
   { ((CtLeabraConSpec*)GetConSpec())->Compute_dWtFlip(this, ru); }
   // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
 
-  TA_BASEFUNS_NOCOPY(CtLeabraRecvCons);
+  void	Copy_(const CtLeabraRecvCons& cp);
+  TA_BASEFUNS(CtLeabraRecvCons);
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -555,6 +587,63 @@ inline void CtLeabraConSpec::Compute_dWtFlip(LeabraRecvCons* cg, CtLeabraUnit* r
     C_Compute_dWtFlip(cn, ru, su);  
     cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
   }
+}
+
+inline void CtLeabraConSpec::C_Compute_Weights_Norm(CtLeabraCon* cn, CtLeabraRecvCons* cg,
+				    CtLeabraUnit*, CtLeabraUnit*, 
+				    CtLeabraUnitSpec*, float dwnorm)
+{
+  float eff_dw = cn->dwt - dwnorm;
+  if(eff_dw != 0.0f) {
+    C_Compute_LinFmWt(cg, cn);	// go to linear weights
+    cn->wt -= eff_dw; // wt is now negative in linear form -- signs are reversed!
+    // note: this fun sets 0-1 limits automatically!
+    C_Compute_WtFmLin(cg, cn);	// go back to nonlinear weights
+    // then put in real limits!!
+    if(cn->wt < wt_limits.min) cn->wt = wt_limits.min;
+    if(cn->wt > wt_limits.max) cn->wt = wt_limits.max;
+  }
+  cn->pdw = cn->dwt;
+  cn->dwt = 0.0f;
+}
+
+inline void CtLeabraConSpec::C_Compute_WeightsActReg_Norm(CtLeabraCon* cn,
+			  CtLeabraRecvCons* cg, CtLeabraUnit* ru, CtLeabraUnit* su,
+			  CtLeabraUnitSpec* rus, float dwnorm)
+{
+  C_Compute_ActReg(cn, cg, ru, su, rus);
+  C_Compute_Weights_Norm(cn, cg, ru, su, rus, dwnorm);
+}
+
+
+inline void CtLeabraConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
+  CtLeabraUnitSpec* rus = (CtLeabraUnitSpec*)ru->GetUnitSpec();
+  CtLeabraRecvCons* lcg = (CtLeabraRecvCons*)cg;
+  if(dwt_norm.on && lcg->cons.size > 0) {
+    lcg->dwt_mean = 0.0f;
+    CON_GROUP_LOOP(cg, lcg->dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
+    lcg->dwt_mean /= (float)lcg->cons.size;
+    float dwnorm = -dwt_norm.norm_pct * lcg->dwt_mean;
+    if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
+      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg_Norm((CtLeabraCon*)cg->Cn(i), lcg,
+			      (CtLeabraUnit*)ru, (CtLeabraUnit*)cg->Un(i), rus, dwnorm));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_Norm((CtLeabraCon*)cg->Cn(i), lcg,
+			(CtLeabraUnit*)ru, (CtLeabraUnit*)cg->Un(i), rus, dwnorm));
+    }
+  }
+  else {
+    if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
+      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((LeabraCon*)cg->Cn(i), lcg,
+						 (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights((LeabraCon*)cg->Cn(i), lcg,
+					   (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
+    }
+  }
+  //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
 #endif // leabra_ct_h

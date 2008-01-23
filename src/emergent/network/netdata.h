@@ -388,6 +388,8 @@ public:
   // #BUTTON #CAT_Monitor update the datatable configuration to match current set of monitored items -- call this during Init. if reset_first, then existing data rows are removed first
   void 		UpdateMonitors(bool reset_first = false) { UpdateDataTable(reset_first); }
   // #CAT_Monitor old name for UpdateDataTable
+  void 		ResetDataTableCols();
+  // #BUTTON #CONFIRM #CAT_Monitor reset the data table columns, and then call UpdateDataTable -- this is useful when new monitor items have been inserted in the middle of the list (they will appear at the end of the data table unless this function is called) -- WARNING: removes any columns that might have been manually added!!
 
   void 		GetMonVals();
   // #CAT_Monitor get all the values and store in current row of data table -- call in program to get new data

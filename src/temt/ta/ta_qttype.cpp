@@ -385,6 +385,8 @@ int taiEnumType::BidForType(TypeDef* td){
 
 taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   isBit = ((typ != NULL) && (typ->HasOption("BITS")));
+  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   if (isBit) {
     return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
   } else if (flags_ & taiData::flgReadOnly) {
@@ -445,6 +447,8 @@ int taiBoolType::BidForType(TypeDef* td){
 }
 
 taiData* taiBoolType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*){
+  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiToggle* rval = new taiToggle(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -706,6 +710,10 @@ taiData* taiTokenPtrType::GetDataRep_impl(IDataHost* host_, taiData* par,
   if (!npt->tokens.keep)
     flags_ |= taiData::flgNoTokenDlg; // no dialog
   flags_ |= (taiData::flgNullOk);
+
+  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+
   taiTokenPtrButton* rval = new taiTokenPtrButton(npt, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -807,6 +815,9 @@ int taiTypePtr::BidForType(TypeDef* td) {
 // need to have a datarep that is a "string or type menu" kind of thing..
 
 taiData* taiTypePtr::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
+  if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+
   if (orig_typ == NULL)
     return taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr_);
 
@@ -1042,6 +1053,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags_ |= taiData::flgEditDialog;
   if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
     flags_ |= taiData::flgAutoApply;
+  if (mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ = flags_ & ~taiData::flgAutoApply;
   if (mbr->HasOption("NO_EDIT_APPLY_IMMED"))
     flags_ |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
   if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
@@ -1348,6 +1361,10 @@ taiData* taiTokenPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par,
     if (flags_ & taiData::flgEditOk)
       flags_ |= taiData::flgEditDialog;
   }
+
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
+
 /*TODO: prob can't have disabling for no keep tokens, because sometimes
   we don't know the type
   if (!npt->tokens.keep)
@@ -1568,6 +1585,8 @@ taiData* taiTypePtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidg
 {
   if (mbr->HasOption("NULL_OK"))
     flags_ |= taiData::flgNullOk;
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiTypeDefButton* rval =
     new taiTypeDefButton(mbr->type, host_, par, gui_parent_, flags_);
   return rval;
@@ -1643,6 +1662,8 @@ int taiMemberDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* taiMemberDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_, MemberDef*) 
 {
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiMemberDefButton* rval =  new taiMemberDefButton(typ, host_, par, gui_parent_, flags_);
   return rval;
 }
@@ -1675,6 +1696,8 @@ int taiMethodDefPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 taiData* taiMethodDefPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, 
   QWidget* gui_parent_, int flags_, MemberDef*) 
 {
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiMethodDefButton* rval = new taiMethodDefButton(typ, host_, 
     par, gui_parent_, flags_);
   return rval;
@@ -1706,6 +1729,8 @@ int taiFunPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiFunPtrMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  if(!mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
+    flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   taiButtonMenu* rval = new taiButtonMenu(taiMenu::radio_update, taiMisc::fonSmall,
       typ, host_, par, gui_parent_, flags_);
   rval->AddItem("NULL");

@@ -968,8 +968,9 @@ public:
   virtual void		SearchNameContains(const String& nm, taBase_PtrList& items,
 					   taBase_PtrList* owners = NULL);
   // #CAT_ObjectMgmt search for objects whose name contains given string, from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items)
-  virtual void		CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
-					 void_PArray& src_bases, taBase* cp_base,
+  virtual void		CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
+					 void_PArray& trg_bases, void_PArray& src_bases,
+					 taBase* cp_base, 
 					 int show_forbidden = taMisc::NO_HIDDEN,
 					 int show_allowed = taMisc::SHOW_CHECK_MASK,
 					 bool no_ptrs = true);
@@ -1710,8 +1711,9 @@ public:
 
   override void	SearchNameContains(const String& nm, taBase_PtrList& items,
 				   taBase_PtrList* owners = NULL);
-  override void	CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
-				 void_PArray& src_bases, taBase* cp_base,
+  override void	CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
+				 void_PArray& trg_bases, void_PArray& src_bases,
+				 taBase* cp_base,
 				 int show_forbidden = taMisc::NO_HIDDEN,
 				 int show_allowed = taMisc::SHOW_CHECK_MASK,
 				 bool no_ptrs = true);

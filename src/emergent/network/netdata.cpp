@@ -1313,6 +1313,14 @@ void NetMonitor::UpdateDataTable(bool reset_first) {
   data->StructUpdate(false);
 }
 
+void NetMonitor::ResetDataTableCols() {
+  if (!data) return;
+  data->StructUpdate(true);
+  data->RemoveAllCols();
+  UpdateDataTable(false);
+  data->StructUpdate(false);
+}
+
 void NetMonitor::GetMonVals() {
   if(TestError(!data, "GetMonVals", "data pointer not set!"))
     return;

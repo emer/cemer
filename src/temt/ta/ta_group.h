@@ -95,8 +95,9 @@ public:
 
   override void	SearchNameContains(const String& nm, taBase_PtrList& items,
 				   taBase_PtrList* owners = NULL);
-  override void	CompareSameTypeR(Member_List& mds, void_PArray& trg_bases,
-				 void_PArray& src_bases, taBase* cp_base,
+  override void	CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
+				 void_PArray& trg_bases, void_PArray& src_bases,
+				 taBase* cp_base,
 				 int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
 				 int show_allowed = taMisc::SHOW_CHECK_MASK,
 				 bool no_ptrs = true);

@@ -2651,6 +2651,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2
+  layWidg->setMargin(0); layWidg->setSpacing(0);
   layTopCtrls = new QVBoxLayout(layWidg);
   layTopCtrls->setSpacing(taiM->vsep_c);
 
@@ -2659,12 +2660,12 @@ NetViewPanel::NetViewPanel(NetView* dv_)
 
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout(layViewParams);
-  chkDisplay = new QCheckBox("Display!", widg);
+  chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
-  chkLayMove = new QCheckBox("Lay\nMv!", widg);
+  chkLayMove = new QCheckBox("Lay\nMv", widg);
   chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkLayMove);
@@ -2674,7 +2675,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-    this, NULL, widg);
+				this, NULL, widg, taiData::flgAutoApply);
   layDispCheck->addWidget(cmbUnitText->GetRep());
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -2683,7 +2684,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
  for maximum speed.");
   layDispCheck->addWidget(lblDispMode);
   cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-    this, NULL, widg);
+				this, NULL, widg, taiData::flgAutoApply);
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
@@ -2694,7 +2695,7 @@ L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
 B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDispCheck->addWidget(lblPrjnDisp);
   cmbPrjnDisp = new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
-				this, NULL, widg);
+				this, NULL, widg, taiData::flgAutoApply);
   layDispCheck->addWidget(cmbPrjnDisp->GetRep());
   layDispCheck->addStretch();
   
@@ -2731,7 +2732,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
   chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
-  connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkXYSquare);
 
   ////////////////////////////////////////////////////////////////////////////
@@ -2744,7 +2745,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   
   chkAutoScale = new QCheckBox("auto scale", widg);
   chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
-  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Changed()) );
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkAutoScale);
 
   butScaleDefault = new QPushButton("Set Defaults", widg);
@@ -2752,7 +2753,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
   
-  chkWtLines = new QCheckBox("Wt\nLines!", widg);
+  chkWtLines = new QCheckBox("Wt\nLines", widg);
   chkWtLines->setToolTip("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude");
   connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLines);
