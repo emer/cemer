@@ -593,7 +593,7 @@ inline void CtLeabraConSpec::C_Compute_Weights_Norm(CtLeabraCon* cn, CtLeabraRec
 				    CtLeabraUnit*, CtLeabraUnit*, 
 				    CtLeabraUnitSpec*, float dwnorm)
 {
-  float eff_dw = cn->dwt - dwnorm;
+  float eff_dw = cn->dwt + dwnorm;
   if(eff_dw != 0.0f) {
     C_Compute_LinFmWt(cg, cn);	// go to linear weights
     cn->wt -= eff_dw; // wt is now negative in linear form -- signs are reversed!
