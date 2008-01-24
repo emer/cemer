@@ -39,6 +39,11 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
 }
 
+void CtLrateSpec::Initialize() {
+  first_dwt = 1.0f;
+  noth_dwt = 1.0f;
+}
+
 void CtDwtNorm::Initialize() {
   on = false;
   norm_pct = .5f;
@@ -110,7 +115,15 @@ void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
   CtLeabraUnit* cu = (CtLeabraUnit*)u;
   if((cu->p_act_p <= opt_thresh.learn) && (cu->p_act_m <= opt_thresh.learn))
     return;
-  Compute_dWt_impl(u, lay, net);
+
+  for(int g=0; g<u->recv.size; g++) {
+    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_dWtCt((CtLeabraUnit*)u, (CtLeabraNetwork*)net);
+  }
+  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtCt((CtLeabraCon*)u->bias.Cn(0),
+					 (CtLeabraUnit*)u, (CtLeabraNetwork*)net);
+  //  Compute_dWt_impl(u, lay, net);
 }
 
 
@@ -121,9 +134,9 @@ void CtLeabraUnitSpec::Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
   for(int g=0; g<u->recv.size; g++) {
     CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_dWtFlip(u);
+    recv_gp->Compute_dWtFlip(u, net);
   }
-  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u);
+  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u, net);
 }
 
 void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {

@@ -88,6 +88,22 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API CtLrateSpec : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra ct learning rate multipliers for various learning phases
+INHERITED(taBase)
+public:
+  float 	first_dwt;	// lrate multiplier for first weight change after nothing phase (ie. noise vs. current more settled state)
+  float 	noth_dwt;	// lrate multiplier for weight change during nothing phase (ie. Restricted Boltzmann Machine learning)
+
+  SIMPLE_COPY(CtLrateSpec);
+  TA_BASEFUNS(CtLrateSpec);
+  //protected:
+  //  void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 
 class LEABRA_API CtDwtNorm : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra renormalize weight changes 
@@ -111,6 +127,7 @@ class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
   // continuous time leabra con spec: most abstract version of continous time
 INHERITED(LeabraConSpec)
 public:
+  CtLrateSpec	ct_lrate;	// learning rates for different phases of ct learning
   CtCaDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy and learning rate
   CtDwtNorm	dwt_norm;	// renormalize weight changes to compensate for overal mean changes
   
@@ -219,17 +236,17 @@ public:
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Special learning functions
   
-  inline void  C_Compute_dWt(CtLeabraCon* cn, LeabraUnit* ru, float heb, float err);
+  inline void  C_Compute_dWt(CtLeabraCon* cn, CtLeabraUnit* ru, float heb, float err, 
+			     float eff_lrate);
 
   inline float C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su);
 
-  inline void Compute_dWt(RecvCons* cg, Unit* ru);
+  inline void Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* ru, CtLeabraNetwork* net);
 
   inline void  C_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su);
   // compute flipped version of dwt (plus-minus reversed)
-  inline void Compute_dWtFlip(LeabraRecvCons* cg, CtLeabraUnit* ru);
+  inline void Compute_dWtFlip(CtLeabraRecvCons* cg, CtLeabraUnit* ru, CtLeabraNetwork* net);
   // compute flipped version of dwt (plus-minus reversed)
-
 
   inline void C_Compute_Weights_Norm(CtLeabraCon* cn, CtLeabraRecvCons* cg,
 		     CtLeabraUnit*, CtLeabraUnit*, CtLeabraUnitSpec*, float dwnorm);
@@ -258,8 +275,11 @@ public:
   void	Compute_CtCycle(CtLeabraUnit* ru, float& cai_avg, float& cai_max)
   { ((CtLeabraConSpec*)GetConSpec())->Compute_CtCycle(this, ru, cai_avg, cai_max); }
   // #CAT_Learning compute one cycle of continuous time processing
-  void	Compute_dWtFlip(CtLeabraUnit* ru)
-  { ((CtLeabraConSpec*)GetConSpec())->Compute_dWtFlip(this, ru); }
+  void	Compute_dWtCt(CtLeabraUnit* ru, CtLeabraNetwork* net)
+  { ((CtLeabraConSpec*)GetConSpec())->Compute_dWtCt(this, ru, net); }
+  // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
+  void	Compute_dWtFlip(CtLeabraUnit* ru, CtLeabraNetwork* net)
+  { ((CtLeabraConSpec*)GetConSpec())->Compute_dWtFlip(this, ru, net); }
   // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
 
   void	Copy_(const CtLeabraRecvCons& cp);
@@ -273,11 +293,13 @@ class LEABRA_API CtLeabraBiasSpec : public LeabraBiasSpec {
   // continuous time leabra bias spec: most abstract version of continous time
 INHERITED(LeabraBiasSpec)
 public:
-  override inline void B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru);
+  CtLrateSpec	ct_lrate;	// learning rates for different phases of ct learning
 
-  inline void B_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru);
+  inline void B_Compute_dWtCt(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraNetwork* net);
 
-  TA_BASEFUNS_NOCOPY(CtLeabraBiasSpec);
+  inline void B_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraNetwork* net);
+
+  TA_SIMPLE_BASEFUNS(CtLeabraBiasSpec);
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -515,18 +537,22 @@ inline void CtLeabraConSpec::Compute_CtCycle(LeabraRecvCons* cg, CtLeabraUnit* r
   CON_GROUP_LOOP(cg, C_Compute_CtCycle((CtLeabraCon*)cg->Cn(i), ru, (CtLeabraUnit*)cg->Un(i), cai_avg, cai_max));
 }
 
-inline void CtLeabraBiasSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
-  CtLeabraUnit* lru = (CtLeabraUnit*)ru;
-  float err = lru->p_act_p - lru->p_act_m;
+inline void CtLeabraBiasSpec::B_Compute_dWtCt(CtLeabraCon* cn, CtLeabraUnit* ru,
+					      CtLeabraNetwork* net) {
+  float eff_lrate = cur_lrate;
+  if(net->ct_cycle == net->ct_learn.interval) { // first dwt
+    eff_lrate *= ct_lrate.first_dwt;
+  }
+  float err = ru->p_act_p - ru->p_act_m;
   if(fabsf(err) >= dwt_thresh)
-    cn->dwt += cur_lrate * err;
+    cn->dwt += eff_lrate * err;
 }
 
-inline void CtLeabraBiasSpec::B_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru) {
-  CtLeabraUnit* lru = (CtLeabraUnit*)ru;
-  float err = lru->p_act_m - lru->p_act_p;
+inline void CtLeabraBiasSpec::B_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru, 
+						CtLeabraNetwork* net) {
+  float err = ru->p_act_m - ru->p_act_p;
   if(fabsf(err) >= dwt_thresh)
-    cn->dwt += cur_lrate * err;
+    cn->dwt += ct_lrate.noth_dwt * cur_lrate * err;
 }
 
 // symmetric differential operator version of the learning rule.. works ok..
@@ -545,23 +571,29 @@ inline float CtLeabraConSpec::C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru,
   return err;
 }
 
-inline void CtLeabraConSpec::C_Compute_dWt(CtLeabraCon* cn, LeabraUnit*, float heb, float err) {
+inline void CtLeabraConSpec::C_Compute_dWt(CtLeabraCon* cn, CtLeabraUnit*,
+					   float heb, float err, float eff_lrate) {
   float dwt = lmix.err * err + lmix.hebb * heb;
-  cn->dwt += cur_lrate * dwt;
+  cn->dwt += eff_lrate * dwt;
 }
 
-inline void CtLeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
-  CtLeabraUnit* lru = (CtLeabraUnit*)ru;
-  LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
-  Compute_SAvgCor(lcg, lru);
+inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* ru, 
+					   CtLeabraNetwork* net) {
+  float eff_lrate = cur_lrate;
+  if(net->ct_cycle == net->ct_learn.interval) { // first dwt
+    eff_lrate *= ct_lrate.first_dwt;
+  }
+
+  Compute_SAvgCor(cg, ru);
   for(int i=0; i<cg->cons.size; i++) {
     CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
     CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
     float orig_wt = cn->wt;
-    C_Compute_LinFmWt(lcg, cn); // get weight into linear form
-    C_Compute_dWt(cn, lru, 
-		  C_Compute_Hebb(cn, lcg, lru->p_act_p, su->p_act_p), // note: using p_act_p!
-		  C_Compute_Err(cn, lru, su));  
+    C_Compute_LinFmWt(cg, cn); // get weight into linear form
+    C_Compute_dWt(cn, ru, 
+		  C_Compute_Hebb(cn, cg, ru->p_act_p, su->p_act_p), // note: using p_act_p!
+		  C_Compute_Err(cn, ru, su),
+		  eff_lrate);  
     cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
   }
 }
@@ -575,10 +607,11 @@ inline void CtLeabraConSpec::C_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru
     if(err > 0.0f)	err *= (1.0f + cn->wt);
     else		err *= -cn->wt;	
   }
-  cn->dwt += cur_lrate * err;
+  cn->dwt += ct_lrate.noth_dwt * cur_lrate * err;
 }
 
-inline void CtLeabraConSpec::Compute_dWtFlip(LeabraRecvCons* cg, CtLeabraUnit* ru) {
+inline void CtLeabraConSpec::Compute_dWtFlip(CtLeabraRecvCons* cg, CtLeabraUnit* ru,
+					     CtLeabraNetwork* net) {
   for(int i=0; i<cg->cons.size; i++) {
     CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
     CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
