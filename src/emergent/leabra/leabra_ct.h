@@ -624,7 +624,7 @@ inline void CtLeabraConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
     CON_GROUP_LOOP(cg, lcg->dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
     lcg->dwt_mean /= (float)lcg->cons.size;
     float dwnorm = -dwt_norm.norm_pct * lcg->dwt_mean;
-    if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
+    if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)
       CON_GROUP_LOOP(cg, C_Compute_WeightsActReg_Norm((CtLeabraCon*)cg->Cn(i), lcg,
 			      (CtLeabraUnit*)ru, (CtLeabraUnit*)cg->Un(i), rus, dwnorm));
     }
@@ -634,7 +634,7 @@ inline void CtLeabraConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
     }
   }
   else {
-    if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
+    if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)
       CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((LeabraCon*)cg->Cn(i), lcg,
 						 (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
     }
