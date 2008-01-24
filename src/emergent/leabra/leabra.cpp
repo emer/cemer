@@ -416,9 +416,11 @@ void DtSpec::Initialize() {
 
 void ActRegSpec::Initialize() {
   on = false;
+  bias_only = false;
   min = 0.0f;
-  max = .35f;
-  wt_dt = 0.2f;
+  max = .4f;
+  dec_wt = 0.2f;
+  inc_wt = 0.2f;
 }
 
 void MaxDaSpec::Initialize() {
@@ -1186,14 +1188,24 @@ void LeabraUnitSpec::TargExtToComp(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
   u->ext_flag = Unit::COMP;
 }
 
-void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer*, LeabraInhib*,
+void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib*,
+					LeabraNetwork* net)
+{
+  if(act.avg_dt <= 0.0f) return;
+  u->act_avg += act.avg_dt * (u->act_eq - u->act_avg);
+  if(!act_reg.on) return;
+  // don't let avg build up if it is being regulated -- as soon as act-reg has an effect, it will stop doing wt changes
+  if(u->act_avg > act_reg.max) u->act_avg = act_reg.max; 
+  if(u->act_avg < act_reg.min) u->act_avg = act_reg.min; 
+}
+
+void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 				LeabraNetwork* net, bool set_both)
 {
   if(set_both) {
     u->act_m = u->act_p = u->act_eq;
     u->act_dif = 0.0f;
-    if(act.avg_dt > 0.0f)
-      u->act_avg += act.avg_dt * (u->act_eq - u->act_avg);
+    Compute_ActTimeAvg(u, lay, thr, net);
   }
   else {
     if(net->phase == LeabraNetwork::MINUS_PHASE) {
@@ -1202,8 +1214,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer*, LeabraInhib*,
     else if((net->phase == LeabraNetwork::PLUS_PHASE) && (net->phase_no < 2)) {
       // act_p is only for first plus phase: others require something else
       u->act_p = u->act_eq;
-      if(act.avg_dt > 0.0f)
-	u->act_avg += act.avg_dt * (u->act_eq - u->act_avg);
+      Compute_ActTimeAvg(u, lay, thr, net);
     }
     if(net->phase_no == 1) {
       u->act_dif = u->act_p - u->act_m;

@@ -583,10 +583,12 @@ class LEABRA_API ActRegSpec : public taBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activity regulation via weight adjustment
 INHERITED(taBase)
 public:
-  bool		on;		// #APPLY_IMMED whether to activity regulation is on (active) or not
-  float		min;		// #CONDEDIT_ON_on:true #DEF_0 increase weights for units below this level of average activation
-  float		max;		// #CONDEDIT_ON_on:true #DEF_0.35 decrease weights for units above this level of average activation 
-  float		wt_dt;		// #CONDEDIT_ON_on:true #DEF_0.2 pre-lrate rate constant for making weight changes to rectify over-activation (dwt = cur_lrate * wt_dt * wt)
+  bool		on;		// #APPLY_IMMED whether activity regulation is on (active) or not
+  bool		bias_only;	// #CONDEDIT_ON_on only apply corrective weight changes to bias weights
+  float		min;		// #CONDEDIT_ON_on [.01 if in use] increase weights for units below this level of average activation
+  float		max;		// #CONDEDIT_ON_on [.4 -- .8 typical] decrease weights for units above this level of average activation 
+  float		dec_wt;		// #CONDEDIT_ON_on pre-lrate amount to subtract from weights as long as average activation is > max (dwt -= cur_lrate * dec_wt)
+  float		inc_wt;		// #CONDEDIT_ON_on pre-lrate amount to add to weights as long as average activation is < min (dwt += cur_lrate * inc_wt)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(ActRegSpec);
@@ -763,6 +765,9 @@ public:
   // #CAT_Activation change external inputs to comparisons (remove input)
   virtual void	TargExtToComp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation change target & external inputs to comparisons (remove targ & input)
+  virtual void	Compute_ActTimeAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+				   LeabraNetwork* net);
+  // #CAT_Activation compute time-averaged activation of unit (using act.avg_dt time constant), typically done at end of settling in PostSettle function
   virtual void	PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
 			   LeabraNetwork* net, bool set_both=false);
   // #CAT_Activation set stuff after settling is over (set_both = both _m and _p for current)
@@ -1885,13 +1890,12 @@ inline void LeabraConSpec::C_Compute_ActReg(LeabraCon* cn, LeabraRecvCons*,
   // do this in update so inactive units can be reached (no opt_thresh.updt)
   // act_reg.on:
   float dwinc = 0.0f;
-  if(ru->act_avg < rus->act_reg.min)
-    dwinc = rus->act_reg.wt_dt;
-  else if(ru->act_avg > rus->act_reg.max)
-    dwinc = -rus->act_reg.wt_dt;
+  if(ru->act_avg <= rus->act_reg.min)
+    dwinc = rus->act_reg.inc_wt;
+  else if(ru->act_avg >= rus->act_reg.max)
+    dwinc = -rus->act_reg.dec_wt;
   if(dwinc != 0.0f) {
-    float wtval = wt_sig_fun_inv.Eval(cn->wt);
-    cn->dwt += cur_lrate * dwinc * wtval; // weight is + !
+    cn->dwt += cur_lrate * dwinc;
   }
 }
 
@@ -1905,7 +1909,7 @@ inline void LeabraConSpec::C_Compute_WeightsActReg(LeabraCon* cn, LeabraRecvCons
 inline void LeabraConSpec::Compute_Weights(RecvCons* cg, Unit* ru) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
   LeabraRecvCons* lcg = (LeabraRecvCons*)cg;
-  if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
+  if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)
     CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((LeabraCon*)cg->Cn(i), lcg,
 					     (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
   }
@@ -1924,10 +1928,10 @@ inline void LeabraConSpec::B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
 // default is not to do anything tricky with the bias weights
 inline void LeabraConSpec::B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus) {
   if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
-    if(ru->act_avg < rus->act_reg.min)
-      cn->dwt += cur_lrate * rus->act_reg.wt_dt;
-    else if(ru->act_avg > rus->act_reg.max)
-      cn->dwt -= cur_lrate * rus->act_reg.wt_dt;
+    if(ru->act_avg <= rus->act_reg.min)
+      cn->dwt += cur_lrate * rus->act_reg.inc_wt;
+    else if(ru->act_avg >= rus->act_reg.max)
+      cn->dwt -= cur_lrate * rus->act_reg.dec_wt;
   }
   cn->pdw = cn->dwt;
   cn->wt += cn->dwt;

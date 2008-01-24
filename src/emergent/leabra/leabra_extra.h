@@ -113,10 +113,10 @@ public:
 
   inline void	B_Compute_Weights(LeabraCon* cn, LeabraUnit* ru, LeabraUnitSpec* rus) {
     if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
-      if(ru->act_avg < rus->act_reg.min)
-	cn->dwt += cur_lrate * rus->act_reg.wt_dt;
-      else if(ru->act_avg > rus->act_reg.max)
-	cn->dwt -= cur_lrate * rus->act_reg.wt_dt;
+      if(ru->act_avg <= rus->act_reg.min)
+	cn->dwt += cur_lrate * rus->act_reg.inc_wt;
+      else if(ru->act_avg >= rus->act_reg.max)
+	cn->dwt -= cur_lrate * rus->act_reg.dec_wt;
     }
     if(cn->dwt > 0.0f)		// positive only
       cn->dwt = 0.0f;
