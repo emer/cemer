@@ -269,7 +269,7 @@ bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
   net->LayerZPos_Unitize();
   net->Build();
   net->StructUpdate(false);
-  net->NewView();
+  net->FindMakeView();
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");

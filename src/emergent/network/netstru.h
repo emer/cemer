@@ -1922,7 +1922,10 @@ public:
 #ifdef TA_GUI
   virtual NetView* NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
+  virtual NetView* FindMakeView(T3DataViewFrame* fr = NULL);
+  // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
 #endif
+
   virtual NetViewObj* NewViewText(const String& txt);
   // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects
   virtual NetViewObj* NewGlassBrain();

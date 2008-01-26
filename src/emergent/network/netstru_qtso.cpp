@@ -1628,6 +1628,27 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   return nv;
 }
 
+NetView* Network::FindMakeView(T3DataViewFrame* fr) {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    NetView* el;
+    FOR_DLC_EL_OF_TYPE(NetView, el, dl, itr) {
+      el->InitDisplay();
+      el->UpdateDisplay();
+      fr = el->GetFrame();
+      if(fr) {
+	MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+	if(mwv) {
+	  mwv->SelectT3ViewTabName(fr->name);
+	}
+      }
+      return el;
+    }
+  }
+
+  return NetView::New(this, fr);
+}
 
 void NetView::Initialize() {
   data_base = &TA_Network;

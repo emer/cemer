@@ -387,6 +387,11 @@ public:
   virtual void 	Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
+
+  override void Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  override void	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
+  override void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+
   override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
   TA_BASEFUNS_NOCOPY(CtLeabraLayerSpec);
@@ -471,21 +476,23 @@ public:
   int		ct_lrn_cycle;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic value of ct_cycle field when ct last learned
   int		ct_lrn_now;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic Ct learned now -- 0 = no learning, +2 = normal dwt, -2 = negative dwt, +1 = ActMP
 
-  virtual void 	Compute_CtCycle() ;
+  virtual void 	Compute_CtCycle();
   // #CAT_Cycle compute one cycle of continuous-time processing, after activations are updated
-  virtual void 	Compute_CtdWt() ;
+  virtual void 	Compute_ActMPAvgs();
+  // #CAT_Learning compute averages of p_act_m and p_act_p values -- needed for preventing learning when layer or unit group is inactive in one of the two phase states
+  virtual void 	Compute_CtdWt();
   // #CAT_Learning compute ct version of delta weight (actually does same as usual Compute_dWt, but that is overwritten to do nothing to prevent standard programs from breaking things)
-  virtual void 	Compute_CtdWtFlip() ;
+  virtual void 	Compute_CtdWtFlip();
   // #CAT_Learning compute flipped version of dwt (plus-minus reversed)
 
-  virtual void 	CtLearn_NothingSync() ;
+  virtual void 	CtLearn_NothingSync();
   // #CAT_Learning perform CT_NOTHING_SYNC version of automatic Ct learning (see enum in ct_learn for details)
 
-  virtual void 	Compute_ActMP() ;
+  virtual void 	Compute_ActMP();
   // #CAT_Learning compute minus and plus phase activations (snapshot prior to learning)
-  virtual void 	Compute_ActM() ;
+  virtual void 	Compute_ActM();
   // #CAT_Learning compute minus phase activations (snapshot prior to learning)
-  virtual void 	Compute_ActP() ;
+  virtual void 	Compute_ActP();
   // #CAT_Learning compute plus phase activations (snapshot prior to learning)
 
   override void	Init_Counters();
@@ -585,8 +592,26 @@ inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* r
   }
 
   Compute_SAvgCor(cg, ru);
+  // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
+  LeabraLayer* lly = (LeabraLayer*)cg->prjn->layer;
+  if((lly->acts_m.avg < savg_cor.thresh) || (lly->acts_p.avg < savg_cor.thresh))
+    return;			// if either phase is below, don't go
+  LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+  if((lfm->acts_m.avg < savg_cor.thresh) || (lfm->acts_p.avg < savg_cor.thresh))
+    return;			// if either phase is below, don't go
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
+      return;
+  }
+
   for(int i=0; i<cg->cons.size; i++) {
     CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
+    if(su->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+      if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
+	continue;
+    }
     CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
     float orig_wt = cn->wt;
     C_Compute_LinFmWt(cg, cn); // get weight into linear form
@@ -612,8 +637,27 @@ inline void CtLeabraConSpec::C_Compute_dWtFlip(CtLeabraCon* cn, CtLeabraUnit* ru
 
 inline void CtLeabraConSpec::Compute_dWtFlip(CtLeabraRecvCons* cg, CtLeabraUnit* ru,
 					     CtLeabraNetwork* net) {
+
+  // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
+  LeabraLayer* lly = (LeabraLayer*)cg->prjn->layer;
+  if((lly->acts_m.avg < savg_cor.thresh) || (lly->acts_p.avg < savg_cor.thresh))
+    return;			// if either phase is below, don't go
+  LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+  if((lfm->acts_m.avg < savg_cor.thresh) || (lfm->acts_p.avg < savg_cor.thresh))
+    return;			// if either phase is below, don't go
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
+      return;
+  }
+
   for(int i=0; i<cg->cons.size; i++) {
     CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
+    if(su->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+      if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
+	continue;
+    }
     CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
     float orig_wt = cn->wt;
     C_Compute_LinFmWt(cg, cn); // get weight into linear form

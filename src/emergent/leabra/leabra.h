@@ -580,15 +580,15 @@ private:
 };
 
 class LEABRA_API ActRegSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activity regulation via weight adjustment
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activity regulation via weight adjustment -- weights are multiplied by given factors when average activity is out of range -- multiplication preserves overall weight pattern, just changes scaling
 INHERITED(taBase)
 public:
   bool		on;		// #APPLY_IMMED whether activity regulation is on (active) or not
   bool		bias_only;	// #CONDEDIT_ON_on only apply corrective weight changes to bias weights
   float		min;		// #CONDEDIT_ON_on [.01 if in use] increase weights for units below this level of average activation
   float		max;		// #CONDEDIT_ON_on [.4 -- .8 typical] decrease weights for units above this level of average activation 
-  float		dec_wt;		// #CONDEDIT_ON_on pre-lrate amount to subtract from weights as long as average activation is > max (dwt -= cur_lrate * dec_wt)
-  float		inc_wt;		// #CONDEDIT_ON_on pre-lrate amount to add to weights as long as average activation is < min (dwt += cur_lrate * inc_wt)
+  float		dec_wt;		// #CONDEDIT_ON_on pre-lrate amount to subtract from weights as long as average activation is > max (dwt -= cur_lrate * dec_wt * wt) -- note: multiplicative on existing weights to preserve overall weight pattern
+  float		inc_wt;		// #CONDEDIT_ON_on pre-lrate amount to add to weights as long as average activation is < min (dwt += cur_lrate * inc_wt * wt) -- note: multiplicative on existing weights to preserve overall weight pattern
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(ActRegSpec);
@@ -1653,6 +1653,11 @@ public:
   float	Compute_TopKAvgNetin(LeabraNetwork* net)  { return spec->Compute_TopKAvgNetin(this, net); }
   // #CAT_Statistic compute the average netinput of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
 
+  void	Compute_ActMAvg(LeabraNetwork* net) { spec->Compute_ActMAvg(this, net); }
+  // #CAT_Activation compute acts_m.avg from act_m
+  void	Compute_ActPAvg(LeabraNetwork* net) { spec->Compute_ActPAvg(this, net); }
+  // #CAT_Activation compute acts_p.avg from act_p
+
   void	PhaseInit(LeabraNetwork* net)		{ spec->PhaseInit(this, net); }
   // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
   void	DecayEvent(LeabraNetwork* net)		{ spec->DecayEvent(this, net); }
@@ -1895,7 +1900,8 @@ inline void LeabraConSpec::C_Compute_ActReg(LeabraCon* cn, LeabraRecvCons*,
   else if(ru->act_avg >= rus->act_reg.max)
     dwinc = -rus->act_reg.dec_wt;
   if(dwinc != 0.0f) {
-    cn->dwt += cur_lrate * dwinc;
+    float wtval = wt_sig_fun_inv.Eval(cn->wt);
+    cn->dwt += cur_lrate * dwinc * wtval;
   }
 }
 

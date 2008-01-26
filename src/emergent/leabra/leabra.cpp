@@ -432,7 +432,7 @@ void MaxDaSpec::Initialize() {
 void LeabraUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraUnit;
   bias_con_type = &TA_LeabraCon;
-  bias_spec.SetBaseType(&TA_LeabraConSpec);
+  bias_spec.SetBaseType(&TA_LeabraBiasSpec);
 
   sse_tol = .5f;
 

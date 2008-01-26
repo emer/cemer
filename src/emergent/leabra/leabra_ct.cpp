@@ -89,6 +89,8 @@ void CtLeabraUnit::Initialize() {
 void CtLeabraUnitSpec::Initialize() {
   min_obj_type = &TA_CtLeabraUnit;
   bias_con_type = &TA_CtLeabraCon;
+  bias_spec.SetBaseType(&TA_CtLeabraBiasSpec);
+
   opt_thresh.updt_wts = false;
 }
 
@@ -211,7 +213,23 @@ void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net
     lay->mean_cai_max /= (float)lay->units.leaves;
 }
 
+void CtLeabraLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
+  // problem is: we don't have savg_cor.thresh here!
+  // if either phase is below, don't go
+//   if((lay->acts_m.avg < savg_cor.thresh) || (lay->acts_p.avg < savg_cor.thresh))
+//     return;			
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
+    u->Compute_dWt(lay, net);
+  AdaptKWTAPt(lay, net);
+}
+
 void CtLeabraLayerSpec::Compute_dWtFlip(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  // problem is: we don't have savg_cor.thresh here!
+  // if either phase is below, don't go
+//   if((lay->acts_m.avg < savg_cor.thresh) || (lay->acts_p.avg < savg_cor.thresh))
+//     return;			
   CtLeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
@@ -243,6 +261,44 @@ void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
   }
 }
 
+// NOTE: the following functions are NEVER called during normal usage in std leabra
+// because postsettle just does a cp from the current acts values, instead of recomputing
+// from scratch. thus, we can co-opt these functions
+
+void CtLeabraLayerSpec::Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr,
+					  LeabraNetwork*) {
+  thr->acts_m.avg = 0.0f;
+  thr->acts_m.max = -FLT_MAX;
+  thr->acts_m.max_i = -1;
+  CtLeabraUnit* u;
+  taLeafItr i;
+  int lf = 0;
+  FOR_ITR_EL(CtLeabraUnit, u, ug->, i) {
+    thr->acts_m.avg += u->p_act_m; // NOTE: using p_act_m instead of act_m here!!
+    if(u->p_act_m > thr->acts_m.max) {
+      thr->acts_m.max = u->p_act_m;  thr->acts_m.max_i = lf;
+    }
+    lf++;
+  }
+  if(ug->leaves > 0) thr->acts_m.avg /= (float)ug->leaves;
+}
+
+void CtLeabraLayerSpec::Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*) {
+  thr->acts_p.avg = 0.0f;
+  thr->acts_p.max = -FLT_MAX;
+  thr->acts_p.max_i = -1;
+  CtLeabraUnit* u;
+  taLeafItr i;
+  int lf = 0;
+  FOR_ITR_EL(CtLeabraUnit, u, ug->, i) {
+    thr->acts_p.avg += u->p_act_p;  // NOTE: using p_act_p instead of act_p here!!
+    if(u->p_act_p > thr->acts_p.max) {
+      thr->acts_p.max = u->p_act_p;  thr->acts_p.max_i = lf;
+    }
+    lf++;
+  }
+  if(ug->leaves > 0) thr->acts_p.avg /= (float)ug->leaves;
+}
 
 //////////////////////////////////
 // 	Ct Network
@@ -355,7 +411,19 @@ void CtLeabraNetwork::CtLearn_NothingSync() {
   // todo: explore a version that does update weight right then and there ?
 }
 
+void CtLeabraNetwork::Compute_ActMPAvgs() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_ActMAvg(this);
+    lay->Compute_ActPAvg(this);
+  }
+}
+
 void CtLeabraNetwork::Compute_CtdWt() {
+  // note: collect averages first so we can use those for filtering learning
+  Compute_ActMPAvgs();
   inherited::Compute_dWt();
 }
 
@@ -374,6 +442,9 @@ void CtLeabraNetwork::Compute_dWt_NStdLay() {
 }
 
 void CtLeabraNetwork::Compute_CtdWtFlip() {
+  // note: collect averages first so we can use those for filtering learning
+  Compute_ActMPAvgs();
+
   CtLeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
