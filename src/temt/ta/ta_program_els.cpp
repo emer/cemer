@@ -1004,7 +1004,7 @@ const String MemberFmArg::GenCssBody_impl(int indent_level) {
   }
 
   if(!quiet)
-    rval += il2 + "taMisc::Info(\"Set " + flpth + "\", \"to:\", arg_str);\n";
+    rval += il2 + "taMisc::Info(\"Set " + flpth + "\", \"to:\", flpth);\n";
   rval += il1 + "}\n";
   rval += il + "}\n";
   return rval;
@@ -1377,6 +1377,14 @@ const String OtherProgramVar::GenCssPost_impl(int indent_level) {
 
 
 void ProgVarFmArg::Initialize() {
+}
+
+void ProgVarFmArg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(arg_name.empty())
+    arg_name = var_name;
+  if(var_name.empty())
+    var_name = arg_name;
 }
 
 void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {

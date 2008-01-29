@@ -40,20 +40,20 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
 }
 
 void CtLrateSpec::Initialize() {
-  first_dwt = 1.0f;
+  first_dwt = 0.0f;
   noth_dwt = 1.0f;
 }
 
 void CtDwtNorm::Initialize() {
-  on = false;
-  norm_pct = .5f;
+  on = true;
+  norm_pct = 1.0f;
 }
 
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;
-  lmix.hebb = 0.0001f;
-  lmix.err = 0.9999f;
+  lmix.hebb = 0.0f;
+  lmix.err = 1.0f;
 }
 
 void CtLeabraConSpec::UpdateAfterEdit_impl() {

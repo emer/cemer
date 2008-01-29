@@ -92,8 +92,8 @@ class LEABRA_API CtLrateSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra ct learning rate multipliers for various learning phases
 INHERITED(taBase)
 public:
-  float 	first_dwt;	// lrate multiplier for first weight change after nothing phase (ie. noise vs. current more settled state)
-  float 	noth_dwt;	// lrate multiplier for weight change during nothing phase (ie. Restricted Boltzmann Machine learning)
+  float 	first_dwt;	// #DEF_0 lrate multiplier for first weight change after nothing phase (ie. noise vs. current more settled state)
+  float 	noth_dwt;	// #DEF_1 lrate multiplier for weight change during nothing phase (ie. Restricted Boltzmann Machine learning)
 
   SIMPLE_COPY(CtLrateSpec);
   TA_BASEFUNS(CtLrateSpec);
@@ -238,6 +238,9 @@ public:
   
   inline void  C_Compute_dWt(CtLeabraCon* cn, CtLeabraUnit* ru, float heb, float err, 
 			     float eff_lrate);
+  inline void  C_Compute_dWt_NoHebb(CtLeabraCon* cn, CtLeabraUnit* ru, float err, 
+				    float eff_lrate);
+  // optimized version for lmix.hebb == 0 -- ct does not typically require hebb
 
   inline float C_Compute_Err(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su);
 
@@ -548,6 +551,7 @@ inline void CtLeabraBiasSpec::B_Compute_dWtCt(CtLeabraCon* cn, CtLeabraUnit* ru,
 					      CtLeabraNetwork* net) {
   float eff_lrate = cur_lrate;
   if(net->ct_cycle == net->ct_learn.interval) { // first dwt
+    if(ct_lrate.first_dwt == 0.0f) return;
     eff_lrate *= ct_lrate.first_dwt;
   }
   float err = ru->p_act_p - ru->p_act_m;
@@ -584,10 +588,16 @@ inline void CtLeabraConSpec::C_Compute_dWt(CtLeabraCon* cn, CtLeabraUnit*,
   cn->dwt += eff_lrate * dwt;
 }
 
+inline void CtLeabraConSpec::C_Compute_dWt_NoHebb(CtLeabraCon* cn, CtLeabraUnit*,
+						  float err, float eff_lrate) {
+  cn->dwt += eff_lrate * err;
+}
+
 inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* ru, 
 					   CtLeabraNetwork* net) {
   float eff_lrate = cur_lrate;
   if(net->ct_cycle == net->ct_learn.interval) { // first dwt
+    if(ct_lrate.first_dwt == 0.0f) return;
     eff_lrate *= ct_lrate.first_dwt;
   }
 
@@ -605,21 +615,40 @@ inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* r
       return;
   }
 
-  for(int i=0; i<cg->cons.size; i++) {
-    CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
-    if(su->in_subgp) {
-      LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-      if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
-	continue;
+  if(lmix.hebb == 0.0f) {	// hebb is sufficiently infrequent to warrant optimizing
+    for(int i=0; i<cg->cons.size; i++) {
+      CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
+	  continue;
+      }
+      CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
+      float orig_wt = cn->wt;
+      C_Compute_LinFmWt(cg, cn); // get weight into linear form
+      C_Compute_dWt_NoHebb(cn, ru, 
+		    C_Compute_Err(cn, ru, su),
+		    eff_lrate);  
+      cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
     }
-    CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
-    float orig_wt = cn->wt;
-    C_Compute_LinFmWt(cg, cn); // get weight into linear form
-    C_Compute_dWt(cn, ru, 
-		  C_Compute_Hebb(cn, cg, ru->p_act_p, su->p_act_p), // note: using p_act_p!
-		  C_Compute_Err(cn, ru, su),
-		  eff_lrate);  
-    cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+  }
+  else {
+    for(int i=0; i<cg->cons.size; i++) {
+      CtLeabraUnit* su = (CtLeabraUnit*)cg->Un(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if((ogp->acts_m.avg < savg_cor.thresh) || (ogp->acts_p.avg < savg_cor.thresh))
+	  continue;
+      }
+      CtLeabraCon* cn = (CtLeabraCon*)cg->Cn(i);
+      float orig_wt = cn->wt;
+      C_Compute_LinFmWt(cg, cn); // get weight into linear form
+      C_Compute_dWt(cn, ru, 
+		    C_Compute_Hebb(cn, cg, ru->p_act_p, su->p_act_p), // note: using p_act_p!
+		    C_Compute_Err(cn, ru, su),
+		    eff_lrate);  
+      cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+    }
   }
 }
 

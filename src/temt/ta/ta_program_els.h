@@ -702,7 +702,8 @@ public:
   TA_SIMPLE_BASEFUNS(ProgVarFmArg);
 
 protected:
-  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void UpdateAfterEdit_impl();
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
   void		AddArgsFmCode(String& gen_code, ProgEl_List& progs);
