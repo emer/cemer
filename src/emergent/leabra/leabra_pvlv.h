@@ -55,12 +55,11 @@ class LEABRA_API PVConSpec : public LeabraConSpec {
   // primary value connection spec: learns using delta rule from PVe - PVi values
 INHERITED(LeabraConSpec)
 public:
-  inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->act_p;
-    // wt is negative in linear form, so using opposite sign of usual here
     if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f + cn->wt);
-      else		err *= -cn->wt;	
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;	
     }
     return err;
   }
@@ -76,12 +75,10 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lru, su));  
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+			C_Compute_Err(cn, lin_wt, lru, su));  
 	}
       }
     }
@@ -148,13 +145,12 @@ INHERITED(PVConSpec)
 public:
   float 	wt_dec_mult;   // multiplier for weight decrease rate relative to basic lrate used for weight increases
 
-  inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+ inline float C_Compute_Err(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->act_p;
     if(err < 0.0f)	err *= wt_dec_mult;
-    // wt is negative in linear form, so using opposite sign of usual here
     if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f + cn->wt);
-      else		err *= -cn->wt;	
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;	
     }
     return err;
   }
@@ -170,12 +166,10 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lru, su));  
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+			C_Compute_Err(cn, lin_wt, lru, su));  
 	}
       }
     }
@@ -206,12 +200,11 @@ class LEABRA_API LVConSpec : public TrialSynDepConSpec {
   // learned value connection spec: learns using delta rule from PVe - LV values; also does synaptic depression to do novelty filtering
 INHERITED(TrialSynDepConSpec)
 public:
-  inline float C_Compute_Err(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->act_p;
-    // wt is negative in linear form, so using opposite sign of usual here
     if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f + cn->wt);
-      else		err *= -cn->wt;	
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;	
     }
     return err;
   }
@@ -226,12 +219,10 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lru, su));  
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+			C_Compute_Err(cn, lin_wt, lru, su));  
 	  // depression operates on linear weight!
 	  C_Depress_Wt((TrialSynDepCon*)cn, lru, su);
 	}

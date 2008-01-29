@@ -43,17 +43,17 @@ public:
 
   LearnRule	learn_rule;	// learning rule to use
 
-  inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, DaModUnit* ru, DaModUnit* su) {
-    // wt is negative in linear form, so using opposite sign of usual here
+  inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, 
+			      float lin_wt, DaModUnit* ru, DaModUnit* su) {
     float rval;
     if((learn_rule == OUTPUT_DELTA) || (learn_rule == OUTPUT_CHL))
-      rval = ru->act_p * (su->act_p * (cg->savg_cor + cn->wt) + (1.0f - su->act_p) * cn->wt);
+      rval = ru->act_p * (su->act_p * (cg->savg_cor - lin_wt) - (1.0f - su->act_p) * lin_wt);
     else
-      rval = ru->act_p2 * (su->act_p * (cg->savg_cor + cn->wt) + (1.0f - su->act_p) * cn->wt);
+      rval = ru->act_p2 * (su->act_p * (cg->savg_cor - lin_wt) - (1.0f - su->act_p) * lin_wt);
     return rval;
   }
 
-  inline float C_Compute_Err(LeabraCon* cn, DaModUnit* ru, DaModUnit* su) {
+  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, DaModUnit* ru, DaModUnit* su) {
     float err = 0.0f;
     switch(learn_rule) {
     case OUTPUT_DELTA:
@@ -66,10 +66,9 @@ public:
       err = (ru->act_p2  - ru->act_p) * su->act_p;
       break;
     }
-    // wt is negative in linear form, so using opposite sign of usual here
     if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f + cn->wt);
-      else		err *= -cn->wt;	
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;
     }
     return err;
   }
@@ -84,12 +83,10 @@ public:
 	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru, su), 
-			C_Compute_Err(cn, lru, su));
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			C_Compute_Hebb(cn, lcg, lin_wt, lru, su), 
+			C_Compute_Err(cn, lin_wt, lru, su));
 	}
       }
     }

@@ -192,12 +192,11 @@ class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
 INHERITED(LeabraConSpec)
 public:
-  inline float C_Compute_Err(LeabraCon* cn, DaModUnit* ru, DaModUnit* su) {
+  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, DaModUnit* ru, DaModUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->p_act_p;
-    // wt is negative in linear form, so using opposite sign of usual here
     if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f + cn->wt);
-      else		err *= -cn->wt;	
+      if(err > 0.0f)	err *= (1.0f - lin_wt);
+      else		err *= lin_wt;	
     }
     return err;
   }
@@ -211,12 +210,10 @@ public:
       for(int i=0; i<lcg->cons.size; i++) {
 	DaModUnit* su = (DaModUnit*)lcg->Un(i);
 	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);
-	float orig_wt = cn->wt;
-	C_Compute_LinFmWt(lcg, cn); // get into linear form
+	float lin_wt = GetLinFmWt(cn->wt);
 	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, lcg, lru->act_p, su->p_act_p),
-		      C_Compute_Err(cn, lru, su));  
-	cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+		      C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->p_act_p),
+		      C_Compute_Err(cn, lin_wt, lru, su));  
       }
     }
   }

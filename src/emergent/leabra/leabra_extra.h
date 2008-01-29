@@ -192,12 +192,10 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lru->act_p, lru->act_m, su->act_p, su->act_m));  
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+			C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
 	  // depression operates on nonlinear weight!
 	  C_Depress_Wt((TrialSynDepCon*)cn, lru, su);
 	}
@@ -489,19 +487,18 @@ public:
   override void SetCurLrate(LeabraNetwork* net, int epoch);
 
   inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraRecvCons* cg,
-				  float ru_act, float su_act)
+				  float lin_wt, float ru_act, float su_act)
   {
-    // swt is always stored positive, so signs are different.
-    float swt_eff = (fast_wt.slw_sat) ? -cn->wt : cn->swt;
+    float swt_eff = (fast_wt.slw_sat) ? lin_wt : cn->swt;
     return ru_act * (su_act * (cg->savg_cor - swt_eff) - (1.0f - su_act) * swt_eff);
   }
 
   // todo: somewhat inefficient to do this computation twice..
 
   // generec error term with sigmoid activation function, and soft bounding
-  inline float C_Compute_SlowErr(FastWtCon* cn, float ru_act_p, float ru_act_m, float su_act_p, float su_act_m) {
+  inline float C_Compute_SlowErr(FastWtCon* cn, float lin_wt, float ru_act_p, float ru_act_m, float su_act_p, float su_act_m) {
     float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
-    float swt_eff = (fast_wt.slw_sat) ? -cn->wt : cn->swt;
+    float swt_eff = (fast_wt.slw_sat) ? lin_wt : cn->swt;
     if(err > 0.0f)	err *= (1.0f - swt_eff);
     else		err *= swt_eff;	
     return err;
@@ -537,15 +534,13 @@ public:
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
 	  C_Compute_FastDecay(cn, lru, su);
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lru->act_p, lru->act_m, su->act_p, su->act_m));  
+			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+			C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
 	  C_Compute_SlowdWt(cn, lru, 
-			C_Compute_SlowHebb(cn, lcg, lru->act_p, su->act_p),
-			C_Compute_SlowErr(cn, lru->act_p, lru->act_m, su->act_p, su->act_m));  
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			    C_Compute_SlowHebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+			    C_Compute_SlowErr(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
 	}
       }
     }
@@ -561,14 +556,10 @@ public:
     }
     if(cn->dwt != 0.0f) {
       // always do this because of the decay term..
-      C_Compute_LinFmWt(cg, cn);	// go to linear weights
-      cn->wt -= cn->dwt; // wt is now negative in linear form -- signs are reversed!
-      cn->wt = MAX(cn->wt, -1.0f);	// limit 0-1
-      cn->wt = MIN(cn->wt, 0.0f);
-      C_Compute_WtFmLin(cg, cn);	// go back to nonlinear weights
-      // then put in real limits!!
-      if(cn->wt < wt_limits.min) cn->wt = wt_limits.min;
-      if(cn->wt > wt_limits.max) cn->wt = wt_limits.max;
+      cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + cn->dwt);
+    // note that GetWtFmLin function enforces 0-1 limits.  other limits are not worth the cost!
+//       if(cn->wt < wt_limits.min) cn->wt = wt_limits.min;
+//       if(cn->wt > wt_limits.max) cn->wt = wt_limits.max;
     }
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;
@@ -624,13 +615,12 @@ INHERITED(LeabraConSpec)
 public:
   ActAvgHebbMixSpec	act_avg_hebb; // mixture of current and average activations to use in hebbian learning
 
-  inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg,
-			      float ru_act, float su_act, float ru_avg_act)
+ inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, float lin_wt,
+			     float ru_act, float su_act, float ru_avg_act)
   {
     // wt is negative in linear form, so using opposite sign of usual here
     float eff_ru_act = act_avg_hebb.act_avg * ru_avg_act + act_avg_hebb.cur_act * ru_act;
-    return eff_ru_act * (su_act * (cg->savg_cor + cn->wt) +
-			 (1.0f - su_act) * cn->wt);
+    return eff_ru_act * (su_act * (cg->savg_cor - lin_wt) - (1.0f - su_act) * lin_wt);
   }
 
   // this computes weight changes based on sender at time t-1
@@ -644,12 +634,10 @@ public:
 	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float orig_wt = cn->wt;
-	  C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	  float lin_wt = GetLinFmWt(cn->wt);
 	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p, lru->act_avg),
-			C_Compute_Err(cn, lru->act_p, lru->act_m, su->act_p, su->act_m));  
-	  cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p, lru->act_avg),
+			C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
 	}
       }
     }

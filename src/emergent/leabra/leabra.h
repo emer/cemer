@@ -84,13 +84,13 @@ TA_SMART_PTRS(LeabraTask);//
 // compensate for differences in expected activity level in the
 // different projections.
 
-// The underlying internal linear weight value upon which learning occurs
-// is computed from the nonlinear (sigmoidal) weight value prior to making
-// weight changes, and is then converted back in Compute_Weights.  The linear
-// weight is always stored as a negative value, so that shared weights or multiple
-// weight updates do not try to linearize the already-linear value.  The learning
-// rules have been updated to assume that wt is negative (and linear).
-
+// NEW as of 1/29/08: the weight value in the connection object 
+// is ALWAYS the contrast-enhanced sigmoidal weight value
+// where the underlying internal linear weight value is needed
+// (i.e., during learning), it is computed and passed around
+// as needed. This is much more efficient and less confusing
+// than the prior business of converting the actual value
+// back and forth and using + and - values to indicate this
 
 // use this macro for iterating over either unit groups one-by-one, or the one
 // unit group that is the layer->units, and applying 'code' to either
@@ -260,17 +260,10 @@ public:
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
 
-  void		C_Compute_WtFmLin(LeabraRecvCons*, LeabraCon* cn)
-  { if(cn->wt < 0.0f) cn->wt = wt_sig_fun.Eval(-cn->wt);  }
-  // #CAT_Learning weight is negative if it is in its linear form, only perform if negative
-  inline virtual void	Compute_WtFmLin(LeabraRecvCons* gp);
-  // #CAT_Learning compute actual weight value from linear weight value
-
-  void		C_Compute_LinFmWt(LeabraRecvCons*, LeabraCon* cn)
-  { if(cn->wt >= 0.0f) cn->wt = - wt_sig_fun_inv.Eval(cn->wt); }
-  // #CAT_Learning weight is negative if it is in its linear form, only perform if positive
-  inline virtual void	Compute_LinFmWt(LeabraRecvCons* gp);
-  // #CAT_Learning compute linear weight value from actual weight value
+  float		GetWtFmLin(float lin_wt) { return wt_sig_fun.Eval(lin_wt);  }
+  // #CAT_Learning get contrast-enhanced weight from linear weight value
+  float		GetLinFmWt(float sig_wt)     { return wt_sig_fun_inv.Eval(sig_wt); }
+  // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
   virtual void	C_Init_Weights_Post(RecvCons*, Connection*, Unit*, Unit*) { };
   // #CAT_Learning hook for setting other weight-like values after initializing the weight value
@@ -310,12 +303,12 @@ public:
   inline virtual void Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit* ru);
   // #CAT_Learning compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
 
-  inline float	C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg,
+  inline float	C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, float lin_wt,
 			       float ru_act, float su_act);
   // #CAT_Learning compute Hebbian associative learning
 
-  inline float 	C_Compute_Err(LeabraCon*, float ru_act_p, float ru_act_m,
-				  float su_act_p, float su_act_m);
+  inline float 	C_Compute_Err(LeabraCon* cn, float lin_wt, float ru_act_p, float ru_act_m,
+			      float su_act_p, float su_act_m);
   // #CAT_Learning compute generec error term, sigmoid case
 
   inline void 	C_Compute_dWt(LeabraCon* cn, LeabraUnit* ru, float heb, float err);
@@ -386,12 +379,6 @@ public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin
   float		savg_cor;	// #NO_SAVE #CAT_Learning savg correction factor for hebbian learning
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
-
-  void	Compute_LinFmWt()  { ((LeabraConSpec*)GetConSpec())->Compute_LinFmWt(this); }
-  // #CAT_Learning compute linear weight value 
-
-  void	Compute_WtFmLin()  { ((LeabraConSpec*)GetConSpec())->Compute_WtFmLin(this); }
-  // #CAT_Learning compute sigmoidal contrast enhanced weight value
 
   void	C_Init_Weights_Post(Connection* cn, Unit* ru, Unit* su) { 
     ((LeabraConSpec*)GetConSpec())->C_Init_Weights_Post(this, cn, ru, su);
@@ -781,9 +768,6 @@ public:
   virtual void	Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning actually do wt change: learn!
 
-  virtual void	Compute_WtFmLin(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning if weights need to be updated from linear values without doing updatewts
-
   override void	Compute_Weights(Unit* u);
 
   virtual void	EncodeState(LeabraUnit*, LeabraLayer*, LeabraNetwork*) { };
@@ -971,10 +955,6 @@ public:
   void 		Compute_dWt(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt(this, lay, net); }	  
   // #CAT_Learning actually do wt change: learn!
-
-  void 		Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_WtFmLin(this, lay, net); }
-  // #CAT_Learning if weights need to be updated from linear values without doing updatewts
 
   void 		EncodeState(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->EncodeState(this, lay, net); }
@@ -1429,8 +1409,6 @@ public:
   // #CAT_Activation adapt the kwta point based on average activity
   virtual void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning learn: compute the weight changes
-  virtual void	Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning use this if weights will be used again for activations prior to being updated
 
   virtual float	Compute_SSE(LeabraLayer* lay, int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
@@ -1680,8 +1658,6 @@ public:
   // #CAT_Activation update self-regulation (accommodation, hysteresis) at end of trial
 
   override void	Compute_dWt() 	{ spec->Compute_dWt(this, (LeabraNetwork*)own_net); }
-  void	Compute_WtFmLin(LeabraNetwork* net) 	{ spec->Compute_WtFmLin(this, net); }
-  // #CAT_Learning use this if weights will be used again for activations prior to being updated
   override void	Compute_Weights();
 
   override float Compute_SSE(int& n_vals, bool unit_avg = false, bool sqrt = false)
@@ -1736,18 +1712,6 @@ private:
 //	Inlines		// 
 //////////////////////////
 
-
-//////////////////////////
-//     WtSigFun 	//
-//////////////////////////
-
-void LeabraConSpec::Compute_LinFmWt(LeabraRecvCons* cg) {
-  CON_GROUP_LOOP(cg, C_Compute_LinFmWt(cg, (LeabraCon*)cg->Cn(i)));
-}
-
-void LeabraConSpec::Compute_WtFmLin(LeabraRecvCons* cg) {
-  CON_GROUP_LOOP(cg, C_Compute_WtFmLin(cg, (LeabraCon*)cg->Cn(i)));
-}
 
 //////////////////////////
 //      Netin   	//
@@ -1826,21 +1790,19 @@ inline void LeabraConSpec::Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit*) {
 }
 
 inline float LeabraConSpec::C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg,
-					   float ru_act, float su_act)
+					   float lin_wt, float ru_act, float su_act)
 {
-  // wt is negative in linear form, so using opposite sign of usual here
-  return ru_act * (su_act * (cg->savg_cor + cn->wt) +
-		   (1.0f - su_act) * cn->wt);
+  return ru_act * (su_act * (cg->savg_cor - lin_wt) - (1.0f - su_act) * lin_wt);
 }
 
 // generec error term with sigmoid activation function, and soft bounding
-inline float LeabraConSpec::C_Compute_Err
-(LeabraCon* cn, float ru_act_p, float ru_act_m, float su_act_p, float su_act_m) {
+inline float LeabraConSpec::C_Compute_Err(LeabraCon* cn, float lin_wt,
+					  float ru_act_p, float ru_act_m,
+					  float su_act_p, float su_act_m) {
   float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
-  // wt is negative in linear form, so using opposite sign of usual here
   if(lmix.err_sb) {
-    if(err > 0.0f)	err *= (1.0f + cn->wt);
-    else		err *= -cn->wt;	
+    if(err > 0.0f)	err *= (1.0f - lin_wt);
+    else		err *= lin_wt;
   }
   return err;
 }
@@ -1861,12 +1823,10 @@ inline void LeabraConSpec::Compute_dWt(RecvCons* cg, Unit* ru) {
       LeabraCon* cn = (LeabraCon*)cg->Cn(i);
       if(!(su->in_subgp &&
 	   (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	float orig_wt = cn->wt;
-	C_Compute_LinFmWt(lcg, cn); // get weight into linear form
+	float lin_wt = GetLinFmWt(cn->wt);
 	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, lcg, lru->act_p, su->act_p),
-		      C_Compute_Err(cn, lru->act_p, lru->act_m, su->act_p, su->act_m));  
-	cn->wt = orig_wt; // restore original value; note: no need to convert there-and-back for dwt, saves numerical lossage!
+		      C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
+		      C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
       }
     }
   }
@@ -1877,13 +1837,11 @@ inline void LeabraConSpec::C_Compute_Weights(LeabraCon* cn, LeabraRecvCons* cg,
 {
   // no act reg!
   if(cn->dwt != 0.0f) {
-    C_Compute_LinFmWt(cg, cn);	// go to linear weights
-    cn->wt -= cn->dwt; // wt is now negative in linear form -- signs are reversed!
-    // note: this fun sets 0-1 limits automatically!
-    C_Compute_WtFmLin(cg, cn);	// go back to nonlinear weights
-    // then put in real limits!!
-    if(cn->wt < wt_limits.min) cn->wt = wt_limits.min;
-    if(cn->wt > wt_limits.max) cn->wt = wt_limits.max;
+    // weight increment happens in linear weights
+    cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + cn->dwt);
+    // note that GetWtFmLin function enforces 0-1 limits.  other limits are not worth the cost!
+//     if(cn->wt < wt_limits.min) cn->wt = wt_limits.min;
+//     if(cn->wt > wt_limits.max) cn->wt = wt_limits.max;
   }
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -1900,8 +1858,7 @@ inline void LeabraConSpec::C_Compute_ActReg(LeabraCon* cn, LeabraRecvCons*,
   else if(ru->act_avg >= rus->act_reg.max)
     dwinc = -rus->act_reg.dec_wt;
   if(dwinc != 0.0f) {
-    float wtval = wt_sig_fun_inv.Eval(cn->wt);
-    cn->dwt += cur_lrate * dwinc * wtval;
+    cn->dwt += cur_lrate * dwinc * GetLinFmWt(cn->wt); // proportional to current linear weights
   }
 }
 

@@ -1243,15 +1243,6 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer*, LeabraNetwork
   inherited::Compute_dWt(u);
 }
 
-void LeabraUnitSpec::Compute_WtFmLin(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    if(lay->lesioned() || !recv_gp->cons.size)	continue;
-    recv_gp->Compute_WtFmLin();
-  }
-}
-
 void LeabraUnitSpec::Compute_Weights(Unit* u) {
   LeabraUnit* lu = (LeabraUnit*)u;
   // see above commment
@@ -3302,13 +3293,6 @@ void LeabraLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
     u->Compute_dWt(lay, net);
   AdaptKWTAPt(lay, net);
-}
-
-void LeabraLayerSpec::Compute_WtFmLin(LeabraLayer* lay, LeabraNetwork* net) {
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->Compute_WtFmLin(lay, net);
 }
 
 void LeabraLayer::Compute_Weights() {

@@ -39,11 +39,6 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
 }
 
-void CtLrateSpec::Initialize() {
-  first_dwt = 0.0f;
-  noth_dwt = 1.0f;
-}
-
 void CtDwtNorm::Initialize() {
   on = true;
   norm_pct = 1.0f;
@@ -113,10 +108,22 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
   }
 }
 
+void CtLeabraUnitSpec::Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
+  for(int g=0; g<u->recv.size; g++) {
+    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_SRAvg(u, net);
+  }
+  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SRAvg((CtLeabraCon*)u->bias.Cn(0), u, net);
+  //  u->p_act_m += u->act_eq;	// use p_act_m as an sravg surrogate
+  // but not really useful only valid at moment of computation -- requires 2 vars: one for the sum, one for inst avg, not really worth it
+}
+
 void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  CtLeabraUnit* cu = (CtLeabraUnit*)u;
-  if((cu->p_act_p <= opt_thresh.learn) && (cu->p_act_m <= opt_thresh.learn))
-    return;
+//   CtLeabraUnit* cu = (CtLeabraUnit*)u;
+  // note: cannot do this because we need to clear out sravg for all connections regardless!!
+//   if((cu->p_act_p <= opt_thresh.learn) && (cu->p_act_m <= opt_thresh.learn))
+//     return;
 
   for(int g=0; g<u->recv.size; g++) {
     CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
@@ -124,31 +131,10 @@ void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
     recv_gp->Compute_dWtCt((CtLeabraUnit*)u, (CtLeabraNetwork*)net);
   }
   ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtCt((CtLeabraCon*)u->bias.Cn(0),
-					 (CtLeabraUnit*)u, (CtLeabraNetwork*)net);
+		 (CtLeabraUnit*)u, (CtLeabraLayer*)lay, (CtLeabraNetwork*)net);
   //  Compute_dWt_impl(u, lay, net);
 }
 
-
-void CtLeabraUnitSpec::Compute_dWtFlip(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
-  if((u->p_act_p <= opt_thresh.learn) && (u->p_act_m <= opt_thresh.learn))
-    return;
-
-  for(int g=0; g<u->recv.size; g++) {
-    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_dWtFlip(u, net);
-  }
-  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtFlip((CtLeabraCon*)u->bias.Cn(0), u, net);
-}
-
-void CtLeabraUnitSpec::Compute_ActMP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
-  u->p_act_m = u->p_act_p;	// update activations for learning
-  u->p_act_p = u->act_eq;
-}
-
-void CtLeabraUnitSpec::Compute_ActM(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
-  u->p_act_m = u->act_eq;
-}
 
 void CtLeabraUnitSpec::Compute_ActP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
   u->p_act_p = u->act_eq;
@@ -213,44 +199,20 @@ void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net
     lay->mean_cai_max /= (float)lay->units.leaves;
 }
 
+void CtLeabraLayerSpec::Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  CtLeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+    u->Compute_SRAvg(lay, net);
+  }
+}
+
 void CtLeabraLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
-  // problem is: we don't have savg_cor.thresh here!
-  // if either phase is below, don't go
-//   if((lay->acts_m.avg < savg_cor.thresh) || (lay->acts_p.avg < savg_cor.thresh))
-//     return;			
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
     u->Compute_dWt(lay, net);
   AdaptKWTAPt(lay, net);
-}
-
-void CtLeabraLayerSpec::Compute_dWtFlip(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  // problem is: we don't have savg_cor.thresh here!
-  // if either phase is below, don't go
-//   if((lay->acts_m.avg < savg_cor.thresh) || (lay->acts_p.avg < savg_cor.thresh))
-//     return;			
-  CtLeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
-    u->Compute_dWtFlip(lay, net);
-  }
-}
-
-void CtLeabraLayerSpec::Compute_ActMP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  CtLeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
-    u->Compute_ActMP(lay, net);
-  }
-}
-
-void CtLeabraLayerSpec::Compute_ActM(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  CtLeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
-    u->Compute_ActM(lay, net);
-  }
 }
 
 void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
@@ -304,23 +266,41 @@ void CtLeabraLayerSpec::Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, Leabra
 // 	Ct Network
 //////////////////////////////////
 
-void CtNetLearnSpec::Initialize() {
-  mode = CT_NOTHING_SYNC;
-  interval = 20;
-  noth_dwt_int = 10;
+void CtTrialTiming::Initialize() {
+  minus = 40;
+  plus = 40;
+  inhib = 40;
+  inhib_max = 10;
+  burst = 20;
+  sravg_start = 0;
+  sravg_int = 5;
+  sravg_end = 20;
+
   syndep_int = 20;
-  noth_trg_first = false;
+
+  total_cycles = minus + plus + inhib;
+  inhib_start = minus + plus;
+}
+
+void CtTrialTiming::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  total_cycles = minus + plus + inhib;
+  inhib_start = minus + plus;
+}
+
+void CtInhibMod::Initialize() {
+  max_i = .2f;
+  burst_i = .2f;
 }
 
 void CtLeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_CtLeabraLayer);
+  ct_cycle = 0;
+  ct_sravg_n = 0;
   cai_max = 0.0f;
-  ct_lrn_time = 0.0f;
-  ct_lrn_cycle = 0;
-  ct_lrn_now = 0;
 
   // set new defaults for some key things:
-  phase_order = MINUS_PLUS_NOTHING;
+  phase_order = MINUS_PLUS_PLUS;
   maxda_stopcrit = -1.0f;
 }
 
@@ -339,18 +319,69 @@ void CtLeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 void CtLeabraNetwork::Init_Counters() {
   inherited::Init_Counters();
   ct_cycle = 0;
+  ct_sravg_n = 0;
 }
 
 void CtLeabraNetwork::Init_Stats() {
   inherited::Init_Stats();
   cai_max = 0.0f;
-  ct_lrn_time = 0.0f;
-  ct_lrn_cycle = 0;
-  ct_lrn_now = 0;
+}
+
+void CtLeabraNetwork::Compute_SRAvg() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_SRAvg(this);
+  }
+  ct_sravg_n++;
+}
+  
+void CtLeabraNetwork::Compute_ActP() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_ActP(this);
+  }
+}
+  
+void CtLeabraNetwork::Compute_ActPAvgs() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_ActPAvg(this);
+  }
+}
+
+void CtLeabraNetwork::Compute_CtdWt() {
+  // note: collect averages first so we can use those for filtering learning
+  Compute_ActPAvgs();
+  inherited::Compute_dWt();
+  ct_sravg_n = 0;		// reset for next -- sravg is reset in cons
+}
+
+void CtLeabraNetwork::Compute_dWt() {
+  return;			// nop to prevent spurious
+}
+
+void CtLeabraNetwork::Compute_dWt_NStdLay() {
+  // note: this is probably not even functional at this point..
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    if(lay->spec.SPtr()->GetTypeDef() != &TA_CtLeabraLayerSpec)
+      lay->Compute_dWt();
+  }
 }
 
 void CtLeabraNetwork::Compute_CtCycle() {
-  if(ct_cycle % ct_learn.syndep_int == 0) {
+  if(phase_no == 0 && cycle == 0) // detect start of trial
+    ct_cycle = 0;
+
+  if(ct_cycle % ct_time.syndep_int == 0) { // time to do syndep
     cai_max = 0.0f;
     int nmax = 0;
     CtLeabraLayer* lay;
@@ -367,154 +398,33 @@ void CtLeabraNetwork::Compute_CtCycle() {
       cai_max /= (float)nmax;
   }
 
-  ct_cycle++;			// increment now, prior to learning -- learning uses
-
-  switch(ct_learn.mode) {
-  case CtNetLearnSpec::CT_MANUAL:
-    break;
-  case CtNetLearnSpec::CT_NOTHING_SYNC:
-    CtLearn_NothingSync();
-    break;
-  }
-}
-
-// Note: 2632 has all the bump detection code, etc
-
-// TODO: impl attenuating sensory responses to inputs instead of NOTHING
-// phase stuff -- could produce more realistic dynamics -- novelty filter etc..
-
-void CtLeabraNetwork::CtLearn_NothingSync() {
-  ct_lrn_now = 0;
-  if(phase_no == 0 && cycle == 0) {
-    Compute_ActMP();
-    ct_lrn_now = 1;		// indicates update without actual learning
-    ct_cycle = 1;		// time starts now -- 1 is to prevent learn interval right now
-    return;
+  if(ct_cycle == ct_time.inhib_start-1) {
+    Compute_ActP();		// capture target activation state
   }
 
-  if(nothing_phase) {
-    if(cycle == ct_learn.noth_dwt_int) {
-      Compute_ActMP();				      // encode new values
-      ct_lrn_now = -2;				      // indicates flip actual learning
-      Compute_CtdWtFlip();
+  if(train_mode != TEST) {	// for training mode only, do some learning
+    if((ct_cycle >= ct_time.sravg_start) && (ct_cycle < (ct_time.inhib_start + ct_time.sravg_end))) {
+      // within sravg computation window
+      if(((ct_cycle - ct_time.sravg_start) % ct_time.sravg_int) == 0) {
+	Compute_SRAvg();
+      }
     }
-    return;			// otherwise no processing!
+
+    // at the end, do the weight update
+    if(ct_cycle == ct_time.total_cycles-1) {
+      Compute_CtdWt();
+    }
   }
 
-  if(ct_cycle % ct_learn.interval != 0) return; // not time to learn
-
-  Compute_ActMP();
-  ct_lrn_now = 2;				      // indicates actual learning
-  if(train_mode != TEST) {	// always just do wt update
-    Compute_CtdWt();
-  }
-  // todo: explore a version that does update weight right then and there ?
+  ct_cycle++;
 }
 
-void CtLeabraNetwork::Compute_ActMPAvgs() {
-  LeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_ActMAvg(this);
-    lay->Compute_ActPAvg(this);
-  }
-}
-
-void CtLeabraNetwork::Compute_CtdWt() {
-  // note: collect averages first so we can use those for filtering learning
-  Compute_ActMPAvgs();
-  inherited::Compute_dWt();
-}
-
-void CtLeabraNetwork::Compute_dWt() {
-  return;			// nop to prevent spurious
-}
-
-void CtLeabraNetwork::Compute_dWt_NStdLay() {
-  LeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    if(lay->spec.SPtr()->GetTypeDef() != &TA_CtLeabraLayerSpec)
-      lay->Compute_dWt();
-  }
-}
-
-void CtLeabraNetwork::Compute_CtdWtFlip() {
-  // note: collect averages first so we can use those for filtering learning
-  Compute_ActMPAvgs();
-
-  CtLeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_dWtFlip(this);
-  }
-  if(ct_learn.noth_trg_first) {
-    TargExtToComp();		// all external input is now 'comparison'
-    Compute_HardClamp();	// recompute -- should turn everything off
-    Compute_NetinScale();	// and then compute net scaling
-    Send_ClampNet();		// and send net from clamped inputs
-  }
-}
-  
 void CtLeabraNetwork::Cycle_Run() {
   inherited::Cycle_Run();
   Compute_CtCycle();
 }
 
-void CtLeabraNetwork::Compute_ActMP() {
-  // assume we're learning now..
-  ct_lrn_time = time;
-  ct_lrn_cycle = ct_cycle;
-  CtLeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_ActMP(this);
-  }
-}
-
-void CtLeabraNetwork::Compute_ActM() {
-  CtLeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_ActM(this);
-  }
-}
-void CtLeabraNetwork::Compute_ActP() {
-  CtLeabraLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
-    if(lay->lesioned())	continue;
-    lay->Compute_ActP(this);
-  }
-}
-  
-void CtLeabraNetwork::Settle_Init_Decay() {
-  if(phase_no >= 3) { // second plus phase or more: use phase2..
-    DecayPhase2();
-  }
-  else if(phase_no == 2) {
-    DecayPhase2();		// decay before 2nd phase set
-    if(phase_order == MINUS_PLUS_NOTHING) {
-      if(!ct_learn.noth_trg_first)
-	TargExtToComp();		// all external input is now 'comparison'
-    }
-  }
-  else if(phase_no == 1) {
-    if(phase_order == PLUS_NOTHING) { // actually a nothing phase
-      DecayPhase2();
-      if(!ct_learn.noth_trg_first)
-	TargExtToComp();		// all external input is now 'comparison'
-    }
-    else
-      DecayPhase();		// prepare for next phase
-  }
-}	
-
 ////////////////////////////////////////////////
 //		TODO
 
+// do the inhibition stuff!
