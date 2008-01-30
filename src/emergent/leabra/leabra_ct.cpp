@@ -86,7 +86,8 @@ void CtLeabraUnit::Initialize() {
 
 void CtSRAvgSpec::Initialize() {
   wt_mode = UNI_WT;
-  da_sum_thr = 0.02f;
+  min_da_thr = 0.002f;
+  max_da_thr = 0.05f;
 }
 
 void CtLeabraUnitSpec::Initialize() {
@@ -134,8 +135,9 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
 }
 
 void CtLeabraUnitSpec::Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
-  u->da_sum += fabsf(u->da);
-  if(u->da_sum >= sravg.da_sum_thr) {
+  float absda = fabsf(u->da); 
+  u->da_sum += absda;
+  if((u->da_sum >= sravg.min_da_thr) && (absda < sravg.max_da_thr)) {
     float sravg_wt = 1.0f;
     if(sravg.wt_mode == CtSRAvgSpec::DA_WT)
       sravg_wt = u->da_sum;

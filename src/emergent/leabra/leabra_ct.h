@@ -310,7 +310,8 @@ public:
   };
 
   SRAvgWtMode   wt_mode;	// how to weight each s-r sample
-  float		da_sum_thr;	// threshold value of da_sum before computing sravg value
+  float		min_da_thr;	// minimum threshold value of da_sum for computing sravg value
+  float		max_da_thr;	// maximum value of instantaneous da (delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
