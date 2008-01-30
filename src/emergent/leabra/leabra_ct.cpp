@@ -75,10 +75,18 @@ void CtLeabraBiasSpec::Initialize() {
 
 void CtLeabraUnit::Initialize() {
   bias.con_type = &TA_CtLeabraCon;
+  da_sum = 0.0f;
+  sravg_sum = 0.0f;
+  sravg_cyc = 0;
   cai_avg = 0.0f;
   cai_max = 0.0f;
   syndep_avg = 0.0f;
   syndep_max = 0.0f;
+}
+
+void CtSRAvgSpec::Initialize() {
+  wt_mode = UNI_WT;
+  da_sum_thr = 0.02f;
 }
 
 void CtLeabraUnitSpec::Initialize() {
@@ -87,6 +95,23 @@ void CtLeabraUnitSpec::Initialize() {
   bias_spec.SetBaseType(&TA_CtLeabraBiasSpec);
 
   opt_thresh.updt_wts = false;
+}
+
+void CtLeabraUnitSpec::Init_Weights(Unit* u) {
+  inherited::Init_Weights(u);
+  CtLeabraUnit* cu = (CtLeabraUnit*)u;
+  cu->da_sum = 0.0f;
+  cu->sravg_sum = 0.0f;
+  cu->sravg_cyc = 0;
+}  
+
+void CtLeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
+  inherited::Init_Acts(ru);
+  CtLeabraUnit* cu = (CtLeabraUnit*)ru;
+  cu->cai_avg = 0.0f;
+  cu->cai_max = 0.0f;
+  cu->syndep_avg = 0.0f;
+  cu->syndep_max = 0.0f;
 }
 
 void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
@@ -109,14 +134,26 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
 }
 
 void CtLeabraUnitSpec::Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
-  for(int g=0; g<u->recv.size; g++) {
-    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_SRAvg(u, net);
+  u->da_sum += fabsf(u->da);
+  if(u->da_sum >= sravg.da_sum_thr) {
+    float sravg_wt = 1.0f;
+    if(sravg.wt_mode == CtSRAvgSpec::DA_WT)
+      sravg_wt = u->da_sum;
+    for(int g=0; g<u->recv.size; g++) {
+      CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_SRAvg(u, net, sravg_wt);
+    }
+    ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SRAvg((CtLeabraCon*)u->bias.Cn(0), u,
+							   net, sravg_wt);
+    u->p_act_m = u->act_eq;	// snapshot at last sravg -- just for visual -- not da
+    u->sravg_sum += sravg_wt;
+    u->da_sum = 0.0f;
+    u->sravg_cyc = 0;
   }
-  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SRAvg((CtLeabraCon*)u->bias.Cn(0), u, net);
-  //  u->p_act_m += u->act_eq;	// use p_act_m as an sravg surrogate
-  // but not really useful only valid at moment of computation -- requires 2 vars: one for the sum, one for inst avg, not really worth it
+  else {
+    u->sravg_cyc++;
+  }
 }
 
 void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
@@ -125,16 +162,22 @@ void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
 //   if((cu->p_act_p <= opt_thresh.learn) && (cu->p_act_m <= opt_thresh.learn))
 //     return;
 
-  for(int g=0; g<u->recv.size; g++) {
-    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_dWtCt((CtLeabraUnit*)u, (CtLeabraNetwork*)net);
+  CtLeabraUnit* cu = (CtLeabraUnit*)u;
+  if(cu->sravg_sum > 0.0f) {	// had to have some sravg_sum at some point to learn..
+    for(int g=0; g<u->recv.size; g++) {
+      CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_dWtCt(cu, (CtLeabraNetwork*)net);
+    }
+    ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtCt((CtLeabraCon*)u->bias.Cn(0),
+		   (CtLeabraUnit*)u, (CtLeabraLayer*)lay, (CtLeabraNetwork*)net);
   }
-  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtCt((CtLeabraCon*)u->bias.Cn(0),
-		 (CtLeabraUnit*)u, (CtLeabraLayer*)lay, (CtLeabraNetwork*)net);
-  //  Compute_dWt_impl(u, lay, net);
-}
 
+  // reset weighting factors etc
+  cu->sravg_sum = 0.0f;
+  cu->da_sum = 0.0f;
+  cu->sravg_cyc = 0;
+}
 
 void CtLeabraUnitSpec::Compute_ActP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
   u->p_act_p = u->act_eq;
@@ -183,6 +226,39 @@ bool CtLeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     us->opt_thresh.updt_wts = false;
   }
   return rval;
+}
+
+void CtLeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
+  if(lay->hard_clamped)	return;	// say no more..
+  inherited::Compute_Inhib(lay, net);
+  
+  Compute_CtDynamicInhib((CtLeabraLayer*)lay, (CtLeabraNetwork*)net);
+}
+
+
+void CtLeabraLayerSpec::Compute_CtDynamicInhib(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  float burst_i = 0.0f;
+  float	inhib_i = 0.0f;
+  if((net->ct_time.burst > 1) && (net->ct_cycle < net->ct_time.burst)) {
+    burst_i = net->ct_inhib.burst_i *
+      ((float)((net->ct_time.burst-1) - net->ct_cycle) / (float)(net->ct_time.burst-1));
+  }
+  if((net->ct_time.inhib_max >= 1) && (net->ct_cycle >= net->ct_time.inhib_start)) {
+    float inhib_t = (float)(net->ct_cycle - net->ct_time.inhib_start);
+    inhib_i = net->ct_inhib.inhib_i * (inhib_t / (float)net->ct_time.inhib_max);
+    if(inhib_i > net->ct_inhib.inhib_i) inhib_i = net->ct_inhib.inhib_i;
+  }
+  // only one is going to be in effect at a time..
+  lay->i_val.g_i += inhib_i * lay->i_val.g_i;
+  lay->i_val.g_i -= burst_i * lay->i_val.g_i;
+
+  if(inhib_group != ENTIRE_LAYER) {
+    for(int g=0; g<lay->units.gp.size; g++) {
+      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+      rugp->i_val.g_i += inhib_i * rugp->i_val.g_i;
+      rugp->i_val.g_i -= burst_i * rugp->i_val.g_i;
+    }
+  }
 }
 
 void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net) {
@@ -273,7 +349,6 @@ void CtTrialTiming::Initialize() {
   inhib_max = 10;
   burst = 20;
   sravg_start = 0;
-  sravg_int = 5;
   sravg_end = 20;
 
   syndep_int = 20;
@@ -289,14 +364,13 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 }
 
 void CtInhibMod::Initialize() {
-  max_i = .2f;
+  inhib_i = .2f;
   burst_i = .2f;
 }
 
 void CtLeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_CtLeabraLayer);
   ct_cycle = 0;
-  ct_sravg_n = 0;
   cai_max = 0.0f;
 
   // set new defaults for some key things:
@@ -319,7 +393,6 @@ void CtLeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 void CtLeabraNetwork::Init_Counters() {
   inherited::Init_Counters();
   ct_cycle = 0;
-  ct_sravg_n = 0;
 }
 
 void CtLeabraNetwork::Init_Stats() {
@@ -334,7 +407,6 @@ void CtLeabraNetwork::Compute_SRAvg() {
     if(lay->lesioned())	continue;
     lay->Compute_SRAvg(this);
   }
-  ct_sravg_n++;
 }
   
 void CtLeabraNetwork::Compute_ActP() {
@@ -359,7 +431,6 @@ void CtLeabraNetwork::Compute_CtdWt() {
   // note: collect averages first so we can use those for filtering learning
   Compute_ActPAvgs();
   inherited::Compute_dWt();
-  ct_sravg_n = 0;		// reset for next -- sravg is reset in cons
 }
 
 void CtLeabraNetwork::Compute_dWt() {
@@ -405,9 +476,7 @@ void CtLeabraNetwork::Compute_CtCycle() {
   if(train_mode != TEST) {	// for training mode only, do some learning
     if((ct_cycle >= ct_time.sravg_start) && (ct_cycle < (ct_time.inhib_start + ct_time.sravg_end))) {
       // within sravg computation window
-      if(((ct_cycle - ct_time.sravg_start) % ct_time.sravg_int) == 0) {
-	Compute_SRAvg();
-      }
+      Compute_SRAvg();
     }
 
     // at the end, do the weight update
@@ -426,5 +495,12 @@ void CtLeabraNetwork::Cycle_Run() {
 
 ////////////////////////////////////////////////
 //		TODO
+
+// sravg modulated by rate of change:
+// p_act_m is last value when sravg was computed
+// if fabs(act_eq - p_act_m) > minus_thr, do sravg (need sravg_n per unit)
+//    p_act_m = act_eq
+// else incr counter 
+// can plot ctr etc to see when plus phase is reliably detected.
 
 // do the inhibition stuff!
