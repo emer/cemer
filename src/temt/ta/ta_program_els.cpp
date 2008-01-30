@@ -1004,7 +1004,7 @@ const String MemberFmArg::GenCssBody_impl(int indent_level) {
   }
 
   if(!quiet)
-    rval += il2 + "taMisc::Info(\"Set " + flpth + "\", \"to:\", flpth);\n";
+    rval += il2 + "taMisc::Info(\"Set " + flpth + " to:\"," + flpth + ");\n";
   rval += il1 + "}\n";
   rval += il + "}\n";
   return rval;
