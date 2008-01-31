@@ -1548,6 +1548,7 @@ public:
   InhibVals	i_val;		// #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
   AvgMaxVals	un_g_i;		// #READ_ONLY #EXPERT #CAT_Activation average and stdev (not max) values for unit inhib-to-thresh
   AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
+  float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }
@@ -1976,7 +1977,7 @@ public:
   int		avg_send_pct_n; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
 
   float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
-  float		maxda;		// #GUI_READ_ONLY #SHOW maximum #CAT_Statistic #VIEW change in activation (delta-activation) over network; used in stopping settling
+  float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
 
   float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
   float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)

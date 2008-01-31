@@ -300,35 +300,10 @@ private:
 // 	Ct Unit
 //////////////////////////////////
 
-class LEABRA_API CtSRAvgSpec : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of delta-activation
-INHERITED(taBase)
-public:
-  enum	SRAvgWtMode {
-    UNI_WT,			// uniform (unit) weighting of each sample
-    DA_WT,			// weight each sample as a function of the delta-activation sum accumulated to that point
-  };
-
-  SRAvgWtMode   wt_mode;	// how to weight each s-r sample
-  float		min_da_thr;	// minimum threshold value of da_sum for computing sravg value
-  float		max_da_thr;	// maximum value of instantaneous da (delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
-
-  SIMPLE_COPY(CtSRAvgSpec);
-  TA_BASEFUNS(CtSRAvgSpec);
-  //protected:
-  //  void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
 class LEABRA_API CtLeabraUnitSpec : public DaModUnitSpec {
   // continuous time leabra unit spec: most abstract version of continous time
 INHERITED(DaModUnitSpec)
 public:
-  CtSRAvgSpec	sravg;	// how to compute sravg value as a function of delta-activation
-
   virtual void 	Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
@@ -339,9 +314,8 @@ public:
   // #CAT_Learning compute target plus phase activations (snapshot prior to learning)
 
   override void	Init_Acts(LeabraUnit* u, LeabraLayer* lay);
-  override void Init_Weights(Unit* u);
 
-  TA_SIMPLE_BASEFUNS(CtLeabraUnitSpec);
+  TA_BASEFUNS_NOCOPY(CtLeabraUnitSpec);
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -351,10 +325,6 @@ class LEABRA_API CtLeabraUnit : public DaModUnit {
   // continuous time leabra unit: most abstract version of continous time
 INHERITED(DaModUnit)
 public:
-  float		da_sum;		// #NO_SAVE #CAT_Activation sum of fabs(da) since last SRAvg update
-  float		sravg_sum;	// #NO_SAVE #CAT_Activation sum of sravg weightings -- used for normalizing the weighted average
-  int		sravg_cyc;	// #NO_SAVE #CAT_Activation cycles since last sravg computation -- potentially useful for determining when unit is in attractor state
-
   float		cai_avg;	// #NO_SAVE #CAT_Activation average level of cai in my incoming connections -- just for analysis and debugging in early development -- remove later
   float		cai_max;	// #NO_SAVE #CAT_Activation maximum level of cai in my incoming connections -- used for determining when to learn
   float		syndep_avg;	// #NO_SAVE #CAT_Activation average level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
@@ -397,6 +367,7 @@ public:
   virtual void 	Compute_CtDynamicInhib(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Activation compute extra dynamic inhibition for ct leabra algorithm
 
+  override void	Init_Weights(LeabraLayer* lay);
   override void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_ActMAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
   override void	Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork*);
@@ -416,6 +387,9 @@ class LEABRA_API CtLeabraLayer : public LeabraLayer {
   // continuous time leabra layer: most abstract version of continous time
 INHERITED(LeabraLayer)
 public:
+  float		maxda_sum;	// #CAT_Activation sum of maxda since last SRAvg update
+  float		sravg_sum;	// #CAT_Activation sum of sravg weightings (count of number of times sravg has been computed) -- used for normalizing the weighted average
+  int		sravg_cyc;	// #CAT_Activation cycles since last sravg computation -- potentially useful for determining when unit is in attractor state
   float		mean_cai_max;	// mean across units of cai_max value for each unit, which is max cai across all incoming connections
 
   void 	Compute_CtCycle(CtLeabraNetwork* net) 
@@ -487,12 +461,30 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API CtSRAvgSpec : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of layer-level delta-activation (measure of how close network is to attractor)
+INHERITED(taBase)
+public:
+  float		min_da_thr;	// minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
+  float		max_da_thr;	// maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
+
+  SIMPLE_COPY(CtSRAvgSpec);
+  TA_BASEFUNS(CtSRAvgSpec);
+  //protected:
+  //  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API CtLeabraNetwork : public LeabraNetwork {
   // continuous time leabra network: most abstract version of continous time, using synaptic depression, trial-level inhibitory envelope, and target_minus_sravg attractor reinforcing learning mechanism
 INHERITED(LeabraNetwork)
 public:
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial
   CtInhibMod 	 ct_inhib;	// #CAT_Learning inhibition parameters for inhibitory modulations during trial, simulating slow time-constant inhibitory dynamics
+  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning parameters controlling computation of sravg value as a function of layer-level delta-activation 
 
   int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		cai_max;	// #READ_ONLY #EXPERT #CAT_Statistic mean across entire network of maximum level of cai per unit in incoming connections -- could potentially be used for determining when to learn, though this proves difficult in practice..
@@ -607,12 +599,12 @@ inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* r
 					   CtLeabraNetwork* net) {
   Compute_SAvgCor(cg, ru);
   // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
-  LeabraLayer* lly = (LeabraLayer*)cg->prjn->layer;
-  if(lly->acts_p.avg < savg_cor.thresh) { // if layer not active in target phase, no learn
+  CtLeabraLayer* rlay = (CtLeabraLayer*)cg->prjn->layer;
+  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in target phase, no learn
     Init_SRAvg(cg, ru, net);		  // critical: need to reset this!
     return;
   }
-  LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+  CtLeabraLayer* lfm = (CtLeabraLayer*)cg->prjn->from.ptr();
   if(lfm->acts_p.avg < savg_cor.thresh) {
     Init_SRAvg(cg, ru, net);		  // critical: need to reset this!
     return;
@@ -626,8 +618,8 @@ inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* r
   }
 
   float avg_nrm = 1.0f;
-  if(ru->sravg_sum > 0.0f)
-    avg_nrm = 1.0f / ru->sravg_sum; // normalize by sum of weighting factors
+  if(rlay->sravg_sum > 0.0f)
+    avg_nrm = 1.0f / rlay->sravg_sum; // normalize by sum of weighting factors, stored on layer
 
   if(lmix.hebb == 0.0f) {	// hebb is sufficiently infrequent to warrant optimizing
     for(int i=0; i<cg->cons.size; i++) {
@@ -740,8 +732,8 @@ inline void CtLeabraBiasSpec::B_Compute_dWtCt(CtLeabraCon* cn, CtLeabraUnit* ru,
   }
 
   float avg_nrm = 1.0f;
-  if(ru->sravg_sum > 0.0f)
-    avg_nrm = 1.0f / ru->sravg_sum; // normalize by sum of weighting factors
+  if(rlay->sravg_sum > 0.0f)
+    avg_nrm = 1.0f / rlay->sravg_sum; // normalize by sum of weighting factors
 
   float err = ru->p_act_p - avg_nrm * cn->sravg;
   if(fabsf(err) >= dwt_thresh)

@@ -75,19 +75,10 @@ void CtLeabraBiasSpec::Initialize() {
 
 void CtLeabraUnit::Initialize() {
   bias.con_type = &TA_CtLeabraCon;
-  da_sum = 0.0f;
-  sravg_sum = 0.0f;
-  sravg_cyc = 0;
   cai_avg = 0.0f;
   cai_max = 0.0f;
   syndep_avg = 0.0f;
   syndep_max = 0.0f;
-}
-
-void CtSRAvgSpec::Initialize() {
-  wt_mode = UNI_WT;
-  min_da_thr = 0.002f;
-  max_da_thr = 0.05f;
 }
 
 void CtLeabraUnitSpec::Initialize() {
@@ -97,14 +88,6 @@ void CtLeabraUnitSpec::Initialize() {
 
   opt_thresh.updt_wts = false;
 }
-
-void CtLeabraUnitSpec::Init_Weights(Unit* u) {
-  inherited::Init_Weights(u);
-  CtLeabraUnit* cu = (CtLeabraUnit*)u;
-  cu->da_sum = 0.0f;
-  cu->sravg_sum = 0.0f;
-  cu->sravg_cyc = 0;
-}  
 
 void CtLeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   inherited::Init_Acts(ru);
@@ -134,38 +117,24 @@ void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabra
   }
 }
 
-void CtLeabraUnitSpec::Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
-  float absda = fabsf(u->da); 
-  u->da_sum += absda;
-  if((u->da_sum >= sravg.min_da_thr) && (absda < sravg.max_da_thr)) {
-    float sravg_wt = 1.0f;
-    if(sravg.wt_mode == CtSRAvgSpec::DA_WT)
-      sravg_wt = u->da_sum;
-    for(int g=0; g<u->recv.size; g++) {
-      CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-      recv_gp->Compute_SRAvg(u, net, sravg_wt);
-    }
-    ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SRAvg((CtLeabraCon*)u->bias.Cn(0), u,
-							   net, sravg_wt);
-    u->p_act_m = u->act_eq;	// snapshot at last sravg -- just for visual -- not da
-    u->sravg_sum += sravg_wt;
-    u->da_sum = 0.0f;
-    u->sravg_cyc = 0;
+void CtLeabraUnitSpec::Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  for(int g=0; g<u->recv.size; g++) {
+    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_SRAvg(u, net, 1.0f); // sravg_wt = 1.0f
   }
-  else {
-    u->sravg_cyc++;
-  }
+  ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_SRAvg((CtLeabraCon*)u->bias.Cn(0), u,
+							 net, 1.0f);  // sravg_wt = 1.0f
+  u->p_act_m = u->act_eq;	// snapshot at last sravg -- just for visual
 }
 
 void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-//   CtLeabraUnit* cu = (CtLeabraUnit*)u;
+  CtLeabraUnit* cu = (CtLeabraUnit*)u;
   // note: cannot do this because we need to clear out sravg for all connections regardless!!
 //   if((cu->p_act_p <= opt_thresh.learn) && (cu->p_act_m <= opt_thresh.learn))
 //     return;
-
-  CtLeabraUnit* cu = (CtLeabraUnit*)u;
-  if(cu->sravg_sum > 0.0f) {	// had to have some sravg_sum at some point to learn..
+  CtLeabraLayer* clay = (CtLeabraLayer*)lay;
+  if(clay->sravg_sum > 0.0f) {	// had to have some sravg_sum at some point to learn..
     for(int g=0; g<u->recv.size; g++) {
       CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
@@ -174,11 +143,6 @@ void CtLeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
     ((CtLeabraBiasSpec*)bias_spec.SPtr())->B_Compute_dWtCt((CtLeabraCon*)u->bias.Cn(0),
 		   (CtLeabraUnit*)u, (CtLeabraLayer*)lay, (CtLeabraNetwork*)net);
   }
-
-  // reset weighting factors etc
-  cu->sravg_sum = 0.0f;
-  cu->da_sum = 0.0f;
-  cu->sravg_cyc = 0;
 }
 
 void CtLeabraUnitSpec::Compute_ActP(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork*) {
@@ -194,9 +158,15 @@ void CtLeabraLayer::Initialize() {
   units.SetBaseType(&TA_CtLeabraUnit);
   unit_spec.SetBaseType(&TA_CtLeabraUnitSpec);
   mean_cai_max = 0.0f;
+  maxda_sum = 0.0f;
+  sravg_sum = 0.0f;
+  sravg_cyc = 0;
 }  
 
 void CtLeabraLayer::Copy_(const CtLeabraLayer& cp) {
+  maxda_sum = cp.maxda_sum;
+  sravg_sum = cp.sravg_sum;
+  sravg_cyc = cp.sravg_cyc;
   mean_cai_max = cp.mean_cai_max;
 }
 
@@ -228,6 +198,15 @@ bool CtLeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     us->opt_thresh.updt_wts = false;
   }
   return rval;
+}
+
+void CtLeabraLayerSpec::Init_Weights(LeabraLayer* lay) {
+  inherited::Init_Weights(lay);
+  CtLeabraLayer* clay = (CtLeabraLayer*)lay;
+  clay->mean_cai_max = 0.0f;
+  clay->maxda_sum = 0.0f;
+  clay->sravg_sum = 0.0f;
+  clay->sravg_cyc = 0;
 }
 
 void CtLeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
@@ -278,10 +257,19 @@ void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net
 }
 
 void CtLeabraLayerSpec::Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  CtLeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
-    u->Compute_SRAvg(lay, net);
+  lay->maxda_sum += lay->maxda;
+  if((lay->maxda_sum >= net->ct_sravg.min_da_thr) && (lay->maxda < net->ct_sravg.max_da_thr)) {
+    CtLeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+      u->Compute_SRAvg(lay, net);
+    }
+    lay->sravg_sum += 1.0f;	// add one to weighting factor
+    lay->maxda_sum = 0.0f;
+    lay->sravg_cyc = 0;
+  }
+  else {
+    lay->sravg_cyc++;		// skipping
   }
 }
 
@@ -291,6 +279,11 @@ void CtLeabraLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
   FOR_ITR_EL(LeabraUnit, u, lay->units., i)
     u->Compute_dWt(lay, net);
   AdaptKWTAPt(lay, net);
+
+  CtLeabraLayer* clay = (CtLeabraLayer*)lay;
+  clay->maxda_sum = 0.0f;
+  clay->sravg_sum = 0.0f;
+  clay->sravg_cyc = 0;
 }
 
 void CtLeabraLayerSpec::Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net) {
@@ -368,6 +361,11 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 void CtInhibMod::Initialize() {
   inhib_i = .2f;
   burst_i = .2f;
+}
+
+void CtSRAvgSpec::Initialize() {
+  min_da_thr = 0.002f;
+  max_da_thr = 0.05f;
 }
 
 void CtLeabraNetwork::Initialize() {

@@ -1105,7 +1105,8 @@ void LeabraUnitSpec::Compute_SelfReg_Trial(LeabraUnit* u, LeabraLayer*, LeabraNe
     acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
 }
 
-void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
+				   LeabraNetwork* net) {
   float fda;
   if(maxda.val == MaxDaSpec::DA_ONLY)
     fda = fabsf(u->da);
@@ -1117,6 +1118,8 @@ void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*
     else
       fda = fabsf(u->da);
   }
+  lay->maxda = MAX(fda, lay->maxda);
+  thr->maxda = MAX(fda, thr->maxda);
   net->maxda = MAX(fda, net->maxda);
 }
 
@@ -2677,6 +2680,7 @@ void LeabraLayerSpec::Compute_ActAvg(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
 					 LeabraNetwork* net) {
+  thr->maxda = 0.0f;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
@@ -2685,6 +2689,7 @@ void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay, Unit_Group* ug, Leabra
 }
 
 void LeabraLayerSpec::Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->maxda = 0.0f;
   if(lay->units.gp.size > 0) {
     for(int g=0; g<lay->units.gp.size; g++) {
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
@@ -3395,6 +3400,7 @@ void LeabraInhib::Inhib_Initialize() {
   kwta.pct_c = .75;
   i_val.Defaults();
   phase_dif_ratio = 1.0f;
+  maxda = 0.0f;
 }
 
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
@@ -3403,6 +3409,7 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   i_thrs.Defaults();
   acts.Defaults();
   un_g_i.Defaults();
+  maxda = 0.0f;
 }
 
 void LeabraLayer::Initialize() {
