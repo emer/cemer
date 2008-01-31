@@ -474,7 +474,7 @@ void CtLeabraNetwork::Compute_CtCycle() {
   }
 
   if(train_mode != TEST) {	// for training mode only, do some learning
-    if((ct_cycle >= ct_time.sravg_start) && (ct_cycle < (ct_time.inhib_start + ct_time.sravg_end))) {
+    if(ct_cycle < (ct_time.inhib_start + ct_time.sravg_end)) {
       // within sravg computation window
       Compute_SRAvg();
     }
