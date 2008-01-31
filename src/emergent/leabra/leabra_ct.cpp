@@ -341,10 +341,9 @@ void CtTrialTiming::Initialize() {
   minus = 40;
   plus = 40;
   inhib = 40;
-  inhib_max = 10;
+  inhib_max = 40;
   burst = 20;
-  sravg_start = 0;
-  sravg_end = 20;
+  sravg_end = 10;
 
   syndep_int = 20;
 
@@ -359,13 +358,13 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 }
 
 void CtInhibMod::Initialize() {
-  inhib_i = .2f;
-  burst_i = .2f;
+  inhib_i = 0.05f;
+  burst_i = 0.05f;
 }
 
 void CtSRAvgSpec::Initialize() {
-  min_da_thr = 0.002f;
-  max_da_thr = 0.05f;
+  min_da_thr = 0.005f;
+  max_da_thr = 0.5f;
 }
 
 void CtLeabraNetwork::Initialize() {
@@ -380,6 +379,7 @@ void CtLeabraNetwork::Initialize() {
 
 void CtLeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  ct_time.UpdateAfterEdit();
 }
 
 void CtLeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {

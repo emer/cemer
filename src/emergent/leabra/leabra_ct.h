@@ -424,9 +424,8 @@ public:
   int		inhib;		// number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
   int		inhib_max;	// number of cycles into inhib phase for inhibition to reach its maximum level (on a linear ramp) -- 0 means do not apply this function
 
-  int		burst;	// number of cycles at start of trial to reduce inhibition levels as a result of residual refractoriness from prior trial, allowing incoming activation to over-activate relative to stable values -- ramps down linearly from start of trial to 0 reduction after burst cycles -- <=1 means do not apply
+  int		burst;		// number of cycles at start of trial to reduce inhibition levels as a result of residual refractoriness from prior trial, allowing incoming activation to over-activate relative to stable values -- ramps down linearly from start of trial to 0 reduction after burst cycles -- <=1 means do not apply
 
-  int		sravg_start;  	// number of cycles into trial to start recording sravg
   int		sravg_end;	// number of cycles from the start of the final inhibitory phase to continue recording sravg
 
   int		syndep_int;	// #DEF_20 interval for doing synaptic depression and associated Ca_i integration calcuations -- numbers > 1 result in faster processing and actually work better too -- need to adjust the conspec ca/syndep rate constants in step with this (multiply by this number)
@@ -448,7 +447,7 @@ class LEABRA_API CtInhibMod : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra inhibitory modulation parameters simulating effects of slow time-constant inhibition dynamics
 INHERITED(taBase)
 public:
-  float		inhib_i;		// maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
+  float		inhib_i;	// maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
   float		burst_i;	// maximum reduction in inhibition as a proportion of computed kwta value to subtract during initial burst phase (trial starts at this reduction, goes down to 0 after burst cycles) -- value should be a positive number!
 
   SIMPLE_COPY(CtInhibMod);
@@ -465,8 +464,8 @@ class LEABRA_API CtSRAvgSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of layer-level delta-activation (measure of how close network is to attractor)
 INHERITED(taBase)
 public:
-  float		min_da_thr;	// minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
-  float		max_da_thr;	// maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
+  float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
+  float		max_da_thr;	// #DEF_0.5 maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
