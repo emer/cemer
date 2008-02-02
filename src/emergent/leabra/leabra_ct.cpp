@@ -257,8 +257,13 @@ void CtLeabraLayerSpec::Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net
 }
 
 void CtLeabraLayerSpec::Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  // always increment: ensures that maxda_sum will be over minimum at start in case
+  // it somehow already slipped into attractor
   lay->maxda_sum += lay->maxda;
-  if((lay->maxda_sum >= net->ct_sravg.min_da_thr) && (lay->maxda < net->ct_sravg.max_da_thr)) {
+  if((net->ct_cycle >= net->ct_time.sravg_start) &&
+     (net->ct_cycle < (net->ct_time.inhib_start + net->ct_time.sravg_end)) &&
+     (lay->maxda_sum >= net->ct_sravg.min_da_thr) &&
+     (lay->maxda < net->ct_sravg.max_da_thr)) {
     CtLeabraUnit* u;
     taLeafItr i;
     FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
@@ -476,11 +481,8 @@ void CtLeabraNetwork::Compute_CtCycle() {
   }
 
   if(train_mode != TEST) {	// for training mode only, do some learning
-    if((ct_cycle >= ct_time.sravg_start) &&
-       (ct_cycle < (ct_time.inhib_start + ct_time.sravg_end))) {
-      // within sravg computation window
-      Compute_SRAvg();
-    }
+    // timing is all computed at the layer level!
+    Compute_SRAvg();
 
     // at the end, do the weight update
     if(ct_cycle == ct_time.total_cycles-1) {
