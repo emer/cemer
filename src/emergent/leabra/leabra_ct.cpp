@@ -343,6 +343,8 @@ void CtTrialTiming::Initialize() {
   inhib = 40;
   inhib_max = 40;
   burst = 20;
+
+  sravg_start = 8;
   sravg_end = 10;
 
   syndep_int = 20;
@@ -474,7 +476,8 @@ void CtLeabraNetwork::Compute_CtCycle() {
   }
 
   if(train_mode != TEST) {	// for training mode only, do some learning
-    if(ct_cycle < (ct_time.inhib_start + ct_time.sravg_end)) {
+    if((ct_cycle >= ct_time.sravg_start) &&
+       (ct_cycle < (ct_time.inhib_start + ct_time.sravg_end))) {
       // within sravg computation window
       Compute_SRAvg();
     }

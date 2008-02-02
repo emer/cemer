@@ -34,9 +34,11 @@ class CtLeabraNetwork; //
 
 // The most abstract version features:
 // * synaptic depression
-// * targ_minus_sravg CHL learning that reinforces target activation state against entire range
-//   of variation that occurs during settling as captured in average sender-receiver activation
-//   coproducts
+// * Contrastive Attractor Learning (CAL) that reinforces attractor activation state
+//   against entire range of variation that occurs during settling as captured in
+//   average sender-receiver activation coproducts
+// * controllable additional inhibitory terms for simulating slow GABA currents to turn
+//   off activations at end of trial and produce refractory burst at start
 
 class LEABRA_API CtLeabraCon : public LeabraCon {
   // continuous time leabra con: most abstract version of continous time
@@ -311,7 +313,7 @@ public:
   override void	Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
 
   virtual void 	Compute_ActP(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
-  // #CAT_Learning compute target plus phase activations (snapshot prior to learning)
+  // #CAT_Learning compute attractor plus phase activations (snapshot prior to learning)
 
   override void	Init_Acts(LeabraUnit* u, LeabraLayer* lay);
 
@@ -339,7 +341,7 @@ public:
 
   void		Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net)
   { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_ActP(this, lay, net); }
-  // #CAT_Learning compute target plus phase activations (snapshot prior to learning)
+  // #CAT_Learning compute attractor plus phase activations (snapshot prior to learning)
 
   TA_BASEFUNS_NOCOPY(CtLeabraUnit);
 private:
@@ -362,7 +364,7 @@ public:
   // #CAT_Learning compute sending-receiving activation product averages
 
   virtual void 	Compute_ActP(CtLeabraLayer* lay, CtLeabraNetwork* net);
-  // #CAT_Learning compute target plus phase activations (snapshot prior to learning)
+  // #CAT_Learning compute attrator plus phase activations (snapshot prior to learning)
 
   virtual void 	Compute_CtDynamicInhib(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Activation compute extra dynamic inhibition for ct leabra algorithm
@@ -387,10 +389,10 @@ class LEABRA_API CtLeabraLayer : public LeabraLayer {
   // continuous time leabra layer: most abstract version of continous time
 INHERITED(LeabraLayer)
 public:
-  float		maxda_sum;	// #CAT_Activation sum of maxda since last SRAvg update
-  float		sravg_sum;	// #CAT_Activation sum of sravg weightings (count of number of times sravg has been computed) -- used for normalizing the weighted average
-  int		sravg_cyc;	// #CAT_Activation cycles since last sravg computation -- potentially useful for determining when unit is in attractor state
-  float		mean_cai_max;	// mean across units of cai_max value for each unit, which is max cai across all incoming connections
+  float		maxda_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of maxda since last SRAvg update
+  float		sravg_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of sravg weightings (count of number of times sravg has been computed) -- used for normalizing the weighted average
+  int		sravg_cyc;	// #READ_ONLY #EXPERT #CAT_Activation cycles since last sravg computation -- potentially useful for determining when unit is in attractor state
+  float		mean_cai_max;	// #READ_ONLY #EXPERT #CAT_Activation mean across units of cai_max value for each unit, which is max cai across all incoming connections
 
   void 	Compute_CtCycle(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_CtCycle(this, net); };
@@ -401,7 +403,7 @@ public:
 
   void 	Compute_ActP(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_ActP(this, net); };
-  // #CAT_Learning compute target plus phase activations (snapshot prior to learning)
+  // #CAT_Learning compute attractor plus phase activations (snapshot prior to learning)
 
   void	Copy_(const CtLeabraLayer& cp);
   TA_BASEFUNS(CtLeabraLayer);
@@ -426,6 +428,7 @@ public:
 
   int		burst;		// number of cycles at start of trial to reduce inhibition levels as a result of residual refractoriness from prior trial, allowing incoming activation to over-activate relative to stable values -- ramps down linearly from start of trial to 0 reduction after burst cycles -- <=1 means do not apply
 
+  int		sravg_start;	// number of cycles from the start of a new pattern to start computing sravg value -- 8 or so cycles is good to avoid transitional states that are too far away from attractor state
   int		sravg_end;	// number of cycles from the start of the final inhibitory phase to continue recording sravg
 
   int		syndep_int;	// #DEF_20 interval for doing synaptic depression and associated Ca_i integration calcuations -- numbers > 1 result in faster processing and actually work better too -- need to adjust the conspec ca/syndep rate constants in step with this (multiply by this number)
@@ -478,7 +481,7 @@ private:
 };
 
 class LEABRA_API CtLeabraNetwork : public LeabraNetwork {
-  // continuous time leabra network: most abstract version of continous time, using synaptic depression, trial-level inhibitory envelope, and target_minus_sravg attractor reinforcing learning mechanism
+  // continuous time leabra network: most abstract version of continous time, using synaptic depression, trial-level inhibitory envelope, and Contrastive Attractor Learning (CAL) mechanism
 INHERITED(LeabraNetwork)
 public:
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial
@@ -491,10 +494,10 @@ public:
   virtual void 	Compute_SRAvg();
   // #CAT_Learning compute sending-receiving activation coproduct averages
   virtual void 	Compute_ActP();
-  // #CAT_Learning compute target plus phase activations (snapshot prior to learning)
+  // #CAT_Learning compute attractor plus phase activations (snapshot prior to learning)
 
   virtual void 	Compute_ActPAvgs();
-  // #CAT_Learning compute averages of p_act_p values -- needed for preventing learning when layer or unit group is inactive in target phase
+  // #CAT_Learning compute averages of p_act_p values -- needed for preventing learning when layer or unit group is inactive in attractor state
   virtual void 	Compute_CtdWt();
   // #CAT_Learning compute ct version of delta weight (actually does same as usual Compute_dWt, but that is overwritten to do nothing to prevent standard programs from breaking things)
 
@@ -599,7 +602,7 @@ inline void CtLeabraConSpec::Compute_dWtCt(CtLeabraRecvCons* cg, CtLeabraUnit* r
   Compute_SAvgCor(cg, ru);
   // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
   CtLeabraLayer* rlay = (CtLeabraLayer*)cg->prjn->layer;
-  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in target phase, no learn
+  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
     Init_SRAvg(cg, ru, net);		  // critical: need to reset this!
     return;
   }
@@ -720,7 +723,7 @@ inline void CtLeabraBiasSpec::B_Compute_dWtCt(CtLeabraCon* cn, CtLeabraUnit* ru,
 					      CtLeabraLayer* rlay, CtLeabraNetwork* net) {
   if(rlay->acts_p.avg < savg_cor.thresh) {
     cn->sravg = 0.0f;
-    return; // if not active in target phase, no learn
+    return; // if not active in attractor phase, no learn
   }
   if(ru->in_subgp) {
     LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;

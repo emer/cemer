@@ -32,6 +32,7 @@ dist_pkgdata_prog_lib_DATA =\
 	LeabraBatch.prog \
 	LeabraBatch_pb.prog \
 	LeabraCycle.prog \
+	LeabraCycleMonitor.prog \
 	LeabraEpoch.prog \
 	LeabraEpochGpData.prog \
 	LeabraEpochMonitor.prog \
