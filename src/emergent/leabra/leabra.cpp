@@ -250,10 +250,8 @@ void LeabraConSpec::CreateWtSigFun() {
 
 void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_WtSigFun", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   graph_data->ResetData();
@@ -273,8 +271,7 @@ void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
     efwt->SetValAsFloat(y, -1);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 void LeabraRecvCons::Initialize() {
@@ -1278,10 +1275,8 @@ float LeabraUnitSpec::Compute_SSE(bool& has_targ, Unit* u) {
 
 void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_VmFun", true);
-    newguy = true;
   }
   int idx;
   graph_data->StructUpdate(true);
@@ -1298,16 +1293,13 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
     vm->SetValAsFloat(y, -1);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max, float incr) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmVmFun", true);
-    newguy = true;
   }
   int idx;
   graph_data->StructUpdate(true);
@@ -1327,16 +1319,13 @@ void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max
     vm->SetValAsFloat(un.act, -1);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmNetFun", true);
-    newguy = true;
   }
   int idx;
   graph_data->StructUpdate(true);
@@ -1357,8 +1346,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
     vm->SetValAsFloat(un.act, -1);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 //////////////////////////

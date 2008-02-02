@@ -125,10 +125,8 @@ void SoUnitSpec::Compute_AvgInAct(Unit* u) {
 
 void SoUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFun", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   graph_data->ResetData();
@@ -146,8 +144,7 @@ void SoUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
     act->SetValAsFloat(un.act, -1);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 void ThreshLinSoUnitSpec::Initialize() {

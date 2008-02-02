@@ -45,29 +45,22 @@ class LEABRA_API CtLeabraCon : public LeabraCon {
 INHERITED(LeabraCon)
 public:
   float		effwt;		// #NO_SAVE effective weight value (subject to synaptic depression) -- used for sending activation
-  float		intwt;		// #NO_SAVE slowly integrating weight value -- exponentially approaches current learned weight value -- mediates between wt and effwt
   float		cai;		// #NO_SAVE intracellular postsynaptic calcium current integrated over cycles, used for synaptic depression
   float		sravg;		// #NO_SAVE average of sender and receiver activation product over time, used for minus phase of targ_minus_avg learning
 
-  CtLeabraCon() { effwt = 0.0f; intwt = 0.0f; cai = 0.0f; sravg = 0.0f; }
+  CtLeabraCon() { effwt = 0.0f; cai = 0.0f; sravg = 0.0f; }
 };
 
 class LEABRA_API CtCaDepSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
 INHERITED(taBase)
 public:
-  float		intwt_dt;	// #DEF_0.02 time constant for integrating intwt value relative to current weight value -- default base value is .001 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
-
   float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
   float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
 
   float		sd_ca_thr;	// #DEF_0.2 synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
   float		sd_ca_gain;	// #DEF_0.3 multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
   float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr (= sd_ca_gain/(1 - sd_ca_thr))
-
-  inline void	IntWtUpdt(float& intwt, float wt) {
-    intwt += intwt_dt * (wt - intwt);
-  }
 
   inline void	CaUpdt(float& cai, float ru_act, float su_act) {
     float drive = ru_act * su_act;
@@ -171,7 +164,7 @@ public:
   // 		Following are all standard code revised to use effwt instead of wt
   
   inline void C_Reset_EffWt(CtLeabraCon* cn) {
-    cn->effwt = cn->wt; cn->intwt = cn->wt;
+    cn->effwt = cn->wt;
   }
   inline void Reset_EffWt(LeabraRecvCons* cg) {
     CON_GROUP_LOOP(cg, C_Reset_EffWt((CtLeabraCon*)cg->Cn(i)));
@@ -181,7 +174,7 @@ public:
   }
 
   override void C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
-    CtLeabraCon* lcn = (CtLeabraCon*)cn; lcn->effwt = lcn->wt; lcn->intwt = lcn->wt;
+    CtLeabraCon* lcn = (CtLeabraCon*)cn; lcn->effwt = lcn->wt;
     lcn->cai = 0.0f; lcn->sravg = 0.0f; 
   }
 
@@ -421,15 +414,9 @@ class LEABRA_API CtTrialTiming : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
 INHERITED(taBase)
 public:
-  int		minus;		// number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
-  int		plus;		// number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
-  int		inhib_max;	// number of cycles into inhib phase for inhibition to reach its maximum level (on a linear ramp) -- 0 means do not apply this function
-
-  int		burst;		// number of cycles at start of trial to reduce inhibition levels as a result of residual refractoriness from prior trial, allowing incoming activation to over-activate relative to stable values -- ramps down linearly from start of trial to 0 reduction after burst cycles -- <=1 means do not apply
-
-  int		sravg_start;	// number of cycles from the start of a new pattern to start computing sravg value -- 8 or so cycles is good to avoid transitional states that are too far away from attractor state
-  int		sravg_end;	// number of cycles from the start of the final inhibitory phase to continue recording sravg
+  int		minus;		// [40] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
+  int		plus;		// [40] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
+  int		inhib;		// [20] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
 
   int		syndep_int;	// #DEF_20 interval for doing synaptic depression and associated Ca_i integration calcuations -- numbers > 1 result in faster processing and actually work better too -- need to adjust the conspec ca/syndep rate constants in step with this (multiply by this number)
 
@@ -446,29 +433,15 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtInhibMod : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra inhibitory modulation parameters simulating effects of slow time-constant inhibition dynamics
-INHERITED(taBase)
-public:
-  float		inhib_i;	// maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
-  float		burst_i;	// maximum reduction in inhibition as a proportion of computed kwta value to subtract during initial burst phase (trial starts at this reduction, goes down to 0 after burst cycles) -- value should be a positive number!
-
-  SIMPLE_COPY(CtInhibMod);
-  TA_BASEFUNS(CtInhibMod);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
 class LEABRA_API CtSRAvgSpec : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of layer-level delta-activation (measure of how close network is to attractor)
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles and layer-level delta-activation (measure of how close network is to attractor)
 INHERITED(taBase)
 public:
+  int		start;		// [10] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
+  int		end;		// [10] number of cycles from the start of the final inhibitory phase to continue recording sravg
+
   float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
-  float		max_da_thr;	// #DEF_0.5 maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
+  float		max_da_thr;	// maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
@@ -480,13 +453,71 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API CtSineInhibMod : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
+INHERITED(taBase)
+public:
+  int		start;		// [20] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
+  int		duration;	// [20] number of cycles from start to apply modulation -- either a full sine wave (burst and trough) or half sine wave (burst only) is applied during this time
+  bool		burst_only;	// if true, only does positive portion (bursting) of sine wave
+  float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
+  float		trough_i;	// [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
+
+  float		GetInhibMod(int ct_cycle) {
+    if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
+    float rads = ((float)(ct_cycle - start) / (float)duration) * taMath_float::pi;
+    if(!burst_only) rads *= 2.0f;
+    float sinval = -taMath_float::sin(rads);
+    if(sinval < 0.0f) 	sinval *= burst_i; // signs are reversed for inhib vs activation
+    else		sinval *= trough_i;
+    return sinval;
+  }
+  // returns inhibitory modulation to apply as a fraction of computed kwta value
+
+  SIMPLE_COPY(CtSineInhibMod);
+  TA_BASEFUNS(CtSineInhibMod);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtFinalInhibMod : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
+INHERITED(taBase)
+public:
+  int		start;		// number of cycles into inhib phase for inhibition ramp to start
+  int		end;		// number of cycles into inhib phase for inhibition ramp to end -- remains at full inhibition level from end to end of inhib phase
+  float		inhib_i;	// [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
+
+  float		GetInhibMod(int inh_cyc) {
+    if(inh_cyc < start) return 0.0f;
+    if(inh_cyc >= end) return inhib_i;
+    float slp = (float)(inh_cyc - start) / (float)(end - start);
+    return slp * inhib_i;
+  }
+  // returns inhibitory modulation to apply as a fraction of computed kwta value
+
+  SIMPLE_COPY(CtFinalInhibMod);
+  TA_BASEFUNS(CtFinalInhibMod);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API CtLeabraNetwork : public LeabraNetwork {
   // continuous time leabra network: most abstract version of continous time, using synaptic depression, trial-level inhibitory envelope, and Contrastive Attractor Learning (CAL) mechanism
 INHERITED(LeabraNetwork)
 public:
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial
-  CtInhibMod 	 ct_inhib;	// #CAT_Learning inhibition parameters for inhibitory modulations during trial, simulating slow time-constant inhibitory dynamics
-  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning parameters controlling computation of sravg value as a function of layer-level delta-activation 
+  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning parameters controlling computation of sravg value as a function of cycles and layer-level max delta-activation 
+  CtSineInhibMod ct_sin_i;	// #CAT_Learning sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
+  CtFinalInhibMod ct_fin_i;	// #CAT_Learning final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
 
   int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		cai_max;	// #READ_ONLY #EXPERT #CAT_Statistic mean across entire network of maximum level of cai per unit in incoming connections -- could potentially be used for determining when to learn, though this proves difficult in practice..
@@ -512,6 +543,9 @@ public:
 
   override void	SetProjectionDefaultTypes(Projection* prjn);
 
+  virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
+  // #BUTTON #NULL_OK graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
+
   TA_SIMPLE_BASEFUNS(CtLeabraNetwork);
 protected:
   void	UpdateAfterEdit_impl();
@@ -529,7 +563,6 @@ private:
 
 inline void CtLeabraConSpec::C_Compute_Cai(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su) {
   ca_dep.CaUpdt(cn->cai, ru->act_eq, su->act_eq);
-  ca_dep.IntWtUpdt(cn->intwt, cn->wt);
 }
 
 inline void CtLeabraConSpec::Compute_Cai(CtLeabraRecvCons* cg, CtLeabraUnit* ru) {
@@ -537,7 +570,7 @@ inline void CtLeabraConSpec::Compute_Cai(CtLeabraRecvCons* cg, CtLeabraUnit* ru)
 }
 
 inline void CtLeabraConSpec::C_Depress_Wt(CtLeabraCon* cn, CtLeabraUnit* ru, CtLeabraUnit* su) {
-  cn->effwt = cn->intwt * ca_dep.SynDep(cn->cai);
+  cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
 }
 
 inline void CtLeabraConSpec::Depress_Wt(CtLeabraRecvCons* cg, CtLeabraUnit* ru) {

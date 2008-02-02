@@ -568,10 +568,8 @@ void DoGFilterSpec::UpdateFilter() {
 
 void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   graph_data->ResetData();
@@ -596,16 +594,13 @@ void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
     }
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   if(reset)
@@ -639,8 +634,7 @@ void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
     matda->SetValAsMatrix(mat, -1);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGridView();
+  graph_data->FindMakeGridView();
 }
 
 
@@ -709,10 +703,8 @@ float GaborFilterSpec::GetParam(GaborParam param) {
 void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   graph_data->ResetData();
@@ -736,17 +728,14 @@ void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
     }
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+  graph_data->FindMakeGraphView();
 }
 
 void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   if(reset)
@@ -765,8 +754,7 @@ void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   matda->SetValAsMatrix(&filter, -1);
 
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGridView();
+  graph_data->FindMakeGridView();
 }
 
 void GaborFilterSpec::OutputParams(ostream& strm) {
@@ -1065,10 +1053,8 @@ void RetinalSpacingSpec::UpdateSizes() {
 
 void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   int idx;
@@ -1097,8 +1083,7 @@ void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
   }
 
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGridView();
+  graph_data->FindMakeGridView();
 }
 
 ///////////////////////////////////////////////////////////
@@ -1381,10 +1366,8 @@ void GaborV1Spec::GraphFilter(DataTable* graph_data, int unit_no) {
 
 void GaborV1Spec::GridFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
-    newguy = true;
   }
   graph_data->StructUpdate(true);
   graph_data->ResetData();
@@ -1402,8 +1385,7 @@ void GaborV1Spec::GridFilter(DataTable* graph_data) {
     }
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGridView();
+  graph_data->FindMakeGridView();
 }
 
 bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
@@ -2129,10 +2111,8 @@ void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
 
 void RetinaSpec::PlotSpacing(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
-    newguy = true;
   }
 
   graph_data->StructUpdate(true);
@@ -2142,8 +2122,7 @@ void RetinaSpec::PlotSpacing(DataTable* graph_data) {
     sp->PlotSpacing(graph_data, val);
   }
   graph_data->StructUpdate(false);
-  if(newguy)
-    graph_data->NewGridView();
+  graph_data->FindMakeGridView();
 }
 
 bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,

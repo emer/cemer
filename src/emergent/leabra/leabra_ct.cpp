@@ -26,7 +26,6 @@
 //////////////////////////////////
 
 void CtCaDepSpec::Initialize() {
-  intwt_dt = 0.02f;		// base per-cycle is .001
   ca_inc = .2f;			// base per-cycle is .01
   ca_dec = .2f;			// base per-cycle is .01
   sd_ca_thr = 0.2f;
@@ -179,14 +178,16 @@ void CtLeabraLayerSpec::Initialize() {
 bool CtLeabraLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
   if(!rval) return false;
-  if(CheckError(decay.event != 0.0f || decay.phase != 0.0f, quiet, rval,
-		"decay.event or phase is not zero -- must be for continuous time learning to function properly",
-		"I just set it for you in layer spec:", name,
-		"(make sure this is appropriate for all layers that use this spec!)")) {
-    SetUnique("decay", true);
-    decay.event = 0.0f;
-    decay.phase = 0.0f;
-  }
+
+  // allow anything..
+//   if(CheckError(decay.event != 0.0f || decay.phase != 0.0f, quiet, rval,
+// 		"decay.event or phase is not zero -- must be for continuous time learning to function properly",
+// 		"I just set it for you in layer spec:", name,
+// 		"(make sure this is appropriate for all layers that use this spec!)")) {
+//     SetUnique("decay", true);
+//     decay.event = 0.0f;
+//     decay.phase = 0.0f;
+//   }
      
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->opt_thresh.updt_wts, quiet, rval,
@@ -218,26 +219,16 @@ void CtLeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
 
 
 void CtLeabraLayerSpec::Compute_CtDynamicInhib(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  float burst_i = 0.0f;
-  float	inhib_i = 0.0f;
-  if((net->ct_time.burst > 1) && (net->ct_cycle < net->ct_time.burst)) {
-    burst_i = net->ct_inhib.burst_i *
-      ((float)((net->ct_time.burst-1) - net->ct_cycle) / (float)(net->ct_time.burst-1));
-  }
-  if((net->ct_time.inhib_max >= 1) && (net->ct_cycle >= net->ct_time.inhib_start)) {
-    float inhib_t = (float)(net->ct_cycle - net->ct_time.inhib_start);
-    inhib_i = net->ct_inhib.inhib_i * (inhib_t / (float)net->ct_time.inhib_max);
-    if(inhib_i > net->ct_inhib.inhib_i) inhib_i = net->ct_inhib.inhib_i;
-  }
+  float imod = net->ct_sin_i.GetInhibMod(net->ct_cycle) +
+    net->ct_fin_i.GetInhibMod(net->ct_cycle - net->ct_time.inhib_start);
+
   // only one is going to be in effect at a time..
-  lay->i_val.g_i += inhib_i * lay->i_val.g_i;
-  lay->i_val.g_i -= burst_i * lay->i_val.g_i;
+  lay->i_val.g_i += imod * lay->i_val.g_i;
 
   if(inhib_group != ENTIRE_LAYER) {
     for(int g=0; g<lay->units.gp.size; g++) {
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
-      rugp->i_val.g_i += inhib_i * rugp->i_val.g_i;
-      rugp->i_val.g_i -= burst_i * rugp->i_val.g_i;
+      rugp->i_val.g_i += imod * rugp->i_val.g_i;
     }
   }
 }
@@ -260,8 +251,8 @@ void CtLeabraLayerSpec::Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) 
   // always increment: ensures that maxda_sum will be over minimum at start in case
   // it somehow already slipped into attractor
   lay->maxda_sum += lay->maxda;
-  if((net->ct_cycle >= net->ct_time.sravg_start) &&
-     (net->ct_cycle < (net->ct_time.inhib_start + net->ct_time.sravg_end)) &&
+  if((net->ct_cycle >= net->ct_sravg.start) &&
+     (net->ct_cycle < (net->ct_time.inhib_start + net->ct_sravg.end)) &&
      (lay->maxda_sum >= net->ct_sravg.min_da_thr) &&
      (lay->maxda < net->ct_sravg.max_da_thr)) {
     CtLeabraUnit* u;
@@ -345,12 +336,7 @@ void CtLeabraLayerSpec::Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, Leabra
 void CtTrialTiming::Initialize() {
   minus = 40;
   plus = 40;
-  inhib = 40;
-  inhib_max = 40;
-  burst = 20;
-
-  sravg_start = 8;
-  sravg_end = 10;
+  inhib = 20;
 
   syndep_int = 20;
 
@@ -364,14 +350,49 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
   inhib_start = minus + plus;
 }
 
-void CtInhibMod::Initialize() {
-  inhib_i = 0.05f;
-  burst_i = 0.05f;
+void CtSRAvgSpec::Initialize() {
+  start = 10;
+  end = 10;
+  min_da_thr = 0.005f;
+  max_da_thr = 1.0f;
 }
 
-void CtSRAvgSpec::Initialize() {
-  min_da_thr = 0.005f;
-  max_da_thr = 0.5f;
+void CtSineInhibMod::Initialize() {
+  start = 20;
+  duration = 20;
+  burst_only = false;
+  burst_i = 0.02f;
+  trough_i = 0.02f;
+}
+
+void CtFinalInhibMod::Initialize() {
+  start = 0;
+  end = 10;
+  inhib_i = 0.0f;
+}
+
+void CtLeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_InhibMod", true);
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* cyc_col = graph_data->FindMakeColName("ct_cycle", idx, VT_INT);
+  DataCol* imod_col = graph_data->FindMakeColName("inhib_mod", idx, VT_FLOAT);
+//   imod->SetUserData("MIN", 0.0f);
+//   imod->SetUserData("MAX", 1.0f);
+
+  for(int cyc = 0; cyc < ct_time.total_cycles; cyc++) {
+    float imod = ct_sin_i.GetInhibMod(cyc) + ct_fin_i.GetInhibMod(cyc - ct_time.inhib_start);
+    if(flip_sign) imod *= -1.0f;
+    graph_data->AddBlankRow();
+    cyc_col->SetValAsInt(cyc, -1);
+    imod_col->SetValAsFloat(imod, -1);
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
 }
 
 void CtLeabraNetwork::Initialize() {
@@ -380,13 +401,14 @@ void CtLeabraNetwork::Initialize() {
   cai_max = 0.0f;
 
   // set new defaults for some key things:
-  phase_order = MINUS_PLUS_PLUS;
+  phase_order = MINUS_PLUS_NOTHING;
   maxda_stopcrit = -1.0f;
 }
 
 void CtLeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   ct_time.UpdateAfterEdit();
+  // todo: check on compatibility of various cycle parameters?
 }
 
 void CtLeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -501,11 +523,5 @@ void CtLeabraNetwork::Cycle_Run() {
 ////////////////////////////////////////////////
 //		TODO
 
-// sravg modulated by rate of change:
-// p_act_m is last value when sravg was computed
-// if fabs(act_eq - p_act_m) > minus_thr, do sravg (need sravg_n per unit)
-//    p_act_m = act_eq
-// else incr counter 
-// can plot ctr etc to see when plus phase is reliably detected.
-
-// do the inhibition stuff!
+// set minus_cycles as function of when target layer goes over threshold..
+// can do this in CtSettle.
