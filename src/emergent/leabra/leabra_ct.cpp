@@ -97,6 +97,16 @@ void CtLeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   cu->syndep_max = 0.0f;
 }
 
+void CtLeabraUnitSpec::Init_SdEffWt(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
+  u->cai_avg = 0.0f;
+  u->cai_max = 0.0f;
+  for(int g=0; g<u->recv.size; g++) {
+    CtLeabraRecvCons* recv_gp = (CtLeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Init_SdEffWt(u);
+  }
+}
+
 void CtLeabraUnitSpec::Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer*, CtLeabraNetwork* net) {
   CtLeabraConSpec* cspec = NULL;
   u->cai_avg = 0.0f;
@@ -208,6 +218,15 @@ void CtLeabraLayerSpec::Init_Weights(LeabraLayer* lay) {
   clay->maxda_sum = 0.0f;
   clay->sravg_sum = 0.0f;
   clay->sravg_cyc = 0;
+}
+
+void CtLeabraLayerSpec::Init_SdEffWt(CtLeabraLayer* lay, CtLeabraNetwork* net) {
+  lay->mean_cai_max = 0.0f;
+  CtLeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
+    u->Init_SdEffWt(lay, net);
+  }
 }
 
 void CtLeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
@@ -429,6 +448,15 @@ void CtLeabraNetwork::Init_Stats() {
   cai_max = 0.0f;
 }
 
+void CtLeabraNetwork::Init_SdEffWt() {
+  CtLeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(CtLeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Init_SdEffWt(this);
+  }
+}
+  
 void CtLeabraNetwork::Compute_SRAvg() {
   CtLeabraLayer* lay;
   taLeafItr l;

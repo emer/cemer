@@ -163,15 +163,17 @@ public:
   /////////////////////////////////////////////////////////////////////////////////////
   // 		Following are all standard code revised to use effwt instead of wt
   
-  inline void C_Reset_EffWt(CtLeabraCon* cn) {
-    cn->effwt = cn->wt;
+  inline void C_Init_SdEffWt(CtLeabraCon* cn) {
+    cn->effwt = cn->wt; cn->cai = 0.0f; 
   }
-  inline void Reset_EffWt(LeabraRecvCons* cg) {
-    CON_GROUP_LOOP(cg, C_Reset_EffWt((CtLeabraCon*)cg->Cn(i)));
+  inline void Init_SdEffWt(LeabraRecvCons* cg) {
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt((CtLeabraCon*)cg->Cn(i)));
   }
-  inline void Reset_EffWt(LeabraSendCons* cg) {
-    CON_GROUP_LOOP(cg, C_Reset_EffWt((CtLeabraCon*)cg->Cn(i)));
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+  inline void Init_SdEffWt(LeabraSendCons* cg) {
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt((CtLeabraCon*)cg->Cn(i)));
   }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
   override void C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
     CtLeabraCon* lcn = (CtLeabraCon*)cn; lcn->effwt = lcn->wt;
@@ -257,6 +259,9 @@ INHERITED(LeabraRecvCons)
 public:
   float		dwt_mean;	// mean delta-weight changes (only computed for dwt_norm.on)
 
+  void	Init_SdEffWt(CtLeabraUnit* ru)
+  { ((CtLeabraConSpec*)GetConSpec())->Init_SdEffWt(this); }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
   void	Compute_CtCycle(CtLeabraUnit* ru, float& cai_avg, float& cai_max)
   { ((CtLeabraConSpec*)GetConSpec())->Compute_CtCycle(this, ru, cai_avg, cai_max); }
   // #CAT_Learning compute one cycle of continuous time processing
@@ -299,6 +304,8 @@ class LEABRA_API CtLeabraUnitSpec : public DaModUnitSpec {
   // continuous time leabra unit spec: most abstract version of continous time
 INHERITED(DaModUnitSpec)
 public:
+  virtual void 	Init_SdEffWt(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
   virtual void 	Compute_CtCycle(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_SRAvg(CtLeabraUnit* u, CtLeabraLayer* lay, CtLeabraNetwork* net);
@@ -325,6 +332,9 @@ public:
   float		syndep_avg;	// #NO_SAVE #CAT_Activation average level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
   float		syndep_max;	// #NO_SAVE #CAT_Activation maximum level of synaptic depression in my incoming connections -- just for analysis and debugging in early development -- remove later
 
+  void		Init_SdEffWt(CtLeabraLayer* lay, CtLeabraNetwork* net)
+  { ((CtLeabraUnitSpec*)GetUnitSpec())->Init_SdEffWt(this, lay, net); }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
   void		Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net)
   { ((CtLeabraUnitSpec*)GetUnitSpec())->Compute_CtCycle(this, lay, net); }
   // #CAT_Learning compute one cycle of continuous time processing
@@ -351,6 +361,9 @@ class LEABRA_API CtLeabraLayerSpec : public LeabraLayerSpec {
   // continuous time leabra layer spec: most abstract version of continous time
 INHERITED(LeabraLayerSpec)
 public:
+  virtual void 	Init_SdEffWt(CtLeabraLayer* lay, CtLeabraNetwork* net);
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+  // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_CtCycle(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Learning compute one cycle of continuous time processing
   virtual void 	Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net);
@@ -387,6 +400,9 @@ public:
   int		sravg_cyc;	// #READ_ONLY #EXPERT #CAT_Activation cycles since last sravg computation -- potentially useful for determining when unit is in attractor state
   float		mean_cai_max;	// #READ_ONLY #EXPERT #CAT_Activation mean across units of cai_max value for each unit, which is max cai across all incoming connections
 
+  void 	Init_SdEffWt(CtLeabraNetwork* net) 
+  { ((CtLeabraLayerSpec*)spec.SPtr())->Init_SdEffWt(this, net); };
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
   void 	Compute_CtCycle(CtLeabraNetwork* net) 
   { ((CtLeabraLayerSpec*)spec.SPtr())->Compute_CtCycle(this, net); };
   // #CAT_Learning compute one cycle of continuous time processing
@@ -522,6 +538,8 @@ public:
   int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		cai_max;	// #READ_ONLY #EXPERT #CAT_Statistic mean across entire network of maximum level of cai per unit in incoming connections -- could potentially be used for determining when to learn, though this proves difficult in practice..
 
+  virtual void 	Init_SdEffWt();
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
   virtual void 	Compute_SRAvg();
   // #CAT_Learning compute sending-receiving activation coproduct averages
   virtual void 	Compute_ActP();
