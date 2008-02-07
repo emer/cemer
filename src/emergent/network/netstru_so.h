@@ -233,6 +233,11 @@ public:
   SoSeparator*		getUnitText();		      // get a new unit text separator
   void			removeUnitText();	      // remove unit text separator
 
+  SoSeparator*		snapBordSep() {return snap_bord_;}
+  SoDrawStyle*		snapBordDraw() {return snap_bord_draw_;}
+  SoIndexedLineSet*	snapBordSet() {return snap_bord_set_;}
+  SoVertexProperty* 	snapBordVtxProp() {return snap_bord_vtx_prop_;}
+
   T3UnitGroupNode(void* dataView_ = NULL, bool no_unts = false);
 
 protected:
@@ -240,6 +245,12 @@ protected:
   iVec3f		max_size; // maximum size of network x,y,z
   SoFont*		unitCaptionFont_;
   bool			no_units; // summary mode: no unit objects exist
+
+  SoSeparator* 		snap_bord_; // weight lines
+  SoDrawStyle*		snap_bord_draw_;
+  SoIndexedLineSet*	snap_bord_set_;
+  SoVertexProperty*	snap_bord_vtx_prop_;
+
   ~T3UnitGroupNode();
 
 protected:

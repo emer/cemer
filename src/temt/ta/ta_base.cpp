@@ -785,6 +785,47 @@ TAPtr taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) co
   return NULL;
 }
 
+Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn_not_found) const {
+  String eff_path = path;
+  void* eff_base = (void*)this;
+  TypeDef* eff_typ = GetTypeDef();
+  while(eff_path.contains('.')) {
+    String membname = eff_path.before('.');
+    eff_path = eff_path.after('.');
+    MemberDef* omd = eff_typ->members.FindName(membname);
+    if(!omd) {
+      TestError(warn_not_found, "GetValFromPath", "member:", membname, "not found in object of type:",
+		eff_typ->name); 
+      return _nilVariant;
+    }
+    eff_base = omd->GetOff(eff_base);
+    if(!eff_base) {
+      TestError(warn_not_found, "GetValFromPath", "could not get base value for member:", membname,
+		"in object of type:", eff_typ->name); 
+      return _nilVariant;
+    }
+    eff_typ = omd->type;
+    if(eff_typ->InheritsFrom(&TA_taBase)) {
+      return ((taBase*)eff_base)->GetValFromPath(eff_path, ret_md, warn_not_found);
+    }
+  }
+  MemberDef* md = eff_typ->members.FindName(eff_path);
+  if(!md) {
+    TestError(warn_not_found, "GetValFromPath", "member:", eff_path, "not found in object of type:",
+	      eff_typ->name); 
+    return _nilVariant;
+  }
+  eff_base = md->GetOff(eff_base);
+  if(!eff_base) {
+    TestError(warn_not_found, "GetValFromPath", "could not get base value for member:", eff_path,
+	      "in object of type:", eff_typ->name); 
+    return _nilVariant;
+  }
+  eff_typ = md->type;
+  ret_md = md;
+  return eff_typ->GetValVar(eff_base, md);
+}
+
 int taBase::GetNextPathDelimPos(const String& path, int start) {
   int point_idx = path.index('.', start+1); // skip any possible starting delim
   int brack_idx = path.index('[', start+1);

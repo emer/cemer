@@ -659,6 +659,8 @@ public:
   // #CAT_ObjectMgmt get path without name informtation, stop at par_stop if non-null
   virtual TAPtr		FindFromPath(const String& path, MemberDef*& ret_md=no_mdef, int start=0) const;
   // #CAT_ObjectMgmt find object from path (starting from this, and position start of the path)
+  virtual Variant	GetValFromPath(const String& path, MemberDef*& ret_md=no_mdef, bool warn_not_found=false) const;
+  // #CAT_ObjectMgmt get a member value from given path -- only follows direct members (of members) of this object -- does not look into items in lists or groups
 
   // utility functions for doing path stuff
   static int		GetNextPathDelimPos(const String& path, int start);

@@ -2096,6 +2096,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  butSetColor->setMinimumWidth(taiM->maxButtonWidth() / 2);
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 

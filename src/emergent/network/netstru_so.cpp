@@ -345,6 +345,15 @@ T3UnitGroupNode::T3UnitGroupNode(void* dataView_, bool no_unts)
     insertChildAfter(topSeparator(), cb, transform());
   }
   unit_text_ = NULL;
+
+  snap_bord_ = new SoSeparator;
+  snap_bord_draw_ = new SoDrawStyle;
+  snap_bord_->addChild(snap_bord_draw_);
+  snap_bord_set_ = new SoIndexedLineSet;
+  snap_bord_vtx_prop_ = new SoVertexProperty;
+  snap_bord_set_->vertexProperty.setValue(snap_bord_vtx_prop_); // does ref/unref
+  snap_bord_->addChild(snap_bord_set_);
+  ss->addChild(snap_bord_);
 }
 
 T3UnitGroupNode::~T3UnitGroupNode()

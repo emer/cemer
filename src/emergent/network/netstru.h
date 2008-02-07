@@ -744,6 +744,8 @@ public: //
   // #DMEM_SHARE_SET_1 #CAT_Activation net input value -- what the unit receives from others
   float		wt_prjn;
   // #NO_SAVE #CAT_Statistic weight projection value -- computed by Network::ProjectUnitWeights (triggered in GUI by setting wt prjn variable in netview control panel to point to a layer instead of NULL) -- represents weight values projected through any intervening layers from source unit (selected unit in netview or passed to ProjectUnitWeights function directly)
+  float		snap;
+  // #NO_SAVE #CAT_Statistic current snapshot value, as computed by the Snapshot function -- this can be displayed as a border around the units in the netview
   float		tmp_calc1;
   // #NO_SAVE #READ_ONLY #HIDDEN #CAT_Statistic temporary calculation variable (used for computing wt_prjn and prossibly other things)
   RecvCons_List	recv;
@@ -869,6 +871,8 @@ public: //
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit
+  virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
+  // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
 
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
@@ -1532,6 +1536,8 @@ public:
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections as well)
+  virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
+  // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
 
   virtual int	ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp
@@ -1918,12 +1924,26 @@ public:
   // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
   virtual void	UpdateMonitors();
   // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
+  virtual bool	SnapVar();
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable
+  virtual bool	SnapAnd();
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an AND-like MIN computation of the current snap unit variable and the current value of the variable shown in netview -- shows the intersection between current state and previously snap'd state
+  virtual bool	SnapOr();
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an OR-like MAX computation of the current snap unit variable and the current value of the variable shown in netview -- shows the union between current state and previously snap'd state
+  virtual bool	SnapThresh(float thresh_val = 0.5f);
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable, but also applies a thresholding such that values above the thresh_val are set to 1 and values below the thresh_val are set to 0
+  virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of given variable (if empty, currently viewed variable in netview is used): assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
 
 #ifdef TA_GUI
   virtual NetView* NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
   virtual NetView* FindMakeView(T3DataViewFrame* fr = NULL);
   // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
+  virtual NetView* FindView();
+  // #CAT_Display find (first) existing viewer of this network
+  virtual String GetViewVar();
+  // #CAT_Display get the currently viewed variable name from netview
 #endif
 
   virtual NetViewObj* NewViewText(const String& txt);

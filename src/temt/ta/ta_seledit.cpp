@@ -352,7 +352,7 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
   for(int i=0;i<mds.size;i++) {
     TypeDef* td = base_types[i];
     if(!td->InheritsFrom(&TA_taBase)) continue;
-    MemberDef* md = mds[i];
+    //    MemberDef* md = mds[i];
     taBase* itma = (taBase*)trg_bases[i];
     taBase* itmb = (taBase*)src_bases[i];
     String nma = "A: " + itma->GetDisplayName().elidedTo(20);

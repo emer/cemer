@@ -492,7 +492,7 @@ void LeabraUnitSpec::Defaults() {
 }
 
 void LeabraUnitSpec::InitLinks() {
-  bias_spec.type = &TA_LeabraBiasSpec;
+  //  bias_spec.type = &TA_LeabraBiasSpec;
   inherited::InitLinks();
   children.SetBaseType(&TA_LeabraUnitSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!

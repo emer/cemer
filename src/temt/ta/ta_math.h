@@ -105,26 +105,26 @@ public:
 };
 
 class TA_API SimpleMathSpec : public taNBase {
-  // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators
+  // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
   INHERITED(taNBase)
 public:
   enum MathOpr {
     NONE,			// no function
     THRESH,			// threshold: if val >= arg then hi, else lo
-    ABS,			// take absolute-value
-    SQUARE,			// square (raise to 2nd power)
-    SQRT,			// square root
-    LOG,			// natural log
-    LOG10,			// log base 10
+    ABS,			// take absolute-value of val
+    SQUARE,			// square val (raise to 2nd power)
+    SQRT,			// square root of val
+    LOG,			// natural log of val
+    LOG10,			// log base 10 ov val
     EXP,			// exponential (e^val)
-    ADD,			// add arg value
-    SUB,			// subtract arg value
-    MUL,			// multiply by arg value
-    DIV, 			// divide by arg value
-    POWER,			// raise to the power of arg
-    GTEQ,			// make all values greater than or equal to arg
-    LTEQ,			// make all values less than or equal to arg
-    GTLTEQ			// make all values greater than lw and less than hi
+    ADD,			// add val + arg
+    SUB,			// subtract val - arg
+    MUL,			// multiply val * arg
+    DIV, 			// divide val / arg
+    POWER,			// raise val to the power of arg: val^arg
+    MAX,			// maximum of value and arg: MAX(val,arg)
+    MIN,			// minimum of value and arg: MIN(val,arg)
+    MINMAX,			// minimum of value and hi, and maximum of value and lw (enforce val between lw-hi range)
   };
 
 #ifdef __MAKETA__
@@ -132,9 +132,9 @@ public:
 #endif
 
   MathOpr 	opr;		// #APPLY_IMMED what math operator to use
-  double	arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,GTEQ,LTEQ argument for ops (threshold add/sub/mul/div arg)
-  double	lw;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values below threshold
-  double	hi;		// #CONDEDIT_ON_opr:THRESH,GTLTEQ the value to assign values above threshold
+  double	arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX argument for ops (threshold add/sub/mul/div,power,max,min arg)
+  double	lw;		// #CONDEDIT_ON_opr:THRESH,MINMAX the value to assign values below threshold for THRESH, or the low range for MINMAX
+  double	hi;		// #CONDEDIT_ON_opr:THRESH,MINMAX the value to assign values above threshold for THRESH, or the high range for MINMAX
 
   double	Evaluate(double val) const; // evaluate math operator on given value
   Variant&	EvaluateVar(Variant& val) const; // #IGNORE evaluate math operator on given value

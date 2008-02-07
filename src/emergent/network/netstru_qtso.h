@@ -207,6 +207,8 @@ public:
   // *only* updates unit values: optimized blocks mode
   virtual void		UpdateUnitValues_outnm();
   // output name mode update
+  virtual void		UpdateUnitValues_snap_bord();
+  // snap border
 
   T3_DATAVIEWFUNS(UnitGroupView, nvDataView)
 protected:
@@ -219,6 +221,8 @@ protected:
   virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void 		Render_impl_blocks(); // optimized blocks
   virtual void 		Render_impl_outnm(); // output name
+  virtual void 		Render_impl_snap_bord(); // snap border
+
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   override void		Reset_impl(); // #IGNORE
@@ -422,6 +426,8 @@ public:
   float			wt_line_thr;	// threshold on fabs(wt) value -- don't display below this value
   bool			wt_line_swt;	// plot sending weights instead of recv weights
   LayerRef		wt_prjn_lay; 	// layer to display projected weights for
+  bool			snap_bord_disp;	// display snapshot value snap as a border around units
+  float			snap_bord_width; // width of snapshot border lines
 
   Network*		net() const {return (Network*)data();}
   T3NetNode*		node_so() const {return (T3NetNode*)inherited::node_so();}
@@ -558,6 +564,11 @@ public:
   QLabel*		    lblWtPrjnLay;
   taiGroupElsButton*	    gelWtPrjnLay;
   QHBoxLayout*		 layColorBar;
+  QCheckBox*		    chkSnapBord;
+  QLabel*		    lblSnapBordWdth;
+  taiField*		    fldSnapBordWdth;
+  QLabel*		    lblUnitSpacing;
+  taiField*		    fldUnitSpacing;
   ScaleBar*		   cbar;	      // colorbar
   QPushButton*		   butSetColor;
   QTreeWidget*		 lvDisplayValues;

@@ -2892,8 +2892,12 @@ int Program::Cont_impl() {
 }
 
 void Program::Run() {
+  if(run_state == RUN || run_state == INIT) return;	// already running!
+  if(run_state == NOT_INIT) {
+    Init();			// auto-press Init button!
+  }
   if(TestError(run_state != DONE && run_state != STOP, "Run",
-	       "You must hit Init first to initialize and check the program")) {
+	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
   stop_req = false;
@@ -2929,8 +2933,12 @@ void Program::ShowRunError() {
 }
 
 void Program::Step() {
+  if(run_state == RUN || run_state == INIT) return;	// already running!
+  if(run_state == NOT_INIT) {
+    Init();			// auto-press Init button!
+  }
   if(TestError(run_state != DONE && run_state != STOP, "Step",
-	       "You must hit Init first to initialize and check the program")) {
+	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
   if(!prog_gp) return;

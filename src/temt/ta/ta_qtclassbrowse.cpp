@@ -800,7 +800,7 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     break;
     }
   case taMisc::TIK_PROPERTY:  {
-    PropertyDef* pd = static_cast<PropertyDef*>(ti);
+//     PropertyDef* pd = static_cast<PropertyDef*>(ti);
     // for properties only, indicate (so can distinguish from members in .properties)
     chk = new iCheckBox(true, body);
     chk->setReadOnly(true);

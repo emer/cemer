@@ -169,11 +169,11 @@ double SimpleMathSpec::Evaluate(double val) const {
     return val / arg;
   case POWER:
     return powf(val, arg);
-  case GTEQ:
+  case MAX:
     return MAX(val, arg);
-  case LTEQ:
+  case MIN:
     return MIN(val, arg);
-  case GTLTEQ:
+  case MINMAX:
     val = MIN(val, hi);
     return MAX(val, lw);
   }

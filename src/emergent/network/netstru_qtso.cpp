@@ -466,6 +466,8 @@ void UnitGroupView::Render_impl_children() {
     return;			// don't render anything!
   }
 
+  Render_impl_snap_bord();
+
   if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
     Render_impl_outnm();
     return;
@@ -581,6 +583,12 @@ void UnitGroupView::Render_impl_blocks() {
   float spacing = nv->view_params.unit_spacing;
   float max_z = MIN(nv->max_size.x, nv->max_size.y); // smallest XY
   max_z = MAX(max_z, nv->max_size.z); // make sure Z isn't bigger
+
+  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  if(nv->snap_bord_disp) {
+    spacing += max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
+    if(spacing > 0.25f) spacing = 0.25f;
+  }
 
   bool build_text = false;
   SoSeparator* un_txt = NULL;
@@ -899,6 +907,8 @@ void UnitGroupView::UpdateUnitValues() {
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
     return;			// don't render anything!
   }
+  if(nv->snap_bord_disp)
+    UpdateUnitValues_snap_bord();
   if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
     UpdateUnitValues_outnm();
     return;
@@ -985,6 +995,118 @@ void UnitGroupView::UpdateUnitValues_outnm() {
     mfs->setValue(lay->output_name.chars());
 }
 
+void UnitGroupView::Render_impl_snap_bord() {
+  NetView* nv = this->nv(); //cache
+  T3UnitGroupNode* node_so = this->node_so(); //cache
+  Unit_Group* ugrp = this->ugrp(); //cache
+
+  bool do_lines = nv->snap_bord_disp;
+  SoIndexedLineSet* ils = node_so->snapBordSet();
+  SoDrawStyle* drw = node_so->snapBordDraw();
+  SoVertexProperty* vtx_prop = node_so->snapBordVtxProp();
+
+  SoMFVec3f& vertex = vtx_prop->vertex;
+  SoMFUInt32& color = vtx_prop->orderedRGBA;
+  SoMFInt32& coords = ils->coordIndex;
+  SoMFInt32& mats = ils->materialIndex;
+
+  if(!do_lines) {
+    vertex.setNum(0);
+    color.setNum(0);
+    coords.setNum(0);
+    mats.setNum(0);
+    return;
+  }
+
+  drw->style = SoDrawStyleElement::LINES;
+  drw->lineWidth = nv->snap_bord_width;
+  // FACE = polyline, PART = line segment!!
+  vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_FACE_INDEXED);
+
+  int n_geom = ugrp->geom.Product();
+
+  vertex.setNum(n_geom * 4);	// 4 virtex per
+  coords.setNum(n_geom * 6);	// 6 coords per
+  color.setNum(n_geom);
+  mats.setNum(n_geom);
+
+  SbVec3f* vertex_dat = vertex.startEditing();
+  int32_t* coords_dat = coords.startEditing();
+  int32_t* mats_dat = mats.startEditing();
+  int v_idx = 0;
+  int cidx = 0;
+  int midx = 0;
+
+  float max_xy = MAX(nv->max_size.x, nv->max_size.y);
+  float spacing = 0.5f * max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
+  if(spacing > .1f) spacing = .1f;
+  float max_z = MAX(max_xy, nv->max_size.z); // make sure Z isn't bigger
+  float zp = (spacing * 2.0f) / max_z;
+
+  TwoDCoord pos;
+  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
+    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+      float xp = ((float)pos.x + spacing) / nv->max_size.x;
+      float yp = -((float)pos.y + spacing) / nv->max_size.y;
+      float xp1 = ((float)pos.x+1 - spacing) / nv->max_size.x;
+      float yp1 = -((float)pos.y+1 - spacing) / nv->max_size.y;
+      coords_dat[cidx++] = v_idx; coords_dat[cidx++] = v_idx+1;
+      coords_dat[cidx++] = v_idx+2; coords_dat[cidx++] = v_idx+3;
+      coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
+
+      vertex_dat[v_idx++].setValue(xp, zp, yp); // 00_0 = 0
+      vertex_dat[v_idx++].setValue(xp1, zp, yp); // 10_0 = 0
+      vertex_dat[v_idx++].setValue(xp1, zp, yp1); // 11_0 = 0
+      vertex_dat[v_idx++].setValue(xp, zp, yp1); // 01_0 = 0
+
+      mats_dat[midx] = midx;  midx++;
+    }
+  }
+
+  vertex.finishEditing();
+  coords.finishEditing();
+  mats.finishEditing();
+
+  UpdateUnitValues_snap_bord();		// hand off to next guy..
+}
+
+void UnitGroupView::UpdateUnitValues_snap_bord() {
+  NetView* nv = this->nv(); //cache
+
+  if(!nv->snap_bord_disp) return;
+
+  Unit_Group* ugrp = this->ugrp(); //cache
+  T3UnitGroupNode* node_so = this->node_so(); // cache
+
+  SoVertexProperty* vtx_prop = node_so->snapBordVtxProp();
+  SoMFUInt32& color = vtx_prop->orderedRGBA;
+
+  uint32_t* color_dat = color.startEditing();
+
+  float trans = nv->view_params.unit_trans;
+  float val;
+  float sc_val;
+  iColor tc;
+  T3Color col;
+  TwoDCoord pos;
+  int c_idx = 0;
+  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
+    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+      val = 0.0f;
+      Unit* unit = ugrp->FindUnitFmCoord(pos);
+      if(unit) {
+	val = unit->snap;
+      }
+      nv->GetUnitColor(val, tc, sc_val);
+      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+
+      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
+    }
+  }
+
+  color.finishEditing();
+}
 
 //////////////////////////
 //   nvhDataView	//
@@ -1628,6 +1750,18 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   return nv;
 }
 
+NetView* Network::FindView() {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    NetView* el;
+    FOR_DLC_EL_OF_TYPE(NetView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
+}
+
 NetView* Network::FindMakeView(T3DataViewFrame* fr) {
   taDataLink* dl = data_link();
   if(dl) {
@@ -1650,6 +1784,12 @@ NetView* Network::FindMakeView(T3DataViewFrame* fr) {
   return NetView::New(this, fr);
 }
 
+String Network::GetViewVar() {
+  NetView* nv = FindView();
+  if(!nv || !nv->unit_disp_md) return _nilString;
+  return nv->unit_disp_md->name;
+}
+
 void NetView::Initialize() {
   data_base = &TA_Network;
   unit_disp_md = NULL;
@@ -1665,6 +1805,8 @@ void NetView::Initialize() {
   wt_line_width = 4.0f;
   wt_line_thr = .5f;
   wt_line_swt = false;
+  snap_bord_disp = false;
+  snap_bord_width = 4.0f;
 }
 
 void NetView::Destroy() {
@@ -2331,7 +2473,7 @@ void NetView::Render_wt_lines() {
 
   drw->style = SoDrawStyleElement::LINES;
   drw->lineWidth = wt_line_width;
-  vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED);
+  vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED); // part = line segment = same as FACE but likely to be faster to compute line segs?
 
   // count the number of lines etc
   int n_prjns = 0;
@@ -2375,13 +2517,13 @@ void NetView::Render_wt_lines() {
   }
 
   vertex.setNum(n_vtx);
-  color.setNum(n_mat);
   coords.setNum(n_coord);
+  color.setNum(n_mat);
   mats.setNum(n_mat);
 
   SbVec3f* vertex_dat = vertex.startEditing();
-  uint32_t* color_dat = color.startEditing();
   int32_t* coords_dat = coords.startEditing();
+  uint32_t* color_dat = color.startEditing();
   int32_t* mats_dat = mats.startEditing();
   int v_idx = 0;
   int c_idx = 0;
@@ -2764,22 +2906,29 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
   
-  chkAutoScale = new QCheckBox("auto scale", widg);
-  chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
-  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layColorScaleCtrls->addWidget(chkAutoScale);
+  chkSnapBord = new QCheckBox("Snap\nBord", widg);
+  chkSnapBord->setToolTip("Whether to display unit snapshot value snap as a border around units");
+  connect(chkSnapBord, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layColorScaleCtrls->addWidget(chkSnapBord);
 
-  butScaleDefault = new QPushButton("Set Defaults", widg);
-  butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layColorScaleCtrls->addWidget(butScaleDefault);
-  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
-  
-  chkWtLines = new QCheckBox("Wt\nLines", widg);
+  lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
+  lblSnapBordWdth->setToolTip("Width of snap border lines"); 
+  layColorScaleCtrls->addWidget(lblSnapBordWdth);
+  fldSnapBordWdth = new taiField(&TA_float, this, NULL, widg);
+  layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
+
+  lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
+  lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box"); 
+  layColorScaleCtrls->addWidget(lblUnitSpacing);
+  fldUnitSpacing = new taiField(&TA_float, this, NULL, widg);
+  layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
+
+  chkWtLines = new QCheckBox("wt\nLines", widg);
   chkWtLines->setToolTip("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude");
   connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLines);
 
-  chkWtLineSwt = new QCheckBox("swt", widg);
+  chkWtLineSwt = new QCheckBox("s.wt", widg);
   chkWtLineSwt->setToolTip("Display the sending weights out of the unit instead of the receiving weights into it");
   connect(chkWtLineSwt, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLineSwt);
@@ -2806,6 +2955,18 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   ////////////////////////////////////////////////////////////////////////////
   layColorBar = new QHBoxLayout(layDisplayValues);
+
+  chkAutoScale = new QCheckBox("Auto\nScale", widg);
+  chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layColorBar->addWidget(chkAutoScale);
+
+  butScaleDefault = new QPushButton("Defaults", widg);
+  butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  butScaleDefault->setMaximumWidth(taiM->maxButtonWidth() / 2);
+  layColorBar->addWidget(butScaleDefault);
+  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
+  
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
 //  cbar->setMaximumWidth(30);
@@ -2814,6 +2975,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   
   butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
   layColorBar->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
 
@@ -2903,6 +3065,10 @@ void NetViewPanel::UpdatePanel_impl() {
   cmbPrjnDisp->GetEnumImage(nv->view_params.prjn_disp);
   fldPrjnWdth->GetImage((String)nv->view_params.prjn_width);
 
+  chkSnapBord->setChecked(nv->snap_bord_disp);
+  fldSnapBordWdth->GetImage((String)nv->snap_bord_width);
+  fldUnitSpacing->GetImage((String)nv->view_params.unit_spacing);
+
   chkWtLines->setChecked(nv->wt_line_disp);
   chkWtLineSwt->setChecked(nv->wt_line_swt);
   fldWtLineWdth->GetImage((String)nv->wt_line_width);
@@ -2962,6 +3128,10 @@ void NetViewPanel::GetValue_impl() {
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
   nv->font_sizes.unit = (float)fldUnitFont->GetValue();
   nv->font_sizes.layer = (float)fldLayFont->GetValue();
+
+  nv->snap_bord_disp = chkSnapBord->isChecked();
+  nv->snap_bord_width = (float)fldSnapBordWdth->GetValue();
+  nv->view_params.unit_spacing = (float)fldUnitSpacing->GetValue();
 
   nv->wt_line_disp = chkWtLines->isChecked();
   nv->wt_line_swt = chkWtLineSwt->isChecked();

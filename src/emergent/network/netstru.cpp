@@ -1656,6 +1656,7 @@ void Unit::Initialize() {
   act = 0.0f;
   net = 0.0f;
   wt_prjn = tmp_calc1 = 0.0f;
+  snap = 0.0f;
   n_recv_cons = 0;
   idx = -1;
   flat_idx = -1;
@@ -1698,6 +1699,7 @@ void Unit::Copy_(const Unit& cp) {
   net = cp.net;
   wt_prjn = cp.wt_prjn;
   tmp_calc1 = cp.tmp_calc1;
+  snap = cp.snap;
   recv = cp.recv;
   send = cp.send;
   bias = cp.bias;
@@ -1839,6 +1841,21 @@ void Unit::RemoveCons() {
 void Unit::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);
+}
+
+bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap) {
+  MemberDef* md = NULL;
+  Variant val = GetValFromPath(var, md, true); // true = warn
+  if(val.isNull() || val.isInvalid()) return false;  // already warned
+  if(math_op.opr == SimpleMathSpec::NONE) {
+    snap = val.toFloat();
+  }
+  else {
+    if(arg_is_snap)
+      math_op.arg = snap;
+    snap = (float)math_op.Evaluate(val.toDouble());
+  }
+  return true;
 }
 
 void Unit::LinkSendCons() {
@@ -4221,6 +4238,15 @@ void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {
   net_mon->AddObject(this, variable);
 }
 
+bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
+  Unit* u;
+  taLeafItr i;
+  FOR_ITR_EL(Unit, u, units., i) {
+    if(!u->Snapshot(variable, math_op, arg_is_snap)) return false;
+  }
+  return true;
+}
+
 int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
   int nchg = 0;
   if(unit_spec.SPtr() == old_sp) {
@@ -4641,30 +4667,6 @@ void Network::SmartRef_DataRefChanging(taSmartRef* ref, taBase* obj,
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
   // noop for base case: algorithms must override!
   prjn->spec.type = &TA_FullPrjnSpec; 
-}
-
-void Network::MonitorVar(NetMonitor* net_mon, const String& variable) {
-  if(!net_mon) return;
-  net_mon->AddObject(this, variable);
-}
-
-void Network::RemoveMonitors() {
-  if (!proj) return;
-  TokenSpace& ts = TA_NetMonitor.tokens;
-  for (int i = 0; i < ts.size; ++i) {
-    NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
-    if(nm->network.ptr() != this) continue;
-    nm->RemoveMonitors();
-  }
-}
-void Network::UpdateMonitors() {
-  if (!proj) return;
-  TokenSpace& ts = TA_NetMonitor.tokens;
-  for (int i = 0; i < ts.size; ++i) {
-    NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
-    if(nm->network.ptr() != this) continue;
-    nm->UpdateDataTable();
-  }
 }
 
 int Network::Dump_Load_Value(istream& strm, taBase* par) {
@@ -5776,6 +5778,76 @@ void Network::GetLocalistName() {
   }
   UpdateAllViews();
   taMisc::DoneBusy();
+}
+
+bool Network::SnapVar() {
+  SimpleMathSpec sm;
+  sm.opr = SimpleMathSpec::NONE;
+  return Snapshot("", sm, false); // empty var is retrieved
+}
+
+bool Network::SnapAnd() {
+  SimpleMathSpec sm;
+  sm.opr = SimpleMathSpec::MIN;
+  return Snapshot("", sm, true); // empty var is retrieved
+}
+
+bool Network::SnapOr() {
+  SimpleMathSpec sm;
+  sm.opr = SimpleMathSpec::MAX;
+  return Snapshot("", sm, true); // empty var is retrieved
+}
+
+bool Network::SnapThresh(float thresh_val) {
+  SimpleMathSpec sm;
+  sm.opr = SimpleMathSpec::THRESH;
+  sm.arg = thresh_val;
+  sm.lw = 0.0;
+  sm.hi = 1.0;
+  return Snapshot("", sm, false);
+}
+
+// Network::GetViewVar is in netstru_qtso.cpp
+
+bool Network::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
+  String var = variable;
+  if(var.empty()) {
+    var = GetViewVar();
+    if(TestError(var.empty(), "Snapshot", "No view variable found!"))
+      return false;
+  }
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesioned()) continue;
+    if(!l->Snapshot(var, math_op, arg_is_snap)) return false;
+  }
+  UpdateAllViews();
+  return true;
+}
+
+void Network::MonitorVar(NetMonitor* net_mon, const String& variable) {
+  if(!net_mon) return;
+  net_mon->AddObject(this, variable);
+}
+
+void Network::RemoveMonitors() {
+  if (!proj) return;
+  TokenSpace& ts = TA_NetMonitor.tokens;
+  for (int i = 0; i < ts.size; ++i) {
+    NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
+    if(nm->network.ptr() != this) continue;
+    nm->RemoveMonitors();
+  }
+}
+void Network::UpdateMonitors() {
+  if (!proj) return;
+  TokenSpace& ts = TA_NetMonitor.tokens;
+  for (int i = 0; i < ts.size; ++i) {
+    NetMonitor* nm = (NetMonitor*)ts.FastEl(i);
+    if(nm->network.ptr() != this) continue;
+    nm->UpdateDataTable();
+  }
 }
 
 void Network::TransformWeights(const SimpleMathSpec& trans) {
