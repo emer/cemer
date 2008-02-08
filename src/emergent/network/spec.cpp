@@ -193,6 +193,7 @@ void BaseSpec::Initialize() {
 
 void BaseSpec::Copy_(const BaseSpec& cp) {
   //  min_obj_type = cp.min_obj_type;  // don't do this -- could be going between types
+  desc = cp.desc;
   unique = cp.unique;
   children = cp.children;
 }
