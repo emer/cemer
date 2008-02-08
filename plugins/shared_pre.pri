@@ -153,7 +153,8 @@ win32 {
 	$${EMERGENT_DIR}
 	
   MAKETA_INCLUDEPATH +=\
-	-I$${EMERGENT_DIR}
+	-I$${EMERGENT_DIR} \
+	-I$${QMAKE_INCDIR_QT}/Qt
 }
 
 DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}

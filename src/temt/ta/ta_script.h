@@ -99,7 +99,7 @@ class TA_API ScriptBase: public AbstractScriptBase {
   // #VIRT_BASE #NO_INSTANCE class for adding a script to other objects
 public:
   taFiler*	script_file;		// file to use for the script
-  String	script_string;
+  String	script_string; // #EDIT_DIALOG script text to use for the script
   
   override ScriptSource	scriptSource();
   override const String	scriptFilename();
