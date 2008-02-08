@@ -347,6 +347,7 @@ T3UnitGroupNode::T3UnitGroupNode(void* dataView_, bool no_unts)
   unit_text_ = NULL;
 
   snap_bord_ = new SoSeparator;
+  //  snap_bord_->setName("SnapBord");
   snap_bord_draw_ = new SoDrawStyle;
   snap_bord_->addChild(snap_bord_draw_);
   snap_bord_set_ = new SoIndexedLineSet;
@@ -690,6 +691,7 @@ T3NetNode::T3NetNode(void* dataView_, bool show_draggers)
   shape_->setDimensions(x, y, 0.02f, -0.02f);
   net_text_ = NULL;
   wt_lines_ = new SoSeparator;
+  wt_lines_->setName("WtLines");
   wt_lines_draw_ = new SoDrawStyle;
   wt_lines_->addChild(wt_lines_draw_);
   wt_lines_set_ = new SoIndexedLineSet;

@@ -364,14 +364,26 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
       rp.setPoint(mouseevent->getPosition());
       rp.apply(viewer->getSceneManager()->getSceneGraph());
 
+      
       SoPickedPoint* pp = rp.getPickedPoint(0);
       if(!pp) continue;
       SoNode* pobj = pp->getPath()->getNodeFromTail(2);
       if(!pobj) continue;
-      //   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
+//       cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
       if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-	//     cerr << "not unitgroupnode!" << endl;
-	continue;
+	pobj = pp->getPath()->getNodeFromTail(3);
+// 	cerr << "2: obj typ: " << pobj->getTypeId().getName() << endl;
+	if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+	  pobj = pp->getPath()->getNodeFromTail(1);
+// 	  cerr << "3: obj typ: " << pobj->getTypeId().getName() << endl;
+	  if(pobj->getName() == "WtLines") {
+	    // disable selecting of wt lines!
+	    ecb->setHandled();
+	    return;
+	  }
+// 	  cerr << "not unitgroupnode!" << endl;
+	  continue;
+	}
       }
       UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
       SbVec3f pt = pp->getObjectPoint(pobj); 
