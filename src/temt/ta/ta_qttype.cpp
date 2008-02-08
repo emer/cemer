@@ -852,7 +852,7 @@ void taiTypePtr::GetValue_impl(taiData* dat, void* base) {
 ////////////////////////
 
 int taiFilePtrType::BidForType(TypeDef* td) {
-  if(td->DerivesFrom("taFiler") && (td->ptr == 1))
+  if(td->DerivesFrom(TA_taFiler) && (td->ptr == 1))
     return (taiType::BidForType(td) +1);
   return 0;
 }
