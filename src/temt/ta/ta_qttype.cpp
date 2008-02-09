@@ -66,87 +66,135 @@ taiTypeBase::~taiTypeBase() {
 bool taiType::CheckProcessCondMembMeth(const String condkey,
     TypeItem* memb_meth, const void* base, bool& is_on, bool& val_is_eq) 
 {
-  // format: [CONDEDIT|GHOST]_[ON|OFF]_member[:value{,value}]
+  // format: [CONDEDIT|CONDSHOW|GHOST]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
   String optedit = memb_meth->OptionAfter(condkey + "_");
   if (optedit.empty()) return false;
   
   String onoff = optedit.before('_');
   is_on = (onoff == "ON"); //NOTE: should probably verify if OFF, otherwise it is an error
-
   optedit = optedit.after('_');
-  String val = optedit.after(':');
+
+  val_is_eq = false;
+  bool firstone = true;
+  int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
+
+  while(true) {			// iterate on logical operations
+    String nextedit;
+    int nextlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
+    int andloc = optedit.index("&&");
+    int orloc = optedit.index("||");
+    if(andloc > 0 && orloc > 0) {
+      if(andloc < orloc) {
+	nextlogic = 1;
+	nextedit = optedit.after(andloc+1);
+	optedit = optedit.before(andloc);
+      }
+      else {
+	nextlogic = 2;
+	nextedit = optedit.after(orloc+1);
+	optedit = optedit.before(orloc);
+      }
+    }
+    else if(andloc > 0) {
+      nextlogic = 1;
+      nextedit = optedit.after(andloc+1);
+      optedit = optedit.before(andloc);
+    }
+    else if(orloc > 0) {
+      nextlogic = 2;
+      nextedit = optedit.after(orloc+1);
+      optedit = optedit.before(orloc);
+    }
+
+    String val = optedit.after(':');
   
-  // find the member name -- depends on mode, see below
-  String mbr;
-  if (val.empty())
-    mbr = optedit; // entire thing is the member, implied boolean
-  else
-    mbr = optedit.before(':');
+    // find the member name -- depends on mode, see below
+    String mbr;
+    if (val.empty())
+      mbr = optedit; // entire thing is the member, implied boolean
+    else
+      mbr = optedit.before(':');
   
-  TAPtr tab = (TAPtr)base;
-  MemberDef* md = NULL;
-  void* mbr_base = NULL;	// base for conditionalizing member itself
-  void* mbr_par_base = (void*)base;	// base for parent of member
-  if (mbr.contains('.')) {
-    String par_path = mbr.before('.', -1);
-    MemberDef* par_md = NULL;
-    TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
-    if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
-      taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
+    TAPtr tab = (TAPtr)base;
+    MemberDef* md = NULL;
+    void* mbr_base = NULL;	// base for conditionalizing member itself
+    void* mbr_par_base = (void*)base;	// base for parent of member
+    if (mbr.contains('.')) {
+      String par_path = mbr.before('.', -1);
+      MemberDef* par_md = NULL;
+      TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
+      if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
+	taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
+	return false;
+      }
+      String subpth = mbr.after('.', -1);
+      md = par_par->FindMembeR(subpth, mbr_base);
+      mbr_par_base = (void*)par_par;
+    } else {
+      md = tab->FindMembeR(mbr, mbr_base);
+    }
+    if ((md == NULL) || (mbr_base == NULL)) {
+      // this can happen in valid cases (selectedit), and the msg is annoying
+      //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
       return false;
     }
-    String subpth = mbr.after('.', -1);
-    md = par_par->FindMembeR(subpth, mbr_base);
-    mbr_par_base = (void*)par_par;
-  } else {
-    md = tab->FindMembeR(mbr, mbr_base);
-  }
-  if ((md == NULL) || (mbr_base == NULL)) {
-    // this can happen in valid cases (selectedit), and the msg is annoying
-    //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
-    return false;
-  }
-  
-  if (val.empty()) {
-    // implied boolean member mode (note: legacy for GHOST, new for CONDEDIT
-    // for GHOST, it is new to support dotted submembers
-    // just get it as a Variant and interpret as boolean
-    Variant mbr_val(md->type->GetValVar(mbr_base, md));
-    val_is_eq = mbr_val.toBool();
-  } else {
-    // explicit value mode (note: legacy for CONDEDIT, new for GHOST
 
-    String mbr_val = md->type->GetValStr(mbr_base, mbr_par_base, md);
-    val_is_eq = false;
-    while (true) {
-      String nxtval;
-      if (val.contains(',')) {
-        nxtval = val.after(',');
-        val = val.before(',');
-      }
-      if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
-	if(mbr_val.contains(val)) {
-	  String aft = mbr_val.after(val);
-	  String bef = mbr_val.before(val);
-	  if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
-	    // make sure it is not just a subset of something else..
-	    val_is_eq = true;
+    bool tmp_val_is_eq = false;
+    if (val.empty()) {
+      // implied boolean member mode (note: legacy for GHOST, new for CONDEDIT
+      // for GHOST, it is new to support dotted submembers
+      // just get it as a Variant and interpret as boolean
+      Variant mbr_val(md->type->GetValVar(mbr_base, md));
+      tmp_val_is_eq = mbr_val.toBool();
+    }
+    else {
+      // explicit value mode (note: legacy for CONDEDIT, new for GHOST
+      String mbr_val = md->type->GetValStr(mbr_base, mbr_par_base, md);
+      while (true) {
+	String nxtval;
+	if (val.contains(',')) {
+	  nxtval = val.after(',');
+	  val = val.before(',');
+	}
+	if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
+	  if(mbr_val.contains(val)) {
+	    String aft = mbr_val.after(val);
+	    String bef = mbr_val.before(val);
+	    if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
+	      // make sure it is not just a subset of something else..
+	      tmp_val_is_eq = true;
+	      break;
+	    }
+	  }
+	}
+	else {
+	  if (val == mbr_val) {
+	    tmp_val_is_eq = true;
 	    break;
 	  }
 	}
-      }
-      else {
-	if (val == mbr_val) {
-	  val_is_eq = true;
+	if (!nxtval.empty())
+	  val = nxtval;
+	else
 	  break;
-	}
-      }
-      if (!nxtval.empty())
-        val = nxtval;
-      else
-        break;
+      } // value while
+    } // if
+
+    if(firstone || curlogic == 0)
+      val_is_eq = tmp_val_is_eq;
+    else if(curlogic == 1)
+      val_is_eq = val_is_eq && tmp_val_is_eq;
+    else if(curlogic == 2)
+      val_is_eq = val_is_eq || tmp_val_is_eq;
+
+    if(nextlogic > 0 && nextedit.nonempty()) {
+      optedit = nextedit;
+      curlogic = nextlogic;
     }
-  }
+    else {
+      break;			// done!
+    }
+  } // outer logic while
   return true;
 }
 

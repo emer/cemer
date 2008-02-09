@@ -1001,6 +1001,19 @@ double taMath_double::vec_median(const double_Matrix* vec) {
   return tmp[idx];
 }
 
+double taMath_double::vec_quantile(const double_Matrix* vec, double quant_pos) {
+  if(vec->size == 0) return 0.0f;
+  double_Array tmp;
+  tmp.SetSize(vec->size);
+  for(int i=0;i<vec->size;i++)
+    tmp[i] = vec->FastEl_Flat(i);
+  tmp.Sort();
+  int idx = (int)(quant_pos * (double)tmp.size);
+  if(idx >= tmp.size) idx = tmp.size-1;
+  if(idx < 0) idx = 0;
+  return tmp[idx];
+}
+
 double taMath_double::vec_mode(const double_Matrix* vec) {
   if(vec->size == 0) return 0.0f;
   double_Array tmp;
@@ -1324,6 +1337,8 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_median(vec);
   case Aggregate::MODE:
     return taMath_double::vec_mode(vec);
+  case Aggregate::QUANTILE:
+    return taMath_double::vec_quantile(vec, agg.rel.val);
   case Aggregate::NONE:
     return 0.0;
   }
@@ -1995,6 +2010,361 @@ bool taMath_double::mat_frame_convolve(double_Matrix* out_vec, const double_Matr
     }
   }
   return true;
+}
+
+bool taMath_double::mat_fmt_out_frame(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  MatrixGeom frg = in_mat->geom;
+  if(frg.size == 1 || in_mat->frames() == 0) return false;
+  frg.SetSize(frg.size-1);	// nuke last dim
+  out_mat->SetGeomN(frg);
+  return true;
+}
+
+bool taMath_double::mat_frame_set_n(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  double frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = frn;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_first(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(i);
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_last(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  int off = (frn-1) * frs;
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(off + i);
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_find_first(double_Matrix* out_mat, const double_Matrix* in_mat,
+					 Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    int j;
+    for(j=0;j<frn;j++) {
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(j * frs + i))) break;
+    }
+    if(j == frn) j = -1;
+    out_mat->FastEl_Flat(i) = j;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_find_last(double_Matrix* out_mat, const double_Matrix* in_mat,
+					 Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    int j;
+    for(j=frn-1;j>=0;j--) {
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(j * frs + i))) break;
+    }
+    if(j < 0) j = -1;
+    out_mat->FastEl_Flat(i) = j;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_max(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double mx = in_mat->FastEl_Flat(i);
+    for(int j=1;j<frn;j++) {
+      mx = MAX(in_mat->FastEl_Flat(j * frs + i), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_abs_max(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double mx = fabs(in_mat->FastEl_Flat(i));
+    for(int j=1;j<frn;j++) {
+      mx = MAX(fabs(in_mat->FastEl_Flat(j * frs + i)), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_min(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double mx = in_mat->FastEl_Flat(i);
+    for(int j=1;j<frn;j++) {
+      mx = MIN(in_mat->FastEl_Flat(j * frs + i), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_abs_min(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double mx = fabs(in_mat->FastEl_Flat(i));
+    for(int j=1;j<frn;j++) {
+      mx = MIN(fabs(in_mat->FastEl_Flat(j * frs + i)), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_sum(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      sum += in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_prod(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double prod = in_mat->FastEl_Flat(i);
+    for(int j=1;j<frn;j++) {
+      prod *= in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = prod;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_mean(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_frame_sum(out_mat, in_mat)) return false;
+  double nrm = 1.0 / (double)in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) *= nrm;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  double nrm = 1.0 / (double)frn;
+  for(int i=0;i<frs;i++) {
+    double mean = 0.0f;
+    for(int j=0;j<frn;j++) {
+      mean += in_mat->FastEl_Flat(j * frs + i);
+    }
+    mean /= (double)frn;
+    double var = 0.0f;
+    for(int j=0;j<frn;j++) {
+      double dm = (in_mat->FastEl_Flat(j * frs + i) - mean);
+      var += dm * dm;
+    }
+    out_mat->FastEl_Flat(i) = var * nrm;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_frame_var(out_mat, in_mat)) return false;
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = sqrt(out_mat->FastEl_Flat(i));
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_sem(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_frame_std_dev(out_mat, in_mat)) return false;
+  int frs = in_mat->frameSize();
+  double nrm = 1.0 / sqrt((double)in_mat->frames());
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) *= nrm;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_ss_len(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      sum += in_mat->FastEl_Flat(j * frs + i) * in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(j * frs + i))) sum += 1.0;
+    }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_median(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  int idx = frn / 2;
+  double_Array tmp;
+  tmp.SetSize(frn);
+  for(int i=0;i<frs;i++) {
+    for(int j=0;j<frn;j++) {
+      tmp[j] = in_mat->FastEl_Flat(j * frs + i);
+    }
+    tmp.Sort();
+    out_mat->FastEl_Flat(i) = tmp[idx];
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_quantile(double_Matrix* out_mat, const double_Matrix* in_mat, double quant_pos) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  double_Array tmp;
+  tmp.SetSize(frn);
+  int idx = (int)(quant_pos * (double)tmp.size);
+  if(idx >= tmp.size) idx = tmp.size-1;
+  if(idx < 0) idx = 0;
+  for(int i=0;i<frs;i++) {
+    for(int j=0;j<frn;j++) {
+      tmp[j] = in_mat->FastEl_Flat(j * frs + i);
+    }
+    tmp.Sort();
+    out_mat->FastEl_Flat(i) = tmp[idx];
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_mode(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  double_Array tmp;
+  tmp.SetSize(frn);
+  for(int i=0;i<frs;i++) {
+    for(int j=0;j<frn;j++) {
+      tmp[j] = in_mat->FastEl_Flat(j * frs + i);
+    }
+    tmp.Sort();
+    int mx_frq = 0;
+    double mode = 0.0f;
+    int idx = 0;
+    while(idx < tmp.size) {
+      double val = tmp[idx];
+      int st_idx = idx;
+      while((idx < tmp.size-1) && (val == tmp[++idx]));
+      int frq = idx - st_idx;
+      if(idx == tmp.size-1) {
+	if(tmp[tmp.size-1] == val) frq++;
+	idx++;
+      }
+      if(frq > mx_frq) {
+	mx_frq = frq;
+	mode = val;
+      }
+    }
+    out_mat->FastEl_Flat(i) = mode;
+  }
+  return true;
+}
+
+bool taMath_double::mat_frame_aggregate(double_Matrix* out_mat, const double_Matrix* in_mat,
+					Aggregate& agg) {
+  switch(agg.op) {
+  case Aggregate::GROUP:
+  case Aggregate::FIRST:
+    return taMath_double::mat_frame_first(out_mat, in_mat);
+  case Aggregate::LAST:
+    return taMath_double::mat_frame_last(out_mat, in_mat);
+  case Aggregate::FIND_FIRST: 
+    return taMath_double::mat_frame_find_first(out_mat, in_mat, agg.rel);
+  case Aggregate::FIND_LAST: 
+    return taMath_double::mat_frame_find_last(out_mat, in_mat, agg.rel);
+  case Aggregate::MIN:
+    return taMath_double::mat_frame_min(out_mat, in_mat);
+  case Aggregate::MAX:
+    return taMath_double::mat_frame_max(out_mat, in_mat);
+  case Aggregate::ABS_MIN:
+    return taMath_double::mat_frame_abs_min(out_mat, in_mat);
+  case Aggregate::ABS_MAX:
+    return taMath_double::mat_frame_abs_max(out_mat, in_mat);
+  case Aggregate::SUM:
+    return taMath_double::mat_frame_sum(out_mat, in_mat);
+  case Aggregate::PROD:
+    return taMath_double::mat_frame_prod(out_mat, in_mat);
+  case Aggregate::MEAN:
+    return taMath_double::mat_frame_mean(out_mat, in_mat);
+  case Aggregate::VAR:
+    return taMath_double::mat_frame_var(out_mat, in_mat);
+  case Aggregate::STDEV:
+    return taMath_double::mat_frame_std_dev(out_mat, in_mat);
+  case Aggregate::SEM:
+    return taMath_double::mat_frame_sem(out_mat, in_mat);
+  case Aggregate::N: 
+    return taMath_double::mat_frame_set_n(out_mat, in_mat);
+  case Aggregate::COUNT: 
+    return taMath_double::mat_frame_count(out_mat, in_mat, agg.rel);
+  case Aggregate::MEDIAN:
+    return taMath_double::mat_frame_median(out_mat, in_mat);
+  case Aggregate::MODE:
+    return taMath_double::mat_frame_mode(out_mat, in_mat);
+  case Aggregate::QUANTILE:
+    return taMath_double::mat_frame_quantile(out_mat, in_mat, agg.rel.val);
+  case Aggregate::NONE:
+    return true;
+  }
+  return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2752,6 +3122,19 @@ float taMath_float::vec_median(const float_Matrix* vec) {
   return tmp[idx];
 }
 
+float taMath_float::vec_quantile(const float_Matrix* vec, float quant_pos) {
+  if(vec->size == 0) return 0.0f;
+  float_Array tmp;
+  tmp.SetSize(vec->size);
+  for(int i=0;i<vec->size;i++)
+    tmp[i] = vec->FastEl_Flat(i);
+  tmp.Sort();
+  int idx = (int)(quant_pos * (float)tmp.size);
+  if(idx >= tmp.size) idx = tmp.size-1;
+  if(idx < 0) idx = 0;
+  return tmp[idx];
+}
+
 float taMath_float::vec_mode(const float_Matrix* vec) {
   if(vec->size == 0) return 0.0f;
   float_Array tmp;
@@ -3077,6 +3460,8 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_median(vec);
   case Aggregate::MODE:
     return taMath_float::vec_mode(vec);
+  case Aggregate::QUANTILE:
+    return taMath_float::vec_quantile(vec, agg.rel.val);
   case Aggregate::NONE:
     return 0.0;
   }
@@ -3589,6 +3974,361 @@ bool taMath_float::mat_frame_convolve(float_Matrix* out_vec, const float_Matrix*
     }
   }
   return true;
+}
+
+bool taMath_float::mat_fmt_out_frame(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  MatrixGeom frg = in_mat->geom;
+  if(frg.size == 1 || in_mat->frames() == 0) return false;
+  frg.SetSize(frg.size-1);	// nuke last dim
+  out_mat->SetGeomN(frg);
+  return true;
+}
+
+bool taMath_float::mat_frame_set_n(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  float frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = frn;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_first(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(i);
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_last(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  int off = (frn-1) * frs;
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = in_mat->FastEl_Flat(off + i);
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_find_first(float_Matrix* out_mat, const float_Matrix* in_mat,
+					 Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    int j;
+    for(j=0;j<frn;j++) {
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(j * frs + i))) break;
+    }
+    if(j == frn) j = -1;
+    out_mat->FastEl_Flat(i) = j;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_find_last(float_Matrix* out_mat, const float_Matrix* in_mat,
+					 Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    int j;
+    for(j=frn-1;j>=0;j--) {
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(j * frs + i))) break;
+    }
+    if(j < 0) j = -1;
+    out_mat->FastEl_Flat(i) = j;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_max(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float mx = in_mat->FastEl_Flat(i);
+    for(int j=1;j<frn;j++) {
+      mx = MAX(in_mat->FastEl_Flat(j * frs + i), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_abs_max(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float mx = fabs(in_mat->FastEl_Flat(i));
+    for(int j=1;j<frn;j++) {
+      mx = MAX(fabs(in_mat->FastEl_Flat(j * frs + i)), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_min(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float mx = in_mat->FastEl_Flat(i);
+    for(int j=1;j<frn;j++) {
+      mx = MIN(in_mat->FastEl_Flat(j * frs + i), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_abs_min(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float mx = fabs(in_mat->FastEl_Flat(i));
+    for(int j=1;j<frn;j++) {
+      mx = MIN(fabs(in_mat->FastEl_Flat(j * frs + i)), mx);
+    }
+    out_mat->FastEl_Flat(i) = mx;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_sum(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      sum += in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_prod(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float prod = in_mat->FastEl_Flat(i);
+    for(int j=1;j<frn;j++) {
+      prod *= in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = prod;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_frame_sum(out_mat, in_mat)) return false;
+  float nrm = 1.0 / (float)in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) *= nrm;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  float nrm = 1.0 / (float)frn;
+  for(int i=0;i<frs;i++) {
+    float mean = 0.0f;
+    for(int j=0;j<frn;j++) {
+      mean += in_mat->FastEl_Flat(j * frs + i);
+    }
+    mean /= (float)frn;
+    float var = 0.0f;
+    for(int j=0;j<frn;j++) {
+      float dm = (in_mat->FastEl_Flat(j * frs + i) - mean);
+      var += dm * dm;
+    }
+    out_mat->FastEl_Flat(i) = var * nrm;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_frame_var(out_mat, in_mat)) return false;
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) = sqrt(out_mat->FastEl_Flat(i));
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_sem(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_frame_std_dev(out_mat, in_mat)) return false;
+  int frs = in_mat->frameSize();
+  float nrm = 1.0 / sqrt((float)in_mat->frames());
+  for(int i=0;i<frs;i++) {
+    out_mat->FastEl_Flat(i) *= nrm;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_ss_len(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      sum += in_mat->FastEl_Flat(j * frs + i) * in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_count(float_Matrix* out_mat, const float_Matrix* in_mat, Relation& rel) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  Relation tmp_rel;
+  rel.CacheVar(tmp_rel);
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      if(tmp_rel.Evaluate(in_mat->FastEl_Flat(j * frs + i))) sum += 1.0;
+    }
+    out_mat->FastEl_Flat(i) = sum;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_median(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  int idx = frn / 2;
+  float_Array tmp;
+  tmp.SetSize(frn);
+  for(int i=0;i<frs;i++) {
+    for(int j=0;j<frn;j++) {
+      tmp[j] = in_mat->FastEl_Flat(j * frs + i);
+    }
+    tmp.Sort();
+    out_mat->FastEl_Flat(i) = tmp[idx];
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_quantile(float_Matrix* out_mat, const float_Matrix* in_mat, float quant_pos) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  float_Array tmp;
+  tmp.SetSize(frn);
+  int idx = (int)(quant_pos * (float)tmp.size);
+  if(idx >= tmp.size) idx = tmp.size-1;
+  if(idx < 0) idx = 0;
+  for(int i=0;i<frs;i++) {
+    for(int j=0;j<frn;j++) {
+      tmp[j] = in_mat->FastEl_Flat(j * frs + i);
+    }
+    tmp.Sort();
+    out_mat->FastEl_Flat(i) = tmp[idx];
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_mode(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  float_Array tmp;
+  tmp.SetSize(frn);
+  for(int i=0;i<frs;i++) {
+    for(int j=0;j<frn;j++) {
+      tmp[j] = in_mat->FastEl_Flat(j * frs + i);
+    }
+    tmp.Sort();
+    int mx_frq = 0;
+    float mode = 0.0f;
+    int idx = 0;
+    while(idx < tmp.size) {
+      float val = tmp[idx];
+      int st_idx = idx;
+      while((idx < tmp.size-1) && (val == tmp[++idx]));
+      int frq = idx - st_idx;
+      if(idx == tmp.size-1) {
+	if(tmp[tmp.size-1] == val) frq++;
+	idx++;
+      }
+      if(frq > mx_frq) {
+	mx_frq = frq;
+	mode = val;
+      }
+    }
+    out_mat->FastEl_Flat(i) = mode;
+  }
+  return true;
+}
+
+bool taMath_float::mat_frame_aggregate(float_Matrix* out_mat, const float_Matrix* in_mat,
+					Aggregate& agg) {
+  switch(agg.op) {
+  case Aggregate::GROUP:
+  case Aggregate::FIRST:
+    return taMath_float::mat_frame_first(out_mat, in_mat);
+  case Aggregate::LAST:
+    return taMath_float::mat_frame_last(out_mat, in_mat);
+  case Aggregate::FIND_FIRST: 
+    return taMath_float::mat_frame_find_first(out_mat, in_mat, agg.rel);
+  case Aggregate::FIND_LAST: 
+    return taMath_float::mat_frame_find_last(out_mat, in_mat, agg.rel);
+  case Aggregate::MIN:
+    return taMath_float::mat_frame_min(out_mat, in_mat);
+  case Aggregate::MAX:
+    return taMath_float::mat_frame_max(out_mat, in_mat);
+  case Aggregate::ABS_MIN:
+    return taMath_float::mat_frame_abs_min(out_mat, in_mat);
+  case Aggregate::ABS_MAX:
+    return taMath_float::mat_frame_abs_max(out_mat, in_mat);
+  case Aggregate::SUM:
+    return taMath_float::mat_frame_sum(out_mat, in_mat);
+  case Aggregate::PROD:
+    return taMath_float::mat_frame_prod(out_mat, in_mat);
+  case Aggregate::MEAN:
+    return taMath_float::mat_frame_mean(out_mat, in_mat);
+  case Aggregate::VAR:
+    return taMath_float::mat_frame_var(out_mat, in_mat);
+  case Aggregate::STDEV:
+    return taMath_float::mat_frame_std_dev(out_mat, in_mat);
+  case Aggregate::SEM:
+    return taMath_float::mat_frame_sem(out_mat, in_mat);
+  case Aggregate::N: 
+    return taMath_float::mat_frame_set_n(out_mat, in_mat);
+  case Aggregate::COUNT: 
+    return taMath_float::mat_frame_count(out_mat, in_mat, agg.rel);
+  case Aggregate::MEDIAN:
+    return taMath_float::mat_frame_median(out_mat, in_mat);
+  case Aggregate::MODE:
+    return taMath_float::mat_frame_mode(out_mat, in_mat);
+  case Aggregate::QUANTILE:
+    return taMath_float::mat_frame_quantile(out_mat, in_mat, agg.rel.val);
+  case Aggregate::NONE:
+    return true;
+  }
+  return false;
 }
 
 //////////////////////////////////////////////////////////////////////

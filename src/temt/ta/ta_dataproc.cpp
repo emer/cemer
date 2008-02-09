@@ -565,18 +565,13 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     if(ds->col_idx < 0) continue;
     DataCol* sda = src->data.FastEl(ds->col_idx);
     DataCol* nda;
-    if(ds->agg.RealVal() && (sda->valType() == VT_INT)) // up-convert to float!
+    // up-convert to float -- always needed for matrix
+    if((sda->valType() == VT_INT) && (ds->agg.RealVal() || sda->isMatrix()))
       nda = new float_Data;
     else
       nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);
-    // todo: lame minimal copy here: replace with encapsulated fun?
-    nda->name = sda->name;
-    nda->col_flags = sda->col_flags;
-    // end todo:
-    nda->Init();		// initialize
-    // don't copy is_matrix or cell_geom -- result is always scalar!
-    //    nda->Copy_NoData(*sda);
+    nda->Copy_NoData(*sda);
     String dst_op = ds->agg.GetAggName();
     dst_op.downcase();
     nda->name += "_" + dst_op;
@@ -616,16 +611,33 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
     if(ds->col_idx < 0) continue;
     DataCol* sda = src->data.FastEl(ds->col_idx);
     DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
-    if(sda->valType() == taBase::VT_DOUBLE) {
-      dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
+    if(sda->is_matrix) {
+      if(sda->valType() == taBase::VT_DOUBLE) {
+	taMath_double::mat_frame_aggregate((double_Matrix*)dda->AR(), 
+					   (double_Matrix*)sda->AR(), ds->agg);
+      }
+      else if(sda->valType() == taBase::VT_FLOAT) {
+	taMath_float::mat_frame_aggregate((float_Matrix*)dda->AR(), 
+					   (float_Matrix*)sda->AR(), ds->agg);
+      }
+      else if(sda->valType() == taBase::VT_INT) {
+	int_Matrix* mat = (int_Matrix*)sda->AR();
+	taMath_float::vec_fm_ints(&float_tmp, mat);
+	taMath_float::mat_frame_aggregate((float_Matrix*)dda->AR(), &float_tmp, ds->agg);
+      }
     }
-    else if(sda->valType() == taBase::VT_FLOAT) {
-      dda->SetValAsFloat(taMath_float::vec_aggregate((float_Matrix*)sda->AR(), ds->agg), 0);
-    }
-    else if(sda->valType() == taBase::VT_INT) {
-      int_Matrix* mat = (int_Matrix*)sda->AR();
-      taMath_float::vec_fm_ints(&float_tmp, mat);
-      dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
+    else {			// scalar
+      if(sda->valType() == taBase::VT_DOUBLE) {
+	dda->SetValAsDouble(taMath_double::vec_aggregate((double_Matrix*)sda->AR(), ds->agg), 0);
+      }
+      else if(sda->valType() == taBase::VT_FLOAT) {
+	dda->SetValAsFloat(taMath_float::vec_aggregate((float_Matrix*)sda->AR(), ds->agg), 0);
+      }
+      else if(sda->valType() == taBase::VT_INT) {
+	int_Matrix* mat = (int_Matrix*)sda->AR();
+	taMath_float::vec_fm_ints(&float_tmp, mat);
+	dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
+      }
     }
   }
   return true;
@@ -707,29 +719,61 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	dda->SetValAsVar(sda->GetValAsVar(st_row), -1); // -1 = last row
       }
       else {
-	if(sda->valType() == taBase::VT_DOUBLE) {
-	  double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	  if(mat) {
-	    taBase::Ref(mat);
-	    dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
-	    taBase::unRefDone(mat);
+	if(sda->isMatrix()) {
+	  if(sda->valType() == taBase::VT_DOUBLE) {
+	    double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(-1);
+	    if(mat && dmat) {
+	      taBase::Ref(mat); taBase::Ref(dmat);
+	      taMath_double::mat_frame_aggregate(dmat, mat, ds->agg);
+	      taBase::unRefDone(mat); taBase::unRefDone(dmat);
+	    }
+	  }
+	  else if(sda->valType() == taBase::VT_FLOAT) {
+	    float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
+	    if(mat && dmat) {
+	      taBase::Ref(mat); taBase::Ref(dmat);
+	      taMath_float::mat_frame_aggregate(dmat, mat, ds->agg);
+	      taBase::unRefDone(mat); taBase::unRefDone(dmat);
+	    }
+	  }
+	  else if(sda->valType() == taBase::VT_INT) {
+	    int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(-1);
+	    if(mat && dmat) {
+	      taBase::Ref(mat); taBase::Ref(dmat);
+	      taMath_float::vec_fm_ints(&float_tmp, mat);
+	      taMath_float::mat_frame_aggregate(dmat, &float_tmp, ds->agg);
+	      taBase::unRefDone(mat); taBase::unRefDone(dmat);
+	    }
 	  }
 	}
-	else if(sda->valType() == taBase::VT_FLOAT) {
-	  float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	  if(mat) {
-	    taBase::Ref(mat);
-	    dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
-	    taBase::unRefDone(mat);
+	else {
+	  if(sda->valType() == taBase::VT_DOUBLE) {
+	    double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    if(mat) {
+	      taBase::Ref(mat);
+	      dda->SetValAsDouble(taMath_double::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	      taBase::unRefDone(mat);
+	    }
 	  }
-	}
-	else if(sda->valType() == taBase::VT_INT) {
-	  int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
-	  if(mat) {
-	    taBase::Ref(mat);
-	    taMath_float::vec_fm_ints(&float_tmp, mat);
-	    dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
-	    taBase::unRefDone(mat);
+	  else if(sda->valType() == taBase::VT_FLOAT) {
+	    float_Matrix* mat = (float_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    if(mat) {
+	      taBase::Ref(mat);
+	      dda->SetValAsFloat(taMath_float::vec_aggregate(mat, ds->agg), -1); // -1 = last row
+	      taBase::unRefDone(mat);
+	    }
+	  }
+	  else if(sda->valType() == taBase::VT_INT) {
+	    int_Matrix* mat = (int_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    if(mat) {
+	      taBase::Ref(mat);
+	      taMath_float::vec_fm_ints(&float_tmp, mat);
+	      dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
+	      taBase::unRefDone(mat);
+	    }
 	  }
 	}
       }

@@ -21,7 +21,7 @@
 #define NETDATA_H
 
 #include "emergent_def.h"
-#include "ta_datatable.h"
+#include "ta_dataproc.h"
 #include "netstru.h"
 
 #include "emergent_TA_type.h"
@@ -60,9 +60,9 @@ public:
   Layer_Group* 		layer_group;
   // #READ_ONLY #HIDDEN #NO_SAVE the group of layers on the network -- just for choosing the layer from a list
   LayerRef 		layer;
-  // #NO_SAVE #CONDEDIT_ON_net_target:LAYER #FROM_GROUP_layer_group #NO_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
+  // #NO_SAVE #CONDSHOW_ON_net_target:LAYER #FROM_GROUP_layer_group #NO_SCOPE the Layer that will get read or written -- this is just for choosing layer_name from a list -- will be reset after selection is applied
   String 		layer_name;
-  // #CONDEDIT_ON_net_target:LAYER the name of the Layer that will get read or written
+  // #CONDSHOW_ON_net_target:LAYER the name of the Layer that will get read or written
 
   PosTwoDCoord		offset;
   // #EXPERT offset in layer or unit group at which to start reading/writing
@@ -123,7 +123,7 @@ class EMERGENT_API LayerWriterEl : public LayerDataEl {
 INHERITED(LayerDataEl)
 public: 
   bool		use_layer_type; // #APPLY_IMMED #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
-  Unit::ExtType	ext_flags;	// #EXPERT #CONDEDIT_OFF_use_layer_type:true how to flag the unit/layer's external input status
+  Unit::ExtType	ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
   Random	noise;		// #EXPERT noise optionally added to values when applied
 
   virtual bool	ApplyInputData(DataBlock* db, Network* net);
@@ -146,9 +146,9 @@ class EMERGENT_API LayerWriter : public taNBase {
   // ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
-  DataBlockRef	data;
+  DataBlockRef		data;
   // the data object with input data to present to the network
-  NetworkRef	network;
+  NetworkRef		network;
   // the network to present the input data to
   LayerDataEl_List	layer_data;
   // the layers/input data channel mappings to present to the network
@@ -231,24 +231,31 @@ public:
   };
 
   bool			computed;	// #APPLY_IMMED if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
-  TypeDef*		object_type;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
-  taSmartRef 		object;		// #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NO_SCOPE the network object being monitored
-  MemberDef*		lookup_var;	// #APPLY_IMMED #CONDEDIT_OFF_computed:true #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
-  String        	variable;	// #CONDEDIT_OFF_computed:true Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
-  String		var_label;	// #CONDEDIT_OFF_computed:true label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
-  NameStyle		name_style;	 // #CONDEDIT_OFF_computed:true how to name the columns/channels generated from this data?
+  TypeDef*		object_type;	// #APPLY_IMMED #CONDSHOW_OFF_computed LAYER #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
+  taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NO_SCOPE the network object being monitored
+  MemberDef*		lookup_var;	// #APPLY_IMMED #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
+  String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt)
+  String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
+  NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/channels generated from this data?
   int			max_name_len;	 // #DEF_6 #EXPERT maximum length for any name segment
 
-  ValType		val_type;       // #CONDEDIT_ON_computed:true type of data column to create (only for computed variables)
-  bool			matrix;		// #APPLY_IMMED #CONDEDIT_ON_computed:true if true, create a matrix data column (otherwise scalar)
-  MatrixGeom		matrix_geom;	// #CONDEDIT_ON_matrix:true geometry of matrix to create if a matrix type
+  ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
+  bool			matrix;		// #APPLY_IMMED #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
+  MatrixGeom		matrix_geom;	// #CONDSHOW_ON_matrix geometry of matrix to create if a matrix type
+
+  bool			data_agg; 	// #CONDSHOW_ON_computed compute value automatically from a column of data in another data table
+  DataTableRef		data_src;	// #CONDSHOW_ON_data_agg source data for data aggregation operation
+  DataOpEl		agg_col;	// #CONDSHOW_ON_data_agg column name in data_src data table to get data to aggregate from
+  
+  Aggregate		agg;		// #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
+
+  bool			select_rows;	// #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
+  DataSelectEl		select_spec;	// #CONDSHOW_ON_select_rows optional selection of rows to perform aggregation on according to the value of items in given column -- for more complex selections and/or greater efficiency, use DataSelectRowsProg to create intermediate data table and operate on that
 
   ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
   ChannelSpec_List	agg_specs;	// #HIDDEN_TREE #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
   MemberSpace   	members;	// #IGNORE memberdefs
   voidptr_Array		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
-
-  Aggregate		agg;		// #CONDEDIT_OFF_computed:true aggregation operation to perform (reduces vector data down to a single scalar value)
 
   SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
   SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
@@ -283,6 +290,8 @@ public:
   
 protected:
   float_Matrix		agg_tmp_calc; // temp calc matrix for agg data
+  float_Matrix		agg_tmp_calc_2; // temp calc matrix for agg data
+  double_Matrix		agg_tmp_calc_d; // temp calc matrix for agg data
 
   void	UpdateAfterEdit_impl();
   int			cell_num; // current cell number, when adding mon vals
@@ -300,6 +309,8 @@ protected:
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
   void 			GetMonVals_Agg(DataBlock* db);
   // special version for agg case
+  void 			GetMonVals_DataAgg(DataBlock* db);
+  // special version for data_agg case
 
   // these are for finding the members and building the stat
   // out of the objects and the variable

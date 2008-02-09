@@ -50,7 +50,7 @@ public:
   Relations	rel;		// #LABEL_ relationship to evaluate
   double	val;		// #LABEL_ comparison value
   bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the relation value
-  ProgVarRef	var;		// #CONDEDIT_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element) -- variable must be a top-level (.args or .vars) variable and not a local one
+  ProgVarRef	var;		// #CONDSHOW_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element) -- variable must be a top-level (.args or .vars) variable and not a local one
 
   bool		CacheVar(Relation& tmp_rel);
   // copy rel and cache the variable value in new Relation object (tmp_rel), or copy val -- optimizes repeated actions using same relation object so they don't have to keep getting the variable 
@@ -84,8 +84,9 @@ public:
     SEM,			// Standard error of the mean 
     N, 				// the number of data items in the vector
     COUNT, 			// Count of the number times count relation was true
-    MEDIAN,			// middle item (note: requires sorting)
+    MEDIAN,			// middle item in sorted list of values
     MODE,			// most frequent item (note: requires sorting)
+    QUANTILE,			// value at ordinal position within a sorted list given by rel.val parameter (normalized 0-1 position within sorted list, e.g., .5 = median, .25 = first quartile, etc) -- rel relation is not used
     NONE,			// no aggregation operation
   };
 
@@ -94,7 +95,7 @@ public:
 #endif
 
   Operator      op;		// #APPLY_IMMED how to aggregate over the network
-  Relation	rel;		// #CONDEDIT_ON_op:COUNT,FIND_FIRST,FIND_LAST parameters for the COUNT and FIND_xxx operators
+  Relation	rel;		// #CONDSHOW_ON_op:COUNT,FIND_FIRST,FIND_LAST,QUANTILE parameters for the COUNT, FIND_xxx, and QUANTILE operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
   virtual bool	 RealVal() const;     // true if agg operation returns a real-valued result
@@ -132,9 +133,9 @@ public:
 #endif
 
   MathOpr 	opr;		// #APPLY_IMMED what math operator to use
-  double	arg;		// #CONDEDIT_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX argument for ops (threshold add/sub/mul/div,power,max,min arg)
-  double	lw;		// #CONDEDIT_ON_opr:THRESH,MINMAX the value to assign values below threshold for THRESH, or the low range for MINMAX
-  double	hi;		// #CONDEDIT_ON_opr:THRESH,MINMAX the value to assign values above threshold for THRESH, or the high range for MINMAX
+  double	arg;		// #CONDSHOW_ON_opr:THRESH,ADD,SUB,MUL,POWER,DIV,MIN,MAX argument for ops (threshold add/sub/mul/div,power,max,min arg)
+  double	lw;		// #CONDSHOW_ON_opr:THRESH,MINMAX the value to assign values below threshold for THRESH, or the low range for MINMAX
+  double	hi;		// #CONDSHOW_ON_opr:THRESH,MINMAX the value to assign values above threshold for THRESH, or the high range for MINMAX
 
   double	Evaluate(double val) const; // evaluate math operator on given value
   Variant&	EvaluateVar(Variant& val) const; // #IGNORE evaluate math operator on given value
@@ -501,6 +502,8 @@ public:
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static double	vec_mode(const double_Matrix* vec);
   // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
+  static double	vec_quantile(const double_Matrix* vec, double quant_pos);
+  // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
 
   static String vec_stats(const double_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
@@ -638,6 +641,59 @@ public:
   static bool mat_frame_convolve(double_Matrix* out_mat, const double_Matrix* in_mat,
 				 const double_Matrix* kernel);
   // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
+
+  /////////////////////  Statistics 
+
+  static bool	mat_fmt_out_frame(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix format out_mat as one frame (inner dimensions) of in_mat (i.e., out_mat has n-1 dimensions relative to in_mat)
+
+  static bool	mat_frame_set_n(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix set out_mat to the number of frames for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_first(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute first item for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_last(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute last item for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_find_first(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute index of first item that meets relationship rel for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_find_last(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute index of last item that meets relationship rel for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_max(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute maximum for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_min(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute minimum for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_abs_max(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute maximum of absolute values for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_abs_min(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute minimum of absolute values for each value within inner frame dimensions across matrix frames (last outer dimension) 
+
+  static bool	mat_frame_sum(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute sum for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_prod(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute product for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_mean(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute variance for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute standard deviation for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_sem(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute standard error of the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_ss_len(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute sum-of-squares length for each value within inner frame dimensions across matrix frames (last outer dimension) 
+
+  static bool	mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute count number of times relationship rel is true for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_median(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute median (middle value -- requires sorting) for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_mode(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute mode (most frequent) value (requires sorting) for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_quantile(double_Matrix* out_mat, const double_Matrix* in_mat, double quant_pos);
+  // #CAT_HighDimMatrix compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc, for each value within inner frame dimensions across matrix frames (last outer dimension) 
+
+  static bool	mat_frame_aggregate(double_Matrix* out_mat, const double_Matrix* in_mat,
+				    Aggregate& agg);
+  // #CAT_Aggregate compute aggregate across matrix frames (last outer dimension) for each value within inner frame dimensions, using aggregation params of agg
+
 
   /////////////////////////////////////////////////////////////////////////////////
   // fft routines -- one size fits all, but we may use the radix-2 impl of gsl where appropriate
@@ -948,6 +1004,8 @@ public:
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static float	vec_mode(const float_Matrix* vec);
   // #CAT_Statistics compute the mode (most frequent) of the values in the vector -- requires sorting
+  static float	vec_quantile(const float_Matrix* vec, float quant_pos);
+  // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
 
   static String vec_stats(const float_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
@@ -1086,6 +1144,58 @@ public:
   static bool mat_frame_convolve(float_Matrix* out_mat, const float_Matrix* in_mat,
 				 const float_Matrix* kernel);
   // #CAT_Convolution convolve in_mat with kernel to produce out_mat, in a cell-by-cell manner across frames.  always keeps the edges by clipping and renormalizing the kernel all the way to both edges
+
+  /////////////////////  Statistics 
+
+  static bool	mat_fmt_out_frame(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix format out_mat as one frame (inner dimensions) of in_mat (i.e., out_mat has n-1 dimensions relative to in_mat)
+
+  static bool	mat_frame_set_n(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix set out_mat to the number of frames for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_first(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute first item for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_last(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute last item for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_find_first(float_Matrix* out_mat, const float_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute index of first item that meets relationship rel for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_find_last(float_Matrix* out_mat, const float_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute index of last item that meets relationship rel for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_max(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute maximum for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_min(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute minimum for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_abs_max(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute maximum of absolute values for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_abs_min(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute minimum of absolute values for each value within inner frame dimensions across matrix frames (last outer dimension) 
+
+  static bool	mat_frame_sum(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute sum for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_prod(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute product for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute variance for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute standard deviation for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_sem(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute standard error of the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_ss_len(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute sum-of-squares length for each value within inner frame dimensions across matrix frames (last outer dimension) 
+
+  static bool	mat_frame_count(float_Matrix* out_mat, const float_Matrix* in_mat, Relation& rel);
+  // #CAT_HighDimMatrix compute count number of times relationship rel is true for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_median(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute median (middle value -- requires sorting) for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_mode(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute mode (most frequent) value (requires sorting) for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_quantile(float_Matrix* out_mat, const float_Matrix* in_mat, float quant_pos);
+  // #CAT_HighDimMatrix compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc, for each value within inner frame dimensions across matrix frames (last outer dimension) 
+
+  static bool	mat_frame_aggregate(float_Matrix* out_mat, const float_Matrix* in_mat,
+				    Aggregate& agg);
+  // #CAT_Aggregate compute aggregate across matrix frames (last outer dimension) for each value within inner frame dimensions, using aggregation params of agg
 
   /////////////////////////////////////////////////////////////////////////////////
   // fft routines -- see double for more info; note: these have to copy to temp double guys, so may be SLOW compared to double

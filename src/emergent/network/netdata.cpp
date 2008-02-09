@@ -392,10 +392,12 @@ void NetMonItem::Initialize() {
   variable = "act";
   name_style = AUTO_NAME;
   max_name_len = 6;
+  agg.op = Aggregate::NONE;
+  data_agg = false;
+  select_rows = false;
   val_type = VT_FLOAT;
   matrix = false;
   cell_num  = 0;
-  agg.op = Aggregate::NONE;
 }
 
 void NetMonItem::InitLinks() {
@@ -409,9 +411,15 @@ void NetMonItem::InitLinks() {
   taBase::Own(pre_proc_3,this);
   taBase::Own(object, this);
   taBase::Own(matrix_geom, this);
+  taBase::Own(data_src,this);
+  taBase::Own(agg_col,this);
+  taBase::Own(select_spec,this);
 }
 
 void NetMonItem::CutLinks() {
+  agg_col.CutLinks();
+  select_spec.CutLinks();
+  data_src.CutLinks();
   pre_proc_3.CutLinks();
   pre_proc_2.CutLinks();
   pre_proc_1.CutLinks();
@@ -438,6 +446,11 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   val_type = cp.val_type;
   matrix = cp.matrix;
   matrix_geom = cp.matrix_geom;
+  data_agg = cp.data_agg;
+  data_src = cp.data_src;
+  agg_col = cp.agg_col;
+  select_rows = cp.select_rows;
+  select_spec = cp.select_spec;
   agg = cp.agg;
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
@@ -450,6 +463,33 @@ void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
     CheckError(!owner, quiet, rval, "NetMonItem named:", name, "has no owner");
     CheckError(!object, quiet, rval, "object is NULL");
     CheckError(variable.empty(), quiet, rval,"variable is empty");
+  }
+  else {
+    if(data_agg) {
+      bool bad = false;
+      if(CheckError(!data_src, quiet, rval, "data_src is NULL")) bad = true;
+      if(CheckError(agg_col.col_name.empty(), quiet, rval, "agg_col.col_name is empty")) bad = true;
+      if(!bad) {
+	DataCol* dc = data_src->FindColName(agg_col.col_name);
+	if(!CheckError(!dc, quiet, rval, "agg_col col_name:", agg_col.col_name,
+		       "not found in data table:", data_src->name)) {
+	  CheckError(!dc->isNumeric() || (dc->valType() == taBase::VT_BYTE), quiet, rval,
+		     "agg_col col_name:", agg_col.col_name,
+		     "is not a proper numeric type (float, double, int)");
+
+	  if(dc->isMatrix() && matrix) {
+	    CheckError(dc->cell_size() != matrix_geom.Product(), quiet, rval, 
+		       "geometry of data_src agg source column:", dc->name,
+		       "is not same as mon destination matrix");
+	  }
+	}
+	if(select_rows) {
+	  DataCol* sc = data_src->FindColName(select_spec.col_name);
+	  CheckError(!sc, quiet, rval, "select_spec column:", agg_col.col_name,
+		     "not found in data table:", data_src->name);
+	}
+      }
+    }
   }
 }
 
@@ -473,6 +513,21 @@ void NetMonItem::UpdateAfterEdit_impl() {
   if(computed) {
     name_style = MY_NAME;
     object = NULL;		// never have an obj for computed guy
+    if(data_agg) {
+      agg_col.SetDataTable(data_src);
+      select_spec.SetDataTable(data_src);
+    }
+    else {
+      data_src = NULL;
+      agg_col.SetDataTable(NULL);
+      select_rows = false;
+      select_spec.SetDataTable(NULL);
+    }
+  }
+  else {
+    data_agg = false;		// make sure not displayed
+    select_rows = false;
+    data_src = NULL;
   }
 
   if(!owner) return;
@@ -584,7 +639,7 @@ MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType vt,
 {
   cell_num = 0;
   MatrixChannelSpec* cs;
-  if(agg.op != Aggregate::NONE) {
+  if(!computed && (agg.op != Aggregate::NONE)) {
     AddScalarChan(valname, vt);
     cs = (MatrixChannelSpec*)agg_specs.New(1, &TA_MatrixChannelSpec); // add to agg_specs!
   }
@@ -1109,7 +1164,13 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
 }
 
 void NetMonItem::GetMonVals(DataBlock* db) {
-  if ((!db) || variable.empty() || computed)  return;
+  if ((!db) || variable.empty())  return;
+  if(computed) {
+    if(data_agg) {
+      GetMonVals_DataAgg(db);
+    }
+    return;
+  }
 
   if(agg.op != Aggregate::NONE) {
     GetMonVals_Agg(db);
@@ -1166,6 +1227,77 @@ void NetMonItem::GetMonVals_Agg(DataBlock* db) {
       GetMonVal(mon++, mbval);
       db->SetData(mbval, vcs->chan_num);
     }
+  }
+}
+
+void NetMonItem::GetMonVals_DataAgg(DataBlock* db) {
+  if(!db || !data_src || agg_col.col_name.empty())  return;
+
+  DataTable sel_out;
+  bool use_sel_out = false;	// use sel_out instead of data_src
+
+  if(select_rows && select_spec.col_name.nonempty()) {
+    DataSelectSpec selspec;
+    selspec.ops.Link(&select_spec);
+    use_sel_out = taDataProc::SelectRows(&sel_out, data_src, &selspec);
+  }
+
+  if(TestError(val_specs.size != 1, "GetMonVals_DataAgg",
+	       "internal error: val_specs.size != 1 for scalar val -- report as bug!"))
+    return;
+  ChannelSpec* vcs = val_specs.FastEl(0);
+  DataCol* dc;
+  if(use_sel_out)
+    dc = sel_out.FindColName(agg_col.col_name);
+  else
+    dc = data_src->FindColName(agg_col.col_name);
+  if(!dc) return;		// err in checkconfig
+  if(!dc->isNumeric() || (dc->valType() == taBase::VT_BYTE)) return;
+
+  Variant mbval;
+  if(!matrix || !vcs->isMatrix() || !dc->isMatrix()) { // no matrix
+    if(dc->valType() == taBase::VT_DOUBLE) {
+      mbval = taMath_double::vec_aggregate((double_Matrix*)dc->AR(), agg);
+    }
+    else if(dc->valType() == taBase::VT_FLOAT) {
+      mbval = taMath_float::vec_aggregate((float_Matrix*)dc->AR(), agg);
+    }
+    else if(dc->valType() == taBase::VT_INT) {
+      int_Matrix* mat = (int_Matrix*)dc->AR();
+      taMath_float::vec_fm_ints(&agg_tmp_calc, mat);
+      mbval = taMath_float::vec_aggregate(&agg_tmp_calc, agg);
+    }
+    db->SetData(mbval, vcs->chan_num);
+  }
+  else {			// both src and dest are matrix
+    int vals = vcs->cellGeom().Product();
+    vals = MIN(vals, dc->cell_size());
+    taMatrix* dmat = db->GetSinkMatrix(vcs->chan_num); // pre-ref'ed
+    if(!dmat) return;				       // bail
+    if(dc->valType() == taBase::VT_DOUBLE) {
+      taMath_double::mat_frame_aggregate(&agg_tmp_calc_d, (double_Matrix*)dc->AR(), agg);
+      for (int j = 0; j < vals; ++j) {
+	mbval = agg_tmp_calc_d.FastEl_Flat(j);
+	dmat->SetFmVar_Flat(mbval, j);
+      }
+    }
+    else if(dc->valType() == taBase::VT_FLOAT) {
+      taMath_float::mat_frame_aggregate(&agg_tmp_calc, (float_Matrix*)dc->AR(), agg);
+      for (int j = 0; j < vals; ++j) {
+	mbval = agg_tmp_calc.FastEl_Flat(j);
+	dmat->SetFmVar_Flat(mbval, j);
+      }
+    }
+    else if(dc->valType() == taBase::VT_INT) {
+      int_Matrix* mat = (int_Matrix*)dc->AR();
+      taMath_float::vec_fm_ints(&agg_tmp_calc, mat);
+      taMath_float::mat_frame_aggregate(&agg_tmp_calc_2, &agg_tmp_calc, agg);
+      for (int j = 0; j < vals; ++j) {
+	mbval = agg_tmp_calc_2.FastEl_Flat(j);
+	dmat->SetFmVar_Flat(mbval, j);
+      }
+    }
+    taBase::UnRef(dmat);
   }
 }
 
