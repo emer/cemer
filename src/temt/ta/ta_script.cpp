@@ -88,7 +88,7 @@ bool AbstractScriptBase::CompileScript_impl() {
   bool rval = false;
   script->name = ((taBase*)GetThisPtr())->GetName();
   switch (scriptSource()) {
-  case NoScript: return false; //nothing to do
+  case NoScript: break; //nothing to do
   case ScriptString:
     rval = script->CompileCode(scriptString());
     break;
@@ -97,8 +97,8 @@ bool AbstractScriptBase::CompileScript_impl() {
     break;
   default: break;// shouldn't happen
   }
+  script_compiled = rval;
   if (rval) {
-    script_compiled = true;
     ScriptCompiled();
   }
   return rval;
@@ -180,10 +180,10 @@ const String ScriptBase::scriptFilename() {
 }
 
 AbstractScriptBase::ScriptSource ScriptBase::scriptSource() {
-  if (!script_file->fileName().empty())
-    return ScriptFile;
-  else if (!script_string.empty()) 
+  if (!script_string.empty()) 
     return ScriptString;
+  else  if (!script_file->fileName().empty())
+    return ScriptFile;
   else return NoScript;
 }
 

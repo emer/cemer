@@ -667,6 +667,14 @@ void ScriptPrjnSpec::Copy_(const ScriptPrjnSpec& cp) {
   script_string = cp.script_string;
 }
 
+void ScriptPrjnSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  
+  //make sure most recent compile succeeded
+  CheckError(!script_compiled, quiet, rval,
+    "The script did not compile -- please recompile and check console for errors");
+}
+
 void ScriptPrjnSpec::Connect_impl(Projection* prj) {
   prjn = prj;			// set the arg for the script
   RunScript();
@@ -676,14 +684,14 @@ void ScriptPrjnSpec::Connect_impl(Projection* prj) {
 void ScriptPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 //v3  UpdateReCompile();
-  CompileScript_impl();
-  if(!script_file->fname().empty()) {
+  CompileScript(true); // force
+/*v3 nuke  if(!script_file->fname().empty()) {
     //note: fname() is name only
     name = script_file->fname().before(".css");
     int i;
     for(i=0;i<s_args.size;i++)
       name += String("_") + s_args[i];
-  }
+  }*/
 }
 
 void ScriptPrjnSpec::Compile() {

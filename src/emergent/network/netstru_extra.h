@@ -202,7 +202,9 @@ public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
-  void		Connect_impl(Projection* prj);
+  override void	Connect_impl(Projection* prj);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {}
+    // NOTE: if you allow init_wts you must set wts in your script
 
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }
@@ -215,6 +217,7 @@ public:
   TA_BASEFUNS(ScriptPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
   void 	Destroy();
