@@ -1233,6 +1233,10 @@ void NetMonItem::GetMonVals_Agg(DataBlock* db) {
 void NetMonItem::GetMonVals_DataAgg(DataBlock* db) {
   if(!db || !data_src || agg_col.col_name.empty())  return;
 
+  if(TestError(val_specs.size != 1, "GetMonVals_DataAgg",
+	       "internal error: val_specs.size != 1 for computed val -- report as bug!"))
+    return;
+
   DataTable sel_out;
   bool use_sel_out = false;	// use sel_out instead of data_src
 
@@ -1240,11 +1244,11 @@ void NetMonItem::GetMonVals_DataAgg(DataBlock* db) {
     DataSelectSpec selspec;
     selspec.ops.Link(&select_spec);
     use_sel_out = taDataProc::SelectRows(&sel_out, data_src, &selspec);
+    if(TestWarning(sel_out.rows == 0, "GetMonVals_DataAgg",
+	       "select rows did not match any rows -- reverting to full data table"))
+      use_sel_out = false;
   }
 
-  if(TestError(val_specs.size != 1, "GetMonVals_DataAgg",
-	       "internal error: val_specs.size != 1 for scalar val -- report as bug!"))
-    return;
   ChannelSpec* vcs = val_specs.FastEl(0);
   DataCol* dc;
   if(use_sel_out)

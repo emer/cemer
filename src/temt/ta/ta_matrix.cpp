@@ -1176,7 +1176,8 @@ int taMatrix::SafeElIndexN(const MatrixGeom& indices) const {
   int rval = 0;
   for (int i = indices.size - 1 ; i > 0; --i) {
     int di = indices[i];
-    if(TestError(((di >= 0) && (di < geom[i])), "SafeElIndexN", "matrix index n out of bounds")) return -1;
+    if(TestError(((di < 0) || (di >= geom[i])),
+		 "SafeElIndexN", "matrix index n out of bounds")) return -1;
     rval += di;
     rval *= geom[i-1];
   }

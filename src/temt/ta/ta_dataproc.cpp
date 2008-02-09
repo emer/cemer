@@ -613,17 +613,30 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
     DataCol* dda = dest->data.FastEl(dest_idx++); // index is spec index
     if(sda->is_matrix) {
       if(sda->valType() == taBase::VT_DOUBLE) {
-	taMath_double::mat_frame_aggregate((double_Matrix*)dda->AR(), 
-					   (double_Matrix*)sda->AR(), ds->agg);
+	double_Matrix* dmat = (double_Matrix*)dda->GetValAsMatrix(0);
+	if(dmat) {
+	  taBase::Ref(dmat);
+	  taMath_double::mat_frame_aggregate(dmat, (double_Matrix*)sda->AR(), ds->agg);
+	  taBase::unRefDone(dmat);
+	}
       }
       else if(sda->valType() == taBase::VT_FLOAT) {
-	taMath_float::mat_frame_aggregate((float_Matrix*)dda->AR(), 
-					   (float_Matrix*)sda->AR(), ds->agg);
+	float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(0);
+	if(dmat) {
+	  taBase::Ref(dmat);
+	  taMath_float::mat_frame_aggregate(dmat, (float_Matrix*)sda->AR(), ds->agg);
+	  taBase::unRefDone(dmat);
+	}
       }
       else if(sda->valType() == taBase::VT_INT) {
-	int_Matrix* mat = (int_Matrix*)sda->AR();
-	taMath_float::vec_fm_ints(&float_tmp, mat);
-	taMath_float::mat_frame_aggregate((float_Matrix*)dda->AR(), &float_tmp, ds->agg);
+	float_Matrix* dmat = (float_Matrix*)dda->GetValAsMatrix(0);
+	if(dmat) {
+	  taBase::Ref(dmat);
+	  int_Matrix* mat = (int_Matrix*)sda->AR();
+	  taMath_float::vec_fm_ints(&float_tmp, mat);
+	  taMath_float::mat_frame_aggregate(dmat, &float_tmp, ds->agg);
+	  taBase::unRefDone(dmat);
+	}
       }
     }
     else {			// scalar
