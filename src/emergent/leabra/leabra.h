@@ -146,9 +146,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API WtSigSpec : public taBase {
+class LEABRA_API WtSigSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sigmoidal weight function specification
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		gain;		// #DEF_6 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1.25 offset of the function (1=centered at .5, >1=higher, <1=lower)
@@ -169,6 +169,8 @@ public:
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(WtSigSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -413,9 +415,9 @@ private:
 //////////////////////////////////////////////////////////////////////////
 //			Unit Level Code
 
-class LEABRA_API ActFunSpec : public taBase {
+class LEABRA_API ActFunSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum IThrFun {	       
     STD,			// include all currents (except bias weights) in inhibitory threshold computation
@@ -433,6 +435,8 @@ public:
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(ActFunSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };

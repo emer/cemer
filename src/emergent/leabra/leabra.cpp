@@ -73,6 +73,11 @@ void WtSigSpec::Initialize() {
   off = 1.25f;
 }
 
+void WtSigSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
+}
+
 void LearnMixSpec::Initialize() {
   hebb = .001f;
   err = 1.0f - hebb;
@@ -366,6 +371,11 @@ void ActFunSpec::Initialize() {
   nvar = .005f;
   avg_dt = .005f;
   i_thr = STD;
+}
+
+void ActFunSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(owner) owner->UpdateAfterEdit(); // update our unitspec so it can recompute lookup function!
 }
 
 void SpikeFunSpec::Initialize() {
