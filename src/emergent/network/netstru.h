@@ -220,7 +220,7 @@ class EMERGENT_API ConSpec: public BaseSpec {
   // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection 
 INHERITED(BaseSpec)
 public:
-  Random	rnd;		// #CAT_ConSpec Weight randomization specification
+  Random	rnd;		// #CAT_ConSpec Weight randomization specification.  Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc
   WeightLimits	wt_limits;	// #CAT_ConSpec limits on weight sign, symmetry
 
   inline void		C_ApplyLimits(Connection* cn, Unit*, Unit*)

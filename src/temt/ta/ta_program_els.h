@@ -33,7 +33,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS(CodeBlock);
+  PROGEL_SIMPLE_BASEFUNS(CodeBlock);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
@@ -62,7 +62,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS(ProgVars);
+  PROGEL_SIMPLE_BASEFUNS(ProgVars);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -87,7 +87,7 @@ public:
   
   override void		SetProgExprFlags();
   override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(UserScript);
+  PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
   override void UpdateAfterEdit_impl();
   override const String	GenCssBody_impl(int indent_level);
@@ -104,7 +104,7 @@ public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
   override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(WhileLoop);
+  PROGEL_SIMPLE_BASEFUNS(WhileLoop);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
@@ -122,7 +122,7 @@ public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
   override String	GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(DoLoop);
+  PROGEL_SIMPLE_BASEFUNS(DoLoop);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
@@ -144,7 +144,7 @@ public:
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
 
-  TA_SIMPLE_BASEFUNS(ForLoop);
+  PROGEL_SIMPLE_BASEFUNS(ForLoop);
 protected:
   virtual void	GetIndexVar(); // make default 'i' variable in program.vars -- just makes it easier to deal with loops in default case..
 
@@ -166,7 +166,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS(IfContinue);
+  PROGEL_SIMPLE_BASEFUNS(IfContinue);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -185,7 +185,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS(IfBreak);
+  PROGEL_SIMPLE_BASEFUNS(IfBreak);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -204,7 +204,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS(IfReturn);
+  PROGEL_SIMPLE_BASEFUNS(IfReturn);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -225,7 +225,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS(If);
+  PROGEL_SIMPLE_BASEFUNS(If);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -248,7 +248,7 @@ public:
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   
-  TA_SIMPLE_BASEFUNS(IfElse);
+  PROGEL_SIMPLE_BASEFUNS(IfElse);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
@@ -274,7 +274,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS(IfGuiPrompt);
+  PROGEL_SIMPLE_BASEFUNS(IfGuiPrompt);
 protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -297,7 +297,7 @@ public:
 
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS(CaseBlock);
+  PROGEL_SIMPLE_BASEFUNS(CaseBlock);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
@@ -327,9 +327,8 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(Switch, Program);
+  PROGEL_SIMPLE_BASEFUNS(Switch);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
@@ -358,9 +357,8 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(AssignExpr, Program);
+  PROGEL_SIMPLE_BASEFUNS(AssignExpr);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -381,9 +379,8 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(VarIncr, Program);
+  PROGEL_SIMPLE_BASEFUNS(VarIncr);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -413,7 +410,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MethodCall, Program);
+  PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -443,7 +440,7 @@ public:
   virtual bool		GetTypeFromPath(bool quiet = false);
   // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberProgEl, Program);
+  PROGEL_SIMPLE_BASEFUNS(MemberProgEl);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -463,7 +460,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS(MemberAssign);
+  PROGEL_SIMPLE_BASEFUNS(MemberAssign);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -484,7 +481,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS(MemberFmArg);
+  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
@@ -505,14 +502,11 @@ public:
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
-  ProgExpr		expr; // the expression to compute and assign to the member
-  bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
-  
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(MemberMethodCall, Program);
+  PROGEL_SIMPLE_BASEFUNS(MemberMethodCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -569,9 +563,8 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(PrintVar, Program);
+  PROGEL_SIMPLE_BASEFUNS(PrintVar);
 protected:
-  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
@@ -589,7 +582,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  TA_SIMPLE_BASEFUNS(PrintExpr);
+  PROGEL_SIMPLE_BASEFUNS(PrintExpr);
 
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -607,7 +600,7 @@ public:
   override String	GetDisplayName() const;
   override String	GetTypeDecoKey() const { return "Comment"; }
 
-  TA_SIMPLE_BASEFUNS(Comment);
+  PROGEL_SIMPLE_BASEFUNS(Comment);
 
 protected:
   override bool		useDesc() const {return false;} 
@@ -624,7 +617,7 @@ INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  TA_SIMPLE_BASEFUNS(StopStepPoint);
+  PROGEL_SIMPLE_BASEFUNS(StopStepPoint);
 
 protected:
   override const String	GenCssBody_impl(int indent_level);
@@ -643,7 +636,7 @@ public:
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  TA_SIMPLE_BASEFUNS(ReturnExpr);
+  PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
 
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -671,9 +664,8 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(OtherProgramVar, Program);
+  PROGEL_SIMPLE_BASEFUNS(OtherProgramVar);
 protected:
-  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
   override const String	GenCssPre_impl(int indent_level); 
@@ -699,7 +691,7 @@ public:
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  TA_SIMPLE_BASEFUNS(ProgVarFmArg);
+  PROGEL_SIMPLE_BASEFUNS(ProgVarFmArg);
 
 protected:
   override void UpdateAfterEdit_impl();
@@ -720,7 +712,7 @@ INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
-  TA_SIMPLE_BASEFUNS(RegisterArgs);
+  PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
 
 protected:
   override const String	GenCssBody_impl(int indent_level);

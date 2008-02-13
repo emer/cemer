@@ -398,9 +398,8 @@ public:
   // get actual data table pointer from variable
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataOneProg, Program);
+  PROGEL_SIMPLE_BASEFUNS(DataOneProg);
 protected:
-  override void UpdateAfterEdit_impl();
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
@@ -430,7 +429,7 @@ public:
 
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataLoop, Program);
+  PROGEL_SIMPLE_BASEFUNS(DataLoop);
 protected:
   virtual void	GetOrderVar(); // make an order variable in program if not already set
   virtual void	GetIndexVar(); // make an index variable in program if not already set
@@ -466,9 +465,8 @@ public:
 
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataVarProg, Program);
+  PROGEL_SIMPLE_BASEFUNS(DataVarProg);
 protected:
-  override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
   override const String	GenCssBody_impl(int indent_level);
@@ -483,7 +481,7 @@ class TA_API DataVarProgMatrix : public DataVarProg {
   // A program element for exchanging information between program variables and data table values in columns with the same names as the variables -- for matrix variables up to 4 cells (var_1 is first cell, var_2 is second cell..), name of column is var name before last '_'
 INHERITED(DataVarProg)
 public:
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataVarProgMatrix, Program);
+  TA_BASEFUNS_NOCOPY(DataVarProgMatrix);
 protected:
   override bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
 			      const String& il, int var_no);
@@ -549,9 +547,8 @@ public:
   // #CAT_Data update the data table pointer(s) for the spec in this prog (so the user can choose columns from the appropriate data table)
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DataSrcDestProg, Program);
+  PROGEL_SIMPLE_BASEFUNS(DataSrcDestProg);
 protected:
-  override void UpdateAfterEdit_impl();
   override void	 CheckThisConfig_impl(bool quiet, bool& rval);
 private:
   void	Initialize();
@@ -663,13 +660,12 @@ public:
   ProgVarRef		src_b_data_var;	// variable pointing to second source data for operation
   DataJoinSpec		join_spec; 	// #SHOW_TREE data grouping specification
 
-
   virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
 
   override void	UpdateSpecDataTable();
 
   override String GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(DataJoinProg);
+  PROGEL_SIMPLE_BASEFUNS(DataJoinProg);
 protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -712,7 +708,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
 
   override String GetDisplayName() const;
-  TA_SIMPLE_BASEFUNS(DataCalcLoop);
+  PROGEL_SIMPLE_BASEFUNS(DataCalcLoop);
 protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);

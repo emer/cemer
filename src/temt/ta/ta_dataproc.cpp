@@ -1252,19 +1252,12 @@ void DataProcCall::Initialize() {
 void DataOneProg::Initialize() {
 }
 
-void DataOneProg::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-
-  UpdateProgVarRef_NewOwner(data_var);
-}
-
 void DataOneProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!data_var, quiet, rval, "data_var is NULL")) return; // fatal
   CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
   CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
 	     "data_var variable does not point to a DataTable object");
-  CheckProgVarRef(data_var, quiet, rval);
 }
 
 DataTable* DataOneProg::GetData() {
@@ -1326,9 +1319,6 @@ void DataLoop::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(data_var);
-  UpdateProgVarRef_NewOwner(index_var);
-  UpdateProgVarRef_NewOwner(order_var);
   GetOrderVar();
   GetIndexVar();
 }
@@ -1343,9 +1333,6 @@ void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
   CheckError(!index_var, quiet, rval, "index_var = NULL");
   CheckError(!order_var, quiet, rval, "order_var = NULL");
-  CheckProgVarRef(data_var, quiet, rval);
-  CheckProgVarRef(index_var, quiet, rval);
-  CheckProgVarRef(order_var, quiet, rval);
 }
 
 const String DataLoop::GenCssPre_impl(int indent_level) {
@@ -1403,24 +1390,9 @@ void DataVarProg::Initialize() {
   set_data = false;
 }
 
-void DataVarProg::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-
-  UpdateProgVarRef_NewOwner(row_var);
-  UpdateProgVarRef_NewOwner(var_1);
-  UpdateProgVarRef_NewOwner(var_2);
-  UpdateProgVarRef_NewOwner(var_3);
-  UpdateProgVarRef_NewOwner(var_4);
-}
-
 void DataVarProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
-  CheckProgVarRef(row_var, quiet, rval);
-  CheckProgVarRef(var_1, quiet, rval);
-  CheckProgVarRef(var_2, quiet, rval);
-  CheckProgVarRef(var_3, quiet, rval);
-  CheckProgVarRef(var_4, quiet, rval);
 }
 
 String DataVarProg::GetDisplayName() const {
@@ -1617,21 +1589,12 @@ const String DoneWritingDataRow::GenCssBody_impl(int indent_level) {
 void DataSrcDestProg::Initialize() {
 }
 
-void DataSrcDestProg::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-
-  UpdateProgVarRef_NewOwner(src_data_var);
-  UpdateProgVarRef_NewOwner(dest_data_var);
-}
-
 void DataSrcDestProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!src_data_var, quiet, rval, "src_data_var is NULL")) return; // fatal
   CheckError(!src_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "src_data_var variable does not point to a DataTable object");
-  CheckProgVarRef(src_data_var, quiet, rval);
-  CheckProgVarRef(dest_data_var, quiet, rval);
   // NULL OK in dest_data_var!
 }
 
@@ -1909,7 +1872,6 @@ void DataGroupProg::AddAllColumns() {
 void DataJoinProg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   join_spec.name = "join_spec";
-  UpdateProgVarRef_NewOwner(src_b_data_var);
   UpdateSpecDataTable();
 }
 
@@ -1940,7 +1902,6 @@ void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!src_b_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_b_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "src_b_data_var variable does not point to a DataTable object");
-  CheckProgVarRef(src_b_data_var, quiet, rval);
 }
 
 void DataJoinProg::CheckChildConfig_impl(bool quiet, bool& rval) {

@@ -767,6 +767,8 @@ public:
   // #CAT_ObjectMgmt called after editing, or any user change to members (eg. in the interface, script)
   virtual void		ChildUpdateAfterEdit(TAPtr child, bool& handled);
   // #IGNORE called by a child in its UAE routine; provides child notifications  NOTE: only member objects are detected; subclasses that want to notify on owned TAPtr members must override and check for those instances manually
+  virtual void		UpdateAfterMove(taBase* old_owner);
+  // #IGNORE called after object has been moved from one location to another in the object hierarchy (i.e., list Transfer fun) -- actual functions should be put in the _impl version which should call inherited:: etc just as for UAE -- use for updating pointers etc
   virtual void		UpdateAllViews();
   // #CAT_Display called after data changes, to update views
   virtual void		RebuildAllViews();
@@ -791,6 +793,8 @@ public:
 protected:  // Impl
   virtual void		UpdateAfterEdit_impl() {}
   // this is the preferred place to put all UAE actions, so they all take place before the notify
+  virtual void		UpdateAfterMove_impl(taBase* old_owner) {}
+  // for actions that should be performed after object has been moved from one location to another in the structure hierarchy
 
   ///////////////////////////////////////////////////////////////////////////
   //	Data Links -- notify other guys when you change
@@ -1418,7 +1422,7 @@ protected: // must use macro below to make instance classes
 //  taSmartRefT() {} 
   
 public:
-  T* operator=(const T& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
+  T* operator=(const taSmartRefT<T,td>& src) {set((T*)src.m_ptr); return (T*)m_ptr;}
   T* operator=(T* src) {set(src); return (T*)m_ptr;}
   TypeDef* GetDataTypeDef() const {return (m_ptr) ? m_ptr->GetTypeDef() : &td;}
   taSmartRefT() {}  //
@@ -1741,6 +1745,7 @@ public:
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 
   override bool	RemoveIdx(int idx);
+  override bool Transfer(taBase* item);
 
   virtual void	EnforceType();
   // #CAT_Modify enforce current type (all elements have to be of this type)

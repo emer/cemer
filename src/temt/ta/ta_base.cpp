@@ -1203,6 +1203,13 @@ void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {
   }
 }
 
+void taBase::UpdateAfterMove(taBase* old_owner) {
+  UpdateAfterMove_impl(old_owner);
+  //  DataChanged(DCR_ITEM_UPDATED);  no extra notify -- list takes care of it.  should
+  // just _impl doing updating of pointers etc -- just have _impl stuff because it always
+  // ends up being needed eventually..
+}
+
 void taBase::UpdateAllViews() {
   if(taMisc::gui_active)
     DataChanged(DCR_UPDATE_VIEWS);
@@ -3223,6 +3230,13 @@ bool taList_impl::RemoveIdx(int i) {
   if(el_def >= size-1)
     el_def = 0;
   return taPtrList_ta_base::RemoveIdx(i);
+}
+
+bool taList_impl::Transfer(taBase* item) {
+  taBase* oldo = item->GetOwner();
+  bool rval = Transfer_((void*)item);
+  item->UpdateAfterMove(oldo);
+  return rval;
 }
 
 int taList_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {

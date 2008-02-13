@@ -569,11 +569,6 @@ void Switch::Initialize() {
   cases.SetBaseType(&TA_CaseBlock);
 }
 
-void Switch::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(switch_var);
-}
-
 void Switch::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!switch_var, quiet, rval, "switch_var is NULL");
@@ -709,15 +704,9 @@ void Switch::CasesFmEnum_dyn() {
 void AssignExpr::Initialize() {
 }
 
-void AssignExpr::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(result_var);
-}
-
 void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!result_var, quiet, rval, "result_var is NULL");
-  CheckProgVarRef(result_var, quiet, rval);
   expr.CheckConfig(quiet, rval);
 }
 
@@ -751,15 +740,9 @@ void VarIncr::Initialize() {
   expr.expr = "1";
 }
 
-void VarIncr::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(var);
-}
-
 void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!var, quiet, rval, "var is NULL");
-  CheckProgVarRef(var, quiet, rval);
   expr.CheckConfig(quiet, rval);
 }
 
@@ -805,9 +788,6 @@ void MethodCall::UpdateAfterEdit_impl() {
     obj_type = obj->act_object_type();
   else obj_type = &TA_taBase; // placeholder
 
-  UpdateProgVarRef_NewOwner(result_var);
-  UpdateProgVarRef_NewOwner(obj);
-
 //  if(!taMisc::is_loading && method)
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
@@ -821,8 +801,6 @@ void MethodCall::UpdateAfterEdit_impl() {
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
-  CheckProgVarRef(result_var, quiet, rval);
-  CheckProgVarRef(obj, quiet, rval);
   CheckError(!method, quiet, rval, "method is NULL");
 }
 
@@ -904,8 +882,6 @@ void MemberProgEl::UpdateAfterEdit_impl() {
   }
 
   GetTypeFromPath();
-
-  UpdateProgVarRef_NewOwner(obj);
 }
 
 bool MemberProgEl::GetTypeFromPath(bool quiet) {
@@ -923,7 +899,6 @@ bool MemberProgEl::GetTypeFromPath(bool quiet) {
 void MemberProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!obj, quiet, rval, "obj is NULL");
-  CheckProgVarRef(obj, quiet, rval);
   CheckError(path.empty(), quiet, rval, "path is empty");
 }
 
@@ -1030,7 +1005,6 @@ void MemberMethodCall::Initialize() {
 
 void MemberMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(result_var);
 
 //  if(!taMisc::is_loading && method)
   if (method) { // needed to set required etc.
@@ -1044,7 +1018,6 @@ void MemberMethodCall::UpdateAfterEdit_impl() {
 
 void MemberMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckProgVarRef(result_var, quiet, rval);
   CheckError(!method, quiet, rval, "method is NULL");
 }
 
@@ -1117,25 +1090,9 @@ void MiscCall::Initialize() {
 void PrintVar::Initialize() {
 }
 
-void PrintVar::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(print_var);
-  UpdateProgVarRef_NewOwner(print_var2);
-  UpdateProgVarRef_NewOwner(print_var3);
-  UpdateProgVarRef_NewOwner(print_var4);
-  UpdateProgVarRef_NewOwner(print_var5);
-  UpdateProgVarRef_NewOwner(print_var6);
-}
-
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   //  CheckError(!print_var, quiet, rval, "print_var is NULL");
-  CheckProgVarRef(print_var, quiet, rval);
-  CheckProgVarRef(print_var2, quiet, rval);
-  CheckProgVarRef(print_var3, quiet, rval);
-  CheckProgVarRef(print_var4, quiet, rval);
-  CheckProgVarRef(print_var5, quiet, rval);
-  CheckProgVarRef(print_var6, quiet, rval);
 }
 
 const String PrintVar::GenCssBody_impl(int indent_level) {
@@ -1289,21 +1246,9 @@ void OtherProgramVar::Initialize() {
   set_other = false;
 }
 
-void OtherProgramVar::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(var_1);
-  UpdateProgVarRef_NewOwner(var_2);
-  UpdateProgVarRef_NewOwner(var_3);
-  UpdateProgVarRef_NewOwner(var_4);
-}
-
 void OtherProgramVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!other_prog, quiet, rval, "other_prog is NULL");
-  CheckProgVarRef(var_1, quiet, rval);
-  CheckProgVarRef(var_2, quiet, rval);
-  CheckProgVarRef(var_3, quiet, rval);
-  CheckProgVarRef(var_4, quiet, rval);
 }
 
 String OtherProgramVar::GetDisplayName() const {

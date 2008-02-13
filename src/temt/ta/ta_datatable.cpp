@@ -2366,10 +2366,13 @@ int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str
   return rval;
 }
 
-void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, int max_recs) {
+void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str, int max_recs, bool reset_first) {
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
-  if(flr->istrm)
+  if(flr->istrm) {
+    if(reset_first)
+      RemoveAllRows();
     LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
+  }
   flr->Close();
   taRefN::unRefDone(flr);
 }

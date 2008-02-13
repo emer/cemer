@@ -154,9 +154,6 @@ void NetGroupedDataLoop::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(data_var);
-  UpdateProgVarRef_NewOwner(group_order_var);
-  UpdateProgVarRef_NewOwner(item_order_var);
   GetOrderVars();
   GetIndexVars();
 }
@@ -173,11 +170,6 @@ void NetGroupedDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!item_index_var, quiet, rval, "item_index_var = NULL");
   CheckError(!group_order_var, quiet, rval, "group_order_var = NULL");
   CheckError(!item_order_var, quiet, rval, "item_order_var = NULL");
-  CheckProgVarRef(data_var, quiet, rval);
-  CheckProgVarRef(group_index_var, quiet, rval);
-  CheckProgVarRef(item_index_var, quiet, rval);
-  CheckProgVarRef(group_order_var, quiet, rval);
-  CheckProgVarRef(item_order_var, quiet, rval);
 }
 
 void NetGroupedDataLoop::GetGroupList() {
@@ -307,8 +299,6 @@ void NetCounterInit::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(network_var);
-  UpdateProgVarRef_NewOwner(local_ctr_var);
   GetLocalCtrVar();
 }
 
@@ -319,8 +309,6 @@ void NetCounterInit::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError((bool)network_var && !network_var->object_val, quiet, rval,
 	     "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
-  CheckProgVarRef(network_var, quiet, rval);
-  CheckProgVarRef(local_ctr_var, quiet, rval);
 }
 
 String NetCounterInit::GetDisplayName() const {
@@ -369,8 +357,6 @@ void NetCounterIncr::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(network_var);
-  UpdateProgVarRef_NewOwner(local_ctr_var);
   GetLocalCtrVar();
 }
 
@@ -381,8 +367,6 @@ void NetCounterIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError((bool)network_var && !network_var->object_val, quiet, rval,
 	     "network_var object = NULL");
   CheckError(!local_ctr_var, quiet, rval, "local_ctr_var = NULL");
-  CheckProgVarRef(network_var, quiet, rval);
-  CheckProgVarRef(local_ctr_var, quiet, rval);
 }
 
 String NetCounterIncr::GetDisplayName() const {
@@ -427,8 +411,6 @@ void NetUpdateView::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(network_var);
-  UpdateProgVarRef_NewOwner(update_var);
   GetUpdateVar();
 }
 
@@ -436,8 +418,6 @@ void NetUpdateView::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!network_var, quiet, rval, "network_var = NULL");
   CheckError(!update_var, quiet, rval, "update_var = NULL");
-  CheckProgVarRef(network_var, quiet, rval);
-  CheckProgVarRef(update_var, quiet, rval);
 }
 
 String NetUpdateView::GetDisplayName() const {
@@ -483,10 +463,6 @@ void InitNamedUnits::UpdateAfterEdit_impl() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
 
-  UpdateProgVarRef_NewOwner(input_data_var);
-  UpdateProgVarRef_NewOwner(unit_names_var);
-  UpdateProgVarRef_NewOwner(network_var);
-
   GetInputDataVar();
   GetUnitNamesVar();
   GetNetworkVar();
@@ -498,9 +474,6 @@ void InitNamedUnits::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!input_data_var, quiet, rval, "input_data = NULL");
   CheckError(!unit_names_var, quiet, rval, "unit_names = NULL");
-  CheckProgVarRef(input_data_var, quiet, rval);
-  CheckProgVarRef(unit_names_var, quiet, rval);
-  CheckProgVarRef(network_var, quiet, rval);
 }
 
 String InitNamedUnits::GetDisplayName() const {
@@ -739,14 +712,12 @@ void SetUnitsLit::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(input_data_var);
   GetInputDataVar();
 }
 
 void SetUnitsLit::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!input_data_var, quiet, rval, "input_data = NULL");
-  CheckProgVarRef(input_data_var, quiet, rval);
 }
 
 String SetUnitsLit::GetDisplayName() const {
@@ -833,19 +804,12 @@ void SetUnitsVar::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying() || prg->isDestroying()) return;
-  UpdateProgVarRef_NewOwner(input_data_var);
-  UpdateProgVarRef_NewOwner(offset);
-  UpdateProgVarRef_NewOwner(unit_1);
-  UpdateProgVarRef_NewOwner(unit_2);
-  UpdateProgVarRef_NewOwner(unit_3);
-  UpdateProgVarRef_NewOwner(unit_4);
   GetInputDataVar();
 }
 
 void SetUnitsVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!input_data_var, quiet, rval, "input_data = NULL");
-  CheckProgVarRef(input_data_var, quiet, rval);
   if(!CheckError((bool)unit_1 && unit_1->var_type != ProgVar::T_DynEnum, quiet, rval, 
 		 "unit_1 is not a DynEnum variable -- must be one associated with layer unit names!"))
     CheckError((bool)unit_1 && !unit_1->dyn_enum_val.enum_type, quiet, rval, 

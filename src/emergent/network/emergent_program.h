@@ -44,7 +44,7 @@ public:
 
   override String GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS(NetDataLoop);
+  PROGEL_SIMPLE_BASEFUNS(NetDataLoop);
 protected:
   override const String	GenCssPre_impl(int indent_level); 
 
@@ -82,7 +82,7 @@ public:
   // initialize the group_idx_list from the data: idx's are where group name changes
   virtual void  GetItemList(int group_idx); // 
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetGroupedDataLoop, Program);
+  PROGEL_SIMPLE_BASEFUNS(NetGroupedDataLoop);
 protected:
   virtual void	GetOrderVars(); // make order variables in program
   virtual void	GetIndexVars(); // make index variables in program if not already set
@@ -141,7 +141,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetCounterInit, Program);
+  PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -166,7 +166,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetCounterIncr, Program);
+  PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -189,7 +189,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(NetUpdateView, Program);
+  PROGEL_SIMPLE_BASEFUNS(NetUpdateView);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -236,7 +236,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(InitNamedUnits, Program);
+  PROGEL_SIMPLE_BASEFUNS(InitNamedUnits);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -267,7 +267,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(SetUnitsLit, Program);
+  PROGEL_SIMPLE_BASEFUNS(SetUnitsLit);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -299,7 +299,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(SetUnitsVar, Program);
+  PROGEL_SIMPLE_BASEFUNS(SetUnitsVar);
 protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);

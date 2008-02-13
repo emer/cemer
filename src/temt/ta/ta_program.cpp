@@ -1099,7 +1099,6 @@ bool ProgVar_List::BrowserCollapseAll() {
   return prog->BrowserCollapseAll_ProgItem(this);
 }
 
-
 //////////////////////////
 //   ProgVarRef_List	//
 //////////////////////////
@@ -1196,7 +1195,19 @@ void ProgExprBase::CutLinks() {
 void ProgExprBase::Copy_(const ProgExprBase& cp) {
   expr = cp.expr;
   flags = cp.flags;
-  UpdateAfterEdit_impl();	// updates all pointers!  no need for extra call..
+  var_expr = cp.var_expr;
+  var_names = cp.var_names;
+  bad_vars = cp.bad_vars;
+
+  //  vars = cp.vars;
+  // the above copy does not set the owner!
+  vars.Reset();
+  for(int i=0;i<cp.vars.size;i++) {
+    ProgVarRef* pvr = new ProgVarRef;
+    vars.Add(pvr);
+    pvr->Init(this);
+    pvr->set(cp.vars[i]->ptr());
+  }
 }
 
 void ProgExprBase::UpdateAfterEdit_impl() {
@@ -1216,6 +1227,16 @@ void ProgExprBase::UpdateAfterEdit_impl() {
 		    // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
 		    );
     }
+  }
+}
+
+void ProgExprBase::UpdateProgExpr_NewOwner() {
+  // note: this is assumed to be called *prior* to any updating of pointers!
+  ProgEl* pel = GET_MY_OWNER(ProgEl);
+  if(!pel) return;
+  for(int i=0;i<vars.size;i++) {
+    ProgVarRef* pvr = vars[i];
+    pel->UpdateProgVarRef_NewOwner(*pvr);
   }
 }
 
@@ -1497,6 +1518,12 @@ void ProgExpr_List::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
 }
 
+void ProgExpr_List::UpdateProgExpr_NewOwner() {
+  for (int i = 0; i < size; ++ i) {
+    ProgExpr* pe = FastEl(i);
+    pe->UpdateProgExpr_NewOwner();
+  }
+}
 //////////////////////////
 //   ProgArg		//
 //////////////////////////
@@ -1635,6 +1662,13 @@ bool ProgArg::BrowserCollapseAll() {
 void ProgArg_List::Initialize() {
   SetBaseType(&TA_ProgArg);
   setUseStale(true);
+}
+
+void ProgArg_List::UpdateProgExpr_NewOwner() {
+  for (int i = 0; i < size; ++ i) {
+    ProgArg* pa = FastEl(i);
+    pa->expr.UpdateProgExpr_NewOwner();
+  }
 }
 
 void ProgArg_List::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -1788,6 +1822,77 @@ void ProgEl::Copy_(const ProgEl& cp) {
   flags = cp.flags;
 }
 
+void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
+  if(!old_owner) return;
+  Program* myprg = GET_MY_OWNER(Program);
+  Program* otprg = (Program*)old_owner->GetOwner(&TA_Program);
+  if(!myprg || !otprg || myprg == otprg) return;
+  // don't update if not relevant
+
+  inherited::UpdateAfterMove_impl(old_owner);
+  // automatically perform all necessary housekeeping functions!
+  TypeDef* td = GetTypeDef();
+  for(int i=0;i<td->members.size;i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFrom(&TA_ProgExprBase)) {
+      ProgExprBase* peb = (ProgExprBase*)md->GetOff((void*)this);
+      peb->UpdateProgExpr_NewOwner();
+    }
+    else if(md->type->InheritsFrom(&TA_ProgArg_List)) {
+      ProgArg_List* peb = (ProgArg_List*)md->GetOff((void*)this);
+      peb->UpdateProgExpr_NewOwner();
+    }
+    else if(md->type->InheritsFrom(&TA_ProgExpr_List)) {
+      ProgExpr_List* peb = (ProgExpr_List*)md->GetOff((void*)this);
+      peb->UpdateProgExpr_NewOwner();
+    }
+    else if(md->type->InheritsFrom(&TA_ProgVarRef)) {
+      ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
+      UpdateProgVarRef_NewOwner(*pvr);
+    }
+  }
+
+  UpdatePointers_NewPar(otprg, myprg); // do the generic function to catch anything else..
+  taProject* myproj = GET_OWNER(myprg, taProject);
+  taProject* otproj = GET_OWNER(otprg, taProject);
+  if(myproj && otproj && (myproj != otproj))
+    UpdatePointers_NewPar(otproj, myproj);
+  // then do it again if moving between projects
+}
+
+void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
+  Program* myprg = GET_MY_OWNER(Program);
+  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
+  if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING)) return;
+  // don't update if already being taken care of at higher level
+
+  // automatically perform all necessary housekeeping functions!
+  TypeDef* td = GetTypeDef();
+  for(int i=0;i<td->members.size;i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFrom(&TA_ProgExprBase)) {
+      ProgExprBase* peb = (ProgExprBase*)md->GetOff((void*)this);
+      peb->UpdateProgExpr_NewOwner();
+    }
+    else if(md->type->InheritsFrom(&TA_ProgArg_List)) {
+      ProgArg_List* peb = (ProgArg_List*)md->GetOff((void*)this);
+      peb->UpdateProgExpr_NewOwner();
+    }
+    else if(md->type->InheritsFrom(&TA_ProgExpr_List)) {
+      ProgExpr_List* peb = (ProgExpr_List*)md->GetOff((void*)this);
+      peb->UpdateProgExpr_NewOwner();
+    }
+    else if(md->type->InheritsFrom(&TA_ProgVarRef)) {
+      ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
+      UpdateProgVarRef_NewOwner(*pvr);
+    }
+  }
+
+  UpdatePointers_NewPar(otprg, myprg); // do the generic function to catch anything else..
+  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject);
+  // then do it again if moving between projects
+}
+
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
 			    const char* d, const char* e, const char* f,
 			    const char* g, const char* h) const {
@@ -1823,17 +1928,45 @@ bool ProgEl::CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval) {
 }
 
 bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
-  if(!pvr) return false;
+  ProgVar* cur_ptr = pvr.ptr();
+  if(!cur_ptr) return false;
   Program* myprg = GET_MY_OWNER(Program);
-  Program* otprg = GET_OWNER(pvr.ptr(), Program);
-  if(!myprg || myprg == otprg) return false; // not updated
-  ProgVar* nvar = myprg->FindVarName(pvr->name);
-  if(TestWarning(!nvar, "UpdtProgVar", "variable of name:",pvr->name,
-		 "not found in new Program -- is now NULL and must be set manually")) {
+  Program* otprg = GET_OWNER(cur_ptr, Program);
+  if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING)) return false; // not updated
+  String var_nm = cur_ptr->name;
+  String cur_path = cur_ptr->GetPath(NULL, otprg);
+  ProgVar* pv = (ProgVar*)myprg->FindFromPath(cur_path);
+  if(pv && (pv->name == var_nm)) { pvr.set(pv); return true; }
+  // ok, this is where we find same name or make one
+  String cur_own_path = cur_ptr->owner->GetPath(NULL, otprg);
+  taBase* pv_own_tab = myprg->FindFromPath(cur_own_path);
+  if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
+    taMisc::Warning("Warning: could not find owner for program variable:", 
+		    var_nm, "in program:", myprg->name, "on path:",
+		    cur_own_path, "setting var to null!");
     pvr.set(NULL);
     return false;
   }
-  pvr.set(nvar);
+  ProgVar_List* pv_own = (ProgVar_List*)pv_own_tab;
+  pv = pv_own->FindName(var_nm);
+  if(pv) { pvr.set(pv); return true; }	// got it!
+  pv = myprg->FindVarName(var_nm); // do more global search
+  if(pv) { pvr.set(pv); return true; }	// got it!
+  // now we need to add a clone of cur_ptr to our local list and use that!!
+  pv = (ProgVar*)cur_ptr->Clone();
+  pv_own->Add(pv);
+  pv->name = var_nm;		// just to be sure
+  pv->DataChanged(DCR_ITEM_UPDATED);
+  pvr.set(pv); // done!!
+  taMisc::Info("Note: copied program variable:", 
+	       var_nm, "from program:", otprg->name, "to program:",
+	       myprg->name, "because copied program element refers to it");
+  taProject* myproj = GET_OWNER(myprg, taProject);
+  taProject* otproj = GET_OWNER(otprg, taProject);
+  // update possible var pointers from other project!
+  if(myproj && otproj && (myproj != otproj)) {
+    pv->UpdatePointers_NewPar(otproj, myproj);
+  }
   return true;
 }
 
@@ -1843,6 +1976,19 @@ bool ProgEl::CheckConfig_impl(bool quiet) {
     return true;
   }
   return inherited::CheckConfig_impl(quiet);
+}
+
+void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  // automatically perform all necessary housekeeping functions!
+  TypeDef* td = GetTypeDef();
+  for(int i=0;i<td->members.size;i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFrom(&TA_ProgVarRef)) {
+      ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
+      CheckProgVarRef(*pvr, quiet, rval);
+    }
+  }
 }
 
 void ProgEl::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
@@ -2059,8 +2205,6 @@ void StaticMethodCall::Initialize() {
 void StaticMethodCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  UpdateProgVarRef_NewOwner(result_var);
-
 //  if(!taMisc::is_loading && method)
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
@@ -2073,7 +2217,6 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
 
 void StaticMethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckProgVarRef(result_var, quiet, rval);
   CheckError(!method, quiet, rval, "method is NULL");
 }
 
@@ -2128,8 +2271,11 @@ String StaticMethodCall::GetDisplayName() const {
 
 
 void ProgramCall::Initialize() {
-  // this is highly unusual -- should be in initlinks, not here in initialize..
-  //  taBase::Own(target, this);
+}
+
+void ProgramCall::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+  // NOTE: base fun does full update of pointers -- could also lookup by name if null or something..
 }
 
 void ProgramCall::UpdateAfterEdit_impl() {
@@ -2479,15 +2625,12 @@ void FunctionCall::Initialize() {
 
 void FunctionCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateProgVarRef_NewOwner(result_var);
-
   UpdateArgs();		// always do this.. nondestructive and sometimes stuff changes anyway
 }
 
 void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!fun, quiet, rval, "fun is NULL");
-  CheckProgVarRef(result_var, quiet, rval);
   if(fun) {
     Program* myprg = GET_MY_OWNER(Program);
     Program* otprg = GET_OWNER(fun.ptr(), Program);

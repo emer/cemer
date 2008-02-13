@@ -45,18 +45,13 @@ class ProgramCall; //
 /////////////////////////////////////////////////////////////////////
 //		IMPORTANT CODING NOTES:
 
-// Any object that contains a ProgVarRef or other program-local object
-// reference should use the TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(Type,Program)
-// basefuns, to ensure that pointers are properly updated
-// if copied between different programs!
+// you must use PROGEL_SIMPLE_BASEFUNS macro instead of TA_SIMPLE_BASEFUNS
+// for all ProgEl types that contain a ProgVarRef or a ProgExpr
+// or, use PROGEL_SIMPLE_COPY or directly call UpdateAfterCopy if defining
+// custom copy functions.
 
-// Also, UpdateProgVarRef_NewOwner(ProgVarRef& pvr); must be called
-// in UpdateAfterEdit_impl for such programs
-
-// Also, pretty much any place where a user can enter an expression,
-// use ProgExpr -- it handles variable name updates automatically!
-// and also provides lookup of variable names
-
+// Note: ProgEl now automatically does update stuff in UpdateAfterMove_impl
+// and does CheckProgVarRef in CheckThisConfig, so these calls are not necc
 
 ///////////////////////////////////////////////////////////
 //		Program Types
@@ -79,10 +74,10 @@ public:
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();
 
-  override String GetDesc() const { return desc; }
-  override String GetTypeDecoKey() const { return "ProgType"; }
-  override bool	  FindCheck(const String& nm) const { return (name == nm); }
-  override void   SetDefaultName() {} // make it local to list, set by list
+  override String 	GetDesc() const { return desc; }
+  override String 	GetTypeDecoKey() const { return "ProgType"; }
+  override bool	  	FindCheck(const String& nm) const { return (name == nm); }
+  override void   	SetDefaultName() {} // make it local to list, set by list
   TA_SIMPLE_BASEFUNS(ProgType);
 protected:
   override void 	UpdateAfterEdit_impl();
@@ -257,7 +252,7 @@ public:
 
   override String	GetDisplayName() const;
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
+  TA_SIMPLE_BASEFUNS(DynEnum);
 protected:
   override void CheckThisConfig_impl(bool quiet, bool& rval);
 
@@ -433,16 +428,22 @@ public:
   ProgVarRef*	FindVarName(const String& var_nm, int& idx = no_index) const;
   // return ref pointing to given var name (NULL if not found)
 
-  override void	El_Done_(void* it)	{ delete (ProgVarRef*)it; }
-
   virtual int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   virtual int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   virtual int	UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr);
 
+  void		operator=(const ProgVarRef_List& cp) { Reset(); Duplicate(cp); }
+
   ProgVarRef_List() {Initialize();}
+  ProgVarRef_List(const ProgVarRef_List& cp) { Reset(); Duplicate(cp); }
   ~ProgVarRef_List();
 protected:
   String	El_GetName_(void* it) const { if(((ProgVarRef*)it)->ptr()) return ((ProgVarRef*)it)->ptr()->GetName(); return _nilString; }
+  void		El_Done_(void* it)	{ delete (ProgVarRef*)it; }
+  void*		El_MakeToken_(void* it) { return new ProgVarRef; }
+  void*		El_Copy_(void* trg, void* src)
+  { *((ProgVarRef*)trg) = *((ProgVarRef*)src); return trg; }
+
 private:
   void Initialize();
 };
@@ -461,11 +462,11 @@ public:
   String	expr;		// #EDIT_DIALOG #LABEL_ enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
   ExprFlags	flags;		// #HIDDEN #NO_SAVE Flags for controlling expression behavior -- should not be saved because they are set by the owning program every time
-  String	var_expr;	// #READ_ONLY #HIDDEN expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
+  String	var_expr;	// #READ_ONLY #HIDDEN #NO_SAVE expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)
 
-  ProgVarRef_List vars;		// #READ_ONLY #HIDDEN list of program variables that appear in the expression
-  String_Array	var_names;	// #READ_ONLY #HIDDEN original variable names associated with vars list -- useful for user info if a variable goes out of existence..
-  String_Array	bad_vars;	// #READ_ONLY #HIDDEN list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
+  ProgVarRef_List vars;		// #READ_ONLY #HIDDEN #NO_SAVE list of program variables that appear in the expression
+  String_Array	var_names;	// #READ_ONLY #HIDDEN #NO_SAVE original variable names associated with vars list -- useful for user info if a variable goes out of existence..
+  String_Array	bad_vars;	// #READ_ONLY #HIDDEN #NO_SAVE list of variable names that are not found in the expression (may be fine if declared locally elsewhere, or somewhere hidden -- just potentially bad)
 
   static cssProgSpace	parse_prog; // #IGNORE program space for parsing
   static cssSpace	parse_tmp;  // #IGNORE temporary el's created during parsing (for types)
@@ -499,6 +500,9 @@ public:
   inline void		SetExprFlagState(ExprFlags flg, bool on)
   { if(on) SetExprFlag(flg); else ClearExprFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
+
+  virtual void	UpdateProgExpr_NewOwner();
+  // update program expression after it has been moved/copied to a new owner -- this will identify any variables that are not present in the new program and copy them from the old owner -- must be called before messing with any of the vars progvarref's pointers (should be a copy/same as prior ones)
 
   override int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
   override int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
@@ -552,6 +556,9 @@ public:
 
   override String GetTypeDecoKey() const { return "ProgExpr"; }
   
+  virtual void	UpdateProgExpr_NewOwner();
+  // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
+
   TA_BASEFUNS_NOCOPY(ProgExpr_List);
 protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
@@ -615,6 +622,9 @@ public:
   override String GetTypeDecoKey() const { return "ProgArg"; }
   virtual const String	GenCssBody_impl(int indent_level); 
   
+  virtual void	UpdateProgExpr_NewOwner();
+  // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
+
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();
@@ -627,9 +637,18 @@ private:
   void	Destroy() {Reset();}
 };
 
+#define PROGEL_SIMPLE_COPY(T) \
+  void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); \
+    UpdateAfterCopy(cp); }
+
+#define PROGEL_SIMPLE_BASEFUNS(T) \
+  PROGEL_SIMPLE_COPY(T);  \
+  SIMPLE_LINKS(T); \
+  TA_BASEFUNS(T)
 
 class TA_API ProgEl: public taOBase {
   // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
+friend class ProgExprBase;
 INHERITED(taOBase)
 public:
   enum ProgFlags { // #BITS flags for modifying program element function or other information
@@ -684,6 +703,9 @@ public:
   TA_BASEFUNS(ProgEl);
 
 protected:
+  override void		UpdateAfterMove_impl(taBase* old_owner);
+  virtual void		UpdateAfterCopy(const ProgEl& cp);
+  // uses type information to do a set of automatic updates of pointers (smart refs) after copy
   override void		CheckError_msg(const char* a, const char* b=0, const char* c=0,
 				       const char* d=0, const char* e=0, const char* f=0,
 				       const char* g=0, const char* h=0) const;
@@ -692,9 +714,10 @@ protected:
   virtual bool		CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval);
   // check program variable reference to make sure it is in same Program scope as this progel
   virtual bool		UpdateProgVarRef_NewOwner(ProgVarRef& pvr);
-  // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found; put in UpdateAfterEdit_impl for any guy containing progvarref's
+  // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found -- auto called by UpdateAfterMove and UpdateAfterCopy
 
   override bool 	CheckConfig_impl(bool quiet);
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 					     int dcr, void* op1_, void* op2_);
 
@@ -789,7 +812,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(StaticMethodCall, Program);
+  PROGEL_SIMPLE_BASEFUNS(StaticMethodCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -817,7 +840,7 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
-  TA_SIMPLE_BASEFUNS(Function);
+  PROGEL_SIMPLE_BASEFUNS(Function);
 protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -879,7 +902,7 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
 
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(FunctionCall, Program);
+  PROGEL_SIMPLE_BASEFUNS(FunctionCall);
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -1320,11 +1343,11 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
 
-  // note: scope here is project, as it is calling outside of program
-  TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(ProgramCall, taProject);
+  PROGEL_SIMPLE_BASEFUNS(ProgramCall);
 protected:
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
+  override void		UpdateAfterMove_impl(taBase* old_owner);
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override const String	GenCssPre_impl(int indent_level); 
