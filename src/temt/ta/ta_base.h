@@ -728,6 +728,8 @@ public:
 public:  
   virtual int	 	Dump_Load_impl(istream& strm, TAPtr par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_impl(strm, (void*)this, par); }
+  virtual void		Dump_Load_pre() {};
+  // #IGNORE -- called just before single-object Load_strm -- use to reset stuff prior to loading
   virtual int	 	Dump_Load_Value(istream& strm, TAPtr par=NULL) // #IGNORE
   { return GetTypeDef()->Dump_Load_Value(strm, (void*)this, par); }
   virtual void 		Dump_Load_post() {} 
@@ -1716,6 +1718,7 @@ public:
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
   virtual int 	Dump_Save_PathR_impl(ostream& strm, TAPtr par, int indent); // #IGNORE
+  override void	Dump_Load_pre();
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   override void	SearchNameContains(const String& nm, taBase_PtrList& items,

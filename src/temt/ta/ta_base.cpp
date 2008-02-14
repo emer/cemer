@@ -959,6 +959,7 @@ taFiler* taBase::GetFiler(TypeItem* td, const String& exts,
 }
 
 int taBase::Load_strm(istream& strm, TAPtr par, taBase** loaded_obj_ptr) { 
+  Dump_Load_pre();
   int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr); 
   if(loaded_obj_ptr) {
     if(*loaded_obj_ptr) (*loaded_obj_ptr)->setDirty(false);
@@ -2934,6 +2935,12 @@ int taList_impl::Dump_SaveR(ostream& strm, TAPtr par, int indent) {
   return true;
 }
 
+void taList_impl::Dump_Load_pre() {
+  inherited::Dump_Load_pre();	// called only when directly loading this group!
+  //  Reset(); // actually can't do this because same fun is used for loading
+  // entire list/group as for one new element in the group.. hmm.
+}
+
 int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
   int c = taMisc::skip_white(strm);
   if(c == EOF)	return EOF;
@@ -2993,8 +3000,11 @@ int taList_impl::Dump_Load_Value(istream& strm, TAPtr par) {
 			 el_base->name)) return false;
 	  el_typ = eltd;
 	  // ensure that enough items are present (don't do full enforce size)
-	  if(size < idx)
+ 	  if(size < idx)
 	    New(idx - size, el_typ);
+	  // actually, probably much better to do full enforce size!  but this case is weird
+	  // not sure if it actually still gets processed -- why would it??
+	  //	  SetSize(idx);
 	  c = taMisc::skip_white(strm);
 	  if(c == '{') {
 	    return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);

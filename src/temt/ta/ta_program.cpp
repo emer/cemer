@@ -2914,6 +2914,11 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   prog_code.CheckConfig(quiet, rval);
 }
 
+void Program::Dump_Load_pre() {
+  inherited::Dump_Load_pre();
+  Reset();			// reset prior to loading!
+}
+
 int Program::Call(Program* caller) {
   setRunState(RUN);
   int rval = Cont_impl();

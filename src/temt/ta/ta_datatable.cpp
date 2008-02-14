@@ -847,11 +847,17 @@ void DataTable::Dump_Load_post() {
   AutoLoadData();
 }
 
+void DataTable::Dump_Load_pre() {
+  inherited::Dump_Load_pre();
+  Reset();			// always reset prior to load because new data could be diff!
+}
+
 int DataTable::Dump_Load_Value(istream& strm, TAPtr par) {
   int c = inherited::Dump_Load_Value(strm, par);
   if (c == EOF) return EOF;
   if (c == 2) return 2; // signal that it was just a path
   // otherwise, if data was loaded, we need to set the rows
+  rows = 0;
   for (int i = 0; i < cols(); ++i) {
     DataCol* col = data.FastEl(i);
     int frms = col->AR()->frames();

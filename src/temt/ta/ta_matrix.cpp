@@ -629,9 +629,6 @@ int taMatrix::Dump_Load_Item(istream& strm, int idx) {
 }
 
 int taMatrix::Dump_Load_Value(istream& strm, TAPtr par) {
-//NOTE: this code is compatible with early 4.0 beta release which 
-// didn't save the members and only saved the data
-
   int c = taMisc::skip_white(strm);
   if(c == EOF)	return EOF;
   if(c == ';')	return 2;	// signal that its a path

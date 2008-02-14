@@ -198,6 +198,7 @@ public:
   override bool		SetFileName(const String& val);
   override int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 
+  override void		Dump_Load_pre();
   override void		PostLoadAutos();
   // perform post-loading automatic functions
   void			OpenViewers(); // open any yet unopen viewers

@@ -4702,6 +4702,15 @@ void Network::SetProjectionDefaultTypes(Projection* prjn) {
   prjn->spec.type = &TA_FullPrjnSpec; 
 }
 
+void Network::Dump_Load_pre() {
+  inherited::Dump_Load_pre();
+  SetBaseFlag(DESTROYING);	// needed to prevent specs from going crazy rebuilding
+  layers.Reset();
+  specs.Reset();
+  view_objs.Reset();
+  ClearBaseFlag(DESTROYING);
+}
+
 int Network::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = inherited::Dump_Load_Value(strm, par);
   if(rval)

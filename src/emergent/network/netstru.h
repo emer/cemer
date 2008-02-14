@@ -2137,8 +2137,8 @@ public:
   // #CAT_DMem distribute units to different nodes
 #endif
 
-//TODO???  TypeDef*	GetDefaultView() { return &TA_NetView; } // #IGNORE default view
-  int		Dump_Load_Value(istream& strm, taBase* par=NULL);
+  override void	Dump_Load_pre();
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   override int 	Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
 
   override String 	GetTypeDecoKey() const { return "Network"; }

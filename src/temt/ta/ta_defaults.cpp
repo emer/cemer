@@ -55,8 +55,12 @@ void TypeDefault::InitLinks() {
   taBase::Own(active_membs, this);
 }
 
-int TypeDefault::Dump_Load_Value(istream& strm, TAPtr par) {
+void TypeDefault::Dump_Load_pre() {
+  inherited::Dump_Load_pre();
   active_membs.Reset();		// remove all members before loading..
+}
+
+int TypeDefault::Dump_Load_Value(istream& strm, TAPtr par) {
   int rval = taNBase::Dump_Load_Value(strm, par);
   if(rval == 1)
     UpdateAfterEdit();

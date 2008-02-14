@@ -53,6 +53,7 @@ public:
   virtual void	SetTypeDefaults()		{ taNBase::SetTypeDefaults(); }
   virtual void	SetTypeDefaults(TAPtr tok);	   // set defaults for a given token
 
+  void	Dump_Load_pre();
   int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
   void	InitLinks();

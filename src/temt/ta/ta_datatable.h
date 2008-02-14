@@ -1044,6 +1044,7 @@ public:
   // #IGNORE perform auto loading of data from file when data table is loaded (called by PostLoadAutos) -- true if loaded
   override void		Dump_Load_post();
 
+  override void		Dump_Load_pre();
   override int 		Dump_Load_Value(istream& strm, TAPtr par);
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 

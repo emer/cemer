@@ -1157,6 +1157,7 @@ public: // XxxGui versions provide feedback to the user
 
   override String 	GetTypeDecoKey() const { return "Program"; }
   override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
+  override void		Dump_Load_pre();
 
   void	InitLinks();
   void	CutLinks();

@@ -613,6 +613,18 @@ bool taProject::SetFileName(const String& val) {
   return true;
 }
 
+void taProject::Dump_Load_pre() {
+  inherited::Dump_Load_pre();
+  viewers.Reset(); 
+  programs.Reset();
+  data_proc.Reset();
+  data.Reset();
+  edits.Reset();
+  wizards.Reset();
+  docs.Reset();
+  templates.Reset();
+}
+
 int taProject::Save_strm(ostream& strm, TAPtr par, int indent) {
 #ifdef TA_GUI
   if (use_change_log) {
