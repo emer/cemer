@@ -2480,6 +2480,16 @@ void Projection::Copy_(const Projection& cp) {
   UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
 }
 
+void Projection::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+
+  if(!old_owner) return;
+  Network* mynet = GET_MY_OWNER(Network);
+  Network* otnet = (Network*)old_owner->GetOwner(&TA_Network);
+  if(!mynet || !otnet || mynet == otnet) return;  // don't update if not relevant
+  UpdatePointers_NewPar(otnet, mynet);
+}
+
 void Projection::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(!taMisc::is_loading)
@@ -3354,6 +3364,16 @@ void Layer::Copy_(const Layer& cp) {
 
   // not copied
   //  send_prjns.BorrowUnique(cp.send_prjns); // link group
+}
+
+void Layer::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+
+  if(!old_owner) return;
+  Network* mynet = GET_MY_OWNER(Network);
+  Network* otnet = (Network*)old_owner->GetOwner(&TA_Network);
+  if(!mynet || !otnet || mynet == otnet) return;  // don't update if not relevant
+  UpdatePointers_NewPar(otnet, mynet);
 }
 
 void Layer::UpdateAfterEdit() {

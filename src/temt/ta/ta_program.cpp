@@ -1823,13 +1823,16 @@ void ProgEl::Copy_(const ProgEl& cp) {
 }
 
 void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+
   if(!old_owner) return;
   Program* myprg = GET_MY_OWNER(Program);
   Program* otprg = (Program*)old_owner->GetOwner(&TA_Program);
   if(!myprg || !otprg || myprg == otprg) return;
   // don't update if not relevant
 
-  inherited::UpdateAfterMove_impl(old_owner);
+  // todo: this can now theoretically be done by UpdatePointers_NewPar_FindNew
+  // but this was written first and it works..
   // automatically perform all necessary housekeeping functions!
   TypeDef* td = GetTypeDef();
   for(int i=0;i<td->members.size;i++) {
@@ -1866,6 +1869,8 @@ void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
   if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING)) return;
   // don't update if already being taken care of at higher level
 
+  // todo: this can now theoretically be done by UpdatePointers_NewPar_FindNew
+  // but this was written first and it works..
   // automatically perform all necessary housekeeping functions!
   TypeDef* td = GetTypeDef();
   for(int i=0;i<td->members.size;i++) {

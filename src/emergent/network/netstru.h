@@ -1087,7 +1087,8 @@ protected:
   ConSpec*	m_prv_con_spec;	// previous con spec set for cons 
 
   override void UpdateAfterEdit_impl();
-  override void  CheckThisConfig_impl(bool quiet, bool& rval);
+  override void UpdateAfterMove_impl(taBase* old_owner);
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
 //  override taiDataLink*	ConstrDataLink(DataViewer* viewer_, const TypeDef* link_type);
 private:
   void 	Initialize();
@@ -1598,6 +1599,7 @@ protected:
   UnitSpec*	m_prv_unit_spec; // previous unit spec set for units in layer
 
   override void 	UpdateAfterEdit_impl();
+  override void 	UpdateAfterMove_impl(taBase* old_owner);
   virtual void		ApplyLayerFlags(Unit::ExtType act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
   virtual void		ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
