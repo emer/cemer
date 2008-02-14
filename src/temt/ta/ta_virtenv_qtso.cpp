@@ -1054,17 +1054,19 @@ void VEWorldView::SetupLights() {
 
   SoGroup* lgt_group = node_so->getLightGroup();
   int n_lgt = 0;
-  if(wl->light_0) {
-    VELight* vlgt = wl->light_0.ptr();
-    SoLight* lt = (SoLight*)lgt_group->getChild(0);
-    vlgt->ConfigLight(lt);
-    n_lgt++;
-  }
-  if((n_lgt == 1) && (bool)wl->light_1) {
-    VELight* vlgt = wl->light_1.ptr();
-    SoLight* lt = (SoLight*)lgt_group->getChild(1);
-    vlgt->ConfigLight(lt);
-    n_lgt++;
+  if(lgt_group->getNumChildren() > 0) {
+    if(wl->light_0) {
+      VELight* vlgt = wl->light_0.ptr();
+      SoLight* lt = (SoLight*)lgt_group->getChild(0);
+      vlgt->ConfigLight(lt);
+      n_lgt++;
+    }
+    if((n_lgt == 1) && (bool)wl->light_1 && (lgt_group->getNumChildren() > 1)) {
+      VELight* vlgt = wl->light_1.ptr();
+      SoLight* lt = (SoLight*)lgt_group->getChild(1);
+      vlgt->ConfigLight(lt);
+      n_lgt++;
+    }
   }
 
   if(wl->sun_light.on) {
