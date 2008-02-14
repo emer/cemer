@@ -170,6 +170,8 @@ public:
   virtual BaseSpec_Group* GetSpecGroup();		 // get the group where specs go
   virtual void	GetSpecOfType();			 // get a spec of type type
 
+  override taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
+						 taBase* new_par);
   override int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
   TA_BASEFUNS(SpecPtr_impl);

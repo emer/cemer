@@ -428,9 +428,12 @@ public:
   ProgVarRef*	FindVarName(const String& var_nm, int& idx = no_index) const;
   // return ref pointing to given var name (NULL if not found)
 
-  virtual int	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  virtual int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
-  virtual int	UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr);
+  virtual int	UpdatePointers_NewPar(taBase* lst_own, taBase* old_par, taBase* new_par);
+  // lst_own is the owner of this list
+  virtual int	UpdatePointers_NewParType(taBase* lst_own, TypeDef* par_typ, taBase* new_par);
+  // lst_own is the owner of this list
+  virtual int	UpdatePointers_NewObj(taBase* lst_own, taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr);
+  // lst_own is the owner of this list
 
   void		operator=(const ProgVarRef_List& cp) { Reset(); Duplicate(cp); }
 
@@ -537,8 +540,8 @@ class TA_API ProgExpr : public ProgExprBase {
 INHERITED(ProgExprBase)
 public:
 
-  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
-  DynEnumItem*	enum_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a dynamic enum variable and add it to the current expression (this field then returns to empty/NULL)
+  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  DynEnumItem*	enum_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a dynamic enum variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
   TA_BASEFUNS_NOCOPY(ProgExpr);
@@ -987,7 +990,7 @@ public:
   static RunState	GetGlobalRunState(); // gets the global run state, i.e. is ANY program running, stopped, etc.
   
   Program_Group*	prog_gp;
-  // #NO_SHOW #READ_ONLY #NO_SAVE our owning program group -- needed for control panel stuff
+  // #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER our owning program group -- needed for control panel stuff
 
   RunState		run_state;
   // #READ_ONLY #NO_SAVE this program's run state

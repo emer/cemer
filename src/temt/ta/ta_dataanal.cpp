@@ -962,14 +962,14 @@ bool taDataAnal::SmoothImpl(DataTable* smooth_data, bool view, DataTable* src_da
 				 dbl_kern, keep_edges);
     }
     else if(da->valType() == VT_INT) { // expensive double-convert..
-      int_Matrix* mat = (int_Matrix*)da->AR();
+      int_Matrix* mat = (int_Matrix*)sda->AR();
       taMath_float::vec_fm_ints(&float_tmp, mat);
       float_tmp2.SetGeomN(mat->geom);
       if(da->isMatrix())
 	taMath_float::mat_frame_convolve(&float_tmp2, &float_tmp, flt_kern);
       else
 	taMath_float::vec_convolve(&float_tmp2, &float_tmp, flt_kern, keep_edges);
-      int_Matrix* smat = (int_Matrix*)sda->AR();
+      int_Matrix* smat = (int_Matrix*)da->AR();
       taMath_float::vec_to_ints(smat, &float_tmp2);
     }
   }

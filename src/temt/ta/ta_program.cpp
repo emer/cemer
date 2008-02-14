@@ -1134,29 +1134,29 @@ ProgVarRef* ProgVarRef_List::FindVarName(const String& var_nm, int& idx) const {
   return NULL;
 }
 
-int ProgVarRef_List::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
+int ProgVarRef_List::UpdatePointers_NewPar(taBase* lst_own, taBase* old_par, taBase* new_par) {
   int nchg = 0;
   for(int i=size-1; i>=0; i--) {
     ProgVarRef* vrf = FastEl(i);
-    nchg += taBase::UpdatePointers_NewPar_Ref(*vrf, old_par, new_par);
+    nchg += lst_own->UpdatePointers_NewPar_Ref(*vrf, old_par, new_par);
   }
   return nchg;
 }
 
-int ProgVarRef_List::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
+int ProgVarRef_List::UpdatePointers_NewParType(taBase* lst_own, TypeDef* par_typ, taBase* new_par) {
   int nchg = 0;
   for(int i=size-1; i>=0; i--) {
     ProgVarRef* vrf = FastEl(i);
-    nchg += taBase::UpdatePointers_NewParType_Ref(*vrf, par_typ, new_par);
+    nchg += lst_own->UpdatePointers_NewParType_Ref(*vrf, par_typ, new_par);
   }
   return nchg;
 }
 
-int ProgVarRef_List::UpdatePointers_NewObj(taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr) {
+int ProgVarRef_List::UpdatePointers_NewObj(taBase* lst_own, taBase* ptr_owner, taBase* old_ptr, taBase* new_ptr) {
   int nchg = 0;
   for(int i=size-1; i>=0; i--) {
     ProgVarRef* vrf = FastEl(i);
-    nchg += taBase::UpdatePointers_NewObj_Ref(*vrf, ptr_owner, old_ptr, new_ptr);
+    nchg += lst_own->UpdatePointers_NewObj_Ref(*vrf, ptr_owner, old_ptr, new_ptr);
   }
   return nchg;
 }
@@ -1262,19 +1262,19 @@ void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 int ProgExprBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
-  nchg += vars.UpdatePointers_NewPar(old_par, new_par);
+  nchg += vars.UpdatePointers_NewPar(this, old_par, new_par);
   return nchg;
 }
 
 int ProgExprBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
-  nchg += vars.UpdatePointers_NewParType(par_typ, new_par);
+  nchg += vars.UpdatePointers_NewParType(this, par_typ, new_par);
   return nchg;
 }
 
 int ProgExprBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
-  nchg += vars.UpdatePointers_NewObj(this, old_ptr, new_ptr);
+  nchg += vars.UpdatePointers_NewObj(this, this, old_ptr, new_ptr);
   return nchg;
 }
 

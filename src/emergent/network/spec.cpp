@@ -531,6 +531,30 @@ void SpecPtr_impl::Copy_(const SpecPtr_impl& cp) {
   base_type = cp.base_type;
 }
 
+taBase* SpecPtr_impl::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
+						    taBase* new_par) {
+  taBase* new_guy = inherited::UpdatePointers_NewPar_FindNew(old_guy, old_par, new_par);
+  String og_nm = old_guy->GetName();
+  if(old_guy->InheritsFrom(&TA_BaseSpec) && old_guy->GetOwner() && 
+     (!new_guy || (og_nm != new_guy->GetName()))) {
+    // still not right -- look globally
+    BaseSpec_Group* spgp = GetSpecGroup();
+    if(spgp) {
+      new_guy = spgp->FindSpecName(og_nm);
+      if(!new_guy) {
+	/// just make a new one!
+	new_guy = old_guy->Clone();
+	spgp->Add(new_guy);
+	new_guy->SetName(og_nm);
+	new_guy->DataChanged(DCR_ITEM_UPDATED);
+	taMisc::Info("Note: copied Spec:", og_nm,
+		     "into .specs on new network because it was not otherwise found");
+      }
+    }
+  }
+  return new_guy;
+}
+
 int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   BaseSpec* sp = GetSpec();
   if(sp != old_ptr) return 0;

@@ -435,7 +435,7 @@ public:
   String		path;
   // path to the member -- can just be member name (use member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
   MemberDef*		member_lookup;
-  // #AKA_member #TYPE_ON_obj_type #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
+  // #TYPE_ON_obj_type #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
   
   virtual bool		GetTypeFromPath(bool quiet = false);
   // get obj_type from current path (also gives warnings about bad paths unless quiet = true)

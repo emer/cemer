@@ -349,6 +349,7 @@ class EMERGENT_API UnitPtrList: public taPtrList<Unit> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network list of unit pointers, for sending connections
 public:
   int UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  int UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   int UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
 
   ~UnitPtrList()             { Reset(); }
@@ -481,6 +482,7 @@ public:
   // #CAT_Structure make connection links in all the sending units (assumes that these are initially empty, as after loading or copying)
 
   int 	UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  int	UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
   int 	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   bool	ChangeMyType(TypeDef* new_type);
   
@@ -975,7 +977,7 @@ public:
   String		name;		// #READ_ONLY #SHOW name of the projection -- this is generated automatically based on the from name
 #endif
 
-  Layer* 		layer;    	// #READ_ONLY #NO_SAVE #HIDDEN layer this prjn is in
+  Layer* 		layer;    	// #READ_ONLY #NO_SAVE #HIDDEN #NO_SET_POINTER layer this prjn is in
   PrjnSource 		from_type;	// #CAT_Structure #APPLY_IMMED Source of the projections
   LayerRef		from;		// #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)
   ProjectionSpec_SPtr	spec;		// #CAT_Structure spec for this item
@@ -1186,7 +1188,7 @@ class EMERGENT_API Unit_Group: public taGroup<Unit> {
   // #NO_UPDATE_AFTER ##CAT_Network ##SCOPE_Network ##NO_EXPAND_ALL a group of units
 INHERITED(taGroup<Unit>)
 public:
-  Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW layer owner
+  Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW #NO_SET_POINTER layer owner
   PosTDCoord	pos;		// #CAT_Structure position of group relative to the layer
   bool		unique_geom;	// #APPLY_IMMED #DEF_false #CAT_Structure if true, this unit group has a unique geometry different from the layer geometry (otherwise, geom is always copied from lay->un_geom)
   XYNGeom	geom;		// #CONDEDIT_ON_unique_geom:true #CAT_Structure geometry of the group: layout and number of units
@@ -1336,7 +1338,7 @@ public:
     PROJECT_WTS_DONE    = 0x0020,	// #NO_SHOW this layer is done with weight projection operation (prevents loops)
   };
 
-  Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure Network this layer is in
+  Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
   LayerFlags		flags;		// flags controlling various aspects of layer funcdtion
   LayerType		layer_type;     // #CAT_Activation type of layer: determines default way that external inputs are presented, and helps with other automatic functions (e.g., wizards)
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)

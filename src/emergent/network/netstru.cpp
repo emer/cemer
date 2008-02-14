@@ -354,6 +354,13 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   return nchg;
 }
 
+int UnitPtrList::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) { 
+  if(size <= 0) return 0;
+  Unit* itm = FastEl(0);
+  taBase* old_par = itm->GetOwner(par_typ);
+  return UpdatePointers_NewPar(old_par, new_par);
+}
+
 int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   int nchg = 0;
   for(int i=size-1; i>=0; i--) {
@@ -467,6 +474,12 @@ void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
 int RecvCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) { 
   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
   nchg += units.UpdatePointers_NewPar(old_par, new_par);
+  return nchg;
+}
+
+int RecvCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) { 
+  int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
+  nchg += units.UpdatePointers_NewParType(par_typ, new_par);
   return nchg;
 }
 
