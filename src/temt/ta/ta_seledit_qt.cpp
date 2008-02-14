@@ -267,6 +267,7 @@ void iSelectEditDataHost::GetValue_Membs_def() {
         md->im->GetMbrValue(mb_dat, item->base, first_diff); 
         if (!first_diff)
           taiMember::EndScript(item->base);
+	item->base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
       }
       ++itm_idx;
     }
