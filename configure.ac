@@ -250,10 +250,7 @@ if test x"$gui" = x"true"; then
                                                     CPPFLAGS="$CPPFLAGS $sim_ac_soqt_cppflags"
                                                     LDFLAGS="$LDFLAGS $sim_ac_soqt_ldflags"
                                                     LIBS="$LIBS $sim_ac_soqt_libs"
-                                                    SIM_AC_HAVE_SIMAGE_IFELSE([SIM_AC_CONFIGURATION_SETTING([Simage],[v.$sim_ac_simage_version])
-                                                                               CPPFLAGS="$CPPFLAGS $sim_ac_simage_cppflags"
-                                                                               LDFLAGS="$LDFLAGS $sim_ac_simage_ldflags"
-                                                                               LIBS="$LIBS $sim_ac_simage_libs"],
+                                                    SIM_AC_HAVE_SIMAGE_IFELSE([SIM_AC_CONFIGURATION_SETTING([Simage],[v.$sim_ac_simage_version])],
                                                                                [SIM_AC_CONFIGURATION_WARNING([Failed to detect Simage. Textures will not work.])])],
                                                    [SIM_AC_CONFIGURATION_WARNING([Failed to detect the SoQt development system])])],
                           [SIM_AC_CONFIGURATION_WARNING([Failed to detect the Coin development system])])
