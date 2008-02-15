@@ -828,10 +828,12 @@ public:
   virtual bool	CreateODE();	// #CAT_ODE create world in ode (if not already created) -- returns false if unable to create
   virtual void	DestroyODE();	// #CAT_ODE destroy world in ode (if created)
   virtual void	SetValsToODE();
-  // #BUTTON #CAT_ODE set the current values to ODE (creates id's if not already done)
+  // #CAT_ODE set the current values to ODE (creates id's if not already done)
   virtual void	GetValsFmODE();
   // #CAT_ODE get the updated values from ODE after computing (called after each step)
 
+  virtual void	Init() { SetValsToODE(); }
+  // #BUTTON #CAT_ODE initialize the virtual environment, placing all objects in their init configurations, updating with any added objects, etc
   virtual void	Step();		
   // #BUTTON #CAT_ODE take one step of integration, and get updated values
 

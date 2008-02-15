@@ -417,6 +417,7 @@ void DtSpec::Initialize() {
   vm = 0.3f;
   net = 0.7f;
   d_vm_max = 0.025f;
+  midpoint = false;
   vm_eq_cyc = 0;
   vm_eq_dt = 1.0f;
 }
@@ -967,7 +968,7 @@ void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhi
 }
 
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, LeabraNetwork* net) {
-  if(dt.vm_eq_cyc > net->cycle) {
+  if(net->cycle < dt.vm_eq_cyc) {
     // directly go to equilibrium value
     float new_v_m= (((u->net * e_rev.e) + (u->gc.l * e_rev.l) + (u->gc.i * e_rev.i) +
 		     (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a)) / 
@@ -976,11 +977,18 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, Leabr
     u->v_m += dt.vm_eq_dt * u->I_net;
   }
   else {
+    float v_m_eff = u->v_m;
+    if(dt.midpoint) {
+      float I_net_1 = 
+	(u->net * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) + 
+	(u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
+	(u->gc.a * (e_rev.a - v_m_eff));
+      v_m_eff += .5f * dt.vm * I_net_1; // go half way
+    }
     u->I_net = 
-      (u->net * (e_rev.e - u->v_m)) + (u->gc.l * (e_rev.l - u->v_m)) + 
-      (u->gc.i * (e_rev.i - u->v_m)) + (u->gc.h * (e_rev.h - u->v_m)) +
-      (u->gc.a * (e_rev.a - u->v_m));
-
+      (u->net * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) + 
+      (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
+      (u->gc.a * (e_rev.a - v_m_eff));
     float dvm = dt.vm * u->I_net;
     if(dvm > dt.d_vm_max) dvm = dt.d_vm_max;
     else if(dvm < -dt.d_vm_max) dvm = -dt.d_vm_max;
