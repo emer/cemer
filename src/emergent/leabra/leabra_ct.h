@@ -357,10 +357,32 @@ private:
 // 	Ct Layer
 //////////////////////////////////
 
+class LEABRA_API CtLayerInhibMod : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
+INHERITED(taBase)
+public:
+  bool		use_sin;	// if on, actually use layer-level sinusoidal values (burst_i, trough_i) -- else use network level
+  float		burst_i;	// #CONDEDIT_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
+  float		trough_i;	// #CONDEDIT_ON_use_sin [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
+  bool		use_fin;	// if on, actually use layer-level final values (inhib_i) -- else use network level
+  float		inhib_i;	// #CONDEDIT_ON_use_fin [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
+
+  SIMPLE_COPY(CtLayerInhibMod);
+  TA_BASEFUNS(CtLayerInhibMod);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API CtLeabraLayerSpec : public LeabraLayerSpec {
   // continuous time leabra layer spec: most abstract version of continous time
 INHERITED(LeabraLayerSpec)
 public:
+  CtLayerInhibMod	ct_inhib_mod; // layer-level inhibitory modulation parameters, to be used instead of network-level values where needed
+
   virtual void 	Init_SdEffWt(CtLeabraLayer* lay, CtLeabraNetwork* net);
   // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
   // #CAT_Learning compute one cycle of continuous time processing
@@ -383,7 +405,7 @@ public:
 
   override bool CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
 
-  TA_BASEFUNS_NOCOPY(CtLeabraLayerSpec);
+  TA_SIMPLE_BASEFUNS(CtLeabraLayerSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
 private:
@@ -479,13 +501,13 @@ public:
   float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
   float		trough_i;	// [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
 
-  float		GetInhibMod(int ct_cycle) {
+  float		GetInhibMod(int ct_cycle, float bi, float ti) {
     if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
     float rads = ((float)(ct_cycle - start) / (float)duration) * taMath_float::pi;
     if(!burst_only) rads *= 2.0f;
     float sinval = -taMath_float::sin(rads);
-    if(sinval < 0.0f) 	sinval *= burst_i; // signs are reversed for inhib vs activation
-    else		sinval *= trough_i;
+    if(sinval < 0.0f) 	sinval *= bi; // signs are reversed for inhib vs activation
+    else		sinval *= ti;
     return sinval;
   }
   // returns inhibitory modulation to apply as a fraction of computed kwta value
@@ -508,11 +530,11 @@ public:
   int		end;		// number of cycles into inhib phase for inhibition ramp to end -- remains at full inhibition level from end to end of inhib phase
   float		inhib_i;	// [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
 
-  float		GetInhibMod(int inh_cyc) {
+  float		GetInhibMod(int inh_cyc, float ii) {
     if(inh_cyc < start) return 0.0f;
     if(inh_cyc >= end) return inhib_i;
     float slp = (float)(inh_cyc - start) / (float)(end - start);
-    return slp * inhib_i;
+    return slp * ii;
   }
   // returns inhibitory modulation to apply as a fraction of computed kwta value
 

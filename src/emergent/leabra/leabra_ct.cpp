@@ -179,6 +179,14 @@ void CtLeabraLayer::Copy_(const CtLeabraLayer& cp) {
   mean_cai_max = cp.mean_cai_max;
 }
 
+void CtLayerInhibMod::Initialize() {
+  use_sin = false;
+  burst_i = 0.02f;
+  trough_i = 0.02f;
+  use_fin = false;
+  inhib_i = 0.0f;
+}
+
 void CtLeabraLayerSpec::Initialize() {
   min_obj_type = &TA_CtLeabraLayer;
   decay.event = 0.0f;
@@ -238,8 +246,18 @@ void CtLeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
 
 
 void CtLeabraLayerSpec::Compute_CtDynamicInhib(CtLeabraLayer* lay, CtLeabraNetwork* net) {
-  float imod = net->ct_sin_i.GetInhibMod(net->ct_cycle) +
-    net->ct_fin_i.GetInhibMod(net->ct_cycle - net->ct_time.inhib_start);
+  float bi = net->ct_sin_i.burst_i;
+  float ti = net->ct_sin_i.trough_i;
+  if(ct_inhib_mod.use_sin) {
+    bi = ct_inhib_mod.burst_i;
+    ti = ct_inhib_mod.trough_i;
+  }
+  float ii = net->ct_fin_i.inhib_i;
+  if(ct_inhib_mod.use_fin) {
+    ii = ct_inhib_mod.inhib_i;
+  }
+  float imod = net->ct_sin_i.GetInhibMod(net->ct_cycle, bi, ti) +
+    net->ct_fin_i.GetInhibMod(net->ct_cycle - net->ct_time.inhib_start, ii);
 
   // only one is going to be in effect at a time..
   lay->i_val.g_i += imod * lay->i_val.g_i;
@@ -403,8 +421,13 @@ void CtLeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
 //   imod->SetUserData("MIN", 0.0f);
 //   imod->SetUserData("MAX", 1.0f);
 
+  float bi = ct_sin_i.burst_i;
+  float ti = ct_sin_i.trough_i;
+  float ii = ct_fin_i.inhib_i;
+
   for(int cyc = 0; cyc < ct_time.total_cycles; cyc++) {
-    float imod = ct_sin_i.GetInhibMod(cyc) + ct_fin_i.GetInhibMod(cyc - ct_time.inhib_start);
+    float imod = ct_sin_i.GetInhibMod(cyc, bi, ti) +
+      ct_fin_i.GetInhibMod(cyc - ct_time.inhib_start, ii);
     if(flip_sign) imod *= -1.0f;
     graph_data->AddBlankRow();
     cyc_col->SetValAsInt(cyc, -1);
