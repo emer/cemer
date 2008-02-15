@@ -417,7 +417,7 @@ void DtSpec::Initialize() {
   vm = 0.3f;
   net = 0.7f;
   d_vm_max = 0.025f;
-  midpoint = false;
+  midpoint = true;
   vm_eq_cyc = 0;
   vm_eq_dt = 1.0f;
 }
