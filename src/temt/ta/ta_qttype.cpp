@@ -75,7 +75,6 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
   optedit = optedit.after('_');
 
   val_is_eq = false;
-  bool firstone = true;
   int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
 
   while(true) {			// iterate on logical operations
@@ -180,7 +179,7 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
       } // value while
     } // if
 
-    if(firstone || curlogic == 0)
+    if(curlogic == 0)
       val_is_eq = tmp_val_is_eq;
     else if(curlogic == 1)
       val_is_eq = val_is_eq && tmp_val_is_eq;

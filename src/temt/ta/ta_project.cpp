@@ -684,6 +684,7 @@ void taProject::UpdateChangeLog() {
     doc->UpdateText();
     doc->DataChanged(DCR_ITEM_UPDATED);
   }
+  delete dlg;
 #endif
 }
 

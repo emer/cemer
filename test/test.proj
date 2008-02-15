@@ -14428,7 +14428,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
        vm_range {min=0: max=1: range=1: scale=1: };
        v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-       dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+       dt {vm=0.3: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
        g_bar {e=1: l=0.1: i=1: h=0.1: a=0.5: };
        e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
        hyst {on=0: b_inc_dt=0.01: b_dec_dt=0.05: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
@@ -14461,7 +14461,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-     dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     dt {vm=0.3: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
      g_bar {e=1: l=0.1: i=1: h=0.1: a=0.5: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.01: b_dec_dt=0.05: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
