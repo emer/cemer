@@ -532,7 +532,7 @@ public:
 
   float		GetInhibMod(int inh_cyc, float ii) {
     if(inh_cyc < start) return 0.0f;
-    if(inh_cyc >= end) return inhib_i;
+    if(inh_cyc >= end) return ii;
     float slp = (float)(inh_cyc - start) / (float)(end - start);
     return slp * ii;
   }
