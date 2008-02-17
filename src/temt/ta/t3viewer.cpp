@@ -1244,6 +1244,7 @@ void iT3DataViewFrame::hideEvent(QHideEvent* ev) {
 
 void iT3DataViewFrame::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
+  Refresh();
   Showing(true);
 }
 
