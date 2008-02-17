@@ -601,9 +601,17 @@ public:
     GS_CLEANLOOKS,	// #LABEL_CleanLooks similar overall to plastique, with a bit more of a windows look
     GS_MOTIF,		// #LABEL_Motif a classic look from the 90's -- one of the first 3d-looks
     GS_CDE,		// #LABEL_CDE Common Desktop Environment -- a bit lighter and cleaner than MOTIF, but overall very similar to it
+#ifdef TA_OS_MAC
     GS_MACINTOSH,	// #LABEL_Macintosh only available on a macintosh!
+#else
+    GS_MACINTOSH,	// #NO_SHOW
+#endif
     GS_WINDOWS,		// #LABEL_Windows standard old-school Microsoft Windows (pre XP)
+#ifdef TA_OS_WIN
     GS_WINDOWSXP,	// #LABEL_WindowsXP Windows XP look -- only available on Windows XP or higher
+#else
+    GS_WINDOWSXP,	// #NO_SHOW
+#endif
   };    
   
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"

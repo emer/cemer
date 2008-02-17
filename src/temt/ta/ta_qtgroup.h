@@ -277,7 +277,6 @@ public: // IDataHost
   override void	GetValue();
 
 protected:
-  override void	Constr_Strings(const char* prompt="", const char* win_title="");
   override void	Constr_Body();
   virtual void	Constr_SubGpList()	{ }  // hook for group new
   override void	Constr_Final();
@@ -285,6 +284,7 @@ protected:
 };
 
 class TA_API gpiGroupNew : public gpiListNew {
+INHERITED(gpiListNew)
 public:
   // this is the function you actually call..
   static TAPtr 	New(TAGPtr the_gp, TAGPtr init_gp = NULL, int n_els=1,  TypeDef* td = NULL,
@@ -382,7 +382,7 @@ protected:
   override void		GetValue_Membs();
   override void		ClearMultiBody_impl(); // clears multi-body for reshowing
 
-  override void		Constr_Strings(const char* prompt="", const char* win_title="");
+  override void		Constr_Strings();
   override void		Constr_MultiBody();
   virtual void		Constr_ElData(); 
   virtual void  	Constr_ListData();  	// construct list members themselves
@@ -432,7 +432,7 @@ protected:
   override void		GetValue_Membs();
   override void		ClearMultiBody_impl(); // clears multi-body for reshowing
 
-  override void		Constr_Strings(const char* prompt="", const char* win_title="");
+  override void		Constr_Strings();
   override void		Constr_MultiBody();
   virtual void		Constr_ElData(); 
   virtual void  	Constr_ListData();  	// construct list members themselves

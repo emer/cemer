@@ -878,7 +878,7 @@ TAPtr gpiListNew::New(TABLPtr the_lst, int n_els, TypeDef* td, QObject* parent)
 {
   if (parent == NULL) parent = taiMisc::main_window;
   gpiListNew* create = new gpiListNew(the_lst, n_els, td, false, true, parent); //read_only, modal
-  create->Constr();
+  create->Constr("New: Create new object(s)");
   bool ok_can = create->Edit(true);
   if (!ok_can || (create->num <= 0)) {
     delete create;
@@ -977,10 +977,6 @@ void gpiListNew::ClearBody_impl() {
   inherited::ClearBody_impl();
 }
 
-void gpiListNew::Constr_Strings(const char*, const char* win_title) {
-  inherited::Constr_Strings("New: Create new object(s)", win_title);
-}
-
 void gpiListNew::Constr_Final() {
   inherited::Constr_Final();
   GetImage();
@@ -989,6 +985,7 @@ void gpiListNew::Constr_Final() {
 void gpiListNew::GetImage() {
   num_rep->GetImage(num);
   typ_rep->GetImage(typ, ths->el_base);
+  GetImage_PromptTitle();
 //no!  taiDialog::GetImage();
 }
 
@@ -1087,13 +1084,13 @@ void gpiGroupNew::ClearBody_impl() {
 void gpiGroupNew::GetImage() {
   if (subgp_list != NULL)
     subgp_list->GetImage((TAGPtr)ths, in_gp);
-  gpiListNew::GetImage();
+  inherited::GetImage();
 }
 
 void gpiGroupNew::GetValue() {
   if (subgp_list != NULL)
     in_gp = subgp_list->GetValue();
-  gpiListNew::GetValue();
+  inherited::GetValue();
 }
 
 
@@ -1213,7 +1210,7 @@ void gpiListDataHost::ClearMultiBody_impl() {
 }
 
 
-void gpiListDataHost::Constr_Strings(const char*, const char* win_title) {
+void gpiListDataHost::Constr_Strings() {
   prompt_str = cur_lst->GetTypeDef()->name + ": ";
   if (cur_lst->GetTypeDef()->desc == taBase_List::StatTypeDef(0)->desc) {
     prompt_str += cur_lst->el_typ->name + "s: " + cur_lst->el_typ->desc;
@@ -1221,7 +1218,7 @@ void gpiListDataHost::Constr_Strings(const char*, const char* win_title) {
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(win_title)
+  win_str = String(def_title())
      + " " + cur_lst->GetPath();
 }
 
@@ -1389,7 +1386,7 @@ void gpiCompactListDataHost::ClearMultiBody_impl() {
 }
 
 
-void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) {
+void gpiCompactListDataHost::Constr_Strings() {
   prompt_str = cur_lst->GetTypeDef()->name + ": ";
   if (cur_lst->GetTypeDef()->desc == taBase_List::StatTypeDef(0)->desc) {
     prompt_str += cur_lst->el_typ->name + "s: " + cur_lst->el_typ->desc;
@@ -1397,7 +1394,7 @@ void gpiCompactListDataHost::Constr_Strings(const char*, const char* win_title) 
   else {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
-  win_str = String(win_title)
+  win_str = String(def_title())
      + " " + cur_lst->GetPath();
 }
 

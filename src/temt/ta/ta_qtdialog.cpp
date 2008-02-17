@@ -792,9 +792,10 @@ void taiDataHostBase::Changed() {
 void taiDataHostBase::Constr(const char* aprompt, const char* win_title,
   HostType host_type_, bool deferred) 
 {
+  if (aprompt) m_def_prompt = String(aprompt);
+  if (win_title) m_def_title = String(win_title);
   host_type = host_type_;
-  Constr_Strings(aprompt, win_title);
-  Constr_WinName();
+  Constr_Strings();
   Constr_Widget();
   if (host_type != HT_CONTROL) 
     Constr_Methods();
@@ -837,9 +838,11 @@ void taiDataHostBase::Constr_impl() {
 // in some cases, such as constructing the browser
 }
 
-void taiDataHostBase::Constr_Strings(const char* prompt, const char* win_title) {
-  prompt_str = prompt;
-  win_str = win_title;
+void taiDataHostBase::Constr_Strings() {
+  // default behavior just sets actuals to defs,
+  // but usually the defs are either replaced, or elaborated
+  prompt_str = def_prompt();
+  win_str = def_title();
 }
 
 void taiDataHostBase::Constr_Widget() {
@@ -850,10 +853,6 @@ void taiDataHostBase::Constr_Widget() {
   vblDialog = new QVBoxLayout(widget()); //marg=2
   vblDialog->setSpacing(0); // need to manage ourself to get nicest look
   vblDialog->setMargin(2);
-}
-
-void taiDataHostBase::Constr_WinName() {
-//nothing
 }
 
 void taiDataHostBase::Constr_Prompt() {
@@ -969,6 +968,15 @@ int taiDataHostBase::Edit(bool modal_) { // only called if isDialog() true
   if(modal)
     Cancel();
   return rval;
+}
+
+void taiDataHostBase::GetImage_PromptTitle() {
+  Constr_Strings(); // in case changed, ex. desc change or name change
+  if (prompt) // always made???
+    prompt->setText(prompt_str);
+  // dialogs only
+  if (dialog)
+    dialog->setWindowTitle(win_str);
 }
 
 void taiDataHostBase::setBgColor(const iColor& new_bg) {
@@ -1875,9 +1883,9 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
   }
 }
 
-void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title) {
+void taiEditDataHost::Constr_Strings() {
 //NOTE: this is INSANE!
-  win_str = String(win_title);
+  win_str = String(def_title());
   String desc; 
   if (typ != NULL) {
     prompt_str = typ->name;
@@ -1895,8 +1903,7 @@ void taiEditDataHost::Constr_Strings(const char* aprompt, const char* win_title)
     }
     if (desc.empty()) desc = typ->desc;
   }
-  String sapr;
-  if (aprompt != NULL) sapr = aprompt;
+  String sapr = def_prompt();
   if (!sapr.empty())
     prompt_str += ": " + sapr;
   else
@@ -2115,6 +2122,7 @@ void taiEditDataHost::GetImage(bool force) {
     GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
   if (!force && !mwidget->isVisible()) return;
+  GetImage_PromptTitle();
   if (state > DEFERRED1) {
     GetImage_Membs();
   }
@@ -2313,13 +2321,13 @@ void taiStringDataHost::Constr_RegNotifies() {
   }
 }
 
-void taiStringDataHost::Constr_Strings(const char* prompt_str_, const char* win_str_) {
-  inherited::Constr_Strings(prompt_str_, win_str_); // for if non-empty
+void taiStringDataHost::Constr_Strings() {
+//NO  inherited::Constr_Strings(prompt_str_, win_str_); // for if non-empty
   taBase* base = this->base(); // cache
-  if (base && (win_str_ == "")) {
+  if (base && mbr) {
     win_str = "Editing " + base->GetPath() + ":" + mbr->GetLabel();
   }
-  if (prompt_str_ == "") {
+  if (mbr) {
     prompt_str = mbr->GetLabel() + ": " + mbr->desc;
   }
   

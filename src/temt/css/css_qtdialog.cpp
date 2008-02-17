@@ -111,13 +111,13 @@ void cssiEditDialog::Constr_Data_Labels() {
   }
 }
 
-void cssiEditDialog::Constr_Strings(const char*, const char* win_title) {
+void cssiEditDialog::Constr_Strings() {
   prompt_str = obj->GetTypeName();
   prompt_str += String(" ") + obj->name + ": ";
   if (obj->type_def != NULL)
     prompt_str += obj->type_def->desc;
 //TODO:  win_str = String(cssiSession::instance()->classname()) + ": " + win_title;
-  win_str = String("(classname will go here): ") + win_title; //TEMP
+  win_str = String("(classname will go here): ") + def_title(); //TEMP
   win_str += String(" ") + obj->name;
 }
 
@@ -341,16 +341,16 @@ void cssiArgDialog::Ok() {
   dialog->dismiss(1);
 }
 
-void cssiArgDialog::Constr_Strings(const char*, const char* win_title) {
+void cssiArgDialog::Constr_Strings() {
   if (md->HasOption("CONFIRM")) {
     prompt_str = "Ok To: ";
     prompt_str += md->name + ": " + md->desc;
-    win_str = String(taiM->classname()) + ": " + win_title;
+    win_str = String(taiM->classname()) + ": " + def_title();
     win_str += String(" ") + md->name + " () Confirm";
   }
   else {
     prompt_str = md->name + ": " + md->desc;
-    win_str = String(taiM->classname()) + ": " + win_title;
+    win_str = String(taiM->classname()) + ": " + def_title();
     win_str += String(" ") + md->name + " (Args)";
   }
 }
@@ -470,6 +470,7 @@ void cssiArgDialog::GetImage(bool) {
     if (mb_dat == NULL) break; // shouldn't happen
     art->GetImage(mb_dat, base);
   }
+  GetImage_PromptTitle();
   Unchanged();
 }
 

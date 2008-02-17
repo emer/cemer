@@ -370,13 +370,14 @@ protected:
   bool			get_image_req;
   bool			apply_req;
   
+  const String		def_prompt() const {return m_def_prompt;} // default prompt, provided at constr time
+  const String		def_title() const {return m_def_title;}; // default title, provided at constr time
 
-  virtual void	Constr_Strings(const char* prompt="", const char* win_title="");
+  virtual void	Constr_Strings();
   virtual void  Constr_Methods() {}
   virtual void 	Constr_RegNotifies() {} // register notify on taBase
   virtual void Constr_impl();
   // called in following order by Constr_impl
-  virtual void	Constr_WinName();
   virtual void	Constr_Widget(); //create the widget(), then call this inherited member
   virtual void	Constr_Prompt();
   virtual void  Constr_Box() {} // impl in subclass
@@ -397,7 +398,10 @@ protected:
 /*  override void		customEvent(QEvent* ev);
 */  
   virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor 
-
+  virtual void		GetImage_PromptTitle(); // updates the prompt and win title
+private:
+  String		m_def_prompt;
+  String		m_def_title;
 };
 
 
@@ -630,7 +634,7 @@ protected:
   virtual void		Enum_Members(); // called by Constr_impl to fill memb_el[]
   override void		Constr_Methods_impl();
   override void		ClearBody_impl();
-  override void		Constr_Strings(const char* prompt, const char* win_title);
+  override void		Constr_Strings();
   override void		Constr_Body();    // construct the data of the dialog
   virtual void		Constr_Data_Labels(); // calls Data then Labels -- override to do your own
   virtual void 		Constr_Inline(); // called instead of Data/Labels when typ->requiresInline true
@@ -692,7 +696,7 @@ protected:
   QPushButton*		btnPrint;
 
   void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
-  override void		Constr_Strings(const char* prompt="", const char* win_title="");
+  override void		Constr_Strings();
   override void  	Constr_Box();
   override void 	Constr_RegNotifies();
   override void 	DoConstr_Dialog(iDialog*& dlg);
