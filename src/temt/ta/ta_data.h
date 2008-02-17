@@ -301,7 +301,7 @@ public:
   { taMatrix* mat = GetSinkMatrix(chan);  if(mat) { mat->SetFmVar_Flat(data, cell);
       return true; } else return false; }
   // #CAT_SinkChannel set the data for given Matrix channel cell (flat index into matrix values) -- must have done Write first! returns true if successful
-  bool			SetMatrixCellDataByName(const taMatrix* data, const String& ch_nm,
+  bool			SetMatrixCellDataByName(const Variant& data, const String& ch_nm,
 						int cell) 
   { taMatrix* mat = GetSinkMatrixByName(ch_nm);  if(mat) { mat->SetFmVar_Flat(data, cell);
       return true; } else return false; }
