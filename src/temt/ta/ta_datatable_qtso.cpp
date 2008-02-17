@@ -5029,9 +5029,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   //   cerr << "panel update" << endl;
 
   GraphTableView* glv = this->glv(); //cache
-//   DataTable* dt = glv->dataTable();
-
-//  viewAll();
+  if (!glv) return; // probably destructing
 
   chkDisplay->setChecked(glv->display_on);
   cmbGraphType->GetImage(glv->graph_type);
