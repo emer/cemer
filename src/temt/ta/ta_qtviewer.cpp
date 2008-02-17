@@ -3904,18 +3904,24 @@ bool iMainWindowViewer::AssertPanel(taiDataLink* link,
 
 void iMainWindowViewer::globalUrlHandler(const QUrl& url) {
 // URLs are usually suffixed with a "#Xxx" where Xxx is the uniqueId()
-// of the window in which is embedded the doc viewer
+// of the window in which is embedded the doc viewer 
+// if no WinId (ex. Find) then we use that of the topmost window
 
   //NOTE: URLs only open in the main project browser for that project
   String path = url.path(); // will only be part before #, if any
   // we usually embed the uniqueId of the win that had the invoking url
-  String win_id = String(url.fragment()).after("#");
+  String win_id_str = String(url.fragment()).after("#");
+  int win_id = win_id_str.toInt(); // 0 if empty or not an int
+  if (win_id == 0) {
+    iMainWindowViewer* top_win = taiMisc::active_wins.Peek_MainWindow();
+    if (top_win)
+      win_id = top_win->uniqueId();
+  }
   
-  // if win_id is an int, then it is uniqueId of the window
   iMainWindowViewer* idoc_win = NULL; // win from which url was invoked
-  if (win_id.isInt()) {
-    idoc_win = taiMisc::active_wins.FindMainWindowById(win_id.toInt());
-  } 
+  if (win_id != 0) { // problem if not found!!!
+    idoc_win = taiMisc::active_wins.FindMainWindowById(win_id);
+  }
 //NOTE: if idoc_win is NULL, then the only really valid thing after this
 // is a WIKI or Web url...
 
