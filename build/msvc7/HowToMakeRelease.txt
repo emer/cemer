@@ -77,7 +77,10 @@ Release Steps
 
 * Upload finished .exe
   * scp it to grey in your home dir (ex. using WinSCP on Win box, or scp on linux)
-  * 'sudo cp' it to ~ftp/pub/emergent
+  
+'sudo cp' it to ~ftp/pub/emergent
+chmod go+r emergent-*
+
   * edit release template, to update:
   http://grey.colorado.edu/emergent/index.php/Template:Native_packages
 

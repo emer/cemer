@@ -86,7 +86,7 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 				PreprocessorDefinitions="COIN_DLL;SOQT_DLL;EMERGENT_DLL;EMERGENT_EXPORTS;TA_DLL;WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
-				EnableEnhancedInstructionSet="2"
+				EnableEnhancedInstructionSet="0"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"

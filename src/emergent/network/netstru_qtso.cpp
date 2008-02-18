@@ -1843,9 +1843,13 @@ void NetView::CutLinks() {
     delete nvp; // should delete our ref
     nvp = NULL;
   }
+  view_params.CutLinks();
+  font_sizes.CutLinks();
+  max_size.CutLinks();
   ordered_uvg_list.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
+  lay_disp_modes.CutLinks();
   inherited::CutLinks();
 }
 
