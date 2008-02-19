@@ -15,30 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_00541AF52D3344DFA363E48EDCCA0D5F"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00541AF52D3344DFA363E48EDCCA0D5F"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00541AF52D3344DFA363E48EDCCA0D5F"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00541AF52D3344DFA363E48EDCCA0D5F"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_03007C4308A24707A3E712803B9BE4EF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -231,6 +207,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4D5FFF4355D84F94A149166B79A2508F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4FD82626749E45DCB5207729F6F5F0B9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -327,26 +309,32 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6B3A8AD79F9148BA93209BD379754AC7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6C2429B79B78495BA7481AF11F160A02"
+        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
         "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_6C2429B79B78495BA7481AF11F160A02"
+        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
         "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_6C2429B79B78495BA7481AF11F160A02"
+        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
         "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
+        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6B3A8AD79F9148BA93209BD379754AC7"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -539,6 +527,24 @@
         {
         "MsmKey" = "8:_B03C97397101475193723403DCB73021"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B14C09573B8843A38E22ADF20C54BFE1"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B14C09573B8843A38E22ADF20C54BFE1"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B14C09573B8843A38E22ADF20C54BFE1"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -778,6 +784,12 @@
         "Entry"
         {
         "MsmKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F07AD742E00646F69BEC88792177367B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1473,6 +1485,26 @@
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\BpAll_Test.progp"
             "TargetName" = "8:BpAll_Test.progp"
+            "Tag" = "8:"
+            "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4D5FFF4355D84F94A149166B79A2508F"
+            {
+            "SourcePath" = "8:..\\..\\..\\prog_lib\\LeabraCycleMonitor.prog"
+            "TargetName" = "8:LeabraCycleMonitor.prog"
             "Tag" = "8:"
             "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
             "Condition" = "8:"
@@ -3189,6 +3221,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F07AD742E00646F69BEC88792177367B"
+            {
+            "SourcePath" = "8:..\\..\\..\\prog_lib\\CtLeabraSettleTest.prog"
+            "TargetName" = "8:CtLeabraSettleTest.prog"
+            "Tag" = "8:"
+            "Folder" = "8:_612BD7E23EAB4A64861742520DB7BE6D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_F271FA9D17D947CFBC855960FF86A7CD"
             {
             "SourcePath" = "8:..\\..\\..\\prog_lib\\BpTrial.prog"
@@ -3627,13 +3679,13 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{C3ED4150-3A9F-4368-ACD5-F4E100FADB12}"
-        "PackageCode" = "8:{631BDE5E-B5AB-4663-893C-1C0344722F19}"
+        "ProductCode" = "8:{43A81D61-6778-4A2B-99A6-C87C094CB4E9}"
+        "PackageCode" = "8:{43001CF5-EE7B-4031-B2DE-CFDB31D9CF48}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:4.0.11"
+        "ProductVersion" = "8:4.0.13"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"
@@ -4231,7 +4283,7 @@
         }
         "MergeModule"
         {
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_00541AF52D3344DFA363E48EDCCA0D5F"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_67BAD069131742F79CA6B9421313132B"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
@@ -4245,7 +4297,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_6C2429B79B78495BA7481AF11F160A02"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_B14C09573B8843A38E22ADF20C54BFE1"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
