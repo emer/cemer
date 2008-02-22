@@ -161,7 +161,7 @@ bool VEBody::CreateODE() {
       geom_id = dCreateSphere(sid, radius);
       break;
     case CAPSULE:
-      geom_id = dCreateCapsule(sid, radius, MAX(0.0f,length-2.0f*radius));
+      geom_id = dCreateCapsule(sid, radius, MAX(0.001f,length-2.0f*radius));
       break;
     case CYLINDER:
       geom_id = dCreateCylinder(sid, radius, length);
@@ -236,7 +236,7 @@ void VEBody::SetMassToODE() {
     break;
   case CAPSULE:
     //    dMassSetCappedCylinderTotal(&mass_ode, mass, long_axis, radius, length);
-    dMassSetCapsuleTotal(&mass_ode, mass, long_axis, radius, MAX(0.0f,length-2.0*radius));
+    dMassSetCapsuleTotal(&mass_ode, mass, long_axis, radius, MAX(0.001f,length-2.0*radius));
     break;
   case CYLINDER:
     dMassSetCylinderTotal(&mass_ode, mass, long_axis, radius, length);
@@ -901,7 +901,7 @@ bool VEStatic::CreateODE() {
       geom_id = dCreateSphere(sid, radius);
       break;
     case CAPSULE:
-      geom_id = dCreateCapsule(sid, radius, MAX(0.0f,length-2.0f*radius));
+      geom_id = dCreateCapsule(sid, radius, MAX(0.001f,length-2.0f*radius));
       break;
     case CYLINDER:
       geom_id = dCreateCylinder(sid, radius, length);
