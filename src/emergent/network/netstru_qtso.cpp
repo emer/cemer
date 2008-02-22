@@ -1611,7 +1611,7 @@ void NetViewObjView::Render_pre() {
       int acc = access(ob->obj_fname, F_OK);
       if (acc == 0) {
 	SoInput in;
-	if (in.openFile(ob->obj_fname)) {
+	if ((access(ob->obj_fname, F_OK) == 0) && in.openFile(ob->obj_fname)) {
 	  SoSeparator* root = SoDB::readAll(&in);
 	  if (root) {
 	    ssep->addChild(root);
