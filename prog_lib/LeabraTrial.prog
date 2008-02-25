@@ -231,7 +231,7 @@ Program .projects[0].programs.gp[0][3] {
    };
   };
   If @[4] {
-   desc=;
+   desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
    flags=;
    cond {
     expr="network.Compute_Weights_Test(network.trial+1)";

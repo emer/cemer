@@ -1557,7 +1557,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
    If @[4] {
-    desc=;
+    desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
     flags=;
     cond {
      expr="network.Compute_Weights_Test(network.trial+1)";
@@ -2027,7 +2027,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Input";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=;
+      ext_flags=EXT;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[1] {
@@ -2036,7 +2036,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       layer_name="Output";
       offset {x=0: y=0: };
       use_layer_type=1;
-      ext_flags=;
+      ext_flags=TARG;
       noise {name="": type=NONE: mean=0: var=0.5: par=1: };
      };
      LayerWriterEl @[2] {

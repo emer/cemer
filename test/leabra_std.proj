@@ -2571,7 +2571,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
      };
      If @[4] {
-      desc=;
+      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=;
       cond {
        expr="network.Compute_Weights_Test(network.trial+1)";
@@ -6977,7 +6977,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=1;
+	cur_val=0;
        };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
@@ -7010,7 +7010,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=1;
+      cur_val=0;
      };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
