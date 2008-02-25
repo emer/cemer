@@ -131,7 +131,7 @@ class TA_API DynEnumItem : public taNBase {
 INHERITED(taNBase)
 public:
   int		value;		// numerical (integer) value of this enum
-  String	desc;		// description of item
+  String	desc;		// #EDIT_DIALOG description of item
 
   override String	GetDisplayName() const;
   override String 	GetDesc() const { return desc; }

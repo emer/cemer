@@ -31,16 +31,11 @@ Program_Group .projects[0].programs.gp[1] {
 	};
 	MethodCall @[4] { };
 	NetDataLoop @[5] { 
-	  ProgEl_List @.loop_code = [2] {
+	  ProgEl_List @.loop_code = [1] {
 	    ProgramCall @[0] { 
 	      ProgArg_List @.prog_args = [2] {
 		ProgArg @[0] { };
 		ProgArg @[1] { };
-	      };
-	    };
-	    IfElse @[1] { 
-	      ProgEl_List @.true_code = [1] {
-		MethodCall @[0] { };
 	      };
 	    };
 	  };
@@ -75,7 +70,7 @@ Program_Group .projects[0].programs.gp[1] {
 	NetCounterInit @[0] { };
       };
 
-      ProgEl_List @.prog_code = [6] {
+      ProgEl_List @.prog_code = [7] {
 	NetCounterInit @[0] { };
 	MethodCall @[1] { };
 	WhileLoop @[2] { 
@@ -91,12 +86,17 @@ Program_Group .projects[0].programs.gp[1] {
 	  };
 	};
 	MethodCall @[3] { };
-	ProgramCall @[4] { 
+	If @[4] { 
+	  ProgEl_List @.true_code = [1] {
+	    MethodCall @[0] { };
+	  };
+	};
+	ProgramCall @[5] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	NetUpdateView @[5] { };
+	NetUpdateView @[6] { };
       };
     };
     Program @[2] { 
@@ -147,12 +147,12 @@ Program_Group .projects[0].programs.gp[1] {
 	  };
 	};
 	MethodCall @[6] { };
-	IfElse @[7] { 
+	If @[7] { 
 	  ProgEl_List @.true_code = [1] {
 	    MethodCall @[0] { };
 	  };
 	};
-	IfElse @[8] { 
+	If @[8] { 
 	  ProgEl_List @.true_code = [1] {
 	    MethodCall @[0] { };
 	  };
@@ -459,11 +459,6 @@ Program_Group .projects[0].programs.gp[1] {
     result_var=.projects[0].programs.gp[1][0].vars[4]$7$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
   };
@@ -485,11 +480,6 @@ Program_Group .projects[0].programs.gp[1] {
     path="train_mode";
     expr {
      expr="Network::TEST";
-     var_expr="Network::TEST";
-     vars {
-     };
-     var_names{      };
-     bad_vars{      };
     };
     update_after=0;
    };
@@ -499,11 +489,6 @@ Program_Group .projects[0].programs.gp[1] {
     result_var=$7$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[3] {
@@ -524,11 +509,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val="true";
       expr {
        expr="true";
-       var_expr="true";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -569,11 +549,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -584,47 +559,8 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="input_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
-      };
-     };
-     IfElse @[1] {
-      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-      flags=;
-      cond {
-       expr="network.Compute_Weights_Test(trial+1)";
-       var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
-       vars {
-       };
-       var_names{ network;trial;       };
-       bad_vars{        };
-      };
-      true_code {
-       name=;
-       el_typ=MethodCall;
-       el_def=0;
-       MethodCall @[0] {
-	desc="update the weight values based on changes computed by trial program";
-	flags=;
-	result_var=NULL;
-	obj=$5$;
-	method=Network::Compute_Weights;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-      };
-      false_code {
-       name=;
-       el_typ=ProgEl;
-       el_def=0;
       };
      };
     };
@@ -641,11 +577,6 @@ Program_Group .projects[0].programs.gp[1] {
     flags=;
     cond {
      expr="network.wt_update == Network::BATCH";
-     var_expr="$#0#$.wt_update == Network::BATCH";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
     true_code {
      name=;
@@ -711,11 +642,6 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -727,11 +653,6 @@ Program_Group .projects[0].programs.gp[1] {
     path="train_mode";
     expr {
      expr="Network::TRAIN";
-     var_expr="Network::TRAIN";
-     vars {
-     };
-     var_names{      };
-     bad_vars{      };
     };
     update_after=0;
    };
@@ -865,11 +786,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -880,11 +796,6 @@ Program_Group .projects[0].programs.gp[1] {
 	def_val=;
 	expr {
 	 expr="input_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -911,11 +822,6 @@ Program_Group .projects[0].programs.gp[1] {
     };
     test {
      expr="phase_no < network.phase_max";
-     var_expr="$#0#$ < $#1#$.phase_max";
-     vars {
-     };
-     var_names{ phase_no;network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[3] {
@@ -930,7 +836,31 @@ Program_Group .projects[0].programs.gp[1] {
      el_def=0;
     };
    };
-   ProgramCall @[4] {
+   If @[4] {
+    desc=;
+    flags=;
+    cond {
+     expr="network.Compute_Weights_Test(network.trial+1)";
+    };
+    true_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     MethodCall @[0] {
+      desc="update the weight values based on changes computed by trial program";
+      flags=;
+      result_var=NULL;
+      obj=$14$;
+      method=Network::Compute_Weights;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+   };
+   ProgramCall @[5] {
     desc="records data about the trial-level processing to a datatable for graphing/processing";
     flags=;
     target=.projects[0].programs.gp[1][5]$16$;
@@ -947,16 +877,11 @@ Program_Group .projects[0].programs.gp[1] {
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
    };
-   NetUpdateView @[5] {
+   NetUpdateView @[6] {
     desc="update the network view(s) (only if update_net_view is true)";
     flags=;
     network_var=$14$;
@@ -1095,11 +1020,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1110,11 +1030,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       def_val=;
       expr {
        expr="input_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ input_data;       };
-       bad_vars{        };
       };
      };
     };
@@ -1136,11 +1051,6 @@ this program can be extended to do arbitrary things to generate data and apply i
     flags=;
     cond {
      expr="network.phase_no <= 1";
-     var_expr="$#0#$.phase_no <= 1";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
     true_code {
      name=;
@@ -1152,11 +1062,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=.projects[0].programs.gp[1][2].vars[1]$21$;
       expr {
        expr="network.min_cycles";
-       var_expr="$#0#$.min_cycles";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1170,11 +1075,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       result_var=$21$;
       expr {
        expr="network.min_cycles_phase2";
-       var_expr="$#0#$.min_cycles_phase2";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1203,11 +1103,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -1224,11 +1119,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       cond {
        expr="cycle < min_cycles";
-       var_expr="$#0#$ < $#1#$";
-       vars {
-       };
-       var_names{ cycle;min_cycles;       };
-       bad_vars{        };
       };
      };
      IfBreak @[3] {
@@ -1237,22 +1127,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       cond {
        expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
-       var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
- ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
     test {
      expr="cycle < network.cycle_max";
-     var_expr="$#0#$ < $#1#$.cycle_max";
-     vars {
-     };
-     var_names{ cycle;network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[6] {
@@ -1267,21 +1146,16 @@ this program can be extended to do arbitrary things to generate data and apply i
      el_def=0;
     };
    };
-   IfElse @[7] {
+   If @[7] {
     desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
     flags=;
     cond {
      expr="network.phase == LeabraNetwork::MINUS_PHASE";
-     var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
     true_code {
      name=;
-     el_typ=MethodCall;
+     el_typ=ProgEl;
      el_def=0;
      MethodCall @[0] {
       desc="compute trial-level statistics";
@@ -1296,22 +1170,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
       };
      };
     };
-    false_code {
-     name=;
-     el_typ=ProgEl;
-     el_def=0;
-    };
    };
-   IfElse @[8] {
+   If @[8] {
     desc="this stat must be called in plus phase when reward information is avail";
     flags=;
     cond {
      expr="network.phase_no == 1";
-     var_expr="$#0#$.phase_no == 1";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
     true_code {
      name=;
@@ -1329,11 +1193,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
        el_def=0;
       };
      };
-    };
-    false_code {
-     name=;
-     el_typ=ProgEl;
-     el_def=0;
     };
    };
    NetUpdateView @[9] {
@@ -1463,7 +1322,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      LayerWriterEl @[2] {
       chan_name="Name";
       net_target=TRIAL_NAME;
-      layer_name=;
+      layer_name="Name";
       offset {x=0: y=0: };
       use_layer_type=1;
       ext_flags=;
@@ -1546,11 +1405,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="input_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ input_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1561,11 +1415,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1588,11 +1437,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1643,7 +1487,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1660,7 +1517,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1677,7 +1547,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1694,7 +1577,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1711,7 +1607,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1728,7 +1637,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1745,7 +1667,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1762,7 +1697,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1779,7 +1727,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1864,11 +1825,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="trial_mon_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ trial_mon_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -1879,11 +1835,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -1906,11 +1857,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -1933,11 +1879,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="true";
-       var_expr="true";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -2001,11 +1942,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="trial_mon_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ trial_mon_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -2016,11 +1952,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="1";
       expr {
        expr="1";
-       var_expr="1";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -2054,7 +1985,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2071,7 +2015,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2088,7 +2045,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2105,7 +2075,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2122,7 +2105,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2139,7 +2135,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2156,7 +2165,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2173,7 +2195,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       val_type=VT_FLOAT;
       matrix=0;
       matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
       agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+      };
       pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -2255,11 +2290,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     result_var=.projects[0].programs.gp[1][6].vars[2]$36$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[1] {
@@ -2280,11 +2310,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="epoch_mon_data";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ epoch_mon_data;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -2295,11 +2320,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="network";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -2322,11 +2342,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -2349,11 +2364,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="false";
       expr {
        expr="true";
-       var_expr="true";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -2393,11 +2403,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
     result_var=$36$;
     expr {
      expr="network.epoch_time";
-     var_expr="$#0#$.epoch_time";
-     vars {
-     };
-     var_names{ network;     };
-     bad_vars{      };
     };
    };
    MethodCall @[3] {
@@ -2418,11 +2423,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="epoch_timer.used.GetTotSecs()";
-       var_expr="$#0#$.used.GetTotSecs()";
-       vars {
-       };
-       var_names{ epoch_timer;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -2433,11 +2433,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="\"epoch_time_tot\"";
-       var_expr="\"epoch_time_tot\"";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      ProgArg @[2] {
@@ -2448,11 +2443,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="-1";
-       var_expr="-1";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };
@@ -2475,11 +2465,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="epoch_timer.used.GetUsrSecs()";
-       var_expr="$#0#$.used.GetUsrSecs()";
-       vars {
-       };
-       var_names{ epoch_timer;       };
-       bad_vars{        };
       };
      };
      ProgArg @[1] {
@@ -2490,11 +2475,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val="\"\"";
       expr {
        expr="\"epoch_time_usr\"";
-       var_expr="\"epoch_time_usr\"";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      ProgArg @[2] {
@@ -2505,11 +2485,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       def_val=;
       expr {
        expr="-1";
-       var_expr="-1";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
     };

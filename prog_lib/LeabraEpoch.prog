@@ -28,16 +28,11 @@ Program .projects[0].programs.gp[0][2] {
     };
     MethodCall @[3] { };
     NetDataLoop @[4] { 
-      ProgEl_List @.loop_code = [2] {
+      ProgEl_List @.loop_code = [1] {
 	ProgramCall @[0] { 
 	  ProgArg_List @.prog_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
-	  };
-	};
-	IfElse @[1] { 
-	  ProgEl_List @.true_code = [1] {
-	    MethodCall @[0] { };
 	  };
 	};
       };
@@ -170,11 +165,6 @@ Program .projects[0].programs.gp[0][2] {
    result_var=.projects[0].programs.gp[0][2].vars[3]$6$;
    expr {
     expr="network.epoch_time";
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
  };
@@ -195,11 +185,6 @@ Program .projects[0].programs.gp[0][2] {
    result_var=$6$;
    expr {
     expr="network.epoch_time";
-    var_expr="$#0#$.epoch_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[2] {
@@ -220,11 +205,6 @@ Program .projects[0].programs.gp[0][2] {
      def_val="true";
      expr {
       expr="true";
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -265,11 +245,6 @@ Program .projects[0].programs.gp[0][2] {
        def_val=;
        expr {
 	expr="network";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -280,47 +255,8 @@ Program .projects[0].programs.gp[0][2] {
        def_val=;
        expr {
 	expr="input_data";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
-     };
-    };
-    IfElse @[1] {
-     desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-     flags=;
-     cond {
-      expr="network.Compute_Weights_Test(trial+1)";
-      var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
-      vars {
-      };
-      var_names{ network;trial;      };
-      bad_vars{       };
-     };
-     true_code {
-      name=;
-      el_typ=MethodCall;
-      el_def=0;
-      MethodCall @[0] {
-       desc="update the weight values based on changes computed by trial program";
-       flags=;
-       result_var=NULL;
-       obj=$4$;
-       method=Network::Compute_Weights;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-     };
-     false_code {
-      name=;
-      el_typ=ProgEl;
-      el_def=0;
      };
     };
    };
@@ -337,11 +273,6 @@ Program .projects[0].programs.gp[0][2] {
    flags=;
    cond {
     expr="network.wt_update == Network::BATCH";
-    var_expr="$#0#$.wt_update == Network::BATCH";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -407,11 +338,6 @@ Program .projects[0].programs.gp[0][2] {
      def_val=;
      expr {
       expr="network";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };

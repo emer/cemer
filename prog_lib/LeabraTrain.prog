@@ -46,7 +46,7 @@ Program .projects[0].programs.gp[0][1] {
 	MethodCall @[0] { };
       };
     };
-    WtInitPrompt @[4] { 
+    IfGuiPrompt @[4] { 
       ProgEl_List @.yes_code = [2] {
 	MethodCall @[0] { };
 	PrintExpr @[1] { };
@@ -62,7 +62,7 @@ Program .projects[0].programs.gp[0][1] {
       };
     };
     MemberAssign @[2] { };
-    IfElse @[3] { 
+    If @[3] { 
       ProgEl_List @.true_code = [2] {
 	MethodCall @[0] { };
 	PrintExpr @[1] { };
@@ -243,12 +243,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    result_var=.projects[0].programs.gp[0][1].args[2]$5$;
    expr {
     expr="false";
-    flags=;
-    var_expr="false";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
    };
   };
   MethodCall @[1] {
@@ -269,12 +263,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -285,12 +273,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    result_var=.projects[0].programs.gp[0][1].vars[6]$7$;
    expr {
     expr="network.train_time";
-    flags=;
-    var_expr="$#0#$.train_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   IfElse @[3] {
@@ -298,12 +280,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    flags=;
    cond {
     expr="rnd_init == OLD_SEED";
-    flags=;
-    var_expr="$#0#$ == OLD_SEED";
-    vars {
-    };
-    var_names{ rnd_init;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -340,7 +316,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     };
    };
   };
-  WtInitPrompt @[4] {
+  IfGuiPrompt @[4] {
    desc="don't initialize weights without checking";
    flags=;
    prompt="Do you want to Initialize Network Weights";
@@ -367,12 +343,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      flags=;
      expr {
       expr="network.name << \" Weights Initialized\"";
-      flags=;
-      var_expr="$#0#$.name << \" Weights Initialized\"";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -388,12 +358,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    result_var=$7$;
    expr {
     expr="network.train_time";
-    flags=;
-    var_expr="$#0#$.train_time";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[1] {
@@ -414,12 +378,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      def_val="true";
      expr {
       expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -431,26 +389,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    path="train_mode";
    expr {
     expr="train_mode";
-    flags=;
-    var_expr="$#0#$";
-    vars {
-    };
-    var_names{ train_mode;    };
-    bad_vars{     };
    };
    update_after=0;
   };
-  IfElse @[3] {
+  If @[3] {
    desc=;
    flags=;
    cond {
     expr="no_prompts";
-    flags=;
-    var_expr="$#0#$";
-    vars {
-    };
-    var_names{ no_prompts;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -473,19 +419,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      flags=;
      expr {
       expr="network.name << \" Weights Initialized\"";
-      flags=;
-      var_expr="$#0#$.name << \" Weights Initialized\"";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
-   };
-   false_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
    };
   };
   AssignExpr @[4] {
@@ -494,12 +429,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
    result_var=.projects[0].programs.gp[0][1].vars[1]$9$;
    expr {
     expr="network.epoch";
-    flags=;
-    var_expr="$#0#$.epoch";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
   };
   WhileLoop @[5] {
@@ -526,12 +455,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        def_val=;
        expr {
 	expr="network";
-	flags=;
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -542,12 +465,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        def_val=;
        expr {
 	expr="input_data";
-	flags=;
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -564,23 +481,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      flags=;
      cond {
       expr="network.cnt_err <= err_stopcrit";
-      flags=;
-      var_expr="$#0#$.cnt_err <= $#1#$";
-      vars {
-      };
-      var_names{ network;err_stopcrit;      };
-      bad_vars{       };
      };
     };
    };
    test {
     expr="epoch < max_epoch";
-    flags=;
-    var_expr="$#0#$ < $#1#$";
-    vars {
-    };
-    var_names{ epoch;max_epoch;    };
-    bad_vars{     };
    };
   };
   MethodCall @[6] {

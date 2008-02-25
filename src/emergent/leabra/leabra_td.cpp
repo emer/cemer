@@ -1309,16 +1309,36 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   else
     ersp->rew_type = ExtRewLayerSpec::EXT_REW;
 
-  int n_rp_u = 19;		// number of rewpred-type units
-  tdrpsp->unit_range.min = 0.0f;  tdrpsp->unit_range.max = 3.0f;
-  tdintsp->unit_range.min = 0.0f;  tdintsp->unit_range.max = 3.0f;
+  int n_rp_u = 22;		// number of rewpred-type units
+  ScalarValLayerSpec* valspecs[3] = {tdrpsp, tdintsp, ersp};
+  for(int i=0;i<2;i++) {
+    ScalarValLayerSpec* lsp = valspecs[i];
+    lsp->scalar.rep = ScalarValSpec::GAUSSIAN;
+    lsp->scalar.min_sum_act = .2f;
+    lsp->inhib.type = LeabraInhibSpec::KWTA_INHIB; lsp->inhib.kwta_pt = 0.25f;
+    lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 3;
+    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 3; 
+    lsp->unit_range.min = -0.5f;  lsp->unit_range.max = 3.5f;
+    lsp->unit_range.UpdateAfterEdit();
+    lsp->val_range = lsp->unit_range;
+  }
+  ersp->unit_range.max = 1.5f;
+  ersp->unit_range.UpdateAfterEdit();
 
   // optimization to speed up settling in phase 2: only the basic layers here
-  int j;
-  for(j=0;j<net->specs.size;j++) {
+  for(int j=0;j<net->specs.size;j++) {
     if(net->specs[j]->InheritsFrom(TA_LeabraLayerSpec)) {
       LeabraLayerSpec* sp = (LeabraLayerSpec*)net->specs[j];
       sp->decay.clamp_phase2 = true;
+      sp->UpdateAfterEdit();
+    }
+  }
+  
+  // make sure that other units are saving prior activation states!!
+  for(int j=0;j<net->specs.size;j++) {
+    if(net->specs[j]->InheritsFrom(TA_DaModUnitSpec)) {
+      DaModUnitSpec* sp = (DaModUnitSpec*)net->specs[j];
+      sp->da_mod.p_dwt = true;
       sp->UpdateAfterEdit();
     }
   }
@@ -1327,7 +1347,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   // set geometries
 
   if(tdrp->un_geom.n != n_rp_u) { tdrp->un_geom.n = n_rp_u; tdrp->un_geom.x = n_rp_u; tdrp->un_geom.y = 1; }
-  if(extrew->un_geom.n != 8) { extrew->un_geom.n = 8; extrew->un_geom.x = 8; extrew->un_geom.y = 1; }
+  if(extrew->un_geom.n != 12) { extrew->un_geom.n = 12; extrew->un_geom.x = 12; extrew->un_geom.y = 1; }
   if(tdint->un_geom.n != n_rp_u) { tdint->un_geom.n = n_rp_u; tdint->un_geom.x = n_rp_u; tdint->un_geom.y = 1; }
   tdda->un_geom.n = 1;
   rew_targ_lay->un_geom.n = 1;
@@ -1392,7 +1412,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   ersp->UpdateAfterEdit();
   tdintsp->UpdateAfterEdit();
   
-  for(j=0;j<net->specs.leaves;j++) {
+  for(int j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
   }

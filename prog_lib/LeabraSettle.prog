@@ -47,12 +47,12 @@ Program .projects[0].programs.gp[0][4] {
       };
     };
     MethodCall @[6] { };
-    IfElse @[7] { 
+    If @[7] { 
       ProgEl_List @.true_code = [1] {
 	MethodCall @[0] { };
       };
     };
-    IfElse @[8] { 
+    If @[8] { 
       ProgEl_List @.true_code = [1] {
 	MethodCall @[0] { };
       };
@@ -191,12 +191,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -207,12 +201,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      def_val=;
      expr {
       expr="input_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ input_data;      };
-      bad_vars{       };
      };
     };
    };
@@ -234,12 +222,6 @@ this program can be extended to do arbitrary things to generate data and apply i
    flags=;
    cond {
     expr="network.phase_no <= 1";
-    flags=;
-    var_expr="$#0#$.phase_no <= 1";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -251,12 +233,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      result_var=.projects[0].programs.gp[0][4].vars[1]$5$;
      expr {
       expr="network.min_cycles";
-      flags=;
-      var_expr="$#0#$.min_cycles";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -270,12 +246,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      result_var=$5$;
      expr {
       expr="network.min_cycles_phase2";
-      flags=;
-      var_expr="$#0#$.min_cycles_phase2";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -304,12 +274,6 @@ this program can be extended to do arbitrary things to generate data and apply i
        def_val=;
        expr {
 	expr="network";
-	flags=;
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -326,12 +290,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      flags=;
      cond {
       expr="cycle < min_cycles";
-      flags=;
-      var_expr="$#0#$ < $#1#$";
-      vars {
-      };
-      var_names{ cycle;min_cycles;      };
-      bad_vars{       };
      };
     };
     IfBreak @[3] {
@@ -340,24 +298,11 @@ this program can be extended to do arbitrary things to generate data and apply i
      cond {
       expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
-      flags=;
-      var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
- ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
    test {
     expr="cycle < network.cycle_max";
-    flags=;
-    var_expr="$#0#$ < $#1#$.cycle_max";
-    vars {
-    };
-    var_names{ cycle;network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[6] {
@@ -372,22 +317,16 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_def=0;
    };
   };
-  IfElse @[7] {
+  If @[7] {
    desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
    flags=;
    cond {
     expr="network.phase == LeabraNetwork::MINUS_PHASE";
-    flags=;
-    var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
-    el_typ=MethodCall;
+    el_typ=ProgEl;
     el_def=0;
     MethodCall @[0] {
      desc="compute trial-level statistics";
@@ -402,23 +341,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
      };
     };
    };
-   false_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
   };
-  IfElse @[8] {
+  If @[8] {
    desc="this stat must be called in plus phase when reward information is avail";
    flags=;
    cond {
     expr="network.phase_no == 1";
-    flags=;
-    var_expr="$#0#$.phase_no == 1";
-    vars {
-    };
-    var_names{ network;    };
-    bad_vars{     };
    };
    true_code {
     name=;
@@ -436,11 +364,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       el_def=0;
      };
     };
-   };
-   false_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
    };
   };
   NetUpdateView @[9] {

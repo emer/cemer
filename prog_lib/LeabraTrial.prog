@@ -5,16 +5,17 @@ Program .projects[0].programs.gp[0][3] {
     ProgVar @[1] { };
   };
 
-  ProgVar_List @.vars = [2] {
+  ProgVar_List @.vars = [3] {
     ProgVar @[0] { };
     ProgVar @[1] { };
+    ProgVar @[2] { };
   };
 
   ProgEl_List @.init_code = [1] {
     NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [6] {
+  ProgEl_List @.prog_code = [7] {
     NetCounterInit @[0] { };
     MethodCall @[1] { };
     WhileLoop @[2] { 
@@ -30,12 +31,17 @@ Program .projects[0].programs.gp[0][3] {
       };
     };
     MethodCall @[3] { };
-    ProgramCall @[4] { 
+    If @[4] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { };
+      };
+    };
+    ProgramCall @[5] { 
       ProgArg_List @.prog_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    NetUpdateView @[5] { };
+    NetUpdateView @[6] { };
   };
 };
 Program .projects[0].programs.gp[0][3] {
@@ -95,6 +101,14 @@ Program .projects[0].programs.gp[0][3] {
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="determines whether to update any network view displays after trial is completed";
+  };
+  ProgVar @[2] {
+   name="trial";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="current trial (event) within the epoch -- increments automatically";
   };
  };
  functions {
@@ -166,12 +180,6 @@ Program .projects[0].programs.gp[0][3] {
        def_val=;
        expr {
 	expr="network";
-	flags=;
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -182,12 +190,6 @@ Program .projects[0].programs.gp[0][3] {
        def_val=;
        expr {
 	expr="input_data";
-	flags=;
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -214,12 +216,6 @@ Program .projects[0].programs.gp[0][3] {
    };
    test {
     expr="phase_no < network.phase_max";
-    flags=;
-    var_expr="$#0#$ < $#1#$.phase_max";
-    vars {
-    };
-    var_names{ phase_no;network;    };
-    bad_vars{     };
    };
   };
   MethodCall @[3] {
@@ -234,7 +230,31 @@ Program .projects[0].programs.gp[0][3] {
     el_def=0;
    };
   };
-  ProgramCall @[4] {
+  If @[4] {
+   desc=;
+   flags=;
+   cond {
+    expr="network.Compute_Weights_Test(network.trial+1)";
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc="update the weight values based on changes computed by trial program";
+     flags=;
+     result_var=NULL;
+     obj=$2$;
+     method=Network::Compute_Weights;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+  ProgramCall @[5] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
    flags=;
    target=.projects[0].programs.gp[0][7]$5$;
@@ -251,17 +271,11 @@ Program .projects[0].programs.gp[0][3] {
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
   };
-  NetUpdateView @[5] {
+  NetUpdateView @[6] {
    desc="update the network view(s) (only if update_net_view is true)";
    flags=;
    network_var=$2$;
