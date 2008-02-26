@@ -191,21 +191,14 @@ public:
   void C_Send_Inhib(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
     ru->gc.i += su_act_eff * cn->effwt;
   }
-  void Send_Inhib(LeabraSendCons* cg, LeabraUnit* su) {
-    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
-    // LeabraUnitSpec::CheckConfig checks that this is ok.
-    Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
-    CON_GROUP_LOOP(cg, C_Send_Inhib(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
-  }
   void C_Send_Netin(LeabraSendCons* cg, CtLeabraCon* cn, Unit* ru, float su_act_eff) {
     ru->net += su_act_eff * cn->effwt;
   }
-  void Send_Netin(SendCons* cg, Unit* su) {
+  void Send_Netin(SendCons* cg, float su_act) {
     // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
     // LeabraUnitSpec::CheckConfig checks that this is ok.
     Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
     if(inhib) {
       CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
     }
@@ -217,17 +210,12 @@ public:
   void C_Send_InhibDelta(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
     ru->g_i_delta += su_act_delta_eff * cn->effwt;
   }
-  void Send_InhibDelta(LeabraSendCons* cg, LeabraUnit* su) {
-    Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
-    CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
-  }
   void C_Send_NetinDelta(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
     ru->net_delta += su_act_delta_eff * cn->effwt;
   }
-  void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
+  void Send_NetinDelta(LeabraSendCons* cg, float su_act_delta) {
     Unit* ru = cg->Un(0);
-    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
     if(inhib) {
       CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
     }
@@ -238,9 +226,9 @@ public:
   void C_Send_ClampNet(LeabraSendCons* cg, CtLeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
     ru->clmp_net += su_act_eff * cn->effwt;
   }
-  void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
+  void Send_ClampNet(LeabraSendCons* cg, float su_act) {
     Unit* ru = cg->Un(0);
-    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
     CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (CtLeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
 

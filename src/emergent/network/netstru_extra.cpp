@@ -1872,3 +1872,24 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 }
 
+//////////////////////////
+//  	CircBuffer	//
+//////////////////////////
+
+void float_CircBuffer::Initialize() {
+  st_idx = 0;
+  length = 0;
+}
+
+void float_CircBuffer::Copy_(const float_CircBuffer& cp) {
+  st_idx = cp.st_idx;
+  length = cp.length;
+}
+
+void float_CircBuffer::Reset() {
+  float_Array::Reset();
+  st_idx = 0;
+  length = 0;
+}
+
+

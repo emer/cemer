@@ -24,36 +24,6 @@
 // move rbp functions over to Network from corresponding 3.2 processes
 
 //////////////////////////
-//  	CircBuffer	//
-//////////////////////////
-
-void float_CircBuffer::Initialize() {
-  st_idx = 0;
-  length = 0;
-}
-
-void float_CircBuffer::Copy_(const float_CircBuffer& cp) {
-  st_idx = cp.st_idx;
-  length = cp.length;
-}
-
-void float_CircBuffer::Add(const float& item) {
-  if((st_idx == 0) && (length >= size)) { // must be building up the list, so add it
-    float_Array::Add(item);
-    length++;
-    return;
-  }
-  Set(CircIdx(length++), item);	// set it to the element at the end
-}
-
-void float_CircBuffer::Reset() {
-  float_Array::Reset();
-  st_idx = 0;
-  length = 0;
-}
-
-
-//////////////////////////
 //  	UnitSpec	//
 //////////////////////////
 
@@ -274,10 +244,10 @@ void RBpUnit::Init_InputData() {
 }
 
 void RBpUnit::StoreState() {
-  ext_flags.Add((float)ext_flag);	// store values in arrays
-  targs.Add(targ);
-  exts.Add(ext);
-  acts.Add(act);
+  ext_flags.CircAddExpand((float)ext_flag);	// store values in arrays
+  targs.CircAddExpand(targ);
+  exts.CircAddExpand(ext);
+  acts.CircAddExpand(act);
 }
 
 bool RBpUnit::StepBack(int tick) {
@@ -317,10 +287,10 @@ bool RBpUnit::RestoreState(int tick) {
 
 
 void RBpUnit::ShiftBuffers(int ticks) {
-  ext_flags.ShiftLeft(ticks);
-  targs.ShiftLeft(ticks);
-  exts.ShiftLeft(ticks);
-  acts.ShiftLeft(ticks);
+  ext_flags.CircShiftLeft(ticks);
+  targs.CircShiftLeft(ticks);
+  exts.CircShiftLeft(ticks);
+  acts.CircShiftLeft(ticks);
 }
 
 

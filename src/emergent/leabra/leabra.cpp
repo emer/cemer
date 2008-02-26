@@ -405,6 +405,11 @@ void DepressSpec::UpdateAfterEdit_impl() {
   max_amp = (.95f * depl + rec) / rec;
 }
 
+void SynDelaySpec::Initialize() {
+  on = false;
+  delay = 4;
+}
+
 void OptThreshSpec::Initialize() {
   send = .1f;
   delta = 0.005f;
@@ -495,6 +500,7 @@ void LeabraUnitSpec::Defaults() {
   act.Defaults();
   spike.Defaults();
   depress.Defaults();
+  syn_delay.Defaults();
   opt_thresh.Defaults();
   dt.Defaults();
   act_reg.Defaults();
@@ -510,6 +516,7 @@ void LeabraUnitSpec::InitLinks() {
   taBase::Own(act, this);
   taBase::Own(spike, this);
   taBase::Own(depress, this);
+  taBase::Own(syn_delay, this);
   taBase::Own(opt_thresh, this);
   taBase::Own(clamp_range, this);
   taBase::Own(vm_range, this);
@@ -697,7 +704,6 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   ru->act_p = ru->act_m = ru->act_dif = 0.0f;
 
   ru->act_sent = 0.0f;
-  ru->act_delta = 0.0f;
   ru->net_raw = 0.0f;
   ru->net_delta = 0.0f;
   ru->g_i_delta = 0.0f;
@@ -706,6 +712,7 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   ru->i_thr = 0.0f;
   if(act_fun == DEPRESS)
     ru->spk_amp = act_range.max;
+  ru->act_buf.Reset();
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -772,7 +779,7 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
 		     "cannot send inhibition from a hard-clamped layer!  Set layerspec clamp.hard off!")) {
 	continue;
       }
-      send_gp->Send_ClampNet(u);
+      send_gp->Send_ClampNet(u->act);
     }
   }
 }
@@ -784,39 +791,49 @@ void LeabraUnitSpec::Send_ClampNet(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) 
 void LeabraUnitSpec::Send_Netin(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net) {
   // sender-based (and this fun not called on hard_clamped EXT layers)
   net->send_pct_tot++;
-  if(u->act > opt_thresh.send) {
+  float act_ts = u->act;
+  if(syn_delay.on) {
+    act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+  }
+  if(act_ts > opt_thresh.send) {
     net->send_pct_n++;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size) continue;
-      send_gp->Send_Netin(u);
+      send_gp->Send_Netin(act_ts);
     }
   }
 }
 
 void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraLayer*, LeabraNetwork* net) {
   net->send_pct_tot++;
-  if(u->act > opt_thresh.send) {
-    if(fabsf(u->act_delta) > opt_thresh.delta) {
+  float act_ts = u->act;
+  if(syn_delay.on) {
+    act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+  }
+
+  if(act_ts > opt_thresh.send) {
+    float act_delta = act_ts - u->act_sent;
+    if(fabsf(act_delta) > opt_thresh.delta) {
       net->send_pct_n++;
       for(int g=0; g<u->send.size; g++) {
 	LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
 	LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
 	if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
-	send_gp->Send_NetinDelta(u);
+	send_gp->Send_NetinDelta(act_delta);
       }
-      u->act_sent = u->act;	// cache the last sent value
+      u->act_sent = act_ts;	// cache the last sent value
     }
   }
   else if(u->act_sent > opt_thresh.send) {
     net->send_pct_n++;
-    u->act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
+    float act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
-      send_gp->Send_NetinDelta(u);
+      send_gp->Send_NetinDelta(act_delta);
     }
     u->act_sent = 0.0f;		// now it effectively sent a 0..
   }
@@ -838,6 +855,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNe
   else
     u->v_m = act.thr + u->act_eq / act.gain;
   u->da = u->I_net = 0.0f;
+  u->AddToActBuf(syn_delay);
 }
 
 // NOTE: these two functions should always be the same modulo the clamp_range.Clip
@@ -855,6 +873,7 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnit* u, LeabraLayer* lay, Le
   else
     u->v_m = act.thr + u->act_eq / act.gain;
   u->da = u->I_net = 0.0f;
+  u->AddToActBuf(syn_delay);
 }
 
 bool LeabraUnitSpec::Compute_SoftClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork*) {
@@ -947,7 +966,7 @@ void LeabraUnitSpec::Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* t
   Compute_Vm(u, lay, thr, net);
   Compute_ActFmVm(u, lay, thr, net);
   Compute_SelfReg_Cycle(u, lay, thr, net);
-  u->act_delta = u->act - u->act_sent;
+  u->AddToActBuf(syn_delay);
 }
 
 void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork*) {
@@ -1174,7 +1193,6 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
 
   // reset the rest of this stuff just for clarity
   u->act_sent = 0.0f;
-  u->act_delta = u->act;
   u->net_raw = 0.0f;
   u->net_delta = 0.0f;
   u->g_i_raw = 0.0f;
@@ -1183,6 +1201,10 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
   u->net = 0.0f;
   u->net_scale = u->bias_scale = 0.0f;
   u->da = u->I_net = 0.0f;
+
+  if(decay == 1.0f) {
+    u->act_buf.Reset();
+  }
 }
 
 void LeabraUnitSpec::DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay) {
@@ -1401,7 +1423,6 @@ void LeabraUnit::Initialize() {
   prv_g_i = 0.0f;
 
   act_sent = 0.0f;
-  act_delta = 0.0f;
   net_raw = 0.0f;
   net_delta = 0.0f;
   g_i_delta = 0.0f;
@@ -1416,6 +1437,7 @@ void LeabraUnit::InitLinks() {
   inherited::InitLinks();
   taBase::Own(vcb, this);
   taBase::Own(gc, this);
+  taBase::Own(act_buf, this);
   GetInSubGp();
 }
 
@@ -1445,7 +1467,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   prv_net = cp.prv_net;
   prv_g_i = cp.prv_g_i;
   act_sent = cp.act_sent;
-  act_delta = cp.act_delta;
   net_raw = cp.net_raw;
   net_delta = cp.net_delta;
   g_i_raw = cp.g_i_raw;
@@ -1453,6 +1474,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   i_thr = cp.i_thr;
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
+  act_buf = cp.act_buf;
 }
 
 void LeabraUnit::Init_Netin() {
@@ -4812,8 +4834,11 @@ bool LeabraThreadEngineInst::OnSend_Netin() {
     FOR_ITR_EL(LeabraUnit, un, lay->units., ui) {
       if (!(lay->lesioned() || lay->hard_clamped)) {
         net->send_pct_tot++;
-        
-        if (un->act > us->opt_thresh.send) {
+	float act_ts = un->act;
+	if(us->syn_delay.on) {
+	  act_ts = un->act_buf.CircSafeEl(0); // get first logical element..
+	}
+        if (act_ts > us->opt_thresh.send) {
           net->send_pct_n++;
           if (send_units.el[cnt] != un)
             send_units.el[cnt] = un;
@@ -4882,8 +4907,13 @@ bool LeabraThreadEngineInst::OnSend_NetinDelta_list() {
       taLeafItr ui;
       FOR_ITR_EL(LeabraUnit, u, lay->units., ui) {
         net->send_pct_tot++;
-        if (u->act > us->opt_thresh.send) {
-          if (fabsf(u->act_delta) > us->opt_thresh.delta) {
+	float act_ts = u->act;
+	if(us->syn_delay.on) {
+	  act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+	}
+        if (act_ts > us->opt_thresh.send) {
+	  float act_delta = act_ts - u->act_sent;
+          if (fabsf(act_delta) > us->opt_thresh.delta) {
             net->send_pct_n++;
             send_units.Add(u);
           }
@@ -5027,12 +5057,12 @@ void LeabraThreadEngineTask::DoCompute_Weights() {
 }
 
 void LeabraThreadEngineTask::DoSend_Netin_Gp(bool is_excit, 
-  SendCons* cg, LeabraUnit* su)
+  SendCons* cg, float su_act)
 {
   // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
   if (is_excit) {
     CON_GROUP_LOOP(cg, 
       StatC_Send_Excit(
@@ -5084,13 +5114,18 @@ void LeabraThreadEngineTask::DoSend_Netin() {
   int chnki = 0; // count units within the chunk
   while (m_u < n_items) {
     LeabraUnit* u = (LeabraUnit*)inst->send_units[m_u];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    float act_ts = u->act;
+    if(us->syn_delay.on) {
+      act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+    }
     
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size) continue;
       bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
-      DoSend_Netin_Gp(is_excit,send_gp,u);
+      DoSend_Netin_Gp(is_excit,send_gp,act_ts);
     }
     
     if (++chnki < LeabraThreadEngineInst::UNIT_CHUNK_SIZE) {
@@ -5107,12 +5142,12 @@ void LeabraThreadEngineTask::DoSend_Netin() {
 }
 
 void LeabraThreadEngineTask::DoSend_NetinDelta_Gp(bool is_excit,
-  SendCons* cg, LeabraUnit* su) 
+  SendCons* cg, float su_act_delta) 
 {
   // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
-  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
   if (is_excit) {
     CON_GROUP_LOOP(cg, 
       StatC_Send_Excit(
@@ -5161,8 +5196,13 @@ void LeabraThreadEngineTask::DoSend_NetinDelta_flat() {
     if (!(lay->hard_clamped || lay->lesioned())) {
       LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
       AtomicFetchAdd(&(net->send_pct_tot),1);
-      if (u->act > us->opt_thresh.send) {
-        if (fabsf(u->act_delta) > us->opt_thresh.delta) {
+      float act_ts = u->act;
+      if(us->syn_delay.on) {
+	act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+      }
+      if (act_ts > us->opt_thresh.send) {
+	float act_delta = act_ts - u->act_sent;
+        if (fabsf(act_delta) > us->opt_thresh.delta) {
           AtomicFetchAdd(&(net->send_pct_n),1);
           // case: above threshold, and delta above delta threshold
           for(int g=0; g<u->send.size; g++) {
@@ -5170,20 +5210,21 @@ void LeabraThreadEngineTask::DoSend_NetinDelta_flat() {
             LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
             if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size) continue;
             bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
-            DoSend_NetinDelta_Gp(is_excit, send_gp, u);
+            DoSend_NetinDelta_Gp(is_excit, send_gp, act_delta);
           }
-          u->act_sent = u->act;	// cache the last sent value
+          u->act_sent = act_ts;	// cache the last sent value
         }
-      } else if (u->act_sent > us->opt_thresh.send) {
+      }
+      else if (u->act_sent > us->opt_thresh.send) {
         AtomicFetchAdd(&(net->send_pct_n),1);
         // case: below threshold, and haven't unsent yet
-        u->act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
+        float act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
         for(int g=0; g<u->send.size; g++) {
           LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
           LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
           if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
           bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
-          DoSend_NetinDelta_Gp(is_excit, send_gp, u);
+          DoSend_NetinDelta_Gp(is_excit, send_gp, act_delta);
         }
         u->act_sent = 0.0f;		// now it effectively sent a 0..
       }
@@ -5220,28 +5261,34 @@ void LeabraThreadEngineTask::DoSend_NetinDelta_list() {
   while (m_u < n_items) {
     LeabraUnit* u = (LeabraUnit*)inst->send_units[m_u];
     LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    float act_ts = u->act;
+    if(us->syn_delay.on) {
+      act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+    }
 
     // note: because we did these tests for putting units on the send list
     // we can then use the first part of first condition to distinguish the two cases
-    if (u->act > us->opt_thresh.send) {
+    if (act_ts > us->opt_thresh.send) {
+      float act_delta = act_ts - u->act_sent;
       // case: above threshold, and delta above delta threshold
       for(int g=0; g<u->send.size; g++) {
         LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size) continue;
         bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
-        DoSend_NetinDelta_Gp(is_excit, send_gp, u);
+        DoSend_NetinDelta_Gp(is_excit, send_gp, act_delta);
       }
-      u->act_sent = u->act;	// cache the last sent value
-    } else {
+      u->act_sent = act_ts;	// cache the last sent value
+    }
+    else {
       // case: below threshold, and haven't unsent yet
-      u->act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
+      float act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
       for(int g=0; g<u->send.size; g++) {
         LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         if(tol->lesioned() || tol->hard_clamped || !send_gp->cons.size)	continue;
         bool is_excit = !((LeabraConSpec*)send_gp->GetConSpec())->inhib;
-        DoSend_NetinDelta_Gp(is_excit, send_gp, u);
+        DoSend_NetinDelta_Gp(is_excit, send_gp, act_delta);
       }
       u->act_sent = 0.0f;		// now it effectively sent a 0..
     }

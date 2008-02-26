@@ -1529,12 +1529,13 @@ void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     
     for(int i=0;i<rugp->size;i++) {
       DaModUnit* ru = (DaModUnit*)rugp->FastEl(i);
+      DaModUnitSpec* rus = (DaModUnitSpec*)ru->GetUnitSpec();
       DaModUnit* pfcu = (DaModUnit*)pfcgp->FastEl(i);
       
       ru->act = gain * pfcu->act;
       ru->act_eq = ru->act;
       ru->da = 0.0f;		// I'm fully settled!
-      ru->act_delta = ru->act - ru->act_sent;
+      ru->AddToActBuf(rus->syn_delay);
     }
   }
   Compute_ActAvg(lay, net);

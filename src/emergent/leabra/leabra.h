@@ -19,7 +19,7 @@
 #define leabra_h
 
 #include "emergent_base.h"
-#include "netstru.h"
+#include "netstru_extra.h"
 #include "emergent_project.h"
 
 #include "fun_lookup.h"
@@ -283,7 +283,7 @@ public:
   // #CAT_Activation receiver-based net input 
 
   inline void 	C_Send_Netin(LeabraSendCons* cg, LeabraCon* cn, Unit* ru, float su_act_eff);
-  inline void 	Send_Netin(SendCons* cg, Unit* su);
+  inline void 	Send_Netin(SendCons* cg, float su_act);
   // #CAT_Activation sender-based net input computation
 
   inline void 	C_Send_Inhib(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
@@ -291,7 +291,7 @@ public:
 
   inline void 	C_Send_NetinDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
   // #CAT_Activation sender-based delta net input computation (send_delta mode only)
-  inline virtual void Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su);
+  inline virtual void Send_NetinDelta(LeabraSendCons* cg, float su_act_delta);
   // #CAT_Activation sender-based delta net input computation (send_delta mode only)
 
   inline void 	C_Send_InhibDelta(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_delta_eff);
@@ -299,7 +299,7 @@ public:
 
   inline void 	C_Send_ClampNet(LeabraSendCons* cg, LeabraCon* cn, LeabraUnit* ru, float su_act_eff);
   // #CAT_Activation sender-based net input computation for clamp net
-  inline virtual void Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su);
+  inline virtual void Send_ClampNet(LeabraSendCons* cg, float su_act);
   // #CAT_Activation sender-based net input computation for clamp net
 
   inline virtual void Compute_SAvgCor(LeabraRecvCons* cg, LeabraUnit* ru);
@@ -397,12 +397,16 @@ class LEABRA_API LeabraSendCons : public SendCons {
   // ##CAT_Leabra Leabra sending connection group
 INHERITED(SendCons)
 public:
-  inline void 	Send_ClampNet(LeabraUnit* su)
-  { ((LeabraConSpec*)GetConSpec())->Send_ClampNet(this, su); }
+  inline void 	Send_ClampNet(float su_act)
+  { ((LeabraConSpec*)GetConSpec())->Send_ClampNet(this, su_act); }
   // #CAT_Activation send input from clamped layers
 
-  inline void 	Send_NetinDelta(LeabraUnit* su)
-  { ((LeabraConSpec*)GetConSpec())->Send_NetinDelta(this, su); }
+  inline void 	Send_Netin(float su_act)
+  { ((LeabraConSpec*)GetConSpec())->Send_Netin(this, su_act); }
+  // #CAT_Activation send delta-netin
+
+  inline void 	Send_NetinDelta(float su_act_delta)
+  { ((LeabraConSpec*)GetConSpec())->Send_NetinDelta(this, su_act_delta); }
   // #CAT_Activation send delta-netin
 
   TA_BASEFUNS_NOCOPY(LeabraSendCons);
@@ -478,6 +482,20 @@ public:
   TA_SIMPLE_BASEFUNS(DepressSpec);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API SynDelaySpec : public taBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
+INHERITED(taBase)
+public:
+  bool		on;		// is synaptic delay active?
+  int		delay;		// #CONDEDIT_ON_on number of cycles to delay for
+
+  void 	Defaults()	{ Initialize(); }
+  TA_SIMPLE_BASEFUNS(SynDelaySpec);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -634,6 +652,7 @@ public:
   ActFunSpec	act;		// #CAT_Activation activation function specs
   SpikeFunSpec	spike;		// #CONDEDIT_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   DepressSpec	depress;	// #CONDEDIT_ON_act_fun:DEPRESS #CAT_Activation depressing synapses activation function specs, note that act_range deterimines range of spk_amp spiking amplitude, max should be > 1
+  SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-1 for normalized, -90-50 for bio-based)
@@ -860,7 +879,6 @@ public:
   float		prv_g_i;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation previous inhibitory conductance value (for time averaging)
 
   float		act_sent;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
-  float		act_delta;	// #NO_VIEW #NO_SAVE #EXPERT change in activation to send to other units
   float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (increments the deltas in send_delta)
   float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #DMEM_SHARE_SET_3 #CAT_Activation change in netinput received from other units  (send_delta mode only)
   float		g_i_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
@@ -869,6 +887,12 @@ public:
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		spk_amp;	// #CAT_Activation amplitude of spiking output (for depressing synapse activation function)
   float		misc_1;		// #NO_VIEW #CAT_Activation miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
+  float_CircBuffer act_buf;	// #CAT_Activation #NO_SAVE buffer of activation states for synaptic delay computation
+
+  inline void	AddToActBuf(SynDelaySpec& sds) {
+    if(sds.on) act_buf.CircAddLimit(act, sds.delay);
+  }
+  // add current activation to act buf if synaptic delay is on
 
   inline LeabraLayer*	own_lay() const {return (LeabraLayer*)own_lay_();}
 
@@ -1739,11 +1763,11 @@ void LeabraConSpec::C_Send_Inhib(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru,
 void LeabraConSpec::C_Send_Netin(LeabraSendCons*, LeabraCon* cn, Unit* ru, float su_act_eff) {
   ru->net += su_act_eff * cn->wt;
 }
-void LeabraConSpec::Send_Netin(SendCons* cg, Unit* su) {
+void LeabraConSpec::Send_Netin(SendCons* cg, float su_act) {
   // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
   // LeabraUnitSpec::CheckConfig checks that this is ok.
   Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
   if(inhib) {
     CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
   }
@@ -1762,9 +1786,9 @@ void LeabraConSpec::C_Send_NetinDelta(LeabraSendCons*, LeabraCon* cn, LeabraUnit
   ru->net_delta += su_act_delta_eff * cn->wt;
 }
 
-void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
+void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, float su_act_delta) {
   Unit* ru = cg->Un(0);
-  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act_delta;
+  float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
   if(inhib) {
     CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
   }
@@ -1778,9 +1802,9 @@ void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraUnit* su) {
 void LeabraConSpec::C_Send_ClampNet(LeabraSendCons*, LeabraCon* cn, LeabraUnit* ru, float su_act_eff) {
   ru->clmp_net += su_act_eff * cn->wt;
 }
-void LeabraConSpec::Send_ClampNet(LeabraSendCons* cg, LeabraUnit* su) {
+void LeabraConSpec::Send_ClampNet(LeabraSendCons* cg, float su_act) {
   Unit* ru = cg->Un(0);
-  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su->act;
+  float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
   CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (LeabraCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
 }
 
@@ -2357,12 +2381,12 @@ protected:
 // Unit routines:  
   override void		DoSend_Netin();
   void			InitScratch_Send_Netin();
-  void 			DoSend_Netin_Gp(bool is_excit, SendCons* cg, LeabraUnit* su);
+  void 			DoSend_Netin_Gp(bool is_excit, SendCons* cg, float su_act);
   
   override void		DoSend_NetinDelta_flat();
   override void		DoSend_NetinDelta_list();
   void			InitScratch_Send_NetinDelta();
-  void 			DoSend_NetinDelta_Gp(bool is_excit, SendCons* cg, LeabraUnit* su); //
+  void 			DoSend_NetinDelta_Gp(bool is_excit, SendCons* cg, float act_delta); //
   
 // Layer routines:
   override void		DoCompute_Act(); //

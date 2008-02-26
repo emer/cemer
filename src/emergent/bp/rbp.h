@@ -21,6 +21,7 @@
 #define rbp_h
 
 #include "bp.h"
+#include "netstru_extra.h"
 
 class RBpConSpec;
 class RBpUnit;
@@ -126,35 +127,6 @@ private:
   void 	Initialize();
   void	Destroy()		{ };
 };
-
-class BP_API float_CircBuffer : public float_Array {
- // Circular buffer for holding state information
-INHERITED(float_Array)
-public:
-  int		st_idx;		// starting index
-  int		length;		// logical length of the list
-
-  int		CircIdx(uint idx) const
-  { int rval = idx+st_idx; if(rval >= size) rval -= size; return rval; }
-  // gets real index based on circular buffer given logical index
-
-  void		ShiftLeft(int nshift)
-  { st_idx = CircIdx(nshift); length -= nshift; }
-
-  void		Add(const float& item);
-  // adds in the framework of a circular buffer
-
-  const float&	Peek() const {return SafeEl(CircIdx(length-1));}
-
-  void		Reset();
-
-  void 	Copy_(const float_CircBuffer& cp);
-  TA_BASEFUNS(float_CircBuffer);
-private:
-  void 	Initialize();
-  void	Destroy()		{ };
-};
-
 
 class BP_API RBpUnit : public BpUnit {
   // recurrent BP unit
