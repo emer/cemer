@@ -170,12 +170,14 @@ void CtLeabraLayer::Initialize() {
   maxda_sum = 0.0f;
   sravg_sum = 0.0f;
   sravg_cyc = 0;
+  act_thr_cyc = 0;
 }  
 
 void CtLeabraLayer::Copy_(const CtLeabraLayer& cp) {
   maxda_sum = cp.maxda_sum;
   sravg_sum = cp.sravg_sum;
   sravg_cyc = cp.sravg_cyc;
+  act_thr_cyc = cp.act_thr_cyc;
   mean_cai_max = cp.mean_cai_max;
 }
 
@@ -226,6 +228,7 @@ void CtLeabraLayerSpec::Init_Weights(LeabraLayer* lay) {
   clay->maxda_sum = 0.0f;
   clay->sravg_sum = 0.0f;
   clay->sravg_cyc = 0;
+  clay->act_thr_cyc = 0;
 }
 
 void CtLeabraLayerSpec::Init_SdEffWt(CtLeabraLayer* lay, CtLeabraNetwork* net) {
@@ -288,11 +291,42 @@ void CtLeabraLayerSpec::Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) 
   // always increment: ensures that maxda_sum will be over minimum at start in case
   // it somehow already slipped into attractor
   lay->maxda_sum += lay->maxda;
+
+  bool act_thr_met = false;
+  if(net->ct_sravg.act_thr == 0.0f) {
+    act_thr_met = true;		// not applicable
+  }
+  else if(net->ct_cycle <= 1) {
+    lay->act_thr_cyc = 0;	// reset at start just to be sure
+    act_thr_met = false;
+  }
+  else {
+    if(lay->acts.max >= net->ct_sravg.act_thr) {
+      if(lay->act_thr_cyc <= 0) lay->act_thr_cyc = 1;
+      else		     lay->act_thr_cyc++;
+      if(lay->act_thr_cyc >= net->ct_sravg.n_over_thr)
+	act_thr_met = true;	// else false
+    }
+    else {
+      if(net->ct_cycle >= net->ct_time.inhib_start) {
+	if(lay->act_thr_cyc >= 0) lay->act_thr_cyc = -1;
+	else		     lay->act_thr_cyc--;
+	if(lay->act_thr_cyc > -net->ct_sravg.n_under_thr)
+	  act_thr_met = true;	// else false
+      }
+      else {
+	// otherwise don't mess with it..
+	if(lay->act_thr_cyc >= net->ct_sravg.n_over_thr)
+	  act_thr_met = true;
+      }
+    }
+  }
+
   if((net->ct_cycle >= net->ct_sravg.start) &&
      (net->ct_cycle < (net->ct_time.inhib_start + net->ct_sravg.end)) &&
      (lay->maxda_sum >= net->ct_sravg.min_da_thr) &&
      (lay->maxda < net->ct_sravg.max_da_thr) &&
-     (lay->acts.max >= net->ct_sravg.act_thr)) {
+     act_thr_met) {
     CtLeabraUnit* u;
     taLeafItr i;
     FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
@@ -372,8 +406,8 @@ void CtLeabraLayerSpec::Compute_ActPAvg_ugp(LeabraLayer*, Unit_Group* ug, Leabra
 //////////////////////////////////
 
 void CtTrialTiming::Initialize() {
-  minus = 40;
-  plus = 40;
+  minus = 50;
+  plus = 20;
   inhib = 20;
 
   syndep_int = 20;
@@ -389,24 +423,26 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 }
 
 void CtSRAvgSpec::Initialize() {
-  start = 10;
-  end = 10;
+  start = 30;
+  end = 20;
   min_da_thr = 0.005f;
   max_da_thr = 1.0f;
   act_thr = 0.0f;
+  n_over_thr = 5;
+  n_under_thr = 0;
 }
 
 void CtSineInhibMod::Initialize() {
-  start = 20;
+  start = 30;
   duration = 20;
-  burst_only = false;
-  burst_i = 0.02f;
-  trough_i = 0.02f;
+  n_pi = 2.0f;
+  burst_i = 0.05f;
+  trough_i = 0.05f;
 }
 
 void CtFinalInhibMod::Initialize() {
-  start = 0;
-  end = 10;
+  start = 20;
+  end = 25;
   inhib_i = 0.0f;
 }
 

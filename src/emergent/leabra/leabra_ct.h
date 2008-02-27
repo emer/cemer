@@ -408,6 +408,7 @@ public:
   float		maxda_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of maxda since last SRAvg update
   float		sravg_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of sravg weightings (count of number of times sravg has been computed) -- used for normalizing the weighted average
   int		sravg_cyc;	// #READ_ONLY #EXPERT #CAT_Activation cycles since last sravg computation -- potentially useful for determining when unit is in attractor state
+  int		act_thr_cyc;	// #READ_ONLY #EXPERT #CAT_Activation number of cycles over (positive values) or under (negative values) activation threshold
   float		mean_cai_max;	// #READ_ONLY #EXPERT #CAT_Activation mean across units of cai_max value for each unit, which is max cai across all incoming connections
 
   void 	Init_SdEffWt(CtLeabraNetwork* net) 
@@ -468,7 +469,9 @@ public:
 
   float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
   float		max_da_thr;	// maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
-  float		act_thr;	// activation threshold for starting/stopping sravg -- whenever layer-wise max activation is below this value, sravg is not computed (0.0 effectively disables this, 0.5 is good default?)
+  float		act_thr;	// activation threshold for starting/stopping sravg -- whenever layer-wise max activation is below this value, sravg is not computed (0.0 effectively disables this, 0.8 is good default)
+  int		n_over_thr;	// number of cycles over act_thr threshold required before learning starts -- allows other layers I project to to also get activated at least to some degree
+  int		n_under_thr;	// number of cycles under act_thr threshold required before learning stops -- only enforced in the inhib phase (cheating for now) -- typically just 1
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
@@ -485,15 +488,14 @@ class LEABRA_API CtSineInhibMod : public taBase {
 INHERITED(taBase)
 public:
   int		start;		// [20] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
-  int		duration;	// [20] number of cycles from start to apply modulation -- either a full sine wave (burst and trough) or half sine wave (burst only) is applied during this time
-  bool		burst_only;	// if true, only does positive portion (bursting) of sine wave
+  int		duration;	// [20] number of cycles from start to apply modulation
+  float		n_pi;		// number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
   float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
   float		trough_i;	// [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
 
   float		GetInhibMod(int ct_cycle, float bi, float ti) {
     if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
-    float rads = ((float)(ct_cycle - start) / (float)duration) * taMath_float::pi;
-    if(!burst_only) rads *= 2.0f;
+    float rads = (((float)(ct_cycle - start) / (float)duration) * taMath_float::pi * n_pi);
     float sinval = -taMath_float::sin(rads);
     if(sinval < 0.0f) 	sinval *= bi; // signs are reversed for inhib vs activation
     else		sinval *= ti;
