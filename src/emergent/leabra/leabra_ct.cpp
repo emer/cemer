@@ -291,7 +291,8 @@ void CtLeabraLayerSpec::Compute_SRAvg(CtLeabraLayer* lay, CtLeabraNetwork* net) 
   if((net->ct_cycle >= net->ct_sravg.start) &&
      (net->ct_cycle < (net->ct_time.inhib_start + net->ct_sravg.end)) &&
      (lay->maxda_sum >= net->ct_sravg.min_da_thr) &&
-     (lay->maxda < net->ct_sravg.max_da_thr)) {
+     (lay->maxda < net->ct_sravg.max_da_thr) &&
+     (lay->acts.max >= net->ct_sravg.act_thr)) {
     CtLeabraUnit* u;
     taLeafItr i;
     FOR_ITR_EL(CtLeabraUnit, u, lay->units., i) {
@@ -392,6 +393,7 @@ void CtSRAvgSpec::Initialize() {
   end = 10;
   min_da_thr = 0.005f;
   max_da_thr = 1.0f;
+  act_thr = 0.0f;
 }
 
 void CtSineInhibMod::Initialize() {

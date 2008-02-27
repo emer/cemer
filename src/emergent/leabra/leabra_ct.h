@@ -463,11 +463,12 @@ class LEABRA_API CtSRAvgSpec : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles and layer-level delta-activation (measure of how close network is to attractor)
 INHERITED(taBase)
 public:
-  int		start;		// [10] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		end;		// [10] number of cycles from the start of the final inhibitory phase to continue recording sravg
+  int		start;		// [20] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
+  int		end;		// [20] number of cycles from the start of the final inhibitory phase to continue recording sravg
 
   float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
   float		max_da_thr;	// maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
+  float		act_thr;	// activation threshold for starting/stopping sravg -- whenever layer-wise max activation is below this value, sravg is not computed (0.0 effectively disables this, 0.5 is good default?)
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
