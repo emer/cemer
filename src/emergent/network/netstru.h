@@ -261,8 +261,6 @@ public:
   inline virtual void 	Compute_Weights(RecvCons* cg, Unit* ru);
   // #CAT_Learning update weights (ie. add delta-wt to wt, zero delta-wt)
 
-  bool	CheckObjectType_impl(taBase* obj); // don't do checking on 1st con group in units
-
   virtual bool  	CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms
 
@@ -278,6 +276,9 @@ public:
   void	CutLinks();
   void	Copy_(const ConSpec& cp);
   TA_BASEFUNS(ConSpec);
+protected:
+  override bool 	CheckType_impl(TypeDef* td);
+  override bool		CheckObjectType_impl(taBase* obj); // don't do checking on 1st con group in units
 private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
@@ -708,6 +709,8 @@ public:
 protected:
   override void  	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);
+  override bool 	CheckType_impl(TypeDef* td);
+  override bool 	CheckObjectType_impl(TAPtr obj);
 private:
   void 	Initialize();
   void 	Destroy()		{ };

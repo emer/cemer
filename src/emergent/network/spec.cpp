@@ -217,13 +217,25 @@ void BaseSpec::InitLinks() {
 
 void BaseSpec::CutLinks() {
   children.CutLinks();
-  taNBase::CutLinks();
+  inherited::CutLinks();
 }
 
+/*nn void BaseSpec::UpdateAfterEdit() {
+  //note: this is probably unnecessary, but added it in "just in case"
+  // get the "substantive" owner, will typically be the network for net specs
+  taBase* own = GetOwner();
+  while (own && (own->InheritsFrom(&TA_BaseSpec) ||
+    own->InheritsFrom(&TA_BaseSpec_Group)))
+    own = own->GetOwner();
+  if (!own || own->isDestroying()) return;
+  
+  inherited::UpdateAfterEdit();
+} */
+
 void BaseSpec::UpdateAfterEdit_impl() {
-  taNBase::UpdateAfterEdit_impl();
-  Network* net = GET_MY_OWNER(Network);
-  if(isDestroying() || !net || net->isDestroying()) return;
+  inherited::UpdateAfterEdit_impl();
+/*obs  Network* net = GET_MY_OWNER(Network);
+  if(isDestroying() || !net || net->isDestroying()) return; */
   UpdateSpec();
 }
 
@@ -370,9 +382,7 @@ bool BaseSpec::CheckObjectType(TAPtr obj) {
 bool BaseSpec::CheckType_impl(TypeDef* td) {
   // other specs are allowed to own any kind of other spec,
   // and layers and projections also contain specs..
-  if(td->InheritsFrom(TA_BaseSpec) ||
-     (td->InheritsFrom(TA_Projection) && InheritsFrom(TA_ConSpec)) ||
-     (td->InheritsFrom(TA_Layer) && InheritsFrom(TA_UnitSpec)))
+  if (td->InheritsFrom(TA_BaseSpec))
     return true;
 
   if(!td->InheritsFrom(min_obj_type))
@@ -384,9 +394,7 @@ bool BaseSpec::CheckType_impl(TypeDef* td) {
 bool BaseSpec::CheckObjectType_impl(TAPtr obj) {
   // other specs are allowed to own any kind of other spec,
   // and layers and projections also contain specs..
-  if(obj->InheritsFrom(TA_BaseSpec) ||
-     (obj->InheritsFrom(TA_Projection) && InheritsFrom(TA_ConSpec)) ||
-     (obj->InheritsFrom(TA_Layer) && InheritsFrom(TA_UnitSpec)))
+  if (obj->InheritsFrom(TA_BaseSpec))
     return true;
 
   if(!obj->InheritsFrom(min_obj_type))

@@ -222,6 +222,13 @@ bool ConSpec::CheckObjectType_impl(taBase* obj) {
   return true;
 }
 
+bool ConSpec::CheckType_impl(TypeDef* td) {
+  if (td->InheritsFrom(TA_Projection))
+    return true;
+  return inherited::CheckType_impl(td);
+}
+
+
 void ConSpec::ApplySymmetry(RecvCons* cg, Unit* ru) {
   if(!wt_limits.sym) return;
   Connection* rc, *su_rc;
@@ -1519,6 +1526,22 @@ void UnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 	     "Bias con type of:", bias_con_type->name,
 	     "is not of the correct type for the bias con spec,"
 	     "which needs at least a:", bias_spec.spec->min_obj_type->name);
+}
+
+bool UnitSpec::CheckType_impl(TypeDef* td) {
+  // other specs are allowed to own any kind of other spec,
+  // and layers and projections also contain specs..
+  if (td->InheritsFrom(TA_Layer))
+    return true;
+  return inherited::CheckType_impl(td);
+}
+
+bool UnitSpec::CheckObjectType_impl(TAPtr obj) {
+  // other specs are allowed to own any kind of other spec,
+  // and layers and projections also contain specs..
+  if (obj->InheritsFrom(TA_Layer))
+    return true;
+  return inherited::CheckObjectType_impl(obj);
 }
 
 void UnitSpec::UpdateAfterEdit_impl() {

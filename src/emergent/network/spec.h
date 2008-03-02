@@ -14,14 +14,13 @@
 //   GNU General Public License for more details.
 
 
-
 // spec.h
 
-#ifndef spec_h
-#define spec_h 1
+#ifndef SPEC_H
+#define SPEC_H
 
 #include "emergent_base.h"
-#include "emergent_TA_type.h" // for templates
+#include "emergent_TA_type.h"
 
 // forwards this file
 
@@ -65,6 +64,7 @@ public:
 
 class EMERGENT_API BaseSpec : public taNBase {
   // ##EXT_spec ##MEMB_IN_GPMENU ##SCOPE_Network ##DEF_CHILD_children ##DEF_CHILDNAME_Sub_Specs ##CAT_Spec base specification class
+friend class BaseSpec_Group;
 INHERITED(taNBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -100,10 +100,6 @@ public:
   // checks typedef type, issues error and returns false if not sufficient
   virtual bool	CheckObjectType(TAPtr obj);
   // checks object type, issues error and returns false if not sufficient
-  virtual bool  CheckType_impl(TypeDef* td);
-  // #IGNORE actually does the check
-  virtual bool	CheckObjectType_impl(TAPtr obj);
-  // #IGNORE actually does the check
 
   virtual BaseSpec* FindMakeChild(const char* nm, TypeDef* td = NULL, bool& nw_itm = nw_itm_def_arg, const char* alt_nm = NULL);
   // find a child spec of given name, and if not, make it (if nm is not found and alt_nm != NULL, it is searched for)
@@ -117,6 +113,10 @@ public:
 protected:
   void	UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
+  virtual bool  CheckType_impl(TypeDef* td);
+  // #IGNORE actually does the check
+  virtual bool	CheckObjectType_impl(TAPtr obj);
+  // #IGNORE actually does the check
 private:
   void 	Initialize();
   void	Destroy();

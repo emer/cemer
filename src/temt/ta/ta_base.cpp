@@ -1185,6 +1185,7 @@ taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) {
 // 	Updating of object properties
 
 void taBase::UpdateAfterEdit() {
+  if (isDestroying()) return;
   UpdateAfterEdit_impl();
   DataChanged(DCR_ITEM_UPDATED);
   taBase* _owner = GetOwner();
