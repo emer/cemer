@@ -1199,9 +1199,6 @@ void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
 }
 
 void taMatrix::SetGeom_(int dims_, const int geom_[]) {
-  String err_msg;
-  bool valid = GeomIsValid(dims_, geom_, &err_msg);
-  if(TestError(!valid, "SetGeom_", err_msg)) return;
   // dims=0 is special case, which is just a reset
   if (dims_ == 0) {
     StructUpdate(true);
@@ -1209,6 +1206,10 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
     geom.Reset(); // ok, now you know what 0-d really means!!!
     StructUpdate(false);
     return;
+  } else {
+    String err_msg;
+    bool valid = GeomIsValid(dims_, geom_, &err_msg);
+    if(TestError(!valid, "SetGeom_", err_msg)) return;
   }
   
   // flex not allowed for fixed data
