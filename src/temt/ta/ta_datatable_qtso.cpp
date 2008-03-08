@@ -513,6 +513,8 @@ void DataTableView::setDataTable(DataTable* dt) {
   if (dt) {
     SetData(dt);
     bool first = (colViewCount() == 0);
+    int u_view_rows = dt->GetUserDataAsInt("VIEW_ROWS");
+    if (u_view_rows > 0) view_rows = u_view_rows;
     UpdateFromDataTable(first);
     T3DataViewFrame* frame = GetFrame();
     if(frame) {
