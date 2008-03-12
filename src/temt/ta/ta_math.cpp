@@ -1519,7 +1519,10 @@ bool taMath_double::mat_row(double_Matrix* row, const double_Matrix* mat, int ro
 #ifdef HAVE_LIBGSL
 
 bool taMath_double::mat_get_gsl_fm_ta(gsl_matrix* gsl_mat, const double_Matrix* ta_mat) {
-  if(ta_mat->dims() != 2) return false;
+  if(ta_mat->dims() != 2) {
+    taMisc::Error("taMath::mat_get_gsl_fm_ta: dimension of matrix must be 2 for gsl calls!");
+    return false;
+  }
   gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
   gsl_mat->size2 = ta_mat->dim(1); // "columns"
   gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
@@ -1540,26 +1543,26 @@ bool taMath_double::vec_get_gsl_fm_ta(gsl_vector* gsl_vec, const double_Matrix* 
 }
 
 bool taMath_double::mat_add(double_Matrix* a, const double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_add(&g_a, &g_b);
 }
 
 bool taMath_double::mat_sub(double_Matrix* a, const double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_sub(&g_a, &g_b);
 }
 
 bool taMath_double::mat_mult_els(double_Matrix* a, const double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_mul_elements(&g_a, &g_b);
 }
 
 bool taMath_double::mat_div_els(double_Matrix* a, const double_Matrix* b) {
-  gsl_matrix g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_div_elements(&g_a, &g_b);
 }
 
@@ -3644,7 +3647,10 @@ bool taMath_float::mat_row(float_Matrix* row, const float_Matrix* mat, int row_n
 
 bool taMath_float::mat_get_gsl_fm_ta(gsl_matrix_float* gsl_mat, const float_Matrix* ta_mat)
 {
-  if(ta_mat->dims() != 2) return false;
+  if(ta_mat->dims() != 2) {
+    taMisc::Error("taMath::mat_get_gsl_fm_ta: dimension of matrix must be 2 for gsl calls!");
+    return false;
+  }
   gsl_mat->size1 = ta_mat->dim(0); // "rows" (rows are contiguous in mem)
   gsl_mat->size2 = ta_mat->dim(1); // "columns"
   gsl_mat->tda = ta_mat->dim(0); // actual size of row in memory
@@ -3666,26 +3672,26 @@ bool taMath_float::vec_get_gsl_fm_ta(gsl_vector_float* gsl_vec, const float_Matr
 }
 
 bool taMath_float::mat_add(float_Matrix* a, const float_Matrix* b) {
-  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix_float g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix_float g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_float_add(&g_a, &g_b);
 }
 
 bool taMath_float::mat_sub(float_Matrix* a, const float_Matrix* b) {
-  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix_float g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix_float g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_float_sub(&g_a, &g_b);
 }
 
 bool taMath_float::mat_mult_els(float_Matrix* a, const float_Matrix* b) {
-  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix_float g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix_float g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_float_mul_elements(&g_a, &g_b);
 }
 
 bool taMath_float::mat_div_els(float_Matrix* a, const float_Matrix* b) {
-  gsl_matrix_float g_a;  mat_get_gsl_fm_ta(&g_a, a);
-  gsl_matrix_float g_b;  mat_get_gsl_fm_ta(&g_b, b);
+  gsl_matrix_float g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix_float g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_float_div_elements(&g_a, &g_b);
 }
 

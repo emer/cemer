@@ -1018,6 +1018,12 @@ int cssElFun::BindArgs(cssEl** args, int& act_argc) {
 	break;
     }
     act_argc = ((int)stack->size - stack_start) - 1;
+    if(act_argc >= ArgMax) {
+      cssMisc::Error(prog, "Arg count greater than max (64) in:", (const char*)name,
+		     String((int)act_argc));
+      act_argc = -1;
+      return -1;
+    }
     for(int i=act_argc; i>0; i--) {
       args[i] = stack->Pop();
 //       args[i] = stack->Pop_NoUnRef();
@@ -1143,7 +1149,7 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
 
   cssEl* tmp = (*funp)(act_argc, args);
   prog = prg;                   // restore if recursive
-  if((tmp) && (tmp != &cssMisc::Void)) {
+  if(!prog->top->external_stop && (tmp) && (tmp != &cssMisc::Void)) {
     tmp->prog = prog;
     prog->Stack()->Push(tmp);
   }
@@ -1259,7 +1265,21 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   cssEl* tmp = (*funp)(ths, act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;
-  prog->Stack()->Push(tmp);
+//   if(prog->top->debug >= 3) {
+//     cerr << "\n" << cssMisc::Indent(1) << "Stack prior to rval push from mbrcfun: " << name;
+//     prog->Stack()->List(cerr, 1);
+//     cerr << endl;
+//     taMisc::FlushConsole();
+//   }
+  if(!prog->top->external_stop && (tmp)) {
+    prog->Stack()->Push(tmp);
+  }
+//   if(prog->top->debug >= 3) {
+//     cerr << "\n" << cssMisc::Indent(1) << "Stack after rval push from mbrcfun: " << name;
+//     prog->Stack()->List(cerr, 1);
+//     cerr << endl;
+//     taMisc::FlushConsole();
+//   }
   DoneArgs(args, act_argc);
   cssEl::Done(ths_arg);		// not in args list so do it separately
   //  cssEl::unRefDone(ths_arg);
@@ -1511,7 +1531,9 @@ cssEl::RunStat cssScriptFun::FunDone(cssProg* prg) {
   cssEl* tmp = (argv[0].El())->AnonClone(); // create clone of retval
   tmp->prog = prg;
   prg->top->PopProg();	// note -- cannot run Pull (DelFrame + Pop) cuz need frame for args!
-  prg->Stack()->Push(tmp);
+  if(!prog->top->external_stop && (tmp)) {
+    prg->Stack()->Push(tmp);
+  }
   DoneArgs(args, act_argc);
   fun->DelFrame(); // now it is safe to delete the frame, after done args!
   return cssEl::Running;	// returning from a running program
@@ -1738,7 +1760,9 @@ cssEl::RunStat cssMbrScriptFun::FunDone(cssProg* prg) {
   tmp->prog = prg;
   // prg->top->PopTop(old_top);		       // restore previous top todo: not doing!
   prg->top->PopProg();	// note -- cannot run Pull (DelFrame + Pop) cuz need frame for args!
-  prg->Stack()->Push(tmp);
+  if(!prog->top->external_stop && (tmp)) {
+    prg->Stack()->Push(tmp);
+  }
   DoneArgs(args, act_argc);
   fun->DelFrame(); // now it is safe to delete the frame, after done args!
   return cssEl::Running;		// returning from a running program

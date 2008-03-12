@@ -1333,6 +1333,10 @@ public:
   static double GaussDen(double x, double stdev)  	{ return taMath_double::gauss_den_sig(x, stdev); }
   // #CAT_Float gaussian (normal) density for given standard deviation (0 mean)
 
+
+  static bool	BoolProb(double p) { return (ZeroOne() < p); }
+  // #CAT_Bool boolean true/false with given probability
+
   void	Initialize();
   void	Destroy()		 { };
   void	Copy_(const Random& cp);

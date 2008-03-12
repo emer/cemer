@@ -30,36 +30,46 @@ void taImage::Copy_(const taImage& cp) {
 }
 
 bool taImage::LoadImage(const String& fname) {
+  String fnm = fname;
   if (fname.empty()) {
     taFiler* flr = GetLoadFiler(fname);
-    name = flr->fileName();
+    fnm = flr->fileName();
     flr->Close();
     taRefN::unRefDone(flr);
   }
-  else {
-    name = fname;
+  if(name.empty()) {
+    name = fnm;
+    if(name.contains(".")) {
+      name = name.before(".",-1);
+    }
+    name = taMisc::StringCVar(name); // make names C legal names -- just much safer
   }
-  QString fn = (const char*)name;
+  QString fn = (const char*)fnm;
   if(!q_img.load(fn)) {
-    taMisc::Error("LoadImage: could not read image file:", name);
+    taMisc::Error("LoadImage: could not read image file:", fnm);
     return false;
   }
   return true;
 }
 
 bool taImage::SaveImage(const String& fname) {
+  String fnm = fname;
   if (fname.empty()) {
     taFiler* flr = GetLoadFiler(fname);
-    name = flr->fileName();
+    fnm = flr->fileName();
     flr->Close();
     taRefN::unRefDone(flr);
   }
-  else {
-    name = fname;
+  if(name.empty()) {
+    name = fnm;
+    if(name.contains(".")) {
+      name = name.before(".",-1);
+    }
+    name = taMisc::StringCVar(name); // make names C legal names -- just much safer
   }
-  QString fn = (const char*)name;
+  QString fn = (const char*)fnm;
   if(!q_img.save(fn)) {
-    taMisc::Error("SaveImage: could not save image file:", name);
+    taMisc::Error("SaveImage: could not save image file:", fnm);
     return false;
   }
   return true;
