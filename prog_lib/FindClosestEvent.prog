@@ -1,0 +1,649 @@
+// ta_Dump File v2.0
+Program .projects[0].programs[2] { 
+  ProgObjList @.objs = [2] {
+    float_Matrix @[0] { };
+    DataTable @[1] { 
+      DataTableCols @.data = [14] {
+	int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+};
+	int_Data @[1] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+};
+	int_Data @[2] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+};
+	String_Data @[3] { };
+	String_Data @[4] { };
+	int_Data @[5] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+};
+	float_Data @[6] { };
+	float_Data @[7] { };
+	float_Data @[8] { };
+	float_Data @[9] { };
+	float_Data @[10] { };
+	String_Data @[11] { };
+	float_Data @[12] { };
+	float_Data @[13] { };
+      };
+    };
+  };
+
+  ProgVar_List @.args = [4] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+  };
+
+  ProgVar_List @.vars = [10] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
+    ProgVar @[9] { };
+  };
+
+  ProgEl_List @.prog_code = [6] {
+    DataVarProg @[0] { };
+    DataSelectRowsProg @[1] { 
+      DataOpList @.ops = [1] {
+	DataSelectEl @[0] { };
+      };
+    };
+    DataAnalCall @[2] { 
+      ProgArg_List @.meth_args = [8] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+	ProgArg @[6] { };
+	ProgArg @[7] { };
+      };
+    };
+    MathCall @[3] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    DataVarProg @[4] { };
+    AssignExpr @[5] { };
+  };
+};
+Program .projects[0].programs[2] {
+ name="FindClosestEvent";
+ tags="Statistic, Error ";
+ desc="find closest event from list of input data compared to recorded output data from network -- replaces ClosestEventStat from PDP++";
+ flags=;
+ objs {
+  name=;
+  el_typ=float_Matrix;
+  el_def=0;
+  float_Matrix @[0] {
+   name="OutputTargetDistMatrix";
+    [26 1] 2.9460075;2.6502221;2.9260435;2.911972;2.9389343;2.8763628;2.9393539;2.8973851;2.9408426;2.5253057;2.5825477;2.5417542;2.4875917;2.9225113;3.180491;3.1883783;2.6065671;2.5264058;2.8684087;2.5984986;2.5254648;2.6041319;2.9005764;3.1804352;2.8744626;0;  };
+  DataTable @[1] {
+   name="CurTrialData";
+   desc=;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    int_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+      };
+     };
+     name="batch";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+    int_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+      };
+     };
+     name="epoch";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 50;     };
+    };
+    int_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+      };
+     };
+     name="trial";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 25;     };
+    };
+    String_Data @[3] {
+     name="trial_name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] "12_b";     };
+    };
+    String_Data @[4] {
+     name="group_name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] ;     };
+    };
+    int_Data @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+      };
+     };
+     name="phase_no";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 1;     };
+    };
+    float_Data @[6] {
+     name="minus_cycles";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 40;     };
+    };
+    float_Data @[7] {
+     name="sse";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+    float_Data @[8] {
+     name="ext_rew";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+    float_Data @[9] {
+     name="Output_act_m";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 5;5;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [5 5 1] 7.6030318e-08;0.0055748038;0.94479495;0;1.1705069e-16;0.79043412;9.9541503e-05;7.3762574e-10;0.71947676;4.3031073e-06;0.68994826;0.066229396;4.293307e-06;0.87150419;0.00023397942;1.3359977e-10;0.00017176205;4.1076437e-06;4.8803631e-05;0.025565915;0.00014999893;0.94640869;6.376033e-09;3.4548846e-11;1.2042756e-14;     };
+    };
+    float_Data @[10] {
+     name="Outp_dist";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+    String_Data @[11] {
+     name="ev_nm";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] "12_b";     };
+    };
+    float_Data @[12] {
+     name="nm_err";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+    float_Data @[13] {
+     name="both_err";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="trial_output_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[1][0]$0$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="the data table containing the monitored activation values to use in the comparison";
+  };
+  ProgVar @[1] {
+   name="output_col_name";
+   var_type=T_String;
+   string_val="Output_act_m";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="name of the column in the trial_output_data that contains the activations to compare";
+  };
+  ProgVar @[2] {
+   name="target_input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][1]$1$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="target input data with full list of events to compare output data pattern to";
+  };
+  ProgVar @[3] {
+   name="target_col_name";
+   var_type=T_String;
+   string_val="Output";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="name of the column in the target_input_data that contains the activations to compare";
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="OutputTargetDistMatrix";
+   var_type=T_Object;
+   object_type=float_Matrix;
+   object_val=.projects[0].programs[2].objs[0]$2$;
+   objs_ptr=1;
+   flags=NULL_CHECK;
+   desc="computed distances between output and targets";
+  };
+  ProgVar @[1] {
+   name="CurTrialData";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[1]$3$;
+   objs_ptr=1;
+   flags=NULL_CHECK;
+   desc="pointer for holding the data from the current trial";
+  };
+  ProgVar @[2] {
+   name="trial";
+   var_type=T_Int;
+   int_val=25;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="last trial number in data table -- used for selecting row";
+  };
+  ProgVar @[3] {
+   name="dist_tol";
+   var_type=T_Real;
+   real_val=0.5;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="parameter: tolerance to use for computing distances -- values < this count as zero";
+  };
+  ProgVar @[4] {
+   name="min_dist";
+   var_type=T_Real;
+   real_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="result: minimum distance between current output pattern and any of the target patterns";
+  };
+  ProgVar @[5] {
+   name="min_idx";
+   var_type=T_Int;
+   int_val=25;
+   objs_ptr=0;
+   flags=CTRL_READ_ONLY|NULL_CHECK;
+   desc="row index of what produced the min val";
+  };
+  ProgVar @[6] {
+   name="Name";
+   var_type=T_String;
+   string_val="12_b";
+   objs_ptr=0;
+   flags=CTRL_READ_ONLY|NULL_CHECK;
+   desc="name of the minimum input/output pair that produced the minimum value";
+  };
+  ProgVar @[7] {
+   name="closest_name";
+   var_type=T_String;
+   string_val="12_b";
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="result: name of input pattern with closest distance";
+  };
+  ProgVar @[8] {
+   name="row_zero";
+   var_type=T_Int;
+   int_val=0;
+   objs_ptr=0;
+   flags=NULL_CHECK;
+   desc="always 0";
+  };
+  ProgVar @[9] {
+   name="last_row";
+   var_type=T_Int;
+   int_val=-1;
+   objs_ptr=0;
+   flags=;
+   desc="always -1";
+  };
+ };
+ functions {
+  name=;
+  el_typ=Function;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  DataVarProg @[0] {
+   desc="get last trial number in output data table";
+   flags=;
+   data_var=.projects[0].programs[2].args[0]$4$;
+   set_data=0;
+   row_spec=ROW_NUM;
+   row_var=.projects[0].programs[2].vars[9]$5$;
+   var_1=.projects[0].programs[2].vars[2]$6$;
+   var_2=NULL;
+   var_3=NULL;
+   var_4=NULL;
+  };
+  DataSelectRowsProg @[1] {
+   desc="select row with that trial number and copy to curtrialdata";
+   flags=;
+   src_data_var=$4$;
+   dest_data_var=.projects[0].programs[2].vars[1]$7$;
+   select_spec {
+    name="select_spec";
+    ops {
+     name=;
+     el_typ=DataSelectEl;
+     el_def=0;
+     DataSelectEl @[0] {
+      col_name="trial";
+      rel=EQUAL;
+      use_var=1;
+      cmp 2 0=25;
+      var=$6$;
+     };
+    };
+    comb_op=AND;
+   };
+  };
+  DataAnalCall @[2] {
+   desc="compute the appropriate distances";
+   flags=;
+   result_var=NULL;
+   object_type=taDataAnal;
+   method=taDataAnal::CrossDistMatrix;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=float_Matrix_ptr;
+     type="float_Matrix*";
+     name="dist_mat";
+     required=1;
+     def_val=;
+     expr {
+      expr="OutputTargetDistMatrix";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="src_data_a";
+     required=1;
+     def_val=;
+     expr {
+      expr="CurTrialData";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="data_col_nm_a";
+     required=1;
+     def_val=;
+     expr {
+      expr="output_col_name";
+     };
+    };
+    ProgArg @[3] {
+     arg_type=DataTable_ptr;
+     type="DataTable*";
+     name="src_data_b";
+     required=1;
+     def_val=;
+     expr {
+      expr="target_input_data";
+     };
+    };
+    ProgArg @[4] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="data_col_nm_b";
+     required=1;
+     def_val=;
+     expr {
+      expr="target_col_name";
+     };
+    };
+    ProgArg @[5] {
+     arg_type=taMath::DistMetric;
+     type="taMath::DistMetric";
+     name="metric";
+     required=1;
+     def_val=;
+     expr {
+      expr="taMath::EUCLIDIAN";
+     };
+    };
+    ProgArg @[6] {
+     arg_type=bool;
+     type="bool";
+     name="norm";
+     required=0;
+     def_val="false";
+     expr {
+      expr="false";
+     };
+    };
+    ProgArg @[7] {
+     arg_type=float;
+     type="float";
+     name="tol";
+     required=0;
+     def_val="0.0f";
+     expr {
+      expr="dist_tol";
+     };
+    };
+   };
+  };
+  MathCall @[3] {
+   desc="find min dist val and index";
+   flags=;
+   result_var=.projects[0].programs[2].vars[4]$8$;
+   object_type=taMath_float;
+   method=taMath_float::vec_min;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=0;
+     def_val=;
+     expr {
+      expr="OutputTargetDistMatrix";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int_ref;
+     type="int&";
+     name="idx";
+     required=0;
+     def_val=;
+     expr {
+      expr="min_idx";
+     };
+    };
+   };
+  };
+  DataVarProg @[4] {
+   desc="get name of the minimum input/output pair";
+   flags=;
+   data_var=.projects[0].programs[2].args[2]$9$;
+   set_data=0;
+   row_spec=ROW_NUM;
+   row_var=.projects[0].programs[2].vars[5]$10$;
+   var_1=.projects[0].programs[2].vars[6]$11$;
+   var_2=NULL;
+   var_3=NULL;
+   var_4=NULL;
+  };
+  AssignExpr @[5] {
+   desc="actually gets the input part of the name";
+   flags=;
+   result_var=.projects[0].programs[2].vars[7]$12$;
+   expr {
+    expr="Name";
+   };
+  };
+ };
+};

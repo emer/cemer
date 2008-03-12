@@ -28,6 +28,7 @@ dist_pkgdata_prog_lib_DATA =\
 	CtLeabraSettleTest.prog \
 	DataCalcSample.prog \
 	EpochsToTrain.prog \
+	FindClosestEvent.prog \
 	LeabraAll_Std.progp \
 	LeabraAll_Test.progp \
 	LeabraBatch.prog \
