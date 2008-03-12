@@ -33,8 +33,14 @@ Program .projects[0].programs.gp[0][6] {
     };
   };
 
-  ProgEl_List @.prog_code = [1] {
-    MethodCall @[0] { };
+  ProgEl_List @.prog_code = [2] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MethodCall @[1] { };
   };
 };
 Program .projects[0].programs.gp[0][6] {
@@ -158,12 +164,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="input_data";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ input_data;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
@@ -174,12 +174,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val=;
      expr {
       expr="network";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
    };
@@ -202,12 +196,6 @@ Program .projects[0].programs.gp[0][6] {
      def_val="false";
      expr {
       expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
    };
@@ -218,6 +206,38 @@ Program .projects[0].programs.gp[0][6] {
   el_typ=MethodCall;
   el_def=0;
   MethodCall @[0] {
+   desc="sets the datatable and network for the layer writer, so it knows what to write to";
+   flags=;
+   result_var=NULL;
+   obj=$3$;
+   method=LayerWriter::SetDataNetwork;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=DataBlock_ptr;
+     type="DataBlock*";
+     name="db";
+     required=0;
+     def_val=;
+     expr {
+      expr="input_data";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Network_ptr;
+     type="Network*";
+     name="net";
+     required=0;
+     def_val=;
+     expr {
+      expr="network";
+     };
+    };
+   };
+  };
+  MethodCall @[1] {
    desc="apply inputs to the network!  layer writer has all the key specs";
    flags=;
    result_var=NULL;

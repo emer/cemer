@@ -3,7 +3,7 @@ Program .projects[0].programs[2] {
   ProgObjList @.objs = [2] {
     float_Matrix @[0] { };
     DataTable @[1] { 
-      DataTableCols @.data = [14] {
+      DataTableCols @.data = [9] {
 	int_Data @[0] { 
      UserDataItem_List @*(.user_data_) { 
 	    UserDataItem @[0] { };
@@ -20,20 +20,11 @@ Program .projects[0].programs[2] {
      };
 };
 	String_Data @[3] { };
-	String_Data @[4] { };
-	int_Data @[5] { 
-     UserDataItem_List @*(.user_data_) { 
-	    UserDataItem @[0] { };
-     };
-};
+	float_Data @[4] { };
+	String_Data @[5] { };
 	float_Data @[6] { };
 	float_Data @[7] { };
 	float_Data @[8] { };
-	float_Data @[9] { };
-	float_Data @[10] { };
-	String_Data @[11] { };
-	float_Data @[12] { };
-	float_Data @[13] { };
       };
     };
   };
@@ -45,7 +36,7 @@ Program .projects[0].programs[2] {
     ProgVar @[3] { };
   };
 
-  ProgVar_List @.vars = [12] {
+  ProgVar_List @.vars = [13] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -58,16 +49,24 @@ Program .projects[0].programs[2] {
     ProgVar @[9] { };
     ProgVar @[10] { };
     ProgVar @[11] { };
+    ProgVar @[12] { };
   };
 
-  ProgEl_List @.prog_code = [8] {
-    DataVarProg @[0] { };
-    DataSelectRowsProg @[1] { 
-      DataOpList @.ops = [1] {
-	DataSelectEl @[0] { };
+  ProgEl_List @.prog_code = [9] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
       };
     };
-    DataAnalCall @[2] { 
+    AddNewDataRow @[1] { };
+    MethodCall @[2] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    DataAnalCall @[3] { 
       ProgArg_List @.meth_args = [8] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -79,16 +78,16 @@ Program .projects[0].programs[2] {
 	ProgArg @[7] { };
       };
     };
-    MathCall @[3] { 
+    MathCall @[4] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    DataVarProg @[4] { };
-    AssignExpr @[5] { };
-    DataVarProg @[6] { };
-    IfElse @[7] { 
+    DataVarProg @[5] { };
+    AssignExpr @[6] { };
+    DataVarProg @[7] { };
+    IfElse @[8] { 
       ProgEl_List @.true_code = [1] {
 	AssignExpr @[0] { };
       };
@@ -110,7 +109,7 @@ Program .projects[0].programs[2] {
   el_def=0;
   float_Matrix @[0] {
    name="OutputTargetDistMatrix";
-    [26 1] 2.9460075;2.6502221;2.9260435;2.911972;2.9389343;2.8763628;2.9393539;2.8973851;2.9408426;2.5253057;2.5825477;2.5417542;2.4875917;2.9225113;3.180491;3.1883783;2.6065671;2.5264058;2.8684087;2.5984986;2.5254648;2.6041319;2.9005764;3.1804352;2.8744626;0;  };
+    [26 1] 6.7681551;7.8604913;8.4941406;7.2077856;6.8041344;6.6891508;8.2777309;8.484375;10.266846;6.474678;6.585701;7.1165552;0;10.272941;6.6615076;8.6317806;8.3459635;5.9359255;7.301331;8.3796177;6.474678;8.587162;8.5191193;9.0339851;5.8333011;6.3505263;  };
   DataTable @[1] {
    name="CurTrialData";
    desc=;
@@ -179,7 +178,7 @@ Program .projects[0].programs[2] {
      };
      ar {
       name=;
-	  [1] 25;     };
+	  [1] 12;     };
     };
     String_Data @[3] {
      name="trial_name";
@@ -193,8 +192,20 @@ Program .projects[0].programs[2] {
       name=;
 	  [1] "12_b";     };
     };
-    String_Data @[4] {
-     name="group_name";
+    float_Data @[4] {
+     name="min_dist";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     ar {
+      name=;
+	  [1] 0;     };
+    };
+    String_Data @[5] {
+     name="closest_name";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -205,29 +216,8 @@ Program .projects[0].programs[2] {
       name=;
 	  [1] ;     };
     };
-    int_Data @[5] {
-     UserDataItem_List @*(.user_data_) {
-      name=;
-      el_typ=UserDataItemBase;
-      el_def=0;
-      UserDataItem @[0] {
-       name="NARROW";
-       value 1 0=1;
-      };
-     };
-     name="phase_no";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     ar {
-      name=;
-	  [1] 1;     };
-    };
     float_Data @[6] {
-     name="minus_cycles";
+     name="name_err";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -236,10 +226,10 @@ Program .projects[0].programs[2] {
      };
      ar {
       name=;
-	  [1] 40;     };
+	  [1] 0;     };
     };
     float_Data @[7] {
-     name="sse";
+     name="both_err";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -251,18 +241,6 @@ Program .projects[0].programs[2] {
 	  [1] 0;     };
     };
     float_Data @[8] {
-     name="ext_rew";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     ar {
-      name=;
-	  [1] 0;     };
-    };
-    float_Data @[9] {
      name="Output_act_m";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=1;
@@ -272,55 +250,7 @@ Program .projects[0].programs[2] {
      };
      ar {
       name=;
-	  [5 5 1] 7.6030318e-08;0.0055748038;0.94479495;0;1.1705069e-16;0.79043412;9.9541503e-05;7.3762574e-10;0.71947676;4.3031073e-06;0.68994826;0.066229396;4.293307e-06;0.87150419;0.00023397942;1.3359977e-10;0.00017176205;4.1076437e-06;4.8803631e-05;0.025565915;0.00014999893;0.94640869;6.376033e-09;3.4548846e-11;1.2042756e-14;     };
-    };
-    float_Data @[10] {
-     name="Outp_dist";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     ar {
-      name=;
-	  [1] 0;     };
-    };
-    String_Data @[11] {
-     name="ev_nm";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     ar {
-      name=;
-	  [1] "12_b";     };
-    };
-    float_Data @[12] {
-     name="nm_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     ar {
-      name=;
-	  [1] 0;     };
-    };
-    float_Data @[13] {
-     name="both_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     ar {
-      name=;
-	  [1] 0;     };
+	  [5 5 1] 5.5287498e-17;0.8996771;0.96325439;0;9.6345998e-10;0.017105836;0.82021612;0.0011627716;0.010350553;0;0.028698351;0.85832769;2.109538e-05;0.0065543121;2.7503931e-15;0;5.7586002e-18;0.0086058136;4.7180304e-13;0.50574511;3.2250097e-07;0.9509809;0.46785235;3.6486291e-15;7.3400756e-08;     };
     };
    };
    data_flags=SAVE_ROWS|AUTO_CALC;
@@ -342,7 +272,7 @@ Program .projects[0].programs[2] {
    name="trial_output_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[1][0]$0$;
+   object_val=.projects[0].data.gp[1][2]$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="the data table containing the monitored activation values to use in the comparison";
@@ -359,7 +289,7 @@ Program .projects[0].programs[2] {
    name="target_input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][1]$1$;
+   object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
    desc="target input data with full list of events to compare output data pattern to";
@@ -396,14 +326,23 @@ Program .projects[0].programs[2] {
    desc="pointer for holding the data from the current trial";
   };
   ProgVar @[2] {
-   name="trial";
-   var_type=T_Int;
-   int_val=25;
+   name="dist_metric";
+   var_type=T_HardEnum;
+   int_val=0;
+   hard_enum_type=taMath::DistMetric;
    objs_ptr=0;
-   flags=NULL_CHECK;
-   desc="last trial number in data table -- used for selecting row";
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="parameter: distance metric to use in computing distances";
   };
   ProgVar @[3] {
+   name="dist_norm";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   desc="parameter: whether to normalize distance value";
+  };
+  ProgVar @[4] {
    name="dist_tol";
    var_type=T_Real;
    real_val=0.5;
@@ -411,7 +350,7 @@ Program .projects[0].programs[2] {
    flags=CTRL_PANEL|NULL_CHECK;
    desc="parameter: tolerance to use for computing distances -- values < this count as zero";
   };
-  ProgVar @[4] {
+  ProgVar @[5] {
    name="min_dist";
    var_type=T_Real;
    real_val=0;
@@ -419,31 +358,31 @@ Program .projects[0].programs[2] {
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="result: minimum distance between current output pattern and any of the target patterns";
   };
-  ProgVar @[5] {
+  ProgVar @[6] {
    name="min_idx";
    var_type=T_Int;
-   int_val=25;
+   int_val=12;
    objs_ptr=0;
    flags=CTRL_READ_ONLY|NULL_CHECK;
    desc="row index of what produced the min val";
   };
-  ProgVar @[6] {
+  ProgVar @[7] {
    name="Name";
    var_type=T_String;
-   string_val="12_b";
+   string_val="12_a";
    objs_ptr=0;
    flags=CTRL_READ_ONLY|NULL_CHECK;
    desc="name of the minimum input/output pair that produced the minimum value";
   };
-  ProgVar @[7] {
+  ProgVar @[8] {
    name="closest_name";
    var_type=T_String;
-   string_val="12_b";
+   string_val="12_a";
    objs_ptr=0;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="result: name of input pattern with closest distance";
   };
-  ProgVar @[8] {
+  ProgVar @[9] {
    name="trial_name";
    var_type=T_String;
    string_val="12_b";
@@ -451,15 +390,15 @@ Program .projects[0].programs[2] {
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="the current trial name";
   };
-  ProgVar @[9] {
+  ProgVar @[10] {
    name="name_err";
    var_type=T_Real;
-   real_val=0;
+   real_val=1;
    objs_ptr=0;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
    desc="error value for whether the full trial names match: 0 = they match, 1 = they don't match";
   };
-  ProgVar @[10] {
+  ProgVar @[11] {
    name="row_zero";
    var_type=T_Int;
    int_val=0;
@@ -467,7 +406,7 @@ Program .projects[0].programs[2] {
    flags=NULL_CHECK;
    desc="always 0";
   };
-  ProgVar @[11] {
+  ProgVar @[12] {
    name="last_row";
    var_type=T_Int;
    int_val=-1;
@@ -495,41 +434,76 @@ Program .projects[0].programs[2] {
   name=;
   el_typ=ProgEl;
   el_def=0;
-  DataVarProg @[0] {
-   desc="get last trial number in output data table";
+  MethodCall @[0] {
+   desc="ensure cur trial has same structure as source";
    flags=;
-   data_var=.projects[0].programs[2].args[0]$4$;
-   set_data=0;
-   row_spec=ROW_NUM;
-   row_var=.projects[0].programs[2].vars[11]$5$;
-   var_1=.projects[0].programs[2].vars[2]$6$;
-   var_2=NULL;
-   var_3=NULL;
-   var_4=NULL;
-  };
-  DataSelectRowsProg @[1] {
-   desc="select row with that trial number and copy to curtrialdata";
-   flags=;
-   src_data_var=$4$;
-   dest_data_var=.projects[0].programs[2].vars[1]$7$;
-   select_spec {
-    name="select_spec";
-    ops {
-     name=;
-     el_typ=DataSelectEl;
-     el_def=0;
-     DataSelectEl @[0] {
-      col_name="trial";
-      rel=EQUAL;
-      use_var=1;
-      cmp 2 0=25;
-      var=$6$;
+   result_var=NULL;
+   obj=.projects[0].programs[2].vars[1]$4$;
+   method=DataTable::Copy_NoData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_DataTable_ref;
+     type="const DataTable&";
+     name="cp";
+     required=0;
+     def_val=;
+     expr {
+      expr="trial_output_data";
      };
     };
-    comb_op=AND;
    };
   };
-  DataAnalCall @[2] {
+  AddNewDataRow @[1] {
+   desc=;
+   flags=;
+   data_var=$4$;
+  };
+  MethodCall @[2] {
+   desc="grab last row of source data";
+   flags=;
+   result_var=NULL;
+   obj=$4$;
+   method=DataTable::CopyFromRow;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type="int";
+     name="dest_row";
+     required=0;
+     def_val=;
+     expr {
+      expr="0";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=const_DataTable_ref;
+     type="const DataTable&";
+     name="cp";
+     required=0;
+     def_val=;
+     expr {
+      expr="trial_output_data";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="src_row";
+     required=0;
+     def_val=;
+     expr {
+      expr="trial_output_data.rows-1";
+     };
+    };
+   };
+  };
+  DataAnalCall @[3] {
    desc="compute the appropriate distances";
    flags=;
    result_var=NULL;
@@ -596,7 +570,7 @@ Program .projects[0].programs[2] {
      required=1;
      def_val=;
      expr {
-      expr="taMath::EUCLIDIAN";
+      expr="dist_metric";
      };
     };
     ProgArg @[6] {
@@ -606,7 +580,7 @@ Program .projects[0].programs[2] {
      required=0;
      def_val="false";
      expr {
-      expr="false";
+      expr="dist_norm";
      };
     };
     ProgArg @[7] {
@@ -621,10 +595,10 @@ Program .projects[0].programs[2] {
     };
    };
   };
-  MathCall @[3] {
+  MathCall @[4] {
    desc="find min dist val and index";
    flags=;
-   result_var=.projects[0].programs[2].vars[4]$8$;
+   result_var=.projects[0].programs[2].vars[5]$5$;
    object_type=taMath_float;
    method=taMath_float::vec_min;
    meth_args {
@@ -653,39 +627,39 @@ Program .projects[0].programs[2] {
     };
    };
   };
-  DataVarProg @[4] {
+  DataVarProg @[5] {
    desc="get name of the minimum input/output pair";
    flags=;
-   data_var=.projects[0].programs[2].args[2]$9$;
+   data_var=.projects[0].programs[2].args[2]$6$;
    set_data=0;
    row_spec=ROW_NUM;
-   row_var=.projects[0].programs[2].vars[5]$10$;
-   var_1=.projects[0].programs[2].vars[6]$11$;
+   row_var=.projects[0].programs[2].vars[6]$7$;
+   var_1=.projects[0].programs[2].vars[7]$8$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
   };
-  AssignExpr @[5] {
-   desc="just record this in a better named variable";
+  AssignExpr @[6] {
+   desc="actually gets the input part of the name";
    flags=;
-   result_var=.projects[0].programs[2].vars[7]$12$;
+   result_var=.projects[0].programs[2].vars[8]$9$;
    expr {
     expr="Name";
    };
   };
-  DataVarProg @[6] {
+  DataVarProg @[7] {
    desc="gets the trial name of the current trial";
    flags=;
-   data_var=$7$;
+   data_var=$4$;
    set_data=0;
    row_spec=ROW_NUM;
-   row_var=.projects[0].programs[2].vars[10]$13$;
-   var_1=.projects[0].programs[2].vars[8]$14$;
+   row_var=.projects[0].programs[2].vars[11]$10$;
+   var_1=.projects[0].programs[2].vars[9]$11$;
    var_2=NULL;
    var_3=NULL;
    var_4=NULL;
   };
-  IfElse @[7] {
+  IfElse @[8] {
    desc="computes err based on whether it was the same or not";
    flags=;
    cond {
@@ -698,7 +672,7 @@ Program .projects[0].programs[2] {
     AssignExpr @[0] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[2].vars[9]$15$;
+     result_var=.projects[0].programs[2].vars[10]$12$;
      expr {
       expr="0.0";
      };
@@ -711,7 +685,7 @@ Program .projects[0].programs[2] {
     AssignExpr @[0] {
      desc=;
      flags=;
-     result_var=$15$;
+     result_var=$12$;
      expr {
       expr="1.0";
      };
