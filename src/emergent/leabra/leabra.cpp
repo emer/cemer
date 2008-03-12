@@ -4648,7 +4648,8 @@ void LeabraThreadEngineInst::DoUnitProc(int proc_id) {
   // number of tasks will either be =threads, or less, if fewer units
   n_tasks = ((n_items + (UNIT_CHUNK_SIZE - 1)) & (~UNIT_CHUNK_SIZE)) / UNIT_CHUNK_SIZE;
   if (n_tasks < 1) n_tasks = 1;
-  else if (n_tasks > taskCount()) n_tasks = taskCount();
+  if (n_tasks > taskCount()) n_tasks = taskCount();
+  //NOTE: don't bail even if items==0 because task(0) is used to init net values
   
 #ifdef DEBUG
   n_items_done = 0;
@@ -4711,8 +4712,8 @@ void LeabraThreadEngineInst::DoLayerProc(int proc_id) {
   // number of tasks will either be =threads, or less, if fewer layers
   n_items = layerSize();
   n_tasks = n_items;
-  if (n_tasks < 1) return;
   if (n_tasks > taskCount()) n_tasks = taskCount();
+  if (n_tasks < 1) return;
 #ifdef DEBUG
   n_items_done = 0;
 #endif

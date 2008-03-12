@@ -2188,7 +2188,7 @@ public:
   inline int		layerSize() const {return layers.size;}
   inline Layer*		layer(int i) const {return layers.FastEl(i);}
   
-  void			OnBuild() {OnBuild_impl();} // #IGNORE
+  void			OnBuild() {OnBuild_impl();} // #IGNORE called on Network::Build() and also when we attach an engine to a net
   
   // engineable routines -- if false returned, then default net one is done
   virtual bool		OnCompute_Act() {return false;}

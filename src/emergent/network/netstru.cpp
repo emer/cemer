@@ -4714,6 +4714,7 @@ void Network::SmartRef_DataRefChanging(taSmartRef* ref, taBase* obj,
       net_inst = net_engine->MakeEngineInst();
       taBase::Own(net_inst, this); // also does InitLinks
       taBase::UnRef(net_inst); // we just want 1 ref
+      net_inst->OnBuild(); // to initialize it
     } else {
       net_inst = NULL;
     } 
