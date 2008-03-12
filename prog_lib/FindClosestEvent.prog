@@ -45,7 +45,7 @@ Program .projects[0].programs[2] {
     ProgVar @[3] { };
   };
 
-  ProgVar_List @.vars = [10] {
+  ProgVar_List @.vars = [12] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -56,9 +56,11 @@ Program .projects[0].programs[2] {
     ProgVar @[7] { };
     ProgVar @[8] { };
     ProgVar @[9] { };
+    ProgVar @[10] { };
+    ProgVar @[11] { };
   };
 
-  ProgEl_List @.prog_code = [6] {
+  ProgEl_List @.prog_code = [8] {
     DataVarProg @[0] { };
     DataSelectRowsProg @[1] { 
       DataOpList @.ops = [1] {
@@ -85,6 +87,16 @@ Program .projects[0].programs[2] {
     };
     DataVarProg @[4] { };
     AssignExpr @[5] { };
+    DataVarProg @[6] { };
+    IfElse @[7] { 
+      ProgEl_List @.true_code = [1] {
+	AssignExpr @[0] { };
+      };
+
+      ProgEl_List @.false_code = [1] {
+	AssignExpr @[0] { };
+      };
+    };
   };
 };
 Program .projects[0].programs[2] {
@@ -432,6 +444,22 @@ Program .projects[0].programs[2] {
    desc="result: name of input pattern with closest distance";
   };
   ProgVar @[8] {
+   name="trial_name";
+   var_type=T_String;
+   string_val="12_b";
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="the current trial name";
+  };
+  ProgVar @[9] {
+   name="name_err";
+   var_type=T_Real;
+   real_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   desc="error value for whether the full trial names match: 0 = they match, 1 = they don't match";
+  };
+  ProgVar @[10] {
    name="row_zero";
    var_type=T_Int;
    int_val=0;
@@ -439,7 +467,7 @@ Program .projects[0].programs[2] {
    flags=NULL_CHECK;
    desc="always 0";
   };
-  ProgVar @[9] {
+  ProgVar @[11] {
    name="last_row";
    var_type=T_Int;
    int_val=-1;
@@ -473,7 +501,7 @@ Program .projects[0].programs[2] {
    data_var=.projects[0].programs[2].args[0]$4$;
    set_data=0;
    row_spec=ROW_NUM;
-   row_var=.projects[0].programs[2].vars[9]$5$;
+   row_var=.projects[0].programs[2].vars[11]$5$;
    var_1=.projects[0].programs[2].vars[2]$6$;
    var_2=NULL;
    var_3=NULL;
@@ -638,11 +666,56 @@ Program .projects[0].programs[2] {
    var_4=NULL;
   };
   AssignExpr @[5] {
-   desc="actually gets the input part of the name";
+   desc="just record this in a better named variable";
    flags=;
    result_var=.projects[0].programs[2].vars[7]$12$;
    expr {
     expr="Name";
+   };
+  };
+  DataVarProg @[6] {
+   desc="gets the trial name of the current trial";
+   flags=;
+   data_var=$7$;
+   set_data=0;
+   row_spec=ROW_NUM;
+   row_var=.projects[0].programs[2].vars[10]$13$;
+   var_1=.projects[0].programs[2].vars[8]$14$;
+   var_2=NULL;
+   var_3=NULL;
+   var_4=NULL;
+  };
+  IfElse @[7] {
+   desc="computes err based on whether it was the same or not";
+   flags=;
+   cond {
+    expr="trial_name == closest_name";
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc=;
+     flags=;
+     result_var=.projects[0].programs[2].vars[9]$15$;
+     expr {
+      expr="0.0";
+     };
+    };
+   };
+   false_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    AssignExpr @[0] {
+     desc=;
+     flags=;
+     result_var=$15$;
+     expr {
+      expr="1.0";
+     };
+    };
    };
   };
  };
