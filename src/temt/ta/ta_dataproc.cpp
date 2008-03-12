@@ -187,6 +187,7 @@ void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void DataGroupSpec::Initialize() {
   ops.SetBaseType(&TA_DataGroupEl);
+  append_agg_name = true;
 }
 
 ///////////////////////////
@@ -572,9 +573,11 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
       nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sda);
-    String dst_op = ds->agg.GetAggName();
-    dst_op.downcase();
-    nda->name += "_" + dst_op;
+    if(spec->append_agg_name) {
+      String dst_op = ds->agg.GetAggName();
+      dst_op.downcase();
+      nda->name += "_" + dst_op;
+    }
   }    
   dest->UniqueColNames();	// make them unique!
 
