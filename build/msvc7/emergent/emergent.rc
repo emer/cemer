@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,13,0
- PRODUCTVERSION 4,0,13,0
+ FILEVERSION 4,0,14,0
+ PRODUCTVERSION 4,0,14,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -71,12 +71,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "CCN Lab"
             VALUE "FileDescription", "emergent Dynamic Link Library"
-            VALUE "FileVersion", "4, 0, 13, 0"
+            VALUE "FileVersion", "4, 0, 14, 0"
             VALUE "InternalName", "emergent Library"
             VALUE "LegalCopyright", "Copyright (C) 1995-2007 Regents of the University of Colorado, Carnegie Mellon University, Princeton University."
             VALUE "OriginalFilename", "emergent.dll"
             VALUE "ProductName", "emergent Dynamic Link Library"
-            VALUE "ProductVersion", "4, 0, 13, 0"
+            VALUE "ProductVersion", "4, 0, 14, 0"
         END
     END
     BLOCK "VarFileInfo"

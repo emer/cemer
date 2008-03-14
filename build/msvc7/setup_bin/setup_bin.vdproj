@@ -309,30 +309,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_67BAD069131742F79CA6B9421313132B"
-        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6B3A8AD79F9148BA93209BD379754AC7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -447,6 +423,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8D20530278BD4A4EBEC99D4254914434"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8D20530278BD4A4EBEC99D4254914434"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8D20530278BD4A4EBEC99D4254914434"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9161BC58330C4C6BBA98527C1965082D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -473,6 +467,30 @@
         {
         "MsmKey" = "8:_93FA0562A8C140398168A63EF3688173"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_947EBFEA97D1466D970F01B3594B34D4"
+        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_947EBFEA97D1466D970F01B3594B34D4"
+        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_947EBFEA97D1466D970F01B3594B34D4"
+        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_947EBFEA97D1466D970F01B3594B34D4"
+        "OwnerKey" = "8:_CF8C64A0EFA94764B3BFE2265007B411"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -527,24 +545,6 @@
         {
         "MsmKey" = "8:_B03C97397101475193723403DCB73021"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B14C09573B8843A38E22ADF20C54BFE1"
-        "OwnerKey" = "8:_6F5199158E62482FA030432801BB2F1C"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B14C09573B8843A38E22ADF20C54BFE1"
-        "OwnerKey" = "8:_EEBD3CDDCA324631B5C5E6A3CEA45D69"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B14C09573B8843A38E22ADF20C54BFE1"
-        "OwnerKey" = "8:_E1468C288D044D87B570A158804AC285"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -3679,13 +3679,13 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Emergent"
-        "ProductCode" = "8:{43A81D61-6778-4A2B-99A6-C87C094CB4E9}"
-        "PackageCode" = "8:{43001CF5-EE7B-4031-B2DE-CFDB31D9CF48}"
+        "ProductCode" = "8:{69244971-3AAA-4B9B-A270-5F50926004F5}"
+        "PackageCode" = "8:{FD63FE1E-21F3-4BC5-B1E2-4ACA56C9FA4E}"
         "UpgradeCode" = "8:{44D9DB79-4385-44C5-8AAE-9E349721CFFC}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:4.0.13"
+        "ProductVersion" = "8:4.0.14"
         "Manufacturer" = "8:CCN Lab"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://grey.colorado.edu/emergent/index.php/Main_Page"
@@ -4283,11 +4283,11 @@
         }
         "MergeModule"
         {
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_67BAD069131742F79CA6B9421313132B"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_8D20530278BD4A4EBEC99D4254914434"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:vc_user_crt71_rtl_x86_---.msm"
+            "SourcePath" = "8:vc_user_stl71_rtl_x86_---.msm"
                 "Properties"
                 {
                 }
@@ -4297,11 +4297,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_B14C09573B8843A38E22ADF20C54BFE1"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_947EBFEA97D1466D970F01B3594B34D4"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:vc_user_stl71_rtl_x86_---.msm"
+            "SourcePath" = "8:vc_user_crt71_rtl_x86_---.msm"
                 "Properties"
                 {
                 }
