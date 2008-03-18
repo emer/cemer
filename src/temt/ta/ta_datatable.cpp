@@ -172,6 +172,8 @@ void DataCol::Copy_NoData(const DataCol& cp) {
 }
 
 void DataCol::CopyFromRow(int dest_row, const DataCol& src, int src_row) {
+  if (dest_row < 0) dest_row = rows() + dest_row; // abs row, if request was from end
+  if (src_row < 0) src_row = src.rows() + src_row; // abs row, if request was from end
   if(src.is_matrix) {
     taMatrix* mat = ((DataCol&)src).GetValAsMatrix(src_row);
     if(mat) {

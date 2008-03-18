@@ -926,6 +926,15 @@ T3GridColViewNode* GridColView::MakeGridColViewNode() {
   return colnd;
 }
 
+void GridColView::SetTextWidth(int text_wdth) {
+  text_width = text_wdth;
+  GridTableView* par = parent();
+  if(par)
+    par->Render();
+}
+
+
+
 //////////////////////////////////
 //  GridTableView		//
 //////////////////////////////////
@@ -1287,6 +1296,10 @@ void GridTableView::CalcViewMetrics() {
 
   if(font_scale < text_size_range.min) {
     font_scale = text_size_range.min; // that's just it!
+  }
+  // now just enforce max
+  if(font_scale > text_size_range.max) {
+    font_scale = text_size_range.max; // that's just it!
   }
 
   // need another iteration now that we know the true font scale!

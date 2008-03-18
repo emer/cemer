@@ -565,20 +565,27 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
+  int trg_con;
+  if(!self_con && (prjn->from.ptr() == prjn->layer))
+    trg_con = (int) (p_con * (float)(prjn->from->units.leaves-1));
+  else
+    trg_con = (int) (p_con * (float)prjn->from->units.leaves);
+  if(trg_con <= 0) trg_con = 1;
+
+  // pre-allocate connections!
+  Unit* ru, *su;
+  taLeafItr ru_itr;
+  FOR_ITR_EL(Unit, ru, prjn->layer->units., ru_itr)
+    ru->ConnectAlloc(trg_con, prjn);
+
   PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
   TwoDCoord ru_pos;		// do this according to act_geom..
   int cnt = 0;
-  Unit* ru;
-  taLeafItr ru_itr;
   for(ru = (Unit*)prjn->layer->units.FirstEl(ru_itr); ru;
       ru = (Unit*)prjn->layer->units.NextEl(ru_itr), cnt++) {
     ru_pos.y = cnt / ru_geom.x;
     ru_pos.x = cnt % ru_geom.x;
     RecvCons* recv_gp = NULL;
-    int n_leaves = prjn->from->units.leaves;
-    if(!self_con && (prjn->from.ptr() == prjn->layer))
-      n_leaves--;
-    int trg_con = (int)(p_con * (float)n_leaves);
     FloatTwoDCoord suc;
     int n_con = 0;
     int n_retry = 0;
@@ -587,7 +594,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
       float angle = 2.0 * 3.14159265 * rnd_angle.Gen(); // same for angle
       suc.x = dist * cos(angle);
       suc.y = dist * sin(angle);
-      Unit* su = GetUnitFmOff(dist_type, wrap, prjn, ru_pos, suc);
+      su = GetUnitFmOff(dist_type, wrap, prjn, ru_pos, suc);
       if((su == NULL) || (!self_con && (ru == su))) {
 	n_retry++;
 	continue;
@@ -600,7 +607,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
       }
     }
     TestWarning(n_con < trg_con, "Connect_impl",
-		"target no of connections:",String(trg_con),
+		"target number of connections:",String(trg_con),
 		"not made, only made:",String(n_con));
   }
 }

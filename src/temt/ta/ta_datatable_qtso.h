@@ -279,6 +279,10 @@ public:
   float 	col_width; // #READ_ONLY #HIDDEN #NO_SAVE calculated col_width in chars
   float		row_height; // #READ_ONLY #HIDDEN #NO_SAVE calculated row height in chars
 
+
+  virtual void		SetTextWidth(int text_wdth=16);
+  // #BUTTON #VIEWMENU set the text width for this column (default is 16) -- can adjust to fit more items in the display or allow existing text to fit better
+
   virtual void		ComputeColSizes();
   // compute the column sizes
 
