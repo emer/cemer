@@ -132,7 +132,7 @@ public:
   override String	GetName() const 	{ return name; } 
 
   virtual void		Hide();
-  // #BUTTON set this column to be invisible
+  // #BUTTON #VIEWMENU set this column to be invisible
 
   override void		DataDestroying();
   
@@ -348,9 +348,9 @@ public:
   // note: we also don't update panel if it is updating
 
   void		ShowAllCols();
-  // #BUTTON #CONFIRM show all columns in the data table (turn their visible flags on) -- this is the only way to turn visible back on once it is turned off!
+  // #BUTTON #CONFIRM #VIEWMENU show all columns in the data table (turn their visible flags on) -- this is the only way to turn visible back on once it is turned off!
   void		SetColorSpec(ColorScaleSpec* color_spec);
-  // #BUTTON set the color scale spec to determine the palette of colors representing values
+  // #BUTTON #VIEWMENU set the color scale spec to determine the palette of colors representing values
 
   // viewpanel accessors for complex members, we don't update though
   void		setWidth(float wdth);
@@ -820,7 +820,7 @@ public:
   override void	UpdateDisplay(bool update_panel = true);
 
   void		SetColorSpec(ColorScaleSpec* color_spec);
-  // #BUTTON set the color scale spec to determine the palette of colors representing values
+  // #BUTTON #VIEWMENU set the color scale spec to determine the palette of colors representing values
 
   virtual void	SetScrollBars();   // set scroll bar values
 
