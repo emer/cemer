@@ -3457,18 +3457,18 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
 }
 
 void iMainWindowViewer::Constr_Menu_impl() {
-  QString cmd_str = "Alt+";
+  QString cmd_str = "Ctrl+";
 
   // project actions -- we always create them (for menu consistency) but selectively enable
-  fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence(cmd_str + "N"), _fileNewAction ));
+  fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence(), _fileNewAction ));
   fileNewAction->setIcon( QIcon( ":/images/filenew.png") );
-  fileOpenAction = AddAction(new taiAction("&Open Project...", QKeySequence(cmd_str+"O"), _fileOpenAction ));
+  fileOpenAction = AddAction(new taiAction("&Open Project...", QKeySequence(), _fileOpenAction ));
   fileOpenAction->setIcon( QIcon( QPixmap(":/images/fileopen.png") ) );
   
   fileSaveAction = AddAction(new taiAction("&Save Project", QKeySequence(cmd_str+"S"), _fileSaveAction ));
   fileSaveAction->setIcon( QIcon( QPixmap(":/images/filesave.png") ) );
   fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), _fileSaveAsAction ));
-  fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(cmd_str+"L"), _fileSaveAsAction ));
+  fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(), _fileSaveAsAction ));
   fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction" ));
   
   fileNewAction->AddTo(fileMenu);
@@ -3497,10 +3497,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
   // other actions
   fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction" ));
   
-  filePrintAction = AddAction(new taiAction("&Print...", QKeySequence(cmd_str+"P"), _filePrintAction ));
+  filePrintAction = AddAction(new taiAction("&Print...", QKeySequence(), _filePrintAction ));
   filePrintAction->setIcon( QIcon( QPixmap(":/images/fileprint.png") ) );
   if (!isRoot()) {
-    fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence(cmd_str+"W"), _fileCloseWindowAction ));
+    fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence(), _fileCloseWindowAction ));
     connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()) );
   }
 #ifndef TA_OS_MAC
@@ -3515,7 +3515,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editUndoAction = AddAction(new taiAction("&Undo", QKeySequence(cmd_str+"Z"), _editUndoAction ));
   editUndoAction->setEnabled( FALSE );
   editUndoAction->setIcon( QIcon( QPixmap(":/images/editundo.png") ) );
-  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(cmd_str+"Y"), _editRedoAction ));
+  editRedoAction = AddAction(new taiAction("&Redo", QKeySequence(), _editRedoAction ));
   editRedoAction->setEnabled( FALSE );
   editRedoAction->setIcon( QIcon( QPixmap(":/images/editredo.png") ) );
   editCutAction = AddAction(new taiAction(taiClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str+"X"), _editCutAction ));
@@ -3535,10 +3535,10 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editPasteAppendAction->setIcon( QIcon( editpaste ) );
   editDeleteAction = AddAction(new taiAction(taiClipData::EA_DELETE, "&Delete", QKeySequence("Shift+D"), _editDeleteAction ));
 //  editDeleteAction->setIcon( QIcon( editpaste ) );
-  editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence(cmd_str+"L"), _editLinkAction ));
-  editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(cmd_str+"L"), "editLinkIntoAction" ));
+  editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence(), _editLinkAction ));
+  editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction" ));
   editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
-  editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence(cmd_str+"F"), "editFindAction"));
+  editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence("Alt+F"), "editFindAction"));
   editFindNextAction = AddAction(new taiAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction" ));
@@ -4290,7 +4290,7 @@ void iMainWindowViewer::toolsClassBrowser() {
 }
 
 void iMainWindowViewer::UpdateUi() {
-  QString cmd_str = "Alt+";
+  QString cmd_str = "Ctrl+";
 
   int ea = GetEditActions();
   // some actions we always show, others we only show if available
@@ -4353,9 +4353,9 @@ void iMainWindowViewer::UpdateUi() {
   } else { 
     // restore accelerators
     editLinkAction->setText("&Link");
-    editLinkAction->setShortcut(QKeySequence(cmd_str+"L"));
+    editLinkAction->setShortcut(QKeySequence());
     editLinkIntoAction->setText("&Link Into");
-    editLinkIntoAction->setShortcut(QKeySequence(cmd_str+"L"));
+    editLinkIntoAction->setShortcut(QKeySequence());
   }
   
   editUnlinkAction->setVisible(ea & taiClipData::EA_UNLINK);
