@@ -34,7 +34,7 @@ Program .projects[0].programs[6] {
     ProgVar @[13] { };
   };
 
-  ProgEl_List @.prog_code = [10] {
+  ProgEl_List @.prog_code = [9] {
     MethodCall @[0] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
@@ -47,8 +47,7 @@ Program .projects[0].programs[6] {
 	ProgArg @[1] { };
       };
     };
-    ReturnExpr @[3] { };
-    DataAnalCall @[4] { 
+    DataAnalCall @[3] { 
       ProgArg_List @.meth_args = [8] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -60,16 +59,16 @@ Program .projects[0].programs[6] {
 	ProgArg @[7] { };
       };
     };
-    MathCall @[5] { 
+    MathCall @[4] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    DataVarProg @[6] { };
+    DataVarProg @[5] { };
+    AssignExpr @[6] { };
     AssignExpr @[7] { };
-    AssignExpr @[8] { };
-    IfElse @[9] { 
+    IfElse @[8] { 
       ProgEl_List @.true_code = [1] {
 	AssignExpr @[0] { };
       };
@@ -369,14 +368,7 @@ Program .projects[0].programs[6] {
     };
    };
   };
-  ReturnExpr @[3] {
-   desc=;
-   flags=OFF;
-   expr {
-    expr=;
-   };
-  };
-  DataAnalCall @[4] {
+  DataAnalCall @[3] {
    desc="compute the appropriate distances";
    flags=;
    result_var=NULL;
@@ -468,7 +460,7 @@ Program .projects[0].programs[6] {
     };
    };
   };
-  MathCall @[5] {
+  MathCall @[4] {
    desc="find min dist val and index";
    flags=;
    result_var=.projects[0].programs[6].vars[6]$7$;
@@ -500,7 +492,7 @@ Program .projects[0].programs[6] {
     };
    };
   };
-  DataVarProg @[6] {
+  DataVarProg @[5] {
    desc="get name of the minimum input/output pair";
    flags=;
    data_var=.projects[0].programs[6].args[3]$8$;
@@ -512,7 +504,7 @@ Program .projects[0].programs[6] {
    var_3=NULL;
    var_4=NULL;
   };
-  AssignExpr @[7] {
+  AssignExpr @[6] {
    desc="actually gets the input part of the name";
    flags=;
    result_var=.projects[0].programs[6].vars[9]$11$;
@@ -520,7 +512,7 @@ Program .projects[0].programs[6] {
     expr="Name";
    };
   };
-  AssignExpr @[8] {
+  AssignExpr @[7] {
    desc=;
    flags=;
    result_var=.projects[0].programs[6].vars[10]$12$;
@@ -528,7 +520,7 @@ Program .projects[0].programs[6] {
     expr="network.trial_name";
    };
   };
-  IfElse @[9] {
+  IfElse @[8] {
    desc="computes err based on whether it was the same or not";
    flags=;
    cond {

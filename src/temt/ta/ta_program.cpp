@@ -2729,7 +2729,8 @@ void ProgObjList::GetVarsForObjs() {
 	  tv->name = nm;	// update the name
 	  tv->objs_ptr = true;	// make sure
 	  tv->object_type = obj->GetTypeDef();
-	  tv->DataChanged(DCR_ITEM_UPDATED);
+	  tv->UpdateAfterEdit(); // need UAE to update schema sig to cascade to progvar
+	  //	  tv->DataChanged(DCR_ITEM_UPDATED);
 	  break;
 	}
       }
