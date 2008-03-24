@@ -2018,6 +2018,7 @@ public:
 
   override void	Init_Counters();
   override void	Init_Stats();
+  override void	Init_Sequence();
 
   // single cycle-level functions
   virtual void	Compute_Netin();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)

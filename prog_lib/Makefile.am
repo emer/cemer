@@ -29,6 +29,7 @@ dist_pkgdata_prog_lib_DATA =\
 	DataCalcSample.prog \
 	EpochsToTrain.prog \
 	FindClosestEvent.prog \
+	FindClosestEventFmNet.prog \
 	LeabraAll_Std.progp \
 	LeabraAll_Test.progp \
 	LeabraBatch.prog \

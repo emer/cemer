@@ -2867,7 +2867,7 @@ void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay, Unit_Group* ug,
     *onm = "n/a";
     return;
   }
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(thr->acts.max_i);
+  LeabraUnit* u = (LeabraUnit*)ug->Leaf(thr->acts.max_i);
   if(!u) {
     *onm = "n/a";
     return;
@@ -3664,6 +3664,17 @@ void LeabraNetwork::Init_Stats() {
   avg_ext_rew_n = 0;
 }
 
+void LeabraNetwork::Init_Sequence() {
+  inherited::Init_Sequence();
+  if(sequence_init == INIT_STATE) {
+    Init_Acts();
+  }
+  else if(sequence_init == DECAY_STATE) {
+    DecayState();
+  }
+}
+
+
 void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   inherited::SetProjectionDefaultTypes(prjn);
   prjn->con_type = &TA_LeabraCon;
@@ -4084,7 +4095,6 @@ void LeabraNetwork::Trial_Init() {
     }
   }
 
-  // todo: this seems kinda silly and should perhaps just be put in the prog: not worth the extra state vars
   if(trial_init == INIT_STATE)
     Init_Acts();
   else if(trial_init == DECAY_STATE)

@@ -1982,6 +1982,9 @@ public:
   // #EXPERT #CAT_Statistic initialize statistic variables on network
   virtual void	Init_Timers();
   // #EXPERT #CAT_Statistic initialize statistic variables on network
+
+  virtual void	Init_Sequence()	{ };
+  // #CAT_Activation called by NetGroupedDataLoop at the start of a sequence (group) of input data events -- some algorithms may want to have a flag to optionally initialize activations at this point
   
   virtual void	Compute_Netin();
   // #CAT_Activation Compute NetInput: weighted activation from other units

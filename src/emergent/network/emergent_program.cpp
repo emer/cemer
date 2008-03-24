@@ -213,6 +213,7 @@ const String NetGroupedDataLoop::GenCssPre_impl(int indent_level) {
   rval += id1 + "if(data_loop->group_order == NetGroupedDataLoop::PERMUTED) data_loop->group_idx_list.Permute();\n";
   rval += id1 + "for(" + gp_idx_nm + " = 0; " + gp_idx_nm + " < data_loop->group_idx_list.size; " + gp_idx_nm + "++) {\n";
   rval += id2 + "network.group = " + gp_idx_nm + ";\n";
+  rval += id2 + "network.Init_Sequence(); // some algorithms use this to initialize at start\n";
   rval += id2 + "int group_data_row_idx;\n";
   rval += id2 + "if(data_loop->group_order == NetGroupedDataLoop::RANDOM) \n";
   rval += id2 + "   group_data_row_idx = data_loop->group_idx_list[Random::IntZeroN(data_loop->group_idx_list.size)];\n";
