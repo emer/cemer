@@ -3339,6 +3339,7 @@ const String Program::scriptString() {
   // current fresh code regardless!  note that it doesn't do this obligatory
   // recompiles all the time -- that is only done at init too.
   int item_id = 0;
+  functions.PreGen(item_id);
   init_code.PreGen(item_id);
   prog_code.PreGen(item_id);
     
@@ -3548,6 +3549,8 @@ void Program::LoadFromProgLib(ProgLibEl* prog_type) {
 void Program::RunLoadInitCode() {
   // automatically do the program call guys!
   int item_id = 0;
+  functions.PreGen(item_id);
+  init_code.PreGen(item_id);
   prog_code.PreGen(item_id);
   for (int i = 0; i < sub_progs.size; ++i) {
     ProgramCall* sp = (ProgramCall*)sub_progs.FastEl(i);
