@@ -35,5 +35,7 @@
 # define HW_API
 #endif
 
+#undef QT_SHARED                             // Already defined in config.h.
+#include "hw_TA_type.h" 
 
 #endif // ta_def_h

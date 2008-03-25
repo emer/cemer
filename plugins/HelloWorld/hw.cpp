@@ -1,24 +1,13 @@
 #include "hw.h"
-#include <QtPlugin>
 
-const taVersion HelloPlugin::version(1,0,0,0);
-
-HelloPlugin::HelloPlugin(QObject*){}
-
-int HelloPlugin::InitializeTypes() {
-  ta_Init_hw();  // call the maketa-generated type initialization routine
-  return 0;
+void HelloBase::Initialize() {
+  // any member initializations would go here
 }
 
-int HelloPlugin::InitializePlugin() {
-  return 0;
+void HelloBase::Destroy() {
+  CutLinks(); // unlinks any owned objects -- always put this in Destroy
+  // any additional destruction operations would go here
 }
-
-const char* HelloPlugin::url() {
-  return "http://grey.colorado.edu/cgi-bin/trac.cgi";
-}
-
-Q_EXPORT_PLUGIN2(hw, HelloPlugin)
 
 void HelloBase::Hello() {
   taMisc::Error("Hello World!");
@@ -27,5 +16,5 @@ void HelloBase::Hello() {
 void HelloBase::AddCoords() {
   FloatTDCoord t = a + b; // demonstrates use of temporary objects
   c = t;
-  UpdateAfterEdit(); // updates any associate members, and refreshes display
+  UpdateAfterEdit(); // updates any associated members, and refreshes display
 }

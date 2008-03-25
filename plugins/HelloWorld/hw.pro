@@ -8,10 +8,9 @@
 # Replace hw w/ your plugin name
 TARGET = hw
 
-# Declare all the headers in your project -- the following assumes just one
-# that is based on the TARGET name
+# Declare all the headers in your project 
 
-HEADERS += $${TARGET}.h
+HEADERS += $${TARGET}_pl.h $${TARGET}.h
 
 # Declare all the maketa headers (usually the same as HEADERS) --
 # you can just refer to the HEADERS if they are the same
@@ -25,7 +24,7 @@ MAKETA_HEADERS = $${TEMT_INC_DIR_ta}/ta_TA_type.h $${HEADERS}
 #  * moc files -- qmake handles those
 #  * xx_TA.cpp file -- the shared.pri handles those
 
-SOURCES += $${TARGET}.cpp
+SOURCES += $${TARGET}_pl.cpp $${TARGET}.cpp
 
 
 !include( ../shared.pri ) {
