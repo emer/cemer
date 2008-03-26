@@ -5012,7 +5012,7 @@ Layer* Network::NewLayer() {
 void Network::RemoveUnits() {
   taMisc::Busy();
   StructUpdate(true);
-  RemoveMonitors();
+  //  RemoveMonitors(); // not needed with smartref!
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
@@ -5025,7 +5025,7 @@ void Network::RemoveUnits() {
 void Network::RemoveUnitGroups() {
   taMisc::Busy();
   StructUpdate(true);
-  RemoveMonitors();
+  // RemoveMonitors(); // not needed with smartref!
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
@@ -5048,7 +5048,7 @@ void Network::LayoutUnitGroups() {
 void Network::RemoveCons() {
   taMisc::Busy();
   StructUpdate(true);
-  RemoveMonitors();
+  //  RemoveMonitors(); // not needed with smartref!
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)

@@ -2188,11 +2188,17 @@ bool taiArgType::GetHasOption(const String& opt, MethodDef* md, int aidx) {
   if(!md) md = meth;
   if(!md) return false;
   if(aidx < 0) aidx = arg_idx;
-  String mb_nm = md->OptionAfter(opt + "_");
+  // first search for digit explicitly -- if multiple opts present, this is key
+  String digopt = opt + "_" + String(aidx);
+  String mb_nm = md->OptionAfter(digopt);
+  if(!mb_nm.empty())
+    return true;
+  // then check for option with another digit before going to generic
+  mb_nm = md->OptionAfter(opt + "_");
   if(!mb_nm.empty()) {
     if(isdigit(mb_nm.firstchar())) { // arg position indicator
       int ai = (int)String((char)mb_nm.firstchar());
-      if(ai == aidx) return true;
+      if(ai == aidx) return true; // should not happen due to above check
       else return false;
     }
   }
@@ -2203,15 +2209,21 @@ String taiArgType::GetOptionAfter(const String& opt, MethodDef* md, int aidx) {
   if(!md) md = meth;
   if(!md) return _nilString;
   if(aidx < 0) aidx = arg_idx;
-  String mb_nm = md->OptionAfter(opt);
+  // first search for digit explicitly -- if multiple opts present, this is key
+  String digopt = opt + String(aidx) + "_";
+  String mb_nm = md->OptionAfter(digopt);
+  if(!mb_nm.empty())
+    return mb_nm;
+  // then check for option with another digit before going to generic
+  mb_nm = md->OptionAfter(opt);
   if(!mb_nm.empty()) {
     if(isdigit(mb_nm.firstchar()) && (mb_nm[1] == '_')) { // arg position indicator
       int ai = (int)String((char)mb_nm.firstchar());
-      if(ai == aidx) mb_nm = mb_nm.after(1); // use it
+      if(ai == aidx) mb_nm = mb_nm.after(1); 	  // should not happen due to above check
       else mb_nm = _nilString;			  // bail
     }
   }
-  return mb_nm;
+  return mb_nm;			// otherwise must be generic
 }
 
 //////////////////////////////////

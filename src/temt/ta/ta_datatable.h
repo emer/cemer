@@ -1001,7 +1001,7 @@ public:
   virtual bool		GroupMeanSEM(DataTable* dest_data,
 				     DataCol* gp_col1, DataCol* gp_col2 = NULL,
 				     DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
-  // #CAT_DataProc #MENU #FROM_GROUP_data #NULL_OK #NULL_TEXT_0_NewDataTable groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
+  // #CAT_DataProc #MENU #NULL_OK #NULL_TEXT_0_NewDataTable #FROM_GROUP_1_data #FROM_GROUP_2_data #FROM_GROUP_3_data #FROM_GROUP_4_data groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
   virtual String	ColStats(DataCol* col);
   // #CAT_DataProc #MENU #FROM_GROUP_data #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual String	ColStatsName(const String& col_name);
