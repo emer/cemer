@@ -4681,8 +4681,8 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
   connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDraw);
-  chkNegDrawZ =  new QCheckBox("Neg\nDraw Z", widg); chkNegDraw->setObjectName("chkNegDrawZ");
-  chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction of Z (to the front), which may indicate a wrap-around to a new channel of data");
+  chkNegDrawZ =  new QCheckBox("Neg\nDraw Z", widg); chkNegDrawZ->setObjectName("chkNegDrawZ");
+  chkNegDrawZ->setToolTip("Whether to draw a line when going in a negative direction of Z (to the front), which may indicate a wrap-around to a new channel of data");
   connect(chkNegDrawZ, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDrawZ);
 
