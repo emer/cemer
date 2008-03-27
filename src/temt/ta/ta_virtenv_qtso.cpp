@@ -805,7 +805,8 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
   vw->BuildAll();
   fr->Render();
   fr->ViewAll();
-  fr->GetCameraPosOrient();
+  if(fr->singleChild())
+    fr->GetCameraPosOrient();
   return vw;
 }
 
