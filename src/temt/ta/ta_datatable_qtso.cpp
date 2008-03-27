@@ -2909,7 +2909,7 @@ void GraphTableView::Initialize() {
   bar_space = .2f;
   color_mode = VALUE_COLOR;
   negative_draw = false;
-  negative_draw_z = false;
+  negative_draw_z = true;
   axis_font_size = .05f;
   label_font_size = .04f;
   label_spacing = -1;
