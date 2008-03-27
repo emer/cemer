@@ -2909,6 +2909,7 @@ void GraphTableView::Initialize() {
   bar_space = .2f;
   color_mode = VALUE_COLOR;
   negative_draw = false;
+  negative_draw_z = false;
   axis_font_size = .05f;
   label_font_size = .04f;
   label_spacing = -1;
@@ -4199,6 +4200,13 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) matz = true;
 
   float last_x;
+  float last_z = 0.0f;
+  if(z_axis.on) {
+    if(x_axis.row_num)
+      last_z = view_range.min;
+    else
+      last_z = da_z->GetValAsFloat(view_range.min);
+  }
   if(x_axis.row_num)
     last_x = view_range.min;
   else
@@ -4212,6 +4220,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     iColor clr; // only used for color modes
     bool clr_ok = false;
     bool new_trace = false;
+    bool new_trace_z = false;
     if(x_axis.row_num)
       dat.x = row;
     else
@@ -4255,6 +4264,9 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
 
     if(dat.x < last_x)
       new_trace = true;
+    if(z_axis.on && (dat.z < last_z))
+      new_trace_z = true;
+
 
     if(da_clr) {
       clr_ok = true;
@@ -4268,7 +4280,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
 
     // draw the line
     if(plot_style == LINE || plot_style == LINE_AND_POINTS) {
-      if(first || (new_trace && !negative_draw)) {	// just starting out
+      if(first || (new_trace && !negative_draw) || (new_trace_z && !negative_draw_z))
+      {	// just starting out
 	if(clr_ok)
 	  t3gl->moveTo(plt, (T3Color)(clr));
 	else
@@ -4339,6 +4352,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     // post draw updates:
     first = false;
     last_x = dat.x;
+    last_z = dat.z;
   }
   t3gl->finishBatch();
 }
@@ -4667,6 +4681,10 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
   connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDraw);
+  chkNegDrawZ =  new QCheckBox("Neg\nDraw Z", widg); chkNegDraw->setObjectName("chkNegDrawZ");
+  chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction of Z (to the front), which may indicate a wrap-around to a new channel of data");
+  connect(chkNegDrawZ, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layTopCtrls->addWidget(chkNegDrawZ);
 
   layTopCtrls->addStretch();
   butRefresh = new QPushButton("Refresh", widg);
@@ -5057,6 +5075,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   fldPointSpacing->GetImage((String)glv->point_spacing);
   fldLabelSpacing->GetImage((String)glv->label_spacing);
   chkNegDraw->setChecked(glv->negative_draw);
+  chkNegDrawZ->setChecked(glv->negative_draw_z);
   fldWidth->GetImage((String)glv->width);
 
   lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
@@ -5152,6 +5171,7 @@ void iGraphTableView_Panel::GetValue_impl() {
   glv->point_spacing = (int)fldPointSpacing->GetValue();
   glv->label_spacing = (int)fldLabelSpacing->GetValue();
   glv->negative_draw = chkNegDraw->isChecked();
+  glv->negative_draw_z = chkNegDrawZ->isChecked();
   glv->width = (float)fldWidth->GetValue();
   
   glv->setScaleData(false, cbar->min(), cbar->max());

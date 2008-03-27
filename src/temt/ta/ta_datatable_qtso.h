@@ -781,6 +781,7 @@ public:
   float			bar_space;	// #DEF_0.2 amount of space between bars
   ColorMode		color_mode;	// how to determine the colors to draw
   bool			negative_draw;	// continue same line when X value resets in negative axis direction?
+  bool			negative_draw_z; // continue same line when Z value resets in negative axis direction?
   float			axis_font_size;	// #DEF_0.05 size to render axis text 
   float			label_font_size;// #DEF_0.04 size to render value/string labels
 
@@ -940,6 +941,7 @@ public:
   QLabel*		    lblLabelSpacing;
   taiField*		    fldLabelSpacing;
   QCheckBox*		    chkNegDraw;
+  QCheckBox*		    chkNegDrawZ;
 
   QLabel*		    lblWidth;
   taiField*		    fldWidth; // width of the display (height is always 1.0)
