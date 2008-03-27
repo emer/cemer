@@ -497,9 +497,9 @@ public:
   // #CAT_Copy copy the source matrix to the indicated frame; src geom must be our frame geom; optimized for like-type mats
 
   virtual void		Reset();
-  // #CAT_Modify remove all items
+  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify remove all items
   void			Clear(int fm = 0, int to = -1); 
-  // #CAT_Modify optimized clear, defaults to clearing all items
+  // #MENU #MENU_ON_Matrix #CAT_Modify optimized clear, defaults to clearing all items
   
   void			SetGeom(int size, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)  
