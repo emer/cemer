@@ -64,7 +64,11 @@ public:
   static bool	ReplicateByFrequency(DataTable* repl_output, const DataTable* data_list_in,
 				     int total_number, const String& freq_col_nm = "frequency",
 				     bool renorm_freqs=true);
-  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 replicate the items in the input data by the number given in the frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 replicate the items in the input data by the number given in the frequency column times the total_number value (equivalent to PERMUTED form of frequency sampling -- without replacement, always the same number), optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
+  static bool	SampleByFrequency(DataTable* repl_output, const DataTable* data_list_in,
+				  int n_samples=1, const String& freq_col_nm = "frequency",
+				  bool renorm_freqs=true);
+  // #MENU_BUTTON #CAT_Lists #NULL_OK_0 sample the items in the input data as a function of the probability value given in the frequency column, with n_samples taken per row (equivalent to RANDOM form of frequency sampling -- with replacement -- total N varies), optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table)
   static bool	NsByFrequency(DataTable* repl_output, const DataTable* data_list_in,
 			      int total_number, const String& freq_col_nm = "frequency",
 			      bool renorm_freqs=true);
