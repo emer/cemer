@@ -850,8 +850,8 @@ bool V3ProjectBase::ConvertToV4_Script_impl(Program_Group* pg, const String& obj
 
 bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
   DataTable_Group* dgp = (DataTable_Group*)nwproj->data.FindMakeGpName("InputData");
-  for(int ei=0; ei < environments.size; ei++) {
-    Environment* env = environments[ei];
+  for(int ei=0; ei < environments.leaves; ei++) {
+    Environment* env = environments.Leaf(ei);
     DataTable* dt = dgp->NewEl(1,&TA_DataTable);
     dt->name = env->name;
     String_Data* gpcol = NULL;
@@ -868,6 +868,26 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
       PatternSpec* ps = (PatternSpec*)es->patterns[pi];
       dt->NewColMatrix(DataCol::VT_FLOAT, ps->name, 2, MAX(ps->geom.x,1), MAX(ps->geom.y,1));
     }
+    // also convert special data fields -- spec_type is very hacky local code for type
+    int spec_type = 0;
+    if(env->InheritsFrom(&TA_FreqEnv)) {
+      dt->NewColFloat("frequency");
+      spec_type = 1;
+    }      
+    if(env->InheritsFrom(&TA_TimeEnvironment)) {
+      dt->NewColFloat("time");
+      spec_type = 2;
+    }      
+    if(env->InheritsFrom(&TA_FreqTimeEnv)) {
+      dt->NewColFloat("frequency");
+      dt->NewColFloat("time");
+      spec_type = 3;
+    }      
+    if(env->events.leaves > 0 && env->events.Leaf(0)->InheritsFrom(&TA_DurEvent)) {
+      dt->NewColFloat("duration");
+      spec_type = 4;
+    }
+
     taLeafItr evi;
     Event* ev;
     FOR_ITR_EL(Event, ev, env->events., evi) {
@@ -892,6 +912,19 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
 	  }
 	  taBase::unRefDone(mat);
 	}
+      }
+      if(spec_type == 1) {
+	dt->SetValColName(((FreqEvent*)ev)->frequency, "frequency", -1);
+      }
+      if(spec_type == 2) {
+	dt->SetValColName(((TimeEvent*)ev)->time, "time", -1);
+      }
+      if(spec_type == 3) {
+	dt->SetValColName(((FreqTimeEvent*)ev)->time, "time", -1);
+	dt->SetValColName(((FreqTimeEvent*)ev)->frequency, "frequency", -1);
+      }
+      if(spec_type == 4) {
+	dt->SetValColName(((DurEvent*)ev)->duration, "duration", -1);
       }
     }
     if(env->InheritsFrom(&TA_ScriptEnv)) {
