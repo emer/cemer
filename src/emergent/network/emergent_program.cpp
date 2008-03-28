@@ -51,11 +51,10 @@ const String NetDataLoop::GenCssPre_impl(int indent_level) {
   rval += id1 + "}\n";
   rval += id1 + "for(" + idx_nm + " = st_idx; " + idx_nm + " < mx_idx; " + idx_nm + " += inc_idx) {\n";
   rval += id2 + "int data_row_idx;\n";
+  // note: cannot use random call here to select if over size because this throws off random
+  // seed consistency between dmem processes!!!
   rval += id2 + "if(data_loop->order == NetDataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
-  rval += id2 + "else {\n";
-  rval += id3 + "if(" + idx_nm + " < data_loop->item_idx_list.size) data_row_idx = data_loop->item_idx_list[" + idx_nm + "];\n";
-  rval += id3 + "else data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size); // draw at random from list if over max -- need to process something for dmem to stay in sync\n";
-  rval += id3 + "}\n";
+  rval += id2 + "else data_row_idx = data_loop->item_idx_list[" + idx_nm + " % data_loop->item_idx_list.size ];\n";
   rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break;\n";
   rval += id2 + data_nm + "->WriteItem(data_row_idx); // set write to same as read, just in case some mods are happening along the way\n";
   rval += id2 + "trial = " + idx_nm + "; network.trial = " + idx_nm + ";\n";

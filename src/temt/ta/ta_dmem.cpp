@@ -56,7 +56,9 @@ bool DMemShare::ProcErr(int ercd, const char* function, const char* mpi_call) {
   }
   cerr << "proc: " << taMisc::dmem_proc << " fun: "
        << function << " MPI_" << mpi_call
-       << " FAILED with code: " << dmem_mpi_decode_err(ercd) << endl;
+       << " FAILED with code: " << dmem_mpi_decode_err(ercd)
+       << " Now Quitting!" << endl;
+  taiMiscCore::Quit();		// bail on error!
   return false;
 }
 
