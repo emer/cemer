@@ -159,7 +159,11 @@ void iTreeWidget::dropEvent(QDropEvent* e) {
   drop_pos = e->pos();
   key_mods = e->keyboardModifiers();
   // we have to skip QTreeWidget because it does the evil gui move, esp. on Mac
-  QTreeView::dropEvent(e);
+//  QTreeView::dropEvent(e);
+//TEMP MAC
+  QDropEvent et(e->pos(), Qt::CopyAction, e->mimeData(), e->mouseButtons(),
+    e->keyboardModifiers(), e->type());
+  QTreeView::dropEvent(&et);
 }
 
 bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index, 
