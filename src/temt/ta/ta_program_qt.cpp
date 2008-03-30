@@ -289,7 +289,8 @@ void iProgramEditor::Init() {
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
   items->setHeaderText(0, "Program Item");
   items->setHeaderText(1, "Item Detail");
-  items->setColumnWidth(1, 160);
+  //  items->setColumnWidth(1, 160);
+  items->setColumnWidth(1, 220);
   items->setHeaderText(2, "Item Description");
   items->setColKey(1, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
   items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);

@@ -103,7 +103,7 @@ void AdaptRelNetinSpec::Initialize() {
   trg_sum = 1.0f;
   tol_lg = 0.05f;
   tol_sm = 0.2f;
-  rel_lrate = .1f;
+  rel_lrate = .2f;
 }
 
 void AdaptRelNetinSpec::UpdateAfterEdit_impl() {
@@ -1617,7 +1617,7 @@ void LayAbsNetAdaptSpec::Initialize() {
   on = false;
   trg_net = .5f;
   tol = .1f;
-  abs_lrate = .1f;
+  abs_lrate = .2f;
 }
 
 void LeabraLayerSpec::Initialize() {
