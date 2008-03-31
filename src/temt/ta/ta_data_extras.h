@@ -28,6 +28,13 @@ class TA_API DirectoryCatalog: public DataBlock_Idx {
   // #INSTANCE a DirectoryCatalog provides a list of files in a directory
 INHERITED(DataBlock_Idx)
 public:
+  enum CatalogOptions { // #BITS the items to catalog -- usually one or the other
+    CO_Files		= 0x01, // #LABEL_Files files
+    CO_Dirs		= 0x02, // #LABEL_Dirs directories
+  };
+  
+  CatalogOptions	options; // what items to catalog -- usually one or the other
+  String		filters; // ; separated list of * or ? filters, ex. "*.txt;*.doc"
   String		directory;  // path of directory where the files are
   
   TA_BASEFUNS(DirectoryCatalog)
@@ -41,8 +48,8 @@ public: // DataBlock i/f
   override int		ItemCount() const; 
   
 public: // DataSource i/f
-  override int		sourceChannelCount() const;
-  override const String	sourceChannelName(int chan) const;
+  override int		SourceChannelCount() const {return 1;}
+  override const String	SourceChannelName(int chan) const;
   
 protected:
   override const Variant GetData_impl(int chan);

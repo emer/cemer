@@ -25,6 +25,7 @@
 
 void DirectoryCatalog::Initialize() {
   m_dir = NULL;
+  options = CO_Files;
   directory = "./";
 }
 
@@ -59,8 +60,15 @@ void DirectoryCatalog::ReadOpen_impl(bool& ok) {
   if (!ok) return;
   QDir& dir = this->dir(); // cache
   dir.setPath(directory);
+  QDir::Filters flags = QDir::NoDotAndDotDot;
+  if (options & CO_Files) flags |= QDir::Files;
+  if (options & CO_Dirs) flags |= QDir::AllDirs;
+  dir.setFilter(flags);
+  if (filters.nonempty()) {
+    QStringList sl((filters.toQString()).split(";"));
+    dir.setNameFilters(sl);
+  }
   ReadItrInit();
-  //TODO: need to refresh()?
 }
 
 void DirectoryCatalog::ReadClose_impl() {
@@ -71,11 +79,7 @@ void DirectoryCatalog::ReadClose_impl() {
   inherited::ReadClose_impl();
 }
 
-int DirectoryCatalog::sourceChannelCount() const {
-  return 1;
-}
-
-const String DirectoryCatalog::sourceChannelName(int chan) const {
+const String DirectoryCatalog::SourceChannelName(int chan) const {
   static String chan_files("files");
   switch (chan) {
   case 0: return chan_files;

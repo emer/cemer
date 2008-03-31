@@ -1277,11 +1277,16 @@ void DataLoop::Initialize() {
   order = SEQUENTIAL;
 }
 
-DataTable* DataLoop::GetData() {
+DataBlock* DataLoop::GetData() {
+  if(!data_var) return NULL;
+  if(data_var->object_type != &TA_DataBlock) return NULL;
+  return (DataBlock*)data_var->object_val.ptr();
+}
+/*DataTable* DataLoop::GetData() {
   if(!data_var) return NULL;
   if(data_var->object_type != &TA_DataTable) return NULL;
   return (DataTable*)data_var->object_val.ptr();
-}
+}*/
 
 void DataLoop::GetOrderVar() {
   Program* my_prog = program();
@@ -1330,8 +1335,8 @@ void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!CheckError(!data_var, quiet, rval,  "data_var = NULL")) {
     if(!CheckError(!data_var->object_val, quiet, rval,"data_var is NULL!")) {
-      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataTable), 
-		 quiet, rval,"data_var does not point to a data table");
+      CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataBlock), 
+		 quiet, rval,"data_var does not point to a data table (or data block)");
     }
   }
   CheckError(!index_var, quiet, rval, "index_var = NULL");

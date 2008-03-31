@@ -180,10 +180,7 @@ public:
     return -1;}
   // #CAT_SourceChannel get the source channel number for the name; -1 if none
     
-  const Variant		GetData(int chan) 
-  { if (ReadAvailable() && SourceChannelInRange(chan)) 
-      return GetData_impl(chan);
-    else return _nilVariant;}
+  const Variant		GetData(int chan);
   // #CAT_SourceChannel get source data from given channel index -- must have done Read first!
   const Variant		GetDataByName(const String& ch_nm) 
   { int chan; if (ReadAvailable() &&

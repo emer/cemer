@@ -150,3 +150,12 @@ void ChannelSpec_List::UpdateDataBlockSchema(DataBlock* db) {
   }
 }
 
+//////////////////////////
+//  DataBlock		//
+//////////////////////////
+
+const Variant DataBlock::GetData(int chan) { 
+  if (ReadAvailable() && SourceChannelInRange(chan)) 
+    return GetData_impl(chan);
+  else return _nilVariant;
+}
