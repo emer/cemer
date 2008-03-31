@@ -59,6 +59,7 @@ void DirectoryCatalog::ReadOpen_impl(bool& ok) {
   if (!ok) return;
   QDir& dir = this->dir(); // cache
   dir.setPath(directory);
+  ReadItrInit();
   //TODO: need to refresh()?
 }
 
