@@ -2260,6 +2260,7 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim) {
 }
 
 int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str) {
+  static int last_row_err_msg = -1;
   char cdlm = GetDelim(delim);
   StructUpdate(true);
   bool added_row = false;
@@ -2285,7 +2286,10 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     if(load_col_idx.size > 0) {
       data_col = load_col_idx[load_col];
     }
-    if(TestWarning((data_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
+    if(data_col >= data.size) {
+      if(last_row_err_msg != rows-1) // don't repeat err msg a zillion times!
+	TestWarning(true, "LoadDataRow_strm", "columns exceeded!");
+      last_row_err_msg = rows;
       c = '\n';
       break;
     }
@@ -2303,7 +2307,10 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
 	  last_mat_col = load_col;
 	if(mat_idx >= da->cell_size()) { // filled up the matrix!
 	  data_col++;
-	  if(TestWarning((data_col >= data.size), "LoadDataRow_strm", "columns exceeded!")) {
+	  if(data_col >= data.size) {
+	    if(last_row_err_msg != rows-1) // don't repeat err msg a zillion times!
+	      TestWarning(true, "LoadDataRow_strm", "matrix columns exceeded!");
+	    last_row_err_msg = rows;
 	    c = '\n';
 	    break;
 	  }

@@ -944,6 +944,7 @@ caseexpr:
           CSS_NUMBER
         | CSS_STRING
 	| CSS_VAR
+	| CSS_PTR
 	;
 
 switchblock:            /* switch is like a little function with one arg */
