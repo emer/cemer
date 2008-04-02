@@ -643,10 +643,12 @@ void iProgramEditor::setEditNode(TAPtr value, bool autosave) {
     if (m_modified && autosave) {
       Apply();
     }
-    Base_Remove();
+    Base_Remove(); // nulls base
   }
-  base = value;
-  if (base) Base_Add();
+  if (value) {
+    base = value;
+    Base_Add();
+  }
 }
 
 void iProgramEditor::setShow(int value) {
