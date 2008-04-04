@@ -1,0 +1,13 @@
+Parameter Settings
+ 
+ANBlock
+
+Following were tuned by hand to approximate the curves presented in Moore p. 40.
+
+0: cl = -82, width = 24 (high rate, sensitive)
+1: cl = -66, width = 42 (med rate, med sensitive)
+2: cl = -36, width = 48 (low rate, broad, higher levels)
+
+Note that the non-zero baseline of H fibers was not modeled.
+
+
