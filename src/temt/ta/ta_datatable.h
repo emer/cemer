@@ -871,7 +871,11 @@ public:
 
   taMatrix*	 	GetValAsMatrix(int col, int row);
   // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+  taMatrix*	 	GetValAsMatrixColName(const String& col_name, int row);
+  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
   bool 			SetValAsMatrix(const taMatrix* val, int col, int row);
+  // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
+  bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name, int row);
   // #CAT_XpertModify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   taMatrix*	 	GetRangeAsMatrix(int col, int st_row, int n_rows);
   // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
@@ -941,6 +945,7 @@ protected:
   virtual int 		LoadDataRow_impl(istream& strm, Delimiters delim = TAB,
 					 bool quote_str = true);
   // #IGNORE #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  bool 			SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row);
 
 public:
   virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,

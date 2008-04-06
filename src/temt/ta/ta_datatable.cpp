@@ -1181,6 +1181,14 @@ taMatrix* DataTable::GetValAsMatrix(int col, int row) {
   else return NULL;
 }
 
+taMatrix* DataTable::GetValAsMatrixColName(const String& col_name, int row) {
+  DataCol* da = GetColName(col_name);
+  int i;
+  if (da &&  idx_err(row, da->rows(), i))
+    return da->GetValAsMatrix(i);
+  else return NULL;
+}
+
 taMatrix* DataTable::GetRangeAsMatrix(int col, int st_row, int n_rows) {
   DataCol* da = GetColData(col);
   int i;
@@ -1248,6 +1256,15 @@ bool DataTable::SetValAsVar(const Variant& val, int col, int row) {
 
 bool DataTable::SetValAsMatrix(const taMatrix* val, int col, int row) {
   DataCol* da = GetColData(col);
+  return SetValAsMatrix_impl(val, da, row);
+}
+
+bool DataTable::SetValAsMatrixColName(const taMatrix* val, const String& col_name, int row) {
+  DataCol* da = GetColName(col_name);
+  return SetValAsMatrix_impl(val, da, row);
+}
+
+bool DataTable::SetValAsMatrix_impl(const taMatrix* val, DataCol* da, int row) {
   if (!da) return false;
   if (da->not_matrix_err()) return false;
   int i;
