@@ -96,8 +96,8 @@ public:
     CS_LogLinear	= 1, // #LABEL_LogLinear simple log linear
   };
   
-  DataBuffer		out_buff_env; // envelope output (if enabled)
-  DataBuffer		out_buff_freq; // frequency output (if enabled)
+  DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
+  DataBuffer		out_buff_freq; //  #SHOW_TREE frequency output (if enabled)
   
   ChanSpacing		chan_spacing; // how to space the channels
   float			ear_q; //Moore and Glasberg ERB values

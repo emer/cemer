@@ -488,7 +488,7 @@ class AUDIOPROC_API InputBlock: public InputBlockBase
 { // #VIRT_BASE ##CAT_Audioproc a block that serves as a source of input
 INHERITED(InputBlockBase) 
 public:
-  DataBuffer		out_buff; // default output buffer 
+  DataBuffer		out_buff; //  #SHOW_TREE default output buffer 
   FloatTDCoord		pos; // #AUDIO3D for localization processing, abs position in 3D space (relative to an arbitrary reference); default unit is m
   
   override int		outBuffCount() const {return 1;}
@@ -572,7 +572,7 @@ class AUDIOPROC_API StdBlock: public SignalProcBlock
 INHERITED(SignalProcBlock) 
 public:
   SourceBlockSpec	in_block;  // 1st (or only) input block to this block
-  DataBuffer		out_buff; // #EXPERT_TREE #EXPERT 
+  DataBuffer		out_buff; // #SHOW_TREE 
 
   override int		outBuffCount() const {return 1;}
   override DataBuffer* 	outBuff(int idx) 

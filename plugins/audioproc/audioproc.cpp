@@ -1367,6 +1367,7 @@ void SignalMonBlock::AcceptData_MT_ITEM(DataBuffer* src_buff, float_Matrix* mat,
   
   // copy the data -- either 1 or 2 field cols
   // NOTE: we currently only support all ASC except Stage which is DESC
+  // also, Stage is relative, not absolute, so we have to test that as a special case
   for (int y_col_field = 0; y_col_field < eff_fields; ++y_col_field) {
     dst_slice = dynamic_cast<float_Matrix*>(
       col_y[y_col_field]->GetValAsMatrix(-1));
@@ -1376,7 +1377,9 @@ void SignalMonBlock::AcceptData_MT_ITEM(DataBuffer* src_buff, float_Matrix* mat,
     // src indexing is somewhat convoluted...
     // start by getting base of latest stage -- always our starting point
     MatrixGeom src_idx;
+    MatrixGeom ovf_idx; // detect dim over/underflow -- curr only used for Stage
     src_buff->GetBaseGeomOfStageRel(-1, src_idx);
+    ovf_idx = src_idx;
     src_idx.FastEl(FIELD_DIM) = y_col_field;
     
     // we iterate # times needed for data elements,
@@ -1395,21 +1398,17 @@ void SignalMonBlock::AcceptData_MT_ITEM(DataBuffer* src_buff, float_Matrix* mat,
         GetItemDimDesc(src_dim_idx, src_dim, desc);
         if (src_dim == DIM_DUMMY) continue; // idx already 0 and stays that way
         int& dim_val = src_idx.FastEl(src_dim); // manip/access in place
+        // dec or inc this iter dim, wrapping around -- overflow test follows
         if (desc) {
-          --dim_val;
-          // if still in range, then that's all we need to do this data val iter
-          if (dim_val >= 0)
-            break;
-           // otherwise, need to set that dim back to max and continue outward
-          dim_val = mat->dim(src_dim) - 1;
+          if (--dim_val < 0)
+            dim_val = mat->dim(src_dim) - 1;
         } else { // ASC (typical case)
-          ++dim_val;
-          // if still in range, then that's all we need to do this data val iter
-          if (dim_val < mat->dim(src_dim))
-            break;
-          // otherwise, need to set that dim back to zero and continue outward
-          dim_val = 0;
+          if (++dim_val >= mat->dim(src_dim))
+            dim_val = 0;
         }
+        // if didn't overflow, then that's all we need to do this data val iter
+        if (dim_val != ovf_idx[src_dim])
+          break;
       }
     }
     dst_slice = NULL; // unref now, so we don't interfere with expanding
