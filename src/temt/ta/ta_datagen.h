@@ -73,6 +73,30 @@ public:
 			      int total_number, const String& freq_col_nm = "frequency",
 			      bool renorm_freqs=true);
   // #MENU_BUTTON #CAT_Lists #NULL_OK_0 compute the numbers of items in the input data that would be produced by the ReplicateByFrequency fnction (frequency column times the total_number value, optionally renormalizing the frequency values to sum to 1 (does not affect data_list_in table))
+  static int 	ProbSelectRow(DataTable* data_table, const String& key_col,
+			      const String& key_val, const String& p_col);
+  // #MENU_BUTTON #CAT_Lists select a row from data table from among subset of rows that have key_val for column key_col using probabilities given in p_col column -- very useful for randomly generating events based on a set of probabilities for given options at each point
+  static int 	ProbSelectColNo(DataTable* data_table, int row_no,
+				const String& colval1, const String& colp1,
+				const String& colval2, const String& colp2,
+				const String& colval3="", const String& colp3="",
+				const String& colval4="", const String& colp4="",
+				const String& colval5="", const String& colp5="",
+				const String& colval6="", const String& colp6="",
+				const String& colval7="", const String& colp7="",
+				const String& colval8="", const String& colp8="");
+  // #MENU_BUTTON #CAT_Lists select a column number from data table based on probabilities associated with different columns -- the colval is the name of the column to return the column number of given the associated probability in colp -- very useful for randomly generating events based on a set of probabilities for given options at each point
+  static Variant ProbSelectColVal(DataTable* data_table, int row_no,
+				  const String& colval1, const String& colp1,
+				  const String& colval2, const String& colp2,
+				  const String& colval3="", const String& colp3="",
+				  const String& colval4="", const String& colp4="",
+				  const String& colval5="", const String& colp5="",
+				  const String& colval6="", const String& colp6="",
+				  const String& colval7="", const String& colp7="",
+				  const String& colval8="", const String& colp8="");
+  // #MENU_BUTTON #CAT_Lists select a column value from data table based on probabilities associated with different columns -- the colval is the name of the column to return the column value of given the associated probability in colp -- very useful for randomly generating events based on a set of probabilities for given options at each point
+
 
 
   ///////////////////////////////////////////////////////////////////

@@ -390,6 +390,113 @@ bool taDataGen::NsByFrequency(DataTable* dest, const DataTable* data_in,
   return true;
 }
 
+int taDataGen::ProbSelectRow(DataTable* data_table, const String& key_col,
+			     const String& key_val, const String& p_col) {
+  double psum = 0.0;
+  double rndval = Random::ZeroOne();
+  int row_no = data_table->FindValColName(key_val, key_col, 0);
+  while (row_no >= 0 && row_no < data_table->rows) {
+    double pval = data_table->GetValColName(p_col, row_no).toDouble();
+    psum += pval;
+    if(rndval < psum) {		// we're it
+      return row_no;
+    }
+    row_no = data_table->FindValColName(key_val, key_col, row_no+1);
+  }
+  // failed
+  return -1;
+}
+
+int taDataGen::ProbSelectColNo(DataTable* data_table, int row_no,
+			       const String& colval1, const String& colp1,
+			       const String& colval2, const String& colp2,
+			       const String& colval3, const String& colp3,
+			       const String& colval4, const String& colp4,
+			       const String& colval5, const String& colp5,
+			       const String& colval6, const String& colp6,
+			       const String& colval7, const String& colp7,
+			       const String& colval8, const String& colp8) {
+  double psum = 0.0;
+  double rndval = Random::ZeroOne();
+  int col_no = -1;
+  if(colp1.nonempty()) {
+    psum += data_table->GetValColName(colp1, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval1, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp2.nonempty()) {
+    psum += data_table->GetValColName(colp2, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval2, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp3.nonempty()) {
+    psum += data_table->GetValColName(colp3, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval3, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp4.nonempty()) {
+    psum += data_table->GetValColName(colp4, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval4, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp5.nonempty()) {
+    psum += data_table->GetValColName(colp5, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval5, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp6.nonempty()) {
+    psum += data_table->GetValColName(colp6, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval6, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp7.nonempty()) {
+    psum += data_table->GetValColName(colp7, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval7, col_no, true);
+      return col_no;
+    }
+  }
+  if(colp8.nonempty()) {
+    psum += data_table->GetValColName(colp8, row_no).toDouble();
+    if(rndval < psum) {
+      data_table->FindColName(colval8, col_no, true);
+      return col_no;
+    }
+  }
+  // nothing selected
+  return -1;
+}
+
+Variant taDataGen::ProbSelectColVal(DataTable* data_table, int row_no,
+				    const String& colval1, const String& colp1,
+				    const String& colval2, const String& colp2,
+				    const String& colval3, const String& colp3,
+				    const String& colval4, const String& colp4,
+				    const String& colval5, const String& colp5,
+				    const String& colval6, const String& colp6,
+				    const String& colval7, const String& colp7,
+				    const String& colval8, const String& colp8) {
+  int col_no = ProbSelectColNo(data_table, row_no, colval1, colp1, colval2, colp2,
+			       colval3, colp3, colval4, colp4, colval5, colp5,
+			       colval6, colp6, colval7, colp7, colval8, colp8);
+  if(col_no >= 0) {
+    return data_table->GetVal(col_no, row_no);
+  }
+  return _nilVariant;
+}
+
 ///////////////////////////////////////////////////////////////////
 // drawing routines
 

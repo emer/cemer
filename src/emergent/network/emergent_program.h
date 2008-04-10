@@ -215,14 +215,15 @@ public:
   ProgVarRef	network_var;	// variable that points to the network (optional; for labeling network units if desired)
   bool		init_label_net;	// label the network units (if network_var is set) in the Init code for this function (typically at the start of training)
   int		n_lay_name_chars; // number of layer-name chars to prepend to the enum values
+  int		max_unit_chars; // max number of characters to use in unit label names (-1 = all)
 
   static bool	InitUnitNamesFmInputData(DataTable* unit_names, const DataTable* input_data);
   // intialize unit names data table from input data table
   static bool	InitDynEnumFmUnitNames(DynEnumType* dyn_enum, const DataCol* unit_names_col,
 				       const String& prefix);
   // initialize a dynamic enum with names from unit names table colum (string matrix with one row)
-  static bool	InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col);
-  // initialize layer unit names from unit names table colum (string matrix with one row)
+  static bool	InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col, int max_un_chars=-1);
+  // initialize layer unit names from unit names table column (string matrix with one row) -- max_un_chars is max length of name to apply to unit
 
   virtual bool	InitNamesTable();
   // #BUTTON #CONFIRM intialize (and update) the unit names table (will auto-create if not set) -- must have set the input_data_var to point to an input data table already!

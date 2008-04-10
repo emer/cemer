@@ -2741,6 +2741,7 @@ void ProgObjList::GetVarsForObjs() {
 	var->object_val = obj;
 	var->objs_ptr = true;
 	var->object_type = obj->GetTypeDef();
+	var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
         var->DataChanged(DCR_ITEM_UPDATED);
       }
     }

@@ -451,6 +451,7 @@ const String NetUpdateView::GenCssBody_impl(int indent_level) {
 void InitNamedUnits::Initialize() {
   init_label_net = true;
   n_lay_name_chars = 1;
+  max_unit_chars = -1;
 }
 
 void InitNamedUnits::Destroy() {
@@ -647,13 +648,13 @@ bool InitNamedUnits::LabelNetwork() {
     DataCol* ndc = undt->data.FastEl(i);
     Layer* lay = (Layer*)net->layers.FindLeafName(ndc->name);
     if(!lay) continue;
-    InitLayerFmUnitNames(lay, ndc);
+    InitLayerFmUnitNames(lay, ndc, max_unit_chars);
   }
   net->GetLocalistName();	// propagate (why not!)
   return true;
 }
 
-bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col) {
+bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_col, int max_un_chars) {
   if(!lay || !unit_names_col) {
     taMisc::Error("InitLayerFmUnitNames", "null args");
     return false;
@@ -663,7 +664,7 @@ bool InitNamedUnits::InitLayerFmUnitNames(Layer* lay, const DataCol* unit_names_
     String cnm = unit_names_col->GetValAsStringM(-1, cidx);
     if(cnm.empty()) continue;
     Unit* un = lay->units.Leaf(i);
-    un->name = cnm;
+    un->name = cnm.elidedTo(max_un_chars);
   }
   return true;
 }
