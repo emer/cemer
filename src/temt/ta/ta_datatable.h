@@ -389,7 +389,9 @@ public:
   void		ChangeColType(ValType new_type);
   // #CAT_ObjectMgmt #MENU change the type of the data in this col, without loss of data
   void		ChangeColCellGeom(const MatrixGeom& new_geom);
-  // #CAT_ObjectMgmt #MENU change the cell geom of a mat col, or change to/from a mat col, without loss of data (use dims=0 for a scalar col)
+  // #CAT_ObjectMgmt #MENU change the cell geom of a mat col, or change from scalar to mat, without loss of data
+  void		ChangeColMatToScalar();
+  // #CAT_ObjectMgmt #MENU #CONFIRM change from a mat col to a scalar col
   
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 

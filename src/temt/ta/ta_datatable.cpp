@@ -271,6 +271,13 @@ void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
   //NOTE: no more code here, because we may have been deleted/replaced
 }
 
+void DataCol::ChangeColMatToScalar() {
+  if (!is_matrix) return;
+  MatrixGeom new_geom; //note: 0 dims is key to change to scalar
+  dataTable()->ChangeColTypeGeom(this, valType(), new_geom);
+  //NOTE: no more code here, because we may have been deleted/replaced
+}
+
 DataTable* DataCol::dataTable() {
   DataTable* rval = GET_MY_OWNER(DataTable);
   return rval;
@@ -1755,9 +1762,10 @@ void DataTable::ChangeColTypeGeom(DataCol* src, ValType new_type, const MatrixGe
   if (!src) return;
   // must validate geom first, before we start making the col!
   String err_msg;
-  bool valid = taMatrix::GeomIsValid(g, &err_msg, false); // no flex
-  if (TestError(!valid, "ChangeColTypeGeom", err_msg)) return;
-
+  if (g.dims() != 0) {
+   bool valid = taMatrix::GeomIsValid(g, &err_msg, false); // no flex
+   if (TestError(!valid, "ChangeColTypeGeom", err_msg)) return;
+  }
   // make a new col of right type
   int old_idx = src->GetIndex();
   String col_nm = src->name; 

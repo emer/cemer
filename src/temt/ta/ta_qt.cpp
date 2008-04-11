@@ -171,6 +171,11 @@ void taiMisc::Init(bool gui) {
   record_cursor = new QCursor(recorder, recorder_m, record_cursor_x_hot, record_cursor_y_hot);
 
   icon_bitmap = NULL;
+  QDesktopWidget* dw = QApplication::desktop();
+  connect(dw, SIGNAL(resized(int)), 
+    this, SLOT(desktopWidget_resized(int)));
+  connect(dw, SIGNAL(workAreaResized(int)), 
+    this, SLOT(desktopWidget_workAreaResized(int)));
 }
 
 int taiMisc::Exec_impl() {
@@ -234,17 +239,75 @@ void taiMisc::GetWindowList(Widget_List& rval) {
   }
 }
 
-void taiMisc::InitMetrics() {
+void taiMisc::desktopWidget_resized(int screen) {
+  HandleScreenGeomChange();
+}
+
+void taiMisc::desktopWidget_workAreaResized(int screen) {
+  HandleScreenGeomChange();
+}
+
+void taiMisc::HandleScreenGeomChange() {
+  QRect old_scrn_geom(scrn_geom);
+  InitMetrics(true);
+  foreach(QWidget* widget, QApplication::topLevelWidgets()) {
+    if (!widget->isHidden())
+      HandleScreenGeomChange_Window(old_scrn_geom, widget);
+  }
+/*  for (int i = 0; i < active_wins.size; ++i) {
+    QWidget* win = active_wins.FastEl(i);
+    Window_HandleScreenGeomChange(win);
+  }*/
+}
+
+void taiMisc::HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget* win) {
+  // if size bigger than avail size, then shrink it
+  // easiest policy is just to resize top-level wins by change in size
+  QRect r(win->frameGeometry());
+  QSize new_sz((int)(r.width() * ((float)scrn_s.width() / old_scrn_geom.width())),
+    (int)(r.height() * ((float)scrn_s.height() / old_scrn_geom.height())));
+  win->resize(new_sz);
+  
+  //TODO
+  // move it to same size-relative point, in new coords
+  // this handles off-screen cases, as well as things like task bar redocks, etc.
+  
+  // moves only if top left no longer accessible
+  const int marg = 50; // so user is able to grab title bar etc.
+  bool redo = false;
+  QPoint pos(r.topLeft());
+  if (r.x() > (scrn_geom.right() - marg)) {
+    pos.setX(scrn_geom.right() - marg);
+    redo = true;
+  } else if (r.x() < scrn_geom.left()) { // task bar left case
+    pos.setX(scrn_geom.left());
+    redo = true;
+  }
+  if (r.y() > (scrn_geom.bottom() - marg)) {
+    pos.setY(scrn_geom.bottom() - marg);
+    redo = true;
+  } else if (r.y() < scrn_geom.top()) { // task bar top case
+    pos.setY(scrn_geom.top());
+    redo = true;
+  }
+  if (redo) {
+    win->move(pos);
+  }
+}
+
+void taiMisc::InitMetrics(bool reinit) {
   // everything that requires Qt to be initialized and could depend on Settings being loaded
   
-  // set up the initial font from (already loaded) Settings
-  QFont font(taMisc::font_name, taMisc::font_size);
-//TODO: we should probably put practical lower/upper limits on font sizes
-  qApp->setFont(font);
+  if (!reinit) {
+    // set up the initial font from (already loaded) Settings
+    QFont font(taMisc::font_name, taMisc::font_size);
+    //TODO: we should probably put practical lower/upper limits on font sizes
+    qApp->setFont(font);
+    
+    edit_darkbg_brightness = -0.15f;
+    edit_lightbg_brightness = 0.50f;
+  }
   
-  edit_darkbg_brightness = -0.15f;
-  edit_lightbg_brightness = 0.50f;
-
   ctrl_size = sizMedium;
   vsep_c = 3;
   hsep_c = 3;

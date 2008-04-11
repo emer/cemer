@@ -117,6 +117,7 @@ taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   rval->InitLayout();
   gui_parent_ = rval->GetRep();
   taiIncrField*	int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
+  int_rep->setMinimum(INT_MIN);
   taiComboBox*	enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
   rval->data_el.Add(int_rep);
   rval->AddChildWidget(int_rep->rep());

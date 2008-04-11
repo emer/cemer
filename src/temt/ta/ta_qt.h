@@ -184,7 +184,7 @@ public:
 
   static void	Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
   
-  void		InitMetrics();	// initializes all the sizes/fonts/etc. -- QApplication object must be created
+  void		InitMetrics(bool reinit=false);	// initializes all the sizes/fonts/etc. -- QApplication object must be created
   void 		AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
   void		ResolveEditChanges(CancelOp& cancel_op); // resolve all changes on ALL edits panels and dialogs
   void		ResolveViewerChanges(CancelOp& cancel_op); // resolve all changes on ALL top level viewers
@@ -198,6 +198,7 @@ protected:
   // #IGNORE restores cursors to previous state -- Set/Restore always called in pairs
   static void	ScriptRecordingGui_(bool start); // callback from taMisc
   
+  
 public:
   QProgressDialog*	load_dlg;       // #IGNORE load dialog
 
@@ -209,6 +210,9 @@ public:
 
 protected slots:
   void		LoadDialogDestroyed();
+
+  void 		desktopWidget_resized(int screen);
+  void 		desktopWidget_workAreaResized(int screen);
 
 #ifdef __MAKETA__
 };
@@ -274,6 +278,9 @@ protected:
   override int		Exec_impl();
   override void 	OnQuitting_impl(CancelOp& cancel_op); // pre-quit resolves changes
   override void		Quit_impl(CancelOp cancel_op);
+
+  void		HandleScreenGeomChange(); // reinit, and make sure all wins visible
+  void		HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget* win); // handle a change for the window
 };
 
 #endif
