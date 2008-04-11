@@ -4594,6 +4594,7 @@ void Network::InitLinks() {
 
   taBase::Own(train_time, this);  //train_time.name = "train_time";
   taBase::Own(epoch_time, this);  //epoch_time.name = "epoch_time";
+  taBase::Own(group_time, this);  //group_time.name = "group_time";
   taBase::Own(trial_time, this);  //trial_time.name = "trial_time";
   taBase::Own(settle_time, this);  //settle_time.name = "settle_time";
   taBase::Own(cycle_time, this);  //cycle_time.name = "cycle_time";
@@ -4618,6 +4619,17 @@ void Network::CutLinks() {
 #endif
   RemoveCons();			// do this first in optimized way!
   RemoveUnitGroups();		// then units
+  misc_time.CutLinks();
+  wt_sync_time.CutLinks();
+  cycle_time.CutLinks();
+  settle_time.CutLinks();
+  trial_time.CutLinks();
+  group_time.CutLinks();
+  epoch_time.CutLinks();
+  train_time.CutLinks();
+  view_params.CutLinks();
+  font_sizes.CutLinks();
+  max_size.CutLinks();
   view_objs.CutLinks();
   layers.CutLinks();		// then std kills
   specs.CutLinks();
