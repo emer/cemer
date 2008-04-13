@@ -780,16 +780,25 @@ void TemporalDeltaBlock::GraphFilter(DataTable* graph_data) {
 */
 
 void TemporalWindowBlock::Initialize() {
+  ft = FT_DEF; //
+  ot = OT_SINGLE;
+  out_rate = 4.0f;
+  l_dur = 24.0f;
+  u_dur = 8.0f;
+  l_flt_wd = 0;
+  u_flt_wd = 0;
+  
+// MooreGlasberg filter parameters:
   w.Set(-30.0f, Level::UN_DBI);
   tpl = 5.5f;
   tsl = 26.0f;
   tpu = 2.5f;
   tsu = 12.0f;
-  l_dur = 24.0f;
-  u_dur = 8.0f;
-  out_rate = 4.0f;
-  l_flt_wd = 0;
-  u_flt_wd = 0;
+// Exponential:
+  sigma = 1.0f;
+// DoG
+  on_sigma = 0.5f;
+  off_sigma = 1.0f;
 }
 
 void TemporalWindowBlock::UpdateAfterEdit_impl() {
@@ -818,16 +827,20 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   if (!ok) return;
   
   if (!check) {
-    // each output value is one stage by definition, but we need to keep several on the go
-    // since we are convolving the temporal filter as we get inputs
-    out_buff.fs.SetCustom(1 / (out_rate / 1000));
-    out_buff.fr_dur.Set(1, Duration::UN_SAMPLES);
-    out_buff.stages = Duration::StatGetDurationSamples((l_dur + u_dur),
-      Duration::UN_TIME_MS, out_buff.fs);
-    out_buff.fields = src_buff->fields;
-    out_buff.chans = src_buff->chans;
-    out_buff.vals = src_buff->vals;
-    // output duration is set in terms of the input sample rate
+    for (int i = 0; (ot==OT_SINGLE)? (i<1) : (i < 2); ++i) {
+      DataBuffer* buff = outBuff(i);
+      // output duration is set in terms of the input sample rate
+      // since we are convolving the temporal filter as we get inputs
+      buff->fs.SetCustom(1 / (out_rate / 1000));
+      buff->fr_dur.Set(1, Duration::UN_SAMPLES);
+      // each output value is one stage by definition 
+      // but we need to keep several on the go
+      buff->stages = Duration::StatGetDurationSamples((l_dur + u_dur),
+        Duration::UN_TIME_MS, out_buff.fs);
+      buff->fields = src_buff->fields;
+      buff->chans = src_buff->chans;
+      buff->vals = src_buff->vals;
+    }
   }
   // filter
   CheckMakeFilter(src_buff->fs, check, quiet, ok);
@@ -841,7 +854,6 @@ void TemporalWindowBlock::InitThisConfigDataOut_impl(bool check,
   inherited::InitThisConfigDataOut_impl(check, quiet, ok);
   if (!ok) return;
   if (check) return;
-  
   
   // init the conv indexes, as if we've already been processing
   conv_idx.SetGeom(1, out_buff.stages);
@@ -857,9 +869,6 @@ void TemporalWindowBlock::InitThisConfigDataOut_impl(bool check,
 void TemporalWindowBlock::CheckMakeFilter(const SampleFreq& fs_in,
   bool check, bool quiet, bool& ok)
 {
-  //figure out # samples we'll need in our filter, based on filter width
-  float tot_dur = l_dur + u_dur;
-  
   l_flt_wd = Duration::StatGetDurationSamples(
     l_dur, Duration::UN_TIME_MS, fs_in);
   u_flt_wd = Duration::StatGetDurationSamples(
@@ -868,25 +877,60 @@ void TemporalWindowBlock::CheckMakeFilter(const SampleFreq& fs_in,
     "filter width is 0 -- check sample rate and filter widths"))
     return;
     
+  // do some common setting -- but check guys can still stop us
+  if (!check) {
+    filter.SetGeom(1, l_flt_wd + u_flt_wd);
+  }
+  
+  switch (ft) {
+  case FT_MG:
+    CheckMakeFilter_MooreGlasberg(fs_in, check, quiet, ok); 
+    break;
+  case FT_Exp:
+    CheckMakeFilter_Exponential(fs_in, check, quiet, ok);
+    break;
+  case FT_DoG:
+    CheckMakeFilter_DoG(fs_in, check, quiet, ok);
+    break;
+  }
+  
+  if (check || !ok) return;
+  
+  // DoG normalizes itself, otherwise we normalize +ve filter types
+  if (ft != FT_DoG) {
+    // normalize filter -- norm +ve and -ve separately
+    double filt_gain = 0; // gain of the filter -- we normalize by this
+    for (int i = 0; i < filter.size; ++i) {
+      filt_gain += (double)filter.FastEl(i);
+    } 
+    filt_gain = 1 / filt_gain; // faster to multiply by this
+    for (int i = 0; i < filter.size; ++i) {
+      filter.FastEl(i) *= filt_gain;
+    } 
+    //TEMP
+    //taMisc::Info("Normalized TemporalWindowBlock by ", String(filt_gain));
+  }
+}
+
+void TemporalWindowBlock::CheckMakeFilter_MooreGlasberg(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok)
+{
   if (CheckError(((w > 1) || (w < 0)), quiet, ok,
     "w must be a weighting factor from 0 to 1"))
     return;
-  if (CheckError(((tpl <= 0) || (tsl <= 0) || (tpu <= 0) || (tsu <= 0)), quiet, ok,
-    "tpl/tsl/tpu/tsu values must be > 0"))
+  if (CheckError( ((l_dur > 0) && ((tpl <= 0) || (tsl <= 0))) || 
+    ((u_dur > 0) && ((tpu <= 0) || (tsu <= 0))),
+    quiet, ok, "tpl/tsl/tpu/tsu values must be > 0"))
     return;
     
   if (check) return;
   
-  filter.SetGeom(1, l_flt_wd + u_flt_wd);
-  
-  double filt_gain = 0; // gain of the filter -- we normalize by this
   // make filter -- note: we define lower[0] as t = 0
   // lower -- time goes -ve
   // note: the formula uses -t, but easier for us to calc
   for (int i = 0; i < l_flt_wd; ++i) {
     float nt = -( (((float)(l_flt_wd - i)) / l_flt_wd) * l_dur);
     float val = (1-w) * exp(nt/tpl) + (w * exp(nt/tsl));
-    filt_gain += val;
     filter.Set_Flat(val, i);
   } 
   
@@ -895,14 +939,53 @@ void TemporalWindowBlock::CheckMakeFilter(const SampleFreq& fs_in,
     float nt = -( (((float) (i + 1)) / u_flt_wd) * u_dur);
     float val = (1-w) * exp(nt/tpu) + (w * exp(nt/tsu));
     filter.Set_Flat(val, l_flt_wd + i);
-    filt_gain += val;
   } 
-  // normalize
-  filt_gain = 1 / filt_gain; // more efficient to multiply by this
-//TEMP
-taMisc::Info("Normalizing TemporalWindowBlock by ", String(filt_gain));
+}
+
+void TemporalWindowBlock::CheckMakeFilter_Exponential(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok)
+{
+}
+
+void TemporalWindowBlock::CheckMakeFilter_DoG(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok)
+{
+  if (CheckError( ((l_dur > 0) && (on_sigma <= 0)) || 
+    ((u_dur > 0) && (off_sigma <= 0)),
+    quiet, ok, "on/off_sigma values must be > 0"))
+    return;
+    
+  if (check) return;
+  
+  // we use temp mats to normalize the on and off before summing
+  float_Matrix on_flt; 
+  float_Matrix off_flt; 
+  on_flt.SetGeom(1, filter.size);
+  off_flt.SetGeom(1, filter.size);
+
+  // make filter -- note: we define lower[0] as t = 0
+  // lower -- time goes -ve
+  // note: the formula uses -t, but easier for us to calc
+  for (int i = 0; i < l_flt_wd; ++i) {
+    float dist = ((float)(l_flt_wd - i - 1)) / l_flt_wd;
+    float ong = taMath_float::gauss_den_sig(dist*3, on_sigma);
+    float offg = taMath_float::gauss_den_sig(dist*3, off_sigma);
+    on_flt.Set(ong, i);
+    off_flt.Set(offg, i);
+  } 
+  for (int i = 0; i < u_flt_wd; ++i) {
+    float dist = ((float)(i+1)) / u_flt_wd;
+    float ong = taMath_float::gauss_den_sig(dist*3, on_sigma);
+    float offg = taMath_float::gauss_den_sig(dist*3, off_sigma);
+    on_flt.Set(ong, l_flt_wd+i);
+    off_flt.Set(offg, l_flt_wd+i);
+  } 
+  // normalize filter -- for OT_ON_OFF we split into 2 layers, so *2
+  float sum = (ot == OT_SINGLE) ? 1.0f : 2.0f;
+  taMath_float::vec_norm_sum(&on_flt, sum); 
+  taMath_float::vec_norm_sum(&off_flt, sum);
   for (int i = 0; i < filter.size; ++i) {
-    filter.FastEl(i) *= filt_gain;
+    filter.FastEl(i) = on_flt.FastEl(i) - off_flt.FastEl(i);
   } 
 }
 
@@ -914,12 +997,15 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
   const int chans = in_mat->dim(CHAN_DIM); 
   const int vals = in_mat->dim(VAL_DIM);
   float_Matrix* out_mat = &out_buff.mat;
+  float_Matrix* out_mat_off = &out_buff_off.mat; // only if ot=ON_OFF
   // note: critical this invariant is true:
   bool ok = true;
   // we do one input item at a time, convolving with all our out guys
   for (int i = 0; ((ps == PS_OK) && (i < in_mat->dim(SignalProcBlock::ITEM_DIM))); ++i) {
   
     // iterate all our outputs, convolving in, and outputting when appropriate
+    // note that we always convolve to main out_buff -- we only do on/off split 
+    // at data output time
     for (int ci = 0; ci < conv_idx.size; ++ci) {
       int& cidx = conv_idx.FastEl(ci); // we test/inc/set
       float filt_val = filter.SafeEl(cidx);
@@ -936,16 +1022,39 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
       if (++cidx >= filter.size) {
         cidx = 0;
         out_buff.stage = ci;
+        // if doing on/off, need to set the two items according to value of out
+        if (ot == OT_ON_OFF) {
+          out_buff_off.stage = ci;
+          for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f)
+          for (int chan = 0; ((ps == PS_OK) && (chan < chans)); ++chan) 
+          for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
+          {
+            float& out_val = out_mat->FastEl(val, chan, f, 0, ci);
+            float& out_val_off = out_mat_off->FastEl(val, chan, f, 0, ci);
+            if (out_val >= 0) {
+              out_val_off = 0.0f;
+            } else {
+              out_val_off = -out_val;
+              out_val = 0.0f;
+            }
+          }
+        }
         // send output
         out_buff.NextIndex(); // note: always rolls over, so we don't test
         NotifyClientsBuffStageFull(&out_buff, 0, ps);
-        
+        if (ot == OT_ON_OFF) {
+          out_buff_off.NextIndex(); // note: always rolls over, so we don't test
+          NotifyClientsBuffStageFull(&out_buff_off, 1, ps);
+        }
         // clear out the line
         for (int f = 0; f < fields; ++f) 
         for (int chan = 0; chan < chans; ++chan) 
         for (int val = 0; val < vals; ++val)
         {
           out_mat->Set(0, val, chan, f, 0, ci);
+          if (ot == OT_ON_OFF) {
+            out_mat_off->Set(0, val, chan, f, 0, ci);
+          }
         }
       }
     }

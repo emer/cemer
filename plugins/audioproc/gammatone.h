@@ -203,16 +203,42 @@ class AUDIOPROC_API TemporalWindowBlock: public StdBlock
 { // ##CAT_Audioproc temporal windowing block
 INHERITED(StdBlock) 
 public: //
-// temporal filter parameters:
-  Level			w; // w parameter, typically around -30dB
-  float			tpl; // ms, peak of lower, typ ~5.5 
-  float			tsl; // ms, skirt of lower, typ ~25 
-  float			tpu; // ms, peak of upper, typ ~2.5 
-  float			tsu; // ms, skirt of upper, typ ~12 
-// windowing parameters:
+  enum FilterType {
+    FT_DEF = 0, // #IGNORE
+    FT_MG = 0, // #LABEL_Moore&Glasberg can do forward as well as back filtering (see Moore & Glasberg, 1987)
+    FT_Exp = 1, // #HIDDEN TODO #LABEL_Exponential simple exponential (typical of many neural net and machine learning approaches)
+    FT_DoG = 2, // #LABEL_DiffOfGaussian difference-of-gaussian -- enables on/off outputs
+  };
+  
+  enum OutputType {
+    OT_SINGLE, // #LABEL_Single output a single value, whether +ve -ve
+    OT_ON_OFF, // #LABEL_On/Off output separate buffers for +ve (on, buff0) and -ve(off, buff1) values, typically only used with DoG type
+  };
+  
+  DataBuffer		out_buff_off; //#CONDSHOW_ON_ot:OT_ON_OFF #SHOW_TREE off values
+
+  override int		outBuffCount() const {return 2;}
+  override DataBuffer* 	outBuff(int idx) 
+    {if (idx == 1) return &out_buff_off; else return inherited::outBuff(idx);}
+  
   float			l_dur; // duration of lower (forward) window in ms, typ 24 ms
   float			u_dur; // duration of upper (backward) window in ms, type 8 ms
   float			out_rate; // output rate, in ms; typ 4 ms (we set our fs by this)		
+  FilterType		ft; // filter type
+  OutputType		ot; // output type,   
+// MooreGlasberg parameters:
+  Level			w; // #CONDSHOW_ON_ft:FT_MG w parameter, typically around -30dB
+  float			tpl; // #CONDSHOW_ON_ft:FT_MG ms, peak of lower, typ ~5.5 
+  float			tsl; // #CONDSHOW_ON_ft:FT_MG ms, skirt of lower, typ ~25 
+  float			tpu; // #CONDSHOW_ON_ft:FT_MG ms, peak of upper, typ ~2.5 
+  float			tsu; // #CONDSHOW_ON_ft:FT_MG ms, skirt of upper, typ ~12 
+  
+// Exponential parameters:
+  float			sigma;	// #CONDSHOW_ON_ft:FT_Exp the sigma, normalized to duration of 1
+  
+// DoG parameters:
+  float			on_sigma; // #CONDSHOW_ON_ft:FT_DoG width of the narrower central 'on' gaussian, duration normalized to 3 s.d., typ 0.5
+  float			off_sigma; // #CONDSHOW_ON_ft:FT_DoG width of the wider surround 'off' gaussian, duration normalized to 3 s.d., typ 2*on_sigma
   
 // hidden guys, for reference
   float_Matrix		filter; // #READ_ONLY #EXPERT_TREE #NO_SAVE filter 1d
@@ -241,6 +267,13 @@ protected:
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
     
   virtual void		CheckMakeFilter(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok);
+    
+  virtual void		CheckMakeFilter_MooreGlasberg(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok);
+  virtual void		CheckMakeFilter_Exponential(const SampleFreq& fs_in,
+    bool check, bool quiet, bool& ok);
+  virtual void		CheckMakeFilter_DoG(const SampleFreq& fs_in,
     bool check, bool quiet, bool& ok);
 
 private:
