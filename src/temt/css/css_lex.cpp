@@ -208,6 +208,32 @@ int yylex()
       // took too long to figure this one out..
       if(cssMisc::cur_top->parse_path_expr || cssMisc::cur_scope) {
 	yylval.nm = cssLex::Buf;
+	if(cssMisc::cur_scope) { // need to check for SCPTYPE guy -- only special case
+	  if(cssMisc::cur_scope->GetType() == cssEl::T_ClassType) {
+	    cssClassType* clt = (cssClassType*)cssMisc::cur_scope;
+	    if(clt->name == cssLex::Buf) { // special case for constructors!
+	      return CSS_TYPE;		 // indicates ctor
+	    }
+	    if((s = clt->types->FindName((char*)cssLex::Buf)) != 0) {
+	      yylval.el = s;
+	      if((s.El()->GetType() != cssEl::T_Enum) && (s.El())->GetParse() != CSS_PTR)
+		return CSS_SCPTYPE;
+	    }
+	  }
+	  else if(cssMisc::cur_scope->GetParse() == CSS_PTR) {
+	    if((s = cssMisc::cur_scope->GetScoped((char*)cssLex::Buf)) != 0) {
+	      yylval.el = s;
+	      cssEl* obj = s.El();
+	      if(obj->GetParse() == CSS_PTR) {
+		if(obj->GetType() == cssEl::T_TA) {
+		  cssTA* tao = (cssTA*)obj->GetNonRefObj();
+		  if((tao->type_def != NULL) && tao->type_def->DerivesFormal(TA_enum))
+		    return CSS_SCPTYPE;
+		}
+	      }
+	    }
+	  }
+	}
 	return CSS_NAME;
       }
 
@@ -264,36 +290,6 @@ int yylex()
 	  return CSS_PTRTYPE;
 	else
 	  return CSS_TYPE;
-      }
-      if(cssMisc::cur_scope != NULL) {
-	if(cssMisc::cur_scope->GetType() == cssEl::T_ClassType) {
-	  cssClassType* clt = (cssClassType*)cssMisc::cur_scope;
-	  if((s = clt->types->FindName((char*)cssLex::Buf)) != 0) {
-	    yylval.el = s;
-	    if(s.El()->GetType() == cssEl::T_Enum)
-	      return CSS_VAR;
-	    else if((s.El())->GetParse() == CSS_PTR)
-	      return CSS_PTRTYPE;
-	    else
-	      return CSS_SCPTYPE;
-	  }
-	}
-	else if(cssMisc::cur_scope->GetParse() == CSS_PTR) {
-	  if((s = cssMisc::cur_scope->GetScoped((char*)cssLex::Buf)) != 0) {
-	    yylval.el = s;
-	    cssEl* obj = s.El();
-	    if(obj->GetParse() == CSS_PTR) {
-	      if(obj->GetType() == cssEl::T_TA) {
-		cssTA* tao = (cssTA*)obj->GetNonRefObj();
-		if((tao->type_def != NULL) && tao->type_def->DerivesFormal(TA_enum))
-		  return CSS_SCPTYPE;
-	      }
-	      return CSS_PTRTYPE;
-	    }
-	    else
-	      return CSS_VAR;
-	  }
-	}
       }
       if((s = cssMisc::cur_top->ParseName((char*)cssLex::Buf)) != 0) {
 	yylval.el = s;

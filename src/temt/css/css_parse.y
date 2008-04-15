@@ -810,6 +810,10 @@ argdefn:  subargdefn 			{ cssMisc::parsing_args = false; }
         | subargdefn '=' primitive 	{
 	    cssMisc::parsing_args = false;
 	    cssMisc::default_args.Push($3.El()); }
+        | subargdefn '=' scopetype CSS_NAME	{
+            cssEl* itm = $3.El()->GetScoped($4);
+	    cssMisc::parsing_args = false;
+	    cssMisc::default_args.Push(itm); cssMisc::cur_scope = NULL; }
         ;
 
 subargdefn:
