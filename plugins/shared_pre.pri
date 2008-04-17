@@ -73,11 +73,11 @@ LIBS += -L$${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 LIBS += -L$${EMERGENT_DIR}/lib/plugins$${BUILD_EXT_SF}
 LIBS +=	-L$${THIS_ROOT}/lib
 win32 {
-  DEFINES += QT_DLL CSS_DLL TEMT_DLL TAIQTSO_DLL EMERGENT_DLL BP_DLL CS_DLL LEABRA_DLL SO_DLL
-  LIBS += -L$${BUILD_MSVC}/lib
-#  LIBS += $${BUILD_MSVC}/lib/temt$${BUILD_EXT_US}.lib
-#  LIBS += $${BUILD_MSVC}/lib/emergent$${BUILD_EXT_US}.lib
-  LIBS += -ltemt$${BUILD_EXT_US} -lemergent$${BUILD_EXT_US}
+  DEFINES += QT_DLL TA_DLL EMERGENT_DLL
+#  LIBS += -L$${BUILD_MSVC}/lib
+#  LIBS += -ltemt$${BUILD_EXT_US} -lemergent$${BUILD_EXT_US}
+  LIBS += $${BUILD_MSVC}/lib/temt$${BUILD_EXT_US}.lib
+  LIBS += $${BUILD_MSVC}/lib/emergent$${BUILD_EXT_US}.lib
 } else {
   LIBS += -L$${EMERGENT_DIR}/lib
   LIBS += -ltemt$${BUILD_EXT_US}-$${LIB_VER}

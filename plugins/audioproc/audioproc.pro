@@ -29,6 +29,11 @@ MAKETA_HEADERS = $${TEMT_INC_DIR_ta}/ta_TA_type.h $${HEADERS}
 
 SOURCES += $${TARGET}_pl.cpp $${TARGET}.cpp gammatone.cpp ap_files.cpp
 
+win32 {
+  DEFINES += AUDIOPROC_DLL AUDIOPROC_EXPORTS
+  LIBS += $${BUILD_MSVC}/lib/libsndfile-1.lib
+}
+
 # NOTE: macx also invokes unix, so we do an else
 macx {
 #  QMAKE_INCDIR += /System/Library/Frameworks/OpenAL.framework/Headers

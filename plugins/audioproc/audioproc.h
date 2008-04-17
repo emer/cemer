@@ -1067,7 +1067,7 @@ private:
 };
 
 
-class TA_API DoG1dFilterSpec : public taNBase {
+class AUDIOPROC_API DoG1dFilterSpec : public taNBase {
   // #INLINE ##CAT_Audioproc defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast -- this is the 1d version
   INHERITED(taNBase)
 public:
