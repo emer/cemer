@@ -454,10 +454,10 @@ public:
 
   ////////////////////////////////////////////////////
   // feedback information -- only if feedback flag is set
-  float		pos;		// #READ_ONLY #SHOW probed position value (joint dependent; could be angle)
-  float		vel;		// #READ_ONLY #SHOW probed velocity value (joint dependent; could be angle)
-  float		pos2;		// #CONDSHOW_ON_joint_type:UNIVERSAL #READ_ONLY #SHOW probed position value (joint dependent; could be angle)
-  float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #READ_ONLY #SHOW probed velocity value (joint dependent; could be angle)
+  float		pos;		// #SHOW probed position value (joint dependent; could be angle)
+  float		vel;		// #SHOW probed velocity value (joint dependent; could be angle)
+  float		pos2;		// #CONDSHOW_ON_joint_type:UNIVERSAL #SHOW probed position value (joint dependent; could be angle)
+  float		vel2;		// #CONDSHOW_ON_joint_type:UNIVERSAL,HINGE2 #SHOW probed velocity value (joint dependent; could be angle)
 
   FloatTDCoord	cur_force1;  	// #READ_ONLY #SHOW force that joint applies to body 1
   FloatTDCoord	cur_torque1;  	// #READ_ONLY #SHOW torque that joint applies to body 1
