@@ -337,7 +337,7 @@ double Duration::StatGetDurationSamples(double duration, Units units, float fs) 
     
   if (units == UN_TIME_S)
     return (duration * fs);
-  else if (units == UN_TIME_MS) 
+  else //if (units == UN_TIME_MS) 
     return ((duration / 1000) * fs);
 }
 
