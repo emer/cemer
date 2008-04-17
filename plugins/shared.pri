@@ -14,7 +14,7 @@ maketa.target = $${TARGET}_TA_type.h
 win32 {
   maketa.commands = $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER}\\bin\\maketa.exe -css /D DEBUG -win_dll \
   /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER}\\include \
-  /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER} \
+  /I $$(EMERGENTDIR)\\build\\$${MSVC_FOLDER} /I $$(QTDIR)\\include\Qt \
   $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}
 } else {
   maketa.commands = $${MAKETA} -css -cpp=\"g++ -E\" $${MAKETA_INCLUDEPATH} $${TARGET} $${MAKETA_HEADERS}

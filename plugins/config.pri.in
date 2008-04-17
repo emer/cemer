@@ -14,7 +14,7 @@ EMERGENT_DIR = $$(EMERGENTDIR)
 win32 {
   CONFIG += dll
 #TODO: need to pass in the msvc target, ex Debug or Release (for pathing)
-#MSVC_TARGET = Debug
+MSVC_TARGET = Debug
 
   contains( MSVC_TARGET, Debug ) {
     CONFIG += debug

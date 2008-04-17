@@ -77,7 +77,7 @@ win32 {
   LIBS += -L$${BUILD_MSVC}/lib
 #  LIBS += $${BUILD_MSVC}/lib/temt$${BUILD_EXT_US}.lib
 #  LIBS += $${BUILD_MSVC}/lib/emergent$${BUILD_EXT_US}.lib
-  LIBS += -lta$${BUILD_EXT_US} -lpdp$${BUILD_EXT_US}
+  LIBS += -ltemt$${BUILD_EXT_US} -lemergent$${BUILD_EXT_US}
 } else {
   LIBS += -L$${EMERGENT_DIR}/lib
   LIBS += -ltemt$${BUILD_EXT_US}-$${LIB_VER}
@@ -143,7 +143,8 @@ isEmpty( EMERGENT_DIR ) {
 
 win32 {
   INCLUDEPATH +=\
-	$${BUILD_MSVC}
+	$${BUILD_MSVC} \
+	$${BUILD_MSVC}\\include
 	
   MAKETA_INCLUDEPATH +=\
 	-I$${BUILD_MSVC}

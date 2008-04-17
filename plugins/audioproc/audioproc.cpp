@@ -575,7 +575,7 @@ void SignalProcBlock::AddRemoveClientBlock(SignalProcBlock* blk,
   // blk will already have been removed from the ref
   for (int i = 0; i < blk->srcBlockCount(); ++i) {
     SourceBlockSpec* sbs = blk->srcBlock(i); // note: can easily be NULL
-    if (sbs && (sbs->src_block == this)) return; //still has a ref
+    if (sbs && (sbs->src_block.ptr() == this)) return; //still has a ref
   }
   // no more refs
   clients.RemoveEl(blk);
@@ -607,7 +607,7 @@ InputBlockBase* SignalProcBlock::GetInputBlock(int idx) {
   // iterate our src blocks, delegating to them, until found or fail
   for (int i = 0; (!rval && (i < srcBlockCount())); ++i) {
     SourceBlockSpec* sbs = srcBlock(i); // note: can easily be NULL
-    if (sbs && sbs->src_block) rval = sbs->src_block->GetInputBlock();
+    if (sbs && (bool)sbs->src_block) rval = sbs->src_block->GetInputBlock();
   }
   return rval;
 }
@@ -1044,7 +1044,7 @@ void ListenerBlock::UpdateAfterEdit_Audio3D() {
     {
       samps = src_blk->stages;
     }
-    delay[con_i] = -((int)round(samps));
+    delay[con_i] = -((int)taMath_float::round(samps));
     params.FastEl(PI_DELAY_L, b) = delay[OFFS_L];
     params.FastEl(PI_DELAY_R, b) = delay[OFFS_R];
     
@@ -1255,7 +1255,8 @@ void SignalMonBlock::AcceptData_MT_VAL(DataBuffer* src_buff, float_Matrix* mat,
   }
   DataCol* col_z = NULL;
   DataCol* col_x = mon_data->FindMakeCol("X", VT_FLOAT);
-  DataCol* col_y[mat->dim(VAL_DIM) * mat->dim(FIELD_DIM)];
+  //note: had to use malloc because msvc won't allow runtime dim'ed arrays
+  DataCol** col_y = (DataCol**)malloc(mat->dim(VAL_DIM) * mat->dim(FIELD_DIM) * sizeof(DataCol*));
   DataCol* col_field = NULL;
   
   int i = 0;
@@ -1300,6 +1301,7 @@ void SignalMonBlock::AcceptData_MT_VAL(DataBuffer* src_buff, float_Matrix* mat,
     ++last_x;
   }
   mon_data->DataUpdate(false);
+  free(col_y);
 } 
 
 void SignalMonBlock::Init_MT_ITEM(bool check, bool quiet, bool& ok) 

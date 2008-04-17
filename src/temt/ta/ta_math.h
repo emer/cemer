@@ -260,8 +260,11 @@ public:
   // #CAT_Arithmetic floor of x: next smallest integer value from x
 //   static double rint(double x) { return std::rint(x); }
 //   // #CAT_Arithmetic round value to an integer using current rounding direction
-
-//   static double round(double x) { return std::round(x); }
+#ifdef TA_OS_WIN
+  static double round(double x) { return std::floor(x+0.5); }
+#else
+  inline static double round(double x) { return std::round(x); }
+#endif
 //   // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
 //   static double trunc(double x) { return std::trunc(x); }
 //   // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
@@ -750,13 +753,18 @@ public:
 //   static float fmin(float x, float y) { return fminf(x,y); }
 //   // #CAT_Arithmetic minimum of x and y
 
-  static float ceil(float x) { return std::ceil(x); }
+  static float ceil(float x) { return std::ceilf(x); }
   // #CAT_Arithmetic ceiling of x: next largest integer value from x
-  static float floor(float x) { return std::floor(x); }
+  static float floor(float x) { return std::floorf(x); }
   // #CAT_Arithmetic floor of x: next smallest integer value from x
 //   static float rint(float x) { return rintf(x); }
 //   // #CAT_Arithmetic round value to an integer using current rounding direction
 
+#ifdef TA_OS_WIN
+  static float round(float x) { return std::floorf(x+0.5f); }
+#else
+  inline static float round(float x) { return std::roundf(x); }
+#endif
 //   static float round(float x) { return roundf(x); }
 //   // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
 //   static float trunc(float x) { return truncf(x); }

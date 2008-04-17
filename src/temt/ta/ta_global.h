@@ -220,6 +220,7 @@
 #define override virtual  // makes override situation more clear -- use for all descendants
 
 #ifdef TA_OS_WIN
+# define _USE_MATH_DEFINES
 #else
 # include <stdint.h>
 #endif
