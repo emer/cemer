@@ -2335,6 +2335,7 @@ bool RetinaSpec::FilterImageName(const String& img_fname, DataTable* dt,
   if (!dt) return false;
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
+  img.name = img_fname;		// explicitly name it
   return FilterImage(img, dt, move_x, move_y, scale, rotate,
 		     ret_move_x, ret_move_y, superimpose, renorm);
 }
@@ -2488,6 +2489,7 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 				 bool superimpose, bool attend, bool renorm) {
   taImage img;
   if(!img.LoadImage(img_fname)) return false;
+  img.name = img_fname;		// explicitly name it
   return LookAtImage(img, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
 		     move_x, move_y, scale, rotate,
 		     ret_move_x, ret_move_y, superimpose, attend, renorm);
