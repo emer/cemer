@@ -1150,7 +1150,9 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
 	else
 	  mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_);
       } else if (pv->var_type == ProgVar::T_Int) {
-        mb_dat = new taiIncrField(NULL, this, NULL, body, flags_);
+        taiIncrField* int_rep = new taiIncrField(NULL, this, NULL, body, flags_);
+        int_rep->setMinimum(INT_MIN);
+        mb_dat = int_rep;
       }
       else {
         mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags_);
