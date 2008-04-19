@@ -379,12 +379,30 @@ void ActFunSpec::UpdateAfterEdit_impl() {
 }
 
 void SpikeFunSpec::Initialize() {
-  decay = 0.05f;
+  g_gain = 5.0f;
+  rise = 1.0f;
+  decay = 5.0f;
+  window = 20;
   v_m_r = 0.0f;
   eq_gain = 10.0f;
   eq_dt = 0.02f;
   hard_gain = .4f;
   // vm_dt of .1 should also be used; vm_noise var .002???
+  
+  oneo_decay = g_gain / decay;
+  oneo_decay_sq = g_gain / (decay * decay);
+  oneo_decay_rise = g_gain / (decay - rise);
+}
+
+void SpikeFunSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(window <= 0) window = 1;
+  if(decay > 0.0f) {
+    oneo_decay = g_gain / decay;
+    oneo_decay_sq = g_gain / (decay * decay);
+    if(decay != rise)
+      oneo_decay_rise = g_gain / (decay - rise);
+  }
 }
 
 void DepressSpec::Initialize() {
@@ -540,6 +558,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   vm_range.UpdateAfterEdit();
   depress.UpdateAfterEdit();
   noise_sched.UpdateAfterEdit();
+  spike.UpdateAfterEdit();
   CreateNXX1Fun();
   if(act_fun == DEPRESS)
     act_range.max = depress.max_amp;
@@ -713,6 +732,7 @@ void LeabraUnitSpec::Init_Acts(LeabraUnit* ru, LeabraLayer*) {
   if(act_fun == DEPRESS)
     ru->spk_amp = act_range.max;
   ru->act_buf.Reset();
+  ru->spike_buf.Reset();
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
@@ -891,6 +911,18 @@ bool LeabraUnitSpec::Compute_SoftClamp(LeabraUnit* u, LeabraLayer* lay, LeabraNe
 //	Stage 3: inhibition		//
 //////////////////////////////////////////
 
+void LeabraUnitSpec::Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork*) {
+  // netin gets added at the end of the spike_buf -- 0 time is the end
+  u->spike_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
+  float sum = 0.0f;
+  int mx = MAX(spike.window, u->spike_buf.length);
+  for(int t=0;t<mx;t++) {
+    float vl = u->spike_buf.CircSafeEl(t) * spike.ComputeAlpha(mx-t-1);
+    sum += vl;
+  }
+  u->net = sum;
+}
+
 float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraLayer*, LeabraNetwork*) {
   float non_bias_net = u->net;
   if(u->bias.cons.size)		// subtract out bias weights so they can change k
@@ -969,7 +1001,7 @@ void LeabraUnitSpec::Compute_Act(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* t
   u->AddToActBuf(syn_delay);
 }
 
-void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork*) {
+void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net) {
   // total conductances
   float g_bar_i_val = g_bar.i;
   float	g_bar_e_val = g_bar.e;
@@ -1090,23 +1122,21 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraLayer*, LeabraInhib*, 
   }
   break;
   case SPIKE: {
-    float spike_act = 0.0f;
     if(u->v_m > act.thr) {
       u->act = 1.0f;
       u->v_m = spike.v_m_r;
-      spike_act = 1.0f;
     }
     else {
-      u->act *= (1.0f - spike.decay);
+      u->act = 0.0f;
     }
     float new_eq = u->act_eq / spike.eq_gain;
     if(spike.eq_dt > 0.0f) {
-      new_eq = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * new_eq + spike.eq_dt * spike_act));
+      new_eq = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * new_eq + spike.eq_dt * u->act));
     }
     else {
       if(net->cycle > 0)
 	new_eq *= (float)net->cycle;
-      new_eq = act_range.Clip(spike.eq_gain * (new_eq + spike_act) / (float)(net->cycle+1));
+      new_eq = act_range.Clip(spike.eq_gain * (new_eq + u->act) / (float)(net->cycle+1));
     }
     u->da = new_eq - u->act_eq;	// da is on equilibrium activation
     u->act_eq = new_eq;
@@ -1204,6 +1234,7 @@ void LeabraUnitSpec::DecayPhase(LeabraUnit* u, LeabraLayer*, LeabraNetwork*, flo
 
   if(decay == 1.0f) {
     u->act_buf.Reset();
+    u->spike_buf.Reset();
   }
 }
 
@@ -1389,6 +1420,38 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   graph_data->FindMakeGraphView();
 }
 
+void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_SpikeAlphFun", true);
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataCol* t = graph_data->FindMakeColName("time_fm_spike", idx, VT_FLOAT);
+  DataCol* g = graph_data->FindMakeColName("conductance", idx, VT_FLOAT);
+
+  float tmax = MAX(spike.window, 2.0f);
+
+  float sumg = 0.0f;
+  float x;
+  for(x = 0.0f; x <= tmax; x += 1.0f) {
+    float y = spike.ComputeAlpha(x);
+    graph_data->AddBlankRow();
+    t->SetValAsFloat(x, -1);
+    g->SetValAsFloat(y, -1);
+    sumg += y;
+  }
+  graph_data->AddBlankRow();
+  t->SetValAsFloat(x, -1);
+  g->SetValAsFloat(0.0f, -1);
+  graph_data->AddBlankRow();
+  t->SetValAsFloat(x+1.0f, -1);
+  g->SetValAsFloat(sumg, -1);
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
 //////////////////////////
 //  	Unit 		//
 //////////////////////////
@@ -1438,6 +1501,7 @@ void LeabraUnit::InitLinks() {
   taBase::Own(vcb, this);
   taBase::Own(gc, this);
   taBase::Own(act_buf, this);
+  taBase::Own(spike_buf, this);
   GetInSubGp();
 }
 
@@ -1475,6 +1539,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
   act_buf = cp.act_buf;
+  spike_buf = cp.spike_buf;
 }
 
 void LeabraUnit::Init_Netin() {

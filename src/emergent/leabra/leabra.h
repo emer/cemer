@@ -447,17 +447,33 @@ private:
 };
 
 class LEABRA_API SpikeFunSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra spiking activation function specs -- conductance is computed postsynaptically using an alpha function based on spike pulses sent presynaptically
 INHERITED(taBase)
 public:
-  float		decay;		// #DEF_0.05 exponential decay of activation produced by a spike (act(t+1) = act(t) * (1-decay))
-  float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect
+  float		g_gain;		// #DEF_5 multiplier for the spike-generated conductances -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
+  float		rise;		// #DEF_1 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay))
+  float		decay;		// #DEF_5 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function
+  int		window;		// #DEF_20 spike integration window -- how long to keep spike information around (should be long enough to incorporate the full alpha function)
+  float		v_m_r;		// #DEF_0 post-spiking membrane potential to reset to, produces refractory effect 
   float		eq_gain;	// #DEF_10 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 if non-zero, eq is computed as a running average with this time constant
   float		hard_gain;	// #DEF_0.4 gain for hard-clamped external inputs, mutliplies ext.  constant external inputs otherwise have too much influence compared to spiking ones: Note: soft clamping is strongly recommended
 
+  float		oneo_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
+  float		oneo_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
+  float		oneo_decay_rise; // #READ_ONLY #NO_SAVE g_gain/(decay-rise)
+
+  float	ComputeAlpha(float t) {
+    if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
+    if(rise == 0.0f) return oneo_decay * expf(-t/decay);	 // exponential
+    if(rise == decay) return t * oneo_decay_sq * expf(-t/decay); // symmetric alpha
+    return oneo_decay_rise * (expf(-t/decay) - expf(-t/rise)); // full alpha
+  }
+
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SpikeFunSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -710,6 +726,8 @@ public:
   //	Stage 2: netinput averages and clamping (if necc)	//
   ////////////////////////////////////////////////////////////////
 
+  virtual void Compute_Netin_Spike(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
+  // #CAT_Activation compute actual netin conductance value for spiking units by integrating over spike
   inline virtual void	Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Activation compute netin average
   inline virtual void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, float inhib_val);
@@ -809,6 +827,8 @@ public:
   // #BUTTON #NULL_OK graph the activation function as a function of membrane potential (v_m) (NULL = new graph data)
   virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
   // #BUTTON #NULL_OK graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
+  virtual void	GraphSpikeAlphaFun(DataTable* graph_data);
+  // #BUTTON #NULL_OK graph the spike alpha function for conductance integration over time window given in spike parameters
 
   override bool  CheckConfig_Unit(Unit* un, bool quiet=false);
 
@@ -888,6 +908,7 @@ public:
   float		spk_amp;	// #CAT_Activation amplitude of spiking output (for depressing synapse activation function)
   float		misc_1;		// #NO_VIEW #CAT_Activation miscellaneous variable for other algorithms that need it (e.g., TdLayerSpec)
   float_CircBuffer act_buf;	// #CAT_Activation #NO_SAVE buffer of activation states for synaptic delay computation
+  float_CircBuffer spike_buf;	// #CAT_Activation #NO_SAVE buffer of spike states for synaptic integration over discrete spikes
 
   inline void	AddToActBuf(SynDelaySpec& sds) {
     if(sds.on) act_buf.CircAddLimit(act, sds.delay);
@@ -2115,10 +2136,13 @@ private:
 //	Unit NetAvg   	//
 //////////////////////////
 
-void LeabraUnitSpec::Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_NetinAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net) {
   if(net->send_delta) {
     u->net_raw += u->net_delta;
     u->net += u->clmp_net + u->net_raw;
+  }
+  if(act_fun == SPIKE) {
+    Compute_Netin_Spike(u,lay,thr,net);
   }
   u->net = u->prv_net + dt.net * (u->net - u->prv_net);
   u->prv_net = u->net;
