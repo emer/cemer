@@ -171,20 +171,24 @@ private:
 class AUDIOPROC_API DataBuffer: public taOBase {
 // ##NO_TOKENS #NO_UPDATE_AFTER #EDIT_INLINE ##CAT_Audioproc provide a matrix for data management
 INHERITED(taOBase) 
-public:
-#ifndef __MAKETA__
+public://
+/*#ifndef __MAKETA__
   static const short	field_mono = 0;
   static const short	field_left = 0;
   static const short	field_right = 1;
-#endif
+#endif*/
+
+  bool			stages_ro; //#NO_SHOW #NO_SAVE some guys require fixed number, so make it ro
+  bool			fields_ro; //#NO_SHOW #NO_SAVE some guys require fixed number, so make it ro
   
   SampleFreq		fs; // the sample frequency of output of this buffer
   Duration		fr_dur; // the length of each frame, typically in terms of the fs;( 0 to disable the output)
-  int			stages; // #DEF_1 #MIN_1 (advanced) for when you want more than one frame of history
+  int			min_stages; // #READ_ONLY #NO_SAVE #SHOW some blocks require a min number of stages -- you may set more, but not fewer
+  int			stages; // #CONDEDIT_OFF_stages_ro #DEF_1 #MIN_1 (advanced) for when you want more than one frame of history
   int			stage; // #READ_ONLY #NO_SAVE the next stage to be written
   int			items; // #READ_ONLY #NO_SAVE #SHOW the number of items per frame (determined by fs and fr_dur)
   int			item; // #READ_ONLY #NO_SAVE the next item to be written
-  short			fields; // #DEF_1 #MIN_1 1 for mono, 2 for stereo
+  short			fields; // #CONDEDIT_OFF_fields_ro #DEF_1 #MIN_1 1 for mono, 2 for stereo
   short			field; // #READ_ONLY #NO_SAVE the field being written -- optional, not used in NextIndex
   short			chans; // #READ_ONLY #NO_SAVE #SHOW the number of channels
   short			vals; // #READ_ONLY #NO_SAVE #SHOW the number of values per channel, usually 1

@@ -39,10 +39,9 @@ protected:
   double a1, a2, a3, a4, a5;
   double p0r, p1r, p2r, p3r, p4r, p0i, p1i, p2i, p3i, p4i;
   double coscf, sincf, cs, sn;
-  int			non_lin; // one of NonLinearity enums
   
   void			InitChan(float cf, float ear_q, float min_bw,
-     float fs, int non_lin, float gain_eq);
+     float fs);
   void 			DoFilter(int n, int in_stride, const float* x,
     int out_stride, float* bm, float* env = NULL, float* instf = NULL);
 
@@ -215,12 +214,21 @@ public: //
     OT_ON_OFF, // #LABEL_On/Off output separate buffers for +ve (on, buff0) and -ve(off, buff1) values, typically only used with DoG type
   };
   
+  enum NonLinearity {
+    NL_NONE,		// #LABEL_None no non-linearity
+    NL_HALF_WAVE,	// #LABEL_HalfWave half-wave rectification
+    NL_FULL_WAVE,	// #LABEL_FullWave full-wave rectification
+    NL_SQUARE		// #LABEL_Square signal is squared
+  };
+  
   DataBuffer		out_buff_off; //#CONDSHOW_ON_ot:OT_ON_OFF #SHOW_TREE off values
 
   override int		outBuffCount() const {return 2;}
   override DataBuffer* 	outBuff(int idx) 
     {if (idx == 1) return &out_buff_off; else return inherited::outBuff(idx);}
   
+  NonLinearity		non_lin; // type of non-linearity to apply to input values -- choose NONE for known +ve inputs (ex. Gamma Env)
+  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the non-lin selected
   float			l_dur; // duration of lower (forward) window in ms, typ 24 ms
   float			u_dur; // duration of upper (backward) window in ms, type 8 ms
   float			out_rate; // output rate, in ms; typ 4 ms (we set our fs by this)		
@@ -241,9 +249,12 @@ public: //
   float			off_sigma; // #CONDSHOW_ON_ft:FT_DoG width of the wider surround 'off' gaussian, duration normalized to 3 s.d., typ 2*on_sigma
   
 // hidden guys, for reference
-  float_Matrix		filter; // #READ_ONLY #EXPERT_TREE #NO_SAVE filter 1d
-  int 			l_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE l side of filter size
-  int 			u_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE u side of filter size
+  float_Matrix		filter; // #READ_ONLY #EXPERT_TREE #NO_SAVE filter 1d, contains l+u samples
+  int 			out_wd; // #READ_ONLY #HIDDEN #NO_SAVE width of output, in fs.in samples
+  int			flt_wd;  // #READ_ONLY #HIDDEN #NO_SAVE total virt+real filt width, in fs.in samples
+  int 			v_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE virtual pre-l width (-ve indices), in fs.in samples
+  int 			l_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE l width of filter, in fs.in samples 
+  int 			u_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE u width of filter, in fs.in samples
   
   virtual void		GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph

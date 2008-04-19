@@ -192,13 +192,20 @@ int FileInput::OpenFile()
     if (!codec) return -1;
   }
   int rval = codec->OpenFile(afname, format);
-  bool specs_ok = (((int)fs.fs_act == codec->samplerate()) &&
-      (out_buff.fields == codec->fields()));
+  bool specs_ok = ((fs.fs_val == SampleFreq::SF_AUTO) || ((int)fs.fs_act == codec->samplerate()));
   if (TestError((!specs_ok), "OpenFile",
-    "Previously set fs or fields does not match this file:", fname)) 
+    "Previously set fs does not match this file:", fname, " (use FS_AUTO)")) 
   {
     CloseFile();
     rval = -1;
+  } else {
+    specs_ok = (out_buff.fields == codec->fields());
+    if (TestError((!specs_ok), "OpenFile",
+      "Previously set fields does not match this file:", fname)) 
+    {
+      CloseFile();
+      rval = -1;
+    }
   }
   if (rval == 0)
     done = false;

@@ -377,7 +377,10 @@ void Duration::AddSamples(double samp, float fs) {
 
 void DataBuffer::Initialize() {
   fr_dur.Set(1, Duration::UN_SAMPLES); // common default
-  stages = 1;
+  min_stages = 1;
+  stages_ro = false;
+  fields_ro = false;
+  stages = min_stages;
   stage = 0;
   items = 1;
   item = 0;
@@ -392,6 +395,13 @@ void DataBuffer::Initialize() {
 void DataBuffer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   //TODO: should we invalidate stuff???
+  if (stages < min_stages) {
+    stages = min_stages;
+  }
+  const int min_fields = 1; // TEMP, maybe need a full field
+  if (fields < min_fields) {
+    fields = min_fields;
+  }
 }
 
 bool DataBuffer::NextIndex() {

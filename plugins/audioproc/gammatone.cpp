@@ -20,7 +20,6 @@ void GammatoneChan::Initialize() {
   tpt = 0;
   gain = 0;
   erb = 0;
-  non_lin = GammatoneBlock::NL_NONE;
 }
 
 String GammatoneChan::GetColText(const KeyString& key, int itm_idx) const {
@@ -41,7 +40,7 @@ bool GammatoneChan::ChanFreqOk(float cf, float ear_q, float min_bw,
 }
 
 void GammatoneChan::InitChan(float cf_, float ear_q, float min_bw,
-   float fs, int non_lin_, float gain_eq)
+   float fs)
 {
   cf = cf_;
   erb = min_bw + (cf / ear_q);
@@ -49,7 +48,6 @@ void GammatoneChan::InitChan(float cf_, float ear_q, float min_bw,
   on = ChanFreqOk(cf_, ear_q, min_bw, fs);
   if (!on) return; // nothing else will be used...
   
-  non_lin = non_lin_;
   tpt = (2 * M_PI) / fs;
   double tptbw = tpt * erb * 1.019; //Moore and Glasberg (1983)
   
@@ -64,7 +62,7 @@ void GammatoneChan::InitChan(float cf_, float ear_q, float min_bw,
   
 //  gain = (tptbw*tptbw*tptbw*tptbw)/3; ning
   //gain = pow(tptbw,4) / 4.66; // jim
-  gain=(2.0*(1-a1-a2-a3-a4)/(1+a1+a5)) * gain_eq; // jim 2.0
+  gain=(2.0*(1-a1-a2-a3-a4)/(1+a1+a5)); // jim 2.0
   
   coscf = cos(tpt*cf);
   sincf = sin(tpt*cf);
@@ -104,20 +102,6 @@ void GammatoneChan::DoFilter(int n, int in_stride, const float* x,
    //==========================================
     
     double tbm = (u0r*cs+u0i*sn) * gain;
-    //non-linearity
-    switch (non_lin) {
-    //case NL_NONE:
-    case GammatoneBlock::NL_HALF_WAVE:
-      if (tbm < 0) tbm = 0;
-      break;
-    case GammatoneBlock::NL_FULL_WAVE:
-      if (tbm < 0) tbm = -tbm;
-      break;
-    case GammatoneBlock::NL_SQUARE:
-      tbm = tbm * tbm;
-      break;
-    default: break; // compiler food
-    }
     if (bm) {
       *bm = (float)tbm;
       bm += out_stride;
@@ -210,7 +194,6 @@ void GammatoneBlock::Initialize() {
   n_chans = 32;
   out_vals = OV_SIG;
   num_out_vals = 1;
-  non_lin = NL_HALF_WAVE;
 }
 
 void GammatoneBlock::UpdateAfterEdit_impl() {
@@ -221,23 +204,6 @@ void GammatoneBlock::UpdateAfterEdit_impl() {
   if (out_vals & OV_ENV) num_out_vals++;
   if (out_vals & OV_FREQ) num_out_vals++;
   
-  // some non-linearity 
-  switch (non_lin) {
-  case NL_HALF_WAVE:
-    // chops out half the signal, so, duh...
-    auto_gain.Set(2, Level::UN_SCALE);
-    break;
-  case NL_SQUARE:
-    //NOTE: the required gain has not been determined!!!
-    auto_gain.Set(1, Level::UN_SCALE);
-    break;
-  // all these guys are gain-neutral
-  case NL_NONE:
-  case NL_FULL_WAVE:
-  default: 
-    auto_gain.Set(1, Level::UN_SCALE);
-    break;
-  }
 }
 
 void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
@@ -254,11 +220,6 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   if (CheckError((src_buff->vals > 1), quiet, ok,
     "GammatoneBlock only supports single val input"))
     return;
-    
-  // warn about the gain for square nonlin
-  if ((non_lin == NL_SQUARE) && check && !quiet) {
-    taMisc::Warning("GammatoneBlock: use of Squaring non-linearity does not apply any gain correction");
-  }
     
   // warn about nyquist violations -- some upper chans will be disabled
   bool on_hi = GammatoneChan::ChanFreqOk(cf_hi, ear_q, min_bw, src_buff->fs.fs_act);
@@ -321,7 +282,7 @@ void GammatoneBlock::InitChildConfig_impl(bool check, bool quiet, bool& ok) {
       } break; 
       default: break;// compiler food -- handle all cases above
       }
-      gc->InitChan(cf, ear_q, min_bw, out_buff.fs, non_lin, auto_gain);
+      gc->InitChan(cf, ear_q, min_bw, out_buff.fs);
     }
   }
   // do the default, which calls all the items, prob does nothing
@@ -439,7 +400,6 @@ void GammatoneBlock::GraphFilter(DataTable* graph_data,
   
   gb->InitLinks();
   gb->Copy(*this);
-  gb->non_lin = NL_NONE; // no rect for filter response
   if ((response != OV_SIG) && (response != OV_ENV) && (response != OV_FREQ))
     response = OV_SIG;
   gb->out_vals = response;
@@ -776,15 +736,54 @@ void TemporalDeltaBlock::GraphFilter(DataTable* graph_data) {
 //////////////////////////////////
 
 /*
-  The gain for the TWB will be the sum of the weights
+  The gain for the TWB will be the sum of the weights; it therefore
+  normalizes the values such that their sum is 1.
+  
+  * the lag between input and output, will always
+    be dur (l_dur+u_dur)
+  * you can output faster than the dur -- this doesn't change the lag, it
+    just gives you updates at a faster rates, basically it gives you overlap
+    between the long sampling windows
+  * 
+  
+  Timing variables relationship:
+    note: anything counted (ex samples) is an integer
+  
+  dur = l_dur + u_dur -- total duration, in ms, >0
+  l/u_flt_wd = filter width of l/u_dur, in in.fs samples, >=1
+  flt_wd = l_flt_wd + u_flt_wd;
+  out_rate = duration between output samples, usually >> in.rate and < dur
+    typical: in = 1/16K, out = 100ms
+  out_wd = output width, in in.fs samples, >=1
+  vl_flt_wd = imaginary additional wd of l_flt_wd, for following calc:
+  v_flt_wd = virtual width, vl_flt_wd + flt_wd,
+    such that v_flt_wd/out_wd is integer >= 1
+  stages = v_flt_wd/out_wd, >=1 (axiomatically, because of def of v_flt_wd)
+  
+  When vl_flt_wd >0 we do not have perfect overlap bewteen in and out
+  
+  For each stage, we maintain a circular filter index value, that varies
+    over the range from -vl_flt_wd:flt_wd-1; when -ve, we ignore the input
+    sample, otherwise we convolve input with filter(index) to output
+  if out_rate < dur {typical case}
+    stages = 
+  if out_rate > dur {subsampling}
+  
+  if out_rate = dur 
+    stages = 1
 */
 
 void TemporalWindowBlock::Initialize() {
+  out_buff.stages_ro = true;
+  non_lin = NL_HALF_WAVE;
   ft = FT_DEF; //
   ot = OT_SINGLE;
   out_rate = 4.0f;
   l_dur = 24.0f;
   u_dur = 8.0f;
+  out_wd = 0;
+  flt_wd = 0;
+  v_flt_wd = 0;
   l_flt_wd = 0;
   u_flt_wd = 0;
   
@@ -804,26 +803,70 @@ void TemporalWindowBlock::Initialize() {
 void TemporalWindowBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (out_rate <= 0) out_rate = 4.0;
+  
+  // gain for non-linearity 
+  switch (non_lin) {
+  case NL_HALF_WAVE:
+    // chops out half the signal, so, duh...
+    auto_gain.Set(2, Level::UN_SCALE);
+    break;
+  case NL_SQUARE:
+    //NOTE: the required gain has not been determined!!!
+    auto_gain.Set(1, Level::UN_SCALE);
+    break;
+  // all these guys are gain-neutral
+  case NL_NONE:
+  case NL_FULL_WAVE:
+  default: 
+    auto_gain.Set(1, Level::UN_SCALE);
+    break;
+  }
 }
 
 void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
-{
+{ //NOTE: even in check mode, we still calc the derived fields, for next check steps
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
-  if (!src_buff) return;
+  if (!src_buff || !ok) return;
   float_Matrix* in_mat = &src_buff->mat;
+  float fs_in = src_buff->fs;
   // note: we can support any number of vals, chans, or items
   
+  // warn about the gain for square nonlin
+  if ((non_lin == NL_SQUARE) && check && !quiet) {
+    taMisc::Warning("GammatoneBlock: use of Squaring non-linearity does not apply any gain correction");
+  }
+    
+    
+  // always calc these derived guys, to simplify checking
+  out_wd = Duration::StatGetDurationSamples(
+    out_rate, Duration::UN_TIME_MS, fs_in);
   // our frame rate must be > 0 (or fs calc will fault!)
-  if (CheckError((l_dur < 0) || (u_dur < 0) ||
-    ((l_dur + u_dur) <= 0), quiet, ok,
-    "l_dur/u_dur must be >= 0 and must add to > 0"))
+  if (CheckError((out_wd <= 0), quiet, ok,
+    "out_rate must be >0 and at least 1 input sample"))
     return;
     
-  if (CheckError((out_rate <= 0), quiet, ok,
-    "out_rate must be > 0"))
+  l_flt_wd = Duration::StatGetDurationSamples(
+    l_dur, Duration::UN_TIME_MS, fs_in);
+  u_flt_wd = Duration::StatGetDurationSamples(
+    u_dur, Duration::UN_TIME_MS, fs_in);
+
+  if (CheckError((l_flt_wd < 0) || (u_flt_wd < 0) ||
+    ((l_flt_wd + u_flt_wd) <= 0), quiet, ok,
+    "l_dur/u_dur must each be >=0, must add to >0 and at least 1 input sample"))
     return;
     
+  const int lu_flt_wd = l_flt_wd + u_flt_wd;
+  
+  // now, add additional v_wd to make out fit exactly in total flt_wd
+  if (out_wd <= lu_flt_wd)
+    v_flt_wd = lu_flt_wd % out_wd;
+  else 
+    v_flt_wd = out_wd % lu_flt_wd;
+  flt_wd = v_flt_wd + l_flt_wd + u_flt_wd;
+  // at this point, each flt_wd is >= 1 integral # of out_wd slices
+  const int stages = flt_wd / out_wd;
+
   if (!ok) return;
   
   if (!check) {
@@ -834,9 +877,8 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
       buff->fs.SetCustom(1 / (out_rate / 1000));
       buff->fr_dur.Set(1, Duration::UN_SAMPLES);
       // each output value is one stage by definition 
-      // but we need to keep several on the go
-      buff->stages = Duration::StatGetDurationSamples((l_dur + u_dur),
-        Duration::UN_TIME_MS, out_buff.fs);
+      // but we typically need to keep several on the go
+      buff->stages = stages;
       buff->fields = src_buff->fields;
       buff->chans = src_buff->chans;
       buff->vals = src_buff->vals;
@@ -858,10 +900,10 @@ void TemporalWindowBlock::InitThisConfigDataOut_impl(bool check,
   // init the conv indexes, as if we've already been processing
   conv_idx.SetGeom(1, out_buff.stages);
   for (int i = 0; i < conv_idx.size; ++i) {
-    // spread the conv idx's evenly over the buff items
+    // spread the conv idx's evenly over the virtual filter range
     // because we apply in asc order, we need to preload in desc order
     // i.e. next guy out will be one most through the seq
-    int idx = ((int) ((conv_idx.size - i) * ((float)filter.size) / (float)out_buff.stages)) - 1;
+    int idx = ((int) ((conv_idx.size - i - 1) * ((float)flt_wd) / (float)out_buff.stages)) - v_flt_wd;
     conv_idx.Set(idx, i);
   }
 }
@@ -869,13 +911,6 @@ void TemporalWindowBlock::InitThisConfigDataOut_impl(bool check,
 void TemporalWindowBlock::CheckMakeFilter(const SampleFreq& fs_in,
   bool check, bool quiet, bool& ok)
 {
-  l_flt_wd = Duration::StatGetDurationSamples(
-    l_dur, Duration::UN_TIME_MS, fs_in);
-  u_flt_wd = Duration::StatGetDurationSamples(
-    u_dur, Duration::UN_TIME_MS, fs_in);
-  if (CheckError(((l_flt_wd + u_flt_wd) <= 0), quiet, ok,
-    "filter width is 0 -- check sample rate and filter widths"))
-    return;
     
   // do some common setting -- but check guys can still stop us
   if (!check) {
@@ -1008,19 +1043,37 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
     // at data output time
     for (int ci = 0; ci < conv_idx.size; ++ci) {
       int& cidx = conv_idx.FastEl(ci); // we test/inc/set
-      float filt_val = filter.SafeEl(cidx);
-      // std accept loop:
-      for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f)
-      for (int chan = 0; ((ps == PS_OK) && (chan < chans)); ++chan) 
-      for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
-      {
+      if (cidx >= 0) { // ignore if in -ve virtual part of the filter (=0)
+        float filt_val = filter.SafeEl(cidx);
+        // std accept loop:
+        for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f)
+        for (int chan = 0; ((ps == PS_OK) && (chan < chans)); ++chan) 
+        for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
+        {
           float dat = in_mat->SafeElAsFloat(val, chan, f, i, stage);
+          
+          //non-linearity (note: we only apply gain_eq once, on output)
+          switch (non_lin) {
+          //case NL_NONE:
+          case GammatoneBlock::NL_HALF_WAVE:
+            if (dat < 0) dat = 0;
+            break;
+          case GammatoneBlock::NL_FULL_WAVE:
+            if (dat < 0) dat = -dat;
+            break;
+          case GammatoneBlock::NL_SQUARE:
+            dat = dat * dat;
+            break;
+          default: break; // compiler food
+          }
+          
           float& item = out_mat->FastEl(val, chan, f, 0, ci);
           item += (dat * filt_val);
+        }
       }
       // now, dec the conv_indx, and if < 0, means need to output and reset 
       if (++cidx >= filter.size) {
-        cidx = 0;
+        cidx = -v_flt_wd;
         out_buff.stage = ci;
         // if doing on/off, need to set the two items according to value of out
         if (ot == OT_ON_OFF) {
@@ -1030,6 +1083,8 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
           for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
           {
             float& out_val = out_mat->FastEl(val, chan, f, 0, ci);
+            // apply gain
+            out_val *= auto_gain;
             float& out_val_off = out_mat_off->FastEl(val, chan, f, 0, ci);
             if (out_val >= 0) {
               out_val_off = 0.0f;
@@ -1063,6 +1118,9 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
 
 
 void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
+  DataBuffer* src_buff = in_block.GetBuffer();
+  if (!src_buff) return;
+
   taProject* proj = GET_MY_OWNER(taProject);
   bool newguy = false;
   if(!graph_data) {
@@ -1080,7 +1138,18 @@ void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
   
   graph_data->DataUpdate(true);
   float_Matrix* mat = &filter;
-  float t, val;
+  float t;
+  float val = 0.0f;
+  // lower virtual (all zero)
+  float vl_dur = l_dur + Duration::StatGetDurationTime(v_flt_wd, Duration::UN_TIME_MS,
+    src_buff->fs);
+  for (int i = 0; i < v_flt_wd; ++i) {
+    float t = -( (((float)((l_flt_wd - i) - v_flt_wd)) / (v_flt_wd + l_flt_wd)) * vl_dur);
+    graph_data->AddBlankRow();
+    xda->SetValAsFloat(t, -1);
+    valda->SetValAsFloat(val, -1);
+  } 
+  // lower real, idx0=time0
   for (int i = 0; i < l_flt_wd; ++i) {
     float t = -( (((float)(l_flt_wd - i)) / l_flt_wd) * l_dur);
     val = mat->SafeEl(i);
