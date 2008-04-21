@@ -165,7 +165,6 @@ bool V3LeabraProject::ConvertToV4_impl() {
     new_net->trial_init = (LeabraNetwork::StateInit)old_trial->trial_init;
     new_net->phase_order = (LeabraNetwork::PhaseOrder)old_trial->phase_order;
     new_net->no_plus_test = old_trial->no_plus_test;
-    new_net->first_plus_dwt = (LeabraNetwork::FirstPlusdWt)old_trial->first_plus_dwt;
   }
 
   // todo: make a standard leabra process for each process group

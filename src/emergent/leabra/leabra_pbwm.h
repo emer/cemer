@@ -35,37 +35,19 @@ class LEABRA_API MatrixConSpec : public LeabraConSpec {
   // Learning of matrix input connections based on dopamine modulation of activation
 INHERITED(LeabraConSpec)
 public:
-  enum LearnRule {
-    OUTPUT_DELTA,		// #AKA_MOTOR_DELTA delta rule for BG_motor: (bg+ - bg-) * s-
-    OUTPUT_CHL,			// #AKA_MOTOR_CHL CHL rule for BG_motor: (bg+ * s+) - (bg- * s-)
-    MAINT   			// #AKA_PFC MAINT learning rule: (bg_p2 - bg_p) * s_p
+  enum MatrixLearnRule {
+    OUTPUT,		// output/motor delta rule for: (bg+ - bg-) * s-
+    MAINT   		// maintenance learning rule: (bg_p2 - bg_p) * s_p
   };
 
-  LearnRule	learn_rule;	// learning rule to use
+  MatrixLearnRule	matrix_rule;	// learning rule to use
 
-  inline float C_Compute_Hebb(LeabraCon* cn, LeabraRecvCons* cg, 
-			      float lin_wt, DaModUnit* ru, DaModUnit* su) {
-    float rval;
-    if((learn_rule == OUTPUT_DELTA) || (learn_rule == OUTPUT_CHL))
-      rval = ru->act_p * (su->act_p * (cg->savg_cor - lin_wt) - (1.0f - su->act_p) * lin_wt);
-    else
-      rval = ru->act_p2 * (su->act_p * (cg->savg_cor - lin_wt) - (1.0f - su->act_p) * lin_wt);
-    return rval;
-  }
-
-  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, DaModUnit* ru, DaModUnit* su) {
+  inline float C_Compute_Err_Delta(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
     float err = 0.0f;
-    switch(learn_rule) {
-    case OUTPUT_DELTA:
+    if(matrix_rule == OUTPUT) 
       err = (ru->act_p - ru->act_m) * su->act_m;
-      break;
-    case OUTPUT_CHL:
-      err = (ru->act_p * su->act_p) - (ru->act_m * su->act_m);
-      break;
-    case MAINT:
+    else
       err = (ru->act_p2  - ru->act_p) * su->act_p;
-      break;
-    }
     if(lmix.err_sb) {
       if(err > 0.0f)	err *= (1.0f - lin_wt);
       else		err *= lin_wt;
@@ -73,48 +55,68 @@ public:
     return err;
   }
 
-  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
-    DaModUnit* lru = (DaModUnit*)ru;
-    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
-    Compute_SAvgCor(lcg, lru);
+  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<lcg->cons.size; i++) {
-	DaModUnit* su = (DaModUnit*)lcg->Un(i);
-	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
 	  float lin_wt = GetLinFmWt(cn->wt);
-	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lin_wt, lru, su), 
-			C_Compute_Err(cn, lin_wt, lru, su));
+	  C_Compute_dWt_NoHebb(cn, ru, 
+			       C_Compute_Err_Delta(cn, lin_wt, ru, su));
+	}
+      }
+    }
+  }
+
+  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	if(!(su->in_subgp &&
+	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
+	  C_Compute_dWt_NoHebb(cn, ru, // cn->wt is linear
+			       C_Compute_Err_Delta(cn, cn->wt, ru, su));
 	}
       }
     }
   }
 
   TA_BASEFUNS(MatrixConSpec);
+protected:
+  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
 };
 
 class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
-  // Matrix bias spec: special learning paramters for matrix units
+  // Matrix bias spec: special learning parameters for matrix units
 INHERITED(LeabraBiasSpec)
 public:
-  enum LearnRule {
-    OUTPUT_DELTA,		// delta rule for BG_motor: (bg+ - bg-) * s-
-    OUTPUT_CHL,			// CHL rule for BG_motor: (bg+ * s+) - (bg- * s-)
-    MAINT   			// MAINT: learn on 2p - p
+  enum MatrixLearnRule {
+    OUTPUT,		// output/motor delta rule for: (bg+ - bg-) * s-
+    MAINT   		// maintenance learning rule: (bg_p2 - bg_p) * s_p
   };
 
-  LearnRule	learn_rule;	// learning rule to use
+  MatrixLearnRule	matrix_rule;	// learning rule to use
 
-  void B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
-    DaModUnit* dau = (DaModUnit*)ru;
+  inline override void B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
     float err;
-    if(learn_rule == MAINT)
-      err = dau->act_p2 - dau->act_p;
+    if(matrix_rule == MAINT)
+      err = ru->act_p2 - ru->act_p;
+    else
+      err = ru->act_p - ru->act_m;
+    if(fabsf(err) >= dwt_thresh)
+      cn->dwt += cur_lrate * err;
+  }
+
+  inline override void B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru) {
+    float err;
+    if(matrix_rule == MAINT)
+      err = ru->act_p2 - ru->act_p;
     else
       err = ru->act_p - ru->act_m;
     if(fabsf(err) >= dwt_thresh)
@@ -127,15 +129,13 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API MatrixUnitSpec : public DaModUnitSpec {
+class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
   // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
-INHERITED(DaModUnitSpec)
+INHERITED(LeabraUnitSpec)
 public:
   bool	freeze_net;		// #DEF_true freeze netinput (MAINT in 2+ phase, OUTPUT in 1+ phase) during learning modulation so that learning only reflects DA modulation and not other changes in netin
 
   void 	Compute_NetAvg(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-  void	PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
-		   LeabraNetwork* net, bool set_both=false);
 
   void	Defaults();
 
@@ -269,9 +269,9 @@ public:
   virtual void 	Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork* net);
   // clear the rnd go signal
 
-  virtual void 	Compute_DaModUnit_NoContrast(DaModUnit* u, float dav, int go_no);
+  virtual void 	Compute_DaMod_NoContrast(LeabraUnit* u, float dav, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); no contrast enancement based on activation
-  virtual void 	Compute_DaModUnit_Contrast(DaModUnit* u, float dav, float gating_act, int go_no);
+  virtual void 	Compute_DaMod_Contrast(LeabraUnit* u, float dav, float gating_act, int go_no);
   // apply given dopamine modulation value to the unit, based on whether it is a go (0) or nogo (1); contrast enhancement based on activation (gating_act)
   virtual void 	Compute_DaTonicMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraInhib* thr, LeabraNetwork* net);
   // compute tonic da modulation (for pfc gating units in first two phases)
@@ -289,11 +289,13 @@ public:
   virtual void	LabelUnits(LeabraLayer* lay);
   // label units with Go/No -- auto done in InitWeights
 
+  // overrides:
   void	Init_Weights(LeabraLayer* lay);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -318,7 +320,6 @@ public:
   float		net_off;	// #DEF_0.5 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
-  float		avg_net_dt;	// #DEF_0.005 #EXPERT time-averaged netinput computation integration rate -- not really used for anything at this point..
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
@@ -336,8 +337,10 @@ public:
   virtual void	Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net);
   // compute netinput as GO - NOGO on matrix layer
 
+  // overrides
   void 	Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer*, LeabraNetwork*);
+  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { };
+  void	Compute_dWt_impl(LeabraLayer*, LeabraNetwork*) { };
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -415,8 +418,7 @@ public:
   // compute the gating signal based on SNrThal layer: GOGO model
 
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -479,7 +481,9 @@ public:
   void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
+  // no learn
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

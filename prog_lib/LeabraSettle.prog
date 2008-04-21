@@ -322,7 +322,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
    flags=;
    cond {
-    expr="network.phase == LeabraNetwork::MINUS_PHASE";
+    expr="network.Compute_TrialStats_Test()";
    };
    true_code {
     name=;

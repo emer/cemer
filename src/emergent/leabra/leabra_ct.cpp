@@ -38,11 +38,6 @@ void CtCaDepSpec::UpdateAfterEdit_impl() {
   sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
 }
 
-void CtDwtNorm::Initialize() {
-  on = true;
-  norm_pct = 1.0f;
-}
-
 void CtLeabraConSpec::Initialize() {
   min_obj_type = &TA_CtLeabraCon;
   savg_cor.thresh = -1.0f;

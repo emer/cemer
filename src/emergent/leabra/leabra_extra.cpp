@@ -843,11 +843,16 @@ void ScalarValLayerSpec::Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, Leab
   }
 }
 
-void ScalarValLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
+void ScalarValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+    lay->sravg_nrm = 1.0f / lay->sravg_sum;
+  }
   UNIT_GP_ITR(lay, 
 	      Compute_dWt_Ugp(ugp, lay, net);
 	      );
   AdaptKWTAPt(lay, net);
+  lay->sravg_sum = 0.0f;
 }
 
 float ScalarValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
@@ -1704,11 +1709,16 @@ void TwoDValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraN
   }
 }
 
-void TwoDValLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
+void TwoDValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+    lay->sravg_nrm = 1.0f / lay->sravg_sum;
+  }
   UNIT_GP_ITR(lay, 
 	      Compute_dWtUgp(ugp, lay, net);
 	      );
   AdaptKWTAPt(lay, net);
+  lay->sravg_sum = 0.0f;
 }
 
 float TwoDValLayerSpec::Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals) {
@@ -1788,10 +1798,6 @@ void DecodeTwoDValLayerSpec::Compute_Act_impl(LeabraLayer*, Unit_Group* ug, Leab
     u->act_eq = su->act_eq;
   }
   ReadValue(ug, net);		// always read out the value
-}
-
-void DecodeTwoDValLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
-  return; 			// no need to do this!
 }
 
 ////////////////////////////////////////////////////////////

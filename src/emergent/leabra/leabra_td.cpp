@@ -22,97 +22,37 @@
 #include <float.h>
 
 //////////////////////////////////////////
-// 	DaMod Units and Cons		//
+// 	LeabraTd Units and Cons		//
 //////////////////////////////////////////
 
-void DaModUnit::Initialize() {
-  act_m2 = 0.0f;
-  act_p2 = 0.0f;
+void LeabraTdUnit::Initialize() {
   p_act_m = -.01f;
   p_act_p = -.01f;
-  dav = 0.0f;
 }
 
-void DaModUnit::Copy_(const DaModUnit& cp) {
-  act_m2 = cp.act_m2;
-  act_p2 = cp.act_p2;
+void LeabraTdUnit::Copy_(const LeabraTdUnit& cp) {
   p_act_p = cp.p_act_p;
   p_act_m = cp.p_act_m;
-  dav = cp.dav;
 }
 
-void DaModSpec::Initialize() {
-  on = false;
-  mod = PLUS_CONT;
-  gain = .1f;
-  neg_rec = .2f;
-  p_dwt = false;
+void LeabraTdUnitSpec::Initialize() {
+  min_obj_type = &TA_LeabraTdUnit;
 }
 
-void DaModUnitSpec::Initialize() {
-  min_obj_type = &TA_DaModUnit;
-}
-
-void DaModUnitSpec::Defaults() {
+void LeabraTdUnitSpec::Defaults() {
   inherited::Defaults();
   Initialize();
 }
 
-void DaModUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
+void LeabraTdUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
   inherited::Init_Acts(u, lay);
-  DaModUnit* lu = (DaModUnit*)u;
-  lu->act_m2 = 0.0f;
-  lu->act_p2 = 0.0f;
-  if(da_mod.p_dwt) {
-    lu->p_act_m = -.01f;
-    lu->p_act_p = -.01f;
-  }
-  lu->dav = 0.0f;
+  LeabraTdUnit* lu = (LeabraTdUnit*)u;
+  lu->p_act_m = -.01f;
+  lu->p_act_p = -.01f;
 }
 
-void DaModUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net) {
-  if(da_mod.on) {
-    if(da_mod.mod == DaModSpec::PLUS_CONT) {
-      // note: u->misc_1 contains maintenance currents in PFC units: g_h should always be set to this!
-      DaModUnit* lu = (DaModUnit*)u;
-      if(net->phase == LeabraNetwork::PLUS_PHASE) {
-	if(lu->dav > 0.0f) {
-	  lu->vcb.g_a = 0.0f;
-	  lu->vcb.g_h = u->misc_1 + da_mod.gain * lu->dav * lu->act_m; // increase in proportion to participation in minus phase
-	}
-	else {
-	  lu->vcb.g_h = u->misc_1;
-	  lu->vcb.g_a = -da_mod.gain * lu->dav * lu->act_m; // decrease in proportion to participation in minus phase
-	}
-      }
-      else {
-	lu->vcb.g_h = u->misc_1;
-	lu->vcb.g_a = 0.0f;	// clear in minus phase!
-      }
-    }
-    else if(da_mod.mod == DaModSpec::NEG_DIP) {
-      if((net->phase == LeabraNetwork::PLUS_PHASE) && (net->phase_no < 2)) {
-	if(net->cycle == 0) { // right at the beginning of the plus phase!
-	  DaModUnit* lu = (DaModUnit*)u;
-	  float new_neg = 0.0f;
-	  if(lu->dav < 0.0f) {
-	    new_neg = -da_mod.gain * lu->dav * lu->act_eq;
-	  }
-	  lu->vcb.g_a = lu->vcb.g_a + new_neg - da_mod.neg_rec * lu->vcb.g_a;
-	}
-      }
-    }
-  }
-
-  inherited::Compute_Conduct(u, lay, thr, net);
-}
-
-void DaModUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  if(!da_mod.p_dwt) {
-    inherited::Compute_dWt(u, lay, net);
-    return;
-  }
-  DaModUnit* lu = (DaModUnit*)u;
+void LeabraTdUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraTdUnit* lu = (LeabraTdUnit*)u;
   if((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) {
     if((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn))
       return;
@@ -122,74 +62,17 @@ void DaModUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* 
   Compute_dWt_impl(u, lay, net);
 }
 
-void DaModUnitSpec::Compute_Weights(Unit* u) {
-  if(!da_mod.p_dwt) {
-    inherited::Compute_Weights(u);
-    return;
-  }
-  DaModUnit* lu = (DaModUnit*)u;
-  ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_Weights((LeabraCon*)u->bias.Cn(0), lu, this);
-  if(opt_thresh.updt_wts && 
-     ((lu->act_p <= opt_thresh.learn) && (lu->act_m <= opt_thresh.learn)) &&
-      ((lu->p_act_p <= opt_thresh.learn) && (lu->p_act_m <= opt_thresh.learn)))
-    return;
-  UnitSpec::Compute_Weights(lu);
-}
-
-void DaModUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
   inherited::EncodeState(u, lay, net);
-  DaModUnit* lu = (DaModUnit*)u;
-  if(da_mod.p_dwt) {
-    // just save phase activation states
-    if(net->phase_max >= 3)
-      lu->p_act_p = lu->act_p2;
-    else
-      lu->p_act_p = lu->act_p;
-    if(net->phase_max >= 4)
-      lu->p_act_m = lu->act_m2;
-    else
-      lu->p_act_m = lu->act_m;
-  }
-}
-
-void DaModUnitSpec::DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay) {
-  inherited::DecayEvent(u, lay, net, decay);
-  DaModUnit* lu = (DaModUnit*)u;
-  lu->dav = 0.0f;
-}
-
-void DaModUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
-			       LeabraNetwork* net, bool set_both)
-{
-  inherited::PostSettle(u, lay, thr, net, set_both);
-  DaModUnit* lu = (DaModUnit*)u;
-
-  if((net->phase == LeabraNetwork::MINUS_PHASE) && (net->phase_no < 2)) {
-    lu->act_m2 = lu->act_m;	// set this just in case..
-  }
-  if((net->phase == LeabraNetwork::PLUS_PHASE) && (net->phase_no < 2)) {
-    if(da_mod.on && (da_mod.mod == DaModSpec::PLUS_POST)) {
-      float dact = da_mod.gain * lu->dav * lu->act_m; // delta activation
-      if(dact > 0.0f) {
-	dact *= 1.0f - lu->act_p;
-      }
-      else {
-	dact *= lu->act_p;
-      }
-      lu->act_p = act_range.Clip(lu->act_p + dact);
-      u->act_dif = u->act_p - u->act_m;
-    }
-    lu->act_p2 = lu->act_p;	// always set this just in case..
-  }
-
-  if((net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS) && (net->phase_no == 2))
-    lu->act_p2 = lu->act_eq;
-  else if(net->phase_order == LeabraNetwork::MINUS_PLUS_2) {
-    if(net->phase_no == 2)
-      lu->act_m2 = lu->act_eq;
-    else
-      lu->act_p2 = lu->act_eq;
-  }
+  LeabraTdUnit* lu = (LeabraTdUnit*)u;
+  if(net->phase_max >= 3)
+    lu->p_act_p = lu->act_p2;
+  else
+    lu->p_act_p = lu->act_p;
+  if(net->phase_max >= 4)
+    lu->p_act_m = lu->act_m2;
+  else
+    lu->p_act_m = lu->act_m;
 }
 
 //////////////////////////////////////////
@@ -274,8 +157,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
-  lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_DaModUnit), quiet, rval,
-	     "must have DaModUnits!");
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -283,8 +164,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = true;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  lay->CheckError(!us->InheritsFrom(TA_DaModUnitSpec), quiet, rval,
-	     "UnitSpec must be DaModUnitSpec!");
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
 		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("act", true);
@@ -331,7 +210,8 @@ bool ExtRewLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   return rval;
 }
 
-void ExtRewLayerSpec::Compute_UnitDa(float er, DaModUnit* u, Unit_Group* ugp, LeabraLayer*, LeabraNetwork* net) {
+void ExtRewLayerSpec::Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer*,
+				     LeabraNetwork* net) {
   u->dav = er;
   if(avg_rew.sub_avg) u->dav -= u->act_avg;
   u->ext = u->dav;
@@ -339,19 +219,19 @@ void ExtRewLayerSpec::Compute_UnitDa(float er, DaModUnit* u, Unit_Group* ugp, Le
 
   float err_thr = (rew.rew_val - rew.err_val) * .5f + rew.err_val;
 
-  // compute sequential error values
-  // p_act_m = count of # sequential correct/errs (+ = correct, - = errors)
-  // p_act_p = last count of correct in a row
+  float& err_cor_cnt = u->misc_2; // count of errors (-) and corrects (+)
+  float& lst_cor_cnt = u->misc_3; // last correct count
+
   if(er < err_thr) {		// made an error
-    if(u->p_act_m > 0.0f)	// had been correct
-      u->p_act_m = 0.0f;
-    u->p_act_m -= 1.0f;
+    if(err_cor_cnt > 0.0f)	// had been correct
+      err_cor_cnt = 0.0f;
+    err_cor_cnt -= 1.0f;
   }
   else {			// no error
-    if(u->p_act_m < 0.0f)	// had been errors
-      u->p_act_m = 0.0f;
-    u->p_act_m += 1.0f;		// increment count of correct
-    u->p_act_p = u->p_act_m;	// record last positive 
+    if(err_cor_cnt < 0.0f)	// had been errors
+      err_cor_cnt = 0.0f;
+    err_cor_cnt += 1.0f;	// increment count of correct
+    lst_cor_cnt = err_cor_cnt;	// record last positive 
   }
 
   ClampValue(ugp, net);
@@ -499,7 +379,7 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 
   UNIT_GP_ITR
     (lay,
-     DaModUnit* u = (DaModUnit*)ugp->Leaf(0);
+     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      u->misc_1 = 1.0f;		// indication of reward!
      Compute_UnitDa(er, u, ugp, lay, net);
      );
@@ -512,7 +392,7 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
   }    
   UNIT_GP_ITR
     (lay, 
-     DaModUnit* u = (DaModUnit*)ugp->Leaf(0);
+     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      float er = u->ext;
      if(er == rew.norew_val) {
        u->misc_1 = 0.0f;	// indication of no reward!
@@ -529,7 +409,7 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
 void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay, 
-     DaModUnit* u = (DaModUnit*)ugp->Leaf(0);
+     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
      float er = u->dav;
      if(er == rew.norew_val) {
        u->misc_1 = 0.0f;	// indication of no reward!
@@ -585,11 +465,6 @@ void ExtRewLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void ExtRewLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
-  return;			// never compute dwts!
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////
@@ -639,7 +514,7 @@ void TDRewPredLayerSpec::HelpConfig() {
  - Plus phase = free-running expected reward computed (over settlng, fm recv wts)\n\
  - Learning is (act_p - act_m) * p_act_p: delta on recv units times sender activations at (t-1).\n\
  \nTDRewPredLayerSpec Configuration:\n\
- - All units I recv from must be DaModUnit/Spec units (to hold t-1 act vals)\n\
+ - All units I recv from must be LeabraTdUnit/Spec units (to hold t-1 act vals)\n\
  - Sending connection to a TDRewIntegLayerSpec to integrate predictions with external rewards";
   cerr << help << endl << flush;
   taMisc::Confirm(help);
@@ -657,12 +532,8 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
-  if(lay->CheckError(net->no_plus_test, quiet, rval,
-		"requires LeabraNetwork no_plus_test = false, I just set it for you")) {
-    net->no_plus_test = false;
-  }
-  if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_DaModUnit), quiet, rval,
-		"must have DaModUnits!")) {
+  if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
+		"must have LeabraTdUnits!")) {
     return false;
   }
 
@@ -671,11 +542,10 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError(!us->InheritsFrom(TA_DaModUnitSpec), quiet, rval,
-		"UnitSpec must be DaModUnitSpec!")) {
+  if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
+		"UnitSpec must be LeabraTdUnitSpec!")) {
     return false;
   }
-  ((DaModUnitSpec*)us)->da_mod.p_dwt = true; // do need prior state dwt
   us->UpdateAfterEdit();
 
   // check for conspecs with correct params
@@ -750,7 +620,7 @@ void TDRewPredLayerSpec::Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork*) {
 void TDRewPredLayerSpec::Compute_TdPlusPhase_impl(Unit_Group* ugp, LeabraNetwork* net) {
   Compute_SavePred(ugp, net);	// first, always save current predictions!
 
-  DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
+  LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
   u->ext = u->act_m + u->dav;
   ClampValue(ugp, net);		// apply new value
   Compute_ExtToPlus(ugp, net);	// copy ext values to act_p
@@ -760,8 +630,8 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* ne
   UNIT_GP_ITR(lay, Compute_TdPlusPhase_impl(ugp, net); );
 }
 
-void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both) {
-  inherited::PostSettle(lay, net, set_both); 
+void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::PostSettle(lay, net); 
   if(net->phase_no < net->phase_max-1)
     return; // only at very last phase, do this!  see note on Compute_dWt as to why..
   Compute_TdPlusPhase(lay, net);
@@ -779,13 +649,22 @@ void TDRewPredLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
   }
 }
 
-void TDRewPredLayerSpec::Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) {
+void TDRewPredLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
   // doing second because act_p is computed only at end of settling!
   // this is better than clamping the value in the middle of everything
   // and then continuing with settling..
   if(net->phase_no < net->phase_max-1)
     return; // only do FINAL dwt!
-  inherited::Compute_dWt(lay, net);
+  Compute_dWt_impl(lay, net);
+}
+
+void TDRewPredLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+  // doing second because act_p is computed only at end of settling!
+  // this is better than clamping the value in the middle of everything
+  // and then continuing with settling..
+  if(net->phase_no < net->phase_max-1)
+    return; // only do FINAL dwt!
+  Compute_dWt_impl(lay, net);
 }
 
 //////////////////////////////////////////
@@ -846,8 +725,8 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		"requires LeabraNetwork trial_init = DECAY_STATE, I just set it for you")) {
     net->trial_init = LeabraNetwork::DECAY_STATE;
   }
-  if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_DaModUnit), quiet, rval,
-		"must have DaModUnits!")) {
+  if(lay->CheckError(!lay->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
+		"must have LeabraTdUnits!")) {
     return false;
   }
 
@@ -856,8 +735,8 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError(!us->InheritsFrom(TA_DaModUnitSpec), quiet, rval,
-		"UnitSpec must be DaModUnitSpec!")) {
+  if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
+		"UnitSpec must be LeabraTdUnitSpec!")) {
     return false;
   }
   us->UpdateAfterEdit();
@@ -942,15 +821,11 @@ void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
   }
     
   UNIT_GP_ITR(lay, 
-      DaModUnit* u = (DaModUnit*)ugp->FastEl(0);
+      LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
       u->ext = new_val;
       ClampValue(ugp, net);
 	      );
   HardClampExt(lay, net);
-}
-
-void TDRewIntegLayerSpec::Compute_dWt(LeabraLayer*, LeabraNetwork*) {
-  return;
 }
 
 //////////////////////////////////
@@ -984,7 +859,7 @@ void TdLayerSpec::HelpConfig() {
  - Single recv connection marked with a MarkerConSpec from reward integration layer\
      (computes expectations and actual reward signals)\n\
  - This layer must be after corresp. reward integration layer in list of layers\n\
- - Sending connections must connect to units of type DaModUnit/Spec \
+ - Sending connections must connect to units of type LeabraTdUnit/Spec \
      (td signal from this layer put directly into td var on units)\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative td = negative activation signal here";
@@ -1041,8 +916,8 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
 		    "requires one recv projection with at least one unit!")) {
 	return false;
       }
-      if(lay->CheckError(!recv_gp->Un(0)->InheritsFrom(TA_DaModUnit), quiet, rval,
-		    "I need to receive from a DaModUnit!")) {
+      if(lay->CheckError(!recv_gp->Un(0)->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
+		    "I need to receive from a LeabraTdUnit!")) {
 	return false;
       }
     }
@@ -1064,8 +939,8 @@ bool TdLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
   int si;
   for(si=0;si<lay->send_prjns.size;si++) {
     Projection* prjn = (Projection*)lay->send_prjns[si];
-    if(lay->CheckError(!prjn->from->units.el_typ->InheritsFrom(TA_DaModUnit), quiet, rval,
-		  "all layers I send to must have DaModUnits!, layer:",
+    if(lay->CheckError(!prjn->from->units.el_typ->InheritsFrom(TA_LeabraTdUnit), quiet, rval,
+		  "all layers I send to must have LeabraTdUnits!, layer:",
 		  prjn->from->GetPath(),"doesn't")) {
       return false;
     }
@@ -1088,12 +963,12 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
   FindLayerFmSpec(lay, ri_prjn_idx, &TA_TDRewIntegLayerSpec);
 
   lay->dav = 0.0f;
-  DaModUnit* u;
+  LeabraTdUnit* u;
   taLeafItr i;
-  FOR_ITR_EL(DaModUnit, u, lay->units., i) {
+  FOR_ITR_EL(LeabraTdUnit, u, lay->units., i) {
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[ri_prjn_idx];
     // just taking the first unit = scalar val
-    DaModUnit* su = (DaModUnit*)cg->Un(0);
+    LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(0);
     u->dav = su->act_eq - su->act_m; // subtract current minus previous!
     u->ext = u->dav;
     u->act_eq = u->act = u->net = u->ext;
@@ -1111,7 +986,7 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned())	continue;
       for(int j=0;j<send_gp->cons.size; j++) {
-	((DaModUnit*)send_gp->Un(j))->dav = u->act;
+	((LeabraTdUnit*)send_gp->Un(j))->dav = u->act;
       }
     }
   }
@@ -1225,7 +1100,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   for(i=0;i<net->layers.size;i++) {
     LeabraLayer* lay = (LeabraLayer*)net->layers[i];
     LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-    lay->SetUnitType(&TA_DaModUnit);
+    lay->SetUnitType(&TA_LeabraTdUnit);
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda
        && !laysp->InheritsFrom(&TA_PFCLayerSpec) && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
@@ -1238,8 +1113,8 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
       else 
 	output_lays.Link(lay);
       LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-      if(us == NULL || !us->InheritsFrom(TA_DaModUnitSpec)) {
-	us->ChangeMyType(&TA_DaModUnitSpec);
+      if(us == NULL || !us->InheritsFrom(TA_LeabraTdUnitSpec)) {
+	us->ChangeMyType(&TA_LeabraTdUnitSpec);
       }
     }
   }
@@ -1257,8 +1132,8 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   BaseSpec_Group* prjns = net->FindMakeSpecGp(gpprfx + "Prjns");
   if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
 
-  LeabraUnitSpec* rewpred_units = (LeabraUnitSpec*)units->FindMakeSpec("TDRewPredUnits", &TA_DaModUnitSpec);
-  LeabraUnitSpec* td_units = (LeabraUnitSpec*)units->FindMakeSpec("TdUnits", &TA_DaModUnitSpec);
+  LeabraUnitSpec* rewpred_units = (LeabraUnitSpec*)units->FindMakeSpec("TDRewPredUnits", &TA_LeabraTdUnitSpec);
+  LeabraUnitSpec* td_units = (LeabraUnitSpec*)units->FindMakeSpec("TdUnits", &TA_LeabraTdUnitSpec);
   if(rewpred_units == NULL || td_units == NULL) return false;
 
   LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
@@ -1334,15 +1209,6 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     }
   }
   
-  // make sure that other units are saving prior activation states!!
-  for(int j=0;j<net->specs.size;j++) {
-    if(net->specs[j]->InheritsFrom(TA_DaModUnitSpec)) {
-      DaModUnitSpec* sp = (DaModUnitSpec*)net->specs[j];
-      sp->da_mod.p_dwt = true;
-      sp->UpdateAfterEdit();
-    }
-  }
-
   //////////////////////////////////////////////////////////////////////////////////
   // set geometries
 

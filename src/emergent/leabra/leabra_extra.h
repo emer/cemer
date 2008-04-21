@@ -34,7 +34,12 @@ public:
   inline void 	Send_NetinDelta(LeabraRecvCons*, float su_act_delta) { };
   inline void 	Send_ClampNet(LeabraRecvCons*, float su_act) { };
   inline void 	Compute_dWt(RecvCons*, Unit*) { };
+  inline void 	Compute_dWt_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Compute_dWt_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void 	Compute_SRAvg(LeabraRecvCons*, LeabraUnit*) { };
   inline void	Compute_Weights(RecvCons*, Unit*) { };
+  inline void	Compute_Weights_LeabraCHL(LeabraRecvCons*, LeabraUnit*) { };
+  inline void	Compute_Weights_CtLeabraCAL(LeabraRecvCons*, LeabraUnit*) { };
 
   bool	 DMem_AlwaysLocal() { return true; }
   // these connections always need to be there on all nodes..
@@ -78,6 +83,10 @@ public:
   // get context source value for given context unit
 
   override bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
+
+  void	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
+  // no learn
 
   void	Defaults();
 
@@ -128,8 +137,12 @@ public:
     C_ApplyLimits(cn, ru, NULL);
   }
 
-  inline void	B_Compute_dWt(LeabraCon* cn, LeabraUnit* ru) {
-    LeabraBiasSpec::B_Compute_dWt(cn, ru);
+  inline void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru) {
+    LeabraBiasSpec::B_Compute_dWt_LeabraCHL(cn, ru);
+    if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->GetUnitSpec());
+  }
+  inline void	B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru, LeabraLayer* rlay) {
+    LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(cn, ru, rlay);
     if(updt_immed) B_Compute_Weights(cn, ru, (LeabraUnitSpec*)ru->GetUnitSpec());
   }
 
@@ -183,25 +196,13 @@ public:
     CON_GROUP_LOOP(cg, C_Depress_Wt((TrialSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
   }
 
-  void Compute_dWt(RecvCons* cg, Unit* ru) {
-    LeabraUnit* lru = (LeabraUnit*)ru;
-    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
-    Compute_SAvgCor(lcg, lru);
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  float lin_wt = GetLinFmWt(cn->wt);
-	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
-	  // depression operates on nonlinear weight!
-	  C_Depress_Wt((TrialSynDepCon*)cn, lru, su);
-	}
-      }
-    }
+  void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_dWt_LeabraCHL(cg, ru);
+    Depress_Wt(cg, ru);
+  }
+  void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_dWt_CtLeabraCAL(cg, ru);
+    Depress_Wt(cg, ru);
   }
 
   void C_Reset_EffWt(TrialSynDepCon* cn) {
@@ -281,6 +282,8 @@ private:
 
 //////////////////////////////////////////
 //      Synaptic Depression: Cycle Level
+
+// todo: update from leabra_ct code!
 
 class LEABRA_API CycleSynDepCon : public LeabraCon {
   // synaptic depression connection at the trial level (as opposed to cycle level)
@@ -408,6 +411,8 @@ private:
 /////////////////////////////////////////////////
 //		Fast Weights
 
+// todo: this code needs a lot of work!
+
 class LEABRA_API FastWtCon : public LeabraCon {
   // fast weight connection: standard wt learns fast, but decays toward slow weight value
 public:
@@ -500,31 +505,31 @@ public:
       cn->wt += fast_wt.decay * (-cn->swt - cn->wt); // decay toward slow weights..
   }
 
-  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
-    LeabraUnit* lru = (LeabraUnit*)ru;
-    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
-    Compute_SAvgCor(lcg, lru);
+  // todo: do ctleabra_cal
+
+  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    Compute_SAvgCor(cg, ru);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
 	FastWtCon* cn = (FastWtCon*)cg->Cn(i);
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_FastDecay(cn, lru, su);
+	  C_Compute_FastDecay(cn, ru, su);
 	  float lin_wt = GetLinFmWt(cn->wt);
-	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
-			C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
-	  C_Compute_SlowdWt(cn, lru, 
-			    C_Compute_SlowHebb(cn, lcg, lin_wt, lru->act_p, su->act_p),
-			    C_Compute_SlowErr(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
+	  C_Compute_dWt(cn, ru, 
+			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
+	  C_Compute_SlowdWt(cn, ru, 
+			    C_Compute_SlowHebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+			    C_Compute_SlowErr(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
 	}
       }
     }
   }
 
-  inline void C_Compute_Weights(FastWtCon* cn, LeabraRecvCons* cg,
-			      LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
+  inline void C_Compute_Weights_LeabraCHL(FastWtCon* cn, LeabraRecvCons* cg,
+					  LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
   {
     if(cn->sdwt != 0.0f) {
       cn->swt += cn->sdwt; // wt is not negative!
@@ -534,31 +539,27 @@ public:
     if(cn->dwt != 0.0f) {
       // always do this because of the decay term..
       cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + cn->dwt);
-    // note that GetWtFmLin function enforces 0-1 limits.  other limits are not worth the cost!
-//       if(cn->wt < wt_limits.min) cn->wt = wt_limits.min;
-//       if(cn->wt > wt_limits.max) cn->wt = wt_limits.max;
     }
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;
     cn->sdwt = 0.0f;
   }
 
-  inline void C_Compute_WeightsActReg(FastWtCon* cn, LeabraRecvCons* cg,
+  inline void C_Compute_WeightsActReg_LeabraCHL(FastWtCon* cn, LeabraRecvCons* cg,
 				    LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus)
   {
-    C_Compute_ActReg(cn, cg, ru, su, rus);
-    C_Compute_Weights(cn, cg, ru, su, rus);
+    C_Compute_ActReg_LeabraCHL(cn, cg, ru, su, rus);
+    C_Compute_Weights_LeabraCHL(cn, cg, ru, su, rus);
   }
 
-  inline void Compute_Weights(RecvCons* cg, Unit* ru) {
+  inline void Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
-    LeabraRecvCons* lcg = (LeabraRecvCons*)cg;
     if(rus->act_reg.on) {		// do this in update so inactive units can be reached (no opt_thresh.updt)
-      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg((FastWtCon*)cg->Cn(i), lcg,
+      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg_LeabraCHL((FastWtCon*)cg->Cn(i), cg,
 					       (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
     }
     else {
-      CON_GROUP_LOOP(cg, C_Compute_Weights((FastWtCon*)cg->Cn(i), lcg,
+      CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((FastWtCon*)cg->Cn(i), cg,
 					 (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
     }
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
@@ -587,7 +588,7 @@ private:
 };
 
 class LEABRA_API ActAvgHebbConSpec : public LeabraConSpec {
-  // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories
+  // hebbian learning that includes a proportion of average activation over time, in addition to standard current unit activation;  produces a trace-based learning effect for learning over trajectories -- only for Leabra_CHL
 INHERITED(LeabraConSpec)
 public:
   ActAvgHebbMixSpec	act_avg_hebb; // mixture of current and average activations to use in hebbian learning
@@ -601,10 +602,8 @@ public:
   }
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
-    LeabraUnit* lru = (LeabraUnit*)ru;
-    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
-    Compute_SAvgCor(lcg, lru);
+  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    Compute_SAvgCor(cg, ru);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
 	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
@@ -612,9 +611,9 @@ public:
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
 	  float lin_wt = GetLinFmWt(cn->wt);
-	  C_Compute_dWt(cn, lru, 
-			C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->act_p, lru->act_avg),
-			C_Compute_Err(cn, lin_wt, lru->act_p, lru->act_m, su->act_p, su->act_m));  
+	  C_Compute_dWt(cn, ru, 
+			C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p, ru->act_avg),
+			C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m, su->act_p, su->act_m));  
 	}
       }
     }
@@ -764,7 +763,7 @@ public:
 
   virtual void 	Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // compute weight changes just for one unit group
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
   override float Compute_SSE(LeabraLayer* lay, int& n_vals,
@@ -989,7 +988,7 @@ public:
 
   virtual void 	Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // compute weight changes just for one unit group
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
 
   virtual float Compute_SSE_Ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
   override float Compute_SSE(LeabraLayer* lay, int& n_vals,
@@ -1016,7 +1015,8 @@ public:
   void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_InhibAvg(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net) { };
 
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);
 private:

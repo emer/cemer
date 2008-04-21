@@ -82,24 +82,6 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtDwtNorm : public taBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra renormalize weight changes 
-INHERITED(taBase)
-public:
-  bool		on;		// whether to do normalized dwt Compute_Weights function 
-  float		norm_pct;	// #CONDEDIT_ON_on what proportion of full normalization to apply to the delta weights (0 = no norm, 1 = full norm)
-
-  SIMPLE_COPY(CtDwtNorm);
-  TA_BASEFUNS(CtDwtNorm);
-  //protected:
-  //  void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-
 class LEABRA_API CtLeabraConSpec : public LeabraConSpec {
   // continuous time leabra con spec: most abstract version of continous time
 INHERITED(LeabraConSpec)

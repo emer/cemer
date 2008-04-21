@@ -23,65 +23,54 @@
 //////////////////////////////////////////////////////////////////
 
 class LEABRA_API DaModUnit : public LeabraUnit {
+  // obsolete -- now incorporated into base LeabraUnit
+INHERITED(LeabraUnit)
+public:
+  TA_BASEFUNS_NOCOPY(DaModUnit);
+private:
+ void	Initialize()    { };
+  void	Destroy()	{ };
+};
+
+class LEABRA_API DaModUnitSpec : public LeabraUnitSpec {
+  // obsolete -- now incoroporated into base LeabraUnitSpec
+INHERITED(LeabraUnitSpec)
+public:
+  TA_BASEFUNS_NOCOPY(DaModUnitSpec);
+private:
+  void	Initialize() { };
+  void	Destroy()    { };
+};
+
+////////////////////////////////////////////////////////////
+//		Td Unit still needs separate vars
+
+class LEABRA_API LeabraTdUnit : public LeabraUnit {
   // Leabra unit with dopamine-like modulation of minus phase activation for learning
 INHERITED(LeabraUnit)
 public:
-  float		act_m2;		// second minus phase activation
-  float		act_p2;		// second plus phase activation
   float 	p_act_m;	// previous minus phase activation 
   float		p_act_p;	// previous plus phase activation
-  float 	dav;		// modulatory dopamine value 
 
-  void	Copy_(const DaModUnit& cp);
-  TA_BASEFUNS(DaModUnit);
+  void	Copy_(const LeabraTdUnit& cp);
+  TA_BASEFUNS(LeabraTdUnit);
 private:
   void	Initialize();
   void	Destroy()	{ };
 };
 
-class LEABRA_API DaModSpec : public taBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
-INHERITED(taBase)
-public:
-  enum ModType {
-    PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
-    PLUS_POST,			// da modulates plus-phase activations (only), at the end of the plus phase
-    NEG_DIP			// da dips provide a (decaying) negative (accomodation) current on a trial-wise basis
-  };
-
-  bool		on;		// #APPLY_IMMED whether to actually modulate activations by da values
-  ModType	mod;		// #CONDEDIT_ON_on:true how to apply DA modulation
-  float		gain;		// #CONDEDIT_ON_on:true gain multiplier of da values
-  float		neg_rec;	// #CONDEDIT_ON_mod:NEG_DIP recovery time constant for NEG_DIP case (how much to decay negative current per trial)
-  bool		p_dwt;		// whether units learn based on prior activation states, as in TD and other algorithms (not really to do with DA modulation; just stuck here.. affects Compute_dWt and Compute_Weights calls)
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(DaModSpec);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-class LEABRA_API DaModUnitSpec : public LeabraUnitSpec {
-  // Leabra unit with temporal-differences error modulation of minus phase activation for learning
+class LEABRA_API LeabraTdUnitSpec : public LeabraUnitSpec {
+  // Leabra unit with temporal-differences variables for prior activation states
 INHERITED(LeabraUnitSpec)
 public:
-  DaModSpec	da_mod;		// da modulation of activations (for da-based learning, and other effects)
-
-  void 		Compute_Conduct(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net);
-
   void		Init_Acts(LeabraUnit* u, LeabraLayer* lay);
   void		Init_Acts(Unit* u)	{ LeabraUnitSpec::Init_Acts(u); }
   void		Compute_dWt(Unit*) { };
   void 		Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  void 		Compute_Weights(Unit* u);
   void 		EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
-  void		DecayEvent(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net, float decay);
-  void		PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* thr,
-			   LeabraNetwork* net, bool set_both=false);
 
   void	Defaults();
-  TA_SIMPLE_BASEFUNS(DaModUnitSpec);
+  TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);
 private:
   void	Initialize();
   void	Destroy()		{ };
@@ -162,15 +151,18 @@ public:
   // get external rewards from inputs (put in da val, clamp)
   virtual void 	Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net);
   // clamp external rewards as da values (put in da val, clamp)
-  virtual void 	Compute_UnitDa(float er, DaModUnit* u, Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
+  virtual void 	Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
   // actually compute the unit da value based on external reward value er
   virtual void	Compute_ZeroAct(LeabraLayer* lay, LeabraNetwork* net);
   // clamp zero activations, for minus phase
   virtual void	Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net);
   // clamp norew_val values for when no reward information is present
 
+  // overrides:
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void 	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
+  // never learns
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -192,7 +184,7 @@ class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
   // Reward Prediction connections: for TD RewPred Layer, uses TD algorithm for predicting rewards
 INHERITED(LeabraConSpec)
 public:
-  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, DaModUnit* ru, DaModUnit* su) {
+  inline float C_Compute_Err(LeabraCon* cn, float lin_wt, LeabraTdUnit* ru, LeabraTdUnit* su) {
     float err = (ru->act_p - ru->act_m) * su->p_act_p;
     if(lmix.err_sb) {
       if(err > 0.0f)	err *= (1.0f - lin_wt);
@@ -202,17 +194,32 @@ public:
   }
 
   // this computes weight changes based on sender at time t-1
-  inline void Compute_dWt(RecvCons* cg, Unit* ru) {
-    DaModUnit* lru = (DaModUnit*)ru;
-    LeabraRecvCons* lcg = (LeabraRecvCons*) cg;
-    Compute_SAvgCor(lcg, lru);
+  inline void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    LeabraTdUnit* lru = (LeabraTdUnit*)ru;
+    Compute_SAvgCor(cg, lru);
     if(lru->p_act_p >= 0.0f) {
-      for(int i=0; i<lcg->cons.size; i++) {
-	DaModUnit* su = (DaModUnit*)lcg->Un(i);
-	LeabraCon* cn = (LeabraCon*)lcg->Cn(i);
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
 	float lin_wt = GetLinFmWt(cn->wt);
 	C_Compute_dWt(cn, lru, 
-		      C_Compute_Hebb(cn, lcg, lin_wt, lru->act_p, su->p_act_p),
+		      C_Compute_Hebb(cn, cg, lin_wt, lru->act_p, su->p_act_p),
+		      C_Compute_Err(cn, lin_wt, lru, su));  
+      }
+    }
+  }
+
+  // currently just same as std
+  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    LeabraTdUnit* lru = (LeabraTdUnit*)ru;
+    Compute_SAvgCor(cg, lru);
+    if(lru->p_act_p >= 0.0f) {
+      for(int i=0; i<cg->cons.size; i++) {
+	LeabraTdUnit* su = (LeabraTdUnit*)cg->Un(i);
+	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+	float lin_wt = GetLinFmWt(cn->wt);
+	C_Compute_dWt(cn, lru, 
+		      C_Compute_Hebb(cn, cg, lin_wt, lru->act_p, su->p_act_p),
 		      C_Compute_Err(cn, lin_wt, lru, su));  
       }
     }
@@ -242,10 +249,14 @@ public:
   virtual void 	Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations for learning including the td values
 
+  // overrides:
   void	Init_Acts(LeabraLayer* lay);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net, bool set_both=false);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) { };
+  // don't learn on nothing
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -283,7 +294,9 @@ public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
-  void	Compute_dWt(LeabraLayer* lay, LeabraNetwork* net);
+  void 	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) { };
+  // never learn
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
@@ -315,7 +328,9 @@ public:
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void 	Compute_Act(LeabraLayer* lay, LeabraNetwork* net);
 
-  void	Compute_dWt(LeabraLayer*, LeabraNetwork*) { }; // nop
+  void 	Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) { };
+  void	Compute_dWt_impl(LeabraLayer*, LeabraNetwork*) { };
+  // never learns
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

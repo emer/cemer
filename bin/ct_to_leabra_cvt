@@ -1,0 +1,9 @@
+#!/bin/csh
+# script to change names in a dump file (or a src file)
+
+foreach i ($*)
+    echo $i
+    set fn=$i:r
+    sed -e "s/CtLeabra/Leabra/g" \
+    $i >$fn.unct.proj
+end
