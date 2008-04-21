@@ -160,52 +160,34 @@ int MatrixGeom::IndexFmDims_(const int* d) const {
 
 void MatrixGeom::DimsFmIndex(int idx, MatrixGeom& d) const {
   d.SetSize(size);
+  div_t qr;
+  // note this algo is iterative, so we keep falling from case to case
+  // who said fallthrough was always bad!
   switch (size) {
-  case 0: 
-    break;
+  case 7:
+    qr = div(idx, (el[5] * el[4] * el[3] * el[2] * el[1] * el[0]));
+    d[6] = qr.quot; idx = qr.rem;
+  case 6:
+    qr = div(idx, (el[4] * el[3] * el[2] * el[1] * el[0]));
+    d[5] = qr.quot; idx = qr.rem;
+  case 5:
+    qr = div(idx, (el[3] * el[2] * el[1] * el[0]));
+    d[4] = qr.quot; idx = qr.rem;
+  case 4:
+    qr = div(idx, (el[2] * el[1] * el[0]));
+    d[3] = qr.quot; idx = qr.rem;
+  case 3:
+    qr = div(idx, (el[1] * el[0]));
+    d[2] = qr.quot; idx = qr.rem;
+  case 2:
+    qr = div(idx, el[0]);
+    d[1] = qr.quot; idx = qr.rem;
   case 1:
     d[0] = idx;
     break;
-  case 2:
-    d[1] = idx / el[0];
-    d[0] = idx % el[0];
+  case 0: 
     break;
-  case 3:
-    d[2] = idx / (el[1] * el[0]);
-    d[1] = (idx % el[1]) / el[0];
-    d[0] = idx % (el[1] * el[0]);
-    break;
-  case 4: 
-    d[3] = idx / (el[2] * el[1] * el[0]);
-    d[2] = (idx % el[2]) / (el[1] * el[0]);
-    d[1] = (idx % (el[2] * el[1])) / el[0];
-    d[0] = idx % (el[2] * el[1] * el[0]);
-    break;
-  case 5: 
-    d[4] = idx / (el[3] * el[2] * el[1] * el[0]);
-    d[3] = (idx % el[3]) / (el[2] * el[1] * el[0]);
-    d[2] = (idx % (el[3] * el[2])) / (el[1] * el[0]);
-    d[1] = (idx % (el[3] * el[2] * el[1])) / el[0];
-    d[0] = idx % (el[3] * el[2] * el[1] * el[0]);
-    break;
-  case 6: 
-    d[5] = idx / (el[4] * el[3] * el[2] * el[1] * el[0]);
-    d[4] = (idx % el[4]) / (el[3] * el[2] * el[1] * el[0]);
-    d[3] = (idx % (el[4] * el[3])) / (el[2] * el[1] * el[0]);
-    d[2] = (idx % (el[4] * el[3] * el[2])) / (el[1] * el[0]);
-    d[1] = (idx % (el[4] * el[3] * el[2] * el[1])) / el[0];
-    d[0] = idx % (el[4] * el[3] * el[2] * el[1] * el[0]);
-    break;
-  case 7: 
-    d[6] = idx / (el[5] * el[4] * el[3] * el[2] * el[1] * el[0]);
-    d[5] = (idx % el[5]) / (el[3] * el[2] * el[1] * el[0]);
-    d[4] = (idx % (el[5] * el[4])) / (el[3] * el[2] * el[1] * el[0]);
-    d[3] = (idx % (el[5] * el[4] * el[3])) / (el[2] * el[1] * el[0]);
-    d[2] = (idx % (el[5] * el[4] * el[3] * el[2])) / (el[1] * el[0]);
-    d[1] = (idx % (el[5] * el[4] * el[3] * el[2] * el[1])) / el[0];
-    d[0] = idx % (el[5] * el[4] * el[3] * el[2] * el[1] * el[0]);
-    break;
-  default: break;
+  default: break; // compiler food
   }
 }
 
