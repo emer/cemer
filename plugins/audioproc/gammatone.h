@@ -8,7 +8,7 @@
  
 class GammatoneChan;
 class GammatoneBlock;//
-//class TemporalDeltaBlock;
+//class SharpeningBlock;
 class ANVal;
 class ANBlock;
 
@@ -82,13 +82,6 @@ public:
     OV_SIG_ENV_FREQ = 0x07 // #NO_BIT signal + envelope + instantaneous frequency
   };
   
-  enum NonLinearity {
-    NL_NONE,		// #LABEL_None no non-linearity
-    NL_HALF_WAVE,	// #LABEL_HalfWave half-wave rectification
-    NL_FULL_WAVE,	// #LABEL_FullWave full-wave rectification
-    NL_SQUARE		// #LABEL_Square signal is squared
-  };
-  
   enum ChanSpacing { // how to space the channels
     CS_0		= 0, // #IGNORE
     CS_MooreGlassberg	= 0, // #LABEL_MooreGlassberg equal ERB crossings
@@ -105,8 +98,6 @@ public:
   float			cf_hi; // upper center frequency (Hz)
   int			n_chans; // #MIN_1 number of filter bands
   OutVals		out_vals; // the desired output values
-  NonLinearity		non_lin; // type of non-linearity to apply to signal output
-  Level			auto_gain; // #READ_ONLY #SHOW #NO_SAVE an automatically applied gain adjustment based on the non-lin selected
   
   GammatoneChan_List	chans; // #NO_SAVE the individual channels
   
@@ -145,57 +136,36 @@ private:
 }; //
 
 
-
-
-/*class AUDIOPROC_API TemporalDeltaBlock: public InputBlock
-{ // ##CAT_Audioproc provides an onset and offset output -- input is generally a Gammatone block (using inst) or a 
-INHERITED(InputBlock) 
+class AUDIOPROC_API SharpeningBlock: public StdBlock
+{ // ##CAT_Audioproc sharpen the frequency response, similar to the active mechanism of basilar membrane -- usually used after Gammatone.Env filter output
+INHERITED(StdBlock) 
 public: //
-  DataBuffer_List	out_buffs; // #EXPERT_TREE #EXPERT 0=onset 1=offset
 
-  override int		outBuffCount() const {return out_buffs.size;} // S/B 2!!!
-  override DataBuffer* 	outBuff(int idx) {return out_buffs.SafeEl(idx);}
-
-// windowing parameters:
-  float			l_dur; // duration of lower (forward) window in ms, typ 24 ms
-  float			u_dur; // duration of upper (backward) window in ms, typ 8 ms
-  float			out_rate; // output rate, in ms; typ 4 ms (we set our fs by this)		
+  float			chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
+  float			pow_gain; // #SHOW_ #NO_SAVE multiple by value before power
+  float			pow_base; // #SHOW #NO_SAVE power base for filter calc
   
-// hidden guys, for reference
-  float_Matrix		filter; // #READ_ONLY #EXPERT_TREE #NO_SAVE filter 1d
-  int 			l_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE l side of filter size
-  int 			u_flt_wd; // #READ_ONLY #HIDDEN #NO_SAVE u side of filter size
+  DoG1dFilterSpec	dog; // #EXPERT_TREE filter specs  
   
   virtual void		GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph
-//  virtual void		GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a grid view
   
   
-  void	InitLinks();
-  SIMPLE_CUTLINKS(TemporalDeltaBlock);
-  TA_BASEFUNS(TemporalDeltaBlock) //
+  SIMPLE_LINKS(SharpeningBlock);
+  TA_BASEFUNS(SharpeningBlock) //
   
-public: // DO NOT USE
-  int_Matrix		conv_idx; // #READ_ONLY #EXPERT_TREE #NO_SAVE 1 item per out frame, tracks the index; pre-decrement
-
 protected:
-
   override void		UpdateAfterEdit_impl();
   override void 	InitThisConfig_impl(bool check, bool quiet, bool& ok); 
-  override void		InitThisConfigDataOut_impl(bool check, bool quiet, bool& ok);
   
   override void		AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps);
-    
-  virtual void		CheckMakeFilter(const SampleFreq& fs_in,
-    bool check, bool quiet, bool& ok);
 
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}
-  SIMPLE_COPY(TemporalDeltaBlock)
-};*/
+  SIMPLE_COPY(SharpeningBlock)
+};
 
 
 class AUDIOPROC_API TemporalWindowBlock: public StdBlock

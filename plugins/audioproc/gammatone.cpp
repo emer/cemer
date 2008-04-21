@@ -337,43 +337,17 @@ SignalProcBlock::ProcStatus GammatoneBlock::AcceptData_GT(float_Matrix* in_mat, 
     }
   } // field
   
-  // advance stage pointer, and notify clients
+  // advance index pointer, and notify clients
   for (int obi = 0; ((ps != PS_ERROR) && (obi <= 2)); ++obi) {
     DataBuffer* ob = outBuff(obi);
     if (!ob->enabled) continue; // will have mat set to zero 
-    ob->NextStage();
-    NotifyClientsBuffStageFull(ob, obi, ps);
+    if (ob->NextIndex())
+      NotifyClientsBuffStageFull(ob, obi, ps);
   }
   
   return ps;
 }
 
-/* old sharpening code from above routine
-  // do sharpening (if enabled) before notifying anyone
-  // note that there are small gain errors at the edges, but the lowest
-  // and highest freq channels are typically low information anyway
-  // note: "in" and "out" in below refer to out_buff and out_buff1 resp.
-  if (sharpen) {
-    const int in_stage = out_buff.stage;
-    const int out_stage = out_buff1.stage;
-    float_Matrix& out_mat1 = out_buff1.mat;
-    for (int f = 0; f < in_fields; ++f)
-    for (int v = 0; v < num_out_vals; ++v)
-    for (int out_ch = 0; out_ch < n_chans; ++out_ch)
-    {
-      float out_val = 0.0f;
-      for (int offs = -dog.filter_width; offs <= dog.filter_width; ++offs) {
-        int in_ch = out_ch + offs;
-        // check for under/overflow (edges)
-        if ((in_ch < 0) || (in_ch >= n_chans)) continue;
-        float val = out_mat.FastEl(v, in_ch, f, 0, in_stage);
-        out_val += dog.FilterPoint(offs, val);
-      }
-      out_mat1.FastEl(v, out_ch, f, 0, out_stage) = out_val;
-    }
-  }
-
-*/
 void GammatoneBlock::GraphFilter(DataTable* graph_data,
   bool log_freq, GammatoneBlock::OutVals response) 
 {
@@ -503,233 +477,123 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 
 
 //////////////////////////////////
-//  TemporalDeltaBlock		//
+//  SharpeningBlock		//
 //////////////////////////////////
 
 /*
-  The gain for the TWB will be the sum of the weights
+  The Sharpen Block models several adjacency and level effects in
+  the BM.
+  
+  1. Suppression (Moore, pp. 45-46)
+  
+  (Assume that the "critical band" to -20dB for a CF is ~.25*CF.)
+  
+  This is a somewhat classic lateral inhibition effect. A sound on
+  or near the CF is attentuated by "up to 20%" by sounds outside.
+  The tails of the effect are quite large, being longer on the low
+  end (quite extended, ex 1/2 or less of CF) than the high end
+  (fairly narrow, ex. similar to critical band itself.)
+  
+  2. Active Mechanism
+  
+  In the ear, this is achieved by selective amplification, of up
+  to 50 dB (Plack, 2005) at low levels, up to 0 at very high levels.
+  In the BM, it is also non-symetrical, with more emphasis added at
+  the high end, thus shifting the CF higher under active mechanism.
+  
+  The active mechanism (outer hair cells) causes the
+  predominant peak on the BM in a local neighborhood to be amplified
+  more than the response to adjacent frequencies.
+  
+  "At very low sound levels, below 20-30dB SPL, the gain is roughly
+  constant and at its maximal value. As the sound level increases,
+  the gain progressively reduces." [it maxes out around 90 dB SPL)
 */
-/*
-void TemporalDeltaBlock::Initialize() {
-  w.Set(-30.0f, Level::UN_DBI);
-  tpl = 5.5f;
-  tsl = 26.0f;
-  tpu = 2.5f;
-  tsu = 12.0f;
-  l_dur = 24.0f;
-  u_dur = 8.0f;
-  out_rate = 4.0f;
-  l_flt_wd = 0;
-  u_flt_wd = 0;
+
+void SharpeningBlock::Initialize() {
+  chans_per_oct = 12;
+//TEMP
+pow_gain = 1.0f;
+pow_base = 20.0f;
+  //TODO defaults for dog
 }
 
-void TemporalDeltaBlock::UpdateAfterEdit_impl() {
+void SharpeningBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (out_rate <= 0) out_rate = 4.0;
+  if (TestError((chans_per_oct == 0), "UpdateAfterEdit",
+    "chans_per_octave cannot be 0 -- setting to 4, please set to correct value!"))
+    chans_per_oct = 4;
 }
 
-void TemporalDeltaBlock::InitLinks() {
-  inherited::InitLinks();
-  InitLinks_taAuto(GetTypeDef());
-  out_buffs.SetSize(2);
-}
 
-void TemporalDeltaBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
+void SharpeningBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
 {
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
   if (!src_buff) return;
   float_Matrix* in_mat = &src_buff->mat;
-  // note: we can support any number of vals, chans, or items
+  // note: we can support any number of vals, chans, fields, or items
   
-  // our frame rate must be > 0 (or fs calc will fault!)
-  if (CheckError((l_dur < 0) || (u_dur < 0) ||
-    ((l_dur + u_dur) <= 0), quiet, ok,
-    "l_dur/u_dur must be >= 0 and must add to > 0"))
-    return;
-    
-  if (CheckError((out_rate <= 0), quiet, ok,
-    "out_rate must be > 0"))
-    return;
-    
-  if (!ok) return;
+  if (check) return;
   
-  if (!check) {
-    // each output value is one stage by definition, but we need to keep several on the go
-    // since we are convolving the temporal filter as we get inputs
-    out_buff.fs.SetCustom(1 / (out_rate / 1000));
-    out_buff.fr_dur.Set(1, Duration::UN_SAMPLES);
-    out_buff.stages = Duration::StatGetDurationSamples((l_dur + u_dur),
-      Duration::UN_TIME_MS, out_buff.fs);
-    out_buff.fields = src_buff->fields;
-    out_buff.chans = src_buff->chans;
-    out_buff.vals = src_buff->vals;
-    // output duration is set in terms of the input sample rate
-  }
+  out_buff.fs = src_buff->fs;
+  out_buff.fr_dur.Set(src_buff->items, Duration::UN_SAMPLES);
+  out_buff.fields = src_buff->fields;
+  out_buff.chans = src_buff->chans;
+  out_buff.vals = src_buff->vals;
+  
   // filter
-  CheckMakeFilter(src_buff->fs, check, quiet, ok);
+  dog.UpdateFilter();
 }
 
-void TemporalDeltaBlock::InitThisConfigDataOut_impl(bool check,
-  bool quiet, bool& ok)
+void SharpeningBlock::AcceptData_impl(SignalProcBlock* src_blk,
+    DataBuffer* src_buff, int buff_index, int in_stage, ProcStatus& ps)
 {
-  // clear out old data
-  if (!check) out_buff.mat.Reset();
-  inherited::InitThisConfigDataOut_impl(check, quiet, ok);
-  if (!ok) return;
-  if (check) return;
-  
-  
-  // init the conv indexes, as if we've already been processing
-  conv_idx.SetGeom(1, out_buff.stages);
-  for (int i = 0; i < conv_idx.size; ++i) {
-    // spread the conv idx's evenly over the buff items
-    // because we apply in asc order, we need to preload in desc order
-    // i.e. next guy out will be one most through the seq
-    int idx = ((int) ((conv_idx.size - i) * ((float)filter.size) / (float)out_buff.stages)) - 1;
-    conv_idx.Set(idx, i);
-  }
-}
-
-void TemporalDeltaBlock::CheckMakeFilter(const SampleFreq& fs_in,
-  bool check, bool quiet, bool& ok)
-{
-  //figure out # samples we'll need in our filter, based on filter width
-  float tot_dur = l_dur + u_dur;
-  
-  l_flt_wd = Duration::StatGetDurationSamples(
-    l_dur, Duration::UN_TIME_MS, fs_in);
-  u_flt_wd = Duration::StatGetDurationSamples(
-    u_dur, Duration::UN_TIME_MS, fs_in);
-  if (CheckError(((l_flt_wd + u_flt_wd) <= 0), quiet, ok,
-    "filter width is 0 -- check sample rate and filter widths"))
-    return;
-    
-  if (CheckError(((w > 1) || (w < 0)), quiet, ok,
-    "w must be a weighting factor from 0 to 1"))
-    return;
-  if (CheckError(((tpl <= 0) || (tsl <= 0) || (tpu <= 0) || (tsu <= 0)), quiet, ok,
-    "tpl/tsl/tpu/tsu values must be > 0"))
-    return;
-    
-  if (check) return;
-  
-  filter.SetGeom(1, l_flt_wd + u_flt_wd);
-  
-  double filt_gain = 0; // gain of the filter -- we normalize by this
-  // make filter -- note: we define lower[0] as t = 0
-  // lower -- time goes -ve
-  // note: the formula uses -t, but easier for us to calc
-  for (int i = 0; i < l_flt_wd; ++i) {
-    float nt = -( (((float)(l_flt_wd - i)) / l_flt_wd) * l_dur);
-    float val = (1-w) * exp(nt/tpl) + (w * exp(nt/tsl));
-    filt_gain += val;
-    filter.Set_Flat(val, i);
-  } 
-  
-  // upper -- time is +ve
-  for (int i = 0; i < u_flt_wd; ++i) {
-    float nt = -( (((float) (i + 1)) / u_flt_wd) * u_dur);
-    float val = (1-w) * exp(nt/tpu) + (w * exp(nt/tsu));
-    filter.Set_Flat(val, l_flt_wd + i);
-    filt_gain += val;
-  } 
-  // normalize
-  filt_gain = 1 / filt_gain; // more efficient to multiply by this
-//TEMP
-taMisc::Info("Normalizing TemporalDeltaBlock by ", String(filt_gain));
-  for (int i = 0; i < filter.size; ++i) {
-    filter.FastEl(i) *= filt_gain;
-  } 
-}
-
-void TemporalDeltaBlock::AcceptData_impl(SignalProcBlock* src_blk,
-    DataBuffer* src_buff, int buff_index, int stage, ProcStatus& ps)
-{
+  if (!src_buff) return;
   float_Matrix* in_mat = &src_buff->mat;
-  const int fields = in_mat->dim(FIELD_DIM);
-  const int chans = in_mat->dim(CHAN_DIM); 
-  const int vals = in_mat->dim(VAL_DIM);
   float_Matrix* out_mat = &out_buff.mat;
-  // note: critical this invariant is true:
-  bool ok = true;
-  // we do one input item at a time, convolving with all our out guys
-  for (int i = 0; ((ps == PS_OK) && (i < in_mat->dim(SignalProcBlock::ITEM_DIM))); ++i) {
   
-    // iterate all our outputs, convolving in, and outputting when appropriate
-    for (int ci = 0; ci < conv_idx.size; ++ci) {
-      int& cidx = conv_idx.FastEl(ci); // we test/inc/set
-      float filt_val = filter.SafeEl(cidx);
-      // std accept loop:
-      for (int f = 0; ((ps == PS_OK) && (f < fields)); ++f)
-      for (int chan = 0; ((ps == PS_OK) && (chan < chans)); ++chan) 
-      for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
-      {
-          float dat = in_mat->SafeElAsFloat(val, chan, f, i, stage);
-          float& item = out_mat->FastEl(val, chan, f, 0, ci);
-          item += (dat * filt_val);
-      }
-      // now, dec the conv_indx, and if < 0, means need to output and reset 
-      if (++cidx >= filter.size) {
-        cidx = 0;
-        out_buff.stage = ci;
-        // send output
-        out_buff.NextIndex(); // note: always rolls over, so we don't test
-        NotifyClientsBuffStageFull(&out_buff, 0, ps);
-        
-        // clear out the line
-        for (int f = 0; f < fields; ++f) 
-        for (int chan = 0; chan < chans; ++chan) 
-        for (int val = 0; val < vals; ++val)
-        {
-          out_mat->Set(0, val, chan, f, 0, ci);
-        }
-      }
+  const int in_vals = in_mat->dim(VAL_DIM); 
+  const int in_items = in_mat->dim(ITEM_DIM);
+  const int in_fields = in_mat->dim(FIELD_DIM);
+  const int n_chans = in_mat->dim(CHAN_DIM); 
+  const int out_stage = out_buff.stage;
+  float pow_gain_eff = pow_gain / dog.filter_size; 
+  
+  // note that there are small gain errors at the edges, but the lowest
+  // and highest freq channels are typically low information anyway
+  
+  for (int v = 0; ((ps == PS_OK) && (v < in_vals)); ++v)
+  for (int i = 0; ((ps == PS_OK) && (i < in_items)); ++i)
+  for (int f = 0; ((ps == PS_OK) && (f < in_fields)); ++f)
+  for (int out_ch = 0; out_ch < n_chans; ++out_ch)
+  {
+    float out_val = 0.0f;
+    for (int offs = -dog.half_width; offs <= dog.half_width; ++offs) {
+      int in_ch = out_ch + offs;
+      // check for under/overflow (edges)
+      if ((in_ch < 0) || (in_ch >= n_chans)) continue;
+      float val = in_mat->FastEl(v, in_ch, f, i, in_stage);
+      out_val += dog.FilterPoint(offs, val);
     }
+    // use out_val as a power to which to apply to this in val
+    float in_val = in_mat->FastEl(v, out_ch, f, i, in_stage);
+    out_val = in_val * pow(pow_base, (out_val * pow_gain_eff));
+    out_mat->FastEl(v, out_ch, f, i, out_stage) = out_val;
   }
+  
+  // advance stage pointer, and notify clients
+  if (out_buff.NextIndex())
+    NotifyClientsBuffStageFull(&out_buff, 0, ps);
 }
 
 
-void TemporalDeltaBlock::GraphFilter(DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  bool newguy = false;
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_TemporalFilter", true);
-    newguy = true;
-  }
-  graph_data->StructUpdate(true);
-  graph_data->ResetData();
-  int idx;
-  DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
-  xda->SetUserData("X_AXIS", true);
-  DataCol* valda = graph_data->FindMakeColName("Y", idx, VT_FLOAT);
-  valda->SetUserData("PLOT_1", true);
-  graph_data->StructUpdate(false);
-  
-  graph_data->DataUpdate(true);
-  float_Matrix* mat = &filter;
-  float t, val;
-  for (int i = 0; i < l_flt_wd; ++i) {
-    float t = -( (((float)(l_flt_wd - i)) / l_flt_wd) * l_dur);
-    val = mat->SafeEl(i);
-    graph_data->AddBlankRow();
-    xda->SetValAsFloat(t, -1);
-    valda->SetValAsFloat(val, -1);
-  } 
-  
-  // upper -- time is +ve
-  for (int i = 0; i < u_flt_wd; ++i) {
-    float t = ( (((float) (i + 1)) / u_flt_wd) * u_dur);
-    val = mat->SafeEl(l_flt_wd + i);
-    graph_data->AddBlankRow();
-    xda->SetValAsFloat(t, -1);
-    valda->SetValAsFloat(val, -1);
-  }
-  graph_data->DataUpdate(false);
-  if(newguy)
-    graph_data->NewGraphView();
+
+
+void SharpeningBlock::GraphFilter(DataTable* graph_data) {
+  dog.GraphFilter(graph_data);
 }
-*/
+
 
 //////////////////////////////////
 //  TemporalWindowBlock		//
@@ -859,10 +723,10 @@ void TemporalWindowBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   const int lu_flt_wd = l_flt_wd + u_flt_wd;
   
   // now, add additional v_wd to make out fit exactly in total flt_wd
-  if (out_wd <= lu_flt_wd)
+  if (out_wd <= lu_flt_wd) // typical case
     v_flt_wd = lu_flt_wd % out_wd;
-  else 
-    v_flt_wd = out_wd % lu_flt_wd;
+  else // subsampling case -- v makes up empty space
+    v_flt_wd = out_wd - lu_flt_wd;
   flt_wd = v_flt_wd + l_flt_wd + u_flt_wd;
   // at this point, each flt_wd is >= 1 integral # of out_wd slices
   const int stages = flt_wd / out_wd;
@@ -1051,22 +915,20 @@ void TemporalWindowBlock::AcceptData_impl(SignalProcBlock* src_blk,
         for (int val = 0; ((ps == PS_OK) && (val < vals)); ++val)
         {
           float dat = in_mat->SafeElAsFloat(val, chan, f, i, stage);
-          
-          //non-linearity (note: we only apply gain_eq once, on output)
+          //non-linearity
           switch (non_lin) {
           //case NL_NONE:
-          case GammatoneBlock::NL_HALF_WAVE:
+          case NL_HALF_WAVE:
             if (dat < 0) dat = 0;
             break;
-          case GammatoneBlock::NL_FULL_WAVE:
+          case NL_FULL_WAVE:
             if (dat < 0) dat = -dat;
             break;
-          case GammatoneBlock::NL_SQUARE:
+          case NL_SQUARE:
             dat = dat * dat;
             break;
           default: break; // compiler food
           }
-          
           float& item = out_mat->FastEl(val, chan, f, 0, ci);
           item += (dat * filt_val);
         }
@@ -1141,10 +1003,10 @@ void TemporalWindowBlock::GraphFilter(DataTable* graph_data) {
   float t;
   float val = 0.0f;
   // lower virtual (all zero)
-  float vl_dur = l_dur + Duration::StatGetDurationTime(v_flt_wd, Duration::UN_TIME_MS,
-    src_buff->fs);
+  float vl_dur = l_dur + (Duration::StatGetDurationTime(v_flt_wd, Duration::UN_SAMPLES,
+    src_buff->fs) * 1000.0f);
   for (int i = 0; i < v_flt_wd; ++i) {
-    float t = -( (((float)((l_flt_wd - i) - v_flt_wd)) / (v_flt_wd + l_flt_wd)) * vl_dur);
+    float t = ( (((float)( -(l_flt_wd + v_flt_wd - 1) + i)) / (v_flt_wd + l_flt_wd)) * vl_dur);
     graph_data->AddBlankRow();
     xda->SetValAsFloat(t, -1);
     valda->SetValAsFloat(val, -1);

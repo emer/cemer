@@ -207,8 +207,7 @@ public://
     // get the root coordinates of the requested stage, relative to CURRENT (not prevStage, which is what you may usually want!), 0=current, -ve is earlier, +ve is later; rel_stage is NOT wrapped if it overflows! (an error is issued)
   bool			GetBaseGeomOfStageAbs(int abs_stage, MatrixGeom& geom);
     // get the root coordinates of the requested absolute stage
-  bool			NextIndex(); // advances item/stage index, returning true if a stage was completed
-  void 			NextStage(); // advance the stage index
+  bool			NextIndex(); // advances item/stage index, returning true if a stage was completed (thus need to call NotifyClientsBuffStageFull)
   SignalProcBlock*	GetOwnerBlock() {return GET_MY_OWNER(SignalProcBlock);}
   
   SIMPLE_LINKS(DataBuffer);
@@ -216,6 +215,8 @@ public://
 protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& ok);
+  
+  void 			NextStage(); // advance the stage index -- shouldn't really call this from client blocks, because it is called by NextIndex, and we shouldn't skip that!
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}
@@ -373,6 +374,8 @@ public:
   virtual int 		inputBlockCount() const {return 0;} 
   virtual InputBlockBase* GetInputBlock(int idx = 0); // gets the input block, if found
     
+  virtual SignalProcBlock* GetUpstreamBlock(TypeDef* typ); // #TYPE_0_SignalProcBlock #NO_NULL_0 find the first upstream block of the indicated type, returns NULL if not found
+  
   int	GetEnabled() const {return (flags & BF_OFF) ? 0 : 1;}
   
   override String GetDesc() const { return desc; }
@@ -981,6 +984,8 @@ public:
   
   override taList_impl*  children_() {return &chans;} //note: required
   
+  void			AddChan(TypeDef* chan_type, int num = 1); // #TYPE_0_StimChan #MENU #MENU_CONTEXT #BUTTON add num channels of the requested type
+  
   SIMPLE_LINKS(StimGen)
   TA_BASEFUNS(StimGen)
   
@@ -1075,15 +1080,17 @@ class AUDIOPROC_API DoG1dFilterSpec : public taNBase {
   // #INLINE ##CAT_Audioproc defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast -- this is the 1d version
   INHERITED(taNBase)
 public:
-  int		filter_width;	// #MIN_1 half-width of the filter (typically 2 * off_sigma)
-  int		filter_size;	// #READ_ONLY size of the filter: 2 * width + 1
-  float		on_sigma;	// width of the narrower central 'on' gaussian
-  float		off_sigma;	// width of the wider surround 'off' gaussian (typically 2 * on_sigma)
-  float_Matrix	on_filter;	// #READ_ONLY #NO_SAVE #NO_COPY on-gaussian 
-  float_Matrix	off_filter;	// #READ_ONLY #NO_SAVE #NO_COPY off-gaussian (values are positive)
-  float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE #NO_COPY net overall filter (for display purposes)
+  int		half_width;	// #MIN_1 half-width of the filter (typically 2-4 semi-tones)
+  int		filter_size;	// #READ_ONLY size of the filter: 2 * half_width + 1
+  float		on_sigma_norm;	// width of the narrower central 'on' gaussian, normalized to half_width of 4 (typically 1)
+  float		off_sigma_norm;	// width of the wider surround 'off' gaussian, normalized to half_width of 4 (typically 2 * on_sigma)
+  float_Matrix	on_filter;	// #SHOW_TREE #READ_ONLY #NO_SAVE #NO_COPY on-gaussian 
+  float_Matrix	off_filter;	// #SHOW_TREE #READ_ONLY #NO_SAVE #NO_COPY off-gaussian (values are positive)
+  float_Matrix	net_filter;	// #SHOW_TREE #READ_ONLY #NO_SAVE #NO_COPY net overall filter (for display purposes)
 
   float		FilterPoint(int x, float val);
+  // #CAT_DoG1dFilter apply filter at given x point to given value
+  float		GetFilterVal(int x) {return net_filter.FastEl(x+half_width);}
   // #CAT_DoG1dFilter apply filter at given x point to given value
 
   virtual void	RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt, float_Matrix& net_flt);

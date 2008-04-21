@@ -622,6 +622,22 @@ InputBlockBase* SignalProcBlock::GetInputBlock(int idx) {
   return rval;
 }
 
+SignalProcBlock* SignalProcBlock::GetUpstreamBlock(TypeDef* typ) {
+   if (!typ) return NULL;
+   SignalProcBlock* rval = NULL;
+  // iterate our src blocks, delegating to them, until found or fail
+  for (int i = 0; (!rval && (i < srcBlockCount())); ++i) {
+    SourceBlockSpec* sbs = srcBlock(i); // note: can easily be NULL
+    if (!(sbs && (bool)sbs->src_block)) continue;
+    // tentatively grab, pending correct type...
+    SignalProcBlock* rval = rval = sbs->src_block;
+    if (rval->InheritsFrom(typ)) break;
+    // otherwise, delegate to that guy, and return if he succeeded
+    rval = rval->GetUpstreamBlock(typ);
+  }
+  return rval;
+}
+
 /*TEMP SignalProcSet* SignalProcBlock::GetParentSet() const {
   SignalProcSet* rval = GET_MY_OWNER(SignalProcSet);
   return rval;
@@ -1619,6 +1635,11 @@ void StimGen::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   out_buff.fs = fs;
 }
 
+void StimGen::AddChan(TypeDef* chan_type, int num) {
+  if (num < 1) return;
+  chans.New(num, chan_type);
+}
+
 void StimGen::ProcNext_Samples_impl(int n, ProcStatus& ps)
 {
   const int buff_index = 0;//clarity
@@ -1720,7 +1741,7 @@ void RampGen::AcceptData_impl(SignalProcBlock* src_blk,
       float dat = in_mat->SafeElAsFloat(val, chan, f, i, stage);
       out_mat->Set(dat * gain, val, chan, f, i, out_stage); 
     }
-    out_buff.NextStage();
+    out_buff.NextIndex(); // assumed to cause NextStage
     } break;
   default: break; // compiler food
   }
@@ -1772,10 +1793,10 @@ void RampGen::UpdateState() {
 //	DoG Filter
 
 void DoG1dFilterSpec::Initialize() {
-  filter_width = 1;
-  filter_size = filter_width * 2 + 1;
-  on_sigma = 2.0f;
-  off_sigma = 4.0f;
+  half_width = 4;
+  filter_size = half_width * 2 + 1;
+  on_sigma_norm = 1.0f;
+  off_sigma_norm = 2.0f;
 //   on_filter.SetGeom(2, filter_size, filter_size);
 //   off_filter.SetGeom(2, filter_size, filter_size);
 //   net_filter.SetGeom(2, filter_size, filter_size);
@@ -1783,30 +1804,33 @@ void DoG1dFilterSpec::Initialize() {
 
 void DoG1dFilterSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  filter_size = filter_width * 2 + 1;
+  filter_size = half_width * 2 + 1;
   UpdateFilter();
 }
 
 float DoG1dFilterSpec::FilterPoint(int x, float val) {
-  return val * net_filter.FastEl(x+filter_width);
+  return val * net_filter.FastEl(x+half_width);
 }
 
 void DoG1dFilterSpec::RenderFilter(float_Matrix& on_flt, 
   float_Matrix& off_flt, float_Matrix& net_flt) 
 {
+  // for convenience, 1 and 2 are considered "typical" values for half=4
+  float	on_sigma = (on_sigma_norm * half_width) * 0.25f;	
+  float	off_sigma = (off_sigma_norm * half_width) * 0.25f;
   on_flt.SetGeom(1, filter_size);
   off_flt.SetGeom(1, filter_size);
   net_flt.SetGeom(1, filter_size);
   int x;
-    for(x=-filter_width; x<=filter_width; x++) {
+    for(x=-half_width; x<=half_width; x++) {
       float dist = x;
       float ong = 0.0f;
       float offg = 0.0f;
       // only set values inside of filter radius
       ong = taMath_float::gauss_den_sig(dist, on_sigma);
       offg = taMath_float::gauss_den_sig(dist, off_sigma);
-      on_flt.Set(ong, x+filter_width);
-      off_flt.Set(offg, x+filter_width);
+      on_flt.Set(ong, x+half_width);
+      off_flt.Set(offg, x+half_width);
     }
 
   taMath_float::vec_norm_sum(&on_flt); // make sure sums to 1.0
@@ -1816,7 +1840,35 @@ void DoG1dFilterSpec::RenderFilter(float_Matrix& on_flt,
     float net = on_flt.FastEl_Flat(i) - off_flt.FastEl_Flat(i);
     net_flt.FastEl_Flat(i) = net;
   }
-  //  taMath_float::vec_norm_abs_max(&net_flt); // max norm = 1
+  
+/*  // now, shift the curve so it is entirely +ve, and then norm again
+  float v_min = net_flt.SafeEl_Flat(0);
+  for (int i=1; i<filter_size; i++) {
+    float val = net_flt.FastEl_Flat(i);
+    if (val > v_min) continue;
+    v_min = val;
+  }
+  for (int i=0; i<filter_size; i++) {
+    net_flt.FastEl_Flat(i) -= v_min;
+  }
+  taMath_float::vec_norm_sum(&net_flt); // make sure sums to 1.0
+*/  
+  // even though the components were norm'ed to 1, the resultant
+  // +ve and =ve components of the gain are usually low, which
+  // means that when we separate +/- and stream separately, we
+  // have much different gain than not doging, so we scale
+  // to make each side have unity gain
+  float pos_sum = 0.0f;
+  for (int i=0; i<filter_size; i++) {
+    float val = net_flt.FastEl_Flat(i);
+    if (val <= 0.0f) continue;
+    pos_sum += val;
+  }
+  if (pos_sum == 0.0f) return;
+  for (int i=0; i<filter_size; i++) {
+    float& val = net_flt.FastEl_Flat(i);
+    val /= pos_sum;
+  }
 }
 
 void DoG1dFilterSpec::UpdateFilter() {
@@ -1841,7 +1893,7 @@ void DoG1dFilterSpec::GraphFilter(DataTable* graph_data) {
 
   float_Matrix* mat = &net_filter;
   int x;
-    for(x=-filter_width; x<=filter_width; x++) {
+    for(x=-half_width; x<=half_width; x++) {
       float val = FilterPoint(x, 1.0f);
       graph_data->AddBlankRow();
       xda->SetValAsFloat(x, -1);
