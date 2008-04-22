@@ -79,6 +79,7 @@ public:
 	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
 	  C_Compute_dWt_NoHebb(cn, ru, // cn->wt is linear
 			       C_Compute_Err_Delta(cn, cn->wt, ru, su));
+	  cn->sravg = 0.0f;
 	}
       }
     }
@@ -121,6 +122,7 @@ public:
       err = ru->act_p - ru->act_m;
     if(fabsf(err) >= dwt_thresh)
       cn->dwt += cur_lrate * err;
+    cn->sravg = 0.0f;
   }
   
   TA_BASEFUNS(MatrixBiasSpec);

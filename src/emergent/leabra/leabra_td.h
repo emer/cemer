@@ -221,6 +221,7 @@ public:
 	C_Compute_dWt(cn, lru, 
 		      C_Compute_Hebb(cn, cg, lin_wt, lru->act_p, su->p_act_p),
 		      C_Compute_Err(cn, lin_wt, lru, su));  
+	cn->sravg = 0.0f;
       }
     }
   }

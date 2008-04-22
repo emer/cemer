@@ -2260,7 +2260,6 @@ inline float LeabraConSpec::C_Compute_Err_CtLeabraCAL(LeabraCon* cn,
 
 inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* ru, float err) {
   cn->dwt += cur_lrate * err;
-  cn->sravg = 0.0f;
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
@@ -2293,6 +2292,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
       C_Compute_dWt_NoHebb(cn, ru, 
 			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
 						     rlay->sravg_nrm));
+      cn->sravg = 0.0f;
     }
   }
   else {
@@ -2309,6 +2309,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
       C_Compute_dWt(cn, ru, 	// note: cn->wt is linear -- no wt sig..
 		    C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p),
 		    C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p, rlay->sravg_nrm));
+      cn->sravg = 0.0f;
     }
   }
 }
