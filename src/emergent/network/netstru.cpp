@@ -456,7 +456,11 @@ void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
 
     Unit* su = Un(0);
-    if(CheckError((su->send.size <= send_idx), quiet, rval,
+    if(CheckError(!su, quiet, rval,
+		  "sending unit is null when it should not be!  rebuild network!")) {
+      prjn->projected = false;
+    }
+    else if(CheckError((su->send.size <= send_idx), quiet, rval,
 		  "send_idx is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
       prjn->projected = false;
     }

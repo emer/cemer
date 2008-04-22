@@ -201,12 +201,14 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if(learn_rule == CTLEABRA_CAL) {
     lmix.err_sb = false;
     dwt_norm.on = true;
-    lrate = 0.1f;
+    if(lrate == 0.01f)
+      lrate = 0.1f;
   }
   else {	// LEABRA_CHL
     lmix.err_sb = true;
     dwt_norm.on = false;
-    lrate = 0.01f;
+    if(lrate == 0.1f)
+      lrate = 0.01f;
   }
 }
 
@@ -2857,6 +2859,8 @@ void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay, Unit_Group*, LeabraInh
 }
 
 void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->learn_rule != LeabraNetwork::CTLEABRA_CAL) return;
+
   float bi = net->ct_sin_i.burst_i;
   float ti = net->ct_sin_i.trough_i;
   if(ct_inhib_mod.use_sin) {
@@ -4256,19 +4260,39 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   }
 }
 
+void LeabraNetwork::SetLearnRule_ConSpecs(BaseSpec_Group* spgp) {
+  BaseSpec* bs;
+  taLeafItr i;
+  FOR_ITR_EL(BaseSpec, bs, spgp->, i) {
+    if(bs->InheritsFrom(&TA_LeabraConSpec)) {
+      ((LeabraConSpec*)bs)->SetLearnRule(this);
+    }
+    SetLearnRule_ConSpecs(&bs->children); // recurse
+  }
+}
+
 void LeabraNetwork::SetLearnRule() {
   if(learn_rule == CTLEABRA_CAL) {
     if(phase_order == MINUS_PLUS) {
       phase_order = MINUS_PLUS_NOTHING;
     }
     maxda_stopcrit = -1;
+    min_cycles = 0;
+    min_cycles_phase2 = 0;
   }
   else {
     if(phase_order == MINUS_PLUS_NOTHING) {
       phase_order = MINUS_PLUS;
     }
     maxda_stopcrit = 0.005;
+    min_cycles = 15;
+    min_cycles_phase2 = 35;
+    cycle_max = 60;
   }
+
+  SetLearnRule_ConSpecs(&specs);
+  // set all my specs -- otherwise it looks weird in hierarchy for unused parent specs
+
   LeabraLayer* lay;
   taLeafItr l;
   FOR_ITR_EL(LeabraLayer, lay, layers., l) {
@@ -4419,9 +4443,10 @@ void LeabraNetwork::Cycle_Run() {
   }
   Compute_Act();
 
+  // ct_cycle is pretty useful anyway
+  if(phase_no == 0 && cycle == 0) // detect start of trial
+    ct_cycle = 0;
   if(learn_rule == CTLEABRA_CAL) {
-    if(phase_no == 0 && cycle == 0) // detect start of trial
-      ct_cycle = 0;
     if(train_mode != TEST) {	// for training mode only, do some learning
       // timing is all computed at the layer level!
       Compute_SRAvg();
@@ -4559,8 +4584,8 @@ void LeabraNetwork::Settle_Init_Decay() {
 }
 
 void LeabraNetwork::Settle_Init_CtTimes() {
-  min_cycles = 0;
-  min_cycles_phase2 = 0;
+  if(learn_rule != CTLEABRA_CAL) return;
+
   if(phase_order >= MINUS_PLUS_PLUS_NOTHING) {
     switch(phase_no) {
     case 0:

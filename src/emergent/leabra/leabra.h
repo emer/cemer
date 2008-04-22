@@ -2644,7 +2644,10 @@ public:
   override void	Init_Stats();
   override void	Init_Sequence();
 
-  virtual void	SetLearnRule();	// set the current learning rule into the conspecs on this network (done by network UAE)
+  virtual void	SetLearnRule_ConSpecs(BaseSpec_Group* spgp);
+  // #IGMORE set the current learning rule into all conspecs in given spec group (recursive)
+  virtual void	SetLearnRule();
+  // #CAT_ObjectMgmt set the current learning rule into the conspecs on this network (done by network UAE only when rule changed)
 
   // single cycle-level functions
   virtual void	Compute_Netin();	// #CAT_Cycle compute netinputs (sender based, if send_delta, then only when sender activations change)
