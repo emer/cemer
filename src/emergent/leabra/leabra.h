@@ -2335,6 +2335,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraCon* cn, LeabraRe
 						       LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
 {
   cn->wt += cn->dwt;		// weights always linear
+  wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }
@@ -2344,6 +2345,7 @@ inline void LeabraConSpec::C_Compute_Weights_Norm_CtLeabraCAL(LeabraCon* cn, Lea
 							    LeabraUnitSpec*, float dwnorm)
 {
   cn->wt += cn->dwt + dwnorm;	// weights always linear
+  wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
 }

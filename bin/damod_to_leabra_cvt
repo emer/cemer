@@ -5,5 +5,5 @@ foreach i ($*)
     echo $i
     set fn=$i:r
     sed -e "s/DaModUnit/LeabraUnit/g" \
-    $i >$fn.unct.proj
+    $i >$fn.nodamod.proj
 end
