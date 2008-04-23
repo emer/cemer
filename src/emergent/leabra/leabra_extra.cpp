@@ -206,6 +206,33 @@ void CycleSynDepConSpec::UpdateAfterEdit_impl() {
 }
 
 //////////////////////////////////
+// 	CaiSynDepCon
+//////////////////////////////////
+
+void CaiSynDepSpec::Initialize() {
+  ca_inc = .2f;			// base per-cycle is .01
+  ca_dec = .2f;			// base per-cycle is .01
+  sd_ca_thr = 0.2f;
+  sd_ca_gain = 0.3f;
+  sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
+}
+
+void CaiSynDepSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  sd_ca_thr_rescale = sd_ca_gain / (1.0f - sd_ca_thr);
+}
+
+void CaiSynDepConSpec::Initialize() {
+  min_obj_type = &TA_CaiSynDepCon;
+}
+
+void CaiSynDepConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ca_dep.UpdateAfterEdit();
+}
+
+
+//////////////////////////////////
 // 	FastWtConSpec		//
 //////////////////////////////////
 
@@ -251,6 +278,10 @@ void ActAvgHebbConSpec::UpdateAfterEdit_impl() {
 void ActAvgHebbConSpec::Initialize() {
 }
 
+
+void LeabraLimPrecConSpec::Initialize() {
+  prec_levels = 1024;
+}
 
 //////////////////////////////////
 // 	Scalar Value Layer	//

@@ -181,9 +181,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   lrate_sched.UpdateAfterEdit();
   CreateWtSigFun();
   lmix.UpdateAfterEdit();
-  if(learn_rule == CTLEABRA_CAL) {
-    lmix.err_sb = false;	// not used in this algorithm
-  }
 }
 
 void LeabraConSpec::Defaults() {
@@ -1235,6 +1232,15 @@ void LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraLayer* lay, LeabraInhib*
   net->maxda = MAX(fda, net->maxda);
 }
 
+void LeabraUnitSpec::Compute_CycSynDep(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_CycSynDep(u);
+  }
+}
+
+
 //////////////////////////////////////////
 //	Stage 5: Between Events 	//
 //////////////////////////////////////////
@@ -2009,6 +2015,7 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay) {
   Init_Stats(lay);
   lay->sravg_sum = 0.0f;
   lay->sravg_nrm = 0.0f;
+  lay->maxda_sum = 0.0f;
 }
 
 void LeabraLayerSpec::Init_Stats(LeabraLayer* lay) {
@@ -3295,7 +3302,13 @@ float LeabraLayerSpec::Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net
   return k_avg;
 }
 
-
+void LeabraLayerSpec::Compute_CycSynDep(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    u->Compute_CycSynDep(lay, net);
+  }
+}
 
 //////////////////////////////////////////
 //	Stage 5: Between Events 	//
@@ -3727,15 +3740,20 @@ void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
 //////////////////////////////////////////
 
 void LeabraLayerSpec::Compute_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
+  // always increment: ensures that maxda_sum will be over minimum at start in case
+  // it somehow already slipped into attractor
+  lay->maxda_sum += lay->maxda;
   if((net->ct_cycle >= net->ct_sravg.start) &&
      (net->ct_cycle < (net->ct_time.inhib_start + net->ct_sravg.end)) &&
-     ((net->ct_cycle - net->ct_sravg.start) % net->ct_sravg.interval == 0)) {
+     ((net->ct_cycle - net->ct_sravg.start) % net->ct_sravg.interval == 0) &&
+     (lay->maxda_sum >= net->ct_sravg.min_da_thr)) {
     LeabraUnit* u;
     taLeafItr i;
     FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
       u->Compute_SRAvg(lay, net);
     }
     lay->sravg_sum += 1.0f;	// add one to weighting factor
+    lay->maxda_sum = 0.0f;
   }
 }
 
@@ -3941,6 +3959,7 @@ void LeabraLayer::Initialize() {
   dav = 0.0f;
   sravg_sum = 0.0f;
   sravg_nrm = 0.0f;
+  maxda_sum = 0.0f;
   da_updt = false;
   net_rescale = 1.0f;
 
@@ -4007,6 +4026,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   dav = cp.dav;
   sravg_sum = cp.sravg_sum;
   sravg_nrm = cp.sravg_nrm;
+  maxda_sum = cp.maxda_sum;
 
   // this will update spec pointer to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!
@@ -4088,6 +4108,11 @@ void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
 //  	Network		//
 //////////////////////////
 
+void LeabraNetMisc::Initialize() {
+  cyc_syn_dep = false;
+  syn_dep_int = 20;
+}
+
 void CtTrialTiming::Initialize() {
   minus = 50;
   plus = 20;
@@ -4107,6 +4132,7 @@ void CtSRAvgSpec::Initialize() {
   start = 30;
   end = 20;
   interval = 2;
+  min_da_thr = 0.005f;
 }
 
 void CtSineInhibMod::Initialize() {
@@ -4424,6 +4450,18 @@ void LeabraNetwork::Compute_Act() {
   inherited::Compute_Act();
 }
 
+void LeabraNetwork::Compute_CycSynDep() {
+  if(!net_misc.cyc_syn_dep) return;
+  if(ct_cycle % net_misc.syn_dep_int != 0) return;
+
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_CycSynDep(this);
+  }
+}
+  
 void LeabraNetwork::Compute_SRAvg() {
   LeabraLayer* lay;
   taLeafItr l;
@@ -4442,6 +4480,7 @@ void LeabraNetwork::Cycle_Run() {
     Compute_InhibAvg();
   }
   Compute_Act();
+  Compute_CycSynDep();
 
   // ct_cycle is pretty useful anyway
   if(phase_no == 0 && cycle == 0) // detect start of trial

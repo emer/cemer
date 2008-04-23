@@ -436,6 +436,9 @@ public:
   /////////////////////////////////////
   // General 
 
+  virtual void Compute_CycSynDep(LeabraRecvCons* cg, LeabraUnit* ru) { };
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
+
   inline override void 	Compute_dWt(RecvCons* cg, Unit* ru) {
     if(learn_rule == LEABRA_CHL)
       Compute_dWt_LeabraCHL((LeabraRecvCons*)cg, (LeabraUnit*)ru);
@@ -528,6 +531,10 @@ public:
   void	Compute_Weights_CtLeabraCAL(LeabraUnit* ru)
   { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraCAL(this, ru); }
   // #CAT_Learning compute weights: CtLeabra CAL version
+
+  void	Compute_CycSynDep(LeabraUnit* ru)
+  { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, ru); }
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   void	Copy_(const LeabraRecvCons& cp);
   TA_BASEFUNS(LeabraRecvCons);
@@ -946,6 +953,9 @@ public:
   // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
   virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the trial time scale
+  virtual void 	Compute_CycSynDep(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
+
 
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
@@ -1167,6 +1177,10 @@ public:
   void 		Compute_MaxDa(LeabraLayer* lay, LeabraInhib* athr, LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MaxDa(this, lay, athr, net); }
   // #CAT_Activation compute the maximum delta-activation (change in activation); used to control settling
+
+  void		Compute_CycSynDep(LeabraLayer* lay, LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_CycSynDep(this, lay, net); }
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   void		PhaseInit(LeabraLayer* lay, LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->PhaseInit(this, lay, net); }
@@ -1643,6 +1657,10 @@ public:
   virtual float	Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the average net input of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current net values
 
+  virtual void 	Compute_CycSynDep(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
+
+
   ////////////////////////////////////////
   //	Stage 5: Between Events 	//
   ////////////////////////////////////////
@@ -1864,6 +1882,7 @@ public:
   bool		hard_clamped;	// #READ_ONLY #SHOW #CAT_Activation this layer is actually hard clamped
   float		sravg_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of sravg weightings (count of number of times sravg has been computed) -- used for normalizing the weighted average
   float		sravg_nrm;	// #READ_ONLY #EXPERT #CAT_Activation actual normalization term computed from sravg_sum
+  float		maxda_sum;	// #READ_ONLY #EXPERT #CAT_Activation sum of maxda since last SRAvg update -- for CtLeabra_CAL
   float		dav;		// #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   float		net_rescale;	// #READ_ONLY #EXPERT #CAT_Activation computed netinput rescaling factor (updated by net_rescale)
   AvgMaxVals	avg_netin;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
@@ -1933,6 +1952,10 @@ public:
   // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
   float	Compute_TopKAvgNetin(LeabraNetwork* net)  { return spec->Compute_TopKAvgNetin(this, net); }
   // #CAT_Statistic compute the average netinput of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
+
+  void 	Compute_CycSynDep(LeabraNetwork* net) 
+  { ((LeabraLayerSpec*)spec.SPtr())->Compute_CycSynDep(this, net); }
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   void	Compute_ActMAvg(LeabraNetwork* net) { spec->Compute_ActMAvg(this, net); }
   // #CAT_Activation compute acts_m.avg from act_m
@@ -2255,7 +2278,12 @@ inline void LeabraConSpec::Init_SRAvg(LeabraRecvCons* cg, LeabraUnit* ru) {
 inline float LeabraConSpec::C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
 						      float ru_act_p, float su_act_p,
 						      float avg_nrm) {
-  return (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
+  float err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
+  if(lmix.err_sb) {
+    if(err > 0.0f)	err *= (1.0f - cn->wt);
+    else		err *= cn->wt;
+  }
+  return err;
 }
 
 inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* ru, float err) {
@@ -2469,6 +2497,23 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit*
 // 	Network		//
 //////////////////////////
 
+class LEABRA_API LeabraNetMisc : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
+INHERITED(taBase)
+public:
+  bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
+  int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
+
+  SIMPLE_COPY(LeabraNetMisc);
+  TA_BASEFUNS(LeabraNetMisc);
+// protected:
+//   void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 class LEABRA_API CtTrialTiming : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
 INHERITED(taBase)
@@ -2497,6 +2542,7 @@ public:
   int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
   int		end;		// [20] number of cycles from the start of the final inhibitory phase to continue recording sravg
   int		interval;	// [2] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
+  float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
@@ -2623,6 +2669,7 @@ public:
   float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
   int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
 
+  LeabraNetMisc	net_misc;	// misc network level parameters for leabra
   int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)
   bool		send_delta;	// #DEF_true #CAT_Optimization send netin deltas instead of raw netin: more efficient (automatically sets corresponding unitspec flag)
   float		send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
@@ -2659,6 +2706,9 @@ public:
   virtual void	Compute_ApplyInhib(); // #CAT_Cycle apply inhibitory conductances from kwta to individual units
   virtual void	Compute_InhibAvg(); // #CAT_Cycle compute average inhibitory conductances (unit-level inhib)
   virtual void	Compute_Act();	// #CAT_Cycle compute activations, and max delta activation
+
+  virtual void 	Compute_CycSynDep();
+  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   virtual void 	Compute_SRAvg();
   // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_CAL)

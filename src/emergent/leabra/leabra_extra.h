@@ -280,16 +280,16 @@ private:
   void	Destroy()		{ };
 };
 
-//////////////////////////////////////////
-//      Synaptic Depression: Cycle Level
+// todo: the following functions need a hook to activate depression!
 
-// todo: update from leabra_ct code!
+////////////////////////////////////////////////////////////////
+//      Synaptic Depression: Cycle Level, simple
 
 class LEABRA_API CycleSynDepCon : public LeabraCon {
-  // synaptic depression connection at the trial level (as opposed to cycle level)
+  // synaptic depression connection at the cycle level (as opposed to the trial level) -- this is the simpler version -- Ca_i based version below
 INHERITED(LeabraCon)
 public:
-  float		effwt;		// #NO_SAVE effective weight value (can be depressed) -- used for sending ativation
+  float		effwt;		// #NO_SAVE effective weight value (subject to synaptic depression) -- used for sending activation
 
   CycleSynDepCon() { effwt = 0.0f; }
 };
@@ -321,16 +321,16 @@ private:
 };
 
 class LEABRA_API CycleSynDepConSpec : public LeabraConSpec {
-  // synaptic depression connection at the trial level (as opposed to cycle level)
+  // synaptic depression connection at the cycle level (as opposed to the trial level) -- this is the simpler version -- Ca_i based version below
 INHERITED(LeabraConSpec)
 public:
   CycleSynDepSpec	syn_dep;	// synaptic depression specifications
 
-  void C_Depress_Wt(CycleSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  inline void C_Compute_CycSynDep(CycleSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     syn_dep.Depress(cn->effwt, cn->wt, ru->act_eq, su->act_eq);
   }
-  virtual void Depress_Wt(LeabraRecvCons* cg, LeabraUnit* ru) {
-    CON_GROUP_LOOP(cg, C_Depress_Wt((CycleSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+  inline override void Compute_CycSynDep(LeabraRecvCons* cg, LeabraUnit* ru) {
+    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CycleSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
   }
 
   void C_Reset_EffWt(CycleSynDepCon* cn) {
@@ -400,6 +400,158 @@ public:
   }
 
   TA_SIMPLE_BASEFUNS(CycleSynDepConSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+////////////////////////////////////////////////////////////////
+//      Synaptic Depression: Cycle Level, Ca-Based
+
+class LEABRA_API CaiSynDepCon : public LeabraCon {
+  // synaptic depression connection at the cycle level, based on synaptic integration of calcium
+INHERITED(LeabraCon)
+public:
+  float		effwt;		// #NO_SAVE effective weight value (subject to synaptic depression) -- used for sending activation
+  float		cai;		// #NO_SAVE intracellular postsynaptic calcium current integrated over cycles, used for synaptic depression
+
+  CaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
+};
+
+class LEABRA_API CaiSynDepSpec : public taBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
+INHERITED(taBase)
+public:
+  float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
+  float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
+
+  float		sd_ca_thr;	// #DEF_0.2 synaptic depression ca threshold: only when ca_i has increased by this amount (thus synaptic ca depleted) does it affect firing rates and thus synaptic depression
+  float		sd_ca_gain;	// #DEF_0.3 multiplier on cai value for computing synaptic depression -- modulates overall level of depression independent of rate parameters
+  float		sd_ca_thr_rescale; // #READ_ONLY rescaling factor taking into account sd_ca_gain and sd_ca_thr (= sd_ca_gain/(1 - sd_ca_thr))
+
+  inline void	CaUpdt(float& cai, float ru_act, float su_act) {
+    float drive = ru_act * su_act;
+    cai += ca_inc * (1.0f - cai) * drive - ca_dec * cai;
+  }
+
+  inline float	SynDep(float cai) {
+    float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
+    return cao_thr * cao_thr;
+  }
+
+  SIMPLE_COPY(CaiSynDepSpec);
+  TA_BASEFUNS(CaiSynDepSpec);
+protected:
+  void UpdateAfterEdit_impl();
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CaiSynDepConSpec : public LeabraConSpec {
+  // synaptic depression connection at the cycle level, based on synaptic integration of calcium
+INHERITED(LeabraConSpec)
+public:
+  CaiSynDepSpec	ca_dep;		// calcium-based depression of synaptic efficacy
+  
+  /////////////////////////////////////////////////////////////////////////////////////
+  // 		Ca updating and synaptic depression
+
+  inline void C_Compute_Cai(CaiSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    ca_dep.CaUpdt(cn->cai, ru->act_eq, su->act_eq);
+  }
+  // connection-level Cai update
+  inline void Compute_Cai(LeabraRecvCons* cg, LeabraUnit* ru) {
+    CON_GROUP_LOOP(cg, C_Compute_Cai((CaiSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+  }
+
+  // connection-level synaptic depression: syn dep direct
+  inline void C_Compute_CycSynDep(CaiSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
+  }
+  // connection-level synaptic depression: ca mediated
+  inline override void Compute_CycSynDep(LeabraRecvCons* cg, LeabraUnit* ru) {
+    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CaiSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
+  }
+  // connection-group level synaptic depression
+
+  /////////////////////////////////////////////////////////////////////////////////////
+  // 		Following are all standard code revised to use effwt instead of wt
+  
+  inline void C_Init_SdEffWt(CaiSynDepCon* cn) {
+    cn->effwt = cn->wt; cn->cai = 0.0f; 
+  }
+  inline void Init_SdEffWt(LeabraRecvCons* cg) {
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt((CaiSynDepCon*)cg->Cn(i)));
+  }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+  inline void Init_SdEffWt(LeabraSendCons* cg) {
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt((CaiSynDepCon*)cg->Cn(i)));
+  }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+
+  override void C_Init_Weights_Post(RecvCons*, Connection* cn, Unit*, Unit*) {
+    CaiSynDepCon* lcn = (CaiSynDepCon*)cn; lcn->effwt = lcn->wt;
+    lcn->cai = 0.0f; 
+  }
+
+  float C_Compute_Netin(CaiSynDepCon* cn, Unit*, Unit* su) {
+    return cn->effwt * su->act;
+  }
+  float Compute_Netin(RecvCons* cg, Unit* ru) {
+    float rval=0.0f;
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((CaiSynDepCon*)cg->Cn(i), ru, cg->Un(i)));
+    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  }
+  void C_Send_Inhib(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->gc.i += su_act_eff * cn->effwt;
+  }
+  void C_Send_Netin(LeabraSendCons* cg, CaiSynDepCon* cn, Unit* ru, float su_act_eff) {
+    ru->net += su_act_eff * cn->effwt;
+  }
+  void Send_Netin(SendCons* cg, float su_act) {
+    // apply scale based only on first unit in con group: saves lots of redundant mulitplies!
+    // LeabraUnitSpec::CheckConfig checks that this is ok.
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_Inhib((LeabraSendCons*)cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_Netin((LeabraSendCons*)cg, (CaiSynDepCon*)cg->Cn(i), cg->Un(i), su_act_eff));
+    }
+  }
+
+  void C_Send_InhibDelta(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += su_act_delta_eff * cn->effwt;
+  }
+  void C_Send_NetinDelta(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += su_act_delta_eff * cn->effwt;
+  }
+  void Send_NetinDelta(LeabraSendCons* cg, float su_act_delta) {
+    Unit* ru = cg->Un(0);
+    float su_act_delta_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act_delta;
+    if(inhib) {
+      CON_GROUP_LOOP(cg, C_Send_InhibDelta(cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Send_NetinDelta(cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+    }
+  }
+  void C_Send_ClampNet(LeabraSendCons* cg, CaiSynDepCon* cn, LeabraUnit* ru, float su_act_eff) {
+    ru->clmp_net += su_act_eff * cn->effwt;
+  }
+  void Send_ClampNet(LeabraSendCons* cg, float su_act) {
+    Unit* ru = cg->Un(0);
+    float su_act_eff = ((LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx))->scale_eff * su_act;
+    CON_GROUP_LOOP(cg, C_Send_ClampNet(cg, (CaiSynDepCon*)cg->Cn(i), (LeabraUnit*)cg->Un(i), su_act_eff));
+  }
+
+  TA_SIMPLE_BASEFUNS(CaiSynDepConSpec);
 protected:
   void 	UpdateAfterEdit_impl();
 
@@ -622,6 +774,48 @@ public:
   TA_SIMPLE_BASEFUNS(ActAvgHebbConSpec);
 protected:
   void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+class LEABRA_API LeabraLimPrecConSpec : public LeabraConSpec {
+  // ##CAT_Leabra Leabra limited precision connection specs: limits weight values to specified level of precision between 0-1
+INHERITED(LeabraConSpec)
+public:
+  float		prec_levels;	// number of levels of precision available in the weight values
+
+  inline float	PrecLimitVal(float val) {
+    int tmp = (int)((prec_levels * val) + .5f); // integerize with rounding -- val 0-1
+    float rval = (float)tmp / prec_levels;
+    if(rval > 1.0f) rval = 1.0f;
+    if(rval < 0.0f) rval = 0.0f;
+    return rval;
+  }
+
+  inline void C_Compute_LimPrecWts(LeabraCon* cn) {
+    cn->wt = PrecLimitVal(cn->wt);
+  }
+  inline void Compute_LimPrecWts(LeabraRecvCons* cg, LeabraUnit* ru) {
+    CON_GROUP_LOOP(cg, C_Compute_LimPrecWts((LeabraCon*)cg->Cn(i)));
+  }
+
+  inline override void	Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_Weights_LeabraCHL(cg, ru);
+    Compute_LimPrecWts(cg, ru);
+  }
+
+  inline override void	Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_Weights_CtLeabraCAL(cg, ru);
+    Compute_LimPrecWts(cg, ru);
+  }
+
+  // NOTE: bias weights typically not subject to limited precision!
+
+  SIMPLE_COPY(LeabraLimPrecConSpec);
+  TA_BASEFUNS(LeabraLimPrecConSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
