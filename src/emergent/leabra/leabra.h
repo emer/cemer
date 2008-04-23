@@ -2543,7 +2543,6 @@ public:
   int		end;		// [20] number of cycles from the start of the final inhibitory phase to continue recording sravg
   int		interval;	// [2] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
   float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
-  float		max_da_thr;	// #DEF_1 maximum value of layer-level max da (max delta-activation), above which sravg is not computed (prevents learning when too far out of the attractor state)
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
