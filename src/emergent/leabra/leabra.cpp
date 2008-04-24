@@ -174,6 +174,11 @@ void LeabraConSpec::InitLinks() {
   taBase::Own(wt_sig_fun_inv, this);
   taBase::Own(wt_sig_fun_lst, this);
   CreateWtSigFun();
+  if(taMisc::is_loading || taMisc::is_duplicating) return;
+  LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
+  if(mynet) {
+    SetLearnRule(mynet);		// get current learning rule.
+  }
 }
 
 void LeabraConSpec::UpdateAfterEdit_impl() {

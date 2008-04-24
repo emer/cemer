@@ -107,7 +107,9 @@ void taPlugins::AppendLogEntry(const String& entry, bool warn) {
     taMisc::Warning("Could not open plugin log file:", logfile);
   } else {
     if (warn) taMisc::Warning(entry);
+#ifdef DEBUG
     else      taMisc::Info(entry);
+#endif
     if (warn)
       ofs << "**WARNING: ";
     ofs << entry << "\n";
@@ -118,7 +120,9 @@ void taPlugins::AppendLogEntry(const String& entry, bool warn) {
 taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
   taPluginInst* rval = new taPluginInst(fileName);
   String log_entry = "Attempting to probe plugin: " + fileName;
+#ifdef DEBUG
   taMisc::Info(log_entry);
+#endif
   AppendLogEntry(log_entry);
   // get the plugin object, and initialize types
   if (rval->load())  {
