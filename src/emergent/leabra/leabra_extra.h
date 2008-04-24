@@ -475,6 +475,7 @@ public:
   }
   // connection-level synaptic depression: ca mediated
   inline override void Compute_CycSynDep(LeabraRecvCons* cg, LeabraUnit* ru) {
+    Compute_Cai(cg, ru);
     CON_GROUP_LOOP(cg, C_Compute_CycSynDep((CaiSynDepCon*)cg->Cn(i), ru, (LeabraUnit*)cg->Un(i)));
   }
   // connection-group level synaptic depression
