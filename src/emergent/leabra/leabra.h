@@ -183,7 +183,7 @@ INHERITED(taBase)
 public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
-  bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component
+  bool		err_sb;		// [true for std Leabra, false for CtLeabra] apply exponential soft-bounding to the error learning component
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
@@ -274,7 +274,7 @@ public:
   WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
   WtScaleSpecInit wt_scale_init;// #CAT_Activation initial values of wt_scale parameters, set during InitWeights -- useful for rel_net_adapt and abs_net_adapt (on LayerSpec)
 
-  float		lrate;		// #DEF_0.01 #CAT_Learning learning rate -- how fast do the weights change per experience
+  float		lrate;		// #CAT_Learning [0.01 for std leabra, .04-.08 for CtLeabra] learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   LRSValue	lrs_value;	// #CAT_Learning what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs or as a function of performance, as determined by lrs_value (NOTE: these factors multiply lrate to give the cur_lrate value)
@@ -2541,8 +2541,8 @@ INHERITED(taBase)
 public:
   int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
   int		end;		// [20] number of cycles from the start of the final inhibitory phase to continue recording sravg
-  int		interval;	// [2] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
-  float		min_da_thr;	// #DEF_0.005 minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
+  int		interval;	// [5] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
+  float		min_da_thr;	// [0 or 0.005] minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);

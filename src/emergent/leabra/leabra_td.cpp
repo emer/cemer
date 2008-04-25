@@ -28,15 +28,18 @@
 void LeabraTdUnit::Initialize() {
   p_act_m = -.01f;
   p_act_p = -.01f;
+  trace = 0.0f;
 }
 
 void LeabraTdUnit::Copy_(const LeabraTdUnit& cp) {
   p_act_p = cp.p_act_p;
   p_act_m = cp.p_act_m;
+  trace = cp.trace;
 }
 
 void LeabraTdUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraTdUnit;
+  lambda = 0.0f;
 }
 
 void LeabraTdUnitSpec::Defaults() {
@@ -49,6 +52,10 @@ void LeabraTdUnitSpec::Init_Acts(LeabraUnit* u, LeabraLayer* lay) {
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
   lu->p_act_m = -.01f;
   lu->p_act_p = -.01f;
+}
+
+void LeabraTdUnitSpec::Init_Weights(Unit* u) {
+  ((LeabraTdUnit*)u)->trace = 0.0f;
 }
 
 void LeabraTdUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
@@ -73,6 +80,7 @@ void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwor
     lu->p_act_m = lu->act_m2;
   else
     lu->p_act_m = lu->act_m;
+  lu->trace = lambda * lu->trace + lu->p_act_p;
 }
 
 //////////////////////////////////////////
@@ -673,6 +681,7 @@ void TDRewPredLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork*
 
 void TDRewIntegSpec::Initialize() {
   discount = .8f;
+  max_r_v = false;
 }
 
 void TDRewIntegLayerSpec::Initialize() {
@@ -817,7 +826,12 @@ void TDRewIntegLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     new_val = rew_pred_val; // no discount in minus phase!!!  should only reflect previous V^(t)
   }
   else {
-    new_val = rew_integ.discount * rew_pred_val + ext_rew_val; // now discount new rewpred!
+    if(rew_integ.max_r_v) {
+      new_val = MAX(rew_integ.discount * rew_pred_val, ext_rew_val);
+    }
+    else {
+      new_val = rew_integ.discount * rew_pred_val + ext_rew_val; // now discount new rewpred!
+    }
   }
     
   UNIT_GP_ITR(lay, 

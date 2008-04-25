@@ -51,6 +51,7 @@ INHERITED(LeabraUnit)
 public:
   float 	p_act_m;	// previous minus phase activation 
   float		p_act_p;	// previous plus phase activation
+  float		trace;		// the trace of activation states that is used for learning
 
   void	Copy_(const LeabraTdUnit& cp);
   TA_BASEFUNS(LeabraTdUnit);
@@ -63,8 +64,12 @@ class LEABRA_API LeabraTdUnitSpec : public LeabraUnitSpec {
   // Leabra unit with temporal-differences variables for prior activation states
 INHERITED(LeabraUnitSpec)
 public:
+  float		lambda;		// exponential decay parameter for updating activation trace values over time: these trace values are used in learning.  in principle this should also include the effects of the discount (gamma) parameter from the TdRewInteg layer
+
+  // overrides:
   void		Init_Acts(LeabraUnit* u, LeabraLayer* lay);
   void		Init_Acts(Unit* u)	{ LeabraUnitSpec::Init_Acts(u); }
+  void 		Init_Weights(Unit* u);
   void		Compute_dWt(Unit*) { };
   void 		Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
   void 		EncodeState(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net);
@@ -185,7 +190,7 @@ class LEABRA_API TDRewPredConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   inline float C_Compute_Err(LeabraCon* cn, float lin_wt, LeabraTdUnit* ru, LeabraTdUnit* su) {
-    float err = (ru->act_p - ru->act_m) * su->p_act_p;
+    float err = (ru->act_p - ru->act_m) * su->trace;
     if(lmix.err_sb) {
       if(err > 0.0f)	err *= (1.0f - lin_wt);
       else		err *= lin_wt;	
@@ -280,6 +285,7 @@ class LEABRA_API TDRewIntegSpec : public taBase {
 INHERITED(taBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
+  bool		max_r_v;	// represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(TDRewIntegSpec);
