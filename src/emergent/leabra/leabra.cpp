@@ -3826,6 +3826,9 @@ void LeabraLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net
 }
 
 void LeabraLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
+  if((net->learn_rule == LeabraNetwork::CTLEABRA_CAL) && (net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS)) {
+    Compute_dWt_impl(lay, net);	// go for it..
+  }
   return;			// standard layers never learn here
 }
 

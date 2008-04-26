@@ -160,6 +160,11 @@ void MatrixLayerSpec::Initialize() {
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
   inhib.kwta_pt = .25f;
 
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
+
   bg_type = MAINT;
 }
 
@@ -786,6 +791,10 @@ void SNrThalLayerSpec::Initialize() {
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   inhib.kwta_pt = .6f;
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void SNrThalLayerSpec::Defaults() {
@@ -1257,6 +1266,10 @@ void PFCOutLayerSpec::Initialize() {
   decay.phase = 0.0f;
   decay.phase2 = 0.1f;
   decay.clamp_phase2 = false;	// this is the one exception!
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void PFCOutLayerSpec::UpdateAfterEdit_impl() {

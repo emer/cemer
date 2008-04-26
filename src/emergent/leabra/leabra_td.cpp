@@ -111,6 +111,10 @@ void ExtRewLayerSpec::Initialize() {
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
   decay.clamp_phase2 = true;
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 
   rew_type = OUT_ERR_REW;
 
@@ -504,6 +508,10 @@ void TDRewPredLayerSpec::Initialize() {
   unit_range.max = 3.0f;
   unit_range.UpdateAfterEdit();
   val_range.UpdateAfterEdit();
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void TDRewPredLayerSpec::Defaults() {
@@ -692,6 +700,10 @@ void TDRewIntegLayerSpec::Initialize() {
   unit_range.max = 3.0f;
   unit_range.UpdateAfterEdit();
   val_range.UpdateAfterEdit();
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void TDRewIntegLayerSpec::Defaults() {
@@ -857,6 +869,10 @@ void TdLayerSpec::Initialize() {
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
   inhib.kwta_pt = .25;
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void TdLayerSpec::Defaults() {

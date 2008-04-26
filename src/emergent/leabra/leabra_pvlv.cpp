@@ -75,6 +75,11 @@ void PViLayerSpec::Initialize() {
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = .5f;		// default is no-information case; extrew = .5
+
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void PViLayerSpec::Defaults() {
@@ -330,6 +335,11 @@ void LVeLayerSpec::Initialize() {
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = 0.5f;		// 0.0 for old syn_dep
+
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void LVeLayerSpec::Defaults() {
@@ -635,6 +645,11 @@ void NVLayerSpec::Initialize() {
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = 1.0f;		// this is the completely novel value
+
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void NVLayerSpec::Defaults() {
@@ -816,6 +831,10 @@ void PVLVDaLayerSpec::Initialize() {
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
   inhib.kwta_pt = .25;
+  SetUnique("ct_inhib_mod", true);
+  ct_inhib_mod.use_sin = true;
+  ct_inhib_mod.burst_i = 0.0f;
+  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void PVLVDaLayerSpec::Defaults() {
