@@ -189,15 +189,24 @@ void iSelectEditDataHost::Constr_Methods() {
       //NOTE: for seledit functions, we never place them on the last menu or button, because that may
       // make no sense -- the label specifies the place, or Actions if no label
       String mth_cap = item->caption();
+      String statustip = item->desc;
       switch (group_type) {
       case EditMthItem_Group::GT_BUTTONS:  {
         AddMethButton(mth_rep, mth_cap);
       } break;
       case EditMthItem_Group::GT_MENU: {
-        mth_rep->AddToMenu(cur_menu);
+//        mth_rep->AddToMenu(cur_menu);
+        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
+              taiAction::action, mth_rep, SLOT(CallFun()) );
+        if (statustip.nonempty())
+          act->setStatusTip(statustip);
       } break;
       case EditMthItem_Group::GT_MENU_BUTTON: { 
-        mth_rep->AddToMenu(cur_menu_but);
+//        mth_rep->AddToMenu(cur_menu_but);
+        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
+              taiAction::action, mth_rep, SLOT(CallFun()) );
+        if (statustip.nonempty())
+          act->setStatusTip(statustip);
       } break;
       } // switch group_type
     }
