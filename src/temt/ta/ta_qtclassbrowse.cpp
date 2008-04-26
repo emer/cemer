@@ -650,8 +650,12 @@ void taTypeSpaceTreeDataNode::CreateChildren_impl() {
       last_child_node, tree_nm, flags);
   }
 }
+/*TODO: can only make showing modal if browser will either populate or
+at least refresh dynamically
+*/
 
 bool taTypeSpaceTreeDataNode::ShowItem(TypeItem* ti) const {
+return true;
   // default doesn't show hidden items
   if (ti->HasOption("HIDDEN") || ti->HasOption("NO_SHOW"))
     return false;
@@ -659,13 +663,18 @@ bool taTypeSpaceTreeDataNode::ShowItem(TypeItem* ti) const {
 }
 
 bool taTypeSpaceTreeDataNode::ShowMember(MemberDef* md) const {
-  if (!ShowItem(md)) return false;
-  return true;
+return true;
+//  if (!ShowItem(md)) return false;
+//  return true;
+  return md->ShowMember(treeView()->show(), 
+    TypeItem::SC_ANY); // note: don't say "tree" because this is a meta context
 }
 
 bool taTypeSpaceTreeDataNode::ShowMethod(MethodDef* md) const {
-  if (!ShowItem(md)) return false;
-  return true;
+return true;
+//  if (!ShowItem(md)) return false;
+//  return true;
+  return md->ShowMethod(treeView()->show());
 }
  
 bool taTypeSpaceTreeDataNode::ShowType(TypeDef* td) const {
