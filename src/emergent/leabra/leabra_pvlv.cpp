@@ -45,6 +45,9 @@ void PVConSpec::Initialize() {
   lrate = .01f;
   cur_lrate = .01f;
 
+  SetUnique("dwt_norm", true);
+  dwt_norm.on = false;
+
   SetUnique("lrate_sched", true); // not to have any lrate schedule!!
   SetUnique("lrs_value", true); // not to have any lrate schedule!!
   lrs_value = NO_LRS;
@@ -243,10 +246,10 @@ void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, bool er_avail, float pve_val
 }
 
 void PViLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
-    //    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_nrm = 1.0f / lay->sravg_sum;
-  }
+//   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
+//   }
   Compute_PVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
   lay->sravg_sum = 0.0f;
@@ -307,6 +310,9 @@ void LVConSpec::Initialize() {
   SetUnique("lrate", true);
   lrate = .05f;
   cur_lrate = .05f;
+
+  SetUnique("dwt_norm", true);
+  dwt_norm.on = false;
 
 //   decay = 0.0f;
 
@@ -597,10 +603,10 @@ void LVeLayerSpec::Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bo
 }
 
 void LVeLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
-    //    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_nrm = 1.0f / lay->sravg_sum;
-  }
+//   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
+//   }
   Compute_LVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
   lay->sravg_sum = 0.0f;
@@ -775,10 +781,10 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, bool er_avail) {
 }
 
 void NVLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
-    //    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
-    lay->sravg_nrm = 1.0f / lay->sravg_sum;
-  }
+//   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
+//   }
   Compute_NVPlusPhaseDwt(lay, net);
   AdaptKWTAPt(lay, net);
   lay->sravg_sum = 0.0f;

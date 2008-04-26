@@ -1501,14 +1501,12 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNet
     }
   }
   else { // CTLEABRA_CAL
-    if(lay->sravg_sum > 0.0f) {	// had to have some sravg_sum at some point to learn..
-      ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0), u,
-								    lay);
-      for(int g = 0; g < u->recv.size; g++) {
-	LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-	if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-	recv_gp->Compute_dWt_CtLeabraCAL(u);
-      }
+    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0), u,
+								  lay);
+    for(int g = 0; g < u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_dWt_CtLeabraCAL(u);
     }
   }
 }

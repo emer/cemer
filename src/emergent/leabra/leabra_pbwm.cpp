@@ -30,6 +30,9 @@ void MatrixConSpec::Initialize() {
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
 
+  SetUnique("dwt_norm", true);
+  dwt_norm.on = false;
+
   matrix_rule = MAINT;
 }
 
