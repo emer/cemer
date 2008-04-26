@@ -752,6 +752,10 @@ void MatrixLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* ne
   }
 }
 
+void MatrixLayerSpec::Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net) {
+  // don't learn on nothing..
+}
+
 void MatrixLayerSpec::LabelUnits_impl(Unit_Group* ugp) {
   for(int i=0;i<ugp->size;i++) {
     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);

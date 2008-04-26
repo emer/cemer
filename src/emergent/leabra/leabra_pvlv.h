@@ -127,6 +127,7 @@ public:
   // update the prior PV value, stored in pv unit misc_1 values
 
   // overrides:
+  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { }; // todo: unless switch to CAL learning
   void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
@@ -294,6 +295,7 @@ public:
   virtual void	Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bool er_avail);
   // update the prior Lv value, stored in lv unit misc_1 values
 
+  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { }; // todo: unless switch to CAL learning
   void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
@@ -356,6 +358,7 @@ public:
   virtual void 	Compute_ExtToPlus(Unit_Group* ugp, LeabraNetwork* net);
   // copy ext values to act_p
 
+  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { }; // todo: unless switch to CAL learning
   void	Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);

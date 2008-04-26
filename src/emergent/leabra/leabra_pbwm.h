@@ -296,8 +296,10 @@ public:
   void 	Compute_Act_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_SRAvg(LeabraLayer*, LeabraNetwork*) { }; // todo: unless switch to CAL learning
   void	Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net);
   void	Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_dWt_Nothing(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);

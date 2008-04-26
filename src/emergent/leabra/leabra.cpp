@@ -203,14 +203,16 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if(learn_rule == CTLEABRA_CAL) {
     lmix.err_sb = false;
     dwt_norm.on = true;
-    if(lrate == 0.01f)
-      lrate = 0.1f;
+    // too much potential for damage here from subclasses etc..
+//     if(lrate == 0.01f)
+//       lrate = 0.1f;
   }
   else {	// LEABRA_CHL
     lmix.err_sb = true;
     dwt_norm.on = false;
-    if(lrate == 0.1f)
-      lrate = 0.01f;
+    // too much potential for damage here from subclasses etc..
+//     if(lrate == 0.1f)
+//       lrate = 0.01f;
   }
 }
 
