@@ -477,7 +477,7 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
 
 
 //////////////////////////////////
-//  SharpeningBlock		//
+//  SharpenBlock		//
 //////////////////////////////////
 
 /*
@@ -510,15 +510,15 @@ void GammatoneBlock::MakeStdFilters(float cf_lo, float cf_hi, int n_chans) {
   the gain progressively reduces." [it maxes out around 90 dB SPL)
 */
 
-void SharpeningBlock::Initialize() {
+void SharpenBlock::Initialize() {
   chans_per_oct = 12;
-//TEMP
-pow_gain = 1.0f;
-pow_base = 20.0f;
+  out_fun = OF_STRAIGHT;
+  pow_gain = 1.0f;
+  pow_base = 20.0f;
   //TODO defaults for dog
 }
 
-void SharpeningBlock::UpdateAfterEdit_impl() {
+void SharpenBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (TestError((chans_per_oct == 0), "UpdateAfterEdit",
     "chans_per_octave cannot be 0 -- setting to 4, please set to correct value!"))
@@ -526,7 +526,7 @@ void SharpeningBlock::UpdateAfterEdit_impl() {
 }
 
 
-void SharpeningBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
+void SharpenBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
 {
   inherited::InitThisConfig_impl(check, quiet, ok);
   DataBuffer* src_buff = in_block.GetBuffer();
@@ -546,7 +546,7 @@ void SharpeningBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok)
   dog.UpdateFilter();
 }
 
-void SharpeningBlock::AcceptData_impl(SignalProcBlock* src_blk,
+void SharpenBlock::AcceptData_impl(SignalProcBlock* src_blk,
     DataBuffer* src_buff, int buff_index, int in_stage, ProcStatus& ps)
 {
   if (!src_buff) return;
@@ -576,9 +576,15 @@ void SharpeningBlock::AcceptData_impl(SignalProcBlock* src_blk,
       float val = in_mat->FastEl(v, in_ch, f, i, in_stage);
       out_val += dog.FilterPoint(offs, val);
     }
-    // use out_val as a power to which to apply to this in val
-    float in_val = in_mat->FastEl(v, out_ch, f, i, in_stage);
-    out_val = in_val * pow(pow_base, (out_val * pow_gain_eff));
+    switch (out_fun) {
+    case OF_STRAIGHT: break; // out_val is our guy
+    case OF_POWER: {
+      // use out_val as a power to which to apply to this in val
+      float in_val = in_mat->FastEl(v, out_ch, f, i, in_stage);
+      out_val = in_val * pow(pow_base, (out_val * pow_gain_eff));
+      } break;
+    // no default, let compiler complain if unhandled
+    }
     out_mat->FastEl(v, out_ch, f, i, out_stage) = out_val;
   }
   
@@ -590,7 +596,7 @@ void SharpeningBlock::AcceptData_impl(SignalProcBlock* src_blk,
 
 
 
-void SharpeningBlock::GraphFilter(DataTable* graph_data) {
+void SharpenBlock::GraphFilter(DataTable* graph_data) {
   dog.GraphFilter(graph_data);
 }
 

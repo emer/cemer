@@ -8,7 +8,7 @@
  
 class GammatoneChan;
 class GammatoneBlock;//
-//class SharpeningBlock;
+//class SharpenBlock;
 class ANVal;
 class ANBlock;
 
@@ -136,14 +136,19 @@ private:
 }; //
 
 
-class AUDIOPROC_API SharpeningBlock: public StdBlock
-{ // ##CAT_Audioproc sharpen the frequency response, similar to the active mechanism of basilar membrane -- usually used after Gammatone.Env filter output
+class AUDIOPROC_API SharpenBlock: public StdBlock
+{ // ##CAT_Audioproc #AKA_SharpenBlock sharpen the frequency response, similar to the active mechanism of basilar membrane -- usually used after Gammatone.Env filter output
 INHERITED(StdBlock) 
 public: //
-
+  enum OutputFunction { // the type of function to apply to filtered value
+    OF_STRAIGHT = 0, // output of DoG filter (output vals will go negative)
+    OF_POWER, // use a power function of the DoG output (output will stay positive, but be compressed)
+  };
+  
   float			chans_per_oct; // channels per octave -- normally looked up from an upstream GammatoneBlock
-  float			pow_gain; // #SHOW_ #NO_SAVE multiple by value before power
-  float			pow_base; // #SHOW #NO_SAVE power base for filter calc
+  OutputFunction	out_fun; // function (if any) to use on filtered  values prior to output to next stage
+  float			pow_gain; // #CONDSHOW_ON_out_fun:OF_POWER multiply by value before power
+  float			pow_base; // #CONDSHOW_ON_out_fun:OF_POWER power base for filter calc
   
   DoG1dFilterSpec	dog; // #EXPERT_TREE filter specs  
   
@@ -151,8 +156,8 @@ public: //
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter gaussian into data table and generate a graph
   
   
-  SIMPLE_LINKS(SharpeningBlock);
-  TA_BASEFUNS(SharpeningBlock) //
+  SIMPLE_LINKS(SharpenBlock);
+  TA_BASEFUNS(SharpenBlock) //
   
 protected:
   override void		UpdateAfterEdit_impl();
@@ -164,7 +169,7 @@ protected:
 private:
   void	Initialize();
   void	Destroy() {CutLinks();}
-  SIMPLE_COPY(SharpeningBlock)
+  SIMPLE_COPY(SharpenBlock)
 };
 
 

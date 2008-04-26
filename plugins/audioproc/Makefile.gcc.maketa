@@ -4,3 +4,7 @@ all: audioproc_TA_type.h
 
 audioproc_TA_type.h: ${EMERGENTDIR}/src/temt/ta/ta_TA_type.h audioproc_pl.h audioproc.h gammatone.h ap_files.h
 	${MAKETA} -css -cpp="g++ -E" -I. -I${EMERGENTDIR} -I${EMERGENTDIR}/src/temt/taiqtso -I${EMERGENTDIR}/src/temt/ta -I${EMERGENTDIR}/src/temt/ta/ios-g++-3.1 -I${EMERGENTDIR}/src/temt/css -I${EMERGENTDIR}/include -I../../../include audioproc  -I/Library/Frameworks/QtCore.framework/Headers ${EMERGENTDIR}/src/temt/ta/ta_TA_type.h audioproc_pl.h audioproc.h gammatone.h ap_files.h
+
+clean:
+	rm *_TA*.*
+
