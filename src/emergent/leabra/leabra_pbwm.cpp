@@ -1001,7 +1001,7 @@ bool PFCLayerSpec::CheckConfig_Layer(LeabraLayer* lay,  bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(net->phase_order != LeabraNetwork::MINUS_PLUS_PLUS, quiet, rval,
+  if(lay->CheckError(net->phase_order == LeabraNetwork::MINUS_PLUS, quiet, rval,
 		"requires LeabraNetwork phase_oder = MINUS_PLUS_PLUS, I just set it for you")) {
     net->phase_order = LeabraNetwork::MINUS_PLUS_PLUS;
   }
