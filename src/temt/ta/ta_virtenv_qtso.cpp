@@ -55,7 +55,7 @@ bool SetTextureImage(SoTexture2* sotx, const String& fname) {
   int nc = 4;
 /*temp  nc = img.isGrayscale() ? 1 : 3;
   if (img.hasAlphaChannel()) nc++; */
-  QImage img2(img.convertToFormat(QImage::Format_ARGB32));
+  QImage img2(img.mirrored(false, true).convertToFormat(QImage::Format_ARGB32));
   
   sotx->image.setValue(SbVec2s(img2.width(), img2.height()),
 		       nc, img2.bits(), SoSFImage::COPY);
