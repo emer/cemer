@@ -1,3 +1,1042 @@
+2008-04-22 22:34  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/emergent/leabra/leabra_td.h: fix reset of
+	  sravg in compute_dwt w/ hebb
+
+2008-04-22 06:46  oreilly
+
+	* emergent/trunk/bin/damod_to_leabra_cvt,
+	  emergent/trunk/src/emergent/leabra/leabra.h: fixed weight
+	  bounding in CtLeabra
+
+2008-04-22 06:16  oreilly
+
+	* emergent/trunk/bin/damod_to_leabra_cvt,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp: ct leabra
+	  intrusion bugs should be fixed
+
+2008-04-21 09:36  oreilly
+
+	* emergent/trunk/bin/ct_to_leabra_cvt,
+	  emergent/trunk/prog_lib/LeabraAll_Std.progp,
+	  emergent/trunk/prog_lib/LeabraAll_Test.progp,
+	  emergent/trunk/prog_lib/LeabraSettle.prog,
+	  emergent/trunk/src/emergent/leabra/Makefile.am,
+	  emergent/trunk/src/emergent/leabra/files.mta,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_td.h,
+	  emergent/trunk/src/emergent/leabra/leabra_v3_compat.cpp,
+	  emergent/trunk/test/leabra_std.proj: major update to Leabra,
+	  integrating CtLeabra into base code so that all the various
+	  standard Leabra subtypes can be easily used, including PBWM
+	  (though this will require additional work). previous CtLeabra
+	  code is no longer supported -- use the bin/ct_to_leabra_cvt
+	  script to convert existing ct leabra projects back to standard
+	  leabra, then select learn_rule = CtLeabra_CHL in network. in
+	  addition to this integration, many other crazy things were
+	  rationalized and cleaned up (e.g., _NStdLay functions and all
+	  the logic associated with different phase_order choices). tested
+	  on basic test cases but more testing would be good.
+
+2008-04-21 05:12  baisa
+
+	* emergent/trunk/plugins/audioproc/audioproc.cpp,
+	  emergent/trunk/plugins/audioproc/audioproc.h,
+	  emergent/trunk/plugins/audioproc/gammatone.cpp,
+	  emergent/trunk/plugins/audioproc/gammatone.h: latest hacking of
+	  audioproc
+
+2008-04-21 05:02  baisa
+
+	* emergent/trunk/src/temt/ta/ta_matrix.cpp: fixed BugID:382
+	  CRITICAL FIX
+
+2008-04-19 21:32  baisa
+
+	* emergent/trunk/plugins/audioproc/ap_files.cpp,
+	  emergent/trunk/plugins/audioproc/audioproc.cpp,
+	  emergent/trunk/plugins/audioproc/audioproc.h,
+	  emergent/trunk/plugins/audioproc/gammatone.cpp,
+	  emergent/trunk/plugins/audioproc/gammatone.h: intermed checkin
+
+2008-04-19 05:04  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h: major optimization
+	  of spike mode in leabra: before it used exponential decay of
+	  activation to simulate synaptic currents, requiring redundant
+	  sends of activations (very expensive), now it just sends the
+	  activation once when it spikes and then stores results in a
+	  moving time window buffer from which synaptic current is
+	  computed. also now has a full alpha function for synatic
+	  current, including separate rise and decay time constants.
+	  system is now fully integrate-and-fire compliant and we should
+	  get major speedup from using spikes.. if it will work with
+	  learning..
+
+2008-04-18 21:54  baisa
+
+	* emergent/trunk/demo/audioproc,
+	  emergent/trunk/demo/audioproc/ap_beat.proj: added stub audioproc
+	  project
+
+2008-04-18 07:19  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_imgproc.cpp: restored recording of
+	  image name in image proc funs
+
+2008-04-18 06:09  baisa
+
+	* emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp: fixed ta_math.h
+	  plus uncommited prev fix
+
+2008-04-17 04:34  baisa
+
+	* emergent/trunk/plugins/audioproc/audioproc.cpp: compiler food fix
+
+2008-04-17 04:03  baisa
+
+	* emergent/trunk/plugins/audioproc/audioproc.h,
+	  emergent/trunk/plugins/audioproc/audioproc.pro,
+	  emergent/trunk/plugins/audioproc/audioproc_def.h,
+	  emergent/trunk/plugins/shared_pre.pri: more tweaks for plugs on
+	  win
+
+2008-04-17 02:36  baisa
+
+	* emergent/trunk/build/msvc7/include/ode,
+	  emergent/trunk/build/msvc7/include/ode/collision.h,
+	  emergent/trunk/build/msvc7/include/ode/collision_space.h,
+	  emergent/trunk/build/msvc7/include/ode/collision_trimesh.h,
+	  emergent/trunk/build/msvc7/include/ode/common.h,
+	  emergent/trunk/build/msvc7/include/ode/compatibility.h,
+	  emergent/trunk/build/msvc7/include/ode/config.h,
+	  emergent/trunk/build/msvc7/include/ode/contact.h,
+	  emergent/trunk/build/msvc7/include/ode/error.h,
+	  emergent/trunk/build/msvc7/include/ode/export-dif.h,
+	  emergent/trunk/build/msvc7/include/ode/mass.h,
+	  emergent/trunk/build/msvc7/include/ode/matrix.h,
+	  emergent/trunk/build/msvc7/include/ode/memory.h,
+	  emergent/trunk/build/msvc7/include/ode/misc.h,
+	  emergent/trunk/build/msvc7/include/ode/objects.h,
+	  emergent/trunk/build/msvc7/include/ode/ode.h,
+	  emergent/trunk/build/msvc7/include/ode/odecpp.h,
+	  emergent/trunk/build/msvc7/include/ode/odecpp_collision.h,
+	  emergent/trunk/build/msvc7/include/ode/odecpp_old.h,
+	  emergent/trunk/build/msvc7/include/ode/odemath.h,
+	  emergent/trunk/build/msvc7/include/ode/rotation.h,
+	  emergent/trunk/build/msvc7/include/ode/timer.h,
+	  emergent/trunk/build/msvc7/include/sndfile.h,
+	  emergent/trunk/build/msvc7/include/sndfile.hh,
+	  emergent/trunk/build/msvc7/lib/libsndfile-1.def,
+	  emergent/trunk/build/msvc7/lib/libsndfile-1.dll,
+	  emergent/trunk/build/msvc7/lib/libsndfile-1.exp,
+	  emergent/trunk/build/msvc7/lib/libsndfile-1.lib: some win
+	  changes to support plugins and audioproc
+
+2008-04-17 02:34  baisa
+
+	* emergent/trunk/plugins/audioproc/audioproc.cpp,
+	  emergent/trunk/plugins/config.pri.in,
+	  emergent/trunk/plugins/shared.pri,
+	  emergent/trunk/plugins/shared_pre.pri,
+	  emergent/trunk/src/temt/ta/ta_global.h,
+	  emergent/trunk/src/temt/ta/ta_math.h: some win changes to
+	  support plugins and audioproc
+
+2008-04-17 01:20  mingus
+
+	* emergent/trunk/src/temt/ta/ta_virtenv.h: nuke READ_ONLY flag in
+	  VEJoint
+
+2008-04-15 08:12  oreilly
+
+	* emergent/trunk/src/temt/css/css_lex.cpp,
+	  emergent/trunk/src/temt/css/css_parse.cpp,
+	  emergent/trunk/src/temt/css/css_parse.y: fixed css parsing of
+	  scoped types for css classes -- wasn't allowing ctors and scoped
+	  default args. resulted from earlier fix for ignoring everything
+	  after a scoper (::) -- turns out you can't quite ignore
+	  *everything*.. :)
+
+2008-04-13 06:19  baisa
+
+	* emergent/trunk/plugins/audioproc/gammatone.cpp,
+	  emergent/trunk/plugins/audioproc/gammatone.h: major upgrade to
+	  Temporal guy added DoG
+
+2008-04-11 04:22  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_qt.cpp,
+	  emergent/trunk/src/temt/ta/ta_qt.h: couple bug fixes and beta of
+	  screen resize detection
+
+2008-04-11 04:14  baisa
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h: added group_timer
+	  and small fixup to CutLinks
+
+2008-04-10 08:12  oreilly
+
+	* emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program.h,
+	  emergent/trunk/src/temt/ta/ta_datagen.cpp,
+	  emergent/trunk/src/temt/ta/ta_datagen.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp: * max_unit_chars in
+	  InitUnitNames * taDataGen:: ProbSelectRow, ProbSelectColNo,
+	  ProbSelectColVal -- good for random generation of events from
+	  specs in data tables (used in SG model -- script versions).
+
+2008-04-07 01:55  baisa
+
+	* emergent/trunk/plugins/audioproc/audioproc.cpp,
+	  emergent/trunk/plugins/audioproc/audioproc.h,
+	  emergent/trunk/plugins/audioproc/gammatone.h: fixed bug in
+	  SignalMonBlock dim iterating
+
+2008-04-06 18:06  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable.cpp: added ColName
+	  accessors for GetValMatrix
+
+2008-04-06 17:58  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h: added ColName
+	  accessors for GetValMatrix
+
+2008-04-04 21:52  baisa
+
+	* emergent/trunk/plugins/audioproc,
+	  emergent/trunk/plugins/audioproc/Makefile.gcc.maketa,
+	  emergent/trunk/plugins/audioproc/ap_files.cpp,
+	  emergent/trunk/plugins/audioproc/ap_files.h,
+	  emergent/trunk/plugins/audioproc/audioproc.cpp,
+	  emergent/trunk/plugins/audioproc/audioproc.h,
+	  emergent/trunk/plugins/audioproc/audioproc.pro,
+	  emergent/trunk/plugins/audioproc/audioproc_def.h,
+	  emergent/trunk/plugins/audioproc/audioproc_pl.cpp,
+	  emergent/trunk/plugins/audioproc/audioproc_pl.h,
+	  emergent/trunk/plugins/audioproc/doc,
+	  emergent/trunk/plugins/audioproc/doc/AN_notes.txt,
+	  emergent/trunk/plugins/audioproc/doc/ERB_notes.txt,
+	  emergent/trunk/plugins/audioproc/doc/audioproc_bg.doc,
+	  emergent/trunk/plugins/audioproc/doc/gamma_calcs.xls,
+	  emergent/trunk/plugins/audioproc/doc/gamma_filts.xls,
+	  emergent/trunk/plugins/audioproc/gammatone.cpp,
+	  emergent/trunk/plugins/audioproc/gammatone.h,
+	  emergent/trunk/plugins/audioproc/proj,
+	  emergent/trunk/plugins/audioproc/snd,
+	  emergent/trunk/plugins/audioproc/snd/11025.1,
+	  emergent/trunk/plugins/audioproc/snd/11025.1/1-welcome.wav,
+	  emergent/trunk/plugins/audioproc/snd/16000.1,
+	  emergent/trunk/plugins/audioproc/snd/16000.1/arctic_a0027.wav,
+	  emergent/trunk/plugins/audioproc/snd/8000.1,
+	  emergent/trunk/plugins/audioproc/snd/8000.1/hello_universe.au,
+	  emergent/trunk/plugins/audioproc/snd/8000.1/spacemusic.au,
+	  emergent/trunk/plugins/audioproc/snd/8000.1/yahoo1.au: added
+	  audioproc 0.8 to Emergent
+
+2008-04-02 02:44  baisa
+
+	* emergent/trunk/src/temt/ta/ta_program_qt.cpp: BugID:328
+
+2008-04-01 08:33  oreilly
+
+	* emergent/trunk/src/temt/css/css_parse.cpp,
+	  emergent/trunk/src/temt/css/css_parse.y,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp: * datatable: don't
+	  repeat messages for each row! * css_parse: allow progvars
+	  (CSS_PTR) for switch case items
+
+2008-03-31 04:52  baisa
+
+	* emergent/trunk/src/temt/ta/ta_data.cpp,
+	  emergent/trunk/src/temt/ta/ta_data.h,
+	  emergent/trunk/src/temt/ta/ta_data_extras.cpp,
+	  emergent/trunk/src/temt/ta/ta_data_extras.h,
+	  emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.h: DirectoryCatalog
+	  fixes/updates
+
+2008-03-31 03:06  baisa
+
+	* emergent/trunk/src/temt/ta/ta_data_extras.cpp: dircat update
+
+2008-03-30 05:58  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/temt/ta/ta_program_qt.cpp: new defaults
+
+2008-03-29 20:09  baisa
+
+	* emergent/trunk/src/temt/taiqtso/itreewidget.cpp: small
+	  treewidget change
+
+2008-03-28 07:12  oreilly
+
+	* emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_dmem.cpp: Fixed BugID:330 --
+	  Quit() on dmem error, and the NetDataLoop was calling Random to
+	  select index at random when wrapping around if number of events
+	  was not even divisor of number of procs -- this random call then
+	  caused seeds to be out of sync across procs, which is a
+	  disaster.. so, now it just wraps around modulo style.
+
+2008-03-27 19:45  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp: changed
+	  default of neg_draw_z to true for legacy compat
+
+2008-03-27 19:43  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp: added NegDrawZ
+	  for graphs
+
+2008-03-27 19:42  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h: added NegDrawZ
+	  for graphs
+
+2008-03-27 18:25  baisa
+
+	* emergent/trunk/src/temt/ta/ta_matrix.h: added MENU to coupla Mat
+	  funcs
+
+2008-03-27 08:52  oreilly
+
+	* emergent/trunk/src/emergent/network/v3_compat.cpp: convert pdp++
+	  special environment data (frequency, time, duration) to new cols
+	  in data table.
+
+2008-03-27 08:35  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_datagen.cpp,
+	  emergent/trunk/src/temt/ta/ta_datagen.h: added
+	  taDataGen::SampleByFrequency -- does RANDOM sampling of data by
+	  frequency
+
+2008-03-27 01:54  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp: fixed BugID:319
+	  -- no reset home view for item added to view (only for 1st item)
+
+2008-03-26 05:10  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_qttype.cpp: * fixed BugID:324 --
+	  was using generic FROM_GROUP for datatable arg -- changed those
+	  to be specific to each arg number -- which in turn revealed a
+	  bug with multiple opts of same type with diff arg number.. fixed
+	  that. * got rid of RemoveMonitors call from various places in
+	  network building this is no longer needed with the smart refs,
+	  and causes problems.
+
+2008-03-25 17:43  baisa
+
+	* emergent/trunk/plugins/HelloWorld/hw.cpp,
+	  emergent/trunk/plugins/HelloWorld/hw.h,
+	  emergent/trunk/plugins/HelloWorld/hw.pro,
+	  emergent/trunk/plugins/HelloWorld/hw_def.h,
+	  emergent/trunk/plugins/HelloWorld/hw_pl.cpp,
+	  emergent/trunk/plugins/HelloWorld/hw_pl.h: canonicalized
+	  HelloWorld file setups
+
+2008-03-24 20:37  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_program.cpp: prog() calls within
+	  functions were not being PreGen'd so their Init was not being
+	  called meaning a segfault for a prog() called only within an
+	  init function.
+
+2008-03-24 19:04  oreilly
+
+	* emergent/trunk/prog_lib/FindClosestEventFmNet.prog,
+	  emergent/trunk/src/temt/ta/ta_program.cpp: fixed bug in Program
+	  where changing name of objs obj did not propagate to expressions
+	  containing associated progvar. Changed DataChanged to UAE when
+	  name changes in GetVarsForObjs, which updates schema data for
+	  subsequent schemaChanged check in DataChanged for ProgVarRef.
+
+2008-03-24 05:15  oreilly
+
+	* emergent/trunk/prog_lib/FindClosestEventFmNet.prog,
+	  emergent/trunk/prog_lib/Makefile.am,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h: * fixed auto
+	  output_name computation to use actual unit group (fixes bug in
+	  dyslex.proj where only 1st unit group names were being used) *
+	  added Init_Sequence() called by NetGroupedDataLoop at start of
+	  seq -- in Leabra this makes the sequence_init setting work *
+	  added FindClosestEventFmNet program -- gets activations directly
+	  from network instead of requiring a monitor to get values from.
+
+2008-03-20 21:59  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.h: menu actions for
+	  grid and graph view configuration actions.
+
+2008-03-20 06:02  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_qtviewer.cpp: nuked conflicting
+	  shortcuts/accelerators for std emacs nav keys.
+
+2008-03-19 22:05  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_qtviewer.cpp: changed global
+	  shortcuts to Alt instead of Ctrl -- this is settable in the code
+	  with cmd_str in the relevant functions so it is easy to change
+	  later. We could also promote it to a global parameter if need
+	  be. It also looks like there is some way to intercept the global
+	  shortcuts through the overall event() handler but this is likely
+	  to be a bit messy.
+
+2008-03-18 06:53  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h: fixed BugID: 304
+	  (PolarRndPrjnSpec); BugID: 305 max text font in grid view BugID:
+	  307: SetColWidth (SetTextWidth)
+
+2008-03-14 02:48  baisa
+
+	* emergent/trunk/build/msvc7/HowToMakeRelease.txt,
+	  emergent/trunk/build/msvc7/config.h,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.rc,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.rc,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.rc,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj,
+	  emergent/trunk/build/msvc7/temt/temt.rc: win .14 release changes
+
+2008-03-12 22:43  oreilly
+
+	* emergent/trunk/prog_lib/ApplyInputs.prog,
+	  emergent/trunk/prog_lib/FindClosestEvent.prog,
+	  emergent/trunk/prog_lib/LeabraAll_Std.progp,
+	  emergent/trunk/prog_lib/LeabraAll_Test.progp,
+	  emergent/trunk/test/leabra_std.proj: updated ApplyInputs to
+	  always update the data and network pointers -- minimal
+	  computational cost well worth avoiding the bugs that this
+	  causes. also updated FindClosestEvent
+
+2008-03-12 19:51  oreilly
+
+	* emergent/trunk/prog_lib/FindClosestEvent.prog: fix to closest
+	  event
+
+2008-03-12 19:34  oreilly
+
+	* emergent/trunk/prog_lib/FindClosestEvent.prog,
+	  emergent/trunk/prog_lib/Makefile.am: added FindClosestEvent
+	  program: does ClosestEventStat functionality
+
+2008-03-12 17:49  baisa
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h: fixed bug
+	  bugID:310
+
+2008-03-12 08:22  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.h: BugID: 300 -- option
+	  in group spec to not append agg name
+
+2008-03-12 08:03  oreilly
+
+	* emergent/trunk/src/temt/css/css_machine.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h: fix to css Step bug: don't
+	  push return values on stack if external_stop is true!
+
+2008-03-08 07:03  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp: added a
+	  VIEW_ROWS table userdata check to tableviews
+
+2008-03-08 02:49  baisa
+
+	* emergent/trunk/src/temt/ta/ta_matrix.cpp: fixed mat error that
+	  was preventing copying of empty mats
+
+2008-03-02 22:11  baisa
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/spec.cpp,
+	  emergent/trunk/src/emergent/network/spec.h,
+	  emergent/trunk/src/temt/ta/ta_base.cpp: remove some dependencies
+	  in spec
+
+2008-02-27 06:32  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct: n_pi for
+	  inhib wiggle (cur default is 2.0) & n_over_thr, n_under_thr for
+	  act_thr params
+
+2008-02-27 03:21  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct: act_thr param
+
+2008-02-26 08:03  oreilly
+
+	* emergent/trunk/src/emergent/bp/rbp.cpp,
+	  emergent/trunk/src/emergent/bp/rbp.h,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.cpp,
+	  emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/emergent/network/netstru_extra.h: synaptic
+	  delay in leabra; also made std send netin functions take act arg
+	  and got rid of act_delta unit var -- just compute as needed.
+
+2008-02-26 05:47  oreilly
+
+	* emergent/trunk/configure.ac: revision changed to 4.0.14 - make
+	  uninstall, clean, etc.
+
+2008-02-26 05:06  oreilly
+
+	* emergent/trunk/demo/leabra/model_and_task.proj,
+	  emergent/trunk/test/imgproc_test.proj: demo/test models updated
+
+2008-02-25 06:29  oreilly
+
+	* emergent/trunk/prog_lib/LeabraAll_Std.progp,
+	  emergent/trunk/prog_lib/LeabraTrial.prog,
+	  emergent/trunk/test/leabra_std.proj: updated comments in
+	  LeabraTrial program
+
+2008-02-25 04:26  oreilly
+
+	* emergent/trunk/prog_lib/LeabraAll_Std.progp,
+	  emergent/trunk/prog_lib/LeabraAll_Test.progp,
+	  emergent/trunk/prog_lib/LeabraEpoch.prog,
+	  emergent/trunk/prog_lib/LeabraSettle.prog,
+	  emergent/trunk/prog_lib/LeabraTrain.prog,
+	  emergent/trunk/prog_lib/LeabraTrial.prog,
+	  emergent/trunk/src/emergent/leabra/leabra_td.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/test/leabra_std.proj: updated programs for leabra
+	  with compute weights moved to trial program so stepping by trial
+	  will show weight changes for that time.
+
+2008-02-22 07:19  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_virtenv.cpp: 0.001 minimum length
+	  for capsules -- prevents ode crash for length = 2*radius
+
+2008-02-22 05:05  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru_qtso.cpp: also need
+	  access fix for netview objs!
+
+2008-02-22 05:03  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp: use access to
+	  check for valid filenames for VE world objs -- SoInput not good.
+
+2008-02-19 05:47  baisa
+
+	* emergent/trunk/build/msvc7/config.h,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.rc,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.rc,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.rc,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.vcproj,
+	  emergent/trunk/build/msvc7/setup_bin/setup_bin.vdproj,
+	  emergent/trunk/build/msvc7/temt/temt.rc,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj: win proj changes
+	  for release 13
+
+2008-02-18 00:58  baisa
+
+	* emergent/trunk/build/msvc7/HowToMakeRelease.txt,
+	  emergent/trunk/build/msvc7/css_bin/css_bin.vcproj,
+	  emergent/trunk/build/msvc7/emergent/emergent.vcproj,
+	  emergent/trunk/build/msvc7/emergent_bin/emergent_bin.vcproj,
+	  emergent/trunk/build/msvc7/temt/temt.vcproj,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp: some
+	  missing things in NetView CutLinks
+
+2008-02-17 22:12  baisa
+
+	* emergent/trunk/src/temt/css/css_qtdialog.cpp,
+	  emergent/trunk/src/temt/css/css_qtdialog.h,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtdialog.h,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.cpp,
+	  emergent/trunk/src/temt/ta/ta_qtgroup.h,
+	  emergent/trunk/src/temt/ta/ta_type.h: bug bugID:261
+
+2008-02-17 19:08  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_data.h: fix for
+	  taData::SetMatrixCellDataByName -- copy/paste err had matrix
+	  instead of variant arg for data. resulted in DataVarProgMatrix
+	  not working for setting data.
+
+2008-02-17 18:44  baisa
+
+	* emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp: bug bugID:278
+
+2008-02-17 18:09  baisa
+
+	* emergent/trunk/src/temt/ta/ta_qtviewer.cpp: bug bugID:268
+
+2008-02-17 17:41  baisa
+
+	* emergent/trunk/src/temt/ta/t3viewer.cpp: bug bugID:254
+
+2008-02-16 21:34  mingus
+
+	* emergent/trunk/configure.ac: 4.0.13
+
+2008-02-16 04:18  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.h: * ct: fixed
+	  layer fin inhib mod code
+
+2008-02-15 20:37  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h: midpoint off by
+	  default: seems to be worse for ft and objrec under ct. better to
+	  have it as an option than the default.
+
+2008-02-15 09:19  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct:
+	  layer-specific inhib parameters
+
+2008-02-15 08:59  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_qttype.cpp,
+	  emergent/trunk/test/test.proj: 2 bugs fixed: * condedit/show
+	  logic fix for multiple membs (||, &&) -- was ignoring first
+	  cond, affected netmonitor agg field for !computed * changelog
+	  dialog was not being deleted!! this was the source of at least
+	  one fairly reliable project crash (the most frequent one for me)
+
+2008-02-15 06:40  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp: midpoint = true
+	  is new default
+
+2008-02-15 06:02  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/temt/ta/ta_virtenv.h: * added Init button for
+	  VEWorld (alias for SetValsToODE, which is less than clear) *
+	  added midpoint version of vm update computation as suggested by
+	  Michael Frank -- seems to work very well in minimizing
+	  oscillations -- was able to crank up dt in family trees to .4
+	  and it was still stable (didn't try higher yet). could be very
+	  useful as higher dt dynamics are much better in general for
+	  network learning.
+
+2008-02-15 04:50  mingus
+
+	* emergent/trunk/configure.ac: Check for simage but don't include
+	  LIBS, CXXFLAGS OR LDFLAGS
+
+2008-02-14 09:16  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp: fixed VELight
+	  crash, tested fully - light stuff seems to work!
+
+2008-02-14 08:59  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_defaults.cpp,
+	  emergent/trunk/src/temt/ta/ta_defaults.h,
+	  emergent/trunk/src/temt/ta/ta_matrix.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_project.cpp,
+	  emergent/trunk/src/temt/ta/ta_project.h: * added Dump_Load_pre
+	  which is called at start of Load_strm -- use it for clearing out
+	  anything prior to loading (only when loading that specific
+	  object) * added Dump_Load_pre for DataTable, Program, and
+	  Network: resets existing
+
+2008-02-14 07:09  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_seledit_qt.cpp: select edit now
+	  does UAE on all bases on apply -- fixes problem with specs not
+	  updating children etc.
+
+2008-02-14 06:41  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp: added Layer and
+	  Projection UpdateAfterMove to call UpdatePointers when moved.
+
+2008-02-14 06:21  oreilly
+
+	* emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/spec.cpp,
+	  emergent/trunk/src/emergent/network/spec.h,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_dataanal.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.h,
+	  emergent/trunk/src/temt/ta/ta_group.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.h,
+	  emergent/trunk/test/test.proj: * living hell conquered!
+	  UpdatePointers code now supports extensions for more flexible
+	  updating of pointers after copying, moving. also, a bunch of
+	  "internal" pointers that should NOT have been copied, and which
+	  did not properly have NO_SET_POINTER set, were fixed. this may
+	  have been a significant source of latent crashing in previous
+	  versions. In fact, I can now duplicate a project! the viewers
+	  are still screwed up a bit, but it works! * any spec pointers
+	  now copy spec from source into new guy, so any copying of layers
+	  or projections will result in a functional network!
+
+2008-02-13 09:12  oreilly
+
+	* emergent/trunk/src/emergent/network/emergent_program.cpp,
+	  emergent/trunk/src/emergent/network/emergent_program.h,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.h,
+	  emergent/trunk/src/temt/ta/ta_datatable.cpp,
+	  emergent/trunk/src/temt/ta/ta_datatable.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h: * progel copy now
+	  looks up any variables by name, not just path, and copies over
+	  from source any missing variables. also does proper update of
+	  pointers across projects. new PROGEL_SIMPLE_BASEFUNS to be used
+	  in any progel object instead of TA basefuns -- has auto
+	  copy/move guys * added UpdateAfterMove[_impl] infrastructure to
+	  taBase, called in a List/Group Transfer -- use for updating
+	  pointers such as this stuff.
+
+2008-02-10 06:25  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h: wt_sig and act both
+	  call UAE on owner spec to regenerate lookup tables
+
+2008-02-09 23:11  oreilly
+
+	* emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_matrix.cpp,
+	  emergent/trunk/test/test.proj: * err msg if select rows = 0 rows
+	  on netmon * fixed TestError in taMatrix::SafeElIndexN -- was
+	  backwards! failed for dims > 1
+
+2008-02-09 09:49  oreilly
+
+	* emergent/trunk/prog_lib/CtLeabraSettleTest.prog,
+	  emergent/trunk/prog_lib/Makefile.am,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/temt/ta/ta_dataproc.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_qttype.cpp,
+	  emergent/trunk/test/test.proj: * added quantile with arbitrary
+	  parameter to Aggregator * added matrix frame based aggregation
+	  functions and general agg funcdtion * added net monitor data agg
+	  functionality * if source data is a matrix column, now produce
+	  matrix aggregated data for group operation, and for netmonitor
+	  computed agg of data * added select rows to netmonitor data agg
+	  * boolean logic now supported for multiple member dependencies
+	  in CONDEDIT/SHOW/GHOST etc.
+
+2008-02-09 08:13  baisa
+
+	* emergent/trunk/src/emergent/network/netstru_extra.cpp,
+	  emergent/trunk/src/emergent/network/netstru_extra.h,
+	  emergent/trunk/src/temt/ta/ta_script.cpp: ScriptPrjn fixes
+
+2008-02-08 07:05  oreilly
+
+	* emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/emergent/network/netstru_so.cpp: fixed
+	  selection bug with snap bord display (and wt lines too --
+	  doesn't select those anymore)
+
+2008-02-08 06:32  baisa
+
+	* emergent/trunk/src/temt/ta/ta_qttype.cpp: taFiler ctrl was not
+	  being used
+
+2008-02-08 06:18  baisa
+
+	* emergent/trunk/plugins/shared_pre.pri,
+	  emergent/trunk/src/temt/ta/ta_script.h: minor update to plugin
+	  config
+
+2008-02-08 03:47  baisa
+
+	* emergent/trunk/src/emergent/network/spec.cpp: small fix
+
+2008-02-07 09:42  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/network/netstru.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/emergent/network/netstru_qtso.h,
+	  emergent/trunk/src/emergent/network/netstru_so.cpp,
+	  emergent/trunk/src/emergent/network/netstru_so.h,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.cpp,
+	  emergent/trunk/src/temt/ta/ta_math.h,
+	  emergent/trunk/src/temt/ta/ta_program.cpp,
+	  emergent/trunk/src/temt/ta/ta_program.h,
+	  emergent/trunk/src/temt/ta/ta_qtclassbrowse.cpp,
+	  emergent/trunk/src/temt/ta/ta_seledit.cpp: * Program Run & Step
+	  now auto-call Init if not pressed yet.. extremely easy and saves
+	  a lot of button pressing. Also don't put up err msg if pressed
+	  when still running. * renamed SimpleMathSpec ops GTEQ LTEQ
+	  GTLTEQ to MIN, MAX, MINMAX * major new feature: snapshot
+	  function on network, plus Snap Border display around units in
+	  the netview -- very convenient for comparing things.
+
+2008-02-03 08:00  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: added
+	  Init_SdEffWt Function
+
+2008-02-02 19:35  oreilly
+
+	* emergent/trunk/src/emergent/bp/bp.cpp,
+	  emergent/trunk/src/emergent/cs/cs.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/emergent/so/so.cpp,
+	  emergent/trunk/src/temt/ta/ta_imgproc.cpp: * all graphs now use
+	  FindMakeGraphView etc * total revamp of ct inhibition w/
+	  sinusoidal etc
+
+2008-02-02 06:01  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp: new logic for
+	  maxda_sum and sravg -- always incrementing so first sravg is
+	  always computed at start
+
+2008-02-02 05:17  oreilly
+
+	* emergent/trunk/prog_lib/LeabraCycleMonitor.prog,
+	  emergent/trunk/prog_lib/Makefile.am,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: * added back
+	  sravg_start -- turns out thresh is not that reliable to
+	  discriminate in other networks * added LeabraCycleMonitor program
+
+2008-01-31 07:52  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp: ak! compile
+	  err fixed
+
+2008-01-31 07:50  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct: new defaults
+	  and uae for timing -- key!
+
+2008-01-31 06:02  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct: use
+	  layer-level maxda vals for scoping sravg computation -- much
+	  more reliable..
+
+2008-01-30 23:00  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct: new min and
+	  max thresholds for da for sravg
+
+2008-01-30 08:33  oreilly
+
+	* emergent/trunk/src/temt/ta/ta_program_els.cpp: fixed member fm
+	  arg css gen bug
+
+2008-01-30 08:10  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct updates incl
+	  inhib and da-based sampling/weighting
+
+2008-01-29 08:04  oreilly
+
+	* emergent/trunk/prog_lib/CtLeabraSettle.prog,
+	  emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pbwm.h,
+	  emergent/trunk/src/emergent/leabra/leabra_pvlv.h,
+	  emergent/trunk/src/emergent/leabra/leabra_td.h: * first pass at
+	  new CtLeabra learning algorithm * fixed linear weight thing in
+	  leabra: now just gets a temp variable instead of changing actual
+	  weight val back and forth: not only more computationally
+	  efficient, but also much cleaner!!
+
+2008-01-29 04:17  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/temt/ta/ta_program_els.cpp,
+	  emergent/trunk/src/temt/ta/ta_program_els.h: * ctleabra: misc
+	  optimizations in advance of new version * minor progel fix
+
+2008-01-26 09:46  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/emergent/network/emergent_project.cpp,
+	  emergent/trunk/src/emergent/network/netstru.h,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp: *
+	  Network::FindMakeView -- finds existing or makes new view *
+	  Wizard::StdNetwork uses FindMakeView * CtLeabra: checks for
+	  inactive layers / unit groups and ignores learning if so. *
+	  Leabra: revert act_reg to multiplicative
+
+2008-01-24 10:04  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h: ct learning
+	  rates for diff phases
+
+2008-01-24 06:41  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.h: ct was not using
+	  bias_only act reg check
+
+2008-01-24 04:19  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra.h,
+	  emergent/trunk/src/emergent/leabra/leabra_extra.h: leabra: new
+	  act_reg functionality
+
+2008-01-24 02:49  baisa
+
+	* emergent/trunk/src/temt/ta/ta_virtenv_qtso.cpp: bypassed use of
+	  simage in VeTexture
+
+2008-01-23 23:32  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.h: ctleabra sign
+	  was backwards
+
+2008-01-23 22:44  oreilly
+
+	* emergent/trunk/src/emergent/leabra/leabra_ct.cpp,
+	  emergent/trunk/src/emergent/leabra/leabra_ct.h,
+	  emergent/trunk/src/emergent/network/netdata.cpp,
+	  emergent/trunk/src/emergent/network/netdata.h,
+	  emergent/trunk/src/emergent/network/netstru_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.cpp,
+	  emergent/trunk/src/temt/ta/ta_base.h,
+	  emergent/trunk/src/temt/ta/ta_datatable_qtso.cpp,
+	  emergent/trunk/src/temt/ta/ta_group.cpp,
+	  emergent/trunk/src/temt/ta/ta_group.h,
+	  emergent/trunk/src/temt/ta/ta_qttype.cpp,
+	  emergent/trunk/src/temt/ta/ta_seledit.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.cpp,
+	  emergent/trunk/src/temt/ta/ta_type.h: * fixed select for edit
+	  compare (BugId: 253) * all bools, enums, and token choosers are
+	  auto-apply by default (BugId: 212), got rid of ! stuff -- now
+	  very predictable default behavior doesn't need confusing marker.
+	  also fixed view control panels. added NO_APPLY_IMMED to override
+	  if needed. Text fields are always apply.. * reset columns button
+	  on netmonitor * ctleabra: dwt_norm function
+
+2008-01-23 19:40  oreilly
+
+	* emergent/trunk/configure.ac: version -> 4.0.12 -- everyone must
+	  make uninstall and make clean!
+
+2008-01-21 02:50  mingus
+
+	* emergent/trunk/acsite.m4: another kubuntu 64 fix
+
+2008-01-21 02:42  mingus
+
+	* emergent/trunk/acsite.m4: fix qt4 macro detection of 64bit
+	  kubuntu packages
+
+2008-01-21 02:37  mingus
+
+	* emergent/trunk/acsite.m4: intermediate fix for 64bit
+
+2008-01-13 04:17  mingus
+
+	* emergent/trunk/ChangeLog: updated
+
 2008-01-12 07:59  oreilly
 
 	* emergent/trunk/src/emergent/network/v3_compat.cpp: crash on null
