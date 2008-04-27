@@ -41,7 +41,7 @@ class TA_API taTask: public taOBase {
   // ##TOKENS ##INSTANCE ##CAT_Task a single processing instance for an engine
 INHERITED(taOBase)
 public:
-  int			task_id; // unique id per logical set, ex. one per thread
+  int			task_id; // #READ_ONLY #SHOW #NO_COPY unique id per logical set, ex. one per thread
   int			proc_id; // current proc being run
   
   inline taEngineInst*	inst() const {return m_inst;} // typically lex override

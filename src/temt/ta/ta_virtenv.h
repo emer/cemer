@@ -108,7 +108,7 @@ public:
   taColor	blend_color;	// #CONDEDIT_ON_mode:BLEND color to use in blend case
 
   int		idx;
-  // #READ_ONLY #HIDDEN #CAT_Structure index of this unit within containing unit group
+  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit within containing unit group
 
   virtual void		SetTexture(SoTexture2* sotx);
   // configure the texture based on values

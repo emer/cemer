@@ -133,7 +133,7 @@ public:
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column
   ColFlags		col_flags; // #APPLY_IMMED flags for this column to indicate specific properties 
-  short			col_idx; // #READ_ONLY #SHOW #NO_SAVE the index of this column in the table
+  int			col_idx; // #READ_ONLY #SHOW #NO_SAVE #NO_COPY the index of this column in the table
   bool			is_matrix;
   // #READ_ONLY #SAVE #SHOW 'true' if the cell is a matrix, not a scalar
   MatrixGeom		cell_geom;

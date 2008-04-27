@@ -764,9 +764,9 @@ public: //
   TDCoord       pos;
   // #CAT_Structure position in space relative to owning group, layer
   int		idx;
-  // #READ_ONLY #HIDDEN #CAT_Structure index of this unit within containing unit group
+  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit within containing unit group
   int		flat_idx;
-  // #READ_ONLY #HIDDEN #CAT_Structure index of this unit in a flat array of units (used by some Engines)
+  // #READ_ONLY #HIDDEN #NO_COPY #CAT_Structure index of this unit in a flat array of units (used by some Engines)
 
 #ifdef DMEM_COMPILE
   static int	dmem_this_proc;	// #IGNORE processor rank for this processor RELATIVE TO COMMUNICATOR for the network
