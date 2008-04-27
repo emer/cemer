@@ -78,6 +78,7 @@ public:
     OV_SIG	= 0x01, // #LABEL_Signal signal channel
     OV_ENV	= 0x02, // #LABEL_Envelope envelope
     OV_FREQ	= 0x04, // #LABEL_InstFreq instantaneous frequency
+    OV_DELTA_ENV = 0x08, // #LABEL_DeltaEnvelope 1st derivitive (per 100us) of envelope (requires Envelope)
     OV_SIG_ENV	= 0x03, // #NO_BIT signal + envelope
     OV_SIG_ENV_FREQ = 0x07 // #NO_BIT signal + envelope + instantaneous frequency
   };
@@ -90,6 +91,7 @@ public:
   
   DataBuffer		out_buff_env; //  #SHOW_TREE envelope output (if enabled)
   DataBuffer		out_buff_freq; //  #SHOW_TREE frequency output (if enabled)
+  DataBuffer		out_buff_delta_env; //  #SHOW_TREE delta envelope output (if enabled)
   
   ChanSpacing		chan_spacing; // how to space the channels
   float			ear_q; //Moore and Glasberg ERB values
@@ -102,11 +104,12 @@ public:
   GammatoneChan_List	chans; // #NO_SAVE the individual channels
   
   override taList_impl*  children_() {return &chans;} //note: required
-  override int		outBuffCount() const {return 3;}
+  override int		outBuffCount() const {return 4;}
   override DataBuffer* 	outBuff(int idx) {switch (idx) {
     case 0: return &out_buff; 
     case 1: return &out_buff_env;
     case 2: return &out_buff_freq;
+    case 3: return &out_buff_delta_env;
     default: return NULL;}}
   
   virtual void		GraphFilter(DataTable* disp_data,
@@ -118,8 +121,11 @@ public:
     // #IGNORE mostly for proc
 
   SIMPLE_LINKS(GammatoneBlock)
-  TA_BASEFUNS(GammatoneBlock)
+  TA_BASEFUNS(GammatoneBlock) //
   
+public: // diagnostic values
+  float			delta_env_dt_inv; // #HIDDEN #READ_ONLY #NO_SAVE 1/dt value, calc'ed once for efficiency
+
 protected:
   int			num_out_vals;
   override void		UpdateAfterEdit_impl();

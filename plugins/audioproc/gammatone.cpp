@@ -194,15 +194,21 @@ void GammatoneBlock::Initialize() {
   n_chans = 32;
   out_vals = OV_SIG;
   num_out_vals = 1;
+  delta_env_dt_inv = 1.0f; // safe dummy value
 }
 
 void GammatoneBlock::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  // must always have ENV if DELTA_ENV
+  if (out_vals & OV_DELTA_ENV) 
+    out_vals = (OutVals)(out_vals | OV_ENV);
+  
   // note: because of the codes used, there is always at least one val
   num_out_vals = 0;
   if (out_vals & OV_SIG) num_out_vals++;
   if (out_vals & OV_ENV) num_out_vals++;
   if (out_vals & OV_FREQ) num_out_vals++;
+  if (out_vals & OV_DELTA_ENV) num_out_vals++;
   
 }
 
@@ -231,7 +237,7 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   
   // just init all chans, whether enabled or not
   int buff_bit = 1;
-  for (int obi = 0; obi <= 2; ++obi, buff_bit<<=1) {
+  for (int obi = 0; obi < outBuffCount(); ++obi, buff_bit<<=1) {
     DataBuffer* ob = outBuff(obi);
     ob->enabled = (out_vals & buff_bit);
     if (!ob->enabled) continue; // will have mat set to zero 
@@ -240,6 +246,15 @@ void GammatoneBlock::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
     ob->fields = src_buff->fields;
     ob->chans = n_chans;
     ob->vals = 1;
+  }
+  // if using delta_env, need min of 2 env stages
+  if (out_vals & OV_DELTA_ENV) {
+    out_buff_env.min_stages = 2;
+    // 1/dt value, in 1/100us based on env guy
+    delta_env_dt_inv = out_buff_env.fs / 100.0f;
+    if (CheckError((delta_env_dt_inv <= 0), quiet, ok,
+      "delta_env_dt value was <= 0 -- sampling rate must be bad!"))
+      return;
   }
   
 }
@@ -334,11 +349,17 @@ SignalProcBlock::ProcStatus GammatoneBlock::AcceptData_GT(float_Matrix* in_mat, 
       
       sc->DoFilter(in_items, in_stride, &dat, out_stride, bm,
           env, instf);
+          
+      if (out_vals & OV_DELTA_ENV) {
+        float env_prev = out_buff_env.mat.FastEl(0, g_ch, f, 0, out_buff_env.prevStage());
+        out_buff_delta_env.mat.FastEl(0, g_ch, f, 0, out_buff_delta_env.stage) =
+          (*env - env_prev) * delta_env_dt_inv;
+      }
     }
   } // field
   
   // advance index pointer, and notify clients
-  for (int obi = 0; ((ps != PS_ERROR) && (obi <= 2)); ++obi) {
+  for (int obi = 0; ((ps != PS_ERROR) && (obi < outBuffCount())); ++obi) {
     DataBuffer* ob = outBuff(obi);
     if (!ob->enabled) continue; // will have mat set to zero 
     if (ob->NextIndex())

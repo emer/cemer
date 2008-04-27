@@ -431,6 +431,10 @@ void DataBuffer::InitConfig(bool check, bool quiet, bool& ok) {
     mat.SetGeom(0, 0);
     return; 
   }
+  // enforce minimums, esp. when those were set by some other prog
+  if (!check) {
+    if (stages < min_stages) stages = min_stages;
+  }
   
   if (CheckError(((vals < 1) || (chans < 1) || (fields < 1) ||
     (stages < 1)), quiet, ok,
@@ -1492,6 +1496,7 @@ DataBuffer* SequentialProcSet::outBuff(int idx) {
 
 TAPtr StimChan::SetOwner(TAPtr own) {
   inherited::SetOwner(own);
+  chan_flags = CF_0;
   stim_gen = GET_MY_OWNER(StimGen); 
   return own;
 }
@@ -1645,14 +1650,15 @@ void StimGen::ProcNext_Samples_impl(int n, ProcStatus& ps)
   const int buff_index = 0;//clarity
   PROC_NEXT_LOOP(ps,i) {
     double dat = 0.0;
-    int j = 0;
-    while (j < chans.size) {
-      StimChan* sc = chans.FastEl(j);
+    int cnt = 0;
+    for (int i = 0; i < chans.size; ++i) {
+      StimChan* sc = chans.FastEl(i);
+      if (sc->chan_flags & StimChan::CF_OFF) continue;
       dat += sc->GetNext();
-      ++j;
+      ++cnt;
     }
-    if (j > 0) {
-      dat /= (double)j;
+    if (cnt > 0) {
+      dat /= (double)cnt;
     }
     // note: 1 val, 1 chan, 1 field
     dat *= (float)gain;

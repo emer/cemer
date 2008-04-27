@@ -858,8 +858,16 @@ class AUDIOPROC_API StimChan: public SignalProcItem
 { // #VIRT_BASE ##CAT_Audioproc base class for a stimulus generator channel
 INHERITED(SignalProcItem) 
 public:
+  enum ChanFlags { // #CAT_Audioproc #BITS
+    CF_0	= 0, // #IGNORE
+    CF_OFF	= 0x0002, // #LABEL_Off don't call this item
+  };
+  
+  ChanFlags		chan_flags;
+  
   virtual float		GetNext() {return 0.0f;} // return current sample, and advance
   
+  int	GetEnabled() const {return (chan_flags & CF_OFF) ? 0 : 1;}
   override void SetDefaultName() {name = _nilString;}
   override TAPtr SetOwner(TAPtr own);
   TA_BASEFUNS_NOCOPY(StimChan)
