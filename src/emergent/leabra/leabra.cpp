@@ -4139,8 +4139,8 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 void CtSRAvgSpec::Initialize() {
   start = 30;
   end = 20;
-  interval = 2;
-  min_da_thr = 0.005f;
+  interval = 5;
+  min_da_thr = 0.0f;
 }
 
 void CtSineInhibMod::Initialize() {

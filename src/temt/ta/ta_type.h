@@ -857,6 +857,11 @@ public:
   static void	FlushConsole();
   // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
 
+  static int	ProcessEvents();
+  // #CAT_GlobalState run any pending qt events that might need processed
+  static int	RunPending();
+  // #CAT_GlobalState check to see if any events are pending, and run if true -- MUCH faster than processevents, but also likely to miss some events along the way.
+
   static void 	Busy(bool busy = true);
   // #CAT_GlobalState puts system in a 'busy' state
   static inline void	DoneBusy() {Busy(false);}

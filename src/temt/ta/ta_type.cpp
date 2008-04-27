@@ -912,6 +912,23 @@ void taMisc::FlushConsole() {
 #endif
 }
 
+int taMisc::ProcessEvents() {
+#ifndef NO_TA_BASE
+  return taiMiscCore::ProcessEvents();
+#else
+  return 0;
+#endif
+}
+
+int taMisc::RunPending() {
+#ifndef NO_TA_BASE
+  return taiMiscCore::RunPending();
+#else
+  return 0;
+#endif
+}
+
+
 void taMisc::Busy(bool busy) {
 #ifndef NO_TA_BASE
   if (taiMC_) taiMC_->Busy_(busy);

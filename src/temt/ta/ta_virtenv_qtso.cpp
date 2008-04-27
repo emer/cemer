@@ -68,9 +68,9 @@ bool SetTextureImage(SoTexture2* sotx, const String& fname) {
 
 
 void VETexture::SetTexture(SoTexture2* sotx) {
-//temp  sotx->filename = (const char*)fname;
-  taMisc::TestError(this, !SetTextureImage(sotx, fname),
-    "Could not set texture from fname:", fname);
+  sotx->filename = (const char*)fname;
+//   taMisc::TestError(this, !SetTextureImage(sotx, fname),
+//     "Could not set texture from fname:", fname);
   if(wrap_horiz == REPEAT)
     sotx->wrapS = SoTexture2::REPEAT;
   else
