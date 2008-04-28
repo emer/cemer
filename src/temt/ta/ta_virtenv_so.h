@@ -49,6 +49,7 @@ public:
   SoGroup*		getLightGroup() { return light_group; }
   SoSwitch*		getCameraSwitch() { return camera_switch; }
   SoSwitch*		getTextureSwitch() { return textures; }
+  SoSwitch*		getTextureXformSwitch() { return texture_xforms; }
 
 protected:
   SoDirectionalLight* 	sun_light;
@@ -56,6 +57,7 @@ protected:
   SoGroup*		light_group;
   SoSwitch*		camera_switch; // switching between diff cameras
   SoSwitch*		textures;      // group of shared textures (always switched off -- used by nodes)
+  SoSwitch*		texture_xforms;      // group of shared textures (always switched off -- used by nodes)
   
   ~T3VEWorld();
 };

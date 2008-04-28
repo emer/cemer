@@ -112,6 +112,8 @@ public:
 
   virtual void		SetTexture(SoTexture2* sotx);
   // configure the texture based on values
+  virtual bool		UpdateTexture();
+  // #BUTTON if environment is already initialized and viewed, this will update the texture actually shown in the view
 
   virtual bool	  	NeedsTransform(); // determines if SoTexture2Transform is needed
   virtual void		SetTransform(SoTexture2Transform* sotx);
@@ -839,6 +841,8 @@ public:
 
   VEWorldView*	NewView(T3DataViewFrame* fr = NULL);
   // #NULL_OK #NULL_TEXT_0_NewFrame #BUTTON #CAT_Display make a new viewer of this world (NULL=use existing empty frame if any, else make new frame)
+  VEWorldView*	FindView();
+  // #CAT_Display find first existing viewer of this world (if it exists)
 
   virtual QImage GetCameraImage(int camera_no);
   // #CAT_ODE get camera image from given camera number (image may be null if camera not set)

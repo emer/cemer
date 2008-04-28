@@ -1642,6 +1642,13 @@ bool T3DataViewFrame::SaveImageIV(const String& fname) {
   return true;
 }
 
+void T3DataViewFrame::SetImageSize(int width, int height) {
+  if(!widget()) return;
+  // note: these may not be the same on all platforms!! works for me on my mac.. :)
+  int eff_wd = width + 60;
+  int eff_ht = height + 30;
+  widget()->resize(eff_wd, eff_ht);
+}
 
 //////////////////////////
 //   iTabBarEx		//

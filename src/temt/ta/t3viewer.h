@@ -594,6 +594,8 @@ public:
 
   override QPixmap	GrabImage(bool& got_image);
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = EPS);
+  virtual  void		SetImageSize(int width, int height);
+  // set size of SaveImageAs image to given size parameters
 
   virtual bool		SaveImageEPS(const String& fname = "");
   // save image in EPS format

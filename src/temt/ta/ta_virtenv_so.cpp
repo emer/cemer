@@ -52,6 +52,10 @@ T3VEWorld::T3VEWorld(void* world)
   textures = new SoSwitch;
   textures->whichChild = -1;	// don't render here!
   insertChildBefore(topSeparator(), textures, childNodes());
+
+  texture_xforms = new SoSwitch;
+  texture_xforms->whichChild = -1;	// don't render here!
+  insertChildBefore(topSeparator(), texture_xforms, childNodes());
 }
 
 T3VEWorld::~T3VEWorld()

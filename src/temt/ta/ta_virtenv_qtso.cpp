@@ -105,6 +105,35 @@ void VETexture::SetTransform(SoTexture2Transform* sotx) {
   sotx->center.setValue(center.x, center.y);
 }
 
+bool VETexture::UpdateTexture() {
+  if(idx < 0) return false;
+  bool rval = false;
+  VEWorld* wrld = GET_MY_OWNER(VEWorld);
+  if(wrld) {
+    VEWorldView* wv = wrld->FindView();
+    if(wv) {
+      SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+      if(tsw) {
+	if(tsw->getNumChildren() > idx) {
+	  SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+	  SetTexture(tex);
+	  rval = true;
+	}
+      }
+      tsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
+      if(tsw) {
+	if(tsw->getNumChildren() > idx) {
+	  SoTexture2Transform* tex = (SoTexture2Transform*)tsw->getChild(idx);
+	  SetTransform(tex);
+	  rval = true;
+	}
+      }
+    }
+  }
+  return rval;
+}
+
+
 void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
   cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
   cam->orientation.setValue(SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
@@ -212,14 +241,14 @@ void VEBodyView::Render_pre() {
     
     if((bool)ob->texture && wv) {
       SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+      SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
       VETexture* vtex = ob->texture.ptr();
       int idx = vtex->GetIndex();
       if(idx >= 0 && tsw->getNumChildren() > idx) {
 	SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
 	ssep->addChild(tex);
 	if(vtex->NeedsTransform()) {
-	  SoTexture2Transform* ttx = new SoTexture2Transform;
-	  vtex->SetTransform(ttx);
+	  SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
 	  ssep->addChild(ttx);
 	}
       }
@@ -509,15 +538,14 @@ void VEStaticView::Render_pre() {
 
     if((bool)ob->texture && wv) {
       SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
+      SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
       VETexture* vtex = ob->texture.ptr();
       int idx = vtex->GetIndex();
       if(idx >= 0 && tsw->getNumChildren() > idx) {
 	SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
 	ssep->addChild(tex);
 	if(vtex->NeedsTransform()) {
-// 	  cerr << "using xform" << endl;
-	  SoTexture2Transform* ttx = new SoTexture2Transform;
-	  vtex->SetTransform(ttx);
+	  SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
 	  ssep->addChild(ttx);
 	}
       }
@@ -769,7 +797,7 @@ void VESpaceView::Render_impl() {
 }
 
 //////////////////////////
-//   VEWorldView	//
+//   VEWorld		//
 //////////////////////////
 
 VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
@@ -809,6 +837,22 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
     fr->GetCameraPosOrient();
   return vw;
 }
+
+VEWorldView* VEWorld::FindView() {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    VEWorldView* el;
+    FOR_DLC_EL_OF_TYPE(VEWorldView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
+}
+
+//////////////////////////
+//   VEWorldView	//
+//////////////////////////
 
 void VEWorldView::Initialize() {
   display_on = true;
@@ -976,11 +1020,16 @@ void VEWorldView::CreateTextures() {
   VEWorld* wl = World();
 
   SoSwitch* texsw = node_so->getTextureSwitch();
+  SoSwitch* texxfsw = node_so->getTextureXformSwitch();
   for(int i=0;i<wl->textures.size;i++) {
     VETexture* vtex = wl->textures.FastEl(i);
     SoTexture2* tex = new SoTexture2;
     vtex->SetTexture(tex);
     texsw->addChild(tex);
+
+    SoTexture2Transform* texxf = new SoTexture2Transform;
+    vtex->SetTransform(texxf);
+    texxfsw->addChild(texxf);
   }
 }
 
