@@ -140,7 +140,7 @@ linecount:
 
 
 changelog: changelog-web
-        /usr/local/svn2cl/svn2cl.sh -i -a
+	/usr/local/svn2cl/svn2cl.sh -i -a
 
 changelog-web:
         sudo /usr/local/svn2cl/svn2cl.sh --group-by-day --separate-daylogs --include-rev --include-actions --title="Emergent ChangeLog" --revision-link='http://grey.colorado.edu/cgi-bin/viewvc.cgi?view=rev&revision=' -o /usr/local/svn2cl/www/ChangeLog.html --authors=AUTHORS --html
