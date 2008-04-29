@@ -899,29 +899,31 @@ public:
   };
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
-  virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB, bool quote_str = true);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings
+  virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB,
+				      bool quote_str = true, bool save_headers=true);
+  // #CAT_File #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
   virtual void 		SaveHeader_strm(ostream& strm, Delimiters delim = TAB,
-    bool row_mark = true, int col_fr = 0, int col_to = -1);
+					bool row_mark = true, int col_fr = 0, int col_to = -1);
   // #CAT_File #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings
   virtual void 		SaveDataRow_strm(ostream& strm, int row=-1,
-    Delimiters delim = TAB, bool quote_str = true, bool row_mark = true,
-    int col_fr = 0, int col_to = -1); 
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end
+				 Delimiters delim = TAB, bool quote_str = true,
+				 bool row_mark = true, int col_fr = 0, int col_to = -1); 
+  // #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
   virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
-					 bool quote_str = true); 
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings
+					  bool quote_str = true, bool row_mark=true); 
+  // #CAT_File #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
 
-  virtual void 		SaveData(const String& fname="", Delimiters delim = TAB, bool quote_str = true);
-  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+  virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
+				 bool quote_str = true, bool save_headers=true);
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
   virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
-				   bool quote_str = true); 
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log appends all of current datatable data to given file (does not output header; file assumed to be of same data structure
+				   bool quote_str = true, bool row_mark=true); 
+  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if data_tag then mark data rows with _D: at start (to differentiate from _H: headers)
   virtual void 		SaveHeader(const String& fname="", Delimiters delim = TAB);
   // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
   virtual void 		SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
-					 bool quote_str = true); 
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+				    bool quote_str = true, bool row_mark=true); 
+  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
 
   virtual void		SaveDataLog(const String& fname="", bool append=false,
 				    bool dmem_proc_0 = true);

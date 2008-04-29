@@ -2115,15 +2115,16 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
   strm << endl;
 }
 
-void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str) {
+void DataTable::SaveDataRows_strm(ostream& strm, Delimiters delim, bool quote_str, bool row_mark) {
   for(int row=0;row <rows; row++) {
-    SaveDataRow_strm(strm, row, delim, quote_str);
+    SaveDataRow_strm(strm, row, delim, quote_str, row_mark);
   }
 }
 
-void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str) {
-  SaveHeader_strm(strm, delim);
-  SaveDataRows_strm(strm, delim, quote_str);
+void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str, bool save_headers) {
+  if(save_headers)
+    SaveHeader_strm(strm, delim);
+  SaveDataRows_strm(strm, delim, quote_str, save_headers); // last arg is row mark -- only if headers
 }
 
 void DataTable::SaveHeader(const String& fname, Delimiters delim) {
@@ -2134,18 +2135,18 @@ void DataTable::SaveHeader(const String& fname, Delimiters delim) {
   taRefN::unRefDone(flr);
 }
 
-void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool quote_str) {
+void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool quote_str, bool row_mark) {
   taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->ostrm)
-    SaveDataRow_strm(*flr->ostrm, row, delim, quote_str);
+    SaveDataRow_strm(*flr->ostrm, row, delim, quote_str, row_mark);
   flr->Close();
   taRefN::unRefDone(flr);
 }
 
-void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) {
+void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str, bool save_headers) {
   taFiler* flr = GetSaveFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if (flr->ostrm) {
-    SaveData_strm(*flr->ostrm, delim, quote_str);
+    SaveData_strm(*flr->ostrm, delim, quote_str, save_headers);
   }
   flr->Close();
   taRefN::unRefDone(flr);
@@ -2167,10 +2168,10 @@ void DataTable::SaveData(const String& fname, Delimiters delim, bool quote_str) 
 //   taRefN::unRefDone(flr);
 // }
 
-void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str) {
+void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str, bool row_mark) {
   taFiler* flr = GetAppendFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->ostrm)
-    SaveDataRows_strm(*flr->ostrm, delim, quote_str);
+    SaveDataRows_strm(*flr->ostrm, delim, quote_str, row_mark);
   flr->Close();
   taRefN::unRefDone(flr);
 }
