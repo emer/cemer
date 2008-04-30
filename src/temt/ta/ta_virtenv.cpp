@@ -473,6 +473,16 @@ void VEJoint::SetValsToODE() {
   if(!joint_id) return;
   dJointID jid = (dJointID)joint_id;
 
+  // reset probe vals!
+  pos = 0.0f;
+  vel = 0.0f;
+  pos2 = 0.0f;
+  vel2 = 0.0f;
+  cur_force1 = 0.0f;
+  cur_force2 = 0.0f;
+  cur_torque1 = 0.0f;
+  cur_torque2 = 0.0f;
+
   if(TestError(!body1 || !body1->body_id,
 	       "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
     return;
@@ -638,6 +648,13 @@ void VEJoint::SetValsToODE() {
   }
 }
 
+static float get_val_no_nan(float val) {
+  // note: this may not be sufficiently cross-platform (e.g., windows)
+  // could potentially try this: if(val != val) return 0.0f;  // supposed to be true of nans
+  if(isnan(val)) return 0.0f;
+  return val;
+}
+
 void VEJoint::GetValsFmODE(bool updt_disp) {
   if(!HasJointFlag(FEEDBACK)) return;
   if(!joint_id) CreateODE();
@@ -645,32 +662,40 @@ void VEJoint::GetValsFmODE(bool updt_disp) {
   dJointID jid = (dJointID)joint_id;
 
   dJointGetFeedback(jid);
-  cur_force1.x = ode_fdbk_obj.f1[0]; cur_force1.y = ode_fdbk_obj.f1[1]; cur_force1.z = ode_fdbk_obj.f1[2];
-  cur_force2.x = ode_fdbk_obj.f2[0]; cur_force2.y = ode_fdbk_obj.f2[1]; cur_force2.z = ode_fdbk_obj.f2[2];
-  cur_torque1.x = ode_fdbk_obj.t1[0]; cur_torque1.y = ode_fdbk_obj.t1[1]; cur_torque1.z = ode_fdbk_obj.t1[2];
-  cur_torque2.x = ode_fdbk_obj.t2[0]; cur_torque2.y = ode_fdbk_obj.t2[1]; cur_torque2.z = ode_fdbk_obj.t2[2];
+  cur_force1.x = get_val_no_nan(ode_fdbk_obj.f1[0]);
+  cur_force1.y = get_val_no_nan(ode_fdbk_obj.f1[1]);
+  cur_force1.z = get_val_no_nan(ode_fdbk_obj.f1[2]);
+  cur_force2.x = get_val_no_nan(ode_fdbk_obj.f2[0]);
+  cur_force2.y = get_val_no_nan(ode_fdbk_obj.f2[1]);
+  cur_force2.z = get_val_no_nan(ode_fdbk_obj.f2[2]);
+  cur_torque1.x = get_val_no_nan(ode_fdbk_obj.t1[0]);
+  cur_torque1.y = get_val_no_nan(ode_fdbk_obj.t1[1]);
+  cur_torque1.z = get_val_no_nan(ode_fdbk_obj.t1[2]);
+  cur_torque2.x = get_val_no_nan(ode_fdbk_obj.t2[0]);
+  cur_torque2.y = get_val_no_nan(ode_fdbk_obj.t2[1]);
+  cur_torque2.z = get_val_no_nan(ode_fdbk_obj.t2[2]);
 
   switch(joint_type) {
   case BALL:
     break;
   case HINGE:
-    pos = dJointGetHingeAngle(jid);
-    vel = dJointGetHingeAngleRate(jid);
+    pos = get_val_no_nan(dJointGetHingeAngle(jid));
+    vel = get_val_no_nan(dJointGetHingeAngleRate(jid));
     break;
   case SLIDER:
-    pos = dJointGetSliderPosition(jid);
-    vel = dJointGetSliderPositionRate(jid);
+    pos = get_val_no_nan(dJointGetSliderPosition(jid));
+    vel = get_val_no_nan(dJointGetSliderPositionRate(jid));
     break;
   case UNIVERSAL:
-    pos = dJointGetUniversalAngle1(jid);
-    vel = dJointGetUniversalAngle1Rate(jid);
-    pos2 = dJointGetUniversalAngle2(jid);
-    vel2 = dJointGetUniversalAngle2Rate(jid);
+    pos = get_val_no_nan(dJointGetUniversalAngle1(jid));
+    vel = get_val_no_nan(dJointGetUniversalAngle1Rate(jid));
+    pos2 = get_val_no_nan(dJointGetUniversalAngle2(jid));
+    vel2 = get_val_no_nan(dJointGetUniversalAngle2Rate(jid));
     break;
   case HINGE2:
-    pos = dJointGetHinge2Angle1(jid);
-    vel = dJointGetHinge2Angle1Rate(jid);
-    vel2 = dJointGetHinge2Angle2Rate(jid);
+    pos = get_val_no_nan(dJointGetHinge2Angle1(jid));
+    vel = get_val_no_nan(dJointGetHinge2Angle1Rate(jid));
+    vel2 = get_val_no_nan(dJointGetHinge2Angle2Rate(jid));
     break;
   case FIXED:
     break;
