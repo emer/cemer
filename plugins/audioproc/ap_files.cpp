@@ -114,6 +114,15 @@ int64_t SndfileCodec::SeekFile(int64_t frames, SeekCode whence_) {
 }
 
 //////////////////////////////////
+//  FieldSpec			//
+//////////////////////////////////
+
+void FieldSpec::Initialize() {
+  is_auto = true;
+  act = 1;
+}
+
+//////////////////////////////////
 //  FileInput			//
 //////////////////////////////////
 
@@ -148,11 +157,25 @@ void FileInput::GetCodec() {
   codec = AudioCodec::New(format);
 }
 
+void AllocFields(int raw_fields, bool fields_auto, 
+  int& fields, short& chans)
+{
+  if (fields_auto) {
+    // grab up to 2
+    fields = MIN(raw_fields, 2);
+    if (fields < 1) {
+      fields = 1; // TODO: if it was 0, then something went wrong!
+    }
+  }
+  chans = raw_fields / fields;
+}
+  
 void FileInput::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
   inherited::InitThisConfig_impl(check, quiet, ok);
   
   // if we need_config, then we will need a valid file to open to get it from
-  bool need_config = ((fs.fs_val == SampleFreq::SF_AUTO));
+  bool need_config = ((fs.fs_val == SampleFreq::SF_AUTO) ||
+    num_fields.is_auto);
   if (check) {
     // note: we don't do the config yet, just make sure we can
     if (need_config) {
@@ -172,7 +195,9 @@ void FileInput::InitThisConfig_impl(bool check, bool quiet, bool& ok) {
         "Could not open codec for reading")) return;
     // get the sample rate etc.
     fs.SetCustom(codec->samplerate());
-    out_buff.fields = codec->fields();
+    AllocFields(codec->fields(), num_fields.is_auto, 
+      num_fields.act, out_buff.chans);
+    out_buff.fields = num_fields.act;
     CloseFile();
   }
   out_buff.fs = fs;
@@ -199,9 +224,14 @@ int FileInput::OpenFile()
     CloseFile();
     rval = -1;
   } else {
-    specs_ok = (out_buff.fields == codec->fields());
+    // check that fields/chans jives with that previously set
+    int fields = num_fields.act;
+    short chans = 0;
+    AllocFields(codec->fields(), false, 
+      fields, chans);
+    specs_ok = ((out_buff.fields == fields) && (out_buff.chans == chans));
     if (TestError((!specs_ok), "OpenFile",
-      "Previously set fields does not match this file:", fname)) 
+      "Previously set fields/chans does not match this file:", fname)) 
     {
       CloseFile();
       rval = -1;

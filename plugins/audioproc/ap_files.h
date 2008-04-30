@@ -48,6 +48,20 @@ private:
 };
 TA_SMART_PTRS(AudioCodec)
 
+class AUDIOPROC_API FieldSpec: public taBase {
+  // #INLINE defines how file fields get allocated to chans and fields 
+INHERITED(taBase) 
+public:
+  bool			is_auto; // #LABEL_auto determined from file
+  int			act; // #CONDEDIT_OFF_auto #MIN_1 actual value
+  
+  TA_BASEFUNS(FieldSpec)
+private:
+  void	Initialize();
+  void	Destroy() {}
+  SIMPLE_COPY(FieldSpec)
+};
+
 class AUDIOPROC_API FileInput: public InputBlock
 { /*  get input from a file
   You can either set the sampling rate and fields manually, if you know what they will be,
@@ -59,6 +73,7 @@ public:
   String		fname; // #READ_ONLY #SHOW #SAVE filename in use; can be relative to project
   AudioCodec::SoundFormat format; // #READ_ONLY #SHOW #SAVE sound format
   bool			loop; // if set true, then keep looping input, else set PS_STOP at end
+  FieldSpec		num_fields; // number of fields, typically auto unless using cached Audioproc multi-channel files, in which case you must specify 1 for mono and 2 for stereo files; number of chans are then determined
   
   String		fnameAbs() const {return afname;} // absolute filename
   
