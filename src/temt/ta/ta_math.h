@@ -410,6 +410,8 @@ public:
   // #CAT_Probability cumulative gaussian (unit variance) to z 
   static double gauss_inv(double p);
   // #CAT_Probability inverse of the cumulative for p: z value for given p 
+  static double gauss_inv_lim(double p);
+  // #CAT_Probability inverse of the cumulative for p: z value for given p , returns a non-zero value for p==0 or p==1
   static double gauss_dev();
   // #CAT_Probability gaussian deviate: normally distributed 
   static double erf(double x);
@@ -422,7 +424,9 @@ public:
   static double chisq_q(double X, double v);
   // #CAT_Probability Q(X^2 | v) (complement) 
   static double students_cum(double t, double df);
-  // #CAT_Probability cumulative student's distribution df deg of free t test
+  // #CAT_Probability area between -t and t of the student's distribution df deg of free t test
+  static double students_cum_cum(double t, double df);
+  // #CAT_Probability cumulative student's distribution df deg of free t test 
   static double students_den(double t, double df);
   // #CAT_Probability density fctn of student's distribution df deg of free t test
   static double Ftest_q(double F, double v1, double v2);
@@ -462,6 +466,15 @@ public:
 				    const SimpleMathSpec& math_spec);
   // #CAT_Arithmetic apply simple math operators to values in vector, other vector provides 'arg' value for math_spec
 
+  static bool vec_students_cum(double_Matrix* t,const double_Matrix* df);
+  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test
+  static bool vec_students_cum_cum(double_Matrix* t,const double_Matrix* df);
+  // #CAT_Probability element wise cumulative student's distribution df deg of free t test (area from 0 to t)
+  static bool vec_gauss_inv(double_Matrix* p);
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p 
+  static bool vec_gauss_inv_lim(double_Matrix* p);
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p . returns non-0 values for p==0 or p ==1
+
   ///////////////////////////////////////
   // basic statistics
 
@@ -484,6 +497,8 @@ public:
 
   static double	vec_sum(const double_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
+  static double	vec_sum_range(const double_Matrix* vec, int start=0, int end=-1);
+  // #CAT_Statistics compute the sum of the values in the vector from el=startpos to el=endpos-1
   static double	vec_prod(const double_Matrix* vec);
   // #CAT_Statistics compute the product of the values in the vector
   static double	vec_mean(const double_Matrix* vec);
@@ -912,6 +927,8 @@ public:
   // #CAT_Probability cumulative gaussian (unit variance) to z 
   static float gauss_inv(float p);
   // #CAT_Probability inverse of the cumulative for p: z value for given p 
+  static float gauss_inv_lim(float p);
+  // #CAT_Probability inverse of the cumulative for p: z value for given p , returns nonzero value for p==0 or p==1
   static float gauss_dev();
   // #CAT_Probability gaussian deviate: normally distributed 
   static float erf(float x);
@@ -924,7 +941,9 @@ public:
   static float chisq_q(float X, float v);
   // #CAT_Probability Q(X^2 | v) (complement) 
   static float students_cum(float t, float df);
-  // #CAT_Probability cumulative student's distribution df deg of free t test
+  // #CAT_Probability area between -t and t of cumulative student's distribution df deg of free t test
+  static float students_cum_cum(float t, float df);
+ // #CAT_Probability cumulative student's distribution df deg of free t test 
   static float students_den(float t, float df);
   // #CAT_Probability density fctn of student's distribution df deg of free t test
   static float Ftest_q(float F, float v1, float v2);
@@ -969,6 +988,15 @@ public:
 				    const SimpleMathSpec& math_spec);
   // #CAT_Arithmetic apply simple math operators to values in vector, other vector provides 'arg' value for math_spec
 
+  static bool vec_students_cum(float_Matrix* t,const float_Matrix* df);
+  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test
+  static bool vec_students_cum_cum( float_Matrix* t,const float_Matrix* df);
+  // #CAT_Probability element wise cumulative student's distribution (a is tval, b is df)
+  static bool vec_gauss_inv(float_Matrix* p);
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p 
+  static bool vec_gauss_inv_lim(float_Matrix* p);
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p , returns nonzero values for  p==0 or p==1
+  
   ///////////////////////////////////////
   // basic statistics
 
@@ -991,6 +1019,8 @@ public:
 
   static float	vec_sum(const float_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
+  static float	vec_sum_range(const float_Matrix* vec, int start=0, int end=-1);
+  // #CAT_Statistics compute the sum of the values in the vector from el=startpos to el=endpos-1
   static float	vec_prod(const float_Matrix* vec);
   // #CAT_Statistics compute the product of the values in the vector
   static float	vec_mean(const float_Matrix* vec);

@@ -686,6 +686,30 @@ double taMath_double::gauss_inv(double p) {
   return (zval);
 }
 
+double taMath_double::gauss_inv_lim(double p) {
+  double	minz = -6.0;
+  double	maxz = 6.0;
+  double	zval = 0.0;
+  double	pval;
+
+  if (p < 0.0 || p > 1.0 || p == .5)
+    return (0.0);
+  if(p==0.0)
+    return minz;
+  if(p==1.0)
+    return maxz;
+
+  while (maxz - minz > 0.000001) {
+    pval = gauss_cum(zval);
+    if (pval > p)
+      maxz = zval;
+    else
+      minz = zval;
+    zval = (maxz + minz) * 0.5;
+  }
+  return (zval);
+}
+
 
 double taMath_double::gauss_dev() {
   static int iset=0;
@@ -724,6 +748,14 @@ double taMath_double::chisq_q(double X, double v) {
 
 double taMath_double::students_cum(double t, double df) {
   return 1.0 - beta_i(0.5*df, 0.5, df / (df + t * t));
+}
+
+double taMath_double::students_cum_cum(double t, double df) {
+  float pgtabst = 1.0 - students_cum(t,df);
+  if(t<0)
+    return 0.5*(pgtabst);
+  else
+    return 1.0 - 0.5*pgtabst;
 }
 
 double taMath_double::students_den(double t, double df) {
@@ -832,6 +864,33 @@ bool taMath_double::vec_simple_math_arg(double_Matrix* vec, const double_Matrix*
   return true;
 }
 
+
+bool taMath_double::vec_students_cum(double_Matrix* t, const double_Matrix* df) {
+  if(!vec_check_same_size(t, df)) return false;
+  for(int i=0;i<t->size;i++)
+    t->FastEl_Flat(i) = students_cum(t->FastEl_Flat(i),df->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_double::vec_students_cum_cum(double_Matrix* t, const double_Matrix* df) {
+  if(!vec_check_same_size(t, df)) return false;
+  for(int i=0;i<t->size;i++)
+    t->FastEl_Flat(i) = students_cum_cum(t->FastEl_Flat(i),df->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_double::vec_gauss_inv(double_Matrix* p) {
+  for(int i=0;i<p->size;i++)
+    p->FastEl_Flat(i) = gauss_inv(p->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_double::vec_gauss_inv_lim(double_Matrix* p) {
+  for(int i=0;i<p->size;i++)
+    p->FastEl_Flat(i) = gauss_inv_lim(p->FastEl_Flat(i));
+  return true;
+}
+
 double taMath_double::vec_first(const double_Matrix* vec) {
   if(vec->size == 0) return 0.0;
   return vec->FastEl_Flat(0);
@@ -915,6 +974,19 @@ double taMath_double::vec_abs_min(const double_Matrix* vec, int& idx) {
 double taMath_double::vec_sum(const double_Matrix* vec) {
   double rval = 0.0;
   for(int i=0;i<vec->size;i++)
+    rval += vec->FastEl_Flat(i);
+  return rval;
+}
+
+double taMath_double::vec_sum_range(const double_Matrix* vec, int start, int end) {
+  double rval = 0.0;
+  if(start<0)
+    start = vec->size - 1;
+  if(end<0)
+    end = vec->size;
+  if(start>end)
+    return rval;
+  for(int i=start;i<end;i++)
     rval += vec->FastEl_Flat(i);
   return rval;
 }
@@ -2801,6 +2873,31 @@ float taMath_float::gauss_inv(float p) {
   return (zval);
 }
 
+float taMath_float::gauss_inv_lim(float p) {
+  float	minz = -6.0;
+  float	maxz = 6.0;
+  float	zval = 0.0;
+  float	pval;
+
+  if (p < 0.0 || p > 1.0 || p == .5)
+    return (0.0);
+
+  if(p==0.0)
+    return minz;
+  if(p==1.0)
+    return maxz;
+
+  while (maxz - minz > 0.000001) {
+    pval = gauss_cum(zval);
+    if (pval > p)
+      maxz = zval;
+    else
+      minz = zval;
+    zval = (maxz + minz) * 0.5;
+  }
+  return (zval);
+}
+
 
 float taMath_float::gauss_dev() {
   static int iset=0;
@@ -2839,6 +2936,15 @@ float taMath_float::chisq_q(float X, float v) {
 
 float taMath_float::students_cum(float t, float df) {
   return 1.0 - beta_i(0.5*df, 0.5, df / (df + t * t));
+}
+
+
+float taMath_float::students_cum_cum(float t, float df) {
+  float pgtabst = 1.0 - students_cum(t,df);
+  if(t<0)
+    return 0.5*(pgtabst);
+  else
+    return 1.0 - 0.5*pgtabst ;
 }
 
 float taMath_float::students_den(float t, float df) {
@@ -2956,6 +3062,33 @@ bool taMath_float::vec_simple_math_arg(float_Matrix* vec, const float_Matrix* ar
   return true;
 }
 
+
+bool taMath_float::vec_students_cum(float_Matrix* t, const float_Matrix* df) {
+  if(!vec_check_same_size(t, df)) return false;
+  for(int i=0;i<t->size;i++)
+    t->FastEl_Flat(i) = students_cum(t->FastEl_Flat(i),df->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_float::vec_students_cum_cum(float_Matrix* t, const float_Matrix* df) {
+  if(!vec_check_same_size(t, df)) return false;
+  for(int i=0;i<t->size;i++)
+    t->FastEl_Flat(i) = students_cum_cum(t->FastEl_Flat(i),df->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_float::vec_gauss_inv(float_Matrix* p) {
+  for(int i=0;i<p->size;i++)
+    p->FastEl_Flat(i) = gauss_inv(p->FastEl_Flat(i));
+  return true;
+}
+
+bool taMath_float::vec_gauss_inv_lim(float_Matrix* p) {
+  for(int i=0;i<p->size;i++)
+    p->FastEl_Flat(i) = gauss_inv_lim(p->FastEl_Flat(i));
+  return true;
+}
+
 float taMath_float::vec_first(const float_Matrix* vec) {
   if(vec->size == 0) return 0.0;
   return vec->FastEl_Flat(0);
@@ -3039,6 +3172,20 @@ float taMath_float::vec_abs_min(const float_Matrix* vec, int& idx) {
 float taMath_float::vec_sum(const float_Matrix* vec) {
   float rval = 0.0;
   for(int i=0;i<vec->size;i++)
+    rval += vec->FastEl_Flat(i);
+  return rval;
+}
+
+
+float taMath_float::vec_sum_range(const float_Matrix* vec, int start, int end) {
+  float rval = 0.0;
+  if(start<0)
+    start = vec->size - 1;
+  if(end<0)
+    end = vec->size ;
+  if(start>end)
+    return rval;
+  for(int i=start;i<end;i++)
     rval += vec->FastEl_Flat(i);
   return rval;
 }
