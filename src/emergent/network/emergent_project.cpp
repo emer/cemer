@@ -368,9 +368,9 @@ bool Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
     }
   }
   data_table->StructUpdate(false);
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
-  }
+//   if(taMisc::gui_active) {
+//     tabMisc::DelayedFunCall_gui(data_table, "BrowserSelectMe");
+//   }
   return true;
 }
 

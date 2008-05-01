@@ -151,6 +151,7 @@ public:
   void operator=(taBase*);
   void operator=(taBase**);
 
+  void PtrAssignPtr(const cssEl& s);
   override bool PtrAssignPtrPtr(void* new_ptr_val);
   // use SetPointer..
 

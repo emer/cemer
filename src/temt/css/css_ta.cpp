@@ -391,9 +391,11 @@ void cssTA_Base::Constr() {
   }
   else {
     taBase* ths = GetTAPtr();
-    if(!ths)
-      return;
-    type_def = ths->GetTypeDef();	// just to be sure
+    if(ths) {
+      if(ptr_cnt == 1)
+	taBase::Ref(ths);		// always ref ptrs!
+      type_def = ths->GetTypeDef();	// just to be sure
+    }
   }
 }
 
@@ -427,6 +429,9 @@ cssTA_Base::~cssTA_Base() {
     taBase::UnRef(ths);
     ptr = NULL;
     flags = (PtrFlags)(flags & ~OWN_OBJ);
+  }
+  if(ptr_cnt == 1 && ptr) {
+    taBase::DelPointer((taBase**)&ptr);
   }
 }
 
@@ -496,6 +501,39 @@ String cssTA_Base::GetStr() const {
   }
 }
 
+void cssTA_Base::PtrAssignPtr(const cssEl& s) {
+  if(PtrAssignNullInt(s)) return; // don't proceed further
+  if(!AssignCheckSource(s)) return;
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  int sp_ptr_cnt = sp->GetNonRefPtrCnt();
+  void* sp_ptr = sp->GetNonRefPtr();
+  TypeDef* sp_typ = sp->GetNonRefTypeDef();
+  if(ptr_cnt == sp_ptr_cnt) {
+    if(ptr_cnt == 1)
+      taBase::SetPointer((taBase**)&ptr, (taBase*)sp_ptr);
+    else
+      ptr = sp_ptr;
+    type_def = sp_typ;
+    SetClassParent(sp->class_parent);
+  }
+  else if((ptr_cnt == 1) && (sp_ptr_cnt == 0)) {
+    taBase::SetPointer((taBase**)&ptr, (taBase*)sp_ptr);
+    type_def = sp_typ;
+    SetClassParent(sp->class_parent);
+  }
+  else if((ptr_cnt == 2) && (sp_ptr_cnt <= 1)) {
+    // I'm a ptr-ptr and this sets me to point to another guy
+    if(PtrAssignPtrPtr(sp_ptr)) {
+      type_def = sp_typ;
+    }
+  }
+  else {
+    cssMisc::Error(prog, "Failed to assign TA pointer of type:", type_def->name,
+		   "pointer mismatch.  our ptr_cnt == ", String(ptr_cnt),
+		   "source ptr_cnt == ", String(sp_ptr_cnt));
+  }
+}
+
 bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
   if(!ptr) {
     cssMisc::Error(prog,  "Failed to assign taBase pointer-pointer of type:", GetTypeName(),
@@ -524,7 +562,8 @@ void cssTA_Base::operator=(taBase* cp) {
     UpdateClassParent();
   }
   if(ptr_cnt == 1) {
-    ptr = cp;
+    taBase::SetPointer((taBase**)&ptr, cp); // always use set pointer for ta base!
+//     ptr = cp;
     if(ptr)
       type_def = ((taBase*)ptr)->GetTypeDef();
   }
@@ -554,7 +593,8 @@ void cssTA_Base::operator=(taBase** cp) {
     UpdateClassParent();
   }
   if(ptr_cnt == 1) {
-    ptr = *cp;
+    taBase::SetPointer((taBase**)&ptr, *cp); // always use set pointer!
+    //    ptr = *cp;
     if(ptr)
       type_def = ((taBase*)ptr)->GetTypeDef();
   }
