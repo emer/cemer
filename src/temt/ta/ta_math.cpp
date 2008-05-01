@@ -126,7 +126,7 @@ String Aggregate::GetAggName() const {
 }
 
 bool Aggregate::RealVal() const {
-  if(op == MEAN || op == VAR || op == STDEV || op == SEM) return true;
+  if(op == MEAN || op == VAR || op == SS || op == STDEV || op == SEM) return true;
   return false;
 }
 
@@ -1029,6 +1029,14 @@ double taMath_double::vec_ss_len(const double_Matrix* vec) {
   return rval;
 }
 
+double taMath_double::vec_ss_mean(const double_Matrix* vec) {
+  double rval = 0.0;
+  double mean = vec_mean(vec);
+  for(int i=0;i<vec->size;i++)
+    rval += (vec->FastEl_Flat(i) - mean) * (vec->FastEl_Flat(i) - mean);
+  return rval;
+}
+
 void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size) {
   vec->Reset();
   if(oth->size == 0) return;
@@ -1397,6 +1405,8 @@ double taMath_double::vec_aggregate(const double_Matrix* vec, Aggregate& agg) {
     return taMath_double::vec_mean(vec);
   case Aggregate::VAR:
     return taMath_double::vec_var(vec);
+  case Aggregate::SS:
+    return taMath_double::vec_ss_mean(vec);
   case Aggregate::STDEV:
     return taMath_double::vec_std_dev(vec);
   case Aggregate::SEM:
@@ -2309,6 +2319,23 @@ bool taMath_double::mat_frame_ss_len(double_Matrix* out_mat, const double_Matrix
   return true;
 }
 
+
+bool taMath_double::mat_frame_ss_mean(double_Matrix* out_mat, const double_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    double sumsqr = 0.0f;
+    double sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      sumsqr += in_mat->FastEl_Flat(j * frs + i) * in_mat->FastEl_Flat(j * frs + i);
+      sum += in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = sumsqr - (sum * sum) / frn;
+  }
+  return true;
+}
+
 bool taMath_double::mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   Relation tmp_rel;
@@ -2422,6 +2449,8 @@ bool taMath_double::mat_frame_aggregate(double_Matrix* out_mat, const double_Mat
     return taMath_double::mat_frame_mean(out_mat, in_mat);
   case Aggregate::VAR:
     return taMath_double::mat_frame_var(out_mat, in_mat);
+  case Aggregate::SS:
+    return taMath_double::mat_frame_ss_mean(out_mat, in_mat);
   case Aggregate::STDEV:
     return taMath_double::mat_frame_std_dev(out_mat, in_mat);
   case Aggregate::SEM:
@@ -3228,6 +3257,14 @@ float taMath_float::vec_ss_len(const float_Matrix* vec) {
   return rval;
 }
 
+float taMath_float::vec_ss_mean(const float_Matrix* vec) {
+  float rval = 0.0;
+  float mean = vec_mean(vec);
+  for(int i=0;i<vec->size;i++)
+    rval += (vec->FastEl_Flat(i) - mean) * (vec->FastEl_Flat(i) - mean);
+  return rval;
+}
+
 void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, float bin_size) {
   vec->Reset();
   if(oth->size == 0) return;
@@ -3598,6 +3635,8 @@ float taMath_float::vec_aggregate(const float_Matrix* vec, Aggregate& agg) {
     return taMath_float::vec_mean(vec);
   case Aggregate::VAR:
     return taMath_float::vec_var(vec);
+  case Aggregate::SS:
+    return taMath_float::vec_ss_mean(vec);
   case Aggregate::STDEV:
     return taMath_float::vec_std_dev(vec);
   case Aggregate::SEM:
@@ -4351,6 +4390,22 @@ bool taMath_float::mat_frame_ss_len(float_Matrix* out_mat, const float_Matrix* i
   return true;
 }
 
+bool taMath_float::mat_frame_ss_mean(float_Matrix* out_mat, const float_Matrix* in_mat) {
+  if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
+  int frn = in_mat->frames();
+  int frs = in_mat->frameSize();
+  for(int i=0;i<frs;i++) {
+    float sumsqr = 0.0f;
+    float sum = 0.0f;
+    for(int j=0;j<frn;j++) {
+      sumsqr += in_mat->FastEl_Flat(j * frs + i) * in_mat->FastEl_Flat(j * frs + i);
+      sum += in_mat->FastEl_Flat(j * frs + i);
+    }
+    out_mat->FastEl_Flat(i) = sumsqr - (sum * sum) / frn;
+  }
+  return true;
+}
+
 bool taMath_float::mat_frame_count(float_Matrix* out_mat, const float_Matrix* in_mat, Relation& rel) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   Relation tmp_rel;
@@ -4464,6 +4519,8 @@ bool taMath_float::mat_frame_aggregate(float_Matrix* out_mat, const float_Matrix
     return taMath_float::mat_frame_mean(out_mat, in_mat);
   case Aggregate::VAR:
     return taMath_float::mat_frame_var(out_mat, in_mat);
+  case Aggregate::SS:
+    return taMath_float::mat_frame_ss_mean(out_mat, in_mat);
   case Aggregate::STDEV:
     return taMath_float::mat_frame_std_dev(out_mat, in_mat);
   case Aggregate::SEM:

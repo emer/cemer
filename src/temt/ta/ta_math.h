@@ -80,6 +80,7 @@ public:
     PROD,			// Product
     MEAN,			// Mean of values
     VAR,			// Variance
+    SS,			// Sum of squares around the mean
     STDEV,			// Standard deviation
     SEM,			// Standard error of the mean 
     N, 				// the number of data items in the vector
@@ -511,6 +512,8 @@ public:
   // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
   static double	vec_ss_len(const double_Matrix* vec);
   // #CAT_Statistics sum-of-squares length of the vector
+  static double	vec_ss_mean(const double_Matrix* vec);
+  // #CAT_Statistics sum-of-squares around the mean of the vector
   static void	vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
 			      double bin_size);
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
@@ -698,6 +701,8 @@ public:
   // #CAT_HighDimMatrix compute standard error of the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
   static bool	mat_frame_ss_len(double_Matrix* out_mat, const double_Matrix* in_mat);
   // #CAT_HighDimMatrix compute sum-of-squares length for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_ss_mean(double_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute sum of squares around the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
 
   static bool	mat_frame_count(double_Matrix* out_mat, const double_Matrix* in_mat, Relation& rel);
   // #CAT_HighDimMatrix compute count number of times relationship rel is true for each value within inner frame dimensions across matrix frames (last outer dimension) 
@@ -1033,6 +1038,8 @@ public:
   // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
   static float	vec_ss_len(const float_Matrix* vec);
   // #CAT_Statistics sum-of-squares length of the vector
+  static float	vec_ss_mean(const float_Matrix* vec);
+  // #CAT_Statistics sum-of-squares around the mean of the vector
   static void	vec_histogram(float_Matrix* hist_vec, const float_Matrix* src_vec,
 			      float bin_size);
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
@@ -1221,6 +1228,8 @@ public:
   // #CAT_HighDimMatrix compute standard error of the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
   static bool	mat_frame_ss_len(float_Matrix* out_mat, const float_Matrix* in_mat);
   // #CAT_HighDimMatrix compute sum-of-squares length for each value within inner frame dimensions across matrix frames (last outer dimension) 
+  static bool	mat_frame_ss_mean(float_Matrix* out_mat, const float_Matrix* in_mat);
+  // #CAT_HighDimMatrix compute sum of squares around the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
 
   static bool	mat_frame_count(float_Matrix* out_mat, const float_Matrix* in_mat, Relation& rel);
   // #CAT_HighDimMatrix compute count number of times relationship rel is true for each value within inner frame dimensions across matrix frames (last outer dimension) 
