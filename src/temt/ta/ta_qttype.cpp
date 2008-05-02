@@ -2404,12 +2404,9 @@ void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {
   if(arg_base == NULL)
     return;
   taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
-//   taiToken* rval = (taiToken*)dat;
-// since it is an arg type, its a ptr to a css ptr, don't set it..
-//   if(npt->DerivesFrom(TA_taBase))
-//     taBase::SetPointer((TAPtr*)arg_base, (TAPtr)rval->GetValue());
-//   else
-  *((void**)arg_base) = rval->GetValue();
+  // must use set pointer because cssTA_Base now does refcounts on pointer!
+  taBase::SetPointer((taBase**)arg_base, (taBase*)rval->GetValue());
+//   *((void**)arg_base) = rval->GetValue();
 }
 
 ///////////////////////////////////
@@ -3010,7 +3007,9 @@ void gpiInObjArgType::GetValue_impl(taiData* dat, void*) {
     return;
   //note: GetValue is not modal
   taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
-  *((TAPtr*)arg_base) = els->GetValue();
+  // must use set pointer because cssTA_Base now does refcounts on pointer!
+  taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
+//   *((TAPtr*)arg_base) = els->GetValue();
 }
 
 //////////////////////////////////
@@ -3083,7 +3082,9 @@ void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
   taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
-  *((TAPtr*)arg_base) = els->GetValue();
+  // must use set pointer because cssTA_Base now does refcounts on pointer!
+  taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
+  //  *((TAPtr*)arg_base) = els->GetValue();
 }
 
 MemberDef* gpiFromGpArgType::GetFromMd() {
