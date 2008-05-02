@@ -580,6 +580,12 @@ void ProgVar::UpdateAfterEdit_impl() {
   }
   else {
     ClearVarFlag(LOCAL_VAR);
+    if(var_type == T_Object && object_type) {
+      if(object_type->InheritsFrom(&TA_taMatrix)) {
+	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
+		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+      }
+    }
   }
 }
 
@@ -597,13 +603,12 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 				    "object pointer is NULL");
       rval = false;
     }
-    // this is not actually a very reasonable warning, because these vars can be assigned
-    // directly in the code!
-//     if(owner != &(prg->args) && owner != &(prg->vars)) {
-//       // not quite an error..
-//       if(!quiet) taMisc::Warning("for ProgVar in program:", prognm, "var name:",name,
-// 				 "object pointers should be in program args or vars, not embedded within the program, where they are hard to find and correct if they don't point to the right thing.");
-//     }
+    if(object_type) {
+      if(object_type->InheritsFrom(&TA_taMatrix)) {
+	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
+		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+      }
+    }
   }
 }
 
