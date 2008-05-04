@@ -58,6 +58,18 @@ LeabraProject .projects[0] {
 	ProgVar @[1] { };
       };
 
+      Function_List @.functions = [1] {
+	Function @[0] { 
+	  ProgEl_List @.fun_code = [1] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [1] {
+		ProgVar @[0] { };
+	      };
+	    };
+	  };
+	};
+      };
+
       ProgEl_List @.prog_code = [1] {
 	ForLoop @[0] { 
 	  ProgEl_List @.loop_code = [3] {
@@ -392,6 +404,46 @@ LeabraProject .projects[0] {
     name=;
     el_typ=Function;
     el_def=0;
+    Function @[0] {
+     desc=;
+     flags=;
+     return_val {
+      name="rval";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK;
+      desc=;
+     };
+     name=;
+     args {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     fun_code {
+      name=;
+      el_typ=ProgVars;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=;
+       local_vars {
+	name=;
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @[0] {
+	 name="mytmpvar";
+	 var_type=T_Int;
+	 int_val=0;
+	 objs_ptr=0;
+	 flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
+	 desc=;
+	};
+       };
+      };
+     };
+    };
    };
    load_code {
     name=;

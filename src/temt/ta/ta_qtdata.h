@@ -999,7 +999,7 @@ private:
   taiItemChooser& operator=(const taiItemChooser&); //no
 };
 
-typedef bool (*item_filter_fun)(void*); // optional filter, spec'ed in ITEM_FILTER_xxx
+typedef bool (*item_filter_fun)(void*, void*); // optional filter, spec'ed in ITEM_FILTER_xxx
 
 class TA_API taiItemPtrBase : public taiData {
 // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
@@ -1031,7 +1031,7 @@ public:
   void			setNullText(const String& nt) { null_text = " " + nt; }
   // set text to display instead of NULL for a null item
   
-  bool			ShowItemFilter(void* item) const; // apply optional filter, else true
+  bool			ShowItemFilter(void* base, void* item) const; // apply optional filter, else true
   
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   

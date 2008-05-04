@@ -539,8 +539,9 @@ class TA_API ProgExpr : public ProgExprBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- includes variable lookup functions
 INHERITED(ProgExprBase)
 public:
+  static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
 
-  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
+  ProgVar*	var_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
   DynEnumItem*	enum_lookup;	// #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a dynamic enum variable and add it to the current expression (this field then returns to empty/NULL)
 
   void 	CutLinks();
@@ -654,6 +655,8 @@ class TA_API ProgEl: public taOBase {
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:
+  static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
+
   enum ProgFlags { // #BITS flags for modifying program element function or other information
     PEF_NONE		= 0, // #NO_BIT
     OFF 		= 0x0001, // inactivated: does not generate code
@@ -804,7 +807,7 @@ class TA_API StaticMethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a static method (member function) on a type 
 INHERITED(ProgEl)
 public:
-  ProgVarRef		result_var; // result variable (optional -- can be NULL)
+  ProgVarRef		result_var; // #ITEM_FILTER_StdProgVarFilter result variable (optional -- can be NULL)
   TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
   TypeDef*		object_type; // #TYPE_ON_min_type #APPLY_IMMED The object type to look for methods on
   MethodDef*		method; //  #TYPE_ON_object_type #APPLY_IMMED the method to call
@@ -843,7 +846,10 @@ public:
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
-  PROGEL_SIMPLE_BASEFUNS(Function);
+
+  override void		InitLinks();
+  PROGEL_SIMPLE_COPY(Function);
+  TA_BASEFUNS(Function);
 protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
@@ -892,7 +898,7 @@ class TA_API FunctionCall: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
-  // where to store the result (return value) of the function (optional -- can be NULL)
+  // #ITEM_FILTER_StdProgVarFilter where to store the result (return value) of the function (optional -- can be NULL)
   FunctionRef		fun;
   // #APPLY_IMMED the function to be called
   ProgArg_List		fun_args;

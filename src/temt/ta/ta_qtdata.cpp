@@ -3289,9 +3289,9 @@ void taiItemPtrBase::OpenChooser() {
 delete ic;
 }
 
-bool taiItemPtrBase::ShowItemFilter(void* item) const {
+bool taiItemPtrBase::ShowItemFilter(void* base, void* item) const {
   if (item_filter) 
-    return item_filter(item);
+    return item_filter(base, item);
   return true;
 }
 
@@ -3390,7 +3390,7 @@ const String taiMemberDefButton::labelNameNonNull() const {
 }
 
 bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
-  return (ShowItemFilter(mbr) &&
+  return (ShowItemFilter(NULL, mbr) &&
     mbr->ShowMember());
 }
 
@@ -3421,7 +3421,7 @@ void taiMethodDefButton::BuildCategories_impl() {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    if (!ShowMethod(mth) || !ShowItemFilter(mth)) continue;
+    if (!ShowMethod(mth) || !ShowItemFilter(NULL, mth)) continue;
     cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
     cats->AddUnique(cat);
   }
@@ -3525,7 +3525,7 @@ const String taiMethodDefButton::labelNameNonNull() const {
 }
 
 bool taiMethodDefButton::ShowMethod(MethodDef* mth) {
-  return (ShowItemFilter(mth) &&
+  return (ShowItemFilter(NULL, mth) &&
     mth->ShowMethod());
 }
 
@@ -4017,7 +4017,7 @@ const String taiTokenPtrButton::labelNameNonNull() const {
 }
 
 bool taiTokenPtrButton::ShowToken(void* tk) const {
-  return ShowItemFilter(tk);
+  return ShowItemFilter(scope_ref, tk);
 }
 
 const String taiTokenPtrButton::viewText(int index) const {

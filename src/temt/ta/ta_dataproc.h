@@ -393,7 +393,7 @@ class TA_API DataOneProg : public ProgEl {
   // #VIRT_BASE #NO_INSTANCE a program element for operations on one data table (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    data_var;	// program variable pointing to data table for operation
+  ProgVarRef	    data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to data table for operation
 
   virtual DataTable* GetData();
   // get actual data table pointer from variable
@@ -417,9 +417,9 @@ public:
     RANDOM 			// pick an event at random (with replacement)
   };
 
-  ProgVarRef	data_var;	// program variable pointing to the data table to use
-  ProgVarRef	index_var;	// program variable for the index used in the loop -- goes from 0 to number of rows in data table-1
-  ProgVarRef	order_var;	// variable that contains the order to process data items (rows) in -- is automatically created if not set
+  ProgVarRef	data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to the data table to use
+  ProgVarRef	index_var;	// #ITEM_FILTER_StdProgVarFilter program variable for the index used in the loop -- goes from 0 to number of rows in data table-1
+  ProgVarRef	order_var;	// #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data items (rows) in -- is automatically created if not set
   Order		order;		// #READ_ONLY #SHOW order to process data items (rows) in -- set from order_var
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies (permuted if permuted, otherwise in sequential order)
 
@@ -457,12 +457,12 @@ public:
 
   bool		set_data;	// if true, values in data table are set according to current variable values, otherwise, it gets data from the data table into the variables
   RowType	row_spec;	// #APPLY_IMMED how the row number within data table is specified
-  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW program variable containing information about which row to operate on (depends on row_spec for what this information is)
+  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
-  ProgVarRef	var_1;		// program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_2;		// program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_3;		// program variable to operate on -- name must match name of column in data table!
-  ProgVarRef	var_4;		// program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_3;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
+  ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of column in data table!
 
   override String	GetDisplayName() const;
 
@@ -538,8 +538,8 @@ class TA_API DataSrcDestProg : public ProgEl {
   // #VIRT_BASE #NO_INSTANCE a program element for data operations involving a source and destination (virtual base class -- do not use)
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    src_data_var;	// program variable pointing to source data for operation
-  ProgVarRef	    dest_data_var;	// #NULL_OK program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
+  ProgVarRef	    src_data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to source data for operation
+  ProgVarRef	    dest_data_var;	// #NULL_OK #ITEM_FILTER_StdProgVarFilter program variable pointing to destination (result) data for operation (if NULL, a new one will be automatically created)
 
   virtual DataTable* GetSrcData(); // get source data table pointer from src_data_var (or NULL)
   virtual DataTable* GetDestData(); // get dsource data table pointer from dest_data_var (or NULL)
@@ -658,7 +658,7 @@ class TA_API DataJoinProg : public DataSrcDestProg {
   // joins two datatables (src and src_b) into dest datatable indexed by a common column
 INHERITED(DataSrcDestProg)
 public:
-  ProgVarRef		src_b_data_var;	// variable pointing to second source data for operation
+  ProgVarRef		src_b_data_var;	// #ITEM_FILTER_StdProgVarFilter variable pointing to second source data for operation
   DataJoinSpec		join_spec; 	// #SHOW_TREE data grouping specification
 
   virtual DataTable* GetSrcBData(); // get source data table pointer from src_data_var (or NULL)
@@ -734,8 +734,8 @@ class TA_API DataCalcAddDestRow : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
-  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN source data for operation
-  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW destination table to add row in -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN #ITEM_FILTER_StdProgVarFilter source data for operation
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_StdProgVarFilter destination table to add row in -- automatically updated from DataCalcLoop
 #endif
 
   virtual void	GetDataPtrsFmLoop();
@@ -760,8 +760,8 @@ class TA_API DataCalcSetDestRow : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
-  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN source data for operation
-  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW destination table to add row in -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #HIDDEN #ITEM_FILTER_StdProgVarFilter source data for operation
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_StdProgVarFilter destination table to add row in -- automatically updated from DataCalcLoop
 #endif
 
   virtual void	GetDataPtrsFmLoop();
@@ -786,8 +786,8 @@ class TA_API DataCalcSetSrcRow : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
-  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW source table to set values in -- automatically updated from DataCalcLoop
-  ProgVarRef	    dest_data_var;	// #READ_ONLY #HIDDEN destination table -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_StdProgVarFilter source table to set values in -- automatically updated from DataCalcLoop
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #HIDDEN #ITEM_FILTER_StdProgVarFilter destination table -- automatically updated from DataCalcLoop
 #endif
 
   virtual void	GetDataPtrsFmLoop();
@@ -812,8 +812,8 @@ class TA_API DataCalcCopyCommonCols : public DataSrcDestProg {
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
-  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW source data for copying -- automatically updated from DataCalcLoop
-  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW destination table for copying -- automatically updated from DataCalcLoop
+  ProgVarRef	    src_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_StdProgVarFilter source data for copying -- automatically updated from DataCalcLoop
+  ProgVarRef	    dest_data_var;	// #READ_ONLY #SHOW #ITEM_FILTER_StdProgVarFilter destination table for copying -- automatically updated from DataCalcLoop
 #endif
   bool		only_named_cols;
   // only copy columns that are named in src_cols and dest_cols (otherwise just operates on all the datatable columns)

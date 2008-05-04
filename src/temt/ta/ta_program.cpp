@@ -1477,6 +1477,18 @@ String ProgExprBase::GetFullExpr() const {
 //   ProgExpr		//
 //////////////////////////
 
+bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
+  if(!base_) return true;
+  ProgExpr* base = static_cast<ProgExpr*>(base_);
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  if(!var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
+  Function* varfun = GET_OWNER(var, Function);
+  if(!varfun) return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  Function* basefun = GET_OWNER(base, Function);
+  if(basefun != varfun) return false; // different function scope
+  return true;
+}
+
 void ProgExpr::Initialize() {
   var_lookup = NULL;
   enum_lookup = NULL;
@@ -1813,6 +1825,18 @@ bool ProgArg_List::BrowserCollapseAll() {
 //////////////////////////
 //  ProgEl		//
 //////////////////////////
+
+bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
+  if(!base_) return true;
+  ProgEl* base = static_cast<ProgEl*>(base_);
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  if(!var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
+  Function* varfun = GET_OWNER(var, Function);
+  if(!varfun) return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  Function* basefun = GET_OWNER(base, Function);
+  if(basefun != varfun) return false; // different function scope
+  return true;
+}
 
 void ProgEl::Initialize() {
   flags = PEF_NONE;
@@ -2565,6 +2589,20 @@ bool Function_List::BrowserCollapseAll() {
 void Function::Initialize() {
   args.var_context = ProgVar_List::VC_FuncArgs;
   return_val.name = "rval";
+}
+
+void Function::InitLinks() {
+  inherited::InitLinks();
+  taBase::Own(return_val, this);
+  taBase::Own(args, this);
+  taBase::Own(fun_code, this);
+
+  if(!taMisc::is_loading) {
+    if(fun_code.size == 0) {
+      //      ProgVars* pv = (ProgVars*)
+      fun_code.New(1, &TA_ProgVars); // make this by default because it is typically needed!
+    }
+  }
 }
 
 void Function::UpdateAfterEdit_impl() {

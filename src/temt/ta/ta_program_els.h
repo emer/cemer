@@ -314,7 +314,7 @@ class TA_API Switch: public ProgEl {
   // switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    switch_var;	// variable to switch on
+  ProgVarRef	    switch_var;	// #ITEM_FILTER_StdProgVarFilter variable to switch on
 
   ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
 
@@ -350,7 +350,7 @@ class TA_API AssignExpr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
-  // where to store the result of the expression (the variable)
+  // #ITEM_FILTER_StdProgVarFilter where to store the result of the expression (the variable)
   ProgExpr		expr;
   // expression to assign to variable
   
@@ -372,7 +372,7 @@ class TA_API VarIncr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		var;
-  // variable to increment
+  // #ITEM_FILTER_StdProgVarFilter variable to increment
   ProgExpr		expr;
   // expression for how much to add to variable (use a negative sign to decrement)
   
@@ -393,10 +393,10 @@ class TA_API MethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a method (member function) on an object
 INHERITED(ProgEl)
 public:
-  static bool		ShowVarFilter(void* var); // filter for button, only obj types
+  static bool		ShowVarFilter(void* base, void* var); // filter for button, only obj types
   
   ProgVarRef		result_var;
-  // where to store the result of the method call (optional -- can be NULL)
+  // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
   // #APPLY_IMMED #ITEM_FILTER_ShowVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
@@ -426,7 +426,7 @@ class TA_API MemberProgEl: public ProgEl {
   // #VIRT_BASE base class for dealing with members of objects
 INHERITED(ProgEl)
 public:
-  static bool		ShowVarFilter(void* var); // filter for button, only obj types
+  static bool		ShowVarFilter(void* base, void* var); // filter for button, only obj types
 
   ProgVarRef		obj;
   // #APPLY_IMMED #ITEM_FILTER_ShowVarFilter program variable that points to the object with the method to call
@@ -496,7 +496,7 @@ class TA_API MemberMethodCall: public MemberProgEl {
 INHERITED(MemberProgEl)
 public:
   ProgVarRef		result_var;
-  // where to store the result of the method call (optional -- can be NULL)
+  // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
   MethodDef*		method;
   // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj->path
   ProgArg_List		meth_args;
@@ -553,12 +553,12 @@ class TA_API PrintVar: public ProgEl {
 INHERITED(ProgEl)
 public:
   String		message;	// initial message to print
-  ProgVarRef		print_var; 	// print out (to console) the value of this variable
-  ProgVarRef		print_var2; 	// print out (to console) the value of this variable
-  ProgVarRef		print_var3; 	// print out (to console) the value of this variable
-  ProgVarRef		print_var4; 	// print out (to console) the value of this variable
-  ProgVarRef		print_var5; 	// print out (to console) the value of this variable
-  ProgVarRef		print_var6; 	// print out (to console) the value of this variable
+  ProgVarRef		print_var; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
+  ProgVarRef		print_var2; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
+  ProgVarRef		print_var3; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
+  ProgVarRef		print_var4; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
+  ProgVarRef		print_var5; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
+  ProgVarRef		print_var6; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
@@ -653,10 +653,10 @@ INHERITED(ProgEl)
 public:
   ProgramRef	other_prog; 	// #APPLY_IMMED the other program with variables that you want to get or set
   bool		set_other;	// if true, values in other program are set from our variable values, otherwise our variables get values from those in other program
-  ProgVarRef	var_1;		// program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_2;		// program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_3;		// program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_4;		// program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_3;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
 
   virtual Program*	GetOtherProg();
   // safe call to get other program: emits error if other_prog is null (used by program)
