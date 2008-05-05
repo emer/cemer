@@ -19,6 +19,7 @@
 #include "css_basic_types.h"
 #include "css_builtin.h"
 #include "css_ta.h"
+#include "ta_program.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -275,7 +276,10 @@ QStringList QcssConsole::autocompleteCommand(QString q_cmd) {
 }
 
 void QcssConsole::ctrlCPressed() {
-  cssMisc::cur_top->Stop();
+  cssMisc::Warning(NULL, "User Interrupt");
+  if(cssMisc::cur_top)
+    cssMisc::cur_top->Stop();
+  Program::stop_req = true;	// notify any running programs to stop too
 }
 
 #endif // HAVE_QT_CONSOLE

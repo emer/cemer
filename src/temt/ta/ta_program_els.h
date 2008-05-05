@@ -293,7 +293,7 @@ class TA_API CaseBlock: public CodeBlock {
   // one case element of a switch: if switch variable is equal to case_val, then this chunk of code is run
   INHERITED(CodeBlock)
 public:
-  ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here)
+  ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
 
   override String	GetDisplayName() const;
 
@@ -481,8 +481,14 @@ public:
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
 
-  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
+  //  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
+  void Copy_(const MemberFmArg& cp);
+  SIMPLE_LINKS(MemberFmArg);
+  TA_BASEFUNS(MemberFmArg);
 protected:
+  ProgVar* 		prv_obj; // #IGNORE used to track changes in obj type to clear expr
+  
+  override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 

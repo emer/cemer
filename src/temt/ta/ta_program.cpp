@@ -1882,6 +1882,18 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
       UpdateProgVarRef_NewOwner(*pvr);
     }
+    else if(md->type->InheritsFrom(&TA_ProgramRef)) {
+      ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
+      if(pvr->ptr()) {
+	Program_Group* mygp = GET_MY_OWNER(Program_Group);
+	Program_Group* otgp = GET_OWNER(old_owner, Program_Group);
+	Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
+	if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
+	  Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
+	  if(npg) pvr->set(npg);		    // set it!
+	}
+      }
+    }
   }
 
   UpdatePointers_NewPar(otprg, myprg); // do the generic function to catch anything else..
@@ -1919,6 +1931,18 @@ void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
     else if(md->type->InheritsFrom(&TA_ProgVarRef)) {
       ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
       UpdateProgVarRef_NewOwner(*pvr);
+    }
+    else if(md->type->InheritsFrom(&TA_ProgramRef)) {
+      ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
+      if(pvr->ptr()) {
+	Program_Group* mygp = GET_MY_OWNER(Program_Group);
+	Program_Group* otgp = GET_OWNER(otprg, Program_Group);
+	Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
+	if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
+	  Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
+	  if(npg) pvr->set(npg);		    // set it!
+	}
+      }
     }
   }
 

@@ -227,7 +227,8 @@ int yylex()
 	      if(obj->GetParse() == CSS_PTR) {
 		if(obj->GetType() == cssEl::T_TA) {
 		  cssTA* tao = (cssTA*)obj->GetNonRefObj();
-		  if((tao->type_def != NULL) && tao->type_def->DerivesFormal(TA_enum))
+		  TypeDef* taonrt = tao->GetNonRefTypeDef();
+		  if(taonrt && taonrt->DerivesFormal(TA_enum))
 		    return CSS_SCPTYPE;
 		}
 	      }

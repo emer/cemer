@@ -689,7 +689,7 @@ public:
   ProgEl_List		loop_code; // #SHOW_TREE the items to execute in the loop
   ProgVar_List		src_col_vars;  // #READ_ONLY source column variables
   ProgVar_List		dest_col_vars;  // #READ_ONLY dest column variables
-  ProgVar		src_row_var;	// #IGNORE variable for FindVarName rval for src_row loop variable
+  ProgVar		src_row_var;	// #HIDDEN #READ_ONLY #NO_SAVE variable for FindVarName rval for src_row loop variable
 
 //no  override taList_impl*	children_() {return &loop_code;}	
 
@@ -716,6 +716,7 @@ protected:
   override void CheckChildConfig_impl(bool quiet, bool& rval);
   override void	PreGenChildren_impl(int& item_id);
 
+  virtual void	SetColProgVarFmData(ProgVar* pv, DataOpEl* ds);
   virtual void	UpdateColVars();
   // sync col vars from cols
 

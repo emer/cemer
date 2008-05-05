@@ -1034,7 +1034,7 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
 #ifndef TA_OS_WIN
   signal(SIGILL,  fun);	// 4
   signal(SIGSEGV, fun); // 11
-  signal(SIGINT,  fun);	// 2
+  //  signal(SIGINT,  fun);	// 2 -- this is caught by css!!
   signal(SIGQUIT, fun);	// 3
   signal(SIGBUS,  fun); // 7
   signal(SIGUSR1, fun); // 10

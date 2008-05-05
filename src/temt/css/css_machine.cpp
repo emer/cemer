@@ -348,7 +348,9 @@ void cssMisc::intrcatch(int) {
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
   cssMisc::Warning(NULL, "User Interrupt");
   cssProgSpace* top = cssMisc::cur_top;
-  top->external_stop = true;
+  if(top)
+    top->Stop();
+  Program::stop_req = true;	// notify any running programs to stop too
 }
 #endif
 

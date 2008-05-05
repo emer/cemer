@@ -99,7 +99,8 @@ public:
   Relation	rel;		// #CONDSHOW_ON_op:COUNT,FIND_FIRST,FIND_LAST,QUANTILE parameters for the COUNT, FIND_xxx, and QUANTILE operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
-  virtual bool	 RealVal() const;     // true if agg operation returns a real-valued result
+  virtual ValType MinValType() const; // minimum value type that aggregation operator can operate on (VT_INT = any kind of numeric data, VT_STRING = even non-numeric is ok (GROUP, FIRST, LAST)
+  virtual ValType MinReturnType() const; // minimum return type of the aggregation operator (VT_FLOAT = floating point type (double, float), VT_INT = integer type, VT_STRING = could even be a non-numeric type (GROUP, FIRST, LAST)
 
   void 	Initialize();
   void 	Destroy();

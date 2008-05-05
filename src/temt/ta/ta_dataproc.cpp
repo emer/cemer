@@ -180,8 +180,11 @@ String DataGroupEl::GetDisplayName() const {
 void DataGroupEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(col_lookup) {
-    CheckError((agg.op == Aggregate::GROUP) && (col_lookup->is_matrix), quiet, rval,
+    CheckError((agg.op == Aggregate::GROUP) && col_lookup->isMatrix(), quiet, rval,
 	       "cannot use matrix column to GROUP");
+    ValType mvt = agg.MinValType();
+    CheckError((mvt == Aggregate::VT_INT) && !col_lookup->isNumeric(), quiet, rval,
+	       "aggregation operator:", agg.GetAggName(), "requires numeric data to operate on, but column named:", col_name, "is not numeric");
   }
 }
 
@@ -567,7 +570,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     DataCol* sda = src->data.FastEl(ds->col_idx);
     DataCol* nda;
     // up-convert to float -- always needed for matrix
-    if((sda->valType() == VT_INT) && (ds->agg.RealVal() || sda->isMatrix()))
+    if((sda->valType() == VT_INT) && ((ds->agg.MinReturnType() == VT_FLOAT) || sda->isMatrix()))
       nda = new float_Data;
     else
       nda = (DataCol*)sda->MakeToken();
@@ -653,6 +656,15 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 	int_Matrix* mat = (int_Matrix*)sda->AR();
 	taMath_float::vec_fm_ints(&float_tmp, mat);
 	dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), 0);
+      }
+      else if(sda->valType() == taBase::VT_STRING) {
+	String_Matrix* mat = (String_Matrix*)sda->AR();
+	if(ds->agg.op == Aggregate::FIRST) {
+	  dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), 0);
+	}
+	else if(ds->agg.op == Aggregate::LAST) {
+	  dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
+	}
       }
     }
   }
@@ -765,7 +777,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	    }
 	  }
 	}
-	else {
+	else {			// scalar
 	  if(sda->valType() == taBase::VT_DOUBLE) {
 	    double_Matrix* mat = (double_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
 	    if(mat) {
@@ -788,6 +800,19 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	      taBase::Ref(mat);
 	      taMath_float::vec_fm_ints(&float_tmp, mat);
 	      dda->SetValAsFloat(taMath_float::vec_aggregate(&float_tmp, ds->agg), -1);
+	      taBase::unRefDone(mat);
+	    }
+	  }
+	  else if(sda->valType() == taBase::VT_STRING) {
+	    String_Matrix* mat = (String_Matrix*)sda->GetRangeAsMatrix(st_row, n_rows);
+	    if(mat) {
+	      taBase::Ref(mat);
+	      if(ds->agg.op == Aggregate::FIRST) {
+		dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), 0);
+	      }
+	      else if(ds->agg.op == Aggregate::LAST) {
+		dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
+	      }
 	      taBase::unRefDone(mat);
 	    }
 	  }
@@ -1981,13 +2006,30 @@ void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   // null ok in dest_data just as long as you don't call set dest!
 }
 
+
+void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
+  if(!ds->col_lookup) return;	// nothing to do
+  ValType vt = ds->col_lookup->valType();
+  if(vt == VT_FLOAT || vt == VT_DOUBLE) {
+    pv->SetReal(0.0f);
+  }
+  else if(vt == VT_INT) {
+    pv->SetInt(0);
+  }
+  else if(vt == VT_STRING) {
+    pv->SetString("");
+  }
+}
+
 void DataCalcLoop::UpdateColVars() {
+  src_cols.GetColumns(GetSrcData());
   String srcp = "s_";
   int ti, i;
   for(i = src_col_vars.size - 1; i >= 0; --i) { // delete not used ones
     ProgVar* pv = src_col_vars.FastEl(i);
     src_cols.FindName(pv->name.after(srcp), ti);
     if (ti >= 0) {
+      SetColProgVarFmData(pv, src_cols.FastEl(ti));
       //      pa->UpdateFromVar(*pv);
     } else {
       src_col_vars.RemoveIdx(i);
@@ -2000,18 +2042,21 @@ void DataCalcLoop::UpdateColVars() {
     if(i < 0) {
       ProgVar* pv = new ProgVar();
       pv->name = srcp + ds->col_name;
+      SetColProgVarFmData(pv, ds);
       src_col_vars.Insert(pv, ti);
     } else if (i != ti) {
       src_col_vars.MoveIdx(i, ti);
     }
   }
+  src_cols.ClearColumns();
 
+  dest_cols.GetColumns(GetDestData());
   srcp = "d_";
   for(i = dest_col_vars.size - 1; i >= 0; --i) { // delete not used ones
     ProgVar* pv = dest_col_vars.FastEl(i);
     dest_cols.FindName(pv->name.after(srcp), ti);
     if (ti >= 0) {
-      //      pa->UpdateFromVar(*pv);
+      SetColProgVarFmData(pv, dest_cols.FastEl(ti));
     } else {
       dest_col_vars.RemoveIdx(i);
     }
@@ -2023,11 +2068,13 @@ void DataCalcLoop::UpdateColVars() {
     if(i < 0) {
       ProgVar* pv = new ProgVar();
       pv->name = srcp + ds->col_name;
+      SetColProgVarFmData(pv, ds);
       dest_col_vars.Insert(pv, ti);
     } else if (i != ti) {
       dest_col_vars.MoveIdx(i, ti);
     }
   }
+  dest_cols.ClearColumns();
 }
 
 

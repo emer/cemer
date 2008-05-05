@@ -534,14 +534,19 @@ void CaseBlock::Initialize() {
 
 void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  CheckError(case_val.empty(), quiet, rval,  "case value expression is empty!");
+  //  CheckError(case_val.empty(), quiet, rval,  "case value expression is empty!");
 }
 
 const String CaseBlock::GenCssPre_impl(int indent_level) {
   case_val.ParseExpr();		// re-parse just to be sure!
   if(prog_code.size == 0) return _nilString;
   String il = cssMisc::Indent(indent_level);
-  String rval = il + "case " + case_val.GetFullExpr() + ": {\n";
+  String expr = case_val.GetFullExpr();
+  String rval;
+  if(expr.empty())
+    rval = il + "default: {\n";
+  else
+    rval = il + "case " + case_val.GetFullExpr() + ": {\n";
   return rval; 
 }
 
@@ -558,6 +563,7 @@ const String CaseBlock::GenCssPost_impl(int indent_level) {
 }
 
 String CaseBlock::GetDisplayName() const {
+  if(case_val.expr.empty()) return "default: (" + String(prog_code.size) + " items)";
   return "case: " + case_val.expr + " (" + String(prog_code.size) + " items)";
 }
 
@@ -954,6 +960,30 @@ String MemberAssign::GetDisplayName() const {
 void MemberFmArg::Initialize() {
   update_after = true;
   quiet = false;
+  prv_obj = NULL;
+}
+
+void MemberFmArg::Copy_(const MemberFmArg& cp) {
+  MemberFmArg::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp);
+  UpdateAfterCopy(cp);
+  prv_obj = obj.ptr();
+}
+
+void MemberFmArg::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(prv_obj && obj && (obj != prv_obj)) {
+    if(obj->object_val && prv_obj->object_val &&
+       !obj->object_val->InheritsFrom(prv_obj->object_val->GetTypeDef())) {
+      path = "";		// reset path
+    }
+  }
+  prv_obj = obj.ptr();
+  if(arg_name.empty() && path.nonempty()) {
+    if(path.contains("."))
+      arg_name = path.after(".",-1);
+    else
+      arg_name = path;
+  }
 }
 
 void MemberFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1253,6 +1283,29 @@ void OtherProgramVar::Initialize() {
 void OtherProgramVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!other_prog, quiet, rval, "other_prog is NULL");
+  if(other_prog) {
+    ProgVar* pv = NULL;
+    if(var_1) {
+      pv = other_prog->FindVarName(var_1->name);
+      CheckError(!pv, quiet, rval, "Could not find variable named:", var_1->name,
+		 "in program:", other_prog->name, "path:", other_prog->GetPath_Long());
+    }
+    if(var_2) {
+      pv = other_prog->FindVarName(var_2->name);
+      CheckError(!pv, quiet, rval, "Could not find variable named:", var_2->name,
+		 "in program:", other_prog->name, "path:", other_prog->GetPath_Long());
+    }
+    if(var_3) {
+      pv = other_prog->FindVarName(var_3->name);
+      CheckError(!pv, quiet, rval, "Could not find variable named:", var_3->name,
+		 "in program:", other_prog->name, "path:", other_prog->GetPath_Long());
+    }
+    if(var_4) {
+      pv = other_prog->FindVarName(var_4->name);
+      CheckError(!pv, quiet, rval, "Could not find variable named:", var_4->name,
+		 "in program:", other_prog->name, "path:", other_prog->GetPath_Long());
+    }
+  }
 }
 
 String OtherProgramVar::GetDisplayName() const {
@@ -1341,6 +1394,12 @@ void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!prog, quiet, rval, "prog is NULL");
   CheckError(var_name.empty(), quiet, rval, "var_name is empty");
   CheckError(arg_name.empty(), quiet, rval, "arg_name is empty");
+
+  if(prog && var_name.nonempty()) {
+    ProgVar* pv = prog->FindVarName(var_name);
+    CheckError(!pv, quiet, rval, "Could not find variable named:", var_name, "in program:",
+	       prog->name, "path:", prog->GetPath_Long());
+  }
 }
 
 String ProgVarFmArg::GetDisplayName() const {
