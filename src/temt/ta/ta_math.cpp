@@ -1010,22 +1010,22 @@ double taMath_double::vec_mean(const double_Matrix* vec) {
   return vec_sum(vec) / (double)vec->size;
 }
 
-double taMath_double::vec_var(const double_Matrix* vec, double mean, bool use_mean) {
+double taMath_double::vec_var(const double_Matrix* vec, double mean, bool use_mean, bool use_est) {
   if(vec->size == 0)	return 0.0;
   if(!use_mean)    mean = vec_mean(vec);
   double rval = 0.0;
   for(int i=0;i<vec->size;i++)
     rval += (vec->FastEl_Flat(i) - mean) * (vec->FastEl_Flat(i) - mean);
-  return rval / (double)vec->size;
+  return rval / ((double)vec->size - (double)use_est);
 }
 
-double taMath_double::vec_std_dev(const double_Matrix* vec, double mean, bool use_mean) {
-  return sqrt(vec_var(vec, mean, use_mean));
+double taMath_double::vec_std_dev(const double_Matrix* vec, double mean, bool use_mean, bool use_est) {
+  return sqrt(vec_var(vec, mean, use_mean, use_est));
 }
 
 double taMath_double::vec_sem(const double_Matrix* vec, double mean, bool use_mean) {
   if(vec->size == 0)	return 0.0;
-  return vec_std_dev(vec, mean, use_mean) / sqrt((double)vec->size);
+  return vec_std_dev(vec, mean, use_mean, true) / sqrt((double)vec->size);
 }
 
 double taMath_double::vec_ss_len(const double_Matrix* vec) {
@@ -2271,11 +2271,11 @@ bool taMath_double::mat_frame_mean(double_Matrix* out_mat, const double_Matrix* 
   return true;
 }
 
-bool taMath_double::mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat) {
+bool taMath_double::mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat, bool use_est) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   int frn = in_mat->frames();
   int frs = in_mat->frameSize();
-  double nrm = 1.0 / (double)frn;
+  double nrm = 1.0 / ((double)frn - (double)use_est);
   for(int i=0;i<frs;i++) {
     double mean = 0.0f;
     for(int j=0;j<frn;j++) {
@@ -2292,8 +2292,8 @@ bool taMath_double::mat_frame_var(double_Matrix* out_mat, const double_Matrix* i
   return true;
 }
 
-bool taMath_double::mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat) {
-  if(!mat_frame_var(out_mat, in_mat)) return false;
+bool taMath_double::mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat, bool use_est) {
+  if(!mat_frame_var(out_mat, in_mat, use_est)) return false;
   int frs = in_mat->frameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = sqrt(out_mat->FastEl_Flat(i));
@@ -2302,7 +2302,7 @@ bool taMath_double::mat_frame_std_dev(double_Matrix* out_mat, const double_Matri
 }
 
 bool taMath_double::mat_frame_sem(double_Matrix* out_mat, const double_Matrix* in_mat) {
-  if(!mat_frame_std_dev(out_mat, in_mat)) return false;
+  if(!mat_frame_std_dev(out_mat, in_mat, true)) return false;
   int frs = in_mat->frameSize();
   double nrm = 1.0 / sqrt((double)in_mat->frames());
   for(int i=0;i<frs;i++) {
@@ -3238,25 +3238,25 @@ float taMath_float::vec_mean(const float_Matrix* vec) {
   return vec_sum(vec) / (float)vec->size;
 }
 
-float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean) {
+float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean, bool use_est) {
   if(vec->size == 0)	return 0.0;
   if(!use_mean)    mean = vec_mean(vec);
   float rval = 0.0;
   for(int i=0;i<vec->size;i++)
     rval += (vec->FastEl_Flat(i) - mean) * (vec->FastEl_Flat(i) - mean);
-  return rval / (float)vec->size;
+  return rval / ((float)vec->size - (float)use_est);
 }
 
-float taMath_float::vec_std_dev(const float_Matrix* vec, float mean, bool use_mean) {
-  return sqrt(vec_var(vec, mean, use_mean));
+float taMath_float::vec_std_dev(const float_Matrix* vec, float mean, bool use_mean, bool use_est) {
+  return sqrt(vec_var(vec, mean, use_mean, use_est));
 }
 
 float taMath_float::vec_sem(const float_Matrix* vec, float mean, bool use_mean) {
   if(vec->size == 0)	return 0.0;
-  return vec_std_dev(vec, mean, use_mean) / sqrt((float)vec->size);
+  return vec_std_dev(vec, mean, use_mean, true) / sqrt((float)vec->size);
 }
 
-float taMath_float::vec_ss_len(const float_Matrix* vec) {
+float taMath_float::vec_ss_len(const float_Matrix* vec){
   float rval = 0.0;
   for(int i=0;i<vec->size;i++)
     rval += vec->FastEl_Flat(i) * vec->FastEl_Flat(i);
@@ -4342,11 +4342,11 @@ bool taMath_float::mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_
   return true;
 }
 
-bool taMath_float::mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat) {
+bool taMath_float::mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat, bool use_est) {
   if(!mat_fmt_out_frame(out_mat, in_mat)) return false;
   int frn = in_mat->frames();
   int frs = in_mat->frameSize();
-  float nrm = 1.0 / (float)frn;
+  float nrm = 1.0 / ((float)frn - (float)use_est);
   for(int i=0;i<frs;i++) {
     float mean = 0.0f;
     for(int j=0;j<frn;j++) {
@@ -4363,8 +4363,8 @@ bool taMath_float::mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_m
   return true;
 }
 
-bool taMath_float::mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* in_mat) {
-  if(!mat_frame_var(out_mat, in_mat)) return false;
+bool taMath_float::mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* in_mat, bool use_est) {
+  if(!mat_frame_var(out_mat, in_mat, use_est)) return false;
   int frs = in_mat->frameSize();
   for(int i=0;i<frs;i++) {
     out_mat->FastEl_Flat(i) = sqrt(out_mat->FastEl_Flat(i));
@@ -4373,7 +4373,7 @@ bool taMath_float::mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* 
 }
 
 bool taMath_float::mat_frame_sem(float_Matrix* out_mat, const float_Matrix* in_mat) {
-  if(!mat_frame_std_dev(out_mat, in_mat)) return false;
+  if(!mat_frame_std_dev(out_mat, in_mat, true)) return false;
   int frs = in_mat->frameSize();
   float nrm = 1.0 / sqrt((float)in_mat->frames());
   for(int i=0;i<frs;i++) {

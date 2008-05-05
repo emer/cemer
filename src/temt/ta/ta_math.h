@@ -82,7 +82,7 @@ public:
     VAR,			// Variance
     SS,			// Sum of squares around the mean
     STDEV,			// Standard deviation
-    SEM,			// Standard error of the mean 
+    SEM,			// Standard error of the mean (always uses the unbiased estimate of the variance)
     N, 				// the number of data items in the vector
     COUNT, 			// Count of the number times count relation was true
     MEDIAN,			// middle item in sorted list of values
@@ -96,7 +96,7 @@ public:
 #endif
 
   Operator      op;		// #APPLY_IMMED how to aggregate over the network
-  Relation	rel;		// #CONDSHOW_ON_op:COUNT,FIND_FIRST,FIND_LAST,QUANTILE parameters for the COUNT, FIND_xxx, and QUANTILE operators
+  Relation	rel;		// #CONDSHOW_ON_op:COUNT,FIND_FIRST,FIND_LAST,QUANTILE,VAR,STDEV parameters for the COUNT, FIND_xxx, and QUANTILE operators
 
   virtual String GetAggName() const;  // get string representation of aggregation opr
   virtual ValType MinValType() const; // minimum value type that aggregation operator can operate on (VT_INT = any kind of numeric data, VT_STRING = even non-numeric is ok (GROUP, FIRST, LAST)
@@ -505,10 +505,10 @@ public:
   // #CAT_Statistics compute the product of the values in the vector
   static double	vec_mean(const double_Matrix* vec);
   // #CAT_Statistics compute the mean of the values in the vector
-  static double	vec_var(const double_Matrix* vec, double mean=0, bool use_mean=false);
-  // #CAT_Statistics compute the variance of the values, opt with given mean
-  static double	vec_std_dev(const double_Matrix* vec, double mean=0, bool use_mean=false);
-  // #CAT_Statistics compute the standard deviation of the values, opt with given mean
+  static double	vec_var(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the variance of the values, opt with given mean, if use_est is true, divides by N-1 rather than N
+  static double	vec_std_dev(const double_Matrix* vec, double mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the standard deviation of the values, opt with given mean, if use_est is true, divides by N-1 rather than N
   static double	vec_sem(const double_Matrix* vec, double mean=0, bool use_mean=false);
   // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
   static double	vec_ss_len(const double_Matrix* vec);
@@ -694,9 +694,9 @@ public:
   // #CAT_HighDimMatrix compute product for each value within inner frame dimensions across matrix frames (last outer dimension) 
   static bool	mat_frame_mean(double_Matrix* out_mat, const double_Matrix* in_mat);
   // #CAT_HighDimMatrix compute mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
-  static bool	mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat);
+  static bool	mat_frame_var(double_Matrix* out_mat, const double_Matrix* in_mat, bool use_est=false);
   // #CAT_HighDimMatrix compute variance for each value within inner frame dimensions across matrix frames (last outer dimension) 
-  static bool	mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat);
+  static bool	mat_frame_std_dev(double_Matrix* out_mat, const double_Matrix* in_mat, bool use_est=false);
   // #CAT_HighDimMatrix compute standard deviation for each value within inner frame dimensions across matrix frames (last outer dimension) 
   static bool	mat_frame_sem(double_Matrix* out_mat, const double_Matrix* in_mat);
   // #CAT_HighDimMatrix compute standard error of the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
@@ -1031,10 +1031,10 @@ public:
   // #CAT_Statistics compute the product of the values in the vector
   static float	vec_mean(const float_Matrix* vec);
   // #CAT_Statistics compute the mean of the values in the vector
-  static float	vec_var(const float_Matrix* vec, float mean=0, bool use_mean=false);
-  // #CAT_Statistics compute the variance of the values, opt with given mean
-  static float	vec_std_dev(const float_Matrix* vec, float mean=0, bool use_mean=false);
-  // #CAT_Statistics compute the standard deviation of the values, opt with given mean
+  static float	vec_var(const float_Matrix* vec, float mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the variance of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N
+  static float	vec_std_dev(const float_Matrix* vec, float mean=0, bool use_mean=false, bool use_est=false);
+  // #CAT_Statistics compute the standard deviation of the values, opt with given mean; if use_est == true, then divides by N-1 rather than N
   static float	vec_sem(const float_Matrix* vec, float mean=0, bool use_mean=false);
   // #CAT_Statistics compute the standard error of the mean of the values, opt with given mean
   static float	vec_ss_len(const float_Matrix* vec);
@@ -1221,9 +1221,9 @@ public:
   // #CAT_HighDimMatrix compute product for each value within inner frame dimensions across matrix frames (last outer dimension) 
   static bool	mat_frame_mean(float_Matrix* out_mat, const float_Matrix* in_mat);
   // #CAT_HighDimMatrix compute mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
-  static bool	mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat);
+  static bool	mat_frame_var(float_Matrix* out_mat, const float_Matrix* in_mat, bool use_est=false);
   // #CAT_HighDimMatrix compute variance for each value within inner frame dimensions across matrix frames (last outer dimension) 
-  static bool	mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* in_mat);
+  static bool	mat_frame_std_dev(float_Matrix* out_mat, const float_Matrix* in_mat, bool use_est=false);
   // #CAT_HighDimMatrix compute standard deviation for each value within inner frame dimensions across matrix frames (last outer dimension) 
   static bool	mat_frame_sem(float_Matrix* out_mat, const float_Matrix* in_mat);
   // #CAT_HighDimMatrix compute standard error of the mean for each value within inner frame dimensions across matrix frames (last outer dimension) 
