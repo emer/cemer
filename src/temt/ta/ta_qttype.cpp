@@ -2063,7 +2063,7 @@ taiArgType::~taiArgType() {
     use_it = NULL;
   }
   if (obj_inst != NULL) {
-    delete obj_inst;
+//     delete obj_inst;   // this is now done automatically by deref from taBase var pointer!!
     obj_inst = NULL;
   }
 }
