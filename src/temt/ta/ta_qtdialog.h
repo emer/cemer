@@ -274,10 +274,10 @@ public:
   static void	DeleteChildrenLater(QObject* obj); // convenience function -- deleteLater all children
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
+  TypeDef*		typ;		// type of object (if relevant)
+  void*			root;	// current root pointer of object (if relevant)
   int		ctrl_size;	// a taiMisc::SizeSpec-compatible value (ie, from FontSpec) -- def is taiM->ctrl_size
   bool          read_only;	// cannot change data
-  TypeDef*	typ;		// type of object (if relevant)
-  void*		cur_base;	// current base pointer of object (if relevant)
   int		state;		// Dlg_State value -- indicates state of construction of dialog
   bool		modal;	// true if dialog is of the modal variety, always false for edit panels
   bool		no_ok_but;	// no ok button
@@ -311,6 +311,7 @@ public:
     bool modal_ = false, QObject* parent = 0);
   virtual ~taiDataHostBase(); //
 
+  taBase*	Base_() const; // root of the object, if a taBase 
   void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
 
   void  Constr(const char* prompt = "", const char* win_title = "",
@@ -467,8 +468,9 @@ public: // IDataHost i/f
   bool		isModal() {return modal;}
   bool		isReadOnly() {return read_only;} //
 // iMainWindowViewer* viewerWindow() const; n/a here -- defined in taiEDH
-  void*		Base() {return cur_base;} // base of the object
-  TypeDef*	GetBaseTypeDef() {return typ;} // TypeDef on the base, for casting
+  void*		Root() const {return root;} // root of the object
+  taBase*	Base() const {return Base_();} // root of the object, if a taBase 
+  TypeDef*	GetRootTypeDef() const {return typ;} // TypeDef on the root, for casting
   void		GetImage()	{GetImage(true);}
   void		GetValue()	{ }
 public slots:
@@ -676,8 +678,6 @@ INHERITED(taiDataHostBase)
 public:
   QTextEdit*		edit;
   MemberDef*		mbr; // the member being edited (doesn't have to be String)
-  
-  taBase*		base() const;
   
   void 			Constr(const char* prompt = "", const char* win_title = "");
   override void		GetImage();

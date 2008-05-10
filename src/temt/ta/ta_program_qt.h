@@ -151,8 +151,9 @@ public: // IDataHost i/f -- some delegate up to mommy
   taMisc::ShowMembs 	show() const {return (taMisc::ShowMembs)m_show;} 
     // used by polydata
   iMainWindowViewer* 	window() const;
-  void*			Base() {return (void*)base;} // base of the object
-  TypeDef*		GetBaseTypeDef(); // TypeDef on the base, for casting
+  void*			Root() const {return (void*)base;} // base of the object
+  taBase*		Base() const {return base;} // root of the object, if a taBase 
+  TypeDef*		GetRootTypeDef() const; // TypeDef on the base, for casting
   void			GetValue();
   void			GetImage();
   void			Changed(); // called by embedded item to indicate contents have changed
@@ -290,7 +291,7 @@ public: //
     MS_CNT	= 4, 
   };
   
-  inline Program*	prog() const {return (Program*)cur_base;}
+  inline Program*	prog() const {return (Program*)root;}
 
   
   iProgramCtrlDataHost(Program* base, bool read_only_ = false,

@@ -687,7 +687,7 @@ taiDataHostBase::taiDataHostBase(TypeDef* typ_, bool read_only_,
   read_only = read_only_;
   modified = false;
   typ = typ_;
-  cur_base = NULL;
+  root = NULL;
   modal = modal_;
   state = EXISTS;
 
@@ -745,6 +745,12 @@ void taiDataHostBase::Apply() {
 /*obs  GetImage();
   Unchanged(); */
   --updating;
+}
+
+taBase*	taiDataHostBase::Base_() const {
+  if (typ && typ->InheritsFrom(&TA_taBase))
+    return (taBase*)root;
+  else return NULL;
 }
 
 void taiDataHostBase::Revert() {
@@ -921,7 +927,7 @@ void taiDataHostBase::Constr_Buttons() {
 
 void taiDataHostBase::DataLinkDestroying(taDataLink* dl) {
 // TENT, TODO: confirm this is right...
-  cur_base = NULL;
+  root = NULL;
 //NO!  if (!isConstructed()) return;
   Cancel();
 }
@@ -1681,7 +1687,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
 :taiDataHost(typ_, read_only_, modal_, parent)
 {
-  cur_base = base;
+  root = base;
   // note: subclass might add more membs, and might set def_size to use them
   membs.SetMinSize(MS_CNT); 
   membs.def_size = MS_CNT;
@@ -1701,9 +1707,10 @@ taiEditDataHost::~taiEditDataHost() {
   taiMisc::active_edits.RemoveEl(this);
   taiMisc::css_active_edits.RemoveEl(this);
   // remove data client -- harmless if already done in Cancel
-  if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
-    ((taBase*)cur_base)->RemoveDataClient(this);
-    cur_base = NULL;
+  taBase* rbase = Base();
+  if  (rbase) {
+    rbase->RemoveDataClient(this);
+    root = NULL;
   }
   bgrp = NULL;
 }
@@ -1742,8 +1749,9 @@ void taiEditDataHost::Cancel_impl() {
     delete menu;
     menu = NULL;
   }
-  if  (cur_base && (typ && typ->InheritsFrom(&TA_taBase))) {
-    ((taBase*)cur_base)->RemoveDataClient(this);
+  taBase* rbase = Base();
+  if  (rbase) {
+    rbase->RemoveDataClient(this);
   }
   if (isPanel()) {
     if (panel != NULL)
@@ -1889,8 +1897,8 @@ void taiEditDataHost::Constr_Strings() {
   String desc; 
   if (typ != NULL) {
     prompt_str = typ->name;
-    if (typ->InheritsFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)cur_base;
+    TAPtr rbase = Base();
+    if (rbase) {
       desc = rbase->GetDesc(); // often empty -- use td if so
       if(rbase->GetOwner() != NULL)
         win_str += String(" ") + rbase->GetPath();
@@ -1918,7 +1926,7 @@ void taiEditDataHost::Constr_Methods_impl() {
     MethodDef* md = typ->methods.FastEl(i);
     if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
       continue;
-    taiMethodData* mth_rep = md->im->GetMethodRep(cur_base, this, NULL, frmMethButtons); //buttons are in the frame
+    taiMethodData* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
     if (mth_rep == NULL)
       continue;
 
@@ -1939,8 +1947,9 @@ void taiEditDataHost::Constr_Methods_impl() {
 }
 
 void taiEditDataHost::Constr_RegNotifies() {
-  if ((typ && typ->InheritsFrom(&TA_taBase) && cur_base)) {
-    ((taBase*)cur_base)->AddDataClient(this);
+  taBase* rbase = Base();
+  if (rbase) {
+    rbase->AddDataClient(this);
   }
 }
 //void taiEditDataHost::Constr_ShowMenu() {
@@ -1967,7 +1976,7 @@ void taiEditDataHost::DoRaise_Panel() {
 }
 
 void taiEditDataHost::DoSelectForEdit(int param){
-  taProject* proj = (taProject*)((taBase*)cur_base)->GetThisOrOwner(&TA_taProject);
+  taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
   if (!proj) return;
   
   SelectEdit* se = proj->edits.Leaf(param);
@@ -1984,7 +1993,7 @@ void taiEditDataHost::DoSelectForEdit(int param){
   if ((idx = se->FindMbrBase(base, md)) >= 0)
     se->RemoveField(idx);
   else {
-    se->SelectMember((taBase*)cur_base, md, lbl, desc);
+    se->SelectMember((taBase*)root, md, lbl, desc);
   }
 }
 
@@ -1994,8 +2003,8 @@ MemberDef* taiEditDataHost::GetMemberPropsForSelect(int sel_idx, taBase** base,
   MemberDef* md = NULL;
   if (!(membs.GetFlatDataItem(sel_idx, &md) && md))
     return NULL;
-  if (base) *base = (taBase*)cur_base;
-  String tlbl = ((taBase*)cur_base)->GetName().elidedTo(16);
+  if (base) *base = (taBase*)root;
+  String tlbl = ((taBase*)root)->GetName().elidedTo(16);
   lbl = tlbl;
   return md;
 }
@@ -2051,12 +2060,13 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   QMenu* menu, int& last_id)
 {
   // have to be a taBase to use SelEdit
-  if ((cur_base == NULL) || (typ == NULL) || (!typ->InheritsFrom(&TA_taBase))) return; 
+  taBase* rbase = Base();
+  if (!rbase) return; 
   MemberDef* md = NULL; //sel_item_md; // from inherited routine
   if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
     return; 
   // get list of select edits
-  taProject* proj = (taProject*)((taBase*)cur_base)->GetThisOrOwner(&TA_taProject);
+  taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
   if (!proj || proj->edits.leaves == 0) return;
   if (sel_edit_mbrs) { 
 
@@ -2068,7 +2078,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
       sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
       sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
       // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
-      if (se->FindMbrBase((taBase*)cur_base, md) >= 0)
+      if (se->FindMbrBase((taBase*)root, md) >= 0)
         sub->setItemEnabled(i, false);
     }
     menu->insertItem("Add to SelectEdit", sub, ++last_id);
@@ -2083,7 +2093,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
       sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
       sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
       // determine if already on that seledit, and disable if it isn't
-      if (se->FindMbrBase((taBase*)cur_base, md) < 0)
+      if (se->FindMbrBase((taBase*)root, md) < 0)
         sub->setItemEnabled(i, false);
     }
     menu->insertItem("Remove from SelectEdit", sub, ++last_id);
@@ -2103,7 +2113,7 @@ void taiEditDataHost::GetButtonImage(bool force) {
       
     bool ghost_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
-    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, cur_base, ghost_on, val_is_eq))
+    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, root, ghost_on, val_is_eq))
       continue;
     QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
     if (ghost_on) {
@@ -2115,7 +2125,7 @@ void taiEditDataHost::GetButtonImage(bool force) {
 }
 
 void taiEditDataHost::GetImage(bool force) {
-  if ((typ == NULL) || (cur_base == NULL)) return;
+  if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   //note: we could be invisible, so we only do what is visible
   if (host_type != HT_CONTROL) 
@@ -2132,7 +2142,7 @@ void taiEditDataHost::GetImage(bool force) {
 void taiEditDataHost::GetImage_Membs() {
   cur_row = 0;
   if (inline_mode) {
-    GetImageInline_impl(cur_base);
+    GetImageInline_impl(root);
   } else {
     GetImage_Membs_def();
   }
@@ -2147,7 +2157,7 @@ void taiEditDataHost::GetImageInline_impl(const void* base) {
 void taiEditDataHost::GetImage_Membs_def() {
   for (int i = 0; i < membs.def_size; ++i) {
     if (show_set(i) && (data_el(i).size > 0))
-      GetImage_impl(&memb_el(i), data_el(i), cur_base);
+      GetImage_impl(&memb_el(i), data_el(i), root);
   }
 }
 
@@ -2172,7 +2182,7 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
 }
 
 void taiEditDataHost::GetValue() {
-  if ((typ == NULL) || (cur_base == NULL)) return;
+  if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   if (state > DEFERRED1) {
     GetValue_Membs();
@@ -2183,12 +2193,12 @@ void taiEditDataHost::GetValue() {
 
 void taiEditDataHost::GetValue_Membs() {
   if (inline_mode) {
-    GetValueInline_impl(cur_base);
+    GetValueInline_impl(root);
   } else {
     GetValue_Membs_def();
   }
-  if (typ->InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)cur_base;
+  TAPtr rbase = Base();
+  if (rbase) {
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
     taiMisc::Update(rbase);
   }
@@ -2197,7 +2207,7 @@ void taiEditDataHost::GetValue_Membs() {
 void taiEditDataHost::GetValue_Membs_def() {
   for (int i = 0; i < membs.def_size; ++i) {
     if (show_set(i) && (data_el(i).size > 0))
-      GetValue_impl(&memb_el(i), data_el(i), cur_base);
+      GetValue_impl(&memb_el(i), data_el(i), root);
   }
 }
 
@@ -2293,17 +2303,13 @@ taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_
   bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
-  cur_base = base_;
+  root = base_;
   mbr = mbr_;
   edit = NULL;
   btnPrint = NULL;
 }
 
 taiStringDataHost::~taiStringDataHost() {
-}
-
-taBase* taiStringDataHost::base() const {
-  return (taBase*)cur_base;
 }
 
 void taiStringDataHost::Constr(const char* prompt, const char* win_title) {
@@ -2316,16 +2322,17 @@ void taiStringDataHost::Constr_Box() {
 }
 
 void taiStringDataHost::Constr_RegNotifies() {
-  if ((typ && typ->InheritsFrom(&TA_taBase) && cur_base)) {
-    ((taBase*)cur_base)->AddDataClient(this);
+  taBase* rbase = Base_(); // cache
+  if (rbase) {
+    rbase->AddDataClient(this);
   }
 }
 
 void taiStringDataHost::Constr_Strings() {
 //NO  inherited::Constr_Strings(prompt_str_, win_str_); // for if non-empty
-  taBase* base = this->base(); // cache
-  if (base && mbr) {
-    win_str = "Editing " + base->GetPath() + ":" + mbr->GetLabel();
+  taBase* rbase = Base_(); // cache
+  if (rbase && mbr) {
+    win_str = "Editing " + rbase->GetPath() + ":" + mbr->GetLabel();
   }
   if (mbr) {
     prompt_str = mbr->GetLabel() + ": " + mbr->desc;
@@ -2360,13 +2367,13 @@ void taiStringDataHost::DoConstr_Dialog(iDialog*& dlg) {
 
 
 void taiStringDataHost::GetImage() {
-  String val = mbr->type->GetValStr(mbr->GetOff(cur_base), cur_base, mbr);
+  String val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
   edit->setPlainText(val);
 }
 
 void taiStringDataHost::GetValue() {
   String val = edit->toPlainText();
-  mbr->type->SetValStr(val, mbr->GetOff(cur_base), cur_base, mbr);
+  mbr->type->SetValStr(val, mbr->GetOff(root), root, mbr);
 }
 
 void taiStringDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {

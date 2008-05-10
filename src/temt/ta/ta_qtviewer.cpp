@@ -5377,7 +5377,7 @@ iTabViewer* iViewPanelFrame::tabViewerWin() const {
 
 void iViewPanelFrame::UpdateButtons() {
   if (!(vp_flags & VP_USE_BTNS)) return;
-  if (Base() && m_modified) {
+  if (Root() && m_modified) {
     btnApply->setEnabled(true);
     btnRevert->setEnabled(true);
   } else {

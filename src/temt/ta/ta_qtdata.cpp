@@ -4973,10 +4973,10 @@ void taiMethodData::UpdateAfter() {
     return;
   }
   // this is inside the host itself
-  if ((host->GetBaseTypeDef() != NULL) && 
-    host->GetBaseTypeDef()->InheritsFrom(TA_taBase)) 
+  if ((host->GetRootTypeDef() != NULL) && 
+    host->GetRootTypeDef()->InheritsFrom(TA_taBase)) 
   {
-    TAPtr tap = (TAPtr)host->Base();
+    TAPtr tap = host->Base();
     if (tap && meth->HasOption("UPDATE_MENUS")) {
       taiMisc::Update(tap);	// update menus and stuff
       tap->UpdateAllViews(); // tell others to update

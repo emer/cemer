@@ -368,7 +368,7 @@ void iProgramEditor::Base_Add() {
     layMeths = NULL;
   }
   
-  TypeDef* typ = GetBaseTypeDef();
+  TypeDef* typ = GetRootTypeDef();
   // check for a desc guy, it will consume another line
   MemberDef* md_desc = typ->members.FindName("desc");
   if (md_desc) --lines;
@@ -524,13 +524,13 @@ int iProgramEditor::editLines() const {
   return 4;
 }
 
-TypeDef* iProgramEditor::GetBaseTypeDef() {
+TypeDef* iProgramEditor::GetRootTypeDef() const {
   if (base) return base->GetTypeDef();
   else return &TA_void; // avoids null issues
 }
 
 void iProgramEditor::GetValue() {
-  TypeDef* typ = GetBaseTypeDef();
+  TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
   
   ++m_changing;
@@ -554,7 +554,7 @@ void iProgramEditor::GetValue() {
 }
 
 void iProgramEditor::GetImage() {
-  TypeDef* typ = GetBaseTypeDef();
+  TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
 //note: buttons update themselves automatically  
   ++m_changing;

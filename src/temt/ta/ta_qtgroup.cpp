@@ -1193,7 +1193,7 @@ gpiListDataHost::gpiListDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
 : gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
-  cur_lst = (TABLPtr)cur_base;
+  cur_lst = (TABLPtr)root;
   num_lst_fields = 0;
 }
 
@@ -1373,7 +1373,7 @@ gpiCompactListDataHost::gpiCompactListDataHost(void* base, TypeDef* typ_, bool r
 : gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
   header_row = false; 
-  cur_lst = (TABLPtr)cur_base;
+  cur_lst = (TABLPtr)root;
 }
 
 gpiCompactListDataHost::~gpiCompactListDataHost() {
@@ -1543,7 +1543,7 @@ void gpiArrayEditDataHost::Constr_AryData_Labels() {
   AddSectionLabel(-1, lbl,
     "the data items in the array, one per line");
   
-  taArray_base* cur_ary = (taArray_base*)cur_base;
+  taArray_base* cur_ary = (taArray_base*)root;
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
@@ -1571,7 +1571,7 @@ int gpiArrayEditDataHost::Edit() {
 
 void gpiArrayEditDataHost::GetImage_Membs() {
   inherited::GetImage_Membs();
-  taArray_base* cur_ary = (taArray_base*)cur_base;
+  taArray_base* cur_ary = (taArray_base*)root;
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
@@ -1583,7 +1583,7 @@ void gpiArrayEditDataHost::GetImage_Membs() {
 
 void gpiArrayEditDataHost::GetValue_Membs() {
   inherited::GetValue_Membs();
-  taArray_base* cur_ary = (taArray_base*)cur_base;
+  taArray_base* cur_ary = (taArray_base*)root;
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i){
@@ -1612,7 +1612,7 @@ bool SArgEditDataHost::ShowMember(MemberDef* md) const {
 }
 
 void SArgEditDataHost::Constr_AryData() {
-  SArg_Array* cur_ary = (SArg_Array*)cur_base;
+  SArg_Array* cur_ary = (SArg_Array*)root;
   cur_ary->UpdateAfterEdit();
   MemberDef* eldm = typ->members.FindName("el");
   taiType* it = eldm->type->GetNonPtrType()->it;
@@ -1647,7 +1647,7 @@ void DocEditDataHost::init() {
 }
 
 taDoc* DocEditDataHost::doc() const {
-  return static_cast<taDoc*>(cur_base);
+  return static_cast<taDoc*>(root);
 }
 
 void DocEditDataHost::Constr_Body() {

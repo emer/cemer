@@ -1498,7 +1498,7 @@ void taiTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
   TAPtr scope = NULL;
   if (!mbr->HasOption("NO_SCOPE")) {
     scope = (TAPtr)base;
-/*nn    if((rval->host != NULL) && (rval->host)->GetBaseTypeDef()->InheritsFrom(TA_taBase))
+/*nn    if((rval->host != NULL) && (rval->host)->GetRootTypeDef()->InheritsFrom(TA_taBase))
       scope = (TAPtr)(rval->host)->Base(); */
   }
   TypeDef* scope_type = NULL;
@@ -2376,9 +2376,9 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   TAPtr scope = NULL;
   if(GetHasOption("NO_SCOPE"))
     scope = NULL;
-  else if((rval->host != NULL) && (rval->host->GetBaseTypeDef() != NULL) &&
-	  (rval->host->GetBaseTypeDef()->InheritsFrom(TA_taBase)))
-    scope = (TAPtr)(rval->host)->Base();
+  else if((rval->host != NULL) && (rval->host->GetRootTypeDef() != NULL) &&
+	  (rval->host->GetRootTypeDef()->InheritsFrom(TA_taBase)))
+    scope = (rval->host)->Base();
   else
     scope = (TAPtr)base;
   TypeDef* scope_type = NULL;
@@ -2658,8 +2658,8 @@ void taiDefaultEditDataHost::Enum_Members() {
 
 void taiDefaultEditDataHost::GetValue() {
   inherited::GetValue();
-  if (typ->InheritsFrom(TA_taBase)) {
-    TAPtr rbase = (TAPtr)cur_base;
+  TAPtr rbase = Base();
+  if (rbase) {
     taBase_List* gp = typ->defaults;
     TypeDefault* tpdflt = NULL;
     if (gp != NULL) {

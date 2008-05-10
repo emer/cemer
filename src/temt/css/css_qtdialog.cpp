@@ -323,7 +323,7 @@ cssiArgDialog::cssiArgDialog(MethodDef* md_, TypeDef* typ_, void* base_, int use
 {
   md = md_;
   typ = typ_;
-  base = base_;
+  root = base_;
   use_argc = use_argc_;
   hide_args = hide_args_;
   err_flag = false;
@@ -375,7 +375,7 @@ void cssiArgDialog::Constr_ArgTypes() {
         "for arg_name: ", arg_name, " -- no more parameters will be shown for this function"); 
       break;			// don't add new args after bad one..
     }
-    cssEl* el = art->GetElFromArg(arg_name, base);
+    cssEl* el = art->GetElFromArg(arg_name, root);
     if (el == NULL) {
       taMisc::Warning("could not get a cssEl for taiArgType: ", art->GetTypeDef()->name,
         "for arg_name: ", arg_name, " -- no more parameters will be shown for this function"); 
@@ -445,7 +445,7 @@ void cssiArgDialog::GetValue() {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
     taiData* mb_dat = data_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
-    art->GetValue(mb_dat, base);
+    art->GetValue(mb_dat, root);
     if (art->err_flag)
       err_flag = true;
     else if(!art->meth->HasOption("NO_SAVE_ARG_VAL")) {
@@ -468,7 +468,7 @@ void cssiArgDialog::GetImage(bool) {
     taiArgType* art = (taiArgType*)type_el.FastEl(i);
     taiData* mb_dat = data_el(0).SafeEl(i);
     if (mb_dat == NULL) break; // shouldn't happen
-    art->GetImage(mb_dat, base);
+    art->GetImage(mb_dat, root);
   }
   GetImage_PromptTitle();
   Unchanged();

@@ -44,7 +44,6 @@ public:
 
   cssiEditDialog(cssClassInst* ob, cssProgSpace* tp = NULL,
     bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
-//nn  cssiEditDialog() {obj=NULL; top=NULL;} // not really used
   ~cssiEditDialog();
 
   override void		GetImage_Membs();
@@ -71,8 +70,6 @@ class CSS_API cssiArgDialog : public cssiEditDialog {
 public:
   bool		err_flag; 	// true if an arg was improperly set
   MethodDef*	md;
-  TypeDef*	typ;
-  void*		base;
   int		use_argc;
   int 		hide_args; // number of leading args to hide in dialogs to user (because context has already predetermined them)
 

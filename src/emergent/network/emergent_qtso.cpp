@@ -60,7 +60,7 @@ int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {
 bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
   if (!host_) return true;
   void* base = host_->Base();
-  TypeDef* typ = host_->GetBaseTypeDef();
+  TypeDef* typ = host_->GetRootTypeDef();
   if (!base || !typ) return true;
 
   if(typ->InheritsFrom(TA_BaseSpec_Group))

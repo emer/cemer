@@ -682,7 +682,7 @@ bool taiMisc::RevertEdits(void* obj, TypeDef*) {
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
     taiEditDataHost* dlg = active_edits.FastEl(i);
-    if((dlg->cur_base == obj) && (dlg->state == taiDataHost::ACTIVE)) {
+    if((dlg->root == obj) && (dlg->state == taiDataHost::ACTIVE)) {
       dlg->Revert_force();
       got_one = true;
     }
@@ -695,7 +695,7 @@ bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
     taiEditDataHost* edh = active_edits.FastEl(i);
-    if((edh->cur_base == obj) && (edh->state == taiDataHost::ACTIVE)) {
+    if((edh->root == obj) && (edh->state == taiDataHost::ACTIVE)) {
       edh->ReShow_Async(force);
       got_one = true; 
     }
@@ -711,7 +711,7 @@ taiEditDataHost* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_win) {
   if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
     taiEditDataHost* host = active_edits.FastEl(i);
-    if ((host->cur_base != obj) || (host->state != taiDataHost::ACTIVE))
+    if ((host->root != obj) || (host->state != taiDataHost::ACTIVE))
       continue;
     if (host->isDialog() && !host->modal)
       return host;
@@ -726,7 +726,7 @@ taiEditDataHost* taiMisc::FindEditDialog(void* obj, bool read_only_state) {
   if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
     taiEditDataHost* host = active_edits.FastEl(i);
-    if ((host->cur_base != obj) || (host->state != taiDataHost::ACTIVE))
+    if ((host->root != obj) || (host->state != taiDataHost::ACTIVE))
       continue;
     if (host->isDialog() && !host->modal && (host->read_only == read_only_state))
       return host;
@@ -744,7 +744,7 @@ taiEditDataHost* taiMisc::FindEditPanel(void* obj, bool read_only,
   if (!taMisc::gui_active) return NULL;
   for (int i = active_edits.size - 1; i >= 0; --i) {
     taiEditDataHost* host = active_edits.FastEl(i);
-    if ((host->cur_base != obj) || (host->state != taiDataHost::ACTIVE))
+    if ((host->root != obj) || (host->state != taiDataHost::ACTIVE))
       continue;
     if (host->isPanel() && (host->read_only == read_only) &&
       (host->dataPanel()->window() != not_in_win)) // if niw NULL, then will always be true

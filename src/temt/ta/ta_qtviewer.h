@@ -1416,8 +1416,9 @@ public: // IDataHost i/f -- some delegate up to mommy
   taMisc::ShowMembs 	show() const {return taMisc::show_gui;}
     // used by polydata
   iMainWindowViewer* 	window() const {return (tabView()) ? tabView()->viewerWindow() : NULL;}
-  void*			Base() {return (void*)m_dv;} // (typical, could replace)
-  TypeDef*		GetBaseTypeDef(){return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
+  void*			Root() const {return (void*)m_dv;} // (typical, could replace)
+  taBase*		Base() const {return m_dv;} // (typical, could replace)
+  TypeDef*		GetRootTypeDef() const {return (m_dv) ? m_dv->GetTypeDef() : NULL;} // (could replace)
   void			GetValue(); // does setup, override the impl
   void			GetImage() {UpdatePanel();}
 public slots:

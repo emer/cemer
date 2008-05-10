@@ -74,8 +74,9 @@ public:
   virtual taMisc::ShowMembs show() const = 0;
   virtual iMainWindowViewer* viewerWindow() const {return NULL;} // used to set cliphandler
   virtual bool		HasChanged() = 0; // 'true' if has changed
-  virtual void*		Base() = 0; // base of the object
-  virtual TypeDef*	GetBaseTypeDef() = 0; // TypeDef on the base, for casting
+  virtual void*		Root() const = 0; // root of the object
+  virtual taBase*	Base() const = 0; // root of the object, if a taBase 
+  virtual TypeDef*	GetRootTypeDef()const  = 0; // TypeDef on the root, for casting
   virtual void		GetValue() = 0; // copy gui to value
   virtual void		GetImage() = 0; // copy value to gui
   virtual void		Changed() {} // called by embedded item to indicate contents have changed
