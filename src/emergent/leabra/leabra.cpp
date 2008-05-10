@@ -200,19 +200,19 @@ void LeabraConSpec::Defaults() {
 void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if((int)net->learn_rule == (int)learn_rule) return;
   learn_rule = (LeabraConSpec::LearnRule)net->learn_rule;
-  if(learn_rule == CTLEABRA_CAL) {
-    lmix.err_sb = false;
-    dwt_norm.on = true;
-    // too much potential for damage here from subclasses etc..
-//     if(lrate == 0.01f)
-//       lrate = 0.1f;
-  }
-  else {	// LEABRA_CHL
+  if(learn_rule == LEABRA_CHL) {
     lmix.err_sb = true;
     dwt_norm.on = false;
     // too much potential for damage here from subclasses etc..
 //     if(lrate == 0.1f)
 //       lrate = 0.01f;
+  }
+  else {
+//     lmix.err_sb = false;
+    dwt_norm.on = true;
+    // too much potential for damage here from subclasses etc..
+//     if(lrate == 0.01f)
+//       lrate = 0.1f;
   }
 }
 
@@ -1467,10 +1467,12 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
 //////////////////////////////////////////
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-    recv_gp->Compute_SRAvg(u);
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_SRAvg(u);
+    }
   }
   ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_SRAvg((LeabraCon*)u->bias.Cn(0), u);
 }
@@ -1493,21 +1495,31 @@ void LeabraUnitSpec::Compute_dWt(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork*
 
 void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule == LeabraNetwork::LEABRA_CHL) {
-    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_LeabraCHL((LeabraCon*)u->bias.Cn(0), u);
     for(int g = 0; g < u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
       recv_gp->Compute_dWt_LeabraCHL(u);
     }
+    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_LeabraCHL((LeabraCon*)u->bias.Cn(0), u);
   }
-  else { // CTLEABRA_CAL
-    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0), u,
-								  lay);
+  else if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
     for(int g = 0; g < u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
       recv_gp->Compute_dWt_CtLeabraCAL(u);
     }
+    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0), u,
+								  lay);
+  }
+  else if(net->learn_rule == LeabraNetwork::CTLEABRA_DCAL) {
+    for(int g = 0; g < u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_dWt_CtLeabraDCAL(u);
+    }
+    // straight-up cal for bias weights -- critical that it come after above because sravg is used!
+    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0),
+								   u, lay);
   }
 }
 
@@ -1520,7 +1532,7 @@ void LeabraUnitSpec::Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetw
       recv_gp->Compute_Weights_LeabraCHL(u);
     }
   }
-  else { // CTLEABRA_CAL
+  else { // CTLEABRA_CAL, DCAL
     for(int g = 0; g < u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
@@ -2056,12 +2068,12 @@ void LeabraLayerSpec::SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoc
 }
 
 void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
-    decay.phase = 0.0f;		// no phase decay -- these are not even called
-    decay.phase2 = 0.0f;
+  if(net->learn_rule == LeabraNetwork::LEABRA_CHL) {
+    decay.phase = 1.0f;		// all phase decay
   }
   else {
-    decay.phase = 1.0f;		// all phase decay
+    decay.phase = 0.0f;		// no phase decay -- these are not even called
+    decay.phase2 = 0.0f;
   }
 
   if(lay->unit_spec.SPtr()) {
@@ -2871,7 +2883,7 @@ void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay, Unit_Group*, LeabraInh
 }
 
 void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule != LeabraNetwork::CTLEABRA_CAL) return;
+  if(net->learn_rule == LeabraNetwork::LEABRA_CHL) return;
 
   float bi = net->ct_sin_i.burst_i;
   float ti = net->ct_sin_i.trough_i;
@@ -3806,7 +3818,7 @@ void LeabraLayerSpec::AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 void LeabraLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
     lay->sravg_nrm = 1.0f / lay->sravg_sum;
   }
@@ -3819,14 +3831,14 @@ void LeabraLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     return;			// we don't learn here -- only after nothing!
   }
   Compute_dWt_impl(lay, net);
 }
 
 void LeabraLayerSpec::Compute_dWt_SecondPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->learn_rule == LeabraNetwork::CTLEABRA_CAL) && (net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS)) {
+  if((net->learn_rule != LeabraNetwork::LEABRA_CHL) && (net->phase_order == LeabraNetwork::MINUS_PLUS_PLUS)) {
     Compute_dWt_impl(lay, net);	// go for it..
   }
   return;			// standard layers never learn here
@@ -4306,15 +4318,7 @@ void LeabraNetwork::SetLearnRule_ConSpecs(BaseSpec_Group* spgp) {
 }
 
 void LeabraNetwork::SetLearnRule() {
-  if(learn_rule == CTLEABRA_CAL) {
-    if(phase_order == MINUS_PLUS) {
-      phase_order = MINUS_PLUS_NOTHING;
-    }
-    maxda_stopcrit = -1;
-    min_cycles = 0;
-    min_cycles_phase2 = 0;
-  }
-  else {
+  if(learn_rule == LEABRA_CHL) {
     if(phase_order == MINUS_PLUS_NOTHING) {
       phase_order = MINUS_PLUS;
     }
@@ -4322,6 +4326,14 @@ void LeabraNetwork::SetLearnRule() {
     min_cycles = 15;
     min_cycles_phase2 = 35;
     cycle_max = 60;
+  }
+  else {
+    if(phase_order == MINUS_PLUS) {
+      phase_order = MINUS_PLUS_NOTHING;
+    }
+    maxda_stopcrit = -1;
+    min_cycles = 0;
+    min_cycles_phase2 = 0;
   }
 
   SetLearnRule_ConSpecs(&specs);
@@ -4493,7 +4505,7 @@ void LeabraNetwork::Cycle_Run() {
   // ct_cycle is pretty useful anyway
   if(phase_no == 0 && cycle == 0) // detect start of trial
     ct_cycle = 0;
-  if(learn_rule == CTLEABRA_CAL) {
+  if(learn_rule != LEABRA_CHL) {
     if(train_mode != TEST) {	// for training mode only, do some learning
       // timing is all computed at the layer level!
       Compute_SRAvg();
@@ -4631,7 +4643,7 @@ void LeabraNetwork::Settle_Init_Decay() {
 }
 
 void LeabraNetwork::Settle_Init_CtTimes() {
-  if(learn_rule != CTLEABRA_CAL) return;
+  if(learn_rule == LEABRA_CHL) return;
 
   if(phase_order >= MINUS_PLUS_PLUS_NOTHING) {
     switch(phase_no) {

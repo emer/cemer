@@ -283,6 +283,10 @@ void LeabraLimPrecConSpec::Initialize() {
   prec_levels = 1024;
 }
 
+void LeabraCtExptConSpec::Initialize() {
+  learn_var = STD_CT;
+}
+
 //////////////////////////////////
 // 	Scalar Value Layer	//
 //////////////////////////////////
@@ -875,7 +879,7 @@ void ScalarValLayerSpec::Compute_dWt_Ugp(Unit_Group* ugp, LeabraLayer* lay, Leab
 }
 
 void ScalarValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
     lay->sravg_nrm = 1.0f / lay->sravg_sum;
   }
@@ -1747,7 +1751,7 @@ void TwoDValLayerSpec::Compute_dWtUgp(Unit_Group* ugp, LeabraLayer* lay, LeabraN
 }
 
 void TwoDValLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
     lay->sravg_nrm = 1.0f / lay->sravg_sum;
   }

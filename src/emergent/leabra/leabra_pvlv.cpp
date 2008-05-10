@@ -246,7 +246,7 @@ void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, bool er_avail, float pve_val
 }
 
 void PViLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
 //     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
 //     lay->sravg_nrm = 1.0f / lay->sravg_sum;
 //   }
@@ -603,7 +603,7 @@ void LVeLayerSpec::Update_LVPrior(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, bo
 }
 
 void LVeLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
 //     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
 //     lay->sravg_nrm = 1.0f / lay->sravg_sum;
 //   }
@@ -781,7 +781,7 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, bool er_avail) {
 }
 
 void NVLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
-//   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL) {
+//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
 //     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
 //     lay->sravg_nrm = 1.0f / lay->sravg_sum;
 //   }

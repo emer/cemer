@@ -204,6 +204,10 @@ public:
     inherited::Compute_dWt_CtLeabraCAL(cg, ru);
     Depress_Wt(cg, ru);
   }
+  void Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    inherited::Compute_dWt_CtLeabraDCAL(cg, ru);
+    Depress_Wt(cg, ru);
+  }
 
   void C_Reset_EffWt(TrialSynDepCon* cn) {
     cn->effwt = cn->wt;
@@ -815,6 +819,98 @@ public:
 
   SIMPLE_COPY(LeabraLimPrecConSpec);
   TA_BASEFUNS(LeabraLimPrecConSpec);
+// protected:
+//   void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+};
+
+
+class LEABRA_API LeabraCtExptConSpec : public LeabraConSpec {
+  // experimental variations of Ct learning rules
+INHERITED(LeabraConSpec)
+public:
+  enum LearnVar {
+    STD_CT,			// standard ct
+    CHL,
+    CHL_SUBPROD,		// CHL with subprod: (x+ - x-) * (y+ - y-)
+    MINUS_INDEP_AVG, // use the independently computed average activations instead of sravg coproduct: x+ y+ - <x-> <y-> instead of - <x- y->
+    MINUS_INDEP_AVG_SUBPROD, // compute product of sub terms: (x+ - <x->)(y+ - <y->)
+  };
+
+  LearnVar	learn_var;	// learning variant to implement
+
+  inline float C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
+					 float ru_act_p, float su_act_p, float avg_nrm, 
+					 LeabraCon* rbwt, LeabraCon* sbwt,
+					 float ru_act_m, float su_act_m) {
+    float err;
+    if(learn_var == STD_CT) {
+      err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
+    }
+    else if(learn_var == CHL) {
+      err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
+    }
+    else if(learn_var == CHL_SUBPROD) {
+      err = (ru_act_p - ru_act_m) * (su_act_p - su_act_m);
+    }
+    else if(learn_var == MINUS_INDEP_AVG) {
+      // using bias weight's sravg here!
+      err = (ru_act_p * su_act_p) - ((avg_nrm * rbwt->sravg) * (avg_nrm * sbwt->sravg));
+    }
+    else if(learn_var == MINUS_INDEP_AVG_SUBPROD) {
+      // using bias weight's sravg here!
+      err = (ru_act_p - (avg_nrm * rbwt->sravg)) * (su_act_p - (avg_nrm * sbwt->sravg));
+    }
+    if(lmix.err_sb) {
+      if(err > 0.0f)	err *= (1.0f - cn->wt);
+      else		err *= cn->wt;
+    }
+    return err;
+  }
+
+  inline void Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+    // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
+      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+    }
+    LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+    if(lfm->acts_p.avg < savg_cor.thresh) {
+      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+    }
+    if(ru->in_subgp) {
+      LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+      if(ogp->acts_p.avg < savg_cor.thresh) {
+	Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+      }
+    }
+
+    // only no hebb condition supported!!
+
+    LeabraCon* rbwt = (LeabraCon*)ru->bias.Cn(0);
+
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if(ogp->acts_p.avg < savg_cor.thresh) {
+	  cn->sravg = 0.0f;	continue; // critical: must reset!
+	}
+      }
+      LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
+      C_Compute_dWt_NoHebb(cn, ru, 
+			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
+						     rlay->sravg_nrm, rbwt, sbwt,
+						     ru->act_m, su->act_m));
+      cn->sravg = 0.0f;
+    }
+  }
+
+  SIMPLE_COPY(LeabraCtExptConSpec);
+  TA_BASEFUNS(LeabraCtExptConSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
 private:
