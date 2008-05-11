@@ -598,16 +598,15 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 		"Name:",name,"is forbidden -- choose another"))
     name = "My" + name;
   if(var_type == T_Object) {
-    if(HasVarFlag(NULL_CHECK) && !object_val) {
+    if(!HasVarFlag(LOCAL_VAR) && HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
 				    "object pointer is NULL");
       rval = false;
     }
     if(object_type) {
-      if(object_type->InheritsFrom(&TA_taMatrix)) {
-	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
-		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
-      }
+      TestWarning(!HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
+		  "ProgVar", "for Matrix* ProgVar named:",name,
+		  "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
     }
   }
 }
