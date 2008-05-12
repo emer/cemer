@@ -143,10 +143,14 @@ public:
   };
 
   TypeDef* 		typ;		// type for the gui object
+  MemberDef*		mbr; // for members
   IDataHost*		host;		// dialog or edit panel that this belongs to (optional)
   String		orig_val;	// text of original data value
   taiData*		parent() {return mparent;} // if data is contained within data, this the parent container
   void			setParent(taiData* value); // 
+  virtual taBase*	Base() const; // base, typically the parent::ChildBase else the IHost::Base
+  virtual taBase*	ChildBase() const {return Base();} 
+   // child base, typically Base, but ex. override by Polys
   virtual void		Delete(); // use this to dynamically delete this, including the rep
   taiData(); // for ta_TA.cc only
   taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
@@ -169,7 +173,7 @@ public:
   inline int		flags() const {return mflags;}
   bool			HasFlag(int flag_) const {return (mflags & flag_);} // returns true if has the indicated Flag (convenience method)
   void			SetFlag(int flags_, bool value = true) {if (value) mflags |= flags_; else mflags &= ~flags_;} // sets or clears a flag or set of flags
-  virtual void		SetMemberDef(MemberDef* mbr) {} // taiMember sets this
+  virtual void		SetMemberDef(MemberDef* mbr_) {mbr = mbr_;} // taiMember sets this
   
   void			SetThisAsHandler(bool set_it = true); // called by compatible controls to set or unset the control as clipboard/focus handler (usually don't need to unset)
   virtual void		DataChanged(taiData* chld = NULL);

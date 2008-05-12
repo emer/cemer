@@ -151,7 +151,6 @@ public:
   iLineEdit*		rep() const { return leText; }
   bool			fillHor() {return true;} // override 
   void 			setMinCharWidth(int num); // hint for min chars, 0=no min
-  override void		SetMemberDef(MemberDef* mbr_) {mbr = mbr_;}
   
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiField();
@@ -169,7 +168,6 @@ protected:
   QPointer<QToolButton>	btnEdit; // if requested, button to invoke dialog editor
 #endif
   iFieldEditDialog*	edit; // an edit dialog, if created
-  MemberDef*		mbr;
   override void		GetImage_impl(const void* base) {GetImage(*((String*)base));}
   override void		GetValue_impl(void* base) const {*((String*)base) = GetValue();} 
   override void		GetImageVar_impl(const Variant& val) {GetImage(val.toString());}
@@ -383,11 +381,13 @@ public:
   inline QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   bool			fillHor() {return true;} // override 
 
+  override taBase*	ChildBase() const {return base;}
   override void 	AddChildMember(MemberDef* md);
   
   ~taiPolyData();
 
 protected:
+  mutable taBase*	base; // ONLY for context menus
   void			Constr(QWidget* gui_parent_);
   void			AddTypeMembers(); // called to add all typ members
   override void		ChildRemove(taiData* child); // remove from memb_el too

@@ -481,8 +481,9 @@ public slots:
 protected:
   bool			show_meth_buttons; // true if any are created
   bool			sel_edit_mbrs; // support right-click for seledit of mbrs
-//  MemberDef*		sel_item_md; // only used during handling of context menu for select edits
-  int			sel_item_idx; // only used during handling of context menu for select edits
+  //int			sel_item_idx; // only used during handling of context menu for select edits
+  taiData*		sel_item_dat; // ONLY used/valid in handling of context menu for select edits
+  //MemberDef*		sel_item_md; // ONLY used/valid in handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
@@ -547,7 +548,9 @@ public:
   void			SetMinSize(int n); // make sure there are at least n sets
   void			ResetItems(bool data_only = false); // calls Reset on all lists
   bool			GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat = NULL);
-   // get the flat dat (both optional) as a flat idx
+   // get the dat and/or mbr (both optional) from a flat idx
+  int			GetFlatDataIndex(taiData* dat);
+   // get the flat idx from a dat (-1 if not found)
   int			GetDataSize() const; // # data items
   
   MembSet_List()  {def_size = 0;}

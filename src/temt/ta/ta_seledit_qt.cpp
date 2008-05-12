@@ -215,7 +215,7 @@ void iSelectEditDataHost::Constr_Methods() {
 
 void iSelectEditDataHost::DoRemoveSelEdit() {
    // removes the sel_item_index item 
-  int sel_item_index = sel_item_idx;
+  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
@@ -228,7 +228,7 @@ void iSelectEditDataHost::DoRemoveSelEdit() {
 void iSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   QMenu* menu, int& last_id)
 {
-  int sel_item_index = sel_item_idx;
+  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
   if (sel_item_index < 0) return; 
   menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
 }

@@ -1050,7 +1050,9 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   row_height = 1; // actual value set in Constr
   cur_row = 0;
   dat_cnt = 0;
-  sel_item_idx = -1;
+//  sel_item_idx = -1;
+  sel_item_dat = NULL;
+//  sel_item_md = NULL;
   rebuild_body = false;
   sel_edit_mbrs = true; // inherited guys can turn off
 }
@@ -1123,7 +1125,8 @@ iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
   label->setFixedHeight(taiM->label_height(ctrl_size));
   //note: can't use row as index, since there are section headers, so just use flat
 //  if (md) label->setUserData((ta_intptr_t)md);
-  if (dat_idx >= 0) label->setUserData(dat_idx);
+//  if (dat_idx >= 0) label->setUserData(dat_idx);
+  if (buddy) label->setUserData((ta_intptr_t)buddy);
   if (ctx_obj) QObject::connect(
     label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
       ctx_obj, ctx_slot );
@@ -1442,10 +1445,12 @@ void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e)
 
 void taiDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
 //  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
-  sel_item_idx = -1;
+//  sel_item_idx = -1;
+  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+/*  sel_item_dat = NULL;
   QVariant var = sender->userData();
-  if (var.isValid())
-    sel_item_idx = var.toInt();
+  if (var.isPtrType())
+    sel_item_dat = (taiData*)var.toPtr(); // pray!!! */
 }
 
 void taiDataHost::Iconify(bool value) {
@@ -1650,6 +1655,21 @@ bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat) {
     break; // out of range
   }
   return false;
+}
+
+int MembSet_List::GetFlatDataIndex(taiData* dat) {
+  if (!dat) return -1;
+  int rval = 0;
+  for (int i = 0; i < size; ++i) {
+    MembSet* ms = FastEl(i);
+    int ti_set = ms->data_el.FindEl(dat);
+    if (ti_set >= 0) {
+      return (rval + ti_set);
+    } else {
+      rval += ms->data_el.size;
+    }
+  }
+  return -1;
 }
 
 int MembSet_List::GetDataSize() const {
@@ -1981,19 +2001,21 @@ void taiEditDataHost::DoSelectForEdit(int param){
   
   SelectEdit* se = proj->edits.Leaf(param);
  
-  taBase* base = NULL;
-  String lbl;
-  String desc;
-  MemberDef* md = GetMemberPropsForSelect(sel_item_idx, &base, lbl, desc);
+  if (!sel_item_dat) return; // shouldn't happen!
+  taBase* rbase = sel_item_dat->Base();
+//  MemberDef* md = GetMemberPropsForSelect(sel_item_idx, &base, lbl, desc);
+  MemberDef* md = sel_item_dat->mbr;
+  if (!md || !se || !rbase) return; //shouldn't happen...
   
-  if (!md || !se || !base) return; //shouldn't happen...
+  String desc;
+  String lbl = rbase->GetName().elidedTo(16);
   
   //NOTE: this handler adds if not on, or removes if already on
   int idx;
-  if ((idx = se->FindMbrBase(base, md)) >= 0)
+  if ((idx = se->FindMbrBase(rbase, md)) >= 0)
     se->RemoveField(idx);
   else {
-    se->SelectMember((taBase*)root, md, lbl, desc);
+    se->SelectMember(rbase, md, lbl, desc);
   }
 }
 
@@ -2003,9 +2025,12 @@ MemberDef* taiEditDataHost::GetMemberPropsForSelect(int sel_idx, taBase** base,
   MemberDef* md = NULL;
   if (!(membs.GetFlatDataItem(sel_idx, &md) && md))
     return NULL;
-  if (base) *base = (taBase*)root;
-  String tlbl = ((taBase*)root)->GetName().elidedTo(16);
-  lbl = tlbl;
+  taBase* rbase = Base();
+  if (rbase) {
+    if (base) *base = rbase;
+    String tlbl = rbase->GetName().elidedTo(16);
+    lbl = tlbl;
+  }
   return md;
 }
 
@@ -2060,11 +2085,12 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   QMenu* menu, int& last_id)
 {
   // have to be a taBase to use SelEdit
-  taBase* rbase = Base();
-  if (!rbase) return; 
-  MemberDef* md = NULL; //sel_item_md; // from inherited routine
-  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
-    return; 
+  if (!sel_item_dat) return;
+  taBase* rbase = sel_item_dat->Base();
+  MemberDef* md = sel_item_dat->mbr; 
+  if (!rbase || !md) return; 
+//obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
+//    return; 
   // get list of select edits
   taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
   if (!proj || proj->edits.leaves == 0) return;

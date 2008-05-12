@@ -81,6 +81,13 @@ using namespace Qt;
 
 class cssiArgDialog;
 
+taBase* taiData::Base() const {
+  //note: not typically overridden
+  // if has a parent, then try that parent's ChildBase, else the host Base
+  if (mparent) return mparent->ChildBase();
+  else if (host) return host->Base();
+  else return NULL;
+}
 
 //////////////////////////
 //    taiDataList	//
@@ -111,6 +118,7 @@ taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui
 :QObject()
 {
   typ = typ_;
+  mbr = NULL;
   host = host_;
   mhighlight = false;
   m_visible = true;
@@ -362,17 +370,29 @@ void taiCompData::AddChildMember(MemberDef* md) {
   // get gui representation of data
   int child_flags = (mflags & flg_INHERIT_MASK);
   taiData* mb_dat = md->im->GetDataRep(host, this, wid, NULL, child_flags); //adds to list
+  mb_dat->SetMemberDef(md);
   
   // get caption
   String name;
   String desc;
   taiDataHost::GetName(md, name, desc);
   iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
+  lbl->setUserData(mb_dat); // primarily for context menu, esp for SelectEdit
   
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
 	  this, SLOT(ChildDataChanged(taiData*)) );
 	  
+  // check for a compatible taiDataHost, and if so, connect context menu
+  if (host) {
+    
+    taiDataHost* tadh = dynamic_cast<taiDataHost*>((QObject*)host->This());
+    if (tadh) {
+      connect(lbl, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
+        tadh, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)));
+    }
+  }
+  
   switch (lay_type) {
   case LT_HBox:
     AddChildWidget(lbl, 1); // taiM->hsep_c);
@@ -575,7 +595,6 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   edit = NULL;
-  mbr = NULL;
   if (flags_ & flgEditDialog) {
     QWidget* act_par = new QWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
@@ -1131,6 +1150,7 @@ taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : inherited(typ_, host_, par, gui_parent_, flags_)
 {
+  base = NULL;
   if (flags_ & flgFlowLayout)
     lay_type = LT_Flow;
   if (host_) {
@@ -1178,27 +1198,31 @@ void taiPolyData::ChildRemove(taiData* child) {
   inherited::ChildRemove(child);
 }
 
-void taiPolyData::GetImage_impl(const void* base) {
-//NN??  cur_base = base;
+void taiPolyData::GetImage_impl(const void* base_) {
+  if (typ && typ->InheritsFrom(&TA_taBase)) {
+    base = (taBase*)base_;
+  }
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);
-    md->im->GetImage(mb_dat, base);
+    md->im->GetImage(mb_dat, base_);
   }
 }
 
-void taiPolyData::GetValue_impl(void* base) const {
+void taiPolyData::GetValue_impl(void* base_) const {
+  if (typ && typ->InheritsFrom(&TA_taBase)) {
+    base = (taBase*)base_;
+  }
   ostream* rec_scrpt = taMisc::record_script; // don't record script stuff now
   taMisc::record_script = NULL;
   bool first_diff = true;
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
     taiData* mb_dat = data_el.FastEl(i);
-    md->im->GetMbrValue(mb_dat, base, first_diff);
+    md->im->GetMbrValue(mb_dat, base_, first_diff);
   }
-  if (typ->InheritsFrom(TA_taBase) && !HasFlag(flgNoUAE)) {
-    TAPtr rbase = (TAPtr)base;
-    rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
+  if (base && !HasFlag(flgNoUAE)) {
+    base->UpdateAfterEdit();	// hook to update the contents after an edit..
   }
   taMisc::record_script = rec_scrpt;
 }
