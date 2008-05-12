@@ -377,7 +377,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
   String desc;
   taiDataHost::GetName(md, name, desc);
   iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
-  lbl->setUserData(mb_dat); // primarily for context menu, esp for SelectEdit
+  lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
   
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
