@@ -70,6 +70,7 @@ class CSS_API cssiArgDialog : public cssiEditDialog {
 public:
   bool		err_flag; 	// true if an arg was improperly set
   MethodDef*	md;
+  TypeDef*	typ;
   int		use_argc;
   int 		hide_args; // number of leading args to hide in dialogs to user (because context has already predetermined them)
 
