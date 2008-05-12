@@ -175,6 +175,7 @@ protected:
   
   int 			row;
   int			m_show;
+  taiData*		sel_item_dat; // used (and only valid!) for context menus
  
   override void 	customEvent(QEvent* ev_);
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
@@ -185,7 +186,9 @@ protected:
   void 			UpdateButtons();
   
 protected slots:
+  void			label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
   void			items_Notify(ISelectableHost* src, int op); // note: NULL if none
+  void 			DoSelectForEdit(int param);
   
 private:
   void			Init();

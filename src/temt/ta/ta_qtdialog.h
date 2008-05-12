@@ -414,9 +414,13 @@ friend class iDialog;
 public:
   static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
   static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
-    const String& desc, taiData* buddy = NULL, int dat_idx = -1,
+    const String& desc, taiData* buddy = NULL,
     QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0); 
     // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
+  static void 		DoFillLabelContextMenu_SelEdit(iLabel* sender, 
+    QMenu* menu, int& last_id, taiData* sel_item_dat, QWidget* menu_par,
+    QObject* slot_obj, const char* slot);
+    // helper used here and in ProgEditor and elsewhere to handle Seledit context menus
   
   int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
   int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
@@ -481,9 +485,7 @@ public slots:
 protected:
   bool			show_meth_buttons; // true if any are created
   bool			sel_edit_mbrs; // support right-click for seledit of mbrs
-  //int			sel_item_idx; // only used during handling of context menu for select edits
   taiData*		sel_item_dat; // ONLY used/valid in handling of context menu for select edits
-  //MemberDef*		sel_item_md; // ONLY used/valid in handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   int 		AddSectionLabel(int row, QWidget* wid, const String& desc);

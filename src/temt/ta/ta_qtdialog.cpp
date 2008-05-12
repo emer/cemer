@@ -1036,6 +1036,52 @@ void taiDataHostBase::WidgetDeleting() {
 // 	taiDataHost		//
 //////////////////////////////////
 
+void taiDataHost::DoFillLabelContextMenu_SelEdit(iLabel* sender, 
+  QMenu* menu, int& last_id, taiData* sel_item_dat, QWidget* menu_par,
+  QObject* slot_obj, const char* slot)
+{
+  // have to be a taBase to use SelEdit
+  if (!sel_item_dat) return;
+  taBase* rbase = sel_item_dat->Base();
+  MemberDef* md = sel_item_dat->mbr; 
+  if (!rbase || !md) return; 
+//obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
+//    return; 
+  // get list of select edits
+  taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
+  if (!proj || proj->edits.leaves == 0) return;
+
+  // if any edits, populate menu for adding, for all seledits not already on
+  QMenu* sub = new QMenu(menu_par);
+  sub->setFont(menu->font());
+  for (int i = 0; i < proj->edits.leaves; ++i) {
+    SelectEdit* se = proj->edits.Leaf(i);
+    sub->insertItem(se->GetName(), slot_obj, slot, 0, i); // set id to i
+    sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
+    // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
+    if (se->FindMbrBase(rbase, md) >= 0)
+      sub->setItemEnabled(i, false);
+  }
+  menu->insertItem("Add to SelectEdit", sub, ++last_id);
+  if (sub->count() == 0)
+    menu->setItemEnabled(last_id, false); // show item for usability, but disable
+    
+  // TODO: if any edits, populate menu for removing, for all seledits already on
+  sub = new QMenu(menu_par);
+  sub->setFont(menu->font());
+  for (int i = 0; i < proj->edits.leaves; ++i) {
+    SelectEdit* se = proj->edits.Leaf(i);
+    sub->insertItem(se->GetName(), slot_obj, slot, 0, i); // set id to i
+    sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
+    // determine if already on that seledit, and disable if it isn't
+    if (se->FindMbrBase(rbase, md) < 0)
+      sub->setItemEnabled(i, false);
+  }
+  menu->insertItem("Remove from SelectEdit", sub, ++last_id);
+  if (sub->count() == 0)
+    menu->setItemEnabled(last_id, false); // show item for usability, but disable
+}
+
 void taiDataHost::GetName(MemberDef* md, String& name, String& desc) {
   name = md->GetLabel();
   desc = ""; // just in case
@@ -1117,15 +1163,12 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
 }
 
 iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
-  int ctrl_size, const String& desc, taiData* buddy, int dat_idx,
+  int ctrl_size, const String& desc, taiData* buddy,
   QObject* ctx_obj, const char* ctx_slot, int row)
 {
   iLabel* label = new iLabel(row, name, par);
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
-  //note: can't use row as index, since there are section headers, so just use flat
-//  if (md) label->setUserData((ta_intptr_t)md);
-//  if (dat_idx >= 0) label->setUserData(dat_idx);
   if (buddy) label->setUserData((ta_intptr_t)buddy);
   if (ctx_obj) QObject::connect(
     label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
@@ -1155,7 +1198,7 @@ int taiDataHost::AddName(int row, const String& name, const String& desc,
    taiData* buddy, MemberDef* md)
 {
   int dat_idx = (md) ? dat_cnt : -1; // legacy compat
-  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy, dat_idx,
+  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy,
     this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
   // add a label item in first column
   if (row < 0)
@@ -1996,6 +2039,7 @@ void taiEditDataHost::DoRaise_Panel() {
 }
 
 void taiEditDataHost::DoSelectForEdit(int param){
+//note: this routine is duplicated in the ProgEditor
   taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
   if (!proj) return;
   
@@ -2003,7 +2047,6 @@ void taiEditDataHost::DoSelectForEdit(int param){
  
   if (!sel_item_dat) return; // shouldn't happen!
   taBase* rbase = sel_item_dat->Base();
-//  MemberDef* md = GetMemberPropsForSelect(sel_item_idx, &base, lbl, desc);
   MemberDef* md = sel_item_dat->mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
   
@@ -2078,54 +2121,16 @@ void taiEditDataHost::ConstrEditControl() {
 
 void taiEditDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
   inherited::FillLabelContextMenu(sender, menu, last_id);
-  FillLabelContextMenu_SelEdit(sender, menu, last_id);
+  if (sel_edit_mbrs) { 
+    FillLabelContextMenu_SelEdit(sender, menu, last_id);
+  }
 }
 
 void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, 
   QMenu* menu, int& last_id)
 {
-  // have to be a taBase to use SelEdit
-  if (!sel_item_dat) return;
-  taBase* rbase = sel_item_dat->Base();
-  MemberDef* md = sel_item_dat->mbr; 
-  if (!rbase || !md) return; 
-//obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
-//    return; 
-  // get list of select edits
-  taProject* proj = dynamic_cast<taProject*>(rbase->GetThisOrOwner(&TA_taProject));
-  if (!proj || proj->edits.leaves == 0) return;
-  if (sel_edit_mbrs) { 
-
-    // if any edits, populate menu for adding, for all seledits not already on
-    QMenu* sub = new QMenu(body);
-    sub->setFont(menu->font());
-    for (int i = 0; i < proj->edits.leaves; ++i) {
-      SelectEdit* se = proj->edits.Leaf(i);
-      sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
-      sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
-      // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
-      if (se->FindMbrBase((taBase*)root, md) >= 0)
-        sub->setItemEnabled(i, false);
-    }
-    menu->insertItem("Add to SelectEdit", sub, ++last_id);
-    if (sub->count() == 0)
-      menu->setItemEnabled(last_id, false); // show item for usability, but disable
-      
-    // TODO: if any edits, populate menu for removing, for all seledits already on
-    sub = new QMenu(body);
-    sub->setFont(menu->font());
-    for (int i = 0; i < proj->edits.leaves; ++i) {
-      SelectEdit* se = proj->edits.Leaf(i);
-      sub->insertItem(se->GetName(), this, SLOT(DoSelectForEdit(int)), 0, i); // set id to i
-      sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
-      // determine if already on that seledit, and disable if it isn't
-      if (se->FindMbrBase((taBase*)root, md) < 0)
-        sub->setItemEnabled(i, false);
-    }
-    menu->insertItem("Remove from SelectEdit", sub, ++last_id);
-    if (sub->count() == 0)
-      menu->setItemEnabled(last_id, false); // show item for usability, but disable
-  }
+  DoFillLabelContextMenu_SelEdit(sender, menu, last_id, sel_item_dat, body,
+  this, SLOT(DoSelectForEdit(int)));
 }
 
 void taiEditDataHost::GetButtonImage(bool force) {

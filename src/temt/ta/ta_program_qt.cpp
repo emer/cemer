@@ -249,6 +249,7 @@ void iProgramEditor::Init() {
   base = NULL;
   row = 0;
   m_show = (taMisc::ShowMembs)(taMisc::show_gui & taMisc::SHOW_CHECK_MASK);
+  sel_item_dat = NULL;
   
   
   layOuter = new QVBoxLayout(this);
@@ -436,8 +437,8 @@ void iProgramEditor::Base_Add() {
       String desc;
       taiDataHost::GetName(md, name, desc);
       iLabel* lbl = taiDataHost::MakeInitEditLabel(name, body,
-        ctrl_size,  desc, mb_dat, -1//,  
-        /*TODO:ctxt this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)),*/ /*row */);
+        ctrl_size,  desc, mb_dat,   
+        this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
       
       hbl->addWidget(lbl, 0,  (Qt::AlignLeft | Qt::AlignVCenter));
       hbl->addSpacing(taiM->hsep_c);
@@ -606,6 +607,47 @@ void iProgramEditor::items_Notify(ISelectableHost* src, int op) {
   } break;
   //case ISelectableHost::OP_DESTROYING: return;
   default: return;
+  }
+}
+
+void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
+  QMenu* menu = new QMenu(this);
+  //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
+  Q_CHECK_PTR(menu);
+  int last_id = -1;
+  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+  if (sel_item_dat) {
+    taiDataHost::DoFillLabelContextMenu_SelEdit(sender, menu, last_id, sel_item_dat, body,
+    this, SLOT(DoSelectForEdit(int)));
+  }
+
+  if (menu->count() > 0)
+    menu->exec(sender->mapToGlobal(e->pos()));
+  delete menu;
+}
+
+void iProgramEditor::DoSelectForEdit(int param){
+//note: this routine is duplicated in the taiEditDataHost
+  if (!sel_item_dat) return; // shouldn't happen!
+  
+  taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
+  if (!proj) return;
+  
+  SelectEdit* se = proj->edits.Leaf(param);
+ 
+  taBase* rbase = sel_item_dat->Base();
+  MemberDef* md = sel_item_dat->mbr;
+  if (!md || !se || !rbase) return; //shouldn't happen...
+  
+  String desc;
+  String lbl = rbase->GetName().elidedTo(16);
+  
+  //NOTE: this handler adds if not on, or removes if already on
+  int idx;
+  if ((idx = se->FindMbrBase(rbase, md)) >= 0)
+    se->RemoveField(idx);
+  else {
+    se->SelectMember(rbase, md, lbl, desc);
   }
 }
 
