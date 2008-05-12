@@ -164,7 +164,7 @@ void ScriptBase::Copy_(const ScriptBase& cp) {
 void ScriptBase::LoadScript(const String& file_nm) {
   SetScript(file_nm);
 
-  CompileScript();
+  CompileScript(true);
 }
 
 void ScriptBase::LoadScriptString(const String& string) {
@@ -172,7 +172,7 @@ void ScriptBase::LoadScriptString(const String& string) {
   script_file->setFname("");
   script_compiled = false;
   
-  CompileScript();
+  CompileScript(true);
 }
 
 const String ScriptBase::scriptFilename() {

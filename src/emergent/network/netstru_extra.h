@@ -196,7 +196,7 @@ private:
 };
 
 class EMERGENT_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
-  // Script-controlled connectivity
+  // Script-controlled connectivity: use prjn variable in script code to refer to current projection that script is operating on; recv layer is prjn->layer, send layer is prjn->from; must do recv_unit->ConnectAlloc(no_of_cons, prjn); to allocate full set of connections before making any connections using recv_unit->ConnectFromCk(send_unit, prjn) 
 INHERITED(ProjectionSpec)
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn

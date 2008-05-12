@@ -1255,11 +1255,11 @@ public:
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
 
-  Unit*		FindUnitFmCoord(int x, int y);
-  // #CAT_Structure find unit from given set of x and y coordinates
   Unit* 	FindUnitFmCoord(const TwoDCoord& coord)
   { return FindUnitFmCoord(coord.x,coord.y); }
   // #CAT_Structure returns unit at given coordinates within layer
+  Unit*		FindUnitFmCoord(int x, int y);
+  // #CAT_Structure find unit from given set of x and y coordinates
   TwoDCoord	GetGpGeomPos();
   // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
 
@@ -1559,10 +1559,10 @@ public:
   virtual void	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for projection variables, specify prjns.; for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
 
-  Unit*		FindUnitFmCoord(int x, int y);
-  // #CAT_Structure find unit within layer from given coordinates (layer relative coords), taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
   Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
   // #CAT_Structure get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
+  Unit*		FindUnitFmCoord(int x, int y);
+  // #CAT_Structure find unit within layer from given coordinates (layer relative coords), taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
   Unit*		FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y);
   // #CAT_Structure find unit given both unit and unit group coordinates
   Unit*		FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)

@@ -14,20 +14,6 @@ LeabraProject .projects[0] {
     };
   };
 
-  DataTable_Group @.data = [0] {
-    DataTable_Group @.gp[0] = [1] { 
-      DataTable @[0] { 
-	DataTableCols @.data = [3] {
-	  String_Data @[0] { };
-	  float_Data @[1] { };
-	  float_Data @[2] { };
-	};
-      };
-    };
-    DataTable_Group @.gp[1] { };
-    DataTable_Group @.gp[2] { };
-  };
-
   taBase_Group @.data_proc = [4] {
     taDataProc @[0] { 
    UserDataItem_List @*(.user_data_) { 
@@ -51,51 +37,6 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [1] {
-    Program @[0] { 
-      ProgVar_List @.vars = [2] {
-	ProgVar @[0] { };
-	ProgVar @[1] { };
-      };
-
-      Function_List @.functions = [1] {
-	Function @[0] { 
-	  ProgEl_List @.fun_code = [1] {
-	    ProgVars @[0] { 
-	      ProgVar_List @.local_vars = [1] {
-		ProgVar @[0] { };
-	      };
-	    };
-	  };
-	};
-      };
-
-      ProgEl_List @.prog_code = [1] {
-	ForLoop @[0] { 
-	  ProgEl_List @.loop_code = [3] {
-	    ProgVars @[0] { 
-	      ProgVar_List @.local_vars = [1] {
-		ProgVar @[0] { };
-	      };
-	    };
-	    MethodCall @[1] { 
-	      ProgArg_List @.meth_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	    MethodCall @[2] { 
-	      ProgArg_List @.meth_args = [2] {
-		ProgArg @[0] { };
-		ProgArg @[1] { };
-	      };
-	    };
-	  };
-	};
-      };
-    };
-  };
-
   DataViewer_List @.viewers = [1] {
     MainWindowViewer @[0] { 
       ToolBar_List @.toolbars = [1] {
@@ -110,8 +51,9 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
-		  ScaleRange_List @.scale_ranges = [1] {
+		  ScaleRange_List @.scale_ranges = [2] {
 		    ScaleRange @[0] { };
+		    ScaleRange @[1] { };
 		  };
 		};
 	      };
@@ -128,7 +70,7 @@ LeabraProject .projects[0] {
 
   Network_Group @.networks = [1] {
     LeabraNetwork @[0] { 
-      BaseSpec_Group @.specs = [4] {
+      BaseSpec_Group @.specs = [5] {
 	LeabraUnitSpec @[0] { };
 	LeabraLayerSpec @[1] { 
 	  BaseSpec_Group @.children = [1] {
@@ -141,6 +83,7 @@ LeabraProject .projects[0] {
 	    LeabraBiasSpec @[0] { };
 	  };
 	};
+	ScriptPrjnSpec @[4] { };
       };
 
       Layer_Group @.layers = [3] {
@@ -237,55 +180,6 @@ LeabraProject .projects[0] {
    name="InputData";
    el_typ=DataTable;
    el_def=0;
-   DataTable @[0] {
-    name="StdInputData";
-    desc=;
-    data {
-     name="data";
-     el_typ=String_Data;
-     el_def=0;
-     String_Data @[0] {
-      name="Name";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      ar {
-       name=;
-	    [5] ;;;;;      };
-     };
-     float_Data @[1] {
-      name="Input";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      ar {
-       name=;
-	    [5 5 5] 0.51676852;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.24467018;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.59205711;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.41643977;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.78861433;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;      };
-     };
-     float_Data @[2] {
-      name="Output";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      ar {
-       name=;
-	    [5 5 5] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;      };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-   };
   };
   DataTable_Group @.gp[1] {
    name="OutputData";
@@ -358,216 +252,13 @@ LeabraProject .projects[0] {
   step_prog=NULL;
   tags=;
   desc=;
-  Program @[0] {
-   name="matrixtest";
-   tags=;
-   desc=;
-   flags=;
-   objs {
-    name=;
-    el_typ=taNBase;
-    el_def=0;
-   };
-   types {
-    name=;
-    el_typ=ProgType;
-    el_def=0;
-   };
-   args {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-   };
-   vars {
-    name=;
-    el_typ=ProgVar;
-    el_def=0;
-    ProgVar @[0] {
-     name="i";
-     var_type=T_Int;
-     int_val=5;
-     objs_ptr=0;
-     flags=NULL_CHECK;
-     desc=;
-    };
-    ProgVar @[1] {
-     name="StdInputData";
-     var_type=T_Object;
-     object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$0$;
-     objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
-     desc=;
-    };
-   };
-   functions {
-    name=;
-    el_typ=Function;
-    el_def=0;
-    Function @[0] {
-     desc=;
-     flags=;
-     return_val {
-      name="rval";
-      var_type=T_Int;
-      int_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
-      desc=;
-     };
-     name=;
-     args {
-      name=;
-      el_typ=ProgVar;
-      el_def=0;
-     };
-     fun_code {
-      name=;
-      el_typ=ProgVars;
-      el_def=0;
-      ProgVars @[0] {
-       desc=;
-       flags=;
-       local_vars {
-	name=;
-	el_typ=ProgVar;
-	el_def=0;
-	ProgVar @[0] {
-	 name="mytmpvar";
-	 var_type=T_Int;
-	 int_val=0;
-	 objs_ptr=0;
-	 flags=CTRL_PANEL|NULL_CHECK|LOCAL_VAR;
-	 desc=;
-	};
-       };
-      };
-     };
-    };
-   };
-   load_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   init_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-   };
-   prog_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-    ForLoop @[0] {
-     desc=;
-     flags=;
-     loop_code {
-      name=;
-      el_typ=ProgEl;
-      el_def=0;
-      ProgVars @[0] {
-       desc=;
-       flags=;
-       local_vars {
-	name=;
-	el_typ=ProgVar;
-	el_def=0;
-	ProgVar @[0] {
-	 name="mat";
-	 var_type=T_Object;
-	 object_type=float_Matrix;
-	 object_val=NULL;
-	 objs_ptr=0;
-	 flags=CTRL_PANEL|LOCAL_VAR;
-	 desc="note: this should have no object val selector!!";
-	};
-       };
-      };
-      MethodCall @[1] {
-       desc=;
-       flags=;
-       result_var=.projects[0].programs[0].prog_code[0].loop_code[0].local_vars[0]$1$;
-       obj=.projects[0].programs[0].vars[1]$2$;
-       method=DataTable::GetValAsMatrixColName;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="const taString&";
-	 name="col_name";
-	 required=0;
-	 def_val="\"\"";
-	 expr {
-	  expr="\"Input\"";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=int;
-	 type="int";
-	 name="row";
-	 required=0;
-	 def_val=;
-	 expr {
-	  expr="i";
-	 };
-	};
-       };
-      };
-      MethodCall @[2] {
-       desc=;
-       flags=;
-       result_var=NULL;
-       obj=$1$;
-       method=taMatrix::SetFmVar_Flat;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_Variant_ref;
-	 type="const Variant&";
-	 name="var";
-	 required=0;
-	 def_val=;
-	 expr {
-	  expr="Random::ZeroOne()";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=int;
-	 type="int";
-	 name="idx";
-	 required=0;
-	 def_val=;
-	 expr {
-	  expr="i";
-	 };
-	};
-       };
-      };
-     };
-     init {
-      expr="i = 0";
-     };
-     test {
-      expr="i < StdInputData.rows";
-     };
-     iter {
-      expr="i++";
-     };
-    };
-   };
-  };
  };
  viewers {
   name=;
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$3$;
+   m_data=.projects[0]$0$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -597,7 +288,7 @@ LeabraProject .projects[0] {
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$3$;
+     m_root=$0$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -624,7 +315,7 @@ LeabraProject .projects[0] {
 	 el_typ=T3DataView;
 	 el_def=0;
 	 NetView @[0] {
-	  m_data=.projects[0].networks[0]$4$;
+	  m_data=.projects[0].networks[0]$1$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
@@ -635,7 +326,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$5$;
+	   spec=.colorspecs[0]$2$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -648,10 +339,16 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	    min=-1;
 	    max=1;
 	   };
+	   ScaleRange @[1] {
+	    name="r.wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
 	  };
 	  display=1;
 	  lay_mv=1;
-	  ordered_uvg_list{ act;	  };
+	  ordered_uvg_list{ r.wt;	  };
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=5: y=5: z=3: };
@@ -730,7 +427,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=LeabraCon;
-     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$6$: };
+     bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$3$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: i_thr=STD: };
@@ -945,6 +642,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       rel_lrate=0.2;
      };
     };
+    ScriptPrjnSpec @[4] {
+     name="ScriptPrjnSpec_0";
+     desc=;
+     unique{      };
+     children {
+      name=;
+      el_typ=ScriptPrjnSpec;
+      el_def=0;
+     };
+     self_con=0;
+     init_wts=0;
+     script_string=;
+     s_args{ };
+{      };
+    };
    };
    layers {
     name=;
@@ -982,7 +694,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$7$: };
+     unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$4$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -1005,7 +717,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$8$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$5$: };
      stm_gain=0.5;
      hard_clamped=0;
      sravg_sum=0;
@@ -1036,12 +748,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       LeabraPrjn @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$9$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$10$: };
+       from=.projects[0].networks[0].layers[0]$6$;
+       spec {type=ScriptPrjnSpec: spec=.projects[0].networks[0].specs[4]$7$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$11$: };
+       con_spec {type=LeabraConSpec: spec=.projects[0].networks[0].specs[3]$8$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -1060,12 +772,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       LeabraPrjn @[1] {
        name="Fm_Output";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[2]$12$;
-       spec {type=FullPrjnSpec: spec=$10$: };
+       from=.projects[0].networks[0].layers[2]$9$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$10$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$11$: };
+       con_spec {type=LeabraConSpec: spec=$8$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -1098,7 +810,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$7$: };
+     unit_spec {type=LeabraUnitSpec: spec=$4$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -1121,7 +833,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
-     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$13$: };
+     spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$11$: };
      stm_gain=0.5;
      hard_clamped=0;
      sravg_sum=0;
@@ -1152,12 +864,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       LeabraPrjn @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$14$;
+       from=.projects[0].networks[0].layers[1]$12$;
        spec {type=FullPrjnSpec: spec=$10$: };
        con_type=LeabraCon;
        recvcons_type=LeabraRecvCons;
        sendcons_type=LeabraSendCons;
-       con_spec {type=LeabraConSpec: spec=$11$: };
+       con_spec {type=LeabraConSpec: spec=$8$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -1190,7 +902,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LeabraUnitSpec: spec=$7$: };
+     unit_spec {type=LeabraUnitSpec: spec=$4$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -1213,7 +925,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
-     spec {type=LeabraLayerSpec: spec=$8$: };
+     spec {type=LeabraLayerSpec: spec=$5$: };
      stm_gain=0.5;
      hard_clamped=0;
      sravg_sum=0;
@@ -1271,7 +983,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=75;
-   n_cons=1875;
+   n_cons=1250;
    max_size {x=5: y=5: z=3: };
    font_sizes {
     net_name=0.05;
@@ -1301,7 +1013,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=-2359297;
+   ct_cycle=568056080;
    cycle_max=60;
    min_cycles=15;
    min_cycles_phase2=35;

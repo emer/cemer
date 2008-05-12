@@ -702,7 +702,7 @@ void ScriptPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void ScriptPrjnSpec::Compile() {
-  CompileScript();
+  CompileScript(true);		// force recompile!
 }
 
 /////////////////////////////

@@ -275,6 +275,11 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
     type_def = sp_typ;
     SetClassParent(sp->class_parent);
   }
+  else if((ptr_cnt == 1) && (sp_ptr_cnt == 2) && sp_ptr) {
+    ptr = *((void**)sp_ptr);	// deref that guy
+    type_def = sp_typ;
+    SetClassParent(sp->class_parent);
+  }
   else if((ptr_cnt == 2) && (sp_ptr_cnt <= 1)) {
     // I'm a ptr-ptr and this sets me to point to another guy
     if(PtrAssignPtrPtr(sp_ptr)) {
@@ -518,6 +523,11 @@ void cssTA_Base::PtrAssignPtr(const cssEl& s) {
   }
   else if((ptr_cnt == 1) && (sp_ptr_cnt == 0)) {
     taBase::SetPointer((taBase**)&ptr, (taBase*)sp_ptr);
+    type_def = sp_typ;
+    SetClassParent(sp->class_parent);
+  }
+  else if((ptr_cnt == 1) && (sp_ptr_cnt == 2) && sp_ptr) {
+    taBase::SetPointer((taBase**)&ptr, *((taBase**)sp_ptr));
     type_def = sp_typ;
     SetClassParent(sp->class_parent);
   }
