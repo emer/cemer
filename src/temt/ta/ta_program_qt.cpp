@@ -1082,7 +1082,7 @@ iProgramCtrlDataHost::iProgramCtrlDataHost(Program* prog, bool read_only_,
   if (pg) { // better exist!
     refs_struct.Add(pg);
   }
-  sel_edit_mbrs = false; 
+  sel_edit_mbrs = true; 
 }
 
 iProgramCtrlDataHost::~iProgramCtrlDataHost() {
@@ -1199,6 +1199,12 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       else {
         mb_dat = md->im->GetDataRep(this, NULL, body, NULL, flags_);
       }
+      // we need to manually set the md into the dat...
+      // need to check for enums, because md is the type, not the val
+      if (pv->var_type == ProgVar::T_HardEnum) 
+        md = pv->FindMember("int_val");
+      mb_dat->SetMemberDef(md); // usually done by im, but we are manual here...
+      
       data_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       int row = AddData(-1, data);
@@ -1378,6 +1384,8 @@ void iProgramCtrlDataHost::GetImage_Membs()
 #endif
         break;
       }
+      // set base, for ctxt menu, so it won't try to use the Program (which is not the base)
+      mb_dat->SetBase(pv);
       if(pv->var_type == ProgVar::T_HardEnum) {
 	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
 	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);

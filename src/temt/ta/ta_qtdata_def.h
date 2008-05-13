@@ -149,8 +149,10 @@ public:
   taiData*		parent() {return mparent;} // if data is contained within data, this the parent container
   void			setParent(taiData* value); // 
   virtual taBase*	Base() const; // base, typically the parent::ChildBase else the IHost::Base
+  void			SetBase(taBase* base_) const; 
+    // we often try to set the base, so SelEdit ctxt menus can work 
   virtual taBase*	ChildBase() const {return Base();} 
-   // child base, typically Base, but ex. override by Polys
+   // child base, typically obtained from parent or host, except ex. PolyData
   virtual void		Delete(); // use this to dynamically delete this, including the rep
   taiData(); // for ta_TA.cc only
   taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_ = 0);
@@ -190,7 +192,7 @@ public:
     int font_spec = 0) const; // convenience func, sets fonts etc.
   QWidget*		MakeLayoutWidget(QWidget* gui_parent = NULL) const;
     // makes a layout widget, with max height set, and tweaked for Mac
-  
+   
 #ifndef __MAKETA__
 signals:
   bool 			settingHighlight(bool setting); // invoked when highlight state changes
@@ -207,6 +209,7 @@ protected:
 #endif
   taiData*		mparent;		// if data is contained within data, this the parent container
   int			mflags;
+  mutable taBase*	m_base; // this is a hack for when the Host is not the Base, particularly ProgCtrl panels, etc., and enables Seledit to work
   
 
   virtual void		SetRep(QWidget* val);

@@ -81,14 +81,7 @@ using namespace Qt;
 
 class cssiArgDialog;
 
-taBase* taiData::Base() const {
-  //note: not typically overridden
-  // if has a parent, then try that parent's ChildBase, else the host Base
-  if (mparent) return mparent->ChildBase();
-  else if (host) return host->Base();
-  else return NULL;
-}
-
+  
 //////////////////////////
 //    taiDataList	//
 //////////////////////////
@@ -112,6 +105,7 @@ taiData::taiData()
   m_rep = NULL;
   mparent = NULL;
   mflags = 0;
+  m_base = NULL;
 }
 
 taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_widget, int flags_)
@@ -126,6 +120,7 @@ taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui
   mparent = NULL; // must be valid before calling setParent!
   mflags = flags_;
   setParent(parent_);
+  m_base = NULL;
 }
 
 taiData::~taiData() {
@@ -143,6 +138,18 @@ void taiData::applyNow() {
     // during the call, clobbering the ctrl while its sig/slot stuff still ongoing
     host->Apply_Async();
   }
+}
+
+taBase* taiData::Base() const {
+  //note: not typically overridden
+  if (m_base) return m_base;
+  else if (mparent) return mparent->ChildBase();
+  else if (host) return host->Base();
+  else return NULL;
+}
+
+void taiData::SetBase(taBase* base_) const {
+  m_base = base_;
 }
 
 void taiData::DataChanged(taiData* chld) {
@@ -314,6 +321,7 @@ taiCompData::taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWid
   last_spc = -1;
   lay_type = LT_HBox; // default
   mwidgets = new QObjectList();
+  m_child_base = NULL;
 }
 
 taiCompData::~taiCompData() {
@@ -370,7 +378,7 @@ void taiCompData::AddChildMember(MemberDef* md) {
   // get gui representation of data
   int child_flags = (mflags & flg_INHERIT_MASK);
   taiData* mb_dat = md->im->GetDataRep(host, this, wid, NULL, child_flags); //adds to list
-  mb_dat->SetMemberDef(md);
+  //nn, done by im mb_dat->SetMemberDef(md);
   
   // get caption
   String name;
@@ -1150,7 +1158,6 @@ taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : inherited(typ_, host_, par, gui_parent_, flags_)
 {
-  base = NULL;
   if (flags_ & flgFlowLayout)
     lay_type = LT_Flow;
   if (host_) {
@@ -1200,7 +1207,7 @@ void taiPolyData::ChildRemove(taiData* child) {
 
 void taiPolyData::GetImage_impl(const void* base_) {
   if (typ && typ->InheritsFrom(&TA_taBase)) {
-    base = (taBase*)base_;
+    m_child_base = (taBase*)base_; // used for Seledit ctxt menus, and similar
   }
   for (int i = 0; i < memb_el.size; ++i) {
     MemberDef* md = memb_el.FastEl(i);
@@ -1210,9 +1217,6 @@ void taiPolyData::GetImage_impl(const void* base_) {
 }
 
 void taiPolyData::GetValue_impl(void* base_) const {
-  if (typ && typ->InheritsFrom(&TA_taBase)) {
-    base = (taBase*)base_;
-  }
   ostream* rec_scrpt = taMisc::record_script; // don't record script stuff now
   taMisc::record_script = NULL;
   bool first_diff = true;
@@ -1221,8 +1225,9 @@ void taiPolyData::GetValue_impl(void* base_) const {
     taiData* mb_dat = data_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, base_, first_diff);
   }
-  if (base && !HasFlag(flgNoUAE)) {
-    base->UpdateAfterEdit();	// hook to update the contents after an edit..
+  taBase* rbase = Base();
+  if (rbase && !HasFlag(flgNoUAE)) {
+    rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
   }
   taMisc::record_script = rec_scrpt;
 }

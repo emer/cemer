@@ -1197,7 +1197,7 @@ iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
 int taiDataHost::AddName(int row, const String& name, const String& desc,
    taiData* buddy, MemberDef* md)
 {
-  int dat_idx = (md) ? dat_cnt : -1; // legacy compat
+//nn  int dat_idx = (md) ? dat_cnt : -1; // legacy compat
   iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy,
     this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
   // add a label item in first column
@@ -2201,6 +2201,9 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
     if ((md == NULL) || (mb_dat == NULL))
       taMisc::Error("taiEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
     else {
+      //ARGH!!! the following line of code is EVIL but necessary..
+      // in practice, I think there is no such thing as a non-taBase call here
+      mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
       if (mb_dat->visible()) {
         layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN)); 

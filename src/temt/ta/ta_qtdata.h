@@ -75,6 +75,9 @@ public:
   QWidget*		widgets(int index);
   int			widgetCount();
 
+  override taBase*	ChildBase() const 
+   {if (m_child_base) return m_child_base; return inherited::ChildBase();}
+   // child base, typically obtained from parent or host, except ex. PolyData
   virtual void		InitLayout(); // default creates a QHBoxLayout in the Rep
   void			AddChildWidget(QWidget* child_widget, int space_after = -1,
     int stretch = 0);
@@ -91,6 +94,7 @@ protected:
   QLayout*		lay;	// may be ignored/unused by subclasses
   int			last_spc;	// space after last widget, -1 = none
   LayoutType		lay_type;
+  mutable taBase*	m_child_base; // typically set in PolyData GetImage
   inline QHBoxLayout*	layHBox() const {return (QHBoxLayout*)lay;} // only if !hasFlow
   inline iFlowLayout*	layFlow() const {return (iFlowLayout*)lay;} // only if hasFlow
   inline QStackedLayout* layStacked() const {return (QStackedLayout*)lay;} // only if hasFlow
@@ -381,13 +385,11 @@ public:
   inline QWidget*	rep() const { return (QWidget*)m_rep; } //note: actual class may be subclass of QFrame
   bool			fillHor() {return true;} // override 
 
-  override taBase*	ChildBase() const {return base;}
   override void 	AddChildMember(MemberDef* md);
   
   ~taiPolyData();
 
 protected:
-  mutable taBase*	base; // ONLY for context menus
   void			Constr(QWidget* gui_parent_);
   void			AddTypeMembers(); // called to add all typ members
   override void		ChildRemove(taiData* child); // remove from memb_el too

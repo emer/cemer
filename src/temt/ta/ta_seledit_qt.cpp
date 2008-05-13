@@ -59,7 +59,7 @@ iSelectEditDataHost::~iSelectEditDataHost() {
 void iSelectEditDataHost::Initialize()
 {
   sele = NULL;
-  sel_edit_mbrs = false; // not for us!!!
+  sel_edit_mbrs = true; // note: we don't actually select members, just for removal
 }
 
 void iSelectEditDataHost::Constr_Body() {
