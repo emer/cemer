@@ -1306,9 +1306,9 @@ public:
 
 // misc data-holding structures
 
-class LEABRA_API LeabraInhibSpec : public taBase {
+class LEABRA_API LeabraInhibSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system (kwta, unit inhib, etc)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum InhibType {		// how to compute the inhibition
     KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
@@ -1334,9 +1334,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API KWTASpec : public taBase {
+class LEABRA_API KWTASpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies k-winner-take-all parameters
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum K_From {
     USE_K,			// use the k specified directly
@@ -1360,9 +1360,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API KwtaTieBreak : public taBase {
+class LEABRA_API KwtaTieBreak : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED whether to perform the tie breaking function at all
   float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
@@ -1375,9 +1375,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API AdaptISpec : public taBase {
+class LEABRA_API AdaptISpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum AdaptType {
     NONE,			// don't adapt anything
@@ -1400,9 +1400,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API ClampSpec : public taBase {
+class LEABRA_API ClampSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping 
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		hard;		// #APPLY_IMMED #DEF_true whether to hard clamp inputs to this layer or not
   float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.5 starting soft clamp gain factor (net = gain * ext)
@@ -1415,9 +1415,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API DecaySpec : public taBase {
+class LEABRA_API DecaySpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		event;		// #DEF_1 proportion decay of state vars between events
   float		phase;		// [1 for Leabra_CHL, 0 for CtLeabra_CAL] proportion decay of state vars between minus and plus phases 
@@ -1431,9 +1431,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtLayerInhibMod : public taBase {
+class LEABRA_API CtLayerInhibMod : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		use_sin;	// if on, actually use layer-level sinusoidal values (burst_i, trough_i) -- else use network level
   float		burst_i;	// #CONDEDIT_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
@@ -1451,9 +1451,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API LayNetRescaleSpec : public taBase {
+class LEABRA_API LayNetRescaleSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra global rescale of layer netinputs to prevent blowup
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED whether to apply layer netinput rescaling
   float		max_net; 	// #CONDEDIT_ON_on:true #DEF_0.6 target maximum netinput value
@@ -1466,9 +1466,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API LayAbsNetAdaptSpec : public taBase {
+class LEABRA_API LayAbsNetAdaptSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt absolute netinput values by adjusting the wt_scale.abs parameters in the conspecs of projections into this layer, based on differences between time-averaged max netinput values and the target
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED whether to apply layer netinput rescaling
   float		trg_net; 	// #CONDEDIT_ON_on:true #DEF_0.5 target maximum netinput value
@@ -1786,9 +1786,9 @@ private:
 
 SpecPtr_of(LeabraLayerSpec);
 
-class LEABRA_API AvgMaxVals : public taBase {
+class LEABRA_API AvgMaxVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds average and max statistics
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		avg;		// #DMEM_AGG_SUM average value
   float		max;		// #DMEM_AGG_SUM maximum value
@@ -1802,9 +1802,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API KWTAVals : public taBase {
+class LEABRA_API KWTAVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for kwta stuff
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   int		k;       	// target number of active units for this collection
   float		pct;		// actual percent activity in group
@@ -1826,9 +1826,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API AdaptIVals : public taBase {
+class LEABRA_API AdaptIVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for adapting kwta stuff
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		avg_avg;	// average of the average activation in a layer
   float		i_kwta_pt;	// adapting point to place inhibition between k and k+1 for kwta
@@ -1842,9 +1842,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API InhibVals : public taBase {
+class LEABRA_API InhibVals : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for inhibition
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		kwta;		// inhibition due to kwta function
   float		g_i;		// overall value of the inhibition
@@ -2585,9 +2585,9 @@ inline void LeabraBiasSpec::B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit*
 // 	Network		//
 //////////////////////////
 
-class LEABRA_API LeabraNetMisc : public taBase {
+class LEABRA_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
   int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
@@ -2602,9 +2602,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtTrialTiming : public taBase {
+class LEABRA_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   int		minus;		// [40] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// [40] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
@@ -2623,9 +2623,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API CtSRAvgSpec : public taBase {
+class LEABRA_API CtSRAvgSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
   int		end;		// [20] number of cycles from the start of the final inhibitory phase to continue recording sravg

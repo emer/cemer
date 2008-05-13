@@ -76,9 +76,9 @@ class NetView; //
 // note that with the projection spec, its job is to define connectivity, so
 // it does have structural functions in the spec..
 
-class EMERGENT_API SigmoidSpec : public taBase {
+class EMERGENT_API SigmoidSpec : public taOBase {
 // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Math Specifies a Sigmoid 1 / [1 + exp(-(x - off) * gain)]
-INHERITED(taBase) //
+INHERITED(taOBase) //
 public:
 #if (defined(_MSC_VER) && !defined(__MAKETA__))
   // msvc doesn't allow floats here, and doesn't seem to handle static const right
@@ -184,9 +184,9 @@ public:
   for(int i=0; i<cg->cons.size; i++) \
     expr
 
-class EMERGENT_API WeightLimits : public taBase {
+class EMERGENT_API WeightLimits : public taOBase {
   // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Network specifies weight limits for connections
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum LimitType {
     NONE,			// no weight limitations
@@ -1300,9 +1300,9 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class EMERGENT_API LayerDistances : public taBase {
+class EMERGENT_API LayerDistances : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network specifies distance from input/output layers
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   int	fm_input;		// how many layers between closest input layer and me (-1 if unknown)
   int	fm_output;		// how many layers between closest output layer and me (-1 if unknown)
@@ -1647,9 +1647,9 @@ public:
   Layer_PtrList() {}
 };
 
-class EMERGENT_API NetViewFontSizes : public taBase {
+class EMERGENT_API NetViewFontSizes : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display network display font sizes
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float	 net_name;	// #DEF_0.05 network name
   float	 net_vals;	// #DEF_0.05 network values (counters, stats)
@@ -1668,9 +1668,9 @@ private:
   void	Destroy()		{ };
 };
 
-class EMERGENT_API NetViewParams : public taBase {
+class EMERGENT_API NetViewParams : public taOBase {
   // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Display misc parameters for the network display
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum PrjnDisp {		// how to display projections
     L_R_F,			// all in front: sender is at left of layer, receiver is right
