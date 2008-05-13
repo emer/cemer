@@ -425,9 +425,9 @@ public:
   CaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
 };
 
-class LEABRA_API CaiSynDepSpec : public tOaBase {
+class LEABRA_API CaiSynDepSpec : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
-INHERITED(tOBase)
+INHERITED(taOBase)
 public:
   float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
   float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
