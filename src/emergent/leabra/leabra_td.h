@@ -85,9 +85,9 @@ private:
 //	External Reward Layer		//
 //////////////////////////////////////////
 
-class LEABRA_API AvgExtRewSpec : public taBase {
+class LEABRA_API AvgExtRewSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
@@ -99,9 +99,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API OutErrSpec : public taBase {
+class LEABRA_API OutErrSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false #APPLY_IMMED compute a graded reward signal as a function of number of correct output values
@@ -116,9 +116,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API ExtRewSpec : public taBase {
+class LEABRA_API ExtRewSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
@@ -295,9 +295,9 @@ private:
 //	TD Reward Integration Layer	//
 //////////////////////////////////////////
 
-class LEABRA_API TDRewIntegSpec : public taBase {
+class LEABRA_API TDRewIntegSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
   bool		max_r_v;	// represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function

@@ -167,9 +167,9 @@ private:
 //	  Matrix Layer Spec	//
 //////////////////////////////////
 
-class LEABRA_API MatrixMiscSpec : public taBase {
+class LEABRA_API MatrixMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		neg_da_bl;	// #DEF_0.0002 negative da baseline in learning condition: this amount subtracted from all da values in learning phase (essentially reinforces nogo)
   float		neg_gain;	// #DEF_1.5 gain for negative DA signals relative to positive ones: neg DA may need to be stronger!
@@ -183,9 +183,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API ContrastSpec : public taBase {
+class LEABRA_API ContrastSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra contrast enhancement of the GO units
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		gain;		// #DEF_1 overall gain for da modulation
   float		go_p;		// #DEF_0.5 proportion of da * gate_act for DA+ on GO units: contrast enhancement
@@ -200,9 +200,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API MatrixRndGoSpec : public taBase {
+class LEABRA_API MatrixRndGoSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications (unconditional, nogo)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		avgrew;		// #DEF_0.9 threshold on global avg reward value (0..1) below which random GO can fire (uses ExtRew_Stat if avail, else avg value from ExtRewLayer) -- once network is doing well overall, shutdown the exploration.  This is true for all cases EXCEPT err rnd go
 
@@ -220,9 +220,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API MatrixErrRndGoSpec : public taBase {
+class LEABRA_API MatrixErrRndGoSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration when (a series of) errors occur: a stripe is chosen from a softmax over the snrthal netinputs (closer to firing chosen with higher probability)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED #DEF_true whether to use error-driven random go
   int		min_cor;	// #CONDEDIT_ON_on:true [Default is 5 for MAINT, 1 for OUTPUT] minimum number of sequential correct to start counting errors and doing random go: need some amount of correct before errors count!
@@ -239,9 +239,9 @@ private:
   void	Destroy()	{ };
 };
 
-class LEABRA_API MatrixAvgDaRndGoSpec : public taBase {
+class LEABRA_API MatrixAvgDaRndGoSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra matrix random Go firing to encourage exploration for non-productive stripes based on softmax of avg_go_da for that stripe (matrix_u->misc_1)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		on;		// #APPLY_IMMED [Default true for MAINT, false for OUTPUT] whether to use random go based on average dopamine values
   float		avgda_p;	// #CONDEDIT_ON_on:true #DEF_0.1 baseline probability of firing random Go for any stripe (first pass before doing softmax)
@@ -331,9 +331,9 @@ private:
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
-class SNrThalMiscSpec : public taBase {
+class SNrThalMiscSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		net_off;	// #DEF_0.5 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
@@ -374,9 +374,9 @@ private:
 //	PFC Layer Spec	(Maintenance)	//
 //////////////////////////////////////////
 
-class LEABRA_API PFCGateSpec : public taBase {
+class LEABRA_API PFCGateSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum	GateSignal {
     GATE_GO = 0,		// gate GO unit fired 
@@ -452,9 +452,9 @@ private:
 //	PFC Layer Spec	(Output)	//
 //////////////////////////////////////////
 
-class LEABRA_API PFCOutGateSpec : public taBase {
+class LEABRA_API PFCOutGateSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for pfc output gating
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		base_gain;	// #DEF_0.5 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY #SHOW how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain

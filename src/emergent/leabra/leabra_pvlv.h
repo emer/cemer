@@ -108,9 +108,9 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API PVDetectSpec : public taBase {
+class LEABRA_API PVDetectSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for detecting if a primary value is present or expected
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		thr_min;	// #DEF_0.2 minimum threshold on PVe (ExtRew) or PVi, below which PV is considered present (i.e., punishment) (set to 0 if PVe.rew.norew_val = 0)
   float		thr_max;	// #DEF_0.8 maximum threshold on PVe (ExtRew) or PVi, above which PV is considered present (i.e., reward) (set to .4 if PVe.rew.norew_val = 0)
@@ -295,9 +295,9 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API LVSpec : public taBase {
+class LEABRA_API LVSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for learned value layers
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   bool		delta_on_sum;	// #DEF_false if there are multiple lv subgroups, compute the temporal delta on the summed lv values (else deltas are per each sub-group, then summed)
   bool		use_actual_er;	// #DEF_false use actual external reward presence to determine when to learn (cheating), otherwise use PVi's estimate of when primary value is avail (more realistic)
@@ -368,9 +368,9 @@ private:
 //	  Novelty Value Layer (NV)	//
 //////////////////////////////////////////
 
-class LEABRA_API NVSpec : public taBase {
+class LEABRA_API NVSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for novelty value learning
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 gain for novelty value dopamine signal
   float		val_thr;	// #DEF_0.1 threshold for value (training value is 0) -- value is zero below this threshold
@@ -420,9 +420,9 @@ private:
 //	  DaLayer 	//
 //////////////////////////
 
-class LEABRA_API PVLVDaSpec : public taBase {
+class LEABRA_API PVLVDaSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for PVLV da parameters
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		da_gain;	// #DEF_1 multiplier for dopamine values
   float		tonic_da;	// #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)

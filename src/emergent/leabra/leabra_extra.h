@@ -55,9 +55,9 @@ private:
 // 	Context Layer for Sequential	//
 //////////////////////////////////////////
 
-class LEABRA_API CtxtUpdateSpec : public taBase {
+class LEABRA_API CtxtUpdateSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
   float		fm_prv;		// from previous context layer values (maintenance)
@@ -165,9 +165,9 @@ public:
   TrialSynDepCon() { effwt = 0.0f; }
 };
 
-class LEABRA_API TrialSynDepSpec : public taBase {
+class LEABRA_API TrialSynDepSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
@@ -298,9 +298,9 @@ public:
   CycleSynDepCon() { effwt = 0.0f; }
 };
 
-class LEABRA_API CycleSynDepSpec : public taBase {
+class LEABRA_API CycleSynDepSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		rec;		// #DEF_0.002 rate of recovery from depression
   float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
@@ -425,9 +425,9 @@ public:
   CaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
 };
 
-class LEABRA_API CaiSynDepSpec : public taBase {
+class LEABRA_API CaiSynDepSpec : public tOaBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
-INHERITED(taBase)
+INHERITED(tOBase)
 public:
   float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
   float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
@@ -579,9 +579,9 @@ public:
   FastWtCon() { swt = sdwt = 0.0f; }
 };
 
-class LEABRA_API FastWtSpec : public taBase {
+class LEABRA_API FastWtSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specificiations for fast weights
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum DecayMode {
     ALWAYS,			// always decay all weights toward slow weight (swt)
@@ -728,9 +728,9 @@ private:
   void	Destroy()		{ };
 };
 
-class LEABRA_API ActAvgHebbMixSpec : public taBase {
+class LEABRA_API ActAvgHebbMixSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		act_avg;	// what proportion of average activation to include in hebbian receiving unit activation learning term
   float		cur_act;	// #READ_ONLY #SHOW 1.0 - act_avg -- proportion of current activation for hebbian learning
@@ -933,9 +933,9 @@ private:
 // group units, producing a random sensory representation.  not really necc. for S2 
 // spikes, because of syndep..
 
-class LEABRA_API ScalarValSpec : public taBase {
+class LEABRA_API ScalarValSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -973,9 +973,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API ScalarValBias : public taBase {
+class LEABRA_API ScalarValBias : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -1093,9 +1093,9 @@ private:
   void 	Destroy()		{ };
 };
 
-class LEABRA_API MotorForceSpec : public taBase {
+class LEABRA_API MotorForceSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		pos_width;	// sigma parameter of a gaussian specifying the tuning width of the coarse-coded integration over position (in pos_range or normalized units, depending on norm_width)
   float		vel_width;	// sigma parameter of a gaussian specifying the tuning width of the coarse-coded integration over velocity (in vel_range or normalized units, depending on norm_width)
@@ -1159,9 +1159,9 @@ private:
 // 	TwoD Value Layer	//
 //////////////////////////////////
 
-class LEABRA_API TwoDValSpec : public taBase {
+class LEABRA_API TwoDValSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -1206,9 +1206,9 @@ private:
   void 	Destroy()	{ };
 };
 
-class LEABRA_API TwoDValBias : public taBase {
+class LEABRA_API TwoDValBias : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -1404,9 +1404,9 @@ private:
   void 	Destroy()		{ };
 };
 
-class LEABRA_API V1FeatInhibSpec : public taBase {
+class LEABRA_API V1FeatInhibSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for V1 layer units based on feature-level inhibition
-INHERITED(taBase)
+INHERITED(taOBase)
 public:
   float		feat_gain;	// multiplier for feature-level inhibition
   float		dist_sigma;	// Gaussian std deviation (sigma) for weighting competitors based on distance, in normalized units relative to max x,y size dimension of the layer group geometry
