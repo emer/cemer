@@ -1250,7 +1250,10 @@ void iT3DataViewFrame::showEvent(QShowEvent* ev) {
 
 void iT3DataViewFrame::Showing(bool showing) {
   if (panel_set) {
-    panel_set->FrameShowing(showing, showing); // focus it if showing
+    // note: don't focus, because that results in hard-to-prevent side-effect
+    // of spurious focusing when restoring windows, changing desktops, etc.
+    //panel_set->FrameShowing(showing, showing); // focus it if showing
+    panel_set->FrameShowing(showing, false);
   }
 }
 
