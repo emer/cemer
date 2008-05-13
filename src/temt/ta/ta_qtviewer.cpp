@@ -5003,23 +5003,11 @@ void iDataPanel::DataChanged_impl(int dcr, void* op1, void* op2) {
 }
 
 void iDataPanel::FrameShowing(bool showing, bool focus) {
-//TEMP:
+  // note: if caller sets focus on its showing, then this will cause
+  // spurious tab focuses on restore window, change desktop, etc.
   if (tabView()) {
     tabView()->ShowTab(this, showing, focus);
   }
-return;
-//NOTE: the sync version seems to work better, ex. no startup issues
-  if (showing) {
-    if (!show_req) { // !already waiting
-      QEvent::Type evt = (QEvent::Type)(focus ? CET_SHOW_PANEL_FOCUS : CET_SHOW_PANEL);
-      QEvent* ev = new QEvent(evt);
-      show_req = true;
-      QCoreApplication::postEvent(this, ev);
-    }
-  } else if (tabView()) {
-    tabView()->ShowTab(this, showing);
-  }
-
 }
 
 void iDataPanel::FrameShowing_Async(bool focus) {
@@ -5431,6 +5419,10 @@ void iDataPanelSetBase::ClosePanel() {
   deleteLater();
 }
 
+void iDataPanelSetBase::DataLinkDestroying(taDataLink* dl) {
+  ClosePanel();
+} // nothing for us; subpanels handle
+
 void iDataPanelSetBase::UpdatePanel() {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
@@ -5803,6 +5795,7 @@ void iListDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
 }
 
 void iListDataPanel::FillList() {
+  if (!link()) return; // zombie
   taiListDataNode* last_child = NULL;
   int i = 0;
   while (true) { // break when NULL child encountered

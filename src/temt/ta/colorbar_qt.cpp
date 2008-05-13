@@ -63,6 +63,7 @@ HCBar::HCBar(ColorScale* c, QWidget* parent)
 {};
 
 void HCBar::paintEvent(QPaintEvent* ev) {
+  if (!scale) return; // some kind of zombie happening...
   QRect r = rect();
   int w_tot = r.width();
   if (w_tot == 0) return;  // prob should never happen
@@ -106,6 +107,7 @@ VCBar::VCBar(ColorScale* c, QWidget* parent)
 
 
 void VCBar::paintEvent(QPaintEvent* ev) {
+  if (!scale) return; // some kind of zombie happening...
   QRect r = rect();
   int h_tot = r.height();
   if (h_tot == 0) return;  // prob should never happen

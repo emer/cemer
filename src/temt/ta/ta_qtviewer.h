@@ -1478,7 +1478,7 @@ public slots:
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}
-  override void		DataLinkDestroying(taDataLink* dl) {} // nothing for us; subpanels handle
+  override void		DataLinkDestroying(taDataLink* dl);
   override TypeDef*	GetTypeDef() const {return &TA_iDataPanelSetBase;}
   
 protected:

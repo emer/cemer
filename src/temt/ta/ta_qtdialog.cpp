@@ -927,9 +927,9 @@ void taiDataHostBase::Constr_Buttons() {
 
 void taiDataHostBase::DataLinkDestroying(taDataLink* dl) {
 // TENT, TODO: confirm this is right...
-  root = NULL;
 //NO!  if (!isConstructed()) return;
   Cancel();
+  root = NULL;
 }
  
 void taiDataHostBase::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {

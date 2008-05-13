@@ -276,6 +276,16 @@ void SelectEdit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); 
   if (taMisc::is_loading) {
     ConvertLegacy(); // LEGACY
+    // add all the bases, since they weren't available during load
+    // this is harmless if Convert actually did this instead
+    taLeafItr itr;
+    SelectEditItem* sei = NULL;
+    FOR_ITR_EL(SelectEditItem, sei, mbrs., itr) {
+      BaseAdded(sei->base);
+    }
+    FOR_ITR_EL(SelectEditItem, sei, mths., itr) {
+      BaseAdded(sei->base);
+    }
   }
 }
 
@@ -311,28 +321,25 @@ void SelectEdit::DataDestroying_Ref(taBase_RefList* src, taBase* base) {
 void SelectEdit::DataChanged_Ref(taBase_RefList* src, taBase* ta,
     int dcr, void* op1, void* op2)
 {
-//TODO
+  // simplest, is to just issue our own DataChanged
+  DataChanged(DCR_ITEM_UPDATED);
 }
 
 void SelectEdit::DataChanged_Group(taGroup_impl* grp,
     int dcr, void* op1, void* op2)
 {
   if (m_changing) return;
+  if (taMisc::is_loading) return; // note: base's aren't set yet, so we can't add
   if (dcr == DCR_GROUP_ITEM_REMOVE) {
     SelectEditItem* ei = (SelectEditItem*)op1;
     BaseRemoved(ei->base);
   }
-  else if (dcr == DCR_GROUP_ITEM_UPDATE) {
+  else if (dcr == DCR_GROUP_ITEM_INSERT) {
     SelectEditItem* ei = (SelectEditItem*)op1;
-    // load is special case -- will probably be the UAE, register the base
-    if (taMisc::is_loading) {
-      if (ei->base) 
-        BaseAdded(ei->base);
-      return; // no gui stuff
-    }
+    BaseAdded(ei->base); // ignored if null, but shouldn't happen anyway
   }
   //pretty much everything else as well, need to reshow
-//TODO: watch out of this one being too much remaking!!!
+  //note: this is asynch, so multiple events (ex Compare, etc.) will only cause 1 reshow
   ReShowEdit(true);
 }
 

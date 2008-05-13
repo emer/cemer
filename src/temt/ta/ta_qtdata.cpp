@@ -1225,9 +1225,8 @@ void taiPolyData::GetValue_impl(void* base_) const {
     taiData* mb_dat = data_el.FastEl(i);
     md->im->GetMbrValue(mb_dat, base_, first_diff);
   }
-  taBase* rbase = Base();
-  if (rbase && !HasFlag(flgNoUAE)) {
-    rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
+  if (m_child_base && !HasFlag(flgNoUAE)) {
+     m_child_base->UpdateAfterEdit();	// hook to update the contents after an edit..
   }
   taMisc::record_script = rec_scrpt;
 }
