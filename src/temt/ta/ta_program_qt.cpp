@@ -1203,6 +1203,12 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       // need to check for enums, because md is the type, not the val
       if (pv->var_type == ProgVar::T_HardEnum) 
         md = pv->FindMember("int_val");
+      else if (pv->var_type == ProgVar::T_DynEnum) {
+        // special case -- we will be setting the base to the DynEnum, not pv
+        // and herein need to set the md for the nested dyn_val, which 
+        // conceivably may not even exist, so we do this via the instance
+        md = TAI_DynEnum->FindMember("value");
+      }
       mb_dat->SetMemberDef(md); // usually done by im, but we are manual here...
       
       data_el(j).Add(mb_dat);
