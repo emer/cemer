@@ -1391,7 +1391,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
         break;
       }
       // set base, for ctxt menu, so it won't try to use the Program (which is not the base)
-      mb_dat->SetBase(pv);
+      mb_dat->SetBase(pv); // for all, except HardEnum which is nested again
       if(pv->var_type == ProgVar::T_HardEnum) {
 	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
 	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
@@ -1408,6 +1408,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
 	}
       }
       else if(pv->var_type == ProgVar::T_DynEnum) {
+	mb_dat->SetBase(&pv->dyn_enum_val);
 	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
 	  taiField* tmb_dat = dynamic_cast<taiField*>(mb_dat);
 	  if (pv->TestError(!tmb_dat, "expected taiField, not: ", 
