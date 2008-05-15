@@ -618,21 +618,22 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
   if (sel_item_dat) {
     taiDataHost::DoFillLabelContextMenu_SelEdit(sender, menu, last_id, sel_item_dat, body,
-    this, SLOT(DoSelectForEdit(int)));
+    this, SLOT(DoSelectForEdit(QAction*)));
   }
 
-  if (menu->count() > 0)
+  if (menu->actions().count() > 0)
     menu->exec(sender->mapToGlobal(e->pos()));
   delete menu;
 }
 
-void iProgramEditor::DoSelectForEdit(int param){
+void iProgramEditor::DoSelectForEdit(QAction* act) {
 //note: this routine is duplicated in the taiEditDataHost
   if (!sel_item_dat) return; // shouldn't happen!
   
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
   
+  int param = act->data().toInt();
   SelectEdit* se = proj->edits.Leaf(param);
  
   taBase* rbase = sel_item_dat->Base();

@@ -1052,34 +1052,35 @@ void taiDataHost::DoFillLabelContextMenu_SelEdit(iLabel* sender,
   if (!proj || proj->edits.leaves == 0) return;
 
   // if any edits, populate menu for adding, for all seledits not already on
-  QMenu* sub = new QMenu(menu_par);
+  QMenu* sub = menu->addMenu("Add to SelectEdit");
+  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
   sub->setFont(menu->font());
+  QAction* act = NULL; // we need to track last one
   for (int i = 0; i < proj->edits.leaves; ++i) {
     SelectEdit* se = proj->edits.Leaf(i);
-    sub->insertItem(se->GetName(), slot_obj, slot, 0, i); // set id to i
-    sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
+    act = sub->addAction(se->GetName()/*, slot_obj, slot*/); //
+    act->setData(i); // sets data, which is what is used in signal, to i
     // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
     if (se->FindMbrBase(rbase, md) >= 0)
-      sub->setItemEnabled(i, false);
+      act->setEnabled(false);
   }
-  menu->insertItem("Add to SelectEdit", sub, ++last_id);
-  if (sub->count() == 0)
-    menu->setItemEnabled(last_id, false); // show item for usability, but disable
+  if (sub->actions().count() == 0)
+    sub->setEnabled(false); // show item for usability, but disable
     
   // TODO: if any edits, populate menu for removing, for all seledits already on
-  sub = new QMenu(menu_par);
+  sub = menu->addMenu("Remove from SelectEdit");
+  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
   sub->setFont(menu->font());
   for (int i = 0; i < proj->edits.leaves; ++i) {
     SelectEdit* se = proj->edits.Leaf(i);
-    sub->insertItem(se->GetName(), slot_obj, slot, 0, i); // set id to i
-    sub->setItemParameter(i, i); // sets param, which is what is passed in signal, to i
+    act = sub->addAction(se->GetName()/*, slot_obj, slot*/);
+    act->setData(i); // sets data, which is what is used in signal, to i
     // determine if already on that seledit, and disable if it isn't
     if (se->FindMbrBase(rbase, md) < 0)
-      sub->setItemEnabled(i, false);
+      act->setEnabled(false);
   }
-  menu->insertItem("Remove from SelectEdit", sub, ++last_id);
-  if (sub->count() == 0)
-    menu->setItemEnabled(last_id, false); // show item for usability, but disable
+  if (sub->actions().count() == 0)
+    sub->setEnabled(false); // show item for usability, but disable
 }
 
 void taiDataHost::GetName(MemberDef* md, String& name, String& desc) {
@@ -1136,7 +1137,7 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   }
   if (row < 0)
     row = layBody->rowCount();
-  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
+  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   QHBoxLayout* layH = new QHBoxLayout();
   
   
@@ -1218,7 +1219,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
     row = layBody->rowCount();
   // note1: margins not automatically baked in to max height
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
-  layBody->setRowSpacing(row, row_height + (2 * LAYBODY_MARGIN)); 
+  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); 
   QHBoxLayout* hbl = new QHBoxLayout();
   hbl->setMargin(0);
   layBody->addLayout(hbl, row, 1);
@@ -1481,7 +1482,7 @@ void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e)
   Q_CHECK_PTR(menu);
   int last_id = -1;
   FillLabelContextMenu(sender, menu, last_id);
-  if (menu->count() > 0)
+  if (menu->actions().count() > 0)
     menu->exec(sender->mapToGlobal(e->pos()));
   delete menu;
 }
@@ -2038,11 +2039,12 @@ void taiEditDataHost::DoRaise_Panel() {
   //TODO
 }
 
-void taiEditDataHost::DoSelectForEdit(int param){
+void taiEditDataHost::DoSelectForEdit(QAction* act){
 //note: this routine is duplicated in the ProgEditor
   taProject* proj = (taProject*)((taBase*)root)->GetThisOrOwner(&TA_taProject);
   if (!proj) return;
   
+  int param = act->data().toInt();
   SelectEdit* se = proj->edits.Leaf(param);
  
   if (!sel_item_dat) return; // shouldn't happen!
@@ -2130,7 +2132,7 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
   QMenu* menu, int& last_id)
 {
   DoFillLabelContextMenu_SelEdit(sender, menu, last_id, sel_item_dat, body,
-  this, SLOT(DoSelectForEdit(int)));
+  this, SLOT(DoSelectForEdit(QAction*)));
 }
 
 void taiEditDataHost::GetButtonImage(bool force) {

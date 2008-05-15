@@ -3623,7 +3623,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   connect( editFindNextAction, SIGNAL( Action() ), this, SLOT(editFindNext()) );
   connect( viewRefreshAction, SIGNAL( Action() ), this, SLOT(viewRefresh()) );
   connect( viewSaveViewAction, SIGNAL( Action() ), this, SLOT(viewSaveView()) );
-  connect( toolsClassBrowseAction, SIGNAL( activated() ), 
+  connect( toolsClassBrowseAction, SIGNAL( triggered() ), 
     this, SLOT( toolsClassBrowser() ) );
   connect( helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()) );
   connect( helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()) );

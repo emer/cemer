@@ -5225,7 +5225,7 @@ void cssCmdShell::Shell_NoConsole_Run() {
       free(curln); // spec has rl allocating this 
       curln = NULL;
       if(str.length() > 0)
-	add_history((char*)(const char*)str);
+	add_history((char*)(str.toAscii().constData()));
       AcceptNewLine(str, false);
     }
   }

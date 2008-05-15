@@ -92,7 +92,7 @@ void cssConsole::setPrompt(const QString& value) {
     if (thread->prompt == value) return; // test is threadsafe/threadcorrect
     //TODO: try to erase last prompt if any
     thread->prompt = value; // threadsafe
-    cout << value.latin1();
+    cout << value.toLatin1().data();
   }
 }
 
@@ -128,7 +128,7 @@ void ConThread::run() {
   while (con) { // con null'ed can indicate stop needed
     lprompt = prompt;
     //NOTE: according to rl spec, we must call free() on the string returned
-    curln_ = rl_readline(const_cast<char*>(lprompt.latin1())); // rl doesn't change it, so safe
+    curln_ = rl_readline((lprompt.toLatin1().data())); // rl doesn't change it, so safe
     eof = (!curln_);
     if (eof) {
       curln = _nilString;
@@ -160,5 +160,5 @@ cssConsole* cssConsole::New_SysConsole(QObject* parent) {
 }
 
 
-#endif  TA_OS_UNIX
+#endif  // TA_OS_UNIX
 

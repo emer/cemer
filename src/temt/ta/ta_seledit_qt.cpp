@@ -230,10 +230,11 @@ void iSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
 {
   int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
   if (sel_item_index < 0) return; 
-  menu->insertItem("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()), 0, ++last_id);
+  //QAction* act = 
+  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
 }
 
-QMenu* iSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
+/* QMenu* iSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
   int id = 0;
   for (uint i = 0; i < par_menu->count(); ++i) {
     id = par_menu->idAt(i);
@@ -241,7 +242,7 @@ QMenu* iSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
       return (QMenu*)par_menu->findItem(id);
   }
   return NULL;
-}
+}*/
 
 void iSelectEditDataHost::GetImage_Membs_def() {
   int itm_idx = 0;
@@ -283,10 +284,10 @@ void iSelectEditDataHost::GetValue_Membs_def() {
   }
 }
 
-void iSelectEditDataHost::MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot) {
+/* void iSelectEditDataHost::(QMenu* menu, const char* name, int index, int param, const char* slot) {
     menu->insertItem(name, this, slot, 0, index);
     menu->setItemParameter(index, param);
-}
+}*/
 
 void iSelectEditDataHost::mnuRemoveMember_select(int idx) {
   sele->RemoveField(idx);

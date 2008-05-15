@@ -63,8 +63,8 @@ protected:
   void 			Constr_Methods();
 
   override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
-  void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
-  QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
+//obs  void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
+//obs  QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
 
   override void		Constr_Data_Labels(); 
   override void 	GetImage_Membs_def();

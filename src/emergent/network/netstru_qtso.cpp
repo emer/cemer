@@ -2236,7 +2236,6 @@ void NetView::InitDisplay(bool init_panel) {
 }
 
 void NetView::InitDisplay_Layer(LayerView* lv, bool check_build) {
-//   if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
   UnitGroupView* ugrv;
   taListItr j;
   FOR_ITR_EL(UnitGroupView, ugrv, lv->children., j) {
@@ -2245,7 +2244,6 @@ void NetView::InitDisplay_Layer(LayerView* lv, bool check_build) {
 }
 
 void NetView::InitDisplay_UnitGroup(UnitGroupView* ugrv, bool check_build) {
-//   if (check_build && (!display || !net()->CheckBuild(true))) return; // needs to be built
   ugrv->AllocUnitViewData(); // make sure we have correct space in uvd array
   ugrv->UpdateUnitViewBase(unit_disp_md, unit_src, unit_con_md);
 }
@@ -2453,7 +2451,6 @@ void NetView::Render_net_text() {
     chld_idx++;
   }
 
-//   if (!display || !net()->CheckBuild(true)) return; // no display, or needs to be built
   if (scale.auto_scale) {
     UpdateAutoScale();
     if (nvp) {
@@ -2832,14 +2829,14 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   //note: we don't set the values of all controls here, because dv does an immediate refresh
   layWidg = new QVBoxLayout(widg); //def margin/spacing=2
   layWidg->setMargin(0); layWidg->setSpacing(0);
-  layTopCtrls = new QVBoxLayout(layWidg);
+  layTopCtrls = new QVBoxLayout(); layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(taiM->vsep_c);
 
-  layViewParams = new QVBoxLayout(layTopCtrls);
+  layViewParams = new QVBoxLayout(); layTopCtrls->addLayout(layViewParams);
   layViewParams->setSpacing(taiM->vsep_c);
 
   ////////////////////////////////////////////////////////////////////////////
-  layDispCheck = new QHBoxLayout(layViewParams);
+  layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
   chkDisplay = new QCheckBox("Display", widg);
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkDisplay);
@@ -2880,7 +2877,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDispCheck->addStretch();
   
   ////////////////////////////////////////////////////////////////////////////
-  layFontsEtc = new QHBoxLayout(layViewParams);
+  layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
 
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
   lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
@@ -2919,9 +2916,9 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   //  gbDisplayValues = new QGroupBox("Display Values", widg);
   //  layTopCtrls->addWidget(gbDisplayValues, 1);
   //  gbDisplayValues->setFlat(true);		  // make it take up less space
-  layDisplayValues = new QVBoxLayout(layTopCtrls); //gbDisplayValues);
+  layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
 
-  layColorScaleCtrls = new QHBoxLayout(layDisplayValues);
+  layColorScaleCtrls = new QHBoxLayout();  layDisplayValues->addLayout(layColorScaleCtrls);
   
   chkSnapBord = new QCheckBox("Snap\nBord", widg);
   chkSnapBord->setToolTip("Whether to display unit snapshot value snap as a border around units");
@@ -2971,7 +2968,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
 
   ////////////////////////////////////////////////////////////////////////////
-  layColorBar = new QHBoxLayout(layDisplayValues);
+  layColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layColorBar);
 
   chkAutoScale = new QCheckBox("Auto\nScale", widg);
   chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
@@ -3012,7 +3009,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //   gbSpecs = new QGroupBox("Specs", widg);
 //   gbSpecs->setFlat(true); // make it take up less space
 //   layTopCtrls->addWidget(gbSpecs, 1);
-  laySpecs = new QVBoxLayout(layTopCtrls);
+  laySpecs = new QVBoxLayout();  layTopCtrls->addLayout(laySpecs);
   tvSpecs = new iTreeView(widg, iTreeView::TV_AUTO_EXPAND);
   tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
   laySpecs->addWidget(tvSpecs, 1);

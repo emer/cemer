@@ -443,10 +443,8 @@ void ScaleBar::Init(bool hor_, bool adj, bool ed){
   max_frep = new iLineEdit(this);
   max_frep->setCharWidth(6); // make them a bit smaller
   if (editflag) {
-    connect(min_frep, SIGNAL(returnPressed()), this, SLOT(editor_accept()) );
-    connect(min_frep, SIGNAL(lostFocus()), this, SLOT(editor_accept()) );
-    connect(max_frep, SIGNAL(returnPressed()), this, SLOT(editor_accept()) );
-    connect(max_frep, SIGNAL(lostFocus()), this, SLOT(editor_accept()) );
+    connect(min_frep, SIGNAL(editingFinished()), this, SLOT(editor_accept()) );
+    connect(max_frep, SIGNAL(editingFinished()), this, SLOT(editor_accept()) );
   } else { // no editing
     min_frep->setReadOnly(true);
     max_frep->setReadOnly(true);

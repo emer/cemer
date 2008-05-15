@@ -671,7 +671,7 @@ protected:
   override void 	DoConstr_Dialog(iDialog*& dlg);
 
 protected slots:
-  virtual void		DoSelectForEdit(int param); // param will be index of the SelectEdit; sel_data_index will hold the index of the data item
+  virtual void		DoSelectForEdit(QAction* act); // act.data will be index of the SelectEdit; sel_data_index will hold the index of the data item
   virtual void		bgrp_buttonClicked(int id); // one of the section checkboxes
 };
 
