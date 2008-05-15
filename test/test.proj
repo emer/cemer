@@ -644,7 +644,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     };
     ScriptPrjnSpec @[4] {
      name="ScriptPrjnSpec_0";
-     desc=;
+     desc="makes a plus sign";
      unique{      };
      children {
       name=;
@@ -654,6 +654,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      self_con=0;
      init_wts=0;
      script_string=;
+     script_filename="/Users/oreilly/emergent_dbg/test/test_script_prjn.css";
      s_args{ };
 {      };
     };

@@ -98,8 +98,9 @@ public:
 class TA_API ScriptBase: public AbstractScriptBase {
   // #VIRT_BASE #NO_INSTANCE class for adding a script to other objects
 public:
-  taFiler*	script_file;		// file to use for the script
+  taFiler*	script_file;	// file to use for the script
   String	script_string; // #EDIT_DIALOG script text to use for the script
+  String	script_filename; // #HIDDEN #READ_ONLY file name for the script -- used only for saving and loading
   
   override ScriptSource	scriptSource();
   override const String	scriptFilename();
@@ -111,6 +112,8 @@ public:
   // load script from script string and compile it
   virtual void 	SetScript(const String& file_nm);
   // set the script file name (also clears script string)
+  virtual void	UpdateScriptFile();
+  // #IGNORE call this function in the UpdateAfterEdit of object to ensure script file name is properly saved and loaded
   
   void		Copy_(const ScriptBase& cp);
   ScriptBase();

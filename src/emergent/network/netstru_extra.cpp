@@ -672,6 +672,7 @@ void ScriptPrjnSpec::Copy_(const ScriptPrjnSpec& cp) {
   s_args = cp.s_args;
   *script_file = *(cp.script_file);
   script_string = cp.script_string;
+  script_filename = cp.script_filename;
 }
 
 void ScriptPrjnSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -690,7 +691,7 @@ void ScriptPrjnSpec::Connect_impl(Projection* prj) {
 
 void ScriptPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-//v3  UpdateReCompile();
+  UpdateScriptFile();		// deals with all the script file management issues
   CompileScript(true); // force
 /*v3 nuke  if(!script_file->fname().empty()) {
     //note: fname() is name only
@@ -702,6 +703,7 @@ void ScriptPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void ScriptPrjnSpec::Compile() {
+  UpdateScriptFile();		// deals with all the script file management issues
   CompileScript(true);		// force recompile!
 }
 
