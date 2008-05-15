@@ -6098,7 +6098,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 //  connect(this, SIGNAL(itemSelectionChanged()),
 //    this, SLOT(this_itemSelectionChanged()) );
   //note: can't use "activate" because that is only for ex. double-clicking the item
-  connect(this, SIGNAL(clicked(const QModelIndex&)),
+  connect(this, SIGNAL(pressed(const QModelIndex&)),
     this, SLOT(this_itemSelectionChanged()) );
   connect(this, SIGNAL(contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)),
     this, SLOT(this_contextMenuRequested(QTreeWidgetItem*, const QPoint&, int)) );
