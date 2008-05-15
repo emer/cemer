@@ -555,6 +555,22 @@ bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
   return true;
 }
 
+void cssTA_Base::operator=(void* cp) {
+// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
+#ifdef DEBUG
+  cerr << "debug note: using cssTA_Base::operator=(void* cp) -- not a good idea so please change to use taBase* version!" << endl;
+#endif
+  *this = (taBase*)cp;		// just call taBase* version anyway
+}
+
+void cssTA_Base::operator=(void** cp) {
+// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
+#ifdef DEBUG
+  cerr << "debug note: using cssTA_Base::operator=(void** cp) -- not a good idea so please change to use taBase** version!" << endl;
+#endif
+  *this = (taBase**)cp;		// just call taBase* version anyway
+}
+
 void cssTA_Base::operator=(taBase* cp) {
   if((ptr_cnt == 0) && ptr) {
     if(!ptr) {

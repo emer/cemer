@@ -578,6 +578,12 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
 	not_mod = false;	got_one = true;
       }
     }
+    else if(nrt->DerivesFrom(TA_taBase)) {
+      // need to use taBase* to preserve reffing sanity!
+      strm << "    *arg[" << j+1 << "]=(taBase" << nrt->GetPtrString() << ")";
+      strm << "refarg_" << j << ";";
+      not_mod = false;		got_one = true;
+    }
     else {			// all ptrs just done through (void*)..
       strm << "    *arg[" << j+1 << "]=(void" << nrt->GetPtrString() << ")";
       strm << "refarg_" << j << ";";

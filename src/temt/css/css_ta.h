@@ -150,6 +150,8 @@ public:
   void operator=(const cssEl& s); // use obj->UnSafeCopy for ptr_cnt == 0
   void operator=(taBase*);
   void operator=(taBase**);
+  void operator=(void* cp);	// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
+  void operator=(void** cp);
 
   void PtrAssignPtr(const cssEl& s);
   override bool PtrAssignPtrPtr(void* new_ptr_val);
