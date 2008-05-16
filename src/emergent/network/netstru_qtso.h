@@ -482,7 +482,6 @@ public:
   override String	GetLabel() const;
   override String	GetName() const;
 
-  override bool		hasViewProperties() const { return true; }
 
   override void		Dump_Load_post();
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
@@ -490,7 +489,11 @@ public:
   override void		InitLinks();
   override void		CutLinks();
   override void  	ChildUpdateAfterEdit(TAPtr child, bool& handled);
-  T3_DATAVIEWFUNS(NetView, T3DataViewMain)
+  T3_DATAVIEWFUNS(NetView, T3DataViewMain) //
+
+// ISelectable i/f
+  override GuiContext	shType() const {return GC_DUAL_DEF_VIEW;} 
+  override bool		hasViewProperties() const { return true; } //TODO: NUKE, OBS
 
 protected:
   NetViewPanel*		nvp; // created during first Render

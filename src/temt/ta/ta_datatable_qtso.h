@@ -207,8 +207,11 @@ public:
 
 // IDataLinkClient i/f
   override void		IgnoredDataChanged(taDataLink* dl, int dcr,
-    void* op1, void* op2);
+    void* op1, void* op2); //
 
+// ISelectable i/f
+  override GuiContext	shType() const {return GC_DUAL_DEF_VIEW;} 
+  
 protected:
 #ifndef __MAKETA__
   QPointer<iDataTableView_Panel> m_lvp; //note: will be a subclass of this, per the log type

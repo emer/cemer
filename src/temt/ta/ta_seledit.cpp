@@ -367,6 +367,7 @@ int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
     SelectMember_impl(itma, mds[i], nma, _nilString);
     SelectMember_impl(itmb, mds[i], nmb, _nilString);
   }
+  DataChanged(DCR_ITEM_UPDATED); // so name updates in tree
   ReShowEdit(true);
   return mds.size;
 }

@@ -1334,6 +1334,10 @@ QObject* ISelectable::clipHandlerObj() const {
   return (host_) ? host_->clipHandlerObj() : NULL;
 }
 
+taiDataLink* ISelectable::clipParLink(GuiContext sh_typ) const {
+  return par_link();
+}
+
 // called from ui to handle drops
 void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos, 
     int mods, int where) 
@@ -1346,7 +1350,7 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
   host_->ctxt_ms = ms;
   host_->ctxt_item = this;
   
-  int ea = QueryEditActions_(ms);
+  int ea = QueryEditActions_(ms, GC_DEFAULT);
   int key_mods = mods & (Qt::ShiftModifier | Qt::ControlModifier |
     Qt::AltModifier);
   // only honor if user has chosen 1 and only 1 mod
@@ -1370,6 +1374,7 @@ void ISelectable::DropHandler(const QMimeData* mime, const QPoint& pos,
   
      
   // always show menu, for consistency
+  // all following implicitly use the GC_DEFAULT code
 show_menu: 
   { // block for jump
   taiMenu* menu = new taiMenu(widget(), taiMenu::normal, 0);
@@ -1478,26 +1483,43 @@ exit:
   delete ms;
 }
 
-void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu) {
-  FillContextMenu_impl(menu);
-  int allowed = QueryEditActions_(sel_items);
-  FillContextMenu_EditItems_impl(menu, allowed);
-  if (sel_items.size == 1) {
-    taiDataLink* link = this->link();
-    if (link) link->FillContextMenu(menu);
+taiDataLink* ISelectable::effLink(GuiContext sh_typ) const {
+  if (sh_typ == GC_DEFAULT)
+    sh_typ = shType();
+  if (sh_typ <= GC_DUAL_DEF_DATA) return link();
+  return viewLink();
+}
+      
+void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
+  taiActions* menu, GuiContext sh_typ) 
+{
+  // if default, get the actual type
+  if (sh_typ == GC_DEFAULT) {
+    sh_typ = shType();
+    if (sh_typ == GC_SINGLE_DATA) {
+      FillContextMenu(sel_items, menu, sh_typ);
+    } else { // dual, make submenus
+      String cap = "View"; // TODO: get a custom string
+      taiMenu* sub = menu->AddSubMenu(cap);
+      FillContextMenu(sel_items, sub, GC_DUAL_DEF_VIEW);
+      cap = "Object"; // TODO: get a custom string
+      sub = menu->AddSubMenu(cap);
+      FillContextMenu(sel_items, sub, GC_DUAL_DEF_DATA);
+    }
+  } else {
+    FillContextMenu_impl(menu, sh_typ);
+    int allowed = QueryEditActions_(sel_items, sh_typ);
+    FillContextMenu_EditItems_impl(menu, allowed, sh_typ);
+    if (sel_items.size == 1) {
+      taiDataLink* link = this->effLink(sh_typ);
+      if (link) link->FillContextMenu(menu);
+    }
   }
 }
 
-/*void ISelectable::FillContextMenu(taiActions* menu) {
-  taiMimeSource* ms = taiMimeSource::NewFromClipboard();
-  FillContextMenu_impl(menu);
-  int allowed = QueryEditActions_(ms);
-  FillContextMenu_EditItems_impl(menu, allowed);
-  taiDataLink* link = this->link();
-  if (link) link->FillContextMenu(menu);
-}*/
-
-void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
+void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
+  int ea, GuiContext sh_typ)
+{
   if (ea == 0) return;
   if (menu->count() > 0)
     menu->AddSep();
@@ -1505,18 +1527,21 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
   taiAction* mel;
   if (ea & taiClipData::EA_CUT) {
     mel = menu->AddItem("Cu&t", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_CUT;
+    mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_COPY) {
     mel = menu->AddItem("&Copy", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_COPY;
+    mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_DUPE) {
     mel = menu->AddItem("Duplicate", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_DUPE;
+    mel->setData(sh_typ);
   }
   
   // Paste and Link guys are slightly complicated, because we can have 
@@ -1530,73 +1555,88 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu, int ea) {
   if (ea & taiClipData::EA_PASTE) {
     if (paste_cnt > 1) txt = "Paste"; else txt = "&Paste";
     mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE;
+    mel->setData(sh_typ);
   } 
   if (ea & taiClipData::EA_PASTE_INTO) {
     if (paste_cnt > 1) txt = "Paste Into"; else txt = "&Paste Into";
     mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_INTO;
+    mel->setData(sh_typ);
   } 
   if (ea & taiClipData::EA_PASTE_ASSIGN) {
     if (paste_cnt > 1) txt = "Paste Assign"; else txt = "&Paste Assign";
     mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_ASSIGN;
+    mel->setData(sh_typ);
   } 
   if (ea & taiClipData::EA_PASTE_APPEND) {
     if (paste_cnt > 1) txt = "Paste Append"; else txt = "&Paste Append";
     mel = menu->AddItem(txt, taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_PASTE_APPEND;
+    mel->setData(sh_typ);
   }
   
   if (ea & taiClipData::EA_DELETE) {
     mel = menu->AddItem("&Delete", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_DELETE;
+    mel->setData(sh_typ);
   }
   if ((ea & taiClipData::EA_LINK) == taiClipData::EA_LINK) {
     mel = menu->AddItem("Link", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK;
+    mel->setData(sh_typ);
     mel = menu->AddItem("Link Into", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK_INTO;
+    mel->setData(sh_typ);
   } 
   else if (ea & taiClipData::EA_LINK) {
     mel = menu->AddItem("&Link", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK;
+    mel->setData(sh_typ);
   } 
   else if (ea & taiClipData::EA_LINK_INTO) {
     mel = menu->AddItem("&Link Into", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_LINK_INTO;
+    mel->setData(sh_typ);
   } 
   
   if (ea & taiClipData::EA_UNLINK) {
     mel = menu->AddItem("&Unlink", taiMenu::use_default,
-        taiAction::int_act, clipHandlerObj(), ISelectableHost::edit_action_slot, this);
+        taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_UNLINK;
+    mel->setData(sh_typ);
   }
-  taiDataLink* link = this->link();
+  taiDataLink* link = this->effLink(sh_typ);
   if (link) link->FillContextMenu_EditItems(menu, ea);
 }
 
-taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
-  bool for_drag) const
+taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items,
+  int src_edit_action, bool for_drag, GuiContext sh_typ) const
 {
   if (sel_items.size <= 1) { 
-    return GetClipDataSingle(src_edit_action, for_drag);
+    return GetClipDataSingle(src_edit_action, for_drag, sh_typ);
   } else { 
-    return GetClipDataMulti(sel_items,src_edit_action, for_drag);
+    return GetClipDataMulti(sel_items,src_edit_action, for_drag, sh_typ);
   }
 }
 
-taiDataLink* ISelectable::own_link() const {
-  taiDataLink* link = this->link();
+TypeDef* ISelectable::GetEffDataTypeDef(GuiContext sh_typ) const {
+  taDataLink* link_ = (taDataLink*)effLink(sh_typ);
+  return (link_) ? link_->GetDataTypeDef() : NULL;
+}
+
+taiDataLink* ISelectable::own_link(GuiContext sh_typ) const {
+  taiDataLink* link = this->effLink(sh_typ);
   return (link) ? link->ownLink() : NULL;
 }
 
@@ -1605,7 +1645,7 @@ MemberDef* ISelectable::par_md() const {
   MemberDef* rval = NULL;
   taBase* par_tab = NULL; //note: still only got the guy, not par
   taBase* gpar_tab = NULL;
-  taiDataLink* link = this->link();
+  taiDataLink* link = this->effLink();
   if (!link) goto exit;
   par_tab = link->taData(); //note: still only got the guy, not par
   if (!par_tab) goto exit;
@@ -1625,7 +1665,9 @@ taiDataLink* ISelectable::par_link() const {
 }
 
 // called from Ui for cut/paste etc. -- not called for drag/drop ops
-int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
+int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
+  GuiContext sh_typ) 
+{
   taiMimeSource* ms = NULL;
   taiClipData* cd = NULL;
   int rval = taiClipData::ER_IGNORED; //not really used, but 0 is ignored, 1 is done, -1 is forbidden, -2 is error
@@ -1634,7 +1676,7 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   if  (ea & (taiClipData::EA_SRC_OPS)) { // no clipboard data
     // we handle cut and copy
     if ((ea & (taiClipData::EA_CUT | taiClipData::EA_COPY))) { // copy-like op, get item data
-      cd = GetClipData(sel_items, taiClipData::ClipOpToSrcCode(ea), false);
+      cd = GetClipData(sel_items, taiClipData::ClipOpToSrcCode(ea), false, sh_typ);
       // note that a Cut is a Copy, possibly followed later by a xxx_data_taken command, if client pastes it
       QApplication::clipboard()->setMimeData(cd, QClipboard::Clipboard);
       cd = NULL; // clipboard now owns it
@@ -1643,7 +1685,7 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
       for (int i = 0; i < sel_items.size; ++i) {
         ISelectable* is = sel_items.SafeEl(i);
         if (!is) continue;
-        int trval = is->EditActionS_impl_(ea);
+        int trval = is->EditActionS_impl_(ea, GC_DEFAULT);
         if (trval == 0) continue;
         rval = trval;
         if (rval < 0) break; // forbidden or error
@@ -1655,7 +1697,7 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
       taMisc::Error("Paste-like clip operations only allowed for a single dest item");
     } else {
       ms = taiMimeSource::New(QApplication::clipboard()->mimeData(QClipboard::Clipboard));
-      rval = EditActionD_impl_(ms, ea);
+      rval = EditActionD_impl_(ms, ea, sh_typ);
     }
   }
   if (ms) delete ms;
@@ -1663,24 +1705,26 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea) {
   return rval;
 }
 
-int ISelectable::QueryEditActions_(taiMimeSource* ms) const {
+int ISelectable::QueryEditActions_(taiMimeSource* ms, GuiContext sh_typ) const {
   int allowed = 0;
   int forbidden = 0;
   // if src is readonly, then forbid certain dst ops
   if (ms->srcAction() & taiClipData::EA_SRC_READONLY)
     forbidden |= taiClipData::EA_FORB_ON_SRC_READONLY;
-  QueryEditActionsD_impl_(ms, allowed, forbidden);
+  QueryEditActionsD_impl_(ms, allowed, forbidden, sh_typ);
   return (allowed & (~forbidden));
 }
 
-int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
+int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items,
+  GuiContext sh_typ) const
+{
   int allowed = 0;
   int forbidden = 0;
   if (sel_items.size <= 1) { // single select
-    QueryEditActionsS_impl_(allowed, forbidden);
+    QueryEditActionsS_impl_(allowed, forbidden, sh_typ);
     taiMimeSource* ms = taiMimeSource::New(
       QApplication::clipboard()->mimeData(QClipboard::Clipboard));
-    QueryEditActionsD_impl_(ms, allowed, forbidden);
+    QueryEditActionsD_impl_(ms, allowed, forbidden, sh_typ);
     delete ms;
   } else { // multi select -- no dst ops allowed
     int allowed_accum = 0; // add allowed to this guy
@@ -1689,7 +1733,7 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
       ISelectable* is = sel_items.SafeEl(i);
       if (is) {
         int item_allowed = 0;
-        is->QueryEditActionsS_impl_(item_allowed, forbidden);
+        is->QueryEditActionsS_impl_(item_allowed, forbidden, GC_DEFAULT);
         allowed_accum |= item_allowed;
         allowed_knockout &= item_allowed;
       }
@@ -1699,8 +1743,8 @@ int ISelectable::QueryEditActions_(const ISelectable_PtrList& sel_items) const {
   return (allowed & (~forbidden));
 }
 
-taBase* ISelectable::taData() const {
-  taiDataLink* link = this->link();
+taBase* ISelectable::taData(GuiContext sh_typ) const {
+  taiDataLink* link = this->effLink(sh_typ);
   if (link)
     return link->taData();
   else return NULL;
@@ -1716,9 +1760,11 @@ QWidget* ISelectable::widget() const {
 //   IObjectSelectable		//
 //////////////////////////////////
 
-taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action, bool for_drag) const {
+taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action,
+  bool for_drag, GuiContext sh_typ) const
+{
   // if it is taBase, we can make an object
-  taBase* obj = this->taData();
+  taBase* obj = this->taData(sh_typ);
   if (!obj) return NULL;
   
   taiObjectMimeFactory* mf = taiObjectMimeFactory::instance();
@@ -1728,7 +1774,7 @@ taiClipData* IObjectSelectable::GetClipDataSingle(int src_edit_action, bool for_
 }
 
 taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_items, 
-    int src_edit_action, bool for_drag) const
+    int src_edit_action, bool for_drag, GuiContext sh_typ) const
 {
   taiClipData* rval = NULL;
   //note: although a bit sleazy, we just do this by optimistically
@@ -1753,10 +1799,12 @@ taiClipData* IObjectSelectable::GetClipDataMulti(const ISelectable_PtrList& sel_
   return rval;
 }
 
-int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = clipParLink();
+int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms,
+  int ea, GuiContext sh_typ) 
+{//note: follows same logic as the Query
+  taiDataLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
-  taiDataLink* link = this->link();
+  taiDataLink* link = this->effLink(sh_typ);
   int rval = taiClipData::ER_IGNORED;
   // we have to individually disambiguate the allowed, because we have
   // to make sure the right list or group guy handles things like PasteInto, etc.
@@ -1789,10 +1837,11 @@ int IObjectSelectable::EditActionD_impl_(taiMimeSource* ms, int ea) {//note: fol
   return rval;
 }
 
-int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as the Query
-  taiDataLink* pdl = clipParLink();
+int IObjectSelectable::EditActionS_impl_(int ea, GuiContext sh_typ) {
+//note: follows same logic as the Query
+  taiDataLink* pdl = clipParLink(sh_typ);
   //note: called routines must requery for allowed
-  taiDataLink* link = this->link();
+  taiDataLink* link = this->effLink(sh_typ);
   int rval = taiClipData::ER_IGNORED;
   if (pdl) {
 //no    rval = pdl->ChildEditAction_impl(par_md(), link, NULL, ea);
@@ -1807,12 +1856,12 @@ int IObjectSelectable::EditActionS_impl_(int ea) {//note: follows same logic as 
 }
 
 void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms,
-  int& allowed, int& forbidden) const 
+  int& allowed, int& forbidden, GuiContext sh_typ) const 
 {
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
-  taiDataLink* pdl = clipParLink();
-  taiDataLink* link = this->link();
+  taiDataLink* pdl = clipParLink(sh_typ);
+  taiDataLink* link = this->effLink(sh_typ);
   if (pdl) 
     pdl->ChildQueryEditActions_impl(NULL, link, ms, allowed, forbidden); // ex. DROP of child on another child, to reorder
   if (link) {
@@ -1821,11 +1870,13 @@ void IObjectSelectable::QueryEditActionsD_impl_(taiMimeSource* ms,
   }
 }
 
-void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
+void IObjectSelectable::QueryEditActionsS_impl_(int& allowed, int& forbidden,
+  GuiContext sh_typ) const 
+{
   // parent object will generally manage CUT, and DELETE
   // parent object normally passes on to child object
-  taiDataLink* pdl = clipParLink();
-  taiDataLink* link = this->link();
+  taiDataLink* pdl = clipParLink(sh_typ);
+  taiDataLink* link = this->effLink(sh_typ);
   if (pdl) 
     pdl->ChildQueryEditActions_impl(NULL, link, NULL, allowed, forbidden); // ex. CUT of child
   if (link) {
@@ -1868,11 +1919,11 @@ ISelectable_PtrList::~ISelectable_PtrList() {
 
 TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of items 1-N
   if (size == 0) return NULL;
-  taiDataLink* link = FastEl(0)->link();
+  taiDataLink* link = FastEl(0)->effLink();
   if (!link) return NULL; // gui-only object, no ref
   TypeDef* rval = link->GetDataTypeDef();
   for (int i = 1; (rval && (i < size)); ++i) {
-    link = FastEl(i)->link();
+    link = FastEl(i)->effLink();
     if (!link) return NULL; // gui-only, not commensurable
     rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
   }
@@ -1881,11 +1932,11 @@ TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of 
 
 TypeDef* ISelectable_PtrList::CommonSubtype2N() { // greatest common subtype of items 2-N
   if (size <= 1) return NULL;
-  taiDataLink* link = FastEl(1)->link();
+  taiDataLink* link = FastEl(1)->effLink();
   if (!link) return NULL; // gui-only object, no ref
   TypeDef* rval = link->GetDataTypeDef();
   for (int i = 2; (rval && (i < size)); ++i) {
-    link = FastEl(i)->link();
+    link = FastEl(i)->effLink();
     if (!link) return NULL; // gui-only, not commensurable
     rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
   }
@@ -1895,7 +1946,7 @@ TypeDef* ISelectable_PtrList::CommonSubtype2N() { // greatest common subtype of 
 TypeDef* ISelectable_PtrList::Type1() {
   if (size == 0) return NULL;
   else {
-    taiDataLink* link = FastEl(0)->link();
+    taiDataLink* link = FastEl(0)->effLink();
     if (link) return link->GetDataTypeDef();
     else      return NULL; // gui-only object, no ref
   }
@@ -1931,7 +1982,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
   }
 
   if (sel_items.size == 1) return;
-  taiDataLink* link = sel_items.FastEl(0)->link();
+  taiDataLink* link = sel_items.FastEl(0)->effLink();
   if (!link) return; // gui only obj
   TypeDef* t1 = link->GetDataTypeDef(); // type of 1st item
   TypeDef* t2n = sel_items.CommonSubtype2N(); // greatest common subtype of items 2-N
@@ -1982,7 +2033,7 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
   taiObjectsMimeItem* mi = ms.objects();
   if (!mi || (mi->count() == 0)) return;
   TypeDef* tms = mi->CommonSubtype(); // greatest common subtype of source object(s)
-  TypeDef* tdi = drop_item->GetDataTypeDef(); 
+  TypeDef* tdi = drop_item->GetEffDataTypeDef(); 
   if (!tdi) return;
   
   for (int i = 0; i < tdi->methods.size; ++i) {
@@ -2021,6 +2072,7 @@ void ISelectableHost::ItemDeleting(ISelectable* item) {
 
 const char* ISelectableHost::edit_enabled_slot = SLOT(EditActionsEnabled(int&));
 const char* ISelectableHost::edit_action_slot = SLOT(EditAction(int)); 
+const char* ISelectableHost::edit_menu_action_slot = SLOT(EditAction(taiAction*)); 
 const char* ISelectableHost::actions_enabled_slot; // currently NULL
 const char* ISelectableHost::update_ui_signal; // currently NULL
 
@@ -2093,10 +2145,12 @@ void ISelectableHost::ctxtMenu_destroyed() {
 void ISelectableHost::DropEditAction(int ea) {
   ISelectable* ci = ctxt_item; 
   if (!ci) return;
-  ci->EditActionD_impl_(ctxt_ms, ea);
+  ci->EditActionD_impl_(ctxt_ms, ea, ISelectable::GC_DEFAULT);
 }
 
-void ISelectableHost::EditAction(int ea) {
+void ISelectableHost::EditAction(int ea, 
+    ISelectable::GuiContext gc_typ) 
+{
   ISelectable* ci = curItem();
   if (!ci) return;
   // delete is a special case
@@ -2109,23 +2163,21 @@ void ISelectableHost::EditAction(int ea) {
     if (chs != 1) return;
 //     }
   
-    EditAction_Delete();
+    EditAction_Delete(gc_typ);
   } else {
     ISelectable_PtrList items(selItems());
-    ci->EditAction_(items, ea);
+    ci->EditAction_(items, ea, gc_typ);
   }
 }
 
-void ISelectableHost::EditAction_Delete() {
+void ISelectableHost::EditAction_Delete(ISelectable::GuiContext gc_typ) {
   const ISelectable_PtrList& items = selItems();
   // first, compile a ref list of all taBase guys
   taBase_RefList ta_items;
   for (int i = 0; i < items.size; ++i) {
     ISelectable* ci = items.SafeEl(i); 
     if (!ci) continue;
-    taiDataLink* link = ci->link();
-    if (!link) continue;
-    taBase* tab = link->taData();
+    taBase* tab =  ci->taData(gc_typ);// is the effLink data
     if (!tab) continue;
     ta_items.Add(tab);
   }
@@ -2236,8 +2288,8 @@ void ISelectableHost::DoDynAction(int idx) {
       case DynMethod_PtrList::Type_1N: { // same for all
         for (i = 0; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          typ = itN->GetDataTypeDef();
-          link = itN->link();
+          typ = itN->GetEffDataTypeDef();
+          link = itN->effLink();
           if (!link) return;
           base = link->data();
           rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
@@ -2248,13 +2300,13 @@ void ISelectableHost::DoDynAction(int idx) {
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
-        typ = it1->GetDataTypeDef();
-        link = it1->link();
+        typ = it1->GetEffDataTypeDef();
+        link = it1->effLink();
         if (!link) return;
         base = link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          link = itN->link(); //note: prob can't be null, because we wouldn't get called
+          link = itN->effLink(); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           *param[1] = (void*)link->data();
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
@@ -2266,8 +2318,8 @@ void ISelectableHost::DoDynAction(int idx) {
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
-        typ = it1->GetDataTypeDef();
-        link = it1->link();
+        typ = it1->GetEffDataTypeDef();
+        link = it1->effLink();
         if (!link) return; //note: we prob wouldn't get called if any were null
         *param[1] = (void*)link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
@@ -2288,7 +2340,7 @@ void ISelectableHost::DoDynAction(int idx) {
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
-        typ = it1->GetDataTypeDef();
+        typ = it1->GetEffDataTypeDef();
         for (int j = 0; j < ctxt_ms->count(); ++j) {
           ctxt_ms->setIndex(j);
           taBase* obj = ctxt_ms->tabObject();
@@ -2296,7 +2348,7 @@ void ISelectableHost::DoDynAction(int idx) {
           *param[1] = (void*)obj;
           for (i = 0; i < sel_items_cp.size; ++i) {
             itN = sel_items_cp.FastEl(i);
-            link = itN->link();
+            link = itN->effLink();
             if (!link) continue; // prob won't happen, because we wouldn't have been called
             base = link->data();
             rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
@@ -2442,6 +2494,12 @@ void SelectableHostHelper::customEvent(QEvent* ev) {
     break;
   }
 }
+
+void SelectableHostHelper::EditAction(taiAction* act) {
+  int ea = act->usr_data.toInt();
+  ISelectable::GuiContext gc = (ISelectable::GuiContext)act->data().toInt();
+  host->EditAction(ea, gc);
+} 
 
 void SelectableHostHelper::Emit_NotifySignal(ISelectableHost::NotifyOp op) {
   // selection ops need to go through the event loop or things get weird and nasty...
@@ -2715,7 +2773,7 @@ void iTabViewer::SelectionChanged_impl(ISelectableHost* src_host) {
   cur_item = src_host->curItem(); // note: could be NULL
   if (!cur_item) goto end; // no selected item, so no change
   if (m_curTabView) {
-    taiDataLink* link = cur_item->link();
+    taiDataLink* link = cur_item->effLink();
     if (link) {
       new_pn = m_curTabView->GetDataPanel(link);
       m_curTabView->ShowPanel(new_pn);
@@ -6874,18 +6932,21 @@ void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos,
 
 }
 
-void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
+void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
+  GuiContext sh_typ) const 
+{
   if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
-  IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden);
+  IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden, sh_typ);
 }
 
-void iTreeViewItem::FillContextMenu_impl(taiActions* menu) {
+void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
+  GuiContext sh_typ) {
   //taiAction* mel =
   menu->AddItem("Find from here...", taiMenu::use_default,
     taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
-  IObjectSelectable::FillContextMenu_impl(menu);
+  IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
 }
 
 ISelectableHost* iTreeViewItem::host() const {

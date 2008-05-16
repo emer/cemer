@@ -1941,6 +1941,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
     editor->name = "Srch_" + memb_contains;
     editor->desc = "Search of members containing: " + memb_contains 
       + " in object: " + GetDisplayName();
+    editor->DataChanged(DCR_ITEM_UPDATED); // so name updates in treee
   }
   TypeDef* td = GetTypeDef();
   int nfound = 0;

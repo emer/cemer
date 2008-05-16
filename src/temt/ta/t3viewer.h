@@ -237,10 +237,11 @@ public: // ISelectable interface (only not in IDataLinkClient)
   override ISelectable*	par() const;
 //  override taiDataLink* par_link() const; // from parent data
 //  override MemberDef* 	par_md() const; // as for par_link
-  override taiDataLink*	clipParLink() const {return own_link();} // not par_link 
+  override taiDataLink*	viewLink() const; // data of the link
+  override GuiContext	shType() const {return GC_DUAL_DEF_DATA;} 
+  override taiDataLink*	clipParLink(GuiContext sh_typ = GC_DEFAULT) const; // not par_link 
 /*override int		EditAction_(ISelectable_PtrList& sel_items, int ea);
   override void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
-  override void 		FillContextMenu(taiActions* menu);
   override taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
     bool for_drag) const;
   override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const;
@@ -248,8 +249,9 @@ public: // ISelectable interface (only not in IDataLinkClient)
     int src_edit_action, bool for_drag) const;
   override int		QueryEditActions_(taiMimeSource* ms) const; */
 protected:
-  override void		FillContextMenu_impl(taiActions* menu);
-  override void 	QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
+//  override void		FillContextMenu_impl(taiActions* menu, GuiContext sh_typ);
+  override void 	QueryEditActionsS_impl_(int& allowed, int& forbidden,
+    GuiContext sh_typ) const;
 
 protected:
   MemberDef*		m_md; // memberdef of this item in its parent
@@ -275,9 +277,6 @@ protected:
 
 protected:
   T3DataView*		last_child_node; // #IGNORE last child node created, so we can pass to createnode
-//nn  DataLink_QObj*	qobj; // #IGNORE delegate object, when we need to connect or signal
-//TODO  virtual void		Assert_QObj(); // makes sure the qobj is created
-//  override void		DataDataChanged_impl(int dcr, void* op1, void* op2); // called when the data item has changed, esp. ex lists and groups, EXCEPT UpdateAfterEdit, which gets dispatched direct
   override void		DataUpdateAfterEdit_impl(); // called by data for an UAE
   override void		UpdateAfterEdit_impl();
 
@@ -357,6 +356,9 @@ public:
   override void 	ChildRemoving(taDataView* child); 
   
   T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
+
+// ISelectable i/f
+  override GuiContext	shType() const {return GC_DUAL_DEF_VIEW;} // the default for mains
 
 protected:
   override void		Constr_Node_impl();
@@ -457,7 +459,7 @@ public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const {return true;} // always
   override QWidget*	widget() {return this;} 
 protected:
-  override void 	EditAction_Delete();
+//  override void 	EditAction_Delete(ISelectable::GuiContext gc_typ);
   override void		UpdateSelectedItems_impl(); 
 
 protected:

@@ -314,37 +314,60 @@ protected:
 
  NOTE: you must call viewer_win()->ItemRemoving(item) in the implementation when an object is
  deleted or being removed from the viewing hierarchy.
+ 
+   "eff_data" is the concept of what the object refers to -- for things like Layers,
+     it is the object itself; but for graphs, it is NOT the table in the view, it
+     is the view itself -- so the various links etc. are modalized according to
+     this major distinction -- this is operationalized in T3 where a view guy can
+     override his effLink
 */
 
 class TA_API ISelectable: public virtual IDataLinkProxy { //
 INHERITED(IDataLinkProxy)
 friend class ISelectableHost;
 public: // Interface Properties and Methods
+  enum GuiContext { // primarily for the T3 guys that have dual identities (don't reorder these)
+    GC_DEFAULT		= 0, // this code only used when requesting the default link
+    GC_SINGLE_DATA	= 1, // for trees, etc., only one identity, and link() is data
+    GC_DUAL_DEF_DATA	= 2, // for T3, guys like Layer, where def identity is the data
+    GC_DUAL_DEF_VIEW	= 3,  // for T3, guys like GraphView, where def ident is the graphview obj itself
+  };
+  
   virtual MemberDef*	md() const {return NULL;} // memberdef in data parent, if any, of the selected item
-  virtual taiDataLink*	own_link() const; // owner item's link -- this is the *data* parent (not the gui parent) 
+  virtual taiDataLink*	own_link(GuiContext sh_typ = GC_DEFAULT) const; // owner item's link -- this is the *eff_data* parent (not the gui parent) 
   virtual ISelectable*	par() const = 0; // gui parent, if any
   virtual taiDataLink*	par_link() const; // parent item's link -- this is the *gui* parent (not the data parent/owner) 
-  virtual taiDataLink*	clipParLink() const {return par_link();} // for tree stuff, we use the gui parent for clip ops; for t3 we use the data owner
-  virtual MemberDef* 	par_md() const;// data parent item's (if any) md
+  virtual taiDataLink*	viewLink() const {return NULL;} // only defined for T3 guys
+  taiDataLink*		effLink(GuiContext sh_typ = GC_DEFAULT) const; // for trees and things like layers, we just just use the data, for things like graphs (where view==data) we use the view itself (override shType)
+  virtual taiDataLink*	clipParLink(GuiContext sh_typ) const;
+    // for tree stuff, we use the gui parent for clip ops; for t3 we use the eff_data owner
+  virtual MemberDef* 	par_md() const;// eff_data parent item's (if any) md
   virtual ISelectableHost* host() const = 0; //
-  taBase*		taData() const; // if the data is taBase, this returns it
+  virtual GuiContext	shType() const {return GC_SINGLE_DATA;} // mediates menu handling, and default source for clip ops
+  taBase*		taData(GuiContext sh_typ = GC_DEFAULT) const; // if the eff_data is taBase, this returns it
 //obs  virtual String	view_name() const = 0; // for members, the member name; for list items, the name if any, otherwise a created name using the index
   QWidget*		widget() const; // gets from host
   QObject*		clipHandlerObj() const; // shortcut for host()->clipHanderObj(); 
 
-  virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea);
+  virtual TypeDef* 	GetEffDataTypeDef(GuiContext sh_typ = GC_DEFAULT) const; // gets it from effLink
+  virtual int		EditAction_(ISelectable_PtrList& sel_items, int ea,
+    GuiContext sh_typ = GC_DEFAULT);
    // do the indicated edit action (called from browser or list view); normally implement the _impl
-  virtual void 		FillContextMenu(ISelectable_PtrList& sel_items, taiActions* menu);
+  virtual void 		FillContextMenu(ISelectable_PtrList& sel_items,
+    taiActions* menu, GuiContext sh_typ = GC_DEFAULT);
    // for multi or single (normally implement the _impl)
 //  virtual void 		FillContextMenu(taiActions* menu);
    // for single (normally implement the _impl)
-  virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items, int src_edit_action,
-    bool for_drag) const; // works for single or multi; normally not overridden
-  virtual taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const = 0;
+  virtual taiClipData*	GetClipData(const ISelectable_PtrList& sel_items,
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const; // works for single or multi; normally not overridden
+  virtual taiClipData*	GetClipDataSingle(int src_edit_action,
+    bool for_drag, GuiContext sh_typ = GC_DEFAULT) const = 0;
   virtual taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
-    int src_edit_action, bool for_drag) const {return NULL;}// only needed if multi is handled
-  virtual int		QueryEditActions_(taiMimeSource* ms) const; // typically called on single item for canAcceptDrop
-  int			QueryEditActions_(const ISelectable_PtrList& sel_items) const;
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const {return NULL;}// only needed if multi is handled
+  virtual int		QueryEditActions_(taiMimeSource* ms,
+    GuiContext sh_typ = GC_DEFAULT) const; // typically called on single item for canAcceptDrop
+  int			QueryEditActions_(const ISelectable_PtrList& sel_items,
+    GuiContext sh_typ = GC_DEFAULT) const;
     // called to get edit items available on clipboard for the sel_items
   virtual int		RefUnref(bool ref) {return 1;} // ref'ed/unrefed in select lists etc.; optional, and can be used for lifetime mgt; returns count after operation
 
@@ -352,31 +375,40 @@ public: // Interface Properties and Methods
 protected:
   void 			DropHandler(const QMimeData* mime, const QPoint& pos, 
     int key_mods, int where);
-    //  handles all aspects of a drag drop operation
+    //  handles all aspects of a drag drop operation -- ALWAYS uses default context
     // (iTreeWidgetItem::WhereIndicator where)
-  virtual int		EditActionD_impl_(taiMimeSource* ms, int ea) = 0;
+  virtual int		EditActionD_impl_(taiMimeSource* ms,
+    int ea, GuiContext sh_typ) = 0;
     // do Dst op for single selected item; generally doesn't need extending
-  virtual int		EditActionS_impl_(int ea) = 0;
+  virtual int		EditActionS_impl_(int ea, GuiContext sh_typ) = 0;
     // do Src op for single or one of multi selected items; CUT and COPY usually just a 1 return code; we actually implement the actual clipboard transfer
-  virtual void		FillContextMenu_EditItems_impl(taiActions* menu, int allowed); // might be extended
-  virtual void		FillContextMenu_impl(taiActions* menu) {} // link handles most, called in FCM
-  virtual void		QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const = 0;
+  virtual void		FillContextMenu_EditItems_impl(taiActions* menu,
+    int allowed, GuiContext sh_typ); // might be extended
+  virtual void		FillContextMenu_impl(taiActions* menu,
+    GuiContext sh_typ) {} // link handles most, called in FCM
+  virtual void		QueryEditActionsD_impl_(taiMimeSource* ms,
+   int& allowed, int& forbidden, GuiContext sh_typ) const = 0;
     // get Dst ops allowed for a single item,
-  virtual void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const = 0;
+  virtual void		QueryEditActionsS_impl_(int& allowed,
+   int& forbidden, GuiContext sh_typ) const = 0;
     // get Src ops allowed for a single item, possibly of many selected items
 };
 
 class TA_API IObjectSelectable: public ISelectable { // specialized for taBase object items
 INHERITED(ISelectable)
 public: // Interface Properties and Methods
-  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag) const;
+  override taiClipData*	GetClipDataSingle(int src_edit_action, bool for_drag,
+    GuiContext sh_typ = GC_DEFAULT) const;
   override taiClipData*	GetClipDataMulti(const ISelectable_PtrList& sel_items, 
-    int src_edit_action, bool for_drag) const;
+    int src_edit_action, bool for_drag, GuiContext sh_typ = GC_DEFAULT) const;
 protected:
-  override int		EditActionD_impl_(taiMimeSource* ms, int ea);
-  override int		EditActionS_impl_(int ea);
-  override void		QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed, int& forbidden) const;
-  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;
+  override int		EditActionD_impl_(taiMimeSource* ms, int ea,
+    GuiContext sh_typ);
+  override int		EditActionS_impl_(int ea, GuiContext sh_typ);
+  override void		QueryEditActionsD_impl_(taiMimeSource* ms, int& allowed,
+    int& forbidden, GuiContext sh_typ) const;
+  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden,
+    GuiContext sh_typ) const;
 };
 
 
@@ -466,6 +498,7 @@ public:
   static const char* edit_action_slot; // for the SetClipboardHandler call, takes int param
   static const char* actions_enabled_slot; // currently NULL
   static const char* update_ui_signal; // currently NULL
+  static const char* edit_menu_action_slot;
   
   ISelectable*		curItem() {return selItems().SafeEl(0);} // convenience
   virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
@@ -495,7 +528,8 @@ public:
     // 'true' if item was actually removed from (i.e. was in) list
 
   virtual void 		EditActionsEnabled(int&); // return enabled flags
-  virtual void 		EditAction(int); // perform the action
+  virtual void 		EditAction(int, 
+    ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT); // perform the action
   virtual void 		DropEditAction(int ea); // perform the action (from drop handler)
   
   void			Emit_GotFocusSignal() {Emit_NotifySignal(OP_GOT_FOCUS);} 
@@ -528,7 +562,7 @@ protected:
   virtual void		FillContextMenu_post(ISelectable_PtrList& sel_items, 
     taiActions* menu) {} // hook 
   
-  virtual void 		EditAction_Delete(); // actually does the Edit/Delete
+  virtual void 		EditAction_Delete(ISelectable::GuiContext gc_typ); // actually does the Edit/Delete
   virtual void		UpdateSelectedItems_impl() = 0; 
     // called when force=true for changes, force gui to be selItems
   void			Emit_NotifySignal(NotifyOp op);
@@ -556,7 +590,8 @@ public slots:
   void		EditAction(int ea) {host->EditAction(ea);} //  callback for when we are ClipHandler
   void		ctxtMenu_destroyed() {host->ctxtMenu_destroyed();}
    // attached to ctxt menu so we can clean up the mimesource 
-  
+  void		EditAction(taiAction*); //  callback for context menu 
+    
 #ifndef __MAKETA__
 signals:
   void		NotifySignal(ISelectableHost* src, int op);
@@ -1909,8 +1944,11 @@ public: // ISelectable interface
 protected:
 //  override int		EditAction_impl(taiMimeSource* ms, int ea);
 //  override void		FillContextMenu_EditItems_impl(taiActions* menu, int allowed);
-  override void		FillContextMenu_impl(taiActions* menu); // this is the one to extend in inherited classes
-  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden) const;  // OR's in allowed; OR's in forbidden
+  override void		FillContextMenu_impl(taiActions* menu,
+    GuiContext sh_typ); // this is the one to extend in inherited classes
+  override void		QueryEditActionsS_impl_(int& allowed, int& forbidden,
+    GuiContext sh_typ) const;  // OR's in allowed; OR's in forbidden
+    
 #ifndef __MAKETA__ 
 protected:
   MemberDef*		m_md; // for members, the MemberDef (otherwise NULL)

@@ -593,6 +593,10 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   }
 }
 
+taiDataLink* T3DataView::clipParLink(GuiContext sh_typ) const {
+  return own_link(sh_typ);
+}
+
 void T3DataView::setNode(T3Node* node_) {
   if (m_node_so.ptr() == node_) return; // generally shouldn't happen
   if (m_node_so.ptr()) {
@@ -638,7 +642,7 @@ void T3DataView::DataUpdateAfterEdit_impl() {
 //   if (m_node_so)
 //     m_node_so->touch();
 }
-
+/* obs
 void T3DataView::FillContextMenu_impl(taiActions* menu) {
   TypeDef* typ = GetTypeDef();
   // put view props first, if any
@@ -655,7 +659,7 @@ void T3DataView::FillContextMenu_impl(taiActions* menu) {
   }
   menu->AddSep();
   IObjectSelectable::FillContextMenu_impl(menu);
-} 
+} */
 
 T3DataViewFrame* T3DataView::GetFrame() {
   T3DataViewFrame* frame = GET_MY_OWNER(T3DataViewFrame);
@@ -669,11 +673,13 @@ SoQtViewer* T3DataView::GetViewer() {
   return viewer;
 }
 
-void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden) const {
-  if (flags & DNF_IS_MEMBER) {
+void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden,
+  GuiContext sh_typ) const 
+{
+  if ((sh_typ == GC_DUAL_DEF_DATA) && (flags & DNF_IS_MEMBER)) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   }
-  IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden);
+  IObjectSelectable::QueryEditActionsS_impl_(allowed, forbidden, sh_typ);
 }
 
 ISelectableHost* T3DataView::host() const {
@@ -751,6 +757,11 @@ FloatTransform* T3DataView::transform(bool auto_create) {
 void T3DataView::UpdateChildNames(T3DataView*) {
   //nothing
 }
+
+taiDataLink* T3DataView::viewLink() const {
+  return (taiDataLink*)const_cast<T3DataView*>(this)->GetDataLink();
+}  
+
 
 void T3DataView::ViewProperties() {
   EditDialog();
@@ -1117,9 +1128,9 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
   delete menu;
 }
 
-void iT3ViewspaceWidget::EditAction_Delete() {
+/*void iT3ViewspaceWidget::EditAction_Delete(ISelectable::GuiContext gc_typ) {
   ISelectableHost::EditAction_Delete();
-}
+}*/
 
 void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
   T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
