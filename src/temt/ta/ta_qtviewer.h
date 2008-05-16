@@ -386,6 +386,7 @@ protected:
     int allowed, GuiContext sh_typ); // might be extended
   virtual void		FillContextMenu_impl(taiActions* menu,
     GuiContext sh_typ) {} // link handles most, called in FCM
+  virtual void		GetContextCaptions(String& view_cap, String& obj_cap);
   virtual void		QueryEditActionsD_impl_(taiMimeSource* ms,
    int& allowed, int& forbidden, GuiContext sh_typ) const = 0;
     // get Dst ops allowed for a single item,

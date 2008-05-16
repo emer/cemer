@@ -1499,11 +1499,12 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
     if (sh_typ == GC_SINGLE_DATA) {
       FillContextMenu(sel_items, menu, sh_typ);
     } else { // dual, make submenus
-      String cap = "View"; // TODO: get a custom string
-      taiMenu* sub = menu->AddSubMenu(cap);
+      String view_cap = "View"; // TODO: get a custom string
+      String obj_cap = "Object"; // TODO: get a custom string
+      GetContextCaptions(view_cap, obj_cap);
+      taiMenu* sub = menu->AddSubMenu(view_cap);
       FillContextMenu(sel_items, sub, GC_DUAL_DEF_VIEW);
-      cap = "Object"; // TODO: get a custom string
-      sub = menu->AddSubMenu(cap);
+      sub = menu->AddSubMenu(obj_cap);
       FillContextMenu(sel_items, sub, GC_DUAL_DEF_DATA);
     }
   } else {
@@ -1628,6 +1629,13 @@ taiClipData* ISelectable::GetClipData(const ISelectable_PtrList& sel_items,
   } else { 
     return GetClipDataMulti(sel_items,src_edit_action, for_drag, sh_typ);
   }
+}
+
+void ISelectable::GetContextCaptions(String& view_cap, String& obj_cap) {
+  taBase* tab = taData(GC_DUAL_DEF_VIEW);
+  if (tab) view_cap = tab->GetTypeName();
+  tab = taData(GC_DUAL_DEF_DATA);
+  if (tab) obj_cap = tab->GetTypeName();
 }
 
 TypeDef* ISelectable::GetEffDataTypeDef(GuiContext sh_typ) const {
