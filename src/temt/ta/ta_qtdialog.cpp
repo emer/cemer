@@ -2052,15 +2052,12 @@ void taiEditDataHost::DoSelectForEdit(QAction* act){
   MemberDef* md = sel_item_dat->mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
   
-  String desc;
-  String lbl = rbase->GetName().elidedTo(16);
-  
   //NOTE: this handler adds if not on, or removes if already on
   int idx;
   if ((idx = se->FindMbrBase(rbase, md)) >= 0)
     se->RemoveField(idx);
   else {
-    se->SelectMember(rbase, md, lbl, desc);
+    se->SelectMember(rbase, md);
   }
 }
 

@@ -1172,7 +1172,9 @@ public:
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
   // select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected
-
+  virtual void		GetSelectText(MemberDef* mbr, String extra_label,
+    String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
+  
   ///////////////////////////////////////////////////////////////////////////
   //	Closing 
 

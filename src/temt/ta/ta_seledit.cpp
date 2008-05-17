@@ -22,6 +22,24 @@
 
 
 //////////////////////////////////
+//  taBase			//
+//////////////////////////////////
+
+void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
+    String& full_lbl, String& desc) const
+{
+  if (xtra_lbl.empty())
+    xtra_lbl = GetName().elidedTo(16);
+  full_lbl = xtra_lbl;
+  if (full_lbl.nonempty()) full_lbl += " ";
+  full_lbl += mbr->GetLabel();
+  // desc is the member description
+  if (desc.empty()) 
+    MemberDef::GetMembDesc(mbr, desc, "");
+}
+
+
+//////////////////////////////////
 //  SelectEditItem		//
 //////////////////////////////////
 
@@ -409,25 +427,29 @@ int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
   return rval;
 }
 
-bool SelectEdit::SelectMember(taBase* base, MemberDef* md,
-  const String& lbl, const String& desc) 
+bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
+  const String& xtra_lbl, const String& desc) 
 {
-  bool rval = SelectMember_impl(base, md, lbl, desc);
+  if (!base) return false;
+  String eff_desc = desc; // non-const
+  String full_lbl;
+  base->GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
+  bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc);
   ReShowEdit(true); //forced
   return rval;
 }
 
 bool SelectEdit::SelectMemberNm(taBase* base, const String& md_nm,
-  const String& lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc) 
 {
   if(base == NULL) return false;
   MemberDef* md = (MemberDef*)base->FindMember(md_nm);
   if (md == NULL) return false;
-  return SelectMember(base, md, lbl, desc);
+  return SelectMember(base, md, xtra_lbl, desc);
 }
 
 bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
-  const String& lbl, const String& desc)
+  const String& full_lbl, const String& desc)
 {
   int bidx = -1;
   EditMbrItem* item = (EditMbrItem*)SelectEditItem::StatFindItemBase(&mbrs, base, md, bidx);
@@ -437,12 +459,8 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
     item->base = base;
     item->mbr = md;
     item->item_nm = md->name;
-    if (desc.empty()) 
-      MemberDef::GetMembDesc(md, item->desc, "");
-    else item->desc = desc;
-    item->label = lbl;
-    if(item->label.nonempty()) item->label += " ";
-    item->label += md->GetLabel();
+    item->label = full_lbl;
+    item->desc = desc; // even if empty
     mbrs.Add(item); // will trigger BaseAdded
     rval = true;
   }
@@ -450,24 +468,24 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
 }
 
 bool SelectEdit::SelectMethod(taBase* base, MethodDef* md,
-  const String& lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc) 
 {
-  bool rval = SelectMethod_impl(base, md, lbl, desc);
+  bool rval = SelectMethod_impl(base, md, xtra_lbl, desc);
   ReShowEdit(true); //forced
   return rval;
 }
 
 bool SelectEdit::SelectMethodNm(taBase* base, const String& md_nm,
-  const String& lbl, const String& desc) 
+  const String& xtra_lbl, const String& desc) 
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
   if (md == NULL) return false;
-  return SelectMethod(base, md, lbl, desc);
+  return SelectMethod(base, md, xtra_lbl, desc);
 }
 
 bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
-  const String& lbl, const String& desc)
+  const String& xtra_lbl, const String& desc)
 {
   int bidx = -1;
   EditMthItem* item = (EditMthItem*)SelectEditItem::StatFindItemBase(&mths, base, mth, bidx);
@@ -477,10 +495,10 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
     item->base = base;
     item->mth = mth;
     item->item_nm = mth->name;
-    item->label = lbl;
     if (desc.empty())
       item->desc = desc;
     else item->desc = mth->desc;
+    item->label = xtra_lbl;
     if (item->label.nonempty()) item->label += " ";
     item->label += mth->GetLabel();
     mths.Add(item); // will call BaseAdded

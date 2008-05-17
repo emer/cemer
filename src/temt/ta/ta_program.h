@@ -335,6 +335,8 @@ public:
 
   ProgVar* operator=(const Variant& value);
  
+  override void GetSelectText(MemberDef* mbr, String xtra_lbl,
+    String& full_lbl, String& desc) const;
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }

@@ -194,17 +194,17 @@ public: // public API
   // #MENU #MENU_ON_SelectEdit search given object for member names that contain given string, and add them to this editor
   virtual int	CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs = true);
   // #MENU #TYPE_taNBase compare two objects (must be of same type) and add the differences in this select edit; no_ptrs = ignore pointer fields
-  virtual bool	SelectMember(taBase* base, MemberDef* md,
-    const String& lbl, const String& desc = _nilString);
+  bool		SelectMember(taBase* base, MemberDef* md,
+    const String& xtra_lbl = _nilString, const String& desc = _nilString);
   // add new member to edit if it isn't already here (returns true)
   virtual bool	SelectMemberNm(taBase* base, const String& md_nm,
-    const String& lbl, const String& desc = _nilString);
+    const String& xtra_lbl, const String& desc = _nilString);
   // add new member to edit if it isn't already here (returns true)
   virtual bool	SelectMethod(taBase* base, MethodDef* md,
-    const String& lbl, const String& desc = _nilString);
+    const String& xtra_lbl, const String& desc = _nilString);
   // add new method to edit if it isn't already here (returns true)
   virtual bool	SelectMethodNm(taBase* base, const String& md,
-    const String& lbl, const String& desc = _nilString);
+    const String& xtra_lbl, const String& desc = _nilString);
   // add new method to edit if it isn't already here (returns true)
   
   virtual int	FindMbrBase(taBase* base, MemberDef* md);
