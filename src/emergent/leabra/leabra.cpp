@@ -18,6 +18,7 @@
 #include "ta_platform.h"
 #include "netstru_extra.h"
 
+// todo: are these really necessary anymore!?
 #include <math.h>
 #include <limits.h>
 #include <float.h>
