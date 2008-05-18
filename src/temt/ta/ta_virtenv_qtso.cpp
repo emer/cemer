@@ -457,6 +457,7 @@ void VEObjectView::BuildAll() {
   VEBody* bod;
   taLeafItr i;
   FOR_ITR_EL(VEBody, bod, obj->bodies., i) {
+    if(bod->HasBodyFlag(VEBody::OFF)) continue;
     VEBodyView* ov = new VEBodyView();
     ov->SetBody(bod);
     children.Add(ov);
@@ -775,6 +776,7 @@ void VESpaceView::BuildAll() {
   VEStatic* bod;
   taLeafItr i;
   FOR_ITR_EL(VEStatic, bod, obj->static_els., i) {
+    if(bod->HasStaticFlag(VEStatic::OFF)) continue;
     VEStaticView* ov = new VEStaticView();
     ov->SetStatic(bod);
     children.Add(ov);

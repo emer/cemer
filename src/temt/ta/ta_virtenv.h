@@ -149,9 +149,10 @@ INHERITED(taNBase)
 public:	
   enum BodyFlags { // #BITS flags for bodies
     BF_NONE		= 0, // #NO_BIT
-    FIXED 		= 0x0001, // body cannot move at all
-    PLANE2D		= 0x0002, // body is constrained to the Z=0 plane
-    FM_FILE		= 0x0004, // load object image features from Inventor (iv) object file
+    OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
+    FIXED 		= 0x0002, // body cannot move at all
+    PLANE2D		= 0x0004, // body is constrained to the Z=0 plane
+    FM_FILE		= 0x0008, // load object image features from Inventor (iv) object file
   };
     //    COLLIDE_FM_FILE	= 0x0008, // use object shape from file for collision detection (NOTE: this is more computationally expensive and requires trimesh feature to be enabled in ode)
 
@@ -205,6 +206,7 @@ public:
 #endif
   void*		fixed_joint_id;	// #READ_ONLY #HIDDEN #NO_SAVE #NO_COPY id of joint used to fix a FIXED body
 
+  override int		GetEnabled() const {  return !HasBodyFlag(OFF); }
   override String	GetDesc() const { return desc; }
   inline void		SetBodyFlag(BodyFlags flg)   { flags = (BodyFlags)(flags | flg); }
   // set body flag state on
@@ -591,7 +593,8 @@ INHERITED(taNBase)
 public:	
   enum StaticFlags { // #BITS flags for static elements
     SF_NONE		= 0, // #NO_BIT
-    FM_FILE		= 0x0001, // load object image features from Inventor (iv) object file
+    OFF 		= 0x0001, // turn this object off -- do not include in the virtual world
+    FM_FILE		= 0x0002, // load object image features from Inventor (iv) object file
   };
 
   enum Shape {			// shape of the object -- used for intertial mass and for collision detection (unless use_fname
@@ -640,6 +643,7 @@ public:
   //////////////////////////////
   //	Internal-ish stuff
 
+  override int		GetEnabled() const {  return !HasStaticFlag(OFF); }
   override String	GetDesc() const { return desc; }
   inline void		SetStaticFlag(StaticFlags flg)   { flags = (StaticFlags)(flags | flg); }
   // set body flag state on

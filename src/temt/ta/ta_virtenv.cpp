@@ -127,11 +127,17 @@ void* VEBody::GetObjSpaceID() {
 }
 
 bool VEBody::CreateODE() {
+  if(HasBodyFlag(VEBody::OFF)) {
+    DestroyODE();
+    return true;
+  }
+
   if(body_id && geom_id && cur_shape == shape && ((bool)fixed_joint_id == HasBodyFlag(FIXED)))
      return true;
   dWorldID wid = (dWorldID)GetWorldID();
   if(TestError(!wid, "CreateODE", "no valid world id -- cannot create body!"))
     return false;
+
   if(!body_id)
     body_id = (dBodyID)dBodyCreate(wid);
   if(TestError(!body_id, "CreateODE", "could not create body!"))
@@ -195,6 +201,9 @@ void VEBody::DestroyODE() {
 }
 
 void VEBody::SetValsToODE() {
+  if(HasBodyFlag(VEBody::OFF)) {
+    return;
+  }
   if(!body_id || !geom_id || cur_shape != shape) CreateODE();
   if(!body_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
@@ -227,6 +236,9 @@ void VEBody::SetValsToODE() {
 }
 
 void VEBody::SetMassToODE() {
+  if(HasBodyFlag(VEBody::OFF)) {
+    return;
+  }
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
@@ -251,6 +263,9 @@ void VEBody::SetMassToODE() {
 }
 
 void VEBody::GetValsFmODE(bool updt_disp) {
+  if(HasBodyFlag(VEBody::OFF)) {
+    return;
+  }
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
@@ -434,6 +449,11 @@ bool VEJoint::CreateODE() {
     return false;
   if(joint_id)
     DestroyODE();
+
+
+  if(!body1 || !body1->body_id || body1->HasBodyFlag(VEBody::OFF)) return true;
+  if(!body2 || !body2->body_id || body2->HasBodyFlag(VEBody::OFF)) return true;
+
   switch(joint_type) {
   case BALL:
     joint_id = (dJointID)dJointCreateBall(wid, 0);
@@ -489,6 +509,8 @@ void VEJoint::SetValsToODE() {
   if(TestError(!body2 || !body2->body_id,
 	       "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
     return;
+
+  if(body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) return;
 
   dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
 
@@ -908,6 +930,10 @@ void* VEStatic::GetSpaceID() {
 }
 
 bool VEStatic::CreateODE() {
+  if(HasStaticFlag(VEStatic::OFF)) {
+    DestroyODE();
+    return true;
+  }
   if(geom_id && cur_shape == shape)
      return true;
   dWorldID wid = (dWorldID)GetWorldID();
@@ -969,6 +995,9 @@ void VEStatic::DestroyODE() {
 }
 
 void VEStatic::SetValsToODE() {
+  if(HasStaticFlag(VEStatic::OFF)) {
+    return;
+  }
   if(!geom_id || cur_shape != shape) CreateODE();
   if(!geom_id) return;
   dWorldID wid = (dWorldID)GetWorldID();
