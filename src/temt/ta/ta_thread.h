@@ -36,6 +36,8 @@ private:
 #endif
 };
 
+#ifndef __MAKETA__
+
 
 # if ((defined(__i386__) || defined(__x86_64__)))
 #   if defined(Q_CC_GNU)
@@ -79,6 +81,8 @@ int taAtomic::FetchAdd(volatile int *ptr, int value)
 # else
 #   error "Undefined arch or compiler -- need to define q_atomic_fetch_and_add_int"
 # endif
+
+#endif // maketa exclusion
 
 #endif
 
