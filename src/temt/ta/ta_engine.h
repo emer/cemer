@@ -21,6 +21,7 @@
 #include "ta_group.h"
 #include "ta_time.h"
 #include "ta_datatable.h"
+#include "ta_thread.h" 
 
 #include "ta_def.h"
 #include "ta_TA_type.h"
@@ -136,50 +137,15 @@ private:
 
 #if defined(TA_USE_THREADS) && !defined(__MAKETA__)
 
+#include "ta_thread.h"
+
 #include <QtCore/QList>
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
-#include <QtCore/qatomic.h>
 
 #define AtomicFetchAdd(p_operand, incr) \
-   q_atomic_fetch_and_add_int(p_operand, incr)
-
-#if (QT_VERSION < 0x040300) 
-# if ((defined(__i386__) || defined(__x86_64__)))
-#   if defined(Q_CC_GNU)
-inline int q_atomic_fetch_and_add_int(volatile int *ptr, int value)
-{
-    asm volatile("lock\n"
-                "xaddl %0,%1"
-                : "=r" (value), "+m" (*ptr)
-                : "0" (value)
-                : "memory");
-    return value;
-}
-#   elif defined(_MSC_VER)
-#     error "We do not support Qt < 4.3 on Windows -- need to define q_atomic_fetch_and_add_int"
-#   else
-#     error "Undefined compiler on i386 -- need to define q_atomic_fetch_and_add_int"
-#   endif
-# elif defined(_ARCH_PPC) && defined(Q_CC_GNU)
-inline int q_atomic_fetch_and_add_int(volatile int *ptr, int value)
-{
-    register int tmp;
-    register int ret;
-    asm volatile("lwarx  %0, 0, %3\n"
-                 "add    %1, %4, %0\n"
-                 "stwcx. %1, 0, %3\n"
-                 "bne-   $-12\n"
-                 : "=&r" (ret), "=&r" (tmp), "=m" (*ptr)
-                 : "r" (ptr), "r" (value)
-                 : "cc", "memory");
-    return ret;
-} 
-# else
-#   error "Undefined arch or compiler -- need to define q_atomic_fetch_and_add_int"
-# endif
-#endif // < Qt 3.3
+   taAtomic::FetchAdd(p_operand, incr)
 
 //
 

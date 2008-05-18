@@ -20,20 +20,14 @@
 #define TA_THREAD_H
 
 #include "ta_def.h"
-/*
+
+//#ifdef TA_USE_THREADS
+
 class TA_API taAtomic {
-  // ##NO_INSTANCE static class for doing atomic (threadsafe) operations
+  // ##NO_INSTANCE static class for doing atomic (threadsafe) operations -- only exists on supported multi-threaded architectures (NOT PPC)
 public:
-  static int 		Increment(volatile int& i);
-    // indivisibly increment i; returns 'true' if result is != 0
-  static int 		Decrement(volatile int& i);
-    // indivisibly decrement i; returns 'true' if result is != 0
-  static int 		TestAndSet(volatile int& i, int expected, int newval);
-    // if i==exp then return 'true' and set i=newval; else return 'false' (i unchanged)
-  static int		GetNextValue(volatile int& i, int&result, int maxval, int inc_by=1);
-    // get the next available value of i <= maxval, by adding inc_by -- useful for "greedy" multi-thread algorithms; 'true' if the result is valid
-  static int		GetPrevValue(volatile int& i, int&result, int minval, int dec_by=1);
-    // get the next available value of i >= minval, by subtracting dec_by -- useful for "greedy" multi-thread algorithms; 'true' if the result is valid
+  static inline int 	FetchAdd(volatile int *ptr, int value);
+    // returns current value, then indivisibly adds value
     
 #ifndef __MAKETA__
 private:
@@ -43,23 +37,48 @@ private:
 };
 
 
-#ifdef TA_USE_QT
-#ifndef __MAKETA__
-# include <QAtomic>
-#endif
+# if ((defined(__i386__) || defined(__x86_64__)))
+#   if defined(Q_CC_GNU)
+int taAtomic::FetchAdd(volatile int *ptr, int value)
+{
+    asm volatile("lock\n"
+                "xaddl %0,%1"
+                : "=r" (value), "+m" (*ptr)
+                : "0" (value)
+                : "memory");
+    return value;
+}
+#   elif defined(_MSC_VER)
+int taAtomic::FetchAdd(volatile int *pointer, int value)
+{
+    __asm {
+        mov EDX,pointer
+        mov ECX,value
+        lock xadd dword ptr[EDX],ECX
+        mov value,ECX
+    }
+    return value;
+}
+#   else
+#     error "Undefined compiler on i386 -- need to define q_atomic_fetch_and_add_int"
+#   endif // compiler on Intel
+# elif defined(_ARCH_PPC) && defined(Q_CC_GNU)
+int taAtomic::FetchAdd(volatile int *ptr, int value)
+{
+    register int tmp;
+    register int ret;
+    asm volatile("lwarx  %0, 0, %3\n"
+                 "add    %1, %4, %0\n"
+                 "stwcx. %1, 0, %3\n"
+                 "bne-   $-12\n"
+                 : "=&r" (ret), "=&r" (tmp), "=m" (*ptr)
+                 : "r" (ptr), "r" (value)
+                 : "cc", "memory");
+    return ret;
+} 
+# else
+#   error "Undefined arch or compiler -- need to define q_atomic_fetch_and_add_int"
+# endif
 
-inline int taAtomic::Increment(volatile int& i)
-  {return q_atomic_increment(&i);}
-  
-inline int taAtomic::Decrement(volatile int& i)
-  {return q_atomic_decrement(&i);}
-
-inline int taAtomic::TestAndSet(volatile int& i, int expected, int newval)
-  {return q_atomic_test_and_set_int(&i, expected, newval);}
-
-#else
-//NOTE: shouldn't need these...
-#endif
-*/
 #endif
 

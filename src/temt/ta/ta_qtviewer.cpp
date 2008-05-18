@@ -2373,32 +2373,6 @@ void ISelectableHost::DoDynAction(int idx) {
 #endif
     return;
   }
-/*  arg_dlg = new cssiArgDialog(meth, typ, base, use_argc, 0); //modal
-  const iColor* bgclr = NULL;
-  if (typ->InheritsFrom(TA_taBase)) {
-    bgclr = ((TAPtr)base)->GetEditColorInherit();
-  }
-  if ((bgclr == NULL) && (host != NULL)) bgclr = host->bg_color;
-  arg_dlg->Constr("", "", bgclr);
-  int ok_can = arg_dlg->Edit(true);	// true = wait for a response
-  if (ok_can && !arg_dlg->err_flag) {
-    GenerateScript();
-#ifdef DMEM_COMPILE
-    // don't actually run the command when using gui in dmem mode: everything happens via the script!
-    if (taMisc::dmem_nprocs == 1) {
-#endif
-      cssEl* rval = (*(meth->stubp))(base, arg_dlg->obj->members->size-1,
-				     arg_dlg->obj->members->els);
-      UpdateAfter();
-      if (rval != &cssMisc::Void)
-	ShowReturnVal(rval);
-#ifdef DMEM_COMPILE
-    }
-#endif
-  }
-  delete arg_dlg;
-*/
-
 }
 
 iMainWindowViewer* ISelectableHost::mainWindow() const {
