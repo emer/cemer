@@ -40,7 +40,8 @@ private:
 
 
 # if ((defined(__i386__) || defined(__x86_64__)))
-#   if defined(Q_CC_GNU)
+//#   if defined(Q_CC_GNU)
+#   if defined(__GNUC__)
 int taAtomic::FetchAdd(volatile int *ptr, int value)
 {
     asm volatile("lock\n"

@@ -181,6 +181,33 @@ void VELight::ConfigLight(SoLight* lgt) {
   }
 }
 
+bool VELight::UpdateLight() {
+  bool rval = false;
+  VEWorld* wrld = GET_MY_OWNER(VEWorld);
+  if(!wrld) return false;
+  VEWorldView* wv = wrld->FindView();
+  if(!wv) return false;
+  SoGroup* lg = ((T3VEWorld*)wv->node_so())->getLightGroup();
+  if(!lg || lg->getNumChildren() == 0) return false;
+  if(wrld->light_0.ptr() == this) {
+    SoLight* lgt = (SoLight*)lg->getChild(0); 
+    ConfigLight(lgt);
+    rval = true;
+  }
+  else if(wrld->light_1.ptr() == this) {
+    if(lg->getNumChildren() == 2) {
+      SoLight* lgt = (SoLight*)lg->getChild(1); 
+      ConfigLight(lgt);
+    }
+    else {
+      SoLight* lgt = (SoLight*)lg->getChild(0); 
+      ConfigLight(lgt);
+    }
+    rval = true;
+  }
+  return rval;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //		T3 DataView Guys
 

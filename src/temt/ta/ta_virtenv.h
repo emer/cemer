@@ -352,8 +352,10 @@ public:
 
   virtual SoLight*	CreateLight();
   // create the So light of correct type
-  virtual void 	ConfigLight(SoLight* lgt);
+  virtual void 		ConfigLight(SoLight* lgt);
   // config So light parameters
+  virtual bool		UpdateLight();
+  // #BUTTON if environment is already initialized and viewed, this will update the light in the display based on current settings
 
   override void	SetValsToODE();
   override void	GetValsFmODE(bool updt_disp = false);
