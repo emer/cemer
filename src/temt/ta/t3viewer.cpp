@@ -833,6 +833,11 @@ void T3DataViewPar::ReInit() {
 //    T3DataViewRoot	//
 //////////////////////////
 
+void T3DataViewRoot::Initialize() {
+  host = NULL;
+  children.SetBaseType(&TA_T3DataViewMain);
+}
+
 void T3DataViewRoot::Constr_Node_impl() {
   setNode(new T3NodeParent);
 }
@@ -849,6 +854,7 @@ void T3DataViewRoot::ChildRemoving(taDataView* child) {
     }
   }
 }
+
 
 //////////////////////////
 //    T3DataViewMain	//

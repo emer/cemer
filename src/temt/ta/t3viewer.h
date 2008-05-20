@@ -352,7 +352,8 @@ public:
 
 //note: typically never has a non-null parent, because it is rooted in non-T3DataView  
   override T3DataViewRoot* root() {return this;}
-
+  override bool		isRootLevelView() const {return true;} 
+    
   override void 	ChildRemoving(taDataView* child); 
   
   T3_DATAVIEWFUNS(T3DataViewRoot, T3DataViewPar)
@@ -365,7 +366,7 @@ protected:
 
 private:
   NOCOPY(T3DataViewRoot)
-  void			Initialize() {host = NULL;}
+  void			Initialize();
   void			Destroy() {}
 };
 
@@ -378,6 +379,8 @@ public:
   FloatTransform	main_xform;
   // this is the overall transform (position, scale, rotation) for this view object (typically can be adjusted by view's transform dragbox)
 
+  override bool		isTopLevelView() const {return true;} 
+  
   override void		InitLinks();
   T3_DATAVIEWFUNS(T3DataViewMain, T3DataViewPar) // 
 private:

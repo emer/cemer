@@ -1362,3 +1362,67 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
   return taiClipData::ER_IGNORED;
 }
 
+
+void taDataView::DV_QueryEditActionsS(int& allowed, int& forbidden)
+{
+  if (!isTopLevelView()) {
+    forbidden |= (taiClipData::EA_CUT | 
+      taiClipData::EA_DUPE | taiClipData::EA_DELETE | 
+      taiClipData::EA_CLEAR | taiClipData::EA_UNLINK);
+  }
+}
+ 
+void taDataView::DV_QueryEditActionsD(taiMimeSource* ms,
+    int& allowed, int& forbidden)
+{
+  // note: don't need to forbid anything at item level, most controlled by owner
+}
+
+void taDataView::DV_ChildQueryEditActions(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden)
+{
+  // unless we are ourself a root, then pretty much deny everything writish
+  // except for PasteAssign (note: child will have forbidden Cut etc.)
+  // note that refusing to forbid will still require the normal type
+  // checks, so that only compatible guys can get pasted
+  if (!isRootLevelView()) {
+    forbidden |= (taiClipData::EA_PASTE2 | taiClipData::EA_PASTE_APPEND |
+      taiClipData::EA_LINK2 | taiClipData::EA_DROP_COPY2 |
+      taiClipData::EA_DROP_LINK2 | taiClipData::EA_DROP_MOVE2);
+  }
+}
+
+void taDataView::QueryEditActionsS_impl(int& allowed, int& forbidden)
+{
+  inherited::QueryEditActionsS_impl(allowed, forbidden);
+  DV_QueryEditActionsS(allowed, forbidden);
+}
+
+void taDataView::QueryEditActionsD_impl(taiMimeSource* ms,
+    int& allowed, int& forbidden)
+{
+  inherited::QueryEditActionsD_impl(ms, allowed, forbidden);
+  DV_QueryEditActionsD(ms, allowed, forbidden);
+}
+
+void taDataView::ChildQueryEditActions_impl(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden)
+{
+  inherited::ChildQueryEditActions_impl(md,
+    child, ms, allowed, forbidden);
+  DV_ChildQueryEditActions(md, child, ms, allowed, forbidden);
+}
+
+void DataView_List::ChildQueryEditActionsL_impl(const MemberDef* md,
+  const taBase* lst_itm, const taiMimeSource* ms,
+  int& allowed, int& forbidden) 
+{
+  inherited::ChildQueryEditActionsL_impl(md,
+    lst_itm, ms, allowed, forbidden);
+  if (!data_view) return;
+  data_view->DV_ChildQueryEditActions(md,
+    lst_itm, ms, allowed, forbidden);
+}
+

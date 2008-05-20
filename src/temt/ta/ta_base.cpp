@@ -3763,7 +3763,6 @@ TAPtr taDataView::SetOwner(TAPtr own) {
   return rval;
 }
 
-
 //////////////////////////////////
 //   DataView_List	 	//
 //////////////////////////////////

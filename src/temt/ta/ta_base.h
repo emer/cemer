@@ -1912,6 +1912,10 @@ private:
   responsible for lifetime management of dataview objects.
 
   However, if a dataobject is destroying, it will destroy all its views
+  
+  Most DataView objs are strictly managed by a parent, and so user should not
+  be able to cut/paste/del them -- this is overridden for top-level view objs
+  by overidding canCutPasteDel()
 
 */
 class TA_API taDataView: public taOBase, public virtual IDataLinkClient {
@@ -1959,6 +1963,8 @@ public:
   inline bool		hasParent() const {return (m_parent);} // encapsulated way to check for a par
   taDataView*		parent() const {return m_parent;} // typically lex override with strong type
   virtual TypeDef*	parentType() const {return &TA_taDataView;} // the controlling parent -- note that when in a list, this is the list owner, not the list; overrride for strong check in SetOwner
+  virtual bool		isRootLevelView() const {return false;} // #IGNORE controls the default clip behavior, whereby root = allow child ops (cut, dup, etc.); not = do almost nothing
+  virtual bool		isTopLevelView() const {return false;} // #IGNORE controls the default clip behavior, whereby top = do most stuff; not = do almost nothing
 
   virtual MemberDef*	GetDataMemberDef() {return NULL;} // returns md if known and/or knowable (ex. NULL for list members)
   virtual String	GetLabel() const; // returns a label suitable for tabview tabs, etc.
@@ -1985,6 +1991,23 @@ public:
   virtual void		ItemRemoving(taDataView* item) {} // items call this on the root item -- usually used by a viewer to insure item removed from things like sel lists
   virtual void		DataDestroying() {} // called when data is destroying (m_data will already be NULL)
   
+  // special clip op queries, including Child_xx that gets forwarded from owned lists -- most view objs are managed by an owner, exception is very top-level objs; so defaults of following basically disallow things like Cut, Paste, and Delete (Copy and Paste Assign are allowed by default) -- all in ta_qtclipdata.cpp
+  virtual void		DV_QueryEditActionsS(int& allowed, int& forbidden); // #IGNORE 
+  virtual void		DV_QueryEditActionsD(taiMimeSource* ms,
+    int& allowed, int& forbidden); // #IGNORE
+  virtual void		DV_ChildQueryEditActions(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden); // #IGNORE note: this includes children of owned lists--md=NULL
+protected: // the following just call inherited then insert the DV_ version 
+  override void		QueryEditActionsS_impl(int& allowed, int& forbidden);
+    // called once per src item, by controller
+  override void		QueryEditActionsD_impl(taiMimeSource* ms,
+    int& allowed, int& forbidden);
+  override void		ChildQueryEditActions_impl(const MemberDef* md,
+    const taBase* child, const taiMimeSource* ms,
+    int& allowed, int& forbidden);
+
+public:
   int	GetIndex() const {return m_index;}
   void	SetIndex(int value) {m_index = value;}
   TAPtr	SetOwner(TAPtr own); // update the parent; nulls it if not of parentType
@@ -2081,6 +2104,9 @@ protected:
 
   override void*	El_Own_(void* it);
   override void		El_disOwn_(void* it);
+  override void		ChildQueryEditActionsL_impl(const MemberDef* md,
+    const taBase* lst_itm, const taiMimeSource* ms,
+    int& allowed, int& forbidden); // also forwards to dv owner; in ta_qtclipdata.cpp
 
 private:
   NOCOPY(DataView_List)
