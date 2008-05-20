@@ -360,7 +360,6 @@ LEABRA_HEADS =\
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_td.h \
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_pvlv.h \
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_pbwm.h \
-	$(EMERGENTDIR)/src/emergent/leabra/leabra_ct.h \
 	$(EMERGENTDIR)/src/emergent/leabra/leabra_v3_compat.h
 
 LEABRA_MAKETA =\

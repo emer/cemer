@@ -262,6 +262,7 @@ typedef unsigned char   byte;
   // type differences to cause compile issues
 # define strtoll _strtoi64
 # define strtoull _strtoui64
+# define isnan(x) _isnan(x)
 # endif // intptr_t hacks
 #endif // skip over for maketa
 

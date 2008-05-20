@@ -2,7 +2,7 @@
 # this file is copied directly to .pri on Windows
 
 # for some whacky reason, CONFIG had way too much default stuff, so we init it here:
-CONFIG = lex yacc plugin warn_off uic resources qt incremental stl link_prl
+CONFIG = lex yacc plugin warn_off uic resources qt incremental rtti stl link_prl thread
 # NOTE: nasty on Mac! causes libtool to fail to find libs
 #   but it was in the default list on Linux
 !macx {
@@ -17,7 +17,7 @@ win32 {
 MSVC_TARGET = Debug
 
   contains( MSVC_TARGET, Debug ) {
-    CONFIG += debug
+    CONFIG += debug warn_on
   } else { 
     contains( MSVC_TARGET, Release ) {
       CONFIG += release

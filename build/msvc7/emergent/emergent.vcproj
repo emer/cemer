@@ -384,7 +384,7 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\bp\bp_TA_inst.h">
 				</File>
 				<File
-					RelativePath="..\include\bp_TA_type.h">
+					RelativePath="..\..\..\src\emergent\bp\bp_TA_type.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -396,9 +396,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\leabra\leabra_ct.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra_extra.cpp">
@@ -424,9 +421,6 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 				Filter="">
 				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra.h">
-				</File>
-				<File
-					RelativePath="..\..\..\src\emergent\leabra\leabra_ct.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\emergent\leabra\leabra_def.h">
@@ -463,7 +457,7 @@ copy $(TargetDir)emergent*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\emergent\leabra\leabra_TA_inst.h">
 				</File>
 				<File
-					RelativePath="..\include\leabra_TA_type.h">
+					RelativePath="..\..\..\src\emergent\leabra\leabra_TA_type.h">
 				</File>
 			</Filter>
 		</Filter>

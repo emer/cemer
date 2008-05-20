@@ -678,6 +678,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\ta\ta_string.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\ta\ta_thread.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\ta\ta_ti.cpp">
 				</File>
 				<File
@@ -899,6 +902,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_string.h">
+				</File>
+				<File
+					RelativePath="..\..\..\src\temt\ta\ta_thread.h">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\ta\ta_time.h">

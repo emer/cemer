@@ -971,8 +971,8 @@ void MemberFmArg::Copy_(const MemberFmArg& cp) {
 
 void MemberFmArg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(prv_obj && obj && (obj != prv_obj)) {
-    if(obj->object_val && prv_obj->object_val &&
+  if(prv_obj && (bool)obj && (obj != prv_obj)) {
+    if((bool)obj->object_val && (bool)prv_obj->object_val &&
        !obj->object_val->InheritsFrom(prv_obj->object_val->GetTypeDef())) {
       path = "";		// reset path
     }
@@ -1395,7 +1395,7 @@ void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(var_name.empty(), quiet, rval, "var_name is empty");
   CheckError(arg_name.empty(), quiet, rval, "arg_name is empty");
 
-  if(prog && var_name.nonempty()) {
+  if((bool)prog && var_name.nonempty()) {
     ProgVar* pv = prog->FindVarName(var_name);
     CheckError(!pv, quiet, rval, "Could not find variable named:", var_name, "in program:",
 	       prog->name, "path:", prog->GetPath_Long());

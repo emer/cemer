@@ -39,19 +39,7 @@ private:
 #ifndef __MAKETA__
 
 
-# if ((defined(__i386__) || defined(__x86_64__)))
-//#   if defined(Q_CC_GNU)
-#   if defined(__GNUC__)
-int taAtomic::FetchAdd(volatile int *ptr, int value)
-{
-    asm volatile("lock\n"
-                "xaddl %0,%1"
-                : "=r" (value), "+m" (*ptr)
-                : "0" (value)
-                : "memory");
-    return value;
-}
-#   elif defined(_MSC_VER)
+#if defined(_MSC_VER) //note: assumes i386 arch, 32/64 doesn't matter (??)
 int taAtomic::FetchAdd(volatile int *pointer, int value)
 {
     __asm {
@@ -62,10 +50,21 @@ int taAtomic::FetchAdd(volatile int *pointer, int value)
     }
     return value;
 }
+#elif ((defined(__i386__) || defined(__x86_64__)))
+#  if defined(__GNUC__)
+int taAtomic::FetchAdd(volatile int *ptr, int value)
+{
+    asm volatile("lock\n"
+                "xaddl %0,%1"
+                : "=r" (value), "+m" (*ptr)
+                : "0" (value)
+                : "memory");
+    return value;
+}
 #   else
 #     error "Undefined compiler on i386 -- need to define q_atomic_fetch_and_add_int"
 #   endif // compiler on Intel
-# elif defined(_ARCH_PPC) && defined(Q_CC_GNU)
+#elif defined(_ARCH_PPC) && defined(Q_CC_GNU)
 int taAtomic::FetchAdd(volatile int *ptr, int value)
 {
     register int tmp;
@@ -79,9 +78,9 @@ int taAtomic::FetchAdd(volatile int *ptr, int value)
                  : "cc", "memory");
     return ret;
 } 
-# else
-#   error "Undefined arch or compiler -- need to define q_atomic_fetch_and_add_int"
-# endif
+#else // not MSVC or GNU so...
+#   error "Undefined arch or compiler -- need to define taAtomic::FetchAdd"
+#endif
 
 #endif // maketa exclusion
 
