@@ -43,6 +43,7 @@
 #include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/SbViewportRegion.h>
+#include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 
 #include "SoCapsule.h"
 
@@ -1015,6 +1016,9 @@ void VEWorldView::BuildAll() {
 
 void VEWorldView::Render_pre() {
   InitPanel();
+
+  // this delay is deadly for viewing!
+  SoVRMLImageTexture::setDelayFetchURL(false);
 
   setNode(new T3VEWorld(this));
 
