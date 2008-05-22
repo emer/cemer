@@ -1464,7 +1464,7 @@ show_menu:
   // if any appropriate drop actions, then add them!
   menu->AddSep();
   host_->UpdateMethodsActionsForDrop();
-  host_->AddDynActions(menu);
+  host_->AddDynActions(menu, 0);
   
   menu->AddSep();
   act = menu->AddItem("C&ancel", -1);
@@ -1493,28 +1493,12 @@ taiDataLink* ISelectable::effLink(GuiContext sh_typ) const {
 void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
   taiActions* menu, GuiContext sh_typ) 
 {
-  // if default, get the actual type
-  if (sh_typ == GC_DEFAULT) {
-    sh_typ = shType();
-    if (sh_typ == GC_SINGLE_DATA) {
-      FillContextMenu(sel_items, menu, sh_typ);
-    } else { // dual, make submenus
-      String view_cap = "View"; // TODO: get a custom string
-      String obj_cap = "Object"; // TODO: get a custom string
-      GetContextCaptions(view_cap, obj_cap);
-      taiMenu* sub = menu->AddSubMenu(view_cap);
-      FillContextMenu(sel_items, sub, GC_DUAL_DEF_VIEW);
-      sub = menu->AddSubMenu(obj_cap);
-      FillContextMenu(sel_items, sub, GC_DUAL_DEF_DATA);
-    }
-  } else {
-    FillContextMenu_impl(menu, sh_typ);
-    int allowed = QueryEditActions_(sel_items, sh_typ);
-    FillContextMenu_EditItems_impl(menu, allowed, sh_typ);
-    if (sel_items.size == 1) {
-      taiDataLink* link = this->effLink(sh_typ);
-      if (link) link->FillContextMenu(menu);
-    }
+  FillContextMenu_impl(menu, sh_typ);
+  int allowed = QueryEditActions_(sel_items, sh_typ);
+  FillContextMenu_EditItems_impl(menu, allowed, sh_typ);
+  if (sel_items.size == 1) {
+    taiDataLink* link = this->effLink(sh_typ);
+    if (link) link->FillContextMenu(menu);
   }
 }
 
@@ -1925,36 +1909,38 @@ ISelectable_PtrList::~ISelectable_PtrList() {
   }
 }
 
-TypeDef* ISelectable_PtrList::CommonSubtype1N() { // greatest common subtype of items 1-N
+TypeDef* ISelectable_PtrList::CommonSubtype1N(ISelectable::GuiContext gc_typ) 
+{ // greatest common subtype of items 1-N
   if (size == 0) return NULL;
-  taiDataLink* link = FastEl(0)->effLink();
+  taiDataLink* link = FastEl(0)->effLink(gc_typ);
   if (!link) return NULL; // gui-only object, no ref
   TypeDef* rval = link->GetDataTypeDef();
   for (int i = 1; (rval && (i < size)); ++i) {
-    link = FastEl(i)->effLink();
+    link = FastEl(i)->effLink(gc_typ);
     if (!link) return NULL; // gui-only, not commensurable
     rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
   }
   return rval;
 }
 
-TypeDef* ISelectable_PtrList::CommonSubtype2N() { // greatest common subtype of items 2-N
+TypeDef* ISelectable_PtrList::CommonSubtype2N(ISelectable::GuiContext gc_typ) 
+{ // greatest common subtype of items 2-N
   if (size <= 1) return NULL;
-  taiDataLink* link = FastEl(1)->effLink();
+  taiDataLink* link = FastEl(1)->effLink(gc_typ);
   if (!link) return NULL; // gui-only object, no ref
   TypeDef* rval = link->GetDataTypeDef();
   for (int i = 2; (rval && (i < size)); ++i) {
-    link = FastEl(i)->effLink();
+    link = FastEl(i)->effLink(gc_typ);
     if (!link) return NULL; // gui-only, not commensurable
     rval = TypeDef::GetCommonSubtype(rval, link->GetDataTypeDef());
   }
   return rval;
 }
 
-TypeDef* ISelectable_PtrList::Type1() {
+TypeDef* ISelectable_PtrList::Type1(ISelectable::GuiContext gc_typ) {
   if (size == 0) return NULL;
   else {
-    taiDataLink* link = FastEl(0)->effLink();
+    taiDataLink* link = FastEl(0)->effLink(gc_typ);
     if (link) return link->GetDataTypeDef();
     else      return NULL; // gui-only object, no ref
   }
@@ -1976,10 +1962,12 @@ DynMethodDesc* DynMethod_PtrList::AddNew(int dmd_type, MethodDef* md) {
   return rval;
 }
 
-void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
+void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
+  ISelectable::GuiContext gc_typ) 
+{
   if (sel_items.size == 0) return;
 
-  TypeDef* t1n = sel_items.CommonSubtype1N(); // greatest common subtype of items 1-N
+  TypeDef* t1n = sel_items.CommonSubtype1N(gc_typ); // greatest common subtype of items 1-N
   if (t1n == NULL) return; // typically for non-taBase types, ex Class browsing
   MethodDef* md;
   // Type_N methods (common to all)
@@ -1990,10 +1978,10 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items) {
   }
 
   if (sel_items.size == 1) return;
-  taiDataLink* link = sel_items.FastEl(0)->effLink();
+  taiDataLink* link = sel_items.FastEl(0)->effLink(gc_typ);
   if (!link) return; // gui only obj
   TypeDef* t1 = link->GetDataTypeDef(); // type of 1st item
-  TypeDef* t2n = sel_items.CommonSubtype2N(); // greatest common subtype of items 2-N
+  TypeDef* t2n = sel_items.CommonSubtype2N(gc_typ); // greatest common subtype of items 2-N
   if (!t2n) return;
 
   TypeDef* arg1_typ;
@@ -2087,6 +2075,8 @@ const char* ISelectableHost::update_ui_signal; // currently NULL
 ISelectableHost::ISelectableHost() {
   m_sel_chg_cnt = 0;
   helper = new SelectableHostHelper(this);
+  dyn_idx = 0;
+  ctxt_ms = 0;
   ctxt_ms = NULL;
 }
 
@@ -2103,11 +2093,13 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
     SelectionChanged(forced);
 }
 
-void ISelectableHost::AddDynActions(taiActions* menu) {
-  if (dyn_actions.count() == 0) return;
+void ISelectableHost::AddDynActions(taiActions* menu, int dyn_list,
+  ISelectable::GuiContext gc_typ) 
+{
+  if (dyn_actions[dyn_list].count() == 0) return;
 //nn,at top  menu->AddSep();
-  for (int i = 0; i < (int)dyn_actions.count(); ++i) {
-    taiAction* act = dyn_actions.FastEl(i);
+  for (int i = 0; i < (int)dyn_actions[dyn_list].count(); ++i) {
+    taiAction* act = dyn_actions[dyn_list].FastEl(i);
     act->AddTo(menu);
   }
 }
@@ -2215,25 +2207,31 @@ void ISelectableHost::Emit_NotifySignal(NotifyOp op) {
 }
 
 void ISelectableHost::FillContextMenu(taiActions* menu) {
+  if (sel_items.size == 0) return; // shouldn't happen
   QObject::connect(menu, SIGNAL(destroyed()), helper, SLOT(ctxtMenu_destroyed()) );
   ISelectable_PtrList& sel_items = selItems(); 
+  ISelectable* item = sel_items.FastEl(0);
   if (sel_items.size == 1) {
     ctxt_ms = taiMimeSource::NewFromClipboard(); // deleted in the destroyed() handler
-    ctxt_item = sel_items.FastEl(0);
+    ctxt_item = item;
   }
-  UpdateMethodsActions();
   
   FillContextMenu_pre(sel_items, menu);
   
-  // do the item-mediated portion
-  ISelectable* ci = curItem();
-  if (ci) {
-    // start with dynamic actions
-    if (dyn_actions.count() != 0) {
-      AddDynActions(menu);
-      menu->AddSep();
-    }
-    ci->FillContextMenu(sel_items, menu);
+  ISelectable::GuiContext sh_typ = item->shType();
+  // init the dyn context
+  dyn_idx = 0;
+  
+  if (sh_typ == ISelectable::GC_SINGLE_DATA) {
+    FillContextMenu_int(sel_items, menu, 0, sh_typ);
+  } else { // dual, make submenus
+    String view_cap = "View";
+    String obj_cap = "Object"; 
+    item->GetContextCaptions(view_cap, obj_cap);
+    taiMenu* sub = menu->AddSubMenu(view_cap);
+    FillContextMenu_int(sel_items, sub, 0, ISelectable::GC_DUAL_DEF_VIEW);
+    sub = menu->AddSubMenu(obj_cap);
+    FillContextMenu_int(sel_items, sub, 1, ISelectable::GC_DUAL_DEF_DATA);
   }
   
   FillContextMenu_post(sel_items, menu);
@@ -2245,7 +2243,35 @@ void ISelectableHost::FillContextMenu(taiActions* menu) {
   }
 }
 
+void ISelectableHost::FillContextMenu_int(ISelectable_PtrList& sel_items,
+  taiActions* menu, int dyn_list, ISelectable::GuiContext sh_typ)
+{
+  UpdateMethodsActions(dyn_list, sh_typ);
+  
+  // do the item-mediated portion
+  ISelectable* ci = curItem();
+  if (ci) {
+    // start with dynamic actions
+    if (dyn_actions[dyn_list].count() != 0) {
+      AddDynActions(menu, dyn_list, sh_typ);
+      menu->AddSep();
+    }
+    ci->FillContextMenu(sel_items, menu, sh_typ);
+  }
+}
+
 void ISelectableHost::DoDynAction(int idx) {
+  // find the right list, and adjust idx to refer to that list
+  //const int max_lists = 1; // 2 lists
+  int list = 0;
+  while (idx > dyn_methods[list].size) {
+    idx -= dyn_methods[list].size;
+    list++;
+  }
+  DynMethod_PtrList& dyn_methods = this->dyn_methods[list];
+//nn  taiAction_List&    dyn_actions = this->dyn_actions[list]; 
+  ISelectable::GuiContext gui_ctxt = dyn_context[list];
+  
   //note: we really won't have been called if any items don't have links,
   // but we have code in here to bail anyway if we do (maybe should put warning text?)
   if ((idx < 0) || (idx >= dyn_methods.size)) return; // shouldn't happen
@@ -2296,8 +2322,8 @@ void ISelectableHost::DoDynAction(int idx) {
       case DynMethod_PtrList::Type_1N: { // same for all
         for (i = 0; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          typ = itN->GetEffDataTypeDef();
-          link = itN->effLink();
+          typ = itN->GetEffDataTypeDef(gui_ctxt);
+          link = itN->effLink(gui_ctxt);
           if (!link) return;
           base = link->data();
           rval = (*(meth->stubp))(base, 0, (cssEl**)NULL);
@@ -2308,13 +2334,13 @@ void ISelectableHost::DoDynAction(int idx) {
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
-        typ = it1->GetEffDataTypeDef();
-        link = it1->effLink();
+        typ = it1->GetEffDataTypeDef(gui_ctxt);
+        link = it1->effLink(gui_ctxt);
         if (!link) return;
         base = link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          link = itN->effLink(); //note: prob can't be null, because we wouldn't get called
+          link = itN->effLink(gui_ctxt); //note: prob can't be null, because we wouldn't get called
           if (!link) continue;
           *param[1] = (void*)link->data();
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
@@ -2326,13 +2352,13 @@ void ISelectableHost::DoDynAction(int idx) {
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
-        typ = it1->GetEffDataTypeDef();
-        link = it1->effLink();
+        typ = it1->GetEffDataTypeDef(gui_ctxt);
+        link = it1->effLink(gui_ctxt);
         if (!link) return; //note: we prob wouldn't get called if any were null
         *param[1] = (void*)link->data();
         for (i = 1; i < sel_items_cp.size; ++i) {
           itN = sel_items_cp.FastEl(i);
-          link = itN->link();
+          link = itN->effLink(gui_ctxt);
           if (!link) continue; // prob won't happen
           base = link->data();
           rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
@@ -2348,7 +2374,7 @@ void ISelectableHost::DoDynAction(int idx) {
         param[0] = &cssMisc::Void;
         param[1] = new cssCPtr();
         ISelectable* it1 = sel_items_cp.FastEl(0);
-        typ = it1->GetEffDataTypeDef();
+        typ = it1->GetEffDataTypeDef(gui_ctxt);
         for (int j = 0; j < ctxt_ms->count(); ++j) {
           ctxt_ms->setIndex(j);
           taBase* obj = ctxt_ms->tabObject();
@@ -2356,7 +2382,7 @@ void ISelectableHost::DoDynAction(int idx) {
           *param[1] = (void*)obj;
           for (i = 0; i < sel_items_cp.size; ++i) {
             itN = sel_items_cp.FastEl(i);
-            link = itN->effLink();
+            link = itN->effLink(gui_ctxt);
             if (!link) continue; // prob won't happen, because we wouldn't have been called
             base = link->data();
             rval = (*(meth->stubp))(base, 1, param); // note: "array" of 1 item
@@ -2397,7 +2423,8 @@ void ISelectableHost::SelectionChanged(bool forced) {
     UpdateSelectedItems_impl();
     m_sel_chg_cnt = 0;
   }
-  UpdateMethodsActions();
+  dyn_idx = 0;
+  UpdateMethodsActions(0);
   Emit_NotifySignal(OP_SELECTION_CHANGED); // note: sent through event loop first
 }
 
@@ -2412,39 +2439,43 @@ void ISelectableHost::SelectionChanging(bool begin, bool forced) {
   }
 }
 
-void ISelectableHost::UpdateMethodsActions() {
+void ISelectableHost::UpdateMethodsActions(int dyn_list, ISelectable::GuiContext gc_typ) {
+  dyn_context[dyn_list] = gc_typ;
   // enumerate dynamic methods
-  dyn_methods.Reset();
+  dyn_methods[dyn_list].Reset();
   // if one dst, add the drop actions
   ISelectable_PtrList& sel_items = selItems();
   if (ctxt_ms && ctxt_item) {
-    dyn_methods.FillForDrop(*ctxt_ms, ctxt_item);
+    dyn_methods[dyn_list].FillForDrop(*ctxt_ms, ctxt_item);
   }
-  dyn_methods.Fill(sel_items);
+  dyn_methods[dyn_list].Fill(sel_items, gc_typ);
 
   // dynamically create actions
-  dyn_actions.Reset(); // note: items ref deleted if needed
-  for (int i = 0; i < dyn_methods.size; ++i) {
-    DynMethodDesc* dmd = dyn_methods.FastEl(i);
-    taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
+  dyn_actions[dyn_list].Reset(); // note: items ref deleted if needed
+  for (int i = 0; i < dyn_methods[dyn_list].size; ++i) {
+    DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);
+    taiAction* act = new taiAction(dyn_idx, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
     QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
-    dyn_actions.Add(act);
+    dyn_actions[dyn_list].Add(act);
+    dyn_idx++;
   }
 }
 
 void ISelectableHost::UpdateMethodsActionsForDrop() {
+  dyn_context[0] = ISelectable::GC_DEFAULT;
   // enumerate dynamic methods
-  dyn_methods.Reset();
-  dyn_actions.Reset(); // note: items ref deleted if needed
+  dyn_methods[0].Reset();
+  dyn_actions[0].Reset(); // note: items ref deleted if needed
   if (!ctxt_ms || !ctxt_item) return;
-  dyn_methods.FillForDrop(*ctxt_ms, ctxt_item);
+  dyn_methods[0].FillForDrop(*ctxt_ms, ctxt_item);
 
   // dynamically create actions
-  for (int i = 0; i < dyn_methods.size; ++i) {
-    DynMethodDesc* dmd = dyn_methods.FastEl(i);
+  for (int i = 0; i < dyn_methods[0].size; ++i) {
+    DynMethodDesc* dmd = dyn_methods[0].FastEl(i);
     taiAction* act = new taiAction(i, dmd->md->GetLabel(), QKeySequence(), dmd->md->name );
     QObject::connect(act, SIGNAL(IntParamAction(int)), helper, SLOT(DynAction(int)));
-    dyn_actions.Add(act);
+    dyn_actions[0].Add(act);
+    dyn_idx++;
   }
 }
 

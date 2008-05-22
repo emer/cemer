@@ -424,19 +424,19 @@ class TA_API ISelectable_PtrList: public taPtrList<ISelectable> { // for selecti
 INHERITED(taPtrList<ISelectable>)
 friend class ISelectableHost;
 public:
-  TypeDef*		Type1(); // data type of 1st item
-  TypeDef*		CommonSubtype1N(); // greatest common data subtype of items 1-N
-  TypeDef*		CommonSubtype2N(); // greatest common data subtype of items 2-N
+  TypeDef*	Type1(ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT); 
+    // data type of 1st item
+  TypeDef*	CommonSubtype1N(ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT); 
+    // greatest common data subtype of items 1-N
+  TypeDef*	CommonSubtype2N(ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT); 
+    // greatest common data subtype of items 2-N
   
   ISelectable_PtrList() {Initialize();}
   ISelectable_PtrList(const ISelectable_PtrList& cp);
   ~ISelectable_PtrList();
 protected:
   static taPtrList_impl* insts; // global lists of all insts, to enable removing deleting items
-//TEMP nn??  override void*	El_Ref_(void* it) {((ISelectable*)it)->RefUnref(true); return it;}
-//TEMP nn??  override void* 	El_unRef_(void* it) {((ISelectable*)it)->RefUnref(false);  return it;}
 private:
-  
   void	Initialize();
 };
 
@@ -473,7 +473,8 @@ public:
   };
 
   DynMethodDesc*	AddNew(int dmd_type, MethodDef* md); // creates new DMD and adds, returning ref
-  void			Fill(ISelectable_PtrList& sel_items); // clear, then fill based on sel_items
+  void			Fill(ISelectable_PtrList& sel_items,
+    ISelectable::GuiContext gc_typ); // clear, then fill based on sel_items
   void			FillForDrop(const taiMimeSource& ms, 
     ISelectable* drop_item); // clear, then fill based on ms and sel_items (used for Drop operations)
   ~DynMethod_PtrList();
@@ -503,9 +504,9 @@ public:
   
   ISelectable*		curItem() {return selItems().SafeEl(0);} // convenience
   virtual void		setCurItem(ISelectable* item, bool forceUpdate = false);
-  virtual taiAction_List& dynActions() {return dyn_actions;} 
+//  virtual taiAction_List& dynActions() {return dyn_actions;} 
     // Action list, of current dynamic actions available
-  virtual DynMethod_PtrList& dynMethods() {return dyn_methods;}
+//  virtual DynMethod_PtrList& dynMethods() {return dyn_methods;}
    // -- list of current dynamic methods availableselectionChanged
   QObject*		clipHandlerObj() const; 
     // provided so client can connect to us as a ClipHandler (EditEnabled, EditAction only)
@@ -519,7 +520,8 @@ public:
   
   virtual void		FillContextMenu(taiActions* menu); 
     // s/b called by desc class, to put dynaction items onto menu
-  virtual void		AddDynActions(taiActions* menu);
+  virtual void		AddDynActions(taiActions* menu, int dyn_list,
+    ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT);
    // add the dynamic guys to the given menu (note: FillContextMenu does this too)
   
   virtual void 		SelectionChanging(bool begin, bool forced = true); // if used, must be called in pairs, with true then false
@@ -553,13 +555,17 @@ protected:
   int			m_sel_chg_cnt; 
    // counter to track batch selection changes; -ve means we are in Update (prog calls ignored) 
   ISelectable_PtrList	sel_items;
-  DynMethod_PtrList	dyn_methods; // available dynamic methods
-  taiAction_List	dyn_actions; // actions corresponding to methods (always 1:1)
+  DynMethod_PtrList	dyn_methods[2]; // available dynamic methods; 0=single/view 1=obj
+  taiAction_List	dyn_actions[2]; // actions corresponding to methods (always 1:1)
+  ISelectable::GuiContext dyn_context[2]; 
+  int			dyn_idx; // the current dyn index (of all [])
   taiMimeSource*	ctxt_ms; // during a drop and context holds the ms used for dyn and edit actions 
   ISelectable*		ctxt_item; // during drop, holds the item dropped on; for context, holds the item
   
   virtual void		FillContextMenu_pre(ISelectable_PtrList& sel_items, 
     taiActions* menu) {} // hook
+  void 			FillContextMenu_int(ISelectable_PtrList& sel_items,
+    taiActions* menu, int dyn_list, ISelectable::GuiContext sh_typ);
   virtual void		FillContextMenu_post(ISelectable_PtrList& sel_items, 
     taiActions* menu) {} // hook 
   
@@ -570,7 +576,8 @@ protected:
   virtual void		DoDynAction(int idx); // do the action in the list
   virtual void 		SelectionChanged(bool forced);
     // invoked when selection of current clipboard/focus handler changes
-  virtual void		UpdateMethodsActions(); 
+  virtual void		UpdateMethodsActions(int dyn_list,
+    ISelectable::GuiContext gc_typ = ISelectable::GC_DEFAULT); 
     // updates the dyn methods/actions
 
 private:
