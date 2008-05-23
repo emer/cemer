@@ -1144,10 +1144,10 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
       data_el(MS_GP).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
-      int row = AddData(-1, data);
+      //int row = AddData(-1, data);
       nm = "step_prog";
       help_text = md->desc;
-      AddName(row, nm, help_text, mb_dat/*, md*/); 
+      AddNameData(-1, nm, help_text, data, mb_dat/*, md*/); 
       ++dat_cnt;
     }
   }
@@ -1211,10 +1211,10 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       
       data_el(j).Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
-      int row = AddData(-1, data);
+      //int row = AddData(-1, data);
       nm = pv->name;
       help_text = pv->desc;
-      AddName(row, nm, help_text, mb_dat/*, md*/); 
+      AddNameData(-1, nm, help_text, data, mb_dat/*, md*/); 
       refs.Add(pv);
       ++dat_cnt;
     }

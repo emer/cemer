@@ -38,6 +38,9 @@
 #include <QButtonGroup>
 #include <qlabel.h>
 #include <qlayout.h>
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+# include <QFormLayout>
+#endif
 #include <QMenuBar>
 #include <QMenu>
 #include <qmessagebox.h>
@@ -1126,18 +1129,26 @@ const iColor taiDataHost::colorOfRow(int row) const {
   }
 }
 
+void taiDataHost::StartEndLayout(bool start) {
+  if (start) {
+    layBody->setEnabled(false);
+  } else { // end
+    layBody->setEnabled(true);
+  }
+}
+
+
 int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
+  if (row < 0)
+    row = layBody->rowCount();
   QFont f(taiM->nameFont(ctrl_size));
   f.setBold(true);
   wid->setFont(f);
-  wid->setFixedHeight(taiM->label_height(ctrl_size));
+  wid->setFixedHeight(row_height);
   SET_PALETTE_BACKGROUND_COLOR(wid, colorOfRow(row));
   if (!desc.empty()) {
     wid->setToolTip(desc);
   }
-  if (row < 0)
-    row = layBody->rowCount();
-  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   QHBoxLayout* layH = new QHBoxLayout();
   
   
@@ -1158,7 +1169,12 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   ln->show();
   layH->addSpacing(2);
   // add the item to span both cols
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  layBody->addRow(layH);
+#else
+  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); //note: margins not automatically baked in to max height
   layBody->addLayout(layH, row, 0, 1, 2, (Qt::AlignLeft | Qt::AlignVCenter)); 
+#endif  
   wid->show(); // needed for rebuilds, to make the widget show
   return row;
 }
@@ -1195,40 +1211,74 @@ iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
   return label;
 }
 
-int taiDataHost::AddName(int row, const String& name, const String& desc,
-   taiData* buddy, MemberDef* md)
-{
-//nn  int dat_idx = (md) ? dat_cnt : -1; // legacy compat
-  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy,
-    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row);
-  // add a label item in first column
-  if (row < 0)
-    row = layBody->rowCount();
-  QHBoxLayout* layH = new QHBoxLayout();
-  layH->setMargin(0);
-  layH->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  layH->addSpacing(2);
-  layBody->addLayout(layH, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
-  label->show(); // needed for rebuilds, to make the widget show
-  return row;
-}
 
-int taiDataHost::AddData(int row, QWidget* data, bool fill_hor) {
-  // add a data item in second column
+int taiDataHost::AddNameData(int row, const String& name, const String& desc,
+   QWidget* data, taiData* buddy, MemberDef* md, bool fill_hor)
+{
   if (row < 0)
     row = layBody->rowCount();
+//LABEL
+  iLabel* label = MakeInitEditLabel(name, body, ctrl_size, desc, buddy,
+    this, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)), row); 
+  
+//DATA
   // note1: margins not automatically baked in to max height
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
+  QHBoxLayout* lay_dat = new QHBoxLayout();
+  lay_dat->setMargin(0);
+  lay_dat->addWidget(data, 0/*, (Qt::AlignLeft | Qt::AlignVCenter)*/);
+  if (!fill_hor) lay_dat->addStretch();
+  
+// add label/body and show
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  label->setMinimumHeight(row_height);
+  label->setMaximumHeight(row_height);
+  lay_dat->addStrut(row_height); // make it full height, so controls center
+  layBody->addRow(label, lay_dat);
+#else
+
+  
+  QHBoxLayout* lay_lbl = new QHBoxLayout();
+  lay_lbl->setMargin(0);
+  lay_lbl->addWidget(label, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  lay_lbl->addSpacing(2);
   layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); 
-  QHBoxLayout* hbl = new QHBoxLayout();
-  hbl->setMargin(0);
-  layBody->addLayout(hbl, row, 1);
-  hbl->addWidget(data, 0);
-  if (!fill_hor) hbl->addStretch();
+  layBody->addLayout(lay_lbl, row, 0, (Qt::AlignLeft | Qt::AlignVCenter));
+  layBody->addLayout(lay_dat, row, 1);
+#endif  
+  
+  label->show(); // needed for rebuilds, to make the widget show  
   data->show(); // needed for rebuilds, to make the widget show
+  
   return row;
 }
 
+int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
+{
+  if (row < 0)
+    row = layBody->rowCount();
+  
+  
+//DATA
+  // note1: margins not automatically baked in to max height
+  // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
+  QHBoxLayout* hbl = new QHBoxLayout();
+  hbl->setMargin(0);
+  hbl->addWidget(data, 0);
+  if (!fill_hor) hbl->addStretch();
+
+// add label/body and show
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  layBody->addRow(hbl);
+#else
+  layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); 
+  layBody->addLayout(hbl, row, 0, 1, 2); // col 0, span 1 row, span 2 cols
+#endif  
+  
+  data->show(); // needed for rebuilds, to make the widget show
+  
+  return row;
+}
 void taiDataHost::AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc) {
   SetMultiSize(row + 1, 0); //0 gets set to multi_col
   QLabel* label = new QLabel(name, (QWidget*)NULL);
@@ -1320,6 +1370,14 @@ void taiDataHost::Constr_Box() {
 void taiDataHost::Constr_Body() {
   QVBoxLayout* vbl = new QVBoxLayout(body);
   vbl->setMargin(0);
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  layBody = new QFormLayout();
+  layBody->setRowWrapPolicy(QFormLayout::DontWrapRows);
+  layBody->setHorizontalSpacing(2 * LAYBODY_MARGIN);
+  layBody->setVerticalSpacing(2 * LAYBODY_MARGIN);
+  layBody->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
+  layBody->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow); // TBD
+#else
   layBody = new QGridLayout();
 #if QT_VERSION >= 0x040300
   layBody->setHorizontalSpacing(LAYBODY_SPACING);
@@ -1330,6 +1388,7 @@ void taiDataHost::Constr_Body() {
   layBody->setMargin(LAYBODY_MARGIN);
 #endif
   layBody->setColumnStretch(1,1);
+#endif // 4.4 vs. <4.4
   vbl->addLayout(layBody);
   vbl->addStretch(1);
 }
@@ -1609,60 +1668,6 @@ void taiDButton::release(const ivEvent& e) {
   ivButton::release(e);
 }
 */
-// **TODO maybe each dialog should have its own style so that
-// it could update its name ect...
-//ivStyle*     taiDialog::style = NULL;
-
-/*taiDialog::taiDialog(TypeDef* typ_, bool modal_, bool read_only_, QObject* parent, const char* name)
-: taiDataHost(typ_, read_only_, parent, name)
-{
-  dialog = NULL;
-  modal = modal_;
-  no_ok_but = false;
-  def_size = 0;
-}
-
-taiDialog::~taiDialog() {
-  DoDestr_Dialog(dialog);
-} */
-
-/* table approach not very successful -- cells are fixed size, and contained widgets are resized
- ugh, tables!
-void  taiDialog::Constr_Box() {
-  body = new QTable(1, 1, dialog);
-  body->horizontalHeader()->hide();
-  QHeader* vh = body->verticalHeader();
-  vh->setResizeEnabled(false);
-  vh->setMovingEnabled(false);
-  vh->setClickEnabled(false);
-  body->resize(1, 1); // let it expand
-  body->setPaletteBackgroundColor(bg_color_dark); //TODO: replace/nuke when we use Palettes
-  vblDialog->addWidget(body, 2);
-}
-
-
-void taiDialog::AddName(int index, String& name, String& desc, QWidget* buddy) {
-   // add a data item in data column
-    if (body->rowCount() < (index + 1))
-      body->setNumRows(index + 1);
-    body->verticalHeader()->setLabel(index, name);
-    // set a tooltip on buddy, if supplied
-    if ((buddy != NULL) && (!desc.empty())) {
-      QToolTip::add(buddy, desc);
-    }
-
-}
-
-void taiDialog::AddData(int index, QWidget* data) {
-   // add a data item in data column
-    if (body->rowCount() < (index + 1))
-      body->setNumRows(index + 1);
-    body->setCellWidget(index, 0, data);
-    int h;
-//    h = MAX(data->height(), body->rowHeight(index));
-    h = 37; // temp -- button height, s/b highest
-    body->setRowHeight(index, h);
-} */
 
 
 void taiDataHost::SetRevert(){
@@ -1872,15 +1877,16 @@ void taiEditDataHost::Enum_Members() {
   }
 }
 
-
 void taiEditDataHost::Constr_Body() {
   inherited::Constr_Body();
+  StartEndLayout(true);
   if (inline_mode) {
     dat_cnt = 0;
     Constr_Inline();
   } else {
     Constr_Data_Labels();
   }
+  StartEndLayout(false);
 }
 
 void taiEditDataHost::Constr_Data_Labels() {
@@ -1943,13 +1949,13 @@ void taiEditDataHost::Constr_Data_Labels_impl(int& idx, Member_List* ms,
     dl->Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
-    AddData(idx, rep, fill_hor);
+    //AddData(idx, rep, fill_hor);
 
     // create label
     name = "";
     desc = "";
     GetName(md, name, desc);
-    AddName(idx, name, desc, mb_dat, md);
+    AddNameData(idx, name, desc, rep, mb_dat, md, fill_hor);
     ++idx;
     ++dat_cnt;
   }
@@ -2204,11 +2210,15 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
       // in practice, I think there is no such thing as a non-taBase call here
       mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+//TODO: YIKES!!!!!!
+#else      
       if (mb_dat->visible()) {
         layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN)); 
       } else {
         layBody->setRowMinimumHeight(cur_row, 0); 
       }
+#endif
       ++cur_row;
     }
   }

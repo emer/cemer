@@ -61,13 +61,15 @@ class	QDockWidget;		// #IGNORE
 class	QDragObject;		// #IGNORE 
 class	QFileDialog;		// #IGNORE 
 class	QFont;			// #IGNORE 
+#if (QT_VERSION >= 0x040400)
+class	QFormLayout;		// #IGNORE
+#endif
 class	QFrame;			// #IGNORE 
 class	QGrid;			// #IGNORE 
 class	QGridLayout;		// #IGNORE 
 class	QGroupBox;		// #IGNORE 
 class	QHBox;			// #IGNORE 
 class	QHBoxLayout;		// #IGNORE 
-//nuke class	Q3HButtonGroup;		// #IGNORE 
 class	QHostAddress;		// #IGNORE
 class	QIcon;			// #IGNORE
 class	QImage;			// #IGNORE
@@ -120,9 +122,7 @@ class	QToolTip;		// #IGNORE
 class	QTreeWidget;		// #IGNORE
 class	QTreeWidgetItem;	// #IGNORE
 class	QValidator;		// #IGNORE 
-//nuke class	Q3VBox;			// #IGNORE 
 class	QVBoxLayout;		// #IGNORE 
-//nuke class	Q3VButtonGroup;		// #IGNORE 
 class	QWidget;		// #IGNORE 
 
 // #IGNORE Events

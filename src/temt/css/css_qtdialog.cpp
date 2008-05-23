@@ -99,11 +99,11 @@ void cssiEditDialog::Constr_Data_Labels() {
     // get the widget representation of the data
     taiData* mb_dat = cit->GetDataRep(this, NULL, body);
     data_el(0).Add(mb_dat);
-    AddData(index, mb_dat->GetRep());
+    //AddData(index, mb_dat->GetRep());
     
     // now get label
     GetName(i, md, name, desc);
-    AddName(i, name, desc, mb_dat);
+    AddNameData(-1, name, desc, mb_dat->GetRep(), mb_dat);
     
     ++index;
   }
@@ -429,11 +429,11 @@ void cssiArgDialog::Constr_Data_Labels() {
 
     data_el(0).Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
-    int row = AddData(-1, rep);
+    //int row = AddData(-1, rep);
     
     cssEl* md = obj->members->FastEl(i+1); // need to add 1 here to skip over arg[0]
     GetName(j, md, name, desc);
-    AddName(row, name, desc, mb_dat);
+    AddNameData(-1, name, desc, rep, mb_dat);
   }
 }
 

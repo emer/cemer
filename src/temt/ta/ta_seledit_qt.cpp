@@ -123,12 +123,12 @@ void iSelectEditDataHost::Constr_Data_Labels() {
       memb_set->memb_el.Add(md);
       memb_set->data_el.Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
-      int row = AddData(-1, data);
+      //int row = AddData(-1, data);
   
       help_text = item->GetDesc();
       String new_lbl = item->caption();
       //obs GetName(md, nm, help_text); //note: we just call this to get the help text
-      AddName(row, new_lbl, help_text, mb_dat, md);
+      AddNameData(-1, new_lbl, help_text, data, mb_dat, md);
       ++dat_cnt;
     }
     def_grp = false;

@@ -741,25 +741,21 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
   iCheckBox* chk = NULL;
   iLineEdit* rep = new iLineEdit(ti->name, body);
   rep->setReadOnly(true);
-//  AddName(row, "name", "name of the type item", rep);
-  AddName(row, "name", "name of the type item", NULL);
-  AddData(row++, rep, true);
+  AddNameData(row++, "name", "name of the type item", rep, NULL, NULL, true);
   
   // description
   rep = new iLineEdit(ti->desc, body);
   rep->setReadOnly(true);
-//  AddName(row, "description", "description of the type item", rep);
-  AddName(row, "description", "description of the type item", NULL);
-  AddData(row++, rep, true);
+  AddNameData(row++, "description", "description of the type item", rep,
+    NULL, NULL, true);
   
   // opts
 //  String tmp = taMisc::StrArrayToChar(ti->opts);//ti->opts.AsString();
   String tmp = ti->opts.AsString();
   rep = new iLineEdit(tmp, body);
   rep->setReadOnly(true);
-//  AddName(row, "options", "ta # options, including inherited", rep);
-  AddName(row, "options", "ta # options, including inherited", NULL);
-  AddData(row++, rep, true);
+  AddNameData(row++, "options", "ta # options, including inherited",
+    rep, NULL, NULL, true);
   
   // stuff shared for Members/Props
   MemberDefBase* md = dynamic_cast<MemberDefBase*>(ti);
@@ -767,23 +763,21 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     // type
     rep = new iLineEdit(md->type->Get_C_Name(), body);
     rep->setReadOnly(true);
-    AddName(row, "type", "type of the member/property", NULL);
-    AddData(row++, rep, true);
+    AddNameData(row++, "type", "type of the member/property",
+      rep, NULL, NULL, true);
     // static
     chk = new iCheckBox(md->is_static, body);
     chk->setReadOnly(true);
-    AddName(row, "is_static", "static (non-instance) member/property", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "is_static", "static (non-instance) member/property",
+     chk, NULL, NULL, true);
     // read-only
     chk = new iCheckBox(md->isReadOnly(), body);
     chk->setReadOnly(true);
-    AddName(row, "readOnly", "member/property is read-only (including in CSS/programs)", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "readOnly", "member/property is read-only (including in CSS/programs)", chk, NULL, NULL, true);
     // gui read-only
     chk = new iCheckBox(md->isGuiReadOnly(), body);
     chk->setReadOnly(true);
-    AddName(row, "guiReadOnly", "member/property is read-only in the gui (but may be writable in CSS/programs)", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "guiReadOnly", "member/property is read-only in the gui (but may be writable in CSS/programs)", chk, NULL, NULL, true);
   }
   
   switch (tik) {
@@ -792,8 +786,7 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     // value
     rep = new iLineEdit(String(ed->enum_no), body);
     rep->setReadOnly(true);
-    AddName(row, "value", "value of the enum", NULL);
-    AddData(row++, rep, true);
+    AddNameData(row++, "value", "value of the enum", rep, NULL, NULL, true);
     break;
     }
   case taMisc::TIK_MEMBER:  {
@@ -803,9 +796,8 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     iSpinBox* repi = new iSpinBox(body);
     repi->setValue((ta_intptr_t)md->GetOff(NULL));
     repi->setReadOnly(true);
-//    AddName(row, "size", "size, in bytes, of the type", repi);
-    AddName(row, "offset", "offset, in bytes, of the member", NULL);
-    AddData(row++, repi);
+    AddNameData(row++, "offset", "offset, in bytes, of the member", 
+      repi, NULL, NULL, true);
     break;
     }
   case taMisc::TIK_PROPERTY:  {
@@ -813,8 +805,8 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     // for properties only, indicate (so can distinguish from members in .properties)
     chk = new iCheckBox(true, body);
     chk->setReadOnly(true);
-    AddName(row, "is_property", "this is a property (not a member)", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "is_property", "this is a property (not a member)",
+      chk, NULL, NULL, true);
     break;
     }
   case taMisc::TIK_METHOD:  {
@@ -822,29 +814,29 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     // return type
     rep = new iLineEdit(md->type->Get_C_Name(), body);
     rep->setReadOnly(true);
-    AddName(row, "return type", "return type of the method", NULL);
-    AddData(row++, rep, true);
+    AddNameData(row++, "return type", "return type of the method",
+      rep, NULL, NULL, true);
     
     // params
     rep = new iLineEdit(md->ParamsAsString(), body);
     rep->setReadOnly(true);
-    AddName(row, "params", "params of the method", NULL);
-    AddData(row++, rep, true);
+    AddNameData(row++, "params", "params of the method", 
+      rep, NULL, NULL, true);
     
     chk = new iCheckBox(md->is_static, body);
     chk->setReadOnly(true);
-    AddName(row, "is_static", "static (non-instance) method", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "is_static", "static (non-instance) method",
+      chk, NULL, NULL, true);
     
     chk = new iCheckBox(md->is_virtual, body);
     chk->setReadOnly(true);
-    AddName(row, "is_virtual", "virtual (overridable) method", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "is_virtual", "virtual (overridable) method", 
+      chk, NULL, NULL, true);
     
     chk = new iCheckBox(md->is_override, body);
     chk->setReadOnly(true);
-    AddName(row, "is_override", "virtual override of a base method", NULL);
-    AddData(row++, chk, true);
+    AddNameData(row++, "is_override", "virtual override of a base method", 
+      chk, NULL, NULL, true);
     break;
     }
 
@@ -854,9 +846,8 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     iSpinBox* repi = new iSpinBox(body);
     repi->setValue(td->size);
     repi->setReadOnly(true);
-//    AddName(row, "size", "size, in bytes, of the type", repi);
-    AddName(row, "size", "size, in bytes, of the type", NULL);
-    AddData(row++, repi);
+    AddNameData(row++, "size", "size, in bytes, of the type",
+      repi, NULL, NULL, true);
     
     // plugin, if any
     String plg;
@@ -865,8 +856,8 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     }
     rep = new iLineEdit(plg, body);
     rep->setReadOnly(true);
-    AddName(row, "plugin class", "the classname of the IPlugin for the plugin in which this type was defined, if any", NULL);
-    AddData(row++, rep, true);
+    AddNameData(row++, "plugin class", "the classname of the IPlugin for the plugin in which this type was defined, if any",
+      rep, NULL, NULL, true);
     
     // parents
     String pars;
@@ -876,8 +867,8 @@ void taiTypeItemDataHost::Constr_Data_Labels() {
     }
     rep = new iLineEdit(pars, body);
     rep->setReadOnly(true);
-    AddName(row, "parents", "parent type(s)", NULL);
-    AddData(row++, rep, true);
+    AddNameData(row++, "parents", "parent type(s)",
+      rep, NULL, NULL, true);
     
     break;
     }

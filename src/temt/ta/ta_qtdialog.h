@@ -429,7 +429,11 @@ public:
 
   QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
   QScrollArea*	  scrBody;		// scrollbars for the body items
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  QFormLayout*	layBody;
+#else
   QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
+#endif
   QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
   iFlowLayout*	layMethButtons;	// method buttons
 
@@ -488,14 +492,15 @@ protected:
   taiData*		sel_item_dat; // ONLY used/valid in handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
+  virtual void	StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
   int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
     // add a widget, usually a label or checkbox, that will span both columns (no data)
-  int		AddName(int row, const String& name, const String& desc,
-    taiData* buddy = NULL, MemberDef* md = NULL);
-    // add a label item in first column; row<0 means "next row"; returns row
-//  void		AddLabel(int index, QWidget* label); // add a label item in first column
-  int		AddData(int row, QWidget* data, bool fill_hor = false);
-    // add a data item in second column; row<0 means "next row"; returns row
+  int		AddNameData(int row, const String& name, const String& desc,
+    QWidget* data_wid, taiData* data_dat = NULL, MemberDef* md = NULL,
+    bool fill_hor = false);
+    // add a label item in first column, data item in second column; row<0 means "next row"; returns row
+  int		AddData(int row, QWidget* data_wid, bool fill_hor = false);
+    // add a data item with no label (spanning whole row); row<0 means "next row"; returns row
   void		AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
   void		AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
   void		AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary

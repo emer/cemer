@@ -951,22 +951,22 @@ void gpiListNew::Constr_Body() {
 
   // lay out controls
   QWidget* trep;
-  int row;
   trep = num_rep->GetRep();
-  row = AddData(0, trep);
-  AddName(0, "number", "the number of new items to make", num_rep);
+  //row = AddData(0, trep);
+  AddNameData(0, "number", "the number of new items to make", trep, num_rep);
 
   trep = typ_rep->GetRep();
-  row = AddData(1, trep);
-  AddName(1, "of type", "the Type of new items to make", typ_rep);
+  //row = AddData(1, trep);
+  AddNameData(1, "of type", "the Type of new items to make", trep, typ_rep);
 
   Constr_SubGpList(); // hook for groups
 
   // if any callable functions, put them in a box for the user to select from
   if ((fun_list != NULL) && (fun_list->funs.size > 0)) {
     trep = fun_list->GetRep();
-    row = AddData(-1, trep);
-    AddName(row, "call funs", "optional functions to call on each instance", fun_list);
+    //row = AddData(-1, trep);
+    AddNameData(-1, "call funs", "optional functions to call on each instance",
+      trep, fun_list);
   }
 }
 
@@ -1072,8 +1072,9 @@ void gpiGroupNew::Constr_SubGpList() {
 
   QWidget* trep;
   trep = subgp_list->GetRep();
-  int row = AddData(-1, trep);
-  AddName(row, "in", "the subgroup in which to add items", subgp_list);
+  //int row = AddData(-1, trep);
+  AddNameData(-1, "in", "the subgroup in which to add items", 
+    trep, subgp_list);
 }
 
 void gpiGroupNew::ClearBody_impl() {
@@ -1552,8 +1553,8 @@ void gpiArrayEditDataHost::Constr_AryData_Labels() {
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     String nm = String("[") + String(i) + "]";
-    int idx = AddData(-1, rep, fill_hor);
-    AddName(idx, nm, String(""), mb_dat);
+    //int idx = AddData(-1, rep, fill_hor);
+    AddNameData(-1, nm, String(""), rep, mb_dat, NULL, fill_hor);
   }
 }
 
@@ -1626,8 +1627,8 @@ void SArgEditDataHost::Constr_AryData() {
     String lbl = cur_ary->labels[i];
     if (!lbl.empty())
       nm = lbl + nm;
-    int idx = AddData(-1, rep, fill_hor);
-    AddName(idx, nm, String(""), mb_dat);
+    //int idx = AddData(-1, rep, fill_hor);
+    AddNameData(-1, nm, String(""), rep, mb_dat, NULL, fill_hor);
   }
 }
 
