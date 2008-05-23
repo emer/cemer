@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-//TEMP: comment out to use legacy layout for Qt 4.4
+//TEMP: comment out to use legacy layout for Qt 4.4; uncomment to enable for testing
 //#define TA_USE_QFORMLAYOUT
 
 #ifndef __MAKETA__

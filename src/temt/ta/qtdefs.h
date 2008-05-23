@@ -181,6 +181,9 @@ class	iDimEdit;		// #IGNORE  for editing dimensions of a Matrix
 class	iEditGrid;		// #IGNORE 
 class	iFlowLayout;		// #IGNORE 
 class	iFont;			//
+#if (QT_VERSION >= 0x040400)
+class	iFormLayout;		// #IGNORE
+#endif
 class	HiLightButton;		//
 class	iLabel;			// #IGNORE  -- label w/ highlighting
 class	iLineEdit;		// #IGNORE 

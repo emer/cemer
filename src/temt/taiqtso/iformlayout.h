@@ -13,21 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-/****************************************************************************
-** $Id: qt/examples/customlayout/flow.h   2.3.2   edited 2001-01-26 $
-**
-** Definition of simple flow layout for custom layout example
-**
-** Created : 979899
-**
-** Copyright (C) 1997 by Trolltech AS.  All rights reserved.
-**
-** This file is part of an example program for Qt.  This example
-** program may be used, distributed and modified without limitation.
-**
-*****************************************************************************/
-
 #ifndef IFORMLAYOUT_H
 #define IFORMLAYOUT_H
 
@@ -43,6 +28,7 @@
 #endif
 
 typedef QMap<int, QWidget*> QMap_int_QWidget;
+typedef QMap<int, QLayout*> QMap_int_QLayout;
 
 class TAIQTSO_API iFormLayout : public QFormLayout {
 INHERITED(QFormLayout)
@@ -58,11 +44,12 @@ public: // required or desired overrides
 
 protected:
 #ifndef __MAKETA__
-  QBitArray		m_vis; // visible guys -- out of range implies visible
+  QBitArray		m_inv; // invisible guys -- out of range implies visible
   QMap_int_QWidget	m_inv_labels; // invisible labels
-  QMap_int_QWidget	m_inv_fields; // invisible fields	
+  QMap_int_QLayout	m_inv_fields; // invisible fields	
 #endif
-
+  int			GetIndexFromRowRole(int row, ItemRole role); 
+    // hacky method to get raw index, ex. for takeAt use
 private:
   void init();
 };

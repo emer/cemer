@@ -9,6 +9,7 @@ VPATH = @srcdir@
 HEADS =\
 	taiqtso_def.h \
 	iflowlayout.h \
+	iformlayout.h \
 	ilabel.h \
 	icliptoolwidget.h \
 	ispinbox.h \
@@ -37,6 +38,7 @@ HEADS =\
 
 SRCS =\
 	iflowlayout.cpp \
+	iformlayout.cpp \
 	ilabel.cpp \
 	ilabel.moc.cpp \
 	icliptoolwidget.cpp \

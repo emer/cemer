@@ -430,7 +430,7 @@ public:
   QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
   QScrollArea*	  scrBody;		// scrollbars for the body items
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
-  QFormLayout*	layBody;
+  iFormLayout*	layBody;
 #else
   QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
 #endif

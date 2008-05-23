@@ -39,7 +39,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
-# include <QFormLayout>
+# include "iformlayout.h"
 #endif
 #include <QMenuBar>
 #include <QMenu>
@@ -1131,9 +1131,9 @@ const iColor taiDataHost::colorOfRow(int row) const {
 
 void taiDataHost::StartEndLayout(bool start) {
   if (start) {
-    layBody->setEnabled(false);
+    body->setUpdatesEnabled(false);
   } else { // end
-    layBody->setEnabled(true);
+    body->setUpdatesEnabled(true);
   }
 }
 
@@ -1226,7 +1226,7 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
   QHBoxLayout* lay_dat = new QHBoxLayout();
   lay_dat->setMargin(0);
-  lay_dat->addWidget(data, 0/*, (Qt::AlignLeft | Qt::AlignVCenter)*/);
+  lay_dat->addWidget(data, 0, Qt::AlignVCenter/*, (Qt::AlignLeft | Qt::AlignVCenter)*/);
   if (!fill_hor) lay_dat->addStretch();
   
 // add label/body and show
@@ -1264,7 +1264,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
   // note2: if guy goes invisible, we'll set its row height to 0 in GetImage
   QHBoxLayout* hbl = new QHBoxLayout();
   hbl->setMargin(0);
-  hbl->addWidget(data, 0);
+  hbl->addWidget(data, 0, Qt::AlignVCenter);
   if (!fill_hor) hbl->addStretch();
 
 // add label/body and show
@@ -1371,12 +1371,12 @@ void taiDataHost::Constr_Body() {
   QVBoxLayout* vbl = new QVBoxLayout(body);
   vbl->setMargin(0);
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
-  layBody = new QFormLayout();
-  layBody->setRowWrapPolicy(QFormLayout::DontWrapRows);
+  layBody = new iFormLayout();
+  layBody->setRowWrapPolicy(iFormLayout::DontWrapRows);
   layBody->setHorizontalSpacing(2 * LAYBODY_MARGIN);
   layBody->setVerticalSpacing(2 * LAYBODY_MARGIN);
   layBody->setContentsMargins(LAYBODY_MARGIN, 0, LAYBODY_MARGIN, 0);
-  layBody->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow); // TBD
+  layBody->setFieldGrowthPolicy(iFormLayout::AllNonFixedFieldsGrow); // TBD
 #else
   layBody = new QGridLayout();
 #if QT_VERSION >= 0x040300
@@ -2211,7 +2211,8 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
       mb_dat->SetBase((taBase*)base); // used for things like Seledit context menu
       md->im->GetImage(mb_dat, base); // need to do this first, to affect visible
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
-//TODO: YIKES!!!!!!
+      // note: visibles are cached, so nothing happens if it hasn't changed
+      layBody->setVisible(cur_row, mb_dat->visible());
 #else      
       if (mb_dat->visible()) {
         layBody->setRowMinimumHeight(cur_row, row_height + (2 * LAYBODY_MARGIN)); 
