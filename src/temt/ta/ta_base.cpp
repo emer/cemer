@@ -1188,11 +1188,12 @@ void taBase::UpdateAfterEdit() {
   if (isDestroying()) return;
   UpdateAfterEdit_impl();
   DataChanged(DCR_ITEM_UPDATED);
-/*TEST  taBase* _owner = GetOwner();
+  /*TEST */
+  taBase* _owner = GetOwner();
   if (_owner ) {
     bool handled = false;
     _owner->ChildUpdateAfterEdit(this, handled);
-  } */
+  } /* */
 }
 
 void taBase::ChildUpdateAfterEdit(TAPtr child, bool& handled) {

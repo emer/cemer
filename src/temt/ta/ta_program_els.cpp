@@ -975,6 +975,7 @@ void MemberFmArg::UpdateAfterEdit_impl() {
     if((bool)obj->object_val && (bool)prv_obj->object_val &&
        !obj->object_val->InheritsFrom(prv_obj->object_val->GetTypeDef())) {
       path = "";		// reset path
+      arg_name = "";
     }
   }
   prv_obj = obj.ptr();
