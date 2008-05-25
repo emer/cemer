@@ -469,6 +469,10 @@ bool taDataProc::Sort(DataTable* dest, DataTable* src, DataSortSpec* spec) {
   return Sort_impl(dest, spec);
 }
 
+bool taDataProc::SortInPlace(DataTable* dt, DataSortSpec* spec) {
+  return Sort_impl(dt, spec);
+}
+
 int taDataProc::Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			    DataSortSpec* spec) {
   for(int i=0;i<spec->ops.size; i++) {

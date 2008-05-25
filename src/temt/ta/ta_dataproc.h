@@ -314,6 +314,8 @@ public:
 
   static bool	Sort(DataTable* dest, DataTable* src, DataSortSpec* spec);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON #MENU_ON_Order sort data from src into dest according to sorting specifications in spec; dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  static bool 	SortInPlace(DataTable* dt, DataSortSpec* spec);
+  // #CAT_Order #MENU_BUTTON #MENU_ON_Order sort given data table in place (modifies data table) according to sorting specifications in spec
 
   static int 	Sort_Compare(DataTable* dt_a, int row_a, DataTable* dt_b, int row_b,
 			     DataSortSpec* spec);

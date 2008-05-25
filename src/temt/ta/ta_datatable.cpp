@@ -2544,7 +2544,10 @@ bool DataTable::CalcAllRows() {
 
 void DataTable::Sort(int col1, bool ascending1,
 		     int col2, bool ascending2,
-		     int col3, bool ascending3) {
+		     int col3, bool ascending3,
+		     int col4, bool ascending4,
+		     int col5, bool ascending5,
+		     int col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1 >= 0) {
@@ -2574,13 +2577,43 @@ void DataTable::Sort(int col1, bool ascending1,
       else sp->order = DataSortEl::DESCENDING;
     }
   }
+  if(col4 >= 0) {
+    DataCol* da = GetColData(col4);
+    if(da) {
+      DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+      sp->col_name = da->name;
+      if(ascending4) sp->order = DataSortEl::ASCENDING;
+      else sp->order = DataSortEl::DESCENDING;
+    }
+  }
+  if(col5 >= 0) {
+    DataCol* da = GetColData(col5);
+    if(da) {
+      DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+      sp->col_name = da->name;
+      if(ascending5) sp->order = DataSortEl::ASCENDING;
+      else sp->order = DataSortEl::DESCENDING;
+    }
+  }
+  if(col6 >= 0) {
+    DataCol* da = GetColData(col6);
+    if(da) {
+      DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+      sp->col_name = da->name;
+      if(ascending6) sp->order = DataSortEl::ASCENDING;
+      else sp->order = DataSortEl::DESCENDING;
+    }
+  }
   
   taDataProc::Sort_impl(this, &spec);
 }
 
 void DataTable::SortColName(const String& col1, bool ascending1,
 			    const String& col2, bool ascending2,
-			    const String& col3, bool ascending3) {
+			    const String& col3, bool ascending3,
+			    const String& col4, bool ascending4,
+			    const String& col5, bool ascending5,
+			    const String& col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1.nonempty()) {
@@ -2601,13 +2634,34 @@ void DataTable::SortColName(const String& col1, bool ascending1,
     if(ascending3) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
   }
+  if(col4.nonempty()) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col4;
+    if(ascending4) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col5.nonempty()) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col5;
+    if(ascending5) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col6.nonempty()) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col6;
+    if(ascending6) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
   
   taDataProc::Sort_impl(this, &spec);
 }
 
 void DataTable::SortCol(DataCol* col1, bool ascending1,
 			DataCol* col2, bool ascending2,
-			DataCol* col3, bool ascending3) {
+			DataCol* col3, bool ascending3,
+			DataCol* col4, bool ascending4,
+			DataCol* col5, bool ascending5,
+			DataCol* col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1) {
@@ -2626,6 +2680,24 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
     sp->col_name = col3->name;
     if(ascending3) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col4) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col4->name;
+    if(ascending4) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col5) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col5->name;
+    if(ascending5) sp->order = DataSortEl::ASCENDING;
+    else sp->order = DataSortEl::DESCENDING;
+  }
+  if(col6) {
+    DataSortEl* sp = (DataSortEl*)spec.ops.New(1);
+    sp->col_name = col6->name;
+    if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
   }
   
