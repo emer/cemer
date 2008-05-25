@@ -1118,8 +1118,8 @@ public:
   float		misc_1;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float		misc_2;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float		misc_3;		// #NO_VIEW #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
-  float_CircBuffer act_buf;	// #CAT_Activation #NO_SAVE buffer of activation states for synaptic delay computation
-  float_CircBuffer spike_buf;	// #CAT_Activation #NO_SAVE buffer of net input from spikes for synaptic integration over discrete spikes
+  float_CircBuffer act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
+  float_CircBuffer spike_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of net input from spikes for synaptic integration over discrete spikes
 
   inline void	AddToActBuf(SynDelaySpec& sds) {
     if(sds.on) act_buf.CircAddLimit(act, sds.delay);
@@ -2757,6 +2757,8 @@ public:
   float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
   float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
   int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
+
+  String	minus_output_name; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
 
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
   int		netin_mod;	// #DEF_1 net #CAT_Optimization input computation modulus: how often to compute netinput vs. activation update (2 = faster)

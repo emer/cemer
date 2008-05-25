@@ -390,6 +390,9 @@ public:
   // #CAT_ObjectMgmt #MENU change the type of the data in this col, without loss of data
   void		ChangeColCellGeom(const MatrixGeom& new_geom);
   // #CAT_ObjectMgmt #MENU change the cell geom of a mat col, or change from scalar to mat, without loss of data
+  void		ChangeColCellGeomNs(int dims = 1, int d0=0, int d1=0, int d2=0,
+				      int d3=0, int d4=0, int d5=0, int d6=0);
+  // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data -- separate numbers input instead of overall geom object
   void		ChangeColMatToScalar();
   // #CAT_ObjectMgmt #MENU #CONFIRM change from a mat col to a scalar col
   
@@ -604,9 +607,14 @@ public:
 	int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #EXPERT #CAT_Columns find a column of the given name, val type, and dimension. if one does not exist, then create it.  Note that dims < 1 means make a scalar column, not a matrix
     
-  void 			ChangeColTypeGeom(DataCol* src, ValType val_type,
-    const MatrixGeom& geom);
+  void 			ChangeColTypeGeom_impl(DataCol* src, ValType val_type,
+					       const MatrixGeom& geom);
     // #IGNORE impl func, called by Col or other funcs here; new is diff from exist; geom.dims=0 for scalar, otherwise matrix
+
+  virtual void 		ChangeColTypeGeom(const String& col_nm, ValType val_type, int dims = 0,
+					  int d0=0, int d1=0, int d2=0, int d3=0,
+					  int d4=0, int d5=0, int d6=0);
+  // #CAT_Columns change type and/or geometry of column with given name 
   
   virtual DataCol* 	GetColData(int col, bool quiet = false) const {
     bool bad_col = (col < 0 || col >= cols());

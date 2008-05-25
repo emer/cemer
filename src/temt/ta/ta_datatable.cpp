@@ -260,21 +260,28 @@ void DataCol::ChangeColType(ValType new_type) {
   if (valType() == new_type) return;
   MatrixGeom cell_geom;
   if (is_matrix) cell_geom = this->cell_geom; // because we will be nuked
-  dataTable()->ChangeColTypeGeom(this, new_type, cell_geom);
+  dataTable()->ChangeColTypeGeom_impl(this, new_type, cell_geom);
   //NOTE: no more code here, because we've probably been deleted/replaced
 }
 
 void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
   if ((!is_matrix && (new_geom.dims() == 0)) ||
     cell_geom.Equal(new_geom)) return;
-  dataTable()->ChangeColTypeGeom(this, valType(), new_geom);
+  dataTable()->ChangeColTypeGeom_impl(this, valType(), new_geom);
   //NOTE: no more code here, because we may have been deleted/replaced
+}
+
+void DataCol::ChangeColCellGeomNs(int dims, int d0, int d1, int d2, int d3,
+				  int d4, int d5, int d6) {
+  MatrixGeom mg;
+  mg.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
+  ChangeColCellGeom(mg);
 }
 
 void DataCol::ChangeColMatToScalar() {
   if (!is_matrix) return;
   MatrixGeom new_geom; //note: 0 dims is key to change to scalar
-  dataTable()->ChangeColTypeGeom(this, valType(), new_geom);
+  dataTable()->ChangeColTypeGeom_impl(this, valType(), new_geom);
   //NOTE: no more code here, because we may have been deleted/replaced
 }
 
@@ -1758,13 +1765,13 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
   }
 }
 
-void DataTable::ChangeColTypeGeom(DataCol* src, ValType new_type, const MatrixGeom& g) {
+void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const MatrixGeom& g) {
   if (!src) return;
   // must validate geom first, before we start making the col!
   String err_msg;
   if (g.dims() != 0) {
    bool valid = taMatrix::GeomIsValid(g, &err_msg, false); // no flex
-   if (TestError(!valid, "ChangeColTypeGeom", err_msg)) return;
+   if (TestError(!valid, "ChangeColTypeGeom_impl", err_msg)) return;
   }
   // make a new col of right type
   int old_idx = src->GetIndex();
@@ -1786,7 +1793,19 @@ void DataTable::ChangeColTypeGeom(DataCol* src, ValType new_type, const MatrixGe
   data.MoveIdx(tmp_idx, old_idx);
   data.RemoveEl(src);
   StructUpdate(false);
+}
 
+void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
+				  int dims, int d0, int d1, int d2, int d3,
+				  int d4, int d5, int d6) {
+  int col_idx;
+  DataCol* da = FindColName(col_nm, col_idx, true);
+  if(!da) return;
+  MatrixGeom mg;
+  mg.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
+  if((!da->is_matrix && (mg.dims() == 0)) ||
+     da->cell_geom.Equal(mg)) return;
+  ChangeColTypeGeom_impl(da, new_type, mg);
 }
 
 void DataTable::UniqueColNames() {

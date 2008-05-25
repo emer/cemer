@@ -285,6 +285,7 @@ public:
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK		= 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
     LOCAL_VAR		= 0x0008, // #NO_SHOW this is a local variable which does not set or update values!
+    FUN_ARG		= 0x0010, // #NO_SHOW this is a function argument variable
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
@@ -298,6 +299,7 @@ public:
   DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #CONDEDIT_OFF_flags:LOCAL_VAR #LABEL_ dynamic enum value
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
+  bool		reference;	// #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String	desc;		// #EDIT_DIALOG Description of what this variable is for
 
   cssEl*	parse_css_el;	// #IGNORE css el for parsing

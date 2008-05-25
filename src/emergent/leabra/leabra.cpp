@@ -3165,8 +3165,10 @@ void LeabraLayerSpec::Compute_ActPAvg(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->cycle >= 0) && lay->hard_clamped)
+  if((net->cycle >= 0) && lay->hard_clamped) {
+    Compute_OutputName(lay, net); // need to keep doing this because network clears it
     return;			// don't do this during normal processing
+  }
 
   if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
     int g;
@@ -3233,14 +3235,22 @@ void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay, Unit_Group* ug,
   // for target/output layers, if we set something, set network name!
   if(u->name.empty()) return;
   *onm = u->name;	// if it is something..
+
+  if(lay->unit_groups) {	// also aggregate the layer name
+    if(lay->output_name.nonempty())
+      lay->output_name += "_";
+    lay->output_name += u->name;
+  }
+
   if((lay->layer_type != Layer::OUTPUT) && (lay->layer_type != Layer::TARGET)) return;
-  if(!net->output_name.empty())
+  if(net->output_name.nonempty())
     net->output_name += "_";
   net->output_name += u->name;
 }
 
 void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->units.gp.size > 0) {
+    lay->output_name = "";
     int g;
     for(g=0; g<lay->units.gp.size; g++) {
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
@@ -4263,6 +4273,8 @@ void LeabraNetwork::Init_Stats() {
   avg_cycles_sum = 0.0f;
   avg_cycles_n = 0;
 
+  minus_output_name = "";
+
   send_pct_n = send_pct_tot = 0;
   send_pct = 0.0f;
   avg_send_pct = 0.0f;
@@ -4989,6 +5001,7 @@ bool LeabraNetwork::Compute_TrialStats_Test() {
 void LeabraNetwork::Compute_TrialStats() {
   inherited::Compute_TrialStats();
   Compute_MinusCycles();
+  minus_output_name = output_name; // grab and hold..
 }
 
 void LeabraNetwork::Compute_AbsRelNetin() {

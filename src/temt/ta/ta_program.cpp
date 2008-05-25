@@ -497,6 +497,7 @@ void ProgVar::Initialize() {
   hard_enum_type = NULL;
   objs_ptr = false;
   flags = (VarFlags)(CTRL_PANEL | NULL_CHECK);
+  reference = false;
   parse_css_el = NULL;
 }
 
@@ -512,6 +513,17 @@ void ProgVar::InitLinks() {
     ProgVars* pvs = GET_MY_OWNER(ProgVars);
     if(pvs)
       SetVarFlag(LOCAL_VAR);
+    else {
+      ClearVarFlag(LOCAL_VAR);
+      Function* myfun = GET_MY_OWNER(Function);
+      if(myfun) {
+	SetVarFlag(FUN_ARG);
+	SetVarFlag(LOCAL_VAR);	// also local!
+      }
+      else {
+	ClearVarFlag(FUN_ARG);
+      }
+    }
   }
 }
 
@@ -534,6 +546,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   dyn_enum_val = cp.dyn_enum_val;
   objs_ptr = cp.objs_ptr;
   flags = cp.flags;
+  reference = cp.reference;
   desc = cp.desc;
 
   if(var_type == T_Object) {
@@ -549,8 +562,17 @@ void ProgVar::Copy_(const ProgVar& cp) {
   ProgVars* pvs = GET_MY_OWNER(ProgVars);
   if(pvs)
     SetVarFlag(LOCAL_VAR);
-  else
+  else {
     ClearVarFlag(LOCAL_VAR);
+    Function* myfun = GET_MY_OWNER(Function);
+    if(myfun) {
+      SetVarFlag(FUN_ARG);
+      SetVarFlag(LOCAL_VAR);	// also local!
+    }
+    else {
+      ClearVarFlag(FUN_ARG);
+    }
+  }
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
@@ -580,6 +602,14 @@ void ProgVar::UpdateAfterEdit_impl() {
   }
   else {
     ClearVarFlag(LOCAL_VAR);
+    Function* myfun = GET_MY_OWNER(Function);
+    if(myfun) {
+      SetVarFlag(FUN_ARG);
+      SetVarFlag(LOCAL_VAR);	// also local!
+    }
+    else {
+      ClearVarFlag(FUN_ARG);
+    }
     if(var_type == T_Object && object_type) {
       if(object_type->InheritsFrom(&TA_taMatrix)) {
 	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
@@ -948,7 +978,10 @@ const String ProgVar::GenCssInitVal() const {
 // value in object..
 const String ProgVar::GenCssArg_impl() {
   String rval;
-  rval += GenCssType() + " ";
+  rval += GenCssType();
+  if(reference)
+    rval += "&";
+  rval += " ";
   rval += name;
   return rval;
 }
