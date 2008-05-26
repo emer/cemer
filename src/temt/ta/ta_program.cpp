@@ -1387,14 +1387,33 @@ void ProgExprBase::ParseExpr_SkipPath(int& pos) {
 int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr) {
   String vnm = nm;
   if(vnm == "__tmp") return 0;	// skip
-  if(vnm == "this")  return CSS_PTR;
-  if(vnm == "run_state" || vnm == "ret_val") return CSS_VAR;
 
   ProgExprBase* pe = (ProgExprBase*)udata;
   Program* prog = GET_OWNER(pe, Program);
   int idx = 0;
   ProgVar* var = NULL;
   Function* fun = GET_OWNER(pe, Function); // first look inside any function we might live within
+
+  if(vnm == "this") {
+    cssEl* el = new cssTA_Base((void*)prog, 1, &TA_Program, "this");
+    pe->parse_tmp.Push(el);
+    el_ptr.SetDirect(el);
+    return el->GetParse();
+  }
+  if(vnm == "run_state") {
+    cssEl* el = new cssCPtr_enum(&(prog->run_state), 1, "run_state",
+				 TA_Program.sub_types.FindName("RunState"));
+    pe->parse_tmp.Push(el);
+    el_ptr.SetDirect(el);
+    return el->GetParse();
+  }
+  if(vnm == "ret_val") {
+    cssEl* el = new cssCPtr_int(&(prog->ret_val), 1, "ret_val");
+    pe->parse_tmp.Push(el);
+    el_ptr.SetDirect(el);
+    return el->GetParse();
+  }
+
   if(fun)
     var = fun->FindVarName(vnm);
   if(!var)
