@@ -1386,7 +1386,10 @@ void ProgExprBase::ParseExpr_SkipPath(int& pos) {
 
 int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr) {
   String vnm = nm;
-  if(vnm == "__tmp") return 0;	// skip that guy
+  if(vnm == "__tmp") return 0;	// skip
+  if(vnm == "this")  return CSS_PTR;
+  if(vnm == "run_state" || vnm == "ret_val") return CSS_VAR;
+
   ProgExprBase* pe = (ProgExprBase*)udata;
   Program* prog = GET_OWNER(pe, Program);
   int idx = 0;
