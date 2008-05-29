@@ -126,7 +126,7 @@ String Aggregate::GetAggName() const {
 }
 
 Aggregate::ValType Aggregate::MinValType() const {
-  if(op == GROUP || op == FIRST || op == LAST) return VT_STRING;
+  if(op == GROUP || op == FIRST || op == LAST || op == N) return VT_STRING;
   return VT_INT;
 }
 

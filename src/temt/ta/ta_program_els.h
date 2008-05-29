@@ -558,7 +558,7 @@ class TA_API PrintVar: public ProgEl {
   // print out (to the console) the value of variable(s) -- useful for debugging
 INHERITED(ProgEl)
 public:
-  String		message;	// initial message to print
+  String		message;	// initial message to print (do NOT include quotes!)
   ProgVarRef		print_var; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var2; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var3; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
@@ -584,7 +584,7 @@ class TA_API PrintExpr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr		expr;
-  // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things
+  // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }

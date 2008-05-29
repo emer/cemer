@@ -599,6 +599,7 @@ void ProgVar::UpdateAfterEdit_impl() {
     real_val = 0.0;
     bool_val = false;
     object_val = NULL;
+    ClearVarFlag(CTRL_PANEL);
   }
   else {
     ClearVarFlag(LOCAL_VAR);
@@ -606,6 +607,7 @@ void ProgVar::UpdateAfterEdit_impl() {
     if(myfun) {
       SetVarFlag(FUN_ARG);
       SetVarFlag(LOCAL_VAR);	// also local!
+      ClearVarFlag(CTRL_PANEL);
     }
     else {
       ClearVarFlag(FUN_ARG);

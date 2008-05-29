@@ -576,11 +576,16 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
     // up-convert to float -- always needed for matrix
     if((sda->valType() == VT_INT) && ((ds->agg.MinReturnType() == VT_FLOAT) || sda->isMatrix()))
       nda = new float_Data;
+    else if((sda->valType() == VT_STRING) && (ds->agg.MinReturnType() == VT_INT)) // N
+      nda = new int_Data;
     else
       nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sda);
-    if(spec->append_agg_name) {
+    if(ds->agg.op == Aggregate::N) {
+      nda->name = "N";		// doesn't matter what the column was!
+    }
+    else if(spec->append_agg_name) {
       String dst_op = ds->agg.GetAggName();
       dst_op.downcase();
       nda->name += "_" + dst_op;
@@ -668,6 +673,9 @@ bool taDataProc::Group_nogp(DataTable* dest, DataTable* src, DataGroupSpec* spec
 	}
 	else if(ds->agg.op == Aggregate::LAST) {
 	  dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
+	}
+	else if(ds->agg.op == Aggregate::N) {
+	  dda->SetValAsInt(mat->size, 0);
 	}
       }
     }
@@ -816,6 +824,9 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	      }
 	      else if(ds->agg.op == Aggregate::LAST) {
 		dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
+	      }
+	      else if(ds->agg.op == Aggregate::N) {
+		dda->SetValAsInt(mat->size, 0);
 	      }
 	      taBase::unRefDone(mat);
 	    }

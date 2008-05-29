@@ -1372,6 +1372,8 @@ void taiDataHost::Constr_Body() {
   vbl->setMargin(0);
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   layBody = new iFormLayout();
+  layBody->setFormAlignment(Qt::AlignLeft | Qt::AlignTop);
+  layBody->setLabelAlignment(Qt::AlignLeft);
   layBody->setRowWrapPolicy(iFormLayout::DontWrapRows);
   layBody->setHorizontalSpacing(2 * LAYBODY_MARGIN);
   layBody->setVerticalSpacing(2 * LAYBODY_MARGIN);
