@@ -580,8 +580,9 @@ public:
 				     float move_x=0.0f, float move_y=0.0f,
 				     float scale = 1.0f, float rotate = 0.0f,
 				     float ret_move_x=0.0f, float ret_move_y=0.0f,
-				     bool superimpose = false, bool renorm = true);
-  // #CAT_Filter filter image data into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+				     bool superimpose = false, int renorm = 1,
+				     int fade_width=-1);
+  // #CAT_Filter filter image data into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added -- impl routine for other functions to call (doesn't do any display updating), renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
   virtual bool	FilterImageData(float_Matrix& img_data, DataTable* dt,
 				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,

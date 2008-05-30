@@ -704,8 +704,36 @@ protected:
   override void CheckThisConfig_impl(bool quiet, bool& rval);
   override const String	GenCssBody_impl(int indent_level);
 
-  void		AddArgsFmCode(String& gen_code, ProgEl_List& progs);
-  // main function: iterates recursively through progs, adding any that add args to gen_code
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API DataColsFmArgs: public ProgEl { 
+  // sets column value(s) in a data table based on startup arguments of the same name as the column -- row in data table to set values in is specified by a program variable (which can itself be previously set by an argument)
+INHERITED(ProgEl)
+public:
+  enum RowType {
+    CUR_ROW,			// use the current row (i.e., the last one added or specifically set by Read or Write operation)
+    ROW_NUM,			// row_var variable contains the row number to operate on
+    ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
+  };
+
+  ProgVarRef	data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to data table with columns that are to be set from startup args
+  RowType	row_spec;	// how the row number within data table is specified
+  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
+
+  virtual DataTable* GetData() const;
+  // get actual data table pointer from variable
+
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "DataTable"; }
+  PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
+
+protected:
+  override void UpdateAfterEdit_impl();
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -713,7 +741,7 @@ private:
 }; 
 
 class TA_API RegisterArgs: public ProgEl { 
-  // register command-line arguments for any MemberFmArg or ProgVarFmArg program elements contained in the prog_code of the program that this item appears in.  calls taMisc::UpdateArgs(), so any any other taMisc::AddArgName MiscCall's placed before this will also be processed
+  // register command-line arguments for any MemberFmArg, ProgVarFmArg DataColsFmArgs program elements contained in the prog_code of the program that this item appears in.  calls taMisc::UpdateArgs(), so any any other taMisc::AddArgName MiscCall's placed before this will also be processed
 INHERITED(ProgEl)
 public:
   override String	GetDisplayName() const;
@@ -723,7 +751,7 @@ public:
 protected:
   override const String	GenCssBody_impl(int indent_level);
 
-  void		AddArgsFmCode(String& gen_code, ProgEl_List& progs, int indent_level);
+  virtual void		AddArgsFmCode(String& gen_code, ProgEl_List& progs, int indent_level);
   // main function: iterates recursively through progs, adding any that add args to gen_code
 
 private:

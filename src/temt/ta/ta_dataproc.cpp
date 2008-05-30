@@ -820,13 +820,13 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	    if(mat) {
 	      taBase::Ref(mat);
 	      if(ds->agg.op == Aggregate::FIRST) {
-		dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), 0);
+		dda->SetValAsString(mat->SafeElAsVar_Flat(0).toString(), -1);
 	      }
 	      else if(ds->agg.op == Aggregate::LAST) {
-		dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), 0);
+		dda->SetValAsString(mat->SafeElAsVar_Flat(mat->size-1).toString(), -1);
 	      }
 	      else if(ds->agg.op == Aggregate::N) {
-		dda->SetValAsInt(mat->size, 0);
+		dda->SetValAsInt(mat->size, -1);
 	      }
 	      taBase::unRefDone(mat);
 	    }
@@ -1298,12 +1298,13 @@ void DataOneProg::Initialize() {
 void DataOneProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!data_var, quiet, rval, "data_var is NULL")) return; // fatal
-  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
+  // this should actually be done by the var, not us!
+  //  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
   CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
 	     "data_var variable does not point to a DataTable object");
 }
 
-DataTable* DataOneProg::GetData() {
+DataTable* DataOneProg::GetData() const {
   if(!data_var) return NULL;
   if(data_var->object_type != &TA_DataTable) return NULL;
   return (DataTable*)data_var->object_val.ptr();
@@ -1374,7 +1375,7 @@ void DataLoop::UpdateAfterEdit_impl() {
 void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!CheckError(!data_var, quiet, rval,  "data_var = NULL")) {
-    if(!CheckError(!data_var->object_val, quiet, rval,"data_var is NULL!")) {
+    if(data_var->object_val) {
       CheckError(!data_var->object_val.ptr()->InheritsFrom(&TA_DataBlock), 
 		 quiet, rval,"data_var does not point to a data table (or data block)");
     }
@@ -1640,7 +1641,8 @@ void DataSrcDestProg::Initialize() {
 void DataSrcDestProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!src_data_var, quiet, rval, "src_data_var is NULL")) return; // fatal
-  CheckError(!src_data_var->object_val, quiet, rval, "src_data_var variable NULL");
+  // should be done by var, not us
+//   CheckError(!src_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "src_data_var variable does not point to a DataTable object");
   // NULL OK in dest_data_var!
@@ -1947,7 +1949,8 @@ String DataJoinProg::GetDisplayName() const {
 void DataJoinProg::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(!src_b_data_var, quiet, rval, "src_b_data_var is NULL")) return; // fatal
-  CheckError(!src_b_data_var->object_val, quiet, rval, "src_data_var variable NULL");
+  // should be done by var, not us
+//   CheckError(!src_b_data_var->object_val, quiet, rval, "src_data_var variable NULL");
   CheckError(src_b_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "src_b_data_var variable does not point to a DataTable object");
 }
@@ -2262,7 +2265,8 @@ void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found")) return;
   if(CheckError(!dcl->dest_data_var, quiet, rval,
 		"DataCalcLoop::dest_data_var is NULL, but is needed")) return;
-  CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
+  // should be done by var, not us
+//   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
@@ -2339,7 +2343,8 @@ void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found")) return;
   if(CheckError(!dcl->dest_data_var, quiet, rval,
 		"DataCalcLoop::dest_data_var is NULL, but is needed")) return;
-  CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
+  // should be done by var, not us
+//   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
@@ -2494,7 +2499,8 @@ void DataCalcCopyCommonCols::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(CheckError(!dcl, quiet, rval,"parent DataCalcLoop not found")) return;
   if(CheckError(!dcl->dest_data_var, quiet, rval,
 		"DataCalcLoop::dest_data_var is NULL, but is needed")) return;
-  CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
+  // should be done by var, not us
+//   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
 	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }

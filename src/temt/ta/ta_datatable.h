@@ -754,6 +754,14 @@ public:
   int 		FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
   // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
+  int 		FindMultiValColName(int st_row, const Variant& val1, const String& col_name1,
+				    const Variant& val2=0, const String& col_name2="",
+				    const Variant& val3=0, const String& col_name3="",
+				    const Variant& val4=0, const String& col_name4="",
+				    const Variant& vall5=0, const String& col_name5="",
+				    const Variant& val6=0, const String& col_name6="") const;
+  // #CAT_Access find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+
   /////////////////////////////
   // column and row name versions:
 
@@ -794,6 +802,13 @@ public:
   int 		FindValCol(DataCol* col, const Variant& val, int st_row = 0) const 
   { return col->FindVal(val, st_row); }
   // #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  int 		FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
+				const Variant& val2=0, DataCol* col2=NULL,
+				const Variant& val3=0, DataCol* col3=NULL,
+				const Variant& val4=0, DataCol* col4=NULL,
+				const Variant& vall5=0, DataCol* col5=NULL,
+				const Variant& val6=0, DataCol* col6=NULL) const;
+  // #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
 
   /////////////////////////////////////////////////////////

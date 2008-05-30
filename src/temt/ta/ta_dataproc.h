@@ -397,7 +397,7 @@ INHERITED(ProgEl)
 public:
   ProgVarRef	    data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to data table for operation
 
-  virtual DataTable* GetData();
+  virtual DataTable* GetData() const;
   // get actual data table pointer from variable
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }

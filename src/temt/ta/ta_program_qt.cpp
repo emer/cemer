@@ -969,6 +969,8 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
     tabMisc::root->GetTemplateInstance(&TA_ProgVarFmArg)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("memb=arg",
     tabMisc::root->GetTemplateInstance(&TA_MemberFmArg)));
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("data=args",
+    tabMisc::root->GetTemplateInstance(&TA_DataColsFmArgs)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("reg args",
     tabMisc::root->GetTemplateInstance(&TA_RegisterArgs)));
 

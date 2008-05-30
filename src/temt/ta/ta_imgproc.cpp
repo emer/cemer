@@ -2139,7 +2139,7 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
 				      float move_x, float move_y,
 				      float scale, float rotate,
 				      float ret_move_x, float ret_move_y,
-				      bool superimpose, bool renorm)
+				      bool superimpose, int renorm, int fade_width)
 {
   if (!dt) return false;
   if(dogs.size == 0) return false;
@@ -2157,6 +2157,9 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
     DoGRetinaSpec* sp = dogs[i];
     max_off_width = MAX(max_off_width, (int)sp->dog.off_sigma);
   }
+
+  if(fade_width == -1)
+    fade_width = max_off_width;
 
   int idx;
   DataCol* da_ret;
@@ -2208,12 +2211,14 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
     }
   }
 
-  taImageProc::FadeEdgesToBorder_float(*use_img, max_off_width); 
+  if(fade_width > 0)
+    taImageProc::FadeEdgesToBorder_float(*use_img, fade_width); 
   // this should be JUST the original with no border fill -- crop does the filling
 
   taImageProc::CropImage_float(*ret_img, *use_img, retina_size.x, retina_size.y);
 
-  taImageProc::FadeEdgesToBorder_float(*ret_img, max_off_width); 
+  if(fade_width > 0)
+    taImageProc::FadeEdgesToBorder_float(*ret_img, fade_width); 
   // and make double-sure.. on final image
 
   float max_val = 0.0f;
@@ -2229,7 +2234,7 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
     taBase::Ref(on_mat);
     taBase::Ref(off_mat);
     taImageProc::DoGFilterRetina(*on_mat, *off_mat, *ret_img, *sp, superimpose);
-    if(renorm) {
+    if(renorm > 0) {
       int idx;
       float on_max = taMath_float::vec_max(on_mat, idx);
       float off_max = taMath_float::vec_max(off_mat, idx);
@@ -2241,29 +2246,37 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
   }
   taBase::unRefDone(ret_img);
 
-  if(renorm) {
+  if(renorm > 0 && max_val > 0.00001f) {
     float rescale = 1.0f;
-    if(max_val > 0.00001f)
+    if(renorm == 2)
+      rescale = 1.0f / logf(max_val);
+    else
       rescale = 1.0f / max_val;
 
     // normalize with single max for all channels, so they are all on a comparable scale
-    if(rescale != 1.0f) {
-      for(int i=0;i<dogs.size;i++) {
-	DoGRetinaSpec* sp = dogs[i];
-	DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-					     sp->spacing.output_size.x, sp->spacing.output_size.y);
-	DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
-					      2, sp->spacing.output_size.x, sp->spacing.output_size.y);
+    for(int i=0;i<dogs.size;i++) {
+      DoGRetinaSpec* sp = dogs[i];
+      DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+					   sp->spacing.output_size.x, sp->spacing.output_size.y);
+      DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+					    2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
-	float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-	float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-	taBase::Ref(on_mat);
-	taBase::Ref(off_mat);
+      float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+      float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+      taBase::Ref(on_mat);
+      taBase::Ref(off_mat);
+      if(renorm == 2) {
+	for(int j=0;j<on_mat->size;j++)
+	  on_mat->FastEl_Flat(j) = logf(on_mat->FastEl_Flat(j)) * rescale;
+	for(int j=0;j<off_mat->size;j++)
+	  off_mat->FastEl_Flat(j) = logf(off_mat->FastEl_Flat(j)) * rescale;
+      }
+      else {
 	taMath_float::vec_mult_scalar(on_mat, rescale);
 	taMath_float::vec_mult_scalar(off_mat, rescale);
-	taBase::unRefDone(on_mat);
-	taBase::unRefDone(off_mat);
       }
+      taBase::unRefDone(on_mat);
+      taBase::unRefDone(off_mat);
     }
   }
 

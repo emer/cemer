@@ -14,6 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "ta_program_els.h"
+#include "ta_datatable.h"
 
 #include "css_machine.h"
 // #include "css_basic_types.h"
@@ -1433,6 +1434,83 @@ const String ProgVarFmArg::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
+///////////////////////////////////////////////////////
+//		DataColsFmArgs
+///////////////////////////////////////////////////////
+
+void DataColsFmArgs::Initialize() {
+  row_spec = CUR_ROW;
+}
+
+void DataColsFmArgs::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void DataColsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(!data_var, quiet, rval, "data_var is NULL")) return; // fatal
+  // should be done by var, not us
+  //  CheckError(!data_var->object_val, quiet, rval, "data_var variable is NULL");
+  CheckError(data_var->object_type != &TA_DataTable, quiet, rval,
+	     "data_var variable does not point to a DataTable object");
+  CheckError(row_spec != CUR_ROW && !row_var, quiet, rval, "row_var is NULL but is required!");
+}
+
+String DataColsFmArgs::GetDisplayName() const {
+  String rval = "Data Cols Fm Args";
+  DataTable* dt = GetData();
+  if(dt) {
+    rval += " To: " + dt->name;
+  }
+  String row_var_name = "(ERR: not set!)";
+  if((bool)row_var)
+    row_var_name = row_var->name;
+  if(row_spec  == CUR_ROW)
+    rval += " cur_row";
+  else if(row_spec == ROW_NUM)
+    rval += " row_num: " + row_var_name;
+  else
+    rval += " row_val: " + row_var_name;
+  return rval;
+}
+
+DataTable* DataColsFmArgs::GetData() const {
+  if(!data_var) return NULL;
+  if(data_var->object_type != &TA_DataTable) return NULL;
+  return (DataTable*)data_var->object_val.ptr();
+}
+
+const String DataColsFmArgs::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String il2 = cssMisc::Indent(indent_level+2);
+  DataTable* dt = GetData();
+  if(!dt) return il + "// DataColsFmArgs: data_var not set!\n";
+  String rval = il + "{ // DataColsFmArgs fm: " + dt->name + "\n";
+  rval += il1 + "String __col_nm, __arg_val;\n";
+  rval += il1 + "for(int j=0;j<" + dt->name + ".cols();j++) {\n";
+  rval += il2 + "__col_nm = " + dt->name + ".data[j].name;\n";
+  rval += il2 + "__argv_val = taMisc::FindArgByName(__col_nm);\n";
+  rval += il2 + "if(__argv_val.empty()) continue;\n";
+  if(row_spec == CUR_ROW) {
+    rval += il2 + data_var->name + ".SetDataByName(__argv_val, __col_nm);\n";
+  }
+  else if(row_spec == ROW_NUM) {
+    rval +=  il2 + data_var->name + ".SetValColName(__argv_val, __col_nm, "
+      + row_var->name + ");\n";
+  }
+  else if(row_spec == ROW_VAL) {
+    rval +=  il2 + data_var->name + ".SetValColRowName(__argv_val, __col_nm, \""
+      + row_var->name + "\", " + row_var->name + ");\n";
+  }
+  if(taMisc::dmem_proc == 0) {
+    rval += il2 + "cerr << \"Set column: \" << __col_nm << \" in data table: \" << \"" +
+      dt->name + "\" << \" to val: \" << __argv_val << endl;\n";
+  }
+  rval += il1 + "}\n";
+  return rval;
+}
+
 
 ///////////////////////////////////////////////////////
 //		RegisterArgs
@@ -1468,6 +1546,16 @@ void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int inden
     else if(pel->InheritsFrom(&TA_MemberFmArg)) {
       MemberFmArg* mfa = (MemberFmArg*)pel;
       gen_code += il + "taMisc::AddEqualsArgName(\"" + mfa->arg_name + "\");\n";
+    }
+    else if(pel->InheritsFrom(&TA_DataColsFmArgs)) {
+      DataColsFmArgs* mfa = (DataColsFmArgs*)pel;
+      DataTable* dt = mfa->GetData();
+      if(dt) {
+	for(int j=0;j<dt->cols();j++) {
+	  DataCol* dc = dt->data[j];
+	  gen_code += il + "taMisc::AddEqualsArgName(\"" + dc->name + "\");\n";
+	}
+      }
     }
     else {			// look for sub-lists
       TypeDef* td = pel->GetTypeDef();

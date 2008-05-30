@@ -1145,6 +1145,64 @@ int DataTable::FindValColName(const Variant& val, const String& col_nm, int st_r
   return da->FindVal(val, st_row);
 }
 
+int DataTable::FindMultiValColName(int st_row, const Variant& val1, const String& col_nm1,
+				   const Variant& val2, const String& col_nm2,
+				   const Variant& val3, const String& col_nm3,
+				   const Variant& val4, const String& col_nm4,
+				   const Variant& val5, const String& col_nm5,
+				   const Variant& val6, const String& col_nm6) const {
+  DataCol* col1=NULL;
+  DataCol* col2=NULL;
+  DataCol* col3=NULL;
+  DataCol* col4=NULL;
+  DataCol* col5=NULL;
+  DataCol* col6=NULL;
+  int idx;
+
+  if(col_nm1.nonempty()) col1 = FindColName(col_nm1, idx, true);
+  if(col_nm2.nonempty()) col2 = FindColName(col_nm2, idx, true);
+  if(col_nm3.nonempty()) col3 = FindColName(col_nm3, idx, true);
+  if(col_nm4.nonempty()) col4 = FindColName(col_nm4, idx, true);
+  if(col_nm5.nonempty()) col5 = FindColName(col_nm5, idx, true);
+  if(col_nm6.nonempty()) col6 = FindColName(col_nm6, idx, true);
+  
+  return FindMultiValCol(st_row, val1, col1, val2, col2, val3, col3, val4, col4, 
+			 val5, col5, val6, col6); 
+}
+
+int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
+			       const Variant& val2, DataCol* col2,
+			       const Variant& val3, DataCol* col3,
+			       const Variant& val4, DataCol* col4,
+			       const Variant& val5, DataCol* col5,
+			       const Variant& val6, DataCol* col6) const {
+  if(st_row >= 0) {
+    for(int i=st_row; i<rows; i++) {
+      if(col1 && col1->GetVal(i) != val1) continue;
+      if(col2 && col2->GetVal(i) != val2) continue;
+      if(col3 && col3->GetVal(i) != val3) continue;
+      if(col4 && col4->GetVal(i) != val4) continue;
+      if(col5 && col5->GetVal(i) != val5) continue;
+      if(col6 && col6->GetVal(i) != val6) continue;
+      return i;
+    }
+    return -1;
+  }
+  else {
+    for(int i=rows-st_row; i>=0; i--) {
+      if(col1 && col1->GetVal(i) != val1) continue;
+      if(col2 && col2->GetVal(i) != val2) continue;
+      if(col3 && col3->GetVal(i) != val3) continue;
+      if(col4 && col4->GetVal(i) != val4) continue;
+      if(col5 && col5->GetVal(i) != val5) continue;
+      if(col6 && col6->GetVal(i) != val6) continue;
+      return i;
+    }
+  }
+  return -1;
+}
+
+
 /////////////////////
 
 double DataTable::GetValAsDouble(int col, int row) {
