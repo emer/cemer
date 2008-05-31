@@ -587,22 +587,24 @@ public:
 				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,
 				float ret_move_x=0.0f, float ret_move_y=0.0f,
-				bool superimpose = false, bool renorm=true);
-  // #CAT_Filter filter image data into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+				bool superimpose = false, int renorm=1,
+				int fade_width=-1);
+  // #CAT_Filter filter image data into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
 
   virtual bool	FilterImage(taImage& img, DataTable* dt,
 			    float move_x=0, float move_y=0,
 			    float scale = 1.0f, float rotate = 0.0f,
 			    float ret_move_x=0.0f, float ret_move_y=0.0f,
-			    bool superimpose = false, bool renorm=true);
-  // #CAT_Filter filter image into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+			    bool superimpose = false, int renorm=1, int fade_width=-1);
+  // #CAT_Filter filter image into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
 
   virtual bool	FilterImageName(const String& img_fname, DataTable* dt,
 				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,
 				float ret_move_x=0.0f, float ret_move_y=0.0f,
-				bool superimpose = false, bool renorm=true);
-  // #BUTTON #CAT_Filter load image from file and filter into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+				bool superimpose = false, int renorm=1,
+				int fade_width=-1);
+  // #BUTTON #CAT_Filter load image from file and filter into given datatable, with retina centered at given normalized offsets from center of image, scaled by given factor (zoom), rotated by normalized units (1=360deg), and with normalized retinal offset as specified, ret = final movement in retinal coordinates, superimpose = merge into filter values into last row of table; otherwise new row is added, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
 
   ///////////////////////////////////////////////////////////////////////
   // Automatic foveation of an image based on a bounding box
@@ -617,8 +619,9 @@ public:
 				     float move_x=0, float move_y=0,
 				     float scale = 1.0f, float rotate = 0.0f,
 				     float ret_move_x=0.0f, float ret_move_y=0.0f,
-				     bool superimpose = false, bool attend=false, bool renorm=true);
-  // #CAT_Filter filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+				     bool superimpose = false, bool attend=false,
+				     int renorm=1, int fade_width=-1);
+  // #CAT_Filter filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
 
   virtual bool	LookAtImageData(float_Matrix& img_data, DataTable* dt,
 				RetinalSpacingSpec::Region region,
@@ -627,8 +630,9 @@ public:
 				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,
 				float ret_move_x=0.0f, float ret_move_y=0.0f,
-				bool superimpose = false, bool attend=false, bool renorm=true);
-  // #CAT_Filter filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+				bool superimpose = false, bool attend=false,
+				int renorm=1, int fade_width=-1);
+  // #CAT_Filter filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params applied after foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
 
   virtual bool	LookAtImage(taImage& img, DataTable* dt,
 			    RetinalSpacingSpec::Region region,
@@ -637,8 +641,9 @@ public:
 			    float move_x=0, float move_y=0,
 			    float scale = 1.0f, float rotate = 0.0f,
 			    float ret_move_x=0.0f, float ret_move_y=0.0f,
-			    bool superimpose = false, bool attend=false, bool renorm=true);
-  // #CAT_Filter filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+			    bool superimpose = false, bool attend=false,
+			    int renorm=1, int fade_width=-1);
+  // #CAT_Filter filter image data into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
   virtual bool	LookAtImageName(const String& img_fname, DataTable* dt,
 				RetinalSpacingSpec::Region region,
 				float box_ll_x, float box_ll_y,
@@ -646,8 +651,9 @@ public:
 				float move_x=0, float move_y=0,
 				float scale = 1.0f, float rotate = 0.0f,
 				float ret_move_x=0.0f, float ret_move_y=0.0f,
-				bool superimpose = false, bool attend=false, bool renorm=true);
-  // #BUTTON #CAT_Filter load image from file and filter into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if superimpose, only do for last one!)
+				bool superimpose = false, bool attend=false,
+				int renorm=1, int fade_width=-1);
+  // #BUTTON #CAT_Filter load image from file and filter into given datatable, with region of retina centered and scaled to fit the box coordinates given (ll=lower-left coordinates, in pct; ur=upper-right); additional scale, rotate, and offset params add to foveation scaling and offsets, ret = final movement in retinal coordinates, attend = apply attentional weighting filter, renorm = renormalize dynamic range to max = 1 across all filters (if 0 don't do, 1 = linear renorm, 2 = log renorm, if superimpose, only do for last one!), fade_width = fade to background around border (-1 = use width of max off-center DOG sigma, 0 = none)
 
   // todo: need a checkconfig here..
 

@@ -1487,25 +1487,25 @@ const String DataColsFmArgs::GenCssBody_impl(int indent_level) {
   DataTable* dt = GetData();
   if(!dt) return il + "// DataColsFmArgs: data_var not set!\n";
   String rval = il + "{ // DataColsFmArgs fm: " + dt->name + "\n";
-  rval += il1 + "String __col_nm, __arg_val;\n";
+  rval += il1 + "String dcfma_colnm, dcfma_argval;\n";
   rval += il1 + "for(int j=0;j<" + dt->name + ".cols();j++) {\n";
-  rval += il2 + "__col_nm = " + dt->name + ".data[j].name;\n";
-  rval += il2 + "__argv_val = taMisc::FindArgByName(__col_nm);\n";
-  rval += il2 + "if(__argv_val.empty()) continue;\n";
+  rval += il2 + "dcfma_colnm = " + dt->name + ".data[j].name;\n";
+  rval += il2 + "dcfma_argval = taMisc::FindArgByName(dcfma_colnm);\n";
+  rval += il2 + "if(dcfma_argval.empty()) continue;\n";
   if(row_spec == CUR_ROW) {
-    rval += il2 + data_var->name + ".SetDataByName(__argv_val, __col_nm);\n";
+    rval += il2 + data_var->name + ".SetDataByName(dcfma_argval, dcfma_colnm);\n";
   }
   else if(row_spec == ROW_NUM) {
-    rval +=  il2 + data_var->name + ".SetValColName(__argv_val, __col_nm, "
+    rval +=  il2 + data_var->name + ".SetValColName(dcfma_argval, dcfma_colnm, "
       + row_var->name + ");\n";
   }
   else if(row_spec == ROW_VAL) {
-    rval +=  il2 + data_var->name + ".SetValColRowName(__argv_val, __col_nm, \""
+    rval +=  il2 + data_var->name + ".SetValColRowName(dcfma_argval, dcfma_colnm, \""
       + row_var->name + "\", " + row_var->name + ");\n";
   }
   if(taMisc::dmem_proc == 0) {
-    rval += il2 + "cerr << \"Set column: \" << __col_nm << \" in data table: \" << \"" +
-      dt->name + "\" << \" to val: \" << __argv_val << endl;\n";
+    rval += il2 + "cerr << \"Set column: \" << dcfma_colnm << \" in data table: \" << \"" +
+      dt->name + "\" << \" to val: \" << dcfma_argval << endl;\n";
   }
   rval += il1 + "}\n";
   return rval;
