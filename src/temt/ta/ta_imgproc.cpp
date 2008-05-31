@@ -2248,8 +2248,9 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
 
   if(renorm > 0 && max_val > 0.00001f) {
     float rescale = 1.0f;
-    if(renorm == 2)
-      rescale = 1.0f / logf(1.0f + max_val);
+    float renorm_factor = (float)(renorm - 1);
+    if(renorm >= 2)
+      rescale = 1.0f / logf(1.0f + renorm_factor * max_val);
     else
       rescale = 1.0f / max_val;
 
@@ -2265,11 +2266,11 @@ bool RetinaSpec::FilterImageData_impl(float_Matrix& img_data, DataTable* dt,
       float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
       taBase::Ref(on_mat);
       taBase::Ref(off_mat);
-      if(renorm == 2) {
+      if(renorm >= 2) {
 	for(int j=0;j<on_mat->size;j++)
-	  on_mat->FastEl_Flat(j) = logf(1.0f + on_mat->FastEl_Flat(j)) * rescale;
+	  on_mat->FastEl_Flat(j) = logf(1.0f + renorm_factor * on_mat->FastEl_Flat(j)) * rescale;
 	for(int j=0;j<off_mat->size;j++)
-	  off_mat->FastEl_Flat(j) = logf(1.0f + off_mat->FastEl_Flat(j)) * rescale;
+	  off_mat->FastEl_Flat(j) = logf(1.0f + renorm_factor * off_mat->FastEl_Flat(j)) * rescale;
       }
       else {
 	taMath_float::vec_mult_scalar(on_mat, rescale);
