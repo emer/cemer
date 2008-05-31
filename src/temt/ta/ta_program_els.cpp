@@ -1508,6 +1508,7 @@ const String DataColsFmArgs::GenCssBody_impl(int indent_level) {
       dt->name + "\" << \" to val: \" << dcfma_argval << endl;\n";
   }
   rval += il1 + "}\n";
+  rval += il + "}\n";
   return rval;
 }
 

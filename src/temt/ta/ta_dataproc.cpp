@@ -49,7 +49,10 @@ String DataOpEl::GetName() const {
 void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(col_name.empty(), quiet, rval,"col_name is empty");
-  CheckError(col_idx < 0, quiet, rval,"could not find", col_name,"in datatable");
+  //  CheckError(col_idx < 0, quiet, rval,"could not find", col_name,"in datatable");
+  // note: an error can be too strong and prevent transitional code from running -- sometimes
+  // at compile time the names aren't right, but they later end up being ok..
+  TestWarning(col_idx < 0, "CheckConfig", "could not find", col_name,"in datatable");
 }
 
 void DataOpEl::SetDataTable(DataTable* dt) {
