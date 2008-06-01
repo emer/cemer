@@ -2031,14 +2031,30 @@ void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
   if(!ds->col_lookup) return;	// nothing to do
   ValType vt = ds->col_lookup->valType();
-  if(vt == VT_FLOAT || vt == VT_DOUBLE) {
-    pv->SetReal(0.0f);
+  if(ds->col_lookup->is_matrix) {
+    pv->var_type = ProgVar::T_Object;
+    pv->object_val = NULL;
+    if(vt == VT_FLOAT)
+      pv->object_type = &TA_float_Matrix;
+    else if(vt == VT_DOUBLE)
+      pv->object_type = &TA_double_Matrix;
+    else if(vt == VT_INT)
+      pv->object_type = &TA_int_Matrix;
+    else if(vt == VT_STRING)
+      pv->object_type = &TA_String_Matrix;
+    else 
+      pv->object_type = &TA_taMatrix;
   }
-  else if(vt == VT_INT) {
-    pv->SetInt(0);
-  }
-  else if(vt == VT_STRING) {
-    pv->SetString("");
+  else {
+    if(vt == VT_FLOAT || vt == VT_DOUBLE) {
+      pv->SetReal(0.0f);
+    }
+    else if(vt == VT_INT) {
+      pv->SetInt(0);
+    }
+    else if(vt == VT_STRING) {
+      pv->SetString("");
+    }
   }
 }
 
