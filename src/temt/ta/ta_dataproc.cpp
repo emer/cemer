@@ -2029,6 +2029,7 @@ void DataCalcLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 
 void DataCalcLoop::SetColProgVarFmData(ProgVar* pv, DataOpEl* ds) {
+  pv->SetVarFlag(ProgVar::LOCAL_VAR);
   if(!ds->col_lookup) return;	// nothing to do
   ValType vt = ds->col_lookup->valType();
   if(ds->col_lookup->is_matrix) {
@@ -2187,9 +2188,20 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
     DataOpEl* ds = src_cols[i];
     if(ds->col_idx < 0) continue;
     DataCol* da = GetSrcData()->data[ds->col_idx];
-    if(da->is_matrix)
-      rval += il2 + "taMatrix* s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsMatrix(" +
+    if(da->is_matrix) {
+      ValType vt = da->valType();
+      String mat_type = "taMatrix";
+      if(vt == VT_FLOAT)
+	mat_type = "float_Matrix";
+      else if(vt == VT_DOUBLE)
+	mat_type = "double_Matrix";
+      else if(vt == VT_INT)
+	mat_type = "int_Matrix";
+      else if(vt == VT_STRING)
+	mat_type = "String_Matrix";
+      rval += il2 + mat_type + "* s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsMatrix(" +
 	String(ds->col_idx) + ", src_row);\n";
+    }
     else
       rval += il2 + "Variant s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsVar(" +
 	String(ds->col_idx) + ", src_row);\n";
@@ -2306,9 +2318,20 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
     DataOpEl* ds = dcl->dest_cols[i];
     if(ds->col_idx < 0) continue;
     DataCol* da = dd->data[ds->col_idx];
-    if(da->is_matrix)
-      rval += il + "taMatrix* d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsMatrix(" +
+    if(da->is_matrix) {
+      ValType vt = da->valType();
+      String mat_type = "taMatrix";
+      if(vt == VT_FLOAT)
+	mat_type = "float_Matrix";
+      else if(vt == VT_DOUBLE)
+	mat_type = "double_Matrix";
+      else if(vt == VT_INT)
+	mat_type = "int_Matrix";
+      else if(vt == VT_STRING)
+	mat_type = "String_Matrix";
+      rval += il + mat_type + "* d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsMatrix(" +
 	String(ds->col_idx) + ", -1); // -1 = last row\n";
+    }
     else
       rval += il + "Variant d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsVar(" +
 	String(ds->col_idx) + ", -1); // -1 = last row\n";

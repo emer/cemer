@@ -358,6 +358,9 @@ public:
   { if(on) SetVarFlag(flg); else ClearVarFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
+  virtual void		SetFlagsByOwnership();
+  // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
+
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();

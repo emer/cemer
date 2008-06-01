@@ -534,6 +534,38 @@ void ProgVar::CutLinks() {
   inherited::CutLinks();
 }
 
+void ProgVar::SetFlagsByOwnership() {
+  bool is_global = false;
+  if(owner && owner->InheritsFrom(&TA_ProgVar_List)) {
+    ProgVar_List* pvl = (ProgVar_List*)owner;
+    if(pvl->owner && pvl->owner->InheritsFrom(&TA_Program))
+      is_global = true;		// this is the only case in which vars are global
+  }
+  if(is_global) {
+    ClearVarFlag(LOCAL_VAR);
+    ClearVarFlag(FUN_ARG);
+    if(var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
+	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
+		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+    }
+  }
+  else {
+    SetVarFlag(LOCAL_VAR);
+    int_val = 0;
+    real_val = 0.0;
+    bool_val = false;
+    object_val = NULL;
+    ClearVarFlag(CTRL_PANEL);
+    // now check for fun args
+    ClearVarFlag(FUN_ARG);
+    if(owner && owner->InheritsFrom(&TA_ProgVar_List)) {
+      ProgVar_List* pvl = (ProgVar_List*)owner;
+      if(pvl->owner && pvl->owner->InheritsFrom(&TA_Function))
+	SetVarFlag(FUN_ARG);
+    }
+  }
+}
+
 void ProgVar::Copy_(const ProgVar& cp) {
   var_type = cp.var_type;
   int_val = cp.int_val;
@@ -559,20 +591,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
 	UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject); // only look outside of program
     }
   }
-  ProgVars* pvs = GET_MY_OWNER(ProgVars);
-  if(pvs)
-    SetVarFlag(LOCAL_VAR);
-  else {
-    ClearVarFlag(LOCAL_VAR);
-    Function* myfun = GET_MY_OWNER(Function);
-    if(myfun) {
-      SetVarFlag(FUN_ARG);
-      SetVarFlag(LOCAL_VAR);	// also local!
-    }
-    else {
-      ClearVarFlag(FUN_ARG);
-    }
-  }
+  SetFlagsByOwnership();
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
@@ -592,33 +611,7 @@ void ProgVar::UpdateAfterEdit_impl() {
       setStale();
     }
   }
-  ProgVars* pvs = GET_MY_OWNER(ProgVars);
-  if(pvs) {
-    SetVarFlag(LOCAL_VAR);
-    int_val = 0;
-    real_val = 0.0;
-    bool_val = false;
-    object_val = NULL;
-    ClearVarFlag(CTRL_PANEL);
-  }
-  else {
-    ClearVarFlag(LOCAL_VAR);
-    Function* myfun = GET_MY_OWNER(Function);
-    if(myfun) {
-      SetVarFlag(FUN_ARG);
-      SetVarFlag(LOCAL_VAR);	// also local!
-      ClearVarFlag(CTRL_PANEL);
-    }
-    else {
-      ClearVarFlag(FUN_ARG);
-    }
-    if(var_type == T_Object && object_type) {
-      if(object_type->InheritsFrom(&TA_taMatrix)) {
-	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
-		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
-      }
-    }
-  }
+  SetFlagsByOwnership();
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
