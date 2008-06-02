@@ -19,7 +19,7 @@ Program .projects[0].programs.gp[0][1] {
     ProgVar @[2] { };
   };
 
-  ProgVar_List @.vars = [7] {
+  ProgVar_List @.vars = [8] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -27,6 +27,7 @@ Program .projects[0].programs.gp[0][1] {
     ProgVar @[4] { };
     ProgVar @[5] { };
     ProgVar @[6] { };
+    ProgVar @[7] { };
   };
 
   ProgEl_List @.init_code = [5] {
@@ -54,7 +55,7 @@ Program .projects[0].programs.gp[0][1] {
     };
   };
 
-  ProgEl_List @.prog_code = [7] {
+  ProgEl_List @.prog_code = [8] {
     AssignExpr @[0] { };
     MethodCall @[1] { 
       ProgArg_List @.meth_args = [1] {
@@ -82,6 +83,15 @@ Program .projects[0].programs.gp[0][1] {
       };
     };
     MethodCall @[6] { };
+    If @[7] { 
+      ProgEl_List @.true_code = [1] {
+	ProgramCall @[0] { 
+	  ProgArg_List @.prog_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+      };
+    };
   };
 };
 Program .projects[0].programs.gp[0][1] {
@@ -135,6 +145,7 @@ Program .projects[0].programs.gp[0][1] {
    object_val=.projects[0].networks[0]$0$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="network to train";
   };
   ProgVar @[1] {
@@ -144,6 +155,7 @@ Program .projects[0].programs.gp[0][1] {
    object_val=.projects[0].data.gp[0][0]$1$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="datatable with training patterns";
   };
   ProgVar @[2] {
@@ -152,6 +164,7 @@ Program .projects[0].programs.gp[0][1] {
    bool_val=0;
    objs_ptr=0;
    flags=NULL_CHECK;
+   reference=0;
    desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
   };
  };
@@ -165,6 +178,7 @@ Program .projects[0].programs.gp[0][1] {
    int_val=500;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="maximum number of epochs to run";
   };
   ProgVar @[1] {
@@ -173,6 +187,7 @@ Program .projects[0].programs.gp[0][1] {
    int_val=8;
    objs_ptr=0;
    flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+   reference=0;
    desc="current epoch -- local copy, which is used to update network's epoch counter";
   };
   ProgVar @[2] {
@@ -182,6 +197,7 @@ Program .projects[0].programs.gp[0][1] {
    hard_enum_type=Network::TrainMode;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
   };
   ProgVar @[3] {
@@ -193,6 +209,7 @@ Program .projects[0].programs.gp[0][1] {
    };
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="how to initialize the random numbers when the Init button is pressed";
   };
   ProgVar @[4] {
@@ -201,25 +218,37 @@ Program .projects[0].programs.gp[0][1] {
    real_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
    desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
 goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
   };
   ProgVar @[5] {
+   name="save_final_wts";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK;
+   reference=0;
+   desc="save the network's weights at the end of training?  Note: you can also just call SaveWeights program inside training loop to save more frequently";
+  };
+  ProgVar @[6] {
    name="rnd_seed";
    var_type=T_Object;
    object_type=RndSeed;
    object_val=.projects[0].programs.gp[0][1].objs[0]$3$;
    objs_ptr=1;
    flags=NULL_CHECK;
+   reference=0;
    desc="random seed that is used at start of training -- if OldSeed is called";
   };
-  ProgVar @[6] {
+  ProgVar @[7] {
    name="train_timer";
    var_type=T_Object;
    object_type=TimeUsed;
    object_val=.projects[0].networks[0].train_time$4$;
    objs_ptr=0;
    flags=NULL_CHECK;
+   reference=0;
    desc="records time used to train network (object lives on network -- this is a pointer to it)";
   };
  };
@@ -270,7 +299,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
   AssignExpr @[2] {
    desc="get our pointer to the network training time object";
    flags=;
-   result_var=.projects[0].programs.gp[0][1].vars[6]$7$;
+   result_var=.projects[0].programs.gp[0][1].vars[7]$7$;
    expr {
     expr="network.train_time";
    };
@@ -289,7 +318,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      desc="restore previous random seed (all runs produce same results)";
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs.gp[0][1].vars[5]$8$;
+     obj=.projects[0].programs.gp[0][1].vars[6]$8$;
      method=RndSeed::OldSeed;
      meth_args {
       name=;
@@ -498,6 +527,39 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
     name=;
     el_typ=ProgArg;
     el_def=0;
+   };
+  };
+  If @[7] {
+   desc=;
+   flags=;
+   cond {
+    expr="save_final_wts";
+   };
+   true_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    ProgramCall @[0] {
+     desc=;
+     flags=;
+     target=.projects[0].programs.gp[0][9]$11$;
+     targ_ld_init="*SaveWeights*";
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Network;
+       type="LeabraNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       expr {
+	expr="network";
+       };
+      };
+     };
+    };
    };
   };
  };

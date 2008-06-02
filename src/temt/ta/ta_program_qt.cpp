@@ -1027,7 +1027,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("join",
     tabMisc::root->GetTemplateInstance(&TA_DataJoinProg)));
   tb->AddSeparator(sec);
-  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("calc",
+  tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("calc loop",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcLoop)));
   tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("+dest row",
     tabMisc::root->GetTemplateInstance(&TA_DataCalcAddDestRow)));
