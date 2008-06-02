@@ -1808,7 +1808,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] {
       name="epoch";
       var_type=T_Int;
-      int_val=8;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
       reference=0;
@@ -2275,7 +2275,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=0;
       objs_ptr=0;
       flags=NULL_CHECK;
       reference=0;
@@ -2426,7 +2426,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$24$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$25$;
       order=PERMUTED;
-      item_idx_list{ 1;2;0;3;4;5;      };
+      item_idx_list{ 2;1;4;3;5;0;      };
       dmem_nprocs=1;
       dmem_this_proc=0;
      };
@@ -7332,7 +7332,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	last_ctr=-1;
 	default_val=1;
 	interpolate=0;
-	cur_val=0;
+	cur_val=1;
        };
        wt_sig {gain=6: off=1.25: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -7370,7 +7370,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       last_ctr=-1;
       default_val=1;
       interpolate=0;
-      cur_val=0;
+      cur_val=1;
      };
      wt_sig {gain=6: off=1.25: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -7441,7 +7441,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
      acts_p {avg=0.19: max=0.95: max_i=0: };
-     acts_m {avg=0.19: max=0.95: max_i=0: };
+     acts_m {avg=0.19: max=0.95: max_i=10: };
      phase_dif_ratio=1;
      acts_p2 {avg=0: max=0: max_i=-1: };
      acts_m2 {avg=0: max=0: max_i=-1: };
@@ -7557,11 +7557,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
      acts_p {avg=0.1878763: max=0.8656276: max_i=24: };
-     acts_m {avg=0.1876385: max=0.8683646: max_i=24: };
+     acts_m {avg=0.1842529: max=0.831869: max_i=6: };
      phase_dif_ratio=0.9987342;
      acts_p2 {avg=0: max=0: max_i=-1: };
      acts_m2 {avg=0: max=0: max_i=-1: };
-     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=4.078452: k1_ithr=3.391489: ithr_r=0.1844483: ithr_diff=0.1684371: tie_brk=0: };
+     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=2.76578: k1_ithr=2.335913: ithr_r=0.1689199: ithr_diff=0.1554234: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.24: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
@@ -7643,17 +7643,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       fm_output=-1;
      };
      output_name=;
-     sse=0;
+     sse=4.39075;
      icon_value=0;
      netin {avg=0: max=0: max_i=-1: };
      i_thrs {avg=0: max=0: max_i=-1: };
      acts {avg=0: max=0: max_i=-1: };
      acts_p {avg=0.19: max=0.95: max_i=0: };
-     acts_m {avg=0.1815801: max=0.8894196: max_i=14: };
+     acts_m {avg=0.0834405: max=0.4280627: max_i=16: };
      phase_dif_ratio=0.9556849;
      acts_p2 {avg=0: max=0: max_i=-1: };
      acts_m2 {avg=0: max=0: max_i=-1: };
-     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=3.039868: k1_ithr=2.824925: ithr_r=0.07333242: ithr_diff=0.07070813: tie_brk=0: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=3.169628: k1_ithr=3.135986: ithr_r=0.01067039: ithr_diff=0.01061366: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.2: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
@@ -7691,7 +7691,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cycle=0;
    time=0;
    group_name=;
-   trial_name="random";
+   trial_name="midhoriz";
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -7703,8 +7703,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="TimeUsed_0": start={usr=2404: sys=365: tot=617949373: }: end={usr=2564: sys=373: tot=617949541: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="TimeUsed_1": start={usr=2546: sys=372: tot=617949522: }: end={usr=2564: sys=373: tot=617949541: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   train_time {name="TimeUsed_0": start={usr=516: sys=71: tot=980397630: }: end={usr=2564: sys=373: tot=617949541: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="TimeUsed_1": start={usr=516: sys=71: tot=980397630: }: end={usr=2564: sys=373: tot=617949541: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="TimeUsed_2": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="TimeUsed_3": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="TimeUsed_4": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -7746,7 +7746,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=2049;
+   ct_cycle=20;
    cycle_max=20;
    min_cycles=0;
    min_cycles_phase2=0;
