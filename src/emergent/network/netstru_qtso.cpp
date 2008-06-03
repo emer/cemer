@@ -3063,6 +3063,7 @@ NetViewPanel::~NetViewPanel() {
 
 void NetViewPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
+  ++updating;
   NetView* nv = this->nv(); // cache
   if (!nv) return;
   if (req_full_redraw) {
@@ -3112,6 +3113,7 @@ void NetViewPanel::UpdatePanel_impl() {
     setHighlightSpec(m_cur_spec, true);
 
   ColorScaleFromData();
+  --updating;
 }
 
 void NetViewPanel::GetValue_impl() {
@@ -3228,23 +3230,13 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   if (updating) return;
   NetView* nv_;
   if (!(nv_ = nv())) return;
-  // iterate the list -- remove unselected items, and add selected items
-  int i = 0;
-  //redo the list each time, to guard against stale values
+  // redo the list each time, to guard against stale values
   nv_->ordered_uvg_list.Reset(); 
-  QTreeWidgetItemIterator it(lvDisplayValues);
+  QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
   QTreeWidgetItem* item = NULL;
-  while (*it) {
-    item = *it;
-    if (item->isSelected()) {
-      if (nv_->ordered_uvg_list.FindEl(item->text(0)) < 0) {
-        nv_->ordered_uvg_list.Add(item->text(0));
-      }
-    } else {
-      nv_->ordered_uvg_list.RemoveEl(item->text(0)); // note: may not exist
-    }
-    ++it;
-    ++i;
+  for (int j = 0; j < items.size(); ++j) {
+    item = items.at(j);
+    nv_->ordered_uvg_list.Add(item->text(0));
   }
   MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->ordered_uvg_list.SafeEl(0));
   if (md) {
