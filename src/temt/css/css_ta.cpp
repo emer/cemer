@@ -330,7 +330,7 @@ void cssTA::operator=(const cssEl& s) {
   type_def->CopyFromSameType(ptr, sp->GetNonRefPtr());
 }
 
-cssEl* cssTA::GetElement_impl(taBase* ths, int i) const {
+cssEl* cssTA::GetElement_impl(taBase* ths, Variant i) const {
   TypeDef* eltd;
   void* el = ths->GetTA_Element(i, eltd);
   if(!eltd) {
@@ -338,12 +338,13 @@ cssEl* cssTA::GetElement_impl(taBase* ths, int i) const {
 		    "type:", ths->GetTypeDef()->name);
     return &cssMisc::Void;
   }
+  String elno = i.toString();
   if(!el) {
-    cssMisc::Error(prog, "Index out of range:", String((int)i), "for", ths->GetName(),
+    cssMisc::Error(prog, "Index out of range:", elno, "for", ths->GetName(),
 		    "type:", ths->GetTypeDef()->name);
     return &cssMisc::Void;
   }
-  String nm = ths->GetName() + String("[") + String((int)i) + "]";
+  String nm = ths->GetName() + String("[") + elno + "]";
   return GetElFromTA(eltd, el, nm, (MemberDef*)NULL, (cssEl*)this);
 }
 
@@ -682,7 +683,7 @@ void cssTA_Base::operator=(const cssEl& s) {
   UpdateClassParent();
 }
 
-cssEl* cssTA_Base::operator[](int i) const {
+cssEl* cssTA_Base::operator[](Variant i) const {
   taBase* ths = GetTAPtr();
   if(ths)
     return GetElement_impl(ths, i);
@@ -928,7 +929,7 @@ void cssSmartRef::UpdateAfterEdit() {
   // nothing left to do: not avail: sr->UpdateAfterEdit();
 }
 
-cssEl* cssSmartRef::operator[](int i) const {
+cssEl* cssSmartRef::operator[](Variant i) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return GetElement_impl(sr->ptr(), i);

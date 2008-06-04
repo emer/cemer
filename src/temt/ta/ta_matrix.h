@@ -322,8 +322,8 @@ public:
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
   virtual ValType	GetDataValType() const = 0;
   // #CAT_Access val_type of data
-  void*   		GetTA_Element(int i, TypeDef*& eltd)
-  { eltd = GetDataTypeDef(); if(InRange_Flat(i)) return (void*)FastEl_Flat_(i); return NULL; }
+  void*   		GetTA_Element(Variant i, TypeDef*& eltd)
+  { eltd = GetDataTypeDef(); int dx = i.toInt(); if(InRange_Flat(dx)) return (void*)FastEl_Flat_(dx); return NULL; }
 
   ///////////////////////////////////////
   // String

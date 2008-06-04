@@ -1550,8 +1550,78 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
 //	Type information
 
 
-void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
-				taBase_PtrList* owners) {
+///////////// Searching
+
+void taBase::Search(const String& srch, taBase_PtrList& items,
+		    taBase_PtrList* owners,
+		    bool contains, bool case_sensitive,
+		    bool obj_name, bool obj_type,
+		    bool obj_desc, bool obj_val,
+		    bool mbr_name, bool type_desc) {
+  String srch_act = srch;
+  if(!case_sensitive)
+    srch_act.downcase();
+  Search_impl(srch_act, items, owners, contains, case_sensitive, obj_name, obj_type,
+	      obj_desc, obj_val, mbr_name, type_desc);
+}
+
+
+bool taBase::SearchTestStr_impl(const String& srch, String tst,
+				bool contains, bool case_sensitive) {
+  if(!case_sensitive) tst.downcase();
+  if(contains) {
+    if(tst.contains(srch)) return true;
+  }
+  else {
+    if(tst == srch) return true;
+  }
+  return false;
+}
+
+bool taBase::SearchTestItem_impl(taBase* obj, const String& srch,
+				 bool contains, bool case_sensitive,
+				 bool obj_name, bool obj_type,
+				 bool obj_desc, bool obj_val,
+				 bool mbr_name, bool type_desc) {
+  if(!obj) return false;
+  if(obj_name) {
+    if(SearchTestStr_impl(srch, obj->GetName(), contains, case_sensitive)) return true;
+  }
+  if(obj_type) {
+    if(SearchTestStr_impl(srch, obj->GetTypeDef()->name, contains, case_sensitive)) return true;
+    if(type_desc) {
+      if(SearchTestStr_impl(srch, obj->GetTypeDef()->desc, contains, case_sensitive)) return true;
+    }
+  }
+  if(obj_desc) {
+    if(SearchTestStr_impl(srch, obj->GetDesc(), contains, case_sensitive)) return true;
+  }
+  if(obj_val) {
+    if(SearchTestStr_impl(srch, obj->GetDisplayName(), contains, case_sensitive)) return true;
+    String strval = GetTypeDef()->GetValStr(obj, NULL, NULL,
+	 (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
+    if(SearchTestStr_impl(srch, strval, contains, case_sensitive)) return true;
+  }
+
+  if(mbr_name) {
+    TypeDef* td = obj->GetTypeDef();
+    for(int m=0;m<td->members.size;m++) {
+      MemberDef* md = td->members[m];
+      if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) return true;
+      if(type_desc) {
+	if(SearchTestStr_impl(srch, md->desc, contains, case_sensitive)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+void taBase::Search_impl(const String& srch, taBase_PtrList& items,
+			 taBase_PtrList* owners,
+			 bool contains, bool case_sensitive,
+			 bool obj_name, bool obj_type,
+			 bool obj_desc, bool obj_val,
+			 bool mbr_name, bool type_desc) {
   TypeDef* td = GetTypeDef();
   int st_sz = items.size;
   // first pass: just look at our guys
@@ -1560,7 +1630,20 @@ void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
     if(md->type->ptr == 0) {
       if(md->type->InheritsFrom(TA_taBase)) {
 	taBase* obj = (taBase*)md->GetOff(this);
-	if(obj->GetName().contains(nm)) {
+	if(mbr_name) {
+	  if(SearchTestStr_impl(srch, md->name, contains, case_sensitive)) {
+	    items.Link(obj);
+	    continue;
+	  }
+	  else if(type_desc) {
+	    if(SearchTestStr_impl(srch, md->desc, contains, case_sensitive)) {
+	      items.Link(obj);
+	      continue;
+	    }
+	  }
+	}
+	if(SearchTestItem_impl(obj, srch, contains, case_sensitive, obj_name, obj_type,
+			       obj_desc, obj_val, mbr_name, type_desc)) {
 	  items.Link(obj);
 	}
       }
@@ -1572,7 +1655,8 @@ void taBase::SearchNameContains(const String& nm, taBase_PtrList& items,
     if(md->type->ptr == 0) {
       if(md->type->InheritsFrom(TA_taBase)) {
 	taBase* obj = (taBase*)md->GetOff(this);
-	obj->SearchNameContains(nm, items, owners);
+	obj->Search_impl(srch, items, owners,contains, case_sensitive, obj_name, obj_type,
+			 obj_desc, obj_val, mbr_name, type_desc);
       }
     }
   }
@@ -3347,10 +3431,15 @@ int taList_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& e
   return nfound;
 }
 
-void taList_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
-				     taBase_PtrList* owners) {
+void taList_impl::Search_impl(const String& srch, taBase_PtrList& items,
+			 taBase_PtrList* owners,
+			 bool contains, bool case_sensitive,
+			 bool obj_name, bool obj_type,
+			 bool obj_desc, bool obj_val,
+			 bool mbr_name, bool type_desc) {
   int st_sz = items.size;
-  taOBase::SearchNameContains(nm, items, owners);
+  taOBase::Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+		       obj_desc, obj_val, mbr_name, type_desc);
   bool already_added_me = false;
   if(items.size > st_sz)
     already_added_me = true;
@@ -3358,10 +3447,12 @@ void taList_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
     taBase* itm = (taBase*)el[i];
     if(!itm) continue;
     if(itm->GetOwner() == this) { // for guys we own (not links; prevents loops)
-      if(itm->GetName().contains(nm)) {
+      if(SearchTestItem_impl(itm, srch, contains, case_sensitive, obj_name, obj_type,
+			     obj_desc, obj_val, mbr_name, type_desc)) {
 	items.Link(itm);
       }
-      itm->SearchNameContains(nm, items, owners);
+      itm->Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+		       obj_desc, obj_val, mbr_name, type_desc);
     }
   }
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..

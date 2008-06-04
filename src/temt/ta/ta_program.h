@@ -204,6 +204,8 @@ public:
   // output type information in C++ syntax
 
   override taList_impl*	children_() {return &enums;}	
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  { return enums.GetTA_Element(i, eltd); }
 
   override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 

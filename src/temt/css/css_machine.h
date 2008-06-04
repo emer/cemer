@@ -603,7 +603,7 @@ public:
   virtual cssEl* operator|(cssEl&) { NopErr("|"); return &cssMisc::Void; }
   virtual cssEl* operator-()       { NopErr("-"); return &cssMisc::Void; } // unary minus
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
-  virtual cssEl* operator[](int) const { NopErr("[]"); return &cssMisc::Void; }
+  virtual cssEl* operator[](Variant) const { NopErr("[]"); return &cssMisc::Void; }
 
   static cssEl* GetElFromTA(TypeDef* td, void* itm, const char* nm, 
 			    MemberDef* md = NULL, cssEl* class_parent = NULL);
@@ -665,7 +665,7 @@ protected:
 
   cssEl* GetScoped_impl(TypeDef* typ, void* base, const char* nm) const;
 
-  cssEl* GetVariantEl_impl(const Variant& val, int idx) const; // helper for operator[]
+  cssEl* GetVariantEl_impl(const Variant& val, Variant idx) const; // helper for operator[]
 };
 
 #ifndef DEBUG

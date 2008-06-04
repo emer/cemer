@@ -2183,12 +2183,15 @@ public:
 #endif
 
   enum SearchOptions { // #BITS
-    SO_OBJ_NAME		= 0x0001, // #LABEL_object_name
-    SO_OBJ_DESC		= 0x0002, // #LABEL_object_desc object description (where applicable)
-    SO_MEMB_NAME	= 0x0004, // #LABEL_member_name
-    SO_MEMB_VAL		= 0x0008, // #LABEL_member_value searches in the values of members, especially strings
+    SO_OBJ_NAME		= 0x0001, // #LABEL_object_name the name given to the object by the user
+    SO_OBJ_TYPE		= 0x0002, // #LABEL_object_type the type name
+    SO_OBJ_DESC		= 0x0004, // #LABEL_object_desc object description (where applicable), including full display name
+    SO_MEMB_NAME	= 0x0008, // #LABEL_member_name the name of the member of an object
+    SO_MEMB_VAL		= 0x0010, // #LABEL_member_value searches in the values of members, especially strings
+    SO_ALL_MEMBS	= 0x0020, // #LABEL_all_members searches in all members, otherwise excludes the members that are not typicaly shown according to current settings
+    SO_TYPE_DESC	= 0x0040, // #LABEL_type_desc searches in the type description information, including the description of the type of the object, and the description of the member (all of this information is hard-coded into the program)
 #ifndef __MAKETA__
-    SO_DEF_OPTIONS	= SO_OBJ_NAME | SO_OBJ_DESC | SO_MEMB_NAME | SO_MEMB_VAL
+    SO_DEF_OPTIONS	= SO_OBJ_NAME | SO_OBJ_TYPE | SO_OBJ_DESC | SO_MEMB_NAME | SO_MEMB_VAL
 #endif
   };
   

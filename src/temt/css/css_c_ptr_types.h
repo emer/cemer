@@ -704,7 +704,7 @@ public:
   bool operator!=(cssEl& s) { if(ptr_cnt == 0) return (GetStringRef("!=") != s.GetStr()); return cssCPtr::operator!=(s); }
 
   // these use the TA info to perform actions
-  cssEl* operator[](int idx) const;
+  cssEl* operator[](Variant idx) const;
   int	 GetMethodNo(const char*) const;
   cssEl* GetMethodFmName(const char* memb) const;
   cssEl* GetMethodFmNo(int memb) const;
@@ -777,7 +777,7 @@ public:
   bool operator!=(cssEl& s) { if(ptr_cnt == 0) return (GetVarRef("!=") != s.GetVar()); return cssCPtr::operator!=(s); }
 
   // these use the TA info to perform actions
-  cssEl* operator[](int idx) const;
+  cssEl* operator[](Variant idx) const;
   bool	 MembersDynamic()	{ return true; }
   int	 GetMemberNo(const char* memb) const { return -1; } // never do static lookup!
   cssEl* GetMemberFmNo(int memb) const;

@@ -93,8 +93,12 @@ public:
   override int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
   override int	Dump_Save_PathR_impl(ostream& strm, taBase* par=NULL, int indent=0);
 
-  override void	SearchNameContains(const String& nm, taBase_PtrList& items,
-				   taBase_PtrList* owners = NULL);
+  override void	Search_impl(const String& srch, taBase_PtrList& items,
+			    taBase_PtrList* owners = NULL, 
+			    bool contains = true, bool case_sensitive = false,
+			    bool obj_name = true, bool obj_type = true,
+			    bool obj_desc = true, bool obj_val = true,
+			    bool mbr_name = true, bool type_desc = false);
   override void	CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
 				 void_PArray& trg_bases, void_PArray& src_bases,
 				 taBase* cp_base,

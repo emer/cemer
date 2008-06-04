@@ -469,7 +469,7 @@ public:
   bool operator!=(cssEl& s) { return (val != s.GetStr()); }
 
   // these use the TA info to perform actions
-  cssEl* operator[](int idx) const;
+  cssEl* operator[](Variant idx) const;
   int	 GetMethodNo(const char* method) const;
   cssEl* GetMethodFmNo(int memb) const;
   cssEl* GetMethodFmName(const char* memb) const;
@@ -618,7 +618,7 @@ public:
   bool operator!=(cssEl& s);
   
   // these delegate to the string, base or variant
-  cssEl* operator[](int idx) const; // only valid for Matrixes, gets flat el
+  cssEl* operator[](Variant idx) const; // only valid for Matrixes, gets flat el
   bool	 MembersDynamic()	{ return true; }
   int	 GetMemberNo(const char* memb) const { return -1; } // don't do any advance lookup: always dynamic
   cssEl* GetMemberFmNo(int memb) const;
@@ -729,8 +729,8 @@ public:
   cssEl* operator*(cssEl&)	{ NopErr("*"); return &cssMisc::Void; }
 
   cssEl* operator*()	     	{ return GetOprPtr().El(); } // unary de-ptr
-  cssEl* operator[](int i) const
-  { cssElPtr tmp = GetOprPtr(); tmp += i; return tmp.El(); };
+  cssEl* operator[](Variant i) const
+  { cssElPtr tmp = GetOprPtr(); tmp += i.toInt(); return tmp.El(); };
 
   void operator+=(cssEl& t)
   { cssElPtr r = GetOprPtr(); r += (Int)t; SetPtr(r); }
@@ -851,7 +851,7 @@ public:
   cssEl* operator-(cssEl&)      { NopErr("-"); return &cssMisc::Void; }
   cssEl* operator*(cssEl&)      { NopErr("*"); return &cssMisc::Void; }
   cssEl* operator*()            { NopErr("*"); return &cssMisc::Void; }
-  cssEl* operator[](int) const
+  cssEl* operator[](Variant) const
   { NopErr("[]"); return &cssMisc::Void; }
   void operator+=(cssEl&)       { NopErr("+="); }
   void operator-=(cssEl&)       { NopErr("-="); }
@@ -998,7 +998,7 @@ public:
   cssEl* operator|(cssEl& s)	{ return ptr.El()->operator|(s); }
   cssEl* operator-()       	{ return ptr.El()->operator-(); }
   cssEl* operator*()	   	{ return ptr.El()->operator*(); }
-  cssEl* operator[](int i) const		{ return ptr.El()->operator[](i); }
+  cssEl* operator[](Variant i) const	{ return ptr.El()->operator[](i); }
 
   bool	 MembersDynamic()	{ return true; }
   int    GetMemberNo(const char* s) const; // emit errorless -1 for void

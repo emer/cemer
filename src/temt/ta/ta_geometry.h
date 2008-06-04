@@ -792,8 +792,8 @@ public:
   String	El_GetStr_(void* it) const { return (String)((ValIdx*)it); } // #IGNORE
   void		El_SetFmStr_(void* it, String& val)
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
-  virtual void*		GetTA_Element(int i, TypeDef*& eltd)
-  { eltd = &TA_ValIdx; if(InRange(i)) return FastEl_(i); return NULL; }
+  virtual void*		GetTA_Element(Variant i, TypeDef*& eltd)
+  { eltd = &TA_ValIdx; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(ValIdx_Array);
   TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 private:

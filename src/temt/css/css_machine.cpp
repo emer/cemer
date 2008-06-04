@@ -820,11 +820,11 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const char* nm, MemberDef* md,
   return new cssTA(itm, new_ptr, nptd, nm, class_parent, ro);
 }
 
-cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
+cssEl* cssEl::GetVariantEl_impl(const Variant& val, Variant idx) const {
   switch (val.type()) {
   case Variant::T_String: {
     //TODO: maybe this should be Char???
-    String nw_val = val.toString().elem(idx);
+    String nw_val = val.toString().elem(idx.toInt());
     return new cssString(nw_val);
     } break;
   case Variant::T_Matrix: {
@@ -833,7 +833,7 @@ cssEl* cssEl::GetVariantEl_impl(const Variant& val, int idx) const {
       break;
     }
     taMatrix* mat = val.toMatrix();
-    Variant var(mat->SafeElAsVar_Flat(idx));
+    Variant var(mat->SafeElAsVar_Flat(idx.toInt()));
     return new cssVariant(var);
     }
   default:

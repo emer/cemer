@@ -68,8 +68,8 @@ void cssString::InheritInfo(ostream& fh) const {
   TA_taString.OutputInherit(fh) << "\n";
 }
 
-cssEl* cssString::operator[](int idx) const {
-  String nw_val = val.elem(idx);
+cssEl* cssString::operator[](Variant idx) const {
+  String nw_val = val.elem(idx.toInt());
   return new cssString(nw_val);
 }
 
@@ -413,8 +413,8 @@ cssEl* cssVariant::GetScoped(const char* memb) const {
   return GetScoped_impl(&TA_Variant, &val_r, memb);
 }
 
-cssEl* cssVariant::operator[](int idx) const {
-  return GetVariantEl_impl(val, idx);
+cssEl* cssVariant::operator[](Variant idx) const {
+  return GetVariantEl_impl(val, idx.toInt());
 }
 
 

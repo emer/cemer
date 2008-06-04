@@ -660,6 +660,9 @@ public:
   void	UpdateRetinaSize();	// copy retina_size to dogs..
 
   override taList_impl*	children_() {return &dogs;}	
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  { return dogs.GetTA_Element(i, eltd); }
+
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(RetinaSpec);
@@ -699,6 +702,8 @@ public:
 //   void	UpdateRetinaSize();	// copy retina_size to dogs..
 
   override taList_impl*	children_() {return &gabors;}
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  { return gabors.GetTA_Element(i, eltd); }
 
   void 	Initialize();
   void	Destroy() { };

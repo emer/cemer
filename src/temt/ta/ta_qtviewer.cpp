@@ -967,6 +967,7 @@ void AddHit(int item_type, const String& probedx, String& hits)
   if (hits.nonempty()) hits += "<br>";
   switch (item_type) {
   case iSearchDialog::SO_OBJ_NAME: hits += "name:"; break;
+  case iSearchDialog::SO_OBJ_TYPE: hits += "type:"; break;
   case iSearchDialog::SO_OBJ_DESC: hits += "desc:"; break;
   case iSearchDialog::SO_MEMB_NAME: hits += "memb name:"; break;
   case iSearchDialog::SO_MEMB_VAL: hits += "memb val:"; break;
@@ -991,12 +992,36 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       {++n; AddHit(item_type, probed, hits);}
   }
   
+  // TYPE
+  item_type = iSearchDialog::SO_OBJ_TYPE;
+  if (sd->options() & item_type) {
+    probed = tab->GetTypeDef()->name;
+    if (IsHit(targs, kicks, probed)) {
+      ++n; AddHit(item_type, probed, hits);
+    }
+    else {
+      if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
+	probed = tab->GetTypeDef()->desc;
+	if (IsHit(targs, kicks, probed)) {
+	  ++n; AddHit(item_type, probed, hits);
+	}
+      }
+    }
+  }
+  
   // DESC
   item_type = iSearchDialog::SO_OBJ_DESC;
   if (sd->options() & item_type) {
     probed = tab->GetColText(taBase::key_desc);
-    if (IsHit(targs, kicks, probed)) 
-      {++n; AddHit(item_type, probed, hits);}
+    if (IsHit(targs, kicks, probed)) {
+      ++n; AddHit(item_type, probed, hits);
+    }
+    else {
+      probed = tab->GetDisplayName(); // include display name
+      if (IsHit(targs, kicks, probed)) {
+	++n; AddHit(item_type, probed, hits);
+      }
+    }
   }
   
   TypeDef* td = tab->GetTypeDef();
@@ -1005,10 +1030,19 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!md->ShowMember()) continue;
+      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       probed = md->name;
-      if (IsHit(targs, kicks, probed)) 
-        {++n; AddHit(item_type, probed, hits);}
+      if (IsHit(targs, kicks, probed)) {
+	++n; AddHit(item_type, probed, hits);
+      }
+      else {
+	if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
+	  probed = md->desc;
+	  if (IsHit(targs, kicks, probed)) {
+	    ++n; AddHit(item_type, probed, hits);
+	  }
+	}
+      }
     }
   }
   
@@ -1021,7 +1055,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   if (sd->options() & item_type) {
     for(int m=0;m<td->members.size;m++) {
       MemberDef* md = td->members[m];
-      if (!md->ShowMember()) continue;
+      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       if (md->is_static) continue;
       if (md->HasOption("NO_SEARCH")) continue;
       if (md->type->ptr == 0) {
@@ -1038,6 +1072,13 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
           }
         } 
         // have to force getting an inline value, since default is often the path
+        probed = md->type->GetValStr(md->GetOff(tab), tab, md,
+          (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
+        if (IsHit(targs, kicks, probed)) 
+          {++n; AddHit(item_type, probed, hits);}
+      }
+      else if(md->type->ptr == 1) {
+	// if a pointer, treat it as a value and go for it!
         probed = md->type->GetValStr(md->GetOff(tab), tab, md,
           (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
         if (IsHit(targs, kicks, probed)) 
@@ -1061,7 +1102,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   for(int m=0; m<td->members.size;m++) {
     if (sd->stop()) return; // user hit stop
     MemberDef* md = td->members[m];
-    if (!md->ShowMember()) {
+    if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) {
       // def children are excluded from show, but should not be from search!!
       if (md->name != def_child)
 	continue;
@@ -1075,7 +1116,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       continue;
     // if guy is not a list or greater, must be browsable taBase
     if (!md->type->InheritsFrom(TA_taList_impl)) {
-      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
+      if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember(taMisc::USE_SHOW_GUI_DEF,
           TypeItem::SC_TREE)) continue;
     }      
     

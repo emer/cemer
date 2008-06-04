@@ -18,6 +18,7 @@
 
 #include "ta_def.h"
 #include "ta_string.h"
+#include "ta_variant.h"
 
 // this is the amount of overhead (in 4 byte units) allowed by the alloc
 // routines, which allocate a power of two minus this amount
@@ -259,8 +260,7 @@ public:
   // 	functions that return the type		//
   ////////////////////////////////////////////////
 
-  void*   	GetTA_Element_(int i, TypeDef*& eltd) const
-  { void* rval = SafeEl_(i); if (rval) eltd = El_GetType_(rval); return rval; } // #IGNORE 
+  void*   	GetTA_Element_(Variant i, TypeDef*& eltd) const; // #IGNORE 
   virtual TypeDef*	El_GetType_(void*) const {return GetElType();}
     // #IGNORE should usually override to provide per-item typing where applicable
   void*		SafeEl_(int i) const

@@ -140,6 +140,16 @@ taHashVal taPtrList_impl::El_GetHashVal_(void* it) const {
   }
 }
 
+void* taPtrList_impl::GetTA_Element_(Variant i, TypeDef*& eltd) const {
+  eltd = NULL;
+  if(i.isStringType()) {	// lookup by name if string
+    void* rval = FindName_(i.toString());
+    if(rval) { eltd = El_GetType_(rval); return rval; }
+  }
+  int dx = i.toInt();	// string could be number in disguise -- try that next
+  void* rval = SafeEl_(dx); if (rval) eltd = El_GetType_(rval); return rval;
+}
+
 int taPtrList_impl::FindEl_(const void* it) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_PTR))
     return hash_table->FindListEl(HashCode_Ptr(it));

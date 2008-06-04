@@ -96,7 +96,7 @@ public:
   virtual bool AssignObjCheck(const cssEl& s);
   // do basic checks on us and source for object assign (ptr_cnt = 0)
 
-  virtual cssEl*	GetElement_impl(taBase* ths, int i) const;
+  virtual cssEl*	GetElement_impl(taBase* ths, Variant i) const;
 
   int	 GetMemberNo(const char* memb) const;
   cssEl* GetMemberFmName(const char* memb) const;
@@ -159,7 +159,7 @@ public:
 
   void UpdateAfterEdit();
 
-  cssEl* operator[](int) const;
+  cssEl* operator[](Variant) const;
   cssEl* GetMemberFmName(const char* memb) const; // use recursive path!
   cssEl* NewOpr();		// only ta_base get a new operator..
   void 	 DelOpr();		// and a del operator
@@ -219,7 +219,7 @@ public:
   void PtrAssignPtr(const cssEl& s);
   void UpdateAfterEdit();
 
-  cssEl* operator[](int) const;
+  cssEl* operator[](Variant) const;
   bool	MembersDynamic()	{ return true; }
   int	 GetMemberNo(const char* memb) const { return -1; } // never static lookup
   cssEl* GetMemberFmName(const char* memb) const;

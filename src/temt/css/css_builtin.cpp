@@ -2465,7 +2465,7 @@ bool cssMisc::Initialize() {
     }
     else {	   // pass the arg to the script
       int ac = (int)(*cssMisc::s_argc);
-      cssString* av = (cssString*)(*cssMisc::s_argv)[ac];
+      cssString* av = (cssString*)(*cssMisc::s_argv)[(Variant)ac];
       *av = tmp;
       *cssMisc::s_argc = (int)(*cssMisc::s_argc) + 1;
     }

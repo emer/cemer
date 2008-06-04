@@ -237,14 +237,20 @@ int taGroup_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& 
   return nfound;
 }
 
-void taGroup_impl::SearchNameContains(const String& nm, taBase_PtrList& items,
-				      taBase_PtrList* owners) {
+void taGroup_impl::Search_impl(const String& srch, taBase_PtrList& items,
+			       taBase_PtrList* owners,
+			       bool contains, bool case_sensitive,
+			       bool obj_name, bool obj_type,
+			       bool obj_desc, bool obj_val,
+			       bool mbr_name, bool type_desc) {
   int st_sz = items.size;
-  inherited::SearchNameContains(nm, items, owners);
+  inherited::Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+		       obj_desc, obj_val, mbr_name, type_desc);
   bool already_added_me = false;
   if(items.size > st_sz)
     already_added_me = true;
-  gp.SearchNameContains(nm, items, owners);
+  gp.Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+		 obj_desc, obj_val, mbr_name, type_desc);
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
     owners->Link(this);
   }

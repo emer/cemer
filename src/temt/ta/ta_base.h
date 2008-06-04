@@ -636,7 +636,7 @@ public:
   virtual String	GetStateDecoKey() const;
   // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for backgroundt colors in the gui browser, for example
 
-  virtual void* 	GetTA_Element(int idx, TypeDef*& eltd) 
+  virtual void* 	GetTA_Element(Variant idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
   virtual taList_impl*  children_() {return NULL;} 
     // for lists, and for taOBase w/ default children
@@ -973,9 +973,33 @@ public:
   virtual bool		FindCheck(const String& nm) const // #IGNORE check this for the name
   { return ((GetName() == nm) || InheritsFromName(nm)); }
 
-  virtual void		SearchNameContains(const String& nm, taBase_PtrList& items,
-					   taBase_PtrList* owners = NULL);
-  // #CAT_ObjectMgmt search for objects whose name contains given string, from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items)
+  virtual void		Search(const String& srch, taBase_PtrList& items,
+			       taBase_PtrList* owners = NULL, 
+			       bool contains = true, bool case_sensitive = false,
+			       bool obj_name = true, bool obj_type = true,
+			       bool obj_desc = true, bool obj_val = true,
+			       bool mbr_name = true, bool type_desc = false);
+  // #CAT_ObjectMgmt search for objects using srch string, from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items).  contains = use "contains" for all matches instead of exact match, rest are values to search in (obj_desc includes DisplayName as well as any explicit description), obj_val is only for value members and inline members
+
+  virtual void		Search_impl(const String& srch, taBase_PtrList& items,
+				    taBase_PtrList* owners = NULL, 
+				    bool contains = true, bool case_sensitive = false,
+				    bool obj_name = true, bool obj_type = true,
+				    bool obj_desc = true, bool obj_val = true,
+				    bool mbr_name = true, bool type_desc = false);
+  // #IGNORE implementation -- only first Search() is externally called
+
+  virtual bool		SearchTestStr_impl(const String& srch,  String tst,
+					   bool contains, bool case_sensitive);
+  // #IGNORE Search test string according to searching criteria
+
+  virtual bool		SearchTestItem_impl(taBase* obj, const String& srch,  
+					    bool contains, bool case_sensitive,
+					    bool obj_name, bool obj_type,
+					    bool obj_desc, bool obj_val,
+					    bool mbr_name, bool type_desc);
+  // #IGNORE Search test for just this one taBase item according to criteria
+
   virtual void		CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
 					 void_PArray& trg_bases, void_PArray& src_bases,
 					 taBase* cp_base, 
@@ -1691,7 +1715,7 @@ public:
 
   override TypeDef* 	GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group
-  override void*        GetTA_Element(int i, TypeDef*& eltd)
+  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
     { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
   override TypeDef*	El_GetType_(void* it) const
     {return ((TAPtr)it)->GetTypeDef();} // #IGNORE 
@@ -1723,8 +1747,12 @@ public:
   override void	Dump_Load_pre();
   override int	Dump_Load_Value(istream& strm, TAPtr par=NULL);
 
-  override void	SearchNameContains(const String& nm, taBase_PtrList& items,
-				   taBase_PtrList* owners = NULL);
+  override void	Search_impl(const String& srch, taBase_PtrList& items,
+			    taBase_PtrList* owners = NULL, 
+			    bool contains = true, bool case_sensitive = false,
+			    bool obj_name = true, bool obj_type = true,
+			    bool obj_desc = true, bool obj_val = true,
+			    bool mbr_name = true, bool type_desc = false);
   override void	CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
 				 void_PArray& trg_bases, void_PArray& src_bases,
 				 taBase* cp_base,
@@ -2236,8 +2264,8 @@ public:
   virtual void	FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
   
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_int; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_int; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   NOCOPY(int_Array)
   void Initialize()	{err = 0; };
   void Destroy()	{ }; //
@@ -2267,8 +2295,8 @@ class TA_API float_Array : public taArray<float> {
 INHERITED(taArray<float>)
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_float; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_float; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(float_Array);
   TA_ARRAY_FUNS(float_Array, float)
 protected:
@@ -2290,8 +2318,8 @@ class TA_API double_Array : public taArray<double> {
 INHERITED(taArray<double>)
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_double; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_double; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(double_Array);
   TA_ARRAY_FUNS(double_Array, double)
 protected:
@@ -2313,8 +2341,8 @@ class TA_API char_Array : public taArray<char> {
 INHERITED(taArray<char>)
 public:
   STATIC_CONST char blank; // #HIDDEN #READ_ONLY 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_char; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_char; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS(char_Array);
   TA_ARRAY_FUNS(char_Array, char)
 protected:
@@ -2338,8 +2366,8 @@ class TA_API String_Array : public taArray<String> {
 INHERITED(taArray<String>)
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_taString; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_taString; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
 #ifdef TA_USE_QT
   void			ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
 #endif
@@ -2391,8 +2419,8 @@ class TA_API Variant_Array : public taArray<Variant> {
 INHERITED(taArray<Variant>)
 public:
   STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_Variant; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_Variant; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(Variant_Array);
   TA_ARRAY_FUNS(Variant_Array, Variant)
 protected:
@@ -2416,8 +2444,8 @@ INHERITED(taArray<voidptr>)
 public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY 
 
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_voidptr; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_voidptr; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(voidptr_Array);
   TA_ARRAY_FUNS(voidptr_Array, voidptr)
 protected:
@@ -2450,8 +2478,8 @@ public:
   // get all values having given name (converts to strings)
   bool		SetVal(const String& nm, const Variant& vl);
   // set value by name; if name already on list, it is updated (rval = true); else new item added
-  override void*	GetTA_Element(int i, TypeDef*& eltd) 
-  { eltd = &TA_NameVar; if(InRange(i)) return FastEl_(i); return NULL; }
+  override void*	GetTA_Element(Variant i, TypeDef*& eltd) 
+  { eltd = &TA_NameVar; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(NameVar_Array);
   TA_ARRAY_FUNS(NameVar_Array, NameVar)
 protected:
