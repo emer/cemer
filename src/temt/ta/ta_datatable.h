@@ -129,6 +129,7 @@ public:
     KEY			= 0x0020, // indicates this is a key column; a table could have a compound key: set all that apply (note: currently not used by pdp, but may in the future)
     AUTO_KEY		= 0x0040, // automatically set a key from next keygen value when a row is added (scalar cols only) -- you will usually set KEY as well
     READ_ONLY		= 0x0080, // this column is read-only in the gui (helps protect keys or programmatically generated data items)
+    PAT_4D		= 0x0100, // (4d cells only) displays cells in the same geometry as grouped network layers -- NOTE: data is still copied/pasted in clipboard in a 2d format
   };
 
   String		desc; // #NO_SAVE_EMPTY #EDIT_DIALOG optional description to help in documenting the use of this column

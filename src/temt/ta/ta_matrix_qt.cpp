@@ -43,6 +43,7 @@ MatrixTableModel::MatrixTableModel(taMatrix* mat_, QWidget* gui_parent_)
     m_mat->AddDataClient(this);
   }
   gui_parent = gui_parent_;
+  m_pat_4d = false;
 }
 
 MatrixTableModel::~MatrixTableModel() {
@@ -54,7 +55,7 @@ MatrixTableModel::~MatrixTableModel() {
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
   if (!m_mat) return 0;
-  return m_mat->geom.FastEl(0);
+  return m_mat->geom.colCount(pat4D());
 }
 
 QVariant MatrixTableModel::data(const QModelIndex& index, int role) const {
@@ -135,31 +136,61 @@ to find i1,i2... from index:
 1. divide by d0 gives rowframe -- remainder is i1
 2. divide by d1 gives 2d-frame
 */
-QVariant MatrixTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant MatrixTableModel::headerData(int section, 
+  Qt::Orientation orientation, int role) const
+{
   if (role != Qt::DisplayRole)
     return QVariant();
-//TODO: make the headers show the dimenion # when > 2
-  if (orientation == Qt::Horizontal)
-    return QString::number(section); //QString("%1").arg(section);
-  else {// in form: d1[[:d2]:d3]
+  // get an effective pat4D guaranteed true only if applicable
+  bool pat_4d = (pat4D() && (m_mat->dims() >= 4));
+  if (orientation == Qt::Horizontal) {
+    if (pat_4d) {
+      // need to break the flat col down 
+      div_t qr = div(section, m_mat->dim(0));
+      // d0:d2
+      return QString("u%1:g%2").arg(qr.rem).arg(qr.quot);
+    } else {
+      return QString::number(section); //QString("%1").arg(section);
+    }
+  } else {// in form: d1[[:d2]:d3]
     int eff_row;
     switch (matView()) {
-    case taMisc::BOT_ZERO: eff_row = m_mat->rowCount() - section - 1; break;
-    case taMisc::TOP_ZERO: eff_row = section; break;
+    case taMisc::BOT_ZERO: eff_row = m_mat->rowCount(pat_4d) - section - 1; break;
+    default /*case taMisc::TOP_ZERO*/: eff_row = section; break;
     }
     if (m_mat->dims() <= 2) {
       return QString::number(eff_row);
     } else {
+      const int cc = m_mat->colCount(pat_4d);
+      int row_flat_idx = eff_row * cc;
+      MatrixGeom coords;
+      m_mat->geom.DimsFmIndex(row_flat_idx, coords);
+      QString rval;
+      int j;
+      if (pat_4d) {
+        // d1:d3...
+        rval = QString("u%1:g%2").arg(coords[1]).arg(coords[3]);
+        j = 4;
+      } else {
+        // d1...
+        rval = QString("%1").arg(coords[1]);
+        j = 2;
+      }
+      for (int i = j; i < coords.size; ++i) {
+        rval += QString(":%1").arg(coords[i]);
+      }
+      
+/*obs      int d_this = m_mat->colCount(pat_4d);
       div_t r;
-      String rval;
       // find each nextmost dim n by doing modulo remaining dim[n-1]
-      for (int i = 1; i < (m_mat->dims() - 1); ++i) {
-        r = div(eff_row, m_mat->dim(i)); 
+      for (int i = (pat_4d) ? 2:1; i < (m_mat->dims() - 1); ++i) {
+        r = div(eff_row, d_this); 
         eff_row = r.quot;
         if (i > 1) rval = ":" + rval;
         rval = String(r.rem) + rval; 
+        d_this = m_mat->geom.SafeEl(i+1); // for next iter, but safe in case done
       }
-      rval = String(eff_row) + ":"  + rval; 
+      rval = String(eff_row) + ":"  + rval; */
       return rval;
     }
   }
@@ -171,13 +202,7 @@ bool MatrixTableModel::ignoreDataChanged() const {
 
 int MatrixTableModel::matIndex(const QModelIndex& idx) const {
   //note: we dimensionally reduce all dims >1 to 1
-  switch (matView()) {
-  case taMisc::BOT_ZERO:
-    return ((m_mat->rowCount() - idx.row() - 1) * m_mat->dim(0)) + idx.column();
-  case taMisc::TOP_ZERO:
-    return (idx.row() * m_mat->dim(0)) + idx.column();
-  }
-  return -1; // compiler food, never executes
+  return m_mat->geom.IndexFmDims2D(idx.column(), idx.row(), pat4D(), matView());
 }
 
 QMimeData* MatrixTableModel::mimeData (const QModelIndexList& indexes) const {
@@ -197,7 +222,7 @@ QStringList MatrixTableModel::mimeTypes () const {
 
 
 int MatrixTableModel::rowCount(const QModelIndex& parent) const {
-  return m_mat->rowCount();
+  return m_mat->rowCount(pat4D());
   //note: for visual stuff, there is always at least one row
 }
 
@@ -210,6 +235,14 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value,
   }
   return false;
 }
+
+void MatrixTableModel::setPat4D(bool val, bool notify) {
+  if (m_pat_4d == val) return;
+  m_pat_4d = val;
+  if (notify) 
+    emit_layoutChanged();
+}
+
 
 bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
   // TODO: maybe need to check bounds???

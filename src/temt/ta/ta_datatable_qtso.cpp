@@ -5557,6 +5557,7 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
     taMatrix* tcell = dt_->GetValAsMatrix(index.column(), index.row());
     if (tcell) {
       setCellMat(tcell, index);
+      tvCell->model()->setPat4D(col->HasColFlag(DataCol::PAT_4D), false);
       return;
     }
   }

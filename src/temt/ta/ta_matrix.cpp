@@ -117,6 +117,34 @@ void MatrixGeom::Add(int value) {
   el[size++] = value;
 }
 
+int MatrixGeom::colCount(bool pat_4d) const {
+  if (size == 0)
+    return 1;
+  else if (size < 4)
+    return el[0];
+  else {	
+    if (pat_4d)
+      return (el[0] * el[2]);
+    else return (el[0]);
+  }
+}
+
+int MatrixGeom::rowCount(bool pat_4d) const {
+  if (size <= 1)
+    return 1;
+  // more than 2d, return # flat rows
+  int rval = el[1];
+  if (pat_4d && (size >= 4)) { //note: el[2] is part of cols
+    for (int i = 3; i < size; ++i)
+      rval *= el[i];
+  } else {
+    for (int i = 2; i < size; ++i)
+      rval *= el[i];
+  }
+  return rval;
+  
+}
+
 int MatrixGeom::IndexFmDims(const MatrixGeom& d) const {
   return IndexFmDims_(d.el);
 }
@@ -157,6 +185,30 @@ int MatrixGeom::IndexFmDims_(const int* d) const {
   }
   return rval;
 }
+
+int MatrixGeom::IndexFmDims2D(int col, int row, bool pat_4d,
+    taMisc::MatrixView mat_view) const
+{
+  if (size < 4) pat_4d = false;
+  if (mat_view == taMisc::DEF_ZERO)
+    mat_view = taMisc::matrix_view;
+  // 0-base the row
+  const int rc = rowCount(pat_4d); // cache
+  const int cc = colCount(pat_4d);
+  if (mat_view == taMisc::BOT_ZERO) {
+    row = rc - row - 1;
+  }
+  if (pat_4d) {
+    // factor down the row/col to get d2 and d1
+    div_t qr_col = div(col, el[0]); // quot=d2, rem=d0
+    div_t qr_row = div(row, el[1]); // quot=rest, rem=d1
+    return IndexFmDims(qr_col.rem, qr_row.rem, qr_col.quot, qr_row.quot);
+  } else {
+    return (row * cc) + col;
+  }
+  return -1; // compiler food, never executes
+}
+
 
 void MatrixGeom::DimsFmIndex(int idx, MatrixGeom& d) const {
   d.SetSize(size);
@@ -1083,19 +1135,6 @@ bool taMatrix::InsertFrames(int st_fr, int n_fr) {
 void taMatrix::Reset() {
   EnforceFrames(0);
   UpdateSlices_Collapse();
-}
-
-int taMatrix::rowCount() {
-  if (dims() <= 1)
-    return 1;
-  else if (dims() == 2)
-    return dim(1);
-  else { // more than 2d, return # flat rows
-    int rval = dim(1);
-    for (int i = dims() - 1; i > 1; --i)
-      rval *= dim(i);
-    return rval;
-  }
 }
 
 int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {

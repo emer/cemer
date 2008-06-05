@@ -579,6 +579,7 @@ public:
   };
 
   enum MatrixView { 	// order of display for matrix cols
+    DEF_ZERO    = -1, // #IGNORE use the current global default
     BOT_ZERO, 	// row zero is displayed at bottom of view (default)
     TOP_ZERO 	// row zero is displayed at top of view (ex. for images)
   };

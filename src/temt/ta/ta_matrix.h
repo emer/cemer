@@ -195,6 +195,8 @@ friend class DataCol;
 public:
   int			size; // DO NOT SET DIRECTLY, use SetSize
   
+  int 			colCount(bool pat_4d = false) const; // #IGNORE
+  int			rowCount(bool pat_4d = false) const; // #IGNORE
   inline int		dims() const {return size;} // convenience
   bool			Equal(const MatrixGeom& other) const;
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
@@ -219,6 +221,9 @@ public:
   int			IndexFmDims(int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0) const;
     // get index from dimension values, based on geometry
+  int			IndexFmDims2D(int col, int row, bool pat_4d = true,
+    taMisc::MatrixView mat_view = taMisc::DEF_ZERO) const;
+    // #IGNORE get index from dimension values for 2d display (MatEditor and GridView)
   void 			DimsFmIndex(int idx, MatrixGeom& dims) const;
   // get dimension values from index, based on geometry
 
@@ -290,6 +295,9 @@ public:
   //////////////////////////////////////////////////////////////////
   // Access functions
   
+  int 			colCount(bool pat_4d = false) const
+    {return geom.colCount(pat_4d);}
+  // #CAT_Access flat col count, for 2-d grid operations, never 0; by2 puts d0/d1 in same row when dims>=4
   inline int		count() const {return size;}
   // #CAT_Access the number of items
   inline int		dims() const {return geom.size;}
@@ -300,8 +308,9 @@ public:
   // #CAT_Access number of frames currently in use (value of highest dimension) 
   int 			frameSize() const;
   // #CAT_Access number of elements in each frame (product of inner dimensions) 
-  int			rowCount();
-  // #CAT_Access flat row count, for 2-d grid operations, only 0 if empty
+  int			rowCount(bool pat_4d = false) const
+    {return geom.rowCount(pat_4d);}
+  // #CAT_Access flat row count, for 2-d grid operations, never 0; by2 puts d0/d1 in same row when dims>=4
   int			FrameToRow(int f) const;
   // #CAT_Access convert frame number to row number
   int			FastElIndex(int d0, int d1=0, int d2=0, int d3=0,

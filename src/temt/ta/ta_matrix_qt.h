@@ -43,6 +43,8 @@ public:
   taMisc::MatrixView 	matView() const;
 #endif //note: bugs in maketa necessitated these sections
   taMatrix*		mat() const {return m_mat;}
+  inline bool		pat4D() const {return m_pat_4d;} // for dims>=4 whether to group d0/d1 in row (default is true)
+  void			setPat4D(bool val, bool notify = true);
   
   void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
     int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
@@ -74,6 +76,7 @@ protected:
  
   taMatrix*		m_mat;
   taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
+  bool			m_pat_4d;
   
   bool			ValidateIndex(const QModelIndex& index) const;
   bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
