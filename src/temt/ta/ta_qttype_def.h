@@ -112,6 +112,19 @@ public:
   virtual void		GetValue(taiData* dat, void* base);
   // get the value from the representation -- same rules as GetDataRep
 
+  void			SetCurParObjType(void* par_obj_base, TypeDef* pob_typ) {
+    m_par_obj_base = par_obj_base;
+    m_par_obj_type = pob_typ;
+  }
+  // called by taiMember::GetImage_impl and GetValue_impl prior to calling respective functions
+  void			ClearCurParObjType() {
+    m_par_obj_base = NULL;
+    m_par_obj_type = NULL;
+  }
+  // called by taiMember::GetImage_impl and GetValue_impl after calling respective functions
+  void*			GetCurParObjBase() { return m_par_obj_base; }
+  void*			GetCurParObjType() { return m_par_obj_type; }
+
   void			Initialize();
   void			Destroy();
   TAQT_TYPE_INSTANCE(taiType, taiTypeBase);
@@ -126,6 +139,11 @@ protected:
   // generate the gui representation of the data --  default behavior uses a taiField type
   virtual void		GetValue_impl(taiData* dat, void* base);
   // get the value from the representation --  default behavior uses a taiField type
+
+  void*			m_par_obj_base;
+  // if GetImage/Value is called by a taiMember, it will set this to point to parent object's base
+  TypeDef*		m_par_obj_type;
+  // if GetImage/Value is called by a taiMember, it will set this to point to parent object's base type
 };
 
 

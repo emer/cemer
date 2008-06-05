@@ -283,11 +283,12 @@ public:
 
   enum VarFlags { // #BITS flags for modifying program variables
     PV_NONE		= 0, // #NO_BIT
-    CTRL_PANEL		= 0x0001, // show this variable in the control panel
+    CTRL_PANEL		= 0x0001, // #CONDSHOW_OFF_flags:LOCAL_VAR show this variable in the control panel
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK		= 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
     LOCAL_VAR		= 0x0008, // #NO_SHOW this is a local variable which does not set or update values!
     FUN_ARG		= 0x0010, // #NO_SHOW this is a function argument variable
+    USED		= 0x0020, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
   };
 
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
@@ -362,7 +363,10 @@ public:
 
   virtual void		SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
+  virtual bool		UpdateUsedFlag();
+  // #IGNORE update the USED flag based on datalink refs
 
+  override int		GetEnabled() const;
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();

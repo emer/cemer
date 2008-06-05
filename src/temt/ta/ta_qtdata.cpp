@@ -1018,6 +1018,7 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
+  // todo: move this to the getImage case so it can be dynamic..
   if (is_enum && typ) {
     int cnt = 0;
     for (int i = 0; i < typ->enum_vals.size; ++i) {
@@ -1037,6 +1038,7 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
 }
 
 void taiBitBox::Initialize(QWidget* gui_parent_) {
+  m_par_obj_base = NULL;
   SetRep(MakeLayoutWidget(gui_parent_));
   lay = new QHBoxLayout(m_rep);
   lay->setMargin(0); // in Qt4 it adds style-dependent defaults
@@ -1076,6 +1078,33 @@ void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
 }
 
 void taiBitBox::GetImage(int val) {
+  // todo: help me!  I can't get this code to work:
+  /* 
+  if (typ && typ->InheritsFormal(TA_enum)) {
+    m_rep->children().clear();	// just reset it! <- this complains about const
+    int cnt = 0;
+    for (int i = 0; i < typ->enum_vals.size; ++i) {
+      EnumDef* ed = typ->enum_vals.FastEl(i);
+      if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
+        ed->HasOption("NO_SHOW"))
+        continue;
+      if(m_par_obj_base) { // <- here begins my major hack!!
+	bool is_on = false; // defaults here make it editable in test chain below
+	bool val_is_eq = false;
+	taiType::CheckProcessCondMembMeth("CONDSHOW", ed, m_par_obj_base, is_on, val_is_eq);
+	bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+	if(!is_visible) continue;
+      }
+      // auto apply if entire guy marked, or if item is marked
+      bool auto_apply = ((flags() & taiData::flgAutoApply)
+        || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
+      if (cnt++ > 0)
+        lay->addSpacing(taiM->hsep_c);
+      AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc);
+    }
+    lay->addStretch();
+  }
+  */
   QObject *obj;
   foreach (obj, m_rep->children() ) {
     if (obj->inherits("iBitCheckBox")) {
@@ -3482,6 +3511,7 @@ void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
+    if (!ShowMethod(mth) || !ShowItemFilter(NULL, mth)) continue;
     cat = mth->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
@@ -3500,6 +3530,7 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
     if ((mth->owner != mbs) || mth->is_override) continue;
+    if (!ShowMethod(mth) || !ShowItemFilter(NULL, mth)) continue;
     ++rval;
     cat = mth->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);

@@ -3918,6 +3918,10 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
     show |= (byte)taMisc::IS_EXPERT;
 
+  String cat = OptionAfter("CAT_");
+  if(cat.contains("Xpert"))	// special code for expert -- no need for redundant #EXPERT flag
+    show |= (byte)taMisc::IS_EXPERT;
+
   // if NO_SHOW and no SHOW or explicit other, then never shows
   if (mbr_no_show || (typ_no_show && (!mbr_show || (show & (byte)taMisc::NORM_MEMBS)))) {
     show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);

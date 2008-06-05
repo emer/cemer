@@ -543,14 +543,14 @@ public:
   // Flags
 
   inline void		SetDataFlag(DataFlags flg)   { data_flags = (DataFlags)(data_flags | flg); }
-  // set data column flag state on
+  // #CAT_ObjectMgmt set data column flag state on
   inline void		ClearDataFlag(DataFlags flg) { data_flags = (DataFlags)(data_flags & ~flg); }
-  // clear data column flag state (set off)
+  // #CAT_ObjectMgmt clear data column flag state (set off)
   inline bool		HasDataFlag(DataFlags flg) const { return (data_flags & flg); }
-  // check if data column flag is set
+  // #CAT_ObjectMgmt check if data column flag is set
   inline void		SetDataFlagState(DataFlags flg, bool on)
   { if(on) SetDataFlag(flg); else ClearDataFlag(flg); }
-  // set data column flag state according to on bool (if true, set flag, if false, clear it)
+  // #CAT_ObjectMgmt set data column flag state according to on bool (if true, set flag, if false, clear it)
 
   /////////////////////////////////////////////////////////
   // columns
@@ -620,11 +620,11 @@ public:
 					  int d4=0, int d5=0, int d6=0);
   // #CAT_Columns change type and/or geometry of column with given name 
   
-  virtual DataCol* 	GetColData(int col, bool quiet = false) const {
-    bool bad_col = (col < 0 || col >= cols());
-    if(quiet && bad_col) return NULL;
-    if(TestError(bad_col, "GetColData", "column number is out of range")) return NULL;
-    return data.FastEl(col);
+  virtual DataCol* 	GetColData(Variant col, bool quiet = false) const {
+    if(col.isStringType()) return FindColName(col.toString(), idx_def_arg, !quiet);
+    DataCol* rval = data.SafeEl(col.toInt());
+    TestError(!quiet && !rval, "GetColData", "column number is out of range", col.toString());
+    return rval;
   }
   // #CAT_Columns get col data for given column 
   virtual taMatrix*	GetColMatrix(int col) const
@@ -665,8 +665,10 @@ public:
   // #CAT_Rows calculates an actual index for a col item, based on the current #rows and size of that col; returns 'true' if act_idx >= 0 (i.e., if there is a data item for that column)
   inline bool		idx_err(int row_num, int col_size, int& act_idx) const {
     return !TestError(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
+  // #IGNORE
   inline bool		idx_warn(int row_num, int col_size, int& act_idx) const {
     return !TestWarning(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
+  // #IGNORE 
   virtual bool		RowInRangeNormalize(int& row);
   // #CAT_Rows normalizes row (if -ve) and tests result in range 
   virtual void		AllocRows(int n);
@@ -695,68 +697,68 @@ public:
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
 
-  const Variant 	GetVal(int col, int row) const
-  { return GetValAsVar(col, row); }
-  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column, row
-  bool 			SetVal(const Variant& val, int col, int row)
-  { return SetValAsVar(val, col, row); }
-  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column, row; returns 'true' if valid access and set is successful
+  const Variant 	GetVal(Variant col, int row) const;
+  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name
+  bool 			SetVal(const Variant& val, Variant col, int row);
+  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful
 
-  const Variant 	GetMatrixVal(int col, int row,
-				     int d0, int d1=0, int d2=0, int d3=0) const
-  { return GetValAsVarMDims(col, row, d0, d1, d2, d3); }
-  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies
-  bool 			SetMatrixVal(const Variant& val, int col, int row, 
-				     int d0, int d1=0, int d2=0, int d3=0)
-  { return SetValAsVarMDims(val, col, row, d0, d1, d2, d3); }
-  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+  const Variant 	GetMatrixVal(Variant col, int row,
+				     int d0, int d1=0, int d2=0, int d3=0) const;
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies -- column can be specified as either integer index or a string that is then used to find the given column name
+  bool 			SetMatrixVal(const Variant& val, Variant col, int row, 
+				     int d0, int d1=0, int d2=0, int d3=0);
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful
 
-  const Variant 	GetMatrixFlatVal(int col, int row,
-					 int cell) const
-  { return GetValAsVarM(col, row, cell); }
-  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions)
-  bool 			SetMatrixFlatVal(const Variant& val, int col, int row, 
-					 int cell)
-  { return SetValAsVarM(val, col, row, cell); }
-  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions); returns 'true' if valid access and set is successful
+  const Variant 	GetMatrixFlatVal(Variant col, int row, int cell) const;
+  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions) -- column can be specified as either integer index or a string that is then used to find the given column name
+  bool 			SetMatrixFlatVal(const Variant& val, Variant col, int row, int cell);
+  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix flat cell index (regardless of dimensions) -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful
 
-  bool	 	InitVals(const Variant& init_val, int col);
-  // #CAT_Modify initialize all values in given column to given value
-  bool	 	InitValsToRowNo(int col);
-  // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+  bool	 	InitVals(const Variant& init_val, Variant col);
+  // #CAT_Modify initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name
+  bool	 	InitValsToRowNo(Variant col);
+  // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name
 
-  int 		FindVal(const Variant& val, int col, int st_row = 0) const;
-  // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  int 		FindVal(const Variant& val, Variant col, int st_row = 0) const;
+  // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- column can be specified as either integer index or a string that is then used to find the given column name
+
+  int 		FindMultiVal(int st_row, const Variant& val1, Variant col1,
+			     const Variant& val2=0, Variant col2="",
+			     const Variant& val3=0, Variant col3="",
+			     const Variant& val4=0, Variant col4="",
+			     const Variant& vall5=0, Variant col5="",
+			     const Variant& val6=0, Variant col6="") const;
+  // #CAT_Access find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end) -- columns can be specified as either integer index or a string that is then used to find the given column name
 
   /////////////////////////////
   // column name versions:
 
   const Variant 	GetValColName(const String& col_name, int row) const;
-  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row
+  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row
   bool 			SetValColName(const Variant& val, const String& col_name, int row);
-  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful
+  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful
 
   const Variant 	GetMatrixValColName(const String& col_name, int row,
 					    int d0, int d1=0, int d2=0, int d3=0) const;
-  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
   bool 			SetMatrixValColName(const Variant& val, const String& col_name,
 					    int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
   const Variant 	GetMatrixFlatValColName(const String& col_name, int row,
 						int cell) const;
-  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality)
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality)
   bool 			SetMatrixFlatValColName(const Variant& val, const String& col_name,
 						int row, int cell);
-  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful
 
   bool	 	InitValsColName(const Variant& init_val, const String& col_name);
-  // #CAT_Modify initialize all values in column of given name to given value
+  // #CAT_XpertModify initialize all values in column of given name to given value
   bool	 	InitValsToRowNoColName(const String& col_name);
-  // #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_XpertModify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
 
   int 		FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
-  // #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #CAT_XpertAccess find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
   int 		FindMultiValColName(int st_row, const Variant& val1, const String& col_name1,
 				    const Variant& val2=0, const String& col_name2="",
@@ -764,55 +766,55 @@ public:
 				    const Variant& val4=0, const String& col_name4="",
 				    const Variant& vall5=0, const String& col_name5="",
 				    const Variant& val6=0, const String& col_name6="") const;
-  // #CAT_Access find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #CAT_XpertAccess find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
   /////////////////////////////
   // column and row name versions:
 
   const Variant 	GetValColRowName(const String& col_name, const String& row_col_name,
 					 const Variant& row_value) const;
-  // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name
+  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name
   bool 			SetValColRowName(const Variant& val, const String& col_name,
 				      const String& row_col_name, const Variant& row_value);
-  // #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful
+  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful
 
   const Variant 	GetMatrixValColRowName(const String& col_name,
 				const String& row_col_name, const Variant& row_value,
 					    int d0, int d1=0, int d2=0, int d3=0) const;
-  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies
   bool 			SetMatrixValColRowName(const Variant& val, const String& col_name,
 				    const String& row_col_name, const Variant& row_value,
 					       int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
   const Variant 	GetMatrixFlatValColRowName(const String& col_name,
 				const String& row_col_name, const Variant& row_value,
 					    int cell) const;
-  // #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells)
+  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells)
   bool 			SetMatrixFlatValColRowName(const Variant& val, const String& col_name,
 				    const String& row_col_name, const Variant& row_value,
 					       int cell);
-  // #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful
+  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful
 
   /////////////////////////////
   // column pointer versions, just for the gui:
 
   bool	 	InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #CAT_Columns #MENU #MENU_ON_Columns #FROM_GROUP_data initialize all values in given column to given value
+  // #CAT_XpertColumns #MENU #MENU_ON_Columns #FROM_GROUP_data initialize all values in given column to given value
   bool	 	InitValsToRowNoCol(DataCol* col) 
   { return col->InitValsToRowNo(); }
-  // #CAT_Modify #MENU #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_XpertModify #MENU #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
   int 		FindValCol(DataCol* col, const Variant& val, int st_row = 0) const 
   { return col->FindVal(val, st_row); }
-  // #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #CAT_XpertAccess #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
   int 		FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
 				const Variant& val2=0, DataCol* col2=NULL,
 				const Variant& val3=0, DataCol* col3=NULL,
 				const Variant& val4=0, DataCol* col4=NULL,
 				const Variant& vall5=0, DataCol* col5=NULL,
 				const Variant& val6=0, DataCol* col6=NULL) const;
-  // #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #CAT_XpertAccess #MENU #FROM_GROUP_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
 
   /////////////////////////////////////////////////////////
@@ -911,7 +913,7 @@ public:
 
   int 			GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void			GetFlatGeom(const CellRange& cr, int& tot_cols, 
-   int& max_cell_rows); // IGNORE get the total flat cols and max rows per cell; used for TSV output
+   int& max_cell_rows); // #IGNORE get the total flat cols and max rows per cell; used for TSV output
 
   String		HeaderToTSV(); // #IGNORE for tsv save
   String		RangeToTSV(const CellRange& cr); // #IGNORE for clip operations

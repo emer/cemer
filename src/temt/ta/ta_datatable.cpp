@@ -928,6 +928,48 @@ taMatrix* DataTable::GetMatrixData_impl(int chan) {
 }
 
 ///////////////////////////////////////////
+//	Basic Access/Modify with Variant col spec
+
+const Variant DataTable::GetVal(Variant col, int row) const {
+  if(col.isStringType())
+    return GetValColName(col.toString(), row);
+  return GetValAsVar(col.toInt(), row);
+}
+
+bool DataTable::SetVal(const Variant& val, Variant col, int row) {
+  if(col.isStringType())
+    return SetValColName(val, col.toString(), row);
+  return SetValAsVar(val, col.toInt(), row);
+}
+
+
+const Variant DataTable::GetMatrixVal(Variant col, int row,
+				      int d0, int d1, int d2, int d3) const {
+  if(col.isStringType())
+    return GetMatrixValColName(col.toString(), row, d0, d1, d2, d3);
+  return GetValAsVarMDims(col.toInt(), row, d0, d1, d2, d3);
+}
+
+bool DataTable::SetMatrixVal(const Variant& val, Variant col, int row,
+			     int d0, int d1, int d2, int d3)  {
+  if(col.isStringType())
+    return SetMatrixValColName(val, col.toString(), row, d0, d1, d2, d3);
+  return SetValAsVarMDims(val, col.toInt(), row, d0, d1, d2, d3);
+}
+
+const Variant DataTable::GetMatrixFlatVal(Variant col, int row, int cell) const {
+  if(col.isStringType())
+    return GetMatrixFlatValColName(col.toString(), row, cell);
+  return GetValAsVarM(col.toInt(), row, cell);
+}
+
+bool DataTable::SetMatrixFlatVal(const Variant& val, Variant col, int row, int cell) {
+  if(col.isStringType())
+    return SetMatrixFlatValColName(val, col.toString(), row, cell);
+  return SetValAsVarM(val, col.toInt(), row, cell);
+}
+
+///////////////////////////////////////////
 //	Column Name Access
 
 const Variant DataTable::GetValColName(const String& col_nm, int row) const {
@@ -1100,14 +1142,14 @@ bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col
 
 /////////////////////
 
-bool DataTable::InitVals(const Variant& init_val, int col) {
+bool DataTable::InitVals(const Variant& init_val, Variant col) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   da->InitVals(init_val);
   return true;
 }
 
-bool DataTable::InitValsToRowNo(int col) {
+bool DataTable::InitValsToRowNo(Variant col) {
   DataCol* da = GetColData(col);
   if (!da) return false;
   da->InitValsToRowNo();
@@ -1132,7 +1174,7 @@ bool DataTable::InitValsToRowNoColName(const String& col_nm) {
 
 /////////////////////
 
-int DataTable::FindVal(const Variant& val, int col, int st_row) const {
+int DataTable::FindVal(const Variant& val, Variant col, int st_row) const {
   DataCol* da = GetColData(col);
   if (!da) return false;
   return da->FindVal(val, st_row);
@@ -1143,6 +1185,23 @@ int DataTable::FindValColName(const Variant& val, const String& col_nm, int st_r
   DataCol* da = FindColName(col_nm, col, true);
   if (!da) return false;
   return da->FindVal(val, st_row);
+}
+
+int DataTable::FindMultiVal(int st_row, const Variant& val1, Variant col1,
+			    const Variant& val2, Variant col2,
+			    const Variant& val3, Variant col3,
+			    const Variant& val4, Variant col4,
+			    const Variant& val5, Variant col5,
+			    const Variant& val6, Variant col6) const {
+  DataCol* cold1=GetColData(col1,true); // quiet
+  DataCol* cold2=GetColData(col2,true);
+  DataCol* cold3=GetColData(col3,true);
+  DataCol* cold4=GetColData(col4,true);
+  DataCol* cold5=GetColData(col5,true);
+  DataCol* cold6=GetColData(col6,true);
+
+  return FindMultiValCol(st_row, val1, cold1, val2, cold2, val3, cold3, val4, cold4, 
+			 val5, cold5, val6, cold6); 
 }
 
 int DataTable::FindMultiValColName(int st_row, const Variant& val1, const String& col_nm1,
@@ -1720,6 +1779,7 @@ bool DataTable::RenameCol(const String& cur_nm, const String& new_nm) {
 }
 
 DataCol* DataTable::FindColName(const String& col_nm, int& col_idx, bool err_msg) const {
+  if(col_nm.empty()) return NULL;
   DataCol* da = data.FindName(col_nm, col_idx);
   TestError(!da && err_msg, "FindColName",  "could not find column named:", col_nm);
   return da;

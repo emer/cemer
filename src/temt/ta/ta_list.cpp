@@ -1158,6 +1158,7 @@ void taFixedArray_impl::Insert_(const void* it, int where, int n) {
 }
 
 const void* taFixedArray_impl::SafeEl_(int i) const {
+  i=Index(i);
   if (InRange(i)) return FastEl_(i); 
   else            return El_GetErr_();
 }
@@ -1359,6 +1360,7 @@ void taArray_impl::RemoveIdxOnly(int i) {
 }
 
 const void* taArray_impl::SafeEl_(int i) const {
+  i = Index(i);
   if (InRange(i)) return ((taArray_impl*)this)->FastEl_(i); //safe const cast
   else            return El_GetErr_();
 }

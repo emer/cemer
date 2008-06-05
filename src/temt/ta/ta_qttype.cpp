@@ -60,7 +60,7 @@ taiTypeBase::~taiTypeBase() {
 
 
 //////////////////////////
-// 	taiType	//
+// 	taiType		//
 //////////////////////////
 
 bool taiType::CheckProcessCondMembMeth(const String condkey,
@@ -198,6 +198,8 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
 }
 
 void taiType::Initialize() {
+  m_par_obj_base = NULL;
+  m_par_obj_type = NULL;
 }
 
 void taiType::Destroy() {
@@ -447,6 +449,7 @@ taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* g
 void taiEnumType::GetImage_impl(taiData* dat, const void* base) {
   if (isBit) {
     taiBitBox* rval = (taiBitBox*)dat;
+    rval->m_par_obj_base = GetCurParObjBase(); // note: hack to pass things to bitbox for condshow
     rval->GetImage(*((int*)base));
   } else if (isReadOnly(dat)) {
     taiField* rval = (taiField*)(dat);
@@ -1182,7 +1185,9 @@ void taiMember::GetImage(taiData* dat, const void* base) {
 }
 
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
+  mbr->type->it->SetCurParObjType((void*)base, typ);
   mbr->type->it->GetImage(dat, mbr->GetOff(base));
+  mbr->type->it->ClearCurParObjType();
   GetOrigVal(dat, base);
 }
 
@@ -1242,7 +1247,9 @@ void taiMember::GetOrigVal(taiData* dat, const void* base) {
 }
 
 void taiMember::GetMbrValue_impl(taiData* dat, void* base) {
+  mbr->type->it->SetCurParObjType(base, typ);
   mbr->type->it->GetValue(dat, mbr->GetOff(base));
+  mbr->type->it->ClearCurParObjType();
 }
 
 bool taiMember::isCondEdit() const { //return false; //TEMP

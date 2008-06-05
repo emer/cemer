@@ -510,20 +510,7 @@ void ProgVar::InitLinks() {
   taBase::Own(dyn_enum_val, this);
   inherited::InitLinks();
   if(!taMisc::is_loading) {
-    ProgVars* pvs = GET_MY_OWNER(ProgVars);
-    if(pvs)
-      SetVarFlag(LOCAL_VAR);
-    else {
-      ClearVarFlag(LOCAL_VAR);
-      Function* myfun = GET_MY_OWNER(Function);
-      if(myfun) {
-	SetVarFlag(FUN_ARG);
-	SetVarFlag(LOCAL_VAR);	// also local!
-      }
-      else {
-	ClearVarFlag(FUN_ARG);
-      }
-    }
+    SetFlagsByOwnership();
   }
 }
 
@@ -556,6 +543,7 @@ void ProgVar::SetFlagsByOwnership() {
     bool_val = false;
     object_val = NULL;
     ClearVarFlag(CTRL_PANEL);
+    ClearVarFlag(CTRL_READ_ONLY);
     // now check for fun args
     ClearVarFlag(FUN_ARG);
     if(owner && owner->InheritsFrom(&TA_ProgVar_List)) {
@@ -564,6 +552,31 @@ void ProgVar::SetFlagsByOwnership() {
 	SetVarFlag(FUN_ARG);
     }
   }
+}
+
+bool ProgVar::UpdateUsedFlag() {
+  taDataLink* dl = data_link();
+  if(!dl) return false;
+  int cnt = 0;
+  taDataLinkItr itr;
+  taSmartRef* el;
+  FOR_DLC_EL_OF_TYPE(taSmartRef, el, dl, itr) {
+    taBase* spo = el->GetOwner();
+    if(!spo) continue;
+    cnt++;
+  }
+  bool prv_val = HasVarFlag(USED);
+  if(cnt > 0) {
+    SetVarFlag(USED);
+  }
+  else {
+    ClearVarFlag(USED);
+  }
+  return HasVarFlag(USED) != prv_val; // return value is whether we changed
+}
+
+int ProgVar::GetEnabled() const {
+  return HasVarFlag(USED);
 }
 
 void ProgVar::Copy_(const ProgVar& cp) {
@@ -612,6 +625,7 @@ void ProgVar::UpdateAfterEdit_impl() {
     }
   }
   SetFlagsByOwnership();
+  UpdateUsedFlag();
 }
 
 void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -902,6 +916,7 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
 }
 
 const String ProgVar::GenCss(bool is_arg) {
+  UpdateAfterEdit();		// update used and other flags
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
 } 
 

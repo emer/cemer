@@ -264,7 +264,7 @@ public:
   virtual TypeDef*	El_GetType_(void*) const {return GetElType();}
     // #IGNORE should usually override to provide per-item typing where applicable
   void*		SafeEl_(int i) const
-  { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
+  { void* rval=NULL; i=Index(i); if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
   virtual void*	FindName_(const String& it, int& idx=no_index) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
@@ -316,14 +316,18 @@ public:
   // functions that don't depend on the type	//
   ////////////////////////////////////////////////
 
-  virtual TypeDef* 	GetElType() const {return NULL;}		// #IGNORE Default type for objects in group
+  virtual TypeDef* 	GetElType() const {return NULL;}
+  // #IGNORE Default type for objects in group
   virtual void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
+  inline int	Index(int idx) const { if(idx < 0) idx += size; return idx; }
+  // #CAT_XpertAccess get actual index from index value that can also be negative, meaning access from end of list
   inline bool	InRange(int idx) const { return ((idx < size) && (idx >= 0)); }
+  // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
   virtual bool	Alloc(int sz);
-  // #CAT_Modify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
+  // #CAT_XpertModify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
   virtual bool	AllocExact(int sz);
-  // #CAT_Modify allocate exact number specified
+  // #CAT_XpertModify allocate exact number specified
   void		Trim(int n); // #IGNORE if larger than n, trim to n (does NOT expand)
   virtual void 	Reset()			{ RemoveAll(); }
   // #CAT_Modify reset the list (remove all elements)
@@ -360,9 +364,9 @@ public:
   virtual void 	UpdateAllIndicies();	// #IGNORE update all indices of elements in list
 
   void*		FirstEl(taListItr& itr) {itr = 0; return SafeEl_(0);}
-  // #CAT_Access get the first item on the list, initialize iterator
+  // #CAT_XpertAccess get the first item on the list, initialize iterator
   void*		NextEl(taListItr& itr) {return (++itr < size) ? FastEl_(itr) : NULL;}
-  // #CAT_Access get the next item on the list according to iterator
+  // #CAT_XpertAccess get the next item on the list according to iterator
 
   /////////////////////////////////////////////////////////////////////////
   // replicating items: either by clone/add (duplicate) or link (borrow) //
@@ -403,12 +407,12 @@ public:
   virtual int		NumListCols() const {return 0;}
   // #IGNORE number of columns in a list view for this item type
   virtual const KeyString GetListColKey(int col) const {return _nilKeyString;}
-    // #IGNORE col key for the default list column
+  // #IGNORE col key for the default list column
   virtual String	GetColHeading(const KeyString& key) const {return _nilKeyString;} 
-   // #IGNORE header text for the given key
+  // #IGNORE header text for the given key
   virtual String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
     int itm_idx = -1) const {return _nilKeyString;}
-    // #IGNORE itm_idx is a hint from source, -1 means not specified or ignore
+  // #IGNORE itm_idx is a hint from source, -1 means not specified or ignore
 
   // output
   virtual void 	List(ostream& strm=cout) const;
@@ -432,84 +436,85 @@ public:
 
   // operators
   T*		SafeEl(int i) const		{ return (T*)SafeEl_(i); }
-  // element at index
+  // #CAT_Access element at index
   T*		FastEl(int i) const		{ return (T*)el[i]; }
-  // fast element (no range checking)
+  // #CAT_Access fast element (no range checking)
   T* 		operator[](int i) const		{ return (T*)el[i]; }
   void		operator=(const taPtrList<T>& cp) { Reset(); Borrow(cp); }
   // borrow is guaranteed to work, others require EL_ functions..
 
   T*		Edit_El(T* item) const		{ return SafeEl(FindEl(item)); }
-  // #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
+  // #CAT_Access #MENU #MENU_ON_Edit #USE_RVAL #ARG_ON_OBJ Edit given list item
 
   T*		FindName(const String& item_nm, int& idx=no_index) const { return (T*)FindName_(item_nm, idx); }
-  // find given named element (NULL = not here), sets idx
+  // #CAT_Access find given named element (NULL = not here), sets idx
   T*		Pop()				{ return (T*)Pop_(); }
-  // pop the last element off the stack
+  // #CAT_Modify pop the last element off the stack
   T*		Peek() const			{ return (T*)Peek_(); }
-  // peek at the last element on the stack
+  // #CAT_Access peek at the last element on the stack
 
   virtual T*	AddUniqNameOld(T* item)		{ return (T*)AddUniqNameOld_((void*)item); }
-  // add so that name is unique, old used if dupl, returns one used
+  // #CAT_Modify add so that name is unique, old used if dupl, returns one used
   virtual T*	LinkUniqNameOld(T* item)		{ return (T*)LinkUniqNameOld_((void*)item); }
-  // link so that name is unique, old used if dupl, returns one used
+  // #CAT_Modify link so that name is unique, old used if dupl, returns one used
 
   ////////////////////////////////////////////////
   // 	functions that are passed el of type	//
   ////////////////////////////////////////////////
 
   virtual int	FindEl(const T* item) const	{ return FindEl_((const void*)item); }
-  // find element in list (-1 if not there)
+  // #CAT_Access find element in list (-1 if not there)
   virtual void	AddOnly(T* item)		{ AddOnly_((void*)item); }
-  // append a new pointer to end of list, does not own it or do anything else
+  // #IGNORE append a new pointer to end of list, does not own it or do anything else
   virtual void	Add(T* item)	      		{ Add_((void*)item); }
-  // add element to the list and "own" item
+  // #CAT_Modify add element to the list and "own" item
   virtual bool	AddUnique(T* item)		{ return AddUnique_((void*)item); }
-  // add so that object is unique, true if unique
+  // #CAT_Modify add so that object is unique, true if unique
   virtual bool	AddUniqNameNew(T* item)		{ return AddUniqNameNew_((void*)item); }
-  // add so that name is unique, true if unique, new replaces existing
+  // #CAT_XpertModify add so that name is unique, true if unique, new replaces existing
 
   virtual bool	Insert(T* item, int idx)	{ return Insert_((void*)item, idx); }
-  // Add or insert element at idx (-1 for end)
+  // #CAT_Modify Add or insert element at idx (-1 for end)
   virtual bool 	ReplaceEl(T* old_it, T* new_it)	{ return ReplaceEl_((void*)old_it, (void*)new_it); }
-  // Replace old element with new element
+  // #CAT_Modify Replace old element with new element
   virtual bool 	ReplaceName(const String& old_nm, T* new_it)	{ return ReplaceName_(old_nm, (void*)new_it); }
+  // #CAT_Modify replace element with given name with the new one
   virtual bool 	ReplaceIdx(int old_idx, T* new_it)	{ return ReplaceIdx_(old_idx, (void*)new_it); }
-  // replace element at index with the new one
+  // #CAT_Modify replace element at index with the new one
 
   virtual bool	RemoveEl(T* item)	{ return RemoveEl_(item); }
-  // #MENU #ARG_ON_OBJ Remove given item from list
+  // #CAT_Modify #MENU #ARG_ON_OBJ Remove given item from list
   // note: folowing not virt, because we hide in taList with stronger typed version
   virtual T* 	DuplicateEl(const T* item) { return (T*)DuplicateEl_((void*)item); }
-  // #MENU #ARG_ON_OBJ Duplicate given list item and Add to list; returns item added, or NULL if failed
+  // #CAT_Modify #MENU #ARG_ON_OBJ Duplicate given list item and Add to list; returns item added, or NULL if failed
 
   virtual void 	Link(T* item)			{ Link_((void*)item); }
-  // Link an item to list without owning it
+  // #CAT_Modify Link an item to list without owning it
   virtual bool	LinkUnique(T* item)		{ return LinkUnique_((void*)item); }
-  // link so that object is unique, true if unique
+  // #CAT_Modify link so that object is unique, true if unique
   virtual bool	LinkUniqNameNew(T* item)		{ return LinkUniqNameNew_((void*)item); }
-  // link so that name is unique, true if unique, new replaces existing
+  // #CAT_XpertModify link so that name is unique, true if unique, new replaces existing
   virtual bool	InsertLink(T* item, int idx= -1) { return InsertLink_((void*)item, idx);}
-  // #MENU Insert a link at index (-1 for end)
+  // #CAT_Modify #MENU Insert a link at index (-1 for end)
   virtual bool 	ReplaceLinkEl(T* old_it, T* new_it)	{ return ReplaceLinkEl_((void*)old_it, (void*)new_it); }
-  // replace given element (if on list) with the new one
+  // #CAT_Modify replace given element (if on list) with the new one
   virtual bool 	ReplaceLinkName(const String& old_nm, T* new_it) { return ReplaceLinkName_(old_nm, (void*)new_it); }
-  // replace given named element (if on list) with the new one
+  // #CAT_Modify replace given named element (if on list) with the new one
   virtual bool 	ReplaceLinkIdx(int old_idx, T* new_it)	{ return ReplaceLinkIdx_(old_idx, (void*)new_it); }
-  // replace element with a link to the new one
+  // #CAT_Modify replace element with a link to the new one
 
   virtual void	Push(T* item)			{ Push_((void*)item); }
-  // push item on stack (for temporary use, not "owned")
+  // #CAT_Modify push item on stack (for temporary use, not "owned")
 
   virtual bool 	MoveEl(T* from, T* to)		{ return MoveIdx(FindEl(from), FindEl(to)); }
-  // #MENU #ARG_ON_OBJ Move item (from) to position of (to)
+  // #CAT_Modify #MENU #ARG_ON_OBJ Move item (from) to position of (to)
   virtual bool 	Transfer(T* item)  		{ return Transfer_((void*)item); }
-  // #MENU #MENU_ON_Edit #NO_SCOPE Transfer item to this list
+  // #CAT_Modify #MENU #MENU_ON_Edit #NO_SCOPE Transfer item to this list
 
   virtual bool	MoveBefore(T* trg, T* item) { return MoveBefore_((void*)trg, (void*)item); }
-  // move item so that it appears just before the target item trg in the list
+  // #CAT_Modify move item so that it appears just before the target item trg in the list
   virtual bool	MoveAfter(T* trg, T* item) { return MoveAfter_((void*)trg, (void*)item); }
-  // move item so that it appears just after the target item trg in the list
+  // #CAT_Modify move item so that it appears just after the target item trg in the list
 };
 
 
@@ -680,19 +685,23 @@ public:
 
   virtual void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE only called when size changes 
+  inline int		Index(int idx) const { if(idx < 0) idx += size; return idx; }
+  // #CAT_XpertAccess get actual index from index value that can also be negative, meaning access from end of array
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
-  virtual bool		Alloc(int n); // allocate storage for at least the given size
+  // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
+  virtual bool		Alloc(int n);
+  // #CAT_Modify allocate storage for at least the given size
   virtual void		Reset()	{ Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED); };
-  // reset the list to zero size (does not free memory)
+  // #CAT_Modify reset the list to zero size (does not free memory)
+
   ////////////////////////////////////////////////
   // 	internal functions that depend on type	//
   ////////////////////////////////////////////////
 
-  virtual const void*		SafeEl_(int) const;
+  virtual const void*	SafeEl_(int) const;
   // #IGNORE element at posn
   virtual void*		FastEl_(int)	{ return NULL; }
   // #IGNORE element at posn
-// compulsory element accessor and manip functions 
   virtual const void*	FastEl_(int i) const 
     {return const_cast<taArray_impl*>(this)->FastEl_(i);}
   virtual bool		El_Equal_(const void*, const void*) const { return false; }
@@ -725,46 +734,46 @@ public:
   ////////////////////////////////////////////////
 
   virtual String	SafeElAsStr(int idx) const
-    {return InRange(idx) ? El_GetStr_(FastEl_(idx)) : _nilString;}
+    {return InRange(idx) ? El_GetStr_(SafeEl_(idx)) : _nilString;}
   // #IGNORE element at idx, as a string
   virtual String	FastElAsStr(int idx) const {return El_GetStr_(FastEl_(idx));}
   // #IGNORE element at idx, as a string
   virtual void	SetSize(int sz);
-  // #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
+  // #CAT_Modify #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
 
   virtual void	AddBlank(int n_els = 1);
-  // #MENU #MENU_ON_Edit Add n_els empty elements to the end of the array
+  // #CAT_Modify #MENU #MENU_ON_Edit Add n_els empty elements to the end of the array
   virtual bool	RemoveIdx(uint idx, int n_els=1);
-  // #MENU #MENU_ON_Edit Remove (n_els) item(s) at idx, returns success
+  // #CAT_Modify #MENU #MENU_ON_Edit Remove (n_els) item(s) at idx, returns success
   virtual bool	MoveIdx(int from, int to);
-  // #MENU move item from index to index
+  // #CAT_Modify #MENU move item from index to index
   virtual bool	SwapIdx(int pos1, int pos2);
-  // #CAT_Modify Swap the elements in the two given positions on the list
+  // #CAT_Modify #CAT_Modify Swap the elements in the two given positions on the list
   virtual void	Permute();
-  // #MENU permute the items in the list into a random order
+  // #CAT_Modify #MENU permute the items in the list into a random order
   virtual void	Sort(bool descending=false);
-  // #MENU sort the list in ascending order (or descending if switched)
+  // #CAT_Modify #MENU sort the list in ascending order (or descending if switched)
   virtual void	ShiftLeft(int nshift);
-  // shift all the elements in the array to the left by given number of items
+  // #CAT_Modify shift all the elements in the array to the left by given number of items
   virtual void	ShiftLeftPct(float pct);
-  // shift the array to the left by given percentage of current size
+  // #CAT_Modify shift the array to the left by given percentage of current size
   virtual int	V_Flip(int width);
-  // vertically flip the array as if it was arrange in a matrix of width
+  // #CAT_XpertModify vertically flip the array as if it was arrange in a matrix of width
 
   virtual void	Duplicate(const taArray_impl& cp);
-  // duplicate the items in the list
+  // #CAT_Copy duplicate the items in the list
   virtual void	DupeUnique(const taArray_impl& cp);
-  // duplicate so result is unique list
+  // #CAT_Copy duplicate so result is unique list
   virtual void	Copy_Common(const taArray_impl& cp);
-  // copy elements in common
+  // #CAT_Copy copy elements in common
   virtual void	Copy_Duplicate(const taArray_impl& cp);
-  // copy elements in common, duplicating (if necc) any extra on cp
+  // #CAT_Copy copy elements in common, duplicating (if necc) any extra on cp
   virtual void 	CopyVals(const taArray_impl& from, int start=0, int end=-1, int at=0);
-  // copy values from other array at given start and end points, and putting at given point in this
+  // #CAT_Copy copy values from other array at given start and end points, and putting at given point in this
   virtual void	List(ostream& strm = cout) const;
-  // print out all of the elements in the array
+  // #CAT_Display print out all of the elements in the array
   virtual void	InitFromString(const String& val);
-  // initialize an array from given string (does reset first)
+  // #CAT_Modify initialize an array from given string (does reset first)
 protected:
 
   void			AddOnly_(const void* it); // don't notify
@@ -825,42 +834,42 @@ public:
   ////////////////////////////////////////////////
 
   T&		SafeEl(int i) const
-  { T* rval=(T*)&err; if((i >= 0) && (i < size)) rval=&(el[i]); return *rval; }
-  // the element at the given index
+  { T* rval=(T*)&err; i=Index(i); if((i >= 0) && (i < size)) rval=&(el[i]); return *rval; }
+  // #CAT_Access the element at the given index (index can be - meaning from end of list)
   T&		FastEl(int i)		{ return el[i]; }
-  // fast element (no range checking)
+  // #CAT_Access fast element (no range checking)
   const T&	FastEl(int i) const	{ return el[i]; }
-  // fast element (no range checking)
+  // #CAT_Access fast element (no range checking)
   T&		RevEl(int idx) const		{ return SafeEl(size - idx - 1); }
-  // reverse (index) element (ie. get from the back of the list first)
+  // #CAT_Access reverse (index) element (ie. get from the back of the list first)
   T&		operator[](int i) const		{ return el[i]; }
   void		operator=(const taPlainArray<T>& cp)	{ Reset(); Duplicate(cp); }
 
   virtual T	Pop()
   { T* rval=(T*)&err; if(size>0) rval=&(el[--size]); return *rval; }
-  // pop the last item in the array off
+  // #CAT_Modify pop the last item in the array off
   virtual T&	Peek() const
   { T* rval=(T*)&err; if(size>0) rval=&(el[size-1]); return *rval; }
-  // peek at the last item on the array
+  // #CAT_Modify peek at the last item on the array
 
   ////////////////////////////////////////////////
   // 	functions that are passed el of type	//
   ////////////////////////////////////////////////
 
   virtual void	Set(int i, const T& item) 	{ SafeEl(i) = item; }
-  // use this for assigning values to items in the array (Set should update if needed)
+  // #CAT_Modify use this for assigning values to items in the array (Set should update if needed)
   virtual void	Add(const T& item)		{ Add_((void*)&item); }
-  // #MENU add the item to the array
+  // #CAT_Modify #MENU add the item to the array
   virtual bool	AddUnique(const T& item)	{ return AddUnique_((void*)&item); }
-  // add the item to the array if it isn't already on it, returns true if unique
+  // #CAT_Modify add the item to the array if it isn't already on it, returns true if unique
   virtual void	Push(const T& item)		{ Add(item); }
-  // push the item on the end of the array (same as add)
+  // #CAT_Modify push the item on the end of the array (same as add)
   virtual void	Insert(const T& item, int idx, int n_els=1) { Insert_((void*)&item, idx, n_els); }
-  // #MENU Insert (n_els) item(s) at idx (-1 for end) in the array
+  // #CAT_Modify #MENU Insert (n_els) item(s) at idx (-1 for end) in the array
   virtual int	FindEl(const T& item, int i=0) const { return FindEl_((void*)&item, i); }
-  // #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
+  // #CAT_Access #MENU #USE_RVAL Find item starting from idx in the array (-1 if not there)
   virtual bool	RemoveEl(const T& item)		{ return RemoveEl_((void*)&item); }
-  // remove given item, returns success
+  // #CAT_Modify remove given item, returns success
 protected:
   T		tmp;
   override void*	MakeArray_(int n) const	{ return new T[n]; }
@@ -876,15 +885,19 @@ public:
   taFixedArray_impl()			{size = 0;}
   virtual ~taFixedArray_impl()		{size = 0;} 
 
+  inline int		Index(int idx) const { if(idx < 0) idx += size; return idx; }
+  // #CAT_XpertAccess get actual index from index value that can also be negative, meaning access from end of list
   inline bool		InRange(int idx) const {return ((idx >= 0) && (idx < size));}
+  // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
   virtual void		Reset()		{SetSize(0);}
+  // #CAT_Modify
  
   ////////////////////////////////////////////////
   // functions that don't depend on the type	//
   ////////////////////////////////////////////////
 
   virtual void	SetSize(int sz);
-  // #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
+  // #CAT_Modify #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
 
 public: // accessible but generally not used implementation overrides
   virtual const void*	SafeEl_(int i) const;

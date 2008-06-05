@@ -616,8 +616,10 @@ public:
   // #CAT_ObjectMgmt object's index within an owner list.  cached by some objs.
   virtual void		SetIndex(int value) {};
   // #IGNORE set the objects index value.  note: typically don't do a notify, because list itself will take care of notifying gui clients
-  virtual int		GetEnabled() const {return -1;} // for items that support an enabled/disabled state; -1=n/a, 0=disabled, 1=enabled (note: (bool)-1 = true)
-  virtual void		SetEnabled(bool value) {}
+  virtual int		GetEnabled() const {return -1;}
+  // #IGNORE for items that support an enabled/disabled state; -1=n/a, 0=disabled, 1=enabled (note: (bool)-1 = true)
+  virtual void		SetEnabled(bool value) {};
+  // #IGNORE
   virtual bool		SetName(const String& nm) {return false;} 
   // #CAT_ObjectMgmt #SET_name Set the object's name
   virtual String	GetName() const 	{ return _nilString; }
@@ -632,17 +634,18 @@ public:
   virtual void 		SetDefaultName_impl(int idx); // #IGNORE called from within, or by list -- NAME_TYPE will determine what we do with idx
   virtual String	GetTypeDecoKey() const { return _nilString; }
   // #IGNORE lookup key for visual decoration of an item reflecting its overall type information, used for font colors in the gui browser, for example
-  virtual bool		GetQuiet() const {return false;} // general-purpose fuzzy flag for suppressing Warning messages from an object, maybe because it is special, user shuts them off, etc.
+  virtual bool		GetQuiet() const {return false;} 
+  // #IGNORE general-purpose fuzzy flag for suppressing Warning messages from an object, maybe because it is special, user shuts them off, etc.
   virtual String	GetStateDecoKey() const;
   // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for backgroundt colors in the gui browser, for example
 
   virtual void* 	GetTA_Element(Variant idx, TypeDef*& eltd) 
   { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
   virtual taList_impl*  children_() {return NULL;} 
-    // for lists, and for taOBase w/ default children
+  // #IGNORE for lists, and for taOBase w/ default children
   const taList_impl*  	children_() const 
-    {return const_cast<const taList_impl*>(const_cast<taBase*>(this)->children_());} 
-    // mostly for testing if has children
+  { return const_cast<const taList_impl*>(const_cast<taBase*>(this)->children_());} 
+  // #IGNORE mostly for testing if has children
   virtual TAPtr 	SetOwner(TAPtr)		{ return(NULL); } // #IGNORE
   virtual TAPtr 	GetOwner() const	{ return(NULL); } // #CAT_ObjectMgmt 
   virtual TAPtr		GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt 
@@ -855,7 +858,7 @@ public:
   virtual void 	CheckError_msg(const char* a, const char* b=0, const char* c=0,
 			       const char* d=0, const char* e=0, const char* f=0,
 			       const char* g=0, const char* h=0) const;
-  // generate error message
+  // #IGNORE generate error message
 
   inline bool 	CheckError(bool test, bool quiet, bool& rval,
 			   const char* a, const char* b=0, const char* c=0,
@@ -866,7 +869,7 @@ public:
     if(!quiet) CheckError_msg(a,b,c,d,e,f,g,h);
     return test;
   }
-  // for CheckConfig routines: if test, then report config error, including object name, type, and path information; returns test & sets rval to false if test is true -- use e.g. CheckError((condition), rval, "msg"));
+  // #CAT_ObjectMgmt for CheckConfig routines: if test, then report config error, including object name, type, and path information; returns test & sets rval to false if test is true -- use e.g. CheckError((condition), rval, "msg"));
 
 protected: // impl
   virtual bool		CheckConfig_impl(bool quiet);
@@ -1060,10 +1063,10 @@ public:
   virtual bool		HasUserData(const String& key) const;
   // #CAT_UserData #EXPERT returns true if UserData exists for this key (case sens)
   virtual const Variant	GetUserData(const String& key) const;
-  // #CAT_UserData get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
+  // #CAT_UserData #EXPERT get specified user data; returns class default value if not present, or nilVariant if no default user data or class doesn't support UserData
   const Variant 	GetUserDataDef(const String& key, const Variant& def)
     {if (HasUserData(key)) return GetUserData(key); else return def;}
-    // return value if exists, or default if doesn't
+  // #CAT_UserData #EXPERT return value if exists, or default if doesn't
   virtual UserDataItemBase* GetUserDataOfType(TypeDef* typ, const String& key,
      bool force_create);
   // #CAT_UserData #EXPERT gets specified user data of given type, making one if doesn't exist and fc=true
@@ -1097,8 +1100,8 @@ public:
   //  child="item here" for item, else NULL for "into" parent
 #ifdef TA_GUI
 public:
-  void			QueryEditActions(taiMimeSource* ms,
-    int& allowed, int& forbidden);
+  void			QueryEditActions(taiMimeSource* ms, int& allowed, int& forbidden);
+  // #IGNORE
   int			EditAction(taiMimeSource* ms, int ea); // #IGNORE 
   
   void			ChildQueryEditActions(const MemberDef* md, const taBase* child,
@@ -1187,7 +1190,7 @@ public:
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
   // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual bool		SelectForEditNm(const String& memb_nm, SelectEdit* editor, const String& extra_label);
-  // select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
+  // #CAT_Display select a given member (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
   virtual int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
   // #MENU #NULL_OK_1 #NULL_TEXT_1_NewEditor #CAT_Display search among this object and any sub-objects for members containing given string, and add to given select editor (if NULL, a new one is created in .edits).  returns number found
   virtual int		SelectForEditCompare(taBase* cmp_obj, SelectEdit*& editor, bool no_ptrs = true);
@@ -1195,7 +1198,7 @@ public:
   virtual bool		SelectFunForEdit(MethodDef* function, SelectEdit* editor, const String& extra_label);
   // #MENU #NULL_OK_1  #NULL_TEXT_1_NewEditor  #CAT_Display select a given function (method) for calling in a select edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits). returns false if method was already selected
   virtual bool		SelectFunForEditNm(const String& function_nm, SelectEdit* editor, const String& extra_label);
-  // select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected
+  // #CAT_Display select a given method (by name) for editing in an edit dialog that collects selected members from different objects (if editor is NULL, a new one is created in .edits)  returns false if method was already selected
   virtual void		GetSelectText(MemberDef* mbr, String extra_label,
     String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
   
@@ -1395,6 +1398,7 @@ public:
       {m_ptr = src; DataRefChanging(m_ptr, true);} }
   
   virtual TypeDef*	GetBaseType() const {return &TA_taBase;}
+  taBase* 		GetOwner() const { return m_own; }
   
   inline		operator bool() const {return (m_ptr);}
     // needed to avoid ambiguities when we have derived T* operators

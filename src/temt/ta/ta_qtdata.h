@@ -325,6 +325,9 @@ public:
   void 		GetImage(int val);  // set to this value, according to bit fields
   void		GetValue(int& val) const;
 
+  void*			m_par_obj_base;
+  // if GetImage/Value is called by a taiMember, it will set this to point to parent object's base
+
 public slots:
   void		bitCheck_clicked(iBitCheckBox* sender, bool on); // #IGNORE
 
