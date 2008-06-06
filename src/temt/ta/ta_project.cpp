@@ -1301,9 +1301,6 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 // # if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
 //     if (gstyle.empty()) gstyle = "windows"; // this looks nice and works
 // # endif
-    if(gstyle.nonempty()) {
-      QApplication::setStyle(gstyle);
-    }
 # ifdef TA_USE_INVENTOR
     new QApplication(argc, (char**)argv); // accessed as qApp
     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
@@ -1312,6 +1309,9 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     new QApplication(argc, (char**)argv); // accessed as qApp
     milestone |= SM_QAPP_OBJ;
 # endif
+    if(gstyle.nonempty()) {
+      QApplication::setStyle(gstyle.toQString());
+    }
     QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
     QPixmap app_ico(app_ico_nm);
     QApplication::setWindowIcon(app_ico);
