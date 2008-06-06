@@ -1018,7 +1018,6 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
 :taiData(typ_, host_, par, gui_parent_, flags_)
 {
   Initialize(gui_parent_);
-  // todo: move this to the getImage case so it can be dynamic..
   if (is_enum && typ) {
     int cnt = 0;
     for (int i = 0; i < typ->enum_vals.size; ++i) {
@@ -1038,6 +1037,8 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
 }
 
 void taiBitBox::Initialize(QWidget* gui_parent_) {
+  no_show = 0;
+  no_edit = 0;
   m_par_obj_base = NULL;
   SetRep(MakeLayoutWidget(gui_parent_));
   lay = new QHBoxLayout(m_rep);
@@ -1051,14 +1052,6 @@ void taiBitBox::bitCheck_clicked(iBitCheckBox* sender, bool on) {
     applyNow();
   else
     DataChanged();
-/*was: bad, sh/call the apis
-  if (host != NULL) {
-    if (sender->auto_apply)
-      host->Apply();
-    else
-      host->Changed();
-  }
-*/
 }
 
 void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
@@ -1078,37 +1071,16 @@ void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
 }
 
 void taiBitBox::GetImage(int val) {
-  // todo: help me!  I can't get this code to work:
-  /* 
-  if (typ && typ->InheritsFormal(TA_enum)) {
-    m_rep->children().clear();	// just reset it! <- this complains about const
-    int cnt = 0;
-    for (int i = 0; i < typ->enum_vals.size; ++i) {
-      EnumDef* ed = typ->enum_vals.FastEl(i);
-      if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
-        ed->HasOption("NO_SHOW"))
-        continue;
-      if(m_par_obj_base) { // <- here begins my major hack!!
-	bool is_on = false; // defaults here make it editable in test chain below
-	bool val_is_eq = false;
-	taiType::CheckProcessCondMembMeth("CONDSHOW", ed, m_par_obj_base, is_on, val_is_eq);
-	bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
-	if(!is_visible) continue;
-      }
-      // auto apply if entire guy marked, or if item is marked
-      bool auto_apply = ((flags() & taiData::flgAutoApply)
-        || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
-      if (cnt++ > 0)
-        lay->addSpacing(taiM->hsep_c);
-      AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc);
-    }
-    lay->addStretch();
-  }
-  */
   QObject *obj;
   foreach (obj, m_rep->children() ) {
-    if (obj->inherits("iBitCheckBox")) {
-      iBitCheckBox* bcb = (iBitCheckBox*)obj;
+    iBitCheckBox* bcb = dynamic_cast<iBitCheckBox*>(obj);
+    if (bcb) {
+      // CONDSHOW
+      bcb->setVisible(!(no_show & bcb->val));
+      // CONDEDIT 
+      if (!readOnly())
+        bcb->setEnabled(!(no_edit & bcb->val));
+      // value
       bcb->setChecked((val & bcb->val)); //note: prob raises signal -- ok
     }
   }

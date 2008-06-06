@@ -432,8 +432,24 @@ int taiEnumType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiEnumType::GetDataRep_impl(IDataHost* host_, taiData* par, 
+  QWidget* gui_parent_, int flags_, MemberDef*) 
+{
   isBit = ((typ != NULL) && (typ->HasOption("BITS")));
+  m_is_cond = false;
+  // determine if has any CONDxxx guys
+  if (isBit) {
+    for (int i = 0; i < typ->enum_vals.size; ++i) {
+      EnumDef* ed = typ->enum_vals.FastEl(i);
+      if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
+        ed->HasOption("NO_SHOW"))
+        continue;
+      if (ed->OptionAfter("COND").nonempty()) {
+        m_is_cond = true;
+        break;
+      }
+    }
+  }
   if(!typ->HasOption(TypeItem::opt_NO_APPLY_IMMED))
     flags_ |= taiData::flgAutoApply; // default is to auto-apply!
   if (isBit) {
@@ -1184,8 +1200,44 @@ void taiMember::GetImage(taiData* dat, const void* base) {
   }
 }
 
+void taiMember::CheckProcessCondEnum(taiEnumType* et, taiData* dat, 
+    const void* base)
+{
+  taiBitBox* bb = dynamic_cast<taiBitBox*>(dat); // should be, except maybe if ro
+  if (!bb) return;
+  for (int i = 0; i < mbr->type->enum_vals.size; ++i) {
+    EnumDef* ed = mbr->type->enum_vals.FastEl(i);
+    if (ed->OptionAfter("COND").empty() || ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
+      ed->HasOption("NO_SHOW"))
+      continue;
+    
+    bool is_on = false; // defaults here make it editable in test chain below
+    bool val_is_eq = false;
+    taiType::CheckProcessCondMembMeth("CONDSHOW", ed, base, is_on, val_is_eq);
+    bool is_visible = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    if (is_visible) 
+      bb->no_show &= ~ed->enum_no;
+    else
+      bb->no_show |= ed->enum_no;
+    
+    is_on = false; // defaults here make it editable in test chain below
+    val_is_eq = false;
+    taiType::CheckProcessCondMembMeth("CONDEDIT", ed, base, is_on, val_is_eq);
+    bool is_editable = ((is_on && val_is_eq) || (!is_on && !val_is_eq));
+    if (is_editable) 
+      bb->no_edit &= ~ed->enum_no;
+    else
+      bb->no_edit |= ed->enum_no;
+  }
+}
+
 void taiMember::GetImage_impl(taiData* dat, const void* base) {
   mbr->type->it->SetCurParObjType((void*)base, typ);
+  // special: if enum type, do the detailed bit-level COND processing
+  taiEnumType* et = dynamic_cast<taiEnumType*>(mbr->type->it);
+  if (et && et->isCond()) {
+    CheckProcessCondEnum(et, dat, base);
+  }
   mbr->type->it->GetImage(dat, mbr->GetOff(base));
   mbr->type->it->ClearCurParObjType();
   GetOrigVal(dat, base);

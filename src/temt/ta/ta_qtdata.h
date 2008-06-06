@@ -313,6 +313,9 @@ signals:
 class TA_API taiBitBox : public taiData { // supports enums that are bit fields 
   Q_OBJECT
 public:
+  int			no_show; // any bits that should be temporarily hidden
+  int			no_edit; // any bits that should be set readonly
+  
   inline QWidget*	rep() const { return (QWidget*)(QWidget*)m_rep; }
   bool			fillHor() {return true;} // override 
 

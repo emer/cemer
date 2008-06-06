@@ -77,6 +77,7 @@ public:
 
 class TA_API taiEnumType : public taiType {
 public:
+  inline bool	isCond() const {return m_is_cond;} // true if a BIT, and has any CONDxxxx bits
   bool		handlesReadOnly() { return true; } // uses a RO iLineEdit w/ enum name
   int		BidForType(TypeDef* td);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
@@ -87,6 +88,7 @@ public:
   TAQT_TYPE_INSTANCE(taiEnumType, taiType);
 protected:
   bool		isBit; // true if a BIT type enum
+  bool		m_is_cond; // true if a BIT, and has any CONDxxxx bits
   void		Initialize();
 };
 
@@ -353,6 +355,8 @@ protected:
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void		GetMbrValue_impl(taiData* dat, void* base);
   override bool		isReadOnly(taiData* dat, IDataHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
+  void			CheckProcessCondEnum(taiEnumType* et, taiData* dat, 
+    const void* base);
 };
 
 #define TAQT_MEMBER_INSTANCE(x,y) x(MemberDef* md, TypeDef* td) 	\
