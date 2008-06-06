@@ -479,25 +479,18 @@ void taiEnumType::GetImage_impl(taiData* dat, const void* base) {
     rval->GetImage(str);
   } else {
     taiComboBox* rval = (taiComboBox*)dat;
-    EnumDef* td = typ->enum_vals.FindNo(*((int*)base));
-    if (td != NULL)
-      rval->GetImage(td->idx);
+    int enum_val = *((int*)base);
+    rval->GetEnumImage(enum_val);
   }
 }
 
 void taiEnumType::GetValue_impl(taiData* dat, void* base) {
   if (isBit) {
-    taiBitBox* rval = (taiBitBox*)dat;
-    rval->GetValue(*((int*)base));
+    taiBitBox* rval = dynamic_cast<taiBitBox*>(dat);
+    if (rval) rval->GetValue(*((int*)base));
   } else if (!isReadOnly(dat)) {
-    taiComboBox* rval = (taiComboBox*)dat;
-    int itm_no = -1;
-    rval->GetValue(itm_no);
-    EnumDef* td = NULL;
-    if ((itm_no >= 0) && (itm_no < typ->enum_vals.size))
-      td = typ->enum_vals.FastEl(itm_no);
-    if (td != NULL)
-      *((int*)base) = td->enum_no;
+    taiComboBox* rval = dynamic_cast<taiComboBox*>(dat);
+    if (rval) rval->GetEnumValue(*((int*)base));
   }
 }
 
