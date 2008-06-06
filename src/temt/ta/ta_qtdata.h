@@ -155,6 +155,9 @@ public:
   iLineEdit*		rep() const { return leText; }
   bool			fillHor() {return true;} // override 
   void 			setMinCharWidth(int num); // hint for min chars, 0=no min
+
+  MemberDef*		tab_md;	// for tab trap, member def 
+  void*			tab_base; // for tab trap, base of owner
   
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiField();
@@ -165,6 +168,7 @@ public:
 protected slots:
   void			selectionChanged();
   void			btnEdit_clicked(bool);
+  void			tabPressed();
 
 protected:
 #ifndef __MAKETA__

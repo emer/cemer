@@ -1660,6 +1660,8 @@ public:
   static const String opt_inline; // "INLINE"
   static const String opt_edit_inline; // "EDIT_INLINE"
   static const String opt_EDIT_DIALOG; // "EDIT_DIALOG"
+  static const String opt_FILE_DIALOG; // "FILE_DIALOG"
+  static const String opt_TAB_TRAP; // "TAB_TRAP"
   
   static const String opt_bits; // "BITS"
   static const String opt_instance; // "INSTANCE"

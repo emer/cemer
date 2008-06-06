@@ -39,7 +39,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
   if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
 #ifdef TA_OS_MAC
-  // ctrl = meta on apple; except it doesnt' work!
+  // ctrl = meta on apple
   if(e->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
 #endif

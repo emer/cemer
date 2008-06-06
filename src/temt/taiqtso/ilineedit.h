@@ -39,11 +39,13 @@ public:
   void		setCharWidth(int num); // sets width to accommodate num chars of
   inline short	minCharWidth() {return mmin_char_width;} 
   void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
-
+  void		setTabKeyTrap(bool trap_tab); // determines whether we trap the tab key (e.g., for a completion function)
+  inline bool	tabKeyTrap() { return m_tab_key_trap; }
   
 #ifndef __MAKETA__
 signals:
   void		focusChanged(bool got_focus);
+  void		tabPressed();	// use this as hook for autocompletion, only if setTabKeyTrap(true) is called first
 #endif
 
 public slots:
@@ -53,9 +55,11 @@ public slots:
 protected:
   short		mmin_char_width; // note: we limit to 128
   short		mchar_width; // note: we limit to 128
+  bool		m_tab_key_trap;
   
   void 		focusInEvent(QFocusEvent* ev); // override
   void 		focusOutEvent(QFocusEvent* ev); // override
+  void 		keyPressEvent(QKeyEvent* e);	// override
 private:  
   void		init();
 };

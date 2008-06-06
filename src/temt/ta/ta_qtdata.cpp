@@ -603,6 +603,8 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   edit = NULL;
+  tab_md = NULL;
+  tab_base = NULL;
   if (flags_ & flgEditDialog) {
     QWidget* act_par = new QWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
@@ -632,7 +634,13 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
   // cliphandling connections
   QObject::connect(rep(), SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
-    
+
+  if(flags_ & flgTabTrap) {
+    rep()->setTabKeyTrap(true);
+    QObject::connect(rep(), SIGNAL(tabPressed()),
+		     this, SLOT(tabPressed()) );
+  }
+
   // min width for some popular types
   if (typ) {
     if (typ->DerivesFrom(TA_float))
@@ -669,7 +677,6 @@ void taiField::btnEdit_clicked(bool) {
     edit = new iFieldEditDialog(false, readOnly(), desc, this);
     edit->setText(rep()->text());
     edit->setWindowTitle(wintxt);
-    edit->show();
   }
   edit->show();
   edit->raise();
@@ -689,6 +696,17 @@ String taiField::GetValue() const {
 
 void taiField::selectionChanged() {
   emit_UpdateUi();
+}
+
+void taiField::tabPressed() {
+  // needs to end up calling owner's taBase::TabTrap with rep()->text() and current position
+  // and name of member -- then takes result of that function and does rep()setText() with it
+  if(!tab_md || !tab_base) return;
+  taBase* tab = (taBase*)tab_base;
+  String rval = tab->TabTrap(rep()->text(), rep()->cursorPosition(), tab_md->name);
+  if(rval.nonempty()) {
+    rep()->setText(rval);
+  }
 }
 
 void taiField::setMinCharWidth(int num) {

@@ -1321,7 +1321,7 @@ public:
   };
 
   InhibType	type;		// #APPLY_IMMED how to compute inhibition (g_i)
-  float		kwta_pt;	// [Default: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		kwta_pt;	// [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
   float		comp_thr;	// #CONDEDIT_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDEDIT_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level

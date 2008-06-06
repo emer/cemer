@@ -541,12 +541,23 @@ int taiStringType::BidForType(TypeDef* td){
   return 0;
 }
 
-taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
   taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
+  rval->tab_md = md;		// for tab trap, just in case
+  if(md) {
+    String ew = md->OptionAfter("EDIT_WIDTH_");
+    if(ew.nonempty()) {
+      int ewi = (int)ew;
+      if(ewi > 0) {
+	rval->setMinCharWidth(ewi);
+      }
+    }
+  }
   return rval;
 }
 
 void taiStringType::GetImage_impl(taiData* dat, const void* base) {
+  ((taiField*)dat)->tab_base = GetCurParObjBase(); // for tab trap, just in case
   dat->GetImage_(base);
 }
 
@@ -1117,6 +1128,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags_ |= taiData::flgInline;
   if (mbr->HasOption(TypeItem::opt_EDIT_DIALOG)) // if a string field, puts up an editor button
     flags_ |= taiData::flgEditDialog;
+  if (mbr->HasOption(TypeItem::opt_FILE_DIALOG))
+    flags_ |= taiData::flgFileDialog;
   if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
     flags_ |= taiData::flgAutoApply;
   if (mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
@@ -1125,6 +1138,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags_ |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
   if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
     flags_ |= taiData::flgNoAlpha; // just in case this is needed
+  if (mbr->HasOption(TypeItem::opt_TAB_TRAP))
+    flags_ |= taiData::flgTabTrap;
     
   ro = (flags_ & taiData::flgReadOnly); // just for clarity and parity with Image/Value
   taiData* rval = NULL;

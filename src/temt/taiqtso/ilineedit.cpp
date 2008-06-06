@@ -41,6 +41,7 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 void iLineEdit::init() {
   mmin_char_width = 0;
   mchar_width = 0;
+  m_tab_key_trap = false;
   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
   sc->setContext(Qt::WidgetShortcut);
   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
@@ -128,6 +129,78 @@ void iLineEdit::setReadOnly(bool value) {
   }
   setPalette(pal);
   update();
+}
+
+void iLineEdit::setTabKeyTrap(bool trap_tab) {
+  m_tab_key_trap = trap_tab;
+}
+
+void iLineEdit::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+
+  // emacs keys!!
+  if(ctrl_pressed) {
+    if(e->key() == Qt::Key_A) {
+      e->accept();
+      home(false);		// no mark
+    }
+    else if(e->key() == Qt::Key_E) {
+      e->accept();
+      end(false);		// no mark
+    }
+    else if(e->key() == Qt::Key_F) {
+      e->accept();
+      cursorForward(false, 1);	// no mark
+    }
+    else if(e->key() == Qt::Key_B) {
+      e->accept();
+      cursorBackward(false, 1);	// no mark
+    }
+    else if(e->key() == Qt::Key_D) {
+      e->accept();
+      del();
+    }
+//     else if(e->key() == Qt::Key_K) { // already supported
+//       e->accept();
+//       end(true);		// mark
+//       cut();
+//     }
+    else if(e->key() == Qt::Key_Y) {
+      e->accept();
+      paste();
+    }
+    else if(e->key() == Qt::Key_W) {
+      e->accept();
+      cut();
+    }
+    else if(e->key() == Qt::Key_Slash) {
+      e->accept();
+      undo();
+    }
+    else if(e->key() == Qt::Key_Minus) {
+      e->accept();
+      undo();
+    }
+    else {
+      QLineEdit::keyPressEvent( e );
+    }
+  }
+  else {
+    if(m_tab_key_trap) {
+      if(e->key() == Qt::Key_Tab) {
+	e->accept();
+	emit tabPressed();
+      }
+    }
+    QLineEdit::keyPressEvent( e );
+  }
 }
 
 
