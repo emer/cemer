@@ -235,7 +235,7 @@ class TA_API DynEnum : public taOBase {
 INHERITED(taOBase)
 public:
   DynEnumTypeRef	enum_type; // #APPLY_IMMED enum type information (list of enum labels)
-  int			value;     // #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
+  int			value;     // #APPLY_IMMED #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
 
   virtual bool	IsSet() const
   { return ((bool)enum_type && (value >= 0)); }

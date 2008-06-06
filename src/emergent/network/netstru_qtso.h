@@ -528,7 +528,7 @@ INHERITED(iViewPanelFrame)
   Q_OBJECT
 public:
   QWidget*		widg;
-  QVBoxLayout*		layWidg;
+//  QVBoxLayout*		layWidg;
 
   QVBoxLayout*		layTopCtrls;
   QVBoxLayout*		layViewParams;
@@ -553,7 +553,6 @@ public:
   taiField*		    fldLayFont;
   QCheckBox*		    chkXYSquare;
 
-  QGroupBox*		gbDisplayValues;
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		  layColorScaleCtrls;
   QCheckBox*		    chkAutoScale;       // autoscale ck_box
@@ -574,11 +573,10 @@ public:
   taiField*		    fldUnitSpacing;
   ScaleBar*		   cbar;	      // colorbar
   QPushButton*		   butSetColor;
-  QTreeWidget*		 lvDisplayValues;
   
-  QGroupBox*		gbSpecs;
-  QVBoxLayout*		laySpecs;
-  iTreeView*		tvSpecs;
+  QTabWidget* 		tw; 
+  QTreeWidget*		  lvDisplayValues;
+  iTreeView*		  tvSpecs;
   
   iMethodButtonMgr*	meth_but_mgr;
   QWidget*		widCmdButtons;

@@ -2827,9 +2827,9 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   
   QWidget* widg = new QWidget();
   //note: we don't set the values of all controls here, because dv does an immediate refresh
-  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
-  layWidg->setMargin(0); layWidg->setSpacing(0);
-  layTopCtrls = new QVBoxLayout(); layWidg->addLayout(layTopCtrls);
+//  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
+//  layWidg->setMargin(0); layWidg->setSpacing(0);
+  layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(taiM->vsep_c);
 
   layViewParams = new QVBoxLayout(); layTopCtrls->addLayout(layViewParams);
@@ -2913,9 +2913,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addWidget(chkXYSquare);
 
   ////////////////////////////////////////////////////////////////////////////
-  //  gbDisplayValues = new QGroupBox("Display Values", widg);
-  //  layTopCtrls->addWidget(gbDisplayValues, 1);
-  //  gbDisplayValues->setFlat(true);		  // make it take up less space
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
 
   layColorScaleCtrls = new QHBoxLayout();  layDisplayValues->addLayout(layColorScaleCtrls);
@@ -2992,27 +2989,29 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
   layColorBar->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
+//  layDisplayValues->addStretch();
 
+  setCentralWidget(widg);
+  
+  tw = new QTabWidget(this);
   ////////////////////////////////////////////////////////////////////////////
-  lvDisplayValues = new QTreeWidget(widg);
+  lvDisplayValues = new QTreeWidget();
+  tw->addTab(lvDisplayValues, "Unit Display Values");
   lvDisplayValues->setRootIsDecorated(false); // makes it look like a list
   QStringList hdr;
   hdr << "Value" << "Description";
   lvDisplayValues->setHeaderLabels(hdr);
   lvDisplayValues->setSortingEnabled(false);
   lvDisplayValues->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  layDisplayValues->addWidget(lvDisplayValues, 1);
+  //layDisplayValues->addWidget(lvDisplayValues, 1);
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
   
   ////////////////////////////////////////////////////////////////////////////
   // Spec tree
-//   gbSpecs = new QGroupBox("Specs", widg);
-//   gbSpecs->setFlat(true); // make it take up less space
-//   layTopCtrls->addWidget(gbSpecs, 1);
-  laySpecs = new QVBoxLayout();  layTopCtrls->addLayout(laySpecs);
-  tvSpecs = new iTreeView(widg, iTreeView::TV_AUTO_EXPAND);
+  
+  tvSpecs = new iTreeView(NULL, iTreeView::TV_AUTO_EXPAND);
+  tw->addTab(tvSpecs, "Spec Explorer");
   tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
-  laySpecs->addWidget(tvSpecs, 1);
   tvSpecs->setColumnCount(2);
   tvSpecs->setSortingEnabled(false);// only 1 order possible
   tvSpecs->setHeaderText(0, "Spec");
@@ -3041,16 +3040,24 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
   
+  layOuter->setStretchFactor(scr, 0); // so it only uses exact spacing
+  // so doesn't have tiny scrollable annoying area:
+  // (the tradeoff is that if you squish the whole thing, eventually you can't 
+  // get at all the properties)
+  scr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  layOuter->addWidget(tw, 2);
+  
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
   widCmdButtons = new QWidget(widg);
   iFlowLayout* fl = new iFlowLayout(widCmdButtons);
-  layTopCtrls->addWidget(widCmdButtons);
+//  layTopCtrls->addWidget(widCmdButtons);
+layOuter->addWidget(widCmdButtons);
   
   meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
   meth_but_mgr->Constr(nv()->net());
 
-  setCentralWidget(widg);
+//  setCentralWidget(widg);
   MakeButtons(layOuter);
 }
 
