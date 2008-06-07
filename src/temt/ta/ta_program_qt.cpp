@@ -1639,9 +1639,9 @@ int taiProgLibElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst
   return rval;
 }
 
-//////////////////////////////////
-//        taiProgLibElArgType      //
-//////////////////////////////////
+//////////////////////////////////////
+//        taiProgLibElArgType       //
+//////////////////////////////////////
 
 int taiProgLibElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
   if ((argt->ptr != 1) || !argt->DerivesFrom(TA_ProgLibEl))
@@ -1688,3 +1688,194 @@ void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {
   *((TAPtr*)arg_base) = els->GetValue();
 }
 
+
+//////////////////////////////////////
+//        taiProgLibElArgType       //
+//////////////////////////////////////
+
+String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
+					  const String& mbr_name) {
+
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return _nilString;
+
+//   cerr << "lookup for text: " << cur_txt << " pos: " << cur_pos << " mbr: " << mbr_name
+//        << endl;
+
+  String txt = cur_txt.before(cur_pos);
+  String extra_txt = cur_txt.from(cur_pos);
+  String append_at_end;
+  String prepend_before;
+
+  String base_path;		// path to base element(s) if present
+  String lookup_seed;		// start of text to seed lookup process
+  String rval = _nilString;
+
+  int lookup_type = -1; // 1 = var name (no path, delim), 2 = obj memb/meth,
+  // 3 = type scoped, 4 = array index
+  
+  int_Array delim_pos;
+  int delims_used = 0;
+  int expr_start = 0;
+  int c = '\0';
+  for(int i=cur_pos-1;i>= 0; i--) {
+    c = txt[i];
+    if(isalpha(c) || isdigit(c) || (c == '_')) continue;
+    if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
+      delim_pos.Add(i);
+      continue;
+    }
+    expr_start = i+1;		// anything else is a bust
+    break;
+  }
+
+  int xtra_st = extra_txt.length();
+  for(int i=0;i<extra_txt.length(); i++) {
+    c = extra_txt[i];
+    if(isalpha(c) || isdigit(c) || (c == '_')) continue;
+    xtra_st = i;
+    break;
+  }
+  if(xtra_st < extra_txt.length()) {
+    append_at_end = extra_txt.from(xtra_st);
+  }
+
+  if(delim_pos.size > 0) {
+    if(txt[delim_pos[0]] == '.') { // path sep = .
+      base_path = txt.at(expr_start, delim_pos[0]-expr_start);
+      prepend_before = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = 2;
+      delims_used = 1;
+    }
+    else if(txt[delim_pos[0]] == '>' && delim_pos.size > 1 && txt[delim_pos[1]] == '-'
+	    && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
+      base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      prepend_before = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = 2;
+      delims_used = 2;
+    }
+    else if(txt[delim_pos[0]] == ':' && delim_pos.size > 1 && txt[delim_pos[1]] == ':'
+	    && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
+      base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      prepend_before = txt.before(expr_start);
+      lookup_seed = txt.after(delim_pos[0]);
+      lookup_type = 3;
+      delims_used = 2;
+    }
+    // todo: []
+  }
+  else {
+    lookup_type = 1;
+    lookup_seed = txt.from(expr_start);
+    prepend_before = txt.before(expr_start);
+  }
+
+  switch(lookup_type) {
+  case 1: {// lookup variables
+//     cerr << "base_path empty: lookup a var, seed: " << lookup_seed << endl;
+    // todo: needs leading name filter still
+    taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_ProgVar, NULL, NULL,
+							NULL, 0, lookup_seed);
+    varlkup->item_filter = (item_filter_fun)ProgExpr::StdProgVarFilter;
+    varlkup->GetImage(NULL, &TA_ProgVar, prg, &TA_Program);
+    varlkup->OpenChooser();
+    if(varlkup->token()) {
+      rval = prepend_before + varlkup->token()->GetName() + append_at_end;
+    }
+    delete varlkup;
+    break;
+  }
+  case 2: {
+//     cerr << "lookup a memb/meth from path: " << base_path << " seed: " << lookup_seed << endl;
+    String path_var, path_rest;
+    ProgVar* st_var = NULL;
+    TypeDef* lookup_td = NULL;
+    if(delim_pos.size > delims_used) {
+      // note: any ref to base path needs to subtract expr_start relative to delim_pos!
+      path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
+      if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
+	path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
+      else
+	path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
+    }
+    else {
+      path_var = base_path;
+    }
+    st_var = prg->FindVarName(path_var);
+    if(st_var) {
+      if(st_var->var_type == ProgVar::T_Object) {
+	if(!st_var->object_type) {
+	  taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
+		       "because it is an Object* but has no type set yet!");
+	}
+	else {
+	  if(path_rest.empty()) {
+	    lookup_td = st_var->object_type;
+	  }
+	  else {
+	    TypeDef* own_td = st_var->object_type;
+	    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, path_rest, false); // warn
+	    if(md) lookup_td = md->type;
+	    else {
+	      if((bool)st_var->object_val) {
+		MemberDef* md = NULL;
+		taBase* mb_tab = st_var->object_val->FindFromPath(path_rest, md);
+		if(mb_tab) lookup_td = mb_tab->GetTypeDef();
+		else if(md) lookup_td = md->type;
+	      }
+	    }
+	    if(!lookup_td) {
+	      taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
+			   path_var);
+	    }
+	  }
+	}
+      }
+    }
+    else {
+      taMisc::Info("Var lookup: cannot find variable:", path_var,
+		   "as start of lookup path:", base_path);
+    }
+    if(lookup_td) {
+//       cerr << "lookup from type: " << lookup_td->name << endl;
+      taiMemberMethodDefButton* mdlkup =  new taiMemberMethodDefButton(lookup_td, NULL, NULL,
+								       NULL, 0, lookup_seed);
+      mdlkup->GetImage(NULL, lookup_td);
+      mdlkup->OpenChooser();
+      if(mdlkup->md()) {
+	rval = txt.through(delim_pos[0]) + mdlkup->md()->name + append_at_end;
+      }
+      delete mdlkup;
+    }
+    break;
+  }
+  case 3: {
+//     cerr << "lookup a type/static guy from path: " << base_path << " seed: "
+// 	 << lookup_seed << endl;
+    TypeDef* lookup_td = taMisc::types.FindName(base_path);
+    if(lookup_td) {
+//       cerr << "lookup from type: " << lookup_td->name << endl;
+      taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
+							     NULL, 0, lookup_seed);
+      eslkup->GetImage(NULL, lookup_td);
+      eslkup->OpenChooser();
+      if(eslkup->md()) {
+	rval = txt.through(delim_pos[0]) + eslkup->md()->name + append_at_end;
+      }
+      delete eslkup;
+    }
+    else {
+      // todo: need to deal with local enum defs!!
+    }
+    break;
+  }
+  case 4: {
+    cerr << "lookup an array index from path: " << base_path << " seed: " << lookup_seed << endl;
+    break;
+  }
+  }
+
+  return rval;
+}

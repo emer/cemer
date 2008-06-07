@@ -1562,13 +1562,7 @@ String ProgExprBase::GetFullExpr() const {
   return rval;
 }
 
-
-String ProgExprBase::TabTrap(const String& cur_txt, int cur_pos, const String& mbr_name) {
-  cerr << "got tab key for text: " << cur_txt << " pos: " << cur_pos << " mbr: " << mbr_name
-       << endl;
-  // todo: write this function!!
-  return _nilString;
-}
+// StringFieldLookupFun is in ta_program_qt.cpp
 
 //////////////////////////
 //   ProgExpr		//

@@ -156,8 +156,8 @@ public:
   bool			fillHor() {return true;} // override 
   void 			setMinCharWidth(int num); // hint for min chars, 0=no min
 
-  MemberDef*		tab_md;	// for tab trap, member def 
-  void*			tab_base; // for tab trap, base of owner
+  MemberDef*		lookupfun_md;	// for lookup function, member def 
+  void*			lookupfun_base; // for lookup function, base of owner
   
   taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
   ~taiField();
@@ -168,7 +168,7 @@ public:
 protected slots:
   void			selectionChanged();
   void			btnEdit_clicked(bool);
-  void			tabPressed();
+  void			lookupKeyPressed();
 
 protected:
 #ifndef __MAKETA__
@@ -1018,6 +1018,7 @@ class TA_API taiItemPtrBase : public taiData {
   Q_OBJECT
 public:
   item_filter_fun	item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
+  String		filter_start_txt; // if nonempty, item name must start with this text to be included
   
   const String		labelText(); // "tag: name" for button
   virtual int		columnCount(int view) const = 0; 
@@ -1043,7 +1044,8 @@ public:
   void			setNullText(const String& nt) { null_text = " " + nt; }
   // set text to display instead of NULL for a null item
   
-  bool			ShowItemFilter(void* base, void* item) const; // apply optional filter, else true
+  bool			ShowItemFilter(void* base, void* item, const String& itnm) const;
+  // apply optional item_filter and filter_start_txt, else true
   
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
@@ -1073,7 +1075,8 @@ protected:
   virtual void 		UpdateImage(void* cur_sel);
   
   taiItemPtrBase(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0); // typ_ 
+		 taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		 const String& flt_start_txt = ""); // typ_ 
 };
 
 
@@ -1096,7 +1099,8 @@ public:
   virtual bool		ShowMember(MemberDef* mbr);
 
   taiMemberDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+		     taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		     const String& flt_start_txt = "");
 protected:
   const String		itemTag() const {return "Member: ";}
   const String		labelNameNonNull() const;
@@ -1123,7 +1127,8 @@ public:
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
   taiMethodDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+		     taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		     const String& flt_start_txt = "");
 protected:
   const String		itemTag() const {return "Method: ";}
   const String		labelNameNonNull() const;
@@ -1134,6 +1139,76 @@ protected:
     QTreeWidgetItem* top_item); // we use this recursively
     
   virtual bool		ShowMethod(MethodDef* mth);
+};
+
+
+class TA_API taiMemberMethodDefButton : public taiItemPtrBase {
+// for MemberDefs AND MethodDefs -- useful for path completion lookup for example
+INHERITED(taiItemPtrBase)
+public:
+  inline TypeItem*	md() const {return (TypeItem*)m_sel;}
+
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  int			viewCount() const {return 3;} // override
+  const String		viewText(int index) const; // override
+
+  void			GetImage(MemberDef* cur_sel, TypeDef* targ_typ) 
+    {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
+  TypeItem*		GetValue() {return md();}
+
+  override void		BuildChooser(taiItemChooser* ic, int view = 0); // 
+  
+  virtual bool		ShowMember(MemberDef* mbr);
+  virtual bool		ShowMethod(MethodDef* mth);
+
+  taiMemberMethodDefButton(TypeDef* typ_, IDataHost* host,
+			   taiData* par, QWidget* gui_parent_, int flags_ = 0,
+			   const String& flt_start_txt = "");
+protected:
+  const String		itemTag() const {return "Member/Method: ";}
+  const String		labelNameNonNull() const;
+
+  override void		BuildCategories_impl();
+  void 			BuildChooser_0(taiItemChooser* ic); // all
+  void 			BuildChooser_1(taiItemChooser* ic); // just mbr
+  void 			BuildChooser_2(taiItemChooser* ic); // just mth
+};
+
+
+class TA_API taiEnumStaticButton : public taiItemPtrBase {
+// for enums AND static members, methods -- useful for path completion lookup for example
+INHERITED(taiItemPtrBase)
+public:
+  inline TypeItem*	md() const {return (TypeItem*)m_sel;}
+
+  int			columnCount(int view) const; // override
+  const String		headerText(int index, int view) const; // override
+  int			viewCount() const {return 4;} // override
+  const String		viewText(int index) const; // override
+
+  void			GetImage(MemberDef* cur_sel, TypeDef* targ_typ) 
+    {taiItemPtrBase::GetImage((void*)cur_sel, targ_typ);}
+  TypeItem*		GetValue() {return md();}
+
+  override void		BuildChooser(taiItemChooser* ic, int view = 0); // 
+  
+  virtual bool		ShowEnum(EnumDef* enm);
+  virtual bool		ShowMember(MemberDef* mbr);
+  virtual bool		ShowMethod(MethodDef* mth);
+
+  taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
+		      taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		      const String& flt_start_txt = "");
+protected:
+  const String		itemTag() const {return "Enum/static: ";}
+  const String		labelNameNonNull() const;
+
+  override void		BuildCategories_impl();
+  void 			BuildChooser_0(taiItemChooser* ic); // all
+  void 			BuildChooser_1(taiItemChooser* ic); // just enum
+  void 			BuildChooser_2(taiItemChooser* ic); // just static mbr
+  void 			BuildChooser_3(taiItemChooser* ic); // just static meth
 };
 
 
@@ -1155,7 +1230,8 @@ public:
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
   taiTypeDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+		   taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		   const String& flt_start_txt = "");
 protected:
   enum TypeCat {
     TC_NoAdd, // for ptrs, non classes, etc.
@@ -1173,9 +1249,8 @@ protected:
   int 			CountChildren(TypeDef* td);
 };
 
-
 class TA_API taiEnumTypeDefButton : public taiTypeDefButton {
-// for TypeDefs that are enums
+// 
 INHERITED(taiTypeDefButton)
 public:
   int			columnCount(int view) const; // override
@@ -1184,7 +1259,8 @@ public:
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
   taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+		       taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		       const String& flt_start_txt = "");
 protected:
   const String		itemTag() const {return "Enum Type: ";}
 
@@ -1219,7 +1295,8 @@ public:
   override void		EditDialog();
   
   taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+		    taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		    const String& flt_start_txt = "");
 protected:
   taSmartRef		scope_ref;	// reference object for scoping, default is none
   TypeDef*		scope_typ;	// type of scope to use (NULL = default)

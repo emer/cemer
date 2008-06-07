@@ -536,7 +536,7 @@ int taiStringType::BidForType(TypeDef* td){
 
 taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* md) {
   taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
-  rval->tab_md = md;		// for tab trap, just in case
+  rval->lookupfun_md = md;		// for lookup function
   if(md) {
     String ew = md->OptionAfter("EDIT_WIDTH_");
     if(ew.nonempty()) {
@@ -550,7 +550,7 @@ taiData* taiStringType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 }
 
 void taiStringType::GetImage_impl(taiData* dat, const void* base) {
-  ((taiField*)dat)->tab_base = GetCurParObjBase(); // for tab trap, just in case
+  ((taiField*)dat)->lookupfun_base = GetCurParObjBase(); // for lookup function
   dat->GetImage_(base);
 }
 
@@ -1131,8 +1131,6 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags_ |= taiData::flgNoEditDialogAutoApply; // just in case this is needed
   if (mbr->HasOption("NO_ALPHA")) // for color types only, ignored by others
     flags_ |= taiData::flgNoAlpha; // just in case this is needed
-  if (mbr->HasOption(TypeItem::opt_TAB_TRAP))
-    flags_ |= taiData::flgTabTrap;
     
   ro = (flags_ & taiData::flgReadOnly); // just for clarity and parity with Image/Value
   taiData* rval = NULL;

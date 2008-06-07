@@ -417,7 +417,6 @@ void taiCompData::AddChildMember(MemberDef* md) {
     break;
   }
 
-  // add description text tooltips
   if (!desc.empty()) {
     lbl->setToolTip(desc);
     ctrl->setToolTip(desc);
@@ -603,8 +602,8 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   edit = NULL;
-  tab_md = NULL;
-  tab_base = NULL;
+  lookupfun_md = NULL;
+  lookupfun_base = NULL;
   if (flags_ & flgEditDialog) {
     QWidget* act_par = new QWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
@@ -635,11 +634,8 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
   QObject::connect(rep(), SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
 
-  if(flags_ & flgTabTrap) {
-    rep()->setTabKeyTrap(true);
-    QObject::connect(rep(), SIGNAL(tabPressed()),
-		     this, SLOT(tabPressed()) );
-  }
+  QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
+		   this, SLOT(lookupKeyPressed()) );
 
   // min width for some popular types
   if (typ) {
@@ -698,14 +694,15 @@ void taiField::selectionChanged() {
   emit_UpdateUi();
 }
 
-void taiField::tabPressed() {
-  // needs to end up calling owner's taBase::TabTrap with rep()->text() and current position
-  // and name of member -- then takes result of that function and does rep()setText() with it
-  if(!tab_md || !tab_base) return;
-  taBase* tab = (taBase*)tab_base;
-  String rval = tab->TabTrap(rep()->text(), rep()->cursorPosition(), tab_md->name);
+void taiField::lookupKeyPressed() {
+  if(!lookupfun_md || !lookupfun_base) return;
+  taBase* tab = (taBase*)lookupfun_base;
+  int cur_pos = rep()->cursorPosition();
+  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
+					  lookupfun_md->name);
   if(rval.nonempty()) {
     rep()->setText(rval);
+    rep()->setCursorPosition(cur_pos); // go back to orig pos
   }
 }
 
@@ -3235,11 +3232,13 @@ void taiItemChooser::timFilter_timeout() {
 //////////////////////////////////
 
 taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
-  IDataHost* host_, taiData* par, 
-  QWidget* gui_parent_, int flags_)
+			       IDataHost* host_, taiData* par, 
+			       QWidget* gui_parent_, int flags_,
+			       const String& flt_start_txt)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   item_filter = NULL;
+  filter_start_txt = flt_start_txt;
   targ_typ = NULL; // gets set later
   m_sel = NULL;
   cats = NULL;
@@ -3323,7 +3322,9 @@ const String taiItemPtrBase::labelText() {
 
 void taiItemPtrBase::OpenChooser() {
   BuildCategories(); // for subtypes that use categories
-  taiItemChooser* ic = taiItemChooser::New("Choose " + itemTag(), this);
+  String chs_title = "Choose " + itemTag();
+  if(targ_typ) chs_title += " from: " + targ_typ->name;
+  taiItemChooser* ic = taiItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {
     if (m_sel != ic->selObj()) {
       UpdateImage(ic->selObj());
@@ -3336,7 +3337,8 @@ void taiItemPtrBase::OpenChooser() {
 delete ic;
 }
 
-bool taiItemPtrBase::ShowItemFilter(void* base, void* item) const {
+bool taiItemPtrBase::ShowItemFilter(void* base, void* item, const String& itnm) const {
+  if(filter_start_txt.nonempty() && !itnm.startsWith(filter_start_txt)) return false;
   if (item_filter) 
     return item_filter(base, item);
   return true;
@@ -3365,8 +3367,9 @@ void taiItemPtrBase::UpdateImage(void* cur_sel) {
 //////////////////////////////////
 
 taiMemberDefButton::taiMemberDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+				       taiData* par, QWidget* gui_parent_, int flags_, 
+				       const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
 
@@ -3437,8 +3440,7 @@ const String taiMemberDefButton::labelNameNonNull() const {
 }
 
 bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
-  return (ShowItemFilter(NULL, mbr) &&
-    mbr->ShowMember());
+  return (ShowItemFilter(NULL, mbr, mbr->name) && mbr->ShowMember());
 }
 
 
@@ -3455,8 +3457,9 @@ const String taiMemberDefButton::viewText(int index) const {
 //////////////////////////////////
 
 taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+				       taiData* par, QWidget* gui_parent_, int flags_,
+				       const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
 
@@ -3468,7 +3471,7 @@ void taiMethodDefButton::BuildCategories_impl() {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    if (!ShowMethod(mth) || !ShowItemFilter(NULL, mth)) continue;
+    if (!ShowMethod(mth)) continue;
     cat = mth->OptionAfter("CAT_"); // note: could be empty for no category
     cats->AddUnique(cat);
   }
@@ -3501,7 +3504,7 @@ void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
-    if (!ShowMethod(mth) || !ShowItemFilter(NULL, mth)) continue;
+    if (!ShowMethod(mth)) continue;
     cat = mth->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
     item->setData(0, Qt::ToolTipRole, mth->prototype());
@@ -3520,7 +3523,7 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   for (int i = 0; i < mbs->size; ++i) {
     MethodDef* mth = mbs->FastEl(i);
     if ((mth->owner != mbs) || mth->is_override) continue;
-    if (!ShowMethod(mth) || !ShowItemFilter(NULL, mth)) continue;
+    if (!ShowMethod(mth)) continue;
     ++rval;
     cat = mth->OptionAfter("CAT_");
     QTreeWidgetItem* item = ic->AddItem(typ_nm, top_item, (void*)mth);
@@ -3574,8 +3577,7 @@ const String taiMethodDefButton::labelNameNonNull() const {
 }
 
 bool taiMethodDefButton::ShowMethod(MethodDef* mth) {
-  return (ShowItemFilter(NULL, mth) &&
-    mth->ShowMethod());
+  return (ShowItemFilter(NULL, mth, mth->name) &&  mth->ShowMethod());
 }
 
 const String taiMethodDefButton::viewText(int index) const {
@@ -3587,14 +3589,344 @@ const String taiMethodDefButton::viewText(int index) const {
 }
 
 
+//////////////////////////////////////////
+//   taiMemberMethodDefButton		//
+//////////////////////////////////////////
+
+taiMemberMethodDefButton::taiMemberMethodDefButton(TypeDef* typ_, IDataHost* host,
+		   taiData* par, QWidget* gui_parent_, int flags_,
+						   const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
+{
+}
+
+void taiMemberMethodDefButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+  String cat;
+
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+  }
+
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = "method: " + mth->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+  }
+  cats->Sort(); // empty, if any, should sort to top
+}
+
+void taiMemberMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!targ_typ) {
+    taMisc::Error("taiMemberMethodDefButton::BuildChooser: targ_type needed");
+    return;
+  }
+  switch (view) {
+  case 0: 
+    BuildChooser_0(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  case 1: 
+    BuildChooser_1(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  case 2: 
+    BuildChooser_2(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  default: break; // shouldn't happen
+  }
+}
+
+void taiMemberMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
+  String cat;
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, "mbr:  "+mbr->name, NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = "method: " + mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, "mth:  "+mth->name, NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
+void taiMemberMethodDefButton::BuildChooser_1(taiItemChooser* ic) {
+  String cat;
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+}
+
+void taiMemberMethodDefButton::BuildChooser_2(taiItemChooser* ic) {
+  String cat;
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = "method: " + mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
+
+int taiMemberMethodDefButton::columnCount(int view) const {
+  return 2;			// always 2
+}
+
+const String taiMemberMethodDefButton::headerText(int index, int view) const {
+  if(index == 1) return "Description"; 
+  if(index == 0) {
+    switch (view) {
+    case 0: return "Member/Method"; 
+    case 1: return "Member"; 
+    case 2: return "Method"; 
+    default: break; // compiler food
+    }
+  }
+  return _nilString; // shouldn't happen
+}
+
+const String taiMemberMethodDefButton::labelNameNonNull() const {
+  return md()->name;
+}
+
+bool taiMemberMethodDefButton::ShowMethod(MethodDef* mth) {
+  return (ShowItemFilter(NULL, mth, mth->name) &&  mth->ShowMethod());
+}
+
+bool taiMemberMethodDefButton::ShowMember(MemberDef* mbr) {
+  return (ShowItemFilter(NULL, mbr, mbr->name) &&  mbr->ShowMember());
+}
+
+const String taiMemberMethodDefButton::viewText(int index) const {
+  switch (index) {
+  case 0: return "Members & Methods"; 
+  case 1: return "Members"; 
+  case 2: return "Methods"; 
+  default: return _nilString;
+  }
+}
+
+//////////////////////////////////////////
+//   taiEnumStaticButton		//
+//////////////////////////////////////////
+
+taiEnumStaticButton::taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
+					 taiData* par, QWidget* gui_parent_, int flags_,
+					 const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
+{
+}
+
+void taiEnumStaticButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+  cats->AddUnique("Enums");
+
+  String cat;
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+  }
+
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = "method: " + mth->OptionAfter("CAT_"); // note: could be empty for no category
+    cats->AddUnique(cat);
+  }
+  cats->Sort(); // empty, if any, should sort to top
+}
+
+void taiEnumStaticButton::BuildChooser(taiItemChooser* ic, int view) {
+  //assume only called if needed
+  
+  if (!targ_typ) {
+    taMisc::Error("taiEnumStaticButton::BuildChooser: targ_type needed");
+    return;
+  }
+  switch (view) {
+  case 0: 
+    BuildChooser_0(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  case 1: 
+    BuildChooser_1(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  case 2: 
+    BuildChooser_2(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  case 3: 
+    BuildChooser_3(ic); 
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break; 
+  default: break; // shouldn't happen
+  }
+}
+
+void taiEnumStaticButton::BuildChooser_0(taiItemChooser* ic) {
+  String cat;
+  cat = "Enum";
+  for(int i=0; i < targ_typ->sub_types.size; i++) {
+    TypeDef* td = targ_typ->sub_types.FastEl(i);
+    if(td->InheritsFormal(TA_enum)) {
+      for(int j=0;j< td->enum_vals.size; j++) {
+	EnumDef* ed = td->enum_vals.FastEl(j);
+	if(!ShowEnum(ed)) continue;
+	QTreeWidgetItem* item = ic->AddItem(cat, "enum:  "+ed->name, NULL, (void*)ed);
+	item->setData(1, Qt::DisplayRole, ed->desc);
+      }
+    }
+  }
+
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, "mbr:  "+mbr->name, NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = "method: " + mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, "mth:  "+mth->name, NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
+void taiEnumStaticButton::BuildChooser_1(taiItemChooser* ic) {
+  String cat;
+  cat = "Enum";
+  for(int i=0; i < targ_typ->sub_types.size; i++) {
+    TypeDef* td = targ_typ->sub_types.FastEl(i);
+    if(td->InheritsFormal(TA_enum)) {
+      for(int j=0;j< td->enum_vals.size; j++) {
+	EnumDef* ed = td->enum_vals.FastEl(j);
+	if(!ShowEnum(ed)) continue;
+	QTreeWidgetItem* item = ic->AddItem(cat, ed->name, NULL, (void*)ed);
+	item->setData(1, Qt::DisplayRole, ed->desc);
+      }
+    }
+  }
+}
+
+void taiEnumStaticButton::BuildChooser_2(taiItemChooser* ic) {
+  String cat;
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if (!ShowMember(mbr)) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+}
+
+void taiEnumStaticButton::BuildChooser_3(taiItemChooser* ic) {
+  String cat;
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if (!ShowMethod(mth)) continue;
+    cat = "method: " + mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
+
+int taiEnumStaticButton::columnCount(int view) const {
+  return 2;			// always 2
+}
+
+const String taiEnumStaticButton::headerText(int index, int view) const {
+  if(index == 1) return "Description"; 
+  if(index == 0) {
+    switch (view) {
+    case 0: return "Item"; 
+    case 1: return "Enum"; 
+    case 2: return "Static Member"; 
+    case 3: return "Static Method"; 
+    default: break; // compiler food
+    }
+  }
+  return _nilString; // shouldn't happen
+}
+
+const String taiEnumStaticButton::labelNameNonNull() const {
+  return md()->name;
+}
+
+bool taiEnumStaticButton::ShowEnum(EnumDef* enm) {
+  return (ShowItemFilter(NULL, enm, enm->name));
+}
+
+bool taiEnumStaticButton::ShowMethod(MethodDef* mth) {
+  if(!mth->is_static) return false;
+  return (ShowItemFilter(NULL, mth, mth->name) &&  mth->ShowMethod());
+}
+
+bool taiEnumStaticButton::ShowMember(MemberDef* mbr) {
+  if(!mbr->is_static) return false;
+  return (ShowItemFilter(NULL, mbr, mbr->name) &&  mbr->ShowMember());
+}
+
+const String taiEnumStaticButton::viewText(int index) const {
+  switch (index) {
+  case 0: return "Enums & statics"; 
+  case 1: return "Enums"; 
+  case 2: return "Static Members"; 
+  case 3: return "Static Methods"; 
+  default: return _nilString;
+  }
+}
 
 //////////////////////////////////
 //   taiTypeDefButton		//
 //////////////////////////////////
 
 taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+				   taiData* par, QWidget* gui_parent_, int flags_, 
+				   const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
 
@@ -3753,8 +4085,9 @@ const String taiTypeDefButton::viewText(int index) const {
 //////////////////////////////////
 
 taiEnumTypeDefButton::taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+					   taiData* par, QWidget* gui_parent_, int flags_,
+					   const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
 
@@ -3893,8 +4226,9 @@ const String taiEnumTypeDefButton::headerText(int index, int view) const {
 //////////////////////////////////
 
 taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+				     taiData* par, QWidget* gui_parent_, int flags_,
+				     const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   scope_typ = NULL;
 }
@@ -4066,7 +4400,8 @@ const String taiTokenPtrButton::labelNameNonNull() const {
 }
 
 bool taiTokenPtrButton::ShowToken(void* tk) const {
-  return ShowItemFilter(scope_ref, tk);
+  TAPtr btmp = (TAPtr)tk;
+  return ShowItemFilter(scope_ref, tk, btmp->GetName());
 }
 
 const String taiTokenPtrButton::viewText(int index) const {

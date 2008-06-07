@@ -1180,9 +1180,10 @@ public:
   virtual const QPixmap* GetDataNodeBitmap(int, int& flags_supported) const
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
 #endif
-  virtual String	TabTrap(const String& cur_txt, int cur_pos, const String& mbr_name)
+  virtual String	StringFieldLookupFun(const String& cur_txt, int cur_pos,
+					     const String& mbr_name)
   { return _nilString; } 
-  // #IGNORE special function called when tab is pressed for string members that have a TAB_TRAP option set -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
+  // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
 
   virtual void		CallFun(const String& fun_name);
   // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface

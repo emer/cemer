@@ -41,7 +41,6 @@ iLineEdit::iLineEdit(const char* text, QWidget* parent)
 void iLineEdit::init() {
   mmin_char_width = 0;
   mchar_width = 0;
-  m_tab_key_trap = false;
   QShortcut* sc = new QShortcut(QKeySequence(/*Qt::ALT +*/ Qt::CTRL + Qt::Key_U), this);
   sc->setContext(Qt::WidgetShortcut);
   connect(sc, SIGNAL(activated()), this, SLOT(editInEditor()));
@@ -131,10 +130,6 @@ void iLineEdit::setReadOnly(bool value) {
   update();
 }
 
-void iLineEdit::setTabKeyTrap(bool trap_tab) {
-  m_tab_key_trap = trap_tab;
-}
-
 void iLineEdit::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
@@ -167,11 +162,11 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       del();
     }
-//     else if(e->key() == Qt::Key_K) { // already supported
-//       e->accept();
-//       end(true);		// mark
-//       cut();
-//     }
+    else if(e->key() == Qt::Key_K) { // supposedly already supported
+      e->accept();
+      end(true);		// mark
+      cut();
+    }
     else if(e->key() == Qt::Key_Y) {
       e->accept();
       paste();
@@ -188,17 +183,15 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       undo();
     }
+    else if(e->key() == Qt::Key_L) {
+      e->accept();
+      emit lookupKeyPressed();
+    }
     else {
       QLineEdit::keyPressEvent( e );
     }
   }
   else {
-    if(m_tab_key_trap) {
-      if(e->key() == Qt::Key_Tab) {
-	e->accept();
-	emit tabPressed();
-      }
-    }
     QLineEdit::keyPressEvent( e );
   }
 }
