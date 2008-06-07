@@ -2565,7 +2565,7 @@ void taiObjChooser::setSel_obj(const TAPtr value) {
       return;
     }
   }
-  browser->setCurrentItem(-1);
+  browser->setCurrentItem(0);	// default is to select first item!
 }
 
 bool taiObjChooser::Choose() {
@@ -2612,7 +2612,6 @@ void taiObjChooser::Build() {
   GetPathStr();
   editor = new QLineEdit(path_str, this);
   layOuter->addWidget(editor, 0, 0);
-
 
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
@@ -3320,9 +3319,15 @@ const String taiItemPtrBase::labelText() {
   return nm ;
 }
 
+const String taiItemPtrBase::titleText() {
+  String chs_title = "Choose " + itemTag();
+  if(targ_typ) chs_title += " from: " + targ_typ->name;
+  return chs_title;
+}
+
 void taiItemPtrBase::OpenChooser() {
   BuildCategories(); // for subtypes that use categories
-  String chs_title = "Choose " + itemTag();
+  String chs_title = titleText();
   if(targ_typ) chs_title += " from: " + targ_typ->name;
   taiItemChooser* ic = taiItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {

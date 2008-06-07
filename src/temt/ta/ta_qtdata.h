@@ -1020,7 +1020,8 @@ public:
   item_filter_fun	item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
   String		filter_start_txt; // if nonempty, item name must start with this text to be included
   
-  const String		labelText(); // "tag: name" for button
+  virtual const String	labelText(); // "tag: name" for button
+  virtual const String	titleText(); // title of overall chooser;
   virtual int		columnCount(int view) const = 0; 
     // number of header columns in the view
   virtual const String	headerText(int index, int view) const = 0;

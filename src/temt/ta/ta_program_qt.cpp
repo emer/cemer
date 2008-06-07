@@ -1775,7 +1775,8 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   switch(lookup_type) {
   case 1: {// lookup variables
 //     cerr << "base_path empty: lookup a var, seed: " << lookup_seed << endl;
-    // todo: needs leading name filter still
+    // todo: definitely need to lookup enums here too: have a dual-list token guy with
+    // two types to search on..
     taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_ProgVar, NULL, NULL,
 							NULL, 0, lookup_seed);
     varlkup->item_filter = (item_filter_fun)ProgExpr::StdProgVarFilter;
@@ -1787,11 +1788,12 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
     delete varlkup;
     break;
   }
-  case 2: {
+  case 2: {			// methods
 //     cerr << "lookup a memb/meth from path: " << base_path << " seed: " << lookup_seed << endl;
     String path_var, path_rest;
     ProgVar* st_var = NULL;
     TypeDef* lookup_td = NULL;
+    taList_impl* tal = NULL;
     if(delim_pos.size > delims_used) {
       // note: any ref to base path needs to subtract expr_start relative to delim_pos!
       path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
@@ -1815,16 +1817,22 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 	    lookup_td = st_var->object_type;
 	  }
 	  else {
-	    TypeDef* own_td = st_var->object_type;
-	    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, path_rest, false); // warn
-	    if(md) lookup_td = md->type;
-	    else {
-	      if((bool)st_var->object_val) {
-		MemberDef* md = NULL;
-		taBase* mb_tab = st_var->object_val->FindFromPath(path_rest, md);
-		if(mb_tab) lookup_td = mb_tab->GetTypeDef();
-		else if(md) lookup_td = md->type;
+	    if((bool)st_var->object_val) {
+	      MemberDef* md = NULL;
+	      taBase* mb_tab = st_var->object_val->FindFromPath(path_rest, md);
+	      if(mb_tab) {
+		lookup_td = mb_tab->GetTypeDef();
+		if(lookup_td->InheritsFrom(&TA_taList_impl))
+		  tal = (taList_impl*)mb_tab;
 	      }
+	      else {
+		if(md) lookup_td = md->type;
+	      }
+	    }
+	    if(!lookup_td) {
+	      TypeDef* own_td = st_var->object_type;
+	      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, path_rest, false); // no warn
+	      if(md) lookup_td = md->type;
 	    }
 	    if(!lookup_td) {
 	      taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
@@ -1838,7 +1846,29 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
       taMisc::Info("Var lookup: cannot find variable:", path_var,
 		   "as start of lookup path:", base_path);
     }
-    if(lookup_td) {
+    if(tal) {
+      if(tal->InheritsFrom(&TA_taGroup_impl)) {
+	taiGroupElsButton* lilkup = new taiGroupElsButton(lookup_td, NULL, NULL, NULL,
+							  0, lookup_seed);
+	lilkup->GetImage((taGroup_impl*)tal, NULL);
+	lilkup->OpenChooser();
+	if(lilkup->item()) {
+	  rval = txt.through(delim_pos[0]) + lilkup->item()->GetName() + append_at_end;
+	}
+	delete lilkup;
+      }
+      else {
+	taiListElsButton* lilkup = new taiListElsButton(lookup_td, NULL, NULL, NULL,
+							0, lookup_seed);
+	lilkup->GetImage(tal, NULL);
+	lilkup->OpenChooser();
+	if(lilkup->item()) {
+	  rval = txt.through(delim_pos[0]) + lilkup->item()->GetName() + append_at_end;
+	}
+	delete lilkup;
+      }
+    }
+    else if(lookup_td) {
 //       cerr << "lookup from type: " << lookup_td->name << endl;
       taiMemberMethodDefButton* mdlkup =  new taiMemberMethodDefButton(lookup_td, NULL, NULL,
 								       NULL, 0, lookup_seed);
@@ -1866,8 +1896,18 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
       }
       delete eslkup;
     }
-    else {
-      // todo: need to deal with local enum defs!!
+    else {			// now try for local enums
+      ProgType* pt = prg->types.FindName(base_path);
+      if(pt && pt->InheritsFrom(&TA_DynEnumType)) {
+	taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_DynEnumItem, NULL, NULL,
+							    NULL, 0, lookup_seed);
+	varlkup->GetImage(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
+	varlkup->OpenChooser();
+	if(varlkup->token()) {
+	  rval = prepend_before + varlkup->token()->GetName() + append_at_end;
+	}
+	delete varlkup;
+      }
     }
     break;
   }

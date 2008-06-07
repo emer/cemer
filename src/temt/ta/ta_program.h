@@ -475,7 +475,7 @@ public:
     FOR_LOOP_EXPR	= 0x0004, // expression is an initializer or increment for a for loop -- requires different parsing due to possibility of commas..
   };
 
-  String	expr;		// #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
+  String	expr;		// #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
 
   ExprFlags	flags;		// #HIDDEN #NO_SAVE Flags for controlling expression behavior -- should not be saved because they are set by the owning program every time
   String	var_expr;	// #READ_ONLY #HIDDEN #NO_SAVE expression with variables listed as $#1#$, etc. used for generating the actual code (this is the 'official' version that generates the full expr)

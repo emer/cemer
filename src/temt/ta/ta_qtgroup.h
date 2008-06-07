@@ -102,7 +102,8 @@ public:
   TAPtr			GetValue() {return item();}
   
   taiListElsButtonBase(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_ = 0);
+		       taiData* par, QWidget* gui_parent_, int flags_ = 0,
+		       const String& flt_start_txt = "");
 protected:
   
 //nn  const String		itemTag() {return "Token: ";}
@@ -119,12 +120,15 @@ INHERITED(taiListElsButtonBase)
 public:
   TABLPtr		list;
   
+  override const String	titleText();
+
   void			GetImage(TABLPtr base_lst, TAPtr it);
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
   taiListElsButton(TypeDef* typ, IDataHost* host, taiData* par,
-    QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
+		   QWidget* gui_parent_, int flags_ = 0,
+		   const String& flt_start_txt = ""); //note: typ is type of list
 };
 
 
@@ -134,12 +138,14 @@ INHERITED(taiListElsButtonBase)
 public:
   taGroup_impl* 	grp;
   
+  override const String	titleText();
   void			GetImage(taGroup_impl* base_grp, TAPtr it);
   
   void			BuildChooser(taiItemChooser* ic, int view = 0); // override
 
   taiGroupElsButton(TypeDef* typ, IDataHost* host, taiData* par,
-    QWidget* gui_parent_, int flags_ = 0); //note: typ is type of grp
+		    QWidget* gui_parent_, int flags_ = 0,
+		    const String& flt_start_txt = ""); //note: typ is type of grp
 protected:
   int 			BuildChooser_1(taiItemChooser* ic, taGroup_impl* top_grp, 
     QTreeWidgetItem* top_item); // we use this recursively, and also in gpi guy

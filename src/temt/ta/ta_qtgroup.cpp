@@ -221,8 +221,9 @@ void gpiArrayEditButton::SetLabel() {
 //////////////////////////////////
 
 taiListElsButtonBase::taiListElsButtonBase(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+		   taiData* par, QWidget* gui_parent_, int flags_,
+		   const String& flt_start_txt)
+:inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
 
@@ -234,6 +235,10 @@ int taiListElsButtonBase::BuildChooser_0(taiItemChooser* ic, taList_impl* top_ls
   for (int i = 0; i < top_lst->size; ++i) {
     TAPtr tab = (TAPtr)top_lst->FastEl_(i);
     if (!tab)  continue;
+    if(filter_start_txt.nonempty()) {
+      String nm = tab->GetName();
+      if(nm.nonempty() && !nm.startsWith(filter_start_txt)) continue;
+    }
     QTreeWidgetItem* item = ic->AddItem(tab->GetColText(taBase::key_disp_name), top_item, tab); 
     item->setText(1, tab->GetColText(taBase::key_type));
     item->setText(2, tab->GetColText(taBase::key_desc));
@@ -272,16 +277,22 @@ const String taiListElsButtonBase::viewText(int index) const {
   }
 }
 
-
 //////////////////////////////////
 //   taiListElsButton		//
 //////////////////////////////////
 
 taiListElsButton::taiListElsButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+				   taiData* par, QWidget* gui_parent_, int flags_,
+				   const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   list = NULL;
+}
+
+const String taiListElsButton::titleText() {
+  String chs_title = "Choose " + itemTag();
+  if(list) chs_title += " from list: " + list->GetDisplayName();
+  return chs_title;
 }
 
 void taiListElsButton::BuildChooser(taiItemChooser* ic, int view) {
@@ -315,10 +326,17 @@ void taiListElsButton::GetImage(taList_impl* base_lst, TAPtr it) {
 //////////////////////////////////
 
 taiGroupElsButton::taiGroupElsButton(TypeDef* typ_, IDataHost* host,
-    taiData* par, QWidget* gui_parent_, int flags_)
-:inherited(typ_, host, par, gui_parent_, flags_)
+				     taiData* par, QWidget* gui_parent_, int flags_,
+				     const String& flt_start_txt)
+ :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   grp = NULL;
+}
+
+const String taiGroupElsButton::titleText() {
+  String chs_title = "Choose " + itemTag();
+  if(grp) chs_title += " from group: " + grp->GetDisplayName();
+  return chs_title;
 }
 
 void taiGroupElsButton::BuildChooser(taiItemChooser* ic, int view) {
