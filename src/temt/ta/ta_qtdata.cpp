@@ -2565,7 +2565,7 @@ void taiObjChooser::setSel_obj(const TAPtr value) {
       return;
     }
   }
-  browser->setCurrentItem(0);	// default is to select first item!
+  browser->setCurrentItem(-1);	// 0 = default is to select first item!  not sure about that
 }
 
 bool taiObjChooser::Choose() {
