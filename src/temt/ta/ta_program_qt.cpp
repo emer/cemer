@@ -1775,11 +1775,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   switch(lookup_type) {
   case 1: {// lookup variables
 //     cerr << "base_path empty: lookup a var, seed: " << lookup_seed << endl;
-    // todo: definitely need to lookup enums here too: have a dual-list token guy with
-    // two types to search on..
-    taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_ProgVar, NULL, NULL,
-							NULL, 0, lookup_seed);
+    taiTokenPtrMultiTypeButton* varlkup =  new taiTokenPtrMultiTypeButton
+      (&TA_ProgVar, NULL, NULL,	NULL, 0, lookup_seed);
     varlkup->item_filter = (item_filter_fun)ProgExpr::StdProgVarFilter;
+    varlkup->type_list.Link(&TA_ProgVar);
+    varlkup->type_list.Link(&TA_DynEnumItem);
     varlkup->GetImage(NULL, &TA_ProgVar, prg, &TA_Program);
     varlkup->OpenChooser();
     if(varlkup->token()) {

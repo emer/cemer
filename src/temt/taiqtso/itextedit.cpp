@@ -102,6 +102,10 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       undo();
     }
+    else if(e->key() == Qt::Key_L) {
+      e->accept();
+      emit lookupKeyPressed();
+    }
     else {
       QTextEdit::keyPressEvent( e );
     }

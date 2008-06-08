@@ -32,6 +32,11 @@ public:
   iTextEdit(const QString &text, QWidget *parent = 0);
   ~iTextEdit();
   
+#ifndef __MAKETA__
+signals:
+  void		lookupKeyPressed();	// use this as hook for looking up information based on current text etc (completion) -- bound to Ctrl-L
+#endif
+
 protected:
   void keyPressEvent(QKeyEvent* e);
 };

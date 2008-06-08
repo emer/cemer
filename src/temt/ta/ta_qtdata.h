@@ -111,12 +111,13 @@ private:
   QObjectList*		mwidgets; // list of child widgets
 };
 
+class iTextEdit; // #IGNORE
 
 class TA_API iFieldEditDialog : public QDialog {
   Q_OBJECT
 INHERITED(QDialog)
 public:
-  QTextEdit*	txtText;
+  iTextEdit*	txtText;
   QPushButton*	btnOk; // read/write only
   QPushButton* 	btnCancel; // or close, if read only
   QPushButton*	btnApply; // writes it back to field
@@ -169,6 +170,7 @@ protected slots:
   void			selectionChanged();
   void			btnEdit_clicked(bool);
   void			lookupKeyPressed();
+  void			lookupKeyPressed_dialog();
 
 protected:
 #ifndef __MAKETA__
@@ -1298,6 +1300,44 @@ public:
   taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
 		    taiData* par, QWidget* gui_parent_, int flags_ = 0,
 		    const String& flt_start_txt = "");
+protected:
+  taSmartRef		scope_ref;	// reference object for scoping, default is none
+  TypeDef*		scope_typ;	// type of scope to use (NULL = default)
+  
+  const String		itemTag() const {return "Token: ";}
+  const String		labelNameNonNull() const;
+
+  int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
+    QTreeWidgetItem* top_item); // we use this recursively
+  virtual bool		ShowToken(void* tk) const;
+};
+
+
+class TA_API taiTokenPtrMultiTypeButton : public taiItemPtrBase {
+// for tokens of taBase objects of multiple types
+INHERITED(taiItemPtrBase)
+public:
+  TypeSpace		type_list; // #LINK_GROUP set of types to generate tokens for -- must be set manually after construction and before GetImage etc -- be sure to only do Link here..
+
+  inline TAPtr		token() const {return (TAPtr)m_sel;}
+  override int		columnCount(int view) const;
+  override const String	headerText(int index, int view) const;
+  override int		viewCount() const; // n = size of type_list + 1
+  override const String	viewText(int index) const;
+
+  virtual void		GetImage(TAPtr ths, TypeDef* targ_typ, TAPtr scope = NULL,
+				 TypeDef* scope_type = NULL);
+  // get image, using the new type and scope params supplied
+  virtual taBase*	GetValue() {return token();}
+  
+  void			BuildChooser(taiItemChooser* ic, int view = 0); // override
+
+  override void		EditPanel();
+  override void		EditDialog();
+  
+  taiTokenPtrMultiTypeButton(TypeDef* typ_, IDataHost* host,
+			     taiData* par, QWidget* gui_parent_, int flags_ = 0,
+			     const String& flt_start_txt = "");
 protected:
   taSmartRef		scope_ref;	// reference object for scoping, default is none
   TypeDef*		scope_typ;	// type of scope to use (NULL = default)
