@@ -3015,7 +3015,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   tvSpecs->setColumnCount(2);
   tvSpecs->setSortingEnabled(false);// only 1 order possible
   tvSpecs->setHeaderText(0, "Spec");
-  tvSpecs->setColumnWidth(0, 160); // more width for spec column
+//   tvSpecs->setColumnWidth(0, 160); // more width for spec column
   tvSpecs->setHeaderText(1, "Description");
   tvSpecs->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE); // in case of multi-line specs
   tvSpecs->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
@@ -3033,6 +3033,9 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
       dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
     }
   }
+
+  tvSpecs->resizeColumnToContents(0); // just make sure everythign fits
+
   tvSpecs->Connect_SelectableHostNotifySignal(this,
     SLOT(tvSpecs_Notify(ISelectableHost*, int)) );
 //   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
@@ -3222,6 +3225,7 @@ void NetViewPanel::GetVars() {
     itm << md->name << md->desc;
     lvi = new QTreeWidgetItem(lvDisplayValues, itm);
   }
+  lvDisplayValues->resizeColumnToContents(0);
 }
 
 void NetViewPanel::InitPanel() {
