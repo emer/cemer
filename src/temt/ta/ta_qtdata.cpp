@@ -720,7 +720,9 @@ void taiField::lookupKeyPressed_dialog() {
 					  lookupfun_md->name);
   if(rval.nonempty()) {
     edit->txtText->setPlainText(rval);
-    edit->txtText->setTextCursor(cursor);
+    QTextCursor cur2(edit->txtText->textCursor());
+    cur2.setPosition(cur_pos);
+    edit->txtText->setTextCursor(cur2);
   }
 }
 
@@ -3346,7 +3348,6 @@ const String taiItemPtrBase::titleText() {
 void taiItemPtrBase::OpenChooser() {
   BuildCategories(); // for subtypes that use categories
   String chs_title = titleText();
-  if(targ_typ) chs_title += " from: " + targ_typ->name;
   taiItemChooser* ic = taiItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {
     if (m_sel != ic->selObj()) {
