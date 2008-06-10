@@ -35,40 +35,7 @@ Unit::Unit() {
 }
 
 Unit::~Unit() {
-  for (int i = send_cons.size - 1; i >= 0; --i)
-    delete send_cons[i];
 }
-
-void Unit::ConnectAlloc(int no, int& rec_idx, RecvCons*& cgp) {
-  if((recv_idx < 0) || ((cgp = recv.SafeEl(recv_idx)) == NULL)) {
-    cgp = recv.New(); 
-    recv_idx = recv.size-1;
-  }
-  cgp->AllocCons(no);
-}
-
-Connection* Unit::ConnectFrom(Unit* su, int& recv_idx, int& send_idx,
-  RecvCons*& recv_gp, SendCons*& send_gp) 
-{
-  if((recv_idx < 0) || ((recv_gp = recv.SafeEl(recv_idx)) == NULL)) {
-    recv_gp = recv.New();
-    recv_idx = recv.size-1;
-  }
-  if((send_idx < 0) || ((send_gp = su->send.SafeEl(send_idx)) == NULL)) {
-    send_gp = su->send.New();
-    send_idx = su->send.size-1;
-  }
-  if(recv_gp->send_idx < 0)
-    recv_gp->send_idx = send_idx;
-  if(send_gp->recv_idx < 0)
-    send_gp->recv_idx = recv_idx;
-
-  Connection* con = recv_gp->NewCon(su);
-  send_gp->LinkCon(con, this);
-  n_recv_cons++;
-  return con;
-}
-
 
 bool Unit::DoDelta() {
 #ifndef USE_RECV_SMART
@@ -90,45 +57,44 @@ Layer::Layer() {
 Layer::~Layer() {
 }
 
-void Unit::Connect(Layer* lay_to) {
-  Conn_Array* cl = new Conn_Array(Nb::n_cons);
-  send_cons.Add(cl);
-  
-  for (int con = 0; con < Nb::n_cons; con++) {
-    Unit* un_to = lay_to->units.FastEl(lay_to->un_to_idx);
-    this->targs.Set(un_to, this->targs.size);
-    Connection& cn = (*cl)[this->targs.size++];
-    cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-#ifdef USE_VAL
-    cn.val = &(un_to->net);
-#endif      
-    if (++(lay_to->un_to_idx) >= lay_to->units.size)
-      lay_to->un_to_idx = 0;
-  }
-}
-
-
-void Layer::Connect(Layer* lay_to) {
-  for (int u_fr = 0; u_fr < this->units.size; u_fr++) {
-    Unit* un_fr = units.FastEl(u_fr);
-    RecvCons*& recv_gp; 
-    SendCons*& send_gp
-    int& recv_idx;
-    int& send_idx;
-  
-    un_fr->Connect(lay_to);
-  }
-}
-
 void Layer::ConnectFrom(Layer* lay_fm) {
-  for (int u_to = 0; u_to < this->units.size; u_to++) {
-    Unit* un_to = units.FastEl(u_to);
-    RecvCons*& recv_gp; 
-    SendCons*& send_gp
-    int& recv_idx;
-    int& send_idx;
-  
-    un_to->Connect(lay_fm);
+  const int n_send = lay_fm->units.size;
+  if (n_send == 0) return; // shouldn't happen
+  const int n_recv = this->units.size;  
+  // get a unit to determine sending gp
+  Unit* un = lay_fm->units.FastEl(0);
+  const int send_idx = un->send.size; // index of new send gp...
+
+  for (int i_to = 0; i_to < units.size; ++i_to) {
+    Unit* un_to = units.FastEl(i_to);
+    const int recv_idx = un_to->send.size; // index of new recv gp...
+    RecvCons* recv_gp = un_to->recv.New();
+    recv_gp->cons.SetSize(n_send);
+    recv_gp->units.SetSize(n_send);
+    recv_gp->send_idx = send_idx;
+    
+    for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
+      Unit* un_fm = lay_fm->units.FastEl(i_fm);
+      SendCons* send_gp;
+      if (i_to == 0) {
+        send_gp = un_fm->send.New();
+        send_gp->cons.SetSize(n_recv);
+        send_gp->units.SetSize(n_recv);
+        send_gp->recv_idx = recv_idx;
+      } else {
+        send_gp = un_fm->send.FastEl(send_idx);
+      }
+      
+      Connection& cn = recv_gp->cons[i_to];
+      cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+#ifdef USE_VAL
+      cn.val = &(un_to->net);
+#endif      
+      recv_gp->units.Set(un_to, i_to);
+      
+      send_gp->cons.Set(&cn, i_fm);
+      send_gp->units.Set(un_fm, i_fm);
+    }
   }
 }
 
@@ -158,8 +124,8 @@ void Network::Build() {
     
     for (int i=0;i<Nb::n_units;i++) {
       Unit* un = lay->units.New();
-      un->task_id = units_flat.size % Nb::n_procs;
-      units_flat.Set(un, units_flat.size++);
+      un->task_id = n_units_flat % Nb::n_procs;
+      units_flat.Add(un);
       un->cs = cs;
     } 
   }
@@ -170,8 +136,8 @@ void Network::Build() {
     if (lay_nxt >= Nb::n_layers) lay_nxt = 0;
     int lay_prv = lay_ths - 1; 
     if (lay_prv < 0) lay_prv = Nb::n_layers - 1;
-    layers[lay_prv]->Connect(layers[lay_ths]);
-    layers[lay_ths]->Connect(layers[lay_nxt]);
+    layers[lay_ths]->ConnectFrom(layers[lay_prv]);
+    layers[lay_nxt]->ConnectFrom(layers[lay_ths]);
     if (Nb::n_layers == 2) break; // special case
   }
 }
@@ -248,32 +214,25 @@ void NetTask::run() {
 }
 
 void NetTask::Send_Netin_0(Unit* su) {
-  float su_act_eff = su->act;
+/*TODO  float su_act_eff = su->act;
   Connection* cns = su->send_wts; // array pointer
-#ifdef USE_VAL
-  for(int i=0; i<su->targs.size; i++)
-    Send_Netin_inner_0(cns[i].wt, cns[i].val, su_act_eff);
-#else
   Unit** uns = su->targs.Els(); // unit pointer
   for(int i=0; i<su->targs.size; i++)
-    Send_Netin_inner_0(cns[i].wt, &(uns[i]->net), su_act_eff);
-#endif
+    Send_Netin_inner_0(cns[i].wt, &(uns[i]->net), su_act_eff); */
 }
 
 void NetTask::Recv_Netin_0(Unit* ru) {
   float ru_net = 0.0f;
-  Connection* cns = ru->send_wts; // array pointer
-#ifdef USE_VAL
-  for(int i=0; i<ru->targs.size; i++)
-    ru_net += *(cns[i].val) * cns[i].wt;
-#else
-  Unit** uns = ru->targs.Els(); // unit pointer
-  for(int i=0; i<ru->targs.size; i++)
+  for (int j = 0; j < ru->recv.size; ++j) {
+    RecvCons* recv_gp = ru->recv[j];
+    Connection* cns = &(recv_gp->cons[0]); // array pointer
+    Unit** uns = recv_gp->units.Els(); // unit pointer
+    for(int i=0; i < recv_gp->units.size; ++i)
 #ifdef USE_RECV_SMART
-    if (uns[i]->do_delta)
+      if (uns[i]->do_delta)
 #endif
-      ru_net += uns[i]->act * cns[i].wt;
-#endif
+        ru_net += uns[i]->act * cns[i].wt;
+  }
   ru->net = ru_net;
 }
 

@@ -14,9 +14,8 @@
 using namespace std;
 
 //////////////////////////
-// 	TimeUsed 	//
+//  TimeUsed 		//
 //////////////////////////
-
 
 #ifdef Q_OS_WIN
 
@@ -99,9 +98,6 @@ void TimeUsed::ResetUsed() {
 }
 
 
-// timing code
-////////////////////////////////////////////////////////////////////////////////////
-
 // core version 
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
@@ -179,6 +175,10 @@ void DeleteThreads() {
 */
 
 
+//////////////////////////
+//  taPtrList_impl	//
+//////////////////////////
+
 void taPtrList_impl::Alloc(int new_alloc) {
   if (alloc_size >= new_alloc)	return;	// no need to increase..
   int old_alloc_sz = alloc_size;
@@ -203,3 +203,15 @@ void taPtrList_impl::Alloc(int new_alloc) {
 }
 
 
+void taPtrList_impl::SetSize(int i) {
+  if (i == size) return;
+  if (i < size) {
+    Release_(i, size - 1);
+    size = i;
+  } else {
+    Alloc(i);
+    while (size < i) {
+      el[size++] = NULL;
+    }
+  }
+}

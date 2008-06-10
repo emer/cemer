@@ -109,10 +109,14 @@ public:
   int		size;		// #READ_ONLY #NO_SAVE #SHOW number of elements in the 
   
   void		Alloc(int i);
+  void		SetSize(int i); // set size, setting unused to NULL
   taPtrList_impl() {el = NULL; alloc_size = 0; size = 0;}
-  virtual ~taPtrList_impl() {if (alloc_size) {delete[] el; el = NULL; alloc_size = size = 0;}}
+  virtual ~taPtrList_impl() {if (alloc_size) {delete el; el = NULL; alloc_size = size = 0;}}
 protected:
-  void		Add_(void* it) {Alloc(size+1); ++size; el[size] = it;}
+  void		Add_(void* it) {Alloc(size+1); el[size] = it; ++size;}
+  void*		SafeEl_(int i) 
+    {if ((i >= 0) && (i < size)) return el[i]; return NULL;}
+  virtual void	Release_(int /*fm*/, int /*to*/) {} // only needed for taList
 
 };
 
@@ -123,6 +127,7 @@ public:
   // element at index
   T**		Els() const		{ return (T**)el; }
   T*		FastEl(int i) const		{ return (T*)el[i]; }
+  T*		SafeEl(int i) const	{ return (T*)SafeEl_(i); }
   T*		operator[](int i) const		{ return (T*)el[i]; }
   void		Set(T* it, int i)		{  el[i] = it; }
   
@@ -138,6 +143,7 @@ public:
   // element at index
   T**		Els() const		{ return (T**)el; }
   T*		FastEl(int i) const		{ return (T*)el[i]; }
+  T*		SafeEl(int i) const	{ return (T*)SafeEl_(i); }
   T*		operator[](int i) const		{ return (T*)el[i]; }
   void		Set(T* it, int i)		{  el[i] = it; }
   
@@ -147,7 +153,11 @@ public:
   
   taList() {}
   explicit taList(int alloc) {Alloc(alloc);}
-  ~taList() {while (size-- > 0) delete FastEl(size);}
+  ~taList() {SetSize(0);}
+protected:
+  void		Release_(int fm, int to) 
+    {while (fm <= to) {T* el = FastEl(fm); if (el) delete el; ++fm;}}
+
 };
 
 

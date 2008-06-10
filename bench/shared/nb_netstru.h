@@ -21,10 +21,10 @@ class Layer;
 class Connection {
   // one connection between units
 public:
-  float 	wt;			// connection weight value
-  float 	dwt;			// delta-weight
+  float 	wt;	// connection weight value
+  float 	dwt;	// delta-weight
   float		pdw;
-  float		sravg;		// #NO_SAVE average of sender and receiver activation 
+  float		sravg;	// #NO_SAVE average of sender and receiver activation 
 };
 
 typedef taArray<Connection>	ConArray;
@@ -40,7 +40,7 @@ public:
   int		send_idx;
 
   RecvCons() {send_idx = -1;}
-  ~RecvCons();
+  ~RecvCons() {}
 };
 
 typedef taList<RecvCons>	RecvCons_List;
@@ -90,10 +90,7 @@ public:
 //  Connection* 	Cn(int i) const { return &(send_wts[i]); }
   // #CAT_Structure gets the connection at the given index
 //  Unit*		Un(int i) const { return targs.FastEl(i); }
-  
-  virtual Connection* 	ConnectFrom(Unit* su, int& recv_idx, int& send_idx, 
-    RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
-  
+    
   bool		DoDelta(); // returns true if we should do a delta; also sets the do_delta
   
   
@@ -109,7 +106,7 @@ public:
   
   UnitList	units;
   
-  void		Connect(Layer* to); // connect from me to
+  void		ConnectFrom(Layer* lay_fm); // connect from me to
   
   Layer();
   ~Layer();
