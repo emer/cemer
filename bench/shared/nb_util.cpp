@@ -108,10 +108,6 @@ void TimeUsed::ResetUsed() {
 #include <pthread.h>
 #include <sys/signal.h>
 
-int n_procs;		// total number of processors
-const int core_max_nprocs = 32; // maximum number of processors!
-QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
-
 
 QTaskThread::QTaskThread() {
   m_task = NULL;
@@ -131,7 +127,7 @@ void QTaskThread::resume() {
   if (!m_suspended) return;
   mutex.lock();
   m_suspended = false;
-  start_latency.Start();
+  m_task->start_latency.Start(false);
   wc.wakeAll();;
   mutex.unlock();
 }
@@ -143,11 +139,11 @@ void QTaskThread::run() {
     while (m_suspended)
       wc.wait(&mutex);
       
-    start_latency.Stop();
     if (m_task) {
-      run_time.Start();
+      m_task->start_latency.Stop();
+      m_task->run_time.Start(false);
       m_task->run();
-      run_time.Stop();
+      m_task->run_time.Stop();
     }
     m_suspended = true;
     if (!m_active) break;

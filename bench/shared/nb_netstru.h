@@ -81,6 +81,9 @@ public:
   static bool	recv_based; // true for recv, false for send
   static bool	recv_smart; // fort recv-based, does the smart recv algo
   
+  static int 	n_units_flat; // total number of units (flattened, all layers)
+
+  
   Unit_List 	units_flat;		// layers = arrays of units
   Layer_List	layers;
   
@@ -147,25 +150,34 @@ public:
 
 class Nb { // global catchall
 public:
-  static int n_procs;		// total number of processors
-  static const int core_max_nprocs = 32; // maximum number of processors!
-  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
-  static NetTask* netin_tasks[core_max_nprocs]; // only n_procs created
-  
+  static bool hdr;
+// global net params
   static int n_layers;
   static int n_units;			// number of units per layer
   static int n_cons; // number of cons per unit
-  static int n_units_flat; // total number of units (flattened, all layers)
   static int n_cycles;			// number of cycles of updating
   static Network net;		// global network 
   static int n_tot; // total units (reality check)
   static float tot_act; // check on tot act
   static int send_act; // send activation, as a fraction of 2^16 
+  
   static int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
+  
+// thread values
+  static const int core_max_nprocs = 32; // maximum number of processors!
+  static int n_procs;		// total number of processors
+  static NetTask* netin_tasks[core_max_nprocs]; // only n_procs created
+  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
+  
   static bool nibble; // setting false disables nibbling and adds sync to loop
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
   
+  static int	main(int argc, char* argv[]); // must be suplied in the main.cpp
+protected:
+  static void 	MakeThreads();
+  static void 	DeleteThreads();
+
 private:
   Nb();
   ~Nb();

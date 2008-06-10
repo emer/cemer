@@ -9,6 +9,9 @@
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
+#if (QT_VERSION >= 0x040400) 
+# include <QtCore/QRunnable>
+#endif
 
 class TimeUsedP;
 
@@ -52,22 +55,28 @@ inline int AtomicFetchAdd(int* operand, int incr)
 }
 #endif
 
+#if (QT_VERSION < 0x040400) 
+class QRunnable {
+public:
+  virtual void	run() = 0;
+  
+  QRunnable() {}
+  virtual ~QRunnable() {}
+};
+#endif
 
-class Task {
+class Task : public QRunnable {
 public:
   int		task_id;
   int		proc_id; // current proc being run
-  
-  virtual void	run() = 0;
+  TimeUsed	start_latency; // amount of time waiting to start (n/a for main thread)
+  TimeUsed	run_time; // amount of time actually running jobs
   
   Task() {task_id = -1; proc_id = 0;}
-  virtual ~Task();
 };
 
 class QTaskThread: public QThread {
 public:
-  TimeUsed	start_latency; // amount of time waiting to start
-  TimeUsed	run_time; // amount of time actually running jobs
   
   inline bool	isActive() const {return m_active;}
   inline bool	isSuspended() const {return m_suspended;}

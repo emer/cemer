@@ -1,10 +1,14 @@
 #include "nb_util.h"
+#include "nb_netstru.h"
 
 #include <QtCore/QCoreApplication>
 
 int main(int argc, char* argv[]) {
+  return Nb::main(argc, argv);
+}
+  
+int Nb::main(int argc, char* argv[]) {
   QCoreApplication app(argc, argv);
-  bool hdr = false;
   
   if(argc < 4) {
     printf("must have min 3 args:\n"
@@ -16,13 +20,14 @@ int main(int argc, char* argv[]) {
       "\t<n_cons>\tnumber of cons per unit-projection (def=n_units)\n"
       "\t<send_act>\tpercent (/100) avg activation level (def = 100)\n"
       "optional commands: \n"
+      "\t-header\t output a header line\n"
       "\t-log=0\t(def) do not log optional values to ptest_core.log\n"
       "\t-log=1\tlog optional values to ptest_core.log\n"
       "\t-act=0\tdo not calculate activation\n"
     );
     return 1;
   }
-/*
+
 #ifdef USE_RECV_SMART
   net.recv_based = true; net.recv_smart = true;
 #endif  
@@ -32,7 +37,7 @@ int main(int argc, char* argv[]) {
 
   n_units = (int)strtol(argv[1], NULL, 0);
   //TODO: parameterize this!
-  n_units_flat = n_units * n_layers;
+  Network::n_units_flat = n_units * n_layers;
   n_cycles = (int)strtol(argv[2], NULL, 0);
   n_procs = (int)strtol(argv[3], NULL, 0);
   if (n_procs <= 0) {
@@ -92,17 +97,14 @@ int main(int argc, char* argv[]) {
   MakeThreads();
   net.Build();
 
-  FILE* logfile;
+  FILE* logfile = NULL;
   if (use_log_file) {
     logfile = fopen("ptest_core.log", "w");
     fprintf(logfile,"cyc\ttot_act\n");
   }
 
   TimeUsed time_used;	
-  time_used.rec = true;
-  TimeUsed start;  	
-  start.rec = true;
-  start.GetTimes();
+  time_used.Start();
 
   // this is the key computation loop
   for(int cyc = 0; cyc < n_cycles; cyc++) {
@@ -114,13 +116,17 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  time_used.GetUsed(start);
+  time_used.Stop();
+  if (use_log_file) {
+    fclose(logfile);
+    logfile = NULL;
+  }
 
 
 //     time_used.OutString(stdout);
 //     printf("\n");
 
-  double tot_time = time_used.tot / (double)time_used.ticks_per;//1.0e2;
+  double tot_time = time_used.s_used;
 
   double n_wts = n_layers * n_units * n_cons * 2.0;   // bidirectional connected layers
   // cons travelled will depend on activation percent, so we calc exactly
@@ -130,22 +136,21 @@ int main(int argc, char* argv[]) {
   double n_eff_con_trav = n_layers * n_units * n_cycles * (n_cons * 2.0);
   double eff_con_trav_sec = ((double)n_eff_con_trav / tot_time) / 1.0e6;
   
-  if(use_log_file) {
-    fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
+  if (use_log_file) {
+    logfile = fopen("nb_thread.log", "w");
+    if (hdr) fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
     for (int t = 0; t < n_procs; t++) {
       NetTask* tsk = netin_tasks[t];
       QTaskThread* th = (QTaskThread*)threads[t];
       double start_lat = 0;
       double run_time = 0;
-      if (t > 0) {
-        start_lat = th->start_latency.elapsed();
-        run_time = th->run_time.elapsed();
-      }
+      start_lat = tsk->start_latency.s_used;
+      run_time = tsk->run_time.s_used;
       fprintf(logfile,"%d\t%d\t%g\t%g\n", t, tsk->t_tot, start_lat, run_time);
     }
-  }
-  if(use_log_file)
     fclose(logfile);
+    logfile = NULL;
+  }
 
   if (hdr)
   printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\n");
@@ -154,6 +159,7 @@ int main(int argc, char* argv[]) {
     eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
 
   DeleteThreads();
-//  DeleteNet();*/
+//  DeleteNet();
+  return 0;
 }
 
