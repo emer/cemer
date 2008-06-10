@@ -13,11 +13,20 @@ void ConSpec::Send_Netin(Unit* cg, Unit* su) {
     C_Send_Netin(NULL, cg->Cn(i), cg->Un(i), su_act_eff);
 }*/
 
+//////////////////////////
+//  RecvCons		//
+//////////////////////////
+
+
+//////////////////////////
+//  Unit		//
+//////////////////////////
+
 Unit::Unit() {
   act = 0; 
-  send_wts = NULL; 
   cs = NULL; 
   task_id = 0;
+  n_recv_cons = 0;
   net = 0;
   my_rand = rand();
 #ifdef USE_RECV_SMART
@@ -26,8 +35,40 @@ Unit::Unit() {
 }
 
 Unit::~Unit() {
-  delete[] send_wts;
+  for (int i = send_cons.size - 1; i >= 0; --i)
+    delete send_cons[i];
 }
+
+void Unit::ConnectAlloc(int no, int& rec_idx, RecvCons*& cgp) {
+  if((recv_idx < 0) || ((cgp = recv.SafeEl(recv_idx)) == NULL)) {
+    cgp = recv.New(); 
+    recv_idx = recv.size-1;
+  }
+  cgp->AllocCons(no);
+}
+
+Connection* Unit::ConnectFrom(Unit* su, int& recv_idx, int& send_idx,
+  RecvCons*& recv_gp, SendCons*& send_gp) 
+{
+  if((recv_idx < 0) || ((recv_gp = recv.SafeEl(recv_idx)) == NULL)) {
+    recv_gp = recv.New();
+    recv_idx = recv.size-1;
+  }
+  if((send_idx < 0) || ((send_gp = su->send.SafeEl(send_idx)) == NULL)) {
+    send_gp = su->send.New();
+    send_idx = su->send.size-1;
+  }
+  if(recv_gp->send_idx < 0)
+    recv_gp->send_idx = send_idx;
+  if(send_gp->recv_idx < 0)
+    send_gp->recv_idx = recv_idx;
+
+  Connection* con = recv_gp->NewCon(su);
+  send_gp->LinkCon(con, this);
+  n_recv_cons++;
+  return con;
+}
+
 
 bool Unit::DoDelta() {
 #ifndef USE_RECV_SMART
@@ -37,37 +78,63 @@ bool Unit::DoDelta() {
   return do_delta;
 } 
 
-// construct the network
 
-int Layer::un_to_idx;
+//////////////////////////
+//  Layer		//
+//////////////////////////
 
 Layer::Layer() {
+  un_to_idx = 0;
 }
 
 Layer::~Layer() {
-  while (units.size > 0) 
-    delete units.FastEl(--(units.size));
 }
 
-void Layer::Connect(Layer* lay_to) {
-  for (int u_fr = 0; u_fr < this->units.size; u_fr++) {
-    Unit* un_fr = units.FastEl(u_fr);
-    for (int con = 0; con < Nb::n_cons; con++) {
-      Unit* un_to = lay_to->units.FastEl(un_to_idx);
-      un_fr->targs.Set(un_to, un_fr->targs.size);
-      Connection& cn = un_fr->send_wts[un_fr->targs.size++];
-      cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+void Unit::Connect(Layer* lay_to) {
+  Conn_Array* cl = new Conn_Array(Nb::n_cons);
+  send_cons.Add(cl);
+  
+  for (int con = 0; con < Nb::n_cons; con++) {
+    Unit* un_to = lay_to->units.FastEl(lay_to->un_to_idx);
+    this->targs.Set(un_to, this->targs.size);
+    Connection& cn = (*cl)[this->targs.size++];
+    cn.wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
 #ifdef USE_VAL
-      cn.val = &(un_to->net);
+    cn.val = &(un_to->net);
 #endif      
-      if (++un_to_idx >= Nb::n_units) un_to_idx = 0;
-    }
+    if (++(lay_to->un_to_idx) >= lay_to->units.size)
+      lay_to->un_to_idx = 0;
   }
 }
 
 
-// delete the network
+void Layer::Connect(Layer* lay_to) {
+  for (int u_fr = 0; u_fr < this->units.size; u_fr++) {
+    Unit* un_fr = units.FastEl(u_fr);
+    RecvCons*& recv_gp; 
+    SendCons*& send_gp
+    int& recv_idx;
+    int& send_idx;
+  
+    un_fr->Connect(lay_to);
+  }
+}
 
+void Layer::ConnectFrom(Layer* lay_fm) {
+  for (int u_to = 0; u_to < this->units.size; u_to++) {
+    Unit* un_to = units.FastEl(u_to);
+    RecvCons*& recv_gp; 
+    SendCons*& send_gp
+    int& recv_idx;
+    int& send_idx;
+  
+    un_to->Connect(lay_fm);
+  }
+}
+
+//////////////////////////
+//  Network		//
+//////////////////////////
 
 bool Network::recv_based; // true for recv, false for send
 bool Network::recv_smart; 
@@ -76,10 +143,6 @@ Network::Network() {
 }
 
 Network::~Network() {
-  for(int l=0;l<Nb::n_layers;l++) {
-    Layer* lay = layers[l];
-    delete lay;
-  }
 }
 
 void Network::Build() {
@@ -90,16 +153,11 @@ void Network::Build() {
   ConSpec* cs = new ConSpec; // everyone shares
   // make all layers and units first
   for (int l = 0; l < Nb::n_layers; l++) {
-    Layer* lay = new Layer;
-    layers.Set(lay, layers.size++);
+    Layer* lay = layers.New();
     lay->units.Alloc(Nb::n_units);
     
     for (int i=0;i<Nb::n_units;i++) {
-      Unit* un = new Unit;
-      un->send_wts = new Connection[Nb::n_cons * 2];
-      un->targs.Alloc(Nb::n_cons * 2);
-      
-      lay->units.Set(un, lay->units.size++);
+      Unit* un = lay->units.New();
       un->task_id = units_flat.size % Nb::n_procs;
       units_flat.Set(un, units_flat.size++);
       un->cs = cs;

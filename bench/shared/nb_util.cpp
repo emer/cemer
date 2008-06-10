@@ -9,7 +9,9 @@
 # include <unistd.h>
 #endif
 
+#include <iostream>
 
+using namespace std;
 
 //////////////////////////
 // 	TimeUsed 	//
@@ -175,5 +177,29 @@ void DeleteThreads() {
   }
 }
 */
+
+
+void taPtrList_impl::Alloc(int new_alloc) {
+  if (alloc_size >= new_alloc)	return;	// no need to increase..
+  int old_alloc_sz = alloc_size;
+  if (new_alloc == (alloc_size +1))
+    new_alloc = max(16, (alloc_size * 2));
+  alloc_size = new_alloc;
+  if (!el) {
+    el = (void**)malloc(alloc_size * sizeof(void*));
+    if (!el) {
+      cerr << "taPtrList_impl::Alloc -- malloc failed -- pointer list is too long! could be fatal.\n";
+      alloc_size = 0;
+    }
+  }
+  else {
+    void** nwel = (void**)realloc((char *) el, alloc_size * sizeof(void*));
+    if(!nwel) {
+      cerr << "taPtrList_impl::Alloc -- realloc failed -- pointer list is too long! could be fatal.\n";
+      alloc_size = old_alloc_sz;
+    }
+    el = nwel;
+  }
+}
 
 

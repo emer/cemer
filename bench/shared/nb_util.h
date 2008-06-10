@@ -108,21 +108,75 @@ public:
   int 		alloc_size;	// #READ_ONLY #NO_SAVE allocation size
   int		size;		// #READ_ONLY #NO_SAVE #SHOW number of elements in the 
   
-  void		Alloc(int i) {el = new void*[i]; alloc_size = i;}
+  void		Alloc(int i);
   taPtrList_impl() {el = NULL; alloc_size = 0; size = 0;}
-  ~taPtrList_impl() {if (alloc_size) {delete[] el; el = NULL; alloc_size = size = 0;}}
+  virtual ~taPtrList_impl() {if (alloc_size) {delete[] el; el = NULL; alloc_size = size = 0;}}
+protected:
+  void		Add_(void* it) {Alloc(size+1); ++size; el[size] = it;}
+
 };
 
 template<class T> 
-class taPtrList : public taPtrList_impl { // #INSTANCE
+class taPtrList : public taPtrList_impl { 
+// unowned instances
 public:
   // element at index
   T**		Els() const		{ return (T**)el; }
   T*		FastEl(int i) const		{ return (T*)el[i]; }
   T*		operator[](int i) const		{ return (T*)el[i]; }
   void		Set(T* it, int i)		{  el[i] = it; }
+  
+  void		Add(T* it) {Add_(it);}
   taPtrList() {}
   explicit taPtrList(int alloc) {Alloc(alloc);}
+};
+
+template<class T> 
+class taList : public taPtrList_impl { 
+// owned instances
+public:
+  // element at index
+  T**		Els() const		{ return (T**)el; }
+  T*		FastEl(int i) const		{ return (T*)el[i]; }
+  T*		operator[](int i) const		{ return (T*)el[i]; }
+  void		Set(T* it, int i)		{  el[i] = it; }
+  
+  void		Add(T* it) {Add_(it);}
+  T*		New(int i = 1) {while (i-- > 0) Add_(new T); return (T*)el[size - 1];}
+    // make a new T and add it; return last (or only) T made
+  
+  taList() {}
+  explicit taList(int alloc) {Alloc(alloc);}
+  ~taList() {while (size-- > 0) delete FastEl(size);}
+};
+
+
+class taArray_impl {
+public:
+  int 		alloc_size;	// #READ_ONLY #NO_SAVE allocation size
+  int		size;		// #READ_ONLY #NO_SAVE #SHOW number of elements in the 
+  
+  taArray_impl() {alloc_size = 0; size = 0;}
+};
+
+template<class T> 
+class taArray : public taArray_impl { // #INSTANCE
+public:
+  T*		el;
+  // element at index
+  T*		Els() const		{ return el; }
+  T&		FastEl(int i) const		{ return (T*)el[i]; }
+  const T&	operator[](int i) const	{ return el[i]; }
+  T&		operator[](int i) 	{ return el[i]; }
+  void		Set(const T& it, int i)		{el[i] = it; }
+  
+  void		SetSize(int i) {if (i < alloc_size) Alloc(i); size = i;}
+  
+  taArray() {el = NULL;}
+  explicit taArray(int size_) {el = NULL; SetSize(size_);}
+  ~taArray() {if (alloc_size) {delete[] el; el = NULL; alloc_size = size = 0;}}
+protected:
+  void		Alloc(int i) {el = new T[i]; alloc_size = i;}
 };
 
 

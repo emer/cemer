@@ -10,22 +10,56 @@
 // and then compute activations, and repeat.
 
 class Connection;
+class RecvCons;
 class ConSpec;
 class Unit;
 class Layer;
 
-typedef taPtrList<Unit>	Unit_List;
+// note: some of these classes are same-name and similar in structure to
+// the corresponding Emergent/Leabra classes
 
 class Connection {
   // one connection between units
 public:
-  float wt;			// connection weight value
-#ifdef USE_VAL
-  float* val; // pointer to the net guy to use
-#endif
-  float dwt;			// delta-weight
-  float	pdw;
+  float 	wt;			// connection weight value
+  float 	dwt;			// delta-weight
+  float		pdw;
+  float		sravg;		// #NO_SAVE average of sender and receiver activation 
 };
+
+typedef taArray<Connection>	ConArray;
+typedef taPtrList<Unit>		UnitPtrList;
+typedef taList<Unit>		UnitList;
+
+class RecvCons {
+public:
+  ConArray	cons;
+  // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
+  UnitPtrList	units;
+  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
+  int		send_idx;
+
+  RecvCons() {send_idx = -1;}
+  ~RecvCons();
+};
+
+typedef taList<RecvCons>	RecvCons_List;
+
+typedef taPtrList<Connection>	ConPtrList; // SendCons
+
+class SendCons {
+public:
+  ConPtrList	cons;
+  // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
+  UnitPtrList	units;
+  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
+  int		recv_idx;
+  
+  SendCons() { recv_idx = -1;}
+  ~SendCons() {}
+};
+
+typedef taList<SendCons>	SendCons_List;
 
 class ConSpec {
   int	dummy[8];
@@ -35,23 +69,30 @@ public:
 //  void Send_Netin(Unit* cg, Unit* su);
 };
 
+
 class Unit {
   // a simple unit
 public:
 #ifdef USE_RECV_SMART
   bool		do_delta; // for recv_smart
 #endif
-  float act;			// activation value
-  float net;			// net input value
-  Connection* send_wts;		// sending weights
+  float 	act;			// activation value
+  float 	net;			// net input value
+  
+  RecvCons_List	recv;
+  SendCons_List send;
+  
   int		task_id; // which task will process this guy
-  Unit_List	targs;
+  int		n_recv_cons;
   ConSpec*	cs;
   char dummy[16]; // bump a bit, to spread these guys out
   
-  Connection* 	Cn(int i) const { return &(send_wts[i]); }
+//  Connection* 	Cn(int i) const { return &(send_wts[i]); }
   // #CAT_Structure gets the connection at the given index
-  Unit*		Un(int i) const { return targs.FastEl(i); }
+//  Unit*		Un(int i) const { return targs.FastEl(i); }
+  
+  virtual Connection* 	ConnectFrom(Unit* su, int& recv_idx, int& send_idx, 
+    RecvCons*& recv_gp = rcg_rval, SendCons*& send_gp = scg_rval);
   
   bool		DoDelta(); // returns true if we should do a delta; also sets the do_delta
   
@@ -64,9 +105,9 @@ protected:
 
 class Layer {
 public:
-  static int	un_to_idx; // circular guy we globally use to pick next target unit
+  int		un_to_idx; // circular guy we use to pick next target unit
   
-  Unit_List	units;
+  UnitList	units;
   
   void		Connect(Layer* to); // connect from me to
   
@@ -74,7 +115,7 @@ public:
   ~Layer();
 };
 
-typedef taPtrList<Layer>	Layer_List;
+typedef taList<Layer>	LayerList;
 
 class Network {
 public:
@@ -84,8 +125,8 @@ public:
   static int 	n_units_flat; // total number of units (flattened, all layers)
 
   
-  Unit_List 	units_flat;		// layers = arrays of units
-  Layer_List	layers;
+  UnitPtrList 	units_flat;		// layers = arrays of units
+  LayerList	layers;
   
   void		Build(); 
   void 		ComputeNets();
