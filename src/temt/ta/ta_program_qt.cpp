@@ -1699,6 +1699,8 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return _nilString;
 
+  Function* fun = GET_MY_OWNER(Function); // first look inside any function we might live within
+
 //   cerr << "lookup for text: " << cur_txt << " pos: " << cur_pos << " mbr: " << mbr_name
 //        << endl;
 
@@ -1805,7 +1807,10 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
     else {
       path_var = base_path;
     }
-    st_var = prg->FindVarName(path_var);
+    if(fun)
+      st_var = fun->FindVarName(path_var);
+    if(!st_var)
+      st_var = prg->FindVarName(path_var);
     if(st_var) {
       if(st_var->var_type == ProgVar::T_Object) {
 	if(!st_var->object_type) {
@@ -1840,6 +1845,9 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 	    }
 	  }
 	}
+      }
+      else if(st_var->var_type == ProgVar::T_String) {
+	lookup_td = &TA_taString;
       }
     }
     else {

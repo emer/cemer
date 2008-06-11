@@ -3405,6 +3405,7 @@ bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet
 }
 
 ProgVar* Program::FindVarName(const String& var_nm) const {
+  // note: this does NOT look in functions!
   ProgVar* sv = args.FindName(var_nm);
   if(sv) return sv;
   sv = vars.FindName(var_nm);
