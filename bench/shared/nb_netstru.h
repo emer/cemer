@@ -117,12 +117,9 @@ typedef taList<Layer>	LayerList;
 class Network {
 public:
   static bool	recv_based; // true for recv, false for send
-  static bool	recv_smart; // fort recv-based, does the smart recv algo
+  static bool	recv_smart; // for recv-based, does the smart recv algo
   
-  static int 	n_units_flat; // total number of units (flattened, all layers)
-
-  
-  UnitPtrList 	units_flat;		// layers = arrays of units
+  UnitPtrList 	units_flat;	// all units, flattened
   LayerList	layers;
   
   void		Build(); 
@@ -131,6 +128,8 @@ public:
   
   Network();
   ~Network();
+protected:
+  void		PartitionUnits(); // partition for threading -- algo deps on recv or send
 };
 
 class NetTask: public Task {
@@ -210,6 +209,7 @@ public:
   static bool nibble; // setting false disables nibbling and adds sync to loop
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
+  static bool sender; // sender based, else receiver-based
   
   static int	main(int argc, char* argv[]); // must be suplied in the main.cpp
 protected:

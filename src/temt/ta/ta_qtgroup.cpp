@@ -497,7 +497,9 @@ void gpiListEls::UpdateMenu(taiMenuAction* actn) {
 
 void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL)	return;
-  if (cur_lst->size >= taMisc::max_menu) {
+  if (cur_lst->size >= taMisc::max_menu) 
+  {
+
     taiAction* mnel = menu->AddItem
       ("<Over max, select...>", taiMenu::normal,
 	taiAction::action, this, SLOT(Choose()), cur_lst );

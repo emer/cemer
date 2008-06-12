@@ -29,7 +29,7 @@
 
 #ifdef TA_GUI
 # include "ta_qt.h"
-# include "ta_qtdata.h" // for taiObjChooser
+# include "ta_qtdata.h" 
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "colorscale.h"

@@ -52,8 +52,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qlineedit.h>
-#include <Q3ListBox>
-#include <Q3ListBoxText>
+#include <QListWidget>
 #include <QMenu>
 #include <QMenuBar>
 #include <QPointer>
@@ -2512,17 +2511,6 @@ void taiEditButton::setRepLabel(const char* label) {
 // 		taiObjChooser		//
 //////////////////////////////////////////
 
-class ocListBoxItem: public Q3ListBoxText {
-public:
-  const void* data;
-  ocListBoxItem(const QString& text_, const void* data_);
-};
-
-ocListBoxItem::ocListBoxItem(const QString& text_, const void* data_)
-:Q3ListBoxText(text_)
-{
-  data = data_;
-}
 
 taiObjChooser* taiObjChooser::createInstance(TAPtr parob, const char* captn, bool selonly, QWidget* par_window_) {
   if (par_window_ == NULL)
@@ -2578,14 +2566,14 @@ taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, TAPtr scope_ref_, Q
 void taiObjChooser::setSel_obj(const TAPtr value) {
   if (msel_obj == value) return;
   msel_obj = value;
-  for (uint i = 0; i < browser->count(); ++i) {
-    ocListBoxItem* lbi = (ocListBoxItem*)browser->item(i);
-    if (lbi->data == value) {
-      browser->setCurrentItem(i);
+  for (int i = 0; i < browser->count(); ++i) {
+    QListWidgetItem* lbi = browser->item(i);
+    if (lbi->data(Qt::UserRole).value<ta_intptr_t>() == (ta_intptr_t)value) {
+      browser->setCurrentRow(i);
       return;
     }
   }
-  browser->setCurrentItem(-1);	// 0 = default is to select first item!  not sure about that
+  browser->setCurrentRow(-1);	// 0 = default is to select first item!  not sure about that
 }
 
 bool taiObjChooser::Choose() {
@@ -2613,7 +2601,7 @@ void taiObjChooser::Build() {
   layOuter = new QGridLayout(this);
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c); 
-  browser = new Q3ListBox(this);
+  browser = new QListWidget(this);
   layOuter->addWidget(browser, 1, 0);
   layOuter->setRowStretch(1, 1); // list is item to expand in host
   layOuter->setRowMinimumHeight(1, 100); // don't shrink to nothing
@@ -2635,10 +2623,10 @@ void taiObjChooser::Build() {
 
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
-  connect(browser, SIGNAL(doubleClicked(Q3ListBoxItem*)),
-      this, SLOT(browser_doubleClicked(Q3ListBoxItem*)));
-  connect(browser, SIGNAL(selectionChanged(Q3ListBoxItem*)),
-      this, SLOT(browser_selectionChanged(Q3ListBoxItem*)));
+  connect(browser, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+      this, SLOT(browser_itemDoubleClicked(QListWidgetItem*)));
+  connect(browser, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+      this, SLOT(browser_currentItemChanged(QListWidgetItem*, QListWidgetItem*)));
   connect(editor, SIGNAL(returnPressed()),
       this, SLOT(AcceptEditor()) );
 
@@ -2723,9 +2711,11 @@ void taiObjChooser::AddTokens(TypeDef* td) {
 
 void taiObjChooser::AddItem(const char* itm, const void* data_) {
   items.Add(itm);
-  browser->insertItem(new ocListBoxItem(QString(itm), data_)); 
+  QListWidgetItem* lwi = new QListWidgetItem(QString(itm), browser);
+  lwi->setData(Qt::UserRole, (ta_intptr_t)data_);
+  //browser->insertItem(new ocListBoxItem(, data_)); 
   if (msel_obj == data_)
-    browser->setCurrentItem(browser->count() - 1);
+    browser->setCurrentRow(browser->count() - 1);
 }
 
 void taiObjChooser::UpdateFmSelStr() {
@@ -2761,7 +2751,7 @@ void taiObjChooser::UpdateFmSelStr() {
 }
 
 void taiObjChooser::accept() {
-  int i = browser->currentItem();
+  int i = browser->currentRow();
   if (i == -1) {
     if (!select_only)
       AcceptEditor_impl(NULL);	// null is clue to not fork to descend!
@@ -2776,20 +2766,19 @@ void taiObjChooser::accept() {
     QDialog::accept();
 }
 
-void taiObjChooser::browser_doubleClicked(Q3ListBoxItem* itm) {
+void taiObjChooser::browser_itemDoubleClicked(QListWidgetItem* itm) {
   if (select_only)
     accept();
   else
     DescendBrowser();
 }
 
-void taiObjChooser::browser_selectionChanged(Q3ListBoxItem* itm) {
-  //TODO: verify this is what we want to do... this is assumed behavior of IV FileBrowser
+void taiObjChooser::browser_currentItemChanged(QListWidgetItem* itm, QListWidgetItem*) {
   GetPathStr();
   if (itm == NULL)
     msel_obj = NULL;
   else
-    msel_obj = (TAPtr)(((ocListBoxItem*)itm)->data);
+    msel_obj = (TAPtr)(itm->data(Qt::UserRole).value<ta_intptr_t>());
 
   String nw_txt;
   if (msel_obj == NULL)
@@ -2801,7 +2790,7 @@ void taiObjChooser::browser_selectionChanged(Q3ListBoxItem* itm) {
 }
 
 void taiObjChooser::DescendBrowser() {
-  int i = browser->currentItem();
+  int i = browser->currentRow();
   if (i == -1) {
     msel_str = editor->text();
     if (select_only) {

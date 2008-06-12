@@ -851,8 +851,6 @@ protected:
       QWidget* gui_parent_, int flags_ = 0); 
 };
 
-class Q3ListBox; // #IGNORE
-class Q3ListBoxItem; // #IGNORE
 
 //////////////////////////////////
 // 	taiObjChooser		//
@@ -882,7 +880,7 @@ public:
   String_Array		items;		// the items in the list
 
   QGridLayout*		layOuter;
-  Q3ListBox* 		browser; 	// list of items
+  QListWidget* 		browser; 	// list of items
   QLineEdit* 		editor;
   QHBoxLayout*		layButtons;
   QPushButton*		btnOk;
@@ -916,8 +914,8 @@ protected slots:
   void accept(); // override
   void reject(); // override
   // callbacks
-  void 		browser_selectionChanged(Q3ListBoxItem* itm);
-  void 		browser_doubleClicked(Q3ListBoxItem* itm);
+  void 		browser_currentItemChanged(QListWidgetItem* itm, QListWidgetItem* prv);
+  void 		browser_itemDoubleClicked(QListWidgetItem* itm);
   virtual void 	DescendBrowser();
   virtual void 	AcceptEditor();
 };

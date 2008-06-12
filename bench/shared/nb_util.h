@@ -180,7 +180,7 @@ public:
   T&		operator[](int i) 	{ return el[i]; }
   void		Set(const T& it, int i)		{el[i] = it; }
   
-  void		SetSize(int i) {if (i < alloc_size) Alloc(i); size = i;}
+  void		SetSize(int i) {if (alloc_size < i) Alloc(i); size = i;}
   
   taArray() {el = NULL;}
   explicit taArray(int size_) {el = NULL; SetSize(size_);}

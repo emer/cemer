@@ -21,15 +21,15 @@ int Nb::main(int argc, char* argv[]) {
       "\t<send_act>\tpercent (/100) avg activation level (def = 100)\n"
       "optional commands: \n"
       "\t-header\t output a header line\n"
-      "\t-log=0\t(def) do not log optional values to ptest_core.log\n"
-      "\t-log=1\tlog optional values to ptest_core.log\n"
+      "\t-log=1/0(def)\t log/do-not-log optional values to ptest_core.log\n"
+      "\t-recv=1/0(def)\treceiver-based 1:yes, 0:sender-based (like Leabra)\n"
       "\t-act=0\tdo not calculate activation\n"
     );
     return 1;
   }
 
 #ifdef USE_RECV_SMART
-  net.recv_based = true; net.recv_smart = true;
+  net.recv_smart = true;
 #endif  
   bool use_log_file = false;
 
@@ -85,6 +85,8 @@ int Nb::main(int argc, char* argv[]) {
 #endif
     if (strcmp(argv[arg], "-header") == 0)
       hdr = true;
+    if (strcmp(argv[arg], "-recv=1") == 0)
+      net.recv_based = true;
     if (strcmp(argv[arg], "-log=1") == 0)
       use_log_file = true;
     if (strcmp(argv[arg], "-log=0") == 0)
