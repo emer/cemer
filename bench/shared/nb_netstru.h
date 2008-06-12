@@ -116,7 +116,12 @@ typedef taList<Layer>	LayerList;
 
 class Network {
 public:
-  static bool	recv_based; // true for recv, false for send
+  enum Algo { // note: not exhaustive...
+    RECV	= 0,
+    SEND_CLASH	= 1, // sender, where writes can clash
+  };
+  
+  static int 	algo; // the algorithm number
   static bool	recv_smart; // for recv-based, does the smart recv algo
   
   UnitPtrList 	units_flat;	// all units, flattened
@@ -129,7 +134,8 @@ public:
   Network();
   ~Network();
 protected:
-  void		PartitionUnits(); // partition for threading -- algo deps on recv or send
+  void		PartitionUnits_RoundRobin(); // for recv, and send-clash
+  //void		PartitionUnits_SendClash(); 
 };
 
 class NetTask: public Task {

@@ -102,8 +102,8 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 //  Network		//
 //////////////////////////
 
-bool Network::recv_based; // true for recv, false for send
 bool Network::recv_smart; 
+int Network::algo = 0;
 
 Network::Network() {
 }
@@ -142,8 +142,10 @@ void Network::Build() {
   
   // then partition for multi-threading, if applicable
   if (Nb::n_procs > 0) {
-    if (recv) PartitionUnits_Recv();
-    else      PartitionUnits_Send();
+    switch (algo) {
+    case RECV: PartitionUnits_RoundRobin(); break;
+    default:  break;
+    }
   }
 }
 
@@ -171,7 +173,7 @@ void DoProc(int proc_id) {
     if (Nb::nibble) {
       NetTask* tsk = Nb::netin_tasks[t];
       // note: its ok if tsk finishes between our test and calling run
-      if (tsk->g_u < Network::units_flat.size)
+      if (tsk->g_u < Nb::net.units_flat.size)
         tsk->run();
     } else { // need to sync
       QTaskThread* th = (QTaskThread*)Nb::threads[t];
@@ -182,10 +184,15 @@ void DoProc(int proc_id) {
 
 
 void Network::ComputeNets() {
-  if (recv_based)
+  switch (algo) {
+  case RECV:
     DoProc(NetTask::P_Recv_Netin);
-  else
+    break;
+  case SEND_CLASH:
     DoProc(NetTask::P_Send_Netin);
+    break;
+  default: break;
+  }
 }
 
 float Network::ComputeActs() {
@@ -200,16 +207,16 @@ float Network::ComputeActs() {
   return Nb::tot_act;
 }
 
-void Network::PartitionUnits_Recv() {
+void Network::PartitionUnits_RoundRobin() {
   // we just partition them round-robin
-  for (int i = 0; i < n_units_flat; ++i) {
+  for (int i = 0; i < units_flat.size; ++i) {
     Unit* un = units_flat[i];
     un->task_id = i % Nb::n_procs;
   }
 }
 
-void Network::PartitionUnits_Send() {
-}
+/*void Network::PartitionUnits_Send() {
+}*/
 
 
 //////////////////////////////////
@@ -256,7 +263,8 @@ void NetTask::Recv_Netin_0(Unit* ru) {
 
 void NetTask::Recv_Netin() {
   Unit** units = Nb::net.units_flat.Els();
-  while (g_u < Network::units_flat.size) {
+  const int n_units_flat =  Nb::net.units_flat.size;
+  while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
@@ -277,7 +285,8 @@ void NetTask::ComputeAct() {
   Unit** units = Nb::net.units_flat.Els();
   // compute activations (only order number of units)
   my_act = 0.0f;
-  while (g_u < Network::units_flat.size) {
+  const int n_units_flat =  Nb::net.units_flat.size;
+  while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
     ComputeAct_inner(un);
     my_act += un->act;
@@ -288,7 +297,8 @@ void NetTask::ComputeAct() {
 
 void NetTask_0::Send_Netin() {
   Unit** units = Nb::net.units_flat.Els();
-  while (g_u < Network::units_flat.size) {
+  const int n_units_flat =  Nb::net.units_flat.size;
+  while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
     if (un->DoDelta()) {
       Send_Netin_0(un);
@@ -302,7 +312,7 @@ void NetTask_0::Send_Netin() {
 void NetTask_N::Send_Netin() {
   Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
-  while (my_u < Network::units_flat.size) {
+  while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u]; //note: accessed flat
     if (un->DoDelta()) {
       Send_Netin_0(un);
@@ -316,7 +326,7 @@ void NetTask_N::Send_Netin() {
 void NetTask_N::Recv_Netin() {
   Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
-  while (my_u < Network::units_flat.size) {
+  while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
@@ -329,7 +339,7 @@ void NetTask_N::ComputeAct() {
   Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
   my_act = 0.0f;
-  while (my_u < Network::units_flat.size) {
+  while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u];
     ComputeAct_inner(un);
     my_act += un->act;
@@ -347,7 +357,6 @@ QThread* Nb::threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (
 int Nb::n_layers;
 int Nb::n_units;			// number of units per layer
 int Nb::n_cons; // number of cons per unit
-int Network::units_flat.size; // total number of units (flattened, all layers)
 int Nb::n_cycles;			// number of cycles of updating
 Network Nb::net;		// global network 
 int Nb::n_tot; // total units (reality check)

@@ -29,8 +29,6 @@
 
 #include <qapplication.h>
 #include <qclipboard.h>
-//#include <qcursor.h>
-#include <Q3DragObject>
 #include <qevent.h>
 #include <qfile.h>
 #include <qfiledialog.h>

@@ -1,6 +1,7 @@
 #include "nb_util.h"
 #include "nb_netstru.h"
 
+#include <QtCore/QString>
 #include <QtCore/QCoreApplication>
 
 int main(int argc, char* argv[]) {
@@ -18,12 +19,14 @@ int Nb::main(int argc, char* argv[]) {
       "optional positional params -- none can be skipped: \n"
       "\t<n_lays>\tnumber of layers (min 2, def=3, max 128)\n"
       "\t<n_cons>\tnumber of cons per unit-projection (def=n_units)\n"
-      "\t<send_act>\tpercent (/100) avg activation level (def = 100)\n"
+      "\t<send_act>\tpercent avg activation level (def = 10)\n"
       "optional commands: \n"
       "\t-header\t output a header line\n"
       "\t-log=1/0(def)\t log/do-not-log optional values to ptest_core.log\n"
-      "\t-recv=1/0(def)\treceiver-based 1:yes, 0:sender-based (like Leabra)\n"
       "\t-act=0\tdo not calculate activation\n"
+      "-algo=n (def=0) is one of the following:\n"
+      "\t 0 receiver-based\n"
+      "\t 1 sender-based -- clashes allowed \n"
     );
     return 1;
   }
@@ -36,8 +39,6 @@ int Nb::main(int argc, char* argv[]) {
   srand(56);			// always start with the same seed!
 
   n_units = (int)strtol(argv[1], NULL, 0);
-  //TODO: parameterize this!
-  Network::n_units_flat = n_units * n_layers;
   n_cycles = (int)strtol(argv[2], NULL, 0);
   n_procs = (int)strtol(argv[3], NULL, 0);
   if (n_procs <= 0) {
@@ -62,7 +63,7 @@ int Nb::main(int argc, char* argv[]) {
       n_cons = n_units;
   }
   
-  int tsend_act = 100; // def
+  int tsend_act = 10; // def
   if ((argc > 6) && (*argv[6] != '-')) {
     tsend_act = (int)strtol(argv[6], NULL, 0);
     if (tsend_act < 0)
@@ -70,28 +71,30 @@ int Nb::main(int argc, char* argv[]) {
     else if (tsend_act > 100)
       tsend_act = 100;
   }
-  if (tsend_act != 100) {
-    send_act = (int)(0x10000 * (tsend_act / 100.0f));
-  }
+  send_act = (int)(0x10000 * (tsend_act / 100.0f));
   
   
   // switch params
   for (int arg = 4; arg < argc; arg++) {
+    QString targ(argv[arg]);
 #ifdef USE_SAFE
-    if (strcmp(argv[arg], "-safe=1") == 0)
+    if (targ == "-safe=1")
       safe = true;
-    if (strcmp(argv[arg], "-safe=0") == 0)
+    if (targ == "-safe=0")
       safe = false;
 #endif
-    if (strcmp(argv[arg], "-header") == 0)
+    if (targ == "-header")
       hdr = true;
-    if (strcmp(argv[arg], "-recv=1") == 0)
-      net.recv_based = true;
-    if (strcmp(argv[arg], "-log=1") == 0)
+    if (targ.startsWith("-algo=")) {
+      net.algo = targ.remove("-algo=").toInt();
+      continue;
+    }
+      
+    if (targ == "-log=1")
       use_log_file = true;
-    if (strcmp(argv[arg], "-log=0") == 0)
+    if (targ == "-log=0")
       use_log_file = false;
-    if (strcmp(argv[arg], "-act=0") == 0)
+    if (targ == "-act=0")
       calc_act = false;
     //TODO: any more
   }
@@ -143,7 +146,7 @@ int Nb::main(int argc, char* argv[]) {
     if (hdr) fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
     for (int t = 0; t < n_procs; t++) {
       NetTask* tsk = netin_tasks[t];
-      QTaskThread* th = (QTaskThread*)threads[t];
+//      QTaskThread* th = (QTaskThread*)threads[t];
       double start_lat = 0;
       double run_time = 0;
       start_lat = tsk->start_latency.s_used;
@@ -155,10 +158,10 @@ int Nb::main(int argc, char* argv[]) {
   }
 
   if (hdr)
-  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\n");
+  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\talgo\n");
   if (single) n_procs = 0;
-  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\n",
-    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot);
+  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\n",
+    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot, algo);
 
   DeleteThreads();
 //  DeleteNet();

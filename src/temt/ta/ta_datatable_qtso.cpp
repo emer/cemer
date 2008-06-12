@@ -39,12 +39,10 @@
 #include <qpalette.h>
 #include <qpixmap.h>
 #include <QPushButton>
-#include <Q3ScrollView>
 #include <QSplitter>
 #include <QTableView>
 #include <QTextStream>
 
-//#include <Q3VBox>
 
 #include <Inventor/SbLinear.h>
 #include <Inventor/Qt/SoQt.h>

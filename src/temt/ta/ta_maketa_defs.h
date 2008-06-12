@@ -122,13 +122,6 @@ public:
 	int dummy; // #IGNORE
 };
 
-class Q3DragObject: public QAction {
-//  
-public:
-	int dummy; // #IGNORE
-};
-
-
 class iRenderAreaWrapper: public QWidget  {
 //  
 public:
@@ -171,11 +164,6 @@ public:
 	int dummy; // #IGNORE
 };
 
-class Q3Scrollview: public QWidget {
-public:
-  int dummy; // #IGNORE
-};
-
 class QSplitter: public QWidget {
 public:
   int dummy; // #IGNORE
@@ -192,10 +180,6 @@ public:
 	int dummy; // #IGNORE
 };
 
-class Q3Table: public Q3Scrollview {
-public:
-  int dummy; // #IGNORE
-};
 
 class iClipToolWidget: public QLabel  {
 //  

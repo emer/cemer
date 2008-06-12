@@ -2186,36 +2186,6 @@ void taiMenu::init()
 taiMenu::~taiMenu() {
 }
 
-/*obs taiAction* taiMenu::AddItem_FromAction(iAction* act)
-{
-  Q3PopupMenu* pm = rep_popup();
-  if (!pm) {
-    taMisc::Error("taiMenu::AddItem_FromAction: can only be called for Q3PopupMenu taiMenu objects");
-    return NULL;
-  }
-  taiMenu::SelType st = act->isToggleAction() ? taiMenu::toggle : taiMenu::normal;
-
-  taiAction* rval;
-  int rgrp = -1; // radiogroup n/a
-  // use the built in api to add the menu, then retrieve it
-  act->addTo(pm);
-  int new_id = pm->idAt(pm->count() - 1);
-  QMenuItem* new_men = pm->findItem(new_id);
-  pm->setItemParameter(new_id, act->param);
-
-  rval = new taiAction(this, new_men, rgrp, st, act->menuText(), NULL,
-      taiAction::int_act, act, SIGNAL(activated(int)));
-  rval->label = act->menuText();
-  items.Add(rval);
-//TODO: Qt4  // connect any parent submenu handler
-  if (par_menu_el) {
-    if (par_menu_el->default_child_action.receiver) {
-      menu()->connectItem(rval->id(), par_menu_el->default_child_action.receiver, par_menu_el->default_child_action.member);
-    }
-  }
-  return rval;
-} */
-
 void taiMenu::exec(const iPoint& pos) {
   menu()->exec((QPoint)pos);
 }

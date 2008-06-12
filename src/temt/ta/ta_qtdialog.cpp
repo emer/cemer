@@ -53,8 +53,6 @@
 #include <qsizepolicy.h>
 #include <QSplitter>
 #include <qstring.h>
-#include <Q3StyleSheet>
-//#include <qtable.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <QVBoxLayout>
@@ -1353,7 +1351,6 @@ void taiDataHost::Constr_Box() {
   QWidget* scr_par = (splBody == NULL) ? widget() : splBody;
   scrBody = new iScrollArea(scr_par);
   SET_PALETTE_BACKGROUND_COLOR(scrBody->viewport(), bg_color_dark);
-//Qt3  scrBody->setResizePolicy(Q3ScrollView::AutoOneFit);
   scrBody->setWidgetResizable(true); 
   body = new iStripeWidget();
   scrBody->setWidget(body);

@@ -33,7 +33,6 @@
 #include <qlayout.h>
 #include <qmenudata.h>
 #include <QMenu>
-#include <Q3VBox>
 #include <QScrollArea> // for gpiGroupDialog
 #include <QSplitter>
 #include <qtooltip.h>
@@ -870,7 +869,9 @@ gpiNewFuns* gpiNewFuns::CondNew(TypeDef* typ_, IDataHost* host_, taiData* par, Q
 gpiNewFuns::gpiNewFuns(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
-  SetRep(new Q3VBox(gui_parent_));
+  QWidget* vbox = new QWidget(gui_parent_);
+  QVBoxLayout* layout = new QVBoxLayout(vbox);
+  SetRep(vbox);
 
   for (int i = 0;i < typ->methods.size; ++i){
     MethodDef* md = typ->methods.FastEl(i);
