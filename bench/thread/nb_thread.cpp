@@ -161,7 +161,7 @@ int Nb::main(int argc, char* argv[]) {
   printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\talgo\n");
   if (single) n_procs = 0;
   printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\n",
-    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot, algo);
+    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot, Network::algo);
 
   DeleteThreads();
 //  DeleteNet();

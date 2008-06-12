@@ -1,4 +1,5 @@
-CONFIG		+= console debug
+#CONFIG		+= console debug
+CONFIG		+= console 
 DEFINES		+= NB_THREAD
 QMAKE_INCDIR	+= ../shared
 HEADERS       = ../shared/nb_util.h \
