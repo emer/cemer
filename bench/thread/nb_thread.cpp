@@ -22,7 +22,8 @@ int Nb::main(int argc, char* argv[]) {
       "\t<send_act>\tpercent avg activation level (def = 10)\n"
       "optional commands: \n"
       "\t-header\t output a header line\n"
-      "\t-log=1/0(def)\t log/do-not-log optional values to ptest_core.log\n"
+      "\t-log=1/0(def)\tlog/do-not-log optional values to ptest_core.log\n"
+      "\t-nibble=n\tnibble: 0(def)=none, 1=on, 2=auto (> .20 left)\n"
       "\t-act=0\tdo not calculate activation\n"
       "-algo=n (def=0) is one of the following:\n"
       "\t 0 receiver-based\n"
@@ -40,13 +41,16 @@ int Nb::main(int argc, char* argv[]) {
 
   n_units = (int)strtol(argv[1], NULL, 0);
   n_cycles = (int)strtol(argv[2], NULL, 0);
-  n_procs = (int)strtol(argv[3], NULL, 0);
-  if (n_procs <= 0) {
+  NetEngine::n_procs = (int)strtol(argv[3], NULL, 0);
+  if (NetEngine::n_procs <= 0) {
     single = true;
-    n_procs = 1;
+    NetEngine::n_procs = 1;
+    Nb::net.SetEngine(new NetEngine); // just the default
   } else {
     single = false;
-    if (n_procs > core_max_nprocs) n_procs = core_max_nprocs;
+    if (NetEngine::n_procs > NetEngine::core_max_nprocs) 
+      NetEngine::n_procs = NetEngine::core_max_nprocs;
+    Nb::net.SetEngine(new ThreadNetEngine); // just the default
   }
   
   // optional positional params
@@ -86,9 +90,11 @@ int Nb::main(int argc, char* argv[]) {
     if (targ == "-header")
       hdr = true;
     if (targ.startsWith("-algo=")) {
-      net.algo = targ.remove("-algo=").toInt();
+      NetEngine::algo = targ.remove("-algo=").toInt();
       continue;
     }
+    if (NetEngine::algo == NetEngine::RECV_SMART)
+      Network::recv_smart = true;
       
     if (targ == "-log=1")
       use_log_file = true;
@@ -96,10 +102,14 @@ int Nb::main(int argc, char* argv[]) {
       use_log_file = false;
     if (targ == "-act=0")
       calc_act = false;
+    if (targ.startsWith("-nibble=")) {
+      nibble_mode = targ.remove("-nibble=").toInt();
+      continue;
+    }
     //TODO: any more
   }
   
-  MakeThreads();
+  net.Initialize();
   net.Build();
 
   FILE* logfile = NULL;
@@ -141,30 +151,16 @@ int Nb::main(int argc, char* argv[]) {
   double n_eff_con_trav = n_layers * n_units * n_cycles * (n_cons * 2.0);
   double eff_con_trav_sec = ((double)n_eff_con_trav / tot_time) / 1.0e6;
   
-  if (use_log_file) {
-    logfile = fopen("nb_thread.log", "w");
-    if (hdr) fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\n");
-    for (int t = 0; t < n_procs; t++) {
-      NetTask* tsk = netin_tasks[t];
-//      QTaskThread* th = (QTaskThread*)threads[t];
-      double start_lat = 0;
-      double run_time = 0;
-      start_lat = tsk->start_latency.s_used;
-      run_time = tsk->run_time.s_used;
-      fprintf(logfile,"%d\t%d\t%g\t%g\n", t, tsk->t_tot, start_lat, run_time);
-    }
-    fclose(logfile);
-    logfile = NULL;
-  }
+  // note: always make/extend the thread log
+  net.engine->Log(hdr);
 
   if (hdr)
-  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\talgo\n");
-  if (single) n_procs = 0;
-  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\n",
-    eff_con_trav_sec, con_trav_sec, tsend_act, n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot, Network::algo);
+  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\talgo\tnibble\n");
+  if (single) NetEngine::n_procs = 0;
+  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\t%d\n",
+    eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot, NetEngine::algo, nibble_mode);
 
-  DeleteThreads();
-//  DeleteNet();
+  net.SetEngine(NULL); // controlled delete
   return 0;
 }
 

@@ -14,6 +14,10 @@ class RecvCons;
 class ConSpec;
 class Unit;
 class Layer;
+class Network;
+class NetEngine;
+class NetTask;
+typedef taList<NetTask>		NetTaskList;
 
 // note: some of these classes are same-name and similar in structure to
 // the corresponding Emergent/Leabra classes
@@ -83,6 +87,7 @@ public:
   SendCons_List send;
   
   int		task_id; // which task will process this guy
+  int		flat_idx; // flat index
   int		n_recv_cons;
   ConSpec*	cs;
   char dummy[16]; // bump a bit, to spread these guys out
@@ -116,14 +121,9 @@ typedef taList<Layer>	LayerList;
 
 class Network {
 public:
-  enum Algo { // note: not exhaustive...
-    RECV	= 0,
-    SEND_CLASH	= 1, // sender, where writes can clash
-  };
-  
-  static int 	algo; // the algorithm number
   static bool	recv_smart; // for recv-based, does the smart recv algo
   
+  NetEngine*	engine;
   UnitPtrList 	units_flat;	// all units, flattened
   LayerList	layers;
   
@@ -131,31 +131,92 @@ public:
   void 		ComputeNets();
   float 	ComputeActs();
   
+  void		SetEngine(NetEngine* engine);
+  virtual void	Initialize(); // call after ctor, and engine set
+  
   Network();
-  ~Network();
+  virtual ~Network();
 protected:
   void		PartitionUnits_RoundRobin(); // for recv, and send-clash
   //void		PartitionUnits_SendClash(); 
 };
 
+
+class NetEngine { // prototype, and is also the default type (0-procs)
+public:
+  enum Algo { // note: not exhaustive...
+    RECV	= 0,
+    RECV_SMART  = 1,		// ignores senders under threshold
+    
+    SEND_CLASH  = 2, // sender, where writes can clash (or for 1 proc)
+    SEND_ARRAY  = 3, // sender, using an array of nets to avoid clashes
+  };
+  
+  static int 	algo; // the algorithm number
+  static const int core_max_nprocs = 32; // maximum number of processors!
+  static int n_procs;		// total number of processors
+  static NetTaskList net_tasks; // only n_procs created
+  
+  Network*	net; // owning net, set automatically
+  
+  virtual void		Initialize(); // called after creation
+  virtual void		OnBuild() {} 
+  
+  // generally don't override:
+  virtual void 		ComputeNets();
+  virtual float 	ComputeActs();
+  
+  virtual void 		Log(bool /*hdr*/) {} // save a log file
+  
+  NetEngine() {net = NULL;}
+  virtual ~NetEngine();
+protected:
+  virtual void 		DoProc(int proc_id);
+};
+
+
+class ThreadNetEngine: public NetEngine {
+INHERITED(NetEngine) 
+public:
+  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
+  
+  override void		Initialize();
+  override void		OnBuild(); 
+  
+  override void 	ComputeNets();
+  
+  override void 	Log(bool hdr); // save a log file
+  //ThreadNetEngine();
+  ~ThreadNetEngine();
+protected:
+  void			DeleteThreads();
+  void 			MakeThreads();
+  override void 	DoProc(int proc_id);
+  void 			ComputeNets_SendArray();
+};
+
+
 class NetTask: public Task {
 public:
   enum Proc {
-    P_Send_Netin,
     P_Recv_Netin,
+    P_Send_Netin_Clash,
+    P_Send_Netin_Array,
     P_ComputeAct
   };
   
 // All
   int		g_u; 
   int		t_tot; // shared by Xxx_Netin
+  
   void		run();
 
 // Send_Netin
   inline static void Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff);
     // highly optimized inner loop
   static void 	Send_Netin_0(Unit* su); // shared by 0 and N
-  virtual void	Send_Netin() = 0; // NetIn
+  virtual void	Send_Netin_Clash() = 0; // NetIn
+  virtual void	Send_Netin_Array() {} // only used by Net_N
   
 // Recv_Netin
   static void 	Recv_Netin_0(Unit* ru); // shared by 0 and N
@@ -179,16 +240,21 @@ void NetTask::Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff) {
 class NetTask_0: public NetTask {
 // for single threaded approach -- optimum for that
 public:
-  void		Send_Netin();
+  void		Send_Netin_Clash();
 //  void		ComputeAct();
 };
 
 class NetTask_N: public NetTask {
 // for N threaded approach -- optimum for that
 public:
-  void		Send_Netin();
+  float_Array		excit; // Send_Array only
+  
+  void		Send_Netin_Clash();
+  void		Send_Netin_Array();
   void		Recv_Netin();
   void		ComputeAct();
+  
+  NetTask_N() {}
 };
 
 class Nb { // global catchall
@@ -207,20 +273,15 @@ public:
   static int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
   
 // thread values
-  static const int core_max_nprocs = 32; // maximum number of processors!
-  static int n_procs;		// total number of processors
-  static NetTask* netin_tasks[core_max_nprocs]; // only n_procs created
-  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
   
-  static bool nibble; // setting false disables nibbling and adds sync to loop
+  static float nibble_thresh; // < 80%
+  static signed char nibble_mode; // 0=none, 1=on, 2=auto (> 20% left)
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
   static bool sender; // sender based, else receiver-based
   
   static int	main(int argc, char* argv[]); // must be suplied in the main.cpp
 protected:
-  static void 	MakeThreads();
-  static void 	DeleteThreads();
 
 private:
   Nb();

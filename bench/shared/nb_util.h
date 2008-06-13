@@ -13,6 +13,9 @@
 # include <QtCore/QRunnable>
 #endif
 
+#define INHERITED(c) typedef c inherited;
+#define override
+
 class TimeUsedP;
 
 class TimeUsed {
@@ -71,6 +74,8 @@ public:
   int		proc_id; // current proc being run
   TimeUsed	start_latency; // amount of time waiting to start (n/a for main thread)
   TimeUsed	run_time; // amount of time actually running jobs
+  TimeUsed	nibble_time; // (task 0 only) time spent nibbling (if applicable)
+  TimeUsed	sync_time; // (task 0 only) time spent syncing (if applicable)
   
   Task() {task_id = -1; proc_id = 0;}
 };
@@ -114,7 +119,7 @@ public:
   virtual ~taPtrList_impl() {if (alloc_size) {delete el; el = NULL; alloc_size = size = 0;}}
 protected:
   void		Add_(void* it) {Alloc(size+1); el[size] = it; ++size;}
-  void*		SafeEl_(int i) 
+  void*		SafeEl_(int i) const
     {if ((i >= 0) && (i < size)) return el[i]; return NULL;}
   virtual void	Release_(int /*fm*/, int /*to*/) {} // only needed for taList
 
@@ -189,5 +194,6 @@ protected:
   void		Alloc(int i) {el = new T[i]; alloc_size = i;}
 };
 
+typedef taArray<float>	float_Array;
 
 #endif

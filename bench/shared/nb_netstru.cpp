@@ -26,6 +26,7 @@ Unit::Unit() {
   act = 0; 
   cs = NULL; 
   task_id = 0;
+  flat_idx = -1;
   n_recv_cons = 0;
   net = 0;
   my_rand = rand();
@@ -95,17 +96,23 @@ void Layer::ConnectFrom(Layer* lay_fm) {
   }
 }
 
+
 //////////////////////////
 //  Network		//
 //////////////////////////
 
 bool Network::recv_smart; 
-int Network::algo = 0;
 
 Network::Network() {
+  engine = NULL;
 }
 
 Network::~Network() {
+  SetEngine(NULL);
+}
+
+void Network::Initialize() {
+  if (engine) engine->Initialize();
 }
 
 void Network::Build() {
@@ -121,6 +128,7 @@ void Network::Build() {
     
     for (int i=0;i<Nb::n_units;i++) {
       Unit* un = lay->units.New();
+      un->flat_idx = units_flat.size; // next index
       units_flat.Add(un);
       un->cs = cs;
     } 
@@ -137,21 +145,152 @@ void Network::Build() {
     if (Nb::n_layers == 2) break; // special case
   }
   
-  // then partition for multi-threading, if applicable
+  engine->OnBuild();
+/*  // then partition for multi-threading, if applicable
   if (Nb::n_procs > 0) {
     switch (algo) {
-    case RECV: PartitionUnits_RoundRobin(); break;
+    case RECV:
+    case SEND_CLASH:
+      PartitionUnits_RoundRobin(); break;
     default:  break;
     }
+  }*/
+}
+
+
+void Network::ComputeNets() {
+  engine->ComputeNets();
+}
+
+float Network::ComputeActs() {
+  float rval = engine->ComputeActs();
+  Nb::this_rand = rand(); // for next cycle
+  return rval;
+}
+
+void Network::SetEngine(NetEngine* engine_) {
+  if (engine == engine_) return;
+  if (engine) {
+    delete engine; // removes ref
+  }
+  engine = engine_;
+  if (engine) {
+    engine->net = this;
   }
 }
 
-void DoProc(int proc_id) {
+
+
+/*void Network::PartitionUnits_Send() {
+}*/
+
+//////////////////////////
+//  NetEngine		//
+//////////////////////////
+
+int NetEngine::algo = 0;
+const int NetEngine::core_max_nprocs; // maximum number of processors!
+int NetEngine::n_procs;		// total number of processors
+NetTaskList NetEngine::net_tasks; // only n_procs created
+
+NetEngine::~NetEngine() {
+  if (net) {
+    net->engine = NULL;
+  }
+}
+
+void NetEngine::Initialize() {
+  NetTask* tsk = new NetTask_0;
+  tsk->task_id = 0;
+  net_tasks.Add(tsk);
+}
+
+void NetEngine::DoProc(int proc_id) {
+  NetTask* tsk = net_tasks.SafeEl(0);
+  //if (!tsk) return;
+  tsk->g_u = 0;
+  tsk->proc_id = proc_id;
+  tsk->run();
+}
+
+void NetEngine::ComputeNets() {
+  switch (algo) {
+  case RECV:
+  case RECV_SMART:
+    DoProc(NetTask::P_Recv_Netin);
+    break;
+  case SEND_CLASH:
+  case SEND_ARRAY: // ignore for single, trapped for N
+    DoProc(NetTask::P_Send_Netin_Clash);
+    break;
+  default: break;
+  }
+}
+
+
+
+float NetEngine::ComputeActs() {
+  // compute activations (only order number of units)
+  Nb::tot_act = 0.0f;
+  DoProc(NetTask::P_ComputeAct);
+  for (int t = 0; t < net_tasks.size; ++t) {
+    NetTask* tsk = net_tasks[t];
+    Nb::tot_act += tsk->my_act;
+  }
+  return Nb::tot_act;
+}
+
+//////////////////////////////////
+//  ThreadNetEngine		//
+//////////////////////////////////
+
+QThread* ThreadNetEngine::threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
+
+ThreadNetEngine::~ThreadNetEngine() {
+  DeleteThreads();
+}
+
+void ThreadNetEngine::Initialize() {
+  net_tasks.Alloc(n_procs);
+  for (int i = 0; i < n_procs; i++) {
+    NetTask* tsk = new NetTask_N;
+    tsk->task_id = i;
+    net_tasks.Add(tsk);
+    if (i == 0) continue;
+    QTaskThread* th = new QTaskThread;
+    threads[i] = th;
+    th->setTask(tsk);
+    th->start(); // starts paused
+  }
+  
+}
+
+void ThreadNetEngine::DeleteThreads() {
+  for (int t = n_procs - 1; t >= 1; t--) {
+    QTaskThread* th = (QTaskThread*)threads[t];
+    if (th->isActive()) {
+      th->terminate();
+    }
+    while (!th->isFinished());
+    delete th;
+  }
+}
+void ThreadNetEngine::ComputeNets() {
+  if (algo == SEND_ARRAY)
+    ComputeNets_SendArray();
+  else inherited::ComputeNets();
+}
+
+
+
+void ThreadNetEngine::DoProc(int proc_id) {
+  const int n_units_flat = net->units_flat.size;
+  const int n_nibb_thresh = (int)(n_units_flat * Nb::nibble_thresh);
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
-  for (int t = 1; t < Nb::n_procs; ++t) {
-    QTaskThread* th = (QTaskThread*)Nb::threads[t];
-    NetTask* tsk = Nb::netin_tasks[t];
+  for (int t = 1; t < n_procs; ++t) {
+    QTaskThread* th = (QTaskThread*)threads[t];
+    NetTask* tsk = net_tasks[t];
     th->suspend(); // prob already suspended
     tsk->g_u = t;
     tsk->proc_id = proc_id;
@@ -159,62 +298,94 @@ void DoProc(int proc_id) {
   }
   
   // then do my part
-  NetTask* tsk = Nb::netin_tasks[0];
+  NetTask* tsk = net_tasks[0];
   tsk->g_u = 0;
   tsk->proc_id = proc_id;
   tsk->run_time.Start(false);
   tsk->run();
-  tsk->run_time.Stop(); // TODO: should add NIBBLE timer!
-  // then lend a "helping hand"
-  for (int t = 1; t < Nb::n_procs; ++t) {
-    if (Nb::nibble) {
-      NetTask* tsk = Nb::netin_tasks[t];
+  tsk->run_time.Stop(); 
+  // then either sync or "nibble"
+  for (int t = 1; t < n_procs; ++t) {
+    bool nibble = false;
+    switch (Nb::nibble_mode) {
+    case 0: nibble = false; break;
+    case 1: nibble = true; break;
+    default: // 2: auto, only if 
+      nibble = (tsk->g_u < n_nibb_thresh); break;
+    }
+    if (nibble) {
+      NetTask* tsk = net_tasks[t];
       // note: its ok if tsk finishes between our test and calling run
-      if (tsk->g_u < Nb::net.units_flat.size)
+      if (tsk->g_u < n_units_flat) {
+        tsk->nibble_time.Start(false);
         tsk->run();
-    } else { // need to sync
-      QTaskThread* th = (QTaskThread*)Nb::threads[t];
+        tsk->nibble_time.Stop(); 
+      }
+    } else { // sync
+      tsk->sync_time.Start(false);
+      QTaskThread* th = (QTaskThread*)threads[t];
       th->suspend(); // suspending is syncing with completion of loop
+      tsk->sync_time.Stop(); 
     }
   }
 }
 
-
-void Network::ComputeNets() {
-  switch (algo) {
-  case RECV:
-    DoProc(NetTask::P_Recv_Netin);
-    break;
-  case SEND_CLASH:
-    DoProc(NetTask::P_Send_Netin);
-    break;
-  default: break;
+void ThreadNetEngine::Log(bool hdr) {
+  // note: always make/extend the thread log
+  if (true/*use_log_file*/) {
+  FILE* logfile = NULL;
+    if (hdr) {
+      logfile = fopen("nb_thread.log", "w");
+      fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\tnibble time\tsync time\n");
+    } else {
+      logfile = fopen("nb_thread.log", "a");
+    }
+    for (int t = 0; t < net_tasks.size; t++) {
+      NetTask* tsk = net_tasks[t];
+      fprintf(logfile,"%d\t%d\t%g\t%g\t%g\t%g\n", 
+        t, 
+        tsk->t_tot, 
+        tsk->start_latency.s_used, 
+        tsk->run_time.s_used,
+        tsk->nibble_time.s_used,
+        tsk->sync_time.s_used
+      );
+    }
+    fclose(logfile);
   }
 }
 
-float Network::ComputeActs() {
-  // compute activations (only order number of units)
-  Nb::tot_act = 0.0f;
-  DoProc(NetTask::P_ComputeAct);
-  for (int t = 0; t < Nb::n_procs; ++t) {
-    NetTask* tsk = Nb::netin_tasks[t];
-    Nb::tot_act += tsk->my_act;
-  }
-  Nb::this_rand = rand(); // for next cycle
-  return Nb::tot_act;
-}
-
-void Network::PartitionUnits_RoundRobin() {
+void ThreadNetEngine::OnBuild() {
   // we just partition them round-robin
-  for (int i = 0; i < units_flat.size; ++i) {
-    Unit* un = units_flat[i];
-    un->task_id = i % Nb::n_procs;
+  const int n_flat_units = net->units_flat.size;
+  for (int i = 0; i < n_flat_units; ++i) {
+    Unit* un = net->units_flat[i];
+    un->task_id = i % n_procs;
+  }
+  // Send_Array only
+  if (algo == SEND_ARRAY) {
+    for (int t = 0; t < net_tasks.size; t++) {
+      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
+      tsk->excit.SetSize(n_flat_units);
+    }
   }
 }
 
-/*void Network::PartitionUnits_Send() {
-}*/
+void ThreadNetEngine::ComputeNets_SendArray() {
+  DoProc(NetTask::P_Send_Netin_Array);
 
+  // post stuff
+//  RollupWritebackScratch_Netin();
+  const int n_flat_units = net->units_flat.size;
+  for (int i = 0; i < n_flat_units; ++i) {
+    Unit* un = net->units_flat[i];
+    un->net = 0.0f;
+    for (int t = 0; t < net_tasks.size; t++) {
+      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
+      un->net += tsk->excit[i];
+    }
+  }
+}
 
 //////////////////////////////////
 // NetTask			//
@@ -228,8 +399,9 @@ NetTask::NetTask() {
 
 void NetTask::run() {
   switch (proc_id) {
-  case P_Send_Netin: Send_Netin(); break;
   case P_Recv_Netin: Recv_Netin(); break;
+  case P_Send_Netin_Clash: Send_Netin_Clash(); break;
+  case P_Send_Netin_Array: Send_Netin_Array(); break;
   case P_ComputeAct: ComputeAct(); break;
   }
 }
@@ -240,7 +412,8 @@ void NetTask::Send_Netin_0(Unit* su) {
     SendCons* send_gp = su->send[j];
     Connection** cns = send_gp->cons.Els(); // conn pointer
     Unit** uns = send_gp->units.Els(); // unit pointer
-    for (int i=0; i < send_gp->units.size; i++)
+    const int send_sz = send_gp->units.size;
+    for (int i=0; i < send_sz; i++)
       Send_Netin_inner_0(cns[i]->wt, &(uns[i]->net), su_act_eff);
   }
 }
@@ -251,7 +424,8 @@ void NetTask::Recv_Netin_0(Unit* ru) {
     RecvCons* recv_gp = ru->recv[j];
     Connection* cns = &(recv_gp->cons[0]); // array pointer
     Unit** uns = recv_gp->units.Els(); // unit pointer
-    for(int i=0; i < recv_gp->units.size; ++i)
+    const int recv_sz = recv_gp->units.size;
+    for(int i=0; i < recv_sz; ++i)
 #ifdef USE_RECV_SMART
       if (uns[i]->do_delta)
 #endif
@@ -295,7 +469,7 @@ void NetTask::ComputeAct() {
 }
 
 
-void NetTask_0::Send_Netin() {
+void NetTask_0::Send_Netin_Clash() {
   Unit** units = Nb::net.units_flat.Els();
   const int n_units_flat =  Nb::net.units_flat.size;
   while (g_u < n_units_flat) {
@@ -309,9 +483,9 @@ void NetTask_0::Send_Netin() {
   }
 }
 
-void NetTask_N::Send_Netin() {
+void NetTask_N::Send_Netin_Clash() {
   Unit** units = Nb::net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
+  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u]; //note: accessed flat
     if (un->DoDelta()) {
@@ -319,40 +493,62 @@ void NetTask_N::Send_Netin() {
       AtomicFetchAdd(&Nb::n_tot, 1);
       //AtomicFetchAdd(&t_tot, 1); // because of helping hand clobbers
     }
-    my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
+    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
+  }
+}
+
+void NetTask_N::Send_Netin_Array() {
+  memset(excit.el, 0, sizeof(float) * excit.size);
+
+  Unit** units = Nb::net.units_flat.Els();
+  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
+  while (my_u < Nb::net.units_flat.size) {
+    Unit* su = units[my_u]; //note: accessed flat
+    if (su->DoDelta()) {
+      float su_act_eff = su->act;
+      for (int j = 0; j < su->send.size; ++j) {
+        SendCons* send_gp = su->send[j];
+        Connection** cns = send_gp->cons.Els(); // conn pointer
+        Unit** uns = send_gp->units.Els(); // unit pointer
+        const int send_sz = send_gp->units.size;
+        for (int i=0; i < send_sz; i++) {
+          int targ_i = uns[i]->flat_idx;
+          Send_Netin_inner_0(cns[i]->wt, &(excit.el[targ_i]), su_act_eff);
+        }
+      }
+      AtomicFetchAdd(&Nb::n_tot, 1);
+      //AtomicFetchAdd(&t_tot, 1); // because of helping hand clobbers
+    }
+    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask_N::Recv_Netin() {
   Unit** units = Nb::net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
+  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
       //++t_tot;
-    my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
+    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask_N::ComputeAct() {
   Unit** units = Nb::net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
+  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   my_act = 0.0f;
   while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u];
     ComputeAct_inner(un);
     my_act += un->act;
-    my_u = AtomicFetchAdd(&g_u, Nb::n_procs);
+    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 
 bool Nb::hdr = false;
-int Nb::n_procs;		// total number of processors
-const int Nb::core_max_nprocs; // maximum number of processors!
-NetTask* Nb::netin_tasks[core_max_nprocs]; // only n_procs created
-QThread* Nb::threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
 
 int Nb::n_layers;
 int Nb::n_units;			// number of units per layer
@@ -361,38 +557,10 @@ int Nb::n_cycles;			// number of cycles of updating
 Network Nb::net;		// global network 
 int Nb::n_tot; // total units (reality check)
 float Nb::tot_act; // check on tot act
-bool Nb::nibble = true; // setting false disables nibbling and adds sync to loop
+float Nb::nibble_thresh = 0.8f;
+signed char Nb::nibble_mode = 0;
 bool Nb::single = false; // true for single thread mode, to compare against nprocs=1
 int Nb::send_act = 0x10000; // send activation, as a fraction of 2^16 
 int Nb::this_rand; // assigned a new random value each cycle, to let us randomize unit acts
 bool Nb::calc_act = true;
-
-
-void Nb::DeleteThreads() {
-  for (int t = n_procs - 1; t >= 1; t--) {
-    QTaskThread* th = (QTaskThread*)threads[t];
-    if (th->isActive()) {
-      th->terminate();
-    }
-    while (!th->isFinished());
-    delete th;
-  }
-}
-
-void Nb::MakeThreads() {
-  if (Nb::single) {
-    NetTask* tsk = new NetTask_0;
-    tsk->task_id = 0;
-    Nb::netin_tasks[0] = tsk;
-  } else for (int i = 0; i < Nb::n_procs; i++) {
-    NetTask* tsk = new NetTask_N;
-    tsk->task_id = i;
-    Nb::netin_tasks[i] = tsk;
-    if (i == 0) continue;
-    QTaskThread* th = new QTaskThread;
-    Nb::threads[i] = th;
-    th->setTask(tsk);
-    th->start(); // starts paused
-  }
-}
 
