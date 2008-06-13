@@ -937,7 +937,9 @@ void SNrThalLayerSpec::Compute_Clamp_NetAvg(LeabraLayer* lay, LeabraNetwork* net
 
 void PFCGateSpec::Initialize() {
   off_accom = 0.0f;
+  out_gate_learn_mod = false;
   updt_reset_sd = true;
+  allow_clamp = false;
 }
 
 void PFCLayerSpec::Initialize() {
@@ -1238,6 +1240,50 @@ void PFCLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+void PFCLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
+  if(!gate.out_gate_learn_mod) {
+    inherited::Compute_dWt_impl(lay, net);
+    return;
+  }
+  int pfcout_prjn_idx;
+  LeabraLayer* pfcout_lay = FindLayerFmSpec(lay, pfcout_prjn_idx, &TA_PFCOutLayerSpec);
+  if(!pfcout_lay) {
+    inherited::Compute_dWt_impl(lay, net);
+    return;
+  }
+
+  if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
+    if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+    lay->sravg_nrm = 1.0f / lay->sravg_sum;
+  }
+
+  for(int mg=0;mg<lay->units.gp.size;mg++) {
+    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
+    LeabraUnit_Group* outgp = (LeabraUnit_Group*)pfcout_lay->units.gp[mg];
+
+    if(outgp->misc_state2 == PFCGateSpec::GATE_NOGO) {
+      if(net->learn_rule != LeabraNetwork::LEABRA_CHL) { // need to reset
+	LeabraUnit* u;
+	taLeafItr i;
+	FOR_ITR_EL(LeabraUnit, u, ugp->, i)
+	  u->Init_SRAvg(lay, net);
+      }
+    }
+    else {
+      LeabraUnit* u;
+      taLeafItr i;
+      FOR_ITR_EL(LeabraUnit, u, ugp->, i)
+	u->Compute_dWt(lay, net);
+    }
+  }
+
+  AdaptKWTAPt(lay, net);
+  lay->sravg_sum = 0.0f;
+}
+
+
+
+
 //////////////////////////////////
 //	PFCOut Layer Spec	//
 //////////////////////////////////
@@ -1481,12 +1527,16 @@ void PFCOutLayerSpec::Compute_Act(LeabraLayer* lay, LeabraNetwork* net) {
     // note that random go is added into activation at the snrthal level, not here.
 
     float gain = out_gate.base_gain;
+    PFCGateSpec::GateSignal gate_sig = PFCGateSpec::GATE_NOGO;
     if(!snrthal_lay->lesioned() && (snru->act_eq > snrthalsp->snrthal.go_thr)) {
+      gate_sig = PFCGateSpec::GATE_GO;
       if(out_gate.graded_go) 
 	gain += snru->act_eq * out_gate.go_gain;
       else
 	gain += out_gate.go_gain;
     }
+
+    rugp->misc_state2 = gate_sig; // store the raw gating signal itself
     
     for(int i=0;i<rugp->size;i++) {
       LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(i);

@@ -397,6 +397,7 @@ public:
   };
 
   float		off_accom;	// #DEF_0 how much of the maintenance current to apply to accommodation after turning a unit off
+  bool		out_gate_learn_mod; // modulate the learning as a function of whether the corresponding output gating layer fired Go, to enforce appropriate credit assignment to only learn when given stripe participated in output -- this is a discrete modulation (all or nothing)
   bool		updt_reset_sd;	// #DEF_true reset synaptic depression when units are updated
   bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
 
@@ -435,8 +436,9 @@ public:
   virtual void 	Compute_GatingGOGO(LeabraLayer* lay, LeabraNetwork* net);
   // compute the gating signal based on SNrThal layer: GOGO model
 
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net);
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(LeabraLayer* lay, bool quiet=false);
