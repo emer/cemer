@@ -525,6 +525,7 @@ bool InitNamedUnits::GetUnitNamesVar() {
       }
     }
     unit_names_var->object_val = rval;
+    unit_names_var->object_type = &TA_DataTable;
     unit_names_var->DataChanged(DCR_ITEM_UPDATED);
   }
   return true;

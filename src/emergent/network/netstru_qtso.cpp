@@ -2826,11 +2826,9 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   req_full_redraw = false;
   
   QWidget* widg = new QWidget();
-  //note: we don't set the values of all controls here, because dv does an immediate refresh
-//  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
-//  layWidg->setMargin(0); layWidg->setSpacing(0);
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(taiM->vsep_c);
+  layTopCtrls->setMargin(0);
 
   layViewParams = new QVBoxLayout(); layTopCtrls->addLayout(layViewParams);
   layViewParams->setSpacing(taiM->vsep_c);
