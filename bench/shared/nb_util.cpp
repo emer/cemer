@@ -7,9 +7,17 @@
 # include <sys/time.h>
 # include <sys/times.h>
 # include <unistd.h>
+# include <pthread.h>
+# include <sys/signal.h>
 #endif
 
 #include <iostream>
+
+#include <QtCore/QThread>
+#include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
+#include <QtCore/QCoreApplication>
+
 
 using namespace std;
 
@@ -98,14 +106,9 @@ void TimeUsed::ResetUsed() {
 }
 
 
-// core version 
-#include <QtCore/QThread>
-#include <QtCore/QMutex>
-#include <QtCore/QWaitCondition>
-#include <QtCore/QCoreApplication>
-#include <pthread.h>
-#include <sys/signal.h>
-
+//////////////////////////
+//  QTaskThread		//
+//////////////////////////
 
 QTaskThread::QTaskThread() {
   m_task = NULL;

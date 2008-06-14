@@ -77,9 +77,6 @@ public:
 class Unit {
   // a simple unit
 public:
-#ifdef USE_RECV_SMART
-  bool		do_delta; // for recv_smart
-#endif
   float 	act;			// activation value
   float 	net;			// net input value
   
@@ -90,19 +87,15 @@ public:
   int		flat_idx; // flat index
   int		n_recv_cons;
   ConSpec*	cs;
-  char dummy[16]; // bump a bit, to spread these guys out
+  bool		do_delta; // for sender and recv_smart
   
-//  Connection* 	Cn(int i) const { return &(send_wts[i]); }
-  // #CAT_Structure gets the connection at the given index
-//  Unit*		Un(int i) const { return targs.FastEl(i); }
-    
-  bool		DoDelta(); // returns true if we should do a delta; also sets the do_delta
-  
+  void		CalcDelta(); // sets delta if we should do a delta
   
   Unit();
   ~Unit();
 protected:
   int		my_rand; // random value
+  char 		dummy[200]; // add cruft to make it more like leabra ;)
 };
 
 class Layer {
@@ -159,7 +152,7 @@ public:
   
   Network*	net; // owning net, set automatically
   
-  virtual void		Initialize(); // called after creation
+  virtual void		Initialize(); // called after creation, usually override impl
   virtual void		OnBuild() {} 
   
   // generally don't override:
@@ -171,6 +164,7 @@ public:
   NetEngine() {net = NULL;}
   virtual ~NetEngine();
 protected:
+  virtual void		Initialize_impl(); // override this
   virtual void 		DoProc(int proc_id);
 };
 
@@ -180,7 +174,6 @@ INHERITED(NetEngine)
 public:
   static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
   
-  override void		Initialize();
   override void		OnBuild(); 
   
   override void 	ComputeNets();
@@ -189,12 +182,14 @@ public:
   //ThreadNetEngine();
   ~ThreadNetEngine();
 protected:
+  override void		Initialize_impl();
   void			DeleteThreads();
   void 			MakeThreads();
   override void 	DoProc(int proc_id);
   void 			ComputeNets_SendArray();
 };
 
+typedef void (*Recv_Netin_0_t)(Unit* ru);
 
 class NetTask: public Task {
 public:
@@ -219,7 +214,9 @@ public:
   virtual void	Send_Netin_Array() {} // only used by Net_N
   
 // Recv_Netin
-  static void 	Recv_Netin_0(Unit* ru); // shared by 0 and N
+  static 	Recv_Netin_0_t Recv_Netin_0; // set in NetTask::Initialize
+  static void 	Recv_Netin_0_Dumb(Unit* ru); // shared by 0 and N
+  static void 	Recv_Netin_0_Smart(Unit* ru); // shared by 0 and N
   virtual void	Recv_Netin(); // default is the _0 version
   
   

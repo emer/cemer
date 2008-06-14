@@ -27,14 +27,13 @@ int Nb::main(int argc, char* argv[]) {
       "\t-act=0\tdo not calculate activation\n"
       "-algo=n (def=0) is one of the following:\n"
       "\t 0 receiver-based\n"
-      "\t 1 sender-based -- clashes allowed \n"
+      "\t 1 receiver-based, with smart calc (ignore senders below thresh)\n"
+      "\t 2 sender-based -- clashes allowed \n"
+      "\t 3 sender-based -- array-based, 1 array of nets per thread, then rolled up \n"
     );
     return 1;
   }
 
-#ifdef USE_RECV_SMART
-  net.recv_smart = true;
-#endif  
   bool use_log_file = false;
 
   srand(56);			// always start with the same seed!
@@ -93,8 +92,6 @@ int Nb::main(int argc, char* argv[]) {
       NetEngine::algo = targ.remove("-algo=").toInt();
       continue;
     }
-    if (NetEngine::algo == NetEngine::RECV_SMART)
-      Network::recv_smart = true;
       
     if (targ == "-log=1")
       use_log_file = true;
@@ -108,6 +105,8 @@ int Nb::main(int argc, char* argv[]) {
     }
     //TODO: any more
   }
+  if (NetEngine::algo == NetEngine::RECV_SMART)
+    Network::recv_smart = true;
   
   net.Initialize();
   net.Build();

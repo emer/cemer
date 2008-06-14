@@ -30,20 +30,14 @@ Unit::Unit() {
   n_recv_cons = 0;
   net = 0;
   my_rand = rand();
-#ifdef USE_RECV_SMART
   do_delta = true; // for first iteration, before it is set in ComputeActs
-#endif
 }
 
 Unit::~Unit() {
 }
 
-bool Unit::DoDelta() {
-#ifndef USE_RECV_SMART
-  bool
-#endif
+void Unit::CalcDelta() {
   do_delta = ((Nb::this_rand ^ my_rand) & 0xffff) < Nb::send_act;
-  return do_delta;
 } 
 
 
@@ -200,6 +194,19 @@ NetEngine::~NetEngine() {
 }
 
 void NetEngine::Initialize() {
+  Initialize_impl();
+  switch (algo) {
+  case RECV:
+    NetTask::Recv_Netin_0 = *NetTask::Recv_Netin_0_Dumb;
+    break;
+  case RECV_SMART:
+    NetTask::Recv_Netin_0 = *NetTask::Recv_Netin_0_Smart;
+    break;
+  default: break;
+  }
+}
+
+void NetEngine::Initialize_impl() {
   NetTask* tsk = new NetTask_0;
   tsk->task_id = 0;
   net_tasks.Add(tsk);
@@ -250,7 +257,7 @@ ThreadNetEngine::~ThreadNetEngine() {
   DeleteThreads();
 }
 
-void ThreadNetEngine::Initialize() {
+void ThreadNetEngine::Initialize_impl() {
   net_tasks.Alloc(n_procs);
   for (int i = 0; i < n_procs; i++) {
     NetTask* tsk = new NetTask_N;
@@ -336,19 +343,20 @@ void ThreadNetEngine::Log(bool hdr) {
   FILE* logfile = NULL;
     if (hdr) {
       logfile = fopen("nb_thread.log", "w");
-      fprintf(logfile,"\nthread\tt_tot\tstart lat\trun time\tnibble time\tsync time\n");
+      fprintf(logfile,"thread\tt_tot\tstart lat\trun time\tnibble time\tsync time\toverhead\n");
     } else {
       logfile = fopen("nb_thread.log", "a");
     }
     for (int t = 0; t < net_tasks.size; t++) {
       NetTask* tsk = net_tasks[t];
-      fprintf(logfile,"%d\t%d\t%g\t%g\t%g\t%g\n", 
+      fprintf(logfile,"%d\t%d\t%g\t%g\t%g\t%g\t%g\n", 
         t, 
         tsk->t_tot, 
         tsk->start_latency.s_used, 
         tsk->run_time.s_used,
         tsk->nibble_time.s_used,
-        tsk->sync_time.s_used
+        tsk->sync_time.s_used,
+        tsk->overhead.s_used
       );
     }
     fclose(logfile);
@@ -376,20 +384,26 @@ void ThreadNetEngine::ComputeNets_SendArray() {
 
   // post stuff
 //  RollupWritebackScratch_Netin();
+  // called in Thread 0, so allocate the Task0
+  NetTask* nt0 = net_tasks[0];
+  nt0->overhead.Start(false);
   const int n_flat_units = net->units_flat.size;
   for (int i = 0; i < n_flat_units; ++i) {
     Unit* un = net->units_flat[i];
-    un->net = 0.0f;
+    //NOTE: un.net was reset to 0.0 in previous Act calc
     for (int t = 0; t < net_tasks.size; t++) {
       NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
       un->net += tsk->excit[i];
     }
   }
+  nt0->overhead.Stop();
 }
 
 //////////////////////////////////
 // NetTask			//
 //////////////////////////////////
+
+Recv_Netin_0_t NetTask::Recv_Netin_0 = NULL;
 
 NetTask::NetTask() {
   g_u = 0;
@@ -418,7 +432,7 @@ void NetTask::Send_Netin_0(Unit* su) {
   }
 }
 
-void NetTask::Recv_Netin_0(Unit* ru) {
+void NetTask::Recv_Netin_0_Dumb(Unit* ru) {
   float ru_net = 0.0f;
   for (int j = 0; j < ru->recv.size; ++j) {
     RecvCons* recv_gp = ru->recv[j];
@@ -426,9 +440,20 @@ void NetTask::Recv_Netin_0(Unit* ru) {
     Unit** uns = recv_gp->units.Els(); // unit pointer
     const int recv_sz = recv_gp->units.size;
     for(int i=0; i < recv_sz; ++i)
-#ifdef USE_RECV_SMART
+      ru_net += uns[i]->act * cns[i].wt;
+  }
+  ru->net = ru_net;
+}
+
+void NetTask::Recv_Netin_0_Smart(Unit* ru) {
+  float ru_net = 0.0f;
+  for (int j = 0; j < ru->recv.size; ++j) {
+    RecvCons* recv_gp = ru->recv[j];
+    Connection* cns = &(recv_gp->cons[0]); // array pointer
+    Unit** uns = recv_gp->units.Els(); // unit pointer
+    const int recv_sz = recv_gp->units.size;
+    for(int i=0; i < recv_sz; ++i)
       if (uns[i]->do_delta)
-#endif
         ru_net += uns[i]->act * cns[i].wt;
   }
   ru->net = ru_net;
@@ -450,9 +475,9 @@ void NetTask::Recv_Netin() {
 void NetTask::ComputeAct_inner(Unit* un) {
   un->act = 1.0f / (1.0f + expf(-un->net));
   un->net = 0.0f; // only needed for sender-based, but cheaper to just do than test
-#ifdef USE_RECV_SMART
-  if (Network::recv_smart) un->DoDelta(); // sets flag
-#endif
+  //NOTE: following is not used for vanilla RECV, but we include it
+  // as shared overhead anyway
+  un->CalcDelta(); // sets flag, except for RECV
 }
 
 void NetTask::ComputeAct() {
@@ -474,7 +499,7 @@ void NetTask_0::Send_Netin_Clash() {
   const int n_units_flat =  Nb::net.units_flat.size;
   while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
-    if (un->DoDelta()) {
+    if (un->do_delta) {
       Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
       //++t_tot;
@@ -488,7 +513,7 @@ void NetTask_N::Send_Netin_Clash() {
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
     Unit* un = units[my_u]; //note: accessed flat
-    if (un->DoDelta()) {
+    if (un->do_delta) {
       Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1);
       //AtomicFetchAdd(&t_tot, 1); // because of helping hand clobbers
@@ -498,13 +523,15 @@ void NetTask_N::Send_Netin_Clash() {
 }
 
 void NetTask_N::Send_Netin_Array() {
+  overhead.Start(false);
   memset(excit.el, 0, sizeof(float) * excit.size);
+  overhead.Stop();
 
   Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
     Unit* su = units[my_u]; //note: accessed flat
-    if (su->DoDelta()) {
+    if (su->do_delta) {
       float su_act_eff = su->act;
       for (int j = 0; j < su->send.size; ++j) {
         SendCons* send_gp = su->send[j];
