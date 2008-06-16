@@ -1051,9 +1051,9 @@ public:
   // #CAT_Structure update con specs for all connection groups for this projection in the network to use con_spec (only if changed from last update -- force = do regardless); returns true if changed and all cons can use given spec
 
   virtual bool 	SetPrjnSpec(ProjectionSpec* sp);
-  // #BUTTON #CAT_Structure set the projection spec (connectivity pattern) for this projection
+  // #BUTTON #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the projection spec (connectivity pattern) for this projection
   virtual bool 	SetConSpec(ConSpec* sp);
-  // #BUTTON #CAT_Structure set the con spec for all connections in this prjn
+  // #BUTTON #CAT_Structure #INIT_ARGVAL_ON_con_spec.spec set the con spec for all connections in this prjn
   virtual bool	CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Structure check if projection is connected
   virtual void	FixPrjnIndexes();
@@ -1065,11 +1065,11 @@ public:
   // #CAT_Structure switch any projections using old_sp to using new_sp
 
   virtual bool 	SetConType(TypeDef* td);
-  // #BUTTON #CAT_Structure #TYPE_Connection set the connection type for all connections in this prjn
+  // #BUTTON #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn
   virtual bool 	SetRecvConsType(TypeDef* td);
-  // #BUTTON #CAT_Structure #TYPE_RecvCons set the receiving connection group type for all connections in this prjn
+  // #BUTTON #CAT_Structure #TYPE_RecvCons #INIT_ARGVAL_ON_recvcons_type set the receiving connection group type for all connections in this prjn
   virtual bool 	SetSendConsType(TypeDef* td);
-  // #BUTTON #CAT_Structure #TYPE_SendCons set the connection group type for all connections in this prjn
+  // #BUTTON #CAT_Structure #TYPE_SendCons #INIT_ARGVAL_ON_sendcons_type set the connection group type for all connections in this prjn
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this projection
@@ -1530,13 +1530,13 @@ public:
   // #CAT_Structure update connection specs for all projections in the layer (only if changed from last update -- force = do regardless)
 
   virtual bool	SetLayerSpec(LayerSpec* layspec);
-  // #BUTTON #DROP1 #CAT_Structure set the layer specification
+  // #BUTTON #DROP1 #CAT_Structure #INIT_ARGVAL_ON_spec.spec set the layer specification
   virtual LayerSpec* GetLayerSpec()		{ return (LayerSpec*)NULL; }
   // #CAT_Structure get the layer spec for this layer (if used)
   virtual bool	SetUnitSpec(UnitSpec* unitspec);
-  // #BUTTON #DROP1 #CAT_Structure set unit spec for all units in layer
+  // #BUTTON #DROP1 #CAT_Structure #INIT_ARGVAL_ON_unit_spec.spec set unit spec for all units in layer
   virtual void	SetUnitType(TypeDef* td);
-  // #BUTTON #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
+  // #BUTTON #TYPE_Unit #CAT_Structure #INIT_ARGVAL_ON_units.el_typ set unit type for all units in layer (created by Build)
   virtual void	FixPrjnIndexes();
   // #CAT_Structure fix the projection indicies of the connection groups (other_idx)
 
@@ -2022,7 +2022,7 @@ public:
   virtual void	LayerZPos_Unitize();
   // #CAT_Structure #MENU set layer z axis positions to unitary increments (0, 1, 2.. etc)
   virtual void	LayerPos_Cleanup();
-  // #CAT_Structure cleanup the layer positions relative to each other (prevent overlap etc)
+  // #CAT_Structure #MENU_BUTTON #MENU_ON_NetView cleanup the layer positions relative to each other (prevent overlap etc)
 
   virtual void	Compute_LayerDistances();
   // #MENU #CONFIRM #CAT_Structure compute distances between layers and input/output layers

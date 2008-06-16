@@ -3550,6 +3550,10 @@ void* MemberDef::GetOff(const void* base) const {
   return rval;
 }
 
+void* MemberDef::GetOff_static(const void* base, int base_off_, ta_memb_ptr off_) {
+  return (void*)&((ta_memb_ptr_class*)((char*)base+base_off_)->*off_);
+}
+
 const String MemberDef::GetPathName() const {
   String rval; 
   TypeDef* owtp = GetOwnerType();
@@ -4692,7 +4696,11 @@ bool TypeDef::is_enum() const {
   return (enum_vals.size > 0);
 }
 
-MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, const String& path, bool warn) {
+MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
+					 ta_memb_ptr& net_mbr_off, 
+					 const String& path, bool warn) {
+  void* cur_base_off = NULL;
+  net_mbr_off = 0;
   if(!own_td || path.empty()) {
     return NULL;		// no warning..
   }
@@ -4710,6 +4718,8 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, const String& path, b
     }
     else {
       own_td = md->type;
+      cur_base_off = md->GetOff(cur_base_off);
+      net_mbr_off = *((ta_memb_ptr*)&cur_base_off);
     }
   }
   MemberDef* md = own_td->members.FindName(pth);
@@ -4720,6 +4730,8 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, const String& path, b
     }
     return NULL;
   }
+  cur_base_off = md->GetOff(cur_base_off);
+  net_mbr_off = *((ta_memb_ptr*)&cur_base_off);
   return md;
 }
 
@@ -5075,31 +5087,8 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       var.GetRepInfo(typ, var_base);
       return typ->GetValStr(var_base, NULL, memb_def, sc);
     }
-    else if(DerivesFormal(TA_class) && 
-      (flag_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) 
-    {
-      int i;
-      String rval("{");
-      for(i=0; i<members.size; i++) {
-	MemberDef* md = members.FastEl(i);
-	// if streaming, do full save check, else just check for NO_SAVE
-	if (sc == SC_STREAMING) {
-	  if (!md->DumpMember(base))
-	    continue;
-	} else {
-	  if(md->HasOption("NO_SAVE"))
-	    continue;
-        }
-	rval += md->name + "=";
-	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += md->type->GetValStr(md->GetOff(base), base, md, sc);
-	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += ": ";
-      }
-      rval += "}";
-      return rval;
-    }
 #ifndef NO_TA_BASE
+    // todo: include all these guys in appropriate function calls on taBase!!
     else if(DerivesFrom(TA_taGroup_impl)) {
       TAGPtr gp = (TAGPtr)base;
       if(gp != NULL) {
@@ -5144,12 +5133,6 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       }
       return name;
     }
-    else if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
-      if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)))
-	return rbase->GetPath();
-      return name;
-    }
     else if (DerivesFrom(TA_taSmartPtr)) {
       // we just delegate to taBase* since we are binary compatible
       return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc_);
@@ -5170,6 +5153,44 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
         } else
           return String((intptr_t)rbase);
       } else  return String::con_NULL;
+    }
+#endif
+    else if(DerivesFormal(TA_class) && 
+      (flag_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) 
+    {
+#ifndef NO_TA_BASE
+      if(DerivesFrom(TA_taBase)) {
+	TAPtr rbase = (TAPtr)base;
+	return rbase->GetValStr_inline(sc);
+      }
+#endif
+      int i;
+      String rval("{");
+      for(i=0; i<members.size; i++) {
+	MemberDef* md = members.FastEl(i);
+	// if streaming, do full save check, else just check for NO_SAVE
+	if (sc == SC_STREAMING) {
+	  if (!md->DumpMember(base))
+	    continue;
+	} else {
+	  if(md->HasOption("NO_SAVE"))
+	    continue;
+        }
+	rval += md->name + "=";
+	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+	rval += md->type->GetValStr(md->GetOff(base), base, md, sc);
+	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+	rval += ": ";
+      }
+      rval += "}";
+      return rval;
+    }
+#ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taBase)) {
+      TAPtr rbase = (TAPtr)base;
+      if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)))
+	return rbase->GetPath();
+      return name;
     }
 #endif
     else if(DerivesFormal(TA_struct))
@@ -5462,6 +5483,9 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
   StrContext sc) 
 {
+  bool flag_inline = (sc & SC_FLAG_INLINE);
+  // mask out flags
+  sc = (StrContext)(sc & SC_CONTEXT_MASK);
   if (sc == SC_DEFAULT) 
     sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
@@ -5634,7 +5658,14 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       ref = bs;
     }
 #endif
-    else if(DerivesFormal(TA_class) && (HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
+    else if(DerivesFormal(TA_class) && (flag_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
+#ifndef NO_TA_BASE
+      if(DerivesFrom(TA_taBase)) {
+	TAPtr rbase = (TAPtr)base;
+	rbase->SetValStr_inline(val, sc);
+	return;
+      }
+#endif
       String rval = val;
       rval = rval.after('{');
       while(rval.contains(':')) {
@@ -5677,18 +5708,10 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 	    }
 	  }
 	}
-	if((md != NULL) && !mb_val.empty())
-	  md->type->SetValStr(mb_val, md->GetOff(base), par, md, sc);
-      }
-#ifndef NO_TA_BASE
-      if(InheritsFrom(TA_taBase)) {
-	TAPtr rbase = (TAPtr)base;
-	if(rbase != NULL) {
-	  if (sc != SC_STREAMING)
-	    rbase->UpdateAfterEdit(); 	// only when not loading (else will happen after)
+	if((md != NULL) && !mb_val.empty()) { // note: changed par to base here.. 
+	  md->type->SetValStr(mb_val, md->GetOff(base), base /* par */, md, sc);
 	}
       }
-#endif
     }
   }
   else if(ptr == 1) {

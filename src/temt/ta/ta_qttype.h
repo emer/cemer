@@ -739,6 +739,8 @@ private:
 class TA_API taiTypePtrArgType : public taiArgType {
   // for typedef ptr types
 public:
+  TypeDef*	base_type;	// base type for type selector
+
   int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
   cssEl*	GetElFromArg(const char* arg_nm, void* base);
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
@@ -748,7 +750,7 @@ public:
 
   TAQT_ARGTYPE_INSTANCE(taiTypePtrArgType, taiArgType);
 private:
-  void		Initialize() {}
+  void		Initialize() { base_type = NULL; }
   void		Destroy() {}
 };
 

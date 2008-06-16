@@ -4147,7 +4147,7 @@ void LeabraNetMisc::Initialize() {
 void CtTrialTiming::Initialize() {
   minus = 50;
   plus = 20;
-  inhib = 20;
+  inhib = 0;
 
   total_cycles = minus + plus + inhib;
   inhib_start = minus + plus;
@@ -4161,7 +4161,7 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 
 void CtSRAvgSpec::Initialize() {
   start = 30;
-  end = 20;
+  end = 0;
   interval = 5;
   min_da_thr = 0.0f;
 }
@@ -4170,8 +4170,8 @@ void CtSineInhibMod::Initialize() {
   start = 30;
   duration = 20;
   n_pi = 2.0f;
-  burst_i = 0.05f;
-  trough_i = 0.05f;
+  burst_i = 0.02f;
+  trough_i = 0.02f;
 }
 
 void CtFinalInhibMod::Initialize() {

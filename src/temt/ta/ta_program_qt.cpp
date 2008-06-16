@@ -1782,7 +1782,7 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
     varlkup->item_filter = (item_filter_fun)ProgExpr::StdProgVarFilter;
     varlkup->type_list.Link(&TA_ProgVar);
     varlkup->type_list.Link(&TA_DynEnumItem);
-    varlkup->GetImage(NULL, &TA_ProgVar, prg, &TA_Program);
+    varlkup->GetImage(NULL, &TA_ProgVar, this, &TA_Program); // scope_token is this!
     varlkup->OpenChooser();
     if(varlkup->token()) {
       rval = prepend_before + varlkup->token()->GetName() + append_at_end;
@@ -1836,7 +1836,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 	    }
 	    if(!lookup_td) {
 	      TypeDef* own_td = st_var->object_type;
-	      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, path_rest, false); // no warn
+	      int net_base_off=0;
+	      ta_memb_ptr net_mbr_off=0;
+	      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, 
+							    net_mbr_off, path_rest, false);
+	      // no warn
 	      if(md) lookup_td = md->type;
 	    }
 	    if(!lookup_td) {

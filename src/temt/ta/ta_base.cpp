@@ -1181,6 +1181,91 @@ taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) {
   return DQR_DEFAULT;
 }
 
+
+String taBase::GetValStr_inline(TypeDef::StrContext sc) {
+  sc = (TypeDef::StrContext)(sc & TypeDef::SC_CONTEXT_MASK); // clear inline--assumed
+  TypeDef* td = GetTypeDef();
+  String rval("{");
+  for(int i=0; i<td->members.size; i++) {
+    MemberDef* md = td->members.FastEl(i);
+    // if streaming, do full save check, else just check for NO_SAVE
+    if (sc == TypeDef::SC_STREAMING) {
+      if (!md->DumpMember(this))
+	continue;
+    } else {
+      if(md->HasOption("NO_SAVE"))
+	continue;
+    }
+    rval += md->name + "=";
+    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+    rval += md->type->GetValStr(md->GetOff(this), this, md,
+				(TypeDef::StrContext)(sc | TypeDef::SC_FLAG_INLINE));
+    // make sure it is inline!
+    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+    rval += ": ";
+  }
+  rval += "}";
+  return rval;
+}
+
+bool taBase::SetValStr_inline(const String& val, TypeDef::StrContext sc) {
+  sc = (TypeDef::StrContext)(sc & TypeDef::SC_CONTEXT_MASK); // clear inline--assumed
+  TypeDef* td = GetTypeDef();
+  String rval = val;
+  rval = rval.after('{');
+  while(rval.contains(':')) {
+    int st_pos = rval.index('=');
+    String mb_nm = rval.before(st_pos);
+    String next_val = rval.after(st_pos);
+    int pos = 0;
+    int next_val_len = next_val.length();
+    int c = next_val[pos];
+    if(c == '\"') {		// "
+      st_pos++;
+      next_val = next_val.after(0);
+      next_val_len--;
+      c = next_val[pos];
+      while((c != '\"') && (pos < next_val_len)) c = next_val[++pos]; // "
+    }
+    else {
+      int depth = 0;
+      while(!(((c == ':') || (c == '}')) && (depth <= 0)) && (pos < next_val_len)) {
+	if(c == '{')  depth++;
+	if(c == '}')  depth--;
+	c = next_val[++pos];
+      }
+    }
+    String mb_val = next_val.before(pos);
+    rval = rval.after(pos + st_pos + 1); // next position
+    if(c == '\"')			     // "
+      rval = rval.after(':');	// skip the semi-colon which was not groked
+    mb_nm.gsub(" ", "");
+    MemberDef* md = td->members.FindName(mb_nm);
+    if(md == NULL) {		// try to find a name with an aka..
+      int a;
+      for(a=0;a<td->members.size;a++) {
+	MemberDef* amd = td->members.FastEl(a);
+	String aka = amd->OptionAfter("AKA_");
+	if(aka.empty()) continue;
+	if(aka == mb_nm) {
+	  md = amd;
+	  break;
+	}
+      }
+    }
+    if((md != NULL) && !mb_val.empty()) {
+      md->type->SetValStr(mb_val, md->GetOff(this), this, md, 
+			  (TypeDef::StrContext)(sc | TypeDef::SC_FLAG_INLINE));
+      // make sure it is inline!
+    }
+  }
+  if (sc != TypeDef::SC_STREAMING)
+    UpdateAfterEdit(); 	// only when not loading (else will happen after)
+  return true;
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////
 // 	Updating of object properties
 

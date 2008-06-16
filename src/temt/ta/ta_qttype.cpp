@@ -2107,7 +2107,7 @@ taiArgType::taiArgType(int aidx, TypeDef* argt, MethodDef* mb, TypeDef* td)
   arg_base = NULL;
   arg_val = NULL;
   use_it = NULL;
-  obj_inst = NULL;
+  obj_inst = NULL;		// note: no longer used..
 }
 
 taiArgType::taiArgType() {
@@ -2127,7 +2127,7 @@ taiArgType::~taiArgType() {
     delete use_it;
     use_it = NULL;
   }
-  if (obj_inst != NULL) {
+  if (obj_inst != NULL) {	// note: no longer used..
 //     delete obj_inst;   // this is now done automatically by deref from taBase var pointer!!
     obj_inst = NULL;
   }
@@ -2217,9 +2217,8 @@ cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
     } else if (arg_typ->DerivesFrom(TA_taBase)) {
       arg_typ = arg_typ->GetNonRefType()->GetNonConstType();
       if(arg_typ->GetInstance() == NULL) return NULL;
-      obj_inst = ((TAPtr)arg_typ->GetInstance())->MakeToken();
-      arg_val = new cssTA_Base(obj_inst, 1, arg_typ, nm);
-      arg_base = obj_inst;
+      arg_val = new cssTA_Base(NULL, 0, arg_typ, nm); // it will create token for us!
+      arg_base = (void*)((cssTA_Base*)arg_val)->ptr;
       return arg_val;
     } else if (arg_typ->DerivesFormal(TA_enum)) {
       arg_val = new cssEnum(0, nm);
@@ -2487,7 +2486,7 @@ int taiTypePtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, Typ
 
 cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
   String mb_nm = GetOptionAfter("TYPE_ON_");
-  if (mb_nm != "") {
+  if (mb_nm.nonempty()) {
     TypeDef* tpdf = NULL;
     if (mb_nm == "this") {
       tpdf = typ;
@@ -2500,6 +2499,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       }
     }
     if(tpdf) {
+      base_type = tpdf;
       arg_val = new cssTypeDef(tpdf, 1, &TA_TypeDef, nm);
       arg_base = (void*)&(((cssTA*)arg_val)->ptr);
       return arg_val;
@@ -2517,11 +2517,13 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       }
       if (tpdf == NULL)
 	tpdf = &TA_taBase;
+      base_type = tpdf;
       arg_val = new cssTypeDef(tpdf, 1, &TA_TypeDef, nm);
       arg_base = (void*)&(((cssTA*)arg_val)->ptr);
       return arg_val;
     }
   }
+  base_type = &TA_taBase;;
   arg_val = new cssTypeDef(&TA_taBase, 1, &TA_TypeDef, nm);
   arg_base = (void*)&(((cssTA*)arg_val)->ptr);
   return arg_val;
@@ -2532,11 +2534,11 @@ taiData* taiTypePtrArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWid
   if (GetHasOption("NULL_OK"))
     flags |= taiData::flgNullOk;
   
-  TypeDef* init_typ = &TA_taBase;
-  if (*((TypeDef**)arg_base) != NULL)
-    init_typ = *((TypeDef**)arg_base);
-  taiTypeDefButton* rval = new taiTypeDefButton(init_typ, host_, par,
-    gui_parent_, flags);
+//   TypeDef* init_typ = &TA_taBase;
+//   if (*((TypeDef**)arg_base) != NULL)
+//     init_typ = *((TypeDef**)arg_base);
+  taiTypeDefButton* rval = new taiTypeDefButton(base_type, host_, par,
+						gui_parent_, flags);
   return rval;
 }
 
@@ -2557,7 +2559,7 @@ void taiTypePtrArgType::GetImage_impl(taiData* dat, const void* base) {
     }
   }
   TypeDef* typ_ = (TypeDef*)*((void**)arg_base);
-  rval->GetImage(typ_, typ_);
+  rval->GetImage(typ_, base_type);
 }
 
 void taiTypePtrArgType::GetValue_impl(taiData* dat, void*) {

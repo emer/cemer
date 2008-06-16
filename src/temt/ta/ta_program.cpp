@@ -1570,7 +1570,7 @@ String ProgExprBase::GetFullExpr() const {
 
 bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
   if(!base_) return true;
-  ProgExpr* base = static_cast<ProgExpr*>(base_);
+  ProgExprBase* base = static_cast<ProgExprBase*>(base_);
   ProgVar* var = static_cast<ProgVar*>(var_);
   if(!var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);

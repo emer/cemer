@@ -233,8 +233,11 @@ public:
   
   String		GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // returns human-friendly text in form: "[dims:{dim}{,dim}]"
-  void			GeomFromString(String& str, const char* ldelim = "[", const char* rdelim = "]");
+  void			GeomFromString(const String& str, const char* ldelim = "[", const char* rdelim = "]");
   // reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
+
+  override String	GetValStr_inline(TypeDef::StrContext sc);
+  override bool		SetValStr_inline(const String& val, TypeDef::StrContext sc);
 
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
@@ -517,7 +520,7 @@ public:
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive 
   void			SetGeomN(const MatrixGeom& geom_) 
   { SetGeom_(geom_.size, geom_.el);}
-  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify set geom for any sized matrix -- if matches current size, it is non-destructive 
+  // #MENU #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive 
   
   // Slicing -- NOTES: 
   // 1. slices are updated if parent allocation changes -- this could collapse slice to [0]

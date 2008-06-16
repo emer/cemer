@@ -502,9 +502,14 @@ String cssTA_Base::GetStr() const {
     else
       return "NULL";
   }
-  else {
-    return cssTA::GetStr();
+  else if(ptr_cnt == 0) {
+    if(ptr) {
+      taBase* obj = (taBase*)ptr;
+      return obj->GetValStr_inline((TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE));
+      // force inline
+    }
   }
+  return cssTA::GetStr();
 }
 
 void cssTA_Base::PtrAssignPtr(const cssEl& s) {
@@ -633,7 +638,12 @@ void cssTA_Base::operator=(taBase** cp) {
 void cssTA_Base::operator=(const String& s) {
   if(!ROCheck()) return;
   if(ptr_cnt == 0) {
-    cssTA::operator=(s);		// just do same thing
+    //    cssTA::operator=(s);		// just do same thing
+    if(ptr) {
+      taBase* obj = (taBase*)ptr;
+      obj->SetValStr_inline(s, (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE));
+      // force inline
+    }
     return;
   }
   else {

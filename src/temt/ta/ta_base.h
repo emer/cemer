@@ -725,6 +725,10 @@ public:
   virtual int		SaveAs(const String& fname = ""); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user; if context="" then default is used
 
+  virtual String	GetValStr_inline(TypeDef::StrContext sc);
+  // #IGNORE get an inline value string for this object (all in one string) -- called by TypeDef GetValStr -- default is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes that might still be inlinable
+  virtual bool		SetValStr_inline(const String& val, TypeDef::StrContext sc);
+  // #IGNORE set value from an "inline" value string for this object -- called by TypeDef SetValStr -- default is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes that might still be inlinable
 
   ////////////////////////////////////////////////////////////////////// 
   // 	Low-level dump load/save
@@ -1784,7 +1788,7 @@ public:
   override taBase* New(int n_objs=1, TypeDef* typ=NULL);
   // #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual taBase* New_gui(int n_objs=1, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_XpertModify #LABEL_New create n_objs new objects of given type in list (NULL = default type, el_typ)
+  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_XpertModify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 

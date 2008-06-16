@@ -245,7 +245,7 @@ public:
   TAColor		nocolor;	// #IGNORE
 
   virtual void		SetColorSpec(ColorScaleSpec* color_spec);
-  // #BUTTON set the color scale spec to determine the palette of colors representing values
+  // #BUTTON #INIT_ARGVAL_ON_spec set the color scale spec to determine the palette of colors representing values
 
   virtual const iColor	Get_Background(); // #IGNORE
   float 		GetAbsPercent(float val);

@@ -2423,6 +2423,7 @@ bool RetinaSpec::RecordImageName(taImage& img, DataTable* dt) {
       imgnm = imgnm.after('/'); // get rid of all but last 2
   }
   dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(imgnm, -1);
+  return true;
 }
 
 bool RetinaSpec::TransformImage(taImage& img, DataTable* dt,

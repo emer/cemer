@@ -739,7 +739,7 @@ public:
   virtual String	FastElAsStr(int idx) const {return El_GetStr_(FastEl_(idx));}
   // #IGNORE element at idx, as a string
   virtual void	SetSize(int sz);
-  // #CAT_Modify #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
+  // #CAT_Modify #MENU #MENU_ON_Edit #INIT_ARGVAL_ON_size force array to be of given size by inserting blanks or removing
 
   virtual void	AddBlank(int n_els = 1);
   // #CAT_Modify #MENU #MENU_ON_Edit Add n_els empty elements to the end of the array
@@ -897,7 +897,7 @@ public:
   ////////////////////////////////////////////////
 
   virtual void	SetSize(int sz);
-  // #CAT_Modify #MENU #MENU_ON_Edit force array to be of given size by inserting blanks or removing
+  // #CAT_Modify #MENU #MENU_ON_Edit #INIT_ARGVAL_ON_size force array to be of given size by inserting blanks or removing
 
 public: // accessible but generally not used implementation overrides
   virtual const void*	SafeEl_(int i) const;

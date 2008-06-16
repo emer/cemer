@@ -624,12 +624,16 @@ bool InitNamedUnits::InitDynEnumFmUnitNames(DynEnumType* dyn_enum,
     return false;
   }
   dyn_enum->enums.Reset();
-  for(int i=0;i<unit_names_col->cell_size();i++) {
+  int i;
+  for(i=0;i<unit_names_col->cell_size();i++) {
     String cnm = unit_names_col->GetValAsStringM(-1, i);
     if(cnm.empty()) continue;
     cnm = prefix + "_" + cnm;
     dyn_enum->AddEnum(cnm, i);
   }
+  String cnm = dyn_enum->name;
+  cnm = prefix + "_N" + cnm;
+  dyn_enum->AddEnum(cnm, i);
   return true;
 }
 

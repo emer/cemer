@@ -1817,6 +1817,9 @@ public:
   MemberDef*	MakeToken()	{ return new MemberDef(); }
 
   void*			GetOff(const void* base) const;
+  // get offset of member relative to overall class base pointer
+  static void*		GetOff_static(const void* base, int base_off_, ta_memb_ptr off_);
+  // get offset of member -- static version that takes args
   override const String	GetPathName() const; 
     // name used for saving a reference in stream files, can be used to lookup again
 
@@ -2158,8 +2161,10 @@ public:
   void		SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars);
   // set type of a template class
 
-  static MemberDef* FindMemberPathStatic(TypeDef*& own_td, const String& path, bool warn = true);
-  // looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths
+  static MemberDef* FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
+					 ta_memb_ptr& net_mbr_off, 
+					 const String& path, bool warn = true);
+  // you must supply the initial own_td as starting type -- looks for a member or sequence of members based on static type information for members (i.e., does not walk the structural tree and cannot go into lists or other containers, but can find any static paths for object members and their members, etc) -- if warn, emits warning message for bad paths -- net offsets provide overall offset from original own_td obj
 
   EnumDef*	FindEnum(const String& enum_nm) const;
   // find an enum and return its definition (or NULL if not found).  searches in enum_vals, then subtypes

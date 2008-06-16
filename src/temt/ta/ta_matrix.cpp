@@ -345,8 +345,8 @@ String MatrixGeom::GeomToString(const char* ldelim, const char* rdelim) const {
   return rval;
 }
 
-void MatrixGeom::GeomFromString(String& str, const char* ldelim, const char* rdelim) {
-  str = str.after(ldelim);
+void MatrixGeom::GeomFromString(const String& str_, const char* ldelim, const char* rdelim) {
+  String str = str_.after(ldelim);
   String ds = str.before(':');
   str = str.after(':');
   SetSize((int)ds);
@@ -359,6 +359,15 @@ void MatrixGeom::GeomFromString(String& str, const char* ldelim, const char* rde
   ds = str.before(rdelim);
   str = str.after(rdelim);
   Set(i, (int)ds);
+}
+
+String MatrixGeom::GetValStr_inline(TypeDef::StrContext sc) {
+  return GeomToString();
+}
+
+bool MatrixGeom::SetValStr_inline(const String& val, TypeDef::StrContext sc) {
+  GeomFromString(val);
+  return true;
 }
 
 bool MatrixGeom::SetSize(int new_sz) {

@@ -284,7 +284,7 @@ public:
 
 
   virtual void		SetTextWidth(int text_wdth=16);
-  // #BUTTON #VIEWMENU set the text width for this column (default is 16) -- can adjust to fit more items in the display or allow existing text to fit better
+  // #BUTTON #VIEWMENU #INIT_ARGVAL_ON_text_width set the text width for this column (default is 16) -- can adjust to fit more items in the display or allow existing text to fit better
 
   virtual void		ComputeColSizes();
   // compute the column sizes
@@ -353,7 +353,7 @@ public:
   void		ShowAllCols();
   // #BUTTON #CONFIRM #VIEWMENU show all columns in the data table (turn their visible flags on) -- this is the only way to turn visible back on once it is turned off!
   void		SetColorSpec(ColorScaleSpec* color_spec);
-  // #BUTTON #VIEWMENU set the color scale spec to determine the palette of colors representing values
+  // #BUTTON #VIEWMENU #INIT_ARGVAL_ON_colorscale.spec set the color scale spec to determine the palette of colors representing values
 
   // viewpanel accessors for complex members, we don't update though
   void		setWidth(float wdth);
@@ -824,7 +824,7 @@ public:
   override void	UpdateDisplay(bool update_panel = true);
 
   void		SetColorSpec(ColorScaleSpec* color_spec);
-  // #BUTTON #VIEWMENU set the color scale spec to determine the palette of colors representing values
+  // #BUTTON #VIEWMENU #INIT_ARGVAL_ON_colorscale.spec set the color scale spec to determine the palette of colors representing values
 
   virtual void	SetScrollBars();   // set scroll bar values
 

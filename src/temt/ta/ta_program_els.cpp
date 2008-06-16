@@ -901,7 +901,9 @@ bool MemberProgEl::GetTypeFromPath(bool quiet) {
     return false;
   }
   TypeDef* ot = obj->act_object_type();
-  MemberDef* md = TypeDef::FindMemberPathStatic(ot, path, false);
+  int net_base_off = 0;
+  ta_memb_ptr net_mbr_off = 0;
+  MemberDef* md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, path, false);
   // gets static path based just on member types, updates ot to point to owner type of md
   obj_type = ot;
   return (bool)md;

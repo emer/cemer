@@ -382,9 +382,23 @@ void cssiArgDialog::Constr_ArgTypes() {
     }
     // set to default value if not empty
     String val = md->arg_vals.FastEl(i);
+    String init_argval = art->GetOptionAfter("INIT_ARGVAL_ON_");
+    if(init_argval.nonempty()) {
+      TypeDef* own_td = typ;
+      ta_memb_ptr net_mbr_off = 0;
+      int net_base_off = 0;
+      MemberDef* md = typ->FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						init_argval, true);
+      if(md != NULL) {
+	void* mbrbase = MemberDef::GetOff_static(root, net_base_off, net_mbr_off);
+	val = md->type->GetValStr(mbrbase, NULL, md, 
+				  (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE));
+	// get val from member
+      }
+    }
     if (!val.empty()) {
-      // not for type def pointers (cuz you lose ability to select other types)
-      if (!art->arg_typ->DerivesFrom(&TA_TypeDef) && !art->arg_typ->DerivesFrom(&TA_ios)) {
+      // note: fixed type pointers to only use val as cur sel, not base type
+      if (!art->arg_typ->DerivesFrom(&TA_ios)) {
 	while (val.firstchar() == ' ')
           val = val.after(' ');
 #ifdef DEBUG

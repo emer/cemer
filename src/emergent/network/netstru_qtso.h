@@ -472,7 +472,7 @@ public:
   void 			SetScaleDefault(); //revert scale to its default
 
   void			SetColorSpec(ColorScaleSpec* color_spec);
-  // #BUTTON set the color scale spec to determine the palette of colors representing values
+  // #BUTTON #INIT_ARGVAL_ON_scale.spec set the color scale spec to determine the palette of colors representing values
 
   virtual void		SetLayDispMode(const String& lay_nm, int disp_md);
   // set the layer display mode value for given layer name (called by LayerView UAE)
