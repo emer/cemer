@@ -19,7 +19,7 @@
 #include "ta_type_constr.h"
 #include "ta_TA_type.h"
 
-static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, char* nm) {
+static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, const char* nm) {
   String full_nm = nm;
   TypeDef* rval;
   String sub_nm = full_nm.after("::");
@@ -47,8 +47,8 @@ static TypeDef* tac_GetTypeFmName(TypeDef& cur_tp, char* nm) {
   return rval;
 }
 
-void tac_AddEnum(TypeDef& tp, char* name, char* desc, char* opts,
-		 char* inh_opts, char* lists, EnumDef_data* dt) {
+void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
+ const char* opts, const char* inh_opts, const char* lists, EnumDef_data* dt) {
   if(dt == NULL) return;
   TypeDef* enm = new TypeDef(name, desc, inh_opts, opts, lists, sizeof(int), (void**)0);
   enm->AddParFormal(&TA_enum);

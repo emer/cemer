@@ -1687,7 +1687,7 @@ void Variant::setType(VarType value) {
   }
 }
 
-static char* var_types_as_str[] = {
+static const char* var_types_as_str[] = {
   "T_Invalid", "T_Bool", "T_Int", "T_UInt", "T_Int64", "T_UInt64", "T_Double",
   "T_Char", "T_na", "T_String", "T_Ptr", "T_Base", "T_Matrix"};
 

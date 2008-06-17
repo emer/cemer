@@ -33,11 +33,11 @@
 class TA_API MemberDef_data {
 public:
   TypeDef* 	type;		// either the type is known
-  char*		type_nm;	// or its a type::subtype, given by this name
-  char*		name;
-  char*		desc;
-  char*		opts;
-  char*		lists;
+  const char*		type_nm;	// or its a type::subtype, given by this name
+  const char*		name;
+  const char*		desc;
+  const char*		opts;
+  const char*		lists;
   ta_memb_ptr	off;		// offset if not static
   bool		is_static;
   void*		addr;		// address static absolute addr
@@ -47,11 +47,11 @@ public:
 class TA_API PropertyDef_data {
 public:
   TypeDef* 	type;		// either the type is known
-  char*		type_nm;	// or its a type::subtype, given by this name
-  char*		name;
-  char*		desc;
-  char*		opts;
-  char*		lists;
+  const char*		type_nm;	// or its a type::subtype, given by this name
+  const char*		name;
+  const char*		desc;
+  const char*		opts;
+  const char*		lists;
   bool		is_static;
   ta_prop_get_fun prop_get; // stub function to get the property (as Variant)
   ta_prop_set_fun prop_set; // stub function to set the property (as Variant)
@@ -60,19 +60,19 @@ public:
 class TA_API MethodArgs_data {
 public:
   TypeDef*	type;		// either the type is known
-  char*		type_nm;	// or its a type::subtype, given by this name
-  char*		name;
-  char*		def;		// default value
+  const char*		type_nm;	// or its a type::subtype, given by this name
+  const char*		name;
+  const char*		def;		// default value
 };
 
 class TA_API MethodDef_data {
 public:
   TypeDef* 	type;		// either the type is known
-  char*		type_nm;	// or its a type::subtype, given by this name
-  char*		name;
-  char*		desc;
-  char*		opts;
-  char*		lists;
+  const char*		type_nm;	// or its a type::subtype, given by this name
+  const char*		name;
+  const char*		desc;
+  const char*		opts;
+  const char*		lists;
   short		fun_overld;	// number of times overloaded
   short		fun_argc;	// nofun, or # of parameters to the function
   short		fun_argd;	// indx for start of the default args (-1 if none)
@@ -85,14 +85,14 @@ public:
 
 class TA_API EnumDef_data {
 public:
-  char* 	name;
-  char*		desc;
-  char*		opts;
+  const char* 	name;
+  const char*		desc;
+  const char*		opts;
   int		val;
 };
 
-extern TA_API void tac_AddEnum(TypeDef& tp, char* name, char* desc, char* inh_opts,
-			char* opts, char* lists, EnumDef_data* dt);
+extern TA_API void tac_AddEnum(TypeDef& tp, const char* name, const char* desc, const char* inh_opts,
+			const char* opts, const char* lists, EnumDef_data* dt);
 extern TA_API void tac_ThisEnum(TypeDef& tp, EnumDef_data* dt);
 extern TA_API void tac_AddMembers(TypeDef& tp, MemberDef_data* dt);
 extern TA_API void tac_AddProperties(TypeDef& tp, PropertyDef_data* dt);
