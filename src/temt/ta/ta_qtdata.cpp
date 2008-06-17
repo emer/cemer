@@ -597,6 +597,9 @@ void iFieldEditDialog::repChanged() {
   setApplyEnabled(true);
 }
 
+/////////////////////////////////////////////////
+//		taiField
+
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
@@ -618,7 +621,8 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
     SetRep(act_par);
     connect(btnEdit, SIGNAL(clicked(bool)),
       this, SLOT(btnEdit_clicked(bool)) );
-  } else {
+  }
+  else {
     SetRep(leText = new iLineEdit(gui_parent_));
     btnEdit = NULL;
   }
@@ -656,7 +660,6 @@ taiField::~taiField() {
 }
 
 void taiField::btnEdit_clicked(bool) {
-//  rep()->editInEditor();
   if (!edit) { // has to be modeless
     String wintxt;
     String desc;
@@ -757,6 +760,157 @@ void taiField::this_SetActionsEnabled() {
   //TODO: UNDO/REDO
 }
 
+/////////////////////////////////////////////////
+//		taiField
+
+taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData* par,
+				       QWidget* gui_parent_, int flags_, FileActionType fact,
+				       const String& fext, const String& ftyp, int fcmprs)
+ : taiData(typ_, host_, par, gui_parent_, flags_)
+{
+  file_ext = fext;
+  file_act = fact;
+  file_type = ftyp;
+  file_cmprs = fcmprs;
+  base_obj = NULL;
+
+  QWidget* act_par = new QWidget(gui_parent_);
+  QHBoxLayout* lay = new QHBoxLayout(act_par);
+  lay->setMargin(0);
+  lay->setSpacing(1);
+  leText = new iLineEdit(act_par);
+  lay->addWidget(leText, 1);
+  btnEdit = new QToolButton(act_par);
+  btnEdit->setText("...");
+  btnEdit->setToolTip("open a file chooser dialog to select a file name");
+  btnEdit->setFixedHeight(taiM->text_height(defSize()));
+  lay->addWidget(btnEdit);
+  SetRep(act_par);
+  connect(btnEdit, SIGNAL(clicked(bool)),
+	  this, SLOT(filebtn_clicked(bool)) );
+
+  rep()->setFixedHeight(taiM->text_height(defSize()));
+  if (readOnly()) {
+    rep()->setReadOnly(true);
+  } else {
+    QObject::connect(rep(), SIGNAL(textChanged(const QString&) ),
+          this, SLOT(repChanged() ) );
+  }
+  // cliphandling connections
+  QObject::connect(rep(), SIGNAL(selectionChanged()),
+    this, SLOT(selectionChanged() ) );
+
+  QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
+		   this, SLOT(lookupKeyPressed()) );
+
+  setMinCharWidth(40);		// file names are longer in general..
+}
+
+taiFileDialogField::~taiFileDialogField() {
+  leText = NULL;
+}
+
+void taiFileDialogField::lookupKeyPressed() {
+  taFiler* flr = NULL;
+  if(base_obj) {
+    String desc = file_type;
+    if(desc.empty()) desc = base_obj->GetTypeDef()->name;
+    if(file_act == FA_SAVE) {
+      flr = base_obj->GetSaveFiler("", file_ext, file_cmprs, desc);
+      if (flr->ostrm) {
+	rep()->setText(flr->fileName());
+      }
+    }
+    else if(file_act == FA_LOAD) {
+      flr = base_obj->GetLoadFiler("", file_ext, file_cmprs, desc);
+      if (flr->istrm) {
+	rep()->setText(flr->fileName());
+      }
+    }
+    else if(file_act == FA_APPEND) {
+      flr = base_obj->GetAppendFiler("", file_ext, file_cmprs, desc);
+      if (flr->ostrm) {
+	rep()->setText(flr->fileName());
+      }
+    }
+    flr->Close();
+    taRefN::unRefDone(flr);
+  }
+  else {			// do a static dialog
+    taFiler* flr = taBase::StatGetFiler(NULL, file_ext, file_cmprs, file_type);
+    taRefN::Ref(flr);
+    if(file_act == FA_LOAD) {
+      flr->Open();
+      if (flr->istrm) {
+	rep()->setText(flr->fileName());
+      }
+    }
+    else if(file_act == FA_SAVE) {
+      flr->SaveAs();
+      if (flr->ostrm) {
+	rep()->setText(flr->fileName());
+      }
+    }
+    else if(file_act == FA_APPEND) {
+      flr->Append();
+      if (flr->ostrm) {
+	rep()->setText(flr->fileName());
+      }
+    }
+    flr->Close();
+    taRefN::unRefDone(flr);
+  }
+}
+
+void taiFileDialogField::filebtn_clicked(bool) {
+  lookupKeyPressed();		// all the code is there
+}
+
+void taiFileDialogField::GetImage(const String& val) {
+  if(!rep()) return;
+  rep()->setText(val);
+}
+
+String taiFileDialogField::GetValue() const {
+  if(!rep()) return _nilString;
+  return rep()->text();
+}
+
+void taiFileDialogField::selectionChanged() {
+  emit_UpdateUi();
+}
+
+void taiFileDialogField::setMinCharWidth(int num) {
+  rep()->setMinCharWidth(num);
+}
+
+void taiFileDialogField::this_GetEditActionsEnabled(int& ea) {
+  if(!rep()) return;
+  if (!readOnly())
+    ea |= taiClipData::EA_PASTE;
+  if (rep()->hasSelectedText()) {
+    ea |= (taiClipData::EA_COPY);
+    if (!readOnly())
+      ea |= (taiClipData::EA_CUT |  taiClipData::EA_DELETE);
+  }
+}
+
+void taiFileDialogField::this_EditAction(int ea) {
+  if(!rep()) return;
+  if (ea & taiClipData::EA_CUT) {
+    rep()->cut();
+  } else if (ea & taiClipData::EA_COPY) {
+    rep()->copy();
+  } else if (ea & taiClipData::EA_PASTE) {
+    rep()->paste();
+  } else if (ea & taiClipData::EA_DELETE) {
+    rep()->del(); //note: assumes we already qualified with hasSelectedText, otherwise it is a BS
+  }
+}
+
+void taiFileDialogField::this_SetActionsEnabled() {
+  //TODO: UNDO/REDO
+}
 
 //////////////////////////////////
 //	taiIncrField		//

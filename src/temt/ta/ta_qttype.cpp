@@ -1129,8 +1129,6 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
     flags_ |= taiData::flgInline;
   if (mbr->HasOption(TypeItem::opt_EDIT_DIALOG)) // if a string field, puts up an editor button
     flags_ |= taiData::flgEditDialog;
-  if (mbr->HasOption(TypeItem::opt_FILE_DIALOG))
-    flags_ |= taiData::flgFileDialog;
   if (mbr->HasOption(TypeItem::opt_APPLY_IMMED))
     flags_ |= taiData::flgAutoApply;
   if (mbr->HasOption(TypeItem::opt_NO_APPLY_IMMED))
@@ -2187,10 +2185,12 @@ void taiArgType::GetValue_impl(taiData* dat, void*) {
 taiData* taiArgType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   if (arg_base == NULL) return NULL;
 
+  taiData* rval;
   if (use_it)
-    return use_it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
+    rval = use_it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
   else
-    return arg_typ->it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
+    rval = arg_typ->it->GetDataRep(host_, par, gui_parent_, NULL, flags_);
+  return rval;
 }
 
 cssEl* taiArgType::GetElFromArg(const char* nm, void*) {
@@ -2701,7 +2701,60 @@ void taiMethodPtrArgType::GetValue_impl(taiData* dat, void*) {
 }
 
 
+//////////////////////////////////
+//       taiFileDialogArgType     //
+//////////////////////////////////
 
+void taiFileDialogArgType::Initialize() {
+}
+
+void taiFileDialogArgType::Destroy() {
+}
+
+int taiFileDialogArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if(argt->InheritsFrom(&TA_taString) && GetOptionAfter("FILE_DIALOG_", md, aidx) != "")
+    return taiArgType::BidForArgType(aidx,argt,md,td)+1;
+  return 0;
+}
+
+cssEl* taiFileDialogArgType::GetElFromArg(const char* nm, void*) {
+  arg_val = new cssString("", nm);
+  arg_base = (void*)&(((cssString*)arg_val)->val);
+  return arg_val;
+}
+
+taiData* taiFileDialogArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
+					       QWidget* gui_parent_, int flags_, MemberDef*) {
+
+  String file_act = GetOptionAfter("FILE_DIALOG_");
+  taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
+  if(file_act == "SAVE")
+    fact = taiFileDialogField::FA_SAVE;
+  else if(file_act == "APPEND")
+    fact = taiFileDialogField::FA_APPEND;
+
+  String fext = GetOptionAfter("EXT_");
+  String ftyp = GetOptionAfter("FILETYPE_");
+  bool cmprs = GetHasOption("COMPRESS");
+  
+  int cmpr = -1;
+  if(cmprs)
+    cmpr = 1;
+    
+  return new taiFileDialogField(meth->type, host_, par, gui_parent_, flags_, fact, fext,
+				ftyp, cmpr);
+}
+
+void taiFileDialogArgType::GetImage_impl(taiData* dat, const void* base){
+  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  rval->base_obj = (taBase*)base;
+  rval->GetImage(*((String*)arg_base));
+}
+
+void taiFileDialogArgType::GetValue_impl(taiData* dat, void*) {
+  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  *((String*)arg_base) = rval->GetValue();
+}
 
 //////////////////////////////
 //    taiDefaultEditDataHost  //

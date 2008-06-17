@@ -469,9 +469,9 @@ public:
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
   virtual void	SaveWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="", Unit* ru = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File  #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
 
   int 	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
   int	Dump_Load_Value(istream& strm, taBase* par=NULL);
@@ -797,9 +797,9 @@ public: //
   // #IGNORE skip over saved weight values -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
   virtual void	SaveWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   void		SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
   // #CAT_Activation set ext flag for what type of input data we receive
@@ -1012,10 +1012,10 @@ public:
 				 bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt)
   virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
-  // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   // convenience functions for those defined in the spec
   void 	RemoveCons()		{ if((bool)spec) spec->RemoveCons(this); }
@@ -1214,10 +1214,10 @@ public:
   // #EXT_wts #COMPRESS #CAT_File skip over weight values -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
   virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
-  // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual bool	BuildUnits();
   // #MENU #MENU_ON_Actions #CAT_Structure for subgroups: build units to specs (true if changed)
@@ -1399,10 +1399,10 @@ public:
   // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
   virtual void	SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
-  // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int	LoadWeights(const String& fname="",
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual void  BuildUnits();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration
@@ -1877,9 +1877,9 @@ public:
   virtual bool	LoadWeights_strm(istream& strm, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file)
   virtual void	SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
-  // #MENU #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual bool	LoadWeights(const String& fname="", bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+  // #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
 

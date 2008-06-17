@@ -187,6 +187,53 @@ protected:
   override void 	this_SetActionsEnabled(); // for when control is clipboard handler
 };
 
+class TA_API taiFileDialogField : public taiData {
+  // for FILE_DIALOG_xxx strings
+  Q_OBJECT
+public:
+  enum FileActionType {		
+    FA_LOAD,
+    FA_SAVE,
+    FA_APPEND,
+  };
+
+  FileActionType	file_act;	// file action to take for file dialog
+  String		file_ext;	// file extention list (from EXT_xxx)
+  String		file_type;	// file type information (from FILETYPE_xxx)
+  int			file_cmprs;	// compress?  from #COMPRESS -1 = default, 0 = no, 1 = yes
+  taBase*		base_obj;	// taBase object for saving/loading 
+  
+  iLineEdit*		rep() const { return leText; }
+  bool			fillHor() {return true;} // override 
+  void 			setMinCharWidth(int num); // hint for min chars, 0=no min
+
+  taiFileDialogField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+		     int flags = 0, FileActionType fact=FA_LOAD, const String& fext = "",
+		     const String& ftyp = "", int fcmprs = -1);
+  ~taiFileDialogField();
+
+  void 	GetImage(const String& val);
+  String GetValue() const;
+  
+protected slots:
+  void			selectionChanged();
+  void			filebtn_clicked(bool);
+  void			lookupKeyPressed(); // remap to file dialog
+
+protected:
+#ifndef __MAKETA__
+  QPointer<iLineEdit>	leText;
+  QPointer<QToolButton>	btnEdit; // if requested, button to invoke file dialog
+#endif
+  override void		GetImage_impl(const void* base) {GetImage(*((String*)base));}
+  override void		GetValue_impl(void* base) const {*((String*)base) = GetValue();} 
+  override void		GetImageVar_impl(const Variant& val) {GetImage(val.toString());}
+  override void		GetValueVar_impl(Variant& val) const {val.updateFromString(GetValue());} 
+  override void 	this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
+  override void 	this_EditAction(int param); // for when control is clipboard handler
+  override void 	this_SetActionsEnabled(); // for when control is clipboard handler
+};
+
 // this is for integers -- includes up and down arrow buttons
 class TA_API taiIncrField : public taiData { // increment/decrement field
   Q_OBJECT

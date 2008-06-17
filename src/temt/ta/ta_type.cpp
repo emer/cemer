@@ -3106,7 +3106,6 @@ const String TypeItem::opt_NO_APPLY_IMMED("NO_APPLY_IMMED");
 const String TypeItem::opt_inline("INLINE");
 const String TypeItem::opt_edit_inline("EDIT_INLINE");
 const String TypeItem::opt_EDIT_DIALOG("EDIT_DIALOG");
-const String TypeItem::opt_FILE_DIALOG("FILE_DIALOG");
 
 const String TypeItem::opt_bits("BITS");
 const String TypeItem::opt_instance("INSTANCE");

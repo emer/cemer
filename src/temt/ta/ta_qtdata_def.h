@@ -137,8 +137,6 @@ public:
     flgCondEditUseRO	= 0x2000, // for taiCondEditMember, used to keep its use_ro flag
     flgNoEditDialogAutoApply = 0x4000, // overrides the implicit APPLY_IMMED for the edit dialog of fields
     flgNoAlpha		= 0x10000, // for taiColor, don't use the alpha channel
-    flgFileDialog	= 0x20000, // for taiField, enables dialog for FILE_DIALOG directive
-    flgTabTrap		= 0x40000, // for taiField, enables tab key trap function calling
 #ifndef __MAKETA__
     flg_INHERIT_MASK	= (flgReadOnly) // flags to pass on to nested children, in inline
 #endif

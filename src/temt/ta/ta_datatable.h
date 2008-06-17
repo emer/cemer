@@ -945,19 +945,19 @@ public:
 
   virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
 				 bool quote_str = true, bool save_headers=true);
-  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE saves data, one line per rec, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
   virtual void 		AppendData(const String& fname="", Delimiters delim = TAB,
 				   bool quote_str = true, bool row_mark=true); 
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if data_tag then mark data rows with _D: at start (to differentiate from _H: headers)
+  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_APPEND appends all of current datatable data to given file (does not output header; file assumed to be of same data structure -- if data_tag then mark data rows with _D: at start (to differentiate from _H: headers)
   virtual void 		SaveHeader(const String& fname="", Delimiters delim = TAB);
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
+  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves #FILE_DIALOG_SAVE header information, with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser
   virtual void 		SaveDataRow(const String& fname="", int row=-1, Delimiters delim = TAB,
 				    bool quote_str = true, bool row_mark=true); 
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; leave fname empty to pick from file chooser -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
 
   virtual void		SaveDataLog(const String& fname="", bool append=false,
 				    bool dmem_proc_0 = true);
-  // #CAT_File #MENU #MENU_SEP_BEFORE #ARGC_0 #EXT_dat,tsv,csv,txt,log incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
+  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_SAVE incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file.  writes the header first if not appending to existing file.  if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write
   virtual void		CloseDataLog();
   // #CAT_File #MENU close the data log file if it was previously open
   virtual bool		WriteDataLogRow();
@@ -992,11 +992,11 @@ public:
   // #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1, bool reset_first=false);
-  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
+  // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
   virtual int 		LoadHeader(const String& fname, Delimiters delim = TAB);
   // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
   virtual int 		LoadDataRow(const String& fname, Delimiters delim = TAB, bool quote_str = true);
-  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  // #CAT_File #MENU #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   
  
   /////////////////////////////////////////////////////////
