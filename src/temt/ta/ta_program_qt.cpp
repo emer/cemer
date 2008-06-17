@@ -286,7 +286,7 @@ void iProgramEditor::Init() {
   
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
-  items->setColumnCount(3);
+/*obs  items->setColumnCount(3);
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);
   items->setHeaderText(0, "Program Item");
@@ -301,6 +301,20 @@ void iProgramEditor::Init() {
   // adjunct data, tooltips, etc.
   items->AddColDataKey(1, taBase::key_disp_name, Qt::ToolTipRole); 
   items->AddColDataKey(2, taBase::key_desc, Qt::ToolTipRole);
+*/  
+  items->setColumnCount(2);
+  items->setSortingEnabled(false);// only 1 order possible
+  items->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  items->setHeaderText(0, "Program Item");
+  items->setColumnWidth(0, 220);
+  items->setHeaderText(1, "Item Description");
+  items->setColKey(0, taBase::key_disp_name); //note: ProgVars and Els have nice disp_name desc's
+  items->setColFormat(0, iTreeView::CF_ELIDE_TO_FIRST_LINE);
+  items->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
+  items->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE);
+  // adjunct data, tooltips, etc.
+  items->AddColDataKey(0, taBase::key_disp_name, Qt::ToolTipRole); 
+  items->AddColDataKey(1, taBase::key_desc, Qt::ToolTipRole);
   
   //enable dnd support
   items->setDragEnabled(true);
