@@ -236,8 +236,12 @@ public:
   void			GeomFromString(const String& str, const char* ldelim = "[", const char* rdelim = "]");
   // reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
 
-  override String	GetValStr_inline(TypeDef::StrContext sc);
-  override bool		SetValStr_inline(const String& val, TypeDef::StrContext sc);
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			    bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false);
 
   override int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   override int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
@@ -555,6 +559,12 @@ public:
   virtual void 		BinaryLoad(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			    bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false);
 
   void			SetDefaultName() { };
   ostream& 		Output(ostream& strm, int indent = 0) const;

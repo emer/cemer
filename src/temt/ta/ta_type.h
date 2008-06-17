@@ -1975,8 +1975,6 @@ public:
     SC_STREAMING,	// value is being used for streaming, ex. strings are quoted/escaped
     SC_VALUE,		// value is being manipulated programmatically, ex. strings are not quoted/escaped
     SC_DISPLAY,		// value is being used for display purposes, ex. float value may be formatted prettily
-    SC_CONTEXT_MASK	= 0x00FF, // masks out the value
-    SC_FLAG_INLINE	= 0x0100 // forces gen of inline values for classes (ex used by search)
   };
   
   static TypeDef* 	GetCommonSubtype(TypeDef* typ1, TypeDef* typ2); // get the common primary (1st parent class) subtype between the two
@@ -2187,21 +2185,51 @@ public:
   void 		Register(void* it);
   void 		unRegister(void* it);
 
+  /////////////////////////////////////////////////////////////
+  //		Get/Set From String
+
   String	GetValStr(const void* base, void* par=NULL,
-    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT) const;
-  // get a string representation of value
+			  MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT,
+			  bool force_inline = false) const;
+  // get a string representation of value -- this is very widely used in the code
+  void		SetValStr(const String& val, void* base, void* par = NULL,
+			  MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT,
+			  bool force_inline = false);
+  // set the value from a string representation -- this is very widely used in the code
+
+  ////////////	Helpers for specific cases
+
+  String	GetValStr_enum(const void* base, void* par=NULL,
+			       MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT,
+			       bool force_inline = false) const;
+  // get a string representation of enum 
+  String	GetValStr_class_inline(const void* base, void* par=NULL,
+				       MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT,
+				       bool force_inline = false) const;
+  // get a string representation of inline class
+
+  void		SetValStr_enum(const String& val, void* base, void* par = NULL,
+			       MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT,
+			       bool force_inline = false);
+  // set the enum value from a string representation 
+  void		SetValStr_class_inline(const String& val, void* base, void* par = NULL,
+				       MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT,
+				       bool force_inline = false);
+  // set the inline class value from a string representation 
+
+  /////////////////////////////////////////////////////////////
+  //		Get/Set From Variant
+
   const Variant	GetValVar(const void* base, const MemberDef* memb_def = NULL) const;
   // get a Variant representation of value; primarily for value types (int, etc.); NOTE: returns TAPtr types as the Base value (not a pointer to the pointer), which is usually what you want (see source for more detail)
   void		SetValVar(const Variant& val, void* base, void* par = NULL,
-    MemberDef* memb_def = NULL);
+			  MemberDef* memb_def = NULL);
   // sets value from a Variant representation; primarily for value types (int, etc.); 
   bool		ValIsDefault(const void* base, const MemberDef* memb_def, 
-    int for_show = taMisc::IS_EXPERT) const; // true if the type contains its defaults
+			     int for_show = taMisc::IS_EXPERT) const;
+  // true if the type contains its defaults
   bool 		ValIsEmpty(const void* base_, const MemberDef* memb_def) const;
-    // true only if value is empty, ex 0 or "" 
-  void		SetValStr(const String& val, void* base, void* par = NULL,
-    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
-  // set the value from a string representation
+  // true only if value is empty, ex 0 or "" 
 
   void		CopyFromSameType(void* trg_base, void* src_base,
 					 MemberDef* memb_def = NULL);

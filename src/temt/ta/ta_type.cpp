@@ -4964,16 +4964,58 @@ void TypeDef::unRegister(void* it) {
 // 	Get/SetVal		//
 //////////////////////////////////
 
-String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
-  StrContext sc_) const 
+String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
+			       StrContext sc, bool force_inline) const 
 {
-  StrContext sc = sc_; // we keep sc_ for recursive calls
-  // extract flags
-  bool flag_inline = (sc & SC_FLAG_INLINE);
-  // mask out flags
-  sc = (StrContext)(sc & SC_CONTEXT_MASK);
-//note: par is not used (except for recursive calls) and should maybe be nuked
-  if (sc == SC_DEFAULT) 
+  int enval = *((int*)base);
+
+  if(HasOption("BITS")) {
+    String bits;
+    for(int i=0; i<enum_vals.size; i++) {
+      EnumDef* ed = enum_vals[i];
+      if(ed->HasOption("NO_BIT") || ed->HasOption("NO_SAVE")) continue;
+      if(enval & ed->enum_no) {
+	if(bits.empty()) bits = ed->name;
+	else bits += "|" + ed->name;
+      }
+    }
+    return bits;
+  }
+
+  EnumDef* ed = enum_vals.FindNo(enval);
+  if(ed != NULL) return ed->name;
+  else return String(*((int*)base));
+}
+
+String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* memb_def,
+				       StrContext sc, bool force_inline) const 
+{
+  void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
+  String rval("{");
+  for(int i=0; i<members.size; i++) {
+    MemberDef* md = members.FastEl(i);
+    // if streaming, do full save check, else just check for NO_SAVE
+    if (sc == SC_STREAMING) {
+      if (!md->DumpMember(base))
+	continue;
+    } else {
+      if(md->HasOption("NO_SAVE"))
+	continue;
+    }
+    rval += md->name + "=";
+    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+    rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
+    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+    rval += ": ";
+  }
+  rval += "}";
+  return rval;
+}
+
+String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
+			  StrContext sc, bool force_inline) const 
+{
+  if(sc == SC_DEFAULT) 
     sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
@@ -5053,24 +5095,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       }
     }
     else if(DerivesFormal(TA_enum)) {
-      int enval = *((int*)base);
-      if(HasOption("BITS")) {
-	String bits;
-	for(int i=0; i<enum_vals.size; i++) {
-	  EnumDef* ed = enum_vals[i];
-	  if(ed->HasOption("NO_BIT") || ed->HasOption("NO_SAVE")) continue;
-	  if(enval & ed->enum_no) {
-	    if(bits.empty()) bits = ed->name;
-	    else bits += "|" + ed->name;
-	  }
-	}
-	return bits;
-      }
-      else {
-	EnumDef* ed = enum_vals.FindNo(enval);
-	if(ed != NULL) return ed->name;
-	else return String(*((int*)base));
-      }
+      return GetValStr_enum(base, par, memb_def, sc, force_inline);
     }
     else if(DerivesFrom(TA_taString))
       return *((String*)base);
@@ -5085,43 +5110,13 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
         //NOTE: maybe we should indirect, rather than return NULL directly...
       if (var.isNull()) return String::con_NULL;
       var.GetRepInfo(typ, var_base);
-      return typ->GetValStr(var_base, NULL, memb_def, sc);
+      return typ->GetValStr(var_base, NULL, memb_def, sc, force_inline);
     }
 #ifndef NO_TA_BASE
-    // todo: include all these guys in appropriate function calls on taBase!!
-    else if(DerivesFrom(TA_taGroup_impl)) {
-      TAGPtr gp = (TAGPtr)base;
-      if(gp != NULL) {
-	String nm = " Size: ";
-	nm += String(gp->size);
-	if(gp->gp.size > 0)
-	  nm += String(".") + String(gp->gp.size);
-	if(gp->leaves != gp->size)
-	  nm += String(".") + String((int) gp->leaves);
-	nm += String(" (") + gp->el_typ->name + ")";
-	return nm;
-      }
-      return name;
-    }
-    else if(DerivesFrom(TA_taList_impl)) {
-      taList_impl* gp = (taList_impl*)base;
-      if(gp != NULL) {
-	String nm = " Size: ";
-	nm += String(gp->size);
-	nm += String(" (") + gp->el_typ->name + ")";
-	return nm;
-      }
-      return name;
-    }
-    else if(DerivesFrom(TA_taArray_base)) {
-      taArray_base* gp = (taArray_base*)base;
-      if(gp != NULL) {
-	String nm = " Size: ";
-	nm += String(gp->size);
-	nm += String(" (") + name + ")";
-	return nm;
-      }
-      return name;
+    else if(DerivesFrom(TA_taBase)) {
+      TAPtr rbase = (TAPtr)base;
+      if(rbase)
+	return rbase->GetValStr(par, memb_def, sc, force_inline);
     }
     else if(DerivesFrom(TA_taArray_impl)) {
       taArray_impl* gp = (taArray_impl*)base;
@@ -5135,7 +5130,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if (DerivesFrom(TA_taSmartPtr)) {
       // we just delegate to taBase* since we are binary compatible
-      return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc_);
+      return TA_taBase_ptr.GetValStr(base_, par, memb_def, sc, force_inline);
     }
     else if (DerivesFrom(TA_taSmartRef)) {
       taSmartRef& ref = *((taSmartRef*)base);
@@ -5156,43 +5151,10 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
 #endif
     else if(DerivesFormal(TA_class) && 
-      (flag_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) 
+	    (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) 
     {
-#ifndef NO_TA_BASE
-      if(DerivesFrom(TA_taBase)) {
-	TAPtr rbase = (TAPtr)base;
-	return rbase->GetValStr_inline(sc);
-      }
-#endif
-      int i;
-      String rval("{");
-      for(i=0; i<members.size; i++) {
-	MemberDef* md = members.FastEl(i);
-	// if streaming, do full save check, else just check for NO_SAVE
-	if (sc == SC_STREAMING) {
-	  if (!md->DumpMember(base))
-	    continue;
-	} else {
-	  if(md->HasOption("NO_SAVE"))
-	    continue;
-        }
-	rval += md->name + "=";
-	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += md->type->GetValStr(md->GetOff(base), base, md, sc);
-	if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-	rval += ": ";
-      }
-      rval += "}";
-      return rval;
+      return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
     }
-#ifndef NO_TA_BASE
-    else if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = (TAPtr)base;
-      if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)))
-	return rbase->GetPath();
-      return name;
-    }
-#endif
     else if(DerivesFormal(TA_struct))
       return "struct " + name;
     else if(DerivesFormal(TA_union))
@@ -5205,28 +5167,12 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
   else if(ptr == 1) {
 #ifndef NO_TA_BASE
     if(DerivesFrom(TA_taBase)) {
-      TAPtr rbase = *((TAPtr*)base);
-      if((rbase != NULL) && ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root))) {
-	if (sc == SC_STREAMING) {
-	  return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
-	}
-	else {
-	  return rbase->GetPath();
-	}
-      }
-      else {
-	if(rbase != NULL)
-	  return String((intptr_t)rbase);
-	else
-	  return String::con_NULL;
-      }
+      return taBase::GetValStr_ptr(this, base_, par, memb_def, sc, force_inline);
     }
     else
 #endif
     if (DerivesFrom(TA_TypeDef)) {
       TypeDef* td = *((TypeDef**)base);
-/*      if (td != NULL)
-	return td->name; */
       if (td) {
         return td->GetPathName();
       } else
@@ -5234,9 +5180,6 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if (DerivesFrom(TA_MemberDef)) {
       MemberDef* md = *((MemberDef**)base);
-/*      if((md != NULL) && (md->GetOwnerType() != NULL)) {
-	String tmp = md->GetOwnerType()->name + "::" + md->name;
-	return tmp; */
       if (md) {
         return md->GetPathName();
       } else
@@ -5244,18 +5187,276 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
     else if (DerivesFrom(TA_MethodDef)) {
       MethodDef* md = *((MethodDef**)base);
-/*      if((md != NULL) && (md->GetOwnerType() != NULL)) {
-	String tmp = md->GetOwnerType()->name + "::" + md->name;
-	return tmp; */
       if (md) {
         return md->GetPathName();
       } else
 	return String::con_NULL;
     }
-//    else
-//      return String((int)*((void**)base));
   }
   return name;
+}
+
+void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef* memb_def,
+			     StrContext sc, bool force_inline) {
+  String strval = val;
+  if(strval.contains(')')) {
+    strval = strval.after(')');
+    if(strval.empty())	// oops
+      strval = val;
+  }
+  strval.gsub(" ",""); strval.gsub("\t",""); strval.gsub("\n","");
+  if(strval.contains("::")) {
+    String tp_nm = strval.before("::");
+    String en_nm = strval.after("::");
+    TypeDef* td = taMisc::types.FindName(tp_nm);
+    if(td != NULL) {
+      td->SetValStr(en_nm, base, par, memb_def, sc, force_inline);
+      return;
+    }
+    EnumDef* ed = FindEnum(en_nm);
+    if(ed) {
+      *((int*)base) = ed->enum_no;
+      return;
+    }
+    taMisc::Warning("Enum named:", strval, "not found in enum type:", name);
+  }
+  if(strval.contains('|')) { // bits
+    int bits = 0;
+    while(strval.nonempty()) {
+      String curstr = strval;
+      if(strval.contains('|')) {
+	curstr = strval.before('|');
+	strval = strval.after('|');
+      }
+      else
+	strval = _nilString;
+      EnumDef* ed = FindEnum(curstr);
+      if(ed) {
+	bits |= ed->enum_no;
+      }
+      else {
+	taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
+      }
+    }
+    *((int*)base) = bits;
+    return;
+  }
+  else {
+    EnumDef* ed = FindEnum(strval);
+    if(ed) {
+      *((int*)base) = ed->enum_no;
+      return;
+    }
+    int intval = (int)strval;
+    *((int*)base) = intval;
+    return;
+  }
+}
+
+void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par, 
+				     MemberDef* memb_def, StrContext sc, bool force_inline) {
+  String rval = val;
+  rval = rval.after('{');
+  while(rval.contains(':')) {
+    int st_pos = rval.index('=');
+    String mb_nm = rval.before(st_pos);
+    String next_val = rval.after(st_pos);
+    int pos = 0;
+    int next_val_len = next_val.length();
+    int c = next_val[pos];
+    if(c == '\"') {		// "
+      st_pos++;
+      next_val = next_val.after(0);
+      next_val_len--;
+      c = next_val[pos];
+      while((c != '\"') && (pos < next_val_len)) c = next_val[++pos]; // "
+    }
+    else {
+      int depth = 0;
+      while(!(((c == ':') || (c == '}')) && (depth <= 0)) && (pos < next_val_len)) {
+	if(c == '{')  depth++;
+	if(c == '}')  depth--;
+	c = next_val[++pos];
+      }
+    }
+    String mb_val = next_val.before(pos);
+    rval = rval.after(pos + st_pos + 1); // next position
+    if(c == '\"')			     // "
+      rval = rval.after(':');	// skip the semi-colon which was not groked
+    mb_nm.gsub(" ", "");
+    MemberDef* md = members.FindName(mb_nm);
+    if(md == NULL) {		// try to find a name with an aka..
+      int a;
+      for(a=0;a<members.size;a++) {
+	MemberDef* amd = members.FastEl(a);
+	String aka = amd->OptionAfter("AKA_");
+	if(aka.empty()) continue;
+	if(aka == mb_nm) {
+	  md = amd;
+	  break;
+	}
+      }
+    }
+    if((md != NULL) && !mb_val.empty()) { // note: changed par to base here.. 
+      md->type->SetValStr(mb_val, md->GetOff(base), base /* par */, md, sc, true);
+      // force inline!
+    }
+  }
+}
+
+void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
+			StrContext sc, bool force_inline) 
+{
+  if (sc == SC_DEFAULT) 
+    sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
+
+  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
+    MethodDef* fun = TA_taRegFun.methods.FindName(val);
+    if((fun != NULL) && (fun->addr != NULL))
+      *((ta_void_fun*)base) = fun->addr;
+    return;
+  }
+  if (ptr == 0) {
+    if(DerivesFrom(TA_bool)) {
+      *((bool*)base) = val.toBool();
+    }
+    else if(DerivesFrom(TA_int))
+      *((int*)base) = val.toInt();
+    else if(DerivesFrom(TA_float))
+      *((float*)base) = val.toFloat();
+    else if(DerivesFormal(TA_enum)) {
+      SetValStr_enum(val, base, par, memb_def, sc, force_inline);
+    }
+    else if(DerivesFrom(TA_taString))
+      *((String*)base) = val;
+    // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
+    else if (DerivesFrom(TA_Variant)) {
+      TypeDef* typ;
+      void* var_base;
+      Variant& var = *((Variant*)base);
+      // if it doesn't have a type, then it will just become a string
+      // (we can't let TA_void get processed...)
+      if (var.type() == Variant::T_Invalid) {
+        // don't do anything for empty string
+        if (!val.empty())
+          var = val;
+        return;
+      }
+      var.GetRepInfo(typ, var_base);
+      typ->SetValStr(val, var_base, par, memb_def, sc, force_inline);
+      var.UpdateAfterLoad();
+    }
+    // note: char is treated as an ansi character
+    else if (DerivesFrom(TA_char))
+    //TODO: char conversion heuristics
+      *((char*)base) = val.toChar();
+    // signed char is treated like a number
+    else if (DerivesFrom(TA_signed_char))
+      *((signed char*)base) = (signed char)val.toShort();
+    // unsigned char is "byte" in ta/pdp and treated like a number
+    else if (DerivesFrom(TA_unsigned_char))
+      *((unsigned char*)base) = (unsigned char)val.toUShort();
+    else if(DerivesFrom(TA_short))
+      *((short*)base) = val.toShort();
+    else if(DerivesFrom(TA_unsigned_short))
+      *((unsigned short*)base) = val.toUShort();
+    else if(DerivesFrom(TA_unsigned_int))
+      *((uint*)base) = val.toUInt();
+    else if(DerivesFrom(TA_int64_t))
+      *((int64_t*)base) = val.toInt64();
+    else if(DerivesFrom(TA_uint64_t))
+      *((uint64_t*)base) = val.toUInt64();
+    else if(DerivesFrom(TA_double))
+      *((double*)base) = val.toDouble();
+#ifndef NO_TA_BASE
+    else if(DerivesFrom(TA_taBase)) {
+      TAPtr rbase = (TAPtr)base;
+      if(rbase)
+	rbase->SetValStr(val, par, memb_def, sc, force_inline);
+    }
+    else if(DerivesFrom(TA_taArray_impl)) {
+      taArray_impl* gp = (taArray_impl*)base;
+      if(gp != NULL)
+	gp->InitFromString(val);
+    }
+    else if (DerivesFrom(TA_taSmartPtr)) {
+      // we just delegate, since we are binary compat
+      TA_taBase_ptr.SetValStr(val, base, par, memb_def, sc, force_inline);
+      return;
+    }
+    else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
+      TAPtr bs = NULL;
+      if ((val != String::con_NULL) && (val != "Null")) {
+        String tmp_val(val); // FindFromPath can change it
+	if (sc == SC_STREAMING) {
+	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
+	  if (!bs)return;	// indicates deferred
+	} else {
+	  MemberDef* md = NULL;
+	  bs = tabMisc::root->FindFromPath(tmp_val, md);
+	  if((md == NULL) || (bs == NULL)) {
+	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
+	    return;
+	  }
+	  if (md->type->ptr == 1) {
+	    bs = *((TAPtr*)bs);
+	    if(bs == NULL) {
+	      taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+	      return;
+	    }
+	  } else if(md->type->ptr != 0) {
+	    taMisc::Warning("*** ptr count greater than 1 in path:", val);
+	    return;
+	  }
+	}
+      }
+      taSmartRef& ref = *((taSmartRef*)base);
+      ref = bs;
+    }
+#endif
+    else if(DerivesFormal(TA_class) &&
+	    (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
+      SetValStr_class_inline(val, base, par, memb_def, sc, force_inline);
+    }
+  }
+  else if(ptr == 1) {
+#ifndef NO_TA_BASE
+    if(DerivesFrom(TA_taBase) && (tabMisc::root)) {
+      taBase::SetValStr_ptr(val, this, base, par, memb_def, sc, force_inline);
+    }
+    else
+#endif
+    if(DerivesFrom(TA_TypeDef)) {
+      TypeDef* td = taMisc::types.FindTypeR(val);
+      //TODO: shouldn't we set NULL values????? (also for members, etc.)
+      if(td != NULL)
+	*((TypeDef**)base) = td;
+    }
+    if(DerivesFrom(TA_MemberDef)) {
+      String fqtypnm = val.before("::", -1); // before final ::
+      String mbnm = val.after("::", -1); // after final ::
+      if(!fqtypnm.empty() && !mbnm.empty()) {
+	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
+	if(td != NULL) {
+	  MemberDef* md = td->members.FindName(mbnm);
+	  if(md != NULL)
+	    *((MemberDef**)base) = md;
+	}
+      }
+    }
+    if(DerivesFrom(TA_MethodDef)) {
+      String fqtypnm = val.before("::", -1); // before final ::
+      String mthnm = val.after("::", -1);
+      if(!fqtypnm.empty() && !mthnm.empty()) {
+	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
+	if(td != NULL) {
+	  MethodDef* md = td->methods.FindName(mthnm);
+	  if(md != NULL)
+	    *((MethodDef**)base) = md;
+	}
+      }
+    }
+  }
 }
 
 bool TypeDef::isVarCompat() const {
@@ -5480,319 +5681,8 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     return !(*((void**)base)); // only empty if NULL
 }
 
-void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
-  StrContext sc) 
-{
-  bool flag_inline = (sc & SC_FLAG_INLINE);
-  // mask out flags
-  sc = (StrContext)(sc & SC_CONTEXT_MASK);
-  if (sc == SC_DEFAULT) 
-    sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
-  if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
-    MethodDef* fun = TA_taRegFun.methods.FindName(val);
-    if((fun != NULL) && (fun->addr != NULL))
-      *((ta_void_fun*)base) = fun->addr;
-    return;
-  }
-  if (ptr == 0) {
-    if(DerivesFrom(TA_bool)) {
-      *((bool*)base) = val.toBool();
-    }
-    else if(DerivesFrom(TA_int))
-      *((int*)base) = val.toInt();
-    else if(DerivesFrom(TA_float))
-      *((float*)base) = val.toFloat();
-    else if(DerivesFormal(TA_enum)) {
-      String strval = val;
-      if(strval.contains(')')) {
-	strval = strval.after(')');
-	if(strval.empty())	// oops
-	  strval = val;
-      }
-      strval.gsub(" ",""); strval.gsub("\t",""); strval.gsub("\n","");
-      if(strval.contains("::")) {
-	String tp_nm = strval.before("::");
-	String en_nm = strval.after("::");
-	TypeDef* td = taMisc::types.FindName(tp_nm);
-	if(td != NULL) {
-	  td->SetValStr(en_nm, base, memb_def);
-	  return;
-	}
-	EnumDef* ed = FindEnum(en_nm);
-	if(ed) {
-	  *((int*)base) = ed->enum_no;
-	  return;
-	}
-	taMisc::Warning("Enum named:", strval, "not found in enum type:", name);
-      }
-      if(strval.contains('|')) { // bits
-	int bits = 0;
-	while(strval.nonempty()) {
-	  String curstr = strval;
-	  if(strval.contains('|')) {
-	    curstr = strval.before('|');
-	    strval = strval.after('|');
-	  }
-	  else
-	    strval = _nilString;
-	  EnumDef* ed = FindEnum(curstr);
-	  if(ed) {
-	    bits |= ed->enum_no;
-	  }
-	  else {
-	    taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
-	  }
-	}
-	*((int*)base) = bits;
-	return;
-      }
-      else {
-	EnumDef* ed = FindEnum(strval);
-	if(ed) {
-	  *((int*)base) = ed->enum_no;
-	  return;
-	}
-	int intval = (int)strval;
-	*((int*)base) = intval;
-	return;
-      }
-    }
-    else if(DerivesFrom(TA_taString))
-      *((String*)base) = val;
-    // in general, Variant is handled by recalling this routine on its rep's typdef, then fixing null
-    else if (DerivesFrom(TA_Variant)) {
-      TypeDef* typ;
-      void* var_base;
-      Variant& var = *((Variant*)base);
-      // if it doesn't have a type, then it will just become a string
-      // (we can't let TA_void get processed...)
-      if (var.type() == Variant::T_Invalid) {
-        // don't do anything for empty string
-        if (!val.empty())
-          var = val;
-        return;
-      }
-      var.GetRepInfo(typ, var_base);
-      typ->SetValStr(val, var_base, par, memb_def, sc);
-      var.UpdateAfterLoad();
-    }
-    // note: char is treated as an ansi character
-    else if (DerivesFrom(TA_char))
-    //TODO: char conversion heuristics
-      *((char*)base) = val.toChar();
-    // signed char is treated like a number
-    else if (DerivesFrom(TA_signed_char))
-      *((signed char*)base) = (signed char)val.toShort();
-    // unsigned char is "byte" in ta/pdp and treated like a number
-    else if (DerivesFrom(TA_unsigned_char))
-      *((unsigned char*)base) = (unsigned char)val.toUShort();
-    else if(DerivesFrom(TA_short))
-      *((short*)base) = val.toShort();
-    else if(DerivesFrom(TA_unsigned_short))
-      *((unsigned short*)base) = val.toUShort();
-    else if(DerivesFrom(TA_unsigned_int))
-      *((uint*)base) = val.toUInt();
-    else if(DerivesFrom(TA_int64_t))
-      *((int64_t*)base) = val.toInt64();
-    else if(DerivesFrom(TA_uint64_t))
-      *((uint64_t*)base) = val.toUInt64();
-    else if(DerivesFrom(TA_double))
-      *((double*)base) = val.toDouble();
-#ifndef NO_TA_BASE
-    else if(DerivesFrom(TA_taList_impl)) {
-      taList_impl* tl = (taList_impl*)base;
-      if(val != String::con_NULL) {
-	String tmp = val;
-	if(tmp.contains('(')) {
-	  tmp = tmp.after('(');
-	  tmp = tmp.before(')');
-	}
-	tmp.gsub(" ", "");
-	TypeDef* td = taMisc::types.FindName(tmp);
-	if(td != NULL)
-	  tl->el_typ = td;
-      }
-    }
-    else if(DerivesFrom(TA_taArray_base)) {
-      taArray_base* gp = (taArray_base*)base;
-      if(gp != NULL)
-	gp->InitFromString(val);
-    }
-    else if(DerivesFrom(TA_taArray_impl)) {
-      taArray_impl* gp = (taArray_impl*)base;
-      if(gp != NULL)
-	gp->InitFromString(val);
-    }
-    else if (DerivesFrom(TA_taSmartPtr)) {
-      // we just delegate, since we are binary compat
-      TA_taBase_ptr.SetValStr(val, base, par, memb_def, sc);
-      return;
-    }
-    else if(DerivesFrom(TA_taSmartRef) && (tabMisc::root)) {
-      TAPtr bs = NULL;
-      if ((val != String::con_NULL) && (val != "Null")) {
-        String tmp_val(val); // FindFromPath can change it
-	if (sc == SC_STREAMING) {
-	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
-	  if (!bs)return;	// indicates deferred
-	} else {
-	  MemberDef* md = NULL;
-	  bs = tabMisc::root->FindFromPath(tmp_val, md);
-	  if((md == NULL) || (bs == NULL)) {
-	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
-	    return;
-	  }
-	  if (md->type->ptr == 1) {
-	    bs = *((TAPtr*)bs);
-	    if(bs == NULL) {
-	      taMisc::Warning("*** Null object at end of path in SetValStr:",val);
-	      return;
-	    }
-	  } else if(md->type->ptr != 0) {
-	    taMisc::Warning("*** ptr count greater than 1 in path:", val);
-	    return;
-	  }
-	}
-      }
-      taSmartRef& ref = *((taSmartRef*)base);
-      ref = bs;
-    }
-#endif
-    else if(DerivesFormal(TA_class) && (flag_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
-#ifndef NO_TA_BASE
-      if(DerivesFrom(TA_taBase)) {
-	TAPtr rbase = (TAPtr)base;
-	rbase->SetValStr_inline(val, sc);
-	return;
-      }
-#endif
-      String rval = val;
-      rval = rval.after('{');
-      while(rval.contains(':')) {
-	int st_pos = rval.index('=');
-	String mb_nm = rval.before(st_pos);
-	String next_val = rval.after(st_pos);
-	int pos = 0;
-	int next_val_len = next_val.length();
-	int c = next_val[pos];
-	if(c == '\"') {		// "
-	  st_pos++;
-	  next_val = next_val.after(0);
-	  next_val_len--;
-	  c = next_val[pos];
-	  while((c != '\"') && (pos < next_val_len)) c = next_val[++pos]; // "
-	}
-	else {
-	  int depth = 0;
-	  while(!(((c == ':') || (c == '}')) && (depth <= 0)) && (pos < next_val_len)) {
-	    if(c == '{')  depth++;
-	    if(c == '}')  depth--;
-	    c = next_val[++pos];
-	  }
-	}
-	String mb_val = next_val.before(pos);
-	rval = rval.after(pos + st_pos + 1); // next position
-	if(c == '\"')			     // "
-	  rval = rval.after(':');	// skip the semi-colon which was not groked
-	mb_nm.gsub(" ", "");
-	MemberDef* md = members.FindName(mb_nm);
-	if(md == NULL) {		// try to find a name with an aka..
-	  int a;
-	  for(a=0;a<members.size;a++) {
-	    MemberDef* amd = members.FastEl(a);
-	    String aka = amd->OptionAfter("AKA_");
-	    if(aka.empty()) continue;
-	    if(aka == mb_nm) {
-	      md = amd;
-	      break;
-	    }
-	  }
-	}
-	if((md != NULL) && !mb_val.empty()) { // note: changed par to base here.. 
-	  md->type->SetValStr(mb_val, md->GetOff(base), base /* par */, md, sc);
-	}
-      }
-    }
-  }
-  else if(ptr == 1) {
-#ifndef NO_TA_BASE
-    if(DerivesFrom(TA_taBase) && (tabMisc::root)) {
-      TAPtr bs = NULL;
-      if((val != String::con_NULL) && (val != "Null")) {
-        String tmp_val(val); // FindFromPath can change it
-	if (sc == SC_STREAMING) {
-	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
-	  if(bs == NULL)	// indicates error condition
-	    return;
-	} else {
-	  MemberDef* md = NULL;
-	  bs = tabMisc::root->FindFromPath(tmp_val, md);
-	  if((md == NULL) || (bs == NULL)) {
-	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
-	    return;
-	  }
-	  if (md->type->ptr == 1) {
-	    bs = *((TAPtr*)bs);
-	    if(bs == NULL) {
-	      taMisc::Warning("*** Null object at end of path in SetValStr:",val);
-	      return;
-	    }
-	  } else if(md->type->ptr != 0) {
-	    taMisc::Warning("*** ptr count greater than 1 in path:", val);
-	    return;
-	  }
-	}
-      }
-      if (memb_def  && memb_def->HasOption("OWN_POINTER")) {
-	if(par == NULL)
-	  taMisc::Warning("*** NULL parent for owned pointer:",val);
-	else
-	  taBase::OwnPointer((TAPtr*)base, bs, (TAPtr)par);
-      }
-      else {
-        if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
-	  (*(TAPtr*)base) = bs;
-        else
-	  taBase::SetPointer((TAPtr*)base, bs);
-      }
-    }
-    else
-#endif
-    if(DerivesFrom(TA_TypeDef)) {
-      TypeDef* td = taMisc::types.FindTypeR(val);
-      //TODO: shouldn't we set NULL values????? (also for members, etc.)
-      if(td != NULL)
-	*((TypeDef**)base) = td;
-    }
-    if(DerivesFrom(TA_MemberDef)) {
-      String fqtypnm = val.before("::", -1); // before final ::
-      String mbnm = val.after("::", -1); // after final ::
-      if(!fqtypnm.empty() && !mbnm.empty()) {
-	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
-	if(td != NULL) {
-	  MemberDef* md = td->members.FindName(mbnm);
-	  if(md != NULL)
-	    *((MemberDef**)base) = md;
-	}
-      }
-    }
-    if(DerivesFrom(TA_MethodDef)) {
-      String fqtypnm = val.before("::", -1); // before final ::
-      String mthnm = val.after("::", -1);
-      if(!fqtypnm.empty() && !mthnm.empty()) {
-	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
-	if(td != NULL) {
-	  MethodDef* md = td->methods.FindName(mthnm);
-	  if(md != NULL)
-	    *((MethodDef**)base) = md;
-	}
-      }
-    }
-  }
-}
-
 void TypeDef::SetValVar(const Variant& val, void* base, void* par,
-  MemberDef* memb_def) 
+			MemberDef* memb_def) 
 {
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val.toString());
@@ -5814,59 +5704,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
         *((int*)base) = val.toInt();
         return;
       }
-      String strval = val.toString();
-      if(strval.contains(')')) {
-	strval = strval.after(')');
-	if(strval.empty())	// oops
-	  strval = val.toString();
-      }
-      strval.gsub(" ",""); strval.gsub("\t",""); strval.gsub("\n","");
-      if(strval.contains("::")) {
-	String tp_nm = strval.before("::");
-	String en_nm = strval.after("::");
-	TypeDef* td = taMisc::types.FindName(tp_nm);
-	if(td != NULL) {
-	  td->SetValStr(en_nm, base, par, memb_def);
-	  return;
-	}
-	EnumDef* ed = FindEnum(en_nm);
-	if(ed) {
-	  *((int*)base) = ed->enum_no;
-	  return;
-	}
-	taMisc::Warning("Enum named:", strval, "not found in enum type:", name);
-      }
-      if(strval.contains('|')) { // bits
-	int bits = 0;
-	while(strval.nonempty()) {
-	  String curstr = strval;
-	  if(strval.contains('|')) {
-	    curstr = strval.before('|');
-	    strval = strval.after('|');
-	  }
-	  else
-	    strval = _nilString;
-	  EnumDef* ed = FindEnum(curstr);
-	  if(ed) {
-	    bits |= ed->enum_no;
-	  }
-	  else {
-	    taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
-	  }
-	}
-	*((int*)base) = bits;
-	return;
-      }
-      else {
-	EnumDef* ed = FindEnum(strval);
-	if(ed) {
-	  *((int*)base) = ed->enum_no;
-	  return;
-	}
-	int intval = (int)strval;
-	*((int*)base) = intval;
-	return;
-      }
+      SetValStr_enum(val.toString(), base, par, memb_def);
     }
     else if(DerivesFrom(TA_taString)) {
       *((String*)base) = val.toString(); return;}
@@ -5898,7 +5736,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
       *((double*)base) = val.toDouble(); return;}
 #ifndef NO_TA_BASE
     else if(DerivesFrom(TA_taList_impl)) {
-    //TODO: not handled!
+      //TODO: not handled!
     }
     else if(DerivesFrom(TA_taArray_base)) {
       taArray_base* gp = (taArray_base*)base;

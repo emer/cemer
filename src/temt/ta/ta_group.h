@@ -88,6 +88,13 @@ public:
   // IO routines
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			    bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false);
+
   override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
   override int	Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
   override int	Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
@@ -237,8 +244,6 @@ protected:
     bool& ok, bool virt) const;
   override void 	CheckChildConfig_impl(bool quiet, bool& rval);
   override void		ItemRemoved_(); // update the leaf counts (supercursively)
-  virtual String	GetValStr(const TypeDef* td, void* par=NULL,
-	MemberDef* memb_def = NULL) const;
   virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
 #ifdef TA_GUI
 protected: // clip functions

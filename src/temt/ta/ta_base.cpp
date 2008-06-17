@@ -1181,90 +1181,99 @@ taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) {
   return DQR_DEFAULT;
 }
 
+String taBase::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
+			 bool force_inline) const {
+  if (sc == TypeDef::SC_DEFAULT) 
+    sc = (taMisc::is_saving) ? TypeDef::SC_STREAMING : TypeDef::SC_VALUE;
 
-String taBase::GetValStr_inline(TypeDef::StrContext sc) {
-  sc = (TypeDef::StrContext)(sc & TypeDef::SC_CONTEXT_MASK); // clear inline--assumed
   TypeDef* td = GetTypeDef();
-  String rval("{");
-  for(int i=0; i<td->members.size; i++) {
-    MemberDef* md = td->members.FastEl(i);
-    // if streaming, do full save check, else just check for NO_SAVE
-    if (sc == TypeDef::SC_STREAMING) {
-      if (!md->DumpMember(this))
-	continue;
-    } else {
-      if(md->HasOption("NO_SAVE"))
-	continue;
-    }
-    rval += md->name + "=";
-    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-    rval += md->type->GetValStr(md->GetOff(this), this, md,
-				(TypeDef::StrContext)(sc | TypeDef::SC_FLAG_INLINE));
-    // make sure it is inline!
-    if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
-    rval += ": ";
+  if(force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")) {
+    return td->GetValStr_class_inline(this, par, memb_def, sc, force_inline);
   }
-  rval += "}";
-  return rval;
+  else {
+    if(GetOwner() || (this == tabMisc::root))
+      return GetPath();
+    return td->name;
+  }
 }
 
-bool taBase::SetValStr_inline(const String& val, TypeDef::StrContext sc) {
-  sc = (TypeDef::StrContext)(sc & TypeDef::SC_CONTEXT_MASK); // clear inline--assumed
-  TypeDef* td = GetTypeDef();
-  String rval = val;
-  rval = rval.after('{');
-  while(rval.contains(':')) {
-    int st_pos = rval.index('=');
-    String mb_nm = rval.before(st_pos);
-    String next_val = rval.after(st_pos);
-    int pos = 0;
-    int next_val_len = next_val.length();
-    int c = next_val[pos];
-    if(c == '\"') {		// "
-      st_pos++;
-      next_val = next_val.after(0);
-      next_val_len--;
-      c = next_val[pos];
-      while((c != '\"') && (pos < next_val_len)) c = next_val[++pos]; // "
+String taBase::GetValStr_ptr(const TypeDef* td, const void* base, void* par, MemberDef* memb_def,
+			     TypeDef::StrContext sc, bool force_inline) {
+  taBase* rbase = *((taBase**)base);
+  if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {
+    if (sc == TypeDef::SC_STREAMING) {
+      return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
     }
     else {
-      int depth = 0;
-      while(!(((c == ':') || (c == '}')) && (depth <= 0)) && (pos < next_val_len)) {
-	if(c == '{')  depth++;
-	if(c == '}')  depth--;
-	c = next_val[++pos];
-      }
-    }
-    String mb_val = next_val.before(pos);
-    rval = rval.after(pos + st_pos + 1); // next position
-    if(c == '\"')			     // "
-      rval = rval.after(':');	// skip the semi-colon which was not groked
-    mb_nm.gsub(" ", "");
-    MemberDef* md = td->members.FindName(mb_nm);
-    if(md == NULL) {		// try to find a name with an aka..
-      int a;
-      for(a=0;a<td->members.size;a++) {
-	MemberDef* amd = td->members.FastEl(a);
-	String aka = amd->OptionAfter("AKA_");
-	if(aka.empty()) continue;
-	if(aka == mb_nm) {
-	  md = amd;
-	  break;
-	}
-      }
-    }
-    if((md != NULL) && !mb_val.empty()) {
-      md->type->SetValStr(mb_val, md->GetOff(this), this, md, 
-			  (TypeDef::StrContext)(sc | TypeDef::SC_FLAG_INLINE));
-      // make sure it is inline!
+      return rbase->GetPath();
     }
   }
-  if (sc != TypeDef::SC_STREAMING)
-    UpdateAfterEdit(); 	// only when not loading (else will happen after)
-  return true;
+  else {
+    if(rbase != NULL)
+      return String((intptr_t)rbase);
+  }
+  return String::con_NULL;
 }
 
+bool taBase::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+		       TypeDef::StrContext sc, bool force_inline) {
+  if (sc == TypeDef::SC_DEFAULT) 
+    sc = (taMisc::is_saving) ? TypeDef::SC_STREAMING : TypeDef::SC_VALUE;
 
+  if(force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")) {
+    TypeDef* td = GetTypeDef();
+    td->SetValStr_class_inline(val, this, par, memb_def, sc, force_inline);
+    if (sc != TypeDef::SC_STREAMING)
+      UpdateAfterEdit(); 	// only when not loading (else will happen after)
+    return true;
+  }
+  return false;			// not processed otherwise..
+}
+
+bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par,
+			   MemberDef* memb_def, TypeDef::StrContext sc, bool force_inline) {
+  taBase* bs = NULL;
+  if((val != String::con_NULL) && (val != "Null")) {
+    String tmp_val(val); // FindFromPath can change it
+    if (sc == TypeDef::SC_STREAMING) {
+      bs = dumpMisc::path_tokens.FindFromPath(tmp_val, td, base, par, memb_def);
+      if(!bs)	// indicates error condition
+	return false;
+    }
+    else {
+      MemberDef* md = NULL;
+      bs = tabMisc::root->FindFromPath(tmp_val, md);
+      if(!md || !bs) {
+	taMisc::Warning("*** Invalid Path in SetValStr:",val);
+	return false;
+      }
+      if (md->type->ptr == 1) {
+	bs = *((taBase**)bs);
+	if(bs == NULL) {
+	  taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+	  return false;
+	}
+      }
+      else if(md->type->ptr != 0) {
+	taMisc::Warning("*** ptr count greater than 1 in path:", val);
+	return false;
+      }
+    }
+  }
+  if (memb_def && memb_def->HasOption("OWN_POINTER")) {
+    if(!par)
+      taMisc::Warning("*** NULL parent for owned pointer:",val);
+    else
+      taBase::OwnPointer((taBase**)base, bs, (taBase*)par);
+  }
+  else {
+    if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
+      (*(taBase**)base) = bs;
+    else
+      taBase::SetPointer((taBase**)base, bs);
+  }
+  return true;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // 	Updating of object properties
@@ -1683,8 +1692,8 @@ bool taBase::SearchTestItem_impl(taBase* obj, const String& srch,
   }
   if(obj_val) {
     if(SearchTestStr_impl(srch, obj->GetDisplayName(), contains, case_sensitive)) return true;
-    String strval = GetTypeDef()->GetValStr(obj, NULL, NULL,
-	 (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
+    String strval = GetTypeDef()->GetValStr(obj, NULL, NULL, TypeDef::SC_DEFAULT, true);
+    // true = force_inline
     if(SearchTestStr_impl(srch, strval, contains, case_sensitive)) return true;
   }
 
@@ -3017,6 +3026,33 @@ bool taList_impl::Close_Child(TAPtr obj) {
   return RemoveEl(obj);
 }
 
+
+String taList_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
+			      bool force_inline) const {
+  String nm = " Size: ";
+  nm += String(size);
+  nm += String(" (") + el_typ->name + ")";
+  return nm;
+}
+
+bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+			    TypeDef::StrContext sc, bool force_inline) {
+  if(val != String::con_NULL) {
+    String tmp = val;
+    if(tmp.contains('(')) {
+      tmp = tmp.after('(');
+      tmp = tmp.before(')');
+    }
+    tmp.gsub(" ", "");
+    TypeDef* td = taMisc::types.FindName(tmp);
+    if(td != NULL) {
+      el_typ = td;
+      return true;
+    }
+  }
+  return false;
+}
+
 int taList_impl::Dump_Save_PathR(ostream& strm, TAPtr par, int indent) {
    bool dump_my_path = !(this == par);
   // dump_my_path is a bit of a hack, to enable us to use this same
@@ -4009,6 +4045,25 @@ ostream& taArray_base::Output(ostream& strm, int indent) const {
 
 void taArray_base::DataChanged(int dcr, void* op1, void* op2) {
   taOBase::DataChanged(dcr, op1, op2);
+}
+
+String taArray_base::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
+			      bool force_inline) const {
+  if(force_inline) {
+    return GetValStr();
+  }
+  else {
+    String nm = " Size: ";
+    nm += String(size);
+    nm += String(" (") + GetTypeDef()->name + ")";
+    return nm;
+  }
+}
+
+bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+			    TypeDef::StrContext sc, bool force_inline) {
+  InitFromString(val);
+  return true;
 }
 
 int taArray_base::Dump_Save_Value(ostream& strm, TAPtr, int) {

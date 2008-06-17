@@ -361,11 +361,15 @@ void MatrixGeom::GeomFromString(const String& str_, const char* ldelim, const ch
   Set(i, (int)ds);
 }
 
-String MatrixGeom::GetValStr_inline(TypeDef::StrContext sc) {
+String MatrixGeom::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
+			      bool force_inline) const {
+  // always inline effectively
   return GeomToString();
 }
 
-bool MatrixGeom::SetValStr_inline(const String& val, TypeDef::StrContext sc) {
+bool MatrixGeom::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+			   TypeDef::StrContext sc, bool force_inline) {
+  // always inline effectively
   GeomFromString(val);
   return true;
 }
@@ -661,6 +665,45 @@ bool taMatrix::CopyFrame(const taMatrix& src, int frame) {
 
 int taMatrix::defAlignment() const {
   return Qt::AlignRight; // most mats are numeric, so this is the default
+}
+
+String taMatrix::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
+			      bool force_inline) const {
+  // always inline effectively
+  String rval = geom.GetValStr(par, memb_def, sc, force_inline);
+  rval += " {";
+  for(int i=0;i<size;i++) {
+    rval += " " + FastElAsStr_Flat(i) + ",";
+  }
+  rval += "}";
+  return rval;
+}
+
+bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+			 TypeDef::StrContext sc, bool force_inline) {
+  // always inline effectively
+  String gmstr = val.before('{');
+  MatrixGeom ng;
+  ng.SetValStr(gmstr, par, memb_def, sc, force_inline);
+  SetGeomN(ng);
+  int idx = 0;
+  String tmp = val.after('{');
+  while(tmp.length() > 0) {
+    String el_val = tmp.before(',');
+    if(el_val.empty()) {
+      el_val = tmp.before('}');
+      if (el_val.empty())
+	break;
+    }
+    tmp = tmp.after(',');
+    if(TestError(idx >= size, "SetValStr",
+		 "more items in val string than shoudl be according to geometry!")) break;
+    if (el_val.contains(' '))
+      el_val = el_val.after(' ');
+    SetFmStr_Flat(el_val, idx);
+    idx++;
+  }
+  return true;
 }
 
 int taMatrix::Dump_Load_Item(istream& strm, int idx) {

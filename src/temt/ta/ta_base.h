@@ -725,10 +725,24 @@ public:
   virtual int		SaveAs(const String& fname = ""); 
   // #MENU #ARGC_0 #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user; if context="" then default is used
 
-  virtual String	GetValStr_inline(TypeDef::StrContext sc);
-  // #IGNORE get an inline value string for this object (all in one string) -- called by TypeDef GetValStr -- default is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes that might still be inlinable
-  virtual bool		SetValStr_inline(const String& val, TypeDef::StrContext sc);
-  // #IGNORE set value from an "inline" value string for this object -- called by TypeDef SetValStr -- default is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes that might still be inlinable
+  virtual String	GetValStr(void* par = NULL, MemberDef* md = NULL,
+				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+				  bool force_inline = false) const;
+  // #IGNORE get a value string for this object (ptr=0) -- called by TypeDef GetValStr -- default for inline is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes for inlines
+  static String		GetValStr_ptr(const TypeDef* td, const void* base, void* par = NULL, 
+				      MemberDef* md = NULL,
+				      TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+				      bool force_inline = false);
+  // #IGNORE get a value string for pointer to ta base object (ptr=1) -- called by TypeDef GetValStr
+  virtual bool		SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+				  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+				  bool force_inline = false);
+  // #IGNORE set value from a string for this object (ptr=0) -- called by TypeDef SetValStr -- default for inline is just to iterate over members and output values just as in TypeDef code -- can overload for more complex classes that might still be inlinable
+  static bool		SetValStr_ptr(const String& val, TypeDef* td, void* base,
+				      void* par = NULL, MemberDef* md = NULL, 
+				      TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+				      bool force_inline = false);
+  // #IGNORE set value from a string for ptr to taBase (ptr=1) -- called by TypeDef SetValStr
 
   ////////////////////////////////////////////////////////////////////// 
   // 	Low-level dump load/save
@@ -1752,6 +1766,13 @@ public:
 
   ostream& 	OutputR(ostream& strm, int indent = 0) const;
 
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			    bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false);
+
   override void Dump_Save_GetPluginDeps();
   override int	Dump_SaveR(ostream& strm, TAPtr par=NULL, int indent=0);
   override int	Dump_Save_PathR(ostream& strm, TAPtr par=NULL, int indent=0);
@@ -2163,6 +2184,12 @@ public:
   ostream& 	OutputR(ostream& strm, int indent = 0) const
   { return Output(strm, indent); }
 
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			    bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false);
   int		Dump_Save_Value(ostream& strm, TAPtr par=NULL, int indent = 0);
   int		Dump_Load_Value(istream& strm, TAPtr par=NULL);
   

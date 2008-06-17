@@ -115,24 +115,32 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
       mbr = optedit.before(':');
   
     TAPtr tab = (TAPtr)base;
-    MemberDef* md = NULL;
     void* mbr_base = NULL;	// base for conditionalizing member itself
-    void* mbr_par_base = (void*)base;	// base for parent of member
-    if (mbr.contains('.')) {
-      String par_path = mbr.before('.', -1);
-      MemberDef* par_md = NULL;
-      TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
-      if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
-	taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
-	return false;
-      }
-      String subpth = mbr.after('.', -1);
-      md = par_par->FindMembeR(subpth, mbr_base);
-      mbr_par_base = (void*)par_par;
-    } else {
-      md = tab->FindMembeR(mbr, mbr_base);
+
+    TypeDef* own_td = tab->GetTypeDef();
+    ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						  mbr, true);
+    if (md) {
+      mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
     }
-    if ((md == NULL) || (mbr_base == NULL)) {
+    
+//     if (mbr.contains('.')) {
+//       String par_path = mbr.before('.', -1);
+//       MemberDef* par_md = NULL;
+//       TAPtr par_par = (TAPtr)tab->FindFromPath(par_path, par_md);
+//       if ((par_par == NULL) || !(par_md->type->InheritsFrom(&TA_taBase))) {
+// 	taMisc::Error("CONDEDIT: can't find parent of member:", par_path);
+// 	return false;
+//       }
+//       String subpth = mbr.after('.', -1);
+//       md = par_par->FindMembeR(subpth, mbr_base);
+//       mbr_par_base = (void*)par_par;
+//     } else {
+//       md = tab->FindMembeR(mbr, mbr_base);
+//     }
+
+    if (!md || !mbr_base) {
       // this can happen in valid cases (selectedit), and the msg is annoying
       //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
       return false;
@@ -148,7 +156,7 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
     }
     else {
       // explicit value mode (note: legacy for CONDEDIT, new for GHOST
-      String mbr_val = md->type->GetValStr(mbr_base, mbr_par_base, md);
+      String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_DEFAULT, true); // inline
       while (true) {
 	String nxtval;
 	if (val.contains(',')) {
@@ -1375,13 +1383,21 @@ TypeDef* taiMember::GetTargetType(const void* base) {
   //      is in.
 
   String mb_nm = mbr->OptionAfter("TYPE_ON_");
-  if (!mb_nm.empty()) {
-//    taBase* base = (taBase*)host->cur_base; //TODO: highly unsafe cast -- should provide As_taBase() or such in taiDialog
+  if(!mb_nm.empty()) {
     if (base) {
-      void* adr; // discarded
-      MemberDef* tdmd = ((taBase*)base)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
-      if (tdmd != NULL)
-        targ_typ = *((TypeDef **) tdmd->GetOff(base));
+      TypeDef* own_td = typ;
+      ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+      MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						      mb_nm, true);
+      if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
+	targ_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
+      }
+      else {			// try fully dynamic
+	void* adr; // discarded
+	tdmd = ((taBase*)base)->FindMembeR(mb_nm, adr); //TODO: highly unsafe cast!!
+	if (tdmd && (tdmd->type == &TA_TypeDef_ptr))
+	  targ_typ = *((TypeDef **) tdmd->GetOff(base));
+      }
     }
     return targ_typ;
   } 
@@ -1523,11 +1539,17 @@ TypeDef* taiTokenPtrMember::GetMinType(const void* base) {
   String tmp = mbr->OptionAfter("TYPE_ON_");
   if (tmp.nonempty()) {
     if (base) {
-      MemberDef* md = typ->members.FindName(tmp);
-      if (md && (md->type->ptr == 1) && md->type->DerivesFrom(&TA_TypeDef))
-        dir_type = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+      TypeDef* own_td = typ;
+      ta_memb_ptr net_mbr_off = 0;
+      int net_base_off = 0;
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						    tmp, true);
+      if (md && (md->type == &TA_TypeDef_ptr)) {
+	dir_type = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
+      }
     }
-  } else {
+  }
+  else {
     // static type scoping
     tmp = mbr->OptionAfter("TYPE_");
     if (tmp.nonempty()) {
@@ -1710,11 +1732,15 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
   TypeDef* td = NULL;
   String mb_nm = mbr->OptionAfter("TYPE_ON_");
   if (mb_nm != "") {
-    MemberDef* md = typ->members.FindName(mb_nm);
-    if (md != NULL)
-      //TODO: should check that member is a TypeDef!!!
-      td = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
-  } else {
+    TypeDef* own_td = typ;
+    ta_memb_ptr net_mbr_off = 0;    int net_base_off = 0;
+    MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						  mb_nm, true);
+    if (md && (md->type == &TA_TypeDef_ptr)) {
+      td = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
+    }
+  }
+  else {
     mb_nm = mbr->OptionAfter("TYPE_");
     if(mb_nm == "this")
       td = typ;
@@ -2420,9 +2446,12 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
       npt = ((TAPtr)base)->GetTypeDef(); // use object type
     }
     else {
-      MemberDef* md = typ->members.FindName(mb_nm);
-      if(md != NULL) {
-	TypeDef* mbr_typ = (TypeDef*)*((void**)md->GetOff(base)); // set according to value of this member
+      TypeDef* own_td = typ;
+      ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						    mb_nm, true);
+      if (md && (md->type == &TA_TypeDef_ptr)) {
+	TypeDef* mbr_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
 	if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
 	  npt = mbr_typ;		// make sure this applies to this argument..
       }
@@ -2493,9 +2522,12 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       if (typ->InheritsFrom(&TA_taBase) && (base != NULL))
 	tpdf = ((TAPtr)base)->GetTypeDef();
     } else {
-      MemberDef* md = typ->members.FindName(mb_nm);
-      if ((md != NULL) && (md->type == &TA_TypeDef_ptr)) {
-	tpdf = *(TypeDef**)(md->GetOff(base));
+      TypeDef* own_td = typ;
+      ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						    mb_nm, true);
+      if (md && (md->type == &TA_TypeDef_ptr)) {
+	tpdf = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
     }
     if(tpdf) {

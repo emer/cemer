@@ -387,12 +387,11 @@ void cssiArgDialog::Constr_ArgTypes() {
       TypeDef* own_td = typ;
       ta_memb_ptr net_mbr_off = 0;
       int net_base_off = 0;
-      MemberDef* md = typ->FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						init_argval, true);
+      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+						    init_argval, true);
       if(md != NULL) {
 	void* mbrbase = MemberDef::GetOff_static(root, net_base_off, net_mbr_off);
-	val = md->type->GetValStr(mbrbase, NULL, md, 
-				  (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE));
+	val = md->type->GetValStr(mbrbase, NULL, md, TypeDef::SC_DEFAULT, true); // force_inline
 	// get val from member
       }
     }

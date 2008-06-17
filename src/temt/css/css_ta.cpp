@@ -505,8 +505,7 @@ String cssTA_Base::GetStr() const {
   else if(ptr_cnt == 0) {
     if(ptr) {
       taBase* obj = (taBase*)ptr;
-      return obj->GetValStr_inline((TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE));
-      // force inline
+      return obj->GetValStr(NULL, NULL, TypeDef::SC_DEFAULT, true); // force_inline
     }
   }
   return cssTA::GetStr();
@@ -641,7 +640,7 @@ void cssTA_Base::operator=(const String& s) {
     //    cssTA::operator=(s);		// just do same thing
     if(ptr) {
       taBase* obj = (taBase*)ptr;
-      obj->SetValStr_inline(s, (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE));
+      obj->SetValStr(s, NULL, NULL, TypeDef::SC_DEFAULT, true);
       // force inline
     }
     return;

@@ -772,6 +772,8 @@ public:
   // #CAT_Copy copy values from other array at given start and end points, and putting at given point in this
   virtual void	List(ostream& strm = cout) const;
   // #CAT_Display print out all of the elements in the array
+  virtual String GetValStr() const;
+  // #CAT_Display get a string representation of the value of the array (list of items)
   virtual void	InitFromString(const String& val);
   // #CAT_Modify initialize an array from given string (does reset first)
 protected:

@@ -301,6 +301,36 @@ int taGroup_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr
   return nchg;
 }
 
+String taGroup_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
+			      bool force_inline) const {
+  String nm = " Size: ";
+  nm += String(size);
+  if(gp.size > 0)
+    nm += String(".") + String(gp.size);
+  if(leaves != size)
+    nm += String(".") + String((int) leaves);
+  nm += String(" (") + el_typ->name + ")";
+  return nm;
+}
+
+bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+			    TypeDef::StrContext sc, bool force_inline) {
+  if(val != String::con_NULL) {
+    String tmp = val;
+    if(tmp.contains('(')) {
+      tmp = tmp.after('(');
+      tmp = tmp.before(')');
+    }
+    tmp.gsub(" ", "");
+    TypeDef* td = taMisc::types.FindName(tmp);
+    if(td != NULL) {
+      el_typ = td;
+      return true;
+    }
+  }
+  return false;
+}
+
 int taGroup_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   return inherited::Dump_Save_PathR(strm, par, indent);
 }
@@ -500,19 +530,6 @@ TAGPtr taGroup_impl::GetSuperGp_() {
   }
   return NULL;
 }
-
-String taGroup_impl::GetValStr(const TypeDef* td, void* par,
-	MemberDef* memb_def) const
-{
-  String nm = " Size: ";
-  nm += String(size);
-  if(gp.size > 0)
-    nm += String(".") + String(gp.size);
-  if(leaves != size)
-    nm += String(".") + String((int) leaves);
-  nm += String(" (") + el_typ->name + ")";
-  return nm;
- }
 
 taBase* taGroup_impl::Leaf_(int idx) const {
   if ((idx < 0) || (idx >= leaves))

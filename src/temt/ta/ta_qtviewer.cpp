@@ -1073,14 +1073,14 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
         } 
         // have to force getting an inline value, since default is often the path
         probed = md->type->GetValStr(md->GetOff(tab), tab, md,
-          (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
+				     TypeDef::SC_DEFAULT, true); // force_inline
         if (IsHit(targs, kicks, probed)) 
           {++n; AddHit(item_type, probed, hits);}
       }
       else if(md->type->ptr == 1) {
 	// if a pointer, treat it as a value and go for it!
         probed = md->type->GetValStr(md->GetOff(tab), tab, md,
-          (TypeDef::StrContext)(TypeDef::SC_DEFAULT | TypeDef::SC_FLAG_INLINE) );
+				     TypeDef::SC_DEFAULT, true); // force_inline
         if (IsHit(targs, kicks, probed)) 
           {++n; AddHit(item_type, probed, hits);}
       }

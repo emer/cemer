@@ -1489,8 +1489,7 @@ void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at
 
 void taArray_impl::List(ostream& strm) const {
   strm << "[" << size << "] {";
-  int i;
-  for(i=0;i<size;i++) {
+  for(int i=0;i<size;i++) {
     strm << " " << El_GetStr_(FastEl_(i)) << ",";
     if(i+1 % 8 == 0) {
       strm << endl;
@@ -1498,6 +1497,15 @@ void taArray_impl::List(ostream& strm) const {
     }
   }
   strm << "}";
+}
+
+String taArray_impl::GetValStr() const {
+  String rval = "[" + String(size) + "] {";
+  for(int i=0;i<size;i++) {
+    rval += " " + El_GetStr_(FastEl_(i)) + ",";
+  }
+  rval += "}";
+  return rval;
 }
 
 void taArray_impl::InitFromString(const String& val) {
