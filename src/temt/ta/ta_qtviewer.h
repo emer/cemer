@@ -1904,6 +1904,8 @@ public:
   iTreeViewItem*	parent() const; // strongly typed version of base
   iTreeView*		treeView() const;
 
+  virtual const String	GetColText(int col, const String& def = _nilString) const;
+  
   override void 	CreateChildren(); 
   void			DataChanged(int dcr, void* op1, void* op2)
     {DataChanged_impl(dcr, op1, op2);} // primarily to support Refresh

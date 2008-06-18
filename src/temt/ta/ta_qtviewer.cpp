@@ -6799,7 +6799,8 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
     setData(0, Qt::FontRole, fnt);
   }
 */
-  setText(0, tree_name);
+//  setText(0, tree_name);
+  setText(0, GetColText(0, tree_name));
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
   if (dn_flags_ & DNF_LAZY_CHILDREN) {
@@ -6917,17 +6918,10 @@ void iTreeViewItem::DecorateDataNode() {
 //         setData(i, Qt::FontRole, QVariant(tv->italicFont()));
 //       }
 //     }
-    int max_chars = tv->maxColChars(i); // -1 if no limit
-    int col_format = tv->colFormat(i); // 0 if none
     // first, the col text (cols >=1 only)
-    if (i > 0) {
-      KeyString key = tv->colKey(i);
-      if (key.length() > 0) { // no point if no key
-        if (col_format & iTreeView::CF_ELIDE_TO_FIRST_LINE)
-          setText(i, (link->GetColText(key)).elidedToFirstLine());
-        else
-          setText(i, (link->GetColText(key)).elidedTo(max_chars));
-      }
+ //TEMP   if (i > 0) 
+    {
+      setText(i, GetColText(i));
     }
     // then, col data, if any (empty map, otherwise)
     QMap_qstr_qvar map = tv->colDataKeys(i);
@@ -7001,6 +6995,28 @@ void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
   menu->AddItem("Find from here...", taiMenu::use_default,
     taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
   IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
+}
+
+const String iTreeViewItem::GetColText(int col, const String& def) const
+{
+  iTreeView* tv = treeView();
+  taiDataLink* link = this->link(); // local cache
+  String rval;
+  if (tv && link) {  
+    KeyString key = tv->colKey(col);
+    if (key.length() > 0) { // no point if no key
+      const int max_chars = tv->maxColChars(col); // -1 if no limit
+      const int col_format = tv->colFormat(col); // 0 if none
+      if (col_format & iTreeView::CF_ELIDE_TO_FIRST_LINE)
+        rval = link->GetColText(key).elidedToFirstLine();
+      else
+        rval = link->GetColText(key).elidedTo(max_chars);
+    } else if (col == 0) { // use default name for col 0
+      rval = link->GetDisplayName();
+    }
+  }
+  if (rval.empty()) rval = def;
+  return rval;
 }
 
 ISelectableHost* iTreeViewItem::host() const {
@@ -7390,7 +7406,8 @@ void tabParTreeDataNode::UpdateListNames() {
     }
     taiTreeDataNode* node1 = this->FindChildForData(el); //null if not found
     if (node1 != NULL)
-      node1->setText(0, tree_nm);
+//TEMP      node1->setText(0, tree_nm);
+node1->DecorateDataNode();
   }
 }
 

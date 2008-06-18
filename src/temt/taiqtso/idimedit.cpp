@@ -61,7 +61,7 @@ void iDimEdit::init() {
   connect(spnDims, SIGNAL(valueChanged(int)), 
     this, SLOT(dims_valueChanged(int)) );
     
-  setMaxDims(8);
+//  setMaxDims(8);
 }
 
 
@@ -83,7 +83,7 @@ void iDimEdit::dim_valueChanged(int value) {
 
 void iDimEdit::dims_valueChanged(int value) {
   if (m_changing > 0) return;
-  setDims_impl(value);
+  setDims(value, true);
   emit changed(this);
 }
 
@@ -99,9 +99,13 @@ void iDimEdit::setDim(int idx, int value) {
   --m_changing;
 }
 
-void iDimEdit::setDims(int value) {
-  if ((dims() == value) || (value < 0)) return;
-  setDims_impl(value);
+void iDimEdit::setDims(int value, bool force) {
+  if (value > m_maxDims) value = m_maxDims;
+  if (!force && ((dims() == value) || (value < 0))) return;
+  ++m_changing;
+  spnDims->setValue(value); // don't care if it triggers recursive call to us
+  dimsUpdated();
+  --m_changing;
 }
 
 void iDimEdit::setDimsReadOnly(bool value) {
@@ -110,12 +114,27 @@ void iDimEdit::setDimsReadOnly(bool value) {
   m_dimsReadOnly = value;
 }
 
-void iDimEdit::setDims_impl(int value) {
+void iDimEdit::dimsUpdated() {
+  // called from both Dims and MaxDims, to get readonly set
   ++m_changing;
-  int i;
-  if (dims() > value) {
+  for (int i = 0; i < m_maxDims; ++i) {
+    QSpinBox* spn = (QSpinBox*)dimEdits.at(i);
+    bool en = (i < dims());
+    spn->setEnabled(en);
+    if (i >= m_maxDims) {
+      spn->setValue(0);
+    }
+     
+  }
+  --m_changing;
+}
+
+void iDimEdit::setMaxDims(int value) {
+  if ((value < 0) || (m_maxDims == value)) return;
+  ++m_changing;
+  if (m_maxDims > value) {
     // delete controls
-    for (i = dimEdits.count() - 1; i >= value; --i) {
+    for (int i = m_maxDims - 1; i >= value; --i) {
       QWidget* wdg = dimEdits.takeAt(i);
       disconnect(wdg, NULL, this, NULL);
       wdg->setParent(NULL);
@@ -124,10 +143,12 @@ void iDimEdit::setDims_impl(int value) {
       wdg->setParent(NULL);
       wdg->deleteLater();
     }
-    
+    setDims(value);
+    spnDims->setMaximum(value); // don't care if it triggers recursive call to us
   } else {
+    spnDims->setMaximum(value); // don't care if it triggers recursive call to us
     // add controls
-    for (i = dims(); i < value; ++i) {
+    for (int i = m_maxDims; i < value; ++i) {
       QLabel* lbl = new QLabel(QString::number(i), wdgDimEdits);
       layDimEdits->addWidget(lbl);
       dimLabels.append(lbl);
@@ -142,16 +163,8 @@ void iDimEdit::setDims_impl(int value) {
         this, SLOT(dim_valueChanged(int)) );
     }
   }
-  spnDims->setValue(value); // don't care if it triggers recursive call to us
-  --m_changing;
-}
-
-void iDimEdit::setMaxDims(int value) {
-  if ((value < 0) || (m_maxDims == value)) return;
-  ++m_changing;
-  if (value < dims())
-    setDims(value);
-  spnDims->setMaximum(value);
+  m_maxDims = value;
+  dimsUpdated();
   --m_changing;
 }
 

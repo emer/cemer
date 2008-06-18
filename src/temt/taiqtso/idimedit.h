@@ -38,7 +38,7 @@ public:
 
 
   int			dims() const; // number of dims
-  void			setDims(int value);
+  void			setDims(int value, bool force = false);
   int			dim(int idx) const; // value of a given dim
   void			setDim(int idx, int value);
   int			maxDims() const {return m_maxDims;} // default=8
@@ -64,7 +64,7 @@ protected:
   bool			m_dimsReadOnly; // dimension only
   bool			m_readOnly;  //all
   bool			inRange(int idx) const;
-  void			setDims_impl(int value);
+  void			dimsUpdated();
   
 protected slots:
   void			dim_valueChanged(int value);
