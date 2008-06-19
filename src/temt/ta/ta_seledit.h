@@ -238,6 +238,7 @@ protected:
     const String& lbl, const String& desc);
   virtual bool		SelectMethod_impl(taBase* base, MethodDef* md,
     const String& lbl, const String& desc);
+  bool			ReShowEdit(bool force = false); // this is just really a synonym for doing a DataChanged
   
 private:
   void	Initialize();

@@ -547,6 +547,7 @@ taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
 taMisc::MatrixView	taMisc::matrix_view = taMisc::BOT_ZERO;	
+taMisc::EditStyle	taMisc::edit_style = taMisc::ES_WIDGETS;
 bool 			taMisc::beep_on_error = false;
 short			taMisc::num_recent_files = 10;
 short			taMisc::num_recent_paths = 10;

@@ -540,7 +540,7 @@ void taiMisc::Quit_impl(CancelOp cancel_op) {
 
 void taiMisc::ResolveEditChanges(CancelOp& cancel_op) {
   for (int i = 0; i < taiMisc::active_edits.size; ++i) {
-    taiEditDataHost* edh = taiMisc::active_edits.FastEl(i);
+    taiDataHostBase* edh = taiMisc::active_edits.FastEl(i);
     if (!edh || (edh->state != taiEditDataHost::ACTIVE)) continue;
     edh->ResolveChanges(cancel_op); // don't need 'discard'
     if (cancel_op == CO_CANCEL) return;
@@ -602,82 +602,7 @@ void taiMisc::SetWinCursors() {
   taMisc::Warning("*** Unexpected call to SetWinCursors -- not busy or recording.");
 }
 
-
-/*obs bool taiMisc::CloseEdits(void* obj, TypeDef* td) {
-  if(!taMisc::gui_active)    return false;
-  PurgeDialogs();
-  bool got_one = false;
-  //note: for panels, Cancel() causes panel to close/delete
-  if(!td->InheritsFrom(TA_taBase)) {
-    // look for edits whose object is 'obj'
-    for (int i=active_edits.size-1; i>=0; i--) {
-      taiEditDataHost* edh = active_edits.FastEl(i);
-      if((edh->cur_base == obj) && (edh->state == taiDataHost::ACTIVE)) {
-	edh->Cancel();
-	got_one = true;
-      }
-    }
-    return got_one;
-  }
-
-  TAPtr ta_obj = (TAPtr)obj;
-  int i;
-  for(i=active_edits.size-1; i>=0; i--) {
-    taiEditDataHost* edh = active_edits.FastEl(i);
-    if((edh->typ == NULL) || !edh->typ->InheritsFrom(TA_taBase) ||
-       (edh->state != taiDataHost::ACTIVE))
-      continue;
-    TAPtr dbase = (TAPtr)edh->cur_base;
-    if(dbase == ta_obj) {
-      edh->Cancel();
-      got_one = true;
-      continue;
-    }
-    TAPtr dbpar = dbase->GetOwner(td); // if its a parent of that type..
-    if(dbpar == ta_obj) {
-      edh->Cancel();
-      got_one = true;
-      continue;
-    }
-    // also check for groups that might contain the object
-    if(!edh->typ->InheritsFrom(TA_taList_impl))
-      continue;
-    taList_impl* lst = (taList_impl*)edh->cur_base;
-    if(lst->Find(ta_obj) >= 0)
-       edh->SetRevert();	// it's been changed..
-  }
-  return got_one;
-} */
-
-/*
-bool taiMisc::NotifyEdits(void* obj, TypeDef*) {
-  if(!taMisc::gui_active)    return false;
-  bool got_one = false;
-  for (int i = active_edits.size - 1; i >= 0; --i) {
-    taiEditDataHost* dlg = active_edits.FastEl(i);
-    if((dlg->state != taiDataHost::ACTIVE) || (dlg->cur_base == NULL) ||
-       (dlg->typ == NULL))
-      continue;
-    // this object contains the given one
-    if((dlg->cur_base <= obj) && ((char*)obj <= ((char*)dlg->cur_base + dlg->typ->size))) {
-      // if not modified, then update it, otherwise we should notify the user
-       dlg->NotifyChanged();	// it's been changed..
-      got_one = true;
-      continue;
-    }
-    // also check for groups that might contain the object
-    if(!dlg->typ->InheritsFrom(TA_taList_impl))
-      continue;
-    taList_impl* lst = (taList_impl*)dlg->cur_base;
-    if(lst->Find((TAPtr)obj) >= 0) {
-       dlg->NotifyChanged();	// it's been changed..
-       got_one = true;
-    }
-  }
-  return got_one;
-}
-*/
-bool taiMisc::RevertEdits(void* obj, TypeDef*) {
+/*bool taiMisc::RevertEdits(void* obj, TypeDef*) {
   if (!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
@@ -688,9 +613,9 @@ bool taiMisc::RevertEdits(void* obj, TypeDef*) {
     }
   }
   return got_one;
-}
+}*/
 
-bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
+/*obs bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
   if (!taMisc::gui_active)    return false;
   bool got_one = false;
   for (int i = active_edits.size-1; i >= 0; --i) {
@@ -701,7 +626,7 @@ bool taiMisc::ReShowEdits(void* obj, TypeDef*, bool force) {
     }
   }
   return got_one;
-}
+}*/
 
 taiEditDataHost* taiMisc::FindEdit(void* obj, iMainWindowViewer* not_in_win) {
   //NOTE: not_in_win works as follows:

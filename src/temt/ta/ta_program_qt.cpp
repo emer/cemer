@@ -1147,9 +1147,11 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
     Constr_Data_Labels_impl(idx, &memb_el(MS_PROG), &data_el(MS_PROG));
   }
   
-  iLabel* lbl = new iLabel("Items from Program_Group", body);
-  AddSectionLabel(-1, lbl,
-    "useful items from the Program_Group to which this Program belongs");
+  MembSet* ms = membs.SafeEl(MS_GP); 
+  ms->text = "Items from Program_Group";
+  ms->desc = "useful items from the Program_Group to which this Program belongs";
+  iLabel* lbl = new iLabel(ms->text.chars(), body);
+  AddSectionLabel(-1, lbl,ms->desc.chars());
   
   // ProgGroup guys
   if(!(prog->HasProgFlag(Program::NO_STOP) || !prog->HasProgFlag(Program::SHOW_STEP))) {
@@ -1169,21 +1171,22 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
   }
   // args and vars
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
+    ms = membs.SafeEl(j);
     ProgVar_List* pvl = NULL;
     switch (j) {
     case MS_ARGS:
-      nm = "Program args";
-      help_text = "the arguments to the program";
+      ms->text = "Program args";
+      ms->desc = "the arguments to the program";
       pvl = &prog->args; 
-      lbl = new iLabel(nm, body);
-      AddSectionLabel(-1, lbl,help_text);
+      lbl = new iLabel(ms->text.chars(), body);
+      AddSectionLabel(-1, lbl,ms->desc.chars());
       break;
     case MS_VARS: {
       nm = "Program vars";
       help_text = "the variables used inside the program";
       pvl = &prog->vars; 
-      lbl = new iLabel(nm, body);
-      AddSectionLabel(-1, lbl, help_text);
+      lbl = new iLabel(ms->text.chars(), body);
+      AddSectionLabel(-1, lbl, ms->desc.chars());
       } break;
     default: continue; // shouldn't happen!
     }

@@ -72,15 +72,11 @@ public: // IDataLinkClient i/f
   override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
   
 protected:
-  static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
- 
   taMatrix*		m_mat;
   taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
   bool			m_pat_4d;
   
   bool			ValidateIndex(const QModelIndex& index) const;
-  bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
-    // translates index into matrix coords; true if the index is valid
 #endif
 };
 

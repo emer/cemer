@@ -33,8 +33,6 @@
 //  The MatrixTableModel provides a 2-d table model for TA Matrix objects.
 //  For Gui editing, we map indexes in 2d flat table.
 
-MatrixGeom MatrixTableModel::tgeom; 
-
 MatrixTableModel::MatrixTableModel(taMatrix* mat_, QWidget* gui_parent_) 
 :inherited(NULL)
 {
@@ -247,14 +245,6 @@ void MatrixTableModel::setPat4D(bool val, bool notify) {
 bool MatrixTableModel::ValidateIndex(const QModelIndex& index) const {
   // TODO: maybe need to check bounds???
   return (m_mat);
-}
-
-bool MatrixTableModel::ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const {
-  bool rval = ValidateIndex(index);
-  if (rval) {
-    // TODO:
-  }
-  return rval;
 }
 
 taMisc::MatrixView MatrixTableModel::matView() const {

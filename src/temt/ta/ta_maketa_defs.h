@@ -91,7 +91,14 @@ public:
 	int dummy; // #IGNORE
 };
 
-class QAbstractTableModel: public QObject {
+class QAbstractItemModel: public QObject {
+//  
+public:
+	int dummy; // #IGNORE
+};
+
+
+class QAbstractTableModel: public QAbstractItemModel {
 //  
 public:
 	int dummy; // #IGNORE

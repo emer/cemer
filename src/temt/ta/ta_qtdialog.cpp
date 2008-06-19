@@ -1034,10 +1034,10 @@ void taiDataHostBase::WidgetDeleting() {
 
 
 //////////////////////////////////
-// 	taiDataHost		//
+//  taiDataHost_impl		//
 //////////////////////////////////
 
-void taiDataHost::DoFillLabelContextMenu_SelEdit(iLabel* sender, 
+void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(iLabel* sender, 
   QMenu* menu, int& last_id, taiData* sel_item_dat, QWidget* menu_par,
   QObject* slot_obj, const char* slot)
 {
@@ -1084,11 +1084,369 @@ void taiDataHost::DoFillLabelContextMenu_SelEdit(iLabel* sender,
     sub->setEnabled(false); // show item for usability, but disable
 }
 
-void taiDataHost::GetName(MemberDef* md, String& name, String& desc) {
+void taiDataHost_impl::GetName(MemberDef* md, String& name, String& desc) {
   name = md->GetLabel();
   desc = ""; // just in case
   MemberDef::GetMembDesc(md, desc, "");
 }
+
+taiDataHost_impl::taiDataHost_impl(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
+:inherited(typ_, read_only_, modal_, parent)
+{
+  InitGuiFields(false);
+
+  sel_item_dat = NULL;
+//  sel_item_md = NULL;
+  rebuild_body = false;
+  sel_edit_mbrs = true; // inherited guys can turn off
+}
+
+taiDataHost_impl::~taiDataHost_impl() {
+}
+
+// note: called non-virtually in our ctor, and virtually in WidgetDeleting
+void taiDataHost_impl::InitGuiFields(bool virt) { 
+  if (virt)  inherited::InitGuiFields(virt);
+  frmMethButtons = NULL;
+  layMethButtons = NULL;
+  show_meth_buttons = false;
+}
+
+const iColor taiDataHost_impl::colorOfRow(int row) const {
+  if ((row % 2) == 0) {
+    return bg_color;
+  } else {
+    return bg_color_dark;
+  }
+}
+
+void taiDataHost_impl::StartEndLayout(bool start) {
+  if (start) {
+    body->setUpdatesEnabled(false);
+  } else { // end
+    body->setUpdatesEnabled(true);
+  }
+}
+
+
+void taiDataHost_impl::BodyCleared() { // called when last widget cleared from body
+  if (!(state & SHOW_CHANGED)) return; // probably just destroying
+  rebuild_body = true;
+  ReConstr_Body();
+  state &= ~SHOW_CHANGED;
+}
+
+void taiDataHost_impl::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
+  inherited::Cancel_impl();
+  // delete any methods
+  if (frmMethButtons) {
+    QWidget* t = frmMethButtons; // avoid any possible callback issues
+    frmMethButtons = NULL;
+    delete t;
+  }
+
+  warn_clobber = false; // just in case
+}
+
+void taiDataHost_impl::ClearBody() {
+  widget()->setUpdatesEnabled(false);
+  ClearBody_impl();
+  taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
+  BodyCleared(); //rebuilds if ShowChanged
+  widget()->setUpdatesEnabled(true);
+}
+
+void taiDataHost_impl::ClearBody_impl() {
+  DeleteChildrenLater(body);
+}
+
+void taiDataHost_impl::Constr_Methods() {
+  Constr_Methods_impl();
+}
+
+void taiDataHost_impl::Constr_Methods_impl() { //note: conditional constructions used by SelectEditHost to rebuild methods
+  QFrame* tmp = frmMethButtons;
+  if (!frmMethButtons) {
+    show_meth_buttons = false; // set true if any created
+    tmp = new QFrame(); // tmp = new QFrame(widget());
+    tmp->setVisible(false); // prevents it showing as global win in some situations
+    tmp->setAutoFillBackground(true); // for when disconnected from us
+    SET_PALETTE_BACKGROUND_COLOR(tmp, bg_color);
+    tmp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
+    tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+  }
+  if (!layMethButtons) {
+    layMethButtons = new iFlowLayout(tmp, 3, taiM->hspc_c, (Qt::AlignCenter)); // margin, space, align
+  }
+  if (!frmMethButtons) {
+    frmMethButtons = tmp;
+    //TODO: if this is a SelectEdit, and this is a rebuild for first time,
+    // we will need to do the Insert_Methods call
+  }
+}
+
+void taiDataHost_impl::Insert_Methods() {
+  //NOTE: for taiEditDataHost, menus are always put in widget() even in deferred
+  if (frmMethButtons && !frmMethButtons->parentWidget()) {
+    // meth buttons always at bottom of inner layout
+    vblDialog->addSpacing(2);
+    vblDialog->addWidget(frmMethButtons);
+    frmMethButtons->setVisible(show_meth_buttons); // needed for deferred insert
+  }
+}
+
+void taiDataHost_impl::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_APPLY: {
+    if (apply_req) {
+      if (state == ACTIVE) {
+        Apply();
+      }
+      apply_req = false;
+    }
+  } break;
+  case CET_RESHOW: {
+    ReShowEvent* ev = static_cast<ReShowEvent*>(ev_);
+    if (reshow_req) {
+      if (state == ACTIVE) {
+        ReShow(ev->forced);
+        GetImage();
+      }
+      reshow_req = false;
+    }
+  } break;
+  case CET_GET_IMAGE: {
+    if (get_image_req) {
+      if ((state & STATE_MASK) < CANCELED) {
+        GetImage(false);
+      }
+      get_image_req = false;
+    }
+  } break;
+  default: inherited(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
+
+void taiDataHost_impl::Apply_Async() {
+  if (apply_req) return; // already waiting
+  if (state != ACTIVE) return;
+  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
+  apply_req = true;
+  QCoreApplication::postEvent(this, ev);
+}
+
+void taiDataHost_impl::ReShow_Async(bool forced) {
+  if (reshow_req) return; // already waiting
+  if ((state & STATE_MASK) >= CANCELED) return;
+  ReShowEvent* ev = new ReShowEvent(forced);
+  reshow_req = true;
+  QCoreApplication::postEvent(this, ev);
+}
+
+void taiDataHost_impl::GetImage_Async() {
+  // reshow does a getimage, so ignore if a reshow pending
+  if (get_image_req || reshow_req) return; // already waiting
+  // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
+  if ((state & STATE_MASK) >= CANCELED) return;
+  QEvent* ev = new QEvent((QEvent::Type)CET_GET_IMAGE);
+  get_image_req = true;
+  QCoreApplication::postEvent(this, ev);
+}
+
+void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+//note: nothing in base, by design
+  //NOTE: list/group subclasses typically detect changes in their GetImage routine
+  //  so we don't really subclass this routine or explicitly detect the list/group notifies
+  // note: because of deferred construction, we may still need to update buttons/menus
+  if (state == DEFERRED1) {
+    Refresh_impl(false);
+    return;
+  }
+  // note: we should have unlinked if cancelled, but if not, ignore if cancelled
+  if (!isConstructed()) return;
+  
+  if (updating) return; // it is us that caused this
+  if (dcr == DCR_STRUCT_UPDATE_END) {
+    Refresh_impl(true);
+  } 
+  // we really just want to ignore the BEGIN-type guys, otherwise accept all others
+  else if (!((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
+    (dcr == DCR_DATA_UPDATE_BEGIN)))
+  {
+    Refresh_impl(false);
+  }
+}
+
+void taiDataHost_impl::Refresh_impl(bool reshow) {
+  // if no changes have been made in this instance, then just refresh,
+  // otherwise, user will have to decide what to do, i.e., revert
+  if (HasChanged()) {
+    warn_clobber = true;
+    if (reshow) defer_reshow_req = true; // if not already set
+  } else {
+    if (reshow)
+      ReShow_Async();
+    else 
+      GetImage_Async();
+  }
+}
+
+void taiDataHost_impl::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
+  QMenu* menu = new QMenu(widget());
+  //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
+  Q_CHECK_PTR(menu);
+  int last_id = -1;
+  FillLabelContextMenu(sender, menu, last_id);
+  if (menu->actions().count() > 0)
+    menu->exec(sender->mapToGlobal(e->pos()));
+  delete menu;
+}
+
+void taiDataHost_impl::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
+//  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
+//  sel_item_idx = -1;
+  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+/*  sel_item_dat = NULL;
+  QVariant var = sender->userData();
+  if (var.isPtrType())
+    sel_item_dat = (taiData*)var.toPtr(); // pray!!! */
+}
+
+void taiDataHost_impl::Iconify(bool value) {
+  if (!dialog) return;
+  if (value) dialog->iconify();
+  else       dialog->deiconify();
+}
+
+void taiDataHost_impl::Ok_impl() { //note: only used for Dialogs
+  // NOTE: we herein might be bypassing the clobber warn, but shouldn't really
+  //be possible to modify ourself externally inside a dialog
+  inherited::Ok_impl();
+  if (HasChanged()) {
+    GetValue();
+    Unchanged();
+  }
+}
+
+void taiDataHost_impl::ReConstr_Body() {
+  if (!isConstructed()) return;
+  Constr_Body();
+  GetImage();
+}
+
+bool taiDataHost_impl::ReShow(bool force) {
+// if not visible, we may refresh the buttons if visible, otherwise nothing else
+  if (!mwidget) return false;//. huh?
+  //note: extremely unlikely to be updating if invisible, so we do this test here
+  if (!mwidget->isVisible()) {
+    defer_reshow_req = true;
+    GetImage(false); // no-force; invisible-friendly
+  }
+//note: only called with force from ReShowEdits, typ only from a SelEdit dialog
+  if (!updating) {
+    // was not us that caused this...
+    if (force) {
+        // get confirmation if changed, and possibly exit
+      if (HasChanged()) {
+        int chs = taMisc::Choice("Changes must be applied before rebuilding", "&Apply", "&Cancel");
+        switch (chs) {
+        case  1: // just ignore and exit
+          return false;
+          break;
+        case  0:
+        default:
+          Apply();
+          break;
+        }
+      }
+    } else { // not forced, normal situation for datachanged notifies
+      if (HasChanged()) {
+        warn_clobber = true; 
+        defer_reshow_req = true;
+        return false;
+      }
+    }
+  }
+  state |= SHOW_CHANGED; 
+  ClearBody(); // rebuilds body after clearing -- but SHOW_CHANGED prevents GetImage...
+  GetImage(); // ... so we do it here
+  defer_reshow_req = false; // if it was true
+  return true;
+}
+
+void taiDataHost_impl::Revert_force() {
+  if (modified && (taMisc::auto_revert == taMisc::CONFIRM_REVERT)) {
+    int chs = taMisc::Choice
+      ("Revert: You have edited the data -- apply, or revert and lose changes?",
+      "Apply", "Revert", "Cancel");
+    if(chs == 2)
+      return;
+    if(chs == 0) {
+      Apply();
+      return;
+    }
+  }
+  Unchanged();
+  Revert();			// use real revert to be sure..
+}
+
+taMisc::ShowMembs taiDataHost_impl::show() const {
+  return taMisc::show_gui;
+}
+
+void taiDataHost_impl::SetRevert(){
+  if (updating || (taMisc::is_loading)) return;
+  if (!revert_but) return;
+  revert_but->setHiLight(true);
+  revert_but->setEnabled(true);
+}
+
+void taiDataHost_impl::UnSetRevert(){
+  if (!revert_but) return;
+  revert_but->setHiLight(false);
+  revert_but->setEnabled(false);
+}
+
+
+//////////////////////////////////
+// 	taiDataHost		//
+//////////////////////////////////
+
+iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
+  int ctrl_size, const String& desc, taiData* buddy,
+  QObject* ctx_obj, const char* ctx_slot, int row)
+{
+  iLabel* label = new iLabel(row, name, par);
+  label->setFont(taiM->nameFont(ctrl_size));
+  label->setFixedHeight(taiM->label_height(ctrl_size));
+  if (buddy) label->setUserData((ta_intptr_t)buddy);
+  if (ctx_obj) QObject::connect(
+    label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
+      ctx_obj, ctx_slot );
+// if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
+  QWidget* buddy_widg = NULL;
+  if (buddy) {
+    buddy->setLabel(label);
+    buddy_widg = buddy->GetRep();
+    QObject::connect(buddy, SIGNAL(settingHighlight(bool)),
+        label, SLOT(setHighlight(bool)) );
+  }
+  
+
+  if (!desc.empty()) {
+    label->setToolTip(desc);
+    label->setStatusTip(desc);
+    if (buddy_widg != NULL) {
+      buddy_widg->setToolTip(desc);
+      buddy_widg->setStatusTip(desc);
+    }
+  }
+  return label;
+}
+
 
 taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)
 :inherited(typ_, read_only_, modal_, parent)
@@ -1098,11 +1456,6 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   row_height = 1; // actual value set in Constr
   cur_row = 0;
   dat_cnt = 0;
-//  sel_item_idx = -1;
-  sel_item_dat = NULL;
-//  sel_item_md = NULL;
-  rebuild_body = false;
-  sel_edit_mbrs = true; // inherited guys can turn off
 }
 
 taiDataHost::~taiDataHost() {
@@ -1114,27 +1467,7 @@ void taiDataHost::InitGuiFields(bool virt) {
   splBody = NULL;
   scrBody = NULL;
   layBody = NULL;
-  frmMethButtons = NULL;
-  layMethButtons = NULL;
-  show_meth_buttons = false;
 }
-
-const iColor taiDataHost::colorOfRow(int row) const {
-  if ((row % 2) == 0) {
-    return bg_color;
-  } else {
-    return bg_color_dark;
-  }
-}
-
-void taiDataHost::StartEndLayout(bool start) {
-  if (start) {
-    body->setUpdatesEnabled(false);
-  } else { // end
-    body->setUpdatesEnabled(true);
-  }
-}
-
 
 int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   if (row < 0)
@@ -1176,39 +1509,6 @@ int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
   wid->show(); // needed for rebuilds, to make the widget show
   return row;
 }
-
-iLabel* taiDataHost::MakeInitEditLabel(const String& name, QWidget* par,
-  int ctrl_size, const String& desc, taiData* buddy,
-  QObject* ctx_obj, const char* ctx_slot, int row)
-{
-  iLabel* label = new iLabel(row, name, par);
-  label->setFont(taiM->nameFont(ctrl_size));
-  label->setFixedHeight(taiM->label_height(ctrl_size));
-  if (buddy) label->setUserData((ta_intptr_t)buddy);
-  if (ctx_obj) QObject::connect(
-    label, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
-      ctx_obj, ctx_slot );
-// if it is an iLabel connecting a taiData, then connect the highlighting for non-default values
-  QWidget* buddy_widg = NULL;
-  if (buddy) {
-    buddy->setLabel(label);
-    buddy_widg = buddy->GetRep();
-    QObject::connect(buddy, SIGNAL(settingHighlight(bool)),
-        label, SLOT(setHighlight(bool)) );
-  }
-  
-
-  if (!desc.empty()) {
-    label->setToolTip(desc);
-    label->setStatusTip(desc);
-    if (buddy_widg != NULL) {
-      buddy_widg->setToolTip(desc);
-      buddy_widg->setStatusTip(desc);
-    }
-  }
-  return label;
-}
-
 
 int taiDataHost::AddNameData(int row, const String& name, const String& desc,
    QWidget* data, taiData* buddy, MemberDef* md, bool fill_hor)
@@ -1313,37 +1613,6 @@ void taiDataHost::AddMultiData(iEditGrid* multi_body, int row, int col, QWidget*
   data->show(); //required to show when rebuilding
 }
 
-void taiDataHost::BodyCleared() { // called when last widget cleared from body
-  if (!(state & SHOW_CHANGED)) return; // probably just destroying
-  rebuild_body = true;
-  ReConstr_Body();
-  state &= ~SHOW_CHANGED;
-}
-
-void taiDataHost::Cancel_impl() { //note: taiEditDataHost takes care of cancelling panels
-  inherited::Cancel_impl();
-  // delete any methods
-  if (frmMethButtons) {
-    QWidget* t = frmMethButtons; // avoid any possible callback issues
-    frmMethButtons = NULL;
-    delete t;
-  }
-
-  warn_clobber = false; // just in case
-}
-
-void taiDataHost::ClearBody() {
-  widget()->setUpdatesEnabled(false);
-  ClearBody_impl();
-  taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
-  BodyCleared(); //rebuilds if ShowChanged
-  widget()->setUpdatesEnabled(true);
-}
-
-void taiDataHost::ClearBody_impl() {
-  DeleteChildrenLater(body);
-}
-
 void taiDataHost::Constr_Box() {
   row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if using even/odd shading
   //note: see also gpiMultiEditDialog::Constr_Box, if changes made to this implementation
@@ -1364,7 +1633,7 @@ void taiDataHost::Constr_Box() {
   //note: the layout is added in Constr_Body, because it gets deleted when we change the 'show'
 }
 
-void taiDataHost::Constr_Body() {
+void taiDataHost::Constr_Body_impl() {
   QVBoxLayout* vbl = new QVBoxLayout(body);
   vbl->setMargin(0);
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
@@ -1392,294 +1661,11 @@ void taiDataHost::Constr_Body() {
   vbl->addStretch(1);
 }
 
-void taiDataHost::Constr_Methods() {
-  Constr_Methods_impl();
-}
-
-
-void taiDataHost::Constr_Methods_impl() { //note: conditional constructions used by SelectEditHost to rebuild methods
-  QFrame* tmp = frmMethButtons;
-  if (!frmMethButtons) {
-    show_meth_buttons = false; // set true if any created
-    tmp = new QFrame(); // tmp = new QFrame(widget());
-    tmp->setVisible(false); // prevents it showing as global win in some situations
-    tmp->setAutoFillBackground(true); // for when disconnected from us
-    SET_PALETTE_BACKGROUND_COLOR(tmp, bg_color);
-    tmp->setFrameStyle( QFrame::Panel | QFrame::Sunken );
-    tmp->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
-  }
-  if (!layMethButtons) {
-    layMethButtons = new iFlowLayout(tmp, 3, taiM->hspc_c, (Qt::AlignCenter)); // margin, space, align
-  }
-  if (!frmMethButtons) {
-    frmMethButtons = tmp;
-    //TODO: if this is a SelectEdit, and this is a rebuild for first time,
-    // we will need to do the Insert_Methods call
-  }
-}
-
-void taiDataHost::Insert_Methods() {
-  //NOTE: for taiEditDataHost, menus are always put in widget() even in deferred
-  if (frmMethButtons && !frmMethButtons->parentWidget()) {
-    // meth buttons always at bottom of inner layout
-    vblDialog->addSpacing(2);
-    vblDialog->addWidget(frmMethButtons);
-    frmMethButtons->setVisible(show_meth_buttons); // needed for deferred insert
-  }
-}
-
 void taiDataHost::Constr_Final() {
   inherited::Constr_Final();
   // we put all the stretch factor setting here, so it is easy to make code changes if necessary
   if (splBody) vblDialog->setStretchFactor(splBody, 1);
   else         vblDialog->setStretchFactor(scrBody, 1);
-}
-
-void taiDataHost::customEvent(QEvent* ev_) {
-  // we return early if we don't accept, otherwise fall through to accept
-  switch ((int)ev_->type()) {
-  case CET_APPLY: {
-    if (apply_req) {
-      if (state == ACTIVE) {
-        Apply();
-      }
-      apply_req = false;
-    }
-  } break;
-  case CET_RESHOW: {
-    ReShowEvent* ev = static_cast<ReShowEvent*>(ev_);
-    if (reshow_req) {
-      if (state == ACTIVE) {
-        ReShow(ev->forced);
-        GetImage();
-      }
-      reshow_req = false;
-    }
-  } break;
-  case CET_GET_IMAGE: {
-    if (get_image_req) {
-      if ((state & STATE_MASK) < CANCELED) {
-        GetImage(false);
-      }
-      get_image_req = false;
-    }
-  } break;
-  default: inherited(ev_); 
-    return; // don't accept
-  }
-  ev_->accept();
-}
-
-void taiDataHost::Apply_Async() {
-  if (apply_req) return; // already waiting
-  if (state != ACTIVE) return;
-  QEvent* ev = new QEvent((QEvent::Type)CET_APPLY);
-  apply_req = true;
-  QCoreApplication::postEvent(this, ev);
-}
-
-void taiDataHost::ReShow_Async(bool forced) {
-  if (reshow_req) return; // already waiting
-  if ((state & STATE_MASK) >= CANCELED) return;
-  ReShowEvent* ev = new ReShowEvent(forced);
-  reshow_req = true;
-  QCoreApplication::postEvent(this, ev);
-}
-
-void taiDataHost::GetImage_Async() {
-  // reshow does a getimage, so ignore if a reshow pending
-  if (get_image_req || reshow_req) return; // already waiting
-  // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
-  if ((state & STATE_MASK) >= CANCELED) return;
-  QEvent* ev = new QEvent((QEvent::Type)CET_GET_IMAGE);
-  get_image_req = true;
-  QCoreApplication::postEvent(this, ev);
-}
-
-void taiDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
-//note: nothing in base, by design
-  //NOTE: list/group subclasses typically detect changes in their GetImage routine
-  //  so we don't really subclass this routine or explicitly detect the list/group notifies
-  // note: because of deferred construction, we may still need to update buttons/menus
-  if (state == DEFERRED1) {
-    Refresh_impl(false);
-    return;
-  }
-  // note: we should have unlinked if cancelled, but if not, ignore if cancelled
-  if (!isConstructed()) return;
-  
-  if (updating) return; // it is us that caused this
-  if (dcr == DCR_STRUCT_UPDATE_END) {
-    Refresh_impl(true);
-  } 
-  // we really just want to ignore the BEGIN-type guys, otherwise accept all others
-  else if (!((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
-    (dcr == DCR_DATA_UPDATE_BEGIN)))
-  {
-    Refresh_impl(false);
-  }
-}
-
-void taiDataHost::Refresh_impl(bool reshow) {
-  // if no changes have been made in this instance, then just refresh,
-  // otherwise, user will have to decide what to do, i.e., revert
-  if (HasChanged()) {
-    warn_clobber = true;
-    if (reshow) defer_reshow_req = true; // if not already set
-  } else {
-    if (reshow)
-      ReShow_Async();
-    else 
-      GetImage_Async();
-  }
-}
-
-void taiDataHost::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e) {
-  QMenu* menu = new QMenu(widget());
-  //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
-  Q_CHECK_PTR(menu);
-  int last_id = -1;
-  FillLabelContextMenu(sender, menu, last_id);
-  if (menu->actions().count() > 0)
-    menu->exec(sender->mapToGlobal(e->pos()));
-  delete menu;
-}
-
-void taiDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
-//  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
-//  sel_item_idx = -1;
-  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
-/*  sel_item_dat = NULL;
-  QVariant var = sender->userData();
-  if (var.isPtrType())
-    sel_item_dat = (taiData*)var.toPtr(); // pray!!! */
-}
-
-void taiDataHost::Iconify(bool value) {
-  if (!dialog) return;
-  if (value) dialog->iconify();
-  else       dialog->deiconify();
-}
-
-void taiDataHost::Ok_impl() { //note: only used for Dialogs
-  // NOTE: we herein might be bypassing the clobber warn, but shouldn't really
-  //be possible to modify ourself externally inside a dialog
-  inherited::Ok_impl();
-  if (HasChanged()) {
-    GetValue();
-    Unchanged();
-  }
-}
-
-void taiDataHost::ReConstr_Body() {
-  if (!isConstructed()) return;
-  Constr_Body();
-  GetImage();
-}
-
-bool taiDataHost::ReShow(bool force) {
-// if not visible, we may refresh the buttons if visible, otherwise nothing else
-  if (!mwidget) return false;//. huh?
-  //note: extremely unlikely to be updating if invisible, so we do this test here
-  if (!mwidget->isVisible()) {
-    defer_reshow_req = true;
-    GetImage(false); // no-force; invisible-friendly
-  }
-//note: only called with force from ReShowEdits, typ only from a SelEdit dialog
-  if (!updating) {
-    // was not us that caused this...
-    if (force) {
-        // get confirmation if changed, and possibly exit
-      if (HasChanged()) {
-        int chs = taMisc::Choice("Changes must be applied before rebuilding", "&Apply", "&Cancel");
-        switch (chs) {
-        case  1: // just ignore and exit
-          return false;
-          break;
-        case  0:
-        default:
-          Apply();
-          break;
-        }
-      }
-    } else { // not forced, normal situation for datachanged notifies
-      if (HasChanged()) {
-        warn_clobber = true; 
-        defer_reshow_req = true;
-        return false;
-      }
-    }
-  }
-  state |= SHOW_CHANGED; 
-  ClearBody(); // rebuilds body after clearing -- but SHOW_CHANGED prevents GetImage...
-  GetImage(); // ... so we do it here
-  defer_reshow_req = false; // if it was true
-  return true;
-}
-
-void taiDataHost::Revert_force() {
-  if (modified && (taMisc::auto_revert == taMisc::CONFIRM_REVERT)) {
-    int chs = taMisc::Choice
-      ("Revert: You have edited the data -- apply, or revert and lose changes?",
-      "Apply", "Revert", "Cancel");
-    if(chs == 2)
-      return;
-    if(chs == 0) {
-      Apply();
-      return;
-    }
-  }
-  Unchanged();
-  Revert();			// use real revert to be sure..
-}
-
-taMisc::ShowMembs taiDataHost::show() const {
-  return taMisc::show_gui;
-}
-
-//////////////////////////////////
-// 	taiDialog		//
-//////////////////////////////////
-
-/* OBS:
-class taiDButton : public ivButton {
-public:
-  taiDialog* diag;
-  virtual void release(const ivEvent&);
-  static taiDButton* GetButton(taiDialog* d, const char* s, ivAction* a);
-  taiDButton(taiDialog* d, ivGlyph* g, ivStyle* s, ivTelltaleState* t, ivAction* a);
-};
-
-taiDButton::taiDButton(taiDialog* d, ivGlyph* g, ivStyle* s, ivTelltaleState* t, ivAction* a)
-: ivButton(g,s,t,a) {
-  diag = d;
-}
-
-taiDButton* taiDButton::GetButton(taiDialog *d, const char* s, ivAction* a){
-  ivWidgetKit* wkit = ivWidgetKit::instance();
-  ivTelltaleState* t = new ivTelltaleState(ivTelltaleState::is_enabled);
-  return new taiDButton(d,wkit->default_button_look(wkit->label(s),t),
-		      wkit->style(),t,a);
-}
-
-void taiDButton::release(const ivEvent& e) {
-  diag->mouse_button = taiM->GetButton(e);
-  ivButton::release(e);
-}
-*/
-
-
-void taiDataHost::SetRevert(){
-  if (updating || (taMisc::is_loading)) return;
-  if (!revert_but) return;
-  revert_but->setHiLight(true);
-  revert_but->setEnabled(true);
-}
-
-void taiDataHost::UnSetRevert(){
-  if (!revert_but) return;
-  revert_but->setHiLight(false);
-  revert_but->setEnabled(false);
 }
 
 
@@ -1760,6 +1746,25 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   membs.SetMinSize(MS_CNT); 
   membs.def_size = MS_CNT;
   show_set(MS_NORM) = true;
+  
+  for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
+    MembSet* ms = membs.SafeEl(j);
+    if (!ms) break; // shouldn't happen
+    ms->modal = true;
+    switch (j) {
+    case MS_EXPT:
+      ms->text = "Expert Items";
+      ms->desc = "show member items that are usually only needed for advanced purposes";
+      break;
+    case MS_HIDD:
+      ms->text = "Hidden Items";
+      ms->desc = "show member items that are rarely needed by most users";
+      break;
+    default: continue; // shouldn't happen!
+    }
+  }
+  
+  
   inline_mode = false;
   bgrp = new QButtonGroup(this);
   bgrp->setExclusive(false);
@@ -1877,7 +1882,7 @@ void taiEditDataHost::Enum_Members() {
 }
 
 void taiEditDataHost::Constr_Body() {
-  inherited::Constr_Body();
+  Constr_Body_impl();
   StartEndLayout(true);
   if (inline_mode) {
     dat_cnt = 0;
@@ -1899,19 +1904,10 @@ void taiEditDataHost::Constr_Data_Labels() {
   }
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
     if (j >= membs.def_size) return; // don't do those
-    if (memb_el(j).size == 0) continue;
-    String text; String desc;
-    switch (j) {
-    case MS_EXPT:
-      text = "Expert Items";
-      desc = "show member items that are usually only needed for advanced purposes";
-      break;
-    case MS_HIDD:
-      text = "Hidden Items";
-      desc = "show member items that are rarely needed by most users";
-      break;
-    default: continue; // shouldn't happen!
-    }
+    MembSet* ms = membs.SafeEl(j);
+    if (!ms || ms->memb_el.size == 0) continue;
+    String text = ms->text; 
+    String desc = ms->desc;
     iCheckBox* chk = new iCheckBox(text.chars(), body);
     AddSectionLabel(idx, chk, desc);
     ++idx;
@@ -2117,9 +2113,12 @@ EditDataPanel* taiEditDataHost::EditPanelDeferred(taiDataLink* link) {
   return panel;
 }
 
-void taiEditDataHost::ConstrEditControl() {
+void taiDataHostBase::ConstrEditControl() {
   Constr("", "", HT_CONTROL);
-  taiMisc::active_edits.Add(this); // add to the list of active edit dialogs
+//TEMP
+//TODO: need to deal with the now wrongly based taiEDH stuff in taiMisc
+  taiEditDataHost* edh = dynamic_cast<taiEditDataHost*>(this);
+  if (edh) taiMisc::active_edits.Add(edh); // add to the list of active edit dialogs
   state = ACTIVE;
 }
 

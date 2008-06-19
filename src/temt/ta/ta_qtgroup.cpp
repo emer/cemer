@@ -959,7 +959,8 @@ gpiListNew::~gpiListNew() {
 }
 
 void gpiListNew::Constr_Body() {
-  inherited::Constr_Body();
+//  inherited::Constr_Body();
+  Constr_Body_impl();
   num_rep = new taiIncrField(NULL, this, NULL, body);//, taiData::flgPosOnly);
 //   typ_rep = new gpiElTypes(taiMenu::buttonmenu, taiMisc::fonSmall,
 // 			       ths->GetTypeDef(), ths->el_base, this, NULL, body);

@@ -26,6 +26,7 @@
 
 #ifndef __MAKETA__
 # include <QPointer>
+# include <QItemDelegate>
 #endif
 
 #include "ta_TA_type.h"
@@ -63,9 +64,6 @@ protected:
   void 			Constr_Methods();
 
   override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
-//obs  void			MakeMenuItem(QMenu* menu, const char* name, int index, int param, const char* slot);
-//obs  QMenu*		FindMenuItem(QMenu* par_menu, const char* label);
-
   override void		Constr_Data_Labels(); 
   override void 	GetImage_Membs_def();
   override void 	GetValue_Membs_def();
@@ -78,6 +76,64 @@ private:
   void	Initialize();
 };
 
+class SelectEditDelegate; // #IGNORE
+
+class TA_API iSelectEditDataHost2 : public taiEditDataHost {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS alternative, using viewer
+INHERITED(taiEditDataHost)
+  Q_OBJECT
+public:
+  SelectEdit*		sele;
+  
+  QTableWidget*		tw;
+
+  override void		Constr_Body();
+  override void		Constr_Box();
+  
+  iSelectEditDataHost2(void* base, TypeDef* td, bool read_only_ = false,
+  	QObject* parent = 0);
+  iSelectEditDataHost2()	{ Initialize();};
+  ~iSelectEditDataHost2();
+
+protected:
+  SelectEditDelegate*	sed;
+  
+  override void		Constr_Body_impl();
+  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
+  void 			Constr_Methods();
+
+  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
+
+  override void		Constr_Data_Labels(); 
+  override void 	GetImage_Membs_def();
+  override void 	GetValue_Membs_def();
+
+protected slots:
+  virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
+  virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
+  virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
+private:
+  void	Initialize();
+};
+//
+#ifndef __MAKETA__
+class TA_API SelectEditDelegate: public QItemDelegate {
+INHERITED(QItemDelegate)
+public:
+  SelectEdit*		sele;
+  iSelectEditDataHost2*	sedh;
+  
+  override QWidget* createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  override void setEditorData(QWidget* editor, 
+    const QModelIndex& index) const;
+  override void setModelData(QWidget* editor, QAbstractItemModel* model,
+    const QModelIndex& index ) const;
+
+  SelectEditDelegate(SelectEdit* sele_, iSelectEditDataHost2* sedh_);
+};
+#endif // !__MAKETA__
+
 
 
 
@@ -86,7 +142,7 @@ class TA_API iSelectEditPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  iSelectEditDataHost*	se;
+  taiDataHost_impl*	se;
   SelectEdit*		sele() {return (m_link) ? (SelectEdit*)(link()->data()) : NULL;}
   
   override bool		HasChanged(); // 'true' if user has unsaved changes

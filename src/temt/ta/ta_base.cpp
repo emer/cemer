@@ -2046,13 +2046,13 @@ bool taBase::BrowserCollapseAll() {
 }
 #endif
 
-bool taBase::ReShowEdit(bool force) {
+/*obs bool taBase::ReShowEdit(bool force) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
 #endif
   return false;
-}
+}*/
 
 const iColor taBase::GetEditColor(bool& ok) {
   String dec_key = GetTypeDecoKey(); // nil if none

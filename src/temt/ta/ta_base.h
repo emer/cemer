@@ -1189,7 +1189,7 @@ public:
   // #CAT_Display collapse all sub-leaves under this item in the browser
   virtual void		BrowseMe();
   // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
-  virtual bool		ReShowEdit(bool force = false);
+//obs  virtual bool		ReShowEdit(bool force = false);
   // #CAT_Display reshows any open edit dialogs for this object
   virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
   virtual const iColor GetEditColorInherit(bool& ok);

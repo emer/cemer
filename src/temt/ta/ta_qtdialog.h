@@ -26,6 +26,7 @@
 
 #ifndef __MAKETA__
 # include <ilabel.h>
+# include <QAbstractItemModel>
 # include <QEvent>
 # include <QMessageBox>
 # include <QObject>
@@ -38,6 +39,7 @@ class iDataPanel; //
 
 // forwards
 class taiDataHostBase;
+class taiDataHost_impl;
 class taiDataHost;
 class taiEditDataHost; 
 class taiStringDataHost; //
@@ -318,6 +320,7 @@ public:
     HostType host_type = HT_DIALOG, bool deferred = false);
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
   void  ConstrDeferred(); // finish deferred construction
+  void		 	ConstrEditControl(); 
   virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
 /*  virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call */
@@ -406,43 +409,28 @@ private:
 };
 
 
-class TA_API taiDataHost: public taiDataHostBase, virtual public IDataHost 
+class TA_API taiDataHost_impl: public taiDataHostBase, virtual public IDataHost 
 { // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiDataHostBase)
   Q_OBJECT
 friend class iDialog;
 public:
-  static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
-  static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
-    const String& desc, taiData* buddy = NULL,
-    QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0); 
-    // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
   static void 		DoFillLabelContextMenu_SelEdit(iLabel* sender, 
     QMenu* menu, int& last_id, taiData* sel_item_dat, QWidget* menu_par,
     QObject* slot_obj, const char* slot);
     // helper used here and in ProgEditor and elsewhere to handle Seledit context menus
+  static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
   
-  int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
-  int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
-  int		dat_cnt; // count of actual data controls added -- used to mark flat data index of control for right click menu
-
-
-  QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
-  QScrollArea*	  scrBody;		// scrollbars for the body items
-#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
-  iFormLayout*	layBody;
-#else
-  QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
-#endif
   QFrame*	frmMethButtons;	// method buttons -- in body for dialogs, in outer panel for panel
   iFlowLayout*	layMethButtons;	// method buttons
 
+  virtual int		curRow() const {return 0;}
 
   virtual const iColor	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
   inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
 
-  taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
-  virtual ~taiDataHost();
+  taiDataHost_impl(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+  virtual ~taiDataHost_impl();
 
   void			ClearBody();	
    // prepare dialog for rebuilding Body to show new contents
@@ -461,14 +449,14 @@ public:
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
-  TypeDef* 	GetTypeDef() const {return &TA_taiDataHost;} // override
+  TypeDef* 	GetTypeDef() const {return &TA_taiDataHost_impl;} // override
 
 public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
 //  void		DataLinkDestroying(taDataLink* dl); 
   void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f
-  const iColor	 colorOfCurRow() const {return colorOfRow(cur_row);} 
+  const iColor	 colorOfCurRow() const {return colorOfRow(curRow());} 
   taMisc::ShowMembs	show() const; // legacy -- just returns the app value
   bool  	HasChanged() {return modified;}	
   bool		isConstructed() {int s = state & STATE_MASK;
@@ -493,26 +481,12 @@ protected:
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   virtual void	StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
-  int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
-    // add a widget, usually a label or checkbox, that will span both columns (no data)
-  int		AddNameData(int row, const String& name, const String& desc,
-    QWidget* data_wid, taiData* data_dat = NULL, MemberDef* md = NULL,
-    bool fill_hor = false);
-    // add a label item in first column, data item in second column; row<0 means "next row"; returns row
-  int		AddData(int row, QWidget* data_wid, bool fill_hor = false);
-    // add a data item with no label (spanning whole row); row<0 means "next row"; returns row
-  void		AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
-  void		AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
-  void		AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
-  void		BodyCleared(); // called when show changed, and body has actually been cleared
-  void		SetMultiSize(int rows, int cols) {} // implemented in gpiMultiEditHost
+  virtual void		BodyCleared(); // called when show changed, and body has actually been cleared
   virtual void	ClearBody_impl(); // #IGNORE prepare dialog for rebuilding Body to show new contents -- INHERITING CLASSES MUST CALL THIS LAST
   override void  Constr_Methods(); // creates the box for buttons
   virtual void	Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
-  override void  Constr_Box();
-  override void	Constr_Body();
   override void  Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
-  override void	Constr_Final();
+  //override void	Constr_Final();
   virtual void	FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
   override void	Cancel_impl();
   override void	Ok_impl();
@@ -528,6 +502,67 @@ protected slots:
 };
 
 
+class TA_API taiDataHost: public taiDataHost_impl 
+{ // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+INHERITED(taiDataHost_impl)
+  Q_OBJECT
+friend class iDialog;
+public:
+  static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
+    const String& desc, taiData* buddy = NULL,
+    QObject* ctx_obj = NULL, const char* ctx_slot = NULL, int row = 0); 
+    // helper used by AddName, and in ProgEditor (and elsewhere, ex inlines)
+  
+  int		row_height;	// height of edit rows, not including margins and spaces (= max_control_height(def_size)) -- set in Constr
+  int		cur_row;	// #IGNORE marks row num of ctrl being added to grid or matrix (for groups) -- child can read this to determine its background color, by calling colorOfRow()
+  int		dat_cnt; // count of actual data controls added -- used to mark flat data index of control for right click menu
+
+
+  QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
+  QScrollArea*	  scrBody;		// scrollbars for the body items
+#if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
+  iFormLayout*	layBody;
+#else
+  QGridLayout* 	  layBody;	// layout for the body -- deleted/reconstructed when show changes
+#endif
+
+  override int		curRow() const {return cur_row;}
+  
+  taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
+  ~taiDataHost();
+
+public: // ITypedObject i/f (common to IDLC and IDH)
+  void*		This() {return this;} // override
+  TypeDef* 	GetTypeDef() const {return &TA_taiDataHost;} // override
+
+public: // IDataLinkClient i/f -- note: only registered though for taiEDH and later
+//  void		DataLinkDestroying(taDataLink* dl); 
+//  void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+
+protected:
+
+  virtual void		SetMultiSize(int rows, int cols) {}
+  int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
+    // add a widget, usually a label or checkbox, that will span both columns (no data)
+  int		AddNameData(int row, const String& name, const String& desc,
+    QWidget* data_wid, taiData* data_dat = NULL, MemberDef* md = NULL,
+    bool fill_hor = false);
+    // add a label item in first column, data item in second column; row<0 means "next row"; returns row
+  int		AddData(int row, QWidget* data_wid, bool fill_hor = false);
+    // add a data item with no label (spanning whole row); row<0 means "next row"; returns row
+  void		AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
+  void		AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
+  void		AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
+  override void  Constr_Box();
+  virtual void	Constr_Body_impl();
+  override void	Constr_Final();
+
+protected:
+  override void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
+};
+
+
+
 
 class TA_API taiDialog_List : public taPtrList<taiDataHost> { // #IGNORE list of DataHosts that have been dialoged
 protected:
@@ -541,15 +576,19 @@ class TA_API MembSet { // #IGNORE
 public:
   Member_List		memb_el; // member elements (1:1 with data_el), empty in inline mode
   taiDataList 		data_el; // data elements (1:1 with memb_el WHEN section shown)
+  String		text; // for non-default guys, the text in the label or checkbox
+  String		desc; // for non-default guys, the tooltip text
   bool			show; // flag to help by indicating whether to show or not
+  bool			modal; // flag to indicate that section is modal (checkbox, or default closed tree)
   
-  MembSet() {show = false;}
+  MembSet() {show = false; modal = false;}
 private:
   MembSet(const MembSet& cp); // value semantics not allowed
   MembSet& operator=(const MembSet& cp);
 };
 
-class TA_API MembSet_List : public taPtrList<MembSet> { // #IGNORE 
+
+class TA_API MembSet_List : public taPtrList<MembSet> { // #IGNORE -- note that 1st list is always the default (no parent) -- leave it empty to have no root items
 public:
   int			def_size; // set to how many you want to use default processing
   void			SetMinSize(int n); // make sure there are at least n sets
@@ -565,6 +604,7 @@ public:
 protected:
   void	El_Done_(void* it) { delete (MembSet*)it; }
 };
+
 
 class TA_API taiEditDataHost : public taiDataHost {
   // // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
@@ -620,7 +660,7 @@ public:
     // for dialogs -- add to list of active_edit dialogs too
   EditDataPanel* 	EditPanel(taiDataLink* link); // for panels
   EditDataPanel* 	EditPanelDeferred(taiDataLink* link); // for panels
-  void		 	ConstrEditControl(); 
+//  void		 	ConstrEditControl(); 
     // for controls -- construct then edit 
   void			GetImage(bool force); //override
   void			GetValue(); //override

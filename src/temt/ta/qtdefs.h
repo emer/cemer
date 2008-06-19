@@ -111,6 +111,7 @@ class	QStackedLayout;		// #IGNORE
 class	QStackedWidget;		// #IGNORE 
 class	QStatusBar;		// #IGNORE
 class	QTableView;		// #IGNORE 
+class	QTableWidget;		// #IGNORE 
 class	QTabBar;		// #IGNORE 
 class	QTabWidget;		// #IGNORE 
 class	QTcpServer;		// #IGNORE 

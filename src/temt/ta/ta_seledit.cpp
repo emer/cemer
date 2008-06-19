@@ -418,6 +418,16 @@ void SelectEdit::Reset() {
   ReShowEdit(true); //forced
 }
 
+bool SelectEdit::ReShowEdit(bool force) {
+  if(!taMisc::gui_active) return false;
+#ifdef TA_GUI
+  DataChanged(DCR_ITEM_UPDATED);
+//  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
+#endif
+  return false;
+}
+
+
 int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
   if(TestError(!obj || memb_contains.empty(), "SearchMembers", 
 	       "null object or empty search")) return -1;

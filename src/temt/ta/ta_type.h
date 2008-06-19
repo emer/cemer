@@ -615,6 +615,11 @@ public:
 #endif
   };    
   
+  enum EditStyle { // style of editor
+    ES_WIDGETS, // #LABEL_Widgets use the legacy style, that uses nested live widgets (slower)
+    ES_TABLE, // #LABEL_Table use the new tabular view style, that makes edit widgets on demand (much faster)
+  };
+  
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		default_app_install_folder_name; // #READ_ONLY #NO_SAVE #HIDDEN the default folder name for installation, ex. "Emergent"
@@ -670,6 +675,7 @@ public:
   static bool		auto_edit; 	// #SAVE #CAT_GUI #EXPERT automatic edit dialog after creation?
   static AutoRevert	auto_revert;    // #SAVE #CAT_GUI #EXPERT when dialogs are automatically updated (reverted), what to do about changes?
   static MatrixView	matrix_view;	// #SAVE #CAT_GUI #EXPERT #DEF_BOT_ZERO whether to show matrices with 0 row at top or bottom of view
+  static EditStyle	edit_style;	// #SAVE #CAT_GUI #EXPERT #DEF_ES_WIDGETS style to use for edit dialogs
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
   static short		num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent files to save
   static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save

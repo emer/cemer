@@ -171,9 +171,9 @@ public:
   static void	PurgeDialogs();
   // remove any 'NoBlock' dialogs from active list (& delete them)
 
-  static bool	RevertEdits(void* obj, TypeDef* td);
+//obs  static bool	RevertEdits(void* obj, TypeDef* td);
   // revert any open edit dialogs for given object
-  static bool	ReShowEdits(void* obj, TypeDef* td, bool force = true);
+//  static bool	ReShowEdits(void* obj, TypeDef* td, bool force = true);
   // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
   static taiEditDataHost* FindEdit(void* base, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
