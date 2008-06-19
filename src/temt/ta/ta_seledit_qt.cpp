@@ -250,12 +250,11 @@ void tabSelectEditViewType::CreateDataPanel_impl(taiDataLink* dl_)
 }
 
 
+//////////////////////////////////
+//  iSelectEditDataHostBase	//
+//////////////////////////////////
 
-//////////////////////////
-//  iSelectEditDataHost	//
-//////////////////////////
-
-iSelectEditDataHost::iSelectEditDataHost(void* base, TypeDef* td,
+iSelectEditDataHostBase::iSelectEditDataHostBase(void* base, TypeDef* td,
   bool read_only_, QObject* parent)
 :inherited(base, td, read_only_, false, parent)
 {
@@ -263,16 +262,16 @@ iSelectEditDataHost::iSelectEditDataHost(void* base, TypeDef* td,
   sele = (SelectEdit*)base;
 }
 
-iSelectEditDataHost::~iSelectEditDataHost() {
+iSelectEditDataHostBase::~iSelectEditDataHostBase() {
 }
 
-void iSelectEditDataHost::Initialize()
+void iSelectEditDataHostBase::Initialize()
 {
   sele = NULL;
   sel_edit_mbrs = true; // note: we don't actually select members, just for removal
 }
 
-void iSelectEditDataHost::Constr_Body() {
+void iSelectEditDataHostBase::Constr_Body() {
   if (rebuild_body) {
     meth_el.Reset();
   }
@@ -284,6 +283,141 @@ void iSelectEditDataHost::Constr_Body() {
   }
 }
   
+void iSelectEditDataHostBase::Constr_Methods() {
+  inherited::Constr_Methods();
+  Insert_Methods();
+  if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
+    cur_menu->AddSep();
+  }
+
+  taGroupItr itr;
+  EditMthItem_Group* grp;
+  //int set_idx = 0;
+  FOR_ITR_GP(EditMthItem_Group, grp, sele->mths., itr) {
+    if (grp->size == 0) continue;
+    //note: root group uses only buttons (hard wired)
+    EditMthItem_Group::MthGroupType group_type = grp->group_type;
+    
+    // make a menu or button group if needed
+    String men_nm = grp->GetDisplayName();
+    if (men_nm.empty()) // shouldn't happen
+      men_nm = "Actions";
+    switch (group_type) {
+    case EditMthItem_Group::GT_MENU: {
+      cur_menu = ta_menus.FindName(men_nm);
+      if (cur_menu == NULL) {
+        cur_menu = menu->AddSubMenu(men_nm);
+        ta_menus.Add(cur_menu);
+      }
+    } break;
+    case EditMthItem_Group::GT_MENU_BUTTON: { 
+      cur_menu_but = ta_menu_buttons.FindName(men_nm);
+      if (cur_menu_but == NULL) {
+        cur_menu_but = taiActions::New
+          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
+                  NULL, this, NULL, widget());
+        cur_menu_but->setLabel(men_nm);
+        DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
+        ta_menu_buttons.Add(cur_menu_but);
+      }
+    } break;
+    default: break; // nothing for butts
+    } // switch group_type
+          
+    for (int i = 0; i < grp->size; ++i) {
+      EditMthItem* item = grp->FastEl(i);
+      MethodDef* md = item->mth;
+      taBase* base = item->base;
+      if ((md->im == NULL) || (base == NULL)) continue;
+      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
+      if (mth_rep == NULL) continue;
+      meth_el.Add(mth_rep);
+  
+      //NOTE: for seledit functions, we never place them on the last menu or button, because that may
+      // make no sense -- the label specifies the place, or Actions if no label
+      String mth_cap = item->caption();
+      String statustip = item->desc;
+      switch (group_type) {
+      case EditMthItem_Group::GT_BUTTONS:  {
+        AddMethButton(mth_rep, mth_cap);
+      } break;
+      case EditMthItem_Group::GT_MENU: {
+//        mth_rep->AddToMenu(cur_menu);
+        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
+              taiAction::action, mth_rep, SLOT(CallFun()) );
+        if (statustip.nonempty())
+          act->setStatusTip(statustip);
+      } break;
+      case EditMthItem_Group::GT_MENU_BUTTON: { 
+//        mth_rep->AddToMenu(cur_menu_but);
+        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
+              taiAction::action, mth_rep, SLOT(CallFun()) );
+        if (statustip.nonempty())
+          act->setStatusTip(statustip);
+      } break;
+      } // switch group_type
+    }
+  } // groups
+}
+
+void iSelectEditDataHostBase::DoRemoveSelEdit() {
+   // removes the sel_item_index item 
+  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
+  if (sel_item_index >= 0) {
+    sele->RemoveField(sel_item_index);
+  }
+#ifdef DEBUG
+  else
+    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
+#endif
+}
+
+void iSelectEditDataHostBase::FillLabelContextMenu_SelEdit(iLabel* sender,
+  QMenu* menu, int& last_id)
+{
+  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
+  if (sel_item_index < 0) return; 
+  //QAction* act = 
+  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
+}
+
+taBase* iSelectEditDataHostBase::GetMembBase_Flat(int idx) {
+  return sele->mbrs.GetBase_Flat(idx);
+}
+
+taBase* iSelectEditDataHostBase::GetMethBase_Flat(int idx) {
+  return sele->mths.GetBase_Flat(idx);
+}
+
+
+void iSelectEditDataHostBase::mnuRemoveMember_select(int idx) {
+  sele->RemoveField(idx);
+}
+
+void iSelectEditDataHostBase::mnuRemoveMethod_select(int idx) {
+  sele->RemoveFun(idx);
+}
+
+
+
+//////////////////////////
+//  iSelectEditDataHost	//
+//////////////////////////
+
+iSelectEditDataHost::iSelectEditDataHost(void* base, TypeDef* td,
+  bool read_only_, QObject* parent)
+:inherited(base, td, read_only_, parent)
+{
+  Initialize();
+}
+
+iSelectEditDataHost::~iSelectEditDataHost() {
+}
+
+void iSelectEditDataHost::Initialize()
+{
+}
+
 void iSelectEditDataHost::ClearBody_impl() {
   // we also clear all the methods, and then rebuild them
   ta_menus.Reset();
@@ -346,114 +480,6 @@ void iSelectEditDataHost::Constr_Data_Labels() {
   }
 }
 
-void iSelectEditDataHost::Constr_Methods() {
-  inherited::Constr_Methods();
-  Insert_Methods();
-  if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
-    cur_menu->AddSep();
-  }
-
-  taGroupItr itr;
-  EditMthItem_Group* grp;
-  //int set_idx = 0;
-  FOR_ITR_GP(EditMthItem_Group, grp, sele->mths., itr) {
-    if (grp->size == 0) continue;
-    //note: root group uses only buttons (hard wired)
-    EditMthItem_Group::MthGroupType group_type = grp->group_type;
-    
-    // make a menu or button group if needed
-    String men_nm = grp->GetDisplayName();
-    if (men_nm.empty()) // shouldn't happen
-      men_nm = "Actions";
-    switch (group_type) {
-    case EditMthItem_Group::GT_MENU: {
-      cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu == NULL) {
-        cur_menu = menu->AddSubMenu(men_nm);
-        ta_menus.Add(cur_menu);
-      }
-    } break;
-    case EditMthItem_Group::GT_MENU_BUTTON: { 
-      cur_menu_but = ta_menu_buttons.FindName(men_nm);
-      if (cur_menu_but == NULL) {
-        cur_menu_but = taiActions::New
-          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
-                  NULL, this, NULL, widget());
-        cur_menu_but->setLabel(men_nm);
-        DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
-        ta_menu_buttons.Add(cur_menu_but);
-      }
-    } break;
-    default: break; // nothing for butts
-    } // switch group_type
-          
-    for (int i = 0; i < grp->size; ++i) {
-      EditMthItem* item = grp->FastEl(i);
-      MethodDef* md = item->mth;
-      taBase* base = item->base;
-      if ((md->im == NULL) || (base == NULL)) continue;
-      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
-      if (mth_rep == NULL) continue;
-      meth_el.Add(mth_rep);
-  
-      //NOTE: for seledit functions, we never place them on the last menu or button, because that may
-      // make no sense -- the label specifies the place, or Actions if no label
-      String mth_cap = item->caption();
-      String statustip = item->desc;
-      switch (group_type) {
-      case EditMthItem_Group::GT_BUTTONS:  {
-        AddMethButton(mth_rep, mth_cap);
-      } break;
-      case EditMthItem_Group::GT_MENU: {
-//        mth_rep->AddToMenu(cur_menu);
-        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
-        if (statustip.nonempty())
-          act->setStatusTip(statustip);
-      } break;
-      case EditMthItem_Group::GT_MENU_BUTTON: { 
-//        mth_rep->AddToMenu(cur_menu_but);
-        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
-        if (statustip.nonempty())
-          act->setStatusTip(statustip);
-      } break;
-      } // switch group_type
-    }
-  } // groups
-}
-
-void iSelectEditDataHost::DoRemoveSelEdit() {
-   // removes the sel_item_index item 
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    sele->RemoveField(sel_item_index);
-  }
-#ifdef DEBUG
-  else
-    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
-#endif
-}
-
-void iSelectEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender,
-  QMenu* menu, int& last_id)
-{
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
-  if (sel_item_index < 0) return; 
-  //QAction* act = 
-  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
-}
-
-/* QMenu* iSelectEditDataHost::FindMenuItem(QMenu* par_menu, const char* label) {
-  int id = 0;
-  for (uint i = 0; i < par_menu->count(); ++i) {
-    id = par_menu->idAt(i);
-    if (par_menu->text(id) == label)
-      return (QMenu*)par_menu->findItem(id);
-  }
-  return NULL;
-}*/
-
 void iSelectEditDataHost::GetImage_Membs_def() {
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
@@ -494,19 +520,97 @@ void iSelectEditDataHost::GetValue_Membs_def() {
   }
 }
 
-/* void iSelectEditDataHost::(QMenu* menu, const char* name, int index, int param, const char* slot) {
-    menu->insertItem(name, this, slot, 0, index);
-    menu->setItemParameter(index, param);
-}*/
 
-void iSelectEditDataHost::mnuRemoveMember_select(int idx) {
-  sele->RemoveField(idx);
+//////////////////////////
+//   taiDataDelegate	//
+//////////////////////////
+
+
+taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_) 
+{
+  edh = edh_;
 }
 
-void iSelectEditDataHost::mnuRemoveMethod_select(int idx) {
-  sele->RemoveFun(idx);
+QWidget* taiDataDelegate::createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  MemberDef* md = NULL;
+  taBase* base = NULL;
+  if (IndexToMembBase(index, md, base)) {
+    if (md->im == NULL) goto exit; // shouldn't happen
+    dat = md->im->GetDataRep(edh, NULL, parent);
+    dat->SetBase(base);
+    dat->SetMemberDef(md);
+    QWidget* rep = dat->GetRep();
+    connect(rep, SIGNAL(destroyed(QObject*)),
+      this, SLOT(rep_destroyed(QObject*)) );
+    return rep;
+  }
+exit:
+  return inherited::createEditor(parent, option, index);
 }
 
+void taiDataDelegate::rep_destroyed(QObject* rep) {
+#ifdef DEBUG
+    cerr << "rep_destroyed for (dat/rep): " <<
+      dat->metaObject()->className() << "/" <<
+      rep->metaObject()->className() << "\n";
+#endif
+  if (dat && (dat->GetRep() == rep)) {
+    dat->Delete();
+    dat = NULL;
+  }
+  // if user left the edit unchanged, then assume this was a cancel, and Revert
+  if (edh->isModified())
+    edh->Revert();
+}
+
+void taiDataDelegate::setEditorData(QWidget* editor,
+    const QModelIndex& index) const
+{
+  if (!dat) return;
+  // confirm that this editor goes with the dat!
+  if (dat->GetRep() != editor) {
+#ifdef DEBUG
+    cerr << "Unexpected editor, not same as dat!\n";
+#endif
+    return;
+  }
+#ifdef DEBUG
+    cerr << "setEditorData for (dat/rep): " <<
+      dat->metaObject()->className() << "/" <<
+      dat->GetRep()->metaObject()->className() << "\n";
+#endif
+  edh->Updating(true);
+  dat->mbr->im->GetImage(dat, dat->Base());
+  edh->Updating(false);
+}
+
+void taiDataDelegate::setModelData(QWidget* editor,
+  QAbstractItemModel* model, const QModelIndex& index ) const
+{
+  if (!dat) return;
+  // confirm that this editor goes with the dat!
+  if (dat->GetRep() != editor) {
+#ifdef DEBUG
+    cerr << "Unexpected editor, not same as dat!\n";
+#endif
+    return;
+  }
+#ifdef DEBUG
+    cerr << "setModelData for (dat/rep): " <<
+      dat->metaObject()->className() << "/" <<
+      dat->GetRep()->metaObject()->className() << "\n";
+#endif
+  taBase* base = dat->Base(); // cache
+  bool first_diff = true;
+  dat->mbr->im->GetMbrValue(dat, base, first_diff); 
+  if (!first_diff)
+    taiMember::EndScript(base);
+  base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+  // this is paradoxically an AutoApply
+  edh->Revert();
+}
 
 
 //////////////////////////
@@ -515,7 +619,7 @@ void iSelectEditDataHost::mnuRemoveMethod_select(int idx) {
 
 iSelectEditDataHost2::iSelectEditDataHost2(void* base, TypeDef* td,
   bool read_only_, QObject* parent)
-:inherited(base, td, read_only_, false, parent)
+:inherited(base, td, read_only_, parent)
 {
   Initialize();
   sele = (SelectEdit*)base;
@@ -534,23 +638,12 @@ void iSelectEditDataHost2::Initialize()
   sed = new SelectEditDelegate(sele, this);
 }
 
-void iSelectEditDataHost2::Constr_Body() {
-  if (rebuild_body) {
-    meth_el.Reset();
-  }
-  inherited::Constr_Body();
-  // we deleted the normally not-deleted methods, so redo them here
-  if (rebuild_body) {
-    Constr_Methods();
-    frmMethButtons->setHidden(!showMethButtons());
-  }
-}
- 
 void iSelectEditDataHost2::Constr_Body_impl() {
   if (tw) return;
   tw = new QTableWidget(widget());
   tw->setColumnCount(2);
   tw->horizontalHeader()->setVisible(false);
+  tw->horizontalHeader()->setStretchLastSection(true); // will this work if header invis?
   tw->verticalHeader()->setVisible(false);
   tw->setSortingEnabled(false);
   // colors
@@ -562,10 +655,13 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   
   tw->setItemDelegateForColumn(1, sed);
   vblDialog->addWidget(tw, 1);
+  connect(tw, SIGNAL(currentCellChanged(int, int, int, int)), 
+    this, SLOT(tw_currentCellChanged(int, int, int, int)) );
   body = tw;
 }
  
 void iSelectEditDataHost2::Constr_Box() {
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
 }
  
 
@@ -608,7 +704,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
     // make a group header
     if (!def_grp) {
       tw->setRowCount(row+1);
-      int item_flags = 0; //Qt::ItemIsUserCheckable;
+      int item_flags = Qt::ItemIsEnabled; //Qt::ItemIsUserCheckable;
       ms->text = grp->GetName();
       ms->show = true;
       QTableWidgetItem* twi = new QTableWidgetItem;
@@ -620,6 +716,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       twi->setFont(f);
       tw->setItem(row, 0, twi);
       tw->setSpan(row, 0, 1, 2);
+      tw->setRowHeight(row, row_height);
       ++row;
     }
     tw->setRowCount(row + grp->size);
@@ -643,7 +740,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       
       // data item
       twi = new QTableWidgetItem;
-      item_flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+      item_flags = Qt::ItemIsEnabled; // |Qt::ItemIsSelectable;
       //TODO: check for READONLY
       bool ro = false;
       if (!ro)
@@ -653,110 +750,13 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       twi->setData(Qt::UserRole, QVariant((ta_intptr_t)item));
       
       tw->setItem(row, 1, twi);
+      tw->setRowHeight(row, row_height);
       ++row;
     }
     def_grp = false;
     ++set_idx;
   }
   tw->resizeColumnToContents(0); // note: don't do 1 here, do it in GetImage
-}
-
-void iSelectEditDataHost2::Constr_Methods() {
-  inherited::Constr_Methods();
-  Insert_Methods();
-  if (cur_menu != NULL) {// for safety... cur_menu should be the SelectEdit menu
-    cur_menu->AddSep();
-  }
-
-  taGroupItr itr;
-  EditMthItem_Group* grp;
-  //int set_idx = 0;
-  FOR_ITR_GP(EditMthItem_Group, grp, sele->mths., itr) {
-    if (grp->size == 0) continue;
-    //note: root group uses only buttons (hard wired)
-    EditMthItem_Group::MthGroupType group_type = grp->group_type;
-    
-    // make a menu or button group if needed
-    String men_nm = grp->GetDisplayName();
-    if (men_nm.empty()) // shouldn't happen
-      men_nm = "Actions";
-    switch (group_type) {
-    case EditMthItem_Group::GT_MENU: {
-      cur_menu = ta_menus.FindName(men_nm);
-      if (cur_menu == NULL) {
-        cur_menu = menu->AddSubMenu(men_nm);
-        ta_menus.Add(cur_menu);
-      }
-    } break;
-    case EditMthItem_Group::GT_MENU_BUTTON: { 
-      cur_menu_but = ta_menu_buttons.FindName(men_nm);
-      if (cur_menu_but == NULL) {
-        cur_menu_but = taiActions::New
-          (taiMenu::buttonmenu, taiMenu::normal, taiMisc::fonSmall,
-                  NULL, this, NULL, widget());
-        cur_menu_but->setLabel(men_nm);
-        DoAddMethButton((QPushButton*)cur_menu_but->GetRep()); // rep is the button for buttonmenu
-        ta_menu_buttons.Add(cur_menu_but);
-      }
-    } break;
-    default: break; // nothing for butts
-    } // switch group_type
-          
-    for (int i = 0; i < grp->size; ++i) {
-      EditMthItem* item = grp->FastEl(i);
-      MethodDef* md = item->mth;
-      taBase* base = item->base;
-      if ((md->im == NULL) || (base == NULL)) continue;
-      taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
-      if (mth_rep == NULL) continue;
-      meth_el.Add(mth_rep);
-  
-      //NOTE: for seledit functions, we never place them on the last menu or button, because that may
-      // make no sense -- the label specifies the place, or Actions if no label
-      String mth_cap = item->caption();
-      String statustip = item->desc;
-      switch (group_type) {
-      case EditMthItem_Group::GT_BUTTONS:  {
-        AddMethButton(mth_rep, mth_cap);
-      } break;
-      case EditMthItem_Group::GT_MENU: {
-//        mth_rep->AddToMenu(cur_menu);
-        taiAction* act = cur_menu->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
-        if (statustip.nonempty())
-          act->setStatusTip(statustip);
-      } break;
-      case EditMthItem_Group::GT_MENU_BUTTON: { 
-//        mth_rep->AddToMenu(cur_menu_but);
-        taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
-              taiAction::action, mth_rep, SLOT(CallFun()) );
-        if (statustip.nonempty())
-          act->setStatusTip(statustip);
-      } break;
-      } // switch group_type
-    }
-  } // groups
-}
-
-void iSelectEditDataHost2::DoRemoveSelEdit() {
-   // removes the sel_item_index item 
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    sele->RemoveField(sel_item_index);
-  }
-#ifdef DEBUG
-  else
-    taMisc::Error("iSelectEditDataHost2::DoRemoveSelEdit: could not find item");
-#endif
-}
-
-void iSelectEditDataHost2::FillLabelContextMenu_SelEdit(iLabel* sender,
-  QMenu* menu, int& last_id)
-{
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
-  if (sel_item_index < 0) return; 
-  //QAction* act = 
-  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
 }
 
 void iSelectEditDataHost2::GetImage_Membs_def() {
@@ -797,14 +797,14 @@ void iSelectEditDataHost2::GetValue_Membs_def() {
   }*/
 }
 
-void iSelectEditDataHost2::mnuRemoveMember_select(int idx) {
-  sele->RemoveField(idx);
+void iSelectEditDataHost2::tw_currentCellChanged(int row, 
+    int col, int previousRow, int previousColumn)
+{
+  if ((row < 0) || (col < 1)) return;
+  QTableWidgetItem* twi = tw->item(row, col);
+  if (!twi) return;
+  tw->editItem(twi);
 }
-
-void iSelectEditDataHost2::mnuRemoveMethod_select(int idx) {
-  sele->RemoveFun(idx);
-}
-
 
 //////////////////////////
 //   SelectEditDelegate	//
@@ -818,7 +818,8 @@ QTableWidgetItem* /*SelectEditDelegate::*/ItemFromIndex(QTableWidget* tw,
 }
 
 SelectEditDelegate::SelectEditDelegate(SelectEdit* sele_,
-  iSelectEditDataHost2* sedh_) 
+  iSelectEditDataHost2* sedh_)
+:inherited(sedh_)
 {
   sele = sele_;
   sedh = sedh_;
@@ -827,31 +828,35 @@ SelectEditDelegate::SelectEditDelegate(SelectEdit* sele_,
 QWidget* SelectEditDelegate::createEditor(QWidget* parent, 
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-  QTableWidgetItem* twi = ItemFromIndex(sedh->tw, index);
+  QWidget* rval = inherited::createEditor(parent, option, index);
+  QSize sz(rval->size());
+  if (sz.width() > sedh->tw->columnWidth(1)) {
+    sedh->tw->setColumnWidth(1,sz.width());
+  }
+  // also, delete the text so it doesn't show through
+  QTableWidgetItem* twi = sedh->tw->item(index.row(), index.column());
+  if (twi) {
+    twi->setText(QString());
+  }  
+  return rval;
+}
+
+bool SelectEditDelegate::IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const
+{
+  QTableWidgetItem* twi = sedh->tw->item(index.row(), index.column());
   if (twi) {
     EditMbrItem* item = dynamic_cast<EditMbrItem*>(
       (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
     if (item) {
-      MemberDef* md = item->mbr;
-      if (md->im == NULL) goto exit; // shouldn't happen
-      taiData* mb_dat = md->im->GetDataRep(sedh, NULL, parent);
-      QWidget* data = mb_dat->GetRep();
-      return data;
+      mbr = item->mbr;
+      base = item->base;
+      return true;
     }
   }
-exit:
-  return inherited::createEditor(parent, option, index);
+  return false;
 }
 
-void SelectEditDelegate::setEditorData(QWidget* editor,
-    const QModelIndex& index) const
-{
-}
-
-void SelectEditDelegate::setModelData(QWidget* editor,
-  QAbstractItemModel* model, const QModelIndex& index ) const
-{
-}
 
 
 //////////////////////////

@@ -782,9 +782,9 @@ void taiDataHostBase::Cancel_impl() { //note: taiEditDataHost takes care of canc
 }
 
 void taiDataHostBase::Changed() {
+  if (updating) return; // spurious
   if (modified) return; // handled already
   modified = true;
-  if (updating) return;
   if (apply_but != NULL) {
       apply_but->setEnabled(true);
       apply_but->setHiLight(true);
@@ -1183,6 +1183,14 @@ void taiDataHost_impl::Constr_Methods_impl() { //note: conditional constructions
     //TODO: if this is a SelectEdit, and this is a rebuild for first time,
     // we will need to do the Insert_Methods call
   }
+}
+
+taBase* taiDataHost_impl::GetMembBase_Flat(int) {
+  return (taBase*)root; // pray!
+}
+
+taBase* taiDataHost_impl::GetMethBase_Flat(int) {
+  return (taBase*)root; // pray!
 }
 
 void taiDataHost_impl::Insert_Methods() {
@@ -2147,7 +2155,8 @@ void taiEditDataHost::GetButtonImage(bool force) {
       
     bool ghost_on = false; // defaults here make it editable in test chain below
     bool val_is_eq = false;
-    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, root, ghost_on, val_is_eq))
+    taBase* base = mth_rep->Base();
+    if (!taiType::CheckProcessCondMembMeth("GHOST", mth_rep->meth, base, ghost_on, val_is_eq))
       continue;
     QAbstractButton* but = mth_rep->GetButtonRep(); //note: always exists because hasButtonRep was true
     if (ghost_on) {
@@ -2162,15 +2171,18 @@ void taiEditDataHost::GetImage(bool force) {
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
   //note: we could be invisible, so we only do what is visible
-  if (host_type != HT_CONTROL) 
+  // note: must do this for SeleEdit guys!
+  if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
     GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
   if (!force && !mwidget->isVisible()) return;
+  ++updating;
   GetImage_PromptTitle();
   if (state > DEFERRED1) {
     GetImage_Membs();
   }
   Unchanged();
+  --updating;
 }
 
 void taiEditDataHost::GetImage_Membs() {

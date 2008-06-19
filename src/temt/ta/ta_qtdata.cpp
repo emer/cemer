@@ -123,9 +123,19 @@ taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui
 }
 
 taiData::~taiData() {
+  Destroy();
+}
+
+void taiData::Destroy() {
   setParent(NULL);
   host = NULL;
   m_rep = NULL;
+//TEMP
+#ifdef DEBUG
+/*if (taMisc::edit_style == taMisc::ES_TABLE) {
+  cerr << this->metaObject()->className() << " deleting\n";
+}*/
+#endif
 }
 
 void taiData::applyNow() {

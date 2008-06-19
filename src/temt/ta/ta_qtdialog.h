@@ -303,12 +303,14 @@ public:
 
   inline bool		isDialog() {return (host_type == HT_DIALOG);} 
     // 'true' when we will be been posted as a dialog
+  bool			isModified() const {return modified;}
   inline bool		isPanel() {return (host_type == HT_PANEL);} 
     // 'true' when we will be shown in a panel
   inline bool		isControl() {return (host_type == HT_CONTROL);} 
     // 'true' when shown in a control
   QWidget* 	widget() {return mwidget;}
 
+  void			Updating(bool enter) {if (enter) ++updating; else --updating;}
   taiDataHostBase(TypeDef* typ_ = NULL, bool read_only_ = false, 
     bool modal_ = false, QObject* parent = 0);
   virtual ~taiDataHostBase(); //
@@ -429,6 +431,9 @@ public:
   virtual const iColor	colorOfRow(int row) const;	// background color for specified row (row need not exist); good for top and bottom areas
   inline bool		showMethButtons() const {return show_meth_buttons;} // true if any are created
 
+  virtual taBase*	GetMembBase_Flat(int idx); // these are overridden by seledit
+  virtual taBase*	GetMethBase_Flat(int idx);
+  
   taiDataHost_impl(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   virtual ~taiDataHost_impl();
 

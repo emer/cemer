@@ -571,7 +571,7 @@ void iProgramEditor::GetValue() {
 void iProgramEditor::GetImage() {
   TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
-//note: buttons update themselves automatically  
+  meth_but_mgr->GetImage();
   ++m_changing;
   for (int j = 0; j < membs.size; ++j) {
     MembSet* ms = membs.FastEl(j);

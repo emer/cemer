@@ -2082,7 +2082,9 @@ void taiMethod::AddMethod(MethodDef* md) {
 taiMethodData* taiMethod::GetMethodRep(void* base, IDataHost* host_, taiData* par, 
   QWidget* gui_parent_) 
 {
-  return GetMethodRep_impl(base, host_, par, gui_parent_, 0); //TODO: may need to do more with the flags
+  taiMethodData* rval = GetMethodRep_impl(base, host_, par, gui_parent_, 0); //TODO: may need to do more with the flags
+  rval->SetBase((taBase*)base); // pray!
+  return rval;
 }
 
 

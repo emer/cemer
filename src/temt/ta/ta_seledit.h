@@ -33,6 +33,8 @@ public:
   static SelectEditItem*	StatFindItemBase(taGroup_impl* grp, taBase* base,
     TypeItem* ti, int& idx);
     // find the item iwth indicated base and mth/mbr in the group
+  static bool		StatGetBase_Flat(const taGroup_impl* grp, int idx, taBase*& base);
+    // gets the flat (leaf) base
   static bool		StatHasBase(taGroup_impl* grp, taBase* base);
     // see if anyone has this base
   static bool		StatRemoveItemBase(taGroup_impl* grp, taBase* base);
@@ -98,6 +100,9 @@ class TA_API EditMbrItem_Group : public taGroup<EditMbrItem> {
   // ##CAT_Display group of select edit dialog objects
 INHERITED(taGroup<EditMbrItem>)
 public:
+  taBase*		GetBase_Flat(int idx) const;
+    // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
+  
   override int		NumListCols() const {return 5;}
   // base name, base type, memb name, memb type, memb label
   override String	GetColHeading(const KeyString& key) const;
@@ -127,6 +132,9 @@ public:
   
   void			SetGroupType(MthGroupType group_type);
    // #MENU #MENU_CONTEXT set how the methods will be displayed in the SelectEdit dialog
+  
+  taBase*		GetBase_Flat(int idx) const;
+    // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
   
   override int		NumListCols() const {return 4;}
   // base name, base type, meth name, memb label

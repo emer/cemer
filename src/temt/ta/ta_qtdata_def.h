@@ -229,7 +229,8 @@ protected slots:
   virtual void 		this_GetEditActionsEnabled(int& ea) {} // for when control is clipboard handler
   virtual void 		this_EditAction(int param) {} // for when control is clipboard handler
   virtual void 		this_SetActionsEnabled() {} // for when control is clipboard handler
-
+private:
+  void			Destroy();
 };
 
 

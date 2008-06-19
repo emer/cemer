@@ -45,7 +45,8 @@ protected:
 };
 
 
-class TA_API iSelectEditDataHost : public taiEditDataHost {
+
+class TA_API iSelectEditDataHostBase : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditDataHost)
   Q_OBJECT
@@ -53,6 +54,33 @@ public:
   SelectEdit*	sele;
 
   override void		Constr_Body();
+  override taBase*	GetMembBase_Flat(int idx); // these are overridden by seledit
+  override taBase*	GetMethBase_Flat(int idx);
+  
+  iSelectEditDataHostBase(void* base, TypeDef* td, bool read_only_ = false,
+  	QObject* parent = 0);
+  iSelectEditDataHostBase()	{ Initialize();};
+  ~iSelectEditDataHostBase();
+
+protected:
+  void 			Constr_Methods();
+
+  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
+
+protected slots:
+  virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
+  virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
+  virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
+private:
+  void	Initialize();
+};
+
+//
+class TA_API iSelectEditDataHost : public iSelectEditDataHostBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
+INHERITED(iSelectEditDataHostBase)
+  Q_OBJECT
+public:
   
   iSelectEditDataHost(void* base, TypeDef* td, bool read_only_ = false,
   	QObject* parent = 0);
@@ -61,68 +89,26 @@ public:
 
 protected:
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
-  void 			Constr_Methods();
-
-  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
-  override void		Constr_Data_Labels(); 
-  override void 	GetImage_Membs_def();
-  override void 	GetValue_Membs_def();
-
-protected slots:
-  virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
-  virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
-  virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
-private:
-  void	Initialize();
-};
-
-class SelectEditDelegate; // #IGNORE
-
-class TA_API iSelectEditDataHost2 : public taiEditDataHost {
-  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS alternative, using viewer
-INHERITED(taiEditDataHost)
-  Q_OBJECT
-public:
-  SelectEdit*		sele;
-  
-  QTableWidget*		tw;
-
-  override void		Constr_Body();
-  override void		Constr_Box();
-  
-  iSelectEditDataHost2(void* base, TypeDef* td, bool read_only_ = false,
-  	QObject* parent = 0);
-  iSelectEditDataHost2()	{ Initialize();};
-  ~iSelectEditDataHost2();
-
-protected:
-  SelectEditDelegate*	sed;
-  
-  override void		Constr_Body_impl();
-  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
-  void 			Constr_Methods();
-
-  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
 
   override void		Constr_Data_Labels(); 
   override void 	GetImage_Membs_def();
   override void 	GetValue_Membs_def();
 
-protected slots:
-  virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
-  virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
-  virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
 private:
   void	Initialize();
 };
+
 //
 #ifndef __MAKETA__
-class TA_API SelectEditDelegate: public QItemDelegate {
+class TA_API taiDataDelegate: public QItemDelegate {
 INHERITED(QItemDelegate)
+Q_OBJECT
 public:
-  SelectEdit*		sele;
-  iSelectEditDataHost2*	sedh;
+  taiEditDataHost*	edh;
   
+  virtual bool		IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const = 0;
+    
   override QWidget* createEditor(QWidget* parent, 
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
   override void setEditorData(QWidget* editor, 
@@ -130,6 +116,64 @@ public:
   override void setModelData(QWidget* editor, QAbstractItemModel* model,
     const QModelIndex& index ) const;
 
+  taiDataDelegate(taiEditDataHost* edh_);
+  
+protected:
+  mutable taiData*	dat; // most recently created
+
+protected slots:
+  virtual void		rep_destroyed(QObject* rep); // when dat.rep destroys
+};
+#endif // !__MAKETA__
+
+class SelectEditDelegate; // #IGNORE
+
+class TA_API iSelectEditDataHost2 : public iSelectEditDataHostBase {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS alternative, using viewer
+INHERITED(iSelectEditDataHostBase)
+  Q_OBJECT
+public:
+  QTableWidget*		tw;
+
+  override void		Constr_Box();
+  
+  iSelectEditDataHost2(void* base, TypeDef* td, bool read_only_ = false,
+  	QObject* parent = 0);
+  iSelectEditDataHost2()	{ Initialize();};
+  ~iSelectEditDataHost2();
+
+protected slots:
+  void 			tw_currentCellChanged( int currentRow, 
+    int currentColumn, int previousRow, int previousColumn);
+
+protected:
+  SelectEditDelegate*	sed;
+  
+  override void		Constr_Body_impl();
+  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
+
+  override void		Constr_Data_Labels(); 
+  override void 	GetImage_Membs_def();
+  override void 	GetValue_Membs_def();
+
+private:
+  void	Initialize();
+};
+//
+#ifndef __MAKETA__
+class TA_API SelectEditDelegate: public taiDataDelegate {
+INHERITED(taiDataDelegate)
+Q_OBJECT
+public:
+  SelectEdit*		sele;
+  iSelectEditDataHost2*	sedh;
+  
+  override bool		IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const;
+
+  override QWidget* createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  
   SelectEditDelegate(SelectEdit* sele_, iSelectEditDataHost2* sedh_);
 };
 #endif // !__MAKETA__

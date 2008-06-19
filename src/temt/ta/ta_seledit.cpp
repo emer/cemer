@@ -58,6 +58,17 @@ SelectEditItem* SelectEditItem::StatFindItemBase(taGroup_impl* grp, taBase* base
   return NULL;
 }
 
+bool SelectEditItem::StatGetBase_Flat(const taGroup_impl* grp, int idx,
+  taBase*& base)
+{
+  SelectEditItem* sei = dynamic_cast<SelectEditItem*>(grp->Leaf_(idx));
+  if (sei) {
+    base = sei->base;
+    return true;
+  }
+  return false;
+}
+
 bool SelectEditItem::StatHasBase(taGroup_impl* grp, taBase* base) {
   SelectEditItem* ei;
   taLeafItr itr;
@@ -156,6 +167,12 @@ void EditMbrItem_Group::DataChanged(int dcr, void* op1, void* op2)
   SelectEdit::StatDataChanged_Group(this, dcr, op1, op2);
 }
 
+taBase* EditMbrItem_Group::GetBase_Flat(int idx) const {
+  taBase* rval = NULL;
+  SelectEditItem::StatGetBase_Flat(this, idx, rval);
+  return rval;
+}
+
 String EditMbrItem_Group::GetColHeading(const KeyString& key) const {
   if (key == "base_name") return "Base Name";
   else if (key == "base_type") return "Base Type";
@@ -227,6 +244,12 @@ void EditMthItem_Group::DataChanged(int dcr, void* op1, void* op2)
   SelectEdit::StatDataChanged_Group(this, dcr, op1, op2);
 }
 
+
+taBase* EditMthItem_Group::GetBase_Flat(int idx) const {
+  taBase* rval = NULL;
+  SelectEditItem::StatGetBase_Flat(this, idx, rval);
+  return rval;
+}
 
 String EditMthItem_Group::GetColHeading(const KeyString& key) const {
   if (key == "base_name") return "Base Name";
