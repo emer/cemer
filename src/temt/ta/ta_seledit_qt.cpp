@@ -23,6 +23,8 @@
 #include <QHeaderView>
 #include <QLayout>
 #include <QTableWidget>
+#include <QTextEdit>
+
 /*
 class TA_API DataHostModel: public QAbstractTableModel,
   public IDataLinkClient
@@ -559,6 +561,84 @@ exit:
   return inherited::createEditor(parent, option, index);
 }
 
+bool taiDataDelegate::eventFilter(QObject *object, QEvent *event)
+{
+  QWidget *editor = qobject_cast<QWidget*>(object);
+  if (!editor)
+      return false;
+  if (event->type() == QEvent::KeyPress) {
+    switch (static_cast<QKeyEvent *>(event)->key()) {
+/*  case Qt::Key_Tab:
+      emit commitData(editor);
+      emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+      return true;
+    case Qt::Key_Backtab:
+      emit commitData(editor);
+      emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
+      return true;*/
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+      if (qobject_cast<QTextEdit*>(editor))
+          return false; // don't filter enter key events for QTextEdit
+      // We want the editor to be able to process the key press
+      // before committing the data (e.g. so it can do
+      // validation/fixup of the input).
+      if (QLineEdit* e = qobject_cast<QLineEdit*>(editor))
+        if (!e->hasAcceptableInput())
+          return false;
+      QMetaObject::invokeMethod(this, "_q_commitDataAndCloseEditor",
+        Qt::QueuedConnection, Q_ARG(QWidget*, editor));
+      return false;
+    case Qt::Key_Escape:
+      // don't commit data
+      emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
+      break;
+    default:
+      return false;
+    }
+    if (editor->parentWidget())
+        editor->parentWidget()->setFocus();
+    return true;
+  } 
+/*  else if (event->type() == QEvent::FocusOut) {
+    if (!editor->isActiveWindow() || (QApplication::focusWidget() != editor)) {
+      QWidget *w = QApplication::focusWidget();
+      while (w) { // don't worry about focus changes internally in the editor
+        if (w == editor)
+            return false;
+        w = w->parentWidget();
+      }
+      // The window may lose focus during an drag operation.
+      // i.e when dragging involves the taskbar on Windows.
+      if (QDragManager::self() && QDragManager::self()->object != 0)
+        return false;
+      // Opening a modal dialog will start a new eventloop
+      // that will process the deleteLater event.
+      if (QApplication::activeModalWidget()
+        && !QApplication::activeModalWidget()->isAncestorOf(editor)
+        && qobject_cast<QDialog*>(QApplication::activeModalWidget()))
+        return false;
+      emit commitData(editor);
+      emit closeEditor(editor, NoHint);
+    }
+  } */
+  else if (event->type() == QEvent::ShortcutOverride) {
+    if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape) {
+      event->accept();
+      return true;
+    }
+  }
+  return false;
+}
+
+void taiDataDelegate::GetImage() {
+//TODO
+}
+
+void taiDataDelegate::GetValue() {
+//TODO
+}
+
 void taiDataDelegate::rep_destroyed(QObject* rep) {
 #ifdef DEBUG
     cerr << "rep_destroyed for (dat/rep): " <<
@@ -578,18 +658,18 @@ void taiDataDelegate::setEditorData(QWidget* editor,
     const QModelIndex& index) const
 {
   if (!dat) return;
-  // confirm that this editor goes with the dat!
+/*nn  // confirm that this editor goes with the dat!
   if (dat->GetRep() != editor) {
 #ifdef DEBUG
     cerr << "Unexpected editor, not same as dat!\n";
 #endif
     return;
-  }
+  }*/
 #ifdef DEBUG
     cerr << "setEditorData for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
-#endif
+#endif 
   edh->Updating(true);
   dat->mbr->im->GetImage(dat, dat->Base());
   edh->Updating(false);
@@ -599,18 +679,18 @@ void taiDataDelegate::setModelData(QWidget* editor,
   QAbstractItemModel* model, const QModelIndex& index ) const
 {
   if (!dat) return;
-  // confirm that this editor goes with the dat!
+/*nn  // confirm that this editor goes with the dat!
   if (dat->GetRep() != editor) {
 #ifdef DEBUG
     cerr << "Unexpected editor, not same as dat!\n";
 #endif
     return;
-  }
+  }*/
 #ifdef DEBUG
     cerr << "setModelData for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
-#endif
+#endif 
   taBase* base = dat->Base(); // cache
   bool first_diff = true;
   dat->mbr->im->GetMbrValue(dat, base, first_diff); 
@@ -618,7 +698,7 @@ void taiDataDelegate::setModelData(QWidget* editor,
     taiMember::EndScript(base);
   base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
   // this is paradoxically an AutoApply
-  edh->Revert();
+//  edh->Revert();
 }
 
 
@@ -784,6 +864,7 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
     it->setText(txt);
     it->setToolTip(txt); // for when over
   }
+  sed->GetImage(); // if a ctrl is active
   tw->resizeColumnToContents(1);
 }
 
@@ -830,6 +911,7 @@ void iSelectEditDataHost2::GetValue_Membs_def() {
       ++itm_idx;
     }
   }*/
+  sed->GetValue();
 }
 
 void iSelectEditDataHost2::tw_currentCellChanged(int row, 

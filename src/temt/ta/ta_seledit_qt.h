@@ -108,20 +108,25 @@ Q_OBJECT
 public:
   taiEditDataHost*	edh;
   
+  virtual void		GetImage(); // callable from edh any time
+  virtual void		GetValue(); // callable from edh
   virtual bool		IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const = 0;
     
-  override QWidget* createEditor(QWidget* parent, 
-    const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  override void setEditorData(QWidget* editor, 
-    const QModelIndex& index) const;
-  override void setModelData(QWidget* editor, QAbstractItemModel* model,
-    const QModelIndex& index ) const;
-
   taiDataDelegate(taiEditDataHost* edh_);
   
+public: // overrides
+  override QWidget* 	createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  override void 	setEditorData(QWidget* editor, 
+    const QModelIndex& index) const;
+  override void 	setModelData(QWidget* editor, QAbstractItemModel* model,
+    const QModelIndex& index ) const;
+
 protected:
-  mutable taiData*	dat; // most recently created
+  mutable QPointer<taiData> dat; // most recently created
+
+  override bool 	eventFilter(QObject* object, QEvent* event); // replace
 
 protected slots:
   virtual void		rep_destroyed(QObject* rep); // when dat.rep destroys
