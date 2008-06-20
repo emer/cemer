@@ -147,6 +147,7 @@ public:
   IDataHost*		host;		// dialog or edit panel that this belongs to (optional)
   String		orig_val;	// text of original data value
   taiData*		parent() {return mparent;} // if data is contained within data, this the parent container
+  
   void			setParent(taiData* value); // 
   virtual taBase*	Base() const; // base, typically the parent::ChildBase else the IHost::Base
   void			SetBase(taBase* base_) const; 

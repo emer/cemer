@@ -1037,14 +1037,11 @@ void taiDataHostBase::WidgetDeleting() {
 //  taiDataHost_impl		//
 //////////////////////////////////
 
-void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(iLabel* sender, 
-  QMenu* menu, int& last_id, taiData* sel_item_dat, QWidget* menu_par,
+void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
+  int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
   QObject* slot_obj, const char* slot)
 {
   // have to be a taBase to use SelEdit
-  if (!sel_item_dat) return;
-  taBase* rbase = sel_item_dat->Base();
-  MemberDef* md = sel_item_dat->mbr; 
   if (!rbase || !md) return; 
 //obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
 //    return; 
@@ -1096,7 +1093,8 @@ taiDataHost_impl::taiDataHost_impl(TypeDef* typ_, bool read_only_, bool modal_, 
   InitGuiFields(false);
 
   sel_item_dat = NULL;
-//  sel_item_md = NULL;
+  sel_item_mbr = NULL;
+  sel_item_base = NULL;
   rebuild_body = false;
   sel_edit_mbrs = true; // inherited guys can turn off
 }
@@ -1307,20 +1305,21 @@ void taiDataHost_impl::label_contextMenuInvoked(iLabel* sender, QContextMenuEven
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
   int last_id = -1;
-  FillLabelContextMenu(sender, menu, last_id);
+  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+  if (sel_item_dat) {
+    sel_item_mbr = sel_item_dat->mbr;
+    sel_item_base = sel_item_dat->Base();
+  } else {
+    sel_item_mbr = NULL;
+    sel_item_base = NULL;
+  }
+  FillLabelContextMenu(menu, last_id);
   if (menu->actions().count() > 0)
     menu->exec(sender->mapToGlobal(e->pos()));
   delete menu;
 }
 
-void taiDataHost_impl::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
-//  sel_item_md = (MemberDef*)qvariant_cast<ta_intptr_t>(sender->userData());
-//  sel_item_idx = -1;
-  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
-/*  sel_item_dat = NULL;
-  QVariant var = sender->userData();
-  if (var.isPtrType())
-    sel_item_dat = (taiData*)var.toPtr(); // pray!!! */
+void taiDataHost_impl::FillLabelContextMenu(QMenu* menu, int& last_id) {
 }
 
 void taiDataHost_impl::Iconify(bool value) {
@@ -1714,6 +1713,19 @@ int MembSet_List::GetFlatDataIndex(taiData* dat) {
   return -1;
 }
 
+int MembSet_List::GetFlatDataIndex(MemberDef* mbr, taBase* base) {
+  if (!mbr || !base) return -1;
+  int rval = 0;
+  for (int i = 0; i < size; ++i) {
+    MembSet* ms = FastEl(i);
+    for (int j = 0; j < ms->data_el.size; ++j, ++rval) {
+      if (mbr != ms->memb_el.SafeEl(j)) continue;
+      if (ms->data_el.FastEl(j)->Base() == base) return rval;
+    }
+  }
+  return -1;
+}
+
 int MembSet_List::GetDataSize() const {
   int rval = 0;
   for (int i = 0; i < size; ++i) {
@@ -2056,9 +2068,9 @@ void taiEditDataHost::DoSelectForEdit(QAction* act){
   int param = act->data().toInt();
   SelectEdit* se = proj->edits.Leaf(param);
  
-  if (!sel_item_dat) return; // shouldn't happen!
-  taBase* rbase = sel_item_dat->Base();
-  MemberDef* md = sel_item_dat->mbr;
+  if (!sel_item_base) return; // shouldn't happen!
+  taBase* rbase = sel_item_base;
+  MemberDef* md = sel_item_mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
   
   //NOTE: this handler adds if not on, or removes if already on
@@ -2130,17 +2142,16 @@ void taiDataHostBase::ConstrEditControl() {
   state = ACTIVE;
 }
 
-void taiEditDataHost::FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id) {
-  inherited::FillLabelContextMenu(sender, menu, last_id);
+void taiEditDataHost::FillLabelContextMenu(QMenu* menu, int& last_id) {
+  inherited::FillLabelContextMenu(menu, last_id);
   if (sel_edit_mbrs) { 
-    FillLabelContextMenu_SelEdit(sender, menu, last_id);
+    FillLabelContextMenu_SelEdit(menu, last_id);
   }
 }
 
-void taiEditDataHost::FillLabelContextMenu_SelEdit(iLabel* sender, 
-  QMenu* menu, int& last_id)
+void taiEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 {
-  DoFillLabelContextMenu_SelEdit(sender, menu, last_id, sel_item_dat, body,
+  DoFillLabelContextMenu_SelEdit(menu, last_id, sel_item_base, sel_item_mbr, body,
   this, SLOT(DoSelectForEdit(QAction*)));
 }
 

@@ -30,9 +30,9 @@ class TA_API SelectEditItem: public taOBase {
   INHERITED(taOBase)
 public:
 // some convenience functions
-  static SelectEditItem*	StatFindItemBase(taGroup_impl* grp, taBase* base,
-    TypeItem* ti, int& idx);
-    // find the item iwth indicated base and mth/mbr in the group
+  static SelectEditItem*	StatFindItemBase(const taGroup_impl* grp,
+    taBase* base, TypeItem* ti, int& idx);
+    // find the item with indicated base and mth/mbr in the group
   static bool		StatGetBase_Flat(const taGroup_impl* grp, int idx, taBase*& base);
     // gets the flat (leaf) base
   static bool		StatHasBase(taGroup_impl* grp, taBase* base);
@@ -102,6 +102,9 @@ INHERITED(taGroup<EditMbrItem>)
 public:
   taBase*		GetBase_Flat(int idx) const;
     // gets the flat (leaf) base -- NULL if out of bounds or doesn't exist
+  EditMbrItem*		FindItemBase(taBase* base,
+    MemberDef* md, int& idx) const
+    {return (EditMbrItem*)SelectEditItem::StatFindItemBase(this, base, md, idx);}
   
   override int		NumListCols() const {return 5;}
   // base name, base type, memb name, memb type, memb label

@@ -65,10 +65,8 @@ public:
 protected:
   void 			Constr_Methods();
 
-  override void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
-
 protected slots:
-  virtual void		DoRemoveSelEdit(); // #IGNORE removes the sel_item_index item
+  virtual void		DoRemoveSelEdit() = 0;
   virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
   virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
 private:
@@ -87,10 +85,14 @@ public:
   iSelectEditDataHost()	{ Initialize();};
   ~iSelectEditDataHost();
 
+protected slots:
+  override void		DoRemoveSelEdit();
+
 protected:
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
 
   override void		Constr_Data_Labels(); 
+  override void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
   override void 	GetImage_Membs_def();
   override void 	GetValue_Membs_def();
 
@@ -143,8 +145,10 @@ public:
   ~iSelectEditDataHost2();
 
 protected slots:
+  override void		DoRemoveSelEdit();
   void 			tw_currentCellChanged( int currentRow, 
     int currentColumn, int previousRow, int previousColumn);
+  void 			tw_customContextMenuRequested(const QPoint& pos);
 
 protected:
   SelectEditDelegate*	sed;
@@ -153,6 +157,7 @@ protected:
   override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
 
   override void		Constr_Data_Labels(); 
+  override void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
   override void 	GetImage_Membs_def();
   override void 	GetValue_Membs_def();
 

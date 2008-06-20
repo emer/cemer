@@ -360,27 +360,6 @@ void iSelectEditDataHostBase::Constr_Methods() {
   } // groups
 }
 
-void iSelectEditDataHostBase::DoRemoveSelEdit() {
-   // removes the sel_item_index item 
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
-  if (sel_item_index >= 0) {
-    sele->RemoveField(sel_item_index);
-  }
-#ifdef DEBUG
-  else
-    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
-#endif
-}
-
-void iSelectEditDataHostBase::FillLabelContextMenu_SelEdit(iLabel* sender,
-  QMenu* menu, int& last_id)
-{
-  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
-  if (sel_item_index < 0) return; 
-  //QAction* act = 
-  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
-}
-
 taBase* iSelectEditDataHostBase::GetMembBase_Flat(int idx) {
   return sele->mbrs.GetBase_Flat(idx);
 }
@@ -480,6 +459,27 @@ void iSelectEditDataHost::Constr_Data_Labels() {
   }
 }
 
+void iSelectEditDataHost::DoRemoveSelEdit() {
+   // removes the sel_item_index item 
+  int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
+  if (sel_item_index >= 0) {
+    sele->RemoveField(sel_item_index);
+  }
+#ifdef DEBUG
+  else
+    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
+#endif
+}
+
+void iSelectEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu,
+  int& last_id)
+{
+  int sel_item_index = membs.GetFlatDataIndex(sel_item_mbr, sel_item_base);
+  if (sel_item_index < 0) return; 
+  //QAction* act = 
+  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
+}
+
 void iSelectEditDataHost::GetImage_Membs_def() {
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
@@ -538,13 +538,22 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
   taBase* base = NULL;
   if (IndexToMembBase(index, md, base)) {
     if (md->im == NULL) goto exit; // shouldn't happen
-    dat = md->im->GetDataRep(edh, NULL, parent);
+    // we create a wrap widget for all of these guys, mostly so that smaller
+    // guys like Combo don't try to be stretched the whole way
+    QWidget* np = new QWidget(parent);
+    QHBoxLayout* hbl = new QHBoxLayout(np);
+    hbl->setMargin(0);
+    hbl->setSpacing(0);
+    
+    dat = md->im->GetDataRep(edh, NULL, np);
     dat->SetBase(base);
     dat->SetMemberDef(md);
     QWidget* rep = dat->GetRep();
-    connect(rep, SIGNAL(destroyed(QObject*)),
+    hbl->addWidget(rep);
+    hbl->addStretch();
+    connect(np, SIGNAL(destroyed(QObject*)),
       this, SLOT(rep_destroyed(QObject*)) );
-    return rep;
+    return np;
   }
 exit:
   return inherited::createEditor(parent, option, index);
@@ -643,7 +652,7 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   tw = new QTableWidget(widget());
   tw->setColumnCount(2);
   tw->horizontalHeader()->setVisible(false);
-  tw->horizontalHeader()->setStretchLastSection(true); // will this work if header invis?
+  tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis
   tw->verticalHeader()->setVisible(false);
   tw->setSortingEnabled(false);
   // colors
@@ -652,11 +661,14 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   palette.setColor(QPalette::AlternateBase, bg_color_dark);
   tw->setPalette(palette);
   tw->setAlternatingRowColors(true);
+  tw->setContextMenuPolicy(Qt::CustomContextMenu);
   
   tw->setItemDelegateForColumn(1, sed);
   vblDialog->addWidget(tw, 1);
   connect(tw, SIGNAL(currentCellChanged(int, int, int, int)), 
     this, SLOT(tw_currentCellChanged(int, int, int, int)) );
+  connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)), 
+    this, SLOT(tw_customContextMenuRequested(const QPoint&)) );
   body = tw;
 }
  
@@ -775,6 +787,29 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
   tw->resizeColumnToContents(1);
 }
 
+void iSelectEditDataHost2::DoRemoveSelEdit() {
+   // removes the sel_item_index item 
+  int sel_item_index = -1;
+  sele->mbrs.FindItemBase(sel_item_base, sel_item_mbr, sel_item_index);
+  if (sel_item_index >= 0) {
+    sele->RemoveField(sel_item_index);
+  }
+#ifdef DEBUG
+  else
+    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
+#endif
+}
+
+void iSelectEditDataHost2::FillLabelContextMenu_SelEdit(QMenu* menu,
+  int& last_id)
+{
+  int sel_item_index = -1;
+  sele->mbrs.FindItemBase(sel_item_base, sel_item_mbr, sel_item_index);
+  if (sel_item_index < 0) return; 
+  //QAction* act = 
+  menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
+}
+
 void iSelectEditDataHost2::GetValue_Membs_def() {
 /*TODO  int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
@@ -804,6 +839,30 @@ void iSelectEditDataHost2::tw_currentCellChanged(int row,
   QTableWidgetItem* twi = tw->item(row, col);
   if (!twi) return;
   tw->editItem(twi);
+}
+
+void iSelectEditDataHost2::tw_customContextMenuRequested(const QPoint& pos)
+{
+  int row = tw->rowAt(pos.y());
+  int col = tw->columnAt(pos.x());
+  if ((row < 0) || (col != 0)) return;
+  // we want the data item for the label, to get its goodies...
+  QTableWidgetItem* twi = tw->item(row, 1);
+  if (!twi) return; // ex. right clicking on a section
+  
+  EditMbrItem* item = dynamic_cast<EditMbrItem*>(
+    (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
+  if ((item == NULL) || (item->base == NULL)) return;
+    
+  sel_item_mbr = item->mbr;
+  sel_item_base = item->base;
+  QMenu* menu = new QMenu(widget());
+  int last_id = -1;
+  FillLabelContextMenu(menu, last_id);
+  if (menu->actions().count() > 0)
+    menu->exec(tw->mapToGlobal(pos));
+  delete menu;
+  
 }
 
 //////////////////////////

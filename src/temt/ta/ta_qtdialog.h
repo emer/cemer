@@ -417,8 +417,8 @@ INHERITED(taiDataHostBase)
   Q_OBJECT
 friend class iDialog;
 public:
-  static void 		DoFillLabelContextMenu_SelEdit(iLabel* sender, 
-    QMenu* menu, int& last_id, taiData* sel_item_dat, QWidget* menu_par,
+  static void 		DoFillLabelContextMenu_SelEdit(QMenu* menu, 
+    int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
     QObject* slot_obj, const char* slot);
     // helper used here and in ProgEditor and elsewhere to handle Seledit context menus
   static void 		GetName(MemberDef* md, String& name, String& help_text); // returns one name, and optionally help_text
@@ -483,6 +483,8 @@ protected:
   bool			show_meth_buttons; // true if any are created
   bool			sel_edit_mbrs; // support right-click for seledit of mbrs
   taiData*		sel_item_dat; // ONLY used/valid in handling of context menu for select edits
+  MemberDef*		sel_item_mbr; // ONLY used/valid in handling of context menu for select edits
+  taBase*		sel_item_base; // ONLY used/valid in handling of context menu for select edits
   bool			rebuild_body; // #IGNORE set for second and subsequent build of body (show change, and seledit rebuild)
 
   virtual void	StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
@@ -492,7 +494,7 @@ protected:
   virtual void	Constr_Methods_impl(); // actually makes methods -- stub this out to supress methods
   override void  Insert_Methods(); // insert the menu and methods, if made, and not owned elsewise
   //override void	Constr_Final();
-  virtual void	FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id); // last_id enables access menu items
+  virtual void	FillLabelContextMenu(QMenu* menu, int& last_id); // last_id enables access menu items
   override void	Cancel_impl();
   override void	Ok_impl();
 
@@ -601,7 +603,8 @@ public:
   bool			GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat = NULL);
    // get the dat and/or mbr (both optional) from a flat idx
   int			GetFlatDataIndex(taiData* dat);
-   // get the flat idx from a dat (-1 if not found)
+  int			GetFlatDataIndex(MemberDef* mbr, taBase* base);
+   // get the flat idx from a mbr/dat, -1 if not found
   int			GetDataSize() const; // # data items
   
   MembSet_List()  {def_size = 0;}
@@ -703,8 +706,8 @@ protected:
   virtual MemberDef*	GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play
 
-  override void		FillLabelContextMenu(iLabel* sender, QMenu* menu, int& last_id);
-  virtual void		FillLabelContextMenu_SelEdit(iLabel* sender, QMenu* menu, int& last_id);
+  override void		FillLabelContextMenu(QMenu* menu, int& last_id);
+  virtual void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
   virtual void		GetImage_Membs(); // for overridding
   virtual void		GetImage_Membs_def(); // calls GetImage_impl for all our lists
   virtual void		GetValue_Membs(); 

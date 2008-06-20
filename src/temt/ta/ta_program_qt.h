@@ -175,7 +175,8 @@ protected:
   
   int 			row;
   int			m_show;
-  taiData*		sel_item_dat; // used (and only valid!) for context menus
+  MemberDef*		sel_item_mbr; // used (and only valid!) for context menus
+  taBase*		sel_item_base; // used (and only valid!) for context menus
  
   override void 	customEvent(QEvent* ev_);
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls

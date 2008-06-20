@@ -249,7 +249,8 @@ void iProgramEditor::Init() {
   base = NULL;
   row = 0;
   m_show = (taMisc::ShowMembs)(taMisc::show_gui & taMisc::SHOW_CHECK_MASK);
-  sel_item_dat = NULL;
+  sel_item_mbr = NULL;
+  sel_item_base = NULL;
   
   
   layOuter = new QVBoxLayout(this);
@@ -629,9 +630,12 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
   //note: don't use body for menu parent, because some context menu choices cause ReShow, which deletes body items!
   Q_CHECK_PTR(menu);
   int last_id = -1;
-  sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
+  taiData* sel_item_dat = (taiData*)qvariant_cast<ta_intptr_t>(sender->userData()); // pray!!!
   if (sel_item_dat) {
-    taiDataHost::DoFillLabelContextMenu_SelEdit(sender, menu, last_id, sel_item_dat, body,
+    sel_item_mbr = sel_item_dat->mbr;
+    sel_item_base = sel_item_dat->Base();
+    taiDataHost::DoFillLabelContextMenu_SelEdit(menu, last_id, 
+      sel_item_base, sel_item_mbr, body,
     this, SLOT(DoSelectForEdit(QAction*)));
   }
 
@@ -642,7 +646,6 @@ void iProgramEditor::label_contextMenuInvoked(iLabel* sender, QContextMenuEvent*
 
 void iProgramEditor::DoSelectForEdit(QAction* act) {
 //note: this routine is duplicated in the taiEditDataHost
-  if (!sel_item_dat) return; // shouldn't happen!
   
   taProject* proj = (taProject*)(base->GetThisOrOwner(&TA_taProject));
   if (!proj) return;
@@ -650,8 +653,8 @@ void iProgramEditor::DoSelectForEdit(QAction* act) {
   int param = act->data().toInt();
   SelectEdit* se = proj->edits.Leaf(param);
  
-  taBase* rbase = sel_item_dat->Base();
-  MemberDef* md = sel_item_dat->mbr;
+  taBase* rbase = sel_item_base;
+  MemberDef* md = sel_item_mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
   
   //NOTE: this handler adds if not on, or removes if already on

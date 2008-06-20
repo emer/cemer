@@ -43,8 +43,8 @@ void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
 //  SelectEditItem		//
 //////////////////////////////////
 
-SelectEditItem* SelectEditItem::StatFindItemBase(taGroup_impl* grp, taBase* base,
-    TypeItem* ti, int& idx)
+SelectEditItem* SelectEditItem::StatFindItemBase(const taGroup_impl* grp,
+   taBase* base, TypeItem* ti, int& idx)
 {
   SelectEditItem* rval = NULL;
   taLeafItr itr;
@@ -444,7 +444,12 @@ void SelectEdit::Reset() {
 bool SelectEdit::ReShowEdit(bool force) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
-  DataChanged(DCR_ITEM_UPDATED);
+  if (force) { // ugh
+    DataChanged(DCR_STRUCT_UPDATE_BEGIN);
+    DataChanged(DCR_STRUCT_UPDATE_END);
+  } else {
+    DataChanged(DCR_ITEM_UPDATED);
+  }
 //  return taiMisc::ReShowEdits((void*)this, GetTypeDef(), force);
 #endif
   return false;
