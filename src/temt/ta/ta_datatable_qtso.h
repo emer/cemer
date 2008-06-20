@@ -692,6 +692,7 @@ public:
 
   LineStyle	line_style;	// the style in which the line is drawn
   PointStyle	point_style;	// the style in which the points are drawn
+  bool		alt_y;		// use the alternate (right hand side) y axis instead of default left axis
   GraphPlotView* eff_y_axis;	// #NO_SAVE #READ_ONLY #NO_SET_POINTER effective y axis for this guy at this point in time
 
   override void		UpdateOnFlag();
@@ -764,17 +765,20 @@ public:
     Z_INDEX,			// values in the matrix are drawn in the same graph, arrayed in depth along the z axis
   };
 
+  static const int	max_plots = 5; // maximum number of y axis data plots (fixed by plot_x guys below)
+
   GraphAxisView		x_axis; 	// the x axis (horizontal, left-to-right)
   GraphAxisView		z_axis;		// the z axis (in depth, front-to-back)
-  GraphPlotView		plot_1;		// first column of data to plot
-  GraphPlotView		plot_2;		// second column of data to plot (optional -- only one that can set alt 2nd axis)
+  GraphPlotView		plot_1;		// first column of data to plot (optional)
+  GraphPlotView		plot_2;		// second column of data to plot (optional)
   GraphPlotView		plot_3;		// third column of data to plot (optional)
   GraphPlotView		plot_4;		// fourth column of data to plot (optional)
   GraphPlotView		plot_5;		// fifth column of data to plot (optional)
-  bool			alt_y_2;	// plot 2 values on alt Y axis (else plot_1 axis)
-  bool			alt_y_3;	// plot 3 values on alt Y axis (else plot_1 axis)
-  bool			alt_y_4;	// plot 4 values on alt Y axis (else plot_1 axis)
-  bool			alt_y_5;	// plot 5 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_1;	// #HIDDEN #READ_ONLY deprecated! plot 1 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_2;	// #HIDDEN #READ_ONLY deprecated! plot 2 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_3;	// #HIDDEN #READ_ONLY deprecated! plot 3 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_4;	// #HIDDEN #READ_ONLY deprecated! plot 4 values on alt Y axis (else plot_1 axis)
+  bool			alt_y_5;	// #HIDDEN #READ_ONLY deprecated! plot 5 values on alt Y axis (else plot_1 axis)
 
   GraphType		graph_type; 	// type of graph to draw
   PlotStyle		plot_style;	// how to plot the data
@@ -862,7 +866,15 @@ public:
   T3_DATAVIEWFUNS(GraphTableView, DataTableView)
 
 protected:
-  int			n_plots; // updated during rendergraph -- number of plots
+  int			n_plots; 		// number of active plots
+  GraphPlotView*	all_plots[max_plots]; 	// just pointers to all the plot_ guys for ease
+  GraphPlotView*	all_errs[max_plots]; 	// just pointers to all the err_ guys for ease
+  int_Array		main_y_plots;		// indicies of active guys using main y axis
+  int_Array		alt_y_plots;		// indicies of active guys using alt y axis
+  GraphPlotView*	mainy;			// main y axis guy (first main_y_plots)
+  GraphPlotView*	alty;			// alt y axis guy (first alt_y_plots)
+  bool			do_matrix_plot;		// if a data guy is a matrix, then find him
+
   float			bar_width; // width of bar for bar charts
   T3Axis* 		t3_x_axis;
   T3Axis* 		t3_x_axis_top; // tick-only top version of x
@@ -963,9 +975,11 @@ public:
   taiPolyData*	    	    pdtZAxis; // fixed_range polydata (inline)
 
   QHBoxLayout*		  lay1Axis;
+  iCheckBox*		    onc1Axis; // on checkbox
   QLabel*		    lbl1Axis;
   taiListElsButton*	    lel1Axis; // list element chooser
   taiPolyData*	    	    pdt1Axis; // fixed_range polydata (inline)
+  QCheckBox*		    chk1AltY;
 
   QHBoxLayout*		  lay2Axis;
   iCheckBox*		    onc2Axis; // on checkbox

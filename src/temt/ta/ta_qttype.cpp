@@ -120,7 +120,7 @@ bool taiType::CheckProcessCondMembMeth(const String condkey,
     TypeDef* own_td = tab->GetTypeDef();
     ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
     MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						  mbr, true);
+						  mbr, false); // no warn..
     if (md) {
       mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
     }
@@ -1386,7 +1386,7 @@ TypeDef* taiMember::GetTargetType(const void* base) {
       TypeDef* own_td = typ;
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						      mb_nm, true);
+						      mb_nm, false); // no warn
       if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
 	targ_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
@@ -1541,7 +1541,7 @@ TypeDef* taiTokenPtrMember::GetMinType(const void* base) {
       ta_memb_ptr net_mbr_off = 0;
       int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						    tmp, true);
+						    tmp, false); // no warn
       if (md && (md->type == &TA_TypeDef_ptr)) {
 	dir_type = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }
@@ -1733,7 +1733,7 @@ void taiTypePtrMember::GetImage_impl(taiData* dat, const void* base){
     TypeDef* own_td = typ;
     ta_memb_ptr net_mbr_off = 0;    int net_base_off = 0;
     MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						  mb_nm, true);
+						  mb_nm, false); // no warn
     if (md && (md->type == &TA_TypeDef_ptr)) {
       td = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
     }
@@ -2451,7 +2451,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
       TypeDef* own_td = typ;
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						    mb_nm, true);
+						    mb_nm, false); // no warn
       if (md && (md->type == &TA_TypeDef_ptr)) {
 	TypeDef* mbr_typ = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
 	if(mbr_typ->InheritsFrom(npt) || npt->InheritsFrom(mbr_typ))
@@ -2527,7 +2527,7 @@ cssEl* taiTypePtrArgType::GetElFromArg(const char* nm, void* base) {
       TypeDef* own_td = typ;
       ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
       MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						    mb_nm, true);
+						    mb_nm, false); // no warn
       if (md && (md->type == &TA_TypeDef_ptr)) {
 	tpdf = *(TypeDef**)(MemberDef::GetOff_static(base, net_base_off, net_mbr_off));
       }

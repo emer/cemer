@@ -2771,6 +2771,7 @@ void GraphPlotView::Initialize() {
   axis = Y;
   line_style = SOLID;
   point_style = CIRCLE;
+  alt_y = false;
   eff_y_axis = NULL;
 }
 
@@ -2894,6 +2895,7 @@ void GraphTableView::Initialize() {
   plot_5.color.name = "purple";
   plot_5.point_style = GraphPlotView::PLUS;
   plot_5.color.UpdateAfterEdit();
+  alt_y_1 = false;
   alt_y_2 = false;
   alt_y_3 = false;
   alt_y_4 = false;
@@ -2944,6 +2946,7 @@ void GraphTableView::Initialize() {
   children.SetBaseType(&TA_GraphColView); // subclasses need to set this to their type!
 
   n_plots = 1;
+  do_matrix_plot = false;
   t3_x_axis = NULL;
   t3_x_axis_top = NULL;
   t3_x_axis_far = NULL;
@@ -2976,6 +2979,21 @@ void GraphTableView::InitLinks() {
   taBase::Own(raster_axis, this);
   taBase::Own(colorscale, this);
   taBase::Own(last_sel_pt, this);
+
+  taBase::Own(main_y_plots, this);
+  taBase::Own(alt_y_plots, this);
+
+  all_plots[0] = &plot_1;
+  all_plots[1] = &plot_2;
+  all_plots[2] = &plot_3;
+  all_plots[3] = &plot_4;
+  all_plots[4] = &plot_5;
+
+  all_errs[0] = &err_1;
+  all_errs[1] = &err_2;
+  all_errs[2] = &err_3;
+  all_errs[3] = &err_4;
+  all_errs[4] = &err_5;
 }
 
 void GraphTableView::CutLinks() {
@@ -3000,6 +3018,14 @@ void GraphTableView::CutLinks() {
 void GraphTableView::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
 
+  // capture saved alt_y vals and reset in favor of new ones on the plot_x guys
+  // todo: obsolete stuff should be removed after some point
+  if(alt_y_1) { plot_1.alt_y = true; alt_y_1 = false; } 
+  if(alt_y_2) { plot_2.alt_y = true; alt_y_1 = false; } 
+  if(alt_y_3) { plot_3.alt_y = true; alt_y_1 = false; } 
+  if(alt_y_4) { plot_4.alt_y = true; alt_y_1 = false; } 
+  if(alt_y_5) { plot_5.alt_y = true; alt_y_1 = false; } 
+
   if(taMisc::is_loading) return;
 
   x_axis.axis_length = width;
@@ -3008,7 +3034,6 @@ void GraphTableView::UpdateAfterEdit_impl(){
   x_axis.on = true;		// try to keep it on
   x_axis.UpdateOnFlag();
   z_axis.UpdateOnFlag();
-  plot_1.on = true;		// try to keep it on
   plot_1.UpdateOnFlag();
   plot_2.UpdateOnFlag();
   plot_3.UpdateOnFlag();
@@ -3027,48 +3052,102 @@ void GraphTableView::UpdateAfterEdit_impl(){
   if(dt && dt->data.size > 0)
     no_cols = false;
 
-  // don't bother: not generlizable and not supported
-//   if(plot_2.on && !plot_1.on) { // move to pl1
-//     plot_1.col_name = plot_2.col_name;
-//     plot_2.col_name = "";
-//     plot_1.UpdateOnFlag();
-//     plot_2.UpdateOnFlag();
-//   }
+  ////////////////////// update y axes in use, etc
 
-  if(!plot_1.on) {
-    if(!no_cols) {
-      taMisc::Warning("GraphTableView -- plot_1 is not on -- perhaps no valid col_name found for plot_1 -- nothing will be plotted!");
+  main_y_plots.Reset();
+  alt_y_plots.Reset();
+  do_matrix_plot = false;
+  n_plots = 0;
+  int first_mat = -1;
+  for(int i=0;i<max_plots;i++) {
+    GraphPlotView* pl = all_plots[i];
+    if(!pl->on) continue;
+    n_plots++;
+    if(pl->alt_y) alt_y_plots.Add(i);
+    else	  main_y_plots.Add(i);
+    GraphColView* plc = all_plots[i]->GetColPtr();
+    if(plc->dataCol()->is_matrix) {
+      if(!do_matrix_plot) first_mat = i;
+      do_matrix_plot = true;
     }
   }
-  else if(plot_1.isString()) {
-    taMisc::Warning("GraphTableView -- plot_1 is a string -- must be a numeric value -- nothing will be plotted");
-    plot_1.on = false;
-  }
-  else {
-    GraphColView* pl1 = plot_1.GetColPtr();
-    if(pl1->dataCol()->is_matrix && plot_2.on) {
-      taMisc::Warning("GraphTableView -- plot_1 is a matrix, so all other plots are being turned off (matrix can only be plotted by itself)");
-      plot_2.on = false; plot_3.on = false; plot_4.on = false; plot_5.on = false;
+  if(do_matrix_plot && n_plots > 1) {
+    n_plots = 1;
+    taMisc::Warning("GraphTableView -- a data column to be plotted is a matrix, so all other plots are being turned off (matrix can only be plotted by itself)");
+    main_y_plots.Reset();
+    alt_y_plots.Reset();
+    for(int i=0;i<max_plots;i++) {
+      GraphPlotView* pl = all_plots[i];
+      if(!pl->on) continue;
+      if(i == first_mat) continue;
+      pl->on = false;		// turn off
+      if(pl->alt_y) alt_y_plots.RemoveIdx(i);
+      else	    main_y_plots.RemoveIdx(i);
     }
+  }
 
-    // always share axis if string
-    if(plot_2.on && plot_2.isString()) alt_y_2 = false;
-    
-    if(!alt_y_2 || !plot_2.on) {
-      if(alt_y_3 && plot_3.on) {
-	taMisc::Warning("GraphTableView -- plot_3 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
-	alt_y_3 = false;
+  if(main_y_plots.size > 0) {
+    GraphPlotView* pl = all_plots[main_y_plots[0]];
+    if(pl->isString()) {
+      int non_str = -1;
+      for(int i=1; i< main_y_plots.size; i++) {
+	if(!all_plots[main_y_plots[i]]->isString()) {
+	  non_str = i;
+	  break;
+	}
       }
-      if(alt_y_4 && plot_4.on) {
-	taMisc::Warning("GraphTableView -- plot_4 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
-	alt_y_4 = false;
+
+      if(non_str == -1) {
+	taMisc::Warning("GraphTableView -- can't have only a string value(s) plotted on main Y axis -- must also include a numeric column to provide Y axis values -- turning off plot!");
+	for(int i=0; i< main_y_plots.size; i++) {
+	  all_plots[main_y_plots[i]]->on = false;
+	}
+	n_plots -= main_y_plots.size;
+	main_y_plots.Reset();
       }
-      if(alt_y_5 && plot_5.on) {
-	taMisc::Warning("GraphTableView -- plot_5 cannot use alt axis because plot_2 alt axis is not set -- only plot_2 can define the alt axis");
-	alt_y_5 = false; // no can do
+      else {
+	main_y_plots.SwapIdx(0,non_str); // exchange
       }
     }
   }
+
+  if(alt_y_plots.size > 0) {
+    GraphPlotView* pl = all_plots[alt_y_plots[0]];
+    if(pl->isString()) {	// oops.. not again!
+      int non_str = -1;
+      for(int i=1; i< alt_y_plots.size; i++) {
+	if(!all_plots[alt_y_plots[i]]->isString()) {
+	  non_str = i;
+	  break;
+	}
+      }
+
+      if(non_str == -1) {
+	taMisc::Warning("GraphTableView -- can't have only a string value(s) plotted on alt Y axis -- must also include a numeric column to provide Y axis values -- turning off plot!");
+	for(int i=0; i< alt_y_plots.size; i++) {
+	  all_plots[alt_y_plots[i]]->on = false;
+	}
+	n_plots -= alt_y_plots.size;
+	alt_y_plots.Reset();
+      }
+      else {
+	alt_y_plots.SwapIdx(0,non_str); // exchange
+      }
+    }
+  }
+
+  if(n_plots > 0 && main_y_plots.size == 0) { // no first y's so must be alts -- switch them!
+    main_y_plots = alt_y_plots;
+    alt_y_plots.Reset();
+  }
+
+  mainy = NULL;
+  if(main_y_plots.size > 0) mainy = all_plots[main_y_plots[0]];
+  alty = NULL;
+  if(alt_y_plots.size > 0) alty = all_plots[alt_y_plots[0]];
+
+  ///////////////////////////////////////////////////////////
+  // other axes
 
   if(!x_axis.on) {
     if(!no_cols) {
@@ -3275,9 +3354,11 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
 }
 
 void GraphTableView::ComputeAxisRanges() {
+  UpdateAfterEdit_impl();
+
   x_axis.ComputeRange();
-  if(matrix_mode == Z_INDEX) {
-    DataCol* da_y = plot_1.GetDAPtr();
+  if(do_matrix_plot && matrix_mode == Z_INDEX && mainy) {
+    DataCol* da_y = mainy->GetDAPtr();
     if(da_y && da_y->is_matrix) {
       z_axis.SetRange_impl(0.0f, da_y->cell_size());
     }
@@ -3288,33 +3369,26 @@ void GraphTableView::ComputeAxisRanges() {
   else {
     z_axis.ComputeRange();
   }
-  plot_1.ComputeRange();
-  plot_2.ComputeRange();
-  plot_3.ComputeRange();
-  plot_4.ComputeRange();
-  plot_5.ComputeRange();
 
-  if(plot_2.on && plot_2.GetDAPtr() && !plot_2.isString()) {
-    if(!alt_y_2)
-      plot_1.UpdateRange_impl(plot_2.data_range.min, plot_2.data_range.max);
+  for(int i=0;i<max_plots;i++) {
+    GraphPlotView* pl = all_plots[i];
+    pl->ComputeRange();
   }
-  if(plot_3.on && plot_3.GetDAPtr() && !plot_3.isString()) {
-    if(alt_y_3)
-      plot_2.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
-    else
-      plot_1.UpdateRange_impl(plot_3.data_range.min, plot_3.data_range.max);
+
+  if(mainy) {
+    for(int i=1;i<main_y_plots.size;i++) {
+      GraphPlotView* pl = all_plots[main_y_plots[i]];
+      if(pl->isString()) continue;
+      mainy->UpdateRange_impl(pl->data_range.min, pl->data_range.max);
+    }
   }
-  if(plot_4.on && plot_4.GetDAPtr() && !plot_4.isString()) {
-    if(alt_y_4)
-      plot_2.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
-    else
-      plot_1.UpdateRange_impl(plot_4.data_range.min, plot_4.data_range.max);
-  }
-  if(plot_5.on && plot_5.GetDAPtr() && !plot_5.isString()) {
-    if(alt_y_5)
-      plot_2.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
-    else
-      plot_1.UpdateRange_impl(plot_5.data_range.min, plot_5.data_range.max);
+
+  if(alty) {
+    for(int i=1;i<alt_y_plots.size;i++) {
+      GraphPlotView* pl = all_plots[alt_y_plots[i]];
+      if(pl->isString()) continue;
+      alty->UpdateRange_impl(pl->data_range.min, pl->data_range.max);
+    }
   }
 
   if(color_mode == COLOR_AXIS)
@@ -3559,20 +3633,11 @@ void GraphTableView::UpdateFromDataTable_this(bool first) {
 void GraphTableView::RenderGraph() {
 //   cerr << "render graph" << endl;
   UpdateAfterEdit_impl();
-  if(!plot_1.on || !x_axis.on) return;
-  n_plots = 1;
-  if(plot_2.on && plot_2.GetDAPtr())
-    n_plots++;
-  if(plot_3.on && plot_3.GetDAPtr())
-    n_plots++;
-  if(plot_4.on && plot_4.GetDAPtr())
-    n_plots++;
-  if(plot_5.on && plot_5.GetDAPtr())
-    n_plots++;
+  if(n_plots == 0 || !x_axis.on) return;
 
   RenderAxes();
 
-  if(plot_1.GetDAPtr()->is_matrix) {
+  if(do_matrix_plot && mainy && mainy->GetDAPtr()->is_matrix) {
     if(matrix_mode == SEP_GRAPHS)
       RenderGraph_Matrix_Sep();
     else
@@ -3592,6 +3657,8 @@ void GraphTableView::RenderAxes() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
+  if(!x_axis.on || !mainy) return;
+
   SoSeparator* xax = node_so->x_axis();
   xax->removeAllChildren();
   SoSeparator* zax = node_so->z_axis();
@@ -3599,16 +3666,17 @@ void GraphTableView::RenderAxes() {
   SoSeparator* yax = node_so->y_axes();
   yax->removeAllChildren();
 
-
   t3_x_axis = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
   t3_x_axis_top = new T3Axis((T3Axis::Axis)x_axis.axis, &x_axis, axis_font_size);
 
   xax->addChild(t3_x_axis);
 
+  float ylen = plot_1.axis_length;
+
   SoTranslation* tr;
   // top
   tr = new SoTranslation();  xax->addChild(tr);
-  tr->translation.setValue(0.0f, plot_1.axis_length, 0.0f);
+  tr->translation.setValue(0.0f, ylen, 0.0f);
   xax->addChild(t3_x_axis_top);
 
   x_axis.RenderAxis(t3_x_axis);
@@ -3624,7 +3692,7 @@ void GraphTableView::RenderAxes() {
     xax->addChild(t3_x_axis_far_top);
     // far
     tr = new SoTranslation();  xax->addChild(tr);
-    tr->translation.setValue(0.0f, -plot_1.axis_length, 0.0f);
+    tr->translation.setValue(0.0f, -ylen, 0.0f);
     xax->addChild(t3_x_axis_far);
 
     x_axis.RenderAxis(t3_x_axis_far_top, 0, true); // ticks only
@@ -3646,7 +3714,7 @@ void GraphTableView::RenderAxes() {
     zax->addChild(t3_z_axis_rt);
     // top_rt
     tr = new SoTranslation();   zax->addChild(tr);
-    tr->translation.setValue(0.0f, plot_1.axis_length, 0.0f);
+    tr->translation.setValue(0.0f, ylen, 0.0f);
     zax->addChild(t3_z_axis_top_rt);
     // top
     tr = new SoTranslation();   zax->addChild(tr);
@@ -3673,13 +3741,13 @@ void GraphTableView::RenderAxes() {
 
   }
   else {
-    t3_y_axis = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, axis_font_size);
-    plot_1.RenderAxis(t3_y_axis);
+    t3_y_axis = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
+    mainy->RenderAxis(t3_y_axis);
     yax->addChild(t3_y_axis);
 
     if(z_axis.on) {
-      t3_y_axis_far = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, axis_font_size);
-      plot_1.RenderAxis(t3_y_axis_far, 0, true); // only ticks
+      t3_y_axis_far = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
+      mainy->RenderAxis(t3_y_axis_far, 0, true); // only ticks
       // far
       tr = new SoTranslation();   yax->addChild(tr);
       tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
@@ -3691,16 +3759,16 @@ void GraphTableView::RenderAxes() {
       t3_y_axis_far = NULL;
     }
 
-    if(plot_2.on && alt_y_2) {
-      t3_y_axis_rt = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, axis_font_size, 1); // second Y = 1
-      plot_2.RenderAxis(t3_y_axis_rt, 1); // indicate second axis!
+    if(alty) {
+      t3_y_axis_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1); // second Y = 1
+      alty->RenderAxis(t3_y_axis_rt, 1); // indicate second axis!
       tr = new SoTranslation();  yax->addChild(tr);
       tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f); // put on right hand side!
       yax->addChild(t3_y_axis_rt);		  
 
       if(z_axis.on) {
-	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)plot_2.axis, &plot_2, axis_font_size, 1);
-	plot_2.RenderAxis(t3_y_axis_far_rt, 1, true); // only ticks
+	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1);
+	alty->RenderAxis(t3_y_axis_far_rt, 1, true); // only ticks
 	tr = new SoTranslation();   yax->addChild(tr);
 	tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
 	yax->addChild(t3_y_axis_far_rt);
@@ -3711,15 +3779,15 @@ void GraphTableView::RenderAxes() {
     }
     else {
       // rt
-      t3_y_axis_rt = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, axis_font_size);
-      plot_1.RenderAxis(t3_y_axis_rt, 0, true); // ticks
+      t3_y_axis_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
+      mainy->RenderAxis(t3_y_axis_rt, 0, true); // ticks
       tr = new SoTranslation();   yax->addChild(tr);
       tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f);
       yax->addChild(t3_y_axis_rt);
 
       if(z_axis.on) {
-	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)plot_1.axis, &plot_1, axis_font_size);
-	plot_1.RenderAxis(t3_y_axis_far_rt, 0, true); // only ticks
+	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
+	mainy->RenderAxis(t3_y_axis_far_rt, 0, true); // only ticks
 	tr = new SoTranslation();   yax->addChild(tr);
 	tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
 	yax->addChild(t3_y_axis_far_rt);
@@ -3754,52 +3822,34 @@ void GraphTableView::RenderLegend() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
+  float ylen = plot_1.axis_length;
+
   SoSeparator* leg = node_so->legend();
   leg->removeAllChildren();
   // move to top
   SoTranslation* tr;
   tr = new SoTranslation();  leg->addChild(tr);
-  tr->translation.setValue(0.0f, plot_1.axis_length + 2.5f * axis_font_size, 0.0f);
+  tr->translation.setValue(0.0f, ylen + 2.5f * axis_font_size, 0.0f);
 
   float over_amt = .33f * x_axis.axis_length;
   float dn_amt = -1.1f * axis_font_size;
   bool mv_dn = true;		// else over
 
-  if(plot_1.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_1, axis_font_size); leg->addChild(ln);
-    RenderLegend_Ln(plot_1, ln);
+  // keep in same order as plotting: main then alt
+  for(int i=0;i<main_y_plots.size;i++) {
+    GraphPlotView* pl = all_plots[main_y_plots[i]];
+    T3GraphLine* ln = new T3GraphLine(pl, axis_font_size); leg->addChild(ln);
+    RenderLegend_Ln(*pl, ln);
     tr = new SoTranslation();  leg->addChild(tr);
     if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
     else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
     mv_dn = !mv_dn;		// flip
   }
-  if(plot_2.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_2, axis_font_size); leg->addChild(ln);
-    RenderLegend_Ln(plot_2, ln);
-    tr = new SoTranslation();  leg->addChild(tr);
-    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
-    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-    mv_dn = !mv_dn;		// flip
-  }
-  if(plot_3.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_3, axis_font_size); leg->addChild(ln);
-    RenderLegend_Ln(plot_3, ln);
-    tr = new SoTranslation();  leg->addChild(tr);
-    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
-    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-    mv_dn = !mv_dn;		// flip
-  }
-  if(plot_4.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_4, axis_font_size); leg->addChild(ln);
-    RenderLegend_Ln(plot_4, ln);
-    tr = new SoTranslation();  leg->addChild(tr);
-    if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
-    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-    mv_dn = !mv_dn;		// flip
-  }
-  if(plot_5.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_5, axis_font_size); leg->addChild(ln);
-    RenderLegend_Ln(plot_5, ln);
+
+  for(int i=0;i<alt_y_plots.size;i++) {
+    GraphPlotView* pl = all_plots[alt_y_plots[i]];
+    T3GraphLine* ln = new T3GraphLine(pl, axis_font_size); leg->addChild(ln);
+    RenderLegend_Ln(*pl, ln);
     tr = new SoTranslation();  leg->addChild(tr);
     if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
     else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
@@ -3811,7 +3861,9 @@ void GraphTableView::RenderGraph_XY() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
-  DataCol* da_1 = plot_1.GetDAPtr();
+  if(!mainy) return;
+
+  DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
@@ -3827,52 +3879,26 @@ void GraphTableView::RenderGraph_XY() {
   // each graph has a box and lines..
   SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
   gr1->addChild(lbox);
-  T3GraphLine* ln = new T3GraphLine(&plot_1, label_font_size);
-  gr1->addChild(ln);
 
-  PlotData_XY(plot_1, err_1, plot_1, ln); // this guy always has to be on
+  for(int i=0;i<main_y_plots.size;i++) {
+    GraphPlotView* pl = all_plots[main_y_plots[i]];
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    if(pl->isString()) {
+      PlotData_String(*pl, *mainy, ln);
+    }
+    else {
+      PlotData_XY(*pl, *all_errs[main_y_plots[i]], *mainy, ln);
+    }
+  }
 
-  if(plot_2.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_2, label_font_size); gr1->addChild(ln);
-    if(plot_2.isString()) {
-      PlotData_String(plot_2, plot_1, ln);
+  for(int i=0;i<alt_y_plots.size;i++) {
+    GraphPlotView* pl = all_plots[alt_y_plots[i]];
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    if(pl->isString()) {
+      PlotData_String(*pl, *alty, ln);
     }
     else {
-      if(alt_y_2) PlotData_XY(plot_2, err_2, plot_2, ln);
-      else        PlotData_XY(plot_2, err_2, plot_1, ln);
-    }
-  }
-  if(plot_3.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_3, label_font_size); gr1->addChild(ln);
-    if(plot_3.isString()) {
-      if(alt_y_3) PlotData_String(plot_3, plot_2, ln);
-      else 	    PlotData_String(plot_3, plot_1, ln);
-    }
-    else {
-      if(alt_y_3) PlotData_XY(plot_3, err_3, plot_2, ln);
-      else        PlotData_XY(plot_3, err_3, plot_1, ln);
-    }
-  }
-  if(plot_4.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_4, label_font_size); gr1->addChild(ln);
-    if(plot_4.isString()) {
-      if(alt_y_4) PlotData_String(plot_4, plot_2, ln);
-      else 	    PlotData_String(plot_4, plot_1, ln);
-    }
-    else {
-      if(alt_y_4) PlotData_XY(plot_4, err_4, plot_2, ln);
-      else        PlotData_XY(plot_4, err_4, plot_1, ln);
-    }
-  }
-  if(plot_5.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_5, label_font_size); gr1->addChild(ln);
-    if(plot_5.isString()) {
-      if(alt_y_5) PlotData_String(plot_5, plot_2, ln);
-      else 	    PlotData_String(plot_5, plot_1, ln);
-    }
-    else {
-      if(alt_y_5) PlotData_XY(plot_5, err_5, plot_2, ln);
-      else        PlotData_XY(plot_5, err_5, plot_1, ln);
+      PlotData_XY(*pl, *all_errs[alt_y_plots[i]], *alty, ln);
     }
   }
 }
@@ -3883,7 +3909,7 @@ void GraphTableView::RenderGraph_Bar() {
 
   if(n_plots <= 0) return;
 
-  DataCol* da_1 = plot_1.GetDAPtr();
+  DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
@@ -3896,68 +3922,39 @@ void GraphTableView::RenderGraph_Bar() {
   if(z_axis.on)
     boxd = depth;
 
-  // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
-  gr1->addChild(lbox);
-  T3GraphLine* ln = new T3GraphLine(&plot_1, label_font_size);
-  gr1->addChild(ln);
-
   int n_str = 0;
-  if(plot_2.on && plot_2.isString()) n_str++;
-  if(plot_3.on && plot_3.isString()) n_str++;
-  if(plot_4.on && plot_4.isString()) n_str++;
-  if(plot_5.on && plot_5.isString()) n_str++;
+  for(int i=0;i<max_plots;i++) {
+    GraphPlotView* pl = all_plots[i];
+    if(pl->on && pl->isString()) n_str++;
+  }
 
   bar_width = (1.0f - bar_space) / ((float)(n_plots - n_str));
   float bar_off = - .5f * (1.0f - bar_space);
 
-  PlotData_Bar(plot_1, err_1, plot_1, ln, bar_off); // this guy always has to be on
-  bar_off += bar_width;
+  // each graph has a box and lines..
+  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd);
+  gr1->addChild(lbox);
 
-  if(plot_2.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_2, label_font_size); gr1->addChild(ln);
-    if(plot_2.isString()) {
-      PlotData_String(plot_2, plot_1, ln);
+  for(int i=0;i<main_y_plots.size;i++) {
+    GraphPlotView* pl = all_plots[main_y_plots[i]];
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    if(pl->isString()) {
+      PlotData_String(*pl, *mainy, ln);
     }
     else {
-      if(alt_y_2) PlotData_Bar(plot_2, err_2, plot_2, ln, bar_off);
-      else        PlotData_Bar(plot_2, err_2, plot_1, ln, bar_off);
+      PlotData_Bar(*pl, *all_errs[main_y_plots[i]], *mainy, ln, bar_off);
       bar_off += bar_width;
     }
   }
-  if(plot_3.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_3, label_font_size); gr1->addChild(ln);
-    if(plot_3.isString()) {
-      if(alt_y_3) PlotData_String(plot_3, plot_2, ln);
-      else 	    PlotData_String(plot_3, plot_1, ln);
+
+  for(int i=0;i<alt_y_plots.size;i++) {
+    GraphPlotView* pl = all_plots[alt_y_plots[i]];
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    if(pl->isString()) {
+      PlotData_String(*pl, *alty, ln);
     }
     else {
-      if(alt_y_3) PlotData_Bar(plot_3, err_3, plot_2, ln, bar_off);
-      else        PlotData_Bar(plot_3, err_3, plot_1, ln, bar_off);
-      bar_off += bar_width;
-    }
-  }
-  if(plot_4.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_4, label_font_size); gr1->addChild(ln);
-    if(plot_4.isString()) {
-      if(alt_y_4) PlotData_String(plot_4, plot_2, ln);
-      else 	    PlotData_String(plot_4, plot_1, ln);
-    }
-    else {
-      if(alt_y_4) PlotData_Bar(plot_4, err_4, plot_2, ln, bar_off);
-      else        PlotData_Bar(plot_4, err_4, plot_1, ln, bar_off);
-      bar_off += bar_width;
-    }
-  }
-  if(plot_5.on) {
-    T3GraphLine* ln = new T3GraphLine(&plot_5, label_font_size); gr1->addChild(ln);
-    if(plot_5.isString()) {
-      if(alt_y_5) PlotData_String(plot_5, plot_2, ln);
-      else 	    PlotData_String(plot_5, plot_1, ln);
-    }
-    else {
-      if(alt_y_5) PlotData_Bar(plot_5, err_5, plot_2, ln, bar_off);
-      else        PlotData_Bar(plot_5, err_5, plot_1, ln, bar_off);
+      PlotData_Bar(*pl, *all_errs[alt_y_plots[i]], *alty, ln, bar_off);
       bar_off += bar_width;
     }
   }
@@ -3967,7 +3964,7 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
-  DataCol* da_1 = plot_1.GetDAPtr();
+  DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
@@ -3981,9 +3978,9 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   gr1->addChild(lbox);
 
   for(int i=0;i<da_1->cell_size();i++) {
-    T3GraphLine* ln = new T3GraphLine(&plot_1, label_font_size);
+    T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
     gr1->addChild(ln);
-    PlotData_XY(plot_1, err_1, plot_1, ln, i);
+    PlotData_XY(*mainy, *all_errs[main_y_plots[0]], *mainy, ln, i);
   }
 }
 
@@ -3991,8 +3988,10 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
 
-  DataCol* da_1 = plot_1.GetDAPtr();
+  DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
+
+  GraphPlotView* erry = all_errs[main_y_plots[0]];
 
   float boxd = .01f;
   if(z_axis.on)
@@ -4030,13 +4029,13 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	SoTransform* tx = new SoTransform();
 	gr->addChild(tx);
 	tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-	T3GraphLine* ln = new T3GraphLine(&plot_1, label_font_size);
+	T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
 	gr->addChild(ln);
 	if(mat_layout == taMisc::TOP_ZERO)
 	  idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
 	else
 	  idx = mgeom.IndexFmDims(pos.x, pos.y);
-	PlotData_XY(plot_1, err_1, plot_1, ln, idx);
+	PlotData_XY(*mainy, *erry, *mainy, ln, idx);
       }
     }
   }
@@ -4068,13 +4067,13 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	  SoTransform* tx = new SoTransform();
 	  gr->addChild(tx);
 	  tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-	  T3GraphLine* ln = new T3GraphLine(&plot_1, label_font_size);
+	  T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
 	  gr->addChild(ln);
 	  if(mat_layout == taMisc::TOP_ZERO)
 	    idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
 	  else
 	    idx = mgeom.IndexFmDims(pos.x, pos.y, z);
-	  PlotData_XY(plot_1, err_1, plot_1, ln, idx);
+	  PlotData_XY(*mainy, *erry, *mainy, ln, idx);
 	}
       }
     }
@@ -4108,13 +4107,13 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 	    SoTransform* tx = new SoTransform();
 	    gr->addChild(tx);
 	    tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-	    T3GraphLine* ln = new T3GraphLine(&plot_1, label_font_size);
+	    T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
 	    gr->addChild(ln);
 	    if(mat_layout == taMisc::TOP_ZERO)
 	      idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
 	    else
 	      idx = mgeom.IndexFmDims(pos.x, pos.y, opos.x, opos.y);
-	    PlotData_XY(plot_1, err_1, plot_1, ln, idx);
+	    PlotData_XY(*mainy, *erry, *mainy, ln, idx);
           }
 	}
       }
@@ -4787,11 +4786,22 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay1Axis = new QHBoxLayout; layWidg->addLayout(lay1Axis);
 
   lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
-  lbl1Axis->setToolTip("First column of data to plot");
+  lbl1Axis->setToolTip("First column of data to plot (optional)");
   lay1Axis->addWidget(lbl1Axis);
   lel1Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay1Axis->addWidget(lel1Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
+
+  onc1Axis = new iCheckBox("On", widg);
+  onc1Axis->setToolTip("Display this column's data or not?");
+  connect(onc1Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  lay1Axis->addWidget(onc1Axis);
+
+  chk1AltY =  new QCheckBox("Alt\nY", widg); chk1AltY->setObjectName("chk1AltY");
+  chk1AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
+  connect(chk1AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  //  layPlots->addWidget(chk1AltY);
+  lay1Axis->addWidget(chk1AltY);
 
   pdt1Axis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
   lay1Axis->addWidget(pdt1Axis->GetRep());
@@ -4810,12 +4820,12 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layVals->addSpacing(taiM->hsep_c);
 
   onc2Axis = new iCheckBox("On", widg);
-  onc2Axis->setToolTip("Display a second column's worth of data?");
+  onc2Axis->setToolTip("Display this column's data or not?");
   connect(onc2Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay2Axis->addWidget(onc2Axis);
 
   chk2AltY =  new QCheckBox("Alt\nY", widg); chk2AltY->setObjectName("chk2AltY");
-  chk2AltY->setToolTip("Whether to setup an alternate Y axis for this second column of data (otherwise it shares with the first plot's Y axis)");
+  chk2AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
   connect(chk2AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   //  layPlots->addWidget(chk2AltY);
   lay2Axis->addWidget(chk2AltY);
@@ -4830,19 +4840,19 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay3Axis = new QHBoxLayout; layWidg->addLayout(lay3Axis);
 
   lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
-  lbl3Axis->setToolTip("Second column of data to plot (optional)");
+  lbl3Axis->setToolTip("Third column of data to plot (optional)");
   lay3Axis->addWidget(lbl3Axis);
   lel3Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay3Axis->addWidget(lel3Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   onc3Axis = new iCheckBox("On", widg);
-  onc3Axis->setToolTip("Display a second column's worth of data?");
+  onc3Axis->setToolTip("Display this column's data or not?");
   connect(onc3Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay3Axis->addWidget(onc3Axis);
 
   chk3AltY =  new QCheckBox("Alt\nY", widg); chk3AltY->setObjectName("chk3AltY");
-  chk3AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
+  chk3AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
   connect(chk3AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   //  layPlots->addWidget(chk3AltY);
   lay3Axis->addWidget(chk3AltY);
@@ -4857,19 +4867,19 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay4Axis = new QHBoxLayout; layWidg->addLayout(lay4Axis);
 
   lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
-  lbl4Axis->setToolTip("Second column of data to plot (optional)");
+  lbl4Axis->setToolTip("Fourth column of data to plot (optional)");
   lay4Axis->addWidget(lbl4Axis);
   lel4Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay4Axis->addWidget(lel4Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   onc4Axis = new iCheckBox("On", widg);
-  onc4Axis->setToolTip("Display a second column's worth of data?");
+  onc4Axis->setToolTip("Display this column's data or not?");
   connect(onc4Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay4Axis->addWidget(onc4Axis);
 
   chk4AltY =  new QCheckBox("Alt\nY", widg);
-  chk4AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
+  chk4AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
   connect(chk4AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   //  layPlots->addWidget(chk4AltY);
   lay4Axis->addWidget(chk4AltY);
@@ -4884,19 +4894,19 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lay5Axis = new QHBoxLayout; layWidg->addLayout(lay5Axis);
 
   lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
-  lbl5Axis->setToolTip("Second column of data to plot (optional)");
+  lbl5Axis->setToolTip("Fifth column of data to plot (optional)");
   lay5Axis->addWidget(lbl5Axis);
   lel5Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
   lay5Axis->addWidget(lel5Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   onc5Axis = new iCheckBox("On", widg);
-  onc5Axis->setToolTip("Display a second column's worth of data?");
+  onc5Axis->setToolTip("Display this column's data or not?");
   connect(onc5Axis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   lay5Axis->addWidget(onc5Axis);
 
   chk5AltY =  new QCheckBox("Alt\nY", widg); chk5AltY->setObjectName("chk5AltY");
-  chk5AltY->setToolTip("Use the alternate (plot 2) or standard (plot 1) axis -- only plot 2 can create an alternate axis");
+  chk5AltY->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
   connect(chk5AltY, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   //  layPlots->addWidget(chk5AltY);
   lay5Axis->addWidget(chk5AltY);
@@ -5089,8 +5099,14 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   lelZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
   pdtZAxis->SetFlag(taiData::flgReadOnly, !glv->z_axis.on);
+
   lel1Axis->GetImage(&(glv->children), glv->plot_1.GetColPtr());
+  onc1Axis->setReadOnly(glv->plot_1.GetColPtr() == NULL);
+  onc1Axis->setChecked(glv->plot_1.on);
   pdt1Axis->GetImage_(&(glv->plot_1.fixed_range));
+  lel1Axis->SetFlag(taiData::flgReadOnly, !glv->plot_1.on);
+  pdt1Axis->SetFlag(taiData::flgReadOnly, !glv->plot_1.on);
+  chk1AltY->setChecked(glv->plot_1.alt_y);
 
   lel2Axis->GetImage(&(glv->children), glv->plot_2.GetColPtr());
   onc2Axis->setReadOnly(glv->plot_2.GetColPtr() == NULL);
@@ -5098,7 +5114,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   pdt2Axis->GetImage_(&(glv->plot_2.fixed_range));
   lel2Axis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
   pdt2Axis->SetFlag(taiData::flgReadOnly, !glv->plot_2.on);
-  chk2AltY->setChecked(glv->alt_y_2);
+  chk2AltY->setChecked(glv->plot_2.alt_y);
 
   lel3Axis->GetImage(&(glv->children), glv->plot_3.GetColPtr());
   onc3Axis->setReadOnly(glv->plot_3.GetColPtr() == NULL);
@@ -5106,7 +5122,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   pdt3Axis->GetImage_(&(glv->plot_3.fixed_range));
   lel3Axis->SetFlag(taiData::flgReadOnly, !glv->plot_3.on);
   pdt3Axis->SetFlag(taiData::flgReadOnly, !glv->plot_3.on);
-  chk3AltY->setChecked(glv->alt_y_3);
+  chk3AltY->setChecked(glv->plot_3.alt_y);
 
   lel4Axis->GetImage(&(glv->children), glv->plot_4.GetColPtr());
   onc4Axis->setReadOnly(glv->plot_4.GetColPtr() == NULL);
@@ -5114,7 +5130,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   pdt4Axis->GetImage_(&(glv->plot_4.fixed_range));
   lel4Axis->SetFlag(taiData::flgReadOnly, !glv->plot_4.on);
   pdt4Axis->SetFlag(taiData::flgReadOnly, !glv->plot_4.on);
-  chk4AltY->setChecked(glv->alt_y_4);
+  chk4AltY->setChecked(glv->plot_4.alt_y);
 
   lel5Axis->GetImage(&(glv->children), glv->plot_5.GetColPtr());
   onc5Axis->setReadOnly(glv->plot_5.GetColPtr() == NULL);
@@ -5122,7 +5138,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   pdt5Axis->GetImage_(&(glv->plot_5.fixed_range));
   lel5Axis->SetFlag(taiData::flgReadOnly, !glv->plot_5.on);
   pdt5Axis->SetFlag(taiData::flgReadOnly, !glv->plot_5.on);
-  chk5AltY->setChecked(glv->alt_y_5);
+  chk5AltY->setChecked(glv->plot_5.alt_y);
 
   lel1Err->GetImage(&(glv->children), glv->err_1.GetColPtr());
   onc1Err->setReadOnly(glv->err_1.GetColPtr() == NULL);
@@ -5187,15 +5203,20 @@ void iGraphTableView_Panel::GetValue_impl() {
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
 
+  tcol = (GraphColView*)lel1Axis->GetValue();
+  if (tcol && !glv->plot_1.GetColPtr())
+    onc1Axis->setChecked(true);
+  glv->plot_1.on = onc1Axis->isChecked();
   pdt1Axis->GetValue_(&(glv->plot_1.fixed_range)); // this can change, so update
-  glv->plot_1.SetColPtr((GraphColView*)lel1Axis->GetValue());
+  glv->plot_1.alt_y = chk1AltY->isChecked();
+  glv->plot_1.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel2Axis->GetValue();
   if (tcol && !glv->plot_2.GetColPtr())
     onc2Axis->setChecked(true);
   glv->plot_2.on = onc2Axis->isChecked();
   pdt2Axis->GetValue_(&(glv->plot_2.fixed_range)); // this can change, so update
-  glv->alt_y_2 = chk2AltY->isChecked();
+  glv->plot_2.alt_y = chk2AltY->isChecked();
   glv->plot_2.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel3Axis->GetValue();
@@ -5203,7 +5224,7 @@ void iGraphTableView_Panel::GetValue_impl() {
     onc3Axis->setChecked(true);
   glv->plot_3.on = onc3Axis->isChecked();
   pdt3Axis->GetValue_(&(glv->plot_3.fixed_range)); // this can change, so update
-  glv->alt_y_3 = chk3AltY->isChecked();
+  glv->plot_3.alt_y = chk3AltY->isChecked();
   glv->plot_3.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel4Axis->GetValue();
@@ -5211,7 +5232,7 @@ void iGraphTableView_Panel::GetValue_impl() {
     onc4Axis->setChecked(true);
   glv->plot_4.on = onc4Axis->isChecked();
   pdt4Axis->GetValue_(&(glv->plot_4.fixed_range)); // this can change, so update
-  glv->alt_y_4 = chk4AltY->isChecked();
+  glv->plot_4.alt_y = chk4AltY->isChecked();
   glv->plot_4.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel5Axis->GetValue();
@@ -5219,7 +5240,7 @@ void iGraphTableView_Panel::GetValue_impl() {
     onc5Axis->setChecked(true);
   glv->plot_5.on = onc5Axis->isChecked();
   pdt5Axis->GetValue_(&(glv->plot_5.fixed_range)); // this can change, so update
-  glv->alt_y_5 = chk5AltY->isChecked();
+  glv->plot_5.alt_y = chk5AltY->isChecked();
   glv->plot_5.SetColPtr(tcol);
   
   tcol = (GraphColView*)lel1Err->GetValue();

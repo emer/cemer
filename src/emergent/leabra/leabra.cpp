@@ -601,6 +601,15 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
     act_range.max = depress.max_amp;
 }
 
+void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(da_mod.on && act.i_thr != ActFunSpec::NO_AH, quiet, rval,
+		"da_mod is on but act.i_thr != NO_AH -- this is generally required for da modulation to work properly as it operates through the a & h currents, and including them in i_thr computation leads to less clean modulation effects -- I set this for you in spec:", name)) {
+    SetUnique("act", true);
+    act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
+  }
+}
+
 bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   if(!inherited::CheckConfig_Unit(un, quiet)) return false;
 
@@ -4147,7 +4156,7 @@ void LeabraNetMisc::Initialize() {
 void CtTrialTiming::Initialize() {
   minus = 50;
   plus = 20;
-  inhib = 0;
+  inhib = 1;
 
   total_cycles = minus + plus + inhib;
   inhib_start = minus + plus;
@@ -4161,7 +4170,7 @@ void CtTrialTiming::UpdateAfterEdit_impl() {
 
 void CtSRAvgSpec::Initialize() {
   start = 30;
-  end = 0;
+  end = 1;
   interval = 5;
   min_da_thr = 0.0f;
 }

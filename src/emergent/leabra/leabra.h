@@ -1041,6 +1041,8 @@ public:
   TA_BASEFUNS(LeabraUnitSpec);
 protected:
   void	UpdateAfterEdit_impl();	// to set _impl sig
+  void 	CheckThisConfig_impl(bool quiet, bool& rval);
+
 private:
   void 	Initialize();
   void	Destroy()		{ };
@@ -2608,7 +2610,7 @@ INHERITED(taOBase)
 public:
   int		minus;		// [40] number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// [40] number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// [20] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
+  int		inhib;		// [1] number of cycles to run in the final inhibitory phase -- network can do MINUS_PLUS_PLUS, MINUS_PLUS_MINUS, or MINUS_PLUS_NOTHING for inputs on this phase
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
   int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
@@ -2628,7 +2630,7 @@ class LEABRA_API CtSRAvgSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		start;		// [30] number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		end;		// [20] number of cycles from the start of the final inhibitory phase to continue recording sravg
+  int		end;		// [1] number of cycles from the start of the final inhibitory phase to continue recording sravg
   int		interval;	// [5] how frequently to compute sravg -- more infrequent updating saves computational costs as sravg is expensive
   float		min_da_thr;	// [0 or 0.005] minimum threshold value of accumulated layer-level delta activation (da_sum) for computing sravg value
 

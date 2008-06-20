@@ -59,6 +59,9 @@ void MatrixUnitSpec::Initialize() {
   g_bar.a = .03f;
   g_bar.h = .01f;
 
+  SetUnique("act", true);
+  act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
+
   freeze_net = true;
 }
 
@@ -243,7 +246,15 @@ bool MatrixLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.005f;
   }
+  if(lay->CheckError(us->act.i_thr != ActFunSpec::NO_AH, quiet, rval,
+		"requires UnitSpec act.i_thr = NO_AH to support proper da modulation, I just set it for you in spec:",
+		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+    us->SetUnique("act", true);
+    us->act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
+  }
+
   us->SetUnique("g_bar", true);
+
   // must have these not initialized every trial!
   if(lay->CheckError(us->hyst.init, quiet, rval,
 		"requires UnitSpec hyst.init = false, I just set it for you in spec:",
@@ -782,7 +793,7 @@ void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.1f;
   rnd_go_inc = 0.2f;
-  net_off = 0.5f;
+  net_off = 0.2f;
 }
 
 void SNrThalLayerSpec::Initialize() {
