@@ -540,20 +540,20 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     if (md->im == NULL) goto exit; // shouldn't happen
     // we create a wrap widget for all of these guys, mostly so that smaller
     // guys like Combo don't try to be stretched the whole way
-    QWidget* np = new QWidget(parent);
-    QHBoxLayout* hbl = new QHBoxLayout(np);
-    hbl->setMargin(0);
-    hbl->setSpacing(0);
+//    QWidget* np = new QWidget(parent);
+//    QHBoxLayout* hbl = new QHBoxLayout(np);
+//    hbl->setMargin(0);
+//    hbl->setSpacing(0);
     
-    dat = md->im->GetDataRep(edh, NULL, np);
+    dat = md->im->GetDataRep(edh, NULL, parent);
     dat->SetBase(base);
     dat->SetMemberDef(md);
     QWidget* rep = dat->GetRep();
-    hbl->addWidget(rep);
-    hbl->addStretch();
-    connect(np, SIGNAL(destroyed(QObject*)),
+//    hbl->addWidget(rep);
+//    hbl->addStretch();
+    connect(rep, SIGNAL(destroyed(QObject*)),
       this, SLOT(rep_destroyed(QObject*)) );
-    return np;
+    return rep;
   }
 exit:
   return inherited::createEditor(parent, option, index);
