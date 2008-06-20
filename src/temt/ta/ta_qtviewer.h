@@ -165,6 +165,7 @@ public:
   override String	GetTypeDecoKey() const;
   override String	GetStateDecoKey() const;
   override String	GetName() const;
+  override String	GetDisplayName() const;
   override void		Search(iSearchDialog* dlg);
   override bool		ShowMember(MemberDef* md, TypeItem::ShowContext show_context) const; // asks this type if we should show the md member
   override String	GetColText(const KeyString& key, int itm_idx = -1) const; // #IGNORE

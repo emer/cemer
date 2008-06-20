@@ -916,6 +916,12 @@ String tabDataLink::GetName() const {
   return data()->GetName();
 }
 
+String tabDataLink::GetDisplayName() const {
+  MemberDef* md = GetDataMemberDef();
+  if (md) return md->name;
+  else    return data()->GetDisplayName();
+}
+
 bool tabDataLink::HasChildItems() {
   // we only search up until we can say yes...
   MemberSpace* ms = &GetDataTypeDef()->members;
