@@ -118,6 +118,8 @@ public:
 public: // overrides
   override QWidget* 	createEditor(QWidget* parent, 
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
+  override void 	paint(QPainter* painter, const QStyleOptionViewItem& option,
+    const QModelIndex& index) const;
   override void 	setEditorData(QWidget* editor, 
     const QModelIndex& index) const;
   override void 	setModelData(QWidget* editor, QAbstractItemModel* model,
@@ -125,11 +127,14 @@ public: // overrides
 
 protected:
   mutable QPointer<taiData> dat; // most recently created
+  mutable int		m_dat_row; // row corresponding to dat, -1 if none
 
   override bool 	eventFilter(QObject* object, QEvent* event); // replace
 
 protected slots:
   virtual void		rep_destroyed(QObject* rep); // when dat.rep destroys
+  virtual void 		this_closeEditor(QWidget* editor,
+    QAbstractItemDelegate::EndEditHint hint = NoHint);
 };
 #endif // !__MAKETA__
 

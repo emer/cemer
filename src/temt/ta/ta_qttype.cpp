@@ -1296,16 +1296,21 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   CmpOrigVal(dat, base, first_diff);
 }
 
+taiMember::DefaultStatus taiMember::GetDefaultStatus(String memb_val) {
+  String defval = mbr->OptionAfter("DEF_");
+  if (defval.empty()) return NO_DEF;
+//TODO: may need to hack for , in real numbers
+  return (memb_val == defval) ? EQU_DEF : NOT_DEF;
+}
+
 void taiMember::GetOrigVal(taiData* dat, const void* base) {
   dat->orig_val = mbr->type->GetValStr(mbr->GetOff(base));
   // if a default value was specified, compare and set the highlight accordingly
   if (!isReadOnly(dat)) { 
-    String defval = mbr->OptionAfter("DEF_");
-    if (!defval.empty()) {
-      if (dat->orig_val != defval)
-        dat->setHighlight(true);
-      else
-        dat->setHighlight(false);
+    switch (GetDefaultStatus(orig_val)) {
+    case NOT_DEF: dat->setHighlight(true); break;
+    case EQU_DEF: dat->setHighlight(false); break;
+    default: break; // compiler food
     }
   }
 }

@@ -297,6 +297,15 @@ public:
   static  void	EndScript(const void* base);
         // calling function has to use this function to end script if neccesary
   
+  enum DefaultStatus { //#BITS  status of default value comparison
+    HAS_DEF	= 0x01,	// member specified a default value
+     IS_DEF	= 0x02, // member's value is the default
+     
+     NO_DEF	= 0x00, // #NO_BIT none defined
+    NOT_DEF	= 0x01, // #NO_BIT default specified, current is not equal
+    EQU_DEF     = 0x03, // #NO_BIT default specified, current is default
+  };
+  
   MemberDef*	mbr;
 
   taiMember* 		sub_types() {return (taiMember*)m_sub_types;}
@@ -316,6 +325,8 @@ public:
     QWidget* gui_parent, taiType* parent_type_ = NULL,
     int flags = 0, MemberDef* mbr_ = NULL);
   // get taiData rep of type -- delegates to mbr's it
+  DefaultStatus 	GetDefaultStatus(String memb_val);
+    // get status of value, if is default value or not
   override void		GetImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void		GetMbrValue(taiData* dat, void* base, bool& first_diff);

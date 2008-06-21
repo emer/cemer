@@ -25,214 +25,6 @@
 #include <QTableWidget>
 #include <QTextEdit>
 
-/*
-class TA_API DataHostModel: public QAbstractTableModel,
-  public IDataLinkClient
-{
-  // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for matrices; we extend it to support N-d, but only 2-d cell display; if the model has a single gui client, then set it, to avoid doing refreshes when it isn't visible
-friend class taMatrix;
-INHERITED(QAbstractTableModel)
-  Q_OBJECT
-public:
-#ifndef __MAKETA__
-  QPointer<QWidget>	gui_parent;
-  int			matIndex(const QModelIndex& idx) const; // #IGNORE flat matrix data index
-  override QMimeData* 	mimeData (const QModelIndexList& indexes) const;
-  override QStringList	mimeTypes () const;
-  taMisc::MatrixView 	matView() const;
-#endif //note: bugs in maketa necessitated these sections
-  taMatrix*		mat() const {return m_mat;}
-  
-  DataHostModel(taMatrix* mat_, QWidget* gui_parent = NULL); // note: mat is always valid, we destroy this on mat dest
-  ~DataHostModel(); //
-  
-public: // required implementations
-#ifndef __MAKETA__
-  int 			columnCount(const QModelIndex& parent = QModelIndex()) const; // override
-  QVariant 		data(const QModelIndex& index, int role = Qt::DisplayRole) const; // override
-  Qt::ItemFlags 	flags(const QModelIndex& index) const; // override, for editing
-//  QVariant 		headerData(int section, Qt::Orientation orientation, 
-//    int role = Qt::DisplayRole) const; // override
-  int 			rowCount(const QModelIndex& parent = QModelIndex()) const; // override
-  bool 			setData(const QModelIndex& index, const QVariant& value, 
-    int role = Qt::EditRole); // override, for editing
-
-public: // IDataLinkClient i/f
-  override void*	This() {return this;}
-  override TypeDef*	GetTypeDef() const {return &TA_MatrixTableModel;}
-  override bool		ignoreDataChanged() const;
-  override void		DataLinkDestroying(taDataLink* dl);
-  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2); 
-  
-protected:
-  static MatrixGeom	tgeom; // #IGNORE to avoid cost of allocation in index ops, we use this for non-reentrant
- 
-  taMatrix*		m_mat;
-  taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
-  bool			m_pat_4d;
-  
-  bool			ValidateIndex(const QModelIndex& index) const;
-  bool			ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const;
-    // translates index into matrix coords; true if the index is valid
-#endif
-};
-
-//////////////////////////////////
-// 	DataHostModel		//
-//////////////////////////////////
-
-MatrixGeom DataHostModel::tgeom; 
-
-DataHostModel::DataHostModel(taMatrix* mat_, QWidget* gui_parent_) 
-:inherited(NULL)
-{
-  m_mat = mat_;
-  if (m_mat) {
-    m_mat->AddDataClient(this);
-  }
-  gui_parent = gui_parent_;
-  m_pat_4d = false;
-}
-
-DataHostModel::~DataHostModel() {
-  if (m_mat) {
-    m_mat->RemoveDataClient(this);
-    m_mat = NULL;
-  }
-}
-
-int DataHostModel::columnCount(const QModelIndex& parent) const {
-  return 2;
-}
-
-QVariant DataHostModel::data(const QModelIndex& index, int role) const {
-  if (!m_mat) return QVariant();
-  switch (role) {
-  case Qt::DisplayRole: 
-  case Qt::EditRole:
-    return m_mat->SafeElAsStr_Flat(matIndex(index));
-//Qt::DecorationRole
-//Qt::ToolTipRole
-//Qt::StatusTipRole
-//Qt::WhatsThisRole
-//Qt::SizeHintRole -- QSize
-//Qt::FontRole--  QFont: font for the text
-  case Qt::TextAlignmentRole:
-    return m_mat->defAlignment();
-  case Qt::BackgroundColorRole : //-- QColor
- // note: only used when !(option.showDecorationSelected && (option.state
-//    & QStyle::State_Selected)) 
-    if (!(flags(index) & Qt::ItemIsEditable))
-      return QColor(COLOR_RO_BACKGROUND);
-    break;
-//Qt::TextColorRole
-//  QColor: color of text
-//Qt::CheckStateRole
-  default: break;
-  }
-  return QVariant();
-}
-
-void DataHostModel::DataLinkDestroying(taDataLink* dl) {
-  m_mat = NULL;
-}
-
-void DataHostModel::DataDataChanged(taDataLink* dl, int dcr,
-  void* op1, void* op2)
-{
-  //this is primarily for code-driven changes
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
-    emit_dataChanged();
-  }
-  else if ((dcr == DCR_STRUCT_UPDATE_END)) {
-    emit_layoutChanged();
-  }
-}
-
-
-void DataHostModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int col_to) {
-  if (!m_mat) return;
-  // lookup actual end values when we are called with sentinels
-  if (row_to < 0) row_to = rowCount() - 1;
-  if (col_to < 0) col_to = columnCount() - 1;  
-  
-  emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
-}
-
-void DataHostModel::emit_layoutChanged() {
-  emit layoutChanged();
-}
-
-Qt::ItemFlags DataHostModel::flags(const QModelIndex& index) const {
-  if (!m_mat) return 0;
-  //TODO: maybe need to qualify!, plus drag-drop handling, etc.
-  Qt::ItemFlags rval = 0;
-  
-  if (ValidateIndex(index)) {
-    rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-  }
-  // editability is a property of the whole mat
-  if (!m_mat->isGuiReadOnly()) {
-    rval |= Qt::ItemIsEditable;
-  }
-  return rval; 
-}
-
-bool DataHostModel::ignoreDataChanged() const {
-  return (gui_parent && !gui_parent->isVisible());
-}
-
-int DataHostModel::matIndex(const QModelIndex& idx) const {
-  //note: we dimensionally reduce all dims >1 to 1
-  return m_mat->geom.IndexFmDims2D(idx.column(), idx.row(), pat4D(), matView());
-}
-
-QMimeData* DataHostModel::mimeData (const QModelIndexList& indexes) const {
-  if (!m_mat) return NULL;
-  CellRange cr(indexes);
-  String str = mat()->FlatRangeToTSV(cr);
-  QMimeData* rval = new QMimeData;
-  rval->setText(str);
-  return rval;
-}
-
-QStringList DataHostModel::mimeTypes () const {
-  QStringList types;
-  types << "text/plain";
-  return types;
-}
-
-
-int DataHostModel::rowCount(const QModelIndex& parent) const {
-  return m_mat->rowCount(pat4D());
-  //note: for visual stuff, there is always at least one row
-}
-
-bool DataHostModel::setData(const QModelIndex& index, const QVariant & value, int role) {
-  if (!m_mat) return false;
-  if (index.isValid() && role == Qt::EditRole) {
-    m_mat->SetFmStr_Flat(value.toString(), matIndex(index));
-    emit dataChanged(index, index);
-    return true;
-  }
-  return false;
-}
-
-bool DataHostModel::ValidateIndex(const QModelIndex& index) const {
-  // TODO: maybe need to check bounds???
-  return (m_mat);
-}
-
-bool DataHostModel::ValidateTranslateIndex(const QModelIndex& index, MatrixGeom& tr_index) const {
-  bool rval = ValidateIndex(index);
-  if (rval) {
-    // TODO:
-  }
-  return rval;
-}
-
-
-*/
 //////////////////////////////////
 //  tabSelectEditViewType 	//
 /////////////////////////////////
@@ -531,6 +323,11 @@ void iSelectEditDataHost::GetValue_Membs_def() {
 taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_) 
 {
   edh = edh_;
+  m_dat_row = -1;
+  connect(this, SIGNAL(closeEditor(QWidget*,
+    QAbstractItemDelegate::EndEditHint)),
+    this, SLOT(this_closeEditor(QWidget*,
+    QAbstractItemDelegate::EndEditHint)) );
 }
 
 QWidget* taiDataDelegate::createEditor(QWidget* parent, 
@@ -540,21 +337,30 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
   taBase* base = NULL;
   if (IndexToMembBase(index, md, base)) {
     if (md->im == NULL) goto exit; // shouldn't happen
-    // we create a wrap widget for all of these guys, mostly so that smaller
+    // we create a wrap widget for many of these guys, mostly so that smaller
     // guys like Combo don't try to be stretched the whole way
-//    QWidget* np = new QWidget(parent);
-//    QHBoxLayout* hbl = new QHBoxLayout(np);
-//    hbl->setMargin(0);
-//    hbl->setSpacing(0);
+    bool wrap = true;
+    QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
     
-    dat = md->im->GetDataRep(edh, NULL, parent);
+    dat = md->im->GetDataRep(edh, NULL, rep_par);
+    m_dat_row = index.row();
     dat->SetBase(base);
     dat->SetMemberDef(md);
-    QWidget* rep = dat->GetRep();
-//    hbl->addWidget(rep);
-//    hbl->addStretch();
+    QWidget* rep = dat->GetRep(); // note: rep may get replaced by rep_par 
+    if (wrap) {
+      QHBoxLayout* hbl = new QHBoxLayout(rep_par);
+      hbl->setMargin(0);
+      hbl->setSpacing(0);
+      hbl->addWidget(rep);
+      // some controls do better without stretch
+      if (!(dynamic_cast<taiField*>(dat.data())))
+        hbl->addStretch();
+      rep = rep_par;
+    }
+/*    connect(rep, SIGNAL(destroyed(QObject*)),
+      this, SLOT(rep_destroyed(QObject*)) );*/
     connect(rep, SIGNAL(destroyed(QObject*)),
-      this, SLOT(rep_destroyed(QObject*)) );
+      dat, SLOT(deleteLater()) );
     return rep;
   }
 exit:
@@ -646,11 +452,21 @@ void taiDataDelegate::GetValue() const {
   if (!first_diff)
     taiMember::EndScript(base);
   base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
-  // this is paradoxically an AutoApply
-//  edh->Revert();
+}
+
+void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
+    const QModelIndex& index) const
+{
+  // skip, and just paint background if an editor is in place
+  if (dat && (m_dat_row == index.row())) {
+    drawBackground(painter, option, index);
+  } else { // normal
+    inherited::paint(painter, option, index);
+  }
 }
 
 void taiDataDelegate::rep_destroyed(QObject* rep) {
+/*NOTE: not used
 #ifdef DEBUG
     cerr << "rep_destroyed for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
@@ -662,20 +478,13 @@ void taiDataDelegate::rep_destroyed(QObject* rep) {
   }
   // if user left the edit unchanged, then assume this was a cancel, and Revert
   if (edh->isModified())
-    edh->Revert();
+    edh->Revert();*/
 }
 
 void taiDataDelegate::setEditorData(QWidget* editor,
     const QModelIndex& index) const
 {
   if (!dat) return;
-/*nn  // confirm that this editor goes with the dat!
-  if (dat->GetRep() != editor) {
-#ifdef DEBUG
-    cerr << "Unexpected editor, not same as dat!\n";
-#endif
-    return;
-  }*/
 #ifdef DEBUG
     cerr << "setEditorData for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
@@ -688,19 +497,66 @@ void taiDataDelegate::setModelData(QWidget* editor,
   QAbstractItemModel* model, const QModelIndex& index ) const
 {
   if (!dat) return;
-/*nn  // confirm that this editor goes with the dat!
-  if (dat->GetRep() != editor) {
-#ifdef DEBUG
-    cerr << "Unexpected editor, not same as dat!\n";
-#endif
-    return;
-  }*/
 #ifdef DEBUG
     cerr << "setModelData for (dat/rep): " <<
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
 #endif 
   GetValue();
+}
+
+void taiDataDelegate::this_closeEditor(QWidget* /*editor*/,
+    QAbstractItemDelegate::EndEditHint /*hint*/)
+{
+  // get rid of dat info, so we paint
+  dat = NULL;
+  m_dat_row = -1;
+}
+
+//////////////////////////
+//   SelectEditDelegate	//
+//////////////////////////
+
+QTableWidgetItem* /*SelectEditDelegate::*/ItemFromIndex(QTableWidget* tw,
+  const QModelIndex& index)
+{
+  QTableWidgetItem* rval = tw->item(index.row(), index.column());
+  return rval;
+}
+
+SelectEditDelegate::SelectEditDelegate(SelectEdit* sele_,
+  iSelectEditDataHost2* sedh_)
+:inherited(sedh_)
+{
+  sele = sele_;
+  sedh = sedh_;
+}
+
+QWidget* SelectEditDelegate::createEditor(QWidget* parent, 
+    const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  QWidget* rval = inherited::createEditor(parent, option, index);
+  QSize sz(rval->size());
+  if (sz.width() > sedh->tw->columnWidth(1)) {
+    sedh->tw->setColumnWidth(1,sz.width());
+  }
+  return rval;
+}
+
+bool SelectEditDelegate::IndexToMembBase(const QModelIndex& index,
+    MemberDef*& mbr, taBase*& base) const
+{
+  QTableWidgetItem* twi = sedh->tw->item(index.row(), index.column());
+  if (twi) {
+    EditMbrItem* item = dynamic_cast<EditMbrItem*>(
+      (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
+    if (item) {
+      mbr = item->mbr;
+      base = item->base;
+      return true;
+    }
+  }
+  return false;
 }
 
 
@@ -737,6 +593,8 @@ void iSelectEditDataHost2::Constr_Body_impl() {
   tw->horizontalHeader()->setStretchLastSection(true); // note: works if header invis
   tw->verticalHeader()->setVisible(false);
   tw->setSortingEnabled(false);
+  // don't try to scroll by item, it looks ugly, just scroll smoothly
+  tw->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
   // colors
   QPalette palette(tw->palette());
   palette.setColor(QPalette::Base, bg_color);
@@ -856,6 +714,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
 void iSelectEditDataHost2::GetImage_Membs_def() {
   for (int row = 0; row < tw->rowCount(); ++row) {
     QTableWidgetItem* it = tw->item(row, 1);
+    QTableWidgetItem* lbl = tw->item(row, 0); // not always needed
     if (!it) continue;
     EditMbrItem* item = dynamic_cast<EditMbrItem*>(
       (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
@@ -865,6 +724,18 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
       item->mbr, TypeDef::SC_DISPLAY); 
     it->setText(txt);
     it->setToolTip(txt); // for when over
+    
+    // default highlighting
+    switch (item->mbr->im->GetDefaultStatus(txt)) {
+    case taiMember::NOT_DEF: 
+      lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
+      break;
+    case taiMember::EQU_DEF:
+      //note: setting nil Variant will force it to ignore and use bg
+      lbl->setData(Qt::BackgroundRole, QVariant()); 
+      break;
+    default: break; // compiler food
+    }
   }
   sed->GetImage(); // if a ctrl is active
   tw->resizeColumnToContents(1);
@@ -894,25 +765,6 @@ void iSelectEditDataHost2::FillLabelContextMenu_SelEdit(QMenu* menu,
 }
 
 void iSelectEditDataHost2::GetValue_Membs_def() {
-/*TODO  int itm_idx = 0;
-  for (int j = 0; j < membs.size; ++j) {
-    MembSet* ms = membs.FastEl(j);
-    for (int i = 0; i < ms->data_el.size; ++i) {
-      taiData* mb_dat = ms->data_el.FastEl(i);
-      MemberDef* md = ms->memb_el.SafeEl(i);
-      EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
-      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL))
-        taMisc::Error("iSelectEditDataHost2::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
-      else {
-        bool first_diff = true;
-        md->im->GetMbrValue(mb_dat, item->base, first_diff); 
-        if (!first_diff)
-          taiMember::EndScript(item->base);
-	item->base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
-      }
-      ++itm_idx;
-    }
-  }*/
   sed->GetValue();
 }
 
@@ -947,57 +799,6 @@ void iSelectEditDataHost2::tw_customContextMenuRequested(const QPoint& pos)
     menu->exec(tw->mapToGlobal(pos));
   delete menu;
   
-}
-
-//////////////////////////
-//   SelectEditDelegate	//
-//////////////////////////
-
-QTableWidgetItem* /*SelectEditDelegate::*/ItemFromIndex(QTableWidget* tw,
-  const QModelIndex& index)
-{
-  QTableWidgetItem* rval = tw->item(index.row(), index.column());
-  return rval;
-}
-
-SelectEditDelegate::SelectEditDelegate(SelectEdit* sele_,
-  iSelectEditDataHost2* sedh_)
-:inherited(sedh_)
-{
-  sele = sele_;
-  sedh = sedh_;
-}
-
-QWidget* SelectEditDelegate::createEditor(QWidget* parent, 
-    const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-  QWidget* rval = inherited::createEditor(parent, option, index);
-  QSize sz(rval->size());
-  if (sz.width() > sedh->tw->columnWidth(1)) {
-    sedh->tw->setColumnWidth(1,sz.width());
-  }
-  // also, delete the text so it doesn't show through
-  QTableWidgetItem* twi = sedh->tw->item(index.row(), index.column());
-  if (twi) {
-    twi->setText(QString());
-  }  
-  return rval;
-}
-
-bool SelectEditDelegate::IndexToMembBase(const QModelIndex& index,
-    MemberDef*& mbr, taBase*& base) const
-{
-  QTableWidgetItem* twi = sedh->tw->item(index.row(), index.column());
-  if (twi) {
-    EditMbrItem* item = dynamic_cast<EditMbrItem*>(
-      (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
-    if (item) {
-      mbr = item->mbr;
-      base = item->base;
-      return true;
-    }
-  }
-  return false;
 }
 
 
