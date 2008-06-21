@@ -108,8 +108,8 @@ Q_OBJECT
 public:
   taiEditDataHost*	edh;
   
-  virtual void		GetImage(); // callable from edh any time
-  virtual void		GetValue(); // callable from edh
+  virtual void		GetImage() const; // callable from edh any time
+  virtual void		GetValue() const; // callable from edh
   virtual bool		IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const = 0;
     

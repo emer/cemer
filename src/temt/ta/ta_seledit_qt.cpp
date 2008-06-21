@@ -631,12 +631,23 @@ bool taiDataDelegate::eventFilter(QObject *object, QEvent *event)
   return false;
 }
 
-void taiDataDelegate::GetImage() {
-//TODO
+void taiDataDelegate::GetImage() const {
+  if (!dat) return;
+  edh->Updating(true);
+  dat->mbr->im->GetImage(dat, dat->Base());
+  edh->Updating(false);
 }
 
-void taiDataDelegate::GetValue() {
-//TODO
+void taiDataDelegate::GetValue() const {
+  if (!dat) return;
+  taBase* base = dat->Base(); // cache
+  bool first_diff = true;
+  dat->mbr->im->GetMbrValue(dat, base, first_diff); 
+  if (!first_diff)
+    taiMember::EndScript(base);
+  base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+  // this is paradoxically an AutoApply
+//  edh->Revert();
 }
 
 void taiDataDelegate::rep_destroyed(QObject* rep) {
@@ -670,9 +681,7 @@ void taiDataDelegate::setEditorData(QWidget* editor,
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
 #endif 
-  edh->Updating(true);
-  dat->mbr->im->GetImage(dat, dat->Base());
-  edh->Updating(false);
+  GetImage();
 }
 
 void taiDataDelegate::setModelData(QWidget* editor,
@@ -691,14 +700,7 @@ void taiDataDelegate::setModelData(QWidget* editor,
       dat->metaObject()->className() << "/" <<
       dat->GetRep()->metaObject()->className() << "\n";
 #endif 
-  taBase* base = dat->Base(); // cache
-  bool first_diff = true;
-  dat->mbr->im->GetMbrValue(dat, base, first_diff); 
-  if (!first_diff)
-    taiMember::EndScript(base);
-  base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
-  // this is paradoxically an AutoApply
-//  edh->Revert();
+  GetValue();
 }
 
 
