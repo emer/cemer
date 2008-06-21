@@ -623,9 +623,8 @@ public:
 
   inline float		DataToPlot(float data) // convert data value to plotting value
   { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Normalize(data); }
-  virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false,
-				   GraphAxisBase* labels = NULL);
-  // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y) -- if labels is given and on, then it is used for labels..
+  virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
+  // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 
   ///////////////////////////////////////////////////
   // 	Misc
@@ -643,8 +642,8 @@ public:
   SIMPLE_COPY(GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)
 protected:
-  void 		RenderAxis_X(T3Axis* t3ax, bool ticks_only=false, GraphAxisBase* labels=NULL);
-  void 		RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false, GraphAxisBase* labels=NULL);
+  void 		RenderAxis_X(T3Axis* t3ax, bool ticks_only=false);
+  void 		RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false);
   void 		RenderAxis_Y(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
 
   override void 	UpdateAfterEdit_impl();
@@ -785,9 +784,7 @@ public:
   float			label_font_size;// #DEF_0.04 size to render value/string labels
 
   GraphAxisView		x_axis; 	// the x axis (horizontal, left-to-right)
-  GraphAxisView		x_labels; 	// optional data to display as labels for the x axis -- x_axis contains the values and this column contains the labels -- just looked up by row number from corresponding x_axis data -- only works correctly if x_axis data is monotonic and linearly spaced
   GraphAxisView		z_axis;		// the z axis (in depth, front-to-back)
-  GraphAxisView		z_labels; 	// optional data to display as labels for the z axis -- z_axis contains the values and this column contains the labels -- just looked up by row number from corresponding z_axis data -- only works correctly if x_axis data is monotonic and linearly spaced
   GraphPlotView		plot_1;		// first column of data to plot (optional)
   GraphPlotView		plot_2;		// second column of data to plot (optional)
   GraphPlotView		plot_3;		// third column of data to plot (optional)
