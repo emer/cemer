@@ -2389,8 +2389,8 @@ void GraphAxisBase::SetRange_impl(float first, float last) {
 }
 
 // limits are needed to prevent numerical overflow!
-static const float range_min_limit = 1.0e-6f;
-static const float range_zero_range = 5.0e-5f; // half-range for zero-range values
+static const float range_min_limit = 1.0e-18f;
+static const float range_zero_range = 5.0e-17f; // half-range for zero-range values
 
 // updates range based on new data and returns true if it really is a new range
 bool GraphAxisBase::UpdateRange_impl(float first, float last) {
@@ -2518,18 +2518,18 @@ void GraphAxisBase::ComputeTicks() {
 /////////////////////////////////////////////////////////
 //	rendering
 
-void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only, GraphAxisBase* labels) {
   t3ax->clear();
   if(!on) return;
   ComputeTicks();		// do this always..
   SoMaterial* mat = t3ax->material();
   color.color().copyTo(mat->diffuseColor);
   switch (axis) {
-  case X: RenderAxis_X(t3ax, ticks_only);
+  case X: RenderAxis_X(t3ax, ticks_only, labels);
     break;
   case Y: RenderAxis_Y(t3ax, n_ax, ticks_only);
     break;
-  case Z: RenderAxis_Z(t3ax, ticks_only);
+  case Z: RenderAxis_Z(t3ax, ticks_only, labels);
     break;
   }
 }
@@ -2538,7 +2538,7 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
   act_n_ticks is the number of sections, so tick marks will be +1 (to include ends)
 
 */
-void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only, GraphAxisBase* labels) {
   iVec3f fm;			// init to 0
   iVec3f to;
 
@@ -2560,7 +2560,12 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
     if(!col_name.empty()) {
       fm.x = .5f * axis_length;
       fm.y = -(GraphTableView::tick_size + TICK_OFFSET + 1.5f * t3ax->fontSize());
-      String label = col_name; taMisc::SpaceLabel(label);
+      String label;
+      if(labels && labels->on)
+	label = labels->col_name;
+      else
+	label = col_name;
+      taMisc::SpaceLabel(label);
       if(((GraphAxisView*)this)->row_num) {
 	if(isString()) {
 	  use_str_labels = true;
@@ -2581,6 +2586,20 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
 
   float y_lab_off = (TICK_OFFSET + t3ax->fontSize());
 
+  DataCol* da = GetDAPtr();
+  // this is for labels guy
+  DataCol* labels_da = NULL;
+  float first_val = 0.0f;
+  float last_val = 0.0f;
+  float val_range = 1.0f;
+  if(da && da->rows() > 0 && labels && labels->on) {
+    first_val = da->GetValAsFloat(0);
+    last_val = da->GetValAsFloat(-1);
+    if(first_val != last_val)
+      val_range = last_val - first_val;
+    labels_da = labels->GetDAPtr();
+  }
+
   int i;
   float val;
   String label;
@@ -2590,20 +2609,23 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
     t3ax->addLine(fm, to);
     if(!ticks_only) {
       float lab_val = val / units;
-      if (fabs(lab_val) < .001) {
-	if (fabs(lab_val) < .0001)
-	  lab_val = 0.0f;		// the 0 can be screwy
-	else lab_val = .001f;
-      }
+      if (fabsf(lab_val) < range_zero_range)
+	lab_val = 0.0f;		// the 0 can be screwy
       label = String(lab_val);
-      if(use_str_labels) {
-	DataCol* da = GetDAPtr();
-	if(da) {
-	  int rnum = (int)lab_val;// lab_val is row number!
-	  if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
-	    label = da->GetValAsString(rnum);
-	  else
-	    label = "";		// empty it!
+      if(use_str_labels && da) {
+	int rnum = (int)lab_val;// lab_val is row number!
+	if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
+	  label = da->GetValAsString(rnum);
+	else
+	  label = "";		// empty it!
+      }
+      else if(labels_da) {
+	int rnum = (int)(((float)(labels_da->rows()-1)* ((lab_val - first_val) / val_range)) + .5f);
+	if(rnum >= 0 && rnum < labels_da->rows()) {
+	  label = labels_da->GetValAsString(rnum);
+	}
+	else {
+	  label = "";
 	}
       }
       if(label.nonempty()) {
@@ -2669,11 +2691,8 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
     t3ax->addLine(fm, to);
     if(!ticks_only) {
       float lab_val = val / units;
-      if (fabs(lab_val) < .001) {
-	if (fabs(lab_val) < .0001)
-	  lab_val = 0.0f;		// the 0 can be screwy
-	else lab_val = .001f;
-      }
+      if (fabsf(lab_val) < range_zero_range)
+	lab_val = 0.0f;		// the 0 can be screwy
       label = String(lab_val);
       if(n_ax > 0) {
 	t3ax->addLabel(label.chars(),
@@ -2687,7 +2706,7 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
   }
 }
 
-void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
+void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only, GraphAxisBase* labels) {
   iVec3f fm;
   iVec3f to;
 
@@ -2713,7 +2732,12 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       fm.z = .5f * axis_length;
       fm.y = -(.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
       fm.x = -(TICK_OFFSET + 2.5f * t3ax->fontSize());
-      String label = col_name; taMisc::SpaceLabel(label);
+      String label;
+      if(labels && labels->on)
+	label = labels->col_name;
+      else
+	label = col_name;
+      taMisc::SpaceLabel(label);
       if(((GraphAxisView*)this)->row_num) {
 	if(isString()) {
 	  use_str_labels = true;
@@ -2734,6 +2758,20 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
   
   float y_lab_off = (.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
 
+  DataCol* da = GetDAPtr();
+  // this is for labels guy
+  DataCol* labels_da = NULL;
+  float first_val = 0.0f;
+  float last_val = 0.0f;
+  float val_range = 1.0f;
+  if(da && da->rows() > 0 && labels && labels->on) {
+    first_val = da->GetValAsFloat(0);
+    last_val = da->GetValAsFloat(-1);
+    if(first_val != last_val)
+      val_range = last_val - first_val;
+    labels_da = labels->GetDAPtr();
+  }
+
   int i;
   float val;
   String label;
@@ -2743,22 +2781,27 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
     t3ax->addLine(fm, to);
     if(!ticks_only) {
       float lab_val = val / units;
-      if (fabs(lab_val) < .001) {
-	if (fabs(lab_val) < .0001)
-	  lab_val = 0.0f;		// the 0 can be screwy
-	else lab_val = .001f;
-      }
+      if (fabsf(lab_val) < range_zero_range)
+	lab_val = 0.0f;		// the 0 can be screwy
       label = String(lab_val);
-      if(use_str_labels) {
-	DataCol* da = GetDAPtr();
-	if(da) {
-	  int rnum = (int)lab_val;// lab_val is row number!
-	  if(rnum >= 0 && rnum < da->rows())
-	    label = da->GetValAsString(rnum); 
+      if(use_str_labels && da) {
+	int rnum = (int)lab_val;// lab_val is row number!
+	if(rnum >= 0 && rnum < da->rows())
+	  label = da->GetValAsString(rnum); 
+      }
+      else if(labels_da) {
+	int rnum = (int)(((float)labels_da->rows() * ((lab_val - first_val) / val_range)) + .5f);
+	if(rnum >= 0 && rnum < labels_da->rows()) {
+	  label = labels_da->GetValAsString(rnum);
+	}
+	else {
+	  label = "";
 	}
       }
-      t3ax->addLabel(label.chars(),
-		     iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
+      if(label.nonempty()) {
+	t3ax->addLabel(label.chars(),
+		       iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
+      }
     }
   }
 }
@@ -2879,7 +2922,9 @@ void GraphTableView::Initialize() {
   view_rows = 10000;
 
   x_axis.axis = GraphAxisBase::X;
+  x_labels.axis = GraphAxisBase::X;
   z_axis.axis = GraphAxisBase::Z;
+  z_labels.axis = GraphAxisBase::Z;
   plot_1.color.name = "black";
   plot_1.point_style = GraphPlotView::CIRCLE;
   plot_1.color.UpdateAfterEdit();	// needed to pick up color name
@@ -2964,7 +3009,9 @@ void GraphTableView::Initialize() {
 void GraphTableView::InitLinks() {
   inherited::InitLinks();
   taBase::Own(x_axis, this);
+  taBase::Own(x_labels, this);
   taBase::Own(z_axis, this);
+  taBase::Own(z_labels, this);
   taBase::Own(plot_1, this);
   taBase::Own(plot_2, this);
   taBase::Own(plot_3, this);
@@ -2998,7 +3045,9 @@ void GraphTableView::InitLinks() {
 
 void GraphTableView::CutLinks() {
   x_axis.CutLinks();
+  x_labels.CutLinks();
   z_axis.CutLinks();
+  z_labels.CutLinks();
   plot_1.CutLinks();
   plot_2.CutLinks();
   plot_3.CutLinks();
@@ -3033,7 +3082,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
 
   x_axis.on = true;		// try to keep it on
   x_axis.UpdateOnFlag();
+  x_labels.UpdateOnFlag();
   z_axis.UpdateOnFlag();
+  z_labels.UpdateOnFlag();
   plot_1.UpdateOnFlag();
   plot_2.UpdateOnFlag();
   plot_3.UpdateOnFlag();
@@ -3453,11 +3504,22 @@ void GraphTableView::FindDefaultXZAxes() {
       x_axis.UpdateOnFlag();
       set_x = true;
     }
+    if(da->HasUserData("X_LABELS")) {
+      x_labels.col_name = cvs->name;
+      x_labels.InitFromUserData();
+      x_labels.UpdateOnFlag();
+    }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
       z_axis.on = true;
       z_axis.InitFromUserData();
       z_axis.UpdateOnFlag();
+    }
+    if(da->HasUserData("Z_LABELS")) {
+      z_labels.col_name = cvs->name;
+      z_labels.on = true;
+      z_labels.InitFromUserData();
+      z_labels.UpdateOnFlag();
     }
   }
   if(set_x) return;
@@ -3679,7 +3741,7 @@ void GraphTableView::RenderAxes() {
   tr->translation.setValue(0.0f, ylen, 0.0f);
   xax->addChild(t3_x_axis_top);
 
-  x_axis.RenderAxis(t3_x_axis);
+  x_axis.RenderAxis(t3_x_axis, 0, false, &x_labels);
   x_axis.RenderAxis(t3_x_axis_top, 0, true); // ticks only
 
   if(z_axis.on) {
@@ -3706,7 +3768,7 @@ void GraphTableView::RenderAxes() {
     t3_z_axis_top_rt = new T3Axis((T3Axis::Axis)z_axis.axis, &z_axis, axis_font_size);
 
     zax->addChild(t3_z_axis);
-    z_axis.RenderAxis(t3_z_axis);
+    z_axis.RenderAxis(t3_z_axis, 0, false, &z_labels);
 
     // rt
     tr = new SoTranslation();   zax->addChild(tr);

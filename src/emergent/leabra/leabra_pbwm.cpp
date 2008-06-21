@@ -112,6 +112,8 @@ void MatrixMiscSpec::Initialize() {
 
 void ContrastSpec::Initialize() {
   gain = 1.0f;
+  one_val = true;
+  contrast = .5f;
   go_p = .5f;
   go_n = .5f;
   nogo_p = .5f;
@@ -176,6 +178,13 @@ void MatrixLayerSpec::Initialize() {
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(contrast.one_val) {
+    if(bg_type == OUTPUT && contrast.go_p == 1.0f && contrast.contrast == 0.5f) {
+      contrast.contrast = 1.0f;		// convert existing files
+    }
+    contrast.go_p = contrast.go_n = contrast.nogo_p = contrast.nogo_n = contrast.contrast;
+    // set them all
+  }
 }
 
 void MatrixLayerSpec::Defaults() {

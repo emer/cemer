@@ -623,8 +623,9 @@ public:
 
   inline float		DataToPlot(float data) // convert data value to plotting value
   { if(range.Range() == 0.0f) return 0.0f; return axis_length * range.Normalize(data); }
-  virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
-  // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
+  virtual void 		RenderAxis(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false,
+				   GraphAxisBase* labels = NULL);
+  // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y) -- if labels is given and on, then it is used for labels..
 
   ///////////////////////////////////////////////////
   // 	Misc
@@ -642,9 +643,9 @@ public:
   SIMPLE_COPY(GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)
 protected:
-  void 			RenderAxis_X(T3Axis* t3ax, bool ticks_only=false);
-  void 			RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false);
-  void 			RenderAxis_Y(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
+  void 		RenderAxis_X(T3Axis* t3ax, bool ticks_only=false, GraphAxisBase* labels=NULL);
+  void 		RenderAxis_Z(T3Axis* t3ax, bool ticks_only=false, GraphAxisBase* labels=NULL);
+  void 		RenderAxis_Y(T3Axis* t3ax, int n_ax = 0, bool ticks_only=false);
 
   override void 	UpdateAfterEdit_impl();
 private:
@@ -767,8 +768,26 @@ public:
 
   static const int	max_plots = 5; // maximum number of y axis data plots (fixed by plot_x guys below)
 
+  GraphType		graph_type; 	// type of graph to draw
+  PlotStyle		plot_style;	// how to plot the data
+  bool			negative_draw;	// continue same line when X value resets in negative axis direction?
+  bool			negative_draw_z; // continue same line when Z value resets in negative axis direction?
+  float			line_width;	// width of line -- 0 means use default
+  PointSize		point_size;	// size of point symbols
+  int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE how frequently to display point markers 
+  float			bar_space;	// #DEF_0.2 amount of space between bars
+  int 			label_spacing;	// how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
+  float			width;		// how wide to make the display (height is always 1.0)
+  float			depth;		// how deep to make the display (height is always 1.0)
+
+  float			axis_font_size;	// #DEF_0.05 size to render axis text 
+  static float		tick_size; 	// #DEF_0.05 size of tick marks
+  float			label_font_size;// #DEF_0.04 size to render value/string labels
+
   GraphAxisView		x_axis; 	// the x axis (horizontal, left-to-right)
+  GraphAxisView		x_labels; 	// optional data to display as labels for the x axis -- x_axis contains the values and this column contains the labels -- just looked up by row number from corresponding x_axis data -- only works correctly if x_axis data is monotonic and linearly spaced
   GraphAxisView		z_axis;		// the z axis (in depth, front-to-back)
+  GraphAxisView		z_labels; 	// optional data to display as labels for the z axis -- z_axis contains the values and this column contains the labels -- just looked up by row number from corresponding z_axis data -- only works correctly if x_axis data is monotonic and linearly spaced
   GraphPlotView		plot_1;		// first column of data to plot (optional)
   GraphPlotView		plot_2;		// second column of data to plot (optional)
   GraphPlotView		plot_3;		// third column of data to plot (optional)
@@ -780,23 +799,6 @@ public:
   bool			alt_y_4;	// #HIDDEN #READ_ONLY deprecated! plot 4 values on alt Y axis (else plot_1 axis)
   bool			alt_y_5;	// #HIDDEN #READ_ONLY deprecated! plot 5 values on alt Y axis (else plot_1 axis)
 
-  GraphType		graph_type; 	// type of graph to draw
-  PlotStyle		plot_style;	// how to plot the data
-  float			line_width;	// width of line -- 0 means use default
-  PointSize		point_size;	// size of point symbols
-  int 			point_spacing;	// #CONDEDIT_OFF_plot_style:LINE how frequently to display point markers 
-  float			bar_space;	// #DEF_0.2 amount of space between bars
-  ColorMode		color_mode;	// how to determine the colors to draw
-  bool			negative_draw;	// continue same line when X value resets in negative axis direction?
-  bool			negative_draw_z; // continue same line when Z value resets in negative axis direction?
-  float			axis_font_size;	// #DEF_0.05 size to render axis text 
-  float			label_font_size;// #DEF_0.04 size to render value/string labels
-
-  int 			label_spacing;	// how frequently to display text labels of the data values (-1 = never); if plotting a string column, the other data column (e.g. plot_2) is used to determine the y axis values
-  MatrixMode		matrix_mode;	// how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
-  taMisc::MatrixView	mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
-  bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
-
   GraphPlotView		err_1;		// data for error bars for plot_1 values
   GraphPlotView		err_2;		// data for error bars for plot_2 values
   GraphPlotView		err_3;		// data for error bars for plot_3 values
@@ -805,22 +807,23 @@ public:
   int			err_spacing;	// #CONDEDIT_ON_graph_type:XY_ERR spacing between
   float			err_bar_width;	// half-width of error bars, in view plot units
 
+  ColorMode		color_mode;	// how to determine the colors to draw
   GraphAxisView		color_axis;	// #CONDEDIT_ON_color_mode:COLOR_AXIS color axis, for determining color of lines when color_mode = COLOR_AXIS
   ColorScale		colorscale; 	// contains current min,max,range,zero,auto_scale
 
   GraphAxisView		raster_axis;	// #CONDEDIT_ON_graph_type:RASTER raster axis, if doing a raster plot
   float			thresh;		// #CONDEDIT_ON_plot_style:THRESH_LINE,THRESH_POINT threshold on raw data value for THRESH_LINE or THRESH_POINT plotting sytles 
-  float			thr_line_len;	// length of line to draw when above threshold: value is subtracted and added to current X value to render line
-  float			width;		// how wide to make the display (height is always 1.0)
-  float			depth;		// how deep to make the display (height is always 1.0)
+  float			thr_line_len;	// #CONDEDIT_ON_plot_style:THRESH_LINE,THRESH_POINT length of line to draw when above threshold: value is subtracted and added to current X value to render line
+
+  MatrixMode		matrix_mode;	// how to display matrix data (note that if a matrix column is selected, it is the only thing displayed)
+  taMisc::MatrixView	mat_layout; 	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS #DEF_BOT_ZERO layout of matrix graphs for SEP_GRAPHS mode
+  bool			mat_odd_vert;	// #CONDEDIT_ON_matrix_mode:SEP_GRAPHS how to arrange odd-dimensional matrix values (e.g., 1d or 3d) -- put the odd dimension in the Y (vertical) axis (else X, horizontal)
 
   bool			two_d_font;	// #DEF_true use 2d font (easier to read, but doesn't scale) instead of 3d font
   float			two_d_font_scale; // #DEF_350 how to scale the two_d font relative to the computed 3d number
 
   String		last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
   FloatTDCoord		last_sel_pt; 	// #READ_ONLY #SHOW #NO_SAVE values of last selected point
-
-  static float		tick_size; 	// #DEF_0.05 size of tick marks
 
   bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
 
