@@ -1,0 +1,22 @@
+Issues for Table edits
+
+ 
+BUGS
+
+* sometimes the text doesn't show up after declicking a ctrl
+  ex. AdvancedControlPanel when you click the complex guy,
+  then click the label, the text is blank
+  (prolly relates to dat still hanging around when the Paint
+    occurs; and this is the result of editor not being close
+    see TODO)
+  
+TODO:
+
+* editor is currently not destroying! (except for esc)
+  * need to detect when field is exited, and then 
+    emit the closeEditor signal
+    
+* much better text version of guys;
+  *possibly formatted vs. "raw" -- you can have formatted for
+  display, then "raw" when you edit
+  * check if it supports rich (html) text

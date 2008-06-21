@@ -2168,6 +2168,9 @@ protected:
   override void		ChildQueryEditActionsL_impl(const MemberDef* md,
     const taBase* lst_itm, const taiMimeSource* ms,
     int& allowed, int& forbidden); // also forwards to dv owner; in ta_qtclipdata.cpp
+  virtual void 		DV_ChildQueryEditActionsL_impl(const MemberDef* md,
+    const taBase* lst_itm, const taiMimeSource* ms,
+    int& allowed, int& forbidden); // specialized guys for DV -- can be replaced
 
 private:
   NOCOPY(DataView_List)

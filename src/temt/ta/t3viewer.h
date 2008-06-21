@@ -736,6 +736,7 @@ public:
     
   T3DataViewFrame_List	frames; // 
 
+  override bool		isRootLevelView() const {return true;} 
   inline iT3DataViewer*	widget() {return (iT3DataViewer*)inherited::widget();} // lex override
 
   virtual T3DataView*	FindRootViewOfData(TAPtr data); // looks for a root view of the data, returns it if found; useful to check for existing view before adding a new one

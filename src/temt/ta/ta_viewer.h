@@ -163,6 +163,8 @@ public:
   virtual iMainWindowViewer* viewerWindow() const;
     // #IGNORE valid if is, or is within, a main window
   
+  override bool		isTopLevelView() const {return true;} //
+    
   // view state properties (don't require to be mapped)
   virtual bool		isVisible() const; // whether we are supposed to be showing or not (view state)
   virtual void		setVisible(bool value, bool update_view = true); // whether we are supposed to be showing or not (view state)
@@ -598,6 +600,7 @@ public:
 
   bool			isDialog() const {return m_is_dialog;}
   override bool		isRoot() const {return m_is_root;}
+  override bool		isRootLevelView() const {return true;}
   bool			isProjBrowser() const;
     // main proj window with tree browser (always t for 3-pane guy)
   bool			isProjViewer() const {return m_is_proj_viewer;}
