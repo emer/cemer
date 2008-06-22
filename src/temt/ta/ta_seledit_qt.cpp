@@ -353,7 +353,7 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
       hbl->setSpacing(0);
       hbl->addWidget(rep);
       // some controls do better without stretch
-      if (!(dynamic_cast<taiField*>(dat.data())))
+      if (!(dynamic_cast<taiField*>((taiData*)dat)))
         hbl->addStretch();
       rep = rep_par;
     }
