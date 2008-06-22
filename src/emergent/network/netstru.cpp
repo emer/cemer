@@ -3623,6 +3623,13 @@ void Layer::LayoutUnits(Unit* u) {
   StructUpdate(false);
 }
 
+
+void Layer::SetNUnits(int n_units) {
+  if(un_geom.n == n_units || n_units <= 0) return; // only if diff or sensible
+  un_geom.FitN(n_units);
+  UpdateAfterEdit();
+}
+
 void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);

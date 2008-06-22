@@ -601,7 +601,7 @@ public:
   float		gain;		// #DEF_600 gain (gamma) of the sigmoidal rate-coded activation function 
   float		nvar;		// #DEF_0.005 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
   float		avg_dt;		// #DEF_0.005 time constant for integrating activation average (computed across trials)
-  IThrFun	i_thr;		// #DEF_STD how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing)
+  IThrFun	i_thr;		// [STD or NO_AH for da mod units) how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(ActFunSpec);

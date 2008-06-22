@@ -152,7 +152,7 @@ public:
 
   inline String GetStr() const { return String(x) + ", " + String(y); }
 
-  bool		FitN(int n);		// adjust x and y to fit x total elements
+  virtual bool	FitN(int n);		// adjust x and y to fit x total elements
 
   void		SetGtEq(int n)	{ x = MAX(n, x);  y = MAX(n, y); }
   // set each to be greater than or equal to n
@@ -211,6 +211,8 @@ public:
   // #HIDDEN #READ_ONLY #NO_SAVE legacy v3 third dimension -- used for conversion only -- do not use!!  to be removed at some later date
 
   void operator=(const TwoDCoord& cp);
+
+  override bool	FitN(int n);
 
   TA_BASEFUNS(XYNGeom);
 protected:

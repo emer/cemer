@@ -39,10 +39,27 @@ void TwoDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
 }
 
 bool TwoDCoord::FitN(int n) {
-  if((x * y) >= n)	return false;
+  if((x * y) == n)	return false;
   y = (int)sqrtf((float)n);
   if(y < 1)
     y = 1;
+  x = n / y;
+  if(x*y == n) return true; // got lucky
+
+  // next try a range of y's to fit evenly
+  int sqrty = y;
+  int lwy = y/2;  int hiy = y*2;
+  if(lwy == 0) lwy = 1;
+  for(y = lwy; y<=hiy; y++) {
+    x = n / y;
+    if(x*y == n) return true; // got lucky
+  }
+  if(n < 20) {
+    x = n;    y = 1;		// just go linear for small values
+    return true;
+  }
+  // else just go with an imperfect fit
+  y = sqrty;
   x = n / y;
   while((x * y) < n)
     x++;
@@ -79,12 +96,20 @@ void XYNGeom::Initialize() {
 
 void XYNGeom::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(n_not_xy && n > 0) {
+  if(n_not_xy && n > 0 && x*y > n) { // only if not fitting, expand
     FitN(n);
   }
   else {
     n = x * y;
   }
+}
+
+bool XYNGeom::FitN(int no) {
+  bool rval = inherited::FitN(no);
+  n = no;
+  if(x * y == n) n_not_xy = false;
+  else n_not_xy = true;
+  return rval;
 }
 
 void XYNGeom::operator=(const TwoDCoord& cp) {
@@ -110,14 +135,7 @@ void TDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
 }
 
 bool TDCoord::FitNinXY(int n) {
-  if((x * y) >= n)	return false;
-  y = (int)sqrtf((float)n);
-  if(y < 1)
-    y = 1;
-  x = n / y;
-  while((x * y) < n)
-    x++;
-  return true;
+  return FitN(n);
 }
 
 void PosTDCoord::UpdateAfterEdit_impl() {
