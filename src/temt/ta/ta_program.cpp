@@ -1741,8 +1741,8 @@ bool ProgArg::UpdateFromType(TypeDef* td) {
 } 
 
 String ProgArg::GetDisplayName() const {
-//  return type + " " + name + "=" + expr.GetFullExpr();
-  return expr.expr;
+  return type + " " + name + "=" + expr.GetFullExpr();
+//  return expr.expr;
 }
 
 bool ProgArg::BrowserSelectMe() {
@@ -2519,13 +2519,15 @@ String ProgramCall::GetDisplayName() const {
   String rval = "Call ";
   if (target) {
     rval += target->GetName();
-//     if(prog_args.size > 0) {
-//     rval += "(";
-//     for(int i=0;i<prog_args.size;i++) {
-//       ProgArg* pa = prog_args.FastEl(i);
-//       rval += pa->GetDisplayName();
-//     }
-//     rval += ")";
+    if(prog_args.size > 0) {
+      rval += "(";
+      for(int i=0;i<prog_args.size;i++) {
+	ProgArg* pa = prog_args.FastEl(i);
+	if(i > 0) rval += ", ";
+	rval += pa->expr.expr;   // GetDisplayName();
+      }
+      rval += ")";
+    }
   }
   else
     rval += "(no program set)";
@@ -2837,7 +2839,7 @@ String FunctionCall::GetDisplayName() const {
       for(int i=0;i<fun_args.size;i++) {
         ProgArg* pa = fun_args.FastEl(i);
 	if(i > 0) rval += ", ";
-        rval += pa->GetDisplayName();
+        rval += pa->expr.expr;  // GetDisplayName();
       }
       rval += ")";
     }

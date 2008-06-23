@@ -852,7 +852,7 @@ String MethodCall::GetDisplayName() const {
     ProgArg* pa = meth_args[i];
     if (i > 0)
       rval += ", ";
-    rval += pa->GetDisplayName();
+    rval += pa->expr.expr; // GetDisplayName();
   }
   rval += ")";
   return rval;
@@ -1096,7 +1096,7 @@ String MemberMethodCall::GetDisplayName() const {
     ProgArg* pa = meth_args[i];
     if (i > 0)
       rval += ", ";
-    rval += pa->GetDisplayName();
+    rval += pa->expr.expr;   // GetDisplayName();
   }
   rval += ")";
   return rval;
