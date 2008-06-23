@@ -82,8 +82,8 @@ public:
   String 	token;		// the string value of the token
 
   virtual bool 	next();		// get next element: main interface
-  virtual void 	error_msg(char *msg_part1, char *msg_part2 = "");
-  virtual bool 	expect(char *token_str, char *err_msg);
+  virtual void 	error_msg(const char *msg_part1, const char *msg_part2 = "");
+  virtual bool 	expect(const char *token_str, const char *err_msg);
 
   Tokenizer(istream &ifstrm);
   virtual ~Tokenizer();

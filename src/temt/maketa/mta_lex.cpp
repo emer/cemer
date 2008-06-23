@@ -316,12 +316,6 @@ int MTA::lex() {
 	  cout << "\nSkipping: " << cur_fname << " because prev included\n";
 	state = Skip_File;
       }
-//TEMP
-if (cur_fname_only == "ta_qtclipdata.h") {
-  int i = 0;
-  ++i;
-}
-// /TEMP
       String fname_only = taPlatform::getFileName(fname);
 
       if(cur_fname_only != fname_only) {

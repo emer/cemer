@@ -35,7 +35,7 @@
 // oreilly: just put the entire thing in here so installation is easy -- no
 // dependency on app defaults or other install location files at all
 
-static struct { char* name; int value; } cc[] = {
+static struct { const char* name; int value; } cc[] = {
   {"snow", 0xfffafa},  {"ghost white", 0xf8f8ff},  {"GhostWhite", 0xf8f8ff},
   {"white smoke", 0xf5f5f5},  {"WhiteSmoke", 0xf5f5f5},  {"gainsboro", 0xdcdcdc},
   {"floral white", 0xfffaf0},  {"FloralWhite", 0xfffaf0},  {"old lace", 0xfdf5e6},

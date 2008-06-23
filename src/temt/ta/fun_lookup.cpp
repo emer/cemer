@@ -162,12 +162,12 @@ Tokenizer::Tokenizer(std::istream &ifstrm) {
 Tokenizer::~Tokenizer() {
 }
 
-void Tokenizer::error_msg(char *msg_part1, char *msg_part2) {
+void Tokenizer::error_msg(const char *msg_part1, const char *msg_part2) {
   taMisc::Warning("*** Tokenizer: Parse error on line: ", String(line_num),
 		msg_part1, msg_part2);
 }
 
-bool Tokenizer::expect(char *token_str, char *err_msg) {
+bool Tokenizer::expect(const char *token_str, const char *err_msg) {
   next();
   if (token != String(token_str)) {
     error_msg(err_msg);

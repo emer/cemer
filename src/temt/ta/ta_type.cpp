@@ -1164,6 +1164,7 @@ void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) 
   // are created (static data gets created in "random" order in C++)
   // so we will add now if the type exists, otherwise we add to a deferred list
   TypeDef* typ = NULL;
+  //TODO: gcc complains that &types is always true!
   if (&types) {
     typ = types.FindName(type_name);
   }

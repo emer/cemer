@@ -3,7 +3,7 @@ typedef struct {
   EnumDef* 	enm;
   MemberDef* 	memb;
   MethodDef* 	meth;
-  char*    	chr;
+  const char*   chr;
   int	   	rval;
 } YYSTYPE;
 #define	CLASS	257

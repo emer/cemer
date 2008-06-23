@@ -33,7 +33,7 @@ static String_PArray bogus_inh_opts;
 
 #define SETENUMDESC(ty,cm) mta->SetDesc(cm, ty->desc, bogus_inh_opts, ty->opts, ty->lists)
 
-void yyerror(char *s);
+void yyerror(const char *s);
 int yylex();
 
 %}
@@ -46,7 +46,7 @@ int yylex();
   EnumDef* 	enm;
   MemberDef* 	memb;
   MethodDef* 	meth;
-  char*    	chr;
+  const char*   chr;
   int	   	rval;
 }
 
@@ -838,7 +838,7 @@ classkeyword:
 
 	/* end of grammar */
 
-void yyerror(char *s) { 	/* called for yacc syntax error */
+void yyerror(const char *s) { 	/* called for yacc syntax error */
   int i;
   if((mta->verbose < 1) && (mta->spc != &(mta->spc_target)))
     return;

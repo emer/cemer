@@ -41,7 +41,7 @@
 #include <alloca.h>
 #endif
 
-void yyerror(char* s);
+void yyerror(const char* s);
 /* int yyparse(); */
 int yylex();
 
@@ -1516,7 +1516,7 @@ end:	  /* nothing */		{ Code1(cssInst::Stop); $$ = cssMisc::cur_top->Prog()->siz
 	/* end of grammar */
 
 
-void yyerror(char* s) { 	/* called for yacc syntax error */
+void yyerror(const char* s) { 	/* called for yacc syntax error */
   int i;
 
   ostream* fh = &cerr;

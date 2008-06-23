@@ -49,7 +49,7 @@
 #include <sstream>
 
 int yyparse(void);
-void yyerror(char* s);
+void yyerror(const char* s);
 
 pager_ostream::pager_ostream() {
   fout = &cout;
@@ -4573,7 +4573,7 @@ void cssProgSpace::ListTypes() {
   cmd_shell->src_prog->types.NameList(fh);
 }
 
-static char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",
+static const char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",
 			   "Returning", "Breaking", "Continuing", "BreakPoint",
 			   "ExecError", "Bailing"};
 
