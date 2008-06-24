@@ -265,6 +265,9 @@ public:
     // #IGNORE should usually override to provide per-item typing where applicable
   void*		SafeEl_(int i) const
   { void* rval=NULL; i=Index(i); if(InRange(i)) rval = el[i]; return rval; } 	// #IGNORE
+  void*		PosSafeEl_(int i) const
+  { void* rval=NULL; if(InRange(i)) rval = el[i]; return rval; } 	
+    // #IGNORE -- for internal use only, where you want NULL if i < 0
   void*		FastEl_(int i)	const	{ return el[i]; } 	// #IGNORE
   virtual void*	FindName_(const String& it, int& idx=no_index) const;	// #IGNORE
   virtual void*	Pop_();					// #IGNORE
