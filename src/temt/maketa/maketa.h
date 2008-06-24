@@ -59,7 +59,7 @@ extern TypeDef TA_void_ptr;
 #endif
 
 int yyparse(void);
-void yyerror(char *s);
+void yyerror(const char *s);
 
 class MTA {
 public:
