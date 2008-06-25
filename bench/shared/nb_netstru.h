@@ -47,8 +47,9 @@ public:
   UnitPtrList	units;
   // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
   int		send_idx;
+  Layer*	send_lay; // sending layer
 
-  RecvCons() {send_idx = -1;}
+  RecvCons() {send_idx = -1; send_lay = NULL;}
   ~RecvCons() {}
 };
 
@@ -67,8 +68,9 @@ public:
   UnitPtrList	units;
   // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
   int		recv_idx;
+  Layer*	recv_lay; // receiving layer
   
-  SendCons() { recv_idx = -1;}
+  SendCons() { recv_idx = -1; recv_lay = NULL;}
   ~SendCons() {}
 };
 
@@ -294,6 +296,7 @@ public:
   
   static float nibble_thresh; // < 80%
   static signed char nibble_mode; // 0=none, 1=on, 2=auto (> 20% left)
+  static signed char fast_prjn; // fast prjns directly access target unit array
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
   static bool sender; // sender based, else receiver-based

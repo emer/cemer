@@ -5,12 +5,11 @@
 #include <QtCore/QCoreApplication>
 
 int main(int argc, char* argv[]) {
+  QCoreApplication app(argc, argv);
   return Nb::main(argc, argv);
 }
   
 int Nb::main(int argc, char* argv[]) {
-  QCoreApplication app(argc, argv);
-  
   if(argc < 4) {
     printf("must have min 3 args (you can use \"0\" for def of positionals):\n"
       "\t<n_units>\tnumber of units in each of the layers\n"
@@ -30,6 +29,7 @@ int Nb::main(int argc, char* argv[]) {
       "\t 1 receiver-based, with smart calc (ignore senders below thresh)\n"
       "\t 2 sender-based -- clashes allowed \n"
       "\t 3 sender-based -- array-based, 1 array of nets per thread, then rolled up \n"
+      "\t-fast_prjn=0(def)/1\tuse fast prjn mode to directly access target units\n"
     );
     return 1;
   }
@@ -102,6 +102,8 @@ int Nb::main(int argc, char* argv[]) {
     if (targ.startsWith("-nibble=")) {
       nibble_mode = targ.remove("-nibble=").toInt();
       continue;
+    if (targ == "-fast_prjn=1")
+      fast_prjn = true;
     }
     //TODO: any more
   }
@@ -154,12 +156,12 @@ int Nb::main(int argc, char* argv[]) {
   net.engine->Log(hdr);
 
   if (hdr)
-  printf("algo\teMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tnibble\tsndcn\n");
+  printf("algo\teMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tnibble\tsndcn\tfstprjn\n");
   if (single) NetEngine::n_procs = 0;
-  printf("%d\t%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\n",
+  printf("%d\t%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\t%d\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
     n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, nibble_mode,
-    sndcn);
+    sndcn, fast_prjn);
 
   net.SetEngine(NULL); // controlled delete
   return 0;

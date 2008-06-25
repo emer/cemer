@@ -72,6 +72,7 @@ void Layer::ConnectTo(Layer* lay_to) {
     send_gp->cons.SetSize(n_recv);
     send_gp->units.SetSize(n_recv);
     send_gp->recv_idx = recv_idx;
+    send_gp->recv_lay = lay_to;
     
     for (int i_to = 0; i_to < lay_to->units.size; ++i_to) {
       Unit* un_to = lay_to->units.FastEl(i_to);
@@ -81,6 +82,7 @@ void Layer::ConnectTo(Layer* lay_to) {
         recv_gp->cons.SetSize(n_send);
         recv_gp->units.SetSize(n_send);
         recv_gp->send_idx = send_idx;
+        recv_gp->send_lay = this;
       } else {
         recv_gp = un_to->recv.FastEl(recv_idx);
       }
@@ -111,6 +113,7 @@ void Layer::ConnectFrom(Layer* lay_fm) {
     recv_gp->cons.SetSize(n_send);
     recv_gp->units.SetSize(n_send);
     recv_gp->send_idx = send_idx;
+    recv_gp->send_lay = lay_fm;
     
     for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
       Unit* un_fm = lay_fm->units.FastEl(i_fm);
@@ -120,6 +123,7 @@ void Layer::ConnectFrom(Layer* lay_fm) {
         send_gp->cons.SetSize(n_recv);
         send_gp->units.SetSize(n_recv);
         send_gp->recv_idx = recv_idx;
+        send_gp->recv_lay = this;
       } else {
         send_gp = un_fm->send.FastEl(send_idx);
       }
@@ -500,7 +504,8 @@ void NetTask::Send_Netin_0(Unit* su) {
 #else
     Connection** cns = send_gp->cons.Els(); // conn pointer
 #endif
-    Unit** uns = send_gp->units.Els(); // unit pointer
+    Unit** uns = (Nb::fast_prjn) ? send_gp->recv_lay->units.Els() :
+      send_gp->units.Els(); // unit pointer
     const int send_sz = send_gp->units.size;
     su->n_con_calc += send_sz;
     for (int i=0; i < send_sz; i++)
@@ -521,7 +526,8 @@ void NetTask::Recv_Netin_0_Dumb(Unit* ru) {
 #else
     Connection* cns = &(recv_gp->cons[0]); // array pointer
 #endif
-    Unit** uns = recv_gp->units.Els(); // unit pointer
+    Unit** uns = (Nb::fast_prjn) ? recv_gp->send_lay->units.Els() :
+      recv_gp->units.Els(); // unit pointer
     const int recv_sz = recv_gp->units.size;
     ru->n_con_calc += recv_sz;
     for(int i=0; i < recv_sz; ++i)
@@ -543,7 +549,8 @@ void NetTask::Recv_Netin_0_Smart(Unit* ru) {
 #else
     Connection* cns = &(recv_gp->cons[0]); // array pointer
 #endif
-    Unit** uns = recv_gp->units.Els(); // unit pointer
+    Unit** uns = (Nb::fast_prjn) ? recv_gp->send_lay->units.Els() :
+      recv_gp->units.Els(); // unit pointer
     const int recv_sz = recv_gp->units.size;
     ru->n_con_calc += (recv_sz / Nb::inv_act);
     for(int i=0; i < recv_sz; ++i)
@@ -635,7 +642,8 @@ void NetTask_N::Send_Netin_Array() {
 #else
         Connection** cns = send_gp->cons.Els(); // conn pointer
 #endif
-        Unit** uns = send_gp->units.Els(); // unit pointer
+        Unit** uns = (Nb::fast_prjn) ? send_gp->recv_lay->units.Els() :
+          send_gp->units.Els(); // unit pointer
         const int send_sz = send_gp->units.size;
         su->n_con_calc += send_sz;
         for (int i=0; i < send_sz; i++) {
@@ -668,7 +676,8 @@ void NetTask_N::ComputeAct() {
   Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   my_act = 0.0f;
-  while (my_u < Nb::net.units_flat.size) {
+  const int unit_sz = Nb::net.units_flat.size;
+  while (my_u < unit_sz) {
     Unit* un = units[my_u];
     ComputeAct_inner(un);
     my_act += un->act;
@@ -689,6 +698,7 @@ int Nb::n_prjns;
 float Nb::tot_act; // check on tot act
 float Nb::nibble_thresh = 0.8f;
 signed char Nb::nibble_mode = 0;
+signed char Nb::fast_prjn = 0; // fast prjns directly access target unit array
 bool Nb::single = false; // true for single thread mode, to compare against nprocs=1
 int Nb::send_act = 0x10000; // send activation, as a fraction of 2^16 
 int Nb::inv_act = 1; // inverse of activation -- can use to divide
