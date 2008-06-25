@@ -4,22 +4,32 @@
 #
 ################################################################################
 
+
 # Add source files here
-EXECUTABLE	:= ./embench_cuda
+EXECUTABLE	:= ./embench_cuda.so
 # Cuda source files (compiled with cudacc)
 CUFILES		:= embench_cuda.cu
 # C/C++ source files (compiled with gcc / c++)
-CCFILES		:= \
-	main.cpp 
+#CCFILES		:= main.cpp 
 # C/C++ header files
 HEADERS		+= embench_cuda.h
 
+# root defines that common.mk will need outside the SDK folder context
+
+ROOTDIR = ${CUDA_SDK}/common
 BINDIR	= ./
 
 ################################################################################
 # Rules and targets
 
 include ${CUDA_SDK}/common/common.mk
+
+# compile and link options
+NVCCFLAGS      	+= -Xcompiler -fPIC
+CXXFLAGS       	+= -fPIC
+CFLAGS        	+= -fPIC
+LINK		+= -shared 
+#-nostdlib -lgcc BLAH
 
 # additional dependencies
 
