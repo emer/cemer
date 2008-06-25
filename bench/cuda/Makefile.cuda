@@ -6,7 +6,7 @@
 
 
 # Add source files here
-EXECUTABLE	:= ./embench_cuda.so
+EXECUTABLE	:= ./libembench_cuda.so
 # Cuda source files (compiled with cudacc)
 CUFILES		:= embench_cuda.cu
 # C/C++ source files (compiled with gcc / c++)

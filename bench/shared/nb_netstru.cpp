@@ -713,10 +713,7 @@ signed char Nb::sndcn = 0;
 #endif
 
 int Nb::main() {
-  if(argc < 4) {
-    printf(prompt.toLatin1());
-    return 1;
-  }
+  Initialize();
   
   net.Initialize();
   net.Build();
@@ -754,8 +751,8 @@ int Nb::main() {
   return 0;
 }
 
-
-void Nb::Initialize() {
+int Nb::PreInitialize() {
+  int rval = 0;
   prompt = 
     "must have min 3 args (you can use \"0\" for def of positionals):\n"
     "\t<n_units>\tnumber of units in each of the layers\n"
@@ -777,6 +774,19 @@ void Nb::Initialize() {
     "\t 3 sender-based -- array-based, 1 array of nets per thread, then rolled up \n"
     "\t-fast_prjn=0(def)/1\tuse fast prjn mode to directly access target units\n"
   ;
+  PreInitialize_impl(rval);
+  if (rval != 0) return rval;
+  if (argc < 4) {
+    printf(prompt.toLatin1());
+    return 1;
+  }
+  return rval;
+}
+
+void Nb::PreInitialize_impl(int& /*rval*/) {
+}
+
+void Nb::Initialize() {
 
   srand(56);			// always start with the same seed!
 

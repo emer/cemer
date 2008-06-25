@@ -310,8 +310,9 @@ public:
   
   virtual int	main(); // must be suplied in the main.cpp
   
+  int		PreInitialize(); 
   void		Initialize();
-  Nb(int argc_, char* argv_[]) {argc = argc_; argv = argv_;}
+  Nb(int argc_, char** argv_) {argc = argc_; argv = argv_;}
   virtual ~Nb() {}
 protected:
   int 		argc;
@@ -327,6 +328,7 @@ protected:
   double n_eff_con_trav;
   double eff_con_trav_sec;
 
+  virtual void	PreInitialize_impl(int& rval); 
   virtual void	Initialize_impl() {} // extensions
   virtual void	PrintResults();
 
