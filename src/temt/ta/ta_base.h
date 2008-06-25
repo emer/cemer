@@ -1896,6 +1896,8 @@ INHERITED(taList_impl)
 public:
   T*		SafeEl(int idx) const		{ return (T*)SafeEl_(idx); }
   // #CAT_Access get element at index
+  T*		PosSafeEl(int idx) const		{ return (T*)PosSafeEl_(idx); }
+  // #IGNORE positive only, internal use
   T*		FastEl(int i) const		{ return (T*)el[i]; }
   // #CAT_Access fast element (no range checking)
   T* 		operator[](int i) const	{ return (T*)el[i]; }
