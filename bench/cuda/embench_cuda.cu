@@ -263,7 +263,7 @@ Runtime layout:
 
 nets [blks][SND_UG_SZ]
 */
-
+/* TODO
 // CONSTANTS
 
 #define SND_UG_SZ 
@@ -305,3 +305,4 @@ void kSend_Netin(
   d_nets[un_idx] = tnet; 
 }
 
+*/

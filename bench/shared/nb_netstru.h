@@ -4,6 +4,8 @@
 
 #include "nb_util.h"
 
+#include <QtCore/QString>
+
 // Now: actual neural network code
 // units compute net = sum_j weight_j * act_j for all units that send input into them
 // then share this net across nodes
@@ -275,7 +277,7 @@ public:
   NetTask_N() {}
 };
 
-class Nb { // global catchall
+class Nb { // global catchall and startup
 public:
   static bool hdr;
 // global net params
@@ -287,6 +289,7 @@ public:
   static int n_tot; // total units done each NetIn (reality check)
   static int n_prjns; // total number of prjns
   static float tot_act; // check on tot act
+  static int tsend_act; // as decimal percent
   static int send_act; // send activation, as a fraction of 2^16 
   static int inv_act; // inverse of activation -- can use to divide
   
@@ -301,13 +304,34 @@ public:
   static bool calc_act;
   static bool sender; // sender based, else receiver-based
   static signed char sndcn; // if 1, uses SEND_CONS, else 0=RECV_CONS
+  static bool use_log_file;
   
-  static int	main(int argc, char* argv[]); // must be suplied in the main.cpp
+  TimeUsed 	time_used;	
+  
+  virtual int	main(); // must be suplied in the main.cpp
+  
+  void		Initialize();
+  Nb(int argc_, char* argv_[]) {argc = argc_; argv = argv_;}
+  virtual ~Nb() {}
 protected:
+  int 		argc;
+  char**	argv;
+  
+  QString	prompt; // displayed if user enters no options	
+// various result vals, only valid at end
+  double tot_time;
+
+  double n_wts;
+  double n_con_trav;
+  double con_trav_sec;
+  double n_eff_con_trav;
+  double eff_con_trav_sec;
+
+  virtual void	Initialize_impl() {} // extensions
+  virtual void	PrintResults();
 
 private:
   Nb();
-  ~Nb();
 };
 
 #endif
