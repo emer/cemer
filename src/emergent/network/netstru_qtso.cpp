@@ -2707,7 +2707,7 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
 }
 
 void NetView::setUnitDisp(int value) {
-  MemberDef* md = membs.SafeEl(value);
+  MemberDef* md = membs.PosSafeEl(value);
   setUnitDispMd(md);
 }
 

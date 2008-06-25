@@ -1496,6 +1496,8 @@ public: // lexical hacks
   inline MemberDef*	operator[](int i) const {return (MemberDef*)inherited::FastEl(i);}
   inline MemberDef*	FastEl(int i) const {return (MemberDef*)inherited::FastEl(i);}
   inline MemberDef*	SafeEl(int i) {return (MemberDef*)inherited::SafeEl(i);}
+  inline MemberDef*	PosSafeEl(int i) {return (MemberDef*)inherited::PosSafeEl(i);}
+  //#IGNORE
   inline MemberDef*	FindName(const String& item_nm, int& idx=no_index) const
     {return (MemberDef*)inherited::FindName(item_nm, idx);}
 };

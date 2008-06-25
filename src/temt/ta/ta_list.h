@@ -439,7 +439,8 @@ public:
 
   // operators
   T*		SafeEl(int i) const		{ return (T*)SafeEl_(i); }
-  // #CAT_Access element at index
+  T*		PosSafeEl(int i) const		{ return (T*)PosSafeEl_(i); }
+  // #IGNORE element at index
   T*		FastEl(int i) const		{ return (T*)el[i]; }
   // #CAT_Access fast element (no range checking)
   T* 		operator[](int i) const		{ return (T*)el[i]; }

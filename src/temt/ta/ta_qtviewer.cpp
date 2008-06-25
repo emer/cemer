@@ -2849,7 +2849,7 @@ void iTabViewer::TabView_Destroying(iTabView* tv) {
   if (m_curTabView != tv) return;
   // focus next, if any, or prev, if any
   if (idx >= m_tabViews->size) --idx;
-  TabView_Selected(m_tabViews->SafeEl(idx)); // NULL if no more
+  TabView_Selected(m_tabViews->PosSafeEl(idx)); // NULL if no more
 }
 
 void iTabViewer::TabView_Selected(iTabView* tv) {
@@ -4167,7 +4167,7 @@ void iMainWindowViewer::windowActivate(int win) {
   // populate with current windows -- should correspond to the ones enumerated
   Widget_List wl;
   taiMisc::GetWindowList(wl);
-  QWidget* wid = wl.SafeEl(win);
+  QWidget* wid = wl.PosSafeEl(win);
   if (!wid) return;
   wid->activateWindow();
   wid->raise();
@@ -4854,7 +4854,7 @@ void iTabView::ShowTab(iDataPanel* panel, bool show, bool focus) {
 }
 
 iDataPanel* iTabView::panel(int pan_idx) {
-  return panels.SafeEl(pan_idx);
+  return panels.PosSafeEl(pan_idx);
 }
 
 int iTabView::panelCount() const {
@@ -5761,7 +5761,7 @@ void iDataPanelSet::SetMethodBox(QWidget* meths) {
 }
 
 void iDataPanelSet::setCurrentPanelId_impl(int id) {
-  iDataPanel* pn = panels.SafeEl(id);
+  iDataPanel* pn = panels.PosSafeEl(id);
   if (!pn) return; //shouldn't happen
   wsSubPanels->setCurrentWidget(pn);
   QAbstractButton* but = buttons->button(id);
@@ -5822,7 +5822,7 @@ void iViewPanelSet::PanelDestroying(iViewPanelFrame* pn) {
 }
 
 void iViewPanelSet::setCurrentPanelId_impl(int id) {
-  iDataPanel* pn = panels.SafeEl(id);
+  iDataPanel* pn = panels.PosSafeEl(id);
   if (!pn) return; //shouldn't happen
   wsSubPanels->setCurrentWidget(pn);
   tbSubPanels->setCurrentIndex(id);

@@ -83,11 +83,11 @@ iMainWindowViewer* iTopLevelWindow_List::FindMainWindowById(int id) {
 } 
 
 iMainWindowViewer* iTopLevelWindow_List::SafeElAsMainWindow(int i) {
-  return dynamic_cast<iMainWindowViewer*>(SafeEl(i)->widget());
+  return dynamic_cast<iMainWindowViewer*>(PosSafeEl(i)->widget());
 }
 
 iDockViewer* iTopLevelWindow_List::SafeElAsDockWindow(int i) {
-  return dynamic_cast<iDockViewer*>(SafeEl(i)->widget());
+  return dynamic_cast<iDockViewer*>(PosSafeEl(i)->widget());
 }
 
 void iTopLevelWindow_List::GotFocus_MainWindow(iMainWindowViewer* imw) {
