@@ -119,9 +119,13 @@ QTaskThread::QTaskThread() {
 
 void QTaskThread::suspend() {
   if (m_suspended) return;
-  mutex.lock();
+  while (!m_suspended) {// had to have entered the run
+    mutex.lock(); // forces block
+    mutex.unlock();
+  }
+/*  mutex.lock();
   m_suspended = true;
-  mutex.unlock();
+  mutex.unlock();*/
 }
 
 void QTaskThread::resume() {
@@ -129,7 +133,7 @@ void QTaskThread::resume() {
   mutex.lock();
   m_suspended = false;
   m_task->start_latency.Start(false);
-  wc.wakeAll();;
+  wc.wakeAll();
   mutex.unlock();
 }
 

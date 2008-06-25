@@ -1,6 +1,6 @@
-CONFIG		+= console debug
-#CONFIG		+= console 
-DEFINES		+= NB_THREAD
+#CONFIG		+= console debug
+CONFIG		+= console 
+DEFINES		+= NB_THREAD SEND_CONS
 QMAKE_INCDIR	+= ../shared
 HEADERS       = ../shared/nb_util.h \
 		../shared/nb_netstru.h

@@ -1504,7 +1504,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=LeabraNetwork;
      object_val=.projects[0].networks[0]$2$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="network to operate on -- updates batch counter on network and passes it to train program";
     };
     ProgVar @[1] {
@@ -1514,6 +1515,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_val=.projects[0].data.gp[0][0]$3$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="datatable with training patterns -- not used by this program, but passed to train program";
     };
    };
@@ -1527,7 +1529,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=Program;
      object_val=.projects[0].programs.gp[0][0]$4$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="set this to point to your batch process";
     };
     ProgVar @[1] {
@@ -1535,7 +1538,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
     ProgVar @[2] {
@@ -1543,7 +1547,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="log file directory";
     };
     ProgVar @[3] {
@@ -1551,7 +1556,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=NULL_CHECK;
+     flags=NULL_CHECK|USED;
+     reference=0;
      desc="name of log file";
     };
     ProgVar @[4] {
@@ -1560,6 +1566,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      bool_val=0;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="whether to log the epoch data";
     };
     ProgVar @[5] {
@@ -1568,6 +1575,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      bool_val=0;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="whether to log the trial data";
     };
     ProgVar @[6] {
@@ -1576,6 +1584,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      int_val=10;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="how many training patterns";
     };
     ProgVar @[7] {
@@ -1584,6 +1593,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      int_val=100;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="how many units per layer";
     };
     ProgVar @[8] {
@@ -1592,6 +1602,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      bool_val=0;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="whether to use threaded computation or not";
     };
     ProgVar @[9] {
@@ -1600,7 +1611,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][1]$5$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
     ProgVar @[10] {
@@ -1609,7 +1621,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][0]$6$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
    };
@@ -1637,11 +1650,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=;
      cond {
       expr="taMisc::gui_active";
-      var_expr="taMisc::gui_active";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     Comment @[1] {
@@ -1666,11 +1674,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="\"\"";
        expr {
 	expr="\"tag=\"";
-	var_expr="\"tag=\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -1681,11 +1684,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="\"\"";
        expr {
 	expr="\"FileTag\"";
-	var_expr="\"FileTag\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
      };
@@ -1708,11 +1706,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="\"\"";
        expr {
 	expr="\"logdir=\"";
-	var_expr="\"logdir=\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -1723,11 +1716,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="\"\"";
        expr {
 	expr="\"LogDir\"";
-	var_expr="\"LogDir\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
      };
@@ -1745,11 +1733,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=OFF;
      expr {
       expr="\"Loaded project: \" << .projects[0].file_name";
-      var_expr="\"Loaded project: \" << .projects[0].file_name";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
      };
     };
     MethodCall @[7] {
@@ -1782,11 +1765,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="\"\"";
        expr {
 	expr="\"FileTag\"";
-	var_expr="\"FileTag\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
      };
@@ -1809,11 +1787,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="\"\"";
        expr {
 	expr="\"LogDir\"";
-	var_expr="\"LogDir\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
      };
@@ -1865,11 +1838,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=;
      cond {
       expr="use_threads";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ use_threads;      };
-      bad_vars{       };
      };
      true_code {
       name=;
@@ -1882,11 +1850,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        path="net_engine";
        expr {
 	expr=".engines.gp.NetEngine.LeabraThreadEngine";
-	var_expr=".engines.gp.NetEngine.LeabraThreadEngine";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
        update_after=0;
       };
@@ -1910,11 +1873,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=;
      cond {
       expr="log_epc";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_epc;      };
-      bad_vars{       };
      };
      true_code {
       name=;
@@ -1938,11 +1896,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val=;
 	 expr {
 	  expr="\".epc.dat\"";
-	  var_expr="\".epc.dat\"";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[1] {
@@ -1953,11 +1906,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="\"\"";
 	 expr {
 	  expr="tag";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ tag;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[2] {
@@ -1968,11 +1916,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="\"\"";
 	 expr {
 	  expr="log_dir";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ log_dir;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[3] {
@@ -1983,11 +1926,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="false";
 	 expr {
 	  expr="false";
-	  var_expr="false";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
        };
@@ -2010,11 +1948,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="\"\"";
 	 expr {
 	  expr="log_file_nm";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ log_file_nm;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[1] {
@@ -2025,11 +1958,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="false";
 	 expr {
 	  expr="false";
-	  var_expr="false";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[2] {
@@ -2040,11 +1968,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="true";
 	 expr {
 	  expr="true";
-	  var_expr="true";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
        };
@@ -2056,11 +1979,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=;
      cond {
       expr="log_trl";
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_trl;      };
-      bad_vars{       };
      };
      true_code {
       name=;
@@ -2084,11 +2002,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val=;
 	 expr {
 	  expr="\".trl.dat\"";
-	  var_expr="\".trl.dat\"";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[1] {
@@ -2099,11 +2012,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="\"\"";
 	 expr {
 	  expr="tag";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ tag;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[2] {
@@ -2114,11 +2022,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="\"\"";
 	 expr {
 	  expr="log_dir";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ log_dir;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[3] {
@@ -2129,11 +2032,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="false";
 	 expr {
 	  expr="true";
-	  var_expr="true";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
        };
@@ -2156,11 +2054,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="\"\"";
 	 expr {
 	  expr="log_file_nm";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ log_file_nm;	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[1] {
@@ -2171,11 +2064,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="false";
 	 expr {
 	  expr="false";
-	  var_expr="false";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
 	ProgArg @[2] {
@@ -2186,11 +2074,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val="true";
 	 expr {
 	  expr="false";
-	  var_expr="false";
-	  vars {
-	  };
-	  var_names{ 	  };
-	  bad_vars{ 	  };
 	 };
 	};
        };
@@ -2212,11 +2095,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=OFF;
      expr {
       expr="\"Running: \" << train.name";
-      var_expr="\"Running: \" << $#0#$.name";
-      vars {
-      };
-      var_names{ train;      };
-      bad_vars{       };
      };
     };
     ProgramCall @[23] {
@@ -2236,11 +2114,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="network";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -2251,11 +2124,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="n_units";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ n_units;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -2277,11 +2145,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="network";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -2292,11 +2155,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="input_data";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[2] {
@@ -2307,11 +2165,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="n_patterns";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ n_patterns;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -2345,11 +2198,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="network";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -2360,11 +2208,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="input_data";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[2] {
@@ -2375,11 +2218,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="true";
-	var_expr="true";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
      };
@@ -2411,7 +2249,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=Network;
      object_val=$2$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="network to train";
     };
     ProgVar @[1] {
@@ -2420,6 +2259,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      int_val=10;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="number of units per layer in network";
     };
    };
@@ -2433,6 +2273,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      int_val=5;
      objs_ptr=0;
      flags=NULL_CHECK;
+     reference=0;
      desc=;
     };
     ProgVar @[1] {
@@ -2441,7 +2282,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=Layer;
      object_val=.projects[0].networks[0].layers[4]$17$;
      objs_ptr=0;
-     flags=;
+     flags=USED;
+     reference=0;
      desc=;
     };
    };
@@ -2477,11 +2319,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        result_var=.projects[0].programs[1].vars[1]$18$;
        expr {
 	expr="network.layers[i]";
-	var_expr="$#0#$.layers[$#1#$]";
-	vars {
-	};
-	var_names{ network;i;	};
-	bad_vars{ 	};
        };
       };
       MemberAssign @[1] {
@@ -2491,11 +2328,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        path="un_geom.x";
        expr {
 	expr="1";
-	var_expr="1";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
        update_after=0;
       };
@@ -2506,11 +2338,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        path="un_geom.y";
        expr {
 	expr="1";
-	var_expr="1";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
        update_after=1;
       };
@@ -2533,48 +2360,19 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	 def_val=;
 	 expr {
 	  expr="n_units";
-	  var_expr="$#0#$";
-	  vars {
-	  };
-	  var_names{ n_units;	  };
-	  bad_vars{ 	  };
 	 };
 	};
        };
-       expr {
-	expr=;
-	var_expr=;
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
-       };
-       update_after=0;
       };
      };
      init {
       expr="i = 0";
-      var_expr="$#0#$ = 0";
-      vars {
-      };
-      var_names{ i;      };
-      bad_vars{       };
      };
      test {
       expr="i < network.layers.size";
-      var_expr="$#0#$ < $#1#$.layers.size";
-      vars {
-      };
-      var_names{ i;network;      };
-      bad_vars{       };
      };
      iter {
       expr="i++";
-      var_expr="$#0#$++";
-      vars {
-      };
-      var_names{ i;      };
-      bad_vars{       };
      };
     };
     MethodCall @[1] {
@@ -2617,6 +2415,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_val=$2$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="network to train";
     };
     ProgVar @[1] {
@@ -2625,7 +2424,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=$3$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="datatable with training patterns";
     };
     ProgVar @[2] {
@@ -2634,6 +2434,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      int_val=10;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="number of rows to create in datatable";
     };
    };
@@ -2646,7 +2447,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_Int;
      int_val=12;
      objs_ptr=0;
-     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
     ProgVar @[1] {
@@ -2656,6 +2458,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_val=.projects[0].programs.gp[0][5]$20$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc=;
     };
     ProgVar @[2] {
@@ -2664,7 +2467,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=LeabraWizard;
      object_val=.projects[0].wizards[0]$21$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
    };
@@ -2705,11 +2509,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="network";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ network;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -2720,11 +2519,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="input_data";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -2747,11 +2541,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="n_rows";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ n_rows;	};
-	bad_vars{ 	};
        };
       };
      };
@@ -2762,11 +2551,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      result_var=.projects[0].programs[2].vars[0]$24$;
      expr {
       expr="network.layers[0].un_geom.n";
-      var_expr="$#0#$.layers[0].un_geom.n";
-      vars {
-      };
-      var_names{ network;      };
-      bad_vars{       };
      };
     };
     DataGenCall @[3] {
@@ -2787,11 +2571,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="input_data";
-	var_expr="$#0#$";
-	vars {
-	};
-	var_names{ input_data;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[1] {
@@ -2802,11 +2581,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="\"\"";
-	var_expr="\"\"";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[2] {
@@ -2817,11 +2591,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val=;
        expr {
 	expr="input_size / 4";
-	var_expr="$#0#$ / 4";
-	vars {
-	};
-	var_names{ input_size;	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[3] {
@@ -2832,11 +2601,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="1.0f";
        expr {
 	expr="1.0";
-	var_expr="1.0";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
       ProgArg @[4] {
@@ -2847,11 +2611,6 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        def_val="0.0f";
        expr {
 	expr="0.0";
-	var_expr="0.0";
-	vars {
-	};
-	var_names{ 	};
-	bad_vars{ 	};
        };
       };
      };
@@ -2915,7 +2674,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       object_type=LeabraNetwork;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to train";
      };
      ProgVar @[1] {
@@ -2925,6 +2685,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       object_val=$3$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="datatable with training patterns";
      };
      ProgVar @[2] {
@@ -2932,7 +2693,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
      };
     };
@@ -2946,6 +2708,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       int_val=5;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="maximum number of epochs to run";
      };
      ProgVar @[1] {
@@ -2953,7 +2716,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=5;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
      };
      ProgVar @[2] {
@@ -2963,6 +2727,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       hard_enum_type=Network::TrainMode;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
      };
      ProgVar @[3] {
@@ -2974,6 +2739,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
      };
      ProgVar @[4] {
@@ -2982,6 +2748,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       real_val=-1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
 goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
      };
@@ -2991,7 +2758,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=RndSeed;
       object_val=.projects[0].programs.gp[0][0].objs[0]$27$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="random seed that is used at start of training -- if OldSeed is called";
      };
      ProgVar @[6] {
@@ -3000,7 +2768,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].train_time$28$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
      };
      ProgVar @[7] {
@@ -3008,7 +2777,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=1008;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="total number of connections in network (read from net)";
      };
      ProgVar @[8] {
@@ -3016,7 +2786,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=60;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="total number of units in network (read from net)";
      };
      ProgVar @[9] {
@@ -3024,7 +2795,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=50;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="total number of training patterns (pats * epcs)";
      };
      ProgVar @[10] {
@@ -3032,7 +2804,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=5000;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="total number of training cycles (n_pats_tot * network.cycles_max)";
      };
      ProgVar @[11] {
@@ -3040,7 +2813,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=5040000;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="total number of connections traversed";
      };
      ProgVar @[12] {
@@ -3048,7 +2822,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=2.33;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="total number of seconds used";
      };
      ProgVar @[13] {
@@ -3056,7 +2831,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Real;
       real_val=2.163090128755365;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="millions of connections traversed per second";
      };
     };
@@ -3080,11 +2856,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=.projects[0].programs.gp[0][0].args[2]$29$;
       expr {
        expr="false";
-       var_expr="false";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      MethodCall @[1] {
@@ -3105,11 +2876,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val="false";
 	expr {
 	 expr="false";
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3120,11 +2886,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=.projects[0].programs.gp[0][0].vars[6]$31$;
       expr {
        expr="network.train_time";
-       var_expr="$#0#$.train_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      IfElse @[3] {
@@ -3132,11 +2893,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       cond {
        expr="rnd_init == OLD_SEED";
-       var_expr="$#0#$ == OLD_SEED";
-       vars {
-       };
-       var_names{ rnd_init;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -3200,11 +2956,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=OFF;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
-	 var_expr="$#0#$.name << \" Weights Initialized\"";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3220,11 +2971,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=$31$;
       expr {
        expr="network.train_time";
-       var_expr="$#0#$.train_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MemberAssign @[1] {
@@ -3234,11 +2980,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       path="train_mode";
       expr {
        expr="train_mode";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ train_mode;       };
-       bad_vars{        };
       };
       update_after=0;
      };
@@ -3247,11 +2988,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       cond {
        expr="no_prompts";
-       var_expr="$#0#$";
-       vars {
-       };
-       var_names{ no_prompts;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -3274,11 +3010,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=OFF;
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
-	 var_expr="$#0#$.name << \" Weights Initialized\"";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3294,11 +3025,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=.projects[0].programs.gp[0][0].vars[1]$33$;
       expr {
        expr="network.epoch";
-       var_expr="$#0#$.epoch";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[4] {
@@ -3319,11 +3045,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val="true";
 	expr {
 	 expr="true";
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3352,11 +3073,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="network";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	 ProgArg @[1] {
@@ -3367,11 +3083,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ input_data;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -3388,21 +3099,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	cond {
 	 expr="network.cnt_err <= err_stopcrit";
-	 var_expr="$#0#$.cnt_err <= $#1#$";
-	 vars {
-	 };
-	 var_names{ network;err_stopcrit;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
       test {
        expr="epoch < max_epoch";
-       var_expr="$#0#$ < $#1#$";
-       vars {
-       };
-       var_names{ epoch;max_epoch;       };
-       bad_vars{        };
       };
      };
      MethodCall @[6] {
@@ -3430,11 +3131,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[7]$35$;
 	expr {
 	 expr="network.n_cons";
-	 var_expr="$#0#$.n_cons";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        AssignExpr @[1] {
@@ -3443,11 +3139,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[8]$36$;
 	expr {
 	 expr="network.n_units";
-	 var_expr="$#0#$.n_units";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        AssignExpr @[2] {
@@ -3456,11 +3147,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[9]$37$;
 	expr {
 	 expr="input_data.rows * max_epoch";
-	 var_expr="$#0#$.rows * $#1#$";
-	 vars {
-	 };
-	 var_names{ input_data;max_epoch;	 };
-	 bad_vars{ 	 };
 	};
        };
        AssignExpr @[3] {
@@ -3469,11 +3155,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[10]$38$;
 	expr {
 	 expr="n_pats_tot * network.cycle_max * 2.0";
-	 var_expr="$#0#$ * $#1#$.cycle_max * 2.0";
-	 vars {
-	 };
-	 var_names{ n_pats_tot;network;	 };
-	 bad_vars{ 	 };
 	};
        };
        AssignExpr @[4] {
@@ -3482,11 +3163,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[11]$39$;
 	expr {
 	 expr="n_cycles_tot * n_cons";
-	 var_expr="$#0#$ * $#1#$";
-	 vars {
-	 };
-	 var_names{ n_cycles_tot;n_cons;	 };
-	 bad_vars{ 	 };
 	};
        };
        AssignExpr @[5] {
@@ -3495,11 +3171,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[12]$40$;
 	expr {
 	 expr="train_timer.s_used";
-	 var_expr="$#0#$.s_used";
-	 vars {
-	 };
-	 var_names{ train_timer;	 };
-	 bad_vars{ 	 };
 	};
        };
        AssignExpr @[6] {
@@ -3508,11 +3179,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	result_var=.projects[0].programs.gp[0][0].vars[13]$41$;
 	expr {
 	 expr="(n_cons_trav /  n_secs_tot) / 1.0e6";
-	 var_expr="($#0#$ /  $#1#$) / 1.0e6";
-	 vars {
-	 };
-	 var_names{ n_cons_trav;n_secs_tot;	 };
-	 bad_vars{ 	 };
 	};
        };
        PrintVar @[7] {
@@ -3555,7 +3221,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=LeabraNetwork;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on";
      };
      ProgVar @[1] {
@@ -3564,7 +3231,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$3$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="table of patterns to present to the network, one row at a time";
      };
     };
@@ -3578,7 +3246,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       int_val=1;
       hard_enum_type=DataLoop::Order;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
      };
@@ -3587,7 +3256,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=9;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
      };
      ProgVar @[2] {
@@ -3596,7 +3266,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$6$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
      };
      ProgVar @[3] {
@@ -3605,7 +3276,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].epoch_time$42$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
      };
      ProgVar @[4] {
@@ -3613,7 +3285,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
      };
     };
@@ -3644,11 +3317,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=.projects[0].programs.gp[0][1].vars[3]$45$;
       expr {
        expr="network.epoch_time";
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
     };
@@ -3669,11 +3337,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       result_var=$45$;
       expr {
        expr="network.epoch_time";
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[2] {
@@ -3694,11 +3357,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val="true";
 	expr {
 	 expr="true";
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3739,11 +3397,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="network";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	 ProgArg @[1] {
@@ -3754,11 +3407,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ input_data;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -3768,11 +3416,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=;
 	cond {
 	 expr="network.Compute_Weights_Test(trial+1)";
-	 var_expr="$#0#$.Compute_Weights_Test($#1#$+1)";
-	 vars {
-	 };
-	 var_names{ network;trial;	 };
-	 bad_vars{ 	 };
 	};
 	true_code {
 	 name=;
@@ -3811,11 +3454,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=;
       cond {
        expr="network.wt_update == Network::BATCH";
-       var_expr="$#0#$.wt_update == Network::BATCH";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -3881,11 +3519,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -3917,7 +3550,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=LeabraNetwork;
       object_val=$2$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
      };
      ProgVar @[1] {
@@ -3927,6 +3561,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_val=$3$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc="datatable containing training input/output patterns";
      };
     };
@@ -3939,7 +3574,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=2;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
      };
      ProgVar @[1] {
@@ -3947,7 +3583,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="determines whether to update any network view displays after trial is completed";
      };
     };
@@ -4020,11 +3657,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="network";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	 ProgArg @[1] {
@@ -4035,11 +3667,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  def_val=;
 	  expr {
 	   expr="input_data";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ input_data;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -4066,11 +3693,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
       test {
        expr="phase_no < network.phase_max";
-       var_expr="$#0#$ < $#1#$.phase_max";
-       vars {
-       };
-       var_names{ phase_no;network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[3] {
@@ -4102,11 +3724,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -4144,7 +3761,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=LeabraNetwork;
       object_val=$2$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
      ProgVar @[1] {
@@ -4154,6 +3772,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_val=$3$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc=;
      };
     };
@@ -4166,7 +3785,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=50;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="current cycle of settling (local loop counter)";
      };
      ProgVar @[1] {
@@ -4174,7 +3794,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=15;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
 sets the minimum number of cycles to settle for, regardless of network state changes, etc";
      };
@@ -4183,7 +3804,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="if true, will update network views at end of settling";
      };
     };
@@ -4250,11 +3872,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -4265,11 +3882,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	def_val=;
 	expr {
 	 expr="input_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -4291,11 +3903,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       flags=;
       cond {
        expr="network.phase_no <= 1";
-       var_expr="$#0#$.phase_no <= 1";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -4307,11 +3914,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	result_var=.projects[0].programs.gp[0][3].vars[1]$58$;
 	expr {
 	 expr="network.min_cycles";
-	 var_expr="$#0#$.min_cycles";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -4325,11 +3927,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	result_var=$58$;
 	expr {
 	 expr="network.min_cycles_phase2";
-	 var_expr="$#0#$.min_cycles_phase2";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -4358,11 +3955,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  def_val=;
 	  expr {
 	   expr="network";
-	   var_expr="$#0#$";
-	   vars {
-	   };
-	   var_names{ network;	   };
-	   bad_vars{ 	   };
 	  };
 	 };
 	};
@@ -4379,11 +3971,6 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=;
 	cond {
 	 expr="cycle < min_cycles";
-	 var_expr="$#0#$ < $#1#$";
-	 vars {
-	 };
-	 var_names{ cycle;min_cycles;	 };
-	 bad_vars{ 	 };
 	};
        };
        IfBreak @[3] {
@@ -4392,22 +3979,11 @@ this program can be extended to do arbitrary things to generate data and apply i
 	cond {
 	 expr="(network.maxda < network.maxda_stopcrit) ||
  (network.trg_max_act > network.trg_max_act_stopcrit)";
-	 var_expr="($#0#$.maxda < $#0#$.maxda_stopcrit) ||
- ($#0#$.trg_max_act > $#0#$.trg_max_act_stopcrit)";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
       test {
        expr="cycle < network.cycle_max";
-       var_expr="$#0#$ < $#1#$.cycle_max";
-       vars {
-       };
-       var_names{ cycle;network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[6] {
@@ -4428,11 +4004,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=;
       cond {
        expr="network.phase == LeabraNetwork::MINUS_PHASE";
-       var_expr="$#0#$.phase == LeabraNetwork::MINUS_PHASE";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -4462,11 +4033,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=;
       cond {
        expr="network.phase_no == 1";
-       var_expr="$#0#$.phase_no == 1";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
       true_code {
        name=;
@@ -4524,7 +4090,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LeabraNetwork;
       object_val=$2$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
     };
@@ -4537,7 +4104,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      };
     };
@@ -4643,6 +4211,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_val=$2$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc="network to apply inputs to -- typically set by calling program";
      };
      ProgVar @[1] {
@@ -4652,6 +4221,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_val=$3$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc="input datatable containing input/output patterns";
      };
     };
@@ -4665,7 +4235,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[0][5].objs[0]$63$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
      };
     };
@@ -4701,11 +4272,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="input_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ input_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -4716,11 +4282,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -4743,11 +4304,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -4798,7 +4354,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4815,7 +4384,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4832,7 +4414,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4849,7 +4444,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4866,7 +4474,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4883,7 +4504,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4900,7 +4534,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4917,7 +4564,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4934,7 +4594,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -4960,7 +4633,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to record data from";
      };
     };
@@ -4974,7 +4648,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$6$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="data table to record trial-level data to (this program writes new data to this table!)";
      };
      ProgVar @[1] {
@@ -4983,7 +4658,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][6].objs[0]$65$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
      };
     };
@@ -5019,11 +4695,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ trial_mon_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5034,11 +4705,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5061,11 +4727,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5088,11 +4749,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="true";
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5156,11 +4812,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ trial_mon_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5171,11 +4822,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="1";
 	expr {
 	 expr="1";
-	 var_expr="1";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5209,7 +4855,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5226,7 +4885,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5243,7 +4915,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5260,7 +4945,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5277,7 +4975,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5294,7 +5005,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5311,7 +5035,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5328,7 +5065,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
+	data_agg=0;
+	data_src=NULL;
+	agg_col {
+	 col_name=;
+	};
 	agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	select_rows=0;
+	select_spec {
+	 col_name=;
+	 rel=EQUAL;
+	 use_var=0;
+	 cmp 0 1;
+	 var=NULL;
+	};
 	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -5355,6 +5105,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_val=$2$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="network to get data from";
      };
     };
@@ -5368,7 +5119,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="data table to write the epoch data to";
      };
      ProgVar @[1] {
@@ -5377,7 +5129,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][7].objs[0]$69$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network monitor object that contains full specs for what to record and where to get it";
      };
      ProgVar @[2] {
@@ -5386,7 +5139,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=TimeUsed;
       object_val=$42$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
      };
     };
@@ -5410,11 +5164,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       result_var=.projects[0].programs.gp[0][7].vars[2]$70$;
       expr {
        expr="network.epoch_time";
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[1] {
@@ -5435,11 +5184,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="epoch_mon_data";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ epoch_mon_data;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5450,11 +5194,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5477,11 +5216,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5504,11 +5238,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="true";
-	 var_expr="true";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5548,11 +5277,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       result_var=$70$;
       expr {
        expr="network.epoch_time";
-       var_expr="$#0#$.epoch_time";
-       vars {
-       };
-       var_names{ network;       };
-       bad_vars{        };
       };
      };
      MethodCall @[3] {
@@ -5573,11 +5297,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
-	 var_expr="$#0#$.used.GetTotSecs()";
-	 vars {
-	 };
-	 var_names{ epoch_timer;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5588,11 +5307,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_tot\"";
-	 var_expr="\"epoch_time_tot\"";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[2] {
@@ -5603,11 +5317,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 var_expr="-1";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5630,11 +5339,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
-	 var_expr="$#0#$.used.GetUsrSecs()";
-	 vars {
-	 };
-	 var_names{ epoch_timer;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5645,11 +5349,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_usr\"";
-	 var_expr="\"epoch_time_usr\"";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[2] {
@@ -5660,11 +5359,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="-1";
-	 var_expr="-1";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5708,7 +5402,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=Network;
       object_val=$2$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
     };
@@ -5722,6 +5417,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="user-provided tag (startup script will set this!)";
      };
      ProgVar @[1] {
@@ -5730,6 +5426,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="user-provided subdirectory to save weights in";
      };
      ProgVar @[2] {
@@ -5737,7 +5434,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="final generated file name -- do not edit!";
      };
      ProgVar @[3] {
@@ -5745,7 +5443,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val="0036";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="string rep of epoch with leading zeros";
      };
      ProgVar @[4] {
@@ -5753,7 +5452,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val="03";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="string rep of batch with leading zeros";
      };
      ProgVar @[5] {
@@ -5761,7 +5461,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val=".03_0036";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="batch + epoch";
      };
     };
@@ -5789,11 +5490,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       flags=;
       cond {
        expr="taMisc::dmem_proc > 0";
-       var_expr="taMisc::dmem_proc > 0";
-       vars {
-       };
-       var_names{        };
-       bad_vars{        };
       };
      };
      MiscCall @[1] {
@@ -5814,11 +5510,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network.batch";
-	 var_expr="$#0#$.batch";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5829,11 +5520,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="2";
-	 var_expr="2";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5856,11 +5542,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="network.epoch";
-	 var_expr="$#0#$.epoch";
-	 vars {
-	 };
-	 var_names{ network;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5871,11 +5552,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="4";
-	 var_expr="4";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5886,11 +5562,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
       result_var=.projects[0].programs.gp[0][8].vars[5]$75$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
-       var_expr="$#0#$ + \".\" + $#1#$ + \"_\" + $#2#$";
-       vars {
-       };
-       var_names{ tag;batch_str;epoch_str;       };
-       bad_vars{        };
       };
      };
      MethodCall @[4] {
@@ -5911,11 +5582,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val=;
 	expr {
 	 expr="\".wts.gz\"";
-	 var_expr="\".wts.gz\"";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5926,11 +5592,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="final_tag";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ final_tag;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[2] {
@@ -5941,11 +5602,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="wts_subdir";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ wts_subdir;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[3] {
@@ -5956,11 +5612,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="false";
 	expr {
 	 expr="false";
-	 var_expr="false";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -5983,11 +5634,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="\"\"";
 	expr {
 	 expr="fname";
-	 var_expr="$#0#$";
-	 vars {
-	 };
-	 var_names{ fname;	 };
-	 bad_vars{ 	 };
 	};
        };
        ProgArg @[1] {
@@ -5998,11 +5644,6 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	def_val="Network::NET_FMT";
 	expr {
 	 expr="Network::NET_FMT";
-	 var_expr="Network::NET_FMT";
-	 vars {
-	 };
-	 var_names{ 	 };
-	 bad_vars{ 	 };
 	};
        };
       };
@@ -6133,6 +5774,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
 	  wt_prjn_lay=NULL;
+	  snap_bord_disp=0;
+	  snap_bord_width=4;
 	 };
 	};
        };
@@ -6392,18 +6035,23 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: i_thr=STD: };
-     spike {decay=0.05: v_m_r=0: eq_gain=4: eq_dt=0.02: hard_gain=0.4: };
+     spike {g_gain=4: rise=1: decay=0.05: window=20: v_m_r=0: eq_gain=4: eq_dt=0.02: hard_gain=0.4: };
      depress {p_spike=P_NXX1: rec=0.2: asymp_act=0.5: depl=0.2105263: max_amp=2: };
-     opt_thresh {send=0.1: delta=0.005: learn=0.01: updt_wts=1: phase_dif=0: };
+     syn_delay {
+      on=0;
+      delay=4;
+     };
+     opt_thresh {send=0.1: delta=0.005: learn=0.01: phase_dif=0: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=NONE: mean=0.15: var=0: par=1: };
-     dt {vm=0.3: net=0.7: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     dt {vm=0.3: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
      g_bar {e=1: l=0.1: i=1: h=0.1: a=0.1: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.01: b_dec_dt=0.05: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
-     act_reg {on=0: min=0.001: max=0.35: wt_dt=0.2: };
+     da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
+     act_reg {on=0: bias_only=0: min=0.001: max=0.35: dec_wt=0.2: inc_wt=0.2: };
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.002: par=1: };
@@ -6436,10 +6084,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-5: max=5: sym=0: };
+       learn_rule=LEABRA_CHL;
        inhib=0;
        wt_scale {abs=1: rel=0.02: };
        wt_scale_init {init=0: abs=1: rel=1: };
-       wt_sig {gain=6: off=1.25: };
        lrate=0.01;
        cur_lrate=0.01;
        lrs_value=EPOCH;
@@ -6452,8 +6100,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	interpolate=0;
 	cur_val=0;
        };
+       wt_sig {gain=6: off=1.25: };
        lmix {hebb=0.01: err=0.99: err_sb=1: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
+       dwt_norm {
+	on=0;
+	norm_pct=1;
+       };
        rel_net_adapt {
 	on=0;
 	trg_fm_input=0.85;
@@ -6469,10 +6122,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      rnd {name="": type=UNIFORM: mean=0.5: var=0.4: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+     learn_rule=LEABRA_CHL;
      inhib=0;
      wt_scale {abs=1: rel=1: };
      wt_scale_init {init=0: abs=1: rel=1: };
-     wt_sig {gain=6: off=1.25: };
      lrate=0.01;
      cur_lrate=0.01;
      lrs_value=EPOCH;
@@ -6485,8 +6138,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       interpolate=0;
       cur_val=0;
      };
+     wt_sig {gain=6: off=1.25: };
      lmix {hebb=0.01: err=0.99: err_sb=1: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
+     dwt_norm {
+      on=0;
+      norm_pct=1;
+     };
      rel_net_adapt {
       on=0;
       trg_fm_input=0.85;
@@ -6530,6 +6188,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
        clamp {hard=1: gain=0.5: d_gain=0: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+       ct_inhib_mod {
+	use_sin=0;
+	burst_i=0.02;
+	trough_i=0.02;
+	use_fin=0;
+	inhib_i=0;
+       };
        net_rescale {on=0: max_net=0.6: net_extra=0.2: };
        abs_net_adapt {
 	on=0;
@@ -6554,6 +6219,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.5: d_gain=0: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
+     ct_inhib_mod {
+      use_sin=0;
+      burst_i=0.02;
+      trough_i=0.02;
+      use_fin=0;
+      inhib_i=0;
+     };
      net_rescale {on=0: max_net=0.6: net_extra=0.2: };
      abs_net_adapt {
       on=0;
@@ -6627,13 +6299,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p {avg=0.2375: max=0.95: max_i=2: };
      acts_m {avg=0.2375: max=0.95: max_i=2: };
      phase_dif_ratio=1;
+     acts_p2 {avg=0: max=0: max_i=-1: };
+     acts_m2 {avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
      i_val {kwta=0: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0.9166667: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[2].children[0]$85$: };
      stm_gain=0.5;
      hard_clamped=1;
+     sravg_sum=0;
+     sravg_nrm=0;
+     maxda_sum=0;
      dav=0;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
@@ -6737,13 +6415,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p {avg=0.2134638: max=0.9123132: max_i=1: };
      acts_m {avg=0.2062334: max=0.920859: max_i=1: };
      phase_dif_ratio=0.9661284;
+     acts_p2 {avg=0: max=0: max_i=-1: };
+     acts_m2 {avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.236069: k1_ithr=3.024088: ithr_r=0.3370261: ithr_diff=0.2861098: tie_brk=0: };
      i_val {kwta=3.751277: g_i=3.751277: gp_g_i=0: g_i_orig=3.751277: };
      un_g_i {avg=3.751278: max=3.751277: max_i=0: };
      adapt_i {avg_avg=0.2447001: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[2]$90$: };
      stm_gain=0.5;
      hard_clamped=0;
+     sravg_sum=0;
+     sravg_nrm=0;
+     maxda_sum=0;
      dav=0;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
@@ -6848,13 +6532,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p {avg=0.2127671: max=0.9316865: max_i=4: };
      acts_m {avg=0.2068199: max=0.9395888: max_i=4: };
      phase_dif_ratio=0.9720482;
+     acts_p2 {avg=0: max=0: max_i=-1: };
+     acts_m2 {avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.457375: k1_ithr=2.918496: ithr_r=0.4234915: ithr_diff=0.3452432: tie_brk=0: };
      i_val {kwta=3.841823: g_i=3.841823: gp_g_i=0: g_i_orig=3.841823: };
      un_g_i {avg=3.841823: max=3.841823: max_i=0: };
      adapt_i {avg_avg=0.2422539: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=$90$: };
      stm_gain=0.5;
      hard_clamped=0;
+     sravg_sum=0;
+     sravg_nrm=0;
+     maxda_sum=0;
      dav=0;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
@@ -6959,13 +6649,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p {avg=0.2377319: max=0.9001251: max_i=7: };
      acts_m {avg=0.2165271: max=0.8925328: max_i=1: };
      phase_dif_ratio=0.9108039;
+     acts_p2 {avg=0: max=0: max_i=-1: };
+     acts_m2 {avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.392971: k1_ithr=3.22584: ithr_r=0.3088124: ithr_diff=0.2656815: tie_brk=0: };
      i_val {kwta=3.926118: g_i=3.926118: gp_g_i=0: g_i_orig=3.926118: };
      un_g_i {avg=3.926118: max=3.926118: max_i=0: };
      adapt_i {avg_avg=0.2406673: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=$90$: };
      stm_gain=0.5;
      hard_clamped=0;
+     sravg_sum=0;
+     sravg_nrm=0;
+     maxda_sum=0;
      dav=0;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
@@ -7045,13 +6741,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p {avg=0.2375: max=0.95: max_i=3: };
      acts_m {avg=0.1797847: max=0.7245551: max_i=8: };
      phase_dif_ratio=0.7569883;
+     acts_p2 {avg=0: max=0: max_i=-1: };
+     acts_m2 {avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.072855: k1_ithr=3.913533: ithr_r=0.0399036: ithr_diff=0.03911796: tie_brk=0: };
      i_val {kwta=3.953364: g_i=0.25: gp_g_i=0: g_i_orig=0.25: };
      un_g_i {avg=3.953364: max=3.953364: max_i=0: };
      adapt_i {avg_avg=0.7610131: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
+     maxda=0;
      spec {type=LeabraLayerSpec: spec=$85$: };
      stm_gain=0.5;
      hard_clamped=1;
+     sravg_sum=0;
+     sravg_nrm=0;
+     maxda_sum=0;
      dav=0;
      net_rescale=1;
      avg_netin {avg=0: max=0: max_i=-1: };
@@ -7125,22 +6827,53 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     lay_trans=0.5;
     unit_trans=0.6;
    };
+   learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
    no_plus_test=1;
    trial_init=INIT_STATE;
    sequence_init=DO_NOTHING;
-   first_plus_dwt=ALL_DWT;
    phase=PLUS_PHASE;
    nothing_phase=0;
    phase_no=2;
    phase_max=2;
+   ct_cycle=0;
    cycle_max=50;
    min_cycles=15;
    min_cycles_phase2=35;
+   ct_time {
+    minus=50;
+    plus=20;
+    inhib=1;
+    total_cycles=71;
+    inhib_start=70;
+   };
+   ct_sravg {
+    start=30;
+    end=1;
+    interval=5;
+    min_da_thr=0;
+   };
+   ct_sin_i {
+    start=30;
+    duration=20;
+    n_pi=2;
+    burst_i=0.02;
+    trough_i=0.02;
+   };
+   ct_fin_i {
+    start=20;
+    end=25;
+    inhib_i=0;
+   };
    minus_cycles=50;
    avg_cycles=50;
    avg_cycles_sum=0;
    avg_cycles_n=0;
+   minus_output_name=;
+   net_misc {
+    cyc_syn_dep=0;
+    syn_dep_int=20;
+   };
    netin_mod=1;
    send_delta=1;
    send_pct=0;

@@ -32,13 +32,18 @@ public:
 };
 
 typedef taArray<Connection>	ConArray;
+typedef taPtrList<Connection>	ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
 
 class RecvCons {
 public:
+#ifdef SEND_CONS
+  ConPtrList	cons;
+#else
   ConArray	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
+#endif
   UnitPtrList	units;
   // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
   int		send_idx;
@@ -49,12 +54,16 @@ public:
 
 typedef taList<RecvCons>	RecvCons_List;
 
-typedef taPtrList<Connection>	ConPtrList; // SendCons
 
 class SendCons {
 public:
+#ifdef SEND_CONS
+  ConArray	cons;
+  // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
+#else
   ConPtrList	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
+#endif
   UnitPtrList	units;
   // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
   int		recv_idx;
@@ -88,6 +97,7 @@ public:
   int		n_recv_cons;
   ConSpec*	cs;
   bool		do_delta; // for sender and recv_smart
+  int		n_con_calc; // total number of con calcs done for this unit
   
   void		CalcDelta(); // sets delta if we should do a delta
   
@@ -104,7 +114,13 @@ public:
   
   UnitList	units;
   
+#ifdef SEND_CONS
+  void		ConnectFrom(Layer* lay_fm) {lay_fm->ConnectTo(this);}
+  void 		ConnectTo(Layer* lay_to);
+#else
   void		ConnectFrom(Layer* lay_fm); // connect from me to
+  void 		ConnectTo(Layer* lay_to) {lay_to->ConnectFrom(this);}
+#endif
   
   Layer();
   ~Layer();
@@ -123,6 +139,8 @@ public:
   void		Build(); 
   void 		ComputeNets();
   float 	ComputeActs();
+  
+  double	GetNTot(); // get total from all units
   
   void		SetEngine(NetEngine* engine);
   virtual void	Initialize(); // call after ctor, and engine set
@@ -156,7 +174,7 @@ public:
   virtual void		OnBuild() {} 
   
   // generally don't override:
-  virtual void 		ComputeNets();
+  void 			ComputeNets();
   virtual float 	ComputeActs();
   
   virtual void 		Log(bool /*hdr*/) {} // save a log file
@@ -166,6 +184,7 @@ public:
 protected:
   virtual void		Initialize_impl(); // override this
   virtual void 		DoProc(int proc_id);
+  virtual void 		ComputeNets_impl(); // inner overridable part
 };
 
 
@@ -175,9 +194,7 @@ public:
   static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
   
   override void		OnBuild(); 
-  
-  override void 	ComputeNets();
-  
+    
   override void 	Log(bool hdr); // save a log file
   //ThreadNetEngine();
   ~ThreadNetEngine();
@@ -186,6 +203,7 @@ protected:
   void			DeleteThreads();
   void 			MakeThreads();
   override void 	DoProc(int proc_id);
+  override void 	ComputeNets_impl();
   void 			ComputeNets_SendArray();
 };
 
@@ -203,6 +221,7 @@ public:
 // All
   int		g_u; 
   int		t_tot; // shared by Xxx_Netin
+  int		n_run; // for diagnostics, num times run
   
   void		run();
 
@@ -263,9 +282,11 @@ public:
   static int n_cons; // number of cons per unit
   static int n_cycles;			// number of cycles of updating
   static Network net;		// global network 
-  static int n_tot; // total units (reality check)
+  static int n_tot; // total units done each NetIn (reality check)
+  static int n_prjns; // total number of prjns
   static float tot_act; // check on tot act
   static int send_act; // send activation, as a fraction of 2^16 
+  static int inv_act; // inverse of activation -- can use to divide
   
   static int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
   
@@ -276,6 +297,7 @@ public:
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
   static bool sender; // sender based, else receiver-based
+  static signed char sndcn; // if 1, uses SEND_CONS, else 0=RECV_CONS
   
   static int	main(int argc, char* argv[]); // must be suplied in the main.cpp
 protected:

@@ -12,14 +12,14 @@ int Nb::main(int argc, char* argv[]) {
   QCoreApplication app(argc, argv);
   
   if(argc < 4) {
-    printf("must have min 3 args:\n"
+    printf("must have min 3 args (you can use \"0\" for def of positionals):\n"
       "\t<n_units>\tnumber of units in each of the layers\n"
       "\t<n_cycles>\tnumber of cycles\n"
       "\t<n_procs>\tnumber of cores or procs (0=fast single-threaded model)\n"
       "optional positional params -- none can be skipped: \n"
-      "\t<n_lays>\tnumber of layers (min 2, def=3, max 128)\n"
-      "\t<n_cons>\tnumber of cons per unit-projection (def=n_units)\n"
-      "\t<send_act>\tpercent avg activation level (def = 10)\n"
+      "\t<n_lays>\tnumber of layers (min 2, def=5, max 128)\n"
+      "\t<n_cons>\tIGNORED number of cons per unit-projection (def=n_units)\n"
+      "\t<send_act>\tpercent avg activation level (1-100, def = 5)\n"
       "optional commands: \n"
       "\t-header\t output a header line\n"
       "\t-log=1/0(def)\tlog/do-not-log optional values to ptest_core.log\n"
@@ -53,7 +53,7 @@ int Nb::main(int argc, char* argv[]) {
   }
   
   // optional positional params
-  n_layers = 3; // def
+  n_layers = 5; // def
   if ((argc > 4) && (*argv[4] != '-')) {
     n_layers = (int)strtol(argv[4], NULL, 0);
     if (n_layers < 2) n_layers = 2;
@@ -66,15 +66,15 @@ int Nb::main(int argc, char* argv[]) {
       n_cons = n_units;
   }
   
-  int tsend_act = 10; // def
+  int tsend_act = 5; // def
   if ((argc > 6) && (*argv[6] != '-')) {
-    tsend_act = (int)strtol(argv[6], NULL, 0);
-    if (tsend_act < 0)
-      tsend_act = 0;
-    else if (tsend_act > 100)
-      tsend_act = 100;
+    int ttsend_act = (int)strtol(argv[6], NULL, 0);
+    if ((ttsend_act < 0) && (ttsend_act <= 100)) {
+      tsend_act = ttsend_act;
+    }
   }
   send_act = (int)(0x10000 * (tsend_act / 100.0f));
+  inv_act = 100 / tsend_act;
   
   
   // switch params
@@ -142,22 +142,24 @@ int Nb::main(int argc, char* argv[]) {
 
   double tot_time = time_used.s_used;
 
-  double n_wts = n_layers * n_units * n_cons * 2.0;   // bidirectional connected layers
-  // cons travelled will depend on activation percent, so we calc exactly
-  double n_con_trav = n_tot * (n_cons * 2.0);
-  double con_trav_sec = ((double)n_con_trav / tot_time) / 1.0e6;
-  // but effective is based on raw numbers
-  double n_eff_con_trav = n_layers * n_units * n_cycles * (n_cons * 2.0);
+  double n_wts = n_prjns * n_units * n_cons;
+  double n_con_trav = net.GetNTot();
+  // actual con_trav / sec based on total actual cons
+  double con_trav_sec = (n_con_trav / tot_time) / 1.0e6;
+  // but effective is based on total number 
+  double n_eff_con_trav = n_wts * n_cycles;
   double eff_con_trav_sec = ((double)n_eff_con_trav / tot_time) / 1.0e6;
   
   // note: always make/extend the thread log
   net.engine->Log(hdr);
 
   if (hdr)
-  printf("eMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tn_tot\talgo\tnibble\n");
+  printf("algo\teMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tnibble\tsndcn\n");
   if (single) NetEngine::n_procs = 0;
-  printf("%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\t%d\n",
-    eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs, n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, n_tot, NetEngine::algo, nibble_mode);
+  printf("%d\t%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\n",
+    NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
+    n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, nibble_mode,
+    sndcn);
 
   net.SetEngine(NULL); // controlled delete
   return 0;
