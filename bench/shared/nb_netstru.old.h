@@ -24,22 +24,10 @@ typedef taList<NetTask>		NetTaskList;
 // note: some of these classes are same-name and similar in structure to
 // the corresponding Emergent/Leabra classes
 
-// Accessor macros
-
-#ifdef FLAT_WT
-# define CN_WT(cn) (Network::wts[cn->wti])
-#else
-# define CN_WT(cn) (cn->wt)
-#endif
-
 class Connection {
   // one connection between units
 public:
-  static float*		g_wts; // global weights
-  static int		g_next_wti; // next wti
-  
-  int	 	wti;	// index of weight value
-  inline float&	wt() const {return g_wts[wti];}
+  float 	wt;	// connection weight value
   float 	dwt;	// delta-weight
   float		pdw;
   float		sravg;	// #NO_SAVE average of sender and receiver activation 
@@ -50,24 +38,16 @@ typedef taPtrList<Connection>	ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
 
-class ConsBase {
-public:
-  virtual ConArray*	GetConArray() {return NULL;}
-  
-  int_Array		units; // global indexes of the units
-  
-  virtual ~ConsBase() {}
-};
-
-class RecvCons: public ConsBase {
+class RecvCons {
 public:
 #ifdef SEND_CONS
   ConPtrList	cons;
 #else
   ConArray	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
-  override ConArray*	GetConArray() {return &cons;}
 #endif
+  UnitPtrList	units;
+  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the sending units of this connection (in index correspondence with cons)
   int		send_idx;
   Layer*	send_lay; // sending layer
 
@@ -78,17 +58,17 @@ public:
 typedef taList<RecvCons>	RecvCons_List;
 
 
-class SendCons: public ConsBase {
+class SendCons {
 public:
 #ifdef SEND_CONS
   ConArray	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
-  override ConArray*	GetConArray() {return &cons;}
 #else
   ConPtrList	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
 #endif
-  
+  UnitPtrList	units;
+  // #NO_FIND #NO_SAVE #CAT_Structure pointers to the receiving units of this connection, in index correspondence with cons
   int		recv_idx;
   Layer*	recv_lay; // receiving layer
   
@@ -110,11 +90,8 @@ public:
 class Unit {
   // a simple unit
 public:
-  static float*		g_acts; // global acts
-  static float*		g_nets; // global nets
-
-//  float 	act;			// activation value index
-//  float 	net;			// net input value
+  float 	act;			// activation value
+  float 	net;			// net input value
   
   RecvCons_List	recv;
   SendCons_List send;
@@ -125,9 +102,6 @@ public:
   ConSpec*	cs;
   bool		do_delta; // for sender and recv_smart
   int		n_con_calc; // total number of con calcs done for this unit
-  
-  inline float&	act() {return g_acts[flat_idx];}
-  inline float&	net() {return g_nets[flat_idx];}
   
   void		CalcDelta(); // sets delta if we should do a delta
   
@@ -140,7 +114,6 @@ protected:
 
 class Layer {
 public:
-  Network*	net;
   int		un_to_idx; // circular guy we use to pick next target unit
   
   UnitList	units;
@@ -161,21 +134,11 @@ typedef taList<Layer>	LayerList;
 
 class Network {
 public:
-  static bool		recv_based; // for recv-based algos
-  static bool		recv_smart; // for recv-based, does the smart recv algo
-
-// global lists and static accessors for them
-  static Unit**		g_units; // global units 
-  UnitPtrList 		units_flat;	// all units, flattened
-  float_Array		acts_flat; // global acts
-  float_Array		nets_flat; // global nets
-  float_Array		wts_flat; // global wts
+  static bool	recv_smart; // for recv-based, does the smart recv algo
   
-  
-  NetEngine*		engine;
-  LayerList		layers;
-  
-  
+  NetEngine*	engine;
+  UnitPtrList 	units_flat;	// all units, flattened
+  LayerList	layers;
   
   void		Build(); 
   void 		ComputeNets();
@@ -202,15 +165,6 @@ public:
     
     SEND_CLASH  = 2, // sender, where writes can clash (or for 1 proc)
     SEND_ARRAY  = 3, // sender, using an array of nets to avoid clashes
-#ifdef NB_CUDA
-    RECV_CUDA	= 8, // NOTE: requires RECV_CONS (ie !SEND_CONS)
-    
-    SEND_CUDA   = 10, // NOTE: requires SEND_CONS
-#endif
-
-  // flags
-    SEND_FLAG	= 2,
-    CUDA_FLAG	= 8,
   };
   
   static int 	algo; // the algorithm number
@@ -276,10 +230,10 @@ public:
   void		run();
 
 // Send_Netin
-  inline static void Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff);
+  inline static void Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff);
     // highly optimized inner loop
   static void 	Send_Netin_0(Unit* su); // shared by 0 and N
-  virtual void	Send_Netin_Clash() {} // NetIn
+  virtual void	Send_Netin_Clash() = 0; // NetIn
   virtual void	Send_Netin_Array() {} // only used by Net_N
   
 // Recv_Netin
@@ -290,15 +244,15 @@ public:
   
   
 // ComputeAct  
-  static float ComputeAct_inner(int uni);
+  static void ComputeAct_inner(Unit* un);
   float		my_act;
   virtual void	ComputeAct(); // default does it globally
   
   NetTask();
 };
 
-void NetTask::Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff) {
-  ru_net += su_act_eff * cn_wt;
+void NetTask::Send_Netin_inner_0(float cn_wt, float* ru_net, float su_act_eff) {
+  *ru_net += su_act_eff * cn_wt;
   //tru_net = *ru_net + su_act_eff * cn_wt;
 }
 
@@ -352,9 +306,7 @@ public:
   static signed char sndcn; // if 1, uses SEND_CONS, else 0=RECV_CONS
   static bool use_log_file;
   
-  TimeUsed 	time_used;
-  QString 	log_suff; // suffix
-  QString	log_filename;	
+  TimeUsed 	time_used;	
   
   virtual int	main(); // must be suplied in the main.cpp
   
@@ -376,11 +328,9 @@ protected:
   double n_eff_con_trav;
   double eff_con_trav_sec;
 
-  virtual void		PreInitialize_impl(int& rval); 
-  virtual void		ParseCmdLine(int& rval);
-  virtual void		Initialize_impl() {} // extensions
-  virtual void		PrintResults();
-  virtual NetEngine*	CreateNetEngine(); // called after all Initialize done, 
+  virtual void	PreInitialize_impl(int& rval); 
+  virtual void	Initialize_impl() {} // extensions
+  virtual void	PrintResults();
 
 private:
   Nb();

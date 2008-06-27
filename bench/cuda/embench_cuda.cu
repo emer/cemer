@@ -43,12 +43,44 @@ int cuCpDH_Nets(float* nets) {
 Description of Algorithm
 
 This is a receiver-based algorithm.
-Each thread computes the d_net input for a single Unit. 
+
+Each thread computes the d_net input for a single Unit. Each warp 
+comprises Units with the same number of inputs (to a parameterized
+granularity, ex. 4 or 8 -- extras reference 0).
 
 The Warp size (RCV_N_THREADS) is used to make sure that different
 units are processed in parallel-- the allocation algorithm 
 insures that each warp uses a different d_nets unit, so the write
 updates do not need to be syncronized. 
+
+Host Requirements
+
+  It must have a list of each size of units
+  
+  D_Recv_Reset
+  D_Recv_MakeMetaList(n_lists)
+  foreach (un_list in meta_list)
+    D_Recv_MakeUnitList(i, n_cons_pu, n_units, *units)
+    
+Data Hierarchy
+  unit_blks[] -- one item for each unique size
+    int n_wts; // number of recv wts for this block
+    int n_units; // number of units
+    int* units[]; // list of units
+    
+Device Kernel
+  k_Recv_Netin(n_cons_pu)<>
+  
+Device Kernel Dispatch
+
+D_Recv_Netin()
+  foreach (un_list in meta_list)
+    foreach (full block of units)
+      do k_Recv_Netin for a full block
+    if remainder
+      do k_Recv_Netin for remainder
+  
+  
 */
 
 // Types

@@ -169,10 +169,12 @@ protected:
 
 class taArray_impl {
 public:
-  int 		alloc_size;	// #READ_ONLY #NO_SAVE allocation size
-  int		size;		// #READ_ONLY #NO_SAVE #SHOW number of elements in the 
+  int 			alloc_size;	// allocation size
+  int			size;		// number of elements in the 
   
+  	
   taArray_impl() {alloc_size = 0; size = 0;}
+protected:
 };
 
 template<class T> 
@@ -181,7 +183,9 @@ public:
   T*		el;
   // element at index
   T*		Els() const		{ return el; }
-  T&		FastEl(int i) const		{ return (T*)el[i]; }
+  T&		FastEl(int i) const		{ return (T&)el[i]; }
+  T*		SafeEl(int i) const { 
+    if ((i >= 0) && (i < size)) return (T*)&(el[i]); return NULL;}
   const T&	operator[](int i) const	{ return el[i]; }
   T&		operator[](int i) 	{ return el[i]; }
   void		Set(const T& it, int i)		{el[i] = it; }
@@ -196,5 +200,6 @@ protected:
 };
 
 typedef taArray<float>	float_Array;
+typedef taArray<int>	int_Array;
 
 #endif
