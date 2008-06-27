@@ -181,7 +181,7 @@ taTypeSpaceDataLink::taTypeSpaceDataLink(TypeSpace* data_)
 }
 
 taiDataLink* taTypeSpaceDataLink::GetListChild(int itm_idx) {
-  TypeDef* el = static_cast<TypeDef*>(data()->SafeEl(itm_idx)); 
+  TypeDef* el = static_cast<TypeDef*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
   taiDataLink* dl = taiViewType::StatGetDataLink(el, &TA_TypeDef);
@@ -250,7 +250,7 @@ taMethodSpaceDataLink::taMethodSpaceDataLink(MethodSpace* data_)
 }
 
 taiDataLink* taMethodSpaceDataLink::GetListChild(int itm_idx) {
-  MethodDef* el = static_cast<MethodDef*>(data()->SafeEl(itm_idx)); 
+  MethodDef* el = static_cast<MethodDef*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
   taiDataLink* dl = taiViewType::StatGetDataLink(el, &TA_MethodDef);
@@ -310,7 +310,7 @@ taMemberSpaceDataLink::taMemberSpaceDataLink(MemberSpace* data_)
 }
 
 taiDataLink* taMemberSpaceDataLink::GetListChild(int itm_idx) {
-  MemberDef* el = static_cast<MemberDef*>(data()->SafeEl(itm_idx)); 
+  MemberDef* el = static_cast<MemberDef*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
   taiDataLink* dl = taiViewType::StatGetDataLink(el, &TA_MemberDef);
@@ -363,7 +363,7 @@ taPropertySpaceDataLink::taPropertySpaceDataLink(PropertySpace* data_)
 }
 
 taiDataLink* taPropertySpaceDataLink::GetListChild(int itm_idx) {
-  MemberDefBase* el = static_cast<MemberDefBase*>(data()->SafeEl(itm_idx)); 
+  MemberDefBase* el = static_cast<MemberDefBase*>(data()->PosSafeEl(itm_idx)); 
   if (el == NULL) return NULL;
   
   taiDataLink* dl = taiViewType::StatGetDataLink(el, &TA_MemberDefBase);
@@ -594,7 +594,7 @@ taTypeSpaceTreeDataNode::~taTypeSpaceTreeDataNode() {
 
 taTypeInfoDataLink* taTypeSpaceTreeDataNode::child_link(int idx) {
   taiDataLink* dl = NULL;
-  TypeItem* ti = static_cast<TypeItem*>(data()->SafeEl_(idx));
+  TypeItem* ti = static_cast<TypeItem*>(data()->PosSafeEl_(idx));
   if (ti != NULL) {
     dl = taiViewType::StatGetDataLink(ti, ti->GetTypeDef());
   }

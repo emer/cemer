@@ -1719,7 +1719,7 @@ int MembSet_List::GetFlatDataIndex(MemberDef* mbr, taBase* base) {
   for (int i = 0; i < size; ++i) {
     MembSet* ms = FastEl(i);
     for (int j = 0; j < ms->data_el.size; ++j, ++rval) {
-      if (mbr != ms->memb_el.SafeEl(j)) continue;
+      if (mbr != ms->memb_el.PosSafeEl(j)) continue;
       if (ms->data_el.FastEl(j)->Base() == base) return rval;
     }
   }

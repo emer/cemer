@@ -1598,7 +1598,7 @@ void gpiArrayEditDataHost::GetImage_Membs() {
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i) {
-    taiData* mb_dat = data_el(array_set).SafeEl(i);
+    taiData* mb_dat = data_el(array_set).PosSafeEl(i);
     if (mb_dat == NULL) return; // unexpected end
     tit->GetImage(mb_dat, cur_ary->FastEl_(i));
   }
@@ -1610,7 +1610,7 @@ void gpiArrayEditDataHost::GetValue_Membs() {
   MemberDef* eldm = typ->members.FindName("el");
   taiType* tit = eldm->type->GetNonPtrType()->it;
   for (int i = 0; i < cur_ary->size; ++i){
-    taiData* mb_dat = data_el(array_set).SafeEl(i);
+    taiData* mb_dat = data_el(array_set).PosSafeEl(i);
     if (mb_dat == NULL) return; // unexpected
     tit->GetValue(mb_dat, cur_ary->FastEl_(i));
   }

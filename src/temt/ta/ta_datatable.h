@@ -172,7 +172,8 @@ public:
   // #CAT_Access for matrix type, number of elements in each cell
   virtual int		cell_dims() const { return cell_geom.size; }
   // #CAT_Access for matrix type, number of dimensions in each cell
-  virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); } // #CAT_Access for matrix type, size of given dim
+  virtual int		GetCellGeom(int dim) const { return cell_geom.SafeEl(dim); }
+  // #CAT_Access for matrix type, size of given dim
   void			Get2DCellGeom(int& x, int& y) const; // for flat 2D access
   
   void			Get2DCellGeomGui(int& x, int& y,

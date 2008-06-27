@@ -4689,7 +4689,7 @@ int taiTokenPtrMultiTypeButton::viewCount() const {
 
 const String taiTokenPtrMultiTypeButton::viewText(int index) const {
   if(index == 0) return "All Types";
-  return type_list.SafeEl(index-1)->name;
+  return type_list.PosSafeEl(index-1)->name;
 }
 
 //////////////////////////////////////////

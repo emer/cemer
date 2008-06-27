@@ -1097,14 +1097,16 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
     DataCol* nda = (DataCol*)sda->MakeToken();
     dest->data.Add(nda);
     nda->Copy_NoData(*sda);
-  }    
+  }
   for(int row=0;row<src->rows;row++) {
     dest->AddBlankRow();
+    int dest_idx = 0;
     for(int i=0;i<spec->size; i++) {
       DataOpEl* ds = spec->FastEl(i);
       if(ds->col_idx < 0) continue;
       DataCol* sda = src->data.FastEl(ds->col_idx);
-      DataCol* nda = dest->data.FastEl(i);
+      DataCol* nda = dest->data.SafeEl(dest_idx++);
+      if(!nda) continue;
       nda->CopyFromRow(row, *sda, row);
     }
   }
