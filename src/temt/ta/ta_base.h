@@ -1839,11 +1839,15 @@ public:
 #if defined(TA_GUI) && !defined(__MAKETA__) 
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;
 #endif
-  override int		NumListCols() const {return 3;} // #IGNORE number of columns in a default list view for this list type
-  override const KeyString GetListColKey(int col) const; // #IGNORE get the key for the default list view
-  override String	GetColHeading(const KeyString& key) const; // #IGNORE header text for the indicated column
+  override int		NumListCols() const {return 3;}
+  // #IGNORE number of columns in a default list view for this list type
+  override const 	KeyString GetListColKey(int col) const;
+  // #IGNORE get the key for the default list view
+  override String	GetColHeading(const KeyString& key) const;
+  // #IGNORE header text for the indicated column
+  override String	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
-    int itm_idx = -1) const;	// #IGNORE
+					int itm_idx = -1) const;	// #IGNORE
   override int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
 
   void 	CutLinks();

@@ -1898,6 +1898,7 @@ public:
   };
 
   int			dn_flags; // any of DataNodeFlags
+  String		given_name; // name given to the obj during init or setName -- used as default for col0
 
   override bool 	canAcceptDrop(const QMimeData* mime) const;
   void*			linkData() const;

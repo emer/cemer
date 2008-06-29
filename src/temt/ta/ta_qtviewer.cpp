@@ -6806,6 +6806,7 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
   }
 */
 //  setText(0, tree_name);
+  given_name = tree_name;
   setText(0, GetColText(0, tree_name));
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
@@ -6914,6 +6915,10 @@ void iTreeViewItem::DecorateDataNode() {
     if (i == 0) {
       if (!set_font)
         set_font = data(0, Qt::FontRole).isValid();
+      setText(0, GetColText(0, given_name));
+    }
+    else {
+      setText(i, GetColText(i));
     }
     // font -- just for reference -- not used
 //     if (set_font) {
@@ -6924,11 +6929,6 @@ void iTreeViewItem::DecorateDataNode() {
 //         setData(i, Qt::FontRole, QVariant(tv->italicFont()));
 //       }
 //     }
-    // first, the col text (cols >=1 only)
- //TEMP   if (i > 0) 
-    {
-      setText(i, GetColText(i));
-    }
     // then, col data, if any (empty map, otherwise)
     QMap_qstr_qvar map = tv->colDataKeys(i);
     if (!map.isEmpty()) {
@@ -7021,7 +7021,8 @@ const String iTreeViewItem::GetColText(int col, const String& def) const
       rval = link->GetDisplayName();
     }
   }
-  if (rval.empty()) rval = def;
+  if (rval.empty())
+    rval = def;
   return rval;
 }
 
@@ -7058,6 +7059,7 @@ iTreeViewItem* iTreeViewItem::parent() const {
 }
 
 void iTreeViewItem::setName(const String& value) {
+  given_name = value;
   this->setText(0, value);
 }
 

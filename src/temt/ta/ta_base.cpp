@@ -2956,6 +2956,10 @@ const KeyString taList_impl::GetListColKey(int col) const {
   }
 }
 
+String taList_impl::GetColText(const KeyString& key, int itm_idx) const {
+  if (key == key_disp_name) return GetName(); // get name here instead of display name
+  return inherited_taBase::GetColText(key, itm_idx);
+}
 
 bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
   if(TestError(!new_type, "ChangeType", "new type is null")) return false;
