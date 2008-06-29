@@ -703,7 +703,7 @@ public:
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
   virtual int	 	Load_strm(istream& strm, TAPtr par=NULL, taBase** loaded_obj_ptr = NULL);
-  // #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
+  // #CAT_XpertFile Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   virtual taFiler* 	GetLoadFiler(const String& fname, String exts = _nilString,
     int compress=-1, String filetypes = _nilString);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
@@ -713,7 +713,7 @@ public:
   // #IGNORE convert stream from old to new format (if needed)
 
   virtual int 		Save_strm(ostream& strm, TAPtr par=NULL, int indent=0);
-  // #CAT_File Save object data to a file stream
+  // #CAT_XpertFile Save object data to a file stream
   virtual taFiler* 	GetSaveFiler(const String& fname, String ext = _nilString,
     int compress=-1, String filetypes=_nilString);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!

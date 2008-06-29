@@ -733,11 +733,11 @@ void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
 }
 
 
-bool DataTable::CopyCell(int dest_col, int dest_row, const DataTable& src,
-  int src_col, int src_row) 
+bool DataTable::CopyCell(Variant dest_col, int dest_row, const DataTable& src,
+  Variant src_col, int src_row) 
 {
-  DataCol* dar = data.SafeEl(dest_col);
-  DataCol* sar = src.data.SafeEl(src_col);
+  DataCol* dar = GetColData(dest_col);
+  DataCol* sar = src.GetColData(src_col);
   return CopyCell_impl(dar, dest_row, src, sar, src_row);
 }
 
@@ -2679,12 +2679,12 @@ bool DataTable::CalcAllRows() {
 /////////////////////////////////////////////////////////
 // core data processing -- see taDataProc for more elaborate options
 
-void DataTable::Sort(int col1, bool ascending1,
-		     int col2, bool ascending2,
-		     int col3, bool ascending3,
-		     int col4, bool ascending4,
-		     int col5, bool ascending5,
-		     int col6, bool ascending6) {
+void DataTable::Sort(Variant col1, bool ascending1,
+		     Variant col2, bool ascending2,
+		     Variant col3, bool ascending3,
+		     Variant col4, bool ascending4,
+		     Variant col5, bool ascending5,
+		     Variant col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1 >= 0) {
@@ -2911,7 +2911,14 @@ bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
   return taDataProc::Group(dest_data, this, &spec);
 }
 
-String DataTable::ColStats(DataCol* col) {
+String DataTable::ColStats(Variant col) {
+  DataCol* cda = GetColData(col);
+  if (!cda) return _nilString;
+  return cda->ColStats();
+}
+
+
+String DataTable::ColStatsCol(DataCol* col) {
   if(TestError(!col, "ColStats", "column is null")) return _nilString;
   return col->ColStats();
 }

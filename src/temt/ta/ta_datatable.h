@@ -672,7 +672,7 @@ public:
     return !TestWarning(!idx(row_num, col_size, act_idx), "idx_err", "index out of range"); }
   // #IGNORE 
   virtual bool		RowInRangeNormalize(int& row);
-  // #CAT_Rows normalizes row (if -ve) and tests result in range 
+  // #CAT_XpertRows normalizes row (if -ve) and tests result in range 
   virtual void		AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
   virtual int		AddBlankRow() 
@@ -932,17 +932,17 @@ public:
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB,
 				      bool quote_str = true, bool save_headers=true);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
   virtual void 		SaveHeader_strm(ostream& strm, Delimiters delim = TAB,
 					bool row_mark = true, int col_fr = 0, int col_to = -1);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves header information, with delimiter between columns, and optionally quoting strings
   virtual void 		SaveDataRow_strm(ostream& strm, int row=-1,
 				 Delimiters delim = TAB, bool quote_str = true,
 				 bool row_mark = true, int col_fr = 0, int col_to = -1); 
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
   virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
 					  bool quote_str = true, bool row_mark=true); 
-  // #CAT_File #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
 
   virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
 				 bool quote_str = true, bool save_headers=true);
@@ -985,12 +985,12 @@ protected:
 public:
   virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
   virtual int 		LoadHeader_strm(istream& strm, Delimiters delim = TAB);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end)
   virtual int 		LoadDataRow_strm(istream& strm, Delimiters delim = TAB,
     bool quote_str = true);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1, bool reset_first=false);
   // #CAT_File #MENU #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log  #FILE_DIALOG_LOAD loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings, reset_first = remove any existing data prior to loading
@@ -1004,16 +1004,16 @@ public:
   // calculated column values
 
   virtual bool		UpdateColCalcs();
-  // #CAT_Calc update column calculations
+  // #IGNORE update column calculations
   virtual bool		CalcLastRow();
-  // #CAT_Calc if HAS_CALCS, does calculations for last row of data -- called by WriteClose
+  // #IGNORE if HAS_CALCS, does calculations for last row of data -- called by WriteClose
 
   virtual bool		CheckForCalcs();
-  // #CAT_Calc see if any columns have CALC flag -- sets HAS_CALCS flag -- returns state of flag
+  // #IGNORE see if any columns have CALC flag -- sets HAS_CALCS flag -- returns state of flag
   virtual void		InitCalcScript();
   // #IGNORE initialize the calc_script for computing column calculations
   virtual bool		CalcAllRows_impl();
-  // #CAT_Calc perform calculations for all rows of data (calls InitCalcScript to make sure)
+  // #IGNORE perform calculations for all rows of data (calls InitCalcScript to make sure)
   virtual bool		CalcAllRows();
   // #CAT_Calc #BUTTON #GHOST_OFF_data_flags:HAS_CALCS perform calculations for all rows of data (updates after)
   virtual void		CalcRowCodeGen(String& code_str);
@@ -1024,12 +1024,12 @@ public:
   /////////////////////////////////////////////////////////
   // core data processing -- see taDataProc for more elaborate options
 
-  virtual void		Sort(int col1, bool ascending1 = true,
-			     int col2 = -1, bool ascending2 = true,
-			     int col3 = -1, bool ascending3 = true,
-			     int col4 = -1, bool ascending4 = true,
-			     int col5 = -1, bool ascending5 = true,
-			     int col6 = -1, bool ascending6 = true);
+  virtual void		Sort(Variant col1, bool ascending1 = true,
+			     Variant col2 = -1, bool ascending2 = true,
+			     Variant col3 = -1, bool ascending3 = true,
+			     Variant col4 = -1, bool ascending4 = true,
+			     Variant col5 = -1, bool ascending5 = true,
+			     Variant col6 = -1, bool ascending6 = true);
   // #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual void		SortColName(const String& col1, bool ascending1 = true,
 				    const String& col2 = "", bool ascending2 = true,
@@ -1037,24 +1037,26 @@ public:
 				    const String& col4 = "", bool ascending4 = true,
 				    const String& col5 = "", bool ascending5 = true,
 				    const String& col6 = "", bool ascending6 = true);
-  // #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  // #CAT_XpertDataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual void		SortCol(DataCol* col1, bool ascending1 = true,
 				DataCol* col2 = NULL, bool ascending2 = true,
 				DataCol* col3 = NULL, bool ascending3 = true,
 				DataCol* col4 = NULL, bool ascending4 = true,
 				DataCol* col5 = NULL, bool ascending5 = true,
 				DataCol* col6 = NULL, bool ascending6 = true);
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  // #CAT_XpertDataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		Filter(const String& filter_expr);
   // #CAT_DataProc #MENU #FROM_GROUP_data filter (select) table rows by applying given expression -- if it evaluates to true, the row is included, and otherwise it is removed.  refer to current colum values by name.  NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual bool		GroupMeanSEM(DataTable* dest_data,
 				     DataCol* gp_col1, DataCol* gp_col2 = NULL,
 				     DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
   // #CAT_DataProc #MENU #NULL_OK #NULL_TEXT_0_NewDataTable #FROM_GROUP_1_data #FROM_GROUP_2_data #FROM_GROUP_3_data #FROM_GROUP_4_data groups data according to given columns in hierarchical fashion (gp_col2 is subgrouped within gp_col1, etc), and compute the Mean and Standard Error of the Mean (SEM) for any other numerical columns of data -- results go in dest_data table (new table created if NULL)
-  virtual String	ColStats(DataCol* col);
-  // #CAT_DataProc #MENU #FROM_GROUP_data #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  virtual String	ColStats(Variant col);
+  // #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).-- column can be specified as either integer index or a string that is then used to find the given column name
+  virtual String	ColStatsCol(DataCol* col);
+  // #CAT_XpertDataProc #MENU #FROM_GROUP_data #LABEL_ColStats #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual String	ColStatsName(const String& col_name);
-  // #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_XpertDataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   /////////////////////////////////////////////////////////
   // misc funs
@@ -1076,12 +1078,12 @@ public:
   // #CAT_Copy copy only the column structure, but no data, from other data table
   virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
   // #CAT_Copy copy one row from source to given row in this object: source must have exact same column structure as this!!
-  virtual bool	CopyCell(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row);
-  // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
+  virtual bool	CopyCell(Variant dest_col, int dest_row, const DataTable& src, Variant src_col, int src_row);
+  // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful) -- column can be specified as either integer index or a string that is then used to find the given column name
   virtual bool	CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) { return CopyCell(dest_col, dest_row, src, src_col, src_row); }
-  // #CAT_Obsolete this is an obsolete name for CopyCell -- use CopyCell instead
+  // #CAT_XpertObsolete this is an obsolete name for CopyCell -- use CopyCell instead
   bool		CopyCellName(const String& dest_col_name, int dest_row, const DataTable& src, const String& src_col_name, int src_row);
-  // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
+  // #CAT_XpertCopy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
 
   virtual void	UniqueColNames();
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)
