@@ -3284,7 +3284,7 @@ iBaseClipWidgetAction::iBaseClipWidgetAction(const String& tooltip_, const Strin
 void iBaseClipWidgetAction::Init(taBase* inst_, String tooltip_) {
   m_inst = inst_;
   if (tooltip_.empty() && inst_) {
-    tooltip_ = inst_->GetToolTip(taBase::key_desc);
+    tooltip_ = inst_->GetToolTip(taBase::key_type_desc);
   }
   if (tooltip_.nonempty()) {
     setToolTip(tooltip_);
