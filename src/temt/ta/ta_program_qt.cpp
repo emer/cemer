@@ -1185,8 +1185,8 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       AddSectionLabel(-1, lbl,ms->desc.chars());
       break;
     case MS_VARS: {
-      nm = "Program vars";
-      help_text = "the variables used inside the program";
+      ms->text = "Program vars";
+      ms->desc = "the variables used inside the program";
       pvl = &prog->vars; 
       lbl = new iLabel(ms->text.chars(), body);
       AddSectionLabel(-1, lbl, ms->desc.chars());
