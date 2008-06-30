@@ -1,0 +1,3 @@
+20080629_01 -- added Compute_SRAvg (every 5) and Compute_Weights (every 50)
+20080629_02 -- optimized conn wti assignment so that RECV_CONS/sender-based gets sender-ordered cons
+ 

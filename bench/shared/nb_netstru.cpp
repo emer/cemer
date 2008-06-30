@@ -8,7 +8,7 @@
 
 using namespace std;
 
-/*void ConSpec::C_Send_Netin(void*, Connection* cn, Unit* ru, float su_act_eff) {
+/*void ConSpec::C_Send_Netin(void*, Conn* cn, Unit* ru, float su_act_eff) {
   ru->net += su_act_eff * cn->wt;
 }
 void ConSpec::Send_Netin(Unit* cg, Unit* su) {
@@ -18,16 +18,101 @@ void ConSpec::Send_Netin(Unit* cg, Unit* su) {
 }*/
 
 //////////////////////////
-//  Connection		//
+//  Conn		//
 //////////////////////////
 
-float* 		Connection::g_wts;
-int		Connection::g_next_wti;
+float* 		Conn::g_wts;
+int		Conn::g_next_wti;
 
 //////////////////////////
 //  RecvCons		//
 //////////////////////////
 
+RecvCons::RecvCons() {
+  send_idx = -1; 
+  send_lay = NULL;
+  dwt_mean = 0.0f;
+}
+
+
+//////////////////////////
+//  ConSpec		//
+//////////////////////////
+
+ConSpec:: ConSpec() {
+  cur_lrate = 0.01f;
+  norm_pct = 1.0f;
+  wt_limits.max = 1.0f;
+}
+
+void ConSpec::Compute_SRAvg(Unit* ru) {
+  for(int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    if (cg->cons.size <= 0) continue;
+    for (int i = 0; i < cg->cons.size; ++i) {
+      Conn* cn = cg->Cn(i);
+      cn->sravg += ru->act() * Network::g_units[cg->units[i]]->act();
+    }
+  }
+}
+
+#ifdef SEND_CONS
+void ConSpec::Compute_Weights(Unit* u) {
+}
+#else
+
+void ConSpec::Compute_Weights_CtCAL(RecvCons* cg, Unit* /*ru*/) {
+//  UnitSpec* rus = (UnitSpec*)ru->spec;
+  
+  //Compute_dWtMean(cg, ru);
+  cg->dwt_mean = 0.0f;
+  for (int i = 0; i < cg->cons.size; ++i) {
+    Conn* cn = &(cg->cons[i]);
+    cg->dwt_mean += cn->dwt;
+  }
+  cg->dwt_mean /= (float)cg->cons.size;
+  
+  float dwnorm = -norm_pct * cg->dwt_mean;
+    
+  for (int i = 0; i < cg->cons.size; ++i) {
+    Conn* cn = &(cg->cons[i]);
+    float& cn_wt = cn->wt();
+    
+    // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+    float dwinc = (rand() & 1) ? -0.2f : 0.2f; //0.0f; hack
+   /* if(ru->act_avg <= rus->act_reg.min)
+      dwinc = rus->act_reg.inc_wt;
+    else if(ru->act_avg >= rus->act_reg.max)
+      dwinc = -rus->act_reg.dec_wt;*/
+    if(dwinc != 0.0f) {
+      cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+    }
+    
+    // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
+    cn_wt += cn->dwt + dwnorm;	// weights always linear
+    wt_limits.ApplyMinLimit(cn_wt); wt_limits.ApplyMaxLimit(cn_wt);
+    cn->pdw = cn->dwt;
+    cn->dwt = 0.0f;
+  }
+}
+
+void ConSpec::Compute_Weights(Unit* u) {
+  // CTLEABRA_CAL, DCAL
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
+    if (recv_gp->cons.size <= 0) continue;
+    Compute_Weights_CtCAL(recv_gp, u);
+  }
+}
+#endif // !SEND_CONS
+
+//////////////////////////
+//  UnitSpec		//
+//////////////////////////
+
+UnitSpec::UnitSpec() {
+//  act_reg = 0.0f;
+}
 
 //////////////////////////
 //  Unit		//
@@ -39,7 +124,9 @@ float* 		Unit::g_nets;
 Unit::Unit() {
   //act = 0; 
   //net = 0;
+  act_avg = 0.0f;
   cs = NULL; 
+  spec = NULL;
   task_id = 0;
   flat_idx = -1;
   n_recv_cons = 0;
@@ -67,6 +154,7 @@ Layer::Layer() {
 
 Layer::~Layer() {
 }
+
 
 #ifdef SEND_CONS
 void Layer::ConnectTo(Layer* lay_to) {
@@ -100,19 +188,25 @@ void Layer::ConnectTo(Layer* lay_to) {
         recv_gp = un_to->recv.FastEl(recv_idx);
       }
       
-      Connection* cn = &(send_gp->cons[i_to]);
-      cn->wti = Connection::g_next_wti;
+      Conn* cn = &(send_gp->cons[i_to]);
+      cn->wti = Conn::g_next_wti++;
       cn->wt() = (4.0 * (float)rand() / RAND_MAX) - 2.0;
       send_gp->units.Set(un_to->flat_idx, i_to);
       
       recv_gp->cons.Set(cn, i_fm);
       recv_gp->units.Set(un_fm->flat_idx, i_fm);
-      Connection::g_next_wti++;
     }
   }
 }
-#else
+#else // RECV_CONS
 void Layer::ConnectFrom(Layer* lay_fm) {
+  if (Network::recv_based)
+    ConnectFrom_Recv(lay_fm);
+  else
+    ConnectFrom_Send(lay_fm);
+}
+
+void Layer::ConnectFrom_Recv(Layer* lay_fm) {
   Nb::n_prjns++;
   const int n_send = lay_fm->units.size;
   if (n_send == 0) return; // shouldn't happen
@@ -143,7 +237,57 @@ void Layer::ConnectFrom(Layer* lay_fm) {
         send_gp = un_fm->send.FastEl(send_idx);
       }
       
-      Connection* cn = &(recv_gp->cons[i_fm]);
+      Conn* cn = &(recv_gp->cons[i_fm]);
+      cn->wti = Conn::g_next_wti++;
+      cn->wt() = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+      recv_gp->units.Set(un_fm->flat_idx, i_fm);
+      
+      send_gp->cons.Set(cn, i_to);
+      send_gp->units.Set(un_to->flat_idx, i_to);
+    }
+  }
+}
+/*
+Note:
+  This routine causes the Conns in the sender to be ordered
+  by receiver -- i.e., the wts array
+*/
+
+void Layer::ConnectFrom_Send(Layer* lay_fm) {
+  Nb::n_prjns++;
+  const int n_send = lay_fm->units.size;
+  if (n_send == 0) return; // shouldn't happen
+  const int n_recv = this->units.size;  
+  // get a unit to determine sending gp
+  Unit* un = this->units.FastEl(0);
+  const int recv_idx = un->recv.size; // index of new recv gp...
+  un = lay_fm->units.FastEl(0);
+  const int send_idx = un->send.size; // index of new send gp...
+  
+  
+  for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
+    Unit* un_fm = lay_fm->units.FastEl(i_fm);
+    SendCons* send_gp = un_fm->send.New();
+    send_gp->cons.SetSize(n_recv);
+    send_gp->units.SetSize(n_recv);
+    send_gp->recv_idx = recv_idx;
+    send_gp->recv_lay = this;
+    
+    for (int i_to = 0; i_to < units.size; ++i_to) {
+      Unit* un_to = units.FastEl(i_to);
+      RecvCons* recv_gp;
+      if (i_fm == 0) {
+        recv_gp = un_to->recv.New();
+        recv_gp->cons.SetSize(n_send);
+        recv_gp->units.SetSize(n_send);
+        recv_gp->send_idx = send_idx;
+        recv_gp->send_lay = lay_fm;
+      } else {
+        recv_gp = un_to->recv.FastEl(send_idx);
+      }
+  
+      Conn* cn = &(recv_gp->cons[i_fm]);
+      cn->wti = Conn::g_next_wti++;
       cn->wt() = (4.0 * (float)rand() / RAND_MAX) - 2.0;
       recv_gp->units.Set(un_fm->flat_idx, i_fm);
       
@@ -162,10 +306,11 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 bool 		Network::recv_based; 
 bool 		Network::recv_smart; 
 Unit** 		Network::g_units; 
-//Connection* 	Network::g_cons; 
+//Conn* 	Network::g_cons; 
 
 Network::Network() {
   engine = NULL;
+  cycle = 0;
 }
 
 Network::~Network() {
@@ -173,7 +318,7 @@ Network::~Network() {
   g_units = NULL;
   Unit::g_acts = NULL;
   Unit::g_nets = NULL;
-  Connection::g_wts = NULL;
+  Conn::g_wts = NULL;
 }
 
 void Network::Initialize() {
@@ -195,10 +340,11 @@ void Network::Build() {
   Unit::g_nets = nets_flat.el;
   
   wts_flat.SetSize(n_cons_flat);
-  Connection::g_wts = wts_flat.el;
+  Conn::g_wts = wts_flat.el;
   
-  Connection::g_next_wti = 0;
+  Conn::g_next_wti = 0;
   ConSpec* cs = new ConSpec; // everyone shares
+  UnitSpec* uspec = new UnitSpec; // everyone shares
   // make all layers and units first
   for (int l = 0; l < Nb::n_layers; l++) {
     Layer* lay = layers.New();
@@ -210,6 +356,7 @@ void Network::Build() {
       un->flat_idx = units_flat.size; // next index
       units_flat.Add(un);
       un->cs = cs;
+      un->spec = uspec;
     } 
   }
    
@@ -238,6 +385,14 @@ float Network::ComputeActs() {
   float rval = engine->ComputeActs();
   Nb::this_rand = rand(); // for next cycle
   return rval;
+}
+
+void Network::Compute_SRAvg() {
+  engine->Compute_SRAvg();
+}
+
+void Network::Compute_Weights() {
+  engine->Compute_Weights();
 }
 
 double Network::GetNTot() {
@@ -332,9 +487,6 @@ void NetEngine::ComputeNets_impl() {
   }
 }
 
-
-
-
 float NetEngine::ComputeActs() {
   // compute activations (only order number of units)
   Nb::tot_act = 0.0f;
@@ -346,6 +498,40 @@ float NetEngine::ComputeActs() {
   return Nb::tot_act;
 }
 
+void NetEngine::Compute_SRAvg() {
+  DoProc(NetTask::P_ComputeSRAvg);
+}
+
+void NetEngine::Compute_Weights() {
+  DoProc(NetTask::P_ComputeWeights);
+}
+
+void NetEngine::Log(bool hdr) {
+  // note: always make/extend the thread log
+  if (true/*use_log_file*/) {
+  FILE* logfile = NULL;
+    if (hdr) {
+      logfile = fopen("ThreadNetEngine.log", "w");
+      fprintf(logfile,"thread\tt_tot\tn_run\tstart lat\trun time\tnibble time\tsync time\toverhead\n");
+    } else {
+      logfile = fopen("ThreadNetEngine.log", "a");
+    }
+    for (int t = 0; t < net_tasks.size; t++) {
+      NetTask* tsk = net_tasks[t];
+      fprintf(logfile,"%d\t%d\t%d\t%g\t%g\t%g\t%g\t%g\n", 
+        t, 
+        tsk->t_tot,
+        tsk->n_run, 
+        tsk->start_latency.s_used, 
+        tsk->run_time.s_used,
+        tsk->nibble_time.s_used,
+        tsk->sync_time.s_used,
+        tsk->overhead.s_used
+      );
+    }
+    fclose(logfile);
+  }
+}
 //////////////////////////////////
 //  ThreadNetEngine		//
 //////////////////////////////////
@@ -436,33 +622,6 @@ void ThreadNetEngine::DoProc(int proc_id) {
   }
 }
 
-void ThreadNetEngine::Log(bool hdr) {
-  // note: always make/extend the thread log
-  if (true/*use_log_file*/) {
-  FILE* logfile = NULL;
-    if (hdr) {
-      logfile = fopen("nb_thread.log", "w");
-      fprintf(logfile,"thread\tt_tot\tn_run\tstart lat\trun time\tnibble time\tsync time\toverhead\n");
-    } else {
-      logfile = fopen("nb_thread.log", "a");
-    }
-    for (int t = 0; t < net_tasks.size; t++) {
-      NetTask* tsk = net_tasks[t];
-      fprintf(logfile,"%d\t%d\t%d\t%g\t%g\t%g\t%g\t%g\n", 
-        t, 
-        tsk->t_tot,
-        tsk->n_run, 
-        tsk->start_latency.s_used, 
-        tsk->run_time.s_used,
-        tsk->nibble_time.s_used,
-        tsk->sync_time.s_used,
-        tsk->overhead.s_used
-      );
-    }
-    fclose(logfile);
-  }
-}
-
 void ThreadNetEngine::OnBuild() {
   // we just partition them round-robin
   const int n_units_flat = net->units_flat.size;
@@ -520,6 +679,8 @@ void NetTask::run() {
   case P_Send_Netin_Clash: Send_Netin_Clash(); break;
   case P_Send_Netin_Array: Send_Netin_Array(); break;
   case P_ComputeAct: ComputeAct(); break;
+  case P_ComputeSRAvg: Compute_SRAvg(); break;
+  case P_ComputeWeights: Compute_Weights(); break;
   }
 }
 
@@ -528,16 +689,18 @@ void NetTask::Send_Netin_0(Unit* su) {
   for (int j = 0; j < su->send.size; ++j) {
     SendCons* send_gp = su->send[j];
     const int send_sz = send_gp->units.size;
+    if (send_sz == 0) continue; // guard
     su->n_con_calc += send_sz;
     int* uns = send_gp->units.Els(); // unit pointer
+    int cni = send_gp->Cn(0)->wti; // first weight
+    //note: for RECV_CONS/send-based, we assigned wti's in sender order
 #ifdef SEND_CONS
     int cni = send_gp->cons[0].wti; // first weight
     for (int i=0; i < send_sz; i++)
-      Send_Netin_inner_0(Connection::g_wts[cni++], Unit::g_nets[uns[i]], su_act_eff);
+      Send_Netin_inner_0(Conn::g_wts[cni++], Unit::g_nets[uns[i]], su_act_eff);
 #else    
-    Connection** cns = send_gp->cons.Els(); // conn pointer
     for (int i=0; i < send_sz; i++)
-      Send_Netin_inner_0(cns[i]->wt(), Unit::g_nets[uns[i]], su_act_eff);
+      Send_Netin_inner_0(Conn::g_wts[cni++], Unit::g_nets[uns[i]], su_act_eff);
 #endif
   }
 }
@@ -550,14 +713,14 @@ void NetTask::Recv_Netin_0_Dumb(Unit* ru) {
     const int recv_sz = recv_gp->units.size;
     ru->n_con_calc += recv_sz;
 #ifdef SEND_CONS
-    Connection** cns = recv_gp->cons.Els(); // array pointer
+    Conn** cns = recv_gp->cons.Els(); // array pointer
     for(int i=0; i < recv_sz; ++i)
       ru_net += Unit::g_acts[uns[i]] * cns[i]->wt();
 #else  
-//    Connection* cns = &(recv_gp->cons[0]); // array pointer
+//    Conn* cns = &(recv_gp->cons[0]); // array pointer
     int wti = recv_gp->cons[0].wti; // first con
     for(int i=0; i < recv_sz; ++i)
-      ru_net += Unit::g_acts[uns[i]] * Connection::g_wts[wti++];
+      ru_net += Unit::g_acts[uns[i]] * Conn::g_wts[wti++];
 #endif
   }
   ru->net() = ru_net;
@@ -571,9 +734,9 @@ void NetTask::Recv_Netin_0_Smart(Unit* ru) {
     const int recv_sz = recv_gp->units.size;
     ru->n_con_calc += (recv_sz / Nb::inv_act);
 #ifdef SEND_CONS
-    Connection** cns = recv_gp->cons.Els(); // array pointer
+    Conn** cns = recv_gp->cons.Els(); // array pointer
 #else
-    Connection* cns = &(recv_gp->cons[0]); // array pointer
+    Conn* cns = &(recv_gp->cons[0]); // array pointer
 #endif
     for(int i=0; i < recv_sz; ++i) {
       const int uni = uns[i];
@@ -622,6 +785,24 @@ void NetTask::ComputeAct() {
   }
 }
 
+void NetTask::Compute_Weights() {
+  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
+  while (my_u < Nb::net.units_flat.size) {
+    Unit* un = Network::g_units[my_u]; //note: accessed flat
+    un->cs->Compute_Weights(un);
+    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
+  }
+}
+
+void NetTask::Compute_SRAvg() {
+  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
+  while (my_u < Nb::net.units_flat.size) {
+    Unit* un = Network::g_units[my_u]; //note: accessed flat
+    un->cs->Compute_SRAvg(un);
+    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
+  }
+}
+
 
 void NetTask_0::Send_Netin_Clash() {
   Unit** units = Nb::net.units_flat.Els();
@@ -637,10 +818,9 @@ void NetTask_0::Send_Netin_Clash() {
 }
 
 void NetTask_N::Send_Netin_Clash() {
-  Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
-    Unit* un = units[my_u]; //note: accessed flat
+    Unit* un = Network::g_units[my_u]; //note: accessed flat
     if (un->do_delta) {
       Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1);
@@ -654,30 +834,30 @@ void NetTask_N::Send_Netin_Array() {
   memset(excit.el, 0, sizeof(float) * excit.size);
   overhead.Stop();
 
-  Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
-    Unit* su = units[my_u]; //note: accessed flat
+    Unit* su = Network::g_units[my_u]; //note: accessed flat
     if (su->do_delta) {
       float su_act_eff = su->act();
       for (int j = 0; j < su->send.size; ++j) {
         SendCons* send_gp = su->send[j];
-#ifdef SEND_CONS
-        Connection* cns = &(send_gp->cons[0]); // conn pointer
-#else
-        Connection** cns = send_gp->cons.Els(); // conn pointer
-#endif
-        int* uns = send_gp->units.Els(); // unit pointer
         const int send_sz = send_gp->units.size;
+        if (send_sz == 0) continue; // guard
         su->n_con_calc += send_sz;
+        int* uns = send_gp->units.Els(); // unit pointer
+    //note: for RECV_CONS/send-based, we assigned wti's in sender order
+        int cni = send_gp->Cn(0)->wti; // first weight
+#ifdef SEND_CONS
         for (int i=0; i < send_sz; i++) {
           int targ_i = uns[i];
-#ifdef SEND_CONS
-          Send_Netin_inner_0(cns[i].wt(), excit.el[targ_i], su_act_eff);
-#else
-          Send_Netin_inner_0(cns[i]->wt(), excit.el[targ_i], su_act_eff);
-#endif
+          Send_Netin_inner_0(Conn::g_wts[cni++], excit.el[targ_i], su_act_eff);
         }
+#else
+        for (int i=0; i < send_sz; i++) {
+          int targ_i = uns[i];
+          Send_Netin_inner_0(Conn::g_wts[cni++], excit.el[targ_i], su_act_eff);
+        }
+#endif
       }
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
@@ -686,10 +866,9 @@ void NetTask_N::Send_Netin_Array() {
 }
 
 void NetTask_N::Recv_Netin() {
-  Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   while (my_u < Nb::net.units_flat.size) {
-    Unit* un = units[my_u]; //note: accessed flat
+    Unit* un = Network::g_units[my_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
     my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
@@ -724,6 +903,8 @@ signed char Nb::fast_prjn = 0; // fast prjns directly access target unit array
 bool Nb::single = false; // true for single thread mode, to compare against nprocs=1
 int Nb::send_act = 0x10000; // send activation, as a fraction of 2^16 
 int Nb::tsend_act; 
+int Nb::dwt_rate = 50;
+int Nb::sra_rate = 5;
 int Nb::inv_act = 1; // inverse of activation -- can use to divide
 int Nb::this_rand; // assigned a new random value each cycle, to let us randomize unit acts
 bool Nb::use_log_file = false;
@@ -749,13 +930,19 @@ int Nb::main() {
   time_used.Start();
 
   // this is the key computation loop
-  for(int cyc = 0; cyc < n_cycles; cyc++) {
+  for (net.cycle = 0; net.cycle < n_cycles; net.cycle++) {
     net.ComputeNets();
     if (calc_act) {
       float tot_act = net.ComputeActs();
       if(use_log_file)
-        fprintf(logfile,"%d\t%g\n", cyc, tot_act);
+        fprintf(logfile,"%d\t%g\n", net.cycle, tot_act);
     }
+    // note: add 1 to cycle so we do it after dwt_rate full counts
+    int nc1 = net.cycle + 1;
+    if ((sra_rate > 0) && ((nc1 % sra_rate) == 0)) 
+      net.Compute_SRAvg();
+    if ((dwt_rate > 0) && ((nc1 % dwt_rate) == 0)) 
+      net.Compute_Weights();
   }
 
   time_used.Stop();
@@ -789,6 +976,8 @@ int Nb::PreInitialize() {
     "\t-log=1/0(def)\tlog/do-not-log optional values to ptest_core.log\n"
     "\t-nibble=n\tnibble: 0(def)=none, 1=on, 2=auto (> .20 left)\n"
     "\t-act=0\tdo not calculate activation\n"
+    "\t-sra_rate=5\tcalc sravg every n cycles, 0=never\n"
+    "\t-dwt_rate=50\tcalc dwt every n cycles, 0=never\n"
     "\t-suff=xxx\tlog file suffix\n"
     "-algo=n (def=0) is one of the following:\n"
     "\t 0 receiver-based\n"
@@ -868,8 +1057,13 @@ void Nb::ParseCmdLine(int& /*rval*/) {
       hdr = true;
     if (targ.startsWith("-algo=")) {
       NetEngine::algo = targ.remove("-algo=").toInt();
-      continue;
-    }
+      continue; }
+    if (targ.startsWith("-dwt_rate=")) {
+      dwt_rate = targ.remove("-dwt_rate=").toInt();
+      continue; }
+    if (targ.startsWith("-sra_rate=")) {
+      sra_rate = targ.remove("-sra_rate=").toInt();
+      continue; }
       
     if (targ == "-log=1") {
       use_log_file = true; continue;}
@@ -914,7 +1108,11 @@ void Nb::PrintResults() {
   FILE* logfile = NULL;
   if (hdr) {
     logfile = fopen(log_filename.toLatin1(), "w");
-    const char* hdr_str = "algo\teMcon\tMcon\tsnd_act\tprocs\tlayers\tunits\tcons\tweights\tcycles\tcon_trav\tsecs\tnibble\tsndcn\tfstprjn\n";
+    const char* hdr_str = 
+    "algo\teMcon\tMcon\tsnd_act\tprocs"
+    "\tlayers\tunits\tcons\tKwts\tcycles"
+    "\tKcn_tot\tsecs\tnibble\tsndcn\tfstprjn"
+    "\tdwtrate\n";
     
     if (logfile) fprintf(logfile, hdr_str);
     printf(hdr_str);
@@ -923,10 +1121,15 @@ void Nb::PrintResults() {
   }
   if (single) NetEngine::n_procs = 0;
   char buf[256]; // s/b enough
-  sprintf(buf, "%d\t%g\t%g\t%d\t%d\t%d\t%d\t%d\t%g\t%d\t%g\t%g\t%d\t%d\t%d\n",
+  sprintf(buf, 
+    "%d\t%.4g\t%.4g\t%d\t%d"
+    "\t%d\t%d\t%d\t%g\t%d"
+    "\t%g\t%.3g\t%d\t%d\t%d"
+    "\t%d\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
-    n_layers, n_units, n_cons, n_wts, n_cycles, n_con_trav, tot_time, nibble_mode,
-    sndcn, fast_prjn);
+    n_layers, n_units, n_cons, n_wts / 1000, n_cycles,
+    n_con_trav / 1000, tot_time, nibble_mode, sndcn, fast_prjn,
+    dwt_rate);
   cout << buf;
   if (logfile) {
     fprintf(logfile, buf);

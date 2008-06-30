@@ -180,11 +180,15 @@ protected:
 template<class T> 
 class taArray : public taArray_impl { // #INSTANCE
 public:
+  static const T	no_el; // for SafeEl etc.
+  
   T*		el;
   // element at index
   T*		Els() const		{ return el; }
   T&		FastEl(int i) const		{ return (T&)el[i]; }
-  T*		SafeEl(int i) const { 
+  const T&	SafeEl(int i) const { 
+    if ((i >= 0) && (i < size)) return el[i]; return no_el;}
+  T*		AddrEl(int i) const { 
     if ((i >= 0) && (i < size)) return (T*)&(el[i]); return NULL;}
   const T&	operator[](int i) const	{ return el[i]; }
   T&		operator[](int i) 	{ return el[i]; }
@@ -201,5 +205,63 @@ protected:
 
 typedef taArray<float>	float_Array;
 typedef taArray<int>	int_Array;
+
+class MinMax {
+public:
+  float		min;	// minimum value
+  float		max;	// maximum value
+
+  void 	ApplyMinLimit(float& wt)	{ if(wt < min) wt = min; }
+  void 	ApplyMaxLimit(float& wt)	{ if(wt > max) wt = max; }
+  
+  inline float	Range()	const		{ return (max - min); }
+  inline float	Scale()	const
+  { float rval = Range(); if(rval != 0.0f) rval = 1.0f / rval; return rval; }
+
+  MinMax() {min = max = 0.0f;} 
+};
+
+class MinMaxRange: public MinMax {
+public:
+  float		min;	// minimum value
+  float		max;	// maximum value
+  float		range;		// #HIDDEN distance between min and max
+  float		scale;		// #HIDDEN scale (1.0 / range)
+
+  float	Normalize(float val) const	{ return (val - min) * scale; }
+  // normalize given value to 0-1 range given current in max
+  float	Project(float val) const	{ return min + (val * range); }
+  // project a normalized value into the current min-max range
+
+  MinMaxRange() {range = scale = 0.0f;} 
+  void	UpdateAfterEdit() { 
+    range = Range(); if (range != 0.0f) scale = 1.0f / range; }
+};
+
+
+class FunLookup : public float_Array {
+  // ##CAT_Math function lookup for non-computable functions and optimization
+  INHERITED(float_Array)
+public:
+  MinMaxRange	x_range;	// range of the x axis
+  float		res;		// resolution of the function
+  float		res_inv;	// #READ_ONLY #NO_SAVE 1/res: speeds computation because multiplies are faster than divides
+
+  inline float	Yval(float x) const	
+    // get y value at given x value (no interpolation)
+    { return SafeEl( (int) ((x - x_range.min) * res_inv)); }
+
+  inline float	Xval(int idx)	// get x value for given index position within list
+  { return x_range.min + ((float)idx * res); }
+
+  float		Eval(float x);
+
+  virtual void	AllocForRange(); // allocate values for given range and resolution
+
+  FunLookup();
+  virtual ~FunLookup() {}
+  void	UpdateAfterEdit();
+};
+
 
 #endif

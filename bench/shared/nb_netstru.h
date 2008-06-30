@@ -11,9 +11,10 @@
 // then share this net across nodes
 // and then compute activations, and repeat.
 
-class Connection;
+class Conn;
 class RecvCons;
 class ConSpec;
+class UnitSpec;
 class Unit;
 class Layer;
 class Network;
@@ -32,7 +33,7 @@ typedef taList<NetTask>		NetTaskList;
 # define CN_WT(cn) (cn->wt)
 #endif
 
-class Connection {
+class Conn {
   // one connection between units
 public:
   static float*		g_wts; // global weights
@@ -45,8 +46,8 @@ public:
   float		sravg;	// #NO_SAVE average of sender and receiver activation 
 };
 
-typedef taArray<Connection>	ConArray;
-typedef taPtrList<Connection>	ConPtrList; // SendCons
+typedef taArray<Conn>	ConArray;
+typedef taPtrList<Conn>	ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
 
@@ -61,17 +62,20 @@ public:
 
 class RecvCons: public ConsBase {
 public:
+  float		dwt_mean;
 #ifdef SEND_CONS
   ConPtrList	cons;
+  inline Conn*	Cn(int i) {return (Conn*)cons.el[i];}
 #else
   ConArray	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
+  inline Conn*	Cn(int i) {return &(cons.el[i]);}
   override ConArray*	GetConArray() {return &cons;}
 #endif
   int		send_idx;
   Layer*	send_lay; // sending layer
 
-  RecvCons() {send_idx = -1; send_lay = NULL;}
+  RecvCons();
   ~RecvCons() {}
 };
 
@@ -84,9 +88,11 @@ public:
   ConArray	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure the array of connections, in index correspondence with units
   override ConArray*	GetConArray() {return &cons;}
+  inline Conn*	Cn(int i) {return &(cons.el[i]);}
 #else
   ConPtrList	cons;
   // #NO_FIND #NO_SAVE #CAT_Structure list of pointers to receiving connections, in index correspondence with units;
+  inline Conn*	Cn(int i) {return (Conn*)cons.el[i];}
 #endif
   
   int		recv_idx;
@@ -99,11 +105,27 @@ public:
 typedef taList<SendCons>	SendCons_List;
 
 class ConSpec {
-  int	dummy[8];
 public:
+  float		cur_lrate;
+  float		norm_pct;
+  MinMax	wt_limits;
+#ifndef SEND_CONS
+  void 		Compute_Weights_CtCAL(RecvCons* cg, Unit* ru);
+#endif
+  void 		Compute_SRAvg(Unit* ru);
+  void 		Compute_Weights(Unit* ru);
+    // note: does nothing for SEND_CONS
   
-//  void C_Send_Netin(void*, Connection* cn, Unit* ru, float su_act_eff);
-//  void Send_Netin(Unit* cg, Unit* su);
+  int	dummy[8];
+  ConSpec();
+};
+
+
+class UnitSpec {
+public:
+  int	dummy[8];
+  
+  UnitSpec();
 };
 
 
@@ -115,6 +137,7 @@ public:
 
 //  float 	act;			// activation value index
 //  float 	net;			// net input value
+  float		act_avg;
   
   RecvCons_List	recv;
   SendCons_List send;
@@ -123,6 +146,7 @@ public:
   int		flat_idx; // flat index
   int		n_recv_cons;
   ConSpec*	cs;
+  UnitSpec*	spec;
   bool		do_delta; // for sender and recv_smart
   int		n_con_calc; // total number of con calcs done for this unit
   
@@ -155,6 +179,9 @@ public:
   
   Layer();
   ~Layer();
+protected:
+  void		ConnectFrom_Recv(Layer* lay_fm); // connect from me to
+  void		ConnectFrom_Send(Layer* lay_fm); // connect from me to
 };
 
 typedef taList<Layer>	LayerList;
@@ -170,6 +197,7 @@ public:
   float_Array		acts_flat; // global acts
   float_Array		nets_flat; // global nets
   float_Array		wts_flat; // global wts
+  int			cycle;
   
   
   NetEngine*		engine;
@@ -180,6 +208,8 @@ public:
   void		Build(); 
   void 		ComputeNets();
   float 	ComputeActs();
+  void		Compute_SRAvg();
+  void		Compute_Weights();
   
   double	GetNTot(); // get total from all units
   
@@ -226,8 +256,10 @@ public:
   // generally don't override:
   void 			ComputeNets();
   virtual float 	ComputeActs();
+  virtual void		Compute_SRAvg();
+  virtual void		Compute_Weights();
   
-  virtual void 		Log(bool /*hdr*/) {} // save a log file
+  virtual void 		Log(bool hdr); // save a log file
   
   NetEngine() {net = NULL;}
   virtual ~NetEngine();
@@ -245,7 +277,6 @@ public:
   
   override void		OnBuild(); 
     
-  override void 	Log(bool hdr); // save a log file
   //ThreadNetEngine();
   ~ThreadNetEngine();
 protected:
@@ -265,7 +296,9 @@ public:
     P_Recv_Netin,
     P_Send_Netin_Clash,
     P_Send_Netin_Array,
-    P_ComputeAct
+    P_ComputeAct,
+    P_ComputeSRAvg,
+    P_ComputeWeights
   };
   
 // All
@@ -293,6 +326,11 @@ public:
   static float ComputeAct_inner(int uni);
   float		my_act;
   virtual void	ComputeAct(); // default does it globally
+  
+// Weights
+  virtual void	Compute_SRAvg(); // compat with single or threaded
+//  virtual void	Compute_dWt(); // compat with single or threaded
+  virtual void	Compute_Weights(); // compat with single or threaded
   
   NetTask();
 };
@@ -335,6 +373,8 @@ public:
   static int n_tot; // total units done each NetIn (reality check)
   static int n_prjns; // total number of prjns
   static float tot_act; // check on tot act
+  static int dwt_rate; // how many cycles per dwt calc; 0=none
+  static int sra_rate; // how many cycles per sravg calc; 0=none
   static int tsend_act; // as decimal percent
   static int send_act; // send activation, as a fraction of 2^16 
   static int inv_act; // inverse of activation -- can use to divide

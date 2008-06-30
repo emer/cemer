@@ -11,6 +11,7 @@
 # include <sys/signal.h>
 #endif
 
+#include <cmath>
 #include <iostream>
 
 #include <QtCore/QThread>
@@ -222,3 +223,40 @@ void taPtrList_impl::SetSize(int i) {
     }
   }
 }
+
+
+//////////////////////////
+//  FunLookup	//
+//////////////////////////
+
+FunLookup::FunLookup() {
+  res = .001f;
+  res_inv = 1.0f / res;
+  x_range.min = 0.0f;
+  x_range.max = 1.0f;
+  x_range.UpdateAfterEdit();
+}
+
+void FunLookup::UpdateAfterEdit() {
+  res_inv = 1.0f / res;
+  x_range.UpdateAfterEdit();
+}
+
+void FunLookup::AllocForRange() {
+  // range is inclusive -- add some extra..
+  UpdateAfterEdit();
+  int sz = (int) (x_range.range / res) + 2;
+  Alloc(sz);
+  size = sz;
+}
+
+float FunLookup::Eval(float x) 	{
+  // get value via linear interpolation between points..
+  int idx = (int) floor((x - x_range.min) * res_inv);
+  if(idx < 0) return FastEl(0); if(idx >= size-1) return FastEl(size-1);
+  float x_0 = x_range.min + (res * (float)idx);
+  float y_0 = FastEl(idx);
+  float y_1 = FastEl(idx+1);
+  return y_0 + (y_1 - y_0) * ((x - x_0) * res_inv);
+}
+
