@@ -61,6 +61,8 @@ void ConSpec::Compute_Weights(Unit* u) {
 }
 #else
 
+static int ir;
+
 void ConSpec::Compute_Weights_CtCAL(RecvCons* cg, Unit* /*ru*/) {
 //  UnitSpec* rus = (UnitSpec*)ru->spec;
   
@@ -79,7 +81,7 @@ void ConSpec::Compute_Weights_CtCAL(RecvCons* cg, Unit* /*ru*/) {
     float& cn_wt = cn->wt();
     
     // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
-    float dwinc = (rand() & 1) ? -0.2f : 0.2f; //0.0f; hack
+    float dwinc = ((ir^i)  & 1) ? -0.2f : 0.2f; //0.0f; hack
    /* if(ru->act_avg <= rus->act_reg.min)
       dwinc = rus->act_reg.inc_wt;
     else if(ru->act_avg >= rus->act_reg.max)
@@ -98,6 +100,7 @@ void ConSpec::Compute_Weights_CtCAL(RecvCons* cg, Unit* /*ru*/) {
 
 void ConSpec::Compute_Weights(Unit* u) {
   // CTLEABRA_CAL, DCAL
+  ir = rand();
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
     if (recv_gp->cons.size <= 0) continue;
