@@ -303,6 +303,18 @@ void DynEnumType::SeqNumberItems(int first_val) {
   }
 }
 
+bool DynEnumType::CopyToAllProgs() {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return false;
+  Program* pg;
+  taLeafItr i;
+  FOR_ITR_EL(Program, pg, proj->programs., i) {
+    DynEnumType* tp = (DynEnumType*)pg->types.FindName(name); // find my name
+    if(!tp || tp == this || !tp->InheritsFrom(&TA_DynEnumType)) continue;
+    tp->CopyFrom(this);
+  }
+}
+
 taBase* DynEnumType::FindTypeName(const String& nm) const {
   if(name == nm) return (taBase*)this;
   int idx = FindNameIdx(nm);

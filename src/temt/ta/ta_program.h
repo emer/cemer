@@ -194,6 +194,8 @@ public:
   // add a new enum item with given name/label and value
   virtual void		SeqNumberItems(int first_val = 0);
   // #BUTTON assign values to items sequentially, starting with given first value
+  virtual bool		CopyToAllProgs();
+  // #BUTTON #CONFIRM copy this type information to all programs that have an enum with this same name in their types section -- provides a convenient way to update when multiple programs use the same dynamic enum types
   
   virtual int	FindNumIdx(int val) const { return enums.FindNumIdx(val); }
   // find index of given numerical value
