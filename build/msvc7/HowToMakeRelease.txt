@@ -72,7 +72,7 @@ Release Steps
   * make a file change to config.h (to trigger full recompile)
   * recompile and rebuild entire project
   * rename zip:
-    emergent-4.0.9-athlon.zip
+    emergent-4.0.9-win32-nosse.zip
   * VERY IMPORTANT: change the SSE property back
 
 * Upload finished .exe
