@@ -1,0 +1,565 @@
+// ta_Dump File v2.0
+LeabraProject .projects[0] { 
+  Doc_Group @.docs = [6] {
+    taDoc @[0] { };
+    taDoc @[1] { };
+    taDoc @[2] { };
+    taDoc @[3] { };
+    taDoc @[4] { };
+    taDoc @[5] { };
+  };
+
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+
+      LayerWizElList @.layer_cfg = [3] {
+	LayerWizEl @[0] { };
+	LayerWizEl @[1] { };
+	LayerWizEl @[2] { };
+      };
+    };
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp[0] = [1] { 
+      DataTable @[0] { 
+	DataTableCols @.data = [5] {
+	  int_Data @[0] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  int_Data @[1] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  int_Data @[2] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  int_Data @[3] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[4] { };
+	};
+      };
+    };
+    DataTable_Group @.gp[1] { };
+    DataTable_Group @.gp[2] { };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @[0] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+    taDataAnal @[1] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+    taDataGen @[2] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+    taImageProc @[3] { 
+   UserDataItem_List @*(.user_data_) { 
+	UserDataItem @[0] { };
+   };
+};
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @[0] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @[0] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @[0] { };
+	PanelViewer @[1] { };
+	T3DataViewer @[2] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @[0] { };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @[0] { };
+      };
+    };
+  };
+};
+LeabraProject .projects[0] {
+ name="Project_0";
+ desc=;
+ tags=;
+ templates {
+  name=;
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name=;
+  el_typ=taDoc;
+  el_def=0;
+  taDoc @[0] {
+   name="ProjectDocs";
+   auto_open=1;
+   text="<html>
+<head></head>
+<body>
+= Data Table Tutoral =
+
+This tutorial provides an introduction to a variety of techniques for working with DataTables in Emergent.  DataTables are one of the most important objects in the system, and can be used for a very wide range of different functions.  Essentially, anything that requires storing and manipulating multiple items of data can benefit from a data table.  Most of the functionality is exposed through the writing of Programs, so this also serves as a good tutorial for the gui-based programming system in emergent.
+
+ '''To return to this document''' at any time, just hit the <code>ProjectDocs</code> tab at the top of this middle panel where you are now reading.
+
+Also, as you work with each documentation section, it is usually a good idea to do <code>Object/Edit Dialog</code> in the menu just above this text, which will open the documentation in a separate window that you can more easily come back to.
+
+Some basic terminology:
+* '''Left browser panel''' is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the network, and the input/output data, etc).
+* '''Middle edit panel''' is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty).
+* '''Right view panel''' shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
+
+Note: this tutorial is designed for version 4.0.15 or greater of Emergent!  Some features may not work in earlier versions.
+
+== Overview of Tutorial ==
+
+We begin by creating some data, which we then process in a variety of ways.  Each step is described in a separate document object located in the docs section of the left browser panel, and linked here:
+
+# [[.docs.DataGen]] -- generating data, including basic datatable gui usage (''required first step'')
+# [[.docs.DataAnalysis]] -- analyzing data in various ways (grouping, stats, dimensionality reduction, etc)
+# [[.docs.DataBase]] -- data-base style operations for modifying data in various ways
+# [[.docs.DataCalcLoop]] -- a very powerful mechanism for iterating through data tables row-by-row and performing various computations
+
+Each document involves creating a separate Program with its own data tables, so after the first step of generating the data, each one can be independently explored in any order.
+
+</body>
+</html>
+";
+  };
+  taDoc @[1] {
+   name="DataGen";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+= DataGen: Generating Data =
+
+This section introduces the basic steps for creating and configuring a data table in the gui, and generating data within a table.
+
+== Creating and Configuring a DataTable ==
+
+Open the data section in the left browser, and then click on InputData to get the context menu (right mouse button or Ctrl+mouse on Mac), and select New.  Leave the defaults as they are, and hit Ok.  This creates a new data table (should be called DataTable_0).
+
+Click on the [[.data.gp.InputData.DataTable_0]] (can use link), and observe that the middle edit panel for it has 3 sub-tabs: Data Table, Properties, Columns.  This provides 3 different views of a datatable, each facilitating a different form of interaction.  Click on Properties, and let's give it a new name: \"MyRandomData\" -- we will be using random numbers to generate the data..  You can see various other properties that can be set -- mouse-over these to see what they do (most are not relevant in the default setup and are greyed out).
+
+Now we need to create some columns of data.  A datatable is organized by '''columns first''', and then rows -- each column has a specific type (e.g., floating point numbers, integers, Strings) and all rows of that column must have the same type (to get around this, you can create a Variant column which can contain different types of information, but this is very rarely necessary).  A particular row of a column is called a '''cell''' -- the cell can either hold a single value (a so-called ''scalar'' column), or it can hold multiple values organized in a ''matrix'' (up to 5 dimensional matricies can be defined for a cell).  See the [[http://grey.colorado.edu/emergent/index.php/AX_Tutorial|AX Tutorial]] for an example where matrix cells are used to hold input patterns to be presented to a network.
+
+For our random data, we're going to simulate the results of a hypothetical test of a network, where we have two separate ''condition'' factors of testing (independent variables in experimental lingo) and a couple of measures recorded from the network (dependent variables in experimental lingo).  Each item of data is recorded over a sequence of ''batches'' (new runs of the network with random initial weights).  Thus, the columns we want to create are:
+
+* '''batch''' (integer) -- batch number (equivalent to subject number in a typical psych experiment)
+* '''cond1''' (integer) -- condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)
+* '''cond2''' (integer) -- condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)
+* '''cycles''' (integer) -- number of cycles the network required (i.e., reaction time in a typical experiment)
+* '''sse''' (float) -- summed-squared error (how much error did the network make)
+
+For each column, just click on the Columns menu at the top of the middle edit panel for the data table, and select NewCol (for a scalar column -- one value per cell -- see [[.docs.MatrixData]] for matrix data), and then select the type (int = integer) and enter the name as given above.  As you create each column, it will be selected -- one could enter something akin to the above comments in the desc field, so another user would know what each column represents -- this is a very good habit to develop, but is admittedly difficult given limited time.
+
+'''Tip:''' you can do context-menu/Duplicate on a column in the left browser to create a new column of the same type -- this can be quicker.  Note also that you can move columns around in this left browser, and that determines the order they appear in the data table!  Deleting a column is similarly possible.  All of this also applies to the Columns tab of the edit panel as well.
+
+
+</body>
+</html>
+";
+  };
+  taDoc @[2] {
+   name="DataAnalysis";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  };
+  taDoc @[3] {
+   name="DataBase";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  };
+  taDoc @[4] {
+   name="DataCalcLoop";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  };
+  taDoc @[5] {
+   name="MatrixData";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+  };
+ };
+ wizards {
+  name=;
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=0;
+   n_layers=3;
+   layer_cfg {
+    name=;
+    el_typ=LayerWizEl;
+    el_def=0;
+    LayerWizEl @[0] {
+     name="Input";
+     n_units=25;
+     io_type=INPUT;
+    };
+    LayerWizEl @[1] {
+     name="Hidden";
+     n_units=25;
+     io_type=HIDDEN;
+    };
+    LayerWizEl @[2] {
+     name="Output";
+     n_units=25;
+     io_type=OUTPUT;
+    };
+   };
+   connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
+  };
+ };
+ edits {
+  name=;
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp[0] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+   DataTable @[0] {
+    name="MyRandomData";
+    desc="randomly generated data";
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @[0] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="batch";
+      desc="batch number (equivalent to subject number in a typical psych experiment)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @[1] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="cond1";
+      desc="condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @[2] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="cond2";
+      desc="condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     int_Data @[3] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItemBase;
+       el_def=0;
+       UserDataItem @[0] {
+	name="NARROW";
+	value 1 0=1;
+       };
+      };
+      name="cycles";
+      desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+     float_Data @[4] {
+      name="sse";
+      desc="summed-squared error (how much error did the network make)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [0]       };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+   };
+  };
+  DataTable_Group @.gp[1] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp[2] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name=;
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @[0] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @[1] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @[2] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @[3] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItemBase;
+    el_def=0;
+    UserDataItem @[0] {
+     name="NO_CLIP";
+     value 1 0=1;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name=;
+  el_typ=Program;
+  el_def=0;
+  step_prog=NULL;
+  tags=;
+  desc=;
+ };
+ viewers {
+  name=;
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @[0] {
+   m_data=.projects[0]$0$;
+   name="Browser2";
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name=;
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @[0] {
+     m_data=NULL;
+     name="Application";
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name=;
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @[0] {
+     m_data=NULL;
+     name="Tree";
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$0$;
+    };
+    PanelViewer @[1] {
+     m_data=NULL;
+     name="Panels";
+     visible=1;
+    };
+    T3DataViewer @[2] {
+     m_data=NULL;
+     name="T3Frames";
+     visible=1;
+     frames {
+      name=;
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @[0] {
+       m_data=NULL;
+       name="Frame1";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       camera_pos {x=0: y=0: z=-0.4765596: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=3.52344;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+     };
+    };
+   };
+   docks {
+    name=;
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @[0] {
+     m_data=NULL;
+     name="Tools";
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ use_change_log=0;
+ last_change_desc=;
+ networks {
+  name=;
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};
