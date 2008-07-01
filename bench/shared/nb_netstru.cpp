@@ -173,7 +173,6 @@ void Layer::ConnectFrom(Layer* lay_fm) {
   // get a unit to determine sending gp
   Unit* un = lay_fm->units.FastEl(0);
   const int send_idx = un->send.size; // index of new send gp...
-  const int n_recv = this->units.size;  
 
   for (int i_to = 0; i_to < units.size; ++i_to) {
     Unit* un_to = units.FastEl(i_to);
@@ -581,6 +580,7 @@ void ThreadNetEngine::OnBuild() {
 
 void ThreadNetEngine::ComputeNets_SendArray() {
   DoProc(NetTask::P_Send_Netin_Array);
+  if (net_tasks.size <= 1) return; // only rollup for 2+
 
   // post stuff
 //  RollupScratch_Netin();
@@ -589,15 +589,25 @@ void ThreadNetEngine::ComputeNets_SendArray() {
   nt0->overhead.Start(false);
   const int n_units_flat = net->n_units_flat;
   float* g_nets = net->g_nets; // cache -- this is also task0's guys
+  // make local array pointers, for speed
+  const int jsz = net_tasks.size - 1;
+  float** nets = new float*[jsz]; // the 
   for (int t = 1; t < net_tasks.size; t++) {
     NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
-    float* nets = tsk->excit; // cache
-    for (int i = 0; i < n_units_flat; ++i) {
-      //TODO: this can be optimized using SSE or equiv compiler commands
-      // to rollup 4 floats at once in parallel
-      g_nets[i] += nets[i];
-    }
+    nets[t-1] = tsk->excit; // cache
   }
+  
+  for (int i = 0; i < n_units_flat; ++i) {
+    //TODO: this can be optimized using SSE or equiv compiler commands
+    // to rollup 4 floats at once in parallel
+    float tnet = 0.0f;
+    for (int j = 0; j < jsz; ++j) {
+      tnet += nets[j][i];
+    }
+    g_nets[i] += tnet;
+  }
+  
+  delete[] nets;
   nt0->overhead.Stop();
 }
 
@@ -710,6 +720,10 @@ void NetTask::Compute_SRAvg() {
 }
 
 
+//////////////////////////////////
+//  NetTask_0			//
+//////////////////////////////////
+
 void NetTask_0::Send_Netin_Clash() {
   Unit** units = Nb::net.g_units; // cache
   const int n_units_flat =  Nb::net.n_units_flat;
@@ -722,6 +736,11 @@ void NetTask_0::Send_Netin_Clash() {
     ++g_u;
   }
 }
+
+
+//////////////////////////////////
+//  NetTask_N			//
+//////////////////////////////////
 
 NetTask_N::~NetTask_N() {
   if (excit && (task_id > 0)) {
