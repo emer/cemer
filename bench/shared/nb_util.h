@@ -167,12 +167,16 @@ protected:
 };
 
 
+template<class T>
+void StatFill(T* el, int size, const T& it)
+    {for (int i=0; i<size; ++i) el[i] = it;}
+    
 class taArray_impl {
 public:
+
   int 			alloc_size;	// allocation size
   int			size;		// number of elements in the 
   
-  	
   taArray_impl() {alloc_size = 0; size = 0;}
 protected:
 };
@@ -193,6 +197,7 @@ public:
   const T&	operator[](int i) const	{ return el[i]; }
   T&		operator[](int i) 	{ return el[i]; }
   void		Set(const T& it, int i)		{el[i] = it; }
+  void		Fill(const T& it) {StatFill(el, size, it);}
   
   void		SetSize(int i) {if (alloc_size < i) Alloc(i); size = i;}
   

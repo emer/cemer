@@ -25,6 +25,9 @@ static int g_rand;
 
 void ConsBase::setSize_impl(int i) {
   units.SetSize(i);
+#ifdef DEBUG
+  units.Fill(-1); // helps detect errors
+#endif
 }
 
 
@@ -49,6 +52,9 @@ RecvCons::RecvCons() {
 void SendCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
   cons.SetSize(i);
+#ifdef DEBUG
+  cons.Fill(-1); // helps detect errors
+#endif
 }
 
 
@@ -132,14 +138,15 @@ UnitSpec::UnitSpec() {
 //  Unit		//
 //////////////////////////
 
-Unit::Unit() {
+Unit::Unit()
+{
   //act = 0; 
   //net = 0;
+  uni = -1; // set during build
   act_avg = 0.0f;
   cs = NULL; 
   spec = NULL;
   task_id = 0;
-  uni = -1;
   n_recv_cons = 0;
   my_rand = rand();
   do_delta = true; // for first iteration, before it is set in ComputeActs
@@ -169,6 +176,65 @@ Layer::~Layer() {
 void Layer::ConnectFrom(Layer* lay_fm) {
   Nb::n_prjns++;
   const int n_send = lay_fm->units.size;
+  if ((n_send == 0) || (units.size <= 0)) return; // shouldn't happen
+  // get a unit to determine send and recv gp
+  Unit* un_fm = lay_fm->units.FastEl(0);
+  const int send_idx = un_fm->send.size; // index of new send gp...
+  Unit* un_to = units.FastEl(0);
+  const int recv_idx = un_to->recv.size; // index of new recv gp...
+
+  // do ConGps first
+  for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
+    un_fm = lay_fm->units.FastEl(i_fm);
+    SendCons* send_gp = un_fm->send.New();
+    send_gp->setSize(n_send);
+    send_gp->recv_idx = recv_idx;
+    send_gp->recv_lay = this;
+  }
+  int& g_next_wti = Network::g_next_wti; // abstract
+  for (int i_to = 0; i_to < units.size; ++i_to) {
+    un_to = units.FastEl(i_to);
+    RecvCons* recv_gp = un_to->recv.New();
+    recv_gp->setSize(n_send);
+    recv_gp->send_idx = send_idx;
+    recv_gp->send_lay = lay_fm;
+    // global index of wts/cons, and pointers thereof
+    recv_gp->wti_base = g_next_wti;
+    recv_gp->wts = &(net->g_wts[g_next_wti]);
+    recv_gp->cons = &(net->g_cons[g_next_wti]);
+    g_next_wti += n_send;
+  }
+
+  // connect, on a receiver-basis
+  for (int i_to = 0; i_to < units.size; ++i_to) {
+    un_to = units.FastEl(i_to);
+    RecvCons* recv_gp = un_to->recv.FastEl(recv_idx);
+    
+    for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
+      un_fm = lay_fm->units.FastEl(i_fm);
+      
+      // Recv stuff
+//      Conn* cn = recv_gp->Cn(i_fm);
+      float& wt = recv_gp->Wt(i_fm);
+      wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+      // set index of sending unit
+      recv_gp->units.Set(un_fm->uni, i_fm); //??
+      
+      // Send stuff
+      SendCons* send_gp = un_fm->send.FastEl(send_idx);
+      // set the global index of target Conn
+      const int g_wti = recv_gp->wti_base + i_fm;
+      send_gp->cons.Set(g_wti, i_to);
+      // set global index of target Unit
+      send_gp->units.Set(un_to->uni, i_to);
+    }
+  }
+}
+
+/*
+void Layer::ConnectFrom(Layer* lay_fm) {
+  Nb::n_prjns++;
+  const int n_send = lay_fm->units.size;
   if (n_send == 0) return; // shouldn't happen
   // get a unit to determine sending gp
   Unit* un = lay_fm->units.FastEl(0);
@@ -193,7 +259,7 @@ void Layer::ConnectFrom(Layer* lay_fm) {
     for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
       Unit* un_fm = lay_fm->units.FastEl(i_fm);
       SendCons* send_gp;
-      if (i_to == 0) {
+      if (i_fm == 0) {
         send_gp = un_fm->send.New();
         send_gp->setSize(n_send);
         send_gp->recv_idx = recv_idx;
@@ -207,14 +273,14 @@ void Layer::ConnectFrom(Layer* lay_fm) {
       wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
       // set the global index of target Conn
       const int g_wti = recv_gp->wti_base + i_fm;
-      send_gp->cons.Set(g_wti, i_to);
+      send_gp->cons.Set(g_wti, i_fm);
       // set global index of target Unit
-      send_gp->units.Set(un_fm->uni, i_fm);
+      send_gp->units.Set(un_to->uni, i_fm);
       // set index of sending unit
-      recv_gp->units.Set(un_to->uni, i_fm); //??
+      recv_gp->units.Set(un_fm->uni, i_fm); //??
     }
   }
-}
+}*/
 
 
 //////////////////////////
@@ -257,11 +323,14 @@ void Network::Build() {
   units_flat.Alloc(n_units_flat);
   g_units = units_flat.Els();
   acts_flat.SetSize(n_units_flat);
+  acts_flat.Fill(0.4f);
   g_acts = acts_flat.el;
   nets_flat.SetSize(n_units_flat);
+  nets_flat.Fill(0.0f);  // safety
   g_nets = nets_flat.el;
   
   wts_flat.SetSize(n_cons_flat);
+  // every wt given a new value during Build
   g_wts = wts_flat.el;
   cons_flat.SetSize(n_cons_flat);
   g_cons = cons_flat.el;
@@ -271,12 +340,13 @@ void Network::Build() {
   ConSpec* cs = new ConSpec; // everyone shares
   UnitSpec* uspec = new UnitSpec; // everyone shares
   // make all layers and units first
+  layers.Alloc(Nb::n_layers);
   for (int l = 0; l < Nb::n_layers; l++) {
     Layer* lay = layers.New();
     lay->net = this;
     lay->units.Alloc(Nb::n_units);
     
-    for (int i=0;i<Nb::n_units;i++) {
+    for (int i=0; i < Nb::n_units; ++i) {
       Unit* un = lay->units.New();
       un->uni = next_uni++; 
       units_flat.Add(un);

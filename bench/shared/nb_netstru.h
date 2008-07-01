@@ -140,13 +140,11 @@ public:
 class Unit {
   // a simple unit
 public:
-  float		act_avg;
-  
   RecvCons_List	recv;
   SendCons_List send;
-  
-  int		task_id; // which task will process this guy
   int		uni; // flat index
+  float		act_avg;
+  int		task_id; // which task will process this guy
   int		n_recv_cons;
   ConSpec*	cs;
   UnitSpec*	spec;
