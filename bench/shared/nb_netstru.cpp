@@ -8,21 +8,25 @@
 
 using namespace std;
 
-/*void ConSpec::C_Send_Netin(void*, Conn* cn, Unit* ru, float su_act_eff) {
-  ru->net += su_act_eff * cn->wt;
-}
-void ConSpec::Send_Netin(Unit* cg, Unit* su) {
-  float su_act_eff = su->act;
-  for(int i=0; i<cg->units.size; i++) \
-    C_Send_Netin(NULL, cg->Cn(i), cg->Un(i), su_act_eff);
-}*/
+// this is set to a rand() before each cycle -- algos can read and hash it
+// with their own key values to create a custom pseudo value, with very little
+// overhead
+static int g_rand; 
+
 
 //////////////////////////
 //  Conn		//
 //////////////////////////
 
-float* 		Conn::g_wts;
-int		Conn::g_next_wti;
+
+//////////////////////////
+//  ConsBase		//
+//////////////////////////
+
+void ConsBase::setSize_impl(int i) {
+  units.SetSize(i);
+}
+
 
 //////////////////////////
 //  RecvCons		//
@@ -32,6 +36,19 @@ RecvCons::RecvCons() {
   send_idx = -1; 
   send_lay = NULL;
   dwt_mean = 0.0f;
+  wts = NULL;
+  cons = NULL;
+  wti_base = -1; // written later
+}
+
+
+//////////////////////////
+//  SendCons		//
+//////////////////////////
+
+void SendCons::setSize_impl(int i) {
+  inherited::setSize_impl(i);
+  cons.SetSize(i);
 }
 
 
@@ -45,69 +62,63 @@ ConSpec:: ConSpec() {
   wt_limits.max = 1.0f;
 }
 
-void ConSpec::Compute_SRAvg(Unit* ru) {
+void ConSpec::Compute_SRAvg(Network* net, Unit* ru) {
+  //nn Unit** g_units = net->g_units;
+  float* g_acts = net->g_acts;
+  float ru_act = g_acts[ru->uni];
   for(int g = 0; g < ru->recv.size; g++) {
     RecvCons* cg = ru->recv.FastEl(g);
-    if (cg->cons.size <= 0) continue;
-    for (int i = 0; i < cg->cons.size; ++i) {
+    int* s_units = cg->units.el;
+    for (int i = 0; i < cg->size; ++i) {
       Conn* cn = cg->Cn(i);
-      cn->sravg += ru->act() * Network::g_units[cg->units[i]]->act();
+      cn->sravg += ru_act * g_acts[s_units[i]];
     }
   }
 }
 
-#ifdef SEND_CONS
-void ConSpec::Compute_Weights(Unit* u) {
-}
-#else
-
-static int ir;
-
-void ConSpec::Compute_Weights_CtCAL(RecvCons* cg, Unit* /*ru*/) {
-//  UnitSpec* rus = (UnitSpec*)ru->spec;
-  
+void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* /*ru*/) {
   //Compute_dWtMean(cg, ru);
   cg->dwt_mean = 0.0f;
-  for (int i = 0; i < cg->cons.size; ++i) {
-    Conn* cn = &(cg->cons[i]);
+  for (int i = 0; i < cg->size; ++i) {
+    Conn* cn = cg->Cn(i);
     cg->dwt_mean += cn->dwt;
   }
-  cg->dwt_mean /= (float)cg->cons.size;
+  cg->dwt_mean /= (float)cg->size;
   
   float dwnorm = -norm_pct * cg->dwt_mean;
     
-  for (int i = 0; i < cg->cons.size; ++i) {
-    Conn* cn = &(cg->cons[i]);
-    float& cn_wt = cn->wt();
+  for (int i = 0; i < cg->size; ++i) {
+    Conn* cn = cg->Cn(i);
+    float& cn_wt = cg->Wt(i);
     
     // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
-    float dwinc = ((ir^i)  & 1) ? -0.2f : 0.2f; //0.0f; hack
+    float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
    /* if(ru->act_avg <= rus->act_reg.min)
       dwinc = rus->act_reg.inc_wt;
     else if(ru->act_avg >= rus->act_reg.max)
       dwinc = -rus->act_reg.dec_wt;*/
-    if(dwinc != 0.0f) {
+    if (dwinc != 0.0f) {
       cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
     }
     
     // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
     cn_wt += cn->dwt + dwnorm;	// weights always linear
-    wt_limits.ApplyMinLimit(cn_wt); wt_limits.ApplyMaxLimit(cn_wt);
+    wt_limits.ApplyMinLimit(cn_wt); 
+    wt_limits.ApplyMaxLimit(cn_wt);
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;
   }
 }
 
-void ConSpec::Compute_Weights(Unit* u) {
+void ConSpec::Compute_Weights(Network* net, Unit* u) {
   // CTLEABRA_CAL, DCAL
-  ir = rand();
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
-    if (recv_gp->cons.size <= 0) continue;
-    Compute_Weights_CtCAL(recv_gp, u);
+    if (recv_gp->size <= 0) continue;
+    Compute_Weights_CtCAL(net, recv_gp, u);
   }
 }
-#endif // !SEND_CONS
+
 
 //////////////////////////
 //  UnitSpec		//
@@ -121,9 +132,6 @@ UnitSpec::UnitSpec() {
 //  Unit		//
 //////////////////////////
 
-float* 		Unit::g_acts;
-float* 		Unit::g_nets;
-
 Unit::Unit() {
   //act = 0; 
   //net = 0;
@@ -131,7 +139,7 @@ Unit::Unit() {
   cs = NULL; 
   spec = NULL;
   task_id = 0;
-  flat_idx = -1;
+  uni = -1;
   n_recv_cons = 0;
   my_rand = rand();
   do_delta = true; // for first iteration, before it is set in ComputeActs
@@ -158,170 +166,82 @@ Layer::Layer() {
 Layer::~Layer() {
 }
 
-
-#ifdef SEND_CONS
-void Layer::ConnectTo(Layer* lay_to) {
-  Nb::n_prjns++;
-  const int n_recv = lay_to->units.size;
-  if (n_recv == 0) return; // shouldn't happen
-  const int n_send = this->units.size;  
-  // get a unit to determine receiving gp
-  Unit* un = lay_to->units.FastEl(0);
-  const int recv_idx = un->recv.size; // index of new recv gp...
-
-  for (int i_fm = 0; i_fm < units.size; ++i_fm) {
-    Unit* un_fm = units.FastEl(i_fm);
-    const int send_idx = un_fm->send.size; // index of new send gp...
-    SendCons* send_gp = un_fm->send.New();
-    send_gp->cons.SetSize(n_recv);
-    send_gp->units.SetSize(n_recv);
-    send_gp->recv_idx = recv_idx;
-    send_gp->recv_lay = lay_to;
-    
-    for (int i_to = 0; i_to < lay_to->units.size; ++i_to) {
-      Unit* un_to = lay_to->units.FastEl(i_to);
-      RecvCons* recv_gp;
-      if (i_fm == 0) {
-        recv_gp = un_to->recv.New();
-        recv_gp->cons.SetSize(n_send);
-        recv_gp->units.SetSize(n_send);
-        recv_gp->send_idx = send_idx;
-        recv_gp->send_lay = this;
-      } else {
-        recv_gp = un_to->recv.FastEl(recv_idx);
-      }
-      
-      Conn* cn = &(send_gp->cons[i_to]);
-      cn->wti = Conn::g_next_wti++;
-      cn->wt() = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-      send_gp->units.Set(un_to->flat_idx, i_to);
-      
-      recv_gp->cons.Set(cn, i_fm);
-      recv_gp->units.Set(un_fm->flat_idx, i_fm);
-    }
-  }
-}
-#else // RECV_CONS
 void Layer::ConnectFrom(Layer* lay_fm) {
-  if (Network::recv_based)
-    ConnectFrom_Recv(lay_fm);
-  else
-    ConnectFrom_Send(lay_fm);
-}
-
-void Layer::ConnectFrom_Recv(Layer* lay_fm) {
   Nb::n_prjns++;
   const int n_send = lay_fm->units.size;
   if (n_send == 0) return; // shouldn't happen
-  const int n_recv = this->units.size;  
   // get a unit to determine sending gp
   Unit* un = lay_fm->units.FastEl(0);
   const int send_idx = un->send.size; // index of new send gp...
+  const int n_recv = this->units.size;  
 
   for (int i_to = 0; i_to < units.size; ++i_to) {
     Unit* un_to = units.FastEl(i_to);
     const int recv_idx = un_to->recv.size; // index of new recv gp...
+    
+    // new RecvCons, and init
+    int& g_next_wti = Network::g_next_wti; // abstract
     RecvCons* recv_gp = un_to->recv.New();
-    recv_gp->cons.SetSize(n_send);
-    recv_gp->units.SetSize(n_send);
+    recv_gp->setSize(n_send);
     recv_gp->send_idx = send_idx;
     recv_gp->send_lay = lay_fm;
+    // global index of wts/cons, and pointers thereof
+    recv_gp->wti_base = g_next_wti;
+    recv_gp->wts = &(net->g_wts[g_next_wti]);
+    recv_gp->cons = &(net->g_cons[g_next_wti]);
+    g_next_wti += n_send;
     
     for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
       Unit* un_fm = lay_fm->units.FastEl(i_fm);
       SendCons* send_gp;
       if (i_to == 0) {
         send_gp = un_fm->send.New();
-        send_gp->cons.SetSize(n_recv);
-        send_gp->units.SetSize(n_recv);
+        send_gp->setSize(n_send);
         send_gp->recv_idx = recv_idx;
         send_gp->recv_lay = this;
       } else {
         send_gp = un_fm->send.FastEl(send_idx);
       }
       
-      Conn* cn = &(recv_gp->cons[i_fm]);
-      cn->wti = Conn::g_next_wti++;
-      cn->wt() = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-      recv_gp->units.Set(un_fm->flat_idx, i_fm);
-      
-      send_gp->cons.Set(cn, i_to);
-      send_gp->units.Set(un_to->flat_idx, i_to);
+//      Conn* cn = recv_gp->Cn(i_fm);
+      float& wt = recv_gp->Wt(i_fm);
+      wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+      // set the global index of target Conn
+      const int g_wti = recv_gp->wti_base + i_fm;
+      send_gp->cons.Set(g_wti, i_to);
+      // set global index of target Unit
+      send_gp->units.Set(un_fm->uni, i_fm);
+      // set index of sending unit
+      recv_gp->units.Set(un_to->uni, i_fm); //??
     }
   }
 }
-/*
-Note:
-  This routine causes the Conns in the sender to be ordered
-  by receiver -- i.e., the wts array
-*/
-
-void Layer::ConnectFrom_Send(Layer* lay_fm) {
-  Nb::n_prjns++;
-  const int n_send = lay_fm->units.size;
-  if (n_send == 0) return; // shouldn't happen
-  const int n_recv = this->units.size;  
-  // get a unit to determine sending gp
-  Unit* un = this->units.FastEl(0);
-  const int recv_idx = un->recv.size; // index of new recv gp...
-  un = lay_fm->units.FastEl(0);
-  const int send_idx = un->send.size; // index of new send gp...
-  
-  
-  for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
-    Unit* un_fm = lay_fm->units.FastEl(i_fm);
-    SendCons* send_gp = un_fm->send.New();
-    send_gp->cons.SetSize(n_recv);
-    send_gp->units.SetSize(n_recv);
-    send_gp->recv_idx = recv_idx;
-    send_gp->recv_lay = this;
-    
-    for (int i_to = 0; i_to < units.size; ++i_to) {
-      Unit* un_to = units.FastEl(i_to);
-      RecvCons* recv_gp;
-      if (i_fm == 0) {
-        recv_gp = un_to->recv.New();
-        recv_gp->cons.SetSize(n_send);
-        recv_gp->units.SetSize(n_send);
-        recv_gp->send_idx = send_idx;
-        recv_gp->send_lay = lay_fm;
-      } else {
-        recv_gp = un_to->recv.FastEl(send_idx);
-      }
-  
-      Conn* cn = &(recv_gp->cons[i_fm]);
-      cn->wti = Conn::g_next_wti++;
-      cn->wt() = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-      recv_gp->units.Set(un_fm->flat_idx, i_fm);
-      
-      send_gp->cons.Set(cn, i_to);
-      send_gp->units.Set(un_to->flat_idx, i_to);
-    }
-  }
-}
-#endif
 
 
 //////////////////////////
 //  Network		//
 //////////////////////////
 
-bool 		Network::recv_based; 
-bool 		Network::recv_smart; 
-Unit** 		Network::g_units; 
-//Conn* 	Network::g_cons; 
+bool 	Network::recv_based; 
+int 	Network::g_next_wti; 
 
 Network::Network() {
   engine = NULL;
   cycle = 0;
+  n_units_flat = 0;
+  g_units = NULL;
+  g_acts = NULL;
+  g_nets = NULL;
+  g_wts = NULL;
+  g_cons = NULL;
 }
 
 Network::~Network() {
   SetEngine(NULL);
+  n_units_flat = 0;
   g_units = NULL;
-  Unit::g_acts = NULL;
-  Unit::g_nets = NULL;
-  Conn::g_wts = NULL;
+  g_acts = NULL;
+  g_nets = NULL;
 }
 
 void Network::Initialize() {
@@ -329,7 +249,7 @@ void Network::Initialize() {
 }
 
 void Network::Build() {
-  const int n_units_flat = Nb::n_layers * Nb::n_units;
+  n_units_flat = Nb::n_layers * Nb::n_units;
   const int n_prjns = (Nb::n_layers - 1) * 2;
   const int n_cons_flat = n_prjns * Nb::n_units * Nb::n_cons;
   
@@ -338,14 +258,17 @@ void Network::Build() {
   units_flat.Alloc(n_units_flat);
   g_units = units_flat.Els();
   acts_flat.SetSize(n_units_flat);
-  Unit::g_acts = acts_flat.el;
+  g_acts = acts_flat.el;
   nets_flat.SetSize(n_units_flat);
-  Unit::g_nets = nets_flat.el;
+  g_nets = nets_flat.el;
   
   wts_flat.SetSize(n_cons_flat);
-  Conn::g_wts = wts_flat.el;
+  g_wts = wts_flat.el;
+  cons_flat.SetSize(n_cons_flat);
+  g_cons = cons_flat.el;
   
-  Conn::g_next_wti = 0;
+  g_next_wti = 0;
+  int next_uni = 0;
   ConSpec* cs = new ConSpec; // everyone shares
   UnitSpec* uspec = new UnitSpec; // everyone shares
   // make all layers and units first
@@ -356,7 +279,7 @@ void Network::Build() {
     
     for (int i=0;i<Nb::n_units;i++) {
       Unit* un = lay->units.New();
-      un->flat_idx = units_flat.size; // next index
+      un->uni = next_uni++; 
       units_flat.Add(un);
       un->cs = cs;
       un->spec = uspec;
@@ -398,10 +321,30 @@ void Network::Compute_Weights() {
   engine->Compute_Weights();
 }
 
+void Network::Cycle(int n_cycles) {
+  // this is the key computation loop
+  for (int i = 0; i < n_cycles; ++i) {
+    g_rand = rand();
+    ComputeNets();
+    if (Nb::calc_act) {
+      float tot_act = ComputeActs();
+      if (Nb::use_log_file)
+        fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", cycle, tot_act);
+    }
+    // note: add 1 to cycle so we do it after dwt_rate full counts
+    int nc1 = cycle + 1;
+    if ((Nb::sra_rate > 0) && ((nc1 % Nb::sra_rate) == 0)) 
+      Compute_SRAvg();
+    if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) 
+      Compute_Weights();
+    ++cycle;
+  }
+}
+
 double Network::GetNTot() {
   double rval = 0;
-  for (int i = 0; i < units_flat.size; ++i) {
-    Unit* un = units_flat[i];
+  for (int i = 0; i < n_units_flat; ++i) {
+    Unit* un = g_units[i];
     rval += un->n_con_calc;
   }
   return rval;
@@ -440,19 +383,10 @@ NetEngine::~NetEngine() {
 
 void NetEngine::Initialize() {
   Initialize_impl();
-  switch (algo) {
-  case RECV:
-    NetTask::Recv_Netin_0 = *NetTask::Recv_Netin_0_Dumb;
-    break;
-  case RECV_SMART:
-    NetTask::Recv_Netin_0 = *NetTask::Recv_Netin_0_Smart;
-    break;
-  default: break;
-  }
 }
 
 void NetEngine::Initialize_impl() {
-  NetTask* tsk = new NetTask_0;
+  NetTask* tsk = new NetTask_0(this);
   tsk->task_id = 0;
   net_tasks.Add(tsk);
 }
@@ -469,7 +403,7 @@ void NetEngine::ComputeNets() {
   Nb::n_tot = 0;
   ComputeNets_impl();
 #ifdef DEBUG
-  if (algo < RECV_SMART) && (Nb::n_tot != net->units_flat.size)) {
+  if (algo < RECV_SMART) && (Nb::n_tot != net->n_units_flat)) {
     cerr << "ERROR: NetEngine::ComputeNets: n_tot != n_units, was: "
       << Nb::n_tot << "\n";
   }
@@ -479,7 +413,7 @@ void NetEngine::ComputeNets() {
 void NetEngine::ComputeNets_impl() {
   switch (algo) {
   case RECV:
-  case RECV_SMART:
+//  case RECV_SMART:
     DoProc(NetTask::P_Recv_Netin);
     break;
   case SEND_CLASH:
@@ -548,7 +482,7 @@ ThreadNetEngine::~ThreadNetEngine() {
 void ThreadNetEngine::Initialize_impl() {
   net_tasks.Alloc(n_procs);
   for (int i = 0; i < n_procs; i++) {
-    NetTask* tsk = new NetTask_N;
+    NetTask* tsk = new NetTask_N(this);
     tsk->task_id = i;
     net_tasks.Add(tsk);
     if (i == 0) continue;
@@ -579,7 +513,7 @@ void ThreadNetEngine::ComputeNets_impl() {
 
 
 void ThreadNetEngine::DoProc(int proc_id) {
-  const int n_units_flat = net->units_flat.size;
+  const int n_units_flat = net->n_units_flat;
   const int n_nibb_thresh = (int)(n_units_flat * Nb::nibble_thresh);
   // start all the other threads first...
   // have to suspend then resume in case not finished from last time
@@ -627,16 +561,20 @@ void ThreadNetEngine::DoProc(int proc_id) {
 
 void ThreadNetEngine::OnBuild() {
   // we just partition them round-robin
-  const int n_units_flat = net->units_flat.size;
+  const int n_units_flat = net->n_units_flat;
   for (int i = 0; i < n_units_flat; ++i) {
-    Unit* un = net->units_flat[i];
+    Unit* un = net->g_units[i];
     un->task_id = i % n_procs;
   }
   // Send_Array only
   if (algo == SEND_ARRAY) {
     for (int t = 0; t < net_tasks.size; t++) {
       NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
-      tsk->excit.SetSize(n_units_flat);
+      if (t == 0) {
+        tsk->excit = net->g_nets;
+      } else {
+        tsk->excit = new float[n_units_flat]; // no need to init
+      }
     }
   }
 }
@@ -645,18 +583,19 @@ void ThreadNetEngine::ComputeNets_SendArray() {
   DoProc(NetTask::P_Send_Netin_Array);
 
   // post stuff
-//  RollupWritebackScratch_Netin();
+//  RollupScratch_Netin();
   // called in Thread 0, so allocate the Task0
   NetTask* nt0 = net_tasks[0];
   nt0->overhead.Start(false);
-  const int n_units_flat = net->units_flat.size;
-  for (int i = 0; i < n_units_flat; ++i) {
-    Unit* un = net->units_flat[i];
-    //NOTE: un.net was reset to 0.0 in previous Act calc
-    float& un_net = un->net();
-    for (int t = 0; t < net_tasks.size; t++) {
-      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
-      un_net += tsk->excit[i];
+  const int n_units_flat = net->n_units_flat;
+  float* g_nets = net->g_nets; // cache -- this is also task0's guys
+  for (int t = 1; t < net_tasks.size; t++) {
+    NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
+    float* nets = tsk->excit; // cache
+    for (int i = 0; i < n_units_flat; ++i) {
+      //TODO: this can be optimized using SSE or equiv compiler commands
+      // to rollup 4 floats at once in parallel
+      g_nets[i] += nets[i];
     }
   }
   nt0->overhead.Stop();
@@ -666,9 +605,8 @@ void ThreadNetEngine::ComputeNets_SendArray() {
 //  NetTask			//
 //////////////////////////////////
 
-Recv_Netin_0_t NetTask::Recv_Netin_0 = NULL;
-
-NetTask::NetTask() {
+NetTask::NetTask(NetEngine* engine) {
+  net = engine->net;
   g_u = 0;
   t_tot = 0;
   my_act = 0.0f;
@@ -688,76 +626,39 @@ void NetTask::run() {
 }
 
 void NetTask::Send_Netin_0(Unit* su) {
-  float su_act_eff = su->act();
+  float su_act_eff = net->g_acts[su->uni];
+  float* g_wts = net->g_wts; // cache
+  float* g_nets = net->g_nets;
   for (int j = 0; j < su->send.size; ++j) {
     SendCons* send_gp = su->send[j];
-    const int send_sz = send_gp->units.size;
-    if (send_sz == 0) continue; // guard
+    const int send_sz = send_gp->size;
     su->n_con_calc += send_sz;
     int* uns = send_gp->units.Els(); // unit pointer
-    int cni = send_gp->Cn(0)->wti; // first weight
-    //note: for RECV_CONS/send-based, we assigned wti's in sender order
-#ifdef SEND_CONS
-    int cni = send_gp->cons[0].wti; // first weight
-    for (int i=0; i < send_sz; i++)
-      Send_Netin_inner_0(Conn::g_wts[cni++], Unit::g_nets[uns[i]], su_act_eff);
-#else    
-    for (int i=0; i < send_sz; i++)
-      Send_Netin_inner_0(Conn::g_wts[cni++], Unit::g_nets[uns[i]], su_act_eff);
-#endif
-  }
-}
-
-void NetTask::Recv_Netin_0_Dumb(Unit* ru) {
-  float ru_net = 0.0f;
-  for (int j = 0; j < ru->recv.size; ++j) {
-    RecvCons* recv_gp = ru->recv[j];
-    int* uns = recv_gp->units.Els(); // unit pointer
-    const int recv_sz = recv_gp->units.size;
-    ru->n_con_calc += recv_sz;
-#ifdef SEND_CONS
-    Conn** cns = recv_gp->cons.Els(); // array pointer
-    for(int i=0; i < recv_sz; ++i)
-      ru_net += Unit::g_acts[uns[i]] * cns[i]->wt();
-#else  
-//    Conn* cns = &(recv_gp->cons[0]); // array pointer
-    int wti = recv_gp->cons[0].wti; // first con
-    for(int i=0; i < recv_sz; ++i)
-      ru_net += Unit::g_acts[uns[i]] * Conn::g_wts[wti++];
-#endif
-  }
-  ru->net() = ru_net;
-}
-
-void NetTask::Recv_Netin_0_Smart(Unit* ru) {
-  float ru_net = 0.0f;
-  for (int j = 0; j < ru->recv.size; ++j) {
-    RecvCons* recv_gp = ru->recv[j];
-    int* uns = recv_gp->units.Els(); // unit pointer
-    const int recv_sz = recv_gp->units.size;
-    ru->n_con_calc += (recv_sz / Nb::inv_act);
-#ifdef SEND_CONS
-    Conn** cns = recv_gp->cons.Els(); // array pointer
-#else
-    Conn* cns = &(recv_gp->cons[0]); // array pointer
-#endif
-    for(int i=0; i < recv_sz; ++i) {
-      const int uni = uns[i];
-      if (Network::g_units[uni]->do_delta)
-#ifdef SEND_CONS
-        ru_net += Unit::g_acts[uns[i]] * cns[i]->wt();
-#else
-        ru_net += Unit::g_acts[uns[i]] * cns[i].wt();
-#endif
+    for (int i=0; i < send_sz; i++) {
+      const int targ_i = uns[i];
+      Send_Netin_inner_0(g_wts[send_gp->Wti(i)], g_nets[targ_i], su_act_eff);
     }
   }
-  ru->net() = ru_net;
 }
 
+void NetTask::Recv_Netin_0(Unit* ru) {
+  float ru_net = 0.0f;
+  float* g_acts = Nb::net.g_acts;
+  for (int j = 0; j < ru->recv.size; ++j) {
+    RecvCons* recv_gp = ru->recv[j];
+    int* uns = recv_gp->units.Els(); // unit pointer
+    const int recv_sz = recv_gp->size;
+    ru->n_con_calc += recv_sz;
+    float* wts = recv_gp->wts; // cache
+    for(int i=0; i < recv_sz; ++i)
+      ru_net += g_acts[uns[i]] * wts[i];
+  }
+  net->g_nets[ru->uni] = ru_net;
+}
 
 void NetTask::Recv_Netin() {
-  Unit** units = Nb::net.units_flat.Els();
-  const int n_units_flat =  Nb::net.units_flat.size;
+  Unit** units = Nb::net.g_units; // cache
+  const int n_units_flat =  Nb::net.n_units_flat;
   while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
     Recv_Netin_0(un);
@@ -767,13 +668,13 @@ void NetTask::Recv_Netin() {
 }
 
 float NetTask::ComputeAct_inner(int uni) {
-  float& un_net = Unit::g_nets[uni];
-  float& un_act = Unit::g_acts[uni];
+  float& un_net = net->g_nets[uni];
+  float& un_act = net->g_acts[uni];
   un_act = 1.0f / (1.0f + expf(-un_net));
   un_net = 0.0f; // only needed for sender-based, but cheaper to just do than test
   //NOTE: following is not used for vanilla RECV, but we include it
   // as shared overhead anyway
-  Nb::net.units_flat[uni]->CalcDelta(); // sets flag, except for RECV
+  Nb::net.g_units[uni]->CalcDelta(); // sets flag, except for RECV
   return un_act;
 }
 
@@ -781,7 +682,7 @@ void NetTask::ComputeAct() {
 //  Unit** units = Nb::net.units_flat.Els();
   // compute activations (only order number of units)
   my_act = 0.0f;
-  const int n_units_flat =  Nb::net.units_flat.size;
+  const int n_units_flat =  Nb::net.n_units_flat;
   while (g_u < n_units_flat) {
     my_act += ComputeAct_inner(g_u);
     ++g_u;
@@ -789,27 +690,29 @@ void NetTask::ComputeAct() {
 }
 
 void NetTask::Compute_Weights() {
+  Unit** units = Nb::net.g_units; // cache
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.units_flat.size) {
-    Unit* un = Network::g_units[my_u]; //note: accessed flat
-    un->cs->Compute_Weights(un);
+  while (my_u < Nb::net.n_units_flat) {
+    Unit* un = units[my_u]; //note: accessed flat
+    un->cs->Compute_Weights(&Nb::net, un);
     my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask::Compute_SRAvg() {
+  Unit** units = Nb::net.g_units; // cache
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.units_flat.size) {
-    Unit* un = Network::g_units[my_u]; //note: accessed flat
-    un->cs->Compute_SRAvg(un);
+  while (my_u < Nb::net.n_units_flat) {
+    Unit* un = units[my_u]; //note: accessed flat
+    un->cs->Compute_SRAvg(&Nb::net, un);
     my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 
 void NetTask_0::Send_Netin_Clash() {
-  Unit** units = Nb::net.units_flat.Els();
-  const int n_units_flat =  Nb::net.units_flat.size;
+  Unit** units = Nb::net.g_units; // cache
+  const int n_units_flat =  Nb::net.n_units_flat;
   while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
     if (un->do_delta) {
@@ -820,10 +723,18 @@ void NetTask_0::Send_Netin_Clash() {
   }
 }
 
+NetTask_N::~NetTask_N() {
+  if (excit && (task_id > 0)) {
+    delete[] excit;
+  }
+  excit = NULL;
+}
+
 void NetTask_N::Send_Netin_Clash() {
+  Unit** units = Nb::net.g_units; // cache
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.units_flat.size) {
-    Unit* un = Network::g_units[my_u]; //note: accessed flat
+  while (my_u < Nb::net.n_units_flat) {
+    Unit* un = units[my_u]; //note: accessed flat
     if (un->do_delta) {
       Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1);
@@ -834,33 +745,27 @@ void NetTask_N::Send_Netin_Clash() {
 
 void NetTask_N::Send_Netin_Array() {
   overhead.Start(false);
-  memset(excit.el, 0, sizeof(float) * excit.size);
+  memset(excit, 0, sizeof(float) * net->n_units_flat);
   overhead.Stop();
 
+  Unit** units = Nb::net.g_units; // cache
+  float* acts = Nb::net.g_acts;
+  float* g_wts = net->g_wts; // cache
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.units_flat.size) {
-    Unit* su = Network::g_units[my_u]; //note: accessed flat
+  while (my_u < Nb::net.n_units_flat) {
+    Unit* su = units[my_u]; //note: accessed flat
     if (su->do_delta) {
-      float su_act_eff = su->act();
+      float su_act_eff = acts[my_u];
       for (int j = 0; j < su->send.size; ++j) {
         SendCons* send_gp = su->send[j];
-        const int send_sz = send_gp->units.size;
+        const int send_sz = send_gp->size;
         if (send_sz == 0) continue; // guard
         su->n_con_calc += send_sz;
         int* uns = send_gp->units.Els(); // unit pointer
-    //note: for RECV_CONS/send-based, we assigned wti's in sender order
-        int cni = send_gp->Cn(0)->wti; // first weight
-#ifdef SEND_CONS
         for (int i=0; i < send_sz; i++) {
-          int targ_i = uns[i];
-          Send_Netin_inner_0(Conn::g_wts[cni++], excit.el[targ_i], su_act_eff);
-        }
-#else
-        for (int i=0; i < send_sz; i++) {
-          int targ_i = uns[i];
-          Send_Netin_inner_0(Conn::g_wts[cni++], excit.el[targ_i], su_act_eff);
-        }
-#endif
+          const int targ_i = uns[i];
+          Send_Netin_inner_0(g_wts[send_gp->Wti(i)], excit[targ_i], su_act_eff);
+       }
       }
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
@@ -869,9 +774,10 @@ void NetTask_N::Send_Netin_Array() {
 }
 
 void NetTask_N::Recv_Netin() {
+  Unit** units = Nb::net.g_units; // cache
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.units_flat.size) {
-    Unit* un = Network::g_units[my_u]; //note: accessed flat
+  while (my_u < Nb::net.n_units_flat) {
+    Unit* un = units[my_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
     my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
@@ -882,7 +788,7 @@ void NetTask_N::ComputeAct() {
 //  Unit** units = Nb::net.units_flat.Els();
   int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   my_act = 0.0f;
-  const int unit_sz = Nb::net.units_flat.size;
+  const int unit_sz = Nb::net.n_units_flat;
   while (my_u < unit_sz) {
     my_act += ComputeAct_inner(my_u);
     my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
@@ -890,6 +796,7 @@ void NetTask_N::ComputeAct() {
 }
 
 
+Nb* Nb::inst;
 bool Nb::hdr = false;
 
 int Nb::n_layers;
@@ -912,11 +819,6 @@ int Nb::inv_act = 1; // inverse of activation -- can use to divide
 int Nb::this_rand; // assigned a new random value each cycle, to let us randomize unit acts
 bool Nb::use_log_file = false;
 bool Nb::calc_act = true;
-#ifdef SEND_CONS
-signed char Nb::sndcn = 1; 
-#else
-signed char Nb::sndcn = 0; 
-#endif
 
 int Nb::main() {
   Initialize();
@@ -924,34 +826,20 @@ int Nb::main() {
   net.Initialize();
   net.Build();
 
-  FILE* logfile = NULL;
+  act_logfile = NULL;
   if (use_log_file) {
-    logfile = fopen("ptest_core.log", "w");
-    fprintf(logfile,"cyc\ttot_act\n");
+    act_logfile = fopen("ptest_core.log", "w");
+    fprintf((FILE*)act_logfile,"cyc\ttot_act\n");
   }
 
   time_used.Start();
-
-  // this is the key computation loop
-  for (net.cycle = 0; net.cycle < n_cycles; net.cycle++) {
-    net.ComputeNets();
-    if (calc_act) {
-      float tot_act = net.ComputeActs();
-      if(use_log_file)
-        fprintf(logfile,"%d\t%g\n", net.cycle, tot_act);
-    }
-    // note: add 1 to cycle so we do it after dwt_rate full counts
-    int nc1 = net.cycle + 1;
-    if ((sra_rate > 0) && ((nc1 % sra_rate) == 0)) 
-      net.Compute_SRAvg();
-    if ((dwt_rate > 0) && ((nc1 % dwt_rate) == 0)) 
-      net.Compute_Weights();
-  }
+  
+  net.Cycle(n_cycles);
 
   time_used.Stop();
   if (use_log_file) {
-    fclose(logfile);
-    logfile = NULL;
+    fclose((FILE*)act_logfile);
+    act_logfile = NULL;
   }
 
   // note: always make/extend the thread log
@@ -1090,8 +978,8 @@ void Nb::Initialize() {
   srand(56);			// always start with the same seed!
   
   Network::recv_based = !(NetEngine::algo & NetEngine::SEND_FLAG);
-  if (NetEngine::algo == NetEngine::RECV_SMART)
-    Network::recv_smart = true;
+  if (NetEngine::algo == 1/*NetEngine::RECV_SMART*/)
+    cerr << "RECV_SMART is no longer supported\n";
 
   Initialize_impl();
   
@@ -1114,7 +1002,7 @@ void Nb::PrintResults() {
     const char* hdr_str = 
     "algo\teMcon\tMcon\tsnd_act\tprocs"
     "\tlayers\tunits\tcons\tKwts\tcycles"
-    "\tKcn_tot\tsecs\tnibble\tsndcn\tfstprjn"
+    "\tKcn_tot\tsecs\tnibble\tfstprjn\tsrarate"
     "\tdwtrate\n";
     
     if (logfile) fprintf(logfile, hdr_str);
@@ -1131,7 +1019,7 @@ void Nb::PrintResults() {
     "\t%d\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
     n_layers, n_units, n_cons, n_wts / 1000, n_cycles,
-    n_con_trav / 1000, tot_time, nibble_mode, sndcn, fast_prjn,
+    n_con_trav / 1000, tot_time, nibble_mode, fast_prjn, sra_rate,
     dwt_rate);
   cout << buf;
   if (logfile) {

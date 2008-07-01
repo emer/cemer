@@ -42,6 +42,10 @@ Strategy
 * blocks can work on separate layers
   
 * each thread works on one source unit -- these can be random
+* so the breakdown, is that it is still quasi-receiver-based,
+  in that the entire set of units is divided up into chunks that
+  will get read and processed by blocks
+* 
 
 Restrictions
 
