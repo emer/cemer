@@ -6,6 +6,7 @@
 
 #include <QtCore/QString>
 
+
 class Conn;
 class RecvCons;
 class SendCons;
@@ -232,6 +233,30 @@ protected:
   //void		PartitionUnits_SendClash(); 
 };
 
+// macros for initializing and updating proc iter vars
+
+//#define UNIT_STRIDE
+#ifdef UNIT_STRIDE
+
+#define PROC_VAR_INIT(g_u, task) \
+  g_u = task
+
+#define PROC_VAR_LOOP(my_u, g_u, total) \
+  for ( \
+    int my_u = AtomicFetchAdd(&g_u, NetEngine::n_procs); \
+    my_u < total; \
+    my_u = AtomicFetchAdd(&g_u, NetEngine::n_procs))
+#else
+
+#define PROC_VAR_INIT(g_u, task) \
+  g_u = (task) * NetEngine::proc_stride
+
+#define PROC_VAR_LOOP(my_u, g_u, total) \
+  for ( \
+    int my_u = AtomicFetchAdd(&g_u, NetEngine::n_stride); \
+    my_u < total; \
+    my_u = (++my_u & NetEngine::proc_stride_mask) ? my_u : AtomicFetchAdd(&g_u, NetEngine::n_stride))
+#endif
 
 class NetEngine { // prototype, and is also the default type (0-procs)
 public:
@@ -253,9 +278,14 @@ public:
   };
   
   static int 	algo; // the algorithm number
-  static const int core_max_nprocs = 32; // maximum number of processors!
-  static int n_procs;		// total number of processors
   static NetTaskList net_tasks; // only n_procs created
+  
+// Chunking and allocating of data, for multi-tasking
+  static const int core_max_nprocs = 32; // maximum number of processors!
+  static const int 	proc_stride = 8; // items done each iter in loop (must be 2^n)
+  static const int 	proc_stride_mask = proc_stride-1; // mask of proc_stride
+  static int 		n_procs; // total number of processors/processes
+  static int 		n_stride; // n_procs * proc_stride
   
   Network*	net; // owning net, set automatically
   

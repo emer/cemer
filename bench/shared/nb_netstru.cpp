@@ -408,6 +408,7 @@ void Network::SetEngine(NetEngine* engine_) {
 int NetEngine::algo = 0;
 const int NetEngine::core_max_nprocs; // maximum number of processors!
 int NetEngine::n_procs;		// total number of processors
+int NetEngine::n_stride;
 NetTaskList NetEngine::net_tasks; // only n_procs created
 
 NetEngine::~NetEngine() {
@@ -556,14 +557,14 @@ void ThreadNetEngine::DoProc(int proc_id) {
     QTaskThread* th = (QTaskThread*)threads[t];
     NetTask* tsk = net_tasks[t];
     th->suspend(); // prob already suspended
-    tsk->g_u = t;
+    PROC_VAR_INIT(tsk->g_u, t);
     tsk->proc_id = proc_id;
     th->resume();
   }
   
   // then do my part
   NetTask* tsk = net_tasks[0];
-  tsk->g_u = 0;
+  PROC_VAR_INIT(tsk->g_u, 0);
   tsk->proc_id = proc_id;
   tsk->run_time.Start(false);
   tsk->run();
@@ -737,21 +738,17 @@ void NetTask::ComputeAct() {
 
 void NetTask::Compute_Weights() {
   Unit** units = Nb::net.g_units; // cache
-  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.n_units_flat) {
+  PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     un->cs->Compute_Weights(&Nb::net, un);
-    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask::Compute_SRAvg() {
   Unit** units = Nb::net.g_units; // cache
-  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.n_units_flat) {
+  PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     un->cs->Compute_SRAvg(&Nb::net, un);
-    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
@@ -787,27 +784,27 @@ NetTask_N::~NetTask_N() {
 
 void NetTask_N::Send_Netin_Clash() {
   Unit** units = Nb::net.g_units; // cache
-  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.n_units_flat) {
+  PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     if (un->do_delta) {
       Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
-    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask_N::Send_Netin_Array() {
-  overhead.Start(false);
-  memset(excit, 0, sizeof(float) * net->n_units_flat);
-  overhead.Stop();
+  // task0 is the native nets, and it gets cleared already
+  if (task_id > 0) {
+    overhead.Start(false);
+    memset(excit, 0, sizeof(float) * net->n_units_flat);
+    overhead.Stop();
+  }
 
   Unit** units = Nb::net.g_units; // cache
   float* acts = Nb::net.g_acts;
   float* g_wts = net->g_wts; // cache
-  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.n_units_flat) {
+  PROC_VAR_LOOP(my_u, g_u,  Nb::net.n_units_flat) {
     Unit* su = units[my_u]; //note: accessed flat
     if (su->do_delta) {
       float su_act_eff = acts[my_u];
@@ -824,29 +821,24 @@ void NetTask_N::Send_Netin_Array() {
       }
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
-    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask_N::Recv_Netin() {
-  Unit** units = Nb::net.g_units; // cache
-  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  while (my_u < Nb::net.n_units_flat) {
-    Unit* un = units[my_u]; //note: accessed flat
+  Unit** g_units = Nb::net.g_units; // cache
+  PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
+    Unit* un = g_units[my_u]; //note: accessed flat
     Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
-    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
 void NetTask_N::ComputeAct() {
 //  Unit** units = Nb::net.units_flat.Els();
-  int my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
-  my_act = 0.0f;
   const int unit_sz = Nb::net.n_units_flat;
-  while (my_u < unit_sz) {
+  my_act = 0.0f;
+  PROC_VAR_LOOP(my_u, g_u, unit_sz) {
     my_act += ComputeAct_inner(my_u);
-    my_u = AtomicFetchAdd(&g_u, ThreadNetEngine::n_procs);
   }
 }
 
@@ -957,6 +949,7 @@ NetEngine* Nb::CreateNetEngine() {
       NetEngine::n_procs = NetEngine::core_max_nprocs;
     rval = new ThreadNetEngine; // just the default
   }
+  NetEngine::n_stride = NetEngine::proc_stride * NetEngine::n_procs;
   return rval;
 }  
 

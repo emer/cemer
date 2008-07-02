@@ -3,5 +3,9 @@
 20080629_04 -- DOH -- pulled the rand() call from the inner wt calc! 
 20080630_05 -- run on Mac before reorg discussed w/ Randy today
 20080701_03 -- added the dWt calc to the Compute_Weight call
+20080701_04 -- changed the stride from 1 to 8
+20080701_05 -- (very minor) omit clearing Task0:excit for Send_Array (redundant)
+
+
 
  
