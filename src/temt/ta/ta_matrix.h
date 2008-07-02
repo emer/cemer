@@ -33,7 +33,7 @@
 #include <string.h>
 
 // externals
-class TypeDef;
+class TypeDef; //
 
 // forwards this file
 class taMatrix_PList;

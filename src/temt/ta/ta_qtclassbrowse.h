@@ -29,7 +29,7 @@ class taTypeSpaceDataLink;
 class taTypeInfoTreeDataNode;
 class taTypeSpaceTreeDataNode;
 
-class iClassBrowseViewer;
+class iClassBrowseViewer; //
 
 //////////////////////////
 //   tabDataLink	//

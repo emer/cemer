@@ -27,7 +27,7 @@
 #endif
 
 // forwards
-class TypeDefItemModel; 
+class TypeDefItemModel;  //
 
 
 class TA_API TypeDefItemModel: public QAbstractItemModel { // #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for TypeDefs

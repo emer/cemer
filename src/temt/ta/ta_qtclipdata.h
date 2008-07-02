@@ -136,7 +136,7 @@ class taiMimeItem_List;
 class taiMultiMimeItem;
 class taiObjectMimeItem;
 class taiObjectsMimeItem;
-class taiMimeSource;
+class taiMimeSource; //
 
 
 class TA_API taiClipData: public QMimeData { // ##NO_CSS

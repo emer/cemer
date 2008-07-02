@@ -29,7 +29,7 @@ class cssElPtr;		// #IGNORE
 class cssSpace;		// #IGNORE
 
 // external refs
-class DataTable;
+class DataTable; //
 
 // forwards
 class DynEnumType;

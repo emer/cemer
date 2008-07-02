@@ -4482,11 +4482,13 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
       }
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
+
+      pt = plt;  pt.x += bar_off_plt + bar_wd_plt * 0.5f;
       
       if(clr_ok)
-	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(clr));
+	t3gl->errBar(pt, err_plt, err_bar_width, (T3Color)(clr));
       else
-	t3gl->errBar(plt, err_plt, err_bar_width);
+	t3gl->errBar(pt, err_plt, err_bar_width);
     }
 
     if((label_spacing > 0) && (row % label_spacing == 0)) {

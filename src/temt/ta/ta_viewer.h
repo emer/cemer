@@ -127,7 +127,7 @@ class     BrowseViewer;
 class       tabBrowseViewer;
 class       ClassBrowseViewer;
 class     PanelViewer;
-class ToolBoxRegistrar;
+class ToolBoxRegistrar; //
 
 
 class TA_API DataViewer : public taDataView {

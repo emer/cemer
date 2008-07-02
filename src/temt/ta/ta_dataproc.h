@@ -737,7 +737,7 @@ private:
 };
 
 class TA_API DataCalcAddDestRow : public DataSrcDestProg { 
-  // add a new blank row into the dest data table (used in DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
+  // add a new blank row into the dest data table (used ONLY within a DataCalcLoop to add new data -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
@@ -763,7 +763,7 @@ private:
 };
 
 class TA_API DataCalcSetDestRow : public DataSrcDestProg { 
-  // set all the current values into the dest data table (used in DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
+  // set all the current values into the dest data table (used ONLY within a DataCalcLoop -- automatically gets dest_data from outer DataCalcLoop object)
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
@@ -789,7 +789,7 @@ private:
 };
 
 class TA_API DataCalcSetSrcRow : public DataSrcDestProg { 
-  // set all the current values into the src data table (used in DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
+  // set all the current values into the src data table (used ONLY within a DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__
@@ -815,7 +815,7 @@ private:
 };
 
 class TA_API DataCalcCopyCommonCols : public DataSrcDestProg { 
-  // copy all of the columns from source to dest that have the same name and type
+  // copy all of the columns from source to dest that have the same name and type (used ONLY within a DataCalcLoop -- automatically gets src_data from outer DataCalcLoop object)
 INHERITED(DataSrcDestProg)
 public:
 #ifdef __MAKETA__

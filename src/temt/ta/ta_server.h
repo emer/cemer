@@ -30,7 +30,7 @@
 class TemtClient;
 class TemtClientAdapter;
 class TemtServer;
-class TemtServerAdapter;
+class TemtServerAdapter; //
 
 class TA_API TemtClientAdapter: public taBaseAdapter {
   // ##IGNORE QObject for attaching events/signals for its taBase owner

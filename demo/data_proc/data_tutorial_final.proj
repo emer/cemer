@@ -78,6 +78,99 @@ LeabraProject .projects[0] {
 };
   };
 
+  Program_Group @.programs = [2] {
+    Program @[0] { 
+      ProgVar_List @.vars = [7] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+	ProgVar @[5] { };
+	ProgVar @[6] { };
+      };
+
+      ProgEl_List @.prog_code = [2] {
+	ResetDataRows @[0] { };
+	ForLoop @[1] { 
+	  ProgEl_List @.loop_code = [1] {
+	    ForLoop @[0] { 
+	      ProgEl_List @.loop_code = [1] {
+		ForLoop @[0] { 
+		  ProgEl_List @.loop_code = [7] {
+		    AddNewDataRow @[0] { };
+		    DataVarProg @[1] { };
+		    RandomCall @[2] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    VarIncr @[3] { };
+		    RandomCall @[4] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    VarIncr @[5] { };
+		    DataVarProg @[6] { };
+		  };
+		};
+	      };
+	    };
+	  };
+	};
+      };
+    };
+    Program @[1] { 
+      ProgObjList @.objs = [1] {
+	DataTable @[0] { 
+	  DataTableCols @.data = [6] {
+	    int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[2] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[3] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[4] { };
+	    float_Data @[5] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+      };
+
+      ProgEl_List @.prog_code = [1] {
+	DataGroupProg @[0] { 
+	  DataOpList @.ops = [6] {
+	    DataGroupEl @[0] { };
+	    DataGroupEl @[1] { };
+	    DataGroupEl @[2] { };
+	    DataGroupEl @[3] { };
+	    DataGroupEl @[4] { };
+	    DataGroupEl @[5] { };
+	  };
+	};
+      };
+    };
+  };
+
   DataViewer_List @.viewers = [1] {
     MainWindowViewer @[0] { 
       ToolBar_List @.toolbars = [1] {
@@ -88,8 +181,34 @@ LeabraProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @[0] { };
+	  T3DataViewFrame_List @.frames = [2] {
+	    T3DataViewFrame @[0] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [5] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		    GraphColView @[4] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[1] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [6] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		    GraphColView @[4] { };
+		    GraphColView @[5] { };
+		  };
+		};
+	      };
+	    };
 	  };
 	};
       };
@@ -138,10 +257,11 @@ Note: this tutorial is designed for version 4.0.15 or greater of Emergent!  Some
 
 We begin by creating some data, which we then process in a variety of ways.  Each step is described in a separate document object located in the docs section of the left browser panel, and linked here:
 
-# [[.docs.DataGen]] -- generating data, including basic datatable gui usage (''required first step'')
-# [[.docs.DataAnalysis]] -- analyzing data in various ways (grouping, stats, dimensionality reduction, etc)
-# [[.docs.DataBase]] -- data-base style operations for modifying data in various ways
-# [[.docs.DataCalcLoop]] -- a very powerful mechanism for iterating through data tables row-by-row and performing various computations
+# [[.docs.DataGenDoc]] -- generating data, including basic datatable gui usage (''required first step'')
+# [[.docs.DataAnalysisDoc]] -- analyzing data in various ways (grouping, stats, dimensionality reduction, etc)
+# [[.docs.DataBaseDoc]] -- data-base style operations for modifying data in various ways
+# [[.docs.DataCalcLoopDoc]] -- a very powerful mechanism for iterating through data tables row-by-row and performing various computations
+# [[.docs.MatrixDataDoc]] -- various operations on matrix column data
 
 Each document involves creating a separate Program with its own data tables, so after the first step of generating the data, each one can be independently explored in any order.
 
@@ -150,7 +270,7 @@ Each document involves creating a separate Program with its own data tables, so 
 ";
   };
   taDoc @[1] {
-   name="DataGen";
+   name="DataGenDoc";
    auto_open=0;
    text="<html>
 <head></head>
@@ -175,9 +295,117 @@ For our random data, we're going to simulate the results of a hypothetical test 
 * '''cycles''' (integer) -- number of cycles the network required (i.e., reaction time in a typical experiment)
 * '''sse''' (float) -- summed-squared error (how much error did the network make)
 
-For each column, just click on the Columns menu at the top of the middle edit panel for the data table, and select NewCol (for a scalar column -- one value per cell -- see [[.docs.MatrixData]] for matrix data), and then select the type (int = integer) and enter the name as given above.  As you create each column, it will be selected -- one could enter something akin to the above comments in the desc field, so another user would know what each column represents -- this is a very good habit to develop, but is admittedly difficult given limited time.
+For each column, just click on the Columns menu at the top of the middle edit panel for the data table, and select NewCol (for a scalar column -- one value per cell -- see [[.docs.MatrixData]] for matrix data), and then select the type (int = integer) and enter the name as given above.  As you create each column, it will be selected -- one could enter something akin to the above comments in the desc field, so another user would know what each column represents -- this is a very good habit to develop.
 
 '''Tip:''' you can do context-menu/Duplicate on a column in the left browser to create a new column of the same type -- this can be quicker.  Note also that you can move columns around in this left browser, and that determines the order they appear in the data table!  Deleting a column is similarly possible.  All of this also applies to the Columns tab of the edit panel as well.
+
+You can click on the other tabs (Data Table, Columns) to see that your table is configured properly when you're done.
+
+== Writing a Program to Generate Data ==
+
+Now we'll write a program to generate data for our table.
+
+Do context menu/New in programs to create a new program, and call it \"DataGenProg\".  Then click on the Edit Program sub-tab in the middle edit panel.  You can see the various empty containers for the various program elements:
+
+* objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
+* types -- special user-defined types that define properties of corresponding variables (currently for \"dynamic enums\" that define enumerated lists of options).
+* args -- (short for arguments) this is where you put variables that other programs will set when they run  this program.
+* vars -- place for other non-argument variables that are used in the program.
+* functions -- you can define subroutines (functions) that can be called within a program to perform a given task that needs to be done repeatedly.  These functions are only accessible from <i>within</i> this given program.
+* init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
+* prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
+
+Programming in this system mostly consists of dragging program elements from the toolbar at the very left edge of the display into your program, and then configuring their properties (drag-and-drop and duplicate are also very handy here).
+
+In the Toolbox, the program elements are organized into various sub-categories (Network, Ctrl, Var/Fun, etc).  Take a look through these categories and use the mouse-over to see what kinds of things are available.
+
+=== Overall Plan for Program ===
+
+Our overall plan for the program is to just iterate over the conditions, and then over batches, and randomly generate the sse and cycles data.  Therefore, we need to create 3 \"nested\" loops for each of these iterations, and some simple function calls to set the data.  There is a very useful feature of the system whereby variables with the same names as columns in a datatable can be easily stored and retrieved from a specified row in the datatable, so we'll name all our variables from the columns in the datatable.
+
+=== Step 1: Create Variables ===
+
+In the <code>Var/Fun</code> tab on the Toolbox, there is an item called <code>var</code> (''not'' <code>var=</code>) -- drag this into the <code>vars</code> section of your program, and select \"CopyInto\" (don't do AddVarTo for vars -- this option is nonsensical here and will be removed in a subsequent release).
+
+Name this new variable \"batch\", and select Int for its type (should be default already).  This will hold the batch counter that we iterate over, and will be written to the batch column of the data table.
+
+Repeat the above process, or do context menu/Duplicate, to create the remaining column variables (be sure to make sse a Real type, which is the program version of a floating point number (it is actually stored as a double-precision floating point number internally -- for the program level of code, runtime performance is not critical so only one floating point variable type is available, to simplify things).
+
+=== Step 2: Create For Loops ===
+
+Next, drag a <code>for</code> item from the <code>Ctrl</code> (program flow control elements) section of the toolbox into the <code>prog code</code> section of your program.
+
+There are 3 main elements to the for loop:
+* init -- run once at the start of the loop -- used to initialize the loop counter variable
+* test -- run after each iteration through the loop -- if this expression is true, the looping continues, else it stops
+* iter -- what to do after each iteration, typically incrementing the loop counter variable
+
+As you can see, the default for loop will iterate from 0 to 9 over the <code>i</code> variable (which it automatically crated for you in your vars section).
+
+Let's replace <code>i</code> with <code>cond1</code> (first condition variable), and have the test expression be: <code>cond1 &lt; 2</code> (and keep all other stuff the same aside from replacing i with cond1) -- this will iterate from 0 to 1 over the cond1 variable.
+
+Now repeat the process by dragging a for into the <code>loop_code</code> of your first for loop, and change it to use cond2 (with a test of < 2).
+
+Finally, repeat this process one last time, changing the variable to batch, and let's keep the test limit of 10 for now.
+
+=== Incremental Progress Test: Write the Vars And Run! ===
+
+It is often a good idea to program incrementally where possible, so you can test what you've done, and consolidate your understanding of how it works, before moving on to the next steps.  Thus, we're going to just write the for-loop variables to our datatable, and see how that works, before adding the random number generation part.
+
+Drag a <code>new row</code> item from the <code>Data</code> toolbox into the inner-most <code>loop code</code> of your three for loops.  This will add a new row into your data table, and then we'll write the variables into that row.  You should see it complaining about an ERROR -- you need to tell it which data table to add a new row to.  When you click on the <code>data var</code>, you'll see that it doesn't show any option corresponding to your MyRandomData data table.  This is because most all of these kinds of data program elements operate on ''variables'' that ''point to'' datatables, instead of referring to data tables directly.  This allows considerable more flexibility (one can change the variable to point to different data tables at will), at the cost of requiring an extra step when you don't need it (like now!).
+
+To create a variable that points to (refers to) your MyRandomData table, you can just drag that item from the left browser into the vars section of your program, and select <code>Add Var To</code>.  Note: you have to do this drag without first selecting the item -- just click down and ''hold the mouse button down'' while dragging over to vars -- otherwise you'll end up selecting the data table and won't be able to drag it into your program in the middle edit panel.
+
+You should see that you now have a variable called MyRandomData (you could rename it to anything else) that is of type Object*, meaning it points to an object (this is C language syntax), and the object_val is MyRandomData (i.e., the data table it is actually pointing to). If you had any other data tables lying around, you could see that you could select one of them and then this variable would point to that other data table.
+
+Now that we have the variable we need, go back down to the new row guy (says AddNewDataRow to:) and select this variable for the <code>data var</code>.  You should see that the text description of this program element says \"AddNewDataRow to: MyRandomData (or whatever you might have renamed your variable to).
+
+Finally, drag a <code>data vars</code> from the Data toolbox into the same loop code as before (this will add it to the end -- if you drop it on the AddNewDataRow guy it will replace it as the first item in the list -- it is also possible to drag it ''just'' after that item as indicated by a small horizontal line).
+
+Now select your datatable variable for the <code>data var</code> field, and click the <code>set data</code> flag ''on'', indicating that we are writing to the data table, as opposed to reading values from it (note that the text description in the program changes to \"To:\"), and then select cond1, cond2 and batch for <code>var 1, var 2,</code> and <code>var 3</code> respectively.  Leave the <code>row spec</code> at <code>CUR ROW</code>  -- the new row function will set the new row as the current row (each data table contains its own variable indicating the current row -- this is very widely used in the software, as some program elements will set the current row, and others will read/write to that row without having to keep track of which row it is).
+
+Ready for the moment of truth!?  Press the <code>Init</code> button at the bottom of the program editor.  Look at your '''css Console'' window to see if there were any error messages -- this is critical whenever you are programming, because often informative error messages or warnings will show up there.  Usually you will also get a pop-up dialog, but not always..  On Linux and Mac, you can find your css Console window by going to the overall program menu and selecting Window/css Console.  On Windows, the console is floating around somewhere behind your application, and looks like the command prompt window.
+
+Assuming you didn't get any errors, you are now ready to hit the Run button!  Nothing obvious happens!  To see if it did what you expected, click back up on the MyRandomData and select the Data Table view -- you should see 40 rows of data, with the batch, cond1 and cond2 columns filled in as you would expect.
+
+If you do get errors, the can only be in the for loop expressions -- you should get information when you enter those in the first place about whether they are incorrect.  Hopefully you can correct the mistake.  If you're stumped, you can always pull up the data_tutorial_final.proj file in the same directory as this project, which has the final working version of this program, and see what is different.
+
+=== Generating Random Numbers ===
+
+All we need to do to complete our program is generate random numbers for the cycles and sse values, and then set them to the data table.
+
+In the <code>Misc Fun</code> toolbox tab, you'll see a <code>random()</code> item -- drag that to the end of your loop code.  There are two things that need to be set: the <code>result var</code> and the <code>method</code>.  Select cycles for the result var, and then click on the method and choose \"Float\" at the top in the category selector -- this selector is very useful for narrowing down your set of options by different overall categories of methods (functions) available.  You can see that Random has different methods for generating integer (Int) and Boolean random numbers in addition to floating point.  The other categories are standard for all objects, and include File, Display, ObjectMgmt, and UserData functions.  Select the <code>Gauss</code> method from the Float category -- we'll generate Gaussian (normal) random variables for our cycles variable (even though it is an integer, we can generate the numbers using floating point and they'll automatically be converted to integers).
+
+The Gauss function takes one argument: the stdev or standard deviation of the random variable to generate.  We can just enter 5 for that -- you have to click on the stdev line under the Random method call to enter this number into the expr field.  You could enter any kind of fancy expression here (more on that in a moment).
+
+To make this number more realistic, we need to add a mean offset to it -- do this by dragging a <code>var+=</code> item from the <code>Var/Fun</code> toolbox into the end of the loop code, and select cycles for the var.  Now we get to write an interesting expression for the mean offset that we will add to this variable.  The expression is: <code>20 + cond1 * 4 + cond2 * 6 + cond1 * cond2 * 1</code> -- note that you can use the var lookup selector to lookup these variables and enter them into the expression, or just type Ctrl-L to pull up a selector directly while typing in the field.  The Ctrl-L lookup selector is particularly powerful and context sensitive, allowing you to lookup all manner of expression elements (functions, types, methods, members, etc) depending on the current text that you've entered so far.  Give it a try!
+
+This expression basically provides for a main effect of the two independent condition variables, plus a small interaction term.  Feel free to experiment with different expressions later -- some of the subsequent tutorial text depends on this particular equation however.
+
+We want to just duplicate and modify these two lines of code for the sse computation.  You can do this using an extended select (click on the first element, then hold down shift and click on the next one) -- note that you need to first \"close\" the Random method call to not show the arguments, so that what you select will just be overall program elements.  Then, you can either drag these two guys into the loop code, or do context menu Copy, and then context-menu paste on the loop code item.  This is a very powerful way of creating new code by copying existing chunks of code!
+
+Now go into these two new items and select sse for the var instead of cycles, set the stdev to 2, and the var+= expression to: <code>10 + cond1 * 2 + cond2 * 3 + cond1 * cond2 * 1</code>
+
+=== Final Bits ===
+
+The last step is to add an additional <code>data vars</code> item to the end (can just drag the existing one onto the loop code and Copy to put it at the end), configured as before, but with cycles and sse as the two variables to set.
+
+Finally, we need to add one new element to the start of the program.  This will be evident if you are impatient and just did Init and Run -- your data table just keeps growing in size every time you run the program!  We need to start by resetting the rows.  Drag a <code>reset rows</code> item from the <code>Data</code> toolkit on top of the first for loop -- it will go at the start of the program.  As you might expect, you need to select the data table variable for the data var.
+
+Now you are ready to do Init and Run, and then inspect the results in your MyRandomData table.
+
+== Graphing the Data ==
+
+To really see if you've achieved what the above equations seem like they should, you can create a graph of your data.
+
+Select MyRandomData, and in the smaller menu at the top of this middle edit dialog, select View/New Graph View, and leave the default at New Frame.
+
+You will see a graph appear in the right view panel, but the default configuration probably doesn't make a lot of sense.  Select the right-most tab in the middle panel (initially called Frame1), to reveal the graph view control panel, which enables you to configure how the graph view looks.  At the top, change the Style to POINTS instead of LINES.  Then make sure that cycles is selected for the X axis, and sse for the Y1 axis, and turn the on button off for the Z axis variable. You should now see a nice scatterplot showing what looks like a decent correlation between cycles and sse.  We'll explore the analysis of this correlation in the [[.docs.DataAnalysisDoc]] tutorial next!
+
+== Futher Extensions ==
+
+You can extend the program by adding variables for the constants in the random number equations -- just make new variables, and turn on the Ctrl Panel flag so that they appear in the first \"Program Ctrl\" panel of the program edit panel (this presents the \"user\" view of the program, as compared to the programmer view, and it should contain the key parameters that a user might want to manipulate or set).
+
 
 
 </body>
@@ -185,18 +413,58 @@ For each column, just click on the Columns menu at the top of the middle edit pa
 ";
   };
   taDoc @[2] {
-   name="DataAnalysis";
+   name="DataAnalysisDoc";
    auto_open=0;
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Data Analysis =
+
+This document describes the process of analyzing the data generated in the [[.docs.DataGenDoc]] program (which must be completed first).
+
+The single most important analysis tool is the Group function, which we introduce first.  Then, we cover various other useful tools including various statistics.
+
+First, we create a new Program to put our analysis functions in: do programs/New, and call the new program: DataAnalProg.  Click on the Edit Program tab so we can start editing it.
+
+== Group Function ==
+
+Drag the <code>group</code> item from the <code>Data Proc</code> toolkit into your <code>prog code</code> in the program.  You can see that this requires a <code>src data var</code> and a <code>dest data var</code> -- the src is the data table to be analyzed, and the dest is where the resulting data goes.  As we learned before, we need to create variables that point to these data tables.
+
+Drag the MyRandomData data table (in data/InputData) into the vars section of your program, and do Add Var To.  This will be our source (src) data.
+
+For the dest data, we can create a new data table directly within the program itself -- this is useful for data that will not generally be used by other programs, and is thus best left \"encapsulated\" within the one program where it is used -- this makes it easier to share the program with other users, etc.  We didn't do this with the MyRandomData table because it is shared among all of our programs in this project.
+
+To create the new data table, do context menu in the objs field, and select New Data Table.  Click on the new data table, and give it an appropraite name like \"grouped_data\".  Note that when you created the new data table, it automatically created a variable in the vars section of the program that points to it -- this is true for any object created in the objs section of a program, because most program functions require a variable to access the object in any case.  Also, when you rename the object, the variable is automatically renamed as well.
+
+Now you can go back to the Group item and select the MyRandomData variable for the src data, and your grouped_data var for the dest data.
+
+Next, click on the Add Column button, and just hit Ok for the dialog that comes up asking for a column name -- it is usually easier just to pick it from a list that we can get when we edit the item.  Click on the new item that appeared below the group_spec, and in the <code>col lookup</code> field, select the cond1 column.  Then select <code>GROUP</code> for the <code>agg op</code> (aggregation operator) -- this means that all the rows for each different value that shows up in the cond1 field will be grouped together in the resulting output data table.
+
+Duplicate this cond1 column and set the name to cond2, so we get grouping by both of our independent condition variables.
+
+Next, duplicate the cond2 guy and enter/lookup cycles, and change the agg op back to MEAN.
+
+Finally, duplicate that cycles item and change it to sse.
+
+We are now ready to Init and Run the program -- go ahead!  To see the results, click on the grouped_data data table in the ''left tree view'' (this is the only way to get the Data Table view that shows the data).  You should see four rows of data, with each unique combination of cond1 and cond2, and the means of the data for each of these condition combinations.
+
+=== Creating a Bar Graph of the Grouped Data ===
+
+To better see the results, we'll create a bar graph.  Do View/New Graph View for the grouped_data table, and leave the default New Frame and hit OK (it is also possible to put multiple graphs on a singe view frame by selecting an existing frame there).  To get this to display as a bar graph, you need to click on the view control tab (rightmost tab in middle panel), and change the graph setting at the top to BAR, then click Row Num for the X axis, and set a fixed min/max of -.9 and 3.9.  Turn off the Z axis, and select sse_mean for Y2.  Lastly, toward the bottom, select FIXED COLOR for the color mode, so that the cycles show up as black bars and sse is red.  This should give a decent display of the quantitative data, if not particularly well-labeled (we'll get to that later).
+
+=== Adding SEM Error Bars ===
+
+To be able to visually interpret whether there are significant differences between these results, it would be nice to add error bars that reflect the standard error of the mean (SEM), which provides a rough visual sense of statistical significance (if the error-bars between conditions do not overlap, then the result is likely statistically significant -- of course an actual statistical test is required to know for sure).
+
+To generate SEM data, you just have to go back to the Group spec, and duplicate the cycles and sse items and replace the agg_op in the duplicates with SEM instead of MEAN.  Then Run again.
+
+
 </body>
 </html>
 ";
   };
   taDoc @[3] {
-   name="DataBase";
+   name="DataBaseDoc";
    auto_open=0;
    text="<html>
 <head></head>
@@ -207,7 +475,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
 ";
   };
   taDoc @[4] {
-   name="DataCalcLoop";
+   name="DataCalcLoopDoc";
    auto_open=0;
    text="<html>
 <head></head>
@@ -218,7 +486,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
 ";
   };
   taDoc @[5] {
-   name="MatrixData";
+   name="MatrixDataDoc";
    auto_open=0;
    text="<html>
 <head></head>
@@ -310,7 +578,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
       };
       ar {
        name=;
-	    [0]       };
+	    [40] 0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;      };
      };
      int_Data @[1] {
       UserDataItem_List @*(.user_data_) {
@@ -332,7 +600,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
       };
       ar {
        name=;
-	    [0]       };
+	    [40] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;      };
      };
      int_Data @[2] {
       UserDataItem_List @*(.user_data_) {
@@ -354,7 +622,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
       };
       ar {
        name=;
-	    [0]       };
+	    [40] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;      };
      };
      int_Data @[3] {
       UserDataItem_List @*(.user_data_) {
@@ -376,7 +644,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
       };
       ar {
        name=;
-	    [0]       };
+	    [40] 22;22;14;20;25;26;22;20;25;18;22;24;31;26;32;26;24;18;32;17;22;18;17;23;26;25;31;24;24;19;33;31;31;29;25;30;38;28;23;35;      };
      };
      float_Data @[4] {
       name="sse";
@@ -389,7 +657,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
       };
       ar {
        name=;
-	    [0]       };
+	    [40] 12.96199;8.7764883;9.1705914;8.7239799;9.0430956;8.2273264;12.05254;11.231114;11.670703;7.2926192;18.590942;13.32478;14.818536;8.5334902;12.226235;15.865373;9.4373112;17.277391;12.206725;9.8924589;10.641316;11.491203;10.349874;11.496339;11.275867;10.307311;13.779653;13.054425;12.130418;11.508247;14.95736;11.562045;16.282803;14.811419;16.396666;14.347064;18.994009;16.332794;13.699154;15.480586;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -469,13 +737,503 @@ For each column, just click on the Columns menu at the top of the middle edit pa
   step_prog=NULL;
   tags=;
   desc=;
+  Program @[0] {
+   name="DataGenProg";
+   tags=;
+   desc="program for generating data";
+   flags=;
+   objs {
+    name=;
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="batch";
+     var_type=T_Int;
+     int_val=10;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="cond1";
+     var_type=T_Int;
+     int_val=2;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[2] {
+     name="cond2";
+     var_type=T_Int;
+     int_val=2;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="cycles";
+     var_type=T_Int;
+     int_val=35;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[4] {
+     name="sse";
+     var_type=T_Real;
+     real_val=15.48058561761692;
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[5] {
+     name="i";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=NULL_CHECK;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[6] {
+     name="MyRandomData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].data.gp[0][0]$0$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    ResetDataRows @[0] {
+     desc=;
+     flags=;
+     data_var=.projects[0].programs[0].vars[6]$1$;
+    };
+    ForLoop @[1] {
+     desc=;
+     flags=;
+     loop_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      ForLoop @[0] {
+       desc=;
+       flags=;
+       loop_code {
+	name=;
+	el_typ=ProgEl;
+	el_def=0;
+	ForLoop @[0] {
+	 desc=;
+	 flags=;
+	 loop_code {
+	  name=;
+	  el_typ=ProgEl;
+	  el_def=0;
+	  AddNewDataRow @[0] {
+	   desc=;
+	   flags=;
+	   data_var=$1$;
+	  };
+	  DataVarProg @[1] {
+	   desc=;
+	   flags=;
+	   data_var=$1$;
+	   set_data=1;
+	   row_spec=CUR_ROW;
+	   row_var=NULL;
+	   var_1=.projects[0].programs[0].vars[1]$2$;
+	   var_2=.projects[0].programs[0].vars[2]$3$;
+	   var_3=.projects[0].programs[0].vars[0]$4$;
+	   var_4=NULL;
+	  };
+	  RandomCall @[2] {
+	   desc=;
+	   flags=;
+	   result_var=.projects[0].programs[0].vars[3]$5$;
+	   object_type=Random;
+	   method=Random::Gauss;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=double;
+	     type="double";
+	     name="stdev";
+	     required=0;
+	     def_val=;
+	     expr {
+	      expr="5";
+	     };
+	    };
+	   };
+	  };
+	  VarIncr @[3] {
+	   desc=;
+	   flags=;
+	   var=$5$;
+	   expr {
+	    expr="20 + cond1 * 4 + cond2 * 6 + cond1 * cond2 * 1";
+	   };
+	  };
+	  RandomCall @[4] {
+	   desc=;
+	   flags=;
+	   result_var=.projects[0].programs[0].vars[4]$6$;
+	   object_type=Random;
+	   method=Random::Gauss;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=double;
+	     type="double";
+	     name="stdev";
+	     required=0;
+	     def_val=;
+	     expr {
+	      expr="2";
+	     };
+	    };
+	   };
+	  };
+	  VarIncr @[5] {
+	   desc=;
+	   flags=;
+	   var=$6$;
+	   expr {
+	    expr="10 + cond1 * 2 + cond2 * 3 + cond1 * cond2 * 1";
+	   };
+	  };
+	  DataVarProg @[6] {
+	   desc=;
+	   flags=;
+	   data_var=$1$;
+	   set_data=1;
+	   row_spec=CUR_ROW;
+	   row_var=NULL;
+	   var_1=$5$;
+	   var_2=$6$;
+	   var_3=NULL;
+	   var_4=NULL;
+	  };
+	 };
+	 init {
+	  expr="batch = 0";
+	 };
+	 test {
+	  expr="batch < 10";
+	 };
+	 iter {
+	  expr="batch++";
+	 };
+	};
+       };
+       init {
+	expr="cond2 = 0";
+       };
+       test {
+	expr="cond2 < 2";
+       };
+       iter {
+	expr="cond2++";
+       };
+      };
+     };
+     init {
+      expr="cond1 = 0";
+     };
+     test {
+      expr="cond1 < 2";
+     };
+     iter {
+      expr="cond1++";
+     };
+    };
+   };
+  };
+  Program @[1] {
+   name="DataAnalProg";
+   tags=;
+   desc="data analysis program";
+   flags=;
+   objs {
+    name=;
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="grouped_data";
+     desc=;
+     data {
+      name="data";
+      el_typ=DataColTp;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond1_group";
+       desc="condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 0;0;1;1;       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond2_group";
+       desc="condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 0;1;0;1;       };
+      };
+      float_Data @[2] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles_mean";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 21.4;25.200001;22.9;30.299999;       };
+      };
+      float_Data @[3] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles_sem";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 1.1469767;1.6983652;1.3203535;1.4067299;       };
+      };
+      float_Data @[4] {
+       name="sse_mean";
+       desc="summed-squared error (how much error did the network make)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 9.9150448;13.217325;11.603466;15.286389;       };
+      };
+      float_Data @[5] {
+       name="sse_sem";
+       desc="summed-squared error (how much error did the network make)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 0.60020459;1.0761691;0.35647127;0.6210289;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="MyRandomData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$0$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="grouped_data";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[1].objs[0]$7$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    DataGroupProg @[0] {
+     desc=;
+     flags=;
+     src_data_var=.projects[0].programs[1].vars[0]$8$;
+     dest_data_var=.projects[0].programs[1].vars[1]$9$;
+     group_spec {
+      name="group_spec";
+      ops {
+       name=;
+       el_typ=DataGroupEl;
+       el_def=0;
+       DataGroupEl @[0] {
+	col_name="cond1";
+	agg {name="Aggregate": op=GROUP: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[1] {
+	col_name="cond2";
+	agg {name="Aggregate": op=GROUP: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[2] {
+	col_name="cycles";
+	agg {name="Aggregate": op=MEAN: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[3] {
+	col_name="cycles";
+	agg {name="Aggregate": op=SEM: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[4] {
+	col_name="sse";
+	agg {name="Aggregate": op=MEAN: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[5] {
+	col_name="sse";
+	agg {name="Aggregate": op=SEM: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+      };
+      append_agg_name=1;
+     };
+    };
+   };
+  };
  };
  viewers {
   name=;
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$0$;
+   m_data=.projects[0]$10$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -505,7 +1263,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$0$;
+     m_root=$10$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -522,7 +1280,7 @@ For each column, just click on the Columns menu at the top of the middle edit pa
       el_def=0;
       T3DataViewFrame @[0] {
        m_data=NULL;
-       name="Frame1";
+       name="MyRandomData";
        visible=1;
        root_view {
 	m_data=NULL;
@@ -531,11 +1289,653 @@ For each column, just click on the Columns menu at the top of the middle edit pa
 	 name=;
 	 el_typ=T3DataViewMain;
 	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$0$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].data.gp[0][0].data[0]$11$;
+	    m_transform=NULL;
+	    name="batch";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=9: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].data.gp[0][0].data[1]$12$;
+	    m_transform=NULL;
+	    name="cond1";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].data.gp[0][0].data[2]$13$;
+	    m_transform=NULL;
+	    name="cond2";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].data.gp[0][0].data[3]$14$;
+	    m_transform=NULL;
+	    name="cycles";
+	    visible=1;
+	    fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    m_data=.projects[0].data.gp[0][0].data[4]$15$;
+	    m_transform=NULL;
+	    name="sse";
+	    visible=1;
+	    fixed_range {fix_min=0: min=7.29262: fix_max=0: max=18.994: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=39: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=POINTS;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="cycles";
+	   fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=14: max=38: };
+	   range {min=14: max=38: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="cond2";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="sse";
+	   fixed_range {fix_min=0: min=7.292619: fix_max=0: max=18.99401: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=7.292619: max=18.99401: };
+	   range {min=7.292619: max=18.99401: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name="cycles";
+	   fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=14: max=38: };
+	   range {min=14: max=38: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name="cond1";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=.colorspecs[0]$16$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
 	};
        };
-       camera_pos {x=0: y=0: z=-0.4765596: };
+       camera_pos {x=1.4275: y=0.445: z=1.376934: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=3.52344;
+       camera_focdist=1.866934;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[1] {
+       m_data=NULL;
+       name="grouped_data";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$7$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].programs[1].objs[0].data[0]$17$;
+	    m_transform=NULL;
+	    name="cond1_group";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].programs[1].objs[0].data[1]$18$;
+	    m_transform=NULL;
+	    name="cond2_group";
+	    visible=1;
+	    fixed_range {fix_min=1: min=-0.9: fix_max=1: max=3.9: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].programs[1].objs[0].data[2]$19$;
+	    m_transform=NULL;
+	    name="cycles_mean";
+	    visible=1;
+	    fixed_range {fix_min=0: min=21.4: fix_max=0: max=30.3: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].programs[1].objs[0].data[3]$20$;
+	    m_transform=NULL;
+	    name="cycles_sem";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    m_data=.projects[0].programs[1].objs[0].data[4]$21$;
+	    m_transform=NULL;
+	    name="sse_mean";
+	    visible=1;
+	    fixed_range {fix_min=0: min=9.91504: fix_max=0: max=15.2864: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[5] {
+	    m_data=.projects[0].programs[1].objs[0].data[5]$22$;
+	    m_transform=NULL;
+	    name="sse_sem";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=3: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=BAR;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="cond2_group";
+	   fixed_range {fix_min=1: min=-0.9: fix_max=1: max=3.9: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-0.9: max=3.9: };
+	   range {min=-0.9: max=3.9: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="cond1_group";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=1: };
+	   range {min=0: max=1: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="cycles_mean";
+	   fixed_range {fix_min=0: min=21.4: fix_max=0: max=30.3: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=9.915045: max=30.3: };
+	   range {min=5: max=35: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="sse_mean";
+	   fixed_range {fix_min=0: min=9.915045: fix_max=0: max=15.28639: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=9.915045: max=15.28639: };
+	   range {min=9.915045: max=15.28639: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="cycles_sem";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="sse_sem";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$16$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.4275: y=0.445: z=1.376934: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.866934;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
