@@ -5,6 +5,10 @@
 20080701_03 -- added the dWt calc to the Compute_Weight call
 20080701_04 -- changed the stride from 1 to 8
 20080701_05 -- (very minor) omit clearing Task0:excit for Send_Array (redundant)
+20080702_02 -- baseline on wave (note: CPU=2GHz, not 3GHz due to no PowerNow)
+20080702_03 -- small change to inner Send loop, to use wtsi[] array direct (not cg->Wti)
+
+
 
 
 

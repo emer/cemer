@@ -6,6 +6,12 @@
 
 #include <QtCore/QString>
 
+// switches
+//#define USE_INT_IDX // true to use indirect ints, else use ptrs
+#define WT_IN_CONN // true if wt is in Conn, else in an array
+
+#ifdef USE_INT_IDX
+#endif
 
 class Conn;
 class RecvCons;
@@ -44,29 +50,42 @@ typedef taList<NetTask>		NetTaskList;
 class Conn {
   // one connection between units
 public:
-  
+#ifdef WT_IN_CONN
+  float		wt;
+#endif
   float 	dwt;	// delta-weight
   float		pdw;
   float		sravg;	// #NO_SAVE average of sender and receiver activation 
   //Conn() {dwt = pdw = sravg = 0.0f;}
 };
 
-typedef taArray<Conn>	ConArray;
-typedef taPtrList<Conn>	ConPtrList; // SendCons
+typedef taArray<Conn>		ConArray;
+typedef taPtrList<Conn>		ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
 
 class ConsBase {
 public:
-  int_Array		units; // global indexes of the units
+#ifdef USE_INT_IDX
+  int*			units; // global indexes of the units
+  inline int		Uni(int i) {return units[i];}
+#else
+  Unit**		units;
+  inline Unit*		Un(int i) {return units[i];}
+#endif
+  
   int			size; // number of connections
   void			setSize(int i) 
     {if (i == size) return; setSize_impl(i); size = i;}
   
-  inline int		Uni(int i) {return units.el[i];}
   
   virtual ~ConsBase() {size = 0;}
 protected:
+#ifdef USE_INT_IDX
+  int_Array		m_units; // global indexes of the units
+#else
+  UnitPtrList		m_units;
+#endif
   virtual void		setSize_impl(int);
 };
 
@@ -77,12 +96,16 @@ protected:
 class RecvCons: public ConsBase {
 INHERITED(ConsBase)
 public:
-  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
   Conn*			cons; // flat array -- ReadOnly!!! you must access safely!!!
-  float			dwt_mean;
+#ifdef WT_IN_CONN
+  inline float&		Wt(int i) {return cons[i].wt;}
+#else
+  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
   int			wti_base; // base index for the wts in net->g_wts
-  
   inline float&		Wt(int i) {return wts[i];}
+#endif
+  float			dwt_mean;
+  
   inline Conn*		Cn(int i) {return &(cons[i]);}
   
   int		send_idx;
@@ -91,6 +114,10 @@ public:
   RecvCons();
   ~RecvCons() {}
 protected:
+  override void		setSize_impl(int i);
+#ifndef USE_INT_IDX
+  ConArray		m_cons;
+#endif
 };
 
 typedef taList<RecvCons>	RecvCons_List;
@@ -100,10 +127,14 @@ typedef taList<RecvCons>	RecvCons_List;
 class SendCons: public ConsBase {
 INHERITED(ConsBase)
 public:
-  int_Array		cons; // global indexes of the cons/wts
-  
-  inline int		Cni(int i) {return cons.el[i];}
-  inline int		Wti(int i) {return cons.el[i];} // note: same as Cni
+#ifdef USE_INT_IDX
+  int*			cons;
+#else
+  Conn**		cons;
+#endif
+
+//  inline int		Cni(int i) {return cons.el[i];}
+//  inline int		Wti(int i) {return cons.el[i];} // note: same as Cni
   
   int		recv_idx;
   Layer*	recv_lay; // receiving layer
@@ -111,6 +142,11 @@ public:
   SendCons() { recv_idx = -1; recv_lay = NULL;}
   ~SendCons() {}
 protected:
+#ifdef USE_INT_IDX
+  int_Array		m_cons; // global indexes of the cons/wts
+#else
+  ConPtrList		m_cons;
+#endif
   override void		setSize_impl(int i);
 };
 
@@ -143,6 +179,9 @@ class Unit {
 public:
   RecvCons_List	recv;
   SendCons_List send;
+  
+  float		act;
+  float 	net;
   int		uni; // flat index
   float		act_avg;
   int		task_id; // which task will process this guy
@@ -151,9 +190,6 @@ public:
   UnitSpec*	spec;
   bool		do_delta; // for sender and recv_smart
   int		n_con_calc; // total number of con calcs done for this unit
-  
-//  inline float&	act() {return g_acts[uni];}
-//  inline float&	net() {return g_nets[uni];}
   
   void		CalcDelta(); // sets delta if we should do a delta
   
@@ -189,15 +225,13 @@ public:
 // Units -- all indexes are commensurable
   int			n_units_flat; // number of global units (acts, nets, etc.)
   Unit**		g_units; // global units 
-  float*		g_acts; // global acts
-  float*		g_nets; // global nets
-
   
   // Conns
+#ifndef WT_IN_CONN
   float*		g_wts; // global weights
   Conn*			g_cons;
   static int		g_next_wti; // next wti, only valid during Build
-  
+#endif  
   int			cycle;
   
   
@@ -223,12 +257,11 @@ public:
   virtual ~Network();
 protected:
   UnitPtrList 		units_flat;	// all units, flattened
-  float_Array		acts_flat; // global acts
-  float_Array		nets_flat; // global nets
   
+#ifndef WT_IN_CONN
   float_Array		wts_flat; // global wts
   ConArray		cons_flat; // global cons
-  
+#endif  
   void			PartitionUnits_RoundRobin(); // for recv, and send-clash
   //void		PartitionUnits_SendClash(); 
 };
@@ -360,7 +393,7 @@ public:
   
   
 // ComputeAct  
-  float 	ComputeAct_inner(int uni);
+  float 	ComputeAct_inner(Unit* un);
   float		my_act;
   virtual void	ComputeAct(); // default does it globally
   
