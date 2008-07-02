@@ -2,5 +2,6 @@
 20080629_02 -- optimized conn wti assignment so that RECV_CONS/sender-based gets sender-ordered cons
 20080629_04 -- DOH -- pulled the rand() call from the inner wt calc! 
 20080630_05 -- run on Mac before reorg discussed w/ Randy today
+20080701_03 -- added the dWt calc to the Compute_Weight call
 
  

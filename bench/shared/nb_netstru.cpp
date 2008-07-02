@@ -82,7 +82,24 @@ void ConSpec::Compute_SRAvg(Network* net, Unit* ru) {
   }
 }
 
-void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* /*ru*/) {
+void ConSpec::Compute_Weights_CtCAL(Network* net, RecvCons* cg, Unit* ru) {
+  // first emulate the Leabra "dWt" calc
+  float* g_acts = net->g_acts;
+  const float ru_act = g_acts[ru->uni];
+  for (int i=0; i<cg->size; i++) {
+    const float su_act = g_acts[cg->Uni(i)];
+    const float& cn_wt = cg->Wt(i);
+    Conn* cn = cg->Cn(i);
+   // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+    float err = (ru_act * su_act) - (0.02f * cn->sravg);
+    //if(lmix.err_sb) {
+      if(err > 0.0f) err *= (1.0f - cn_wt);
+      else	     err *= cn_wt;
+    //}
+    cn->dwt += cur_lrate * err;
+    cn->sravg = 0.0f;
+  }
+  
   //Compute_dWtMean(cg, ru);
   cg->dwt_mean = 0.0f;
   for (int i = 0; i < cg->size; ++i) {
@@ -230,57 +247,6 @@ void Layer::ConnectFrom(Layer* lay_fm) {
     }
   }
 }
-
-/*
-void Layer::ConnectFrom(Layer* lay_fm) {
-  Nb::n_prjns++;
-  const int n_send = lay_fm->units.size;
-  if (n_send == 0) return; // shouldn't happen
-  // get a unit to determine sending gp
-  Unit* un = lay_fm->units.FastEl(0);
-  const int send_idx = un->send.size; // index of new send gp...
-
-  for (int i_to = 0; i_to < units.size; ++i_to) {
-    Unit* un_to = units.FastEl(i_to);
-    const int recv_idx = un_to->recv.size; // index of new recv gp...
-    
-    // new RecvCons, and init
-    int& g_next_wti = Network::g_next_wti; // abstract
-    RecvCons* recv_gp = un_to->recv.New();
-    recv_gp->setSize(n_send);
-    recv_gp->send_idx = send_idx;
-    recv_gp->send_lay = lay_fm;
-    // global index of wts/cons, and pointers thereof
-    recv_gp->wti_base = g_next_wti;
-    recv_gp->wts = &(net->g_wts[g_next_wti]);
-    recv_gp->cons = &(net->g_cons[g_next_wti]);
-    g_next_wti += n_send;
-    
-    for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
-      Unit* un_fm = lay_fm->units.FastEl(i_fm);
-      SendCons* send_gp;
-      if (i_fm == 0) {
-        send_gp = un_fm->send.New();
-        send_gp->setSize(n_send);
-        send_gp->recv_idx = recv_idx;
-        send_gp->recv_lay = this;
-      } else {
-        send_gp = un_fm->send.FastEl(send_idx);
-      }
-      
-//      Conn* cn = recv_gp->Cn(i_fm);
-      float& wt = recv_gp->Wt(i_fm);
-      wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-      // set the global index of target Conn
-      const int g_wti = recv_gp->wti_base + i_fm;
-      send_gp->cons.Set(g_wti, i_fm);
-      // set global index of target Unit
-      send_gp->units.Set(un_to->uni, i_fm);
-      // set index of sending unit
-      recv_gp->units.Set(un_fm->uni, i_fm); //??
-    }
-  }
-}*/
 
 
 //////////////////////////
