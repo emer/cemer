@@ -992,8 +992,10 @@ void Nb::ParseCmdLine(int& /*rval*/) {
     if (targ == "-safe=0")
       safe = false;
 #endif
-    if (targ == "-header")
-      hdr = true;
+    if ((targ == "-header") || (targ == "-header=1")) {
+      hdr = true; continue;}
+    if (targ == "-header=0") {
+      hdr = false; continue;}
     if (targ.startsWith("-algo=")) {
       NetEngine::algo = targ.remove("-algo=").toInt();
       continue; }
