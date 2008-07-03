@@ -6,22 +6,24 @@
 
 #include <QtCore/QString>
 
-// switches
+// switches and optional subswitches
 //#define USE_INT_IDX // true to use indirect ints, else use ptrs
 #define WT_RECV 0 // owned by RecvCons
 #define WT_SEND 1 // owned by SendCons
 #define WT_CONN 2 // is baked into Conn
 
-#define WT_IN WT_RECV
+#define WT_IN WT_SEND
 
-// template, and catch
+// template, subswitches, and catch
 #if (WT_IN == WT_CONN)
 #elif (WT_IN == WT_RECV)
 #elif (WT_IN == WT_SEND)
+# define PWT_IN_CONN // put a ptr to wt in Conn, instead of using a PtrList 
 #else
 # error("WT_IN not set")
 #endif
 
+// optional subs
 class Conn;
 class RecvCons;
 class SendCons;
@@ -59,8 +61,11 @@ typedef taList<NetTask>		NetTaskList;
 class Conn {
   // one connection between units
 public:
+//NOTE: when wt is in Conn, it MUST be placed as the first member
 #if (WT_IN == WT_CONN)
   float		wt;
+#elif defined(PWT_IN_CONN)
+  float*	pwt;
 #endif
   float 	dwt;	// delta-weight
   float		pdw;
@@ -76,13 +81,8 @@ typedef taArray<float*>		floatPtrList;
 
 class ConsBase {
 public:
-#ifdef USE_INT_IDX
-  int*			units; // global indexes of the units
-  inline int		Uni(int i) {return units[i];}
-#else
   Unit**		units;
   inline Unit*		Un(int i) {return units[i];}
-#endif
   
   int			size; // number of connections
   void			setSize(int i) 
@@ -91,11 +91,8 @@ public:
   
   virtual ~ConsBase() {size = 0;}
 protected:
-#ifdef USE_INT_IDX
-  int_Array		m_units; // global indexes of the units
-#else
   UnitPtrList		m_units;
-#endif
+  
   virtual void		setSize_impl(int);
 };
 
@@ -113,8 +110,14 @@ public:
   float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
   inline float&		Wt(int i) {return wts[i];}
 #elif (WT_IN == WT_SEND)
+# if defined(PWT_IN_CONN)
+  inline float&		Wt(int i) {return *(cons[i].pwt);}
+  inline void		SetWt(float* pwt, int i) {cons[i].pwt = pwt;}
+# else
   float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
   inline float&		Wt(int i) {return *(pwts[i]);}
+  inline void		SetWt(float* pwt, int i) {pwts[i] = pwt;}
+# endif
 #endif
   float			dwt_mean;
   
@@ -130,7 +133,7 @@ protected:
   ConArray		m_cons;
 #if (WT_IN == WT_RECV)
   float_Array		m_wts;
-#elif (WT_IN == WT_SEND)
+#elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
   floatPtrList		m_pwts; 
 #endif
 };
@@ -142,11 +145,15 @@ typedef taList<RecvCons>	RecvCons_List;
 class SendCons: public ConsBase {
 INHERITED(ConsBase)
 public:
-#ifdef USE_INT_IDX
-  int*			cons;
-#else
   Conn**		cons;
-  float**		pwts;
+#if (WT_IN == WT_CONN)
+  inline float&		Wt(int i) {return cons[i]->wt;}
+#elif (WT_IN == WT_RECV)
+  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
+  inline float&		Wt(int i) {return *(pwts[i]);}
+#elif (WT_IN == WT_SEND)
+  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
+  inline float&		Wt(int i) {return wts[i];}
 #endif
 
 //  inline int		Cni(int i) {return cons.el[i];}
@@ -158,12 +165,13 @@ public:
   SendCons() { recv_idx = -1; recv_lay = NULL;}
   ~SendCons() {}
 protected:
-#ifdef USE_INT_IDX
-  int_Array		m_cons; // global indexes of the cons/wts
-#else
   ConPtrList		m_cons;
-  floatPtrList		m_wts;
+#if (WT_IN == WT_RECV)
+  floatPtrList		m_pwts;
+#elif (WT_IN == WT_SEND)
+  float_Array		m_wts;
 #endif
+  
   override void		setSize_impl(int i);
 };
 
@@ -462,6 +470,7 @@ public:
   static int inv_act; // inverse of activation -- can use to divide
   
   static int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
+  static const int	wt_in = WT_IN; // just for logging
   
 // thread values
   

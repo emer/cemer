@@ -45,24 +45,19 @@ RecvCons::RecvCons() {
   send_lay = NULL;
   dwt_mean = 0.0f;
   cons = NULL;
-#if (WT_IN == WT_CONN)
-  wts = NULL;
-#endif
+  //note: we don't init the modal guys -- they get written in setSize
 }
 
 void RecvCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
-#ifdef USE_INT_IDX
-#else
   m_cons.SetSize(i);
   cons = m_cons.Els();
-#endif
 #if (WT_IN == WT_CONN)
-# error("TODO")
+  // nothing
 #elif (WT_IN == WT_RECV)
   m_wts.SetSize(i); 
   wts = m_wts.Els();
-#elif (WT_IN == WT_SEND)
+#elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
   m_pwts.SetSize(i); 
   pwts = m_pwts.Els();
 #endif
@@ -74,18 +69,16 @@ void RecvCons::setSize_impl(int i) {
 
 void SendCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
-#ifdef USE_INT_IDX
-  m_cons.SetSize(i);
-# ifdef DEBUGß
-  m_cons.Fill(-1); // helps detect errors
-# endif
-#else
   m_cons.Alloc(i);
-  m_wts.SetSize(i);
-  m_wts.Fill(NULL);
-  pwts = m_wts.el;
-#endif
   cons = m_cons.Els();
+#if (WT_IN == WT_RECV)
+  m_pwts.SetSize(i);
+  m_pwts.Fill(NULL);
+  pwts = m_pwts.el;
+#elif (WT_IN == WT_SEND)
+  m_wts.SetSize(i); // init'ed in Build
+  wts = m_wts.el;
+#endif
 }
 
 
@@ -119,7 +112,13 @@ void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* ru) {
   for (int i=0; i<cg->size; i++) {
     const float su_act = cg->Un(i)->act;
     Conn* cn = cg->Cn(i);
+#if (WT_IN == WT_CONN)
+    const float& cn_wt = cn->wt;
+#elif defined(PWT_IN_CONN)
+    const float& cn_wt = *(const_cast<const float*>(cn->pwt));
+#else
     const float& cn_wt = cg->Wt(i);
+#endif
    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
     float err = (ru_act * su_act) - (0.02f * cn->sravg);
     //if(lmix.err_sb) {
@@ -142,7 +141,14 @@ void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* ru) {
     
   for (int i = 0; i < cg->size; ++i) {
     Conn* cn = cg->Cn(i);
+//note: following is optimization only
+#if (WT_IN == WT_CONN)
+    float& cn_wt = cn->wt;
+#elif defined(PWT_IN_CONN)
+    float& cn_wt = *(cn->pwt);
+#else
     float& cn_wt = cg->Wt(i);
+#endif
     
     // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
     float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
@@ -255,24 +261,22 @@ void Layer::ConnectFrom(Layer* lay_fm) {
       un_fm = lay_fm->units.FastEl(i_fm);
       
       SendCons* send_gp = un_fm->send.FastEl(send_idx);
-      // Recv stuff
+      
+      // wt references and access
+#if (WT_IN == WT_CONN)
+      float& wt = recv_gp->Wt(i_fm); // from Conn itself
+#elif (WT_IN == WT_RECV)
       float& wt = recv_gp->Wt(i_fm);
+      send_gp->pwts[i_to] = &wt;
+#elif (WT_IN == WT_SEND)
+      float& wt = send_gp->Wt(i_to);
+      recv_gp->SetWt(&wt, i_fm);
+#endif
       wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-#ifdef USE_INT_IDX
-      // set index of sending unit
-      recv_gp->units[i_fm] = un_fm->uni; //??
-      // set global index of target Unit
-      send_gp->units[i_to] = un_to->uni;
-      // set the global index of target Conn
-      const int g_wti = recv_gp->wti_base + i_fm;
-      send_gp->cons[i_to] = g_wti;
-#else
       recv_gp->units[i_fm] = un_fm;
       send_gp->units[i_to] = un_to;
       Conn* cn = recv_gp->Cn(i_fm);
       send_gp->cons[i_to] = cn;
-      send_gp->pwts[i_to] = &wt;
-#endif
     }
   }
 }
@@ -652,7 +656,7 @@ void ThreadNetEngine::ComputeNets_SendArray() {
 }
 
 //////////////////////////////////
-//  NetTask			//
+//  NetTask -- mixed classes	//
 //////////////////////////////////
 
 NetTask::NetTask(NetEngine* engine) {
@@ -684,11 +688,22 @@ void NetTask::Send_Netin_0(Unit* su) {
     su->n_con_calc += send_sz;
     Unit** units = send_gp->units; // unit pointer
 #if (WT_IN == WT_CONN)
-#else
+    Conn** cons = send_gp->cons; 
+    for (int i=0; i < send_sz; i++) {
+      //const int targ_i = unis[i];
+      Send_Netin_inner_0(cons[i]->wt, units[i]->net, su_act_eff);
+    }
+#elif (WT_IN == WT_RECV)
     float** pwts = send_gp->pwts; // wt pointer
     for (int i=0; i < send_sz; i++) {
       //const int targ_i = unis[i];
       Send_Netin_inner_0(*(pwts[i]), units[i]->net, su_act_eff);
+    }
+#elif (WT_IN == WT_SEND)
+    float* wts = send_gp->wts; // the wts themselves!
+    for (int i=0; i < send_sz; i++) {
+      //const int targ_i = unis[i];
+      Send_Netin_inner_0(wts[i], units[i]->net, su_act_eff);
     }
 #endif
   }
@@ -702,17 +717,25 @@ void NetTask::Recv_Netin_0(Unit* ru) {
     const int recv_sz = recv_gp->size;
     ru->n_con_calc += recv_sz;
     
+    Unit** units = recv_gp->units; // unit pointer
 #if (WT_IN == WT_CONN)
+    Conn* cons = recv_gp->cons; // cache
+    for(int i=0; i < recv_sz; ++i)
+      ru_net += units[i]->act * cons[i].wt; //TODO: try casting directly to float
 #elif (WT_IN == WT_RECV)
     float* wts = recv_gp->wts; // cache
-    Unit** units = recv_gp->units; // unit pointer
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * wts[i];
 #elif (WT_IN == WT_SEND)
+# if defined(PWT_IN_CONN)
+    Conn* cons = recv_gp->cons; // cache
+    for(int i=0; i < recv_sz; ++i)
+      ru_net += units[i]->act * *(cons[i].pwt);
+# else
     float** pwts = recv_gp->pwts; // cache
-    Unit** units = recv_gp->units; // unit pointer
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * *(pwts[i]);
+# endif
 #endif
   }
   ru->net = ru_net;
@@ -828,11 +851,25 @@ void NetTask_N::Send_Netin_Array() {
         const int send_sz = send_gp->size;
         su->n_con_calc += send_sz;
         Unit** units = send_gp->units; // unit pointer
+#if (WT_IN == WT_CONN)
+        Conn** cons = send_gp->cons; 
+        for (int i=0; i < send_sz; i++) {
+          //const int targ_i = unis[i];
+          Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
+        }
+#elif (WT_IN == WT_RECV)
         float** pwts = send_gp->pwts; // wt pointer
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];
           Send_Netin_inner_0(*(pwts[i]), excit[units[i]->uni], su_act_eff);
-       }
+        }
+#elif (WT_IN == WT_SEND)
+        float* wts = send_gp->wts; // wts themselves
+        for (int i=0; i < send_sz; i++) {
+          //const int targ_i = uns[i];
+          Send_Netin_inner_0(wts[i], excit[units[i]->uni], su_act_eff);
+        }
+#endif
       }
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
@@ -1052,6 +1089,8 @@ void Nb::Initialize() {
   Nb::net.SetEngine(CreateNetEngine());
 }
 
+const char* wt_in_str[] = {"recv", "send", "conn"};
+
 void Nb::PrintResults() {
   tot_time = time_used.s_used;
   n_wts = n_prjns * n_units * n_cons;
@@ -1069,7 +1108,7 @@ void Nb::PrintResults() {
     "algo\teMcon\tMcon\tsnd_act\tprocs"
     "\tlayers\tunits\tcons\tKwts\tcycles"
     "\tKcn_tot\tsecs\tnibble\tfstprjn\tsrarate"
-    "\tdwtrate\n";
+    "\tdwtrate\twt_in\n";
     
     if (logfile) fprintf(logfile, hdr_str);
     printf(hdr_str);
@@ -1082,11 +1121,11 @@ void Nb::PrintResults() {
     "%d\t%.4g\t%.4g\t%d\t%d"
     "\t%d\t%d\t%d\t%g\t%d"
     "\t%g\t%.3g\t%d\t%d\t%d"
-    "\t%d\n",
+    "\t%d\t%s\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
     n_layers, n_units, n_cons, n_wts / 1000, n_cycles,
     n_con_trav / 1000, tot_time, nibble_mode, fast_prjn, sra_rate,
-    dwt_rate);
+    dwt_rate, wt_in_str[wt_in]);
   cout << buf;
   if (logfile) {
     fprintf(logfile, buf);
