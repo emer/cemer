@@ -15,7 +15,7 @@
 
 #define INHERITED(c) typedef c inherited;
 #define override
-#if defined(MSVC_VER) // evil MSVC
+#if defined(_MSC_VER) // evil MSVC
   typedef long long int int64_t; 
 #endif
 

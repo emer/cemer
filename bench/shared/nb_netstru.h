@@ -24,7 +24,7 @@
 #endif
 
 // for SEND_ARRAY, whether to use the asymmetrical version
-#define SEND_ARY_ASYM
+//#define SEND_ARY_ASYM
 
 // optional subs
 class Conn;
