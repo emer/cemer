@@ -43,7 +43,16 @@ private:
 
 // returns value of i before add, then adds requested amount
 #if defined(Q_OS_WIN)
-# error not defined for Windows yet
+int AtomicFetchAdd(volatile int *pointer, int value)
+{
+    __asm {
+        mov EDX,pointer
+        mov ECX,value
+        lock xadd dword ptr[EDX],ECX
+        mov value,ECX
+    }
+    return value;
+}
 #else // unix incl Intel Mac
 inline int AtomicFetchAdd(int* operand, int incr)
 {
