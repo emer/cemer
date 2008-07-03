@@ -43,7 +43,7 @@ private:
 
 // returns value of i before add, then adds requested amount
 #if defined(Q_OS_WIN)
-int AtomicFetchAdd(volatile int *pointer, int value)
+inline int AtomicFetchAdd(volatile int *pointer, int value)
 {
     __asm {
         mov EDX,pointer

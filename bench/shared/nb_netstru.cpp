@@ -418,7 +418,7 @@ void Network::SetEngine(NetEngine* engine_) {
 //////////////////////////
 
 int NetEngine::algo = 0;
-const int NetEngine::core_max_nprocs; // maximum number of processors!
+//const int NetEngine::core_max_nprocs; // maximum number of processors!
 int NetEngine::n_procs;		// total number of processors
 int NetEngine::n_stride;
 NetTaskList NetEngine::net_tasks; // only n_procs created

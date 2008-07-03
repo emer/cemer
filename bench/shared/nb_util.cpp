@@ -47,7 +47,7 @@ public:
     return rval;}
 };
 
-LARGE_INTEGER TimeUsedHRd::freq;
+LARGE_INTEGER TimeUsedP::freq;
 
 #else // Unix
 // computes a-b

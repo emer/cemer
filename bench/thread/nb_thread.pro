@@ -1,5 +1,5 @@
 #CONFIG		+= console debug
-CONFIG		+= console 
+CONFIG		+= console release
 DEFINES		+= NB_THREAD 
 #SEND_CONS
 QMAKE_INCDIR	+= ../shared
