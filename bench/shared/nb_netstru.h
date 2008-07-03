@@ -8,9 +8,18 @@
 
 // switches
 //#define USE_INT_IDX // true to use indirect ints, else use ptrs
-#define WT_IN_CONN // true if wt is in Conn, else in an array
+#define WT_RECV 0 // owned by RecvCons
+#define WT_SEND 1 // owned by SendCons
+#define WT_CONN 2 // is baked into Conn
 
-#ifdef USE_INT_IDX
+#define WT_IN WT_RECV
+
+// template, and catch
+#if (WT_IN == WT_CONN)
+#elif (WT_IN == WT_RECV)
+#elif (WT_IN == WT_SEND)
+#else
+# error("WT_IN not set")
 #endif
 
 class Conn;
@@ -50,7 +59,7 @@ typedef taList<NetTask>		NetTaskList;
 class Conn {
   // one connection between units
 public:
-#ifdef WT_IN_CONN
+#if (WT_IN == WT_CONN)
   float		wt;
 #endif
   float 	dwt;	// delta-weight
@@ -63,6 +72,7 @@ typedef taArray<Conn>		ConArray;
 typedef taPtrList<Conn>		ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
+typedef taArray<float*>		floatPtrList;
 
 class ConsBase {
 public:
@@ -97,12 +107,14 @@ class RecvCons: public ConsBase {
 INHERITED(ConsBase)
 public:
   Conn*			cons; // flat array -- ReadOnly!!! you must access safely!!!
-#ifdef WT_IN_CONN
+#if (WT_IN == WT_CONN)
   inline float&		Wt(int i) {return cons[i].wt;}
-#else
+#elif (WT_IN == WT_RECV)
   float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
-  int			wti_base; // base index for the wts in net->g_wts
   inline float&		Wt(int i) {return wts[i];}
+#elif (WT_IN == WT_SEND)
+  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
+  inline float&		Wt(int i) {return *(pwts[i]);}
 #endif
   float			dwt_mean;
   
@@ -115,8 +127,11 @@ public:
   ~RecvCons() {}
 protected:
   override void		setSize_impl(int i);
-#ifndef USE_INT_IDX
   ConArray		m_cons;
+#if (WT_IN == WT_RECV)
+  float_Array		m_wts;
+#elif (WT_IN == WT_SEND)
+  floatPtrList		m_pwts; 
 #endif
 };
 
@@ -131,6 +146,7 @@ public:
   int*			cons;
 #else
   Conn**		cons;
+  float**		pwts;
 #endif
 
 //  inline int		Cni(int i) {return cons.el[i];}
@@ -146,6 +162,7 @@ protected:
   int_Array		m_cons; // global indexes of the cons/wts
 #else
   ConPtrList		m_cons;
+  floatPtrList		m_wts;
 #endif
   override void		setSize_impl(int i);
 };
@@ -226,12 +243,6 @@ public:
   int			n_units_flat; // number of global units (acts, nets, etc.)
   Unit**		g_units; // global units 
   
-  // Conns
-#ifndef WT_IN_CONN
-  float*		g_wts; // global weights
-  Conn*			g_cons;
-  static int		g_next_wti; // next wti, only valid during Build
-#endif  
   int			cycle;
   
   
@@ -258,10 +269,6 @@ public:
 protected:
   UnitPtrList 		units_flat;	// all units, flattened
   
-#ifndef WT_IN_CONN
-  float_Array		wts_flat; // global wts
-  ConArray		cons_flat; // global cons
-#endif  
   void			PartitionUnits_RoundRobin(); // for recv, and send-clash
   //void		PartitionUnits_SendClash(); 
 };

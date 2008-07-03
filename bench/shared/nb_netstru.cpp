@@ -45,9 +45,8 @@ RecvCons::RecvCons() {
   send_lay = NULL;
   dwt_mean = 0.0f;
   cons = NULL;
-#ifndef WT_IN_CONN
+#if (WT_IN == WT_CONN)
   wts = NULL;
-  wti_base = -1; // written later
 #endif
 }
 
@@ -57,6 +56,15 @@ void RecvCons::setSize_impl(int i) {
 #else
   m_cons.SetSize(i);
   cons = m_cons.Els();
+#endif
+#if (WT_IN == WT_CONN)
+# error("TODO")
+#elif (WT_IN == WT_RECV)
+  m_wts.SetSize(i); 
+  wts = m_wts.Els();
+#elif (WT_IN == WT_SEND)
+  m_pwts.SetSize(i); 
+  pwts = m_pwts.Els();
 #endif
 }
 
@@ -68,11 +76,14 @@ void SendCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
 #ifdef USE_INT_IDX
   m_cons.SetSize(i);
-# ifdef DEBUG
+# ifdef DEBUGß
   m_cons.Fill(-1); // helps detect errors
 # endif
 #else
   m_cons.Alloc(i);
+  m_wts.SetSize(i);
+  m_wts.Fill(NULL);
+  pwts = m_wts.el;
 #endif
   cons = m_cons.Els();
 }
@@ -227,18 +238,12 @@ void Layer::ConnectFrom(Layer* lay_fm) {
     send_gp->recv_idx = recv_idx;
     send_gp->recv_lay = this;
   }
-  int& g_next_wti = Network::g_next_wti; // abstract
   for (int i_to = 0; i_to < units.size; ++i_to) {
     un_to = units.FastEl(i_to);
     RecvCons* recv_gp = un_to->recv.New();
     recv_gp->setSize(n_send);
     recv_gp->send_idx = send_idx;
     recv_gp->send_lay = lay_fm;
-    // global index of wts/cons, and pointers thereof
-    recv_gp->wti_base = g_next_wti;
-    recv_gp->wts = &(net->g_wts[g_next_wti]);
-    recv_gp->cons = &(net->g_cons[g_next_wti]);
-    g_next_wti += n_send;
   }
 
   // connect, on a receiver-basis
@@ -266,6 +271,7 @@ void Layer::ConnectFrom(Layer* lay_fm) {
       send_gp->units[i_to] = un_to;
       Conn* cn = recv_gp->Cn(i_fm);
       send_gp->cons[i_to] = cn;
+      send_gp->pwts[i_to] = &wt;
 #endif
     }
   }
@@ -277,15 +283,12 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 //////////////////////////
 
 bool 	Network::recv_based; 
-int 	Network::g_next_wti; 
 
 Network::Network() {
   engine = NULL;
   cycle = 0;
   n_units_flat = 0;
   g_units = NULL;
-  g_wts = NULL;
-  g_cons = NULL;
 }
 
 Network::~Network() {
@@ -300,22 +303,13 @@ void Network::Initialize() {
 
 void Network::Build() {
   n_units_flat = Nb::n_layers * Nb::n_units;
-  const int n_prjns = (Nb::n_layers - 1) * 2;
+//nn  const int n_prjns = (Nb::n_layers - 1) * 2;
   
   layers.Alloc(Nb::n_layers);
   // global allocs and ptrs
   units_flat.Alloc(n_units_flat);
   g_units = units_flat.Els();
   
-#ifndef WT_IN_CONN
-  const int n_cons_flat = n_prjns * Nb::n_units * Nb::n_cons;
-  wts_flat.SetSize(n_cons_flat);
-  // every wt given a new value during Build
-  g_wts = wts_flat.el;
-  cons_flat.SetSize(n_cons_flat);
-  g_cons = cons_flat.el;
-  g_next_wti = 0;
-#endif
   int next_uni = 0;
   ConSpec* cs = new ConSpec; // everyone shares
   UnitSpec* uspec = new UnitSpec; // everyone shares
@@ -683,18 +677,18 @@ void NetTask::run() {
 
 void NetTask::Send_Netin_0(Unit* su) {
   const float su_act_eff = su->act;
-  float* g_wts = net->g_wts; // cache
+//  float* g_wts = net->g_wts; // cache
   for (int j = 0; j < su->send.size; ++j) {
     SendCons* send_gp = su->send[j];
     const int send_sz = send_gp->size;
     su->n_con_calc += send_sz;
     Unit** units = send_gp->units; // unit pointer
-#ifdef WT_IN_CONN
+#if (WT_IN == WT_CONN)
 #else
-    const int* wtis = send_gp->cons; // wt pointer
+    float** pwts = send_gp->pwts; // wt pointer
     for (int i=0; i < send_sz; i++) {
       //const int targ_i = unis[i];
-      Send_Netin_inner_0(g_wts[wtis[i]], units[i]->net, su_act_eff);
+      Send_Netin_inner_0(*(pwts[i]), units[i]->net, su_act_eff);
     }
 #endif
   }
@@ -707,15 +701,18 @@ void NetTask::Recv_Netin_0(Unit* ru) {
     RecvCons* recv_gp = ru->recv[j];
     const int recv_sz = recv_gp->size;
     ru->n_con_calc += recv_sz;
+    
+#if (WT_IN == WT_CONN)
+#elif (WT_IN == WT_RECV)
     float* wts = recv_gp->wts; // cache
-#ifdef USE_INT_IDX
-    int* unis = recv_gp->units; // unit pointer
-    for(int i=0; i < recv_sz; ++i)
-      ru_net += g_acts[unis[i]] * wts[i];
-#else
     Unit** units = recv_gp->units; // unit pointer
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * wts[i];
+#elif (WT_IN == WT_SEND)
+    float** pwts = recv_gp->pwts; // cache
+    Unit** units = recv_gp->units; // unit pointer
+    for(int i=0; i < recv_sz; ++i)
+      ru_net += units[i]->act * *(pwts[i]);
 #endif
   }
   ru->net = ru_net;
@@ -821,8 +818,6 @@ void NetTask_N::Send_Netin_Array() {
   overhead.Stop();
 
   Unit** units = Nb::net.g_units; // cache
-//  float* acts = Nb::net.g_acts;
-  float* g_wts = net->g_wts; // cache
   const int n_units_flat = Nb::net.n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* su = units[my_u]; //note: accessed flat
@@ -833,10 +828,10 @@ void NetTask_N::Send_Netin_Array() {
         const int send_sz = send_gp->size;
         su->n_con_calc += send_sz;
         Unit** units = send_gp->units; // unit pointer
-        const int* wtis = send_gp->cons; // wt pointer
+        float** pwts = send_gp->pwts; // wt pointer
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];
-          Send_Netin_inner_0(g_wts[wtis[i]], excit[units[i]->uni], su_act_eff);
+          Send_Netin_inner_0(*(pwts[i]), excit[units[i]->uni], su_act_eff);
        }
       }
       AtomicFetchAdd(&Nb::n_tot, 1);
