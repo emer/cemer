@@ -12,13 +12,13 @@
 #define WT_SEND 1 // owned by SendCons
 #define WT_CONN 2 // is baked into Conn
 
-#define WT_IN WT_SEND
+#define WT_IN WT_CONN
 
 // template, subswitches, and catch
 #if (WT_IN == WT_CONN)
 #elif (WT_IN == WT_RECV)
 #elif (WT_IN == WT_SEND)
-# define PWT_IN_CONN // put a ptr to wt in Conn, instead of using a PtrList 
+//# define PWT_IN_CONN // put a ptr to wt in Conn, instead of using a PtrList 
 #else
 # error("WT_IN not set")
 #endif
