@@ -23,16 +23,23 @@ static int g_rand;
 //  ConsBase		//
 //////////////////////////
 
+ConsBase::ConsBase()
+:units(NULL) 
+{
+  size = 0;
+}
+
+ConsBase::~ConsBase() {
+  size = 0;
+  delete[] units; // safe if NULL
+  units = NULL;
+}
+
 void ConsBase::setSize_impl(int i) {
-#ifdef USE_INT_IDX
-  m_units.SetSize(i);
+  units = new Unit*[i];
 #ifdef DEBUG
-  m_units.Fill(-1); // helps detect errors
+ // units.Fill(-1); // helps detect errors
 #endif
-#else
-  m_units.Alloc(i);
-#endif
-  units = m_units.Els();
 }
 
 
@@ -48,15 +55,26 @@ RecvCons::RecvCons() {
   //note: we don't init the modal guys -- they get written in setSize
 }
 
-void RecvCons::setSize_impl(int i) {
-  inherited::setSize_impl(i);
-  m_cons.SetSize(i);
-  cons = m_cons.Els();
+RecvCons::~RecvCons() {
+  delete[] cons;
+  cons = NULL;
 #if (WT_IN == WT_CONN)
   // nothing
 #elif (WT_IN == WT_RECV)
-  m_wts.SetSize(i); 
-  wts = m_wts.Els();
+  wts = NULL;
+#elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
+  pwts = NULL;
+#endif
+}
+
+void RecvCons::setSize_impl(int i) {
+  inherited::setSize_impl(i);
+  m_cons.SetSize(i);
+  cons = new Conn[i];
+#if (WT_IN == WT_CONN)
+  // nothing
+#elif (WT_IN == WT_RECV)
+  wts = Nb::net.AllocWts(i); // note: sleazy global access
 #elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
   m_pwts.SetSize(i); 
   pwts = m_pwts.Els();
@@ -67,6 +85,15 @@ void RecvCons::setSize_impl(int i) {
 //  SendCons		//
 //////////////////////////
 
+SendCons::SendCons() {
+  recv_idx = -1;
+  recv_lay = NULL;
+}
+
+SendCons::~SendCons() {
+  cons = NULL;
+}
+
 void SendCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
   m_cons.Alloc(i);
@@ -76,8 +103,7 @@ void SendCons::setSize_impl(int i) {
   m_pwts.Fill(NULL);
   pwts = m_pwts.el;
 #elif (WT_IN == WT_SEND)
-  m_wts.SetSize(i); // init'ed in Build
-  wts = m_wts.el;
+  wts = Nb::net.AllocWts(i); // note: sleazy global access
 #endif
 }
 
@@ -199,7 +225,6 @@ Unit::Unit()
   act_avg = 0.0f;
   cs = NULL; 
   spec = NULL;
-  task_id = 0;
   n_recv_cons = 0;
   my_rand = rand();
   do_delta = true; // for first iteration, before it is set in ComputeActs
@@ -293,6 +318,7 @@ Network::Network() {
   cycle = 0;
   n_units_flat = 0;
   g_units = NULL;
+  next_wti = 0;
 }
 
 Network::~Network() {
@@ -307,12 +333,17 @@ void Network::Initialize() {
 
 void Network::Build() {
   n_units_flat = Nb::n_layers * Nb::n_units;
-//nn  const int n_prjns = (Nb::n_layers - 1) * 2;
+  const int n_prjns = (Nb::n_layers - 1) * 2;
+  //note: we validated cons < 2^31 in startup
+  const int n_cons_flat = n_prjns * Nb::n_units * Nb::n_cons;
   
   layers.Alloc(Nb::n_layers);
   // global allocs and ptrs
   units_flat.Alloc(n_units_flat);
   g_units = units_flat.Els();
+  wts_flat.SetSize(n_cons_flat);
+  next_wti = 0;
+  
   
   int next_uni = 0;
   ConSpec* cs = new ConSpec; // everyone shares
@@ -349,6 +380,13 @@ void Network::Build() {
   engine->OnBuild();
 }
 
+float* Network::AllocWts(int sz) {
+  if ((next_wti + sz) > wts_flat.alloc_size)
+    return NULL;
+  float* rval = &(wts_flat[next_wti]);
+  next_wti += sz;
+  return rval;
+}
 
 void Network::ComputeNets() {
   engine->ComputeNets();
@@ -558,8 +596,6 @@ void ThreadNetEngine::ComputeNets_impl() {
   else inherited::ComputeNets_impl();
 }
 
-
-
 void ThreadNetEngine::DoProc(int proc_id) {
   const int n_units_flat = net->n_units_flat;
   const int n_nibb_thresh = (int)(n_units_flat * Nb::nibble_thresh);
@@ -610,12 +646,13 @@ void ThreadNetEngine::DoProc(int proc_id) {
 void ThreadNetEngine::OnBuild() {
   // we just partition them round-robin
   const int n_units_flat = net->n_units_flat;
-  for (int i = 0; i < n_units_flat; ++i) {
+/*nn  for (int i = 0; i < n_units_flat; ++i) {
     Unit* un = net->g_units[i];
     un->task_id = i % n_procs;
-  }
+  }*/
   // Send_Array only
   if (algo == SEND_ARRAY) {
+    //note: we alloc to all, but the ASYM version doesn't use nt0.excit
     for (int t = 0; t < net_tasks.size; t++) {
       NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
       tsk->excit = new float[n_units_flat]; // no need to init
@@ -623,9 +660,11 @@ void ThreadNetEngine::OnBuild() {
   }
 }
 
+#ifdef SEND_ARY_ASYM
 void ThreadNetEngine::ComputeNets_SendArray() {
   DoProc(NetTask::P_Send_Netin_Array);
-
+  const int tsz = net_tasks.size - 1; // we only do Tasks1-N
+  if (tsz <= 0) return; // there were no additional buffs to accum
   // post stuff
 //  RollupScratch_Netin();
   // called in Thread 0, so allocate the Task0
@@ -633,27 +672,73 @@ void ThreadNetEngine::ComputeNets_SendArray() {
   nt0->overhead.Start(false);
   const int n_units_flat = net->n_units_flat;
   Unit** g_units = net->g_units; // cache -- this is also task0's guys
-  // make local array pointers, for speed
-  const int tsz = net_tasks.size;
-  float** nets = new float*[tsz]; // the 
-  for (int t = 0; t < tsz; t++) {
-    NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
-    nets[t] = tsk->excit; // cache
-  }
-  
-  for (int i = 0; i < n_units_flat; ++i) {
-    //TODO: this can be optimized using SSE or equiv compiler commands
-    // to rollup 4 floats at once in parallel
-    float tnet = 0.0f;
-    for (int t = 0; t < tsz; ++t) {
-      tnet += nets[t][i];
+  // 2-thread version is optimized
+  if (tsz == 1) {
+    float* nets = dynamic_cast<NetTask_N*>(net_tasks[1])->excit;  
+    for (int i = 0; i < n_units_flat; ++i) {
+      g_units[i]->net += nets[i]; // since Task0 was also accumulating
     }
-    g_units[i]->net = tnet;
+  } else { // tsz > 1, need to rollup
+    // make local array pointers, for speed
+    float** nets = new float*[tsz];  
+    for (int t = 1; t < net_tasks.size; t++) {
+      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
+      nets[t-1] = tsk->excit; // cache
+    }
+    
+    for (int i = 0; i < n_units_flat; ++i) {
+      //TODO: this can be optimized using SSE or equiv compiler commands
+      // to rollup 4 floats at once in parallel
+      float tnet = 0.0f;
+      for (int t = 0; t < tsz; ++t) {
+        tnet += nets[t][i];
+      }
+      g_units[i]->net += tnet; // since Task0 was also accumulating
+    }
+    delete[] nets;
   }
-  
-  delete[] nets;
   nt0->overhead.Stop();
 }
+#else // SYM version
+void ThreadNetEngine::ComputeNets_SendArray() {
+  DoProc(NetTask::P_Send_Netin_Array);
+
+  // post stuff
+//  RollupScratch_Netin();
+  // called in Thread 0, so allocate the Task0
+  NetTask_N* nt0 = dynamic_cast<NetTask_N*>(net_tasks[0]);
+  nt0->overhead.Start(false);
+  const int n_units_flat = net->n_units_flat;
+  Unit** g_units = net->g_units; // cache -- this is also task0's guys
+  // 1-thread version is optimized, for fair comparison
+  const int tsz = net_tasks.size;
+  if (tsz == 1) {
+    float* nets = nt0->excit;  
+    for (int i = 0; i < n_units_flat; ++i) {
+      g_units[i]->net = nets[i];
+    }
+  } else { //  need to rollup
+    // make local array pointers, for speed
+    float** nets = new float*[tsz];
+    for (int t = 0; t < tsz; t++) {
+      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
+      nets[t] = tsk->excit; // cache
+    }
+    
+    for (int i = 0; i < n_units_flat; ++i) {
+      //TODO: this can be optimized using SSE or equiv compiler commands
+      // to rollup 4 floats at once in parallel
+      float tnet = 0.0f;
+      for (int t = 0; t < tsz; ++t) {
+        tnet += nets[t][i];
+      }
+      g_units[i]->net = tnet;
+    }
+    delete[] nets;
+  }
+  nt0->overhead.Stop();
+}
+#endif
 
 //////////////////////////////////
 //  NetTask -- mixed classes	//
@@ -836,6 +921,12 @@ void NetTask_N::Send_Netin_Clash() {
 }
 
 void NetTask_N::Send_Netin_Array() {
+#ifdef SEND_ARY_ASYM
+  if (task_id == 0) {
+    Send_Netin_Clash();
+    return;//
+  }
+#endif
   overhead.Start(false);
   memset(excit, 0, sizeof(float) * net->n_units_flat);
   overhead.Stop();
@@ -876,6 +967,49 @@ void NetTask_N::Send_Netin_Array() {
   }
 }
 
+
+
+/* void NetTask_N::Send_Netin_Array() {
+  overhead.Start(false);
+  memset(excit, 0, sizeof(float) * net->n_units_flat);
+  overhead.Stop();
+
+  Unit** units = Nb::net.g_units; // cache
+  const int n_units_flat = Nb::net.n_units_flat;
+  PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+    Unit* su = units[my_u]; //note: accessed flat
+    if (su->do_delta) {
+      float su_act_eff = su->act;
+      for (int j = 0; j < su->send.size; ++j) {
+        SendCons* send_gp = su->send[j];
+        const int send_sz = send_gp->size;
+        su->n_con_calc += send_sz;
+        Unit** units = send_gp->units; // unit pointer
+#if (WT_IN == WT_CONN)
+        Conn** cons = send_gp->cons; 
+        for (int i=0; i < send_sz; i++) {
+          //const int targ_i = unis[i];
+          Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
+        }
+#elif (WT_IN == WT_RECV)
+        float** pwts = send_gp->pwts; // wt pointer
+        for (int i=0; i < send_sz; i++) {
+          //const int targ_i = uns[i];
+          Send_Netin_inner_0(*(pwts[i]), excit[units[i]->uni], su_act_eff);
+        }
+#elif (WT_IN == WT_SEND)
+        float* wts = send_gp->wts; // wts themselves
+        for (int i=0; i < send_sz; i++) {
+          //const int targ_i = uns[i];
+          Send_Netin_inner_0(wts[i], excit[units[i]->uni], su_act_eff);
+        }
+#endif
+      }
+      AtomicFetchAdd(&Nb::n_tot, 1);
+    }
+  }
+}
+*/
 void NetTask_N::Recv_Netin() {
   Unit** g_units = Nb::net.g_units; // cache
   PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
@@ -1006,7 +1140,7 @@ NetEngine* Nb::CreateNetEngine() {
   return rval;
 }  
 
-void Nb::ParseCmdLine(int& /*rval*/) {
+void Nb::ParseCmdLine(int& rval) {
   n_units = (int)strtol(argv[1], NULL, 0);
   n_cycles = (int)strtol(argv[2], NULL, 0);
   NetEngine::n_procs = (int)strtol(argv[3], NULL, 0);
@@ -1075,6 +1209,14 @@ void Nb::ParseCmdLine(int& /*rval*/) {
       continue;}
   }
   log_filename = QFileInfo(argv[0]).baseName() + log_suff + ".log"; 
+
+  // confirm sizes are in range
+  const int n_prjns = (n_layers - 1) * 2;
+  const int64_t n_cons_flat = n_prjns * n_units * n_cons;
+  if (n_cons_flat > INT_MAX) {
+    cerr << "ERROR: too many connections (max is 2^31)!\n";
+    rval = 1;
+  }
 
 }
 void Nb::Initialize() {

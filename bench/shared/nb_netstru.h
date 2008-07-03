@@ -12,7 +12,7 @@
 #define WT_SEND 1 // owned by SendCons
 #define WT_CONN 2 // is baked into Conn
 
-#define WT_IN WT_CONN
+#define WT_IN WT_SEND
 
 // template, subswitches, and catch
 #if (WT_IN == WT_CONN)
@@ -22,6 +22,9 @@
 #else
 # error("WT_IN not set")
 #endif
+
+// for SEND_ARRAY, whether to use the asymmetrical version
+#define SEND_ARY_ASYM
 
 // optional subs
 class Conn;
@@ -88,17 +91,17 @@ public:
   void			setSize(int i) 
     {if (i == size) return; setSize_impl(i); size = i;}
   
-  
-  virtual ~ConsBase() {size = 0;}
+  ConsBase();
+  virtual ~ConsBase();
 protected:
-  UnitPtrList		m_units;
+//  UnitPtrList		m_units;
   
   virtual void		setSize_impl(int);
 };
 
-/* The wts and cons array pointers are actually subpointers
-  into the Network master arrays. These are allocated globally
-  during Build, and cannot be individually replaced or altered.
+/* The wts array pointers are actually subpointers
+  into the Network master array (allocated globally
+  during Build) and cannot be individually replaced or altered.
 */
 class RecvCons: public ConsBase {
 INHERITED(ConsBase)
@@ -127,13 +130,11 @@ public:
   Layer*	send_lay; // sending layer
 
   RecvCons();
-  ~RecvCons() {}
+  ~RecvCons();
 protected:
   override void		setSize_impl(int i);
   ConArray		m_cons;
-#if (WT_IN == WT_RECV)
-  float_Array		m_wts;
-#elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
+#if ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
   floatPtrList		m_pwts; 
 #endif
 };
@@ -162,14 +163,14 @@ public:
   int		recv_idx;
   Layer*	recv_lay; // receiving layer
   
-  SendCons() { recv_idx = -1; recv_lay = NULL;}
-  ~SendCons() {}
+  SendCons();
+  ~SendCons();
 protected:
   ConPtrList		m_cons;
 #if (WT_IN == WT_RECV)
   floatPtrList		m_pwts;
 #elif (WT_IN == WT_SEND)
-  float_Array		m_wts;
+//  float_Array		m_wts;
 #endif
   
   override void		setSize_impl(int i);
@@ -209,7 +210,6 @@ public:
   float 	net;
   int		uni; // flat index
   float		act_avg;
-  int		task_id; // which task will process this guy
   int		n_recv_cons;
   ConSpec*	cs;
   UnitSpec*	spec;
@@ -264,6 +264,7 @@ public:
   float 	ComputeActs();
   void		Compute_SRAvg();
   void		Compute_Weights();
+  float*	AllocWts(int sz); // alloc indicated number (from pool created in Build)
   
   double	GetNTot(); // get total from all units
   
@@ -276,6 +277,8 @@ public:
   virtual ~Network();
 protected:
   UnitPtrList 		units_flat;	// all units, flattened
+  float_Array 		wts_flat;
+  int			next_wti;
   
   void			PartitionUnits_RoundRobin(); // for recv, and send-clash
   //void		PartitionUnits_SendClash(); 
@@ -400,7 +403,7 @@ public:
     // highly optimized inner loop
   void 		Send_Netin_0(Unit* su); // shared by 0 and N
   virtual void	Send_Netin_Clash() {} // NetIn
-  virtual void	Send_Netin_Array() {} // only used by Net_N
+  virtual void	Send_Netin_Array() {Send_Netin_Clash();} // only used by Net_N
   
 // Recv_Netin
   void 		Recv_Netin_0(Unit* ru); // shared by 0 and N

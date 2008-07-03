@@ -13,6 +13,11 @@
 20080702_07 -- Recv owns wts, on Lin64, unfortunately the bare Netin/Act is somewhat poorer
 20080702_08 -- series, comparing wts owned by: RecvCon, SendCon, and Conn
 20080702_09b -- (minor tweaks), wts owned by: SendCon with a *wt in the Conn
+20080703_01 -- (3 runs) baseline of Send Array before optimization
+20080703_02 -- (3 runs) Send Array after Task0=unit.net optimization
+20080703_03 -- (3 runs) pretty much the same, just done again for confirmation
+20080703_04 -- (3 runs) baseline again, but with the Threads=1 rollup optimize thrown in for fairness
+
 
 
 
