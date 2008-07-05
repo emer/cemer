@@ -2387,6 +2387,9 @@ void LeabraLayerSpec::Compute_NetinAvg(LeabraLayer* lay, Unit_Group* ug, LeabraI
 }
 
 void LeabraLayerSpec::Compute_SoftClamp(LeabraLayer* lay, LeabraNetwork* net) {
+  if(clamp.d_gain == 0.0f) {
+    lay->stm_gain = clamp.gain;	// always set directly to spec val so changes are "live"
+  }
   LeabraUnit* u;
   taLeafItr i;
   bool inc_gain = false;

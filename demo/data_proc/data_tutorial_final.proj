@@ -122,7 +122,7 @@ LeabraProject .projects[0] {
       };
     };
     Program @[1] { 
-      ProgObjList @.objs = [1] {
+      ProgObjList @.objs = [2] {
 	DataTable @[0] { 
 	  DataTableCols @.data = [6] {
 	    int_Data @[0] { 
@@ -149,14 +149,46 @@ LeabraProject .projects[0] {
 	    float_Data @[5] { };
 	  };
 	};
+	DataTable @[1] { 
+	  DataTableCols @.data = [6] {
+	    int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[2] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[3] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[4] { };
+	    float_Data @[5] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	  };
+	};
       };
 
-      ProgVar_List @.vars = [2] {
+      ProgVar_List @.vars = [4] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
       };
 
-      ProgEl_List @.prog_code = [1] {
+      ProgEl_List @.prog_code = [5] {
 	DataGroupProg @[0] { 
 	  DataOpList @.ops = [6] {
 	    DataGroupEl @[0] { };
@@ -165,6 +197,23 @@ LeabraProject .projects[0] {
 	    DataGroupEl @[3] { };
 	    DataGroupEl @[4] { };
 	    DataGroupEl @[5] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	UserScript @[3] { };
+	MathCall @[4] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
 	  };
 	};
       };
@@ -457,6 +506,39 @@ To better see the results, we'll create a bar graph.  Do View/New Graph View for
 To be able to visually interpret whether there are significant differences between these results, it would be nice to add error bars that reflect the standard error of the mean (SEM), which provides a rough visual sense of statistical significance (if the error-bars between conditions do not overlap, then the result is likely statistically significant -- of course an actual statistical test is required to know for sure).
 
 To generate SEM data, you just have to go back to the Group spec, and duplicate the cycles and sse items and replace the agg_op in the duplicates with SEM instead of MEAN.  Then Run again.
+
+To add the error bars to the plot, select these new columns in the Err 1 and Err 2 selectors near the bottom of the graph control panel (Err 1 is cycles_sem and 2 is sse_sem).  Note that the incorrect location of the error bar in version 4.0.15 has been fixed for a subsequent release).  This is now a plot that gives a good sense of how significant the differences between conditions are.
+
+== Computing Correlations (and other such things) ==
+
+The bar graph and scatter plot both show that the two variables, cycles and sse, are correlated (as we know from the equations we used to generate them).  We can compute the degree of correlation (and a large number of other statistics and mathematical functions) using the math library that is built into Emergent.
+
+The core step is very easy: just drag a <code>math()</code> guy from the <code>Misc Fun</code> toolkit to the end of your program, which provides access to a large range of math functionality.  One key nonobvious step is that you need to select which type of floating-point numbers to operate on: float (single precision -- used extensively in Emergent) or double (less frequently used).  In our case, because sse is float data, we select float -- this means choose taMath_float for the <code>object type</code> (it starts out with the generic taMath type which ony has very limited functionality -- this is the \"parent class\" to the two choices: taMath_float or taMath_double).
+
+Next, you just need to choose the method (function) to call.  All the functions are organized into various categories, selectable at the top.  Browse through these to get a sense of what is available.  Although correlation might seem to be a statistic, it is actually located in the Distance category (where it also belongs), under the name <code>vec_correl</code>.  Once this is selected, you'll see that it takes two arguments of type float_Matrix.
+
+This raises a bit of an issue.  It is easy to get a float_Matrix containing all the data for the sse column, because this is how the data is stored.  However, the cycles column is int data, and therefore we need to interject a small detour to create a float version of that column, which can then be passed to this function.
+
+To do this, we first create a new temporary data table in the objs -- context menu/New Data Table -- call it float_cycles or something to that effect.  Then drag a <code>meth()</code> on top of your existing math function call (so it will go ahead of it), and select the new float_cycles data table for the object, and CopyFrom (under ObjectMgmt category) for the method.  Enter MyRandomData as the object to copy from.  This just gives us a duplicate of the existing data. 
+
+Next, drag another meth() after this copy from, again for float_cycles, and this time select NewColFloat under the Columns category.  Enter something like \"cycles_flt\" for the name of the new float column to create.  There are many ways to copy the int values from the cycles column to this new cycles_flt column.  We will use a particularly useful one: drag a <code>script</code> item from the <code>Ctrl</code> toolkit, and enter the following expression:
+* <code>float_cycles[\"cycles_flt\"].CopyFromCol_Robust(float_cycles[\"cycles\"]);</code>
+
+You can use the Ctrl-L lookup to find each element of this expression -- give that a try to get some familiarity with this important tool.  This expression is calling a \"robust\" copy method on the cycles_flt column (columns of a data table can be accessed by the \"array\" operator as shown, using either a name or an actual column index).
+
+Now you can use this same type of expression to enter the two args to the vec_correl function:
+* <code>MyRandomData[\"sse\"].ar</code>
+* <code>float_cycles[\"cycles_flt\"].ar</code>
+
+'''The .ar at the end indicates the float_Matrix data used to actually store the data for the column.''' -- this is a very important point to remember for using these math functions!
+
+The last thing you need to do is create a new variable to store the results of this correlation computation -- create a new Real var, call it \"r\", and then select that variable for the result var.
+
+Now you can do Init (look for errors) and then Run.  When you then click on the r variable, you can see that it has a value, probably around .5 or so, indicating the presence of a decent correlation.
+
+
+
+
 
 
 </body>
@@ -1131,6 +1213,142 @@ To generate SEM data, you just have to go back to the Group spec, and duplicate 
      auto_load_file=;
      keygen 4 0=0;
     };
+    DataTable @[1] {
+     name="float_cycles";
+     desc="randomly generated data";
+     data {
+      name="data";
+      el_typ=int_Data;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="batch";
+       desc="batch number (equivalent to subject number in a typical psych experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond1";
+       desc="condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;       };
+      };
+      int_Data @[2] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond2";
+       desc="condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;       };
+      };
+      int_Data @[3] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 22;22;14;20;25;26;22;20;25;18;22;24;31;26;32;26;24;18;32;17;22;18;17;23;26;25;31;24;24;19;33;31;31;29;25;30;38;28;23;35;       };
+      };
+      float_Data @[4] {
+       name="sse";
+       desc="summed-squared error (how much error did the network make)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 12.96199;8.7764883;9.1705914;8.7239799;9.0430956;8.2273264;12.05254;11.231114;11.670703;7.2926192;18.590942;13.32478;14.818536;8.5334902;12.226235;15.865373;9.4373112;17.277391;12.206725;9.8924589;10.641316;11.491203;10.349874;11.496339;11.275867;10.307311;13.779653;13.054425;12.130418;11.508247;14.95736;11.562045;16.282803;14.811419;16.396666;14.347064;18.994009;16.332794;13.699154;15.480586;       };
+      };
+      float_Data @[5] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles_flt";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 22;22;14;20;25;26;22;20;25;18;22;24;31;26;32;26;24;18;32;17;22;18;17;23;26;25;31;24;24;19;33;31;31;29;25;30;38;28;23;35;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
    };
    types {
     name=;
@@ -1166,6 +1384,25 @@ To generate SEM data, you just have to go back to the Group spec, and duplicate 
      reference=0;
      desc=;
     };
+    ProgVar @[2] {
+     name="r";
+     var_type=T_Real;
+     real_val=0.489235907793045;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="float_cycles";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[1].objs[1]$8$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
    };
    functions {
     name=;
@@ -1189,8 +1426,8 @@ To generate SEM data, you just have to go back to the Group spec, and duplicate 
     DataGroupProg @[0] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[1].vars[0]$8$;
-     dest_data_var=.projects[0].programs[1].vars[1]$9$;
+     src_data_var=.projects[0].programs[1].vars[0]$9$;
+     dest_data_var=.projects[0].programs[1].vars[1]$10$;
      group_spec {
       name="group_spec";
       ops {
@@ -1225,6 +1462,89 @@ To generate SEM data, you just have to go back to the Group spec, and duplicate 
       append_agg_name=1;
      };
     };
+    MethodCall @[1] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[1].vars[3]$11$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=TAPtr;
+       type="taBase*";
+       name="cpy_from";
+       required=0;
+       def_val=;
+       expr {
+	expr="MyRandomData";
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$11$;
+     method=DataTable::NewColFloat;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="col_nm";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="\"cycles_flt\"";
+       };
+      };
+     };
+    };
+    UserScript @[3] {
+     desc=;
+     flags=;
+     script {
+      expr="float_cycles[\"cycles_flt\"].CopyFromCol_Robust(float_cycles[\"cycles\"]);";
+     };
+    };
+    MathCall @[4] {
+     desc=;
+     flags=;
+     result_var=.projects[0].programs[1].vars[2]$12$;
+     object_type=taMath_float;
+     method=taMath_float::vec_correl;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_float_Matrix_ptr;
+       type="const float_Matrix*";
+       name="vec";
+       required=0;
+       def_val=;
+       expr {
+	expr="MyRandomData[\"sse\"].ar";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float_Matrix_ptr;
+       type="const float_Matrix*";
+       name="oth_vec";
+       required=0;
+       def_val=;
+       expr {
+	expr="float_cycles[\"cycles_flt\"].ar";
+       };
+      };
+     };
+    };
    };
   };
  };
@@ -1233,7 +1553,7 @@ To generate SEM data, you just have to go back to the Group spec, and duplicate 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$10$;
+   m_data=.projects[0]$13$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -1263,7 +1583,7 @@ To generate SEM data, you just have to go back to the Group spec, and duplicate 
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$10$;
+     m_root=$13$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -1297,7 +1617,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$11$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$14$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -1305,7 +1625,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$12$;
+	    m_data=.projects[0].data.gp[0][0].data[1]$15$;
 	    m_transform=NULL;
 	    name="cond1";
 	    visible=1;
@@ -1313,7 +1633,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$13$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$16$;
 	    m_transform=NULL;
 	    name="cond2";
 	    visible=1;
@@ -1321,7 +1641,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[0][0].data[3]$14$;
+	    m_data=.projects[0].data.gp[0][0].data[3]$17$;
 	    m_transform=NULL;
 	    name="cycles";
 	    visible=1;
@@ -1329,7 +1649,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[0][0].data[4]$15$;
+	    m_data=.projects[0].data.gp[0][0].data[4]$18$;
 	    m_transform=NULL;
 	    name="sse";
 	    visible=1;
@@ -1572,7 +1892,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$16$;
+	   spec=.colorspecs[0]$19$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -1623,31 +1943,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[1].objs[0].data[0]$17$;
+	    m_data=.projects[0].programs[1].objs[0].data[0]$20$;
 	    m_transform=NULL;
 	    name="cond1_group";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[1].objs[0].data[1]$18$;
+	    m_data=.projects[0].programs[1].objs[0].data[1]$21$;
 	    m_transform=NULL;
 	    name="cond2_group";
 	    visible=1;
-	    fixed_range {fix_min=1: min=-0.9: fix_max=1: max=3.9: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[1].objs[0].data[2]$19$;
+	    m_data=.projects[0].programs[1].objs[0].data[2]$22$;
 	    m_transform=NULL;
 	    name="cycles_mean";
 	    visible=1;
-	    fixed_range {fix_min=0: min=21.4: fix_max=0: max=30.3: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].programs[1].objs[0].data[3]$20$;
+	    m_data=.projects[0].programs[1].objs[0].data[3]$23$;
 	    m_transform=NULL;
 	    name="cycles_sem";
 	    visible=1;
@@ -1655,15 +1975,15 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].programs[1].objs[0].data[4]$21$;
+	    m_data=.projects[0].programs[1].objs[0].data[4]$24$;
 	    m_transform=NULL;
 	    name="sse_mean";
 	    visible=1;
-	    fixed_range {fix_min=0: min=9.91504: fix_max=0: max=15.2864: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].programs[1].objs[0].data[5]$22$;
+	    m_data=.projects[0].programs[1].objs[0].data[5]$25$;
 	    m_transform=NULL;
 	    name="sse_sem";
 	    visible=1;
@@ -1906,7 +2226,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$16$;
+	   spec=$19$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
