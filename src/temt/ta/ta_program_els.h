@@ -393,12 +393,10 @@ class TA_API MethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a method (member function) on an object
 INHERITED(ProgEl)
 public:
-  static bool		ShowVarFilter(void* base, void* var); // filter for button, only obj types
-  
   ProgVarRef		result_var;
   // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
-  // #APPLY_IMMED #ITEM_FILTER_ShowVarFilter program variable that points to the object with the method to call
+  // #APPLY_IMMED #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   MethodDef*		method;
@@ -426,10 +424,8 @@ class TA_API MemberProgEl: public ProgEl {
   // #VIRT_BASE base class for dealing with members of objects
 INHERITED(ProgEl)
 public:
-  static bool		ShowVarFilter(void* base, void* var); // filter for button, only obj types
-
   ProgVarRef		obj;
-  // #APPLY_IMMED #ITEM_FILTER_ShowVarFilter program variable that points to the object with the method to call
+  // #APPLY_IMMED #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   String		path;
@@ -719,7 +715,7 @@ public:
     ROW_VAL,			// row_var variable contains a value that is used to find the row number by searching within data table column with the same name as the row_var variable
   };
 
-  ProgVarRef	data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to data table with columns that are to be set from startup args
+  ProgVarRef	data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to data table with columns that are to be set from startup args
   RowType	row_spec;	// how the row number within data table is specified
   ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
 

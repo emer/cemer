@@ -32,6 +32,18 @@ class Layer;
 // note: the motivation for supporting dmem within the basic data loops is so that the
 // same project can be run transparently in dmem or non-dmem mode without modification
 
+class EMERGENT_API NetBaseProgEl: public ProgEl { 
+  // #VIRT_BASE #NO_INSTANCE base type for network-oriented prog els (filter function, etc)
+INHERITED(ProgEl)
+public:
+  static bool		NetProgVarFilter(void* base, void* var); // Network* progvar filter -- only shows Network* items -- use in ITEM_FILTER comment directive
+  TA_BASEFUNS_NOCOPY(NetBaseProgEl);
+private:
+ void	Initialize() { };
+ void	Destroy() { };
+};
+
+
 class EMERGENT_API NetDataLoop: public DataLoop { 
   // For network input data: loops over items in a DataTable, in different basic orderings, using index to select current data table item using ReadItem(index) call, so that later processes will access this row of data. Note: assumes that there is a 'network' object pointer variable and an int 'trial' counter variable defined in the program!!
 INHERITED(DataLoop)
@@ -63,7 +75,7 @@ public:
     RANDOM, 			// pick an event (input data row) at random (with replacement)
   };
 
-  ProgVarRef	data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to the data table to use
+  ProgVarRef	data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the data table to use
   ProgVarRef	group_index_var; // #ITEM_FILTER_StdProgVarFilter program variable for the group index used in the loop -- goes from 0 to number of groups in data table-1
   ProgVarRef	item_index_var; // #ITEM_FILTER_StdProgVarFilter program variable for the item index used in the loop -- goes from 0 to number of items in current group
   ProgVarRef	group_order_var; // #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data groups in -- is automatically created if not set
@@ -129,11 +141,11 @@ private:
   void	Destroy() { }
 };
 
-class EMERGENT_API NetCounterInit: public ProgEl { 
+class EMERGENT_API NetCounterInit: public NetBaseProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
-INHERITED(ProgEl)
+INHERITED(NetBaseProgEl)
 public:
-  ProgVarRef	network_var;	// #ITEM_FILTER_StdProgVarFilter variable that points to the network 
+  ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network 
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// #ITEM_FILTER_StdProgVarFilter local version of the counter variable, maintained by the program -- must have same name as the counter!  automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type #DEFCAT_Counter counter variable on network to operate on
@@ -154,11 +166,11 @@ private:
   void	Destroy();
 };
 
-class EMERGENT_API NetCounterIncr: public ProgEl { 
+class EMERGENT_API NetCounterIncr: public NetBaseProgEl { 
   // initialize a network counter: program keeps a local version of the counter, and updates both this and the network's copy
-INHERITED(ProgEl)
+INHERITED(NetBaseProgEl)
 public:
-  ProgVarRef	network_var;	// #ITEM_FILTER_StdProgVarFilter variable that points to the network (typically a global_var)
+  ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network (typically a global_var)
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// #ITEM_FILTER_StdProgVarFilter local version of the counter variable, maintained by the program -- must have same name as the counter! -- automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type  #DEFCAT_Counter counter variable on network to operate on
@@ -179,11 +191,11 @@ private:
   void	Destroy();
 };
 
-class EMERGENT_API NetUpdateView: public ProgEl { 
+class EMERGENT_API NetUpdateView: public NetBaseProgEl { 
   // update the network view, conditional on an update_net_view variable that is created by this progam element
-INHERITED(ProgEl)
+INHERITED(NetBaseProgEl)
 public:
-  ProgVarRef	network_var;	// #ITEM_FILTER_StdProgVarFilter variable that points to the network
+  ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network
   ProgVarRef	update_var;	// #ITEM_FILTER_StdProgVarFilter variable that controls whether we update the display or not
   
   override String	GetDisplayName() const;
@@ -206,13 +218,13 @@ private:
 //		Named Units Framework
 ////////////////////////////////////////////////////
 
-class EMERGENT_API InitNamedUnits: public ProgEl { 
+class EMERGENT_API InitNamedUnits: public NetBaseProgEl { 
   // Initialize named units system -- put this in the Init code of the program and it will configure everything based on the input_data datatable (which should be the first datatable in the args or vars -- Set Unit guys will look for it there)
-INHERITED(ProgEl)
+INHERITED(NetBaseProgEl)
 public:
-  ProgVarRef	input_data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to the input data table -- finds the first one in the program by default (and makes one if not found)
-  ProgVarRef	unit_names_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to the unit_names data table, which is created if it does not exist -- contains the name labels for each of the units
-  ProgVarRef	network_var;	// #ITEM_FILTER_StdProgVarFilter variable that points to the network (optional; for labeling network units if desired)
+  ProgVarRef	input_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table -- finds the first one in the program by default (and makes one if not found)
+  ProgVarRef	unit_names_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the unit_names data table, which is created if it does not exist -- contains the name labels for each of the units
+  ProgVarRef	network_var;	// #ITEM_FILTER_NetProgVarFilter variable that points to the network (optional; for labeling network units if desired)
   bool		init_label_net;	// label the network units (if network_var is set) in the Init code for this function (typically at the start of training)
   int		n_lay_name_chars; // number of layer-name chars to prepend to the enum values
   int		max_unit_chars; // max number of characters to use in unit label names (-1 = all)
@@ -254,10 +266,10 @@ private:
 };
 
 class EMERGENT_API SetUnitsLit: public ProgEl { 
-  // set units in input_data table to present to the network: values supplied as literal items
+  // set units in input_data table to present to the network based on dynamic enum values where the type name of the dynamic enum corresponds to the layer name in the input data: values supplied as literal items
 INHERITED(ProgEl)
 public:
-  ProgVarRef	input_data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to the input data table
+  ProgVarRef	input_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table
   bool		set_nm;		// set trial name based on unit names here
   int		offset;		// add this additional offset to unit indicies -- useful for unit groups with same sets of units
   DynEnum	unit_1; 	// unit to activate -- order doesn't matter -- can be any unit
@@ -285,17 +297,17 @@ private:
 
 
 class EMERGENT_API SetUnitsVar: public ProgEl { 
-  // set units in input_data table to present to the network: values supplied as variables
+  // set units in input_data table to present to the network based on dynamic enum variables where the type name of the dynamic enum corresponds to the layer name in the input data: values supplied as variables
 INHERITED(ProgEl)
 public:
-  ProgVarRef	input_data_var;	// #ITEM_FILTER_StdProgVarFilter program variable pointing to the input data table
+  ProgVarRef	input_data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to the input data table
   
   bool		set_nm;		// set trial name based on unit names here
   ProgVarRef	offset;		// #ITEM_FILTER_StdProgVarFilter add this additional offset to unit indicies -- useful for unit groups with same sets of units
-  ProgVarRef	unit_1;		// #ITEM_FILTER_StdProgVarFilter unit to activate -- order doesn't matter -- can be any unit
-  ProgVarRef	unit_2;		// #ITEM_FILTER_StdProgVarFilter unit to activate -- order doesn't matter -- can be any unit
-  ProgVarRef	unit_3;		// #ITEM_FILTER_StdProgVarFilter unit to activate -- order doesn't matter -- can be any unit
-  ProgVarRef	unit_4;		// #ITEM_FILTER_StdProgVarFilter unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_1;		// #ITEM_FILTER_DynEnumProgVarFilter unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_2;		// #ITEM_FILTER_DynEnumProgVarFilter unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_3;		// #ITEM_FILTER_DynEnumProgVarFilter unit to activate -- order doesn't matter -- can be any unit
+  ProgVarRef	unit_4;		// #ITEM_FILTER_DynEnumProgVarFilter unit to activate -- order doesn't matter -- can be any unit
   
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }

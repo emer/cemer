@@ -19,6 +19,15 @@
 #include "ta_datatable_qtso.h"
 #include "ta_project.h"
 
+bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {
+  bool rval = ObjProgVarFilter(base_, var_);
+  if(!rval) return false; // doesn't pass basic test
+
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  return (var->object_type && var->object_type->InheritsFrom(&TA_Network));
+}
+
+
 //////////////////////////
 //     NetDataLoop	//
 //////////////////////////

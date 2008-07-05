@@ -674,6 +674,9 @@ friend class ProgExprBase;
 INHERITED(taOBase)
 public:
   static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
+  static bool		ObjProgVarFilter(void* base, void* var); // Object* progvar filter -- only shows Object* items -- use in ITEM_FILTER comment directive
+  static bool		DataProgVarFilter(void* base, void* var); // data table* progvar filter -- only shows DataTable* items -- use in ITEM_FILTER comment directive
+  static bool		DynEnumProgVarFilter(void* base, void* var); // DynEnum progvar filter -- only shows DynEnum items -- use in ITEM_FILTER comment directive
 
   enum ProgFlags { // #BITS flags for modifying program element function or other information
     PEF_NONE		= 0, // #NO_BIT

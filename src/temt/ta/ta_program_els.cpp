@@ -779,13 +779,6 @@ String VarIncr::GetDisplayName() const {
 //    MethodCall	//
 //////////////////////////
 
-bool MethodCall::ShowVarFilter(void* base_, void* var_) {
-  bool rval = StdProgVarFilter(base_, var_);
-  if(!rval) return false;
-  ProgVar* var = static_cast<ProgVar*>(var_);
-  return (var->var_type == ProgVar::T_Object);
-}
-
 void MethodCall::Initialize() {
   method = NULL;
   obj_type = &TA_taBase; // placeholder
@@ -861,13 +854,6 @@ String MethodCall::GetDisplayName() const {
 //////////////////////////
 //    MemberProgEl	//
 //////////////////////////
-
-bool MemberProgEl::ShowVarFilter(void* base_, void* var_) {
-  bool rval = StdProgVarFilter(base_, var_);
-  if(!rval) return false;
-  ProgVar* var = static_cast<ProgVar*>(var_);
-  return (var->var_type == ProgVar::T_Object);
-}
 
 void MemberProgEl::Initialize() {
   obj_type = &TA_taBase; // placeholder

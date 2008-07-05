@@ -1941,6 +1941,28 @@ bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   return true;
 }
 
+bool ProgEl::ObjProgVarFilter(void* base_, void* var_) {
+  bool rval = StdProgVarFilter(base_, var_);
+  if(!rval) return false;
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  return (var->var_type == ProgVar::T_Object);
+}
+
+bool ProgEl::DataProgVarFilter(void* base_, void* var_) {
+  bool rval = ObjProgVarFilter(base_, var_);
+  if(!rval) return false; // doesn't pass basic test
+
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  return (var->object_type && var->object_type->InheritsFrom(&TA_DataTable));
+}
+
+bool ProgEl::DynEnumProgVarFilter(void* base_, void* var_) {
+  bool rval = StdProgVarFilter(base_, var_);
+  if(!rval) return false;
+  ProgVar* var = static_cast<ProgVar*>(var_);
+  return (var->var_type == ProgVar::T_DynEnum);
+}
+
 void ProgEl::Initialize() {
   flags = PEF_NONE;
   setUseStale(true);
