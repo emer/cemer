@@ -169,6 +169,11 @@ public:
 
   RecvCons_recv() {cons = NULL;}
   ~RecvCons_recv() {cons = NULL;}
+protected:
+  void 			setSize_impl(int i, Projection* prjn) {
+    inherited::setSize_impl(i, prjn);
+    cons = crealloc(cons, size, i);
+  }
 };
 
 template<class CN>
@@ -181,6 +186,11 @@ public:
 
   RecvCons_send() {cons = NULL;}
   ~RecvCons_send() {cons = NULL;}
+protected:
+  void 			setSize_impl(int i, Projection* prjn) {
+    inherited::setSize_impl(i, prjn);
+    cons = crealloc(cons, size, i);
+  }
 };
 
 typedef taPtrList<RecvCons>	RecvConsPtrList;
@@ -237,6 +247,11 @@ public:
 
   SendCons_send() {cons = NULL;}
   ~SendCons_send() {cons = NULL;}
+protected:
+  void 			setSize_impl(int i, Projection* prjn) {
+    inherited::setSize_impl(i, prjn);
+    cons = crealloc(cons, size, i);
+  }
 };
 
 template<class CN>
@@ -251,6 +266,11 @@ public:
 
   SendCons_recv() {cons = NULL;}
   ~SendCons_recv() {cons = NULL;}
+protected:
+  void 			setSize_impl(int i, Projection* prjn) {
+    inherited::setSize_impl(i, prjn);
+    cons = crealloc(cons, size, i);
+  }
 };
 
 // ALGO Specific Guys

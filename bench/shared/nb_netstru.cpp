@@ -1080,6 +1080,7 @@ int Nb::main() {
   default: /*YOU WILL NOW CRASH!!!*/ return 1;
   };
   
+  net->SetEngine(CreateNetEngine());
   net->Initialize();
   net->Build();
 
@@ -1250,8 +1251,6 @@ void Nb::Initialize() {
     cerr << "RECV_SMART is no longer supported\n";
 
   Initialize_impl();
-  
-  Nb::net->SetEngine(CreateNetEngine());
 }
 
 const char* wt_in_str[] = {"recv", "send", "conn"};
