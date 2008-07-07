@@ -15,7 +15,7 @@ static int g_rand;
 
 
 //////////////////////////
-//  Conn		//
+//  Connection		//
 //////////////////////////
 
 
@@ -27,62 +27,53 @@ ConsBase::ConsBase()
 :units(NULL) 
 {
   size = 0;
+  prjn = NULL;
 }
 
 ConsBase::~ConsBase() {
   size = 0;
-  delete[] units; // safe if NULL
+  free(units); // safe if NULL
   units = NULL;
 }
 
-void ConsBase::setSize_impl(int i) {
-  units = new Unit*[i];
-#ifdef DEBUG
- // units.Fill(-1); // helps detect errors
-#endif
+void ConsBase::setSize_impl(int i, Projection* /*prjn*/) {
+  units = crealloc<Unit*>(units, size, i);
 }
 
 
 //////////////////////////
-//  RecvCons		//
+//  RecvCons	//
 //////////////////////////
 
 RecvCons::RecvCons() {
   send_idx = -1; 
   send_lay = NULL;
   dwt_mean = 0.0f;
-  cons = NULL;
-  //note: we don't init the modal guys -- they get written in setSize
 }
 
-RecvCons::~RecvCons() {
-  delete[] cons;
-  cons = NULL;
-#if (WT_IN == WT_CONN)
-  // nothing
-#elif (WT_IN == WT_RECV)
-  wts = NULL;
-#elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
-  pwts = NULL;
-#endif
-}
-
-void RecvCons::setSize_impl(int i) {
-  inherited::setSize_impl(i);
-  m_cons.SetSize(i);
-  cons = new Conn[i];
-#if (WT_IN == WT_CONN)
-  // nothing
-#elif (WT_IN == WT_RECV)
-  wts = Nb::net.AllocWts(i); // note: sleazy global access
-#elif ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
-  m_pwts.SetSize(i); 
-  pwts = m_pwts.Els();
-#endif
-}
 
 //////////////////////////
-//  SendCons		//
+//  RecvCons_send_impl	//
+//////////////////////////
+
+RecvCons_send_impl::~RecvCons_send_impl() {
+  free(pwts); // nop if null
+  pwts = NULL;
+}
+
+void RecvCons_recv_impl::setSize_impl(int i, Projection* prjn) {
+  inherited::setSize_impl(i, prjn);
+  wts = prjn->AllocWts(i);
+}
+
+void RecvCons_send_impl::setSize_impl(int i, Projection* prjn) {
+  inherited::setSize_impl(i, prjn);
+  pwts = crealloc(pwts, size, i);
+}
+
+
+//////////////////////////
+//  SendCons	//
 //////////////////////////
 
 SendCons::SendCons() {
@@ -90,22 +81,25 @@ SendCons::SendCons() {
   recv_lay = NULL;
 }
 
-SendCons::~SendCons() {
-  cons = NULL;
+//////////////////////////
+//  SendCons_recv_impl	//
+//////////////////////////
+
+SendCons_recv_impl::~SendCons_recv_impl() {
+  free(pwts); // nop if null
+  pwts = NULL;
 }
 
-void SendCons::setSize_impl(int i) {
-  inherited::setSize_impl(i);
-  m_cons.Alloc(i);
-  cons = m_cons.Els();
-#if (WT_IN == WT_RECV)
-  m_pwts.SetSize(i);
-  m_pwts.Fill(NULL);
-  pwts = m_pwts.el;
-#elif (WT_IN == WT_SEND)
-  wts = Nb::net.AllocWts(i); // note: sleazy global access
-#endif
+void SendCons_recv_impl::setSize_impl(int i, Projection* prjn) {
+  inherited::setSize_impl(i, prjn);
+  pwts = crealloc(pwts, size, i);
 }
+
+void SendCons_send_impl::setSize_impl(int i, Projection* prjn) {
+  inherited::setSize_impl(i, prjn);
+  wts = prjn->AllocWts(i);
+}
+
 
 
 //////////////////////////
@@ -118,33 +112,47 @@ ConSpec:: ConSpec() {
   wt_limits.max = 1.0f;
 }
 
-void ConSpec::Compute_SRAvg(Network* /*net*/, Unit* ru) {
+//////////////////////////
+//  LeabraConSpec	//
+//////////////////////////
+
+void LeabraConSpec::Compute_Weights(Network* net, Unit* u) {
+  // CTLEABRA_CAL, DCAL
+  for(int g = 0; g < u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if (recv_gp->size <= 0) continue;
+    Compute_Weights_CtCAL(net, recv_gp, u);
+  }
+}
+
+
+void LeabraConSpec::Compute_SRAvg(Network* /*net*/, Unit* ru) {
   //nn Unit** g_units = net->g_units;
 //  float* g_acts = net->g_acts;
   float ru_act = ru->act;
   for(int g = 0; g < ru->recv.size; g++) {
-    RecvCons* cg = ru->recv.FastEl(g);
+    LeabraRecvCons* cg = (LeabraRecvCons*)ru->recv.FastEl(g);
     Unit** units = cg->units;
-    for (int i = 0; i < cg->size; ++i) {
-      Conn* cn = cg->Cn(i);
+    LeabraCon* cons = cg->cons;
+    const int cg_size = cg->size;
+    for (int i = 0; i < cg_size; ++i) {
+      LeabraCon* cn = &(cons[i]); 
       cn->sravg += ru_act * units[i]->act;
     }
   }
 }
 
-void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* ru) {
+void LeabraConSpec::Compute_Weights_CtCAL(Network* /*net*/, LeabraRecvCons* cg, Unit* ru) {
   // first emulate the Leabra "dWt" calc
+  const int cg_size = cg->size;
   const float ru_act = ru->act;
-  for (int i=0; i<cg->size; i++) {
+  LeabraCon* cons = cg->cons; // for speed
+  
+  cg->dwt_mean = 0.0f;
+  for (int i=0; i<cg_size; i++) {
     const float su_act = cg->Un(i)->act;
-    Conn* cn = cg->Cn(i);
-#if (WT_IN == WT_CONN)
-    const float& cn_wt = cn->wt;
-#elif defined(PWT_IN_CONN)
-    const float& cn_wt = *(const_cast<const float*>(cn->pwt));
-#else
+    LeabraCon* cn = &(cons[i]);
     const float& cn_wt = cg->Wt(i);
-#endif
    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
     float err = (ru_act * su_act) - (0.02f * cn->sravg);
     //if(lmix.err_sb) {
@@ -153,28 +161,15 @@ void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* ru) {
     //}
     cn->dwt += cur_lrate * err;
     cn->sravg = 0.0f;
-  }
-  
-  //Compute_dWtMean(cg, ru);
-  cg->dwt_mean = 0.0f;
-  for (int i = 0; i < cg->size; ++i) {
-    Conn* cn = cg->Cn(i);
     cg->dwt_mean += cn->dwt;
   }
-  cg->dwt_mean /= (float)cg->size;
+  cg->dwt_mean /= (float)cg_size;
   
   float dwnorm = -norm_pct * cg->dwt_mean;
     
-  for (int i = 0; i < cg->size; ++i) {
-    Conn* cn = cg->Cn(i);
-//note: following is optimization only
-#if (WT_IN == WT_CONN)
-    float& cn_wt = cn->wt;
-#elif defined(PWT_IN_CONN)
-    float& cn_wt = *(cn->pwt);
-#else
+  for (int i = 0; i < cg_size; ++i) {
+    LeabraCon* cn = &(cons[i]);
     float& cn_wt = cg->Wt(i);
-#endif
     
     // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
     float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
@@ -192,15 +187,6 @@ void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* ru) {
     wt_limits.ApplyMaxLimit(cn_wt);
     cn->pdw = cn->dwt;
     cn->dwt = 0.0f;
-  }
-}
-
-void ConSpec::Compute_Weights(Network* net, Unit* u) {
-  // CTLEABRA_CAL, DCAL
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
-    if (recv_gp->size <= 0) continue;
-    Compute_Weights_CtCAL(net, recv_gp, u);
   }
 }
 
@@ -232,12 +218,54 @@ Unit::Unit()
 }
 
 Unit::~Unit() {
+  for (int i = send.size - 1; i >= 0; --i) {
+    delete send.FastEl(i);
+  }
+  for (int i = recv.size - 1; i >= 0; --i) {
+    delete recv.FastEl(i);
+  }
+
 }
 
 void Unit::CalcDelta() {
   do_delta = ((Nb::this_rand ^ my_rand) & 0xffff) < Nb::send_act;
 } 
 
+
+//////////////////////////
+//  Layer		//
+//////////////////////////
+
+Projection::Projection() {
+  size = 0;
+  con_size = 0; // will be set later
+  wts = NULL;
+  cons = NULL;
+  next_wti = 0;
+}
+
+Projection::~Projection() {
+}
+
+float* Projection::AllocWts(int sz) {
+  float* rval = &(wts[next_wti]);
+  next_wti += sz;
+#ifdef DEBUG
+  if (next_wti > size) {
+    cerr << "ERROR: Projection::AllocWts() overflow\n";
+    return NULL;
+  }
+#endif
+  return rval;
+}
+
+void Projection::SetSize(int i) {
+//NOTE: based on only one allocation
+  wts = crealloc<float>(wts, size, i);
+  cons = realloc(cons, i);
+  memset(cons, 0, con_size * 1);
+  size = i;
+}
 
 //////////////////////////
 //  Layer		//
@@ -252,35 +280,48 @@ Layer::~Layer() {
 }
 
 void Layer::ConnectFrom(Layer* lay_fm) {
+  ConSpec* cs = net->con_spec; // concrete type
+  const int recv_idx = prjns.size; // index of new recv gp...
+  const int send_idx = lay_fm->send_prjns.size; // index of new send gp...
+  Projection* prjn = prjns.New();
+  prjn->own_lay = this;
+  prjn->con_size = cs->GetConSize();
+  lay_fm->send_prjns.Add(prjn);
   Nb::n_prjns++;
   const int n_send = lay_fm->units.size;
+  const int n_cons_prjn = n_send * units.size; // TODO: should actually be based on n_cons
+  prjn->SetSize(n_cons_prjn);
   if ((n_send == 0) || (units.size <= 0)) return; // shouldn't happen
   // get a unit to determine send and recv gp
   Unit* un_fm = lay_fm->units.FastEl(0);
-  const int send_idx = un_fm->send.size; // index of new send gp...
   Unit* un_to = units.FastEl(0);
-  const int recv_idx = un_to->recv.size; // index of new recv gp...
 
   // do ConGps first
   for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
     un_fm = lay_fm->units.FastEl(i_fm);
-    SendCons* send_gp = un_fm->send.New();
-    send_gp->setSize(n_send);
+    SendCons* send_gp = cs->NewSendCons(); 
+    un_fm->send.Add(send_gp);
+    send_gp->setSize(n_send, prjn);
     send_gp->recv_idx = recv_idx;
     send_gp->recv_lay = this;
   }
+  
   for (int i_to = 0; i_to < units.size; ++i_to) {
     un_to = units.FastEl(i_to);
-    RecvCons* recv_gp = un_to->recv.New();
-    recv_gp->setSize(n_send);
+    RecvCons* recv_gp = cs->NewRecvCons();
+    un_to->recv.Add(recv_gp);
+    recv_gp->setSize(n_send, prjn);
     recv_gp->send_idx = send_idx;
     recv_gp->send_lay = lay_fm;
   }
-
+  // just use last guy to determine who owns weights
+  
   // connect, on a receiver-basis
   for (int i_to = 0; i_to < units.size; ++i_to) {
     un_to = units.FastEl(i_to);
     RecvCons* recv_gp = un_to->recv.FastEl(recv_idx);
+    //note: small waste to check every time, but we have the obj right here...
+    bool recv_owns_wts = recv_gp->ownsWts();
     
     for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
       un_fm = lay_fm->units.FastEl(i_fm);
@@ -288,20 +329,19 @@ void Layer::ConnectFrom(Layer* lay_fm) {
       SendCons* send_gp = un_fm->send.FastEl(send_idx);
       
       // wt references and access
-#if (WT_IN == WT_CONN)
-      float& wt = recv_gp->Wt(i_fm); // from Conn itself
-#elif (WT_IN == WT_RECV)
-      float& wt = recv_gp->Wt(i_fm);
-      send_gp->pwts[i_to] = &wt;
-#elif (WT_IN == WT_SEND)
-      float& wt = send_gp->Wt(i_to);
-      recv_gp->SetWt(&wt, i_fm);
-#endif
-      wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+      float* wt;
+      if (recv_owns_wts) {
+        wt = &recv_gp->Wt(i_fm);
+        send_gp->SetWt(wt, i_to);
+      } else {// wt in sender
+        wt = &send_gp->Wt(i_to);
+        recv_gp->SetWt(wt, i_fm);
+      }
+      *wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
       recv_gp->units[i_fm] = un_fm;
       send_gp->units[i_to] = un_to;
-      Conn* cn = recv_gp->Cn(i_fm);
-      send_gp->cons[i_to] = cn;
+      Connection* cn = recv_gp->Cn(i_fm);
+      send_gp->SetCn(cn, i_to);
     }
   }
 }
@@ -314,17 +354,19 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 bool 	Network::recv_based; 
 
 Network::Network() {
+  con_spec = NULL;
   engine = NULL;
   cycle = 0;
   n_units_flat = 0;
   g_units = NULL;
-  next_wti = 0;
 }
 
 Network::~Network() {
   SetEngine(NULL);
   n_units_flat = 0;
   g_units = NULL;
+  delete con_spec;
+  con_spec = NULL;
 }
 
 void Network::Initialize() {
@@ -333,20 +375,18 @@ void Network::Initialize() {
 
 void Network::Build() {
   n_units_flat = Nb::n_layers * Nb::n_units;
-  const int n_prjns = (Nb::n_layers - 1) * 2;
+//  const int n_prjns = (Nb::n_layers - 1) * 2;
   //note: we validated cons < 2^31 in startup
-  const int n_cons_flat = n_prjns * Nb::n_units * Nb::n_cons;
+//nn  const int n_cons_flat = n_prjns * Nb::n_units * Nb::n_cons;
   
   layers.Alloc(Nb::n_layers);
   // global allocs and ptrs
   units_flat.Alloc(n_units_flat);
   g_units = units_flat.Els();
-  wts_flat.SetSize(n_cons_flat);
-  next_wti = 0;
   
   
   int next_uni = 0;
-  ConSpec* cs = new ConSpec; // everyone shares
+  ConSpec* cs = con_spec; // everyone shares
   UnitSpec* uspec = new UnitSpec; // everyone shares
   // make all layers and units first
   layers.Alloc(Nb::n_layers);
@@ -380,14 +420,6 @@ void Network::Build() {
   engine->OnBuild();
 }
 
-float* Network::AllocWts(int sz) {
-  if ((next_wti + sz) > wts_flat.alloc_size)
-    return NULL;
-  float* rval = &(wts_flat[next_wti]);
-  next_wti += sz;
-  return rval;
-}
-
 void Network::ComputeNets() {
   engine->ComputeNets();
 }
@@ -398,11 +430,11 @@ float Network::ComputeActs() {
   return rval;
 }
 
-void Network::Compute_SRAvg() {
+void LeabraNetwork::Compute_SRAvg() {
   engine->Compute_SRAvg();
 }
 
-void Network::Compute_Weights() {
+void LeabraNetwork::Compute_Weights() {
   engine->Compute_Weights();
 }
 
@@ -410,19 +442,18 @@ void Network::Cycle(int n_cycles) {
   // this is the key computation loop
   for (int i = 0; i < n_cycles; ++i) {
     g_rand = rand();
+    Cycle_impl();
     ComputeNets();
-    if (Nb::calc_act) {
-      float tot_act = ComputeActs();
-      if (Nb::use_log_file)
-        fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", cycle, tot_act);
-    }
-    // note: add 1 to cycle so we do it after dwt_rate full counts
-    int nc1 = cycle + 1;
-    if ((Nb::sra_rate > 0) && ((nc1 % Nb::sra_rate) == 0)) 
-      Compute_SRAvg();
-    if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) 
-      Compute_Weights();
     ++cycle;
+  }
+}
+
+void Network::Cycle_impl() {
+  ComputeNets();
+  if (Nb::calc_act) {
+    float tot_act = ComputeActs();
+    if (Nb::use_log_file)
+      fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", cycle, tot_act);
   }
 }
 
@@ -450,6 +481,29 @@ void Network::SetEngine(NetEngine* engine_) {
 
 /*void Network::PartitionUnits_Send() {
 }*/
+
+//////////////////////////
+//  LeabraNetwork		//
+//////////////////////////
+
+LeabraNetwork::LeabraNetwork() {
+  con_spec = new LeabraConSpec; 
+}
+
+LeabraNetwork::~LeabraNetwork() {
+}
+
+void LeabraNetwork::Cycle_impl() {
+  inherited::Cycle_impl();
+  // note: add 1 to cycle so we do it after dwt_rate full counts
+  int nc1 = cycle + 1;
+  if ((Nb::sra_rate > 0) && ((nc1 % Nb::sra_rate) == 0)) 
+    Compute_SRAvg();
+  if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) 
+    Compute_Weights();
+}
+
+
 
 //////////////////////////
 //  NetEngine		//
@@ -764,74 +818,45 @@ void NetTask::run() {
   }
 }
 
-void NetTask::Send_Netin_0(Unit* su) {
+void LeabraConSpec::Send_Netin_0(Unit* su) {
   const float su_act_eff = su->act;
 //  float* g_wts = net->g_wts; // cache
   for (int j = 0; j < su->send.size; ++j) {
-    SendCons* send_gp = su->send[j];
+    LeabraSendCons* send_gp = (LeabraSendCons*)su->send[j];
     const int send_sz = send_gp->size;
     su->n_con_calc += send_sz;
     Unit** units = send_gp->units; // unit pointer
-#if (WT_IN == WT_CONN)
-    Conn** cons = send_gp->cons; 
-    for (int i=0; i < send_sz; i++) {
-      //const int targ_i = unis[i];
-      Send_Netin_inner_0(cons[i]->wt, units[i]->net, su_act_eff);
-    }
-#elif (WT_IN == WT_RECV)
-    float** pwts = send_gp->pwts; // wt pointer
-    for (int i=0; i < send_sz; i++) {
-      //const int targ_i = unis[i];
-      Send_Netin_inner_0(*(pwts[i]), units[i]->net, su_act_eff);
-    }
-#elif (WT_IN == WT_SEND)
     float* wts = send_gp->wts; // the wts themselves!
     for (int i=0; i < send_sz; i++) {
       //const int targ_i = unis[i];
       Send_Netin_inner_0(wts[i], units[i]->net, su_act_eff);
     }
-#endif
   }
 }
 
-void NetTask::Recv_Netin_0(Unit* ru) {
+void BpConSpec::Recv_Netin_0(Unit* ru) {
   float ru_net = 0.0f;
-//  float* g_acts = Nb::net.g_acts;
+//  float* g_acts = Nb::net->g_acts;
   for (int j = 0; j < ru->recv.size; ++j) {
-    RecvCons* recv_gp = ru->recv[j];
+    RecvCons_recv_impl* recv_gp = (RecvCons_recv_impl*)ru->recv[j];
     const int recv_sz = recv_gp->size;
     ru->n_con_calc += recv_sz;
     
     Unit** units = recv_gp->units; // unit pointer
-#if (WT_IN == WT_CONN)
-    Conn* cons = recv_gp->cons; // cache
-    for(int i=0; i < recv_sz; ++i)
-      ru_net += units[i]->act * cons[i].wt; //TODO: try casting directly to float
-#elif (WT_IN == WT_RECV)
     float* wts = recv_gp->wts; // cache
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * wts[i];
-#elif (WT_IN == WT_SEND)
-# if defined(PWT_IN_CONN)
-    Conn* cons = recv_gp->cons; // cache
-    for(int i=0; i < recv_sz; ++i)
-      ru_net += units[i]->act * *(cons[i].pwt);
-# else
-    float** pwts = recv_gp->pwts; // cache
-    for(int i=0; i < recv_sz; ++i)
-      ru_net += units[i]->act * *(pwts[i]);
-# endif
-#endif
   }
   ru->net = ru_net;
 }
 
 void NetTask::Recv_Netin() {
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** units = Nb::net->g_units; // cache
+  BpConSpec* bp_cs = (BpConSpec*)Nb::net->con_spec;
+  const int n_units_flat =  Nb::net->n_units_flat;
   while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
-    Recv_Netin_0(un);
+    bp_cs->Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
     ++g_u;
   }
@@ -851,7 +876,7 @@ float NetTask::ComputeAct_inner(Unit* un) {
 void NetTask::ComputeAct() {
   // compute activations (only order number of units)
   my_act = 0.0f;
-  const int n_units_flat =  Nb::net.n_units_flat;
+  const int n_units_flat =  Nb::net->n_units_flat;
   Unit** g_units = net->g_units;
   while (g_u < n_units_flat) {
     Unit* un = g_units[g_u]; //note: accessed flat
@@ -861,20 +886,20 @@ void NetTask::ComputeAct() {
 }
 
 void NetTask::Compute_Weights() {
-  Unit** g_units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** g_units = Nb::net->g_units; // cache
+  const int n_units_flat =  Nb::net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = g_units[my_u]; //note: accessed flat
-    un->cs->Compute_Weights(&Nb::net, un);
+    un->cs->Compute_Weights(Nb::net, un);
   }
 }
 
 void NetTask::Compute_SRAvg() {
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** units = Nb::net->g_units; // cache
+  const int n_units_flat =  Nb::net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
-    un->cs->Compute_SRAvg(&Nb::net, un);
+    ((LeabraConSpec*)(un->cs))->Compute_SRAvg(Nb::net, un);
   }
 }
 
@@ -884,12 +909,13 @@ void NetTask::Compute_SRAvg() {
 //////////////////////////////////
 
 void NetTask_0::Send_Netin_Clash() {
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** units = Nb::net->g_units; // cache
+  LeabraConSpec* lb_cs = (LeabraConSpec*)Nb::net->con_spec;
+  const int n_units_flat =  Nb::net->n_units_flat;
   while (g_u < n_units_flat) {
     Unit* un = units[g_u]; //note: accessed flat
     if (un->do_delta) {
-      Send_Netin_0(un);
+      lb_cs->Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
     }
     ++g_u;
@@ -909,12 +935,13 @@ NetTask_N::~NetTask_N() {
 }
 
 void NetTask_N::Send_Netin_Clash() {
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat = Nb::net.n_units_flat;
+  Unit** units = Nb::net->g_units; // cache
+  LeabraConSpec* lb_cs = (LeabraConSpec*)Nb::net->con_spec;
+  const int n_units_flat = Nb::net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     if (un->do_delta) {
-      Send_Netin_0(un);
+      lb_cs->Send_Netin_0(un);
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
   }
@@ -931,36 +958,22 @@ void NetTask_N::Send_Netin_Array() {
   memset(excit, 0, sizeof(float) * net->n_units_flat);
   overhead.Stop();
 
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat = Nb::net.n_units_flat;
+  Unit** units = Nb::net->g_units; // cache
+  const int n_units_flat = Nb::net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* su = units[my_u]; //note: accessed flat
     if (su->do_delta) {
       float su_act_eff = su->act;
       for (int j = 0; j < su->send.size; ++j) {
-        SendCons* send_gp = su->send[j];
+        SendCons_send_impl* send_gp = (SendCons_send_impl*)su->send[j];
         const int send_sz = send_gp->size;
         su->n_con_calc += send_sz;
         Unit** units = send_gp->units; // unit pointer
-#if (WT_IN == WT_CONN)
-        Conn** cons = send_gp->cons; 
-        for (int i=0; i < send_sz; i++) {
-          //const int targ_i = unis[i];
-          Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
-        }
-#elif (WT_IN == WT_RECV)
-        float** pwts = send_gp->pwts; // wt pointer
-        for (int i=0; i < send_sz; i++) {
-          //const int targ_i = uns[i];
-          Send_Netin_inner_0(*(pwts[i]), excit[units[i]->uni], su_act_eff);
-        }
-#elif (WT_IN == WT_SEND)
         float* wts = send_gp->wts; // wts themselves
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];
-          Send_Netin_inner_0(wts[i], excit[units[i]->uni], su_act_eff);
+          LeabraConSpec::Send_Netin_inner_0(wts[i], excit[units[i]->uni], su_act_eff);
         }
-#endif
       }
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
@@ -974,8 +987,8 @@ void NetTask_N::Send_Netin_Array() {
   memset(excit, 0, sizeof(float) * net->n_units_flat);
   overhead.Stop();
 
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat = Nb::net.n_units_flat;
+  Unit** units = Nb::net->g_units; // cache
+  const int n_units_flat = Nb::net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* su = units[my_u]; //note: accessed flat
     if (su->do_delta) {
@@ -986,7 +999,7 @@ void NetTask_N::Send_Netin_Array() {
         su->n_con_calc += send_sz;
         Unit** units = send_gp->units; // unit pointer
 #if (WT_IN == WT_CONN)
-        Conn** cons = send_gp->cons; 
+        Connection** cons = send_gp->cons; 
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = unis[i];
           Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
@@ -1011,17 +1024,18 @@ void NetTask_N::Send_Netin_Array() {
 }
 */
 void NetTask_N::Recv_Netin() {
-  Unit** g_units = Nb::net.g_units; // cache
-  PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
+  Unit** g_units = Nb::net->g_units; // cache
+  PROC_VAR_LOOP(my_u, g_u, Nb::net->n_units_flat) {
     Unit* un = g_units[my_u]; //note: accessed flat
-    Recv_Netin_0(un);
+    BpConSpec* bp_cs = (BpConSpec*)un->cs;
+    bp_cs->Recv_Netin_0(un);
     AtomicFetchAdd(&Nb::n_tot, 1); // note: we use this because we have to measure it regardless, don't penalize
   }
 }
 
 void NetTask_N::ComputeAct() {
   Unit** g_units = net->g_units;
-  const int n_units_flat = Nb::net.n_units_flat;
+  const int n_units_flat = Nb::net->n_units_flat;
   my_act = 0.0f;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = g_units[my_u]; //note: accessed flat
@@ -1037,10 +1051,11 @@ int Nb::n_layers;
 int Nb::n_units;			// number of units per layer
 int Nb::n_cons; // number of cons per unit
 int Nb::n_cycles;			// number of cycles of updating
-Network Nb::net;		// global network 
+Network* Nb::net;		// global network 
 int Nb::n_tot;
 int Nb::n_prjns;
 float Nb::tot_act; // check on tot act
+int Nb::net_type;
 float Nb::nibble_thresh = 0.8f;
 signed char Nb::nibble_mode = 0;
 signed char Nb::fast_prjn = 0; // fast prjns directly access target unit array
@@ -1057,8 +1072,16 @@ bool Nb::calc_act = true;
 int Nb::main() {
   Initialize();
   
-  net.Initialize();
-  net.Build();
+  switch (net_type) {
+  case Network::Leabra:
+    net = new LeabraNetwork; break;
+  case Network::Bp:
+//TODO    net = new BpNetwork; break;
+  default: /*YOU WILL NOW CRASH!!!*/ return 1;
+  };
+  
+  net->Initialize();
+  net->Build();
 
   act_logfile = NULL;
   if (use_log_file) {
@@ -1068,7 +1091,7 @@ int Nb::main() {
 
   time_used.Start();
   
-  net.Cycle(n_cycles);
+  net->Cycle(n_cycles);
 
   time_used.Stop();
   if (use_log_file) {
@@ -1077,11 +1100,11 @@ int Nb::main() {
   }
 
   // note: always make/extend the thread log
-  net.engine->Log(hdr);
+  net->engine->Log(hdr);
 
   PrintResults();
 
-  net.SetEngine(NULL); // controlled delete
+  net->SetEngine(NULL); // controlled delete
   return 0;
 }
 
@@ -1228,15 +1251,16 @@ void Nb::Initialize() {
 
   Initialize_impl();
   
-  Nb::net.SetEngine(CreateNetEngine());
+  Nb::net->SetEngine(CreateNetEngine());
 }
 
 const char* wt_in_str[] = {"recv", "send", "conn"};
+const char* net_type_str[] = {"leabra", "bp"};
 
 void Nb::PrintResults() {
   tot_time = time_used.s_used;
   n_wts = n_prjns * n_units * n_cons;
-  n_con_trav = net.GetNTot();
+  n_con_trav = net->GetNTot();
   // actual con_trav / sec based on total actual cons
   con_trav_sec = (n_con_trav / tot_time) / 1.0e6;
   // but effective is based on total number 
@@ -1249,7 +1273,7 @@ void Nb::PrintResults() {
     const char* hdr_str = 
     "algo\teMcon\tMcon\tsnd_act\tprocs"
     "\tlayers\tunits\tcons\tKwts\tcycles"
-    "\tKcn_tot\tsecs\tnibble\tfstprjn\tsrarate"
+    "\tKcn_tot\tsecs\tnibble\tnettype\tsrarate"
     "\tdwtrate\twt_in\n";
     
     if (logfile) fprintf(logfile, hdr_str);
@@ -1262,11 +1286,11 @@ void Nb::PrintResults() {
   sprintf(buf, 
     "%d\t%.4g\t%.4g\t%d\t%d"
     "\t%d\t%d\t%d\t%g\t%d"
-    "\t%g\t%.3g\t%d\t%d\t%d"
+    "\t%g\t%.3g\t%d\t%s\t%d"
     "\t%d\t%s\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
     n_layers, n_units, n_cons, n_wts / 1000, n_cycles,
-    n_con_trav / 1000, tot_time, nibble_mode, fast_prjn, sra_rate,
+    n_con_trav / 1000, tot_time, nibble_mode, net_type_str[net_type], sra_rate,
     dwt_rate, wt_in_str[wt_in]);
   cout << buf;
   if (logfile) {

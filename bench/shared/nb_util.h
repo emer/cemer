@@ -183,6 +183,15 @@ template<class T>
 void StatFill(T* el, int size, const T& it)
     {for (int i=0; i<size; ++i) el[i] = it;}
     
+template<class T>
+T* crealloc(T* el, int cur_size, int new_size) {
+  T* rval = (T*)realloc(el, size_t(sizeof(T) * new_size));
+  if (new_size > cur_size) {
+    memset(&(rval[cur_size+1]), 0, sizeof(T) * (new_size - cur_size));
+  }
+  return rval;
+}
+  
 class taArray_impl {
 public:
 

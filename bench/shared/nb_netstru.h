@@ -10,7 +10,7 @@
 //#define USE_INT_IDX // true to use indirect ints, else use ptrs
 #define WT_RECV 0 // owned by RecvCons
 #define WT_SEND 1 // owned by SendCons
-#define WT_CONN 2 // is baked into Conn
+#define WT_CONN 2 // is baked into Connection
 
 #define WT_IN WT_SEND
 
@@ -18,7 +18,7 @@
 #if (WT_IN == WT_CONN)
 #elif (WT_IN == WT_RECV)
 #elif (WT_IN == WT_SEND)
-//# define PWT_IN_CONN // put a ptr to wt in Conn, instead of using a PtrList 
+//# define PWT_IN_CONN // put a ptr to wt in Connection, instead of using a PtrList 
 #else
 # error("WT_IN not set")
 #endif
@@ -27,57 +27,68 @@
 //#define SEND_ARY_ASYM
 
 // optional subs
-class Conn;
+class Connection;
 class RecvCons;
 class SendCons;
 class ConSpec;
 class UnitSpec;
 class Unit;
+class Projection;
 class Layer;
 class Network;
 class NetEngine;
 class NetTask;
 typedef taList<NetTask>		NetTaskList;
+typedef taList<Projection>		PrjnList;
+typedef taPtrList<Projection>		PrjnPtrList;
 
 // note: classes of same-name are similar in structure to
 // the corresponding Emergent/Leabra classes
 
 
-/* Conns and wts are owned by the receiving unit
-   (via a RecvCon entry per projection.)
+/* Conns are allocated by the recv Projection and owned by the receiving unit
+   (via a RecvCon entry per projection.) Wts are owned by
+   the "congruent" XxxxCons object for the algorithm:
+   RecvCons for recv-based algos (ex. Bp)
+   SendCons for send-based algos (ex. Leabra)
    
-   The wts in a RecvCon object are ordered by
-   Conn index (i.e., in the same order.) Therefore,
-   access to the RecvCon wt is done via the same
+   The wts in a congruent XxxxCons object are ordered by
+   Connection index (i.e., in the same order.) Therefore,
+   access to the wt is done via the same
    index as used to access the Con
    
-   The SendCon object has a list of indexes that
-   correspond to the target Conn/wt in the RecvCon
+   The incongruent object has a list of pointers that
+   correspond to the target Connection/wt in the congruent
    (target) list. Therefore, the sender-based Netin
    process must use an indirect lookup for the targets.
    
    The benefit, is that the Recv-based routines 
    access the wt directly, and it avoids an additional
-   index in the Conn obj itself
+   index in the Connection obj itself
+   
+   NOTE: Connection objects are never created individually, only in
+   big honkin arrays -- we allocate those using malloc and
+   zero them then, so we don't have (slow) ctors
   
 */
-class Conn {
+class Connection {
   // one connection between units
 public:
-//NOTE: when wt is in Conn, it MUST be placed as the first member
-#if (WT_IN == WT_CONN)
-  float		wt;
-#elif defined(PWT_IN_CONN)
-  float*	pwt;
-#endif
   float 	dwt;	// delta-weight
-  float		pdw;
-  float		sravg;	// #NO_SAVE average of sender and receiver activation 
-  //Conn() {dwt = pdw = sravg = 0.0f;}
 };
 
-typedef taArray<Conn>		ConArray;
-typedef taPtrList<Conn>		ConPtrList; // SendCons
+class BpCon: public Connection {
+public:
+  float		pdw;
+};
+
+class LeabraCon: public Connection {
+public:
+  float		pdw;
+  float		sravg;	// #NO_SAVE average of sender and receiver activation 
+};
+
+typedef taPtrList<Connection>	ConPtrList; // points to any subclass of Connection
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
 typedef taArray<float*>		floatPtrList;
@@ -85,112 +96,246 @@ typedef taArray<float*>		floatPtrList;
 class ConsBase {
 public:
   Unit**		units;
-  inline Unit*		Un(int i) {return units[i];}
-  
+  Projection*		prjn; // receiving prjn
   int			size; // number of connections
-  void			setSize(int i) 
-    {if (i == size) return; setSize_impl(i); size = i;}
+  
+  virtual bool		ownsWts() const {return false;}
+  
+  inline Unit*		Un(int i) {return units[i];}
+  virtual Connection*	Cn(int i) = 0; // generic access to the actual type SLOW!!!
+  virtual float&	Wt(int i) = 0; // generic access to the wt SLOW!!!
+  virtual void		SetWt(float* /*pwt*/, int /*i*/) {} //NOTE: noop if ownsWts!
+  
+  void			setSize(int i, Projection* prjn) // cons/wts are alloced on the prjn
+    {if (i == size) return; setSize_impl(i, prjn); size = i;}
   
   ConsBase();
   virtual ~ConsBase();
 protected:
-//  UnitPtrList		m_units;
+  virtual void		setSize_impl(int, Projection* prjn);
+};
+
+class RecvCons: public ConsBase {
+INHERITED(ConsBase)
+public:
+  Layer*	send_lay; // sending layer
+  int		send_idx;
+  float		dwt_mean; // used by many algos
   
-  virtual void		setSize_impl(int);
+  
+  RecvCons();
+  ~RecvCons() {}
+};
+
+class RecvCons_recv_impl: public RecvCons {
+INHERITED(RecvCons)
+public:
+  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
+  
+  virtual bool		ownsWts() const {return true;}
+  override float&	Wt(int i) {return wts[i];} // SLOW!!!!
+
+  RecvCons_recv_impl() {wts = NULL;}
+  ~RecvCons_recv_impl() {}
+protected:
+  override void		setSize_impl(int i, Projection* prjn);
+};
+
+class RecvCons_send_impl: public RecvCons {
+INHERITED(RecvCons)
+public:
+  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
+  
+  override float&	Wt(int i) {return *(pwts[i]);} // SLOW!!!!
+  override void		SetWt(float* pwt, int i) {pwts[i] = pwt;}
+
+  RecvCons_send_impl() {pwts = NULL;}
+  ~RecvCons_send_impl();
+protected:
+  override void		setSize_impl(int i, Projection* prjn);
 };
 
 /* The wts array pointers are actually subpointers
   into the Network master array (allocated globally
   during Build) and cannot be individually replaced or altered.
 */
-class RecvCons: public ConsBase {
-INHERITED(ConsBase)
+template<class CN>
+class RecvCons_recv: public RecvCons_recv_impl {
+INHERITED(RecvCons_recv_impl)
 public:
-  Conn*			cons; // flat array -- ReadOnly!!! you must access safely!!!
-#if (WT_IN == WT_CONN)
-  inline float&		Wt(int i) {return cons[i].wt;}
-#elif (WT_IN == WT_RECV)
-  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
-  inline float&		Wt(int i) {return wts[i];}
-#elif (WT_IN == WT_SEND)
-# if defined(PWT_IN_CONN)
-  inline float&		Wt(int i) {return *(cons[i].pwt);}
-  inline void		SetWt(float* pwt, int i) {cons[i].pwt = pwt;}
-# else
-  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
-  inline float&		Wt(int i) {return *(pwts[i]);}
-  inline void		SetWt(float* pwt, int i) {pwts[i] = pwt;}
-# endif
-#endif
-  float			dwt_mean;
+  CN*			cons; // flat array -- ReadOnly!!! you must access safely!!!
   
-  inline Conn*		Cn(int i) {return &(cons[i]);}
-  
-  int		send_idx;
-  Layer*	send_lay; // sending layer
+  override Connection*	Cn(int i) {return &(cons[i]);} // SLOW generic access
 
-  RecvCons();
-  ~RecvCons();
-protected:
-  override void		setSize_impl(int i);
-  ConArray		m_cons;
-#if ((WT_IN == WT_SEND) && !defined(PWT_IN_CONN))
-  floatPtrList		m_pwts; 
-#endif
+  RecvCons_recv() {cons = NULL;}
+  ~RecvCons_recv() {cons = NULL;}
 };
 
-typedef taList<RecvCons>	RecvCons_List;
+template<class CN>
+class RecvCons_send: public RecvCons_send_impl {
+INHERITED(RecvCons_send_impl)
+public:
+  CN*			cons; // flat array -- ReadOnly!!! you must access safely!!!
+  
+  override Connection*	Cn(int i) {return &(cons[i]);} // SLOW generic access
 
-/* The cons contains *global* array indexes
-*/
+  RecvCons_send() {cons = NULL;}
+  ~RecvCons_send() {cons = NULL;}
+};
+
+typedef taPtrList<RecvCons>	RecvConsPtrList;
+
+
 class SendCons: public ConsBase {
 INHERITED(ConsBase)
 public:
-  Conn**		cons;
-#if (WT_IN == WT_CONN)
-  inline float&		Wt(int i) {return cons[i]->wt;}
-#elif (WT_IN == WT_RECV)
-  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
-  inline float&		Wt(int i) {return *(pwts[i]);}
-#elif (WT_IN == WT_SEND)
-  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
-  inline float&		Wt(int i) {return wts[i];}
-#endif
-
-//  inline int		Cni(int i) {return cons.el[i];}
-//  inline int		Wti(int i) {return cons.el[i];} // note: same as Cni
-  
-  int		recv_idx;
-  Layer*	recv_lay; // receiving layer
+  int			recv_idx;
+  Layer*		recv_lay; // receiving layer
+  virtual void		SetCn(Connection* cn, int i) = 0;
   
   SendCons();
-  ~SendCons();
-protected:
-  ConPtrList		m_cons;
-#if (WT_IN == WT_RECV)
-  floatPtrList		m_pwts;
-#elif (WT_IN == WT_SEND)
-//  float_Array		m_wts;
-#endif
-  
-  override void		setSize_impl(int i);
+  ~SendCons() {}
 };
 
-typedef taList<SendCons>	SendCons_List;
+class SendCons_send_impl: public SendCons {
+INHERITED(SendCons)
+public:
+  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
+  
+  virtual bool		ownsWts() const {return true;}
+  override float&	Wt(int i) {return wts[i];} // SLOW!!!!
+  
+  SendCons_send_impl() {wts = NULL;}
+  ~SendCons_send_impl() {wts = NULL;}
+protected:
+  override void		setSize_impl(int i, Projection* prjn);
+};
+
+class SendCons_recv_impl: public SendCons {
+INHERITED(SendCons)
+public:
+  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
+  
+  override float&	Wt(int i) {return *(pwts[i]);} // SLOW!!!!
+  override void		SetWt(float* pwt, int i) {pwts[i] = pwt;}
+  
+  SendCons_recv_impl();
+  ~SendCons_recv_impl();
+protected:
+  override void		setSize_impl(int i, Projection* prjn);
+};
+
+template<class CN>
+class SendCons_send: public SendCons_send_impl {
+INHERITED(SendCons_send_impl)
+public:
+  CN**			cons;
+  
+  override Connection*	Cn(int i) {return cons[i];} // SLOW virtual
+  override void		SetCn(Connection* cn, int i) // cn must be of type CN!!!
+    {cons[i] = (CN*)cn;}
+
+  SendCons_send() {cons = NULL;}
+  ~SendCons_send() {cons = NULL;}
+};
+
+template<class CN>
+class SendCons_recv: public SendCons_recv_impl {
+INHERITED(SendCons_recv_impl)
+public:
+  CN**			cons;
+  
+  override Connection*	Cn(int i) {return cons[i];} // SLOW virtual
+  override void		SetCn(Connection* cn, int i) // cn must be of type CN!!!
+    {cons[i] = (CN*)cn;}
+
+  SendCons_recv() {cons = NULL;}
+  ~SendCons_recv() {cons = NULL;}
+};
+
+// ALGO Specific Guys
+
+// Bp -- recv-based
+
+class BpSendCons: public SendCons_recv<BpCon> {
+INHERITED(SendCons_recv<BpCon>)
+public:
+  
+  BpSendCons() {}
+  ~BpSendCons() {}
+};
+
+class BpRecvCons: public RecvCons_recv<BpCon> {
+INHERITED(RecvCons_recv<BpCon>)
+public:
+  
+  BpRecvCons() {}
+  ~BpRecvCons() {}
+};
+
+
+// Leabra -- send-based
+
+class LeabraSendCons: public SendCons_send<LeabraCon> {
+INHERITED(SendCons_send<LeabraCon>)
+public:
+  
+  LeabraSendCons() {}
+  ~LeabraSendCons() {}
+};
+
+class LeabraRecvCons: public RecvCons_send<LeabraCon> {
+INHERITED(RecvCons_send<LeabraCon>)
+public:
+  
+  LeabraRecvCons() {}
+  ~LeabraRecvCons() {}
+};
+
+
+
+typedef taPtrList<SendCons>	SendConsPtrList;
 
 class ConSpec {
 public:
-  float		cur_lrate;
-  float		norm_pct;
-  MinMax	wt_limits;
-  void 		Compute_Weights_CtCAL(Network* net, RecvCons* cg, Unit* ru);
-  void 		Compute_SRAvg(Network* net, Unit* ru);
-  void 		Compute_Weights(Network* net, Unit* ru);
+  float			cur_lrate;
+  float			norm_pct;
+  MinMax		wt_limits;
+  
+  virtual size_t	GetConSize() const = 0; // size of the Con
+  virtual RecvCons*	NewRecvCons() const = 0;
+  virtual SendCons*	NewSendCons() const = 0;  
+  virtual void 		Compute_Weights(Network* net, Unit* ru) = 0;
   
   int	dummy[8];
   ConSpec();
+  virtual ~ConSpec() {}
 };
 
+class LeabraConSpec: public ConSpec {
+public:
+  inline static void Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff);
+    // highly optimized inner loop
+  void 			Send_Netin_0(Unit* su); // shared by 0 and N
+
+  override size_t	GetConSize() const {return sizeof(LeabraCon);} // size of the Con
+  RecvCons*		NewRecvCons() const {return new LeabraRecvCons;}
+  SendCons*		NewSendCons() const {return new LeabraSendCons;}  
+  override void 	Compute_Weights(Network* net, Unit* ru);
+  void 		Compute_Weights_CtCAL(Network* net, LeabraRecvCons* cg, Unit* ru);
+  void 		Compute_SRAvg(Network* net, Unit* ru);
+};
+
+void LeabraConSpec::Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff) {
+  ru_net += su_act_eff * cn_wt;
+  //tru_net = *ru_net + su_act_eff * cn_wt;
+}
+
+class BpConSpec: public ConSpec {
+INHERITED(ConSpec)
+public:
+  void 			Recv_Netin_0(Unit* ru); // shared by 0 and N
+};
 
 class UnitSpec {
 public:
@@ -203,8 +348,8 @@ public:
 class Unit {
   // a simple unit
 public:
-  RecvCons_List	recv;
-  SendCons_List send;
+  RecvConsPtrList recv; // note: owned
+  SendConsPtrList send; // note: owned
   
   float		act;
   float 	net;
@@ -225,12 +370,41 @@ protected:
   char 		dummy[200]; // add cruft to make it more like leabra ;)
 };
 
+/* Projection
+  The Projection manages the memory for the cons and wts for the connections.
+  For all algos, the SendCons owns the conns.
+  For sender-based algos, the SendCons will own the wts, and thus they will
+  be ordered by sender.
+  For receiver-based algos, the RecvCons will own the wts, and they will be
+  ordered the same as the corresponding cons.
+*/
+
+class Projection {
+public:
+  Layer*		own_lay; // owning layer
+  int			size; // number of connections
+  int			con_size; // number of bytes per conn -- must be %4 bytes
+  
+  void			SetSize(int i); // sets number of wts/conns
+  float*		AllocWts(int sz); // alloc indicated number (from pool)
+
+  Projection();
+  ~Projection();
+protected:
+  float*		wts; // all weights
+  void*			cons; // conn memory
+  float_Array 		wts_flat;
+  int			next_wti;
+};
+
 class Layer {
 public:
   Network*	net;
   int		un_to_idx; // circular guy we use to pick next target unit
   
   UnitList	units;
+  PrjnList	prjns; // receving prjns (owned)
+  PrjnPtrList	send_prjns; // sender links
   
   
   void		ConnectFrom(Layer* lay_fm); // connect from me to
@@ -244,10 +418,16 @@ typedef taList<Layer>	LayerList;
 
 class Network {
 public:
+  enum NetType {
+    Leabra		= 0,
+    Bp			= 1,
+  };
+  
   static bool		recv_based; // for recv-based algos
 
 // global lists accessors for them
 // Units -- all indexes are commensurable
+  ConSpec*		con_spec; // we use one global value, of type of network
   int			n_units_flat; // number of global units (acts, nets, etc.)
   Unit**		g_units; // global units 
   
@@ -262,26 +442,37 @@ public:
   void		Build(); 
   void 		ComputeNets();
   float 	ComputeActs();
-  void		Compute_SRAvg();
-  void		Compute_Weights();
-  float*	AllocWts(int sz); // alloc indicated number (from pool created in Build)
   
   double	GetNTot(); // get total from all units
   
   void		SetEngine(NetEngine* engine);
   virtual void	Initialize(); // call after ctor, and engine set
   
-  void		Cycle(int n_cycles = 1); // do one net cycle
+  virtual void	Cycle(int n_cycles = 1); // do one net cycle
   
   Network();
   virtual ~Network();
 protected:
   UnitPtrList 		units_flat;	// all units, flattened
-  float_Array 		wts_flat;
-  int			next_wti;
   
+  virtual void		Cycle_impl(); // do one net cycle
   void			PartitionUnits_RoundRobin(); // for recv, and send-clash
   //void		PartitionUnits_SendClash(); 
+};
+
+
+class LeabraNetwork: public Network {
+INHERITED(Network)
+public:
+  
+  void		Compute_Weights();
+  void		Compute_SRAvg();
+  LeabraNetwork();
+  ~LeabraNetwork();
+protected:
+  UnitPtrList 		units_flat;	// all units, flattened
+  
+  override void		Cycle_impl(); // do one net cycle
 };
 
 // macros for initializing and updating proc iter vars
@@ -399,14 +590,10 @@ public:
   void		run();
 
 // Send_Netin
-  inline static void Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff);
-    // highly optimized inner loop
-  void 		Send_Netin_0(Unit* su); // shared by 0 and N
   virtual void	Send_Netin_Clash() {} // NetIn
   virtual void	Send_Netin_Array() {Send_Netin_Clash();} // only used by Net_N
   
 // Recv_Netin
-  void 		Recv_Netin_0(Unit* ru); // shared by 0 and N
   virtual void	Recv_Netin(); // default is the _0 version
   
   
@@ -423,10 +610,6 @@ public:
   NetTask(NetEngine* engine);
 };
 
-void NetTask::Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff) {
-  ru_net += su_act_eff * cn_wt;
-  //tru_net = *ru_net + su_act_eff * cn_wt;
-}
 
 
 class NetTask_0: public NetTask {
@@ -462,10 +645,11 @@ public:
   static int n_units;			// number of units per layer
   static int n_cons; // number of cons per unit
   static int n_cycles;			// number of cycles of updating
-  static Network net;		// global network 
+  static Network* net;		// global network 
   static int n_tot; // total units done each NetIn (reality check)
   static int n_prjns; // total number of prjns
   static float tot_act; // check on tot act
+  static int net_type; // network type, def= Leabra
   static int dwt_rate; // how many cycles per dwt calc; 0=none
   static int sra_rate; // how many cycles per sravg calc; 0=none
   static int tsend_act; // as decimal percent
