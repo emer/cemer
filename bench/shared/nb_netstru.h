@@ -7,21 +7,6 @@
 #include <QtCore/QString>
 
 // switches and optional subswitches
-//#define USE_INT_IDX // true to use indirect ints, else use ptrs
-#define WT_RECV 0 // owned by RecvCons
-#define WT_SEND 1 // owned by SendCons
-#define WT_CONN 2 // is baked into Connection
-
-#define WT_IN WT_SEND
-
-// template, subswitches, and catch
-#if (WT_IN == WT_CONN)
-#elif (WT_IN == WT_RECV)
-#elif (WT_IN == WT_SEND)
-//# define PWT_IN_CONN // put a ptr to wt in Connection, instead of using a PtrList 
-#else
-# error("WT_IN not set")
-#endif
 
 // for SEND_ARRAY, whether to use the asymmetrical version
 //#define SEND_ARY_ASYM
@@ -95,6 +80,7 @@ typedef taArray<float*>		floatPtrList;
 
 class ConsBase {
 public:
+  Unit*			own_un; // my owner, for fast access
   Unit**		units;
   Projection*		prjn; // receiving prjn
   int			size; // number of connections
@@ -207,6 +193,8 @@ public:
   ~SendCons() {}
 };
 
+typedef taPtrList<SendCons>	SendConsPtrList;
+
 class SendCons_send_impl: public SendCons {
 INHERITED(SendCons)
 public:
@@ -220,6 +208,8 @@ public:
 protected:
   override void		setSize_impl(int i, Projection* prjn);
 };
+
+typedef taPtrList<SendCons_send_impl>	SendCons_send_implPtrList;
 
 class SendCons_recv_impl: public SendCons {
 INHERITED(SendCons)
@@ -277,8 +267,8 @@ protected:
 
 // Bp -- recv-based
 
-class BpSendCons: public SendCons_recv<BpCon> {
-INHERITED(SendCons_recv<BpCon>)
+class BpSendCons: public SendCons_send<BpCon> {
+INHERITED(SendCons_send<BpCon>)
 public:
   
   BpSendCons() {}
@@ -313,8 +303,6 @@ public:
 };
 
 
-
-typedef taPtrList<SendCons>	SendConsPtrList;
 
 class ConSpec {
 public:
@@ -354,6 +342,10 @@ void LeabraConSpec::Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_
 class BpConSpec: public ConSpec {
 INHERITED(ConSpec)
 public:
+  override size_t	GetConSize() const {return sizeof(BpCon);} // size of the Con
+  RecvCons*		NewRecvCons() const {return new BpRecvCons;}
+  SendCons*		NewSendCons() const {return new BpSendCons;}  
+  override void 	Compute_Weights(Network* , Unit* /*ru*/) {} // nothing
   void 			Recv_Netin_0(Unit* ru); // shared by 0 and N
 };
 
@@ -489,10 +481,18 @@ public:
   void		Compute_SRAvg();
   LeabraNetwork();
   ~LeabraNetwork();
-protected:
-  UnitPtrList 		units_flat;	// all units, flattened
-  
+protected:  
   override void		Cycle_impl(); // do one net cycle
+};
+
+class BpNetwork: public Network {
+INHERITED(Network)
+public:
+  
+  BpNetwork();
+  ~BpNetwork();
+protected:
+//  override void		Cycle_impl(); // do one net cycle
 };
 
 // macros for initializing and updating proc iter vars
@@ -520,87 +520,30 @@ protected:
     my_u = (++my_u & NetEngine::proc_stride_mask) ? my_u : AtomicFetchAdd(&g_u, NetEngine::n_stride))
 #endif
 
-class NetEngine { // prototype, and is also the default type (0-procs)
-public:
-  enum Algo { // note: not exhaustive...
-    RECV	= 0,
-//  RECV_SMART  = 1,	// OBS ignores senders under threshold
-    
-    SEND_CLASH  = 2, // sender, where writes can clash (or for 1 proc)
-    SEND_ARRAY  = 3, // sender, using an array of nets to avoid clashes
-#ifdef NB_CUDA
-    RECV_CUDA	= 8,
-    
-    SEND_CUDA   = 10,
-#endif
+// Taskable functions have the following signature
+// typically, they are static object functions that take an instance
+// as the pointer obj
 
-  // flags
-    SEND_FLAG	= 2,
-    CUDA_FLAG	= 8,
-  };
-  
-  static int 	algo; // the algorithm number
-  static NetTaskList net_tasks; // only n_procs created
-  
-// Chunking and allocating of data, for multi-tasking
-  static const int core_max_nprocs = 32; // maximum number of processors!
-  static const int 	proc_stride = 8; // items done each iter in loop (must be 2^n)
-  static const int 	proc_stride_mask = proc_stride-1; // mask of proc_stride
-  static int 		n_procs; // total number of processors/processes
-  static int 		n_stride; // n_procs * proc_stride
-  
-  Network*	net; // owning net, set automatically
-  
-  virtual void		Initialize(); // called after creation, usually override impl
-  virtual void		OnBuild() {} 
-  
-  // generally don't override:
-  void 			ComputeNets();
-  virtual float 	ComputeActs();
-  virtual void		Compute_SRAvg();
-  virtual void		Compute_Weights();
-  
-  virtual void 		Log(bool hdr); // save a log file
-  
-  NetEngine() {net = NULL;}
-  virtual ~NetEngine();
-protected:
-  virtual void		Initialize_impl(); // override this
-  virtual void 		DoProc(int proc_id);
-  virtual void 		ComputeNets_impl(); // inner overridable part
-};
-
-
-class ThreadNetEngine: public NetEngine {
-INHERITED(NetEngine) 
-public:
-  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
-  
-  override void		OnBuild(); 
-    
-  //ThreadNetEngine();
-  ~ThreadNetEngine();
-protected:
-  override void		Initialize_impl();
-  void			DeleteThreads();
-  void 			MakeThreads();
-  override void 	DoProc(int proc_id);
-  override void 	ComputeNets_impl();
-  void 			ComputeNets_SendArray();
-};
-
+typedef void (*TaskFun_t)(NetTask* task, void* inst);
 
 class NetTask: public Task {
 public:
-  enum Proc {
-    P_Recv_Netin,
-    P_Send_Netin_Clash,
-    P_Send_Netin_Array,
-    P_ComputeAct,
-    P_ComputeSRAvg,
-    P_ComputeWeights
-  };
-  
+  static void T_Send_Netin_Clash(NetTask* nt, void* )
+    {nt->Send_Netin_Clash();}
+  static void T_Send_Netin_Array(NetTask* nt, void* ) 
+    {nt->Send_Netin_Array();}
+  static void T_Recv_Netin(NetTask* nt, void* )
+    {nt->Recv_Netin();}
+  static void T_ComputeAct(NetTask* nt, void* )
+    {nt->ComputeAct();}
+  static void T_Compute_SRAvg(NetTask* nt, void* )
+    {nt->Compute_SRAvg();}
+  static void T_Compute_Weights(NetTask* nt, void* )
+    {nt->Compute_Weights();}
+
+
+
+
   Network*	net;
 // All
   int		g_u; 
@@ -627,7 +570,88 @@ public:
 //  virtual void	Compute_dWt(); // compat with single or threaded
   virtual void	Compute_Weights(); // compat with single or threaded
   
+  void		SetTaskFun(TaskFun_t tf, void* inst);
+  
   NetTask(NetEngine* engine);
+protected:
+  TaskFun_t 		TaskFun;
+  void* 		inst;
+};
+
+
+class NetEngine { // prototype, and is also the default type (0-procs)
+public:
+  enum Algo { // note: not exhaustive...
+    RECV	= 0,
+//  RECV_SMART  = 1,	// OBS ignores senders under threshold
+    
+    SEND_CLASH  = 2, // sender, where writes can clash (or for 1 proc)
+    SEND_ARRAY  = 3, // sender, using an array of nets to avoid clashes
+//    SEND_PRJN   = 6, // sender, using target-disjoint arrays
+#ifdef NB_CUDA
+    RECV_CUDA	= 8,
+    
+    SEND_CUDA   = 10,
+#endif
+
+  // flags
+    SEND_FLAG	= 2,
+    CUDA_FLAG	= 8,
+  };
+  
+  static int 	algo; // the algorithm number
+  static NetTaskList net_tasks; // only n_procs created
+  
+// Chunking and allocating of data, for multi-tasking
+  static const int core_max_nprocs = 32; // maximum number of processors!
+  static const int 	proc_stride = 8; // items done each iter in loop (must be 2^n)
+  static const int 	proc_stride_mask = proc_stride-1; // mask of proc_stride
+  static int 		n_procs; // total number of processors/processes
+  static int 		n_stride; // n_procs * proc_stride
+  
+  Network*	net; // owning net, set automatically
+  
+  
+  virtual void		Initialize(); // called after creation, usually override impl
+  virtual void		OnBuild_Pre() {} // before net built
+  virtual void		OnBuild_Post() {} // after net built
+  
+  // generally don't override:
+  void 			ComputeNets();
+  virtual float 	ComputeActs();
+  virtual void		Compute_SRAvg();
+  virtual void		Compute_Weights();
+  
+  virtual void 		Log(bool hdr); // save a log file
+  
+  NetEngine() {net = NULL;}
+  virtual ~NetEngine();
+protected:
+  virtual void		Initialize_impl(); // override this
+  virtual void 		DoProc(TaskFun_t tf, void* inst = NULL);
+  virtual void 		ComputeNets_impl(); // inner overridable part
+};
+
+
+class ThreadNetEngine: public NetEngine {
+INHERITED(NetEngine) 
+public:
+  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
+  SendCons_send_implPtrList*	send_cons; // [n_procs] -- each list has disjoint targets
+  
+//  override void		OnBuild_Pre(); 
+  override void		OnBuild_Post(); 
+    
+  ThreadNetEngine();
+  ~ThreadNetEngine();
+protected:
+  override void		Initialize_impl();
+  void			DeleteThreads();
+  void 			MakeThreads();
+  override void 	DoProc(TaskFun_t tf, void* inst = NULL);
+  override void 	ComputeNets_impl();
+  void 			ComputeNets_SendArray();
+  void 			ComputeNets_SendPrjn();
 };
 
 
@@ -677,13 +701,11 @@ public:
   static int inv_act; // inverse of activation -- can use to divide
   
   static int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
-  static const int	wt_in = WT_IN; // just for logging
   
 // thread values
   
   static float nibble_thresh; // < 80%
   static signed char nibble_mode; // 0=none, 1=on, 2=auto (> 20% left)
-  static signed char fast_prjn; // fast prjns directly access target unit array
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
   static bool sender; // sender based, else receiver-based

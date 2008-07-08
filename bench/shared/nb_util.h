@@ -20,6 +20,7 @@
 #endif
 
 class TimeUsedP;
+class Task;
 
 class TimeUsed {
   // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used (in high resolution) for a given process: start the timer at the start, then do EndTimer and it computes the amount used
@@ -83,15 +84,15 @@ public:
 class Task : public QRunnable {
 public:
   int		task_id;
-  int		proc_id; // current proc being run
   TimeUsed	start_latency; // amount of time waiting to start (n/a for main thread)
   TimeUsed	run_time; // amount of time actually running jobs
   TimeUsed	nibble_time; // (task 0 only) time spent nibbling (if applicable)
   TimeUsed	sync_time; // (task 0 only) time spent syncing (if applicable)
   TimeUsed	overhead; // for algos with overhead, like the Send_Array
   
-  Task() {task_id = -1; proc_id = 0;}
+  Task() {task_id = -1;}
 };
+
 
 class QTaskThread: public QThread {
 public:
