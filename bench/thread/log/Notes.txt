@@ -17,6 +17,9 @@
 20080703_02 -- (3 runs) Send Array after Task0=unit.net optimization
 20080703_03 -- (3 runs) pretty much the same, just done again for confirmation
 20080703_04 -- (3 runs) baseline again, but with the Threads=1 rollup optimize thrown in for fairness
+20080708_01 -- back to earlier codebase, pure Conns, comparing send-owned vs. recv-owned
+20080708_02 -- earlier codebase, optimized SRAvg (modal, congruent to CON_IN)
+20080708_03 -- variant of 02 baking Unit* into Conn
 
 
 
