@@ -15,11 +15,12 @@
 
 #define INHERITED(c) typedef c inherited;
 #define override
-#if defined(MSVC_VER) // evil MSVC
+#if defined(_MSC_VER) // evil MSVC
   typedef long long int int64_t; 
 #endif
 
 class TimeUsedP;
+class Task;
 
 class TimeUsed {
   // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used (in high resolution) for a given process: start the timer at the start, then do EndTimer and it computes the amount used
@@ -83,15 +84,15 @@ public:
 class Task : public QRunnable {
 public:
   int		task_id;
-  int		proc_id; // current proc being run
   TimeUsed	start_latency; // amount of time waiting to start (n/a for main thread)
   TimeUsed	run_time; // amount of time actually running jobs
   TimeUsed	nibble_time; // (task 0 only) time spent nibbling (if applicable)
   TimeUsed	sync_time; // (task 0 only) time spent syncing (if applicable)
   TimeUsed	overhead; // for algos with overhead, like the Send_Array
   
-  Task() {task_id = -1; proc_id = 0;}
+  Task() {task_id = -1;}
 };
+
 
 class QTaskThread: public QThread {
 public:
@@ -183,6 +184,15 @@ template<class T>
 void StatFill(T* el, int size, const T& it)
     {for (int i=0; i<size; ++i) el[i] = it;}
     
+template<class T>
+T* crealloc(T* el, int cur_size, int new_size) {
+  T* rval = (T*)realloc(el, size_t(sizeof(T) * new_size));
+  if (new_size > cur_size) {
+    memset(&(rval[cur_size+1]), 0, sizeof(T) * (new_size - cur_size));
+  }
+  return rval;
+}
+  
 class taArray_impl {
 public:
 

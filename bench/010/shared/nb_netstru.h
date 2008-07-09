@@ -104,8 +104,8 @@ protected:
 class RecvCons: public ConsBase {
 INHERITED(ConsBase)
 public:
-  Layer*	send_lay; // sending layer
   int		send_idx;
+  Layer*	send_lay; // sending layer
   float		dwt_mean; // used by many algos
   
   
