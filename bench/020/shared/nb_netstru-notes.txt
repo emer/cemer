@@ -1,0 +1,273 @@
+Notes on cartoonifying the Compute_Weight routine 
+
+* actual code at the end
+
+* we use the norm version, which is slightly longer
+
+* For dWt, we don't do Hebb, and we don't handle the cases where we are supposed
+  to reset SRAvg
+  
+inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  // we ignore all these cases: 
+  //    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+
+  // we assume no Hebb ("infrequent" per Leabra code)
+  for (int i=0; i<cg->cons.size; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+    LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+    float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+    if(lmix.err_sb) {
+      if(err > 0.0f) err *= (1.0f - cn->wt);
+      else	     err *= cn->wt;
+    }
+    cn->dwt += cur_lrate * err;
+    cn->sravg = 0.0f;
+}
+
+
+inline void LeabraConSpec::C_Compute_WeightsActReg_Norm_CtLeabraCAL(LeabraCon* cn,
+                         LeabraRecvCons* cg, LeabraUnit* ru, LeabraUnit* su,
+                         LeabraUnitSpec* rus, float dwnorm)
+{
+  // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+  float dwinc = 0.0f;
+  if(ru->act_avg <= rus->act_reg.min)
+    dwinc = rus->act_reg.inc_wt;
+  else if(ru->act_avg >= rus->act_reg.max)
+    dwinc = -rus->act_reg.dec_wt;
+  if(dwinc != 0.0f) {
+    cn->dwt += cur_lrate * dwinc * cn->wt; // proportional to current weights
+  }
+  
+  // C_Compute_Weights_Norm_CtLeabraCAL(cn, cg, ru, su, rus, dwnorm);
+  float eff_dw = cn->dwt + dwnorm;
+  if(eff_dw != 0.0f) {
+    // weight increment happens in linear weights
+    cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + eff_dw);
+  }
+  cn->pdw = cn->dwt;
+  cn->dwt = 0.0f;
+}
+
+
+
+inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
+  if(cg->cons.size == 0) return;
+  
+  //Compute_dWtMean(cg, ru);
+  cg->dwt_mean = 0.0f;
+  CON_GROUP_LOOP(cg, cg->dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
+  cg->dwt_mean /= (float)cg->cons.size;
+  
+  float dwnorm = -dwt_norm.norm_pct * cg->dwt_mean;
+    
+  CON_GROUP_LOOP(cg, C_Compute_Weights_Norm_CtLeabraCAL((LeabraCon*)cg->Cn(i), cg,
+    (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus, dwnorm));
+  }
+    // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+    float dwinc = 0.0f;
+    if(ru->act_avg <= rus->act_reg.min)
+      dwinc = rus->act_reg.inc_wt;
+    else if(ru->act_avg >= rus->act_reg.max)
+      dwinc = -rus->act_reg.dec_wt;
+    if(dwinc != 0.0f) {
+      cn->dwt += cur_lrate * dwinc * cn->wt; // proportional to current weights
+    }
+    
+    // C_Compute_Weights_Norm_CtLeabraCAL(cn, cg, ru, su, rus, dwnorm);
+    float eff_dw = cn->dwt + dwnorm;
+    if(eff_dw != 0.0f) {
+      // weight increment happens in linear weights
+      cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + eff_dw);
+    }
+    cn->pdw = cn->dwt;
+    cn->dwt = 0.0f;
+  }
+}
+
+
+
+void LeabraUnitSpec::Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  // CTLEABRA_CAL, DCAL
+  for(int g = 0; g < u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+    recv_gp->Compute_Weights_CtLeabraCAL(u);
+  }
+}
+
+
+
+
+
+
+
+--- BEGIN ACTUAL LEABRA CODE ----
+
+inline void LeabraConSpec::Compute_dWtMean(LeabraRecvCons* cg, LeabraUnit* ru) {
+  cg->dwt_mean = 0.0f;
+  CON_GROUP_LOOP(cg, cg->dwt_mean += ((LeabraCon*)cg->Cn(i))->dwt);
+  cg->dwt_mean /= (float)cg->cons.size;
+}
+
+
+inline void LeabraConSpec::C_Compute_ActReg_CtLeabraCAL(LeabraCon* cn, LeabraRecvCons*,
+						      LeabraUnit* ru, LeabraUnit*, LeabraUnitSpec* rus)
+{
+  // do this in update so inactive units can be reached (no opt_thresh.updt)
+  // act_reg.on:
+  float dwinc = 0.0f;
+  if(ru->act_avg <= rus->act_reg.min)
+    dwinc = rus->act_reg.inc_wt;
+  else if(ru->act_avg >= rus->act_reg.max)
+    dwinc = -rus->act_reg.dec_wt;
+  if(dwinc != 0.0f) {
+    cn->dwt += cur_lrate * dwinc * cn->wt; // proportional to current weights
+  }
+}
+
+inline void LeabraConSpec::C_Compute_Weights_Norm_LeabraCHL(LeabraCon* cn, LeabraRecvCons* cg,
+							    LeabraUnit*, LeabraUnit*, 
+							    LeabraUnitSpec*, float dwnorm)
+{
+  float eff_dw = cn->dwt + dwnorm;
+  if(eff_dw != 0.0f) {
+    // weight increment happens in linear weights
+    cn->wt = GetWtFmLin(GetLinFmWt(cn->wt) + eff_dw);
+  }
+  cn->pdw = cn->dwt;
+  cn->dwt = 0.0f;
+}
+
+
+inline void LeabraConSpec::C_Compute_WeightsActReg_Norm_CtLeabraCAL(LeabraCon* cn,
+                         LeabraRecvCons* cg, LeabraUnit* ru, LeabraUnit* su,
+                         LeabraUnitSpec* rus, float dwnorm)
+{
+  C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+  C_Compute_Weights_Norm_CtLeabraCAL(cn, cg, ru, su, rus, dwnorm);
+}
+
+inline void LeabraConSpec::C_Compute_WeightsActReg_CtLeabraCAL(LeabraCon* cn,
+			       LeabraRecvCons* cg,
+				 LeabraUnit* ru, LeabraUnit* su, LeabraUnitSpec* rus)
+{
+  C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+  C_Compute_Weights_CtLeabraCAL(cn, cg, ru, su, rus);
+}
+
+
+inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
+  if(dwt_norm.on && cg->cons.size > 0) {
+    Compute_dWtMean(cg, ru);
+    float dwnorm = -dwt_norm.norm_pct * cg->dwt_mean;
+    if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)
+      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg_Norm_CtLeabraCAL((LeabraCon*)cg->Cn(i), cg,
+			      (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus, dwnorm));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_Norm_CtLeabraCAL((LeabraCon*)cg->Cn(i), cg,
+			(LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus, dwnorm));
+    }
+  }
+  else {
+    if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)
+      CON_GROUP_LOOP(cg, C_Compute_WeightsActReg_CtLeabraCAL((LeabraCon*)cg->Cn(i), cg,
+					 (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
+    }
+    else {
+      CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraCAL((LeabraCon*)cg->Cn(i), cg,
+					   (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i), rus));
+    }
+  }
+  //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+}
+
+
+
+void LeabraUnitSpec::Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
+  ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_Weights((LeabraCon*)u->bias.Cn(0), u, this);
+  if(net->learn_rule == LeabraNetwork::LEABRA_CHL) {
+    for(int g = 0; g < u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_Weights_LeabraCHL(u);
+    }
+  }
+  else { // CTLEABRA_CAL, DCAL
+    for(int g = 0; g < u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
+      recv_gp->Compute_Weights_CtLeabraCAL(u);
+    }
+  }
+}
+
+inline float LeabraConSpec::C_Compute_Err_CtLeabraCAL(LeabraCon* cn, 
+						      float ru_act_p, float su_act_p,
+						      float avg_nrm) {
+  float err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
+  if(lmix.err_sb) {
+    if(err > 0.0f)	err *= (1.0f - cn->wt);
+    else		err *= cn->wt;
+  }
+  return err;
+}
+
+inline void LeabraConSpec::C_Compute_dWt_NoHebb(LeabraCon* cn, LeabraUnit* ru, float err) {
+  cn->dwt += cur_lrate * err;
+}
+
+inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
+  // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
+    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+  }
+  LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
+  if(lfm->acts_p.avg < savg_cor.thresh) {
+    Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+  }
+  if(ru->in_subgp) {
+    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
+    if(ogp->acts_p.avg < savg_cor.thresh) {
+      Init_SRAvg(cg, ru);	return;	  // critical: need to reset this!
+    }
+  }
+
+  if(lmix.hebb == 0.0f) {	// hebb is sufficiently infrequent to warrant optimizing
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if(ogp->acts_p.avg < savg_cor.thresh) {
+	  cn->sravg = 0.0f;	continue; // critical: must reset!
+	}
+      }
+      C_Compute_dWt_NoHebb(cn, ru, 
+			   C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p,
+						     rlay->sravg_nrm));
+      cn->sravg = 0.0f;
+    }
+  }
+  else {
+    Compute_SAvgCor(cg, ru);
+    for(int i=0; i<cg->cons.size; i++) {
+      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
+      if(su->in_subgp) {
+	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
+	if(ogp->acts_p.avg < savg_cor.thresh) {
+	  cn->sravg = 0.0f;	continue; // critical: must reset!
+	}
+      }
+      C_Compute_dWt(cn, ru, 	// note: cn->wt is linear -- no wt sig..
+		    C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p),
+		    C_Compute_Err_CtLeabraCAL(cn, ru->act_p, su->act_p, rlay->sravg_nrm));
+      cn->sravg = 0.0f;
+    }
+  }
+}
