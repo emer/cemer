@@ -283,8 +283,8 @@ public:
 
 // Bp -- recv-based
 
-typedef SendCons_send<BpCon> BpSendCons;
-typedef RecvCons_send<BpCon> BpRecvCons;
+typedef SendCons_recv<BpCon> BpSendCons;
+typedef RecvCons_recv<BpCon> BpRecvCons;
 
 /* again unnecessary...
 class BpSendCons: public SendCons_recv<BpCon> {
