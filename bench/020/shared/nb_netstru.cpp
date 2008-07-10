@@ -825,11 +825,17 @@ void NetTask::Send_Netin_0(Unit* su) {
     su->n_con_calc += send_sz;
 #if (CON_IN == CON_RECV)
     Unit** units = send_gp->units; // unit pointer
+#   ifdef USE_V_CON
+    for (int i=0; i < send_sz; i++) {
+      Send_Netin_inner_0(send_gp->V_Cn(i)->wt, units[i]->net, su_act_eff);
+    }
+#   else
     Connection** cons = send_gp->cons; 
     for (int i=0; i < send_sz; i++) {
       //const int targ_i = unis[i];
       Send_Netin_inner_0(cons[i]->wt, units[i]->net, su_act_eff);
     }
+#   endif
 #elif (CON_IN == CON_SEND)
 # ifdef UN_IN_CON
     //Connection* cons = send_gp->cons; 
@@ -839,11 +845,17 @@ void NetTask::Send_Netin_0(Unit* su) {
     }
 # else
     Unit** units = send_gp->units; // unit pointer
+#   ifdef USE_V_CON
+    for (int i=0; i < send_sz; i++) {
+      Send_Netin_inner_0(send_gp->V_Cn(i)->wt, units[i]->net, su_act_eff);
+    }
+#   else
     Connection* cons = send_gp->cons; 
     for (int i=0; i < send_sz; i++) {
       Send_Netin_inner_0(cons[i].wt, units[i]->net, su_act_eff);
     }
-#endif
+#   endif
+# endif
 #endif
   }
 }
@@ -865,15 +877,25 @@ void NetTask::Recv_Netin_0(Unit* ru) {
     }
 # else
     Unit** units = recv_gp->units; // unit pointer
+#   ifdef USE_V_CON
+    for(int i=0; i < recv_sz; ++i)
+      ru_net += units[i]->act * recv_gp->V_Cn(i)->wt;
+#   else
     Connection* cons = recv_gp->cons; 
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * cons[i].wt;
+#   endif
 #endif
 #elif (CON_IN == CON_SEND)
     Unit** units = recv_gp->units; // unit pointer
+#   ifdef USE_V_CON
+    for(int i=0; i < recv_sz; ++i)
+      ru_net += units[i]->act * recv_gp->V_Cn(i)->wt;
+#   else
     Connection** cons = recv_gp->cons; // cache
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * cons[i]->wt;
+#   endif
 #endif
   }
   ru->net = ru_net;
@@ -996,11 +1018,17 @@ void NetTask_N::Send_Netin_Array() {
         su->n_con_calc += send_sz;
 #if (CON_IN == CON_RECV)
         Unit** units = send_gp->units; // unit pointer
+#   ifdef USE_V_CON
+	for (int i=0; i < send_sz; i++) {
+	Send_Netin_inner_0(send_gp->V_Cn(i)->wt, excit[units[i]->uni], su_act_eff);
+	}
+#   else
         Connection** cons = send_gp->cons; 
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];
           Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
         }
+#   endif
 #elif (CON_IN == CON_SEND)
 # ifdef UN_IN_CON
         Connection* cons = send_gp->cons; 
@@ -1010,11 +1038,17 @@ void NetTask_N::Send_Netin_Array() {
         }
 # else
         Unit** units = send_gp->units; // unit pointer
+#   ifdef USE_V_CON
+	for (int i=0; i < send_sz; i++) {
+	Send_Netin_inner_0(send_gp->V_Cn(i)->wt, excit[units[i]->uni], su_act_eff);
+	}
+#   else
         Connection* cons = send_gp->cons; 
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];
           Send_Netin_inner_0(cons[i].wt, excit[units[i]->uni], su_act_eff);
         }
+#   endif
 # endif
 #endif
       }

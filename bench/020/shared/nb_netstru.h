@@ -7,7 +7,8 @@
 #include <QtCore/QString>
 
 // switches and optional subswitches
-#define UN_IN_CON // true if target unit is in con
+//#define UN_IN_CON // true if target unit is in con
+//#define USE_V_CON // use slow access to Cn -- for benching
 #define CON_RECV 0 // owned by RecvCons
 #define CON_SEND 1 // owned by SendCons
 
@@ -76,7 +77,7 @@ typedef taArray<Connection>		ConArray;
 typedef taPtrList<Connection>		ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
-typedef taArray<float*>		floatPtrList;
+
 
 class ConsBase {
 public:
@@ -89,7 +90,7 @@ public:
   Unit**		units;
   inline Unit*		Un(int i) {return units[i];}
 #endif
-  
+  virtual Connection*	V_Cn(int i) = 0; // slow virtual Cn
   int			size; // number of connections
   void			setSize(int i) 
     {if (i == size) return; setSize_impl(i); size = i;}
@@ -111,6 +112,7 @@ public:
 #if (CON_IN == CON_RECV)
   Connection*		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return &(cons[i]);}
+  override Connection*	V_Cn(int i) {return &(cons[i]);}
   inline float&		Wt(int i) {return cons[i].wt;} // SLOW!
 # ifdef UN_IN_CON
   override Unit*	Un(int i) {return cons[i].un;} // SLOW!
@@ -118,6 +120,7 @@ public:
 #elif (CON_IN == CON_SEND)
   Connection**		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return cons[i];}
+  override Connection*	V_Cn(int i) {return cons[i];}
   void			SetCn(Connection* cn, int i) {cons[i] = cn;}
   inline float&		Wt(int i) {return cons[i]->wt;} // SLOW!
 # ifdef UN_IN_CON
@@ -147,6 +150,7 @@ public:
 #if (CON_IN == CON_RECV)
   Connection**		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return cons[i];}
+  override Connection*	V_Cn(int i) {return cons[i];}
   void			SetCn(Connection* cn, int i) {cons[i] = cn;}
   inline float&		Wt(int i) {return cons[i]->wt;} // SLOW!
 # ifdef UN_IN_CON
@@ -156,6 +160,7 @@ public:
 #elif (CON_IN == CON_SEND)
   Connection*		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return &(cons[i]);}
+  override Connection*	V_Cn(int i) {return &(cons[i]);}
   inline float&		Wt(int i) {return cons[i].wt;} // SLOW!
 # ifdef UN_IN_CON
   override Unit*	Un(int i) {return cons[i].un;} // SLOW!

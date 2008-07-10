@@ -84,13 +84,14 @@ public:
 class Task : public QRunnable {
 public:
   int		task_id;
+  int		proc_id;
   TimeUsed	start_latency; // amount of time waiting to start (n/a for main thread)
   TimeUsed	run_time; // amount of time actually running jobs
   TimeUsed	nibble_time; // (task 0 only) time spent nibbling (if applicable)
   TimeUsed	sync_time; // (task 0 only) time spent syncing (if applicable)
   TimeUsed	overhead; // for algos with overhead, like the Send_Array
   
-  Task() {task_id = -1;}
+  Task() {task_id = -1; proc_id = 0;}
 };
 
 

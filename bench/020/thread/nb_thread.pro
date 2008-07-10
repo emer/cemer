@@ -1,12 +1,14 @@
 CONFIG		+= console debug
 #CONFIG		+= console release
-#note: need to modalize for Windows
-QMAKE_CXXFLAGS_RELEASE += -g
+windows {
+#TODO need to modalize for Windows -- add cc flag that adds debug symbols
+} else {
+  QMAKE_CXXFLAGS_RELEASE += -g
+}
 DEFINES		+= NB_THREAD 
 debug {
   DEFINES	+= DEBUG
 }
-#SEND_CONS
 QMAKE_INCDIR	+= ../shared
 HEADERS       = ../shared/nb_util.h \
 		../shared/nb_netstru.h

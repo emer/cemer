@@ -23,21 +23,40 @@ static int g_rand;
 //  ConsBase		//
 //////////////////////////
 
-ConsBase::ConsBase()
-:units(NULL) 
+Connection* ConsBase::InitCon(SendCons* send_gp, RecvCons* recv_gp, 
+    Unit* un_fm, Unit* un_to, int i_fm, int i_to, float wt)
 {
-  size = 0;
+  Connection* cn;
+  if (recv_gp->ownsCons()) {
+    // receiver-owned
+    cn = recv_gp->V_Cn(i_fm);
+    send_gp->SetCn(cn, i_to);
+  } else {
+    // sender-owned
+    cn = send_gp->V_Cn(i_to);
+    recv_gp->SetCn(cn, i_fm);
+  }
+  send_gp->units[i_to] = un_to; 
+  recv_gp->units[i_fm] = un_fm;
+  cn->wt = wt;
+  return cn;
+}
+
+ConsBase::ConsBase()
+{
+  own_un = NULL;
+  units = NULL;
   prjn = NULL;
+  size = 0;
 }
 
 ConsBase::~ConsBase() {
-  size = 0;
-  free(units); // safe if NULL
   units = NULL;
+  size = 0;
 }
 
-void ConsBase::setSize_impl(int i, Projection* /*prjn*/) {
-  units = crealloc<Unit*>(units, size, i);
+void ConsBase::setSize_impl(int i) {
+  units = prjn->AllocPUnits(i);
 }
 
 
@@ -53,27 +72,13 @@ RecvCons::RecvCons() {
 
 
 //////////////////////////
-//  RecvCons_send_impl	//
+//  RecvCons_xxxx_impl	//
 //////////////////////////
 
-RecvCons_send_impl::~RecvCons_send_impl() {
-  free(pwts); // nop if null
-  pwts = NULL;
-}
-
-void RecvCons_recv_impl::setSize_impl(int i, Projection* prjn) {
-  inherited::setSize_impl(i, prjn);
-  wts = prjn->AllocWts(i);
-}
-
-void RecvCons_send_impl::setSize_impl(int i, Projection* prjn) {
-  inherited::setSize_impl(i, prjn);
-  pwts = crealloc(pwts, size, i);
-}
 
 
 //////////////////////////
-//  SendCons	//
+//  SendCons		//
 //////////////////////////
 
 SendCons::SendCons() {
@@ -82,23 +87,8 @@ SendCons::SendCons() {
 }
 
 //////////////////////////
-//  SendCons_recv_impl	//
+//  SendCons_xxxx_impl	//
 //////////////////////////
-
-SendCons_recv_impl::~SendCons_recv_impl() {
-  free(pwts); // nop if null
-  pwts = NULL;
-}
-
-void SendCons_recv_impl::setSize_impl(int i, Projection* prjn) {
-  inherited::setSize_impl(i, prjn);
-  pwts = crealloc(pwts, size, i);
-}
-
-void SendCons_send_impl::setSize_impl(int i, Projection* prjn) {
-  inherited::setSize_impl(i, prjn);
-  wts = prjn->AllocWts(i);
-}
 
 
 
@@ -116,7 +106,7 @@ ConSpec:: ConSpec() {
 //  LeabraConSpec	//
 //////////////////////////
 
-void LeabraConSpec::Compute_Weights(Network* net, Unit* u) {
+void LeabraConSpec_impl::Compute_Weights(Network* net, Unit* u) {
   // CTLEABRA_CAL, DCAL
   for(int g = 0; g < u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -125,10 +115,9 @@ void LeabraConSpec::Compute_Weights(Network* net, Unit* u) {
   }
 }
 
-
+/*
 void LeabraConSpec::Send_Netin_0(Unit* su) {
   const float su_act_eff = su->act;
-//  float* g_wts = net->g_wts; // cache
   for (int j = 0; j < su->send.size; ++j) {
     LeabraSendCons* send_gp = (LeabraSendCons*)su->send[j];
     const int send_sz = send_gp->size;
@@ -140,35 +129,37 @@ void LeabraConSpec::Send_Netin_0(Unit* su) {
       Send_Netin_inner_0(wts[i], units[i]->net, su_act_eff);
     }
   }
-}
+}*/
 
-void LeabraConSpec::Compute_SRAvg(Network* /*net*/, Unit* ru) {
+void LeabraConSpec_impl::Compute_SRAvg(Network* /*net*/, Unit* su) {
   //nn Unit** g_units = net->g_units;
 //  float* g_acts = net->g_acts;
-  float ru_act = ru->act;
-  for(int g = 0; g < ru->recv.size; g++) {
-    LeabraRecvCons* cg = (LeabraRecvCons*)ru->recv.FastEl(g);
+  float su_act = su->act;
+  for(int g = 0; g < su->send.size; g++) {
+    LeabraSendCons* cg = (LeabraSendCons*)su->send.FastEl(g);
     Unit** units = cg->units;
     LeabraCon* cons = cg->cons;
     const int cg_size = cg->size;
     for (int i = 0; i < cg_size; ++i) {
       LeabraCon* cn = &(cons[i]); 
-      cn->sravg += ru_act * units[i]->act;
+      cn->sravg += su_act * units[i]->act;
     }
   }
 }
 
-void LeabraConSpec::Compute_Weights_CtCAL(Network* /*net*/, LeabraRecvCons* cg, Unit* ru) {
+void LeabraConSpec_impl::Compute_Weights_CtCAL(Network* /*net*/, 
+ LeabraRecvCons* cg, Unit* ru) 
+{
   // first emulate the Leabra "dWt" calc
   const int cg_size = cg->size;
   const float ru_act = ru->act;
-  LeabraCon* cons = cg->cons; // for speed
+  LeabraCon** cons = cg->cons; // for speed
   
   cg->dwt_mean = 0.0f;
   for (int i=0; i<cg_size; i++) {
     const float su_act = cg->Un(i)->act;
-    LeabraCon* cn = &(cons[i]);
-    const float& cn_wt = cg->Wt(i);
+    LeabraCon* cn = cons[i];
+    const float& cn_wt = cn->wt;
    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
     float err = (ru_act * su_act) - (0.02f * cn->sravg);
     //if(lmix.err_sb) {
@@ -184,8 +175,8 @@ void LeabraConSpec::Compute_Weights_CtCAL(Network* /*net*/, LeabraRecvCons* cg, 
   float dwnorm = -norm_pct * cg->dwt_mean;
     
   for (int i = 0; i < cg_size; ++i) {
-    LeabraCon* cn = &(cons[i]);
-    float& cn_wt = cg->Wt(i);
+    LeabraCon* cn = cons[i];
+    float& cn_wt = cn->wt;
     
     // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
     float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
@@ -215,14 +206,14 @@ void BpConSpec::Recv_Netin_0(Unit* ru) {
   float ru_net = 0.0f;
 //  float* g_acts = Nb::net->g_acts;
   for (int j = 0; j < ru->recv.size; ++j) {
-    RecvCons_recv_impl* recv_gp = (RecvCons_recv_impl*)ru->recv[j];
+    BpRecvCons* recv_gp = (BpRecvCons*)ru->recv[j];
     const int recv_sz = recv_gp->size;
     ru->n_con_calc += recv_sz;
     
     Unit** units = recv_gp->units; // unit pointer
-    float* wts = recv_gp->wts; // cache
+    BpCon* cons = recv_gp->cons; // cache
     for(int i=0; i < recv_sz; ++i)
-      ru_net += units[i]->act * wts[i];
+      ru_net += units[i]->act * cons[i].wt;
   }
   ru->net = ru_net;
 }
@@ -270,38 +261,43 @@ void Unit::CalcDelta() {
 
 
 //////////////////////////
-//  Layer		//
+//  Projection		//
 //////////////////////////
 
 Projection::Projection() {
   size = 0;
   con_size = 0; // will be set later
-  wts = NULL;
   cons = NULL;
-  next_wti = 0;
+  next_cni = 0;
 }
 
 Projection::~Projection() {
 }
 
-float* Projection::AllocWts(int sz) {
-  float* rval = &(wts[next_wti]);
-  next_wti += sz;
-#ifdef DEBUG
-  if (next_wti > size) {
-    cerr << "ERROR: Projection::AllocWts() overflow\n";
-    return NULL;
-  }
-#endif
+void Projection::AllocConMem(int i) {
+//NOTE: based on only one allocation
+  units.Alloc(i * 2);
+  pcons.Alloc(i);
+  cons = (char*)crealloc(cons, size, i, con_size);
+  size = i;
+}
+
+Unit** Projection::AllocPUnits(int sz) {
+  Unit** rval = &(units.Els()[units.size]);
+  units.size += sz;
   return rval;
 }
 
-void Projection::SetSize(int i) {
-//NOTE: based on only one allocation
-  wts = crealloc<float>(wts, size, i);
-  cons = realloc(cons, i);
-  memset(cons, 0, con_size * 1);
-  size = i;
+Connection** Projection::AllocPCons(int sz) {
+  Connection** rval = &(pcons.Els()[pcons.size]);
+  pcons.size += sz;
+  return rval;
+}
+
+Connection* Projection::AllocCons(int sz) {
+  Connection* rval = (Connection*)&(cons[next_cni * con_size]);
+  next_cni += sz;
+  return rval;
 }
 
 //////////////////////////
@@ -327,7 +323,7 @@ void Layer::ConnectFrom(Layer* lay_fm) {
   Nb::n_prjns++;
   const int n_send = lay_fm->units.size;
   const int n_cons_prjn = n_send * units.size; // TODO: should actually be based on n_cons
-  prjn->SetSize(n_cons_prjn);
+  prjn->AllocConMem(n_cons_prjn);
   if ((n_send == 0) || (units.size <= 0)) return; // shouldn't happen
 
   // do ConGps first
@@ -335,26 +331,28 @@ void Layer::ConnectFrom(Layer* lay_fm) {
     Unit* un_fm = lay_fm->units.FastEl(i_fm);
     SendCons* send_gp = cs->NewSendCons(); 
     send_gp->own_un = un_fm;
-    un_fm->send.Add(send_gp);
-    send_gp->setSize(n_send, prjn);
+    send_gp->prjn = prjn;
     send_gp->recv_idx = recv_idx;
     send_gp->recv_lay = this;
+    un_fm->send.Add(send_gp);
+    send_gp->setSize(n_send);
   }
   
+  for (int i_to = 0; i_to < units.size; ++i_to) {
+    Unit* un_to = units.FastEl(i_to);
+    RecvCons* recv_gp = cs->NewRecvCons();
+    recv_gp->own_un = un_to;
+    recv_gp->prjn = prjn;
+    recv_gp->send_idx = send_idx;
+    recv_gp->send_lay = lay_fm;
+    un_to->recv.Add(recv_gp);
+    recv_gp->setSize(n_send);
+  }
   
   // connect, on a receiver-basis
   for (int i_to = 0; i_to < units.size; ++i_to) {
     Unit* un_to = units.FastEl(i_to);
-    // make/init the new RecvCons 
-    RecvCons* recv_gp = cs->NewRecvCons();
-    recv_gp->own_un = un_to;
-    un_to->recv.Add(recv_gp);
-    recv_gp->setSize(n_send, prjn);
-    recv_gp->send_idx = send_idx;
-    recv_gp->send_lay = lay_fm;
-    
-    //note: small waste to check every time, but we have the obj right here...
-    bool recv_owns_wts = recv_gp->ownsWts();
+    RecvCons* recv_gp = un_to->recv.FastEl(recv_idx);
     
     for (int i_fm = 0; i_fm < lay_fm->units.size; ++i_fm) {
       Unit* un_fm = lay_fm->units.FastEl(i_fm);
@@ -362,19 +360,10 @@ void Layer::ConnectFrom(Layer* lay_fm) {
       SendCons* send_gp = un_fm->send.FastEl(send_idx);
       
       // wt references and access
-      float* wt;
-      if (recv_owns_wts) {
-        wt = &recv_gp->Wt(i_fm);
-        send_gp->SetWt(wt, i_to);
-      } else {// wt in sender
-        wt = &send_gp->Wt(i_to);
-        recv_gp->SetWt(wt, i_fm);
-      }
-      *wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-      recv_gp->units[i_fm] = un_fm;
-      send_gp->units[i_to] = un_to;
-      Connection* cn = recv_gp->Cn(i_fm);
-      send_gp->SetCn(cn, i_to);
+      float wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
+//      Connection* cn = 
+      ConsBase::InitCon(send_gp, recv_gp,
+        un_fm, un_to, i_fm, i_to, wt);
     }
   }
 }
@@ -590,7 +579,7 @@ void NetEngine::ComputeNets() {
   Nb::n_tot = 0;
   ComputeNets_impl();
 #ifdef DEBUG
-  if (algo < RECV_SMART) && (Nb::n_tot != net->n_units_flat)) {
+  if (!(algo & SEND_FLAG) && (Nb::n_tot != net->n_units_flat)) {
     cerr << "ERROR: NetEngine::ComputeNets: n_tot != n_units, was: "
       << Nb::n_tot << "\n";
   }
@@ -987,18 +976,8 @@ void NetTask_N::Send_Netin_Array() {
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* su = units[my_u]; //note: accessed flat
     if (su->do_delta) {
-      float su_act_eff = su->act;
-      for (int j = 0; j < su->send.size; ++j) {
-        SendCons_send_impl* send_gp = (SendCons_send_impl*)su->send[j];
-        const int send_sz = send_gp->size;
-        su->n_con_calc += send_sz;
-        Unit** units = send_gp->units; // unit pointer
-        float* wts = send_gp->wts; // wts themselves
-        for (int i=0; i < send_sz; i++) {
-          //const int targ_i = uns[i];
-          LeabraConSpec::Send_Netin_inner_0(wts[i], excit[units[i]->uni], su_act_eff);
-        }
-      }
+    //TODO: unmotivated coercive cast:
+      ((LeabraConSpec_impl*)su->cs)->Send_Netin_Array(su, excit);
       AtomicFetchAdd(&Nb::n_tot, 1);
     }
   }

@@ -23,6 +23,7 @@ class Layer;
 class Network;
 class NetEngine;
 class NetTask;
+typedef taPtrList<Connection>	ConnectionPtrList; // note: typically pts to subclass
 typedef taList<NetTask>		NetTaskList;
 typedef taList<Projection>		PrjnList;
 typedef taPtrList<Projection>		PrjnPtrList;
@@ -59,6 +60,7 @@ typedef taPtrList<Projection>		PrjnPtrList;
 class Connection {
   // one connection between units
 public:
+  float		wt;
   float 	dwt;	// delta-weight
 };
 
@@ -73,6 +75,11 @@ public:
   float		sravg;	// #NO_SAVE average of sender and receiver activation 
 };
 
+class FunkyLeabraCon: public LeabraCon {
+public:
+  float		funky; // an interneural deconfabulating ratecon modulator 
+};
+
 typedef taPtrList<Connection>	ConPtrList; // points to any subclass of Connection
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
@@ -80,25 +87,27 @@ typedef taArray<float*>		floatPtrList;
 
 class ConsBase {
 public:
+  static Connection*	InitCon(SendCons* snd, RecvCons* rcv, 
+    Unit* un_fm, Unit* un_to, int i_fm, int i_to, float wt);
+  
   Unit*			own_un; // my owner, for fast access
   Unit**		units;
   Projection*		prjn; // receiving prjn
   int			size; // number of connections
   
-  virtual bool		ownsWts() const {return false;}
+  virtual bool		ownsCons() const {return false;}
   
   inline Unit*		Un(int i) {return units[i];}
-  virtual Connection*	Cn(int i) = 0; // generic access to the actual type SLOW!!!
-  virtual float&	Wt(int i) = 0; // generic access to the wt SLOW!!!
-  virtual void		SetWt(float* /*pwt*/, int /*i*/) {} //NOTE: noop if ownsWts!
+  virtual Connection*	V_Cn(int i) = 0; // generic access to the actual type SLOW!!!
   
-  void			setSize(int i, Projection* prjn) // cons/wts are alloced on the prjn
-    {if (i == size) return; setSize_impl(i, prjn); size = i;}
+  void			setSize(int i) // cons/wts are alloced on the prjn
+    {if (i == size) return; setSize_impl(i); size = i;}
   
   ConsBase();
   virtual ~ConsBase();
 protected:
-  virtual void		setSize_impl(int, Projection* prjn);
+  virtual void		setSize_impl(int);
+  virtual void		SetCn(Connection*, int) {} // only impl'ed by non-owner
 };
 
 class RecvCons: public ConsBase {
@@ -108,7 +117,6 @@ public:
   Layer*	send_lay; // sending layer
   float		dwt_mean; // used by many algos
   
-  
   RecvCons();
   ~RecvCons() {}
 };
@@ -116,34 +124,30 @@ public:
 class RecvCons_recv_impl: public RecvCons {
 INHERITED(RecvCons)
 public:
-  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
   
-  virtual bool		ownsWts() const {return true;}
-  override float&	Wt(int i) {return wts[i];} // SLOW!!!!
+  override bool		ownsCons() const {return true;}
+  virtual Connection*	V_Cns() = 0; // SLOW!!!!
 
-  RecvCons_recv_impl() {wts = NULL;}
+  RecvCons_recv_impl() {}
   ~RecvCons_recv_impl() {}
-protected:
-  override void		setSize_impl(int i, Projection* prjn);
 };
 
 class RecvCons_send_impl: public RecvCons {
 INHERITED(RecvCons)
 public:
-  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
   
-  override float&	Wt(int i) {return *(pwts[i]);} // SLOW!!!!
-  override void		SetWt(float* pwt, int i) {pwts[i] = pwt;}
+  virtual Connection**	V_Cns() = 0; // SLOW!!!!
 
-  RecvCons_send_impl() {pwts = NULL;}
-  ~RecvCons_send_impl();
+  RecvCons_send_impl() {}
+  ~RecvCons_send_impl() {}
 protected:
-  override void		setSize_impl(int i, Projection* prjn);
+  override void		SetCn(Connection* cn, int i) 
+    {V_Cns()[i] = cn;}
 };
 
-/* The wts array pointers are actually subpointers
-  into the Network master array (allocated globally
-  during Build) and cannot be individually replaced or altered.
+/* The templated guys are useful in the templated ConSpec routines.
+  Note that it is ok to cast to a templated version, even if the 
+  code further inherits from the template.
 */
 template<class CN>
 class RecvCons_recv: public RecvCons_recv_impl {
@@ -151,32 +155,28 @@ INHERITED(RecvCons_recv_impl)
 public:
   CN*			cons; // flat array -- ReadOnly!!! you must access safely!!!
   
-  override Connection*	Cn(int i) {return &(cons[i]);} // SLOW generic access
+  override Connection*	V_Cn(int i) {return &(cons[i]);} // SLOW generic access
+  override Connection*	V_Cns() {return cons;} // SLOW!!!!
 
   RecvCons_recv() {cons = NULL;}
   ~RecvCons_recv() {cons = NULL;}
 protected:
-  void 			setSize_impl(int i, Projection* prjn) {
-    inherited::setSize_impl(i, prjn);
-    cons = crealloc(cons, size, i);
-  }
+  void 			setSize_impl(int i);
 };
 
 template<class CN>
 class RecvCons_send: public RecvCons_send_impl {
 INHERITED(RecvCons_send_impl)
 public:
-  CN*			cons; // flat array -- ReadOnly!!! you must access safely!!!
+  CN**			cons; // flat array -- ReadOnly!!! you must access safely!!!
   
-  override Connection*	Cn(int i) {return &(cons[i]);} // SLOW generic access
+  override Connection*	V_Cn(int i) {return cons[i];} // SLOW generic access
+  override Connection**	V_Cns() {return (Connection**)cons;} // SLOW!!!!
 
   RecvCons_send() {cons = NULL;}
   ~RecvCons_send() {cons = NULL;}
 protected:
-  void 			setSize_impl(int i, Projection* prjn) {
-    inherited::setSize_impl(i, prjn);
-    cons = crealloc(cons, size, i);
-  }
+  void 			setSize_impl(int i);
 };
 
 typedef taPtrList<RecvCons>	RecvConsPtrList;
@@ -187,7 +187,6 @@ INHERITED(ConsBase)
 public:
   int			recv_idx;
   Layer*		recv_lay; // receiving layer
-  virtual void		SetCn(Connection* cn, int i) = 0;
   
   SendCons();
   ~SendCons() {}
@@ -198,15 +197,13 @@ typedef taPtrList<SendCons>	SendConsPtrList;
 class SendCons_send_impl: public SendCons {
 INHERITED(SendCons)
 public:
-  float*		wts; // flat array -- ReadOnly!!! you must access safely!!!
+
+  virtual bool		ownsCons() const {return true;}
+  virtual Connection*	V_Cns() = 0; // SLOW!!!!
   
-  virtual bool		ownsWts() const {return true;}
-  override float&	Wt(int i) {return wts[i];} // SLOW!!!!
-  
-  SendCons_send_impl() {wts = NULL;}
-  ~SendCons_send_impl() {wts = NULL;}
+  SendCons_send_impl() {}
+  ~SendCons_send_impl() {}
 protected:
-  override void		setSize_impl(int i, Projection* prjn);
 };
 
 typedef taPtrList<SendCons_send_impl>	SendCons_send_implPtrList;
@@ -214,34 +211,30 @@ typedef taPtrList<SendCons_send_impl>	SendCons_send_implPtrList;
 class SendCons_recv_impl: public SendCons {
 INHERITED(SendCons)
 public:
-  float**		pwts; // flat array -- ReadOnly!!! you must access safely!!!
   
-  override float&	Wt(int i) {return *(pwts[i]);} // SLOW!!!!
-  override void		SetWt(float* pwt, int i) {pwts[i] = pwt;}
+  virtual Connection**	V_Cns() = 0; // SLOW!!!!
   
-  SendCons_recv_impl();
-  ~SendCons_recv_impl();
+  SendCons_recv_impl() {}
+  ~SendCons_recv_impl() {}
 protected:
-  override void		setSize_impl(int i, Projection* prjn);
+  override void		SetCn(Connection* cn, int i) 
+    {V_Cns()[i] = cn;}
 };
 
 template<class CN>
 class SendCons_send: public SendCons_send_impl {
 INHERITED(SendCons_send_impl)
 public:
-  CN**			cons;
+  CN*			cons;
   
-  override Connection*	Cn(int i) {return cons[i];} // SLOW virtual
-  override void		SetCn(Connection* cn, int i) // cn must be of type CN!!!
-    {cons[i] = (CN*)cn;}
-
+  override Connection*	V_Cn(int i) {return &(cons[i]);} // SLOW virtual
+  override Connection*	V_Cns() {return cons;}
+  inline CN*		Cn(int i) {return &(cons[i]);}
+  
   SendCons_send() {cons = NULL;}
   ~SendCons_send() {cons = NULL;}
 protected:
-  void 			setSize_impl(int i, Projection* prjn) {
-    inherited::setSize_impl(i, prjn);
-    cons = crealloc(cons, size, i);
-  }
+  void 			setSize_impl(int i);
 };
 
 template<class CN>
@@ -250,42 +243,27 @@ INHERITED(SendCons_recv_impl)
 public:
   CN**			cons;
   
-  override Connection*	Cn(int i) {return cons[i];} // SLOW virtual
-  override void		SetCn(Connection* cn, int i) // cn must be of type CN!!!
-    {cons[i] = (CN*)cn;}
+  override Connection*	V_Cn(int i) {return cons[i];} // SLOW virtual
+  override Connection**	V_Cns() {return (Connection**)cons;}
+  inline CN*		Cn(int i) {return cons[i];}
 
   SendCons_recv() {cons = NULL;}
-  ~SendCons_recv() {cons = NULL;}
+  ~SendCons_recv() {setSize_impl(0);}
 protected:
-  void 			setSize_impl(int i, Projection* prjn) {
-    inherited::setSize_impl(i, prjn);
-    cons = crealloc(cons, size, i);
-  }
+  void 			setSize_impl(int i);
 };
+
 
 // ALGO Specific Guys
 
-// Bp -- recv-based
-
-class BpSendCons: public SendCons_send<BpCon> {
-INHERITED(SendCons_send<BpCon>)
-public:
-  
-  BpSendCons() {}
-  ~BpSendCons() {}
-};
-
-class BpRecvCons: public RecvCons_recv<BpCon> {
-INHERITED(RecvCons_recv<BpCon>)
-public:
-  
-  BpRecvCons() {}
-  ~BpRecvCons() {}
-};
-
-
 // Leabra -- send-based
+typedef SendCons_send<LeabraCon> LeabraSendCons;
+typedef RecvCons_send<LeabraCon> LeabraRecvCons;
 
+typedef SendCons_send<FunkyLeabraCon> FunkyLeabraSendCons;
+typedef RecvCons_send<FunkyLeabraCon> FunkyLeabraRecvCons;
+
+/* why this nonsense???
 class LeabraSendCons: public SendCons_send<LeabraCon> {
 INHERITED(SendCons_send<LeabraCon>)
 public:
@@ -301,7 +279,30 @@ public:
   LeabraRecvCons() {}
   ~LeabraRecvCons() {}
 };
+*/
 
+// Bp -- recv-based
+
+typedef SendCons_send<BpCon> BpSendCons;
+typedef RecvCons_send<BpCon> BpRecvCons;
+
+/* again unnecessary...
+class BpSendCons: public SendCons_recv<BpCon> {
+INHERITED(SendCons_send<BpCon>)
+public:
+  
+  BpSendCons() {}
+  ~BpSendCons() {}
+};
+
+class BpRecvCons: public RecvCons_recv<BpCon> {
+INHERITED(RecvCons_recv<BpCon>)
+public:
+  
+  BpRecvCons() {}
+  ~BpRecvCons() {}
+};
+*/
 
 
 class ConSpec {
@@ -320,21 +321,51 @@ public:
   virtual ~ConSpec() {}
 };
 
-class LeabraConSpec: public ConSpec {
+class ConSpec_send_impl: public ConSpec {
+public:
+};
+
+
+class LeabraConSpec_impl: public ConSpec_send_impl {
+INHERITED(ConSpec_send_impl)
 public:
   inline static void Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff);
     // highly optimized inner loop
-  void 			Send_Netin_0(Unit* su); // shared by 0 and N
+  template<class CN>
+  void 			T_Send_Netin_0(Unit* su); // shared by 0 and N
+  virtual void 		Send_Netin_0(Unit* su) = 0;
 
-  override size_t	GetConSize() const {return sizeof(LeabraCon);} // size of the Con
-  RecvCons*		NewRecvCons() const {return new LeabraRecvCons;}
-  SendCons*		NewSendCons() const {return new LeabraSendCons;}  
+  template<class CN>
+  void 			T_Send_Netin_Array(Unit* su, float* excit);
+  virtual void 		Send_Netin_Array(Unit* su, float* excit) = 0;
+  
   override void 	Compute_Weights(Network* net, Unit* ru);
-  void 		Compute_Weights_CtCAL(Network* net, LeabraRecvCons* cg, Unit* ru);
-  void 		Compute_SRAvg(Network* net, Unit* ru);
+  void 			Compute_Weights_CtCAL(Network* net, LeabraRecvCons* cg, Unit* ru);
+  void 			Compute_SRAvg(Network* net, Unit* su);
 };
 
-void LeabraConSpec::Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff) {
+template<class CN>
+class LeabraConSpecT: public LeabraConSpec_impl {
+INHERITED(LeabraConSpec_impl)
+public:
+  override void 	Send_Netin_0(Unit* su)
+    {T_Send_Netin_0<CN>(su);}
+  override void 	Send_Netin_Array(Unit* su, float* excit) 
+    {T_Send_Netin_Array<CN>(su, excit);}
+  
+public: // i/f
+  override size_t	GetConSize() const {return sizeof(CN);} // size of the Con
+  override RecvCons*	NewRecvCons() const {return new RecvCons_send<CN>;}
+  override SendCons*	NewSendCons() const {return new SendCons_send<CN>;}  
+  
+};
+
+typedef  LeabraConSpecT<LeabraCon> LeabraConSpec;
+typedef  LeabraConSpecT<FunkyLeabraCon> FunkyLeabraConSpec;
+
+void LeabraConSpec_impl::Send_Netin_inner_0(float cn_wt, 
+  float& ru_net, float su_act_eff) 
+{
   ru_net += su_act_eff * cn_wt;
   //tru_net = *ru_net + su_act_eff * cn_wt;
 }
@@ -397,17 +428,21 @@ public:
   int			size; // number of connections
   int			con_size; // number of bytes per conn -- must be %4 bytes
   
-  void			SetSize(int i); // sets number of wts/conns
-  float*		AllocWts(int sz); // alloc indicated number (from pool)
+  void			AllocConMem(int n_cons); // allocates required memory
+  Unit**		AllocPUnits(int sz); // alloc indicated number (from pool)
+  Connection**		AllocPCons(int sz); // alloc indicated number (from pool)
+  Connection*		AllocCons(int sz); // alloc indicated number (from pool)
+    // note: must cast to correct type
 
   Projection();
   ~Projection();
 protected:
-  float*		wts; // all weights
-  void*			cons; // conn memory
-  float_Array 		wts_flat;
-  int			next_wti;
+  UnitPtrList		units; // all unit ptrs
+  ConnectionPtrList	pcons; // all con ptrs
+  char*			cons; // conn memory
+  int			next_cni;
 };
+
 
 class Layer {
 public:
@@ -745,6 +780,66 @@ protected:
 private:
   Nb();
 };
+
+
+/* Templates
+*/
+
+template<class CN>
+void RecvCons_recv<CN>::setSize_impl(int i) {
+  inherited::setSize_impl(i);
+  cons = (CN*)prjn->AllocCons(i);
+}
+
+template<class CN>
+void RecvCons_send<CN>::setSize_impl(int i) {
+  inherited::setSize_impl(i);
+  cons = (CN**)prjn->AllocPCons(i);
+}
+
+template<class CN>
+void SendCons_send<CN>::setSize_impl(int i) {
+  inherited::setSize_impl(i);
+  cons = (CN*)prjn->AllocCons(i);
+}
+
+template<class CN>
+void SendCons_recv<CN>::setSize_impl(int i) {
+  inherited::setSize_impl(i);
+  cons = (CN**)prjn->AllocPCons(i);
+}
+
+template<class CN>
+void LeabraConSpec_impl::T_Send_Netin_0(Unit* su) {
+  const float su_act_eff = su->act;
+  for (int j = 0; j < su->send.size; ++j) {
+    SendCons_send<CN>* send_gp = (SendCons_send<CN>*)su->send[j];
+    const int send_sz = send_gp->size;
+    su->n_con_calc += send_sz;
+    Unit** units = send_gp->units; // unit pointer
+    CN* cons = send_gp->cons; // the cons themselves!
+    for (int i=0; i < send_sz; i++) {
+      //const int targ_i = unis[i];
+      Send_Netin_inner_0(cons[i].wt, units[i]->net, su_act_eff);
+    }
+  }
+}
+
+template<class CN>
+void LeabraConSpec_impl::T_Send_Netin_Array(Unit* su, float* excit) {
+  float su_act_eff = su->act;
+  for (int j = 0; j < su->send.size; ++j) {
+    SendCons_send<CN>* send_gp = (SendCons_send<CN>*)su->send[j];
+    const int send_sz = send_gp->size;
+    su->n_con_calc += send_sz;
+    Unit** units = send_gp->units; // unit pointer
+    CN* cons = send_gp->cons; 
+    for (int i=0; i < send_sz; i++) {
+      //const int targ_i = uns[i];
+      LeabraConSpec::Send_Netin_inner_0(cons[i].wt, excit[units[i]->uni], su_act_eff);
+    }
+  }
+}
 
 #endif
 
