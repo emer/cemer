@@ -8,6 +8,17 @@
 
 using namespace std;
 
+//TEMP
+
+void VisitUnit(Unit* un, void*) {
+//dummy code
+  cerr << un->uni << " ";
+}
+
+Visitor<Unit, UnitPtrList> v(new UnitPtrList);
+
+// /TEMP
+
 // this is set to a rand() before each cycle -- algos can read and hash it
 // with their own key values to create a custom pseudo value, with very little
 // overhead
@@ -1031,6 +1042,8 @@ bool Nb::use_log_file = false;
 bool Nb::calc_act = true;
 
 int Nb::main() {
+//TEMP
+v.Run_inc(VisitUnit);
   Initialize();
   
   switch (net_type) {

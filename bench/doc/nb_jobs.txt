@@ -1,0 +1,68 @@
+For parallel execution, we need to develop some constructs that
+will enable us to efficiently and cleanly make use of multi-cores
+and auxiliary computing resources.
+
+Jobs
+
+Let us define computation as a set of Jobs. A Job is a clearly
+defined piece of work to be done. One thing to note is that
+Jobs do not need to be sequential or non-overlapping. They thus
+do not need to be in the same time frame. For example, an
+entire process may comprise a series of overlapping jobs at
+different time scales.
+
+Synchronization
+
+Some Jobs have temporal relations--this is similar to Project
+management, wherein Job B may not be able to begin until Job A
+has completed.
+
+Example
+
+Here are the names of jobs:
+
+SR - SendRecv Average
+N - Netin
+C - per Cycle items (stats, etc.)
+d - dWt
+W - Weight
+S - per Settle items
+
+      SR       |
+N-C-N-C-N-C-N-C| repeat 9 times |N-d-W-S
+
+We can maximize parallelism by the following:
+* minimize hard sync points
+* have overlapping jobs at different time scales
+
+Niterating (N-way Iterating)
+
+We will concern ourself only with work that can be 
+iterated using a sequential bounded index. To balance
+caching and bus locking (for atomic operations) we can
+define an iteration primitive:
+
+int& g_i -- reference to the global iter counter
+  MUST start at 0 (or %I_BY) in this scheme
+int  i_to -- maximum i value
+int  I_BY -- (up to) this many items per block (2^n)
+int  M_BY -- bit mask for the 2^n, derived from I_BY
+
+canonical iteration loop
+(note: x ? y : z  will ONLY eval y OR z)
+
+for (
+  int my_i = AtomicFetchAdd(&g_i, I_BY);
+  my_i <= i_to;
+  my_i = (++my_i & M_BY) ? my_i : AtomicFetchAdd(&g_i, I_BY)
+) {
+  // do work here
+}
+
+
+
+Note that I_BY (and its derivative M_BY) can be implicit
+constants built in to the client routines (or global 
+constants or literals) thus their capitalization. So the
+only values needed by the client code are g_i and i_to. Also,
+dispatch code can eliminate most locking overhead by
