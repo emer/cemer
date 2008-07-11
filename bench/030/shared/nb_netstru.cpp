@@ -541,12 +541,12 @@ void NetEngine::DoProc(int proc_id) {
 void NetEngine::ComputeNets() {
   Nb::n_tot = 0;
   ComputeNets_impl();
-#ifdef DEBUG
+//#ifdef DEBUG -- ALWAYS do this! too easy for this to fail!
   if (!(algo & SEND_FLAG) && (Nb::n_tot != net->n_units_flat)) {
     cerr << "ERROR: NetEngine::ComputeNets: n_tot != n_units, was: "
       << Nb::n_tot << "\n";
   }
-#endif
+//#endif
 }
 
 void NetEngine::ComputeNets_impl() {

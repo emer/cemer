@@ -715,40 +715,38 @@ void ThreadNetEngine::DoProc(TaskFun_t tf, void* inst) {
     NetTask* tsk = net_tasks[t];
     th->suspend(); // prob already suspended
     PROC_VAR_INIT(tsk->g_u, t);
-    tsk->SetTaskFun(tf, inst);
+    tsk->proc_id = proc_id;
     th->resume();
   }
   
   // then do my part
   NetTask* tsk = net_tasks[0];
   PROC_VAR_INIT(tsk->g_u, 0);
-  tsk->SetTaskFun(tf, inst);
+  tsk->proc_id = proc_id;
   tsk->run_time.Start(false);
   tsk->run();
   tsk->run_time.Stop(); 
-  // then either sync or "nibble"
+  // optional "nibble"
+  if (Nb::nibble_mode != 0)
   for (int t = 1; t < n_procs; ++t) {
-    bool nibble = false;
-    switch (Nb::nibble_mode) {
-    case 0: nibble = false; break;
-    case 1: nibble = true; break;
-    default: // 2: auto, only if 
-      nibble = (tsk->g_u < n_nibb_thresh); break;
+    if (tsk->g_u >= n_nibb_thresh) continue;
+    NetTask* tsk = net_tasks[t];
+    // note: its ok if tsk finishes between our test and calling run
+    if (tsk->g_u < n_units_flat) {
+      tsk->nibble_time.Start(false);
+      tsk->run();
+      tsk->nibble_time.Stop(); 
     }
-    if (nibble) {
-      NetTask* tsk = net_tasks[t];
-      // note: its ok if tsk finishes between our test and calling run
-      if (tsk->g_u < n_units_flat) {
-        tsk->nibble_time.Start(false);
-        tsk->run();
-        tsk->nibble_time.Stop(); 
-      }
-    } else { // sync
-      tsk->sync_time.Start(false);
-      QTaskThread* th = (QTaskThread*)threads[t];
-      th->suspend(); // suspending is syncing with completion of loop
-      tsk->sync_time.Stop(); 
-    }
+  }
+  // then we must sync UNLESS we are UNI mode and uncond nibbled
+#ifdef UNIT_STRIDE
+  if (Nb::nibble_mode != 1)
+#endif
+  for (int t = 1; t < n_procs; ++t) {
+    tsk->sync_time.Start(false);
+    QTaskThread* th = (QTaskThread*)threads[t];
+    th->suspend(); // suspending is syncing with completion of loop
+    tsk->sync_time.Stop(); 
   }
 }
 

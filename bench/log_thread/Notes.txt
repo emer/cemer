@@ -22,3 +22,5 @@
 20080708_03 -- variant of 02 baking Unit* into Conn
 20080709_01 -- 020 - compares iterating with cons[i] vs V_Cn(i) in inner loop
 20080710_01 -- 020(a) vs. 030(b) - compares (a) stride and sync vs. (b) pure blocked (self-syncing) on Mac
+20080710_02 -- as for 01, but Lin64-quad
+20080710_03 -- as for 02, but only for 0/2/4 threads; (c) is 020 with w/ nibble turned on

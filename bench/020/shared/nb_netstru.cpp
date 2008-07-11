@@ -541,12 +541,12 @@ void NetEngine::DoProc(int proc_id) {
 void NetEngine::ComputeNets() {
   Nb::n_tot = 0;
   ComputeNets_impl();
-#ifdef DEBUG
+//#ifdef DEBUG -- ALWAYS do this! too easy for this to fail!
   if (!(algo & SEND_FLAG) && (Nb::n_tot != net->n_units_flat)) {
     cerr << "ERROR: NetEngine::ComputeNets: n_tot != n_units, was: "
       << Nb::n_tot << "\n";
   }
-#endif
+//#endif
 }
 
 void NetEngine::ComputeNets_impl() {
@@ -670,29 +670,27 @@ void ThreadNetEngine::DoProc(int proc_id) {
   tsk->run_time.Start(false);
   tsk->run();
   tsk->run_time.Stop(); 
-  // then either sync or "nibble"
+  // optional "nibble"
+  if (Nb::nibble_mode != 0)
   for (int t = 1; t < n_procs; ++t) {
-    bool nibble = false;
-    switch (Nb::nibble_mode) {
-    case 0: nibble = false; break;
-    case 1: nibble = true; break;
-    default: // 2: auto, only if 
-      nibble = (tsk->g_u < n_nibb_thresh); break;
+    if (tsk->g_u >= n_nibb_thresh) continue;
+    NetTask* tsk = net_tasks[t];
+    // note: its ok if tsk finishes between our test and calling run
+    if (tsk->g_u < n_units_flat) {
+      tsk->nibble_time.Start(false);
+      tsk->run();
+      tsk->nibble_time.Stop(); 
     }
-    if (nibble) {
-      NetTask* tsk = net_tasks[t];
-      // note: its ok if tsk finishes between our test and calling run
-      if (tsk->g_u < n_units_flat) {
-        tsk->nibble_time.Start(false);
-        tsk->run();
-        tsk->nibble_time.Stop(); 
-      }
-    } else { // sync
-      tsk->sync_time.Start(false);
-      QTaskThread* th = (QTaskThread*)threads[t];
-      th->suspend(); // suspending is syncing with completion of loop
-      tsk->sync_time.Stop(); 
-    }
+  }
+  // then we must sync UNLESS we are UNI mode and uncond nibbled
+#ifdef UNIT_STRIDE
+  if (Nb::nibble_mode != 1)
+#endif
+  for (int t = 1; t < n_procs; ++t) {
+    tsk->sync_time.Start(false);
+    QTaskThread* th = (QTaskThread*)threads[t];
+    th->suspend(); // suspending is syncing with completion of loop
+    tsk->sync_time.Stop(); 
   }
 }
 
