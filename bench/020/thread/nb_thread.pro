@@ -1,5 +1,5 @@
-CONFIG		+= console debug
-#CONFIG		+= console release
+#CONFIG		+= console debug
+CONFIG		+= console release
 windows {
 #TODO need to modalize for Windows -- add cc flag that adds debug symbols
 } else {
