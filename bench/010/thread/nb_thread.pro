@@ -6,7 +6,9 @@ windows {
   QMAKE_CXXFLAGS_RELEASE += -g
 }
 DEFINES		+= NB_THREAD 
-debug {
+# note: for some reason, using debug here was still true
+release {
+} else {
   DEFINES	+= DEBUG
 }
 QMAKE_INCDIR	+= ../shared
