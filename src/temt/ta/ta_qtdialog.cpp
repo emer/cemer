@@ -1790,6 +1790,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
   bgrp->setExclusive(false);
   connect(bgrp, SIGNAL(buttonClicked(int)),
     this, SLOT(bgrp_buttonClicked(int)) );
+  menu = NULL;
   InitGuiFields(false);
   //note: don't register for notification until constr starts
 }
@@ -1806,6 +1807,10 @@ taiEditDataHost::~taiEditDataHost() {
     root = NULL;
   }
   bgrp = NULL;
+  if (menu) {
+    delete menu;
+    menu = NULL;
+  }
 }
 
 // note: called non-virtually in our ctor, and virtually in WidgetDeleting
@@ -1813,7 +1818,6 @@ void taiEditDataHost::InitGuiFields(bool virt) {
   if (virt) inherited::InitGuiFields();
   cur_menu = NULL;
   cur_menu_but = NULL;
-  menu = NULL;
   panel = NULL;
 }
 
