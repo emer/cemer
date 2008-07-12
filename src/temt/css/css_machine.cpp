@@ -630,6 +630,7 @@ cssEl* cssEl::MakePtrType(int ptrs) {
 	ths->ptr_cnt = 0;
       else
 	ptr->ptr_cnt += 1;
+      ptr->flags = cssCPtr::NO_PTR_FLAGS; // turn off the OWN_OBJ flag if it was set!
       return ptr;
     }
     else {			// 2 is max
@@ -641,6 +642,7 @@ cssEl* cssEl::MakePtrType(int ptrs) {
       }
       else
 	ptr->ptr_cnt += 2;
+      ptr->flags = cssCPtr::NO_PTR_FLAGS; // turn off the OWN_OBJ flag if it was set!
       return ptr;
     }
   }

@@ -231,9 +231,7 @@ protected:
   
   override void		Unbind_impl(); // unbinds table
 
-  override void 	DataStructUpdateEnd_impl();
   override void		DataUpdateView_impl();
-  override void		DataUpdateAfterEdit_impl();
   override void		DoActionChildren_impl(DataViewAction acts);
 
   void			UpdateFromDataTable(bool first_time = false);
@@ -960,6 +958,8 @@ public:
 
   QLabel*		    lblWidth;
   taiField*		    fldWidth; // width of the display (height is always 1.0)
+  QLabel*		    lblDepth;
+  taiField*		    fldDepth; // depth of the display (height is always 1.0)
 
   QHBoxLayout*		  layXAxis;
   QLabel*		    lblXAxis;

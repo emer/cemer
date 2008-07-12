@@ -3782,7 +3782,7 @@ void iMainWindowViewer::emit_EditAction(int param) {
   emit selectionChanged();
 } */
 
-void iMainWindowViewer::Find(taiDataLink* root) {
+void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
   // if an instance doesn't exist, need to make one; we tie it to ourself 
   if (!search_dialog) {
     search_dialog = iSearchDialog::New(0, this);
@@ -3793,6 +3793,8 @@ void iMainWindowViewer::Find(taiDataLink* root) {
   dlg->show();
   dlg->raise();
   dlg->activateWindow();
+  if(find_str.nonempty())
+    dlg->setSearchStr(find_str);
 }
 
 void iMainWindowViewer::editFind() {
@@ -7694,7 +7696,7 @@ void iSearchDialog::Constr() {
   QHBoxLayout* lay = new QHBoxLayout();
   lay->setMargin(0);
   lay->setSpacing(0);
-  search = new QLineEdit(this);
+  search = new iLineEdit(this);
   search->setToolTip("Enter text to search for in item names, descriptions, and contents.");
   lay->addWidget(search, 1);
   btnGo = new QToolButton(this);
@@ -7925,6 +7927,17 @@ void iSearchDialog::setRoot(taiDataLink* root) {
   RootSet(root);
 }
 
+void iSearchDialog::setSearchStr(const String& srch_str) {
+  stop();
+  search->setText(srch_str);
+  if(srch_str.nonempty())
+    Search();
+}
+
+String iSearchDialog::searchStr() const {
+  return search->text();
+}
+
 bool iSearchDialog::stop() const {
   taiMisc::ProcessEvents();
 //TEMP
@@ -8018,6 +8031,28 @@ bool taBase::BrowserCollapseAll() {
     if(!imwv) continue;
   
     rval = rval || (bool)imwv->BrowserCollapseAllItem(link);
+  }
+  return rval;
+}
+
+bool taBase::GuiFindFromMe(const String& find_str) {
+  if(!taMisc::gui_active) return false;
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return false;
+  taiDataLink* link = (taiDataLink*)GetDataLink();
+  if (!link) return false;
+  
+  bool rval = false;
+  // iterate to find all Browsers 
+  for (int i = 0; i < proj->viewers.size; ++i) {
+    MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(proj->viewers.FastEl(i));
+    //if (vwr && (vwr->GetName() == "DefaultProjectBrowser")) return vwr;
+    if (!(vwr && vwr->isProjBrowser())) continue;
+    iMainWindowViewer* imwv = vwr->widget();
+    if(!imwv) continue;
+  
+    rval= true;
+    imwv->Find(link, find_str);
   }
   return rval;
 }

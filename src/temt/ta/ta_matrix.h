@@ -553,11 +553,11 @@ public:
   virtual int		BinarySave_strm(ostream& strm);
   // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
   virtual void 		BinarySave(const String& fname="");
-  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_mat saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+  // #CAT_File #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_mat #FILE_DIALOG_SAVE saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
   virtual int		BinaryLoad_strm(istream& strm);
   // #CAT_File load binary data from a stream -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
   virtual void 		BinaryLoad(const String& fname="");
-  // #CAT_File #MENU #MENU_ON_Object #EXT_mat saves data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
+  // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
 			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,

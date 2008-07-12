@@ -534,21 +534,23 @@ private:
   void		Destroy() {}
 };
 
-/* die die die
-class TA_API taiCondEditMember : public taiMember {
-  // conditional editing member
+class TA_API taiFileDialogMember : public taiMember {
+  // string with file dialog directive
+INHERITED(taiMember)
 public:
   int		BidForMember(MemberDef* md, TypeDef* td);
-  void		GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
 
-  TAQT_MEMBER_INSTANCE(taiCondEditMember, taiMember);
+  TAQT_MEMBER_INSTANCE(taiFileDialogMember, taiMember);
 protected:
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   override void	GetImage_impl(taiData* dat, const void* base);
+  override void	GetMbrValue_impl(taiData* dat, void* base);
 private:
   void		Initialize() {}
   void		Destroy() {}
-}; */
+};
+
 
 class TypeDefault;
 

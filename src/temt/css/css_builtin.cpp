@@ -2001,6 +2001,7 @@ static void GeneratePtrRefTypes() {
     if(tp->GetType() == cssEl::T_TA) {
       cssTA* tap = (cssTA*)tp->GetNonRefObj();
       tap->ptr_cnt--;		// decrement ptr cnt from install to prevent obj creation
+      tap->flags = cssCPtr::NO_PTR_FLAGS; // turn off the OWN_OBJ flag if it was set!
     }
     cssMisc::TypesSpace_refs.Push(tp->MakeRefType());
 
@@ -2076,8 +2077,11 @@ static void Install_Types() {
       // (use the subclass instead)
       if(tmp->InheritsFormal(TA_templ_inst)) {
 	if((tmp->children.size != 1) || (tmp->children.FastEl(0)->parents.size > 1)) {
-	  if(tmp->InheritsFrom(TA_taBase))
-	    cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	  if(tmp->InheritsFrom(TA_taBase)) {
+	    taBase* inst = (taBase*)tmp->GetInstance();
+	    if(inst) taBase::Ref(inst); // ref it!
+	    cssTA_Base_inst_nm(cssMisc::TypesSpace, inst, 1, tmp, tmp->name);
+	  }
 	  else
 	    cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
 	}
@@ -2087,8 +2091,11 @@ static void Install_Types() {
 	      (tmp->name != "taString") && (tmp->name != "taLeafItr") &&
 	      (tmp->name != "sstream"))
       {
-	if(tmp->InheritsFrom(TA_taBase))
-	  cssTA_Base_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	if(tmp->InheritsFrom(TA_taBase)) {
+	  taBase* inst = (taBase*)tmp->GetInstance();
+	  if(inst) taBase::Ref(inst); // ref it!
+	  cssTA_Base_inst_nm(cssMisc::TypesSpace, inst, 1, tmp, tmp->name);
+	}
 	else
 	  cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
       }

@@ -100,7 +100,7 @@ class TA_API ScriptBase: public AbstractScriptBase {
 public:
   taFiler*	script_file;	// file to use for the script
   String	script_string; // #EDIT_DIALOG script text to use for the script
-  String	script_filename; // #HIDDEN #READ_ONLY file name for the script -- used only for saving and loading
+  String	script_filename; // #HIDDEN #READ_ONLY #FILE_DIALOG_LOAD file name for the script -- used only for saving and loading
   
   override ScriptSource	scriptSource();
   override const String	scriptFilename();

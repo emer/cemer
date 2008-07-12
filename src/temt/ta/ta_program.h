@@ -269,9 +269,9 @@ private:
 //		Program Variables
 ///////////////////////////////////////////////////////////
 
-class TA_API ProgVar: public taNBase {
+class TA_API ProgVar: public taOBase {
   // ##INSTANCE ##INLINE ##SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
-INHERITED(taNBase)
+INHERITED(taOBase)
 public:
   enum VarType {
     T_Int,			// #LABEL_Int integer
@@ -293,6 +293,7 @@ public:
     USED		= 0x0020, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
   };
 
+  String	name;		// name of the variable
   VarType	var_type;	// #APPLY_IMMED type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_OFF_flags:LOCAL_VAR integer value (also for enum types)
   double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_OFF_flags:LOCAL_VAR real value
@@ -344,6 +345,8 @@ public:
  
   override void GetSelectText(MemberDef* mbr, String xtra_lbl,
     String& full_lbl, String& desc) const;
+  bool 		SetName(const String& nm)    	{ name = nm; return true; }
+  String	GetName() const			{ return name; }
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }
@@ -411,6 +414,9 @@ public:
 
   virtual void	AddVarTo(taNBase* src);
   // #DROPN add a var to the given object
+  virtual void	CreateDataColVars(DataTable* src);
+  // #DROP1 #BUTTON create column variables for given database object (only for scalar vals -- not matrix ones)
+
   virtual ProgVar* FindVarType(ProgVar::VarType vart, TypeDef* td = NULL);
   // find first variable of given type (if hard enum or object type, td specifies type of object to find if not null)
 
@@ -864,6 +870,9 @@ public:
   ProgEl_List	    	fun_code;
   // the function code (list of program elements)
   
+  virtual void  UpdateCallerArgs();
+  // #BUTTON #CAT_Code run UpdateArgs on all the function calls to me, and also display all these calls in the Find dialog (searching on this function's name) so you can make sure the args are correct for each call
+
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
@@ -1104,6 +1113,8 @@ public:
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code set css command shell to operate on this program, so you can run, debug, etc this script from the command line
   virtual void	ExitShell();
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code exit the command shell for this program (shell returns to previous script)
+  virtual void  UpdateCallerArgs();
+  // #BUTTON #CAT_Code run UpdateArgs on all the other programs that call me, and also display all these calls in the Find dialog (searching on this program's name) so you can make sure the args are correct for each such program
 
   int			Call(Program* caller); 
   // #CAT_Run runs the program as a subprogram called from another running program, 0=success

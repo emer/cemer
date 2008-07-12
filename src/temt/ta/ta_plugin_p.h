@@ -104,7 +104,7 @@ class TA_API taPlugin: public taPluginBase {
   // taBase rep of a plugin -- these can be out of date w/ respect to actual plugins
 INHERITED(taPluginBase)
 public:
-  String		filename; // #READ_ONLY #SHOW the plugin's filename
+  String		filename; // #READ_ONLY #SHOW #FILE_DIALOG_LOAD the plugin's filename
   bool			enabled; // set if this plugin should be loaded when the app starts
   bool			loaded; // / #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin

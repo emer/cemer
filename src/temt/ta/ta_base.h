@@ -1190,6 +1190,8 @@ public:
   virtual void		BrowseMe();
   // #MENU #MENU_ON_Object #MENU_SEP_AFTER #MENU_CONTEXT #CAT_Display show this object in its own browser 
 //obs  virtual bool		ReShowEdit(bool force = false);
+  virtual bool		GuiFindFromMe(const String& find_str="");
+  // #CAT_Display activate the gui find dialog starting from this object, with given find string
   // #CAT_Display reshows any open edit dialogs for this object
   virtual const iColor GetEditColor(bool& ok); // #IGNORE background color for edit dialog
   virtual const iColor GetEditColorInherit(bool& ok);
@@ -1643,7 +1645,7 @@ class TA_API taFBase: public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename
 public:
   String		desc;	   // #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
-  String		file_name; // #READ_ONLY #NO_SAVE #SHOW the current filename for this object
+  String		file_name; // #READ_ONLY #NO_SAVE #SHOW #FILE_DIALOG_LOAD the current filename for this object
 
   override String	GetDesc() const { return desc; }
 
@@ -1809,7 +1811,7 @@ public:
   override taBase* New(int n_objs=1, TypeDef* typ=NULL);
   // #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual taBase* New_gui(int n_objs=1, TypeDef* typ=NULL);
-  // #MENU #MENU_ON_Edit #MENU_CONTEXT #TYPE_ON_el_base #CAT_XpertModify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (NULL = default type, el_typ)
+  // #BUTTON #TYPE_ON_el_base #CAT_XpertModify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 

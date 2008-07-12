@@ -97,7 +97,7 @@ public:
   };
 
   String	desc;	   	// #EDIT_DIALOG description of this object: what does it do, how should it be used, etc
-  String       	fname;		// full file name (including path if not in same dir as project) for the texture image file (formats supported: JPEG, PNG, GIF, TIFF, RGB, PIC, TGA)
+  String       	fname;		// #FILE_DIALOG_LOAD #FILETYPE_Image full file name (including path if not in same dir as project) for the texture image file (formats supported: JPEG, PNG, GIF, TIFF, RGB, PIC, TGA)
   Mode		mode;		// how to apply texture to object
   Wrap		wrap_horiz;	// how to wrap in the horizontal (largest) dimension
   Wrap		wrap_vert;	// how to wrap in the vertical (smallest) dimension
@@ -191,7 +191,7 @@ public:
   FloatTDCoord	box;		// #CONDEDIT_ON_shape:BOX length of box in each axis for BOX-shaped body
 
   FloatTransform obj_xform;	// full transform to apply to body file to align/size/etc with body
-  String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE file name of Inventor file that describes body appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
+  String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes body appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
   taColor	color; 		// #CONDEDIT_ON_set_color default color of body if not otherwise defined (a used for transparency)
@@ -634,7 +634,7 @@ public:
   FloatTwoDCoord plane_vis_size; // #CONDEDIT_ON_shape:PLANE extent of the plane to actually render in the display (displayed as a very thin box of this size, centered at 0,0,0) -- actual plane in physical system is of infinite extent!
 
   FloatTransform obj_xform;	// full transform to apply to object file to align/size/etc with static item
-  String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
+  String	obj_fname;	// #CONDEDIT_ON_flags:FM_FILE #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Inventor file that describes static item appearance (if empty or FM_FILE flag is not on, basic shape will be rendered)
 
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
   taColor	color; 		// #CONDEDIT_ON_set_color default color of static item if not otherwise defined (a used for transparency)

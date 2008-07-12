@@ -1909,97 +1909,48 @@ void taiFunPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
 }
 
 //////////////////////////////
-//	taiCondEditMember  //
+//	taiFileDialogMember   //
 //////////////////////////////
 
-/*
-int taiCondEditMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if (!td->InheritsFrom(TA_taBase))
-    return 0;
-  String optedit = md->OptionAfter("CONDEDIT_");
-  if (!optedit.empty()) {
-    return (taiMember::BidForMember(md,td) + 100); // 100 = definitely do this over other!
-  } 
+int taiFileDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->type->InheritsFrom(&TA_taString) && md->OptionAfter("FILE_DIALOG_").nonempty())
+    return (taiMember::BidForMember(md,td) + 1);
   return 0;
 }
 
-taiData* taiCondEditMember::GetDataRep_impl(IDataHost* host_,
-   taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) 
-{
-  // only get read-only for modal dialogs (otherwise, no chance to update!)
-  bool use_ro = (!host_->isModal()); 
+taiData* taiFileDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+
+  String file_act = mbr->OptionAfter("FILE_DIALOG_");
+  taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
+  if(file_act == "SAVE")
+    fact = taiFileDialogField::FA_SAVE;
+  else if(file_act == "APPEND")
+    fact = taiFileDialogField::FA_APPEND;
+
+  String fext = mbr->OptionAfter("EXT_");
+  String ftyp = mbr->OptionAfter("FILETYPE_");
+  bool cmprs = mbr->HasOption("COMPRESS");
   
-  if (use_ro) flags_ |= taiData::flgCondEditUseRO;
-  
-  taiDataDeck* rval = new taiDataDeck(typ, host_, par, gui_parent_, flags_);
-
-  rval->InitLayout();
-  taiData* child;
-  if (m_sub_types)
-    child = sub_types()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
-  else
-    child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, flags_);
-  rval->AddChildWidget(child->GetRep());
-  if (use_ro) {
-    child = taiMember::GetDataRep_impl(host_, rval, gui_parent_, (flags_ | taiData::flgReadOnly));
-    rval->AddChildWidget(child->GetRep());
-  }
-  rval->EndLayout();
-  return rval;
+  int cmpr = -1;
+  if(cmprs)
+    cmpr = 1;
+    
+  return new taiFileDialogField(mbr->type, host_, par, gui_parent_, flags_, fact, fext,
+				ftyp, cmpr);
 }
 
-
-void taiCondEditMember::GetImage_impl(taiData* dat, const void* base){
-  QCAST_MBR_SAFE_EXIT(taiDataDeck*, rval, dat)
-  if(m_sub_types) {
-    sub_types()->GetImage(rval->data_el.FastEl(0), base);
-  }
-  else {
-    taiMember::GetImage_impl(rval->data_el.FastEl(0), base);
-  }
-  bool use_ro = rval->HasFlag(taiData::flgCondEditUseRO); 
-  if (use_ro) {	// only if two options (i.e., !host_->waiting)
-//    ro_im->GetImage(rval->data_el.FastEl(1), base);
-    taiMember::GetImage_impl(rval->data_el.FastEl(1), base);
-
-    bool is_on = false; // defaults here make it editable in test chain below
-    bool val_is_eq = false;
-    //note: we don't care if processed or not -- flag defaults make it editable
-    CheckProcessCondMembMeth("CONDEDIT", mbr, base, is_on, val_is_eq);
-    if (is_on) {
-      if (val_is_eq)
-	rval->GetImage(0);	// editable
-      else
-	rval->GetImage(1);	// not editable
-    } else {
-      if (val_is_eq)
-	rval->GetImage(1);	// not editable
-      else
-	rval->GetImage(0);	// editable
-    }
-  } else {
-    rval->GetImage(0);		// always editable
-  }
-  GetOrigVal(dat, base);
+void taiFileDialogMember::GetImage_impl(taiData* dat, const void* base){
+  void* new_base = mbr->GetOff(base);
+  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  rval->GetImage(*((String*)new_base));
 }
 
-void taiCondEditMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
-// note: these guys are so hairy and complicated, we put these tests in!
-  taiDataDeck* rval = qobject_cast<taiDataDeck*>(dat);
-  if (!rval) {
-    taMisc::Error("taiCondEditMember::GetMbrValue: expect taiDataDeck for mbr",
-    mbr->name, "but was:",
-      dat->metaObject()->className());
-    return;
-  }
-  if (m_sub_types) {
-    sub_types()->GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
-  } else {
-    taiMember::GetMbrValue(rval->data_el.FastEl(0), base, first_diff);
-  }
-  //note: of course never need to get the RO guy...
+void taiFileDialogMember::GetMbrValue_impl(taiData* dat, void* base) {
+  void* new_base = mbr->GetOff(base);
+  taiFileDialogField* rval = (taiFileDialogField*)dat;
+  *((String*)new_base) = rval->GetValue();
 }
-*/
+
 
 /////////////////////////////
 //    taiTDefaultMember  //

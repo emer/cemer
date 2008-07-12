@@ -622,6 +622,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  name = taMisc::StringCVar(name); // make names C legal names -- just much safer
   if(Program::IsForbiddenName(name))
     name = "My" + name;
   // only send stale if the schema changed, not just the value
@@ -1094,6 +1095,29 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   it->UpdateAfterEdit();
   if(taMisc::gui_active)
     tabMisc::DelayedFunCall_gui(it, "BrowserSelectMe");
+}
+
+void ProgVar_List::CreateDataColVars(DataTable* src) {
+  if (!src) return;
+
+  for(int i=0;i<src->data.size; i++) {
+    DataCol* da = src->data[i];
+    if(da->is_matrix || da->name.empty()) continue;
+    ProgVar* it = FindName(da->name);
+    if(!it)
+      it = (ProgVar*)New(1);
+    it->SetName(da->name);
+    if(da->isString()) {
+      it->var_type = ProgVar::T_String;
+    }
+    else if(da->valType() == VT_FLOAT || da->valType() == VT_DOUBLE) {
+      it->var_type = ProgVar::T_Real;
+    }
+    else {
+      it->var_type = ProgVar::T_Int;
+    }
+    it->UpdateAfterEdit();
+  }
 }
 
 const String ProgVar_List::GenCss(int indent_level) const {
@@ -2814,6 +2838,13 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
   return fun_code.FindVarName(var_nm);
 }
 
+void Function::UpdateCallerArgs() {
+  Program* prog = program();
+  if(!prog) return;
+  // todo: need to find a way to iterate through program code..
+  // pc->UpdateArgs();
+  prog->GuiFindFromMe(name);	// find all refs to me
+}
 
 //////////////////////////
 //   FunctionCall	//
@@ -3377,6 +3408,20 @@ void Program::CmdShell() {
 
 void Program::ExitShell() {
   ExitShellScript();
+}
+
+void Program::UpdateCallerArgs() {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return;
+  Program* pg;
+  taLeafItr i;
+  FOR_ITR_EL(Program, pg, proj->programs., i) {
+    ProgramCall* pc = pg->FindSubProgTarget(this);
+    if(pc) {
+      pc->UpdateArgs();
+    }
+  }
+  proj->programs.GuiFindFromMe(name);	// find all refs to me in programs
 }
 
 void Program::ScriptCompiled() {

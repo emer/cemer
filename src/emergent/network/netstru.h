@@ -1712,7 +1712,7 @@ public:
   FloatRotation	rot;  		// 3d rotation of body, specifying an axis and a rot along that axis in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   FloatTDCoord	scale; 		// 3d scaling of object along each dimension (applied prior to rotation)
   ObjType	obj_type;	// #APPLY_IMMED type of object to display
-  String	obj_fname;	// #CONDEDIT_ON_obj_type:OBJECT file name of Open Inventor file that contains the 3d geometry of the object
+  String	obj_fname;	// #CONDEDIT_ON_obj_type:OBJECT #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Open Inventor file that contains the 3d geometry of the object
   String	text;		// #CONDEDIT_ON_obj_type:TEXT text to display for text type of object
   float		font_size;	// #CONDEDIT_ON_obj_type:TEXT font size to display text in, in normalized units (the entire network is 1x1x1, so this should typically be a smaller fraction like .05)
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)

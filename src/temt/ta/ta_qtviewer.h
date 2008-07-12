@@ -985,7 +985,9 @@ public:
   virtual void		AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea); 
   QPointer<iSearchDialog> search_dialog;
-  void 		Find(taiDataLink* root); // common find called by main menu, and context menu finds
+
+  void 			Find(taiDataLink* root, const String& find_str="");
+  // common find called by main menu, and context menu finds
 #endif
   iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   iTreeViewItem* 	BrowserExpandAllItem(taiDataLink* link);
@@ -2215,12 +2217,11 @@ public:
   
   static iSearchDialog* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
-  
   QVBoxLayout*		layOuter;
 //QHBoxLayout*		  layOptions;
   taiBitBox*		  bbOptions;
 //QHBoxLayout*		  laySearch;
-  QLineEdit*		    search;
+  iLineEdit*		    search;
   QAbstractButton*	    btnGo;
   QAbstractButton*	    btnStop;
   iTextBrowser* 	  results; 	// list of result items
@@ -2228,6 +2229,11 @@ public:
   
   int			options() const {return m_options;}
   void			setRoot(taiDataLink* root); // set or reset the root and window used for the search; sets caption and clears
+  void			setSearchStr(const String& srch_str);
+  // set the search string to given value (erases any that might be there already -- if non-empty, starts the search going too!
+  String		searchStr() const;
+  // gets the current value of the search string 
+
   bool			stop() const; // allow event loop, then check stop
   bool			setFirstSort(int col); // set first sort column, pushes others down; true if order changed
   inline const String_PArray& targets() const {return m_targets;} // ref for max speed; only use in search

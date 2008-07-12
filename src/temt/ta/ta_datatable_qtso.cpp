@@ -564,24 +564,14 @@ int DataTableView::CheckRowsChanged(int& orig_rows) {
   return rval;
 }
 
-void DataTableView::DataStructUpdateEnd_impl() {
-  inherited::DataStructUpdateEnd_impl();
-  // default case is good enough: does full reconstruct
-}
-
 void DataTableView::DataUpdateView_impl() {
   if(!display_on) return;
   UpdateDisplay(true);
 }
 
-void DataTableView::DataUpdateAfterEdit_impl() {
-  inherited::DataUpdateAfterEdit_impl();
-  // this is actually fully redundant..
-  //  UpdateDisplay(true);
-}
-
 void DataTableView::DoActionChildren_impl(DataViewAction acts) {
-  if(acts & RESET_IMPL) return;
+  // todo: maybe this is evil that causes updating on view to fail?
+//   if(acts & RESET_IMPL) return;
   // don't do the reset action on children -- updatefromdatatable does that
   inherited::DoActionChildren_impl(acts);
 }
@@ -4722,6 +4712,13 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layVals->addWidget(fldWidth->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
+  lblDepth = taiM->NewLabel("Depth", widg, font_spec);
+  lblDepth->setToolTip("Depth of graph display, in normalized units (default is 1.0 = same as height).");
+  layVals->addWidget(lblDepth);
+  fldDepth = new taiField(&TA_float, this, NULL, widg);
+  layVals->addWidget(fldDepth->GetRep());
+  //  layVals->addSpacing(taiM->hsep_c);
+
   layVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
@@ -5080,6 +5077,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
   chkNegDraw->setChecked(glv->negative_draw);
   chkNegDrawZ->setChecked(glv->negative_draw_z);
   fldWidth->GetImage((String)glv->width);
+  fldDepth->GetImage((String)glv->depth);
 
   lelXAxis->GetImage(&(glv->children), glv->x_axis.GetColPtr());
   rncXAxis->setChecked(glv->x_axis.row_num);
@@ -5182,6 +5180,7 @@ void iGraphTableView_Panel::GetValue_impl() {
   glv->negative_draw = chkNegDraw->isChecked();
   glv->negative_draw_z = chkNegDrawZ->isChecked();
   glv->width = (float)fldWidth->GetValue();
+  glv->depth = (float)fldDepth->GetValue();
   
   glv->setScaleData(false, cbar->min(), cbar->max());
   

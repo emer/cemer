@@ -2044,6 +2044,9 @@ bool taBase::BrowserExpandAll() {
 bool taBase::BrowserCollapseAll() {
   return false;
 }
+bool taBase::GuiFindFromMe(const String& find_str) {
+  return false;
+}
 #endif
 
 /*obs bool taBase::ReShowEdit(bool force) {
