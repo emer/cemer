@@ -482,8 +482,13 @@ public:
 public:
 
   static int		GetRefn(TAPtr it)	{ return it->refn; } // #IGNORE
+#ifdef DEBUG
+  static void  		Ref(taBase& it);	     // #IGNORE
+  static void  		Ref(taBase* it);	     // #IGNORE
+#else
   static void  		Ref(taBase& it)		{ it.refn++; }	     // #IGNORE
   static void  		Ref(taBase* it) 	{ it->refn++; }	     // #IGNORE
+#endif
   static void		UnRef(taBase* it) {unRef(it); Done(it);} // #IGNORE
   static void		Own(taBase& it, TAPtr onr);	// #IGNORE note: also does a RefStatic() on first ownership
   static void		Own(taBase* it, TAPtr onr);	// #IGNORE note: also does a Ref() on new ownership

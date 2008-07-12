@@ -347,6 +347,19 @@ MemberDef* taBase::no_mdef = NULL;
 // 	Reference counting mechanisms, all static just for consistency..
 
 #ifdef DEBUG
+void taBase::Ref(taBase& it) { 
+  Ref(&it);
+}
+
+void taBase::Ref(taBase* it) {
+//TEMP
+/*if (tabMisc::root && (it == tabMisc::root->viewers.SafeEl(0))) {
+  int i = 0;
+  ++i;
+}*/
+  it->refn++;
+}
+
 void taBase::unRef(taBase* it) {
   if (it->refn <= 0) {
     cerr << "WARNING: taBase::unRef: taBase refn < 0 for item\n";
