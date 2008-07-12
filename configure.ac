@@ -60,6 +60,13 @@ This file is part of Emergent
   GNU General Public License for more details.
 ])
 
+USER_OVERRIDE_LIBS=$LIBS
+USER_OVERRIDE_LDFLAGS=$LDFLAGS
+USER_OVERRIDE_CXXFLAGS=$CXXFLAGS
+LIBS=""
+LDFLAGS=""
+CXXFLAGS=""
+
 AC_DISABLE_STATIC                                      dnl Disable static libraries
 AC_CONFIG_AUX_DIR([cfg])                               dnl Stick extra stuff in /cfg
 AC_CONFIG_SRCDIR([src/temt/ta/ta_global.h])                 dnl Make sure we're in the right place
@@ -91,6 +98,8 @@ case $host in
                AC_HAVE_LIBRARY([dl],[LIBS="$LIBS -ldl"],[SIM_AC_CONFIGURATION_WARNING([libdl not found])])
        ;;
 esac
+
+
 
 dnl  non-modal, for now
 AC_DEFINE([V3_COMPAT],[],[turn on version 3.x compatability code])
@@ -305,13 +314,17 @@ case $host in
     *)
     ;;
 esac
-    
-# Remove duplicate entries. TODO: Will this cause problems on MinGW?
-# NOTE: on quadrigraphs: [ is @<:@  and ] is @:>@  
+
+
+LIBS="$USER_OVERRIDE_LIBS $LIBS"
+LDFLAGS="$USER_OVERRIDE_LDFLAGS $LDFLAGS"
+CXXFLAGS="$USER_OVERRIDE_CXXFLAGS $CXXFLAGS"
 
 #CXXFLAGS="`echo "$CXXFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
 #LDFLAGS="`echo "$LDFLAGS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
 LIBS="`echo "$LIBS" | tr " " "\n" | awk '!seen@<:@$0@:>@++' | tr "\n" " "`"
+
+
 
 SIM_AC_UNIVERSAL_BINARIES 
 

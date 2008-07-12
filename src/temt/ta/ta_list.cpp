@@ -53,11 +53,13 @@ void taPtrList_impl::InitList_() {
   size = 0;
   DataChanged(DCR_LIST_INIT);
 }
+
 taPtrList_impl::~taPtrList_impl() {
   Reset();
   if(el != NULL) {
     free(el);
     el = NULL;
+    alloc_size = 0;
   }
   if(hash_table != NULL) {
     delete hash_table;

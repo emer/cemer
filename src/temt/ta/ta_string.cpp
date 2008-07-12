@@ -41,6 +41,39 @@ software work for purposes of copyright.
 #include <limits.h>
 #include <stdio.h>
 
+
+#if (false && defined(DEBUG) && defined(TA_OS_LINUX))
+
+#if (TA_POINTER_SIZE == 4)
+# define MALLOC_MASK ~7LL
+#elif (TA_POINTER_SIZE == 8)
+# define MALLOC_MASK ~7LL // same
+#else
+# error "TA_POINTER_SIZE should be 4 or 8"
+#endif
+# define MALLOC_OVHD (2*sizeof(ta_intptr_t))
+
+void CleanChunk(void* ptr) {
+  // assume lea's malloc
+  size_t size = ((size_t*)ptr)[-1]; // note: has some ctrl bits in lsb's
+  size &= MALLOC_MASK;
+  size -= MALLOC_OVHD;
+  memset(ptr, 0, size);
+}
+
+void operator delete(void* ptr) throw() {
+  CleanChunk(ptr);
+  free(ptr);
+  //::delete(ptr);
+}
+
+void operator delete[](void* ptr) throw() {
+  CleanChunk(ptr);
+  free(ptr);
+  //  ::delete[](ptr);
+}
+#endif
+
 using namespace std;
 
 //////////////////////////

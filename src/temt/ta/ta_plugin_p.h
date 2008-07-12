@@ -143,7 +143,7 @@ private:
 
 
 class TA_API taPluginBase_List: public taList<taPluginBase> {
-  // ##CHILDREN_INLINE ##NO_UPDATE_AFTER plugins available to the program (also used for deps)
+  // ##CHILDREN_INLINE ##NO_UPDATE_AFTER ##NO_TOKENS plugins available to the program (also used for deps)
 INHERITED(taList<taPluginBase>)
 public:
   taPluginBase*		FindUniqueId(const String& value); // find by unique_id
