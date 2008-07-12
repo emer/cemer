@@ -1,0 +1,12 @@
+010 README
+
+This is the original set of guys, moved down into a subfolder. 
+ 
+threads + shared
+
+This is the elaborate RecvCons/SendCons by _send and _recv scheme.
+
+Memory
+
+Memory is allocated by the Projection and doled out to each XxxxCons.
+

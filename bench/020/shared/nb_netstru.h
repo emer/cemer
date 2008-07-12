@@ -12,11 +12,11 @@
 #define CON_RECV 0 // owned by RecvCons
 #define CON_SEND 1 // owned by SendCons
 
-#define CON_IN CON_SEND
+#define CON_IN CON_RECV
 
 // template, subswitches, and catch
 #if (CON_IN == CON_RECV)
-//# define PWT_IN_SEND // put a ptr to wt in SendCons 
+# define USE_CON_ARRAY // use a ConArray just like Leabra
 #elif (CON_IN == CON_SEND)
 #else
 # error("CON_IN not set")
@@ -73,8 +73,7 @@ public:
   //Connection() {dwt = pdw = sravg = 0.0f;}
 };
 
-typedef taArray<Connection>		ConArray;
-typedef taPtrList<Connection>		ConPtrList; // SendCons
+typedef taPtrList<Connection>	ConPtrList; // SendCons
 typedef taPtrList<Unit>		UnitPtrList;
 typedef taList<Unit>		UnitList;
 
@@ -102,6 +101,22 @@ protected:
   virtual void		setSize_impl(int);
 };
 
+#ifdef USE_CON_ARRAY
+//note: this structure is bogus, but we use it to compare directly
+// against Emergent/Leabra
+class ConArray {
+public:
+  int			con_size;
+  int			size;
+  char*			cons;		
+  
+  void			SetSize(int i);
+  inline Connection*	FastEl(int idx) const
+    { return (Connection*)&(cons[con_size * idx]); }
+    
+  ConArray();
+};
+#endif
 /* The wts array pointers are actually subpointers
   into the Network master array (allocated globally
   during Build) and cannot be individually replaced or altered.
@@ -110,10 +125,17 @@ class RecvCons: public ConsBase {
 INHERITED(ConsBase)
 public:
 #if (CON_IN == CON_RECV)
+# ifdef USE_CON_ARRAY
+  ConArray		cons; // flat array -- ReadOnly!!! you must access safely!!!
+  inline Connection*	Cn(int i) {return cons.FastEl(i);}
+  override Connection*	V_Cn(int i) {return cons.FastEl(i);}
+  inline float&		Wt(int i) {return cons.FastEl(i)->wt;} // SLOW!
+# else
   Connection*		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return &(cons[i]);}
   override Connection*	V_Cn(int i) {return &(cons[i]);}
   inline float&		Wt(int i) {return cons[i].wt;} // SLOW!
+#endif
 # ifdef UN_IN_CON
   override Unit*	Un(int i) {return cons[i].un;} // SLOW!
 # endif
@@ -148,11 +170,19 @@ class SendCons: public ConsBase {
 INHERITED(ConsBase)
 public:
 #if (CON_IN == CON_RECV)
+# ifdef USE_CON_ARRAY
+  ConPtrList		cons; // flat array -- ReadOnly!!! you must access safely!!!
+  inline Connection*	Cn(int i) {return cons.FastEl(i);}
+  override Connection*	V_Cn(int i) {return cons.FastEl(i);}
+  void			SetCn(Connection* cn, int i) {cons.Set(cn, i);}
+  inline float&		Wt(int i) {return cons.FastEl(i)->wt;} // SLOW!
+# else
   Connection**		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return cons[i];}
   override Connection*	V_Cn(int i) {return cons[i];}
   void			SetCn(Connection* cn, int i) {cons[i] = cn;}
   inline float&		Wt(int i) {return cons[i]->wt;} // SLOW!
+# endif
 # ifdef UN_IN_CON
   Unit**		units;
   inline Unit*		Un(int i) {return units[i];}

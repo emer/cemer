@@ -1,0 +1,16 @@
+030 README
+ 
+threads + shared
+
+This is based on an earlier revision of bench than 010, and uses a simple
+modalized scheme to place ownership of the Conn in either the SendCons
+or RecvCons -- it is a branch of 020
+
+Memory
+
+Memory is allocated by each XxxxCons for its objects.
+
+Jobbing
+
+It uses the "block-nibbling" approach in which all threads just grab the
+next ready block to work on.

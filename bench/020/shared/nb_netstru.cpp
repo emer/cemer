@@ -76,6 +76,19 @@ void ConsBase::setSize_impl(int i) {
 }
 
 
+#ifdef USE_CON_ARRAY
+ConArray::ConArray() {
+  con_size = sizeof(Connection);
+  size = 0;
+  cons = NULL;
+}
+
+void ConArray::SetSize(int i) {
+  cons = (char*)realloc(cons, con_size * i);
+  size = i;
+}
+#endif
+
 //////////////////////////
 //  RecvCons		//
 //////////////////////////
@@ -84,13 +97,17 @@ RecvCons::RecvCons() {
   send_idx = -1; 
   send_lay = NULL;
   dwt_mean = 0.0f;
+#ifndef USE_CON_ARRAY
   cons = NULL;
+#endif
   //note: we don't init the modal guys -- they get written in setSize
 }
 
 RecvCons::~RecvCons() {
+#ifndef USE_CON_ARRAY
   free(cons);
   cons = NULL;
+#endif
 #if ((CON_IN == CON_SEND) && defined(UN_IN_CON))
   delete[] units; // safe if NULL
   units = NULL;
@@ -100,7 +117,11 @@ RecvCons::~RecvCons() {
 void RecvCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
 #if (CON_IN == CON_RECV)
+# ifdef USE_CON_ARRAY
+  cons.SetSize(i);
+# else
   cons = (Connection*)malloc(sizeof(Connection) * i);
+# endif
 #elif (CON_IN == CON_SEND)
   cons = (Connection**)malloc(sizeof(Connection*) * i);
 # ifdef UN_IN_CON
@@ -116,12 +137,16 @@ void RecvCons::setSize_impl(int i) {
 SendCons::SendCons() {
   recv_idx = -1;
   recv_lay = NULL;
+#ifndef USE_CON_ARRAY
   cons = NULL;
+#endif
 }
 
 SendCons::~SendCons() {
+#ifndef USE_CON_ARRAY
   free(cons);
   cons = NULL;
+#endif
 #if ((CON_IN == CON_RECV) && defined(UN_IN_CON))
   delete[] units; // safe if NULL
   units = NULL;
@@ -131,7 +156,11 @@ SendCons::~SendCons() {
 void SendCons::setSize_impl(int i) {
   inherited::setSize_impl(i);
 #if (CON_IN == CON_RECV)
+# ifdef USE_CON_ARRAY
+  cons.SetSize(i);
+# else
   cons = (Connection**)malloc(sizeof(Connection*) * i);
+# endif
 # ifdef UN_IN_CON
   units = new Unit*[i];
 # endif
@@ -159,20 +188,28 @@ void ConSpec::Compute_SRAvg(Network* /*net*/, Unit* un) {
   const float ru_act = un->act;
   for(int g = 0; g < un->recv.size; g++) {
     RecvCons* cg = un->recv.FastEl(g);
+    
+# ifdef USE_CON_ARRAY
+    for (int i = 0; i < cg->cons.size; ++i) {
+      Connection* cn = cg->cons.FastEl(i);
+      cn->sravg += ru_act * cg->Un(i)->act;
+    }
+# else
     Connection* cons = cg->cons;
     const int cg_size = cg->size;
-# ifdef UN_IN_CON
+#   ifdef UN_IN_CON
     for (int i = 0; i < cg_size; ++i) {
       Connection* cn = &(cons[i]);
       cn->sravg += ru_act * cn->un->act;
     }
-# else
+#   else
     Unit** units = cg->units;
     for (int i = 0; i < cg_size; ++i) {
       Connection* cn = &(cons[i]);
       cn->sravg += ru_act * units[i]->act;
     }
-# endif
+#   endif
+# endif //. USE_CON_ARRAY
   }
 #elif (CON_IN == CON_SEND)
   const float su_act = un->act;
@@ -822,18 +859,23 @@ void NetTask::Send_Netin_0(Unit* su) {
     const int send_sz = send_gp->size;
     su->n_con_calc += send_sz;
 #if (CON_IN == CON_RECV)
+# ifdef USE_CON_ARRAY // highest priority
+    for (int i=0; i < send_gp->cons.size; i++) {
+      Send_Netin_inner_0(send_gp->Cn(i)->wt, send_gp->Un(i)->net, su_act_eff);
+    }
+# elif defined(USE_V_CON)
     Unit** units = send_gp->units; // unit pointer
-#   ifdef USE_V_CON
     for (int i=0; i < send_sz; i++) {
       Send_Netin_inner_0(send_gp->V_Cn(i)->wt, units[i]->net, su_act_eff);
     }
-#   else
+# else
+    Unit** units = send_gp->units; // unit pointer
     Connection** cons = send_gp->cons; 
     for (int i=0; i < send_sz; i++) {
       //const int targ_i = unis[i];
       Send_Netin_inner_0(cons[i]->wt, units[i]->net, su_act_eff);
     }
-#   endif
+# endif
 #elif (CON_IN == CON_SEND)
 # ifdef UN_IN_CON
     //Connection* cons = send_gp->cons; 
@@ -867,23 +909,31 @@ void NetTask::Recv_Netin_0(Unit* ru) {
     ru->n_con_calc += recv_sz;
     
 #if (CON_IN == CON_RECV)
-# ifdef UN_IN_CON
+
+# ifdef USE_CON_ARRAY
+    for (int i = 0; i < recv_gp->cons.size; ++i) {
+      Connection* cn = recv_gp->cons.FastEl(i);
+      cn->sravg += recv_gp->Un(i)->act * cn->wt;
+    }
+# else
+#   ifdef UN_IN_CON
     Connection* cons = recv_gp->cons; 
     for (int i=0; i < recv_sz; ++i) {
       Connection* cn = &(cons[i]);
       ru_net += cn->un->act * cn->wt;
     }
-# else
+#   else
     Unit** units = recv_gp->units; // unit pointer
-#   ifdef USE_V_CON
+#     ifdef USE_V_CON
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * recv_gp->V_Cn(i)->wt;
-#   else
+#     else
     Connection* cons = recv_gp->cons; 
     for(int i=0; i < recv_sz; ++i)
       ru_net += units[i]->act * cons[i].wt;
+#     endif
 #   endif
-#endif
+# endif // USE_CON_ARRAY
 #elif (CON_IN == CON_SEND)
     Unit** units = recv_gp->units; // unit pointer
 #   ifdef USE_V_CON
@@ -1015,18 +1065,23 @@ void NetTask_N::Send_Netin_Array() {
         const int send_sz = send_gp->size;
         su->n_con_calc += send_sz;
 #if (CON_IN == CON_RECV)
+# ifdef USE_CON_ARRAY // highest priority
+        for (int i=0; i < send_gp->cons.size; i++) {
+          Send_Netin_inner_0(send_gp->Cn(i)->wt, excit[send_gp->Un(i)->uni], su_act_eff);
+        }
+# elif defined(USE_V_CON)
         Unit** units = send_gp->units; // unit pointer
-#   ifdef USE_V_CON
 	for (int i=0; i < send_sz; i++) {
 	Send_Netin_inner_0(send_gp->V_Cn(i)->wt, excit[units[i]->uni], su_act_eff);
 	}
-#   else
+# else
+        Unit** units = send_gp->units; // unit pointer
         Connection** cons = send_gp->cons; 
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];
           Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
         }
-#   endif
+# endif
 #elif (CON_IN == CON_SEND)
 # ifdef UN_IN_CON
         Connection* cons = send_gp->cons; 
