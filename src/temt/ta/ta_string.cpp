@@ -45,9 +45,9 @@ software work for purposes of copyright.
 #if (false && defined(DEBUG) && defined(TA_OS_LINUX))
 
 #if (TA_POINTER_SIZE == 4)
-# define MALLOC_MASK ~7LL
+# define MALLOC_MASK ~7
 #elif (TA_POINTER_SIZE == 8)
-# define MALLOC_MASK ~7LL // same
+# define MALLOC_MASK ~7LL
 #else
 # error "TA_POINTER_SIZE should be 4 or 8"
 #endif
