@@ -585,7 +585,7 @@ public:
   MinMax		data_range;     // #READ_ONLY actual min and max of data (including fixed range) 
   MinMax		range;		// #READ_ONLY actual display range of the axis data
 
-  int          		n_ticks;	// #EXPERT #DEF_10 number of ticks desired
+  int          		n_ticks;	// #DEF_10 number of ticks desired
   float			axis_length; 	// #READ_ONLY in view units (width or depth)
   float			start_tick;	// #READ_ONLY #NO_SAVE first tick mark here
   float       		tick_incr;	// #READ_ONLY #NO_SAVE increment for tick marks

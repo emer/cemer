@@ -92,7 +92,11 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget *parent, const char *name,
   setBaseWidget(widget);
 }
 
+bool so_scrollbar_is_dragging = false; // referenced in t3node_so.cpp
+
 void T3ExaminerViewer::processEvent(QEvent* ev_) {
+  static bool inside_event_loop = false;
+
   //NOTE: the base classes don't check if event is already handled, so we have to skip
   // calling inherited if we handle it ourselves
 
@@ -114,6 +118,16 @@ void T3ExaminerViewer::processEvent(QEvent* ev_) {
 
 do_inherited:
   inherited::processEvent(ev_);
+
+  if(so_scrollbar_is_dragging) {
+    if(!inside_event_loop) {
+      inside_event_loop = true;
+      while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
+	taiMiscCore::ProcessEvents();
+      }
+      inside_event_loop = false;
+    }
+  }
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {

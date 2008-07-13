@@ -1816,7 +1816,7 @@ public:
   override taBase* New(int n_objs=1, TypeDef* typ=NULL);
   // #CAT_Modify create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual taBase* New_gui(int n_objs=1, TypeDef* typ=NULL);
-  // #BUTTON #TYPE_ON_el_base #CAT_XpertModify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (NULL = default type, el_typ)
+  // #BUTTON #MENU_CONTEXT #TYPE_ON_el_base #CAT_XpertModify #LABEL_New #NO_SAVE_ARG_VAL create n_objs new objects of given type in list (NULL = default type, el_typ)
   virtual void	SetSize(int sz);
   // #MENU #MENU_ON_Edit #CAT_Modify add or remove elements to force list to be of given size
 

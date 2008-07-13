@@ -570,8 +570,7 @@ void DataTableView::DataUpdateView_impl() {
 }
 
 void DataTableView::DoActionChildren_impl(DataViewAction acts) {
-  // todo: maybe this is evil that causes updating on view to fail?
-//   if(acts & RESET_IMPL) return;
+  if(acts & RESET_IMPL) return;
   // don't do the reset action on children -- updatefromdatatable does that
   inherited::DoActionChildren_impl(acts);
 }

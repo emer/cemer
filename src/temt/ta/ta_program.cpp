@@ -313,6 +313,7 @@ bool DynEnumType::CopyToAllProgs() {
     if(!tp || tp == this || !tp->InheritsFrom(&TA_DynEnumType)) continue;
     tp->CopyFrom(this);
   }
+  return true;
 }
 
 taBase* DynEnumType::FindTypeName(const String& nm) const {
@@ -2841,8 +2842,26 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
 void Function::UpdateCallerArgs() {
   Program* prog = program();
   if(!prog) return;
-  // todo: need to find a way to iterate through program code..
-  // pc->UpdateArgs();
+  
+  taBase_PtrList fc_items;
+  prog->Search("FunctionCall", fc_items, NULL,
+	       false, // contains
+	       true, // case_sensitive
+	       false, // obj_name
+	       true,   // obj_type
+	       false,  // obj_desc
+	       false,  // obj_val
+	       false,  // mbr_name
+	       false);  // type_desc
+
+  for(int i=0;i<fc_items.size; i++) {
+    taBase* it = fc_items[i];
+    if(!it || !it->InheritsFrom(&TA_FunctionCall)) continue;
+    FunctionCall* fc = (FunctionCall*)it;
+    if(fc->fun.ptr() == this) {
+      fc->UpdateArgs();
+    }
+  }
   prog->GuiFindFromMe(name);	// find all refs to me
 }
 

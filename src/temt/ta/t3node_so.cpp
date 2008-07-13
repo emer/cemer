@@ -2754,8 +2754,12 @@ void SoScrollBar::valueChangedCB() {
     (*valueChanged_cb_)(this, value_, valueChanged_ud_);
 }
 
+// defined in t3viewer.cpp
+extern bool so_scrollbar_is_dragging;
+
 void SoScrollBar::DragStartCB(SoTranslate1Dragger* dragger) {
   start_val_ = value_;
+  so_scrollbar_is_dragging = true;
 }
 
 void SoScrollBar::DraggingCB(SoTranslate1Dragger* dragger) {
@@ -2775,8 +2779,9 @@ void SoScrollBar::DraggingCB(SoTranslate1Dragger* dragger) {
     float nw_pos = (float)delta_val / ((float)range + (float)pageStep_);
     dragger->translation.setValue(nw_pos, 0.0f, 0.0f);
   }
-  if(delta_val != 0)
+  if(delta_val != 0) {
     valueChangedCB();
+  }
 }
 
 void SoScrollBar::DragFinishCB(SoTranslate1Dragger* dragger) {
@@ -2793,5 +2798,6 @@ void SoScrollBar::DragFinishCB(SoTranslate1Dragger* dragger) {
   repositionSlider();
 
   valueChangedCB();
+  so_scrollbar_is_dragging = false; // this drops us out of the event loop!!
 }
 
