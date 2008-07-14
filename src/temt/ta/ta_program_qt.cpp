@@ -322,7 +322,14 @@ void iProgramEditor::Init() {
   items->setAcceptDrops(true);
   items->setDropIndicatorShown(true);
   items->setHighlightRows(true);
-  
+
+  insert_el_sc = new QShortcut(QKeySequence(tr("Ctrl+I", "Insert Element")),
+			       items);
+
+  connect(insert_el_sc, SIGNAL(activated()), this, SLOT(InsertEl()) );
+
+  connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
+
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
   connect(btnRevert, SIGNAL(clicked()), this, SLOT(Revert()) );
   items->Connect_SelectableHostNotifySignal(this,
@@ -355,6 +362,31 @@ void iProgramEditor::Apply_Async() {
 
 bool iProgramEditor::ShowMember(MemberDef* md) {
   return taiPolyData::ShowMemberStat(md, show());
+}
+
+void iProgramEditor::InsertEl() {
+  // todo: this can be moved into the basic itreeview class directly!
+  ISelectable* si = items->curItem();
+  if(!si || !si->link()) return;		// nothing selected
+  taBase* sb = si->link()->taData();
+  if(!sb) return;
+  taList_impl* sbo = GET_OWNER(sb, taList_impl);
+  if(!sbo) return;
+  taiTypeDefButton* typlkup =
+    new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiData::flgAutoApply);
+  TypeDef* td = sbo->el_base;
+  typlkup->GetImage(td, sbo->el_base);
+  typlkup->OpenChooser();
+  td = typlkup->td();
+  if(td) {
+    taBase* nwi = taBase::MakeToken(td);
+    int idx = sbo->FindEl(sb) + 1;
+    if(idx < 0) idx = 0;
+    if(idx > sbo->size) idx = sbo->size;
+    sbo->Insert(nwi, idx);
+    tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
+  }
 }
 
 void iProgramEditor::Base_Add() {

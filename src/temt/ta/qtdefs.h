@@ -104,6 +104,7 @@ class	QScrollBar;		// #IGNORE
 class	QSessionManager;	// #IGNORE
 class	QSize;			// #IGNORE 
 class	QSizePolicy;		// #IGNORE 
+class 	QShortcut;		// #IGNORE
 class	QSpacerItem;		// #IGNORE 
 class	QSpinBox;		// #IGNORE 
 class	QSplitter;		// #IGNORE 

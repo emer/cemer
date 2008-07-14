@@ -29,6 +29,7 @@
 
 #ifndef __MAKETA__
 # include <QPointer>
+# include <QShortcut>
 #endif
 
 #include "ta_TA_type.h"
@@ -114,6 +115,7 @@ public:
   HiLightButton*	    btnApply;
   HiLightButton*	    btnRevert;
   iTreeView*		  items;
+  QShortcut*		  insert_el_sc;
   
   bool			read_only; // set true if we are
 #ifndef __MAKETA__ 
@@ -133,6 +135,7 @@ public slots:
   void			Apply();
   void			Revert();
   void			ExpandAll(); // expands all, and resizes columns
+  void			InsertEl(); // insert new prog el after currently selected item
   
 public: // ITypedObject i/f
   void*			This() {return this;} 

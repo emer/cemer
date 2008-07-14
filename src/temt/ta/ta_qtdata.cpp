@@ -2739,6 +2739,7 @@ void taiObjChooser::Build() {
   layOuter->addWidget(browser, 1, 0);
   layOuter->setRowStretch(1, 1); // list is item to expand in host
   layOuter->setRowMinimumHeight(1, 100); // don't shrink to nothing
+  browser->setFocus();
 
   layButtons = new QHBoxLayout();
   layButtons->addStretch();
@@ -3169,6 +3170,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   items = new QTreeWidget(this);
   items->setSortingEnabled(true);
   layOuter->addWidget(items, 1); // list is item to expand in host
+  items->setFocus();		 // this is where the keyboard focus goes first!
 
   QHBoxLayout* lay = new QHBoxLayout();
   lay->addStretch();

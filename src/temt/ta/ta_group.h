@@ -166,7 +166,7 @@ public:
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
 
   virtual TAGPtr  NewGp_gui(int n_gps=1, TypeDef* typ=NULL);
-  // #CAT_Modify #MENU #MENU_CONTEXT #MENU_ON_Edit #TYPE_this #NULL_OK #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
+  // #CAT_XpertModify #BUTTON #MENU_CONTEXT #TYPE_this #NULL_OK #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL Create and add n_gps new sub group(s) of given type (NULL = same type as this group)
 
   virtual taBase* FindLeafName_(const char* it, int& idx=no_idx) const; 	// #IGNORE
   virtual taBase* FindLeafNameContains_(const String& it, int& idx=no_idx) const;	// #IGNORE
