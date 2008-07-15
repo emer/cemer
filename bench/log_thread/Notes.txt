@@ -24,3 +24,5 @@
 20080710_01 -- 020(a) vs. 030(b) - compares (a) stride and sync vs. (b) pure blocked (self-syncing) on Mac
 20080710_02 -- as for 01, but Lin64-quad
 20080710_03 -- as for 02, but only for 0/2/4 threads; (c) is 020 with w/ nibble turned on
+20080712_01 -- as for 09_01, but (for CON_RECV) using fast cons (flat array) vs. Emergent-like collections
+20080714_01 -- as for 12_01, adding in a CON_SEND as well
