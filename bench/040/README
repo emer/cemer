@@ -1,0 +1,15 @@
+040 README
+ 
+threads + shared
+
+This is based on an earlier revision of bench than 010, and uses a simple
+modalized scheme to place ownership of the Conn in either the SendCons
+or RecvCons -- it is a branch of 030
+
+Memory
+
+Memory is allocated by each XxxxCons for its objects.
+
+Jobbing
+
+This explores the new tasking architectures.
