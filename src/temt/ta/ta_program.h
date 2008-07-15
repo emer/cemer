@@ -537,7 +537,7 @@ public:
   override String GetTypeDecoKey() const { return "ProgExpr"; }
 
   override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-				       const String& mbr_name, int& new_pos=-1);
+				       const String& mbr_name, int& new_pos);
 
   void 	InitLinks();
   void 	CutLinks();

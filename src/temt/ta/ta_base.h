@@ -1209,7 +1209,7 @@ public:
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
 #endif
   virtual String	StringFieldLookupFun(const String& cur_txt, int cur_pos,
-					     const String& mbr_name, int& new_pos=-1)
+					     const String& mbr_name, int& new_pos)
   { return _nilString; } 
   // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
 
