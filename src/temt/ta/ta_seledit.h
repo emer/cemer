@@ -26,7 +26,7 @@ class EditMbrItem;
 class EditMthItem;
 
 class TA_API SelectEditItem: public taOBase {
-  //  ##CAT_Display base class for membs/meths in a ControlEdit
+  // #STEM_BASE ##CAT_Display base class for membs/meths in a ControlEdit
   INHERITED(taOBase)
 public:
 // some convenience functions
@@ -172,7 +172,7 @@ private:
 
 
 class TA_API SelectEdit: public taNBase, public virtual IRefListClient {
-  // ##EXT_edit ##CAT_Display Selectively edit members from different objects
+  // #STEM_BASE ##EXT_edit ##CAT_Display Selectively edit members from different objects
   INHERITED(taNBase)
 public:
   static void		StatDataChanged_Group(taGroup_impl* grp, int dcr, void* op1, void* op2);
@@ -266,9 +266,5 @@ public: // legacy routines/members
   String_Array	meth_strs;	// #NO_SHOW #NO_SAVE #READ_ONLY string names of meths on bases -- used for saving
   void		ConvertLegacy();
 };
-
-
-
-
 
 #endif

@@ -33,7 +33,7 @@ class QPainterPath;	// #IGNORE
 class QBrush;		// #IGNORE
 
 class TA_API taImage : public taNBase {
-  // ##CAT_Image represents an image in TA accessible way (wrapper for QT's QImage)
+  // #STEM_BASE ##CAT_Image represents an image in TA accessible way (wrapper for QT's QImage)
   INHERITED(taNBase)
 public:
 #ifdef TA_GUI
@@ -182,7 +182,7 @@ private:
 };
 
 class TA_API DoGFilterSpec : public taNBase {
-  // #INLINE ##CAT_Image defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast in an image
+  // #STEM_BASE #INLINE ##CAT_Image defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast in an image
   INHERITED(taNBase)
 public:
   enum ColorChannel {		// indicator of which coor channel to filter on
@@ -222,7 +222,7 @@ protected:
 };
 
 class TA_API GaborFilterSpec : public taNBase {
-  // ##CAT_Image defines a gabor filter (gaussian times a plane sine wave) that highlights lines/edges in an image
+  // #STEM_BASE ##CAT_Image defines a gabor filter (gaussian times a plane sine wave) that highlights lines/edges in an image
 INHERITED(taNBase)
 public:
   enum GaborParam {
@@ -296,7 +296,7 @@ public:
 //		Retinal Processing (DoG model)
 
 class TA_API RetinalSpacingSpec : public taNBase {
-  // #INLINE ##CAT_Image defines the spacing of a filter relative to a specified retinal image size
+  // #STEM_BASE #INLINE ##CAT_Image defines the spacing of a filter relative to a specified retinal image size
 INHERITED(taNBase)
 public:
   enum Region {			// retinal region
@@ -383,7 +383,7 @@ private:
 //		V1 Processing (Gabor model)
 
 class TA_API GaborRFSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec (for V1)
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Spec Gabor receptive field spec (for V1)
   INHERITED(taBase)
 public:
   int		n_angles;	// number of different angles
@@ -413,7 +413,7 @@ public:
 };
 
 class TA_API GaborV1Spec : public taNBase {
-  // ##CAT_Image specifies a Gabor-based filtering of an input image, as a model of V1
+  // #STEM_BASE ##CAT_Image specifies a Gabor-based filtering of an input image, as a model of V1
 INHERITED(taNBase)
 public:
   enum V1FilterType {
@@ -492,7 +492,7 @@ private:
 // 	taImageProc
 
 class TA_API taImageProc : public taNBase {
-  // ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
+  // #STEM_BASE ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
   INHERITED(taNBase)
 public:
 
@@ -553,7 +553,7 @@ private:
 /////////////////////////////////////////////////////////
 
 class TA_API RetinaSpec : public taNBase {
-  // ##CAT_Image ##DEF_CHILD_dogs ##DEF_CHILDNAME_DOG_Filters full specification of retinal filtering based on difference-of-gaussian filters
+  // #STEM_BASE ##CAT_Image ##DEF_CHILD_dogs ##DEF_CHILDNAME_DOG_Filters full specification of retinal filtering based on difference-of-gaussian filters
 INHERITED(taNBase)
 public:
   enum ColorType {		// type of color processing to do (determines file loading)
@@ -734,7 +734,7 @@ protected:
 SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef
 
 class TA_API V1GaborSpec : public taNBase {
-  // ##CAT_Image ##DEF_CHILD_gabors ##DEF_CHILDNAME_Gabor_Filters full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
+  // #STEM_BASE ##CAT_Image ##DEF_CHILD_gabors ##DEF_CHILDNAME_Gabor_Filters full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
 INHERITED(taNBase)
 public:
   GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters

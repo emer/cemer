@@ -21,7 +21,7 @@
 #include "ta_program.h"
 
 class TA_API taDataGen : public taNBase {
-  // ##CAT_Data collection of data generation functions (e.g., drawing, random patterns, combining lists)
+  // #STEM_BASE ##CAT_Data collection of data generation functions (e.g., drawing, random patterns, combining lists)
 INHERITED(taNBase)
 public:
 

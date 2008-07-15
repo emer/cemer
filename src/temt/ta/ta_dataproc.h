@@ -23,7 +23,7 @@
 // data processing operations on datatables
 
 class TA_API DataOpEl : public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
+  // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
   INHERITED(taOBase)
 public:
   DataTableRef		data_table;
@@ -86,7 +86,7 @@ private:
 };
 
 class TA_API DataOpBaseSpec : public taNBase {
-  // ##CAT_Data ##DEF_CHILD_ops ##DEF_CHILDNAME_Operators a datatable operation specification -- contains a list of operation elements associated with different data columns
+  // #STEM_BASE ##CAT_Data ##DEF_CHILD_ops ##DEF_CHILDNAME_Operators a datatable operation specification -- contains a list of operation elements associated with different data columns
 INHERITED(taNBase)
 public:
   DataOpList	ops;		// #SHOW_TREE the list of operation elements, associated with different data columns
@@ -241,7 +241,7 @@ private:
 /////////////////////////////////////////////////////////
 
 class TA_API DataJoinSpec : public taNBase {
-  // ##INLINE ##CAT_Data datatable join specification: combine two tables along matching column values -- tables are both sorted (internally) by join col, so results are in that sort order
+  // #STEM_BASE ##INLINE ##CAT_Data datatable join specification: combine two tables along matching column values -- tables are both sorted (internally) by join col, so results are in that sort order
   INHERITED(taNBase)
 public:
   enum JoinType {
@@ -277,7 +277,7 @@ private:
 /////////////////////////////////////////////////////////
 
 class TA_API taDataProc : public taNBase {
-  // ##CAT_Data collection of commonly-used datatable processing operations (database-style)
+  // #STEM_BASE ##CAT_Data collection of commonly-used datatable processing operations (database-style)
 INHERITED(taNBase)
 public:
   

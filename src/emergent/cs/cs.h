@@ -40,7 +40,7 @@ class CsNetwork;
 class CsProject; //
 
 class CS_API CsCon : public Connection {
-  // ##CAT_Cs connection values for constraint satisfaction
+  // #STEM_BASE ##CAT_Cs connection values for constraint satisfaction
 public:
   float		pdw;		// #NO_SAVE the previous delta-weight (for momentum)
   float		dwt_agg;	// #NO_VIEW #NO_SAVE variable for aggregating the outer-prods
@@ -55,7 +55,7 @@ public:
 // version, where the new B_ just calls the new C_
 
 class CS_API CsConSpec : public ConSpec {
-  // ##CAT_Cs constraint satisfaction connection specifications
+  // #STEM_BASE ##CAT_Cs constraint satisfaction connection specifications
 INHERITED(ConSpec)
 public:
   float		lrate;		// learning rate
@@ -112,7 +112,7 @@ void Cs_WtElim_WtDecay(CsConSpec* spec, CsCon* cn, Unit* ru, Unit* su)
 
 
 class CS_API CsRecvCons : public RecvCons {
-  // ##CAT_Cs group of constraint-satisfaction receiving connections
+  // #STEM_BASE ##CAT_Cs group of constraint-satisfaction receiving connections
 INHERITED(RecvCons)
 public:
   void		Aggregate_dWt(CsUnit* ru, float phase)
@@ -126,7 +126,7 @@ private:
 };
 
 class CS_API CsSendCons : public SendCons {
-  // ##CAT_Cs group of constraint-satisfaction sending connections
+  // #STEM_BASE ##CAT_Cs group of constraint-satisfaction sending connections
 INHERITED(SendCons)
 public:
   TA_BASEFUNS_NOCOPY(CsSendCons);
@@ -136,7 +136,7 @@ private:
 };
 
 class CS_API CsUnitSpec : public UnitSpec {
-  // ##CAT_Cs standard constraint satisfaction unit (uses inverse-logistic activation)
+  // #STEM_BASE ##CAT_Cs standard constraint satisfaction unit (uses inverse-logistic activation)
 INHERITED(UnitSpec)
 public:
   enum ClampType {
@@ -282,7 +282,7 @@ private:
 };
 
 class CS_API CsUnit : public Unit {
-  // ##CAT_Cs constraint satisfaction unit
+  // #STEM_BASE ##CAT_Cs constraint satisfaction unit
 INHERITED(Unit)
 public:
   float		da;		// delta-activation (or net input) value
@@ -409,7 +409,7 @@ inline void HebbCsConSpec::B_Compute_dWt(CsCon* cn, CsUnit* ru) {
 /////////////////////////////////////////////////////////////////////////
 
 class CS_API CsLayer : public Layer {
-  // ##CAT_Cs A constraint-satisfaction layer
+  // #STEM_BASE ##CAT_Cs A constraint-satisfaction layer
 INHERITED(Layer)
 public:
   override void  Init_Acts();
@@ -425,7 +425,7 @@ private:
 //////////////////////////////////
 
 class CS_API CsNetwork : public Network {
-  // ##CAT_Cs network for constraint statisfaction
+  // #STEM_BASE ##CAT_Cs network for constraint statisfaction
 INHERITED(Network)
 public:
   enum UpdateMode {
@@ -548,7 +548,7 @@ private:
 };
 
 class CS_API CsProject : public ProjectBase {
-  // ##CAT_Cs project for constraint satisfaction networks
+  // #STEM_BASE ##CAT_Cs project for constraint satisfaction networks
 INHERITED(ProjectBase)
 public:
 
@@ -563,7 +563,7 @@ private:
 //////////////////////////////////
 
 class CS_API CsWizard : public Wizard {
-  // ##CAT_Cs constraint satisfaction specific wizard for automating construction of simulation objects
+  // #STEM_BASE ##CAT_Cs constraint satisfaction specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
 

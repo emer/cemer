@@ -96,7 +96,7 @@ private:
 };
 
 class TA_API DataBlock: public taFBase {
-  // #VIRT_BASE #NO_INSTANCE ##TOKENS ##CAT_Data abstract base class interface for objects that provide (source) and/or accept (sink) data
+  // #VIRT_BASE #STEM_BASE #NO_INSTANCE ##TOKENS ##CAT_Data abstract base class interface for objects that provide (source) and/or accept (sink) data
 INHERITED(taFBase)
 public:
   enum DBOptions { // #BITS datablock options -- they also have individual convenience accessors

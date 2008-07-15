@@ -1655,6 +1655,11 @@ bool taBase::ChangeMyType(TypeDef* new_type) {
 ///////////////////////////////////////////////////////////////////////////
 //	Type information
 
+TypeDef* taBase::GetStemBase() const {
+  TypeDef* rval = GetTypeDef()->GetStemBase();
+  if(!rval) rval = &TA_taBase;
+  return rval;
+}
 
 ///////////// Searching
 
@@ -2106,6 +2111,11 @@ void taBase::CallFun(const String& fun_name) {
     md->CallFun((void*)this);
   else
     TestWarning(true, "CallFun", "function:", fun_name, "not found on object");
+}
+
+Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
+  if(fun_name != "ChangeMyType") return _nilVariant;
+  return Variant(GetStemBase()->name); // taiTypePtrArgType will convert from String
 }
 
 bool taBase::SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label) {
@@ -2587,11 +2597,13 @@ int taBase::UpdatePointersToMe_impl(taBase* scope_obj, taBase* new_ptr) {
 int taBase::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr) {
   int nchg = 0;
   TypeDef* otd = GetTypeDef();
-  TypeDef* ntd = new_ptr->GetTypeDef();
+  TypeDef* ntd = NULL;
+  if(new_ptr)
+    ntd = new_ptr->GetTypeDef();
   for(int m=0;m<otd->members.size;m++) {
     MemberDef* omd = otd->members[m];
     MemberDef* nmd = NULL;
-    if(ntd->members.size > m)
+    if(ntd && ntd->members.size > m)
       nmd = ntd->members[m];
     if((omd->type->ptr == 0) && omd->type->InheritsFrom(TA_taBase)) {
       taBase* old_kid = (taBase*)omd->GetOff(this);

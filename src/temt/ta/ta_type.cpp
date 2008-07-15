@@ -4229,6 +4229,22 @@ bool TypeDef::InheritsNonAtomicClass() const {
   return (m_cacheInheritsNonAtomicClass == 1);
 }
 
+TypeDef* TypeDef::GetStemBase() const {
+  if(HasOption("STEM_BASE")) return const_cast<TypeDef*>(this);
+  // first breadth
+  for(int i=0; i < parents.size; i++) {
+    TypeDef* par = parents.FastEl(i);
+    if(par->HasOption("STEM_BASE"))
+      return par;
+  }
+  // then depth recursion
+  for(int i=0; i < parents.size; i++) {
+    TypeDef* rval = parents.FastEl(i)->GetStemBase();
+    if(rval) return rval;
+  }
+  return NULL;
+}
+
 void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
   int i;
   for(i=0; i<members.size; i++) {

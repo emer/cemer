@@ -31,7 +31,7 @@
 #endif
 
 class TA_API Relation : public taNBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params
+  // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math counting criteria params
   INHERITED(taNBase)
 public:
   enum Relations {
@@ -63,7 +63,7 @@ public:
 };
 
 class TA_API Aggregate : public taNBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Basic aggregation operations
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Basic aggregation operations
   INHERITED(taNBase)
 public:
   enum Operator {		// Aggregate Operators
@@ -108,7 +108,7 @@ public:
 };
 
 class TA_API SimpleMathSpec : public taNBase {
-  // #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
+  // #STEM_BASE #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##NO_TOKENS ##CAT_Math params for std kinds of simple math operators applied to an input value 'val'
   INHERITED(taNBase)
 public:
   enum MathOpr {
@@ -148,7 +148,7 @@ public:
 };
 
 class TA_API taMath : public taNBase {
-  // ##CAT_Math ##NO_TOKENS ##INSTANCE collection of commonly-used math functions
+  // #STEM_BASE ##CAT_Math ##NO_TOKENS ##INSTANCE collection of commonly-used math functions
 INHERITED(taNBase)
 public:
 
@@ -1267,7 +1267,7 @@ private:
 //			Random Number Generation 
 
 class TA_API RndSeed : public taNBase {
-  // ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
+  // #STEM_BASE ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
 INHERITED(taNBase)
 public:
   int_Array		seed;	// #READ_ONLY the seed, 624 elements long
@@ -1314,7 +1314,7 @@ private:
 };
 
 class TA_API Random : public taNBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Random Number Generation
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math Random Number Generation
 INHERITED(taNBase)
 public:
   enum Type {

@@ -58,7 +58,7 @@ class ProgramCall; //
 ///////////////////////////////////////////////////////////
 
 class TA_API ProgType: public taNBase {
-  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program a program type -- base class for defining new types within a program
+  // #STEM_BASE #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program a program type -- base class for defining new types within a program
 INHERITED(taNBase)
 public:
   String	desc;	// #EDIT_DIALOG Description of this type
@@ -233,7 +233,7 @@ private:
 SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
 
 class TA_API DynEnum : public taOBase {
-  // #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
+  // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
   DynEnumTypeRef	enum_type; // #APPLY_IMMED enum type information (list of enum labels)
@@ -270,7 +270,7 @@ private:
 ///////////////////////////////////////////////////////////
 
 class TA_API ProgVar: public taOBase {
-  // ##INSTANCE ##INLINE ##SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
+  // ##INSTANCE ##INLINE #STEM_BASE ##SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
 INHERITED(taOBase)
 public:
   enum VarType {
@@ -537,7 +537,7 @@ public:
   override String GetTypeDecoKey() const { return "ProgExpr"; }
 
   override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
-				       const String& mbr_name);
+				       const String& mbr_name, int& new_pos=-1);
 
   void 	InitLinks();
   void 	CutLinks();
@@ -675,7 +675,7 @@ private:
   TA_BASEFUNS(T)
 
 class TA_API ProgEl: public taOBase {
-  // #NO_INSTANCE #VIRT_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
+  // #NO_INSTANCE #VIRT_BASE #STEM_BASE ##EDIT_INLINE ##SCOPE_Program ##CAT_Program base class for a program element
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:
@@ -983,7 +983,7 @@ private:
 
 
 class TA_API Program: public taNBase, public AbstractScriptBase {
-  // ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
+  // #STEM_BASE ##TOKENS ##INSTANCE ##EXT_prog ##FILETYPE_Program ##CAT_Program a structured gui-buildable program that generates css script code to actually run
 INHERITED(taNBase)
 public:
   enum ProgFlags { // #BITS program flags

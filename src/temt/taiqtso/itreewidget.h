@@ -68,6 +68,8 @@ protected:
   void 			contextMenuEvent(QContextMenuEvent* e); // override
   void			doItemExpanded(QTreeWidgetItem* item, bool expanded);
 _(Qt::DropActions	supportedDropActions() const;)
+
+  void 		keyPressEvent(QKeyEvent* e);	// override
   
 protected slots:
   void			this_itemExpanded(QTreeWidgetItem* item);

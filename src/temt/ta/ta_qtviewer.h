@@ -1832,6 +1832,8 @@ public slots:
     // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
   void			CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
+  void			InsertEl(); // insert new elemente after currently selected item
+
 public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const;
   override QWidget*	widget() {return this;} 
@@ -1867,6 +1869,9 @@ protected:
   void 			ExpandItem_impl(iTreeViewItem* item,
      int level, int max_levels, int exp_flags = 0); // inner code; level=-1 when not known
   void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
+
+  void 		keyPressEvent(QKeyEvent* e);	// override
+
 #ifndef __MAKETA__
   override QMimeData* 	mimeData(const QList<QTreeWidgetItem*> items) const; 
     // we replace this and provide the ta custom mime data (not the treewidget data)

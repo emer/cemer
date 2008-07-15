@@ -34,7 +34,7 @@ class SoLayer;
 class SoLayerSpec; //
 
 class SO_API SoCon : public Connection {
-  // ##CAT_So generic self-organizing algorithm connection
+  // #STEM_BASE ##CAT_So generic self-organizing algorithm connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change
 
@@ -42,7 +42,7 @@ public:
 };
 
 class SO_API SoConSpec : public ConSpec {
-  // ##CAT_So #VIRT_BASE generic self-organizing algorithm connection specification
+  // #STEM_BASE ##CAT_So #VIRT_BASE generic self-organizing algorithm connection specification
 INHERITED(ConSpec)
 public:
   enum AvgInActSource {
@@ -71,7 +71,7 @@ private:
 };
 
 class SO_API SoRecvCons : public RecvCons {
-  // ##CAT_So self-organizing connection group
+  // #STEM_BASE ##CAT_So self-organizing connection group
 INHERITED(RecvCons)
 public:
   float		avg_in_act;	// average input activation
@@ -89,7 +89,7 @@ private:
 };
 
 class SO_API SoSendCons : public SendCons {
-  // ##CAT_So group of self-organizing sending connections
+  // #STEM_BASE ##CAT_So group of self-organizing sending connections
 INHERITED(SendCons)
 public:
   TA_BASEFUNS_NOCOPY(SoSendCons);
@@ -99,7 +99,7 @@ private:
 };
 
 class SO_API SoUnitSpec : public UnitSpec {
-  // ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
+  // #STEM_BASE ##CAT_So generic self-organizing unit spec: linear act of std dot-product netin
 INHERITED(UnitSpec)
 public:
   void		Init_Acts(Unit* u);
@@ -132,7 +132,7 @@ private:
 };
   
 class SO_API SoUnit : public Unit {
-  // ##CAT_So generic self-organizing unit
+  // #STEM_BASE ##CAT_So generic self-organizing unit
 INHERITED(Unit)
 public:
   float		act_i;
@@ -150,7 +150,7 @@ private:
 
 
 class SO_API SoLayerSpec : public LayerSpec {
-  // ##CAT_So generic self-organizing layer specification
+  // #STEM_BASE ##CAT_So generic self-organizing layer specification
 INHERITED(LayerSpec)
 public:
   enum	NetInType {		// type of netinput measure unit has
@@ -182,7 +182,7 @@ private:
 SpecPtr_of(SoLayerSpec);
 
 class SO_API SoLayer : public Layer {
-  // ##CAT_So generic self-organizing layer
+  // #STEM_BASE ##CAT_So generic self-organizing layer
 INHERITED(Layer)
 public:
   SoLayerSpec_SPtr	spec;	// the spec for this layer
@@ -289,7 +289,7 @@ private:
 };
 
 class SO_API SoNetwork : public Network {
-  // ##CAT_So network for self-organizing networks
+  // #STEM_BASE ##CAT_So network for self-organizing networks
 INHERITED(Network)
 public:
 
@@ -306,7 +306,7 @@ private:
 };
 
 class SO_API SoProject : public ProjectBase {
-  // ##CAT_So project for self-organizing networks
+  // #STEM_BASE ##CAT_So project for self-organizing networks
 INHERITED(ProjectBase)
 public:
 
@@ -321,7 +321,7 @@ private:
 //////////////////////////////////
 
 class SO_API SoWizard : public Wizard {
-  // ##CAT_So self-organizing networks specific wizard for automating construction of simulation objects
+  // #STEM_BASE ##CAT_So self-organizing networks specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
 

@@ -940,7 +940,7 @@ public:
   bool			DuplicateMe();
   // #MENU #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
   virtual bool		ChangeMyType(TypeDef* new_type);
-  // #MENU #TYPE_this #CAT_ObjectMgmt Change me into a different type of object, copying current info (done through owner)
+  // #MENU #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
   virtual void		UnSafeCopy(const taBase*) {} // #IGNORE custom version made for each class: if cp->Inherits(me) Copy(cp); else if me->Inherits(cp) cp.CastCopyTo(me) else CopyOther_impl(cp)
   virtual void		CastCopyTo(taBase*) const {}; // #IGNORE custom version made for every class, casts
   void			CopyToCustom(taBase* src) const; // #IGNORE DO NOT CALL -- this is only a public, static wrapper for the _impl
@@ -980,6 +980,9 @@ public:
   { return GetTypeDef()->InheritsFormal(it); }
   bool		InheritsFormal(const TypeDef& it) const	// #IGNORE
   { return GetTypeDef()->InheritsFormal(it); }
+
+  TypeDef*	GetStemBase() const;
+  // #IGNORE get first (from me) parent with STEM_BASE directive -- defines equivalence class -- if not found, then taBase is returned
 
   virtual MemberDef*	FindMember(const String& nm, int& idx=no_idx) const // #IGNORE
   { return GetTypeDef()->members.FindName(nm, idx); }
@@ -1206,15 +1209,15 @@ public:
     {return NULL; } // #IGNORE gets the NodeBitmapFlags for the tree or list node -- see ta_qtbrowse_def.h
 #endif
   virtual String	StringFieldLookupFun(const String& cur_txt, int cur_pos,
-					     const String& mbr_name)
+					     const String& mbr_name, int& new_pos=-1)
   { return _nilString; } 
   // #IGNORE special lookup function called when Ctrl-L is pressed for string members -- is passed current text and position of cursor, and name of member, and it must return the replacement text for the entire edit (if rval is empty, nothing happens)
 
   virtual void		CallFun(const String& fun_name);
   // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
 
-  virtual Variant	GetGuiArgVal(const String& fun_name, int arg_idx) { return _nilVariant; }
-  // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored
+  virtual Variant	GetGuiArgVal(const String& fun_name, int arg_idx);
+  // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!
   
   virtual bool		SelectForEdit(MemberDef* member, SelectEdit* editor, const String& extra_label);
   // #MENU #MENU_ON_SelectEdit #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewEditor select a given member for editing in an edit dialog that collects selected members and methods from different objects (if editor is NULL, a new one is created in .edits).  returns false if method was already selected
@@ -1728,7 +1731,7 @@ typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 //		taList_impl -- base ta list impl
 
 class TA_API taList_impl : public taOBase, public taPtrList_ta_base {
-  // #INSTANCE #NO_TOKENS #NO_UPDATE_AFTER ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
+  // #INSTANCE #NO_TOKENS #STEM_BASE #NO_UPDATE_AFTER ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
 #ifndef __MAKETA__
 private:
 typedef taOBase inherited; // for the boilerplate code

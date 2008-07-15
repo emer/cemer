@@ -917,7 +917,7 @@ private:
 // ProjectionSpec does the connectivity, and optionally the weight init
 
 class EMERGENT_API ProjectionSpec : public BaseSpec {
-  // #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
+  // #STEM_BASE #VIRT_BASE ##CAT_Spec Specifies the connectivity between layers (ie. full vs. partial)
 INHERITED(BaseSpec)
 public:
   bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
@@ -959,7 +959,7 @@ private:
 SpecPtr_of(ProjectionSpec);
 
 class EMERGENT_API Projection: public taNBase {
-  // ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
+  // #STEM_BASE ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
 INHERITED(taNBase)
 public:
   enum PrjnSource {

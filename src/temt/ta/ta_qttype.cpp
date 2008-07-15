@@ -2545,6 +2545,9 @@ void taiTypePtrArgType::GetImage_impl(taiData* dat, const void* base) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {// must be a string..
       TypeDef* tdlkup = taMisc::types.FindName(val.toString());
+      if(tdlkup && !tdlkup->InheritsFrom(base_type)) {
+	base_type = tdlkup;	// reset base type to accommodate current value
+      }
       *((TypeDef**)arg_base) = tdlkup;
     }
   }

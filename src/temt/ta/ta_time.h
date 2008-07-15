@@ -20,7 +20,7 @@
 #include "ta_TA_type.h"
 
 class TA_API taTime : public taBase {
-  // ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
+  // #STEM_BASE ##NO_TOKENS #INLINE #INLINE_DUMP #NO_UPDATE_AFTER ##CAT_Program raw time information
 INHERITED(taBase)
 public:
   double	usr;		// #HIDDEN user clock ticks -- time spent on this process
@@ -58,7 +58,7 @@ private:
 };
 
 class TA_API TimeUsed : public taNBase {
-  // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
+  // #STEM_BASE #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used for a given process: start the timer at the start, then do EndTimer and it computes the amount used
 INHERITED(taNBase)
 public:
   taTime	start;		// #HIDDEN starting time
@@ -82,7 +82,7 @@ public:
 class TimeUsedHRd; // #IGNORE
 
 class TA_API TimeUsedHR : public taNBase {
-  // #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used (in high resolution) for a given process: start the timer at the start, then do EndTimer and it computes the amount used
+  // #STEM_BASE #INLINE #INLINE_DUMP  ##CAT_Program computes amount of time used (in high resolution) for a given process: start the timer at the start, then do EndTimer and it computes the amount used
 INHERITED(taNBase)
 public:
   double 	s_used;		// #SHOW #GUI_READ_ONLY total number of seconds used
@@ -111,7 +111,7 @@ class QDateTime; // #IGNORE
 #endif
 
 class TA_API taDateTime : public taNBase {
-  // #INLINE ##CAT_Program represents date and time information -- for calendar management and date fields in data tables, etc (use int value conversion for secs since 1 Jan 1970 UTC)
+  // #STEM_BASE #INLINE ##CAT_Program represents date and time information -- for calendar management and date fields in data tables, etc (use int value conversion for secs since 1 Jan 1970 UTC)
 INHERITED(taNBase)
 public:
   int64_t	secs_1jan_1970; // internal storage unit: seconds since january 1st, 1970, UTC

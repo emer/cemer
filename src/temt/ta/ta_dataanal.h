@@ -97,7 +97,7 @@ public:
 
 
 class TA_API taDataAnal : public taNBase {
-  // ##CAT_Data collection of data analysis functions
+  // #STEM_BASE ##CAT_Data collection of data analysis functions
 INHERITED(taNBase)
 public:
 

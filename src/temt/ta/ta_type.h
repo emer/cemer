@@ -2123,6 +2123,9 @@ public:
   bool 			DerivesFormal(const TypeDef& it) const { return DerivesFormal((TypeDef*)&it); }
 
   bool			InheritsNonAtomicClass() const; // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant 
+
+  TypeDef*		GetStemBase() const;
+  // for class types: get first (from me) parent with STEM_BASE directive -- defines equivalence class -- returns NULL if not found
   
   TypeDef*	AddParent(TypeDef* it, int p_off=0);
   // adds parent and inherits all the stuff from it

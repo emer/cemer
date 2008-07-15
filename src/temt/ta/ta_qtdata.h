@@ -1104,7 +1104,7 @@ public:
   ~taiItemPtrBase();
   
 public slots:
-  void			OpenChooser(); // make and then open chooser dialog
+  bool			OpenChooser(); // make and then open chooser dialog
   virtual void		EditPanel() {} // used by tokens to edit -- opens panel on guy (in new tab)
   virtual void		EditDialog() {} // used by tokens to edit -- opens edit dialog
 

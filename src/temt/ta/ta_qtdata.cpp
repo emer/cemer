@@ -40,6 +40,7 @@
 #include "ilineedit.h"
 #include "ispinbox.h"
 #include "itextedit.h"
+#include "itreewidget.h"
 
 #include <qapplication.h>
 #include <qcolor.h> // needed for qbitmap
@@ -712,11 +713,15 @@ void taiField::lookupKeyPressed() {
   if(!lookupfun_md || !lookupfun_base) return;
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = rep()->cursorPosition();
+  int new_pos = -1;
   String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
-					  lookupfun_md->name);
+					  lookupfun_md->name, new_pos);
   if(rval.nonempty()) {
     rep()->setText(rval);
-    rep()->setCursorPosition(cur_pos); // go back to orig pos
+    if(new_pos >= 0)
+      rep()->setCursorPosition(new_pos); // go back to orig pos
+    else
+      rep()->setCursorPosition(cur_pos); // go back to orig pos
   }
 }
 
@@ -728,12 +733,16 @@ void taiField::lookupKeyPressed_dialog() {
 
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = cursor.position();
+  int new_pos = -1;
   String rval = tab->StringFieldLookupFun(edit->txtText->toPlainText(), cur_pos,
-					  lookupfun_md->name);
+					  lookupfun_md->name, new_pos);
   if(rval.nonempty()) {
     edit->txtText->setPlainText(rval);
     QTextCursor cur2(edit->txtText->textCursor());
-    cur2.setPosition(cur_pos);
+    if(new_pos >= 0)
+      cur2.setPosition(new_pos);
+    else
+      cur2.setPosition(cur_pos);
     edit->txtText->setTextCursor(cur2);
   }
 }
@@ -3167,7 +3176,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   } else cmbView = NULL;
   if (layFilter) layOuter->addLayout(layFilter);
   
-  items = new QTreeWidget(this);
+  items = new iTreeWidget(this);
   items->setSortingEnabled(true);
   layOuter->addWidget(items, 1); // list is item to expand in host
   items->setFocus();		 // this is where the keyboard focus goes first!
@@ -3470,11 +3479,13 @@ const String taiItemPtrBase::titleText() {
   return chs_title;
 }
 
-void taiItemPtrBase::OpenChooser() {
+bool taiItemPtrBase::OpenChooser() {
+  bool rval = false;
   BuildCategories(); // for subtypes that use categories
   String chs_title = titleText();
   taiItemChooser* ic = taiItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {
+    rval = true;		// hit ok
     if (m_sel != ic->selObj()) {
       UpdateImage(ic->selObj());
       if (mflags & flgAutoApply)
@@ -3483,7 +3494,8 @@ void taiItemPtrBase::OpenChooser() {
         DataChanged();
     }
   }
-delete ic;
+  delete ic;
+  return rval;
 }
 
 bool taiItemPtrBase::ShowItemFilter(void* base, void* item, const String& itnm) const {

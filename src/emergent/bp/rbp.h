@@ -258,7 +258,7 @@ private:
 //////////////////////////////////
 
 class BP_API BpWizard : public Wizard {
-  // backprop-specific wizard for automating construction of simulation objects
+  // #STEM_BASE backprop-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
   virtual bool	SRNContext(Network* net);

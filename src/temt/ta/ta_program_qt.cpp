@@ -323,11 +323,6 @@ void iProgramEditor::Init() {
   items->setDropIndicatorShown(true);
   items->setHighlightRows(true);
 
-  insert_el_sc = new QShortcut(QKeySequence(tr("Ctrl+I", "Insert Element")),
-			       items);
-
-  connect(insert_el_sc, SIGNAL(activated()), this, SLOT(InsertEl()) );
-
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
 
   connect(btnApply, SIGNAL(clicked()), this, SLOT(Apply()) );
@@ -362,31 +357,6 @@ void iProgramEditor::Apply_Async() {
 
 bool iProgramEditor::ShowMember(MemberDef* md) {
   return taiPolyData::ShowMemberStat(md, show());
-}
-
-void iProgramEditor::InsertEl() {
-  // todo: this can be moved into the basic itreeview class directly!
-  ISelectable* si = items->curItem();
-  if(!si || !si->link()) return;		// nothing selected
-  taBase* sb = si->link()->taData();
-  if(!sb) return;
-  taList_impl* sbo = GET_OWNER(sb, taList_impl);
-  if(!sbo) return;
-  taiTypeDefButton* typlkup =
-    new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiData::flgAutoApply);
-  TypeDef* td = sbo->el_base;
-  typlkup->GetImage(td, sbo->el_base);
-  typlkup->OpenChooser();
-  td = typlkup->td();
-  if(td) {
-    taBase* nwi = taBase::MakeToken(td);
-    int idx = sbo->FindEl(sb) + 1;
-    if(idx < 0) idx = 0;
-    if(idx > sbo->size) idx = sbo->size;
-    sbo->Insert(nwi, idx);
-    tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
-    tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
-  }
 }
 
 void iProgramEditor::Base_Add() {
@@ -1746,7 +1716,7 @@ void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {
 //////////////////////////////////////
 
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
-					  const String& mbr_name) {
+					  const String& mbr_name, int& new_pos) {
 
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return _nilString;
@@ -1835,9 +1805,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
     varlkup->type_list.Link(&TA_ProgVar);
     varlkup->type_list.Link(&TA_DynEnumItem);
     varlkup->GetImage(NULL, &TA_ProgVar, this, &TA_Program); // scope_token is this!
-    varlkup->OpenChooser();
-    if(varlkup->token()) {
-      rval = prepend_before + varlkup->token()->GetName() + append_at_end;
+    bool okc = varlkup->OpenChooser();
+    if(okc && varlkup->token()) {
+      rval = prepend_before + varlkup->token()->GetName();
+      new_pos = rval.length();
+      rval += append_at_end;
     }
     delete varlkup;
     break;
@@ -1915,9 +1887,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 	taiGroupElsButton* lilkup = new taiGroupElsButton(lookup_td, NULL, NULL, NULL,
 							  0, lookup_seed);
 	lilkup->GetImage((taGroup_impl*)tal, NULL);
-	lilkup->OpenChooser();
-	if(lilkup->item()) {
-	  rval = txt.through(delim_pos[0]) + lilkup->item()->GetName() + append_at_end;
+	bool okc = lilkup->OpenChooser();
+	if(okc && lilkup->item()) {
+	  rval = txt.through(delim_pos[0]) + lilkup->item()->GetName();
+	  new_pos = rval.length();
+	  rval += append_at_end;
 	}
 	delete lilkup;
       }
@@ -1925,9 +1899,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 	taiListElsButton* lilkup = new taiListElsButton(lookup_td, NULL, NULL, NULL,
 							0, lookup_seed);
 	lilkup->GetImage(tal, NULL);
-	lilkup->OpenChooser();
-	if(lilkup->item()) {
-	  rval = txt.through(delim_pos[0]) + lilkup->item()->GetName() + append_at_end;
+	bool okc = lilkup->OpenChooser();
+	if(okc && lilkup->item()) {
+	  rval = txt.through(delim_pos[0]) + lilkup->item()->GetName();
+	  new_pos = rval.length();
+	  rval += append_at_end;
 	}
 	delete lilkup;
       }
@@ -1937,9 +1913,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
       taiMemberMethodDefButton* mdlkup =  new taiMemberMethodDefButton(lookup_td, NULL, NULL,
 								       NULL, 0, lookup_seed);
       mdlkup->GetImage(NULL, lookup_td);
-      mdlkup->OpenChooser();
-      if(mdlkup->md()) {
-	rval = txt.through(delim_pos[0]) + mdlkup->md()->name + append_at_end;
+      bool okc = mdlkup->OpenChooser();
+      if(okc && mdlkup->md()) {
+	rval = txt.through(delim_pos[0]) + mdlkup->md()->name;
+	new_pos = rval.length();
+	rval += append_at_end;
       }
       delete mdlkup;
     }
@@ -1954,9 +1932,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
       taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
 							     NULL, 0, lookup_seed);
       eslkup->GetImage(NULL, lookup_td);
-      eslkup->OpenChooser();
-      if(eslkup->md()) {
-	rval = txt.through(delim_pos[0]) + eslkup->md()->name + append_at_end;
+      bool okc = eslkup->OpenChooser();
+      if(okc && eslkup->md()) {
+	rval = txt.through(delim_pos[0]) + eslkup->md()->name;
+	new_pos = rval.length();
+	rval += append_at_end;
       }
       delete eslkup;
     }
@@ -1966,9 +1946,11 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 	taiTokenPtrButton* varlkup =  new taiTokenPtrButton(&TA_DynEnumItem, NULL, NULL,
 							    NULL, 0, lookup_seed);
 	varlkup->GetImage(NULL, &TA_DynEnumItem, pt, &TA_DynEnumType); // scope to this guy
-	varlkup->OpenChooser();
-	if(varlkup->token()) {
-	  rval = prepend_before + varlkup->token()->GetName() + append_at_end;
+	bool okc = varlkup->OpenChooser();
+	if(okc && varlkup->token()) {
+	  rval = prepend_before + varlkup->token()->GetName();
+	  new_pos = rval.length();
+	  rval += append_at_end;
 	}
 	delete varlkup;
       }

@@ -119,7 +119,7 @@ private:
 //		Layer Writer
 
 class EMERGENT_API LayerWriterEl : public LayerDataEl {
-  // controls the writing of input data from a data source to a network layer
+  // #STEM_BASE controls the writing of input data from a data source to a network layer
 INHERITED(LayerDataEl)
 public: 
   bool		use_layer_type; // #APPLY_IMMED #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
@@ -143,7 +143,7 @@ private:
 };
 
 class EMERGENT_API LayerWriter : public taNBase {
-  // ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
+  // #STEM_BASE ##CAT_Network ##DEF_CHILD_layer_data #DEF_CHILDNAME_LayerDataEls controls the writing of input data from a data source to network layers
 INHERITED(taNBase)
 public:
   DataBlockRef		data;
@@ -222,7 +222,7 @@ private:
 
 
 class EMERGENT_API NetMonItem: public taNBase {
-  // #NO_TOKENS ##CAT_Network used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
+  // #STEM_BASE #NO_TOKENS ##CAT_Network used for monitoring the value of an object\n(special support for network variables, including Layer, Projection, UnitGroup, Unit)
 INHERITED(taNBase)
 public:
   enum	NameStyle {		// how to name the datatable columns
@@ -355,7 +355,7 @@ private:
 };
 
 class EMERGENT_API NetMonitor: public taNBase {
-  // ##TOKENS #NO_UPDATE_AFTER ##CAT_Network  ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
+  // #STEM_BASE ##TOKENS #NO_UPDATE_AFTER ##CAT_Network  ##DEF_CHILD_items monitors values from network (or other) objects and sends them to a data table/sink
 INHERITED(taNBase)
 public:
   NetMonItem_List	items;
@@ -427,7 +427,7 @@ private:
 };
 
 class EMERGENT_API ActBasedRF : public taNBase {
-  // ##CAT_Network computes an activation-based receptive field of network unit activations weighted by the activation of target units within selected target layer across a range of testing patterns: effectively shows what patterns of network activation are associated with the activation of target units, regardless of direct connectivity: columns of data table are for each network layer, and rows are the units within the target layer
+  // #STEM_BASE ##CAT_Network computes an activation-based receptive field of network unit activations weighted by the activation of target units within selected target layer across a range of testing patterns: effectively shows what patterns of network activation are associated with the activation of target units, regardless of direct connectivity: columns of data table are for each network layer, and rows are the units within the target layer
 INHERITED(taNBase)
 public:
   enum NormMode {		// how to normalize the final rf data after computing the weighted averages

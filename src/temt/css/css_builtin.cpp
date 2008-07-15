@@ -2480,3 +2480,65 @@ bool cssMisc::Initialize() {
 
   return true;
 }
+
+
+//////////////////////////////////
+//	Shutdown		//
+//////////////////////////////////
+
+bool cssMisc::Shutdown() {
+  if(cur_top)
+    cur_top->Stop();
+  if(TopShell) {
+    TopShell->Exit();
+    delete TopShell;
+    TopShell = NULL;
+  }
+  if(Top) {
+    Top->Stop();
+    delete Top;
+    Top = NULL;
+  }
+  if(ConstExprTop) {
+    ConstExprTop->Stop();
+    delete ConstExprTop;
+    ConstExprTop = NULL;
+  }
+  ConstExpr = NULL;
+  if(CDtorProg) {
+    delete CDtorProg;
+    CDtorProg = NULL;
+  }
+  if(CallFunProg) {
+    delete CallFunProg;
+    CallFunProg = NULL;
+  }
+    
+  cur_top = NULL;
+  code_cur_top = NULL;
+  cur_class = NULL;
+  cur_scope = NULL;
+  cur_method = NULL;
+  cur_enum = NULL;
+  default_args.Reset();
+  s_argv = NULL;
+  s_argc = NULL;
+  
+  Defines.Reset();
+  Settings.Reset();
+  Enums.Reset();
+  Constants.Reset();
+  Functions.Reset();
+  Commands.Reset();
+  HardVars.Reset();
+  HardFuns.Reset();
+  Externs.Reset();
+  PreProcessor.Reset();
+  Parse.Reset();
+  Internal.Reset();
+  TypesSpace_ptrs.Reset();
+  TypesSpace_refs.Reset();
+  TypesSpace.Reset();
+
+  return true;
+}

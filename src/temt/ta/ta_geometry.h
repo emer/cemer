@@ -37,7 +37,7 @@ class FloatTwoDCoord;
 class FloatTDCoord;
 
 class TA_API TwoDCoord : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
 INHERITED(taBase)
 public:
   int 		x;  		// horizontal
@@ -393,7 +393,7 @@ private:
 };
 
 class TA_API FloatTwoDCoord : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a value in 2D coordinate space
   INHERITED(taBase)
 public:
   float		x;  		// horizontal
@@ -636,6 +636,8 @@ inline FloatTDCoord operator / (float td, const FloatTDCoord& v) {
   FloatTDCoord rv; rv.x = td / v.x; rv.y = td / v.y; rv.z = td / v.z; return rv;
 }
 
+// todo: add rotation functions!
+
 class TA_API FloatRotation: public FloatTDCoord {
   //  ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP 3-d rotation data, xyz specify the rotation axis
   INHERITED(FloatTDCoord)
@@ -682,7 +684,7 @@ private:
 // TODO: Brad -- you might need to update this with system-wide constructor changes, etc
 
 class TA_API ValIdx : public taBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a float value and an index: very useful for sorting!
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math a float value and an index: very useful for sorting!
   INHERITED(taBase)
 public:
   float		val;  		// value

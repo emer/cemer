@@ -191,6 +191,8 @@ public:
 
   static bool 		Initialize();
   // this is called to install builtin funcs, setup system, etc.; returns true if ok
+  static bool 		Shutdown();
+  // call this when quitting system -- resets all the above lists etc.
 
   static String	    	Indent(int indent_level, int indent_spc = 2);
   static String	    	IndentLines(const String& lines, int indent_level); 

@@ -108,7 +108,7 @@ TA_SMART_PTRS(LeabraTask);//
   } 
   
 class LeabraCon : public Connection {
-  // ##CAT_Leabra Leabra connection
+  // #STEM_BASE ##CAT_Leabra Leabra connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
   float		sravg;		// #NO_SAVE average of sender and receiver activation product over time, used for minus phase of ct leabra contrastive attractor learning
@@ -254,7 +254,7 @@ private:
 };
 
 class LEABRA_API LeabraConSpec : public ConSpec {
-  // ##CAT_Leabra Leabra connection specs
+  // #STEM_BASE ##CAT_Leabra Leabra connection specs
 INHERITED(ConSpec)
 public:
   enum LearnRule {
@@ -512,7 +512,7 @@ private:
 };
 
 class LEABRA_API LeabraRecvCons : public RecvCons {
-  // ##CAT_Leabra Leabra receiving connection group
+  // #STEM_BASE ##CAT_Leabra Leabra receiving connection group
 INHERITED(RecvCons)
 public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin
@@ -560,7 +560,7 @@ private:
 };
 
 class LEABRA_API LeabraSendCons : public SendCons {
-  // ##CAT_Leabra Leabra sending connection group
+  // #STEM_BASE ##CAT_Leabra Leabra sending connection group
 INHERITED(SendCons)
 public:
   inline void 	Send_ClampNet(float su_act)
@@ -830,7 +830,7 @@ private:
 };
 
 class LEABRA_API LeabraUnitSpec : public UnitSpec {
-  // ##CAT_Leabra Leabra unit specifications, point-neuron approximation
+  // #STEM_BASE ##CAT_Leabra Leabra unit specifications, point-neuron approximation
 INHERITED(UnitSpec)
 public:
   enum ActFun {
@@ -1083,7 +1083,7 @@ private:
 };
 
 class LEABRA_API LeabraUnit : public Unit {
-  // ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
+  // #STEM_BASE ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
 INHERITED(Unit)
 public:
   float		act_eq;		// #NO_SAVE #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
@@ -1254,7 +1254,7 @@ private:
 //			Projection Level Code
 
 class LEABRA_API LeabraPrjn: public Projection {
-  // ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
+  // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:
   float		netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
@@ -1485,7 +1485,7 @@ private:
 };
 
 class LEABRA_API LeabraLayerSpec : public LayerSpec {
-  // ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
+  // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:
   enum InhibGroup {
@@ -1892,7 +1892,7 @@ public:
 };
 
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
-  // ##CAT_Leabra layer that implements the Leabra algorithms
+  // #STEM_BASE ##CAT_Leabra layer that implements the Leabra algorithms
 INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
@@ -2052,7 +2052,7 @@ private:
 };
 
 class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
-  // ##CAT_Leabra for independent subgroups of competing units within a single layer
+  // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer
 INHERITED(Unit_Group)
 public:
   int		misc_state;	// #CAT_Activation miscellaneous state variable
@@ -2701,7 +2701,7 @@ private:
 };
 
 class LEABRA_API LeabraNetwork : public Network {
-  // ##CAT_Leabra network that uses the Leabra algorithms and objects
+  // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
 INHERITED(Network)
 public:
   enum LearnRule {
@@ -2893,7 +2893,7 @@ private:
 };
 
 class LEABRA_API LeabraProject : public ProjectBase {
-  // ##CAT_Leabra project for Leabra models
+  // #STEM_BASE ##CAT_Leabra project for Leabra models
 INHERITED(ProjectBase)
 public:
 
@@ -2946,7 +2946,7 @@ void LeabraUnitSpec::Compute_InhibAvg(LeabraUnit* u, LeabraLayer*, LeabraInhib* 
 //////////////////////////////////
 
 class LEABRA_API LeabraWizard : public Wizard {
-  // ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
+  // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
   override bool StdNetwork(TypeDef* net_type = &TA_LeabraNetwork, Network* net = NULL);

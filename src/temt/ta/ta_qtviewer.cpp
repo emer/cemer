@@ -6230,6 +6230,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
     QColor(0xa0, 0xa0, 0xa0),  // light grey
     QColor(0x80, 0x80, 0x80) // medium grey
   );
+
   connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
     this, SLOT(this_currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)) );
 //  connect(this, SIGNAL(itemSelectionChanged()),
@@ -6359,6 +6360,43 @@ void iTreeView::CollapseAllUnder(iTreeViewItem* item) {
 void iTreeView::CollapseAllUnderInt(void* item) {
   CollapseAllUnder((iTreeViewItem*)item);
 } 
+
+void iTreeView::InsertEl() {
+  ISelectable* si = curItem();
+  if(!si || !si->link()) return;		// nothing selected
+  taBase* sb = si->link()->taData();
+  if(!sb) return;
+  taList_impl* sbo = NULL;
+  if(sb->InheritsFrom(&TA_taList_impl)) {
+    sbo = (taList_impl*)sb;
+  }
+  else {
+    sbo = GET_OWNER(sb, taList_impl);
+  }
+  if(!sbo) return;
+  taiTypeDefButton* typlkup =
+    new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiData::flgAutoApply);
+  TypeDef* td = sbo->el_typ;
+  typlkup->GetImage(td, sbo->el_base);
+  bool okc = typlkup->OpenChooser();
+  td = typlkup->td();
+  if(okc && td) {
+    taBase* nwi = taBase::MakeToken(td);
+    int idx = 0;
+    if(sbo == sb) {		// it is the list
+      idx = sbo->size;
+    }
+    else {
+      idx = sbo->FindEl(sb) + 1;
+    }
+    if(idx < 0) idx = 0;
+    if(idx > sbo->size) idx = sbo->size;
+    sbo->Insert(nwi, idx);
+    tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
+  }
+  delete typlkup;
+}
 
 const KeyString iTreeView::colKey(int col) const {
   if ((col < 0) || (col >= columnCount())) return _nilKeyString;
@@ -6527,6 +6565,29 @@ QStringList iTreeView::mimeTypes () const {
   QStringList rval;
   rval.append(taiObjectMimeFactory::tacss_objectdesc);
   return rval;
+}
+
+void iTreeView::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(ctrl_pressed) {
+    if(e->key() == Qt::Key_I) {
+      e->accept();
+      InsertEl();
+    }
+    else {
+      inherited::keyPressEvent( e );
+    }
+  }
+  else {
+    inherited::keyPressEvent( e );
+  }
 }
 
 void iTreeView::mnuFindFromHere(taiAction* mel) {

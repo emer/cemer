@@ -3792,7 +3792,7 @@ void Program::SaveToProgLib(ProgLibs library) {
 }
 
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
-  if(fun_name != "LoadFromProgLib") return _nilVariant;
+  if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   if(!prog_lib) return  _nilVariant;
   ProgLibEl* pel = prog_lib->FindName(name); // find our name
   return Variant(pel);
@@ -4073,7 +4073,7 @@ taBase* Program_Group::NewFromLibByName(const String& prog_nm) {
 }
 
 Variant Program_Group::GetGuiArgVal(const String& fun_name, int arg_idx) {
-  if(fun_name != "LoadFromProgLib") return _nilVariant;
+  if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   ProgLibEl* pel = prog_lib.FindName(name); // find our name
   return Variant(pel);
 }

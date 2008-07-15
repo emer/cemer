@@ -2066,9 +2066,7 @@ void taRootBase::Cleanup_Main() {
   if (milestone & SM_REG_SIG) {
     taMisc::Register_Cleanup(SIG_DFL); // replace back to using default
   }
-//TEMP: prolly better to have cssMisc::Destroy to keep adding anything else to
-  // since cssMiscHardVars had root pushed on it, make sure it is released
-  cssMisc::HardVars.Reset();
+  cssMisc::Shutdown();		// shut down css..
   if (milestone & SM_ROOT_CREATE)
     tabMisc::DeleteRoot();
   if (milestone & SM_TYPES_INIT)

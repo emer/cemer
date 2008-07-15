@@ -81,7 +81,7 @@ class SoTexture2; // #IGNORE
 class SoTexture2Transform; // #IGNORE
 
 class TA_API VETexture : public taNBase {
-  // #NO_UPDATE_AFTER ##CAT_VirtEnv texture mapping of an image onto a 3d object -- defined as a shared resource in the VEWorld that individual objects can point to
+  // #STEM_BASE #NO_UPDATE_AFTER ##CAT_VirtEnv texture mapping of an image onto a 3d object -- defined as a shared resource in the VEWorld that individual objects can point to
 INHERITED(taNBase)
 public:
   enum Mode {
@@ -144,7 +144,7 @@ private:
 
 
 class TA_API VEBody : public taNBase {
-  // ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
 public:	
   enum BodyFlags { // #BITS flags for bodies
@@ -418,7 +418,7 @@ public:
 };
 
 class TA_API VEJoint : public taNBase {
-  // ##CAT_VirtEnv ##EXT_vejnt a virtual environment joint, which connects two bodies
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vejnt a virtual environment joint, which connects two bodies
 INHERITED(taNBase)
 public:	
   enum JointFlags { // #BITS flags for joints
@@ -528,7 +528,7 @@ private:
 //	Object: collection of bodies and joints
 
 class TA_API VEObject : public taNBase {
-  // ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:	
   enum SpaceType {
@@ -590,7 +590,7 @@ private:
 //	Static bodies
 
 class TA_API VEStatic : public taNBase {
-  // ##CAT_VirtEnv ##EXT_vestc virtual environment static environment element -- not subject to physics and only interacts with bodies via collisions (cannot be part of a joint)
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vestc virtual environment static environment element -- not subject to physics and only interacts with bodies via collisions (cannot be part of a joint)
 INHERITED(taNBase)
 public:	
   enum StaticFlags { // #BITS flags for static elements
@@ -721,7 +721,7 @@ private:
 //	Space: collection of static elements
 
 class TA_API VESpace : public taNBase {
-  // ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:	
   enum SpaceType {
@@ -795,7 +795,7 @@ protected:
 };
 
 class TA_API VEWorld : public taNBase {
-  // ##CAT_VirtEnv ##EXT_vewld a virtual environment world
+  // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld a virtual environment world
 INHERITED(taNBase)
 public:	
   enum	StepType {		// which type of stepping function to use

@@ -36,7 +36,7 @@ class BpUnitSpec; //
 // note: dwt is equivalent to the old dEdW and pdw = the old dwt
 
 class BP_API BpCon : public Connection {
-  // ##CAT_Bp Bp connection
+  // #STEM_BASE ##CAT_Bp Bp connection
 public:
   float		pdw;		// #NO_SAVE previous delta-weight change -- useful for viewing because current weight change (dwt) is typically reset to 0 when views are updated
 
@@ -50,7 +50,7 @@ public:
 // version, where the new B_ just calls the new C_
 
 class BP_API BpConSpec : public ConSpec {
-  // ##CAT_Bp Bp connection specifications
+  // #STEM_BASE ##CAT_Bp Bp connection specifications
 INHERITED(ConSpec)
 public:
   enum MomentumType {
@@ -119,7 +119,7 @@ BP_API void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit* ru, BpUnit* su
      ;				// term here so scanner picks up comment
 
 class BP_API BpRecvCons : public RecvCons {
-  // ##CAT_Bp group of Bp recv connections
+  // #STEM_BASE ##CAT_Bp group of Bp recv connections
 INHERITED(RecvCons)
 public:
   // these are "convenience" functions for those defined in the spec
@@ -133,7 +133,7 @@ private:
 };
 
 class BP_API BpSendCons : public SendCons {
-  // ##CAT_Bp group of Bp sending connections
+  // #STEM_BASE ##CAT_Bp group of Bp sending connections
 INHERITED(SendCons)
 public:
   // these are "convenience" functions for those defined in the spec
@@ -147,7 +147,7 @@ private:
 };
 
 class BP_API BpUnitSpec : public UnitSpec {
-  // ##CAT_Bp specifications for Bp units
+  // #STEM_BASE ##CAT_Bp specifications for Bp units
 INHERITED(UnitSpec)
 public:
   SigmoidSpec	sig;		// sigmoid activation parameters
@@ -193,7 +193,7 @@ BP_API void Bp_CrossEnt_Error(BpUnitSpec* spec, BpUnit* u)
 
 
 class BP_API BpUnit : public Unit {
-  // ##CAT_Bp ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
+  // #STEM_BASE ##CAT_Bp ##DMEM_SHARE_SETS_4 standard feed-forward Bp unit
 INHERITED(Unit)
 public:
   float 	err; 		// this is E, not dEdA
@@ -592,8 +592,7 @@ private:
 };
 
 class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
-  /* SoftMax Units: first one-to-one prjn is from corresp exponential unit,
-     second prjn is from single summing linear unit, this then divides two */
+  // SoftMax Units: first one-to-one prjn is from corresp exponential unit, second prjn is from single summing linear unit, this then divides two
 INHERITED(BpUnitSpec)
 public:
 
@@ -612,7 +611,7 @@ private:
 };
 
 class BP_API BpLayer : public Layer {
-  // ##CAT_Bp A feedforward backpropagation layer
+  // #STEM_BASE ##CAT_Bp A feedforward backpropagation layer
 INHERITED(Layer)
 public:
 
@@ -623,7 +622,7 @@ private:
 };
 
 class BP_API BpNetwork : public Network {
-  // ##CAT_Bp project for feedforward backpropagation networks (recurrent backprop is in RBpNetwork)
+  // #STEM_BASE ##CAT_Bp project for feedforward backpropagation networks (recurrent backprop is in RBpNetwork)
 INHERITED(Network)
 public:
   bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
@@ -644,7 +643,7 @@ private:
 };
 
 class BP_API BpProject : public ProjectBase {
-  // ##CAT_Bp project for backpropagation networks
+  // #STEM_BASE ##CAT_Bp project for backpropagation networks
 INHERITED(ProjectBase)
 public:
 

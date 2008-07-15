@@ -17,6 +17,7 @@
 
 #include <QMap>
 #include <QModelIndex>
+#include <QScrollBar>
 
 #include <iostream>
 using namespace std;
@@ -291,6 +292,66 @@ void iTreeWidget::this_itemExpanded(QTreeWidgetItem* item) {
   doItemExpanded(item, true);
 }
 
+
+void iTreeWidget::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(ctrl_pressed) {
+    int vl, mn, mx, ss, ps;
+    QScrollBar* scb = verticalScrollBar();
+    if(scb) {
+      vl = scb->value();
+      mx = scb->maximum();
+      mn = scb->minimum();
+      ss = scb->singleStep();
+      ps = scb->pageStep();
+    }
+    if(e->key() == Qt::Key_N) {
+      e->accept();
+      if(scb) {
+	vl += ss;
+	if(vl >= mx) vl = mx;
+	scb->setValue(vl);
+      }
+    }
+    else if(e->key() == Qt::Key_P) {
+      e->accept();
+      if(scb) {
+	vl -= ss;
+	if(vl <= mn) vl = mn;
+	scb->setValue(vl);
+      }
+    }
+    if(e->key() == Qt::Key_V) {
+      e->accept();
+      if(scb) {
+	vl += ps;
+	if(vl >= mx) vl = mx;
+	scb->setValue(vl);
+      }
+    }
+    else if(e->key() == Qt::Key_U) {
+      e->accept();
+      if(scb) {
+	vl -= ps;
+	if(vl <= mn) vl = mn;
+	scb->setValue(vl);
+      }
+    }
+    else {
+      inherited::keyPressEvent( e );
+    }
+  }
+  else {
+    inherited::keyPressEvent( e );
+  }
+}
 
 //////////////////////////
 //  iTreeWidgetItem	//
