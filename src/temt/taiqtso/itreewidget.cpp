@@ -293,64 +293,40 @@ void iTreeWidget::this_itemExpanded(QTreeWidgetItem* item) {
 }
 
 
-void iTreeWidget::keyPressEvent(QKeyEvent* e) {
+void iTreeWidget::keyPressEvent(QKeyEvent* event) {
+
   bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
+  if(event->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
 #ifdef TA_OS_MAC
   // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
+  if(event->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
 #endif
   if(ctrl_pressed) {
-    int vl, mn, mx, ss, ps;
-    QScrollBar* scb = verticalScrollBar();
-    if(scb) {
-      vl = scb->value();
-      mx = scb->maximum();
-      mn = scb->minimum();
-      ss = scb->singleStep();
-      ps = scb->pageStep();
+    QPersistentModelIndex newCurrent;
+    switch (event->key()) {
+    case Qt::Key_N:
+      newCurrent = moveCursor(MoveDown, event->modifiers());
+      break;
+    case Qt::Key_P:
+      newCurrent = moveCursor(MoveUp, event->modifiers());
+      break;
+    case Qt::Key_U:
+      newCurrent = moveCursor(MovePageUp, event->modifiers());
+      break;
+    case Qt::Key_V:
+      newCurrent = moveCursor(MovePageDown, event->modifiers());
+      break;
     }
-    if(e->key() == Qt::Key_N) {
-      e->accept();
-      if(scb) {
-	vl += ss;
-	if(vl >= mx) vl = mx;
-	scb->setValue(vl);
-      }
-    }
-    else if(e->key() == Qt::Key_P) {
-      e->accept();
-      if(scb) {
-	vl -= ss;
-	if(vl <= mn) vl = mn;
-	scb->setValue(vl);
-      }
-    }
-    if(e->key() == Qt::Key_V) {
-      e->accept();
-      if(scb) {
-	vl += ps;
-	if(vl >= mx) vl = mx;
-	scb->setValue(vl);
-      }
-    }
-    else if(e->key() == Qt::Key_U) {
-      e->accept();
-      if(scb) {
-	vl -= ps;
-	if(vl <= mn) vl = mn;
-	scb->setValue(vl);
-      }
-    }
-    else {
-      inherited::keyPressEvent( e );
+
+    QPersistentModelIndex oldCurrent = currentIndex();
+    if (newCurrent != oldCurrent && newCurrent.isValid()) {
+      setCurrentIndex(newCurrent);
+      return;
     }
   }
-  else {
-    inherited::keyPressEvent( e );
-  }
+  inherited::keyPressEvent( event );
 }
 
 //////////////////////////
