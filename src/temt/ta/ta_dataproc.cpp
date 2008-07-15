@@ -215,6 +215,9 @@ String DataSelectEl::GetDisplayName() const {
 }
 
 bool DataSelectEl::Eval(const Variant& val) {
+  if(use_var && (bool)var) {
+    cmp = var->GetVar();	// get current val
+  }
   switch(rel) {
   case EQUAL:
     return val == cmp;
@@ -242,6 +245,9 @@ void DataSelectEl::CheckThisConfig_impl(bool quiet, bool& rval) {
     CheckError(col_lookup->is_matrix, quiet, rval, "cannot use matrix column to select");
   }
   CheckError(use_var && !var, quiet, rval, "use_var is selected but no var variable is set!");
+  if(use_var && (bool)var) {
+    CheckError(var->HasVarFlag(ProgVar::LOCAL_VAR), quiet, rval, "var for use_var is a local variable -- must be a global var in .args or .vars");
+  }
 }
 
 void DataSelectSpec::Initialize() {
@@ -1772,12 +1778,6 @@ const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
   if(!src_data_var)
     return il + "// DataSelectRows: src_data_var not set!  cannot run!\n";
   String rval = il + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
-  for(int i=0;i<select_spec.ops.size; i++) {
-    DataSelectEl* el = (DataSelectEl*)select_spec.ops[i];
-    if(el->use_var && (bool)el->var) {
-      rval += il1 + "dsp->select_spec.ops[" + String(i) + "].cmp = " + el->var->name + ";\n";
-    }
-  }
   if(dest_data_var) {
     rval += il1 + "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
       src_data_var->name + ", dsp->select_spec);\n";

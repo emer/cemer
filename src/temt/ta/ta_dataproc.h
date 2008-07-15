@@ -202,9 +202,9 @@ public:
   };
 
   Relations	rel;		// relation of column to expression for selection
-  bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the selection value (only used if this is embedded in a DataSelectRowsProg program element)
+  bool		use_var;	// #APPLY_IMMED if true, use a program variable to specify the selection value
   Variant	cmp;		// #CONDEDIT_ON_use_var:false literal compare value of column to this comparison value
-  ProgVarRef	var;		// #CONDEDIT_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element)
+  ProgVarRef	var;		// #CONDEDIT_ON_use_var:true variable that contains the comparison value: note -- this MUST be a global var in vars or args, not in local vars!
 
   bool	Eval(const Variant& val); // evaluate expression
 
