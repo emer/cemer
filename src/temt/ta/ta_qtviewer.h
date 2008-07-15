@@ -908,6 +908,12 @@ INHERITED(QMainWindow)
 friend class taDataLink;
 friend class MainWindowViewer;
 public: 
+#ifndef __MAKETA__
+  enum CustomEventType {
+    CET_FILE_CLOSE		= QEvent::User + 1, 
+  };
+#endif
+
 //nn  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
 
@@ -1091,7 +1097,9 @@ protected:
   bool			m_is_proj_browser; // true if this is a project browser (false for simple browsers)
   bool			m_is_proj_viewer; // true if this is a project viewer
   int			m_unique_id;
+  
   override void 	closeEvent(QCloseEvent* ev);
+  override void		customEvent(QEvent* ev);
   bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);
   override void 	moveEvent(QMoveEvent* ev);

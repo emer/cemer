@@ -9,14 +9,15 @@
 // switches and optional subswitches
 //#define UN_IN_CON // true if target unit is in con
 //#define USE_V_CON // use slow access to Cn -- for benching
+#define USE_CON_ARRAY // use a ConArray just like Leabra
+
 #define CON_RECV 0 // owned by RecvCons
 #define CON_SEND 1 // owned by SendCons
 
-#define CON_IN CON_RECV
+#define CON_IN CON_SEND
 
 // template, subswitches, and catch
 #if (CON_IN == CON_RECV)
-# define USE_CON_ARRAY // use a ConArray just like Leabra
 #elif (CON_IN == CON_SEND)
 #else
 # error("CON_IN not set")
@@ -106,8 +107,11 @@ protected:
 // against Emergent/Leabra
 class ConArray {
 public:
+  char			dummy_cruft[2*sizeof(void*)]; // cruft
   int			con_size;
+  void*			dummy_con_type; // cruft
   int			size;
+  int			dummy_alloc_size; // cruft
   char*			cons;		
   
   void			SetSize(int i);
@@ -115,6 +119,7 @@ public:
     { return (Connection*)&(cons[con_size * idx]); }
     
   ConArray();
+  virtual ~ConArray() {}
 };
 #endif
 /* The wts array pointers are actually subpointers
@@ -188,10 +193,17 @@ public:
   inline Unit*		Un(int i) {return units[i];}
 # endif
 #elif (CON_IN == CON_SEND)
+# ifdef USE_CON_ARRAY
+  ConArray		cons; // flat array -- ReadOnly!!! you must access safely!!!
+  inline Connection*	Cn(int i) {return cons.FastEl(i);}
+  override Connection*	V_Cn(int i) {return cons.FastEl(i);}
+  inline float&		Wt(int i) {return cons.FastEl(i)->wt;} // SLOW!
+# else
   Connection*		cons; // flat array -- ReadOnly!!! you must access safely!!!
   inline Connection*	Cn(int i) {return &(cons[i]);}
   override Connection*	V_Cn(int i) {return &(cons[i]);}
   inline float&		Wt(int i) {return cons[i].wt;} // SLOW!
+# endif
 # ifdef UN_IN_CON
   override Unit*	Un(int i) {return cons[i].un;} // SLOW!
 # endif

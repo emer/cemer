@@ -324,6 +324,8 @@ void taiMiscCore::app_aboutToQuit() {
 //NOTE: Qt will not process any more events at this point!
   if (timer)
     timer->stop();
+  // do wait proc, to do final deferred deletes
+  WaitProc();
 }
 
 void taiMiscCore::CheckConfigResult_(bool ok) {

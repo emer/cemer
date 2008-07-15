@@ -171,13 +171,20 @@ bool tabMisc::DoDelayedCloses() {
       taBase* it = delayed_close.FastEl(i);
       // we need to grab count, because we always remove, and it could delete
       int refn = taBase::GetRefn(it); 
+#ifdef DEBUG
+      if (refn != 1) {
+	taMisc::Error("tabMisc::delayed_close: item had refn != 1, was=",
+	  String(refn), "type=", it->GetTypeDef()->name, "name=",
+	  it->GetName());
+      }
+#endif
       delayed_close.RemoveIdx(i);
-      //TODO: maybe should warn if refn>2, since that will mean refs remain
+/*obs      //TODO: maybe should warn if refn>2, since that will mean refs remain
       if (refn > 1) {
 	it->Close(); // tries owner if any, else just unrefs, which should delete
       } else if (refn < 1) { // VERY BAD! ref s/nb < 1!
 	taMisc::Error("tabMisc::delayed_close: item had refn<1!");
-      }
+      }*/
     }
     did_some = true;
   }
@@ -198,19 +205,17 @@ bool tabMisc::DoDelayedUpdateAfterEdits() {
 
 bool tabMisc::DoDelayedFunCalls() {
   bool did_some = false;
-  if (delayed_funcalls.base_funs.size > 0) {
-    while(delayed_funcalls.base_funs.size > 0) { // note this must be fifo!
-      NameVar& nv = delayed_funcalls.base_funs.FastEl(0);
-      taBase* it = nv.value.toBase();
-      String fun_nm = nv.name;
-      if(it) {
-	it->CallFun(fun_nm);
-      }
-      delayed_funcalls.base_funs.RemoveIdx(0); // note: we don't care about keeping lists in sync -- the refs list is only for delete notification
+  while (delayed_funcalls.size > 0) {// note this must be fifo!
+    // note: get all details before call, then remove
+    FunCallItem* fci = delayed_funcalls.FastEl(0);
+    taBase* it = fci->it;
+    String fun_name = fci->fun_name;
+    delayed_funcalls.RemoveIdx(0); // deletes fci
+    if (it) {
+      it->CallFun(fun_name);
     }
-    delayed_funcalls.Reset();	// clear out both lists
-    did_some = true;
   }
+  did_some = true;
   return did_some;
 }
 
@@ -350,13 +355,7 @@ MemberDef* taBase::no_mdef = NULL;
 void taBase::Ref(taBase& it) { 
   Ref(&it);
 }
-
 void taBase::Ref(taBase* it) {
-//TEMP
-/*if (tabMisc::root && (it == tabMisc::root->viewers.SafeEl(0))) {
-  int i = 0;
-  ++i;
-}*/
   it->refn++;
 }
 
@@ -2203,10 +2202,17 @@ void taBase::Close() {
 }
 
 void taBase::CloseLater() {
+  TAPtr own = GetOwner();
+  if (own && own->CloseLater_Child(this))
+    return;
   tabMisc::DelayedClose(this);
 }
 
 bool taBase::Close_Child(TAPtr) {
+  return false;
+}
+
+bool taBase::CloseLater_Child(TAPtr) {
   return false;
 }
 
@@ -2817,7 +2823,7 @@ void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
   // note: dl has already done a RemoveDataLink on us
   taBase* tab = dl->taData();
   if (tab) { // should exist!
-    // note: we need to remove all instances, in case mutliply-added
+    // note: we need to remove all instances, in case multiply-added
     while (RemoveEl(tab)) {;} 
     if (m_own) {
       m_own->DataDestroying_Ref(this, tab);
@@ -3043,6 +3049,18 @@ void taList_impl::Close() {
 }
 
 bool taList_impl::Close_Child(TAPtr obj) {
+  return RemoveEl(obj);
+}
+
+bool taList_impl::CloseLater_Child(TAPtr obj) {
+#ifdef DEBUG
+  if (obj->refn <= 0) {
+    cerr << "WARNING: taList_impl::CloseLater_Child: taBase refn <= 0 for item type="
+      << obj->GetTypeDef()->name.chars() << "name='" << obj->GetName().chars() << "'\n";
+  }
+#endif
+  // add to delayed list first, thus ref'ing so we don't delete
+  tabMisc::DelayedClose(obj);
   return RemoveEl(obj);
 }
 
@@ -4316,43 +4334,33 @@ bool NameVar_Array::SetVal(const String& nm, const Variant& vl) {
 // taBase_FunCallList	//
 //////////////////////////
 
-void taBase_FunCallList::Initialize() { 
-  base_refs.setOwner(this);
-}
 
-void taBase_FunCallList::Destroy() {
-  base_refs.Reset();
-  base_funs.Reset();
-}
-
-void taBase_FunCallList::Reset() {
-  base_refs.Reset();
-  base_funs.Reset();
-}
-
-bool taBase_FunCallList::DeleteBase_Funs(taBase* obj) {
-  bool got_one = false;
-  for(int i = base_funs.size-1; i>=0; i--) {
-    NameVar& nv = base_funs.FastEl(i);
-    taBase* it = nv.value.toBase();
-    if(it == obj) {
-      base_funs.RemoveIdx(i);
-      got_one = true;
-    }
-  }
-  return got_one;
+void taBase_FunCallList::El_Done_(void* it_) {
+  FunCallItem* it = (FunCallItem*)it_;
+  it->it->RemoveDataClient(this);
+  delete it;
 }
 
 bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
-  NameVar nv(fun_name, Variant(obj));
-  base_funs.Add(nv);
-  base_refs.AddUnique(obj);
+  FunCallItem* fci = new FunCallItem(obj, fun_name);
+  Add(fci);
+  obj->AddDataClient(this); 
   return true;
 }
 
-void taBase_FunCallList::DataDestroying_Ref(taBase_RefList* src, taBase* obj) {
-  if(src != &base_refs) return;	// presumably shouldn't happen
-  if(!DeleteBase_Funs(obj)) {
+void taBase_FunCallList::DataLinkDestroying(taDataLink* dl) {
+  taBase* obj = dl->taData();
+  if (!obj) return; // shouldn't happen;
+  bool got_one = false;
+  for(int i = size-1; i>=0; i--) {
+    FunCallItem* fci = FastEl(i);
+    if(fci->it == obj) {
+      RemoveIdx(i);
+      got_one = true;
+    }
+  }
+  
+  if(!got_one) {
     taMisc::Error("Internal error -- taBase_FunCallList DataDestroying_Ref didn't find base in base_funs!");
   }
 }

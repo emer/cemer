@@ -157,6 +157,13 @@ win32 {
 	-I$${EMERGENT_DIR} \
 	-I$${QMAKE_INCDIR_QT}/Qt
 }
+#omg what a mess is mac... this is for the standard location of packages
+#TODO: add everything, for Network, etc.
+macx {
+  MAKETA_INCLUDEPATH +=\
+	-I/Library/Frameworks/QtCore.framework/Versions/4/Headers \
+	-I/Library/Frameworks/QtGui.framework/Versions/4/Headers 
+}
 
 DESTDIR = $${THIS_ROOT}/lib/plugins$${BUILD_EXT_SF}
 

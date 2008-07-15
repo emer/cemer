@@ -165,7 +165,16 @@ void SendCons::setSize_impl(int i) {
   units = new Unit*[i];
 # endif
 #elif (CON_IN == CON_SEND)
+# ifdef USE_CON_ARRAY
+  cons.SetSize(i);
+# else
   cons = (Connection*)malloc(sizeof(Connection) * i);
+# endif
+
+
+
+
+
 #endif
 }
 
@@ -215,14 +224,21 @@ void ConSpec::Compute_SRAvg(Network* /*net*/, Unit* un) {
   const float su_act = un->act;
   for(int g = 0; g < un->send.size; g++) {
     SendCons* cg = un->send.FastEl(g);
+# ifdef USE_CON_ARRAY
+    for (int i = 0; i < cg->cons.size; ++i) {
+      Connection* cn = cg->Cn(i);
+      cn->sravg += su_act * cg->Un(i)->act;
+    }
+# elif defined(UN_IN_CON)
     Connection* cons = cg->cons;
     const int cg_size = cg->size;
-# ifdef UN_IN_CON
     for (int i = 0; i < cg_size; ++i) {
       Connection* cn = &(cons[i]);
       cn->sravg += su_act * cn->un->act;
     }
 # else
+    Connection* cons = cg->cons;
+    const int cg_size = cg->size;
     Unit** units = cg->units;
     for (int i = 0; i < cg_size; ++i) {
       Connection* cn = &(cons[i]);
@@ -884,12 +900,17 @@ void NetTask::Send_Netin_0(Unit* su) {
       Send_Netin_inner_0(cn->wt, cn->un->net, su_act_eff);
     }
 # else
+#   ifdef USE_CON_ARRAY // highest priority
+    for (int i=0; i < send_gp->cons.size; i++) {
+      Send_Netin_inner_0(send_gp->Cn(i)->wt, send_gp->Un(i)->net, su_act_eff);
+    }
+#   elif defined( USE_V_CON)
     Unit** units = send_gp->units; // unit pointer
-#   ifdef USE_V_CON
     for (int i=0; i < send_sz; i++) {
       Send_Netin_inner_0(send_gp->V_Cn(i)->wt, units[i]->net, su_act_eff);
     }
 #   else
+    Unit** units = send_gp->units; // unit pointer
     Connection* cons = send_gp->cons; 
     for (int i=0; i < send_sz; i++) {
       Send_Netin_inner_0(cons[i].wt, units[i]->net, su_act_eff);
@@ -1090,12 +1111,17 @@ void NetTask_N::Send_Netin_Array() {
           Send_Netin_inner_0(cn->wt, excit[cn->un->uni], su_act_eff);
         }
 # else
+# ifdef USE_CON_ARRAY // highest priority
+        for (int i=0; i < send_gp->cons.size; i++) {
+          Send_Netin_inner_0(send_gp->Cn(i)->wt, excit[send_gp->Un(i)->uni], su_act_eff);
+        }
+# elif defined(USE_V_CON)
         Unit** units = send_gp->units; // unit pointer
-#   ifdef USE_V_CON
 	for (int i=0; i < send_sz; i++) {
 	Send_Netin_inner_0(send_gp->V_Cn(i)->wt, excit[units[i]->uni], su_act_eff);
 	}
 #   else
+        Unit** units = send_gp->units; // unit pointer
         Connection* cons = send_gp->cons; 
         for (int i=0; i < send_sz; i++) {
           //const int targ_i = uns[i];

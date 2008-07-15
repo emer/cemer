@@ -1240,6 +1240,8 @@ public:
   // #IGNORE an immediate version of Close for use in code (no waitproc delay)
   virtual bool		Close_Child(TAPtr obj);
   // #IGNORE actually closes a child object (should be immediate child)
+  virtual bool		CloseLater_Child(TAPtr obj);
+  // #IGNORE actually closes a child object (should be immediate child) but defers deletion to loop
 
   virtual void		Help();
   // #MENU #CAT_Display get help on using this object
@@ -1768,6 +1770,7 @@ public:
 
   override void	Close();
   override bool	Close_Child(TAPtr obj);
+  override bool	CloseLater_Child(TAPtr obj);
   override void	ChildUpdateAfterEdit(TAPtr child, bool& handled); 
   override void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL); 
 
@@ -2551,26 +2554,35 @@ private:
 TA_ARRAY_OPS(NameVar_Array)
 
 
-class TA_API taBase_FunCallList: public taOBase, public IRefListClient {
-  // function call list manager
-INHERITED(taOBase)
+class TA_API FunCallItem {
+// #NO_INSTANCE
 public:
-  NameVar_Array		base_funs;	// variant val is base*, name is function name -- this is the primary list to use for calling funs, etc
-  taBase_RefList 	base_refs;	// references to base objects -- used ONLY for notify if they destroy -- this is a Unique list and is not in any matching order with base_funs
+  taBase*		it;
+  String		fun_name;
+  FunCallItem(taBase* it_, const String& fn) {it = it_; fun_name = fn;}
+};
+
+class TA_API taBase_FunCallList: public taPtrList<FunCallItem>, public IDataLinkClient {
+  // #INSTANCE function call list manager
+INHERITED(taPtrList<FunCallItem>)
+public:
 
   bool	AddBaseFun(taBase* obj, const String& fun_name); // add base + function -- no check for unique on base_funs
-  void	Reset();		// reset both lists
-  bool	DeleteBase_Funs(taBase* obj); // delete base from wherever it might appear in base_funs list
   
-  TA_BASEFUNS_NOCOPY(taBase_FunCallList);
+  taBase_FunCallList() {}
+  ~taBase_FunCallList() {Reset();}
 
 public: // ITypedObject interface
   override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_taBase_FunCallList;}
 
-public: // IRefListClient interface
-  override void	DataDestroying_Ref(taBase_RefList* src, taBase* ta);
-  override void	DataChanged_Ref(taBase_RefList* src, taBase* ta,
-				int dcr, void* op1, void* op2) { };
+public: // IDataLinkClient interface
+  override void		DataLinkDestroying(taDataLink* dl);
+  override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {}
+
+protected:
+  override void	El_Done_(void* it); // unref link
+
 private:
   void Initialize();
   void Destroy();

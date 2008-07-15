@@ -3922,6 +3922,19 @@ void iMainWindowViewer::fileSaveAll() {
   tabMisc::root->SaveAll();
 }
 
+void iMainWindowViewer::customEvent(QEvent* ev_) {
+  // we return early if we don't accept, otherwise fall through to accept
+  switch ((int)ev_->type()) {
+  case CET_FILE_CLOSE: {
+    taProject* proj = curProject();
+    if (!proj) return;
+    proj->CloseLater();
+  } break;
+  default: inherited(ev_); 
+    return; // don't accept
+  }
+  ev_->accept();
+}
 void iMainWindowViewer::fileClose() {
   taProject* proj = curProject();
   if (!proj) return;
@@ -3940,7 +3953,11 @@ void iMainWindowViewer::fileClose() {
       return;
     }
   }
-  proj->CloseLater();
+  // send async event so deleting of menu items doesn't crash us
+//  QEvent* ev = new QEvent((QEvent::Type)CET_FILE_CLOSE);
+//  QCoreApplication::postEvent(this, ev);
+//TEMP
+proj->CloseLater();
 }
 
 void iMainWindowViewer::fileOptions() {

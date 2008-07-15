@@ -284,8 +284,6 @@ void DataViewer::WidgetDeleting() {
   WidgetDeleting_impl();
   if (deleteOnWinClose()) {
     // do a deferred delete
-    // NOTE: these are kind of dangerous and can cause issues...
-    taBase::Ref(this); // to prevent us deleting when removed from list
     CloseLater();
   }
 }
