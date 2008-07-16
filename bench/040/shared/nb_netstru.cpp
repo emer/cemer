@@ -530,56 +530,40 @@ void NetEngine::Initialize_impl() {
   net_tasks.Add(tsk);
 }
 
-void NetEngine::DoProc(int proc_id) {
-  NetTask* tsk = net_tasks.SafeEl(0);
-  //if (!tsk) return;
-  tsk->g_u = 0;
-  tsk->proc_id = proc_id;
-  tsk->run();
+void NetEngine::DoProc(Visitor_impl* v, VisitProc_t vp, void* aux) {
+  vp(v, aux);
 }
 
 void NetEngine::ComputeNets() {
   Nb::n_tot = 0;
-  ComputeNets_impl();
-//#ifdef DEBUG -- ALWAYS do this! too easy for this to fail!
+/*TODO  ComputeNets_impl();
   if (!(algo & SEND_FLAG) && (Nb::n_tot != net->n_units_flat)) {
     cerr << "ERROR: NetEngine::ComputeNets: n_tot != n_units, was: "
       << Nb::n_tot << "\n";
-  }
-//#endif
+  }*/
 }
 
 void NetEngine::ComputeNets_impl() {
-  switch (algo) {
-  case RECV:
-//  case RECV_SMART:
-    DoProc(NetTask::P_Recv_Netin);
-    break;
-  case SEND_CLASH:
-  case SEND_ARRAY: // ignore for single, trapped for N
-    DoProc(NetTask::P_Send_Netin_Clash);
-    break;
-  default: break;
-  }
+//TODO
 }
 
 float NetEngine::ComputeActs() {
   // compute activations (only order number of units)
   Nb::tot_act = 0.0f;
-  DoProc(NetTask::P_ComputeAct);
+/*TODO  DoProc(NetTask::P_ComputeAct);
   for (int t = 0; t < net_tasks.size; ++t) {
     NetTask* tsk = net_tasks[t];
     Nb::tot_act += tsk->my_act;
-  }
+  }*/
   return Nb::tot_act;
 }
 
 void NetEngine::Compute_SRAvg() {
-  DoProc(NetTask::P_ComputeSRAvg);
+//TODO  DoProc(NetTask::P_ComputeSRAvg);
 }
 
 void NetEngine::Compute_Weights() {
-  DoProc(NetTask::P_ComputeWeights);
+//TODO  DoProc(NetTask::P_ComputeWeights);
 }
 
 void NetEngine::Log(bool hdr) {
@@ -649,28 +633,21 @@ void ThreadNetEngine::ComputeNets_impl() {
   else inherited::ComputeNets_impl();
 }
 
-void ThreadNetEngine::DoProc(int proc_id) {
+/*void ThreadNetEngine::DoProc(int proc_id) {
 //  const int n_units_flat = net->n_units_flat;
   // start all the other threads first...
-/*na, because we always sync after
-  // have to suspend then resume in case not finished from last time
-  for (int t = 1; t < n_procs; ++t) {
-    QTaskThread* th = (QTaskThread*)threads[t];
-    NetTask* tsk = net_tasks[t];
-    th->suspend(); // prob already suspended
-  }*/
   NetTask::g_u = 0;
   
   for (int t = 1; t < n_procs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
     NetTask* tsk = net_tasks[t];
-    tsk->proc_id = proc_id;
+//    tsk->proc_id = proc_id;
     th->resume();
   }
   
   // then do my part
   NetTask* tsk = net_tasks[0];
-  tsk->proc_id = proc_id;
+//  tsk->proc_id = proc_id;
   tsk->run_time.Start(false);
   tsk->run();
   tsk->run_time.Stop(); 
@@ -683,7 +660,7 @@ void ThreadNetEngine::DoProc(int proc_id) {
     th->suspend(); // suspending is syncing with completion of loop
     tsk->sync_time.Stop(); 
   }
-}
+}*/
 
 void ThreadNetEngine::OnBuild() {
   // we just partition them round-robin
@@ -702,48 +679,8 @@ void ThreadNetEngine::OnBuild() {
   }
 }
 
-#ifdef SEND_ARY_ASYM
 void ThreadNetEngine::ComputeNets_SendArray() {
-  DoProc(NetTask::P_Send_Netin_Array);
-  const int tsz = net_tasks.size - 1; // we only do Tasks1-N
-  if (tsz <= 0) return; // there were no additional buffs to accum
-  // post stuff
-//  RollupScratch_Netin();
-  // called in Thread 0, so allocate the Task0
-  NetTask* nt0 = net_tasks[0];
-  nt0->overhead.Start(false);
-  const int n_units_flat = net->n_units_flat;
-  Unit** g_units = net->g_units; // cache -- this is also task0's guys
-  // 2-thread version is optimized
-  if (tsz == 1) {
-    float* nets = dynamic_cast<NetTask_N*>(net_tasks[1])->excit;  
-    for (int i = 0; i < n_units_flat; ++i) {
-      g_units[i]->net += nets[i]; // since Task0 was also accumulating
-    }
-  } else { // tsz > 1, need to rollup
-    // make local array pointers, for speed
-    float** nets = new float*[tsz];  
-    for (int t = 1; t < net_tasks.size; t++) {
-      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
-      nets[t-1] = tsk->excit; // cache
-    }
-    
-    for (int i = 0; i < n_units_flat; ++i) {
-      //TODO: this can be optimized using SSE or equiv compiler commands
-      // to rollup 4 floats at once in parallel
-      float tnet = 0.0f;
-      for (int t = 0; t < tsz; ++t) {
-        tnet += nets[t][i];
-      }
-      g_units[i]->net += tnet; // since Task0 was also accumulating
-    }
-    delete[] nets;
-  }
-  nt0->overhead.Stop();
-}
-#else // SYM version
-void ThreadNetEngine::ComputeNets_SendArray() {
-  DoProc(NetTask::P_Send_Netin_Array);
+/*TODO  DoProc(NetTask::P_Send_Netin_Array);
 
   // post stuff
 //  RollupScratch_Netin();
@@ -778,9 +715,9 @@ void ThreadNetEngine::ComputeNets_SendArray() {
     }
     delete[] nets;
   }
-  nt0->overhead.Stop();
+  nt0->overhead.Stop();*/
 }
-#endif
+
 
 //////////////////////////////////
 //  NetTask -- mixed classes	//
@@ -796,14 +733,6 @@ NetTask::NetTask(NetEngine* engine) {
 
 void NetTask::run() {
   ++n_run;
-  switch (proc_id) {
-  case P_Recv_Netin: Recv_Netin(); break;
-  case P_Send_Netin_Clash: Send_Netin_Clash(); break;
-  case P_Send_Netin_Array: Send_Netin_Array(); break;
-  case P_ComputeAct: ComputeAct(); break;
-  case P_ComputeSRAvg: Compute_SRAvg(); break;
-  case P_ComputeWeights: Compute_Weights(); break;
-  }
 }
 
 void NetTask::Send_Netin_0(Unit* su) {

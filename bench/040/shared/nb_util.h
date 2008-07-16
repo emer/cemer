@@ -71,6 +71,63 @@ inline int AtomicFetchAdd(int* operand, int incr)
 }
 #endif
 
+/* Visitor pattern
+
+  A Visitor is an object that iterates a collection, calling a function
+  for each item visited.
+  
+  We use two main variants of Visitor:
+  FastVisitor -- suitable for single-threaded visitation
+  SafeVisitor -- suitable for multi-threaded visitiation
+  
+  We also provide the following options:
+  * inc/dec ordering -- for upwards (typical) or downwards order
+  * one/stride advancing -- for single (1) vs strided
+  * unitary/blocked -- whether the visitation chunky is unitary or blocked
+    -- blocks provide better cache coherency/usage by breaking lists up
+       into blocks of at least the size of a cache line (usually 64 bytes);
+       the typical chunk size is 16
+
+  Each "visit" conjures a reference to a visitee, then calls the supplied
+  visiting procedure.
+  
+  The Visitor template takes two arguments:
+    class V -- the visitee object type
+    class C -- the visitor client -- this class must supply one or more of
+      the following:
+      void _Visit_inc(VisitProc_t vp, void* aux,
+        int i_fm = 0, int i_to = -1, int_by = 1);
+      void _Visit_dec(VisitProc_t vp, void* aux,
+        int i_fm = -1, int i_to = 0, int_by = -1);
+*/
+
+
+// generic, untyped version of VisitProc
+typedef void (*VisitProc_t)(void* v, void* aux);
+
+class Visitor_impl {
+public:
+};
+
+template <typename V, class C>
+class Visitor: public Visitor_impl {
+INHERITED(Visitor_impl)
+public:
+  typedef void (*VisitProc_t)(V* v, void* aux);
+  
+  C*		c;
+  
+  void 		Run_inc(VisitProc_t vp, void* aux = NULL,
+        int i_fm = 0, int i_to = -1)
+  {c->_Visit_inc((::VisitProc_t)vp, aux, i_fm, i_to);}
+  void 		Run_dec(VisitProc_t vp, void* aux = NULL,
+        int i_fm = -1, int i_to = 0)
+  {c->_Visit_dec((::VisitProc_t)vp, aux, i_fm, i_to);}
+  
+  Visitor(C* c_): c(c_) {}
+};
+
+
 #if (QT_VERSION < 0x040400) 
 class QRunnable {
 public:
@@ -84,14 +141,13 @@ public:
 class Task : public QRunnable {
 public:
   int		task_id;
-  int		proc_id;
   TimeUsed	start_latency; // amount of time waiting to start (n/a for main thread)
   TimeUsed	run_time; // amount of time actually running jobs
   TimeUsed	nibble_time; // (task 0 only) time spent nibbling (if applicable)
   TimeUsed	sync_time; // (task 0 only) time spent syncing (if applicable)
   TimeUsed	overhead; // for algos with overhead, like the Send_Array
   
-  Task() {task_id = -1; proc_id = 0;}
+  Task() {task_id = -1;}
 };
 
 
@@ -138,6 +194,13 @@ protected:
     {if ((i >= 0) && (i < size)) return el[i]; return NULL;}
   virtual void	Release_(int /*fm*/, int /*to*/) {} // only needed for taList
 
+public: // Visitor i/f
+  void _Visit_inc(VisitProc_t vp, void* aux,
+    int i_fm = 0, int i_to = -1) {if (i_to < 0) i_to = size - 1;
+    for (int i = i_fm; i <= i_to; ++i) vp(el[i], aux);} 
+  void _Visit_dec(VisitProc_t vp, void* aux,
+    int i_fm = -1, int i_to = 0) {if (i_fm < 0) i_fm = size - 1;
+    for (int i = i_fm; i >= i_to; --i) vp(el[i], aux);} 
 };
 
 template<class T> 
@@ -150,10 +213,11 @@ public:
   T*		SafeEl(int i) const	{ return (T*)SafeEl_(i); }
   T*		operator[](int i) const		{ return (T*)el[i]; }
   void		Set(T* it, int i)		{  el[i] = it; }
-  
   void		Add(T* it) {Add_(it);}
+  
   taPtrList() {}
   explicit taPtrList(int alloc) {Alloc(alloc);}
+  
 };
 
 template<class T> 
@@ -189,7 +253,16 @@ template<class T>
 T* crealloc(T* el, int cur_size, int new_size) {
   T* rval = (T*)realloc(el, size_t(sizeof(T) * new_size));
   if (new_size > cur_size) {
-    memset(&(rval[cur_size+1]), 0, sizeof(T) * (new_size - cur_size));
+    memset(&(rval[cur_size]), 0, sizeof(T) * (new_size - cur_size));
+  }
+  return rval;
+}
+
+// generic version
+static void* crealloc(void* el, int cur_size, int new_size, int item_size) {
+  char* rval = (char*)realloc(el, size_t(new_size * item_size));
+  if (new_size > cur_size) {
+    memset(&(rval[cur_size *item_size]), 0, item_size * (new_size - cur_size));
   }
   return rval;
 }

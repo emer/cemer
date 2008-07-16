@@ -22,8 +22,6 @@
 # error("CON_IN not set")
 #endif
 
-// for SEND_ARRAY, whether to use the asymmetrical version
-//#define SEND_ARY_ASYM
 
 // optional subs
 class Connection;
@@ -336,6 +334,11 @@ public:
   virtual void		Initialize(); // called after creation, usually override impl
   virtual void		OnBuild() {} 
   
+  // Tasking
+  
+  virtual void		DoProc(Visitor_impl* v, VisitProc_t vp, void* aux);
+  // default just calls directly w/ single instance
+  
   // generally don't override:
   void 			ComputeNets();
   virtual float 	ComputeActs();
@@ -348,7 +351,6 @@ public:
   virtual ~NetEngine();
 protected:
   virtual void		Initialize_impl(); // override this
-  virtual void 		DoProc(int proc_id);
   virtual void 		ComputeNets_impl(); // inner overridable part
 };
 
@@ -366,7 +368,7 @@ protected:
   override void		Initialize_impl();
   void			DeleteThreads();
   void 			MakeThreads();
-  override void 	DoProc(int proc_id);
+//  override void 	DoProc(int proc_id);
   override void 	ComputeNets_impl();
   void 			ComputeNets_SendArray();
 };
@@ -375,15 +377,6 @@ protected:
 class NetTask: public Task {
 public:
   static int	g_u;  // shared by ALL
-  
-  enum Proc {
-    P_Recv_Netin,
-    P_Send_Netin_Clash,
-    P_Send_Netin_Array,
-    P_ComputeAct,
-    P_ComputeSRAvg,
-    P_ComputeWeights
-  };
   
   Network*	net;
 // All

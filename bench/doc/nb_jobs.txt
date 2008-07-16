@@ -2,6 +2,81 @@ For parallel execution, we need to develop some constructs that
 will enable us to efficiently and cleanly make use of multi-cores
 and auxiliary computing resources.
 
+Issues
+
+* need to separate the mechanism of iteration from the algorithm
+  -- most Network steps can then become threadable simply by
+  having a dispatcher call several copies 
+* practical point: EVERYTHING we iterate is either in a List
+  or a Group
+* the algos in Emergent are byzantine, and the specialized ones
+  often pass in three or more parameters of context, such as
+  LeabraLayerSpec, LeabraConSpec, etc.; the call chains are also
+  byzantine, often passing through the obj to the spec
+* some of the routines have this structure:
+   // do some setup
+   // iterate
+   //   call item fun(item, setup stuff)
+  -- this is very thread-unfriendly, and also iteration unfriendly,
+     UNLESS we can have a simple way to indicate the first vs.
+     subsequent calls
+  
+Notes:
+
+* cooperative multi-tasking/threading will require *restartable*
+  iterating, which implies that the iteratee cannot do the entire
+  thing
+* in order to insure algos don't need to know about multi-t/t the
+  easiest way might be to just pass them a small part of the allotment
+* implies an Itr/Vistr with at least i_fm and i_to capability
+* the iterator *capabilities* are limited to every routine respecting
+  them; therefore, ex. no point having "by" unless every routine uses
+  that; also, iteration may be more efficient by 1
+* separating the collection originator from the client gives MUCH
+  more flexibility; ex. the client routine doesn't need to know if
+  it is driven off layer.units or net.all_units
+* all "virtual" or "object" routines are recast statically as --
+  this lets them be easily passed as function pointers:
+
+Object
+  void SomeRoutine(...)
+  S_SomeRoutine(Object* inst, ...)
+  
+Approaches
+
+1) Top level dispatcher
+   Central level generic iterator dispatcher
+   Core routines, accept (Iterator)
+   
+2) Top level dispatcher
+   Central level generic Visitor
+   Core routines accept visitor
+
+"Local (Item)" Routines
+
+Send_Netin(Unit*)
+Compute_SRAvg(Unit*)
+
+*Dispatch' routines
+
+Network::Compute_Netin
+Network::Compute_SRAvg() // note: can be semi-async
+Network::Compute_dWt()
+Network::Compute_Weight()
+
+Pros/Cons
+Iterator approach
+* routines need to be iterator-aware, take itr as a param
+Visitor approach
+* there really aren't any "middle" routines -- just a ptr to
+  an inner routine, and a Visitor on the collection
+
+Isn't the issue related just to the middle level, the one
+that iterates? In both cases:
+* inner routines are indifferent
+
+What about doing this tasking/threading? 
+
 Jobs
 
 Let us define computation as a set of Jobs. A Job is a clearly
@@ -34,6 +109,12 @@ N-C-N-C-N-C-N-C| repeat 9 times |N-d-W-S
 We can maximize parallelism by the following:
 * minimize hard sync points
 * have overlapping jobs at different time scales
+
+Transparent Synchronization
+
+If you call a routine, that does all its work before completing,
+then you can still check if it is complete, without knowing that
+you had finished for sure.
 
 Niterating (N-way Iterating)
 
