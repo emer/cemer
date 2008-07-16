@@ -333,7 +333,8 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
 	  // 	  QRect rect(d->pressedPosition - d->offset(), visualRect(newCurrent).center());
 	  // 	  setSelection(rect, command);
 	} else {
-	  selectionModel()->setCurrentIndex(newCurrent, command);
+// 	  selectionModel()->setCurrentIndex(newCurrent, command);
+ 	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::ClearAndSelect);
 	  // 	  d->pressedPosition = visualRect(newCurrent).center() + d->offset();
 	}
 	//	selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::SelectCurrent);
