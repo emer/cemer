@@ -921,7 +921,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
     rval->setBrowserViewer(true, false);
     viewer = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
     fv = viewer->AddFrameByType(&TA_PanelViewer);
-    fv = viewer->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+    fv = viewer->AddFrameByType(&TA_T3DataViewer); // taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
     viewer->SetData(proj);
     viewer->setBrowserViewer(false, true);
     // twiddle sizes a bit, to get overlap
@@ -931,7 +931,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   } break;
   case taMisc::PVP_3PANE: {
     rval->setBrowserViewer(true, true);
-    fv = rval->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+    fv = rval->AddFrameByType(&TA_T3DataViewer); // taMisc::types.FindName("T3DataViewer")); // sleazy, but effective (and pointless???)
   } break;
   // no default, must handle all cases
   }
@@ -1118,7 +1118,24 @@ void MainWindowViewer::ConstrFrames_impl() {
     // note: don't parent the frame, since we use the api to add it
     ((DataViewer*)fv)->Constr_impl(NULL);
     win->AddFrameViewer(fv->widget());
+    // no effect:
+//     if(frames.size >= 2 && i == frames.size -1 && fv->InheritsFrom(&TA_T3DataViewer)) {
+//       // do not include the T3 guy in the tab order -- it is rather deadly
+//       fv->widget()->setFocusPolicy(Qt::NoFocus); // not tab focus! -- note: not having any effect
+//     }
   }
+  // do not include the T3 guy in the tab order -- it is rather deadly
+  // this doesn't seem to have any effect at all!
+//   if(frames.size >= 2 && frames.SafeEl(-1)->InheritsFrom(&TA_T3DataViewer)) {
+//     for (int i = 0; i < frames.size-2; ++i) {
+//       FrameViewer* fv = frames.FastEl(i);
+//       FrameViewer* fvn = frames.FastEl(i+1);
+//       if (!fv || !fvn) continue; // shouldn't happen
+//       QWidget::setTabOrder(fv->widget(), fvn->widget());
+//     }
+//     QWidget::setTabOrder(frames.SafeEl(-2)->widget(), frames.FastEl(0)->widget());
+//     // wrap back around
+//   }
 }
 
 void MainWindowViewer::ConstrToolBars_impl() {

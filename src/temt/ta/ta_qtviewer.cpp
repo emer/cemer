@@ -3417,7 +3417,7 @@ void iMainWindowViewer::AddDockViewer(iDockViewer* dv, Qt::DockWidgetArea in_are
     act->setChecked(dv->isVisible()); // note: triggers action
   //TODO: maybe need to hook up signals for undocking
 }
- 
+
 void iMainWindowViewer::AddFrameViewer(iFrameViewer* fv, int at_index) {
   if (at_index < 0) {
     body->addWidget(fv);

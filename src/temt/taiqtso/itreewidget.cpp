@@ -320,10 +320,25 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
       break;
     }
 
+    // from qabstractitemview.cpp
     QPersistentModelIndex oldCurrent = currentIndex();
     if (newCurrent != oldCurrent && newCurrent.isValid()) {
-      setCurrentIndex(newCurrent);
-      return;
+      QItemSelectionModel::SelectionFlags command = selectionCommand(newCurrent, event);
+      if (command != QItemSelectionModel::NoUpdate
+	  || style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, 0, this)) {
+	if (command & QItemSelectionModel::Current) {
+	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
+	  // 	  if (d->pressedPosition == QPoint(-1, -1))
+	  // 	    d->pressedPosition = visualRect(oldCurrent).center();
+	  // 	  QRect rect(d->pressedPosition - d->offset(), visualRect(newCurrent).center());
+	  // 	  setSelection(rect, command);
+	} else {
+	  selectionModel()->setCurrentIndex(newCurrent, command);
+	  // 	  d->pressedPosition = visualRect(newCurrent).center() + d->offset();
+	}
+	//	selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::SelectCurrent);
+	return;
+      }
     }
   }
   inherited::keyPressEvent( event );
