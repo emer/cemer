@@ -5612,6 +5612,11 @@ iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
 iDataTablePanel::~iDataTablePanel() {
 }
 
+QWidget* iDataTablePanel::firstTabFocusWidget() {
+  if(!dte) return NULL;
+  return dte->tvTable;
+}
+
 void iDataTablePanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   if(!isVisible() || !dte || !dte->isVisible()) return; // no update when hidden!
   inherited::DataChanged_impl(dcr, op1_, op2_);

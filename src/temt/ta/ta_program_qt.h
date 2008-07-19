@@ -125,6 +125,7 @@ public:
   void			defEditBgColor(); // set default color
   void			setShow(int value); // only used by expert toggle
   virtual void		Refresh(); // manual refresh
+  virtual QWidget*	firstTabFocusWidget();
 
   iProgramEditor(QWidget* parent = NULL); //
   ~iProgramEditor();
@@ -205,6 +206,7 @@ public:
   
   override bool		HasChanged_impl(); // 'true' if user has unsaved changes
   void			FillList();
+  override QWidget*	firstTabFocusWidget();
 
   iProgramPanelBase(taiDataLink* dl_);
   

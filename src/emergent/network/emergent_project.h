@@ -18,17 +18,12 @@
 #ifndef emergent_project_h
 #define emergent_project_h 1
 
-#include "ta_fontspec.h"
 #include "ta_project.h"
-#include "ta_program.h"
-#include "ta_imgproc.h"
-
-#ifdef TA_GUI
-# include "ta_seledit.h"
-# include "ta_qtviewer.h"
-#endif
-
 #include "netstru.h"
+
+class Program;
+class Program_Group; //
+class RetinaSpec; //
 
 //////////////////////////////////////////////////
 //			Wizard			//

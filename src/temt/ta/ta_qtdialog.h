@@ -165,7 +165,8 @@ protected:
 // 	EditDataPanel	//
 //////////////////////////
 
-class TA_API EditDataPanel: public iDataPanelFrame { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API EditDataPanel: public iDataPanelFrame {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for any edit dialog-like data panel
 INHERITED(iDataPanelFrame)
 friend class taiEditDataHost;
 public:
@@ -176,6 +177,8 @@ public:
   override const iColor GetTabColor(bool selected, bool& ok) const; // special color for tab; NULL means use default
   override bool		HasChanged_impl(); // 'true' if user has unsaved changes -- used to prevent browsing away
   override void		UpdatePanel(); // always do it, even when hidden; the edit sorts it out
+  override QWidget*	firstTabFocusWidget();
+
   EditDataPanel(taiEditDataHost* owner_, taiDataLink* dl_);
   ~EditDataPanel();
 
@@ -241,8 +244,8 @@ private:
   void		Init();
 };
 
-class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient
-{ // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient {
+  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
 INHERITED(QObject)
   Q_OBJECT
 friend class iDialog;
@@ -337,6 +340,9 @@ public:
   /*virtual void	Raise() {if (isDialog()) DoRaise_Dialog();}	// bring dialog or panel (in new tab) to the front*/
   virtual void 		ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL) {}
   virtual void		WidgetDeleting(); // lets us null the gui fields, and set state
+
+  virtual QWidget*	firstTabFocusWidget() { return NULL; } // first widget that accepts tab focus -- to set link between tab and contents of edit
+
   
 public: // ITypedObject i/f (common to IDLC and IDH)
   void*		This() {return this;} // override
@@ -399,8 +405,7 @@ protected:
   virtual void 		DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
   void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
-  
-  
+
 /*  override void		customEvent(QEvent* ev);
 */  
   virtual void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor 
@@ -509,8 +514,8 @@ protected slots:
 };
 
 
-class TA_API taiDataHost: public taiDataHost_impl 
-{ // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API taiDataHost: public taiDataHost_impl {
+  // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using a QGridLayout or iFormLayout (expensive and slow -- to be replaced)
 INHERITED(taiDataHost_impl)
   Q_OBJECT
 friend class iDialog;
@@ -527,6 +532,7 @@ public:
 
   QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
   QScrollArea*	  scrBody;		// scrollbars for the body items
+  QWidget*	first_tab_foc;		// first tab focus widget
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   iFormLayout*	layBody;
 #else
@@ -534,7 +540,8 @@ public:
 #endif
 
   override int		curRow() const {return cur_row;}
-  
+  override QWidget*	firstTabFocusWidget() { return first_tab_foc; }
+
   taiDataHost(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   ~taiDataHost();
 
@@ -548,24 +555,24 @@ public: // IDataLinkClient i/f -- note: only registered though for taiEDH and la
 
 protected:
 
-  virtual void		SetMultiSize(int rows, int cols) {}
+  virtual void	SetMultiSize(int rows, int cols) {}
   int 		AddSectionLabel(int row, QWidget* wid, const String& desc);
-    // add a widget, usually a label or checkbox, that will span both columns (no data)
+  // add a widget, usually a label or checkbox, that will span both columns (no data)
   int		AddNameData(int row, const String& name, const String& desc,
-    QWidget* data_wid, taiData* data_dat = NULL, MemberDef* md = NULL,
-    bool fill_hor = false);
-    // add a label item in first column, data item in second column; row<0 means "next row"; returns row
+			    QWidget* data_wid, taiData* data_dat = NULL,
+			    MemberDef* md = NULL, bool fill_hor = false);
+  // add a label item in first column, data item in second column; row<0 means "next row"; returns row
   int		AddData(int row, QWidget* data_wid, bool fill_hor = false);
-    // add a data item with no label (spanning whole row); row<0 means "next row"; returns row
+  // add a data item with no label (spanning whole row); row<0 means "next row"; returns row
   void		AddMultiRowName(iEditGrid* multi_body, int row, const String& name, const String& desc); // adds a label item in first column of multi data area -- we define here for source code mgt, since AddName etc. are similar
   void		AddMultiColName(iEditGrid* multi_body, int col, const String& name, const String& desc); // adds descriptive column text to top of a multi data item
   void		AddMultiData(iEditGrid* multi_body, int row, int col, QWidget* data); // add a data item in the multi-data area -- expands if necessary
-  override void  Constr_Box();
+  override void Constr_Box();
   virtual void	Constr_Body_impl();
   override void	Constr_Final();
 
 protected:
-  override void		InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
+  override void	InitGuiFields(bool virt = true); // NULL the gui fields -- virt used for ctor
 };
 
 
@@ -615,7 +622,7 @@ protected:
 
 
 class TA_API taiEditDataHost : public taiDataHost {
-  // // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit host for classes -- default is to assume a EditDataPanel as the widget, but the Edit subclasses override that
   Q_OBJECT
 INHERITED(taiDataHost)
 friend class EditDataPanel;
@@ -655,7 +662,7 @@ public:
   
   EditDataPanel*	dataPanel() {return panel;} // #IGNORE
   override void 	guiParentDestroying() {panel = NULL;}
-  
+
   bool			SetShow(int value, bool no_refresh = false); // change show value; returns true if we rebuilt/reshowed dialog
 
   taiEditDataHost(void* base, TypeDef* typ_ = NULL, bool read_only_ = false,
@@ -723,6 +730,9 @@ protected:
   void			DoRaise_Panel(); // what Raise() calls for panels
   override void 	DoConstr_Dialog(iDialog*& dlg);
 
+  override bool 	eventFilter(QObject *obj, QEvent *event);
+  // event filter to trigger apply button on Ctrl+Return
+  
 protected slots:
   virtual void		DoSelectForEdit(QAction* act); // act.data will be index of the SelectEdit; sel_data_index will hold the index of the data item
   virtual void		bgrp_buttonClicked(int id); // one of the section checkboxes

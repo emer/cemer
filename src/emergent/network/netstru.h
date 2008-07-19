@@ -20,19 +20,14 @@
 #ifndef netstru_h
 #define netstru_h
 
-#include "ta_script.h"
-#include "ta_datatable.h"
 #include "ta_math.h"
+#include "ta_geometry.h"
 #include "ta_time.h"
 #include "ta_dmem.h"
 #include "ta_engine.h"
 
 #include "emergent_base.h"
 #include "spec.h"
-
-#ifdef TA_GUI
-#include "t3viewer.h"
-#endif
 
 // pre-declare:
 class Connection;
@@ -61,6 +56,7 @@ class NetEngine;
 TA_SMART_PTRS(NetEngine);//
 
 // externals
+class DataTable;
 class NetMonitor;
 class NetView; //
 

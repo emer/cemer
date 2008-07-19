@@ -467,6 +467,10 @@ void EditDataPanel::ResolveChanges_impl(CancelOp& cancel_op) {
   owner->ResolveChanges(cancel_op);
 }
 
+QWidget* EditDataPanel::firstTabFocusWidget() {
+  return editDataHost()->firstTabFocusWidget();
+}
+
 
 //////////////////////////////////
 // iMethodButtonMgr		//
@@ -1463,6 +1467,7 @@ taiDataHost::taiDataHost(TypeDef* typ_, bool read_only_, bool modal_, QObject* p
   row_height = 1; // actual value set in Constr
   cur_row = 0;
   dat_cnt = 0;
+  first_tab_foc = NULL;
 }
 
 taiDataHost::~taiDataHost() {
@@ -1474,6 +1479,7 @@ void taiDataHost::InitGuiFields(bool virt) {
   splBody = NULL;
   scrBody = NULL;
   layBody = NULL;
+  first_tab_foc = NULL;
 }
 
 int taiDataHost::AddSectionLabel(int row, QWidget* wid, const String& desc) {
@@ -1552,6 +1558,13 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   layBody->addLayout(lay_dat, row, 1);
 #endif  
   
+  if(!first_tab_foc) {
+    if(data->focusPolicy() & Qt::TabFocus) {
+//       cerr << "setting first tab focus to row: " << row << " of type: " << data->metaObject()->className() << endl;
+      first_tab_foc = data;
+    }
+  }
+
   label->show(); // needed for rebuilds, to make the widget show  
   data->show(); // needed for rebuilds, to make the widget show
   
@@ -1579,6 +1592,14 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
   layBody->setRowMinimumHeight(row, row_height + (2 * LAYBODY_MARGIN)); 
   layBody->addLayout(hbl, row, 0, 1, 2); // col 0, span 1 row, span 2 cols
 #endif  
+
+  if(!first_tab_foc) {
+    if(data->focusPolicy() & Qt::TabFocus) {
+//       cerr << "setting first tab focus to row: " << row << " of type: " << data->metaObject()->className() << endl;
+      first_tab_foc = data;
+      // todo: might need to drill deeper
+    }
+  }
   
   data->show(); // needed for rebuilds, to make the widget show
   
@@ -1641,6 +1662,7 @@ void taiDataHost::Constr_Box() {
 }
 
 void taiDataHost::Constr_Body_impl() {
+  first_tab_foc = NULL;		// reset
   QVBoxLayout* vbl = new QVBoxLayout(body);
   vbl->setMargin(0);
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
@@ -2046,6 +2068,8 @@ void taiEditDataHost::Constr_RegNotifies() {
 
 void taiEditDataHost::Constr_Final() {
   inherited::Constr_Final();
+  if(body)
+    body->installEventFilter(this); // hopefully everyone below body will get it too!
 }
 
 void taiEditDataHost::DoAddMethButton(QAbstractButton* but) {
@@ -2367,6 +2391,28 @@ iMainWindowViewer* taiEditDataHost::viewerWindow() const {
   return dv;
 }
 
+bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent* e = static_cast<QKeyEvent *>(event);
+    bool ctrl_pressed = false;
+    if(e->modifiers() & Qt::ControlModifier)
+      ctrl_pressed = true;
+#ifdef TA_OS_MAC
+    // ctrl = meta on apple
+    if(e->modifiers() & Qt::MetaModifier)
+      ctrl_pressed = true;
+#endif
+    if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+//       cerr << "got ctrl+enter -- applying!" << endl;
+      Apply();			// do it!
+      return true;
+    }
+  }
+  return QObject::eventFilter(obj, event);
+}
+
+//////////////////////////////////////////////////
+//		StringDataHost
 
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
   bool read_only_, bool modal_, QObject* parent)

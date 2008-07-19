@@ -1413,6 +1413,9 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraLayer* lay, LeabraInhib* th
     else if(net->phase_no == 1) {
       u->act_p = u->act_eq;
       u->act_dif = u->act_p - u->act_m;
+      if(no_plus_testing) {
+	u->act_m = u->act_eq;	// update act_m because it is actually another test case!
+      }
       Compute_DaMod_PlusPost(u,lay,thr,net);
       Compute_ActTimeAvg(u, lay, thr, net);
     }
@@ -4992,7 +4995,12 @@ bool LeabraNetwork::Compute_TrialStats_Test() {
     break;
   case MINUS_PLUS_NOTHING:
   case MINUS_PLUS_MINUS:
-    if(phase_no == 0) is_time = true;
+    if(no_plus_testing) {
+      if(phase_no == 1) is_time = true;
+    }
+    else {
+      if(phase_no == 0) is_time = true;
+    }
     break;
   case PLUS_NOTHING:
     if(phase_no == 1) is_time = true;

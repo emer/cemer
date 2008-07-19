@@ -921,7 +921,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
     rval->setBrowserViewer(true, false);
     viewer = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
     fv = viewer->AddFrameByType(&TA_PanelViewer);
-    fv = viewer->AddFrameByType(&TA_T3DataViewer); // taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+    fv = viewer->AddFrameByType(&TA_T3DataViewer);
     viewer->SetData(proj);
     viewer->setBrowserViewer(false, true);
     // twiddle sizes a bit, to get overlap
@@ -931,7 +931,7 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   } break;
   case taMisc::PVP_3PANE: {
     rval->setBrowserViewer(true, true);
-    fv = rval->AddFrameByType(&TA_T3DataViewer); // taMisc::types.FindName("T3DataViewer")); // sleazy, but effective (and pointless???)
+    fv = rval->AddFrameByType(&TA_T3DataViewer);
   } break;
   // no default, must handle all cases
   }
@@ -954,7 +954,7 @@ MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
   
   MainWindowViewer* viewer  = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   FrameViewer* fv = viewer->AddFrameByType(&TA_PanelViewer);
-  fv = viewer->AddFrameByType(taMisc::types.FindName("T3DataViewer")); // sleazy, but effective
+  fv = viewer->AddFrameByType(&TA_T3DataViewer);
   viewer->SetData(proj);
   viewer->setBrowserViewer(false, true);
   // twiddle sizes a bit, to get overlap

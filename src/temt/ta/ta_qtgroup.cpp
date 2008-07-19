@@ -1715,6 +1715,9 @@ void DocEditDataHost::GetValue_Membs() {
   taiMisc::Update(doc);
 }
 
+QWidget* DocEditDataHost::firstTabFocusWidget() {
+  return tedHtml;
+}
 
 //////////////////////////
 //    iDocEditDataPanel	//
@@ -1743,6 +1746,11 @@ iDocEditDataPanel::~iDocEditDataPanel() {
     delete de;
     de = NULL;
   }
+}
+
+QWidget* iDocEditDataPanel::firstTabFocusWidget() {
+  if(!de) return NULL;
+  return de->firstTabFocusWidget();
 }
 
 bool iDocEditDataPanel::ignoreDataChanged() const {

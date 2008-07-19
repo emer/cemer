@@ -170,7 +170,7 @@ T3ExaminerViewer::createViewerButtons(QWidget * parent, SbPList * buttonlist)
     QPushButton * p = new QPushButton(parent);
     // Button focus doesn't really make sense in the way we're using
     // the pushbuttons.
-    //    p->setFocusPolicy(Qt::NoFocus);
+    p->setFocusPolicy(Qt::NoFocus);
     // In some GUI styles in Qt4, a default button is drawn with an
     // extra frame around it, up to 3 pixels or more. This causes
     // pixmaps on buttons to look tiny, which is not what we want.
@@ -1707,7 +1707,9 @@ void iTabBarEx::contextMenuEvent(QContextMenuEvent * e) {
 iTabWidget::iTabWidget(QWidget* parent)
 :inherited(parent)
 {
-  setTabBar(new iTabBarEx(this));
+  iTabBarEx* itbex = new iTabBarEx(this);
+  setTabBar(itbex);
+  itbex->setFocusPolicy(Qt::NoFocus); // do not focus on this guy -- nothing useful here
 }
 void iTabWidget::emit_customContextMenuRequested2(const QPoint& pos,
      int tab_idx)
@@ -1744,7 +1746,6 @@ void iT3DataViewer::Init() {
   tw->setElideMode(Qt::ElideMiddle/*Qt::ElideNone*/); // fixed now..
   //  tw->setElideMode(Qt::ElideNone); // don't elide, because it does it even when enough room, and it is ugly and confusing
 #endif
-  //  tw->setFocusPolicy(Qt::NoFocus); // do not focus on this guy!! -- no effect at all
   lay->addWidget(tw);
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
 	  this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
@@ -1760,7 +1761,6 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
     idx = tw->addTab(idvf, tab_label);
   else
     tw->insertTab(idx, idvf, tab_label);
-  //  idvf->setFocusPolicy(Qt::NoFocus); // do not focus on this guy!! -- no effect at all
   idvf->t3vs->Connect_SelectableHostNotifySignal(this, 
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
   tw->setCurrentIndex(idx); // not selected automatically

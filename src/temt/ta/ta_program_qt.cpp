@@ -355,6 +355,10 @@ void iProgramEditor::Apply_Async() {
   QCoreApplication::postEvent(this, ev);
 }
 
+QWidget* iProgramEditor::firstTabFocusWidget() {
+  return items;
+}
+
 bool iProgramEditor::ShowMember(MemberDef* md) {
   return taiPolyData::ShowMemberStat(md, show());
 }
@@ -799,6 +803,11 @@ void iProgramPanelBase::ResolveChanges_impl(CancelOp& cancel_op) {
     pe->Apply();
   }
 }
+
+QWidget* iProgramPanelBase::firstTabFocusWidget() {
+  return pe->firstTabFocusWidget();
+}
+
 
 
 //////////////////////////

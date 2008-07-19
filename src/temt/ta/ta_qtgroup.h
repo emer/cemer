@@ -500,6 +500,8 @@ public:
     
   taDoc*		doc() const; // just returns cast of base
   
+  override QWidget*	firstTabFocusWidget();
+
   DocEditDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
 		  bool modal_ = false, QObject* parent = 0);
   DocEditDataHost() {init();} // just for instance
@@ -526,6 +528,8 @@ public:
 
   override bool		HasChanged(); // 'true' if user has unsaved changes
   void			FillList();
+
+  override QWidget*	firstTabFocusWidget();
 
   iDocEditDataPanel(taiDataLink* dl_);
   ~iDocEditDataPanel();

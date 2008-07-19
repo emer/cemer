@@ -4578,6 +4578,44 @@ void iTabBar::mousePressEvent(QMouseEvent* e) {
     tabView()->m_viewer_win->TabView_Selected(tabView());
 }
 
+void iTabBar::keyPressEvent(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(ctrl_pressed && ((e->key() == Qt::Key_B) || e->key() == Qt::Key_N)) {
+    // following code from qtabbar.cpp:
+    int dx = e->key() == (isRightToLeft() ? Qt::Key_N : Qt::Key_B) ? -1 : 1;
+    for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+      if (isTabEnabled(index)) {
+	setCurrentIndex(index);
+	break;
+      }
+    }
+  }
+  else {
+    inherited::keyPressEvent(e);
+  }
+}
+
+bool iTabBar::focusNextPrevChild(bool next) {
+//   cerr << "iTabBar:: focusnext/prv" << endl;
+  if(!next) return inherited::focusNextPrevChild(next);
+
+  int idx = currentIndex();
+  iDataPanel* tpan = panel(idx);
+  if(!tpan) return inherited::focusNextPrevChild(next);
+  QWidget* nxt = tpan->firstTabFocusWidget();
+  if(!nxt) return inherited::focusNextPrevChild(next);
+//   cerr << "focusing on widget of type: " << nxt->metaObject()->className() << endl;
+  nxt->setFocus();
+  return true;
+}
+
 iDataPanel* iTabBar::panel(int idx) {
   QVariant data(tabData(idx)); // returns NULL variant if out of range
   if (data.isNull() || !data.isValid()) return NULL;
@@ -5059,6 +5097,21 @@ void iTabView::UpdateTabName(iDataPanel* pan) { // called by a panel when its ta
     tbPanels->setTabIcon(i,  pan->tabIcon());
   }
 }
+
+void iTabView::keyPressEvent(QKeyEvent* e) {
+  if (e->key() == Qt::Key_Tab) {
+    iDataPanel* idp = curPanel();
+    if(idp) {
+      idp->centralWidget()->setFocus(); // tab from here to there..
+    }
+    e->accept();
+  }
+  else {
+    QWidget::keyPressEvent(e);
+  }
+}
+
+
 
 //////////////////////////
 //   iTabView_PtrList	//
@@ -5644,10 +5697,73 @@ void iDataPanelSetBase::setTabView(iTabView* value) {
   }
 }
 
-
 //////////////////////////
 //    iDataPanelSet 	//
 //////////////////////////
+
+iDataPanelSetButton::iDataPanelSetButton(QWidget* parent) : QToolButton(parent) {
+  m_datapanelset = NULL;
+  m_idx = -1;
+}
+
+void iDataPanelSetButton::keyPressEvent(QKeyEvent* e) {
+  if(!m_datapanelset || m_idx < 0) { inherited::keyPressEvent(e); return; }
+
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+
+  // arrow/ctrl-key nav to adjacent buttons
+  if((e->key() == Qt::Key_Left) || (ctrl_pressed && e->key() == Qt::Key_B)) {
+    int prv_idx = m_idx -1;
+    if(prv_idx < 0) prv_idx = m_datapanelset->panels.size-1;
+    if(prv_idx == m_idx) { e->accept(); return; }
+    QAbstractButton* pbut = m_datapanelset->buttons->button(prv_idx);
+    if(pbut) {
+      pbut->click();
+      pbut->setFocus();
+    }
+    e->accept();
+    return;
+  }
+  else if((e->key() == Qt::Key_Right) || (ctrl_pressed && e->key() == Qt::Key_N)) {
+    int nxt_idx = m_idx +1;
+    if(nxt_idx >= m_datapanelset->panels.size) nxt_idx = 0;
+    if(nxt_idx == m_idx) { e->accept(); return; }
+    QAbstractButton* pbut = m_datapanelset->buttons->button(nxt_idx);
+    if(pbut) {
+      pbut->click();
+      pbut->setFocus();
+    }
+    e->accept();
+    return;
+  }
+  inherited::keyPressEvent(e);
+}
+
+bool iDataPanelSetButton::focusNextPrevChild(bool next) {
+  if(!m_datapanelset || m_idx < 0) return inherited::focusNextPrevChild(next);
+  if(next) {
+    iDataPanel* tpan = m_datapanelset->panels.SafeEl(m_idx); // my panel
+    if(!tpan) return inherited::focusNextPrevChild(next);
+    QWidget* nxt = tpan->firstTabFocusWidget();
+    if(!nxt) return inherited::focusNextPrevChild(next);
+    nxt->setFocus();
+  }
+  else { // prev
+    iTabView* itv = m_datapanelset->tabView(); // tab view
+    if(!itv) return inherited::focusNextPrevChild(next);
+    itv->tbPanels->setFocus();	// focus back on overall tab bar
+  }
+  return true;
+}
+
+/////////////////////////////////////////
 
 iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 :inherited(link_)
@@ -5680,7 +5796,9 @@ void iDataPanelSet::AddSubPanel(iDataPanelFrame* pn) {
   panels.Add(pn);
   int id = panels.size - 1;
   wsSubPanels->addWidget(pn);
-  QToolButton* but = new QToolButton(frmButtons);
+  iDataPanelSetButton* but = new iDataPanelSetButton(frmButtons);
+  but->m_datapanelset = this;
+  but->m_idx = id;
   but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
   but->setFont(taiM->buttonFont(taiMisc::sizSmall));
   // first visible button should be down
@@ -5801,6 +5919,18 @@ void iDataPanelSet::setCurrentPanelId_impl(int id) {
 void iDataPanelSet::setPanelAvailable(iDataPanel* pn) {
 }
 
+QWidget* iDataPanelSet::firstTabFocusWidget() {
+  if(panels.size == 0) return NULL;
+  if(panels.size == 1) return panels[0]->firstTabFocusWidget(); // skip buttons
+
+  // focus on the current button
+  QAbstractButton* but = buttons->button(cur_panel_id);
+  if(but) {
+    return but;
+  }
+  return NULL;
+}
+
 
 //////////////////////////
 //    iViewPanelSet 	//
@@ -5882,6 +6012,10 @@ iListDataPanel::iListDataPanel(taiDataLink* dl_, const String& custom_name_)
 }
 
 iListDataPanel::~iListDataPanel() {
+}
+
+QWidget* iListDataPanel::firstTabFocusWidget() {
+  return list;
 }
 
 void iListDataPanel::ClearList() {
@@ -6038,6 +6172,10 @@ iTextDataPanel::iTextDataPanel(taiDataLink* dl_)
 iTextDataPanel::~iTextDataPanel() {
 }
 
+QWidget* iTextDataPanel::firstTabFocusWidget() {
+  return txtText;
+}
+
 void iTextDataPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
 //TODO:  if (dcr <= DCR_ITEM_UPDATED_ND) ;
@@ -6103,6 +6241,10 @@ iDocDataPanel::iDocDataPanel()
 
 iDocDataPanel::~iDocDataPanel() {
   m_doc = NULL;
+}
+
+QWidget* iDocDataPanel::firstTabFocusWidget() {
+  return br;
 }
 
 void iDocDataPanel::doc_setSourceRequest(iTextBrowser* src,

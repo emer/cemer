@@ -205,6 +205,8 @@ public:
   taMatrix*		mat() {return (m_link) ? (taMatrix*)(link()->data()) : NULL;}
   override String	panel_type() const; // this string is on the subpanel button for this panel
 
+  override QWidget*	firstTabFocusWidget();
+
   iMatrixPanel(taiDataLink* dl_);
   ~iMatrixPanel();
 

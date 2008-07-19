@@ -1155,8 +1155,11 @@ protected:
 //  QColor	defBackgroundColor; // for when tabpanel doesn't provide one
 //  QColor	defBaseColor; // for when tabpanel doesn't provide one
   QPalette	defPalette;
+ 
+  override bool	focusNextPrevChild(bool next);
   override void contextMenuEvent(QContextMenuEvent * e);
   override void mousePressEvent(QMouseEvent* e);
+  override void keyPressEvent(QKeyEvent* e);
 //  override void paint(QPainter* p, QTab* t, bool selected ) const;
 };
 
@@ -1238,6 +1241,8 @@ public slots:
 protected:
   iTabViewer* 	m_viewer_win;
 
+  override void keyPressEvent(QKeyEvent* e);
+
 private:
   iDataPanel_PtrList	panels; // no external hanky-panky with this puppie
   void			Init();
@@ -1260,7 +1265,7 @@ public:
 //////////////////////////
 
 class TA_API iDataPanel: public QFrame, public IDataLinkClient {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels (note: don't inherit directly)
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS interface for panels -- basic element that can appear in a tabbed viewing context (note: use iDataPanelFrame or iViewPanelFrame)
   Q_OBJECT
 INHERITED(QFrame)
 friend class taDataLink;
@@ -1277,6 +1282,7 @@ public:
 #endif
   virtual QWidget*	centralWidget() const; // contents
   virtual void		setCentralWidget(QWidget* widg); // sets the contents
+  virtual QWidget*	firstTabFocusWidget() { return NULL; } // first widget that accepts tab focus -- to set link between tab and contents of edit
   void			setButtonsWidget(QWidget* widg); // is put at the bottom, not in a scroll
   virtual void		ClearDataPanelSet() {} // used for clearing by the set in its dtor
   virtual bool		dirty() {return HasChanged();}
@@ -1297,7 +1303,6 @@ public:
   virtual iTabViewer* 	tabViewerWin() const = 0;
   iMainWindowViewer* 	viewerWindow() {return (m_tabView) ? m_tabView->viewerWindow() : NULL;}
   virtual bool		isViewPanelFrame() const {return false;} // we group the vpf's to the right, all others to the left
-
 
   virtual void		AddedToPanelSet() {} // called when fully added to DataPanelSet
   virtual void		Closing(CancelOp& cancel_op) {} // called to notify panel is(forced==true)/wants(forced=false) to close -- set cancel 'true' (if not forced) to prevent
@@ -1365,7 +1370,7 @@ private:
 //////////////////////////
 
 class TA_API iDataPanelFrame: public iDataPanel {
-  // interface for panel frames
+  // this is the base for all panels for regular data items that the user controls the viewing of -- as contrasted with iViewPanelFrame which is only for view control panels
   Q_OBJECT
 INHERITED(iDataPanel)
 friend class iDataPanelSet;
@@ -1405,8 +1410,7 @@ protected:
 //////////////////////////
 
 class TA_API iViewPanelFrame: public iDataPanel, public virtual IDataHost {
-  // frame for gui interface to a view element -- usually posted by the view, and locked
-  // provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls
+  // frame for gui interface to a view element (view control panel) -- usually posted by the view, and locked -- provides optional IDataHost and Apply/Revert services, so you can use taiData ctrls
   Q_OBJECT
 INHERITED(iDataPanel)
 friend class iViewPanelSet;
@@ -1541,6 +1545,22 @@ protected:
   override void		OnWindowBind_impl(iTabViewer* itv);
 };
 
+
+class TA_API iDataPanelSetButton: public QToolButton {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS button for datapanelset -- manages keyboard flow
+INHERITED(QToolButton)
+  Q_OBJECT
+public:
+  iDataPanelSetButton(QWidget* parent = 0);
+
+  iDataPanelSet* m_datapanelset;
+  int 		m_idx;
+protected:
+  override bool	focusNextPrevChild(bool next);
+  override void keyPressEvent(QKeyEvent* e);
+};
+
+
 class TA_API iDataPanelSet: public iDataPanelSetBase { //  contains 0 or more sub-data-panels, and a small control bar for selecting panels
   Q_OBJECT
 INHERITED(iDataPanelSetBase)
@@ -1559,6 +1579,7 @@ public:
   void			AddSubPanelDynamic(iDataPanelFrame* pn); // call this after fully built to dynamically add a new frame
   void			SetMethodBox(QWidget* meths); // sets a box that contains methods, on bottom
 
+  override QWidget*	firstTabFocusWidget();
 
   iDataPanelSet(taiDataLink* dl_);
   ~iDataPanelSet();
@@ -1620,6 +1641,8 @@ public:
   void			ClearList(); // for when data changes -- we just rebuild the list
   void			FillList();
   void			RenumberList();
+
+  override QWidget*	firstTabFocusWidget();
   
   iListDataPanel(taiDataLink* dl_, const String& custom_name = _nilString);
   ~iListDataPanel();
@@ -1657,6 +1680,8 @@ public:
   override int 		EditAction(int ea);
   override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
 
+  override QWidget*	firstTabFocusWidget();
+
   iTextDataPanel(taiDataLink* dl_);
   ~iTextDataPanel();
 
@@ -1686,6 +1711,8 @@ public:
 
 //  override int 		EditAction(int ea);
 //  override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
+
+  override QWidget*	firstTabFocusWidget();
 
   iDocDataPanel(); // NOTE: use the setDoc api to (indirectly) set the DataLink
   ~iDocDataPanel();

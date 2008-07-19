@@ -24,6 +24,11 @@
 #include "netdata.h"
 #include "ta_program_els.h"
 
+#include "ta_program.h"
+#include "ta_imgproc.h"
+
+// #include "ta_fontspec.h"
+
 #ifdef TA_GUI
 # include "css_qt.h"
 # include "ta_qt.h"
@@ -32,6 +37,8 @@
 # include "ta_qttype_def.h"
 # include "ta_datatable_qtso.h"
 # include "netstru_qtso.h"
+//# include "ta_seledit.h"
+//# include "ta_qtviewer.h"
 
 # include <qapplication.h>
 # include <QWidgetList>

@@ -1198,6 +1198,8 @@ public:
   override int		GetEditActions(); // after a change in selection, update the available edit actions (cut, copy, etc.)
   void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected cells
 
+  override QWidget*	firstTabFocusWidget();
+
   iDataTablePanel(taiDataLink* dl_);
   ~iDataTablePanel();
 

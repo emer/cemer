@@ -21,6 +21,7 @@
 # include "ta_qt.h"
 # include <QApplication>
 # include <QPixmap>
+# include <QIcon>
 #endif
 
 #ifdef TA_GUI

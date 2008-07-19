@@ -525,6 +525,11 @@ iMatrixPanel::iMatrixPanel(taiDataLink* dl_)
 iMatrixPanel::~iMatrixPanel() {
 }
 
+QWidget* iMatrixPanel::firstTabFocusWidget() {
+  if(!me) return NULL;
+  return me->tv;
+}
+
 void iMatrixPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   //NOTE: don't need to do anything because DataModel will handle it
