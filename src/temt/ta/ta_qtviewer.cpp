@@ -4817,7 +4817,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   // only add Close if on a tab
   if (tab_idx >= 0) {
     // always add for consistency, even if on an empty or locked guy
-    act = new taiAction(tab_idx, "&Close Tab", CTRL+Key_D);
+    act = new taiAction(tab_idx, "&Close Tab");
     act->setParent(contextMenu);
     contextMenu->addAction(act);
     if (dp && dp->lockInPlace()) 
@@ -5124,11 +5124,12 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;
     }
-    else if(e->key() == Qt::Key_D) {
-      CloseTab(tbPanels->currentIndex());
-      e->accept();
-      return;
-    }
+    // I don't think it is useful to have a command for this -- too obscure and dangerous
+//     else if(e->key() == Qt::Key_D) {
+//       CloseTab(tbPanels->currentIndex());
+//       e->accept();
+//       return;
+//     }
   }
   QWidget::keyPressEvent(e);
 }
@@ -6749,13 +6750,25 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;
     }
+    if(e->key() == Qt::Key_D) {
+      ISelectable* si = curItem();
+      if(si && si->link()) {
+	taBase* sb = si->link()->taData();
+	if(sb) {
+	  sb->DuplicateMe();
+	}
+      }
+      e->accept();
+      return;
+    }
   }
   if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_F) {
     ISelectable* si = curItem();
-    if(!si || !si->link()) return;		// nothing selected
-    taiDataLink* link = si->link();
-    iMainWindowViewer* imw = mainWindow();
-    if(imw) imw->Find(link);
+    if(si && si->link()) {
+      taiDataLink* link = si->link();
+      iMainWindowViewer* imw = mainWindow();
+      if(imw) imw->Find(link);
+    }
     e->accept();
     return;
   }

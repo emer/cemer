@@ -1600,7 +1600,7 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
 bool taBase::DuplicateMe() {
   TAPtr own = GetOwner();
   if (TestError((own == NULL), "DuplicateMe", "owner is null")) return false;
-  if (own->ChildCanDuplicate(this, false)) return false;
+  if (!own->ChildCanDuplicate(this, false)) return false;
   return (own->ChildDuplicate(this));
 }
 
