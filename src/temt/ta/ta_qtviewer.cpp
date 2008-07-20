@@ -3656,7 +3656,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editLinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link", QKeySequence(), _editLinkAction ));
   editLinkIntoAction = AddAction(new taiAction(taiClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction" ));
   editUnlinkAction = AddAction(new taiAction(taiClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction" ));
-  editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence("Alt+F"), "editFindAction"));
+  editFindAction = AddAction(new taiAction(0, "&Find...", QKeySequence(), "editFindAction"));
   editFindNextAction = AddAction(new taiAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
   viewRefreshAction = AddAction(new taiAction("&Refresh", QKeySequence("F5"), _viewRefreshAction ));
   viewSaveViewAction = AddAction(new taiAction("&Save View", QKeySequence(), "viewSaveViewAction" ));
@@ -4810,14 +4810,14 @@ void iTabView::DataPanelDestroying(iDataPanel* panel) {
 void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   iDataPanel* dp = tabPanel(tab_idx); // always safe, NULL if no tab
   // note: need to (re)parent the actions; not parented by adding to menu
-  taiAction* act = new taiAction(tab_idx, "&Add Tab",  CTRL+ALT+Key_N );
+  taiAction* act = new taiAction(tab_idx, "&Add Tab",  CTRL+Key_T );
   act->connect(taiAction::int_act, this,  SLOT(AddTab(int))); 
   act->setParent(contextMenu);
   contextMenu->addAction(act);
   // only add Close if on a tab
   if (tab_idx >= 0) {
     // always add for consistency, even if on an empty or locked guy
-    act = new taiAction(tab_idx, "&Close Tab", CTRL+ALT+Key_Q );
+    act = new taiAction(tab_idx, "&Close Tab", CTRL+Key_D);
     act->setParent(contextMenu);
     contextMenu->addAction(act);
     if (dp && dp->lockInPlace()) 
@@ -4830,9 +4830,9 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   if (!dp || dp->lockInPlace()) return;
   contextMenu->addSeparator();
   if (dp->pinned()) {
-    act = new taiAction("&Unpin",  dp, SLOT(Unpin()), CTRL+ALT+Key_U );
+    act = new taiAction("&Unpin",  dp, SLOT(Unpin()), CTRL+Key_P );
   } else {
-    act = new taiAction("&Pin in place",  dp, SLOT(Pin()), CTRL+ALT+Key_P );
+    act = new taiAction("&Pin in place",  dp, SLOT(Pin()), CTRL+Key_P );
   }//TODO
   act->setParent(contextMenu);
   contextMenu->addAction(act);
@@ -5099,16 +5099,38 @@ void iTabView::UpdateTabName(iDataPanel* pan) { // called by a panel when its ta
 }
 
 void iTabView::keyPressEvent(QKeyEvent* e) {
-  if (e->key() == Qt::Key_Tab) {
-    iDataPanel* idp = curPanel();
-    if(idp) {
-      idp->centralWidget()->setFocus(); // tab from here to there..
+  bool ctrl_pressed = false;
+  if(e->modifiers() & Qt::ControlModifier)
+    ctrl_pressed = true;
+#ifdef TA_OS_MAC
+  // ctrl = meta on apple
+  if(e->modifiers() & Qt::MetaModifier)
+    ctrl_pressed = true;
+#endif
+  if(ctrl_pressed) {
+    if(e->key() == Qt::Key_P) {
+      iDataPanel* dp = curPanel();
+      if(dp) {
+	if(dp->pinned())
+	  dp->Unpin();
+	else
+	  dp->Pin();
+      }
+      e->accept();
+      return;
     }
-    e->accept();
+    else if(e->key() == Qt::Key_T) {
+      AddTab(tbPanels->currentIndex());
+      e->accept();
+      return;
+    }
+    else if(e->key() == Qt::Key_D) {
+      CloseTab(tbPanels->currentIndex());
+      e->accept();
+      return;
+    }
   }
-  else {
-    QWidget::keyPressEvent(e);
-  }
+  QWidget::keyPressEvent(e);
 }
 
 
@@ -6723,16 +6745,21 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
 #endif
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_I) {
-      e->accept();
       InsertEl();
-    }
-    else {
-      inherited::keyPressEvent( e );
+      e->accept();
+      return;
     }
   }
-  else {
-    inherited::keyPressEvent( e );
+  if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_F) {
+    ISelectable* si = curItem();
+    if(!si || !si->link()) return;		// nothing selected
+    taiDataLink* link = si->link();
+    iMainWindowViewer* imw = mainWindow();
+    if(imw) imw->Find(link);
+    e->accept();
+    return;
   }
+  inherited::keyPressEvent(e);
 }
 
 bool iTreeView::focusNextPrevChild(bool next) {
@@ -7235,8 +7262,12 @@ void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
 void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
   GuiContext sh_typ) {
   //taiAction* mel =
-  menu->AddItem("Find from here...", taiMenu::use_default,
-    taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
+  menu->AddItem("Find from here (Alt+F)...", taiMenu::use_default,
+		taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
+  // note: this causes it to always search from the first one entered!  need to trap
+  // specific keyboard input
+//   menu->AddItem("Find from here...", taiAction::men_act, treeView(),
+// 		SLOT(mnuFindFromHere(taiAction*)), this, QKeySequence("Alt+F"));
   IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
 }
 

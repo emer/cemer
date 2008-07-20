@@ -2016,6 +2016,7 @@ protected:
     int key_mods, WhereIndicator where);
   virtual void		DataChanged_impl(int dcr, void* op1, void* op2); // called for each node when the data item has changed, esp. ex lists and groups
   override void 	itemExpanded(bool value);
+
   virtual bool		ShowNode_impl(int show, const String& context) const;
 private:
   void			init(const String& tree_name, taiDataLink* link_, 
