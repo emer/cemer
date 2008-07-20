@@ -318,6 +318,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     case Qt::Key_V:
       newCurrent = moveCursor(MovePageDown, event->modifiers());
       break;
+    case Qt::Key_F:
+      newCurrent = moveCursor(MoveRight, event->modifiers());
+      break;
+    case Qt::Key_B:
+      newCurrent = moveCursor(MoveLeft, event->modifiers());
+      break;
     }
 
     // from qabstractitemview.cpp

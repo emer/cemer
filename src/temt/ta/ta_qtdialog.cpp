@@ -1595,9 +1595,7 @@ int taiDataHost::AddData(int row, QWidget* data, bool fill_hor)
 
   if(!first_tab_foc) {
     if(data->focusPolicy() & Qt::TabFocus) {
-//       cerr << "setting first tab focus to row: " << row << " of type: " << data->metaObject()->className() << endl;
       first_tab_foc = data;
-      // todo: might need to drill deeper
     }
   }
   
@@ -2403,8 +2401,11 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
       ctrl_pressed = true;
 #endif
     if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-//       cerr << "got ctrl+enter -- applying!" << endl;
       Apply();			// do it!
+      return true;
+    }
+    if(e->key() == Qt::Key_Escape) {
+      Revert();			// do it!
       return true;
     }
   }

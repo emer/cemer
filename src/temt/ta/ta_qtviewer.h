@@ -1773,6 +1773,11 @@ public:
   
   static const String  	opt_treefilt; // "TREEFILT_"
 
+#ifndef __MAKETA__
+  QPointer<QWidget>	focus_next_widget; // if set, this is the widget to focus next on when tab pressed
+  QPointer<QWidget>	focus_prev_widget;  // if set, this is the widget to focus on when shift-tab pressed
+#endif
+
 #ifndef __MAKETA__  
   static void 		FillTypedList(const QList<QTreeWidgetItem*>& items,
     ISelectable_PtrList& list); // helper, for filling our own typed list
@@ -1897,7 +1902,8 @@ protected:
      int level, int max_levels, int exp_flags = 0); // inner code; level=-1 when not known
   void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
 
-  void 		keyPressEvent(QKeyEvent* e);	// override
+  override void 	keyPressEvent(QKeyEvent* e);
+  override bool		focusNextPrevChild(bool next);
 
 #ifndef __MAKETA__
   override QMimeData* 	mimeData(const QList<QTreeWidgetItem*> items) const; 

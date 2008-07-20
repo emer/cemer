@@ -532,7 +532,10 @@ public:
 
   QSplitter*	splBody;	// if not null when body created, then body is put into this splitter (used for list/group hosts)
   QScrollArea*	  scrBody;		// scrollbars for the body items
-  QWidget*	first_tab_foc;		// first tab focus widget
+#ifndef __MAKETA__
+  QPointer<QWidget> first_tab_foc;	// first tab focus widget
+#endif
+
 #if ((QT_VERSION >= 0x040400) && defined(TA_USE_QFORMLAYOUT))
   iFormLayout*	layBody;
 #else

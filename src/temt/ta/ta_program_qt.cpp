@@ -262,6 +262,9 @@ void iProgramEditor::Init() {
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   body = new iStripeWidget; 
   scrBody->setWidget(body);
+
+  body->installEventFilter(this);
+
   line_ht = ln_sz + (2 * ln_vmargin);
   body->setStripeHeight(line_ht);
   int body_ht = line_ht * editLines();
@@ -346,6 +349,31 @@ void iProgramEditor::customEvent(QEvent* ev_) {
     return; // don't accept
   }
   ev_->accept();
+}
+
+bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent* e = static_cast<QKeyEvent *>(event);
+    bool ctrl_pressed = false;
+    if(e->modifiers() & Qt::ControlModifier)
+      ctrl_pressed = true;
+#ifdef TA_OS_MAC
+    // ctrl = meta on apple
+    if(e->modifiers() & Qt::MetaModifier)
+      ctrl_pressed = true;
+#endif
+    if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+      Apply();			// do it!
+      items->setFocus();	// return to items!
+      return true;
+    }
+    if(e->key() == Qt::Key_Escape) {
+      Revert();			// do it!
+      items->setFocus();	// return to items!
+      return true;
+    }
+  }
+  return QWidget::eventFilter(obj, event);
 }
 
 void iProgramEditor::Apply_Async() {
@@ -481,12 +509,14 @@ void iProgramEditor::Base_Add() {
     //AddData(cur_line++, NULL, meth_but_mgr->lay());
   }
   lay->addStretch();
-  
+
   // ok, get er!
   GetImage();
 }
 
 void iProgramEditor::Base_Remove() {
+  first_tab_foc = NULL;
+  items->focus_next_widget = NULL; // clear
   base->RemoveDataClient(this);
   base = NULL;
   membs.Reset();
@@ -576,6 +606,8 @@ void iProgramEditor::GetValue() {
 }
 
 void iProgramEditor::GetImage() {
+  first_tab_foc = NULL;
+
   TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
   meth_but_mgr->GetImage();
@@ -587,9 +619,20 @@ void iProgramEditor::GetImage() {
       taiData* mb_dat = ms->data_el.FastEl(i);
       if (md && mb_dat) {
         md->im->GetImage(mb_dat, base);
+
+	if(!first_tab_foc && !mb_dat->readOnly() && mb_dat->visible()) {
+	  QWidget* rep = mb_dat->GetRep();
+	  if(rep->isVisible() && rep->isEnabled() && (j >= 1) && 
+	     (rep->focusPolicy() & Qt::TabFocus || md->name == "desc")) {
+	    first_tab_foc = rep;
+	  }
+	}
       }
     }
   }
+
+  items->focus_next_widget = first_tab_foc; // set linkage
+  
   InternalSetModified(false);
   --m_changing;
 }

@@ -134,6 +134,7 @@ protected:
   };
   
   override bool		event(QEvent* ev);
+  override void 	keyPressEvent(QKeyEvent* e);
   void 			ContextMenuRequested(ContextArea ca, const QPoint& global_pos);
   virtual void		FillContextMenu_impl(ContextArea ca, taiMenu* menu,
     const CellRange& sel);

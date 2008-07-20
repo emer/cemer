@@ -4587,9 +4587,9 @@ void iTabBar::keyPressEvent(QKeyEvent* e) {
   if(e->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
 #endif
-  if(ctrl_pressed && ((e->key() == Qt::Key_B) || e->key() == Qt::Key_N)) {
+  if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
     // following code from qtabbar.cpp:
-    int dx = e->key() == (isRightToLeft() ? Qt::Key_N : Qt::Key_B) ? -1 : 1;
+    int dx = e->key() == (isRightToLeft() ? Qt::Key_F : Qt::Key_B) ? -1 : 1;
     for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
       if (isTabEnabled(index)) {
 	setCurrentIndex(index);
@@ -5731,7 +5731,7 @@ void iDataPanelSetButton::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  else if((e->key() == Qt::Key_Right) || (ctrl_pressed && e->key() == Qt::Key_N)) {
+  else if((e->key() == Qt::Key_Right) || (ctrl_pressed && e->key() == Qt::Key_F)) {
     int nxt_idx = m_idx +1;
     if(nxt_idx >= m_datapanelset->panels.size) nxt_idx = 0;
     if(nxt_idx == m_idx) { e->accept(); return; }
@@ -6351,6 +6351,9 @@ void iTreeView::FillTypedList(const QList<QTreeWidgetItem*>& items,
 iTreeView::iTreeView(QWidget* parent, int tv_flags_)
 :inherited(parent)
 {
+  focus_next_widget = NULL;
+  focus_prev_widget = NULL;
+
   tv_flags = tv_flags_;
   m_filters = NULL; // only created if needed
   m_def_exp_levels = 2; // works well for most contexts
@@ -6730,6 +6733,18 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   else {
     inherited::keyPressEvent( e );
   }
+}
+
+bool iTreeView::focusNextPrevChild(bool next) {
+  if(next && focus_next_widget) {
+    focus_next_widget->setFocus();
+    return true;
+  }
+  if(!next && focus_prev_widget) {
+    focus_prev_widget->setFocus();
+    return true;
+  }
+  return inherited::focusNextPrevChild(next);
 }
 
 void iTreeView::mnuFindFromHere(taiAction* mel) {

@@ -114,6 +114,9 @@ public:
   HiLightButton*	    btnApply;
   HiLightButton*	    btnRevert;
   iTreeView*		  items;
+#ifndef __MAKETA__
+  QPointer<QWidget> 	first_tab_foc;	// first tab focus widget
+#endif
   
   bool			read_only; // set true if we are
 #ifndef __MAKETA__ 
@@ -180,6 +183,9 @@ protected:
   taBase*		sel_item_base; // used (and only valid!) for context menus
  
   override void 	customEvent(QEvent* ev_);
+  override bool 	eventFilter(QObject *obj, QEvent *event);
+  // event filter to trigger apply button on Ctrl+Return
+
   virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
   virtual void		Base_Add(); // adds controls etc for base
   bool			ShowMember(MemberDef* md);
