@@ -4975,7 +4975,9 @@ cssCmdShell::~cssCmdShell() {
   PopAllSrcProg();
   src_prog = NULL;
   delete cmd_prog;
-  delete src_prog_stack;
+  cmd_prog = NULL;
+  free(src_prog_stack);
+  src_prog_stack = NULL;
 }
 
 void cssCmdShell::AllocSrcProg(int sz) {

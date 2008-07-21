@@ -3133,6 +3133,10 @@ int iToolBoxDockViewer::AssertSection(const String& sec_name) {
 void iToolBoxDockViewer::AddClipToolWidget(int sec, iClipWidgetAction* cwa) {
   QToolBar* w = sectionWidget(sec);
   if (!w) return; // user didn't assert
+  // don't leak!
+  if (cwa->parent() == NULL) {
+    cwa->setParent(this);
+  }
   w->addAction(cwa); 
   connect(cwa, SIGNAL(triggered()), cwa, SLOT(copyToClipboard()) ); // ie to self
 }
@@ -3473,6 +3477,8 @@ void iMainWindowViewer::EditItem(taiDataLink* link, bool not_in_cur) {
 } 
 
 void iMainWindowViewer::AddToolBar(iToolBar* itb) {
+  if (!itb->parent()) 
+    itb->setParent(this); // needs parent otherwise will leak
   itb->m_window = this;
   addToolBar(itb); //TODO: should specify area
   // create a menu entry to show/hide it, regardless if visible now

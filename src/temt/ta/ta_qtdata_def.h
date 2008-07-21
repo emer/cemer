@@ -237,13 +237,18 @@ private:
 
 class TA_API taiDataList : public taPtrList<taiData> {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS taiData list, OBJECTS ARE DELETED ON REMOVAL
+public:
+#ifndef __MAKETA__
+  template<class T>
+  T*			Add(T* it) {Add_((void*)it); return it;}
+    // convenience method, returns strongly typed guy that it adds
+#endif
+  ~taiDataList()                       { Reset(); }
 protected:
 //  void*		El_Ref_(void* it)	{ taRefN::Ref((taiData*)it); return it; }
 //  void* 	El_unRef_(void* it)	{ taRefN::unRef((taiData*)it); return it; }
   void		El_Done_(void* it);
 
-public:
-  ~taiDataList()                       { Reset(); }
 };
 
 

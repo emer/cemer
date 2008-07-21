@@ -1993,7 +1993,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblFontScale = taiM->NewLabel("Font\nScale", widg, font_spec);
   lblFontScale->setToolTip("Scaling of the 2d font to make it roughly the same size as the 3d font -- adjust this to change the size of the 2d text (has no effect if 2d Font is not clicked");
   layTopCtrls->addWidget(lblFontScale);
-  fldFontScale = new taiField(&TA_float, this, NULL, widg);
+  fldFontScale = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layTopCtrls->addWidget(fldFontScale->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
 
@@ -2016,35 +2016,35 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = new taiIncrField(&TA_int, this, NULL, widg);
+  fldRows = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
 
   lblCols = taiM->NewLabel("Cols", widg, font_spec);
   lblCols->setToolTip("Maximum number of columns to display (column widths are scaled to fit).");
   layVals->addWidget(lblCols);
-  fldCols = new taiIncrField(&TA_int, this, NULL, widg);
+  fldCols = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldCols->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of grid log display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
-  fldWidth = new taiField(&TA_float, this, NULL, widg);
+  fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
 
   lblTxtMin = taiM->NewLabel("Min\nText", widg, font_spec);
   lblTxtMin->setToolTip("Minimum text size in 'view units' (size of entire display is 1.0) -- .02 is default -- increase to make small text more readable");
   layVals->addWidget(lblTxtMin);
-  fldTxtMin = new taiField(&TA_float, this, NULL, widg);
+  fldTxtMin = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMin->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
 
   lblTxtMax = taiM->NewLabel("Max\nText", widg, font_spec);
   lblTxtMax->setToolTip("Maximum text size in 'view units' (size of entire display is 1.0) -- .05 is default");
   layVals->addWidget(lblTxtMax);
-  fldTxtMax = new taiField(&TA_float, this, NULL, widg);
+  fldTxtMax = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMax->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
 
@@ -2065,21 +2065,21 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
   lblTrans->setToolTip("Maximum transparency of the grid blocks (0 = fully opaque, 1 = fully transparent)\nBlocks with smaller magnitude values are more transparent.");
   layMatrix->addWidget(lblTrans);
-  fldTrans = new taiField(&TA_float, this, NULL, widg);
+  fldTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldTrans->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
 
   lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
   lblRot->setToolTip("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns.");
   layMatrix->addWidget(lblRot);
-  fldRot = new taiField(&TA_float, this, NULL, widg);
+  fldRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldRot->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
 
   lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
   lblBlockHeight->setToolTip("Maximum height of grid blocks (in Z dimension), as a proportion of their overall X-Y size.");
   layMatrix->addWidget(lblBlockHeight);
-  fldBlockHeight = new taiField(&TA_float, this, NULL, widg);
+  fldBlockHeight = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layMatrix->addWidget(fldBlockHeight->GetRep());
 //   layMatrix->addSpacing(taiM->hsep_c);
 
@@ -4645,16 +4645,16 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblGraphType = taiM->NewLabel("Graph", widg, font_spec);
   lblGraphType->setToolTip("How to display the graph");
   layTopCtrls->addWidget(lblGraphType);
-  cmbGraphType = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
-				 this, NULL, widg, taiData::flgAutoApply);
+  cmbGraphType = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
+				 this, NULL, widg, taiData::flgAutoApply));
   layTopCtrls->addWidget(cmbGraphType->GetRep());
   //  layTopCtrls->addSpacing(taiM->hsep_c);
 
   lblPlotStyle = taiM->NewLabel("Style", widg, font_spec);
   lblPlotStyle->setToolTip("How to plot the lines");
   layTopCtrls->addWidget(lblPlotStyle);
-  cmbPlotStyle = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
-				 this, NULL, widg, taiData::flgAutoApply);
+  cmbPlotStyle = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
+				 this, NULL, widg, taiData::flgAutoApply));
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
   //  layTopCtrls->addSpacing(taiM->hsep_c);
 
@@ -4679,42 +4679,42 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
   layVals->addWidget(lblRows);
-  fldRows = new taiIncrField(&TA_int, this, NULL, widg);
+  fldRows = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
 //   layVals->addSpacing(taiM->hsep_c);
 
   lblLineWidth = taiM->NewLabel("Line\nWidth", widg, font_spec);
   lblLineWidth->setToolTip("Width to draw lines with.");
   layVals->addWidget(lblLineWidth);
-  fldLineWidth = new taiField(&TA_float, this, NULL, widg);
+  fldLineWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLineWidth->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   lblPointSpacing = taiM->NewLabel("Pt\nSpc", widg, font_spec);
   lblPointSpacing->setToolTip("Spacing of points drawn relative to underlying data points.");
   layVals->addWidget(lblPointSpacing);
-  fldPointSpacing = new taiField(&TA_float, this, NULL, widg);
+  fldPointSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldPointSpacing->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   lblLabelSpacing = taiM->NewLabel("Lbl\nSpc", widg, font_spec);
   lblLabelSpacing->setToolTip("Spacing of text labels of data point values. -1 means no text labels.");
   layVals->addWidget(lblLabelSpacing);
-  fldLabelSpacing = new taiField(&TA_float, this, NULL, widg);
+  fldLabelSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLabelSpacing->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip("Width of graph display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblWidth);
-  fldWidth = new taiField(&TA_float, this, NULL, widg);
+  fldWidth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   lblDepth = taiM->NewLabel("Depth", widg, font_spec);
   lblDepth->setToolTip("Depth of graph display, in normalized units (default is 1.0 = same as height).");
   layVals->addWidget(lblDepth);
-  fldDepth = new taiField(&TA_float, this, NULL, widg);
+  fldDepth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldDepth->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4732,7 +4732,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
   lblXAxis->setToolTip("Column of data to plot for the X Axis");
   layXAxis->addWidget(lblXAxis);
-  lelXAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lelXAxis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layXAxis->addWidget(lelXAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4741,7 +4741,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(rncXAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layXAxis->addWidget(rncXAxis);
 
-  pdtXAxis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdtXAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   layXAxis->addWidget(pdtXAxis->GetRep());
 
   layXAxis->addStretch();
@@ -4753,7 +4753,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
   lblZAxis->setToolTip("Column of data to plot for the Z Axis");
   layZAxis->addWidget(lblZAxis);
-  lelZAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lelZAxis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layZAxis->addWidget(lelZAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4767,7 +4767,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   connect(rncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(rncZAxis);
 
-  pdtZAxis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdtZAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   layZAxis->addWidget(pdtZAxis->GetRep());
 
   layZAxis->addStretch();
@@ -4779,7 +4779,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl1Axis = taiM->NewLabel("Y1:", widg, font_spec);
   lbl1Axis->setToolTip("First column of data to plot (optional)");
   lay1Axis->addWidget(lbl1Axis);
-  lel1Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel1Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   lay1Axis->addWidget(lel1Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4794,7 +4794,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layPlots->addWidget(chk1AltY);
   lay1Axis->addWidget(chk1AltY);
 
-  pdt1Axis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdt1Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   lay1Axis->addWidget(pdt1Axis->GetRep());
 
   lay1Axis->addStretch();
@@ -4806,7 +4806,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl2Axis = taiM->NewLabel("Y2:", widg, font_spec);
   lbl2Axis->setToolTip("Second column of data to plot (optional)");
   lay2Axis->addWidget(lbl2Axis);
-  lel2Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel2Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   lay2Axis->addWidget(lel2Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4821,7 +4821,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layPlots->addWidget(chk2AltY);
   lay2Axis->addWidget(chk2AltY);
 
-  pdt2Axis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdt2Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   lay2Axis->addWidget(pdt2Axis->GetRep());
 
   lay2Axis->addStretch();
@@ -4833,7 +4833,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl3Axis = taiM->NewLabel("Y3:", widg, font_spec);
   lbl3Axis->setToolTip("Third column of data to plot (optional)");
   lay3Axis->addWidget(lbl3Axis);
-  lel3Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel3Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   lay3Axis->addWidget(lel3Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4848,7 +4848,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layPlots->addWidget(chk3AltY);
   lay3Axis->addWidget(chk3AltY);
 
-  pdt3Axis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdt3Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   lay3Axis->addWidget(pdt3Axis->GetRep());
 
   lay3Axis->addStretch();
@@ -4860,7 +4860,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl4Axis = taiM->NewLabel("Y4:", widg, font_spec);
   lbl4Axis->setToolTip("Fourth column of data to plot (optional)");
   lay4Axis->addWidget(lbl4Axis);
-  lel4Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel4Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   lay4Axis->addWidget(lel4Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4875,7 +4875,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layPlots->addWidget(chk4AltY);
   lay4Axis->addWidget(chk4AltY);
 
-  pdt4Axis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdt4Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   lay4Axis->addWidget(pdt4Axis->GetRep());
 
   lay4Axis->addStretch();
@@ -4887,7 +4887,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl5Axis = taiM->NewLabel("Y5:", widg, font_spec);
   lbl5Axis->setToolTip("Fifth column of data to plot (optional)");
   lay5Axis->addWidget(lbl5Axis);
-  lel5Axis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel5Axis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   lay5Axis->addWidget(lel5Axis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4902,7 +4902,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   //  layPlots->addWidget(chk5AltY);
   lay5Axis->addWidget(chk5AltY);
 
-  pdt5Axis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdt5Axis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   lay5Axis->addWidget(pdt5Axis->GetRep());
 
   lay5Axis->addStretch();
@@ -4915,7 +4915,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl1Err = taiM->NewLabel("1 Err:", widg, font_spec);
   lbl1Err->setToolTip("Column of for the 1st column's error bar data");
   layErr1->addWidget(lbl1Err);
-  lel1Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel1Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layErr1->addWidget(lel1Err->GetRep());
   onc1Err = new iCheckBox("On", widg);
   onc1Err->setToolTip("Display error bars for 1st column's data?");
@@ -4926,7 +4926,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl2Err = taiM->NewLabel("2 Err:", widg, font_spec);
   lbl2Err->setToolTip("Column of for the 2nd column's error bar data");
   layErr1->addWidget(lbl2Err);
-  lel2Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel2Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layErr1->addWidget(lel2Err->GetRep());
   onc2Err = new iCheckBox("On", widg);
   onc2Err->setToolTip("Display error bars for 2nd column's data?");
@@ -4937,7 +4937,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl3Err = taiM->NewLabel("3 Err:", widg, font_spec);
   lbl3Err->setToolTip("Column of for the 3nd column's error bar data");
   layErr1->addWidget(lbl3Err);
-  lel3Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel3Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layErr1->addWidget(lel3Err->GetRep());
   onc3Err = new iCheckBox("On", widg);
   onc3Err->setToolTip("Display error bars for 3nd column's data?");
@@ -4951,7 +4951,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl4Err = taiM->NewLabel("4 Err:", widg, font_spec);
   lbl4Err->setToolTip("Column of for the 4nd column's error bar data");
   layErr2->addWidget(lbl4Err);
-  lel4Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel4Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layErr2->addWidget(lel4Err->GetRep());
   onc4Err = new iCheckBox("On", widg);
   onc4Err->setToolTip("Display error bars for 4nd column's data?");
@@ -4962,7 +4962,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lbl5Err = taiM->NewLabel("5 Err:", widg, font_spec);
   lbl5Err->setToolTip("Column of for the 5nd column's error bar data");
   layErr2->addWidget(lbl5Err);
-  lel5Err = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lel5Err = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layErr2->addWidget(lel5Err->GetRep());
   onc5Err = new iCheckBox("On", widg);
   onc5Err->setToolTip("Display error bars for 5nd column's data?");
@@ -4973,7 +4973,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
   lblErrSpacing->setToolTip("Spacing of error bars relative to data points.");
   layErr2->addWidget(lblErrSpacing);
-  fldErrSpacing = new taiField(&TA_float, this, NULL, widg);
+  fldErrSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layErr2->addWidget(fldErrSpacing->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -4986,22 +4986,22 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
   lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
   layCAxis->addWidget(lblColorMode);
-  cmbColorMode = new taiComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
-				 this, NULL, widg, taiData::flgAutoApply);
+  cmbColorMode = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
+	this, NULL, widg, taiData::flgAutoApply));
   layCAxis->addWidget(cmbColorMode->GetRep());
   //  layColorScale->addSpacing(taiM->hsep_c);
 
   lblCAxis = taiM->NewLabel("Color\nAxis:", widg, font_spec);
   lblCAxis->setToolTip("Column of data for COLOR_AXIS color mode");
   layCAxis->addWidget(lblCAxis);
-  lelCAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lelCAxis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layCAxis->addWidget(lelCAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
   lblThresh = taiM->NewLabel("Thresh", widg, font_spec);
   lblThresh->setToolTip("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold.");
   layCAxis->addWidget(lblThresh);
-  fldThresh = new taiField(&TA_float, this, NULL, widg);
+  fldThresh = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldThresh->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
@@ -5028,11 +5028,11 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
   lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
   layRAxis->addWidget(lblRAxis);
-  lelRAxis = new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags);
+  lelRAxis = dl.Add(new taiListElsButton(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layRAxis->addWidget(lelRAxis->GetRep());
   //  layVals->addSpacing(taiM->hsep_c);
 
-  pdtRAxis = taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg);
+  pdtRAxis = dl.Add(taiPolyData::New(true, &TA_FixedMinMax, this, NULL, widg));
   layRAxis->addWidget(pdtRAxis->GetRep());
 
   layRAxis->addStretch();

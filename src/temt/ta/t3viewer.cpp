@@ -1211,14 +1211,6 @@ void iT3DataViewFrame::Init() {
   t3vs->setRenderArea(m_ra);
 }
 
-/*void iT3DataViewFrame::Constr_Menu_impl() {
-  inherited::Constr_Menu_impl();
-  taiAction* act = AddAction(new taiAction("Inventor", QKeySequence(), "fileExportInventor" ));
-  act->AddTo(fileExportMenu);
-  act->connect(taiAction::action, this, SLOT( fileExportInventor() ) );
-} */
-
-
 void iT3DataViewFrame::fileExportInventor() {
   static QFileDialog* fd = NULL;
   SoNode* scene = m_ra->getSceneGraph();
