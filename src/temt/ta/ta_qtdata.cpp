@@ -86,6 +86,10 @@ class cssiArgDialog;
 //    taiDataList	//
 //////////////////////////
 
+taiDataList::~taiDataList() {
+  Reset();
+}
+
 void taiDataList::El_Done_(void* it) {
   delete (taiData*)it;
 }

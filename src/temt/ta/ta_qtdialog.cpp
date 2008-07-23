@@ -1701,6 +1701,10 @@ void taiDataHost::Constr_Final() {
 // 	MembSet_List		//
 //////////////////////////////////
 
+MembSet_List::~MembSet_List() {
+  Reset();
+}
+
 bool MembSet_List::GetFlatDataItem(int idx, MemberDef** mbr, taiData** dat) {
   for (int i = 0; i < size; ++i) {
     MembSet* ms = FastEl(i);
@@ -1813,6 +1817,7 @@ taiEditDataHost::taiEditDataHost(void* base, TypeDef* typ_, bool read_only_,
     this, SLOT(bgrp_buttonClicked(int)) );
   menu = NULL;
   InitGuiFields(false);
+  ta_menu_buttons.own_items = true; // so they get destroyed
   //note: don't register for notification until constr starts
 }
 

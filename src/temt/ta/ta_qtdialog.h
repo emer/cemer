@@ -617,7 +617,7 @@ public:
   int			GetDataSize() const; // # data items
   
   MembSet_List()  {def_size = 0;}
-  ~MembSet_List() { Reset(); }
+  ~MembSet_List();
 protected:
   void	El_Done_(void* it) { delete (MembSet*)it; }
 };

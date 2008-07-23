@@ -243,7 +243,7 @@ public:
   T*			Add(T* it) {Add_((void*)it); return it;}
     // convenience method, returns strongly typed guy that it adds
 #endif
-  ~taiDataList()                       { Reset(); }
+  ~taiDataList();
 protected:
 //  void*		El_Ref_(void* it)	{ taRefN::Ref((taiData*)it); return it; }
 //  void* 	El_unRef_(void* it)	{ taRefN::unRef((taiData*)it); return it; }
