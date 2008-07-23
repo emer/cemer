@@ -1101,10 +1101,12 @@ class TA_API taRefN {
 public:
   static uint		RefN(taRefN* it)	{ return it->refn; }
   static void  		Ref(taRefN* it)	{ it->refn++; }
+  static void  		SafeRef(taRefN* it)	{ if(it) it->refn++; }
   static void  		Ref(taRefN& it)	{ it.refn++; }
   static void   	unRef(taRefN* it)	{ it->refn--; }
   static void   	Done(taRefN* it)	{ if(it->refn == 0) delete it; }
   static void		unRefDone(taRefN* it)	{ unRef(it); Done(it); }
+  static void		SafeUnRefDone(taRefN* it) { if(it) unRefDone(it); }
   static void		SetRefDone(taRefN*& var, taRefN* it) // does it fast, but safe, even for var==it
     {if (it) Ref(it); if (var != NULL) unRefDone(var); var = it;}
 
@@ -1948,6 +1950,7 @@ public:
 	    int fover, int farc, int fard, bool is_stat = false, ta_void_fun funa = NULL,
 	    css_fun_stub_ptr stb = NULL, bool is_virt = false);
   MethodDef(const MethodDef& md);	// copy constructor
+  ~MethodDef();
 
   MethodDef*		Clone()		{ return new MethodDef(*this); }
   MethodDef*		MakeToken()	{ return new MethodDef(); }
@@ -2055,7 +2058,7 @@ public:
 	  bool global_obj=false, uint siz = 0, const char* c_nm = NULL
 	  ); // global_obj=ture for global (non new'ed) typedef objs; c_name only needed when diff from nm
   TypeDef(const TypeDef& td);
-  virtual ~TypeDef();
+  ~TypeDef();
   TypeDef*		Clone()		{ return new TypeDef(*this); }
   TypeDef*		MakeToken()	{ return new TypeDef(); }
 

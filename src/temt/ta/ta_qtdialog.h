@@ -319,7 +319,6 @@ public:
   virtual ~taiDataHostBase(); //
 
   taBase*	Base_() const; // root of the object, if a taBase 
-  void		ClearBody();	// prepare dialog for rebuilding Body to show new contents
 
   void  Constr(const char* prompt = "", const char* win_title = "",
     HostType host_type = HT_DIALOG, bool deferred = false);
@@ -442,7 +441,7 @@ public:
   taiDataHost_impl(TypeDef* typ_ = NULL, bool read_only_ = false, bool modal_ = false, QObject* parent = 0);
   virtual ~taiDataHost_impl();
 
-  void			ClearBody();	
+  void			ClearBody(bool waitproc = true);	
    // prepare dialog for rebuilding Body to show new contents
 
   virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify

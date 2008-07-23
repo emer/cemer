@@ -45,7 +45,7 @@ class taiTypeHier; //
 // 	taiType 	//
 //////////////////////////
 
-class TA_API taiTypeBase {
+class TA_API taiTypeBase: public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
   static const iColor	def_color; // passed as a default, or explicitly, to indicate using default

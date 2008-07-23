@@ -224,10 +224,14 @@ void taiType::AddToType(TypeDef* td) {
       cur_it = cur_it->sub_types();	// and compare to current sub_type
     }
     else {
+      taRefN::Ref(cur_it);
+      taRefN::SafeUnRefDone(m_sub_types);
       m_sub_types = cur_it;		// we are higher, current is our sub
       cur_it = NULL;			// and we are done
     }
   }
+  taRefN::Ref(this);
+  taRefN::SafeUnRefDone(*ptr_to_it);
   *ptr_to_it = this;			// put us here
 }
 
@@ -1367,10 +1371,14 @@ void taiMember::AddMember(MemberDef* md) {
       cur_im = cur_im->sub_types();
     }
     else {
+      taRefN::Ref(cur_im);
+      taRefN::SafeUnRefDone(m_sub_types);
       m_sub_types = cur_im;
       cur_im = NULL;
     }
   }
+  taRefN::Ref(this);
+  taRefN::SafeUnRefDone(*ptr_to_im);
   *ptr_to_im = this;
 }
 
@@ -2028,10 +2036,14 @@ void taiMethod::AddMethod(MethodDef* md) {
       cur_im = cur_im->sub_types();
     }
     else {
+      taRefN::Ref(cur_im);
+      taRefN::SafeUnRefDone(m_sub_types);
       m_sub_types = cur_im;
       cur_im = NULL;
     }
   }
+  taRefN::Ref(this);
+  taRefN::SafeUnRefDone(*ptr_to_im);
   *ptr_to_im = this;
 }
 

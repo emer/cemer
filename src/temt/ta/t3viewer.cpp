@@ -856,15 +856,15 @@ void T3DataViewRoot::Constr_Node_impl() {
 
 void T3DataViewRoot::ChildRemoving(taDataView* child) {
   inherited::ChildRemoving(child);
-/* Special Rules:
+/*TODO: nuke this code, it was a bad idea Special Rules: NONONO!!! 
   1. in a non-default frame, delete if deleting last item
-*/
+
   if (!isDestroying() && (children.size == 0)) {
     T3DataViewFrame* dvf = GET_MY_OWNER(T3DataViewFrame);
     if (dvf && (dvf->GetIndex() > 0)) {
       dvf->CloseLater();
     }
-  }
+  }*/
 }
 
 

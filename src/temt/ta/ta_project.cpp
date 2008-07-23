@@ -338,6 +338,10 @@ void taProject::Initialize() {
   viewers.SetBaseType(&TA_TopLevelViewer);
 }
 
+void taProject::Destroy() { 
+  CutLinks();
+}
+
 void taProject::InitLinks() {
   //note: this routine is private, so subclasses must use _impl or _post
   inherited::InitLinks();

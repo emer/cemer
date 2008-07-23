@@ -1329,7 +1329,8 @@ void IDataViewWidget::Close() {
     m_viewer->WidgetDeleting();
     m_viewer = NULL;
   }
-  delete this;
+//TEMP  delete this;
+widget()->deleteLater();
   //NO CODE AFTER THIS POINT -- WE ARE DELETED
 }
 
@@ -3356,7 +3357,7 @@ iMainWindowViewer::~iMainWindowViewer() {
   taiMisc::active_wins.RemoveEl(this);
 //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
 // has already deleted the menu items
-//  if (menu) delete menu;
+  if (menu) menu->deleteLater();
   menu = NULL;
 }
 
@@ -3402,10 +3403,9 @@ void iMainWindowViewer::Init() {
 
 taiAction* iMainWindowViewer::AddAction(taiAction* act) {
   actions.Add(act); // refs the act
-  // Qt docs recommend "actions be created as children of the window they are in"
-  act->setParent(this);
-  // because Qt only activates acts with shortcuts if visible, we need to add the
-  // shorcutted guys to something visible... how about... us!
+  // note: don't parent Actions because we manage them manually in our lists
+  // note: because Qt only activates acts with shortcuts if visible, we need
+  // to add the shorcutted guys to something visible... how about... us!
   if (!act->shortcut().isEmpty())
     this->addAction(act);
   return act;
@@ -3928,19 +3928,6 @@ void iMainWindowViewer::fileSaveAll() {
   tabMisc::root->SaveAll();
 }
 
-void iMainWindowViewer::customEvent(QEvent* ev_) {
-  // we return early if we don't accept, otherwise fall through to accept
-  switch ((int)ev_->type()) {
-  case CET_FILE_CLOSE: {
-    taProject* proj = curProject();
-    if (!proj) return;
-    proj->CloseLater();
-  } break;
-  default: inherited(ev_); 
-    return; // don't accept
-  }
-  ev_->accept();
-}
 void iMainWindowViewer::fileClose() {
   taProject* proj = curProject();
   if (!proj) return;
@@ -3959,11 +3946,7 @@ void iMainWindowViewer::fileClose() {
       return;
     }
   }
-  // send async event so deleting of menu items doesn't crash us
-//  QEvent* ev = new QEvent((QEvent::Type)CET_FILE_CLOSE);
-//  QCoreApplication::postEvent(this, ev);
-//TEMP
-proj->CloseLater();
+  proj->CloseLater();
 }
 
 void iMainWindowViewer::fileOptions() {

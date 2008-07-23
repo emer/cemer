@@ -2050,8 +2050,10 @@ void taiActions::AddAction(taiAction* act) {
   }
   // font compliance
   act->setFont(taiM->menuFont(font_spec));
-  if (!act->parent()) 
-    act->setParent(this); // needs parent otherwise will leak
+#ifdef DEBUG
+  if (act->parent()) 
+    cerr << "WARNING: taiAction has non-null parent!\n";
+#endif
   items.Add(act);
   ActionAdded(act);
   connect(act, SIGNAL(MenuAction(taiAction*)), this, SLOT(child_triggered_toggled(taiAction*)) );

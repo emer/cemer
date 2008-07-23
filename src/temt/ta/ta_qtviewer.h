@@ -1099,7 +1099,7 @@ protected:
   int			m_unique_id;
   
   override void 	closeEvent(QCloseEvent* ev);
-  override void		customEvent(QEvent* ev);
+//nn  override void		customEvent(QEvent* ev);
   bool			event(QEvent* ev);
   override void 	resizeEvent(QResizeEvent* ev);
   override void 	moveEvent(QMoveEvent* ev);
@@ -1484,6 +1484,7 @@ public slots:
   void			Apply_Async();
 
 protected:
+  taiDataList		dl; // add any taiData guys you make to this, so they get deleted
   iViewPanelSet*	m_dps; // set if we are in a viewpanelset
   taDataView*		m_dv;
   int			updating; // #IGNORE >0 used to suppress update-related widget signals

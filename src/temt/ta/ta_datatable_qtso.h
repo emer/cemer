@@ -451,7 +451,6 @@ protected:
   SoQtRenderArea* 	m_ra;
   SoPerspectiveCamera*	m_camera;
   SoLightModel*		m_lm;
-  taiDataList		dl; // for deleting all the guys
 
   void 			Constr_T3ViewspaceWidget(QWidget* widg);
 

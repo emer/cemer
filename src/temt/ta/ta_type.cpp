@@ -3339,7 +3339,8 @@ void MemberDefBase::Copy_(const MemberDefBase& cp) {
 MemberDefBase::~MemberDefBase() {
 #ifndef NO_TA_BASE
 # ifndef NO_TA_GUI
-  if (im != NULL) {delete im; im = NULL;}
+  taRefN::SafeUnRefDone(im); 
+  im = NULL;
 # endif
 #endif
 }
@@ -3764,6 +3765,15 @@ MethodDef::MethodDef(const MethodDef& cp)
   Copy(cp);
 }
 
+MethodDef::~MethodDef() {
+#ifndef NO_TA_BASE
+# ifndef NO_TA_GUI
+  taRefN::SafeUnRefDone(im); 
+  im = NULL;
+# endif
+#endif
+}
+
 void MethodDef::Copy(const MethodDef& cp) {
   inherited::Copy(cp);
   type = cp.type;
@@ -4143,7 +4153,7 @@ TypeDef::~TypeDef() {
     schema = NULL;
   }
 # ifndef NO_TA_GUI
-  if (it) {delete it; it = NULL;}
+  taRefN::SafeUnRefDone(it); it = NULL;
   if (ie) {delete ie; ie = NULL;}
   if (iv) {delete iv; iv = NULL;}
 # endif // !NO_TA_GUI

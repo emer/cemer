@@ -1150,10 +1150,11 @@ void taiDataHost_impl::Cancel_impl() { //note: taiEditDataHost takes care of can
   warn_clobber = false; // just in case
 }
 
-void taiDataHost_impl::ClearBody() {
+void taiDataHost_impl::ClearBody(bool waitproc) {
   widget()->setUpdatesEnabled(false);
   ClearBody_impl();
-  taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
+  if (waitproc)
+    taiMiscCore::RunPending(); // not a bad idea to update gui before proceeding
   BodyCleared(); //rebuilds if ShowChanged
   widget()->setUpdatesEnabled(true);
 }
@@ -1875,7 +1876,7 @@ void taiEditDataHost::Cancel_impl() {
       panel->ClosePanel();
   } else if (isControl()) {
     //TODO: need to verify what to do!
-    ClearBody();
+    ClearBody(false); // no event loop
   } 
   inherited::Cancel_impl();
 }

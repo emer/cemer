@@ -131,7 +131,7 @@ taBase_RefList 	tabMisc::delayed_updateafteredit;
 taBase_FunCallList  tabMisc::delayed_funcalls;
 
 void tabMisc::DelayedClose(taBase* obj) {
-  delayed_close.Link(obj);
+  delayed_close.LinkUnique(obj); // only add once!!!
 }
 
 void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
@@ -356,6 +356,9 @@ void taBase::Ref(taBase& it) {
   Ref(&it);
 }
 void taBase::Ref(taBase* it) {
+if (it->GetName() == "LeabraProject_0") {
+int i = 0;
+}
   it->refn++;
 }
 

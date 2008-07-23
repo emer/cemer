@@ -219,7 +219,7 @@ private:
   void	Copy_(const taProject& cp);
   void 	InitLinks(); // don't try to use this -- use _impl instead
   void	Initialize();
-  void 	Destroy() { CutLinks(); }
+  void 	Destroy();
 };
 TA_SMART_PTRS(taProject)
 

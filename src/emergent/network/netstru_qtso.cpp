@@ -2849,8 +2849,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
-  cmbUnitText = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-				this, NULL, widg, taiData::flgAutoApply);
+  cmbUnitText = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
+				this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbUnitText->GetRep());
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -2858,8 +2858,8 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
  for maximum speed.");
   layDispCheck->addWidget(lblDispMode);
-  cmbDispMode = new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
-				this, NULL, widg, taiData::flgAutoApply);
+  cmbDispMode = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
+    this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addStretch();
   
@@ -2869,8 +2869,8 @@ L_R_F: Left = sender, Right = receiver, all arrows at the Front of the layer\n\
 L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
 B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDispCheck->addWidget(lblPrjnDisp);
-  cmbPrjnDisp = new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
-				this, NULL, widg, taiData::flgAutoApply);
+  cmbPrjnDisp = dl.Add(new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
+				this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbPrjnDisp->GetRep());
   layDispCheck->addStretch();
   
@@ -2880,28 +2880,28 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
   lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
   layFontsEtc->addWidget(lblPrjnWdth);
-  fldPrjnWdth = new taiField(&TA_float, this, NULL, widg);
+  fldPrjnWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
 //   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
   layFontsEtc->addWidget(lblUnitTrans);
-  fldUnitTrans = new taiField(&TA_float, this, NULL, widg);
+  fldUnitTrans = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
 //   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
   lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
   layFontsEtc->addWidget(lblUnitFont);
-  fldUnitFont = new taiField(&TA_float, this, NULL, widg);
+  fldUnitFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitFont->GetRep());
 //   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
   lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
   layFontsEtc->addWidget(lblLayFont);
-  fldLayFont = new taiField(&TA_float, this, NULL, widg);
+  fldLayFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldLayFont->GetRep());
 //   layFontsEtc->addSpacing(taiM->hsep_c);
 
@@ -2923,13 +2923,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
   lblSnapBordWdth->setToolTip("Width of snap border lines"); 
   layColorScaleCtrls->addWidget(lblSnapBordWdth);
-  fldSnapBordWdth = new taiField(&TA_float, this, NULL, widg);
+  fldSnapBordWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
 
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
   lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box"); 
   layColorScaleCtrls->addWidget(lblUnitSpacing);
-  fldUnitSpacing = new taiField(&TA_float, this, NULL, widg);
+  fldUnitSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
 
   chkWtLines = new QCheckBox("wt\nLines", widg);
@@ -2945,13 +2945,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
   lblWtLineWdth->setToolTip("Width of weight lines"); 
   layColorScaleCtrls->addWidget(lblWtLineWdth);
-  fldWtLineWdth = new taiField(&TA_float, this, NULL, widg);
+  fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
 
   lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
   lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown.");
   layColorScaleCtrls->addWidget(lblWtLineThr);
-  fldWtLineThr = new taiField(&TA_float, this, NULL, widg);
+  fldWtLineThr = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
 
   int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
@@ -2959,7 +2959,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
   lblWtPrjnLay->setToolTip("Layer to display weight projection values onto for selected unit (values are visible on all units in the wt_prjn unit variable if this setting is non-null)");
   layColorScaleCtrls->addWidget(lblWtPrjnLay);
-  gelWtPrjnLay = new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags);
+  gelWtPrjnLay = dl.Add(new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags));
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
 
   ////////////////////////////////////////////////////////////////////////////
