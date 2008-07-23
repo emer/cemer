@@ -117,32 +117,19 @@ ConSpec:: ConSpec() {
 //  LeabraConSpec	//
 //////////////////////////
 
-void LeabraConSpec_impl::Compute_Weights(Network* net, Unit* u) {
-  // CTLEABRA_CAL, DCAL
-  for(int g = 0; g < u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if (recv_gp->size <= 0) continue;
-    Compute_Weights_CtCAL(net, recv_gp, u);
-  }
+void LeabraConSpec_impl::S_Compute_SRAvg(Unit* un, void*) {
+  un->cs->Compute_SRAvg(un);
 }
 
-/*
-void LeabraConSpec::Send_Netin_0(Unit* su) {
-  const float su_act_eff = su->act;
-  for (int j = 0; j < su->send.size; ++j) {
-    LeabraSendCons* send_gp = (LeabraSendCons*)su->send[j];
-    const int send_sz = send_gp->size;
-    su->n_con_calc += send_sz;
-    Unit** units = send_gp->units; // unit pointer
-    float* wts = send_gp->wts; // the wts themselves!
-    for (int i=0; i < send_sz; i++) {
-      //const int targ_i = unis[i];
-      Send_Netin_inner_0(wts[i], units[i]->net, su_act_eff);
-    }
-  }
-}*/
+void LeabraConSpec_impl::S_Compute_dWts(Unit* un, void*) {
+  un->cs->Compute_dWts(un);
+}
 
-void LeabraConSpec_impl::Compute_SRAvg(Network* /*net*/, Unit* su) {
+void LeabraConSpec_impl::S_Compute_Weights(Unit* un, void*) {
+  un->cs->Compute_Weights(un);
+}
+
+void LeabraConSpec_impl::Compute_SRAvg(Unit* su) {
   //nn Unit** g_units = net->g_units;
 //  float* g_acts = net->g_acts;
   float su_act = su->act;
@@ -158,53 +145,69 @@ void LeabraConSpec_impl::Compute_SRAvg(Network* /*net*/, Unit* su) {
   }
 }
 
-void LeabraConSpec_impl::Compute_Weights_CtCAL(Network* /*net*/, 
- LeabraRecvCons* cg, Unit* ru) 
-{
-  // first emulate the Leabra "dWt" calc
-  const int cg_size = cg->size;
-  const float ru_act = ru->act;
-  LeabraCon** cons = cg->cons; // for speed
-  
-  cg->dwt_mean = 0.0f;
-  for (int i=0; i<cg_size; i++) {
-    const float su_act = cg->Un(i)->act;
-    LeabraCon* cn = cons[i];
-    const float& cn_wt = cn->wt;
-   // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
-    float err = (ru_act * su_act) - (0.02f * cn->sravg);
-    //if(lmix.err_sb) {
-      if(err > 0.0f) err *= (1.0f - cn_wt);
-      else	     err *= cn_wt;
-    //}
-    cn->dwt += cur_lrate * err;
-    cn->sravg = 0.0f;
-    cg->dwt_mean += cn->dwt;
-  }
-  cg->dwt_mean /= (float)cg_size;
-  
-  float dwnorm = -norm_pct * cg->dwt_mean;
+void LeabraConSpec_impl::Compute_dWts(Unit* ru) {
+  for(int g = 0; g < u->recv.size; g++) {
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+
+    // first emulate the Leabra "dWt" calc
+    const float ru_act = ru->act;
+    LeabraCon** cons = cg->cons; // for speed
     
-  for (int i = 0; i < cg_size; ++i) {
-    LeabraCon* cn = cons[i];
-    float& cn_wt = cn->wt;
-    
-    // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
-    float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
-   /* if(ru->act_avg <= rus->act_reg.min)
-      dwinc = rus->act_reg.inc_wt;
-    else if(ru->act_avg >= rus->act_reg.max)
-      dwinc = -rus->act_reg.dec_wt;*/
-    if (dwinc != 0.0f) {
-      cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+    cg->dwt_mean = 0.0f;
+    for (int i=0; i < cg_size; i++) {
+      const float su_act = cg->Un(i)->act;
+      LeabraCon* cn = cons[i];
+      const float& cn_wt = cn->wt;
+    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+      float err = (ru_act * su_act) - (0.02f * cn->sravg);
+      //if(lmix.err_sb) {
+        if(err > 0.0f) err *= (1.0f - cn_wt);
+        else	     err *= cn_wt;
+      //}
+      cn->dwt += cur_lrate * err;
+      cn->sravg = 0.0f;
+      cg->dwt_mean += cn->dwt;
     }
+    cg->dwt_mean /= (float)cg_size;
+  }
+}
+
+void LeabraConSpec_impl::Compute_Weights(Unit* ru) {
+  // CTLEABRA_CAL, DCAL
+  for(int g = 0; g < u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
     
-    // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
-    cn_wt += cn->dwt + dwnorm;	// weights always linear
-    wt_limits.ApplyMinLimit(cn_wt); 
-    wt_limits.ApplyMaxLimit(cn_wt);
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
+    // first emulate the Leabra "dWt" calc
+    const float ru_act = ru->act;
+    LeabraCon** cons = cg->cons; // for speed
+    
+    float dwnorm = -norm_pct * cg->dwt_mean;
+      
+    for (int i = 0; i < cg_size; ++i) {
+      LeabraCon* cn = cons[i];
+      float& cn_wt = cn->wt;
+      
+      // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+      float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
+    /* if(ru->act_avg <= rus->act_reg.min)
+        dwinc = rus->act_reg.inc_wt;
+      else if(ru->act_avg >= rus->act_reg.max)
+        dwinc = -rus->act_reg.dec_wt;*/
+      if (dwinc != 0.0f) {
+        cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+      }
+      
+      // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
+      cn_wt += cn->dwt + dwnorm;	// weights always linear
+      wt_limits.ApplyMinLimit(cn_wt); 
+      wt_limits.ApplyMaxLimit(cn_wt);
+      cn->pdw = cn->dwt;
+      cn->dwt = 0.0f;
+    }
   }
 }
 
@@ -385,11 +388,16 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 //////////////////////////
 
 bool 	Network::recv_based; 
+int 	Network::dwt_rate = Network::trial_rate;
+int 	Network::sra_start = 30;
+int 	Network::sra_rate = 5;
 
 Network::Network() {
   con_spec = NULL;
   engine = NULL;
+  trial = 0;
   cycle = 0;
+  tot_cycle = 0;
   n_units_flat = 0;
   g_units = NULL;
 }
@@ -477,8 +485,11 @@ void Network::Cycle(int n_cycles) {
   for (int i = 0; i < n_cycles; ++i) {
     g_rand = rand();
     Cycle_impl();
-    ComputeNets();
-    ++cycle;
+    ++tot_cycle;
+    if (++cycle >= trial_rate) {
+      ++trial;
+      cycle = 0;
+    }
   }
 }
 
@@ -487,7 +498,7 @@ void Network::Cycle_impl() {
   if (Nb::calc_act) {
     float tot_act = ComputeActs();
     if (Nb::use_log_file)
-      fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", cycle, tot_act);
+      fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", tot_cycle, tot_act);
   }
 }
 
@@ -529,12 +540,14 @@ LeabraNetwork::~LeabraNetwork() {
 
 void LeabraNetwork::Cycle_impl() {
   inherited::Cycle_impl();
+  if ((Nb::sra_rate > 0) && (cycle >= sra_start) && ((cycle % Nb::sra_rate) == 0)) 
+    Compute_SRAvg();
   // note: add 1 to cycle so we do it after dwt_rate full counts
   int nc1 = cycle + 1;
-  if ((Nb::sra_rate > 0) && ((nc1 % Nb::sra_rate) == 0)) 
-    Compute_SRAvg();
-  if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) 
+  if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) {
+    Compute_dWts();
     Compute_Weights();
+  }
 }
 
 //////////////////////////
@@ -767,46 +780,6 @@ void ThreadNetEngine::OnBuild_Post() {
   }
 }
 
-/*#ifdef SEND_ARY_ASYM
-void ThreadNetEngine::ComputeNets_SendArray() {
-  DoProc(NetTask::P_Send_Netin_Array);
-  const int tsz = net_tasks.size - 1; // we only do Tasks1-N
-  if (tsz <= 0) return; // there were no additional buffs to accum
-  // post stuff
-//  RollupScratch_Netin();
-  // called in Thread 0, so allocate the Task0
-  NetTask* nt0 = net_tasks[0];
-  nt0->overhead.Start(false);
-  const int n_units_flat = net->n_units_flat;
-  Unit** g_units = net->g_units; // cache -- this is also task0's guys
-  // 2-thread version is optimized
-  if (tsz == 1) {
-    float* nets = dynamic_cast<NetTask_N*>(net_tasks[1])->excit;  
-    for (int i = 0; i < n_units_flat; ++i) {
-      g_units[i]->net += nets[i]; // since Task0 was also accumulating
-    }
-  } else { // tsz > 1, need to rollup
-    // make local array pointers, for speed
-    float** nets = new float*[tsz];  
-    for (int t = 1; t < net_tasks.size; t++) {
-      NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
-      nets[t-1] = tsk->excit; // cache
-    }
-    
-    for (int i = 0; i < n_units_flat; ++i) {
-      //TODO: this can be optimized using SSE or equiv compiler commands
-      // to rollup 4 floats at once in parallel
-      float tnet = 0.0f;
-      for (int t = 0; t < tsz; ++t) {
-        tnet += nets[t][i];
-      }
-      g_units[i]->net += tnet; // since Task0 was also accumulating
-    }
-    delete[] nets;
-  }
-  nt0->overhead.Stop();
-}
-#else // SYM version */
 void ThreadNetEngine::ComputeNets_SendArray() {
   DoProc(NetTask::T_Send_Netin_Array);
 
@@ -845,7 +818,7 @@ void ThreadNetEngine::ComputeNets_SendArray() {
   }
   nt0->overhead.Stop();
 }
-//#endif
+
 
 //////////////////////////////////
 //  NetTask -- mixed classes	//
@@ -907,21 +880,21 @@ void NetTask::ComputeAct() {
   }
 }
 
-void NetTask::Compute_Weights() {
-  Unit** g_units = Nb::net->g_units; // cache
-  const int n_units_flat =  Nb::net->n_units_flat;
-  PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
-    Unit* un = g_units[my_u]; //note: accessed flat
-    un->cs->Compute_Weights(Nb::net, un);
-  }
-}
-
 void NetTask::Compute_SRAvg() {
   Unit** units = Nb::net->g_units; // cache
   const int n_units_flat =  Nb::net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     ((LeabraConSpec*)(un->cs))->Compute_SRAvg(Nb::net, un);
+  }
+}
+
+void NetTask::Compute_Weights() {
+  Unit** g_units = Nb::net->g_units; // cache
+  const int n_units_flat =  Nb::net->n_units_flat;
+  PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+    Unit* un = g_units[my_u]; //note: accessed flat
+    un->cs->Compute_Weights(Nb::net, un);
   }
 }
 
@@ -1032,8 +1005,6 @@ signed char Nb::nibble_mode = 0;
 bool Nb::single = false; // true for single thread mode, to compare against nprocs=1
 int Nb::send_act = 0x10000; // send activation, as a fraction of 2^16 
 int Nb::tsend_act; 
-int Nb::dwt_rate = 50;
-int Nb::sra_rate = 5;
 int Nb::inv_act = 1; // inverse of activation -- can use to divide
 int Nb::this_rand; // assigned a new random value each cycle, to let us randomize unit acts
 bool Nb::use_log_file = false;

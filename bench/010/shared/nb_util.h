@@ -118,11 +118,11 @@ public:
   C*		c;
   
   void 		Run_inc(VisitProc_t vp, void* aux = NULL,
-        int i_fm = 0, int i_to = -1, int i_by = 1)
-  {c->_Visit_inc((::VisitProc_t)vp, aux, i_fm, i_to, i_by);}
+        int i_fm = 0, int i_to = -1)
+  {c->Visit_inc_((::VisitProc_t)vp, aux, i_fm, i_to);}
   void 		Run_dec(VisitProc_t vp, void* aux = NULL,
-        int i_fm = -1, int i_to = 0, int i_by = -1)
-  {c->_Visit_dec((::VisitProc_t)vp, aux, i_fm, i_to, i_by);}
+        int i_fm = -1, int i_to = 0)
+  {c->Visit_dec_((::VisitProc_t)vp, aux, i_fm, i_to);}
   
   Visitor(C* c_): c(c_) {}
 };
@@ -195,11 +195,14 @@ protected:
   virtual void	Release_(int /*fm*/, int /*to*/) {} // only needed for taList
 
 public: // Visitor i/f
-  void _Visit_inc(VisitProc_t vp, void* aux,
-        int i_fm = 0, int i_to = -1, int i_by = 1)
+  void Visit_inc_(VisitProc_t vp, void* aux,
+    int i_fm = 0, int i_to = -1)
   {if (i_to < 0) i_to = size - 1;
-   for (int i = i_fm; i <= i_to; i += i_by)
-     vp(el[i], aux);} 
+   for (int i = i_fm; i <= i_to; ++i) vp(el[i], aux);} 
+  void Visit_dec_(VisitProc_t vp, void* aux,
+    int i_fm = -1, int i_to = 0)
+  {if (i_fm < 0) i_fm = size - 1;
+   for (int i = i_fm; i >= i_to; --i) vp(el[i], aux);} 
 
 };
 

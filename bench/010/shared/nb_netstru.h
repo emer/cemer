@@ -314,7 +314,8 @@ public:
   virtual size_t	GetConSize() const = 0; // size of the Con
   virtual RecvCons*	NewRecvCons() const = 0;
   virtual SendCons*	NewSendCons() const = 0;  
-  virtual void 		Compute_Weights(Network* net, Unit* ru) = 0;
+  virtual void 		Compute_dWts(Unit* ru) = 0;
+  virtual void 		Compute_Weights(Unit* ru) = 0;
   
   int	dummy[8];
   ConSpec();
@@ -328,6 +329,11 @@ public:
 
 class LeabraConSpec_impl: public ConSpec_send_impl {
 INHERITED(ConSpec_send_impl)
+public: // static Visitor targets
+  static void		S_Compute_SRAvg(Unit* un, void* aux);
+  static void		S_Compute_dWts(Unit* un, void* aux);
+  static void		S_Compute_Weights(Unit* un, void* aux);
+
 public:
   inline static void Send_Netin_inner_0(float cn_wt, float& ru_net, float su_act_eff);
     // highly optimized inner loop
@@ -339,9 +345,9 @@ public:
   void 			T_Send_Netin_Array(Unit* su, float* excit);
   virtual void 		Send_Netin_Array(Unit* su, float* excit) = 0;
   
-  override void 	Compute_Weights(Network* net, Unit* ru);
-  void 			Compute_Weights_CtCAL(Network* net, LeabraRecvCons* cg, Unit* ru);
-  void 			Compute_SRAvg(Network* net, Unit* su);
+  override void 	Compute_dWts(Unit* ru);
+  override void 	Compute_Weights(Unit* ru);
+  void 			Compute_SRAvg(Unit* su);
 };
 
 template<class CN>
@@ -471,6 +477,10 @@ public:
   };
   
   static bool		recv_based; // for recv-based algos
+  const static int 	trial_rate = 71; // how many cycles per trial; def=71
+  static int 		dwt_rate; // how many cycles per dwt calc; 0=none,def=trial_rate
+  static int 		sra_start; // cycle after which to start; 0=none,def=30
+  static int 		sra_rate; // how many cycles per sravg calc; 0=none,def=5
 
 // global lists accessors for them
 // Units -- all indexes are commensurable
@@ -478,7 +488,9 @@ public:
   int			n_units_flat; // number of global units (acts, nets, etc.)
   Unit**		g_units; // global units 
   
+  int			trial;
   int			cycle;
+  int			tot_cycle;
   
   
   NetEngine*		engine;
@@ -512,8 +524,9 @@ class LeabraNetwork: public Network {
 INHERITED(Network)
 public:
   
-  void		Compute_Weights();
   void		Compute_SRAvg();
+  void		Compute_dWts();
+  void		Compute_Weights();
   LeabraNetwork();
   ~LeabraNetwork();
 protected:  
@@ -655,6 +668,7 @@ public:
   void 			ComputeNets();
   virtual float 	ComputeActs();
   virtual void		Compute_SRAvg();
+  virtual void		Compute_dWts();
   virtual void		Compute_Weights();
   
   virtual void 		Log(bool hdr); // save a log file
@@ -729,8 +743,6 @@ public:
   static int n_prjns; // total number of prjns
   static float tot_act; // check on tot act
   static int net_type; // network type, def= Leabra
-  static int dwt_rate; // how many cycles per dwt calc; 0=none
-  static int sra_rate; // how many cycles per sravg calc; 0=none
   static int tsend_act; // as decimal percent
   static int send_act; // send activation, as a fraction of 2^16 
   static int inv_act; // inverse of activation -- can use to divide
