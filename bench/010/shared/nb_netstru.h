@@ -314,7 +314,7 @@ public:
   virtual size_t	GetConSize() const = 0; // size of the Con
   virtual RecvCons*	NewRecvCons() const = 0;
   virtual SendCons*	NewSendCons() const = 0;  
-  virtual void 		Compute_dWts(Unit* ru) = 0;
+  virtual void 		Compute_dWt(Unit* ru) = 0;
   virtual void 		Compute_Weights(Unit* ru) = 0;
   
   int	dummy[8];
@@ -331,7 +331,7 @@ class LeabraConSpec_impl: public ConSpec_send_impl {
 INHERITED(ConSpec_send_impl)
 public: // static Visitor targets
   static void		S_Compute_SRAvg(Unit* un, void* aux);
-  static void		S_Compute_dWts(Unit* un, void* aux);
+  static void		S_Compute_dWt(Unit* un, void* aux);
   static void		S_Compute_Weights(Unit* un, void* aux);
 
 public:
@@ -345,7 +345,7 @@ public:
   void 			T_Send_Netin_Array(Unit* su, float* excit);
   virtual void 		Send_Netin_Array(Unit* su, float* excit) = 0;
   
-  override void 	Compute_dWts(Unit* ru);
+  override void 	Compute_dWt(Unit* ru);
   override void 	Compute_Weights(Unit* ru);
   void 			Compute_SRAvg(Unit* su);
 };
@@ -525,7 +525,7 @@ INHERITED(Network)
 public:
   
   void		Compute_SRAvg();
-  void		Compute_dWts();
+  void		Compute_dWt();
   void		Compute_Weights();
   LeabraNetwork();
   ~LeabraNetwork();
@@ -584,13 +584,6 @@ public:
     {nt->Recv_Netin();}
   static void T_ComputeAct(NetTask* nt, void* )
     {nt->ComputeAct();}
-  static void T_Compute_SRAvg(NetTask* nt, void* )
-    {nt->Compute_SRAvg();}
-  static void T_Compute_Weights(NetTask* nt, void* )
-    {nt->Compute_Weights();}
-
-
-
 
   Network*	net;
 // All
@@ -615,7 +608,7 @@ public:
   
 // Weights
   virtual void	Compute_SRAvg(); // compat with single or threaded
-//  virtual void	Compute_dWt(); // compat with single or threaded
+  virtual void	Compute_dWt(); // compat with single or threaded
   virtual void	Compute_Weights(); // compat with single or threaded
   
   void		SetTaskFun(TaskFun_t tf, void* inst);
@@ -668,7 +661,7 @@ public:
   void 			ComputeNets();
   virtual float 	ComputeActs();
   virtual void		Compute_SRAvg();
-  virtual void		Compute_dWts();
+  virtual void		Compute_dWt();
   virtual void		Compute_Weights();
   
   virtual void 		Log(bool hdr); // save a log file

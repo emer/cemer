@@ -121,8 +121,8 @@ void LeabraConSpec_impl::S_Compute_SRAvg(Unit* un, void*) {
   un->cs->Compute_SRAvg(un);
 }
 
-void LeabraConSpec_impl::S_Compute_dWts(Unit* un, void*) {
-  un->cs->Compute_dWts(un);
+void LeabraConSpec_impl::S_Compute_dWt(Unit* un, void*) {
+  un->cs->Compute_dWt(un);
 }
 
 void LeabraConSpec_impl::S_Compute_Weights(Unit* un, void*) {
@@ -145,7 +145,7 @@ void LeabraConSpec_impl::Compute_SRAvg(Unit* su) {
   }
 }
 
-void LeabraConSpec_impl::Compute_dWts(Unit* ru) {
+void LeabraConSpec_impl::Compute_dWt(Unit* ru) {
   for(int g = 0; g < u->recv.size; g++) {
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.FastEl(g);
     const int cg_size = cg->size;
@@ -545,7 +545,7 @@ void LeabraNetwork::Cycle_impl() {
   // note: add 1 to cycle so we do it after dwt_rate full counts
   int nc1 = cycle + 1;
   if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) {
-    Compute_dWts();
+    Compute_dWt();
     Compute_Weights();
   }
 }
@@ -726,7 +726,6 @@ void ThreadNetEngine::DoProc(TaskFun_t tf, void* inst) {
   for (int t = 1; t < n_procs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
     NetTask* tsk = net_tasks[t];
-    th->suspend(); // prob already suspended
     PROC_VAR_INIT(tsk->g_u, t);
     tsk->proc_id = proc_id;
     th->resume();
@@ -739,22 +738,7 @@ void ThreadNetEngine::DoProc(TaskFun_t tf, void* inst) {
   tsk->run_time.Start(false);
   tsk->run();
   tsk->run_time.Stop(); 
-  // optional "nibble"
-  if (Nb::nibble_mode != 0)
-  for (int t = 1; t < n_procs; ++t) {
-    if (tsk->g_u >= n_nibb_thresh) continue;
-    NetTask* tsk = net_tasks[t];
-    // note: its ok if tsk finishes between our test and calling run
-    if (tsk->g_u < n_units_flat) {
-      tsk->nibble_time.Start(false);
-      tsk->run();
-      tsk->nibble_time.Stop(); 
-    }
-  }
-  // then we must sync UNLESS we are UNI mode and uncond nibbled
-#ifdef UNIT_STRIDE
-  if (Nb::nibble_mode != 1)
-#endif
+  // sync 
   for (int t = 1; t < n_procs; ++t) {
     tsk->sync_time.Start(false);
     QTaskThread* th = (QTaskThread*)threads[t];
@@ -772,7 +756,6 @@ void ThreadNetEngine::OnBuild_Post() {
   }*/
   // Send_Array only
   if (algo == SEND_ARRAY) {
-    //note: we alloc to all, but the ASYM version doesn't use nt0.excit
     for (int t = 0; t < net_tasks.size; t++) {
       NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
       tsk->excit = new float[n_units_flat]; // no need to init

@@ -7,8 +7,6 @@
 #include <QtCore/QString>
 
 // switches and optional subswitches
-//#define UN_IN_CON // true if target unit is in con
-//#define USE_V_CON // use slow access to Cn -- for benching
 #define CON_RECV 0 // owned by RecvCons
 #define CON_SEND 1 // owned by SendCons
 
@@ -16,7 +14,6 @@
 
 // template, subswitches, and catch
 #if (CON_IN == CON_RECV)
-//# define PWT_IN_SEND // put a ptr to wt in SendCons 
 #elif (CON_IN == CON_SEND)
 #else
 # error("CON_IN not set")
@@ -323,7 +320,7 @@ public:
   static NetTaskList net_tasks; // only n_procs created
   
 // Chunking and allocating of data, for multi-tasking
-  static const int core_max_nprocs = 32; // maximum number of processors!
+  static const int 	core_max_nprocs = 32; // maximum number of processors!
   static const int 	proc_stride = 16; // items done each iter in loop (must be 2^n)
   static const int 	proc_stride_mask = proc_stride-1; // mask of proc_stride
   static int 		n_procs; // total number of processors/processes
@@ -376,6 +373,10 @@ protected:
 
 class NetTask: public Task {
 public:
+  override void		run();
+
+
+public: // legacy
   static int	g_u;  // shared by ALL
   
   Network*	net;
@@ -383,7 +384,6 @@ public:
   int		t_tot; // shared by Xxx_Netin
   int		n_run; // for diagnostics, num times run
   
-  void		run();
 
 // Send_Netin
 #ifdef DEBUG
