@@ -875,7 +875,8 @@ void ThreadNetEngine::DoProc(int proc_id) {
   }
   NetTask* tsk = net_tasks[0];
   tsk->run_time.Start(false);
-  /*QFuture<void> fv = */QtConcurrent::map(net_tasks, net_task_run);
+  QFuture<void> fv = QtConcurrent::map(net_tasks, net_task_run);
+  fv.waitForFinished();
   tsk->run_time.Stop(); 
 #else // legacy threads
   for (int t = 1; t < n_procs; ++t) {
@@ -1320,9 +1321,7 @@ Network Nb::net;		// global network
 int Nb::n_tot;
 int Nb::n_prjns;
 float Nb::tot_act; // check on tot act
-float Nb::nibble_thresh = 0.8f;
-signed char Nb::nibble_mode = 0;
-signed char Nb::fast_prjn = 0; // fast prjns directly access target unit array
+
 bool Nb::single = false; // true for single thread mode, to compare against nprocs=1
 int Nb::send_act = 0x10000; // send activation, as a fraction of 2^16 
 int Nb::tsend_act; 
@@ -1480,11 +1479,6 @@ void Nb::ParseCmdLine(int& rval) {
       use_log_file = false; continue;}
     if (targ == "-act=0") {
       calc_act = false; continue;}
-    if (targ.startsWith("-nibble=")) {
-      nibble_mode = targ.remove("-nibble=").toInt();
-      continue;}
-    if (targ == "-fast_prjn=1") {
-      fast_prjn = true; continue;}
     if (targ.startsWith("-suff=")) {
       log_suff = targ.remove("-suff=");
       continue;}
@@ -1530,8 +1524,8 @@ void Nb::PrintResults() {
     const char* hdr_str = 
     "algo\teMcon\tMcon\tsnd_act\tprocs"
     "\tlayers\tunits\tcons\tKwts\tcycles"
-    "\tKcn_tot\tsecs\tnibble\tfstprjn\tsrarate"
-    "\tdwtrate\tcn_in\tdnorm\n";
+    "\tKcn_tot\tsecs\tQtConc\tsrarate\tdwtrate"
+    "\tcn_in\tdnorm\n";
     
     if (logfile) fprintf(logfile, hdr_str);
     printf(hdr_str);
@@ -1544,11 +1538,11 @@ void Nb::PrintResults() {
     "%d\t%.4g\t%.4g\t%d\t%d"
     "\t%d\t%d\t%d\t%g\t%d"
     "\t%g\t%.3g\t%d\t%d\t%d"
-    "\t%d\t%s\t%d\n",
+    "\t%s\t%d\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
     n_layers, n_units, n_cons, n_wts / 1000, n_cycles,
-    n_con_trav / 1000, tot_time, nibble_mode, fast_prjn, Network::sra_rate,
-    Network::dwt_rate, cn_in_str[cn_in], Network::use_dnorm);
+    n_con_trav / 1000, tot_time, qt_conc, Network::sra_rate, Network::dwt_rate,
+    cn_in_str[cn_in], Network::use_dnorm);
   cout << buf;
   if (logfile) {
     fprintf(logfile, buf);

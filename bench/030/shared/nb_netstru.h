@@ -503,12 +503,11 @@ public:
   
   static int this_rand; // assigned a new random value each cycle, to let us randomize unit acts
   static const int	cn_in = CON_IN; // just for logging
-  
-// thread values
-  
-  static float nibble_thresh; // < 80%
-  static signed char nibble_mode; // 0=none, 1=on, 2=auto (> 20% left)
-  static signed char fast_prjn; // fast prjns directly access target unit array
+#ifdef USE_QT_CONCURRENT
+  static const int	qt_conc = 1; // just for logging
+#else
+  static const int	qt_conc = 0; // just for logging
+#endif  
   static bool single; // true for single thread mode, to compare against nprocs=1
   static bool calc_act;
   static bool sender; // sender based, else receiver-based
