@@ -221,6 +221,9 @@ public:
   taPtrList() {}
   explicit taPtrList(int alloc) {Alloc(alloc);}
   
+public: // compat
+  inline void	append(T* it) {Add(it);}
+  inline void	count() const {return size;}
 };
 
 template<class T> 

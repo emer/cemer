@@ -5,11 +5,23 @@
 #include "nb_util.h"
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 
 // switches and optional subswitches
 
-// for SEND_ARRAY, whether to use the asymmetrical version
-//#define SEND_ARY_ASYM
+#define CON_RECV 0 // owned by RecvCons
+#define CON_SEND 1 // owned by SendCons
+
+#define CON_IN CON_SEND
+
+// template, subswitches, and catch
+#if (CON_IN == CON_RECV)
+//# define PWT_IN_SEND // put a ptr to wt in SendCons 
+#elif (CON_IN == CON_SEND)
+#else
+# error("CON_IN not set")
+#endif
+
 
 // optional subs
 class Connection;
@@ -24,9 +36,14 @@ class Network;
 class NetEngine;
 class NetTask;
 typedef taPtrList<Connection>	ConnectionPtrList; // note: typically pts to subclass
-typedef taList<NetTask>		NetTaskList;
 typedef taList<Projection>		PrjnList;
 typedef taPtrList<Projection>		PrjnPtrList;
+
+//typedef taList<NetTask>	NetTaskList;
+class NetTaskList: public QList<NetTask*> {
+public:
+  ~NetTaskList();
+};
 
 // note: classes of same-name are similar in structure to
 // the corresponding Emergent/Leabra classes
@@ -113,10 +130,11 @@ protected:
 class RecvCons: public ConsBase {
 INHERITED(ConsBase)
 public:
-  int		send_idx;
-  Layer*	send_lay; // sending layer
-  float		dwt_mean; // used by many algos
+  int			send_idx;
+  Layer*		send_lay; // sending layer
+  float			dwt_mean; // used by many algos
   
+  virtual float 	Compute_Netin() = 0; // partial sum for this Cons 
   RecvCons();
   ~RecvCons() {}
 };
@@ -155,6 +173,7 @@ INHERITED(RecvCons_recv_impl)
 public:
   CN*			cons; // flat array -- ReadOnly!!! you must access safely!!!
   
+  override float 	Compute_Netin(); 
   override Connection*	V_Cn(int i) {return &(cons[i]);} // SLOW generic access
   override Connection*	V_Cns() {return cons;} // SLOW!!!!
 
@@ -170,6 +189,7 @@ INHERITED(RecvCons_send_impl)
 public:
   CN**			cons; // flat array -- ReadOnly!!! you must access safely!!!
   
+  override float 	Compute_Netin(); 
   override Connection*	V_Cn(int i) {return cons[i];} // SLOW generic access
   override Connection**	V_Cns() {return (Connection**)cons;} // SLOW!!!!
 
@@ -256,12 +276,30 @@ protected:
 
 // ALGO Specific Guys
 
-// Leabra -- send-based
+#if (CON_IN == CON_RECV)
+
+// Bp -- recv-based -- NOTE: we only bench recv
+typedef SendCons_recv<BpCon> BpSendCons;
+typedef RecvCons_recv<BpCon> BpRecvCons;
+
+// Leabra -- recv-based -- NOTE: like legacy
+typedef SendCons_recv<LeabraCon> LeabraSendCons;
+typedef RecvCons_recv<LeabraCon> LeabraRecvCons;
+typedef SendCons_recv<FunkyLeabraCon> FunkyLeabraSendCons;
+typedef RecvCons_recv<FunkyLeabraCon> FunkyLeabraRecvCons;
+
+#elif (CON_IN == CON_SEND)
+// Leabra -- send-based -- NOTE: OPPOSITE TO LEGACY
 typedef SendCons_send<LeabraCon> LeabraSendCons;
 typedef RecvCons_send<LeabraCon> LeabraRecvCons;
-
 typedef SendCons_send<FunkyLeabraCon> FunkyLeabraSendCons;
 typedef RecvCons_send<FunkyLeabraCon> FunkyLeabraRecvCons;
+#else
+# error("CON_IN not set")
+#endif
+
+
+
 
 /* why this nonsense???
 class LeabraSendCons: public SendCons_send<LeabraCon> {
@@ -281,10 +319,6 @@ public:
 };
 */
 
-// Bp -- recv-based
-
-typedef SendCons_recv<BpCon> BpSendCons;
-typedef RecvCons_recv<BpCon> BpRecvCons;
 
 /* again unnecessary...
 class BpSendCons: public SendCons_recv<BpCon> {
@@ -314,8 +348,10 @@ public:
   virtual size_t	GetConSize() const = 0; // size of the Con
   virtual RecvCons*	NewRecvCons() const = 0;
   virtual SendCons*	NewSendCons() const = 0;  
-  virtual void 		Compute_dWt(Unit* ru) = 0;
-  virtual void 		Compute_Weights(Unit* ru) = 0;
+  void 			Recv_Netin(Unit* ru); // shared by 0 and N
+  virtual void 		Compute_SRAvg(Unit* /*ru*/) {}
+  virtual void 		Compute_dWt(Unit* /*ru*/) {}
+  virtual void 		Compute_Weights(Unit* /*ru*/) {}
   
   int	dummy[8];
   ConSpec();
@@ -345,9 +381,9 @@ public:
   void 			T_Send_Netin_Array(Unit* su, float* excit);
   virtual void 		Send_Netin_Array(Unit* su, float* excit) = 0;
   
+  override void 	Compute_SRAvg(Unit* su);
   override void 	Compute_dWt(Unit* ru);
   override void 	Compute_Weights(Unit* ru);
-  void 			Compute_SRAvg(Unit* su);
 };
 
 template<class CN>
@@ -376,6 +412,7 @@ void LeabraConSpec_impl::Send_Netin_inner_0(float cn_wt,
   //tru_net = *ru_net + su_act_eff * cn_wt;
 }
 
+#if (CON_IN == CON_RECV)
 class BpConSpec: public ConSpec {
 INHERITED(ConSpec)
 public:
@@ -383,9 +420,8 @@ public:
   RecvCons*		NewRecvCons() const {return new BpRecvCons;}
   SendCons*		NewSendCons() const {return new BpSendCons;}  
   override void 	Compute_Weights(Network* , Unit* /*ru*/) {} // nothing
-  void 			Recv_Netin_0(Unit* ru); // shared by 0 and N
 };
-
+#endif
 class UnitSpec {
 public:
   int	dummy[8];
@@ -533,6 +569,7 @@ protected:
   override void		Cycle_impl(); // do one net cycle
 };
 
+#if (CON_IN == CON_RECV)
 class BpNetwork: public Network {
 INHERITED(Network)
 public:
@@ -542,31 +579,16 @@ public:
 protected:
 //  override void		Cycle_impl(); // do one net cycle
 };
-
+#endif
 // macros for initializing and updating proc iter vars
 
 //#define UNIT_STRIDE
-#ifdef UNIT_STRIDE
-
-#define PROC_VAR_INIT(g_u, task) \
-  g_u = task
 
 #define PROC_VAR_LOOP(my_u, g_u, total) \
   for ( \
-    int my_u = AtomicFetchAdd(&g_u, NetEngine::n_procs); \
+    int my_u = AtomicFetchAdd(&g_u, NetEngine::proc_stride); \
     my_u < total; \
-    my_u = AtomicFetchAdd(&g_u, NetEngine::n_procs))
-#else
-
-#define PROC_VAR_INIT(g_u, task) \
-  g_u = (task) * NetEngine::proc_stride
-
-#define PROC_VAR_LOOP(my_u, g_u, total) \
-  for ( \
-    int my_u = AtomicFetchAdd(&g_u, NetEngine::n_stride); \
-    my_u < total; \
-    my_u = (++my_u & NetEngine::proc_stride_mask) ? my_u : AtomicFetchAdd(&g_u, NetEngine::n_stride))
-#endif
+    my_u = (++my_u & NetEngine::proc_stride_mask) ? my_u : AtomicFetchAdd(&g_u, NetEngine::proc_stride))
 
 // Taskable functions have the following signature
 // typically, they are static object functions that take an instance
@@ -576,6 +598,8 @@ typedef void (*TaskFun_t)(NetTask* task, void* inst);
 
 class NetTask: public Task {
 public:
+  static int	g_u;
+  
   static void T_Send_Netin_Clash(NetTask* nt, void* )
     {nt->Send_Netin_Clash();}
   static void T_Send_Netin_Array(NetTask* nt, void* ) 
@@ -584,10 +608,15 @@ public:
     {nt->Recv_Netin();}
   static void T_ComputeAct(NetTask* nt, void* )
     {nt->ComputeAct();}
+  static void T_Compute_SRAvg(NetTask* nt, void* )
+    {nt->Compute_SRAvg();}
+  static void T_Compute_dWt(NetTask* nt, void* )
+    {nt->Compute_dWt();}
+  static void T_Compute_Weights(NetTask* nt, void* )
+    {nt->Compute_Weights();}
 
   Network*	net;
 // All
-  int		g_u; 
   int		t_tot; // shared by Xxx_Netin
   int		n_run; // for diagnostics, num times run
   
@@ -645,7 +674,7 @@ public:
   
 // Chunking and allocating of data, for multi-tasking
   static const int core_max_nprocs = 32; // maximum number of processors!
-  static const int 	proc_stride = 8; // items done each iter in loop (must be 2^n)
+  static const int 	proc_stride = 32; // items done each iter in loop (must be 2^n)
   static const int 	proc_stride_mask = proc_stride-1; // mask of proc_stride
   static int 		n_procs; // total number of processors/processes
   static int 		n_stride; // n_procs * proc_stride
@@ -794,6 +823,31 @@ template<class CN>
 void RecvCons_recv<CN>::setSize_impl(int i) {
   inherited::setSize_impl(i);
   cons = (CN*)prjn->AllocCons(i);
+}
+
+template<class CN>
+float RecvCons_recv<CN>::Compute_Netin() { 
+  float ru_net = 0;
+  const int recv_sz = size;
+  
+  Unit** units = this->units; // unit pointer
+  CN* cons = this->cons; // cache
+  for (int i=0; i < recv_sz; ++i)
+    ru_net += units[i]->act * cons[i].wt;
+  return ru_net;
+}
+
+
+template<class CN>
+float RecvCons_send<CN>::Compute_Netin() { 
+  float ru_net = 0;
+  const int recv_sz = size;
+  
+  Unit** units = this->units; // unit pointer
+  CN** cons = this->cons; // cache
+  for (int i=0; i < recv_sz; ++i)
+    ru_net += units[i]->act * cons[i]->wt;
+  return ru_net;
 }
 
 template<class CN>
