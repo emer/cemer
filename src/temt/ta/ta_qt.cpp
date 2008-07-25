@@ -122,7 +122,7 @@ TA_API taiMisc* taiM_ = NULL;
 const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
-taiDialog_List 		taiMisc::active_dialogs;
+taiHostDialog_List 	taiMisc::active_dialogs;
 taiEditDataHost_List	taiMisc::active_edits;
 taiEditDataHost_List 	taiMisc::css_active_edits;
 iTopLevelWindow_List	taiMisc::active_wins;

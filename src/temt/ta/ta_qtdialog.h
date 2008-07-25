@@ -135,15 +135,17 @@ private:
 };
 
 //////////////////////////
-// 	iDialog		//
+// 	iHostDialog	//
 //////////////////////////
 
-class TA_API iDialog : public QDialog { // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
+class TA_API iHostDialog : public iDialog {
+  // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS dialog with taiDataHostBase owner
+  INHERITED(iDialog)
   Q_OBJECT
 friend class taiDataHostBase;
 public:
-  iDialog(taiDataHostBase* owner_, QWidget* parent = 0, int wflags = 0);
-  ~iDialog();
+  iHostDialog(taiDataHostBase* owner_, QWidget* parent = 0, int wflags = 0);
+  ~iHostDialog();
 
   bool		post(bool modal); // simplified version of post_xxx routines, returns true if accepted or false (if modal) if cancelled
   void		dismiss(bool accept_);
@@ -248,7 +250,7 @@ class TA_API taiDataHostBase: public QObject, virtual public IDataLinkClient {
   // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS base class for managing the contents of an edit dialog
 INHERITED(QObject)
   Q_OBJECT
-friend class iDialog;
+friend class iHostDialog;
 public:
   enum Dlg_State {
     EXISTS		= 0x01,
@@ -263,7 +265,7 @@ public:
   };
   
   enum HostType {
-    HT_DIALOG,		// host/owner is an iDialog (legacy "Edit" behavior)
+    HT_DIALOG,		// host/owner is an iHostDialog (legacy "Edit" behavior)
     HT_PANEL,		// host/owner is an EditPanel ("properties" panel)
     HT_CONTROL		// host/owner is a control -- we won't show menus or obj buttons
   };
@@ -325,7 +327,7 @@ public:
     //NOTE: if built with as_panel=true, then must only be a panel, not dialog, and viceversa
   void  ConstrDeferred(); // finish deferred construction
   void		 	ConstrEditControl(); 
-  virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iDialog
+  virtual int 		Edit(bool modal_ = false); // for dialogs -- creates iHostDialog
 /*  virtual void		Iconify(bool value);	// for dialogs: iconify/deiconify
   virtual void 		ReConstr_Body(); // called when show has changed and body should be reconstructed -- this is a deferred call */
   virtual void  Unchanged();	// call when data has been saved or reverted
@@ -371,7 +373,7 @@ protected:
   bool			modified;
   bool			warn_clobber; // was changed elsewhere while edited here; warn user before saving
   QWidget*		mwidget;	// outer container for all widgets
-  iDialog*		dialog; // dialog, when using Edit, NULL otherwise
+  iHostDialog*		dialog; // dialog, when using Edit, NULL otherwise
   HostType		host_type; // hint when constructed to tell us if we are a dialog or panel -- must be consistent with dialog/panel
   iColor 		bg_color; // background color of host -- set via setBgColor
   iColor		bg_color_dark;	// background color of dialog, darkened (calculated when bg_color set)
@@ -401,8 +403,8 @@ protected:
   virtual void 	Ok_impl(); // for dialogs
   virtual void	Refresh_impl(bool reshow) {}
   
-  virtual void 		DoConstr_Dialog(iDialog*& dlg); // common sub-code for constructing a dialog instance
-  void 			DoDestr_Dialog(iDialog*& dlg); // common sub-code for destructing a dialog instance
+  virtual void 		DoConstr_Dialog(iHostDialog*& dlg); // common sub-code for constructing a dialog instance
+  void 			DoDestr_Dialog(iHostDialog*& dlg); // common sub-code for destructing a dialog instance
   void			DoRaise_Dialog(); // what Raise() calls for dialogs
 
 /*  override void		customEvent(QEvent* ev);
@@ -419,7 +421,7 @@ class TA_API taiDataHost_impl: public taiDataHostBase, virtual public IDataHost
 { // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
 INHERITED(taiDataHostBase)
   Q_OBJECT
-friend class iDialog;
+friend class iHostDialog;
 public:
   static void 		DoFillLabelContextMenu_SelEdit(QMenu* menu, 
     int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
@@ -517,7 +519,7 @@ class TA_API taiDataHost: public taiDataHost_impl {
   // ##IGNORE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS specific instantiation of the gui appearance of the edit, using a QGridLayout or iFormLayout (expensive and slow -- to be replaced)
 INHERITED(taiDataHost_impl)
   Q_OBJECT
-friend class iDialog;
+friend class iHostDialog;
 public:
   static iLabel* MakeInitEditLabel(const String& name, QWidget* par, int ctrl_size,
     const String& desc, taiData* buddy = NULL,
@@ -580,12 +582,13 @@ protected:
 
 
 
-class TA_API taiDialog_List : public taPtrList<taiDataHost> { // #IGNORE list of DataHosts that have been dialoged
+class TA_API taiHostDialog_List : public taPtrList<taiDataHost> {
+  // #IGNORE list of DataHosts that have been dialoged
 protected:
   void	El_Done_(void* it)	{ delete (taiDataHost*)it; }
 
 public:
-  ~taiDialog_List()            { Reset(); }
+  ~taiHostDialog_List()            { Reset(); }
 };
 
 class TA_API MembSet { // #IGNORE
@@ -730,7 +733,7 @@ protected:
     // uses mth's label, if no label passed
   void			DoAddMethButton(QAbstractButton* but);
   void			DoRaise_Panel(); // what Raise() calls for panels
-  override void 	DoConstr_Dialog(iDialog*& dlg);
+  override void 	DoConstr_Dialog(iHostDialog*& dlg);
 
   override bool 	eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return
@@ -769,7 +772,7 @@ protected:
   override void		Constr_Strings();
   override void  	Constr_Box();
   override void 	Constr_RegNotifies();
-  override void 	DoConstr_Dialog(iDialog*& dlg);
+  override void 	DoConstr_Dialog(iHostDialog*& dlg);
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
   override void 	Ok_impl();
 };

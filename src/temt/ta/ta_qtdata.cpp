@@ -2701,7 +2701,7 @@ taiObjChooser::taiObjChooser(TAPtr parob, const char* captn, bool selonly, QWidg
 }
 
 taiObjChooser::taiObjChooser(TypeDef* td, const char* captn, TAPtr scope_ref_, QWidget* par_window_)
-: QDialog(par_window_)
+: iDialog(par_window_)
 {
   setModal(true);
   init(captn, true, par_window_); //select_only = true always true for typedef!
@@ -2728,7 +2728,7 @@ void taiObjChooser::setSel_obj(const TAPtr value) {
 }
 
 bool taiObjChooser::Choose() {
-  return (exec() == QDialog::Accepted);
+  return (exec() == iDialog::Accepted);
 }
 
 void taiObjChooser::GetPathStr() {
@@ -2915,7 +2915,7 @@ void taiObjChooser::accept() {
 
   UpdateFmSelStr();		// get the new selection based on that!
   if (msel_obj != NULL)
-    QDialog::accept();
+    iDialog::accept();
 }
 
 void taiObjChooser::browser_itemDoubleClicked(QListWidgetItem* itm) {
@@ -2976,7 +2976,7 @@ void taiObjChooser::DescendBrowser() {
 
 void taiObjChooser::reject() {
   msel_obj = NULL;
-  QDialog::reject();
+  iDialog::reject();
 }
 
 void taiObjChooser::AcceptEditor() {
@@ -2994,13 +2994,13 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
     msel_str = msel_str.after(path_str);
     UpdateFmSelStr();		// get the new selection based on that!
     if (msel_obj != NULL)
-      QDialog::accept();
+      iDialog::accept();
   } else {
     reg_par_obj = tabMisc::root;
     lst_par_obj = NULL;
     UpdateFmSelStr();
     if(msel_obj != NULL)
-      QDialog::accept();
+      iDialog::accept();
   }
 }
 
@@ -3105,7 +3105,7 @@ bool taiItemChooser::Choose(taiItemPtrBase* client_) {
     Refresh(); // input data could have changed since last view
     setSelObj(m_client->sel());
   }
-  return (exec() == QDialog::Accepted);
+  return (exec() == iDialog::Accepted);
 }
 
 void taiItemChooser::Clear() {

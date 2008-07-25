@@ -22,7 +22,7 @@
 #include "taiqtso_def.h"
 
 #include <QLineEdit>
-#include <QDialog>
+#include "idialog.h"
 
 // externals
 class QTextEdit;
@@ -62,9 +62,9 @@ private:
 };
 
 
-class TAIQTSO_API iTextEditDialog : public QDialog {
+class TAIQTSO_API iTextEditDialog : public iDialog {
   Q_OBJECT
-INHERITED(QDialog)
+INHERITED(iDialog)
 public:
   QTextEdit*	txtText;
   QPushButton*	btnPrint;

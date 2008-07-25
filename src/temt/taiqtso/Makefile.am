@@ -15,6 +15,7 @@ HEADS =\
 	ispinbox.h \
 	iwidgetlist.h \
 	itreewidget.h \
+	idialog.h \
 	ilineedit.h \
 	icheckbox.h \
 	icombobox.h \
@@ -50,6 +51,8 @@ SRCS =\
 	itreewidget.moc.cpp \
 	ilineedit.cpp \
 	ilineedit.moc.cpp \
+	idialog.cpp \
+	idialog.moc.cpp \
 	icheckbox.cpp \
 	icheckbox.moc.cpp \
 	icombobox.cpp \

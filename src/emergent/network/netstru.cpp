@@ -5719,7 +5719,8 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
 
   stat = taMisc::read_tag(strm, tag, val);
   if((stat != taMisc::TAG_GOT) || (tag != "Name")) return false;
-  name = val;
+  // don't set the name!!! this causes more trouble than it is worth!!
+//   name = val;
 
   stat = taMisc::read_tag(strm, tag, val);
   if((stat != taMisc::TAG_GOT) || (tag != "Epoch")) return false;

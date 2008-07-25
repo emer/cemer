@@ -32,7 +32,6 @@
 #include <QCursor>
 #include <QClipboard>
 #include <qdesktopwidget.h>
-#include <qdialog.h>
 #include <qevent.h>
 //#include <qhbox.h>
 #include <QButtonGroup>
@@ -299,11 +298,11 @@ void taiChoiceDialog::keyPressEvent(QKeyEvent* ev) {
 
 
 //////////////////////////
-//   iDialog		//
+//   iHostDialog		//
 //////////////////////////
 
-iDialog::iDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
-:QDialog(parent, (Qt::WFlags)wflags) 
+iHostDialog::iHostDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
+:iDialog(parent, (Qt::WFlags)wflags) 
 {
   owner = owner_;
   mcentralWidget = NULL;
@@ -319,14 +318,14 @@ iDialog::iDialog(taiDataHostBase* owner_, QWidget* parent, int wflags)
   setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum));
 }
 
-iDialog::~iDialog() {
+iHostDialog::~iHostDialog() {
   if (owner != NULL) {
     owner->WidgetDeleting(); // removes our ref
     owner = NULL;
   }
 }
 
-void iDialog::closeEvent(QCloseEvent* ev) {
+void iHostDialog::closeEvent(QCloseEvent* ev) {
   //note: a higher level routine may already have resolved changes
   // if so, the ResolveChanges call is superfluous
   ev->accept(); // default, unless we override;
@@ -346,7 +345,7 @@ void iDialog::closeEvent(QCloseEvent* ev) {
   setResult(Rejected);
 }
 
-bool iDialog::post(bool modal) {
+bool iHostDialog::post(bool modal) {
   if (modal) {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
     bool rval = (exec() == Accepted);
@@ -358,31 +357,31 @@ bool iDialog::post(bool modal) {
   }
 }
 
-void iDialog::dismiss(bool accept_) {
+void iHostDialog::dismiss(bool accept_) {
   if (accept_)
     accept();
   else
     reject();
 }
 
-void iDialog::iconify() {
+void iHostDialog::iconify() {
   // Iv compatibility routine
   if (isModal() || isMinimized()) return;
   showMinimized();
 }
 
-void iDialog::deiconify() {
+void iHostDialog::deiconify() {
    // Iv compatibility routine
   if (isModal() || !isMinimized()) return;
   showNormal();
 }
 
-void iDialog::setButtonsWidget(QWidget* widg) {
+void iHostDialog::setButtonsWidget(QWidget* widg) {
   widg->setParent(this);
   layOuter->addWidget(widg);
 }
 
-void iDialog::setCentralWidget(QWidget* widg) {
+void iHostDialog::setCentralWidget(QWidget* widg) {
   mcentralWidget = widg;
   scr->setWidget(widg);
   widg->show(); 
@@ -763,7 +762,7 @@ void taiDataHostBase::Revert() {
   Unchanged();
 }
 
-void taiDataHostBase::DoDestr_Dialog(iDialog*& dlg) { // common sub-code for destructing a dialog instance
+void taiDataHostBase::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for destructing a dialog instance
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
     dlg->deleteLater(); dlg->close(); // destructive close
@@ -941,13 +940,13 @@ void taiDataHostBase::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* 
 //inherited class completely implements
 }
 
-void taiDataHostBase::DoConstr_Dialog(iDialog*& dlg) {
-  // common subcode for creating a dialog -- used by the taiDialog and taiEditDialog cousin classes
+void taiDataHostBase::DoConstr_Dialog(iHostDialog*& dlg) {
+  // common subcode for creating a dialog -- used by the taiHostDialog and taiEditDialog cousin classes
   if (dlg) return; // already constructed
   if (modal) // s/b parented to current win
-    dlg = new iDialog(this, QApplication::activeWindow());
+    dlg = new iHostDialog(this, QApplication::activeWindow());
   else 
-    dlg = new iDialog(this, NULL, Qt::WindowMinimizeButtonHint);
+    dlg = new iHostDialog(this, NULL, Qt::WindowMinimizeButtonHint);
   // note: X can't seem to handle more than 12-14 windows, so making these top-level is an issue
   // BUT it is also highly unusable to make them owned, since then they obscure parent window
   dlg->setWindowTitle(win_str);
@@ -2129,7 +2128,7 @@ MemberDef* taiEditDataHost::GetMemberPropsForSelect(int sel_idx, taBase** base,
   return md;
 }
 
-void taiEditDataHost::DoConstr_Dialog(iDialog*& dlg) {
+void taiEditDataHost::DoConstr_Dialog(iHostDialog*& dlg) {
   inherited::DoConstr_Dialog(dlg);
   if(!modal) {
 #ifdef TA_OS_MAC
@@ -2474,7 +2473,7 @@ void taiStringDataHost::Constr_Buttons() {
 void taiStringDataHost::btnPrint_clicked() {
   QPrinter pr;
   QPrintDialog pd(&pr, widget());
-  if (pd.exec() != QDialog::Accepted) return;
+  if (pd.exec() != iDialog::Accepted) return;
   // print ...
   edit->document()->print(&pr);
 }
@@ -2482,7 +2481,7 @@ void taiStringDataHost::btnPrint_clicked() {
 void taiStringDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
 }
 
-void taiStringDataHost::DoConstr_Dialog(iDialog*& dlg) {
+void taiStringDataHost::DoConstr_Dialog(iHostDialog*& dlg) {
   inherited::DoConstr_Dialog(dlg);
   dlg->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
 }

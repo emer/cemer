@@ -25,7 +25,6 @@
 
 #ifndef __MAKETA__
 # include <QAction>
-# include <QDialog>
 # include <QList>
 # include <QMenu>
 # include <QObject>
@@ -33,6 +32,7 @@
 # include "ibutton.h" 
 # include "icheckbox.h"
 # include "ilineedit.h"
+# include "idialog.h"
 #endif
 
 #include "igeometry.h"
@@ -113,9 +113,9 @@ private:
 
 class iTextEdit; // #IGNORE
 
-class TA_API iFieldEditDialog : public QDialog {
+class TA_API iFieldEditDialog : public iDialog {
   Q_OBJECT
-INHERITED(QDialog)
+INHERITED(iDialog)
 public:
   iTextEdit*	txtText;
   QPushButton*	btnOk; // read/write only
@@ -903,9 +903,9 @@ protected:
 // 	taiObjChooser		//
 //////////////////////////////////
 
-class TA_API taiObjChooser: QDialog {
-// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS
-// select objects from a list, much like a file chooser.  can be tokens from typedef or items on a list
+class TA_API taiObjChooser: iDialog {
+// ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select objects from a list, much like a file chooser.  can be tokens from typedef or items on a list
+  INHERITED(iDialog)
   Q_OBJECT
 public:
   static taiObjChooser* createInstance(TAPtr parob, const char* captn, bool selonly = true, QWidget* par_window_ = NULL);
@@ -971,9 +971,9 @@ protected slots:
 // 	taiItemChooser		//
 //////////////////////////////////
 
-class TA_API taiItemChooser: QDialog {
+class TA_API taiItemChooser: iDialog {
 // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS select items from a list, much like a file chooser; can be tokens from typedef or items on a list
-INHERITED(QDialog)
+INHERITED(iDialog)
   Q_OBJECT
 public:
 #ifndef __MAKETA__

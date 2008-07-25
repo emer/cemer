@@ -38,9 +38,9 @@
 #define CHOOSERDIALOG_H
 
 #include "tai_qtdefs.h"
+#include "idialog.h"
 
 #include <qvariant.h>
-#include <qdialog.h>
 #include <qlistview.h>
 
 class QVBoxLayout;
@@ -52,8 +52,9 @@ class QListViewItem;
 class QPushButton;
 
 
-class iChooserDialog : public QDialog
+class iChooserDialog : public iDialog
 {
+  INHERITED(iDialog)
     Q_OBJECT
 
 public:
