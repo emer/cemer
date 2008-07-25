@@ -5,6 +5,9 @@
 #include <iostream>
 
 #include <QtCore/QFileInfo>
+#ifdef USE_QT_CONCURRENT
+# include <QtCore/QtConcurrentMap>
+#endif
 
 using namespace std;
 
@@ -12,6 +15,17 @@ using namespace std;
 // with their own key values to create a custom pseudo value, with very little
 // overhead
 static int g_rand; 
+
+//////////////////////////
+//  NetTaskList		//
+//////////////////////////
+
+NetTaskList::~NetTaskList() {
+  while (count() > 0) {
+    NetTask* nt = takeLast();
+    delete nt;
+  }
+}
 
 
 //////////////////////////
@@ -151,110 +165,283 @@ ConSpec:: ConSpec() {
   wt_limits.max = 1.0f;
 }
 
-void ConSpec::Compute_SRAvg(Network* /*net*/, Unit* un) {
-  //nn Unit** g_units = net->g_units;
-//  float* g_acts = net->g_acts;
-// use the algo that is "congruent" to cons
 #if (CON_IN == CON_RECV)
-  const float ru_act = un->act;
-  for(int g = 0; g < un->recv.size; g++) {
-    RecvCons* cg = un->recv.FastEl(g);
+void ConSpec::Compute_SRAvg(Unit* ru) {
+  const float ru_act = ru->act;
+  for(int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
     Connection* cons = cg->cons;
     const int cg_size = cg->size;
-# ifdef UN_IN_CON
-    for (int i = 0; i < cg_size; ++i) {
-      Connection* cn = &(cons[i]);
-      cn->sravg += ru_act * cn->un->act;
-    }
-# else
     Unit** units = cg->units;
     for (int i = 0; i < cg_size; ++i) {
       Connection* cn = &(cons[i]);
       cn->sravg += ru_act * units[i]->act;
     }
-# endif
   }
+}
+
+void ConSpec::Compute_dWt(Unit* ru) {
+  for(int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+
+    const float ru_act = ru->act;
+    Unit** units = cg->units;
+    Connection* cons = cg->cons; // for speed
+    
+    for (int i=0; i < cg_size; i++) {
+      const float su_act = units[i]->act;
+      Connection* cn = &(cons[i]);
+      const float& cn_wt = cn->wt;
+    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+      float err = (ru_act * su_act) - (0.02f * cn->sravg);
+      //if(lmix.err_sb) {
+        if(err > 0.0f) err *= (1.0f - cn_wt);
+        else	     err *= cn_wt;
+      //}
+      cn->dwt += cur_lrate * err;
+      cn->sravg = 0.0f;
+    }
+  }
+}
+
+void ConSpec::Compute_Weights(Unit* ru) {
+  // CTLEABRA_CAL, DCAL
+  for (int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+    
+  //  const float ru_act = ru->act;
+    Connection* cons = cg->cons; // for speed
+    
+    for (int i = 0; i < cg_size; ++i) {
+      Connection* cn = &(cons[i]);
+      float& cn_wt = cn->wt;
+      
+      // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+      float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
+    /* if(ru->act_avg <= rus->act_reg.min)
+        dwinc = rus->act_reg.inc_wt;
+      else if(ru->act_avg >= rus->act_reg.max)
+        dwinc = -rus->act_reg.dec_wt;*/
+      if (dwinc != 0.0f) {
+        cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+      }
+      
+      // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
+      wt_limits.ApplyMinLimit(cn_wt); 
+      wt_limits.ApplyMaxLimit(cn_wt);
+      cn->pdw = cn->dwt;
+      cn->dwt = 0.0f;
+    }
+  }
+}
+
+void ConSpec::Compute_dWt_dnorm(Unit* ru) {
+  for(int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+
+    const float ru_act = ru->act;
+    Connection* cons = cg->cons; // for speed
+    
+    cg->dwt_mean = 0.0f;
+    for (int i=0; i < cg_size; i++) {
+      const float su_act = cg->Un(i)->act;
+      Connection* cn = &(cons[i]);
+      const float& cn_wt = cn->wt;
+    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+      float err = (ru_act * su_act) - (0.02f * cn->sravg);
+      //if(lmix.err_sb) {
+        if(err > 0.0f) err *= (1.0f - cn_wt);
+        else	     err *= cn_wt;
+      //}
+      cn->dwt += cur_lrate * err;
+      cn->sravg = 0.0f;
+      cg->dwt_mean += cn->dwt;
+    }
+    cg->dwt_mean /= (float)cg_size;
+  }
+}
+
+void ConSpec::Compute_Weights_dnorm(Unit* ru) {
+  // CTLEABRA_CAL, DCAL
+  for (int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+    
+  //  const float ru_act = ru->act;
+    Connection* cons = cg->cons; // for speed
+    
+    float dwnorm = -norm_pct * cg->dwt_mean;
+      
+    for (int i = 0; i < cg_size; ++i) {
+      Connection* cn = &(cons[i]);
+      float& cn_wt = cn->wt;
+      
+      // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+      float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
+    /* if(ru->act_avg <= rus->act_reg.min)
+        dwinc = rus->act_reg.inc_wt;
+      else if(ru->act_avg >= rus->act_reg.max)
+        dwinc = -rus->act_reg.dec_wt;*/
+      if (dwinc != 0.0f) {
+        cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+      }
+      
+      // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
+      cn_wt += cn->dwt + dwnorm;	// weights always linear
+      wt_limits.ApplyMinLimit(cn_wt); 
+      wt_limits.ApplyMaxLimit(cn_wt);
+      cn->pdw = cn->dwt;
+      cn->dwt = 0.0f;
+    }
+  }
+}
+
+
 #elif (CON_IN == CON_SEND)
-  const float su_act = un->act;
-  for(int g = 0; g < un->send.size; g++) {
-    SendCons* cg = un->send.FastEl(g);
+
+void ConSpec::Compute_SRAvg(Unit* su) {
+  float su_act = su->act;
+  for(int g = 0; g < su->send.size; g++) {
+    SendCons* cg = su->send.FastEl(g);
+    Unit** units = cg->units;
     Connection* cons = cg->cons;
     const int cg_size = cg->size;
-# ifdef UN_IN_CON
     for (int i = 0; i < cg_size; ++i) {
-      Connection* cn = &(cons[i]);
-      cn->sravg += su_act * cn->un->act;
-    }
-# else
-    Unit** units = cg->units;
-    for (int i = 0; i < cg_size; ++i) {
-      Connection* cn = &(cons[i]);
+      Connection* cn = &(cons[i]); 
       cn->sravg += su_act * units[i]->act;
     }
-# endif
   }
-#endif
 }
 
-void ConSpec::Compute_Weights_CtCAL(Network* /*net*/, RecvCons* cg, Unit* ru) {
-  // first emulate the Leabra "dWt" calc
-  const float ru_act = ru->act;
-  for (int i=0; i<cg->size; i++) {
-    const float su_act = cg->Un(i)->act;
-    Connection* cn = cg->Cn(i);
-    const float& cn_wt = cn->wt;
-   // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
-    float err = (ru_act * su_act) - (0.02f * cn->sravg);
-    //if(lmix.err_sb) {
-      if(err > 0.0f) err *= (1.0f - cn_wt);
-      else	     err *= cn_wt;
-    //}
-    cn->dwt += cur_lrate * err;
-    cn->sravg = 0.0f;
-  }
-  
-  //Compute_dWtMean(cg, ru);
-  cg->dwt_mean = 0.0f;
-  for (int i = 0; i < cg->size; ++i) {
-    Connection* cn = cg->Cn(i);
-    cg->dwt_mean += cn->dwt;
-  }
-  cg->dwt_mean /= (float)cg->size;
-  
-  float dwnorm = -norm_pct * cg->dwt_mean;
+void ConSpec::Compute_dWt(Unit* su) {
+  for(int g = 0; g < su->send.size; g++) {
+    SendCons* cg = su->send.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+
+    const float su_act = su->act;
+    Unit** units = cg->units; // for speed
+    Connection* cons = cg->cons; // for speed
     
-  for (int i = 0; i < cg->size; ++i) {
-    Connection* cn = cg->Cn(i);
-//note: following is optimization only
-    float& cn_wt = cn->wt;
-    
-    // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
-    float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
-   /* if(ru->act_avg <= rus->act_reg.min)
-      dwinc = rus->act_reg.inc_wt;
-    else if(ru->act_avg >= rus->act_reg.max)
-      dwinc = -rus->act_reg.dec_wt;*/
-    if (dwinc != 0.0f) {
-      cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+    for (int i=0; i < cg_size; i++) {
+      const float ru_act = units[i]->act;
+      Connection* cn = &(cons[i]);
+      const float& cn_wt = cn->wt;
+    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+      float err = (ru_act * su_act) - (0.02f * cn->sravg);
+      //if(lmix.err_sb) {
+        if(err > 0.0f) err *= (1.0f - cn_wt);
+        else	     err *= cn_wt;
+      //}
+      cn->dwt += cur_lrate * err;
+      cn->sravg = 0.0f;
     }
-    
-    // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
-    cn_wt += cn->dwt + dwnorm;	// weights always linear
-    wt_limits.ApplyMinLimit(cn_wt); 
-    wt_limits.ApplyMaxLimit(cn_wt);
-    cn->pdw = cn->dwt;
-    cn->dwt = 0.0f;
   }
 }
 
-void ConSpec::Compute_Weights(Network* net, Unit* u) {
+void ConSpec::Compute_Weights(Unit* ru) {
   // CTLEABRA_CAL, DCAL
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
-    if (recv_gp->size <= 0) continue;
-    Compute_Weights_CtCAL(net, recv_gp, u);
+  for (int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+    
+    Connection** cons = cg->cons; // for speed
+    
+    for (int i = 0; i < cg_size; ++i) {
+      Connection* cn = cons[i];
+      float& cn_wt = cn->wt;
+      
+      // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+      float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
+    /* if(ru->act_avg <= rus->act_reg.min)
+        dwinc = rus->act_reg.inc_wt;
+      else if(ru->act_avg >= rus->act_reg.max)
+        dwinc = -rus->act_reg.dec_wt;*/
+      if (dwinc != 0.0f) {
+        cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+      }
+      
+      // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
+      wt_limits.ApplyMinLimit(cn_wt); 
+      wt_limits.ApplyMaxLimit(cn_wt);
+      cn->pdw = cn->dwt;
+      cn->dwt = 0.0f;
+    }
   }
 }
+
+void ConSpec::Compute_dWt_dnorm(Unit* ru) {
+  for(int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+
+    const float ru_act = ru->act;
+    Connection** cons = cg->cons; // for speed
+    
+    cg->dwt_mean = 0.0f;
+    for (int i=0; i < cg_size; i++) {
+      const float su_act = cg->Un(i)->act;
+      Connection* cn = cons[i];
+      const float& cn_wt = cn->wt;
+    // float err = (ru->act_p * su->act_p) - (rlay->sravg_nrm * cn->sravg);
+      float err = (ru_act * su_act) - (0.02f * cn->sravg);
+      //if(lmix.err_sb) {
+        if(err > 0.0f) err *= (1.0f - cn_wt);
+        else	     err *= cn_wt;
+      //}
+      cn->dwt += cur_lrate * err;
+      cn->sravg = 0.0f;
+      cg->dwt_mean += cn->dwt;
+    }
+    cg->dwt_mean /= (float)cg_size;
+  }
+}
+
+void ConSpec::Compute_Weights_dnorm(Unit* ru) {
+  // CTLEABRA_CAL, DCAL
+  for (int g = 0; g < ru->recv.size; g++) {
+    RecvCons* cg = ru->recv.FastEl(g);
+    const int cg_size = cg->size;
+    if (cg_size <= 0) continue;
+    
+    Connection** cons = cg->cons; // for speed
+    
+    float dwnorm = -norm_pct * cg->dwt_mean;
+      
+    for (int i = 0; i < cg_size; ++i) {
+      Connection* cn = cons[i];
+      float& cn_wt = cn->wt;
+      
+      // C_Compute_ActReg_CtLeabraCAL(cn, cg, ru, su, rus);
+      float dwinc = ((g_rand^i) & 1) ? -0.2f : 0.2f; //0.0f; hack, just for calc cost parity
+    /* if(ru->act_avg <= rus->act_reg.min)
+        dwinc = rus->act_reg.inc_wt;
+      else if(ru->act_avg >= rus->act_reg.max)
+        dwinc = -rus->act_reg.dec_wt;*/
+      if (dwinc != 0.0f) {
+        cn->dwt += cur_lrate * dwinc * cn_wt; // proportional to current weights
+      }
+      
+      // C_Compute_Weights_Norm_CtLeabraCAL(cn, dwnorm);
+      cn_wt += cn->dwt + dwnorm;	// weights always linear
+      wt_limits.ApplyMinLimit(cn_wt); 
+      wt_limits.ApplyMaxLimit(cn_wt);
+      cn->pdw = cn->dwt;
+      cn->dwt = 0.0f;
+    }
+  }
+}
+
+#endif // modal for CON_IN
 
 
 //////////////////////////
@@ -344,17 +531,6 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 //      Connection* cn = 
       ConsBase::InitCon(send_gp, recv_gp,
         un_fm, un_to, i_fm, i_to, wt);
-/*      
-#if (CON_IN == CON_RECV)
-      cn = recv_gp->Cn(i_fm);
-      send_gp->SetCn(cn, i_to);
-#elif (CON_IN == CON_SEND)
-      cn = send_gp->Cn(i_to);
-      recv_gp->SetCn(cn, i_fm);
-#endif
-      cn->wt = (4.0 * (float)rand() / RAND_MAX) - 2.0;
-      recv_gp->units[i_fm] = un_fm;
-      send_gp->units[i_to] = un_to; */
     }
   }
 }
@@ -365,10 +541,16 @@ void Layer::ConnectFrom(Layer* lay_fm) {
 //////////////////////////
 
 bool 	Network::recv_based; 
+char 	Network::use_dnorm; 
+int 	Network::dwt_rate = Network::trial_rate;
+int 	Network::sra_start = 30;
+int 	Network::sra_rate = 5;
 
 Network::Network() {
   engine = NULL;
   cycle = 0;
+  trial = 0;
+  tot_cycle = 0;
   n_units_flat = 0;
   g_units = NULL;
   next_wti = 0;
@@ -455,6 +637,10 @@ void Network::Compute_SRAvg() {
   engine->Compute_SRAvg();
 }
 
+void Network::Compute_dWt() {
+  engine->Compute_dWt();
+}
+
 void Network::Compute_Weights() {
   engine->Compute_Weights();
 }
@@ -467,15 +653,22 @@ void Network::Cycle(int n_cycles) {
     if (Nb::calc_act) {
       float tot_act = ComputeActs();
       if (Nb::use_log_file)
-        fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", cycle, tot_act);
+        fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", tot_cycle, tot_act);
     }
+    if ((sra_rate > 0) && (cycle >= sra_start) && ((cycle % sra_rate) == 0)) 
+      Compute_SRAvg();
     // note: add 1 to cycle so we do it after dwt_rate full counts
     int nc1 = cycle + 1;
-    if ((Nb::sra_rate > 0) && ((nc1 % Nb::sra_rate) == 0)) 
-      Compute_SRAvg();
-    if ((Nb::dwt_rate > 0) && ((nc1 % Nb::dwt_rate) == 0)) 
+    if ((dwt_rate > 0) && ((nc1 % dwt_rate) == 0)) {
+      Compute_dWt();
       Compute_Weights();
-    ++cycle;
+    }
+    ++tot_cycle;
+    if (++cycle >= trial_rate) {
+      ++trial;
+      cycle = 0;
+    }
+    
   }
 }
 
@@ -527,11 +720,11 @@ void NetEngine::Initialize() {
 void NetEngine::Initialize_impl() {
   NetTask* tsk = new NetTask_0(this);
   tsk->task_id = 0;
-  net_tasks.Add(tsk);
+  net_tasks.append(tsk);
 }
 
 void NetEngine::DoProc(int proc_id) {
-  NetTask* tsk = net_tasks.SafeEl(0);
+  NetTask* tsk = net_tasks[0];
   //if (!tsk) return;
   tsk->g_u = 0;
   tsk->proc_id = proc_id;
@@ -567,7 +760,7 @@ float NetEngine::ComputeActs() {
   // compute activations (only order number of units)
   Nb::tot_act = 0.0f;
   DoProc(NetTask::P_ComputeAct);
-  for (int t = 0; t < net_tasks.size; ++t) {
+  for (int t = 0; t < net_tasks.count(); ++t) {
     NetTask* tsk = net_tasks[t];
     Nb::tot_act += tsk->my_act;
   }
@@ -576,6 +769,10 @@ float NetEngine::ComputeActs() {
 
 void NetEngine::Compute_SRAvg() {
   DoProc(NetTask::P_ComputeSRAvg);
+}
+
+void NetEngine::Compute_dWt() {
+  DoProc(NetTask::P_ComputedWt);
 }
 
 void NetEngine::Compute_Weights() {
@@ -592,7 +789,7 @@ void NetEngine::Log(bool hdr) {
     } else {
       logfile = fopen("ThreadNetEngine.log", "a");
     }
-    for (int t = 0; t < net_tasks.size; t++) {
+    for (int t = 0; t < net_tasks.count(); t++) {
       NetTask* tsk = net_tasks[t];
       fprintf(logfile,"%d\t%d\t%d\t%g\t%g\t%g\t%g\t%g\n", 
         t, 
@@ -612,26 +809,12 @@ void NetEngine::Log(bool hdr) {
 //  ThreadNetEngine		//
 //////////////////////////////////
 
+#ifdef USE_QT_CONCURRENT
+void net_task_run(NetTask*& nt) {
+  nt->run();
+}
+#else
 QThread* ThreadNetEngine::threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
-
-ThreadNetEngine::~ThreadNetEngine() {
-  DeleteThreads();
-}
-
-void ThreadNetEngine::Initialize_impl() {
-  net_tasks.Alloc(n_procs);
-  for (int i = 0; i < n_procs; i++) {
-    NetTask* tsk = new NetTask_N(this);
-    tsk->task_id = i;
-    net_tasks.Add(tsk);
-    if (i == 0) continue;
-    QTaskThread* th = new QTaskThread;
-    threads[i] = th;
-    th->setTask(tsk);
-    th->start(); // starts paused
-  }
-  
-}
 
 void ThreadNetEngine::DeleteThreads() {
   for (int t = n_procs - 1; t >= 1; t--) {
@@ -643,6 +826,38 @@ void ThreadNetEngine::DeleteThreads() {
     delete th;
   }
 }
+#endif
+
+
+ThreadNetEngine::~ThreadNetEngine() {
+#ifdef USE_QT_CONCURRENT
+#else
+  DeleteThreads();
+#endif
+}
+
+void ThreadNetEngine::Initialize_impl() {
+#ifdef USE_QT_CONCURRENT
+  for (int i = 0; i < n_procs; i++) {
+    NetTask* tsk = new NetTask_N(this);
+    tsk->setAutoDelete(false);
+    tsk->task_id = i;
+    net_tasks.append(tsk);
+  }
+#else
+  for (int i = 0; i < n_procs; i++) {
+    NetTask* tsk = new NetTask_N(this);
+    tsk->task_id = i;
+    net_tasks.append(tsk);
+    if (i == 0) continue;
+    QTaskThread* th = new QTaskThread;
+    threads[i] = th;
+    th->setTask(tsk);
+    th->start(); // starts paused
+  }
+#endif
+}
+
 void ThreadNetEngine::ComputeNets_impl() {
   if (algo == SEND_ARRAY)
     ComputeNets_SendArray();
@@ -650,17 +865,19 @@ void ThreadNetEngine::ComputeNets_impl() {
 }
 
 void ThreadNetEngine::DoProc(int proc_id) {
-//  const int n_units_flat = net->n_units_flat;
   // start all the other threads first...
-/*na, because we always sync after
-  // have to suspend then resume in case not finished from last time
-  for (int t = 1; t < n_procs; ++t) {
-    QTaskThread* th = (QTaskThread*)threads[t];
-    NetTask* tsk = net_tasks[t];
-    th->suspend(); // prob already suspended
-  }*/
   NetTask::g_u = 0;
   
+#ifdef USE_QT_CONCURRENT
+  for (int t = 0; t < n_procs; ++t) {
+    NetTask* tsk = net_tasks[t];
+    tsk->proc_id = proc_id;
+  }
+  NetTask* tsk = net_tasks[0];
+  tsk->run_time.Start(false);
+  /*QFuture<void> fv = */QtConcurrent::map(net_tasks, net_task_run);
+  tsk->run_time.Stop(); 
+#else // legacy threads
   for (int t = 1; t < n_procs; ++t) {
     QTaskThread* th = (QTaskThread*)threads[t];
     NetTask* tsk = net_tasks[t];
@@ -683,6 +900,7 @@ void ThreadNetEngine::DoProc(int proc_id) {
     th->suspend(); // suspending is syncing with completion of loop
     tsk->sync_time.Stop(); 
   }
+#endif
 }
 
 void ThreadNetEngine::OnBuild() {
@@ -695,7 +913,7 @@ void ThreadNetEngine::OnBuild() {
   // Send_Array only
   if (algo == SEND_ARRAY) {
     //note: we alloc to all, but the ASYM version doesn't use nt0.excit
-    for (int t = 0; t < net_tasks.size; t++) {
+    for (int t = 0; t < net_tasks.count(); t++) {
       NetTask_N* tsk = dynamic_cast<NetTask_N*>(net_tasks[t]);
       tsk->excit = new float[n_units_flat]; // no need to init
     }
@@ -753,7 +971,7 @@ void ThreadNetEngine::ComputeNets_SendArray() {
   const int n_units_flat = net->n_units_flat;
   Unit** g_units = net->g_units; // cache -- this is also task0's guys
   // 1-thread version is optimized, for fair comparison
-  const int tsz = net_tasks.size;
+  const int tsz = net_tasks.count();
   if (tsz == 1) {
     float* nets = nt0->excit;  
     for (int i = 0; i < n_units_flat; ++i) {
@@ -802,6 +1020,7 @@ void NetTask::run() {
   case P_Send_Netin_Array: Send_Netin_Array(); break;
   case P_ComputeAct: ComputeAct(); break;
   case P_ComputeSRAvg: Compute_SRAvg(); break;
+  case P_ComputedWt: Compute_dWt(); break;
   case P_ComputeWeights: Compute_Weights(); break;
   }
 }
@@ -924,21 +1143,45 @@ void NetTask::ComputeAct() {
   }
 }
 
-void NetTask::Compute_Weights() {
-  Unit** g_units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
-  PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
-    Unit* un = g_units[my_u]; //note: accessed flat
-    un->cs->Compute_Weights(&Nb::net, un);
-  }
-}
-
 void NetTask::Compute_SRAvg() {
   Unit** units = Nb::net.g_units; // cache
   const int n_units_flat =  Nb::net.n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
-    un->cs->Compute_SRAvg(&Nb::net, un);
+//note: CON_IN will automatically compile the correct s or r based routine
+    un->cs->Compute_SRAvg(un);
+  }
+}
+
+void NetTask::Compute_dWt() {
+  Unit** g_units = Nb::net.g_units; // cache
+  const int n_units_flat =  Nb::net.n_units_flat;
+  if (Network::use_dnorm) {
+    PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+      Unit* un = g_units[my_u]; //note: accessed flat
+      un->cs->Compute_dWt_dnorm(un);
+    }
+  } else {
+    PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+      Unit* un = g_units[my_u]; //note: accessed flat
+      un->cs->Compute_dWt(un);
+    }
+  }
+}
+
+void NetTask::Compute_Weights() {
+  Unit** g_units = Nb::net.g_units; // cache
+  const int n_units_flat =  Nb::net.n_units_flat;
+  if (Network::use_dnorm) {
+    PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+      Unit* un = g_units[my_u]; //note: accessed flat
+      un->cs->Compute_Weights_dnorm(un);
+    }
+  } else {
+    PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+      Unit* un = g_units[my_u]; //note: accessed flat
+      un->cs->Compute_Weights(un);
+    }
   }
 }
 
@@ -1046,49 +1289,6 @@ void NetTask_N::Send_Netin_Array() {
   }
 }
 
-
-
-/* void NetTask_N::Send_Netin_Array() {
-  overhead.Start(false);
-  memset(excit, 0, sizeof(float) * net->n_units_flat);
-  overhead.Stop();
-
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat = Nb::net.n_units_flat;
-  PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
-    Unit* su = units[my_u]; //note: accessed flat
-    if (su->do_delta) {
-      float su_act_eff = su->act;
-      for (int j = 0; j < su->send.size; ++j) {
-        SendCons* send_gp = su->send[j];
-        const int send_sz = send_gp->size;
-        su->n_con_calc += send_sz;
-        Unit** units = send_gp->units; // unit pointer
-#if (CON_IN == CON_CONN)
-        Connection** cons = send_gp->cons; 
-        for (int i=0; i < send_sz; i++) {
-          //const int targ_i = unis[i];
-          Send_Netin_inner_0(cons[i]->wt, excit[units[i]->uni], su_act_eff);
-        }
-#elif (CON_IN == CON_RECV)
-        float** pwts = send_gp->pwts; // wt pointer
-        for (int i=0; i < send_sz; i++) {
-          //const int targ_i = uns[i];
-          Send_Netin_inner_0(*(pwts[i]), excit[units[i]->uni], su_act_eff);
-        }
-#elif (CON_IN == CON_SEND)
-        float* wts = send_gp->wts; // wts themselves
-        for (int i=0; i < send_sz; i++) {
-          //const int targ_i = uns[i];
-          Send_Netin_inner_0(wts[i], excit[units[i]->uni], su_act_eff);
-        }
-#endif
-      }
-      AtomicFetchAdd(&Nb::n_tot, 1);
-    }
-  }
-}
-*/
 void NetTask_N::Recv_Netin() {
   Unit** g_units = Nb::net.g_units; // cache
   PROC_VAR_LOOP(my_u, g_u, Nb::net.n_units_flat) {
@@ -1126,8 +1326,6 @@ signed char Nb::fast_prjn = 0; // fast prjns directly access target unit array
 bool Nb::single = false; // true for single thread mode, to compare against nprocs=1
 int Nb::send_act = 0x10000; // send activation, as a fraction of 2^16 
 int Nb::tsend_act; 
-int Nb::dwt_rate = 50;
-int Nb::sra_rate = 5;
 int Nb::inv_act = 1; // inverse of activation -- can use to divide
 int Nb::this_rand; // assigned a new random value each cycle, to let us randomize unit acts
 bool Nb::use_log_file = false;
@@ -1180,8 +1378,8 @@ int Nb::PreInitialize() {
     "\t-log=1/0(def)\tlog/do-not-log optional values to ptest_core.log\n"
     "\t-nibble=n\tnibble: 0(def)=none, 1=on, 2=auto (> .20 left)\n"
     "\t-act=0\tdo not calculate activation\n"
-    "\t-sra_rate=5\tcalc sravg every n cycles, 0=never\n"
-    "\t-dwt_rate=50\tcalc dwt every n cycles, 0=never\n"
+    "\t-sra_rate=5\tcalc sravg every n cycles (after 30), 0=never\n"
+    "\t-dwt_rate=71\tcalc dwt every n cycles, 0=never\n"
     "\t-suff=xxx\tlog file suffix\n"
     "-algo=n (def=0) is one of the following:\n"
     "\t 0 receiver-based\n"
@@ -1266,11 +1464,15 @@ void Nb::ParseCmdLine(int& rval) {
       NetEngine::algo = targ.remove("-algo=").toInt();
       continue; }
     if (targ.startsWith("-dwt_rate=")) {
-      dwt_rate = targ.remove("-dwt_rate=").toInt();
+      Network::dwt_rate = targ.remove("-dwt_rate=").toInt();
       continue; }
     if (targ.startsWith("-sra_rate=")) {
-      sra_rate = targ.remove("-sra_rate=").toInt();
+      Network::sra_rate = targ.remove("-sra_rate=").toInt();
       continue; }
+    if (targ == "-dnorm=1") {
+      Network::use_dnorm = true; continue;}
+    if (targ == "-dnorm=0") {
+      Network::use_dnorm = false; continue;}
       
     if (targ == "-log=1") {
       use_log_file = true; continue;}
@@ -1329,7 +1531,7 @@ void Nb::PrintResults() {
     "algo\teMcon\tMcon\tsnd_act\tprocs"
     "\tlayers\tunits\tcons\tKwts\tcycles"
     "\tKcn_tot\tsecs\tnibble\tfstprjn\tsrarate"
-    "\tdwtrate\tcn_in\n";
+    "\tdwtrate\tcn_in\tdnorm\n";
     
     if (logfile) fprintf(logfile, hdr_str);
     printf(hdr_str);
@@ -1342,11 +1544,11 @@ void Nb::PrintResults() {
     "%d\t%.4g\t%.4g\t%d\t%d"
     "\t%d\t%d\t%d\t%g\t%d"
     "\t%g\t%.3g\t%d\t%d\t%d"
-    "\t%d\t%s\n",
+    "\t%d\t%s\t%d\n",
     NetEngine::algo, eff_con_trav_sec, con_trav_sec, tsend_act, NetEngine::n_procs,
     n_layers, n_units, n_cons, n_wts / 1000, n_cycles,
-    n_con_trav / 1000, tot_time, nibble_mode, fast_prjn, sra_rate,
-    dwt_rate, cn_in_str[cn_in]);
+    n_con_trav / 1000, tot_time, nibble_mode, fast_prjn, Network::sra_rate,
+    Network::dwt_rate, cn_in_str[cn_in], Network::use_dnorm);
   cout << buf;
   if (logfile) {
     fprintf(logfile, buf);

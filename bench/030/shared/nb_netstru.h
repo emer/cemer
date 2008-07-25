@@ -5,8 +5,12 @@
 #include "nb_util.h"
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 
 // switches and optional subswitches
+#if (QT_VERSION >= 0x040400) 
+# define USE_QT_CONCURRENT // use the new Qt4,4 concurrent arch
+#endif
 //#define UN_IN_CON // true if target unit is in con
 //#define USE_V_CON // use slow access to Cn -- for benching
 #define CON_RECV 0 // owned by RecvCons
@@ -36,7 +40,10 @@ class Layer;
 class Network;
 class NetEngine;
 class NetTask;
-typedef taList<NetTask>		NetTaskList;
+class NetTaskList: public QList<NetTask*> {
+public:
+  ~NetTaskList();
+};
 
 // note: classes of same-name are similar in structure to
 // the corresponding Emergent/Leabra classes
@@ -182,9 +189,21 @@ public:
   float		cur_lrate;
   float		norm_pct;
   MinMax	wt_limits;
-  void 		Compute_Weights_CtCAL(Network* net, RecvCons* cg, Unit* ru);
-  void 		Compute_SRAvg(Network* net, Unit* ru);
-  void 		Compute_Weights(Network* net, Unit* ru);
+#if (CON_IN == CON_RECV)
+// Recv-based guys (itr on the recv)
+  void 		Compute_SRAvg(Unit* ru);
+  void 		Compute_dWt(Unit* ru);
+  void 		Compute_Weights(Unit* ru);
+#elif (CON_IN == CON_SEND)
+// Send-based guys (itr on the send)
+  void 		Compute_SRAvg(Unit* su);
+  void 		Compute_dWt(Unit* su);
+  void 		Compute_Weights(Unit* su);
+#endif
+
+// dnorm guys, must always itr on the recv, regardless of CON_IN
+  void 		Compute_dWt_dnorm(Unit* ru);
+  void 		Compute_Weights_dnorm(Unit* ru);
   
   int	dummy[8];
   ConSpec();
@@ -244,6 +263,11 @@ typedef taList<Layer>	LayerList;
 class Network {
 public:
   static bool		recv_based; // for recv-based algos
+  static char		use_dnorm; // whether to use wt norm
+  const static int 	trial_rate = 71; // how many cycles per trial; def=71
+  static int 		dwt_rate; // how many cycles per dwt calc; 0=none,def=trial_rate
+  static int 		sra_start; // cycle after which to start; 0=none,def=30
+  static int 		sra_rate; // how many cycles per sravg calc; 0=none,def=5
 
 // global lists accessors for them
 // Units -- all indexes are commensurable
@@ -251,6 +275,8 @@ public:
   Unit**		g_units; // global units 
   
   int			cycle;
+  int			trial;
+  int			tot_cycle;
   
   
   NetEngine*		engine;
@@ -258,11 +284,12 @@ public:
   
   
   
-  void		Build(); 
-  void 		ComputeNets();
-  float 	ComputeActs();
-  void		Compute_SRAvg();
-  void		Compute_Weights();
+  void			Build(); 
+  void 			ComputeNets();
+  float 		ComputeActs();
+  void			Compute_SRAvg();
+  void			Compute_dWt();
+  void			Compute_Weights();
   float*	AllocWts(int sz); // alloc indicated number (from pool created in Build)
   
   double	GetNTot(); // get total from all units
@@ -340,6 +367,7 @@ public:
   void 			ComputeNets();
   virtual float 	ComputeActs();
   virtual void		Compute_SRAvg();
+  virtual void		Compute_dWt();
   virtual void		Compute_Weights();
   
   virtual void 		Log(bool hdr); // save a log file
@@ -355,20 +383,23 @@ protected:
 
 class ThreadNetEngine: public NetEngine {
 INHERITED(NetEngine) 
-public:
-  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
-  
   override void		OnBuild(); 
     
   //ThreadNetEngine();
   ~ThreadNetEngine();
 protected:
   override void		Initialize_impl();
-  void			DeleteThreads();
   void 			MakeThreads();
   override void 	DoProc(int proc_id);
   override void 	ComputeNets_impl();
   void 			ComputeNets_SendArray();
+public:
+#ifdef USE_QT_CONCURRENT
+#else
+  static QThread* threads[core_max_nprocs]; // only n_procs-1 created, none for [0] (main thread)
+protected:
+  void			DeleteThreads();
+#endif  
 };
 
 
@@ -382,6 +413,7 @@ public:
     P_Send_Netin_Array,
     P_ComputeAct,
     P_ComputeSRAvg,
+    P_ComputedWt,
     P_ComputeWeights
   };
   
@@ -416,7 +448,7 @@ public:
   
 // Weights
   virtual void	Compute_SRAvg(); // compat with single or threaded
-//  virtual void	Compute_dWt(); // compat with single or threaded
+  virtual void	Compute_dWt(); // compat with single or threaded
   virtual void	Compute_Weights(); // compat with single or threaded
   
   NetTask(NetEngine* engine);
@@ -465,8 +497,6 @@ public:
   static int n_tot; // total units done each NetIn (reality check)
   static int n_prjns; // total number of prjns
   static float tot_act; // check on tot act
-  static int dwt_rate; // how many cycles per dwt calc; 0=none
-  static int sra_rate; // how many cycles per sravg calc; 0=none
   static int tsend_act; // as decimal percent
   static int send_act; // send activation, as a fraction of 2^16 
   static int inv_act; // inverse of activation -- can use to divide
