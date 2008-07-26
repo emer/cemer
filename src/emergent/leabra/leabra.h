@@ -183,7 +183,8 @@ INHERITED(taBase)
 public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
-  bool		err_sb;		// [true for std Leabra, false for CtLeabra] apply exponential soft-bounding to the error learning component
+  bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt for Leabra_CHL and in wt update for Leabra_CAL)
+  float		sb_margin;	// #CONDEDIT_ON_err_sb [.5 means always sb, lower = some linear range in middle] margin from extremes (0,1) for applying soft bounding: if weight is closer to extreme than this value, then soft bounding applies, else it does not
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
@@ -2252,7 +2253,7 @@ inline void LeabraConSpec::C_Compute_WeightsActReg_Norm_LeabraCHL(LeabraCon* cn,
 
 inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
-  if(dwt_norm.on && cg->cons.size > 0) {
+  if(dwt_norm.on) {
     Compute_dWtMean(cg, ru);
     float dwnorm = -dwt_norm.norm_pct * cg->dwt_mean;
     if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)
@@ -2297,10 +2298,7 @@ inline float LeabraConSpec::C_Compute_Err_CtLeabraCAL(LeabraCon* cn,
 						      float ru_act_p, float su_act_p,
 						      float avg_nrm) {
   float err = (ru_act_p * su_act_p) - (avg_nrm * cn->sravg);
-  if(lmix.err_sb) {
-    if(err > 0.0f)	err *= (1.0f - cn->wt);
-    else		err *= cn->wt;
-  }
+  // note: sb now done in compute weights
   return err;
 }
 
@@ -2446,13 +2444,18 @@ inline void LeabraConSpec::C_Compute_ActReg_CtLeabraCAL(LeabraCon* cn, LeabraRec
   else if(ru->act_avg >= rus->act_reg.max)
     dwinc = -rus->act_reg.dec_wt;
   if(dwinc != 0.0f) {
-    cn->dwt += cur_lrate * dwinc * cn->wt; // proportional to current weights
+    cn->dwt += cur_lrate * dwinc;
   }
 }
 
 inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraCon* cn, LeabraRecvCons* cg,
 						       LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
 {
+  // do soft bounding now so it can include actreg, agg from dm, etc
+  if(lmix.err_sb && ((cn->wt < lmix.sb_margin) || (1.0 - cn->wt < lmix.sb_margin))) {
+    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
+    else		cn->dwt *= cn->wt;
+  }
   cn->wt += cn->dwt;		// weights always linear
   wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
@@ -2463,7 +2466,13 @@ inline void LeabraConSpec::C_Compute_Weights_Norm_CtLeabraCAL(LeabraCon* cn, Lea
 							    LeabraUnit*, LeabraUnit*, 
 							    LeabraUnitSpec*, float dwnorm)
 {
-  cn->wt += cn->dwt + dwnorm;	// weights always linear
+  // do soft bounding now so it can include actreg, agg from dm, dwtnorm, 
+  cn->dwt += dwnorm;
+  if(lmix.err_sb && ((cn->wt < lmix.sb_margin) || (1.0 - cn->wt < lmix.sb_margin))) {
+    if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
+    else		cn->dwt *= cn->wt;
+  }
+  cn->wt += cn->dwt;	// weights always linear
   wt_limits.ApplyMinLimit(cn->wt); wt_limits.ApplyMaxLimit(cn->wt);
   cn->pdw = cn->dwt;
   cn->dwt = 0.0f;
@@ -2487,7 +2496,7 @@ inline void LeabraConSpec::C_Compute_WeightsActReg_CtLeabraCAL(LeabraCon* cn,
 
 inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
-  if(dwt_norm.on && cg->cons.size > 0) {
+  if(dwt_norm.on) {
     Compute_dWtMean(cg, ru);
     float dwnorm = -dwt_norm.norm_pct * cg->dwt_mean;
     if(rus->act_reg.on && !rus->act_reg.bias_only) {	// do this in update so inactive units can be reached (no opt_thresh.updt)

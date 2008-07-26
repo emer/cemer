@@ -106,6 +106,9 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       emit lookupKeyPressed();
     }
+    else if(e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter) {
+      e->ignore();		// allow this to go up to higher guy
+    }
     else {
       QTextEdit::keyPressEvent( e );
     }

@@ -98,7 +98,7 @@ public:
   virtual const String 	GenListing(int indent_level) const; // generate the listing of program
 
   virtual DynEnumType* NewDynEnum();
-  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new DynEnumType (shortcut)
+  // #BUTTON #MENU_CONTEXT create a new DynEnumType (shortcut)
 
   virtual taBase* FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on list
