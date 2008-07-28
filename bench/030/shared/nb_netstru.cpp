@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include <QtCore/QFileInfo>
-#ifdef USE_QT_CONCURRENT
+#if (QT_VERSION >= 0x040400) 
 # include <QtCore/QtConcurrentMap>
 #endif
 
@@ -633,10 +633,6 @@ float Network::ComputeActs() {
   return rval;
 }
 
-void Network::Compute_SRAvg() {
-  engine->Compute_SRAvg();
-}
-
 void Network::Compute_dWt() {
   engine->Compute_dWt();
 }
@@ -645,6 +641,45 @@ void Network::Compute_Weights() {
   engine->Compute_Weights();
 }
 
+#ifdef SRAVG_CONCURR
+void Network::Cycle(int n_cycles) {
+  // this is the key computation loop
+  int sra_sync_in = 0;
+  for (int i = 0; i < n_cycles; ++i) {
+    g_rand = rand();
+    ComputeNets();
+    if (Nb::calc_act) {
+      float tot_act = ComputeActs();
+      if (Nb::use_log_file)
+        fprintf((FILE*)Nb::inst->act_logfile,"%d\t%g\n", tot_cycle, tot_act);
+    }
+    // see if we should sync SRAvg from previous cycle
+    if (sra_sync_in) {
+      if (--sra_sync_in == 0)
+        engine->Compute_SRAvg_sync();
+    }
+    // note: we don't kick off SRAvg on last cycle (wt update)
+    // note: add 1 to cycle so we do it after dwt_rate full counts
+    int nc1 = cycle + 1;
+    if ((dwt_rate > 0) && ((nc1 % dwt_rate) == 0)) {
+      Compute_dWt();
+      Compute_Weights();
+    }
+    else if ((sra_rate > 0) && (cycle > (sra_start - sra_rate))){
+       if ((cycle % sra_rate) == 0) {
+         engine->Compute_SRAvg_start();
+         sra_sync_in = sra_rate;
+       }
+    }
+    ++tot_cycle;
+    if (++cycle >= trial_rate) {
+      ++trial;
+      cycle = 0;
+    }
+    
+  }
+}
+#else   
 void Network::Cycle(int n_cycles) {
   // this is the key computation loop
   for (int i = 0; i < n_cycles; ++i) {
@@ -671,6 +706,11 @@ void Network::Cycle(int n_cycles) {
     
   }
 }
+
+void Network::Compute_SRAvg() {
+  engine->Compute_SRAvg();
+}
+#endif    
 
 double Network::GetNTot() {
   double rval = 0;
@@ -718,7 +758,7 @@ void NetEngine::Initialize() {
 }
 
 void NetEngine::Initialize_impl() {
-  NetTask* tsk = new NetTask_0(this);
+  NetTask* tsk = new NetTask_0(this->net);
   tsk->task_id = 0;
   net_tasks.append(tsk);
 }
@@ -767,9 +807,17 @@ float NetEngine::ComputeActs() {
   return Nb::tot_act;
 }
 
+#ifdef SRAVG_CONCURR
+void NetEngine::Compute_SRAvg_start() {
+}
+void NetEngine::Compute_SRAvg_sync() {
+  DoProc(NetTask::P_ComputeSRAvg);
+}
+#else
 void NetEngine::Compute_SRAvg() {
   DoProc(NetTask::P_ComputeSRAvg);
 }
+#endif
 
 void NetEngine::Compute_dWt() {
   DoProc(NetTask::P_ComputedWt);
@@ -809,6 +857,11 @@ void NetEngine::Log(bool hdr) {
 //  ThreadNetEngine		//
 //////////////////////////////////
 
+#ifdef SRAVG_CONCURR
+QTaskThread* ThreadNetEngine::sra_thread;
+SRAvg_Task* ThreadNetEngine::sra_task;
+#endif
+
 #ifdef USE_QT_CONCURRENT
 void net_task_run(NetTask*& nt) {
   nt->run();
@@ -839,14 +892,14 @@ ThreadNetEngine::~ThreadNetEngine() {
 void ThreadNetEngine::Initialize_impl() {
 #ifdef USE_QT_CONCURRENT
   for (int i = 0; i < n_procs; i++) {
-    NetTask* tsk = new NetTask_N(this);
+    NetTask* tsk = new NetTask_N(this->net);
     tsk->setAutoDelete(false);
     tsk->task_id = i;
     net_tasks.append(tsk);
   }
 #else
   for (int i = 0; i < n_procs; i++) {
-    NetTask* tsk = new NetTask_N(this);
+    NetTask* tsk = new NetTask_N(this->net);
     tsk->task_id = i;
     net_tasks.append(tsk);
     if (i == 0) continue;
@@ -856,6 +909,12 @@ void ThreadNetEngine::Initialize_impl() {
     th->start(); // starts paused
   }
 #endif
+#ifdef SRAVG_CONCURR
+  sra_task = new SRAvg_Task(this->net);
+  sra_thread = new QTaskThread;
+  sra_thread->setTask(sra_task);
+  sra_thread->start(QThread::LowPriority);
+#endif
 }
 
 void ThreadNetEngine::ComputeNets_impl() {
@@ -863,6 +922,17 @@ void ThreadNetEngine::ComputeNets_impl() {
     ComputeNets_SendArray();
   else inherited::ComputeNets_impl();
 }
+
+#ifdef SRAVG_CONCURR
+void ThreadNetEngine::Compute_SRAvg_start() {
+  sra_thread->resume();
+}
+
+void ThreadNetEngine::Compute_SRAvg_sync() {
+  sra_thread->suspend();
+}
+#endif
+
 
 void ThreadNetEngine::DoProc(int proc_id) {
   // start all the other threads first...
@@ -1001,13 +1071,41 @@ void ThreadNetEngine::ComputeNets_SendArray() {
 }
 #endif
 
+#ifdef SRAVG_CONCURR
+//////////////////////////////////
+//  SRAvg_Task			//
+//////////////////////////////////
+
+int SRAvg_Task::g_u;
+
+SRAvg_Task::SRAvg_Task(Network* net_) {
+  net = net_;
+}
+
+void SRAvg_Task::run() {
+  Unit** units = net->g_units; // cache
+  const int n_units_flat =  net->n_units_flat;
+//note: we only run in one thread
+  for (int my_u = 0; my_u < n_units_flat; ++my_u) {
+    Unit* un = units[my_u]; //note: accessed flat
+    un->cs->Compute_SRAvg(un);
+  }
+/*  PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
+    Unit* un = units[my_u]; //note: accessed flat
+//note: CON_IN will automatically compile the correct s or r based routine
+    un->cs->Compute_SRAvg(un);
+  }*/
+}
+#endif
+
+
 //////////////////////////////////
 //  NetTask -- mixed classes	//
 //////////////////////////////////
 
 int NetTask::g_u;
-NetTask::NetTask(NetEngine* engine) {
-  net = engine->net;
+NetTask::NetTask(Network* net_) {
+  net = net_;
   t_tot = 0;
   my_act = 0.0f;
   n_run = 0;
@@ -1135,7 +1233,7 @@ float NetTask::ComputeAct_inner(Unit* un) {
 void NetTask::ComputeAct() {
   // compute activations (only order number of units)
   my_act = 0.0f;
-  const int n_units_flat =  Nb::net.n_units_flat;
+  const int n_units_flat =  net->n_units_flat;
   Unit** g_units = net->g_units;
   while (g_u < n_units_flat) {
     Unit* un = g_units[g_u]; //note: accessed flat
@@ -1145,8 +1243,8 @@ void NetTask::ComputeAct() {
 }
 
 void NetTask::Compute_SRAvg() {
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** units = net->g_units; // cache
+  const int n_units_flat =  net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
 //note: CON_IN will automatically compile the correct s or r based routine
@@ -1155,8 +1253,8 @@ void NetTask::Compute_SRAvg() {
 }
 
 void NetTask::Compute_dWt() {
-  Unit** g_units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** g_units = net->g_units; // cache
+  const int n_units_flat =  net->n_units_flat;
   if (Network::use_dnorm) {
     PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
       Unit* un = g_units[my_u]; //note: accessed flat
@@ -1171,8 +1269,8 @@ void NetTask::Compute_dWt() {
 }
 
 void NetTask::Compute_Weights() {
-  Unit** g_units = Nb::net.g_units; // cache
-  const int n_units_flat =  Nb::net.n_units_flat;
+  Unit** g_units = net->g_units; // cache
+  const int n_units_flat =  net->n_units_flat;
   if (Network::use_dnorm) {
     PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
       Unit* un = g_units[my_u]; //note: accessed flat
@@ -1217,8 +1315,8 @@ NetTask_N::~NetTask_N() {
 }
 
 void NetTask_N::Send_Netin_Clash() {
-  Unit** units = Nb::net.g_units; // cache
-  const int n_units_flat = Nb::net.n_units_flat;
+  Unit** units = net->g_units; // cache
+  const int n_units_flat = net->n_units_flat;
   PROC_VAR_LOOP(my_u, g_u, n_units_flat) {
     Unit* un = units[my_u]; //note: accessed flat
     if (un->do_delta) {

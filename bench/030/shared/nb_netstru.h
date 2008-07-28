@@ -9,7 +9,8 @@
 
 // switches and optional subswitches
 #if (QT_VERSION >= 0x040400) 
-# define USE_QT_CONCURRENT // use the new Qt4,4 concurrent arch
+//# define USE_QT_CONCURRENT // use the new Qt4,4 concurrent arch
+//# define SRAVG_CONCURR // do the SRAVG concurrently
 #endif
 //#define UN_IN_CON // true if target unit is in con
 //#define USE_V_CON // use slow access to Cn -- for benching
@@ -40,6 +41,9 @@ class Layer;
 class Network;
 class NetEngine;
 class NetTask;
+#ifdef SRAVG_CONCURR
+class SRAvg_Task; // harmless if not used
+#endif
 class NetTaskList: public QList<NetTask*> {
 public:
   ~NetTaskList();
@@ -366,7 +370,12 @@ public:
   // generally don't override:
   void 			ComputeNets();
   virtual float 	ComputeActs();
+#ifdef SRAVG_CONCURR
+  virtual void		Compute_SRAvg_start();
+  virtual void		Compute_SRAvg_sync();
+#else
   virtual void		Compute_SRAvg();
+#endif
   virtual void		Compute_dWt();
   virtual void		Compute_Weights();
   
@@ -387,6 +396,13 @@ INHERITED(NetEngine)
     
   //ThreadNetEngine();
   ~ThreadNetEngine();
+  
+#ifdef SRAVG_CONCURR
+  static QTaskThread* 	sra_thread;
+  static SRAvg_Task*	sra_task;
+  virtual void		Compute_SRAvg_start();
+  virtual void		Compute_SRAvg_sync();
+#endif
 protected:
   override void		Initialize_impl();
   void 			MakeThreads();
@@ -402,6 +418,16 @@ protected:
 #endif  
 };
 
+#ifdef SRAVG_CONCURR
+class SRAvg_Task: public Task {
+public:
+  static int		g_u;  // shared by ALL
+  Network*		net;
+  
+  override void		run();
+  SRAvg_Task(Network* net);
+};
+#endif
 
 class NetTask: public Task {
 public:
@@ -451,7 +477,7 @@ public:
   virtual void	Compute_dWt(); // compat with single or threaded
   virtual void	Compute_Weights(); // compat with single or threaded
   
-  NetTask(NetEngine* engine);
+  NetTask(Network* net);
 };
 
 #ifndef DEBUG
@@ -466,7 +492,7 @@ INHERITED(NetTask)
 public:
   void		Send_Netin_Clash();
 //  void		ComputeAct();
-  NetTask_0(NetEngine* engine): inherited(engine) {}
+  NetTask_0(Network* net): inherited(net) {}
 };
 
 class NetTask_N: public NetTask {
@@ -480,7 +506,7 @@ public:
   void		Recv_Netin();
   void		ComputeAct();
   
-  NetTask_N(NetEngine* engine): inherited(engine) {excit = NULL;}
+  NetTask_N(Network* net): inherited(net) {excit = NULL;}
   ~NetTask_N();
 };
 
