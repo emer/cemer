@@ -2133,9 +2133,12 @@ IDataLinkClient::~IDataLinkClient() {
 
 bool IDataLinkClient::AddDataLink(taDataLink* dl) {
 #ifdef DEBUG
-  if (m_link) {
+  if (m_link && (m_link != dl)) {
     taMisc::Error("IDataLinkClient::AddDataLink: a link has already been set!");
   }
+/*  if (m_link) {
+    taMisc::Error("IDataLinkClient::AddDataLink: a link has already been set!");
+  }*/
 #endif
   bool r = (!m_link);
   m_link = dl;
