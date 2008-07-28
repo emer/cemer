@@ -10,7 +10,7 @@
 // switches and optional subswitches
 #if (QT_VERSION >= 0x040400) 
 //# define USE_QT_CONCURRENT // use the new Qt4,4 concurrent arch
-//# define SRAVG_CONCURR // do the SRAVG concurrently
+# define SRAVG_CONCURR // do the SRAVG concurrently
 #endif
 //#define UN_IN_CON // true if target unit is in con
 //#define USE_V_CON // use slow access to Cn -- for benching

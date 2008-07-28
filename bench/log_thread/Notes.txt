@@ -28,3 +28,6 @@
 20080714_01 -- as for 12_01, adding in a CON_SEND as well
 20080727_01 -- SEND vs RECV x dnorm=0 vs. dnorm=1; new timings: 30 nets, then SRAvg every 5, to 71; separate dWt/Weight passes
 20080727_02 -- as for 01, but with SRAvg suppressed (will help set upper limit on benefit of concurrent SRAvg)
+20080728_01 -- all SEND: dnorm x sravg_async (Linux64)
+20080728_02 -- as for 01, Mac32 batteries
+

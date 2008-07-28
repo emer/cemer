@@ -913,7 +913,8 @@ void ThreadNetEngine::Initialize_impl() {
   sra_task = new SRAvg_Task(this->net);
   sra_thread = new QTaskThread;
   sra_thread->setTask(sra_task);
-  sra_thread->start(QThread::LowPriority);
+//  sra_thread->start(QThread::LowPriority);
+  sra_thread->start(QThread::NormalPriority);
 #endif
 }
 
