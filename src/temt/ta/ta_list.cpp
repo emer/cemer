@@ -261,7 +261,7 @@ bool taPtrList_impl::MoveBeforeIdx(int fm, int to) {
     }
     el[to] = itm;
     UpdateIndex_(to);
-    if (to > 1) op2 = FastEl_(to - 1);
+    if (to > 0) op2 = FastEl_(to - 1);
     DataChanged(DCR_LIST_ITEM_MOVED, itm, op2); // itm, itm_after, NULL at beg
   }
   return true;
