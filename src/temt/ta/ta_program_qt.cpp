@@ -404,19 +404,18 @@ void iProgramEditor::Base_Add() {
   row = 0;
   
   // do methods first, so we know whether to show, and thus how many memb lines we have
+  // this is just a dry run..
+  QWidget* tmp_body = new QWidget();
   QHBoxLayout* layMeths = new QHBoxLayout; // def margins ok
-  layMeths->setMargin(0); 
-  layMeths->addSpacing(2); //no stretch: we left-justify
-  layMeths->addItem(new QSpacerItem(0, ln_sz + (2 * ln_vmargin), 
-    QSizePolicy::Fixed, QSizePolicy::Fixed));
-  meth_but_mgr->Constr(body, layMeths, base);
+  meth_but_mgr->Constr(tmp_body, layMeths, base);
   if (meth_but_mgr->show_meth_buttons) {
     --lines;
-    layMeths->addStretch();
-  } else {
-    delete layMeths;
-    layMeths = NULL;
   }
+  meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
+  delete layMeths;
+  layMeths = NULL;
+  delete tmp_body;
+  tmp_body = NULL;
   
   TypeDef* typ = GetRootTypeDef();
   // check for a desc guy, it will consume another line
@@ -501,6 +500,19 @@ void iProgramEditor::Base_Add() {
       hbl->addStretch(); // so guys flush left
     lay->addLayout(hbl); 
     ++row;
+  }
+
+  layMeths = new QHBoxLayout; // def margins ok
+  layMeths->setMargin(0); 
+  layMeths->addSpacing(2); //no stretch: we left-justify
+  layMeths->addItem(new QSpacerItem(0, ln_sz + (2 * ln_vmargin), 
+				    QSizePolicy::Fixed, QSizePolicy::Fixed));
+  meth_but_mgr->Constr(body, layMeths, base);
+  if (meth_but_mgr->show_meth_buttons) {
+    layMeths->addStretch();
+  } else {
+    delete layMeths;
+    layMeths = NULL;
   }
   
   if (meth_but_mgr->show_meth_buttons) {
@@ -606,8 +618,6 @@ void iProgramEditor::GetValue() {
 }
 
 void iProgramEditor::GetImage() {
-  first_tab_foc = NULL;
-
   TypeDef* typ = GetRootTypeDef();
   if (!typ) return; // shouldn't happen
   meth_but_mgr->GetImage();
@@ -619,20 +629,25 @@ void iProgramEditor::GetImage() {
       taiData* mb_dat = ms->data_el.FastEl(i);
       if (md && mb_dat) {
         md->im->GetImage(mb_dat, base);
-
-	if(!first_tab_foc && !mb_dat->readOnly() && mb_dat->visible()) {
-	  QWidget* rep = mb_dat->GetRep();
-	  if(rep->isVisible() && rep->isEnabled() && (j >= 1) && 
-	     (rep->focusPolicy() & Qt::TabFocus || md->name == "desc")) {
-	    first_tab_foc = rep;
-	  }
-	}
       }
     }
   }
 
+  // search through children to find first tab focus widget
+  // skip over flags
+  first_tab_foc = NULL;
+  QList<QWidget*> list = qFindChildren<QWidget*>(body);
+  for (int i=0; i<list.size(); ++i) {
+    QWidget* rep = list.at(i);
+//     cerr << i << "\t" << rep->metaObject()->className() << endl;
+    if(rep->isVisible() && rep->isEnabled() && (rep->focusPolicy() & Qt::TabFocus) &&
+       !rep->inherits("QCheckBox")) {
+      first_tab_foc = rep;
+      break;
+    }
+  }
+
   items->focus_next_widget = first_tab_foc; // set linkage
-  
   InternalSetModified(false);
   --m_changing;
 }
