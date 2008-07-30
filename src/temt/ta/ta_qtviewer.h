@@ -902,6 +902,53 @@ private:
 //   iMainWindowViewer	//
 //////////////////////////
 
+#ifdef __MAKETA__
+class iBrowseHistory; // #NO_INSTANCE #NO_CSS
+#else
+class TA_API iBrowseHistory: public QObject, public IMultiDataLinkClient {
+INHERITED(QObject)
+  Q_OBJECT
+public:
+  int			max_items; // #DEF_20 number of history items
+  int			cur_item; // -1 when empty; max_items when off the end
+  
+  taPtrList<taiDataLink>	items;
+  void			reset(); // esp used to put all signals etc. in correct place
+  
+  void			addItem(taiDataLink* link);
+  
+  iBrowseHistory(QObject* parent = NULL);
+  ~iBrowseHistory();
+
+public: // ITypedObject interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iBrowseHistory;}
+public: // IDataLinkClient interface
+  override void		DataDataChanged(taDataLink*, int, void*, void*) {}
+  override void		DataLinkDestroying(taDataLink* dl);
+
+
+public slots:
+  void 			ItemSelected(iTreeViewItem* tvi);
+  void			SelectableHostNotifying(ISelectableHost* src_host, int op);
+  void			back();
+  void			forward();
+  
+signals:
+  void			back_enabled(bool);
+  void			forward_enabled(bool);
+  void			select_item(taiDataLink* dl);
+  
+protected:
+  ContextFlag		navigating; // so we ignore the callback
+  
+  void			doEnabling();
+  void			itemAdding(taiDataLink* link); // link if no refs
+  void			itemRemoved(taiDataLink* link); // unlink if no more refs
+};
+#endif
+
+
 class TA_API iMainWindowViewer: public QMainWindow, public IDataViewWidget {
 // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS gui portion of the DataViewer
   Q_OBJECT
@@ -917,7 +964,7 @@ public:
 
 //nn  iToolBar_List		toolbars; // list of all created toolbars
   taiAction_List	actions; // our own list of all created actions
-
+  iBrowseHistory*	brow_hist;
   taiMenuBar*		menu;		// menu bar -- note: we use the window's built-in QMenu
   QSplitter*		body;		// #IGNORE body of the window
 
@@ -933,6 +980,8 @@ public:
   taiMenu* 		toolsMenu;
   taiMenu* 		windowMenu; // on-demand
   taiMenu* 		helpMenu;
+  taiAction* 		historyBackAction;
+  taiAction* 		historyForwardAction;
   taiAction* 		fileNewAction;
   taiAction* 		fileOpenAction;
   taiAction* 		fileSaveAction;
@@ -1014,6 +1063,8 @@ public:
   ~iMainWindowViewer();
 
 public slots:
+  void		 	slot_AssertBrowserItem(taiDataLink* link)
+    {AssertBrowserItem(link);}
   virtual void 	fileNew(); // New Project (in new viewer)
   virtual void 	fileOpen(); // Open Project (in new viewer)
   virtual void 	fileOpenRecent_aboutToShow();
@@ -1927,7 +1978,6 @@ protected slots:
 private:
   mutable QFont*	italic_font;
 };
-
 
 class TA_API iTreeViewItem: public iTreeWidgetItem, 
   public virtual IDataLinkClient, public virtual IObjectSelectable {

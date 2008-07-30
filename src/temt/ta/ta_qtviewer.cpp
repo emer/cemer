@@ -3224,6 +3224,14 @@ void iApplicationToolBar::Constr_post() {
   iToolBar* tb = this;
   int icon_sz = taiM_->label_height(taiMisc::sizMedium);
   tb->setIconSize(QSize(icon_sz, icon_sz));
+  win->historyBackAction->addTo(tb);
+  win->historyForwardAction->addTo(tb);
+//TEMP 
+QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction));
+if (but) but->setArrowType(Qt::LeftArrow);
+but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction));
+if (but) but->setArrowType(Qt::RightArrow);
+  tb->addSeparator();
   win->fileNewAction->addTo(tb);
   win->fileOpenAction->addTo(tb);
   win->fileSaveAction->addTo(tb);
@@ -3329,6 +3337,121 @@ QStringList iBaseClipWidgetAction::mimeTypes() const {
 
 
 //////////////////////////
+//  iBrowseHistory	//
+//////////////////////////
+
+iBrowseHistory::iBrowseHistory(QObject* parent) 
+:inherited(parent)
+{
+  max_items = taMisc::num_browse_history;
+  if (max_items < 10) max_items = 10; // sanity
+  cur_item = -1;
+}
+
+iBrowseHistory::~iBrowseHistory() {
+  reset();
+}
+
+void iBrowseHistory::addItem(taiDataLink* dl) {
+  if (items.size >= max_items) {
+    taiDataLink* it = items[0];
+    items.RemoveIdx(0);
+    itemRemoved(it);
+  }
+  itemAdding(dl);
+  items.Add(dl);
+  cur_item = items.size - 1;
+  doEnabling();
+}
+
+void iBrowseHistory::back() {
+  if (cur_item <= 0) goto exit;
+  --cur_item;
+  if (cur_item >= items.size) goto exit;
+  ++navigating; {
+    taiDataLink* dl = items[cur_item];
+    emit select_item(dl);
+  } --navigating;
+  
+exit:
+  doEnabling();
+}
+
+void iBrowseHistory::forward() {
+  if (cur_item >= items.size) goto exit;
+  ++cur_item;
+  if (cur_item >= items.size) goto exit;
+  ++navigating; {
+    taiDataLink* dl = items[cur_item];
+    emit select_item(dl);
+  } --navigating;
+exit:
+  doEnabling();
+}
+
+void iBrowseHistory::doEnabling() {
+  bool be = ((cur_item > 0) && (items.size > 1));
+  emit back_enabled(be);
+  bool fe = ((cur_item < (items.size - 1)) && (items.size > 1));
+  emit forward_enabled(fe);
+}
+
+void iBrowseHistory::DataLinkDestroying(taDataLink* dl) {
+  for (int i = items.size - 1; i >= 0; --i) {
+    if (dl == items[i]) {
+      if (cur_item > i) -- cur_item;
+      else if (cur_item == i) cur_item = items.size; // adjust later
+      items.RemoveIdx(i);
+    }
+  }
+  doEnabling();
+}
+
+void iBrowseHistory::itemAdding(taiDataLink* dl) {
+  for (int i = 0; i < items.size; ++i) {
+    if (dl == items[i]) return;
+  }
+  dl->AddDataClient(this);
+}
+
+void iBrowseHistory::itemRemoved(taiDataLink* dl) {
+  for (int i = 0; i < items.size; ++i) {
+    if (dl == items[i]) return;
+  }
+  dl->RemoveDataClient(this);
+}
+
+void iBrowseHistory::SelectableHostNotifying(ISelectableHost* src_host, int op)
+{
+  if (navigating) return;
+  if (op != ISelectableHost::OP_SELECTION_CHANGED) return;
+  iTreeView* tvw = qobject_cast<iTreeView*>(src_host->widget());
+  if (!tvw) return;
+  iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(tvw->curItem());
+  if (!tvi) return;
+  ItemSelected(tvi);
+}
+
+void iBrowseHistory::ItemSelected(iTreeViewItem* tvi) {
+  if (navigating) return;
+  taiDataLink* dl = tvi->link();
+  if (!dl) return;
+  addItem(dl);
+}
+
+
+void iBrowseHistory::reset() {
+  for (int i = items.size - 1; i >= 0; --i) {
+    taiDataLink* dl = items[i];
+    items.RemoveIdx(i);
+    itemRemoved(dl);
+  }
+  cur_item = 0;
+  //enabled?
+}
+
+
+//////////////////////////
 //  iMainWindowViewer	//
 //////////////////////////
 
@@ -3365,6 +3488,7 @@ iMainWindowViewer::~iMainWindowViewer() {
 void iMainWindowViewer::Init() {
   setAttribute(Qt::WA_DeleteOnClose);
   //note: only a bare init -- most stuff done in virtual Constr() called after new
+  brow_hist = new iBrowseHistory(this);
   menu = NULL;
   body = NULL;
   last_clip_handler = NULL;
@@ -3393,6 +3517,8 @@ void iMainWindowViewer::Init() {
   (void)statusBar(); // creates the status bar
   
   // these are modal, so NULL them for when unused
+  historyBackAction = NULL;
+  historyForwardAction = NULL;
   fileNewAction = NULL;
   fileOpenAction = NULL;
   fileSaveAction = NULL;
@@ -3588,6 +3714,23 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
 void iMainWindowViewer::Constr_Menu_impl() {
   QString cmd_str = "Ctrl+";
 
+  // forward/back guys
+  historyBackAction = AddAction(new taiAction("Back", QKeySequence(), "historyBackAction" ));
+  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
+  connect(brow_hist, SIGNAL(back_enabled(bool)), 
+    historyBackAction, SLOT(setEnabled(bool)) );
+  historyForwardAction = AddAction(new taiAction("Forward", QKeySequence(), "historyForwardAction" ));
+  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
+  connect(brow_hist, SIGNAL(forward_enabled(bool)), 
+    historyForwardAction, SLOT(setEnabled(bool)) );
+  connect(this, SIGNAL(SelectableHostNotifySignal(ISelectableHost*, int)),
+    brow_hist, SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
+  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
+    this, SLOT(slot_AssertBrowserItem(taiDataLink*)) );
+  // no history, just manually disable
+  historyBackAction->setEnabled(false);
+  historyForwardAction->setEnabled(false);
+  
   // project actions -- we always create them (for menu consistency) but selectively enable
   fileNewAction = AddAction(new taiAction("&New Project...", QKeySequence(), _fileNewAction ));
   fileNewAction->setIcon( QIcon( ":/images/filenew.png") );
@@ -3706,6 +3849,9 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editFindNextAction->AddTo( editMenu );
   
   viewRefreshAction->AddTo(viewMenu);
+  viewMenu->insertSeparator();
+  historyBackAction->AddTo(viewMenu);
+  historyForwardAction->AddTo(viewMenu);
   viewMenu->insertSeparator();
   frameMenu = viewMenu->AddSubMenu("Frames");
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");

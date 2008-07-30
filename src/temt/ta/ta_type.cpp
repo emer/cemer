@@ -553,6 +553,7 @@ taMisc::EditStyle	taMisc::edit_style = taMisc::ES_WIDGETS;
 bool 			taMisc::beep_on_error = false;
 short			taMisc::num_recent_files = 10;
 short			taMisc::num_recent_paths = 10;
+short			taMisc::num_browse_history = 20;
  
 ////////////////////////////////////////////////////////
 // 	File/Path/Arg Info
