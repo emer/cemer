@@ -114,6 +114,9 @@ public:
   override String 	GetTypeDecoKey() const { return "SelectEdit"; }
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   TA_BASEFUNS_NOCOPY(EditMbrItem_Group);
+#ifdef __MAKETA__ // dummy to supress New
+  taBase* 	New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
+#endif
 private:
   void	Initialize() { SetBaseType(&TA_EditMbrItem);}
   void 	Destroy()		{ };
@@ -148,6 +151,9 @@ public:
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   void	InitLinks();
   TA_BASEFUNS(EditMthItem_Group);
+#ifdef __MAKETA__ // dummy to supress New
+  taBase* 	New_gui(int n_objs=1, TypeDef* typ = NULL); // #NO_SHOW
+#endif
 private:
   void	Initialize();
   void 	Destroy() { };

@@ -3924,18 +3924,20 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
   
   //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
   //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
+  //MethodDef note: SHOW is implied in any of: MENU BUTTON or MENU_CONTEXT
   bool typ_show = type->HasOption("METH_SHOW");
   bool typ_no_show = type->HasOption("METH_NO_SHOW") || type->HasOption("METH_NO_SHOW");
-  bool mbr_show = HasOption("SHOW");
-  bool mbr_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
+  bool mth_show = HasOption("SHOW") || HasOption("MENU") ||
+    HasOption("BUTTON") || HasOption("MENU_CONTEXT") || HasOption("MENU_BUTTON");
+  bool mth_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
   
   // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
-  // you can't "undo" type-level specials, but you can always mark SHOW on the mbr
+  // you can't "undo" type-level specials, but you can always mark SHOW on the mth
 
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
     show |= (byte)taMisc::IS_HIDDEN;
-  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mbr_show) 
+  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mth_show) 
     show |= (byte)taMisc::IS_HIDDEN;
   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
     show |= (byte)taMisc::IS_EXPERT;
@@ -3945,7 +3947,7 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
     show |= (byte)taMisc::IS_EXPERT;
 
   // if NO_SHOW and no SHOW or explicit other, then never shows
-  if (mbr_no_show || (typ_no_show && (!mbr_show || (show & (byte)taMisc::NORM_MEMBS)))) {
+  if (mth_no_show || (typ_no_show && (!mth_show || (show & (byte)taMisc::NORM_MEMBS)))) {
     show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
     return; 
   }
@@ -3956,7 +3958,7 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
     show &= ~(byte)taMisc::IS_NORMAL;
   else // no non-NORMAL set
     // SHOW is like an explicit NORMAL if nothing else applies
-    if (mbr_show || typ_show)
+    if (mth_show || typ_show)
       show |= (byte)taMisc::IS_NORMAL;
 }
 

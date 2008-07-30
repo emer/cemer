@@ -122,7 +122,7 @@ void iSelectEditDataHostBase::Constr_Methods() {
       EditMthItem* item = grp->FastEl(i);
       MethodDef* md = item->mth;
       taBase* base = item->base;
-      if ((md->im == NULL) || (base == NULL)) continue;
+      if (!md || (md->im == NULL) || (base == NULL)) continue;
       taiMethodData* mth_rep = md->im->GetMethodRep(base, this, NULL, frmMethButtons);
       if (mth_rep == NULL) continue;
       meth_el.Add(mth_rep);
@@ -235,7 +235,7 @@ void iSelectEditDataHost::Constr_Data_Labels() {
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
-      if (md->im == NULL) continue; // shouldn't happen
+      if (!md || (md->im == NULL)) continue; // should only happen if created manually (Bad!)
       taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
       memb_set->memb_el.Add(md);
       memb_set->data_el.Add(mb_dat);
@@ -676,7 +676,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       int item_flags = 0;
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
-      if (md->im == NULL) continue; // shouldn't happen
+      if (!md || (md->im == NULL)) continue; // shouldn't happen
      // taiData* mb_dat = md->im->GetDataRep(this, NULL, body);
       ms->memb_el.Add(md);
      // ms->data_el.Add(mb_dat);
@@ -718,7 +718,7 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
     if (!it) continue;
     EditMbrItem* item = dynamic_cast<EditMbrItem*>(
       (taBase*)(it->data(Qt::UserRole).value<ta_intptr_t>()));
-    if ((item == NULL) || (item->base == NULL)) continue;
+    if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) continue;
     void* off = item->mbr->GetOff(item->base);
     String txt = item->mbr->type->GetValStr(off, item->base->GetOwner(),
       item->mbr, TypeDef::SC_DISPLAY); 

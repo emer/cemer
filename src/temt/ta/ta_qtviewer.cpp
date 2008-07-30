@@ -818,6 +818,7 @@ void tabDataLink::FillContextMenu_impl(taiActions* menu) {
   for (int i = 0; i < typ->methods.size; ++i) {
     MethodDef* md = typ->methods.FastEl(i);
     if (!(md->HasOption("MENU_CONTEXT"))) continue;
+    if (!md->ShowMethod()) continue;
     if (md->im == NULL)  continue;
     taiMethodData* mth_rep = md->im->GetMethodRep(data(), NULL, NULL, NULL);
     if (mth_rep == NULL)  continue;

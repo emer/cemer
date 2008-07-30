@@ -556,6 +556,7 @@ void iMethodButtonMgr::Constr_Methods_impl() {
     MethodDef* md = typ->methods.FastEl(i);
     if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
       continue;
+    if (!md->ShowMethod()) continue;
     taiMethodData* mth_rep = md->im->GetMethodRep(base, host, NULL, widg); //buttons are in the frame
     if (mth_rep == NULL)
       continue;
@@ -2040,6 +2041,7 @@ void taiEditDataHost::Constr_Methods_impl() {
     MethodDef* md = typ->methods.FastEl(i);
     if ((md->im == NULL) || (md->name == "Edit")) // don't put edit on edit dialogs..
       continue;
+    if (!md->ShowMethod()) continue;
     taiMethodData* mth_rep = md->im->GetMethodRep(root, this, NULL, frmMethButtons); //buttons are in the frame
     if (mth_rep == NULL)
       continue;
