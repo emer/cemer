@@ -2659,6 +2659,7 @@ void iBrowseViewer::Init() {
   lvwDataTree->setDefaultExpandLevels(8); // set fairly deep for ExpandAll
   lvwDataTree->setColumnCount(1);
   lvwDataTree->AddColDataKey(0, "", Qt::StatusTipRole); // show status tip
+  lvwDataTree->AddColDataKey(0, "", Qt::ToolTipRole); // and tool tip
   lvwDataTree->header()->hide();
   //enable dnd support
   lvwDataTree->setDragEnabled(true);
@@ -3606,18 +3607,6 @@ void iMainWindowViewer::Constr_Menu_impl() {
   fileCloseAction->AddTo(fileMenu);
   fileMenu->insertSeparator();
   
-  connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
-  connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
-  connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
-  if (isProjShower()) {
-    connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
-    connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
-    connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
-  } else {
-    fileSaveAction->setEnabled(false);
-    fileSaveAsAction->setEnabled(false);
-    fileCloseAction->setEnabled(false);
-  }
   // other actions
   fileOptionsAction = AddAction(new taiAction("&Options...", QKeySequence(), "fileOptionsAction" ));
   
@@ -3626,6 +3615,20 @@ void iMainWindowViewer::Constr_Menu_impl() {
   if (!isRoot()) {
     fileCloseWindowAction = AddAction(new taiAction("C&lose Window", QKeySequence(), _fileCloseWindowAction ));
     connect(fileCloseWindowAction, SIGNAL(Action()), this, SLOT(fileCloseWindow()) );
+  }
+  connect( fileNewAction, SIGNAL( Action() ), this, SLOT( fileNew() ) );
+  connect( fileOpenAction, SIGNAL( Action() ), this, SLOT( fileOpen() ) );
+  connect( fileSaveAllAction, SIGNAL( Action() ), this, SLOT( fileSaveAll() ) );
+  if (isProjShower()) {
+    connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
+    connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
+    connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
+    // disable the CloseWindow to help emphasize that Closing will close proj
+    fileCloseWindowAction->setEnabled(false);
+  } else {
+    fileSaveAction->setEnabled(false);
+    fileSaveAsAction->setEnabled(false);
+    fileCloseAction->setEnabled(false);
   }
 #ifndef TA_OS_MAC
   if (isRoot())
@@ -3934,7 +3937,7 @@ void iMainWindowViewer::fileClose() {
   // Check for dirty/save
   if (proj->isDirty()) {
     int chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing it?",
-        "&Save", "&Don't Save", "&Cancel");
+        "&Save", "&Don't Save");
   
     switch (chs) {
     case 0:
@@ -3942,8 +3945,6 @@ void iMainWindowViewer::fileClose() {
       break;
     case 1:
       break;
-    case 2: 
-      return;
     }
   }
   proj->CloseLater();
@@ -4230,7 +4231,7 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
     if (!mwv || !(mwv->isProjBrowser() && mwv->isMapped())) continue;
     if (++cnt >= 2) return;
   }
-  
+  // ok, so here we are at the final project viewer, which will close the project!
   if (isDirty() && !(proj && proj->m_no_save)) {
     bool forced = (cancel_op == CO_NOT_CANCELLABLE);
     int chs;
@@ -4254,6 +4255,7 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
       return;
     }
   }
+  proj->CloseLater();
 }
 
 bool iMainWindowViewer::isDirty() const {

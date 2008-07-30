@@ -403,10 +403,15 @@ public:
   // #TYPE_ON_obj_type #APPLY_IMMED the method to call on object obj
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
+  String		meth_sig;
+  // #READ_ONLY #NO_SAVE #SHOW signature of the method, for reference
+  String		meth_desc;
+  // #READ_ONLY #NO_SAVE #SHOW description of the method, for reference
 
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
+//nn  override const String statusTip(const KeyString&) const;
 
   PROGEL_SIMPLE_BASEFUNS(MethodCall);
 protected:

@@ -797,6 +797,11 @@ void MethodCall::UpdateAfterEdit_impl() {
 	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
+    meth_sig = method->prototype();
+    meth_desc = method->desc;
+  } else {
+    meth_sig = _nilString;
+    meth_desc = _nilString;
   }
 }
 
@@ -850,6 +855,13 @@ String MethodCall::GetDisplayName() const {
   rval += ")";
   return rval;
 }
+
+/*const String MethodCall::statusTip(const KeyString& ks) const {
+  if (method)
+    return method->prototype();
+  else return inherited::statusTip(ks);
+}*/
+
 
 //////////////////////////
 //    MemberProgEl	//

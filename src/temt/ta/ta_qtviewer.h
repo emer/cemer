@@ -53,6 +53,7 @@ class ISelectable_PtrList;
 class ISelectableHost; 
 class iBrowseViewer;
 class iBaseClipWidgetAction;
+class iMainWindowViewer;
 class iTreeView;
 class iTreeViewItem;
 class taiListDataNode;
