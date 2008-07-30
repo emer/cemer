@@ -252,6 +252,7 @@ void iProgramEditor::Init() {
   sel_item_mbr = NULL;
   sel_item_base = NULL;
   
+  brow_hist = new iBrowseHistory(this);
   
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(2);
@@ -275,9 +276,11 @@ void iProgramEditor::Init() {
   
   defEditBgColor(); 
   
-  QHBoxLayout* layButtons = new QHBoxLayout();
+  layButtons = new QHBoxLayout();
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
+  tb = new QToolBar(this);
+  layButtons->addWidget(tb);
   layButtons->addStretch();
   btnApply = new HiLightButton("&Apply", this);
   layButtons->addWidget(btnApply);
@@ -333,6 +336,33 @@ void iProgramEditor::Init() {
   items->Connect_SelectableHostNotifySignal(this,
     SLOT(items_Notify(ISelectableHost*, int)) );
 
+  // browse history
+  historyBackAction = new taiAction("Back", QKeySequence(), "historyBackAction" );
+  historyBackAction->setParent(this); // for shortcut functionality, and to delete
+  connect(historyBackAction, SIGNAL(triggered()), brow_hist, SLOT(back()) );
+  connect(brow_hist, SIGNAL(back_enabled(bool)), 
+    historyBackAction, SLOT(setEnabled(bool)) );
+  historyForwardAction = new taiAction("Forward", QKeySequence(), "historyForwardAction" );
+  historyForwardAction->setParent(this); // for shortcut functionality, and to delete
+  connect(historyForwardAction, SIGNAL(triggered()), brow_hist, SLOT(forward()) );
+  connect(brow_hist, SIGNAL(forward_enabled(bool)), 
+    historyForwardAction, SLOT(setEnabled(bool)) );
+  items->Connect_SelectableHostNotifySignal(brow_hist,
+    SLOT(SelectableHostNotifying(ISelectableHost*, int)) );
+  connect(brow_hist, SIGNAL(select_item(taiDataLink*)),
+    this, SLOT(slot_AssertBrowserItem(taiDataLink*)) );
+  // no history, just manually disable
+  historyBackAction->setEnabled(false);
+  historyForwardAction->setEnabled(false);
+  // toolbar
+  historyBackAction->addTo(tb);
+  historyForwardAction->addTo(tb);
+//TEMP 
+QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(historyBackAction));
+if (but) but->setArrowType(Qt::LeftArrow);
+but = qobject_cast<QToolButton*>(tb->widgetForAction(historyForwardAction));
+if (but) but->setArrowType(Qt::RightArrow);
+  
   InternalSetModified(false);
 }
 
@@ -553,6 +583,20 @@ void iProgramEditor::Apply() {
   InternalSetModified(false); // superfulous??
 }
 
+iTreeViewItem* iProgramEditor::AssertBrowserItem(taiDataLink* link)
+{
+  // note: waitproc is now insulated against recurrent calls..
+  // make sure previous operations are finished
+  taiMiscCore::ProcessEvents();
+  iTreeViewItem* rval = items->AssertItem(link);
+  if (rval) {
+    items->scrollTo(rval);
+    items->setCurrentItem(rval);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return rval;
+}
 
 const iColor iProgramEditor::colorOfCurRow() const {
   if ((row % 2) == 0) {

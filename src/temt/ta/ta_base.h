@@ -68,6 +68,7 @@ public:
   // list of objs to be update-after-edit'd in the wait process
   static taBase_FunCallList  delayed_funcalls;
   // functions to call during the waiting process -- variant value is the object, and name is the function
+  static ContextFlag	delayed_closing; // context -- don't do WaitProc
 
   static void		WaitProc();
   // wait process function: process all the delayed stuff

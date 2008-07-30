@@ -106,11 +106,16 @@ public:
   };
 #endif
 
+  iBrowseHistory*	brow_hist;
+  taiAction* 		historyBackAction;
+  taiAction* 		historyForwardAction;
+  
   QVBoxLayout*		layOuter;
   QScrollArea*		  scrBody;
   iStripeWidget*	  body; // container for the actual taiData items
   iMethodButtonMgr*	    meth_but_mgr; // note: not a widget
-//QHBoxLayout*		  layButtons;
+  QHBoxLayout*		  layButtons;
+  QToolBar*		    tb; // for the history buttons
   HiLightButton*	    btnApply;
   HiLightButton*	    btnRevert;
   iTreeView*		  items;
@@ -127,6 +132,7 @@ public:
   void 			setEditBgColor(const iColor& value); // set bg for edit, null for default
   void			defEditBgColor(); // set default color
   void			setShow(int value); // only used by expert toggle
+  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
   virtual void		Refresh(); // manual refresh
   virtual QWidget*	firstTabFocusWidget();
 
@@ -137,6 +143,9 @@ public slots:
   void			Apply();
   void			Revert();
   void			ExpandAll(); // expands all, and resizes columns
+  void		 	slot_AssertBrowserItem(taiDataLink* link)
+    {AssertBrowserItem(link);}
+
   
 public: // ITypedObject i/f
   void*			This() {return this;} 

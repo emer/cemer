@@ -679,7 +679,7 @@ public:
   static bool		beep_on_error; // #SAVE #DEF_false #CAT_GUI beep when an error message is printed on the console
   static short		num_recent_files; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent files to save
   static short		num_recent_paths; // #SAVE #DEF_10 #MIN_0 #MAX_50 number of recent paths to save
-  static short 		num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_500 number of browse history items to keep
+  static short 		num_browse_history; // #SAVE #DEF_20 #MIN_10 #MAX_50 number of browse history items to keep
 
   ////////////////////////////////////////////////////////
   // 	File/Paths Info

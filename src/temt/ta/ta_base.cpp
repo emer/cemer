@@ -129,6 +129,7 @@ taRootBase* tabMisc::root = NULL;
 taBase_PtrList 	tabMisc::delayed_close;
 taBase_RefList 	tabMisc::delayed_updateafteredit;
 taBase_FunCallList  tabMisc::delayed_funcalls;
+ContextFlag  tabMisc::delayed_closing;
 
 void tabMisc::DelayedClose(taBase* obj) {
   delayed_close.LinkUnique(obj); // only add once!!!
@@ -148,6 +149,7 @@ void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
 }
 
 void tabMisc::WaitProc() {
+  if (delayed_closing) return;
   static bool already_in = false;
   // prevent reentrant waitprocs!
   if(already_in) return;
@@ -3043,8 +3045,8 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
     rval->SetName(orgnm);
   SwapIdx(idx, size-1);		// switch positions, so old guy is now at end!
   itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
-  tabMisc::DelayedClose(itm);
   // then do a delayed remove of this object (in case called by itself!)
+  itm->CloseLater();
   return true;
 }
 
@@ -3076,7 +3078,9 @@ bool taList_impl::CloseLater_Child(TAPtr obj) {
 #endif
   // add to delayed list first, thus ref'ing so we don't delete
   tabMisc::DelayedClose(obj);
+  ++tabMisc::delayed_closing;
   return RemoveEl(obj);
+  --tabMisc::delayed_closing;
 }
 
 
