@@ -1097,6 +1097,7 @@ protected:
   bool			m_is_root; // true if this is a root window (has Quit menu)
   bool			m_is_proj_browser; // true if this is a project browser (false for simple browsers)
   bool			m_is_proj_viewer; // true if this is a project viewer
+  bool			m_close_proj_now; // flag used to pass command to close proj
   int			m_unique_id;
   
   override void 	closeEvent(QCloseEvent* ev);

@@ -3372,6 +3372,7 @@ void iMainWindowViewer::Init() {
   m_is_root = false;
   m_is_proj_browser = false;
   m_is_proj_viewer = false;
+  m_close_proj_now = false; // only ever set once
   
   // allow win to be any size, even bigger than screen -- esp important for
   // multi-monitor situations, so you can size across screens
@@ -3504,6 +3505,9 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   CancelOp cancel_op = ((taMisc::quitting == taMisc::QF_FORCE_QUIT) || (!m_viewer)) ?
      CO_NOT_CANCELLABLE : CO_PROCEED; 
   closeEvent_Handler(e, cancel_op);
+  // now, if we are the last proj window, close us!
+  if (m_close_proj_now) 
+    curProject()->CloseLater();
 }
 
 void iMainWindowViewer::moveEvent(QMoveEvent* e) {
@@ -4255,7 +4259,8 @@ void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
       return;
     }
   }
-  proj->CloseLater();
+  // if we make it here,  then we should be closed -- closeEvent will do this
+  m_close_proj_now = true;
 }
 
 bool iMainWindowViewer::isDirty() const {
