@@ -1681,7 +1681,9 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 //			BgPFC
 ///////////////////////////////////////////////////////////////
 
-static void set_n_stripes(LeabraNetwork* net, char* nm, int n_stripes, int n_units, bool sp) {
+static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
+  int n_units, bool sp)
+{
   LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
   if(lay == NULL) return;
   lay->gp_geom.n_not_xy = true;
