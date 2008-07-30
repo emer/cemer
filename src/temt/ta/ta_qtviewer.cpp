@@ -6892,7 +6892,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;
     }
-    if(e->key() == Qt::Key_D) {
+    if(e->key() == Qt::Key_M) {
       ISelectable* si = curItem();
       if(si && si->link()) {
 	taBase* sb = si->link()->taData();
@@ -6903,6 +6903,17 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;
     }
+  }
+  if((ctrl_pressed && e->key() == Qt::Key_W) || (e->key() == Qt::Key_Delete)) {
+    ISelectable* si = curItem();
+    if(si && si->link()) {
+      taBase* sb = si->link()->taData();
+      if(sb) {
+	sb->CloseLater();	// this doesn't seem to be working: gives an error
+      }
+    }
+    e->accept();
+    return;
   }
   if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_F) {
     ISelectable* si = curItem();
