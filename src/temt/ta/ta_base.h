@@ -58,12 +58,12 @@ class taBase_FunCallList; //
 
 class TA_API tabMisc {
   // #NO_TOKENS #INSTANCE miscellaneous useful stuff for taBase
+friend class taBase;
+friend class taList_impl;
 public:
   static taRootBase*	root;
   // root of the structural object hierarchy
 
-  static taBase_PtrList	delayed_close;
-  // list of objs to be removed in the wait process (e.g. when objs delete themselves)
   static taBase_RefList	delayed_updateafteredit;
   // list of objs to be update-after-edit'd in the wait process
   static taBase_FunCallList  delayed_funcalls;
@@ -73,8 +73,6 @@ public:
   static void		WaitProc();
   // wait process function: process all the delayed stuff
 
-  static void		DelayedClose(taBase* obj);
-  // close this object during the wait process (after other events have been processed and we are outside of any functions within the to-be-closed object)
   static void		DelayedUpdateAfterEdit(TAPtr obj);
   // call update-after-edit on object in wait process (in case this does other kinds of damage..)
   static void		DelayedFunCall_gui(taBase* obj, const String& fun_name);
@@ -85,6 +83,12 @@ public:
   static void		DeleteRoot(); // get rid of root, if not nuked already
 
 protected:
+  static taBase_PtrList	delayed_close;
+  // list of objs to be removed in the wait process (e.g. when objs delete themselves)
+  
+  static void		DelayedClose(taBase* obj);
+  // close this object during the wait process (after other events have been processed and we are outside of any functions within the to-be-closed object) -- USE taBase APIs for this!
+  
   static bool		DoDelayedCloses();
   static bool		DoDelayedUpdateAfterEdits();
   static bool		DoDelayedFunCalls();
