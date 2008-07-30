@@ -3628,7 +3628,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
     connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
     connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
     // disable the CloseWindow to help emphasize that Closing will close proj
-    fileCloseWindowAction->setEnabled(false);
+//no, not needed    fileCloseWindowAction->setEnabled(false);
   } else {
     fileSaveAction->setEnabled(false);
     fileSaveAsAction->setEnabled(false);
