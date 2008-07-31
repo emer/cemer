@@ -280,6 +280,8 @@ void iProgramEditor::Init() {
   layButtons->setMargin(0);
   layButtons->setSpacing(0);
   tb = new QToolBar(this);
+  int icon_sz = taiM_->label_height(taiMisc::sizSmall) -4;
+  tb->setIconSize(QSize(icon_sz, icon_sz));
   layButtons->addWidget(tb);
   layButtons->addStretch();
   btnApply = new HiLightButton("&Apply", this);

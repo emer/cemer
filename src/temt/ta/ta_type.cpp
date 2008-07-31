@@ -541,7 +541,7 @@ taMisc::ViewerOptions	taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::V
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
 int	taMisc::antialiasing_level = 4;
-float	taMisc::text_complexity = .1f;
+float	taMisc::text_complexity = .5f;
 
 taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
 taMisc::TypeInfo  	taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;

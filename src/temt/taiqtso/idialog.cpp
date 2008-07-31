@@ -28,7 +28,8 @@ void iDialog::keyPressEvent(QKeyEvent *e) {
   if(e->modifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
 #endif
-  if(ctrl_pressed && (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)) {
+  if(ctrl_pressed && (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return
+		      || e->key() == Qt::Key_Control)) { // on linux ctrl+return looks just like ctrl sometimes?
     accept();
     return;
   }
