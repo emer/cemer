@@ -42,7 +42,7 @@ software work for purposes of copyright.
 #include <stdio.h>
 
 
-#if (false && defined(DEBUG) && defined(TA_OS_LINUX))
+#if (0 && defined(DEBUG) && defined(TA_OS_LINUX))
 
 #if (TA_POINTER_SIZE == 4)
 # define MALLOC_MASK ~7

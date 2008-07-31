@@ -52,7 +52,7 @@
   #endif
 #endif // __MAKETA__
 
-#if (false && defined(DEBUG) && defined(TA_OS_LINUX))
+#if (0 && defined(DEBUG) && defined(TA_OS_LINUX))
 void operator delete(void* ptr) throw();
 void operator delete[](void* ptr) throw();
 #endif
