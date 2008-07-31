@@ -1806,7 +1806,7 @@ void taiProgLibElArgType::GetImage_impl(taiData* dat, const void* base) {
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {
-      *((TAPtr*)arg_base) = val.toBase();
+      taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
   MemberDef* from_md = GetFromMd();
@@ -1820,12 +1820,13 @@ void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {
   if (arg_base == NULL)
     return;
   taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
-  *((TAPtr*)arg_base) = els->GetValue();
+  // must use set pointer because cssTA_Base now does refcounts on pointer!
+  taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
 }
 
 
 //////////////////////////////////////
-//        taiProgLibElArgType       //
+//        StringFieldLookupFun      //
 //////////////////////////////////////
 
 String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,

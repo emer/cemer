@@ -1286,7 +1286,7 @@ protected:
 
 private:
   void	Initialize();
-  void	Destroy() { CutLinks(); }
+  void	Destroy();
 };
 
 class TA_API ProgLibEl_List : public taList<ProgLibEl> {

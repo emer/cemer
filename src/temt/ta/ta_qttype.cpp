@@ -2457,7 +2457,7 @@ void taiTokenPtrArgType::GetImage_impl(taiData* dat, const void* base){
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {
-      *((TAPtr*)arg_base) = val.toBase();
+      taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
   rval->GetImage(*((TAPtr*)arg_base), npt, scope, scope_type);
@@ -2469,7 +2469,6 @@ void taiTokenPtrArgType::GetValue_impl(taiData* dat, void*) {
   taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)rval->GetValue());
-//   *((void**)arg_base) = rval->GetValue();
 }
 
 ///////////////////////////////////
@@ -3115,7 +3114,7 @@ void gpiInObjArgType::GetImage_impl(taiData* dat, const void* base) {
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {
-      *((TAPtr*)arg_base) = val.toBase();
+      taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
   if (typ->InheritsFrom(TA_taGroup_impl)) {
@@ -3134,7 +3133,6 @@ void gpiInObjArgType::GetValue_impl(taiData* dat, void*) {
   taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
-//   *((TAPtr*)arg_base) = els->GetValue();
 }
 
 //////////////////////////////////
@@ -3188,7 +3186,7 @@ void gpiFromGpArgType::GetImage_impl(taiData* dat, const void* base) {
   if (GetHasOption("ARG_VAL_FM_FUN")) {
     Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
     if(val != _nilVariant) {
-      *((TAPtr*)arg_base) = val.toBase();
+      taBase::SetPointer((taBase**)arg_base, val.toBase());
     }
   }
   MemberDef* from_md = GetFromMd();
@@ -3209,7 +3207,6 @@ void gpiFromGpArgType::GetValue_impl(taiData* dat, void*) {
   taiListElsButtonBase* els = (taiListElsButtonBase*)dat;
   // must use set pointer because cssTA_Base now does refcounts on pointer!
   taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
-  //  *((TAPtr*)arg_base) = els->GetValue();
 }
 
 MemberDef* gpiFromGpArgType::GetFromMd() {
