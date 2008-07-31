@@ -2570,7 +2570,7 @@ public:
   FunCallItem(taBase* it_, const String& fn) {it = it_; fun_name = fn;}
 };
 
-class TA_API taBase_FunCallList: public taPtrList<FunCallItem>, public IDataLinkClient {
+class TA_API taBase_FunCallList: public taPtrList<FunCallItem>, public IMultiDataLinkClient {
   // #INSTANCE function call list manager
 INHERITED(taPtrList<FunCallItem>)
 public:

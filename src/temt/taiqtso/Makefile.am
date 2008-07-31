@@ -13,7 +13,6 @@ HEADS =\
 	ilabel.h \
 	icliptoolwidget.h \
 	ispinbox.h \
-	iwidgetlist.h \
 	itreewidget.h \
 	idialog.h \
 	ilineedit.h \
@@ -30,12 +29,7 @@ HEADS =\
 	ibutton.h \
 	iscrollarea.h \
 	itextbrowser.h \
-	itextedit.h \
-	test_iflowbox.h \
-	test_iflowlayout.h \
-	test_simplewidgets.h \
-	test_itreeview.h \
-	test_mainwindow.h
+	itextedit.h 
 
 SRCS =\
 	iflowlayout.cpp \
@@ -46,7 +40,6 @@ SRCS =\
 	icliptoolwidget.moc.cpp \
 	ispinbox.cpp \
 	ispinbox.moc.cpp \
-	iwidgetlist.cpp \
 	itreewidget.cpp \
 	itreewidget.moc.cpp \
 	ilineedit.cpp \
