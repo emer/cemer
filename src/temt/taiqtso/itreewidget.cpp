@@ -324,6 +324,10 @@ void iTreeWidget::keyPressEvent(QKeyEvent* event) {
     case Qt::Key_B:
       newCurrent = moveCursor(MoveLeft, event->modifiers());
       break;
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+      event->ignore();		// pass this on to anyone higher (e.g., a dialog!)
+      return;
     }
 
     // from qabstractitemview.cpp
