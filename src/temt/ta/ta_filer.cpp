@@ -463,9 +463,9 @@ istream* taFiler::open_read() {
   // note: it is the filename that determines compress, not the flag
   if (m_fname.endsWith(taMisc::compress_sfx)) {
     compressed = true;
-    istrm = new igzstream(fileName(), ios::in);
+    istrm = new igzstream(fileName().chars(), ios::in);
   } else {
-    fstrm = new fstream(fileName(), ios::in);
+    fstrm = new fstream(fileName().chars(), ios::in);
     istrm = (istream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
@@ -500,9 +500,9 @@ ostream* taFiler::open_write() {
   bool hasfx = m_fname.endsWith(taMisc::compress_sfx);
   if (hasfx) {
     compressed = true;
-    ostrm = new ogzstream(fileName(), ios::out);
+    ostrm = new ogzstream(fileName().chars(), ios::out);
   } else {
-    fstrm = new fstream(fileName(), ios::out);
+    fstrm = new fstream(fileName().chars(), ios::out);
     ostrm = (ostream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive
@@ -529,9 +529,9 @@ ostream* taFiler::open_append() {
   bool hasfx = (m_fname.endsWith(taMisc::compress_sfx));
   if (hasfx) {
     compressed = true;
-    ostrm = new ogzstream(fileName(), ios::out | ios::app);
+    ostrm = new ogzstream(fileName().chars(), ios::out | ios::app);
   } else {
-    fstrm = new fstream(fileName(), ios::out | ios::app);
+    fstrm = new fstream(fileName().chars(), ios::out | ios::app);
     ostrm = (ostream*)fstrm;
   }
   // note: check "good" rather than "bad" because good is proactive, bad is only reactive

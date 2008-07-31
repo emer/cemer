@@ -20,7 +20,7 @@
 
 #include <QScrollArea>
 
-class iScrollArea: public QScrollArea {
+class TAIQTSO_API iScrollArea: public QScrollArea {
   // ##NO_CSS scroll area with better visual semantics than the stock Qt one
 INHERITED(QScrollArea)
   Q_OBJECT

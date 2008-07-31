@@ -23,6 +23,7 @@ taiqtso_mocs: \
   icheckbox.moc.cpp \
   icliptoolwidget.moc.cpp \
   icombobox.moc.cpp \
+  idialog.moc.cpp \
   ieditgrid.moc.cpp \
   ilabel.moc.cpp \
   iflowlayout.moc.cpp \
@@ -45,6 +46,9 @@ icombobox.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\icombobox.h
 	$(MOC) %s -o $@
 
 icliptoolwidget.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\icliptoolwidget.h
+	$(MOC) %s -o $@
+
+idialog.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\idialog.h
 	$(MOC) %s -o $@
 
 ieditgrid.moc.cpp: $(EMERGENTDIR)\src\temt\taiqtso\ieditgrid.h

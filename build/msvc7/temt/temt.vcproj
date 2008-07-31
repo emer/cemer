@@ -199,6 +199,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\taiqtso\icombobox.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\taiqtso\idialog.cpp">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\taiqtso\idimedit.cpp">
 				</File>
 				<File
@@ -260,6 +263,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 					RelativePath="..\..\..\src\temt\taiqtso\icombobox.h">
 				</File>
 				<File
+					RelativePath="..\..\..\src\temt\taiqtso\idialog.h">
+				</File>
+				<File
 					RelativePath="..\..\..\src\temt\taiqtso\idimedit.h">
 				</File>
 				<File
@@ -319,6 +325,9 @@ copy $(TargetDir)temt*.dll $(SolutionDir)bin
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\taiqtso\icombobox.moc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\src\temt\taiqtso\idialog.moc.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\src\temt\taiqtso\idimedit.moc.cpp">
