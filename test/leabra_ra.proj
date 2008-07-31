@@ -36,6 +36,12 @@ LeabraProject .projects[0] {
 	EditMthItem @[1] { };
 	EditMthItem @[2] { };
 	EditMthItem @[3] { };
+	EditMthItem_Group @.gp[0] = [4] { 
+	  EditMthItem @[0] { };
+	  EditMthItem @[1] { };
+	  EditMthItem @[2] { };
+	  EditMthItem @[3] { };
+	};
       };
     };
   };
@@ -1007,13 +1013,13 @@ This is the details.
     el_def=0;
     EditMbrItem @[0] {
      label="LeabraConSpec_0 lrate";
-     desc=;
+     desc=" [0.01 for std leabra, .04-.08 for CtLeabra] learning rate -- how fast do the weights change per experience";
      base=.projects[0].networks[0].specs[3]$1$;
      mbr=LeabraConSpec::lrate;
     };
     EditMbrItem @[1] {
      label="HiddenLayer kwta";
-     desc=;
+     desc=" desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)<br>  k from:  how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q<br>    USE K:  use the k specified directly<br>    USE PCT:  use the percentage pct to compute the k as a function of layer size<br>    USE PAT K:  use the activity level of the current event pattern (k = of units > pat_q)<br>  k:  desired number of active units in the layer<br>  pct:  desired proportion of activity (used to compute a k value based on layer size, .25 std)<br>  diff act pct: [Default: false]  if true, use different actual percent activity for overall layer activation<br>  act pct:  actual percent activity to put in kwta.pct field of layer<br>  gp i:  compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value<br>  gp g:  how much this item (layer or unit group) contributes to the pooled layer group values";
      base=.projects[0].networks[0].specs[1]$2$;
      mbr=LeabraLayerSpec::kwta;
     };
@@ -1025,27 +1031,57 @@ This is the details.
     group_type=GT_BUTTONS;
     EditMthItem @[0] {
      label="Train Init";
-     desc=;
+     desc=" set the program state back to the beginning";
      base=.projects[0].programs.gp[0][1]$3$;
      mth=Program::Init;
     };
     EditMthItem @[1] {
      label="Train Run";
-     desc=;
+     desc=" run the program";
      base=$3$;
      mth=Program::Run;
     };
     EditMthItem @[2] {
      label="Train Step";
-     desc=;
+     desc=" step the program, at the previously selected step level (see SetAsStep or the program group control panel)";
      base=$3$;
      mth=Program::Step;
     };
     EditMthItem @[3] {
      label="Train Stop";
-     desc=;
+     desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
      base=$3$;
      mth=Program::Stop;
+    };
+    EditMthItem_Group @.gp[0] {
+     name="Batch";
+     el_typ=EditMthItem;
+     el_def=0;
+     group_type=GT_MENU_BUTTON;
+     EditMthItem @[0] {
+      label="Batch Init";
+      desc=;
+      base=.projects[0].programs.gp[0][0]$4$;
+      mth=Program::Init;
+     };
+     EditMthItem @[1] {
+      label="Batch Run";
+      desc=;
+      base=$4$;
+      mth=Program::Run;
+     };
+     EditMthItem @[2] {
+      label="Batch Step";
+      desc=;
+      base=$4$;
+      mth=Program::Step;
+     };
+     EditMthItem @[3] {
+      label="Batch Stop";
+      desc=;
+      base=$4$;
+      mth=Program::Stop;
+     };
     };
    };
   };
@@ -1493,18 +1529,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      name="network";
      var_type=T_Object;
      object_type=LeabraNetwork;
-     object_val=.projects[0].networks[0]$4$;
+     object_val=.projects[0].networks[0]$5$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="network to operate on -- updates batch counter on network and passes it to train program";
     };
     ProgVar @[1] {
      name="input_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$5$;
+     object_val=.projects[0].data.gp[0][0]$6$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK;
+     reference=0;
      desc="datatable with training patterns -- not used by this program, but passed to train program";
     };
    };
@@ -1516,9 +1554,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      name="batch";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs.gp[0][0]$6$;
+     object_val=$4$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="set this to point to your batch process";
     };
     ProgVar @[1] {
@@ -1526,7 +1565,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
     ProgVar @[2] {
@@ -1534,7 +1574,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc="log file directory";
     };
     ProgVar @[3] {
@@ -1542,7 +1583,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_type=T_String;
      string_val=;
      objs_ptr=0;
-     flags=NULL_CHECK;
+     flags=NULL_CHECK|USED;
+     reference=0;
      desc="name of log file";
     };
     ProgVar @[4] {
@@ -1551,7 +1593,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][1]$7$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
     ProgVar @[5] {
@@ -1560,7 +1603,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      object_type=DataTable;
      object_val=.projects[0].data.gp[1][0]$8$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
      desc=;
     };
    };
@@ -1739,7 +1783,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     ProgVarFmArg @[11] {
      desc=;
      flags=;
-     prog=$6$;
+     prog=$4$;
      var_name="max_batch";
      arg_name="batches";
     };
@@ -1955,7 +1999,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     ProgramCall @[19] {
      desc=;
      flags=;
-     target=$6$;
+     target=$4$;
      targ_ld_init="*LeabraBatch*";
      prog_args {
       name=;
@@ -2015,18 +2059,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
      };
      ProgVar @[1] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$5$;
+      object_val=$6$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="datatable with training patterns -- not used by this program, but passed to train program";
      };
     };
@@ -2039,7 +2085,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="batch counter";
      };
      ProgVar @[1] {
@@ -2048,6 +2095,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       int_val=10;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="maximum number of batch runs to perform";
      };
     };
@@ -2194,18 +2242,20 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to train";
      };
      ProgVar @[1] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$5$;
+      object_val=$6$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="datatable with training patterns";
      };
      ProgVar @[2] {
@@ -2213,7 +2263,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="If train is called by other programs (e.g., Batch), they should set this to true -- otherwise it is reset to false in Init";
      };
     };
@@ -2227,6 +2278,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       int_val=500;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="maximum number of epochs to run";
      };
      ProgVar @[1] {
@@ -2234,7 +2286,8 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       var_type=T_Int;
       int_val=6;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="current epoch -- local copy, which is used to update network's epoch counter";
      };
      ProgVar @[2] {
@@ -2244,6 +2297,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       hard_enum_type=Network::TrainMode;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="TRAIN = update weights (learn), TEST = just record network's responses but don't learn";
      };
      ProgVar @[3] {
@@ -2255,6 +2309,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="how to initialize the random numbers when the Init button is pressed";
      };
      ProgVar @[4] {
@@ -2263,6 +2318,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="stopping criterion -- when error measure (count of trials with a non-zero error by defult)
 goes <= this value, stop training (set to -1 to disable stopping criterion, and always train to max_epoch epochs)";
      };
@@ -2272,7 +2328,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=RndSeed;
       object_val=.projects[0].programs.gp[0][1].objs[0]$20$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="random seed that is used at start of training -- if OldSeed is called";
      };
      ProgVar @[6] {
@@ -2281,7 +2338,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].train_time$21$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="records time used to train network (object lives on network -- this is a pointer to it)";
      };
     };
@@ -2592,18 +2650,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on";
      };
      ProgVar @[1] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$5$;
+      object_val=$6$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="table of patterns to present to the network, one row at a time";
      };
     };
@@ -2617,7 +2677,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       int_val=1;
       hard_enum_type=DataLoop::Order;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="controls the order in which events (rows of the input data datatable) are presented to the network
 (SEQUENTIAL, PERMUTED, RANDOM)";
      };
@@ -2626,7 +2687,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=5;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="current trial (event) within the epoch -- increments automatically";
      };
      ProgVar @[2] {
@@ -2635,7 +2697,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$8$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="trial-level output data -- we reset it every epoch by default, so it just contains last epoch of data";
      };
      ProgVar @[3] {
@@ -2644,7 +2707,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=TimeUsed;
       object_val=.projects[0].networks[0].epoch_time$28$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="timer to record time required to perform one epoch of processing (object is on network -- this is a pointer to it)";
      };
      ProgVar @[4] {
@@ -2652,7 +2716,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=6;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
      };
     };
@@ -2914,18 +2979,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
      };
      ProgVar @[1] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$5$;
+      object_val=$6$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc="datatable containing training input/output patterns";
      };
     };
@@ -2938,7 +3005,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=2;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
      };
      ProgVar @[1] {
@@ -2946,7 +3014,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="determines whether to update any network view displays after trial is completed";
      };
     };
@@ -3121,18 +3190,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
      ProgVar @[1] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$5$;
+      object_val=$6$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc=;
      };
     };
@@ -3145,7 +3216,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=15;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="current cycle of settling (local loop counter)";
      };
      ProgVar @[1] {
@@ -3153,7 +3225,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       var_type=T_Int;
       int_val=15;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
 sets the minimum number of cycles to settle for, regardless of network state changes, etc";
      };
@@ -3162,7 +3235,8 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="if true, will update network views at end of settling";
      };
     };
@@ -3445,9 +3519,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
     };
@@ -3460,7 +3535,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
      };
     };
@@ -3514,8 +3590,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$5$;
-      network=$4$;
+      data=$6$;
+      network=$5$;
       layer_data {
        name=;
        el_typ=LayerWriterEl;
@@ -3563,18 +3639,20 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc="network to apply inputs to -- typically set by calling program";
      };
      ProgVar @[1] {
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$5$;
+      object_val=$6$;
       objs_ptr=0;
       flags=NULL_CHECK;
+      reference=0;
       desc="input datatable containing input/output patterns";
      };
     };
@@ -3588,7 +3666,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=LayerWriter;
       object_val=.projects[0].programs.gp[0][6].objs[0]$50$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="this is a pointer to the LayerWriter object in objs -- edit that object to determine how information is presented to the network";
      };
     };
@@ -3698,7 +3777,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3728,7 +3807,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3758,7 +3837,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3788,7 +3867,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3818,7 +3897,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3848,7 +3927,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="phase_no";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="phase_no";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3878,7 +3957,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cycle";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="minus_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3908,7 +3987,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3938,7 +4017,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3995,7 +4074,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$4$;
+      network=$5$;
       data=$8$;
       rmv_orphan_cols=1;
      };
@@ -4013,9 +4092,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="network to record data from";
      };
     };
@@ -4029,7 +4109,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$8$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="data table to record trial-level data to (this program writes new data to this table!)";
      };
      ProgVar @[1] {
@@ -4038,7 +4119,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][7].objs[0]$53$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="pointer to the NetMonitor object in objs secton of this program that contains configuration for what to record and where to get it";
      };
     };
@@ -4226,7 +4308,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4256,7 +4338,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4286,7 +4368,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4316,7 +4398,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4346,7 +4428,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_ext_rew";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="avg_ext_rew";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4376,7 +4458,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	name="avg_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$5$;
 	variable="avg_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4493,7 +4575,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	pre_proc_3 {name="SimpleMathSpec": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$4$;
+      network=$5$;
       data=$7$;
       rmv_orphan_cols=1;
      };
@@ -4511,9 +4593,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="network to get data from";
      };
     };
@@ -4527,7 +4610,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=DataTable;
       object_val=$7$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc="data table to write the epoch data to";
      };
      ProgVar @[1] {
@@ -4536,7 +4620,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=NetMonitor;
       object_val=.projects[0].programs.gp[0][8].objs[0]$58$;
       objs_ptr=1;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="network monitor object that contains full specs for what to record and where to get it";
      };
      ProgVar @[2] {
@@ -4545,7 +4630,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       object_type=TimeUsed;
       object_val=$28$;
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="pointer to the network's epoch-level timer, to record how long it took to process an epoch";
      };
     };
@@ -4805,9 +4891,10 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$5$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK;
+      flags=CTRL_PANEL|NULL_CHECK|USED;
+      reference=0;
       desc=;
      };
     };
@@ -4821,6 +4908,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="user-provided tag (startup script will set this!)";
      };
      ProgVar @[1] {
@@ -4829,6 +4917,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       string_val=;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK;
+      reference=0;
       desc="user-provided subdirectory to save weights in";
      };
      ProgVar @[2] {
@@ -4836,7 +4925,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
+      reference=0;
       desc="final generated file name -- do not edit!";
      };
      ProgVar @[3] {
@@ -4844,7 +4934,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val="0036";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="string rep of epoch with leading zeros";
      };
      ProgVar @[4] {
@@ -4852,7 +4943,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val="03";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="string rep of batch with leading zeros";
      };
      ProgVar @[5] {
@@ -4860,7 +4952,8 @@ presented in the minus phase -- if this is not the case (values are computed on 
       var_type=T_String;
       string_val=".03_0036";
       objs_ptr=0;
-      flags=NULL_CHECK;
+      flags=NULL_CHECK|USED;
+      reference=0;
       desc="batch + epoch";
      };
     };
@@ -5112,7 +5205,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	 el_typ=T3DataView;
 	 el_def=0;
 	 NetView @[0] {
-	  m_data=$4$;
+	  m_data=$5$;
 FloatTransform @*(.m_transform) {scale={x=0.6753985: y=0.6753985: z=0.6753985: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=0.6753985: y=0.6753985: z=0.6753985: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
@@ -5578,6 +5671,19 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	  view_range {min=0: max=5: };
 	  display_on=1;
 	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
 	  x_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -5601,7 +5707,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-07: max=6e-07: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -5620,6 +5726,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  plot_2 {
 	   m_data=NULL;
@@ -5635,6 +5742,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=SQUARE;
+	   alt_y=0;
 	  };
 	  plot_3 {
 	   m_data=NULL;
@@ -5650,6 +5758,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=DIAMOND;
+	   alt_y=0;
 	  };
 	  plot_4 {
 	   m_data=NULL;
@@ -5665,6 +5774,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=TRIANGLE;
+	   alt_y=0;
 	  };
 	  plot_5 {
 	   m_data=NULL;
@@ -5680,26 +5790,13 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=PLUS;
+	   alt_y=0;
 	  };
+	  alt_y_1=0;
 	  alt_y_2=0;
 	  alt_y_3=0;
 	  alt_y_4=0;
 	  alt_y_5=0;
-	  graph_type=XY;
-	  plot_style=LINE;
-	  line_width=2;
-	  point_size=MEDIUM;
-	  point_spacing=1;
-	  bar_space=0.2;
-	  color_mode=VALUE_COLOR;
-	  negative_draw=0;
-	  negative_draw_z=1;
-	  axis_font_size=0.05;
-	  label_font_size=0.04;
-	  label_spacing=-1;
-	  matrix_mode=SEP_GRAPHS;
-	  mat_layout=BOT_ZERO;
-	  mat_odd_vert=1;
 	  err_1 {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -5714,6 +5811,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_2 {
 	   m_data=NULL;
@@ -5729,6 +5827,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_3 {
 	   m_data=NULL;
@@ -5744,6 +5843,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_4 {
 	   m_data=NULL;
@@ -5759,6 +5859,7 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_5 {
 	   m_data=NULL;
@@ -5774,9 +5875,11 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
 	  color_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -5817,8 +5920,9 @@ FloatTransform @*(.m_transform) {scale={x=0.4119503: y=0.4119501: z=0.4119501: }
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
-	  width=1;
-	  depth=1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
 	  two_d_font=0;
 	  two_d_font_scale=350;
 	 };
@@ -5917,6 +6021,19 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  view_range {min=0: max=5: };
 	  display_on=1;
 	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
 	  x_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -5940,7 +6057,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   data_range {min=0: max=0: };
-	   range {min=-6e-07: max=6e-07: };
+	   range {min=-6e-19: max=6e-19: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -5959,6 +6076,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  plot_2 {
 	   m_data=NULL;
@@ -5974,6 +6092,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=SQUARE;
+	   alt_y=0;
 	  };
 	  plot_3 {
 	   m_data=NULL;
@@ -5989,6 +6108,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=DIAMOND;
+	   alt_y=0;
 	  };
 	  plot_4 {
 	   m_data=NULL;
@@ -6004,6 +6124,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=TRIANGLE;
+	   alt_y=0;
 	  };
 	  plot_5 {
 	   m_data=NULL;
@@ -6019,26 +6140,13 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=PLUS;
+	   alt_y=0;
 	  };
+	  alt_y_1=0;
 	  alt_y_2=0;
 	  alt_y_3=0;
 	  alt_y_4=0;
 	  alt_y_5=0;
-	  graph_type=XY;
-	  plot_style=LINE;
-	  line_width=2;
-	  point_size=MEDIUM;
-	  point_spacing=1;
-	  bar_space=0.2;
-	  color_mode=VALUE_COLOR;
-	  negative_draw=0;
-	  negative_draw_z=1;
-	  axis_font_size=0.05;
-	  label_font_size=0.04;
-	  label_spacing=-1;
-	  matrix_mode=SEP_GRAPHS;
-	  mat_layout=BOT_ZERO;
-	  mat_odd_vert=1;
 	  err_1 {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -6053,6 +6161,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_2 {
 	   m_data=NULL;
@@ -6068,6 +6177,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_3 {
 	   m_data=NULL;
@@ -6083,6 +6193,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_4 {
 	   m_data=NULL;
@@ -6098,6 +6209,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_5 {
 	   m_data=NULL;
@@ -6113,9 +6225,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   axis_length=1;
 	   line_style=SOLID;
 	   point_style=CIRCLE;
+	   alt_y=0;
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
 	  color_axis {
 	   m_data=NULL;
 	   m_transform=NULL;
@@ -6156,8 +6270,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  thresh=0.5;
 	  thr_line_len=0.48;
-	  width=1;
-	  depth=1;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
 	  two_d_font=0;
 	  two_d_font_scale=350;
 	 };
@@ -6180,7 +6295,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$5$;
+	  m_data=$6$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
@@ -6472,7 +6587,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	cur_val=0;
        };
        wt_sig {gain=6: off=1.25: };
-       lmix {hebb=0.1: err=0.9: err_sb=1: };
+       lmix {hebb=0.1: err=0.9: err_sb=1: sb_margin=0.5: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
        dwt_norm {
 	on=0;
@@ -6510,7 +6625,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       cur_val=0;
      };
      wt_sig {gain=6: off=1.25: };
-     lmix {hebb=0.1: err=0.9: err_sb=1: };
+     lmix {hebb=0.1: err=0.9: err_sb=1: sb_margin=0.5: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=0: };
      dwt_norm {
       on=0;
@@ -6916,6 +7031,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    avg_cycles=15;
    avg_cycles_sum=0;
    avg_cycles_n=0;
+   minus_output_name=;
    net_misc {
     cyc_syn_dep=0;
     syn_dep_int=20;
