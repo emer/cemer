@@ -4088,7 +4088,7 @@ void iMainWindowViewer::fileClose() {
   // Check for dirty/save
   if (proj->isDirty()) {
     int chs= taMisc::Choice("The project has unsaved changes -- do you want to save before closing it?",
-        "&Save", "&Don't Save");
+        "&Save", "&Don't Save", "&Cancel");
   
     switch (chs) {
     case 0:
@@ -4096,6 +4096,8 @@ void iMainWindowViewer::fileClose() {
       break;
     case 1:
       break;
+    case 2:
+      return;
     }
   }
   proj->CloseLater();
