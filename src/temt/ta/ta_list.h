@@ -405,6 +405,8 @@ public:
   // #CAT_Copy apply copy operator to items, use borrow to add new ones from cp (if necc)
   void	Copy_Exact(const taPtrList_impl& cp);
   // #CAT_Copy makes us basically identical to cp, in number, and type
+  void	Hijack(taPtrList_impl& src);
+  // #IGNORE specialized usage, transfers entire the memory to us, leaving src empty
 
   // browsing -- browse client lists must override
   virtual int		NumListCols() const {return 0;}

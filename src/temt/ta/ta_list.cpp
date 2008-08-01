@@ -198,6 +198,20 @@ slow_search:
   return NULL;
 }
 
+void taPtrList_impl::Hijack(taPtrList_impl& src) {
+  // normally only used when already empty, but this guarantees it!
+  if (el) {
+    Reset();
+    el = (void**)realloc((char *) el, 0);
+  }
+  el = src.el;
+  size = src.size;
+  alloc_size = src.alloc_size;
+  src.el = NULL;
+  src.size = 0;
+  src.alloc_size = 0;
+}
+
 void taPtrList_impl::UpdateIndex_(int idx) {
   if(el[idx] == NULL)
     return;

@@ -68,7 +68,7 @@ public:
   // list of objs to be update-after-edit'd in the wait process
   static taBase_FunCallList  delayed_funcalls;
   // functions to call during the waiting process -- variant value is the object, and name is the function
-  static ContextFlag	delayed_closing; // context -- don't do WaitProc
+  static ContextFlag	in_wait_proc; // context -- don't do WaitProc
 
   static void		WaitProc();
   // wait process function: process all the delayed stuff
@@ -83,7 +83,7 @@ public:
   static void		DeleteRoot(); // get rid of root, if not nuked already
 
 protected:
-  static taBase_PtrList	delayed_close;
+  static taBase_RefList	delayed_close;
   // list of objs to be removed in the wait process (e.g. when objs delete themselves)
   
   static void		DelayedClose(taBase* obj);

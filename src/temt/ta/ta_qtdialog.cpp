@@ -661,7 +661,7 @@ INHERITED(QEvent)
 public:
   bool forced;
   ReShowEvent(bool forced_):inherited((QEvent::Type)taiDataHost::CET_RESHOW) {
-    forced = forced;
+    forced = forced_;
   }
 };
 

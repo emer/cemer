@@ -126,13 +126,13 @@ const QPixmap* folder_open_pixmap() {
 
 taRootBase* tabMisc::root = NULL;
 
-taBase_PtrList 	tabMisc::delayed_close;
+taBase_RefList 	tabMisc::delayed_close;
 taBase_RefList 	tabMisc::delayed_updateafteredit;
 taBase_FunCallList  tabMisc::delayed_funcalls;
-ContextFlag  tabMisc::delayed_closing;
+ContextFlag  tabMisc::in_wait_proc;
 
 void tabMisc::DelayedClose(taBase* obj) {
-  delayed_close.LinkUnique(obj); // only add once!!!
+  delayed_close.AddUnique(obj); // only add once!!!
 }
 
 void tabMisc::DelayedUpdateAfterEdit(taBase* obj) {
@@ -149,48 +149,50 @@ void tabMisc::DelayedFunCall_nogui(taBase* obj, const String& fun_name) {
 }
 
 void tabMisc::WaitProc() {
-  if (delayed_closing) return;
-  static bool already_in = false;
+  if (in_wait_proc) return; // already doing it!
+  ++in_wait_proc;
   // prevent reentrant waitprocs!
-  if(already_in) return;
-  already_in = true;
 #ifdef TA_GUI
   taiMisc::PurgeDialogs();
 #endif
   DoDelayedCloses();
   DoDelayedUpdateAfterEdits();
   DoDelayedFunCalls();
-  already_in = false;
+  --in_wait_proc;
 }
 
 
+/*
+  Object on this list will only have refs if they are owned, ex. in a list.
+  If the owner or mgr nukes the obj before we get to it, it will have been
+  automatically removed from the delayed_close list. Otherwise, we will
+  "nuke with extreme prejudice".
+  Note that it might be possible for objects to get added to the list
+  while deleting something -- we won't do those this cycle.
+*/
 bool tabMisc::DoDelayedCloses() {
-  bool did_some = false;
-  if(delayed_close.size > 0) {
-    for (int i = delayed_close.size - 1; i >= 0; --i) {
-      // if there is only 1 ref count left, we must be it, so just remove,
-      // otherwise, try its owner, otherwise, prob an error (too many refs)
-      taBase* it = delayed_close.FastEl(i);
-      // we need to grab count, because we always remove, and it could delete
-      int refn = taBase::GetRefn(it); 
+  if (delayed_close.size == 0) return false;
+  // note: this is sleazy, but very efficient -- we just completely 
+  // hijack the memory of the current list in this working copy
+  taBase_RefList items;
+  items.Hijack(delayed_close);
+  // we work fifo
+  while (items.size > 0) {
+    // if there is only 1 ref count left, we must be it, so just remove,
+    // otherwise, try its owner, otherwise, prob an error (too many refs)
+    taBase* it = items.FastEl(0);
+    items.RemoveIdx(0);
+    int refn = taBase::GetRefn(it); 
 #ifdef DEBUG
-      if (refn != 1) {
-	taMisc::Error("tabMisc::delayed_close: item had refn != 1, was=",
-	  String(refn), "type=", it->GetTypeDef()->name, "name=",
-	  it->GetName());
-      }
-#endif
-      delayed_close.RemoveIdx(i);
-/*obs      //TODO: maybe should warn if refn>2, since that will mean refs remain
-      if (refn > 1) {
-	it->Close(); // tries owner if any, else just unrefs, which should delete
-      } else if (refn < 1) { // VERY BAD! ref s/nb < 1!
-	taMisc::Error("tabMisc::delayed_close: item had refn<1!");
-      }*/
+    if (refn != 1) {
+      taMisc::Error("tabMisc::delayed_close: item had refn != 1, was=",
+        String(refn), "type=", it->GetTypeDef()->name, "name=",
+        it->GetName());
     }
-    did_some = true;
+#endif
+    it->Close();
   }
-  return did_some;
+  return true;
 }
 
 bool tabMisc::DoDelayedUpdateAfterEdits() {
@@ -3073,11 +3075,9 @@ bool taList_impl::CloseLater_Child(TAPtr obj) {
       << obj->GetTypeDef()->name.chars() << "name='" << obj->GetName().chars() << "'\n";
   }
 #endif
-  // add to delayed list first, thus ref'ing so we don't delete
+  // just add to list -- it will then close us
   tabMisc::DelayedClose(obj);
-  ++tabMisc::delayed_closing;
-  return RemoveEl(obj);
-  --tabMisc::delayed_closing;
+  return true;
 }
 
 
