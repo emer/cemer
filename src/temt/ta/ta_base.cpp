@@ -358,9 +358,6 @@ void taBase::Ref(taBase& it) {
   Ref(&it);
 }
 void taBase::Ref(taBase* it) {
-if (it->GetName() == "LeabraProject_0") {
-int i = 0;
-}
   it->refn++;
 }
 

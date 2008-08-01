@@ -2,7 +2,7 @@
 # this file is copied directly to .pri on Windows
 
 # for some whacky reason, CONFIG had way too much default stuff, so we init it here:
-CONFIG = lex yacc plugin warn_off uic resources qt incremental rtti stl link_prl thread
+CONFIG = lex yacc plugin warn_off uic resources qt incremental exceptions rtti stl link_prl thread
 # NOTE: nasty on Mac! causes libtool to fail to find libs
 #   but it was in the default list on Linux
 !macx {
@@ -13,11 +13,13 @@ EMERGENT_DIR = $$(EMERGENTDIR)
 
 win32 {
   CONFIG += dll
+  QMAKE_CXXFLAGS += /arch:SSE2
 #TODO: need to pass in the msvc target, ex Debug or Release (for pathing)
 MSVC_TARGET = Debug
 
   contains( MSVC_TARGET, Debug ) {
-    CONFIG += debug warn_on
+    CONFIG += debug
+    QMAKE_CXXFLAGS += /RTC1 /GS
   } else { 
     contains( MSVC_TARGET, Release ) {
       CONFIG += release
