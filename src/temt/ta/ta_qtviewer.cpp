@@ -1572,7 +1572,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
     mel->setData(sh_typ);
   }
   if (ea & taiClipData::EA_DUPE) {
-    mel = menu->AddItem("Duplicate", taiMenu::use_default,
+    mel = menu->AddItem("Duplicate  (Ctrl+M)", taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_DUPE;
     mel->setData(sh_typ);
@@ -1616,7 +1616,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiActions* menu,
   }
   
   if (ea & taiClipData::EA_DELETE) {
-    mel = menu->AddItem("&Delete", taiMenu::use_default,
+    mel = menu->AddItem("&Delete  (Ctrl+D)", taiMenu::use_default,
         taiAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = taiClipData::EA_DELETE;
     mel->setData(sh_typ);
@@ -3798,7 +3798,7 @@ void iMainWindowViewer::Constr_Menu_impl() {
   editCopyAction = AddAction(new taiAction(taiClipData::EA_COPY, "&Copy", QKeySequence(cmd_str+"C"), _editCopyAction ));
   editCopyAction->setIcon( QIcon( QPixmap(":/images/editcopy.png") ) );
   //note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
-  editDupeAction = AddAction(new taiAction(taiClipData::EA_DUPE, "Duplicate", QKeySequence(), "editDuplicateAction" ));
+  editDupeAction = AddAction(new taiAction(taiClipData::EA_DUPE, "Duplicate  (Ctrl+M)", QKeySequence(), "editDuplicateAction" ));
   editPasteAction = AddAction(new taiAction(taiClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str+"V"), _editPasteAction ));
   QPixmap editpaste(":/images/editpaste.png");
   editPasteAction->setIcon( QIcon( editpaste ) );

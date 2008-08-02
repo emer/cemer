@@ -419,11 +419,18 @@ bool LVeLayerSpec::CheckConfig_Layer(LeabraLayer* lay, bool quiet) {
       if(fls->InheritsFrom(TA_PViLayerSpec)) pvi_lay = flay;
       continue;
     }
-    if(!lv.syn_dep) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(lay->CheckError(!cs->InheritsFrom(TA_LVConSpec), quiet, rval,
-		  "requires recv connections to be of type LVConSpec")) {
-      return false;
+    if(lv.syn_dep) {		// old school syndep
+      if(lay->CheckError(!cs->InheritsFrom(TA_LVConSpec), quiet, rval,
+			 "requires recv connections to be of type LVConSpec")) {
+	return false;
+      }
+    }
+    else {
+      if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
+			 "requires recv connections to be of type PVConSpec")) {
+	return false;
+      }
     }
   }
   

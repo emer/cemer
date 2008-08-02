@@ -26,7 +26,7 @@ LeabraProject .projects[0] {
   DataTable_Group @.data = [0] {
     DataTable_Group @.gp[0] = [1] { 
       DataTable @[0] { 
-	DataTableCols @.data = [5] {
+	DataTableCols @.data = [8] {
 	  int_Data @[0] { 
       UserDataItem_List @*(.user_data_) { 
 	      UserDataItem @[0] { };
@@ -37,17 +37,20 @@ LeabraProject .projects[0] {
 	      UserDataItem @[0] { };
       };
 };
-	  int_Data @[2] { 
-      UserDataItem_List @*(.user_data_) { 
-	      UserDataItem @[0] { };
-      };
-};
+	  String_Data @[2] { };
 	  int_Data @[3] { 
       UserDataItem_List @*(.user_data_) { 
 	      UserDataItem @[0] { };
       };
 };
-	  float_Data @[4] { };
+	  String_Data @[4] { };
+	  String_Data @[5] { };
+	  int_Data @[6] { 
+      UserDataItem_List @*(.user_data_) { 
+	      UserDataItem @[0] { };
+      };
+};
+	  float_Data @[7] { };
 	};
       };
     };
@@ -80,7 +83,22 @@ LeabraProject .projects[0] {
 
   Program_Group @.programs = [2] {
     Program @[0] { 
-      ProgVar_List @.vars = [7] {
+      ProgType_List @.types = [2] {
+	DynEnumType @[0] { 
+	  DynEnumItem_List @.enums = [2] {
+	    DynEnumItem @[0] { };
+	    DynEnumItem @[1] { };
+	  };
+	};
+	DynEnumType @[1] { 
+	  DynEnumItem_List @.enums = [2] {
+	    DynEnumItem @[0] { };
+	    DynEnumItem @[1] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.vars = [10] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
@@ -88,6 +106,9 @@ LeabraProject .projects[0] {
 	ProgVar @[4] { };
 	ProgVar @[5] { };
 	ProgVar @[6] { };
+	ProgVar @[7] { };
+	ProgVar @[8] { };
+	ProgVar @[9] { };
       };
 
       ProgEl_List @.prog_code = [2] {
@@ -97,22 +118,26 @@ LeabraProject .projects[0] {
 	    ForLoop @[0] { 
 	      ProgEl_List @.loop_code = [1] {
 		ForLoop @[0] { 
-		  ProgEl_List @.loop_code = [7] {
-		    AddNewDataRow @[0] { };
-		    DataVarProg @[1] { };
-		    RandomCall @[2] { 
+		  ProgEl_List @.loop_code = [11] {
+		    AssignExpr @[0] { };
+		    AssignExpr @[1] { };
+		    AssignExpr @[2] { };
+		    AddNewDataRow @[3] { };
+		    DataVarProg @[4] { };
+		    DataVarProg @[5] { };
+		    RandomCall @[6] { 
 		      ProgArg_List @.meth_args = [1] {
 			ProgArg @[0] { };
 		      };
 		    };
-		    VarIncr @[3] { };
-		    RandomCall @[4] { 
+		    VarIncr @[7] { };
+		    RandomCall @[8] { 
 		      ProgArg_List @.meth_args = [1] {
 			ProgArg @[0] { };
 		      };
 		    };
-		    VarIncr @[5] { };
-		    DataVarProg @[6] { };
+		    VarIncr @[9] { };
+		    DataVarProg @[10] { };
 		  };
 		};
 	      };
@@ -122,9 +147,9 @@ LeabraProject .projects[0] {
       };
     };
     Program @[1] { 
-      ProgObjList @.objs = [2] {
+      ProgObjList @.objs = [3] {
 	DataTable @[0] { 
-	  DataTableCols @.data = [6] {
+	  DataTableCols @.data = [7] {
 	    int_Data @[0] { 
        UserDataItem_List @*(.user_data_) { 
 		UserDataItem @[0] { };
@@ -135,22 +160,23 @@ LeabraProject .projects[0] {
 		UserDataItem @[0] { };
        };
 };
-	    float_Data @[2] { 
-       UserDataItem_List @*(.user_data_) { 
-		UserDataItem @[0] { };
-       };
-};
+	    String_Data @[2] { };
 	    float_Data @[3] { 
        UserDataItem_List @*(.user_data_) { 
 		UserDataItem @[0] { };
        };
 };
-	    float_Data @[4] { };
+	    float_Data @[4] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
 	    float_Data @[5] { };
+	    float_Data @[6] { };
 	  };
 	};
 	DataTable @[1] { 
-	  DataTableCols @.data = [6] {
+	  DataTableCols @.data = [9] {
 	    int_Data @[0] { 
        UserDataItem_List @*(.user_data_) { 
 		UserDataItem @[0] { };
@@ -161,42 +187,48 @@ LeabraProject .projects[0] {
 		UserDataItem @[0] { };
        };
 };
-	    int_Data @[2] { 
-       UserDataItem_List @*(.user_data_) { 
-		UserDataItem @[0] { };
-       };
-};
+	    String_Data @[2] { };
 	    int_Data @[3] { 
        UserDataItem_List @*(.user_data_) { 
 		UserDataItem @[0] { };
        };
 };
-	    float_Data @[4] { };
-	    float_Data @[5] { 
+	    String_Data @[4] { };
+	    String_Data @[5] { };
+	    int_Data @[6] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[7] { };
+	    float_Data @[8] { 
        UserDataItem_List @*(.user_data_) { 
 		UserDataItem @[0] { };
        };
 };
 	  };
 	};
+	DataTable @[2] { };
       };
 
-      ProgVar_List @.vars = [4] {
+      ProgVar_List @.vars = [5] {
 	ProgVar @[0] { };
 	ProgVar @[1] { };
 	ProgVar @[2] { };
 	ProgVar @[3] { };
+	ProgVar @[4] { };
       };
 
       ProgEl_List @.prog_code = [5] {
 	DataGroupProg @[0] { 
-	  DataOpList @.ops = [6] {
+	  DataOpList @.ops = [7] {
 	    DataGroupEl @[0] { };
 	    DataGroupEl @[1] { };
 	    DataGroupEl @[2] { };
 	    DataGroupEl @[3] { };
 	    DataGroupEl @[4] { };
 	    DataGroupEl @[5] { };
+	    DataGroupEl @[6] { };
 	  };
 	};
 	MethodCall @[1] { 
@@ -234,12 +266,15 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		GraphTableView @[0] { 
-		  T3DataView_List @.children = [5] {
+		  T3DataView_List @.children = [8] {
 		    GraphColView @[0] { };
 		    GraphColView @[1] { };
 		    GraphColView @[2] { };
 		    GraphColView @[3] { };
 		    GraphColView @[4] { };
+		    GraphColView @[5] { };
+		    GraphColView @[6] { };
+		    GraphColView @[7] { };
 		  };
 		};
 	      };
@@ -247,13 +282,14 @@ LeabraProject .projects[0] {
 	    T3DataViewFrame @[1] { 
 	      T3DataView_List @.children = [1] {
 		GraphTableView @[0] { 
-		  T3DataView_List @.children = [6] {
+		  T3DataView_List @.children = [7] {
 		    GraphColView @[0] { };
 		    GraphColView @[1] { };
 		    GraphColView @[2] { };
 		    GraphColView @[3] { };
 		    GraphColView @[4] { };
 		    GraphColView @[5] { };
+		    GraphColView @[6] { };
 		  };
 		};
 	      };
@@ -300,7 +336,7 @@ Some basic terminology:
 * '''Middle edit panel''' is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty).
 * '''Right view panel''' shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
 
-Note: this tutorial is designed for version 4.0.15 or greater of Emergent!  Some features may not work in earlier versions.
+Note: this tutorial is designed for version 4.0.17 or greater of Emergent!  Some features may not work in earlier versions.
 
 == Overview of Tutorial ==
 
@@ -330,11 +366,11 @@ This section introduces the basic steps for creating and configuring a data tabl
 
 == Creating and Configuring a DataTable ==
 
-Open the data section in the left browser, and then click on InputData to get the context menu (right mouse button or Ctrl+mouse on Mac), and select New.  Leave the defaults as they are, and hit Ok.  This creates a new data table (should be called DataTable_0).
+Open the data section in the left browser, and then click on InputData, and click the New button in the middle panel (or use right mouse button or Ctrl+mouse on Mac to get the context menu and select New).  Leave the defaults as they are, and hit Ok.  This creates a new data table (should be called DataTable_0).
 
 Click on the [[.data.gp.InputData.DataTable_0]] (can use link), and observe that the middle edit panel for it has 3 sub-tabs: Data Table, Properties, Columns.  This provides 3 different views of a datatable, each facilitating a different form of interaction.  Click on Properties, and let's give it a new name: \"MyRandomData\" -- we will be using random numbers to generate the data..  You can see various other properties that can be set -- mouse-over these to see what they do (most are not relevant in the default setup and are greyed out).
 
-Now we need to create some columns of data.  A datatable is organized by '''columns first''', and then rows -- each column has a specific type (e.g., floating point numbers, integers, Strings) and all rows of that column must have the same type (to get around this, you can create a Variant column which can contain different types of information, but this is very rarely necessary).  A particular row of a column is called a '''cell''' -- the cell can either hold a single value (a so-called ''scalar'' column), or it can hold multiple values organized in a ''matrix'' (up to 5 dimensional matricies can be defined for a cell).  See the [[http://grey.colorado.edu/emergent/index.php/AX_Tutorial|AX Tutorial]] for an example where matrix cells are used to hold input patterns to be presented to a network.
+Now we need to create some columns of data.  A datatable is organized by '''columns first''', and then rows -- each column has a specific type (e.g., floating point numbers, integers, Strings) and all rows of that column must have the same type (to get around this constraint, you can create a Variant column which can contain different types of information, but this is very rarely necessary).  A particular row of a given column is called a '''cell''' -- the cell can either hold a single value (a so-called ''scalar'' column), or it can hold multiple values organized in a ''matrix'' (up to 5 dimensional matricies can be defined for a cell).  See the [[http://grey.colorado.edu/emergent/index.php/AX_Tutorial|AX Tutorial]] for an example where matrix cells are used to hold input patterns to be presented to a network.
 
 For our random data, we're going to simulate the results of a hypothetical test of a network, where we have two separate ''condition'' factors of testing (independent variables in experimental lingo) and a couple of measures recorded from the network (dependent variables in experimental lingo).  Each item of data is recorded over a sequence of ''batches'' (new runs of the network with random initial weights).  Thus, the columns we want to create are:
 
@@ -344,9 +380,9 @@ For our random data, we're going to simulate the results of a hypothetical test 
 * '''cycles''' (integer) -- number of cycles the network required (i.e., reaction time in a typical experiment)
 * '''sse''' (float) -- summed-squared error (how much error did the network make)
 
-For each column, just click on the Columns menu at the top of the middle edit panel for the data table, and select NewCol (for a scalar column -- one value per cell -- see [[.docs.MatrixData]] for matrix data), and then select the type (int = integer) and enter the name as given above.  As you create each column, it will be selected -- one could enter something akin to the above comments in the desc field, so another user would know what each column represents -- this is a very good habit to develop.
+For each column, just click on the Columns menu at the top of the middle edit panel for the data table, and select NewCol (for a scalar column -- one value per cell -- see [[.docs.MatrixDataDoc]] for matrix data), and then select the type (int = integer) and enter the name as given above.  As you create each column, it will be selected -- one could enter something akin to the above comments in the desc field, so another user would know what each column represents -- this is a very good habit to develop.
 
-'''Tip:''' you can do context-menu/Duplicate on a column in the left browser to create a new column of the same type -- this can be quicker.  Note also that you can move columns around in this left browser, and that determines the order they appear in the data table!  Deleting a column is similarly possible.  All of this also applies to the Columns tab of the edit panel as well.
+'''Tip:''' you can do context-menu/Duplicate (or use the Ctrl+M shortcut) on a column in the left browser to create a new column of the same type -- this can be quicker.  Note also that you can move columns around in this left browser, and that determines the order they appear in the data table!  Deleting a column is similarly possible.  All of this also applies to the Columns tab of the edit panel as well.
 
 You can click on the other tabs (Data Table, Columns) to see that your table is configured properly when you're done.
 
@@ -354,7 +390,7 @@ You can click on the other tabs (Data Table, Columns) to see that your table is 
 
 Now we'll write a program to generate data for our table.
 
-Do context menu/New in programs to create a new program, and call it \"DataGenProg\".  Then click on the Edit Program sub-tab in the middle edit panel.  You can see the various empty containers for the various program elements:
+Do context menu/New in programs to create a new program (or use the Ctrl+I keyboard shortcut -- for inserting a new object at any place in the browser), and call it \"DataGenProg\".  Then click on the Edit Program sub-tab in the middle edit panel.  You can see the various empty containers for the various program elements:
 
 * objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
 * types -- special user-defined types that define properties of corresponding variables (currently for \"dynamic enums\" that define enumerated lists of options).
@@ -364,7 +400,7 @@ Do context menu/New in programs to create a new program, and call it \"DataGenPr
 * init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
 * prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
 
-Programming in this system mostly consists of dragging program elements from the toolbar at the very left edge of the display into your program, and then configuring their properties (drag-and-drop and duplicate are also very handy here).
+Programming in this system mostly consists of dragging program elements from the toolbar at the very left edge of the display into your program, and then configuring their properties (drag-and-drop and duplicate are also very handy here, and everything can be done with the keyboard for extra efficiency for experts -- see [[http://grey.colorado.edu/emergent/index.php/Keyboard_shortcuts|Keyboard shortcuts]]).
 
 In the Toolbox, the program elements are organized into various sub-categories (Network, Ctrl, Var/Fun, etc).  Take a look through these categories and use the mouse-over to see what kinds of things are available.
 
@@ -374,11 +410,13 @@ Our overall plan for the program is to just iterate over the conditions, and the
 
 === Step 1: Create Variables ===
 
-In the <code>Var/Fun</code> tab on the Toolbox, there is an item called <code>var</code> (''not'' <code>var=</code>) -- drag this into the <code>vars</code> section of your program, and select \"CopyInto\" (don't do AddVarTo for vars -- this option is nonsensical here and will be removed in a subsequent release).
+In the <code>Var/Fun</code> tab on the Toolbox, there is an item called <code>var</code> (''not'' <code>var=</code>) -- drag this into the <code>vars</code> section of your program, and select \"Copy Into\".
 
 Name this new variable \"batch\", and select Int for its type (should be default already).  This will hold the batch counter that we iterate over, and will be written to the batch column of the data table.
 
 Repeat the above process, or do context menu/Duplicate, to create the remaining column variables (be sure to make sse a Real type, which is the program version of a floating point number (it is actually stored as a double-precision floating point number internally -- for the program level of code, runtime performance is not critical so only one floating point variable type is available, to simplify things).
+
+'''Tip:''' there is a shortcut (added in 4.0.17) for making variables from data table names: just drag a data table on the vars guy and select Create Data Col Vars (or hit the button for that in the middle panel and select a data table).
 
 === Step 2: Create For Loops ===
 
@@ -389,7 +427,7 @@ There are 3 main elements to the for loop:
 * test -- run after each iteration through the loop -- if this expression is true, the looping continues, else it stops
 * iter -- what to do after each iteration, typically incrementing the loop counter variable
 
-As you can see, the default for loop will iterate from 0 to 9 over the <code>i</code> variable (which it automatically crated for you in your vars section).
+As you can see, the default for loop will iterate from 0 to 9 over the <code>i</code> variable (which it automatically created for you in your vars section).
 
 Let's replace <code>i</code> with <code>cond1</code> (first condition variable), and have the test expression be: <code>cond1 &lt; 2</code> (and keep all other stuff the same aside from replacing i with cond1) -- this will iterate from 0 to 1 over the cond1 variable.
 
@@ -409,11 +447,11 @@ You should see that you now have a variable called MyRandomData (you could renam
 
 Now that we have the variable we need, go back down to the new row guy (says AddNewDataRow to:) and select this variable for the <code>data var</code>.  You should see that the text description of this program element says \"AddNewDataRow to: MyRandomData (or whatever you might have renamed your variable to).
 
-Finally, drag a <code>data vars</code> from the Data toolbox into the same loop code as before (this will add it to the end -- if you drop it on the AddNewDataRow guy it will replace it as the first item in the list -- it is also possible to drag it ''just'' after that item as indicated by a small horizontal line).
+Finally, drag a <code>data vars</code> from the Data toolbox into the same loop code as before (this will add it to the end -- if you drop it on the AddNewDataRow guy it will replace it as the first item in the list -- it is also possible to drag it ''just'' after that item as indicated by a small horizontal line).  This is the guy that writes variable values to columns of the same name in a data table.
 
 Now select your datatable variable for the <code>data var</code> field, and click the <code>set data</code> flag ''on'', indicating that we are writing to the data table, as opposed to reading values from it (note that the text description in the program changes to \"To:\"), and then select cond1, cond2 and batch for <code>var 1, var 2,</code> and <code>var 3</code> respectively.  Leave the <code>row spec</code> at <code>CUR ROW</code>  -- the new row function will set the new row as the current row (each data table contains its own variable indicating the current row -- this is very widely used in the software, as some program elements will set the current row, and others will read/write to that row without having to keep track of which row it is).
 
-Ready for the moment of truth!?  Press the <code>Init</code> button at the bottom of the program editor.  Look at your '''css Console'' window to see if there were any error messages -- this is critical whenever you are programming, because often informative error messages or warnings will show up there.  Usually you will also get a pop-up dialog, but not always..  On Linux and Mac, you can find your css Console window by going to the overall program menu and selecting Window/css Console.  On Windows, the console is floating around somewhere behind your application, and looks like the command prompt window.
+Ready for the moment of truth!?  Press the <code>Init</code> button at the bottom of the program editor.  Look at your ''css Console'' window to see if there were any error messages -- this is critical whenever you are programming, because often informative error messages or warnings will show up there.  Usually you will also get a pop-up dialog, but not always..  On Linux and Mac, you can find your css Console window by going to the overall program menu and selecting Window/css Console.  On Windows, the console is floating around somewhere behind your application, and looks like the command prompt window.
 
 Assuming you didn't get any errors, you are now ready to hit the Run button!  Nothing obvious happens!  To see if it did what you expected, click back up on the MyRandomData and select the Data Table view -- you should see 40 rows of data, with the batch, cond1 and cond2 columns filled in as you would expect.
 
@@ -449,7 +487,32 @@ To really see if you've achieved what the above equations seem like they should,
 
 Select MyRandomData, and in the smaller menu at the top of this middle edit dialog, select View/New Graph View, and leave the default at New Frame.
 
-You will see a graph appear in the right view panel, but the default configuration probably doesn't make a lot of sense.  Select the right-most tab in the middle panel (initially called Frame1), to reveal the graph view control panel, which enables you to configure how the graph view looks.  At the top, change the Style to POINTS instead of LINES.  Then make sure that cycles is selected for the X axis, and sse for the Y1 axis, and turn the on button off for the Z axis variable. You should now see a nice scatterplot showing what looks like a decent correlation between cycles and sse.  We'll explore the analysis of this correlation in the [[.docs.DataAnalysisDoc]] tutorial next!
+You will see a graph appear in the right view panel, but the default configuration probably doesn't make a lot of sense.  Select the right-most tab in the middle panel (initially called Frame1), to reveal the graph view control panel, which enables you to configure how the graph view looks.  At the top, change the Style to POINTS instead of LINES.  Then make sure that cycles is selected for the X axis, and sse for the Y1 axis, and turn the on button off for the Z axis variable. You should now see a nice scatterplot showing what looks like a decent correlation between cycles and sse.
+
+== Adding Condition Labels ==
+
+The last step in making our data more useful is to add labels for each of the conditions, and an aggregate label that can be used for plotting.  The best way to do this is to create enumerated values (Dynamic Enums or DynEnums) that convert directly between numbers and string labels. Then, we can write the corresponding labels to new columns in the data table in our rendering loop.
+
+Here are the definitions of the condition values from above:
+
+* '''cond1''' (integer) -- condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)
+* '''cond2''' (integer) -- condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)
+
+In the types section, do New Enum Type (button or contect menu) and name it Cond1 -- click New Enum and call the first one LOC (value is 0), and then duplicate that one and call it OBJ (value = 1).  Then duplicate the Cond1 type and rename it Cond2 and change the two enum values to SRC and TRG respectively.
+
+Next, we'll create new columns in the data table to hold these labels.  Back at the [[.data.InputData.MyRandomData]] table, do New Column and create a cond1_lbl column of type String -- duplicate that and rename it cond2_lbl, and finaly make one more duplicate called cond_lbl which will contain both condition labels in a single column.
+
+Then, in the program, create three new variables in the vars section with these same names.  Set the type of the cond1_lbl and cond2_lbl vars to DynEnum, and select the new Cond1 and Cond2 enum types respectively.  Set cond_lbl to be of type String.
+
+Now we'll set the values of these new variables, and apply them to the data table.  At the start of the inner-most loop_code of the for loop (where all the rest of the code is), insert a var= (from Var/Fun) item, and set the result_var to cond1_lbl and the expr to cond1 -- this just assigns the enum based on the corresponding integer value.  Duplicate that item and set it for cond2_lbl = cond2.  Duplicate one more time, and this time the result_var should be cond_lbl and the expr is <code>(String)cond1_lbl + \"_\" + cond2_lbl</code> -- the (String) aspect of this expression is a ''cast'' will extract the string (label) version of the enum to make a composite string of both conditions.
+
+'''Important:''' the css language (which implements these Programs) always tries to convert values to the type of the ''first item in an expression'' -- so you should be very careful to add an explicit ''cast'' expression to the first item in an expression that is appropriate for the entire result (at least the items within a given level of parentheses).    This is particularly important when dealing with floating point expressions that also have integer values in them -- if the first item is an integer then you need to cast it as a (float) to make sure all subsequent math is done in floating point precision.
+
+The last step is to duplicate the existing data vars item (labeled To: MyRandomData...) and change the vars to these new variables (cond1_lbl, cond2_lbl, cond_lbl).
+
+When you Run this version, you can see in the MyRandomData that the labels have been filled in for each condition, making the data more human readable.
+
+Now, we're ready to explore the analysis of the correlation between cycles and sse in the [[.docs.DataAnalysisDoc]] tutorial next!
 
 == Futher Extensions ==
 
@@ -489,7 +552,7 @@ Now you can go back to the Group item and select the MyRandomData variable for t
 
 Next, click on the Add Column button, and just hit Ok for the dialog that comes up asking for a column name -- it is usually easier just to pick it from a list that we can get when we edit the item.  Click on the new item that appeared below the group_spec, and in the <code>col lookup</code> field, select the cond1 column.  Then select <code>GROUP</code> for the <code>agg op</code> (aggregation operator) -- this means that all the rows for each different value that shows up in the cond1 field will be grouped together in the resulting output data table.
 
-Duplicate this cond1 column and set the name to cond2, so we get grouping by both of our independent condition variables.
+Duplicate this cond1 column and set the name to cond2, so we get grouping by both of our independent condition variables.  Also, Duplicate cond2 and select cond_lbl with an agg op of FIRST -- this will extract the condition labels for each group which are going to be useful for graphing.
 
 Next, duplicate the cond2 guy and enter/lookup cycles, and change the agg op back to MEAN.
 
@@ -499,7 +562,7 @@ We are now ready to Init and Run the program -- go ahead!  To see the results, c
 
 === Creating a Bar Graph of the Grouped Data ===
 
-To better see the results, we'll create a bar graph.  Do View/New Graph View for the grouped_data table, and leave the default New Frame and hit OK (it is also possible to put multiple graphs on a singe view frame by selecting an existing frame there).  To get this to display as a bar graph, you need to click on the view control tab (rightmost tab in middle panel), and change the graph setting at the top to BAR, then click Row Num for the X axis, and set a fixed min/max of -.9 and 3.9.  Turn off the Z axis, and select sse_mean for Y2.  Lastly, toward the bottom, select FIXED COLOR for the color mode, so that the cycles show up as black bars and sse is red.  This should give a decent display of the quantitative data, if not particularly well-labeled (we'll get to that later).
+To better see the results, we'll create a bar graph.  Do View/New Graph View for the grouped_data table, and leave the default New Frame and hit OK (it is also possible to put multiple graphs on a singe view frame by selecting an existing frame there).  To get this to display as a bar graph, you need to click on the view control tab (rightmost tab in middle panel), and change the graph setting at the top to BAR, then click cond_lbl_first for the X axis, and set a fixed min/max of -.5 and 3.5 (to fit the edges).  Turn off the Z axis, and select sse_mean for Y2.  Lastly, toward the bottom, select FIXED COLOR for the color mode, so that the cycles show up as black bars and sse is red.  This should give a decent display of the quantitative data.
 
 === Adding SEM Error Bars ===
 
@@ -507,7 +570,7 @@ To be able to visually interpret whether there are significant differences betwe
 
 To generate SEM data, you just have to go back to the Group spec, and duplicate the cycles and sse items and replace the agg_op in the duplicates with SEM instead of MEAN.  Then Run again.
 
-To add the error bars to the plot, select these new columns in the Err 1 and Err 2 selectors near the bottom of the graph control panel (Err 1 is cycles_sem and 2 is sse_sem).  Note that the incorrect location of the error bar in version 4.0.15 has been fixed for a subsequent release).  This is now a plot that gives a good sense of how significant the differences between conditions are.
+To add the error bars to the plot, select these new columns in the Err 1 and Err 2 selectors near the bottom of the graph control panel (Err 1 is cycles_sem and 2 is sse_sem).  This is now a plot that gives a good sense of how significant the differences between conditions are.
 
 == Computing Correlations (and other such things) ==
 
@@ -530,7 +593,7 @@ Now you can use this same type of expression to enter the two args to the vec_co
 * <code>MyRandomData[\"sse\"].ar</code>
 * <code>float_cycles[\"cycles_flt\"].ar</code>
 
-'''The .ar at the end indicates the float_Matrix data used to actually store the data for the column.''' -- this is a very important point to remember for using these math functions!
+Note: '''The .ar at the end indicates the float_Matrix data used to actually store the data for the column.''' -- this is a very important point to remember for using these math functions!
 
 The last thing you need to do is create a new variable to store the results of this correlation computation -- create a new Real var, call it \"r\", and then select that variable for the result var.
 
@@ -684,7 +747,19 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        name=;
 	    [40] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;      };
      };
-     int_Data @[2] {
+     String_Data @[2] {
+      name="cond1_lbl";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";      };
+     };
+     int_Data @[3] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItemBase;
@@ -706,7 +781,32 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        name=;
 	    [40] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;      };
      };
-     int_Data @[3] {
+     String_Data @[4] {
+      name="cond2_lbl";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";      };
+     };
+     String_Data @[5] {
+      name="cond_lbl";
+      desc="both conditions in a single label";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      ar {
+       name=;
+	    [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";      };
+     };
+     int_Data @[6] {
       UserDataItem_List @*(.user_data_) {
        name=;
        el_typ=UserDataItemBase;
@@ -726,9 +826,9 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
       };
       ar {
        name=;
-	    [40] 22;22;14;20;25;26;22;20;25;18;22;24;31;26;32;26;24;18;32;17;22;18;17;23;26;25;31;24;24;19;33;31;31;29;25;30;38;28;23;35;      };
+	    [40] 20;19;15;18;20;23;14;26;14;27;26;27;26;24;28;20;16;25;23;24;33;25;24;24;26;34;24;25;24;29;31;31;31;32;22;31;30;39;39;32;      };
      };
-     float_Data @[4] {
+     float_Data @[7] {
       name="sse";
       desc="summed-squared error (how much error did the network make)";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -739,7 +839,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
       };
       ar {
        name=;
-	    [40] 12.96199;8.7764883;9.1705914;8.7239799;9.0430956;8.2273264;12.05254;11.231114;11.670703;7.2926192;18.590942;13.32478;14.818536;8.5334902;12.226235;15.865373;9.4373112;17.277391;12.206725;9.8924589;10.641316;11.491203;10.349874;11.496339;11.275867;10.307311;13.779653;13.054425;12.130418;11.508247;14.95736;11.562045;16.282803;14.811419;16.396666;14.347064;18.994009;16.332794;13.699154;15.480586;      };
+	    [40] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;16.534254;12.428211;11.99096;16.449669;13.521808;17.691784;12.483036;14.391989;15.113239;11.827643;11.670762;12.821155;14.318493;13.980083;15.345995;9.815876;11.138397;14.317153;13.611534;17.335604;15.713932;18.443752;15.848848;14.797788;15.957135;17.086241;20.092911;14.52883;17.183912;15.268249;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -833,6 +933,46 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     name=;
     el_typ=ProgType;
     el_def=0;
+    DynEnumType @[0] {
+     name="Cond1";
+     desc=;
+     enums {
+      name=;
+      el_typ=DynEnumItem;
+      el_def=0;
+      DynEnumItem @[0] {
+       name="LOC";
+       value=0;
+       desc=;
+      };
+      DynEnumItem @[1] {
+       name="OBJ";
+       value=1;
+       desc=;
+      };
+     };
+     bits=0;
+    };
+    DynEnumType @[1] {
+     name="Cond2";
+     desc=;
+     enums {
+      name=;
+      el_typ=DynEnumItem;
+      el_def=0;
+      DynEnumItem @[0] {
+       name="SRC";
+       value=0;
+       desc=;
+      };
+      DynEnumItem @[1] {
+       name="TRG";
+       value=1;
+       desc=;
+      };
+     };
+     bits=0;
+    };
    };
    args {
     name=;
@@ -873,7 +1013,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     ProgVar @[3] {
      name="cycles";
      var_type=T_Int;
-     int_val=35;
+     int_val=32;
      objs_ptr=0;
      flags=NULL_CHECK|USED;
      reference=0;
@@ -882,7 +1022,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     ProgVar @[4] {
      name="sse";
      var_type=T_Real;
-     real_val=15.48058561761692;
+     real_val=15.26824872482482;
      objs_ptr=0;
      flags=NULL_CHECK|USED;
      reference=0;
@@ -904,6 +1044,39 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      object_val=.projects[0].data.gp[0][0]$0$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[7] {
+     name="cond1_lbl";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=.projects[0].programs[0].types[0]$1$;
+      value=1;
+     };
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[8] {
+     name="cond2_lbl";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=.projects[0].programs[0].types[1]$2$;
+      value=1;
+     };
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[9] {
+     name="cond_lbl";
+     var_type=T_String;
+     string_val="OBJ_TRG";
+     objs_ptr=0;
+     flags=NULL_CHECK|USED;
      reference=0;
      desc=;
     };
@@ -930,7 +1103,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     ResetDataRows @[0] {
      desc=;
      flags=;
-     data_var=.projects[0].programs[0].vars[6]$1$;
+     data_var=.projects[0].programs[0].vars[6]$3$;
     };
     ForLoop @[1] {
      desc=;
@@ -953,27 +1126,63 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	  name=;
 	  el_typ=ProgEl;
 	  el_def=0;
-	  AddNewDataRow @[0] {
+	  AssignExpr @[0] {
 	   desc=;
 	   flags=;
-	   data_var=$1$;
+	   result_var=.projects[0].programs[0].vars[7]$4$;
+	   expr {
+	    expr="cond1";
+	   };
 	  };
-	  DataVarProg @[1] {
+	  AssignExpr @[1] {
 	   desc=;
 	   flags=;
-	   data_var=$1$;
+	   result_var=.projects[0].programs[0].vars[8]$5$;
+	   expr {
+	    expr="cond2";
+	   };
+	  };
+	  AssignExpr @[2] {
+	   desc=;
+	   flags=;
+	   result_var=.projects[0].programs[0].vars[9]$6$;
+	   expr {
+	    expr="(String)cond1_lbl + \"_\" + cond2_lbl";
+	   };
+	  };
+	  AddNewDataRow @[3] {
+	   desc=;
+	   flags=;
+	   data_var=$3$;
+	  };
+	  DataVarProg @[4] {
+	   desc=;
+	   flags=;
+	   data_var=$3$;
 	   set_data=1;
 	   row_spec=CUR_ROW;
 	   row_var=NULL;
-	   var_1=.projects[0].programs[0].vars[1]$2$;
-	   var_2=.projects[0].programs[0].vars[2]$3$;
-	   var_3=.projects[0].programs[0].vars[0]$4$;
+	   var_1=.projects[0].programs[0].vars[1]$7$;
+	   var_2=.projects[0].programs[0].vars[2]$8$;
+	   var_3=.projects[0].programs[0].vars[0]$9$;
 	   var_4=NULL;
 	  };
-	  RandomCall @[2] {
+	  DataVarProg @[5] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[3]$5$;
+	   data_var=$3$;
+	   set_data=1;
+	   row_spec=CUR_ROW;
+	   row_var=NULL;
+	   var_1=$4$;
+	   var_2=$5$;
+	   var_3=$6$;
+	   var_4=NULL;
+	  };
+	  RandomCall @[6] {
+	   desc=;
+	   flags=;
+	   result_var=.projects[0].programs[0].vars[3]$10$;
 	   object_type=Random;
 	   method=Random::Gauss;
 	   meth_args {
@@ -992,18 +1201,18 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	    };
 	   };
 	  };
-	  VarIncr @[3] {
+	  VarIncr @[7] {
 	   desc=;
 	   flags=;
-	   var=$5$;
+	   var=$10$;
 	   expr {
 	    expr="20 + cond1 * 4 + cond2 * 6 + cond1 * cond2 * 1";
 	   };
 	  };
-	  RandomCall @[4] {
+	  RandomCall @[8] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[4]$6$;
+	   result_var=.projects[0].programs[0].vars[4]$11$;
 	   object_type=Random;
 	   method=Random::Gauss;
 	   meth_args {
@@ -1022,23 +1231,23 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	    };
 	   };
 	  };
-	  VarIncr @[5] {
+	  VarIncr @[9] {
 	   desc=;
 	   flags=;
-	   var=$6$;
+	   var=$11$;
 	   expr {
 	    expr="10 + cond1 * 2 + cond2 * 3 + cond1 * cond2 * 1";
 	   };
 	  };
-	  DataVarProg @[6] {
+	  DataVarProg @[10] {
 	   desc=;
 	   flags=;
-	   data_var=$1$;
+	   data_var=$3$;
 	   set_data=1;
 	   row_spec=CUR_ROW;
 	   row_var=NULL;
-	   var_1=$5$;
-	   var_2=$6$;
+	   var_1=$10$;
+	   var_2=$11$;
 	   var_3=NULL;
 	   var_4=NULL;
 	  };
@@ -1137,7 +1346,20 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	name=;
 	      [4] 0;1;0;1;       };
       };
-      float_Data @[2] {
+      String_Data @[2] {
+       name="cond_lbl_first";
+       desc="both conditions in a single label";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] "LOC_SRC";"LOC_TRG";"OBJ_SRC";"OBJ_TRG";       };
+      };
+      float_Data @[3] {
        UserDataItem_List @*(.user_data_) {
 	name=;
 	el_typ=UserDataItemBase;
@@ -1157,9 +1379,9 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [4] 21.4;25.200001;22.9;30.299999;       };
+	      [4] 19.6;23.9;26.799999;31.799999;       };
       };
-      float_Data @[3] {
+      float_Data @[4] {
        UserDataItem_List @*(.user_data_) {
 	name=;
 	el_typ=UserDataItemBase;
@@ -1179,9 +1401,9 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [4] 1.1469767;1.6983652;1.3203535;1.4067299;       };
+	      [4] 1.4696939;1.1298968;1.2183778;1.5114379;       };
       };
-      float_Data @[4] {
+      float_Data @[5] {
        name="sse_mean";
        desc="summed-squared error (how much error did the network make)";
        col_flags=SAVE_ROWS|SAVE_DATA;
@@ -1192,9 +1414,9 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [4] 9.9150448;13.217325;11.603466;15.286389;       };
+	      [4] 10.219478;14.24326;13.435506;16.492161;       };
       };
-      float_Data @[5] {
+      float_Data @[6] {
        name="sse_sem";
        desc="summed-squared error (how much error did the network make)";
        col_flags=SAVE_ROWS|SAVE_DATA;
@@ -1205,7 +1427,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [4] 0.60020459;1.0761691;0.35647127;0.6210289;       };
+	      [4] 0.31249163;0.67172688;0.68811679;0.54908848;       };
       };
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
@@ -1264,7 +1486,19 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;       };
       };
-      int_Data @[2] {
+      String_Data @[2] {
+       name="cond1_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";       };
+      };
+      int_Data @[3] {
        UserDataItem_List @*(.user_data_) {
 	name=;
 	el_typ=UserDataItemBase;
@@ -1286,7 +1520,32 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;       };
       };
-      int_Data @[3] {
+      String_Data @[4] {
+       name="cond2_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";       };
+      };
+      String_Data @[5] {
+       name="cond_lbl";
+       desc="both conditions in a single label";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";       };
+      };
+      int_Data @[6] {
        UserDataItem_List @*(.user_data_) {
 	name=;
 	el_typ=UserDataItemBase;
@@ -1306,9 +1565,9 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [40] 22;22;14;20;25;26;22;20;25;18;22;24;31;26;32;26;24;18;32;17;22;18;17;23;26;25;31;24;24;19;33;31;31;29;25;30;38;28;23;35;       };
+	      [40] 20;19;15;18;20;23;14;26;14;27;26;27;26;24;28;20;16;25;23;24;33;25;24;24;26;34;24;25;24;29;31;31;31;32;22;31;30;39;39;32;       };
       };
-      float_Data @[4] {
+      float_Data @[7] {
        name="sse";
        desc="summed-squared error (how much error did the network make)";
        col_flags=SAVE_ROWS|SAVE_DATA;
@@ -1319,9 +1578,9 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [40] 12.96199;8.7764883;9.1705914;8.7239799;9.0430956;8.2273264;12.05254;11.231114;11.670703;7.2926192;18.590942;13.32478;14.818536;8.5334902;12.226235;15.865373;9.4373112;17.277391;12.206725;9.8924589;10.641316;11.491203;10.349874;11.496339;11.275867;10.307311;13.779653;13.054425;12.130418;11.508247;14.95736;11.562045;16.282803;14.811419;16.396666;14.347064;18.994009;16.332794;13.699154;15.480586;       };
+	      [40] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;16.534254;12.428211;11.99096;16.449669;13.521808;17.691784;12.483036;14.391989;15.113239;11.827643;11.670762;12.821155;14.318493;13.980083;15.345995;9.815876;11.138397;14.317153;13.611534;17.335604;15.713932;18.443752;15.848848;14.797788;15.957135;17.086241;20.092911;14.52883;17.183912;15.268249;       };
       };
-      float_Data @[5] {
+      float_Data @[8] {
        UserDataItem_List @*(.user_data_) {
 	name=;
 	el_typ=UserDataItemBase;
@@ -1341,8 +1600,21 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
        };
        ar {
 	name=;
-	      [40] 22;22;14;20;25;26;22;20;25;18;22;24;31;26;32;26;24;18;32;17;22;18;17;23;26;25;31;24;24;19;33;31;31;29;25;30;38;28;23;35;       };
+	      [40] 20;19;15;18;20;23;14;26;14;27;26;27;26;24;28;20;16;25;23;24;33;25;24;24;26;34;24;25;24;29;31;31;31;32;22;31;30;39;39;32;       };
       };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[2] {
+     name="data_labeled";
+     desc=;
+     data {
+      name="data";
+      el_typ=DataColTp;
+      el_def=0;
      };
      data_flags=SAVE_ROWS|AUTO_CALC;
      auto_load=NO_AUTO_LOAD;
@@ -1352,7 +1624,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
    };
    types {
     name=;
-    el_typ=ProgType;
+    el_typ=DynEnumType;
     el_def=0;
    };
    args {
@@ -1378,7 +1650,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      name="grouped_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[0]$7$;
+     object_val=.projects[0].programs[1].objs[0]$12$;
      objs_ptr=1;
      flags=NULL_CHECK|USED;
      reference=0;
@@ -1387,7 +1659,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     ProgVar @[2] {
      name="r";
      var_type=T_Real;
-     real_val=0.489235907793045;
+     real_val=0.4739360809326172;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED;
      reference=0;
@@ -1397,7 +1669,17 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      name="float_cycles";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[1]$8$;
+     object_val=.projects[0].programs[1].objs[1]$13$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[4] {
+     name="data_labeled";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[1].objs[2]$14$;
      objs_ptr=1;
      flags=NULL_CHECK|USED;
      reference=0;
@@ -1426,8 +1708,8 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     DataGroupProg @[0] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[1].vars[0]$9$;
-     dest_data_var=.projects[0].programs[1].vars[1]$10$;
+     src_data_var=.projects[0].programs[1].vars[0]$15$;
+     dest_data_var=.projects[0].programs[1].vars[1]$16$;
      group_spec {
       name="group_spec";
       ops {
@@ -1443,18 +1725,22 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
 	agg {name="Aggregate": op=GROUP: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
        DataGroupEl @[2] {
-	col_name="cycles";
-	agg {name="Aggregate": op=MEAN: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	col_name="cond_lbl";
+	agg {name="Aggregate": op=FIRST: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
        DataGroupEl @[3] {
 	col_name="cycles";
-	agg {name="Aggregate": op=SEM: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	agg {name="Aggregate": op=MEAN: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
        DataGroupEl @[4] {
+	col_name="cycles";
+	agg {name="Aggregate": op=SEM: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+       };
+       DataGroupEl @[5] {
 	col_name="sse";
 	agg {name="Aggregate": op=MEAN: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
-       DataGroupEl @[5] {
+       DataGroupEl @[6] {
 	col_name="sse";
 	agg {name="Aggregate": op=SEM: rel={name="Relation": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
        };
@@ -1466,7 +1752,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[1].vars[3]$11$;
+     obj=.projects[0].programs[1].vars[3]$17$;
      method=taBase::CopyFrom;
      meth_args {
       name=;
@@ -1488,7 +1774,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      desc=;
      flags=;
      result_var=NULL;
-     obj=$11$;
+     obj=$17$;
      method=DataTable::NewColFloat;
      meth_args {
       name=;
@@ -1516,7 +1802,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     MathCall @[4] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[1].vars[2]$12$;
+     result_var=.projects[0].programs[1].vars[2]$18$;
      object_type=taMath_float;
      method=taMath_float::vec_correl;
      meth_args {
@@ -1553,7 +1839,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$13$;
+   m_data=.projects[0]$19$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -1583,7 +1869,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$13$;
+     m_root=$19$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -1617,7 +1903,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$14$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$20$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -1625,7 +1911,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$15$;
+	    m_data=.projects[0].data.gp[0][0].data[1]$21$;
 	    m_transform=NULL;
 	    name="cond1";
 	    visible=1;
@@ -1633,27 +1919,51 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$16$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$22$;
+	    m_transform=NULL;
+	    name="cond1_lbl";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    m_data=.projects[0].data.gp[0][0].data[3]$23$;
 	    m_transform=NULL;
 	    name="cond2";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[0][0].data[3]$17$;
+	   GraphColView @[4] {
+	    m_data=.projects[0].data.gp[0][0].data[4]$24$;
 	    m_transform=NULL;
-	    name="cycles";
+	    name="cond2_lbl";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[5] {
+	    m_data=.projects[0].data.gp[0][0].data[5]$25$;
+	    m_transform=NULL;
+	    name="cond_lbl";
 	    visible=1;
 	    fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[0][0].data[4]$18$;
+	   GraphColView @[6] {
+	    m_data=.projects[0].data.gp[0][0].data[6]$26$;
+	    m_transform=NULL;
+	    name="cycles";
+	    visible=1;
+	    fixed_range {fix_min=0: min=14: fix_max=0: max=39: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[7] {
+	    m_data=.projects[0].data.gp[0][0].data[7]$27$;
 	    m_transform=NULL;
 	    name="sse";
 	    visible=1;
-	    fixed_range {fix_min=0: min=7.29262: fix_max=0: max=18.994: };
+	    fixed_range {fix_min=0: min=8.85658: fix_max=0: max=20.0929: };
 	    data_range {min=0: max=0: };
 	   };
 	  };
@@ -1681,10 +1991,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="cycles";
-	   fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
+	   fixed_range {fix_min=0: min=14: fix_max=0: max=39: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=14: max=38: };
-	   range {min=14: max=38: };
+	   data_range {min=14: max=39: };
+	   range {min=14: max=39: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -1709,10 +2019,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="sse";
-	   fixed_range {fix_min=0: min=7.292619: fix_max=0: max=18.99401: };
+	   fixed_range {fix_min=0: min=8.856576: fix_max=0: max=20.09291: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=7.292619: max=18.99401: };
-	   range {min=7.292619: max=18.99401: };
+	   data_range {min=8.856576: max=20.09291: };
+	   range {min=8.856576: max=20.09291: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -1724,7 +2034,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=0;
 	   axis=Y;
-	   col_name="cycles";
+	   col_name="cond_lbl";
 	   fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
 	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	   data_range {min=14: max=38: };
@@ -1892,7 +2202,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$19$;
+	   spec=.colorspecs[0]$28$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -1919,9 +2229,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.4275: y=0.445: z=1.376934: };
+       camera_pos {x=1.4275: y=0.445: z=1.624621: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=1.866934;
+       camera_focdist=1.637121;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
       T3DataViewFrame @[1] {
@@ -1936,54 +2246,62 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$7$;
+	  m_data=$12$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[1].objs[0].data[0]$20$;
+	    m_data=.projects[0].programs[1].objs[0].data[0]$29$;
 	    m_transform=NULL;
 	    name="cond1_group";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[1].objs[0].data[1]$21$;
+	    m_data=.projects[0].programs[1].objs[0].data[1]$30$;
 	    m_transform=NULL;
 	    name="cond2_group";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=1: min=-0.9: fix_max=1: max=3.9: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[1].objs[0].data[2]$22$;
+	    m_data=.projects[0].programs[1].objs[0].data[2]$31$;
 	    m_transform=NULL;
-	    name="cycles_mean";
+	    name="cond_lbl_first";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=1: min=-0.5: fix_max=1: max=3.5: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].programs[1].objs[0].data[3]$23$;
+	    m_data=.projects[0].programs[1].objs[0].data[3]$32$;
+	    m_transform=NULL;
+	    name="cycles_mean";
+	    visible=1;
+	    fixed_range {fix_min=0: min=19.6: fix_max=0: max=31.8: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    m_data=.projects[0].programs[1].objs[0].data[4]$33$;
 	    m_transform=NULL;
 	    name="cycles_sem";
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[4] {
-	    m_data=.projects[0].programs[1].objs[0].data[4]$24$;
+	   GraphColView @[5] {
+	    m_data=.projects[0].programs[1].objs[0].data[5]$34$;
 	    m_transform=NULL;
 	    name="sse_mean";
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=10.2195: fix_max=0: max=16.4922: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @[5] {
-	    m_data=.projects[0].programs[1].objs[0].data[5]$25$;
+	   GraphColView @[6] {
+	    m_data=.projects[0].programs[1].objs[0].data[6]$35$;
 	    m_transform=NULL;
 	    name="sse_sem";
 	    visible=1;
@@ -2014,11 +2332,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
-	   col_name="cond2_group";
-	   fixed_range {fix_min=1: min=-0.9: fix_max=1: max=3.9: };
+	   col_name="cond_lbl_first";
+	   fixed_range {fix_min=1: min=-0.5: fix_max=1: max=3.5: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=-0.9: max=3.9: };
-	   range {min=-0.9: max=3.9: };
+	   data_range {min=-0.5: max=3.5: };
+	   range {min=-0.5: max=3.5: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=1;
@@ -2043,10 +2361,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="cycles_mean";
-	   fixed_range {fix_min=0: min=21.4: fix_max=0: max=30.3: };
+	   fixed_range {fix_min=0: min=19.6: fix_max=0: max=31.8: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=9.915045: max=30.3: };
-	   range {min=5: max=35: };
+	   data_range {min=10.21948: max=31.8: };
+	   range {min=10: max=35: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -2059,10 +2377,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="sse_mean";
-	   fixed_range {fix_min=0: min=9.915045: fix_max=0: max=15.28639: };
+	   fixed_range {fix_min=0: min=10.21948: fix_max=0: max=16.49216: };
 	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
-	   data_range {min=9.915045: max=15.28639: };
-	   range {min=9.915045: max=15.28639: };
+	   data_range {min=10.21948: max=16.49216: };
+	   range {min=10.21948: max=16.49216: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -2226,7 +2544,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$19$;
+	   spec=$28$;
 	   auto_scale=0;
 	  };
 	  raster_axis {

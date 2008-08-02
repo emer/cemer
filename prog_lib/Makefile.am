@@ -39,6 +39,7 @@ dist_pkgdata_prog_lib_DATA =\
 	LeabraEpoch.prog \
 	LeabraEpochGpData.prog \
 	LeabraEpochMonitor.prog \
+	LeabraMovieFrameSave.prog \
 	LeabraSettle.prog \
 	LeabraStartup.prog \
 	LeabraStartup_pb.prog \

@@ -1,0 +1,207 @@
+// ta_Dump File v2.0
+Program .projects[0].programs.gp[0][13] { 
+  ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+  };
+
+  ProgVar_List @.vars = [5] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+  };
+
+  ProgEl_List @.init_code = [1] {
+    MethodCall @[0] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    AssignExpr @[0] { };
+    MethodCall @[1] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs.gp[0][13] {
+ name="LeabraMovieFrameSave";
+ tags="Leabra, Network, Image, Movie";
+ desc="saves an image from a leabra network view using network counter values to name the image -- useful for then making a movie";
+ flags=;
+ objs {
+  name=;
+  el_typ=taNBase;
+  el_def=0;
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$0$;
+   objs_ptr=0;
+   flags=NULL_CHECK|USED;
+   reference=0;
+   desc=;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="image_fname_base";
+   var_type=T_String;
+   string_val="cycle_img";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
+   desc="this is the base (starting part) of the image file name that will be saved";
+  };
+  ProgVar @[1] {
+   name="image_fname";
+   var_type=T_String;
+   string_val="cycle_img150_003_071.jpg";
+   objs_ptr=0;
+   flags=NULL_CHECK|USED;
+   reference=0;
+   desc="this is the full file name with the epoch, trial and cycle values appended";
+  };
+  ProgVar @[2] {
+   name="net_view_frame";
+   var_type=T_Object;
+   object_type=T3DataViewFrame;
+   object_val=.projects[0].viewers[0].frames[2].frames[0]$1$;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
+   desc="DataViewFrame containing the network view to record";
+  };
+  ProgVar @[3] {
+   name="img_width";
+   var_type=T_Int;
+   int_val=640;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|USED;
+   reference=0;
+   desc="desired width of the images (sets this during Init)";
+  };
+  ProgVar @[4] {
+   name="img_height";
+   var_type=T_Int;
+   int_val=480;
+   objs_ptr=0;
+   flags=NULL_CHECK|USED;
+   reference=0;
+   desc="desired height of the images (sets this during Init)";
+  };
+ };
+ functions {
+  name=;
+  el_typ=Function;
+  el_def=0;
+ };
+ load_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+ };
+ init_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  MethodCall @[0] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[0][13].vars[2]$2$;
+   method=T3DataViewFrame::SetImageSize;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type="int";
+     name="width";
+     required=0;
+     def_val=;
+     expr {
+      expr="img_width";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int;
+     type="int";
+     name="height";
+     required=0;
+     def_val=;
+     expr {
+      expr="img_height";
+     };
+    };
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=ProgEl;
+  el_def=0;
+  AssignExpr @[0] {
+   desc=;
+   flags=;
+   result_var=.projects[0].programs.gp[0][13].vars[1]$3$;
+   expr {
+    expr="image_fname_base + \"_\" + taMisc::LeadingZeros(network.epoch,3) + \"_\" + taMisc::LeadingZeros(network.trial,3) + \"_\" +taMisc::LeadingZeros(network.ct_cycle, 3) + \".jpg\"";
+   };
+  };
+  MethodCall @[1] {
+   desc=;
+   flags=;
+   result_var=NULL;
+   obj=$2$;
+   method=T3DataViewFrame::SaveImageAs;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_taString_ref;
+     type="const taString&";
+     name="fname";
+     required=0;
+     def_val="\"\"";
+     expr {
+      expr="image_fname";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataViewer::ImageFormat;
+     type="DataViewer::ImageFormat";
+     name="img_fmt";
+     required=0;
+     def_val="DataViewer::EPS";
+     expr {
+      expr="DataViewer::JPEG";
+     };
+    };
+   };
+  };
+ };
+};
