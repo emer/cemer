@@ -184,7 +184,6 @@ public:
   float		hebb;		// [Default: .01] amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .99] amount of error driven learning, automatically computed to be 1-hebb
   bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt for Leabra_CHL and in wt update for Leabra_CAL)
-  float		sb_margin;	// #CONDEDIT_ON_err_sb [.5 means always sb, lower = some linear range in middle] margin from extremes (0,1) for applying soft bounding: if weight is closer to extreme than this value, then soft bounding applies, else it does not
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
@@ -2452,7 +2451,7 @@ inline void LeabraConSpec::C_Compute_Weights_CtLeabraCAL(LeabraCon* cn, LeabraRe
 						       LeabraUnit*, LeabraUnit*, LeabraUnitSpec*)
 {
   // do soft bounding now so it can include actreg, agg from dm, etc
-  if(lmix.err_sb && ((cn->wt < lmix.sb_margin) || (1.0 - cn->wt < lmix.sb_margin))) {
+  if(lmix.err_sb) {
     if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
     else		cn->dwt *= cn->wt;
   }
@@ -2468,7 +2467,7 @@ inline void LeabraConSpec::C_Compute_Weights_Norm_CtLeabraCAL(LeabraCon* cn, Lea
 {
   // do soft bounding now so it can include actreg, agg from dm, dwtnorm, 
   cn->dwt += dwnorm;
-  if(lmix.err_sb && ((cn->wt < lmix.sb_margin) || (1.0 - cn->wt < lmix.sb_margin))) {
+  if(lmix.err_sb) {
     if(cn->dwt > 0.0f)	cn->dwt *= (1.0f - cn->wt);
     else		cn->dwt *= cn->wt;
   }

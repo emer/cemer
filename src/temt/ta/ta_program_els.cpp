@@ -1533,6 +1533,7 @@ const String RegisterArgs::GenCssBody_impl(int indent_level) {
   rval += cssMisc::Indent(indent_level) + "// Register Args:\n";
   AddArgsFmCode(rval, prog->prog_code, indent_level);
   rval += cssMisc::Indent(indent_level) + "taMisc::UpdateArgs();\n";
+  rval += "if(taMisc::CheckArgByName(\"Help\")) taMisc::HelpMsg();\n"; // extra help!
   return rval;
 }
 
@@ -1543,10 +1544,16 @@ void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int inden
     if(pel->InheritsFrom(&TA_ProgVarFmArg)) {
       ProgVarFmArg* pva = (ProgVarFmArg*)pel;
       gen_code += il + "taMisc::AddEqualsArgName(\"" + pva->arg_name + "\");\n";
+      gen_code += il + "taMisc::AddArgNameDesc(\"" + pva->arg_name
+	+ "\", \"ProgVarFmArg: prog = " + (((bool)pva->prog) ? pva->prog->name : "NOT SET")
+	+ " var_name = " + pva->var_name + "\");\n";
     }
     else if(pel->InheritsFrom(&TA_MemberFmArg)) {
       MemberFmArg* mfa = (MemberFmArg*)pel;
       gen_code += il + "taMisc::AddEqualsArgName(\"" + mfa->arg_name + "\");\n";
+      gen_code += il + "taMisc::AddArgNameDesc(\"" + mfa->arg_name
+	+ "\", \"MemberFmArg: obj = " + (((bool)mfa->obj) ? mfa->obj->name : "NOT SET")
+	+ " path = " + mfa->path + "\");\n";
     }
     else if(pel->InheritsFrom(&TA_DataColsFmArgs)) {
       DataColsFmArgs* mfa = (DataColsFmArgs*)pel;
@@ -1555,6 +1562,8 @@ void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int inden
 	for(int j=0;j<dt->cols();j++) {
 	  DataCol* dc = dt->data[j];
 	  gen_code += il + "taMisc::AddEqualsArgName(\"" + dc->name + "\");\n";
+	  gen_code += il + "taMisc::AddArgNameDesc(\"" + dc->name
+	    + "\", \"DataColsFmArgs: data_table = " + dt->name + "\");\n";
 	}
       }
     }
