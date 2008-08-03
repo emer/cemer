@@ -81,7 +81,7 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [2] {
+  Program_Group @.programs = [4] {
     Program @[0] { 
       ProgType_List @.types = [2] {
 	DynEnumType @[0] { 
@@ -246,6 +246,176 @@ LeabraProject .projects[0] {
 	  ProgArg_List @.meth_args = [2] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
+	  };
+	};
+      };
+    };
+    Program @[2] { 
+      ProgObjList @.objs = [4] {
+	DataTable @[0] { 
+	  DataTableCols @.data = [8] {
+	    int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    String_Data @[2] { };
+	    int_Data @[3] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    String_Data @[4] { };
+	    String_Data @[5] { };
+	    int_Data @[6] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[7] { };
+	  };
+	};
+	DataTable @[1] { 
+	  DataTableCols @.data = [3] {
+	    String_Data @[0] { };
+	    float_Data @[1] { };
+	    float_Data @[2] { };
+	  };
+	};
+	DataTable @[2] { 
+	  DataTableCols @.data = [3] {
+	    String_Data @[0] { };
+	    float_Data @[1] { };
+	    float_Data @[2] { };
+	  };
+	};
+	DataTable @[3] { 
+	  DataTableCols @.data = [10] {
+	    int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    String_Data @[2] { };
+	    int_Data @[3] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    String_Data @[4] { };
+	    String_Data @[5] { };
+	    int_Data @[6] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[7] { };
+	    float_Data @[8] { };
+	    float_Data @[9] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.vars = [5] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+      };
+
+      ProgEl_List @.prog_code = [2] {
+	DataSelectRowsProg @[0] { 
+	  DataOpList @.ops = [1] {
+	    DataSelectEl @[0] { };
+	  };
+	};
+	DataJoinProg @[1] { };
+      };
+    };
+    Program @[3] { 
+      ProgObjList @.objs = [1] {
+	DataTable @[0] { 
+	  DataTableCols @.data = [9] {
+	    int_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    int_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    String_Data @[2] { };
+	    int_Data @[3] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    String_Data @[4] { };
+	    String_Data @[5] { };
+	    int_Data @[6] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[7] { };
+	    float_Data @[8] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+      };
+
+      ProgEl_List @.prog_code = [3] {
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	DataCalcLoop @[2] { 
+	  DataOpList @.src_cols = [2] {
+	    DataOpEl @[0] { };
+	    DataOpEl @[1] { };
+	  };
+
+	  DataOpList @.dest_cols = [1] {
+	    DataOpEl @[0] { };
+	  };
+
+	  ProgEl_List @.loop_code = [4] {
+	    DataCalcAddDestRow @[0] { };
+	    DataCalcCopyCommonCols @[1] { };
+	    AssignExpr @[2] { };
+	    DataCalcSetDestRow @[3] { };
+	  };
+
+	  ProgVar_List @.src_col_vars = [2] {
+	    ProgVar @[0] { };
+	    ProgVar @[1] { };
+	  };
+
+	  ProgVar_List @.dest_col_vars = [1] {
+	    ProgVar @[0] { };
 	  };
 	};
       };
@@ -599,10 +769,11 @@ The last thing you need to do is create a new variable to store the results of t
 
 Now you can do Init (look for errors) and then Run.  When you then click on the r variable, you can see that it has a value, probably around .5 or so, indicating the presence of a decent correlation.
 
+In an upcoming release of the software, we'll have support for ANOVA and generalized linear model (GLM) statistical analysis so you can determine the statistical signfiicance of results directly within the software.
 
+Also, the taDataAnal object, which is available under Misc Fun/data anal() in the program toolbar, has a number of useful analysis routines that are generally geared toward matrix data, and will be explored in [[.docs.MatrixDataDoc]]. 
 
-
-
+Next, we turn to the data base-style operations in [[.docs.DataBaseDoc]].
 
 </body>
 </html>
@@ -614,7 +785,65 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Data Base =
+
+Emergent can do several database-style operations on data tables, including Join, Select, and Sort.  These are powerful motifs for manipulating data, which are introduced in this section.
+
+To start, make a new program under programs called DataBaseProg.  Do Edit Program on it, and drag the MyRandomData table into the vars section and do Add Var To.
+
+== Selecting Rows ==
+
+As we saw in the [[.docs.DataAnalysisDoc]], most analysis operations operate on an entire data table at a time.  So, to focus an analysis on only a subset of data, you first need to select the rows that contain the relevant data, and then operate on that new data table.  There are many other instances where you would want to select a subset of data as well.
+
+There is a built-in select rows operation, in the Data Proc section of the toolkit -- drag sel rows into your prog_code.  You see that it has a source (src) data var and a destination (dest) one -- the src will be MyRandomData, but you need to create a new result data table in the objs of this program to hold the results -- do that (you can call it selectedrows or something like that) and set the dest to it.
+
+The rows to select are specified in terms of the values of specific columns of data -- in this case, let's select all the rows for the LOC condition (i.e., cond1_lbl == \"LOC\").  To do this, click Add Column -- you can either enter cond1_lbl directly here for the name, or just click on the new column when it shows up and you can then choose the column from a list.
+
+There are two choices for how to specify the value you want to select by -- either by using a variable in the program, or by entering a value directly here.  We'll do the latter for simplicity.  Just fill in the values of the <code>cmp</code> field: var_type and var_value -- these are fields for a Variant type which is a special object that can represent any of a number of different types of information.  Set the var_type to String and the var_value to LOC (do NOT include double-quotes here!).
+
+You can now do Init (check for errors) and then Run.  
+
+Click on the selectedrows table under objs in the left browser, and you should see that only the LOC rows are present.
+
+If you need to select multiple values of the same column, you can just duplicate the column, and specify a new value to select, and, critically, change the <code>comb op</code> on the overall SelectRows object to OR instead of AND (the default).  Selecting multiple values across multiple columns is similar (e.g., you could select only rows in the LOC and SRC condition in this way using comb_op of AND.
+
+Feel free to experiment with all these options, including the more exotic NOT AND (negates the relationship and then does AND across all the columns) and NOT OR.  We actually won't be using this data for anything later so don't worry about returning to the initial state.
+
+== Selecting Columns ==
+
+There is a similar function for selecting columns (sel cols) which doesn't have any selection criteria -- it just uses a list of columns to select and copies only those column's values to the destination table.
+
+== Sorting ==
+
+You can also sort a data table according to the values in multiple columns by using the sort object from the Data Proc toolkit, or just by calling the Sort method on a data table (which will sort the table itself, instead of sorting to a new data table object, leaving the original in an unsorted state).  The method approach is limited to 6 columns of sorting, whereas there are no limits on the sort object approach.
+
+== Joins ==
+
+Joins provide a means to join together two different data tables, using a common column of values to link rows between the two.  For example. if you happened to have two different types of data for each batch run of a network, you would join them together according to the batch number.  Analogously, you might have different data for the same set of experimental subjects, so subject number would be the join value.
+
+Another common scenario is when you have a table with detailed information about a given element of data in your table (e.g., for each of the different experimental conditions), which you want to then fold into the overall data table.  In effect, this acts like a \"lookup table\" that looks up new values and adds them as appropriate for the condition.  We'll use this technique to add some more information about each of the conditions in our experiment, which then could potentially be used for subsequent analysis.
+
+First, we'll need to construct a new data table in objs that has the information about each of the conditions in the experiment.  Call it CondData, and add a String cond_lbl column (which will be the key that links this with our main data table), plus some additional columns of data:
+
+* float cycle_off -- a cycle offset value that we could use to adjust cycles for other factors not present in the simulation.
+* float n_objs -- number of objects in the display in each condition (just making this stuff up!)
+
+Then add 4 rows of data to this table, enter the four combinations of LOC/OBJ SRC/TRG as appear in the MyRandomData cond_lbl column, and make up some numbers for the other data.
+
+Next, drag the join from the Data Proc toolbox into the prog_code, and set the src data to MyRandomData, and the src b data to CondData.  You'll see you need to create a new destination data table -- do that in objs as usual (call it JoinedData or whatever) and then select the col_a and col_b columns to be cond_lbl.  Leave the type as an INNER join.
+
+Go ahead and Init and Run this, and look at the results.  You should see that the JoinedData table has all the columns from the MyRandomData, plus the new ones from CondData, with the values appropriately copied over for the given condition.  If you happened to have mistyped one of the condition labels, you should have received a warning about this (as controlled by the nomatch warn flag, which defaults on).
+
+=== Left vs. Inner Join ===
+
+A Join can also be used to select a subset of data -- for an Inner join, only the matching rows will be included in the result.  To demonstrate this, duplicate the CondData table and remove the last row from the new one (which you can rename as OnlySomeConds or whatever)  -- just select the row number (3) and use the context menu to do delete rows.  Then, in your join program item, change the src_b data to this new table, and re-run.  You'll get error messages about the mismatches (if you intend to use this as a selection tool, then turn nomatch_warn off), and you should see that the resulting table does not include the OBJ_TRG condition (which should have been the condition you removed from the src_b table).
+
+If you set the join type to be LEFT instead of INNER, and Run again, you'll see that now the resulting data table has all the rows, but the last set of rows have 0 values for the new data columns.  This is the key difference between a LEFT and INNER join -- LEFT includes all rows of the first src table (src_a) and fills in values where it finds matches and not otherwise, whereas INNER only includes the matching rows.
+
+One additional thing you can experiment with is having multiple rows per condition in the src_b table -- just duplicate the last row of the OnlySomeConds guy, enter some different values for this new row, and then run again -- you'll see that there are now two rows for each original data point of the last condition, matching the two for that condition in the OnlySomeConds table.  Thus, a join can also be used to replicate rows of data for a variable number of times per each condition or by some other variable -- joins can perform many different functions if you think creatively about them!
+
+Next, we'll explore an even more Swiss-army-knife like system, the DataCalcLoop in [[.docs.DataCalcLoopDoc]].
+
 </body>
 </html>
 ";
@@ -625,7 +854,69 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Data Calc Loop =
+
+The DataCalcLoop set of functions (available in the last section of the Data Proc program toolbox) provide framework for looping through the rows of a data table and performing any arbitrary kind of calculations or other functions, and then writing either back to the same data table or to a different data table.  For those familiar with obscure but powerful linux utilities, it resembles the <code>awk</code> tool.
+
+The DataCalcLoop (DCL) can also be used to do abitrarily complex row selection, by deciding on a row-by-row basis what to copy versus not.
+
+One thing to keep in mind about the DCL -- it is slower than the other data base style functions (select rows, join, etc) because it uses script code to iterate through the data table, instead of having the script call a pre-compiled and very fast hard-coded loop.
+
+As usual, the first step is to create a DataCalcLoopProg in programs, and to drag the MyRandomData into its vars.
+
+== Creating a destination data table ==
+
+First, we create a data table to hold the results of our data calc loop computation.  In this case, we're just going to create a plain data table, and then write some program code to create the columns for it, based on our source data table.  So, just do NewDataTable and call it something like DataCalcDest.
+
+Next, we add a <code>meth()</code> call on that DataCalcDest into the prog_code, to copy over the columns from the MyRandomData table.  After setting the object to DataCalcDest, select Copy_NoData (under the Copy category) for the method to call, and select or type MyRandomData for the argument to this method.
+
+Now, we'll add a new column to the destination data table to hold the results of our calculation.  Just duplicate the method call item, and select the method as NewColFloat under the Columns category of functions.  For the col_nm argument, enter \"calc_val\" (include the double quotes!).
+
+== Creating the Data Calc Loop ==
+
+We are ready to drag the <code>calc loop</code> item from Data Proc onto the prog_code, and then set the src data as MyRandomData and the dest data as DataCalcDest.  You can see that it has thee sub-groups: src_cols, dest_cols, and loop_code -- we just add the names of the columns we want to operate on from both the source and destination tables, and then add some code to operate on them one row at a time in the loop_code.
+
+Do Add Src Column and either type in cycles or just select it in the new item that comes up.  Duplicate this one and enter sse -- our computation will involve these two values.
+
+Then do Add Dest Column, and type in calc_val -- it will not be available for selecting because it has yet to be created.
+
+== Copying the Source Data ==
+
+The first thing we want to do in our calculation is to copy over all the data from the source to the destination, and then we'll add the special computed value.
+
+Drag a <code>+dest</code> row item from Data Proc into the loop_code of the DCL (it doesn't require any further configuration), and then add a <code>cpy cols</code> item (which also does not require configuration).
+
+You can now do an incremental test of the program -- Init (you should get a warning about the calc_val not yet existing in the destination data table -- ignore it), and then Run.  If you click on the DataCalcDest now, and view the data table, you'll see it is a copy of MyRandomData, with zeros in the new calc_val column.
+
+If you just wanted to select rows, you could have added an <code>if.cont</code> (if -- continue) expression that evaluated the values of the current source row, and if they were not suitable, continued to the next row without doing the remaining code (i.e., adding a dest row and copying the values).
+
+== Computing the new calc_val ==
+
+Now we'll augment our code with the main point of this exercise: computing a new value and writing it to the destination table.
+
+Drag a <code>var=</code> onto the loop_code (placing it at the end) and you'll see that you can then select d_calc_val for the result var -- this is a new variable automatically computed by the DCL to contain the value of the calc_val column of the destination table.  You should also have noticed that s_sse and s_cycles were on the list too -- they are similar new variables for the source columns we specified.  A variable is created for each of the src_cols and dest_cols you specify.
+
+For the expr, enter <code>s_sse * s_cycles</code> (you can use Ctrl+L to lookup these variables, or the var_lookup selector).
+
+The last step is to add a <code>=dest row</code> item at the end, which is what actually writes the d_calc_val to the calc_val cell of the destination table.  This is a commonly-forgotten step so don't forget it!
+
+Now when you Init and Run, you should see the calc_val contains the product of the sse and cycle columns!
+
+This provides a very brief overview of all the basic elements of the data calc loop system -- clearly there are many many other possibilities -- any arbitrary code can be put in the loop_code, and you can access information from other rows or data tables, etc.  Note that there is a special <code>src_row</code> variable created that contains the current row number of the source datatable, so if you want to access other rows of data (e.g., the prior row), you can refer to that row number (be sure to avoid accessing data out of range!).
+
+You can also skip the dest data table entirely, and just modify the source table directly -- in this case, use the <code>=src row</code> item to write the data back to the source data table after you have performed your computations.
+
+== Simple Calc Alternative; Calc Columns ==
+
+For the simple kind of calculation that we just performed, it turns out that there is a simpler alternative to the more powerful and flexible data calc loop: you can just enter an expression in a data column and it will automatically fill in that column with the result of that expression!  This is somewhat like entering a formula into a spreadsheet (except it is one formula for the whole column).  Also, you typically do not have control over exactly when the column values are updated, which is typically after a cell has been modified.  This can be somewhat computationally expensive and slow if there is a lot of data.
+
+To explore a calc column, select in the left browser the calc_val column of your DataCalcDest table.  Then click on the Calc button, which will enable the calc_expr field to be edited.  Type in \"sse * cycles\" here (note that you do not use any prefix, and just specify the name of the column to refer to the current cell value for that column.  
+When you click Apply, it will perform the calculation, which you can see by clicking on the data table.  Note that there is a Calc All Rows button at the bottom -- this will force a manual recalculation of the table should there be any doubt about whether it has done the calculation.  There is also an auto_calc flag on the data table -- if you turn this off, then it will ONLY do the calculation when you hit the Calc All Rows button (or call this method from a program).
+
+You can also \"lock in\" the current values by turning OFF the Calc flag on the calc_val column -- the current values will just remain as is.  This can be useful for setting values and cleaning up data -- you can create new columns to compute values, lock them in, and then copy them back to the original column, etc.
+
+That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixDataDoc]].
+
 </body>
 </html>
 ";
@@ -636,7 +927,11 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Matrix Data =
+
+* make random bit patterns based on prototypes
+* do highdim reduction stuff -- pull out the categories
+
 </body>
 </html>
 ";
@@ -1833,13 +2128,940 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
     };
    };
   };
+  Program @[2] {
+   name="DataBaseProg";
+   tags=;
+   desc="program for data-base style operations";
+   flags=;
+   objs {
+    name=;
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="selectedrows";
+     desc=;
+     data {
+      name="data";
+      el_typ=DataColTp;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="batch";
+       desc="batch number (equivalent to subject number in a typical psych experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] 0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond1";
+       desc="condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;       };
+      };
+      String_Data @[2] {
+       name="cond1_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";       };
+      };
+      int_Data @[3] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond2";
+       desc="condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;       };
+      };
+      String_Data @[4] {
+       name="cond2_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";       };
+      };
+      String_Data @[5] {
+       name="cond_lbl";
+       desc="both conditions in a single label";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";       };
+      };
+      int_Data @[6] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] 20;19;15;18;20;23;14;26;14;27;26;27;26;24;28;20;16;25;23;24;       };
+      };
+      float_Data @[7] {
+       name="sse";
+       desc="summed-squared error (how much error did the network make)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [20] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;16.534254;12.428211;11.99096;16.449669;13.521808;17.691784;12.483036;14.391989;15.113239;11.827643;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[1] {
+     name="CondData";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="cond_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] "LOC_SRC";"LOC_TRG";"OBJ_SRC";"OBJ_TRG";       };
+      };
+      float_Data @[1] {
+       name="cycle_off";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 30;20;25;22;       };
+      };
+      float_Data @[2] {
+       name="n_objs";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 2;1;3;2;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[2] {
+     name="OnlySomeConds";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="cond_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] "LOC_SRC";"LOC_TRG";"OBJ_SRC";"OBJ_SRC";       };
+      };
+      float_Data @[1] {
+       name="cycle_off";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 30;20;25;22;       };
+      };
+      float_Data @[2] {
+       name="n_objs";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 2;1;3;2;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[3] {
+     name="JoinedData";
+     desc=;
+     data {
+      name="data";
+      el_typ=DataColTp;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="batch";
+       desc="batch number (equivalent to subject number in a typical psych experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 9;3;8;1;5;7;2;0;6;4;3;1;2;0;4;9;8;7;6;5;9;9;8;8;7;7;6;6;5;5;4;4;3;3;2;2;1;1;0;0;       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond1";
+       desc="condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;       };
+      };
+      String_Data @[2] {
+       name="cond1_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";       };
+      };
+      int_Data @[3] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond2";
+       desc="condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;       };
+      };
+      String_Data @[4] {
+       name="cond2_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";       };
+      };
+      String_Data @[5] {
+       name="cond_lbl";
+       desc="both conditions in a single label";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";       };
+      };
+      int_Data @[6] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 27;18;14;19;23;26;15;20;14;20;24;27;26;26;28;24;23;25;16;20;29;29;24;24;25;25;24;24;34;34;26;26;24;24;24;24;25;25;33;33;       };
+      };
+      float_Data @[7] {
+       name="sse";
+       desc="summed-squared error (how much error did the network make)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 9.7257805;9.7241659;9.4780741;10.150656;9.7326889;10.328391;8.856576;10.625034;11.256651;12.316755;16.449669;12.428211;11.99096;16.534254;13.521808;11.827643;15.113239;14.391989;12.483036;17.691784;17.335604;17.335604;13.611534;13.611534;14.317153;14.317153;11.138397;11.138397;9.815876;9.815876;15.345995;15.345995;13.980083;13.980083;14.318493;14.318493;12.821155;12.821155;11.670762;11.670762;       };
+      };
+      float_Data @[8] {
+       name="cycle_off";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 30;30;30;30;30;30;30;30;30;30;20;20;20;20;20;20;20;20;20;20;25;22;25;22;25;22;25;22;25;22;25;22;25;22;25;22;25;22;25;22;       };
+      };
+      float_Data @[9] {
+       name="n_objs";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 2;2;2;2;2;2;2;2;2;2;1;1;1;1;1;1;1;1;1;1;3;2;3;2;3;2;3;2;3;2;3;2;3;2;3;2;3;2;3;2;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="MyRandomData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$0$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="selectedrows";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[2].objs[0]$19$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[2] {
+     name="CondData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[2].objs[1]$20$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="JoinedData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[2].objs[3]$21$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[4] {
+     name="OnlySomeConds";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[2].objs[2]$22$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    DataSelectRowsProg @[0] {
+     desc=;
+     flags=;
+     src_data_var=.projects[0].programs[2].vars[0]$23$;
+     dest_data_var=.projects[0].programs[2].vars[1]$24$;
+     select_spec {
+      name="select_spec";
+      ops {
+       name=;
+       el_typ=DataSelectEl;
+       el_def=0;
+       DataSelectEl @[0] {
+	col_name="cond1_lbl";
+	rel=EQUAL;
+	use_var=0;
+	cmp 9 0="LOC";
+	var=NULL;
+       };
+      };
+      comb_op=AND;
+     };
+    };
+    DataJoinProg @[1] {
+     desc=;
+     flags=;
+     src_data_var=$23$;
+     dest_data_var=.projects[0].programs[2].vars[3]$25$;
+     src_b_data_var=.projects[0].programs[2].vars[4]$26$;
+     join_spec {
+      name="join_spec";
+      col_a {
+       col_name="cond_lbl";
+      };
+      col_b {
+       col_name="cond_lbl";
+      };
+      type=INNER;
+      nomatch_warn=1;
+     };
+    };
+   };
+  };
+  Program @[3] {
+   name="DataCalcLoopProg";
+   tags=;
+   desc="exploration of the data calc loop system";
+   flags=;
+   objs {
+    name=;
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="DataCalcDest";
+     desc=;
+     data {
+      name="data";
+      el_typ=DataColTp;
+      el_def=0;
+      int_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="batch";
+       desc="batch number (equivalent to subject number in a typical psych experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;0;1;2;3;4;5;6;7;8;9;       };
+      };
+      int_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond1";
+       desc="condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;       };
+      };
+      String_Data @[2] {
+       name="cond1_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";"OBJ";       };
+      };
+      int_Data @[3] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cond2";
+       desc="condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;       };
+      };
+      String_Data @[4] {
+       name="cond2_lbl";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";"TRG";       };
+      };
+      String_Data @[5] {
+       name="cond_lbl";
+       desc="both conditions in a single label";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"LOC_TRG";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_SRC";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";"OBJ_TRG";       };
+      };
+      int_Data @[6] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="NARROW";
+	 value 1 0=1;
+	};
+       };
+       name="cycles";
+       desc="number of cycles the network required (i.e., reaction time in a typical experiment)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 20;19;15;18;20;23;14;26;14;27;26;27;26;24;28;20;16;25;23;24;33;25;24;24;26;34;24;25;24;29;31;31;31;32;22;31;30;39;39;32;       };
+      };
+      float_Data @[7] {
+       name="sse";
+       desc="summed-squared error (how much error did the network make)";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [40] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;16.534254;12.428211;11.99096;16.449669;13.521808;17.691784;12.483036;14.391989;15.113239;11.827643;11.670762;12.821155;14.318493;13.980083;15.345995;9.815876;11.138397;14.317153;13.611534;17.335604;15.713932;18.443752;15.848848;14.797788;15.957135;17.086241;20.092911;14.52883;17.183912;15.268249;       };
+      };
+      float_Data @[8] {
+       name="calc_val";
+       col_flags=SAVE_ROWS|SAVE_DATA|CALC;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr="sse * cycles";
+       };
+       ar {
+	name=;
+	      [40] 212.50069;192.86246;132.84863;175.03499;246.33511;223.85184;157.59311;268.53818;132.69304;262.59607;429.89059;335.56171;311.76495;394.79205;378.61063;353.83569;199.72858;359.79971;347.60449;283.86343;385.13516;320.52887;343.64383;335.522;398.99588;333.73978;267.32153;357.92883;326.67682;502.73251;487.1319;571.75635;491.3143;473.52921;351.05698;529.67346;602.78735;566.62433;670.17261;488.58395;       };
+      };
+     };
+     data_flags=SAVE_ROWS|HAS_CALCS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="MyRandomData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=$0$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="DataCalcDest";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[3].objs[0]$27$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=.projects[0].programs[3].vars[1]$28$;
+     method=DataTable::Copy_NoData;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_DataTable_ref;
+       type="const DataTable&";
+       name="cp";
+       required=0;
+       def_val=;
+       expr {
+	expr="MyRandomData";
+       };
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$28$;
+     method=DataTable::NewColFloat;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="col_nm";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="\"calc_val\"";
+       };
+      };
+     };
+    };
+    DataCalcLoop @[2] {
+     desc=;
+     flags=;
+     src_data_var=.projects[0].programs[3].vars[0]$29$;
+     dest_data_var=$28$;
+     src_cols {
+      name="src_cols";
+      el_typ=DataOpEl;
+      el_def=0;
+      DataOpEl @[0] {
+       col_name="cycles";
+      };
+      DataOpEl @[1] {
+       col_name="sse";
+      };
+     };
+     dest_cols {
+      name="dest_cols";
+      el_typ=DataOpEl;
+      el_def=0;
+      DataOpEl @[0] {
+       col_name="calc_val";
+      };
+     };
+     loop_code {
+      name=;
+      el_typ=ProgEl;
+      el_def=0;
+      DataCalcAddDestRow @[0] {
+       desc=;
+       flags=;
+       src_data_var=$29$;
+       dest_data_var=$28$;
+      };
+      DataCalcCopyCommonCols @[1] {
+       desc=;
+       flags=;
+       src_data_var=$29$;
+       dest_data_var=$28$;
+       only_named_cols=0;
+      };
+      AssignExpr @[2] {
+       desc=;
+       flags=;
+       result_var=.projects[0].programs[3].prog_code[2].dest_col_vars[0]$30$;
+       expr {
+	expr="s_sse * s_cycles";
+       };
+      };
+      DataCalcSetDestRow @[3] {
+       desc=;
+       flags=;
+       src_data_var=$29$;
+       dest_data_var=$28$;
+      };
+     };
+     src_col_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="s_cycles";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
+       desc=;
+      };
+      ProgVar @[1] {
+       name="s_sse";
+       var_type=T_Real;
+       real_val=0;
+       objs_ptr=0;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
+       desc=;
+      };
+     };
+     dest_col_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="d_calc_val";
+       var_type=T_Real;
+       real_val=0;
+       objs_ptr=0;
+       flags=NULL_CHECK|LOCAL_VAR;
+       reference=0;
+       desc=;
+      };
+     };
+    };
+   };
+  };
  };
  viewers {
   name=;
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$19$;
+   m_data=.projects[0]$31$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -1869,7 +3091,7 @@ Now you can do Init (look for errors) and then Run.  When you then click on the 
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$19$;
+     m_root=$31$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -1903,7 +3125,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$20$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$32$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -1911,7 +3133,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$21$;
+	    m_data=.projects[0].data.gp[0][0].data[1]$33$;
 	    m_transform=NULL;
 	    name="cond1";
 	    visible=1;
@@ -1919,7 +3141,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$22$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$34$;
 	    m_transform=NULL;
 	    name="cond1_lbl";
 	    visible=1;
@@ -1927,7 +3149,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[0][0].data[3]$23$;
+	    m_data=.projects[0].data.gp[0][0].data[3]$35$;
 	    m_transform=NULL;
 	    name="cond2";
 	    visible=1;
@@ -1935,7 +3157,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[0][0].data[4]$24$;
+	    m_data=.projects[0].data.gp[0][0].data[4]$36$;
 	    m_transform=NULL;
 	    name="cond2_lbl";
 	    visible=1;
@@ -1943,7 +3165,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[0][0].data[5]$25$;
+	    m_data=.projects[0].data.gp[0][0].data[5]$37$;
 	    m_transform=NULL;
 	    name="cond_lbl";
 	    visible=1;
@@ -1951,7 +3173,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[0][0].data[6]$26$;
+	    m_data=.projects[0].data.gp[0][0].data[6]$38$;
 	    m_transform=NULL;
 	    name="cycles";
 	    visible=1;
@@ -1959,7 +3181,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[0][0].data[7]$27$;
+	    m_data=.projects[0].data.gp[0][0].data[7]$39$;
 	    m_transform=NULL;
 	    name="sse";
 	    visible=1;
@@ -2202,7 +3424,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$28$;
+	   spec=.colorspecs[0]$40$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -2253,7 +3475,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[1].objs[0].data[0]$29$;
+	    m_data=.projects[0].programs[1].objs[0].data[0]$41$;
 	    m_transform=NULL;
 	    name="cond1_group";
 	    visible=1;
@@ -2261,7 +3483,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[1].objs[0].data[1]$30$;
+	    m_data=.projects[0].programs[1].objs[0].data[1]$42$;
 	    m_transform=NULL;
 	    name="cond2_group";
 	    visible=1;
@@ -2269,7 +3491,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[1].objs[0].data[2]$31$;
+	    m_data=.projects[0].programs[1].objs[0].data[2]$43$;
 	    m_transform=NULL;
 	    name="cond_lbl_first";
 	    visible=1;
@@ -2277,7 +3499,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].programs[1].objs[0].data[3]$32$;
+	    m_data=.projects[0].programs[1].objs[0].data[3]$44$;
 	    m_transform=NULL;
 	    name="cycles_mean";
 	    visible=1;
@@ -2285,7 +3507,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].programs[1].objs[0].data[4]$33$;
+	    m_data=.projects[0].programs[1].objs[0].data[4]$45$;
 	    m_transform=NULL;
 	    name="cycles_sem";
 	    visible=1;
@@ -2293,7 +3515,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].programs[1].objs[0].data[5]$34$;
+	    m_data=.projects[0].programs[1].objs[0].data[5]$46$;
 	    m_transform=NULL;
 	    name="sse_mean";
 	    visible=1;
@@ -2301,7 +3523,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].programs[1].objs[0].data[6]$35$;
+	    m_data=.projects[0].programs[1].objs[0].data[6]$47$;
 	    m_transform=NULL;
 	    name="sse_sem";
 	    visible=1;
@@ -2544,7 +3766,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$28$;
+	   spec=$40$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -2571,9 +3793,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 };
 	};
        };
-       camera_pos {x=1.4275: y=0.445: z=1.376934: };
+       camera_pos {x=1.4275: y=0.445: z=1.624621: };
        camera_orient {x=0: y=0: z=1: rot=0: };
-       camera_focdist=1.866934;
+       camera_focdist=1.637121;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
