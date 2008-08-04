@@ -566,7 +566,7 @@ void iProgramEditor::Base_Remove() {
   membs.Reset();
   meth_but_mgr->Reset(); // deletes items and widgets (buts/menus)
   body->clearLater();
-  taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
+//nn and dangerous!  taiMiscCore::RunPending(); // note: this is critical for the editgrid clear
 }
 
 void iProgramEditor::Apply() {
@@ -587,8 +587,7 @@ void iProgramEditor::Apply() {
 
 iTreeViewItem* iProgramEditor::AssertBrowserItem(taiDataLink* link)
 {
-  // note: waitproc is now insulated against recurrent calls..
-  // make sure previous operations are finished
+  // note: waitproc is insulated against recurrent calls..
   taiMiscCore::ProcessEvents();
   iTreeViewItem* rval = items->AssertItem(link);
   if (rval) {
