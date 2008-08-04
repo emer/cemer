@@ -81,7 +81,7 @@ LeabraProject .projects[0] {
 };
   };
 
-  Program_Group @.programs = [4] {
+  Program_Group @.programs = [5] {
     Program @[0] { 
       ProgType_List @.types = [2] {
 	DynEnumType @[0] { 
@@ -420,6 +420,205 @@ LeabraProject .projects[0] {
 	};
       };
     };
+    Program @[4] { 
+      ProgObjList @.objs = [7] {
+	DataTable @[0] { 
+	  DataTableCols @.data = [2] {
+	    String_Data @[0] { };
+	    float_Data @[1] { };
+	  };
+	};
+	DataTable @[1] { 
+	  DataTableCols @.data = [2] {
+	    String_Data @[0] { };
+	    float_Data @[1] { };
+	  };
+	};
+	DataTable @[2] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+	    UserDataItem @[1] { };
+     };
+
+	  DataTableCols @.data = [5] {
+	    String_Data @[0] { };
+	    float_Data @[1] { };
+	    float_Data @[2] { };
+	    float_Data @[3] { };
+	    float_Data @[4] { };
+	  };
+	};
+	DataTable @[3] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+	    UserDataItem @[1] { };
+     };
+
+	  DataTableCols @.data = [1] {
+	    float_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	  };
+	};
+	DataTable @[4] { 
+	  DataTableCols @.data = [3] {
+	    float_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+		UserDataItem @[1] { };
+       };
+};
+	    float_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+		UserDataItem @[1] { };
+		UserDataItem @[2] { };
+       };
+};
+	    String_Data @[2] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	  };
+	};
+	DataTable @[5] { 
+     UserDataItem_List @*(.user_data_) { 
+	    UserDataItem @[0] { };
+     };
+
+	  DataTableCols @.data = [3] {
+	    String_Data @[0] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[1] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	    float_Data @[2] { 
+       UserDataItem_List @*(.user_data_) { 
+		UserDataItem @[0] { };
+       };
+};
+	  };
+	};
+	DataTable @[6] { 
+	  DataTableCols @.data = [1] {
+	    float_Data @[0] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.vars = [7] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+	ProgVar @[2] { };
+	ProgVar @[3] { };
+	ProgVar @[4] { };
+	ProgVar @[5] { };
+	ProgVar @[6] { };
+      };
+
+      ProgEl_List @.prog_code = [11] {
+	ResetDataRows @[0] { };
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	DataGenCall @[3] { 
+	  ProgArg_List @.meth_args = [7] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	  };
+	};
+	DataAnalCall @[4] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	DataProcCall @[5] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	DataGenCall @[6] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	DataAnalCall @[7] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	DataAnalCall @[8] { 
+	  ProgArg_List @.meth_args = [8] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	    ProgArg @[7] { };
+	  };
+	};
+	DataAnalCall @[9] { 
+	  ProgArg_List @.meth_args = [7] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	    ProgArg @[5] { };
+	    ProgArg @[6] { };
+	  };
+	};
+	DataAnalCall @[10] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+      };
+    };
   };
 
   DataViewer_List @.viewers = [1] {
@@ -432,7 +631,7 @@ LeabraProject .projects[0] {
 	tabBrowseViewer @[0] { };
 	PanelViewer @[1] { };
 	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [2] {
+	  T3DataViewFrame_List @.frames = [9] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		GraphTableView @[0] { 
@@ -460,6 +659,79 @@ LeabraProject .projects[0] {
 		    GraphColView @[4] { };
 		    GraphColView @[5] { };
 		    GraphColView @[6] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[2] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [5] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		    GridColView @[2] { };
+		    GridColView @[3] { };
+		    GridColView @[4] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[3] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [2] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[4] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [1] {
+		    GridColView @[0] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[5] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [2] {
+		    GridColView @[0] { };
+		    GridColView @[1] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[6] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[7] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [3] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		  };
+		};
+	      };
+	    };
+	    T3DataViewFrame @[8] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @[0] { 
+		  T3DataView_List @.children = [1] {
+		    GridColView @[0] { };
 		  };
 		};
 	      };
@@ -493,7 +765,7 @@ LeabraProject .projects[0] {
    text="<html>
 <head></head>
 <body>
-= Data Table Tutoral =
+= Data Table Tutorial =
 
 This tutorial provides an introduction to a variety of techniques for working with DataTables in Emergent.  DataTables are one of the most important objects in the system, and can be used for a very wide range of different functions.  Essentially, anything that requires storing and manipulating multiple items of data can benefit from a data table.  Most of the functionality is exposed through the writing of Programs, so this also serves as a good tutorial for the gui-based programming system in emergent.
 
@@ -795,7 +1067,7 @@ To start, make a new program under programs called DataBaseProg.  Do Edit Progra
 
 As we saw in the [[.docs.DataAnalysisDoc]], most analysis operations operate on an entire data table at a time.  So, to focus an analysis on only a subset of data, you first need to select the rows that contain the relevant data, and then operate on that new data table.  There are many other instances where you would want to select a subset of data as well.
 
-There is a built-in select rows operation, in the Data Proc section of the toolkit -- drag sel rows into your prog_code.  You see that it has a source (src) data var and a destination (dest) one -- the src will be MyRandomData, but you need to create a new result data table in the objs of this program to hold the results -- do that (you can call it selectedrows or something like that) and set the dest to it.
+There is a built-in select rows operation, in the Data Proc section of the toolkit -- drag <code>sel rows</code> into your prog_code.  You see that it has a source (src) data var and a destination (dest) one -- the src will be MyRandomData, but you need to create a new result data table in the objs of this program to hold the results -- do that (you can call it SelectedData or something like that) and set the dest to it.
 
 The rows to select are specified in terms of the values of specific columns of data -- in this case, let's select all the rows for the LOC condition (i.e., cond1_lbl == \"LOC\").  To do this, click Add Column -- you can either enter cond1_lbl directly here for the name, or just click on the new column when it shows up and you can then choose the column from a list.
 
@@ -803,7 +1075,7 @@ There are two choices for how to specify the value you want to select by -- eith
 
 You can now do Init (check for errors) and then Run.  
 
-Click on the selectedrows table under objs in the left browser, and you should see that only the LOC rows are present.
+Click on the SelectedData table under objs in the left browser, and you should see that only the LOC rows are present.
 
 If you need to select multiple values of the same column, you can just duplicate the column, and specify a new value to select, and, critically, change the <code>comb op</code> on the overall SelectRows object to OR instead of AND (the default).  Selecting multiple values across multiple columns is similar (e.g., you could select only rows in the LOC and SRC condition in this way using comb_op of AND.
 
@@ -856,7 +1128,7 @@ Next, we'll explore an even more Swiss-army-knife like system, the DataCalcLoop 
 <body>
 = Data Calc Loop =
 
-The DataCalcLoop set of functions (available in the last section of the Data Proc program toolbox) provide framework for looping through the rows of a data table and performing any arbitrary kind of calculations or other functions, and then writing either back to the same data table or to a different data table.  For those familiar with obscure but powerful linux utilities, it resembles the <code>awk</code> tool.
+The DataCalcLoop set of functions (available in the last section of the Data Proc program toolbox) provide a framework for looping through the rows of a data table and performing any arbitrary kind of calculations or other functions, and then writing either back to the same data table or to a different data table.  For those familiar with obscure but powerful linux utilities, it resembles the <code>awk</code> tool.
 
 The DataCalcLoop (DCL) can also be used to do abitrarily complex row selection, by deciding on a row-by-row basis what to copy versus not.
 
@@ -868,7 +1140,7 @@ As usual, the first step is to create a DataCalcLoopProg in programs, and to dra
 
 First, we create a data table to hold the results of our data calc loop computation.  In this case, we're just going to create a plain data table, and then write some program code to create the columns for it, based on our source data table.  So, just do NewDataTable and call it something like DataCalcDest.
 
-Next, we add a <code>meth()</code> call on that DataCalcDest into the prog_code, to copy over the columns from the MyRandomData table.  After setting the object to DataCalcDest, select Copy_NoData (under the Copy category) for the method to call, and select or type MyRandomData for the argument to this method.
+Next, we add a <code>meth()</code> call (from the Var/Fun program toolbox) on that DataCalcDest into the prog_code, to copy over the columns from the MyRandomData table.  After setting the object to DataCalcDest, select Copy_NoData (under the Copy category) for the method to call, and select or type MyRandomData for the argument to this method.
 
 Now, we'll add a new column to the destination data table to hold the results of our calculation.  Just duplicate the method call item, and select the method as NewColFloat under the Columns category of functions.  For the col_nm argument, enter \"calc_val\" (include the double quotes!).
 
@@ -894,7 +1166,7 @@ If you just wanted to select rows, you could have added an <code>if.cont</code> 
 
 Now we'll augment our code with the main point of this exercise: computing a new value and writing it to the destination table.
 
-Drag a <code>var=</code> onto the loop_code (placing it at the end) and you'll see that you can then select d_calc_val for the result var -- this is a new variable automatically computed by the DCL to contain the value of the calc_val column of the destination table.  You should also have noticed that s_sse and s_cycles were on the list too -- they are similar new variables for the source columns we specified.  A variable is created for each of the src_cols and dest_cols you specify.
+Drag a <code>var=</code> (from Var/Fun toolbox) onto the loop_code (placing it at the end) and you'll see that you can then select d_calc_val for the result var -- this is a new variable automatically computed by the DCL to contain the value of the calc_val column of the destination table.  You should also have noticed that s_sse and s_cycles were on the list too -- they are similar new variables for the source columns we specified.  A variable is created for each of the src_cols and dest_cols you specify.
 
 For the expr, enter <code>s_sse * s_cycles</code> (you can use Ctrl+L to lookup these variables, or the var_lookup selector).
 
@@ -906,11 +1178,12 @@ This provides a very brief overview of all the basic elements of the data calc l
 
 You can also skip the dest data table entirely, and just modify the source table directly -- in this case, use the <code>=src row</code> item to write the data back to the source data table after you have performed your computations.
 
-== Simple Calc Alternative; Calc Columns ==
+== Simple Calc Alternative: Calc Columns ==
 
-For the simple kind of calculation that we just performed, it turns out that there is a simpler alternative to the more powerful and flexible data calc loop: you can just enter an expression in a data column and it will automatically fill in that column with the result of that expression!  This is somewhat like entering a formula into a spreadsheet (except it is one formula for the whole column).  Also, you typically do not have control over exactly when the column values are updated, which is typically after a cell has been modified.  This can be somewhat computationally expensive and slow if there is a lot of data.
+For the simple kind of calculation that we just performed, it turns out that there is a simpler alternative to the more powerful and flexible data calc loop: you can just enter an expression in a data column and it will automatically fill in that column with the result of that expression!  This is somewhat like entering a formula into a spreadsheet (except it is one formula for the whole column). 
 
-To explore a calc column, select in the left browser the calc_val column of your DataCalcDest table.  Then click on the Calc button, which will enable the calc_expr field to be edited.  Type in \"sse * cycles\" here (note that you do not use any prefix, and just specify the name of the column to refer to the current cell value for that column.  
+To explore a calc column, select in the left browser the calc_val column of your DataCalcDest table.  Then click on the Calc button in its edit panel, which will enable the calc_expr field to be edited.  Type in <code>sse * cycles<code> here (note that you do not use any prefix, and just specify the name of the column to refer to the current cell value for that column.  
+
 When you click Apply, it will perform the calculation, which you can see by clicking on the data table.  Note that there is a Calc All Rows button at the bottom -- this will force a manual recalculation of the table should there be any doubt about whether it has done the calculation.  There is also an auto_calc flag on the data table -- if you turn this off, then it will ONLY do the calculation when you hit the Calc All Rows button (or call this method from a program).
 
 You can also \"lock in\" the current values by turning OFF the Calc flag on the calc_val column -- the current values will just remain as is.  This can be useful for setting values and cleaning up data -- you can create new columns to compute values, lock them in, and then copy them back to the original column, etc.
@@ -929,8 +1202,56 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
 <body>
 = Matrix Data =
 
-* make random bit patterns based on prototypes
-* do highdim reduction stuff -- pull out the categories
+In this final section of the tutorial we explore some functions that can only be used on Matrix data (where the cells of a table contain multiple values).  We create random bit patterns based on prototypes, and then do various forms of analysis on these patterns.
+
+As usual, create a new MatrixDataProg in programs, and click on Edit Program.
+
+== Creating the Prototype Data Table ==
+
+Do New Data Table in the objs (call it ProtoData), and do columns/NewCol and create a String column called Name (we'll format this data as is typical for input data presented to a network), and then do columns/NewColMatrix, specify a float type, with 2 dimensions, each of size 5 (i.e., a 5x5 matrix) -- call this one Input.
+
+Now we'll write some code to add 4 random bit patterns to this prototype data.  Drag a <code>meth()</code> from the Var/Fun toolbox, set the object to ProtoData, and select the AddRows method (under Rows category) -- for the arg set 4 rows.
+
+Duplicate that method call and select the InitValsToRowNo method (under Modify category), and set the arg to \"Name\" -- this will set the name of each prototype to the row number.
+
+Now for the main call -- in the Misc Fun toolbox, drag the <code>data gen()</code> item onto prog_code (adding it to the end), and select the PermutedBinary_MinDist method under the Random section, which will make random bit patterns with a given number of items on (value = 1) with the rest off, ensuring that all the patterns have a minimum distance from each other (if possible).  For the args, set the data to the ProtoData item (use var_lookup or Ctrl+L), enter \"Input\" (incl quotes) for the col_nm, and let's set 6 bits on, with a minimum dist of 10 using the default HAMMING metric specified by the final three args (which you can just leave blank) -- the HAMMING metric counts a 1 for every cell in the matrix that is different, so with 6 bits on and the rest off, the maximum distance is 12.
+
+You can now Init and Run, and check the ProtoData that was generated.  To get a better view of this data, click on View/New Grid View on the ProtoData -- select New Frame.  This allows you to see all the patterns at once, as colored squares.  If you want a better view of it, click on the new middle tab on the far right to bring up the view control for it, and enter 4 for the Rows (instead of the default of 10), and Apply.
+
+Unless you have special powers, it probably won't be obvious whether these patterns do in fact overlap very little as we specified.  To check this, let's compute a distance matrix, which shows how far each pattern is from each other one.  Drag a <code>data anal()</code> from Misc Fun to the end.  Select the DistMatrixTable method (under the Distance category).  We need to create a new data table in objs to hold the results -- call it ProtoDists.  This is then the first arg.  Set view to true (just enter the word true into the expr), set ProtoData for src_data, and the data col nm = \"Input\", name col nm = \"Name\".  For the distance metric to use, type taMath::HAMMING (you can just type taMath:: and then do Ctrl+L to pick from a list of options).  That's it!
+
+After you Init and Run, you should see a new frame with the distance information, which you'll notice has 8 items instead of the expected 4 -- what happened??  We forgot to reset the ProtoData table prior to adding 4 rows to it.  Drag a <code>reset rows</code> from Data to the first line of the prog_code, and select ProtoData, and run again.
+
+Now, you should see that the minimum distance in the distance table is 10, exactly as you requested.  You can play with the parameters at this point to test things further if you want.
+
+== Generating Random Permutations from the Prototypes ==
+
+Next, we replicate these prototypes into a new data table, and then permute the patterns to create random variants of the prototypical patterns.  First, duplicate the ProtoData, and call it ItemData. Also, create a new data table called \"ItemDists\" to hold the distance information for these items.
+
+Drag a <code>data proc()</code> from the Misc Fun toolbox to the end of the code, and choose ReplicateRows from the Copy category -- dest is ItemData, src is ProtoData, and n_repl = 6 (6 items per prototype).
+
+Next, add a <code>data gen()</code> to the end, and select FlipBits under Random -- data is ItemData, col_nm is \"Input\", n_off is 1 and n_on is also 1.  This will flip one bit at random off from those that are on, and vice-versa for one bit that is currently off.
+
+You can Init and Run at this point, and do a Grid View of the ItemData to see what it looks like -- you should be able to perceive the \"family resemblance\" of all the items within a prototype.
+
+To see this structure in the distance matrix, copy the previous DistMatrixTable call to the end of the program, and change the relevant tables to their Item versions (ItemDists, ItemData), and also set the name_col_nm to \"\" (an empty string) -- this will generate a distance matrix without name labels, which is rendered as a single matrix cell and is more appropriate for larger numbers of items.
+
+When you Run it now, you should see the ItemDists matrix has four distinct squares along the diagonal -- these are the 6 items within each prototype family that are very similar to each other, and distant from all the other items.
+
+One flourish you can add to the distance display is to add height information to the grid view -- set the <code>blk hgt</code> field in the view control panel (right-most tab in middle panel) to 1 instead of 0, Apply, and then move the Rotx wheel on the left side of the 3d view -- you should see that the block height now also shows you the distance information.
+
+== Dimensionality Reduction Analysis (Cluster Plot, PCA) ==
+
+The last step in this tutorial is to apply a couple of useful dimensionality reduction techniques to these patterns.  First, we do a cluster plot, and then a principal components analysis (PCA).
+
+Make two new data tables in objs called ItemCluster and ItemPCA.  Then drag a <code>data anal()</code> to the program and select Cluster under HighDim.  The clust_data is ItemCluster, set view to true, the src_data is ItemData, and the columns are \"Input\" and \"Name\" -- leave the metric information blank for the defaults.
+
+When you Run now, you should see a tree-like clustering graph with items from each of the same prototype being clustered together on the right (leaf) side of the graph -- this means that these items are most similar to each other.
+
+Next duplicate this last taDataAnal item and select the PCA2dPrjn method -- most of the args are the same, except you want to set the prjn_data to ItemPCA. When you Run this, you should see a plot with the items clustered together as points within a 2d space -- the X axis represents the projection of the individual patterns onto the first principal component of variance across the item patterns, while the Y axis shows the projection onto the 2nd principal component of variance.  This will provide the greatest separation among the points.  If you change the final two args to this PCA function to 3 and 4, you'll see that projecting onto the smaller components produces a more mixed distribution of points from the different prototypes -- it is picking up on the \"residual\" variation after factoring out the major differences due to the prototype effects.
+
+To actually see what the eigenvectors for these patterns look like, you can create yet another new data table (ItemEigens) and duplicate the last program item, select PCAEigenTable, and set this new ItemEigens as the output pca_data table.  You should recognize blends of the different prototypes in the first few eigenvectors.
+
 
 </body>
 </html>
@@ -2138,7 +2459,7 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
     el_typ=DataTable;
     el_def=0;
     DataTable @[0] {
-     name="selectedrows";
+     name="SelectedData";
      desc=;
      data {
       name="data";
@@ -2587,7 +2908,7 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
      desc=;
     };
     ProgVar @[1] {
-     name="selectedrows";
+     name="SelectedData";
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects[0].programs[2].objs[0]$19$;
@@ -3024,7 +3345,7 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
        var_type=T_Int;
        int_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -3033,7 +3354,7 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
       };
@@ -3047,9 +3368,1165 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
        var_type=T_Real;
        real_val=0;
        objs_ptr=0;
-       flags=NULL_CHECK|LOCAL_VAR;
+       flags=NULL_CHECK|LOCAL_VAR|USED;
        reference=0;
        desc=;
+      };
+     };
+    };
+   };
+  };
+  Program @[4] {
+   name="MatrixDataProg";
+   tags=;
+   desc=;
+   flags=;
+   objs {
+    name=;
+    el_typ=DataTable;
+    el_def=0;
+    DataTable @[0] {
+     name="ProtoData";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] "0";"1";"2";"3";       };
+      };
+      float_Data @[1] {
+       name="Input";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 4] 0;1;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;1;0;1;1;0;0;0;0;0;0;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;1;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;1;0;0;0;1;1;0;0;1;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;1;1;0;1;0;0;0;0;0;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[1] {
+     name="ItemData";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [24] "0";"0";"0";"0";"0";"0";"1";"1";"1";"1";"1";"1";"2";"2";"2";"2";"2";"2";"3";"3";"3";"3";"3";"3";       };
+      };
+      float_Data @[1] {
+       name="Input";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 24] 0;1;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;1;0;1;1;0;0;0;0;0;1;0;0;0;1;0;0;0;1;0;1;0;0;0;0;0;0;0;1;1;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;1;0;0;0;1;0;1;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;0;1;0;0;0;1;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;1;1;0;0;0;0;1;0;1;1;0;0;0;0;0;1;0;0;1;0;0;0;0;1;0;1;0;0;0;0;0;0;0;1;1;0;0;0;0;0;0;1;1;1;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;1;0;1;0;0;1;1;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;1;0;1;0;0;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;1;0;1;0;1;0;0;0;1;1;0;0;0;1;0;0;0;0;0;0;0;0;1;0;0;0;0;1;0;1;0;0;1;1;1;0;0;0;0;0;0;0;0;0;1;0;0;1;0;0;0;0;1;0;0;0;0;1;1;1;0;1;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;1;0;0;0;0;0;0;0;1;0;0;1;0;1;0;0;0;0;0;0;0;1;1;0;0;1;0;0;0;0;0;0;1;1;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;0;0;1;1;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;0;0;0;0;0;1;0;0;0;1;0;0;0;1;1;0;0;1;0;0;0;0;0;0;0;1;0;0;0;0;1;0;0;0;1;0;1;0;1;0;0;0;1;0;0;0;0;0;0;1;1;0;0;0;0;1;0;0;0;1;0;0;0;1;0;0;0;1;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;0;1;0;1;0;0;0;1;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;1;0;0;1;0;0;0;1;0;0;0;1;0;1;0;0;0;0;0;0;1;0;0;0;1;1;0;0;1;0;0;0;0;0;0;0;1;0;1;0;0;0;0;0;0;0;0;0;0;1;1;1;0;0;0;0;0;1;0;0;0;1;0;1;0;0;0;0;0;0;0;1;0;0;0;1;1;0;1;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;1;0;1;1;1;0;1;0;0;0;0;0;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="N_ROWS";
+       value 2 0=1;
+      };
+      UserDataItem @[1] {
+       name="AUTO_SCALE";
+       value 1 0=1;
+      };
+     };
+     name="ProtoDists";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       name="Name";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] "0";"1";"2";"3";       };
+      };
+      float_Data @[1] {
+       name="0";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 0;10;10;10;       };
+      };
+      float_Data @[2] {
+       name="1";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 10;0;10;10;       };
+      };
+      float_Data @[3] {
+       name="2";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 10;10;0;10;       };
+      };
+      float_Data @[4] {
+       name="3";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [4] 10;10;10;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[3] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="N_ROWS";
+       value 2 0=1;
+      };
+      UserDataItem @[1] {
+       name="AUTO_SCALE";
+       value 1 0=1;
+      };
+     };
+     name="ItemDists";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="TOP_ZERO";
+	 value 1 0=1;
+	};
+       };
+       name="ItemData_DistMatrix";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 24;24;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [24 24 1] 0;4;4;4;4;2;10;10;8;8;8;8;10;10;10;10;10;10;10;10;10;10;8;12;4;0;4;4;4;2;12;12;10;12;12;12;10;10;10;10;10;10;10;10;10;10;8;12;4;4;0;4;4;4;12;10;8;10;10;10;10;10;10;10;10;10;10;8;8;8;6;10;4;4;4;0;2;4;12;10;8;10;10;10;10;10;10;10;10;10;12;12;12;12;10;12;4;4;4;2;0;4;12;10;8;10;10;10;8;8;8;8;8;8;12;12;12;12;10;10;2;2;4;4;4;0;10;12;10;10;10;10;10;10;10;10;10;10;10;10;10;10;8;12;10;12;12;12;12;10;0;4;4;4;4;4;10;8;8;6;8;8;6;8;10;6;8;8;10;12;10;10;10;12;4;0;2;4;4;4;8;10;10;8;10;10;8;8;8;8;10;10;8;10;8;8;8;10;4;2;0;4;4;4;8;8;8;6;8;8;8;8;10;8;10;10;8;12;10;10;10;10;4;4;4;0;4;4;10;10;10;8;10;10;8;8;10;8;10;10;8;12;10;10;10;10;4;4;4;4;0;4;12;12;12;10;12;12;6;6;8;6;10;8;8;12;10;10;10;10;4;4;4;4;4;0;10;8;8;8;10;8;10;10;10;10;10;10;10;10;10;10;8;10;10;8;8;10;12;10;0;4;4;4;4;4;12;12;10;12;12;10;10;10;10;10;8;10;8;10;8;10;12;8;4;0;0;4;2;0;10;12;12;10;10;8;10;10;10;10;8;10;8;10;8;10;12;8;4;0;0;4;2;0;10;12;12;10;10;8;10;10;10;10;8;10;6;8;6;8;10;8;4;4;4;0;4;4;8;10;10;8;8;6;10;10;10;10;8;10;8;10;8;10;12;10;4;2;2;4;0;2;8;10;10;10;8;6;10;10;10;10;8;10;8;10;8;10;12;8;4;0;0;4;2;0;10;12;12;10;10;8;10;10;10;12;12;10;6;8;8;8;6;10;12;10;10;8;8;10;0;2;4;2;4;4;10;10;8;12;12;10;8;8;8;8;6;10;12;12;12;10;10;12;2;0;2;2;4;4;10;10;8;12;12;10;10;8;10;10;8;10;10;12;12;10;10;12;4;2;0;4;4;4;10;10;8;12;12;10;6;8;8;8;6;10;12;10;10;8;10;10;2;2;4;0;4;4;8;8;6;10;10;8;8;10;10;10;10;10;12;10;10;8;8;10;4;4;4;4;0;4;12;12;10;12;10;12;8;10;10;10;8;10;10;8;8;6;6;8;4;4;4;4;4;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[4] {
+     name="ItemCluster";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="X_AXIS";
+	 value 1 0=1;
+	};
+	UserDataItem @[1] {
+	 name="MAX";
+	 value 6 0=14.42077922821045;
+	};
+       };
+       name="X";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [175] 0;0;0;0;0;3.1257772;3.1257772;5.1257772;3.1257772;3.1257772;3.1257772;3.1257772;5.1257772;5.1257772;6.5399909;5.1257772;5.1257772;5.1257772;5.1257772;6.5399909;5.1257772;5.1257772;5.1257772;5.1257772;6.5399909;5.1257772;5.1257772;5.1257772;3.1257772;3.1257772;3.1257772;5.1257772;5.1257772;6.5399909;5.1257772;5.1257772;5.1257772;5.1257772;6.5399909;5.1257772;5.1257772;5.1257772;3.1257772;3.1257772;0;0;0;3.1257772;3.1257772;6.1367817;6.1367817;8.1367817;6.1367817;6.1367817;6.1367817;6.1367817;8.1367817;6.1367817;6.1367817;6.1367817;6.1367817;8.1367817;8.1367817;9.5509949;8.1367817;8.1367817;8.1367817;8.1367817;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;9.5509949;8.1367817;8.1367817;6.1367817;6.1367817;3.1257772;3.1257772;3.1257772;6.1367817;6.1367822;9.1255951;9.1255951;11.125595;9.1255951;9.1255951;9.1255951;9.1255951;11.125595;9.1255951;9.1255951;9.1255951;9.1255951;11.125595;9.1255951;9.1255951;9.1255951;9.1255951;11.125595;9.1255951;9.1255951;9.1255951;9.1255951;11.125595;11.125595;12.539808;11.125595;11.125595;11.125595;11.125595;12.539808;11.125595;11.125595;11.125595;9.1255951;9.1255951;6.1367822;6.1367817;6.1367822;9.1255951;9.1255951;11.125595;9.1255951;9.1255951;9.1255951;9.1255951;11.125595;9.1255951;9.1255951;9.1255951;9.1255951;11.125595;11.125595;12.539808;11.125595;11.125595;11.125595;11.125595;12.539808;11.125595;11.125595;11.125595;11.125595;12.539808;11.125595;11.125595;11.125595;11.125595;12.539808;11.125595;11.125595;11.125595;9.1255951;9.1255951;6.1367822;6.1367817;3.1257772;3.1257772;0;0;0;0;0;       };
+      };
+      float_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="PLOT_1";
+	 value 1 0=1;
+	};
+	UserDataItem @[1] {
+	 name="MAX";
+	 value 6 0=23.79999923706055;
+	};
+	UserDataItem @[2] {
+	 name="MIN";
+	 value 6 0=0.2000000029802322;
+	};
+       };
+       name="Y";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [175] 7.6166668;7.6166668;7.6166668;7.6166668;2.6666667;2.6666667;0.5;0.5;0.5;0.5;2.6666667;2.5;2.5;1.5;1.5;1.5;1.5;2.5;2.5;2.5;2.5;2.5;2.5;3.5;3.5;3.5;3.5;2.5;2.5;2.6666667;5;5;4.5;4.5;4.5;4.5;5;5.5;5.5;5.5;5.5;5;5;2.6666667;2.6666667;7.6166668;12.566667;12.566667;7.8333335;7.8333335;6.5;6.5;6.5;6.5;7.8333335;7.5;7.5;7.5;7.5;7.8333335;9.5;9.5;8.5;8.5;8.5;8.5;9.5;10.5;10.5;9.5;9.5;9.5;9.5;10.5;10.5;10.5;10.5;10.5;10.5;11.5;11.5;11.5;11.5;10.5;10.5;9.5;9.5;7.8333335;7.8333335;12.566667;17.299999;17.299999;14.6;14.6;12.5;12.5;12.5;12.5;14.6;13.5;13.5;13.5;13.5;14.6;14.5;14.5;14.5;14.5;14.6;15.5;15.5;15.5;15.5;14.6;17;17;16.5;16.5;16.5;16.5;17;17.5;17.5;17.5;17.5;17;17;14.6;14.6;17.299999;20;20;18.5;18.5;18.5;18.5;20;19.5;19.5;19.5;19.5;20;22;22;20.5;20.5;20.5;20.5;22;21.5;21.5;21.5;21.5;22;22.5;22.5;22.5;22.5;22;23.5;23.5;23.5;23.5;22;22;20;20;17.299999;17.299999;12.566667;12.566667;7.6166668;7.6166668;7.6166668;7.6166668;       };
+      };
+      String_Data @[2] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="PLOT_2";
+	 value 1 0=1;
+	};
+       };
+       name="Label";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [175] ;;;;;;;"0";;;;;;;"0";;;;;"0";;;;;"0";;;;;;;;;"0";;;;;"0";;;;;;;;;;;;;"2";;;;;"2";;;;;;;"2";;;;;;;"2";;;;;"2";;;;;"2";;;;;;;;;;;;;;;"1";;;;;"1";;;;;"1";;;;;"1";;;;;;;"1";;;;;"1";;;;;;;;;;;"3";;;;;"3";;;;;;;"3";;;;;"3";;;;;"3";;;;;"3";;;;;;;;;;;;;;;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItemBase;
+      el_def=0;
+      UserDataItem @[0] {
+       name="PLOT_STYLE";
+       value 9 0="POINTS";
+      };
+     };
+     name="ItemPCA";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @[0] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="PLOT_2";
+	 value 1 0=1;
+	};
+       };
+       name="Name";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [24] "0";"0";"0";"0";"0";"0";"1";"1";"1";"1";"1";"1";"2";"2";"2";"2";"2";"2";"3";"3";"3";"3";"3";"3";       };
+      };
+      float_Data @[1] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="X_AXIS";
+	 value 1 0=1;
+	};
+       };
+       name="x_prjn";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [24] -0.24508342;-0.055133317;0.080080777;0.14336033;0.11473627;-0.2872735;-0.49527052;0.78000599;0.20999052;-0.20469405;-0.13504542;-0.43327627;1.2376177;-0.60301316;-0.60301316;0.36486822;-0.25415975;-0.60301316;-0.37942171;-0.011238756;0.64496535;-0.33161518;-0.37087113;-0.2283015;       };
+      };
+      float_Data @[2] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItemBase;
+	el_def=0;
+	UserDataItem @[0] {
+	 name="PLOT_1";
+	 value 1 0=1;
+	};
+       };
+       name="y_prjn";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [24] -0.25117224;-0.81240624;0.17246984;0.90234572;0.39395204;-0.498797;-0.29284555;0.13025233;0.16395372;-0.2670109;0.19174431;0.089141525;-0.26801163;0.056126736;0.056126736;-0.17321244;0.11016076;0.056126736;-0.081173822;0.013585996;0.019531906;-0.067865476;-0.0015239269;0.48918307;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+    DataTable @[6] {
+     name="ItemEigens";
+     desc=;
+     data {
+      name="data";
+      el_typ=float_Data;
+      el_def=0;
+      float_Data @[0] {
+       name="Input_PCAEigens";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 5;5;       };
+       calc_expr {
+	expr=;
+       };
+       ar {
+	name=;
+	      [5 5 25] 0;0.0057832794;-0.1652265;-0.38529229;-0.027065465;0.16343965;0.038918693;0.081892632;-0.067622714;0.34130692;-0.083841413;0.33035183;0.092654623;0.17083015;-0.27886733;-0.16675211;-0.12331592;0.076855846;-0.20142375;0.34801653;0.3693662;0.025846252;-0.2908648;0;-0.059008505;0;-0.30614361;-0.0044028871;-0.11440807;-0.097973958;-0.10513757;0.28507203;0.3843134;-0.018440036;-0.20287269;0.043740097;-0.24930511;0.36275023;-0.086665623;-0.16831437;-0.18873399;0.22828349;-0.14158873;-0.082404278;-0.19822578;0.16384828;0.19170427;-0.11596587;0;0.37369749;0;0.25859109;-0.38088945;-0.084215507;-0.33617893;0.054778811;-0.031645492;0.118546;-0.20954515;0.010618936;0.0036524332;0.050125163;0.17346862;-0.052073613;0.20830725;0.31727797;0.24706405;-0.38598451;0.34233767;-0.035066646;0.033192199;0.038861822;-0.20976856;0;-0.22675483;0;-0.051772986;0.02307605;0.046327498;-0.24523093;-0.013090753;-0.36379576;-0.046471588;-0.086163267;0.02230691;0.63022983;-0.048028607;0.04050884;0.069132909;0.0022591888;0.032864153;-0.3353188;0.064497001;-0.014942376;-0.024762182;0.060214307;0.5112865;-0.025974235;0;0.041849878;0;-0.2942991;0.047516689;0.0019807999;-0.21317364;-0.52678287;0.063115112;-0.0056197965;-0.18807383;0.04949804;-0.051500924;0.007490111;0.088153489;0.59654707;0.11574449;0.13045748;0.035697658;0.29712281;0.11714913;-0.030512895;-0.0177995;-0.17382465;-0.057446826;0;-0.10742023;0;0.058778796;0.47922015;-0.015358423;-0.12824704;0.23184292;0.24314034;0.023017097;-0.73316079;0.021119745;0.14593092;-0.028359473;-0.12038607;-0.099186257;0.054398555;-0.043018162;-0.028098606;-0.043468688;-0.085065283;-0.00073813309;0.015060578;-0.19219561;-0.00778209;0;-0.02140457;0;-0.20506039;0.087591857;0.19896095;-0.16276665;0.27783021;-0.34126526;-0.21175893;-0.13312869;0.082817227;-0.36098829;-0.059673108;0.074320629;0.27658758;0.054964483;-0.26236254;0.34941366;-0.20486255;-0.05694649;0.11548824;0.058939956;0.27604759;0.27020648;0;0.006668956;0;0.086136155;0.084081888;0.078836799;0.42357275;-0.48580685;-0.11999004;-0.19538172;-0.33423159;-0.0996482;-0.18309401;0.17212667;0.095845029;-0.2714406;-0.060878068;0.042058993;0.13489582;-0.0085532004;-0.07721325;0.050861716;0.065974355;0.38095516;-0.22590028;0;-0.10411362;0;-0.01533362;-0.092696711;-0.17799576;0.4245255;-0.049144514;0.012642929;0.2128773;-0.061404511;-0.13474937;0.19234474;-0.19885479;0.035819404;0.20244496;0.42678249;-0.41314274;-0.11283061;-0.23052338;0.11592597;0.3350682;-0.088824868;-0.013236078;0.047511157;0;-0.18949287;0;-0.047466498;-0.048638213;-0.18437603;-0.19063663;-0.12399807;-0.15179077;0.095647506;-0.034809019;0.11234085;-0.19746302;-0.14331239;0.2870166;-0.42843601;0.37098292;0.00079553621;-0.1763164;0.2692498;-0.20150922;-0.019986449;0.26724526;-0.080296814;0.37597913;0;-0.191668;0;-0.43372923;0.10105871;0.17850381;0.069451623;0.32303521;0.074641705;-0.21481732;0.07510484;0.085471056;-0.050076127;-0.023534754;0.40989763;-0.1966645;0.15296939;0.040204011;-0.14759323;0.16005298;0.24186715;0.10866784;-0.20481828;-0.023658348;-0.43422133;0;-0.11146872;0;0.068927862;-0.15194495;0.099648744;0.034328859;0.12175443;0.46450135;-0.10377508;0.048843805;0.079450011;-0.089345716;-0.15708144;-0.051084094;0.21347967;0.30294847;0.24247175;-0.086366422;-0.041094467;-0.56015736;-0.10039234;-0.075268216;0.34557599;-0.084279768;0;-0.11998199;0;-0.21704246;0.061351899;-0.089810826;0.10270203;-0.14136451;-0.13940398;-0.008388944;0.067765616;0.40710953;0.36018306;0.095858783;0.18241826;-0.096958682;-0.04943068;0.18290021;0.32488382;-0.29263264;-0.37336865;0.077633023;-0.31067938;-0.23644409;0.1103703;0;-0.04448827;0;0.14119428;-0.23264812;0.19589539;-0.33153433;-0.08585377;0.23641846;-0.26992539;0.021842234;-0.32932338;0.24880448;0.12536956;0.10464629;-0.13796155;-0.038795024;-0.31460711;0.26710209;0.23755866;-0.16355257;0.37810841;-0.11361891;-0.075662643;0.043288;0;-0.080651477;0;-0.10338648;0.055147469;-0.1989163;0.13659608;0.31762263;-0.29616401;0.2720755;-0.017551171;-0.54351419;0.035475671;0.18314613;0.015375433;0.11967552;0.031481985;0.26825032;0.23989016;0.28930122;-0.2404875;-0.052946005;-0.055149876;-0.017542066;-0.066064;0;-0.1944301;0;-0.070990928;-0.011355999;0.13464724;0.034048259;-0.037514713;-0.10767055;-0.19563502;-0.014091521;-0.29109532;-0.016850406;-0.25582391;0.065366641;0.054958794;-0.039873902;0.41238517;-0.19004099;-0.2670725;-0.13491584;0.44113234;0.35994986;-0.26895282;-0.026080208;0;0.26802281;0;-0.13204257;0.014694509;0.0073246881;-0.096176654;-0.033391941;0.19589561;0.22760308;-0.081633583;-0.15403195;-0.19541693;0.3190957;0.16140667;-0.0091010444;-0.25097328;0.17554684;-0.36693543;-0.18570273;0.081169903;0.2468251;-0.37138143;0.20812443;0.41013205;0;-0.072982714;0;0.18870632;-0.24001698;-0.37576759;0.10654362;0.094349392;-0.071625382;-0.16806208;-0.26133099;0.10709862;-0.080414377;-0.35050592;0.10769352;0.037897341;-0.09103588;0.13234407;0.069208868;0.3205986;0.082510546;0.13547422;-0.39857724;0.079463869;0.083863415;0;0.39885414;0;-0.1360209;-0.091790862;-0.32714924;0.20891421;0.11105675;0.22971609;-0.53647673;-0.03196276;-0.1532339;0.19780096;0.16833661;0.19144244;0.0964275;-0.061973967;0.02935908;0.0049301218;-0.10089964;0.16399989;-0.32818943;0.25102124;-0.018564681;0.32980087;0;-0.099702001;0;-0.11544882;0.41674557;-0.47800988;-0.22364882;-0.1019796;0.14632934;-0.1354645;0.29986519;-0.040655494;-0.029312635;-0.077518433;-0.31143028;-0.13272257;0.1376002;0.13780174;0.20230152;-0.041049805;0.1569234;0.29990312;0.0060581467;0.26670676;-0.051125072;0;-0.048901431;0;-0.53066528;-0.44519311;0.010763383;0.0093419226;0.0043110223;0.0080181574;0.0087560955;-0.2190598;0.008750678;0.0071258694;-0.2240103;-0.51671153;-0.21903166;-0.2134188;0.0093184672;0.010606912;0.010431349;0.0093172081;0.0087286802;0.010732419;0.0059361891;0.010157308;0;-0.24556392;0;-0.22872829;-0.19187813;-0.0046123159;-0.0040093311;-0.0018503951;-0.0034532698;-0.0037609928;-0.094413154;-0.00376078;-0.003063574;0.52076328;-0.2227181;-0.094409533;0.49611011;-0.0040116142;-0.0045682746;-0.0044835601;-0.0040119486;-0.0037629213;-0.0046166806;-0.0025618677;-0.0043660467;0;0.57086909;0;-0.015067717;-0.012693672;-0.3076694;-0.26739749;-0.12339797;-0.23017494;-0.25080046;-0.0062555564;-0.25080967;-0.20424268;-0.015613099;-0.014647934;-0.0062086;-0.014899325;-0.26743761;-0.30449593;-0.29898465;-0.26743889;-0.25084731;-0.30771703;-0.1707208;-0.29112536;0;-0.017124094;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;-1;0;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="ProtoData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[0]$31$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[1] {
+     name="ProtoDists";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[2]$32$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[2] {
+     name="ItemData";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[1]$33$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[3] {
+     name="ItemDists";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[3]$34$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[4] {
+     name="ItemCluster";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[4]$35$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[5] {
+     name="ItemPCA";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[5]$36$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+    ProgVar @[6] {
+     name="ItemEigens";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects[0].programs[4].objs[6]$37$;
+     objs_ptr=1;
+     flags=NULL_CHECK|USED;
+     reference=0;
+     desc=;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   load_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgEl;
+    el_def=0;
+    ResetDataRows @[0] {
+     desc=;
+     flags=;
+     data_var=.projects[0].programs[4].vars[0]$38$;
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$38$;
+     method=DataTable::AddRows;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n";
+       required=0;
+       def_val="1";
+       expr {
+	expr="4";
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     obj=$38$;
+     method=DataTable::InitValsToRowNo;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=0;
+       def_val=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+     };
+    };
+    DataGenCall @[3] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataGen;
+     method=taDataGen::PermutedBinary_MinDist;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ProtoData";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Input\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="n_on";
+       required=1;
+       def_val=;
+       expr {
+	expr="6";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=float;
+       type="float";
+       name="dist";
+       required=1;
+       def_val=;
+       expr {
+	expr="10";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=taMath::DistMetric;
+       type="taMath::DistMetric";
+       name="metric";
+       required=0;
+       def_val="taMath::HAMMING";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[5] {
+       arg_type=bool;
+       type="bool";
+       name="norm";
+       required=0;
+       def_val="false";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=float;
+       type="float";
+       name="tol";
+       required=0;
+       def_val="0.0f";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataAnalCall @[4] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::DistMatrixTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dist_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="ProtoDists";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ProtoData";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Input\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="name_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=taMath::DistMetric;
+       type="taMath::DistMetric";
+       name="metric";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath::HAMMING";
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="norm";
+       required=0;
+       def_val="false";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=float;
+       type="float";
+       name="tol";
+       required=0;
+       def_val="0.0f";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataProcCall @[5] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataProc;
+     method=taDataProc::ReplicateRows;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dest";
+       required=0;
+       def_val=;
+       expr {
+	expr="ItemData";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src";
+       required=0;
+       def_val=;
+       expr {
+	expr="ProtoData";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="n_repl";
+       required=0;
+       def_val=;
+       expr {
+	expr="6";
+       };
+      };
+     };
+    };
+    DataGenCall @[6] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataGen;
+     method=taDataGen::FlipBits;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="data";
+       required=0;
+       def_val=;
+       expr {
+	expr="ItemData";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="col_nm";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="\"Input\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="n_off";
+       required=0;
+       def_val=;
+       expr {
+	expr="1";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=int;
+       type="int";
+       name="n_on";
+       required=0;
+       def_val=;
+       expr {
+	expr="1";
+       };
+      };
+     };
+    };
+    DataAnalCall @[7] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::DistMatrixTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dist_mat";
+       required=1;
+       def_val=;
+       expr {
+	expr="ItemDists";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ItemData";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Input\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="name_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=taMath::DistMetric;
+       type="taMath::DistMetric";
+       name="metric";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath::HAMMING";
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="norm";
+       required=0;
+       def_val="false";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=float;
+       type="float";
+       name="tol";
+       required=0;
+       def_val="0.0f";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataAnalCall @[8] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::Cluster;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="clust_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ItemCluster";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ItemData";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Input\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="name_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=taMath::DistMetric;
+       type="taMath::DistMetric";
+       name="metric";
+       required=0;
+       def_val="taMath::EUCLIDIAN";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[6] {
+       arg_type=bool;
+       type="bool";
+       name="norm";
+       required=0;
+       def_val="false";
+       expr {
+	expr=;
+       };
+      };
+      ProgArg @[7] {
+       arg_type=float;
+       type="float";
+       name="tol";
+       required=0;
+       def_val="0.0f";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    DataAnalCall @[9] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::PCA2dPrjn;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="prjn_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ItemPCA";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="ItemData";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="data_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Input\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="name_col_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Name\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="x_axis_component";
+       required=0;
+       def_val="0";
+       expr {
+	expr="3";
+       };
+      };
+      ProgArg @[6] {
+       arg_type=int;
+       type="int";
+       name="y_axis_component";
+       required=0;
+       def_val="1";
+       expr {
+	expr="4";
+       };
+      };
+     };
+    };
+    DataAnalCall @[10] {
+     desc=;
+     flags=;
+     result_var=NULL;
+     object_type=taDataAnal;
+     method=taDataAnal::PCAEigenTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="pca_data";
+       required=0;
+       def_val=;
+       expr {
+	expr="ItemEigens";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="view";
+       required=0;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="src_data";
+       required=0;
+       def_val=;
+       expr {
+	expr="ItemData";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="data_col_nm";
+       required=0;
+       def_val="\"\"";
+       expr {
+	expr="\"Input\"";
+       };
       };
      };
     };
@@ -3061,7 +4538,7 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$31$;
+   m_data=.projects[0]$39$;
    name="Browser2";
    visible=1;
    m_is_root=0;
@@ -3091,7 +4568,7 @@ That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixData
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$31$;
+     m_root=$39$;
     };
     PanelViewer @[1] {
      m_data=NULL;
@@ -3125,7 +4602,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$32$;
+	    m_data=.projects[0].data.gp[0][0].data[0]$40$;
 	    m_transform=NULL;
 	    name="batch";
 	    visible=1;
@@ -3133,7 +4610,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$33$;
+	    m_data=.projects[0].data.gp[0][0].data[1]$41$;
 	    m_transform=NULL;
 	    name="cond1";
 	    visible=1;
@@ -3141,7 +4618,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$34$;
+	    m_data=.projects[0].data.gp[0][0].data[2]$42$;
 	    m_transform=NULL;
 	    name="cond1_lbl";
 	    visible=1;
@@ -3149,7 +4626,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[0][0].data[3]$35$;
+	    m_data=.projects[0].data.gp[0][0].data[3]$43$;
 	    m_transform=NULL;
 	    name="cond2";
 	    visible=1;
@@ -3157,7 +4634,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[0][0].data[4]$36$;
+	    m_data=.projects[0].data.gp[0][0].data[4]$44$;
 	    m_transform=NULL;
 	    name="cond2_lbl";
 	    visible=1;
@@ -3165,7 +4642,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[0][0].data[5]$37$;
+	    m_data=.projects[0].data.gp[0][0].data[5]$45$;
 	    m_transform=NULL;
 	    name="cond_lbl";
 	    visible=1;
@@ -3173,7 +4650,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[0][0].data[6]$38$;
+	    m_data=.projects[0].data.gp[0][0].data[6]$46$;
 	    m_transform=NULL;
 	    name="cycles";
 	    visible=1;
@@ -3181,7 +4658,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[0][0].data[7]$39$;
+	    m_data=.projects[0].data.gp[0][0].data[7]$47$;
 	    m_transform=NULL;
 	    name="sse";
 	    visible=1;
@@ -3424,7 +4901,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$40$;
+	   spec=.colorspecs[0]$48$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -3475,7 +4952,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[1].objs[0].data[0]$41$;
+	    m_data=.projects[0].programs[1].objs[0].data[0]$49$;
 	    m_transform=NULL;
 	    name="cond1_group";
 	    visible=1;
@@ -3483,7 +4960,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[1].objs[0].data[1]$42$;
+	    m_data=.projects[0].programs[1].objs[0].data[1]$50$;
 	    m_transform=NULL;
 	    name="cond2_group";
 	    visible=1;
@@ -3491,7 +4968,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[1].objs[0].data[2]$43$;
+	    m_data=.projects[0].programs[1].objs[0].data[2]$51$;
 	    m_transform=NULL;
 	    name="cond_lbl_first";
 	    visible=1;
@@ -3499,7 +4976,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].programs[1].objs[0].data[3]$44$;
+	    m_data=.projects[0].programs[1].objs[0].data[3]$52$;
 	    m_transform=NULL;
 	    name="cycles_mean";
 	    visible=1;
@@ -3507,7 +4984,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].programs[1].objs[0].data[4]$45$;
+	    m_data=.projects[0].programs[1].objs[0].data[4]$53$;
 	    m_transform=NULL;
 	    name="cycles_sem";
 	    visible=1;
@@ -3515,7 +4992,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].programs[1].objs[0].data[5]$46$;
+	    m_data=.projects[0].programs[1].objs[0].data[5]$54$;
 	    m_transform=NULL;
 	    name="sse_mean";
 	    visible=1;
@@ -3523,7 +5000,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].programs[1].objs[0].data[6]$47$;
+	    m_data=.projects[0].programs[1].objs[0].data[6]$55$;
 	    m_transform=NULL;
 	    name="sse_sem";
 	    visible=1;
@@ -3766,7 +5243,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$40$;
+	   spec=$48$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
@@ -3796,6 +5273,1047 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        camera_pos {x=1.4275: y=0.445: z=1.624621: };
        camera_orient {x=0: y=0: z=1: rot=0: };
        camera_focdist=1.637121;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[2] {
+       m_data=NULL;
+       name="ProtoDists";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$32$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[4].objs[2].data[0]$56$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].programs[4].objs[2].data[1]$57$;
+	    m_transform=NULL;
+	    name="0";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[2] {
+	    m_data=.projects[0].programs[4].objs[2].data[2]$58$;
+	    m_transform=NULL;
+	    name="1";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[3] {
+	    m_data=.projects[0].programs[4].objs[2].data[3]$59$;
+	    m_transform=NULL;
+	    name="2";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[4] {
+	    m_data=.projects[0].programs[4].objs[2].data[4]$60$;
+	    m_transform=NULL;
+	    name="3";
+	    visible=1;
+	    text_width=8;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=1;
+	  view_range {min=0: max=0: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=4: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=1;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.5325: y=0.5175: z=1.443747: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.453747;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[3] {
+       m_data=NULL;
+       name="ProtoData";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$31$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[4].objs[0].data[0]$61$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].programs[4].objs[0].data[1]$62$;
+	    m_transform=NULL;
+	    name="Input";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=4;
+	  view_range {min=0: max=3: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=1: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.5325: y=0.5175: z=1.443747: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.453747;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[4] {
+       m_data=NULL;
+       name="ItemDists";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$34$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[4].objs[3].data[0]$63$;
+	    m_transform=NULL;
+	    name="ItemData_DistMatrix";
+	    visible=1;
+	    text_width=24;
+	    scale_on=1;
+	    mat_layout=TOP_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=1;
+	  view_range {min=0: max=0: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=0: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-12;
+	   max=12;
+	   range=12;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=1;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=1;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.5325: y=0.5174999: z=1.443747: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.453747;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[5] {
+       m_data=NULL;
+       name="ItemData";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$33$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[4].objs[1].data[0]$64$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @[1] {
+	    m_data=.projects[0].programs[4].objs[1].data[1]$65$;
+	    m_transform=NULL;
+	    name="Input";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10;
+	  view_range {min=0: max=9: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=1: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.5325: y=0.5174999: z=1.443747: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.453747;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[6] {
+       m_data=NULL;
+       name="ItemCluster";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$35$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].programs[4].objs[4].data[0]$66$;
+	    m_transform=NULL;
+	    name="X";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].programs[4].objs[4].data[1]$67$;
+	    m_transform=NULL;
+	    name="Y";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].programs[4].objs[4].data[2]$68$;
+	    m_transform=NULL;
+	    name="Label";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=174: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="X";
+	   fixed_range {fix_min=0: min=0: fix_max=1: max=14.42078: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=14.42078: };
+	   range {min=0: max=14.42078: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Y";
+	   fixed_range {fix_min=1: min=0.2: fix_max=1: max=23.8: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0.2: max=23.8: };
+	   range {min=0.2: max=23.8: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Label";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.4275: y=0.445: z=1.624621: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.637121;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[7] {
+       m_data=NULL;
+       name="ItemPCA";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  m_data=$36$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    m_data=.projects[0].programs[4].objs[5].data[0]$69$;
+	    m_transform=NULL;
+	    name="Name";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    m_data=.projects[0].programs[4].objs[5].data[1]$70$;
+	    m_transform=NULL;
+	    name="x_prjn";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    m_data=.projects[0].programs[4].objs[5].data[2]$71$;
+	    m_transform=NULL;
+	    name="y_prjn";
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=23: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=POINTS;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="x_prjn";
+	   fixed_range {fix_min=0: min=-0.6030132: fix_max=0: max=1.237618: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-0.6030132: max=1.237618: };
+	   range {min=-0.6030132: max=1.237618: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="y_prjn";
+	   fixed_range {fix_min=0: min=-0.8124062: fix_max=0: max=0.9023457: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=-0.8124062: max=0.9023457: };
+	   range {min=-0.8124062: max=0.9023457: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="Name";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=0;
+	  };
+	  plot_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       camera_pos {x=1.4275: y=0.445: z=1.62462: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.63712;
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      };
+      T3DataViewFrame @[8] {
+       m_data=NULL;
+       name="ItemEigens";
+       visible=1;
+       root_view {
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @[0] {
+	  m_data=$37$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @[0] {
+	    m_data=.projects[0].programs[4].objs[6].data[0]$72$;
+	    m_transform=NULL;
+	    name="Input_PCAEigens";
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=4;
+	  view_range {min=0: max=3: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=0: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$48$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	 };
+	};
+       };
+       camera_pos {x=1.5325: y=0.5174999: z=1.443747: };
+       camera_orient {x=0: y=0: z=1: rot=0: };
+       camera_focdist=1.453747;
        bg_color {r=0.8: g=0.8: b=0.8: a=1: };
       };
      };
