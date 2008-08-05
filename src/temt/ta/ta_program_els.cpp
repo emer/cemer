@@ -893,6 +893,8 @@ void MemberProgEl::UpdateAfterEdit_impl() {
   GetTypeFromPath();
 }
 
+// StringFieldLookupFun is in ta_program_qt.cpp
+
 bool MemberProgEl::GetTypeFromPath(bool quiet) {
   if(!obj) {
     obj_type = &TA_taBase; // placeholder

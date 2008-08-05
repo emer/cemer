@@ -434,12 +434,15 @@ public:
   TypeDef*		obj_type;
   // #NO_SHOW #NO_SAVE temp copy of obj.object_type
   String		path;
-  // path to the member -- can just be member name (use member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
+  // path to the member -- can just be member name (use Ctrl+L or member_lookup to lookup and enter here) -- you can also enter in multiple sub-path elements for object members that themselves have members
   MemberDef*		member_lookup;
   // #TYPE_ON_obj_type #APPLY_IMMED #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER lookup a member name -- after you choose, it will copy the name into the path and reset this lookup to NULL
   
   virtual bool		GetTypeFromPath(bool quiet = false);
   // get obj_type from current path (also gives warnings about bad paths unless quiet = true)
+
+  override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
+				       const String& mbr_name, int& new_pos);
 
   PROGEL_SIMPLE_BASEFUNS(MemberProgEl);
 protected:

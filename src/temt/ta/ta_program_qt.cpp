@@ -687,6 +687,10 @@ void iProgramEditor::GetImage() {
 //     cerr << i << "\t" << rep->metaObject()->className() << endl;
     if(rep->isVisible() && rep->isEnabled() && (rep->focusPolicy() & Qt::TabFocus) &&
        !rep->inherits("QCheckBox")) {
+      if(rep->inherits("QLineEdit")) {
+	QLineEdit* qle = (QLineEdit*)rep;
+	if(qle->isReadOnly()) continue;
+      }
       first_tab_foc = rep;
       break;
     }
@@ -2075,6 +2079,64 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
     break;
   }
   }
+
+  return rval;
+}
+
+String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
+					  const String& mbr_name, int& new_pos) {
+  String txt = cur_txt.before(cur_pos);
+  String extra_txt = cur_txt.from(cur_pos);
+
+  String rval = _nilString;
+
+  if(!obj) {
+    obj_type = &TA_taBase; // placeholder
+    return rval;
+  }
+
+  String base_path;
+  String seed_path;
+
+  if(!txt.empty()) {
+    if(txt.contains('.')) {
+      base_path = txt.through('.',-1);
+      seed_path = txt.after('.', -1);
+    }
+    else {
+      base_path = "";
+      seed_path = txt;
+    }
+  }
+
+  TypeDef* lookup_td = obj->act_object_type();
+  if(base_path.nonempty()) {
+    int net_base_off = 0;
+    ta_memb_ptr net_mbr_off = 0;
+    MemberDef* md = 
+      TypeDef::FindMemberPathStatic(lookup_td, net_base_off, net_mbr_off,
+				    base_path, false);
+    if(md) lookup_td = md->type;
+    if(!lookup_td) {
+      taMisc::Info("Var lookup: cannot find path:", base_path, "in object of type:",
+		   obj->act_object_type()->name);
+      return rval;
+    }
+  }
+
+  taiMemberDefButton* mdlkup = new taiMemberDefButton(lookup_td, NULL, NULL,
+						      NULL, 0, seed_path);
+  mdlkup->GetImage(NULL, lookup_td);
+  bool okc = mdlkup->OpenChooser();
+  MemberDef* md = mdlkup->md();
+  if(okc && md) {
+    rval = base_path + md->name;
+    if(md->type->InheritsFormal(&TA_class) && !md->type->InheritsFrom(&TA_taString))
+      rval += ".";
+    new_pos = rval.length();
+    rval += extra_txt;
+  }
+  delete mdlkup;
 
   return rval;
 }
