@@ -788,7 +788,7 @@ We begin by creating some data, which we then process in a variety of ways.  Eac
 # [[.docs.DataAnalysisDoc]] -- analyzing data in various ways (grouping, stats, dimensionality reduction, etc)
 # [[.docs.DataBaseDoc]] -- data-base style operations for modifying data in various ways
 # [[.docs.DataCalcLoopDoc]] -- a very powerful mechanism for iterating through data tables row-by-row and performing various computations
-# [[.docs.MatrixDataDoc]] -- various operations on matrix column data
+# [[.docs.MatrixDataDoc]] -- matrix data cells: creating random bit patterns, and high-dimensional analysis tools.
 
 Each document involves creating a separate Program with its own data tables, so after the first step of generating the data, each one can be independently explored in any order.
 
@@ -1214,19 +1214,19 @@ Now we'll write some code to add 4 random bit patterns to this prototype data.  
 
 Duplicate that method call and select the InitValsToRowNo method (under Modify category), and set the arg to \"Name\" -- this will set the name of each prototype to the row number.
 
-Now for the main call -- in the Misc Fun toolbox, drag the <code>data gen()</code> item onto prog_code (adding it to the end), and select the PermutedBinary_MinDist method under the Random section, which will make random bit patterns with a given number of items on (value = 1) with the rest off, ensuring that all the patterns have a minimum distance from each other (if possible).  For the args, set the data to the ProtoData item (use var_lookup or Ctrl+L), enter \"Input\" (incl quotes) for the col_nm, and let's set 6 bits on, with a minimum dist of 10 using the default HAMMING metric specified by the final three args (which you can just leave blank) -- the HAMMING metric counts a 1 for every cell in the matrix that is different, so with 6 bits on and the rest off, the maximum distance is 12.
+Now for the main call for generating the random bit patterns, which is located in the Misc Fun toolbox (note that the functions in this toolbox are also available in the data_proc group in the left tree browser, for interactive use outside of writing a program).  Drag the <code>data gen()</code> item onto prog_code (adding it to the end), and select the PermutedBinary_MinDist method under the Random section, which will make random bit patterns with a given number of items turned on (value = 1) with the rest off, and ensuring that all the patterns have a minimum distance from each other (if possible).  For the args, set the data to the ProtoData item (use var_lookup or Ctrl+L), enter \"Input\" (incl quotes) for the col_nm, and let's set 6 bits on, with a minimum dist of 10 using the default HAMMING metric specified by the final three args (which you can just leave blank to accept the default values shown in the arg edit dialogs -- note the required flag -- if it is not checked, then you can leave it blank to use the default) -- the HAMMING metric counts a 1 for every cell in the matrix that is different, so with 6 bits on and the rest off, the maximum distance is 12.
 
-You can now Init and Run, and check the ProtoData that was generated.  To get a better view of this data, click on View/New Grid View on the ProtoData -- select New Frame.  This allows you to see all the patterns at once, as colored squares.  If you want a better view of it, click on the new middle tab on the far right to bring up the view control for it, and enter 4 for the Rows (instead of the default of 10), and Apply.
+You can now Init and Run, and check the ProtoData that was generated.  To get a better view of this data, click on View/New Grid View on the ProtoData -- select New Frame.  This allows you to see all the patterns at once, as colored squares.  If you want a better view of it, click on the tab on the far right of the middle panel to bring up the view control for it, and enter 4 for the Rows (instead of the default of 10), and Apply.
 
-Unless you have special powers, it probably won't be obvious whether these patterns do in fact overlap very little as we specified.  To check this, let's compute a distance matrix, which shows how far each pattern is from each other one.  Drag a <code>data anal()</code> from Misc Fun to the end.  Select the DistMatrixTable method (under the Distance category).  We need to create a new data table in objs to hold the results -- call it ProtoDists.  This is then the first arg.  Set view to true (just enter the word true into the expr), set ProtoData for src_data, and the data col nm = \"Input\", name col nm = \"Name\".  For the distance metric to use, type taMath::HAMMING (you can just type taMath:: and then do Ctrl+L to pick from a list of options).  That's it!
+Unless you have special powers, it probably won't be immediately obvious whether these patterns do in fact overlap very little as we specified.  To check this, let's compute a distance matrix, which shows how far each pattern is from each other one.  Drag a <code>data anal()</code> from Misc Fun to the end.  Select the DistMatrixTable method (under the Distance category).  We need to create a new data table in objs to hold the results -- call it ProtoDists.  This is then the first arg.  Set view to true (just enter the word true into the expr), set ProtoData for src_data, and the data col nm = \"Input\", name col nm = \"Name\".  For the distance metric to use, type taMath::HAMMING (you can just type taMath:: and then do Ctrl+L to pick from a list of options).  That's it!
 
-After you Init and Run, you should see a new frame with the distance information, which you'll notice has 8 items instead of the expected 4 -- what happened??  We forgot to reset the ProtoData table prior to adding 4 rows to it.  Drag a <code>reset rows</code> from Data to the first line of the prog_code, and select ProtoData, and run again.
+After you Init and Run, you should see a new right view frame with the distance information, which you'll notice has 8 items instead of the expected 4 -- what happened??  We forgot to reset the ProtoData table prior to adding 4 rows to it.  Drag a <code>reset rows</code> from the Data toolbox to the first line of the prog_code, and select ProtoData, and run again.
 
 Now, you should see that the minimum distance in the distance table is 10, exactly as you requested.  You can play with the parameters at this point to test things further if you want.
 
 == Generating Random Permutations from the Prototypes ==
 
-Next, we replicate these prototypes into a new data table, and then permute the patterns to create random variants of the prototypical patterns.  First, duplicate the ProtoData, and call it ItemData. Also, create a new data table called \"ItemDists\" to hold the distance information for these items.
+Next, we replicate these prototypes into a new data table, and then permute the patterns to create random variants of the prototypical patterns.  First, duplicate the ProtoData, and call it ItemData. Also, create a new data table called ItemDists to hold the distance information for these items.
 
 Drag a <code>data proc()</code> from the Misc Fun toolbox to the end of the code, and choose ReplicateRows from the Copy category -- dest is ItemData, src is ProtoData, and n_repl = 6 (6 items per prototype).
 
@@ -1246,12 +1246,13 @@ The last step in this tutorial is to apply a couple of useful dimensionality red
 
 Make two new data tables in objs called ItemCluster and ItemPCA.  Then drag a <code>data anal()</code> to the program and select Cluster under HighDim.  The clust_data is ItemCluster, set view to true, the src_data is ItemData, and the columns are \"Input\" and \"Name\" -- leave the metric information blank for the defaults.
 
-When you Run now, you should see a tree-like clustering graph with items from each of the same prototype being clustered together on the right (leaf) side of the graph -- this means that these items are most similar to each other.
+When you Run now, you should see a tree-like clustering graph with items from each of the same prototype being clustered together on the right (leaf) side of the graph -- this means that these items are most similar to each other.  The primary function of this plot is to obtain a qualitative similarity picture -- only the X axis values in this plot are significant, and then only within relatively tight clusters of items -- the length of these horizontal lines indicates the distance between items in the cluster.  At higher levels of clustering, these distances can be hard to reconcile.  The vertical axis is ordinal and only used for organizing the items for display purposes.
 
-Next duplicate this last taDataAnal item and select the PCA2dPrjn method -- most of the args are the same, except you want to set the prjn_data to ItemPCA. When you Run this, you should see a plot with the items clustered together as points within a 2d space -- the X axis represents the projection of the individual patterns onto the first principal component of variance across the item patterns, while the Y axis shows the projection onto the 2nd principal component of variance.  This will provide the greatest separation among the points.  If you change the final two args to this PCA function to 3 and 4, you'll see that projecting onto the smaller components produces a more mixed distribution of points from the different prototypes -- it is picking up on the \"residual\" variation after factoring out the major differences due to the prototype effects.
+Next, duplicate this last taDataAnal item and select the PCA2dPrjn method -- most of the args are the same, except you want to set the prjn_data to ItemPCA. When you Run this, you should see a plot with the items clustered together as points within a 2d space -- the X axis represents the projection of the individual patterns onto the first principal component of variance across the item patterns, while the Y axis shows the projection onto the 2nd principal component of variance.  This will provide the greatest separation among the points.  If you change the final two args to this PCA function to 3 and 4, you'll see that projecting onto the smaller components produces a more mixed distribution of points from the different prototypes -- it is picking up on the \"residual\" variation after factoring out the major differences due to the prototype effects.
 
 To actually see what the eigenvectors for these patterns look like, you can create yet another new data table (ItemEigens) and duplicate the last program item, select PCAEigenTable, and set this new ItemEigens as the output pca_data table.  You should recognize blends of the different prototypes in the first few eigenvectors.
 
+There are several functions available in the HighDim toolkit that you are free to explore at this point.  Hopefully, if you've made it through this entire tutorial, you have a pretty good sense of some of the kinds of things you can do with data tables!
 
 </body>
 </html>
@@ -3492,7 +3493,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
 	      [4] "0";"1";"2";"3";       };
       };
       float_Data @[1] {
-       name="0";
+       name=;
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
        cell_geom{ 1;       };
@@ -3504,7 +3505,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
 	      [4] 0;10;10;10;       };
       };
       float_Data @[2] {
-       name="1";
+       name="_1";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
        cell_geom{ 1;       };
@@ -3516,7 +3517,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
 	      [4] 10;0;10;10;       };
       };
       float_Data @[3] {
-       name="2";
+       name="_2";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
        cell_geom{ 1;       };
@@ -3528,7 +3529,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
 	      [4] 10;10;0;10;       };
       };
       float_Data @[4] {
-       name="3";
+       name="_3";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
        cell_geom{ 1;       };
@@ -3709,7 +3710,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
        name="Name";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
-       cell_geom{        };
+       cell_geom{ 1;       };
        calc_expr {
 	expr=;
        };
@@ -3730,7 +3731,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
        name="x_prjn";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
-       cell_geom{        };
+       cell_geom{ 1;       };
        calc_expr {
 	expr=;
        };
@@ -3751,7 +3752,7 @@ To actually see what the eigenvectors for these patterns look like, you can crea
        name="y_prjn";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=0;
-       cell_geom{        };
+       cell_geom{ 1;       };
        calc_expr {
 	expr=;
        };

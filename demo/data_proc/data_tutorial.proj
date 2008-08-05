@@ -1,10 +1,12 @@
 // ta_Dump File v2.0
-LeabraProject .projects[0] { 
-  Doc_Group @.docs = [4] {
+LeabraProject .projects[1] { 
+  Doc_Group @.docs = [6] {
     taDoc @[0] { };
     taDoc @[1] { };
     taDoc @[2] { };
     taDoc @[3] { };
+    taDoc @[4] { };
+    taDoc @[5] { };
   };
 
   Wizard_Group @.wizards = [1] {
@@ -66,7 +68,7 @@ LeabraProject .projects[0] {
     };
   };
 };
-LeabraProject .projects[0] {
+LeabraProject .projects[1] {
  name="Project_0";
  desc=;
  tags=;
@@ -85,40 +87,495 @@ LeabraProject .projects[0] {
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Data Table Tutorial =
+
+This tutorial provides an introduction to a variety of techniques for working with DataTables in Emergent.  DataTables are one of the most important objects in the system, and can be used for a very wide range of different functions.  Essentially, anything that requires storing and manipulating multiple items of data can benefit from a data table.  Most of the functionality is exposed through the writing of Programs, so this also serves as a good tutorial for the gui-based programming system in emergent.
+
+ '''To return to this document''' at any time, just hit the <code>ProjectDocs</code> tab at the top of this middle panel where you are now reading.
+
+Also, as you work with each documentation section, it is usually a good idea to do <code>Object/Edit Dialog</code> in the menu just above this text, which will open the documentation in a separate window that you can more easily come back to.
+
+Some basic terminology:
+* '''Left browser panel''' is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the network, and the input/output data, etc).
+* '''Middle edit panel''' is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty).
+* '''Right view panel''' shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
+
+Note: this tutorial is designed for version 4.0.17 or greater of Emergent!  Some features may not work in earlier versions.
+
+== Overview of Tutorial ==
+
+We begin by creating some data, which we then process in a variety of ways.  Each step is described in a separate document object located in the docs section of the left browser panel, and linked here:
+
+# [[.docs.DataGenDoc]] -- generating data, including basic datatable gui usage (''required first step'')
+# [[.docs.DataAnalysisDoc]] -- analyzing data in various ways (grouping, stats, dimensionality reduction, etc)
+# [[.docs.DataBaseDoc]] -- data-base style operations for modifying data in various ways
+# [[.docs.DataCalcLoopDoc]] -- a very powerful mechanism for iterating through data tables row-by-row and performing various computations
+# [[.docs.MatrixDataDoc]] -- matrix data cells: creating random bit patterns, and high-dimensional analysis tools.
+
+Each document involves creating a separate Program with its own data tables, so after the first step of generating the data, each one can be independently explored in any order.
+
 </body>
 </html>
 ";
   };
   taDoc @[1] {
-   name="taDoc_1";
+   name="DataGenDoc";
    auto_open=0;
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= DataGen: Generating Data =
+
+This section introduces the basic steps for creating and configuring a data table in the gui, and generating data within a table.
+
+== Creating and Configuring a DataTable ==
+
+Open the data section in the left browser, and then click on InputData, and click the New button in the middle panel (or use right mouse button or Ctrl+mouse on Mac to get the context menu and select New).  Leave the defaults as they are, and hit Ok.  This creates a new data table (should be called DataTable_0).
+
+Click on the [[.data.gp.InputData.DataTable_0]] (can use link), and observe that the middle edit panel for it has 3 sub-tabs: Data Table, Properties, Columns.  This provides 3 different views of a datatable, each facilitating a different form of interaction.  Click on Properties, and let's give it a new name: \"MyRandomData\" -- we will be using random numbers to generate the data..  You can see various other properties that can be set -- mouse-over these to see what they do (most are not relevant in the default setup and are greyed out).
+
+Now we need to create some columns of data.  A datatable is organized by '''columns first''', and then rows -- each column has a specific type (e.g., floating point numbers, integers, Strings) and all rows of that column must have the same type (to get around this constraint, you can create a Variant column which can contain different types of information, but this is very rarely necessary).  A particular row of a given column is called a '''cell''' -- the cell can either hold a single value (a so-called ''scalar'' column), or it can hold multiple values organized in a ''matrix'' (up to 5 dimensional matricies can be defined for a cell).  See the [[http://grey.colorado.edu/emergent/index.php/AX_Tutorial|AX Tutorial]] for an example where matrix cells are used to hold input patterns to be presented to a network.
+
+For our random data, we're going to simulate the results of a hypothetical test of a network, where we have two separate ''condition'' factors of testing (independent variables in experimental lingo) and a couple of measures recorded from the network (dependent variables in experimental lingo).  Each item of data is recorded over a sequence of ''batches'' (new runs of the network with random initial weights).  Thus, the columns we want to create are:
+
+* '''batch''' (integer) -- batch number (equivalent to subject number in a typical psych experiment)
+* '''cond1''' (integer) -- condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)
+* '''cond2''' (integer) -- condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)
+* '''cycles''' (integer) -- number of cycles the network required (i.e., reaction time in a typical experiment)
+* '''sse''' (float) -- summed-squared error (how much error did the network make)
+
+For each column, just click on the Columns menu at the top of the middle edit panel for the data table, and select NewCol (for a scalar column -- one value per cell -- see [[.docs.MatrixDataDoc]] for matrix data), and then select the type (int = integer) and enter the name as given above.  As you create each column, it will be selected -- one could enter something akin to the above comments in the desc field, so another user would know what each column represents -- this is a very good habit to develop.
+
+'''Tip:''' you can do context-menu/Duplicate (or use the Ctrl+M shortcut) on a column in the left browser to create a new column of the same type -- this can be quicker.  Note also that you can move columns around in this left browser, and that determines the order they appear in the data table!  Deleting a column is similarly possible.  All of this also applies to the Columns tab of the edit panel as well.
+
+You can click on the other tabs (Data Table, Columns) to see that your table is configured properly when you're done.
+
+== Writing a Program to Generate Data ==
+
+Now we'll write a program to generate data for our table.
+
+Do context menu/New in programs to create a new program (or use the Ctrl+I keyboard shortcut -- for inserting a new object at any place in the browser), and call it \"DataGenProg\".  Then click on the Edit Program sub-tab in the middle edit panel.  You can see the various empty containers for the various program elements:
+
+* objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
+* types -- special user-defined types that define properties of corresponding variables (currently for \"dynamic enums\" that define enumerated lists of options).
+* args -- (short for arguments) this is where you put variables that other programs will set when they run  this program.
+* vars -- place for other non-argument variables that are used in the program.
+* functions -- you can define subroutines (functions) that can be called within a program to perform a given task that needs to be done repeatedly.  These functions are only accessible from <i>within</i> this given program.
+* init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
+* prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
+
+Programming in this system mostly consists of dragging program elements from the toolbar at the very left edge of the display into your program, and then configuring their properties (drag-and-drop and duplicate are also very handy here, and everything can be done with the keyboard for extra efficiency for experts -- see [[http://grey.colorado.edu/emergent/index.php/Keyboard_shortcuts|Keyboard shortcuts]]).
+
+In the Toolbox, the program elements are organized into various sub-categories (Network, Ctrl, Var/Fun, etc).  Take a look through these categories and use the mouse-over to see what kinds of things are available.
+
+=== Overall Plan for Program ===
+
+Our overall plan for the program is to just iterate over the conditions, and then over batches, and randomly generate the sse and cycles data.  Therefore, we need to create 3 \"nested\" loops for each of these iterations, and some simple function calls to set the data.  There is a very useful feature of the system whereby variables with the same names as columns in a datatable can be easily stored and retrieved from a specified row in the datatable, so we'll name all our variables from the columns in the datatable.
+
+=== Step 1: Create Variables ===
+
+In the <code>Var/Fun</code> tab on the Toolbox, there is an item called <code>var</code> (''not'' <code>var=</code>) -- drag this into the <code>vars</code> section of your program, and select \"Copy Into\".
+
+Name this new variable \"batch\", and select Int for its type (should be default already).  This will hold the batch counter that we iterate over, and will be written to the batch column of the data table.
+
+Repeat the above process, or do context menu/Duplicate, to create the remaining column variables (be sure to make sse a Real type, which is the program version of a floating point number (it is actually stored as a double-precision floating point number internally -- for the program level of code, runtime performance is not critical so only one floating point variable type is available, to simplify things).
+
+'''Tip:''' there is a shortcut (added in 4.0.17) for making variables from data table names: just drag a data table on the vars guy and select Create Data Col Vars (or hit the button for that in the middle panel and select a data table).
+
+=== Step 2: Create For Loops ===
+
+Next, drag a <code>for</code> item from the <code>Ctrl</code> (program flow control elements) section of the toolbox into the <code>prog code</code> section of your program.
+
+There are 3 main elements to the for loop:
+* init -- run once at the start of the loop -- used to initialize the loop counter variable
+* test -- run after each iteration through the loop -- if this expression is true, the looping continues, else it stops
+* iter -- what to do after each iteration, typically incrementing the loop counter variable
+
+As you can see, the default for loop will iterate from 0 to 9 over the <code>i</code> variable (which it automatically created for you in your vars section).
+
+Let's replace <code>i</code> with <code>cond1</code> (first condition variable), and have the test expression be: <code>cond1 &lt; 2</code> (and keep all other stuff the same aside from replacing i with cond1) -- this will iterate from 0 to 1 over the cond1 variable.
+
+Now repeat the process by dragging a for into the <code>loop_code</code> of your first for loop, and change it to use cond2 (with a test of < 2).
+
+Finally, repeat this process one last time, changing the variable to batch, and let's keep the test limit of 10 for now.
+
+=== Incremental Progress Test: Write the Vars And Run! ===
+
+It is often a good idea to program incrementally where possible, so you can test what you've done, and consolidate your understanding of how it works, before moving on to the next steps.  Thus, we're going to just write the for-loop variables to our datatable, and see how that works, before adding the random number generation part.
+
+Drag a <code>new row</code> item from the <code>Data</code> toolbox into the inner-most <code>loop code</code> of your three for loops.  This will add a new row into your data table, and then we'll write the variables into that row.  You should see it complaining about an ERROR -- you need to tell it which data table to add a new row to.  When you click on the <code>data var</code>, you'll see that it doesn't show any option corresponding to your MyRandomData data table.  This is because most all of these kinds of data program elements operate on ''variables'' that ''point to'' datatables, instead of referring to data tables directly.  This allows considerable more flexibility (one can change the variable to point to different data tables at will), at the cost of requiring an extra step when you don't need it (like now!).
+
+To create a variable that points to (refers to) your MyRandomData table, you can just drag that item from the left browser into the vars section of your program, and select <code>Add Var To</code>.  Note: you have to do this drag without first selecting the item -- just click down and ''hold the mouse button down'' while dragging over to vars -- otherwise you'll end up selecting the data table and won't be able to drag it into your program in the middle edit panel.
+
+You should see that you now have a variable called MyRandomData (you could rename it to anything else) that is of type Object*, meaning it points to an object (this is C language syntax), and the object_val is MyRandomData (i.e., the data table it is actually pointing to). If you had any other data tables lying around, you could see that you could select one of them and then this variable would point to that other data table.
+
+Now that we have the variable we need, go back down to the new row guy (says AddNewDataRow to:) and select this variable for the <code>data var</code>.  You should see that the text description of this program element says \"AddNewDataRow to: MyRandomData (or whatever you might have renamed your variable to).
+
+Finally, drag a <code>data vars</code> from the Data toolbox into the same loop code as before (this will add it to the end -- if you drop it on the AddNewDataRow guy it will replace it as the first item in the list -- it is also possible to drag it ''just'' after that item as indicated by a small horizontal line).  This is the guy that writes variable values to columns of the same name in a data table.
+
+Now select your datatable variable for the <code>data var</code> field, and click the <code>set data</code> flag ''on'', indicating that we are writing to the data table, as opposed to reading values from it (note that the text description in the program changes to \"To:\"), and then select cond1, cond2 and batch for <code>var 1, var 2,</code> and <code>var 3</code> respectively.  Leave the <code>row spec</code> at <code>CUR ROW</code>  -- the new row function will set the new row as the current row (each data table contains its own variable indicating the current row -- this is very widely used in the software, as some program elements will set the current row, and others will read/write to that row without having to keep track of which row it is).
+
+Ready for the moment of truth!?  Press the <code>Init</code> button at the bottom of the program editor.  Look at your ''css Console'' window to see if there were any error messages -- this is critical whenever you are programming, because often informative error messages or warnings will show up there.  Usually you will also get a pop-up dialog, but not always..  On Linux and Mac, you can find your css Console window by going to the overall program menu and selecting Window/css Console.  On Windows, the console is floating around somewhere behind your application, and looks like the command prompt window.
+
+Assuming you didn't get any errors, you are now ready to hit the Run button!  Nothing obvious happens!  To see if it did what you expected, click back up on the MyRandomData and select the Data Table view -- you should see 40 rows of data, with the batch, cond1 and cond2 columns filled in as you would expect.
+
+If you do get errors, the can only be in the for loop expressions -- you should get information when you enter those in the first place about whether they are incorrect.  Hopefully you can correct the mistake.  If you're stumped, you can always pull up the data_tutorial_final.proj file in the same directory as this project, which has the final working version of this program, and see what is different.
+
+=== Generating Random Numbers ===
+
+All we need to do to complete our program is generate random numbers for the cycles and sse values, and then set them to the data table.
+
+In the <code>Misc Fun</code> toolbox tab, you'll see a <code>random()</code> item -- drag that to the end of your loop code.  There are two things that need to be set: the <code>result var</code> and the <code>method</code>.  Select cycles for the result var, and then click on the method and choose \"Float\" at the top in the category selector -- this selector is very useful for narrowing down your set of options by different overall categories of methods (functions) available.  You can see that Random has different methods for generating integer (Int) and Boolean random numbers in addition to floating point.  The other categories are standard for all objects, and include File, Display, ObjectMgmt, and UserData functions.  Select the <code>Gauss</code> method from the Float category -- we'll generate Gaussian (normal) random variables for our cycles variable (even though it is an integer, we can generate the numbers using floating point and they'll automatically be converted to integers).
+
+The Gauss function takes one argument: the stdev or standard deviation of the random variable to generate.  We can just enter 5 for that -- you have to click on the stdev line under the Random method call to enter this number into the expr field.  You could enter any kind of fancy expression here (more on that in a moment).
+
+To make this number more realistic, we need to add a mean offset to it -- do this by dragging a <code>var+=</code> item from the <code>Var/Fun</code> toolbox into the end of the loop code, and select cycles for the var.  Now we get to write an interesting expression for the mean offset that we will add to this variable.  The expression is: <code>20 + cond1 * 4 + cond2 * 6 + cond1 * cond2 * 1</code> -- note that you can use the var lookup selector to lookup these variables and enter them into the expression, or just type Ctrl-L to pull up a selector directly while typing in the field.  The Ctrl-L lookup selector is particularly powerful and context sensitive, allowing you to lookup all manner of expression elements (functions, types, methods, members, etc) depending on the current text that you've entered so far.  Give it a try!
+
+This expression basically provides for a main effect of the two independent condition variables, plus a small interaction term.  Feel free to experiment with different expressions later -- some of the subsequent tutorial text depends on this particular equation however.
+
+We want to just duplicate and modify these two lines of code for the sse computation.  You can do this using an extended select (click on the first element, then hold down shift and click on the next one) -- note that you need to first \"close\" the Random method call to not show the arguments, so that what you select will just be overall program elements.  Then, you can either drag these two guys into the loop code, or do context menu Copy, and then context-menu paste on the loop code item.  This is a very powerful way of creating new code by copying existing chunks of code!
+
+Now go into these two new items and select sse for the var instead of cycles, set the stdev to 2, and the var+= expression to: <code>10 + cond1 * 2 + cond2 * 3 + cond1 * cond2 * 1</code>
+
+=== Final Bits ===
+
+The last step is to add an additional <code>data vars</code> item to the end (can just drag the existing one onto the loop code and Copy to put it at the end), configured as before, but with cycles and sse as the two variables to set.
+
+Finally, we need to add one new element to the start of the program.  This will be evident if you are impatient and just did Init and Run -- your data table just keeps growing in size every time you run the program!  We need to start by resetting the rows.  Drag a <code>reset rows</code> item from the <code>Data</code> toolkit on top of the first for loop -- it will go at the start of the program.  As you might expect, you need to select the data table variable for the data var.
+
+Now you are ready to do Init and Run, and then inspect the results in your MyRandomData table.
+
+== Graphing the Data ==
+
+To really see if you've achieved what the above equations seem like they should, you can create a graph of your data.
+
+Select MyRandomData, and in the smaller menu at the top of this middle edit dialog, select View/New Graph View, and leave the default at New Frame.
+
+You will see a graph appear in the right view panel, but the default configuration probably doesn't make a lot of sense.  Select the right-most tab in the middle panel (initially called Frame1), to reveal the graph view control panel, which enables you to configure how the graph view looks.  At the top, change the Style to POINTS instead of LINES.  Then make sure that cycles is selected for the X axis, and sse for the Y1 axis, and turn the on button off for the Z axis variable. You should now see a nice scatterplot showing what looks like a decent correlation between cycles and sse.
+
+== Adding Condition Labels ==
+
+The last step in making our data more useful is to add labels for each of the conditions, and an aggregate label that can be used for plotting.  The best way to do this is to create enumerated values (Dynamic Enums or DynEnums) that convert directly between numbers and string labels. Then, we can write the corresponding labels to new columns in the data table in our rendering loop.
+
+Here are the definitions of the condition values from above:
+
+* '''cond1''' (integer) -- condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)
+* '''cond2''' (integer) -- condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)
+
+In the types section, do New Enum Type (button or contect menu) and name it Cond1 -- click New Enum and call the first one LOC (value is 0), and then duplicate that one and call it OBJ (value = 1).  Then duplicate the Cond1 type and rename it Cond2 and change the two enum values to SRC and TRG respectively.
+
+Next, we'll create new columns in the data table to hold these labels.  Back at the [[.data.InputData.MyRandomData]] table, do New Column and create a cond1_lbl column of type String -- duplicate that and rename it cond2_lbl, and finaly make one more duplicate called cond_lbl which will contain both condition labels in a single column.
+
+Then, in the program, create three new variables in the vars section with these same names.  Set the type of the cond1_lbl and cond2_lbl vars to DynEnum, and select the new Cond1 and Cond2 enum types respectively.  Set cond_lbl to be of type String.
+
+Now we'll set the values of these new variables, and apply them to the data table.  At the start of the inner-most loop_code of the for loop (where all the rest of the code is), insert a var= (from Var/Fun) item, and set the result_var to cond1_lbl and the expr to cond1 -- this just assigns the enum based on the corresponding integer value.  Duplicate that item and set it for cond2_lbl = cond2.  Duplicate one more time, and this time the result_var should be cond_lbl and the expr is <code>(String)cond1_lbl + \"_\" + cond2_lbl</code> -- the (String) aspect of this expression is a ''cast'' will extract the string (label) version of the enum to make a composite string of both conditions.
+
+'''Important:''' the css language (which implements these Programs) always tries to convert values to the type of the ''first item in an expression'' -- so you should be very careful to add an explicit ''cast'' expression to the first item in an expression that is appropriate for the entire result (at least the items within a given level of parentheses).    This is particularly important when dealing with floating point expressions that also have integer values in them -- if the first item is an integer then you need to cast it as a (float) to make sure all subsequent math is done in floating point precision.
+
+The last step is to duplicate the existing data vars item (labeled To: MyRandomData...) and change the vars to these new variables (cond1_lbl, cond2_lbl, cond_lbl).
+
+When you Run this version, you can see in the MyRandomData that the labels have been filled in for each condition, making the data more human readable.
+
+Now, we're ready to explore the analysis of the correlation between cycles and sse in the [[.docs.DataAnalysisDoc]] tutorial next!
+
+== Futher Extensions ==
+
+You can extend the program by adding variables for the constants in the random number equations -- just make new variables, and turn on the Ctrl Panel flag so that they appear in the first \"Program Ctrl\" panel of the program edit panel (this presents the \"user\" view of the program, as compared to the programmer view, and it should contain the key parameters that a user might want to manipulate or set).
+
+
+
 </body>
 </html>
 ";
   };
   taDoc @[2] {
-   name="taDoc_2";
+   name="DataAnalysisDoc";
    auto_open=0;
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Data Analysis =
+
+This document describes the process of analyzing the data generated in the [[.docs.DataGenDoc]] program (which must be completed first).
+
+The single most important analysis tool is the Group function, which we introduce first.  Then, we cover various other useful tools including various statistics.
+
+First, we create a new Program to put our analysis functions in: do programs/New, and call the new program: DataAnalProg.  Click on the Edit Program tab so we can start editing it.
+
+== Group Function ==
+
+Drag the <code>group</code> item from the <code>Data Proc</code> toolkit into your <code>prog code</code> in the program.  You can see that this requires a <code>src data var</code> and a <code>dest data var</code> -- the src is the data table to be analyzed, and the dest is where the resulting data goes.  As we learned before, we need to create variables that point to these data tables.
+
+Drag the MyRandomData data table (in data/InputData) into the vars section of your program, and do Add Var To.  This will be our source (src) data.
+
+For the dest data, we can create a new data table directly within the program itself -- this is useful for data that will not generally be used by other programs, and is thus best left \"encapsulated\" within the one program where it is used -- this makes it easier to share the program with other users, etc.  We didn't do this with the MyRandomData table because it is shared among all of our programs in this project.
+
+To create the new data table, do context menu in the objs field, and select New Data Table.  Click on the new data table, and give it an appropraite name like \"grouped_data\".  Note that when you created the new data table, it automatically created a variable in the vars section of the program that points to it -- this is true for any object created in the objs section of a program, because most program functions require a variable to access the object in any case.  Also, when you rename the object, the variable is automatically renamed as well.
+
+Now you can go back to the Group item and select the MyRandomData variable for the src data, and your grouped_data var for the dest data.
+
+Next, click on the Add Column button, and just hit Ok for the dialog that comes up asking for a column name -- it is usually easier just to pick it from a list that we can get when we edit the item.  Click on the new item that appeared below the group_spec, and in the <code>col lookup</code> field, select the cond1 column.  Then select <code>GROUP</code> for the <code>agg op</code> (aggregation operator) -- this means that all the rows for each different value that shows up in the cond1 field will be grouped together in the resulting output data table.
+
+Duplicate this cond1 column and set the name to cond2, so we get grouping by both of our independent condition variables.  Also, Duplicate cond2 and select cond_lbl with an agg op of FIRST -- this will extract the condition labels for each group which are going to be useful for graphing.
+
+Next, duplicate the cond2 guy and enter/lookup cycles, and change the agg op back to MEAN.
+
+Finally, duplicate that cycles item and change it to sse.
+
+We are now ready to Init and Run the program -- go ahead!  To see the results, click on the grouped_data data table in the ''left tree view'' (this is the only way to get the Data Table view that shows the data).  You should see four rows of data, with each unique combination of cond1 and cond2, and the means of the data for each of these condition combinations.
+
+=== Creating a Bar Graph of the Grouped Data ===
+
+To better see the results, we'll create a bar graph.  Do View/New Graph View for the grouped_data table, and leave the default New Frame and hit OK (it is also possible to put multiple graphs on a singe view frame by selecting an existing frame there).  To get this to display as a bar graph, you need to click on the view control tab (rightmost tab in middle panel), and change the graph setting at the top to BAR, then click cond_lbl_first for the X axis, and set a fixed min/max of -.5 and 3.5 (to fit the edges).  Turn off the Z axis, and select sse_mean for Y2.  Lastly, toward the bottom, select FIXED COLOR for the color mode, so that the cycles show up as black bars and sse is red.  This should give a decent display of the quantitative data.
+
+=== Adding SEM Error Bars ===
+
+To be able to visually interpret whether there are significant differences between these results, it would be nice to add error bars that reflect the standard error of the mean (SEM), which provides a rough visual sense of statistical significance (if the error-bars between conditions do not overlap, then the result is likely statistically significant -- of course an actual statistical test is required to know for sure).
+
+To generate SEM data, you just have to go back to the Group spec, and duplicate the cycles and sse items and replace the agg_op in the duplicates with SEM instead of MEAN.  Then Run again.
+
+To add the error bars to the plot, select these new columns in the Err 1 and Err 2 selectors near the bottom of the graph control panel (Err 1 is cycles_sem and 2 is sse_sem).  This is now a plot that gives a good sense of how significant the differences between conditions are.
+
+== Computing Correlations (and other such things) ==
+
+The bar graph and scatter plot both show that the two variables, cycles and sse, are correlated (as we know from the equations we used to generate them).  We can compute the degree of correlation (and a large number of other statistics and mathematical functions) using the math library that is built into Emergent.
+
+The core step is very easy: just drag a <code>math()</code> guy from the <code>Misc Fun</code> toolkit to the end of your program, which provides access to a large range of math functionality.  One key nonobvious step is that you need to select which type of floating-point numbers to operate on: float (single precision -- used extensively in Emergent) or double (less frequently used).  In our case, because sse is float data, we select float -- this means choose taMath_float for the <code>object type</code> (it starts out with the generic taMath type which ony has very limited functionality -- this is the \"parent class\" to the two choices: taMath_float or taMath_double).
+
+Next, you just need to choose the method (function) to call.  All the functions are organized into various categories, selectable at the top.  Browse through these to get a sense of what is available.  Although correlation might seem to be a statistic, it is actually located in the Distance category (where it also belongs), under the name <code>vec_correl</code>.  Once this is selected, you'll see that it takes two arguments of type float_Matrix.
+
+This raises a bit of an issue.  It is easy to get a float_Matrix containing all the data for the sse column, because this is how the data is stored.  However, the cycles column is int data, and therefore we need to interject a small detour to create a float version of that column, which can then be passed to this function.
+
+To do this, we first create a new temporary data table in the objs -- context menu/New Data Table -- call it float_cycles or something to that effect.  Then drag a <code>meth()</code> on top of your existing math function call (so it will go ahead of it), and select the new float_cycles data table for the object, and CopyFrom (under ObjectMgmt category) for the method.  Enter MyRandomData as the object to copy from.  This just gives us a duplicate of the existing data. 
+
+Next, drag another meth() after this copy from, again for float_cycles, and this time select NewColFloat under the Columns category.  Enter something like \"cycles_flt\" for the name of the new float column to create.  There are many ways to copy the int values from the cycles column to this new cycles_flt column.  We will use a particularly useful one: drag a <code>script</code> item from the <code>Ctrl</code> toolkit, and enter the following expression:
+* <code>float_cycles[\"cycles_flt\"].CopyFromCol_Robust(float_cycles[\"cycles\"]);</code>
+
+You can use the Ctrl-L lookup to find each element of this expression -- give that a try to get some familiarity with this important tool.  This expression is calling a \"robust\" copy method on the cycles_flt column (columns of a data table can be accessed by the \"array\" operator as shown, using either a name or an actual column index).
+
+Now you can use this same type of expression to enter the two args to the vec_correl function:
+* <code>MyRandomData[\"sse\"].ar</code>
+* <code>float_cycles[\"cycles_flt\"].ar</code>
+
+Note: '''The .ar at the end indicates the float_Matrix data used to actually store the data for the column.''' -- this is a very important point to remember for using these math functions!
+
+The last thing you need to do is create a new variable to store the results of this correlation computation -- create a new Real var, call it \"r\", and then select that variable for the result var.
+
+Now you can do Init (look for errors) and then Run.  When you then click on the r variable, you can see that it has a value, probably around .5 or so, indicating the presence of a decent correlation.
+
+In an upcoming release of the software, we'll have support for ANOVA and generalized linear model (GLM) statistical analysis so you can determine the statistical signfiicance of results directly within the software.
+
+Also, the taDataAnal object, which is available under Misc Fun/data anal() in the program toolbar, has a number of useful analysis routines that are generally geared toward matrix data, and will be explored in [[.docs.MatrixDataDoc]]. 
+
+Next, we turn to the data base-style operations in [[.docs.DataBaseDoc]].
+
 </body>
 </html>
 ";
   };
   taDoc @[3] {
-   name="taDoc_3";
+   name="DataBaseDoc";
    auto_open=0;
    text="<html>
 <head></head>
 <body>
-== Enter Title Here ==
+= Data Base =
+
+Emergent can do several database-style operations on data tables, including Join, Select, and Sort.  These are powerful motifs for manipulating data, which are introduced in this section.
+
+To start, make a new program under programs called DataBaseProg.  Do Edit Program on it, and drag the MyRandomData table into the vars section and do Add Var To.
+
+== Selecting Rows ==
+
+As we saw in the [[.docs.DataAnalysisDoc]], most analysis operations operate on an entire data table at a time.  So, to focus an analysis on only a subset of data, you first need to select the rows that contain the relevant data, and then operate on that new data table.  There are many other instances where you would want to select a subset of data as well.
+
+There is a built-in select rows operation, in the Data Proc section of the toolkit -- drag <code>sel rows</code> into your prog_code.  You see that it has a source (src) data var and a destination (dest) one -- the src will be MyRandomData, but you need to create a new result data table in the objs of this program to hold the results -- do that (you can call it SelectedData or something like that) and set the dest to it.
+
+The rows to select are specified in terms of the values of specific columns of data -- in this case, let's select all the rows for the LOC condition (i.e., cond1_lbl == \"LOC\").  To do this, click Add Column -- you can either enter cond1_lbl directly here for the name, or just click on the new column when it shows up and you can then choose the column from a list.
+
+There are two choices for how to specify the value you want to select by -- either by using a variable in the program, or by entering a value directly here.  We'll do the latter for simplicity.  Just fill in the values of the <code>cmp</code> field: var_type and var_value -- these are fields for a Variant type which is a special object that can represent any of a number of different types of information.  Set the var_type to String and the var_value to LOC (do NOT include double-quotes here!).
+
+You can now do Init (check for errors) and then Run.  
+
+Click on the SelectedData table under objs in the left browser, and you should see that only the LOC rows are present.
+
+If you need to select multiple values of the same column, you can just duplicate the column, and specify a new value to select, and, critically, change the <code>comb op</code> on the overall SelectRows object to OR instead of AND (the default).  Selecting multiple values across multiple columns is similar (e.g., you could select only rows in the LOC and SRC condition in this way using comb_op of AND.
+
+Feel free to experiment with all these options, including the more exotic NOT AND (negates the relationship and then does AND across all the columns) and NOT OR.  We actually won't be using this data for anything later so don't worry about returning to the initial state.
+
+== Selecting Columns ==
+
+There is a similar function for selecting columns (sel cols) which doesn't have any selection criteria -- it just uses a list of columns to select and copies only those column's values to the destination table.
+
+== Sorting ==
+
+You can also sort a data table according to the values in multiple columns by using the sort object from the Data Proc toolkit, or just by calling the Sort method on a data table (which will sort the table itself, instead of sorting to a new data table object, leaving the original in an unsorted state).  The method approach is limited to 6 columns of sorting, whereas there are no limits on the sort object approach.
+
+== Joins ==
+
+Joins provide a means to join together two different data tables, using a common column of values to link rows between the two.  For example. if you happened to have two different types of data for each batch run of a network, you would join them together according to the batch number.  Analogously, you might have different data for the same set of experimental subjects, so subject number would be the join value.
+
+Another common scenario is when you have a table with detailed information about a given element of data in your table (e.g., for each of the different experimental conditions), which you want to then fold into the overall data table.  In effect, this acts like a \"lookup table\" that looks up new values and adds them as appropriate for the condition.  We'll use this technique to add some more information about each of the conditions in our experiment, which then could potentially be used for subsequent analysis.
+
+First, we'll need to construct a new data table in objs that has the information about each of the conditions in the experiment.  Call it CondData, and add a String cond_lbl column (which will be the key that links this with our main data table), plus some additional columns of data:
+
+* float cycle_off -- a cycle offset value that we could use to adjust cycles for other factors not present in the simulation.
+* float n_objs -- number of objects in the display in each condition (just making this stuff up!)
+
+Then add 4 rows of data to this table, enter the four combinations of LOC/OBJ SRC/TRG as appear in the MyRandomData cond_lbl column, and make up some numbers for the other data.
+
+Next, drag the join from the Data Proc toolbox into the prog_code, and set the src data to MyRandomData, and the src b data to CondData.  You'll see you need to create a new destination data table -- do that in objs as usual (call it JoinedData or whatever) and then select the col_a and col_b columns to be cond_lbl.  Leave the type as an INNER join.
+
+Go ahead and Init and Run this, and look at the results.  You should see that the JoinedData table has all the columns from the MyRandomData, plus the new ones from CondData, with the values appropriately copied over for the given condition.  If you happened to have mistyped one of the condition labels, you should have received a warning about this (as controlled by the nomatch warn flag, which defaults on).
+
+=== Left vs. Inner Join ===
+
+A Join can also be used to select a subset of data -- for an Inner join, only the matching rows will be included in the result.  To demonstrate this, duplicate the CondData table and remove the last row from the new one (which you can rename as OnlySomeConds or whatever)  -- just select the row number (3) and use the context menu to do delete rows.  Then, in your join program item, change the src_b data to this new table, and re-run.  You'll get error messages about the mismatches (if you intend to use this as a selection tool, then turn nomatch_warn off), and you should see that the resulting table does not include the OBJ_TRG condition (which should have been the condition you removed from the src_b table).
+
+If you set the join type to be LEFT instead of INNER, and Run again, you'll see that now the resulting data table has all the rows, but the last set of rows have 0 values for the new data columns.  This is the key difference between a LEFT and INNER join -- LEFT includes all rows of the first src table (src_a) and fills in values where it finds matches and not otherwise, whereas INNER only includes the matching rows.
+
+One additional thing you can experiment with is having multiple rows per condition in the src_b table -- just duplicate the last row of the OnlySomeConds guy, enter some different values for this new row, and then run again -- you'll see that there are now two rows for each original data point of the last condition, matching the two for that condition in the OnlySomeConds table.  Thus, a join can also be used to replicate rows of data for a variable number of times per each condition or by some other variable -- joins can perform many different functions if you think creatively about them!
+
+Next, we'll explore an even more Swiss-army-knife like system, the DataCalcLoop in [[.docs.DataCalcLoopDoc]].
+
+</body>
+</html>
+";
+  };
+  taDoc @[4] {
+   name="DataCalcLoopDoc";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+= Data Calc Loop =
+
+The DataCalcLoop set of functions (available in the last section of the Data Proc program toolbox) provide a framework for looping through the rows of a data table and performing any arbitrary kind of calculations or other functions, and then writing either back to the same data table or to a different data table.  For those familiar with obscure but powerful linux utilities, it resembles the <code>awk</code> tool.
+
+The DataCalcLoop (DCL) can also be used to do abitrarily complex row selection, by deciding on a row-by-row basis what to copy versus not.
+
+One thing to keep in mind about the DCL -- it is slower than the other data base style functions (select rows, join, etc) because it uses script code to iterate through the data table, instead of having the script call a pre-compiled and very fast hard-coded loop.
+
+As usual, the first step is to create a DataCalcLoopProg in programs, and to drag the MyRandomData into its vars.
+
+== Creating a destination data table ==
+
+First, we create a data table to hold the results of our data calc loop computation.  In this case, we're just going to create a plain data table, and then write some program code to create the columns for it, based on our source data table.  So, just do NewDataTable and call it something like DataCalcDest.
+
+Next, we add a <code>meth()</code> call (from the Var/Fun program toolbox) on that DataCalcDest into the prog_code, to copy over the columns from the MyRandomData table.  After setting the object to DataCalcDest, select Copy_NoData (under the Copy category) for the method to call, and select or type MyRandomData for the argument to this method.
+
+Now, we'll add a new column to the destination data table to hold the results of our calculation.  Just duplicate the method call item, and select the method as NewColFloat under the Columns category of functions.  For the col_nm argument, enter \"calc_val\" (include the double quotes!).
+
+== Creating the Data Calc Loop ==
+
+We are ready to drag the <code>calc loop</code> item from Data Proc onto the prog_code, and then set the src data as MyRandomData and the dest data as DataCalcDest.  You can see that it has thee sub-groups: src_cols, dest_cols, and loop_code -- we just add the names of the columns we want to operate on from both the source and destination tables, and then add some code to operate on them one row at a time in the loop_code.
+
+Do Add Src Column and either type in cycles or just select it in the new item that comes up.  Duplicate this one and enter sse -- our computation will involve these two values.
+
+Then do Add Dest Column, and type in calc_val -- it will not be available for selecting because it has yet to be created.
+
+== Copying the Source Data ==
+
+The first thing we want to do in our calculation is to copy over all the data from the source to the destination, and then we'll add the special computed value.
+
+Drag a <code>+dest</code> row item from Data Proc into the loop_code of the DCL (it doesn't require any further configuration), and then add a <code>cpy cols</code> item (which also does not require configuration).
+
+You can now do an incremental test of the program -- Init (you should get a warning about the calc_val not yet existing in the destination data table -- ignore it), and then Run.  If you click on the DataCalcDest now, and view the data table, you'll see it is a copy of MyRandomData, with zeros in the new calc_val column.
+
+If you just wanted to select rows, you could have added an <code>if.cont</code> (if -- continue) expression that evaluated the values of the current source row, and if they were not suitable, continued to the next row without doing the remaining code (i.e., adding a dest row and copying the values).
+
+== Computing the new calc_val ==
+
+Now we'll augment our code with the main point of this exercise: computing a new value and writing it to the destination table.
+
+Drag a <code>var=</code> (from Var/Fun toolbox) onto the loop_code (placing it at the end) and you'll see that you can then select d_calc_val for the result var -- this is a new variable automatically computed by the DCL to contain the value of the calc_val column of the destination table.  You should also have noticed that s_sse and s_cycles were on the list too -- they are similar new variables for the source columns we specified.  A variable is created for each of the src_cols and dest_cols you specify.
+
+For the expr, enter <code>s_sse * s_cycles</code> (you can use Ctrl+L to lookup these variables, or the var_lookup selector).
+
+The last step is to add a <code>=dest row</code> item at the end, which is what actually writes the d_calc_val to the calc_val cell of the destination table.  This is a commonly-forgotten step so don't forget it!
+
+Now when you Init and Run, you should see the calc_val contains the product of the sse and cycle columns!
+
+This provides a very brief overview of all the basic elements of the data calc loop system -- clearly there are many many other possibilities -- any arbitrary code can be put in the loop_code, and you can access information from other rows or data tables, etc.  Note that there is a special <code>src_row</code> variable created that contains the current row number of the source datatable, so if you want to access other rows of data (e.g., the prior row), you can refer to that row number (be sure to avoid accessing data out of range!).
+
+You can also skip the dest data table entirely, and just modify the source table directly -- in this case, use the <code>=src row</code> item to write the data back to the source data table after you have performed your computations.
+
+== Simple Calc Alternative: Calc Columns ==
+
+For the simple kind of calculation that we just performed, it turns out that there is a simpler alternative to the more powerful and flexible data calc loop: you can just enter an expression in a data column and it will automatically fill in that column with the result of that expression!  This is somewhat like entering a formula into a spreadsheet (except it is one formula for the whole column). 
+
+To explore a calc column, select in the left browser the calc_val column of your DataCalcDest table.  Then click on the Calc button in its edit panel, which will enable the calc_expr field to be edited.  Type in <code>sse * cycles<code> here (note that you do not use any prefix, and just specify the name of the column to refer to the current cell value for that column.  
+
+When you click Apply, it will perform the calculation, which you can see by clicking on the data table.  Note that there is a Calc All Rows button at the bottom -- this will force a manual recalculation of the table should there be any doubt about whether it has done the calculation.  There is also an auto_calc flag on the data table -- if you turn this off, then it will ONLY do the calculation when you hit the Calc All Rows button (or call this method from a program).
+
+You can also \"lock in\" the current values by turning OFF the Calc flag on the calc_val column -- the current values will just remain as is.  This can be useful for setting values and cleaning up data -- you can create new columns to compute values, lock them in, and then copy them back to the original column, etc.
+
+That's it for calc stuff for now -- next up is matrix data in [[.docs.MatrixDataDoc]].
+
+</body>
+</html>
+";
+  };
+  taDoc @[5] {
+   name="MatrixDataDoc";
+   auto_open=0;
+   text="<html>
+<head></head>
+<body>
+= Matrix Data =
+
+In this final section of the tutorial we explore some functions that can only be used on Matrix data (where the cells of a table contain multiple values).  We create random bit patterns based on prototypes, and then do various forms of analysis on these patterns.
+
+As usual, create a new MatrixDataProg in programs, and click on Edit Program.
+
+== Creating the Prototype Data Table ==
+
+Do New Data Table in the objs (call it ProtoData), and do columns/NewCol and create a String column called Name (we'll format this data as is typical for input data presented to a network), and then do columns/NewColMatrix, specify a float type, with 2 dimensions, each of size 5 (i.e., a 5x5 matrix) -- call this one Input.
+
+Now we'll write some code to add 4 random bit patterns to this prototype data.  Drag a <code>meth()</code> from the Var/Fun toolbox, set the object to ProtoData, and select the AddRows method (under Rows category) -- for the arg set 4 rows.
+
+Duplicate that method call and select the InitValsToRowNo method (under Modify category), and set the arg to \"Name\" -- this will set the name of each prototype to the row number.
+
+Now for the main call for generating the random bit patterns, which is located in the Misc Fun toolbox (note that the functions in this toolbox are also available in the data_proc group in the left tree browser, for interactive use outside of writing a program).  Drag the <code>data gen()</code> item onto prog_code (adding it to the end), and select the PermutedBinary_MinDist method under the Random section, which will make random bit patterns with a given number of items turned on (value = 1) with the rest off, and ensuring that all the patterns have a minimum distance from each other (if possible).  For the args, set the data to the ProtoData item (use var_lookup or Ctrl+L), enter \"Input\" (incl quotes) for the col_nm, and let's set 6 bits on, with a minimum dist of 10 using the default HAMMING metric specified by the final three args (which you can just leave blank to accept the default values shown in the arg edit dialogs -- note the required flag -- if it is not checked, then you can leave it blank to use the default) -- the HAMMING metric counts a 1 for every cell in the matrix that is different, so with 6 bits on and the rest off, the maximum distance is 12.
+
+You can now Init and Run, and check the ProtoData that was generated.  To get a better view of this data, click on View/New Grid View on the ProtoData -- select New Frame.  This allows you to see all the patterns at once, as colored squares.  If you want a better view of it, click on the tab on the far right of the middle panel to bring up the view control for it, and enter 4 for the Rows (instead of the default of 10), and Apply.
+
+Unless you have special powers, it probably won't be immediately obvious whether these patterns do in fact overlap very little as we specified.  To check this, let's compute a distance matrix, which shows how far each pattern is from each other one.  Drag a <code>data anal()</code> from Misc Fun to the end.  Select the DistMatrixTable method (under the Distance category).  We need to create a new data table in objs to hold the results -- call it ProtoDists.  This is then the first arg.  Set view to true (just enter the word true into the expr), set ProtoData for src_data, and the data col nm = \"Input\", name col nm = \"Name\".  For the distance metric to use, type taMath::HAMMING (you can just type taMath:: and then do Ctrl+L to pick from a list of options).  That's it!
+
+After you Init and Run, you should see a new right view frame with the distance information, which you'll notice has 8 items instead of the expected 4 -- what happened??  We forgot to reset the ProtoData table prior to adding 4 rows to it.  Drag a <code>reset rows</code> from the Data toolbox to the first line of the prog_code, and select ProtoData, and run again.
+
+Now, you should see that the minimum distance in the distance table is 10, exactly as you requested.  You can play with the parameters at this point to test things further if you want.
+
+== Generating Random Permutations from the Prototypes ==
+
+Next, we replicate these prototypes into a new data table, and then permute the patterns to create random variants of the prototypical patterns.  First, duplicate the ProtoData, and call it ItemData. Also, create a new data table called ItemDists to hold the distance information for these items.
+
+Drag a <code>data proc()</code> from the Misc Fun toolbox to the end of the code, and choose ReplicateRows from the Copy category -- dest is ItemData, src is ProtoData, and n_repl = 6 (6 items per prototype).
+
+Next, add a <code>data gen()</code> to the end, and select FlipBits under Random -- data is ItemData, col_nm is \"Input\", n_off is 1 and n_on is also 1.  This will flip one bit at random off from those that are on, and vice-versa for one bit that is currently off.
+
+You can Init and Run at this point, and do a Grid View of the ItemData to see what it looks like -- you should be able to perceive the \"family resemblance\" of all the items within a prototype.
+
+To see this structure in the distance matrix, copy the previous DistMatrixTable call to the end of the program, and change the relevant tables to their Item versions (ItemDists, ItemData), and also set the name_col_nm to \"\" (an empty string) -- this will generate a distance matrix without name labels, which is rendered as a single matrix cell and is more appropriate for larger numbers of items.
+
+When you Run it now, you should see the ItemDists matrix has four distinct squares along the diagonal -- these are the 6 items within each prototype family that are very similar to each other, and distant from all the other items.
+
+One flourish you can add to the distance display is to add height information to the grid view -- set the <code>blk hgt</code> field in the view control panel (right-most tab in middle panel) to 1 instead of 0, Apply, and then move the Rotx wheel on the left side of the 3d view -- you should see that the block height now also shows you the distance information.
+
+== Dimensionality Reduction Analysis (Cluster Plot, PCA) ==
+
+The last step in this tutorial is to apply a couple of useful dimensionality reduction techniques to these patterns.  First, we do a cluster plot, and then a principal components analysis (PCA).
+
+Make two new data tables in objs called ItemCluster and ItemPCA.  Then drag a <code>data anal()</code> to the program and select Cluster under HighDim.  The clust_data is ItemCluster, set view to true, the src_data is ItemData, and the columns are \"Input\" and \"Name\" -- leave the metric information blank for the defaults.
+
+When you Run now, you should see a tree-like clustering graph with items from each of the same prototype being clustered together on the right (leaf) side of the graph -- this means that these items are most similar to each other.  The primary function of this plot is to obtain a qualitative similarity picture -- only the X axis values in this plot are significant, and then only within relatively tight clusters of items -- the length of these horizontal lines indicates the distance between items in the cluster.  At higher levels of clustering, these distances can be hard to reconcile.  The vertical axis is ordinal and only used for organizing the items for display purposes.
+
+Next, duplicate this last taDataAnal item and select the PCA2dPrjn method -- most of the args are the same, except you want to set the prjn_data to ItemPCA. When you Run this, you should see a plot with the items clustered together as points within a 2d space -- the X axis represents the projection of the individual patterns onto the first principal component of variance across the item patterns, while the Y axis shows the projection onto the 2nd principal component of variance.  This will provide the greatest separation among the points.  If you change the final two args to this PCA function to 3 and 4, you'll see that projecting onto the smaller components produces a more mixed distribution of points from the different prototypes -- it is picking up on the \"residual\" variation after factoring out the major differences due to the prototype effects.
+
+To actually see what the eigenvectors for these patterns look like, you can create yet another new data table (ItemEigens) and duplicate the last program item, select PCAEigenTable, and set this new ItemEigens as the output pca_data table.  You should recognize blends of the different prototypes in the first few eigenvectors.
+
+There are several functions available in the HighDim toolkit that you are free to explore at this point.  Hopefully, if you've made it through this entire tutorial, you have a pretty good sense of some of the kinds of things you can do with data tables!
+
 </body>
 </html>
 ";
@@ -138,7 +595,7 @@ LeabraProject .projects[0] {
      value 1 0=1;
     };
    };
-   name="LeabraWizard_0";
+   name="LeabraWizard_1";
    auto_open=0;
    n_layers=3;
    layer_cfg {
@@ -256,8 +713,8 @@ LeabraProject .projects[0] {
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$0$;
-   name="Browser2";
+   m_data=.projects[1]$0$;
+   name="Browser3";
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -303,7 +760,7 @@ LeabraProject .projects[0] {
       el_def=0;
       T3DataViewFrame @[0] {
        m_data=NULL;
-       name="Frame1";
+       name="Frame10";
        visible=1;
        root_view {
 	m_data=NULL;
@@ -336,7 +793,7 @@ LeabraProject .projects[0] {
    };
   };
  };
- use_change_log=1;
+ use_change_log=0;
  last_change_desc=;
  networks {
   name=;
