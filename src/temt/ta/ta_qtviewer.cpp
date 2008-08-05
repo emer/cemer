@@ -3699,7 +3699,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   // create a taiMenu wrapper around the window's provided menubar
   menu = new taiMenuBar(this, taiMisc::fonBig, menuBar());
 
-  fileMenu = menu->AddSubMenu("&File");
+  fileMenu = menu->AddSubMenu("F&ile");
   editMenu = menu->AddSubMenu("&Edit");
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
