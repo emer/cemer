@@ -5115,16 +5115,17 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     else if(DerivesFrom(TA_uint64_t)) {
       return String(*((uint64_t*)base));
     }
+    // note: we convert , to . for intl contexts so files are always uniform
     else if(DerivesFrom(TA_float)) {
       switch (sc) {
-      case SC_STREAMING: return String(*((float*)base), "%.7g");
+      case SC_STREAMING: return String(*((float*)base), "%.7g").repl(",", ".");
       default:
         return String(*((float*)base));
       }
     }
     else if(DerivesFrom(TA_double)) {
       switch (sc) {
-      case SC_STREAMING: return String(*((double*)base), "%.16lg");
+      case SC_STREAMING: return String(*((double*)base), "%.16lg").repl(",", ".");
       default:
         return String(*((double*)base));
       }

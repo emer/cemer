@@ -439,6 +439,11 @@ public:
   int			gsub(const String& pat, const String& repl);
   // #CAT_Modify global substitution: substitute all occurrences of pat with repl
 
+  String&		repl(const char* pat, const String&     repl);
+  String&		repl(const char* pat, const char* repl);
+  String&		repl(const String& pat, const String& repl);
+  // #CAT_Modify global substitution: substitute all occurrences of pat with repl and return the modified string
+
   // in-place versions of friends -- they automatically makeUnique
 
   String&		reverse();
@@ -794,6 +799,24 @@ inline int String::gsub(const char* pat, const String& r)
 inline int String::gsub(const char* pat, const char* r)
 {
   return _gsub(pat, -1, r, -1);
+}
+
+inline String& String::repl(const String& pat, const String& r)
+{
+  _gsub(pat.chars(), pat.length(), r.chars(), r.length());
+  return *this;
+}
+
+inline String& String::repl(const char* pat, const String& r)
+{
+  _gsub(pat, -1, r.chars(), r.length());
+  return *this;
+}
+
+inline String& String::repl(const char* pat, const char* r)
+{
+  _gsub(pat, -1, r, -1);
+  return *this;
 }
 
 

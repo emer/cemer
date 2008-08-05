@@ -1303,7 +1303,13 @@ void taiMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
 taiMember::DefaultStatus taiMember::GetDefaultStatus(String memb_val) {
   String defval = mbr->OptionAfter("DEF_");
   if (defval.empty()) return NO_DEF;
-//TODO: may need to hack for , in real numbers
+  // hack for , in real numbers in international settings
+  // note: we would probably never have a variant member with float default
+  if (mbr->type->DerivesFrom(TA_float) ||
+    mbr->type->DerivesFrom(TA_double)) 
+  {
+    memb_val.gsub(",", "."); // does a makeUnique
+  }
   return (memb_val == defval) ? EQU_DEF : NOT_DEF;
 }
 
