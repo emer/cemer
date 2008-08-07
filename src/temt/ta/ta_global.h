@@ -25,6 +25,9 @@
 #define TA_USE_QFORMLAYOUT
 
 #ifndef __MAKETA__
+# if defined(_MSC_VER) && defined (_WIN64)
+#   define __restrict
+# endif
 # include <stdlib.h>
 # include <string.h>
 # include <limits.h>
@@ -95,15 +98,15 @@
 #elif defined(__CYGWIN__) // note: not supported
 #  define TA_OS_CYGWIN
 #  error "Cygwin is not supported for TA/PDP"
-#elif defined(WIN64) || defined(_WIN64) || defined(__WIN64__)
+#elif defined(_WIN64)
 #  define TA_OS_WIN64
 #  undef TA_POINTER_SIZE
 #  define TA_POINTER_SIZE 8
-#  error "Win64 is not yet supported for TA/PDP"
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #  undef TA_POINTER_SIZE
 #  define TA_POINTER_SIZE 4
 #  define TA_OS_WIN32
+#error("TEST _WIN32")
 #elif defined(__MWERKS__) && defined(__INTEL__)
 #  define TA_OS_WIN32
 #elif defined(__sun) || defined(sun)
@@ -233,10 +236,6 @@
 typedef void* voidptr; // for maketa, which chokes on void* in a template
 
 #if ((defined TA_GUI) && (!defined __MAKETA__))
-// replicate the builtin bool type for those that don't have it
-#ifdef NO_BUILTIN_BOOL
-typedef	unsigned int 	bool;
-#endif // def  NO_BUILTIN_BOOL
 
 #else // !def TA_GUI or making ta
 
@@ -285,10 +284,10 @@ typedef unsigned char   byte;
 
 #elif (TA_POINTER_SIZE == 8)
 # if defined(_WIN64)
-    typedef __int64	    	intptr_t;
-    typedef unsigned __int64	uintptr_t;
-    typedef __int64	    	ta_intptr_t;
-    typedef unsigned __int64	ta_uintptr_t;
+    typedef long long	    	intptr_t;
+    typedef unsigned long long	uintptr_t;
+    typedef long long	    	ta_intptr_t;
+    typedef unsigned long long	ta_uintptr_t;
 # else // gcc
     typedef long long		ta_intptr_t;
     typedef unsigned long long	ta_uintptr_t;
@@ -336,8 +335,6 @@ typedef unsigned char   byte;
   #define SIGNALS(x)
   #define Q_OBJECT
 #endif
-
-//note: bool defs deleted -- no modern C++ compiler doesn't provide bool
 
 // Misc useful macros
 

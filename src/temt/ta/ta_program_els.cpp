@@ -974,7 +974,7 @@ void MemberFmArg::Copy_(const MemberFmArg& cp) {
 
 void MemberFmArg::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(prv_obj && (bool)obj && (obj != prv_obj)) {
+  if(prv_obj && (bool)obj && (obj.ptr() != prv_obj)) {
     if((bool)obj->object_val && (bool)prv_obj->object_val &&
        !obj->object_val->InheritsFrom(prv_obj->object_val->GetTypeDef())) {
       path = "";		// reset path

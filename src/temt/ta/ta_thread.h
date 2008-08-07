@@ -40,8 +40,25 @@ private:
 
 
 #if defined(_MSC_VER) //note: assumes i386 arch, 32/64 doesn't matter (??)
-int taAtomic::FetchAdd(volatile int *pointer, int value)
-{
+// use compiler intrinsics for all atomic functions -- Win64 doesn't support asm
+// following taken from arch\qatomic_windows.h
+extern "C" {
+//   long __cdecl _InterlockedIncrement(volatile long *);
+//    long __cdecl _InterlockedDecrement(volatile long *);
+//    long __cdecl _InterlockedExchange(volatile long *, long);
+//    long __cdecl _InterlockedCompareExchange(volatile long *, long, long);
+    long __cdecl _InterlockedExchangeAdd(volatile long *, long);
+}
+//#  pragma intrinsic (_InterlockedIncrement)
+//#  pragma intrinsic (_InterlockedDecrement)
+//#  pragma intrinsic (_InterlockedExchange)
+//#  pragma intrinsic (_InterlockedCompareExchange)
+#  pragma intrinsic (_InterlockedExchangeAdd)
+
+int taAtomic::FetchAdd(volatile int *pointer, int value) {
+  return _InterlockedExchangeAdd(reinterpret_cast<volatile long*>(pointer), value);
+}
+/*{
     __asm {
         mov EDX,pointer
         mov ECX,value
@@ -49,7 +66,7 @@ int taAtomic::FetchAdd(volatile int *pointer, int value)
         mov value,ECX
     }
     return value;
-}
+}*/
 #elif ((defined(__i386__) || defined(__x86_64__)))
 #  if defined(__GNUC__)
 int taAtomic::FetchAdd(volatile int *ptr, int value)
