@@ -1,0 +1,268 @@
+#!/usr/bin/python
+# Copyright 2007, Brian Mingus
+#
+# This file is part of GenDoc.py, the Emergent Document Generator
+#
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details. 
+
+"""
+Convert the mta_gendoc.cpp generated XML to HTML
+
+This program knows how to upload the document to the wiki using pywikipediabot
+"""
+
+pwd = os.getcwd()
+emer_path = pwd + "/emergent_TA_doc.xml"
+temt_path = pwd + "/css_TA_doc.xml"
+
+emer = os.path.exists(emer_path)
+temt = os.path.exists(temt_path)
+
+if not emer and temt:
+    print "Fatal error: Could not find emergent_TA_doc.xml AND css_TA_doc.xml in", pwd
+    sys.exit(1)
+
+        for project in ['css','emergent']:
+
+            print "Scanning:", project
+
+            if project == 'emergent':
+                this_xml = emer_path
+            if project == 'css':
+                this_xml = temt_path
+
+            f = open(this_xml)
+            xml = f.read()
+            f.close()
+
+            xml = BeautifulStoneSoup(xml)
+            typespace = xml.typespace
+            typespacename = typespace.typename.string
+            typedefs = typespace.findAllNext("typedef", recursive=False)
+        
+            # Populate list of typedef names
+            typedef_names = []
+
+            # Prep list of lists for alpha-index
+            index_alpha = [[] for i in xrange(26)]
+
+            for typedef in typedefs:
+                if len(typedef):
+                    # Name (required)
+                    if getattr(typedef, 'typedefname'):
+                        typedefname = typedef('typedefname')[0].string
+                        typedef_names.append(typedefname)
+
+                        # Get data for the alpha-index
+                    for letter in range(len(index_alpha)):
+                            if typedefname[0] in [string.uppercase[letter],string.lowercase[letter]]:
+                                index_alpha[letter].append(typedefname)
+
+                    else:
+                        # Require the typedef to have a name
+                        continue
+
+            typedef_names.sort()
+
+            for typedef in typedefs:
+                if len(typedef):
+
+                    # Name (required)
+                    if getattr(typedef, 'typedefname'):
+                        typedefname = typedef('typedefname')[0].string
+                        typedef_names.append(typedefname)
+                    else:
+                        # Require the typedef to have a name
+                        continue
+
+                    # Type (optional) (legal values: enum, class)
+                    if getattr(typedef, 'type'):
+                        typetype = typedef('type')[0].string
+                        if not typetype in ['enum', 'class']:
+                            typetype = None
+                    else:
+                        typetype = None
+
+                    # Description (optional)
+                    if getattr(typedef, 'desc'):
+                        typedesc = typedef('desc')[0].string
+
+
+                    # Categories and Options (optional).
+                    # typeoptions is list of options, or None
+                    cats, opts = [], [] # Categories
+                    if getattr(typedef, 'options'):
+                        typeoptions = [option.string.replace(' ','')
+                                       for option in typedef('options')[0].findAll('option')]
+
+                        for option in typeoptions:
+                            if len(option) > 3:
+                                if option[:4] == "CAT_":
+                                    cats.append(option[4:])
+                                else:
+                                    opts.append(option.strip())                                
+
+                    # Parents (optional).
+                    # typeparents is list of parents, or None
+                    if getattr(typedef, 'parents'):
+                        typeparents = [parent.string.replace(' ','')
+                                       for parent in typedef('parents')[0].findAll('parent')]
+                        typeparents.reverse()
+
+
+                    # Children (optional).
+                    # typechildren is list of children, or None
+                    if getattr(typedef, 'children'):
+                        typechildren = [child.string.replace(' ','')
+                                        for child in typedef('children')[0].findAll('child')]
+
+                    # SubTypes (optional)
+                    # SubTypes contain EnumTypes contain EnumDefs
+
+                    if getattr(typedef, 'subtypes'):
+                        subtypes = typedef.subtypes
+
+                        # Get a sorted list of EnumDefnames for the navigation bar
+                        if getattr(subtypes, 'enumtype'):
+                            enumtypes = subtypes.findAll('enumtype', recursive=False)
+                            if len(enumtypes):
+                                enumtype_names = []
+                                for enumtype in enumtypes:
+                                    enumtypename = enumtype.enumtypename.string
+                                    enumtype_names.append(enumtypename)
+
+
+                                    # EnumDefs (optional)
+                                    enumdefs = enumtype.findAll('enumdef', recursive=False)
+                                    for enumdef in enumdefs:
+                                        if len(enumdefs):
+                                            enumdefname = enumdef.enumdefname.string
+                                    
+                                            # EnumDefName (mandatory)
+                                            enumdefname = enumdef.enumdefname.string
+
+                                            # EnumDef value (mandatory)
+                                            if getattr(enumdef, 'value'):
+                                                enumdefvalue = enumdef.value.string
+
+                                            # EnumDef description (optional)
+                                            if getattr(enumdef, 'desc'):
+                                                enumdefdesc = enumdef.desc.string
+
+                                enumtype_names.sort()
+
+                    # MemberSpace (optional)
+                    if getattr(typedef, 'memberspace'):
+                        memberspace = typedef.memberspace
+        
+                        # Memberspace name (optional)
+                        if getattr(memberspace, 'memberspacename'):
+                            memberspacename = memberspace.memberspacename.string
+                        else:
+                            memberspacename = None
+        
+                        # MemberDef (mandatory)
+                        memberdefs = typedef.memberspace.findAll('memberdef', recursive=False)
+                        if len(memberdefs):
+                            membdef_names = []
+                            for memberdef in memberdefs:
+        
+                                # name (mandatory)
+                                memberdefname = memberdef.memberdefname.string
+                                membdef_names.append(memberdefname)
+        
+                                # type (mandatory)
+                                memberdeftype = memberdef.type.string
+        
+                                # Options (optional).
+                                # memberdefoptions is list of options, or None
+                                mem_cats, mem_opts = [], []
+                                if getattr(memberdef, 'options'):
+                                    memberdefoptions = [memberdefoption.string.replace(' ','')
+                                                        for memberdefoption in memberdef('options')[0].findAll('option')]
+
+                                    for option in memberdefoptions:
+                                        if len(option) > 3:
+                                            if option[:4] == "CAT_":
+                                                mem_cats.append(option[4:])
+                                            else:
+                                                mem_opts.append(option.strip())                                
+
+                                # desc (optional)
+                                if getattr(memberdef, 'desc'):
+                                    memberdefdesc = memberdef.desc.string
+                                else:
+                                    memberdefdesc = ""
+
+                            membdef_names.sort()
+
+                    # MethodSpace (optional)
+
+                    if getattr(typedef, 'methodspace'):
+                        methodspace = typedef.methodspace
+                        # Get a sorted list of MethodDef names for the navigation bar
+                        metdef_names = []
+        
+                        # MethodDefs (mandatory)
+                        if len(methodspace):
+                            methoddefs = methodspace.findAll('methoddef')
+                            for methoddef in methoddefs:
+                                # name (mandatory)
+                                methoddefname = methoddef.methoddefname.string
+                                metdef_names.append(methoddefname)
+
+                                # desc (optional)
+                                if getattr(methoddef, 'desc'):
+                                    methoddefdesc = methoddef.desc.string
+                                else:
+                                    methoddefdesc = ""
+        
+                                # prototype (optional)
+                                if getattr(methoddef, 'prototype'):
+                                    methoddefprototype = methoddef.prototype.string
+                                else:
+                                    methoddefprototype = None
+        
+                                # Options (optional).
+                                # methoddefoptions is list of options, or None
+                                if getattr(methoddef, 'options'):
+                                    methoddefoptions = [methoddefoption.string.replace(' ','')
+                                                        for methoddefoption in methoddef('options')[0].findAll('option')]
+                                else:
+                                    methoddefoptions = None
+
+                            metdef_names.sort()
+
+                    # EnumSpace (optional)
+                    if getattr(typedef, 'enumspace'):
+                        enumspace = typedef.enumspace
+                        # Get a sorted list of EnumDef names for the navigation bar        
+                        enumdef_names = []
+
+                        # EnumDef (mandatory)
+                        if len(enumspace):
+                            enumdefs = enumspace.findAll('enumdef')
+                            for enumdef in enumdefs:
+        
+                                # name (mandatory)
+                                enumdefname = enumdef.enumdefname.string
+                                enumdef_names.append(enumdefname)
+
+                                # desc (optional)
+                                if getattr(enumdef, 'desc'):
+                                    enumdefdesc = enumdef.desc.string
+                                else:
+                                    enumdefdesc = None
+        
+                                # value (mandatory)
+                                enumdefvalue = enumdef.value.string
+
+                            enumdef_names.sort()
