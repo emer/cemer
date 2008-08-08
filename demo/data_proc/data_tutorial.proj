@@ -195,7 +195,7 @@ As you can see, the default for loop will iterate from 0 to 9 over the <code>i</
 
 Let's replace <code>i</code> with <code>cond1</code> (first condition variable), and have the test expression be: <code>cond1 &lt; 2</code> (and keep all other stuff the same aside from replacing i with cond1) -- this will iterate from 0 to 1 over the cond1 variable.
 
-Now repeat the process by dragging a for into the <code>loop_code</code> of your first for loop, and change it to use cond2 (with a test of < 2).
+Now repeat the process by dragging a for into the <code>loop_code</code> of your first for loop, and change it to use cond2 (with a test of &lt; 2).
 
 Finally, repeat this process one last time, changing the variable to batch, and let's keep the test limit of 10 for now.
 
@@ -239,7 +239,7 @@ Now go into these two new items and select sse for the var instead of cycles, se
 
 === Final Bits ===
 
-The last step is to add an additional <code>data vars</code> item to the end (can just drag the existing one onto the loop code and Copy to put it at the end), configured as before, but with cycles and sse as the two variables to set.
+The last step is to add an additional <code>data vars</code> item to the end (can just drag the existing one onto the loop code and Copy to put it at the end), configured as before (don't forget to turn <code>set data</code> on), but with cycles and sse as the two variables to set.
 
 Finally, we need to add one new element to the start of the program.  This will be evident if you are impatient and just did Init and Run -- your data table just keeps growing in size every time you run the program!  We need to start by resetting the rows.  Drag a <code>reset rows</code> item from the <code>Data</code> toolkit on top of the first for loop -- it will go at the start of the program.  As you might expect, you need to select the data table variable for the data var.
 
@@ -262,7 +262,7 @@ Here are the definitions of the condition values from above:
 * '''cond1''' (integer) -- condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)
 * '''cond2''' (integer) -- condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)
 
-In the types section, do New Enum Type (button or contect menu) and name it Cond1 -- click New Enum and call the first one LOC (value is 0), and then duplicate that one and call it OBJ (value = 1).  Then duplicate the Cond1 type and rename it Cond2 and change the two enum values to SRC and TRG respectively.
+In the types section, do <code>New Enum Type</code> (button or context menu -- don't do the plain New function) and name it Cond1, then click New Enum and call the first one LOC (value is 0), and then duplicate that one and call it OBJ (value = 1).  Then duplicate the Cond1 type and rename it Cond2 and change the two enum values to SRC and TRG respectively.
 
 Next, we'll create new columns in the data table to hold these labels.  Back at the [[.data.InputData.MyRandomData]] table, do New Column and create a cond1_lbl column of type String -- duplicate that and rename it cond2_lbl, and finaly make one more duplicate called cond_lbl which will contain both condition labels in a single column.
 
