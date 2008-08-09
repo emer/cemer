@@ -85,20 +85,6 @@ public:
     }
   }
 
-  inline override void Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, // cn->wt is linear
-			       C_Compute_Err_Delta(cn, cn->wt, ru, su));
-	}
-      }
-    }
-  }
-
   TA_BASEFUNS(MatrixConSpec);
 protected:
   void	UpdateAfterEdit_impl();

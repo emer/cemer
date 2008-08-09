@@ -1524,16 +1524,6 @@ void LeabraUnitSpec::Compute_dWt_impl(LeabraUnit* u, LeabraLayer* lay, LeabraNet
     ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0), u,
 								  lay);
   }
-  else if(net->learn_rule == LeabraNetwork::CTLEABRA_DCAL) {
-    for(int g = 0; g < u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;
-      recv_gp->Compute_dWt_CtLeabraDCAL(u);
-    }
-    // straight-up cal for bias weights -- critical that it come after above because sravg is used!
-    ((LeabraConSpec*)bias_spec.SPtr())->B_Compute_dWt_CtLeabraCAL((LeabraCon*)u->bias.Cn(0),
-								   u, lay);
-  }
 }
 
 void LeabraUnitSpec::Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetwork* net) {
@@ -1545,7 +1535,7 @@ void LeabraUnitSpec::Compute_Weights(LeabraUnit* u, LeabraLayer* lay, LeabraNetw
       recv_gp->Compute_Weights_LeabraCHL(u);
     }
   }
-  else { // CTLEABRA_CAL, DCAL
+  else { // CTLEABRA_CAL
     for(int g = 0; g < u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->prjn->from->lesioned() || !recv_gp->cons.size) continue;

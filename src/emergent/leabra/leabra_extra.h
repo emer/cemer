@@ -204,10 +204,6 @@ public:
     inherited::Compute_dWt_CtLeabraCAL(cg, ru);
     Depress_Wt(cg, ru);
   }
-  void Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    inherited::Compute_dWt_CtLeabraDCAL(cg, ru);
-    Depress_Wt(cg, ru);
-  }
 
   void C_Reset_EffWt(TrialSynDepCon* cn) {
     cn->effwt = cn->wt;

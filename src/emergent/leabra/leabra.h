@@ -260,7 +260,6 @@ public:
   enum LearnRule {
     LEABRA_CHL,			// use the standard Leabra Contrastive Hebbian Learning rule: (s+r+) - (s-r-) (s=sender,r=recv +=plus phase, -=minus phase)
     CTLEABRA_CAL,		// use the continuous-time Leabra Contrastive Attractor Learning rule: (s+r+) - <s-r-> (s=sender,r=recv +=plus phase, -=minus phase = average over all non-+ states indicated by <>)
-    CTLEABRA_DCAL,		// use the continuous-time Leabra Delta-Contrastive Attractor Learning rule: (s+ - <s->) - (r+ - <r->) (s=sender,r=recv +=plus phase, -=minus phase = average over all non-+ states indicated by <>)
   };
 
   enum	LRSValue {		// what value to drive the learning rate schedule with
@@ -419,15 +418,6 @@ public:
 
 
   /////////////////////////////////////
-  // 	CtLeabra_DCAL
-
-  inline float 	C_Compute_Err_CtLeabraDCAL(LeabraCon* cn, float ru_act_p, float su_act_p,
-					   float ru_avg, float su_avg, float avg_nrm);
-  // #CAT_Learning compute delta-contrastive attractor learning (DCAL)
-  inline virtual void 	Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru);
-  // #CAT_Learning CtLeabra/DCAL weight changes
-
-  /////////////////////////////////////
   // 	Bias Weights
 
   inline virtual void	B_Compute_dWt_LeabraCHL(LeabraCon* cn, LeabraUnit* ru);
@@ -455,8 +445,6 @@ public:
       Compute_dWt_LeabraCHL((LeabraRecvCons*)cg, (LeabraUnit*)ru);
     else if(learn_rule == CTLEABRA_CAL)
       Compute_dWt_CtLeabraCAL((LeabraRecvCons*)cg, (LeabraUnit*)ru);
-    else if(learn_rule == CTLEABRA_DCAL)
-      Compute_dWt_CtLeabraDCAL((LeabraRecvCons*)cg, (LeabraUnit*)ru);
   }
   // #CAT_Learning do not redefine this function -- just splits out which code is relevant -- not actually called by the unitspec Compute_dWt function
 
@@ -538,9 +526,6 @@ public:
   void	Compute_dWt_CtLeabraCAL(LeabraUnit* ru)
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraCAL(this, ru); }
   // #CAT_Learning compute weight changes: CtLeabra CAL version
-  void	Compute_dWt_CtLeabraDCAL(LeabraUnit* ru)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraDCAL(this, ru); }
-  // #CAT_Learning compute weight changes: CtLeabra DCAL version
   void	Compute_Weights_LeabraCHL(LeabraUnit* ru)
   { ((LeabraConSpec*)GetConSpec())->Compute_Weights_LeabraCHL(this, ru); }
   // #CAT_Learning compute weights: Leabra CHL version
@@ -2357,78 +2342,6 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraCAL(LeabraRecvCons* cg, LeabraUni
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-//     Computing dWt: CtLeabra_DCAL
-
-inline float LeabraConSpec::C_Compute_Err_CtLeabraDCAL(LeabraCon* cn, 
-						       float ru_act_p, float su_act_p,
-						       float ru_avg, float su_avg,
-						       float avg_nrm) {
-  float err = (ru_act_p - (avg_nrm * ru_avg)) * (su_act_p - (avg_nrm * su_avg));
-  if(lmix.err_sb) {
-    if(err > 0.0f)	err *= (1.0f - cn->wt);
-    else		err *= cn->wt;
-  }
-  return err;
-}
-
-inline void LeabraConSpec::Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-  // need to do recv layer here because savg_cor.thresh is only here.. could optimize this later
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
-  if(rlay->acts_p.avg < savg_cor.thresh) { // if layer not active in attractor phase, no learn
-    return;
-  }
-  LeabraLayer* lfm = (LeabraLayer*)cg->prjn->from.ptr();
-  if(lfm->acts_p.avg < savg_cor.thresh) {
-    return;
-  }
-  if(ru->in_subgp) {
-    LeabraUnit_Group* ogp = (LeabraUnit_Group*)ru->owner;
-    if(ogp->acts_p.avg < savg_cor.thresh) {
-      return;
-    }
-  }
-
-  LeabraCon* rbwt = (LeabraCon*)ru->bias.Cn(0);
-
-  if(lmix.hebb == 0.0f) {	// hebb is sufficiently infrequent to warrant optimizing
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-      if(su->in_subgp) {
-	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-	if(ogp->acts_p.avg < savg_cor.thresh) {
-	  continue;
-	}
-      }
-      LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
-      C_Compute_dWt_NoHebb(cn, ru, 
-			   C_Compute_Err_CtLeabraDCAL(cn, ru->act_p, su->act_p,
-						      rbwt->sravg, sbwt->sravg,
-						      rlay->sravg_nrm));
-    }
-  }
-  else {
-    Compute_SAvgCor(cg, ru);
-    for(int i=0; i<cg->cons.size; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-      if(su->in_subgp) {
-	LeabraUnit_Group* ogp = (LeabraUnit_Group*)su->owner;
-	if(ogp->acts_p.avg < savg_cor.thresh) {
-	  continue;
-	}
-      }
-      LeabraCon* sbwt = (LeabraCon*)su->bias.Cn(0);
-      C_Compute_dWt(cn, ru, 	// note: cn->wt is linear -- no wt sig..
-		    C_Compute_Hebb(cn, cg, cn->wt, ru->act_p, su->act_p),
-		    C_Compute_Err_CtLeabraDCAL(cn, ru->act_p, su->act_p,
-					      rbwt->sravg, sbwt->sravg,
-					      rlay->sravg_nrm));
-    }
-  }
-}
-
 /////////////////////////////////////
 //	Compute_Weights_CtLeabraCAL
 
@@ -2715,7 +2628,6 @@ public:
   enum LearnRule {
     LEABRA_CHL,			// use the standard Leabra Contrastive Hebbian Learning rule: (s+r+) - (s-r-) (s=sender,r=recv +=plus phase, -=minus phase)
     CTLEABRA_CAL,		// use the continuous-time Leabra Contrastive Attractor Learning rule: (s+r+) - <s-r-> (s=sender,r=recv +=plus phase, -=minus phase = average over all non-+ states) indicated by <>
-    CTLEABRA_DCAL,		// use the continuous-time Leabra Delta-Contrastive Attractor Learning rule: (s+ - <s->) - (r+ - <r->) (s=sender,r=recv +=plus phase, -=minus phase = average over all non-+ states indicated by <>)
   };
 
   enum StateInit {		// ways of initializing the state of the network

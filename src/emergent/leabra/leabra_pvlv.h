@@ -87,19 +87,6 @@ public:
     }
   }
 
-  inline override void Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
-	}
-      }
-    }
-  }
-
   TA_SIMPLE_BASEFUNS(PVConSpec);
 protected:
   void	UpdateAfterEdit_impl();
@@ -202,19 +189,6 @@ public:
     }
   }
 
-  inline override void Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
-	}
-      }
-    }
-  }
-
   TA_SIMPLE_BASEFUNS(PVrConSpec);
 private:
   void 	Initialize();
@@ -271,20 +245,6 @@ public:
 	  C_Depress_Wt((TrialSynDepCon*)cn, ru, su);
 	}
 	cn->sravg = 0.0f;
-      }
-    }
-  }
-
-  inline override void Compute_dWt_CtLeabraDCAL(LeabraRecvCons* cg, LeabraUnit* ru) {
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
-      for(int i=0; i<cg->cons.size; i++) {
-	LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	LeabraCon* cn = (LeabraCon*)cg->Cn(i);
-	if(!(su->in_subgp &&
-	     (((LeabraUnit_Group*)su->owner)->acts_p.avg < savg_cor.thresh))) {
-	  C_Compute_dWt_NoHebb(cn, ru, C_Compute_Err_Delta(cn, ru, su));  
-	  C_Depress_Wt((TrialSynDepCon*)cn, ru, su);
-	}
       }
     }
   }
