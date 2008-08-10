@@ -55,6 +55,15 @@ public:
     return err;
   }
 
+  inline float C_Compute_Err_Delta_NoSB(LeabraCon* cn, float lin_wt, LeabraUnit* ru, LeabraUnit* su) {
+    float err = 0.0f;
+    if(matrix_rule == OUTPUT) 
+      err = (ru->act_p - ru->act_m) * su->act_m;
+    else
+      err = (ru->act_p2  - ru->act_p) * su->act_p;
+    return err;
+  }
+
   inline override void Compute_dWt_LeabraCHL(LeabraRecvCons* cg, LeabraUnit* ru) {
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg >= savg_cor.thresh) {
       for(int i=0; i<cg->cons.size; i++) {
@@ -78,7 +87,8 @@ public:
 	if(!(su->in_subgp &&
 	     (((LeabraUnit_Group*)su->owner)->acts.avg < savg_cor.thresh))) {
 	  C_Compute_dWt_NoHebb(cn, ru, // cn->wt is linear
-			       C_Compute_Err_Delta(cn, cn->wt, ru, su));
+			       C_Compute_Err_Delta_NoSB(cn, cn->wt, ru, su));
+	  // no softbounding here because it happens in update weights later
 	  cn->sravg = 0.0f;
 	}
       }
