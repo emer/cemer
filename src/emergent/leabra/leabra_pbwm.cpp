@@ -763,6 +763,19 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+void MatrixLayerSpec::Compute_dWt_impl(LeabraLayer* lay, LeabraNetwork* net) {
+//   if(net->learn_rule != LeabraNetwork::LEABRA_CHL) {
+//     if(lay->sravg_sum == 0.0f) return; // if nothing, nothing!
+//     lay->sravg_nrm = 1.0f / lay->sravg_sum;
+//   }
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
+    u->Compute_dWt(lay, net);
+  AdaptKWTAPt(lay, net);
+  lay->sravg_sum = 0.0f;
+}
+
 void MatrixLayerSpec::Compute_dWt_FirstPlus(LeabraLayer* lay, LeabraNetwork* net) {
   if(bg_type == MatrixLayerSpec::OUTPUT) {
     Compute_dWt_impl(lay, net);
