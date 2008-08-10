@@ -2569,7 +2569,7 @@ class LEABRA_API CtSineInhibMod : public taBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
 INHERITED(taBase)
 public:
-  int		start;		// [20] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
+  int		start;		// [30] number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
   int		duration;	// [20] number of cycles from start to apply modulation
   float		n_pi;		// number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
   float		burst_i;	// [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number

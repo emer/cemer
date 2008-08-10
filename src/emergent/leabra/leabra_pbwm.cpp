@@ -1983,6 +1983,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects
 
+  // set bias specs for unit specs
+  pfc_units->bias_spec.SetSpec(pfc_bias);
+  matrix_units->bias_spec.SetSpec(matrix_bias);
+  
   snrthal_m->SetLayerSpec(snrthalsp); snrthal_m->SetUnitSpec(snrthal_units);
   matrix_m->SetLayerSpec(matrixsp);   matrix_m->SetUnitSpec(matrix_units);
   pfc_m->SetLayerSpec(pfcmsp);	pfc_m->SetUnitSpec(pfc_units);
@@ -1990,12 +1994,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     snrthal_o->SetLayerSpec(snrthalosp); snrthal_o->SetUnitSpec(snrthal_units);
     matrix_o->SetLayerSpec(matrixosp);   matrix_o->SetUnitSpec(matrixo_units);
     pfc_o->SetLayerSpec(pfcosp);	pfc_o->SetUnitSpec(pfc_units);
+    matrixo_units->bias_spec.SetSpec(matrix_bias);
   }
 
-  // set bias specs for unit specs
-  pfc_units->bias_spec.SetSpec(pfc_bias);
-  matrix_units->bias_spec.SetSpec(matrix_bias);
-  
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
 
