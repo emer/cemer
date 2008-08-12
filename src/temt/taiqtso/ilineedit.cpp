@@ -175,10 +175,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* e) {
       e->accept();
       cut();
     }
-    else if(e->key() == Qt::Key_U) {
-      e->accept();
-      selectAll();
-    }
     else if(e->key() == Qt::Key_Slash) {
       e->accept();
       undo();
