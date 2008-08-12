@@ -620,6 +620,12 @@ public:
     ES_TABLE, // #LABEL_Table use the new tabular view style, that makes edit widgets on demand (much faster)
   };
   
+  enum SimageAvail { // whether simage is available or not
+    SA_UNKNOWN, // simage availability not known yet
+    SA_AVAIL, // simage known to be available
+    SA_UNAVAIL, // simage not available
+  };
+  
   static String		app_name; // #READ_ONLY #NO_SAVE #SHOW the root name of the app, ex. "pdp++"
   static String		app_lib_name; // #READ_ONLY #NO_SAVE #EXPERT the root name of the app's library, if any, ex. "pdp" (none for css)
   static String		default_app_install_folder_name; // #READ_ONLY #NO_SAVE #HIDDEN the default folder name for installation, ex. "Emergent"
@@ -726,6 +732,7 @@ public:
   static String		help_cmd;	// #SAVE #CAT_File how to run html browser to get help, %s is entire path to help file
   static String		edit_cmd;	// #SAVE #CAT_File how to run editor
   
+  static SimageAvail	simage_avail;	// #NO_SAVE #SHOW #READ_ONLY #HIDDEN 
   ////////////////////////////////////////////////////////
   // 	Args
 

@@ -782,6 +782,101 @@ void SoLineBox3d::render() {
 
 SO_NODE_SOURCE(SoImageEx);
 
+// copy 32 bit xRGB data to an intermediate packed buffer
+// then to the Texture
+void xRGB_to_Texture(const QImage& img, SoTexture2* sotx) {
+  const int nc = 3;
+  int src_cnt = img.width() * img.height();
+  unsigned char* buf = (unsigned char*)malloc(src_cnt * nc);
+  int dst_i = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = img.height() - 1; y >= 0; --y)
+  for (int x = 0; x < img.width(); ++x) {
+    QRgb rgb = img.pixel(x, y);
+    buf[dst_i++] = (unsigned char)qRed(rgb);
+    buf[dst_i++] = (unsigned char)qGreen(rgb);
+    buf[dst_i++] = (unsigned char)qBlue(rgb);
+  }
+  sotx->image.setValue(SbVec2s(img.width(), img.height()),
+    nc, buf, SoSFImage::COPY);
+  free(buf);
+}
+
+void ARGB_to_Texture(const QImage& img, SoTexture2* sotx) {
+  const int nc = 4;
+  int src_cnt = img.width() * img.height();
+  unsigned char* buf = (unsigned char*)malloc(src_cnt * nc);
+  int dst_i = 0;
+  //NOTE: we have to invert the data for Coin's bottom=0 addressing
+  for (int y = img.height() - 1; y >= 0; --y)
+  for (int x = 0; x < img.width(); ++x) {
+    QRgb rgb = img.pixel(x, y);
+    buf[dst_i++] = (unsigned char)qRed(rgb);
+    buf[dst_i++] = (unsigned char)qGreen(rgb);
+    buf[dst_i++] = (unsigned char)qBlue(rgb);
+    buf[dst_i++] = (unsigned char)qAlpha(rgb);
+  }
+  sotx->image.setValue(SbVec2s(img.width(), img.height()),
+    nc, buf, SoSFImage::COPY);
+  free(buf);
+}
+
+bool SoImageEx::SetTextureImage(SoTexture2* sotx, const QImage& img) {
+  // TODO: would be *great* to search paths for fname
+  // assume it is a RGB or ARGB -- if latter, we'll need to rotate to Coin's RGBA
+  QImage::Format format = img.format();
+  // note: loading should never return the normalized alpha format...
+  if (format == QImage::Format_ARGB32) {
+    ARGB_to_Texture(img, sotx);
+    return true; 
+  } 
+  QImage img2(img); // may not need to be changed
+  if (format != QImage::Format_RGB32) {
+    img2 = img.convertToFormat(QImage::Format_RGB32);
+  }
+  xRGB_to_Texture(img2, sotx);
+  return true;
+}
+
+bool SoImageEx::SetTextureFile(SoTexture2* sotx, const String& fname) {
+  // if we haven't set any textures yet, try using simage
+  switch (taMisc::simage_avail) {
+  case taMisc::SA_UNKNOWN:
+    // try using simage
+    if (SetTextureFile_impl(sotx, fname, true)) {
+      taMisc::simage_avail = taMisc::SA_AVAIL;
+      return true;
+    }
+    // ok, that didn't work, but is it a bad file? try Qt...
+    if (SetTextureFile_impl(sotx, fname, false)) {
+      taMisc::simage_avail = taMisc::SA_UNAVAIL;
+      return true;
+    }
+    return false; // note: don't change avail state, since probably bad file
+  case taMisc::SA_AVAIL:
+    return SetTextureFile_impl(sotx, fname, true);
+  case taMisc::SA_UNAVAIL:
+    return SetTextureFile_impl(sotx, fname, false);
+  }
+}
+
+bool SoImageEx::SetTextureFile_impl(SoTexture2* sotx, const String& fname,
+  bool use_simage) 
+{
+  if (use_simage) {
+    sotx->filename = (const char*)fname;
+    // check if anything loaded
+    SbVec2s size; 
+    int nc = 0;
+    sotx->image.getValue(size, nc);
+    return (nc != 0); // would be zero on failure
+  } 
+  // else Qt 
+  QImage img;
+  if (!img.load(fname)) return false;
+  return SetTextureImage(sotx, img);
+}
+
 void SoImageEx::initClass()
 {
   SO_NODE_INIT_CLASS(SoImageEx, SoSeparator, "SoSeparator");

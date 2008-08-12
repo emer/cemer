@@ -47,31 +47,13 @@
 
 #include "SoCapsule.h"
 
-// TEMP -- move to T3Node
-#include <QImage>
-bool SetTextureImage(SoTexture2* sotx, const String& fname) {
-  // TODO: would be *great* to search paths for fname
-  QImage img;
-  if (!img.load(fname)) return false;
-  int nc = 4;
-/*temp  nc = img.isGrayscale() ? 1 : 3;
-  if (img.hasAlphaChannel()) nc++; */
-  QImage img2(img.mirrored(false, true).convertToFormat(QImage::Format_ARGB32));
-  
-  sotx->image.setValue(SbVec2s(img2.width(), img2.height()),
-		       nc, img2.bits(), SoSFImage::COPY);
-  return true;
-}
-// /TEMP
-
 ///////////////////////////////////////////////////////////////////////
 //		So configure classes defined in ta_virtenv.h
 
 
 void VETexture::SetTexture(SoTexture2* sotx) {
-  sotx->filename = (const char*)fname;
-//   taMisc::TestError(this, !SetTextureImage(sotx, fname),
-//     "Could not set texture from fname:", fname);
+  taMisc::TestError(this, !SoImageEx::SetTextureFile(sotx, fname),
+     "Could not set texture from fname:", fname);
   if(wrap_horiz == REPEAT)
     sotx->wrapS = SoTexture2::REPEAT;
   else

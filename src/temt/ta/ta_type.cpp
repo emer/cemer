@@ -657,6 +657,7 @@ UserDataItem_List* taMisc::deferred_schema_items;
 #ifdef TA_GUI
 QPointer<QMainWindow> taMisc::console_win = NULL;
 #endif
+taMisc::SimageAvail taMisc::simage_avail; 
 
 void (*taMisc::WaitProc)() = NULL;
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'

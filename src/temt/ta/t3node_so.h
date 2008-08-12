@@ -429,6 +429,11 @@ typedef SoSeparator inherited;
 public:
   static void		initClass();
   
+  static bool		SetTextureFile(SoTexture2* sotx, const String& fname);
+    // set a texture from a file, using simage if available, else Qt
+  static bool		SetTextureImage(SoTexture2* sotx, const QImage& img);
+    // set a texture from a QImage (note: y is flipped for Coin's base 0)
+  
   SoTexture2*		texture;
   
   void		setImage(const QImage& src);
@@ -437,6 +442,9 @@ public:
   
   SoImageEx();
 protected:
+  static bool 		SetTextureFile_impl(SoTexture2* sotx, const String& fname,
+    bool use_simage); 
+
   const char*  	getFileFormatName() const {return "Separator"; } 
 
   SoRect*		shape;
