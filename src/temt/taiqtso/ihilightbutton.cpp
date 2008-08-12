@@ -13,27 +13,23 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ISCROLLAREA_H
-#define ISCROLLAREA_H
+#include "ta_global.h"
 
-#include "taiqtso_def.h"
+#include "ihilightbutton.h"
 
-#include <QScrollArea>
+iHiLightButton::iHiLightButton(QWidget* parent = 0, const char* name = 0)
+:QPushbutton(parent, name)
+{
+}
 
-class iScrollArea: public QScrollArea {
-  // ##NO_CSS scroll area with better visual semantics than the stock Qt one
-INHERITED(QScrollArea)
-  Q_OBJECT
-public:
-
-  QSize 	sizeHint() const;
-
-  explicit iScrollArea(QWidget* parent = 0);
-
-private:
-  void		init();
-};
+iHiLightButton::iHiLightButton(const QString& text, QWidget* parent, const char* name = 0)
+:QPushbutton(text, parent, name)
+{
+}
 
 
-#endif
+void iHiLightButton::init() {
+  mhilight = false;
+}
 
+void iHiLightButton::setHilight(bool value);

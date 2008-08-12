@@ -313,15 +313,19 @@ for project in ['emergent']:
                             methoddefdesc = ""
                         ########################################################################
 
+
                         # prototype (optional)
                         ########################################################################
-                        if getattr(methoddef, 'prototype'):
-                            methoddefprototype = methoddef.prototype.string
-                            if debug:
-                                print "MethodDef proto", methoddefprototype
-                        else:
-                            methoddefprototype = None
-                        ########################################################################
+                        methoddefargs = methoddef.findAll("argument")
+                        if len(methoddefargs) > 0:
+                        prototype = ""
+                        args = ""
+                            for methoddefarg in methoddefargs:
+                                args += 
+                                print "MetDefArg name", methoddefarg.name
+                                print "MetDefArg type", methoddefarg.type
+                                if getattr(methoddefarg, 'def'):
+                                    print "MetDefArg def", methoddefarg.def
 
                         # Options (optional).
                         # methoddefoptions is list of options, or None

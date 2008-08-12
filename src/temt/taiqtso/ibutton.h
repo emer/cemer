@@ -22,7 +22,7 @@
 #include <QPushButton>
 #include <QToolButton>
 
-class TAIQTSO_API iMenuButton: public QToolButton {
+class iMenuButton: public QToolButton {
   // ##NO_CSS button to use for menu buttons (standalone or in toolbars)
 INHERITED(QToolButton)
   Q_OBJECT
@@ -34,7 +34,7 @@ private:
   void		init();
 };
 
-class TAIQTSO_API iColorButton: public QToolButton {
+class iColorButton: public QToolButton {
 INHERITED(QToolButton)
   Q_OBJECT
 public:

@@ -298,7 +298,19 @@ void taGenDoc::GenDoc(TypeSpace* ths, fstream& strm) {
 	strm << "    <MethodDef>\n";
 	strm << "     <MethodDefName>" << metd->name << "</MethodDefName>\n";
 	strm << (trim(metd->desc).length() ? "     <Desc>"+trim(metd->desc).xml_esc()+"</Desc>\n":"");
-	strm << "     <Prototype>"+String(metd->prototype()).xml_esc()+"</Prototype>\n";
+
+ 	strm << "     <MethodDefType>" << metd->type->name << "</MethodDefType>\n";
+
+	for (int l=0;l<metd->arg_names.size;++l) {
+	  strm << "     <Argument>\n";
+	  strm << "      <Type>" << metd->arg_types[l]->Get_C_Name() << "</Type>\n";
+	  strm << "      <Name>" << metd->arg_names[l]<< "</Name>\n";
+	  String def = metd->arg_defs[l];
+	  if (def.nonempty())
+	    strm << "      <Def>" << def << "</Def>\n";
+	  strm << "     </Argument>\n";
+	}
+          
 
 	if (metd->opts.size) {
 	  strm << "     <Options>\n"; 

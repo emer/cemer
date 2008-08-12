@@ -20,7 +20,7 @@
 
 #include <QDialog>
 
-class TAIQTSO_API iDialog : public QDialog
+class iDialog : public QDialog
 {
     Q_OBJECT
 

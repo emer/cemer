@@ -13,27 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ISCROLLAREA_H
-#define ISCROLLAREA_H
 
-#include "taiqtso_def.h"
+// iwidgetlist.h -- QWidget list
 
-#include <QScrollArea>
+#ifndef IWIDGETLIST_H
+#define IWIDGETLIST_H
 
-class iScrollArea: public QScrollArea {
-  // ##NO_CSS scroll area with better visual semantics than the stock Qt one
-INHERITED(QScrollArea)
-  Q_OBJECT
-public:
+#include <QWidget>
+#include <QList>
 
-  QSize 	sizeHint() const;
+typedef QList<QWidget*> iWidgetList;
 
-  explicit iScrollArea(QWidget* parent = 0);
-
-private:
-  void		init();
-};
-
-
-#endif
-
+#endif // IWIDGETLIST_H
