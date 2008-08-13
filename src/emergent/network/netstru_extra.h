@@ -62,7 +62,7 @@ private:
 };
 
 class EMERGENT_API TesselPrjnSpec : public ProjectionSpec {
-  // arbitrary tesselations (repeating patterns) of connectivity
+  // ##DEF_CHILD_send_offs ##DEF_CHILDNAME_Sending_Offsets arbitrary tesselations (repeating patterns) of connectivity
 INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_off;	// offset in layer for start of recv units to begin connecting
@@ -95,6 +95,8 @@ public:
   // #BUTTON assign weights as a linear function of sender distance
   virtual void	WeightsFromGausDist(float scale, float sigma);
   // #BUTTON assign weights as a Gaussian function of sender distance
+
+  override taList_impl*	children_() {return &send_offs;}
 
   TA_SIMPLE_BASEFUNS(TesselPrjnSpec);
 protected:
@@ -318,7 +320,7 @@ private:
 };
 
 class EMERGENT_API GpRndTesselPrjnSpec : public ProjectionSpec {
-  // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit
+  // ##DEF_CHILD_send_gp_offs  ##DEF_CHILDNAME_Sending_Offsets specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit
 INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
@@ -362,6 +364,8 @@ public:
   // #BUTTON make a connection pattern in the form of an elipse: center is located at ctr_x,y and extends half_width and half_height therefrom
   virtual void	SetPCon(float p_con, int start = 0, int end = -1);
   // #BUTTON set p_con value for a range of send_gp_offs (default = all; end-1 = all)
+
+  override taList_impl*	children_() {return &send_gp_offs;}
 
   TA_SIMPLE_BASEFUNS(GpRndTesselPrjnSpec);
 protected:
