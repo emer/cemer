@@ -124,7 +124,8 @@ public:
       cn->dwt += cur_lrate * err;
   }
 
-  inline override void B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru) {
+  inline override void B_Compute_dWt_CtLeabraCAL(LeabraCon* cn, LeabraUnit* ru,
+						 LeabraLayer* rlay) {
     float err;
     if(matrix_rule == MAINT)
       err = ru->act_p2 - ru->act_p;
