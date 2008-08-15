@@ -72,7 +72,7 @@ public:
   bool			is_auto; // #LABEL_auto determined from file
   short			act; // #CONDEDIT_OFF_auto #MIN_1 actual value
   
-  TA_BASEFUNS(FieldSpec)
+  TA_BASEFUNS_LITE(FieldSpec)
 private:
   void	Initialize();
   void	Destroy() {}
@@ -105,6 +105,7 @@ public:
   virtual int		OpenFile(); // if no format has been set, get the codec based on ext; open the file, confirm specs, return 0 if ok, else error code
   virtual void		CloseFile();
   
+  SIMPLE_LINKS(FileInput);
   TA_BASEFUNS(FileInput)
 #ifndef __MAKETA__  
 protected:
