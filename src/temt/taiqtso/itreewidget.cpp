@@ -389,9 +389,28 @@ void iTreeWidgetItem::init() {
 }
 
 void iTreeWidgetItem::enableLazyChildren() {
-  if (lazy_children || (childCount() > 0) ) return;
+  if (children_created || lazy_children) return; // enable is not update!!!!
   lazy_children = true; // do first, in case any signals happen during following...
-  new QTreeWidgetItem(this); // just a placeholder, gets deleted
+  UpdateLazyChildren();
+}
+
+void iTreeWidgetItem::UpdateLazyChildren() {
+  if (!lazy_children) return;
+  bool will = willHaveChildren(); // note: this is not 100% guaranteed accurate
+  int cc = childCount();
+#ifdef DEBUG
+  if (cc > 1) {
+    qWarning("iTreeWidgetItem::createLazyChildren: 1 dummy item expected; %i items encountered.\n", cc);
+  }
+#endif
+  if (will) {
+    if (cc > 0) return; // correct already
+    new QTreeWidgetItem(this); // just a placeholder, gets deleted
+  } else { // wont'
+    if (cc > 0) // we assume only 1!!! 
+      delete takeChild(0); // the dummy
+    // else none, as should be
+  }
 }
 
 void iTreeWidgetItem::CreateChildren() {
@@ -470,5 +489,12 @@ void iTreeWidgetItem::resetTextColor(int col) {
       setData(col, Qt::TextColorRole, QVariant());
   }
 }
+
+bool iTreeWidgetItem::willHaveChildren() const {
+  bool will = false;
+  willHaveChildren_impl(will);
+  return will;
+}
+
 
 

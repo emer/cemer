@@ -7238,39 +7238,11 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
     setData(0, Qt::FontRole, fnt);
   }
 */
-//  setText(0, tree_name);
   given_name = tree_name;
   setText(0, GetColText(0, tree_name));
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
-  if (dn_flags_ & DNF_LAZY_CHILDREN) {
-    taBase* tab = link_->taData();
-    if(tab) {
-      // note: disable lazy programmer! :)
-      taList_impl* chld = tab->children_();
-      if(chld) {
-	if(!chld->IsEmpty()) {
-	  enableLazyChildren();
-	}
-	else if(chld->InheritsFrom(&TA_taGroup_impl)) {
-	  // isempty doesn't check subgroups -- it is used in dump so we DON'T EVER
-	  // MESS WITH THAT!  hence this additional somewhat unclean check..
-	  taGroup_impl* tagp = (taGroup_impl*)chld;
-	  if(tagp->gp.size > 0) {
-	    enableLazyChildren();
-	  }
-	}
-      }
-      else {
-	// a regular base -- if it is here, then it definitely has child items
-	if(link_->HasChildItems())
-	  enableLazyChildren();
-      }
-    }
-    else {
-      enableLazyChildren();
-    }
-  }
+  // note: lazy children moved to Decorate because uses virtuals
 }
 
 iTreeViewItem::~iTreeViewItem() {
@@ -7328,6 +7300,13 @@ void iTreeViewItem::DataLinkDestroying(taDataLink*) {
 }
 
 void iTreeViewItem::DecorateDataNode() {
+  // note: first do lazy children, which was previously in ctor but can no longer
+  // be because it uses virtual calls -- this is safe and conservative if children
+  // are already made
+  if (dn_flags & DNF_LAZY_CHILDREN) {
+    enableLazyChildren();
+  }
+
   int bmf = 0;
   int dn_flags_supported = 0;
   taiDataLink* link = this->link(); // local cache
@@ -7608,6 +7587,7 @@ taiTreeDataNode::~taiTreeDataNode() {
 }
 
 void taiTreeDataNode::CreateChildren_impl() {
+//NOTE: keep willHaveChildren_impl in sync with this code
   MemberSpace* ms = &(link()->GetDataTypeDef()->members);
   iTreeView* tree = treeView(); //cache
   for (int i = 0; i < ms->size; ++ i) {
@@ -7630,6 +7610,23 @@ void taiTreeDataNode::CreateChildren_impl() {
     }
   }
   last_member_node = last_child_node; //note: will be NULL if no members issued
+}
+
+void taiTreeDataNode::willHaveChildren_impl(bool& will) const {
+//NOTE: keep CreateChildren_impl in sync with this code
+//NOTE: this typically doesn't execute for listish nodes with children
+  MemberSpace* ms = &(link()->GetDataTypeDef()->members);
+  for (int i = 0; i < ms->size; ++ i) {
+    MemberDef* md = ms->FastEl(i);
+    //NOTE: this code is only valid for the **current** view state
+    // lazy children would need to be rerun for all nodes if view state changed
+    // we make everything that isn't NO_SHOW, then hide if not visible now
+    if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_TREE)) continue;
+    will = true;
+    break;
+  }
+  if (!will)
+    inherited::willHaveChildren_impl(will);
 }
 
 taiTreeDataNode* taiTreeDataNode::FindChildForData(void* data, int& idx) {
@@ -7747,6 +7744,12 @@ void tabParTreeDataNode::CreateChildren_impl() {
   last_list_items_node = last_child_node;
 }
 
+void tabParTreeDataNode::willHaveChildren_impl(bool& will) const {
+  if (list()->size > 0) will = true;
+  if (!will)
+    inherited::willHaveChildren_impl(will);
+}
+
 taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
   taiTreeDataNode* after, taBase* el) 
 {
@@ -7769,8 +7772,8 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
 void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (!this->children_created) {
-    if (dcr == DCR_LIST_ITEM_INSERT)
-      enableLazyChildren(); // shows that there are now children
+    if ((dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE))
+      UpdateLazyChildren(); // updates
     return;
   }
   switch (dcr) {
@@ -8006,8 +8009,8 @@ taiTreeDataNode* tabGroupTreeDataNode::CreateSubGroup(taiTreeDataNode* after_nod
 void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (!this->children_created) {
-    if (dcr == DCR_GROUP_INSERT)
-      enableLazyChildren(); // shows that there are now children
+    if ((dcr == DCR_GROUP_INSERT) || (dcr == DCR_GROUP_REMOVE))
+      UpdateLazyChildren(); // updates
     return;
   }
   AssertLastListItem();
@@ -8079,6 +8082,12 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     if (node1 != NULL)
       node1->setText(0, tree_nm);
   }
+}
+
+void tabGroupTreeDataNode::willHaveChildren_impl(bool& will) const {
+  if (data()->gp.size > 0) will = true;
+  if (!will)
+    inherited::willHaveChildren_impl(will);
 }
 
 

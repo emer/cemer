@@ -103,11 +103,14 @@ public:
     // set text color for indicated column, or all if col=-1; note: statically hides Qt member
   void			resetTextColor(int col);
     // return text color for indicated column to default, or for all cols if col=-1
+  bool			willHaveChildren() const;
+    // only called when resolving lazy children status -- true if (likely) will have children
   
   virtual bool		canAcceptDrop(const QMimeData* mime) const {return false;}
     // returns whether we can accept the given data in a drop upon us
   
   virtual void		CreateChildren(); // creates the children, called automatically on expand if lazy_children; normally override _impl
+  void 			UpdateLazyChildren(); // only call when you think child status may have changed, to add or remove the placeholder +
   
 
   iTreeWidgetItem(iTreeWidget* parent);
@@ -123,6 +126,8 @@ protected:
     int key_mods, WhereIndicator where) {}
     // what to do when data dropped, usually we put up a drop context menu
   virtual void		itemExpanded(bool expanded); // called when exanded or closed
+  virtual void		willHaveChildren_impl(bool& will) const {}
+    // set true if will, and only need to call inherited if still false
   virtual void		CreateChildren_impl() {} // override this to create the true children
 private:
   void			init();

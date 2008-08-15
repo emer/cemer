@@ -2128,6 +2128,7 @@ public: // ISelectable interface
 protected:
   taiTreeDataNode*	last_member_node; // #IGNORE last member node created, so we know where to start list/group items
   taiTreeDataNode*	last_child_node; // #IGNORE last child node created, so we can pass to createnode
+  override void		willHaveChildren_impl(bool& will) const;
   override void 	CreateChildren_impl();
 private:
   static int		no_idx; // dummy parameter
@@ -2158,7 +2159,7 @@ private:
 class TA_API tabParTreeDataNode: public tabTreeDataNode {
 INHERITED(tabTreeDataNode)
 public:
-  taList_impl* 		list() {return ((tabODataLink*)m_link)->list();}
+  taList_impl* 		list() const {return ((tabODataLink*)m_link)->list();}
 //nuke  tabParDataLink* 	link() const {return (tabParDataLink*)m_link;}
 
   void			AssertLastListItem(); // #IGNORE updates last_list_items_node -- called by Group node before dynamic inserts/updates etc.
@@ -2179,6 +2180,7 @@ protected:
   taiTreeDataNode*	CreateListItem(taiTreeDataNode* par_node,
     taiTreeDataNode* after, taBase* el);
   void			UpdateListNames(); // #IGNORE updates names after inserts/deletes etc.
+  override void		willHaveChildren_impl(bool& will) const;
 private:
   void			init(tabODataLink* link_, int dn_flags_); // #IGNORE
 };
@@ -2253,7 +2255,7 @@ private:
 class TA_API tabGroupTreeDataNode: public tabListTreeDataNode {
 INHERITED(tabListTreeDataNode)
 public:
-  taGroup_impl* 	data() {return ((tabGroupDataLink*)m_link)->data();}
+  taGroup_impl* 	data() const {return ((tabGroupDataLink*)m_link)->data();}
   tabGroupDataLink* 	link() const {return (tabGroupDataLink*)m_link;}
 
   taiTreeDataNode*	CreateSubGroup(taiTreeDataNode* after, void* el); 
@@ -2272,6 +2274,7 @@ protected:
   override void 	CreateChildren_impl(); 
   override void		DataChanged_impl(int dcr, void* op1, void* op2); // handle DCR_GROUP_xxx ops
   void			UpdateGroupNames(); // #IGNORE updates names after inserts/deletes etc.
+  override void		willHaveChildren_impl(bool& will) const;
 private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
 };
