@@ -1258,6 +1258,8 @@ public:
   // #CAT_Structure find unit from given set of x and y coordinates
   TwoDCoord	GetGpGeomPos();
   // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
+  void 		SetUnitNames(taMatrix* mat);
+  // #CAT_Structure #EXPERT sets the unit names from the mat -- should generally be 2d but we are permissive about dims, size, etc.
 
   // implement save_rmv_units:
   override bool	Dump_QuerySaveChildren();
@@ -1336,6 +1338,8 @@ public:
     NO_ADD_COMP_SSE	= 0x0008,	// do NOT add this layer's sse value (sum squared error) to the overall network sse value: ONLY for ext_flag = COMP (OUTPUT) flag settings (NO_ADD_SSE blocks all contributions) -- this is relevant if the layer type or ext_flags are switched dynamically and only TARGET errors are relevant
     PROJECT_WTS_NEXT    = 0x0010,	// #NO_SHOW this layer is next in line for weight projection operation
     PROJECT_WTS_DONE    = 0x0020,	// #NO_SHOW this layer is done with weight projection operation (prevents loops)
+    SAVE_UNITS		= 0x0040,	// save this layer's units in the project file (even if Network::SAVE_UNITS off)
+    NO_SAVE_UNITS	= 0x0080,	// don't save this layer's units in the project file (even if Network::SAVE_UNITS on)
   };
 
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
@@ -1367,6 +1371,7 @@ public:
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
   bool			lesion_;	
   // #AKA_lesion #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 flag to inactivate this layer from processing (reversable)
+  DataColRef		unit_names; // set unit names from this matrix column -- may be smaller than the layer to partially set names
 
   ProjectBase*		project(); // #IGNORE this layer's project
   	

@@ -631,6 +631,13 @@ TAPtr taBase::GetThisOrOwner(TypeDef* td) {
   return GetOwner(td);
 }
 
+TAPtr taBase::GetParent() const	{ 
+  taBase* rval = GetOwner();
+  while (rval && (rval->InheritsFrom(TA_taList_impl)))
+    rval = rval->GetOwner();
+  return rval;
+} 
+
 bool taBase::IsChildOf(const taBase* obj) const {
   // note: we define ourself as a child of ourself
   const taBase* tobj = this;

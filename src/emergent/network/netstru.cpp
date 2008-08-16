@@ -3263,10 +3263,13 @@ TwoDCoord Unit_Group::GetGpGeomPos() {
 }
 
 bool Unit_Group::Dump_QuerySaveChildren() {
-  if(own_lay && own_lay->own_net && !own_lay->own_net->HasNetFlag(Network::SAVE_UNITS)
-     && !own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE))
-    return false;
-  return true;
+  if (!own_lay) return false; // huh? should always be valid...
+  // always save if forced
+  if (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE)) return true;
+  // else arbitrate: true if layer says SAVE, or net says SAVE and we don't override
+  return (own_lay->HasLayerFlag(Layer::SAVE_UNITS) ||
+    (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS)
+     && !own_lay->HasLayerFlag(Layer::NO_SAVE_UNITS)));
 }
 
 ////////////////////////
@@ -3319,6 +3322,7 @@ void Layer::Initialize() {
   icon_value = 0.0f;
 
   n_units = 0;			// note: v3compat obs
+  taBase::Own(unit_names, this);
 }
 
 void Layer::InitLinks() {
@@ -3679,8 +3683,43 @@ void Layer::BuildUnits() {
       pjn->projected = false;
     }
   }
+  if (unit_names) {
+    // set the names
+    if(unit_groups) {
+    //TODO
+/*      units.gp.SetSize(gp_geom.n);
+      for(int k=0; k< units.gp.size; k++) {
+        Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
+        ug->UpdateAfterEdit();
+        if(ug->BuildUnits())
+          units_changed = true;
+      } */
+    }
+    else {
+      taMatrixPtr mat;
+      mat = unit_names->GetValAsMatrix(0);
+      if (mat)
+        units.SetUnitNames(mat.ptr());
+    }
+  }
   StructUpdate(false);
   taMisc::DoneBusy();
+}
+
+void Unit_Group::SetUnitNames(taMatrix* mat) {
+  if (!mat) return;
+  MatrixGeom mat_idx(2); // we iterate assuming 2d is valid
+  // convenience accessors:
+  int& y = mat_idx[1]; int& x = mat_idx[0];
+  for (y = 0; ((y < mat->dim(1)) && (y < geom.y)); ++y)
+  for (x = 0; ((x < mat->dim(0)) && (x < geom.x)); ++x)
+  {
+    Unit* un = FindUnitFmCoord(x, y);
+    if (!un) goto exit;
+    un->SetName(mat->SafeElAsVarN(mat_idx).toString());
+  }
+exit:
+  ;
 }
 
 void Layer::LayoutUnitGroups() {

@@ -4523,7 +4523,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
       top_item, (void*)btmp); 
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
-    TAPtr own = btmp->GetOwner();
+    TAPtr own = btmp->GetParent();
     if (own) {
       item->setData(2, Qt::DisplayRole, own->GetDisplayName()); // use disp name directly -- overriden to name for groups..
       item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
@@ -4556,8 +4556,8 @@ const String taiTokenPtrButton::headerText(int index, int view) const {
   case 0: switch (index) {
     case 0: return "Name"; 
     case 1: return "Type"; 
-    case 2: return "Owner Name"; 
-    case 3: return "Owner Type"; 
+    case 2: return "Parent Name"; 
+    case 3: return "Parent Type"; 
     } break; 
   default: break; // compiler food
   }
