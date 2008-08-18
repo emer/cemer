@@ -106,7 +106,6 @@
 #  undef TA_POINTER_SIZE
 #  define TA_POINTER_SIZE 4
 #  define TA_OS_WIN32
-#error("TEST _WIN32")
 #elif defined(__MWERKS__) && defined(__INTEL__)
 #  define TA_OS_WIN32
 #elif defined(__sun) || defined(sun)

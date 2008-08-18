@@ -374,6 +374,7 @@ void taProject::InitLinks_impl() {
 void taProject::InitLinks_post() {
   if (!taMisc::is_loading) {
     AssertDefaultProjectBrowser(true);
+    taMisc::ProcessEvents(); // needed for Windows
     AssertDefaultWiz(true);	// make default and do edit it
   } else {
 //NO    AssertDefaultProjectBrowser(false);
