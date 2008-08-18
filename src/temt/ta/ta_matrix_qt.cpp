@@ -137,6 +137,7 @@ to find i1,i2... from index:
 QVariant MatrixTableModel::headerData(int section, 
   Qt::Orientation orientation, int role) const
 {
+  if (!m_mat) return QVariant();
   if (role != Qt::DisplayRole)
     return QVariant();
   // get an effective pat4D guaranteed true only if applicable
@@ -200,7 +201,8 @@ bool MatrixTableModel::ignoreDataChanged() const {
 
 int MatrixTableModel::matIndex(const QModelIndex& idx) const {
   //note: we dimensionally reduce all dims >1 to 1
-  return m_mat->geom.IndexFmDims2D(idx.column(), idx.row(), pat4D(), matView());
+  return (m_mat) ? m_mat->geom.IndexFmDims2D(idx.column(), idx.row(), pat4D(), matView())
+    : 0;
 }
 
 QMimeData* MatrixTableModel::mimeData (const QModelIndexList& indexes) const {
@@ -220,7 +222,7 @@ QStringList MatrixTableModel::mimeTypes () const {
 
 
 int MatrixTableModel::rowCount(const QModelIndex& parent) const {
-  return m_mat->rowCount(pat4D());
+  return (m_mat) ? m_mat->rowCount(pat4D()) : 0;
   //note: for visual stuff, there is always at least one row
 }
 

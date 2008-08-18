@@ -3322,7 +3322,6 @@ void Layer::Initialize() {
   icon_value = 0.0f;
 
   n_units = 0;			// note: v3compat obs
-  taBase::Own(unit_names, this);
 }
 
 void Layer::InitLinks() {
@@ -3341,6 +3340,7 @@ void Layer::InitLinks() {
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_share_units, this);
 #endif
+  taBase::Own(unit_names, this);
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
     SetDefaultPos();
@@ -3351,6 +3351,7 @@ void Layer::InitLinks() {
 void Layer::CutLinks() {
   if(!owner) return; // already replacing or already dead
   DisConnect();
+  unit_names.CutLinks();
   sent_already.CutLinks();
   act_geom.CutLinks();
   flat_geom.CutLinks();
@@ -3683,7 +3684,7 @@ void Layer::BuildUnits() {
       pjn->projected = false;
     }
   }
-  if (unit_names) {
+  if (unit_names.dims() > 0) {
     // set the names
     if(unit_groups) {
     //TODO
@@ -3696,10 +3697,7 @@ void Layer::BuildUnits() {
       } */
     }
     else {
-      taMatrixPtr mat;
-      mat = unit_names->GetValAsMatrix(0);
-      if (mat)
-        units.SetUnitNames(mat.ptr());
+      units.SetUnitNames(&unit_names);
     }
   }
   StructUpdate(false);

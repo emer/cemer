@@ -1371,7 +1371,7 @@ public:
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
   bool			lesion_;	
   // #AKA_lesion #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 flag to inactivate this layer from processing (reversable)
-  DataColRef		unit_names; // set unit names from this matrix column -- may be smaller than the layer to partially set names
+  String_Matrix		unit_names; // #SHOW_TREE set unit names from this mat -- set dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable
 
   ProjectBase*		project(); // #IGNORE this layer's project
   	
