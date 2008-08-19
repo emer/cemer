@@ -1,5 +1,5 @@
 // ta_Dump File v2.0
-LeabraProject .projects[1] { 
+LeabraProject .projects[0] { 
   Doc_Group @.docs = [6] {
     taDoc @[0] { };
     taDoc @[1] { };
@@ -68,7 +68,7 @@ LeabraProject .projects[1] {
     };
   };
 };
-LeabraProject .projects[1] {
+LeabraProject .projects[0] {
  name="Project_0";
  desc=;
  tags=;
@@ -178,7 +178,7 @@ In the <code>Var/Fun</code> tab on the Toolbox, there is an item called <code>va
 
 Name this new variable \"batch\", and select Int for its type (should be default already).  This will hold the batch counter that we iterate over, and will be written to the batch column of the data table.
 
-Repeat the above process, or do context menu/Duplicate, to create the remaining column variables (be sure to make sse a Real type, which is the program version of a floating point number (it is actually stored as a double-precision floating point number internally -- for the program level of code, runtime performance is not critical so only one floating point variable type is available, to simplify things).
+Repeat the above process, or do context menu/Duplicate, to create the remaining column variables (be sure to make sse a Real type, which is the program version of a floating point number (for computer geeks: it is actually stored as a double-precision floating point number internally -- for the program level of code, runtime performance is not critical so only one floating point variable type is available, to simplify things).
 
 '''Tip:''' there is a shortcut (added in 4.0.17) for making variables from data table names: just drag a data table on the vars guy and select Create Data Col Vars (or hit the button for that in the middle panel and select a data table).
 
@@ -203,7 +203,7 @@ Finally, repeat this process one last time, changing the variable to batch, and 
 
 It is often a good idea to program incrementally where possible, so you can test what you've done, and consolidate your understanding of how it works, before moving on to the next steps.  Thus, we're going to just write the for-loop variables to our datatable, and see how that works, before adding the random number generation part.
 
-Drag a <code>new row</code> item from the <code>Data</code> toolbox into the inner-most <code>loop code</code> of your three for loops.  This will add a new row into your data table, and then we'll write the variables into that row.  You should see it complaining about an ERROR -- you need to tell it which data table to add a new row to.  When you click on the <code>data var</code>, you'll see that it doesn't show any option corresponding to your MyRandomData data table.  This is because most all of these kinds of data program elements operate on ''variables'' that ''point to'' datatables, instead of referring to data tables directly.  This allows considerable more flexibility (one can change the variable to point to different data tables at will), at the cost of requiring an extra step when you don't need it (like now!).
+Drag a <code>new row</code> item from the <code>Data</code> toolbox into the inner-most <code>loop code</code> of your three for loops.  This will add a new row into your data table, and then we'll write the variables into that row.  You should see it complaining about an ERROR -- you need to tell it which data table to add a new row to.  When you click on the <code>data var</code>, you'll see that it doesn't show any option corresponding to your MyRandomData data table.  This is because most all of these kinds of data program elements operate on ''variables'' that ''point to'' datatables, instead of referring to data tables directly.  This allows considerable extra flexibility (one can change the variable to point to different data tables at will), at the cost of requiring an extra step when you don't need it (like now!).
 
 To create a variable that points to (refers to) your MyRandomData table, you can just drag that item from the left browser into the vars section of your program, and select <code>Add Var To</code>.  Note: you have to do this drag without first selecting the item -- just click down and ''hold the mouse button down'' while dragging over to vars -- otherwise you'll end up selecting the data table and won't be able to drag it into your program in the middle edit panel.
 
@@ -219,7 +219,7 @@ Ready for the moment of truth!?  Press the <code>Init</code> button at the botto
 
 Assuming you didn't get any errors, you are now ready to hit the Run button!  Nothing obvious happens!  To see if it did what you expected, click back up on the MyRandomData and select the Data Table view -- you should see 40 rows of data, with the batch, cond1 and cond2 columns filled in as you would expect.
 
-If you do get errors, the can only be in the for loop expressions -- you should get information when you enter those in the first place about whether they are incorrect.  Hopefully you can correct the mistake.  If you're stumped, you can always pull up the data_tutorial_final.proj file in the same directory as this project, which has the final working version of this program, and see what is different.
+If you do get errors, they can only be in the for loop expressions -- you should get information when you enter those in the first place about whether they are incorrect.  Hopefully you can correct the mistake.  If you're stumped, you can always pull up the data_tutorial_final.proj file in the same directory as this project, which has the final working version of this program, and see what is different.
 
 === Generating Random Numbers ===
 
@@ -262,7 +262,7 @@ Here are the definitions of the condition values from above:
 * '''cond1''' (integer) -- condition numbers for condition1: 0 or 1 (0 = LOCation input, 1 = OBJect input)
 * '''cond2''' (integer) -- condition2: 0 or 1 (0 = SOURCE item, 1 = TARGET item)
 
-In the types section, do <code>New Enum Type</code> (button or context menu -- don't do the plain New function) and name it Cond1, then click New Enum and call the first one LOC (value is 0), and then duplicate that one and call it OBJ (value = 1).  Then duplicate the Cond1 type and rename it Cond2 and change the two enum values to SRC and TRG respectively.
+In the types section of your program, do <code>New Enum Type</code> (button or context menu -- don't do the plain New function) and name it Cond1, then click New Enum and call the first one LOC (value is 0), and then duplicate that one and call it OBJ (value = 1).  Then duplicate the Cond1 type and rename it Cond2 and change the two enum values to SRC and TRG respectively.
 
 Next, we'll create new columns in the data table to hold these labels.  Back at the [[.data.InputData.MyRandomData]] table, do New Column and create a cond1_lbl column of type String -- duplicate that and rename it cond2_lbl, and finaly make one more duplicate called cond_lbl which will contain both condition labels in a single column.
 
@@ -357,7 +357,7 @@ Now you can use this same type of expression to enter the two args to the vec_co
 * <code>MyRandomData[\"sse\"].ar</code>
 * <code>float_cycles[\"cycles_flt\"].ar</code>
 
-Note: '''The .ar at the end indicates the float_Matrix data used to actually store the data for the column.''' -- this is a very important point to remember for using these math functions!
+Note: The data in a column is actually stored in a Matrix object that for historical reasons is called '''.ar''' (used to be an array..) -- when you are passing data to a taMath function that expects a Matrix object, you must specify the .ar as in the above expressions.
 
 The last thing you need to do is create a new variable to store the results of this correlation computation -- create a new Real var, call it \"r\", and then select that variable for the result var.
 
@@ -405,7 +405,7 @@ Feel free to experiment with all these options, including the more exotic NOT AN
 
 == Selecting Columns ==
 
-There is a similar function for selecting columns (sel cols) which doesn't have any selection criteria -- it just uses a list of columns to select and copies only those column's values to the destination table.
+There is a similar function for selecting columns (sel cols -- just under sel rows in the Data Proc section) which doesn't have any selection criteria -- it just uses a list of columns to select and copies only those column's values to the destination table.
 
 == Sorting ==
 
@@ -713,7 +713,7 @@ There are several functions available in the HighDim toolkit that you are free t
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[1]$0$;
+   m_data=.projects[0]$0$;
    name="Browser3";
    visible=1;
    m_is_root=0;
